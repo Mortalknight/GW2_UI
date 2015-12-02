@@ -1,5 +1,5 @@
 BuffFrame:ClearAllPoints()
-BuffFrame:SetScale(0.6)
+BuffFrame:SetScale(1)
 BuffFrame:Show()
 BuffFrame:SetParent(unitframePowerbg)
 BuffFrame:SetPoint('BOTTOMLEFT',unitframePowerbg,'TOPLEFT',0,10)
@@ -26,9 +26,11 @@ BuffFrame:HookScript("OnEvent", function(self, event, unit)
     local col = 0;
     local max = 0;
     for i = 1,100 do
-        px = col*31;
-        py = row*31;
-        if UnitBuff("player",i) then     
+        px = col*26;
+        py = row*35;
+        if UnitBuff("player",i) then   
+            _G["BuffButton" .. i]:SetWidth(25)
+             _G["BuffButton" .. i]:SetHeight(25)
             _G["BuffButton" .. i]:ClearAllPoints()
             _G["BuffButton" .. i]:SetPoint('BOTTOMLEFT',BuffFrame,'BOTTOMLEFT', px, py)
                 col = col +1

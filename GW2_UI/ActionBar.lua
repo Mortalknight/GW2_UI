@@ -62,14 +62,14 @@ end)
     
 	
 	MultiBarBottomRight:SetPoint('BOTTOMLEFT', ActionButton12, 'TOPLEFT', -171, 40)
-	MultiBarBottomLeft:SetPoint('BOTTOMLEFT', ActionButton1, 'TOPLEFT', -171, 25)
+	MultiBarBottomLeft:SetPoint('BOTTOMLEFT', ActionButton1, 'TOPLEFT', -171, 40)
     
     MultiBarBottomRightButton1:ClearAllPoints()
 	MultiBarBottomRightButton1:SetPoint('BOTTOMRIGHT', ActionButton12, 'TOPLEFT', -151, 40)
 
     
 
-	MultiBarBottomLeftButton1:SetPoint('BOTTOMLEFT', ActionButton1, 'TOPLEFT', 0, 25)
+	MultiBarBottomLeftButton1:SetPoint('BOTTOMLEFT', ActionButton1, 'TOPLEFT', 0, 40)
 
     
     
@@ -128,6 +128,9 @@ CastingBarFrame:UnregisterAllEvents()
         --setOverlay("MultiBarBottomLeftButton"..i.."Icon","MultiBarBottomLeftButton"..i)
        -- setOverlay("MultiBarBottomRightButton"..i.."Icon","MultiBarBottomRightButton"..i)
 
+     if  _G["StanceButton"..i.."Icon"] then
+       _G["StanceButton"..i.."Icon"]:SetTexCoord(0.1,0.9,0.1,0.9)
+    end
       if  _G["ActionButton"..i.."Icon"] then
        _G["ActionButton"..i.."Icon"]:SetTexCoord(0.1,0.9,0.1,0.9)
     end
@@ -149,23 +152,71 @@ CastingBarFrame:UnregisterAllEvents()
     
         
 
-        _G["MultiBarBottomLeftButton" .. i .. "HotKey"]:SetPoint('BOTTOM', _G["MultiBarBottomLeftButton" .. i ], -8, -4)
+        _G["MultiBarBottomLeftButton" .. i .. "HotKey"]:SetPoint('BOTTOM', _G["MultiBarBottomLeftButton" .. i ], 0, -4)
     
-        _G["MultiBarBottomRightButton" .. i .. "HotKey"]:SetPoint('BOTTOM', _G["MultiBarBottomRightButton" .. i ], -4, -4)
+        _G["MultiBarBottomRightButton" .. i .. "HotKey"]:SetPoint('BOTTOM', _G["MultiBarBottomRightButton" .. i ], 0, -4)
+   _G["MultiBarBottomRightButton" .. i .. "HotKey"] :SetJustifyH("CENTER")
+    _G["MultiBarBottomLeftButton" .. i .. "HotKey"] :SetJustifyH("CENTER")
     
         _G["ActionButton" .. i .. "HotKey"]:ClearAllPoints()
-        _G["ActionButton" .. i .. "HotKey"]:SetPoint('BOTTOM', _G["ActionButton" .. i ], -10, -10)
+        _G["ActionButton" .. i .. "HotKey"]:SetPoint('BOTTOM', _G["ActionButton" .. i ], 0, -10)
+    
+        _G["ActionButton" .. i .. "HotKey"]:SetJustifyH("CENTER")
     
     
          _G["hotKey" .. i .. "BG"], _G["hotKey" .. i .. "BGt"] = createBackground('BOTTOM',15,15,0,0,"Interface\\AddOns\\GW2_UI\\textures\\altpowerbg",4)
         _G["hotKey" .. i .. "BG"]:ClearAllPoints();
-       _G["hotKey" .. i .. "BG"]:SetDepth(29)
+        _G["hotKey" .. i .. "BG"]:SetFrameLevel(3)
+     _G["hotKey" .. i .. "BG"]:SetFrameStrata("MEDIUM")
         _G["hotKey" .. i .. "BGt"]:SetVertexColor(0,0,0,1);
         _G["hotKey" .. i .. "BG"]:SetPoint('CENTER', _G["ActionButton" .. i .. "HotKey"], 'CENTER', 17,-2);
     
-        _G["ActionButton" .. i .. "Icon" ]:SetDrawLayer("OVERLAY", 0)
+        
+    _G["ActionButton" .. i .. "NormalTexture" ]:SetTexture(nil)
+    
+       -- _G["MultiBarBottomRightButton" .. i .. "NormalTexture" ]:SetTexture(nil)
+     --   _G["MultiBarBottomRightButton" .. i .. "NormalTexture" ]:SetTexture(nil)
+    
+        if  _G["MultiBarBottomRightButton" .. i..'FloatingBG'] then
+            _G["MultiBarBottomRightButton" .. i..'FloatingBG']:SetTexture(nil)
+        end
+        if  _G["ActionButton" .. i..'FloatingBG'] then
+            _G["ActionButton" .. i..'FloatingBG']:SetTexture(nil)
+        end
+     if  _G["StanceButton" .. i..'FloatingBG'] then
+            _G["StanceButton" .. i..'FloatingBG']:SetTexture(nil)
+        end
+    
+        _G["ActionButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["MultiBarBottomRightButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["MultiBarBottomLeftButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    
+       
+    
+        _G["ActionButton" .. i ]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["MultiBarBottomRightButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["MultiBarBottomLeftButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    
+    _G["ActionButton" .. i ]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["MultiBarBottomRightButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["MultiBarBottomLeftButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+     
+    
+        _G["ActionButton" .. i ]:SetNormalTexture(nil)
+     _G["MultiBarBottomRightButton" .. i ]:SetNormalTexture(nil)
+     _G["MultiBarBottomLeftButton" .. i ]:SetNormalTexture(nil)
+        
+    if  _G["StanceButton"..i.."Icon"] then
+        _G["StanceButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["StanceButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["StanceButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+     --   _G["StanceButton" .. i ]:SetNormalTexture(nil)
+    end
+    
+    --    _G["ActionButton" .. i .. "Icon" ]:SetDrawLayer("OVERLAY", 0)
         if _G["ActionButton" .. i .. "Hotkey" ] then
-            _G["ActionButton" .. i .. "Hotkey" ]:SetDrawLayer("OVERLAY", 0)
+           --_G["ActionButton" .. i .. "Hotkey" ]:SetDrawLayer("OVERLAY", 0)
+      
         end
     
         if i > 1 then
@@ -592,9 +643,9 @@ f:SetAttribute('_onstate-combat', [=[ -- Securely toggle visibility in combat
         self:GetFrameRef('StanceBarFrame'):ClearAllPoints()
         self:GetFrameRef('PetActionBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+121)
         if UnitExists('Pet') then
-        self:GetFrameRef('StanceBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+165)
+        self:GetFrameRef('StanceBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+180)
         else
-            self:GetFrameRef('StanceBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+130)
+            self:GetFrameRef('StanceBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+140)
         end
     else
         self:GetFrameRef('PetActionBarFrame'):ClearAllPoints()
@@ -617,9 +668,9 @@ function setPetBar(bool)
      if bool then
         PetActionBarFrame:SetPoint('TOPLEFT', MultiBarBottomLeft, 'BOTTOMLEFT', 0, 160)
         if UnitExists('Pet') then
-            StanceBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'TOPLEFT', 0, 65)
+            StanceBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'TOPLEFT', 0, 80)
         else
-            StanceBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'TOPLEFT', 0, 30)
+            StanceBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'TOPLEFT', 0, 45)
         end
             
     else

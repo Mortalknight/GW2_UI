@@ -10,7 +10,7 @@ TargetFrame:Hide();
 --FocusFrame:Hide();
 
 unitBGf,unitBGt = createBackground('BOTTOM',104,104,0,16,"Interface\\AddOns\\GW2_UI\\textures\\healthfill",1)
- unitBGt:SetVertexColor(0.1,0,0,0.7);
+ unitBGt:SetVertexColor(0.1,0,0,1);
 
 UIErrorsFrame:ClearAllPoints()
 UIErrorsFrame:SetPoint('TOP',UIParent,'TOP',0,0)
@@ -97,10 +97,10 @@ local healthFill = tprt
     secureButtonFrame:SetParent(unitBGf)
 
     
-    unitframePowerbg,unitframePowerbgt = createBackground('TOPLEFT',210,12,0,0,"Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar",1)
+    unitframePowerbg,unitframePowerbgt = createBackground('TOPLEFT',315,18,0,0,"Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar",2)
 
     --unitframePowerbg:SetParent(ActionButton7)
-    unitframePowerbg:SetScale(1.5)
+    unitframePowerbg:SetScale(1)
     unitframePowerbg:ClearAllPoints()
     unitframePowerbgt:SetVertexColor(0,0,0,0.6);
     unitframePowerbg:SetPoint("BOTTOMLEFT",ActionButton7,"TOPLEFT",0,5)
@@ -108,30 +108,51 @@ local healthFill = tprt
     unitframePower:SetStatusBarTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar")
     unitframePower:GetStatusBarTexture():SetHorizTile(false)
     unitframePower:SetMinMaxValues(0, 100)
-    unitframePower:SetValue(100)
-    unitframePower:SetWidth(208)
-    unitframePower:SetHeight(10)
+    unitframePower:SetValue(0)
+    unitframePower:SetWidth(313)
+    unitframePower:SetHeight(16)
     unitframePower:SetPoint("TOPLEFT",unitframePowerbg,"TOPLEFT",1,-1)
+
+    unitframePowerCandy = CreateFrame("StatusBar", nil, unitframePowerbg)
+    unitframePowerCandy:SetStatusBarTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbarcandy")
+    unitframePowerCandy:GetStatusBarTexture():SetHorizTile(false)
+    unitframePowerCandy:SetMinMaxValues(0, 100)
+    unitframePowerCandy:SetValue(0)
+    unitframePowerCandy:SetWidth(313)
+    unitframePowerCandy:SetHeight(16)
+    unitframePowerCandy:SetPoint("TOPLEFT",unitframePowerbg,"TOPLEFT",1,-1)
+
     
+
+
     local unitframePowerText = unitframePower:CreateFontString('unitframePlayerPower', "OVERLAY", "GameFontNormal")
     unitframePowerText:SetTextColor(1,1,1)
-    unitframePowerText:SetFont(STANDARD_TEXT_FONT,9)
+    unitframePowerText:SetFont(STANDARD_TEXT_FONT,14)
     unitframePowerText:SetPoint("CENTER")
     unitframePowerText:SetText("0")
  
     
     
 
-
+powerBeforeLerp =  (UnitPower('Player')/UnitPowerMax('Player')) * 100
 unitframePower:SetScript("OnEvent",function(self,event,addon)
     powerType, powerToken, altR, altG, altB = UnitPowerType("player")
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         unitframePower:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        unitframePowerCandy:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b,0.5)
     end
    
     local prog = (UnitPower('Player')/UnitPowerMax('Player')) * 100
-    self:SetValue(prog)
+        
+     addToAnimation('unitFramePowerBar',powerBeforeLerp,prog,GetTime(),0.2,function()
+       unitframePower:SetValue(animations['unitFramePowerBar']['progress'])
+    end)
+    addToAnimation('unitFramePowerBarCandy',powerBeforeLerp,prog,GetTime(),1,function()
+       unitframePowerCandy:SetValue(animations['unitFramePowerBarCandy']['progress'])
+    end)
+       
+    powerBeforeLerp = prog
     local num = UnitPower('player')
     local uhm = UnitPower('Player')/UnitPowerMax('Player')
     if not num then return 0 end
@@ -145,6 +166,7 @@ unitframePower:SetScript("OnEvent",function(self,event,addon)
     end
         
 end)
+healthBefore = UnitHealth('Player') / UnitHealthMax('Player')
 unitBGf:SetScript("OnEvent",function(self,event,addon)
     local num = UnitHealth('player')
     local uhm = UnitHealth('Player')/UnitHealthMax('Player')
@@ -156,11 +178,21 @@ unitBGf:SetScript("OnEvent",function(self,event,addon)
             totalAbsorb = 1
     end
     local auhm = totalAbsorb/UnitHealthMax('Player')    
+        
+    
+    addToAnimation('unitFrameHealth',healthBefore,uhm,GetTime(),0.5,function()
+        animations['unitFrameHealth']['progress'] = min(1,max(animations['unitFrameHealth']['progress'],0.01))
+        if isnan(animations['unitFrameHealth']['progress'])==false then
+            healtTextureBg:SetHeight(animations['unitFrameHealth']['progress']*healtTextureBg:GetWidth())
+            healtTextureT:SetTexCoord(0,1,  math.abs(animations['unitFrameHealth']['progress'] - 1),1)  
+        end
+    end)  
+    healthBefore = uhm
    -- healthFill:SetTexCoord(0, 0,  0, 1,  1, 0,  1, 1)
        healthFillBg:SetHeight(uhm*healthFill:GetWidth())
        healthFill:SetTexCoord(0,1,  math.abs(uhm - 1),1)
         
-        
+     
         absorb:SetHeight(auhm*absorb:GetWidth())
         absorbt:SetTexCoord(0,1,  math.abs(auhm - 1),1)
         
@@ -179,40 +211,9 @@ unitBGf:SetScript("OnEvent",function(self,event,addon)
         
         
 end)
-oldHealthStart = 0;
-oldHealth= UnitHealth('Player') / UnitHealthMax('Player')
-HealthlerpRunning = false
-newHealth = 0
-unitBGf:SetScript("OnUpdate",function(self,event,addon)
 
-local currentHealth = UnitHealth('Player') / UnitHealthMax('Player')
-        if currentHealth == nil then
-            return
-        end
-    if oldHealth>currentHealth then
-        if HealthlerpRunning==false then
-                newHealth = currentHealth;
-                HealthlerpRunning = true;
-                oldHealthStart = GetTime()
-        end
-    end
-          
-    if HealthlerpRunning then
-     --    xppre =   (((GetTime() ) - gainExpStart) / (gainExpEnd - gainExpStart) * 100 )
-         currentHealth =  lerp(oldHealth, newHealth, (GetTime() - oldHealthStart) / 0.5)
-            if currentHealth<=newHealth then
-                HealthlerpRunning = false
-                oldHealth = currentHealth;
-            end
-            
-    end
-     healtTextureBg:SetHeight(currentHealth*healtTextureBg:GetWidth())
-    healtTextureT:SetTexCoord(0,1,  math.abs(currentHealth - 1),1)
-        if HealthlerpRunning==false then
-            oldHealth = currentHealth
-        end
-        
-end)
+
+
 
     
    

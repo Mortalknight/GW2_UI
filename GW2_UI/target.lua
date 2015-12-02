@@ -172,7 +172,7 @@ targetPortraitFrame:SetScript("OnEvent",function(self,event,addon)
             
             
             --newWidth = ((100-prec)/100)*270
-            candy:SetWidth(newWidth)
+            --candy:SetWidth(newWidth)
             
             targetFrame:SetAlpha(1)
             SetPortraitTexture(img1, "Target")

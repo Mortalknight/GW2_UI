@@ -41,8 +41,14 @@ Minimap:SetScript('OnLeave', function(self)
 		local kids = { Minimap:GetChildren() };
 
         for _, child in ipairs(kids) do
+              if child:GetName()=='MiniMapMailFrame' then
+                if HasNewMail()~=true then
+                      UIFrameFadeIn(child, 1, self:GetAlpha(),0)
+                end
+            else
             UIFrameFadeIn(child, 1, self:GetAlpha(),0)
             UIFrameFadeIn(MinimapZoneText, 1, self:GetAlpha(),0)
+            end
         end
 	
 end)
@@ -60,8 +66,14 @@ function hoverMiniMap()
 	local kids = { Minimap:GetChildren() };
 
         for _, child in ipairs(kids) do
+           if child:GetName()=='MiniMapMailFrame' then
+                if HasNewMail() then
+                     UIFrameFadeIn(child, 1, Minimap:GetAlpha(),1)
+                end
+            else
             UIFrameFadeIn(child, 1, Minimap:GetAlpha(),1)
             UIFrameFadeIn(MinimapZoneText, 1, Minimap:GetAlpha(),1)
+            end
             
         end
 end

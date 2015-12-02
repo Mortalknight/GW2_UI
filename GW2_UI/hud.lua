@@ -278,6 +278,7 @@ tprf,tprt = createBackground('BOTTOM',560,280,-280,16,"Interface\\AddOns\\GW2_UI
 
 durabilityBg,durabilityTexture = createBackgroundName('BOTTOM',20,20,32,16,"Interface\\AddOns\\GW2_UI\\textures\\repair",3,'durabilityBg')
 durabilityBg:SetFrameStrata('HIGH')
+tprf:SetAlpha(0)
  tprf:HookScript("OnUpdate", function(self)
        
          if IsSwimming() then 
@@ -314,6 +315,7 @@ durabilityBg:SetFrameStrata('HIGH')
     end)
 
 tprf,tprt = createBackground('BOTTOM',560,280,280,16,"Interface\\AddOns\\GW2_UI\\textures\\rightshadowswim",1)
+tprf:SetAlpha(0)
  tprf:HookScript("OnUpdate", function(self)
         
         if IsSwimming() then 
