@@ -1,0 +1,44 @@
+## Interface: 60200
+## Title: Gw2 UI
+## Notes: Hud Replacement addon.
+
+
+## Author: deadend06
+
+## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB
+
+
+
+
+GW2_ui.lua
+fonts.lua
+hud.lua
+QuestTracker.lua
+ActionBar.lua
+unitframes.lua
+buffs.lua
+
+map.lua
+target.lua
+targetoftarget.lua
+focus.lua
+castingbar.lua
+raidframes.lua
+
+
+altpowerpriest.lua
+altpowerpaladin.lua
+altpowerwarlock.lua
+altpowermonk.lua
+altpowerrogue.lua
+altpowermoonkin.lua
+altpower.lua
+
+questview.lua
+
+settings.lua
+chatbubbles.lua
+
+
+
+fader.lua
