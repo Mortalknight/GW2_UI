@@ -39,6 +39,8 @@ questview.lua
 settings.lua
 chatbubbles.lua
 
+nameplates.lua
 
+tooltips.lua
 
 fader.lua

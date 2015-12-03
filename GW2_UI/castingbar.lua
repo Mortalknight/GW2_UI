@@ -9,7 +9,7 @@ mainCastingBarBgt:SetVertexColor(0.1,0,0,0.4);
 
 mainCastingBar , mainCastingBart = createBackground('LEFT',256,20,0,0,"Interface\\AddOns\\GW2_UI\\textures\\castingbar",4)
 mainCastingBar:SetPoint('LEFT',mainCastingBarBg,'LEFT',0,0)
-mainCastingBart:SetBlendMode('ADD')
+
 
 mainCastingBar:SetParent(mainCastingBarBg)
  mainCastingBarBg:SetAlpha(0)

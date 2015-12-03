@@ -135,7 +135,11 @@ local healthFill = tprt
     
 
 powerBeforeLerp =  (UnitPower('Player')/UnitPowerMax('Player')) * 100
-unitframePower:SetScript("OnEvent",function(self,event,addon)
+unitframePower:SetScript("OnEvent",function(self,event,unit)
+      
+        if unit ~='player' then
+            return
+        end
     powerType, powerToken, altR, altG, altB = UnitPowerType("player")
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
@@ -167,7 +171,10 @@ unitframePower:SetScript("OnEvent",function(self,event,addon)
         
 end)
 healthBefore = UnitHealth('Player') / UnitHealthMax('Player')
-unitBGf:SetScript("OnEvent",function(self,event,addon)
+unitBGf:SetScript("OnEvent",function(self,event,unit)
+        if unit ~='player' then
+            return
+        end
     local num = UnitHealth('player')
     local uhm = UnitHealth('Player')/UnitHealthMax('Player')
     local totalAbsorb =  UnitGetTotalAbsorbs("Player")

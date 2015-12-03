@@ -25,14 +25,35 @@ BuffFrame:HookScript("OnEvent", function(self, event, unit)
     local row = 0;
     local col = 0;
     local max = 0;
-    for i = 1,100 do
+    local preI = 0
+    local isConsolidated = false
+    
+    if _G['ConsolidatedBuffs']:IsShown() then
+        _G["ConsolidatedBuffs"]:ClearAllPoints()
+        _G["ConsolidatedBuffs"]:SetWidth(25)
+        _G["ConsolidatedBuffs"]:SetHeight(25)
+        _G["ConsolidatedBuffs"]:ClearAllPoints()
+        _G["ConsolidatedBuffs"]:SetPoint('BOTTOMLEFT',BuffFrame,'BOTTOMLEFT', 0, 0)  
+        preI = 1
+        col = col +1
+        isConsolidated = true
+    end
+            
+    for i = preI,100 do
         px = col*26;
         py = row*35;
-        if UnitBuff("player",i) then   
+        ignoreBuff = false
+        name, rank, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff, value1, value2, value3 = UnitBuff("player", i )
+        if shouldConsolidate  and isConsolidated then
+        ignoreBuff  = true
+        end
+        if UnitBuff("player",i) and ignoreBuff==false  then   
+        
             _G["BuffButton" .. i]:SetWidth(25)
              _G["BuffButton" .. i]:SetHeight(25)
             _G["BuffButton" .. i]:ClearAllPoints()
             _G["BuffButton" .. i]:SetPoint('BOTTOMLEFT',BuffFrame,'BOTTOMLEFT', px, py)
+                    
                 col = col +1
                     max = max +1;
                     if col == 10 then

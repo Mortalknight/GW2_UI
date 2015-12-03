@@ -15,8 +15,7 @@ local function PlateAdd ( Plate )
 	local old_threat, hpborder, highlight, old_level, old_bossicon, raidicon, old_elite = f1:GetRegions()
 	local cbtexture, cbborder, old_cbshield, old_cbicon, old_cbname, cbnameshadow = Cast:GetRegions()
     
-   
-    
+
     old_threat:Hide()
     hpborder:Hide()
     cbborder:Hide()
@@ -24,22 +23,54 @@ local function PlateAdd ( Plate )
     old_level:ClearAllPoints();
     Health:ClearAllPoints();
     Cast:ClearAllPoints();
-    old_cbicon:ClearAllPoints();
-  
+    old_name:ClearAllPoints()
+   if old_cbicon then
+        old_cbicon:ClearAllPoints();
+    end
     
+      
 
     Health:SetPoint('CENTER',Plate,'CENTER',0,-10);
-    Cast:SetPoint('CENTER',Plate,'CENTER',0,-15);
-    old_level:SetPoint('LEFT',Health,'RIGHT',10,0);
-    old_cbicon:SetPoint('LEFT',Health,'LEFT',-old_cbicon:GetWidth(),0);
-    old_cbicon:SetTexCoord(0.1,0.9,0.1,0.9)
+    Cast:SetPoint('TOP',Health,'BOTTOM',0,0);
+    old_level:SetPoint('LEFT',Health,'RIGHT',5,0);
+    old_name:SetPoint('BOTTOM',Health,'TOP',0,5)
+   -- old_cbicon:SetPoint('LEFT',Health,'LEFT',-old_cbicon:GetWidth(),0);
+    --old_cbicon:SetTexCoord(0.1,0.9,0.1,0.9)
+    
+    old_level:SetFont(STANDARD_TEXT_FONT, 11)
     
     old_name:SetShadowOffset(-1, -1)
     old_name:SetShadowColor(0, 0, 0, 1)
-    old_name:SetFont(STANDARD_TEXT_FONT, 12)
-    
+    old_name:SetFont(STANDARD_TEXT_FONT, 11,'OUTLINE')
+    local backdrop = {
+  bgFile = "Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar",  
+
+  edgeFile = nil,
+
+  tile = false,
+
+  tileSize = 32,
+
+  edgeSize = 0,
+
+  insets = {
+    left = -1,
+    right = -1,
+    top = -1,
+    bottom = -1
+  }
+}
+ 
+
+    Health:SetBackdrop(backdrop)
+    Health:SetBackdropColor(0, 0, 0,0.8)
+    Health:SetBackdropBorderColor(0, 0, 0,0.8)
     Health:SetStatusBarTexture('Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar')
     Cast:SetStatusBarTexture('Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar')
+    Cast:SetBackdrop(backdrop)
+    Cast:SetBackdropColor(0, 0, 0,0.8)
+    Cast:SetBackdropBorderColor(0, 0, 0,0.8)
+
     minValue, maxValue = Health:GetMinMaxValues()
     
     setPlateOnShow(Health,Cast,old_name,old_level)
@@ -47,7 +78,7 @@ local function PlateAdd ( Plate )
       setPlateOnShow(Health,Cast,old_name,old_level)
     end)
     
-   Plate:SetScript('OnHide',function(self)
+    Plate:SetScript('OnHide',function(self)
       
     end)
 end
@@ -58,31 +89,20 @@ function setPlateOnShow(Health,Cast,old_name,old_level)
     Cast:SetWidth(70)
     Cast:SetHeight(5)
     
-    red, green, blue, alpha = Health:GetStatusBarColor()
+    r,g,b = Health:GetStatusBarColor()
     
-    if red > green and red > blue then
-        red =0.6
-        green = 0.1
-        blue = 0.1
-    else
-        if green > blue and green > red then
-           red =0.1
-            green = 0.6
-            blue = 0.1
-        else
-            if blue > red and blue > green then
-                red =0.1
-                green = 0.1
-                blue = 0.6
-            end
-        end
+
+    
+    if r==0.99999779462814 and g == 0 and b==0 then
+       Health:SetStatusBarColor(147/255,38/255,27/255)
     end
     
-    Health:SetStatusBarColor(red,green,blue)
+    Cast:SetStatusBarTexture('Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar')
+    Cast:SetBackdrop(backdrop)
+    Cast:SetBackdropColor(0, 0, 0,0.8)
+    Cast:SetBackdropBorderColor(0, 0, 0,0.8)
     
-    
-    old_name:SetTextColor(red+0.2,green+0.2,blue+0.2)
-    old_level:SetTextColor(1,1,1)
+
 end
 
 
@@ -107,6 +127,12 @@ end
 
 
 nPlates:SetScript('OnUpdate',function(self)
+    if GW2UI_SETTINGS['SETTINGS_LOADED'] == false then
+        return
+    end
+    if GW2UI_SETTINGS['DISABLE_NAMEPLATES'] == true then
+        return
+    end
 local ChildCount, NewChildCount = 0;
         local NextUpdate = 0;
         local pairs = pairs;

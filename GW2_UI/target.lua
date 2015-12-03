@@ -1,5 +1,4 @@
 
-
 local spellStart = 0
 local spellEnd = 0
 local casting = 0
@@ -80,15 +79,7 @@ absorbBar:SetHeight(12)
 absorbBar:SetPoint("LEFT",barBG,"LEFT",1,0)
 absorbBar:SetStatusBarColor(0.9,0.9,0.6,0.4)
 
-local candy, candyt = createBackground('TOPLEFT',270,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\gwstatusbarcandy",1)
 
-candyt:SetVertexColor(0,0,0);
-candyt:SetBlendMode("BLEND")
-candy:SetWidth(270)
-candy:SetHeight(12)
-candy:SetParent(healthBar)
-candy:ClearAllPoints()
-candy:SetPoint("RIGHT",healthBar,"RIGHT",0,0)
 
 
 
@@ -156,6 +147,18 @@ targetPortraitFrame:SetScript("OnEvent",function(self,event,addon)
                 tarLevel:SetText(UnitLevel("target"))
             end
             
+            isFriend = UnitIsFriend("player","Target");
+            if isFriend then
+                
+                    healthBar:SetStatusBarColor(38/255,147/255,27/255)
+                healthBar2:SetStatusBarColor(38/255,147/255,27/255)
+                tarName:SetTextColor(38/255,147/255,27/255)
+            else
+                healthBar:SetStatusBarColor(147/255,38/255,27/255)
+                healthBar2:SetStatusBarColor(147/255,38/255,27/255)
+                tarName:SetTextColor(147/255,38/255,27/255)
+            
+            end
             
             
             TargetFrame:Hide();
@@ -264,13 +267,7 @@ targetPortraitFrame:SetScript("OnUpdate",function(self)
             end
             
             healthBar2:SetValue(new)
-            --candy:SetWidth(new)
-            if newWidth == 0 then
-                candy:SetAlpha(0)
-                else
-                candy:SetAlpha(1)
-            end
-            candy:SetAlpha(0)
+           
         end
         
         

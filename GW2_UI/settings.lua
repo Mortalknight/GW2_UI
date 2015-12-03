@@ -7,15 +7,19 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 
         if GW2UI_SETTINGS_DB ==nil then
             GW2UI_SETTINGS_DB = {}
-            GW2UI_SETTINGS_DB['FADE_BOTTOM_ACTIONBAR'] = true;
-            GW2UI_SETTINGS_DB['HIDE_CHATSHADOW'] = false;
+            GW2UI_SETTINGS_DB['FADE_BOTTOM_ACTIONBAR'] = true
+            GW2UI_SETTINGS_DB['HIDE_CHATSHADOW'] = false
             GW2UI_SETTINGS_DB['HIDE_QUESTVIEW'] = false;
             GW2UI_SETTINGS_DB['USE_CHAT_BUBBLES'] = false;
+            GW2UI_SETTINGS_DB['DISABLE_NAMEPLATES'] = false
+            GW2UI_SETTINGS_DB['DISABLE_TOOLTIPS'] = false
         end
         GW2UI_SETTINGS['FADE_BOTTOM_ACTIONBAR'] = GW2UI_SETTINGS_DB['FADE_BOTTOM_ACTIONBAR']
         GW2UI_SETTINGS['HIDE_CHATSHADOW'] = GW2UI_SETTINGS_DB['HIDE_CHATSHADOW']
         GW2UI_SETTINGS['HIDE_QUESTVIEW'] = GW2UI_SETTINGS_DB['HIDE_QUESTVIEW']
         GW2UI_SETTINGS['USE_CHAT_BUBBLES'] = GW2UI_SETTINGS_DB['USE_CHAT_BUBBLES']
+        GW2UI_SETTINGS['DISABLE_NAMEPLATES'] = GW2UI_SETTINGS_DB['DISABLE_NAMEPLATES'] 
+        GW2UI_SETTINGS['DISABLE_TOOLTIPS'] = GW2UI_SETTINGS_DB['DISABLE_TOOLTIPS']
             
             
         GW2UI_SETTINGS['SETTINGS_LOADED'] = true
@@ -25,6 +29,8 @@ frame:SetScript("OnEvent", function(self, event, arg1)
         createBoleanSetting(1,'Hide Chat Backdrop','Hides the shadow in the bottom left corner','HIDE_CHATSHADOW')
         createBoleanSetting(2,'Disable Quest Dialog','Use the default quest interface','HIDE_QUESTVIEW')
         createBoleanSetting(3,'Default Speech Bubbles','Use the default speech bubbles','USE_CHAT_BUBBLES')
+        createBoleanSetting(4,'Default Nameplates','Use the default nameplates','DISABLE_NAMEPLATES')
+        createBoleanSetting(5,'Default Tooltips','Use the default tooltips','DISABLE_TOOLTIPS')
            
         createOptionGameMenuButton()
                     
