@@ -1,6 +1,3 @@
--- these three lines define where to position the topright corner
--- negative x values go left, positive x values go right
--- negative y values go down, positive y values go up
 local anchor = "TOPRIGHT"
 local xOff = 0
 local yOff = 0

@@ -150,7 +150,7 @@ targetPortraitFrame:SetScript("OnEvent",function(self,event,addon)
             isFriend = UnitIsFriend("player","Target");
             if isFriend then
                 
-                    healthBar:SetStatusBarColor(38/255,147/255,27/255)
+                healthBar:SetStatusBarColor(38/255,147/255,27/255)
                 healthBar2:SetStatusBarColor(38/255,147/255,27/255)
                 tarName:SetTextColor(38/255,147/255,27/255)
             else
@@ -163,7 +163,7 @@ targetPortraitFrame:SetScript("OnEvent",function(self,event,addon)
             
             TargetFrame:Hide();
             
-            targetPortraitFrame:EnableMouse(true);
+            targetPortraitFrame:EnableMouse(false);
             casting = false
             castBar:SetAlpha(0)
             

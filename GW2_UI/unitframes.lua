@@ -97,7 +97,7 @@ local healthFill = tprt
     secureButtonFrame:SetParent(unitBGf)
 
     
-    unitframePowerbg,unitframePowerbgt = createBackground('TOPLEFT',315,18,0,0,"Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar",2)
+    unitframePowerbg,unitframePowerbgt = createBackground('TOPLEFT',315,18,0,0,"Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar",2,'unitframePowerbg')
 
     --unitframePowerbg:SetParent(ActionButton7)
     unitframePowerbg:SetScale(1)

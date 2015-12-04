@@ -44,13 +44,29 @@ function splitString(inputstr, sep,sep2,sep3)
 end
 function isnan(n) return tostring(n) == '-1.#IND' end
 function addToAnimation(name,from,to,start,duration,method)
-    animations[name] = {}
-    animations[name]['start'] = start
-    animations[name]['duration'] = duration 
-    animations[name]['from'] = from 
-    animations[name]['to'] = to 
-    animations[name]['progress'] = 0
-    animations[name]['method'] = method
+
+    newAnimation = true
+    if animations[name]~=nil then
+        if (animations[name]['start'] + animations[name]['duration'])>GetTime() then
+            newAnimation = false
+        end
+    end
+    
+    if newAnimation==false then
+  --      animations[name]['start'] = start
+        animations[name]['duration'] = duration 
+        animations[name]['to'] = to 
+        animations[name]['progress'] = 0
+        animations[name]['method'] = method
+    else
+        animations[name] = {}
+        animations[name]['start'] = start
+        animations[name]['duration'] = duration 
+        animations[name]['from'] = from 
+        animations[name]['to'] = to 
+        animations[name]['progress'] = 0
+        animations[name]['method'] = method
+    end
    
 end
 

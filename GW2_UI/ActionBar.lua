@@ -1,11 +1,11 @@
 
-StanceBarFrame:HookScript("OnUpdate", function(self)
-        	
-        MainMenuBarVehicleLeaveButton:ClearAllPoints()
-	MainMenuBarVehicleLeaveButton:SetPoint('RIGHT', ActionButton12, 'RIGHT', ActionButton12:GetWidth(), 0)
+MainMenuBarVehicleLeaveButton:HookScript("OnShow", function(self)
         
-      
-end)   
+    MainMenuBarVehicleLeaveButton:ClearAllPoints()
+	MainMenuBarVehicleLeaveButton:SetPoint('RIGHT', ActionButton12, 'RIGHT', ActionButton12:GetWidth(), 0)
+end)
+
+
 
 
 	local addon, ns = ...
@@ -61,15 +61,15 @@ end)
     
     
 	
-	MultiBarBottomRight:SetPoint('BOTTOMLEFT', ActionButton12, 'TOPLEFT', -171, 40)
-	MultiBarBottomLeft:SetPoint('BOTTOMLEFT', ActionButton1, 'TOPLEFT', -171, 40)
+	MultiBarBottomRight:SetPoint('BOTTOMRIGHT', ActionButton12, 'TOPRIGHT', -10, 0)
+	MultiBarBottomLeft:SetPoint('BOTTOMLEFT', ActionButton1, 'TOPLEFT', 0, 0)
     
     MultiBarBottomRightButton1:ClearAllPoints()
-	MultiBarBottomRightButton1:SetPoint('BOTTOMRIGHT', ActionButton12, 'TOPLEFT', -151, 40)
+	MultiBarBottomRightButton1:SetPoint('BOTTOMLEFT', MultiBarBottomRight, 'BOTTOMLEFT', 0, 40)
 
     
-
-	MultiBarBottomLeftButton1:SetPoint('BOTTOMLEFT', ActionButton1, 'TOPLEFT', 0, 40)
+    MultiBarBottomLeftButton1:ClearAllPoints()
+	MultiBarBottomLeftButton1:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'BOTTOMLEFT', 0, 28)
 
     
     
@@ -112,10 +112,7 @@ CastingBarFrame:UnregisterAllEvents()
 	end)
 
 	-- a new place for the exit vehicle button
-	MainMenuBarVehicleLeaveButton:HookScript('OnShow', function(self)
-		self:ClearAllPoints()
-		self:SetPoint('LEFT', MainMenuBar, 'RIGHT', 10, 75)
-	end)
+
 	stancePadding = 0
 	for i = 1,12 do
     
@@ -167,7 +164,7 @@ CastingBarFrame:UnregisterAllEvents()
          _G["hotKey" .. i .. "BG"], _G["hotKey" .. i .. "BGt"] = createBackground('BOTTOM',15,15,0,0,"Interface\\AddOns\\GW2_UI\\textures\\altpowerbg",4)
         _G["hotKey" .. i .. "BG"]:ClearAllPoints();
         _G["hotKey" .. i .. "BG"]:SetFrameLevel(3)
-     _G["hotKey" .. i .. "BG"]:SetFrameStrata("MEDIUM")
+        _G["hotKey" .. i .. "BG"]:SetFrameStrata("MEDIUM")
         _G["hotKey" .. i .. "BGt"]:SetVertexColor(0,0,0,1);
         _G["hotKey" .. i .. "BG"]:SetPoint('CENTER', _G["ActionButton" .. i .. "HotKey"], 'CENTER', 17,-2);
     
