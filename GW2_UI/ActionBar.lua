@@ -117,6 +117,9 @@ CastingBarFrame:UnregisterAllEvents()
 	for i = 1,12 do
     
         --MAIN ACTIONBAR--
+        setBackDrop("MultiBarLeftButton"..i.."Icon",'MultiBarLeft')
+        setBackDrop("MultiBarRightButton"..i.."Icon",'MultiBarRight')
+    
         setBackDrop("ActionButton"..i.."Icon",'MainMenuBar')
         setBackDrop("MultiBarBottomLeftButton"..i.."Icon",'MultiBarBottomLeft')
         setBackDrop("MultiBarBottomRightButton"..i.."Icon",'MultiBarBottomRight')
@@ -125,8 +128,18 @@ CastingBarFrame:UnregisterAllEvents()
         --setOverlay("MultiBarBottomLeftButton"..i.."Icon","MultiBarBottomLeftButton"..i)
        -- setOverlay("MultiBarBottomRightButton"..i.."Icon","MultiBarBottomRightButton"..i)
 
+    if  _G["MultiBarRightButton"..i.."Icon"] then
+       _G["MultiBarRightButton"..i.."Icon"]:SetTexCoord(0.1,0.9,0.1,0.9)
+    end
+    if  _G["MultiBarLeftButton"..i.."Icon"] then
+       _G["MultiBarLeftButton"..i.."Icon"]:SetTexCoord(0.1,0.9,0.1,0.9)
+    end
+    
      if  _G["StanceButton"..i.."Icon"] then
        _G["StanceButton"..i.."Icon"]:SetTexCoord(0.1,0.9,0.1,0.9)
+    end
+    if  _G["PetActionButton"..i.."Icon"] then
+       _G["PetActionButton"..i.."Icon"]:SetTexCoord(0.1,0.9,0.1,0.9)
     end
       if  _G["ActionButton"..i.."Icon"] then
        _G["ActionButton"..i.."Icon"]:SetTexCoord(0.1,0.9,0.1,0.9)
@@ -173,32 +186,52 @@ CastingBarFrame:UnregisterAllEvents()
     
        -- _G["MultiBarBottomRightButton" .. i .. "NormalTexture" ]:SetTexture(nil)
      --   _G["MultiBarBottomRightButton" .. i .. "NormalTexture" ]:SetTexture(nil)
-    
+
+        if  _G["MultiBarLeftButton" .. i..'FloatingBG'] then
+            _G["MultiBarLeftButton" .. i..'FloatingBG']:SetTexture(nil)
+        end
+        if  _G["MultiBarRightButton" .. i..'FloatingBG'] then
+            _G["MultiBarRightButton" .. i..'FloatingBG']:SetTexture(nil)
+        end
+        if  _G["MultiBarBottomLeftButton" .. i..'FloatingBG'] then
+            _G["MultiBarBottomLeftButton" .. i..'FloatingBG']:SetTexture(nil)
+        end
         if  _G["MultiBarBottomRightButton" .. i..'FloatingBG'] then
             _G["MultiBarBottomRightButton" .. i..'FloatingBG']:SetTexture(nil)
         end
         if  _G["ActionButton" .. i..'FloatingBG'] then
             _G["ActionButton" .. i..'FloatingBG']:SetTexture(nil)
         end
-     if  _G["StanceButton" .. i..'FloatingBG'] then
+        if  _G["StanceButton" .. i..'FloatingBG'] then
             _G["StanceButton" .. i..'FloatingBG']:SetTexture(nil)
         end
+        if  _G["PetActionButton" .. i..'FloatingBG'] then
+            _G["PetActionButton" .. i..'FloatingBG']:SetTexture(nil)
+        end
     
+        _G["MultiBarLeftButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["MultiBarRightButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
         _G["ActionButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
         _G["MultiBarBottomRightButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
         _G["MultiBarBottomLeftButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
     
        
     
-        _G["ActionButton" .. i ]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-        _G["MultiBarBottomRightButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-        _G["MultiBarBottomLeftButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarLeftButton" .. i ]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarRightButton" .. i ]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["ActionButton" .. i ]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarBottomRightButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarBottomLeftButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
     
+    _G["MultiBarLeftButton" .. i ]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarRightButton" .. i ]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
     _G["ActionButton" .. i ]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-        _G["MultiBarBottomRightButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-        _G["MultiBarBottomLeftButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarBottomRightButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarBottomLeftButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
      
     
+        _G["MultiBarLeftButton" .. i ]:SetNormalTexture(nil)
+        _G["MultiBarRightButton" .. i ]:SetNormalTexture(nil)
         _G["ActionButton" .. i ]:SetNormalTexture(nil)
      _G["MultiBarBottomRightButton" .. i ]:SetNormalTexture(nil)
      _G["MultiBarBottomLeftButton" .. i ]:SetNormalTexture(nil)
@@ -207,6 +240,12 @@ CastingBarFrame:UnregisterAllEvents()
         _G["StanceButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
         _G["StanceButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
         _G["StanceButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+     --   _G["StanceButton" .. i ]:SetNormalTexture(nil)
+    end
+    if  _G["PetActionButton"..i.."Icon"] then
+        _G["PetActionButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["PetActionButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["PetActionButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
      --   _G["StanceButton" .. i ]:SetNormalTexture(nil)
     end
     
@@ -638,9 +677,9 @@ f:SetAttribute('_onstate-combat', [=[ -- Securely toggle visibility in combat
     if newstate == 'show' then
         self:GetFrameRef('PetActionBarFrame'):ClearAllPoints()
         self:GetFrameRef('StanceBarFrame'):ClearAllPoints()
-        self:GetFrameRef('PetActionBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+121)
+        self:GetFrameRef('PetActionBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+151)
         if UnitExists('Pet') then
-        self:GetFrameRef('StanceBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+180)
+        self:GetFrameRef('StanceBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+195)
         else
             self:GetFrameRef('StanceBarFrame'):SetPoint(point, relativeTo, relativePoint, xOfs, yOfs+140)
         end
@@ -663,9 +702,9 @@ function setPetBar(bool)
 	PetActionButton1:SetPoint('LEFT', PetActionBarFrame, 'LEFT', 0, 0)
 
      if bool then
-        PetActionBarFrame:SetPoint('TOPLEFT', MultiBarBottomLeft, 'BOTTOMLEFT', 0, 160)
+        PetActionBarFrame:SetPoint('TOPLEFT', MultiBarBottomLeft, 'BOTTOMLEFT', 0, 190)
         if UnitExists('Pet') then
-            StanceBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'TOPLEFT', 0, 80)
+            StanceBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'TOPLEFT', 0, 95)
         else
             StanceBarFrame:SetPoint('BOTTOMLEFT', MultiBarBottomLeft, 'TOPLEFT', 0, 45)
         end
@@ -681,3 +720,83 @@ function setPetBar(bool)
     
 end
 setMicroButtons()
+
+
+
+function setMoveableActionbars()
+local frameMultiBarLeftdrageAbleFrame = CreateFrame("Frame","frameMultiBarLeftdrageAbleFrame",UIParent)
+    frameMultiBarLeftdrageAbleFrame:SetWidth(rABS_MultiBarLeft:GetWidth())
+    frameMultiBarLeftdrageAbleFrame:SetHeight(rABS_MultiBarLeft:GetHeight())
+    frameMultiBarLeftdrageAbleFrame.texture = frameMultiBarLeftdrageAbleFrame:CreateTexture()
+
+    frameMultiBarLeftdrageAbleFrame.texture:SetAllPoints(frameMultiBarLeftdrageAbleFrame)
+    frameMultiBarLeftdrageAbleFrame.texture:SetTexture(1,0,0,0.5)
+    frameMultiBarLeftdrageAbleFrame:SetPoint(GW2UI_SETTINGS['multibarleft_pos']['point'],GW2UI_SETTINGS['multibarleft_pos']['xOfs'],GW2UI_SETTINGS['multibarleft_pos']['yOfs'])
+    frameMultiBarLeftdrageAbleFrame:SetFrameStrata('HIGH');
+
+local frameMultiBarRightdrageAbleFrame = CreateFrame("Frame","frameMultiBarRightdrageAbleFrame",UIParent)
+    frameMultiBarRightdrageAbleFrame:SetWidth(rABS_MultiBarLeft:GetWidth())
+    frameMultiBarRightdrageAbleFrame:SetHeight(rABS_MultiBarLeft:GetHeight())
+    frameMultiBarRightdrageAbleFrame.texture = frameMultiBarRightdrageAbleFrame:CreateTexture()
+
+    frameMultiBarRightdrageAbleFrame.texture:SetAllPoints(frameMultiBarRightdrageAbleFrame)
+    frameMultiBarRightdrageAbleFrame.texture:SetTexture(1,0,0,0.5)
+    frameMultiBarRightdrageAbleFrame:SetPoint(GW2UI_SETTINGS['multibarright_pos']['point'],GW2UI_SETTINGS['multibarright_pos']['xOfs'],GW2UI_SETTINGS['multibarright_pos']['yOfs'])
+    frameMultiBarRightdrageAbleFrame:SetFrameStrata('HIGH');
+
+    rABS_MultiBarLeft:ClearAllPoints()
+    rABS_MultiBarRight:ClearAllPoints()
+
+    
+    rABS_MultiBarLeft:SetPoint('CENTER',frameMultiBarLeftdrageAbleFrame,'CENTER',0,0)
+    rABS_MultiBarRight:SetPoint('CENTER',frameMultiBarRightdrageAbleFrame,'CENTER',0,0)
+
+    
+
+    frameMultiBarLeftdrageAbleFrame:SetMovable(false)
+    frameMultiBarLeftdrageAbleFrame:EnableMouse(false)
+
+    frameMultiBarRightdrageAbleFrame:SetMovable(false)
+    frameMultiBarRightdrageAbleFrame:EnableMouse(false)
+    
+    frameMultiBarLeftdrageAbleFrame:RegisterForDrag("LeftButton")
+    frameMultiBarRightdrageAbleFrame:RegisterForDrag("LeftButton")
+
+    frameMultiBarLeftdrageAbleFrame:SetScript("OnDragStart", frameMultiBarLeftdrageAbleFrame.StartMoving)
+
+    frameMultiBarLeftdrageAbleFrame:SetScript("OnDragStop", function(self)
+        frameMultiBarLeftdrageAbleFrame:StopMovingOrSizing()
+            
+        point, relativeTo, relativePoint, xOfs, yOfs = frameMultiBarLeftdrageAbleFrame:GetPoint()
+            
+        GW2UI_SETTINGS['multibarleft_pos']['point'] =point
+        GW2UI_SETTINGS['multibarleft_pos']['relativePoint'] = relativePoint
+        GW2UI_SETTINGS['multibarleft_pos']['xOfs'] = xOfs
+        GW2UI_SETTINGS['multibarleft_pos']['yOfs']=  yOfs
+
+    end)
+
+    frameMultiBarRightdrageAbleFrame:SetScript("OnDragStart", frameMultiBarRightdrageAbleFrame.StartMoving)
+    frameMultiBarRightdrageAbleFrame:SetScript("OnDragStop", function(self)
+        frameMultiBarRightdrageAbleFrame:StopMovingOrSizing()
+        point, relativeTo, relativePoint, xOfs, yOfs = frameMultiBarRightdrageAbleFrame:GetPoint()
+        GW2UI_SETTINGS['multibarright_pos']['point'] =point
+        GW2UI_SETTINGS['multibarright_pos']['relativePoint'] = relativePoint
+        GW2UI_SETTINGS['multibarright_pos']['xOfs'] = xOfs
+        GW2UI_SETTINGS['multibarright_pos']['yOfs']=  yOfs
+
+    end)
+        frameMultiBarRightdrageAbleFrame:Hide()
+    frameMultiBarLeftdrageAbleFrame:Hide()
+end
+
+local actionBarsFrameLoad = CreateFrame('frame',nil,UIParent)
+
+actionBarsFrameLoad:SetScript('OnUpdate',function()
+    if GW2UI_SETTINGS['SETTINGS_LOADED'] == false then
+                return
+    end
+  
+    setMoveableActionbars()
+    actionBarsFrameLoad:SetScript('OnUpdate',nil)
+end)

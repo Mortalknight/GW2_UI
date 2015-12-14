@@ -32,7 +32,7 @@ end
 	local damage = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
 
 	-- game engine fonts
-	UNIT_NAME_FONT = narrow 
+	UNIT_NAME_FONT = damage 
 	DAMAGE_TEXT_FONT = bold 
 	STANDARD_TEXT_FONT = normal
 	

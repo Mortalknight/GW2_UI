@@ -162,6 +162,7 @@ function setOverlay(n,p)
     t = f:CreateTexture(n..'OverlayTexture',"OVERLAY",f,0)
     t:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\spellIconOverlay')
     
+    
     f:SetPoint('CENTER',_G[n],'CENTER',0,0)
     t:SetAllPoints(f)
     t:SetDrawLayer("OVERLAY", 1)
@@ -233,10 +234,11 @@ sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',1614,0)
 sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
 sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',1794,0)
 
-chatShadowBg,chatShadowTexture = createBackground('BOTTOMLEFT',500,200,0,16,"Interface\\AddOns\\GW2_UI\\textures\\chatshadow",0)
 
 
-mapShadowBg,mapShadowTexture = createBackground('BOTTOMRIGHT',512,256,0,16,"Interface\\AddOns\\GW2_UI\\textures\\mapshadow",0)
+
+mapShadowBg,mapShadowTexture = createBackground('BOTTOMRIGHT',512,256,3,19,"Interface\\AddOns\\GW2_UI\\textures\\mapshadow",0)
+
 
 hudShadowLeft,hudShadowLeftTexture = createBackground('BOTTOM',512,256,-256,16,"Interface\\AddOns\\GW2_UI\\textures\\leftshadow",0)
 hudShadowRight,hudShadowRightTexture = createBackground('BOTTOM',512,256,256,16,"Interface\\AddOns\\GW2_UI\\textures\\rightshadow",0)
@@ -244,7 +246,7 @@ hudShadowRight,hudShadowRightTexture = createBackground('BOTTOM',512,256,256,16,
 BloodhudShadowLeft,BloodhudShadowLeftTexture = createBackground('BOTTOM',560,280,-280,16,"Interface\\AddOns\\GW2_UI\\textures\\bloodLeft",0)
 BloodhudShadowRight,BloodhudShadowRightTexture = createBackground('BOTTOM',560,280,280,16,"Interface\\AddOns\\GW2_UI\\textures\\bloodRight",0)
 
-createBackground('TOPRIGHT',255.9,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\questtracker",0)
+--createBackground('TOPRIGHT',255.9,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\questtracker",0)
 
 
 createBackground('TOP',560,280,-210,0,"Interface\\AddOns\\GW2_UI\\textures\\windowborder",0)
@@ -263,7 +265,7 @@ tprf,tprt = createBackground('RIGHT',280,560,41.0,0,"Interface\\AddOns\\GW2_UI\\
 tprt:SetRotation(-1.5707963268)
 
 
-createBackground('TOPLEFT',560,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\windowcorner",0)
+createBackground('TOPLEFT',560,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\windowcornermenu",0)
 local tprf,tprt = createBackground('TOPRIGHT',560,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\windowcorner",1)
     tprt:SetTexCoord(1,0,0,1)
 
@@ -297,15 +299,11 @@ tprf:SetAlpha(0)
             
             hudShadowLeftTexture:SetVertexColor(1,currentHealthPrecentage  ,currentHealthPrecentage  );
             hudShadowRightTexture:SetVertexColor(1,currentHealthPrecentage  ,currentHealthPrecentage  );
-             chatShadowTexture:SetVertexColor(1,currentHealthPrecentage  ,currentHealthPrecentage  );
-            mapShadowTexture:SetVertexColor(1,currentHealthPrecentage  ,currentHealthPrecentage  );
             BloodhudShadowLeft:SetAlpha(1-currentHealthPrecentage)
              BloodhudShadowRight:SetAlpha(1-currentHealthPrecentage)
         else
               hudShadowLeftTexture:SetVertexColor(1,1,1);
             hudShadowRightTexture:SetVertexColor(1,1,1);
-             chatShadowTexture:SetVertexColor(1,1,1);
-            mapShadowTexture:SetVertexColor(1,1,1);
             BloodhudShadowRight:SetAlpha(0)
              BloodhudShadowLeft:SetAlpha(0)
         end
@@ -506,3 +504,9 @@ end)
 
 durabilityBg:RegisterEvent("UPDATE_INVENTORY_DURABILITY");
 durabilityBg:RegisterEvent("PLAYER_ENTERING_WORLD");
+
+
+
+
+
+

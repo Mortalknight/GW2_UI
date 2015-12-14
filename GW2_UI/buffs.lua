@@ -34,6 +34,9 @@ BuffFrame:HookScript("OnEvent", function(self, event, unit)
         _G["ConsolidatedBuffs"]:SetHeight(25)
         _G["ConsolidatedBuffs"]:ClearAllPoints()
         _G["ConsolidatedBuffs"]:SetPoint('BOTTOMRIGHT',BuffFrame,'BOTTOMRIGHT', 0, 0)  
+                
+       
+                
         preI = 1
         col = col +1
         isConsolidated = true
@@ -53,7 +56,7 @@ BuffFrame:HookScript("OnEvent", function(self, event, unit)
              _G["BuffButton" .. i]:SetHeight(25)
             _G["BuffButton" .. i]:ClearAllPoints()
             _G["BuffButton" .. i]:SetPoint('BOTTOMRIGHT',BuffFrame,'BOTTOMRIGHT', px, py)
-                    
+           
                 col = col +1
                     max = max +1;
                     if col == 10 then

@@ -1,5 +1,6 @@
 chatBubblesFrame = CreateFrame('frame',nil,UIParent)
 local intervalCd = 0
+local bubbles = {}
 chatBubblesFrame:SetScript('OnUpdate',function()
         if intervalCd > GetTime() then
         return
@@ -15,7 +16,14 @@ chatBubblesFrame:SetScript('OnUpdate',function()
             return 
         end
         
-       bgFrame, fontString, b = getBubbles()
+       getBubbles()
+        
+    for k,v in pairs(bubbles) do 
+            
+       bgFrame = v['frame']
+       fontString= v['fontstring']
+        b = v['bgFile']
+            
         if fontString ~=nil then 
             fontString:SetFont(DAMAGE_TEXT_FONT,10)
             fontString:SetShadowColor(1, 1, 1, 0) 
@@ -43,11 +51,11 @@ chatBubblesFrame:SetScript('OnUpdate',function()
             end
            
             fontString:SetTextColor(0,0,0)
-
-           
         end
+    end
 end)
 function getBubbles()
+bi = 0
 for i=1,WorldFrame:GetNumChildren() do
         local v = select(i, WorldFrame:GetChildren())
         local b = v:GetBackdrop()
@@ -57,8 +65,12 @@ for i=1,WorldFrame:GetNumChildren() do
                     local frame = v
                     local v = select(i, v:GetRegions())
                     if v:GetObjectType() == "FontString" then
-                        local fontstring = v
-                        return frame, fontstring, b.bgFile
+                        bi = bi +1
+                            local fontstring = v
+                            bubbles[bi] = {}
+                            bubbles[bi]['frame'] = frame
+                            bubbles[bi]['fontstring']= fontstring
+                            bubbles[bi]['bgFile'] = b.bgFile
                     end
                 end
             end

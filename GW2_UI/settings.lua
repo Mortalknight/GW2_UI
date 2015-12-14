@@ -13,24 +13,68 @@ frame:SetScript("OnEvent", function(self, event, arg1)
             GW2UI_SETTINGS_DB['USE_CHAT_BUBBLES'] = false;
             GW2UI_SETTINGS_DB['DISABLE_NAMEPLATES'] = false
             GW2UI_SETTINGS_DB['DISABLE_TOOLTIPS'] = false
+            GW2UI_SETTINGS_DB['DISABLE_CHATFRAME'] = false
+            GW2UI_SETTINGS_DB['CHATFRAME_FADE'] = true
+                
+            GW2UI_SETTINGS_DB['target_x_position'] = -100
+            GW2UI_SETTINGS_DB['target_y_position'] = -100
+
+            GW2UI_SETTINGS_DB['focus_x_position'] = -350
+            GW2UI_SETTINGS_DB['focus_y_position'] = -100
+                
+            GW2UI_SETTINGS_DB['multibarleft_x_position'] = -300
+            GW2UI_SETTINGS_DB['multibarleft_y_position'] = -0
+
+            GW2UI_SETTINGS_DB['multibarright_x_position'] = -260
+            GW2UI_SETTINGS_DB['multibarright_y_position'] = -0
+                
+            GW2UI_SETTINGS_DB['multibarleft_pos'] ={}
+            GW2UI_SETTINGS_DB['multibarleft_pos']['point'] = 'RIGHT'
+            GW2UI_SETTINGS_DB['multibarleft_pos']['relativePoint'] = 'RIGHT'
+            GW2UI_SETTINGS_DB['multibarleft_pos']['xOfs'] = -300
+            GW2UI_SETTINGS_DB['multibarleft_pos']['yOfs']= 0
+                
+            GW2UI_SETTINGS_DB['multibarright_pos'] ={}
+            GW2UI_SETTINGS_DB['multibarright_pos']['point'] = 'RIGHT'
+            GW2UI_SETTINGS_DB['multibarright_pos']['relativePoint'] = 'RIGHT'
+            GW2UI_SETTINGS_DB['multibarright_pos']['xOfs'] = -260
+            GW2UI_SETTINGS_DB['multibarright_pos']['yOfs']  = 0
+                
+            GW2UI_SETTINGS_DB['target_pos'] ={}
+            GW2UI_SETTINGS_DB['target_pos']['point'] = 'TOP'
+            GW2UI_SETTINGS_DB['target_pos']['relativePoint'] = 'TOP'
+            GW2UI_SETTINGS_DB['target_pos']['xOfs'] =  0
+            GW2UI_SETTINGS_DB['target_pos']['yOfs']  = -100
+
+            GW2UI_SETTINGS_DB['focus_pos'] ={}
+            GW2UI_SETTINGS_DB['focus_pos']['point'] = 'CENTER'
+            GW2UI_SETTINGS_DB['focus_pos']['relativePoint'] = 'CENTER'
+            GW2UI_SETTINGS_DB['focus_pos']['xOfs'] =  -350
+            GW2UI_SETTINGS_DB['focus_pos']['yOfs']  = 0
+
+                
         end
-        GW2UI_SETTINGS['FADE_BOTTOM_ACTIONBAR'] = GW2UI_SETTINGS_DB['FADE_BOTTOM_ACTIONBAR']
-        GW2UI_SETTINGS['HIDE_CHATSHADOW'] = GW2UI_SETTINGS_DB['HIDE_CHATSHADOW']
-        GW2UI_SETTINGS['HIDE_QUESTVIEW'] = GW2UI_SETTINGS_DB['HIDE_QUESTVIEW']
-        GW2UI_SETTINGS['USE_CHAT_BUBBLES'] = GW2UI_SETTINGS_DB['USE_CHAT_BUBBLES']
-        GW2UI_SETTINGS['DISABLE_NAMEPLATES'] = GW2UI_SETTINGS_DB['DISABLE_NAMEPLATES'] 
-        GW2UI_SETTINGS['DISABLE_TOOLTIPS'] = GW2UI_SETTINGS_DB['DISABLE_TOOLTIPS']
+        
+        for k,v in pairs(GW2UI_SETTINGS) do 
+            if GW2UI_SETTINGS_DB[k]==nil then
+                GW2UI_SETTINGS_DB[k] = GW2UI_SETTINGS[k]
+            end
+            GW2UI_SETTINGS[k] = GW2UI_SETTINGS_DB[k]
+        end
             
+        
+                    
             
         GW2UI_SETTINGS['SETTINGS_LOADED'] = true
  
         createOptionWIndow() 
         createBoleanSetting(0,'Fade Actionbars','Hides the bottom actionbars while not in combat','FADE_BOTTOM_ACTIONBAR')
-        createBoleanSetting(1,'Hide Chat Backdrop','Hides the shadow in the bottom left corner','HIDE_CHATSHADOW')
+        createBoleanSetting(1,'Fade Chat Window','Hides the background of the chat window while not active','CHATFRAME_FADE')
         createBoleanSetting(2,'Disable Quest Dialog','Use the default quest interface','HIDE_QUESTVIEW')
         createBoleanSetting(3,'Default Speech Bubbles','Use the default speech bubbles','USE_CHAT_BUBBLES')
         createBoleanSetting(4,'Default Nameplates','Use the default nameplates','DISABLE_NAMEPLATES')
         createBoleanSetting(5,'Default Tooltips','Use the default tooltips','DISABLE_TOOLTIPS')
+        createBoleanSetting(6,'Default Chatframe','Use the default chatframe','DISABLE_CHATFRAME')
            
         createOptionGameMenuButton()
                     
@@ -54,7 +98,7 @@ function createOptionWIndow()
     settingsViewBg:Hide()
     
     settingsViewBg:SetScript('OnShow',function(self) PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX') end)
-     settingsViewBg:SetScript('OnHide',function(self) PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_close.ogg",'SFX') end)
+    settingsViewBg:SetScript('OnHide',function(self) PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_close.ogg",'SFX') end)
 
     
     settingsCloseButtonBg, settingsCloseButtonTextiure = createButton('TOPRIGHT',20,20,0,0,"Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal",4)
@@ -101,6 +145,111 @@ function createOptionWIndow()
     saveAndReloadBg:SetScript("OnClick", function(self,event,addon)
          ReloadUI()
     end)
+    
+    
+    
+    hudArangement, hudArangementTexture = createButton('BOTTOM',150,30,0,0,"Interface\\AddOns\\GW2_UI\\textures\\questviewbutton",4)
+    hudArangement:ClearAllPoints()
+    hudArangement:SetParent(settingsViewBg)
+    hudArangement:SetWidth(128)
+    hudArangement:SetHeight(32);
+    hudArangement:SetPoint('BOTTOMRIGHT',settingsViewBg,'BOTTOMRIGHT',0,-36)
+    hudArangement:SetFrameLevel(5)
+    hudArangement:SetFrameStrata("DIALOG")
+    
+    local hudArangementString = unitBGf:CreateFontString('hudArangementString', "OVERLAY", "GameFontNormal")
+    hudArangementString:SetParent(hudArangement)
+    hudArangementString:SetTextColor(30/255,30/255,30/255)
+    hudArangementString:SetFont(STANDARD_TEXT_FONT,14)
+    hudArangementString:SetPoint("CENTER")
+    hudArangementString:SetText("Rearrange Hud")
+    hudArangementString:SetWidth(128)
+    hudArangementString:SetShadowColor(118/255,118/255,118/255);
+    hudArangementString:SetPoint('CENTER',hudArangement,'CENTER',0,0)
+    
+    
+    hudArangementDisable, hudArangementDisableTexture = createButton('TOP',150,30,0,0,"Interface\\AddOns\\GW2_UI\\textures\\questviewbutton",4)
+    hudArangementDisable:ClearAllPoints()
+    hudArangementDisable:SetPoint('TOP',UIParent,'TOP',0,0)
+    hudArangementDisable:SetWidth(128)
+    hudArangementDisable:SetHeight(32);
+    hudArangementDisable:SetFrameLevel(5)
+    hudArangementDisable:SetFrameStrata("DIALOG")
+    
+    local hudArangementDisableString = hudArangementDisable:CreateFontString('hudArangementString', "OVERLAY", "GameFontNormal")
+    hudArangementDisableString:SetParent(hudArangementDisable)
+    hudArangementDisableString:SetTextColor(30/255,30/255,30/255)
+    hudArangementDisableString:SetFont(STANDARD_TEXT_FONT,14)
+    hudArangementDisableString:SetPoint("CENTER")
+    hudArangementDisableString:SetText("Lock Hud")
+    hudArangementDisableString:SetWidth(128)
+    hudArangementDisableString:SetShadowColor(118/255,118/255,118/255);
+    hudArangementDisableString:SetPoint('CENTER',hudArangementDisable,'CENTER',0,0)
+    
+    hudArangementDisable:Hide()
+    
+     hudArangementDisable:SetScript("OnEnter", function(self,event,addon)
+         hudArangementDisableTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\questviewbutton_hover");
+    end)
+    hudArangementDisable:SetScript("OnLeave", function(self,event,addon)
+          hudArangementDisableTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\questviewbutton");
+    end)
+    hudArangementDisable:SetScript("OnClick", function(self,event,addon)
+        disableMoveHud()
+    end)
+    
+    
+
+    hudArangement:SetScript("OnEnter", function(self,event,addon)
+
+         hudArangementTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\questviewbutton_hover");
+    end)
+    hudArangement:SetScript("OnLeave", function(self,event,addon)
+          hudArangementTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\questviewbutton");
+    end)
+    hudArangement:SetScript("OnClick", function(self,event,addon)
+        enableMoveHud()
+        GW2UI_SETTINGSWINDOW:Hide()
+        
+    end)
+    
+    function enableMoveHud()
+        _G['targetdrageAbleFrame']:Show()
+        _G['targetdrageAbleFrame']:SetMovable(true)
+        _G['targetdrageAbleFrame']:EnableMouse(true)
+        
+        _G['focusdrageAbleFrame']:Show()
+        _G['focusdrageAbleFrame']:SetMovable(true)
+        _G['focusdrageAbleFrame']:EnableMouse(true)
+        
+        _G['frameMultiBarLeftdrageAbleFrame']:Show()
+        _G['frameMultiBarLeftdrageAbleFrame']:SetMovable(true)
+        _G['frameMultiBarLeftdrageAbleFrame']:EnableMouse(true)
+
+        _G['frameMultiBarRightdrageAbleFrame']:Show()
+        _G['frameMultiBarRightdrageAbleFrame']:SetMovable(true)
+        _G['frameMultiBarRightdrageAbleFrame']:EnableMouse(true)
+        hudArangementDisable:Show()
+    end
+    function disableMoveHud()
+        _G['targetdrageAbleFrame']:Hide()
+        _G['targetdrageAbleFrame']:SetMovable(false)
+        _G['targetdrageAbleFrame']:EnableMouse(false)
+        
+        _G['focusdrageAbleFrame']:Hide()
+        _G['focusdrageAbleFrame']:SetMovable(false)
+        _G['focusdrageAbleFrame']:EnableMouse(false)
+        
+        _G['frameMultiBarLeftdrageAbleFrame']:Hide()
+        _G['frameMultiBarLeftdrageAbleFrame']:SetMovable(false)
+        _G['frameMultiBarLeftdrageAbleFrame']:EnableMouse(false)
+
+        _G['frameMultiBarRightdrageAbleFrame']:Hide()
+        _G['frameMultiBarRightdrageAbleFrame']:SetMovable(false)
+        _G['frameMultiBarRightdrageAbleFrame']:EnableMouse(false)
+        
+         hudArangementDisable:Hide()
+    end
 
     local saveAndReloadString = unitBGf:CreateFontString('saveAndReloadString', "OVERLAY", "GameFontNormal")
     saveAndReloadString:SetParent(saveAndReloadBg)

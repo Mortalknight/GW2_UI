@@ -24,7 +24,7 @@ mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
                 local uhm = (((GetTime() * 1000)-startTime) / (endTime - startTime))*100
                 playerSpellStart = startTime
                 playerSpellEnd = endTime
-                mainCastingBarBg:SetAlpha(1)
+                UIFrameFadeIn(mainCastingBarBg, 0.1,0,1)
                -- overflowh:SetWidth(((endTime - startTime)/200))
                 --mainCastingBart:SetTexCoord(0,math.abs(uhm),0,1)
                -- math.abs(uhm - 1)
@@ -33,7 +33,7 @@ mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
             end
             
             if  event=='UNIT_SPELLCAST_STOP' or event=='UNIT_SPELLCAST_CHANNEL_STOP' then
-                mainCastingBarBg:SetAlpha(0)
+                UIFrameFadeOut(mainCastingBarBg, 0.1,1,0)
 
                 playeCasting = 0
             end

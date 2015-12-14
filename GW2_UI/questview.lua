@@ -162,6 +162,9 @@ questAcceptButton:SetScript("OnClick", function(self,event,addon)
             if questState =='TAKE' then
                 AcceptQuest()
             else
+                if ( GetNumQuestChoices() == 1 ) then
+                    QuestInfoFrame.itemChoice = 1;
+                end
                 if ( QuestInfoFrame.itemChoice == 0 and GetNumQuestChoices() > 0 ) then
                     QuestChooseRewardError();
                 else

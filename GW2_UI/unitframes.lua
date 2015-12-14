@@ -16,7 +16,7 @@ UIErrorsFrame:ClearAllPoints()
 UIErrorsFrame:SetPoint('TOP',UIParent,'TOP',0,0)
 
    tprf,tprt = createBackground('BOTTOM',102,102,0,17,"Interface\\AddOns\\GW2_UI\\textures\\healthfill",3)
-   tprt:SetVertexColor(0.8,0,0);
+ --  tprt:SetVertexColor(159/255,36/255,20/255)
 tprf:EnableMouse(false);
 
     healtTextureBg,healtTextureT = createBackground('BOTTOM',102,102,0,17,"Interface\\AddOns\\GW2_UI\\textures\\healthfillCandy",2)
@@ -137,14 +137,16 @@ local healthFill = tprt
 powerBeforeLerp =  (UnitPower('Player')/UnitPowerMax('Player')) * 100
 unitframePower:SetScript("OnEvent",function(self,event,unit)
       
-        if unit ~='player' then
-            return
+          if event~='PLAYER_ENTERING_WORLD' then
+            if unit ~='player' then
+                return
+            end
         end
     powerType, powerToken, altR, altG, altB = UnitPowerType("player")
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         unitframePower:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        unitframePowerCandy:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b,0.5)
+        unitframePowerCandy:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
    
     local prog = (UnitPower('Player')/UnitPowerMax('Player')) * 100
@@ -152,7 +154,7 @@ unitframePower:SetScript("OnEvent",function(self,event,unit)
      addToAnimation('unitFramePowerBar',powerBeforeLerp,prog,GetTime(),0.2,function()
        unitframePower:SetValue(animations['unitFramePowerBar']['progress'])
     end)
-    addToAnimation('unitFramePowerBarCandy',powerBeforeLerp,prog,GetTime(),1,function()
+    addToAnimation('unitFramePowerBarCandy',powerBeforeLerp,prog,GetTime(),0.25,function()
        unitframePowerCandy:SetValue(animations['unitFramePowerBarCandy']['progress'])
     end)
        
@@ -171,9 +173,13 @@ unitframePower:SetScript("OnEvent",function(self,event,unit)
         
 end)
 healthBefore = UnitHealth('Player') / UnitHealthMax('Player')
+normalHealthBefore = healthBefore
+
 unitBGf:SetScript("OnEvent",function(self,event,unit)
-        if unit ~='player' then
-            return
+        if event~='PLAYER_ENTERING_WORLD' then
+            if unit ~='player' then
+                return
+            end
         end
     local num = UnitHealth('player')
     local uhm = UnitHealth('Player')/UnitHealthMax('Player')
@@ -187,17 +193,30 @@ unitBGf:SetScript("OnEvent",function(self,event,unit)
     local auhm = totalAbsorb/UnitHealthMax('Player')    
         
     
-    addToAnimation('unitFrameHealth',healthBefore,uhm,GetTime(),0.5,function()
+    
+    addToAnimation('unitFrameHealth',healthBefore, uhm + 0.03,GetTime(),0.2,function()
         animations['unitFrameHealth']['progress'] = min(1,max(animations['unitFrameHealth']['progress'],0.01))
         if isnan(animations['unitFrameHealth']['progress'])==false then
+                    
             healtTextureBg:SetHeight(animations['unitFrameHealth']['progress']*healtTextureBg:GetWidth())
             healtTextureT:SetTexCoord(0,1,  math.abs(animations['unitFrameHealth']['progress'] - 1),1)  
+                    
+        end
+    end) 
+    healthBefore = uhm + 0.03
+    addToAnimation('unitFrameHealthNormal',normalHealthBefore, uhm,GetTime(),0.1,function()
+        animations['unitFrameHealthNormal']['progress'] = min(1,max(animations['unitFrameHealthNormal']['progress'],0.01))
+        if isnan(animations['unitFrameHealthNormal']['progress'])==false then
+
+            healthFillBg:SetHeight(animations['unitFrameHealthNormal']['progress']*healthFill:GetWidth())
+            healthFill:SetTexCoord(0,1,  math.abs(animations['unitFrameHealthNormal']['progress'] - 1),1)
+                    
+                    
         end
     end)  
-    healthBefore = uhm
-   -- healthFill:SetTexCoord(0, 0,  0, 1,  1, 0,  1, 1)
-       healthFillBg:SetHeight(uhm*healthFill:GetWidth())
-       healthFill:SetTexCoord(0,1,  math.abs(uhm - 1),1)
+    normalHealthBefore = uhm 
+    
+       
         
      
         absorb:SetHeight(auhm*absorb:GetWidth())

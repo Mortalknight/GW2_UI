@@ -72,6 +72,12 @@ local function PlateAdd ( Plate )
     Cast:SetBackdropBorderColor(0, 0, 0,0.8)
 
     minValue, maxValue = Health:GetMinMaxValues()
+    Cast:SetScript('OnShow',function(self)    
+            self:SetStatusBarTexture('Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar')
+            self:SetBackdrop(backdrop)
+            self:SetBackdropColor(0, 0, 0,0.8)
+            self:SetBackdropBorderColor(0, 0, 0,0.8)
+    end)
     
     setPlateOnShow(Health,Cast,old_name,old_level)
     Plate:SetScript('OnShow',function(self)            
@@ -94,7 +100,7 @@ function setPlateOnShow(Health,Cast,old_name,old_level)
 
     
     if r==0.99999779462814 and g == 0 and b==0 then
-       Health:SetStatusBarColor(147/255,38/255,27/255)
+       Health:SetStatusBarColor(159/255,36/255,20/255)
     end
     
     Cast:SetStatusBarTexture('Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar')

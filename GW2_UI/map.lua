@@ -1,7 +1,9 @@
-
-Minimap:SetPoint('BOTTOMRIGHT',UIParent,0,16)
+Minimap:ClearAllPoints()
+Minimap:SetPoint('BOTTOMRIGHT',UIParent,-5,21)
+mapShadowBg:ClearAllPoints()
+mapShadowBg:SetPoint('BOTTOMRIGHT',Minimap,'BOTTOMRIGHT',2,-1)
 Minimap:SetScale(1.1)
---Minimap:SetWidth(250)
+
 Minimap:SetMaskTexture('Interface\\ChatFrame\\ChatFrameBackground')
 
 

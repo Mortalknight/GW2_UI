@@ -19,8 +19,7 @@ unitframes.lua
 buffs.lua
 
 map.lua
-target.lua
-targetoftarget.lua
+
 focus.lua
 castingbar.lua
 raidframes.lua
@@ -35,7 +34,8 @@ altpowermoonkin.lua
 altpower.lua
 
 questview.lua
-
+unitFrame.lua
+chatframe.lua
 settings.lua
 chatbubbles.lua
 
