@@ -1,0 +1,192 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Frame name="GwQuestTrackerRadar" virtual="true" parent="GwQuestTracker">
+        <Size x="300" y="70"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer Level="BACKGROUND">
+                <Texture  file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                    <Color r="1" g="1" b="1" a="0.3"></Color>
+                    <Size x="300" y="70"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer> 
+            <Layer textureSubLevel="2" Level="BACKGROUND">
+                <Texture  file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
+                    <Size x="60" y="60"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="3" Level="BACKGROUND">
+                <Texture name="GwCompassArrow"  file="Interface\AddOns\GW2_UI\textures\compass-arrow">
+                    <Size x="60" y="60"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="4" Level="BACKGROUND">
+                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-objective">
+                    <Size x="30" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" >
+                <FontString name="$parentString" text="Quest name" justifyH="CENTER"  justifyV="CENTER" >
+                     <Size x="200" y="70"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                _G[self:GetName()..'String']:SetFont(UNIT_NAME_FONT,14)
+                _G[self:GetName()..'Icon']:SetVertexColor(GW_QUESTTRACKER_TYPE_COLORS['QUEST'].r,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].g,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].b)
+                
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    <Frame name="GwQuestTracker" parent="UIParent" virtual="true">
+        <Size x="300" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+    </Frame>
+    <Frame name="GwQuesttrackerContainer"  parent="GwQuestTracker" virtual="true" >
+         <Size x="300" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+    </Frame>  
+    <Frame name="GwQuesttrackerContainerProtected"  inherits="SecureHandlerStateTemplate" protected="true" parent="UIParent" virtual="true" >
+         <Size x="300" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+    </Frame>
+    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true" >
+         <Size x="300" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer Level="BACKGROUND">
+                
+                <Texture name="$parentSep"  file="Interface\AddOns\GW2_UI\textures\questtracker-sep">
+                    <Size x="300" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentQuestName" text="Quest name" justifyH="LEFT">
+                     <Size x="300" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentQuestSubHeader" text="Quest name" justifyH="LEFT">
+                     <Size x="300" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="-25"></Anchor>
+                    </Anchors>
+                </FontString>
+                
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentItemButton" inherits="QuestObjectiveItemButtonTemplate">
+                	<Anchors>
+						<Anchor point="TOPLEFT" x="-40" y="0"/>
+					</Anchors>
+            </Button>
+        </Frames>
+    </Button>
+    <Frame name="GwQuesttrackerObjectiveNormal" parent="GwQuestTracker" virtual="true" >
+         <Size x="300" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentStatusBarBg"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="282" y="12"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentString" text="Objective text 1/2" justifyH="LEFT">
+                     <Size x="300" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <StatusBar name="$parentStatusBar"  defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="280" y="10"></Size>
+                <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+            </StatusBar>
+        </Frames>
+    </Frame>
+    
+     <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame" parent="GwQuesttrackerContainerBossFrames" virtual="true" >
+         <Size x="300" y="35"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentStatusBarBg"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="282" y="12"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                    <Size x="24" y="24"></Size>
+                    <Anchors>
+                       <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentString" text="Objective text 1/2" justifyH="LEFT">
+                     <Size x="300" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <StatusBar name="$parentStatusBar"  defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="280" y="10"></Size>
+                <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+            </StatusBar>
+        </Frames>
+    </Button>
+    
+</Ui>

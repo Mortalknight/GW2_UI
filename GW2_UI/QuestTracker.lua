@@ -2,23 +2,15 @@ local anchor = "TOPRIGHT"
 local xOff = 0
 local yOff = 0
 
-local f = CreateFrame("Frame")
-f:SetScript("OnEvent",function(self,event,addon)
-     if IsAddOnLoaded("Blizzard_ObjectiveTracker") then
+function gw_set_questtracker()
+
             local tracker = ObjectiveTrackerFrame
             tracker:ClearAllPoints()
             tracker:SetPoint(anchor,UIParent,xOff,yOff)
-            hooksecurefunc(tracker,"SetPoint",function(self,anchorPoint,relativeTo,x,y)
-                if anchorPoint~='TOPRIGHT' and x~=0 and y~=0 then
-                    self:SetPoint('TOPRIGHT',UIParent,0,0)
-                end
+            hooksecurefunc("UIParent_ManageFramePositions",function()
+                
+                    tracker:SetPoint('TOPRIGHT',UIParent,0,0)
             end)
-            
-        --   ObjectiveTrackerFrame.texture = ObjectiveTrackerFrame:CreateTexture()
-       --     ObjectiveTrackerFrame.texture:SetPoint('TOPRIGHT',ObjectiveTrackerFrame,'TOPRIGHT',0,0)
-       --    ObjectiveTrackerFrame.texture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\questtracker')
-            
-  
             
             for i = 1, ObjectiveTrackerFrame.BlocksFrame:GetNumChildren() do
             local v = select(i, ObjectiveTrackerFrame.BlocksFrame:GetChildren())
@@ -41,12 +33,9 @@ f:SetScript("OnEvent",function(self,event,addon)
                 end
             end
         end
-     self:UnregisterEvent("ADDON_LOADED")
-     else
-            self:RegisterEvent("ADDON_LOADED")
-     end
-end)
-f:RegisterEvent("PLAYER_LOGIN")
+
+end
+
 
 
 

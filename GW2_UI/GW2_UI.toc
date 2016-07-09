@@ -1,4 +1,4 @@
-## Interface: 60200
+## Interface: 70030
 ## Title: Gw2 UI
 ## Notes: Hud Replacement addon.
 
@@ -9,38 +9,46 @@
 
 
 
+frames/target.xml
+frames/experiencebar.xml
+frames/hudart.xml
+frames/hudelements.xml
+frames/settings.xml
+frames/questview.xml
+frames/bag.xml
+frames/questtracker.xml
+
 
 GW2_ui.lua
 fonts.lua
 hud.lua
 QuestTracker.lua
 ActionBar.lua
-unitframes.lua
+
 buffs.lua
 
 map.lua
 
-focus.lua
+
 castingbar.lua
 raidframes.lua
 
-
-altpowerpriest.lua
-altpowerpaladin.lua
-altpowerwarlock.lua
-altpowermonk.lua
-altpowerrogue.lua
-altpowermoonkin.lua
-altpower.lua
-
 questview.lua
-unitFrame.lua
+
 chatframe.lua
 settings.lua
 chatbubbles.lua
 
-nameplates.lua
+
 
 tooltips.lua
 
 fader.lua
+
+newtarget.lua
+playerhud.lua
+questtracker2.lua
+
+classpowers.lua
+
+bag.lua

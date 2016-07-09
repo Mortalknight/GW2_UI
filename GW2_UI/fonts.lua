@@ -1,3 +1,4 @@
+
 local fonts_frame = CreateFrame("frame",nil,UIParent)
 
 function SetFont(fontObject, font, size, style, shadowX, shadowY, shadowA, r, g, b, shadowR, shadowG, shadowB)

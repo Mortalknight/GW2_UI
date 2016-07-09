@@ -1,31 +1,6 @@
-PowerBarColorCustom = {};
-PowerBarColorCustom["MANA"] = { r = 0, g = 0.5058823529411765, b = 1 };
-PowerBarColorCustom["RAGE"] = { r = 1.00, g = 0.00, b = 0.00 };
-PowerBarColorCustom["FOCUS"] = { r = 1.00, g = 0.50, b = 0.25 };
-PowerBarColorCustom["ENERGY"] = { r = 1.00, g = 1.00, b = 0.00 };
-PowerBarColorCustom["CHI"] = { r = 0.71, g = 1.0, b = 0.92 };
-PowerBarColorCustom["RUNES"] = { r = 0.50, g = 0.50, b = 0.50 };
-PowerBarColorCustom["RUNIC_POWER"] = { r = 0.00, g = 0.82, b = 1.00 };
-PowerBarColorCustom["SOUL_SHARDS"] = { r = 0.50, g = 0.32, b = 0.55 };
-PowerBarColorCustom["ECLIPSE"] = { negative = { r = 0.30, g = 0.52, b = 0.90 },  positive = { r = 0.80, g = 0.82, b = 0.60 }};
-PowerBarColorCustom["HOLY_POWER"] = { r = 0.95, g = 0.90, b = 0.60 };
--- vehicle colors
-PowerBarColorCustom["AMMOSLOT"] = { r = 0.80, g = 0.60, b = 0.00 };
-PowerBarColorCustom["FUEL"] = { r = 0.0, g = 0.55, b = 0.5 };
-PowerBarColorCustom["STAGGER"] = { {r = 0.52, g = 1.0, b = 0.52}, {r = 1.0, g = 0.98, b = 0.72}, {r = 1.0, g = 0.42, b = 0.42},};
- 
--- these are mostly needed for a fallback case (in case the code tries to index a power token that is missing from the table,
--- it will try to index by power type instead)
-PowerBarColorCustom[0] = PowerBarColorCustom["MANA"];
-PowerBarColorCustom[1] = PowerBarColorCustom["RAGE"];
-PowerBarColorCustom[2] = PowerBarColorCustom["FOCUS"];
-PowerBarColorCustom[3] = PowerBarColorCustom["ENERGY"];
-PowerBarColorCustom[4] = PowerBarColorCustom["CHI"]; 
-PowerBarColorCustom[5] = PowerBarColorCustom["RUNES"];
-PowerBarColorCustom[6] = PowerBarColorCustom["RUNIC_POWER"];
-PowerBarColorCustom[7] = PowerBarColorCustom["SOUL_SHARDS"];
-PowerBarColorCustom[8] = PowerBarColorCustom["ECLIPSE"];
-PowerBarColorCustom[9] = PowerBarColorCustom["HOLY_POWER"];
+PowerBarColorCustom = PowerBarColor;
+
+PowerBarColorCustom['MANA'] = {r=0,g=123/255,b=244/255}
 
 
 FACTION_BAR_COLORS = {
@@ -39,7 +14,61 @@ FACTION_BAR_COLORS = {
     [8] = {r = 0, g = 0.6, b = 0.1},
 };
 
- oldExp =UnitXP('player') / UnitXPMax('player');
+
+GW_COLOR_FRIENDLY = {
+    [1] = {r = 88/255, g=170/255,b=68/255 },
+    [2] = {r = 159/255, g=36/255,b=20/255 },
+    [3] = { r= 159/255,g=159/255,b=159/255 }
+    
+}
+
+bloodSpark ={}
+
+
+bloodSpark[1] = {left=0,right=0.125,top=0,bottom=0.5}
+bloodSpark[2] = {left=0.125,right=0.125*2,top=0,bottom=0.5}
+bloodSpark[3] = {left=0.125*2,right=0.125*3,top=0,bottom=0.5}
+bloodSpark[4] = {left=0.125*3,right=0.125*4,top=0,bottom=0.5}
+bloodSpark[5] = {left=0.125*4,right=0.125*5,top=0,bottom=0.5}
+bloodSpark[6] = {left=0.125*5,right=0.125*6,top=0,bottom=0.5}
+bloodSpark[7] = {left=0.125*6,right=0.125*7,top=0,bottom=0.5}
+bloodSpark[8] = {left=0.125*7,right=0.125*8,top=0,bottom=0.5}
+
+
+bloodSpark[9] = {left=0,right=0.125,top=0.5,bottom=1}
+bloodSpark[10] = {left=0.125,right=0.125*2,top=0.5,bottom=1}
+bloodSpark[11] = {left=0.125*2,right=0.125*3,top=0.5,bottom=1}
+bloodSpark[12] = {left=0.125*3,right=0.125*4,top=0.5,bottom=1}
+bloodSpark[13] = {left=0.125*4,right=0.125*5,top=0.5,bottom=1}
+bloodSpark[14] = {left=0.125*5,right=0.125*6,top=0.5,bottom=1}
+bloodSpark[15] = {left=0.125*6,right=0.125*7,top=0.5,bottom=1}
+bloodSpark[16] = {left=0.125*7,right=0.125*8,top=0.5,bottom=1}
+
+bloodSpark[17] = {left=0,right=0.125,top=0,bottom=0.5}
+bloodSpark[18] = {left=0.125,right=0.125*2,top=0,bottom=0.5}
+bloodSpark[19] = {left=0.125*2,right=0.125*3,top=0,bottom=0.5}
+bloodSpark[20] = {left=0.125*3,right=0.125*4,top=0,bottom=0.5}
+bloodSpark[21] = {left=0.125*4,right=0.125*5,top=0,bottom=0.5}
+bloodSpark[22] = {left=0.125*5,right=0.125*6,top=0,bottom=0.5}
+bloodSpark[23] = {left=0.125*6,right=0.125*7,top=0,bottom=0.5}
+bloodSpark[24] = {left=0.125*7,right=0.125*8,top=0,bottom=0.5}
+
+          
+
+    
+
+GW_TARGET_FRAME_ART = {
+    
+    ['minus'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow',
+    ['minus'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow',
+    ['normal'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow',
+    ['elite'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowElit',
+    ['worldboss'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowElit',
+    ['rare'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare',
+    ['rareelite'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare',
+}
+
+ oldExp =0;
  gainExpStart =0;
  gainExpEnd=0;
     newExp = 0
@@ -173,337 +202,433 @@ function setOverlay(n,p)
     f:Show()
 end
 
+experiencebarAnimation = 0
 
-lvllable1, levelablet1 = createBackground('BOTTOMLEFT',60,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\levellable",5)
-   clevel = lvllable1:CreateFontString('unitCurrentLevel', "OVERLAY", "GameFontNormal")
+
+
+
+function loadHudArt()
     
-    clevel:SetTextColor(1,1,1)
-    clevel:SetFont(STANDARD_TEXT_FONT,12)
-
-    clevel:SetPoint("RIGHT",lvllable1,'RIGHT',-10,0)
-    unitCurrentLevel:SetText(UnitLevel('Player'))
-
-lvllable2, levelablet2 = createBackground('BOTTOMRIGHT',60,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\levellable",5)
-nlevel = lvllable2:CreateFontString('unitNextLevel', "OVERLAY", "GameFontNormal")
     
-    nlevel:SetTextColor(1,1,1)
-    nlevel:SetFont(STANDARD_TEXT_FONT,12)
-    nlevel:SetPoint("LEFT",lvllable2,'LEFT',10,0)
-    nlevel:SetText(UnitLevel('Player') + 1)
-    if UnitLevel('Player') == 100 then
-        unitNextLevel:SetText(UnitLevel('Player'))
-    end
+    local hudArtFrame =  CreateFrame('Frame', 'GwHudArtFrame',UIParent,'GwHudArtFrame');
+    local GwHudArtFrameRepair =  CreateFrame('Frame', 'GwHudArtFrameRepair',UIParent,'GwRepair');
+    
+    _G['GwHudArtFrameRepair']:SetScript('OnEvent',update_repair_data)
+    
+    DurabilityFrame:UnregisterAllEvents()
+    DurabilityFrame:HookScript('OnShow',function(self) self:Hide() end)
+    DurabilityFrame:Hide()
+    _G['GwHudArtFrameRepair']:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+    
+    update_repair_data()
+    
+   _G['GwHudArtFrameRepair']:SetScript('OnEnter', function() GameTooltip:SetOwner(_G['GwHudArtFrameRepair'], "ANCHOR_CURSOR"); GameTooltip:ClearLines(); GameTooltip:SetText('Damaged or broken equipment') GameTooltip:Show() end)
+    _G['GwHudArtFrameRepair']:SetScript('OnLeave', function() GameTooltip:Hide() end)
+    
+    
+    hudArtFrame:SetScript('OnEvent',function(self,event,unit)
 
-xpbar, xpbart = createBackground('BOTTOMLEFT',0,16,58,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbar",4)
-xpbarCandy, xpbartCandy = createBackground('BOTTOMLEFT',0,16,58,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarCandy",3)
-xpbarbg, xpbarbgt  = createBackground('BOTTOM',1800,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarbg",2)
-xpbarbg:SetAlpha(0.8)
-
-
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',-6,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',174,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',354,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',534,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',714,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',894,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',1074,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',1254,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',1434,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',1614,0)
-
-sep , sept = createBackground('BOTTOMLEFT',16,16,0,0,"Interface\\AddOns\\GW2_UI\\textures\\xpbarsep",5)
-sep:SetPoint('BOTTOMLEFT',xpbar,'BOTTOMLEFT',1794,0)
-
-
-
-
-mapShadowBg,mapShadowTexture = createBackground('BOTTOMRIGHT',512,256,3,19,"Interface\\AddOns\\GW2_UI\\textures\\mapshadow",0)
-
-
-hudShadowLeft,hudShadowLeftTexture = createBackground('BOTTOM',512,256,-256,16,"Interface\\AddOns\\GW2_UI\\textures\\leftshadow",0)
-hudShadowRight,hudShadowRightTexture = createBackground('BOTTOM',512,256,256,16,"Interface\\AddOns\\GW2_UI\\textures\\rightshadow",0)
-
-BloodhudShadowLeft,BloodhudShadowLeftTexture = createBackground('BOTTOM',560,280,-280,16,"Interface\\AddOns\\GW2_UI\\textures\\bloodLeft",0)
-BloodhudShadowRight,BloodhudShadowRightTexture = createBackground('BOTTOM',560,280,280,16,"Interface\\AddOns\\GW2_UI\\textures\\bloodRight",0)
-
---createBackground('TOPRIGHT',255.9,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\questtracker",0)
-
-
-createBackground('TOP',560,280,-210,0,"Interface\\AddOns\\GW2_UI\\textures\\windowborder",0)
-createBackground('TOP',560,280,306.9,0,"Interface\\AddOns\\GW2_UI\\textures\\windowborder",0)
-
-tprf,tprt = createBackground('BOTTOM',560,280,306.9,16,"Interface\\AddOns\\GW2_UI\\textures\\windowborder",0)
-tprt:SetTexCoord(0,1,1,0)
-
-tprf,tprt = createBackground('BOTTOM',560,280,-210.9,16,"Interface\\AddOns\\GW2_UI\\textures\\windowborder",0)
-tprt:SetTexCoord(0,1,1,0)
-
-tprf,tprt = createBackground('LEFT',280,560,-41.0,0,"Interface\\AddOns\\GW2_UI\\textures\\windowborder",0)
-tprt:SetRotation(1.5707963268)
-
-tprf,tprt = createBackground('RIGHT',280,560,41.0,0,"Interface\\AddOns\\GW2_UI\\textures\\windowborder",0)
-tprt:SetRotation(-1.5707963268)
-
-
-createBackground('TOPLEFT',560,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\windowcornermenu",0)
-local tprf,tprt = createBackground('TOPRIGHT',560,280,0,0,"Interface\\AddOns\\GW2_UI\\textures\\windowcorner",1)
-    tprt:SetTexCoord(1,0,0,1)
-
-tprf,tprt = createBackground('BOTTOMLEFT',560,280,0,16,"Interface\\AddOns\\GW2_UI\\textures\\windowcorner",0)
-    tprt:SetTexCoord(0,1,1,0)
-
-tprf,tprt = createBackground('BOTTOMRIGHT',560,280,0,16,"Interface\\AddOns\\GW2_UI\\textures\\windowcorner",0)
-    tprt:SetTexCoord(1,0,1,0)
-
---SWIM--
-tprf,tprt = createBackground('BOTTOM',560,280,-280,16,"Interface\\AddOns\\GW2_UI\\textures\\leftshadowswim",1)
-
-durabilityBg,durabilityTexture = createBackgroundName('BOTTOM',20,20,32,16,"Interface\\AddOns\\GW2_UI\\textures\\repair",3,'durabilityBg')
-durabilityBg:SetFrameStrata('HIGH')
-tprf:SetAlpha(0)
- tprf:HookScript("OnUpdate", function(self)
-       
-         if IsSwimming() then 
-            self:SetAlpha(1)
-            UIFrameFadeIn(self, 1,self:GetAlpha(),1)
-        else
-            UIFrameFadeOut(self, 1,self:GetAlpha(),0)
+        if event=='UNIT_AURA' and unit=='player' then
+            select_actionhud_bg()
+            return
         end
-        
-        local currentHealthPrecentage = UnitHealth('Player')/UnitHealthMax('Player')
-        
-        
-        
-       if currentHealthPrecentage<0.5 then
-            currentHealthPrecentage = currentHealthPrecentage / 0.5;
             
-            hudShadowLeftTexture:SetVertexColor(1,currentHealthPrecentage  ,currentHealthPrecentage  );
-            hudShadowRightTexture:SetVertexColor(1,currentHealthPrecentage  ,currentHealthPrecentage  );
-            BloodhudShadowLeft:SetAlpha(1-currentHealthPrecentage)
-             BloodhudShadowRight:SetAlpha(1-currentHealthPrecentage)
-        else
-              hudShadowLeftTexture:SetVertexColor(1,1,1);
-            hudShadowRightTexture:SetVertexColor(1,1,1);
-            BloodhudShadowRight:SetAlpha(0)
-             BloodhudShadowLeft:SetAlpha(0)
+        if event=='PLAYER_REGEN_DISABLED' or event=='PLAYER_REGEN_ENABLED' then
+                select_actionhud_bg()
+            return
         end
-  
-                
-                    
+         if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit=='player' then
+                combat_hud_healthstate()
+            return
+        end
+            
+        
+            
+            
     end)
-
-tprf,tprt = createBackground('BOTTOM',560,280,280,16,"Interface\\AddOns\\GW2_UI\\textures\\rightshadowswim",1)
-tprf:SetAlpha(0)
- tprf:HookScript("OnUpdate", function(self)
-        
-        if IsSwimming() then 
-            self:SetAlpha(1)
-            UIFrameFadeIn(self, 1,self:GetAlpha(),1)
-        else
-            UIFrameFadeOut(self, 1,self:GetAlpha(),0)
-        end
-                    
-    end)
-
-xpbar:HookScript("OnEvent", function(self)
-    ReputationWatchBar:Hide()
-       local xppre = UnitXP('player') / UnitXPMax('player')
-        xpbart:SetVertexColor(1,1,0)
-         unitNextLevel:SetText(UnitLevel('Player') + 1)
-        unitCurrentLevel:SetText(UnitLevel('Player'))
     
-    if UnitLevel('Player') == 100 then
-        unitNextLevel:SetText(UnitLevel('Player'))
-       
+    hudArtFrame:RegisterEvent("UNIT_AURA");
+    hudArtFrame:RegisterEvent("PLAYER_ALIVE");
+    hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED");
+    hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
+    hudArtFrame:RegisterEvent("UNIT_HEALTH");
+    hudArtFrame:RegisterEvent("UNIT_MAX_HEALTH");
+    select_actionhud_bg()
+    combat_hud_healthstate()
+    
+end
 
-        for factionIndex = 1, GetNumFactions() do
-          name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
-            canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex)
-          if isWatched == true then
-            local name, reaction, min, max, value, factionID = GetWatchedFactionInfo();
-            local nextId = standingId+1
-                    if nextId==nil then
-                        nextId = standingId
-                    end
-                    unitCurrentLevel:SetText(getglobal("FACTION_STANDING_LABEL"..standingId))
-                    unitNextLevel:SetText(getglobal("FACTION_STANDING_LABEL"..nextId))
-                    xppre = (earnedValue - bottomValue) / (topValue - bottomValue)
-                    
-                    xpbart:SetVertexColor(FACTION_BAR_COLORS[reaction].r,FACTION_BAR_COLORS[reaction].g,FACTION_BAR_COLORS[reaction].b)
-                end
+
+
+function update_repair_data()  
+   
+   local needRepair = false
+    for i=1,23 do
+       local current, maximum = GetInventoryItemDurability(i);
+        if current ~=nil then
+            dur = current/maximum
+            if dur < 0.5 then
+                needRepair = true
             end
-         xpbar:SetWidth(1800*xppre)
-    end
-
-    if oldExp > xppre then
-            if lerpRunning==false then
-        oldExp = 0
         end
     end
-            
-    xpbarCandy:SetWidth(1800*xppre)
-   -- xpbar:SetWidth(1800*xppre)
-end)
+    if needRepair then
+        _G['GwHudArtFrameRepair']:Show()
+    else
+        _G['GwHudArtFrameRepair']:Hide()
+    end
+end
 
 
 
-
-xpbar:HookScript("OnUpdate", function(self)
-        
- 
-        
-   if UnitLevel('Player') < 100 then
+function loadExperienceBar()
     
 
-        local xppre = UnitXP('player') / UnitXPMax('player')
-     --   if oldExp<xppre then            
-     --           gainExpEnd = GetTime() + 2
-      --          gainExpStart = GetTime()
-      --          oldExp = xppre
-     --           print(gainExpStart)
-      --          print(gainExpEnd)
-      --  end
-        if oldExp<xppre then
-            if lerpRunning==false then
-                    newExp = xppre;
-                    lerpRunning = true;
-                    gainExpStart = GetTime()
-            end
-        end
-
-        if lerpRunning then
-         --    xppre =   (((GetTime() ) - gainExpStart) / (gainExpEnd - gainExpStart) * 100 )
-             xppre =  lerp(oldExp, newExp, (GetTime() - gainExpStart) / 2)
-                if xppre>=newExp then
-                    lerpRunning = false
-                    oldExp = xppre;
-                end
-
-        end
-
-
-
-        xpbar:SetWidth(1800*xppre)
-     end
-end)
-
-ReputationWatchBar:HookScript("OnShow", function(self)
-        self:Hide()
-end)
-
-xpbar:RegisterEvent("PLAYER_ENTERING_WORLD");
-xpbar:RegisterEvent("PLAYER_XP_UPDATE");
-xpbar:RegisterEvent("UPDATE_FACTION");
-
-
-hudShadowLeft:SetScript("OnEvent", function(self,event,unit)
-        
-        if unit=='player' then
-            local swap = false
-            
-            if UnitAffectingCombat('player') then
-                swap = true
-                hudShadowLeftTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat')
-                hudShadowRightTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat')
-            end
-            
-            if UnitAura('player','Archangel') or UnitAura('player','Avenging Wrath') then
-                swap = true
-                hudShadowLeftTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy')
-                hudShadowRightTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy')
-            end
-            if UnitAura('player','Rapid Fire') or UnitAura('player','Bestial Wrath')  then
-                swap = true
-                hudShadowLeftTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\leftshadow_leafs')
-                hudShadowRightTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\rightshadow_leafs')
-              
-            end
-            if UnitAura('player','Bear Form')  then
-                swap = true
-                hudShadowLeftTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear')
-                hudShadowRightTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear')
-              
-            end
-            if UnitAura('player','Cat Form')  then
-                swap = true
-                hudShadowLeftTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat')
-                hudShadowRightTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat')
-              
-            end
-            
-            
-             if swap==false then
-            
-                hudShadowLeftTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\leftshadow')
-                hudShadowRightTexture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\rightshadow')
-
-            end
-        end
-end)
-
-hudShadowLeft:RegisterEvent("UNIT_AURA");
-hudShadowLeft:RegisterEvent("PLAYER_ALIVE");
-hudShadowLeft:RegisterEvent("PLAYER_REGEN_DISABLED");
-hudShadowLeft:RegisterEvent("PLAYER_REGEN_ENABLED");
-
-
-
-gossip = CreateFrame("frame",gossip,UIParent)
-gossip:SetScript("OnEvent", function(self,event,unit)
+local experiencebar =  CreateFrame('Frame', 'GwExperienceFrame',UIParent,'GwExperienceBar');
+local eName = experiencebar:GetName()
+    
       
-        for i = 1,12 do
-           if _G['GossipTitleButton'..i] then
-                _G['GossipTitleButton'..i]:SetHeight(25)
-                _G['GossipTitleButton'..i..'GossipIcon']:ClearAllPoints()
-                _G['GossipTitleButton'..i..'GossipIcon']:SetPoint('LEFT',_G['GossipTitleButton'..i],0,0)
-              
-            end
-        end
-end)
-gossip:RegisterEvent("GOSSIP_SHOW");
-
-
-durabilityBg:SetScript('OnEvent',function(self,event)
+    _G['GwExperienceFrameNextLevel']:SetFont(UNIT_NAME_FONT,12)
+    _G['GwExperienceFrameCurrentLevel']:SetFont(UNIT_NAME_FONT,12)
     
-        needRepair = false
-        for i=1,23 do
-            current, maximum = GetInventoryItemDurability(i);
-            if current ~=nil then
-                dur = current/maximum
-                if dur < 0.5 then
-                    needRepair = true
+    update_experiencebar_size()
+    update_experiencebar_data()
+    
+    experiencebar:SetScript('OnEvent',update_experiencebar_data)
+    experiencebar:RegisterEvent('PLAYER_XP_UPDATE')
+    experiencebar:RegisterEvent("UPDATE_FACTION");
+    
+    
+    experiencebar:SetScript('OnEnter',  show_experiencebar_tooltip)
+    experiencebar:SetScript('OnLeave', function() GameTooltip:Hide()   UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),1) end)
+    
+    
+    
+    
+end
+
+function show_experiencebar_tooltip()
+    
+    local valCurrent = UnitXP('Player')
+    local valMax = UnitXPMax('Player')
+    
+     UIFrameFadeOut(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),0)
+    
+    GameTooltip:SetOwner(_G['GwExperienceFrame'], "ANCHOR_CURSOR"); GameTooltip:ClearLines(); GameTooltip:SetText(valCurrent.." / "..valMax) GameTooltip:Show() 
+end
+
+
+function update_experiencebar_data(self,event)
+    
+    local valCurrent = UnitXP('Player')
+    local valMax = UnitXPMax('Player')
+    local valPrec = valCurrent/valMax;
+    
+    local level = UnitLevel('Player')
+    local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel('Player') +1)
+    
+    ReputationWatchBar:Hide()
+    if level==Nextlevel  then
+        for factionIndex = 1, GetNumFactions() do
+            name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
+            canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex)
+            if isWatched == true then
+                local name, reaction, min, max, value, factionID = GetWatchedFactionInfo();
+                local nextId = standingId+1
+                if nextId==nil then
+                    nextId = standingId
                 end
+                level = getglobal("FACTION_STANDING_LABEL"..standingId)
+
+                Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
+                valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
+                _G['GwExperienceFrameBar']:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r,FACTION_BAR_COLORS[reaction].g,FACTION_BAR_COLORS[reaction].b)
             end
         end
-        if needRepair then
-        self:Show()
-        else
-            self:Hide()
-        end
-end)
+    end
+       
+    
+    _G['GwExperienceFrameBarCandy']:SetValue(valPrec)
+    
+    if experiencebarAnimation>valPrec then
+        experiencebarAnimation = 0
+    end
+    
+    local dif = 5
+    
+    addToAnimation('experiencebarAnimation',experiencebarAnimation,valPrec,GetTime(),dif,function()
+            
+            ExperienceBarSpark:SetWidth(math.max(8,math.min(9, _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress']) ))
+            
+            _G['GwExperienceFrameBar']:SetValue(animations['experiencebarAnimation']['progress'])
+            ExperienceBarSpark:SetPoint('LEFT', _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'] -8,0)
+           
+    end)
+    experiencebarAnimation =valPrec
+    
+    
+    _G['GwExperienceFrameNextLevel']:SetText(Nextlevel);
+    _G['GwExperienceFrameCurrentLevel']:SetText(level);
+    
+    
+end
 
-durabilityBg:RegisterEvent("UPDATE_INVENTORY_DURABILITY");
-durabilityBg:RegisterEvent("PLAYER_ENTERING_WORLD");
+function update_experiencebar_size()
+    local m = (UIParent:GetWidth()-128) / 10
+    for i=1,9 do
+        local rm = (m*i) +64 
+        _G['barsep'..i]:ClearAllPoints()
+        _G['barsep'..i]:SetPoint('LEFT','GwExperienceFrame','LEFT',rm ,0);
+    end
+end
+
+action_hud_auras = {}
+
+function registerActionHudAura(aura,left,right)
+    local i = countTable(action_hud_auras)
+    action_hud_auras[i] = {}
+    action_hud_auras[i]['aura'] = aura
+    action_hud_auras[i]['left'] = left
+    action_hud_auras[i]['right'] = right
+end
+local currentTexture = nil
+function select_actionhud_bg()
+    if not gwGetSetting('HUD_SPELL_SWAP') then return end
+    local right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadow';
+    local left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadow';
+    
+    if UnitIsDeadOrGhost("player") then
+        right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadow_dead';
+        left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_dead';
+    end
+    
+    if UnitAffectingCombat('player') then
+         right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat';
+         left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat';
+    end
+    
+    for k,v in pairs(action_hud_auras) do
+       if UnitAura('player',action_hud_auras[k]['aura']) then
+            left=action_hud_auras[k]['left']
+            right=action_hud_auras[k]['right']
+        end
+    end
+    if currentTexture~=left then
+        currentTexture = left
+        _G['GwActionBarHudLEFT']:SetTexture(left)
+        _G['GwActionBarHudRIGHT']:SetTexture(right)
+    end
+end
+
+
+function combat_hud_healthstate()
+    
+    local unitHealthPrecentage = UnitHealth('player')/UnitHealthMax('player')
+    
+     if unitHealthPrecentage<0.5 and not  UnitIsDeadOrGhost("player") then
+        unitHealthPrecentage = unitHealthPrecentage / 0.5;
+            
+        _G['GwActionBarHudLEFT']:SetVertexColor(1,unitHealthPrecentage  ,unitHealthPrecentage  );
+        _G['GwActionBarHudRIGHT']:SetVertexColor(1,unitHealthPrecentage  ,unitHealthPrecentage  );
+        
+   
+        _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(1,unitHealthPrecentage  ,unitHealthPrecentage  );
+        _G['GwActionBarHudLEFTSWIM']:SetVertexColor(1,unitHealthPrecentage  ,unitHealthPrecentage  );
+            
+        _G['GwActionBarHudLEFTBLOOD']:SetVertexColor(1,1,1,1-(unitHealthPrecentage-0.2))
+        _G['GwActionBarHudRIGHTBLOOD']:SetVertexColor(1,1,1,1-(unitHealthPrecentage-0.2))
+    else
+       
+        
+        _G['GwActionBarHudLEFT']:SetVertexColor(1,1,1);
+        _G['GwActionBarHudRIGHT']:SetVertexColor(1,1,1);
+           
+           
+        _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(1,1,1);
+        _G['GwActionBarHudLEFTSWIM']:SetVertexColor(1,1,1);
+        
+        _G['GwActionBarHudLEFTBLOOD']:SetVertexColor(1,1,1,0)
+        _G['GwActionBarHudRIGHTBLOOD']:SetVertexColor(1,1,1,0)
+        
+    end
+end
+
+registerActionHudAura('Avenging Wrath','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy')
+registerActionHudAura('Rapid Fire','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_leafs','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_leafs')
+registerActionHudAura('Bear Form','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear')
+registerActionHudAura('Cat Form','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat')
+
+
+
+local microButtonFrame = CreateFrame('Frame', 'GwMicroButtonFrame', UIParent,'GwMicroButtonFrame')
+
+local microButtonPadding = 4 +12
+
+function create_micro_button(key)
+    local mf = CreateFrame('Button', 'GwMicroButton'..key, GwMicroButtonFrame,'GwMicroButtonTemplate')
+    mf:SetPoint('CENTER',GwMicroButtonFrame,'TOPLEFT',microButtonPadding,-16);
+    microButtonPadding = microButtonPadding + 24 + 4
+    
+   mf:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Up'); 
+   mf:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Up'); 
+   mf:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Down'); 
+   mf:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Down'); 
+
+    _G['GwMicroButton'..key..'String']:SetFont(DAMAGE_TEXT_FONT,12)
+    _G['GwMicroButton'..key..'String']:SetShadowColor(0,0,0,0)
+    
+     _G['GwMicroButton'..key..'Texture']:Hide()
+     _G['GwMicroButton'..key..'String']:Hide()
+    
+    
+    return mf
+end
+
+    local CUSTOM_MICRO_BUTTONS={}
+
+function create_micro_menu()
+    
+    
+
+    local mi = 1
+    for k,v in pairs(MICRO_BUTTONS) do 
+
+        CUSTOM_MICRO_BUTTONS[mi] = v
+        if v=='CharacterMicroButton' then
+            mi = mi+1
+            CUSTOM_MICRO_BUTTONS[mi] = 'BagMicroButton'
+        end
+        mi = mi +1
+    end
+
+    
+    for k,v in pairs(CUSTOM_MICRO_BUTTONS) do   
+        create_micro_button(v)
+    end
+    
+    GwMicroButtonCharacterMicroButton:SetScript('OnMouseDown',function()  ToggleCharacter("PaperDollFrame"); gw_UpdateMicroButtons() end);
+    
+    GwMicroButtonBagMicroButton:SetScript('OnMouseDown',function()  ToggleAllBags(); gw_UpdateMicroButtons() end);
+    
+    GwMicroButtonSpellbookMicroButton:SetScript('OnMouseDown',function()  ToggleSpellBook(BOOKTYPE_SPELL); gw_UpdateMicroButtons() end);
+    GwMicroButtonTalentMicroButton:SetScript('OnMouseDown',function()  ToggleTalentFrame(); gw_UpdateMicroButtons() end);
+    GwMicroButtonAchievementMicroButton:SetScript('OnMouseDown',function()  ToggleAchievementFrame(); gw_UpdateMicroButtons() end);
+    GwMicroButtonQuestLogMicroButton:SetScript('OnMouseDown',function()  ToggleQuestLog(); gw_UpdateMicroButtons() end);
+  
+    GwMicroButtonGuildMicroButton:SetScript('OnMouseDown',function()  ToggleGuildFrame(); gw_UpdateMicroButtons() end);
+    
+    GwMicroButtonLFDMicroButton:SetScript('OnMouseDown',function()  PVEFrame_ToggleFrame(); gw_UpdateMicroButtons() end);
+    
+    GwMicroButtonCollectionsMicroButton:SetScript('OnMouseDown',function()  ToggleCollectionsJournal(); gw_UpdateMicroButtons() end);
+    
+    GwMicroButtonEJMicroButton:SetScript('OnMouseDown',function() ToggleEncounterJournal()  gw_UpdateMicroButtons() end);
+    
+     GwMicroButtonMainMenuMicroButton:SetScript('OnMouseDown',function() ToggleGameMenuFrame()  gw_UpdateMicroButtons() end);
+    
+     GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
+     GwMicroButtonStoreMicroButton:SetScript('OnMouseDown',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
+    
+  
+    
+    
+    
+    GwMicroButtonTalentMicroButton:SetScript('OnEvent',gw_update_talentMicrobar)
+    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_LEVEL_UP");
+    GwMicroButtonTalentMicroButton:RegisterEvent("UPDATE_BINDINGS");
+    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE");
+    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
+    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED");
+    
+    gw_update_talentMicrobar()
+end
+
+function gw_update_talentMicrobar()
+    
+    if GetNumUnspentTalents() > 0 then
+        _G['GwMicroButtonTalentMicroButtonTexture']:Show()
+        _G['GwMicroButtonTalentMicroButtonString']:Show()
+        _G['GwMicroButtonTalentMicroButtonString']:SetText(GetNumUnspentTalents())
+    else
+        _G['GwMicroButtonTalentMicroButtonTexture']:Hide()
+        _G['GwMicroButtonTalentMicroButtonString']:Hide()
+    end
+    
+    hooksecurefunc('UpdateMicroButtons',gw_UpdateMicroButtons)
+        
+end
+
+function gw_UpdateMicroButtons()
+    
+   if ( CharacterFrame and CharacterFrame:IsShown() ) then
+		_G['GwMicroButtonCharacterMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonCharacterMicroButton']:SetButtonState("NORMAL");
+    end
+    
+    if ( GwBagFrame and GwBagFrame:IsShown() ) then
+		_G['GwMicroButtonBagMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonBagMicroButton']:SetButtonState("NORMAL");
+    end
+    
+    if ( SpellBookFrame and SpellBookFrame:IsShown() ) then
+		_G['GwMicroButtonSpellbookMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonSpellbookMicroButton']:SetButtonState("NORMAL");
+    end
+    
+    if ( PlayerTalentFrame and PlayerTalentFrame:IsShown() ) then
+		_G['GwMicroButtonTalentMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonTalentMicroButton']:SetButtonState("NORMAL");
+    end
+    
+    if ( AchievementFrame and AchievementFrame:IsShown() ) then
+		_G['GwMicroButtonAchievementMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonAchievementMicroButton']:SetButtonState("NORMAL");
+    end
+    
+    if ( WorldMapFrame and WorldMapFrame:IsShown() ) then
+		_G['GwMicroButtonQuestLogMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonQuestLogMicroButton']:SetButtonState("NORMAL");
+    end
+    
+    if ( GuildFrame and GuildFrame:IsShown() ) then
+		_G['GwMicroButtonGuildMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonGuildMicroButton']:SetButtonState("NORMAL");
+    end
+    
+      if ( PVEFrame and PVEFrame:IsShown() ) then
+		_G['GwMicroButtonLFDMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonLFDMicroButton']:SetButtonState("NORMAL");
+    end
+    
+    if ( EncounterJournal and EncounterJournal:IsShown() ) then
+		_G['GwMicroButtonEJMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonEJMicroButton']:SetButtonState("NORMAL");
+    end
+    if ( CollectionsJournal and CollectionsJournal:IsShown() ) then
+		_G['GwMicroButtonCollectionsMicroButton']:SetButtonState("PUSHED", true);
+	else
+		_G['GwMicroButtonCollectionsMicroButton']:SetButtonState("NORMAL");
+    end
+    
+end
+
+
+
+function ToggleGameMenuFrame()
+    if  GameMenuFrame:IsShown() then
+        GameMenuFrame:Hide()
+        return
+    end
+    GameMenuFrame:Show()
+end
 
 
 

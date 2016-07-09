@@ -15,26 +15,24 @@ local defaults_FCFTab_UpdateColors = FCFTab_UpdateColors
 local defaults_FCF_FadeInChatFrame
 local defaults_FCF_FadeOutChatFrame
 
-function setDefaults()
+local CHAT_FRAME_TEXTURES = defaults_CHAT_FRAME_TEXTURES
+local  CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA
+local  CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA
+local  CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA
+local  CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA
+local  CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA
+local   CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA
+local  CHAT_FRAME_FADE_OUT_TIME =defaults_CHAT_FRAME_FADE_OUT_TIME
+local   DEFAULT_CHATFRAME_ALPHA =defaults_DEFAULT_CHATFRAME_ALPHA
+local   DEFAULT_CHATFRAME_COLOR =defaults_DEFAULT_CHATFRAME_COLOR
+local   DEFAULT_TAB_SELECTED_COLOR_TABLE_ =defaults_DEFAULT_TAB_SELECTED_COLOR_TABLE_
+local   FCF_SetWindowColor =defaults_FCF_SetWindowColor
+local   FCFTab_UpdateColors =defaults_FCFTab_UpdateColorslocal
 
-    CHAT_FRAME_TEXTURES = defaults_CHAT_FRAME_TEXTURES
-    CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA
-    CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA
-    CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA
-    CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA
-    CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA
-    CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA
-    CHAT_FRAME_FADE_OUT_TIME =defaults_CHAT_FRAME_FADE_OUT_TIME
-    DEFAULT_CHATFRAME_ALPHA =defaults_DEFAULT_CHATFRAME_ALPHA
-    DEFAULT_CHATFRAME_COLOR =defaults_DEFAULT_CHATFRAME_COLOR
-    DEFAULT_TAB_SELECTED_COLOR_TABLE_ =defaults_DEFAULT_TAB_SELECTED_COLOR_TABLE_
-    FCF_SetWindowColor =defaults_FCF_SetWindowColor
-    FCFTab_UpdateColors =defaults_FCFTab_UpdateColors
-    
-end
+DEFAULT_CHATFRAME_COLOR = {r=1,b=1,g=1}
 
-function setCustoms()
-    CHAT_FRAME_TEXTURES = {
+
+local   CHAT_FRAME_TEXTURES = {
     "Background",
     "TopLeftTexture",
     "BottomLeftTexture",
@@ -70,19 +68,13 @@ function setCustoms()
     "TabLeft",
     "TabMiddle",
 }
-CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA = 1;
-CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0;
-CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA = 1;
-CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA = 0;
-CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA = 1;
-CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA = 0;
 
-CHAT_FRAME_FADE_OUT_TIME = 1
- 
-DEFAULT_CHATFRAME_ALPHA = 1;
 
-DEFAULT_CHATFRAME_COLOR = {r = 1, g = 1, b = 1};
-DEFAULT_TAB_SELECTED_COLOR_TABLE_= { r = 1, g = 1, b = 1, };
+
+
+function gw_set_custom_chatframe()
+
+
 
 
 end
@@ -91,10 +83,15 @@ end
 local editboxHasFocus = false
 
 
-function FCF_SetWindowColor(frame, r, g, b, doNotSave)
-  --  chatFrameBg()
+function gw_FCF_SetWindowColor(frame, r, g, b, doNotSave)
+
 end
-function FCFTab_UpdateColors(self, selected)
+
+
+function gw_FCFTab_UpdateColors(self, selected)
+    
+     colorTable = DEFAULT_CHATFRAME_COLOR
+
     if ( selected ) then
         self.leftSelectedTexture:Show();
         self.middleSelectedTexture:Show();
@@ -106,7 +103,7 @@ function FCFTab_UpdateColors(self, selected)
     end
      
     local colorTable = self.selectedColorTable or DEFAULT_TAB_SELECTED_COLOR_TABLE;
-     
+    colorTable = DEFAULT_CHATFRAME_COLOR
     if ( self.selectedColorTable ) then
         self:GetFontString():SetTextColor(colorTable.r, colorTable.g, colorTable.b);
     else
@@ -132,11 +129,23 @@ function FCFTab_UpdateColors(self, selected)
         FCFMin_UpdateColors(minimizedFrame);
     end
 end
-function FCF_FadeInChatFrame(chatFrame)
+
+function gw_FCF_FadeInChatFrame(chatFrame)
+
+    
     local frameName = chatFrame:GetName();
     if frameName=='table' then 
         return
     end
+    
+
+    if _G[chatFrame:GetName()..'Background'] then
+        _G[chatFrame:GetName()..'Background']:SetVertexColor(DEFAULT_CHATFRAME_COLOR.r,DEFAULT_CHATFRAME_COLOR.g,DEFAULT_CHATFRAME_COLOR.b)
+        if _G[chatFrame:GetName()..'ButtonFrameBackground'] then
+            _G[chatFrame:GetName()..'ButtonFrameBackground']:SetVertexColor(DEFAULT_CHATFRAME_COLOR.r,DEFAULT_CHATFRAME_COLOR.g,DEFAULT_CHATFRAME_COLOR.b)
+        end
+    end
+    
     chatFrame.hasBeenFaded = true;
     for index, value in pairs(CHAT_FRAME_TEXTURES) do
         local object = _G[frameName..value];
@@ -147,7 +156,7 @@ function FCF_FadeInChatFrame(chatFrame)
     if ( chatFrame == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) ) then
         for _, frame in pairs(FCFDock_GetChatFrames(GENERAL_CHAT_DOCK)) do
             if ( frame ~= chatFrame ) then
-                FCF_FadeInChatFrame(frame);
+                gw_FCF_FadeInChatFrame(frame);
             end
         end
         if ( GENERAL_CHAT_DOCK.overflowButton:IsShown() ) then
@@ -166,12 +175,12 @@ function FCF_FadeInChatFrame(chatFrame)
     UIFrameFadeIn(ChatFrameMenuButton, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
     UIFrameFadeIn(GeneralDockManager, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
 end
-function FCF_FadeOutChatFrame(chatFrame)
-    
+function gw_FCF_FadeOutChatFrame(chatFrame)
+
     if editboxHasFocus then
         return
     end
-    if GW2UI_SETTINGS['CHATFRAME_FADE']==false then
+    if gwGetSetting('CHATFRAME_FADE')==false then
         return
     end
     
@@ -187,7 +196,7 @@ function FCF_FadeOutChatFrame(chatFrame)
     if ( chatFrame == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) ) then
         for _, frame in pairs(FCFDock_GetChatFrames(GENERAL_CHAT_DOCK)) do
             if ( frame ~= chatFrame ) then
-                FCF_FadeOutChatFrame(frame);
+                gw_FCF_FadeOutChatFrame(frame);
             end
         end
         if ( GENERAL_CHAT_DOCK.overflowButton:IsShown() ) then
@@ -208,7 +217,24 @@ function FCF_FadeOutChatFrame(chatFrame)
     UIFrameFadeOut(GeneralDockManager,CHAT_FRAME_FADE_OUT_TIME, chatFrame.buttonFrame:GetAlpha(), 0);
 end
 
-function chatFrameBg()
+function gw_set_chatframe_bg()
+    
+
+    
+    CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA = 1;
+    CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0;
+    CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA = 1;
+    CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA = 0;
+    CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA = 1;
+    CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA = 0;
+
+    CHAT_FRAME_FADE_OUT_TIME = 1
+
+    DEFAULT_CHATFRAME_ALPHA = 1;
+
+    DEFAULT_CHATFRAME_COLOR = {r = 1, g = 1, b = 1};
+    DEFAULT_TAB_SELECTED_COLOR_TABLE_= { r = 1, g = 1, b = 1, };
+
 
     GeneralDockManager.texture = GeneralDockManager:CreateTexture()
     GeneralDockManager.texture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chatdockbg')
@@ -228,6 +254,14 @@ function chatFrameBg()
     
         ChatFrameMenuButton:SetHeight(20)
         ChatFrameMenuButton:SetWidth(20)
+    
+        hooksecurefunc('FCF_FadeOutChatFrame',gw_FCF_FadeOutChatFrame)
+        hooksecurefunc('FCF_FadeInChatFrame',gw_FCF_FadeInChatFrame)
+        hooksecurefunc('FCFTab_UpdateColors',gw_FCFTab_UpdateColors)
+        hooksecurefunc('FCF_SetWindowColor',gw_FCF_SetWindowColor)
+    
+    
+
 
     for i = 1,10 do
         
@@ -280,6 +314,7 @@ function chatFrameBg()
             end)
             _G['ChatFrame'..useId..'EditBox']:HookScript('OnEditFocusLost',function()
                     editboxHasFocus= false
+                    
             end)
             
             _G['ChatFrame'..useId..'TabHighlightMiddle']:SetTexture(nil)
@@ -310,7 +345,7 @@ function chatFrameBg()
         _G['ChatFrame'..useId..'EditBoxFocusRight']:SetTexture(nil)
           _G['ChatFrame'..useId..'EditBoxFocusLeft']:SetTexture(nil)
           _G['ChatFrame'..useId..'EditBoxFocusMid']:SetTexture(nil)
-        _G['ChatFrame'..useId..'EditBox']:Show()
+        
         if _G['ChatFrame'..useId..'EditBox'] then
             
                 _G['ChatFrame'..useId..'EditBox']:SetScript('OnHide',function(self) self:Show() 
@@ -323,21 +358,4 @@ function chatFrameBg()
     
 end
 
-local chatFrameOnload = CreateFrame('frame',nil,UIParent)
 
-chatFrameOnload:SetScript('OnUpdate',function()
-    if GW2UI_SETTINGS['SETTINGS_LOADED'] == false then
-        return
-    end
-        
-    if GW2UI_SETTINGS['DISABLE_CHATFRAME']==false then
-        setCustoms()
-        chatFrameBg()
-        FCF_FadeOutChatFrame(ChatFrame1)
-    else
-        setDefaults()
-    end
-    
-  
-    chatFrameOnload:SetScript('OnUpdate',nil)
-end)

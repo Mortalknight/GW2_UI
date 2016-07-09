@@ -1,20 +1,12 @@
-chatBubblesFrame = CreateFrame('frame',nil,UIParent)
 local intervalCd = 0
 local bubbles = {}
-chatBubblesFrame:SetScript('OnUpdate',function()
+function update_gwChat_bubbles()
         if intervalCd > GetTime() then
         return
         end
-        intervalCd = GetTime() +0.1
+        intervalCd = GetTime() +0.2
         
-        if GW2UI_SETTINGS['SETTINGS_LOADED']==false then
-            return
-        end
-   
-        if GW2UI_SETTINGS['USE_CHAT_BUBBLES']==true then
-            chatBubblesFrame:SetScript('OnUpdate',nil)
-            return 
-        end
+
         
        getBubbles()
         
@@ -24,9 +16,15 @@ chatBubblesFrame:SetScript('OnUpdate',function()
        fontString= v['fontstring']
         b = v['bgFile']
             
-        if fontString ~=nil then 
+        if fontString ~=nil and bgFrame.hasBeenStyled==nil then 
             fontString:SetFont(DAMAGE_TEXT_FONT,10)
-            fontString:SetShadowColor(1, 1, 1, 0) 
+            fontString:SetTextColor(0,0,0)
+            
+            bgFrame:SetScript('OnShow',function() 
+                    fontString:SetFont(DAMAGE_TEXT_FONT,10)
+                    fontString:SetTextColor(0,0,0)
+            end)
+            
             if b ~= 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background' then
                 local backdrop = {
                   -- path to the background texture
@@ -47,13 +45,17 @@ chatBubblesFrame:SetScript('OnUpdate',function()
                     bottom = 11
                   }
                 }
-               bgFrame:SetBackdrop(backdrop)
+                bgFrame:SetBackdrop(backdrop)
+                hooksecurefunc(fontString, 'SetText',function() 
+                    fontString:SetTextColor(0,0,0)
+                end)
+                bgFrame.hasBeenStyled = true
             end
            
-            fontString:SetTextColor(0,0,0)
+            
         end
     end
-end)
+end
 function getBubbles()
 bi = 0
 for i=1,WorldFrame:GetNumChildren() do

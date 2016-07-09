@@ -4,7 +4,9 @@ local Plates = {};
 local i = 1;
 
 local function PlateAdd ( Plate )
-    
+    if Plate.hasBeenStyled~=nil then
+        return
+    end
     i = i +1;
     
     local f1, f2 = Plate:GetChildren()
@@ -41,7 +43,7 @@ local function PlateAdd ( Plate )
     
     old_name:SetShadowOffset(-1, -1)
     old_name:SetShadowColor(0, 0, 0, 1)
-    old_name:SetFont(STANDARD_TEXT_FONT, 11,'OUTLINE')
+    old_name:SetFont(DAMAGE_TEXT_FONT,10)
     local backdrop = {
   bgFile = "Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar",  
 
@@ -80,16 +82,21 @@ local function PlateAdd ( Plate )
     end)
     
     setPlateOnShow(Health,Cast,old_name,old_level)
-    Plate:SetScript('OnShow',function(self)            
-      setPlateOnShow(Health,Cast,old_name,old_level)
-    end)
     
-    Plate:SetScript('OnHide',function(self)
-      
-    end)
+    
+        Plate:SetScript('OnShow',function(self)            
+          setPlateOnShow(Health,Cast,old_name,old_level)
+        end)
+
+        Plate:SetScript('OnHide',function(self)
+
+        end)
+    
+    Plate.hasBeenStyled = true;
 end
 
 function setPlateOnShow(Health,Cast,old_name,old_level)
+    
     Health:SetWidth(70)
     Health:SetHeight(5)
     Cast:SetWidth(70)
@@ -130,26 +137,25 @@ do
 end
 
 
-
-
-nPlates:SetScript('OnUpdate',function(self)
-    if GW2UI_SETTINGS['SETTINGS_LOADED'] == false then
+local thro = 0
+function update_gw_nameplates()
+    
+    if thro>GetTime() then
         return
     end
-    if GW2UI_SETTINGS['DISABLE_NAMEPLATES'] == true then
-        return
+    
+    thro = GetTime() + 0.01
+    
+    local ChildCount, NewChildCount = 0;
+    local NextUpdate = 0;
+    local pairs = pairs;
+    -- Check for new nameplates
+    NewChildCount = WorldFrame:GetNumChildren();
+    if ( ChildCount ~= NewChildCount ) then
+        ChildCount = NewChildCount;
+                           
+        PlatesScan( WorldFrame:GetChildren( WorldFrame ) );
     end
-local ChildCount, NewChildCount = 0;
-        local NextUpdate = 0;
-        local pairs = pairs;
-                -- Check for new nameplates
-                NewChildCount = WorldFrame:GetNumChildren();
-                if ( ChildCount ~= NewChildCount ) then
-                        ChildCount = NewChildCount;
-                       
-                        PlatesScan( WorldFrame:GetChildren( WorldFrame ) );
-                end
 
              
-        
-end)
+end

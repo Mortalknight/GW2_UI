@@ -1,0 +1,361 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    
+    <Font name="gw_button_font_black" font="Interface\AddOns\GW2_UI\fonts\menomonia.ttf" virtual="true">
+          <Color r="0" b="0" g="0"></Color>
+          <FontHeight>
+              <AbsValue val="12"/>
+          </FontHeight>
+  </Font>
+    <Frame name="GwSettingsMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+        <Size x="470" y="40"></Size>
+       <Anchors>
+            <Anchor point="CENTER" x="0" y="256"></Anchor>
+        </Anchors>
+        <Scripts>
+            <OnLoad>
+                self:RegisterForDrag("LeftButton");
+            </OnLoad>
+
+              <OnDragStart>self:StartMoving();</OnDragStart>
+              <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
+        </Scripts>
+        
+    </Frame>
+    <Frame name="GwSettingsWindow" enableMouse="true" parent="UIParent" virtual="true">
+        <Size x="512" y="512"></Size>
+        <Anchors>
+            <Anchor point="TOP" relativeTo="GwSettingsMoverFrame" relativePoint="TOP" x="20" y="-40"></Anchor>
+        </Anchors>
+        <Layers>
+   <Layer level="BACKGROUND">
+                <Texture name="$parentBackground"   file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
+                    <Size x="512" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
+                    <Size x="512" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentFooter" file="Interface\AddOns\GW2_UI\textures\bag\bagfooter">
+                    <Size x="512" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                    <Size x="40" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>               
+                
+            </Layer>
+            <Layer textureSubLevel="2">
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagborder">
+                    <Size x="622" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-3" />
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagborder">
+                    <Size x="622" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="3" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="3">
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\settingsicon">
+                    <Size x="128" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentHeaderString" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                <Size x="512" y="40"></Size>
+                <Color r="1" b="0.73" g="0.93"></Color>
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="30" y="40"></Anchor>
+                </Anchors>
+            </FontString>            
+                
+            </Layer>
+        </Layers>
+            <Frames>
+                <Button name="$parentMoveHud" text="Move HUD elements">
+                    <Size x="128" y="32" />
+                            
+                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\questviewbutton"></NormalTexture>
+                    <PushedTexture  file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover"></PushedTexture >
+                    <HighlightTexture   file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover"></HighlightTexture  >
+                    <Anchors><Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" y="-5"/></Anchors>
+                    <NormalFont style="gw_button_font_black"></NormalFont>
+                    <HighlightFont style="gw_button_font_black"></HighlightFont>
+                    <HighlightFont style="gw_button_font_black"></HighlightFont>
+                    <Scripts>
+                        <OnClick>
+                            gw_moveHudObjects()
+                        </OnClick>
+                    </Scripts>
+                </Button> 
+                <Button name="$parentSave" text="Save and Reload">
+                    <Size x="128" y="32" />
+                    <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" y="-5"/></Anchors>
+                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\questviewbutton"></NormalTexture>
+                    <PushedTexture  file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover"></PushedTexture >
+                    <HighlightTexture   file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover"></HighlightTexture  >
+                  
+                    <NormalFont style="gw_button_font_black"></NormalFont>
+                    <HighlightFont style="gw_button_font_black"></HighlightFont>
+                    <HighlightFont style="gw_button_font_black"></HighlightFont>
+                    <Scripts>
+                        <OnClick>
+                            ReloadUI();
+                        </OnClick>
+                    </Scripts>
+                </Button> 
+       
+                <Frame name="$parentContainer">
+                    <Size x="512" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Frames>                    
+                        <Frame name="GwSettingsModuleOption">
+                            <Size x="660" y="480"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentHeader" text="Modules" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentSub" text="Enable and disable modules if you prefer to use other addons or simply don't like" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </layer>
+                        </Layers>
+                            <Scripts>
+                                <OnLoad>
+                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                    _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                    _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+                                </OnLoad>
+                            </Scripts>
+                        </Frame>
+                        <Frame hidden="true" name="GwSettingsTargetOptions">
+                            <Size x="660" y="480"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentHeader" text="Target" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentSub" text="Edit target frames settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </layer>
+                        </Layers>
+                            <Scripts>
+                                <OnLoad>
+                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                    _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                    _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+                                </OnLoad>
+                            </Scripts>
+                        </Frame>
+                        <Frame hidden="true" name="GwSettingsFocusOptions">
+                            <Size x="660" y="480"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentHeader" text="Focus" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentSub" text="Edit focus frames settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </layer>
+                        </Layers>
+                            <Scripts>
+                                <OnLoad>
+                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                    _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                    _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+                                </OnLoad>
+                            </Scripts>
+                        </Frame>
+                        
+                        <Frame hidden="true" name="GwSettingsHudOptions">
+                            <Size x="660" y="480"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentHeader" text="HUD" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentSub" text="Edit HUD settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </layer>
+                        </Layers>
+                            <Scripts>
+                                <OnLoad>
+                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                    _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                    _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+                                </OnLoad>
+                            </Scripts>
+                        </Frame>
+                    
+                    </Frames>                    
+                </Frame>  
+                <Button name="GwSettingsButtonClose" text="" >
+                <Size x="20" y="20" />
+                <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
+                <PushedTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture >
+                <HighlightTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture >
+
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():Hide()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            </Frames>
+            <Scripts>
+                <OnLoad>
+                    GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT,24)
+                </OnLoad>
+            </Scripts>
+    </Frame>
+    <Button name="GwSettingsLabel" parent="GwSettingsWindow" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Layers>
+            <Layer level="OVERLAY">
+            <Texture name="$parentTexture"  file="Interface\AddOns\GW2_UI\textures\icon-module">
+                <Size x="32" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+               
+            </Layer>
+        </Layers>
+         <Scripts>
+             <OnEnter>
+                 _G[self:GetName()..'Texture']:SetBlendMode('ADD')
+             </OnEnter>
+             <OnLeave>
+
+                 _G[self:GetName()..'Texture']:SetBlendMode('BLEND')
+             </OnLeave>
+        </Scripts>
+    </Button>
+    <Button name="GwOptionBox" frameStrata="HIGHT"  virtual="true">
+        <Size x="244" y="40"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
+                    <Color r="1" g="1" b="1" a="0.3"></Color>
+                    <Size x="244" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="2">
+            <FontString name="$parentTitle" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <Size x="256" y="25"></Size>
+                        <Color r="1" b="1" g="1"></Color>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="5" y="0"></Anchor>
+                        </Anchors>
+                    </FontString>
+                <FontString name="$parentSub" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <Size x="256" y="25"></Size>
+                        <Color r="1" b="1" g="1"></Color>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="5" y="-17"></Anchor>
+                        </Anchors>
+                    </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <CheckButton name="$parentCheckButton" inherits="OptionsCheckButtonTemplate" checked="true">
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-16"></Anchor>
+                </Anchors>
+            </CheckButton>
+        </Frames>
+    </Button>
+    <Button name="GwStandardButton" text="" virtual="true">
+        <Size x="128" y="32" />
+                            
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\questviewbutton"></NormalTexture>
+        <PushedTexture  file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover"></PushedTexture >
+        <Anchors><Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" y="-5"/></Anchors>
+        <NormalFont style="ChatBubbleFont"></NormalFont>
+        <HighlightFont style="ChatBubbleFont"></HighlightFont>
+       
+    </Button>
+</Ui>
