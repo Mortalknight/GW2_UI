@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
+    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
 	
         <Size x="104" y="104"></Size>
         <Anchors>
@@ -144,7 +144,7 @@
         
     </Button>
     
-    <Frame  name="GwPlayerPowerBar" frameStrata="HIGH" parent="UIParent" virtual="true">
+    <Frame  name="GwPlayerPowerBar" frameStrata="LOW" parent="UIParent" virtual="true">
         <Size x="316" y="18"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86" ></Anchor>
@@ -322,7 +322,7 @@
             </Frame>
         </Frames>
     </Frame>
-    <Button name="GwPlayerPetFrame" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="HIGH"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
+    <Button name="GwPlayerPetFrame" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
         <Size x="328" y="100"></Size>
         <HitRectInsets>
 			<AbsInset left="0" right="0" top="0" bottom="30"/>
