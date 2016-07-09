@@ -16,7 +16,7 @@
         </Scripts>
         
     </Frame>
-    <Frame name="GwBagFrame" enableMouse="true"  parent="UIParent" virtual="true">
+    <Frame name="GwBagFrame" frameStrata="MEDIUM" enableMouse="true"  parent="UIParent" virtual="true">
         <HitRectInsets>
              <AbsInset left="-40" right="0" top="0" bottom="-40"/>
         </HitRectInsets>
@@ -225,7 +225,7 @@
         </Frames>
     </Frame>
     
-    <Frame name="GwBagItemBackdrop" enableMouse="false" virtual="true">
+    <Frame name="GwBagItemBackdrop" frameStrata="HIGH" enableMouse="false" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers >
             <Layer textureSubLevel="-1" level="BACKGROUND">

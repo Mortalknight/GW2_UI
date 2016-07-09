@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Frame name="GwQuestTrackerRadar" virtual="true" parent="GwQuestTracker">
+    <Frame name="GwQuestTrackerRadar" virtual="true" parent="GwQuestTracker" frameStrata="LOW">
         <Size x="300" y="70"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
@@ -56,13 +56,13 @@
             </OnLoad>
         </Scripts>
     </Frame>
-    <Frame name="GwQuestTracker" parent="UIParent" virtual="true">
+    <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW">
         <Size x="300" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwQuesttrackerContainer"  parent="GwQuestTracker" virtual="true" >
+    <Frame name="GwQuesttrackerContainer"  parent="GwQuestTracker" virtual="true" frameStrata="LOW">
          <Size x="300" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -82,7 +82,8 @@
         <Layers>
             <Layer Level="BACKGROUND">
                 
-                <Texture name="$parentSep"  file="Interface\AddOns\GW2_UI\textures\questtracker-sep">
+                <Texture name="$parentSep" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                    <Color r="1" b="1" g="1" a="0.6"></Color>
                     <Size x="300" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
