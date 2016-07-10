@@ -3,7 +3,6 @@ GW_MAP_FRAMES_HIDE[1] =MiniMapMailFrame
 
 GW_MAP_FRAMES_HIDE[3] =GameTimeFrame 
 GW_MAP_FRAMES_HIDE[4] =MiniMapVoiceChatFrame
-GW_MAP_FRAMES_HIDE[5] =TimeManagerClockButton
 
 GW_MAP_FRAMES_HIDE[6] =MiniMapTrackingButton
 GW_MAP_FRAMES_HIDE[7] =GarrisonLandingPageMinimapButton
@@ -12,6 +11,8 @@ GW_MAP_FRAMES_HIDE[8] =MiniMapTracking
 GW_MAP_FRAMES_HOVER = {}
 GW_MAP_FRAMES_HOVER[1] = 'mapGradient'
 GW_MAP_FRAMES_HOVER[2] = 'MinimapZoneText'
+GW_MAP_FRAMES_HOVER[3] = 'TimeManagerClockButton'
+GW_MAP_FRAMES_HOVER[4] = 'TimeManagerClockTicker'
 
 local animationIndex = 0
 local animationIndexY = 0
@@ -76,6 +77,8 @@ function gw_set_minimap()
 
     Minimap:SetMaskTexture('Interface\\ChatFrame\\ChatFrameBackground')
 
+   
+    
  local child = _G[v]
     Minimap:SetParent(UIParent)
 	
@@ -85,6 +88,21 @@ function gw_set_minimap()
     mapGradient:SetParent(mapShadowBg)
     mapGradient:SetPoint('TOPLEFT',Minimap,'TOPLEFT',0,0)
     mapGradient:SetPoint('TOPRIGHT',Minimap,'TOPRIGHT',0,0)
+    
+    TimeManagerClockTicker:ClearAllPoints()
+	TimeManagerClockTicker:SetPoint("BOTTOMLEFT",Minimap,"BOTTOMLEFT",5,5)
+	TimeManagerClockTicker:SetFont("menomonia",16)
+	TimeManagerClockTicker:SetJustifyH("LEFT")
+	TimeManagerClockTicker:SetTextColor(1,1,1)
+    
+    TimeManagerClockButton:ClearAllPoints()
+	TimeManagerClockButton:SetPoint("BOTTOMLEFT",Minimap,"BOTTOMLEFT",0,0)
+	TimeManagerClockButton:SetWidth(40)
+	TimeManagerClockButton:SetHeight(20)
+    select(1, TimeManagerClockButton:GetRegions()):Hide()
+    
+    TimeManagerClockButton = CreateFrame('Frame','GwMapTime',Minimap,'GwMapTime')
+    
 
     MinimapCluster:Hide()
     MinimapBorder:Hide()
@@ -179,6 +197,7 @@ function gw_set_minimap()
    GameTooltip:SetScript("OnTooltipSetSpell", function(self)
        move_tooltip_placemtn(self) 
     end)
+
 
 end
     function hideMiniMapIcons()

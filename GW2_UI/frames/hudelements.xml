@@ -521,4 +521,10 @@
             </Layer>
         </Layers>
     </Frame>
+    <Frame name="GwMapTime" frameStrata="LOW" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
+        <Size x="100" y="20"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+        </Anchors>
+    </Frame>
 </Ui>
