@@ -270,6 +270,51 @@ function splitString(inputstr, sep,sep2,sep3)
         return t
 end
 
+function gw_button_enter(self)
+    local name = self:GetName()
+    local startTime = GetTime()
+   local w = self:GetWidth()
+    
+    self:SetScript('OnUpdate',function()
+        
+        local a  = GetTime() - startTime
+        local b  =  0.2
+        
+        if GetTime()>(startTime+0.2) then
+            self:SetScript('OnUpdate',nil)
+            return
+        end
+        
+        local l = lerp(0,w,math.sin(a/b * math.pi * 0.5))
+            
+        _G[name..'OnHover']:SetPoint('RIGHT',self,'LEFT',l,0)
+        _G[name..'OnHover']:SetAlpha((a/b))
+           
+    end)
+end
+
+function gw_button_leave(self)
+    local name = self:GetName()
+    local startTime = GetTime()
+     local w = self:GetWidth()
+    
+    self:SetScript('OnUpdate',function()
+        
+        local a  = GetTime() - startTime
+        local b  =  0.2
+        
+        if GetTime()>(startTime+0.2) then
+            self:SetScript('OnUpdate',nil)
+            return
+        end
+        
+        local l = lerp(w,0,math.sin(a/b * math.pi * 0.5))
+            
+        _G[name..'OnHover']:SetPoint('RIGHT',self,'LEFT',l,0)
+        _G[name..'OnHover']:SetAlpha(1-(a/b))
+           
+    end)
+end
 
 
 function isnan(n) return tostring(n) == '-1.#IND' end
