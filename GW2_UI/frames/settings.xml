@@ -134,7 +134,7 @@
                                         <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentSub" text="Enable and disable modules if you prefer to use other addons or simply don't like" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString name="$parentSub" text="Enable and disable modules if you prefer to use other addons, or those you simply don't like." inherits="GameFontNormalSmall" justifyH="LEFT">
                                     <Size x="512" y="25"></Size>
                                     <Color r="0.6" b="0.6" g="0.6"></Color>
                                     <Anchors>
@@ -166,7 +166,7 @@
                                         <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentSub" text="Edit target frames settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString name="$parentSub" text="Edit the target frame settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
                                     <Size x="512" y="25"></Size>
                                     <Color r="0.6" b="0.6" g="0.6"></Color>
                                     <Anchors>
@@ -198,7 +198,7 @@
                                         <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentSub" text="Edit focus frames settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString name="$parentSub" text="Edit focus frame settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
                                     <Size x="512" y="25"></Size>
                                     <Color r="0.6" b="0.6" g="0.6"></Color>
                                     <Anchors>
@@ -231,7 +231,7 @@
                                         <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentSub" text="Edit HUD settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString name="$parentSub" text="Edit HUD modules, for more customization."  inherits="GameFontNormalSmall" justifyH="LEFT">
                                     <Size x="512" y="25"></Size>
                                     <Color r="0.6" b="0.6" g="0.6"></Color>
                                     <Anchors>
@@ -297,7 +297,7 @@
              </OnLeave>
         </Scripts>
     </Button>
-    <Button name="GwOptionBox" frameStrata="HIGHT"  virtual="true">
+    <Button name="GwOptionBox" frameStrata="HIGH"  virtual="true">
         <Size x="244" y="40"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
