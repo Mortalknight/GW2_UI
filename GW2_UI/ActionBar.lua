@@ -60,7 +60,7 @@ end)
 
 
     MainMenuBar:SetScale(1.3)
-          
+    MainMenuBar:SetFrameStrata(LOW)      
 	
     
     
@@ -217,7 +217,7 @@ end)
 
     _G["hotKey" .. i .. "BG"]:ClearAllPoints();
     _G["hotKey" .. i .. "BG"]:SetFrameLevel(3)
-    _G["hotKey" .. i .. "BG"]:SetFrameStrata("MEDIUM")
+    _G["hotKey" .. i .. "BG"]:SetFrameStrata("LOW")
     _G["hotKey" .. i .. "BGt"]:SetVertexColor(0,0,0,1);
     _G["hotKey" .. i .. "BG"]:SetPoint('CENTER', _G["ActionButton" .. i .. "HotKey"], 'CENTER', 0,-2);
     

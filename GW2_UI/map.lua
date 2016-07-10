@@ -78,6 +78,8 @@ function gw_set_minimap()
 
  local child = _G[v]
     Minimap:SetParent(UIParent)
+	
+	Minimap:SetFrameStrata(LOW)
     
     mapGradient = CreateFrame('Frame','GwMapGradient',mapShadowBg,'GwMapGradient')
     mapGradient:SetParent(mapShadowBg)

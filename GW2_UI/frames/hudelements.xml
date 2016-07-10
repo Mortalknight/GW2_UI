@@ -206,7 +206,7 @@
         </Anchors>
         
     </Frame>
-    <Frame  name="GwPlayerClassPower" frameStrata="HIGH" parent="UIParent" virtual="true">
+    <Frame  name="GwPlayerClassPower" frameStrata="LOW" parent="UIParent" virtual="true">
         <Size x="316" y="18"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-372" y="86" ></Anchor>
@@ -382,7 +382,7 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
     </Frame>
-    <Button name="GwMicroButtonTemplate" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="HIGH"  enableMouse="true" parent="UIParent"   virtual="true">
+    <Button name="GwMicroButtonTemplate" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent"   virtual="true">
         <Size x="24" y="24"></Size>
         <Layers>
             <Layer level="OVERLAY">
@@ -505,7 +505,8 @@
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\stance-icon"></NormalTexture>
         <PushedTexture  file="Interface\AddOns\GW2_UI\textures\stance-icon"></PushedTexture >
     </Button>
-    <Frame name="GwMapGradient" frameStrata="MEDIUM" frameLevel="1" virtual="true">
+    <Frame name="GwMapGradient" frameStrata="LOW" frameLevel="2" virtual="true">
+	
         <Size x="32" y="32"></Size>
         <Layers>
             <Layer>
@@ -520,6 +521,4 @@
             </Layer>
         </Layers>
     </Frame>
-    
-    
 </Ui>
