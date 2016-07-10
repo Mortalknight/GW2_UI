@@ -76,7 +76,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Show Buffs','Display the focus target\'s buffs','focus_BUFFS','GwSettingsFocusOptions')
    
     create_settings_cat('HUD','Edit HUD settings','GwSettingsHudOptions',3)
-    addOption('Fade Actionbars','Don\'t fade the extra action bars','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
+    addOption('Fade Actionbars','Fade the extra action bars','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
     addOption('Dynamic HUD','Change the HUD appearance','HUD_SPELL_SWAP','GwSettingsHudOptions')
     
     
