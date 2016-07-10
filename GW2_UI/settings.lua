@@ -36,7 +36,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
 
 
     
-    create_settings_cat('MODULES','Enable and disable components','GwSettingsModuleOption')
+    create_settings_cat('MODULES','Enable and disable components','GwSettingsModuleOption',0)
     
     
     
@@ -57,7 +57,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Actionbars', 'Styel actionbars','ACTIONBARS_ENABLED','GwSettingsModuleOption')
     addOption('Bags', 'Styel bags','BAGS_ENABLED','GwSettingsModuleOption')
     
-    create_settings_cat('TARGET','Edit target frame settings','GwSettingsTargetOptions')
+    create_settings_cat('TARGET','Edit target frame settings','GwSettingsTargetOptions',1)
     
     addOption('Targets Target','Display targets target','target_TARGET_ENABLED','GwSettingsTargetOptions')
     addOption('Health Value','Display health text','target_HEALTH_VALUE_ENABLED','GwSettingsTargetOptions')
@@ -67,7 +67,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Show Buffs','Display buffs','target_BUFFS','GwSettingsTargetOptions')
     
     
-    create_settings_cat('FOCUS','Edit focus frame settings','GwSettingsFocusOptions')
+    create_settings_cat('FOCUS','Edit focus frame settings','GwSettingsFocusOptions',2)
     
     addOption('Focus Target','Display focus target','focus_TARGET_ENABLED','GwSettingsFocusOptions')
     addOption('Health Value','Display health text','focus_HEALTH_VALUE_ENABLED','GwSettingsFocusOptions')
@@ -75,7 +75,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Show Debuffs','Display debuffs','focus_DEBUFFS','GwSettingsFocusOptions')
     addOption('Show Buffs','Display buffs','focus_BUFFS','GwSettingsFocusOptions')
    
-    create_settings_cat('HUD','Edit HUD settings','GwSettingsHudOptions')
+    create_settings_cat('HUD','Edit HUD settings','GwSettingsHudOptions',3)
     addOption('Fade Actionbars','Fade extra actionbars out of combat','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
     addOption('Dynamic HUD','Change the appearance of the HUD','HUD_SPELL_SWAP','GwSettingsHudOptions')
     
@@ -87,13 +87,14 @@ end
 
 
 
-function create_settings_cat(name,desc,frameName)
+function create_settings_cat(name,desc,frameName,icon)
     
     local i = countTable(settings_cat)
     settings_cat[i] = frameName
 
     local f = CreateFrame('Button','GwSettingsLabel'..i,UIParent,'GwSettingsLabel')
     f:SetPoint('TOPLEFT',-40,-32+(-40*i))
+    _G['GwSettingsLabel'..i..'Texture']:SetTexCoord(0,1,0.25*icon,0.25*(icon+1))
     
     f:SetScript('OnEnter',function() 
         GameTooltip:SetOwner(f, "ANCHOR_CURSOR"); GameTooltip:ClearLines();  GameTooltip:SetText(name..'\n'..desc) GameTooltip:Show()     
