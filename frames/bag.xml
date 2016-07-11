@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     
-    <Frame name="GwBagMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+    <Frame name="GwBagMoverFrame" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="470" y="40"></Size>
        <Anchors>
             <Anchor point="RIGHT" x="-256" y="256"></Anchor>
@@ -16,7 +16,7 @@
         </Scripts>
         
     </Frame>
-    <Frame name="GwBagFrame" frameStrata="MEDIUM" toplevel="true" enableMouse="true"  parent="UIParent" virtual="true">
+    <Frame name="GwBagFrame" frameStrata="HIGH" frameLevel="2" enableMouse="true"  parent="UIParent" virtual="true">
         <HitRectInsets>
              <AbsInset left="-40" right="0" top="0" bottom="-40"/>
         </HitRectInsets>
@@ -205,19 +205,23 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
-            </Frame>            <Frame name="GwBagContainer1">
+            </Frame>            
+            <Frame name="GwBagContainer1">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
-            </Frame>            <Frame name="GwBagContainer2">
+            </Frame>            
+            <Frame name="GwBagContainer2">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
-            </Frame>            <Frame name="GwBagContainer3">
+            </Frame>            
+            <Frame name="GwBagContainer3">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
-            </Frame>            <Frame name="GwBagContainer4">
+            </Frame>            
+            <Frame name="GwBagContainer4">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
@@ -225,9 +229,9 @@
         </Frames>
     </Frame>
     
-    <Frame name="GwBagItemBackdrop" frameStrata="HIGH" enableMouse="false" virtual="true">
+    <Frame name="GwBagItemBackdrop" frameStrata="HIGH" frameLevel="5" enableMouse="false" virtual="true">
         <Size x="40" y="40"></Size>
-        <Layers >
+        <Layers>
             <Layer textureSubLevel="-1" level="BACKGROUND">
                <Texture name="$parentBackground"   file="Interface\AddOns\GW2_UI\textures\bag\bagitembackdrop">
                     <Anchors>

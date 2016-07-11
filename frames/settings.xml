@@ -22,7 +22,7 @@
         </Scripts>
         
     </Frame>
-    <Frame name="GwSettingsWindow" enableMouse="true" parent="UIParent" virtual="true">
+    <Frame name="GwSettingsWindow" frameStrata="HIGH" enableMouse="true" parent="UIParent" virtual="true">
         <Size x="512" y="512"></Size>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSettingsMoverFrame" relativePoint="TOP" x="20" y="-40"></Anchor>
