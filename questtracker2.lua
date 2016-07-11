@@ -224,6 +224,7 @@ function gw_check_senario()
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isComplete'] = false
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isTask'] = false
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isOnMap'] = true
+    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['flags'] = flags
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['subHeader'] = stageDescription
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['GW_TYPE'] = 'SCENARIO'
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES']={}
@@ -232,14 +233,20 @@ function gw_check_senario()
 
     
     for criteriaIndex = 1, numCriteria do
-        local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed = C_Scenario.GetCriteriaInfo(criteriaIndex);
-        criteriaString = string.format("%d/%d %s", quantity, totalQuantity, criteriaString);
+        local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, __, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex);
 
+       local objectiveType ='progressbar'
+        if not isWeightedProgress then
+            criteriaString = string.format("%d/%d %s", quantity, totalQuantity, criteriaString);
+            objectiveType = 'monster'
+        end
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex] ={}
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['questLogIndex'] = 0
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['text'] = criteriaString
-        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['objectiveType'] = monster
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['objectiveType'] = objectiveType
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['finished'] = false   
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['quantity'] = quantity   
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['GW_TYPE'] = 'SCENARIO'   
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['questID'] = 0  
         lastInserted = criteriaIndex
     end
@@ -364,11 +371,13 @@ function gw_display_questtracker_layout()
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetShadowOffset(-1,-1)
         
         local subHeader =''
-        if v['subHeader']~=nil and v['subHeader']~='' then
-           subHeader = v['subHeader']
-            subHeader_Height = 30
+        if GW_HIDDEN_QUESTS[v['questID']]~=nil and GW_HIDDEN_QUESTS[v['questID']]==false then
+            if v['subHeader']~=nil and v['subHeader']~='' then
+                subHeader = v['subHeader']
+                subHeader_Height = 30
+            end
         end
-            _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetText(subHeader)
+        _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetText(subHeader)
         
         
         if ( IsQuestComplete(v['questID']) and GetQuestLogIsAutoComplete(v['questLogIndex']) ) then
@@ -499,7 +508,11 @@ function gw_objective_use_builtin_bar(objective_array,objectiveFrame)
             _G[objectiveFrame..'StatusBar']:Show()
             _G[objectiveFrame..'StatusBarBg']:Show()
             _G[objectiveFrame..'StatusBar']:SetMinMaxValues(0, 100)
-            _G[objectiveFrame..'StatusBar']:SetValue(GetQuestProgressBarPercent(objective_array['questID']) )
+            if objective_array['GW_TYPE']=='SCENARIO' then
+                _G[objectiveFrame..'StatusBar']:SetValue(objective_array['quantity'])
+            else  
+                _G[objectiveFrame..'StatusBar']:SetValue(GetQuestProgressBarPercent(objective_array['questID']) )
+            end
         return true
     end
     _G[objectiveFrame..'StatusBar']:Hide()
