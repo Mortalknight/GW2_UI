@@ -58,18 +58,18 @@
         </Layers>
         <Frames>
             <StatusBar name="$parentBarCandy"  defaultValue="1" frameLevel="2"  minValue="0" maxValue="1" >
-                <Size x="1" y="16" />
+                <Size x="1" y="8" />
                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0" />
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-64" y="0"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="64" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-64" y="-4"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
             </StatusBar>
             <StatusBar name="$parentBar"  defaultValue="1" frameLevel="3"  minValue="0" maxValue="1">
-                <Size x="1" y="16" />
+                <Size x="1" y="8" />
                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0" />
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-64" y="0"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="64" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-64" y="-4"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbar" /> 
                 <Frames>
@@ -81,7 +81,41 @@
                         <Layers>
                             <Layer>
                                 <Texture name="expBarspark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
-                                    <Size x="5" y="5"></Size>
+                                    <Size x="8" y="8"></Size>
+                                </Texture>  
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </StatusBar>
+            <StatusBar name="$parentArtifactBarCandy"  defaultValue="1" frameLevel="2"  minValue="0" maxValue="1" >
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="64" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-64" y="-4"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+            </StatusBar>
+            <StatusBar name="$parentArtifactBar"  defaultValue="1" frameLevel="3"  minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="64" y="4" />
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-64" y="4"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\artifactbar" /> 
+                <Frames>
+                    <Frame name="ExperienceBarSpark" frameLevel="4" >
+                        <Size x="8" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture name="ArtifactBarSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
+                                    <Size x="8" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT"></Anchor>
+                                    </Anchors>
                                 </Texture>  
                             </Layer>
                         </Layers>
@@ -97,6 +131,9 @@
                 </Anchors>
                 <Layers>
                     <Layer >  
+                         <Texture name="dubbleBarSep" hidden="true" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
+                            <Size x="1" y="2"></Size>
+                        </Texture>  
                         <Texture name="barsep1" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
                             <Size x="4" y="16"></Size>
                         </Texture>  
