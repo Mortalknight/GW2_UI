@@ -60,7 +60,8 @@ end)
     MainMenuExpBar:SetScript("OnEvent", nil);
 
 
-    MainMenuBar:SetScale(1.3)    
+    MainMenuBar:SetScale(1.3)
+    MainMenuBar:SetFrameLevel(1)
 	
     
     
@@ -91,6 +92,14 @@ end)
     PetActionBarFrame:ClearAllPoints()
     PetActionButton1:ClearAllPoints()
     PetActionButton1:SetParent(PetActionBarFrame);
+    
+    
+    
+    MultiBarLeft:SetFrameLevel(2)
+	MultiBarRight:SetFrameLevel(2)
+
+    MultiBarBottomLeft:SetFrameLevel(2)
+    MultiBarBottomRight:SetFrameLevel(2)
 
 	
 

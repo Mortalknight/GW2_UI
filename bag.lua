@@ -55,6 +55,19 @@ function gw_create_bgframe()
     BagItemSearchBox:RegisterEvent('BAG_UPDATE_DELAYD')
     BagItemSearchBox:RegisterEvent('BAG_UPDATE')
 
+    ContainerFrame1:SetFrameStrata(HIGH)
+    ContainerFrame1:SetFrameLevel(5)
+    ContainerFrame2:SetFrameStrata(HIGH)
+    ContainerFrame2:SetFrameLevel(5)
+    ContainerFrame3:SetFrameStrata(HIGH)
+    ContainerFrame3:SetFrameLevel(5)
+    ContainerFrame4:SetFrameStrata(HIGH)
+    ContainerFrame4:SetFrameLevel(5)
+    ContainerFrame5:SetFrameStrata(HIGH)
+    ContainerFrame5:SetFrameLevel(5)
+    ContainerFrame6:SetFrameStrata(HIGH)
+    ContainerFrame6:SetFrameLevel(5)
+
 end
 
 function gw_move_bagbar()
@@ -130,6 +143,8 @@ function gw_relocate_searchbox()
     BagItemSearchBox.Middle:SetTexCoord(0,1,0,1)
     BagItemSearchBox.SetPoint = function() end
     BagItemSearchBox.ClearAllPoints = function() end
+    
+    BagItemSearchBox:SetFrameLevel(5)
     
 end
 
