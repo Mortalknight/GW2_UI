@@ -1,9 +1,8 @@
 GW_MAP_FRAMES_HIDE ={}
 GW_MAP_FRAMES_HIDE[1] =MiniMapMailFrame 
 
-GW_MAP_FRAMES_HIDE[3] =GameTimeFrame 
 GW_MAP_FRAMES_HIDE[4] =MiniMapVoiceChatFrame
-
+GW_MAP_FRAMES_HIDE[5] =GameTimeFrame
 GW_MAP_FRAMES_HIDE[6] =MiniMapTrackingButton
 GW_MAP_FRAMES_HIDE[7] =GarrisonLandingPageMinimapButton
 GW_MAP_FRAMES_HIDE[8] =MiniMapTracking
@@ -120,11 +119,11 @@ function gw_set_minimap()
 
 
     GarrisonLandingPageMinimapButton:SetPoint('TOPLEFT',Minimap,0,30)
+    GameTimeFrame:SetPoint('TOPLEFT',Minimap,-42,0)
     MiniMapTracking:SetPoint('TOPLEFT',Minimap,-15,-30)
     MiniMapMailFrame:SetPoint('TOPLEFT',Minimap,45,15)
     QueueStatusMinimapButton:ClearAllPoints()
     QueueStatusMinimapButton:SetPoint('TOPLEFT',Minimap,'TOPRIGHT',45,0)
-    GameTimeFrame:SetPoint('TOPRIGHT',Minimap,0,25)
 
     MinimapZoneText:SetTextColor(1,1,1)
     
@@ -134,13 +133,20 @@ function gw_set_minimap()
     
     QueueStatusMinimapButtonBorder:SetTexture(nil)
     QueueStatusMinimapButton:ClearAllPoints()
-    QueueStatusMinimapButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-10,-80)
+    QueueStatusMinimapButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-5,-69)
+    
+    GameTimeFrame:ClearAllPoints()
+    GameTimeFrame:SetPoint('TOPLEFT',Minimap,-42,0)
+    GameTimeFrame:SetScale(0.8)
+    
+    GameTimeFrame = CreateFrame('Button','GwCalendarButton',UIParent,'GwCalendarButton')
+    GwCalendarButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-7,0)
     
     local GwGarrisonButton = CreateFrame('Button','GwGarrisonButton',UIParent,'GwGarrisonButton')
-    GwGarrisonButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',0,7)
+    GwGarrisonButton:SetPoint('BOTTOMRIGHT',Minimap,'BOTTOMLEFT',1,-7)
     
     local GwMailButton = CreateFrame('Button','GwMailButton',UIParent,'GwMailButton')
-    GwMailButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-10,-40)
+    GwMailButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-12,-47)
     
     
     hooksecurefunc(Minimap,'SetScale',function()
