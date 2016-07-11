@@ -262,11 +262,11 @@ end)
         _G["PetActionButton" .. i..'FloatingBG']:SetTexture(nil)
     end
     
-    _G["MultiBarLeftButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-    _G["MultiBarRightButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-    _G["ActionButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-    _G["MultiBarBottomRightButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-    _G["MultiBarBottomLeftButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    _G["MultiBarLeftButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
+    _G["MultiBarRightButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
+    _G["ActionButton" .. i ]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
+    _G["MultiBarBottomRightButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
+    _G["MultiBarBottomLeftButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
     
        
     
@@ -290,7 +290,7 @@ end)
     _G["MultiBarBottomLeftButton" .. i ]:SetNormalTexture(nil)
         
     if  _G["StanceButton"..i.."Icon"]~=nil then
-        _G["StanceButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        _G["StanceButton" .. i]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
         _G["StanceButton" .. i]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
         _G["StanceButton" .. i]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
             if _G["StanceButton" .. i..'NormalTexture2']  then
