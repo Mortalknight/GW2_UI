@@ -103,6 +103,8 @@ function gw_set_minimap()
     
     TimeManagerClockButton = CreateFrame('Frame','GwMapTime',Minimap,'GwMapTime')
     
+    MinimapNorthTag:ClearAllPoints()
+    MinimapNorthTag:SetPoint('TOP',Minimap,0,0)
 
     MinimapCluster:Hide()
     MinimapBorder:Hide()
