@@ -16,7 +16,7 @@
         </Scripts>
         
     </Frame>
-    <Frame name="GwBagFrame" frameStrata="MEDIUM" enableMouse="true"  parent="UIParent" virtual="true">
+    <Frame name="GwBagFrame" frameStrata="MEDIUM" toplevel="true" enableMouse="true"  parent="UIParent" virtual="true">
         <HitRectInsets>
              <AbsInset left="-40" right="0" top="0" bottom="-40"/>
         </HitRectInsets>

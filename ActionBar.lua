@@ -38,6 +38,7 @@ end)
     MultiBarBottomLeft:SetScale(0.8)
     MultiBarBottomRight:SetScale(0.8)
     
+    
     local left_saved_point = gwGetSetting('multibarleft_pos');
     local right_saved_point = gwGetSetting('multibarright_pos');
     
@@ -59,8 +60,7 @@ end)
     MainMenuExpBar:SetScript("OnEvent", nil);
 
 
-    MainMenuBar:SetScale(1.3)
-    MainMenuBar:SetFrameStrata(LOW)      
+    MainMenuBar:SetScale(1.3)    
 	
     
     
