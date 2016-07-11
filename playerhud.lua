@@ -7,6 +7,8 @@ healthGlobeAnimation = 1;
 powerBarAnimation = 1;
 petBarAnimation = 1;
 
+local LastPlayerPowerType = 0
+
 function create_pet_frame()
     
     local playerPetFrame = CreateFrame('Button', 'GwPlayerPetFrame',UIParent, 'GwPlayerPetFrame');
@@ -53,7 +55,10 @@ function create_power_bar()
     
     
     playerPowerBar:SetScript('OnEvent',function(self,event,unit)
-            if unit=='player' then
+            if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit=='player' then
+                update_power_data(GwPlayerPowerBar) 
+            end 
+            if event=='UPDATE_SHAPESHIFT_FORM' then
                 update_power_data(GwPlayerPowerBar) 
             end
     end)
@@ -165,8 +170,9 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
     if forcePowerType==nil then
         forcePowerType, powerToken, altR, altG, altB = UnitPowerType("player")
         forceAnimationName = 'powerBarAnimation'
+    
     end
-
+    local animation_duration = 0.2
     local power = UnitPower('Player',forcePowerType)
     local powerMax = UnitPowerMax('Player',forcePowerType)
     local powerPrec = 0
@@ -175,7 +181,6 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
      if power>0 and powerMax>0 then
          powerPrec = power/powerMax
     end
-    
    
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
@@ -184,7 +189,7 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
         _G[self:GetName()..'Candy']:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
     
-    addToAnimation(forceAnimationName,powerBarAnimations[forceAnimationName],powerPrec,GetTime(),0.2,function()
+    addToAnimation(forceAnimationName,powerBarAnimations[forceAnimationName],powerPrec,GetTime(),animation_duration,function()
             
             
  

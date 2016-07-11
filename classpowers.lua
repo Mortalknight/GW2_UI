@@ -200,9 +200,9 @@ function GW_POWERTYPE_RUNE()
 end
 
 function GW_POWERTYPE_MANABAR()
-    if extra_manabar==true then return end
+    if extra_manabar_loaded then return end
 
-    extra_manabar = true
+    extra_manabar_loaded = true
     local GwExtraPlayerPowerBar = CreateFrame('Frame', 'GwExtraPlayerPowerBar',UIParent, 'GwPlayerPowerBar');
     
     
