@@ -41,43 +41,43 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     
     
-    addOption('Health Globe','Player health globe','HEALTHGLOBE_ENABLED','GwSettingsModuleOption')
-    addOption('Power','Player power bar','POWERBAR_ENABLED','GwSettingsModuleOption')
-    addOption('Pet','Replace wow default pet','PET_ENABLED','GwSettingsModuleOption')
-    addOption('Focus','Replace wow default focus','FOCUS_ENABLED','GwSettingsModuleOption')
-    addOption('Target','Replace wow default target','TARGET_ENABLED','GwSettingsModuleOption')
-    addOption('Chatbubbles', 'Style chatbubbles','CHATBUBBLES_ENABLED','GwSettingsModuleOption')
-    addOption('Minimap', 'Style the minimap','MINIMAP_ENABLED','GwSettingsModuleOption')
-    addOption('Quest Tracker', 'Style the quest tracker','QUESTTRACKER_ENABLED','GwSettingsModuleOption')
-    addOption('Tooltips', 'Style tooltips','TOOLTIPS_ENABLED','GwSettingsModuleOption')
-    addOption('Chatframe', 'Style chatframe','CHATFRAME_ENABLED','GwSettingsModuleOption')
-    addOption('Questview', 'Style quest interface','QUESTVIEW_ENABLED','GwSettingsModuleOption')
-    addOption('Npc Cam', 'Focus camera on npcs','NPC_CAM_ENABLED','GwSettingsModuleOption')
-    addOption('Player buffs', 'Move player buffs','PLAYER_BUFFS_ENABLED','GwSettingsModuleOption')
-    addOption('Actionbars', 'Styel actionbars','ACTIONBARS_ENABLED','GwSettingsModuleOption')
-    addOption('Bags', 'Styel bags','BAGS_ENABLED','GwSettingsModuleOption')
+    addOption('Health Globe','Health Bar Replacement','HEALTHGLOBE_ENABLED','GwSettingsModuleOption')
+    addOption('Power','Mana/Power Bar Replacement','POWERBAR_ENABLED','GwSettingsModuleOption')
+    addOption('Pet','Pet Frame Replacement','PET_ENABLED','GwSettingsModuleOption')
+    addOption('Focus','Focus Frame Replacement','FOCUS_ENABLED','GwSettingsModuleOption')
+    addOption('Target','Target Frame Replacement','TARGET_ENABLED','GwSettingsModuleOption')
+    addOption('Chatbubbles', 'Use the GW2 Chatbubbles','CHATBUBBLES_ENABLED','GwSettingsModuleOption')
+    addOption('Minimap', 'Use the GW2 Minimap frame','MINIMAP_ENABLED','GwSettingsModuleOption')
+    addOption('Quest Tracker', 'Use the revamped Quest Tracker','QUESTTRACKER_ENABLED','GwSettingsModuleOption')
+    addOption('Tooltips', 'Use the GW2 Tooltips','TOOLTIPS_ENABLED','GwSettingsModuleOption')
+    addOption('Chat', 'Use the restyled Chat Frame','CHATFRAME_ENABLED','GwSettingsModuleOption')
+    addOption('Immersive Questing', 'Use the immersive Quest Screen','QUESTVIEW_ENABLED','GwSettingsModuleOption')
+    addOption('NPC Zoom', 'Focus the camera on NPCs','NPC_CAM_ENABLED','GwSettingsModuleOption')
+    addOption('Player Auras', 'Move and resize player auras','PLAYER_BUFFS_ENABLED','GwSettingsModuleOption')
+    addOption('Action Bars', 'Use the GW2 styled action bars','ACTIONBARS_ENABLED','GwSettingsModuleOption')
+    addOption('Bags', 'Use the unified GW2 bag interface','BAGS_ENABLED','GwSettingsModuleOption')
     
-    create_settings_cat('TARGET','Edit target frame settings','GwSettingsTargetOptions',1)
+    create_settings_cat('TARGET','Edit the target frame settings','GwSettingsTargetOptions',1)
     
-    addOption('Targets Target','Display targets target','target_TARGET_ENABLED','GwSettingsTargetOptions')
-    addOption('Health Value','Display health text','target_HEALTH_VALUE_ENABLED','GwSettingsTargetOptions')
-    addOption('Health Percentage','Display health text as percentage','target_HEALTH_VALUE_TYPE','GwSettingsTargetOptions')
-    addOption('Show Debuffs','Display debuffs','target_DEBUFFS','GwSettingsTargetOptions')
+    addOption('Target of Target','Display the target\'s target','target_TARGET_ENABLED','GwSettingsTargetOptions')
+    addOption('Health Value','Display health information','target_HEALTH_VALUE_ENABLED','GwSettingsTargetOptions')
+    addOption('Health Percentage','Display health info as a percentage','target_HEALTH_VALUE_TYPE','GwSettingsTargetOptions')
+    addOption('Show Debuffs','Display the target\'s debuffs','target_DEBUFFS','GwSettingsTargetOptions')
 
-    addOption('Show Buffs','Display buffs','target_BUFFS','GwSettingsTargetOptions')
+    addOption('Show Buffs','Display the target\'s buffs','target_BUFFS','GwSettingsTargetOptions')
     
     
     create_settings_cat('FOCUS','Edit focus frame settings','GwSettingsFocusOptions',2)
     
-    addOption('Focus Target','Display focus target','focus_TARGET_ENABLED','GwSettingsFocusOptions')
-    addOption('Health Value','Display health text','focus_HEALTH_VALUE_ENABLED','GwSettingsFocusOptions')
-    addOption('Health Percentage','Display health text as percentage','focus_HEALTH_VALUE_TYPE','GwSettingsFocusOptions')
-    addOption('Show Debuffs','Display debuffs','focus_DEBUFFS','GwSettingsFocusOptions')
-    addOption('Show Buffs','Display buffs','focus_BUFFS','GwSettingsFocusOptions')
+    addOption('Focus Target','Display the focus target','focus_TARGET_ENABLED','GwSettingsFocusOptions')
+    addOption('Health Value','Display health information','focus_HEALTH_VALUE_ENABLED','GwSettingsFocusOptions')
+    addOption('Health Percentage','Display health info as a percentage','focus_HEALTH_VALUE_TYPE','GwSettingsFocusOptions')
+    addOption('Show Debuffs','Display the focus target\'s debuffs','focus_DEBUFFS','GwSettingsFocusOptions')
+    addOption('Show Buffs','Display the focus target\'s buffs','focus_BUFFS','GwSettingsFocusOptions')
    
     create_settings_cat('HUD','Edit HUD settings','GwSettingsHudOptions',3)
-    addOption('Fade Actionbars','Fade extra actionbars out of combat','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
-    addOption('Dynamic HUD','Change the appearance of the HUD','HUD_SPELL_SWAP','GwSettingsHudOptions')
+    addOption('Fade Actionbars','Fade the extra action bars','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
+    addOption('Dynamic HUD','Change the HUD appearance','HUD_SPELL_SWAP','GwSettingsHudOptions')
     
     
     
