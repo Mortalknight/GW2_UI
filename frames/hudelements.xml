@@ -471,6 +471,13 @@
         <Size x="40" y="40"/>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar"></NormalTexture>
         <PushedTexture  file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
+        <Layers>
+            <Layer>
+                <FontString name="GwDateText">
+                    <Size x="30" y="20"></Size>
+                </FontString>
+            </Layer>
+        </Layers>
         <Scripts>
             <OnShow>
 				if (IsKioskModeEnabled()) then
