@@ -148,7 +148,8 @@ function gw_set_minimap()
     local GwMailButton = CreateFrame('Button','GwMailButton',UIParent,'GwMailButton')
     GwMailButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-12,-47)
     
-    GwDateText:SetFont("UNIT_NAME_FONT",14)
+    GwDateText:SetFont(UNIT_NAME_FONT,14)
+    GwDateText:SetTextColor(0,0,0)
     GwDateText:SetText(date('%d'))
     
     hooksecurefunc(Minimap,'SetScale',function()

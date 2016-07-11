@@ -473,8 +473,12 @@
         <PushedTexture  file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
         <Layers>
             <Layer>
-                <FontString name="GwDateText">
-                    <Size x="30" y="20"></Size>
+                <FontString name="GwDateText" justifyH="CENTER" justifyV="MIDDLE">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
+                    </Anchors>
+                    
                 </FontString>
             </Layer>
         </Layers>
