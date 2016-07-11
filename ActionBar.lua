@@ -57,7 +57,10 @@ end)
 	
     ReputationWatchBar:Hide()
     MainMenuExpBar:Hide()
-    MainMenuExpBar:SetScript("OnEvent", nil);
+    MainMenuExpBar:SetScript("OnEvent", nil); 
+    
+    ArtifactWatchBar:Hide()
+    ArtifactWatchBar:SetScript("OnEvent", nil);
 
 
     MainMenuBar:SetScale(1.3)    
@@ -65,6 +68,7 @@ end)
     
     
     MainMenuExpBar:SetScript('OnShow',function(self) self:Hide() end)
+    ArtifactWatchBar:SetScript('OnShow',function(self) self:Hide() end)
     
     ReputationWatchBar:SetScript('OnShow',function(self) self:Hide() end)
     

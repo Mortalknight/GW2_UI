@@ -287,7 +287,9 @@ function loadExperienceBar()
 local experiencebar =  CreateFrame('Frame', 'GwExperienceFrame',UIParent,'GwExperienceBar');
 local eName = experiencebar:GetName()
     
-      
+      experiencebarAnimation = UnitXP('Player')/UnitXPMax('Player')
+    
+    _G['GwExperienceFrameArtifactBar'].artifactBarAnimation = 0
     _G['GwExperienceFrameNextLevel']:SetFont(UNIT_NAME_FONT,12)
     _G['GwExperienceFrameCurrentLevel']:SetFont(UNIT_NAME_FONT,12)
     
@@ -297,10 +299,17 @@ local eName = experiencebar:GetName()
     experiencebar:SetScript('OnEvent',update_experiencebar_data)
     experiencebar:RegisterEvent('PLAYER_XP_UPDATE')
     experiencebar:RegisterEvent("UPDATE_FACTION");
+    experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
+    experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE");
     
     
     experiencebar:SetScript('OnEnter',  show_experiencebar_tooltip)
-    experiencebar:SetScript('OnLeave', function() GameTooltip:Hide()   UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),1) end)
+    experiencebar:SetScript('OnLeave', function() GameTooltip:Hide()
+            UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),1)
+            UIFrameFadeIn(_G['GwExperienceFrameArtifactBar'], 0.2, _G['GwExperienceFrameArtifactBar']:GetAlpha(),1)
+    end)
+    
+  
     
     
     
@@ -311,14 +320,52 @@ function show_experiencebar_tooltip()
     
     local valCurrent = UnitXP('Player')
     local valMax = UnitXPMax('Player')
+    local tooltipText = 'Experience: '..valCurrent.." / "..valMax
     
-     UIFrameFadeOut(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),0)
     
-    GameTooltip:SetOwner(_G['GwExperienceFrame'], "ANCHOR_CURSOR"); GameTooltip:ClearLines(); GameTooltip:SetText(valCurrent.." / "..valMax) GameTooltip:Show() 
+    UIFrameFadeOut(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),0)
+    UIFrameFadeOut(_G['GwExperienceFrameArtifactBar'], 0.2, _G['GwExperienceFrameArtifactBar']:GetAlpha(),0)
+    
+    local showArtifact = HasArtifactEquipped()
+    
+    if showArtifact then
+        
+        numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
+      
+        local artifactVal = artifactXP/xpForNextPoint
+        
+        
+        tooltipText = tooltipText..'\nArtifact: '..artifactXP..' / '..xpForNextPoint
+    end
+    
+    GameTooltip:SetOwner(_G['GwExperienceFrame'], "ANCHOR_CURSOR");
+    GameTooltip:ClearLines();
+    GameTooltip:SetText(tooltipText)
+    GameTooltip:Show() 
 end
 
 
+function gw_artifact_points()
+    
+    local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+    
+    local numPoints = 0;
+	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+	while totalXP >= xpForNextPoint and xpForNextPoint > 0 do
+		totalXP = totalXP - xpForNextPoint;
+
+		pointsSpent = pointsSpent + 1;
+		numPoints = numPoints + 1;
+
+		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+	end
+	return numPoints, totalXP, xpForNextPoint;
+    
+end
+
 function update_experiencebar_data(self,event)
+    
+    local showArtifact = HasArtifactEquipped()
     
     local valCurrent = UnitXP('Player')
     local valMax = UnitXPMax('Player')
@@ -326,6 +373,15 @@ function update_experiencebar_data(self,event)
     
     local level = UnitLevel('Player')
     local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel('Player') +1)
+    local showBar1 = false
+    local showBar2 = false
+
+    if level<Nextlevel then
+        showBar1 = true
+    end
+    
+    local dif = 5
+    
     
     ReputationWatchBar:Hide()
     if level==Nextlevel  then
@@ -342,19 +398,38 @@ function update_experiencebar_data(self,event)
 
                 Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
                 valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
+                showBar1 = true
                 _G['GwExperienceFrameBar']:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r,FACTION_BAR_COLORS[reaction].g,FACTION_BAR_COLORS[reaction].b)
             end
         end
     end
-       
     
-    _G['GwExperienceFrameBarCandy']:SetValue(valPrec)
     
-    if experiencebarAnimation>valPrec then
-        experiencebarAnimation = 0
+    if showArtifact then
+             
+        showBar2 = true
+        numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
+        local artifactVal = artifactXP/xpForNextPoint
+        
+        artifactVal = 0.52
+        _G['GwExperienceFrameArtifactBarCandy']:SetValue(artifactVal)
+      
+        addToAnimation('artifactBarAnimation',_G['GwExperienceFrameArtifactBar'].artifactBarAnimation,artifactVal,GetTime(),dif,function()
+            
+                ArtifactBarSpark:SetWidth(math.max(8,math.min(9, _G['GwExperienceFrameArtifactBar']:GetWidth()*animations['artifactBarAnimation']['progress']) ))
+            
+                _G['GwExperienceFrameArtifactBar']:SetValue(animations['artifactBarAnimation']['progress'])
+                ArtifactBarSpark:SetPoint('LEFT', _G['GwExperienceFrameArtifactBar']:GetWidth()*animations['artifactBarAnimation']['progress'] -8,0)
+           
+        end)
+        
+  
     end
     
-    local dif = 5
+    
+
+    
+
     
     addToAnimation('experiencebarAnimation',experiencebarAnimation,valPrec,GetTime(),dif,function()
             
@@ -369,17 +444,65 @@ function update_experiencebar_data(self,event)
     
     _G['GwExperienceFrameNextLevel']:SetText(Nextlevel);
     _G['GwExperienceFrameCurrentLevel']:SetText(level);
+        if showBar1 and not showBar2 then
+        _G['GwExperienceFrameBar']:SetHeight(8)
+        _G['GwExperienceFrameBarCandy']:SetHeight(8)
+        _G['ExperienceBarSpark']:SetHeight(8) 
+             
+    end
+    
+    if showBar1 and showBar2 then
+        _G['GwExperienceFrameBar']:SetHeight(4)
+        _G['GwExperienceFrameBarCandy']:SetHeight(4)
+        _G['ExperienceBarSpark']:SetHeight(4)
+        
+        
+        _G['GwExperienceFrameArtifactBar']:SetHeight(4)
+        _G['ArtifactBarSpark']:SetHeight(4)
+         ArtifactBarSpark:Show()
+    end
+    
+    if not showBar2 then
+        _G['GwExperienceFrameArtifactBar']:SetValue(0)
+        _G['GwExperienceFrameArtifactBarCandy']:SetValue(0)
+        _G['GwExperienceFrameArtifactBarCandy']:SetValue(0)
+        ArtifactBarSpark:Hide()
+    end
+    if  showBar1 then
+        ExperienceBarSpark:Show()
+        _G['GwExperienceFrameBar']:Show()
+        _G['GwExperienceFrameBarCandy']:Show()
+    end 
+    if not showBar1 then
+        _G['GwExperienceFrameBar']:Hide()
+        _G['GwExperienceFrameBarCandy']:Hide()
+        _G['GwExperienceFrameBar']:SetValue(0)
+        _G['GwExperienceFrameBarCandy']:SetValue(0)
+        ExperienceBarSpark:Hide()
+    end 
+       
+    
+    _G['GwExperienceFrameBarCandy']:SetValue(valPrec)
+    
+    if experiencebarAnimation>valPrec then
+        experiencebarAnimation = 0
+    end
     
     
 end
 
 function update_experiencebar_size()
-    local m = (UIParent:GetWidth()-128) / 10
+    local m = (UIParent:GetWidth()-128)  / 10
     for i=1,9 do
         local rm = (m*i) +64 
         _G['barsep'..i]:ClearAllPoints()
         _G['barsep'..i]:SetPoint('LEFT','GwExperienceFrame','LEFT',rm ,0);
     end
+    
+    local m = (UIParent:GetWidth()-128) 
+    dubbleBarSep:SetWidth(m)
+    dubbleBarSep:ClearAllPoints()
+    dubbleBarSep:SetPoint('LEFT','GwExperienceFrame','LEFT',64,0);
 end
 
 action_hud_auras = {}
