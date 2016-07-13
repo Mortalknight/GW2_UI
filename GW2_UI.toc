@@ -8,7 +8,6 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB
 
 
-
 frames/target.xml
 frames/experiencebar.xml
 frames/hudart.xml

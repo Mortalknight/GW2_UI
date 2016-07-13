@@ -24,6 +24,10 @@ local SCENARIO_FLAG_USE_DUNGEON_DISPLAY	= 0x00000008;
 
 local GW_TRACKER_PARENT_FRAMES = {}
 
+local  bX,bY =0
+
+local cvar = GetCVarBool("questPOI")
+
 
 function gw_toggle_quest_hidden(qid)
     local found = false
@@ -110,6 +114,8 @@ function gw_load_questtracker()
 	GwQuestTracker:RegisterEvent("PLAYER_REGEN_DISABLED");
 	GwQuestTracker:RegisterEvent("PLAYER_REGEN_ENABLED");
     
+    WorldMapFrame:HookScript('OnHide',gw_questtracker_OnEvent)
+    
     
     gw_questtracker_OnEvent()
 
@@ -148,13 +154,31 @@ end
 
 
 function gw_questtracker_OnEvent(self,event,arg1,arg2)
+  
+    if not WorldMapFrame:IsShown() then
+    if ( GetCurrentMapContinent() == WORLDMAP_AZEROTH_ID ) then
+		SetMapZoom(WORLDMAP_AZEROTH_ID);
+	elseif ( GetCurrentMapContinent() == WORLDMAP_OUTLAND_ID  )then
+        SetMapZoom(WORLDMAP_OUTLAND_ID);
+    elseif ( GetCurrentMapContinent() == WORLDMAP_DRAENOR_ID ) then
+		SetMapZoom(WORLDMAP_DRAENOR_ID);
+	else
+		SetMapZoom(WORLDMAP_AZEROTH_ID);
+	end
+    end
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS = {}
     GW_RADAR_DATA = {}
     gw_questtracker_setblock_unused()
+    
+
+    bX,bY = GetPlayerMapPosition("player");
+    
     local playerMoney = GetMoney();
     for i = 1, GetNumQuestWatches() do
         
         local questID, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete, failureTime, timeElapsed, questType, isTask, isStory, isOnMap, hasLocalPOI = GetQuestWatchInfo(i);
+
+
 		if ( questID ) then
 
             if isComplete and isComplete < 0  then
@@ -198,6 +222,23 @@ function gw_questtracker_OnEvent(self,event,arg1,arg2)
     gw_toggle_radar()
 
 end
+
+function gw_update_questobjectives(QuestWatchIndex, numObjectives, questID,questLogIndex)
+    
+    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'] = {}
+    for objectiveIndex = 1, numObjectives do
+        
+		local text, objectiveType, finished = GetQuestLogLeaderBoard(objectiveIndex, questLogIndex);
+         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex] ={}
+         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['questLogIndex'] = questLogIndex
+         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['text'] = text
+         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['objectiveType'] = objectiveType
+         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['finished'] = finished   
+         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['questID'] = questID   
+    end
+   gw_update_questitems(questLogIndex,QuestWatchIndex)
+end
+
 
 function gw_check_senario()
     local scenarioName, currentStage, numStages, flags, _, _, completed, xp, money = C_Scenario.GetInfo();
@@ -314,21 +355,6 @@ function gw_bonusobjective_update(questID)
     end
 end
 
-function gw_update_questobjectives(QuestWatchIndex, numObjectives, questID,questLogIndex)
-    
-    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'] = {}
-    for objectiveIndex = 1, numObjectives do
-		local text, objectiveType, finished = GetQuestLogLeaderBoard(objectiveIndex, questLogIndex);
-         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex] ={}
-         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['questLogIndex'] = questLogIndex
-         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['text'] = text
-         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['objectiveType'] = objectiveType
-         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['finished'] = finished   
-         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[QuestWatchIndex]['OBJECTIVES'][objectiveIndex]['questID'] = questID   
-    end
-   gw_update_questitems(questLogIndex,QuestWatchIndex)
-end
-
 
 function gw_update_questitems(questLogIndex,QuestWatchIndex) 
    local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(questLogIndex); 
@@ -386,8 +412,9 @@ function gw_display_questtracker_layout()
 				QUEST_CONTAINER_FRAME:SetScript('OnClick', function()  gw_toggle_quest_hidden(v['questID']) gw_questtracker_OnEvent() end )
             
         end
+
         
-        _, posX, posY, objective = QuestPOIGetIconInfo(v['questID']) 
+
         
         if not InCombatLockdown() then
             local itemButton = _G[QUEST_CONTAINER_FRAME:GetName()..'ItemButton']
@@ -423,11 +450,15 @@ function gw_display_questtracker_layout()
             end
         end
         
-        local bX,bY = GetPlayerMapPosition("player");
+        SetCVar("questPOI", 1)
+        QuestPOIUpdateIcons()
+        _, posX, posY, objective = QuestPOIGetIconInfo(v['questID']) 
+     
         
         local closest = math.huge
         if posX~=nil then
-            
+    
+        
             
             local dx = posX - bX
             local dy = posY - bY
@@ -435,6 +466,10 @@ function gw_display_questtracker_layout()
             
             if dist<closest then
                 closest=dist
+                
+   
+              
+                
                 GW_RADAR_DATA['posX'] = posX
                 GW_RADAR_DATA['posY'] = posY
                 GW_RADAR_DATA['objective'] = objective
@@ -443,6 +478,8 @@ function gw_display_questtracker_layout()
                 GwQuestTrackerRadarIcon:SetTexCoord(GW_QUESTTRACKER_ICON[v['GW_TYPE']].l,GW_QUESTTRACKER_ICON[v['GW_TYPE']].r,GW_QUESTTRACKER_ICON[v['GW_TYPE']].t,GW_QUESTTRACKER_ICON[v['GW_TYPE']].b)
             end
         end
+      
+        SetCVar("questPOI", cvar and 1 or 0)
         
         local objective_count = 1
         USED_HEIGHT[v['GW_TYPE']] = USED_HEIGHT[v['GW_TYPE']] + QUEST_HEADER_HEIGHT 
@@ -692,7 +729,5 @@ function gw_load_all_bossFrames()
     RegisterStateDriver(fgw, 'combat', '[combat] show; hide')
     
 end
-
-
 
 
