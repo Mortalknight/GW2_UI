@@ -47,6 +47,7 @@ function update_gwChat_bubbles()
                 }
                 bgFrame:SetBackdrop(backdrop)
                 hooksecurefunc(fontString, 'SetText',function() 
+
                     fontString:SetTextColor(0,0,0)
                 end)
                 bgFrame.hasBeenStyled = true

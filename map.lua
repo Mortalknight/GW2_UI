@@ -258,6 +258,6 @@ end
     end
 
 function move_tooltip_placemtn(self) 
-     self:ClearAllPoints()
+    self:ClearAllPoints()
     self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 250)
 end

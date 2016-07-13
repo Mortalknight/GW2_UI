@@ -391,7 +391,7 @@
                     <Size  x="14" y="14">
                     </Size>
                     <Anchors>
-                        <Anchor point="TOP" relativePoint="BOTTOM" x="6" y="10"></Anchor>
+                        <Anchor point="TOP" relativePoint="BOTTOM" x="5" y="10"></Anchor>
                     </Anchors>
                 </Texture>
            
@@ -401,7 +401,7 @@
                     <Size x="24" y="24">
                     </Size>
                     <Anchors>
-                        <Anchor point="TOP" relativePoint="BOTTOM" x="5" y="15"></Anchor>
+                        <Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parentTexture" x="0" y="-1"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
