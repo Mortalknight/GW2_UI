@@ -112,8 +112,10 @@
                     
                                 
                     <Button name="$parentAcceptButton" inherits="GwStandardButton">
-                        <NormalFont style="ChatBubbleFont"></NormalFont>
-                        <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                        </Anchors>
+                 
                     </Button>
                     
                 </Frames>
