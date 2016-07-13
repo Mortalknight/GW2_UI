@@ -52,8 +52,8 @@ function gw_set_tooltips()
             _G[toStyle]:SetScript('OnShow',function()
                     _G[toStyle]:SetBackdrop({bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background", 
                             edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border", 
-                            tile = false, tileSize = 16, edgeSize = 16, 
-                            insets = { left = 4, right = 4, top = 4, bottom = 4 }})
+                            tile = false, tileSize = 64, edgeSize = 32, 
+                            insets = { left = 2, right = 2, top = 2, bottom = 2 }})
                 end)
         end
     end

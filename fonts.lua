@@ -86,9 +86,9 @@ end
 	SetFont(ChatBubbleFont, normal)
 
 
-	SetFont(GameTooltipHeader, normal, 12)
-	SetFont(Tooltip_Med, normal, 12)
-	SetFont(Tooltip_Small, normal, 10)
+	SetFont(GameTooltipHeader, bold, 16,nil,-1,-1,1, 1, 1, 1, 0, 0, 0)
+	SetFont(Tooltip_Med, normal, 14,nil,-1,-1,1, 1, 1, 1, 0, 0, 0)
+	SetFont(Tooltip_Small, normal, 10,nil,-1,-1,1, 1, 1, 1, 0, 0, 0)
 	
 
 	SetFont(FriendsFont_UserText, narrow)
