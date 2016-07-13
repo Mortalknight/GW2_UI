@@ -203,24 +203,25 @@ function updateAuras(thisName, unitToWatch)
     for i=1,40 do
         local indexBuffFrame = _G[thisName..'BuffItemFrame'..i]
         if buffLists[unitToWatch][i] then
+            local  key = buffLists[unitToWatch][i]['key']
             if indexBuffFrame==nil then
                 indexBuffFrame = CreateFrame('Frame', thisName..'BuffItemFrame'..i,_G[thisName..'Buffs'],'GwBuffIcon');
                 indexBuffFrame:SetParent(_G[thisName..'Buffs']);
             end
             local margin = indexBuffFrame:GetWidth()
             local marginy = indexBuffFrame:GetWidth() + 12
-            _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][i]['icon'])
+            _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][key]['icon'])
             _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G[thisName..'BuffItemFrame'..i])
             local buffDur = '';
             local stacks = '';
-            if buffLists[unitToWatch][i]['duration']>0 then
-                buffDur = timeCount(buffLists[unitToWatch][i]['timeRemaining']);
+            if buffLists[unitToWatch][key]['duration']>0 then
+                buffDur = timeCount(buffLists[unitToWatch][key]['timeRemaining']);
             end
-              if buffLists[unitToWatch][i]['count']>0 then
-               stacks = buffLists[unitToWatch][i]['count'] 
+              if buffLists[unitToWatch][key]['count']>0 then
+               stacks = buffLists[unitToWatch][key]['count'] 
             end
-            indexBuffFrame.expires =buffLists[unitToWatch][i]['expires']
-            indexBuffFrame.duration =buffLists[unitToWatch][i]['duration']
+            indexBuffFrame.expires =buffLists[unitToWatch][key]['expires']
+            indexBuffFrame.duration =buffLists[unitToWatch][key]['duration']
              _G[thisName..'BuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
              _G[thisName..'BuffItemFrame'..i..'BuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
@@ -261,6 +262,7 @@ function updateDebuffs(thisName, unitToWatch,x,y)
     for i=1,40 do
         local indexBuffFrame = _G[thisName..'DeBuffItemFrame'..i]
         if DebuffLists[unitToWatch][i] then
+            local key =DebuffLists[unitToWatch][i]['key']
             if indexBuffFrame==nil then
                 indexBuffFrame = CreateFrame('Frame', thisName..'DeBuffItemFrame'..i,_G[thisName..'Buffs'],'GwDeBuffIcon');
                 indexBuffFrame:SetParent(_G[thisName..'Buffs']);
@@ -280,19 +282,19 @@ function updateDebuffs(thisName, unitToWatch,x,y)
                 _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetTextColor(255,255,255)
                 
             end
-            _G[thisName..'DeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(DebuffLists[unitToWatch][i]['icon'])
+            _G[thisName..'DeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(DebuffLists[unitToWatch][key]['icon'])
      
             local buffDur = '';
             local stacks  = '';
-            if DebuffLists[unitToWatch][i]['count']>0 then
-               stacks = DebuffLists[unitToWatch][i]['count'] 
+            if DebuffLists[unitToWatch][key]['count']>0 then
+               stacks = DebuffLists[unitToWatch][key]['count'] 
             end
-            if DebuffLists[unitToWatch][i]['duration']>0 then
-                buffDur = timeCount(DebuffLists[unitToWatch][i]['timeRemaining']);
+            if DebuffLists[unitToWatch][key]['duration']>0 then
+                buffDur = timeCount(DebuffLists[unitToWatch][key]['timeRemaining']);
             end
-            indexBuffFrame.expires =DebuffLists[unitToWatch][i]['expires']
-            indexBuffFrame.duration =DebuffLists[unitToWatch][i]['duration']
-           _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetCooldown(DebuffLists[unitToWatch][i]['expires'] - DebuffLists[unitToWatch][i]['duration'], DebuffLists[unitToWatch][i]['duration'])
+            indexBuffFrame.expires =DebuffLists[unitToWatch][key]['expires']
+            indexBuffFrame.duration =DebuffLists[unitToWatch][key]['duration']
+           _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetCooldown(DebuffLists[unitToWatch][key]['expires'] - DebuffLists[unitToWatch][key]['duration'], DebuffLists[unitToWatch][key]['duration'])
      
             
             _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
@@ -334,6 +336,7 @@ function update_buff_timers(thisName)
     update_buff_Timer_cooldown = GetTime()+1
 
     for i=1,40 do
+
         if _G[thisName..'DeBuffItemFrame'..i] then
         
            local buffDur = '';
@@ -345,6 +348,18 @@ function update_buff_timers(thisName)
             end
             _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
         
+        end 
+        if _G[thisName..'BuffItemFrame'..i] then
+        
+           local buffDur = '';
+            d = tonumber(_G[thisName..'BuffItemFrame'..i].duration)
+            e = tonumber(_G[thisName..'BuffItemFrame'..i].expires)
+            
+            if d>0 then
+                buffDur = timeCount(e-GetTime());
+            end
+            _G[thisName..'BuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
+        
         end
     end
 end
@@ -355,7 +370,7 @@ function update_buff_list(unitToWatch)
         if  UnitBuff(unitToWatch,i) then
             buffLists[unitToWatch][i] ={}
     buffLists[unitToWatch][i]['name'],  buffLists[unitToWatch][i]['rank'],  buffLists[unitToWatch][i]['icon'],  buffLists[unitToWatch][i]['count'],  buffLists[unitToWatch][i]['dispelType'],  buffLists[unitToWatch][i]['duration'],  buffLists[unitToWatch][i]['expires'],  buffLists[unitToWatch][i]['caster'],  buffLists[unitToWatch][i]['isStealable'],  buffLists[unitToWatch][i]['shouldConsolidate'],  buffLists[unitToWatch][i]['spellID']  =  UnitBuff(unitToWatch,i) 
-
+            buffLists[unitToWatch][i]['key'] = i
             buffLists[unitToWatch][i]['timeRemaining'] =  buffLists[unitToWatch][i]['expires']-GetTime();
             if buffLists[unitToWatch][i]['duration']<=0 then
                   buffLists[unitToWatch][i]['timeRemaining'] = 500000
@@ -373,7 +388,7 @@ function update_Debuff_list(unitToWatch)
         if  UnitDebuff(unitToWatch,i,'PLAYER')  then
             DebuffLists[unitToWatch][i] ={}
     DebuffLists[unitToWatch][i]['name'],  DebuffLists[unitToWatch][i]['rank'],  DebuffLists[unitToWatch][i]['icon'],  DebuffLists[unitToWatch][i]['count'],  DebuffLists[unitToWatch][i]['dispelType'],  DebuffLists[unitToWatch][i]['duration'],  DebuffLists[unitToWatch][i]['expires'],  DebuffLists[unitToWatch][i]['caster'],  DebuffLists[unitToWatch][i]['isStealable'],  DebuffLists[unitToWatch][i]['shouldConsolidate'],  DebuffLists[unitToWatch][i]['spellID']  =  UnitDebuff(unitToWatch,i,'PLAYER') 
-
+            DebuffLists[unitToWatch][i]['key'] = i 
             DebuffLists[unitToWatch][i]['timeRemaining'] =  DebuffLists[unitToWatch][i]['expires']-GetTime();
             if DebuffLists[unitToWatch][i]['duration']<=0 then
                   DebuffLists[unitToWatch][i]['timeRemaining'] = 500000

@@ -208,6 +208,7 @@ function gw_set_minimap()
    GameTooltip:SetScript("OnTooltipSetSpell", function(self)
        move_tooltip_placemtn(self) 
     end)
+    hoverMiniMapOut()
 
 
 end
