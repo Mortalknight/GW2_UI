@@ -53,6 +53,10 @@
                 _G[self:GetName()..'String']:SetFont(UNIT_NAME_FONT,14)
                 _G[self:GetName()..'Icon']:SetVertexColor(GW_QUESTTRACKER_TYPE_COLORS['QUEST'].r,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].g,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].b)
                 
+                _G[self:GetName()..'String']:SetShadowOffset(-1,-1)
+                _G[self:GetName()..'String']:SetShadowColor(0,0,0)
+       
+                
             </OnLoad>
         </Scripts>
     </Frame>

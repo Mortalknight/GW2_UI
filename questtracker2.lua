@@ -122,15 +122,40 @@ function gw_load_questtracker()
 end
 
 
+local SAVED_RADAR_POSX = 0
+local SAVED_RADAR_POSY = 0
+local RADAR_THRO = 0
 
 
 function gw_update_radar()
-    if  GW_RADAR_DATA['posX']~=nil then
-        local posX, posY  = GetPlayerMapPosition("player");
+         
+   
+    local posX, posY  = GetPlayerMapPosition("player");
+            
+                
+    if RADAR_THRO<GetTime() then
+        RADAR_THRO = GetTime() + 1
+        local closest = math.huge
+        for k,v in pairs(GW_RADAR_DATA) do
+            local dx = v['posX'] - posX
+            local dy = v['posY'] - posY
+            local dist = sqrt(dx * dx + dy * dy)
+
+            if dist<closest then
+                closest=dist
+                GwQuestTrackerRadarString:SetText(v['title'])
+                GwQuestTrackerRadarString:SetTextColor(GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].r,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].g,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].b)
+                GwQuestTrackerRadarIcon:SetTexCoord(GW_QUESTTRACKER_ICON[v['GW_TYPE']].l,GW_QUESTTRACKER_ICON[v['GW_TYPE']].r,GW_QUESTTRACKER_ICON[v['GW_TYPE']].t,GW_QUESTTRACKER_ICON[v['GW_TYPE']].b)
+
+            end
+        end
+    end
+   
+        
         local pFaceing = GetPlayerFacing()
         
-        local dir_x  = GW_RADAR_DATA['posX'] - posX
-        local dir_y  = GW_RADAR_DATA['posY'] - posY
+        local dir_x  =SAVED_RADAR_POSX - posX
+        local dir_y  =SAVED_RADAR_POSY - posY
 
                 
         local square_half = math.sqrt(0.5)
@@ -145,11 +170,7 @@ function gw_update_radar()
 		local sin,cos = math.sin(a) * square_half, math.cos(a) * square_half
 
         _G['GwCompassArrow']:SetTexCoord(0.5-sin, 0.5+cos, 0.5+cos, 0.5+sin, 0.5-cos, 0.5-sin, 0.5+sin, 0.5-cos)
-        
-       --     GW_RADAR_DATA['posX']
-        --    GW_RADAR_DATA['posY']
-        --    GW_RADAR_DATA['objective']
-        end
+    
 end
 
 
@@ -370,6 +391,7 @@ function gw_display_questtracker_layout()
     local OBJECTIVE_HEIGHT = 20
     local QUEST_HEADER_HEIGHT = 30
     local USED_HEIGHT = {}
+    local RADAR_INDEX = 1
     USED_HEIGHT['QUEST'] = 0
     USED_HEIGHT['BONUS'] = 0
     USED_HEIGHT['SCENARIO'] = 0
@@ -453,32 +475,19 @@ function gw_display_questtracker_layout()
         SetCVar("questPOI", 1)
         QuestPOIUpdateIcons()
         _, posX, posY, objective = QuestPOIGetIconInfo(v['questID']) 
-     
-        
-        local closest = math.huge
+
         if posX~=nil then
-    
-        
+                GW_RADAR_DATA[RADAR_INDEX] ={}
+                GW_RADAR_DATA[RADAR_INDEX]['posX'] = posX
+                GW_RADAR_DATA[RADAR_INDEX]['posY'] = posY
+                GW_RADAR_DATA[RADAR_INDEX]['objective'] = objective
+                GW_RADAR_DATA[RADAR_INDEX]['title'] = v['TITLE']
+                GW_RADAR_DATA[RADAR_INDEX]['GW_TYPE'] = v['GW_TYPE']
+  
             
-            local dx = posX - bX
-            local dy = posY - bY
-            local dist = sqrt(dx * dx + dy * dy)
-            
-            if dist<closest then
-                closest=dist
-                
-   
-              
-                
-                GW_RADAR_DATA['posX'] = posX
-                GW_RADAR_DATA['posY'] = posY
-                GW_RADAR_DATA['objective'] = objective
-                GwQuestTrackerRadarString:SetText(v['TITLE'])
-                GwQuestTrackerRadarString:SetTextColor(GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].r,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].g,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].b)
-                GwQuestTrackerRadarIcon:SetTexCoord(GW_QUESTTRACKER_ICON[v['GW_TYPE']].l,GW_QUESTTRACKER_ICON[v['GW_TYPE']].r,GW_QUESTTRACKER_ICON[v['GW_TYPE']].t,GW_QUESTTRACKER_ICON[v['GW_TYPE']].b)
-            end
+            RADAR_INDEX = RADAR_INDEX + 1
         end
-      
+         
         SetCVar("questPOI", cvar and 1 or 0)
         
         local objective_count = 1
@@ -628,7 +637,7 @@ end
 
 function gw_toggle_radar()
     
-    if GW_RADAR_DATA~=nil and GW_RADAR_DATA['posX'] then  
+    if GW_RADAR_DATA~=nil  then  
         GwQuestTrackerRadar:SetPoint('TOPRIGHT',0,0)
     else 
         GwQuestTrackerRadar:SetPoint('TOPRIGHT',0,70)
