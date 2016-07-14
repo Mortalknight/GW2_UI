@@ -69,7 +69,7 @@
                 
                 
                 hooksecurefunc(_G[self:GetName()..'SubString'],'SetText',function(me,string)
-                    print(string)
+
                     if string=='' or string==nil then
                         _G[self:GetName()..'String']:SetPoint('CENTER',0,0)
                         GwCompassArrow:Show();
