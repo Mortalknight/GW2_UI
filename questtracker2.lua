@@ -15,6 +15,8 @@ GW_RADAR_DATA = {}
 
 GW_HIDDEN_QUESTS = {}
 
+GW_QUESTS = {}
+
 
 local SCENARIO_FLAG_CHALLENGE_MODE		= 0x00000001;
 local SCENARIO_FLAG_SUPRESS_STAGE_TEXT	= 0x00000002;
@@ -124,35 +126,63 @@ end
 
 local SAVED_RADAR_POSX = 0
 local SAVED_RADAR_POSY = 0
+local MAPID = 0
 local RADAR_THRO = 0
 
 
 function gw_update_radar()
          
-   
-    local posX, posY  = GetPlayerMapPosition("player");
-            
-                
+   if WorldMapFrame:IsShown() then return end
+    local posX, posY  = 0
+    
+    local CLOSEST_RADAR_POSX =nil
+    local CLOSEST_RADAR_POSY = nil
+    local CLOSEST_RADAR_TYPE = nil
+    local CLOSEST_RADAR_TEXT = nil
+    local CLOSEST_MAPID = nil
+    
     if RADAR_THRO<GetTime() then
-        RADAR_THRO = GetTime() + 1
+      RADAR_THRO = GetTime() + 1
         local closest = math.huge
         for k,v in pairs(GW_RADAR_DATA) do
+            
+            SetMapByID(v['mapID'])
+            posX, posY  = GetPlayerMapPosition("player");
+            
             local dx = v['posX'] - posX
             local dy = v['posY'] - posY
             local dist = sqrt(dx * dx + dy * dy)
 
             if dist<closest then
                 closest=dist
-                GwQuestTrackerRadarString:SetText(v['title'])
-                GwQuestTrackerRadarString:SetTextColor(GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].r,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].g,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].b)
-                GwQuestTrackerRadarIcon:SetTexCoord(GW_QUESTTRACKER_ICON[v['GW_TYPE']].l,GW_QUESTTRACKER_ICON[v['GW_TYPE']].r,GW_QUESTTRACKER_ICON[v['GW_TYPE']].t,GW_QUESTTRACKER_ICON[v['GW_TYPE']].b)
+                
+                CLOSEST_RADAR_TEXT =v['title']
+                CLOSEST_RADAR_TYPE =v['GW_TYPE']
+ 
+                CLOSEST_RADAR_POSX = v['posX']
+                CLOSEST_RADAR_POSY = v['posY']
+                CLOSEST_RADAR_POSY = v['posY']
+                CLOSEST_MAPID = v['mapID']
 
             end
         end
-    end
-   
         
+    end
+    if CLOSEST_RADAR_POSX~=nil then
+                   
+                GwQuestTrackerRadarString:SetText(CLOSEST_RADAR_TEXT)
+                GwQuestTrackerRadarString:SetTextColor(GW_QUESTTRACKER_TYPE_COLORS[CLOSEST_RADAR_TYPE].r,GW_QUESTTRACKER_TYPE_COLORS[CLOSEST_RADAR_TYPE].g,GW_QUESTTRACKER_TYPE_COLORS[CLOSEST_RADAR_TYPE].b)
+                GwQuestTrackerRadarIcon:SetTexCoord(GW_QUESTTRACKER_ICON[CLOSEST_RADAR_TYPE].l,GW_QUESTTRACKER_ICON[CLOSEST_RADAR_TYPE].r,GW_QUESTTRACKER_ICON[CLOSEST_RADAR_TYPE].t,GW_QUESTTRACKER_ICON[CLOSEST_RADAR_TYPE].b)
+                 
+            SAVED_RADAR_POSX =CLOSEST_RADAR_POSX
+            SAVED_RADAR_POSY =CLOSEST_RADAR_POSY
+            MAPID = CLOSEST_MAPID
+    end
+        
+        
+        SetMapByID(MAPID)
         local pFaceing = GetPlayerFacing()
+        posX, posY  =GetPlayerMapPosition("player");
         
         local dir_x  =SAVED_RADAR_POSX - posX
         local dir_y  =SAVED_RADAR_POSY - posY
@@ -176,19 +206,9 @@ end
 
 function gw_questtracker_OnEvent(self,event,arg1,arg2)
   
-    if not WorldMapFrame:IsShown() then
-    if ( GetCurrentMapContinent() == WORLDMAP_AZEROTH_ID ) then
-		SetMapZoom(WORLDMAP_AZEROTH_ID);
-	elseif ( GetCurrentMapContinent() == WORLDMAP_OUTLAND_ID  )then
-        SetMapZoom(WORLDMAP_OUTLAND_ID);
-    elseif ( GetCurrentMapContinent() == WORLDMAP_DRAENOR_ID ) then
-		SetMapZoom(WORLDMAP_DRAENOR_ID);
-	else
-		SetMapZoom(WORLDMAP_AZEROTH_ID);
-	end
-    end
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS = {}
     GW_RADAR_DATA = {}
+    GW_QUESTS = {}
     gw_questtracker_setblock_unused()
     
 
@@ -391,7 +411,7 @@ function gw_display_questtracker_layout()
     local OBJECTIVE_HEIGHT = 20
     local QUEST_HEADER_HEIGHT = 30
     local USED_HEIGHT = {}
-    local RADAR_INDEX = 1
+
     USED_HEIGHT['QUEST'] = 0
     USED_HEIGHT['BONUS'] = 0
     USED_HEIGHT['SCENARIO'] = 0
@@ -472,24 +492,12 @@ function gw_display_questtracker_layout()
             end
         end
         
-        SetCVar("questPOI", 1)
-        QuestPOIUpdateIcons()
-        _, posX, posY, objective = QuestPOIGetIconInfo(v['questID']) 
+        local GQ = countTable(GW_QUESTS)
+        GW_QUESTS[GQ] = {}
+        GW_QUESTS[GQ]['title'] = v['TITLE']
+        GW_QUESTS[GQ]['GW_TYPE'] = v['GW_TYPE']
+        GW_QUESTS[GQ]['questID'] = v['questID']
 
-        if posX~=nil then
-                GW_RADAR_DATA[RADAR_INDEX] ={}
-                GW_RADAR_DATA[RADAR_INDEX]['posX'] = posX
-                GW_RADAR_DATA[RADAR_INDEX]['posY'] = posY
-                GW_RADAR_DATA[RADAR_INDEX]['objective'] = objective
-                GW_RADAR_DATA[RADAR_INDEX]['title'] = v['TITLE']
-                GW_RADAR_DATA[RADAR_INDEX]['GW_TYPE'] = v['GW_TYPE']
-  
-            
-            RADAR_INDEX = RADAR_INDEX + 1
-        end
-         
-        SetCVar("questPOI", cvar and 1 or 0)
-        
         local objective_count = 1
         USED_HEIGHT[v['GW_TYPE']] = USED_HEIGHT[v['GW_TYPE']] + QUEST_HEADER_HEIGHT 
         local USED_OBJECTIVE_HEIGHT = 0
@@ -544,8 +552,71 @@ function gw_display_questtracker_layout()
     
     
         
-
+    gw_findPOI()
     
+end
+
+
+function gw_findPOI()
+    if WorldMapFrame:IsShown() then return end
+    
+    SetMapToCurrentZone()
+    local RADAR_INDEX = 1
+    local scanMap = true
+    local maxZoom = false
+    local foundSomethingOnThisMap = false
+    GW_RADAR_DATA ={}
+    SetCVar("questPOI", 1)
+    local max = 0
+    
+    while scanMap and max<5 do
+
+        for k,v in pairs(GW_QUESTS) do
+            
+            QuestPOIUpdateIcons()
+            _, posX, posY, objective = QuestPOIGetIconInfo(v['questID']) 
+               
+            if posX~=nil then
+                mapId,currentFloor =  GetCurrentMapAreaID()
+                GW_RADAR_DATA[RADAR_INDEX] ={}
+                GW_RADAR_DATA[RADAR_INDEX]['posX'] = posX
+                GW_RADAR_DATA[RADAR_INDEX]['posY'] = posY
+                GW_RADAR_DATA[RADAR_INDEX]['objective'] = objective
+                GW_RADAR_DATA[RADAR_INDEX]['title'] = v['title']
+                GW_RADAR_DATA[RADAR_INDEX]['GW_TYPE'] = v['GW_TYPE']
+                GW_RADAR_DATA[RADAR_INDEX]['mapID'] =mapId
+                RADAR_INDEX = RADAR_INDEX + 1
+                foundSomethingOnThisMap = true
+            end
+        end
+        if foundSomethingOnThisMap then
+            scanMap = false;
+        end 
+        if  maxZoom then
+            scanMap = false;
+        end
+        
+        if  ZoomOut() ~= nil then
+            if ( GetCurrentMapContinent() == WORLDMAP_AZEROTH_ID ) then
+                SetMapZoom(WORLDMAP_AZEROTH_ID);
+                maxZoom = true
+            elseif ( GetCurrentMapContinent() == WORLDMAP_OUTLAND_ID  )then
+                SetMapZoom(WORLDMAP_OUTLAND_ID);
+                maxZoom = true
+            elseif ( GetCurrentMapContinent() == WORLDMAP_DRAENOR_ID ) then
+                SetMapZoom(WORLDMAP_DRAENOR_ID);
+                maxZoom = true
+            else
+                SetMapZoom(WORLDMAP_AZEROTH_ID);
+                maxZoom = true
+            end
+        end
+
+        max =max +1
+    end
+         
+    SetCVar("questPOI", cvar and 1 or 0)
+             
 end
 
 function gw_objective_use_builtin_bar(objective_array,objectiveFrame)
