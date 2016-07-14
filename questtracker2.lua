@@ -616,7 +616,28 @@ function gw_findPOI()
     end
          
     SetCVar("questPOI", cvar and 1 or 0)
-             
+    
+    if countTable(GW_RADAR_DATA)<1 then
+        gw_display_suggested()
+        return
+    end
+    GwQuestTrackerRadarSubString:SetText('')
+end
+function gw_display_suggested()
+    local suggested = {}
+	   C_AdventureJournal.GetSuggestions(suggested);
+
+    -- hide all the display info
+    for i = 1, 1 do  
+        if suggested[i]~=nil and suggested[i].title~=nil then
+            GwQuestTrackerRadarString:SetText('More adventures await:' )
+            GwQuestTrackerRadarSubString:SetText(suggested[i].title)       
+            GwQuestTrackerRadarSubString:SetTextColor(1,1,1)       
+        else
+            GwQuestTrackerRadarSubString:SetText(' ')
+            GwQuestTrackerRadarString:SetText('')
+        end
+    end
 end
 
 function gw_objective_use_builtin_bar(objective_array,objectiveFrame)

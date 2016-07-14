@@ -16,7 +16,7 @@
                 </Texture>
             </Layer> 
             <Layer textureSubLevel="2" Level="BACKGROUND">
-                <Texture  file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
+                <Texture  name="GwCompassRound" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
                     <Size x="60" y="60"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -45,16 +45,45 @@
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
+                </FontString> 
+                <FontString name="$parentSubString" text="Quest name" justifyH="CENTER"  justifyV="CENTER" >
+                     <Size x="200" y="45"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="CENTER" y="10" ></Anchor>
+                    </Anchors>
                 </FontString>
             </Layer>
         </Layers>
         <Scripts>
             <OnLoad>
-                _G[self:GetName()..'String']:SetFont(UNIT_NAME_FONT,14)
+                _G[self:GetName()..'String']:SetFont(DAMAGE_TEXT_FONT,14)
+                _G[self:GetName()..'SubString']:SetFont(UNIT_NAME_FONT,12)
                 _G[self:GetName()..'Icon']:SetVertexColor(GW_QUESTTRACKER_TYPE_COLORS['QUEST'].r,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].g,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].b)
                 
                 _G[self:GetName()..'String']:SetShadowOffset(-1,-1)
-                _G[self:GetName()..'String']:SetShadowColor(0,0,0)
+                _G[self:GetName()..'String']:SetShadowColor(0,0,0) 
+                
+                _G[self:GetName()..'SubString']:SetShadowOffset(-1,-1)
+                _G[self:GetName()..'SubString']:SetShadowColor(0,0,0)
+        
+                
+                
+                hooksecurefunc(_G[self:GetName()..'SubString'],'SetText',function(me,string)
+                    print(string)
+                    if string=='' or string==nil then
+                        _G[self:GetName()..'String']:SetPoint('CENTER',0,0)
+                        GwCompassArrow:Show();
+                        GwCompassRound:Show();
+                        GwQuestTrackerRadarIcon:Show();
+                    else
+                        _G[self:GetName()..'String']:SetPoint('CENTER',0,20)
+                        GwCompassArrow:Hide();
+                        GwCompassRound:Hide();
+                        GwQuestTrackerRadarIcon:Hide();
+                    end
+                end)
+                 _G[self:GetName()..'SubString']:SetText('')
+                    
        
                 
             </OnLoad>
