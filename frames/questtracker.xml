@@ -7,7 +7,7 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture  file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture name="compassBG"  file="Interface\AddOns\GW2_UI\textures\compas-bg">
                     <Color r="1" g="1" b="1" a="0.3"></Color>
                     <Size x="300" y="70"></Size>
                     <Anchors>
@@ -74,12 +74,14 @@
                         _G[self:GetName()..'String']:SetPoint('CENTER',0,0)
                         GwCompassArrow:Show();
                         GwCompassRound:Show();
+                        compassBG:Show();
                         GwQuestTrackerRadarIcon:Show();
                     else
                         _G[self:GetName()..'String']:SetPoint('CENTER',0,20)
                         GwCompassArrow:Hide();
                         GwCompassRound:Hide();
-                        GwQuestTrackerRadarIcon:Hide();
+                        compassBG:Hide();
+                        GwQuestTrackerRadarIcon:SetTexCoord(0,1,0,0.25);
                     end
                 end)
                  _G[self:GetName()..'SubString']:SetText('')

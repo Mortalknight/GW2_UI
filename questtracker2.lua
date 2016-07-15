@@ -207,7 +207,7 @@ end
 function gw_questtracker_OnEvent(self,event,arg1,arg2)
   
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS = {}
-    GW_RADAR_DATA = {}
+
     GW_QUESTS = {}
     gw_questtracker_setblock_unused()
     
@@ -551,15 +551,48 @@ function gw_display_questtracker_layout()
   --  GwQuesttrackerContainerBossFrames:SetHeight(math.max(1,BOSS_FRAME_HEIGHT))
     
     
-        
+    gw_find_bonusObjectives()
     gw_findPOI()
+    
+end
+
+
+function gw_find_bonusObjectives()
+
+    local mapAreaID = GetCurrentMapAreaID();
+    local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(mapAreaID);
+    local numTaskPOIs = 0;
+   
+    if(taskInfo ~= nil) then
+        numTaskPOIs = #taskInfo;
+    end
+    
+    
+    local taskIconCount = 1;
+    if ( numTaskPOIs > 0 ) then
+        local GQ = countTable(GW_QUESTS) + 1
+        for _, info  in next, taskInfo do
+			
+          for k,v in pairs(info) do
+                print(k)
+            end
+            GW_QUESTS[GQ] = {}
+            GW_QUESTS[GQ]['title'] = 'Event Nearby'
+            GW_QUESTS[GQ]['GW_TYPE'] = 'BONUS'
+            GW_QUESTS[GQ]['questID'] = info.questId
+            GW_QUESTS[GQ]['posX'] = info.x
+            GW_QUESTS[GQ]['posY'] = info.Y
+            GQ = GQ+1
+        end
+	end
+	
     
 end
 
 
 function gw_findPOI()
     if WorldMapFrame:IsShown() then return end
-    
+    GW_RADAR_DATA = {}
     SetMapToCurrentZone()
     local RADAR_INDEX = 1
     local scanMap = true
@@ -574,7 +607,14 @@ function gw_findPOI()
         for k,v in pairs(GW_QUESTS) do
             
             QuestPOIUpdateIcons()
-            _, posX, posY, objective = QuestPOIGetIconInfo(v['questID']) 
+            local posX = 0
+            local posY = 0
+            if v['posX']~=nil and v['posY']~=nil then
+                posX=v['posX']
+                posY=v['posY']
+            else
+                _, posX, posY, objective = QuestPOIGetIconInfo(v['questID']) 
+            end
                
             if posX~=nil then
                 mapId,currentFloor =  GetCurrentMapAreaID()
@@ -585,6 +625,7 @@ function gw_findPOI()
                 GW_RADAR_DATA[RADAR_INDEX]['title'] = v['title']
                 GW_RADAR_DATA[RADAR_INDEX]['GW_TYPE'] = v['GW_TYPE']
                 GW_RADAR_DATA[RADAR_INDEX]['mapID'] =mapId
+                
                 RADAR_INDEX = RADAR_INDEX + 1
                 foundSomethingOnThisMap = true
             end
@@ -616,8 +657,9 @@ function gw_findPOI()
     end
          
     SetCVar("questPOI", cvar and 1 or 0)
-    
+     print(countTable(GW_RADAR_DATA))
     if countTable(GW_RADAR_DATA)<1 then
+       
         gw_display_suggested()
         return
     end
