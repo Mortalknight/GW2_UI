@@ -157,7 +157,6 @@ function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
         new_point['relativePoint'] =relativePoint
         new_point['xOfs'] =math.floor(xOfs)
         new_point['yOfs'] = math.floor(yOfs)
-            print(new_point['yOfs'])
         gwSetSetting(settingsName,new_point)
 
     end)

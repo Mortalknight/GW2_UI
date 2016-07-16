@@ -574,7 +574,7 @@ function gw_find_bonusObjectives()
         for _, info  in next, taskInfo do
 			
           for k,v in pairs(info) do
-                print(k)
+
             end
             GW_QUESTS[GQ] = {}
             GW_QUESTS[GQ]['title'] = 'Event Nearby'
@@ -657,7 +657,6 @@ function gw_findPOI()
     end
          
     SetCVar("questPOI", cvar and 1 or 0)
-     print(countTable(GW_RADAR_DATA))
     if countTable(GW_RADAR_DATA)<1 then
        
         gw_display_suggested()

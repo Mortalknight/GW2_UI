@@ -97,7 +97,7 @@ end)
     for k,v in pairs(QUESTSTRING) do
          Stringcount = Stringcount + 1
     end
-            print()
+
         if QUESTSTRINGINT<=Stringcount then
             QUESTSTRINGINT=Stringcount
             nextGossip()
