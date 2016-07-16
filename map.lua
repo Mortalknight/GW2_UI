@@ -10,13 +10,11 @@ GW_MAP_FRAMES_HIDE[8] =MiniMapTracking
 GW_MAP_FRAMES_HOVER = {}
 GW_MAP_FRAMES_HOVER[1] = 'mapGradient'
 GW_MAP_FRAMES_HOVER[2] = 'MinimapZoneText'
-GW_MAP_FRAMES_HOVER[3] = 'TimeManagerClockButton'
-GW_MAP_FRAMES_HOVER[4] = 'TimeManagerClockTicker'
+GW_MAP_FRAMES_HOVER[3] = 'GwMapTime'
 
 local animationIndex = 0
 local animationIndexY = 0
 local anim_thro = 0
-
 
 function gw_lfg_icon_animate()
 
@@ -88,19 +86,7 @@ function gw_set_minimap()
     mapGradient:SetPoint('TOPLEFT',Minimap,'TOPLEFT',0,0)
     mapGradient:SetPoint('TOPRIGHT',Minimap,'TOPRIGHT',0,0)
     
-    TimeManagerClockTicker:ClearAllPoints()
-	TimeManagerClockTicker:SetPoint("BOTTOMLEFT",Minimap,"BOTTOMLEFT",5,5)
-	TimeManagerClockTicker:SetFont("menomonia",16)
-	TimeManagerClockTicker:SetJustifyH("LEFT")
-	TimeManagerClockTicker:SetTextColor(1,1,1)
-    
-    TimeManagerClockButton:ClearAllPoints()
-	TimeManagerClockButton:SetPoint("BOTTOMLEFT",Minimap,"BOTTOMLEFT",0,0)
-	TimeManagerClockButton:SetWidth(40)
-	TimeManagerClockButton:SetHeight(20)
-    select(1, TimeManagerClockButton:GetRegions()):Hide()
-    
-    TimeManagerClockButton = CreateFrame('Frame','GwMapTime',Minimap,'GwMapTime')
+    GwMapTime = CreateFrame('Button','GwMapTime',Minimap,'GwMapTime')
     
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint('TOP',Minimap,0,0)
@@ -260,4 +246,44 @@ end
 function move_tooltip_placemtn(self) 
     self:ClearAllPoints()
     self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 250)
+end
+
+function GwMapTimeClick(self,button)
+	if button == "LeftButton" then
+		PlaySound("igMainMenuOptionCheckBoxOn")
+		
+		if IsShiftKeyDown() then
+			TimeManager_ToggleLocalTime()
+			GwMapTimeOnEnter(self)
+		else
+			TimeManager_ToggleTimeFormat()
+		end
+	end
+	if button == "RightButton" then
+		PlaySound("igMainMenuQuit")
+		Stopwatch_Toggle()
+	end
+end
+
+function GwMapTimeOnEnter(self)
+	local string;
+	
+	if GetCVarBool("timeMgrUseLocalTime") then
+		string = TIMEMANAGER_TOOLTIP_LOCALTIME:gsub(":","")
+	else
+		string = TIMEMANAGER_TOOLTIP_REALMTIME:gsub(":","")
+	end
+	
+	GameTooltip:SetOwner(self, "ANCHOR_TOP",0,5)
+    GameTooltip:AddLine("Clock")
+    GameTooltip:AddLine("Shift-Click to switch between Local and Realm time",1,1,1,TRUE)
+    GameTooltip:AddLine("Right Click to open the Stopwatch",1,1,1,TRUE)
+    GameTooltip:AddLine("Left Click to toggle military time format",1,1,1,TRUE)
+	GameTooltip:AddDoubleLine("Display:",string,nil,nil,nil,1,1,0)
+    GameTooltip:SetMinimumWidth(100)								
+	GameTooltip:Show()
+end
+
+function GameTimeFrame_OnEvent(self)
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-30)
 end

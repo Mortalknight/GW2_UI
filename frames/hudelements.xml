@@ -1,5 +1,16 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+    <Font name="Meno" font="Interface\AddOns\GW2_UI\fonts\menomonia.ttf" virtual="true" outline="NORMAL">
+        <FontHeight>
+            <AbsValue val="12"/>
+        </FontHeight>
+        <Shadow>
+            <Offset>
+                <AbsDimension x="1" y="-1"/>
+            </Offset>
+            <Color r="0" g="0" b="0"/>
+        </Shadow>
+    </Font>
     <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
 	
         <Size x="104" y="104"></Size>
@@ -457,7 +468,7 @@
       
             <OnClick function="GarrisonLandingPageMinimapButton_OnClick"/>
             <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-45);
                 GameTooltip:SetText(GARRISON_LANDING_PAGE_TITLE, 1, 1, 1);
                 GameTooltip:AddLine(MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP, nil, nil, nil, true);
                 GameTooltip:Show();
@@ -488,7 +499,9 @@
 					self:Disable();
 				end
 			</OnShow>
-			<OnEnter function="GameTimeFrame_OnEnter"/>
+			<OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-70);
+            </OnEnter>
 			<OnLeave function="GameTooltip_Hide"/>
 			<OnEvent function="GameTimeFrame_OnEvent"/>
 			<OnUpdate function="GameTimeFrame_OnUpdate"/>
@@ -519,7 +532,7 @@
                 end
             </OnEvent>
             <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-55);
                 if( GameTooltip:IsOwned(self) ) then
                 MinimapMailFrameUpdate();
                 end
@@ -549,10 +562,33 @@
             </Layer>
         </Layers>
     </Frame>
-    <Frame name="GwMapTime" frameStrata="LOW" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
-        <Size x="100" y="20"></Size>
+    <Button name="GwMapTime" frameStrata="LOW" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
+        <Size x="50" y="20"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
         </Anchors>
-    </Frame>
+        <Layers>
+            <Layer>
+                <FontString parentKey="Time" justifyH="CENTER" justifyV="MIDDLE" inherits="Meno">
+                <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>					
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                TimeManager_LoadUI()
+                TimeManagerClockButton:Hide()
+                StopwatchFrame:SetParent("UIParent")
+                self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+            </OnLoad>
+            <OnUpdate>
+                self.Time:SetText(GameTime_GetTime(false))
+            </OnUpdate>
+            <OnClick function="GwMapTimeClick"/>
+            <OnEnter function="GwMapTimeOnEnter"/>
+			<OnLeave function="GameTooltip_Hide"/>
+        </Scripts>
+    </Button>
 </Ui>
