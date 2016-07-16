@@ -120,7 +120,7 @@ function gw_playerUpdateAuras()
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint('BOTTOMRIGHT',(margin*x),-marginy*y)
              
-            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,     "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,i); GameTooltip:Show() end)
+            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,     "ANCHOR_BOTTOMLEFT",28,0); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,i); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
              
             indexBuffFrame:SetScript('OnClick', function(self,button) 
