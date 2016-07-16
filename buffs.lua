@@ -29,6 +29,8 @@ local player_buff_frame = CreateFrame('Frame','GwPlayerAuraFrame',UIParent,'GwPl
       _G['GwPlayerAuraFrame']:SetScript('OnUpdate',function() 
             update_player_buff_timers('GwPlayerBuffItemFrame')    
     end)
+    
+    gw_playerUpdateAuras()
 end
 
 local player_update_buff_Timer_cooldown = 0

@@ -49,8 +49,8 @@ end
 	SetFont(NumberFontNormal, narrow, 12, "", 1.25, -1.25, 1)
 
 	SetFont(SystemFont_Tiny, normal)
-	SetFont(SystemFont_Small, narrow) -- player/target name, level, timer text
-	SetFont(SystemFont_Outline_Small, narrow) -- statusbartext (player/target health, mana, etc)
+	SetFont(SystemFont_Small, narrow) 
+	SetFont(SystemFont_Outline_Small, narrow)
 	SetFont(SystemFont_Outline, normal)
 	SetFont(SystemFont_Shadow_Small, normal)
 	SetFont(SystemFont_InverseShadow_Small, normal)
@@ -100,7 +100,7 @@ end
 	SetFont(NumberFont_Outline_Large, narrow)
 	
 
-	SetFont(NumberFont_Outline_Huge, narrowBold) -- player/target feedback
+	SetFont(NumberFont_Outline_Huge, narrowBold)
 	
 	
 
