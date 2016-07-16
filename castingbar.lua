@@ -3,7 +3,7 @@ local playerSpellStart = 0
 local playerSpellEnd = 0
 local castingbarAnimation = 0
 mainCastingBarBg , mainCastingBarBgt = createBackground('BOTTOM',258,22,0,0,"Interface\\AddOns\\GW2_UI\\textures\\castingbar",0)
-mainCastingBarBg:SetPoint('BOTTOM',UIParent,'BOTTOM',0,270)
+mainCastingBarBg:SetPoint('BOTTOM',UIParent,'BOTTOM',0,300)
 mainCastingBarBgt:SetVertexColor(0.1,0,0,0.4);
 
 
@@ -60,6 +60,7 @@ mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
             
         if  event=='UNIT_SPELLCAST_FAILED' or event=='UNIT_SPELLCAST_INTERRUPTED' then
             mainCastingBart:SetVertexColor(1,0.5,0.5); 
+            playeCasting = 0
         end
         if  event=='UNIT_SPELLCAST_SUCCEEDED' or event=='UNIT_SPELLCAST_SUCCESS' then
             mainCastingBart:SetBlendMode("ADD")
