@@ -30,8 +30,8 @@ mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
             startTime = startTime /1000
             endTime = endTime /1000
             mainCastingBart:SetBlendMode("BLEND")
-                    
-            addToAnimation('castingbarAnimation',castingbarAnimation,1,startTime,endTime-startTime,function()    
+            gw_castingbar_reset()
+            addToAnimation('castingbarAnimation',0,1,startTime,endTime-startTime,function()    
                     local p = animations['castingbarAnimation']['progress']
                     if castingType==2 then
                         p = 1 - animations['castingbarAnimation']['progress']
