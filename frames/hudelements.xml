@@ -592,4 +592,31 @@
 			<OnLeave function="GameTooltip_Hide"/>
         </Scripts>
     </Button>
+    <Frame name="GwBreathMeter" frameStrata="LOW" virtual="true" parent="UIParent">
+        <Size x="258" y="22"></Size>
+        <Anchors>
+            <Anchor point="TOP" x="0" y="-200"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\breathmeter">
+                    <Color r="0.2" b="0.2" g="0.2" a="0.5"></Color>
+                    <Size x="258" y="22"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar name="$parentBar"  defaultValue="1"  minValue="0" maxValue="1">
+                <Size x="258" y="22"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" x="1" ></Anchor>
+                </Anchors>
+                 <BarTexture file="Interface\AddOns\GW2_UI\textures\breathmeter"/>
+            </StatusBar>
+        </Frames>
+    </Frame>
+    
 </Ui>

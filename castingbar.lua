@@ -19,8 +19,8 @@ mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
         if  unitID~='player' then
             return
         end
-        if event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' then
-            if event=='UNIT_SPELLCAST_CHANNEL_START' then
+        if event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE'or event=='UNIT_SPELLCAST_CHANNEL_UPDATE' then
+            if event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_CHANNEL_UPDATE' then
                 spell, subText, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo("player")
                 castingType = 2
             else
@@ -85,6 +85,7 @@ mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_UPDATE")
 
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_STOP")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_SUCCESS")

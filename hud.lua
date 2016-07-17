@@ -582,6 +582,41 @@ registerActionHudAura('Bear Form','Interface\\AddOns\\GW2_UI\\textures\\leftshad
 registerActionHudAura('Cat Form','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat')
 
 
+function gw_breath_meter()
+    CreateFrame('Frame','GwBreathMeter',UIParent,'GwBreathMeter')
+    GwBreathMeter:Hide()
+    GwBreathMeter:SetScript('OnShow', function()
+         UIFrameFadeIn(GwBreathMeter, 0.2,GwBreathMeter:GetAlpha(),1)
+    end)
+    MirrorTimer1:SetScript('OnShow',function(self) self:Hide() end)
+    MirrorTimer1:UnregisterAllEvents()
+ 
+    
+    GwBreathMeter:RegisterEvent('MIRROR_TIMER_START')
+    GwBreathMeter:RegisterEvent('MIRROR_TIMER_STOP')
+    
+    GwBreathMeter:SetScript('OnEvent', function(self,event,arg1,arg2,arg3,arg4)
+        
+        if event=='MIRROR_TIMER_START' then
+                
+            local texture = 'Interface\\AddOns\\GW2_UI\\textures\\castingbar'
+                if arg1=='BREATH' then
+                    texture = 'Interface\\AddOns\\GW2_UI\\textures\\breathmeter'
+                end
+            GwBreathMeterBar:SetStatusBarTexture(texture)
+            GwBreathMeterBar:SetMinMaxValues(0,arg3)
+            GwBreathMeterBar:SetScript('OnUpdate', function() GwBreathMeterBar:SetValue( GetMirrorTimerProgress(arg1)) end)
+            GwBreathMeter:Show()
+        end
+        if event=='MIRROR_TIMER_STOP' then
+            GwBreathMeterBar:SetScript('OnUpdate', nil)
+            GwBreathMeter:Hide()
+        end
+        
+    end)
+
+end
+
 
 local microButtonFrame = CreateFrame('Frame', 'GwMicroButtonFrame', UIParent,'GwMicroButtonFrame')
 

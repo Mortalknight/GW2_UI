@@ -489,9 +489,10 @@ l:SetScript('OnEvent',function(self,event,name)
         
         if gwGetSetting('BAGS_ENABLED') then
             gw_create_bgframe()
-        end
-
-
+        end 
+        
+        gw_breath_meter()
+        
             --Create unitframes
         if gwGetSetting('FOCUS_ENABLED') then
             registerNewUnitFrame('focus','GwTargetFrameTemplate')
