@@ -60,6 +60,7 @@ mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
             
         if  event=='UNIT_SPELLCAST_FAILED' or event=='UNIT_SPELLCAST_INTERRUPTED' then
             mainCastingBart:SetVertexColor(1,0.5,0.5); 
+            gw_castingbar_reset()
             playeCasting = 0
         end
         if  event=='UNIT_SPELLCAST_SUCCEEDED' or event=='UNIT_SPELLCAST_SUCCESS' then

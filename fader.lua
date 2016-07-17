@@ -18,7 +18,8 @@ end
 function actionBarFrameShow(f,name)
     if f:GetAlpha() == 0 then
         addToAnimation(name, action_bar_animations[name],1,GetTime(),0.1,function()
-            f:SetAlpha(animations[name]['progress'])
+        f.Hidden = true  
+        f:SetAlpha(animations[name]['progress'])
                 gw_actionbar_state_changed()
         end,nil,function() gw_actionbar_state_changed() end)         
         action_bar_animations[name] = 1
@@ -26,6 +27,7 @@ function actionBarFrameShow(f,name)
 end
 function actionBarFrameHide(f,name)
     if f:GetAlpha() == 1 then
+         f.Hidden = false
         addToAnimation(name, action_bar_animations[name],0,GetTime(),0.1,function()
             f:SetAlpha(animations[name]['progress'])
                 gw_actionbar_state_changed()

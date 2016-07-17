@@ -669,9 +669,14 @@ f:SetFrameRef('GwPlayerPetFrame', GwPlayerPetFrame)
 
 f:SetAttribute('_onstate-combat', [=[ 
         
+        if self:GetFrameRef('MultiBarBottomLeft'):IsShown()==false then
+            return
+        end
+
+        
         self:GetFrameRef('GwPlayerPetFrame'):ClearAllPoints()
         y = 264
-        if newstate == 'show' then
+        if newstate == 'show'   then
 
             self:GetFrameRef('GwPlayerPetFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',-372,220)
         else
