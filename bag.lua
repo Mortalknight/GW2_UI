@@ -24,6 +24,10 @@ local default_bag_frame_container ={
 function gw_create_bgframe()
    local fm= CreateFrame('Frame','GwBagMoverFrame',UIParent,'GwBagMoverFrame') 
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
+    
+    GwBagFrame:SetScript('OnHide',function() GwBagMoverFrame:Hide() end)
+    GwBagFrame:SetScript('OnShow',function() GwBagMoverFrame:Show() end)
+    
     GwBagFrame:Hide()
     
 
