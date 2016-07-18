@@ -17,6 +17,8 @@ GW_HIDDEN_QUESTS = {}
 
 GW_QUESTS = {}
 
+local UPDATE_POI_SCAN = 0
+
 
 local SCENARIO_FLAG_CHALLENGE_MODE		= 0x00000001;
 local SCENARIO_FLAG_SUPRESS_STAGE_TEXT	= 0x00000002;
@@ -179,8 +181,10 @@ function gw_update_radar()
             MAPID = CLOSEST_MAPID
     end
         
-        
-        SetMapByID(MAPID)
+        if GetCurrentMapAreaID()~=MAPID then
+            SetMapByID(MAPID)
+        end
+       
         local pFaceing = GetPlayerFacing()
         posX, posY  =GetPlayerMapPosition("player");
         
@@ -550,9 +554,11 @@ function gw_display_questtracker_layout()
     GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuestTrackerRadar,'BOTTOMRIGHT',0,-BOSS_FRAME_HEIGHT)
   --  GwQuesttrackerContainerBossFrames:SetHeight(math.max(1,BOSS_FRAME_HEIGHT))
     
-    
-    gw_find_bonusObjectives()
-    gw_findPOI()
+    if UPDATE_POI_SCAN < GetTime() then
+        gw_find_bonusObjectives()
+        gw_findPOI()
+        UPDATE_POI_SCAN = GetTime() + 1
+    end
     
 end
 
