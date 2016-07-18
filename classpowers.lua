@@ -231,6 +231,37 @@ function GW_POWERTYPE_MANABAR()
     update_power_data(GwExtraPlayerPowerBar,0,'MANA','GwExtraPowerBar')
 end
 
+function GW_POWERTYPE_ARCANE()
+       
+  
+    local old_power = CLASS_POWER
+    CLASS_POWER_MAX =  UnitPowerMax('player',16)
+    CLASS_POWER =  UnitPower('player',16)
+    local p = CLASS_POWER - 1
+
+    GwPlayerClassPowerBackground:SetTexCoord(0,1,0.125*3,0.125*(3+1))
+    GwPlayerClassPowerFill:SetTexCoord(0,1,0.125*p,0.125*(p+1))
+    
+    if old_power<CLASS_POWER then
+        HOLY_POWER_FLARE_ANIMATION = 1
+        old_power = CLASS_POWER
+        GwPlayerClassPowerFlare:ClearAllPoints()
+        GwPlayerClassPowerFlare:SetPoint('CENTER',GwPlayerClassPower,'LEFT',(64*CLASS_POWER)-32,0)
+        
+        addToAnimation('HOLY_POWER_FLARE_ANIMATION',HOLY_POWER_FLARE_ANIMATION,0,GetTime(),2,function()
+            
+            local alpha =  animations['HOLY_POWER_FLARE_ANIMATION']['progress']
+
+            GwPlayerClassPowerFlare:SetAlpha(alpha)
+            GwPlayerClassPowerFlare:SetRotation(1*animations['HOLY_POWER_FLARE_ANIMATION']['progress'])
+                
+        
+        end)
+        
+        
+    end 
+end
+
 
 function GW_SET_BARTYPE()
     
@@ -243,6 +274,7 @@ function GW_SET_BARTYPE()
     end
     
     if PLAYER_CLASS==2 then
+      
         GwPlayerClassPowerBackground:SetHeight(32)
         GwPlayerClassPowerBackground:SetWidth(320)
         
@@ -288,6 +320,27 @@ function GW_SET_BARTYPE()
         return
    end
     if PLAYER_CLASS==7 then
+        return 
+    end  
+    if PLAYER_CLASS==8 then
+        GwPlayerClassPower:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',-372,70)
+        GwPlayerClassPowerBackground:SetHeight(64)
+        GwPlayerClassPowerBackground:SetWidth(512)
+        
+        GwPlayerClassPower:SetHeight(64)
+        GwPlayerClassPower:SetWidth(512)
+        GwPlayerClassPowerBackground:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane')
+        GwPlayerClassPowerFlare:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane-flash')
+        GwPlayerClassPowerBackground:SetTexCoord(0,1,0.125*3,0.125*(3+1))
+         
+        GwPlayerClassPowerFlare:SetWidth(256)
+        GwPlayerClassPowerFlare:SetHeight(256)
+
+        GwPlayerClassPowerFill:SetHeight(64)
+        GwPlayerClassPowerFill:SetWidth(512)
+        GwPlayerClassPowerFill:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane')
+        
+        GwPlayerClassPowerBackground:SetVertexColor(0,0,0,0.5)
         return 
     end
 
@@ -350,6 +403,9 @@ CLASS_POWERS[5][3]= GW_POWERTYPE_MANABAR
 
 CLASS_POWERS[7] = {}
 CLASS_POWERS[7][2]= GW_POWERTYPE_MANABAR
+
+CLASS_POWERS[8] = {}
+CLASS_POWERS[8][1]= GW_POWERTYPE_ARCANE
 
 CLASS_POWERS[9] = {}
 CLASS_POWERS[9][1]= GW_POWERTYPE_SOULSHARD

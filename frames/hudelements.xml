@@ -217,7 +217,7 @@
         </Anchors>
         
     </Frame>
-    <Frame  name="GwPlayerClassPower" frameStrata="LOW" parent="UIParent" virtual="true">
+    <Frame  name="GwPlayerClassPower" frameStrata="HIGH" parent="UIParent" virtual="true">
         <Size x="316" y="18"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-372" y="86" ></Anchor>
@@ -235,7 +235,7 @@
                     <Size x="316" y="18"></Size>
                 </Texture>
             </Layer> 
-            <Layer textureSubLevel="2" level="OVERLAY">
+            <Layer textureSubLevel="8" level="OVERLAY">
                 <Texture name="$parentFlare" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare" >
                     <Color r="1" g="1" b="1" a="0"></Color>
                     <Size x="256" y="256"></Size>
