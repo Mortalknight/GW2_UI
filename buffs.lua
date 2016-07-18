@@ -14,7 +14,12 @@ local player_buff_frame = CreateFrame('Frame','GwPlayerAuraFrame',UIParent,'GwPl
     local fgw = CreateFrame('Frame', nil, nil, 'SecureHandlerStateTemplate')
     fgw:SetFrameRef('GwPlayerAuraFrame', player_buff_frame)
     fgw:SetFrameRef('UIParent', UIParent)
+    fgw:SetFrameRef('MultiBarBottomRight', MultiBarBottomRight)
     fgw:SetAttribute('_onstate-combat', [=[ 
+        
+        if self:GetFrameRef('MultiBarBottomRight'):IsShown()==false then
+            return
+        end
         
       self:GetFrameRef('GwPlayerAuraFrame'):ClearAllPoints()
         if newstate == 'show' then
