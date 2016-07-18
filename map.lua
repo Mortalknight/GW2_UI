@@ -126,6 +126,14 @@ function gw_set_minimap()
     GameTimeFrame:SetScale(0.8)
     
     GameTimeFrame = CreateFrame('Button','GwCalendarButton',UIParent,'GwCalendarButton')
+    
+    
+    GameTimeFrame:HookScript('OnEvent',function()
+     GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-30)
+    end)
+   
+
+    
     GwCalendarButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-7,0)
     
     local GwGarrisonButton = CreateFrame('Button','GwGarrisonButton',UIParent,'GwGarrisonButton')
@@ -284,6 +292,3 @@ function GwMapTimeOnEnter(self)
 	GameTooltip:Show()
 end
 
-function GameTimeFrame_OnEvent(self)
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-30)
-end
