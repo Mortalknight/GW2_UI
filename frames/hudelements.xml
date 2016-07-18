@@ -254,36 +254,42 @@
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture name="GwRuneTexture1" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
                             </Anchors>
                         </Texture>
                         <Texture name="GwRuneTexture2" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="42" y="0" ></Anchor>
                             </Anchors>
                         </Texture>
                         <Texture name="GwRuneTexture3" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="84" y="0" ></Anchor>
                             </Anchors>
                         </Texture>
                         <Texture name="GwRuneTexture4" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="126" y="0" ></Anchor>
                             </Anchors>
                         </Texture>
                         <Texture name="GwRuneTexture5" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="168" y="0" ></Anchor>
                             </Anchors>
                         </Texture>
                         <Texture name="GwRuneTexture6" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="210" y="0" ></Anchor>

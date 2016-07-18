@@ -64,8 +64,13 @@ function GW_UPDATE_CLASSPOWER(self,event)
     end
     
     if  CLASS_POWERS[PLAYER_CLASS]~=nil and CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION]~=nil then
-          
-         CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION]()
+        local s = GetShapeshiftFormID()
+        if s==1 then
+            GW_POWERTYPE_COMBOPOINT()
+            return
+        end
+            CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION]()
+        
     end
     
     
@@ -230,6 +235,7 @@ end
 function GW_SET_BARTYPE()
     
     GwPlayerClassPower:Show()
+    local s = GetShapeshiftFormID()
     
     if  CLASS_POWERS[PLAYER_CLASS]==nil or CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION]==nil then
           GwPlayerClassPower:Hide()
@@ -250,7 +256,11 @@ function GW_SET_BARTYPE()
         GwPlayerClassPowerFill:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower')
         return
    end 
-    if PLAYER_CLASS==4 then
+    if PLAYER_CLASS==4 or PLAYER_CLASS==11 and s==1 then
+        if GwExtraPlayerPowerBar~=nil then
+            GwExtraPlayerPowerBar:Hide()
+        end
+        
         GwPlayerClassPowerBackground:SetHeight(32)
         GwPlayerClassPowerBackground:SetWidth(256)
         
@@ -308,8 +318,13 @@ function GW_SET_BARTYPE()
         GwPlayerClassPowerFill:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi')
         return
    end
-   local s = GetShapeshiftFormID()
-    if PLAYER_CLASS==11 and s==5 or s==1 or s==31 then
+   
+    if PLAYER_CLASS==11 and s==5  or s==31 then
+        if GwExtraPlayerPowerBar~=nil then
+            GwExtraPlayerPowerBar:Show()
+        end
+         GwPlayerClassPowerBackground:SetTexture(nil)
+         GwPlayerClassPowerFill:SetTexture(nil)
         return
     end
     GwPlayerClassPower:Hide()
