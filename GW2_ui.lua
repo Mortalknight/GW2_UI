@@ -18,7 +18,7 @@ GW2UI_SETTINGS = {}
     DEFAULT['PLAYER_BUFFS_ENABLED'] = true
     DEFAULT['ACTIONBARS_ENABLED'] = true
     DEFAULT['BAGS_ENABLED'] = true
-    DEFAULT['NPC_CAM_ENABLED'] = true
+    DEFAULT['NPC_CAM_ENABLED'] = false
 
     DEFAULT['HUD_SPELL_SWAP'] = true
 
@@ -113,18 +113,18 @@ local lastSwimState = true
 
 
 function gwGetSetting(name)
-    if GW2UI_SETTINGS_DB==nil then
-        GW2UI_SETTINGS_DB = DEFAULT
+    if GW2UI_SETTINGS_DB_03==nil then
+        GW2UI_SETTINGS_DB_03 = DEFAULT
     end
-    if GW2UI_SETTINGS_DB[name]==nil then
-        GW2UI_SETTINGS_DB[name] = gwGetDefault(name)
+    if GW2UI_SETTINGS_DB_03[name]==nil then
+        GW2UI_SETTINGS_DB_03[name] = gwGetDefault(name)
     end
     
-    return GW2UI_SETTINGS_DB[name]
+    return GW2UI_SETTINGS_DB_03[name]
 end
 
 function gwSetSetting(name,state)
-    GW2UI_SETTINGS_DB[name] = state
+    GW2UI_SETTINGS_DB_03[name] = state
 end
 
 function gwGetDefault(name)    

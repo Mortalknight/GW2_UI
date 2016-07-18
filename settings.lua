@@ -52,7 +52,6 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Tooltips', 'Use the GW2 Tooltips','TOOLTIPS_ENABLED','GwSettingsModuleOption')
     addOption('Chat', 'Use the restyled Chat Frame','CHATFRAME_ENABLED','GwSettingsModuleOption')
     addOption('Immersive Questing', 'Use the immersive Quest Screen','QUESTVIEW_ENABLED','GwSettingsModuleOption')
-    addOption('NPC Zoom', 'Focus the camera on NPCs','NPC_CAM_ENABLED','GwSettingsModuleOption')
     addOption('Player Auras', 'Move and resize player auras','PLAYER_BUFFS_ENABLED','GwSettingsModuleOption')
     addOption('Action Bars', 'Use the GW2 styled action bars','ACTIONBARS_ENABLED','GwSettingsModuleOption')
     addOption('Bags', 'Use the unified GW2 bag interface','BAGS_ENABLED','GwSettingsModuleOption')
