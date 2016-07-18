@@ -17,7 +17,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     
     GwMainMenuFrame = CreateFrame('Button','GwMainMenuFrame',GameMenuFrame,'GwStandardButton')
-    GwMainMenuFrame:SetText('Gw2 UI Settings')
+    GwMainMenuFrame:SetText('GW2 UI Settings')
     GwMainMenuFrame:ClearAllPoints()
     GwMainMenuFrame:SetPoint('TOP',GameMenuFrame,'BOTTOM',0,0 )
     GwMainMenuFrame:SetScript('OnClick',function() sWindow:Show()
