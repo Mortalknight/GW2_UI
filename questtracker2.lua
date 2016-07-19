@@ -541,11 +541,11 @@ function gw_display_questtracker_layout()
     for bossFrameIndex = 1,5 do 
 
         if _G['GwQuestTrackerBossFrame'..bossFrameIndex] and _G['GwQuestTrackerBossFrame'..bossFrameIndex]:IsShown() then
-             BOSS_FRAME_HEIGHT = BOSS_FRAME_HEIGHT + OBJECTIVE_HEIGHT+20
+             BOSS_FRAME_HEIGHT = BOSS_FRAME_HEIGHT + 35 
         end
     end
     if BOSS_FRAME_HEIGHT>0 then
-        BOSS_FRAME_HEIGHT = BOSS_FRAME_HEIGHT + 75 
+        BOSS_FRAME_HEIGHT = BOSS_FRAME_HEIGHT + 20 
     end
     
     GwQuesttrackerContainerQuests:SetHeight(math.max(1,USED_HEIGHT['QUEST']))
@@ -819,24 +819,24 @@ function gw_load_bossFrame(i)
     targetF:SetScript('OnShow',gw_questtracker_OnEvent )
     targetF:SetScript('OnHide',gw_questtracker_OnEvent )
     
-    targetF:SetScript('OnEvent', function()
+    targetF:SetScript('OnShow',function()  gw_update_bossframe( _G['GwQuestTrackerBossFrame'..i], debug_unit_Track) end)
+    targetF:SetScript('OnEvent',function() gw_update_bossframe( _G['GwQuestTrackerBossFrame'..i], debug_unit_Track)end)
+    gw_update_bossframe( _G['GwQuestTrackerBossFrame'..i], debug_unit_Track)
+    
+end
 
-            _G['GwQuestTrackerBossFrame'..i..'String']:SetText(UnitName(debug_unit_Track)) 
+ function gw_update_bossframe(self,debug_unit_Track)
+        
+            _G[self:GetName()..'String']:SetText(UnitName(debug_unit_Track)) 
             local health = UnitHealth(debug_unit_Track)
             local healthMax = UnitHealthMax(debug_unit_Track)
             local healthPrecentage = 0
 
-
-
-
             if health>0 and healthMax>0 then
                 healthPrecentage = health/healthMax
             end
-            _G['GwQuestTrackerBossFrame'..i..'StatusBar']:SetValue(healthPrecentage)
-    end)
-    
-    
-end
+            _G[self:GetName()..'StatusBar']:SetValue(healthPrecentage)
+    end
 
 local DEFAULT_BOSS_FRAMES ={
     Boss1TargetFrame,
