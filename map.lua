@@ -97,7 +97,6 @@ function gw_set_minimap()
 
     GarrisonLandingPageMinimapButton:ClearAllPoints()
     MiniMapMailFrame:ClearAllPoints()
-    GameTimeFrame:ClearAllPoints()
     MinimapZoneText:ClearAllPoints()
 
     MinimapZoneText:SetParent(mapGradient)
@@ -121,14 +120,12 @@ function gw_set_minimap()
     QueueStatusMinimapButton:ClearAllPoints()
     QueueStatusMinimapButton:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-5,-69)
     
-    GameTimeFrame:ClearAllPoints()
-    GameTimeFrame:SetPoint('TOPLEFT',Minimap,-42,0)
-    GameTimeFrame:SetScale(0.8)
+    GameTimeFrame:HookScript('OnShow', function(self) self:Hide() end)
     
-    GameTimeFrame = CreateFrame('Button','GwCalendarButton',UIParent,'GwCalendarButton')
+    GwCalendarButton = CreateFrame('Button','GwCalendarButton',UIParent,'GwCalendarButton')
     
     
-    GameTimeFrame:HookScript('OnEvent',function()
+    GwCalendarButton:HookScript('OnEvent',function()
      GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-30)
     end)
    
