@@ -816,10 +816,10 @@ function gw_load_bossFrame(i)
     targetF:RegisterEvent('UNIT_HEALTH')
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED");
     
-    targetF:SetScript('OnShow',gw_questtracker_OnEvent )
+    targetF:SetScript('OnShow',function() gw_questtracker_OnEvent()  gw_update_bossframe( _G['GwQuestTrackerBossFrame'..i], debug_unit_Track) end )
     targetF:SetScript('OnHide',gw_questtracker_OnEvent )
     
-    targetF:SetScript('OnShow',function()  gw_update_bossframe( _G['GwQuestTrackerBossFrame'..i], debug_unit_Track) end)
+
     targetF:SetScript('OnEvent',function() gw_update_bossframe( _G['GwQuestTrackerBossFrame'..i], debug_unit_Track)end)
     gw_update_bossframe( _G['GwQuestTrackerBossFrame'..i], debug_unit_Track)
     
