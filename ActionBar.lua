@@ -321,14 +321,15 @@ end)
   
 		
         local padding = (i -1) * ActionButton1:GetWidth()
-        local leftPadding = (i -1) * (MultiBarBottomLeftButton1:GetWidth()+2)
+        local leftPadding = (i -1) * (MultiBarBottomLeftButton1:GetWidth()+1)
         local ypadding = 0
     
         if i > 6 then
             padding = padding + 80
-            ypadding = MultiBarBottomLeftButton1:GetHeight() + 3
-            leftPadding = (i -7) * (MultiBarBottomLeftButton1:GetWidth()+2)
+            ypadding = MultiBarBottomLeftButton1:GetHeight() + 1
+            leftPadding = (i -7) * (MultiBarBottomLeftButton1:GetWidth()+1)
         end
+        leftPadding = math.floor(leftPadding)
 		  
         
         _G["ActionButton" .. i]:SetPoint('RIGHT', ActionButton1, padding + 5*(i-1), 0)

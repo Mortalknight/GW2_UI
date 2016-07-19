@@ -208,7 +208,7 @@ function updateAuras(thisName, unitToWatch)
                 indexBuffFrame = CreateFrame('Frame', thisName..'BuffItemFrame'..i,_G[thisName..'Buffs'],'GwBuffIcon');
                 indexBuffFrame:SetParent(_G[thisName..'Buffs']);
             end
-            local margin = indexBuffFrame:GetWidth()
+            local margin = indexBuffFrame:GetWidth() + 4
             local marginy = indexBuffFrame:GetWidth() + 12
             _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][key]['icon'])
             _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G[thisName..'BuffItemFrame'..i])
@@ -225,7 +225,7 @@ function updateAuras(thisName, unitToWatch)
              _G[thisName..'BuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
              _G[thisName..'BuffItemFrame'..i..'BuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint('TOPLEFT',(margin*x),-marginy*y)
+            indexBuffFrame:SetPoint('TOPLEFT',(margin*x),(-marginy*y) + -10)
             
             indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,i); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)

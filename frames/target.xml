@@ -278,6 +278,15 @@
     <Frame  name="GwBuffIcon" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="20" y="20"/>
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="backdrop"  file="Interface\AddOns\GW2_UI\textures\spelliconempty" >
+                    <Size x="20" y="20"/>
+   
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer>
                 <Texture name="$parentBuffIcon"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
                     <Size x="18" y="18"/>
