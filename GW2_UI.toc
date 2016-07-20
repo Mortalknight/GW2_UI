@@ -1,5 +1,5 @@
-## Interface: 70030
-## Title: Gw2 UI
+## Interface: 70000
+## Title: GW2 UI
 ## Notes: Hud Replacement addon.
 
 
