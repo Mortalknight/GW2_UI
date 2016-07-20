@@ -36,14 +36,24 @@ function gw_create_bgframe()
     ContainerFrame3:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer2:Show() end)
     ContainerFrame4:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer3:Show() end)
     ContainerFrame5:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer4:Show() end)
-    ContainerFrame6:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer5:Show() end) 
+    
+    --BANK BAGS
+    
+    ContainerFrame6:HookScript('OnShow',function() gw_bag_close()   end)
+    ContainerFrame7:HookScript('OnShow',function() gw_bag_close()   end)
+    ContainerFrame8:HookScript('OnShow',function() gw_bag_close()   end)
+    ContainerFrame9:HookScript('OnShow',function() gw_bag_close()   end)
+    ContainerFrame10:HookScript('OnShow',function() gw_bag_close()   end)
+    ContainerFrame11:HookScript('OnShow',function() gw_bag_close()   end)
+    ContainerFrame12:HookScript('OnShow',function() gw_bag_close()   end)
+
     
     ContainerFrame1:HookScript('OnHide',function() gw_bag_close() gw_update_bag_icons() GwBagContainer0:Hide() end)
     ContainerFrame2:HookScript('OnHide',function() gw_bag_close() gw_update_bag_icons() GwBagContainer1:Hide() end)
     ContainerFrame3:HookScript('OnHide',function() gw_bag_close() gw_update_bag_icons() GwBagContainer2:Hide() end)
     ContainerFrame4:HookScript('OnHide',function() gw_bag_close() gw_update_bag_icons() GwBagContainer3:Hide() end)
     ContainerFrame5:HookScript('OnHide',function() gw_bag_close() gw_update_bag_icons() GwBagContainer4:Hide() end)
-    ContainerFrame6:HookScript('OnHide',function() gw_bag_close() gw_update_bag_icons() GwBagContainer5:Hide() end)
+
     
     gw_move_bagbar()
     
@@ -112,10 +122,18 @@ function gw_bag_open()
 end 
 function gw_bag_close() 
     local o = false
-   for i=1,5 do
-        if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
-            _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,0);
-            o=true
+
+   for i=1,12 do
+        if i<6 then
+            if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
+                _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,0);
+                o=true
+            end
+        else
+            if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
+                local  point, relativeTo, relativePoint, xOfs, yOfs = _G['ContainerFrame'..i]:GetPoint()
+                _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'RIGHT',-300,yOfs)
+            end
         end
     end
     if o==false then
@@ -272,6 +290,7 @@ function gw_update_free_slots()
             full =  full + GetContainerNumSlots(i)
         end
             
+        free =  full - free
         local bag_space_string =free..' / '..full
         GwBagFrameBagSpaceString:SetText(bag_space_string); 
 end

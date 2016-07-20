@@ -18,7 +18,6 @@ end
 
 function gw_set_actionbars()
     
-
     
 MainMenuBarVehicleLeaveButton:HookScript("OnShow", function(self)
     set_exit_button()
