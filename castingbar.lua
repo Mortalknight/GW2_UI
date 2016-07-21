@@ -10,7 +10,7 @@ CastingBarFrame:UnregisterAllEvents()
 
 mainCastingBarBg , mainCastingBarBgt = createBackground('BOTTOM',258,22,0,0,"Interface\\AddOns\\GW2_UI\\textures\\castingbar",0)
 
-    
+    mainCastingBarBg:ClearAllPoints()
   mainCastingBarBg:SetPoint(gwGetSetting('castingbar_pos')['point'],UIParent,gwGetSetting('castingbar_pos')['relativePoint'],gwGetSetting('castingbar_pos')['xOfs'],gwGetSetting('castingbar_pos')['yOfs'])
     
 mainCastingBarBgt:SetVertexColor(0.1,0,0,0.4);

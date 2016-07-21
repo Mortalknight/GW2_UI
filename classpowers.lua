@@ -206,7 +206,6 @@ end
 
 function GW_POWERTYPE_MANABAR()
     if extra_manabar_loaded then return end
-
     extra_manabar_loaded = true
     local GwExtraPlayerPowerBar = CreateFrame('Frame', 'GwExtraPlayerPowerBar',UIParent, 'GwPlayerPowerBar');
     

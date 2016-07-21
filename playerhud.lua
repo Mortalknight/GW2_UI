@@ -44,6 +44,7 @@ function create_pet_frame()
     --_G['GwPlayerPetFramePortrait']
     update_pet_data('UNIT_PET','player')
    
+    GwPlayerPetFrame:ClearAllPoints()
     GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos')['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
 
 end
