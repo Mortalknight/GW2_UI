@@ -11,6 +11,13 @@
             <Color r="0" g="0" b="0" a="1"/>
         </Shadow>
     </Font>
+    <Button name="GwPlayerHealthGlobeClickOverlay" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="HIGH"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
+        <Size x="104" y="104"></Size>
+        <Anchors>
+            <Anchor point="BOTTOM" x="0" y="16"/>
+        </Anchors>
+    
+    </Button>
     <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
 	
         <Size x="104" y="104"></Size>
