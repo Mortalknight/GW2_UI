@@ -20,10 +20,7 @@ function SetFont(fontObject, font, size, style, shadowX, shadowY, shadowA, r, g,
 	return fontObject	
 end
 
-
-
-
-
+function gw_register_fonts() 
 
 	local normal ='Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
 	local bold ='Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
@@ -130,7 +127,7 @@ end
 	
 
 
-
+end
 	
 
 

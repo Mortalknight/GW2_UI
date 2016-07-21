@@ -19,6 +19,7 @@ GW2UI_SETTINGS = {}
     DEFAULT['ACTIONBARS_ENABLED'] = true
     DEFAULT['BAGS_ENABLED'] = true
     DEFAULT['NPC_CAM_ENABLED'] = false
+    DEFAULT['FONTS_ENABLED'] = true
 
     DEFAULT['HUD_SPELL_SWAP'] = true
 
@@ -457,6 +458,10 @@ l:SetScript('OnEvent',function(self,event,name)
             
             --Create experiencebar
             loadExperienceBar() 
+        
+       if gwGetSetting('FONTS_ENABLED') then
+            gw_register_fonts()
+        end  
         
        if gwGetSetting('MINIMAP_ENABLED') then
             gw_set_minimap()
