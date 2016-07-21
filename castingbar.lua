@@ -3,11 +3,16 @@ local playerSpellStart = 0
 local playerSpellEnd = 0
 local castingbarAnimation = 0
 
+function gw_register_castingbar() 
+    
 CastingBarFrame:Hide()
 CastingBarFrame:UnregisterAllEvents()
 
 mainCastingBarBg , mainCastingBarBgt = createBackground('BOTTOM',258,22,0,0,"Interface\\AddOns\\GW2_UI\\textures\\castingbar",0)
-mainCastingBarBg:SetPoint('BOTTOM',UIParent,'BOTTOM',0,300)
+
+    
+  mainCastingBarBg:SetPoint(gwGetSetting('castingbar_pos')['point'],UIParent,gwGetSetting('castingbar_pos')['relativePoint'],gwGetSetting('castingbar_pos')['xOfs'],gwGetSetting('castingbar_pos')['yOfs'])
+    
 mainCastingBarBgt:SetVertexColor(0.1,0,0,0.4);
 
 
@@ -18,6 +23,9 @@ mainCastingBar:SetPoint('LEFT',mainCastingBarBg,'LEFT',0,0)
 
 mainCastingBar:SetParent(mainCastingBarBg)
 mainCastingBarBg:SetAlpha(0)
+    
+gw_register_movable_frame('castingbarframe',mainCastingBarBg,'castingbar_pos','GwCastFrameDummy')    
+    
 mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
         local castingType = 1
         if  unitID~='player' then
@@ -76,13 +84,6 @@ mainCastingBarBg:SetScript("OnEvent",function(self,event,unitID,spell)
         
 end)
 
-function gw_castingbar_reset()
-    
-    if animations['castingbarAnimation'] then
-        animations['castingbarAnimation']['completed'] = true
-        animations['castingbarAnimation']['duration'] = 0
-    end
-end
 
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_START")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
@@ -94,3 +95,13 @@ mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_STOP")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_SUCCESS")
 mainCastingBarBg:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+
+end
+
+function gw_castingbar_reset()
+    
+    if animations['castingbarAnimation'] then
+        animations['castingbarAnimation']['completed'] = true
+        animations['castingbarAnimation']['duration'] = 0
+    end
+end

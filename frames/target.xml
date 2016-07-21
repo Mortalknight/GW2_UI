@@ -414,13 +414,28 @@
 	</Button> 
     <Button name="GwPetFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent"  virtual="true">
         <Size x="328" y="100"></Size>
-		<HitRectInsets>
-			<AbsInset left="0" right="40" top="10" bottom="20"/>
-		</HitRectInsets>	
+
 		<Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
                     <Size x="328" y="100"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+
+		</Layers>
+	</Button>
+    
+    <Button name="GwCastFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent"  virtual="true">
+        <Size x="258" y="22"></Size>
+
+		<Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
+                    <Size x="258" y="22"></Size>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>

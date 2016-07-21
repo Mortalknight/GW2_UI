@@ -20,6 +20,7 @@ GW2UI_SETTINGS = {}
     DEFAULT['BAGS_ENABLED'] = true
     DEFAULT['NPC_CAM_ENABLED'] = false
     DEFAULT['FONTS_ENABLED'] = true
+    DEFAULT['CASTINGBAR_ENABLED'] = true
 
     DEFAULT['HUD_SPELL_SWAP'] = true
 
@@ -81,7 +82,13 @@ GW2UI_SETTINGS = {}
     DEFAULT['pet_pos']['point'] = 'BOTTOMLEFT'
     DEFAULT['pet_pos']['relativePoint'] = 'BOTTOM'
     DEFAULT['pet_pos']['xOfs'] =  -372
-    DEFAULT['pet_pos']['yOfs']  = 220
+    DEFAULT['pet_pos']['yOfs']  = 220  
+
+    DEFAULT['castingbar_pos'] ={}
+    DEFAULT['castingbar_pos']['point'] = 'BOTTOM'
+    DEFAULT['castingbar_pos']['relativePoint'] = 'BOTTOM'
+    DEFAULT['castingbar_pos']['xOfs'] =  0
+    DEFAULT['castingbar_pos']['yOfs']  = 300
     
     
     
@@ -461,6 +468,9 @@ l:SetScript('OnEvent',function(self,event,name)
         
        if gwGetSetting('FONTS_ENABLED') then
             gw_register_fonts()
+        end  
+        if gwGetSetting('CASTINGBAR_ENABLED') then
+            gw_register_castingbar()
         end  
         
        if gwGetSetting('MINIMAP_ENABLED') then
