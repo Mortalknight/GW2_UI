@@ -48,8 +48,9 @@ function gw_create_bankframe()
     
     BankFrame:HookScript('OnHide', function() GwBankFrame:Hide() end)
     BankFrame:HookScript('OnShow', function() GwBankFrame:Show() 
-        BankFrame:ClearAllPoints()    
-        BankFrame:SetPoint('RIGHT',UIParent,'LEFT',-20000,0)
+            BankFrame:ClearAllPoints()    
+        BankFrame:SetPoint('RIGHT',UIParent,'LEFT',-2000,0)
+        BankFrame.SetPoint = function() end
     end)
     
     GwBankFrame:Hide()
