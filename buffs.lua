@@ -106,7 +106,7 @@ function gw_playerUpdateAuras()
                 indexBuffFrame = CreateFrame('Button',  'GwPlayerBuffItemFrame'..i,_G['GwPlayerAuraFrame'],'GwBuffIconBig');
                 indexBuffFrame:SetParent(_G['GwPlayerAuraFrame']);
             end
-            local margin = -indexBuffFrame:GetWidth() +4
+            local margin = -indexBuffFrame:GetWidth() + -2
             local marginy = indexBuffFrame:GetWidth() + 12
             _G['GwPlayerBuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][key]['icon'])
             _G['GwPlayerBuffItemFrame'..i..'BuffIcon']:SetParent(_G['GwPlayerBuffItemFrame'..i])
