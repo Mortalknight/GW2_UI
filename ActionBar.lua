@@ -140,8 +140,7 @@ end)
     MainMenuBarLeftEndCap:Hide()
     MainMenuBarRightEndCap:Hide()
 
-    CastingBarFrame:Hide()
-    CastingBarFrame:UnregisterAllEvents()
+    
     
     
      if not gwGetSetting('BAGS_ENABLED') then

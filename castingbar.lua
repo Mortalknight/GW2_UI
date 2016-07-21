@@ -2,6 +2,10 @@ local playeCasting = 0
 local playerSpellStart = 0
 local playerSpellEnd = 0
 local castingbarAnimation = 0
+
+CastingBarFrame:Hide()
+CastingBarFrame:UnregisterAllEvents()
+
 mainCastingBarBg , mainCastingBarBgt = createBackground('BOTTOM',258,22,0,0,"Interface\\AddOns\\GW2_UI\\textures\\castingbar",0)
 mainCastingBarBg:SetPoint('BOTTOM',UIParent,'BOTTOM',0,300)
 mainCastingBarBgt:SetVertexColor(0.1,0,0,0.4);
