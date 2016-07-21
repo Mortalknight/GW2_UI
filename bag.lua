@@ -1,6 +1,7 @@
 local BAG_ITEM_SIZE = 45
 local BAG_ITEM_PADDING = 5
 local BAG_WINDOW_SIZE = 480
+local BAG_WINDOW_CONTENT_HEIGHT = 0
 
 local default_bag_frame ={
     'MainMenuBarBackpackButton',
@@ -23,10 +24,11 @@ local default_bag_frame_container ={
 
 function gw_create_bgframe()
    local fm= CreateFrame('Frame','GwBagMoverFrame',UIParent,'GwBagMoverFrame') 
+    GwBagMoverFrame:HookScript('OnDragStop',gw_onBankMove)
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
     
-    GwBagFrame:SetScript('OnHide',function() GwBagMoverFrame:Hide() end)
-    GwBagFrame:SetScript('OnShow',function() GwBagMoverFrame:Show() end)
+    GwBagFrame:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)
+    GwBagFrame:SetScript('OnShow',function() GwBagMoverFrame:Show() GwBagFrameResize:Show() end)
     
     GwBagFrame:Hide()
     
@@ -39,13 +41,7 @@ function gw_create_bgframe()
     
     --BANK BAGS
     
-    ContainerFrame6:HookScript('OnShow',function() gw_bag_close()   end)
-    ContainerFrame7:HookScript('OnShow',function() gw_bag_close()   end)
-    ContainerFrame8:HookScript('OnShow',function() gw_bag_close()   end)
-    ContainerFrame9:HookScript('OnShow',function() gw_bag_close()   end)
-    ContainerFrame10:HookScript('OnShow',function() gw_bag_close()   end)
-    ContainerFrame11:HookScript('OnShow',function() gw_bag_close()   end)
-    ContainerFrame12:HookScript('OnShow',function() gw_bag_close()   end)
+ 
 
     
     ContainerFrame1:HookScript('OnHide',function() gw_bag_close() gw_update_bag_icons() GwBagContainer0:Hide() end)
@@ -126,13 +122,15 @@ function gw_bag_close()
    for i=1,12 do
         if i<6 then
             if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
+
+                _G['ContainerFrame'..i]:ClearAllPoints()
                 _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,0);
                 o=true
             end
         else
             if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
-                local  point, relativeTo, relativePoint, xOfs, yOfs = _G['ContainerFrame'..i]:GetPoint()
-                _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'RIGHT',-300,yOfs)
+                _G['ContainerFrame'..i]:ClearAllPoints()
+                _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,9)
             end
         end
     end
@@ -171,7 +169,7 @@ function gw_relocate_searchbox()
 end
 
 
-function gw_update_bag_icons()
+function gw_update_bag_icons(forceSize)
     gw_move_bagbar()
     local x = 8
     local y = 72
@@ -249,7 +247,21 @@ function gw_update_bag_icons()
         end
     end
     
-    GwBagFrame:SetHeight(math.max(y+BAG_ITEM_SIZE+BAG_ITEM_PADDING,200))
+    GwBagFrame:SetHeight(y+BAG_ITEM_SIZE+BAG_ITEM_PADDING)
+    BAG_WINDOW_CONTENT_HEIGHT= y+BAG_ITEM_SIZE+BAG_ITEM_PADDING
+    gw_bagFrameOnResize(GwBagFrame,forceSize)
+    
+    if (BAG_WINDOW_SIZE/45)<11 and BAG_ITEM_SIZE>32 then
+        BAG_ITEM_SIZE = 32       
+        gw_update_bag_icons(false)
+    else
+        if BAG_WINDOW_CONTENT_HEIGHT>512 and BAG_ITEM_SIZE>32 then
+            BAG_ITEM_SIZE = 32       
+            gw_update_bag_icons(false)
+        else
+            BAG_ITEM_SIZE = 45
+        end
+    end
 
     
     
@@ -294,3 +306,31 @@ function gw_update_free_slots()
         local bag_space_string =free..' / '..full
         GwBagFrameBagSpaceString:SetText(bag_space_string); 
 end
+
+function gw_onBagMove()
+     GwBagFrameResize:SetPoint('BOTTOMRIGHT',GwBagFrame,'BOTTOMRIGHT',0,0)
+end
+function gw_bagFrameOnResize(self,forceSize)
+    if forceSize==nil then
+        forceSize = true
+    end
+    
+    local w = self:GetWidth()
+    local h = self:GetHeight()
+    
+    
+    w = math.max(512,w)
+    h = math.max(350,math.max(BAG_WINDOW_CONTENT_HEIGHT,h))
+    
+    BAG_WINDOW_SIZE = w - (BAG_ITEM_PADDING * 3) -32
+    
+    self:SetSize(w,h)
+    
+    if  forceSize==false then
+        return
+    end
+   
+    gw_update_bag_icons(false)
+    
+
+end 

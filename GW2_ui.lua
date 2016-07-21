@@ -489,6 +489,7 @@ l:SetScript('OnEvent',function(self,event,name)
         
         if gwGetSetting('BAGS_ENABLED') then
             gw_create_bgframe()
+            gw_create_bankframe()
         end 
         
         gw_breath_meter()

@@ -55,6 +55,7 @@ end)
     local replace = string.gsub
 	
     ReputationWatchBar:Hide()
+    HonorWatchBar:Hide()
     MainMenuExpBar:Hide()
     MainMenuExpBar:SetScript("OnEvent", nil); 
     
@@ -71,6 +72,7 @@ end)
     ArtifactWatchBar:SetScript('OnShow',function(self) self:Hide() end)
     
     ReputationWatchBar:SetScript('OnShow',function(self) self:Hide() end)
+    HonorWatchBar:SetScript('OnShow',function(self) self:Hide() end)
     
     
     

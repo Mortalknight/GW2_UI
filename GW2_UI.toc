@@ -51,3 +51,4 @@ questtracker2.lua
 classpowers.lua
 
 bag.lua
+bank.lua
