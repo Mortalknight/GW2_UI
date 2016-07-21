@@ -217,8 +217,11 @@ end)
     _G["MultiBarBottomRightButton" .. i .. "HotKey"]:SetPoint('BOTTOM', _G["MultiBarBottomRightButton" .. i ], 0, -4)
     _G["MultiBarBottomRightButton" .. i .. "HotKey"]:SetJustifyH("CENTER")
     _G["MultiBarBottomLeftButton" .. i .. "HotKey"]:SetJustifyH("CENTER") 
-    _G["MultiBarBottomRightButton" .. i .. "HotKey"]:SetFont(UNIT_NAME_FONT,11)
-    _G["MultiBarBottomLeftButton" .. i .. "HotKey"]:SetFont(UNIT_NAME_FONT,11)
+    _G["MultiBarBottomRightButton" .. i .. "HotKey"]:SetFont(UNIT_NAME_FONT,13,'OUTLINE')
+    _G["MultiBarBottomRightButton" .. i .. "HotKey"]:SetTextColor(1,1,1)
+    _G["MultiBarBottomLeftButton" .. i .. "HotKey"]:SetFont(UNIT_NAME_FONT,13,'OUTLINE')
+    _G["MultiBarBottomLeftButton" .. i .. "HotKey"]:SetTextColor(1,1,1)
+   
     
     _G["ActionButton" .. i .. "HotKey"]:ClearAllPoints()
     _G["ActionButton" .. i .. "HotKey"]:SetFont(UNIT_NAME_FONT,14)
