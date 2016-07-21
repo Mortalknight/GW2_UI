@@ -15,7 +15,10 @@ function create_pet_frame()
 --    playerPetFrame:SetPoint('BOTTOMLEFT',_G['PetActionBarFrame'],'BOTTOMLEFT',0,0)
 --    playerPetFrame:SetPoint('BOTTOMRIGHT',_G['PetActionBarFrame'],'BOTTOMRIGHT',0,0)
     
-     playerPetFrame:SetPoint('CENTER',0,0)
+    gw_register_movable_frame('petframe',GwPlayerPetFrame,'pet_pos','GwPetFrameDummy')
+    
+     
+
     
     playerPetFrame:SetAttribute("*type1", 'target')
     playerPetFrame:SetAttribute("*type2", "showmenu")
@@ -29,7 +32,7 @@ function create_pet_frame()
     playerPetFrame:SetScript('OnEvent',function(self, event ,unit)
         update_pet_data(event,unit)    
     end)
-    playerPetFrame:SetScript('OnShow',function()
+    playerPetFrame:HookScript('OnShow',function()
          update_pet_data('UNIT_PET','player')
     end)
     
@@ -45,7 +48,8 @@ function create_pet_frame()
     
     --_G['GwPlayerPetFramePortrait']
     update_pet_data('UNIT_PET','player')
-    
+   
+    GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos')['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
 
 end
 

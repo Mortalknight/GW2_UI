@@ -579,25 +579,7 @@ GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
     
     end
     
-    
-    function setPetBar(bool)
-        
-       
-        if InCombatLockdown() then
-            return
-        end
-        
-        GwPlayerPetFrame:ClearAllPoints()
-       
-        if bool==true then
-            GwPlayerPetFrame:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',-372,220)
-        else
-            GwPlayerPetFrame:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',-372,120)
-        end
-      --  PetActionButton1:SetPoint('BOTTOMLEFT', PetActionBarFrame, 'BOTTOMLEFT', 0, 0)
-        pet_bar_state = bool
-    
-    end
+
     
 
     
@@ -609,32 +591,12 @@ GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
             b = true
         end
 
-        setPetBar(b)
+ 
         setStanceBar(b)
     end
 
+    gw_anchor_petbar()    
 
-        
-       
-      
-           
-               
-    GwPlayerPetFrame:SetScript('OnUpdate',function() 
-            if pet_bar_th>GetTime() then return end
-            pet_bar_th = GetTime()+1
-            if InCombatLockdown() then
-                return
-            end     
-            if PetActionBarFrame and PetActionBarFrame:IsShown() and GwPlayerPetFrame~=nil and GwPlayerPetFrame:IsShown() then
-                gw_anchor_petbar()
-                GwPlayerPetFrame:SetScript('OnUpdate', nil)
-            end
-                        
-                   
-        end)
-            
-    
-    
 
 
     setMicroButtons()
@@ -643,7 +605,11 @@ end
 
 
 function gw_anchor_petbar()
+    if  InCombatLockdown() then
+        return
+    end
 
+    GwPlayerPetFrame:SetScript('OnUpdate', nil)    
     PetActionBarFrame:SetParent(GwPlayerPetFrame)
     PetActionBarFrame:ClearAllPoints()
     PetActionBarFrame:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',0,0)
@@ -654,47 +620,13 @@ function gw_anchor_petbar()
 
     PetActionBarFrame:HookScript("OnShow",gw_updatePetBarLocation)
     PetActionBarFrame:HookScript("OnLoad",gw_updatePetBarLocation)
-    PetActionBarFrame:SetScript("OnEvent",gw_updatePetBarLocation)
-    PetActionBarFrame:SetScript("OnUpdate",nil)
-    PetActionBarFrame_OnUpdate = nil
+  
     --hooksecurefunc('PetActionBarFrame_OnUpdate',gw_updatePetBarLocation)
     
     PetActionBarFrame.SetPoint = function() end
     
     
-    local f = CreateFrame('frame', nil, nil, 'SecureHandlerStateTemplate')
-f:SetFrameRef('PetActionBarFrame', PetActionBarFrame)
-f:SetFrameRef('MultiBarBottomLeft', MultiBarBottomLeft)
-f:SetFrameRef('StanceBarFrame', StanceBarFrame)
-f:SetFrameRef('UIParent', UIParent)
-f:SetFrameRef('GwPlayerPetFrame', GwPlayerPetFrame)
 
-f:SetAttribute('_onstate-combat', [=[ 
-        
-        if self:GetFrameRef('MultiBarBottomLeft'):IsShown()==false then
-            return
-        end
-
-        
-        self:GetFrameRef('GwPlayerPetFrame'):ClearAllPoints()
-        y = 264
-        if newstate == 'show'   then
-
-            self:GetFrameRef('GwPlayerPetFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',-372,220)
-        else
-             self:GetFrameRef('GwPlayerPetFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',-372,120)
-        end
-        if self:GetFrameRef('PetActionBarFrame'):IsShown() then
-            y = y + 80
-        end
-     
-]=])
-    
-    --   self:GetFrameRef('StanceBarFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',-480,y)
-RegisterStateDriver(f, 'combat', '[combat] show; hide')
-    
-
-    gw_updatePetBarLocation() 
 end
 
 

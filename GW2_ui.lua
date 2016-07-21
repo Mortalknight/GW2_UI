@@ -75,6 +75,12 @@ GW2UI_SETTINGS = {}
     DEFAULT['target_pos']['relativePoint'] = 'TOP'
     DEFAULT['target_pos']['xOfs'] =  -56
     DEFAULT['target_pos']['yOfs']  = -100
+
+    DEFAULT['pet_pos'] ={}
+    DEFAULT['pet_pos']['point'] = 'BOTTOMLEFT'
+    DEFAULT['pet_pos']['relativePoint'] = 'BOTTOM'
+    DEFAULT['pet_pos']['xOfs'] =  -372
+    DEFAULT['pet_pos']['yOfs']  = 220
     
     
     
@@ -483,9 +489,6 @@ l:SetScript('OnEvent',function(self,event,name)
             create_power_bar()
         end
         
-        if gwGetSetting('PET_ENABLED') then
-            create_pet_frame()
-        end
         
         if gwGetSetting('BAGS_ENABLED') then
             gw_create_bgframe()
@@ -514,6 +517,7 @@ l:SetScript('OnEvent',function(self,event,name)
             gw_set_buffframe()
         end
         if gwGetSetting('ACTIONBARS_ENABLED') then
+            create_pet_frame()
             gw_set_actionbars()
         end  
         -- create new microbuttons
