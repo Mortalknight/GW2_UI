@@ -164,7 +164,7 @@ function GW_POWERTYPE_RUNE()
     for i=1,6 do
         local rune_start, rune_duration, rune_ready = GetRuneCooldown(i)
         if rune_start==nil then
-            rune_start = 0 
+            rune_start = GetTime()
             rune_duration = 0 
         end
         if rune_ready then
