@@ -30,6 +30,7 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
     GwQuestviewFrame:RegisterEvent('QUEST_DETAIL')
     GwQuestviewFrame:RegisterEvent('QUEST_FINISHED')
     GwQuestviewFrame:RegisterEvent('QUEST_COMPLETE')
+    GwQuestviewFrame:RegisterEvent('QUEST_ACCEPTED')
    
     GwQuestviewFrame:SetScript("OnEvent",function(self,event,addon)
             if event == 'QUEST_DETAIL' then
@@ -80,7 +81,7 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
 
         end
 
-        if event == 'QUEST_FINISHED' then
+        if event == 'QUEST_FINISHED' or event=='QUEST_ACCEPTED' then
             GwQuestviewFrame:Hide()
             PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_close.ogg",'SFX')          
         end
