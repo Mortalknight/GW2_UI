@@ -452,3 +452,39 @@ function gw_bankFrameOnResize(self,forceSize)
     end
 
 end 
+function gw_bankOnResizeStart(self)
+    self:StartMoving();
+    GwBankFrame:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',0,0);
+    GwBankFrame:SetScript('OnUpdate',gw_onBankDragUpdate)
+end
+function  gw_bankOnResizeStop(self)
+    self:StopMovingOrSizing();
+    GwBankFrame:SetScript('OnUpdate',nil)
+    gw_bankFrameOnResize(GwBankFrame)
+                             
+    GwBankFrame:ClearAllPoints()
+    GwBankFrame:SetPoint('TOPLEFT',GwBankMoverFrame,'TOPLEFT',20,-40);
+                           
+    GwBankFrameResize:SetPoint('BOTTOMRIGHT',GwBankFrame,'BOTTOMRIGHT',0,0)
+    GwBankMoverFrame:SetWidth(GwBankFrame:GetWidth()-40)
+end
+
+function gw_onBankDragUpdate()
+    
+    local  point,relative,framerela,xPos,yPos  = GwBankFrameResize:GetPoint()
+    
+    local w = GwBankFrame:GetWidth()
+    local h = GwBankFrame:GetHeight()
+    
+    if  w<500 or h<340 then
+        GwBankFrameResize:StopMovingOrSizing();
+        GwBankFrameResize:SetPoint(point,relative,framerela,xPos,yPos);
+        gw_bankOnResizeStop(GwBankFrameResize)
+    end
+    
+    if GwReagentBankFrame:IsShown() and  IsReagentBankUnlocked() then
+        gw_update_reagents_icons(false)
+    else
+        gw_update_bank_icons(false)
+    end
+end

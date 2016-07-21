@@ -3,6 +3,9 @@ local BAG_ITEM_PADDING = 5
 local BAG_WINDOW_SIZE = 480
 local BAG_WINDOW_CONTENT_HEIGHT = 0
 
+GW_BAG_RS_START_X = 0;
+GW_BAG_RS_START_Y = 0;
+
 local default_bag_frame ={
     'MainMenuBarBackpackButton',
     'CharacterBag0Slot',
@@ -334,3 +337,30 @@ function gw_bagFrameOnResize(self,forceSize)
     
 
 end 
+function  gw_bagOnResizeStop(self)
+    GwBagFrame:SetScript('OnUpdate',nil)
+    self:StopMovingOrSizing();
+                            
+    gw_bagFrameOnResize(GwBagFrame)
+                          
+    GwBagFrame:ClearAllPoints()
+    GwBagFrame:SetPoint('TOPLEFT',GwBagMoverFrame,'TOPLEFT',20,-40);
+    GwBagFrameResize:ClearAllPoints()
+    GwBagFrameResize:SetPoint('BOTTOMRIGHT',GwBagFrame,'BOTTOMRIGHT',0,0) 
+    GwBagMoverFrame:SetWidth(GwBagFrame:GetWidth()-40)
+end
+function gw_onBagDragUpdate()
+    
+    local  point,relative,framerela,xPos,yPos  = GwBagFrameResize:GetPoint()
+    
+    local w = GwBagFrame:GetWidth()
+    local h = GwBagFrame:GetHeight()
+    
+    if  w<500 or h<340 then
+        GwBagFrameResize:StopMovingOrSizing();
+        GwBagFrameResize:SetPoint(point,relative,framerela,xPos,yPos);
+        gw_bagOnResizeStop(GwBagFrameResize)
+    end
+    gw_update_bag_icons()
+
+end

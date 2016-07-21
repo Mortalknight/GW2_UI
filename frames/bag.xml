@@ -127,6 +127,65 @@
         </Scripts>
 
         <Frames>
+            <Frame name="GwBuyMoreBank" virtual="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Size x="200" y="40"></Size> 
+                <Layers>
+                    <Layer>
+                    <FontString name="GwBuyMoreBankGold" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                        <Size x="50" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeTo="GwButtonBuyBankSlots" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                    </FontString>
+                    <Texture name="GwBuyMoreBankGoldIcon" file="Interface\MoneyFrame\UI-GoldIcon">
+                        <Size x="11" y="11"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeTo="GwBuyMoreBankGold" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                    </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button name="GwButtonBuyBankSlots" inherits="GwStandardButton" text="Purchase More Slots">
+                        <Size x="158" y="32" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" relativeTo="GwBuyMoreBank" x="0" y="5"></Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                PurchaseSlot()                                
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+                <Scripts>
+                    <OnEvent>
+                        if GetNumBankSlots()==7 then
+                            GwBuyMoreBank:Hide()
+                        end
+                        local cost = GetBankSlotCost()/100/100
+                        GwBuyMoreBankGold:SetText(cost)
+                    </OnEvent>
+                    <OnLoad>
+                        if GetNumBankSlots()==7 then
+                            GwBuyMoreBank:Hide()
+                        end
+                        local cost = GetBankSlotCost()/100/100
+                        GwBuyMoreBankGold:SetText(cost)
+                        GwBuyMoreBank:RegisterEvent('PLAYERBANKBAGSLOTS_CHANGED');
+                        GwBuyMoreBankGold:ClearAllPoints()
+                        GwBuyMoreBankGold:SetPoint('LEFT',GwButtonBuyBankSlots,'RIGHT',20,0)
+           
+                                     
+                        GwBuyMoreBankGold:SetFont(UNIT_NAME_FONT,12)
+                        GwBuyMoreBankGold:SetTextColor(221/255,187/255,68/255)
+         
+                    </OnLoad>
+                </Scripts>
+            </Frame>
             <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
@@ -149,18 +208,12 @@
                         self:RegisterForDrag("LeftButton");
                     </OnLoad>
 
-                      <OnDragStart>self:StartMoving();
-                        GwBankFrame:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',0,0);
+                      <OnDragStart>
+                          gw_bankOnResizeStart(self)
+                          
                         </OnDragStart>
                       <OnDragStop>
-                          self:StopMovingOrSizing();
-                          
-                          gw_bankFrameOnResize(GwBankFrame)
-                          
-                          GwBankFrame:ClearAllPoints()
-                          GwBankFrame:SetPoint('TOPLEFT',GwBankMoverFrame,'TOPLEFT',20,-40);
-                          
-                          GwBankFrameResize:SetPoint('BOTTOMRIGHT',GwBankFrame,'BOTTOMRIGHT',0,0)
+                        gw_bankOnResizeStop(self)
                           
                     </OnDragStop>
                 </Scripts>
@@ -544,19 +597,14 @@
                         self:RegisterForDrag("LeftButton");
                     </OnLoad>
 
-                      <OnDragStart>self:StartMoving();
-                        GwBagFrame:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',0,0);
+                      <OnDragStart>
+                          self:StartMoving();
+                          _,_,_,GW_BAG_RS_START_X,GW_BAG_RS_START_Y = self:GetPoint()
+                          GwBagFrame:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',0,0);
+                          GwBagFrame:SetScript('OnUpdate',gw_onBagDragUpdate)
                         </OnDragStart>
                       <OnDragStop>
-                          self:StopMovingOrSizing();
-                          
-                          gw_bagFrameOnResize(GwBagFrame)
-                          
-                          GwBagFrame:ClearAllPoints()
-                          GwBagFrame:SetPoint('TOPLEFT',GwBagMoverFrame,'TOPLEFT',20,-40);
-                          GwBagFrameResize:ClearAllPoints()
-                          GwBagFrameResize:SetPoint('BOTTOMRIGHT',GwBagFrame,'BOTTOMRIGHT',0,0)
-                          
+                        gw_bagOnResizeStop(self)                         
                     </OnDragStop>
                 </Scripts>
 
