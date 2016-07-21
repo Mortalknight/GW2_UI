@@ -43,7 +43,6 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     addOption('Health Globe','Health Bar Replacement','HEALTHGLOBE_ENABLED','GwSettingsModuleOption')
     addOption('Power','Mana/Power Bar Replacement','POWERBAR_ENABLED','GwSettingsModuleOption')
-    addOption('Pet','Pet Frame Replacement','PET_ENABLED','GwSettingsModuleOption')
     addOption('Focus','Focus Frame Replacement','FOCUS_ENABLED','GwSettingsModuleOption')
     addOption('Target','Target Frame Replacement','TARGET_ENABLED','GwSettingsModuleOption')
     addOption('Chatbubbles', 'Use the GW2 Chatbubbles','CHATBUBBLES_ENABLED','GwSettingsModuleOption')
@@ -77,6 +76,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     create_settings_cat('HUD','Edit HUD settings','GwSettingsHudOptions',3)
     addOption('Fade Actionbars','Fade the extra action bars','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
     addOption('Dynamic HUD','Change the HUD appearance','HUD_SPELL_SWAP','GwSettingsHudOptions')
+    addOption('Fade Chat','Fade the chat while inactive','CHATFRAME_FADE','GwSettingsHudOptions')
     
     
     
