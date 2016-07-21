@@ -1,82 +1,121 @@
 local intervalCd = 0
 local bubbles = {}
-function update_gwChat_bubbles()
-        if intervalCd > GetTime() then
-        return
-        end
-        intervalCd = GetTime() +0.2
-        
+local CHAT_BUBBLES_ACTIVE = {}
+function update_gwChat_bubbles(msg)
 
+    getBubbles(msg)
         
-       getBubbles()
-        
-    for k,v in pairs(bubbles) do 
-            
-       bgFrame = v['frame']
-       fontString= v['fontstring']
+    for k,v in pairs(bubbles) do
+        bgFrame = v['frame']
+        fontString= v['fontstring']
         b = v['bgFile']
             
-        if fontString ~=nil and bgFrame.hasBeenStyled==nil then 
+        if fontString~=nil then 
+
             fontString:SetFont(DAMAGE_TEXT_FONT,10)
             fontString:SetTextColor(0,0,0)
             
-            bgFrame:SetScript('OnShow',function() 
-                    fontString:SetFont(DAMAGE_TEXT_FONT,10)
-                    fontString:SetTextColor(0,0,0)
-            end)
-            
             if b ~= 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background' then
                 local backdrop = {
-                  -- path to the background texture
-                  bgFile = 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background',  
-                  -- path to the border texture
-                  edgeFile = 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Backdrop',
-                  -- true to repeat the background texture to fill the frame, false to scale it
-                  tile = true,
-                  -- size (width or height) of the square repeating background tiles (in pixels)
-                  tileSize = 32,
-                  -- thickness of edge segments and square size of edge corners (in pixels)
-                  edgeSize = 32,
-                  -- distance from the edges of the frame to those of the background texture (in pixels)
-                  insets = {
-                    left = 11,
-                    right = 12,
-                    top = 12,
-                    bottom = 11
-                  }
+          
+                    bgFile = 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background',  
+       
+                    edgeFile = 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Backdrop',
+                
+                    tile = true,
+                
+                    tileSize = 32,
+    
+                    edgeSize = 32,
+        
+                    insets = {
+                        left = 11,
+                        right = 12,
+                        top = 12,
+                        bottom = 11
+                    }
                 }
                 bgFrame:SetBackdrop(backdrop)
-                hooksecurefunc(fontString, 'SetText',function() 
-
-                    fontString:SetTextColor(0,0,0)
-                end)
+                
                 bgFrame.hasBeenStyled = true
+                 
             end
-           
-            
         end
     end
 end
-function getBubbles()
-bi = 0
+function getBubbles(msg)
+local bi = 0
+     
 for i=1,WorldFrame:GetNumChildren() do
         local v = select(i, WorldFrame:GetChildren())
         local b = v:GetBackdrop()
-        if b then
+        if b~=nill then
             if b.bgFile == "Interface\\Tooltips\\ChatBubble-Background" or b.bgFile == "Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background" then
                 for i=1,v:GetNumRegions() do
+                    
                     local frame = v
                     local v = select(i, v:GetRegions())
                     if v:GetObjectType() == "FontString" then
-                        bi = bi +1
-                            local fontstring = v
-                            bubbles[bi] = {}
-                            bubbles[bi]['frame'] = frame
-                            bubbles[bi]['fontstring']= fontstring
-                            bubbles[bi]['bgFile'] = b.bgFile
+                       
+                        
+                        if frame.hasBeenStyled==nil then
+                        bi = countTable(bubbles)
+                        local fontstring = v
+                 
+                        bubbles[bi] = {}
+                        bubbles[bi]['frame'] = frame
+                        bubbles[bi]['fontstring']= fontstring
+                        bubbles[bi]['bgFile'] = b.bgFile
+                        return  bubbles[bi]
+                        end
                     end
                 end
             end
         end
     end
+    return nil
 end
+
+function gw_register_chatbubbles()
+   local f = CreateFrame('Frame',nil,nil) 
+
+    f:SetScript('OnEvent',gw_chatbubbles_onevent)
+    f:SetScript('OnUpdate',gw_chatbubbles_onupdate)
+    
+    f:RegisterEvent('CHAT_MSG_SAY')
+    f:RegisterEvent('CHAT_MSG_PARTY')
+    f:RegisterEvent('CHAT_MSG_MONSTER_YELL')
+    f:RegisterEvent('CHAT_MSG_YELL')
+    f:RegisterEvent('CHAT_MSG_MONSTER_EMOTE')
+    f:RegisterEvent('CHAT_MSG_MONSTER_PARTY')
+    f:RegisterEvent('CHAT_MSG_MONSTER_SAY')
+    f:RegisterEvent('CHAT_MSG_MONSTER_WHISPER')
+    f:RegisterEvent('CHAT_MSG_MONSTER_YELL')
+    
+    
+end
+function gw_chatbubbles_onevent(self,event,msg,arg2)
+    
+    local i = countTable(CHAT_BUBBLES_ACTIVE)
+    CHAT_BUBBLES_ACTIVE[i] ={}
+    CHAT_BUBBLES_ACTIVE[i]['msg'] =msg
+    CHAT_BUBBLES_ACTIVE[i]['time'] =GetTime() +5
+   
+    
+end
+function gw_chatbubbles_onupdate()
+    
+local wipe = true
+  for k,v in pairs(CHAT_BUBBLES_ACTIVE) do
+        if v['time']>GetTime() then
+            wipe =false
+        end
+    end
+    if wipe==true then
+        CHAT_BUBBLES_ACTIVE = {}
+    else
+        update_gwChat_bubbles()
+    end
+    
+end
+

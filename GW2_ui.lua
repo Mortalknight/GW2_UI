@@ -395,10 +395,7 @@ l:SetScript('OnUpdate',function()
         end
         
         
-        
-        if gwGetSetting('CHATBUBBLES_ENABLED') then
-            update_gwChat_bubbles()
-        end
+
     
         
         fadet_action_bar_check(MultiBarBottomLeft)
@@ -520,6 +517,12 @@ l:SetScript('OnEvent',function(self,event,name)
             create_pet_frame()
             gw_set_actionbars()
         end  
+        
+                
+        if gwGetSetting('CHATBUBBLES_ENABLED') then
+            gw_register_chatbubbles()
+        end
+        
         -- create new microbuttons
         create_micro_menu()
         
