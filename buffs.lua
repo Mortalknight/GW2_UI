@@ -192,7 +192,8 @@ function gw_playerUpdateDeBuffs(x,y)
             end
             indexBuffFrame.expires =DebuffLists[unitToWatch][key]['expires']
             indexBuffFrame.duration =DebuffLists[unitToWatch][key]['duration']
-            _G['playerDeBuffItemFrame'..i..'Cooldown']:SetCooldown(DebuffLists[unitToWatch][key]['expires'] - DebuffLists[unitToWatch][key]['duration'], DebuffLists[unitToWatch][key]['duration'])
+            
+
             _G['playerDeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
             _G['playerDeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
