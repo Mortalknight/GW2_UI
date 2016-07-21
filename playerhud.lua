@@ -21,9 +21,10 @@ function create_pet_frame()
 
     
     playerPetFrame:SetAttribute("*type1", 'target')
-    playerPetFrame:SetAttribute("*type2", "showmenu")
+    playerPetFrame:SetAttribute("*type2", "togglemenu")
     playerPetFrame:SetAttribute("unit", 'pet')
     playerPetFrame:EnableMouse(true)
+    playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     RegisterUnitWatch(playerPetFrame);
     
     _G['GwPlayerPetFrameHealth']:SetStatusBarColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
@@ -35,12 +36,6 @@ function create_pet_frame()
     playerPetFrame:HookScript('OnShow',function()
          update_pet_data('UNIT_PET','player')
     end)
-    
-    playerPetFrame:SetScript('OnMouseDown', function(self,button)
-            if button=='RightButton' then
-                ToggleDropDownMenu(1, nil, PetFrameDropDown, playerPetFrame, 0, 0)
-            end	
-    end)    
     
     playerPetFrame:RegisterEvent('UNIT_PET')
     playerPetFrame:RegisterEvent('UNIT_HEALTH')

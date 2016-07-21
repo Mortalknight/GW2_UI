@@ -44,7 +44,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
    -- targetF:SetFrameStrata('HIGH');
 
     targetF:SetAttribute("*type1", unitToWatch)
-    targetF:SetAttribute("*type2", "showmenu")
+    targetF:SetAttribute("*type2", "togglemenu")
     targetF:SetAttribute("unit", unitToWatch)
     RegisterUnitWatch(targetF);
     targetF:EnableMouse(true)
