@@ -99,6 +99,10 @@
 
                     <Scripts>
                         <OnClick>
+                            if InCombatLockdown() then
+                                DEFAULT_CHAT_FRAME:AddMessage('You can not move elemtents during combat!')
+                                return
+                            end 
                             gw_moveHudObjects()
                         </OnClick>
                     </Scripts>

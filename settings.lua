@@ -215,6 +215,10 @@ function gw_moveHudObjects()
     end
 end
 function gw_lockHudObjects()
+    DEFAULT_CHAT_FRAME:AddMessage('You can not move elemtents during combat!')
+    if InCombatLockdown() then
+        return
+    end 
     lhb:Hide()
     if settings_window_open_before_change then
         settings_window_open_before_change = false
