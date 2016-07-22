@@ -78,7 +78,7 @@ end)
     
 	OverrideActionBar:SetScale(1)
 	
-	PetActionButton1:ClearAllPoints()
+	
 	--PetActionButton1:SetPoint('BOTTOM', MainMenuBar, 'BOTTOM', 450, 5)
 	
 
@@ -94,9 +94,9 @@ end)
 	MultiBarBottomRight:ClearAllPoints()
 	MultiBarBottomLeft:ClearAllPoints()
 
-    PetActionBarFrame:ClearAllPoints()
-    PetActionButton1:ClearAllPoints()
-    PetActionButton1:SetParent(PetActionBarFrame);
+ 
+
+   
     
     
     
@@ -109,7 +109,7 @@ end)
 	
 
     
-	PetActionButton1:SetPoint('LEFT', PetActionBarFrame, 'LEFT', 0, 0)
+	
 
         -- repositiom the micromenu
 	
@@ -141,7 +141,8 @@ end)
     MainMenuBarRightEndCap:Hide()
 
     
-    
+    PetActionButton1:ClearAllPoints()
+    PetActionButton1:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',0,0)
     
      if not gwGetSetting('BAGS_ENABLED') then
         CharacterBag0Slot:ClearAllPoints()
@@ -317,6 +318,10 @@ end)
         end
     
     if i > 1 then
+            
+            if _G['PetActionButton'..i]~=nil then
+                _G['PetActionButton'..i]:SetPoint('LEFT',PetActionButton1,'RIGHT',32*i,0);
+            end  
         _G["ActionButton" .. i]:ClearAllPoints()
 		_G["MultiBarBottomLeftButton" .. i]:ClearAllPoints()
 		
@@ -373,7 +378,6 @@ end
 
 			'PETACTIONBAR_YPOS',
 			'PETACTIONBAR_XPOS',
-			'PetActionBarFrame',
 			
 		}) do
 			UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
@@ -548,20 +552,6 @@ GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
 
 
 
-
-
-
-
-
-
-    --StanceBarFrame
-    --PetActionBarFrame
-    --	PetActionBarFrame:SetScale(0.6)
-    --PetActionButton1:SetPoint('LEFT', PetActionBarFrame, 'LEFT', 0, 0)
-    --  PetActionBarFrame:ClearAllPoints()
-  --  PetActionButton1:ClearAllPoints()
---    PetActionButton1:SetParent(PetActionBarFrame
-    
     
     function setStanceBar(bool)
         if InCombatLockdown() then
@@ -573,10 +563,7 @@ GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
            y=264
         end
             
-        if PetActionBarFrame:IsShown() then
-            y = y + 80
-        end
-  
+    
      --   StanceBarFrame:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',-480,y)
     
     end
@@ -584,6 +571,15 @@ GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
 
     
 
+
+
+    gw_anchor_petbar()    
+
+
+
+    setMicroButtons()
+
+end
     
     function gw_updatePetBarLocation()
         
@@ -597,35 +593,18 @@ GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
         setStanceBar(b)
     end
 
-    gw_anchor_petbar()    
-
-
-
-    setMicroButtons()
-
-end
-
-
 function gw_anchor_petbar()
     if  InCombatLockdown() then
         return
     end
 
     GwPlayerPetFrame:SetScript('OnUpdate', nil)    
-    PetActionBarFrame:SetParent(GwPlayerPetFrame)
-    PetActionBarFrame:ClearAllPoints()
-    PetActionBarFrame:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',0,0)
     PetActionBarFrame:SetScale(0.77)
-
-
-    gw_actionbar_state_add_callback(gw_updatePetBarLocation)
-
-    PetActionBarFrame:HookScript("OnShow",gw_updatePetBarLocation)
-    PetActionBarFrame:HookScript("OnLoad",gw_updatePetBarLocation)
-  
-    --hooksecurefunc('PetActionBarFrame_OnUpdate',gw_updatePetBarLocation)
+    PetActionBarFrame:ClearAllPoints()
+    PetActionBarFrame:SetParent(GwPlayerPetFrame)
+    PetActionBarFrame:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',0,0)
     
-    PetActionBarFrame.SetPoint = function() end
+
     
     
 
