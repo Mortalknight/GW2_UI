@@ -508,7 +508,7 @@ function updateCastingbar(thisName,unitToWatch)
                 local spark_current = (animations[unitToWatch..'healthAnimation']['progress']*100)/5
                 local spark_prec = spark_current - spark_min
                
-                local spark = math.min(_G[thisName.."HealthBar"]:GetWidth()-15,(_G[thisName.."HealthBar"]:GetWidth()*round_closest)-2)
+                local spark = math.min(_G[thisName.."HealthBar"]:GetWidth()-15,(_G[thisName.."HealthBar"]:GetWidth()*round_closest))
                     bloodSparkIndex[unitToWatch] = 17 - math.max(1,math.ceil(16 * spark_prec))
                     local bI = bloodSparkIndex[unitToWatch]
                     _G[thisName.."HealthBarSpark"]:SetTexCoord(bloodSpark[bI].left,
@@ -600,7 +600,7 @@ function updateCastingbar(thisName,unitToWatch)
     end
     if  _G[thisName.."HealthBarSpark"] then
         _G[thisName.."HealthBarSpark"]:ClearAllPoints()
-        _G[thisName.."HealthBarSpark"]:SetPoint('LEFT',spark,(_G[thisName.."HealthBar"]:GetWidth()*healthPrecentage)-15)
+        _G[thisName.."HealthBarSpark"]:SetPoint('LEFT',_G[thisName.."HealthBar"],'LEFT',(_G[thisName.."HealthBar"]:GetWidth()*healthPrecentage)-15,0)
     end
      _G[thisName.."HealthBarCandy"]:SetValue(healthPrecentage)
     _G[thisName.."HealthBar"]:SetValue(healthPrecentage)
