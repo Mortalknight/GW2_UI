@@ -1,115 +1,115 @@
 
 
 GW2UI_SETTINGS = {}
-  DEFAULT ={}
+  GW_DEFAULT ={}
     
-    DEFAULT['TARGET_ENABLED'] = true
-    DEFAULT['FOCUS_ENABLED'] = true
-    DEFAULT['PET_ENABLED'] = true
-    DEFAULT['POWERBAR_ENABLED'] = true
-    DEFAULT['CHATBUBBLES_ENABLED'] = true
-    DEFAULT['NAMEPLATES_ENABLED'] = true
-    DEFAULT['MINIMAP_ENABLED'] = true
-    DEFAULT['QUESTTRACKER_ENABLED'] = true
-    DEFAULT['TOOLTIPS_ENABLED'] = true
-    DEFAULT['CHATFRAME_ENABLED'] = true
-    DEFAULT['QUESTVIEW_ENABLED'] = true
-    DEFAULT['HEALTHGLOBE_ENABLED'] = true
-    DEFAULT['PLAYER_BUFFS_ENABLED'] = true
-    DEFAULT['ACTIONBARS_ENABLED'] = true
-    DEFAULT['BAGS_ENABLED'] = true
-    DEFAULT['NPC_CAM_ENABLED'] = false
-    DEFAULT['FONTS_ENABLED'] = true
-    DEFAULT['CASTINGBAR_ENABLED'] = true
+    GW_DEFAULT['TARGET_ENABLED'] = true
+    GW_DEFAULT['FOCUS_ENABLED'] = true
+    GW_DEFAULT['PET_ENABLED'] = true
+    GW_DEFAULT['POWERBAR_ENABLED'] = true
+    GW_DEFAULT['CHATBUBBLES_ENABLED'] = true
+    GW_DEFAULT['NAMEPLATES_ENABLED'] = true
+    GW_DEFAULT['MINIMAP_ENABLED'] = true
+    GW_DEFAULT['QUESTTRACKER_ENABLED'] = true
+    GW_DEFAULT['TOOLTIPS_ENABLED'] = true
+    GW_DEFAULT['CHATFRAME_ENABLED'] = true
+    GW_DEFAULT['QUESTVIEW_ENABLED'] = true
+    GW_DEFAULT['HEALTHGLOBE_ENABLED'] = true
+    GW_DEFAULT['PLAYER_BUFFS_ENABLED'] = true
+    GW_DEFAULT['ACTIONBARS_ENABLED'] = true
+    GW_DEFAULT['BAGS_ENABLED'] = true
+    GW_DEFAULT['NPC_CAM_ENABLED'] = false
+    GW_DEFAULT['FONTS_ENABLED'] = true
+    GW_DEFAULT['CASTINGBAR_ENABLED'] = true
 
-    DEFAULT['HUD_SPELL_SWAP'] = true
+    GW_DEFAULT['HUD_SPELL_SWAP'] = true
 
-    DEFAULT['target_HEALTH_VALUE_ENABLED'] = false
-    DEFAULT['target_HEALTH_VALUE_TYPE'] = false
+    GW_DEFAULT['target_HEALTH_VALUE_ENABLED'] = false
+    GW_DEFAULT['target_HEALTH_VALUE_TYPE'] = false
         
-    DEFAULT['FADE_BOTTOM_ACTIONBAR'] = true
-    DEFAULT['HIDE_CHATSHADOW'] = false
-    DEFAULT['HIDE_QUESTVIEW'] = false;
-    DEFAULT['USE_CHAT_BUBBLES'] = false;
-    DEFAULT['DISABLE_NAMEPLATES'] = false
-    DEFAULT['DISABLE_TOOLTIPS'] = false
-    DEFAULT['DISABLE_CHATFRAME'] = false
-    DEFAULT['CHATFRAME_FADE'] = true
+    GW_DEFAULT['FADE_BOTTOM_ACTIONBAR'] = true
+    GW_DEFAULT['HIDE_CHATSHADOW'] = false
+    GW_DEFAULT['HIDE_QUESTVIEW'] = false;
+    GW_DEFAULT['USE_CHAT_BUBBLES'] = false;
+    GW_DEFAULT['DISABLE_NAMEPLATES'] = false
+    GW_DEFAULT['DISABLE_TOOLTIPS'] = false
+    GW_DEFAULT['DISABLE_CHATFRAME'] = false
+    GW_DEFAULT['CHATFRAME_FADE'] = true
 
-    DEFAULT['target_TARGET_ENABLED'] = true
-    DEFAULT['target_DEBUFFS'] = true
-    DEFAULT['target_DEBUFFS_FILTER'] = true
-    DEFAULT['target_BUFFS'] = true
-    DEFAULT['target_BUFFS_FILTER'] = true
+    GW_DEFAULT['target_TARGET_ENABLED'] = true
+    GW_DEFAULT['target_DEBUFFS'] = true
+    GW_DEFAULT['target_DEBUFFS_FILTER'] = true
+    GW_DEFAULT['target_BUFFS'] = true
+    GW_DEFAULT['target_BUFFS_FILTER'] = true
 
-    DEFAULT['focus_TARGET_ENABLED'] = true
-    DEFAULT['focus_DEBUFFS'] = true
-    DEFAULT['focus_DEBUFFS_FILTER'] = true
-    DEFAULT['focus_BUFFS'] = true
-    DEFAULT['focus_BUFFS_FILTER'] = true
+    GW_DEFAULT['focus_TARGET_ENABLED'] = true
+    GW_DEFAULT['focus_DEBUFFS'] = true
+    GW_DEFAULT['focus_DEBUFFS_FILTER'] = true
+    GW_DEFAULT['focus_BUFFS'] = true
+    GW_DEFAULT['focus_BUFFS_FILTER'] = true
                     
-    DEFAULT['target_x_position'] = -100
-    DEFAULT['target_y_position'] = -100
+    GW_DEFAULT['target_x_position'] = -100
+    GW_DEFAULT['target_y_position'] = -100
 
-    DEFAULT['focus_x_position'] = -350
-    DEFAULT['focus_y_position'] = -100
+    GW_DEFAULT['focus_x_position'] = -350
+    GW_DEFAULT['focus_y_position'] = -100
 
-    DEFAULT['multibarleft_x_position'] = -300
-    DEFAULT['multibarleft_y_position'] = -0
+    GW_DEFAULT['multibarleft_x_position'] = -300
+    GW_DEFAULT['multibarleft_y_position'] = -0
 
-    DEFAULT['multibarright_x_position'] = -260
-    DEFAULT['multibarright_y_position'] = -0
+    GW_DEFAULT['multibarright_x_position'] = -260
+    GW_DEFAULT['multibarright_y_position'] = -0
 
-    DEFAULT['multibarleft_pos'] ={}
-    DEFAULT['multibarleft_pos']['point'] = 'RIGHT'
-    DEFAULT['multibarleft_pos']['relativePoint'] = 'RIGHT'
-    DEFAULT['multibarleft_pos']['xOfs'] = -300
-    DEFAULT['multibarleft_pos']['yOfs']= 0
+    GW_DEFAULT['multibarleft_pos'] ={}
+    GW_DEFAULT['multibarleft_pos']['point'] = 'RIGHT'
+    GW_DEFAULT['multibarleft_pos']['relativePoint'] = 'RIGHT'
+    GW_DEFAULT['multibarleft_pos']['xOfs'] = -300
+    GW_DEFAULT['multibarleft_pos']['yOfs']= 0
 
-    DEFAULT['multibarright_pos'] ={}
-    DEFAULT['multibarright_pos']['point'] = 'RIGHT'
-    DEFAULT['multibarright_pos']['relativePoint'] = 'RIGHT'
-    DEFAULT['multibarright_pos']['xOfs'] = -260
-    DEFAULT['multibarright_pos']['yOfs']  = 0
+    GW_DEFAULT['multibarright_pos'] ={}
+    GW_DEFAULT['multibarright_pos']['point'] = 'RIGHT'
+    GW_DEFAULT['multibarright_pos']['relativePoint'] = 'RIGHT'
+    GW_DEFAULT['multibarright_pos']['xOfs'] = -260
+    GW_DEFAULT['multibarright_pos']['yOfs']  = 0
 
-    DEFAULT['target_pos'] ={}
-    DEFAULT['target_pos']['point'] = 'TOP'
-    DEFAULT['target_pos']['relativePoint'] = 'TOP'
-    DEFAULT['target_pos']['xOfs'] =  -56
-    DEFAULT['target_pos']['yOfs']  = -100
+    GW_DEFAULT['target_pos'] ={}
+    GW_DEFAULT['target_pos']['point'] = 'TOP'
+    GW_DEFAULT['target_pos']['relativePoint'] = 'TOP'
+    GW_DEFAULT['target_pos']['xOfs'] =  -56
+    GW_DEFAULT['target_pos']['yOfs']  = -100
 
-    DEFAULT['pet_pos'] ={}
-    DEFAULT['pet_pos']['point'] = 'BOTTOMLEFT'
-    DEFAULT['pet_pos']['relativePoint'] = 'BOTTOM'
-    DEFAULT['pet_pos']['xOfs'] =  -372
-    DEFAULT['pet_pos']['yOfs']  = 220  
+    GW_DEFAULT['pet_pos'] ={}
+    GW_DEFAULT['pet_pos']['point'] = 'BOTTOMLEFT'
+    GW_DEFAULT['pet_pos']['relativePoint'] = 'BOTTOM'
+    GW_DEFAULT['pet_pos']['xOfs'] =  -372
+    GW_DEFAULT['pet_pos']['yOfs']  = 220  
 
-    DEFAULT['castingbar_pos'] ={}
-    DEFAULT['castingbar_pos']['point'] = 'BOTTOM'
-    DEFAULT['castingbar_pos']['relativePoint'] = 'BOTTOM'
-    DEFAULT['castingbar_pos']['xOfs'] =  0
-    DEFAULT['castingbar_pos']['yOfs']  = 300
+    GW_DEFAULT['castingbar_pos'] ={}
+    GW_DEFAULT['castingbar_pos']['point'] = 'BOTTOM'
+    GW_DEFAULT['castingbar_pos']['relativePoint'] = 'BOTTOM'
+    GW_DEFAULT['castingbar_pos']['xOfs'] =  0
+    GW_DEFAULT['castingbar_pos']['yOfs']  = 300
     
     
     
-    DEFAULT['targettarget_pos'] ={}
-    DEFAULT['targettarget_pos']['point'] = 'TOP'
-    DEFAULT['targettarget_pos']['relativePoint'] = 'TOP'
-    DEFAULT['targettarget_pos']['xOfs'] =  250
-    DEFAULT['targettarget_pos']['yOfs']  = -100
+    GW_DEFAULT['targettarget_pos'] ={}
+    GW_DEFAULT['targettarget_pos']['point'] = 'TOP'
+    GW_DEFAULT['targettarget_pos']['relativePoint'] = 'TOP'
+    GW_DEFAULT['targettarget_pos']['xOfs'] =  250
+    GW_DEFAULT['targettarget_pos']['yOfs']  = -100
 
 
-    DEFAULT['focus_pos'] ={}
-    DEFAULT['focus_pos']['point'] = 'CENTER'
-    DEFAULT['focus_pos']['relativePoint'] = 'CENTER'
-    DEFAULT['focus_pos']['xOfs'] =  -350
-    DEFAULT['focus_pos']['yOfs']  = 0
+    GW_DEFAULT['focus_pos'] ={}
+    GW_DEFAULT['focus_pos']['point'] = 'CENTER'
+    GW_DEFAULT['focus_pos']['relativePoint'] = 'CENTER'
+    GW_DEFAULT['focus_pos']['xOfs'] =  -350
+    GW_DEFAULT['focus_pos']['yOfs']  = 0
     
-    DEFAULT['focustarget_pos'] ={}
-    DEFAULT['focustarget_pos']['point'] = 'CENTER'
-    DEFAULT['focustarget_pos']['relativePoint'] = 'CENTER'
-    DEFAULT['focustarget_pos']['xOfs'] =  -80
-    DEFAULT['focustarget_pos']['yOfs']  = 0
+    GW_DEFAULT['focustarget_pos'] ={}
+    GW_DEFAULT['focustarget_pos']['point'] = 'CENTER'
+    GW_DEFAULT['focustarget_pos']['relativePoint'] = 'CENTER'
+    GW_DEFAULT['focustarget_pos']['xOfs'] =  -80
+    GW_DEFAULT['focustarget_pos']['yOfs']  = 0
 
 
 local ADDOON_LOADED = false;
@@ -128,7 +128,7 @@ local lastSwimState = true
 
 function gwGetSetting(name)
     if GW2UI_SETTINGS_DB_03==nil then
-        GW2UI_SETTINGS_DB_03 = DEFAULT
+        GW2UI_SETTINGS_DB_03 = GW_DEFAULT
     end
     if GW2UI_SETTINGS_DB_03[name]==nil then
         GW2UI_SETTINGS_DB_03[name] = gwGetDefault(name)
@@ -142,7 +142,7 @@ function gwSetSetting(name,state)
 end
 
 function gwGetDefault(name)    
-    return DEFAULT[name]
+    return GW_DEFAULT[name]
 end
 
 function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
