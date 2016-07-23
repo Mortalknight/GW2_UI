@@ -48,9 +48,13 @@ function gw_create_bankframe()
     
     BankFrame:HookScript('OnHide', function() GwBankFrame:Hide() end)
     BankFrame:HookScript('OnShow', function() GwBankFrame:Show() 
-            BankFrame:ClearAllPoints()    
+        BankFrame:ClearAllPoints()    
         BankFrame:SetPoint('RIGHT',UIParent,'LEFT',-2000,0)
+
         BankFrame.SetPoint = function() end
+        for i=5,12 do
+           ToggleBag(i)     
+        end
     end)
     
     GwBankFrame:Hide()
@@ -85,6 +89,9 @@ function gw_create_bankframe()
         GwBankFrameHeaderString:SetText('Bank')
         BankItemSearchBox:Show()
         GwReagentBankFrame:Hide()
+        for i=5,12 do
+           ToggleBag(i)     
+        end
             
     end)
     
