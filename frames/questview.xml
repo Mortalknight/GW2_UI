@@ -117,6 +117,16 @@
                         </Anchors>
                  
                     </Button>
+                    <Button name="$parentDeclineQuest" text="Decline" inherits="GwStandardButton">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                DeclineQuest();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
                     
                 </Frames>
             </Frame>
