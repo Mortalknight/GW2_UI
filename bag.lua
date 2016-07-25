@@ -128,14 +128,14 @@ function gw_bag_close()
 
                 _G['ContainerFrame'..i]:ClearAllPoints()
                 _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,0);
-                _G['ContainerFrame'..i].SetPoint = function() end
+
                 o=true
             end
         else
             if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
                 _G['ContainerFrame'..i]:ClearAllPoints()
                 _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,9)
-                _G['ContainerFrame'..i].SetPoint = function() end
+      
             end
         end
     end
