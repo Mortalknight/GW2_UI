@@ -526,9 +526,6 @@
 			<OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-70);
             </OnEnter>
-			<OnLeave function="GameTooltip_Hide"/>
-			<OnEvent function="GameTimeFrame_OnEvent"/>
-			<OnUpdate function="GameTimeFrame_OnUpdate"/>
 			<OnClick function="GameTimeFrame_OnClick"/>
         </Scripts>
     </Button>
