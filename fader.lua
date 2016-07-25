@@ -37,13 +37,6 @@ function actionBarFrameHide(f,name)
 end
 
 
-MultiBarBottomRight:SetScript("OnUpdate",function(self)
-
-end)
-MultiBarBottomLeft:SetScript("OnUpdate",function(self)
-
-end)
-
 local thro = 0
 MultiBarBottomLeft.lastFadeCheck = 0
 MultiBarBottomRight.lastFadeCheck = 0

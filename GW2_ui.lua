@@ -21,6 +21,7 @@ GW2UI_SETTINGS = {}
     GW_DEFAULT['NPC_CAM_ENABLED'] = false
     GW_DEFAULT['FONTS_ENABLED'] = true
     GW_DEFAULT['CASTINGBAR_ENABLED'] = true
+    GW_DEFAULT['HIDEACTIONBAR_BACKGROUND_ENABLED'] = false
 
     GW_DEFAULT['HUD_SPELL_SWAP'] = true
 
@@ -111,6 +112,55 @@ GW2UI_SETTINGS = {}
     GW_DEFAULT['focustarget_pos']['xOfs'] =  -80
     GW_DEFAULT['focustarget_pos']['yOfs']  = 0
 
+    GW_DEFAULT['MultiBarBottomLeft'] ={}
+    GW_DEFAULT['MultiBarBottomLeft']['point'] = 'BOTTOMLEFT'
+    GW_DEFAULT['MultiBarBottomLeft']['relativePoint'] = 'BOTTOM'
+    GW_DEFAULT['MultiBarBottomLeft']['xOfs'] = -372
+    GW_DEFAULT['MultiBarBottomLeft']['yOfs'] = 120
+    
+    GW_DEFAULT['MultiBarBottomLeft']['size'] = 38
+    GW_DEFAULT['MultiBarBottomLeft']['margin'] = 2
+    GW_DEFAULT['MultiBarBottomLeft']['ButtonsPerRow'] = 6
+    GW_DEFAULT['MultiBarBottomLeft']['hideDefaultBackground'] = true
+
+    GW_DEFAULT['MultiBarBottomRight'] ={}
+    GW_DEFAULT['MultiBarBottomRight']['point'] = 'BOTTOMRIGHT'
+    GW_DEFAULT['MultiBarBottomRight']['relativePoint'] = 'BOTTOM'
+    GW_DEFAULT['MultiBarBottomRight']['xOfs'] = 372
+    GW_DEFAULT['MultiBarBottomRight']['yOfs'] = 120
+
+    
+    GW_DEFAULT['MultiBarBottomRight']['size'] = 38
+    GW_DEFAULT['MultiBarBottomRight']['margin'] = 2
+    GW_DEFAULT['MultiBarBottomRight']['ButtonsPerRow'] = 6
+    GW_DEFAULT['MultiBarBottomRight']['hideDefaultBackground'] = true
+    
+
+    GW_DEFAULT['MultiBarRight'] ={}
+    GW_DEFAULT['MultiBarRight']['point'] = 'RIGHT'
+    GW_DEFAULT['MultiBarRight']['relativePoint'] = 'RIGHT'
+    GW_DEFAULT['MultiBarRight']['xOfs'] = -320
+    GW_DEFAULT['MultiBarRight']['yOfs'] = 0
+
+    
+    GW_DEFAULT['MultiBarRight']['size'] = 38
+    GW_DEFAULT['MultiBarRight']['margin'] = 2
+    GW_DEFAULT['MultiBarRight']['ButtonsPerRow'] = 1
+    GW_DEFAULT['MultiBarRight']['hideDefaultBackground'] = true
+
+    GW_DEFAULT['MultiBarLeft'] ={}
+    GW_DEFAULT['MultiBarLeft']['point'] = 'RIGHT'
+    GW_DEFAULT['MultiBarLeft']['relativePoint'] = 'RIGHT'
+    GW_DEFAULT['MultiBarLeft']['xOfs'] = -368
+    GW_DEFAULT['MultiBarLeft']['yOfs'] = 0
+
+    
+    GW_DEFAULT['MultiBarLeft']['size'] = 38
+    GW_DEFAULT['MultiBarLeft']['margin'] = 2
+    GW_DEFAULT['MultiBarLeft']['ButtonsPerRow'] = 1
+    GW_DEFAULT['MultiBarLeft']['hideDefaultBackground'] = true
+
+
 
 local ADDOON_LOADED = false;
 local PLAYER_ENTERING_WORLD = false;
@@ -144,6 +194,9 @@ end
 function gwGetDefault(name)    
     return GW_DEFAULT[name]
 end
+function gwResetToDefault()    
+    GW2UI_SETTINGS_DB_03 = GW_DEFAULT
+end
 
 function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
     
@@ -166,7 +219,7 @@ function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
         moveframe:StopMovingOrSizing()
         point, relativeTo, relativePoint, xOfs, yOfs = moveframe:GetPoint()
             
-        new_point = {}
+        new_point = gwGetSetting(settingsName)
         new_point['point']=point
         new_point['relativePoint'] =relativePoint
         new_point['xOfs'] =math.floor(xOfs)
@@ -405,9 +458,10 @@ l:SetScript('OnUpdate',function()
         
 
     
-        
-        fadet_action_bar_check(MultiBarBottomLeft)
-        fadet_action_bar_check(MultiBarBottomRight)
+        if gwGetSetting('ACTIONBARS_ENABLED') then
+            fadet_action_bar_check(MultiBarBottomLeft)
+            fadet_action_bar_check(MultiBarBottomRight)
+        end
         
         --Swim hud
         
@@ -528,9 +582,12 @@ l:SetScript('OnEvent',function(self,event,name)
         if gwGetSetting('PLAYER_BUFFS_ENABLED') then
             gw_set_buffframe()
         end
+        
+        
         if gwGetSetting('ACTIONBARS_ENABLED') then
             create_pet_frame()
-            gw_set_actionbars()
+            gw_setupActionbars()
+          --  gw_set_actionbars()
         end  
         
                 

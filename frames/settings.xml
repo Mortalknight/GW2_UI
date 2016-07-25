@@ -100,13 +100,24 @@
                     <Scripts>
                         <OnClick>
                             if InCombatLockdown() then
-                                DEFAULT_CHAT_FRAME:AddMessage('You can not move elemtents during combat!')
+                                DEFAULT_CHAT_FRAME:AddMessage('You can not move elements during combat!')
                                 return
                             end 
                             gw_moveHudObjects()
                         </OnClick>
                     </Scripts>
                 </Button> 
+                <Button name="$parentReset"  inherits="GwStandardButton" text="Reset To Default">
+                    <Size x="128" y="32" />
+                    <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-136" y="-5"/></Anchors>
+
+                    <Scripts>
+                        <OnClick>
+                            gwResetToDefault()
+                            ReloadUI();
+                        </OnClick>
+                    </Scripts>
+                </Button>  
                 <Button name="$parentSave"  inherits="GwStandardButton" text="Save and Reload">
                     <Size x="128" y="32" />
                     <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" y="-5"/></Anchors>

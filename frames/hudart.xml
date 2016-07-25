@@ -53,6 +53,13 @@
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="512" y="16" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-512" y="16" />
                     </Anchors>
+                </Texture> 
+                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder" parentKey="Background">
+                    <Size x="512" y="256"></Size>
+                    <TexCoords left="1" right="0" top="1" bottom="0" />
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="16" />
+                    </Anchors>
                 </Texture>
                 <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder-side" parentKey="Background">
                     <Size x="256" y="512"></Size>
@@ -123,7 +130,25 @@
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
                             </Anchors>
-                        </Texture>             
+                        </Texture>  
+                        <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder" parentKey="Background">
+                            <Size x="512" y="700"></Size>
+                            <TexCoords left="1" right="0" top="1" bottom="0" />
+                            <Color r="0" b="0" g="0" a="0.5"></Color>
+                            <Anchors>
+                                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="UIParent" x="0" y="16" />
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="UIParent" x="0" y="16" />
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder" parentKey="Background">
+                            <Size x="512" y="800"></Size>
+                            <TexCoords left="1" right="0" top="1" bottom="0" />
+                            <Color r="0" b="0" g="0" a="0.5"></Color>
+                            <Anchors>
+                                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" relativeTo="UIParent" x="-512" y="16" />
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" relativeTo="UIParent" x="512" y="16" />
+                            </Anchors>
+                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>

@@ -44,6 +44,7 @@ tooltips.lua
 
 fader.lua
 
+actionbars2.lua
 newtarget.lua
 playerhud.lua
 questtracker2.lua

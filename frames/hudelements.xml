@@ -643,4 +643,39 @@
         </Frames>
     </Frame>
     
+    <Frame name="GwActionButtonBackDrop" frameStrata="MEDIUM" frameLevel="1" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="-1" y="1"></Anchor>
+            <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\spelliconempty">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame> 
+    <Frame name="GwActionHotKeyBackDrop"  virtual="true">
+        <Size  x="18" y="18"></Size>
+        <Anchors>
+            <Anchor point="CENTER" ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Size  x="20" y="20">
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    
 </Ui>

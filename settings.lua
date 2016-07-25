@@ -79,6 +79,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Fade Actionbars','Fade the extra action bars','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
     addOption('Dynamic HUD','Change the HUD appearance','HUD_SPELL_SWAP','GwSettingsHudOptions')
     addOption('Fade Chat','Fade the chat while inactive','CHATFRAME_FADE','GwSettingsHudOptions')
+    addOption('Hide Unused Actionbars','Hides empty slots in the actionbar','HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
     
     
     
@@ -215,8 +216,9 @@ function gw_moveHudObjects()
     end
 end
 function gw_lockHudObjects()
-    DEFAULT_CHAT_FRAME:AddMessage('You can not move elemtents during combat!')
+    
     if InCombatLockdown() then
+        DEFAULT_CHAT_FRAME:AddMessage('You can not move elements during combat!')
         return
     end 
     lhb:Hide()
