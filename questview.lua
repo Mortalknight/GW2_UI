@@ -105,9 +105,17 @@ end)
                 
         else
             if questState =='TAKE' then
-                  
-                AcceptQuest()
-            else
+                if ( QuestFlagsPVP() ) then
+                    QuestFrame.dialog = StaticPopup_Show("CONFIRM_ACCEPT_PVP_QUEST");
+                    else
+                        if ( QuestFrame.autoQuest ) then
+                            AcknowledgeAutoAcceptQuest();
+                        else
+                            AcceptQuest();
+                        end
+                    end
+                    AcceptQuest()
+                else
                 if ( GetNumQuestChoices() == 1 ) then
                     QuestInfoFrame.itemChoice = 1;
                 end
