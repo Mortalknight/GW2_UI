@@ -123,7 +123,7 @@ function gw_playerUpdateAuras()
             _G['GwPlayerBuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
             _G['GwPlayerBuffItemFrame'..i..'BuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint('BOTTOMRIGHT',(margin*x),-marginy*y)
+            indexBuffFrame:SetPoint('BOTTOMRIGHT',(margin*x),marginy*y)
              
             indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,i); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
