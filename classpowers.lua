@@ -33,6 +33,8 @@ function create_classpowers()
     
     GwPlayerClassPower:RegisterEvent("UNIT_POWER");
     GwPlayerClassPower:RegisterEvent("UNIT_MAX_POWER");
+    GwPlayerClassPower:RegisterEvent("RUNE_POWER_UPDATE");
+    GwPlayerClassPower:RegisterEvent("RUNE_TYPE_UPDATE");
 
     classPowerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     classPowerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
