@@ -71,7 +71,7 @@ function GW_UPDATE_CLASSPOWER(self,event)
             GW_POWERTYPE_COMBOPOINT()
             return
         end
-            CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION]()
+            CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION](event)
         
     end
     
@@ -162,7 +162,7 @@ function GW_POWERTYPE_COMBOPOINT()
 
 end
 function GW_POWERTYPE_RUNE()
-    
+
     for i=1,6 do
         local rune_start, rune_duration, rune_ready = GetRuneCooldown(i)
         if rune_start==nil then
@@ -171,9 +171,11 @@ function GW_POWERTYPE_RUNE()
         end
         if rune_ready then
             _G['GwRuneTextureFill'..i]:SetTexCoord(0.5,1,0,1)
+            _G['GwRuneTextureFill'..i]:SetHeight(32)
             if animations['RUNE_TIMER_ANIMATIONS'..i] then
                 animations['RUNE_TIMER_ANIMATIONS'..i]['completed']=true
                 animations['RUNE_TIMER_ANIMATIONS'..i]['duration'] = 0
+  
             end
         else
             
@@ -183,7 +185,7 @@ function GW_POWERTYPE_RUNE()
             startTime = startTime 
             endTime = endTime 
             
-            addToAnimation('RUNE_TIMER_ANIMATIONS'..i,RUNE_TIMER_ANIMATIONS[i],1,startTime,endTime-startTime,function()                    
+            addToAnimation('RUNE_TIMER_ANIMATIONS'..i,RUNE_TIMER_ANIMATIONS[i],1,GetTime(),endTime-startTime,function()                    
                 _G['GwRuneTextureFill'..i]:SetTexCoord(0.5,1,1-animations['RUNE_TIMER_ANIMATIONS'..i]['progress'],1)
                  _G['GwRuneTextureFill'..i]:SetHeight(32*animations['RUNE_TIMER_ANIMATIONS'..i]['progress'])
             end,'noease', function()
