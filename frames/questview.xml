@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer textureSubLevel="1" level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\questviewborder">
+                <Texture name="$parentBackgroundBorder" file="Interface\AddOns\GW2_UI\textures\questviewborder">
                     <Size x="1024" y="512"></Size>
                     <Anchors>
                         <Anchor point="center" x="0" y="0" />

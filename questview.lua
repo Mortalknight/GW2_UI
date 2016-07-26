@@ -24,7 +24,8 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
     
     
     GwQuestviewFrame:SetScript('OnShow',function()
-        
+        UIFrameFadeIn(GwQuestviewFrameBackgroundBorder, 0.1,0,1)
+        UIFrameFadeIn(GwQuestviewFrameBackground, 0.5,0,1)
     end)
     
     GwQuestviewFrame:RegisterEvent('QUEST_DETAIL')
