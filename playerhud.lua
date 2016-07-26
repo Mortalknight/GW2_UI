@@ -197,11 +197,7 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
         _G[self:GetName()..'CandySpark']:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
         _G[self:GetName()..'Candy']:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
- 
-    
-   
-    if powerBarAnimations[forceAnimationName]==powerPrec then return end
-    
+     
        
     if animations[forceAnimationName] then
         animations[forceAnimationName]['completed'] = true
