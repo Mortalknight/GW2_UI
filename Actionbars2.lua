@@ -189,6 +189,8 @@ function gw_setupActionbars()
     gw_setMicroButtons()
     gw_setStanceBar()
     gw_setPetBar()
+    gw_setbagFrame()
+    gw_setLeaveVehicleButton()
     hooksecurefunc("ActionButton_UpdateHotkeys",  gw_updatehotkey)
 end
 
@@ -392,3 +394,28 @@ function gw_setStanceBar()
     end) 
 end
 
+
+function gw_setbagFrame()
+    
+      if not gwGetSetting('BAGS_ENABLED') then
+        CharacterBag0Slot:ClearAllPoints()
+        CharacterBag1Slot:ClearAllPoints()
+        CharacterBag2Slot:ClearAllPoints()
+        CharacterBag3Slot:ClearAllPoints()
+
+        MainMenuBarBackpackButton:SetPoint('RIGHT', ActionButton12, 'RIGHT', ActionButton12:GetWidth()+64, 0) 
+
+        CharacterBag0Slot:SetPoint('LEFT', MainMenuBarBackpackButton, 'RIGHT', 0, 0) 
+        CharacterBag1Slot:SetPoint('LEFT', CharacterBag0Slot, 'RIGHT', 0, 0) 
+        CharacterBag2Slot:SetPoint('LEFT', CharacterBag1Slot, 'RIGHT', 0, 0) 
+        CharacterBag3Slot:SetPoint('LEFT', CharacterBag2Slot, 'RIGHT', 0, 0) 
+
+    end 
+end
+
+function gw_setLeaveVehicleButton()
+    MainMenuBarVehicleLeaveButton:HookScript('OnShow',function() 
+        MainMenuBarVehicleLeaveButton:ClearAllPoints();
+        MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0) 
+    end)
+end
