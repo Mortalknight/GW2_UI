@@ -93,9 +93,9 @@
         </Layers>
             <Frames>
                 <Button name="$parentMoveHud" inherits="GwStandardButton" text="Move HUD">
-                    <Size x="128" y="32" />
+                     <Size x="85" y="24" />
 
-                         <Anchors><Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" y="-5"/></Anchors>
+                         <Anchors><Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="10" y="-10"/></Anchors>
 
                     <Scripts>
                         <OnClick>
@@ -108,8 +108,8 @@
                     </Scripts>
                 </Button> 
                 <Button name="$parentReset"  inherits="GwStandardButton" text="Reset To Default">
-                    <Size x="128" y="32" />
-                    <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-136" y="-5"/></Anchors>
+                   <Size x="130" y="24" />
+                    <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-136" y="-10"/></Anchors>
 
                     <Scripts>
                         <OnClick>
@@ -119,8 +119,8 @@
                     </Scripts>
                 </Button>  
                 <Button name="$parentSave"  inherits="GwStandardButton" text="Save and Reload">
-                    <Size x="128" y="32" />
-                    <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" y="-5"/></Anchors>
+                     <Size x="130" y="24" />
+                    <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" y="-10"/></Anchors>
 
                     <Scripts>
                         <OnClick>
@@ -353,7 +353,7 @@
         </Frames>
     </Button>
     <Button name="GwStandardButton" text="" virtual="true">
-        <Size x="128" y="32" />
+        <Size x="128" y="24" />
                             
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\questviewbutton"></NormalTexture>
 
@@ -366,6 +366,8 @@
                 <Texture name="$parentOnHover" file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
                         <Anchor point="RIGHT" relativePoint="LEFT"></Anchor>
                     </Anchors>
                 </Texture>

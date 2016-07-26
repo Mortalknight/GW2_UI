@@ -74,10 +74,10 @@ GW_TARGET_FRAME_ART = {
     ['rareelite'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare',
 }
 
- oldExp =0;
- gainExpStart =0;
- gainExpEnd=0;
-    newExp = 0
+oldExp =0;
+gainExpStart =0;
+gainExpEnd=0;
+newExp = 0
 lerpRunning = false
 
 function createButton(p,w,h,xo,yo,texture,sub)
