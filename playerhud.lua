@@ -57,6 +57,7 @@ function create_power_bar()
     playerPowerBar:SetScript('OnEvent',function(self,event,unit)
             if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit=='player' then
                 update_power_data(GwPlayerPowerBar) 
+                return
             end 
             if event=='UPDATE_SHAPESHIFT_FORM' then
                 update_power_data(GwPlayerPowerBar) 
@@ -187,6 +188,7 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
     
      if power>0 and powerMax>0 then
          powerPrec = power/powerMax
+
     end
    
     if PowerBarColorCustom[powerToken] then
@@ -195,37 +197,53 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
         _G[self:GetName()..'CandySpark']:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
         _G[self:GetName()..'Candy']:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
+ 
+    
+   
+    if powerBarAnimations[forceAnimationName]==powerPrec then return end
+    
+       
+    if animations[forceAnimationName] then
+        animations[forceAnimationName]['completed'] = true
+        animations[forceAnimationName]['duration'] = 0
+    end
     
     addToAnimation(forceAnimationName,powerBarAnimations[forceAnimationName],powerPrec,GetTime(),animation_duration,function()
             
-            
- 
-                local  round_closest = 0.05 * math.floor((animations[forceAnimationName]['progress']*100)/5) 
-                local spark_min =  math.floor((animations[forceAnimationName]['progress']*100)/5)
-                local spark_max =  math.ceil((animations[forceAnimationName]['progress']*100)/5) 
-                local spark_current = (animations[forceAnimationName]['progress']*100)/5
+                
+    
+                local snap = (animations[forceAnimationName]['progress']*100)/5
+
+                local round_closest = 0.05 * snap
+  
+                local spark_min =  math.floor(snap)
+                local spark_max =  math.ceil(snap) 
+                local spark_current = snap
+
                 local spark_prec = spark_current - spark_min
-                local spark = math.min(powerBarWidth-15,(powerBarWidth*round_closest)-2)
-                    local bI = 17 - math.max(1,math.ceil(16 * spark_prec))
+                
+                            
+                local spark = math.floor(powerBarWidth*round_closest) - math.floor(15*spark_prec)
+                local bI = 17 - math.max(1,intRound(16 * spark_prec))
+
                    _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,
                         bloodSpark[bI].right,
                         bloodSpark[bI].top,
                         bloodSpark[bI].bottom)
-                _G[self:GetName()..'CandySpark']:ClearAllPoints()
-                _G[self:GetName()..'CandySpark']:SetPoint('LEFT',math.floor(spark),0)
+             
            
-            
-            local candy = lerp(animations[forceAnimationName]['from'],animations[forceAnimationName]['to'],(GetTime() - animations[forceAnimationName]['start'])/animations[forceAnimationName]['duration'])
-            local sparkPosition = (316*animations[forceAnimationName]['progress'])-18
 
-            
+
+           
             _G[self:GetName()..'Bar']:SetValue(round_closest)
             _G[self:GetName()..'Candy']:SetValue( 0 )
+            _G[self:GetName()..'CandySpark']:ClearAllPoints()
+            _G[self:GetName()..'CandySpark']:SetPoint('LEFT',spark,0)
             _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*animations[forceAnimationName]['progress']))
             
             
         end)            
-    powerBarAnimations[forceAnimationName] = powerPrec;
+        powerBarAnimations[forceAnimationName] = powerPrec;
     
     
     

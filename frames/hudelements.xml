@@ -184,17 +184,17 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarCandy"/>
                 <Layers>
                  <Layer>
-                     <Texture name="$parentSpark" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\bloodspark" >
+                     <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark" >
                       
                          <Anchors>
                              <Anchor point="RIGHT" x="0" y="0"/>
                          </Anchors>
-                         <Size x="16" y="16"></Size>
+                         <Size x="17" y="16"></Size>
                     </Texture>
                     </Layer>
                  </Layers>
             </StatusBar> 
-            <StatusBar name="$parentBar"  frameLevel="2" defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentBar"   defaultValue="1"  minValue="0" maxValue="1" >
                   
                 <Size x="314" y="16"/>
                 <Anchors>

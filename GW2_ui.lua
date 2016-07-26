@@ -303,6 +303,12 @@ animations = {}
 function round(number, decimals)
     return (("%%.%df"):format(decimals)):format(number)
 end
+function intRound(v)
+    if v==nil then return 0 end
+    vf = math.floor(v)
+    if (v-vf)>0.5 then return vf+1 end
+    return vf
+end
 function  lerp( v0,  v1,  t) 
     if v0==nil then 
         v0=0
