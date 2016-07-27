@@ -49,7 +49,7 @@ function gw_set_tooltips()
     for _, toStyle in ipairs(UNSTYLED) do
         if _G[toStyle] then
             
-            _G[toStyle]:SetScript('OnShow',function()
+            _G[toStyle]:HookScript('OnShow',function()
                     _G[toStyle]:SetBackdrop({bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background", 
                             edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border", 
                             tile = false, tileSize = 64, edgeSize = 32, 
