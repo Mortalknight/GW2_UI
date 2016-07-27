@@ -389,7 +389,7 @@ function gw_bonusobjective_update(questID)
    
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES']={}
     for objectiveIndex = 1,numObjectives do
-        local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, true);
+        local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false);
         finished =false
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex] ={}
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['questLogIndex'] = 0
@@ -397,6 +397,7 @@ function gw_bonusobjective_update(questID)
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['objectiveType'] = objectiveType
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['finished'] = finished   
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['questID'] = questID  
+        print(text)
     end
 end
 
