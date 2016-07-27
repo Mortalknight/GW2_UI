@@ -51,6 +51,8 @@ function gw_updatehotkey(self, actionButtonType)
 	local hotkey = _G[self:GetName() .. 'HotKey']
 	local text = hotkey:GetText()
 	
+    if text==nil then return end
+    
 	text = string.gsub(text, '(s%-)', 'S')
 	text = string.gsub(text, '(a%-)', 'A')
 	text = string.gsub(text, '(c%-)', 'C')
