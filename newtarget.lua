@@ -602,7 +602,7 @@ function updateCastingbar(thisName,unitToWatch)
         _G[thisName.."HealthBarSpark"]:ClearAllPoints()
         _G[thisName.."HealthBarSpark"]:SetPoint('LEFT',_G[thisName.."HealthBar"],'LEFT',(_G[thisName.."HealthBar"]:GetWidth()*healthPrecentage)-15,0)
     end
-     _G[thisName.."HealthBarCandy"]:SetValue(healthPrecentage)
+    _G[thisName.."HealthBarCandy"]:SetValue(healthPrecentage)
     _G[thisName.."HealthBar"]:SetValue(healthPrecentage)
     _G[thisName.."ManaBar"]:SetValue(powerPrecentage)
     _G[thisName.."AbsorbBar"]:SetValue(absorbPrecentage)
@@ -611,8 +611,12 @@ function updateCastingbar(thisName,unitToWatch)
     if gwGetSetting(unitToWatch..'_HEALTH_VALUE_ENABLED') then
         healthValueText = comma_value(health)
         if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
-            healthValueText = comma_value(healthPrecentage*100)..'%'
+            healthValueText = healthValueText..' - '
         end
+    end
+    if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
+        local precentag_show = healthPrecentage*100
+        healthValueText = healthValueText..comma_value(precentag_show)..'%'
     end
     _G[thisName.."HealthBarHealthBarString"]:SetText(healthValueText)
         
