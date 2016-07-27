@@ -111,6 +111,7 @@
     </Frame>
     <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true" >
          <Size x="300" y="300"></Size>
+   
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
@@ -143,11 +144,69 @@
         </Layers>
         <Frames>
             <Button name="$parentItemButton" inherits="QuestObjectiveItemButtonTemplate">
-                	<Anchors>
-						<Anchor point="TOPLEFT" x="-40" y="0"/>
-					</Anchors>
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="-40" y="0"/>
+                </Anchors>
+            </Button> 
+            <Button name="$parentUntrackButton" >
+                <Size x="30" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\icon-module">
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0" right="1" top="0.50" bottom="0.75" />
+                            <Color r="1" b="0.6" g="0.6"></Color>
+                            <Size x="20" y="20"></Size>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        self.hoverd = false
+                        self:Hide()
+                    </OnLoad>
+                    <OnClick>
+                        local p = self:GetParent()
+                        print(1)
+                        if p.questType=='QUEST' and p.questLogIndex~=nil then                        
+                            RemoveQuestWatch(p.questLogIndex);
+                        end
+                    </OnClick>
+                    <OnEnter>
+                        self.hoverd = true
+                        GameTooltip:SetOwner(self,"ANCHOR_LEFT",0,0);
+                        GameTooltip:ClearLines();
+                        GameTooltip:AddLine("Untrack quest",1,1,1);
+                        GameTooltip:Show()
+                  
+                    </OnEnter>
+                    <OnLeave>
+                        self.hoverd = false
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
             </Button>
         </Frames>
+        <Scripts>
+            <OnEnter>
+                local selfName = self:GetName()
+                if self.questType=='QUEST' then
+                    _G[selfName..'UntrackButton']:Show()
+                end
+                
+            </OnEnter>
+            <OnLeave>
+                 local selfName = self:GetName()
+                 if self.questType=='QUEST' and _G[selfName..'UntrackButton'].hoverd==false then
+                    _G[selfName..'UntrackButton']:Hide()
+                end
+            </OnLeave>
+        </Scripts>
     </Button>
     <Frame name="GwQuesttrackerObjectiveNormal" parent="GwQuestTracker" virtual="true" >
          <Size x="300" y="300"></Size>
