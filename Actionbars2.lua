@@ -133,8 +133,13 @@ function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
     
     if noBackDrop==nil or noBackDrop==false then 
         local backDrop = CreateFrame('Frame',buttonName..'GwBackDrop',_G[buttonName]:GetParent(),'GwActionButtonBackDrop')
-        backDrop:SetPoint('TOPLEFT',_G[buttonName],'TOPLEFT',-2,2)
-        backDrop:SetPoint('BOTTOMRIGHT',_G[buttonName],'BOTTOMRIGHT',2,-2)
+        local backDropSize = 1
+        if _G[buttonName]:GetWidth()>40 then
+            backDropSize =2
+        end
+        
+        backDrop:SetPoint('TOPLEFT',_G[buttonName],'TOPLEFT',-backDropSize,backDropSize)
+        backDrop:SetPoint('BOTTOMRIGHT',_G[buttonName],'BOTTOMRIGHT',backDropSize,-backDropSize)
     end
     
     
@@ -323,8 +328,8 @@ end
 
 function gw_setPetBar()
     
-    local BUTTON_SIZE = 24;
-    local BUTTON_MARGIN = 2;
+    local BUTTON_SIZE = 23;
+    local BUTTON_MARGIN = 3;
     local USED_WIDTH = 0
     
     PetActionButton1:ClearAllPoints()
