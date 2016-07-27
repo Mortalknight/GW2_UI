@@ -158,14 +158,14 @@
      
     </Frame>
     <Frame  frameStrata="HIGH" name="GwRepair" topLevel="true" virtual="true">
-        <Size x="20" y="20"></Size>
+        <Size x="21" y="21"></Size>
         <Anchors>
-            <Anchor point="BOTTOM" relativePoint="BOTTOM" x="30" y="14" />
+            <Anchor point="BOTTOM" relativePoint="BOTTOM" x="35" y="20" />
         </Anchors>
         <Layers>
             <Layer level="OVERLAY">
                 <Texture name="$parentTexture"  file="Interface\AddOns\GW2_UI\textures\repair" >
-                    <Size x="20" y="20"></Size>
+                    <Size x="21" y="21"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" />
                     </Anchors>
