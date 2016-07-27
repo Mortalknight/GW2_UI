@@ -47,32 +47,33 @@ function gw_hideBlizzardsActionbars()
     
 end
 function gw_updatehotkey(self, actionButtonType)
+
 	local hotkey = _G[self:GetName() .. 'HotKey']
 	local text = hotkey:GetText()
 	
-	text = replace(text, '(s%-)', 'S')
-	text = replace(text, '(a%-)', 'A')
-	text = replace(text, '(c%-)', 'C')
-	text = replace(text, '(Mouse Button )', 'M')
-	text = replace(text, '(Middle Mouse)', 'M3')
-	text = replace(text, '(Num Pad )', 'N')
-	text = replace(text, '(Page Up)', 'PU')
-	text = replace(text, '(Page Down)', 'PD')
-	text = replace(text, '(Spacebar)', 'SpB')
-	text = replace(text, '(Insert)', 'Ins')
-	text = replace(text, '(Home)', 'Hm')
-	text = replace(text, '(Delete)', 'Del')
-	text = replace(text, '(Left Arrow)', 'LT')
-	text = replace(text, '(Right Arrow)', 'RT')
-	text = replace(text, '(Up Arrow)', 'UP')
-	text = replace(text, '(Down Arrow)', 'DN')
+	text = string.gsub(text, '(s%-)', 'S')
+	text = string.gsub(text, '(a%-)', 'A')
+	text = string.gsub(text, '(c%-)', 'C')
+	text = string.gsub(text, '(Mouse Button )', 'M')
+	text = string.gsub(text, '(Middle Mouse)', 'M3')
+	text = string.gsub(text, '(Num Pad )', 'N')
+	text = string.gsub(text, '(Page Up)', 'PU')
+	text = string.gsub(text, '(Page Down)', 'PD')
+	text = string.gsub(text, '(Spacebar)', 'SpB')
+	text = string.gsub(text, '(Insert)', 'Ins')
+	text = string.gsub(text, '(Home)', 'Hm')
+	text = string.gsub(text, '(Delete)', 'Del')
+	text = string.gsub(text, '(Left Arrow)', 'LT')
+	text = string.gsub(text, '(Right Arrow)', 'RT')
+	text = string.gsub(text, '(Up Arrow)', 'UP')
+	text = string.gsub(text, '(Down Arrow)', 'DN')
 		
 	if hotkey:GetText() == _G['RANGE_INDICATOR'] then
 		hotkey:SetText('')
 	else
 		hotkey:SetText(text)
-	end
-  end
+    end
+end
     function gw_setMicroButtons()
         MicroButtonPortrait:Hide()
         GuildMicroButtonTabard:Hide()
@@ -191,6 +192,8 @@ function gw_setupActionbars()
     gw_setPetBar()
     gw_setbagFrame()
     gw_setLeaveVehicleButton()
+    
+    
     hooksecurefunc("ActionButton_UpdateHotkeys",  gw_updatehotkey)
 end
 
@@ -213,6 +216,7 @@ function gw_updateMainBar()
             
             
             gw_setActionButtonStyle('ActionButton'..i)
+            gw_updatehotkey(BUTTON)
             
             _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMLEFT',BUTTON,'BOTTOMLEFT',0,-10)
             _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMRIGHT',BUTTON,'BOTTOMRIGHT',0,-10)
@@ -262,7 +266,7 @@ function gw_updateCustomizableBars(barName,buttonName)
         if BUTTON~=nil then
             
            
-            
+            gw_updatehotkey(BUTTON)
             gw_setActionButtonStyle(buttonName..i,nil, gwGetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED'))
             
             BUTTON:SetSize(BARSETTINGS['size'],BARSETTINGS['size'])
@@ -310,6 +314,9 @@ function gw_setPetBar()
     for i=1,12 do
     
         if _G['PetActionButton'..i]~=nil then
+            
+            gw_updatehotkey(_G['PetActionButton'..i])
+            
             _G['PetActionButton'..i]:SetSize(BUTTON_SIZE,BUTTON_SIZE)
             gw_setActionButtonStyle('PetActionButton'..i)
             
@@ -326,6 +333,8 @@ function gw_setStanceBar()
     
     for i=1,12 do
         if _G["StanceButton"..i]~=nil then
+            
+            
         
             if i>1 then
             _G["StanceButton"..i]:ClearAllPoints()
