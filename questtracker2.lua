@@ -397,7 +397,6 @@ function gw_bonusobjective_update(questID)
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['objectiveType'] = objectiveType
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['finished'] = finished   
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['questID'] = questID  
-        print(text)
     end
 end
 
@@ -695,9 +694,10 @@ function gw_objective_use_builtin_bar(objective_array,objectiveFrame)
             _G[objectiveFrame..'StatusBarBg']:Show()
             _G[objectiveFrame..'StatusBar']:SetMinMaxValues(0, 100)
             if objective_array['GW_TYPE']=='SCENARIO' then
-                _G[objectiveFrame..'StatusBar']:SetValue(objective_array['quantity'])
+       
+                gw_qTSetValue(_G[objectiveFrame..'StatusBar'],objective_array['quantity'])
             else  
-                _G[objectiveFrame..'StatusBar']:SetValue(GetQuestProgressBarPercent(objective_array['questID']) )
+                gw_qTSetValue(_G[objectiveFrame..'StatusBar'],GetQuestProgressBarPercent(objective_array['questID']) )
             end
         return true
     end
@@ -733,7 +733,7 @@ function gw_objective_use_statusbar(text, objectiveFrame)
             _G[objectiveFrame..'StatusBar']:Show()
             _G[objectiveFrame..'StatusBarBg']:Show()
             _G[objectiveFrame..'StatusBar']:SetMinMaxValues(0, numNeeded)
-            _G[objectiveFrame..'StatusBar']:SetValue(numItems)
+            gw_qTSetValue(_G[objectiveFrame..'StatusBar'],numItems)
    
             return true
         end
@@ -741,6 +741,14 @@ function gw_objective_use_statusbar(text, objectiveFrame)
     _G[objectiveFrame..'StatusBarBg']:Hide()
     return false
     
+end
+
+function gw_qTSetValue(self,v)
+    local BNAME = self:GetName()
+    addToAnimation(BNAME,self.animationOld,v,GetTime(),0.5,function()
+            self:SetValue(animations[BNAME]['progress'])
+        end)
+    self.animationOld = v 
 end
 
 function gw_request_questContainer(k,parent)

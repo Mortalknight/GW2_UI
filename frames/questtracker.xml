@@ -180,7 +180,37 @@
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <Layers>
+                    <Layer>
+                        <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                            <Size x="10" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        local BNAME = self:GetName()
+                        if self.animationOld==nil then
+                            self.animationOld=0
+                        end
+                        hooksecurefunc(self,'SetValue',function() 
+                        
+                            local min, max = self:GetMinMaxValues()
+                            local v = self:GetValue()
+                            local width = math.max(0.001,math.min(10,(v/max)*100))
+                            _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',280*(v/max),0)
+                          
+                            _G[BNAME..'Spark']:SetWidth(width)
+                            
+                        
+                        end)
+                    </OnLoad>
+                </Scripts>
             </StatusBar>
+    
         </Frames>
     </Frame>
     
