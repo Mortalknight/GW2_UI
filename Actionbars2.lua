@@ -96,10 +96,16 @@ function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
         _G[buttonName..'Icon']:SetTexCoord(0.1,0.9,0.1,0.9)
     end
     if _G[buttonName.."HotKey"]~=nil then
-    _G[buttonName.."HotKey"]:ClearAllPoints()
-    _G[buttonName.."HotKey"]:SetPoint('CENTER',_G[buttonName],'BOTTOM',0,0)
-
-    _G[buttonName.."HotKey"]:SetJustifyH("CENTER")
+        _G[buttonName.."HotKey"]:ClearAllPoints()
+        _G[buttonName.."HotKey"]:SetPoint('CENTER',_G[buttonName],'BOTTOM',0,0)
+        _G[buttonName.."HotKey"]:SetJustifyH("CENTER")
+    end
+    if _G[buttonName.."Count"]~=nil then
+        _G[buttonName.."Count"]:ClearAllPoints()
+        _G[buttonName.."Count"]:SetPoint('TOPRIGHT',_G[buttonName],'TOPRIGHT',-3,-3)
+        _G[buttonName.."Count"]:SetJustifyH("RIGHT")
+        _G[buttonName.."Count"]:SetFont(UNIT_NAME_FONT,14,'OUTLINED')
+        _G[buttonName.."Count"]:SetTextColor(1,1,0.6)
     end
     
     if _G[buttonName..'NormalTexture']~=nil then
@@ -148,6 +154,17 @@ end
 
 function gw_setupActionbars()
 
+   local HIDE_ACTIONBARS_CVAR = gwGetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED')
+    if HIDE_ACTIONBARS_CVAR then
+        HIDE_ACTIONBARS_CVAR = 0 
+    else
+        HIDE_ACTIONBARS_CVAR = 1
+    end
+       
+    SetCVar('alwaysShowActionBars',HIDE_ACTIONBARS_CVAR)
+    
+
+    
              
     for k,v in pairs(BARS) do
        v:SetParent(UIParent) 
@@ -200,12 +217,12 @@ end
 function gw_updateMainBar()
     
     local MAIN_MENU_BAR_BUTTON_SIZE =50
-    local MAIN_MENU_BAR_BUTTON_MARGIN = 3
+    local MAIN_MENU_BAR_BUTTON_MARGIN = 2
     
     local USED_WIDTH = 0
     local USED_HEIGHT = MAIN_MENU_BAR_BUTTON_SIZE
     
-    local BUTTON_PADDING = 0
+    local BUTTON_PADDING = MAIN_MENU_BAR_BUTTON_MARGIN
     
     for i=1,12 do
         local BUTTON =  _G['ActionButton'..i]
@@ -232,7 +249,7 @@ function gw_updateMainBar()
             BUTTON:SetPoint('LEFT',MainMenuBarArtFrame,'LEFT',BUTTON_PADDING -MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,0)
             
             if i==6 then
-                 BUTTON_PADDING = BUTTON_PADDING + 108
+                 BUTTON_PADDING = BUTTON_PADDING + 110
             end
             
             USED_WIDTH =  BUTTON_PADDING
