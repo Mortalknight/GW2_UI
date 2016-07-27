@@ -465,6 +465,7 @@ function gw_display_questtracker_layout()
             end
         end
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetText(subHeader)
+        _G[QUEST_CONTAINER_FRAME:GetName()..'UntrackButton']:Hide()
         _G[QUEST_CONTAINER_FRAME:GetName()].questType = v['GW_TYPE']
         _G[QUEST_CONTAINER_FRAME:GetName()].questLogIndex = v['questLogIndex']
         

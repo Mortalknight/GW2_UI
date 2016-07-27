@@ -172,9 +172,9 @@
                     </OnLoad>
                     <OnClick>
                         local p = self:GetParent()
-                        print(1)
                         if p.questType=='QUEST' and p.questLogIndex~=nil then                        
                             RemoveQuestWatch(p.questLogIndex);
+                            self.hoverd = false
                         end
                     </OnClick>
                     <OnEnter>
