@@ -32,6 +32,8 @@ local  bX,bY =0
 
 local cvar = GetCVarBool("questPOI")
 
+local GW_COMPASS_SHOWN = true
+
 
 function gw_toggle_quest_hidden(qid)
     local found = false
@@ -51,6 +53,14 @@ function gw_toggle_quest_hidden(qid)
 end
 
 function gw_load_questtracker()
+    
+    GW_COMPASS_SHOWN = gwGetSetting('SHOW_QUESTTRACKER_COMPASS')
+    BOSS_FRAME_Y = -75
+    RADAR_POSITION = 0
+    if GW_COMPASS_SHOWN==false then
+        BOSS_FRAME_Y =0
+        RADAR_POSITION = 70
+    end
 
     ObjectiveTrackerFrame:Hide()
     ObjectiveTrackerFrame:SetScript('OnShow', function() ObjectiveTrackerFrame:Hide() end)
@@ -71,8 +81,10 @@ function gw_load_questtracker()
     
     GwQuesttrackerContainerBonusObjectives:SetPoint('TOPRIGHT',GwQuesttrackerContainerQuests,'BOTTOMRIGHT',0,0)
     GwQuesttrackerContainerQuests:SetPoint('TOPRIGHT',GwQuesttrackerContainerScenario,'BOTTOMRIGHT',0,0)
-    GwQuesttrackerContainerBossFrames:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT',0,-75)
+    GwQuesttrackerContainerBossFrames:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT',0,BOSS_FRAME_Y)
     GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuestTrackerRadar,'BOTTOMRIGHT',0,0)
+    
+    GwQuestTrackerRadar:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT',0,RADAR_POSITION)
     
     GW_TRACKER_PARENT_FRAMES['QUEST'] =GwQuesttrackerContainerQuests
     GW_TRACKER_PARENT_FRAMES['BONUS'] = GwQuesttrackerContainerBonusObjectives
@@ -133,6 +145,10 @@ local RADAR_THRO = 0
 
 
 function gw_update_radar()
+    
+    if GW_COMPASS_SHOWN==false then
+        return
+    end
          
    if WorldMapFrame:IsShown() then return end
     local posX, posY  = 0
@@ -264,7 +280,6 @@ function gw_questtracker_OnEvent(self,event,arg1,arg2)
     gw_display_questtracker_layout()
     
     gw_questtracker_hide_unused()
-    gw_toggle_radar()
 
 end
 
@@ -868,13 +883,9 @@ function gw_load_all_bossFrames()
             v:SetScript("OnEvent", nil);
         end
     end
-    
-   
-
 
     
-    
-    local fgw = CreateFrame('Frame', nil, nil, 'SecureHandlerStateTemplate')
+   --[[ local fgw = CreateFrame('Frame', nil, nil, 'SecureHandlerStateTemplate')
     fgw:SetFrameRef('UIParent', UIParent)
     fgw:SetFrameRef('GwQuesttrackerContainerBossFrames', GwQuesttrackerContainerBossFrames)
     fgw:SetAttribute('_onstate-combat', [=[ 
@@ -884,6 +895,7 @@ function gw_load_all_bossFrames()
         end
     ]=])
     RegisterStateDriver(fgw, 'combat', '[combat] show; hide')
+    ]]--
     
 end
 

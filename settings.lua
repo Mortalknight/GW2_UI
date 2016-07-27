@@ -80,6 +80,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Dynamic HUD','Change the HUD appearance','HUD_SPELL_SWAP','GwSettingsHudOptions')
     addOption('Fade Chat','Fade the chat while inactive','CHATFRAME_FADE','GwSettingsHudOptions')
     addOption('Hide Unused Actionbars','Hides empty slots in the actionbar','HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
+    addOption('Show Compass','Show/Hide the qusttracker compass','SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
     
     
     
