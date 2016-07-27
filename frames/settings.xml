@@ -82,12 +82,19 @@
                     </Anchors>
                 </Texture>
                 <FontString name="$parentHeaderString" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
-                <Size x="512" y="40"></Size>
-                <Color r="1" b="0.73" g="0.93"></Color>
-                <Anchors>
+                    <Size x="512" y="40"></Size>
+                    <Color r="1" b="0.73" g="0.93"></Color>
+                    <Anchors>
                     <Anchor point="TOPLEFT" x="30" y="40"></Anchor>
-                </Anchors>
-            </FontString>            
+                    </Anchors>
+                </FontString>  
+                <FontString name="$parentVersionString" text="Version" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="200" y="40"></Size>
+                    <Color r="1" b="0.73" g="0.93"></Color>
+                    <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>            
                 
             </Layer>
         </Layers>
@@ -286,6 +293,8 @@
             <Scripts>
                 <OnLoad>
                     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT,24)
+                    GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT,12)
+                    GwSettingsWindowVersionString:SetText(GW_VERSION_STRING)
                 </OnLoad>
             </Scripts>
     </Frame>
