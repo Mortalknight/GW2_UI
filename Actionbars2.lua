@@ -15,6 +15,10 @@ local BLIZZARD_HIDE_FRAMES ={
     ActionBarUpButton,
     ActionBarDownButton,
     MainMenuBarPageNumber,
+    MainMenuMaxLevelBar0,
+	MainMenuMaxLevelBar1,
+	MainMenuMaxLevelBar2,
+	MainMenuMaxLevelBar3,
 }
 
 local BLIZZARD_FORCE_HIDE = {
@@ -23,6 +27,27 @@ local BLIZZARD_FORCE_HIDE = {
     HonorWatchBar,
     MainMenuExpBar,
     ArtifactWatchBar,
+    KeyRingButton,
+
+			MainMenuBarTexture,
+			MainMenuMaxLevelBar,
+			MainMenuXPBarTexture,
+
+			ReputationWatchBarTexture,
+			ReputationXPBarTexture,
+
+			MainMenuBarPageNumber,
+
+			SlidingActionBarTexture0,
+			SlidingActionBarTexture1,
+
+			StanceBarLeft,
+			StanceBarMiddle,
+			StanceBarRight,
+			
+
+			PossessBackground1,
+			PossessBackground2,
 }
    
 local BARS= {
@@ -42,7 +67,9 @@ function gw_hideBlizzardsActionbars()
         end
     end    
     for k,v in pairs(BLIZZARD_FORCE_HIDE) do
-        v:SetScript('OnShow', function(self) self:Hide() end)
+        if v.SetScript~=nil then
+            v:SetScript('OnShow', function(self) self:Hide() end)
+        end
     end
     
 end

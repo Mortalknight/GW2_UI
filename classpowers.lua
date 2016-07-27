@@ -172,22 +172,26 @@ function GW_POWERTYPE_RUNE()
         if rune_ready then
             _G['GwRuneTextureFill'..i]:SetTexCoord(0.5,1,0,1)
             _G['GwRuneTextureFill'..i]:SetHeight(32)
+            _G['GwRuneTextureFill'..i]:SetVertexColor(1,1,1)
             if animations['RUNE_TIMER_ANIMATIONS'..i] then
                 animations['RUNE_TIMER_ANIMATIONS'..i]['completed']=true
                 animations['RUNE_TIMER_ANIMATIONS'..i]['duration'] = 0
-  
+                
             end
         else
             
+            if rune_start==0 then return end
             local startTime = rune_start
-            local endTime = rune_start +rune_duration
+            local endTime = rune_start + rune_duration
             
             startTime = startTime 
             endTime = endTime 
             
-            addToAnimation('RUNE_TIMER_ANIMATIONS'..i,RUNE_TIMER_ANIMATIONS[i],1,GetTime(),endTime-startTime,function()                    
+            addToAnimation('RUNE_TIMER_ANIMATIONS'..i,RUNE_TIMER_ANIMATIONS[i],1,rune_start,rune_duration,function()                    
                 _G['GwRuneTextureFill'..i]:SetTexCoord(0.5,1,1-animations['RUNE_TIMER_ANIMATIONS'..i]['progress'],1)
                  _G['GwRuneTextureFill'..i]:SetHeight(32*animations['RUNE_TIMER_ANIMATIONS'..i]['progress'])
+                    
+                _G['GwRuneTextureFill'..i]:SetVertexColor(1,0.6*animations['RUNE_TIMER_ANIMATIONS'..i]['progress'],0.6*animations['RUNE_TIMER_ANIMATIONS'..i]['progress'])
             end,'noease', function()
                       
                     local runpadding = (42 * i) - 42
@@ -428,4 +432,4 @@ CLASS_POWERS[11][4]= GW_POWERTYPE_MANABAR
 
 
 
-create_classpowers()
+

@@ -518,15 +518,19 @@ function updateCastingbar(thisName,unitToWatch)
                  _G[thisName.."HealthBarSpark"]:ClearAllPoints()
                 _G[thisName.."HealthBarSpark"]:SetPoint('LEFT',math.floor(spark),0)
     
-            local healthValueText = ''
+            healthValueText =''
             if gwGetSetting(unitToWatch..'_HEALTH_VALUE_ENABLED') then
-                healthValueText = comma_value(healthMax*animations[unitToWatch..'healthAnimation']['progress'])
+                healthValueText = comma_value(health)
                 if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
-                    healthValueText = comma_value(healthPrecentage*100)..'%'
+                    healthValueText = healthValueText..' - '
                 end
             end
-            
-            _G[thisName.."HealthBarHealthBarString"]:SetText(healthValueText)
+            if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
+                local precentag_show = healthPrecentage*100
+                healthValueText = healthValueText..comma_value(precentag_show)..'%'
+        end
+    _G[thisName.."HealthBarHealthBarString"]:SetText(healthValueText)
+        
             
             _G[thisName.."HealthBar"]:SetValue(round_closest)
             local candy = lerp(animations[unitToWatch..'healthAnimation']['from'],animations[unitToWatch..'healthAnimation']['to'],(GetTime() - animations[unitToWatch..'healthAnimation']['start'])/animations[unitToWatch..'healthAnimation']['duration'])

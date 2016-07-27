@@ -1,4 +1,4 @@
-GW_VERSION_STRING = 'GW2_UI v3.0.4'
+GW_VERSION_STRING = 'GW2_UI v3.0.3'
 
 
 GW2UI_SETTINGS = {}
@@ -24,6 +24,7 @@ GW_DEFAULT['FONTS_ENABLED'] = true
 GW_DEFAULT['CASTINGBAR_ENABLED'] = true
 GW_DEFAULT['HIDEACTIONBAR_BACKGROUND_ENABLED'] = false
 GW_DEFAULT['SHOW_QUESTTRACKER_COMPASS'] = true
+GW_DEFAULT['CLASS_POWER'] = true
 
 GW_DEFAULT['HUD_SPELL_SWAP'] = true
     
@@ -561,6 +562,10 @@ l:SetScript('OnEvent',function(self,event,name)
         
         if gwGetSetting('POWERBAR_ENABLED') then
             create_power_bar()
+        end
+        
+        if gwGetSetting('CLASS_POWER') then
+            create_classpowers()
         end
         
         
