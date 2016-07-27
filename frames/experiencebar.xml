@@ -14,7 +14,7 @@
             </Layer>
             <Layer textureSubLevel="2">
                 <Texture name="$parentBarBgGray" file="Interface\AddOns\GW2_UI\textures\xpbarbggray" parentKey="Background">
-                    <Color r="1" b="1" g="1" a="0.9" ></Color>
+                    <Color r="1" b="1" g="1" a="1" ></Color>
                     <Size x="1" y="16" />
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0" />
@@ -124,7 +124,7 @@
             </StatusBar>
 
             <Frame name="ExperienceBarOverlay"  frameLevel="5" toplevel="true">
-                <Size x="1" y="16"></Size>
+                <Size x="1" y="13"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -135,31 +135,31 @@
                             <Size x="1" y="2"></Size>
                         </Texture>  
                         <Texture name="barsep1" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep2" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep3" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep4" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep5" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep6" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep7" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep8" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
                         <Texture name="barsep9" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="16"></Size>
+                            <Size x="4" y="13"></Size>
                         </Texture>  
 
 
