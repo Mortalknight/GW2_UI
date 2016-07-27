@@ -178,9 +178,12 @@ function gw_update_bag_icons(forceSize)
     gw_move_bagbar()
     local x = 8
     local y = 72
+  
     for BAG_INDEX =1,5 do
+      
         if _G['ContainerFrame'..BAG_INDEX] and _G['ContainerFrame'..BAG_INDEX]:IsShown()  then
-            for i=1,40 do
+            local i = 40
+            while i>0 do
 
                 local slot = _G['ContainerFrame'..BAG_INDEX..'Item'..i]
                 local slotIcon = _G['ContainerFrame'..BAG_INDEX..'Item'..i..'IconTexture']
@@ -242,11 +245,11 @@ function gw_update_bag_icons(forceSize)
                         y = y + BAG_ITEM_SIZE + BAG_ITEM_PADDING
                     end
                     
-                
+                   
                              
            
                 end
-
+                 i = i -1
             end
             
         end

@@ -294,17 +294,21 @@ function gw_update_bank_icons(forceSize)
     local ACTION_FRAME_NAME = 'BankFrame'
     local BAG_INDEX = 5
     for BAG_INDEX =5,12 do
+        local i = 40
+        local run = true
         if BAG_INDEX>5 then
+            i=40
             ACTION_FRAME_NAME ='ContainerFrame'..BAG_INDEX
             ACTION_BUTTON_NAME = 'ContainerFrame'..BAG_INDEX..'Item'
         else
+            i=1
             ACTION_FRAME_NAME ='BankFrame'
             ACTION_BUTTON_NAME ='BankFrameItem'
         end
          
         if _G[ACTION_FRAME_NAME]~=nil and _G[ACTION_FRAME_NAME]:IsShown() then
             
-            for i=1,40 do
+           while run do
                 
                
    
@@ -373,10 +377,18 @@ function gw_update_bank_icons(forceSize)
                     end
                     
                 
-                             
-           
                 end
-
+                if BAG_INDEX>5 then
+                    i=i - 1  
+                    if i==0 then
+                        run=false
+                    end
+                else
+                    i=i + 1
+                    if i==40 then
+                        run=false 
+                    end
+                end
             end
             
         end
