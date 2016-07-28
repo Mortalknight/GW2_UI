@@ -640,7 +640,7 @@
         </Frames>
     </Frame>
     
-    <Frame name="GwActionButtonBackDrop" frameStrata="MEDIUM" frameLevel="1" virtual="true">
+    <Frame name="GwActionButtonBackDrop" frameStrata="LOW" topLevel="true" virtual="true">
         <Anchors>
             <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="-1" y="1"></Anchor>
             <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>

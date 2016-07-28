@@ -137,6 +137,12 @@ function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
         _G[buttonName.."Count"]:SetTextColor(1,1,0.6)
     end
     
+    if _G[buttonName..'Border']~=nil then
+
+        _G[buttonName..'Border']:SetSize(_G[buttonName]:GetWidth(),_G[buttonName]:GetWidth())
+        _G[buttonName..'Border']:SetBlendMode('BLEND')
+        _G[buttonName..'Border']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder')
+    end 
     if _G[buttonName..'NormalTexture']~=nil then
         _G[buttonName]:SetNormalTexture(nil)
     end 
@@ -265,6 +271,7 @@ function gw_updateMainBar()
             
             BUTTON_PADDING = BUTTON_PADDING + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
             
+            BUTTON:SetSize(MAIN_MENU_BAR_BUTTON_SIZE,MAIN_MENU_BAR_BUTTON_SIZE)
             
             gw_setActionButtonStyle('ActionButton'..i)
             gw_updatehotkey(BUTTON)
@@ -283,7 +290,7 @@ function gw_updateMainBar()
             
             
             
-            BUTTON:HookScript('OnUpdate',function()
+            BUTTON:HookScript('OnUpdate',function(self)
                 local isUsable, notEnoughMana = IsUsableAction(BUTTON.action);
                 local valid = IsActionInRange(BUTTON.action);
                 local canCast = true
@@ -304,8 +311,8 @@ function gw_updateMainBar()
                 else
                     rangeIndicator:Hide()
                 
-                end
-                
+                end                
+                gw_actionButtonUpdate(BUTTON)
                     
             end)
             
@@ -314,7 +321,7 @@ function gw_updateMainBar()
             hkBg:SetPoint('CENTER',_G['ActionButton'..i.."HotKey"],'CENTER',0,0)
             _G['GwHotKeyBackDropActionButton'..i..'Texture']:SetParent(_G['ActionButton'..i.."HotKey"]:GetParent())
             
-            BUTTON:SetSize(MAIN_MENU_BAR_BUTTON_SIZE,MAIN_MENU_BAR_BUTTON_SIZE)
+           
             BUTTON:ClearAllPoints()
             BUTTON:SetPoint('LEFT',MainMenuBarArtFrame,'LEFT',BUTTON_PADDING -MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,0)
             
@@ -352,11 +359,11 @@ function gw_updateCustomizableBars(barName,buttonName)
         
         if BUTTON~=nil then
             
-           
+            BUTTON:SetSize(BARSETTINGS['size'],BARSETTINGS['size'])
             gw_updatehotkey(BUTTON)
             gw_setActionButtonStyle(buttonName..i,nil, gwGetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED'))
             
-            BUTTON:SetSize(BARSETTINGS['size'],BARSETTINGS['size'])
+        
             BUTTON:ClearAllPoints()
             BUTTON:SetPoint('TOPLEFT',_G[barName],'TOPLEFT',BUTTON_PADDING,-BUTTON_PADDING_y)
             
@@ -374,6 +381,7 @@ function gw_updateCustomizableBars(barName,buttonName)
                 USED_HEIGHT = BUTTON_PADDING_y
             end
             
+            BUTTON:HookScript('OnUpdate',gw_actionButtonUpdate)
             
             
             
@@ -424,7 +432,7 @@ function gw_setStanceBar()
             
         
             if i>1 then
-            _G["StanceButton"..i]:ClearAllPoints()
+                _G["StanceButton"..i]:ClearAllPoints()
                 local last = i - 1
                 
                 _G["StanceButton"..i]:SetPoint('BOTTOM',_G['StanceButton'..last],'TOP',0,2)
@@ -514,4 +522,16 @@ function gw_setLeaveVehicleButton()
         MainMenuBarVehicleLeaveButton:ClearAllPoints();
         MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0) 
     end)
+end
+
+
+function gw_actionButtonUpdate(self)
+    local BName = self:GetName()
+    if _G[BName.."Border"] then
+        if ( IsEquippedAction(self.action) ) then
+            local r,b,g = _G[BName.."Border"]:GetVertexColor()
+            _G[BName.."Border"]:SetVertexColor(r,b,g,1)
+        end
+    end 
+      
 end
