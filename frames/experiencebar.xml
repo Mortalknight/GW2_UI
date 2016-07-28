@@ -135,31 +135,31 @@
                             <Size x="1" y="2"></Size>
                         </Texture>  
                         <Texture name="barsep1" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep2" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep3" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep4" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep5" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep6" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep7" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep8" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
                         <Texture name="barsep9" file="Interface\AddOns\GW2_UI\textures\xpbarbg" >
-                            <Size x="4" y="13"></Size>
+                            <Size x="4" y="12"></Size>
                         </Texture>  
 
 
