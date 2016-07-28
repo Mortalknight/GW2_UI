@@ -664,11 +664,27 @@
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="1">
                 <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
-                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Color r="0" g="0" b="0" a="0.9"></Color>
                     <Size  x="20" y="20">
                     </Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    <Frame name="GwActionRangeIndicator"  virtual="true">
+        <Size  x="20" y="4"></Size>
+         <Layers>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" ></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>

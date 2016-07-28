@@ -29,25 +29,25 @@ local BLIZZARD_FORCE_HIDE = {
     ArtifactWatchBar,
     KeyRingButton,
 
-			MainMenuBarTexture,
-			MainMenuMaxLevelBar,
-			MainMenuXPBarTexture,
+    MainMenuBarTexture,
+    MainMenuMaxLevelBar,
+    MainMenuXPBarTexture,
 
-			ReputationWatchBarTexture,
-			ReputationXPBarTexture,
+    ReputationWatchBarTexture,
+    ReputationXPBarTexture,
 
-			MainMenuBarPageNumber,
+    MainMenuBarPageNumber,
 
-			SlidingActionBarTexture0,
-			SlidingActionBarTexture1,
+    SlidingActionBarTexture0,
+    SlidingActionBarTexture1,
 
-			StanceBarLeft,
-			StanceBarMiddle,
-			StanceBarRight,
+    StanceBarLeft,
+    StanceBarMiddle,
+    StanceBarRight,
 			
 
-			PossessBackground1,
-			PossessBackground2,
+    PossessBackground1,
+    PossessBackground2,
 }
    
 local BARS= {
@@ -251,7 +251,7 @@ end
 function gw_updateMainBar()
     
     local MAIN_MENU_BAR_BUTTON_SIZE =50
-    local MAIN_MENU_BAR_BUTTON_MARGIN = 2
+    local MAIN_MENU_BAR_BUTTON_MARGIN = 3
     
     local USED_WIDTH = 0
     local USED_HEIGHT = MAIN_MENU_BAR_BUTTON_SIZE
@@ -269,21 +269,57 @@ function gw_updateMainBar()
             gw_setActionButtonStyle('ActionButton'..i)
             gw_updatehotkey(BUTTON)
             
-            _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMLEFT',BUTTON,'BOTTOMLEFT',0,-10)
-            _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMRIGHT',BUTTON,'BOTTOMRIGHT',0,-10)
-            _G['ActionButton'..i..'HotKey']:SetFont(UNIT_NAME_FONT,16,'OUTLINED')
+            _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMLEFT',BUTTON,'BOTTOMLEFT',0,0)
+            _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMRIGHT',BUTTON,'BOTTOMRIGHT',0,0)
+            _G['ActionButton'..i..'HotKey']:SetFont(DAMAGE_TEXT_FONT,14,'OUTLINED')
+            _G['ActionButton'..i..'HotKey']:SetTextColor(1,1,1)
+            
+            local rangeIndicator = CreateFrame('FRAME','GwActionRangeIndicator'..i,_G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionRangeIndicator')
+            rangeIndicator:SetFrameStrata('BACKGROUND',1)
+            rangeIndicator:SetPoint('TOPLEFT',BUTTON,'BOTTOMLEFT',0,-1)
+            rangeIndicator:SetPoint('TOPRIGHT',BUTTON,'BOTTOMRIGHT',0,-1)
+            _G['GwActionRangeIndicator'..i..'Texture']:SetVertexColor(147/255,19/255,2/255)
+             rangeIndicator:Hide()
+            
+            
+            
+            BUTTON:HookScript('OnUpdate',function()
+                local isUsable, notEnoughMana = IsUsableAction(BUTTON.action);
+                local valid = IsActionInRange(BUTTON.action);
+                local canCast = true
+                 _G['ActionButton'..i.."HotKey"]:SetVertexColor(1,1,1)
+  
+                if valid==false then
+                    canCast=false
+                end
+                if isUsable==false then
+                    canCast = false
+                end
+                if notEnoughMana then
+                   canCast = false     
+                end
+                    
+                if canCast==false then
+                    rangeIndicator:Show()
+                else
+                    rangeIndicator:Hide()
+                
+                end
+                
+                    
+            end)
             
             local hkBg = CreateFrame('Frame','GwHotKeyBackDropActionButton'..i, _G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionHotKeyBackDrop')
             
             hkBg:SetPoint('CENTER',_G['ActionButton'..i.."HotKey"],'CENTER',0,0)
-                  _G['GwHotKeyBackDropActionButton'..i..'Texture']:SetParent(_G['ActionButton'..i.."HotKey"]:GetParent())
+            _G['GwHotKeyBackDropActionButton'..i..'Texture']:SetParent(_G['ActionButton'..i.."HotKey"]:GetParent())
             
             BUTTON:SetSize(MAIN_MENU_BAR_BUTTON_SIZE,MAIN_MENU_BAR_BUTTON_SIZE)
             BUTTON:ClearAllPoints()
             BUTTON:SetPoint('LEFT',MainMenuBarArtFrame,'LEFT',BUTTON_PADDING -MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,0)
             
             if i==6 then
-                 BUTTON_PADDING = BUTTON_PADDING + 110
+                 BUTTON_PADDING = BUTTON_PADDING + 105
             end
             
             USED_WIDTH =  BUTTON_PADDING
