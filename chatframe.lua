@@ -182,7 +182,7 @@ function gw_styleChatWindow(i)
         
          if  _G['ChatFrame'..useId] == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) then
             _G['ChatFrame'..useId..'EditBox']:Show()
-            _G['ChatFrame'..useId..'EditBox']:SetText('  (press Enter to chat)')
+           
         end
         
         _G['ChatFrame'..useId..'EditBox'].editboxHasFocus= false
@@ -200,7 +200,7 @@ function gw_styleChatWindow(i)
                    _G['ChatFrame'..useId].editboxHasFocus= false
                 FCF_FadeOutChatFrame(_G['ChatFrame'..useId])
          
-            _G['ChatFrame'..useId..'EditBox']:SetText('  (press Enter to chat)')
+        
         end)
         
         _G['ChatFrame'..useId..'EditBox']:HookScript('OnHide',function(self)
