@@ -492,7 +492,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground"   file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
+                <Texture name="$parentBackground" parentKey="Texture"  file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
                     <Size x="512" y="512"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
@@ -633,6 +633,9 @@
             <OnEvent>
                 gw_update_player_money()
             </OnEvent>
+            <OnSizeChanged function="gw_OnBagFrameChangeSize">
+            
+            </OnSizeChanged>
         </Scripts>
 
         <Frames>

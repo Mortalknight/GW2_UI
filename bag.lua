@@ -390,3 +390,14 @@ function gw_backFrameCompactToggle()
      
     return 'Compact Icons';
 end
+
+function gw_OnBagFrameChangeSize(self)
+    
+    local w,h = self:GetSize();
+    
+    w = math.min(1,w/512)
+    h = math.min(1,h/512) 
+    
+    self.Texture:SetTexCoord(0,w,0,h);
+    
+end
