@@ -254,9 +254,13 @@ function gw_styleChatWindow(i)
     _G['ChatFrame'..useId..'TabSelectedLeft']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft')            
     _G['ChatFrame'..useId..'TabSelectedMiddle']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactive')  
     
-    _G['ChatFrame'..useId..'TabSelectedRight']:SetHeight(40)
-    _G['ChatFrame'..useId..'TabSelectedLeft']:SetHeight(40)       
-    _G['ChatFrame'..useId..'TabSelectedMiddle']:SetHeight(40)
+    
+    _G['ChatFrame'..useId..'TabMiddle']:SetHeight(40)
+    _G['ChatFrame'..useId..'TabLeft']:SetHeight(40)       
+    _G['ChatFrame'..useId..'TabRight']:SetHeight(40)
+    
+    _G['ChatFrame'..useId..'TabLeft']:SetPoint('BOTTOM',GeneralDockManager,'BOTTOM',0,-4)
+    _G['ChatFrame'..useId..'TabMiddle']:SetPoint('BOTTOM',GeneralDockManager,'BOTTOM',0,-4)
             
     _G['ChatFrame'..useId..'TabSelectedRight']:SetBlendMode("BLEND")
     _G['ChatFrame'..useId..'TabSelectedLeft']:SetBlendMode("BLEND")
@@ -266,7 +270,7 @@ function gw_styleChatWindow(i)
     _G['ChatFrame'..useId..'TabSelectedLeft']:SetVertexColor(1,1,1,1)
     _G['ChatFrame'..useId..'TabSelectedMiddle']:SetVertexColor(1,1,1,1)
     
-    _G['ChatFrame'..useId..'TabText']:SetFont(UNIT_NAME_FONT,12)
+    _G['ChatFrame'..useId..'TabText']:SetFont(DAMAGE_TEXT_FONT,14)
     _G['ChatFrame'..useId..'TabText']:SetTextColor(1,1,1)
     
     _G['ChatFrame'..useId..'TabHighlightMiddle']:SetTexture(nil)
