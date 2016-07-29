@@ -256,8 +256,8 @@ end
 
 function gw_updateMainBar()
     
-    local MAIN_MENU_BAR_BUTTON_SIZE =50
-    local MAIN_MENU_BAR_BUTTON_MARGIN = 3
+    local MAIN_MENU_BAR_BUTTON_SIZE =48
+    local MAIN_MENU_BAR_BUTTON_MARGIN = 5
     
     local USED_WIDTH = 0
     local USED_HEIGHT = MAIN_MENU_BAR_BUTTON_SIZE
@@ -283,8 +283,8 @@ function gw_updateMainBar()
             
             local rangeIndicator = CreateFrame('FRAME','GwActionRangeIndicator'..i,_G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionRangeIndicator')
             rangeIndicator:SetFrameStrata('BACKGROUND',1)
-            rangeIndicator:SetPoint('TOPLEFT',BUTTON,'BOTTOMLEFT',0,-1)
-            rangeIndicator:SetPoint('TOPRIGHT',BUTTON,'BOTTOMRIGHT',0,-1)
+            rangeIndicator:SetPoint('TOPLEFT',BUTTON,'BOTTOMLEFT',-1,-2)
+            rangeIndicator:SetPoint('TOPRIGHT',BUTTON,'BOTTOMRIGHT',1,-2)
             _G['GwActionRangeIndicator'..i..'Texture']:SetVertexColor(147/255,19/255,2/255)
              rangeIndicator:Hide()
             
@@ -326,7 +326,7 @@ function gw_updateMainBar()
             BUTTON:SetPoint('LEFT',MainMenuBarArtFrame,'LEFT',BUTTON_PADDING -MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,0)
             
             if i==6 then
-                 BUTTON_PADDING = BUTTON_PADDING + 105
+                 BUTTON_PADDING = BUTTON_PADDING + 108
             end
             
             USED_WIDTH =  BUTTON_PADDING

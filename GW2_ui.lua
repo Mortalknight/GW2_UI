@@ -551,9 +551,9 @@ l:SetScript('OnEvent',function(self,event,name)
             gw_create_questview()
         end
         if gwGetSetting('CHATFRAME_ENABLED') then
-            gw_set_custom_chatframe()
+            
             gw_set_chatframe_bg()
-            FCF_FadeOutChatFrame(ChatFrame1)
+       
         end
             --Create player hud
         if gwGetSetting('HEALTHGLOBE_ENABLED') then    

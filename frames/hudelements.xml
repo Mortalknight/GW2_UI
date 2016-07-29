@@ -677,7 +677,7 @@
     <Frame name="GwActionRangeIndicator"  virtual="true">
         <Size  x="20" y="4"></Size>
          <Layers>
-            <Layer level="ARTWORK" textureSubLevel="-1">
+            <Layer level="BACKGROUND" textureSubLevel="-1">
                 <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Color r="0" g="0" b="0" a="1"></Color>
                     <Anchors>
@@ -685,6 +685,40 @@
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="0" ></Anchor>
                         <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame> 
+    
+    <Frame name="GwChatContainer" frameStrata="BACKGROUND"  virtual="true">
+        <Size  x="20" y="4"></Size>
+         <Layers>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\chatframebackground">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+             </Layer>
+             <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chatframeborder">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+             <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture name="$parentEditBox" file="Interface\AddOns\GW2_UI\textures\chateditboxmid">
+                    <Size x="2" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" ></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>

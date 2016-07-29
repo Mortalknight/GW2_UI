@@ -1,39 +1,6 @@
 
-local defaults_CHAT_FRAME_TEXTURES = CHAT_FRAME_TEXTURES
-local defaults_CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA =CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA
-local defaults_CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA =CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA
-local defaults_CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA =CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA
-local defaults_CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA =CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA
-local defaults_CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA =CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA
-local defaults_CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA =CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA
-local defaults_CHAT_FRAME_FADE_OUT_TIME = CHAT_FRAME_FADE_OUT_TIME
-local defaults_DEFAULT_CHATFRAME_ALPHA = DEFAULT_CHATFRAME_ALPHA
-local defaults_DEFAULT_CHATFRAME_COLOR = DEFAULT_CHATFRAME_COLOR
-local defaults_DEFAULT_TAB_SELECTED_COLOR_TABLE_ = DEFAULT_TAB_SELECTED_COLOR_TABLE_
-local defaults_FCF_SetWindowColor = FCF_SetWindowColor
-local defaults_FCFTab_UpdateColors = FCFTab_UpdateColors
-local defaults_FCF_FadeInChatFrame
-local defaults_FCF_FadeOutChatFrame
-
-local CHAT_FRAME_TEXTURES = defaults_CHAT_FRAME_TEXTURES
-local  CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA
-local  CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA
-local  CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA
-local  CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA
-local  CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA =defaults_CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA
-local   CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA =defaults_CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA
-local  CHAT_FRAME_FADE_OUT_TIME =defaults_CHAT_FRAME_FADE_OUT_TIME
-local   DEFAULT_CHATFRAME_ALPHA =defaults_DEFAULT_CHATFRAME_ALPHA
-local   DEFAULT_CHATFRAME_COLOR =defaults_DEFAULT_CHATFRAME_COLOR
-local   DEFAULT_TAB_SELECTED_COLOR_TABLE_ =defaults_DEFAULT_TAB_SELECTED_COLOR_TABLE_
-local   FCF_SetWindowColor =defaults_FCF_SetWindowColor
-local   FCFTab_UpdateColors =defaults_FCFTab_UpdateColorslocal
-
-DEFAULT_CHATFRAME_COLOR = {r=1,b=1,g=1}
-
-
 local   CHAT_FRAME_TEXTURES = {
-    "Background",
+
     "TopLeftTexture",
     "BottomLeftTexture",
     "TopRightTexture",
@@ -44,9 +11,12 @@ local   CHAT_FRAME_TEXTURES = {
     "TopTexture",
     --"ResizeButton",
      
-    "ButtonFrame",
+    
     "EditBox",
     "ResizeButton",
+    "ButtonFrameDownButton",
+    "ButtonFrameUpButton",
+    "ButtonFrameBottomButton",
     "ButtonFrameBackground",
     "ButtonFrameTopLeftTexture",
     "ButtonFrameBottomLeftTexture",
@@ -69,293 +39,270 @@ local   CHAT_FRAME_TEXTURES = {
     "TabMiddle",
 }
 
-
-
-
-function gw_set_custom_chatframe()
-
-
-
-
-end
-    
-
-local editboxHasFocus = false
-
-
-function gw_FCF_SetWindowColor(frame, r, g, b, doNotSave)
-
-end
-
-
-function gw_FCFTab_UpdateColors(self, selected)
-    
-     colorTable = DEFAULT_CHATFRAME_COLOR
-
-    if ( selected ) then
-        self.leftSelectedTexture:Show();
-        self.middleSelectedTexture:Show();
-        self.rightSelectedTexture:Show();
-    else
-        self.leftSelectedTexture:Hide();
-        self.middleSelectedTexture:Hide();
-        self.rightSelectedTexture:Hide();
-    end
-     
-    local colorTable = self.selectedColorTable or DEFAULT_TAB_SELECTED_COLOR_TABLE;
-    colorTable = DEFAULT_CHATFRAME_COLOR
-    if ( self.selectedColorTable ) then
-        self:GetFontString():SetTextColor(colorTable.r, colorTable.g, colorTable.b);
-    else
-        self:GetFontString():SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
-    end
-     
-    self.leftSelectedTexture:SetVertexColor(1,1,1);
-    self.middleSelectedTexture:SetVertexColor(1,1,1);
-    self.rightSelectedTexture:SetVertexColor(1,1,1);
-     
-    self.leftHighlightTexture:SetVertexColor(1,1,1);
-    self.middleHighlightTexture:SetVertexColor(1,1,1);
-    self.rightHighlightTexture:SetVertexColor(1,1,1);
-    self.glow:SetVertexColor(1,1,1);
-     
-    if ( self.conversationIcon ) then
-        self.conversationIcon:SetVertexColor(colorTable.r, colorTable.g, colorTable.b);
-    end
-     
-    local minimizedFrame = _G["ChatFrame"..self:GetID().."Minimized"];
-    if ( minimizedFrame ) then
-        minimizedFrame.selectedColorTable = self.selectedColorTable;
-        FCFMin_UpdateColors(minimizedFrame);
-    end
-end
-
-function gw_FCF_FadeInChatFrame(chatFrame)
-
-    
-    local frameName = chatFrame:GetName();
-    if frameName=='table' then 
-        return
-    end
-    
-
-    if _G[chatFrame:GetName()..'Background'] then
-        _G[chatFrame:GetName()..'Background']:SetVertexColor(DEFAULT_CHATFRAME_COLOR.r,DEFAULT_CHATFRAME_COLOR.g,DEFAULT_CHATFRAME_COLOR.b)
-        if _G[chatFrame:GetName()..'ButtonFrameBackground'] then
-            _G[chatFrame:GetName()..'ButtonFrameBackground']:SetVertexColor(DEFAULT_CHATFRAME_COLOR.r,DEFAULT_CHATFRAME_COLOR.g,DEFAULT_CHATFRAME_COLOR.b)
-        end
-    end
-    
-    chatFrame.hasBeenFaded = true;
-    for index, value in pairs(CHAT_FRAME_TEXTURES) do
-        local object = _G[frameName..value];
-        if ( object:IsShown() ) then
-            UIFrameFadeIn(object, CHAT_FRAME_FADE_TIME, object:GetAlpha(), 1);
-        end
-    end
-    if ( chatFrame == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) ) then
-        for _, frame in pairs(FCFDock_GetChatFrames(GENERAL_CHAT_DOCK)) do
-            if ( frame ~= chatFrame ) then
-                gw_FCF_FadeInChatFrame(frame);
-            end
-        end
-        if ( GENERAL_CHAT_DOCK.overflowButton:IsShown() ) then
-            UIFrameFadeIn(GENERAL_CHAT_DOCK.overflowButton, CHAT_FRAME_FADE_TIME, GENERAL_CHAT_DOCK.overflowButton:GetAlpha(), 1);
-        end
-    end
-     
-    local chatTab = _G[frameName.."Tab"];
-    UIFrameFadeIn(chatTab, CHAT_FRAME_FADE_TIME, chatTab:GetAlpha(), 1);
-     
-    --Fade in the button frame
-    if ( not chatFrame.isDocked ) then
-        UIFrameFadeIn(chatFrame.buttonFrame, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
-    end
-    UIFrameFadeIn(FriendsMicroButton, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
-    UIFrameFadeIn(ChatFrameMenuButton, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
-    UIFrameFadeIn(GeneralDockManager, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
-end
-function gw_FCF_FadeOutChatFrame(chatFrame)
-
-    if editboxHasFocus then
-        return
-    end
-    if gwGetSetting('CHATFRAME_FADE')==false then
-        return
-    end
-    
-    local frameName = chatFrame:GetName();
-    chatFrame.hasBeenFaded = nil;
-    for index, value in pairs(CHAT_FRAME_TEXTURES) do
-        -- Fade out chat frame
-        local object = _G[frameName..value];
-        if ( object:IsShown() ) then
-            UIFrameFadeOut(object, CHAT_FRAME_FADE_OUT_TIME, max(object:GetAlpha(), chatFrame.oldAlpha), 0);
-        end
-    end
-    if ( chatFrame == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) ) then
-        for _, frame in pairs(FCFDock_GetChatFrames(GENERAL_CHAT_DOCK)) do
-            if ( frame ~= chatFrame ) then
-                gw_FCF_FadeOutChatFrame(frame);
-            end
-        end
-        if ( GENERAL_CHAT_DOCK.overflowButton:IsShown() ) then
-            UIFrameFadeOut(GENERAL_CHAT_DOCK.overflowButton, CHAT_FRAME_FADE_OUT_TIME, GENERAL_CHAT_DOCK.overflowButton:GetAlpha(), 0);
-        end
-    end
-     
-    local chatTab = _G[frameName.."Tab"];
-    UIFrameFadeOut(chatTab, CHAT_FRAME_FADE_OUT_TIME, chatTab:GetAlpha(), chatTab.noMouseAlpha);
-     
-    --Fade out the ButtonFrame
-    if ( not chatFrame.isDocked ) then
-        UIFrameFadeOut(chatFrame.buttonFrame, CHAT_FRAME_FADE_OUT_TIME, chatFrame.buttonFrame:GetAlpha(), 0);
-    end
-
-    UIFrameFadeOut(FriendsMicroButton,CHAT_FRAME_FADE_OUT_TIME, chatFrame.buttonFrame:GetAlpha(), 0);
-    UIFrameFadeOut(ChatFrameMenuButton,CHAT_FRAME_FADE_OUT_TIME, chatFrame.buttonFrame:GetAlpha(), 0);
-    UIFrameFadeOut(GeneralDockManager,CHAT_FRAME_FADE_OUT_TIME, chatFrame.buttonFrame:GetAlpha(), 0);
-end
-
 function gw_set_chatframe_bg()
     
+    gw_styleOveralChat()
 
-    
-    CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA = 1;
-    CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0;
-    CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA = 1;
-    CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA = 0;
-    CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA = 1;
-    CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA = 0;
-
-    CHAT_FRAME_FADE_OUT_TIME = 1
-
-    DEFAULT_CHATFRAME_ALPHA = 1;
-
-    DEFAULT_CHATFRAME_COLOR = {r = 1, g = 1, b = 1};
-    DEFAULT_TAB_SELECTED_COLOR_TABLE_= { r = 1, g = 1, b = 1, };
+end
 
 
+local gw_fade_frames = {}
+
+
+function gw_styleOveralChat()
+   
     GeneralDockManager.texture = GeneralDockManager:CreateTexture()
+    GeneralDockManager.texture:SetDrawLayer('ARTWORK')
     GeneralDockManager.texture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chatdockbg')
-    GeneralDockManager.texture:SetPoint('LEFT',GeneralDockManager,'LEFT',-32,0)
-    GeneralDockManager.texture:SetWidth(GeneralDockManager:GetWidth()+32)
-
-     FriendsMicroButton:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Up'); 
-        FriendsMicroButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Up'); 
-        FriendsMicroButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-        FriendsMicroButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-        FriendsMicroButton:SetWidth(25) 
-        FriendsMicroButton:SetHeight(25) 
+    GeneralDockManager.texture:SetPoint('BOTTOMLEFT',GeneralDockManager,'BOTTOMLEFT',-35,-3)
+    GeneralDockManager.texture:SetPoint('BOTTOMRIGHT',GeneralDockManager,'BOTTOMRIGHT',4,-3)
+    GeneralDockManager.texture:SetHeight(23)
     
-        ChatFrameMenuButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\bubble_down')
-        ChatFrameMenuButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\bubble_up')
-        ChatFrameMenuButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\bubble_down')
+    FriendsMicroButton:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+    FriendsMicroButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+    FriendsMicroButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+    FriendsMicroButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+    FriendsMicroButton:SetWidth(25) 
+    FriendsMicroButton:SetHeight(25) 
     
-        ChatFrameMenuButton:SetHeight(20)
-        ChatFrameMenuButton:SetWidth(20)
+    CreateFrame('FRAME','GwChatContainer',UIParent,'GwChatContainer')
+    GwChatContainer:SetPoint('TOPLEFT',ChatFrame1,'TOPLEFT',-35,5)
+    GwChatContainer:SetPoint('BOTTOMRIGHT',ChatFrame1EditBoxFocusRight,'BOTTOMRIGHT',0,0)
     
-        hooksecurefunc('FCF_FadeOutChatFrame',gw_FCF_FadeOutChatFrame)
-        hooksecurefunc('FCF_FadeInChatFrame',gw_FCF_FadeInChatFrame)
-        hooksecurefunc('FCFTab_UpdateColors',gw_FCFTab_UpdateColors)
-        hooksecurefunc('FCF_SetWindowColor',gw_FCF_SetWindowColor)
-    
-    
-
-
-    for i = 1,10 do
-        
-        local useId = i
-        
-        if _G['ChatFrame'..useId..'Background'] then
-            
-            _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowup_down')
-            _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowup_up')
-            _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowup_down')
-            _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetHeight(24)
-            _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetWidth(24)
-            
-            _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
-            _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up')
-            _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
-            _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetHeight(24)
-            _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetWidth(24)
-            
-            _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
-            _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up')
-            _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
-            _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetHeight(24)
-            _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetWidth(24)
-            
-            _G['ChatFrame'..useId..'TabText']:SetFont(UNIT_NAME_FONT,12)
-            _G['ChatFrame'..useId..'TabText']:SetTextColor(1,1,1)
-
-          _G['ChatFrame'..useId..'Background']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chatframebackground')
-          _G['ChatFrame'..useId..'ButtonFrameBackground']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chatframebackground')
-            
-            _G['ChatFrame'..useId..'TabSelectedRight']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright')
-            _G['ChatFrame'..useId..'TabSelectedLeft']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft')            
-            _G['ChatFrame'..useId..'TabSelectedMiddle']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactive')
-            
-            _G['ChatFrame'..useId..'TabSelectedRight']:SetBlendMode("BLEND")
-            _G['ChatFrame'..useId..'TabSelectedLeft']:SetBlendMode("BLEND")
-            _G['ChatFrame'..useId..'TabSelectedMiddle']:SetBlendMode("BLEND")
-            
-            _G['ChatFrame'..useId..'TabSelectedRight']:SetVertexColor(1,1,1,1)
-            _G['ChatFrame'..useId..'TabSelectedLeft']:SetVertexColor(1,1,1,1)
-            _G['ChatFrame'..useId..'TabSelectedMiddle']:SetVertexColor(1,1,1,1)
-           
-          
-            
-            _G['ChatFrame'..useId..'EditBox']:HookScript('OnEditFocusGained',function()
-                    
-                    editboxHasFocus= true
-                   FCF_FadeInChatFrame(_G['ChatFrame'..useId])
-            end)
-            _G['ChatFrame'..useId..'EditBox']:HookScript('OnEditFocusLost',function()
-                    editboxHasFocus= false
-                    
-            end)
-            
-            _G['ChatFrame'..useId..'TabHighlightMiddle']:SetTexture(nil)
-            _G['ChatFrame'..useId..'TabHighlightRight']:SetTexture(nil)
-            _G['ChatFrame'..useId..'TabHighlightLeft']:SetTexture(nil)
-            
-            _G['ChatFrame'..useId..'TabMiddle']:SetTexture(nil)
-            _G['ChatFrame'..useId..'TabLeft']:SetTexture(nil)
-            _G['ChatFrame'..useId..'TabRight']:SetTexture(nil)
-            
-         _G['ChatFrame'..useId..'ButtonFrameTopTexture']:SetTexture(nil)    
-         _G['ChatFrame'..useId..'ButtonFrameRightTexture']:SetTexture(nil)    
-         _G['ChatFrame'..useId..'ButtonFrameLeftTexture']:SetTexture(nil)    
-         _G['ChatFrame'..useId..'ButtonFrameBottomTexture']:SetTexture(nil)    
-          _G['ChatFrame'..useId..'TopTexture']:SetTexture(nil)
-          _G['ChatFrame'..useId..'BottomTexture']:SetTexture(nil)
-          _G['ChatFrame'..useId..'RightTexture']:SetTexture(nil)
-          _G['ChatFrame'..useId..'LeftTexture']:SetTexture(nil)
-            
-            _G['ChatFrame'..useId..'EditBox']:ClearAllPoints()
-            _G['ChatFrame'..useId..'EditBox']:SetPoint('TOPLEFT', _G['ChatFrame'..useId..'ButtonFrame'],'BOTTOMLEFT',0,0)
-            _G['ChatFrame'..useId..'EditBox']:SetPoint('TOPRIGHT', _G['ChatFrame'..useId..'Background'],'BOTTOMRIGHT',0,0)
-            
-          _G['ChatFrame'..useId..'EditBoxRight']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chateditboxright')
-          _G['ChatFrame'..useId..'EditBoxLeft']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chateditboxleft')
-          _G['ChatFrame'..useId..'EditBoxMid']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chateditboxmid')
-            
-        _G['ChatFrame'..useId..'EditBoxFocusRight']:SetTexture(nil)
-          _G['ChatFrame'..useId..'EditBoxFocusLeft']:SetTexture(nil)
-          _G['ChatFrame'..useId..'EditBoxFocusMid']:SetTexture(nil)
-        
-        if _G['ChatFrame'..useId..'EditBox'] then
-            
-                _G['ChatFrame'..useId..'EditBox']:SetScript('OnHide',function(self) self:Show() 
-                    end)
-        end
-           
-        end
-        
+    for i=1,10 do
+       gw_styleChatWindow(i) 
     end
+    
+    
+    hooksecurefunc('FCFTab_UpdateColors', function(self,selected)
+            
+            self:GetFontString():SetTextColor(1, 1, 1);
+            self.leftSelectedTexture:SetVertexColor(1,1,1);
+            self.middleSelectedTexture:SetVertexColor(1,1,1);
+            self.rightSelectedTexture:SetVertexColor(1,1,1);
+     
+            self.leftHighlightTexture:SetVertexColor(1,1,1);
+            self.middleHighlightTexture:SetVertexColor(1,1,1);
+            self.rightHighlightTexture:SetVertexColor(1,1,1);
+            self.glow:SetVertexColor(1,1,1);
+        
+    end)
+    
+    hooksecurefunc('FCF_FadeOutChatFrame',gw_handleChatFrameFadeOut )
+    hooksecurefunc('FCF_FadeInChatFrame',gw_handleChatFrameFadeIn)
+    hooksecurefunc('FCFTab_UpdateColors',gw_setChatBackgroundColor)
+    
+    gw_fade_frames = {
+    FriendsMicroButton,
+    GwChatContainer,
+    GeneralDockManager,
+    }
+    
+    FCF_FadeOutChatFrame(_G['ChatFrame1'])
+    
+    
     
 end
 
+function gw_ChatFader(frame,to,from)
+
+ 
+     UIFrameFadeIn(frame, 2,from, to);
+end
+
+function gw_setChatBackgroundColor()
+    for i=1,10 do
+        if _G['ChatFrame'..i..'Background'] then
+            _G['ChatFrame'..i..'Background']:SetVertexColor(0,0,0,0)
+            _G['ChatFrame'..i..'Background']:SetAlpha(0)
+            _G['ChatFrame'..i..'Background']:Hide()
+            if _G['ChatFrame'..i..'ButtonFrameBackground'] then
+                _G['ChatFrame'..i..'ButtonFrameBackground']:SetVertexColor(0,0,0,0)
+                _G['ChatFrame'..i..'ButtonFrameBackground']:Hide()
+                _G['ChatFrame'..i..'RightTexture']:SetVertexColor(0,0,0,1)
+                
+                
+                
+            end
+        end
+    end
+end
+
+function gw_handleChatFrameFadeOut(chatFrame)
+    if not gwGetSetting('CHATFRAME_FADE') then return end
+    gw_setChatBackgroundColor()
+    if chatFrame.editboxHasFocus then
+        gw_handleChatFrameFadeIn(chatFrame)
+        return
+    end
+
+    local frameName = chatFrame:GetName()
+    for k,v in pairs(CHAT_FRAME_TEXTURES) do
+        local object = _G[chatFrame:GetName()..v];
+        if ( object:IsShown() ) then
+            UIFrameFadeOut(object,2,object:GetAlpha(),0)
+        end
+    end
+    for k,v in pairs(gw_fade_frames) do 
+        UIFrameFadeOut(v,2,v:GetAlpha(),0)
+    end
+    local chatTab = _G[frameName.."Tab"];
+    UIFrameFadeOut(chatTab,2, chatTab:GetAlpha(),0)
+   
+    UIFrameFadeOut(chatFrame.buttonFrame,2,chatFrame.buttonFrame:GetAlpha(),0)
+    _G[frameName..'ButtonFrame']:Hide()
+    ChatFrameMenuButton:Hide()
+
+end
+function gw_handleChatFrameFadeIn(chatFrame)
+    
+     if not gwGetSetting('CHATFRAME_FADE') then return end
+    
+    gw_setChatBackgroundColor()
+    local frameName = chatFrame:GetName()
+    for k,v in pairs(CHAT_FRAME_TEXTURES) do
+        local object = _G[chatFrame:GetName()..v];
+        if ( object:IsShown() ) then
+            gw_ChatFader(object,object:GetAlpha(),1)
+        end
+    end    
+            
+    for k,v in pairs(gw_fade_frames) do 
+        gw_ChatFader(v,v:GetAlpha(),1)
+    end
+    local chatTab = _G[frameName.."Tab"];
+    gw_ChatFader(chatTab, chatTab:GetAlpha(),1)
+    gw_ChatFader(chatFrame.buttonFrame,chatFrame.buttonFrame:GetAlpha(),1)
+      _G[frameName..'ButtonFrame']:Show()
+    ChatFrameMenuButton:Show()
+
+end
+
+function gw_styleChatWindow(i)
+    local useId = i
+    
+    if not _G['ChatFrame'..useId..'Background'] then return end
+    
+    if not _G['ChatFrame'..useId].gwhasBeenHooked then
+        
+        
+         if  _G['ChatFrame'..useId] == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) then
+            _G['ChatFrame'..useId..'EditBox']:Show()
+            _G['ChatFrame'..useId..'EditBox']:SetText('  (press Enter to chat)')
+        end
+        
+        _G['ChatFrame'..useId..'EditBox'].editboxHasFocus= false
+        _G['ChatFrame'..useId..'EditBox']:HookScript('OnEditFocusGained',function()
+                
+                _G['ChatFrame'..useId].editboxHasFocus= true
+                _G['ChatFrame'..useId]:SetScript('OnUpdate',function()  gw_handleChatFrameFadeIn(_G['ChatFrame'..useId]) end)
+                
+                FCF_FadeInChatFrame(_G['ChatFrame'..useId])
+                _G['ChatFrame'..useId..'EditBox']:SetText('')
+        end)
+  
+        _G['ChatFrame'..useId..'EditBox']:HookScript('OnEditFocusLost',function()
+                _G['ChatFrame'..useId]:SetScript('OnUpdate',nil)
+                   _G['ChatFrame'..useId].editboxHasFocus= false
+                FCF_FadeOutChatFrame(_G['ChatFrame'..useId])
+         
+            _G['ChatFrame'..useId..'EditBox']:SetText('  (press Enter to chat)')
+        end)
+        
+        _G['ChatFrame'..useId..'EditBox']:HookScript('OnHide',function(self)
+            if  _G['ChatFrame'..useId] == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) then
+                self:Show()
+            end
+            
+        end)
+          
+        hooksecurefunc( _G['ChatFrame'..useId..'EditBoxHeader'],'SetTextColor', function() 
+             local newText =  string.gsub(_G['ChatFrame'..useId..'EditBoxHeader']:GetText(),': ','')
+             _G['ChatFrame'..useId..'EditBoxHeader']:SetText('['..newText..'] ')
+        end)
+        
+        _G['ChatFrame'..useId].gwhasBeenHooked = true
+    end
+    
+    
+    _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowup_down')
+    _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowup_up')
+    _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowup_down')
+    _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetHeight(24)
+    _G['ChatFrame'..useId..'ButtonFrameUpButton']:SetWidth(24)
+            
+    _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
+    _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up')
+    _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
+    _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetHeight(24)
+    _G['ChatFrame'..useId..'ButtonFrameDownButton']:SetWidth(24)
+            
+    _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
+    _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up')
+    _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down')
+    _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetHeight(24)
+    _G['ChatFrame'..useId..'ButtonFrameBottomButton']:SetWidth(24)
+    
+    ChatFrameMenuButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\bubble_down')
+    ChatFrameMenuButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\bubble_up')
+    ChatFrameMenuButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\bubble_down')
+    
+    ChatFrameMenuButton:SetHeight(20)
+    ChatFrameMenuButton:SetWidth(20)
+
+    _G['ChatFrame'..useId..'TabSelectedRight']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright')
+    _G['ChatFrame'..useId..'TabSelectedLeft']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft')            
+    _G['ChatFrame'..useId..'TabSelectedMiddle']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chattabactive')  
+    
+    _G['ChatFrame'..useId..'TabSelectedRight']:SetHeight(40)
+    _G['ChatFrame'..useId..'TabSelectedLeft']:SetHeight(40)       
+    _G['ChatFrame'..useId..'TabSelectedMiddle']:SetHeight(40)
+            
+    _G['ChatFrame'..useId..'TabSelectedRight']:SetBlendMode("BLEND")
+    _G['ChatFrame'..useId..'TabSelectedLeft']:SetBlendMode("BLEND")
+    _G['ChatFrame'..useId..'TabSelectedMiddle']:SetBlendMode("BLEND")
+            
+    _G['ChatFrame'..useId..'TabSelectedRight']:SetVertexColor(1,1,1,1)
+    _G['ChatFrame'..useId..'TabSelectedLeft']:SetVertexColor(1,1,1,1)
+    _G['ChatFrame'..useId..'TabSelectedMiddle']:SetVertexColor(1,1,1,1)
+    
+    _G['ChatFrame'..useId..'TabText']:SetFont(UNIT_NAME_FONT,12)
+    _G['ChatFrame'..useId..'TabText']:SetTextColor(1,1,1)
+    
+    _G['ChatFrame'..useId..'TabHighlightMiddle']:SetTexture(nil)
+    _G['ChatFrame'..useId..'TabHighlightRight']:SetTexture(nil)
+    _G['ChatFrame'..useId..'TabHighlightLeft']:SetTexture(nil)
+                
+    _G['ChatFrame'..useId..'TabMiddle']:SetTexture(nil)
+    _G['ChatFrame'..useId..'TabLeft']:SetTexture(nil)
+    _G['ChatFrame'..useId..'TabRight']:SetTexture(nil)
+    
+    
+    _G['ChatFrame'..useId..'ButtonFrameTopTexture']:SetTexture(nil)    
+    _G['ChatFrame'..useId..'ButtonFrameRightTexture']:SetTexture(nil)    
+    _G['ChatFrame'..useId..'ButtonFrameLeftTexture']:SetTexture(nil)    
+    _G['ChatFrame'..useId..'ButtonFrameBottomTexture']:SetTexture(nil)    
+    _G['ChatFrame'..useId..'TopTexture']:SetTexture(nil)
+    _G['ChatFrame'..useId..'BottomTexture']:SetTexture(nil)
+    _G['ChatFrame'..useId..'RightTexture']:SetTexture(nil)
+    _G['ChatFrame'..useId..'LeftTexture']:SetTexture(nil)
+    
+    _G['ChatFrame'..useId..'EditBox']:ClearAllPoints()
+    _G['ChatFrame'..useId..'EditBox']:SetPoint('TOPLEFT', _G['ChatFrame'..useId..'ButtonFrame'],'BOTTOMLEFT',0,0)
+    _G['ChatFrame'..useId..'EditBox']:SetPoint('TOPRIGHT', _G['ChatFrame'..useId..'Background'],'BOTTOMRIGHT',0,0)
+  
+    _G['ChatFrame'..useId..'EditBoxRight']:SetTexture(nil)   
+    _G['ChatFrame'..useId..'EditBoxLeft']:SetTexture(nil)   
+    _G['ChatFrame'..useId..'EditBoxMid']:SetTexture(nil)   
+    
+ 
+    
+    _G['ChatFrame'..useId..'EditBoxFocusRight']:SetTexture(nil)
+    _G['ChatFrame'..useId..'EditBoxFocusLeft']:SetTexture(nil)
+    _G['ChatFrame'..useId..'EditBoxFocusMid']:SetTexture(nil)
+    
+
+    
+    
+end
 
