@@ -50,13 +50,7 @@ local gw_fade_frames = {}
 
 
 function gw_styleOveralChat()
-   
-    GeneralDockManager.texture = GeneralDockManager:CreateTexture()
-    GeneralDockManager.texture:SetDrawLayer('ARTWORK')
-    GeneralDockManager.texture:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\chatdockbg')
-    GeneralDockManager.texture:SetPoint('BOTTOMLEFT',GeneralDockManager,'BOTTOMLEFT',-35,-3)
-    GeneralDockManager.texture:SetPoint('BOTTOMRIGHT',GeneralDockManager,'BOTTOMRIGHT',4,-3)
-    GeneralDockManager.texture:SetHeight(23)
+
     
     FriendsMicroButton:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
     FriendsMicroButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
@@ -217,9 +211,15 @@ function gw_styleChatWindow(i)
         end)
           
         hooksecurefunc( _G['ChatFrame'..useId..'EditBoxHeader'],'SetTextColor', function() 
+                
+            if not string.find(_G['ChatFrame'..useId..'EditBoxHeader']:GetText(),'%[') then
              local newText =  string.gsub(_G['ChatFrame'..useId..'EditBoxHeader']:GetText(),': ','')
              _G['ChatFrame'..useId..'EditBoxHeader']:SetText('['..newText..'] ')
+            end
         end)
+        
+        
+        
         
         _G['ChatFrame'..useId].gwhasBeenHooked = true
     end
@@ -307,6 +307,16 @@ function gw_styleChatWindow(i)
     
 
     
+    
+end
+
+function gw_chatBackgroundOnResize(self)
+    local w,h = self:GetSize();
+    
+    w = math.min(1,w/512)
+    h = math.min(1,h/512) 
+    
+    self.texture:SetTexCoord(0,w,1-h,1);
     
 end
 

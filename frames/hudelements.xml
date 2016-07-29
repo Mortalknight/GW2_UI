@@ -695,7 +695,7 @@
         <Size  x="20" y="4"></Size>
          <Layers>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\chatframebackground">
+                <Texture name="$parentTexture" parentKey="texture" file="Interface\AddOns\GW2_UI\textures\chatframebackground">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
@@ -711,6 +711,14 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" ></Anchor>
                     </Anchors>
+                </Texture>  
+                 
+                 <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chatdockbg">
+                    <Size x="2" y="25"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                    </Anchors>
                 </Texture>
             </Layer>
              <Layer level="ARTWORK" textureSubLevel="0">
@@ -723,6 +731,11 @@
                 </Texture>
             </Layer>
         </Layers>
+        <Scripts>
+            <OnSizeChanged function="gw_chatBackgroundOnResize">
+               
+            </OnSizeChanged>
+        </Scripts>
     </Frame>
     
 </Ui>
