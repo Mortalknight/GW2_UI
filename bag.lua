@@ -30,6 +30,9 @@ function gw_create_bgframe()
     
     BAG_ITEM_SIZE = gwGetSetting('BAG_ITEM_SIZE')
     
+    CreateFrame('Frame','gwNormalBagHolder',UIParent)
+    gwNormalBagHolder:SetPoint('LEFT',UIParent,'RIGHT')
+    gwNormalBagHolder:SetFrameStrata('HIGH')
    local fm= CreateFrame('Frame','GwBagMoverFrame',UIParent,'GwBagMoverFrame') 
     GwBagMoverFrame:HookScript('OnDragStop',gw_onBankMove)
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
@@ -129,16 +132,17 @@ function gw_bag_close()
    for i=1,12 do
         if i<6 then
             if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
-
+                _G['ContainerFrame'..i]:SetParent(gwNormalBagHolder)
                 _G['ContainerFrame'..i]:ClearAllPoints()
-                _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,0);
-
+                _G['ContainerFrame'..i]:SetPoint('RIGHT',gwNormalBagHolder,'LEFT',0,0);
+                
                 o=true
             end
         else
             if _G['ContainerFrame'..i] and _G['ContainerFrame'..i]:IsShown() then
+               _G['ContainerFrame'..i]:SetParent(gwNormalBagHolder)
                 _G['ContainerFrame'..i]:ClearAllPoints()
-                _G['ContainerFrame'..i]:SetPoint('RIGHT',UIParent,'LEFT',0,9)
+                _G['ContainerFrame'..i]:SetPoint('RIGHT',gwNormalBagHolder,'LEFT',0,0);
       
             end
         end
