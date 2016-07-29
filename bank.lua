@@ -27,6 +27,8 @@ local default_bank_frame_container ={
 
 
 function gw_create_bankframe()
+    
+    BAG_ITEM_SIZE = gwGetSetting('BANK_ITEM_SIZE')
    local fm= CreateFrame('Frame','GwBankMoverFrame',UIParent,'GwBagMoverFrame')
     GwBankMoverFrame:ClearAllPoints();
     GwBankMoverFrame:SetPoint('LEFT',UIParent,'LEFT',300,200)
@@ -55,6 +57,8 @@ function gw_create_bankframe()
         for i=5,12 do
            ToggleBag(i)     
         end
+            
+  
     end)
     
     GwBankFrame:Hide()
@@ -71,6 +75,8 @@ function gw_create_bankframe()
         GwReagentBankFrame:Show()
         GwBankFrameHeaderString:SetText('Reagents Bank')
         GwReagentBankFrame:SetHeight(GwBankFrame:GetHeight())
+            
+        GwBuyMoreBank:Hide()
             
         if IsReagentBankUnlocked() then
                 gw_update_reagents_icons()
@@ -91,6 +97,9 @@ function gw_create_bankframe()
         GwReagentBankFrame:Hide()
         for i=5,12 do
            ToggleBag(i)     
+        end
+            if GetNumBankSlots()<7 then
+            GwBuyMoreBank:Show()
         end
             
     end)
@@ -258,17 +267,7 @@ function gw_update_reagents_icons(forceSize)
     BAG_WINDOW_CONTENT_HEIGHT= y+BAG_ITEM_SIZE+BAG_ITEM_PADDING
     gw_bankFrameOnResize(GwBankFrame,forceSize)
     
-    if (BAG_WINDOW_SIZE/45)<11 and BAG_ITEM_SIZE>32 then
-        BAG_ITEM_SIZE = 32       
-        gw_update_reagents_icons(false)
-    else
-        if BAG_WINDOW_CONTENT_HEIGHT>512 and BAG_ITEM_SIZE>32 then
-            BAG_ITEM_SIZE = 32       
-            gw_update_reagents_icons(false)
-        else
-            BAG_ITEM_SIZE = 45
-        end
-    end
+
     
 end
 
@@ -400,12 +399,6 @@ function gw_update_bank_icons(forceSize)
 
     gw_bankFrameOnResize(GwBankFrame,forceSize)
 
-    if (BAG_WINDOW_SIZE/45)<11 and BAG_ITEM_SIZE>32 then
-        BAG_ITEM_SIZE = 32       
-        gw_update_bank_icons(false)
-    else
-        BAG_ITEM_SIZE = 45
-    end
     
 end
 function gw_relocate_bank_searchbox()
@@ -507,4 +500,29 @@ function gw_onBankDragUpdate()
     else
         gw_update_bank_icons(false)
     end
+end
+
+function gw_bankFrameCompactToggle()
+    
+    if BAG_ITEM_SIZE==45 then
+        gwSetSetting('BANK_ITEM_SIZE',32)
+        BAG_ITEM_SIZE = 32
+     if GwReagentBankFrame:IsShown() and  IsReagentBankUnlocked() then
+        gw_update_reagents_icons(false)
+    else
+        gw_update_bank_icons(false)
+    end
+        return 'Large Icons';
+    end
+    
+    gwSetSetting('BANK_ITEM_SIZE',45)
+    BAG_ITEM_SIZE = 45
+
+    if GwReagentBankFrame:IsShown() and  IsReagentBankUnlocked() then
+        gw_update_reagents_icons(false)
+    else
+        gw_update_bank_icons(false)
+    end
+    return 'Compact Icons';
+    
 end

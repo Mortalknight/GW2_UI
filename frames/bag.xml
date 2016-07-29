@@ -339,7 +339,7 @@
                     </OnEvent>
                 </Scripts>
             </Frame>
-            <Button name="GwBagButtonSettings" text="" >
+            <Button name="GwBankButtonSettings" text="" >
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8" />
                 </Anchors>
@@ -353,11 +353,72 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Scripts>
                     <OnClick>
-                        PlaySound("UI_BagSorting_01");
-                        SortBankBags();
+                        if GwBankFrameDropDown:IsShown() then
+                            GwBankFrameDropDown:Hide()
+                        else
+                            GwBankFrameDropDown:Show()
+                        end
                     </OnClick>
                 </Scripts>
             </Button>
+            
+                 <Frame name="$parentDropDown" frameStrata="HIGH" hidden="true" frameLevel="8">
+                <Size x="100" y="60" ></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeTO="GwBankButtonSettings" relativePoint="LEFT" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY" textureSubLevel="8">
+                        <Texture file="nterface\AddOns\GW2_UI\textures\gwstatusbar" >
+                            <Color r="0" b="0" g="0"></Color>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                                <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button text="Sort Bank">
+                        <Size x="100" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                        </Anchors>
+                        <NormalFont style="ChatBubbleFont"></NormalFont>
+                        <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                        <Scripts>
+                            <OnClick>
+                                PlaySound("UI_BagSorting_01");
+                                SortBankBags();
+                                self:GetParent():Hide()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button text="Compact view">
+                        <Size x="100" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
+                        </Anchors>
+                        <NormalFont style="ChatBubbleFont"></NormalFont>
+                        <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                        <Scripts>
+                            <OnClick>
+                                self:SetText(gw_bankFrameCompactToggle())
+                                self:GetParent():Hide()
+                            </OnClick>
+                            <OnLoad>
+                                if gwGetSetting('BANK_ITEM_SIZE')==45 then
+                                    self:SetText('Compact Icons')
+                                else
+                                    self:SetText('Large Icons')
+                                end
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
             
             <Button name="GwBagButtonClose" text="" >
                 <Size x="20" y="20" />
@@ -623,11 +684,73 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Scripts>
                     <OnClick>
-                        PlaySound("UI_BagSorting_01");
-                        SortBags();
+                       if GwBagFrameDropDown:IsShown() then
+                            GwBagFrameDropDown:Hide()
+                        else
+                            GwBagFrameDropDown:Show()
+                        end
                     </OnClick>
                 </Scripts>
             </Button>
+            
+            <Frame name="$parentDropDown" frameStrata="HIGH" hidden="true" frameLevel="8">
+                <Size x="100" y="60" ></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeTO="GwBagButtonSettings" relativePoint="LEFT" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY" textureSubLevel="8">
+                        <Texture file="nterface\AddOns\GW2_UI\textures\gwstatusbar" >
+                            <Color r="0" b="0" g="0"></Color>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                                <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button text="Sort bags">
+                        <Size x="100" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                        </Anchors>
+                        <NormalFont style="ChatBubbleFont"></NormalFont>
+                        <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                        <Scripts>
+                            <OnClick>
+                            PlaySound("UI_BagSorting_01");
+                            SortBags();
+                                self:GetParent():Hide()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button text="Compact view">
+                        <Size x="100" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
+                        </Anchors>
+                        <NormalFont style="ChatBubbleFont"></NormalFont>
+                        <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                        <Scripts>
+                            <OnClick>
+                                self:SetText(gw_backFrameCompactToggle())
+                                self:GetParent():Hide()
+                            </OnClick>
+                            <OnLoad>
+                                if gwGetSetting('BAG_ITEM_SIZE')==45 then
+                                    self:SetText('Compact Icons')
+                                else
+                                    self:SetText('Large Icons')
+                                end
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+            
             
             <Button name="GwBagButtonClose" text="" >
                 <Size x="20" y="20" />

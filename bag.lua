@@ -26,6 +26,10 @@ local default_bag_frame_container ={
 
 
 function gw_create_bgframe()
+    
+    
+    BAG_ITEM_SIZE = gwGetSetting('BAG_ITEM_SIZE')
+    
    local fm= CreateFrame('Frame','GwBagMoverFrame',UIParent,'GwBagMoverFrame') 
     GwBagMoverFrame:HookScript('OnDragStop',gw_onBankMove)
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
@@ -159,6 +163,7 @@ function gw_relocate_searchbox()
     BagItemSearchBox.Right:SetTexture(nil)
     BagItemSearchBoxSearchIcon:Hide()
     BagItemSearchBox.Middle:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagsearchbg')
+
   
     BagItemSearchBox:SetHeight(24)
     
@@ -169,7 +174,8 @@ function gw_relocate_searchbox()
     BagItemSearchBox.SetPoint = function() end
     BagItemSearchBox.ClearAllPoints = function() end
     
-    BagItemSearchBox:SetFrameLevel(5)
+    
+
     
 end
 
@@ -190,6 +196,7 @@ function gw_update_bag_icons(forceSize)
                 local slotIconBorder = _G['ContainerFrame'..BAG_INDEX..'Item'..i..'.IconBorder']
                 local slotIconFlash = _G['ContainerFrame'..BAG_INDEX..'Item'..i..'.flash']
                 local slotNormalTexture = _G['ContainerFrame'..BAG_INDEX..'Item'..i..'NormalTexture']
+                local slotQuesttexture= _G['ContainerFrame'..BAG_INDEX..'Item'..i..'IconQuestTexture']
 
                 if slot and slot:IsShown() then
                     
@@ -228,6 +235,11 @@ function gw_update_bag_icons(forceSize)
                         end 
                         
                     end
+                    
+                    if slotQuesttexture then
+                        slotQuesttexture:SetSize(BAG_ITEM_SIZE,BAG_ITEM_SIZE)
+                    end
+                    
                     if slotNormalTexture then
                         slotNormalTexture:SetSize(BAG_ITEM_SIZE,BAG_ITEM_SIZE)
                         slot:SetNormalTexture(nil)
@@ -259,18 +271,6 @@ function gw_update_bag_icons(forceSize)
     BAG_WINDOW_CONTENT_HEIGHT= y+BAG_ITEM_SIZE+BAG_ITEM_PADDING
     gw_bagFrameOnResize(GwBagFrame,forceSize)
     
-    if (BAG_WINDOW_SIZE/45)<11 and BAG_ITEM_SIZE>32 then
-        BAG_ITEM_SIZE = 32       
-        gw_update_bag_icons(false)
-    else
-        if BAG_WINDOW_CONTENT_HEIGHT>512 and BAG_ITEM_SIZE>32 then
-            BAG_ITEM_SIZE = 32       
-            gw_update_bag_icons(false)
-        else
-            BAG_ITEM_SIZE = 45
-        end
-    end
-
     
     
 end
@@ -368,4 +368,21 @@ function gw_onBagDragUpdate()
     end
     gw_update_bag_icons()
 
+end
+
+
+function gw_backFrameCompactToggle()
+    
+    if BAG_ITEM_SIZE==45 then
+        gwSetSetting('BAG_ITEM_SIZE',32)
+        BAG_ITEM_SIZE = 32
+        gw_update_bag_icons(true)
+        return 'Large Icons';
+    end
+    
+    gwSetSetting('BAG_ITEM_SIZE',45)
+    BAG_ITEM_SIZE = 45
+    gw_update_bag_icons(true)
+     
+    return 'Compact Icons';
 end
