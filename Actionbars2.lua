@@ -252,6 +252,17 @@ function gw_setupActionbars()
     
     
     hooksecurefunc("ActionButton_UpdateHotkeys",  gw_updatehotkey)
+    
+    
+    MainMenuBarArtFrame:RegisterEvent('PET_BATTLE_CLOSE')
+    MainMenuBarArtFrame:RegisterEvent('PET_BATTLE_OPENING_START')
+    MainMenuBarArtFrame:HookScript('OnEvent',function(self,event)
+       if event=='PET_BATTLE_OPENING_START' then
+            MainMenuBarArtFrame:SetPoint('TOP',UIParent,'BOTTOM',0,-80)
+        elseif event=='PET_BATTLE_CLOSE' then
+            MainMenuBarArtFrame:SetPoint('TOP',UIParent,'BOTTOM',0,80)
+        end
+    end)
 end
 
 function gw_updateMainBar()
