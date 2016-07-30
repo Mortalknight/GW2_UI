@@ -199,10 +199,7 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
     end
      
        
-    if animations[forceAnimationName] then
-        animations[forceAnimationName]['completed'] = true
-        animations[forceAnimationName]['duration'] = 0
-    end
+ 
     
     addToAnimation(forceAnimationName,powerBarAnimations[forceAnimationName],powerPrec,GetTime(),animation_duration,function()
             

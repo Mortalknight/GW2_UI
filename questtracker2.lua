@@ -450,12 +450,12 @@ function gw_display_questtracker_layout()
         QUEST_CONTAINER_FRAME:SetPoint('TOPRIGHT',GW_TRACKER_PARENT_FRAMES[v['GW_TYPE']],'TOPRIGHT',0,-USED_HEIGHT[v['GW_TYPE']])
         
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetFont(DAMAGE_TEXT_FONT,14)
-        _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetShadowOffset(-1,-1)
+        _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetShadowOffset(1,-1)
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetTextColor(GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].r,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].g,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].b)
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetText(v['TITLE'])
         
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetFont(UNIT_NAME_FONT,12)
-        _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetShadowOffset(-1,-1)
+        _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetShadowOffset(1,-1)
         
         local subHeader =''
         if GW_HIDDEN_QUESTS[v['questID']]~=nil and GW_HIDDEN_QUESTS[v['questID']]==false then
@@ -731,7 +731,7 @@ function gw_setobjective_style(QUEST_CONTAINER_FRAME,QUEST_OBJECTIVE_CONTAINER,U
     QUEST_OBJECTIVE_CONTAINER:SetPoint('TOPRIGHT',QUEST_CONTAINER_FRAME,'TOPRIGHT',0,-USED_OBJECTIVE_HEIGHT)
     _G[QUEST_OBJECTIVE_CONTAINER:GetName()..'StatusBar']:SetStatusBarColor(GW_QUESTTRACKER_TYPE_COLORS[ObjectiveType].r,GW_QUESTTRACKER_TYPE_COLORS[ObjectiveType].g,GW_QUESTTRACKER_TYPE_COLORS[ObjectiveType].b)
     _G[QUEST_OBJECTIVE_CONTAINER:GetName()..'String']:SetFont(UNIT_NAME_FONT,12)
-    _G[QUEST_OBJECTIVE_CONTAINER:GetName()..'String']:SetShadowOffset(-1,-1)
+    _G[QUEST_OBJECTIVE_CONTAINER:GetName()..'String']:SetShadowOffset(1,-1)
     
 end
 
@@ -833,7 +833,7 @@ function gw_load_bossFrame(i)
     targetF:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     
     _G['GwQuestTrackerBossFrame'..i..'String']:SetFont(UNIT_NAME_FONT,12)
-    _G['GwQuestTrackerBossFrame'..i..'String']:SetShadowOffset(-1,-1)
+    _G['GwQuestTrackerBossFrame'..i..'String']:SetShadowOffset(1,-1)
     
     _G['GwQuestTrackerBossFrame'..i..'StatusBar']:SetStatusBarColor(GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].r,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].g,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].b)
     _G['GwQuestTrackerBossFrame'..i..'Icon']:SetVertexColor(GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].r,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].g,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].b)
