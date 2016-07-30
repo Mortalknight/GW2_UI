@@ -14,6 +14,24 @@
                         <Anchor point="TOPLEFT" x="129" y="-39"/>
                     </Anchors>
                 </Texture>
+                
+                <Texture name="$parentPowerBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="powerBackground">
+                    <Size x="255" y="5"/>
+                    <Color r="0" g="0" b="0" a="0.9"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="129" y="-56"/>
+				    </Anchors>
+                </Texture> 
+                
+                <Texture name="$parentCastingBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="castingBackground">
+                    <Size x="253" y="15"/>
+	         
+                    <Color r="0" g="0" b="0" a="0.9"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="130" y="-63"/>
+				    </Anchors>
+                </Texture>
+                
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\targetshadow" parentKey="Background">
 					<Size x="512" y="128"/>
 					<Anchors>
@@ -106,13 +124,22 @@
                
 			</StatusBar>
             <StatusBar name="$parentCastingBar"  defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND" >
-               <Size x="253" y="15"/>
+               <Size x="251" y="13"/>
 	           <Anchors>
-                   <Anchor point="TOPLEFT" x="130" y="-40"/>
+                    <Anchor point="TOPLEFT" x="131" y="-64"/>
 				</Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
-                    <Layer level="OVERLAY" >
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                            <Size x="13" y="13"></Size>
+                            <Color r="1" g="1" b="1" a="0.7"></Color>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="LEFT" relativeTo="$parent" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="2" >
                         <FontString name="$parentCastingBarString"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="200" y="12"/>
                             <Anchors>
@@ -123,9 +150,9 @@
                 </Layers>
 			</StatusBar>
 			<StatusBar name="$parentManaBar"  defaultValue="1"  minValue="0" maxValue="1" inherits="TextStatusBar"  drawlayer="BACKGROUND">
-                   <Size x="253" y="5"/>
+                <Size x="253" y="3"/>
                 <Anchors>
-                   <Anchor point="TOPLEFT" x="130" y="-55"/>
+                  <Anchor point="TOPLEFT" x="130" y="-56"/>
 				</Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
 			</StatusBar>
@@ -157,6 +184,13 @@
                     <Size x="148" y="17"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="0" y="-39"/>
+                    </Anchors>
+                </Texture>  
+                <Texture name="$parentPowerBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="Background">
+                    <Color r="0" g="0" b="0" a="0.4"/>
+                    <Size x="148" y="5"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="0" y="-55"/>
                     </Anchors>
                 </Texture>
                 
@@ -253,9 +287,9 @@
                 </Layers>
 			</StatusBar>
 			<StatusBar name="$parentManaBar"  defaultValue="1"  minValue="0" maxValue="1" inherits="TextStatusBar"  drawlayer="BACKGROUND">
-                   <Size x="146" y="5"/>
+                   <Size x="146" y="3"/>
                 <Anchors>
-                   <Anchor point="TOPLEFT" x="0" y="-55"/>
+                   <Anchor point="TOPLEFT" x="1" y="-56"/>
 				</Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
 			</StatusBar>

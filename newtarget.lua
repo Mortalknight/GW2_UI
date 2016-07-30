@@ -34,6 +34,8 @@ function registerNewUnitFrame(unitToWatch, frameType)
         _G[thisName..'Buffs']:SetScript('OnUpdate',function() 
             update_buff_timers(thisName)    
     end)
+    
+    
 
     targetF:ClearAllPoints()
     targetF:SetPoint(gwGetSetting(unitToWatch..'_pos')['point'],UIParent,gwGetSetting(unitToWatch..'_pos')['relativePoint'],gwGetSetting(unitToWatch..'_pos')['xOfs'],gwGetSetting(unitToWatch..'_pos')['yOfs'])
@@ -81,6 +83,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
     
     _G[thisName.."HealthBarHealthBarString"]:SetTextColor(255,255,255)
     _G[thisName.."CastingBarCastingBarString"]:SetTextColor(255,255,255)
+    _G[thisName.."CastingBarCastingBarString"]:SetShadowColor(0,0,0,0.5)
     
     _G[thisName.."AbsorbBar"]:SetStatusBarColor(0.9,0.9,0.6,0.6)
     
@@ -412,6 +415,7 @@ end
 function updateCastingbar(thisName,unitToWatch)
         
         local spellType = 0
+        local castingbarWidth = _G[thisName.."CastingBar"]:GetWidth()
         
         local name, subText, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unitToWatch)
         casting = false
@@ -432,21 +436,38 @@ function updateCastingbar(thisName,unitToWatch)
             end
             
             _G[thisName.."CastingBar"]:Show()
+            if _G[thisName.."CastingBarBackground"] then
+                _G[thisName.."CastingBarBackground"]:Show()
+                gw_unitFrameSetBuffPosition(thisName) 
+            end
             
             if notInterruptible then
-                _G[thisName.."CastingBar"]:SetStatusBarColor(0.7,0.7,0.7)  
+                _G[thisName.."CastingBar"]:SetStatusBarColor(145/255,145/255,145/255)  
             else
-                _G[thisName.."CastingBar"]:SetStatusBarColor(1,0.7,0.0)
+                _G[thisName.."CastingBar"]:SetStatusBarColor(221/255,173/255,69/255)
             end
             startTime = startTime /1000
             endTime = endTime /1000
             addToAnimation(unitToWatch..'newcastingAnimation',unitFrameAnimations[unitToWatch..'castingAnimation'],1,startTime,endTime-startTime,function()
+                if _G[thisName.."CastingBarSpark"] then
+                    
+                    local w = math.max(0.001,math.min(10,(animations[unitToWatch..'newcastingAnimation']['progress']/1)*100))
+                    if _G[thisName.."CastingBarSpark"]:GetWidth()~=w then
+                        _G[thisName.."CastingBarSpark"]:SetWidth(w)
+                    end
+                    _G[thisName.."CastingBarSpark"]:SetPoint('RIGHT',_G[thisName.."CastingBar"],'LEFT',castingbarWidth*animations[unitToWatch..'newcastingAnimation']['progress'],0)
+                end
                  _G[thisName.."CastingBar"]:SetValue(animations[unitToWatch..'newcastingAnimation']['progress'])
             end,'noease')    
-          
+            
         
         else
-            _G[thisName.."CastingBar"]:Hide()
+        _G[thisName.."CastingBar"]:Hide()
+        _G[thisName.."CastingBar"]:SetValue(0)
+        if _G[thisName.."CastingBarBackground"] then
+            _G[thisName.."CastingBarBackground"]:Hide()
+            gw_unitFrameSetBuffPosition(thisName) 
+        end
             if animations[unitToWatch..'newcastingAnimation'] then
                 animations[unitToWatch..'newcastingAnimation']['completed'] = true
                 animations[unitToWatch..'newcastingAnimation']['duration'] = 0
@@ -466,7 +487,13 @@ function updateCastingbar(thisName,unitToWatch)
         if power>0 and powerMax>0 then
             powerPrecentage= power/powerMax
         end
-    
+        if _G[thisName.."PowerBarBackground"] then
+                if powerMax<=0 then
+                _G[thisName.."PowerBarBackground"]:Hide()
+                else 
+                 _G[thisName.."PowerBarBackground"]:Show()
+                end
+        end
         
         addToAnimation(unitToWatch..'powerAnimation',unitFrameAnimations[unitToWatch..'powerAnimation'],powerPrecentage,GetTime(),0.1,function()
             _G[thisName.."ManaBar"]:SetValue(animations[unitToWatch..'powerAnimation']['progress'])
@@ -672,7 +699,19 @@ function updateCastingbar(thisName,unitToWatch)
     updateAuras(thisName,unitToWatch,event)
         
         
+end
+
+
+function gw_unitFrameSetBuffPosition(thisName)
+
+    
+    if _G[thisName.."CastingBarBackground"]:IsShown() then
+         _G[thisName..'Buffs']:SetPoint('TOPLEFT',130,-75)
+    else
+        _G[thisName..'Buffs']:SetPoint('TOPLEFT',130,-60)
     end
+end
+    
     
 
 
