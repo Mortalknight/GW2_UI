@@ -108,24 +108,24 @@ function gw_playerUpdateAuras()
             end
             local margin = -indexBuffFrame:GetWidth() + -2
             local marginy = indexBuffFrame:GetWidth() + 12
-            _G['GwPlayerBuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][key]['icon'])
+            _G['GwPlayerBuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][i]['icon'])
             _G['GwPlayerBuffItemFrame'..i..'BuffIcon']:SetParent(_G['GwPlayerBuffItemFrame'..i])
             local buffDur = '';
             local stacks = '';
-            if buffLists[unitToWatch][key]['duration']>0 then
-                buffDur = timeCount(buffLists[unitToWatch][key]['timeRemaining']);
+            if buffLists[unitToWatch][i]['duration']>0 then
+                buffDur = timeCount(buffLists[unitToWatch][i]['timeRemaining']);
                 end
-                  if buffLists[unitToWatch][key]['count']>0 then
-                stacks = buffLists[unitToWatch][key]['count'] 
+                  if buffLists[unitToWatch][i]['count']>0 then
+                stacks = buffLists[unitToWatch][i]['count'] 
             end
-            indexBuffFrame.expires =buffLists[unitToWatch][key]['expires']
-            indexBuffFrame.duration =buffLists[unitToWatch][key]['duration']
+            indexBuffFrame.expires =buffLists[unitToWatch][i]['expires']
+            indexBuffFrame.duration =buffLists[unitToWatch][i]['duration']
             _G['GwPlayerBuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
             _G['GwPlayerBuffItemFrame'..i..'BuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint('BOTTOMRIGHT',(margin*x),marginy*y)
              
-            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,i); GameTooltip:Show() end)
+            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,key); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
              
             indexBuffFrame:SetScript('OnClick', function(self,button) 
@@ -133,7 +133,7 @@ function gw_playerUpdateAuras()
                         return
                     end 
                     if button=='RightButton' then
-                        CancelUnitBuff("player",i)
+                        CancelUnitBuff("player",key)
                     end
                 end)
                 
@@ -149,6 +149,9 @@ function gw_playerUpdateAuras()
             
             if indexBuffFrame~=nil then
                indexBuffFrame:Hide() 
+                indexBuffFrame:SetScript('OnEnter',nil)
+                indexBuffFrame:SetScript('OnClick',nil) 
+                indexBuffFrame:SetScript('OnLeave',nil) 
               
             else
                 break
@@ -180,18 +183,18 @@ function gw_playerUpdateDeBuffs(x,y)
                 _G['playerDeBuffItemFrame'..i..'Cooldown']:SetReverse(1)
                 _G['playerDeBuffItemFrame'..i..'Cooldown']:SetHideCountdownNumbers(true)
             end 
-            _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(DebuffLists[unitToWatch][key]['icon'])
+            _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(DebuffLists[unitToWatch][i]['icon'])
             _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetParent(_G['playerDeBuffItemFrame'..i])
             local buffDur = '';
             local stacks  = '';
-            if DebuffLists[unitToWatch][key]['count']>0 then
-               stacks = DebuffLists[unitToWatch][key]['count'] 
+            if DebuffLists[unitToWatch][i]['count']>0 then
+               stacks = DebuffLists[unitToWatch][i]['count'] 
             end
-            if DebuffLists[unitToWatch][key]['duration']>0 then
-                buffDur = timeCount(DebuffLists[unitToWatch][key]['timeRemaining']);
+            if DebuffLists[unitToWatch][i]['duration']>0 then
+                buffDur = timeCount(DebuffLists[unitToWatch][i]['timeRemaining']);
             end
-            indexBuffFrame.expires =DebuffLists[unitToWatch][key]['expires']
-            indexBuffFrame.duration =DebuffLists[unitToWatch][key]['duration']
+            indexBuffFrame.expires =DebuffLists[unitToWatch][i]['expires']
+            indexBuffFrame.duration =DebuffLists[unitToWatch][i]['duration']
             
 
             _G['playerDeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
