@@ -43,9 +43,23 @@ local UNSTYLED = {
 	"PetBattlePrimaryAbilityTooltip"
 }
 
+function move_tooltip_placemtn(self) 
+    self:ClearAllPoints()
+    self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 250)
+end
 
 function gw_set_tooltips()
-    
+        
+    GameTooltip:HookScript("OnTooltipSetUnit", function(self)
+       move_tooltip_placemtn(self) 
+    end)
+
+    GameTooltip:HookScript("OnTooltipSetQuest", function(self)
+       move_tooltip_placemtn(self) 
+    end)
+   GameTooltip:HookScript("OnTooltipSetSpell", function(self)
+       move_tooltip_placemtn(self) 
+    end)
     for _, toStyle in ipairs(UNSTYLED) do
         if _G[toStyle] then
             

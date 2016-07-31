@@ -188,17 +188,7 @@ function gw_set_minimap()
 
     
 
-    
-    GameTooltip:SetScript("OnTooltipSetUnit", function(self)
-       move_tooltip_placemtn(self) 
-    end)
 
-    GameTooltip:SetScript("OnTooltipSetQuest", function(self)
-       move_tooltip_placemtn(self) 
-    end)
-   GameTooltip:SetScript("OnTooltipSetSpell", function(self)
-       move_tooltip_placemtn(self) 
-    end)
     hoverMiniMapOut()
 
 
@@ -248,10 +238,6 @@ end
         end
     end
 
-function move_tooltip_placemtn(self) 
-    self:ClearAllPoints()
-    self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 250)
-end
 
 function GwMapTimeClick(self,button)
 	if button == "LeftButton" then
