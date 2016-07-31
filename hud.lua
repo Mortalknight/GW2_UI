@@ -341,12 +341,23 @@ end
 
 function show_experiencebar_tooltip()
     
+    GameTooltip:SetOwner(_G['GwExperienceFrame'], "ANCHOR_CURSOR");
+    GameTooltip:ClearLines();
+    
     local valCurrent = UnitXP('Player')
     local valMax = UnitXPMax('Player')
-    local tooltipText = 'Experience '..comma_value(valCurrent).." / "..comma_value(valMax)..'  ('..math.floor((valCurrent/valMax)*100) ..'%)'
     local rested = GetXPExhaustion()
+    local isRestingString =''
+    if IsResting() then
+        isRestingString =' (Resting)'
+    end
+    
+    GameTooltip:AddLine('Experience'..isRestingString,1,1,1)
+    
+    GameTooltip:AddLine( 'Experience '..comma_value(valCurrent).." / "..comma_value(valMax)..' |cffa6a6a6 ('..math.floor((valCurrent/valMax)*100) ..'%)|r',1,1,1)
+    
     if rested~=nil then
-         GameTooltip:AddLine('Rested '..comma_value(rested)..'  ('..math.floor((rested/valMax)*100)..'%)',1,1,1)
+         GameTooltip:AddLine('Rested '..comma_value(rested)..' |cffa6a6a6 ('..math.floor((rested/valMax)*100)..'%) |r',1,1,1)
     end
     
     
@@ -365,10 +376,9 @@ function show_experiencebar_tooltip()
         GameTooltip:AddLine('\nArtifact: '..artifactXP..' / '..xpForNextPoint,1,1,1)
     end
     
-    GameTooltip:SetOwner(_G['GwExperienceFrame'], "ANCHOR_CURSOR");
-    GameTooltip:ClearLines();
-    GameTooltip:AddLine('Experience',1,1,1)
-    GameTooltip:AddLine(tooltipText,1,1,1)
+   
+    
+
   
     GameTooltip:Show() 
 end
@@ -394,12 +404,7 @@ end
 
 function update_experiencebar_data(self,event)
     
-    if event=='PLAYER_UPDATE_RESTING' then
-            if IsResting() then
-              
-            end
-        return
-    end
+
     
     local showArtifact = HasArtifactEquipped()
     
@@ -412,8 +417,14 @@ function update_experiencebar_data(self,event)
     local rested = GetXPExhaustion()
     local showBar1 = false
     local showBar2 = false
+    
+    local restingIconString = ' |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t '
 
+    if not IsResting() then
+        restingIconString = ''
+    end
     if rested==nil then
+        
         rested = 0
     end
     rested = rested / valMax
@@ -489,7 +500,7 @@ function update_experiencebar_data(self,event)
     
     
     _G['GwExperienceFrameNextLevel']:SetText(Nextlevel);
-    _G['GwExperienceFrameCurrentLevel']:SetText(level);
+    _G['GwExperienceFrameCurrentLevel']:SetText(restingIconString..level);
         if showBar1 and not showBar2 then
         _G['GwExperienceFrameBar']:SetHeight(8)
         _G['GwExperienceFrameBarCandy']:SetHeight(8)
