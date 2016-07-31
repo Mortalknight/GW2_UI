@@ -763,7 +763,7 @@ function create_micro_menu()
     
     gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton,CHARACTER_BUTTON,'TOGGLECHARACTER0"')
     gw_microButtonHookToolTip(GwMicroButtonBagMicroButton,GW_BAG_MICROBUTTON_STRING,'OPENALLBAGS')
-    gw_microButtonHookToolTip(GwMicroButtonSpellbookMicroButton,GW_BAG_MICROBUTTON_STRING,'TOGGLESPELLBOOK')
+    gw_microButtonHookToolTip(GwMicroButtonSpellbookMicroButton,SPELLBOOK_ABILITIES_BUTTON,'TOGGLESPELLBOOK')
     gw_microButtonHookToolTip(GwMicroButtonTalentMicroButton,TALENTS_BUTTON,'TOGGLETALENTS')
     gw_microButtonHookToolTip(GwMicroButtonAchievementMicroButton,ACHIEVEMENT_BUTTON,'TOGGLEACHIEVEMENT')
     gw_microButtonHookToolTip(GwMicroButtonQuestLogMicroButton,QUESTLOG_BUTTON,'TOGGLEQUESTLOG')
