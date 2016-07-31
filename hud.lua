@@ -323,6 +323,7 @@ local eName = experiencebar:GetName()
     experiencebar:RegisterEvent("UPDATE_FACTION");
     experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
     experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE");
+    experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING");
     
     
     experiencebar:SetScript('OnEnter',  show_experiencebar_tooltip)
@@ -342,7 +343,11 @@ function show_experiencebar_tooltip()
     
     local valCurrent = UnitXP('Player')
     local valMax = UnitXPMax('Player')
-    local tooltipText = 'Experience: '..valCurrent.." / "..valMax
+    local tooltipText = 'Experience '..comma_value(valCurrent).." / "..comma_value(valMax)..'  ('..math.floor((valCurrent/valMax)*100) ..'%)'
+    local rested = GetXPExhaustion()
+    if rested~=nil then
+         GameTooltip:AddLine('Rested '..comma_value(rested)..'  ('..math.floor((rested/valMax)*100)..'%)',1,1,1)
+    end
     
     
     UIFrameFadeOut(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),0)
@@ -357,12 +362,14 @@ function show_experiencebar_tooltip()
         local artifactVal = artifactXP/xpForNextPoint
         
         
-        tooltipText = tooltipText..'\nArtifact: '..artifactXP..' / '..xpForNextPoint
+        GameTooltip:AddLine('\nArtifact: '..artifactXP..' / '..xpForNextPoint,1,1,1)
     end
     
     GameTooltip:SetOwner(_G['GwExperienceFrame'], "ANCHOR_CURSOR");
     GameTooltip:ClearLines();
+    GameTooltip:AddLine('Experience',1,1,1)
     GameTooltip:AddLine(tooltipText,1,1,1)
+  
     GameTooltip:Show() 
 end
 
@@ -387,6 +394,13 @@ end
 
 function update_experiencebar_data(self,event)
     
+    if event=='PLAYER_UPDATE_RESTING' then
+            if IsResting() then
+              
+            end
+        return
+    end
+    
     local showArtifact = HasArtifactEquipped()
     
     local valCurrent = UnitXP('Player')
@@ -395,9 +409,15 @@ function update_experiencebar_data(self,event)
     
     local level = UnitLevel('Player')
     local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel('Player') +1)
+    local rested = GetXPExhaustion()
     local showBar1 = false
     local showBar2 = false
 
+    if rested==nil then
+        rested = 0
+    end
+    rested = rested / valMax
+    
     if level<Nextlevel then
         showBar1 = true
     end
@@ -458,6 +478,10 @@ function update_experiencebar_data(self,event)
             ExperienceBarSpark:SetWidth(math.max(8,math.min(9, _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress']) ))
             
             _G['GwExperienceFrameBar']:SetValue(animations['experiencebarAnimation']['progress'])
+           
+            _G['GwExperienceFrameBarRested']:SetValue(rested)
+            _G['GwExperienceFrameBarRested']:SetPoint('LEFT',_G['GwExperienceFrameBar'],'LEFT',_G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'],0 )
+      
             ExperienceBarSpark:SetPoint('LEFT', _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'] -8,0)
            
     end)
@@ -664,7 +688,11 @@ function create_micro_button(key)
     return mf
 end
 
-    local CUSTOM_MICRO_BUTTONS={}
+local CUSTOM_MICRO_BUTTONS={}
+local gw_latencyToolTipUpdate = 0
+local gw_frameRate = 0
+
+local GW_BAG_MICROBUTTON_STRING = 'Inventory'
 
 function create_micro_menu()
     
@@ -719,8 +747,90 @@ function create_micro_menu()
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED");
     
+    
+--    gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton,'','')
+    
+    gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton,CHARACTER_BUTTON,'TOGGLECHARACTER0"')
+    gw_microButtonHookToolTip(GwMicroButtonBagMicroButton,GW_BAG_MICROBUTTON_STRING,'OPENALLBAGS')
+    gw_microButtonHookToolTip(GwMicroButtonSpellbookMicroButton,GW_BAG_MICROBUTTON_STRING,'TOGGLESPELLBOOK')
+    gw_microButtonHookToolTip(GwMicroButtonTalentMicroButton,TALENTS_BUTTON,'TOGGLETALENTS')
+    gw_microButtonHookToolTip(GwMicroButtonAchievementMicroButton,ACHIEVEMENT_BUTTON,'TOGGLEACHIEVEMENT')
+    gw_microButtonHookToolTip(GwMicroButtonQuestLogMicroButton,QUESTLOG_BUTTON,'TOGGLEQUESTLOG')
+    gw_microButtonHookToolTip(GwMicroButtonGuildMicroButton,GUILD,'TOGGLEGUILDTAB')
+    gw_microButtonHookToolTip(GwMicroButtonLFDMicroButton,DUNGEONS_BUTTON,'TOGGLEGROUPFINDER')
+    gw_microButtonHookToolTip(GwMicroButtonCollectionsMicroButton,COLLECTIONS,'TOGGLECOLLECTIONS')
+
+    gw_microButtonHookToolTip(GwMicroButtonEJMicroButton,ADVENTURE_JOURNAL,'TOGGLEENCOUNTERJOURNAL')
+    gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton,HELP_BUTTON,'')
+
+    
+    
+    
+    GwMicroButtonMainMenuMicroButton:SetScript('OnEnter', function() 
+        
+        GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate',gw_latencyInfoToolTip)    
+        GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_CURSOR",0,ANCHOR_BOTTOMLEFT); 
+  
+    end)
+    
+     GwMicroButtonMainMenuMicroButton:SetScript('OnLeave', function() 
+        GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate',nil)
+        GameTooltip:Hide()
+    end)
+    
+    
     gw_update_talentMicrobar()
 end
+
+
+function gw_microButtonHookToolTip(frame,text,action)
+    
+    frame:SetScript('OnEnter', function() 
+
+       gw_setToolTipForShow(frame,text,action)
+       gw_setToolTipForShow(frame,text,action)
+      end)
+    frame:SetScript('OnLeave', function() 
+        GameTooltip:Hide()
+    end)
+    
+end
+
+function gw_setToolTipForShow(frame,text,action)
+    GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMLEFT",16 + (GameTooltip:GetWidth()/2),-10); 
+    GameTooltip:ClearLines();
+    GameTooltip:AddLine(gw_getMicroButtonToolTip(text,action),1,1,1)
+    GameTooltip:Show()
+end
+
+function gw_getMicroButtonToolTip(text,action)
+   	if ( GetBindingKey(action) ) then
+		return text.." |cffa6a6a6("..GetBindingText(GetBindingKey(action))..")"..FONT_COLOR_CODE_CLOSE;
+	else
+		return text;
+	end 
+end
+
+function gw_latencyInfoToolTip()
+
+    if gw_latencyToolTipUpdate>GetTime() then return end
+    gw_latencyToolTipUpdate = GetTime() + 0.5
+    
+    gw_frameRate = intRound(GetFramerate());
+    local down, up, lagHome, lagWorld = GetNetStats();
+   
+    GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_BOTTOMLEFT",16 + (GameTooltip:GetWidth()/2),-10); 
+    GameTooltip:ClearLines();
+    GameTooltip:AddLine(MAINMENU_BUTTON,1,1,1)
+    GameTooltip:AddLine('FPS '..gw_frameRate,0.8,0.8,0.8)
+    GameTooltip:AddLine('Latency (Home) '..lagHome,0.8,0.8,0.8)
+    GameTooltip:AddLine('Latency (World) '..lagWorld,0.8,0.8,0.8)
+    
+    GameTooltip:Show()
+  
+    
+end
+
 
 function gw_update_talentMicrobar()
     

@@ -86,6 +86,18 @@
                             </Layer>
                         </Layers>
                     </Frame>
+                    <StatusBar name="$parentRested"  defaultValue="1" frameLevel="3"  minValue="0" maxValue="1">
+                        <Size x="1" y="8" />
+                      
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
+                            <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"/>
+                            <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
+                            <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"/>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbar" /> 
+                        <BarColor r="0.5" b="0.5" g="0" a="0.5"></BarColor>
+                    </StatusBar>
                 </Frames>
             </StatusBar>
             <StatusBar name="$parentArtifactBarCandy"  defaultValue="1" frameLevel="2"  minValue="0" maxValue="1" >
