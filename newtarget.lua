@@ -216,24 +216,24 @@ function updateAuras(thisName, unitToWatch)
             end
             local margin = indexBuffFrame:GetWidth() + 4
             local marginy = indexBuffFrame:GetWidth() + 12
-            _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][key]['icon'])
+            _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][i]['icon'])
             _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G[thisName..'BuffItemFrame'..i])
             local buffDur = '';
             local stacks = '';
-            if buffLists[unitToWatch][key]['duration']>0 then
-                buffDur = timeCount(buffLists[unitToWatch][key]['timeRemaining']);
+            if buffLists[unitToWatch][i]['duration']>0 then
+                buffDur = timeCount(buffLists[unitToWatch][i]['timeRemaining']);
             end
-              if buffLists[unitToWatch][key]['count']>0 then
-               stacks = buffLists[unitToWatch][key]['count'] 
+              if buffLists[unitToWatch][i]['count']>0 then
+               stacks = buffLists[unitToWatch][i]['count'] 
             end
-            indexBuffFrame.expires =buffLists[unitToWatch][key]['expires']
-            indexBuffFrame.duration =buffLists[unitToWatch][key]['duration']
+            indexBuffFrame.expires =buffLists[unitToWatch][i]['expires']
+            indexBuffFrame.duration =buffLists[unitToWatch][i]['duration']
              _G[thisName..'BuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
              _G[thisName..'BuffItemFrame'..i..'BuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint('TOPLEFT',(margin*x),(-marginy*y) + -10)
             
-            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,i); GameTooltip:Show() end)
+            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,key); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
             
             indexBuffFrame:Show()
