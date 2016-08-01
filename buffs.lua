@@ -202,7 +202,7 @@ function gw_playerUpdateDeBuffs(x,y)
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint('BOTTOMRIGHT',(-32*x),32*y)
             
-            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(unitToWatch,i); GameTooltip:Show() end)
+            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(unitToWatch,key); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
             
             indexBuffFrame:Show()
