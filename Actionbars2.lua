@@ -66,10 +66,22 @@ function gw_hideBlizzardsActionbars()
            
         end
     end    
-    for k,v in pairs(BLIZZARD_FORCE_HIDE) do
-        if v.SetScript~=nil then
-            v:SetScript('OnShow', function(self) self:Hide() end)
+    for k,object in pairs(BLIZZARD_FORCE_HIDE) do
+     
+        if object:IsObjectType('Frame') then
+            object:UnregisterAllEvents()
+            object:SetScript('OnEnter', nil)
+            object:SetScript('OnLeave', nil)
         end
+        
+        if  object:IsObjectType('Button') then
+            object:SetScript('OnClick', nil)
+        end
+        hooksecurefunc(object, 'Show', function(self)
+                self:Hide()
+            end)
+
+        object:Hide()
     end
     
 end
