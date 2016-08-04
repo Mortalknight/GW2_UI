@@ -9,6 +9,14 @@ PowerBarColorCustom['FOCUS'] = {r=240/255,g=121/255,b=37/255}
 PowerBarColorCustom['FURY'] = {r=166/255,g=37/255,b=240/255}
 
 
+
+GW_DEBUFF_COLOR ={}
+GW_DEBUFF_COLOR['Curse'] ={r= 97/255, g= 72/255,b= 177/255}
+GW_DEBUFF_COLOR['Disease'] ={r= 177/255, g= 114/255,b= 72/255}
+GW_DEBUFF_COLOR['Magic'] ={r= 72/255, g= 94/255,b= 177/255}
+GW_DEBUFF_COLOR['Poison'] ={r= 94/255, g= 177/255,b= 72/255}
+
+
 FACTION_BAR_COLORS = {
     [1] = {r = 0.8, g = 0.3, b = 0.22},
     [2] = {r = 0.8, g = 0.3, b = 0.22},

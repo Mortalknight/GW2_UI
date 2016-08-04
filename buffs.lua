@@ -175,16 +175,20 @@ function gw_playerUpdateDeBuffs(x,y)
             
             if indexBuffFrame==nil then
                 indexBuffFrame = CreateFrame('Frame', 'playerDeBuffItemFrame'..i,_G['GwPlayerAuraFrame'],'GwDeBuffIcon');
-                indexBuffFrame:SetParent(_G['GwPlayerAuraFrame']);
-                
+                indexBuffFrame:SetParent(_G['GwPlayerAuraFrame']);                
                 _G['playerDeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
+                
+                 if DebuffLists[unitToWatch][i]['dispelType']~=nil then
+                    _G['playerDeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[dispelType].r, GW_DEBUFF_COLOR[dispelType].g, GW_DEBUFF_COLOR[dispelType].b)
+                end
                 _G['playerDeBuffItemFrame'..i..'Cooldown']:SetDrawEdge(0)
                 _G['playerDeBuffItemFrame'..i..'Cooldown']:SetDrawSwipe(1)
-                _G['playerDeBuffItemFrame'..i..'Cooldown']:SetReverse(1)
+                _G['playerDeBuffItemFrame'..i..'Cooldown']:SetReverse(false)
                 _G['playerDeBuffItemFrame'..i..'Cooldown']:SetHideCountdownNumbers(true)
+                
             end 
             _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(DebuffLists[unitToWatch][i]['icon'])
-            _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetParent(_G['playerDeBuffItemFrame'..i])
+        --    _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetParent(_G['playerDeBuffItemFrame'..i])
             local buffDur = '';
             local stacks  = '';
             if DebuffLists[unitToWatch][i]['count']>0 then
@@ -199,8 +203,12 @@ function gw_playerUpdateDeBuffs(x,y)
 
             _G['playerDeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
             _G['playerDeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
+            
+            
+            _G['playerDeBuffItemFrame'..i..'Cooldown']:SetCooldown(DebuffLists[unitToWatch][i]['expires'] - DebuffLists[unitToWatch][i]['duration'], DebuffLists[unitToWatch][i]['duration'])
+            
             indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint('BOTTOMRIGHT',(-32*x),32*y)
+            indexBuffFrame:SetPoint('BOTTOMRIGHT',(-32*x),42*y)
             
             indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(unitToWatch,key); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)

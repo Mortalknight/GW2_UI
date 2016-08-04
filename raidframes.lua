@@ -155,6 +155,9 @@ function gw_raidframe_OnEvent(self,event,unit)
     if event=='PLAYER_TARGET_CHANGED' then
        gw_highlight_target_raidframe()
     end
+    if event=='UNIT_AURA' then
+       gw_raidframes_updateAuras(self)
+    end
     
 
     if event=='PARTY_CONVERTED_TO_RAID' and GROUPD_TYPE=='PARTY' then
@@ -292,7 +295,126 @@ function gw_update_raidframe_awayData(self)
         self.healthbar:SetStatusBarColor(r,g,b)
     end
      
+end
 
+
+function gw_raidframes_updateAuras(self)
+    local x = 0;
+    local y = 0;
+    for i=1,40 do
+        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff(self.unit,i,'PLAYER|RAID')
+        local indexBuffFrame = _G['Gw'..self:GetName()..'BuffItemFrame'..i]
+        if UnitBuff(self.unit,i,'PLAYER|RAID') and caster=='player' then
+        
+            
+
+            if indexBuffFrame==nil then
+                indexBuffFrame = CreateFrame('Button','Gw'..self:GetName()..'BuffItemFrame'..i,self,'GwBuffIconBig');
+                indexBuffFrame:SetParent(self);
+                indexBuffFrame:SetFrameStrata('MEDIUM');
+                indexBuffFrame:SetSize(14,14)
+            end
+            local margin = -indexBuffFrame:GetWidth() + -2
+            local marginy = indexBuffFrame:GetWidth() + 2
+            _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetTexture(icon)
+            --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
+      
+            _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffDuration']:SetText('')
+            _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffStacks']:SetText('')
+            indexBuffFrame:ClearAllPoints()
+            indexBuffFrame:SetPoint('BOTTOMRIGHT',-3 + (margin*x),3+ (marginy*y))
+                 
+            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);       GameTooltip:ClearLines();   GameTooltip:SetUnitBuff(self.unit,i,'PLAYER|RAID'); GameTooltip:Show() end)
+            indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
+                
+            indexBuffFrame:Show()
+                
+            x=x+1
+            if (margin*x)<(-(self:GetWidth()/2)) then
+                y=y+1
+                x=0
+            end
+               
+        else
+            
+            if indexBuffFrame~=nil then
+                indexBuffFrame:Hide() 
+                indexBuffFrame:SetScript('OnEnter',nil)
+                indexBuffFrame:SetScript('OnClick',nil) 
+                indexBuffFrame:SetScript('OnLeave',nil) 
+            end
+        
+        end
+    end
+    gw_raidframes_updateDebuffs(self)
+end
+function gw_raidframes_updateDebuffs(self)
+    local x = 0;
+    local y = 0;
+    for i=1,40 do
+       local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
+         local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
+        if UnitDebuff(self.unit,i)  then
+            
+               
+    
+                if indexBuffFrame==nil then
+                    indexBuffFrame = CreateFrame('Button','Gw'..self:GetName()..'DeBuffItemFrame'..i,self,'GwDeBuffIcon');
+                    indexBuffFrame:SetParent(self);
+                    indexBuffFrame:SetFrameStrata('MEDIUM');
+                    indexBuffFrame:SetSize(16,16)
+                end
+                local margin = indexBuffFrame:GetWidth() + 2
+                local marginy = indexBuffFrame:GetWidth() + 2
+                
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Icon']:SetPoint('TOPLEFT',indexBuffFrame,'TOPLEFT',1,-1)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Icon']:SetPoint('BOTTOMRIGHT',indexBuffFrame,'BOTTOMRIGHT',-1,1)
+                
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(icon)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetDrawEdge(0)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetDrawSwipe(0)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetReverse(1)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetHideCountdownNumbers(true)
+               
+                    _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
+                if dispelType~=nil then
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[dispelType].r, GW_DEBUFF_COLOR[dispelType].g, GW_DEBUFF_COLOR[dispelType].b)
+                end
+            --
+                
+                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
+             --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
+                if count>0 then
+                    stacks =count
+                end
+                
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText('')
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
+                indexBuffFrame:ClearAllPoints()
+                indexBuffFrame:SetPoint('BOTTOMLEFT',3 + (margin*x),3+ (marginy*y))
+             
+                indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);       GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,i); GameTooltip:Show() end)
+                indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
+                
+                indexBuffFrame:Show()
+                
+                x=x+1
+                if (margin*x)<(-(self:GetWidth()/2)) then
+                    y=y+1
+                    x=0
+                end
+               
+             else
+            
+            if indexBuffFrame~=nil then
+                indexBuffFrame:Hide() 
+                indexBuffFrame:SetScript('OnEnter',nil)
+                indexBuffFrame:SetScript('OnClick',nil) 
+                indexBuffFrame:SetScript('OnLeave',nil) 
+            end
+        
+        end
+    end
     
 end
 

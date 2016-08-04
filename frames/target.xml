@@ -315,7 +315,6 @@
             <Layer level="BACKGROUND">
                 <Texture name="backdrop"  file="Interface\AddOns\GW2_UI\textures\spelliconempty" >
                     <Size x="20" y="20"/>
-   
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
@@ -348,12 +347,24 @@
     <Frame  name="GwDeBuffIcon" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="32" y="32"/>
         <Layers>
-            <Layer  Level="ARTWORK">
+            <Layer Level="ARTWORK" textureSubLevel="0">
+                 <Texture name="$parentOutline" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
+                  
+                    <Color r="0" b="0" g="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+    				</Anchors>
+                </Texture>
+            </Layer>
+            <Layer  Level="ARTWORK" textureSubLevel="-1">
                 <Texture name="$parentDeBuffBackground"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
                     <Size x="24" y="24"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y=""/>
+                         <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+   
     				</Anchors>
                 </Texture>
             </Layer>
@@ -366,7 +377,8 @@
                 
                 <Size x="28" y="28"/>
                 <Anchors>
-                    <Anchor point="CENTER" x="0" y=""/>
+                    <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="1" y="-1"/>
+                    <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">                    
@@ -380,9 +392,10 @@
                 </Layers>
             </Cooldown>
             <Frame name="$parentIcon" frameStrata="HIGH" toplevel="true">                
-                <Size x="24" y="24"/>
+              
                 <Anchors>
-                    <Anchor point="CENTER" x="0" y=""/>
+                    <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="3" y="-3"/>
+                    <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
@@ -391,20 +404,33 @@
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
     
                             <Anchors>
-                                <Anchor point="CENTER" x="0" y=""/>
+                                <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"/>
+                                <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                             </Anchors>
                         </Texture>
                             <FontString name="$parentBuffStacks"  fontSize="14" text="unknown"  inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="100" y="12"/>
                             <Anchors>
-                                <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"/>
-                            </Anchors>
+                                <Anchor point="BOTTOMLEFT"  relativePoint="BOTTOMLEFT" x="1" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+    				    </Anchors>
                         </FontString>
                     </Layer>
                 </Layers>
             </Frame>
             
         </Frames>
+        <Scripts>
+            <OnLoad>
+                local mName = self:GetName()
+                _G[mName..'IconBuffStacks']:SetFont(UNIT_NAME_FONT,14,'OUTLINE')
+                _G[mName..'IconBuffStacks']:SetTextColor(255,255,255)
+                
+                
+                _G[mName..'CooldownBuffDuration']:SetFont(UNIT_NAME_FONT,14)
+                _G[mName..'CooldownBuffDuration']:SetTextColor(255,255,255)
+            </OnLoad>
+        </Scripts>
     </Frame>
     
     <Button name="GwTargetFrameTemplateDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
