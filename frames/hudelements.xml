@@ -447,7 +447,8 @@
                     <Size x="26" y="26"/>
    
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"/>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -457,7 +458,8 @@
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
    
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y=""/>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
     				</Anchors>
                 </Texture>
                 <FontString name="$parentBuffDuration"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
@@ -469,7 +471,8 @@
                 <FontString name="$parentBuffStacks"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="32"/>
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="-10"/>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>

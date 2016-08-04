@@ -270,6 +270,38 @@
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
                                 </OnLoad>
                             </Scripts>
+                        </Frame>  
+                        <Frame hidden="true" name="GwSettingsGroupframe">
+                            <Size x="660" y="480"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentHeader" text="Group" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentSub" text="Edit group modules, for more customization."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </layer>
+                        </Layers>
+                            <Scripts>
+                                <OnLoad>
+                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                    _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                    _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+                                </OnLoad>
+                            </Scripts>
                         </Frame>
                     
                     </Frames>                    
@@ -321,6 +353,9 @@
              </OnLeave>
         </Scripts>
     </Button>
+    
+
+    
     <Button name="GwOptionBox" frameStrata="HIGH"  virtual="true">
         <Size x="244" y="40"></Size>
         <Anchors>
@@ -359,6 +394,49 @@
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-16"></Anchor>
                 </Anchors>
             </CheckButton>
+        </Frames>
+    </Button> 
+    <Button name="GwOptionBoxSlider" frameStrata="HIGH"  virtual="true">
+        <Size x="244" y="40"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+       
+            <Layer level="OVERLAY" textureSubLevel="2">
+            <FontString name="$parentTitle" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <Size x="256" y="25"></Size>
+                        <Color r="1" b="1" g="1"></Color>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="5" y="0"></Anchor>
+                        </Anchors>
+                    </FontString>
+                <FontString name="$parentSub" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <Size x="256" y="25"></Size>
+                        <Color r="1" b="1" g="1"></Color>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="5" y="-17"></Anchor>
+                        </Anchors>
+                    </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Slider name="$parentSlider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+                <Size x="244" y="10"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                </Anchors>
+                <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
+                <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background"
+                          edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
+                    <EdgeSize val="8"/>
+                    <TileSize val="8"/>
+                    <BackgroundInsets left="3" right="3" top="6" bottom="6"/>
+                </Backdrop>
+                <ThumbTexture name="$parentThumb" file="Interface\Buttons\UI-SliderBar-Button-Horizontal">
+                    <Size x="32" y="32"/>
+                </ThumbTexture>
+    </Slider>
         </Frames>
     </Button>
     <Button name="GwStandardButton" text="" virtual="true">

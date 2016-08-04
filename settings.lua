@@ -83,6 +83,22 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Hide Empty Slots','Hide empty action bar slots','HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
     addOption('Toggle Compass','Toggle the quest tracker compass','SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
     
+    create_settings_cat('Group','Edit group settings','GwSettingsGroupframe',4)
+    
+    addOption('Raid Styled Party','Use raid-style party frames','RAID_STYLE_PARTY','GwSettingsGroupframe')
+    
+    addOption('Class color','Use class color insted of class icons','RAID_CLASS_COLOR','GwSettingsGroupframe')
+    
+    addOptionSlider('Raid Width','','RAID_WIDTH','GwSettingsGroupframe',function()
+            if gwGetSetting('GROUP_FRAMES')==true then
+                gw_raidframes_update_layout()   
+            end
+    end,55,200)
+    addOptionSlider('Raid Height','','RAID_HEIGHT','GwSettingsGroupframe',function()
+            if gwGetSetting('GROUP_FRAMES')==true then
+                gw_raidframes_update_layout()   
+            end    
+    end,47,100)
     
     
     GwSettingsWindow:Hide()
@@ -128,7 +144,7 @@ function switch_settings_cat(index)
 end
 
 
-function addOption(name,desc,optionName,frameName)
+function addOption(name,desc,optionName,frameName,callback)
     
     local i = countTable(options)
 
@@ -137,6 +153,23 @@ function addOption(name,desc,optionName,frameName)
     options[i]['desc'] = desc;
     options[i]['optionName'] = optionName;
     options[i]['frameName'] = frameName;
+    options[i]['optionType'] = 'boolean';
+    options[i]['callback'] = callback;
+    
+end
+function addOptionSlider(name,desc,optionName,frameName,callback,min,max)
+    
+    local i = countTable(options)
+
+    options[i] = {}
+    options[i]['name'] = name;
+    options[i]['desc'] = desc;
+    options[i]['optionName'] = optionName;
+    options[i]['frameName'] = frameName;
+    options[i]['callback'] = callback;
+    options[i]['min'] = min;
+    options[i]['max'] = max;
+    options[i]['optionType'] = 'slider';
     
 end
 
@@ -154,8 +187,12 @@ function display_options()
             padding[v['frameName']]['x']=  box_padding
             padding[v['frameName']]['y']=-55
         end
+        optionFrameType ='GwOptionBox'
+        if v['optionType']=='slider' then
+           optionFrameType = 'GwOptionBoxSlider' 
+        end
         
-        local of =  CreateFrame('Button','GwOptionBox'..k,_G[v['frameName']],'GwOptionBox')
+        local of =  CreateFrame('Button','GwOptionBox'..k,_G[v['frameName']],optionFrameType)
         
         of:ClearAllPoints()
         of:SetPoint('TOPLEFT',padding[v['frameName']]['x'],padding[v['frameName']]['y'])
@@ -170,6 +207,20 @@ function display_options()
         _G['GwOptionBox'..k..'Sub']:SetShadowColor(1,1,1,0)
 
         
+        
+        if v['optionType']=='slider' then
+             _G['GwOptionBox'..k..'Slider']:SetMinMaxValues(v['min'],v['max'])            
+             _G['GwOptionBox'..k..'Slider']:SetValue(gwGetSetting(v['optionName']))            
+             _G['GwOptionBox'..k..'Slider']:SetScript('OnValueChanged',function()
+                 
+                gwSetSetting(v['optionName'],_G['GwOptionBox'..k..'Slider']:GetValue())
+                if v['callback']~=nil then
+                    v['callback']()         
+                          
+                end
+            end)       
+        end
+        if v['optionType']=='boolean' then
         _G['GwOptionBox'..k..'CheckButton']:SetChecked(gwGetSetting(v['optionName']))
         _G['GwOptionBox'..k..'CheckButton']:SetScript('OnClick',function()
             
@@ -178,8 +229,13 @@ function display_options()
                 toSet = true
             end
             gwSetSetting(v['optionName'],toSet)
+                    
+            if v['callback']~=nil then
+               v['callback']()         
+            end
         
-        end)
+            end)
+        end
         
         
 

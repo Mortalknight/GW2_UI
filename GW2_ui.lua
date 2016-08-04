@@ -25,6 +25,7 @@ GW_DEFAULT['CASTINGBAR_ENABLED'] = true
 GW_DEFAULT['HIDEACTIONBAR_BACKGROUND_ENABLED'] = false
 GW_DEFAULT['SHOW_QUESTTRACKER_COMPASS'] = true
 GW_DEFAULT['CLASS_POWER'] = true
+GW_DEFAULT['GROUP_FRAMES'] = true
 
 GW_DEFAULT['HUD_SPELL_SWAP'] = true
 
@@ -33,6 +34,8 @@ GW_DEFAULT['BAG_ITEM_SIZE'] = 45
 GW_DEFAULT['BANK_ITEM_SIZE'] = 45
 
 
+GW_DEFAULT['RAID_CLASS_COLOR'] = false
+GW_DEFAULT['RAID_STYLE_PARTY'] = false
 
     
 GW_DEFAULT['target_HEALTH_VALUE_ENABLED'] = false
@@ -115,6 +118,7 @@ GW_DEFAULT['focus_pos']['point'] = 'CENTER'
 GW_DEFAULT['focus_pos']['relativePoint'] = 'CENTER'
 GW_DEFAULT['focus_pos']['xOfs'] =  -350
 GW_DEFAULT['focus_pos']['yOfs']  = 0
+
     
 GW_DEFAULT['focustarget_pos'] ={}
 GW_DEFAULT['focustarget_pos']['point'] = 'CENTER'
@@ -169,6 +173,17 @@ GW_DEFAULT['MultiBarLeft']['size'] = 38
 GW_DEFAULT['MultiBarLeft']['margin'] = 2
 GW_DEFAULT['MultiBarLeft']['ButtonsPerRow'] = 1
 GW_DEFAULT['MultiBarLeft']['hideDefaultBackground'] = true
+
+
+GW_DEFAULT['raid_pos'] ={}
+GW_DEFAULT['raid_pos']['point'] = 'LEFT'
+GW_DEFAULT['raid_pos']['relativePoint'] = 'LEFT'
+GW_DEFAULT['raid_pos']['xOfs'] =  0
+GW_DEFAULT['raid_pos']['yOfs']  = 0
+
+GW_DEFAULT['RAID_WIDTH'] = 55
+GW_DEFAULT['RAID_HEIGHT'] = 47
+
 
 
 
@@ -398,6 +413,51 @@ function gw_button_leave(self)
     end)
 end
 
+function gwBar(self,value)
+
+    if self==nil then return end
+    local barWidth = self:GetWidth()
+    local sparkWidth = self.spark:GetWidth()
+    
+    addToAnimation(self.animationName,self.animationValue,value,GetTime(),0.2,function()
+            
+        local snap = (animations[self.animationName]['progress']*100)/5
+            
+        local round_closest = 0.05 * snap
+  
+        local spark_min =  math.floor(snap)
+        local spark_max =  math.ceil(snap) 
+        local spark_current = snap
+
+        local spark_prec = spark_current - spark_min
+                
+                            
+        local spark = math.min(barWidth - sparkWidth,math.floor(barWidth*round_closest) - math.floor(sparkWidth*spark_prec))
+        local bI = 17 - math.max(1,intRound(16 * spark_prec))
+
+        self.spark:SetTexCoord(
+        bloodSpark[bI].left,
+        bloodSpark[bI].right,
+        bloodSpark[bI].top,
+        bloodSpark[bI].bottom)
+
+        self:SetValue(round_closest)
+        self.spark:ClearAllPoints()
+        self.spark:SetPoint('LEFT',spark,0)
+            
+            
+    end)            
+        self.animationValue = value;
+end
+function gw_setClassIcon(self,class)
+  
+  self:SetTexCoord(
+        GW_CLASS_ICONS[class].l,
+        GW_CLASS_ICONS[class].r,
+        GW_CLASS_ICONS[class].t,
+        GW_CLASS_ICONS[class].b
+    )
+end
 
 function isnan(n) return tostring(n) == '-1.#IND' end
 function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCallback)
@@ -617,6 +677,9 @@ l:SetScript('OnEvent',function(self,event,name)
         
         -- create new microbuttons
         create_micro_menu()
+        
+        gw_register_partyframes()
+        gw_register_raidframes()
         
     
         

@@ -45,7 +45,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
     targetF:SetAttribute("unit", unitToWatch);
    -- targetF:SetFrameStrata('HIGH');
 
-    targetF:SetAttribute("*type1", unitToWatch)
+    targetF:SetAttribute("*type1", 'target')
     targetF:SetAttribute("*type2", "togglemenu")
     targetF:SetAttribute("unit", unitToWatch)
     RegisterUnitWatch(targetF);

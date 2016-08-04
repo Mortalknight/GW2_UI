@@ -16,6 +16,8 @@ frames/settings.xml
 frames/questview.xml
 frames/bag.xml
 frames/questtracker.xml
+frames/party.xml
+frames/raidframes.xml
 
 
 GW2_ui.lua
@@ -30,7 +32,7 @@ map.lua
 
 
 castingbar.lua
-raidframes.lua
+
 
 questview.lua
 
@@ -53,3 +55,6 @@ classpowers.lua
 
 bag.lua
 bank.lua
+
+party.lua
+raidframes.lua
