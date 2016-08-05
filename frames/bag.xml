@@ -502,18 +502,23 @@
                     </Anchors>
                 </Texture>
                 <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
-                    <Size x="512" y="40"></Size>
+                    <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right">
+                    <Size x="512" y="64"></Size>
+                    <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
 
                 <Texture name="$parentFooter" file="Interface\AddOns\GW2_UI\textures\bag\bagfooter">
-                    <Size x="512" y="40"></Size>
+                    <Size x="512" y="64"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
-                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="2" />
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="2" />
                     </Anchors>
                 </Texture>
                 <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
@@ -525,22 +530,7 @@
                 </Texture>               
                 
             </Layer>
-            <Layer textureSubLevel="2">
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagborder">
-                    <Size x="622" y="50"></Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-80" y="-3" />
-                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="80" y="-3" />
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagborder">
-                    <Size x="622" y="50"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-55" y="5" />
-                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="55" y="5" />
-                    </Anchors>
-                </Texture>
-            </Layer>
+    
             <Layer textureSubLevel="3">
                 <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagicon">
                     <Size x="128" y="128"></Size>

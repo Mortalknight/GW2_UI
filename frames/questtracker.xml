@@ -132,6 +132,12 @@
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
                     </Anchors>
+                </FontString>  
+                <FontString name="$parentDifficulty"  parentKey="Difficulty"  text="" justifyH="RIGHT">
+                     <Size x="150" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10"></Anchor>
+                    </Anchors>
                 </FontString>
                 <FontString name="$parentQuestSubHeader" text="Quest name" justifyH="LEFT">
                      <Size x="300" y="30"></Size>
@@ -159,7 +165,7 @@
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
                             </Anchors>
-                            <TexCoords left="0" right="1" top="0.50" bottom="0.75" />
+                            <TexCoords left="0" right="0.5" top="0.50" bottom="0.75" />
                             <Color r="1" b="0.6" g="0.6"></Color>
                             <Size x="20" y="20"></Size>
                         </Texture>
@@ -206,6 +212,7 @@
                     _G[selfName..'UntrackButton']:Hide()
                 end
             </OnLeave>
+      
         </Scripts>
     </Button>
     <Frame name="GwQuesttrackerObjectiveNormal" parent="GwQuestTracker" virtual="true" >

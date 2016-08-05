@@ -34,6 +34,11 @@ function gw_register_raidframes()
             UnregisterUnitWatch(_G['GwCompactparty'..i])
             _G['GwCompactparty'..i]:Hide()
         end
+        return
+    end
+    if not UnitExists('party1') then
+         UnregisterUnitWatch(_G['GwCompactplayer'])
+        _G['GwCompactplayer']:Hide()
     end
     
 end
@@ -86,12 +91,12 @@ function gw_toggle_partyframes_for_use(b)
     
     if b==true then
         if gwGetSetting('RAID_STYLE_PARTY') then
-            RegisterUnitWatch(_G['GwCompactplayer']) 
-                RegisterUnitWatch(frame);
+                RegisterUnitWatch(_G['GwCompactplayer']) 
                 _G['GwCompactplayer']:Show()
             for i=1,4 do
                 RegisterUnitWatch(_G['GwCompactparty'..i]) 
                 _G['GwCompactparty'..i]:Show()
+               
             end
         end
         gw_toggle_partyRaid(true)
@@ -106,6 +111,23 @@ function gw_toggle_partyframes_for_use(b)
         end
     end
     
+    
+end
+
+function gw_unhookPlayer_raidframe()
+    
+    if InCombatLockdown() then return end
+    if IsInRaid() then return end
+    
+    if IsInGroup() then
+
+        _G['GwCompactplayer']:Show()
+        RegisterUnitWatch(_G['GwCompactplayer'])
+    else
+        
+        UnregisterUnitWatch(_G['GwCompactplayer'])
+        _G['GwCompactplayer']:Hide()
+    end
     
 end
 
@@ -139,6 +161,8 @@ function gw_raidframe_OnEvent(self,event,unit)
     
     if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event=='GROUP_ROSTER_UPDATE' or event=='RAID_ROSTER_UPDATE' then
         
+        
+        
         if IsInRaid()==false and GROUPD_TYPE=='RAID' then
             gw_toggle_partyframes_for_use(true)
             GROUPD_TYPE='PARTY'
@@ -147,6 +171,8 @@ function gw_raidframe_OnEvent(self,event,unit)
             gw_toggle_partyframes_for_use(false)
             GROUPD_TYPE='RAID'
         end
+        
+        gw_unhookPlayer_raidframe()
         
         gw_update_raidframeData(self)
         gw_raidframes_update_layout()
@@ -269,7 +295,7 @@ function gw_update_raidframe_awayData(self)
        
     else
         self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
-        if self.classicon:GetTexture()==nil then
+        if self.classicon:GetTexture()==nil and  self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead' then
             self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons')
         end
     end

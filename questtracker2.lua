@@ -299,11 +299,34 @@ function gw_update_questobjectives(QuestWatchIndex, numObjectives, questID,quest
    gw_update_questitems(questLogIndex,QuestWatchIndex)
 end
 
+function gw_check_raid()
+    name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize = GetInstanceInfo()
+    
+    if name~=nil and instanceType=='raid' then
+        local i = countTable(GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS)+1
+    
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i] ={}
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['TITLE'] = name
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questID'] = '0'
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questLogIndex'] = 0
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['numObjectives'] = 0
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isComplete'] = false
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isTask'] = false
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isOnMap'] = true
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['flags'] = flags
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['subHeader'] = stageDescription
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['GW_TYPE'] = 'SCENARIO'
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES']={}
+        
+    end
+
+end
 
 function gw_check_senario()
     local scenarioName, currentStage, numStages, flags, _, _, completed, xp, money = C_Scenario.GetInfo();
     if ( numStages == 0 ) then
-		return
+		gw_check_raid()
+        return
 	end
 
 
@@ -450,7 +473,10 @@ function gw_display_questtracker_layout()
         QUEST_CONTAINER_FRAME:SetPoint('TOPRIGHT',GW_TRACKER_PARENT_FRAMES[v['GW_TYPE']],'TOPRIGHT',0,-USED_HEIGHT[v['GW_TYPE']])
         
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetFont(DAMAGE_TEXT_FONT,14)
-        _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetShadowOffset(1,-1)
+        _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetShadowOffset(1,-1)   
+        
+        _G[QUEST_CONTAINER_FRAME:GetName()].Difficulty:SetFont(DAMAGE_TEXT_FONT,14)
+        _G[QUEST_CONTAINER_FRAME:GetName()].Difficulty:SetShadowOffset(1,-1)
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetTextColor(GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].r,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].g,GW_QUESTTRACKER_TYPE_COLORS[v['GW_TYPE']].b)
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestName']:SetText(v['TITLE'])
         
@@ -468,6 +494,9 @@ function gw_display_questtracker_layout()
         _G[QUEST_CONTAINER_FRAME:GetName()..'UntrackButton']:Hide()
         _G[QUEST_CONTAINER_FRAME:GetName()].questType = v['GW_TYPE']
         _G[QUEST_CONTAINER_FRAME:GetName()].questLogIndex = v['questLogIndex']
+        
+        
+        _G[QUEST_CONTAINER_FRAME:GetName()].Difficulty:SetText( gw_getSenarioString(v))
         
         
         if ( IsQuestComplete(v['questID']) and GetQuestLogIsAutoComplete(v['questLogIndex']) ) then
@@ -688,6 +717,20 @@ function gw_findPOI()
     end
     GwQuestTrackerRadarSubString:SetText('')
 end
+
+function gw_getSenarioString(data)
+    if data==nil then return '' end
+    if data['GW_TYPE']~='SCENARIO' then return '' end
+    
+    name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize = GetInstanceInfo()
+    
+    if difficultyName~=nil then 
+        return difficultyName
+    end
+    
+    return ''
+end
+
 function gw_display_suggested()
     local suggested = {}
 	   C_AdventureJournal.GetSuggestions(suggested);

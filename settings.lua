@@ -114,10 +114,16 @@ function create_settings_cat(name,desc,frameName,icon)
 
     local f = CreateFrame('Button','GwSettingsLabel'..i,UIParent,'GwSettingsLabel')
     f:SetPoint('TOPLEFT',-40,-32+(-40*i))
-    _G['GwSettingsLabel'..i..'Texture']:SetTexCoord(0,1,0.25*icon,0.25*(icon+1))
+    
+    
+    _G['GwSettingsLabel'..i..'Texture']:SetTexCoord(0,0.5,0.25*icon,0.25*(icon+1))
+    if icon>3 then
+        icon = icon - 4
+        _G['GwSettingsLabel'..i..'Texture']:SetTexCoord(0.5,1,0.25*icon,0.25*(icon+1))
+    end
     
     f:SetScript('OnEnter',function() 
-        GameTooltip:SetOwner(f, "ANCHOR_CURSOR"); GameTooltip:ClearLines();  GameTooltip:SetText(name..'\n'..desc) GameTooltip:Show()     
+        GameTooltip:SetOwner(f, "ANCHOR_LEFT",0,-40); GameTooltip:ClearLines();  GameTooltip:AddLine(name,1,1,1)  GameTooltip:AddLine(desc,1,1,1) GameTooltip:Show()     
     end)
     f:SetScript('OnLeave',function() 
         GameTooltip:Hide()  
