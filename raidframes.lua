@@ -145,8 +145,8 @@ function gw_raidframe_OnEvent(self,event,unit)
     end
     
     if event=='UNIT_ABSORB_AMOUNT_CHANGED' and unit==self.unit then
-        local healthMax = UnitHealthMax(unitToWatch)
-        local absorb = UnitGetTotalAbsorbs(unitToWatch)
+        local healthMax = UnitHealthMax(self.unit)
+        local absorb = UnitGetTotalAbsorbs(self.unit)
     
         local absorbPrecentage = 0
         
@@ -237,7 +237,7 @@ function gw_update_raidframeData(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrec = 0
-    local absorb = UnitGetTotalAbsorbs(unitToWatch)
+    local absorb = UnitGetTotalAbsorbs(self.unit)
     local absorbPrecentage = 0
         
     if healthMax>0 then

@@ -55,26 +55,17 @@ function registerNewUnitFrame(unitToWatch, frameType)
     
     local dropdown = nil;
     if unitToWatch=='target' then
-        dropdown = TargetFrameDropDown
         
         TargetFrame:SetScript("OnEvent", nil);
         TargetFrame:Hide();   
         
     end
-     if unitToWatch=='focus' then
-        dropdown = FocusFrameDropDown
-        
+    if unitToWatch=='focus' then
+    
         FocusFrame:SetScript("OnEvent", nil);
         FocusFrame:Hide();     
     end
     
-    if dropdown then
-        targetF:SetScript('OnMouseDown', function(self,button)
-            if button=='RightButton' then
-            ToggleDropDownMenu(1, nil, dropdown, targetF, 0, 0)
-            end	
-        end)
-    end
     
     _G[thisName.."Level"]:SetFont(UNIT_NAME_FONT,14)
     _G[thisName.."Name"]:SetFont(UNIT_NAME_FONT,14)
