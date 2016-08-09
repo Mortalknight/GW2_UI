@@ -113,4 +113,95 @@
         </Scripts>
     </Button>
     
+    
+    <Button name="GwManageGroupButton" frameStrata="LOW" toplevel="true" virtual="true" parent="UIParent">
+        <Size x="50" y="38"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-64"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons">
+                    <Size x="38" y="38"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.59375" top="0" bottom="0.2968"/>                    
+                </Texture>
+           </Layer> 
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture  parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                    <Size x="16" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="RIGHT" x="-15"></Anchor>
+                    </Anchors>
+                                
+                </Texture>
+           </Layer>
+        </Layers>
+        <Scripts>
+            <OnClick>
+                if GwGroupManage:IsShown() then
+                    GwGroupManage:Hide()
+                else
+                    GwGroupManage:Show()
+                end
+            </OnClick>
+            <OnEnter>
+                self.arrow:SetSize(21,42)
+            </OnEnter>
+            <OnLeave>
+                self.arrow:SetSize(16,32)
+            </OnLeave>
+        </Scripts>
+    </Button>
+    
+    <Frame name="GwGroupManage" hidden="true" virtual="true" parent="UIParent">
+        <Size x="245" y="100"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="50" y="-64"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+            <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Size x="245" y="100"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-10" y="10"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="10" y="-10"></Anchor>
+                </Anchors>  
+            </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                </Anchors>  
+                </Texture> 
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>  
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    
 </Ui>

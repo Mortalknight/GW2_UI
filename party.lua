@@ -12,15 +12,16 @@ local buffLists = {}
 local DebuffLists = {}
 
 
+function gw_manage_group_button()
+    CreateFrame('Button','GwManageGroupButton',UIParent,'GwManageGroupButton')
+    CreateFrame('Frame','GwGroupManage',UIParent,'GwGroupManage')
+end
+
 function gw_register_partyframes()
     
-    
+    gw_manage_group_button()
     for i=1,4 do 
-        _G['PartyMemberFrame'..i]:Hide()
-        
-        _G['PartyMemberFrame'..i]:UnregisterAllEvents()
-        _G['PartyMemberFrame'..i]:SetScript("OnEvent", nil);
-        _G['PartyMemberFrame'..i]:SetScript("OnShow",  HidePartyFrame);
+       SetCVar('useCompactPartyFrames',1)
     end
     
     if gwGetSetting('RAID_STYLE_PARTY') then
@@ -258,7 +259,7 @@ function gw_updatePartyFrameAuras(self,unit)
             if buffLists[unit][i]['duration']>0 then
                 buffDur = timeCount(buffLists[unit][i]['timeRemaining']);
                 end
-                  if buffLists[unit][i]['count']>0 then
+                  if buffLists[unit][i]['count']>1 then
                 stacks = buffLists[unit][i]['count'] 
             end
             indexBuffFrame.expires =buffLists[unit][i]['expires']

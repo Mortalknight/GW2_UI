@@ -288,7 +288,7 @@ function updateDebuffs(thisName, unitToWatch,x,y)
      
             local buffDur = '';
             local stacks  = '';
-            if DebuffLists[unitToWatch][i]['count']>0 then
+            if DebuffLists[unitToWatch][i]['count']>1 then
                stacks = DebuffLists[unitToWatch][i]['count'] 
             end
             if DebuffLists[unitToWatch][i]['duration']>0 then
@@ -299,7 +299,7 @@ function updateDebuffs(thisName, unitToWatch,x,y)
            _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetCooldown(DebuffLists[unitToWatch][i]['expires'] - DebuffLists[unitToWatch][i]['duration'], DebuffLists[unitToWatch][i]['duration'])
      
             
-            _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
+            _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText('')
             _G[thisName..'DeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint('TOPLEFT',(32*x),-32*y)

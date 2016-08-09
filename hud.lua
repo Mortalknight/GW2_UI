@@ -39,6 +39,7 @@ GW_COLOR_FRIENDLY = {
 bloodSpark ={}
 
 
+bloodSpark[0] = {left=0,right=0.125,top=0,bottom=0.5}
 bloodSpark[1] = {left=0,right=0.125,top=0,bottom=0.5}
 bloodSpark[2] = {left=0.125,right=0.125*2,top=0,bottom=0.5}
 bloodSpark[3] = {left=0.125*2,right=0.125*3,top=0,bottom=0.5}
@@ -514,12 +515,40 @@ function update_experiencebar_data(self,event)
         
   
     end
+    --[[
     
+     local m = (UIParent:GetWidth()-180)  / 10
+    for i=1,9 do
+        local rm = (m*i) +90 
+        _G['barsep'..i]:ClearAllPoints()
+        _G['barsep'..i]:SetPoint('LEFT','GwExperienceFrame','LEFT',rm ,0);
+    end
     
+    local m = (UIParent:GetWidth()-180) 
+    dubbleBarSep:SetWidth(m)
+    dubbleBarSep:ClearAllPoints()
+    dubbleBarSep:SetPoint('LEFT','GwExperienceFrame','LEFT',90,0);
+end
+    
+    ]]--
+    
+    if (valPrec - experiencebarAnimation)>0.15 then
+        
+        expFlare:Show()
+        addToAnimation('expFlare',0,1,GetTime(),1,function()
+             expFlare.texture:SetAlpha(1)
+            local prog = animations['expFlare']['progress']
+            expFlare.texture:SetRotation(lerp(0,3,prog))
+            if prog>0.75 then
+                 expFlare.texture:SetAlpha(lerp(1,0,math.sin(((prog - 0.75)/0.25) * math.pi * 0.5) ))
+            end
+                
+        end,nil,function() expFlare:Hide() end)
+    end
 
-    
-
-    
+    if experiencebarAnimation>valPrec then
+       experiencebarAnimation = 0 
+    end
     addToAnimation('experiencebarAnimation',experiencebarAnimation,valPrec,GetTime(),dif,function()
             
             ExperienceBarSpark:SetWidth(math.max(8,math.min(9, _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress']) ))
@@ -530,8 +559,17 @@ function update_experiencebar_data(self,event)
             _G['GwExperienceFrameBarRested']:SetPoint('LEFT',_G['GwExperienceFrameBar'],'LEFT',_G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'],0 )
       
             ExperienceBarSpark:SetPoint('LEFT', _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'] -8,0)
+            
+           
            
     end)
+      addToAnimation('GwExperienceFrameBarCandy',experiencebarAnimation,valPrec,GetTime(),0.3,function()
+        local prog = animations['GwExperienceFrameBarCandy']['progress']
+        _G['GwExperienceFrameBarCandy']:SetValue(prog)
+        local flarePoint = ((UIParent:GetWidth()-180) * prog) + 90
+        expFlare:SetPoint('CENTER',GwExperienceFrame,'LEFT',flarePoint,0);
+    end)
+
     experiencebarAnimation =valPrec
     
     
@@ -575,7 +613,7 @@ function update_experiencebar_data(self,event)
     end 
        
     
-    _G['GwExperienceFrameBarCandy']:SetValue(valPrec)
+    
     
     if experiencebarAnimation>valPrec then
         experiencebarAnimation = 0
@@ -585,17 +623,17 @@ function update_experiencebar_data(self,event)
 end
 
 function update_experiencebar_size()
-    local m = (UIParent:GetWidth()-128)  / 10
+    local m = (UIParent:GetWidth()-180)  / 10
     for i=1,9 do
-        local rm = (m*i) +64 
+        local rm = (m*i) +90 
         _G['barsep'..i]:ClearAllPoints()
         _G['barsep'..i]:SetPoint('LEFT','GwExperienceFrame','LEFT',rm ,0);
     end
     
-    local m = (UIParent:GetWidth()-128) 
+    local m = (UIParent:GetWidth()-180) 
     dubbleBarSep:SetWidth(m)
     dubbleBarSep:ClearAllPoints()
-    dubbleBarSep:SetPoint('LEFT','GwExperienceFrame','LEFT',64,0);
+    dubbleBarSep:SetPoint('LEFT','GwExperienceFrame','LEFT',90,0);
 end
 
 action_hud_auras = {}

@@ -183,6 +183,7 @@ GW_DEFAULT['raid_pos']['yOfs']  = 0
 
 GW_DEFAULT['RAID_WIDTH'] = 55
 GW_DEFAULT['RAID_HEIGHT'] = 47
+GW_DEFAULT['RAID_POWER_BARS'] = false
 
 
 

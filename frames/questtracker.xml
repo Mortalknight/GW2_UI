@@ -110,6 +110,9 @@
         </Anchors>
     </Frame>
     <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true" >
+        <HitRectInsets>
+			<AbsInset left="0" right="0" top="30" bottom="0"/>
+		</HitRectInsets>	
          <Size x="300" y="300"></Size>
    
         <Anchors>
@@ -149,6 +152,47 @@
             </Layer>
         </Layers>
         <Frames>
+            <Button name="$parentHide">
+                <HitRectInsets>
+                    <AbsInset left="0" right="30" top="0" bottom="0"/>
+                </HitRectInsets>	
+                <Size x="300" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentClickToTurnIn" parentKey="turnin">
+                <size x="90" y="90"></size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="-1">
+                      <Texture  parentKey="flare" file="Interface\AddOns\GW2_UI\textures\reward-icon-flare">
+                             <size x="200" y="200"></size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\rewards-icon">
+                             <size x="140" y="140"></size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture> 
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnShow>
+                        self:SetScript('OnUpdate',gw_animate_wiggle)
+                    </OnShow>
+                    <OnHide>
+                        self:SetScript('OnUpdate',nil)
+                    </OnHide>
+                </Scripts>
+            </Button>
             <Button name="$parentItemButton" inherits="QuestObjectiveItemButtonTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="-40" y="0"/>

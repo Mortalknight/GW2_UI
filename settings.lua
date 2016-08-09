@@ -87,7 +87,8 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     addOption('Raid Styled Party','Use raid-style party frames','RAID_STYLE_PARTY','GwSettingsGroupframe')
     
-    addOption('Class color','Use class color insted of class icons','RAID_CLASS_COLOR','GwSettingsGroupframe')
+    addOption('Class Color','Use class color insted of class icons','RAID_CLASS_COLOR','GwSettingsGroupframe')
+    addOption('Power Bars','Display power bars','RAID_POWER_BARS','GwSettingsGroupframe')
     
     addOptionSlider('Raid Width','','RAID_WIDTH','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then

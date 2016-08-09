@@ -53,7 +53,10 @@ function gw_create_raidframe(registerUnit)
     frame.unit=registerUnit
     
     frame.healthbar.animationName ='GwCompact'..registerUnit..'animation'
-    frame.healthbar.animationValue = 0
+    frame.healthbar.animationValue = 0 
+    
+    frame.manabar.animationName ='GwCompact'..registerUnit..'manabaranimation'
+    frame.manabar.animationValue = 0
     
     frame:SetAttribute("unit", registerUnit);
     frame:SetAttribute("*type1", 'target')
@@ -82,6 +85,11 @@ function gw_create_raidframe(registerUnit)
     frame:SetScript('OnEvent',gw_raidframe_OnEvent)
     
     frame:SetScript('OnUpdate',gw_raidFrame_OnUpdate)
+    
+    if gwGetSetting('RAID_POWER_BARS')==true then
+        frame.healthbar:SetPoint('BOTTOMLEFT',frame,'BOTTOMLEFT',0,5)
+        frame.manabar:Show()
+    end
     
 end
 
@@ -144,6 +152,21 @@ function gw_raidframe_OnEvent(self,event,unit)
         gwBar(self.healthbar,healthPrec)
     end
     
+    if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit==self.unit then
+        local power =   UnitPower(self.unit,UnitPowerType(self.unit))
+        local powerMax =   UnitPowerMax(self.unit,UnitPowerType(self.unit))
+        local powerPrecentage = 0
+        if powerMax>0 then
+            powerPrecentage = power/powerMax
+        end
+        self.manabar:SetValue(powerPrecentage)
+        powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+        if PowerBarColorCustom[powerToken] then
+            local pwcolor = PowerBarColorCustom[powerToken]
+            self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        end
+    end
+    
     if event=='UNIT_ABSORB_AMOUNT_CHANGED' and unit==self.unit then
         local healthMax = UnitHealthMax(self.unit)
         local absorb = UnitGetTotalAbsorbs(self.unit)
@@ -155,6 +178,7 @@ function gw_raidframe_OnEvent(self,event,unit)
         end
         self.healthbar.absorbbar:SetValue(absorbPrecentage)
     end
+    
     if event=='UNIT_PHASE' or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
        gw_update_raidframe_awayData(self)
     end 
@@ -239,6 +263,11 @@ function gw_update_raidframeData(self)
     local healthPrec = 0
     local absorb = UnitGetTotalAbsorbs(self.unit)
     local absorbPrecentage = 0
+     
+    local power =   UnitPower(self.unit,UnitPowerType(self.unit))
+    local powerMax =   UnitPowerMax(self.unit,UnitPowerType(self.unit))
+    local powerPrecentage = 0
+     
         
     if healthMax>0 then
         healthPrec = health/healthMax
@@ -247,9 +276,18 @@ function gw_update_raidframeData(self)
     if absorb>0 and healthMax>0 then
         absorbPrecentage = absorb/healthMax
     end
-    
-     gwBar(self.healthbar,healthPrec)
+    if powerMax>0 then
+        powerPrecentage = power/powerMax
+    end
+    self.manabar:SetValue(powerPrecentage)
+    gwBar(self.healthbar,healthPrec)
     self.healthbar.absorbbar:SetValue(absorbPrecentage)
+    
+    powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+    if PowerBarColorCustom[powerToken] then
+        local pwcolor = PowerBarColorCustom[powerToken]
+        self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    end
     
     local nameRoleIcon = {}
     nameRoleIcon['TANK'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t '
@@ -410,14 +448,15 @@ function gw_raidframes_updateDebuffs(self)
                 
                  _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
              --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
-                if count>0 then
+            local stacks = ''
+                if count>1 then
                     stacks =count
                 end
                 
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText('')
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
                 indexBuffFrame:ClearAllPoints()
-                indexBuffFrame:SetPoint('BOTTOMLEFT',3 + (margin*x),3+ (marginy*y))
+                indexBuffFrame:SetPoint('BOTTOMLEFT',self.healthbar,'BOTTOMLEFT',3 + (margin*x),3+ (marginy*y))
              
                 indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);       GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,i); GameTooltip:Show() end)
                 indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
