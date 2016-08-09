@@ -1,4 +1,4 @@
-local BLIZZARD_HIDE_FRAMES ={
+local GW_BLIZZARD_HIDE_FRAMES ={
     
     MainMenuBar,
     MainMenuBarOverlayFrame,
@@ -21,7 +21,7 @@ local BLIZZARD_HIDE_FRAMES ={
 	MainMenuMaxLevelBar3,
 }
 
-local BLIZZARD_FORCE_HIDE = {
+local GW_BLIZZARD_FORCE_HIDE = {
     
     ReputationWatchBar,
     HonorWatchBar,
@@ -50,7 +50,7 @@ local BLIZZARD_FORCE_HIDE = {
     PossessBackground2,
 }
    
-local BARS= {
+local GW_BARS= {
     MainMenuBarArtFrame,
     MultiBarLeft,
     MultiBarRight,
@@ -59,14 +59,14 @@ local BARS= {
 }
 
 function gw_hideBlizzardsActionbars() 
-    for k,v in pairs(BLIZZARD_HIDE_FRAMES) do
+    for k,v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
        v:Hide() 
         if v.UnregisterAllEvents~=nil then
             v:UnregisterAllEvents() 
            
         end
     end    
-    for k,object in pairs(BLIZZARD_FORCE_HIDE) do
+    for k,object in pairs(GW_BLIZZARD_FORCE_HIDE) do
      
         if object:IsObjectType('Frame') then
             object:UnregisterAllEvents()
@@ -218,7 +218,7 @@ function gw_setupActionbars()
 
     
              
-    for k,v in pairs(BARS) do
+    for k,v in pairs(GW_BARS) do
        v:SetParent(UIParent) 
     end
     

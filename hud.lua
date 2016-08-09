@@ -16,8 +16,8 @@ GW_DEBUFF_COLOR['Disease'] ={r= 177/255, g= 114/255,b= 72/255}
 GW_DEBUFF_COLOR['Magic'] ={r= 72/255, g= 94/255,b= 177/255}
 GW_DEBUFF_COLOR['Poison'] ={r= 94/255, g= 177/255,b= 72/255}
 
-
-FACTION_BAR_COLORS = {
+GW_FACTION_BAR_COLORS = FACTION_BAR_COLORS
+GW_FACTION_BAR_COLORS = {
     [1] = {r = 0.8, g = 0.3, b = 0.22},
     [2] = {r = 0.8, g = 0.3, b = 0.22},
     [3] = {r = 0.75, g = 0.27, b = 0},
@@ -489,7 +489,7 @@ function update_experiencebar_data(self,event)
                 Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
                 valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
                 showBar1 = true
-                _G['GwExperienceFrameBar']:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r,FACTION_BAR_COLORS[reaction].g,FACTION_BAR_COLORS[reaction].b)
+                _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[reaction].r,GW_FACTION_BAR_COLORS[reaction].g,GW_FACTION_BAR_COLORS[reaction].b)
             end
         end
     end
