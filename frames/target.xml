@@ -447,10 +447,21 @@
 						<Anchor point="CENTER" x="0" y="0"/>
 					</Anchors>
 				</Texture>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
+                    <Size x="50" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                    </Anchors>
+                </FontString>
                     
 			</Layer>
 		</Layers>
-       
+        <Scripts>
+            <OnLoad>
+                self.frameName:SetFont(DAMAGE_TEXT_FONT,14)  self.frameName:SetShadowColor(0,0,0,1)                 self.frameName:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
 	</Button>
     <Button name="GwTargetFrameSmallTemplateDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent"  virtual="true">
 		<Size x="146" y="128"/>
@@ -465,10 +476,22 @@
                         <Anchor point="TOPLEFT" x="0" y="-39"/>
                     </Anchors>
                 </Texture>
+                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
+                    <Size x="50" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                    </Anchors>
+                </FontString>
             </Layer>
 
 
 		</Layers>
+              <Scripts>
+            <OnLoad>
+                self.frameName:SetFont(DAMAGE_TEXT_FONT,14)  self.frameName:SetShadowColor(0,0,0,1)                 self.frameName:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
 	</Button> 
     <Button name="GwPetFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent"  virtual="true">
         <Size x="328" y="100"></Size>
@@ -481,10 +504,22 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
+                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
+                    <Size x="50" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                    </Anchors>
+                </FontString>
             </Layer>
 
 
 		</Layers>
+                 <Scripts>
+            <OnLoad>
+                self.frameName:SetFont(DAMAGE_TEXT_FONT,14)  self.frameName:SetShadowColor(0,0,0,1)                 self.frameName:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
 	</Button>
     
     <Button name="GwCastFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent"  virtual="true">
@@ -498,10 +533,22 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
+                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
+                    <Size x="50" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                    </Anchors>
+                </FontString>
             </Layer>
 
 
 		</Layers>
+                   <Scripts>
+            <OnLoad>
+                self.frameName:SetFont(DAMAGE_TEXT_FONT,14)  self.frameName:SetShadowColor(0,0,0,1)                 self.frameName:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
 	</Button>
     <Frame name="VerticalActionBarDummy" virtual="true" frameStrata="DIALOG" parent="UIParent" >
 		<Layers>
@@ -518,9 +565,55 @@
 
                     </Anchors>
                 </Texture>
+                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
+                    <Size x="50" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                    </Anchors>
+                </FontString>
             </Layer>
+            
 
 
 		</Layers>
+                       <Scripts>
+            <OnLoad>
+                self.frameName:SetFont(DAMAGE_TEXT_FONT,14)  
+                self.frameName:SetShadowColor(0,0,0,1)
+                self.frameName:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
     </Frame>
+       <Frame name="GwDummyResize" enableMouse="true" movable="true"  virtual="true" frameStrata="DIALOG" parent="UIParent">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                      <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\resize">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                   
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        self:RegisterForDrag("LeftButton");
+                    </OnLoad>
+
+                      <OnDragStart>
+                          self:StartMoving();
+                
+                        </OnDragStart>
+                      <OnDragStop>
+                            
+                    </OnDragStop>
+                </Scripts>
+
+            </Frame>
 </Ui>

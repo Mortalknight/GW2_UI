@@ -387,7 +387,7 @@
         <Frames>
             <CheckButton name="$parentCheckButton" inherits="OptionsCheckButtonTemplate" checked="true">
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-16"></Anchor>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
                 </Anchors>
             </CheckButton>
         </Frames>
@@ -446,7 +446,7 @@
         
         <Layers>
             <Layer textureSubLevel="3">
-                <Texture name="$parentOnHover" file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover">
+                <Texture parentKey="hover" name="$parentOnHover" file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>

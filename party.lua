@@ -19,23 +19,23 @@ function gw_manage_group_button()
     CreateFrame('Frame','GwGroupManage',UIParent,'GwGroupManage')
     
     tinsert(UISpecialFrames, "GwGroupManage") 
-    local x = 0
-    local y = 0
+    local x = 10
+    local y = -8
     for i=1,8 do
 
         local f = CreateFrame('Button','GwRaidMarkerButton'..i,GwGroupManagerInGroup,'GwRaidMarkerButton') 
         
         f:ClearAllPoints()
         f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
-        f.texture:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
+        f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
         f:SetScript('OnClick',function()
             SetRaidTarget("target", i)
         end)
         
         x = x + 61
         if i==4 then
-            y = y + -61; 
-            x=0
+            y = y + -55; 
+            x=10
         end
         
     end

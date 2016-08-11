@@ -12,9 +12,24 @@ function gw_register_raidframes()
     gw_raidframe_hideBlizzard()
     CreateFrame('Frame','GwRaidFrameContainer',UIParent,'GwRaidFrameContainer')
     
+    GwRaidFrameContainer:SetHeight(gwGetSetting('RAID_WINDOW_HEIGHT'))
+    
     GwRaidFrameContainer:SetPoint(gwGetSetting('raid_pos')['point'],UIParent,gwGetSetting('raid_pos')['relativePoint'],gwGetSetting('raid_pos')['xOfs'],gwGetSetting('raid_pos')['yOfs'])
     
     gw_register_movable_frame('GwRaidFrameContainerFrame',GwRaidFrameContainer,'raid_pos','VerticalActionBarDummy')
+    
+    for i=1,40 do
+       local f = CreateFrame('Frame','GwRaidGridDisplay'..i,GwRaidFrameContainerFrameMoveAble,'VerticalActionBarDummy') 
+        f:SetParent(GwRaidFrameContainerFrameMoveAble)
+        f.frameName:SetText('')
+        f.Background:SetVertexColor(0.2,0.2,0.2,1)
+        f:SetPoint('TOPLEFT',GwRaidFrameContainerFrameMoveAble,'TOPLEFT',0,0)
+        
+    end
+    
+    
+    
+    gw_raidframes_updateMoveablePosition()
 
   
     gw_create_raidframe('player') 
@@ -328,13 +343,14 @@ function gw_update_raidframe_awayData(self)
     if classIndex~=nil and classIndex~=0 and classColor==false then
         gw_setClassIcon(self.classicon,classIndex)
     end
+    
     if classColor==true and classIndex~=nil and classIndex~=0 then
         self.healthbar:SetStatusBarColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
         self.classicon:SetTexture(nil)
        
     else
         self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
-        if self.classicon:GetTexture()==nil and  self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead' then
+        if self.classicon:GetTexture()==nil and  self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\classicons' then
             self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons')
         end
     end
@@ -484,6 +500,31 @@ function gw_raidframes_updateDebuffs(self)
     
 end
 
+function gw_raidframes_updateMoveablePosition()
+    local WIDTH = gwGetSetting('RAID_WIDTH')
+    local HEIGHT =  gwGetSetting('RAID_HEIGHT')
+    local MARGIN = 2
+    local WINDOW_SIZE = GwRaidFrameContainer:GetHeight()
+    
+    local USED_WIDTH = 0
+    local USED_HEIGHT = 0
+    
+  for i=1,40 do
+
+    _G['GwRaidGridDisplay'..i]:SetPoint('TOPLEFT',GwRaidFrameContainerFrameMoveAble,'TOPLEFT',USED_WIDTH,-USED_HEIGHT);
+    _G['GwRaidGridDisplay'..i]:SetSize(WIDTH,HEIGHT)
+               
+        
+        USED_HEIGHT = USED_HEIGHT + HEIGHT + MARGIN
+        
+        if (USED_HEIGHT + HEIGHT + MARGIN)>WINDOW_SIZE then
+            USED_HEIGHT = 0
+            USED_WIDTH = USED_WIDTH + WIDTH +MARGIN
+        end
+        
+    end     
+end
+
 function gw_raidframes_update_layout()
     
     if InCombatLockdown() then return end
@@ -504,7 +545,7 @@ function gw_raidframes_update_layout()
         _G['GwCompact'..v]:SetPoint('TOPLEFT',GwRaidFrameContainer,'TOPLEFT',USED_WIDTH,-USED_HEIGHT);
         _G['GwCompact'..v]:SetSize(WIDTH,HEIGHT)
         _G['GwCompact'..v].healthbar.spark:SetHeight(_G['GwCompact'..v].healthbar:GetHeight())
-               
+
         
         USED_HEIGHT = USED_HEIGHT + HEIGHT + MARGIN
         

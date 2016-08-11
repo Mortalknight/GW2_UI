@@ -92,14 +92,26 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     addOptionSlider('Raid Width','','RAID_WIDTH','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
-                gw_raidframes_update_layout()   
+                gw_raidframes_update_layout() 
+                gw_raidframes_updateMoveablePosition()
             end
     end,55,200)
     addOptionSlider('Raid Height','','RAID_HEIGHT','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
                 gw_raidframes_update_layout()   
+                gw_raidframes_updateMoveablePosition()
             end    
     end,47,100)
+    
+    addOptionSlider('Raid Window Height','','RAID_WINDOW_HEIGHT','GwSettingsGroupframe',function()
+            if gwGetSetting('GROUP_FRAMES')==true then
+                GwRaidFrameContainer:SetHeight(gwGetSetting('RAID_WINDOW_HEIGHT'))
+                GwRaidFrameContainerFrameMoveAble:SetHeight(gwGetSetting('RAID_WINDOW_HEIGHT'))
+                gw_raidframes_update_layout()   
+                gw_raidframes_updateMoveablePosition()
+                
+            end    
+    end,20,1000)
     
     
     GwSettingsWindow:Hide()

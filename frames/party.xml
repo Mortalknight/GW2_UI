@@ -286,12 +286,29 @@
                 </Anchors>
                 <Frames>
                     <Button name="GwGroupReadyCheck" inherits="GwStandardButton" text="Ready Check">
+                        <NormalTexture file="Interface\AddOns\GW2_UI\textures\readycheck-button"></NormalTexture>
                         <Size x="235" y="30" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-140"></Anchor>
                         </Anchors>
+                            <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture file="Interface\AddOns\GW2_UI\textures\readycheck-icon">
+                                    <Size x="30" y="30"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
+                                    </Anchors>
+                                </Texture>   
+                            </Layer>
+                        </Layers>
                         <Scripts>
                             <OnLoad>
+                                
+                                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\readycheck-button-hover')
+                                self:GetFontString():SetTextColor(218/255,214/255,200/255)
+                                self:GetFontString():SetShadowColor(0,0,0,1)
+                                self:GetFontString():SetShadowOffset(1,-1)
+                                
                                 self:RegisterEvent('PARTY_MEMBERS_CHANGED')
                                 self:RegisterEvent('GROUP_ROSTER_UPDATE')
                                 self:RegisterEvent('RAID_ROSTER_UPDATE')
@@ -312,7 +329,7 @@
                     <Button name="GwGroupRoleCheck" inherits="GwStandardButton" text="Role Check">
                         <Size x="100" y="20" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-175"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-180"></Anchor>
                         </Anchors>
                         <Scripts>
                             <OnLoad>
@@ -336,7 +353,7 @@
                     <Button name="GwGroupManagerConvert" inherits="GwStandardButton" text="Convert to Raid">
                         <Size x="120" y="20" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-175"></Anchor>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-180"></Anchor>
                         </Anchors>
                         <Scripts>
                             <OnLoad>
@@ -374,13 +391,18 @@
                         if IsInGroup() then
                             self:Show()
                             GwGroupManage:SetHeight(250)
-                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0.2968,0.2968*2)
+                            
                         else
                             self:Hide()
                             GwGroupManage:SetHeight(80)
-                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0,0.2968)
+                           
                         end
                         
+                        if IsInRaid() then
+                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0.2968,0.2968*2)
+                        else 
+                             GwManageGroupButton.icon:SetTexCoord(0,0.59375,0,0.2968)
+                        end
                         
                         
                         self:RegisterEvent('PARTY_MEMBERS_CHANGED')
@@ -392,11 +414,15 @@
                         if IsInGroup() then
                             self:Show()
                             GwGroupManage:SetHeight(250)
-                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0.2968,0.2968*2)
                         else
                             self:Hide()
                             GwGroupManage:SetHeight(80)
-                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0,0.2968)
+                        end
+                        
+                        if IsInRaid() then
+                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0.2968,0.2968*2)
+                        else 
+                             GwManageGroupButton.icon:SetTexCoord(0,0.59375,0,0.2968)
                         end
                     </OnEvent>
                 </Scripts>
@@ -405,22 +431,28 @@
     </Frame>
     
     <Button name="GwRaidMarkerButton" virtual="true">
-        <Size x="40" y="40" />
+        <Size x="30" y="30" />
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
         </Anchors>
         <Layers>
-            <Layer>
-                <Texture parentkey="texture" file="Interface\TargetingFrame\UI-RaidTargetingIcon_1">
-                    <Size x="40" y="40" />
+            <Layer level="BACKGROUND">
+                <Texture parentkey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                    <Size x="50" y="50" />
                     <Anchors>
                         <Anchor point="CENTER"></Anchor>
                     </Anchors>
-                        
+                    <Color r="0.5" g="0.5" b="0.5"></Color>
                 </Texture>
             </Layer>
         </Layers>
         <Scripts>
+            <OnEnter>
+                self.texture:SetBlendMode('ADD')
+            </OnEnter>
+            <OnLeave>
+                 self.texture:SetBlendMode('BLEND')
+            </OnLeave>
             <OnClick>
                 SetRaidTarget("target", 1);
             </OnClick>

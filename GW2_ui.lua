@@ -184,6 +184,7 @@ GW_DEFAULT['raid_pos']['yOfs']  = 0
 GW_DEFAULT['RAID_WIDTH'] = 55
 GW_DEFAULT['RAID_HEIGHT'] = 47
 GW_DEFAULT['RAID_POWER_BARS'] = false
+GW_DEFAULT['RAID_WINDOW_HEIGHT'] = 300
 
 
 
@@ -229,6 +230,7 @@ function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
     local moveframe = CreateFrame('Frame', name..'MoveAble',UIParent,dummyFrame);
 
     moveframe:SetSize(frame:GetSize())
+    moveframe.frameName:SetText(name)    
  
     
     local dummyPoint = gwGetSetting(settingsName)
@@ -372,21 +374,19 @@ function gw_button_enter(self)
     local name = self:GetName()
     local startTime = GetTime()
    local w = self:GetWidth()
+    _G[name..'OnHover']:SetAlpha(1)
     
-    self:SetScript('OnUpdate',function()
+    self.animationValue = 0
+    
+    addToAnimation(name,self.animationValue,1,GetTime(),0.2,function()
         
-        local a  = GetTime() - startTime
-        local b  =  0.2
-        
-        if GetTime()>(startTime+0.2) then
-            self:SetScript('OnUpdate',nil)
-            return
-        end
-        
-        local l = lerp(0,w,math.sin(a/b * math.pi * 0.5))
+       local prog = animations[name]['progress']
+        local l = lerp(0,w,prog)
             
         _G[name..'OnHover']:SetPoint('RIGHT',self,'LEFT',l,0)
-        _G[name..'OnHover']:SetAlpha((a/b))
+            
+        _G[name..'OnHover']:SetVertexColor(1,1,1,lerp(0,1,((prog) - 0.5)/0.5))
+
            
     end)
 end
@@ -395,21 +395,19 @@ function gw_button_leave(self)
     local name = self:GetName()
     local startTime = GetTime()
      local w = self:GetWidth()
+       _G[name..'OnHover']:SetAlpha(1)
     
-    self:SetScript('OnUpdate',function()
+    self.animationValue = 1
+    
+    addToAnimation(name,self.animationValue,0,GetTime(),0.2,function()
         
-        local a  = GetTime() - startTime
-        local b  =  0.2
-        
-        if GetTime()>(startTime+0.2) then
-            self:SetScript('OnUpdate',nil)
-            return
-        end
-        
-        local l = lerp(w,0,math.sin(a/b * math.pi * 0.5))
+       local prog = animations[name]['progress']
+        local l = lerp(0,w,prog)
             
         _G[name..'OnHover']:SetPoint('RIGHT',self,'LEFT',l,0)
-        _G[name..'OnHover']:SetAlpha(1-(a/b))
+            
+        _G[name..'OnHover']:SetVertexColor(1,1,1,lerp(0,1,((prog) - 0.5)/0.5))
+
            
     end)
 end
