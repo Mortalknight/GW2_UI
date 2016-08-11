@@ -6,6 +6,8 @@ GW_PORTRAIT_BACKGROUND[2] = {l=0,r=0.828,t=0.166015625,b=0.166015625*2}
 GW_PORTRAIT_BACKGROUND[3] = {l=0,r=0.828,t=0.166015625*2,b=0.166015625*3}
 GW_PORTRAIT_BACKGROUND[4] = {l=0,r=0.828,t=0.166015625*3,b=0.166015625*4}
 
+GW_INVITE_PLAYER_NAME_STRING = 'Player Name'
+
 
 
 local buffLists = {}
@@ -15,6 +17,35 @@ local DebuffLists = {}
 function gw_manage_group_button()
     CreateFrame('Button','GwManageGroupButton',UIParent,'GwManageGroupButton')
     CreateFrame('Frame','GwGroupManage',UIParent,'GwGroupManage')
+    
+    tinsert(UISpecialFrames, "GwGroupManage") 
+    local x = 0
+    local y = 0
+    for i=1,8 do
+
+        local f = CreateFrame('Button','GwRaidMarkerButton'..i,GwGroupManagerInGroup,'GwRaidMarkerButton') 
+        
+        f:ClearAllPoints()
+        f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
+        f.texture:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
+        f:SetScript('OnClick',function()
+            SetRaidTarget("target", i)
+        end)
+        
+        x = x + 61
+        if i==4 then
+            y = y + -61; 
+            x=0
+        end
+        
+    end
+    
+    
+end
+
+function gw_invite_to_group(str)
+  
+    InviteUnit(str)
 end
 
 function gw_register_partyframes()
@@ -134,7 +165,7 @@ function gw_partyframe_OnEvent(self,event,unit)
     if event=='UNIT_PHASE' or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
        gw_update_awaydata(self)
     end 
-    if event=='UNIT_AURA' then
+    if event=='UNIT_AURA' and unit==self.unit then
        gw_updatePartyFrameAuras(self,self.unit)
     end
     
@@ -321,12 +352,13 @@ function gw_updatePartyFrameDebuffs(self,unit,x,y)
                 _G['Gw'..unit..'DebuffItemFrame'..i..'Cooldown']:SetDrawSwipe(1)
                 _G['Gw'..unit..'DebuffItemFrame'..i..'Cooldown']:SetReverse(1)
                 _G['Gw'..unit..'DebuffItemFrame'..i..'Cooldown']:SetHideCountdownNumbers(true)
+                indexBuffFrame:SetSize(24,24)
             end 
             _G['Gw'..unit..'DebuffItemFrame'..i..'IconBuffIcon']:SetTexture(DebuffLists[unit][i]['icon'])
             _G['Gw'..unit..'DebuffItemFrame'..i..'IconBuffIcon']:SetParent(_G['Gw'..unit..'DebuffItemFrame'..i])
             local buffDur = '';
             local stacks  = '';
-            if DebuffLists[unit][i]['count']>0 then
+            if DebuffLists[unit][i]['count']>1 then
                stacks = DebuffLists[unit][i]['count'] 
             end
             if DebuffLists[unit][i]['duration']>0 then
@@ -335,11 +367,15 @@ function gw_updatePartyFrameDebuffs(self,unit,x,y)
             indexBuffFrame.expires =DebuffLists[unit][i]['expires']
             indexBuffFrame.duration =DebuffLists[unit][i]['duration']
             
+             _G['Gw'..unit..'DebuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
+                if DebuffLists[unit][i]['dispelType']~=nil then
+                     _G['Gw'..unit..'DebuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[DebuffLists[unit][i]['dispelType']].r, GW_DEBUFF_COLOR[DebuffLists[unit][i]['dispelType']].g, GW_DEBUFF_COLOR[DebuffLists[unit][i]['dispelType']].b)
+                end
 
             _G['Gw'..unit..'DebuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
             _G['Gw'..unit..'DebuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint('BOTTOMRIGHT',(-32*x),32*y)
+            indexBuffFrame:SetPoint('BOTTOMRIGHT',(26*x),26*y)
             
             indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(unit,key); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)

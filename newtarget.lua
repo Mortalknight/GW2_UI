@@ -114,7 +114,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
             updateCastingbar(thisName,unitToWatch)
         end
    
-        if event=='UNIT_AURA' or unit=='target' then
+        if event=='UNIT_AURA' or unit==unitToWatch then
             updateAuras(thisName,unitToWatch,event)
         end
             

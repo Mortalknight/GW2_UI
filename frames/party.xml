@@ -121,7 +121,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons">
                     <Size x="38" y="38"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -156,14 +156,14 @@
         </Scripts>
     </Button>
     
-    <Frame name="GwGroupManage" hidden="true" virtual="true" parent="UIParent">
+    <Frame name="GwGroupManage" enableMouse="true" hidden="true" virtual="true" parent="UIParent">
         <Size x="245" y="100"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="50" y="-64"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-            <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+            <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
                 <Size x="245" y="100"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-10" y="10"></Anchor>
@@ -202,6 +202,229 @@
                 </Texture>
             </Layer>
         </Layers>
+        <Frames>
+            <EditBox name="GwManageGroupInviteBox" autoFocus="false">
+                <Size x="110" y="20"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"></Anchor>
+                </Anchors>
+                 <Layers>
+                     <Layer level="BACKGROUND">
+                         <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                             
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
+                                 <Anchor point="BOTTOMRIGHT" x="5" y="-3"></Anchor>
+                             </Anchors>
+                             <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                         </Texture>
+    
+                     </Layer>
+                </Layers>
+                <FontString inherits="ChatFontNormal" />
+                <Scripts>
+                    <OnEscapePressed>
+                        self:ClearFocus()
+                    </OnEscapePressed>
+                    <OnEditFocusGained>
+                        local sT = self:GetText()
+                        if sT==GW_INVITE_PLAYER_NAME_STRING then
+                            self:SetText('')
+                            self:SetTextColor(1,1,1,1)
+                        end
+                    </OnEditFocusGained>
+                    <OnEditFocusLost>
+                       local sT = self:GetText()
+                        if sT==nil or sT=='' then
+                            self:SetText(GW_INVITE_PLAYER_NAME_STRING)
+                            self:SetTextColor(1,1,1,0.5)
+                        end
+                    </OnEditFocusLost>
+                    <OnLoad>
+                       local sT = self:GetText()
+                        if sT==nil or sT=='' then
+                            self:SetText(GW_INVITE_PLAYER_NAME_STRING)
+                            self:SetTextColor(1,1,1,0.5)
+                        end
+                    </OnLoad>
+                    <OnEnterPressed>
+                        gw_invite_to_group(GwManageGroupInviteBox:GetText())   
+                        self:SetText('')
+                        self:ClearFocus()
+                    </OnEnterPressed>
+                </Scripts>
+            </EditBox>
+            <Button name="GwButtonInviteToParty" inherits="GwStandardButton" text="Invite">
+                <Size x="50" y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwManageGroupInviteBox" x="-5" y="-10"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        gw_invite_to_group(GwManageGroupInviteBox:GetText())     
+                        GwManageGroupInviteBox:SetText('')
+                        GwManageGroupInviteBox:ClearFocus()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="GwManageGroupLeaveButton" inherits="GwStandardButton" text="Leave">
+                <Size x="50" y="20" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="GwManageGroupInviteBox" x="5" y="-10"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        LeaveParty()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Frame name="GwGroupManagerInGroup">
+                <Size x="80" y="240"></Size>
+                <Anchors>
+                   <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-10"></Anchor>
+                </Anchors>
+                <Frames>
+                    <Button name="GwGroupReadyCheck" inherits="GwStandardButton" text="Ready Check">
+                        <Size x="235" y="30" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-140"></Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnLoad>
+                                self:RegisterEvent('PARTY_MEMBERS_CHANGED')
+                                self:RegisterEvent('GROUP_ROSTER_UPDATE')
+                                self:RegisterEvent('RAID_ROSTER_UPDATE')
+                                self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
+                            </OnLoad>
+                            <OnEvent>
+                                if UnitIsGroupLeader('player') or UnitIsGroupAssistant('player') then
+                                    self:Enable()
+                                else
+                                    self:Disable()
+                                end
+                            </OnEvent>
+                            <OnClick>
+                                DoReadyCheck()
+                            </OnClick>
+                        </Scripts>
+                    </Button>   
+                    <Button name="GwGroupRoleCheck" inherits="GwStandardButton" text="Role Check">
+                        <Size x="100" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-175"></Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnLoad>
+                                self:RegisterEvent('PARTY_MEMBERS_CHANGED')
+                                self:RegisterEvent('GROUP_ROSTER_UPDATE')
+                                self:RegisterEvent('RAID_ROSTER_UPDATE')
+                                self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
+                            </OnLoad>
+                            <OnEvent>
+                                if UnitIsGroupLeader('player') or UnitIsGroupAssistant('player') then
+                                    self:Enable()
+                                else
+                                    self:Disable()
+                                end
+                            </OnEvent>
+                            <OnClick>
+                                InitiateRolePoll()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="GwGroupManagerConvert" inherits="GwStandardButton" text="Convert to Raid">
+                        <Size x="120" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-175"></Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnLoad>
+                                self:RegisterEvent('PARTY_MEMBERS_CHANGED')
+                                self:RegisterEvent('GROUP_ROSTER_UPDATE')
+                                self:RegisterEvent('RAID_ROSTER_UPDATE')
+                                self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
+                            </OnLoad>
+                            <OnEvent>
+                                if UnitIsGroupLeader('player') then
+                                    self:Enable()
+                                else
+                                    self:Disable()
+                                end
+                                
+                                 if IsInRaid() then
+                                    self:SetText('Convert to Party')
+                                else
+                                     self:SetText('Convert to Raid')
+                                end
+                            </OnEvent>
+                            <OnClick>
+                                if IsInRaid() then
+                                    ConvertToParty()
+                                else
+                                    ConvertToRaid()
+                                end
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+           
+                </Frames>
+                <Scripts>
+                    <OnLoad>
+                        if IsInGroup() then
+                            self:Show()
+                            GwGroupManage:SetHeight(250)
+                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0.2968,0.2968*2)
+                        else
+                            self:Hide()
+                            GwGroupManage:SetHeight(80)
+                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0,0.2968)
+                        end
+                        
+                        
+                        
+                        self:RegisterEvent('PARTY_MEMBERS_CHANGED')
+                        self:RegisterEvent('GROUP_ROSTER_UPDATE')
+                        self:RegisterEvent('RAID_ROSTER_UPDATE')
+                        self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
+                    </OnLoad>
+                    <OnEvent>
+                        if IsInGroup() then
+                            self:Show()
+                            GwGroupManage:SetHeight(250)
+                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0.2968,0.2968*2)
+                        else
+                            self:Hide()
+                            GwGroupManage:SetHeight(80)
+                            GwManageGroupButton.icon:SetTexCoord(0,0.59375,0,0.2968)
+                        end
+                    </OnEvent>
+                </Scripts>
+            </Frame>
+        </Frames>
     </Frame>
+    
+    <Button name="GwRaidMarkerButton" virtual="true">
+        <Size x="40" y="40" />
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture parentkey="texture" file="Interface\TargetingFrame\UI-RaidTargetingIcon_1">
+                    <Size x="40" y="40" />
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                        
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnClick>
+                SetRaidTarget("target", 1);
+            </OnClick>
+        </Scripts>
+    </Button>
     
 </Ui>

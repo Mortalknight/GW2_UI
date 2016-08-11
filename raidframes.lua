@@ -98,13 +98,13 @@ function gw_toggle_partyframes_for_use(b)
     if InCombatLockdown() then return end
     
     if b==true then
-        if gwGetSetting('RAID_STYLE_PARTY') then
-                RegisterUnitWatch(_G['GwCompactplayer']) 
+        if gwGetSetting('RAID_STYLE_PARTY')==true then
                 _G['GwCompactplayer']:Show()
+                RegisterUnitWatch(_G['GwCompactplayer']) 
+                
             for i=1,4 do
-                RegisterUnitWatch(_G['GwCompactparty'..i]) 
-                _G['GwCompactparty'..i]:Show()
-               
+                 _G['GwCompactparty'..i]:Show()
+                RegisterUnitWatch(_G['GwCompactparty'..i])                
             end
         end
         gw_toggle_partyRaid(true)
@@ -127,7 +127,7 @@ function gw_unhookPlayer_raidframe()
     if InCombatLockdown() then return end
     if IsInRaid() then return end
     
-    if IsInGroup() then
+    if IsInGroup() and gwGetSetting('RAID_STYLE_PARTY')==true then
 
         _G['GwCompactplayer']:Show()
         RegisterUnitWatch(_G['GwCompactplayer'])
@@ -205,7 +205,8 @@ function gw_raidframe_OnEvent(self,event,unit)
     if event=='PLAYER_TARGET_CHANGED' then
        gw_highlight_target_raidframe()
     end
-    if event=='UNIT_AURA' then
+    if event=='UNIT_AURA' and unit==self.unit then
+  
        gw_raidframes_updateAuras(self)
     end
     
@@ -365,7 +366,7 @@ end
 function gw_raidframes_updateAuras(self)
     local x = 0;
     local y = 0;
-    for i=1,40 do
+    for i=1,10 do
         local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff(self.unit,i,'PLAYER|RAID')
         local indexBuffFrame = _G['Gw'..self:GetName()..'BuffItemFrame'..i]
         if UnitBuff(self.unit,i,'PLAYER|RAID') and caster=='player' then
@@ -415,7 +416,7 @@ end
 function gw_raidframes_updateDebuffs(self)
     local x = 0;
     local y = 0;
-    for i=1,40 do
+    for i=1,10 do
        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
          local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
         if UnitDebuff(self.unit,i)  then

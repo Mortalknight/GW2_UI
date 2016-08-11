@@ -560,14 +560,15 @@ end
       
             ExperienceBarSpark:SetPoint('LEFT', _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'] -8,0)
             
+              local flarePoint = ((UIParent:GetWidth()-180) * animations['experiencebarAnimation']['progress']) + 90
+            expFlare:SetPoint('CENTER',GwExperienceFrame,'LEFT',flarePoint,0);
            
            
     end)
       addToAnimation('GwExperienceFrameBarCandy',experiencebarAnimation,valPrec,GetTime(),0.3,function()
         local prog = animations['GwExperienceFrameBarCandy']['progress']
         _G['GwExperienceFrameBarCandy']:SetValue(prog)
-        local flarePoint = ((UIParent:GetWidth()-180) * prog) + 90
-        expFlare:SetPoint('CENTER',GwExperienceFrame,'LEFT',flarePoint,0);
+      
     end)
 
     experiencebarAnimation =valPrec
