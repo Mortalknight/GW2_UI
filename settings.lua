@@ -57,6 +57,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Font', 'Use the GW2 fonts','FONTS_ENABLED','GwSettingsModuleOption')
     addOption('Casting Bar', 'Use the GW2 casting bar','CASTINGBAR_ENABLED','GwSettingsModuleOption')
     addOption('Class Power', 'Display class powers','CLASS_POWER','GwSettingsModuleOption')
+    addOption('Group', 'Raid and party','GROUP_FRAMES','GwSettingsModuleOption')
     
     create_settings_cat('TARGET','Edit the target frame settings','GwSettingsTargetOptions',1)
     

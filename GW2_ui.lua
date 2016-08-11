@@ -677,8 +677,10 @@ l:SetScript('OnEvent',function(self,event,name)
         -- create new microbuttons
         create_micro_menu()
         
-        gw_register_partyframes()
-        gw_register_raidframes()
+        if gwGetSetting('GROUP_FRAMES') then
+            gw_register_partyframes()
+            gw_register_raidframes()
+        end
         
     
         
