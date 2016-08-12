@@ -1,4 +1,5 @@
 local GROUPD_TYPE = 'PARTY'
+local GW_READY_CHECK_INPROGRESS = false
 
 
 function gw_raidframe_hideBlizzard()
@@ -12,7 +13,7 @@ function gw_register_raidframes()
     gw_raidframe_hideBlizzard()
     CreateFrame('Frame','GwRaidFrameContainer',UIParent,'GwRaidFrameContainer')
     
-    GwRaidFrameContainer:SetHeight(gwGetSetting('RAID_WINDOW_HEIGHT'))
+    GwRaidFrameContainer:SetHeight((gwGetSetting('RAID_HEIGHT') + 2) * gwGetSetting('RAID_UNITS_PER_COLUMN') )
     
     GwRaidFrameContainer:SetPoint(gwGetSetting('raid_pos')['point'],UIParent,gwGetSetting('raid_pos')['relativePoint'],gwGetSetting('raid_pos')['xOfs'],gwGetSetting('raid_pos')['yOfs'])
     
@@ -66,6 +67,7 @@ function gw_create_raidframe(registerUnit)
     end
     
     frame.unit=registerUnit
+    frame.ready = -1
     
     frame.healthbar.animationName ='GwCompact'..registerUnit..'animation'
     frame.healthbar.animationValue = 0 
@@ -97,6 +99,9 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent("UNIT_LEVEL");
     frame:RegisterEvent("PLAYER_TARGET_CHANGED");
     frame:RegisterEvent("PARTY_CONVERTED_TO_RAID");
+    frame:RegisterEvent("READY_CHECK");
+    frame:RegisterEvent("READY_CHECK_CONFIRM");
+    frame:RegisterEvent("READY_CHECK_FINISHED");
     frame:SetScript('OnEvent',gw_raidframe_OnEvent)
     
     frame:SetScript('OnUpdate',gw_raidFrame_OnUpdate)
@@ -111,6 +116,8 @@ end
 function gw_toggle_partyframes_for_use(b)
     
     if InCombatLockdown() then return end
+    
+    if IsInRaid() then b=false end
     
     if b==true then
         if gwGetSetting('RAID_STYLE_PARTY')==true then
@@ -154,7 +161,7 @@ function gw_unhookPlayer_raidframe()
     
 end
 
-function gw_raidframe_OnEvent(self,event,unit)
+function gw_raidframe_OnEvent(self,event,unit,arg1)
     
     if not UnitExists(self.unit) then return end
     if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
@@ -229,6 +236,20 @@ function gw_raidframe_OnEvent(self,event,unit)
     if event=='PARTY_CONVERTED_TO_RAID' and GROUPD_TYPE=='PARTY' then
         gw_toggle_partyframes_for_use(false)
         GROUPD_TYPE='RAID'
+    end
+    
+    if event=='READY_CHECK' then
+        self.ready = -1
+        GW_READY_CHECK_INPROGRESS = true
+        gw_update_raidframe_awayData(self)
+    end
+    if event=='READY_CHECK_CONFIRM' and unit==self.unit then
+        self.ready = arg1
+        gw_update_raidframe_awayData(self)
+    end
+    if event=='READY_CHECK_FINISHED' then
+        GW_READY_CHECK_INPROGRESS =false
+        gw_update_raidframe_awayData(self)
     end
     
     
@@ -338,34 +359,61 @@ end
 function gw_update_raidframe_awayData(self)
      
     local classColor = gwGetSetting('RAID_CLASS_COLOR')
+    local iconState = 1
     
     localizedClass, englishClass, classIndex = UnitClass(self.unit);
+    
     if classIndex~=nil and classIndex~=0 and classColor==false then
-        gw_setClassIcon(self.classicon,classIndex)
+        iconState = 1
     end
     
     if classColor==true and classIndex~=nil and classIndex~=0 then
+        
+        iconState = 0        
+    end
+    if UnitIsDeadOrGhost(self.unit) then
+       iconState = 2
+    end
+      
+    if iconState==0 then  
         self.healthbar:SetStatusBarColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
-        self.classicon:SetTexture(nil)
-       
-    else
+         if self.classicon:GetTexture()~=nil then
+            self.classicon:SetTexture(nil)
+        end
+    end
+    if iconState==1 then
+        gw_setClassIcon(self.classicon,classIndex)
         self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
-        if self.classicon:GetTexture()==nil and  self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\classicons' then
+        if self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\classicons' then
             self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons')
         end
     end
-    
-    
+    if iconState==2 then
+        if self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead' then
+            self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead')
+        end
+        self.classicon:SetTexCoord(0,1,0,1)
+    end
+     
     if UnitIsConnected(self.unit)~=true then
         self.healthbar:SetStatusBarColor(0.3,0.3,0.3,1)
     end
     
-    if UnitIsDeadOrGhost(self.unit) then
-       
-        self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead')
-        self.classicon:SetTexCoord(0,1,0,1)
+    if GW_READY_CHECK_INPROGRESS==true then
+        if self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck' then
+            self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck')
+        end
+     
+        if self.ready == -1 then
+            self.classicon:SetTexCoord(0,1,0,0.25)
+        end
+        if self.ready==false then
+            self.classicon:SetTexCoord(0,1,0.25,0.50)
+        end 
+        if self.ready==true then
+            self.classicon:SetTexCoord(0,1,0.50,0.75)
+        end
     end
-    
     
     
     if UnitInPhase(self.unit)~=true or UnitInRange(self.unit)~=true then
@@ -375,6 +423,8 @@ function gw_update_raidframe_awayData(self)
         g = g*0.3
         self.healthbar:SetStatusBarColor(r,g,b)
     end
+    
+
      
 end
 
@@ -458,7 +508,7 @@ function gw_raidframes_updateDebuffs(self)
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetHideCountdownNumbers(true)
                
                     _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
-                if dispelType~=nil then
+                if dispelType~=nil and  GW_DEBUFF_COLOR[dispelType]~=nil then
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[dispelType].r, GW_DEBUFF_COLOR[dispelType].g, GW_DEBUFF_COLOR[dispelType].b)
                 end
             --
@@ -502,7 +552,7 @@ end
 
 function gw_raidframes_updateMoveablePosition()
     local WIDTH = gwGetSetting('RAID_WIDTH')
-    local HEIGHT =  gwGetSetting('RAID_HEIGHT')
+    local HEIGHT =  gwGetSetting('RAID_HEIGHT')  
     local MARGIN = 2
     local WINDOW_SIZE = GwRaidFrameContainer:GetHeight()
     

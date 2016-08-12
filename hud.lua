@@ -71,6 +71,8 @@ bloodSpark[24] = {left=0.125*7,right=0.125*8,top=0,bottom=0.5}
           
 GW_CLASS_ICONS = {}
 
+GW_CLASS_ICONS[0] ={l=0.0625*12,r=0.0625*13,t=0,b=1}
+
 GW_CLASS_ICONS[1] ={l=0.0625*11,r=0.0625*12,t=0,b=1}
 GW_CLASS_ICONS[2] ={l=0.0625*10,r=0.0625*11,t=0,b=1}
 GW_CLASS_ICONS[3] ={l=0.0625*9,r=0.0625*10,t=0,b=1}

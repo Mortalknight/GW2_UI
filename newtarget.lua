@@ -521,8 +521,12 @@ function updateCastingbar(thisName,unitToWatch)
         
     
         --set health and absorbvalue
-          
-    addToAnimation(unitToWatch..'healthAnimation',unitFrameAnimations[unitToWatch..'healthAnimation'],healthPrecentage,GetTime(),0.45,function()
+    
+    local dif = math.abs(unitFrameAnimations[unitToWatch..'healthAnimation'] - healthPrecentage) 
+    if dif==0 then return end
+    
+    local speed = 2.00 * dif
+    addToAnimation(unitToWatch..'healthAnimation',unitFrameAnimations[unitToWatch..'healthAnimation'],healthPrecentage,GetTime(),speed,function()
           
                 
                 local  round_closest = 0.05 * math.floor((animations[unitToWatch..'healthAnimation']['progress']*100)/5) 
@@ -672,15 +676,16 @@ function updateCastingbar(thisName,unitToWatch)
     end
     
     if isFriend then
-        _G[thisName.."HealthBar"]:SetStatusBarTexture("Interface\\AddOns\\GW2_UI\\textures\\statusbarcolored_green")
         if _G[thisName.."HealthBarSpark"] then
             _G[thisName.."HealthBarSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
+            _G[thisName.."HealthBar"]:SetStatusBarColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
         end
         
     else
-        _G[thisName.."HealthBar"]:SetStatusBarTexture("Interface\\AddOns\\GW2_UI\\textures\\statusbarcolored_red") 
+       
          if _G[thisName.."HealthBarSpark"] then
             _G[thisName.."HealthBarSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
+            _G[thisName.."HealthBar"]:SetStatusBarColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
         end
     end
     

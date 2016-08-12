@@ -179,7 +179,7 @@ function gw_playerUpdateDeBuffs(x,y)
                 _G['playerDeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
                 
                
-                 if DebuffLists[unitToWatch][i]['dispelType']~=nil then
+                 if DebuffLists[unitToWatch][i]['dispelType']~=nil and  GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]['dispelType']]~=nil then
                     _G['playerDeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]['dispelType']].r, GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]['dispelType']].g, GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]['dispelType']].b)
                 end
                 _G['playerDeBuffItemFrame'..i..'Cooldown']:SetDrawEdge(0)

@@ -51,9 +51,9 @@ end
 function gw_register_partyframes()
     
     gw_manage_group_button()
-    for i=1,4 do 
-       SetCVar('useCompactPartyFrames',1)
-    end
+ 
+    SetCVar('useCompactPartyFrames',1)
+    
     
     if gwGetSetting('RAID_STYLE_PARTY') then
         return
@@ -72,7 +72,7 @@ function gw_register_partyframes()
 end
 
 function gw_toggle_partyRaid(b)
-    if b==true then
+    if b==true and not IsInRaid() then
         for i=1,4 do
             if _G['GwPartyFrame'..i]~=nil then
                 _G['GwPartyFrame'..i]:Show()
@@ -368,7 +368,7 @@ function gw_updatePartyFrameDebuffs(self,unit,x,y)
             indexBuffFrame.duration =DebuffLists[unit][i]['duration']
             
              _G['Gw'..unit..'DebuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
-                if DebuffLists[unit][i]['dispelType']~=nil then
+                if DebuffLists[unit][i]['dispelType']~=nil and GW_DEBUFF_COLOR[DebuffLists[unit][i]['dispelType']]~=nil then
                      _G['Gw'..unit..'DebuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[DebuffLists[unit][i]['dispelType']].r, GW_DEBUFF_COLOR[DebuffLists[unit][i]['dispelType']].g, GW_DEBUFF_COLOR[DebuffLists[unit][i]['dispelType']].b)
                 end
 

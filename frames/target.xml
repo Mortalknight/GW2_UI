@@ -7,11 +7,11 @@
 		</HitRectInsets>	
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
-                       <Color r="0" g="0" b="0" a="0.4"/>
-                    <Size x="255" y="17"/>
+				<Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="Background">
+                     
+                    <Size x="257" y="19"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="129" y="-39"/>
+                        <Anchor point="TOPLEFT" x="128" y="-38"/>
                     </Anchors>
                 </Texture>
                 

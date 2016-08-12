@@ -163,7 +163,7 @@
     </Button>
     
     <Frame  name="GwPlayerPowerBar" parent="UIParent" virtual="true">
-        <Size x="316" y="18"></Size>
+        <Size x="318" y="20"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86" ></Anchor>
         </Anchors>
@@ -171,7 +171,7 @@
             <Layer level="BACKGROUND">
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
                  
-                    <Size x="316" y="18"></Size>
+                    <Size x="318" y="20"></Size>
                 </Texture>
             </Layer>
         </Layers>
@@ -179,7 +179,7 @@
              <StatusBar name="$parentCandy"  frameLevel="1" defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">   
                 <Size x="314" y="16"/>
                 <Anchors>
-                    <Anchor point="LEFT" x="1" y="0"/>
+                    <Anchor point="LEFT" x="2" y="0"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarCandy"/>
                 <Layers>
@@ -198,7 +198,7 @@
                   
                 <Size x="314" y="16"/>
                 <Anchors>
-                    <Anchor point="LEFT" x="1" y="0"/>
+                    <Anchor point="LEFT" x="2" y="0"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>

@@ -176,15 +176,15 @@ GW_DEFAULT['MultiBarLeft']['hideDefaultBackground'] = true
 
 
 GW_DEFAULT['raid_pos'] ={}
-GW_DEFAULT['raid_pos']['point'] = 'LEFT'
-GW_DEFAULT['raid_pos']['relativePoint'] = 'LEFT'
-GW_DEFAULT['raid_pos']['xOfs'] =  0
-GW_DEFAULT['raid_pos']['yOfs']  = 0
+GW_DEFAULT['raid_pos']['point'] = 'TOPLEFT'
+GW_DEFAULT['raid_pos']['relativePoint'] = 'TOPLEFT'
+GW_DEFAULT['raid_pos']['xOfs'] =  65
+GW_DEFAULT['raid_pos']['yOfs']  = -60
 
 GW_DEFAULT['RAID_WIDTH'] = 55
 GW_DEFAULT['RAID_HEIGHT'] = 47
 GW_DEFAULT['RAID_POWER_BARS'] = false
-GW_DEFAULT['RAID_WINDOW_HEIGHT'] = 300
+GW_DEFAULT['RAID_UNITS_PER_COLUMN'] = 5
 
 
 
@@ -449,6 +449,11 @@ function gwBar(self,value)
         self.animationValue = value;
 end
 function gw_setClassIcon(self,class)
+    
+    if class==nil or class>12 then
+        class = 0
+    end
+    
   
   self:SetTexCoord(
         GW_CLASS_ICONS[class].l,

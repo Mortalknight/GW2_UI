@@ -90,6 +90,16 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     addOption('Class Color','Use class color insted of class icons','RAID_CLASS_COLOR','GwSettingsGroupframe')
     addOption('Power Bars','Display power bars','RAID_POWER_BARS','GwSettingsGroupframe')
+  
+    addOptionSlider('Raid Container Height','','RAID_UNITS_PER_COLUMN','GwSettingsGroupframe',function()
+            if gwGetSetting('GROUP_FRAMES')==true then
+                GwRaidFrameContainer:SetHeight((gwGetSetting('RAID_HEIGHT') + 2) * gwGetSetting('RAID_UNITS_PER_COLUMN'))
+                GwRaidFrameContainerFrameMoveAble:SetHeight((gwGetSetting('RAID_HEIGHT') + 2) * gwGetSetting('RAID_UNITS_PER_COLUMN'))
+                gw_raidframes_update_layout()   
+                gw_raidframes_updateMoveablePosition()
+                
+            end    
+    end,1,80)
     
     addOptionSlider('Raid Width','','RAID_WIDTH','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
@@ -104,15 +114,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
             end    
     end,47,100)
     
-    addOptionSlider('Raid Window Height','','RAID_WINDOW_HEIGHT','GwSettingsGroupframe',function()
-            if gwGetSetting('GROUP_FRAMES')==true then
-                GwRaidFrameContainer:SetHeight(gwGetSetting('RAID_WINDOW_HEIGHT'))
-                GwRaidFrameContainerFrameMoveAble:SetHeight(gwGetSetting('RAID_WINDOW_HEIGHT'))
-                gw_raidframes_update_layout()   
-                gw_raidframes_updateMoveablePosition()
-                
-            end    
-    end,20,1000)
+ 
     
     
     GwSettingsWindow:Hide()
