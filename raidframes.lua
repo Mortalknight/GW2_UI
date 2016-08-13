@@ -432,7 +432,7 @@ end
 function gw_raidframes_updateAuras(self)
     local x = 0;
     local y = 0;
-    for i=1,10 do
+    for i=1,3 do
         local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff(self.unit,i,'PLAYER|RAID')
         local indexBuffFrame = _G['Gw'..self:GetName()..'BuffItemFrame'..i]
         if UnitBuff(self.unit,i,'PLAYER|RAID') and caster=='player' then
@@ -482,7 +482,7 @@ end
 function gw_raidframes_updateDebuffs(self)
     local x = 0;
     local y = 0;
-    for i=1,10 do
+    for i=1,5 do
        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
          local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
         if UnitDebuff(self.unit,i)  then
