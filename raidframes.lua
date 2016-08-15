@@ -57,7 +57,39 @@ function gw_register_raidframes()
         _G['GwCompactplayer']:Hide()
     end
     
+
+    GwRaidFrameContainer:RegisterEvent("PARTY_MEMBERS_CHANGED");
+    GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE");
+    GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE");
+    GwRaidFrameContainer:SetScript('OnEvent', function(self, event) 
+            
+        if IsInRaid()==false and GROUPD_TYPE=='RAID' then
+            gw_toggle_partyframes_for_use(true)
+            GROUPD_TYPE='PARTY'
+        end
+        if  IsInRaid() and GROUPD_TYPE=='PARTY' then
+            gw_toggle_partyframes_for_use(false)
+            GROUPD_TYPE='RAID'
+        end
+        
+        gw_unhookPlayer_raidframe()
+        
+        gw_raidframes_update_layout()
+            
+            
+               gw_update_raidframeData( _G['GwCompactplayer'])         
+        for i=1,80 do
+            if i<5 then
+               gw_update_raidframeData( _G['GwCompactparty'..i])         
+            end
+            gw_update_raidframeData( _G['GwCompactraid'..i])     
+        end
+        
+    end)
+    
 end
+
+
 
 function gw_create_raidframe(registerUnit)
     
@@ -89,9 +121,7 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     frame:RegisterEvent("UNIT_POWER");
     frame:RegisterEvent("UNIT_MAX_POWER");
-    frame:RegisterEvent("PARTY_MEMBERS_CHANGED");
-    frame:RegisterEvent("RAID_ROSTER_UPDATE");
-    frame:RegisterEvent("GROUP_ROSTER_UPDATE");
+
     frame:RegisterEvent("UNIT_PHASE");
     frame:RegisterEvent("PARTY_MEMBER_DISABLE");
     frame:RegisterEvent("PARTY_MEMBER_ENABLE");
@@ -205,30 +235,11 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
        gw_update_raidframe_awayData(self)
     end 
     
-    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event=='GROUP_ROSTER_UPDATE' or event=='RAID_ROSTER_UPDATE' then
-        
-        
-        
-        if IsInRaid()==false and GROUPD_TYPE=='RAID' then
-            gw_toggle_partyframes_for_use(true)
-            GROUPD_TYPE='PARTY'
-        end
-        if  IsInRaid() and GROUPD_TYPE=='PARTY' then
-            gw_toggle_partyframes_for_use(false)
-            GROUPD_TYPE='RAID'
-        end
-        
-        gw_unhookPlayer_raidframe()
-        
-        gw_update_raidframeData(self)
-        gw_raidframes_update_layout()
-    end
     
     if event=='PLAYER_TARGET_CHANGED' then
        gw_highlight_target_raidframe()
     end
     if event=='UNIT_AURA' and unit==self.unit then
-  
        gw_raidframes_updateAuras(self)
     end
     
@@ -242,6 +253,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         self.ready = -1
         GW_READY_CHECK_INPROGRESS = true
         gw_update_raidframe_awayData(self)
+        gw_updateClassIcon_texture(self,true)
     end
     if event=='READY_CHECK_CONFIRM' and unit==self.unit then
         self.ready = arg1
@@ -250,6 +262,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     if event=='READY_CHECK_FINISHED' then
         GW_READY_CHECK_INPROGRESS =false
         gw_update_raidframe_awayData(self)
+        gw_updateClassIcon_texture(self,false)
     end
     
     
@@ -311,7 +324,7 @@ function gw_update_raidframeData(self)
     end
        
     if absorb>0 and healthMax>0 then
-        absorbPrecentage = absorb/healthMax
+        absorbPrecentage = math.min(absorb/healthMax,1)
     end
     if powerMax>0 then
         powerPrecentage = power/powerMax
@@ -343,6 +356,7 @@ function gw_update_raidframeData(self)
     gw_highlight_target_raidframe()
     
     gw_update_raidframe_awayData(self)
+     gw_raidframes_updateAuras(self)
     
     
 end
@@ -354,6 +368,14 @@ function gw_raidFrame_OnUpdate(self)
     self.onUpdateDelay = GetTime()+0.2
     gw_update_raidframe_awayData(self)
     
+end
+
+function gw_updateClassIcon_texture(self)
+    if b==false then
+        self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons')
+    else
+        self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck')
+    end
 end
 
 function gw_update_raidframe_awayData(self)
@@ -377,22 +399,15 @@ function gw_update_raidframe_awayData(self)
       
     if iconState==0 then  
         self.healthbar:SetStatusBarColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
-         if self.classicon:GetTexture()~=nil then
-            self.classicon:SetTexture(nil)
+        if self.classicon:IsShown() then
+            self.classicon:Hide()
         end
     end
     if iconState==1 then
         gw_setClassIcon(self.classicon,classIndex)
-        self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
-        if self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\classicons' then
-            self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons')
-        end
     end
     if iconState==2 then
-        if self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead' then
-            self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead')
-        end
-        self.classicon:SetTexCoord(0,1,0,1)
+        gw_setDeadIcon(self.classicon)
     end
      
     if UnitIsConnected(self.unit)~=true then
@@ -400,9 +415,6 @@ function gw_update_raidframe_awayData(self)
     end
     
     if GW_READY_CHECK_INPROGRESS==true then
-        if self.classicon:GetTexture()~='Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck' then
-            self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck')
-        end
      
         if self.ready == -1 then
             self.classicon:SetTexCoord(0,1,0,0.25)
@@ -412,6 +424,9 @@ function gw_update_raidframe_awayData(self)
         end 
         if self.ready==true then
             self.classicon:SetTexCoord(0,1,0.50,0.75)
+        end
+        if not self.classicon:IsShown() then
+            self.classicon:Show()
         end
     end
     
@@ -432,28 +447,44 @@ end
 function gw_raidframes_updateAuras(self)
     local x = 0;
     local y = 0;
-    for i=1,3 do
-        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff(self.unit,i,'PLAYER|RAID')
+    for i=1,40 do
+        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff(self.unit,i)
+       
+        local showThis = false
+        if  UnitBuff(self.unit,i) then      
+             local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT");
+            if ( hasCustom ) then
+                showThis = showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"));
+            else
+                showThis = (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and not SpellIsSelfBuff(spellID);
+            end
+        end
+
         local indexBuffFrame = _G['Gw'..self:GetName()..'BuffItemFrame'..i]
-        if UnitBuff(self.unit,i,'PLAYER|RAID') and caster=='player' then
-        
-            
+        local created = false
+        if showThis then
 
             if indexBuffFrame==nil then
                 indexBuffFrame = CreateFrame('Button','Gw'..self:GetName()..'BuffItemFrame'..i,self,'GwBuffIconBig');
                 indexBuffFrame:SetParent(self);
                 indexBuffFrame:SetFrameStrata('MEDIUM');
                 indexBuffFrame:SetSize(14,14)
+                created = true
+     
             end
             local margin = -indexBuffFrame:GetWidth() + -2
             local marginy = indexBuffFrame:GetWidth() + 2
+            
+            if created then
+            indexBuffFrame:ClearAllPoints()
+            indexBuffFrame:SetPoint('BOTTOMRIGHT',-3 + (margin*x),3+ (marginy*y))
+            end
             _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetTexture(icon)
             --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
       
             _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffDuration']:SetText('')
             _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffStacks']:SetText('')
-            indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint('BOTTOMRIGHT',-3 + (margin*x),3+ (marginy*y))
+          
                  
             indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);       GameTooltip:ClearLines();   GameTooltip:SetUnitBuff(self.unit,i,'PLAYER|RAID'); GameTooltip:Show() end)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
@@ -485,18 +516,22 @@ function gw_raidframes_updateDebuffs(self)
     for i=1,5 do
        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
          local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
+        local created = false
         if UnitDebuff(self.unit,i)  then
-            
-               
-    
+                
                 if indexBuffFrame==nil then
                     indexBuffFrame = CreateFrame('Button','Gw'..self:GetName()..'DeBuffItemFrame'..i,self,'GwDeBuffIcon');
                     indexBuffFrame:SetParent(self);
                     indexBuffFrame:SetFrameStrata('MEDIUM');
                     indexBuffFrame:SetSize(16,16)
+                    created =  true
                 end
                 local margin = indexBuffFrame:GetWidth() + 2
                 local marginy = indexBuffFrame:GetWidth() + 2
+                if created then
+                    indexBuffFrame:ClearAllPoints()
+                    indexBuffFrame:SetPoint('BOTTOMLEFT',self.healthbar,'BOTTOMLEFT',3 + (margin*x),3+ (marginy*y))
+                end
                 
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Icon']:SetPoint('TOPLEFT',indexBuffFrame,'TOPLEFT',1,-1)
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Icon']:SetPoint('BOTTOMRIGHT',indexBuffFrame,'BOTTOMRIGHT',-1,1)
@@ -522,8 +557,7 @@ function gw_raidframes_updateDebuffs(self)
                 
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText('')
                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
-                indexBuffFrame:ClearAllPoints()
-                indexBuffFrame:SetPoint('BOTTOMLEFT',self.healthbar,'BOTTOMLEFT',3 + (margin*x),3+ (marginy*y))
+         
              
                 indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);       GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,i); GameTooltip:Show() end)
                 indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
@@ -590,11 +624,13 @@ function gw_raidframes_update_layout()
     
     local sorted = gw_raidframes_sortByRole()
     
+    local sparkHeight = _G['GwCompactraid1'].healthbar:GetHeight()
+    
    for k,v in pairs(sorted) do
         
         _G['GwCompact'..v]:SetPoint('TOPLEFT',GwRaidFrameContainer,'TOPLEFT',USED_WIDTH,-USED_HEIGHT);
         _G['GwCompact'..v]:SetSize(WIDTH,HEIGHT)
-        _G['GwCompact'..v].healthbar.spark:SetHeight(_G['GwCompact'..v].healthbar:GetHeight())
+        _G['GwCompact'..v].healthbar.spark:SetHeight(sparkHeight)
 
         
         USED_HEIGHT = USED_HEIGHT + HEIGHT + MARGIN
@@ -625,11 +661,11 @@ function gw_raidframes_update_layout()
             if i<5 then
                 _G['GwCompactparty'..i]:SetPoint('TOPLEFT',GwRaidFrameContainer,'TOPLEFT',USED_WIDTH,-USED_HEIGHT);
                 _G['GwCompactparty'..i]:SetSize(WIDTH,HEIGHT)
-                _G['GwCompactparty'..i].healthbar.spark:SetHeight(_G['GwCompactparty'..i].healthbar:GetHeight())
+                _G['GwCompactparty'..i].healthbar.spark:SetHeight(sparkHeight)
             end
             _G['GwCompactraid'..i]:SetPoint('TOPLEFT',GwRaidFrameContainer,'TOPLEFT',USED_WIDTH,-USED_HEIGHT);
             _G['GwCompactraid'..i]:SetSize(WIDTH,HEIGHT)
-            _G['GwCompactraid'..i].healthbar.spark:SetHeight(_G['GwCompactraid'..i].healthbar:GetHeight())
+            _G['GwCompactraid'..i].healthbar.spark:SetHeight(sparkHeight)
 
             USED_HEIGHT = USED_HEIGHT + HEIGHT + MARGIN
         

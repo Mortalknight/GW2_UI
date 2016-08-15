@@ -115,13 +115,16 @@ function registerNewUnitFrame(unitToWatch, frameType)
         end
    
         if event=='UNIT_AURA' or unit==unitToWatch then
-            updateAuras(thisName,unitToWatch,event)
+            gw_unitFrame_updateAuras(thisName,unitToWatch,event)
         end
             
-        if event=='PLAYER_TARGET_CHANGED' or event=='UNIT_TARGET' then
+        if event=='PLAYER_TARGET_CHANGED' then
             updateFrameData(thisName,unitToWatch,event)
         end
-        if event=='PLAYER_FOCUS_CHANGED' or event=='UNIT_FOCUS' then
+        if  event=='UNIT_TARGET' and unit==unitToWatch then
+            updateFrameData(thisName,unitToWatch,event)
+        end
+        if event=='PLAYER_FOCUS_CHANGED' then
             updateFrameData(thisName,unitToWatch,event)
         end
   
@@ -189,7 +192,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
 
 end
 
-function updateAuras(thisName, unitToWatch)
+function gw_unitFrame_updateAuras(thisName, unitToWatch)
     if gwGetSetting(unitToWatch..'_BUFFS')~=true then
         return
     end
@@ -245,9 +248,9 @@ function updateAuras(thisName, unitToWatch)
         end
         
     end
-    updateDebuffs(thisName,unitToWatch,x,y)
+    gw_unitFrame_updateDebuffs(thisName,unitToWatch,x,y)
 end
-function updateDebuffs(thisName, unitToWatch,x,y)
+function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
  
     if gwGetSetting(unitToWatch..'_DEBUFFS')~=true then
         return
@@ -294,12 +297,13 @@ function updateDebuffs(thisName, unitToWatch,x,y)
             if DebuffLists[unitToWatch][i]['duration']>0 then
                 buffDur = timeCount(DebuffLists[unitToWatch][i]['timeRemaining']);
             end
+            
             indexBuffFrame.expires =DebuffLists[unitToWatch][i]['expires']
             indexBuffFrame.duration =DebuffLists[unitToWatch][i]['duration']
            _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetCooldown(DebuffLists[unitToWatch][i]['expires'] - DebuffLists[unitToWatch][i]['duration'], DebuffLists[unitToWatch][i]['duration'])
      
             
-            _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText('')
+            _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
             _G[thisName..'DeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint('TOPLEFT',(32*x),-32*y)
@@ -697,7 +701,7 @@ function updateCastingbar(thisName,unitToWatch)
     end
         
     updateCastingbar(thisName,unitToWatch)
-    updateAuras(thisName,unitToWatch,event)
+    gw_unitFrame_updateAuras(thisName,unitToWatch,event)
         
         
 end

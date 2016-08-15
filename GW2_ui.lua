@@ -462,6 +462,14 @@ function gw_setClassIcon(self,class)
         GW_CLASS_ICONS[class].b
     )
 end
+function gw_setDeadIcon(self)
+    self:SetTexCoord(
+        GW_CLASS_ICONS['dead'].l,
+        GW_CLASS_ICONS['dead'].r,
+        GW_CLASS_ICONS['dead'].t,
+        GW_CLASS_ICONS['dead'].b
+    )
+end
 
 function isnan(n) return tostring(n) == '-1.#IND' end
 function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCallback)
