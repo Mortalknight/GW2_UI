@@ -453,6 +453,12 @@ function gw_update_raidframe_awayData(self)
         self.classicon:SetAlpha(1)
     end
     
+    if UnitThreatSituation(self.unit)~=nil and UnitThreatSituation(self.unit)>2 then
+        self.aggroborder:Show()
+    else
+       self.aggroborder:Hide() 
+    end
+    
 
      
 end

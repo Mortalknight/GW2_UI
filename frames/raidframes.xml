@@ -61,6 +61,16 @@
                         </Anchors>
                         <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                         <BarColor r="0.9" g="0.9" b="0.6" a="0.4" />
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="aggroborder"  file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
                     </StatusBar>
                 </Frames>
             </StatusBar>
@@ -108,6 +118,7 @@
                 
                 self.name = _G[self:GetName()..'Data'].name
                 self.classicon = _G[self:GetName()..'Data'].classicon
+                self.aggroborder = self.healthbar.absorbbar.aggroborder
                 
                 self.name:SetFont(UNIT_NAME_FONT,12)
                 self.name:SetShadowOffset(-1,-1)
