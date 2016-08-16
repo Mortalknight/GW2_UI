@@ -43,6 +43,40 @@ function gw_register_raidframes()
     end
     gw_raidframes_update_layout()
     
+    
+    
+    GwRaidFrameContainer:RegisterEvent("PARTY_MEMBERS_CHANGED");
+    GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE");
+    GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE");
+
+    GwRaidFrameContainer:SetScript('OnEvent', function(self, event) 
+
+        if IsInRaid()==false and GROUPD_TYPE=='RAID' then
+            gw_toggle_partyframes_for_use(true)
+            GROUPD_TYPE='PARTY'
+        end
+        if  IsInRaid() and GROUPD_TYPE=='PARTY' then
+            gw_toggle_partyframes_for_use(false)
+            GROUPD_TYPE='RAID'
+        end
+        
+        gw_unhookPlayer_raidframe()
+        
+        gw_raidframes_update_layout()
+            
+            
+        gw_update_raidframeData( _G['GwCompactplayer'])         
+            for i=1,80 do
+                if i<5 then
+                    gw_update_raidframeData( _G['GwCompactparty'..i])         
+                end
+            gw_update_raidframeData( _G['GwCompactraid'..i])     
+            end
+           
+    end)
+    
+    
+    
     if gwGetSetting('RAID_STYLE_PARTY')==false then
         UnregisterUnitWatch(_G['GwCompactplayer'])
         _G['GwCompactplayer']:Hide()
@@ -58,35 +92,8 @@ function gw_register_raidframes()
     end
     
 
-    GwRaidFrameContainer:RegisterEvent("PARTY_MEMBERS_CHANGED");
-    GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE");
-    GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE");
-    GwRaidFrameContainer:SetScript('OnEvent', function(self, event) 
-            
-        if IsInRaid()==false and GROUPD_TYPE=='RAID' then
-            gw_toggle_partyframes_for_use(true)
-            GROUPD_TYPE='PARTY'
-        end
-        if  IsInRaid() and GROUPD_TYPE=='PARTY' then
-            gw_toggle_partyframes_for_use(false)
-            GROUPD_TYPE='RAID'
-        end
-        
-        gw_unhookPlayer_raidframe()
-        
-        gw_raidframes_update_layout()
-            
-            
-               gw_update_raidframeData( _G['GwCompactplayer'])         
-        for i=1,80 do
-            if i<5 then
-               gw_update_raidframeData( _G['GwCompactparty'..i])         
-            end
-            gw_update_raidframeData( _G['GwCompactraid'..i])     
-        end
-        
-    end)
-    
+
+      
 end
 
 
@@ -194,13 +201,16 @@ end
 function gw_raidframe_OnEvent(self,event,unit,arg1)
     
     if not UnitExists(self.unit) then return end
+    
     if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
+       
         local health = UnitHealth(self.unit)
         local healthMax = UnitHealthMax(self.unit)
         local healthPrec = 0
         if healthMax>0 then
             healthPrec = health/healthMax
         end
+        
         gwBar(self.healthbar,healthPrec)
     end
     
@@ -379,7 +389,7 @@ function gw_updateClassIcon_texture(self)
 end
 
 function gw_update_raidframe_awayData(self)
-     
+  
     local classColor = gwGetSetting('RAID_CLASS_COLOR')
     local iconState = 1
     
@@ -390,7 +400,6 @@ function gw_update_raidframe_awayData(self)
     end
     
     if classColor==true and classIndex~=nil and classIndex~=0 then
-        
         iconState = 0        
     end
     if UnitIsDeadOrGhost(self.unit) then
@@ -404,16 +413,14 @@ function gw_update_raidframe_awayData(self)
         end
     end
     if iconState==1 then
+        self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
         gw_setClassIcon(self.classicon,classIndex)
     end
     if iconState==2 then
         gw_setDeadIcon(self.classicon)
     end
      
-    if UnitIsConnected(self.unit)~=true then
-        self.healthbar:SetStatusBarColor(0.3,0.3,0.3,1)
-    end
-    
+   
     if GW_READY_CHECK_INPROGRESS==true then
      
         if self.ready == -1 then
@@ -430,6 +437,9 @@ function gw_update_raidframe_awayData(self)
         end
     end
     
+    if UnitIsConnected(self.unit)~=true then
+        self.healthbar:SetStatusBarColor(0.3,0.3,0.3,1)
+    end
     
     if UnitInPhase(self.unit)~=true or UnitInRange(self.unit)~=true then
         local r,g,b = self.healthbar:GetStatusBarColor()
