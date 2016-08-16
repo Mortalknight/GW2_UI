@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Frame name="GwQuestTrackerRadar" virtual="true" parent="GwQuestTracker" frameStrata="LOW">
+    <Frame name="GwQuestTrackerRadar" virtual="true" parent="UIParent" frameStrata="LOW">
         <Size x="300" y="70"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
@@ -91,6 +91,19 @@
             </OnLoad>
         </Scripts>
     </Frame>
+    <ScrollFrame name="GwQuestTrackerScroll" virtual="true">
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+        <Scripts>
+            <OnMouseWheel>
+                delta = delta * 5
+                local s = math.max(0,self:GetVerticalScroll() + delta)
+              
+                self:SetVerticalScroll(s)
+            </OnMouseWheel>
+        </Scripts>
+    </ScrollFrame>
     <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW">
         <Size x="300" y="300"></Size>
         <Anchors>

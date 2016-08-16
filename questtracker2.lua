@@ -65,13 +65,20 @@ function gw_load_questtracker()
     ObjectiveTrackerFrame:Hide()
     ObjectiveTrackerFrame:SetScript('OnShow', function() ObjectiveTrackerFrame:Hide() end)
     
-    CreateFrame('Frame','GwQuestTracker',UIParent,'GwQuestTracker') 
-    CreateFrame('Frame','GwQuestTrackerRadar',GwQuestTracker,'GwQuestTrackerRadar')
+    CreateFrame('ScrollFrame','GwQuestTrackerScroll',UIParent,'GwQuestTrackerScroll') 
+    CreateFrame('Frame','GwQuestTracker',GwQuestTrackerScroll,'GwQuestTracker') 
+   
+    CreateFrame('Frame','GwQuestTrackerRadar',UIParent,'GwQuestTrackerRadar')
     
     CreateFrame('Frame','GwQuesttrackerContainerScenario',GwQuestTracker,'GwQuesttrackerContainer') 
     CreateFrame('Frame','GwQuesttrackerContainerQuests',GwQuestTracker,'GwQuesttrackerContainer') 
     CreateFrame('Frame','GwQuesttrackerContainerBonusObjectives',GwQuestTracker,'GwQuesttrackerContainer')     
     CreateFrame('Frame','GwQuesttrackerContainerBossFrames',GwQuestTracker,'GwQuesttrackerContainerProtected') 
+    
+    
+    GwQuestTrackerScroll:SetSize(300,UIParent:GetHeight() - 70 - 200    )
+    GwQuestTrackerScroll:SetScrollChild(GwQuestTracker)
+
     
     GwQuesttrackerContainerBonusObjectives:ClearAllPoints()
     GwQuesttrackerContainerQuests:ClearAllPoints()
@@ -79,10 +86,12 @@ function gw_load_questtracker()
     GwQuesttrackerContainerScenario:ClearAllPoints()
     
     
+    GwQuestTrackerScroll:SetPoint('TOPRIGHT',GwQuestTrackerRadar,'BOTTOMRIGHT',0,0)
+    
     GwQuesttrackerContainerBonusObjectives:SetPoint('TOPRIGHT',GwQuesttrackerContainerQuests,'BOTTOMRIGHT',0,0)
     GwQuesttrackerContainerQuests:SetPoint('TOPRIGHT',GwQuesttrackerContainerScenario,'BOTTOMRIGHT',0,0)
     GwQuesttrackerContainerBossFrames:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT',0,BOSS_FRAME_Y)
-    GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuestTrackerRadar,'BOTTOMRIGHT',0,0)
+    GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuestTracker,'TOPRIGHT',0,0)
     
     GwQuestTrackerRadar:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT',0,RADAR_POSITION)
     
@@ -610,7 +619,10 @@ function gw_display_questtracker_layout()
     GwQuesttrackerContainerQuests:SetHeight(math.max(1,USED_HEIGHT['QUEST']))
     GwQuesttrackerContainerBonusObjectives:SetHeight(math.max(1,USED_HEIGHT['BONUS']))
     GwQuesttrackerContainerScenario:SetHeight(math.max(1,USED_HEIGHT['SCENARIO']))
-    GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuestTrackerRadar,'BOTTOMRIGHT',0,-BOSS_FRAME_HEIGHT)
+    
+    GwQuestTracker:SetHeight(USED_HEIGHT['QUEST'] + USED_HEIGHT['BONUS'] + USED_HEIGHT['SCENARIO'])
+    
+    GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuestTracker,'TOPRIGHT',0,-BOSS_FRAME_HEIGHT)
   --  GwQuesttrackerContainerBossFrames:SetHeight(math.max(1,BOSS_FRAME_HEIGHT))
     
     if UPDATE_POI_SCAN < GetTime() then
