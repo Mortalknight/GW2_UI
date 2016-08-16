@@ -97,7 +97,7 @@
         </Anchors>
         <Scripts>
             <OnMouseWheel>
-                delta = delta * 5
+                delta = delta * 10
                 local s = math.max(0,self:GetVerticalScroll() + delta)
               
                 self:SetVerticalScroll(s)
@@ -105,7 +105,7 @@
         </Scripts>
     </ScrollFrame>
     <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW">
-        <Size x="300" y="300"></Size>
+        <Size x="400" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>

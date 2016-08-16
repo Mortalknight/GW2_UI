@@ -75,8 +75,8 @@ function gw_load_questtracker()
     CreateFrame('Frame','GwQuesttrackerContainerBonusObjectives',GwQuestTracker,'GwQuesttrackerContainer')     
     CreateFrame('Frame','GwQuesttrackerContainerBossFrames',GwQuestTracker,'GwQuesttrackerContainerProtected') 
     
-    
-    GwQuestTrackerScroll:SetSize(300,UIParent:GetHeight() - 70 - 200    )
+   
+    GwQuestTrackerScroll:SetSize(400,UIParent:GetHeight() - 70 - 200    )
     GwQuestTrackerScroll:SetScrollChild(GwQuestTracker)
 
     
