@@ -97,7 +97,7 @@
         </Anchors>
         <Scripts>
             <OnMouseWheel>
-                delta = delta * 10
+                delta = -delta * 10
                 local s = math.max(0,self:GetVerticalScroll() + delta)
               
                 self:SetVerticalScroll(s)
