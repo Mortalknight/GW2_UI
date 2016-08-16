@@ -525,15 +525,20 @@ function gw_raidframes_updateDebuffs(self)
     local y = 0;
     for i=1,5 do
        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
-         local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
+        local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
         local created = false
-        if UnitDebuff(self.unit,i)  then
+        local shouldDisplay = UnitDebuff(self.unit,i)
+            if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
+                shouldDisplay = (shouldDisplay and isStealable)
+            end
+        if shouldDisplay  then
                 
                 if indexBuffFrame==nil then
                     indexBuffFrame = CreateFrame('Button','Gw'..self:GetName()..'DeBuffItemFrame'..i,self,'GwDeBuffIcon');
                     indexBuffFrame:SetParent(self);
                     indexBuffFrame:SetFrameStrata('MEDIUM');
                     indexBuffFrame:SetSize(16,16)
+                    indexBuffFrame:enableMouse(false)
                     created =  true
                 end
                 local margin = indexBuffFrame:GetWidth() + 2
