@@ -121,9 +121,11 @@ function registerNewUnitFrame(unitToWatch, frameType)
         if event=='PLAYER_TARGET_CHANGED' then
             updateFrameData(thisName,unitToWatch,event)
         end
-        if  event=='UNIT_TARGET' and unit==unitToWatch then
+        
+        if  event=='UNIT_TARGET' then
             updateFrameData(thisName,unitToWatch,event)
         end
+        
         if event=='PLAYER_FOCUS_CHANGED' then
             updateFrameData(thisName,unitToWatch,event)
         end
