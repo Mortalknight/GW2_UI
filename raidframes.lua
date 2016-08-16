@@ -418,6 +418,7 @@ function gw_update_raidframe_awayData(self)
     end
     if iconState==2 then
         gw_setDeadIcon(self.classicon)
+        self.classicon:Show()
     end
      
    
@@ -447,6 +448,9 @@ function gw_update_raidframe_awayData(self)
         b = b*0.3
         g = g*0.3
         self.healthbar:SetStatusBarColor(r,g,b)
+        self.classicon:SetAlpha(0.4)
+    else
+        self.classicon:SetAlpha(1)
     end
     
 
