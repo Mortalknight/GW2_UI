@@ -537,10 +537,19 @@ function gw_raidframes_updateDebuffs(self)
        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
         local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
         local created = false
-        local shouldDisplay = UnitDebuff(self.unit,i)
+        local shouldDisplay = false
+        
+        if  UnitDebuff(self.unit,i) then
+        
             if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
-                shouldDisplay = (shouldDisplay and isStealable)
+                if isStealable then
+                    shouldDisplay = true
+                end
+            else
+                shouldDisplay = true 
             end
+        end
+        
         if shouldDisplay  then
                 
                 if indexBuffFrame==nil then

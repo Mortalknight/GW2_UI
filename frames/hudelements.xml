@@ -789,6 +789,19 @@
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
                             </Anchors>
+                        </Texture> 
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                           
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="TOP" y="2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                            </Anchors>
                         </Texture>
                         <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
                             <Size x="200" y="50"></Size>
@@ -817,6 +830,12 @@
                             <Size x="40" y="40"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
                             </Anchors>
                         </Texture>
                         <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
@@ -848,6 +867,12 @@
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
                             </Anchors>
                         </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                            </Anchors>
+                        </Texture>
                         <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
                             <Size x="200" y="50"></Size>
                               <Anchors>
@@ -875,6 +900,12 @@
                             <Size x="40" y="40"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
                             </Anchors>
                         </Texture>
                         <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
