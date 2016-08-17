@@ -959,6 +959,20 @@
                 _G['GwLevelingRewardsItem4'].name:SetFont(DAMAGE_TEXT_FONT,14)
                 _G['GwLevelingRewardsItem4'].level:SetFont(DAMAGE_TEXT_FONT,14)
             </OnLoad>
+            <OnShow>
+                self.animationValue = -400
+                local name = self:GetName()
+                local start = GetTime()
+                 addToAnimation(name,self.animationValue,0,start,0.2,function()
+        
+                    local prog = animations[name]['progress']
+                    local a = lerp(0,1,(GetTime()-start)/0.2)
+                    self:SetAlpha(a)
+                    self:SetPoint('CENTER',0,prog);
+                  
+                end)
+            </OnShow>  
+
         </Scripts>
     </Frame>
     

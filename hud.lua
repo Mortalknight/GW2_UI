@@ -1063,6 +1063,7 @@ end
 
 function gw_load_levelingrewads()
    CreateFrame('Frame','GwLevelingRewards',UIParent,'GwLevelingRewards') 
+    tinsert(UISpecialFrames, "GwLevelingRewards") 
 end
 
 
