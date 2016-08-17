@@ -548,7 +548,7 @@ function gw_raidframes_updateDebuffs(self)
                     indexBuffFrame:SetParent(self);
                     indexBuffFrame:SetFrameStrata('MEDIUM');
                     indexBuffFrame:SetSize(16,16)
-                    indexBuffFrame:enableMouse(false)
+                    indexBuffFrame:EnableMouse(false)
                     created =  true
                 end
                 local margin = indexBuffFrame:GetWidth() + 2

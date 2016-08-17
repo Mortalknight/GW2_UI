@@ -16,6 +16,23 @@ GwQuestviewFrameContainerAcceptButton
 
 ]]--
 
+function gw_style_questview_rewards()
+    QuestInfoRewardsFrame.Header:SetFont('UNIT_NAME_FONT',14)
+    QuestInfoRewardsFrame.Header:SetTextColor(1,1,1)
+    QuestInfoRewardsFrame.Header:SetShadowColor(0,0,0,1)  
+    
+    QuestInfoRewardsFrame.ItemChooseText:SetFont('UNIT_NAME_FONT',12)
+    QuestInfoRewardsFrame.ItemChooseText:SetTextColor(1,1,1)
+    QuestInfoRewardsFrame.ItemChooseText:SetShadowColor(0,0,0,1)   
+    
+    QuestInfoRewardsFrame.ItemReceiveText:SetFont('UNIT_NAME_FONT',12)
+    QuestInfoRewardsFrame.ItemReceiveText:SetTextColor(1,1,1)
+    QuestInfoRewardsFrame.ItemReceiveText:SetShadowColor(0,0,0,1)
+    
+    QuestInfoXPFrame.ReceiveText:SetFont('UNIT_NAME_FONT',12)
+    QuestInfoXPFrame.ReceiveText:SetTextColor(1,1,1)
+    QuestInfoXPFrame.ReceiveText:SetShadowColor(0,0,0,1)
+end
 
 function gw_create_questview()
     
@@ -82,7 +99,7 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
 
         end
 
-        if event == 'QUEST_FINISHED' or event=='QUEST_ACCEPTED' then
+        if event == 'QUEST_FINISHED' then
             GwQuestviewFrame:Hide()
             PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_close.ogg",'SFX')          
         end
@@ -212,6 +229,7 @@ function showRewards()
         QuestInfoRewardsFrame:ClearAllPoints();
         QuestInfoRewardsFrame:SetPoint('CENTER',GwQuestviewFrame,'CENTER',0,-20);
         QuestInfoRewardsFrame:SetFrameLevel(5)
+        gw_style_questview_rewards()
 end
 
 

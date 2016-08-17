@@ -126,6 +126,7 @@
                         <Scripts>
                             <OnClick>
                                 DeclineQuest();
+                                GwQuestviewFrame:Hide()
                             </OnClick>
                         </Scripts>
                     </Button>

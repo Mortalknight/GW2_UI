@@ -740,5 +740,196 @@
             </OnSizeChanged>
         </Scripts>
     </Frame>
+    <Frame name="GwLevelingRewards" hidden="true" virtual="true">
+        <Size x="376" y="361"></Size>
+        <Anchors>
+            <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                    <Size x="512" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="header" text="Upcoming Level Rewards">
+                    <Size x="376" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="rewardHeader" text="REWARD" justifyH="LEFT">
+                    <Size x="100" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-55"></Anchor>
+                    </Anchors>
+                </FontString> 
+                <FontString parentKey="levelHeader" text=" LEVEL" justifyH="RIGHT">
+                    <Size x="100" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-20" y="-55"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="$parentItem1">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="TOP" x="0" y="-90"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe"> 
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+            </Frame> 
+            <Frame name="$parentItem2">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem1" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe"> 
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+            </Frame> 
+            <Frame name="$parentItem3">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem2" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+            </Frame>   
+            <Frame name="$parentItem4">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem3" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+                
+            </Frame>
+                  <Button name="GwCloseLevelingRewards" inherits="GwStandardButton" text="Close">
+                        <Size x="70" y="20" />
+                        <Anchors>
+                            <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="GwLevelingRewards" x="5" y="10"></Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GwLevelingRewards:Hide()                                
+                            </OnClick>
+                        </Scripts>
+                </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                self.header:SetFont(DAMAGE_TEXT_FONT,24)
+                
+                self.rewardHeader:SetFont(DAMAGE_TEXT_FONT,11)
+                self.rewardHeader:SetTextColor(0.6,0.6,0.6)
+                
+                self.levelHeader:SetFont(DAMAGE_TEXT_FONT,11)
+                self.levelHeader:SetTextColor(0.6,0.6,0.6)
+                
+                
+                _G['GwLevelingRewardsItem1'].name:SetFont(DAMAGE_TEXT_FONT,14)
+                _G['GwLevelingRewardsItem1'].level:SetFont(DAMAGE_TEXT_FONT,14)   
+                
+                _G['GwLevelingRewardsItem2'].name:SetFont(DAMAGE_TEXT_FONT,14)
+                _G['GwLevelingRewardsItem2'].level:SetFont(DAMAGE_TEXT_FONT,14)
+                
+                _G['GwLevelingRewardsItem3'].name:SetFont(DAMAGE_TEXT_FONT,14)
+                _G['GwLevelingRewardsItem3'].level:SetFont(DAMAGE_TEXT_FONT,14)
+                
+                _G['GwLevelingRewardsItem4'].name:SetFont(DAMAGE_TEXT_FONT,14)
+                _G['GwLevelingRewardsItem4'].level:SetFont(DAMAGE_TEXT_FONT,14)
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    
     
 </Ui>

@@ -114,6 +114,46 @@ GW_TARGET_FRAME_ART = {
     ['rare'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare',
     ['rareelite'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare',
 }
+GW_LEVELING_REWARD_AVALIBLE = false
+GW_LEVELING_REWARDS = {}
+
+GW_LEVELING_REWARDS_DEFAULT = {}
+
+
+GW_LEVELING_REWARDS_DEFAULT[1] = {}
+GW_LEVELING_REWARDS_DEFAULT[1]['type'] = 'TALENT'
+GW_LEVELING_REWARDS_DEFAULT[1]['id'] = 0
+GW_LEVELING_REWARDS_DEFAULT[1]['level'] = 15
+
+GW_LEVELING_REWARDS_DEFAULT[2] = {}
+GW_LEVELING_REWARDS_DEFAULT[2]['type'] = 'TALENT'
+GW_LEVELING_REWARDS_DEFAULT[2]['id'] = 0
+GW_LEVELING_REWARDS_DEFAULT[2]['level'] = 30
+
+GW_LEVELING_REWARDS_DEFAULT[3] = {}
+GW_LEVELING_REWARDS_DEFAULT[3]['type'] = 'TALENT'
+GW_LEVELING_REWARDS_DEFAULT[3]['id'] = 0
+GW_LEVELING_REWARDS_DEFAULT[3]['level'] = 45
+
+GW_LEVELING_REWARDS_DEFAULT[4] = {}
+GW_LEVELING_REWARDS_DEFAULT[4]['type'] = 'TALENT'
+GW_LEVELING_REWARDS_DEFAULT[4]['id'] = 0
+GW_LEVELING_REWARDS_DEFAULT[4]['level'] = 60
+
+GW_LEVELING_REWARDS_DEFAULT[5] = {}
+GW_LEVELING_REWARDS_DEFAULT[5]['type'] = 'TALENT'
+GW_LEVELING_REWARDS_DEFAULT[5]['id'] = 0
+GW_LEVELING_REWARDS_DEFAULT[5]['level'] = 75
+
+GW_LEVELING_REWARDS_DEFAULT[6] = {}
+GW_LEVELING_REWARDS_DEFAULT[6]['type'] = 'TALENT'
+GW_LEVELING_REWARDS_DEFAULT[6]['id'] = 0
+GW_LEVELING_REWARDS_DEFAULT[6]['level'] = 90
+
+GW_LEVELING_REWARDS_DEFAULT[7] = {}
+GW_LEVELING_REWARDS_DEFAULT[7]['type'] = 'TALENT'
+GW_LEVELING_REWARDS_DEFAULT[7]['id'] = 0
+GW_LEVELING_REWARDS_DEFAULT[7]['level'] = 100
 
 oldExp =0;
 gainExpStart =0;
@@ -346,6 +386,7 @@ end
 
 function loadExperienceBar()
     
+gw_load_levelingrewads()
 
 local experiencebar =  CreateFrame('Frame', 'GwExperienceFrame',UIParent,'GwExperienceBar');
 local eName = experiencebar:GetName()
@@ -375,7 +416,7 @@ local eName = experiencebar:GetName()
     
   
     
-    
+   
     
     
 end
@@ -446,7 +487,9 @@ end
 function update_experiencebar_data(self,event)
     
 
-    
+   
+
+    gw_leveling_display_rewards()
     local showArtifact = HasArtifactEquipped()
     
     local valCurrent = UnitXP('Player')
@@ -455,6 +498,13 @@ function update_experiencebar_data(self,event)
     
     local level = UnitLevel('Player')
     local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel('Player') +1)
+    
+    local rew = countTable(GW_LEVELING_REWARDS)
+    
+    
+    
+    
+    
     local rested = GetXPExhaustion()
     local showBar1 = false
     local showBar2 = false
@@ -577,6 +627,9 @@ end
 
     experiencebarAnimation =valPrec
     
+    if GW_LEVELING_REWARD_AVALIBLE then
+        Nextlevel = Nextlevel..' |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:20:20:0:0|t'
+    end
     
     _G['GwExperienceFrameNextLevel']:SetText(Nextlevel);
     _G['GwExperienceFrameCurrentLevel']:SetText(restingIconString..level);
@@ -1011,7 +1064,76 @@ function ToggleGameMenuFrame()
 end
 
 
+function gw_load_levelingrewads()
+   CreateFrame('Frame','GwLevelingRewards',UIParent,'GwLevelingRewards') 
+end
 
 
+function gw_leveling_display_rewards()
+    
+    GW_LEVELING_REWARDS =nil
+    GW_LEVELING_REWARDS ={}
+    GW_LEVELING_REWARDS = GW_LEVELING_REWARDS_DEFAULT
+    GW_LEVELING_REWARD_AVALIBLE = false
+    
+    
+    
+    local currentSpec = GetSpecialization() -- Get the player's current spec
+    local spells = {GetSpecializationSpells(currentSpec)}
+    for k,v in pairs(spells) do
+        if v~=nil then
+        local tIndex = countTable(GW_LEVELING_REWARDS)+1
+            GW_LEVELING_REWARDS[tIndex] = {}
+            GW_LEVELING_REWARDS[tIndex]['type'] = 'SPELL'
+            GW_LEVELING_REWARDS[tIndex]['id'] = v
+            GW_LEVELING_REWARDS[tIndex]['level'] = GetSpellLevelLearned(v)
+        end
+    end
+    
+    table.sort( GW_LEVELING_REWARDS, function(a,b) return a['level'] < b['level'] end)
+    
+    local i = 1
+    for k,v in pairs(GW_LEVELING_REWARDS) do
+        if v['level']>UnitLevel('player') then
+             _G['GwLevelingRewardsItem'..i]:Show()
+             _G['GwLevelingRewardsItem'..i].level:SetText(v['level']..' |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:24:24:0:0|t ')
+            
+                if v['type']=='SPELL' then
+                    name, rank, icon = GetSpellInfo(v['id'])
+                    _G['GwLevelingRewardsItem'..i].icon:SetTexture(icon)
+                    _G['GwLevelingRewardsItem'..i].name:SetText(name)
+                    _G['GwLevelingRewardsItem'..i]:SetScript('OnEnter',function()
+                    
+                        GameTooltip:SetOwner(GwLevelingRewards, "ANCHOR_NONE",0,0);
+                        GameTooltip:ClearLines();
+                        GameTooltip:SetSpellByID(v['id'])
+                        GameTooltip:Show()
+                    end)
+                    _G['GwLevelingRewardsItem'..i]:SetScript('OnLeave',function() GameTooltip:Hide() end)
+                
+                end
+                if v['type']=='TALENT' then
+                    
+                    _G['GwLevelingRewardsItem'..i].icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talent-icon')
+                    _G['GwLevelingRewardsItem'..i].name:SetText('Talent Point')
+                    _G['GwLevelingRewardsItem'..i]:SetScript('OnEnter',function() end)
+                    _G['GwLevelingRewardsItem'..i]:SetScript('OnLeave',function() end)
+                end
+                GW_LEVELING_REWARD_AVALIBLE = true
+            
+            i = i + 1
+            if i>4 then break end
+        end
+    end
+    
+    if i<5 then
+        while i<5 do
+           _G['GwLevelingRewardsItem'..i]:Hide()
+            i = i +1
+        end
+    end
+    
+    
+end
 
 

@@ -464,8 +464,7 @@ function gw_setClassIcon(self,class)
     )
 end
 function gw_setDeadIcon(self)
-    self:SetTexCoord(
-        GW_CLASS_ICONS['dead'].l,
+    self:SetTexCoord(GW_CLASS_ICONS['dead'].l,
         GW_CLASS_ICONS['dead'].r,
         GW_CLASS_ICONS['dead'].t,
         GW_CLASS_ICONS['dead'].b
