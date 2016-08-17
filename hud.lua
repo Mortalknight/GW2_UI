@@ -487,9 +487,8 @@ end
 function update_experiencebar_data(self,event)
     
 
-   
-
     gw_leveling_display_rewards()
+    
     local showArtifact = HasArtifactEquipped()
     
     local valCurrent = UnitXP('Player')
@@ -498,8 +497,6 @@ function update_experiencebar_data(self,event)
     
     local level = UnitLevel('Player')
     local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel('Player') +1)
-    
-    local rew = countTable(GW_LEVELING_REWARDS)
     
     
     
@@ -1071,8 +1068,9 @@ end
 
 function gw_leveling_display_rewards()
     
-    GW_LEVELING_REWARDS =nil
-    GW_LEVELING_REWARDS ={}
+    for k,v in pairs(GW_LEVELING_REWARDS) do
+        GW_LEVELING_REWARDS[k] = nil
+    end
     GW_LEVELING_REWARDS = GW_LEVELING_REWARDS_DEFAULT
     GW_LEVELING_REWARD_AVALIBLE = false
     
