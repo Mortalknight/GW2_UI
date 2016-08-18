@@ -216,7 +216,6 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
                 local spark_prec = spark_current - spark_min
                 
                             
-                local spark = math.min(powerBarWidth-15,math.floor(powerBarWidth*round_closest) - math.floor(15*spark_prec))
                 local bI = 17 - math.max(1,intRound(16 * spark_prec))
 
                    _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,
@@ -258,7 +257,7 @@ function update_health_data()
     end
     
     if absorb>0 and healthMax>0 then
-         absorbPrec =  math.max(0.0001,absorb/healthMax)
+         absorbPrec =  math.min(math.max(0.0001,absorb/healthMax), 1)
     end
 
     
