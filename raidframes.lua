@@ -542,7 +542,7 @@ function gw_raidframes_updateDebuffs(self)
         local shouldDisplay = false
         
         if  UnitDebuff(self.unit,i) then
-        
+            
             if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
                 if isStealable then
                     shouldDisplay = true

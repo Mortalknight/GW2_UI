@@ -895,6 +895,9 @@ function gw_load_bossFrame(i)
     targetF:SetAttribute("*type1", 'target')
     targetF:SetAttribute("*type2", "showmenu")
     targetF:SetAttribute("unit", debug_unit_Track)
+    
+    GwaddTOClique(targetF)
+    
     RegisterUnitWatch(targetF);
     targetF:EnableMouse(true)
     targetF:RegisterForClicks("LeftButtonUp", "RightButtonUp")

@@ -112,6 +112,9 @@ function gw_create_partyframe(i)
     RegisterUnitWatch(frame);
     frame:EnableMouse(true)
     frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    
+    GwaddTOClique(frame)
+    
     frame.healthbar.spark:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
     
     frame.healthbar.animationName =registerUnit..'animation'

@@ -90,7 +90,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     addOption('Class Color','Use class color insted of class icons','RAID_CLASS_COLOR','GwSettingsGroupframe')
     addOption('Power Bars','Display power bars','RAID_POWER_BARS','GwSettingsGroupframe')
-    addOption('Show Only Dispelable Debuffs','Only displays debuffs that you can dispell','RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
+ --  addOption('Show Only Dispelable Debuffs','Only displays debuffs that you can dispell','RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
   
     addOptionSlider('Raid Container Height','','RAID_UNITS_PER_COLUMN','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
