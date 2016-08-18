@@ -1,4 +1,4 @@
-GW_VERSION_STRING = 'GW2_UI v3.1.1'
+GW_VERSION_STRING = 'GW2_UI v3.1.2'
 
 
 GW2UI_SETTINGS = {}
@@ -715,7 +715,7 @@ function GwaddTOClique(frame)
         local frameName = frame
         frame = _G[frameName]
         if not frame then
-            print("Clique: error registering frame: " .. tostring(frameName))
+          
         end
     end
 
