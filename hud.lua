@@ -1089,6 +1089,28 @@ function gw_leveling_display_rewards()
         end
     end
     
+    for i=1,80 do
+ 
+    local skillType, spellId =GetSpellBookItemInfo(i,'spell')
+        
+        if skillType=='FUTURESPELL' and spellId~=nil then
+            local  shouldAdd = true
+            for k,v in pairs(GW_LEVELING_REWARDS) do if v['id']==spellId then shouldAdd=false end end
+            if shouldAdd then
+            local tIndex = countTable(GW_LEVELING_REWARDS)+1
+           
+                GW_LEVELING_REWARDS[tIndex] = {}
+                GW_LEVELING_REWARDS[tIndex]['type'] = 'SPELL'
+                GW_LEVELING_REWARDS[tIndex]['id'] = spellId
+                GW_LEVELING_REWARDS[tIndex]['level'] = GetSpellLevelLearned(spellId)
+            end
+        end
+        
+    end
+    
+    
+   
+    
     table.sort( GW_LEVELING_REWARDS, function(a,b) return a['level'] < b['level'] end)
     
     local i = 1

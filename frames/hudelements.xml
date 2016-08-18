@@ -960,6 +960,7 @@
                 _G['GwLevelingRewardsItem4'].level:SetFont(DAMAGE_TEXT_FONT,14)
             </OnLoad>
             <OnShow>
+                PlaySound("AchievementMenuOpen");
                 self.animationValue = -400
                 local name = self:GetName()
                 local start = GetTime()
