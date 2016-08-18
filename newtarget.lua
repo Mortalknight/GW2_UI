@@ -52,6 +52,8 @@ function registerNewUnitFrame(unitToWatch, frameType)
     targetF:EnableMouse(true)
     targetF:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     
+     GwaddTOClique(targetF)
+    
     
     local dropdown = nil;
     if unitToWatch=='target' then

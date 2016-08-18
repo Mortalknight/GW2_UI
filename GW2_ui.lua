@@ -710,3 +710,18 @@ l:RegisterEvent('ADDON_LOADED')
 l:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 
+function GwaddTOClique(frame)
+    if type(frame) == "string" then
+        local frameName = frame
+        frame = _G[frameName]
+        if not frame then
+            print("Clique: error registering frame: " .. tostring(frameName))
+        end
+    end
+
+    if frame and frame.RegisterForClicks and ClickCastFrames~=nil then
+        ClickCastFrames[frame] = true
+    end
+end
+
+

@@ -117,6 +117,8 @@ function gw_create_raidframe(registerUnit)
     frame:SetAttribute("unit", registerUnit);
     frame:SetAttribute("*type1", 'target')
     frame:SetAttribute("*type2", "togglemenu")
+    
+    GwaddTOClique(frame)
 
     RegisterUnitWatch(frame);
     frame:EnableMouse(true)

@@ -103,6 +103,8 @@ function create_player_hud()
             end       
     end)
     
+    GwaddTOClique(GwPlayerHealthGlobeClickOverlay)
+    
     
     
     RegisterUnitWatch(playerHealthGLobaBg)
