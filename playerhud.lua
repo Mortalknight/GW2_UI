@@ -46,7 +46,26 @@ function create_pet_frame()
    
     GwPlayerPetFrame:ClearAllPoints()
     GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos')['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
-
+    
+    
+    CreateFrame('Button','GwDodgeBar',UIParemt,'GwDodgeBar')
+    
+    local ag = GwDodgeBar.spark:CreateAnimationGroup()    
+    local anim = ag:CreateAnimation("Rotation")
+    GwDodgeBar.spark.anim = anim
+    ag:SetLooping("REPEAT")
+    
+    
+    GwDodgeBar.animation = 0
+    GwDodgeBar:RegisterEvent('SPELL_UPDATE_COOLDOWN')
+    GwDodgeBar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    GwDodgeBar:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    GwDodgeBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    GwDodgeBar:SetScript('OnEvent', gw_dodgebar_onevent)
+    
+    gw_dodgebar_onevent()
+    
+    
 end
 
 function create_power_bar()
@@ -291,4 +310,72 @@ function update_health_text(text)
     for i = 1 , 8 do
         _G['GwPlayerHealthGlobeTextShadow'..i]:SetText(comma_value(text))
     end
+end
+
+
+
+function gw_dodgebar_onevent(self,event,unit)
+    
+    local foundADash = false
+  
+    local __,__,c = UnitClass('Player')
+        if GW_DODGEBAR_SPELLS[c]~=nil then
+            for k,v in pairs(GW_DODGEBAR_SPELLS[c]) do
+                local name = GetSpellInfo(v)
+                if name~=nil then
+                    charges, maxCharges, start, duration = GetSpellCharges(v)
+                    foundADash = true
+                    if charges~=nil and charges<maxCharges then
+                       gw_update_dodgebar(start,duration,maxCharges,charges)
+                       
+                    end
+                end
+            end
+    end
+    if foundADash==false then
+        GwDodgeBar:Hide()
+    else
+       GwDodgeBar:Show() 
+    end
+    
+end
+
+
+function gw_update_dodgebar(start,duration,chargesMax,charges)
+    
+
+    
+    if chargesMax>1 and chargesMax<3 then
+        
+        _G['GwDodgeBarSep1']:Show()
+    else
+        _G['GwDodgeBarSep1']:Hide()
+    end
+
+  --  GwDodgeBar.spark.anim:SetDegrees(63)
+ --   GwDodgeBar.spark.anim:SetDuration(1)  
+  --  GwDodgeBar.spark.anim:Play()
+
+    
+
+    addToAnimation('GwDodgeBar',0,1,start,duration,function()
+            
+        local p = animations['GwDodgeBar']['progress']
+        local c = (charges + p) / chargesMax
+        local t = lerp(1,-1,c) +1.4
+        GwDodgeBar.fill:SetTexCoord(0,1*c,0,1)
+        GwDodgeBar.fill:SetWidth(114*c)
+            
+        --[[local spark = GwDodgeBar.spark  
+            value = c --values is between 0 and 1
+            local radian =t
+            spark:SetPoint("CENTER", 94 * math.cos(radian), 94 * math.sin(radian))
+            spark:SetRotation(radian)  
+        ]]--
+      
+                      
+    
+    end,'noease')
+    GwDodgeBar.animation = 0
+    
 end

@@ -155,6 +155,20 @@ GW_LEVELING_REWARDS_DEFAULT[7]['type'] = 'TALENT'
 GW_LEVELING_REWARDS_DEFAULT[7]['id'] = 0
 GW_LEVELING_REWARDS_DEFAULT[7]['level'] = 100
 
+GW_DODGEBAR_SPELLS = {}
+GW_DODGEBAR_SPELLS[1] = {'Intercept','Charge'}
+GW_DODGEBAR_SPELLS[2] = {'Divine Steed'}
+GW_DODGEBAR_SPELLS[3] = {'Disengage', 'Harpoon'}
+GW_DODGEBAR_SPELLS[4] = {'Grappling Hook'}
+GW_DODGEBAR_SPELLS[5] = {'Angelic Feather'}
+GW_DODGEBAR_SPELLS[6] = {'Wraith Walk'}
+GW_DODGEBAR_SPELLS[7] = {'Feral Lunge'}
+GW_DODGEBAR_SPELLS[8] = {'Blink','Shimmer'}
+GW_DODGEBAR_SPELLS[9] = {'Demonic Circle'}
+GW_DODGEBAR_SPELLS[10] = {'Roll', 'Chi Torpedo'}
+GW_DODGEBAR_SPELLS[11] = {'Wild Charge', 'Displacer Beast'}
+GW_DODGEBAR_SPELLS[12] = {'Fel Rush', 'Infernal Strike'}
+
 oldExp =0;
 gainExpStart =0;
 gainExpEnd=0;
