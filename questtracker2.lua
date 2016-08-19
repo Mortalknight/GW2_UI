@@ -34,6 +34,8 @@ local cvar = GetCVarBool("questPOI")
 
 local GW_COMPASS_SHOWN = true
 
+local GW_MAX_SCROLL_HEIGHT = 500
+
 
 function gw_toggle_quest_hidden(qid)
     local found = false
@@ -76,7 +78,8 @@ function gw_load_questtracker()
     CreateFrame('Frame','GwQuesttrackerContainerBossFrames',GwQuestTracker,'GwQuesttrackerContainerProtected') 
     
    
-    GwQuestTrackerScroll:SetSize(400,UIParent:GetHeight() - 70 - 200    )
+    GW_MAX_SCROLL_HEIGHT = UIParent:GetHeight() - 70 - 200
+    GwQuestTrackerScroll:SetSize(400,GW_MAX_SCROLL_HEIGHT )
     GwQuestTrackerScroll:SetScrollChild(GwQuestTracker)
 
     
@@ -621,6 +624,7 @@ function gw_display_questtracker_layout()
     GwQuesttrackerContainerScenario:SetHeight(math.max(1,USED_HEIGHT['SCENARIO']))
     
     GwQuestTracker:SetHeight(USED_HEIGHT['QUEST'] + USED_HEIGHT['BONUS'] + USED_HEIGHT['SCENARIO'])
+    GwQuestTrackerScroll:SetSize(400,math.min(GW_MAX_SCROLL_HEIGHT,USED_HEIGHT['QUEST'] + USED_HEIGHT['BONUS'] + USED_HEIGHT['SCENARIO']) )
     
     GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuestTracker,'TOPRIGHT',0,-BOSS_FRAME_HEIGHT)
   --  GwQuesttrackerContainerBossFrames:SetHeight(math.max(1,BOSS_FRAME_HEIGHT))
