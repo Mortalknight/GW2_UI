@@ -90,7 +90,7 @@ GW_CLASS_ICONS['dead']  ={l=0.0625*12,r=0.0625*13,t=0,b=1}
 
 GW_CLASS_COLORS_RAIDFRAME ={}
 
-GW_CLASS_COLORS_RAIDFRAME[1] = {r= 90/255, g= 54/255, b= 38/255}   --Warrior
+GW_CLASS_COLORS_RAIDFRAME[1] = {r= 90/255, g= 54/255, b= 38/255}    --Warrior
 GW_CLASS_COLORS_RAIDFRAME[2] = {r= 177/255, g= 72/255, b= 117/255}  --Paladin
 GW_CLASS_COLORS_RAIDFRAME[3] = {r= 99/255, g= 125/255, b= 53/255}   --Hunter
 GW_CLASS_COLORS_RAIDFRAME[4] = {r= 190/255, g= 183/255, b= 79/255}  --Rogue
@@ -169,11 +169,7 @@ GW_DODGEBAR_SPELLS[10] = {'Roll', 'Chi Torpedo'}
 GW_DODGEBAR_SPELLS[11] = {'Wild Charge', 'Displacer Beast'}
 GW_DODGEBAR_SPELLS[12] = {'Fel Rush', 'Infernal Strike'}
 
-oldExp =0;
-gainExpStart =0;
-gainExpEnd=0;
-newExp = 0
-lerpRunning = false
+
 
 function createButton(p,w,h,xo,yo,texture,sub)
     local f = CreateFrame("Button",nil,UIParent)

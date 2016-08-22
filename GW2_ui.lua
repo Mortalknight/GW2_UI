@@ -187,6 +187,8 @@ GW_DEFAULT['RAID_POWER_BARS'] = false
 GW_DEFAULT['RAID_UNITS_PER_COLUMN'] = 5
 GW_DEFAULT['RAID_ONLY_DISPELL_DEBUFFS'] = false
 
+GW_DEFAULT['HUD_SCALE'] = 1
+
 
 
 
@@ -269,6 +271,27 @@ function gw_update_moveableframe_positions()
     end
     
 end
+
+function gwUpdateHudScale(scale)
+    
+    local frames = {
+        MainMenuBarArtFrame,
+        GwHudArtFrame,
+        MultiBarBottomRight,
+        MultiBarBottomLeft,
+        GwPlayerPowerBar,
+        GwPlayerAuraFrame,
+        GwPlayerClassPower,
+        GwHudArtFrameRepair,
+        GwPlayerHealthGlobe
+    }
+    
+    for k,v in pairs(frames) do
+       v:SetScale(gwGetSetting('HUD_SCALE')) 
+    end
+    
+end
+
 
 if AchievementMicroButton_Update==nil then
    function AchievementMicroButton_Update()
@@ -700,6 +723,8 @@ l:SetScript('OnEvent',function(self,event,name)
         -- move error frame
         UIErrorsFrame:ClearAllPoints()
         UIErrorsFrame:SetPoint('TOP',UIParent,'TOP',0,0)
+        
+        gwUpdateHudScale()
              
          
         
