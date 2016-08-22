@@ -346,10 +346,20 @@ function gw_update_dodgebar(start,duration,chargesMax,charges)
 
     
     if chargesMax>1 and chargesMax<3 then
-        
         _G['GwDodgeBarSep1']:Show()
     else
         _G['GwDodgeBarSep1']:Hide()
+    end
+    
+    if chargesMax>2 then
+       _G['GwDodgeBarSep2']:SetRotation(0.55) 
+       _G['GwDodgeBarSep3']:SetRotation(-0.55)
+        
+        _G['GwDodgeBarSep2']:Show() 
+        _G['GwDodgeBarSep3']:Show() 
+    else
+        _G['GwDodgeBarSep2']:Hide() 
+        _G['GwDodgeBarSep3']:Hide() 
     end
 
   --  GwDodgeBar.spark.anim:SetDegrees(63)

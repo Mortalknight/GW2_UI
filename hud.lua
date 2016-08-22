@@ -881,11 +881,34 @@ function create_micro_menu()
     
     GwMicroButtonLFDMicroButton:SetScript('OnMouseDown',function()  PVEFrame_ToggleFrame(); gw_UpdateMicroButtons() end);
     
-    GwMicroButtonCollectionsMicroButton:SetScript('OnMouseDown',function()  ToggleCollectionsJournal(); gw_UpdateMicroButtons() end);
+    GwMicroButtonCollectionsMicroButton:SetScript('OnMouseDown',function()                  ToggleCollectionsJournal();
+    gw_UpdateMicroButtons() end);
     
     GwMicroButtonEJMicroButton:SetScript('OnMouseDown',function() ToggleEncounterJournal()  gw_UpdateMicroButtons() end);
     
-     GwMicroButtonMainMenuMicroButton:SetScript('OnMouseDown',function() ToggleGameMenuFrame()  gw_UpdateMicroButtons() end);
+     GwMicroButtonMainMenuMicroButton:SetScript('OnMouseDown',function() 
+            
+        if ( not GameMenuFrame:IsShown() ) then
+                
+                if ( VideoOptionsFrame:IsShown() ) then
+                    VideoOptionsFrameCancel:Click();
+                elseif ( AudioOptionsFrame:IsShown() ) then
+                    AudioOptionsFrameCancel:Click();
+                elseif ( InterfaceOptionsFrame:IsShown() ) then
+                    InterfaceOptionsFrameCancel:Click();
+                end
+                
+                CloseMenus();
+                CloseAllWindows()
+                PlaySound("igMainMenuOpen");
+                ShowUIPanel(GameMenuFrame);
+		  else
+                PlaySound("igMainMenuQuit");
+                HideUIPanel(GameMenuFrame);
+                MainMenuMicroButton_SetNormal();
+            end
+		
+    gw_UpdateMicroButtons() end);
     
      GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
      GwMicroButtonStoreMicroButton:SetScript('OnMouseDown',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
@@ -1067,6 +1090,7 @@ end
 
 
 function ToggleGameMenuFrame()
+   
     if  GameMenuFrame:IsShown() then
         GameMenuFrame:Hide()
         return

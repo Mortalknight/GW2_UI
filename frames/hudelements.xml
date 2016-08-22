@@ -375,26 +375,34 @@
                 </Texture> 
             </Layer> 
             <Layer level="ARTOWRK" textureSubLevel="2">
-                 <Texture name="$parentSep1" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
+                 <Texture name="$parentSep1" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
                     <Size x="118" y="118"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture> 
-                <Texture name="$parentSep2" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
+                <Texture name="$parentSep2" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
                     <Size x="118" y="118"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="20"/>
                     </Anchors> 
                 </Texture>
-                    <Texture name="$parentSep3" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
+                    <Texture name="$parentSep3" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
                     <Size x="118" y="118"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="20"/>
                     </Anchors>
                 </Texture>
             </Layer>
         </Layers>
+        <Scripts>
+            <OnEnter>
+               self:SetScale(1.06)
+            </OnEnter>
+            <OnLeave>
+                self:SetScale(1)
+            </OnLeave>
+        </Scripts>
     </Button>
     <Button name="GwPlayerPetFrame" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
         <Size x="328" y="100"></Size>
