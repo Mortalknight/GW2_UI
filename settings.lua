@@ -118,7 +118,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
  
     
-    
+    switch_settings_cat(0)
     GwSettingsWindow:Hide()
 end
 
@@ -155,9 +155,20 @@ function create_settings_cat(name,desc,frameName,icon)
 end
 
 function switch_settings_cat(index)
+    
+    for i=0,20 do
+        if _G['GwSettingsLabel'..i]~=nil then
+            _G['GwSettingsLabel'..i].iconbg:Hide()
+        end
+    end
+    
+    _G['GwSettingsLabel'..index].iconbg:Show()
+    
+    
     for k,v in pairs(settings_cat) do 
         if k~=index then
             _G[v]:Hide()
+            
         else
             _G[v]:Show()
             UIFrameFadeIn(_G[v], 0.2,0,1)

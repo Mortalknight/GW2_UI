@@ -329,14 +329,21 @@
     <Button name="GwSettingsLabel" parent="GwSettingsWindow" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers>
+            <Layer>
+                <Texture parentKey="iconbg" name="$parentTextureBg" hidden="true"  file="Interface\AddOns\GW2_UI\textures\settingsiconbg">
+                <Size x="64" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" x="-6" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="OVERLAY">
-            <Texture name="$parentTexture"  file="Interface\AddOns\GW2_UI\textures\icon-module">
+                <Texture name="$parentTexture"  file="Interface\AddOns\GW2_UI\textures\icon-module">
                 <Size x="32" y="32"></Size>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
-                </Texture>
-               
+                </Texture>   
             </Layer>
         </Layers>
          <Scripts>
@@ -369,10 +376,14 @@
             </Layer>
         </Layers>
         <Frames>
-            <CheckButton name="$parentCheckButton" inherits="OptionsCheckButtonTemplate" checked="true">
+            <CheckButton name="$parentCheckButton" checked="true">
+                <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                <Size x="16" y="16"></Size>
                 <Anchors>
                     <Anchor point="LEFT" relativePoint="LEFT" x="5"></Anchor>
                 </Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
             </CheckButton>
         </Frames>
     </Button> 
@@ -395,20 +406,25 @@
         </Layers>
         <Frames>
             <Slider name="$parentSlider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
-                <Size x="244" y="10"></Size>
+                <Size x="256" y="16"></Size>
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10"></Anchor>
                 </Anchors>
                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background"
-                          edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
-                    <EdgeSize val="8"/>
-                    <TileSize val="8"/>
-                    <BackgroundInsets left="3" right="3" top="6" bottom="6"/>
-                </Backdrop>
-                <ThumbTexture name="$parentThumb" file="Interface\Buttons\UI-SliderBar-Button-Horizontal">
-                    <Size x="32" y="32"/>
+   
+                <ThumbTexture name="$parentThumb" file="Interface\AddOns\GW2_UI\textures\sliderhandle">
+                    <Size x="16" y="16"/>
                 </ThumbTexture>
+                <Layers>
+                    <Layer>
+                        <Texture  file="Interface\AddOns\GW2_UI\textures\sliderbg">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Slider>
         </Frames>
     </Button>
