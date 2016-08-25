@@ -57,11 +57,17 @@ function create_pet_frame()
     
     
     GwDodgeBar.animation = 0
+    
+        
+    GwDodgeBar:SetScript('OnEvent', gw_dodgebar_onevent)
+    
     GwDodgeBar:RegisterEvent('SPELL_UPDATE_COOLDOWN')
     GwDodgeBar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     GwDodgeBar:RegisterEvent("CHARACTER_POINTS_CHANGED")
     GwDodgeBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    GwDodgeBar:SetScript('OnEvent', gw_dodgebar_onevent)
+    
+    
+
     
     gw_dodgebar_onevent()
     
