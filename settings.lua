@@ -223,7 +223,7 @@ function addOptionDropdown(name,desc,optionName,frameName,callback,options_list,
     options[i]['options'] = options_list;
     options[i]['options_names'] = {};
     options[i]['options_names'] = option_names;
-    print(option_names)
+
     
 end
 
@@ -252,7 +252,7 @@ function display_options()
             newLine = true
             
         end
-          print(v['optionType'])
+
         local of =  CreateFrame('Button','GwOptionBox'..k,_G[v['frameName']],optionFrameType)
         
         of:ClearAllPoints()
