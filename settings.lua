@@ -83,6 +83,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Fade Chat','Fade the chat while inactive','CHATFRAME_FADE','GwSettingsHudOptions')
     addOption('Hide Empty Slots','Hide empty action bar slots','HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
     addOption('Toggle Compass','Toggle the quest tracker compass','SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
+    addOptionDropdown('Hud Scale','Change the size of the HUD','HUD_SCALE','GwSettingsHudOptions',function() gwUpdateHudScale() end,{1,0.9,0.8},{'Normal','Small','Micro'})
     
     create_settings_cat('Group','Edit group settings','GwSettingsGroupframe',4)
     
@@ -195,6 +196,25 @@ function addOptionSlider(name,desc,optionName,frameName,callback,min,max)
     options[i]['optionType'] = 'slider';
     
 end
+function addOptionDropdown(name,desc,optionName,frameName,callback,options_list,option_names)
+    
+    local i = countTable(options)
+
+    options[i] = {}
+    options[i]['name'] = name;
+    options[i]['desc'] = desc;
+    options[i]['optionName'] = optionName;
+    options[i]['frameName'] = frameName;
+    options[i]['callback'] = callback;
+
+    options[i]['optionType'] = 'dropdown';
+    options[i]['options'] ={}
+    options[i]['options'] = options_list;
+    options[i]['options_names'] = {};
+    options[i]['options_names'] = option_names;
+    print(option_names)
+    
+end
 
 function display_options()
     local box_padding = 8
@@ -204,7 +224,7 @@ function display_options()
     local padding = {}
     
     for k,v in pairs(options) do 
-        
+        local newLine =false
         if padding[v['frameName']]==nil then
             padding[v['frameName']] = {}
             padding[v['frameName']]['x']=  box_padding
@@ -213,23 +233,85 @@ function display_options()
         optionFrameType ='GwOptionBox'
         if v['optionType']=='slider' then
            optionFrameType = 'GwOptionBoxSlider' 
+              newLine = true
+        end 
+        if v['optionType']=='dropdown' then
+          
+           optionFrameType = 'GwOptionBoxDropDown'
+            newLine = true
+            
         end
-        
+          print(v['optionType'])
         local of =  CreateFrame('Button','GwOptionBox'..k,_G[v['frameName']],optionFrameType)
         
         of:ClearAllPoints()
+        if of:GetWidth()>300 then
+
+            padding[v['frameName']]['y'] = padding[v['frameName']]['y'] + pY + box_padding
+            padding[v['frameName']]['x'] = box_padding
+     
+        end
         of:SetPoint('TOPLEFT',padding[v['frameName']]['x'],padding[v['frameName']]['y'])
         _G['GwOptionBox'..k..'Title']:SetText(v['name'])
         _G['GwOptionBox'..k..'Title']:SetFont(DAMAGE_TEXT_FONT,12)
-        _G['GwOptionBox'..k..'Title']:SetTextColor(255/255,241/255,209/255)
-        _G['GwOptionBox'..k..'Title']:SetShadowColor(1,1,1,0)
+        _G['GwOptionBox'..k..'Title']:SetTextColor(1,1,1)
+        _G['GwOptionBox'..k..'Title']:SetShadowColor(0,0,0,1)
         
-        _G['GwOptionBox'..k..'Sub']:SetText(v['desc'])
-        _G['GwOptionBox'..k..'Sub']:SetFont(UNIT_NAME_FONT,11)
-        _G['GwOptionBox'..k..'Sub']:SetTextColor(181/255,160/255,128/255)
-        _G['GwOptionBox'..k..'Sub']:SetShadowColor(1,1,1,0)
+     
+        of:SetScript('OnEnter',function() 
+                
+                GameTooltip:SetOwner(of, "ANCHOR_CURSOR",0,0); 
+                GameTooltip:ClearLines();
+                GameTooltip:AddLine(v['name'],1,1,1)
+                GameTooltip:AddLine(v['desc'],1,1,1)
+                GameTooltip:Show()    
+                
+           
+        end)
+        of:SetScript('OnLeave',function()GameTooltip:Hide()  end)
+
 
         
+        if v['optionType']=='dropdown' then
+            local i = 1
+            local pre = _G['GwOptionBox'..k].container
+            for key,val in pairs(v['options']) do
+                local dd = CreateFrame('Button','GwOptionBox'..'dropdown'..i,_G[v['frameName']].container,'GwDropDownItem')
+                dd:SetPoint('TOPRIGHT',pre,'BOTTOMRIGHT')
+                dd:SetParent(_G['GwOptionBox'..k].container)
+                
+                dd.string:SetFont(UNIT_NAME_FONT,12)
+                 _G['GwOptionBox'..k].button.string:SetFont(UNIT_NAME_FONT,12)
+                dd.string:SetText(v['options_names'][key])
+                pre = dd
+                
+                
+                if gwGetSetting(v['optionName'])==val then
+                    _G['GwOptionBox'..k].button.string:SetText(v['options_names'][key])
+                end
+                
+                dd:SetScript('OnClick', function()
+        
+                    _G['GwOptionBox'..k].button.string:SetText(v['options_names'][key])
+                        
+                   if  _G['GwOptionBox'..k].container:IsShown() then
+                        _G['GwOptionBox'..k].container:Hide() 
+                    else
+                    _G['GwOptionBox'..k].container:Show()
+                    end 
+                        
+                    gwSetSetting(v['optionName'] ,val)
+                    
+                    if v['callback']~=nil then
+                        v['callback']()         
+                    end
+                    
+                end)
+              
+                i = i + 1
+            end
+            _G['GwOptionBox'..k].button:SetScript('OnClick', function()  if  _G['GwOptionBox'..k].container:IsShown() then _G['GwOptionBox'..k].container:Hide() else _G['GwOptionBox'..k].container:Show() end end)
+        end
         
         if v['optionType']=='slider' then
              _G['GwOptionBox'..k..'Slider']:SetMinMaxValues(v['min'],v['max'])            
@@ -262,11 +344,12 @@ function display_options()
         
         
 
-      
-        padding[v['frameName']]['x'] = padding[v['frameName']]['x'] + pX + box_padding
-        if padding[v['frameName']]['x']>440 then
-            padding[v['frameName']]['y'] = padding[v['frameName']]['y'] + pY + box_padding
-            padding[v['frameName']]['x'] = box_padding
+        if newLine==false then
+            padding[v['frameName']]['x'] = padding[v['frameName']]['x'] + of:GetWidth() + box_padding
+            if padding[v['frameName']]['x']>440 then
+                padding[v['frameName']]['y'] = padding[v['frameName']]['y'] + pY + box_padding
+                padding[v['frameName']]['x'] = box_padding
+            end
         end
     end
     

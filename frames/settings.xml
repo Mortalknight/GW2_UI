@@ -358,69 +358,46 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
-            <Layer level="OVERLAY">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
-                    <Color r="1" g="1" b="1" a="0.3"></Color>
-                    <Size x="244" y="40"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
-            <FontString name="$parentTitle" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
-                        <Size x="256" y="25"></Size>
-                        <Color r="1" b="1" g="1"></Color>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" x="5" y="0"></Anchor>
+                <FontString name="$parentTitle" text="Settings"     inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="256" y="25"></Size>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="LEFT" x="35" y="0"></Anchor>
                         </Anchors>
-                    </FontString>
-                <FontString name="$parentSub" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
-                        <Size x="256" y="25"></Size>
-                        <Color r="1" b="1" g="1"></Color>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" x="5" y="-17"></Anchor>
-                        </Anchors>
-                    </FontString>
+                </FontString>
             </Layer>
         </Layers>
         <Frames>
             <CheckButton name="$parentCheckButton" inherits="OptionsCheckButtonTemplate" checked="true">
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="5"></Anchor>
                 </Anchors>
             </CheckButton>
         </Frames>
     </Button> 
     <Button name="GwOptionBoxSlider" frameStrata="HIGH"  virtual="true">
-        <Size x="244" y="40"></Size>
+        <Size x="500" y="40"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
-        <Layers>
-       
+        <Layers>   
             <Layer level="OVERLAY" textureSubLevel="2">
             <FontString name="$parentTitle" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
                         <Size x="256" y="25"></Size>
                         <Color r="1" b="1" g="1"></Color>
                         <Anchors>
-                            <Anchor point="TOPLEFT" x="5" y="0"></Anchor>
+                            <Anchor point="LEFT" x="5" y="0"></Anchor>
                         </Anchors>
                     </FontString>
-                <FontString name="$parentSub" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
-                        <Size x="256" y="25"></Size>
-                        <Color r="1" b="1" g="1"></Color>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" x="5" y="-17"></Anchor>
-                        </Anchors>
-                    </FontString>
+
             </Layer>
         </Layers>
         <Frames>
             <Slider name="$parentSlider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
                 <Size x="244" y="10"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                    <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
                 </Anchors>
                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
                 <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background"
@@ -432,9 +409,97 @@
                 <ThumbTexture name="$parentThumb" file="Interface\Buttons\UI-SliderBar-Button-Horizontal">
                     <Size x="32" y="32"/>
                 </ThumbTexture>
-    </Slider>
+            </Slider>
         </Frames>
     </Button>
+    <Button name="GwOptionBoxDropDown" frameStrata="HIGH"  virtual="true">
+        <Size x="500" y="40"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Layers>   
+            <Layer level="OVERLAY" textureSubLevel="2">
+            <FontString name="$parentTitle" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <Size x="256" y="25"></Size>
+                        <Color r="1" b="1" g="1"></Color>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="5" y="0"></Anchor>
+                        </Anchors>
+                    </FontString>
+
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="$parentcontainer" hidden="true" frameStrata="HIGH" parentKey="container">
+                 <Size x="250" y="20"></Size>
+                 <Anchors>
+                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
+                </Anchors>
+           
+            </Frame>
+            <Button parentKey="button" name="$parentDd">
+             <Size x="250" y="20"></Size>
+                 <Anchors>
+                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
+                </Anchors>
+                     <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="2">
+                        <Texture  file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                            <Color r="0" b="0" g="0"></Color>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLayer="3">
+                        <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyY="CENTER">
+                        <Size x="240" y="20"></Size>
+                        <Color r="1" b="1" g="1"></Color>
+                        <Anchors>
+                            <Anchor point="CENTER"></Anchor>
+                        </Anchors>
+                        </FontString>
+               
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLayer="4">
+                        <Texture name="$parentArrow"  file="Interface\AddOns\GW2_UI\textures\arrowdown_down">
+                            <Color r="1" g="1" b="1" a="1"></Color>
+                             <Size x="18" y="18"></Size>
+                            <Anchors>
+                               <Anchor point="RIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>     
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+    </Button>
+    
+    <Button name="GwDropDownItem"  frameStrata="HIGH" virtual="true"  >
+        <Size x="250" y="20"></Size>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture  file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Color r="0" b="0" g="0"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLayer="3">
+                <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyY="CENTER">
+                        <Size x="240" y="20"></Size>
+                        <Color r="1" b="1" g="1"></Color>
+                        <Anchors>
+                            <Anchor point="CENTER"></Anchor>
+                        </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+    
     <Button name="GwStandardButton" text="" virtual="true">
         <Size x="128" y="24" />
                             
