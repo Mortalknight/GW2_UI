@@ -535,6 +535,7 @@ function gw_raidframes_updateAuras(self)
     gw_raidframes_updateDebuffs(self)
 end
 function gw_raidframes_updateDebuffs(self)
+    local widthLimit = self:GetWidth() / 2
     local buffIndex = 1
     local x = 0;
     local y = 0;
@@ -607,6 +608,10 @@ function gw_raidframes_updateDebuffs(self)
                 if (margin*x)<(-(self:GetWidth()/2)) then
                     y=y+1
                     x=0
+                end
+            
+                if widthLimit<(margin*x) then
+                    break
                 end
                
              else
