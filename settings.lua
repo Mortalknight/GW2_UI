@@ -83,7 +83,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Fade Chat','Fade the chat while inactive','CHATFRAME_FADE','GwSettingsHudOptions')
     addOption('Hide Empty Slots','Hide empty action bar slots','HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
     addOption('Toggle Compass','Toggle the quest tracker compass','SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
-    addOptionDropdown('Hud Scale','Change the size of the HUD','HUD_SCALE','GwSettingsHudOptions',function() gwUpdateHudScale() end,{1,0.9,0.8},{'Normal','Small','Micro'})
+    addOptionDropdown('Hud Scale','Change the size of the HUD','HUD_SCALE','GwSettingsHudOptions',function() gwUpdateHudScale() end,{1,0.9,0.8},{'Normal','Small','Tiny'})
     
     create_settings_cat('Group','Edit group settings','GwSettingsGroupframe',4)
     
