@@ -467,6 +467,7 @@ end
 
 
 function gw_raidframes_updateAuras(self)
+    local buffIndex = 1
     local x = 0;
     local y = 0;
     for i=1,40 do
@@ -482,12 +483,12 @@ function gw_raidframes_updateAuras(self)
             end
         end
 
-        local indexBuffFrame = _G['Gw'..self:GetName()..'BuffItemFrame'..i]
+        local indexBuffFrame = _G['Gw'..self:GetName()..'BuffItemFrame'..buffIndex]
         local created = false
         if showThis then
 
             if indexBuffFrame==nil then
-                indexBuffFrame = CreateFrame('Button','Gw'..self:GetName()..'BuffItemFrame'..i,self,'GwBuffIconBig');
+                indexBuffFrame = CreateFrame('Button','Gw'..self:GetName()..'BuffItemFrame'..buffIndex,self,'GwBuffIconBig');
                 indexBuffFrame:SetParent(self);
                 indexBuffFrame:SetFrameStrata('MEDIUM');
                 indexBuffFrame:SetSize(14,14)
@@ -501,11 +502,11 @@ function gw_raidframes_updateAuras(self)
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint('BOTTOMRIGHT',-3 + (margin*x),3+ (marginy*y))
             end
-            _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetTexture(icon)
+            _G['Gw'..self:GetName()..'BuffItemFrame'..buffIndex..'BuffIcon']:SetTexture(icon)
             --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
       
-            _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffDuration']:SetText('')
-            _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffStacks']:SetText('')
+            _G['Gw'..self:GetName()..'BuffItemFrame'..buffIndex..'BuffDuration']:SetText('')
+            _G['Gw'..self:GetName()..'BuffItemFrame'..buffIndex..'BuffStacks']:SetText('')
           
                  
             indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);       GameTooltip:ClearLines();   GameTooltip:SetUnitBuff(self.unit,i,'PLAYER|RAID'); GameTooltip:Show() end)
@@ -514,6 +515,7 @@ function gw_raidframes_updateAuras(self)
             indexBuffFrame:Show()
                 
             x=x+1
+            buffIndex = buffIndex + 1
             if (margin*x)<(-(self:GetWidth()/2)) then
                 y=y+1
                 x=0
@@ -533,23 +535,23 @@ function gw_raidframes_updateAuras(self)
     gw_raidframes_updateDebuffs(self)
 end
 function gw_raidframes_updateDebuffs(self)
+    local buffIndex = 1
     local x = 0;
     local y = 0;
-    for i=1,5 do
+    for i=1,20 do
+        
        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
+        
+        if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
+            name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i,'RAID')
+        end
+        
         local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
         local created = false
         local shouldDisplay = false
         
-        if  UnitDebuff(self.unit,i) then
-            
-            if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
-                if isStealable then
-                    shouldDisplay = true
-                end
-            else
-                shouldDisplay = true 
-            end
+        if  name~=nil then
+           shouldDisplay = true
         end
         
         if shouldDisplay  then
@@ -569,37 +571,38 @@ function gw_raidframes_updateDebuffs(self)
                     indexBuffFrame:SetPoint('BOTTOMLEFT',self.healthbar,'BOTTOMLEFT',3 + (margin*x),3+ (marginy*y))
                 end
                 
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Icon']:SetPoint('TOPLEFT',indexBuffFrame,'TOPLEFT',1,-1)
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Icon']:SetPoint('BOTTOMRIGHT',indexBuffFrame,'BOTTOMRIGHT',-1,1)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Icon']:SetPoint('TOPLEFT',indexBuffFrame,'TOPLEFT',1,-1)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Icon']:SetPoint('BOTTOMRIGHT',indexBuffFrame,'BOTTOMRIGHT',-1,1)
                 
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(icon)
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetDrawEdge(0)
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetDrawSwipe(0)
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetReverse(1)
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'Cooldown']:SetHideCountdownNumbers(true)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'IconBuffIcon']:SetTexture(icon)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetDrawEdge(0)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetDrawSwipe(0)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetReverse(1)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetHideCountdownNumbers(true)
                
-                    _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
+                    _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
                 if dispelType~=nil and  GW_DEBUFF_COLOR[dispelType]~=nil then
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[dispelType].r, GW_DEBUFF_COLOR[dispelType].g, GW_DEBUFF_COLOR[dispelType].b)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[dispelType].r, GW_DEBUFF_COLOR[dispelType].g, GW_DEBUFF_COLOR[dispelType].b)
                 end
             --
                 
-                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
+                 _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
              --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
             local stacks = ''
                 if count>1 then
                     stacks =count
                 end
                 
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText('')
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'CooldownBuffDuration']:SetText('')
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'IconBuffStacks']:SetText(stacks)
          
              
                 indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);       GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,i); GameTooltip:Show() end)
                 indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
                 
                 indexBuffFrame:Show()
-                
+                if buffIndex>5 then break end
+                buffIndex = buffIndex +1
                 x=x+1
                 if (margin*x)<(-(self:GetWidth()/2)) then
                     y=y+1
