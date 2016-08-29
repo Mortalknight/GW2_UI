@@ -35,7 +35,7 @@
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\targetshadow" parentKey="Background">
 					<Size x="512" y="128"/>
 					<Anchors>
-						<Anchor point="CENTER" x="0" y="0"/>
+						<Anchor point="CENTER" x="-3" y="-4"/>
 					</Anchors>
 				</Texture>
                     

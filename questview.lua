@@ -63,15 +63,10 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
                 
             GwQuestviewFrame:Show()
             GwQuestviewFrameContainerPlayerModel:SetUnit("player")
-           
                 
             GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
 
-
-            GwQuestviewFrameContainerGiverModel:SetUnit('npc')
-                
-       
-           
+            GwQuestviewFrameContainerGiverModel:SetUnit('npc')           
                 
             QUESTSTRING = splitString(GetQuestText(),'.','!','?')
             QUESTSTRINGINT = 1
@@ -166,7 +161,7 @@ end
 
 function hideBlizzardQuestFrame()
     QuestFrame:ClearAllPoints()
-    QuestFrame:SetPoint('LEFT',UIParent,'LEFT',-800,0)
+    QuestFrame:SetPoint('RIGHT',UIParent,'RIGHT',-800,0)
 end
 
 
