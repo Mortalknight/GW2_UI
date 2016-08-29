@@ -1034,6 +1034,19 @@
 
         </Scripts>
     </Frame>
-    
+    <Frame name="GwOrderhallBar" virtual="true">
+        <Size x="100" y="32"></Size>
+        <Layers>
+            <Layer>
+                <FontString parentKey="string" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="70" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                    </Anchors>
+                    
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
     
 </Ui>

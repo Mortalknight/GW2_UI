@@ -411,6 +411,7 @@ local eName = experiencebar:GetName()
     update_experiencebar_data()
     
     experiencebar:SetScript('OnEvent',update_experiencebar_data)
+    
     experiencebar:RegisterEvent('PLAYER_XP_UPDATE')
     experiencebar:RegisterEvent("UPDATE_FACTION");
     experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
@@ -654,6 +655,7 @@ end
         
         
         _G['GwExperienceFrameArtifactBar']:SetHeight(4)
+        _G['GwExperienceFrameArtifactBarCandy']:SetHeight(4)
         _G['ArtifactBarSpark']:SetHeight(4)
          ArtifactBarSpark:Show()
     end
@@ -825,8 +827,8 @@ function create_micro_button(key)
     
    mf:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Up'); 
    mf:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Up'); 
-   mf:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Down'); 
-   mf:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Down'); 
+   mf:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Up'); 
+   mf:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Up'); 
 
     _G['GwMicroButton'..key..'String']:SetFont(DAMAGE_TEXT_FONT,12)
     _G['GwMicroButton'..key..'String']:SetShadowColor(0,0,0,0)
@@ -834,6 +836,7 @@ function create_micro_button(key)
      _G['GwMicroButton'..key..'Texture']:Hide()
      _G['GwMicroButton'..key..'String']:Hide()
     
+ 
     
     return mf
 end
@@ -845,6 +848,9 @@ local gw_frameRate = 0
 local GW_BAG_MICROBUTTON_STRING = 'Inventory'
 
 function create_micro_menu()
+    
+       
+
     
     
 
@@ -953,6 +959,14 @@ function create_micro_menu()
     
     
     gw_update_talentMicrobar()
+    
+    
+    
+    if OrderHallCommandBar then
+        OrderHallCommandBar:SetPoint('TOPLEFT',400,0)
+        OrderHallCommandBar:SetPoint('TOPRIGHT',-350,0)
+    end
+    
 end
 
 
