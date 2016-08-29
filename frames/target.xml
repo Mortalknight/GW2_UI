@@ -343,6 +343,12 @@
                 </FontString>
             </Layer>
         </Layers>
+        <Scripts>
+            <OnLoad>
+                _G[self:GetName()..'BuffDuration']:SetFont(UNIT_NAME_FONT,11)
+                _G[self:GetName()..'BuffDuration']:SetTextColor(1,1,1)
+            </OnLoad>
+        </Scripts>
     </Frame> 
     <Frame  name="GwDeBuffIcon" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="32" y="32"/>
