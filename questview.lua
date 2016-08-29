@@ -49,8 +49,16 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
     GwQuestviewFrame:RegisterEvent('QUEST_FINISHED')
     GwQuestviewFrame:RegisterEvent('QUEST_COMPLETE')
     GwQuestviewFrame:RegisterEvent('QUEST_ACCEPTED')
+    GwQuestviewFrame:RegisterEvent('QUEST_PROGRESS')
    
     GwQuestviewFrame:SetScript("OnEvent",function(self,event,addon)
+            
+            if event == 'QUEST_PROGRESS' then
+                if IsQuestCompletable() then
+                    CompleteQuest();
+                end
+            end
+            
             if event == 'QUEST_DETAIL' then
                 
             GwQuestviewFrame:Show()
