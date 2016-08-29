@@ -563,7 +563,7 @@ function update_experiencebar_data(self,event)
         numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
         local artifactVal = artifactXP/xpForNextPoint
         
-        artifactVal = 0.52
+       
         _G['GwExperienceFrameArtifactBarCandy']:SetValue(artifactVal)
       
         addToAnimation('artifactBarAnimation',_G['GwExperienceFrameArtifactBar'].artifactBarAnimation,artifactVal,GetTime(),dif,function()
@@ -574,6 +574,7 @@ function update_experiencebar_data(self,event)
                 ArtifactBarSpark:SetPoint('LEFT', _G['GwExperienceFrameArtifactBar']:GetWidth()*animations['artifactBarAnimation']['progress'] -8,0)
            
         end)
+        _G['GwExperienceFrameArtifactBar'].artifactBarAnimation =artifactVal
         
   
     end
