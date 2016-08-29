@@ -965,6 +965,10 @@ function create_micro_menu()
     if OrderHallCommandBar then
         OrderHallCommandBar:SetPoint('TOPLEFT',400,0)
         OrderHallCommandBar:SetPoint('TOPRIGHT',-350,0)
+        OrderHallCommandBar:HookScript('OnShow',function() 
+            OrderHallCommandBar:SetPoint('TOPLEFT',400,0)
+            OrderHallCommandBar:SetPoint('TOPRIGHT',-350,0)
+        end)
     end
     
 end
