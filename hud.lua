@@ -471,7 +471,7 @@ function show_experiencebar_tooltip()
     
     if showArtifact then
         
-        numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
+        local  numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
       
         local artifactVal = artifactXP/xpForNextPoint
         
@@ -486,12 +486,21 @@ function show_experiencebar_tooltip()
     GameTooltip:Show() 
 end
 
+function gw_experienceBar_OnClick()
+    
+    if HasArtifactEquipped() then
+        SocketInventoryItem(16)
+    elseif UnitLevel('player')<GetMaxPlayerLevel() then
+      GwLevelingRewards:Show() 
+    end
+end
+
 
 function gw_artifact_points()
     
     local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
     
-    local numPoints = 0;
+    local numPoints = pointsSpent;
 	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
 	while totalXP >= xpForNextPoint and xpForNextPoint > 0 do
 		totalXP = totalXP - xpForNextPoint;
@@ -573,9 +582,10 @@ function update_experiencebar_data(self,event)
     if showArtifact then
              
         showBar2 = true
-        numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
+        local numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
         local artifactVal = artifactXP/xpForNextPoint
-        
+        level = numPoints
+        Nextlevel =numPoints + 1
        
         _G['GwExperienceFrameArtifactBarCandy']:SetValue(artifactVal)
       
@@ -588,24 +598,17 @@ function update_experiencebar_data(self,event)
            
         end)
         _G['GwExperienceFrameArtifactBar'].artifactBarAnimation =artifactVal
-        
+     
+        if GetMaxPlayerLevel()==UnitLevel('player') then
+            _G['GwExperienceFrameNextLevel']:SetTextColor(240/255,189/255,103/255);
+            _G['GwExperienceFrameCurrentLevel']:SetTextColor(240/255,189/255,103/255); 
+        end
   
+    else
+        _G['GwExperienceFrameNextLevel']:SetTextColor(1,1,1);
+        _G['GwExperienceFrameCurrentLevel']:SetText(1,1,1); 
     end
 
-    
-    --[[
-    local current = UnitHonor("player");
-	local max = UnitHonorMax("player");
-
-	if (not current or not max) then
-		return;
-	end
-
-	local level = UnitHonorLevel("player");
-	local levelmax = GetMaxPlayerHonorLevel();
-    
-    ]]--
-    
     
     --If we are inside a pvp arena we show the honorbar
     gw_honor_vals = nil
