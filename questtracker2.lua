@@ -810,7 +810,7 @@ end
 function gw_objective_use_statusbar(text, objectiveFrame)
     if text==nil then return false end
 
-       local i, j, itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
+       local  itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
         if numItems==nil then
            numItems,numNeeded,itemName = string.match(text, "(%d+)/(%d+) (%S+)");
         end
