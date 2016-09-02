@@ -22,14 +22,14 @@
                     </Anchors>
                 </Texture>
                 
-               	<Texture name="$parentLevelLableTextureLeft" file="Interface\AddOns\GW2_UI\textures\level-label" parentKey="Background">
+               	<Texture parentKey="labelLeft" name="$parentLevelLableTextureLeft" file="Interface\AddOns\GW2_UI\textures\level-label" >
      
                     <Size x="128" y="32"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentLevelLableTextureRight" file="Interface\AddOns\GW2_UI\textures\level-label" parentKey="Background">
+                <Texture parentKey="labelRight" name="$parentLevelLableTextureRight" file="Interface\AddOns\GW2_UI\textures\level-label" >
                     <TexCoords left="1" right="0" top="0" bottom="1"/>
                     <Size x="128" y="32"></Size>
                     <Anchors>

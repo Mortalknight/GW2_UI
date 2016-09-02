@@ -490,8 +490,8 @@ function gw_experienceBar_OnClick()
     
     if HasArtifactEquipped() then
         SocketInventoryItem(16)
-    elseif UnitLevel('player')<GetMaxPlayerLevel() then
-      GwLevelingRewards:Show() 
+    else
+        GwLevelingRewards:Show() 
     end
 end
 
@@ -602,11 +602,15 @@ function update_experiencebar_data(self,event)
         if GetMaxPlayerLevel()==UnitLevel('player') then
             _G['GwExperienceFrameNextLevel']:SetTextColor(240/255,189/255,103/255);
             _G['GwExperienceFrameCurrentLevel']:SetTextColor(240/255,189/255,103/255); 
+            GwExperienceFrame.labelRight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\level-label-artifact')
+            GwExperienceFrame.labelLeft:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\level-label-artifact')
         end
   
     else
         _G['GwExperienceFrameNextLevel']:SetTextColor(1,1,1);
         _G['GwExperienceFrameCurrentLevel']:SetText(1,1,1); 
+        GwExperienceFrame.labelRight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\level-label')
+        GwExperienceFrame.labelLeft:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\level-label')
     end
 
     
