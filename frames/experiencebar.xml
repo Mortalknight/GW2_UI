@@ -64,7 +64,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        GwLevelingRewards:Show()
+                        gw_experienceBar_OnClick()
                     </OnClick>
                 </Scripts>
             </Button>
