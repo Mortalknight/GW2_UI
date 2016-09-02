@@ -584,8 +584,7 @@ function update_experiencebar_data(self,event)
         showBar2 = true
         local numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
         local artifactVal = artifactXP/xpForNextPoint
-        level = numPoints
-        Nextlevel =numPoints + 1
+  
        
         _G['GwExperienceFrameArtifactBarCandy']:SetValue(artifactVal)
       
@@ -600,6 +599,8 @@ function update_experiencebar_data(self,event)
         _G['GwExperienceFrameArtifactBar'].artifactBarAnimation =artifactVal
      
         if GetMaxPlayerLevel()==UnitLevel('player') then
+            level = numPoints
+            Nextlevel =numPoints + 1
             _G['GwExperienceFrameNextLevel']:SetTextColor(240/255,189/255,103/255);
             _G['GwExperienceFrameCurrentLevel']:SetTextColor(240/255,189/255,103/255); 
             GwExperienceFrame.labelRight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\level-label-artifact')

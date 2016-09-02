@@ -161,7 +161,7 @@ end
 
 function hideBlizzardQuestFrame()
     QuestFrame:ClearAllPoints()
-    QuestFrame:SetPoint('RIGHT',UIParent,'RIGHT',-800,0)
+    QuestFrame:SetPoint('RIGHT',UIParent,'LEFT',-800,0)
 end
 
 
