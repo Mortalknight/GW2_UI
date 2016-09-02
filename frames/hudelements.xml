@@ -1036,17 +1036,80 @@
     </Frame>
     <Frame name="GwOrderhallBar" virtual="true">
         <Size x="100" y="32"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="380" y="0"></Anchor>
+        </Anchors>
         <Layers>
             <Layer>
-                <FontString parentKey="string" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString name="$parentCurrency" parentKey="currency" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="70" y="40"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                     </Anchors>
                     
                 </FontString>
+                <Texture parentKey="currencyIcon"  atlas="legionmission-icon-currency" useAtlasSize="false">
+                    <Size x="24" y="24"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
+        
+        <Scripts>
+            <OnLoad>
+                self.currency:SetFont(UNIT_NAME_FONT,14)
+                self.currency:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
     </Frame>
+    
+    <Frame name="GwOrderHallFollower" virtual="true">
+        <Size x="100" y="32"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <FontString parentKey="Count" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="70" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                    </Anchors>
+                    
+                </FontString>
+                <Texture parentKey="Icon" >
+                    <Size x="35" y="18"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.Count:SetFont(UNIT_NAME_FONT,14)
+                self.Count:SetShadowOffset(1,-1)
+            </OnLoad>
+            <OnEnter>
+            if (self.name) then
+                GameTooltip:SetOwner(self, "ANCHOR_PRESERVE");
+                GameTooltip:ClearAllPoints();
+                GameTooltip:SetPoint("TOPLEFT", self.Count, "BOTTOMRIGHT", -20, -20);
+                GameTooltip:AddLine(self.name);
+                if (self.description) then
+                    GameTooltip:AddLine(self.description, 1, 1, 1, true);
+                end
+                GameTooltip:Show();
+            end
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+            
+        </Scripts>
+    </Frame>
+    
     
 </Ui>
