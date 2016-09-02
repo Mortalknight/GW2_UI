@@ -393,7 +393,8 @@ function update_repair_data()
 end
 
 
-
+local gw_reputation_vals = nil
+local gw_honor_vals = nil
 function loadExperienceBar()
     
 gw_load_levelingrewads()
@@ -447,7 +448,16 @@ function show_experiencebar_tooltip()
     
     GameTooltip:AddLine('Experience'..isRestingString,1,1,1)
     
-    GameTooltip:AddLine( 'Experience '..comma_value(valCurrent).." / "..comma_value(valMax)..' |cffa6a6a6 ('..math.floor((valCurrent/valMax)*100) ..'%)|r',1,1,1)
+    if gw_reputation_vals~=nil then
+          GameTooltip:AddLine( gw_reputation_vals,1,1,1)
+    end
+    if gw_honor_vals~=nil then
+          GameTooltip:AddLine( gw_honor_vals,1,1,1)
+    end
+    
+    if UnitLevel('Player')<GetMaxPlayerLevel() then
+        GameTooltip:AddLine( 'Experience '..comma_value(valCurrent).." / "..comma_value(valMax)..' |cffa6a6a6 ('..math.floor((valCurrent/valMax)*100) ..'%)|r',1,1,1)
+    end
     
     if rested~=nil then
          GameTooltip:AddLine('Rested '..comma_value(rested)..' |cffa6a6a6 ('..math.floor((rested/valMax)*100)..'%) |r',1,1,1)
@@ -534,7 +544,7 @@ function update_experiencebar_data(self,event)
     
     local dif = 5
     
-    
+    gw_reputation_vals = nil
     ReputationWatchBar:Hide()
     if level==Nextlevel  then
         for factionIndex = 1, GetNumFactions() do
@@ -550,6 +560,9 @@ function update_experiencebar_data(self,event)
 
                 Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
                 valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
+                
+                gw_reputation_vals = name..' Reputation '..comma_value((earnedValue - bottomValue)).." / "..comma_value((topValue - bottomValue))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+                
                 showBar1 = true
                 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[reaction].r,GW_FACTION_BAR_COLORS[reaction].g,GW_FACTION_BAR_COLORS[reaction].b)
             end
@@ -578,22 +591,40 @@ function update_experiencebar_data(self,event)
         
   
     end
+
+    
     --[[
-    
-     local m = (UIParent:GetWidth()-180)  / 10
-    for i=1,9 do
-        local rm = (m*i) +90 
-        _G['barsep'..i]:ClearAllPoints()
-        _G['barsep'..i]:SetPoint('LEFT','GwExperienceFrame','LEFT',rm ,0);
-    end
-    
-    local m = (UIParent:GetWidth()-180) 
-    dubbleBarSep:SetWidth(m)
-    dubbleBarSep:ClearAllPoints()
-    dubbleBarSep:SetPoint('LEFT','GwExperienceFrame','LEFT',90,0);
-end
+    local current = UnitHonor("player");
+	local max = UnitHonorMax("player");
+
+	if (not current or not max) then
+		return;
+	end
+
+	local level = UnitHonorLevel("player");
+	local levelmax = GetMaxPlayerHonorLevel();
     
     ]]--
+    
+    
+    --If we are inside a pvp arena we show the honorbar
+    gw_honor_vals = nil
+    if level==Nextlevel and UnitInBattleground('player')~=nil then
+
+        showBar1 = true
+        level =  UnitHonorLevel("player");
+        Nextlevel = math.min(level+1,GetMaxPlayerHonorLevel())
+        
+        local currentHonor = UnitHonor("player");
+        local maxHonor = UnitHonorMax("player");
+        valPrec = currentHonor/maxHonor
+        
+        gw_honor_vals = 'Honor '..comma_value((currentHonor)).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+        
+        _G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
+            
+    end
+    
     
     if (valPrec - experiencebarAnimation)>0.15 then
         
