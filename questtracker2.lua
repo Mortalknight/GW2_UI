@@ -373,7 +373,7 @@ function gw_check_senario()
 
        local objectiveType ='progressbar'
         if not isWeightedProgress then
-            criteriaString = string.format("%d/%d %s", quantity, totalQuantity, criteriaString);
+            criteriaString = gw_parse_criteria(quantity, totalQuantity, criteriaString);
             objectiveType = 'monster'
         end
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex] ={}
@@ -398,7 +398,7 @@ function gw_check_senario()
         
         for criteriaIndex = 1, numCriteria do
             local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed = C_Scenario.GetCriteriaInfoByStep(bonusStepIndex,criteriaIndex);
-             criteriaString = string.format("%d/%d %s", quantity, totalQuantity, criteriaString);
+            criteriaString = gw_parse_criteria(quantity, totalQuantity, criteriaString);
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex] ={}
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['questLogIndex'] = 0
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['text'] = criteriaString
@@ -411,6 +411,15 @@ function gw_check_senario()
 
 
     
+end
+
+function gw_parse_criteria(quantity, totalQuantity,criteriaString)
+    
+    if quantity~=nil and totalQuantity~=nil and criteriaIndex~=nil then
+       return string.format("%d/%d %s", quantity, totalQuantity, criteriaString);
+    end
+     
+    return criteriaString
 end
 
 function gw_check_tasks()
