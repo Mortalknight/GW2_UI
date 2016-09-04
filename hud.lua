@@ -1020,6 +1020,7 @@ function create_micro_menu()
     updateNotificationIcon:SetScript('OnLeave', function() 
          GameTooltip:Hide()
     end)
+    RegisterAddonMessagePrefix("GW2_UI")
     
     updateNotificationIcon:RegisterEvent('CHAT_MSG_ADDON')
     updateNotificationIcon:RegisterEvent("PARTY_MEMBERS_CHANGED");
@@ -1050,7 +1051,8 @@ end
 
 function gw_onReciveVersionCheck(self,event,prefix,message,dist,sender)
 
-    if message~='GW2_UI' then return end
+
+    if prefix~='GW2_UI' then return end
     
     local version, subversion, hotfix= string.match(message, "GW2_UI v(%d+).(%d+).(%d+)");
     local Currentversion, Currentsubversion, Currenthotfix = string.match(GW_VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)");
