@@ -218,6 +218,14 @@ function gw_unitFrame_updateAuras(thisName, unitToWatch)
             _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G[thisName..'BuffItemFrame'..i])
             local buffDur = '';
             local stacks = '';
+            
+            if buffLists[unitToWatch][i]['isStealable'] then
+                indexBuffFrame.outline:SetVertexColor(1,1,1)
+            else
+                indexBuffFrame.outline:SetVertexColor(0,0,0)
+            end
+            
+            
             if buffLists[unitToWatch][i]['duration']>0 then
                 buffDur = timeCount(buffLists[unitToWatch][i]['timeRemaining']);
             end

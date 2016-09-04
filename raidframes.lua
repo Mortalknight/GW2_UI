@@ -136,6 +136,7 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent("PARTY_MEMBER_ENABLE");
     frame:RegisterEvent("UNIT_AURA");
     frame:RegisterEvent("UNIT_LEVEL");
+    frame:RegisterEvent("UNIT_TARGET");
     frame:RegisterEvent("PLAYER_TARGET_CHANGED");
     frame:RegisterEvent("PARTY_CONVERTED_TO_RAID");
     frame:RegisterEvent("READY_CHECK");
@@ -249,6 +250,9 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     
     
     if event=='PLAYER_TARGET_CHANGED' then
+       gw_highlight_target_raidframe()
+    end 
+    if event=='UNIT_TARGET' and unit=='player' then
        gw_highlight_target_raidframe()
     end
     if event=='UNIT_AURA' and unit==self.unit then
@@ -470,6 +474,9 @@ function gw_raidframes_updateAuras(self)
     local buffIndex = 1
     local x = 0;
     local y = 0;
+    local spellTotrack = false
+    local spellToTrackExpires = 0
+    local spellToTrackDuration = 0
     for i=1,40 do
         local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff(self.unit,i)
        
@@ -513,6 +520,11 @@ function gw_raidframes_updateAuras(self)
             indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
                 
             indexBuffFrame:Show()
+            if spellID==194384 then
+                spellTotrack = true
+                spellToTrackExpires = expires
+                spellToTrackDuration = duration
+            end
                 
             x=x+1
             buffIndex = buffIndex + 1
@@ -532,6 +544,17 @@ function gw_raidframes_updateAuras(self)
         
         end
     end
+    
+    if spellTotrack then
+        self.spelltracker:Show() 
+        self.spelltracker:SetScript('OnUpdate',function() 
+           self.spelltracker:SetValue((spellToTrackExpires - GetTime())/spellToTrackDuration )
+        end)
+    else
+       self.spelltracker:Hide() 
+        self.spelltracker:SetScript('OnUpdate',nil)
+    end
+    
     gw_raidframes_updateDebuffs(self)
 end
 function gw_raidframes_updateDebuffs(self)

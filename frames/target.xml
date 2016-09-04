@@ -313,7 +313,7 @@
         <Size x="20" y="20"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="backdrop"  file="Interface\AddOns\GW2_UI\textures\spelliconempty" >
+                <Texture parentKey="outline" name="backdrop"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
                     <Size x="20" y="20"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>

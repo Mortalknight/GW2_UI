@@ -996,6 +996,7 @@ function create_micro_menu()
         GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate',nil)
         GameTooltip:Hide()
     end)
+
     
     
     gw_update_talentMicrobar()
@@ -1004,7 +1005,72 @@ function create_micro_menu()
     gw_create_orderHallBar()
     
     
+    --Create update notifier
+    local updateNotificationIcon = create_micro_button('updateicon')
+    GwMicroButtonupdateicon:Hide()
+      
+    updateNotificationIcon:SetScript('OnEnter', function() 
+        GameTooltip:SetOwner(updateNotificationIcon, "ANCHOR_BOTTOMLEFT",16 + (GameTooltip:GetWidth()/2),-10); 
+        GameTooltip:ClearLines();
+        GameTooltip:AddLine('GW2_UI',1,1,1)
+        GameTooltip:AddLine('An update is available for download',1,1,1)
+        GameTooltip:Show()
+        
+    end)
+    updateNotificationIcon:SetScript('OnLeave', function() 
+         GameTooltip:Hide()
+    end)
+    
+    updateNotificationIcon:RegisterEvent('CHAT_MSG_ADDON')
+    updateNotificationIcon:RegisterEvent("PARTY_MEMBERS_CHANGED");
+    updateNotificationIcon:RegisterEvent("RAID_ROSTER_UPDATE");
+    updateNotificationIcon:RegisterEvent("GROUP_ROSTER_UPDATE");
+
+    updateNotificationIcon:SetScript('OnEvent',function(self,event,prefix,message,dist,sender)
+            
+        if event=='CHAT_MSG_ADDON' then
+            gw_onReciveVersionCheck(self,event,prefix,message,dist,sender)
+        else
+            gw_sendVersionCheck()
+        end
+            
+    end) 
+    
+end
+
+gw_sendUpdate_message_cooldown = 0
+
+function gw_sendVersionCheck()
+    if gw_sendUpdate_message_cooldown>GetTime() then return end
+    gw_sendUpdate_message_cooldown = GetTime() + 10
+
+   SendAddonMessage('GW2_UI', GW_VERSION_STRING, "RAID")
+    
+end
+
+function gw_onReciveVersionCheck(self,event,prefix,message,dist,sender)
+
+    if message~='GW2_UI' then return end
+    
+    local version, subversion, hotfix= string.match(message, "GW2_UI v(%d+).(%d+).(%d+)");
+    local Currentversion, Currentsubversion, Currenthotfix = string.match(GW_VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)");
   
+    
+    if version==nil or subversion==nil or hotfix==nil then return end
+    
+    if version > Currentversion then
+         GwMicroButtonupdateicon:Show()
+    else
+       
+        if subversion > Currentsubversion then
+            GwMicroButtonupdateicon:Show() 
+        else 
+            
+            if hotfix > Currenthotfix then
+                 GwMicroButtonupdateicon:Show() 
+            end
+        end
+    end
     
 end
 

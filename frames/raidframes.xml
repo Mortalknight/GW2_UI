@@ -83,6 +83,26 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
        
+            </StatusBar>  
+            <StatusBar parentKey="spelltracker" orientation="VERTICAL" defaultValue="1"  minValue="0" maxValue="1">
+                <Size x="3" y="3"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="3"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarColor r="1" g="0.5" b="0"></BarColor>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="1"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="-1"></Anchor>
+                            </Anchors>
+                            <Color r="0" g="0" b="0"></Color>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </StatusBar>
             
             <Frame name="$parentData">
