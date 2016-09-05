@@ -30,7 +30,7 @@ function gw_register_raidframes()
     
     
     
-    gw_raidframes_updateMoveablePosition()
+    
 
   
     gw_create_raidframe('player') 
@@ -93,7 +93,7 @@ function gw_register_raidframes()
     
 
 
-      
+      gw_raidframes_updateMoveablePosition()
 end
 
 
