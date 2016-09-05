@@ -1037,7 +1037,7 @@
     <Frame name="GwOrderhallBar" virtual="true">
         <Size x="100" y="32"></Size>
         <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="380" y="0"></Anchor>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="400" y="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer>

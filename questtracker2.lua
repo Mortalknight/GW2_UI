@@ -2,6 +2,7 @@ GW_QUESTTRACKER_TYPE_COLORS = {}
 GW_QUESTTRACKER_TYPE_COLORS['QUEST'] ={r=221/255,g=198/255,b=68/255}
 GW_QUESTTRACKER_TYPE_COLORS['BONUS'] ={r=240/255,g=121/255,b=37/255}
 GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'] ={r=171/255,g=37/255,b=240/255}
+GW_QUESTTRACKER_TYPE_COLORS['BOSS'] ={r=240/255,g=37/255,b=37/255}
 
 GW_QUESTTRACKER_ICON = {}
 GW_QUESTTRACKER_ICON['QUEST'] ={l=0,r=1,t=0.25,b=0.5}
@@ -10,10 +11,13 @@ GW_QUESTTRACKER_ICON['SCENARIO'] ={l=0,r=1,t=0.75,b=1}
 
 GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS = {}
 GW_QUESTTRACKER_LOADED_FRAMES = {}
+GW_QUESTTRACKER_LOADED_SCENARIO_FRAME = nil
 
 GW_RADAR_DATA = {}
 
 GW_HIDDEN_QUESTS = {}
+
+GW_QUEST_DATA = {}
 
 GW_QUESTS = {}
 
@@ -425,6 +429,9 @@ end
 function gw_check_tasks()
     local tasks = GetTasksTable();
     for k,v in pairs(tasks) do
+        if GW_QUEST_DATA[v]==nil and v~=nil then
+            GW_QUEST_DATA[v] ={ }
+        end
         gw_bonusobjective_update(v)
     end 
 end
@@ -445,6 +452,7 @@ function gw_bonusobjective_update(questID)
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isTask'] = true
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isOnMap'] = isOnMap
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['GW_TYPE'] = 'BONUS'
+    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['rewards'] = gw_bonusobjective_rewards(questID)  
    
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES']={}
     for objectiveIndex = 1,numObjectives do
@@ -459,6 +467,64 @@ function gw_bonusobjective_update(questID)
     end
 end
 
+function gw_bonusobjective_rewards(questID)
+    if questID==nil then return end
+    if  GW_QUEST_DATA[questID]~=nil and GW_QUEST_DATA[questID]['rewards']~=nil  then
+       return GW_QUEST_DATA[questID] 
+    end
+    GW_QUEST_DATA[questID]['rewards'] ={}
+    
+    local xp = GetQuestLogRewardXP(questID);
+    if ( xp > 0 and UnitLevel("player") < MAX_PLAYER_LEVEL ) then
+         GW_QUEST_DATA[questID]['rewards']['xp']={}
+         GW_QUEST_DATA[questID]['rewards']['xp'].name ='Experience'
+         GW_QUEST_DATA[questID]['rewards']['xp'].amount =xp
+         GW_QUEST_DATA[questID]['rewards']['xp'].icon = "Interface\\Icons\\XP_Icon";
+    end
+    local artifactXP, artifactCategory = GetQuestLogRewardArtifactXP(questID);
+	if ( artifactXP > 0 ) then
+        local name, icon = C_ArtifactUI.GetArtifactXPRewardTargetInfo(artifactCategory);
+        GW_QUEST_DATA[questID]['rewards']['artifactxp'] = {}
+        GW_QUEST_DATA[questID]['rewards']['artifactxp'].name = name
+        GW_QUEST_DATA[questID]['rewards']['artifactxp'].amount = artifactXP
+        GW_QUEST_DATA[questID]['rewards']['artifactxp'].icon = icon or "Interface\\Icons\\INV_Misc_QuestionMark"; 
+    end
+        
+    local numCurrencies = GetNumQuestLogRewardCurrencies(questID);
+    if numCurrencies>0 then
+        GW_QUEST_DATA[questID]['rewards']['currency'] = {}
+        for i = 1, numCurrencies do
+            local name, texture, count = GetQuestLogRewardCurrencyInfo(i, questID);
+            GW_QUEST_DATA[questID]['rewards']['currency'][i] = {}
+            GW_QUEST_DATA[questID]['rewards']['currency'][i].name = name
+            GW_QUEST_DATA[questID]['rewards']['currency'][i].icon = texture
+            GW_QUEST_DATA[questID]['rewards']['currency'][i].amount = count
+        end
+    end
+    
+    	-- items
+	local numItems = GetNumQuestLogRewards(questID);
+    if numItems>0 then
+        GW_QUEST_DATA[questID]['rewards']['items'] = {}
+	   for i = 1, numItems do
+		local name, texture, count, quality, isUsable = GetQuestLogRewardInfo(i, questID);
+            GW_QUEST_DATA[questID]['rewards']['items'][i] = {}
+            GW_QUEST_DATA[questID]['rewards']['items'][i].quality = quality
+            GW_QUEST_DATA[questID]['rewards']['items'][i].name = name
+            GW_QUEST_DATA[questID]['rewards']['items'][i].icon = texture
+            GW_QUEST_DATA[questID]['rewards']['items'][i].amount = count
+        end
+    end
+    
+    local money = GetQuestLogRewardMoney(questID);
+    if ( money > 0 ) then
+        GW_QUEST_DATA[questID]['rewards']['gold'] = {}
+        GW_QUEST_DATA[questID]['rewards']['gold'].name = 'Gold'
+        GW_QUEST_DATA[questID]['rewards']['gold'].amount = money
+        GW_QUEST_DATA[questID]['rewards']['gold'].icon = "Interface\\Icons\\inv_misc_coin_01";
+    end
+    
+end
 
 function gw_update_questitems(questLogIndex,QuestWatchIndex) 
    local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(questLogIndex); 
@@ -488,6 +554,8 @@ function gw_display_questtracker_layout()
         subHeader_Height = 0
     
         local QUEST_CONTAINER_FRAME = gw_request_questContainer(k,GW_TRACKER_PARENT_FRAMES[v['GW_TYPE']])
+        
+  
   
         QUEST_CONTAINER_FRAME.used = true
         QUEST_CONTAINER_FRAME:Show()
@@ -509,6 +577,9 @@ function gw_display_questtracker_layout()
             if v['subHeader']~=nil and v['subHeader']~='' then
                 subHeader = v['subHeader']
                 subHeader_Height = 30
+                _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:Show()
+            else
+               _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:Hide() 
             end
         end
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetText(subHeader)
@@ -576,6 +647,46 @@ function gw_display_questtracker_layout()
             end
         end
         
+        --rewards
+        if GW_QUEST_DATA[v['questID']]~=nil and  GW_QUEST_DATA[v['questID']]['rewards']~=nil then
+              QUEST_CONTAINER_FRAME:HookScript('OnLeave', function()GameTooltip:Hide() end)
+            QUEST_CONTAINER_FRAME:HookScript('OnEnter', function()
+                    
+                GameTooltip:SetOwner(QUEST_CONTAINER_FRAME, "ANCHOR_BOTTOMLEFT",0,100); 
+                GameTooltip:ClearLines();
+                  GameTooltip:AddLine('Rewards',1,1,1)
+                  GameTooltip:AddLine(' ',1,1,1)
+                for rewardskey,rewards  in pairs(GW_QUEST_DATA[v['questID']]['rewards']) do
+                  
+                    if rewardskey=='currency' then
+                       for kc,c in pairs(rewards) do
+                            GameTooltip:AddLine('|T'..c.icon..':32:32:0:0|t'..c.amount,1,1,1)
+                        end
+                    elseif rewardskey=='items' then
+                        for kc,c in pairs(rewards) do
+                            local r, g, b, hex = GetItemQualityColor(c.quality)
+                            GameTooltip:AddLine('|T'..c.icon..':32:32:0:0|t |c'..hex..' '..c.name..'|r',1,1,1)
+                        end     
+                    else
+                        local rewardsText = rewards.amount
+                            
+                        if rewardskey=='gold' then
+                           rewardsText= GetCoinTextureString(rewards.amount)  
+                        end
+                            
+                        GameTooltip:AddLine('|T'..rewards.icon..':32:32:0:0|t '..rewardsText,1,1,1)
+                   --         |TTexturePath:size1:size2:xoffset:yoffset:dimx:dimy:coordx1:coordx2:coordy1:coordy2|t
+                    end
+                        
+                end
+                GameTooltip:Show()
+              
+                        
+            end)
+            
+        end
+        
+        
         local GQ = countTable(GW_QUESTS)
         GW_QUESTS[GQ] = {}
         GW_QUESTS[GQ]['title'] = v['TITLE']
@@ -585,6 +696,16 @@ function gw_display_questtracker_layout()
         local objective_count = 1
         USED_HEIGHT[v['GW_TYPE']] = USED_HEIGHT[v['GW_TYPE']] + QUEST_HEADER_HEIGHT 
         local USED_OBJECTIVE_HEIGHT = 0
+        
+        
+        if v['GW_TYPE']=='SCENARIO' then
+          
+            local scenarioBlock = gw_request_senarioBlock(QUEST_CONTAINER_FRAME) 
+            scenarioBlock:SetPoint('TOPRIGHT',QUEST_CONTAINER_FRAME,'TOPRIGHT',0,-(QUEST_HEADER_HEIGHT + subHeader_Height))
+            
+            QUEST_HEADER_HEIGHT =  QUEST_HEADER_HEIGHT + scenarioBlock.height
+            
+        end
         
         
         if GW_HIDDEN_QUESTS[v['questID']]==nil or GW_HIDDEN_QUESTS[v['questID']]==false then
@@ -859,6 +980,120 @@ function gw_request_questContainer(k,parent)
     end
     return _G[frameName]
 end
+function gw_request_senarioBlock(parent)
+     
+    if GW_QUESTTRACKER_LOADED_SCENARIO_FRAME==nil then
+        
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME = CreateFrame('BUTTON','GwQuesttrackerScenarioBlock',parent,'GwQuesttrackerScenarioBlock')
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.height = 0
+        
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:SetParent(parent)
+        
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("PLAYER_ENTERING_WORLD");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("WORLD_STATE_TIMER_START");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("WORLD_STATE_TIMER_STOP");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("PROVING_GROUNDS_SCORE_UPDATE");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("SCENARIO_COMPLETED");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("SPELL_UPDATE_COOLDOWN");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("CHALLENGE_MODE_START");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:RegisterEvent("SCENARIO_CRITERIA_SHOW_STATE_UPDATE");
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:SetScript('OnEvent',gw_scenarioTimer_OnEvent)
+        gw_scenarioTimer_OnEvent("PLAYER_ENTERING_WORLD")
+        
+         
+        
+        return GW_QUESTTRACKER_LOADED_SCENARIO_FRAME  
+    end
+    return GW_QUESTTRACKER_LOADED_SCENARIO_FRAME
+end
+
+function gw_scenarioTimer_OnEvent(self, event, ...)
+	if ( event == "PLAYER_ENTERING_WORLD" ) then
+        -- ScenarioTimer_CheckTimers(GetWorldElapsedTimers());
+        gw_scenario_UpdateTimers(GetWorldElapsedTimers())
+	elseif ( event == "WORLD_STATE_TIMER_START") then
+		local timerID = ...;
+		gw_scenario_UpdateTimers(timerID);
+	elseif ( event == "WORLD_STATE_TIMER_STOP" ) then
+		local timerID = ...;
+        gw_scenario_stopTimers()
+	elseif (event == "PROVING_GROUNDS_SCORE_UPDATE") then
+		local score = ...
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.score.scoreString:SetText(score);
+        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.score:Show()
+	elseif (event == "SPELL_UPDATE_COOLDOWN") then
+	--	ScenarioSpellButtons_UpdateCooldowns();
+	elseif (event == "CHALLENGE_MODE_START") then
+    	gw_scenario_UpdateTimers(GetWorldElapsedTimers());
+    end
+end
+
+function gw_scenario_stopTimers()
+    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:SetScript('OnUpdate',nil) 
+    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:Hide()
+end
+
+function gw_scenario_UpdateTimers(...)
+    
+
+    
+	for i = 1, select("#", ...) do
+		local timerID = select(i, ...);
+		local _, elapsedTime, type = GetWorldElapsedTime(timerID);
+		if ( type == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE) then
+			local _, _, _, _, _, _, _, mapID = GetInstanceInfo();
+			if ( mapID ) then
+				local _, _, timeLimit = C_ChallengeMode.GetMapInfo(mapID);
+			--	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
+                GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:SetScript('OnUpdate',function()
+                    local _, elapsedTime, type = GetWorldElapsedTime(timerID);
+                    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:SetValue (1 - (elapsedTime/timeLimit))
+                    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timerString:SetText(GetTimeStringFromSeconds(duration - elapsedTime))
+                   
+                end)
+                 GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:Show()
+                
+                gw_scenario_affixes()
+                
+				return;
+			end
+		elseif ( type == LE_WORLD_ELAPSED_TIMER_TYPE_PROVING_GROUND ) then
+			local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+			if (duration > 0) then
+			--	Scenario_ProvingGrounds_ShowBlock(timerID, elapsedTime, duration, diffID, currWave, maxWave);
+                  GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:SetScript('OnUpdate',function()
+                    local _, elapsedTime, type = GetWorldElapsedTime(timerID);
+                    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:SetValue (1 - (elapsedTime/duration))
+                        GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timerString:SetText(GetTimeStringFromSeconds(duration - elapsedTime,false,true))
+                end)
+                 GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:Show()
+				return;
+			end
+		end
+	end
+    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:Hide()
+    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:SetScript('OnUpdate',nil)
+    
+end
+
+function gw_scenario_affixes()
+    
+    local level, affixes, wasEnergized = C_ChallengeMode.GetActiveKeystoneInfo();
+    local i = 0
+    for k,v in pairs(affixes) do
+        local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
+        SetPortraitToTexture(_G['GwAffixFrame'..i], filedataid);
+
+        _G['GwAffixFrame'..i].affixID = affixID;
+
+        _G['GwAffixFrame'..i]:Show();
+        _G['GwAffixFrame']:Show();
+        i = i + 1
+    end
+    
+end
+
+
 
 function gw_request_objectiveContainer(parent,parentId,k)
     local frameName = 'GwQuesttrackerObjectiveNormal'..parentId..'Objective'..k
@@ -918,8 +1153,8 @@ function gw_load_bossFrame(i)
     _G['GwQuestTrackerBossFrame'..i..'String']:SetFont(UNIT_NAME_FONT,12)
     _G['GwQuestTrackerBossFrame'..i..'String']:SetShadowOffset(1,-1)
     
-    _G['GwQuestTrackerBossFrame'..i..'StatusBar']:SetStatusBarColor(GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].r,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].g,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].b)
-    _G['GwQuestTrackerBossFrame'..i..'Icon']:SetVertexColor(GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].r,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].g,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].b)
+    _G['GwQuestTrackerBossFrame'..i..'StatusBar']:SetStatusBarColor(GW_QUESTTRACKER_TYPE_COLORS['BOSS'].r,GW_QUESTTRACKER_TYPE_COLORS['BOSS'].g,GW_QUESTTRACKER_TYPE_COLORS['BOSS'].b)
+    _G['GwQuestTrackerBossFrame'..i..'Icon']:SetVertexColor(GW_QUESTTRACKER_TYPE_COLORS['BOSS'].r,GW_QUESTTRACKER_TYPE_COLORS['BOSS'].g,GW_QUESTTRACKER_TYPE_COLORS['BOSS'].b)
 
     
     targetF:RegisterEvent('UNIT_MAX_HEALTH')

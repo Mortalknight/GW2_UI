@@ -289,7 +289,7 @@ function gw_highlight_target_raidframe(self)
     
     local  guid = UnitGUID('target')
     
-    if guid==_G['GwCompactplayer'].guid then
+    if UnitIsUnit('target',_G['GwCompactplayer'].unit) then
         _G['GwCompactplayer'].targetHighlight:SetVertexColor(1,1,1,1)
     else
         _G['GwCompactplayer'].targetHighlight:SetVertexColor(0,0,0,1)
@@ -299,14 +299,14 @@ function gw_highlight_target_raidframe(self)
     for i=1,80 do 
         
         if i<5 then
-           if guid==_G['GwCompactparty'..i].guid then
+           if UnitIsUnit('target',_G['GwCompactparty'..i].unit) then
             _G['GwCompactparty'..i].targetHighlight:SetVertexColor(1,1,1,1)
             else
             _G['GwCompactparty'..i].targetHighlight:SetVertexColor(0,0,0,1)
             end 
         end
         
-        if guid==_G['GwCompactraid'..i].guid then
+        if UnitIsUnit('target',_G['GwCompactraid'..i].unit) then
         _G['GwCompactraid'..i].targetHighlight:SetVertexColor(1,1,1,1)
         else
         _G['GwCompactraid'..i].targetHighlight:SetVertexColor(0,0,0,1)

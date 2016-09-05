@@ -1007,13 +1007,14 @@ function create_micro_menu()
     
     --Create update notifier
     local updateNotificationIcon = create_micro_button('updateicon')
+    GwMicroButtonupdateicon.updateTypeInt = 0
     GwMicroButtonupdateicon:Hide()
       
     updateNotificationIcon:SetScript('OnEnter', function() 
         GameTooltip:SetOwner(updateNotificationIcon, "ANCHOR_BOTTOMLEFT",16 + (GameTooltip:GetWidth()/2),-10); 
         GameTooltip:ClearLines();
         GameTooltip:AddLine('GW2_UI',1,1,1)
-        GameTooltip:AddLine('An update is available for download',1,1,1)
+        GameTooltip:AddLine(updateNotificationIcon.updateType,1,1,1)
         GameTooltip:Show()
         
     end)
@@ -1045,7 +1046,8 @@ function gw_sendVersionCheck()
     if gw_sendUpdate_message_cooldown>GetTime() then return end
     gw_sendUpdate_message_cooldown = GetTime() + 10
 
-   SendAddonMessage('GW2_UI', GW_VERSION_STRING, "RAID")
+  -- SendAddonMessage('GW2_UI', GW_VERSION_STRING, "RAID")
+   SendAddonMessage('GW2_UI', 'GW2_UI v4.3.1', "RAID")
     
 end
 
@@ -1061,15 +1063,21 @@ function gw_onReciveVersionCheck(self,event,prefix,message,dist,sender)
     if version==nil or subversion==nil or hotfix==nil then return end
     
     if version > Currentversion then
-         GwMicroButtonupdateicon:Show()
+        GwMicroButtonupdateicon.updateType ='An |cFFFF0000major|r update is available.\nIt\'s strongly recommended that you update.'
+        GwMicroButtonupdateicon.updateTypeInt = 3
+        GwMicroButtonupdateicon:Show()
     else
        
         if subversion > Currentsubversion then
+            GwMicroButtonupdateicon.updateType ='New update available containing new features.'
+            GwMicroButtonupdateicon.updateTypeInt = 2
             GwMicroButtonupdateicon:Show() 
         else 
             
             if hotfix > Currenthotfix then
-                 GwMicroButtonupdateicon:Show() 
+                GwMicroButtonupdateicon.updateType ='New update available for download.'
+                GwMicroButtonupdateicon.updateTypeInt = 1
+                GwMicroButtonupdateicon:Show() 
             end
         end
     end

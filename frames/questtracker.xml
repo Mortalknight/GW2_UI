@@ -336,6 +336,240 @@
     
         </Frames>
     </Frame>
+     <Frame name="GwQuesttrackerScenarioBlock" parent="GwQuestTracker" virtual="true" >
+         <Size x="300" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+         <Layers>
+             <Layer>
+               <Texture name="$parentStatusBarBg" hidden="true" parentKey="timerBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="282" y="12"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
+                    </Anchors>
+                </Texture>
+                 </Layer>
+         </Layers>
+         <Frames>
+             
+            <StatusBar name="$parentStatusBar" parentKey="timer" hidden="true" defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="280" y="10"></Size>
+                <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <Layers>
+                <Layer level="ARTWORK">
+                <FontString parentKey="timerString" text="0:00" justifyH="RIGHT">
+                    <Size x="100" y="24"></Size>
+                     <Anchors>
+                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
+                     </Anchors>
+                 </FontString>
+                 <FontString parentKey="timerlabel" text="Time Remaining" justifyH="LEFT">
+                    <Size x="300" y="24"></Size>
+                     <Anchors>
+                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="20" y="22"></Anchor>
+                     </Anchors>
+                 </FontString>
+                </Layer>
+         </Layers>
+            <Scripts>
+                <OnShow>
+                    self:GetParent().timerBackground:Show()
+                    self:GetParent().height =  self:GetParent().height + 40
+                    
+                 </OnShow>
+                 <OnHide>
+                     self:GetParent().timerBackground:Hide()
+                     self:GetParent().height = self:GetParent().height - 40
+                 </OnHide>    
+            </Scripts>
+             </StatusBar>
+             <Frame name="$parentScore" hidden="true" parentKey="score">
+                 <Size x="280" y="10"></Size>
+                <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                 <Layers>
+                    <Layer>
+                        <FontString parentKey="scorelabel" text="0" justifyH="RIGHT">
+                            <Size x="50" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="22"></Anchor>
+                            </Anchors>
+                        </FontString>  
+                        <FontString parentKey="scoreString" text="0" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
+                            </Anchors>
+                        </FontString>
+                     </Layer>
+                 </Layers>
+                 <Scripts>
+                  <OnShow>
+                    self:GetParent().height =  self:GetParent().height + 30
+                 </OnShow>
+                 <OnHide>
+                     self:GetParent().height = self:GetParent().height - 30
+                 </OnHide>  
+                 </Scripts>
+             </Frame>
+             <Frame name="GwAffixFrame" hidden="true" parentKey="affixes">
+                 <Size x="280" y="10"></Size>
+                 <Anchors>
+                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                 </Anchors>
+                 <Layers>
+                    <Layer>
+                   
+                     </Layer>
+                 </Layers>
+                <Frames>
+                    <Frame name="$parent1" parentKey="1">
+                        <Size x="38" y="38"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                    <Size x="38" y="38"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                        <Script>
+                            <OnEnter>
+                                if self.affixID~=nil then
+                                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,50); 
+                                    GameTooltip:ClearLines()
+                                    
+                                    local name, description = C_ChallengeMode.GetAffixInfo(self.affixID);
+
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                                    GameTooltip:SetText(name, 1, 1, 1, 1, true);
+                                    GameTooltip:AddLine(description, nil, nil, nil, true);
+                                    GameTooltip:Show()
+                                end
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide();
+                            </OnLeave>
+                        </Script>
+                 </Frame>  
+                    <Frame name="$parent2" parentKey="2">
+                        <Size x="38" y="38"></Size>
+                        <Anchors>
+                            <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                    <Size x="38" y="38"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                        <Script>
+                            <OnEnter>
+                                if self.affixID~=nil then
+                                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,50); 
+                                    GameTooltip:ClearLines()
+                                           local name, description = C_ChallengeMode.GetAffixInfo(self.affixID);
+
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                                    GameTooltip:SetText(name, 1, 1, 1, 1, true);
+                                    GameTooltip:AddLine(description, nil, nil, nil, true);
+                                    GameTooltip:Show()
+                                end
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide();
+                            </OnLeave>
+                        </Script>
+                 </Frame>  
+                    <Frame name="$parent3"  parentKey="3">
+                        <Size x="38" y="38"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                    <Size x="38" y="38"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                        <Script>
+                            <OnEnter>
+                                if self.affixID~=nil then
+                                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,50); 
+                                    GameTooltip:ClearLines()
+                                          local name, description = C_ChallengeMode.GetAffixInfo(self.affixID);
+
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                                    GameTooltip:SetText(name, 1, 1, 1, 1, true);
+                                    GameTooltip:AddLine(description, nil, nil, nil, true);
+                                    GameTooltip:Show()
+                                end
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide();
+                            </OnLeave>
+                        </Script>
+                 </Frame>
+                 </Frames>
+                 <Scripts>
+                     <OnShow>
+                        self:GetParent().height =  self:GetParent().height + 40
+                         self:SetHeight(40)
+                     </OnShow>
+                     <OnHide>
+                       self:GetParent().height = self:GetParent().height - 40
+                         self:SetHeight(0)
+                     </OnHide> 
+                 </Scripts>
+             </Frame>
+        </Frames>
+         <Scripts>
+            <OnLoad>
+                self.timerlabel = self.timer.timerlabel
+                self.timerString = self.timer.timerString
+                
+                self.timerBackground:ClearAllPoints()
+                self.timerBackground:SetPoint('CENTER',self.timer,'CENTER')
+                
+                self.timerlabel:SetFont(UNIT_NAME_FONT,12)
+                self.timerlabel:SetTextColor(1,1,1)
+                self.timerString:SetFont(UNIT_NAME_FONT,12)
+         
+                self.timerString:SetTextColor(1,1,1)
+                self.timerString:SetShadowOffset(1,-1)
+                
+                self.score:ClearAllPoints()
+                self.score:SetPoint('TOPLEFT',self.timer,'BOTTOMLEFT',0,0)
+                
+                self.score.scoreString:SetFont(UNIT_NAME_FONT,12)
+                self.score.scorelabel:SetFont(UNIT_NAME_FONT,12)
+                
+                self.timer:ClearAllPoints()
+                self.timer:SetPoint('TOPLEFT',self.affixes,'BOTTOMLEFT',-10,-15)
+                
+                self.timer:SetStatusBarColor(GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].r,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].g,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].b)
+             </OnLoad>
+      
+         </Scripts>
+    </Frame>
     
      <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame" parent="GwQuesttrackerContainerBossFrames" virtual="true" >
          <Size x="300" y="35"></Size>
