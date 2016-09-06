@@ -84,6 +84,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Hide Empty Slots','Hide empty action bar slots','HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
     addOption('Toggle Compass','Toggle the quest tracker compass','SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
     addOptionDropdown('Hud Scale','Change the size of the HUD','HUD_SCALE','GwSettingsHudOptions',function() gwUpdateHudScale() end,{1,0.9,0.8},{'Normal','Small','Tiny'})
+    addOptionDropdown('Minimap Scale','Change the size of the Minimap','MINIMAP_SCALE','GwSettingsHudOptions',function() Minimap:SetSize(gwGetSetting('MINIMAP_SCALE'),gwGetSetting('MINIMAP_SCALE')) end,{250,200,140},{'Large','Medium','Normal'})
     
     create_settings_cat('Group','Edit group settings','GwSettingsGroupframe',4)
     

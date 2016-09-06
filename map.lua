@@ -186,7 +186,7 @@ function gw_set_minimap()
 
     Minimap:RegisterEvent("PLAYER_ENTERING_WORLD");
 
-    
+    Minimap:SetSize(gwGetSetting('MINIMAP_SCALE'),gwGetSetting('MINIMAP_SCALE'))
 
 
     hoverMiniMapOut()
