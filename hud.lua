@@ -1046,8 +1046,7 @@ function gw_sendVersionCheck()
     if gw_sendUpdate_message_cooldown>GetTime() then return end
     gw_sendUpdate_message_cooldown = GetTime() + 10
 
-  -- SendAddonMessage('GW2_UI', GW_VERSION_STRING, "RAID")
-   SendAddonMessage('GW2_UI', 'GW2_UI v4.3.1', "RAID")
+   SendAddonMessage('GW2_UI', GW_VERSION_STRING, "RAID")
     
 end
 

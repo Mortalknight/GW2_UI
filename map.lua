@@ -54,9 +54,8 @@ end
 
 
 function gw_set_minimap()
-    mapShadowBg,mapShadowTexture = createBackground('BOTTOMRIGHT',460,230,3,19,"Interface\\AddOns\\GW2_UI\\textures\\mapshadow",0)
-    mapShadowBg:ClearAllPoints()
     
+    local GwMinimapShadow = CreateFrame('Frame','GwMinimapShadow',Minimap,'GwMinimapShadow')
 
     hooksecurefunc('EyeTemplate_OnUpdate',gw_lfg_icon_animate)
     hooksecurefunc('EyeTemplate_StopAnimating',gw_lfg_icon_animateStop)
@@ -68,8 +67,7 @@ function gw_set_minimap()
     
     Minimap:ClearAllPoints()
     Minimap:SetPoint('BOTTOMRIGHT',UIParent,-5,21)
-    mapShadowBg:ClearAllPoints()
-    mapShadowBg:SetPoint('BOTTOMRIGHT',Minimap,'BOTTOMRIGHT',0,0)
+
 
 
     Minimap:SetMaskTexture('Interface\\ChatFrame\\ChatFrameBackground')
@@ -81,8 +79,8 @@ function gw_set_minimap()
 	
 	Minimap:SetFrameStrata('LOW')
     
-    mapGradient = CreateFrame('Frame','GwMapGradient',mapShadowBg,'GwMapGradient')
-    mapGradient:SetParent(mapShadowBg)
+    mapGradient = CreateFrame('Frame','GwMapGradient',GwMinimapShadow,'GwMapGradient')
+    mapGradient:SetParent(GwMinimapShadow)
     mapGradient:SetPoint('TOPLEFT',Minimap,'TOPLEFT',0,0)
     mapGradient:SetPoint('TOPRIGHT',Minimap,'TOPRIGHT',0,0)
     
@@ -144,7 +142,7 @@ function gw_set_minimap()
     GwDateText:SetText(date('%d'))
     
     hooksecurefunc(Minimap,'SetScale',function()
-    mapShadowBg:SetScale(Minimap:GetScale())
+
     end)
     Minimap:SetScale(1.2)
     

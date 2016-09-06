@@ -1110,6 +1110,21 @@
             
         </Scripts>
     </Frame>
-    
+    <Frame name="GwMinimapShadow" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="Minimap" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativeTo="Minimap"  relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\mapshadow">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
     
 </Ui>
