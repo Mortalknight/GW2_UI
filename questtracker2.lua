@@ -583,7 +583,6 @@ function gw_display_questtracker_layout()
             end
         end
         _G[QUEST_CONTAINER_FRAME:GetName()..'QuestSubHeader']:SetText(subHeader)
-        _G[QUEST_CONTAINER_FRAME:GetName()..'UntrackButton']:Hide()
         _G[QUEST_CONTAINER_FRAME:GetName()].questType = v['GW_TYPE']
         _G[QUEST_CONTAINER_FRAME:GetName()].questLogIndex = v['questLogIndex']
         
@@ -592,11 +591,17 @@ function gw_display_questtracker_layout()
         
         
         if v['GW_TYPE']=='QUEST' then
+            
+            QUEST_CONTAINER_FRAME:SetScript('OnEnter',function()  SetCursor('QUEST_CURSOR') end)
+            QUEST_CONTAINER_FRAME:SetScript('OnLeave',function()  SetCursor(nil) end)
+            
             QUEST_CONTAINER_FRAME:SetScript('OnClick', function() 
                     QuestLogPopupDetailFrame_Show(v['questLogIndex']);
             end)
         else
-             QUEST_CONTAINER_FRAME:SetScript('OnClick',nil)
+            QUEST_CONTAINER_FRAME:SetScript('OnEnter',nil)
+            QUEST_CONTAINER_FRAME:SetScript('OnLeave',nil)
+            QUEST_CONTAINER_FRAME:SetScript('OnClick',nil)
         end
         
         _G[QUEST_CONTAINER_FRAME:GetName()..'Hide']:SetScript('OnClick', function()
@@ -649,7 +654,7 @@ function gw_display_questtracker_layout()
         
         --rewards
         if GW_QUEST_DATA[v['questID']]~=nil and  GW_QUEST_DATA[v['questID']]['rewards']~=nil then
-              QUEST_CONTAINER_FRAME:HookScript('OnLeave', function()GameTooltip:Hide() end)
+              QUEST_CONTAINER_FRAME:HookScript('OnLeave', function() GameTooltip:Hide() end)
             QUEST_CONTAINER_FRAME:HookScript('OnEnter', function()
                     
                 GameTooltip:SetOwner(QUEST_CONTAINER_FRAME, "ANCHOR_BOTTOMLEFT",0,100); 
@@ -675,7 +680,6 @@ function gw_display_questtracker_layout()
                         end
                             
                         GameTooltip:AddLine('|T'..rewards.icon..':32:32:0:0|t '..rewardsText,1,1,1)
-                   --         |TTexturePath:size1:size2:xoffset:yoffset:dimx:dimy:coordx1:coordx2:coordy1:coordy2|t
                     end
                         
                 end
@@ -867,6 +871,7 @@ function gw_findPOI()
         max =max +1
     end
          
+    SetMapToCurrentZone()
     SetCVar("questPOI", cvar and 1 or 0)
     if countTable(GW_RADAR_DATA)<1 then
        
