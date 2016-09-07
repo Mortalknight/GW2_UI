@@ -278,7 +278,7 @@
     
         </Frames>
     </Frame>
-     <Frame name="GwQuesttrackerScenarioBlock" parent="GwQuestTracker" virtual="true" >
+     <Frame name="GwQuesttrackerScenarioBlock" enableMouse="false" parent="GwQuestTracker" virtual="true" >
          <Size x="300" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>

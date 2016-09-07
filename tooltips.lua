@@ -45,7 +45,7 @@ local UNSTYLED = {
 
 function move_tooltip_placemtn(self) 
     self:ClearAllPoints()
-    self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 250)
+    self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 300)
 end
 
 function gw_set_tooltips()
