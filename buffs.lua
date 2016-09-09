@@ -275,3 +275,36 @@ function updatePlayerDeBuffList()
     table.sort( DebuffLists[unitToWatch], function(a,b) return a['timeRemaining'] < b['timeRemaining'] end)
     
 end
+
+function gw_buff(self,data, buffIndex)
+    
+    --Buff icon
+    self.icon:SetTexture(data['icon'])
+    
+    if data['isStealable'] then
+        self.outline:SetVertexColor(1,1,1)
+    else
+        self.outline:SetVertexColor(0,0,0)
+    end
+    
+    local stacks = ''
+    local duration = ''
+    
+    if data['stacks']~=nil and data['stacks']>0 then
+        stacks= data['stacks']
+    end 
+    if data['duration']~=nil and data['duration']>0 then
+        duration = timeCount(data['timeRemaining'])
+    end
+    
+    self.expires = data['expires']
+    self.duration = data['duration']
+    
+    self.durationString:SetText(duration)
+    self.stacksString:SetText(stacks)
+    
+    self:SetScript('OnEnter', function() GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(self.unit,buffIndex); GameTooltip:Show() end)
+    self:SetScript('OnLeave', function() GameTooltip:Hide() end)
+    
+end
+
