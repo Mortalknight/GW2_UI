@@ -406,7 +406,6 @@ function gw_updateCustomizableBars(barName,buttonName)
             
             BUTTON:HookScript('OnUpdate',gw_actionButtonUpdate)
             
-            hooksecurefunc(getmetatable(_G['ActionButton1Cooldown']).__index, 'SetCooldown', function(self)
             local alpha = self:GetEffectiveAlpha()
             if alpha > 0.001 then
                 self:SetSwipeColor(0,0,0,alpha)
