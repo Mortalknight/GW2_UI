@@ -419,7 +419,7 @@ end
 
 function gw_parse_criteria(quantity, totalQuantity,criteriaString)
     
-    if quantity~=nil and totalQuantity~=nil and criteriaIndex~=nil then
+    if quantity~=nil and totalQuantity~=nil and criteriaString~=nil then
        return string.format("%d/%d %s", quantity, totalQuantity, criteriaString);
     end
      
