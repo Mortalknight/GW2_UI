@@ -326,6 +326,7 @@ function gw_dodgebar_onevent(self,event,unit)
                 if name~=nil then
                     charges, maxCharges, start, duration = GetSpellCharges(v)
                     foundADash = true
+                    GwDodgeBar.spellId = v
                     if charges~=nil and charges<maxCharges then
                        gw_update_dodgebar(start,duration,maxCharges,charges)
                        

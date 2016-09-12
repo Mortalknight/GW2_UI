@@ -398,9 +398,14 @@
         <Scripts>
             <OnEnter>
                self:SetScale(1.06)
+                GameTooltip:SetOwner(self,'ANCHOR_PRESERVE')
+                GameTooltip:ClearLines()
+                GameTooltip:SetSpellByID(self.spellId)
+                GameTooltip:Show()
             </OnEnter>
             <OnLeave>
                 self:SetScale(1)
+                GameTooltip:Hide()
             </OnLeave>
         </Scripts>
     </Button>
