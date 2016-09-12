@@ -364,7 +364,7 @@
                 </Texture>
             </Layer>
             <Layer  Level="ARTWORK" textureSubLevel="-1">
-                <Texture name="$parentDeBuffBackground"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
+                <Texture parentKey="background" name="$parentDeBuffBackground"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
                     <Size x="24" y="24"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                     <Anchors>
@@ -376,7 +376,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Cooldown name="$parentCooldown" inherits="ActionButtonTemplate" frameStrata="MEDIUM" toplevel="true">
+            <Cooldown parentKey="cooldown" name="$parentCooldown" inherits="ActionButtonTemplate" frameStrata="MEDIUM" toplevel="true">
                 <SwipeTexture>
                     <Color r="1" g="1" b="1" a="1"/>
                 </SwipeTexture>
@@ -429,12 +429,24 @@
         <Scripts>
             <OnLoad>
                 local mName = self:GetName()
+                
+                 self.icon = _G[mName..'IconBuffIcon']
+                
                 _G[mName..'IconBuffStacks']:SetFont(UNIT_NAME_FONT,14,'OUTLINE')
                 _G[mName..'IconBuffStacks']:SetTextColor(255,255,255)
                 
                 
                 _G[mName..'CooldownBuffDuration']:SetFont(UNIT_NAME_FONT,14)
                 _G[mName..'CooldownBuffDuration']:SetTextColor(255,255,255)
+                
+                
+                _G[mName..'IconBuffStacks']:SetFont(UNIT_NAME_FONT,14,'OUTLINE')
+                _G[mName..'IconBuffStacks']:SetTextColor(255,255,255)
+                
+                
+               _G[mName..'CooldownBuffDuration']:SetFont(UNIT_NAME_FONT,14)
+               _G[mName..'CooldownBuffDuration']:SetTextColor(255,255,255)
+                
             </OnLoad>
         </Scripts>
     </Frame>

@@ -308,3 +308,88 @@ function gw_buff(self,data, buffIndex)
     
 end
 
+function gw_hightlighted_debuff(self,data,buffindex)
+    
+                
+    if data['dispelType']~=nil then
+        self.background:SetVertexColor( GW_DEBUFF_COLOR[data['dispelType']].r, GW_DEBUFF_COLOR[data['dispelType']].g, GW_DEBUFF_COLOR[data['dispelType']].b)
+    else          
+        self.background:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b); 
+    end
+    self.cooldown:SetDrawEdge(0)
+    self.cooldown:SetDrawSwipe(1)
+    self.cooldown:SetReverse(false)
+    self.cooldown:SetHideCountdownNumbers(true)
+                
+   
+                
+
+   self.icon:SetTexture(data['icon'])
+     
+    local buffDur = '';
+    local stacks  = '';
+    if data['count']>1 then
+        stacks = data['count'] 
+    end
+    if data['duration']>0 then
+        buffDur = timeCount(data['timeRemaining']);
+    end
+            
+    self.expires =data['expires']
+    self.duration =data['duration']
+    self.cooldown:SetCooldown(data['expires'] - data['duration'], data['duration'])
+     
+            
+    _G[self:GetName()..'CooldownBuffDuration']:SetText(buffDur)
+    _G[self:GetName()..'IconBuffStacks']:SetText(stacks)
+
+                
+    self:SetScript('OnEnter', function() GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,buffindex); GameTooltip:Show() end)
+    self:SetScript('OnLeave', function() GameTooltip:Hide() end)
+            
+
+    
+end
+function gw_debuff(self,data,buffindex)
+    
+                
+    if data['dispelType']~=nil then
+        self.background:SetVertexColor( GW_DEBUFF_COLOR[data['dispelType']].r, GW_DEBUFF_COLOR[data['dispelType']].g, GW_DEBUFF_COLOR[data['dispelType']].b)
+    else          
+        self.background:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b); 
+    end
+    self.cooldown:SetDrawEdge(0)
+    self.cooldown:SetDrawSwipe(1)
+    self.cooldown:SetReverse(false)
+    self.cooldown:SetHideCountdownNumbers(true)
+                
+   
+                
+
+   self.icon:SetTexture(data['icon'])
+     
+    local buffDur = '';
+    local stacks  = '';
+    if data['count']>1 then
+        stacks = data['count'] 
+    end
+    if data['duration']>0 then
+        buffDur = timeCount(data['timeRemaining']);
+    end
+            
+    self.expires =data['expires']
+    self.duration =data['duration']
+   -- self.cooldown:SetCooldown(data['expires'] - data['duration'], data['duration'])
+     
+            
+    _G[self:GetName()..'CooldownBuffDuration']:SetText(buffDur)
+    _G[self:GetName()..'IconBuffStacks']:SetText(stacks)
+
+                
+    self:SetScript('OnEnter', function() GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,buffindex); GameTooltip:Show() end)
+    self:SetScript('OnLeave', function() GameTooltip:Hide() end)
+            
+
+    
+end
+

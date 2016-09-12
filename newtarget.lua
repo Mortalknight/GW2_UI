@@ -260,60 +260,31 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
     end
     y=y+1
     x=0
+    local frameIndex = 1
     update_Debuff_list(unitToWatch)
 
     for i=1,40 do
-        local indexBuffFrame = _G[thisName..'DeBuffItemFrame'..i]
+        local indexBuffFrame = _G[thisName..'DeBuffItemFrame'..frameIndex]
         if DebuffLists[unitToWatch][i] then
             local key =DebuffLists[unitToWatch][i]['key']
             if indexBuffFrame==nil then
-                indexBuffFrame = CreateFrame('Frame', thisName..'DeBuffItemFrame'..i,_G[thisName..'Buffs'],'GwDeBuffIcon');
+                indexBuffFrame = CreateFrame('Frame', thisName..'DeBuffItemFrame'..frameIndex,_G[thisName..'Buffs'],'GwDeBuffIcon');
                 indexBuffFrame:SetParent(_G[thisName..'Buffs']);
                 indexBuffFrame:SetSize(28,28)
-                
-                _G[thisName..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
-                
-                 if DebuffLists[unitToWatch][i]['dispelType']~=nil then
-                    _G[thisName..'DeBuffItemFrame'..i..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]['dispelType']].r, GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]['dispelType']].g, GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]['dispelType']].b)
-                end
-                _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetDrawEdge(0)
-                _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetDrawSwipe(1)
-                _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetReverse(false)
-                _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetHideCountdownNumbers(true)
-                
+                indexBuffFrame:ClearAllPoints()
+                indexBuffFrame:SetPoint('TOPLEFT',(32*x),-40*y)
+                indexBuffFrame.unit = unitToWatch
+                    
+            end
+            
+            if DebuffLists[unitToWatch][i]['caster']~=nil and DebuffLists[unitToWatch][i]['caster']=='player' then   
+                gw_hightlighted_debuff(indexBuffFrame,DebuffLists[unitToWatch][i],key)
+                indexBuffFrame:SetSize(28,28)
+            else
+                indexBuffFrame:SetSize(24,24)
+                gw_debuff(indexBuffFrame,DebuffLists[unitToWatch][i],key)
+            end
    
-                _G[thisName..'DeBuffItemFrame'..i..'IconBuffStacks']:SetFont(UNIT_NAME_FONT,14,'OUTLINE')
-                _G[thisName..'DeBuffItemFrame'..i..'IconBuffStacks']:SetTextColor(255,255,255)
-                
-                
-                _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetFont(UNIT_NAME_FONT,14)
-                _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetTextColor(255,255,255)
-                
-            end
-            _G[thisName..'DeBuffItemFrame'..i..'IconBuffIcon']:SetTexture(DebuffLists[unitToWatch][i]['icon'])
-     
-            local buffDur = '';
-            local stacks  = '';
-            if DebuffLists[unitToWatch][i]['count']>1 then
-               stacks = DebuffLists[unitToWatch][i]['count'] 
-            end
-            if DebuffLists[unitToWatch][i]['duration']>0 then
-                buffDur = timeCount(DebuffLists[unitToWatch][i]['timeRemaining']);
-            end
-            
-            indexBuffFrame.expires =DebuffLists[unitToWatch][i]['expires']
-            indexBuffFrame.duration =DebuffLists[unitToWatch][i]['duration']
-           _G[thisName..'DeBuffItemFrame'..i..'Cooldown']:SetCooldown(DebuffLists[unitToWatch][i]['expires'] - DebuffLists[unitToWatch][i]['duration'], DebuffLists[unitToWatch][i]['duration'])
-     
-            
-            _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
-            _G[thisName..'DeBuffItemFrame'..i..'IconBuffStacks']:SetText(stacks)
-            indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint('TOPLEFT',(32*x),-32*y)
-            
-            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(unitToWatch,key); GameTooltip:Show() end)
-            indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
-            
             indexBuffFrame:Show()
             
             x=x+1
@@ -321,6 +292,7 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
                 y=y+1
                 x=0
             end
+            frameIndex = frameIndex + 1
             
         else
             
@@ -329,6 +301,12 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
             end
         end
         
+    end
+    for i=frameIndex,40 do
+        local indexBuffFrame = _G[thisName..'DeBuffItemFrame'..i]
+        if indexBuffFrame~=nil and indexBuffFrame:IsShown() then
+           indexBuffFrame:Hide() 
+        end
     end
     
 end
@@ -390,11 +368,18 @@ function update_buff_list(unitToWatch)
     
 end
 function update_Debuff_list(unitToWatch)
-        DebuffLists[unitToWatch] = {}
+    
+    local filter = 'player'
+    
+    if gwGetSetting(unitToWatch..'_BUFFS_FILTER') or UnitIsFriend("player",unitToWatch) then
+        filter = nil
+    end
+    
+    DebuffLists[unitToWatch] = {}
     for i=1,40 do
-        if  UnitDebuff(unitToWatch,i,'PLAYER')  then
+        if  UnitDebuff(unitToWatch,i,filter)  then
             DebuffLists[unitToWatch][i] ={}
-    DebuffLists[unitToWatch][i]['name'],  DebuffLists[unitToWatch][i]['rank'],  DebuffLists[unitToWatch][i]['icon'],  DebuffLists[unitToWatch][i]['count'],  DebuffLists[unitToWatch][i]['dispelType'],  DebuffLists[unitToWatch][i]['duration'],  DebuffLists[unitToWatch][i]['expires'],  DebuffLists[unitToWatch][i]['caster'],  DebuffLists[unitToWatch][i]['isStealable'],  DebuffLists[unitToWatch][i]['shouldConsolidate'],  DebuffLists[unitToWatch][i]['spellID']  =  UnitDebuff(unitToWatch,i,'PLAYER') 
+    DebuffLists[unitToWatch][i]['name'],  DebuffLists[unitToWatch][i]['rank'],  DebuffLists[unitToWatch][i]['icon'],  DebuffLists[unitToWatch][i]['count'],  DebuffLists[unitToWatch][i]['dispelType'],  DebuffLists[unitToWatch][i]['duration'],  DebuffLists[unitToWatch][i]['expires'],  DebuffLists[unitToWatch][i]['caster'],  DebuffLists[unitToWatch][i]['isStealable'],  DebuffLists[unitToWatch][i]['shouldConsolidate'],  DebuffLists[unitToWatch][i]['spellID']  =  UnitDebuff(unitToWatch,i,filter) 
             DebuffLists[unitToWatch][i]['key'] = i 
             DebuffLists[unitToWatch][i]['timeRemaining'] =  DebuffLists[unitToWatch][i]['expires']-GetTime();
             if DebuffLists[unitToWatch][i]['duration']<=0 then
@@ -405,6 +390,8 @@ function update_Debuff_list(unitToWatch)
     
 
     table.sort( DebuffLists[unitToWatch], function(a,b) return a['timeRemaining'] < b['timeRemaining'] end)
+    
+    table.sort( DebuffLists[unitToWatch], function(a,b) return a['caster']=='player' end)
     
 end
 

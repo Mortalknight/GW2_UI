@@ -563,13 +563,17 @@ function gw_raidframes_updateDebuffs(self)
     local buffIndex = 1
     local x = 0;
     local y = 0;
+    
+    local filter = nil 
+    if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
+        filter = 'RAID'
+    end
+    
     for i=1,20 do
         
-       local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i)
+       local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i,filter)
         
-        if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
-            name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i,'RAID')
-        end
+      
         
         local indexBuffFrame = _G['Gw'..self:GetName()..'DeBuffItemFrame'..i]
         local created = false
