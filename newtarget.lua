@@ -52,8 +52,18 @@ function registerNewUnitFrame(unitToWatch, frameType)
     targetF:EnableMouse(true)
     targetF:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     
-     GwaddTOClique(targetF)
+    GwaddTOClique(targetF)
     
+    targetF:SetScript('OnLeave',function() 
+        GameTooltip:Hide()
+    end)
+    targetF:SetScript('OnEnter',function() 
+            GameTooltip:ClearLines()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(unitToWatch)
+       
+        GameTooltip:Show()
+    end)
     
     local dropdown = nil;
     if unitToWatch=='target' then
@@ -261,6 +271,11 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
     y=y+1
     x=0
     local frameIndex = 1
+    local filter = 'player'
+    
+    if gwGetSetting(unitToWatch..'_BUFFS_FILTER') or UnitIsFriend("player",unitToWatch) then
+        filter = nil
+    end
     update_Debuff_list(unitToWatch)
 
     for i=1,40 do
@@ -282,7 +297,7 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
                 indexBuffFrame:SetSize(28,28)
             else
                 indexBuffFrame:SetSize(24,24)
-                gw_debuff(indexBuffFrame,DebuffLists[unitToWatch][i],key)
+                gw_debuff(indexBuffFrame,DebuffLists[unitToWatch][i],key,filter)
             end
    
             indexBuffFrame:Show()

@@ -350,7 +350,7 @@ function gw_hightlighted_debuff(self,data,buffindex)
 
     
 end
-function gw_debuff(self,data,buffindex)
+function gw_debuff(self,data,buffindex,filter)
     
                 
     if data['dispelType']~=nil then
@@ -370,10 +370,10 @@ function gw_debuff(self,data,buffindex)
      
     local buffDur = '';
     local stacks  = '';
-    if data['count']>1 then
+    if data['count']~=nil and data['count']>1 then
         stacks = data['count'] 
     end
-    if data['duration']>0 then
+    if data['duration']~=nil and data['duration']>0 then
         buffDur = timeCount(data['timeRemaining']);
     end
             
@@ -386,7 +386,7 @@ function gw_debuff(self,data,buffindex)
     _G[self:GetName()..'IconBuffStacks']:SetText(stacks)
 
                 
-    self:SetScript('OnEnter', function() GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,buffindex); GameTooltip:Show() end)
+    self:SetScript('OnEnter', function() GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,buffindex,filter); GameTooltip:Show() end)
     self:SetScript('OnLeave', function() GameTooltip:Hide() end)
             
 

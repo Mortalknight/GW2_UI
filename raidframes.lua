@@ -122,7 +122,20 @@ function gw_create_raidframe(registerUnit)
 
     RegisterUnitWatch(frame);
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp")    
+    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp")   
+    
+    
+    frame:SetScript('OnLeave',function() 
+        GameTooltip:Hide()
+    end)
+    frame:SetScript('OnEnter',function() 
+        GameTooltip:ClearLines()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(registerUnit)
+       
+        GameTooltip:Show()
+    end)
+    
     
     
     frame:RegisterEvent('UNIT_HEALTH')
@@ -563,6 +576,7 @@ function gw_raidframes_updateDebuffs(self)
     local buffIndex = 1
     local x = 0;
     local y = 0;
+    local DebuffLists = {}
     
     local filter = nil 
     if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
@@ -571,7 +585,8 @@ function gw_raidframes_updateDebuffs(self)
     
     for i=1,20 do
         
-       local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitDebuff(self.unit,i,filter)
+        DebuffLists[i] ={}
+        DebuffLists[i]['name'],  DebuffLists[i]['rank'],  DebuffLists[i]['icon'],  DebuffLists[i]['count'],  DebuffLists[i]['dispelType'],  DebuffLists[i]['duration'],  DebuffLists[i]['expires'],  DebuffLists[i]['caster'],  DebuffLists[i]['isStealable'],  DebuffLists[i]['shouldConsolidate'],      DebuffLists[i]['spellID']  =  UnitDebuff(self.unit,i,filter)
         
       
         
@@ -579,7 +594,7 @@ function gw_raidframes_updateDebuffs(self)
         local created = false
         local shouldDisplay = false
         
-        if  name~=nil then
+        if DebuffLists[i]['name']~=nil then
            shouldDisplay = true
         end
         
@@ -592,44 +607,23 @@ function gw_raidframes_updateDebuffs(self)
                 indexBuffFrame:SetSize(16,16)
                 indexBuffFrame:EnableMouse(false)
                 created =  true
+                indexBuffFrame.unit = self.unit
             end
             local margin = indexBuffFrame:GetWidth() + 2
             local marginy = indexBuffFrame:GetWidth() + 2
             if created then
                 indexBuffFrame:ClearAllPoints()
                 indexBuffFrame:SetPoint('BOTTOMLEFT',self.healthbar,'BOTTOMLEFT',3 + (margin*x),3+ (marginy*y))
+                                  
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Icon']:SetPoint('TOPLEFT',indexBuffFrame,'TOPLEFT',1,-1)
+                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Icon']:SetPoint('BOTTOMRIGHT',indexBuffFrame,'BOTTOMRIGHT',-1,1)
             end
-                    
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Icon']:SetPoint('TOPLEFT',indexBuffFrame,'TOPLEFT',1,-1)
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Icon']:SetPoint('BOTTOMRIGHT',indexBuffFrame,'BOTTOMRIGHT',-1,1)
-                    
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'IconBuffIcon']:SetTexture(icon)
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetDrawEdge(0)
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetDrawSwipe(0)
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetReverse(1)
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'Cooldown']:SetHideCountdownNumbers(true)
-                   
             
-            if dispelType~=nil and  GW_DEBUFF_COLOR[dispelType]~=nil then
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'DeBuffBackground']:SetVertexColor( GW_DEBUFF_COLOR[dispelType].r,    GW_DEBUFF_COLOR[dispelType].g, GW_DEBUFF_COLOR[dispelType].b)
-            else    
-                _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b); 
-            end
-                    
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'DeBuffBackground']:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
-             --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
-            local stacks = ''
-            if count>1 then
-                stacks =count
-            end
-                
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'CooldownBuffDuration']:SetText('')
-            _G['Gw'..self:GetName()..'DeBuffItemFrame'..buffIndex..'IconBuffStacks']:SetText(stacks)
-         
-             
-            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame,"ANCHOR_BOTTOMLEFT",28,0);           GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,i); GameTooltip:Show() end)
-            indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
-                    
+            gw_debuff(indexBuffFrame,DebuffLists[i],i,filter)
+  
+            
+            
+            
             indexBuffFrame:Show()
      
             buffIndex = buffIndex +1

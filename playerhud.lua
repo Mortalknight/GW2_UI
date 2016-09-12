@@ -107,7 +107,7 @@ function create_player_hud()
 
 
     local playerHealthGLobaBg = CreateFrame('Button', 'GwPlayerHealthGlobe',UIParent, 'GwPlayerHealthGlobe');
-    local GwPlayerHealthGlobeClickOverlay = CreateFrame('Button', 'GwPlayerHealthGlobeClickOverlay',UIParent, 'GwPlayerHealthGlobeClickOverlay');
+
     
 
     playerHealthGLobaBg:SetAttribute("*type1", 'target')
@@ -117,18 +117,13 @@ function create_player_hud()
     RegisterUnitWatch(playerHealthGLobaBg);
     
     --DELETE ME AFTER ACTIONBARS REWORK
-    GwPlayerHealthGlobeClickOverlay:SetAttribute("*type1", 'target')
-    GwPlayerHealthGlobeClickOverlay:SetAttribute("*type2", "showmenu")
-    GwPlayerHealthGlobeClickOverlay:SetAttribute("unit", 'player')
+    playerHealthGLobaBg:SetAttribute("*type1", 'target')
+    playerHealthGLobaBg:SetAttribute("*type2", "showmenu")
+    playerHealthGLobaBg:SetAttribute("unit", 'player')
     
-    GwPlayerHealthGlobeClickOverlay:SetScript('OnMouseDown', function(self,button)
-           
-            if button=='RightButton' then
-                ToggleDropDownMenu(1, nil, PlayerFrameDropDown, playerHealthGLobaBg, 0, 0)
-            end       
-    end)
+
     
-    GwaddTOClique(GwPlayerHealthGlobeClickOverlay)
+    GwaddTOClique(playerHealthGLobaBg)
     
     
     
