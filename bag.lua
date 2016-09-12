@@ -28,14 +28,27 @@ local default_bag_frame_container ={
 function gw_create_bgframe()
     
     
+    BAG_WINDOW_SIZE = gwGetSetting('BAG_WIDTH')
+    
     BAG_ITEM_SIZE = gwGetSetting('BAG_ITEM_SIZE')
     
     CreateFrame('Frame','gwNormalBagHolder',UIParent)
     gwNormalBagHolder:SetPoint('LEFT',UIParent,'RIGHT')
     gwNormalBagHolder:SetFrameStrata('HIGH')
    local fm= CreateFrame('Frame','GwBagMoverFrame',UIParent,'GwBagMoverFrame') 
-    GwBagMoverFrame:HookScript('OnDragStop',gw_onBankMove)
+    GwBagMoverFrame:HookScript('OnDragStop',gw_onBagMove)
+    
+    GwBagMoverFrame:ClearAllPoints()
+    
+    GwBagMoverFrame:SetPoint(gwGetSetting('BAG_POSITION')['point'],UIParent,gwGetSetting('BAG_POSITION')['relativePoint'],gwGetSetting('BAG_POSITION')['xOfs'],gwGetSetting('BAG_POSITION')['yOfs'])
+    
+
+    
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
+    
+    
+     GwBagFrame:SetWidth(gwGetSetting('BAG_WIDTH'))
+    gw_bagFrameOnResize(GwBagFrame,false)
     
     GwBagFrame:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)
     GwBagFrame:SetScript('OnShow',function() GwBagMoverFrame:Show() GwBagFrameResize:Show() end)
@@ -87,6 +100,8 @@ function gw_create_bgframe()
     ContainerFrame5:SetFrameLevel(5)
     ContainerFrame6:SetFrameStrata('HIGH')
     ContainerFrame6:SetFrameLevel(5)
+    
+   
 
 end
 
@@ -335,6 +350,8 @@ function gw_bagFrameOnResize(self,forceSize)
     h = math.max(350,math.max(BAG_WINDOW_CONTENT_HEIGHT,h))
     
     BAG_WINDOW_SIZE = w - (BAG_ITEM_PADDING * 3) -32
+    
+    gwSetSetting('BAG_WIDTH',BAG_WINDOW_SIZE)
     
     self:SetSize(w,h)
     

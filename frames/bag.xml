@@ -13,6 +13,14 @@
 
               <OnDragStart>self:StartMoving();</OnDragStart>
               <OnDragStop>self:StopMovingOrSizing();
+                  
+                  
+                  
+                  local saveBagPos = {}
+                  saveBagPos['point'], _, saveBagPos['relativePoint'], saveBagPos['xOfs'] , saveBagPos['yOfs'] = self:GetPoint()
+  
+                  
+                  gwSetSetting('BAG_POSITION',saveBagPos)
             </OnDragStop>
         </Scripts>
         
