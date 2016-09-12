@@ -202,45 +202,34 @@ function gw_unitFrame_updateAuras(thisName, unitToWatch)
     end
  
     update_buff_list(unitToWatch)
+    
+    local frameIndex = 1
     local x = 0;
     local y = 0;
     for i=1,40 do
-        local indexBuffFrame = _G[thisName..'BuffItemFrame'..i]
+        local indexBuffFrame = _G[thisName..'BuffItemFrame'..frameIndex]
         if buffLists[unitToWatch][i] then
             local  key = buffLists[unitToWatch][i]['key']
             if indexBuffFrame==nil then
-                indexBuffFrame = CreateFrame('Frame', thisName..'BuffItemFrame'..i,_G[thisName..'Buffs'],'GwBuffIcon');
+                
+                indexBuffFrame = CreateFrame('Frame', thisName..'BuffItemFrame'..frameIndex,_G[thisName..'Buffs'],'GwBuffIcon');
                 indexBuffFrame:SetParent(_G[thisName..'Buffs']);
+                _G[thisName..'BuffItemFrame'..frameIndex..'BuffIcon']:SetParent(_G[thisName..'BuffItemFrame'..frameIndex])
+                
+                indexBuffFrame.unit = unitToWatch
+                
+                
+                  
+                local margin = indexBuffFrame:GetWidth() + 4
+                local marginy = indexBuffFrame:GetWidth() + 12
+                
+                
+                indexBuffFrame:ClearAllPoints()
+                indexBuffFrame:SetPoint('TOPLEFT',(margin*x),(-marginy*y) + -10)
             end
-            local margin = indexBuffFrame:GetWidth() + 4
-            local marginy = indexBuffFrame:GetWidth() + 12
-            _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetTexture(buffLists[unitToWatch][i]['icon'])
-            _G[thisName..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G[thisName..'BuffItemFrame'..i])
-            local buffDur = '';
-            local stacks = '';
+      
             
-            if buffLists[unitToWatch][i]['isStealable'] then
-                indexBuffFrame.outline:SetVertexColor(1,1,1)
-            else
-                indexBuffFrame.outline:SetVertexColor(0,0,0)
-            end
-            
-            
-            if buffLists[unitToWatch][i]['duration']>0 then
-                buffDur = timeCount(buffLists[unitToWatch][i]['timeRemaining']);
-            end
-              if buffLists[unitToWatch][i]['count']>0 then
-               stacks = buffLists[unitToWatch][i]['count'] 
-            end
-            indexBuffFrame.expires =buffLists[unitToWatch][i]['expires']
-            indexBuffFrame.duration =buffLists[unitToWatch][i]['duration']
-             _G[thisName..'BuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
-             _G[thisName..'BuffItemFrame'..i..'BuffStacks']:SetText(stacks)
-            indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint('TOPLEFT',(margin*x),(-marginy*y) + -10)
-            
-            indexBuffFrame:SetScript('OnEnter', function() GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitBuff(unitToWatch,key); GameTooltip:Show() end)
-            indexBuffFrame:SetScript('OnLeave', function() GameTooltip:Hide() end)
+            gw_buff(indexBuffFrame,buffLists[unitToWatch][i],key)
             
             indexBuffFrame:Show()
             
@@ -249,17 +238,19 @@ function gw_unitFrame_updateAuras(thisName, unitToWatch)
                 y=y+1
                 x=0
             end
+            frameIndex = frameIndex + 1
             
-        else
-            
-            if indexBuffFrame~=nil then
-                indexBuffFrame:Hide() 
-            else
-                break
-            end
         end
         
     end
+    
+    for i=frameIndex,40 do
+        local indexBuffFrame = _G[thisName..'BuffItemFrame'..i]
+        if indexBuffFrame~=nil and indexBuffFrame:IsShown() then
+           indexBuffFrame:Hide() 
+        end
+    end
+    
     gw_unitFrame_updateDebuffs(thisName,unitToWatch,x,y)
 end
 function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
@@ -335,8 +326,6 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
             
             if indexBuffFrame~=nil then
                 indexBuffFrame:Hide() 
-            else
-                break
             end
         end
         

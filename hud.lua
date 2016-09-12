@@ -617,7 +617,7 @@ function update_experiencebar_data(self,event)
     
     --If we are inside a pvp arena we show the honorbar
     gw_honor_vals = nil
-    if level==Nextlevel and UnitInBattleground('player')~=nil then
+    if UnitLevel('player')==GetMaxPlayerLevel() and UnitInBattleground('player')~=nil then
 
         showBar1 = true
         level =  UnitHonorLevel("player");

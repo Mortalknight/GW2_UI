@@ -122,7 +122,7 @@ function gw_create_raidframe(registerUnit)
 
     RegisterUnitWatch(frame);
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")    
+    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp")    
     
     
     frame:RegisterEvent('UNIT_HEALTH')

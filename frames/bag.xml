@@ -803,5 +803,23 @@
             </Layer>
         </Layers>
     </Frame>
+    <Frame name="GwItemUpgrade"  enableMouse="false" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Anchors>
+            <Anchors point="CENTER"></Anchors>
+        </Anchors>
+    
+        <Layers>
+            <Layer>
+                   <Texture file="Interface\AddOns\GW2_UI\textures\updateicon-UP">
+                       <Color r="0" g="1" b="0"></Color>
+                    <Size x="16" y="16"></Size>
+                     <Anchors>
+                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                       </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
     
 </Ui>
