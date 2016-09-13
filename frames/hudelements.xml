@@ -344,6 +344,78 @@
                 </Layers>
                 
             </Frame>
+            <Frame name="GwStaggerBar" hidden="true">
+                 <Size x="316" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORKD">
+                   
+                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                            <Size x="316" y="18"></Size>
+                        </Texture>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                        </Anchors>
+                    </Layer>
+                    
+                </Layers>
+                <Frames>
+                    <Frame name="$parentcontainer" parentKey="bar">
+                        <Size x="312" y="16"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1" ></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORKD" textureSubLevel="-1">
+                                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
+                                    <Size x="312" y="16"></Size>
+                                    <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                                </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture parentKey="texture1"  file="Interface\AddOns\GW2_UI\textures\staggaer-animation" >
+                                    <Size x="312" y="16"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer> 
+                            <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture parentKey="texture2" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2" >
+                                    <Size x="312" y="16"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORK" textureSubLevel="3">
+                                <Texture  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
+                                    <Size x="12" y="12"></Size>
+                                </Texture>    
+                                 <Anchors>
+                                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                                GwStaggerBar.value = 0   
+                                GwStaggerBar.texture1 = self.texture1
+                                GwStaggerBar.texture2 = self.texture2
+                                GwStaggerBar.fill = self.fill
+                                GwStaggerBar.fill:SetVertexColor(59/255,173/255,231/255)
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                </Frames>
+            </Frame>
         </Frames>
     </Frame>
     <Button name="GwDodgeBar" virtual="true" parent="GwPlayerHealthGlobe" frameStrata="BACKGROUND">

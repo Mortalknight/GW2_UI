@@ -35,6 +35,7 @@ function create_classpowers()
     GwPlayerClassPower:RegisterEvent("UNIT_MAX_POWER");
     GwPlayerClassPower:RegisterEvent("RUNE_POWER_UPDATE");
     GwPlayerClassPower:RegisterEvent("RUNE_TYPE_UPDATE");
+    GwPlayerClassPower:RegisterEvent("UNIT_AURA");
 
     classPowerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     classPowerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -134,6 +135,88 @@ function GW_POWERTYPE_CHI()
         end)
         
         
+    end
+
+end
+
+function GW_LOOP_STAGGER()
+ 
+    GwStaggerBar.looping =true
+    addToAnimation('STAGGER_CLASS_POWER',0,1,GetTime(),10,function()
+            
+        local staggarPrec = CLASS_POWER/CLASS_POWER_MAX
+            
+        
+        local imagesize = 18/256
+            
+        local cord = staggarPrec
+    
+        local l = animations['STAGGER_CLASS_POWER']['progress'] 
+        local r = l + imagesize
+            
+        local a = 1
+        local a2 = 0
+            
+        if animations['STAGGER_CLASS_POWER']['progress']<0.25 then
+             a = lerp(0,1,animations['STAGGER_CLASS_POWER']['progress'] /0.25)
+        elseif animations['STAGGER_CLASS_POWER']['progress']>0.75 then
+            a = lerp(1,0,(animations['STAGGER_CLASS_POWER']['progress']-0.75) /0.25)  
+        end
+            
+            
+        local r = lerp(37,240,staggarPrec/0.5) / 255
+        local g = lerp(240,200,staggarPrec/0.5) / 255
+        local b = lerp(152,37,staggarPrec/0.5) / 255 
+            
+        if animations['STAGGER_CLASS_POWER']['progress']>0.5 then
+        local p = (staggarPrec - 0.5) / 0.5
+         r = lerp(37,240,p) / 255
+         g = lerp(240,200,p) / 255
+         b = lerp(152,37,p) / 255
+        end  
+        
+        GwStaggerBar.texture1:SetTexCoord(0,cord,l,r)
+        GwStaggerBar.texture2:SetTexCoord(0,cord,l,r)
+            
+            
+        GwStaggerBar.texture1:SetVertexColor(r,g,b,a)
+        GwStaggerBar.texture2:SetVertexColor(r,g,b,0)
+        GwStaggerBar.fill:SetVertexColor(r,g,b,1)
+
+    end,'noease',function()
+        
+        local staggarPrec = CLASS_POWER/CLASS_POWER_MAX
+        if staggarPrec>0 then
+            GW_LOOP_STAGGER()    
+        else
+           GwStaggerBar.looping =false     
+        end
+        
+        
+    end) 
+    
+end
+
+function GW_POWERTYPE_STAGGER()
+    
+    local old_power = CLASS_POWER
+    CLASS_POWER_MAX =  UnitHealthMax('player')
+    CLASS_POWER =  UnitStagger('player')
+ --   CLASS_POWER =  168000
+    local staggarPrec = CLASS_POWER/CLASS_POWER_MAX
+    
+    staggarPrec = math.max(0,math.min(staggarPrec,1))
+    
+    addToAnimation('STAGGER_CLASS_POWER_FILL',GwStaggerBar.value,staggarPrec,GetTime(),0.05,function() 
+     
+        GwStaggerBar.bar:SetWidth(math.max(1,316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
+         
+    end)
+
+       GwStaggerBar.value = staggarPrec
+    
+    if GwStaggerBar.looping==nil or GwStaggerBar.looping==false and staggarPrec>0 then
+        GW_LOOP_STAGGER()
     end
 
 end
@@ -274,7 +357,7 @@ function GW_SET_BARTYPE()
     
     GwPlayerClassPower:Show()
     local s = GetShapeshiftFormID()
-    
+   
     if  CLASS_POWERS[PLAYER_CLASS]==nil or CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION]==nil then
           GwPlayerClassPower:Hide()
         return
@@ -363,7 +446,17 @@ function GW_SET_BARTYPE()
         GwPlayerClassPowerFill:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs')
         return
     end
-    if PLAYER_CLASS==10 then
+   
+    if PLAYER_CLASS==10 and PLAYER_SPECIALIZATION==1 then
+         
+        GwStaggerBar:Show()     
+   
+        GwStaggerBar.loopValue= 0   
+        GwPlayerClassPowerBackground:SetTexture(nil)
+        GwPlayerClassPowerFill:SetTexture(nil)
+        return
+    end
+    if PLAYER_CLASS==10 and PLAYER_SPECIALIZATION==3 then
         GwPlayerClassPowerBackground:SetHeight(32)
         GwPlayerClassPowerBackground:SetWidth(320)
         
@@ -421,6 +514,7 @@ CLASS_POWERS[9][2]= GW_POWERTYPE_SOULSHARD
 CLASS_POWERS[9][3]= GW_POWERTYPE_SOULSHARD
 
 CLASS_POWERS[10] = {}
+CLASS_POWERS[10][1]= GW_POWERTYPE_STAGGER
 CLASS_POWERS[10][3]= GW_POWERTYPE_CHI
 
 
