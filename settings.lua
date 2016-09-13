@@ -67,7 +67,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Show Debuffs','Display the target\'s debuffs','target_DEBUFFS','GwSettingsTargetOptions')
 
     addOption('Show Buffs','Display the target\'s buffs','target_BUFFS','GwSettingsTargetOptions')
-    addOption('Show All Buffs','Display all target\'s buffs','target_BUFFS_FILTER','GwSettingsTargetOptions')
+    addOption('Show All Buffs','Display all target\'s buffs','target_BUFFS_FILTER_ALL','GwSettingsTargetOptions')
     
     
     create_settings_cat('FOCUS','Edit focus frame settings','GwSettingsFocusOptions',2)
@@ -77,7 +77,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     addOption('Health Percentage','Display health info as a percentage','focus_HEALTH_VALUE_TYPE','GwSettingsFocusOptions')
     addOption('Show Debuffs','Display the focus target\'s debuffs','focus_DEBUFFS','GwSettingsFocusOptions')
     addOption('Show Buffs','Display the focus target\'s buffs','focus_BUFFS','GwSettingsFocusOptions')
-    addOption('Show All Buffs','Display all focus target\'s buffs','focus_BUFFS_FILTER','GwSettingsFocusOptions')
+    addOption('Show All Buffs','Display all focus target\'s buffs','focus_BUFFS_FILTER_ALL','GwSettingsFocusOptions')
    
     create_settings_cat('HUD','Edit HUD settings','GwSettingsHudOptions',3)
     addOption('Fade Actionbars','Fade the extra action bars','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')

@@ -404,9 +404,27 @@ function update_Debuff_list(unitToWatch)
     end
     
 
-    table.sort( DebuffLists[unitToWatch], function(a,b) return a['timeRemaining'] < b['timeRemaining'] end)
-    
-    table.sort( DebuffLists[unitToWatch], function(a,b) return a['caster']=='player' end)
+    table.sort( DebuffLists[unitToWatch], function(a,b)
+            
+           
+            local first = false
+            
+            if b['caster']~=nil and a['caster']~=nil and  b['caster']=='player' and a['caster']=='player'  then
+                
+                if a['timeRemaining'] < b['timeRemaining']   then
+                    first = true    
+                end
+                
+            elseif b['caster']~='player' and a['caster']~='player' then
+                if a['timeRemaining'] < b['timeRemaining']   then
+                    first = true    
+                end
+            end
+            
+            return first
+        
+        end)
+  
     
 end
 

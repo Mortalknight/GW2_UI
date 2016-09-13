@@ -46,8 +46,7 @@ function gw_create_bgframe()
     
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
     
-    
-     GwBagFrame:SetWidth(gwGetSetting('BAG_WIDTH'))
+    GwBagFrame:SetWidth(gwGetSetting('BAG_WIDTH'))
     gw_bagFrameOnResize(GwBagFrame,false)
     
     GwBagFrame:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)

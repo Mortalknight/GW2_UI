@@ -34,6 +34,8 @@ GW_DEFAULT['BAG_ITEM_SIZE'] = 45
 GW_DEFAULT['BANK_ITEM_SIZE'] = 45
 
 
+GW_DEFAULT['BAG_WIDTH'] = 480
+
 GW_DEFAULT['BAG_POSITION'] ={}
 GW_DEFAULT['BAG_POSITION']['point'] = 'RIGHT'
 GW_DEFAULT['BAG_POSITION']['relativePoint'] = 'RIGHT'
@@ -62,12 +64,14 @@ GW_DEFAULT['target_DEBUFFS'] = true
 GW_DEFAULT['target_DEBUFFS_FILTER'] = true
 GW_DEFAULT['target_BUFFS'] = true
 GW_DEFAULT['target_BUFFS_FILTER'] = true
+GW_DEFAULT['target_BUFFS_FILTER_ALL'] = false
 
 GW_DEFAULT['focus_TARGET_ENABLED'] = true
 GW_DEFAULT['focus_DEBUFFS'] = true
 GW_DEFAULT['focus_DEBUFFS_FILTER'] = true
 GW_DEFAULT['focus_BUFFS'] = true
 GW_DEFAULT['focus_BUFFS_FILTER'] = true
+GW_DEFAULT['focus_BUFFS_FILTER_ALL'] = false
                     
 GW_DEFAULT['target_x_position'] = -100
 GW_DEFAULT['target_y_position'] = -100

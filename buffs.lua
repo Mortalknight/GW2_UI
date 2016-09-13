@@ -379,7 +379,7 @@ function gw_debuff(self,data,buffindex,filter)
             
     self.expires =data['expires']
     self.duration =data['duration']
-   -- self.cooldown:SetCooldown(data['expires'] - data['duration'], data['duration'])
+    self.cooldown:SetCooldown(0,0)
      
             
     _G[self:GetName()..'CooldownBuffDuration']:SetText(buffDur)

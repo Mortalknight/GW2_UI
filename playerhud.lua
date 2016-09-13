@@ -110,15 +110,12 @@ function create_player_hud()
 
     
 
-    playerHealthGLobaBg:SetAttribute("*type1", 'target')
-    playerHealthGLobaBg:SetAttribute("*type2", "showmenu")
-    playerHealthGLobaBg:SetAttribute("unit", 'player')
     playerHealthGLobaBg:EnableMouse(true)
     RegisterUnitWatch(playerHealthGLobaBg);
     
     --DELETE ME AFTER ACTIONBARS REWORK
     playerHealthGLobaBg:SetAttribute("*type1", 'target')
-    playerHealthGLobaBg:SetAttribute("*type2", "showmenu")
+    playerHealthGLobaBg:SetAttribute("*type2", "togglemenu")
     playerHealthGLobaBg:SetAttribute("unit", 'player')
     
 
@@ -136,7 +133,7 @@ function create_player_hud()
        
         _G['GwPlayerHealthGlobeTextShadow'..i]:SetFont(DAMAGE_TEXT_FONT,16)
         _G['GwPlayerHealthGlobeTextShadow'..i]:SetShadowColor(1, 1, 1, 0) 
-        _G['GwPlayerHealthGlobeTextShadow'..i]:SetTextColor(78/255,0,0,1/i)
+        _G['GwPlayerHealthGlobeTextShadow'..i]:SetTextColor(0,0,0,1/i)
     end
     _G['GwPlayerHealthGlobeTextShadow1']:SetPoint("CENTER",-1,0)
     _G['GwPlayerHealthGlobeTextShadow2']:SetPoint("CENTER",0,-1)
@@ -265,6 +262,47 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
 
 end
 
+function gw_healthGlobe_FlashComplete()
+    
+    GwPlayerHealthGlobe.animating = true
+    local lerpTo = 0
+    
+    if GwPlayerHealthGlobe.animationPrecentage==nil then
+       GwPlayerHealthGlobe.animationPrecentage = 0 
+    end
+    
+    if GwPlayerHealthGlobe.animationPrecentage<=0 then
+        lerpTo = 0.4
+    end
+    
+    addToAnimation('healthGlobeFlash',GwPlayerHealthGlobe.animationPrecentage,lerpTo,GetTime(),0.8,function()
+            
+            
+            local l = animations['healthGlobeFlash']['progress']
+             
+            GwPlayerHealthGlobe.background:SetVertexColor(l,l,l)
+           
+                
+    end,nil,function() 
+                
+        local health = UnitHealth('Player')
+        local healthMax = UnitHealthMax('Player')
+        local healthPrec = 0.00001
+        if health>0 and healthMax>0 then
+            healthPrec = health/healthMax
+        end 
+        if healthPrec<0.7 then
+            
+            GwPlayerHealthGlobe.animationPrecentage = lerpTo
+                
+            gw_healthGlobe_FlashComplete()
+        else
+            GwPlayerHealthGlobe.animating = false
+        end
+            
+    end)
+end
+
 function update_health_data()   
     
     local health = UnitHealth('Player')
@@ -283,19 +321,30 @@ function update_health_data()
          absorbPrec =  math.min(math.max(0.0001,absorb/healthMax), 1)
     end
 
+    if healthPrec<0.7 and (GwPlayerHealthGlobe.animating==false or GwPlayerHealthGlobe.animating==nil ) then
+       
+        
+      gw_healthGlobe_FlashComplete()
+        
     
-
+    end
     
+    GwPlayerHealthGlobe.stringUpdateTime = 0
      addToAnimation('healthGlobeAnimation',healthGlobeAnimation,healthPrec,GetTime(),0.2,function()
            
             local healthPrecCandy = math.min(1, animations['healthGlobeAnimation']['progress'] + 0.02)
            
+            if GwPlayerHealthGlobe.stringUpdateTime<GetTime() then
             update_health_text(healthMax*animations['healthGlobeAnimation']['progress'])
+                GwPlayerHealthGlobe.stringUpdateTime= GetTime() + 0.05
+            end
             _G['GwPlayerHealthGlobeCandy']:SetHeight(healthPrecCandy*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
             _G['GwPlayerHealthGlobeCandyBar']:SetTexCoord(0,1,  math.abs(healthPrecCandy - 1),1)  
             
             _G['GwPlayerHealthGlobeHealth']:SetHeight(animations['healthGlobeAnimation']['progress']*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
             _G['GwPlayerHealthGlobeHealthBar']:SetTexCoord(0,1,  math.abs(animations['healthGlobeAnimation']['progress'] - 1),1) 
+        end,nil,function() 
+             update_health_text(health)
         end)            
         healthGlobeAnimation = healthPrec;
 
@@ -307,9 +356,10 @@ end
 
 function update_health_text(text)
     
-    _G['GwPlayerHealthGlobeTextValue']:SetText(comma_value(text))
+    local v = comma_value(text)
+    _G['GwPlayerHealthGlobeTextValue']:SetText(v)
     for i = 1 , 8 do
-        _G['GwPlayerHealthGlobeTextShadow'..i]:SetText(comma_value(text))
+        _G['GwPlayerHealthGlobeTextShadow'..i]:SetText(v)
     end
 end
 

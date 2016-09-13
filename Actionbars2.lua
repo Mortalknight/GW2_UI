@@ -84,6 +84,8 @@ function gw_hideBlizzardsActionbars()
         object:Hide()
     end
     
+    MainMenuBar:EnableMouse(false)
+    
 end
 function gw_updatehotkey(self, actionButtonType)
 
