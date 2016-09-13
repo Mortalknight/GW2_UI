@@ -170,9 +170,9 @@ function GW_LOOP_STAGGER()
             
         if animations['STAGGER_CLASS_POWER']['progress']>0.5 then
         local p = (staggarPrec - 0.5) / 0.5
-         r = lerp(37,240,p) / 255
-         g = lerp(240,200,p) / 255
-         b = lerp(152,37,p) / 255
+         r = lerp(240,240,p) / 255
+         g = lerp(200,37,p) / 255
+         b = lerp(37,37,p) / 255
         end  
         
         GwStaggerBar.texture1:SetTexCoord(0,cord,l,r)
@@ -201,16 +201,23 @@ function GW_POWERTYPE_STAGGER()
     
     local old_power = CLASS_POWER
     CLASS_POWER_MAX =  UnitHealthMax('player')
-    CLASS_POWER =  UnitStagger('player')
+    CLASS_POWER = UnitStagger('player')
  --   CLASS_POWER =  168000
     local staggarPrec = CLASS_POWER/CLASS_POWER_MAX
     
     staggarPrec = math.max(0,math.min(staggarPrec,1))
     
-    addToAnimation('STAGGER_CLASS_POWER_FILL',GwStaggerBar.value,staggarPrec,GetTime(),0.05,function() 
+    addToAnimation('STAGGER_CLASS_POWER_FILL',GwStaggerBar.value,staggarPrec,GetTime(),0.1,function() 
      
         GwStaggerBar.bar:SetWidth(math.max(1,316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
-         
+         GwStaggerBar.spark:ClearAllPoints()
+         GwStaggerBar.spark:SetPoint('RIGHT',GwStaggerBar.bar,'RIGHT',0,0)
+           local sparkwidth = 12
+        if (316*animations['STAGGER_CLASS_POWER_FILL']['progress'])<12 then
+            sparkwidth = math.max(1,12/ (316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
+        end
+
+         GwStaggerBar.spark:SetWidth(sparkwidth)
     end)
 
        GwStaggerBar.value = staggarPrec
