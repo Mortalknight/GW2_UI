@@ -297,6 +297,7 @@ function gw_healthGlobe_FlashComplete()
                 
             gw_healthGlobe_FlashComplete()
         else
+            GwPlayerHealthGlobe.background:SetVertexColor(0,0,0)
             GwPlayerHealthGlobe.animating = false
         end
             
