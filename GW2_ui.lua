@@ -328,7 +328,7 @@ function countTable(T)
   return c
 end
 
-function timeCount(numSec)
+function timeCount(numSec,com)
 	local nSeconds = tonumber(numSec)
         if nSeconds==nil then
             nSeconds = 0
@@ -340,6 +340,7 @@ function timeCount(numSec)
 			local	nHours = math.floor(nSeconds/3600);
 			local	nMins =  math.floor(nSeconds/60 - (nHours*60));
 			local	nSecs = math.floor(nSeconds - nHours*3600 - nMins *60);
+			local	nMilsecs = math.floor( ((nSeconds - nHours*3600 - nMins) * 10^1) + 0.5) / (10^1) 
 			
             if nHours>0 then
                 coolTime =nHours..'h'
@@ -347,7 +348,11 @@ function timeCount(numSec)
                 if nMins>0 then
                      coolTime =nMins..'m'
                 else
-                 coolTime =   nSecs..'s'
+                    if com~=nil then
+                        coolTime = nMilsecs..'s'
+                    else
+                        coolTime =   nSecs..'s'
+                    end
                 end
             end
 

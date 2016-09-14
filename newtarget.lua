@@ -288,7 +288,7 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y,event)
                 indexBuffFrame:SetParent(_G[thisName..'Buffs']);
                 indexBuffFrame:SetSize(28,28)
                 indexBuffFrame:ClearAllPoints()
-                indexBuffFrame:SetPoint('CENTER',_G[thisName..'Buffs'],'TOPLEFT',(32*x)+16,-40*y)
+                indexBuffFrame:SetPoint('CENTER',_G[thisName..'Buffs'],'TOPLEFT',(32*x)+16,(-40*y) - 16)
                 indexBuffFrame.unit = unitToWatch
                     
             end

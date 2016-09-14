@@ -42,7 +42,7 @@ GwCastingBar:SetScript("OnEvent",function(self,event,unitID,spell)
             addToAnimation('castingbarAnimation',0,1,startTime,endTime-startTime,function()    
                         
                     if gwGetSetting('CASTINGBAR_DATA') then
-                            GwCastingBar.time:SetText(timeCount(endTime - GetTime()))
+                            GwCastingBar.time:SetText(timeCount(endTime - GetTime(),true))
                     end
                         
                     local p = animations['castingbarAnimation']['progress']
