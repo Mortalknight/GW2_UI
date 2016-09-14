@@ -547,7 +547,7 @@ l:SetScript('OnUpdate',function()
         if ADDOON_LOADED~=true or ADDOON_LOADED~=true then
             return
         end
-        
+        local foundAnimation = false
         for k,v in pairs(animations) do 
             
             if v['completed']==false and GetTime()>=(v['start']+ v['duration']) then
@@ -565,7 +565,7 @@ l:SetScript('OnUpdate',function()
                 end
                 
                 v['completed'] = true
-                
+                foundAnimation = true
             end            
             if v['completed']==false then
                 
@@ -575,9 +575,13 @@ l:SetScript('OnUpdate',function()
                     v['progress'] = lerp(v['from'],v['to'],(GetTime() - v['start'])/v['duration'])
                 end
             v['method']()
+                foundAnimation = true
             end
         end
         
+        if foundAnimation==false then
+            animations = {}
+        end
         
 
     

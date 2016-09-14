@@ -2,6 +2,7 @@
 local unitFrameAnimations  = {}
 local buffLists = {}
 local DebuffLists = {}
+local gw_unitFrame_debufflist_old = {}
 
 
 
@@ -206,7 +207,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
 
 end
 
-function gw_unitFrame_updateAuras(thisName, unitToWatch)
+function gw_unitFrame_updateAuras(thisName, unitToWatch,event)
     if gwGetSetting(unitToWatch..'_BUFFS')~=true then
         return
     end
@@ -261,9 +262,9 @@ function gw_unitFrame_updateAuras(thisName, unitToWatch)
         end
     end
     
-    gw_unitFrame_updateDebuffs(thisName,unitToWatch,x,y)
+    gw_unitFrame_updateDebuffs(thisName,unitToWatch,x,y,event)
 end
-function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
+function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y,event)
  
     if gwGetSetting(unitToWatch..'_DEBUFFS')~=true then
         return
@@ -287,7 +288,7 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
                 indexBuffFrame:SetParent(_G[thisName..'Buffs']);
                 indexBuffFrame:SetSize(28,28)
                 indexBuffFrame:ClearAllPoints()
-                indexBuffFrame:SetPoint('TOPLEFT',(32*x),-40*y)
+                indexBuffFrame:SetPoint('CENTER',_G[thisName..'Buffs'],'TOPLEFT',(32*x)+16,-40*y)
                 indexBuffFrame.unit = unitToWatch
                     
             end
@@ -301,6 +302,11 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
             end
    
             indexBuffFrame:Show()
+            if DebuffLists[unitToWatch][i]['new'] and event~=nil and DebuffLists[unitToWatch][i]['caster']=='player' then
+                addToAnimation(indexBuffFrame:GetName(),40,28,GetTime(),0.2,function()
+                    indexBuffFrame:SetSize(animations[indexBuffFrame:GetName()]['progress'],animations[indexBuffFrame:GetName()]['progress'])
+                end)
+            end
             
             x=x+1
             if x>7 then
@@ -389,41 +395,74 @@ function update_Debuff_list(unitToWatch)
     if gwGetSetting(unitToWatch..'_BUFFS_FILTER') or UnitIsFriend("player",unitToWatch) then
         filter = nil
     end
-    
+    gw_unitFrame_debufflist_old[unitToWatch] = {}
+    gw_unitFrame_debufflist_old[unitToWatch] = DebuffLists[unitToWatch]
     DebuffLists[unitToWatch] = {}
-    for i=1,40 do
+     for i=1,40 do
         if  UnitDebuff(unitToWatch,i,filter)  then
             DebuffLists[unitToWatch][i] ={}
     DebuffLists[unitToWatch][i]['name'],  DebuffLists[unitToWatch][i]['rank'],  DebuffLists[unitToWatch][i]['icon'],  DebuffLists[unitToWatch][i]['count'],  DebuffLists[unitToWatch][i]['dispelType'],  DebuffLists[unitToWatch][i]['duration'],  DebuffLists[unitToWatch][i]['expires'],  DebuffLists[unitToWatch][i]['caster'],  DebuffLists[unitToWatch][i]['isStealable'],  DebuffLists[unitToWatch][i]['shouldConsolidate'],  DebuffLists[unitToWatch][i]['spellID']  =  UnitDebuff(unitToWatch,i,filter) 
             DebuffLists[unitToWatch][i]['key'] = i 
+            DebuffLists[unitToWatch][i]['new'] = true
             DebuffLists[unitToWatch][i]['timeRemaining'] =  DebuffLists[unitToWatch][i]['expires']-GetTime();
             if DebuffLists[unitToWatch][i]['duration']<=0 then
                   DebuffLists[unitToWatch][i]['timeRemaining'] = 500000
             end    
         end
     end
+   
+    for k,v in pairs(DebuffLists[unitToWatch]) do
+        for k2,v2 in pairs(gw_unitFrame_debufflist_old[unitToWatch]) do
+            if v['name']==v2['name'] then
+                DebuffLists[unitToWatch][k]['new'] = false
+            end
+        end
     
-
-    table.sort( DebuffLists[unitToWatch], function(a,b)
-            
+        
+    end
+        
+    if gwGetSetting(unitToWatch..'_BUFFS_FILTER') or UnitIsFriend("player",unitToWatch) then
            
-            local first = false
+        local playerList = {}
+        local otherList = {}
+        local returnList = {}
+        local playerIndex = 0
+        local otherIndex = 0
             
-            if b['caster']~=nil and a['caster']~=nil and  b['caster']=='player' and a['caster']=='player'  then
+        for k,v in pairs(DebuffLists[unitToWatch]) do    
+            
+            if v['caster']~=nil and v['caster']=='player' then
+                playerIndex = playerIndex + 1
+                    
+                playerList[playerIndex] = {}
+                playerList[playerIndex] = v
+            else
+               
+                otherIndex = otherIndex + 1
+                otherList[otherIndex] = {}
+                otherList[otherIndex] = v
+            end
                 
-                if a['timeRemaining'] < b['timeRemaining']   then
-                    first = true    
-                end
-                
-            elseif b['caster']~='player' and a['caster']~='player' then
-                if a['timeRemaining'] < b['timeRemaining']   then
-                    first = true    
-                end
+            for i=1,(playerIndex) do
+                returnList[i] ={}  
+                returnList[i] = playerList[i]                 
+            end
+            local ind = 0
+            for i=(playerIndex+1),(playerIndex + otherIndex) do
+                ind = ind + 1
+                returnList[i] ={}  
+                returnList[i] = otherList[ind]                 
             end
             
-            return first
+        end
+        DebuffLists[unitToWatch] = returnList
         
-        end)
+    else
+        table.sort( DebuffLists[unitToWatch], function(a,b) return a['timeRemaining'] < b['timeRemaining']  end)         
+    end
+    
+
+   
   
     
 end
@@ -722,7 +761,7 @@ function updateCastingbar(thisName,unitToWatch)
     end
         
     updateCastingbar(thisName,unitToWatch)
-    gw_unitFrame_updateAuras(thisName,unitToWatch,event)
+    gw_unitFrame_updateAuras(thisName,unitToWatch,nil)
         
         
 end

@@ -210,7 +210,7 @@
                     </Anchors>
                 </FontString>
                 <FontString name="$parentName"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
-                    <Size x="200" y="10"/>
+                    <Size x="120" y="10"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="0" y="-20"/>
                     </Anchors>
