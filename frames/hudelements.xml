@@ -1204,5 +1204,79 @@
             </Layer>
         </Layers>
     </Frame>
+    <Frame name="GwCastingBar" virtual="true">
+        <Size x="176" y="15"></Size>
+        <Anchors>
+            <Anchor point="CENTER" ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTOWORK">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                     <Size x="176" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="1" right="0" top="0" bottom="0.25" />
+                    <Color r="1" g="1" b="1" a="0.6"></Color>
+                </Texture> 
+            </Layer>
+            <Layer level="ARTOWORK" textureSubLevel="2">
+                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                     <Size x="176" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                     
+                    </Anchors>
+                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTOWORK" textureSubLevel="3">
+                 <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                     <Size x="15" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="bar" relativePoint="RIGHT"></Anchor>
+                    </Anchors>
+                     <Color r="1" g="1" b="1" a="0.7"></Color>
+                </Texture>
+            </Layer>
+             <Layer  level="ARTOWORK" textureSubLevel="4">
+                  <FontString parentKey="name" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="160" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                 <FontString parentKey="time" justifyH="RIGHT" justifyV="MIDDLE">
+                    <Size x="70" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                 
+                 <Texture parentKey="icon">
+                     <Size x="30" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                    </Anchors>
+                   <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+                 
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                
+                self.name:SetFont(UNIT_NAME_FONT,12)
+                self.name:SetShadowOffset(1,-1) 
+                
+                self.time:SetFont(UNIT_NAME_FONT,12)
+                self.time:SetShadowOffset(1,-1)
+                
+                self.spark:ClearAllPoints()
+                self.spark:SetPoint('RIGHT',self.bar,'RIGHT')
+            </OnLoad>
+        </Scripts>
+    </Frame>
     
 </Ui>

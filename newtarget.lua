@@ -273,7 +273,7 @@ function gw_unitFrame_updateDebuffs(thisName, unitToWatch,x,y)
     local frameIndex = 1
     local filter = 'player'
     
-    if gwGetSetting(unitToWatch..'_BUFFS_FILTER') or UnitIsFriend("player",unitToWatch) then
+    if gwGetSetting(unitToWatch..'_BUFFS_FILTER_ALL') or UnitIsFriend("player",unitToWatch) then
         filter = nil
     end
     update_Debuff_list(unitToWatch)
