@@ -334,29 +334,39 @@ function GW_POWERTYPE_ARCANE()
     local old_power = CLASS_POWER
     CLASS_POWER_MAX =  UnitPowerMax('player',16)
     CLASS_POWER =  UnitPower('player',16)
-    local p = CLASS_POWER - 1
-
-    GwPlayerClassPowerBackground:SetTexCoord(0,1,0.125*3,0.125*(3+1))
-    GwPlayerClassPowerFill:SetTexCoord(0,1,0.125*p,0.125*(p+1))
+   
+end
+function GW_POWERTYPE_MONGOOSE()
+       
+  CLASS_POWER = 0
+   local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitAura('player','Mongoose Fury')
     
-    if old_power<CLASS_POWER then
-        HOLY_POWER_FLARE_ANIMATION = 1
-        old_power = CLASS_POWER
-        GwPlayerClassPowerFlare:ClearAllPoints()
-        GwPlayerClassPowerFlare:SetPoint('CENTER',GwPlayerClassPower,'LEFT',(64*CLASS_POWER)-32,0)
-        
-        addToAnimation('HOLY_POWER_FLARE_ANIMATION',HOLY_POWER_FLARE_ANIMATION,0,GetTime(),2,function()
-            
-            local alpha =  animations['HOLY_POWER_FLARE_ANIMATION']['progress']
+    local old_power = CLASS_POWER
+    CLASS_POWER_MAX = 6
 
-            GwPlayerClassPowerFlare:SetAlpha(alpha)
-            GwPlayerClassPowerFlare:SetRotation(1*animations['HOLY_POWER_FLARE_ANIMATION']['progress'])
+    if name~=nil then
+        if count==nil then count=1 end
+
+       CLASS_POWER = count
+        
+        local pre = (expires - GetTime()) / duration
+        
+        if animations['MONGOOSEBITE_BAR']~=nil then
+        animations['MONGOOSEBITE_BAR']['completed'] = true
+        animations['MONGOOSEBITE_BAR']['duration'] = 0
+        end
+        
+        addToAnimation('MONGOOSEBITE_BAR',pre,0,GetTime(),expires - GetTime(),function()  
                 
-        
-        end)
-        
-        
-    end 
+            GwMongooseBar.bar:SetValue(animations['MONGOOSEBITE_BAR']['progress'])    
+            GwMongooseBar.bar.spark:ClearAllPoints()
+            GwMongooseBar.bar.spark:SetPoint('RIGHT',GwMongooseBar.bar,'LEFT',262*animations['MONGOOSEBITE_BAR']['progress'],0)    
+        end,'noease')
+    end
+    
+    GwMongooseBar.count:SetText(CLASS_POWER)
+
+
 end
 
 
@@ -370,6 +380,7 @@ function GW_SET_BARTYPE()
         return
     end
     
+   
     if PLAYER_CLASS==2 then
       
         GwPlayerClassPowerBackground:SetHeight(32)
@@ -385,6 +396,12 @@ function GW_SET_BARTYPE()
         GwPlayerClassPowerFill:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower')
         return
    end 
+     if PLAYER_CLASS==3 then
+        GwMongooseBar:Show()
+        GwPlayerClassPowerBackground:SetTexture(nil)
+        GwPlayerClassPowerFill:SetTexture(nil)
+        return
+    end
     if PLAYER_CLASS==4 or PLAYER_CLASS==11 and s==1 then
         if GwExtraPlayerPowerBar~=nil then
             GwExtraPlayerPowerBar:Hide()
@@ -494,6 +511,9 @@ end
 
 CLASS_POWERS[2] = {}
 CLASS_POWERS[2][3]= GW_POWERTYPE_HOLYPOWER
+
+CLASS_POWERS[3] = {}
+CLASS_POWERS[3][3]= GW_POWERTYPE_MONGOOSE
 
 CLASS_POWERS[6] = {}
 CLASS_POWERS[6][1]= GW_POWERTYPE_RUNE

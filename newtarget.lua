@@ -413,7 +413,7 @@ function update_Debuff_list(unitToWatch)
    
     for k,v in pairs(DebuffLists[unitToWatch]) do
         for k2,v2 in pairs(gw_unitFrame_debufflist_old[unitToWatch]) do
-            if v['name']==v2['name'] then
+            if v['name']==v2['name'] and  v['caster']=='player' then
                 DebuffLists[unitToWatch][k]['new'] = false
             end
         end

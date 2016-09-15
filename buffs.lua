@@ -114,8 +114,8 @@ function gw_playerUpdateAuras()
             local stacks = '';
             if buffLists[unitToWatch][i]['duration']>0 then
                 buffDur = timeCount(buffLists[unitToWatch][i]['timeRemaining']);
-                end
-                  if buffLists[unitToWatch][i]['count']>0 then
+            end
+            if buffLists[unitToWatch][i]['count']>0 then
                 stacks = buffLists[unitToWatch][i]['count'] 
             end
             indexBuffFrame.expires =buffLists[unitToWatch][i]['expires']
