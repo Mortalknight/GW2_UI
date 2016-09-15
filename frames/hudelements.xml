@@ -358,7 +358,7 @@
                             <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
                         </Anchors>
                          </Texture>
-                        <Texture name="$parentBackground" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" >
+                        <Texture name="$parentBackground" alpha="0" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" >
                             <Size x="80" y="80"></Size>
                       
                             <Anchors>
