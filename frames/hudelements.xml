@@ -358,11 +358,11 @@
                             <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
                         </Anchors>
                          </Texture>
-                        <Texture name="$parentBackground" file="Interface\Icons\ability_hunter_mongoosebite" >
-                            <Size x="45" y="45"></Size>
+                        <Texture name="$parentBackground" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" >
+                            <Size x="80" y="80"></Size>
                       
                             <Anchors>
-                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="5" y="0" ></Anchor>
+                                <Anchor point="CENTER" relativePoint="RIGHT" x="20" y="20" ></Anchor>
                             </Anchors>
                               <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                           </Texture>
@@ -389,22 +389,37 @@
      
                          <BarColor r="0.623" g="0.141" b="0.078"></BarColor>
                          <Layers>
-                             <Layer>
-                             <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
-                                 <Size x="14" y="14"></Size>
-                                 <Anchors>
+                             <Layer level="ARTWORK" textureSubLevel="1">
+                                 <Texture parentKey="texture1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation" >
+                                     <Size x="262" y="14"></Size>
+                                     <Anchors>
+                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                     </Anchors>
+                                 </Texture> 
+                                 <Texture parentKey="texture2" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2" >
+                                     <Size x="262" y="14"></Size>
+                                     <Anchors>
+                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                     </Anchors>
+                                 </Texture>   
+                             </Layer> <Layer level="ARTWORK" textureSubLevel="2">
+                                 <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
+                                     <Size x="14" y="14"></Size>
+                                     <Anchors>
                                      <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0" ></Anchor>
-                                 </Anchors>
-                                 <Color r="1" b="0.6" g="0.6" a="0.5"></Color>
-                             </Texture>   
-                                 </Layer>
+                                     </Anchors>
+                                     <Color r="1" b="0.6" g="0.6" a="0.7"></Color>
+                                 </Texture>   
+                             </Layer>
                          </Layers>
                     </StatusBar>
                 </Frames>
                 <Scripts>
                     <OnLoad>
+                        self.texture1 = self.bar.texture1
+                        self.texture2 = self.bar.texture2
                         self.count:SetFont(DAMAGE_TEXT_FONT,24,'OUTLINED')
-                        self.count:SetShadowOffset(1,-1)
+                   
                     </OnLoad>
                 </Scripts>
             </Frame>
