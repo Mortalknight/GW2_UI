@@ -404,7 +404,7 @@
                                  </Texture>   
                              </Layer> <Layer level="ARTWORK" textureSubLevel="2">
                                  <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
-                                     <Size x="14" y="14"></Size>
+                                     <Size x="1" y="14"></Size>
                                      <Anchors>
                                      <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0" ></Anchor>
                                      </Anchors>

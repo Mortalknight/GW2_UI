@@ -551,6 +551,7 @@ function GW_SET_BARTYPE()
         return
     end
     if PLAYER_CLASS==10 and PLAYER_SPECIALIZATION==3 then
+        GwStaggerBar:Hide()
         GwPlayerClassPowerBackground:SetHeight(32)
         GwPlayerClassPowerBackground:SetWidth(320)
         
