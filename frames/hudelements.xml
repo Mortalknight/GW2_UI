@@ -1359,4 +1359,65 @@
         </Scripts>
     </Frame>
     
+    <Frame name="GwChatBubble" virtual="true" >
+        <Size x="300" y="100"></Size>
+        <Anchors>
+            <Anchor point="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTOWORK" textureSubLevel="-8">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\ChatBubble-Background">
+                     <Size x="1" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="left" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-left">
+                     <Size x="32" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                    </Anchors>
+                </Texture> 
+                <Texture parentKey="right" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-right">
+                     <Size x="32" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="bottom" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-bottom">
+                     <Size x="1" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-10"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="top" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-top">
+                     <Size x="1" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-10"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-25"></Anchor>
+                    </Anchors>
+                </Texture> 
+                
+                <Texture parentKey="cornerTopRight" file="Interface\AddOns\GW2_UI\textures\chatbubbles\corner-top-right">
+                     <Size x="32" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPRIGHT" x="-25"></Anchor>
+                      
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="cornerBottomRight" file="Interface\AddOns\GW2_UI\textures\chatbubbles\corner-bottom-right">
+                     <Size x="32" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMRIGHT" x="0"></Anchor>
+                      
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    
 </Ui>

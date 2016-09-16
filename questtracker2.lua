@@ -347,19 +347,21 @@ function gw_check_senario()
 
 
 
-    local stageName, stageDescription, numCriteria = C_Scenario.GetStepInfo();
+    local stageName, stageDescription, numCriteria, _,_,_,_,_,_,questID = C_Scenario.GetStepInfo();
 
 	local inChallengeMode = bit.band(flags, SCENARIO_FLAG_CHALLENGE_MODE) == SCENARIO_FLAG_CHALLENGE_MODE;
 	local inProvingGrounds = bit.band(flags, SCENARIO_FLAG_PROVING_GROUNDS) == SCENARIO_FLAG_PROVING_GROUNDS;
 	local dungeonDisplay = bit.band(flags, SCENARIO_FLAG_USE_DUNGEON_DISPLAY) == SCENARIO_FLAG_USE_DUNGEON_DISPLAY;
 	local scenariocompleted = currentStage > numStages;
+    local questLogIndex = GetQuestLogIndexByID(questID);
+        
     
     local i = countTable(GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS)+1
     
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i] ={}
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['TITLE'] = stageName
-    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questID'] = '0'
-    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questLogIndex'] = 0
+    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questID'] = questID
+    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questLogIndex'] = questLogIndex
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['numObjectives'] = numCriteria
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isComplete'] = false
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isTask'] = false
@@ -387,7 +389,7 @@ function gw_check_senario()
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['finished'] = false   
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['quantity'] = quantity   
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['GW_TYPE'] = 'SCENARIO'   
-        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['questID'] = 0  
+        GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][criteriaIndex]['questID'] = questID
         lastInserted = criteriaIndex
     end
     
@@ -399,19 +401,21 @@ function gw_check_senario()
         local scenarioName, currentStage, numStages, flags, _, _, completed, xp, money = C_Scenario.GetInfo(bonusStepIndex);
         
         local stageName, stageDescription, numCriteria = C_Scenario.GetStepInfo(bonusStepIndex);
-        
+       
         for criteriaIndex = 1, numCriteria do
             local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed = C_Scenario.GetCriteriaInfoByStep(bonusStepIndex,criteriaIndex);
             criteriaString = gw_parse_criteria(quantity, totalQuantity, criteriaString);
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex] ={}
-            GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['questLogIndex'] = 0
+            GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['questLogIndex'] = questLogIndex
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['text'] = criteriaString
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['objectiveType'] = monster
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['finished'] = false   
             GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][lastInserted+criteriaIndex]['questID'] = 0  
         end
+      
     
     end
+    gw_update_questitems(questLogIndex,i)
 
 
     
@@ -440,13 +444,14 @@ function gw_bonusobjective_update(questID)
     
     local i = countTable(GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS)+1
     local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
+    local questLogIndex = GetQuestLogIndexByID(questID);
     
     if not isInArea then return end
     
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i] ={}
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['TITLE'] = text
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questID'] = questID
-    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questLogIndex'] = 0
+    GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['questLogIndex'] = questLogIndex
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['numObjectives'] = numObjectives
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isComplete'] = false
     GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['isTask'] = true
@@ -459,12 +464,13 @@ function gw_bonusobjective_update(questID)
         local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false);
         finished =false
         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex] ={}
-         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['questLogIndex'] = 0
+         GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['questLogIndex'] = questLogIndex
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['text'] = text
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['objectiveType'] = objectiveType
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['finished'] = finished   
          GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS[i]['OBJECTIVES'][objectiveIndex]['questID'] = questID  
     end
+     gw_update_questitems(questLogIndex,i)
 end
 
 function gw_bonusobjective_rewards(questID)
