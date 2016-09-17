@@ -334,7 +334,29 @@ function GW_POWERTYPE_ARCANE()
     local old_power = CLASS_POWER
     CLASS_POWER_MAX =  UnitPowerMax('player',16)
     CLASS_POWER =  UnitPower('player',16)
-   
+    local p = CLASS_POWER - 1
+
+    GwPlayerClassPowerBackground:SetTexCoord(0,1,0.125*3,0.125*(3+1))
+    GwPlayerClassPowerFill:SetTexCoord(0,1,0.125*p,0.125*(p+1))
+    
+    if old_power<CLASS_POWER then
+        HOLY_POWER_FLARE_ANIMATION = 1
+        old_power = CLASS_POWER
+        GwPlayerClassPowerFlare:ClearAllPoints()
+        GwPlayerClassPowerFlare:SetPoint('CENTER',GwPlayerClassPower,'LEFT',(64*CLASS_POWER)-32,0)
+        
+        addToAnimation('HOLY_POWER_FLARE_ANIMATION',HOLY_POWER_FLARE_ANIMATION,0,GetTime(),2,function()
+            
+            local alpha =  animations['HOLY_POWER_FLARE_ANIMATION']['progress']
+
+            GwPlayerClassPowerFlare:SetAlpha(alpha)
+            GwPlayerClassPowerFlare:SetRotation(1*animations['HOLY_POWER_FLARE_ANIMATION']['progress'])
+                
+        
+        end)
+        
+        
+    end 
 end
 function GW_MONGOOSE_LOOP_ANIMATION()
     GwMongooseBar.looping =true
