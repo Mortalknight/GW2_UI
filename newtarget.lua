@@ -392,8 +392,9 @@ function update_Debuff_list(unitToWatch)
     
     local filter = 'player'
     
-    if gwGetSetting(unitToWatch..'_BUFFS_FILTER') or UnitIsFriend("player",unitToWatch) then
+    if gwGetSetting(unitToWatch..'_BUFFS_FILTER_ALL') or UnitIsFriend("player",unitToWatch) then
         filter = nil
+        
     end
     gw_unitFrame_debufflist_old[unitToWatch] = {}
     gw_unitFrame_debufflist_old[unitToWatch] = DebuffLists[unitToWatch]
@@ -421,7 +422,7 @@ function update_Debuff_list(unitToWatch)
         
     end
         
-    if gwGetSetting(unitToWatch..'_BUFFS_FILTER') or UnitIsFriend("player",unitToWatch) then
+    if gwGetSetting(unitToWatch..'_BUFFS_FILTER_ALL') or UnitIsFriend("player",unitToWatch) then
            
         local playerList = {}
         local otherList = {}
