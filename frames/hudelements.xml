@@ -699,6 +699,9 @@
 				self:RegisterForClicks("RightButtonUp");
                 _G[self:GetName()..'BuffDuration']:SetFont(UNIT_NAME_FONT,11)
                 _G[self:GetName()..'BuffDuration']:SetTextColor(1,1,1)
+                
+                _G[self:GetName()..'BuffStacks']:SetFont(UNIT_NAME_FONT,11,'OUTLINED')
+                _G[self:GetName()..'BuffStacks']:SetTextColor(1,1,1)
 			</OnLoad>
 		</Scripts>
     </Button> 
