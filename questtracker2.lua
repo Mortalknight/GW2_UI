@@ -82,7 +82,7 @@ function gw_load_questtracker()
     CreateFrame('Frame','GwQuesttrackerContainerBossFrames',GwQuestTracker,'GwQuesttrackerContainerProtected') 
     
    
-    GW_MAX_SCROLL_HEIGHT = UIParent:GetHeight() - 70 - gwGetSetting('MINIMAP_SCALE')
+    GW_MAX_SCROLL_HEIGHT = UIParent:GetHeight() - 150 - gwGetSetting('MINIMAP_SCALE')
     GwQuestTrackerScroll:SetSize(400,GW_MAX_SCROLL_HEIGHT )
     GwQuestTrackerScroll:SetScrollChild(GwQuestTracker)
 
