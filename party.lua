@@ -113,6 +113,18 @@ function gw_create_partyframe(i)
     frame:EnableMouse(true)
     frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     
+    
+    frame:SetScript('OnLeave',function() 
+        GameTooltip:Hide()
+    end)
+    frame:SetScript('OnEnter',function() 
+            GameTooltip:ClearLines()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(registerUnit)
+       
+        GameTooltip:Show()
+    end)
+    
     GwaddTOClique(frame)
     
     frame.healthbar.spark:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
