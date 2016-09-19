@@ -285,21 +285,28 @@ function gw_update_moveableframe_positions()
 end
 
 function gwUpdateHudScale(scale)
+  
+    for k,v in pairs(GW_MAIN_HUD_FRAMES) do
+      
+            _G[v]:SetScale(gwGetSetting('HUD_SCALE')) 
+      
+    end
     
-    local frames = {
-        MainMenuBarArtFrame,
-        GwHudArtFrame,
-        MultiBarBottomRight,
-        MultiBarBottomLeft,
-        GwPlayerPowerBar,
-        GwPlayerAuraFrame,
-        GwPlayerClassPower,
-        GwHudArtFrameRepair,
-        GwPlayerHealthGlobe
-    }
-    
-    for k,v in pairs(frames) do
-       v:SetScale(gwGetSetting('HUD_SCALE')) 
+end
+
+function gwToggleMainHud(b)
+  
+    for k,v in pairs(GW_MAIN_HUD_FRAMES) do
+        if v~=nil then
+            if b then
+                if GW_MAIN_HUD_FRAMES_OLD_STATE[k] then
+                    _G[v]:Show()
+                end
+            else
+                GW_MAIN_HUD_FRAMES_OLD_STATE[k] = _G[v]:IsShown()
+                _G[v]:Hide()
+            end
+        end
     end
     
 end
@@ -701,15 +708,15 @@ l:SetScript('OnEvent',function(self,event,name)
         
             --Create unitframes
         if gwGetSetting('FOCUS_ENABLED') then
-            registerNewUnitFrame('focus','GwTargetFrameTemplate')
+            gw_registerNewUnitFrame('focus','GwTargetFrameTemplate')
             if gwGetSetting('focus_TARGET_ENABLED') then
-                registerNewUnitFrame('focustarget','GwTargetFrameSmallTemplate')  
+                gw_registerNewUnitFrame('focustarget','GwTargetFrameSmallTemplate')  
             end
         end
         if gwGetSetting('TARGET_ENABLED') then
-            registerNewUnitFrame('target','GwTargetFrameTemplate')
+            gw_registerNewUnitFrame('target','GwTargetFrameTemplate')
             if gwGetSetting('target_TARGET_ENABLED') then
-                registerNewUnitFrame('targettarget','GwTargetFrameSmallTemplate')
+                gw_registerNewUnitFrame('targettarget','GwTargetFrameSmallTemplate')
             end
         end
         

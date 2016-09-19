@@ -11,7 +11,7 @@ local gw_unitFrame_debufflist_old = {}
 -- 0.1,0.9,0.1,0.9)
 
 
-function registerNewUnitFrame(unitToWatch, frameType)
+function gw_registerNewUnitFrame(unitToWatch, frameType)
     
 
     
@@ -105,7 +105,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
     local castingAnimation = {}
      castingAnimation[unitToWatch] = 0;
 
-    function target_OnEvent(self,event,unit)
+   function target_OnEvent(self,event,unit)
         
        
         
@@ -135,7 +135,7 @@ function registerNewUnitFrame(unitToWatch, frameType)
             updateFrameData(thisName,unitToWatch,event)
         end
         
-        if  event=='UNIT_TARGET' then
+        if  event=='UNIT_TARGET' and unit=='player' then
             updateFrameData(thisName,unitToWatch,event)
         end
         
@@ -170,21 +170,13 @@ function registerNewUnitFrame(unitToWatch, frameType)
     
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED");
     targetF:RegisterEvent("PLAYER_FOCUS_CHANGED");
-    targetF:RegisterEvent("UNIT_AURA");
-    targetF:RegisterEvent("PLAYER_ENTERING_WORLD");
+
     targetF:RegisterEvent("ZONE_CHANGED");
 
-    targetF:RegisterEvent("UNIT_SPELLCAST_START");
-    targetF:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START");
-    targetF:RegisterEvent("UNIT_SPELLCAST_UPDATE");
-    targetF:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP");
-    targetF:RegisterEvent("UNIT_SPELLCAST_STOP");
-    targetF:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");
-    targetF:RegisterEvent("UNIT_SPELLCAST_FAILED");
     targetF:RegisterEvent("UNIT_HEALTH");
     targetF:RegisterEvent("UNIT_MAX_HEALTH");
     targetF:RegisterEvent("UNIT_TARGET");
-    targetF:RegisterEvent("PLAYER_ENTERING_WORLD");
+
 
     targetF:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
 
@@ -562,7 +554,7 @@ function updateCastingbar(thisName,unitToWatch)
         unitFrameAnimations[unitToWatch..'powerAnimation'] = powerPrecentage;
         
     end
-    function updatHealthValues(thisName,unitToWatch)
+    function updatHealthValues(thisName,unitToWatch,noAnimation)
         if not UnitExists(unitToWatch) then return end
         local health = UnitHealth(unitToWatch)
         local healthMax = UnitHealthMax(unitToWatch)
@@ -591,6 +583,7 @@ function updateCastingbar(thisName,unitToWatch)
     if dif==0 then return end
     
     local speed = 2.00 * dif
+    if noAnimation~=nil then speed = 0 end
     addToAnimation(unitToWatch..'healthAnimation',unitFrameAnimations[unitToWatch..'healthAnimation'],healthPrecentage,GetTime(),speed,function()
           
                 
@@ -682,7 +675,7 @@ function updateCastingbar(thisName,unitToWatch)
         friendlyColor = GW_COLOR_FRIENDLY[3]
     end
     
-    updatHealthValues(thisName,unitToWatch)
+    
     updatePowerValues(thisName,unitToWatch)
         
     if animations[unitToWatch..'powerAnimation'] then
@@ -694,12 +687,7 @@ function updateCastingbar(thisName,unitToWatch)
         animations[unitToWatch..'healthAnimation']['completed'] = true
         animations[unitToWatch..'healthAnimation']['duration'] = 0
     end
-    if  _G[thisName.."HealthBarSpark"] then
-        _G[thisName.."HealthBarSpark"]:ClearAllPoints()
-        _G[thisName.."HealthBarSpark"]:SetPoint('LEFT',_G[thisName.."HealthBar"],'LEFT',(_G[thisName.."HealthBar"]:GetWidth()*healthPrecentage)-15,0)
-    end
-    _G[thisName.."HealthBarCandy"]:SetValue(healthPrecentage)
-    _G[thisName.."HealthBar"]:SetValue(healthPrecentage)
+
     _G[thisName.."ManaBar"]:SetValue(powerPrecentage)
     _G[thisName.."AbsorbBar"]:SetValue(absorbPrecentage)
    
@@ -762,8 +750,9 @@ function updateCastingbar(thisName,unitToWatch)
     end
         
     updateCastingbar(thisName,unitToWatch)
+    updatHealthValues(thisName,unitToWatch,false)
     gw_unitFrame_updateAuras(thisName,unitToWatch,nil)
-        
+
         
 end
 
