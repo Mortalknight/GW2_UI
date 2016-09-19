@@ -135,7 +135,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
             updateFrameData(thisName,unitToWatch,event)
         end
         
-        if  event=='UNIT_TARGET' and unit=='player' then
+        if  event=='UNIT_TARGET' and (unit=='player' or unit=='focus') then
             updateFrameData(thisName,unitToWatch,event)
         end
         
