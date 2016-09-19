@@ -597,6 +597,50 @@
                  <Anchors>
                     <Anchor point="BOTTOMRIGHT" x="-88" y="-25"></Anchor>
                 </Anchors>
+            </Texture> 
+                
+                
+                
+            <FontString name="$parentCurrency1" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                <Size x="100" y="40"></Size>
+                 <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-160" y="-40"></Anchor>
+                </Anchors>
+            </FontString>
+            <Texture name="$parentCurrency1Texture" file="Interface\MoneyFrame\UI-GoldIcon">
+                <Size x="11" y="11"></Size>
+                 <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-148" y="-25"></Anchor>
+                </Anchors>
+                <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+            </Texture>
+                
+            <FontString name="$parentCurrency2" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                <Size x="100" y="40"></Size>
+                 <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-210" y="-40"></Anchor>
+                </Anchors>
+            </FontString>
+            <Texture name="$parentCurrency2Texture" file="Interface\MoneyFrame\UI-GoldIcon">
+                <Size x="11" y="11"></Size>
+                 <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-198" y="-25"></Anchor>
+                </Anchors>
+                <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+            </Texture>  
+                
+            <FontString name="$parentCurrency3" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                <Size x="100" y="40"></Size>
+                 <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-270" y="-40"></Anchor>
+                </Anchors>
+            </FontString>
+            <Texture name="$parentCurrency3Texture" file="Interface\MoneyFrame\UI-GoldIcon">
+                <Size x="11" y="11"></Size>
+                 <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-258" y="-25"></Anchor>
+                </Anchors>
+                <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
             </Texture>
             
                 
@@ -742,6 +786,15 @@
                 
                 GwBagFrameGold:SetFont(UNIT_NAME_FONT,12)
                 GwBagFrameGold:SetTextColor(221/255,187/255,68/255)
+                
+                GwBagFrameCurrency1:SetFont(UNIT_NAME_FONT,12)
+                GwBagFrameCurrency1:SetTextColor(1,1,1)       
+                
+                GwBagFrameCurrency2:SetFont(UNIT_NAME_FONT,12)
+                GwBagFrameCurrency2:SetTextColor(1,1,1)        
+                
+                GwBagFrameCurrency3:SetFont(UNIT_NAME_FONT,12)
+                GwBagFrameCurrency3:SetTextColor(1,1,1)
                 
                 gw_update_player_money()
             </OnLoad>
@@ -979,7 +1032,7 @@
             </OnLoad>
         </Scripts>
     </Frame>  
-    <Frame name="GwcurrencyItem" virtual="true">
+    <Button name="GwcurrencyItem" virtual="true">
         <Size x="512" y="32"></Size>
         <Anchors>
             <Anchors point="TOPLEFT"></Anchors>
@@ -1028,6 +1081,6 @@
                 self.amount:SetTextColor(1,1,1)
             </OnLoad>
         </Scripts>
-    </Frame>
+    </Button>
     
 </Ui>

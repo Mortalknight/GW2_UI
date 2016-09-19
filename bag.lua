@@ -103,6 +103,12 @@ function gw_create_bgframe()
     
    
     gw_bg_loadCurrency()
+    
+    
+    GwCurrencyWindow:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
+    
+    GwCurrencyWindow:SetScript('OnEvent',gw_bg_loadCurrency)
+    hooksecurefunc('SetCurrencyBackpack',gw_bg_loadCurrency)
 
 end
 
@@ -111,6 +117,7 @@ function gw_bg_loadCurrency()
     
     local USED_CURRENCY_HEIGHT = 25
     local zebra = 1;
+    local watchSlot = 1
     
     for i=1,GetCurrencyListSize() do
          local y = 0
@@ -134,7 +141,7 @@ function gw_bg_loadCurrency()
         else
             local itemSlot = _G['GwcurrencyItem'..i]
             if itemSlot==nil then
-               itemSlot = CreateFrame('Frame','GwcurrencyItem'..i,GwCurrencyWindow.scrollchild,'GwcurrencyItem')
+               itemSlot = CreateFrame('Button','GwcurrencyItem'..i,GwCurrencyWindow.scrollchild,'GwcurrencyItem')
                itemSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT)
                itemSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT+(-32))
               
@@ -146,6 +153,9 @@ function gw_bg_loadCurrency()
             itemSlot.amount:SetText(count..' / '..maximum)
             itemSlot.icon:SetTexture(icon)
             itemSlot.zebra:SetVertexColor(zebra,zebra,zebra,0.05)
+            if isWatched then
+                itemSlot.zebra:SetVertexColor(1,1,0,0.05)
+            end
             if zebra==1 then
                 zebra = 0
             else
@@ -153,6 +163,15 @@ function gw_bg_loadCurrency()
             end
             itemSlot:SetHeight(32)
             
+            itemSlot:SetScript('OnClick',function()
+                    
+                    local toggle = 1
+                    if isWatched then
+                        toggle=0
+                    end
+                    
+                    SetCurrencyBackpack(i,toggle)
+            end)
           
             itemSlot:SetScript('OnLeave', function()
                 GameTooltip:Hide()
@@ -161,8 +180,17 @@ function gw_bg_loadCurrency()
                 GameTooltip:SetOwner(itemSlot,'ANCHOR_CURSOR')
                 GameTooltip:ClearLines()
                 GameTooltip:SetCurrencyToken(i) 
+                GameTooltip:AddLine('Click to track',1,1,1) 
                 GameTooltip:Show() 
             end)
+            
+            if isWatched and watchSlot<4 then
+                
+                _G['GwBagFrameCurrency'..watchSlot]:SetText(count)
+                _G['GwBagFrameCurrency'..watchSlot..'Texture']:SetTexture(icon)
+                
+                watchSlot = watchSlot + 1
+            end
             
         end
         
@@ -175,6 +203,11 @@ function gw_bg_loadCurrency()
     GwCurrencyWindow.slider:SetMinMaxValues(0, USED_CURRENCY_HEIGHT)
     GwCurrencyWindow.height = USED_CURRENCY_HEIGHT
     GwCurrencyWindow:SetScrollChild(GwCurrencyWindow.scrollchild)
+    
+    for i=watchSlot,3 do
+        _G['GwBagFrameCurrency'..i]:SetText('')
+        _G['GwBagFrameCurrency'..i..'Texture']:SetTexture(nil)
+    end
     
 end
 
