@@ -47,6 +47,7 @@ function gw_create_bgframe()
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
     
     GwBagFrame:SetWidth(gwGetSetting('BAG_WIDTH'))
+    GwCurrencyWindow.scrollchild:SetWidth(gwGetSetting('BAG_WIDTH') - 24 )
     gw_bagFrameOnResize(GwBagFrame,false)
     
     GwBagFrame:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)
@@ -55,11 +56,11 @@ function gw_create_bgframe()
     GwBagFrame:Hide()
     
 
-    ContainerFrame1:HookScript('OnShow',function() gw_bag_close() gw_relocate_searchbox() gw_update_bag_icons() GwBagContainer0:Show()  end)
-    ContainerFrame2:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer1:Show() end)
-    ContainerFrame3:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer2:Show() end)
-    ContainerFrame4:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer3:Show() end)
-    ContainerFrame5:HookScript('OnShow',function() gw_bag_close() gw_update_bag_icons() GwBagContainer4:Show() end)
+    ContainerFrame1:HookScript('OnShow',function() gw_bag_hideIcons(true)  gw_bag_close() gw_relocate_searchbox() gw_update_bag_icons() GwBagContainer0:Show() end)
+    ContainerFrame2:HookScript('OnShow',function() gw_bag_hideIcons(true)  gw_bag_close() gw_update_bag_icons() GwBagContainer1:Show() gw_bag_hideIcons(true) end)
+    ContainerFrame3:HookScript('OnShow',function() gw_bag_hideIcons(true) gw_bag_close() gw_update_bag_icons() GwBagContainer2:Show() gw_bag_hideIcons(true) end)
+    ContainerFrame4:HookScript('OnShow',function() gw_bag_hideIcons(true) gw_bag_close() gw_update_bag_icons() GwBagContainer3:Show() gw_bag_hideIcons(true) end)
+    ContainerFrame5:HookScript('OnShow',function() gw_bag_hideIcons(true) gw_bag_close() gw_update_bag_icons() GwBagContainer4:Show() gw_bag_hideIcons(true) end)
     
     --BANK BAGS
     
@@ -101,8 +102,114 @@ function gw_create_bgframe()
     ContainerFrame6:SetFrameLevel(5)
     
    
+    gw_bg_loadCurrency()
 
 end
+
+
+function gw_bg_loadCurrency()
+    
+    local USED_CURRENCY_HEIGHT = 25
+    local zebra = 1;
+    
+    for i=1,GetCurrencyListSize() do
+         local y = 0
+        local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maximum, hasWeeklyLimit, currentWeeklyAmount, unknown = GetCurrencyListInfo(i)
+        
+        if isHeader then
+            local HeaderSlot = _G['GwCurrencyHeader'..i]
+            if HeaderSlot==nil then
+                
+                HeaderSlot = CreateFrame('Frame','GwCurrencyHeader'..i,GwCurrencyWindow.scrollchild,'GwcurrencyCat')
+                HeaderSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT + (-5))
+                HeaderSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT + (-5) +(-32))
+             
+                
+              
+                y = 32 +5
+            end
+            HeaderSlot.string:SetText(name)
+            HeaderSlot:SetHeight(32)
+      
+        else
+            local itemSlot = _G['GwcurrencyItem'..i]
+            if itemSlot==nil then
+               itemSlot = CreateFrame('Frame','GwcurrencyItem'..i,GwCurrencyWindow.scrollchild,'GwcurrencyItem')
+               itemSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT)
+               itemSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT+(-32))
+              
+               itemSlot.icon:ClearAllPoints()
+               itemSlot.icon:SetPoint('LEFT',0,0)
+                y = 32
+            end
+            itemSlot.string:SetText(name)
+            itemSlot.amount:SetText(count..' / '..maximum)
+            itemSlot.icon:SetTexture(icon)
+            itemSlot.zebra:SetVertexColor(zebra,zebra,zebra,0.05)
+            if zebra==1 then
+                zebra = 0
+            else
+                zebra =1
+            end
+            itemSlot:SetHeight(32)
+            
+          
+            itemSlot:SetScript('OnLeave', function()
+                GameTooltip:Hide()
+            end)
+            itemSlot:SetScript('OnEnter', function()
+                GameTooltip:SetOwner(itemSlot,'ANCHOR_CURSOR')
+                GameTooltip:ClearLines()
+                GameTooltip:SetCurrencyToken(i) 
+                GameTooltip:Show() 
+            end)
+            
+        end
+        
+        
+       
+        
+        USED_CURRENCY_HEIGHT = USED_CURRENCY_HEIGHT + y
+        
+    end
+    GwCurrencyWindow.slider:SetMinMaxValues(0, USED_CURRENCY_HEIGHT)
+    GwCurrencyWindow.height = USED_CURRENCY_HEIGHT
+    GwCurrencyWindow:SetScrollChild(GwCurrencyWindow.scrollchild)
+    
+end
+
+function gw_bag_toggleCurrency()
+    
+    if GwCurrencyWindow:IsShown() then
+        
+        gw_bag_hideIcons(true)
+    else
+         gw_bag_hideIcons(false)
+    end
+
+    
+end
+
+function gw_bag_hideIcons(b)
+  
+    
+    if b==true then
+        BagItemSearchBox:Show()
+        GwBagFrameBagSpaceString:Show()
+        GwBagButtonSettings:Show()
+        GwCurrencyWindow:Hide()
+        ContainerFrame1:Show()
+       
+    else
+        BagItemSearchBox:Hide()
+        GwBagFrameBagSpaceString:Hide()
+        GwBagButtonSettings:Hide()
+        GwCurrencyWindow:Show()
+        CloseAllBags()
+        
+    end
+end
+
 
 function gw_move_bagbar()
     
@@ -161,7 +268,7 @@ function gw_bag_close()
             end
         end
     end
-    if o==false then
+    if o==false and GwCurrencyWindow:IsShown()==false then
         GwBagFrame:Hide()
         return
     end
