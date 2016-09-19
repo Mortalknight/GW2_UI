@@ -23,8 +23,8 @@ frames/raidframes.xml
 GW2_ui.lua
 fonts.lua
 hud.lua
-QuestTracker.lua
-ActionBar.lua
+
+
 
 buffs.lua
 
