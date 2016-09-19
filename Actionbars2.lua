@@ -272,9 +272,9 @@ function gw_setupActionbars()
     MainMenuBarArtFrame:RegisterEvent('PET_BATTLE_OPENING_START')
     MainMenuBarArtFrame:HookScript('OnEvent',function(self,event)
        if event=='PET_BATTLE_OPENING_START' then
-            MainMenuBarArtFrame:SetPoint('TOP',UIParent,'BOTTOM',0,-80)
+           gwToggleMainHud(false)
         elseif event=='PET_BATTLE_CLOSE' then
-            MainMenuBarArtFrame:SetPoint('TOP',UIParent,'BOTTOM',0,80)
+           gwToggleMainHud(true)
         end
     end)
 end

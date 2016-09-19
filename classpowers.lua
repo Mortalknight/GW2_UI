@@ -415,12 +415,17 @@ function GW_POWERTYPE_MONGOOSE()
        
     local old_power = CLASS_POWER
     CLASS_POWER = 0
-    local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitAura('player','Mongoose Fury')
+    local found=false
+    local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = nil
+    for i=1,40 do
+        name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitAura('player',i)
+        if spellID==190931 then found=true break end
+    end
     
 
     CLASS_POWER_MAX = 6
 
-    if name~=nil then
+    if found==true then
         if count==nil then count=1 end
 
        
@@ -456,6 +461,73 @@ function GW_POWERTYPE_MONGOOSE()
 
 end
 
+function GW_FOCUS_RAGE_LOOP()
+    
+    if GwFocusRage.looping~=nil and GwFocusRage.looping~=false then return end
+    
+    GwFocusRage.looping =true
+    
+    addToAnimation('GW_MONGOOSE_LOOP_ANIMATION',0,1,GetTime(),2,function()
+            
+    local a =  lerp(1,0,(animations['GW_MONGOOSE_LOOP_ANIMATION']['progress'] - 0.5)/0.5)
+            
+        if animations['GW_MONGOOSE_LOOP_ANIMATION']['progress']<0.5 then
+            a = lerp(0,1,animations['GW_MONGOOSE_LOOP_ANIMATION']['progress']/0.5)
+        end
+    if CLASS_POWER<3 then
+        a = 0
+    end
+            
+        GwFocusRage.glow:SetAlpha(a)
+        GwFocusRage.highlight:SetAlpha(a)
+            
+    end,nil,function() 
+            
+        GwFocusRage.looping =false
+            
+        if GwFocusRage.bar:GetValue()==3 then
+            GW_FOCUS_RAGE_LOOP()
+        end
+    end)
+    
+    
+end
+
+function GW_POWERTYPE_FOCUSRAGE()
+
+    local found = false
+    local old_power = CLASS_POWER
+    CLASS_POWER = 0
+     local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = nil
+    for i=1,40 do
+        name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitAura('player',i)
+        if spellID==207982 or spellID==204488 then found=true break end
+    end
+    
+
+          
+    if count==nil or found==false then count=0 end
+        CLASS_POWER = count
+    local animationSpeed = 0.2
+    if CLASS_POWER<=0 then
+        animationSpeed = 0
+    end
+    
+    if CLASS_POWER>=3 then
+       GW_FOCUS_RAGE_LOOP() 
+    end
+    
+    addToAnimation('FOCUS_RAGE_BAR',old_power,CLASS_POWER,GetTime(),animationSpeed,function()  
+                
+        GwFocusRage.bar:SetValue(animations['FOCUS_RAGE_BAR']['progress'])
+                
+    end)
+
+
+
+
+end
+
 
 function GW_SET_BARTYPE()
     
@@ -468,6 +540,26 @@ function GW_SET_BARTYPE()
     end
     
    
+    if PLAYER_CLASS==1 and PLAYER_SPECIALIZATION==1 then
+        
+        local talentID, name, texture, selected, available, spellid, tier, column, _ = GetTalentInfo(5, 3, 1, false, "player")
+
+        if selected then
+            GwFocusRage:Show()
+            GwPlayerClassPowerBackground:SetTexture(nil)
+            GwPlayerClassPowerFill:SetTexture(nil)
+            return
+        else
+            GwFocusRage:Hide() 
+        end
+    end
+    if PLAYER_CLASS==1 and PLAYER_SPECIALIZATION==3 then
+        GwFocusRage:Show()
+        GwPlayerClassPowerBackground:SetTexture(nil)
+        GwPlayerClassPowerFill:SetTexture(nil)
+        return
+    end
+    GwFocusRage:Hide()
     if PLAYER_CLASS==2 then
       
         GwPlayerClassPowerBackground:SetHeight(32)
@@ -601,6 +693,10 @@ function GW_SET_BARTYPE()
 end
 
 
+
+CLASS_POWERS[1] = {}
+CLASS_POWERS[1][1]= GW_POWERTYPE_FOCUSRAGE
+CLASS_POWERS[1][3]= GW_POWERTYPE_FOCUSRAGE
 
 CLASS_POWERS[2] = {}
 CLASS_POWERS[2][3]= GW_POWERTYPE_HOLYPOWER

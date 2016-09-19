@@ -169,6 +169,20 @@ GW_DODGEBAR_SPELLS[10] = {109132,115008}
 GW_DODGEBAR_SPELLS[11] = {102401, 102280}
 GW_DODGEBAR_SPELLS[12] = {195072, 189110}
 
+GW_MAIN_HUD_FRAMES = {
+    'MainMenuBarArtFrame',
+    'GwHudArtFrame',
+    'MultiBarBottomRight',
+    'MultiBarBottomLeft',
+    'GwPlayerPowerBar',
+    'GwPlayerAuraFrame',
+    'GwPlayerClassPower',
+    'GwHudArtFrameRepair',
+    'GwPlayerHealthGlobe',
+}
+GW_MAIN_HUD_FRAMES_OLD_STATE = {}
+    
+
 
 
 function createButton(p,w,h,xo,yo,texture,sub)

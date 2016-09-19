@@ -497,6 +497,54 @@
                     </Frame>
                 </Frames>
             </Frame>
+            <Frame name="GwFocusRage" hidden="true">
+                 <Size x="256" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\warrior-bar-bg">
+                            <Size x="256" y="18"></Size>
+                             <Anchors>
+                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTOWRK" textureSubLevel="-1">
+                        <Texture parentKey="glow" alpha="0" file="Interface\AddOns\GW2_UI\textures\warrior-bar-glow">
+                            <Size x="512" y="36"></Size>
+                             <Anchors>
+                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <StatusBar parentKey="bar"  defaultValue="0"  minValue="0" maxValue="3">
+                        <Size x="256" y="18"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\warrior-bar"/>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="highlight" alpha="0" file="Interface\AddOns\GW2_UI\textures\warrior-bar-highlight">
+                                    <Size x="256" y="18"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </StatusBar>
+                </Frames>
+                <Scripts>
+                    <OnLoad>
+                        self.highlight = self.bar.highlight
+                    </OnLoad>
+                </Scripts>
+            </Frame>
         </Frames>
     </Frame>
     <Button name="GwDodgeBar" virtual="true" parent="GwPlayerHealthGlobe" frameStrata="BACKGROUND">

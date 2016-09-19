@@ -15,7 +15,7 @@
               <OnDragStop>self:StopMovingOrSizing();
                   
                   
-                  
+                  if self:GetName()~='GwBagMoverFrame' then return end
                   local saveBagPos = {}
                   saveBagPos['point'], _, saveBagPos['relativePoint'], saveBagPos['xOfs'] , saveBagPos['yOfs'] = self:GetPoint()
   

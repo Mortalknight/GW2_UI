@@ -111,7 +111,7 @@ function create_player_hud()
     
 
     playerHealthGLobaBg:EnableMouse(true)
-    RegisterUnitWatch(playerHealthGLobaBg);
+  --  RegisterUnitWatch(playerHealthGLobaBg);
     
     --DELETE ME AFTER ACTIONBARS REWORK
     playerHealthGLobaBg:SetAttribute("*type1", 'target')
@@ -124,7 +124,7 @@ function create_player_hud()
     
     
     
-    RegisterUnitWatch(playerHealthGLobaBg)
+  --  RegisterUnitWatch(playerHealthGLobaBg)
     _G['GwPlayerHealthGlobeTextValue']:SetFont(DAMAGE_TEXT_FONT,16)
     _G['GwPlayerHealthGlobeTextValue']:SetShadowColor(1, 1, 1, 0) 
 
