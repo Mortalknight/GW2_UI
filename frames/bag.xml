@@ -44,24 +44,24 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bankheaderleft">
-                    <Size x="512" y="40"></Size>
+              <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
+                    <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     </Anchors>
-                </Texture>    
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bankheaderright">
-                    <Size x="512" y="40"></Size>
+                </Texture>
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right">
+                    <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
 
                 <Texture name="$parentFooter" file="Interface\AddOns\GW2_UI\textures\bag\bagfooter">
-                    <Size x="512" y="40"></Size>
+                    <Size x="512" y="70"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
-                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="2" />
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="2" />
                     </Anchors>
                 </Texture>
                 <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
@@ -73,27 +73,18 @@
                 </Texture>               
                 
             </Layer>
-            <Layer textureSubLevel="2">
-                <Texture name="$parentHeaderBorder" file="Interface\AddOns\GW2_UI\textures\bag\bagborder">
-                    <Size x="622" y="50"></Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-60" y="-3" />
-                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="80" y="-3" />
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentFooterBorder" file="Interface\AddOns\GW2_UI\textures\bag\bagborder">
-                    <Size x="622" y="50"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-80" y="3" />
-                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="80" y="3" />
-                    </Anchors>
-                </Texture>
-            </Layer>
+    
             <Layer textureSubLevel="3">
                 <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagicon">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
+                    </Anchors>
+                </Texture>
+                 <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                    <Size x="128" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
                 <FontString name="$parentHeaderString" text="Bank" inherits="GameFontNormalSmall" justifyH="LEFT">
@@ -160,7 +151,7 @@
                     <Button name="GwButtonBuyBankSlots" inherits="GwStandardButton" text="Purchase More Slots">
                         <Size x="158" y="32" />
                         <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" relativeTo="GwBuyMoreBank" x="0" y="5"></Anchor>
+                            <Anchor point="LEFT" relativePoint="LEFT" relativeTo="GwBuyMoreBank" x="5" y="5"></Anchor>
                         </Anchors>
                         <Scripts>
                             <OnClick>
@@ -540,6 +531,12 @@
             </Layer>
     
             <Layer textureSubLevel="3">
+                 <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                    <Size x="128" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
                 <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagicon">
                     <Size x="128" y="128"></Size>
                     <Anchors>

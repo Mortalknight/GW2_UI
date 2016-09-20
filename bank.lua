@@ -53,9 +53,9 @@ function gw_create_bankframe()
         BankFrame:ClearAllPoints()    
         BankFrame:SetPoint('RIGHT',UIParent,'LEFT',-2000,0)
 
-        BankFrame.SetPoint = function() end
+        
         for i=5,12 do
-           ToggleBag(i)     
+        OpenBag(i)     
         end
             
   
@@ -96,7 +96,7 @@ function gw_create_bankframe()
         BankItemSearchBox:Show()
         GwReagentBankFrame:Hide()
         for i=5,12 do
-           ToggleBag(i)     
+            OpenBag(i)     
         end
             if GetNumBankSlots()<7 then
             GwBuyMoreBank:Show()
@@ -155,6 +155,7 @@ function gw_move_bankbagbar()
         BankSlotsFrame.Bag6,
         BankSlotsFrame.Bag7,
     }
+    
     local y = 72
     
     for k,v in pairs(default_bank_frame) do
