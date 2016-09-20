@@ -369,18 +369,35 @@ end
 function gw_dodgebar_onevent(self,event,unit)
     
     local foundADash = false
+    local isTalent = false;
+    local isSelected = false;
   
     local __,__,c = UnitClass('Player')
         if GW_DODGEBAR_SPELLS[c]~=nil then
             for k,v in pairs(GW_DODGEBAR_SPELLS[c]) do
                 local name = GetSpellInfo(v)
-                if name~=nil then
-                    charges, maxCharges, start, duration = GetSpellCharges(v)
-                    foundADash = true
-                    GwDodgeBar.spellId = v
-                    if charges~=nil and charges<maxCharges then
-                       gw_update_dodgebar(start,duration,maxCharges,charges)
-                       
+                if name~=nil then       
+                
+                    for r=1,7 do
+                        for c=1,3 do
+                            local _, _, _, selected, _, spellid = GetTalentInfo(r, c,GetSpecialization(), false, "player")
+                            if spellid==v then
+                                isTalent = true
+                                if selected then
+                                    isSelected = true
+                                end
+                            end
+                            
+                        end
+                    end
+                
+                    if  (isTalent==true and isSelected==true) or isTalent==false then     
+                        charges, maxCharges, start, duration = GetSpellCharges(v)
+                        foundADash = true
+                        GwDodgeBar.spellId = v
+                        if charges~=nil and charges<maxCharges then
+                           gw_update_dodgebar(start,duration,maxCharges,charges)
+                        end
                     end
                 end
             end
