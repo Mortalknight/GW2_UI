@@ -5,12 +5,16 @@ local GW_READY_CHECK_INPROGRESS = false
 function gw_raidframe_hideBlizzard()
     CompactRaidFrameManager:UnregisterAllEvents()
     CompactRaidFrameManager:Hide()
-    CompactRaidFrameContainer:UnregisterAllEvents() 
-    CompactRaidFrameContainer:Hide()
+
 end
 
 function gw_register_raidframes()
     gw_raidframe_hideBlizzard()
+    
+    hooksecurefunc("CompactRaidFrameManager_UpdateShown", gw_raidframe_hideBlizzard)
+    CompactRaidFrameManager:HookScript('OnShow', gw_raidframe_hideBlizzard)
+    CompactRaidFrameContainer:UnregisterAllEvents()
+    
     CreateFrame('Frame','GwRaidFrameContainer',UIParent,'GwRaidFrameContainer')
     
     GwRaidFrameContainer:SetHeight((gwGetSetting('RAID_HEIGHT') + 2) * gwGetSetting('RAID_UNITS_PER_COLUMN') )
