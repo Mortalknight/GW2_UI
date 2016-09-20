@@ -1,44 +1,39 @@
 local intervalCd = 0
 local bubbles = {}
 local CHAT_BUBBLES_ACTIVE = {}
+
 function update_gwChat_bubbles(msg)
 
     getBubbles(msg)
         
     for k,v in pairs(bubbles) do
-        bgFrame = v['frame']
-        fontString= v['fontstring']
+        local bgFrame = v['frame']
+        local fontString= v['fontstring']
         b = v['bgFile']
             
         if fontString~=nil then 
 
-            fontString:SetFont(DAMAGE_TEXT_FONT,10)
+            fontString:SetFont(DAMAGE_TEXT_FONT,14)
             fontString:SetTextColor(0,0,0)
             
-            if b ~= 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background' then
-                local backdrop = {
-          
-                    bgFile = 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background',  
-       
-                    edgeFile = 'Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Backdrop',
-                
-                    tile = true,
-                
-                    tileSize = 32,
-    
-                    edgeSize = 32,
-        
-                    insets = {
-                        left = 11,
-                        right = 12,
-                        top = 12,
-                        bottom = 11
-                    }
-                }
+            if  bgFrame.hasBeenStyled==nil then
+                local backdrop =nil
                 bgFrame:SetBackdrop(backdrop)
                 
                 bgFrame.hasBeenStyled = true
-                 
+                local newBubble = CreateFrame('Frame','GwChatBubble',bgFrame,'GwChatBubble')
+                bgFrame:SetScale(0.6)
+                newBubble:ClearAllPoints()
+                newBubble:SetPoint('TOPLEFT',bgFrame,'TOPLEFT',0,0)
+                newBubble:SetPoint('BOTTOMRIGHT',bgFrame,'BOTTOMRIGHT',0,0)
+               
+                newBubble.string:SetText(fontString:GetText())
+                
+                bgFrame:HookScript('OnShow',function()
+
+                   newBubble.string:SetText(fontString:GetText())
+                end)
+               
             end
         end
     end

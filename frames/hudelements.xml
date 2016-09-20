@@ -1468,7 +1468,22 @@
                     </Anchors>
                 </Texture>
             </Layer>
+            <Layer level="ARTOWORK" textureSubLevel="-7">
+                <FontString name="$parentString" parentKey="string"  text="Not yet loaded" justifyH="CENTER" justifyV="MIDDLE">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
         </Layers>
+        <Scripts>
+            <OnLoad>
+                print('load')
+                self.string:SetFont(UNIT_NAME_FONT,14)
+                self.string:SetTextColor(0,0,0,1)
+            </OnLoad>
+        </Scripts>
     </Frame>
     
 </Ui>
