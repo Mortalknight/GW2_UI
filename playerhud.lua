@@ -380,7 +380,8 @@ function gw_dodgebar_onevent(self,event,unit)
                 
                     for r=1,7 do
                         for c=1,3 do
-                            local _, _, _, selected, _, spellid = GetTalentInfo(r, c,GetSpecialization(), false, "player")
+                       
+                            local _, _, _, selected, _, spellid = GetTalentInfo(r,c,GetActiveSpecGroup(), false, "player")
                             if spellid==v then
                                 isTalent = true
                                 if selected then
