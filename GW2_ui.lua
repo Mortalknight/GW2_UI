@@ -287,9 +287,9 @@ end
 function gwUpdateHudScale(scale)
   
     for k,v in pairs(GW_MAIN_HUD_FRAMES) do
-      
-            _G[v]:SetScale(gwGetSetting('HUD_SCALE')) 
-      
+      if _G[v] then
+        _G[v]:SetScale(gwGetSetting('HUD_SCALE')) 
+      end
     end
     
 end
