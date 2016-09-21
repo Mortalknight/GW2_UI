@@ -96,6 +96,11 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
   
     _G[thisName.."AbsorbBar"]:SetFrameLevel(4)
     _G[thisName.."CastingBar"]:SetFrameLevel(5)
+    
+    
+    if _G[thisName.."Portrait"]~=nil then
+        _G[thisName.."Portrait"]:SetMask("Textures\\MinimapMask")
+    end
 
     
     
@@ -123,7 +128,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
      
    
         
-        if event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE' or event=='UNIT_SPELLCAST_CHANNEL_STOP' or event=='UNIT_SPELLCAST_STOP' or event=='UNIT_SPELLCAST_INTERRUPTED' or event=='UNIT_SPELLCAST_FAILED'   then
+        if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE' or event=='UNIT_SPELLCAST_CHANNEL_STOP' or event=='UNIT_SPELLCAST_STOP' or event=='UNIT_SPELLCAST_INTERRUPTED' or event=='UNIT_SPELLCAST_FAILED') and unit==unitToWatch then
             updateCastingbar(thisName,unitToWatch)
         end
    
@@ -135,7 +140,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
             updateFrameData(thisName,unitToWatch,event)
         end
         
-        if  event=='UNIT_TARGET' and (unit=='player' or unit=='focus') then
+        if  event=='UNIT_TARGET' and (unit=='player' or unit=='focus' or unit=='target') then
             updateFrameData(thisName,unitToWatch,event)
         end
         
@@ -485,7 +490,8 @@ function updateCastingbar(thisName,unitToWatch)
             _G[thisName.."CastingBarCastingBarString"]:SetText(name)
             
             if _G[thisName.."Portrait"] then
-                SetPortraitToTexture(_G[thisName.."Portrait"], texture)
+                _G[thisName.."Portrait"]:SetMask("Textures\\MinimapMask")
+                _G[thisName.."Portrait"]:SetTexture(texture)
             end
             
             _G[thisName.."CastingBar"]:Show()
