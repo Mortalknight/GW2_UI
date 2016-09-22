@@ -221,9 +221,16 @@ GW_MOVABLE_FRAMES_SETTINGS_KEY ={}
 local swimAnimation = 0
 local lastSwimState = true
 
+function gwGetActiveProfile()
+    if GW2UI_SETTINGS_DB_03==nil then
+        GW2UI_SETTINGS_DB_03 = {}
+    end
+    return GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+end
+
 function gwSetProfileSettings()
     
-    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    local profileIndex = gwGetActiveProfile()
     
     if profileIndex==nil then return end
     if GW2UI_SETTINGS_PROFILES[profileIndex]==nil then return end
@@ -238,7 +245,7 @@ end
 
 function gwGetSetting(name)
     
-    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    local profileIndex = gwGetActiveProfile()
     
     if GW2UI_SETTINGS_PROFILES==nil then 
         GW2UI_SETTINGS_PROFILES = {}
@@ -264,7 +271,7 @@ end
 
 function gwSetSetting(name,state)
     
-    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    local profileIndex = gwGetActiveProfile()
     
     if profileIndex~=nil and GW2UI_SETTINGS_PROFILES[profileIndex]~=nil then
         
@@ -282,7 +289,7 @@ function gwGetDefault(name)
 end
 function gwResetToDefault()    
     
-    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    local profileIndex = gwGetActiveProfile()
     
     if profileIndex~=nil and GW2UI_SETTINGS_PROFILES[profileIndex]~=nil then
         for k,v in pairs(GW_DEFAULT) do

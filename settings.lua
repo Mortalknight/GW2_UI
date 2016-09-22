@@ -186,7 +186,7 @@ end
 function gw_Update_Profile_Window()
     
     
-    local currentProfile = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    local currentProfile = gwGetActiveProfile()
     
 
       
