@@ -202,6 +202,9 @@ GW_DEFAULT['HUD_SCALE'] = 1
 GW_DEFAULT['MINIMAP_SCALE'] = 140
 
 
+GW_DEFAULT['ACTIVE_PROFILE'] = nil
+
+
 
 
 local ADDOON_LOADED = false;
@@ -217,8 +220,37 @@ GW_MOVABLE_FRAMES_SETTINGS_KEY ={}
 local swimAnimation = 0
 local lastSwimState = true
 
+function gwSetProfileSettings()
+    
+    local profileIndex = gwGetSetting('ACTIVE_PROFILE')
+    
+    if profileIndex==nil then return end
+    if GW2UI_SETTINGS_PROFILES[profileIndex]==nil then return end
+    
+    
+    
+    for k,v in pairs(GW2UI_SETTINGS_DB_03) do
+        GW2UI_SETTINGS_PROFILES[profileIndex][k] = v
+    end
+    
+end
 
 function gwGetSetting(name)
+    
+    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    
+    if GW2UI_SETTINGS_PROFILES==nil then 
+        GW2UI_SETTINGS_PROFILES = {}
+    end
+    
+    if profileIndex~=nil and GW2UI_SETTINGS_PROFILES[profileIndex]~=nil then
+        if GW2UI_SETTINGS_PROFILES[profileIndex][name]==nil then
+            GW2UI_SETTINGS_PROFILES[profileIndex][name] = gwGetDefault(name)
+        end
+        return GW2UI_SETTINGS_PROFILES[profileIndex][name]
+    end
+    
+    
     if GW2UI_SETTINGS_DB_03==nil then
         GW2UI_SETTINGS_DB_03 = GW_DEFAULT
     end
@@ -230,6 +262,17 @@ function gwGetSetting(name)
 end
 
 function gwSetSetting(name,state)
+    
+    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    
+    if profileIndex~=nil and GW2UI_SETTINGS_PROFILES[profileIndex]~=nil then
+        
+        GW2UI_SETTINGS_PROFILES[profileIndex][name] = state
+        GW2UI_SETTINGS_PROFILES[profileIndex]['profileLastUpdated'] = date("%m/%d/%y %H:%M:%S")
+        return
+        
+    end
+    
     GW2UI_SETTINGS_DB_03[name] = state
 end
 
@@ -238,6 +281,15 @@ function gwGetDefault(name)
 end
 function gwResetToDefault()    
     GW2UI_SETTINGS_DB_03 = GW_DEFAULT
+end
+
+function gwGetSettingsProfiles()
+    
+    if GW2UI_SETTINGS_PROFILES==nil then
+        GW2UI_SETTINGS_PROFILES = {}
+    end
+    return GW2UI_SETTINGS_PROFILES;
+
 end
 
 function gw_register_movable_frame(name,frame,settingsName,dummyFrame)

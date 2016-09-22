@@ -6,6 +6,7 @@
 ## Author: deadend06
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
+## SavedVariables: GW2UI_SETTINGS_PROFILES
 
 
 frames/target.xml

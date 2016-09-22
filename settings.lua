@@ -3,11 +3,30 @@ local settings_cat ={}
 local options = {}
 
 
+--[[
+
+GW_PROFILE_ICONS_PRESET[1] = 'Interface\\icons\\inv_corgi2'
+GW_PROFILE_ICONS_PRESET[2] = 'Interface\\icons\\inv_helmet_151'
+]]--
+
+local GW_PROFILE_ICONS_PRESET = {}
+
+GW_PROFILE_ICONS_PRESET[0] = 'Interface\\icons\\spell_druid_displacement'
+GW_PROFILE_ICONS_PRESET[1] = 'Interface\\icons\\ability_socererking_arcanemines'
+GW_PROFILE_ICONS_PRESET[2] = 'Interface\\icons\\ability_warrior_bloodbath'
+GW_PROFILE_ICONS_PRESET[3] = 'Interface\\icons\\ability_priest_ascendance'
+GW_PROFILE_ICONS_PRESET[4] = 'Interface\\icons\\spell_mage_overpowered'
+GW_PROFILE_ICONS_PRESET[5] = 'Interface\\icons\\achievement_boss_kingymiron'
+GW_PROFILE_ICONS_PRESET[6] = 'Interface\\icons\\spell_fire_elementaldevastation'
+
+
 
 
 
 function create_settings_window()
-local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverFrame')
+    CreateFrame('Frame','GwWarningPromt',UIParent,'GwWarningPromt')
+    
+    local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverFrame')
  local sWindow = CreateFrame('Frame','GwSettingsWindow',UIParent,'GwSettingsWindow')
     
     sWindow:SetScript('OnShow',function() mf:Show() end)
@@ -96,7 +115,7 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
     
     addOption('Class Color','Use class color insted of class icons','RAID_CLASS_COLOR','GwSettingsGroupframe')
     addOption('Power Bars','Display power bars','RAID_POWER_BARS','GwSettingsGroupframe')
-   addOption('Show Only Dispelable Debuffs','Only displays debuffs that you can dispell','RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
+    addOption('Show Only Dispelable Debuffs','Only displays debuffs that you can dispell','RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
   
     addOptionSlider('Raid Container Height','','RAID_UNITS_PER_COLUMN','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
@@ -121,12 +140,136 @@ local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverF
             end    
     end,47,100)
     
+    create_settings_cat('Group','Edit group settings','GwSettingsProfilesframe',5)
+    
  
     
     switch_settings_cat(0)
-    GwSettingsWindow:Hide()
+    --   GwSettingsWindow:Hide()
+    gw_Update_Profile_Window()
+  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
+  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
+  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
+  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
+     
+    GwSettingsProfilesframe.slider:SetValue(0)
+   
+    GwSettingsProfilesframe.slider.thumb:SetHeight(200)
+    
+    
+    local resetTodefault = CreateFrame('Button','GwProfileItemDefault',GwSettingsProfilesframe.scrollchild,'GwProfileItem')
+    resetTodefault.icon:SetTexture('Interface\\icons\\inv_corgi2')
+
+    resetTodefault.deleteable = false 
+    resetTodefault.background:SetTexCoord(0,1,0,0.5)
+    resetTodefault.activateAble = true
+    
+    resetTodefault:SetPoint('TOPLEFT',15,0)
+    
+    resetTodefault.name:SetText('Default Settings')
+    resetTodefault.desc:SetText('Load the default addon settings to your current profile')
+    resetTodefault.activateButton:SetScript('OnClick', function()
+            
+        gwWarningPromt('Are you sure you want to load the default settings?\n\nAll previous settings will be lost.',function() 
+        end)
+    end)
+     resetTodefault.activateButton:SetText('Load')  
+    
+
+          
+    
 end
 
+
+function gw_Update_Profile_Window()
+    
+    
+    local currentProfile = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    
+
+      
+    local h = 0
+    local profiles = gwGetSettingsProfiles()
+    for i=0,6 do
+        
+        local k = i
+        local v = profiles[i]
+        local f = _G['GwProfileItem'..k]
+        if f==nil then
+            f = CreateFrame('Button','GwProfileItem'..k,GwSettingsProfilesframe.scrollchild,'GwProfileItem')
+        end
+        
+        if v~=nil then
+            f:Show() 
+            f.profileID = k
+            f.icon:SetTexture(GW_PROFILE_ICONS_PRESET[k])
+
+            f.deleteable = true 
+            f.background:SetTexCoord(0,1,0,0.5)
+            f.activateAble = true
+            if currentProfile==k then
+                f.background:SetTexCoord(0,1,0.5,1)
+                f.activateAble = false
+            end
+
+            local description = 'Created: '..v['profileCreatedDate']..'\nCreated by '..v['profileCreatedCharacter']..'\nLast updated '..v['profileLastUpdated']
+
+            f.name:SetText(v['profilename'])
+            f.desc:SetText(description)
+            f:SetPoint('TOPLEFT',15, (-70*h) + -120)
+            h=h+1
+        else
+           f:Hide() 
+        end
+    end
+    
+    GwSettingsProfilesframe.scrollFrame:SetScrollChild(GwSettingsProfilesframe.scrollchild)
+
+    GwSettingsProfilesframe.slider:SetMinMaxValues(0, 70*h)
+end
+
+
+function gw_Add_Settings_Profile(name)
+ 
+    local index = 0
+    local profileList = gwGetSettingsProfiles()
+    
+    for i=0,7 do
+        index = i
+        if profileList[i]==nil then
+            break
+        end
+       
+    end
+    
+    if index>6 then return end
+    
+    GW2UI_SETTINGS_PROFILES[index] = {}
+    GW2UI_SETTINGS_PROFILES[index]['profilename'] = name
+    GW2UI_SETTINGS_PROFILES[index]['profileCreatedDate'] = date("%m/%d/%y %H:%M:%S")
+    GW2UI_SETTINGS_PROFILES[index]['profileCreatedCharacter'] = GetUnitName('player', true)
+    GW2UI_SETTINGS_PROFILES[index]['profileLastUpdated'] = date("%m/%d/%y %H:%M:%S")
+    
+    gwSetSetting('ACTIVE_PROFILE',index)
+    gwSetProfileSettings()
+    gw_Update_Profile_Window()
+    
+end
+
+function gw_Delete_Settings_Profile(index)
+   
+    GW2UI_SETTINGS_PROFILES[index]=nil
+    if GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']~=nil and GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']==index then    gwSetSetting('ACTIVE_PROFILE',nil)
+    end
+    
+    
+end
+
+function gw_Set_Active_Profile(index)
+
+    GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE'] = index
+    
+end
 
 
 
@@ -415,3 +558,10 @@ function gw_lockHudObjects()
     gw_update_moveableframe_positions()
 end
 
+
+function gwWarningPromt(text,method)
+    
+    GwWarningPromt.string:SetText(text)
+    GwWarningPromt.method = method
+    GwWarningPromt:Show()
+end

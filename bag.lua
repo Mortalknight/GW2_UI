@@ -108,6 +108,7 @@ function gw_create_bgframe()
     GwCurrencyWindow:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
     
     GwCurrencyWindow:SetScript('OnEvent',gw_bg_loadCurrency)
+    GwCurrencyWindow.slider:SetValue(1)
     hooksecurefunc('SetCurrencyBackpack',gw_bg_loadCurrency)
 
 end

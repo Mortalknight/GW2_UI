@@ -29,7 +29,7 @@
         </Anchors>
         <Layers>
                   <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" parentKey="Texture"  file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
+                <Texture name="$parentBackground" parentKey="background"  file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
                     <Size x="512" y="512"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
@@ -298,6 +298,142 @@
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
                                 </OnLoad>
                             </Scripts>
+                        </Frame> 
+                        <Frame hidden="true" name="GwSettingsProfilesframe">
+                            <Size x="512" y="480"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentHeader" text="Profiles" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="10" y="-10"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentSub" text="Profile is a easy way to share settings cross character and realm. You can simply pick a predefined profile or create your own."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="10" y="-40"></Anchor>
+                                        <Anchor point="TOPRIGHT" x="-10" y="-40"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </layer>
+                        </Layers>
+                            <Frames>
+                                
+                                
+                                <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+                                    <Size x="12" y="12"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-32"></Anchor>
+                                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="32"></Anchor>
+                                    </Anchors>
+                        
+   
+                                    <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
+                                        <Size x="12" y="100"/>
+                                        <Anchors>
+                                            <Anchor point="TOP" relativePoint="TOP" ></Anchor>
+                                        </Anchors>
+                                    </ThumbTexture>
+                                    <Layers>
+                                        <Layer>
+                                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
+                                                <Anchors>
+                                                    <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                                    <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                                                </Anchors>
+                                            </Texture>
+                                        </Layer>
+                                    </Layers>
+                                    <Scripts>
+                                        <OnValueChanged>
+                                            self:GetParent().scrollFrame:SetVerticalScroll(value)
+                                        </OnValueChanged>
+                                        <OnLoad>
+                                           
+                                            self:SetMinMaxValues(0, 512)
+                                           
+                                        </OnLoad>
+                                    </Scripts>
+                                </Slider>
+                                <Button name="$parentScrollButtonUp">
+                                    <Size x="12" y="12"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-22"></Anchor>
+                                    </Anchors>
+                                    <Layers>
+                                        <Layer>
+                                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                                <Size x="12" y="12"></Size>
+                                                <Anchors>
+                                                    <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                                </Anchors>
+                                            </Texture>
+                                        </Layer>
+                                    </Layers>
+                                </Button>
+                                <Button name="$parentScrollButtonDown">
+                                    <Size x="12" y="12"></Size>
+                                        <Anchors>
+                                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="18"></Anchor>
+                                    </Anchors>
+                                    <Layers>
+                                        <Layer>
+                                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                                <Size x="12" y="12"></Size>
+                                                <Anchors>
+                                                    <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                                </Anchors>
+                                                <TexCoords left="0" right="1" top="1" bottom="0" />
+                                            </Texture>
+                                        </Layer>
+                                    </Layers>
+                                </Button>
+                                
+                                <ScrollFrame name="$parentscrollframe" parentKey="scrollFrame">
+                                    <Size x="480" y="442"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="0" y="-70"></Anchor>
+                                    </Anchors>
+                                    <Scripts>
+                                        <OnMouseWheel>
+                                            delta = -delta * 10
+                                            local s = math.max(0,self:GetVerticalScroll() + delta)
+              
+                                            self:SetVerticalScroll(s)
+                                            self:GetParent().slider:SetValue(s)
+                                        </OnMouseWheel>
+                                    </Scripts>
+                                </ScrollFrame>
+                                <Frame name="$parentScrollchild" parentKey="scrollchild">
+                                      <Size x="480" y="442"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Frame>
+                            </Frames>
+                            <Scripts>
+                                <OnLoad>
+                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                    _G[self:GetName()..'Header']:SetTextColor(255/255,255/255,255/255)
+                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                    _G[self:GetName()..'Sub']:SetTextColor(125/255,125/255,125/255)
+                                    
+                          
+                                </OnLoad>
+                                <OnShow>
+                                    GwSettingsWindow.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\profiles\\profiles-bg')
+                                </OnShow>
+                                <OnHide>
+                                    GwSettingsWindow.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg')
+                                </OnHide>
+                            </Scripts>
                         </Frame>
                     
                     </Frames>                    
@@ -548,4 +684,215 @@
         </Scripts>
        
     </Button>
+    
+            
+    <Button name="GwProfileItem" virtual="true">
+        <size x="470" y="66"></size>
+        <Anchors>
+            <Anchor point="TOPLEFT" x="10" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture name="$parentHeader" parentKey="background"    file="Interface\AddOns\GW2_UI\textures\profiles\profile-item">
+                    <size x="480" y="66"></size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    </Anchors>
+                     <TexCoords left="0" right="1" top="0" bottom="0.5" />
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <Texture name="$parentHeader" parentKey="icon"    file="Interface\icons\inv_helmet_151">
+                    <size x="56" y="56"></size>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" ></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="3">
+                <Texture name="$parentHeader" parentKey="portraitframe" file="Interface\AddOns\GW2_UI\textures\profiles\portraitframe">
+                    <size x="64" y="64"></size>
+                    <Anchors>
+                        <Anchor point="LEFT" x="1" ></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentName" parentKey="name"     text="Name not yet loaded" justifyH="LEFT">
+                    <Size x="200" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-5"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentDesc" parentKey="desc" text="If you see this message. We forgot to load some text. Dont worry we have very capable sample text just like this one to fill you with the information." justifyV="TOP" justifyH="LEFT">
+                    <Size x="200" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-25"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-100" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.name:SetFont(UNIT_NAME_FONT,14)
+                self.name:SetTextColor(1,1,1) 
+                
+                self.desc:SetFont(UNIT_NAME_FONT,12)
+                self.desc:SetTextColor(125/255,125/255,125/255)
+                
+                                               
+            </OnLoad>
+            <OnEnter>
+                if self.deleteable~=nil and self.deleteable==true then
+                    self.deleteButton:Show()
+                end
+                if self.activateAble~=nil and self.activateAble==true then
+                    self.activateButton:Show()
+                end
+                self.background:SetBlendMode('ADD')
+            </OnEnter>
+            <OnLeave>
+                if self.deleteable~=nil and self.deleteable==true then
+                    self.deleteButton:Hide()
+                end 
+                
+                    self.activateButton:Hide()
+              
+                self.background:SetBlendMode('BLEND')
+            </OnLeave>
+        </Scripts>
+        <Frames>
+            <Button name="$parentDelete" hidden="true" parentKey="deleteButton">
+                <size x="56" y="20"></size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-10" y="5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture name="$parentHeader" parentKey="background"    file="Interface\AddOns\GW2_UI\textures\profiles\profile-item">
+                            <size x="56" y="20"></size>
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" x="0" ></Anchor>
+                                                            </Anchors>
+                            <Color r="1" g="0.5" b="0.5" a="1"></Color>
+                        </Texture>
+                        
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="string" text="Delete"  justifyH="CENTER" >
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0">    </Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0"   y="0"></Anchor>
+                            </Anchors>
+                        </FontString>    
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnEnter>
+                        if self:GetParent().deleteable~=nil and self:GetParent().deleteable==true   then
+                            self:GetParent().deleteButton:Show()
+                        end
+                         if self:GetParent().activateAble~=nil and self:GetParent().activateAble==true   then
+                            self:GetParent().activateButton:Show()
+                        end
+                    </OnEnter>
+                    <OnClick>
+                        gwWarningPromt('Are you sure you want to delete this profile?',function() 
+                            gw_Delete_Settings_Profile(self:GetParent().profileID)
+                            gw_Update_Profile_Window()
+                        end)
+                    </OnClick>
+                    <OnLoad>
+                        self.string:SetFont(UNIT_NAME_FONT,12)
+                        self.string:SetTextColor(255/255,255/255,255/255)
+                    </OnLoad>
+                </Scripts>
+            </Button> 
+            <Button name="$parentActivateButton" hidden="true" inherits="GwStandardButton" text="Activate" parentKey="activateButton">
+                <Size x="70" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="35"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnEnter>
+                        if self:GetParent().activateAble~=nil and self:GetParent().activateAble==true   then
+                            self:GetParent().activateButton:Show()
+                        end
+                        if self:GetParent().deleteable~=nil and self:GetParent().deleteable==true   then
+                            self:GetParent().deleteButton:Show()
+                        end
+                    </OnEnter>
+                    <OnClick>
+                        gw_Set_Active_Profile(self:GetParent().profileID)                  gw_Update_Profile_Window()
+                        self:Hide()
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+    </Button>
+    
+    <Frame name="GwWarningPromt" hidden="true" frameStrata="DIALOG"  enableMouse="true" topLevel="true" virtual="true">
+        <Size x="350" y="150"></Size>
+        <Anchors>
+            <Anchor point="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                    <Size x="350" y="150"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.2" right="0.8" top="0.2" bottom="0.8" />
+                    <Color r="0.8" b="0.8" g="0.8" a="0.9"></Color>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <FontString parentKey="string" text="Not yet loaded" justifyH="LEFT" justifyV="TOP">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="15" y="-15"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-15" y="15"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentAccept" inherits="GwStandardButton" text="Accept" parentKey="acceptButton">
+                <Size x="70" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-100" y="15"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        if self:GetParent().method~=nil then
+                            self:GetParent().method()
+                            
+                        end
+                        self:GetParent():Hide()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentcancel" inherits="GwStandardButton" text="Cancel" parentKey="cancelButton">
+                <Size x="70" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="15"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                
+                        self:GetParent():Hide()
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                self.string:SetFont(UNIT_NAME_FONT,14)
+                self.string:SetTextColor(1,1,1)
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    
 </Ui>
