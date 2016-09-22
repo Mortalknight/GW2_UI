@@ -110,17 +110,7 @@
                         </OnClick>
                     </Scripts>
                 </Button> 
-                <Button name="$parentReset"  inherits="GwStandardButton" text="Reset To Default">
-                   <Size x="130" y="24" />
-                    <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-140" y="-5"/></Anchors>
-
-                    <Scripts>
-                        <OnClick>
-                            gwResetToDefault()
-                            ReloadUI();
-                        </OnClick>
-                    </Scripts>
-                </Button>  
+              
                 <Button name="$parentSave"  inherits="GwStandardButton" text="Save and Reload">
                      <Size x="130" y="24" />
                     <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="-5"/></Anchors>
@@ -313,7 +303,7 @@
                                         <Anchor point="TOPLEFT" x="10" y="-10"></Anchor>
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentSub" text="Profile is a easy way to share settings cross character and realm. You can simply pick a predefined profile or create your own."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString name="$parentSub" text="Profile is a easy way to share settings cross character and realm."  inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
                                     <Size x="512" y="25"></Size>
                                     <Color r="0.6" b="0.6" g="0.6"></Color>
                                     <Anchors>
@@ -404,7 +394,11 @@
                                         <OnMouseWheel>
                                             delta = -delta * 10
                                             local s = math.max(0,self:GetVerticalScroll() + delta)
-              
+                                            
+                                            if self.maxScroll~=nil then
+                                                s = math.min(self.maxScroll,s)
+                                            end
+                                            
                                             self:SetVerticalScroll(s)
                                             self:GetParent().slider:SetValue(s)
                                         </OnMouseWheel>
@@ -656,6 +650,7 @@
         <Size x="128" y="24" />
                             
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\questviewbutton"></NormalTexture>
+        <DisabledTexture file="Interface\AddOns\GW2_UI\textures\questviewbutton_disable"></DisabledTexture>
 
       
         <NormalFont style="gw_button_font_black"></NormalFont>
@@ -676,6 +671,7 @@
         
         <Scripts>
             <OnEnter>
+                
                 gw_button_enter(self)
             </OnEnter>
             <OnLeave>
@@ -847,18 +843,69 @@
                     </Anchors>
                     <TexCoords left="0.2" right="0.8" top="0.2" bottom="0.8" />
                     <Color r="0.8" b="0.8" g="0.8" a="0.9"></Color>
-                </Texture>
+                </Texture> 
+              
             </Layer>
             <Layer textureSubLevel="2">
-                <FontString parentKey="string" text="Not yet loaded" justifyH="LEFT" justifyV="TOP">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\warning-icon">
+                    <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="15" y="-15"></Anchor>
+                    </Anchors>
+                    
+                </Texture>
+                <FontString parentKey="string" text="Not yet loaded" justifyH="LEFT" justifyV="TOP">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="70" y="-15"></Anchor>
                         <Anchor point="BOTTOMRIGHT" x="-15" y="15"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
         <Frames>
+            
+            <EditBox name="$parentInput" hidden="true" parentKey="input" autoFocus="false">
+                <Size x="110" y="20"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="15" y="-15"></Anchor>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-15" y="0"></Anchor>
+                </Anchors>
+                 <Layers>
+                     <Layer level="BACKGROUND">
+                         <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                             
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
+                                 <Anchor point="BOTTOMRIGHT" x="5" y="-3"></Anchor>
+                             </Anchors>
+                             <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                         </Texture>
+    
+                     </Layer>
+                </Layers>
+                <FontString inherits="ChatFontNormal" />
+                <Scripts>
+                    <OnEscapePressed>
+                        self:ClearFocus()
+                    </OnEscapePressed>
+                    <OnEditFocusGained>
+
+                    </OnEditFocusGained>
+                    <OnEditFocusLost>
+                     
+                    </OnEditFocusLost>
+                    <OnLoad>
+                        
+                    </OnLoad>
+                    <OnEnterPressed>
+                        if self:GetParent().method~=nil then
+                            self:GetParent().method()
+                        end
+                        self:GetParent():Hide()
+                    </OnEnterPressed>
+                </Scripts>
+            </EditBox>
+            
             <Button name="$parentAccept" inherits="GwStandardButton" text="Accept" parentKey="acceptButton">
                 <Size x="70" y="20" />
                 <Anchors>
@@ -868,7 +915,6 @@
                     <OnClick>
                         if self:GetParent().method~=nil then
                             self:GetParent().method()
-                            
                         end
                         self:GetParent():Hide()
                     </OnClick>
@@ -894,5 +940,23 @@
             </OnLoad>
         </Scripts>
     </Frame>
+    
+    <Button name="GwCreateNewProfile" inherits="GwStandardButton" virtual="true" text="New Profile" parentKey="createButton">
+        <Size x="70" y="20" />
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Scripts>
+            <OnLoad>
+                self:SetWidth(self:GetTextWidth() + 10)
+            </OnLoad>
+            <OnClick>
+                gwInputPromtPromt('New profile name',function() 
+                    gw_Add_Settings_Profile(GwWarningPromt.input:GetText())
+                    GwWarningPromt:Hide()
+                end)
+            </OnClick>
+                </Scripts>
+    </Button>
     
 </Ui>

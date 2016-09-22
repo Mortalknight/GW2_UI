@@ -27,7 +27,7 @@ function create_settings_window()
     CreateFrame('Frame','GwWarningPromt',UIParent,'GwWarningPromt')
     
     local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverFrame')
- local sWindow = CreateFrame('Frame','GwSettingsWindow',UIParent,'GwSettingsWindow')
+    local sWindow = CreateFrame('Frame','GwSettingsWindow',UIParent,'GwSettingsWindow')
     
     sWindow:SetScript('OnShow',function() mf:Show() end)
     sWindow:SetScript('OnHide',function() mf:Hide() end)
@@ -140,17 +140,14 @@ function create_settings_window()
             end    
     end,47,100)
     
-    create_settings_cat('Group','Edit group settings','GwSettingsProfilesframe',5)
-    
+    create_settings_cat('Profiles','Edit profiles','GwSettingsProfilesframe',5)
+    _G['GwSettingsLabel5'].iconbg:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga')
  
     
     switch_settings_cat(0)
     --   GwSettingsWindow:Hide()
-    gw_Update_Profile_Window()
-  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
-  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
-  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
-  gw_Add_Settings_Profile('name')gw_Add_Settings_Profile('name')
+   
+
      
     GwSettingsProfilesframe.slider:SetValue(0)
    
@@ -173,11 +170,13 @@ function create_settings_window()
         gwWarningPromt('Are you sure you want to load the default settings?\n\nAll previous settings will be lost.',function() 
         end)
     end)
-     resetTodefault.activateButton:SetText('Load')  
+    resetTodefault.activateButton:SetText('Load')  
     
-
+    CreateFrame('Button','GwCreateNewProfile',GwSettingsProfilesframe.scrollchild,'GwCreateNewProfile')
+    
+    GwCreateNewProfile:SetPoint('TOPLEFT',15,-80)
           
-    
+    gw_Update_Profile_Window()
 end
 
 
@@ -212,7 +211,7 @@ function gw_Update_Profile_Window()
                 f.activateAble = false
             end
 
-            local description = 'Created: '..v['profileCreatedDate']..'\nCreated by '..v['profileCreatedCharacter']..'\nLast updated '..v['profileLastUpdated']
+            local description = 'Created: '..v['profileCreatedDate']..'\nCreated by: '..v['profileCreatedCharacter']..'\nLast updated: '..v['profileLastUpdated']
 
             f.name:SetText(v['profilename'])
             f.desc:SetText(description)
@@ -222,10 +221,27 @@ function gw_Update_Profile_Window()
            f:Hide() 
         end
     end
+   
+    if h<6 then
+        GwCreateNewProfile:Enable() 
+    else
+        GwCreateNewProfile:Disable() 
+    end
     
-    GwSettingsProfilesframe.scrollFrame:SetScrollChild(GwSettingsProfilesframe.scrollchild)
+    local scrollM =  (120 + (70*h))
+    local scroll = 0
+    
+    if scrollM>440 then
+        scroll =  math.abs(440 - scrollM)
+        
+    end
+   
 
-    GwSettingsProfilesframe.slider:SetMinMaxValues(0, 70*h)
+    GwSettingsProfilesframe.scrollFrame:SetScrollChild(GwSettingsProfilesframe.scrollchild)
+    GwSettingsProfilesframe.scrollFrame.maxScroll = scroll
+
+    GwSettingsProfilesframe.slider.thumb:SetHeight(100)
+    GwSettingsProfilesframe.slider:SetMinMaxValues(0,scroll)
 end
 
 
@@ -311,6 +327,9 @@ function switch_settings_cat(index)
     end
     
     _G['GwSettingsLabel'..index].iconbg:Show()
+    
+
+    
     
     
     for k,v in pairs(settings_cat) do 
@@ -564,4 +583,14 @@ function gwWarningPromt(text,method)
     GwWarningPromt.string:SetText(text)
     GwWarningPromt.method = method
     GwWarningPromt:Show()
+    GwWarningPromt.input:Hide()
+end
+
+function gwInputPromtPromt(text,method)
+    
+    GwWarningPromt.string:SetText(text)
+    GwWarningPromt.method = method
+    GwWarningPromt:Show()
+    GwWarningPromt.input:Show()
+    GwWarningPromt.input:SetText('')
 end

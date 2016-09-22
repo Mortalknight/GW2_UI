@@ -1479,7 +1479,6 @@
         </Layers>
         <Scripts>
             <OnLoad>
-                print('load')
                 self.string:SetFont(UNIT_NAME_FONT,14)
                 self.string:SetTextColor(0,0,0,1)
             </OnLoad>
