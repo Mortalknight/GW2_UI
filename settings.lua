@@ -167,7 +167,8 @@ function create_settings_window()
     resetTodefault.desc:SetText('Load the default addon settings to your current profile')
     resetTodefault.activateButton:SetScript('OnClick', function()
             
-        gwWarningPromt('Are you sure you want to load the default settings?\n\nAll previous settings will be lost.',function() 
+        gwWarningPromt('Are you sure you want to load the default settings?\n\nAll previous settings will be lost.',function()
+            gwResetToDefault()
         end)
     end)
     resetTodefault.activateButton:SetText('Load')  
@@ -230,17 +231,18 @@ function gw_Update_Profile_Window()
     
     local scrollM =  (120 + (70*h))
     local scroll = 0
+    local thumbheight = 1
     
     if scrollM>440 then
         scroll =  math.abs(440 - scrollM)
-        
+        thumbheight = 100        
     end
    
 
     GwSettingsProfilesframe.scrollFrame:SetScrollChild(GwSettingsProfilesframe.scrollchild)
     GwSettingsProfilesframe.scrollFrame.maxScroll = scroll
 
-    GwSettingsProfilesframe.slider.thumb:SetHeight(100)
+    GwSettingsProfilesframe.slider.thumb:SetHeight(thumbheight)
     GwSettingsProfilesframe.slider:SetMinMaxValues(0,scroll)
 end
 
@@ -266,7 +268,7 @@ function gw_Add_Settings_Profile(name)
     GW2UI_SETTINGS_PROFILES[index]['profileCreatedCharacter'] = GetUnitName('player', true)
     GW2UI_SETTINGS_PROFILES[index]['profileLastUpdated'] = date("%m/%d/%y %H:%M:%S")
     
-    gwSetSetting('ACTIVE_PROFILE',index)
+    GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE'] = index
     gwSetProfileSettings()
     gw_Update_Profile_Window()
     

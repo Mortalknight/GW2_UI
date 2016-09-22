@@ -200,6 +200,7 @@ GW_DEFAULT['RAID_ONLY_DISPELL_DEBUFFS'] = false
 
 GW_DEFAULT['HUD_SCALE'] = 1
 GW_DEFAULT['MINIMAP_SCALE'] = 140
+GW_DEFAULT['CASTINGBAR_DATA'] = false
 
 
 GW_DEFAULT['ACTIVE_PROFILE'] = nil
@@ -280,6 +281,17 @@ function gwGetDefault(name)
     return GW_DEFAULT[name]
 end
 function gwResetToDefault()    
+    
+    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
+    
+    if profileIndex~=nil and GW2UI_SETTINGS_PROFILES[profileIndex]~=nil then
+        for k,v in pairs(GW_DEFAULT) do
+            GW2UI_SETTINGS_PROFILES[profileIndex][k] = v 
+        end
+        GW2UI_SETTINGS_PROFILES[profileIndex]['profileLastUpdated'] = date("%m/%d/%y %H:%M:%S")
+        return
+        
+    end
     GW2UI_SETTINGS_DB_03 = GW_DEFAULT
 end
 
