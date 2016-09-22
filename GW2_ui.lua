@@ -222,7 +222,7 @@ local lastSwimState = true
 
 function gwSetProfileSettings()
     
-    local profileIndex = gwGetSetting('ACTIVE_PROFILE')
+    local profileIndex = GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE']
     
     if profileIndex==nil then return end
     if GW2UI_SETTINGS_PROFILES[profileIndex]==nil then return end
