@@ -26,6 +26,8 @@ GW_PROFILE_ICONS_PRESET[6] = 'Interface\\icons\\spell_fire_elementaldevastation'
 function create_settings_window()
     CreateFrame('Frame','GwWarningPromt',UIParent,'GwWarningPromt')
     
+    tinsert(UISpecialFrames, "GwWarningPromt") 
+    
     local mf = CreateFrame('Frame','GwSettingsMoverFrame',UIParent,'GwSettingsMoverFrame')
     local sWindow = CreateFrame('Frame','GwSettingsWindow',UIParent,'GwSettingsWindow')
     
@@ -145,7 +147,7 @@ function create_settings_window()
  
     
     switch_settings_cat(0)
-    --   GwSettingsWindow:Hide()
+     GwSettingsWindow:Hide()
    
 
      
@@ -286,6 +288,7 @@ end
 function gw_Set_Active_Profile(index)
 
     GW2UI_SETTINGS_DB_03['ACTIVE_PROFILE'] = index
+    ReloadUI()
     
 end
 

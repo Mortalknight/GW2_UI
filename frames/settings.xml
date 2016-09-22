@@ -28,7 +28,7 @@
             <Anchor point="TOP" relativeTo="GwSettingsMoverFrame" relativePoint="TOP" x="20" y="-40"></Anchor>
         </Anchors>
         <Layers>
-                  <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND">
                 <Texture name="$parentBackground" parentKey="background"  file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
                     <Size x="512" y="512"></Size>
                     <Anchors>
@@ -68,6 +68,12 @@
                 
             </Layer>
             <Layer textureSubLevel="2">
+                <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                    <Size x="128" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
 
             </Layer>
             <Layer textureSubLevel="3">
@@ -303,7 +309,7 @@
                                         <Anchor point="TOPLEFT" x="10" y="-10"></Anchor>
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentSub" text="Profile is a easy way to share settings cross character and realm."  inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
+                                <FontString name="$parentSub" text="Profile is a easy way to share settings across character and realm."  inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
                                     <Size x="512" y="25"></Size>
                                     <Color r="0.6" b="0.6" g="0.6"></Color>
                                     <Anchors>
