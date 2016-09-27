@@ -353,7 +353,14 @@ function gw_check_senario()
 	local inProvingGrounds = bit.band(flags, SCENARIO_FLAG_PROVING_GROUNDS) == SCENARIO_FLAG_PROVING_GROUNDS;
 	local dungeonDisplay = bit.band(flags, SCENARIO_FLAG_USE_DUNGEON_DISPLAY) == SCENARIO_FLAG_USE_DUNGEON_DISPLAY;
 	local scenariocompleted = currentStage > numStages;
-    local questLogIndex = GetQuestLogIndexByID(questID);
+   
+    local questLogIndex = 0
+    
+    if questID==0 or questID==nil then
+        questLogIndex = 0
+    else
+        questLogIndex = GetQuestLogIndexByID(questID); 
+    end
         
     
     local i = countTable(GW_QUESTTRACKER_ACTIVE_QUEST_BLOCKS)+1
