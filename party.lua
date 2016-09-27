@@ -154,6 +154,7 @@ end
 function gw_partyframe_OnEvent(self,event,unit)
   
     if not UnitExists(self.unit) then return end
+    if IsInRaid() then return end
     if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
         local health = UnitHealth(self.unit)
         local healthMax = UnitHealthMax(self.unit)
@@ -173,7 +174,7 @@ function gw_partyframe_OnEvent(self,event,unit)
         end
         self.powerbar:SetValue(powerPrecentage)
     end
-    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event=='GROUP_ROSTER_UPDATE' then
+    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' then
             
         gw_update_partyFrameData(self)
     end
