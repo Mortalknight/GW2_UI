@@ -1057,9 +1057,9 @@ function gw_scenario_UpdateTimers(...)
 				local _, _, timeLimit = C_ChallengeMode.GetMapInfo(mapID);
 			--	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
                 GW_QUESTTRACKER_LOADED_SCENARIO_FRAME:SetScript('OnUpdate',function()
-                    local _, elapsedTime, type = GetWorldElapsedTime(timerID);
+                    local _, elapsedTime,  type = GetWorldElapsedTime(timerID);
                     GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:SetValue (1 - (elapsedTime/timeLimit))
-                    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timerString:SetText(GetTimeStringFromSeconds(duration - elapsedTime))
+                    GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timerString:SetText(GetTimeStringFromSeconds(timeLimit - elapsedTime))
                    
                 end)
                  GW_QUESTTRACKER_LOADED_SCENARIO_FRAME.timer:Show()
