@@ -1,5 +1,6 @@
 local GROUPD_TYPE = 'PARTY'
 local GW_READY_CHECK_INPROGRESS = false
+local GW_CURRENT_HIGHLIGHT_FRAME = nil
 
 
 function gw_raidframe_hideBlizzard()
@@ -261,7 +262,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         self.healthbar.absorbbar:SetValue(absorbPrecentage)
     end
     
-    if event=='UNIT_PHASE' or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
+    if (event=='UNIT_PHASE' and unit==self.unit) or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
        gw_update_raidframe_awayData(self)
     end 
     
@@ -304,22 +305,22 @@ end
 
 function gw_highlight_target_raidframe(self)
     
-    local  guid = UnitGUID('target')
+    if GW_CURRENT_HIGHLIGHT_FRAME~=nil then
+        GW_CURRENT_HIGHLIGHT_FRAME.targetHighlight:SetVertexColor(0,0,0,1)
+    end
     
     if UnitIsUnit('target',_G['GwCompactplayer'].unit) then
         _G['GwCompactplayer'].targetHighlight:SetVertexColor(1,1,1,1)
-    else
-        _G['GwCompactplayer'].targetHighlight:SetVertexColor(0,0,0,1)
-    end 
+        GW_CURRENT_HIGHLIGHT_FRAME = _G['GwCompactplayer']
+    end
 
   
     for i=1,80 do 
         
         if i<5 then
            if UnitIsUnit('target',_G['GwCompactparty'..i].unit) then
-            _G['GwCompactparty'..i].targetHighlight:SetVertexColor(1,1,1,1)
-            else
-            _G['GwCompactparty'..i].targetHighlight:SetVertexColor(0,0,0,1)
+                _G['GwCompactparty'..i].targetHighlight:SetVertexColor(1,1,1,1)
+                GW_CURRENT_HIGHLIGHT_FRAME = _G['GwCompactparty'..i]
             end 
         end
         
