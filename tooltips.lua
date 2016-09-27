@@ -60,6 +60,9 @@ function gw_set_tooltips()
    GameTooltip:HookScript("OnTooltipSetSpell", function(self)
        move_tooltip_placemtn(self) 
     end)
+    GameTooltip:HookScript("OnTooltipSetDefaultAnchor", function(self)
+       move_tooltip_placemtn(self) 
+    end)
     for _, toStyle in ipairs(UNSTYLED) do
         if _G[toStyle] then
             
