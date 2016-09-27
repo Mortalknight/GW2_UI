@@ -356,6 +356,7 @@ function gw_update_bag_icons(forceSize)
                 local slotIconFlash = _G['ContainerFrame'..BAG_INDEX..'Item'..i..'.flash']
                 local slotNormalTexture = _G['ContainerFrame'..BAG_INDEX..'Item'..i..'NormalTexture']
                 local slotQuesttexture= _G['ContainerFrame'..BAG_INDEX..'Item'..i..'IconQuestTexture']
+                local slotCount= _G['ContainerFrame'..BAG_INDEX..'Item'..i..'Count']
 
                 if slot and slot:IsShown() then
                     
@@ -364,7 +365,7 @@ function gw_update_bag_icons(forceSize)
                       backdrop =  gw_create_bag_item_background('ContainerFrame'..BAG_INDEX..'Item'..i)
                     end
                     backdrop:SetParent(_G['ContainerFrame'..BAG_INDEX])
-                        backdrop:SetFrameLevel(1)
+                    backdrop:SetFrameLevel(1)
                     
                     backdrop:SetPoint('TOPLEFT',GwBagFrame,'TOPLEFT',x,-y)
                     backdrop:SetPoint('TOPRIGHT',GwBagFrame,'TOPLEFT',x+BAG_ITEM_SIZE,-y)
@@ -380,6 +381,12 @@ function gw_update_bag_icons(forceSize)
                     slot:SetPoint('BOTTOMLEFT',GwBagFrame,'TOPLEFT',x,-y-BAG_ITEM_SIZE)
                     slot:SetPoint('BOTTOMRIGHT',GwBagFrame,'TOPLEFT',x+BAG_ITEM_SIZE,-y-BAG_ITEM_SIZE)
                     
+                    if slotCount then
+                        slotCount:ClearAllPoints()
+                        slotCount:SetPoint('TOPRIGHT',slotCount:GetParent(),'TOPRIGHT',0,-3) 
+                        slotCount:SetFont(UNIT_NAME_FONT,12,'THINOUTLINED') 
+                        slotCount:SetJustifyH('RIGHT')
+                    end
 
                  
 
