@@ -212,12 +212,14 @@ function GW_POWERTYPE_STAGGER()
         GwStaggerBar.bar:SetWidth(math.max(1,316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
          GwStaggerBar.spark:ClearAllPoints()
          GwStaggerBar.spark:SetPoint('RIGHT',GwStaggerBar.bar,'RIGHT',0,0)
-           local sparkwidth = 12
+        local sparkwidth = 12
+        local sparkOpacity = 0
         if (316*animations['STAGGER_CLASS_POWER_FILL']['progress'])<12 then
-            sparkwidth = math.max(1,12/ (316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
+            sparkwidth = math.max(0,1/ (316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
         end
 
          GwStaggerBar.spark:SetWidth(sparkwidth)
+         GwStaggerBar.spark:SetAlpha(sparkOpacity)
     end)
 
        GwStaggerBar.value = staggarPrec
