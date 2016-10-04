@@ -611,6 +611,8 @@ function GW_SET_BARTYPE()
    end
     
     if PLAYER_CLASS==5 then
+         GwPlayerClassPowerBackground:SetTexture(nil)
+         GwPlayerClassPowerFill:SetTexture(nil)
         return 
     end
     if PLAYER_CLASS==6 then
@@ -620,6 +622,8 @@ function GW_SET_BARTYPE()
         return
    end
     if PLAYER_CLASS==7 then
+         GwPlayerClassPowerBackground:SetTexture(nil)
+         GwPlayerClassPowerFill:SetTexture(nil)
         return 
     end  
     if PLAYER_CLASS==8 then

@@ -79,6 +79,8 @@ function create_power_bar()
     local playerPowerBar = CreateFrame('Frame', 'GwPlayerPowerBar',UIParent, 'GwPlayerPowerBar');
     
     
+    playerPowerBar:SetScript('OnUpdate',gw_powerbar_updateRegen)
+    
     playerPowerBar:SetScript('OnEvent',function(self,event,unit)
             if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit=='player' then
                 update_power_data(GwPlayerPowerBar) 
@@ -98,6 +100,72 @@ function create_power_bar()
     
     update_power_data(GwPlayerPowerBar)
 
+end
+
+
+function gw_powerbar_updateRegen(self)
+    
+    
+    if self.lostKnownPower==nil or self.powerMax==nil or self.lastUpdate==nil or self.animating==true then return end
+    if self.lostKnownPower>=self.powerMax then return end
+    if self.textUpdate==nil then self.textUpdate = 0 end
+    if self.powerType==nil or self.powerType==1 or self.powerType==6 then return end
+    
+   local decayRate = 1
+   local inactiveRegen, activeRegen = GetPowerRegen()
+    
+    local regen = inactiveRegen
+    
+    if InCombatLockdown() then
+        regen = activeRegen
+    end
+    
+    local addPower = regen * ((GetTime() - self.lastUpdate)/decayRate)
+    
+    local power = self.lostKnownPower + addPower
+    local powerMax = self.powerMax
+    local powerPrec = 0
+    local powerBarWidth = _G[self:GetName()..'Bar']:GetWidth()
+    
+     if power>0 and powerMax>0 then
+         powerPrec = power/powerMax
+    end
+    
+    
+    local snap = (powerPrec*100)/5
+
+                local round_closest = 0.05 * snap
+  
+                local spark_min =  math.floor(snap)
+                local spark_max =  math.ceil(snap) 
+                local spark_current = snap
+
+                local spark_prec = spark_current - spark_min
+                
+                            
+                local spark = math.min( powerBarWidth - 15,math.floor(powerBarWidth*round_closest) - math.floor(15*spark_prec))
+                local bI = 17 - math.max(1,intRound(16 * spark_prec))
+
+                   _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,
+                        bloodSpark[bI].right,
+                        bloodSpark[bI].top,
+                        bloodSpark[bI].bottom)
+             
+           
+
+
+           
+            _G[self:GetName()..'Bar']:SetValue(round_closest)
+            _G[self:GetName()..'Candy']:SetValue( 0 )
+            _G[self:GetName()..'CandySpark']:ClearAllPoints()
+            _G[self:GetName()..'CandySpark']:SetPoint('LEFT',spark,0)
+            if self.textUpdate<GetTime() then
+                _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*powerPrec))
+                self.textUpdate = GetTime() + 0.2
+            end
+            
+    powerBarAnimations[self:GetName()] = powerPrec;
+    
 end
 
 function create_player_hud()
@@ -199,11 +267,21 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
         forceAnimationName = 'powerBarAnimation'
     
     end
+    
+    self.animating = true 
+    
     local animation_duration = 0.2
     local power = UnitPower('Player',forcePowerType)
     local powerMax = UnitPowerMax('Player',forcePowerType)
     local powerPrec = 0
     local powerBarWidth = _G[self:GetName()..'Bar']:GetWidth()
+    
+    
+    self.powerType =forcePowerType
+    self.lostKnownPower =power
+    self.powerMax =powerMax
+    self.lastUpdate =GetTime()
+    
     
      if power>0 and powerMax>0 then
          powerPrec = power/powerMax
@@ -220,11 +298,11 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
        
  
     
-    addToAnimation(forceAnimationName,powerBarAnimations[forceAnimationName],powerPrec,GetTime(),animation_duration,function()
+    addToAnimation(self:GetName(),powerBarAnimations[self:GetName()],powerPrec,GetTime(),animation_duration,function()
             
                 
     
-                local snap = (animations[forceAnimationName]['progress']*100)/5
+                local snap = (animations[self:GetName()]['progress']*100)/5
 
                 local round_closest = 0.05 * snap
   
@@ -251,11 +329,13 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
             _G[self:GetName()..'Candy']:SetValue( 0 )
             _G[self:GetName()..'CandySpark']:ClearAllPoints()
             _G[self:GetName()..'CandySpark']:SetPoint('LEFT',spark,0)
-            _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*animations[forceAnimationName]['progress']))
+            _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*animations[self:GetName()]['progress']))
             
             
+        end,nil,function() 
+            self.animating = false
         end)            
-        powerBarAnimations[forceAnimationName] = powerPrec;
+        powerBarAnimations[self:GetName()] = powerPrec;
     
     
     
