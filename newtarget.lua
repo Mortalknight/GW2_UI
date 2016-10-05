@@ -98,6 +98,9 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
     _G[thisName.."CastingBar"]:SetFrameLevel(5)
     
     
+    _G[thisName.."HealthBarSpark"]:ClearAllPoints()
+    
+    
     if _G[thisName.."Portrait"]~=nil then
         _G[thisName.."Portrait"]:SetMask("Textures\\MinimapMask")
     end
@@ -588,42 +591,40 @@ function updateCastingbar(thisName,unitToWatch)
     local dif = math.abs(unitFrameAnimations[unitToWatch..'healthAnimation'] - healthPrecentage) 
     if dif==0 then return end
     
-    local speed = 2.00 * dif
+    local speed = math.max(0.2,1.00 * dif)
     if noAnimation~=nil then speed = 0 end
     addToAnimation(unitToWatch..'healthAnimation',unitFrameAnimations[unitToWatch..'healthAnimation'],healthPrecentage,GetTime(),speed,function()
           
-                
-                local  round_closest = 0.05 * math.floor((animations[unitToWatch..'healthAnimation']['progress']*100)/5) 
-                local spark_min =  math.floor((animations[unitToWatch..'healthAnimation']['progress']*100)/5)
-                local spark_max =  math.ceil((animations[unitToWatch..'healthAnimation']['progress']*100)/5) 
-                local spark_current = (animations[unitToWatch..'healthAnimation']['progress']*100)/5
-                local spark_prec = spark_current - spark_min
-               
-                local spark = math.min(_G[thisName.."HealthBar"]:GetWidth()-15,(_G[thisName.."HealthBar"]:GetWidth()*round_closest))
-                    bloodSparkIndex[unitToWatch] = 17 - math.max(1,math.ceil(16 * spark_prec))
-                    local bI = bloodSparkIndex[unitToWatch]
-                    _G[thisName.."HealthBarSpark"]:SetTexCoord(bloodSpark[bI].left,
-                        bloodSpark[bI].right,
-                        bloodSpark[bI].top,
-                        bloodSpark[bI].bottom)
-                 _G[thisName.."HealthBarSpark"]:ClearAllPoints()
-                _G[thisName.."HealthBarSpark"]:SetPoint('LEFT',math.floor(spark),0)
-    
-            healthValueText =''
-            if gwGetSetting(unitToWatch..'_HEALTH_VALUE_ENABLED') then
-                healthValueText = comma_value(health)
-                if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
-                    healthValueText = healthValueText..' - '
-                end
-            end
+            
+    local powerPrec = animations[unitToWatch..'healthAnimation']['progress']
+    local powerBarWidth = _G[thisName.."HealthBar"]:GetWidth()
+    local bit = powerBarWidth/12        
+    local spark = bit * math.floor(12 * (powerPrec))
+    local spark_current = (bit * (12 * (powerPrec)) - spark) / bit 
+    local round_closest = (spark/powerBarWidth)
+            
+            
+    local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
+         
+    _G[thisName.."HealthBarSpark"]:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[thisName.."HealthBarSpark"]:SetPoint('LEFT',_G[thisName].bar,'RIGHT',0,0)
+    _G[thisName].bar:SetPoint('RIGHT',_G[thisName.."HealthBar"],'LEFT',spark,0)
+            
+            
+        healthValueText =''
+        if gwGetSetting(unitToWatch..'_HEALTH_VALUE_ENABLED') then
+            healthValueText = comma_value(health)
             if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
-                local precentag_show = healthPrecentage*100
-                healthValueText = healthValueText..comma_value(precentag_show)..'%'
+                healthValueText = healthValueText..' - '
+            end
         end
+        if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
+            local precentag_show = healthPrecentage*100
+            healthValueText = healthValueText..comma_value(precentag_show)..'%'
+    end
     _G[thisName.."HealthBarHealthBarString"]:SetText(healthValueText)
         
             
-            _G[thisName.."HealthBar"]:SetValue(round_closest)
+            _G[thisName.."HealthBar"]:SetValue(0)
             local candy = lerp(animations[unitToWatch..'healthAnimation']['from'],animations[unitToWatch..'healthAnimation']['to'],(GetTime() - animations[unitToWatch..'healthAnimation']['start'])/animations[unitToWatch..'healthAnimation']['duration'])
             _G[thisName.."HealthBarCandy"]:SetValue(0)
             
@@ -738,6 +739,7 @@ function updateCastingbar(thisName,unitToWatch)
         if _G[thisName.."HealthBarSpark"] then
             _G[thisName.."HealthBarSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
             _G[thisName.."HealthBar"]:SetStatusBarColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
+            _G[thisName].bar:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
         end
         
     else
@@ -745,6 +747,7 @@ function updateCastingbar(thisName,unitToWatch)
          if _G[thisName.."HealthBarSpark"] then
             _G[thisName.."HealthBarSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
             _G[thisName.."HealthBar"]:SetStatusBarColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
+            _G[thisName].bar:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
         end
     end
     

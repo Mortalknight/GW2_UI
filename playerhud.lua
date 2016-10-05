@@ -1,15 +1,6 @@
-powerBarAnimations = {}
-powerBarAnimations['powerBarAnimation'] =1
-powerBarAnimations['GwExtraPowerBar'] =1
-
-
-healthGlobeAnimation = 1;
-powerBarAnimation = 1;
-petBarAnimation = 1;
-
 local LastPlayerPowerType = 0
 
-function create_pet_frame()
+function gw_create_pet_frame()
     
     local playerPetFrame = CreateFrame('Button', 'GwPlayerPetFrame',UIParent, 'GwPlayerPetFrame');
 --    playerPetFrame:SetPoint('BOTTOMLEFT',_G['PetActionBarFrame'],'BOTTOMLEFT',0,0)
@@ -31,10 +22,10 @@ function create_pet_frame()
     _G['GwPlayerPetFrameHealthString']:SetFont(UNIT_NAME_FONT,11)
     
     playerPetFrame:SetScript('OnEvent',function(self, event ,unit)
-        update_pet_data(event,unit)    
+        gw_update_pet_data(event,unit)    
     end)
     playerPetFrame:HookScript('OnShow',function()
-         update_pet_data('UNIT_PET','player')
+         gw_update_pet_data('UNIT_PET','player')
     end)
     
     playerPetFrame:RegisterEvent('UNIT_PET')
@@ -42,7 +33,7 @@ function create_pet_frame()
     playerPetFrame:RegisterEvent('UNIT_HEALTH_MAX')
     
     --_G['GwPlayerPetFramePortrait']
-    update_pet_data('UNIT_PET','player')
+    gw_update_pet_data('UNIT_PET','player')
    
     GwPlayerPetFrame:ClearAllPoints()
     GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos')['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
@@ -74,20 +65,22 @@ function create_pet_frame()
     
 end
 
-function create_power_bar()
+function gw_create_power_bar()
 
     local playerPowerBar = CreateFrame('Frame', 'GwPlayerPowerBar',UIParent, 'GwPlayerPowerBar');
     
     
     playerPowerBar:SetScript('OnUpdate',gw_powerbar_updateRegen)
     
+    _G[playerPowerBar:GetName()..'CandySpark']:ClearAllPoints()
+    
     playerPowerBar:SetScript('OnEvent',function(self,event,unit)
             if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit=='player' then
-                update_power_data(GwPlayerPowerBar) 
+                gw_update_power_data(GwPlayerPowerBar) 
                 return
             end 
             if event=='UPDATE_SHAPESHIFT_FORM' then
-                update_power_data(GwPlayerPowerBar) 
+                gw_update_power_data(GwPlayerPowerBar) 
             end
     end)
     
@@ -98,7 +91,7 @@ function create_power_bar()
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM");
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD");
     
-    update_power_data(GwPlayerPowerBar)
+    gw_update_power_data(GwPlayerPowerBar)
 
 end
 
@@ -109,7 +102,7 @@ function gw_powerbar_updateRegen(self)
     if self.lostKnownPower==nil or self.powerMax==nil or self.lastUpdate==nil or self.animating==true then return end
     if self.lostKnownPower>=self.powerMax then return end
     if self.textUpdate==nil then self.textUpdate = 0 end
-    if self.powerType==nil or self.powerType==1 or self.powerType==6 then return end
+    if self.powerType==nil or self.powerType==1 or self.powerType==6 or self.powerType==13 or self.powerType==8 then return end
     
    local decayRate = 1
    local inactiveRegen, activeRegen = GetPowerRegen()
@@ -119,7 +112,7 @@ function gw_powerbar_updateRegen(self)
     if InCombatLockdown() then
         regen = activeRegen
     end
-    
+ 
     local addPower = regen * ((GetTime() - self.lastUpdate)/decayRate)
     
     local power = self.lostKnownPower + addPower
@@ -132,50 +125,41 @@ function gw_powerbar_updateRegen(self)
     end
     
     
-    local snap = (powerPrec*100)/5
-
-                local round_closest = 0.05 * snap
-  
-                local spark_min =  math.floor(snap)
-                local spark_max =  math.ceil(snap) 
-                local spark_current = snap
-
-                local spark_prec = spark_current - spark_min
-                
-                            
-                local spark = math.min( powerBarWidth - 15,math.floor(powerBarWidth*round_closest) - math.floor(15*spark_prec))
-                local bI = 17 - math.max(1,intRound(16 * spark_prec))
-
-                   _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,
-                        bloodSpark[bI].right,
-                        bloodSpark[bI].top,
-                        bloodSpark[bI].bottom)
-             
-           
-
-
-           
-            _G[self:GetName()..'Bar']:SetValue(round_closest)
-            _G[self:GetName()..'Candy']:SetValue( 0 )
-            _G[self:GetName()..'CandySpark']:ClearAllPoints()
-            _G[self:GetName()..'CandySpark']:SetPoint('LEFT',spark,0)
-            if self.textUpdate<GetTime() then
-                _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*powerPrec))
-                self.textUpdate = GetTime() + 0.2
-            end
+   
+    
+    local bit = powerBarWidth/15        
+    local spark = bit * math.floor(15 * (powerPrec))
+    
+    local spark_current = (bit * (15 * (powerPrec)) - spark) / bit 
+    local round_closest = (spark/powerBarWidth)
             
-    powerBarAnimations[self:GetName()] = powerPrec;
+            
+    local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
+         
+    _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[self:GetName()..'CandySpark']:SetPoint('LEFT',_G[self:GetName()].bar,'RIGHT',0,0)
+    _G[self:GetName()].bar:SetPoint('RIGHT',self,'LEFT',spark,0)
+    _G[self:GetName()..'Bar']:SetValue(0)
+    _G[self:GetName()..'Candy']:SetValue( 0 )
+        
+   
+
+    if self.textUpdate<GetTime() then
+        _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*powerPrec))
+        self.textUpdate = GetTime() + 0.2
+    end
+            
+    self.animationCurrent = powerPrec;
     
 end
 
-function create_player_hud()
+function gw_create_player_hud()
     
     PlayerFrame:SetScript("OnEvent", nil);
     PlayerFrame:Hide();
 
 
     local playerHealthGLobaBg = CreateFrame('Button', 'GwPlayerHealthGlobe',UIParent, 'GwPlayerHealthGlobe');
-
+    GwPlayerHealthGlobe.animationCurrent = 0
     
 
     playerHealthGLobaBg:EnableMouse(true)
@@ -216,7 +200,7 @@ function create_player_hud()
     
     playerHealthGLobaBg:SetScript('OnEvent',function(self,event,unit)
             if unit=='player' then
-                update_health_data() 
+                gw_update_health_data() 
             end
     end)
 
@@ -225,11 +209,11 @@ function create_player_hud()
     playerHealthGLobaBg:RegisterEvent("PLAYER_ENTERING_WORLD");
     playerHealthGLobaBg:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     
-    update_health_data()
+    gw_update_health_data()
     
 end
 
-function update_pet_data(event, unit)
+function gw_update_pet_data(event, unit)
     
     if UnitExists('pet')==false then
         return
@@ -246,11 +230,11 @@ function update_pet_data(event, unit)
    
        SetPortraitTexture(_G['GwPlayerPetFramePortrait'],'pet')
     
-    
-        addToAnimation('petBarAnimation',petBarAnimation,healthprec,GetTime(),0.2,function()
+        if GwPlayerPetFrameHealth.animationCurrent==nil then GwPlayerPetFrameHealth.animationCurrent = 0 end
+        addToAnimation('petBarAnimation',GwPlayerPetFrameHealth.animationCurrent,healthprec,GetTime(),0.2,function()
                 _G['GwPlayerPetFrameHealth']:SetValue(animations['petBarAnimation']['progress'])
         end)
-        petBarAnimation = healthprec
+        GwPlayerPetFrameHealth.animationCurrent = healthprec
         _G['GwPlayerPetFrameHealthString']:SetText(comma_value(health))
   
    
@@ -260,7 +244,7 @@ function update_pet_data(event, unit)
     
 end
 
-function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
+function gw_update_power_data(self,forcePowerType,powerToken,forceAnimationName)
     
     if forcePowerType==nil then
         forcePowerType, powerToken, altR, altG, altB = UnitPowerType("player")
@@ -293,49 +277,41 @@ function update_power_data(self,forcePowerType,powerToken,forceAnimationName)
         _G[self:GetName()..'Bar']:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         _G[self:GetName()..'CandySpark']:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
         _G[self:GetName()..'Candy']:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        _G[self:GetName()].bar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
      
        
  
+    if self.animationCurrent==nil then self.animationCurren=0 end
     
-    addToAnimation(self:GetName(),powerBarAnimations[self:GetName()],powerPrec,GetTime(),animation_duration,function()
+
+
+    addToAnimation(self:GetName(),self.animationCurrent,powerPrec,GetTime(),0.2,function()
             
                 
+        local powerPrec = animations[self:GetName()]['progress']
+        local bit = powerBarWidth/15        
+        local spark = bit * math.floor(15 * (powerPrec))
     
-                local snap = (animations[self:GetName()]['progress']*100)/5
-
-                local round_closest = 0.05 * snap
-  
-                local spark_min =  math.floor(snap)
-                local spark_max =  math.ceil(snap) 
-                local spark_current = snap
-
-                local spark_prec = spark_current - spark_min
-                
-                            
-                local spark = math.min( powerBarWidth - 15,math.floor(powerBarWidth*round_closest) - math.floor(15*spark_prec))
-                local bI = 17 - math.max(1,intRound(16 * spark_prec))
-
-                   _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,
-                        bloodSpark[bI].right,
-                        bloodSpark[bI].top,
-                        bloodSpark[bI].bottom)
-             
-           
-
-
-           
-            _G[self:GetName()..'Bar']:SetValue(round_closest)
-            _G[self:GetName()..'Candy']:SetValue( 0 )
-            _G[self:GetName()..'CandySpark']:ClearAllPoints()
-            _G[self:GetName()..'CandySpark']:SetPoint('LEFT',spark,0)
-            _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*animations[self:GetName()]['progress']))
+        local spark_current = (bit * (15 * (powerPrec)) - spark) / bit 
+        local round_closest = (spark/powerBarWidth)
             
             
-        end,nil,function() 
+        local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
+        
+        _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[self:GetName()..'CandySpark']:SetPoint('LEFT',_G[self:GetName()].bar,'RIGHT',0,0)
+        _G[self:GetName()].bar:SetPoint('RIGHT',self,'LEFT',spark,0)
+        _G[self:GetName()..'Bar']:SetValue(0)
+        _G[self:GetName()..'Candy']:SetValue( 0 )
+        
+        _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*animations[self:GetName()]['progress']))
+            
+           self.animationCurrent = powerPrec;
+        end,'noease',function() 
             self.animating = false
+           
         end)            
-        powerBarAnimations[self:GetName()] = powerPrec;
+      
     
     
     
@@ -384,7 +360,7 @@ function gw_healthGlobe_FlashComplete()
     end)
 end
 
-function update_health_data()   
+function gw_update_health_data()   
     
     local health = UnitHealth('Player')
     local healthMax = UnitHealthMax('Player')
@@ -411,12 +387,12 @@ function update_health_data()
     end
     
     GwPlayerHealthGlobe.stringUpdateTime = 0
-     addToAnimation('healthGlobeAnimation',healthGlobeAnimation,healthPrec,GetTime(),0.2,function()
+    addToAnimation('healthGlobeAnimation',GwPlayerHealthGlobe.animationCurrent,healthPrec,GetTime(),0.2,function()
            
             local healthPrecCandy = math.min(1, animations['healthGlobeAnimation']['progress'] + 0.02)
            
             if GwPlayerHealthGlobe.stringUpdateTime<GetTime() then
-            update_health_text(healthMax*animations['healthGlobeAnimation']['progress'])
+            gw_update_health_text(healthMax*animations['healthGlobeAnimation']['progress'])
                 GwPlayerHealthGlobe.stringUpdateTime= GetTime() + 0.05
             end
             _G['GwPlayerHealthGlobeCandy']:SetHeight(healthPrecCandy*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
@@ -425,9 +401,9 @@ function update_health_data()
             _G['GwPlayerHealthGlobeHealth']:SetHeight(animations['healthGlobeAnimation']['progress']*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
             _G['GwPlayerHealthGlobeHealthBar']:SetTexCoord(0,1,  math.abs(animations['healthGlobeAnimation']['progress'] - 1),1) 
         end,nil,function() 
-             update_health_text(health)
+             gw_update_health_text(health)
         end)            
-        healthGlobeAnimation = healthPrec;
+        GwPlayerHealthGlobe.animationCurrent = healthPrec;
 
     
     _G['GwPlayerHealthGlobeAbsorb']:SetHeight(absorbPrec*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
@@ -435,7 +411,7 @@ function update_health_data()
     
 end
 
-function update_health_text(text)
+function gw_update_health_text(text)
     
     local v = comma_value(text)
     _G['GwPlayerHealthGlobeTextValue']:SetText(v)

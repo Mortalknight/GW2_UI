@@ -623,7 +623,7 @@ function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCal
    
 end
 
-l = CreateFrame("Frame",nil,UIParent)
+local l = CreateFrame("Frame",nil,UIParent)
 
 l:SetScript('OnUpdate',function() 
         
@@ -758,11 +758,11 @@ l:SetScript('OnEvent',function(self,event,name)
         end
             --Create player hud
         if gwGetSetting('HEALTHGLOBE_ENABLED') then    
-            create_player_hud()
+            gw_create_player_hud()
         end
         
         if gwGetSetting('POWERBAR_ENABLED') then
-            create_power_bar()
+            gw_create_power_bar()
         end
         
         if gwGetSetting('CLASS_POWER') then
@@ -799,7 +799,7 @@ l:SetScript('OnEvent',function(self,event,name)
         
         
         if gwGetSetting('ACTIONBARS_ENABLED') then
-            create_pet_frame()
+            gw_create_pet_frame()
             gw_setupActionbars()
           --  gw_set_actionbars()
         end  

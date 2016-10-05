@@ -31,6 +31,8 @@ function create_classpowers()
     local classPowerFrame = CreateFrame('Frame','GwPlayerClassPower',UIParent,'GwPlayerClassPower')
     GwPlayerClassPower:SetScript('OnEvent',function(self,event) GW_UPDATE_CLASSPOWER(self,event) end)
     
+    
+    
     GwPlayerClassPower:RegisterEvent("UNIT_POWER");
     GwPlayerClassPower:RegisterEvent("UNIT_MAX_POWER");
     GwPlayerClassPower:RegisterEvent("RUNE_POWER_UPDATE");
@@ -308,7 +310,7 @@ function GW_POWERTYPE_MANABAR()
     if extra_manabar_loaded then return end
     extra_manabar_loaded = true
     local GwExtraPlayerPowerBar = CreateFrame('Frame', 'GwExtraPlayerPowerBar',UIParent, 'GwPlayerPowerBar');
-    
+    _G[GwExtraPlayerPowerBar:GetName()..'CandySpark']:ClearAllPoints()
     
    GwExtraPlayerPowerBar:SetParent(GwPlayerClassPower)
    GwExtraPlayerPowerBar:ClearAllPoints()
@@ -317,7 +319,7 @@ function GW_POWERTYPE_MANABAR()
     
     GwExtraPlayerPowerBar:SetScript('OnEvent',function(self,event,unit)
             if unit=='player' then
-                update_power_data(GwExtraPlayerPowerBar,0,'MANA','GwExtraPowerBar')
+                gw_update_power_data(GwExtraPlayerPowerBar,0,'MANA','GwExtraPowerBar')
             end
     end)
     
@@ -327,7 +329,7 @@ function GW_POWERTYPE_MANABAR()
     GwExtraPlayerPowerBar:RegisterEvent("UNIT_MAX_POWER");
     GwExtraPlayerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD");
     
-    update_power_data(GwExtraPlayerPowerBar,0,'MANA','GwExtraPowerBar')
+    gw_update_power_data(GwExtraPlayerPowerBar,0,'MANA','GwExtraPowerBar')
 end
 
 function GW_POWERTYPE_ARCANE()

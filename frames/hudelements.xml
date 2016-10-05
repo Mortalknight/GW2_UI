@@ -173,6 +173,16 @@
                  
                     <Size x="318" y="20"></Size>
                 </Texture>
+         
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
+                <Size x="314" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="2" y="0"/>
+                    <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
+                </Anchors>
+                </Texture>
             </Layer>
         </Layers>
         <Frames>
@@ -189,8 +199,9 @@
                          <Anchors>
                              <Anchor point="RIGHT" x="0" y="0"/>
                          </Anchors>
-                         <Size x="17" y="16"></Size>
-                    </Texture>
+                         <Size x="21" y="16"></Size>
+                    </Texture> 
+               
                     </Layer>
                  </Layers>
             </StatusBar> 
