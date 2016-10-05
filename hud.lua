@@ -519,8 +519,8 @@ function update_experiencebar_data(self,event)
             
     end
     
-    
-    if (valPrec - experiencebarAnimation)>0.15 then
+    local FlareBreakPoint = 0.15 * (1 - (UnitLevel('Player')/GetMaxPlayerLevel()))
+    if (valPrec - experiencebarAnimation)>FlareBreakPoint then
         
         expFlare:Show()
         addToAnimation('expFlare',0,1,GetTime(),1,function()
