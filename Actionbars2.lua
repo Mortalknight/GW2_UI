@@ -416,6 +416,16 @@ function gw_updateCustomizableBars(barName,buttonName)
             else
                 self:Hide()
             end
+        end)   
+            hooksecurefunc(_G[buttonName..i..'Cooldown']:GetParent(), 'SetAlpha', function(self)
+            local b = _G[buttonName..i..'Cooldown']
+            local alpha = self:GetEffectiveAlpha()
+            if alpha > 0.001 then
+                b:SetSwipeColor(0,0,0,alpha)
+                b:Show()
+            else
+                b:Hide()
+            end
         end)
             
         end        
