@@ -621,7 +621,7 @@ function gw_display_questtracker_layout()
                 gw_toggle_quest_hidden(v['questID']) gw_questtracker_OnEvent() 
         end )
         
-        if ( IsQuestComplete(v['questID']) and GetQuestLogIsAutoComplete(v['questLogIndex']) ) then
+        if v['GW_TYPE']=='QUEST' and (IsQuestComplete(v['questID']) and GetQuestLogIsAutoComplete(v['questLogIndex']) ) then
                 _G[QUEST_CONTAINER_FRAME:GetName()..'ClickToTurnIn']:Show()
                 _G[QUEST_CONTAINER_FRAME:GetName()..'ClickToTurnIn']:SetScript('OnClick',function() ShowQuestComplete(v['questLogIndex']) end)
         else
