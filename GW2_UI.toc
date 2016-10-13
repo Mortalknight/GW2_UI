@@ -20,6 +20,8 @@ frames/questtracker.xml
 frames/party.xml
 frames/raidframes.xml
 
+frames/unitframes.xml
+
 
 GW2_ui.lua
 fonts.lua
@@ -59,3 +61,5 @@ bank.lua
 
 party.lua
 raidframes.lua
+
+unitframes.lua

@@ -49,6 +49,7 @@ GW_DEFAULT['RAID_STYLE_PARTY'] = false
     
 GW_DEFAULT['target_HEALTH_VALUE_ENABLED'] = false
 GW_DEFAULT['target_HEALTH_VALUE_TYPE'] = false
+GW_DEFAULT['target_CLASS_COLOR'] = true
         
 GW_DEFAULT['FADE_BOTTOM_ACTIONBAR'] = true
 GW_DEFAULT['HIDE_CHATSHADOW'] = false
@@ -72,6 +73,10 @@ GW_DEFAULT['focus_DEBUFFS_FILTER'] = true
 GW_DEFAULT['focus_BUFFS'] = true
 GW_DEFAULT['focus_BUFFS_FILTER'] = true
 GW_DEFAULT['focus_BUFFS_FILTER_ALL'] = false
+
+GW_DEFAULT['focus_HEALTH_VALUE_ENABLED'] = false
+GW_DEFAULT['focus_HEALTH_VALUE_TYPE'] = false
+GW_DEFAULT['focus_CLASS_COLOR'] = true
                     
 GW_DEFAULT['target_x_position'] = -100
 GW_DEFAULT['target_y_position'] = -100
@@ -456,6 +461,17 @@ function intRound(v)
     if (v-vf)>0.5 then return vf+1 end
     return vf
 end
+function dif(a,b)
+    
+    if a==nil then a = 0 end
+    if b==nil then b = 0 end
+    
+    if a > b then
+        return a-b
+    else
+        return b-a 
+    end
+end
 function  lerp( v0,  v1,  t) 
     if v0==nil then 
         v0=0
@@ -640,7 +656,7 @@ l:SetScript('OnUpdate',function()
                     v['progress'] = lerp(v['from'],v['to'],1)
                 end
                 if  v['method']~=nil then
-                    v['method']()
+                    v['method'](v['progress'])
                 end
                 
                 if v['onCompleteCallback']~=nil then
@@ -657,7 +673,7 @@ l:SetScript('OnUpdate',function()
                 else
                     v['progress'] = lerp(v['from'],v['to'],(GetTime() - v['start'])/v['duration'])
                 end
-            v['method']()
+            v['method'](v['progress'])
                 foundAnimation = true
             end
         end
@@ -779,15 +795,17 @@ l:SetScript('OnEvent',function(self,event,name)
         
             --Create unitframes
         if gwGetSetting('FOCUS_ENABLED') then
-            gw_registerNewUnitFrame('focus','GwTargetFrameTemplate')
+            gw_unitframes_register_Focus()
             if gwGetSetting('focus_TARGET_ENABLED') then
                 gw_registerNewUnitFrame('focustarget','GwTargetFrameSmallTemplate')  
             end
         end
         if gwGetSetting('TARGET_ENABLED') then
-            gw_registerNewUnitFrame('target','GwTargetFrameTemplate')
+             gw_unitframes_register_Target()
             if gwGetSetting('target_TARGET_ENABLED') then
-                gw_registerNewUnitFrame('targettarget','GwTargetFrameSmallTemplate')
+               gw_unitframes_register_Targetstarget()
+                
+              
             end
         end
         
