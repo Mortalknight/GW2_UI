@@ -113,6 +113,11 @@ GW_TARGET_FRAME_ART = {
     ['worldboss'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowElit',
     ['rare'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare',
     ['rareelite'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare',
+    
+    ['prestige1'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p1',
+    ['prestige2'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p2',
+    ['prestige3'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p3',
+    ['prestige4'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p4',
 }
 GW_LEVELING_REWARD_AVALIBLE = false
 GW_LEVELING_REWARDS = {}
@@ -437,7 +442,7 @@ function update_experiencebar_data(self,event)
         showBar1 = true
     end
     
-    local dif = 5
+    local animationSpeed = 15
     
     gw_reputation_vals = nil
     ReputationWatchBar:Hide()
@@ -474,7 +479,7 @@ function update_experiencebar_data(self,event)
        
         _G['GwExperienceFrameArtifactBarCandy']:SetValue(artifactVal)
       
-        addToAnimation('artifactBarAnimation',_G['GwExperienceFrameArtifactBar'].artifactBarAnimation,artifactVal,GetTime(),dif,function()
+        addToAnimation('artifactBarAnimation',_G['GwExperienceFrameArtifactBar'].artifactBarAnimation,artifactVal,GetTime(),animationSpeed,function()
             
                 ArtifactBarSpark:SetWidth(math.max(8,math.min(9, _G['GwExperienceFrameArtifactBar']:GetWidth()*animations['artifactBarAnimation']['progress']) ))
             
@@ -518,38 +523,70 @@ function update_experiencebar_data(self,event)
         _G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
             
     end
+
+ --  experiencebarAnimation = 0.01
+ --   valPrec = 0.8
     
-    local FlareBreakPoint = 0.15 * (1 - (UnitLevel('Player')/GetMaxPlayerLevel()))
-    if (valPrec - experiencebarAnimation)>FlareBreakPoint then
+    local GainBigExp = false
+    local FlareBreakPoint = math.max(0.05,0.15 * (1 - (UnitLevel('Player')/GetMaxPlayerLevel())))
+    if (valPrec - experiencebarAnimation)>FlareBreakPoint   then
         
-        expFlare:Show()
-        addToAnimation('expFlare',0,1,GetTime(),1,function()
-             expFlare.texture:SetAlpha(1)
-            local prog = animations['expFlare']['progress']
-            expFlare.texture:SetRotation(lerp(0,3,prog))
-            if prog>0.75 then
-                 expFlare.texture:SetAlpha(lerp(1,0,math.sin(((prog - 0.75)/0.25) * math.pi * 0.5) ))
-            end
-                
-        end,nil,function() expFlare:Hide() end)
+        
+        GainBigExp = true
+        
+        gw_expFlare_animation()
+        
+      
     end
 
     if experiencebarAnimation>valPrec then
        experiencebarAnimation = 0 
     end
-    addToAnimation('experiencebarAnimation',experiencebarAnimation,valPrec,GetTime(),dif,function()
+    
+    expFlare.soundCooldown = 0
+    local expSoundCooldown = 0
+    local startTime = GetTime()
+    
+    animationSpeed = dif(experiencebarAnimation, valPrec)
+    animationSpeed = math.min(15, math.max(5, 10 * animationSpeed))
+
+    
+    addToAnimation('experiencebarAnimation',experiencebarAnimation,valPrec,GetTime(),animationSpeed,function(step)
             
             ExperienceBarSpark:SetWidth(math.max(8,math.min(9, _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress']) ))
             
+            if not GainBigExp then
             _G['GwExperienceFrameBar']:SetValue(animations['experiencebarAnimation']['progress'])
+                ExperienceBarSpark:SetPoint('LEFT', _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'] -8,0)
+            
+                local flarePoint = ((UIParent:GetWidth()-180) * animations['experiencebarAnimation']['progress']) + 90
+                expFlare:SetPoint('CENTER',GwExperienceFrame,'LEFT',flarePoint,0);
+                
+            end
            
             _G['GwExperienceFrameBarRested']:SetValue(rested)
             _G['GwExperienceFrameBarRested']:SetPoint('LEFT',_G['GwExperienceFrameBar'],'LEFT',_G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'],0 )
       
-            ExperienceBarSpark:SetPoint('LEFT', _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'] -8,0)
+           
             
-              local flarePoint = ((UIParent:GetWidth()-180) * animations['experiencebarAnimation']['progress']) + 90
-            expFlare:SetPoint('CENTER',GwExperienceFrame,'LEFT',flarePoint,0);
+                
+        if  GainBigExp and expFlare.soundCooldown<GetTime() then
+                
+                expSoundCooldown = math.max(0.1,lerp(0.1,2,math.sin( (GetTime() - startTime)/animationSpeed) * math.pi * 0.5))
+                
+                 _G['GwExperienceFrameBar']:SetValue(animations['experiencebarAnimation']['progress'])
+                ExperienceBarSpark:SetPoint('LEFT', _G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'] -8,0)
+            
+                local flarePoint = ((UIParent:GetWidth()-180) * animations['experiencebarAnimation']['progress']) + 90
+                expFlare:SetPoint('CENTER',GwExperienceFrame,'LEFT',flarePoint,0);
+                
+                
+                expFlare.soundCooldown = GetTime() + expSoundCooldown
+                PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg",'SFX') 
+                
+                animations['experiencebarAnimation']['from'] = step
+             
+        end
            
            
     end)
@@ -614,6 +651,24 @@ function update_experiencebar_data(self,event)
     
     
 end
+
+
+  function gw_expFlare_animation()
+        expFlare:Show()
+        
+        addToAnimation('expFlare',0,1,GetTime(),1,function(prog)
+             expFlare.texture:SetAlpha(1)
+            
+            expFlare.texture:SetRotation(lerp(0,3,prog))
+            if prog>0.75 then
+                 expFlare.texture:SetAlpha(lerp(1,0,math.sin(((prog - 0.75)/0.25) * math.pi * 0.5) ))
+            end
+                
+                
+        end,nil,function() expFlare:Hide() end)
+    
+end
+
 
 function update_experiencebar_size()
     local m = (UIParent:GetWidth()-180)  / 10
