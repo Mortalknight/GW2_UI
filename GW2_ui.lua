@@ -1,4 +1,4 @@
-GW_VERSION_STRING = 'GW2_UI v3.6.1'
+GW_VERSION_STRING = 'GW2_UI v3.7.0'
 
 
 GW2UI_SETTINGS = {}
@@ -797,7 +797,8 @@ l:SetScript('OnEvent',function(self,event,name)
         if gwGetSetting('FOCUS_ENABLED') then
             gw_unitframes_register_Focus()
             if gwGetSetting('focus_TARGET_ENABLED') then
-                gw_registerNewUnitFrame('focustarget','GwTargetFrameSmallTemplate')  
+         
+                gw_unitframes_register_Focusstarget()
             end
         end
         if gwGetSetting('TARGET_ENABLED') then

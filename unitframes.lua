@@ -307,13 +307,13 @@ local function setAbsorbValue(self,absorb,absorbPrecentage,healthPrecentage,heal
     local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     
     self.absorbbarbg:SetWidth(math.min( self.barWidth,math.max(1,self.barWidth*absorbAmount)))
-    
     self.absorbbar:SetWidth(math.min( self.barWidth,math.max(1,self.barWidth*absorbAmount2)))
     
     self.absorbbarbg:SetTexCoord(0,math.min(1,1*absorbAmount),0,1)
     self.absorbbar:SetTexCoord(0,math.min(1,1*absorbAmount),0,1)
     
     
+    self.absorbbarbg:SetAlpha( math.max(0,math.min(1,(1*(absorbPrecentage/0.1)) )) )
     self.absorbbar:SetAlpha( math.max(0,math.min(1,(1*(absorbPrecentage/0.1)) )) )
 end
 
@@ -779,6 +779,71 @@ function gw_unitframes_register_Targetstarget()
     NewUnitFrame:SetAttribute("*type1", 'target')
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
     NewUnitFrame:SetAttribute("unit", 'targettarget')
+    RegisterUnitWatch(NewUnitFrame);
+    NewUnitFrame:EnableMouse(true)
+    NewUnitFrame:RegisterForClicks("AnyDown")
+    
+    GwaddTOClique(NewUnitFrame)
+
+    NewUnitFrame.showHealthValue=false
+    NewUnitFrame.showHealthPrecentage=false
+    
+    NewUnitFrame.classColor = gwGetSetting('target_CLASS_COLOR')
+    NewUnitFrame.debuffFilter = nil
+    
+    NewUnitFrame:SetScript('OnEvent',targettarget_OnEvent)
+        
+    NewUnitFrame:RegisterEvent("UNIT_TARGET");
+    NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED");
+    NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED");
+
+    NewUnitFrame:RegisterEvent("ZONE_CHANGED");
+
+    NewUnitFrame:RegisterEvent("UNIT_HEALTH");
+    NewUnitFrame:RegisterEvent("UNIT_MAX_HEALTH");
+    NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
+    NewUnitFrame:RegisterEvent("UNIT_TARGET");
+    NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE");
+
+
+   
+
+
+    NewUnitFrame:RegisterEvent("UNIT_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_MAX_POWER");
+    
+    NewUnitFrame:RegisterEvent("UNIT_AURA");
+    
+    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START");
+    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START");
+    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_UPDATE");
+
+    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP");
+    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP");
+    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");
+    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_FAILED");
+    
+    
+   
+end
+
+function gw_unitframes_register_Focusstarget()
+    
+    
+    local NewUnitFrame = CreateFrame('Button','GwTargetsTargetUnitFrame',UIParent,'GwNormalUnitFrameSmall')
+    NewUnitFrame.unit='focustarget'
+    
+    gw_register_movable_frame('focustargetframe',NewUnitFrame,'focustarget_pos','GwTargetFrameTemplateDummy')
+    
+    NewUnitFrame:ClearAllPoints()
+    NewUnitFrame:SetPoint(gwGetSetting('focustarget_pos')['point'],UIParent,gwGetSetting('focustarget_pos')['relativePoint'],gwGetSetting('focustarget_pos')['xOfs'],gwGetSetting('focustarget_pos')['yOfs'])
+    
+    NewUnitFrame:SetAttribute("unit", 'focustarget');
+  
+
+    NewUnitFrame:SetAttribute("*type1", 'target')
+    NewUnitFrame:SetAttribute("*type2", "togglemenu")
+    NewUnitFrame:SetAttribute("unit", 'focustarget')
     RegisterUnitWatch(NewUnitFrame);
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
