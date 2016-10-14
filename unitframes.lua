@@ -301,6 +301,22 @@ local function updatePowerValues(self,event)
     
 end
 
+local function setAbsorbValue(self,absorb,absorbPrecentage,healthPrecentage,health,healthMax)
+    
+    local absorbAmount = healthPrecentage + absorbPrecentage 
+    local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+    
+    self.absorbbarbg:SetWidth(math.min( self.barWidth,math.max(1,self.barWidth*absorbAmount)))
+    
+    self.absorbbar:SetWidth(math.min( self.barWidth,math.max(1,self.barWidth*absorbAmount2)))
+    
+    self.absorbbarbg:SetTexCoord(0,math.min(1,1*absorbAmount),0,1)
+    self.absorbbar:SetTexCoord(0,math.min(1,1*absorbAmount),0,1)
+    
+    
+    self.absorbbar:SetAlpha( math.max(0,math.min(1,(1*(absorbPrecentage/0.1)) )) )
+end
+
 
 local function updateHealthValues(self,event)
     
@@ -327,10 +343,8 @@ local function updateHealthValues(self,event)
     if event=='UNIT_TARGET_CHANGED' or event=='FOCUS_TARGET_CHANGED' or event=='PLAYER_TARGET_CHANGED' then
         animationSpeed = 0
     end
-    
-    self.absorbbar:SetWidth(math.min( self.barWidth,math.max(1,self.barWidth*absorbPrecentage)))
-    self.absorbbar:SetAlpha( math.max(0,math.min(1,(1*(absorbPrecentage/0.1)) )) )
 
+    setAbsorbValue(self,absorb,absorbPrecentage,healthPrecentage,health,healthMax)
     addToAnimation(self:GetName()..self.unit,self.healthValue,healthPrecentage,GetTime(),animationSpeed,function(step)
 
          healthBarAnimation(self,step)

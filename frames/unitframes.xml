@@ -56,6 +56,13 @@
                     </Anchors>
                      
                 </Texture>
+                <Texture parentKey="absorbbarbg" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
+                    <Size x="253" y="15"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
+                    </Anchors>
+                   
+                </Texture>
 
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="4">
@@ -113,11 +120,12 @@
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
                 
-                <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar">
+                <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
                     <Size x="253" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
+                
                 </Texture>
                  <Texture parentKey="healthbarSpark"  file="Interface\AddOns\GW2_UI\textures\bloodspark" >
                     <Size x="21" y="15"></Size>
@@ -217,6 +225,7 @@
             <OnLeave>
                 GameTooltip:Hide()
             </OnLeave>
+    
         </Scripts>
     </Button>
     
@@ -264,6 +273,12 @@
                     </Anchors>
                      
                 </Texture>
+                 <Texture parentKey="absorbbarbg" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
+                    <Size x="146" y="15"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
 
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="4">
@@ -309,7 +324,7 @@
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
                 
-                <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar">
+                <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
                     <Size x="146" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
