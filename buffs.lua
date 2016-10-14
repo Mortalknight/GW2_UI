@@ -90,11 +90,16 @@ end
 
 function gwSortAuras(a,b)
     
-    if (a['caster']=='player' and b['caster']~=a['caster'])  then
-        return true
+    if a['caster']==nil then a['caster']='' end
+    if b['caster']==nil then b['caster']='' end
+    
+    if a['caster']==b['caster'] then     
+        return a['timeremaning'] < b['timeremaning']
     end
-        
-    return a['timeremaning']<b['timeremaning']
+    
+    return (b['caster']~='player' and a['caster']=='player')
+    
+
         
 end
 
