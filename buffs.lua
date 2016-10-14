@@ -150,7 +150,7 @@ function gw_set_buffData(self,buffs,i,oldBuffs)
         else
             gw_set_auraType(self,'smallbuff') 
         end
-        
+
         if b['stacks']~=nil and b['stacks']>1 then
            stacks = b['stacks'] 
         end

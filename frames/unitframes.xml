@@ -402,7 +402,7 @@
         </Scripts>
     </Button>
     
-    <Frame name="GwAuraFrame" virtual="true">
+    <Frame name="GwAuraFrame" hidden="true" virtual="true">
         <Size x="32" y="32"></Size>
         <Anchors>
             <Anchor point="CENTER" relativePoint="TOPLEFT"></Anchor>
@@ -453,7 +453,7 @@
                              <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                         </Texture>
                     </Layer>
-                    <Layer level="OVERLAY" textureSubLevel="7">
+                    <Layer level="OVERLAY" textureSubLevel="1">
                         <Texture  file="Interface\AddOns\GW2_UI\textures\icon-overlay" >
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -461,7 +461,7 @@
                             </Anchors>
                         </Texture>
                     </Layer>
-                    <Layer level="OVERLAY" textureSubLevel="8">
+                    <Layer level="OVERLAY" textureSubLevel="2">
                         <FontString parentKey="stacks" text="20" justifyH="CENTER" justifyV="BOTTOM">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="-10" y="0"/>
@@ -516,7 +516,7 @@
                     if self.auraType == 'buff' then
                         GameTooltip:SetUnitBuff(self.unit,self.auraid)
                     else
-                        GameTooltip:SetUnitDebuff(self.unit,self.auraid)
+                        GameTooltip:SetUnitDebuff(self.unit,self.auraid,self.debuffFilter)
                     end
                     GameTooltip:Show()
                 end

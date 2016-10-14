@@ -353,7 +353,17 @@ end
 
 local function updateBuffLayout(self,event)
     
-   -- if not self.displayAuras then return end
+
+    
+    local minIndex = 1
+    local maxIndex = 80
+    
+    if self.displayBuffs~=true then
+        minIndex = 40
+    end
+    if self.displayDebuffs~=true then
+        maxIndex = 40
+    end
     
     local marginX = 3
     local marginY = 20
@@ -378,7 +388,7 @@ local function updateBuffLayout(self,event)
     saveAuras['buff'] = {}
     saveAuras['debuff'] = {}
   
-    for frameIndex=1,80 do
+    for frameIndex=minIndex,maxIndex do
         
         local index = frameIndex
         local list = auraList
@@ -605,13 +615,24 @@ function gw_unitframes_register_Target()
     NewUnitFrame:RegisterForClicks("AnyDown")
     
     GwaddTOClique(NewUnitFrame)
+    
+       NewUnitFrame.classColor = gwGetSetting('target_CLASS_COLOR')
 
     NewUnitFrame.showHealthValue=gwGetSetting('target_HEALTH_VALUE_ENABLED')
     NewUnitFrame.showHealthPrecentage=gwGetSetting('target_HEALTH_VALUE_TYPE')
     
-    NewUnitFrame.classColor = gwGetSetting('target_CLASS_COLOR')
     
-    NewUnitFrame.debuffFilter = nil
+    NewUnitFrame.displayBuffs=gwGetSetting('target_BUFFS')
+    NewUnitFrame.displayDebuffs=gwGetSetting('target_DEBUFFS')
+    
+    
+    NewUnitFrame.debuffFilter = 'player'
+    
+    if gwGetSetting('target_BUFFS_FILTER_ALL')==true then
+        NewUnitFrame.debuffFilter = nil
+    end
+    
+    
     
     NewUnitFrame:SetScript('OnEvent',target_OnEvent)
         
@@ -679,7 +700,14 @@ function gw_unitframes_register_Focus()
     NewUnitFrame.showHealthPrecentage=gwGetSetting('focus_HEALTH_VALUE_TYPE')
     
     NewUnitFrame.classColor = gwGetSetting('focus_CLASS_COLOR')
-    NewUnitFrame.debuffFilter = nil
+    
+      NewUnitFrame.displayBuffs=gwGetSetting('focus_BUFFS')
+    NewUnitFrame.displayDebuffs=gwGetSetting('focus_DEBUFFS')
+    
+    NewUnitFrame.debuffFilter = 'player'
+    if gwGetSetting('focus_BUFFS_FILTER_ALL')==true then
+        NewUnitFrame.debuffFilter = nil
+    end
     
     NewUnitFrame:SetScript('OnEvent',focus_OnEvent)
         

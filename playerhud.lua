@@ -121,7 +121,7 @@ function gw_powerbar_updateRegen(self)
     local powerBarWidth = _G[self:GetName()..'Bar']:GetWidth()
     
      if power>0 and powerMax>0 then
-         powerPrec = power/powerMax
+         powerPrec = math.min(1,power/powerMax)
     end
     
     
