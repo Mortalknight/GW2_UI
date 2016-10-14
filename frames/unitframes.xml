@@ -428,7 +428,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Cooldown frameStrata="LOW" parentKey="cooldown" inherits="ActionButtonTemplate">
+            <Cooldown  parentKey="cooldown" inherits="ActionButtonTemplate">
                 <SwipeTexture>
                     <Color r="1" g="1" b="1" a="1"/>
                 </SwipeTexture>
@@ -438,13 +438,13 @@
                     <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
                 </Anchors>
             </Cooldown>
-            <Frame frameStrata="HIGH">
+            <Frame>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
                 </Anchors>
                 <Layers> 
-                    <Layer level="ARTWORK">
+                    <Layer level="OVERLAY">
                         <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -453,7 +453,7 @@
                              <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                         </Texture>
                     </Layer>
-                    <Layer level="ARTWORK" textureSubLevel="2">
+                    <Layer level="OVERLAY" textureSubLevel="7">
                         <Texture  file="Interface\AddOns\GW2_UI\textures\icon-overlay" >
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -461,7 +461,7 @@
                             </Anchors>
                         </Texture>
                     </Layer>
-                    <Layer level="OVERLAY">
+                    <Layer level="OVERLAY" textureSubLevel="8">
                         <FontString parentKey="stacks" text="20" justifyH="CENTER" justifyV="BOTTOM">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="-10" y="0"/>

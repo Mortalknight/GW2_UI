@@ -1,13 +1,322 @@
 local buffLists = {}
 local DebuffLists = {}
 
+
+
+
+
+
+
+function gw_set_auraType(self,typeAura)
+    
+    if self.typeAura==typeAura then return end
+    
+    if typeAura=='smallbuff'then
+        
+        self.icon:SetPoint('TOPLEFT',self,'TOPLEFT',1,-1)
+        self.icon:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',-1,1)
+        self.duration:SetFont(UNIT_NAME_FONT,11)
+                
+    end
+    
+    if typeAura=='bigBuff' then 
+        self.icon:SetPoint('TOPLEFT',self,'TOPLEFT',3,-3)
+        self.icon:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',-3,3)
+        self.duration:SetFont(UNIT_NAME_FONT,14)
+    end
+
+    self.typeAura = typeAura
+end
+
+
+function gw_get_buffs(unit,filter)
+    
+    local auraList = {}
+    local player = {}
+    for i=1,40 do
+        
+        if UnitBuff(unit,i,filter)~=nil  then 
+            auraList[i] = {}
+            auraList[i]['id'] = i 
+            
+            auraList[i]['name'],auraList[i]['rank'],auraList[i]['icon'],auraList[i]['count'],auraList[i]['dispelType'],auraList[i]['duration'],auraList[i]['expires'],auraList[i]['caster'],auraList[i]['isStealable'],auraList[i]['shouldConsolidate'],auraList[i]['spellID']  =  UnitBuff(unit,i,filter)  
+            
+            auraList[i]['timeremaning'] = auraList[i]['expires'] - GetTime()
+            
+            if auraList[i]['duration']<=0 then
+                  auraList[i]['timeremaning'] = 500001
+            end    
+        end
+    end
+    
+
+    
+    
+    return gw_sort_aura_table(auraList)
+    
+    
+end
+
+function gw_get_debuffs(unit,filter)
+    
+    local auraList = {}
+   
+    for i=1,40 do
+        
+        if UnitDebuff(unit,i,filter)~=nil  then 
+            auraList[i] = {}
+            auraList[i]['id'] = i 
+            
+            auraList[i]['name'],auraList[i]['rank'],auraList[i]['icon'],auraList[i]['count'],auraList[i]['dispelType'],auraList[i]['duration'],auraList[i]['expires'],auraList[i]['caster'],auraList[i]['isStealable'],auraList[i]['shouldConsolidate'],auraList[i]['spellID']  =  UnitDebuff(unit,i,filter)  
+            
+            auraList[i]['timeremaning'] = auraList[i]['expires'] - GetTime()
+            
+            if auraList[i]['duration']<=0 then
+                  auraList[i]['timeremaning'] = 500001
+            end    
+        end
+    end
+   
+    return gw_sort_aura_table(auraList)
+   
+end
+
+function gw_sort_aura_table(auraList)
+
+    table.sort(auraList,function(a,b) return gwSortAuras(a,b) end)
+    
+    return auraList
+end
+
+function gwSortAuras(a,b)
+    
+    if (a['caster']=='player' and b['caster']~=a['caster'])  then
+        return true
+    end
+        
+    return a['timeremaning']<b['timeremaning']
+        
+end
+
+function gw_aura_animate_in(self)
+    
+    local endWidth = self:GetWidth()
+    
+    addToAnimation(self:GetName(),endWidth*2,endWidth,GetTime(),0.2,function(step) 
+        self:SetSize(step,step)
+    end)
+end
+
+function gw_aura_animate_out(self)
+    self.animating = true
+    
+    addToAnimation(self:GetName(),0,1,GetTime(),2,function(step) 
+    
+    local alpha = 1
+    
+            
+    if step<0.25 then
+        alpha = lerp(1,0.3,step/0.25)     
+    elseif step<0.5 and step>0.25 then
+        alpha = lerp(0.3,1,(step - 0.25)/0.25)            
+    elseif step<0.75 and step>0.5 then
+        alpha = lerp(1,0.3,(step - 0.5)/0.25)      
+    else
+        alpha = lerp(0.3,1,(step - 0.75)/0.25)                  
+    end
+                    
+    self:SetAlpha(alpha)
+                    
+    end,'noease',function() 
+        self.animating = false    
+    end)
+end
+
+
+function gw_set_buffData(self,buffs,i,oldBuffs)
+    
+   local b = buffs[i]
+ 
+    if b~=nil and b['name']~=nil then
+        
+        local stacks = ''
+        local duration = ''
+        
+        if  b['caster']=='player' and (b['duration']>0 and b['duration']<120)then
+            gw_set_auraType(self,'bigBuff') 
+
+            self.cooldown:SetCooldown(b['expires'] - b['duration'],b['duration'])
+           
+        else
+            gw_set_auraType(self,'smallbuff') 
+        end
+        
+        if b['stacks']~=nil and b['stacks']>1 then
+           stacks = b['stacks'] 
+        end
+        if b['timeremaning']~=nil and b['timeremaning']>0 and b['timeremaning']<500000 then
+           duration = timeCount(b['timeremaning'])
+        end
+        
+        if b['expires']<1 or b['timeremaning']>500000  then
+            self.expires = nil
+        else
+            self.expires = b['expires']
+        end
+        
+        if self.auraType=='debuff' then
+            
+            if b['dispelType']~=nil then
+                self.background:SetVertexColor( GW_DEBUFF_COLOR[b['dispelType']].r, GW_DEBUFF_COLOR[b['dispelType']].g, GW_DEBUFF_COLOR[b['dispelType']].b)
+            else          
+                self.background:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b); 
+            end     
+        else
+            
+            if b['isStealable'] then
+                self.background:SetVertexColor(1,1,1)
+            else
+                self.background:SetVertexColor(0,0,0)
+            end
+            
+        end
+        
+        
+        self.auraid = b['id']
+        self.duration:SetText(duration)
+        self.stacks:SetText(stacks)
+        self.icon:SetTexture(b['icon'])
+    
+        return true
+    end
+    
+    return false
+end
+
+
+
+local function updateBuffLayout(self,event)
+    
+   -- if not self.displayAuras then return end
+    
+    local marginX = 3
+    local marginY = 20
+    
+    
+    local usedWidth = 0
+    local usedHeight = 0
+    
+    local smallSize = 28
+    local bigSize = 32
+    local lineSize = smallSize
+    local maxSize = self:GetWidth()
+   
+    local auraList = {}
+    local debuffList = {}
+    
+    auraList = gw_get_buffs(self.unit)
+    debuffList = gw_get_debuffs(self.unit,self.debuffFilter)
+    
+    local saveAuras = {}
+    
+    saveAuras['buff'] = {}
+    saveAuras['debuff'] = {}
+  
+    for frameIndex=1,80 do
+        
+        local index =  41 - frameIndex
+        local list = auraList
+        local newAura = true
+        
+        if frameIndex>40 then index = 41 - (frameIndex  - 40)  end
+
+        
+        local frame = _G['GwPlayerbuffFrame'..index]
+        
+        if frameIndex>40 then
+            frame = _G['GwPlayerdebuffFrame'..index]
+            list = debuffList
+        end
+        
+        if frameIndex==41 then
+            usedWidth = 0
+            usedHeight = usedHeight + lineSize + marginY
+            lineSize = smallSize 
+        end
+        
+
+        
+        if gw_set_buffData(frame,list,index) then
+            
+            if not frame:IsShown() then frame:Show() end
+
+            local isBig = frame.typeAura=='bigBuff'
+
+            local size = smallSize
+            if isBig then
+                size = bigSize
+                lineSize = bigSize
+               
+                for k,v in pairs(self.saveAuras[frame.auraType]) do
+                    if v==list[index]['name'] then
+                       newAura = false
+                    end
+                end
+                self.animating =false
+                saveAuras[frame.auraType][ #saveAuras[frame.auraType]+1] = list[index]['name']
+            end
+
+            frame:SetPoint('CENTER', self,'BOTTOMRIGHT',-usedWidth - (size/2), usedHeight + (size/2) )
+ 
+            frame:SetSize(size,size)
+            if newAura  and isBig and event=='UNIT_AURA' then 
+                gw_aura_animate_in(frame)
+            end
+
+            usedWidth = usedWidth + size + marginX
+            if maxSize<usedWidth then
+                usedWidth = 0
+                usedHeight = usedHeight + lineSize + marginY
+                lineSize = smallSize
+            
+            end 
+        else
+            if frame:IsShown() then
+                frame:Hide()
+            end
+        end
+    end
+    
+    self.saveAuras = saveAuras
+    
+end
+
+local function loadAuras(self)
+    for i=1,40 do
+       local frame =  CreateFrame('Frame','GwPlayerbuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
+        frame.unit = 'player'
+        frame.auraType = 'buff'
+        frame = CreateFrame('Frame','GwPlayerdebuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
+        frame.unit = 'player'
+        frame.auraType = 'debuff'
+        
+    end
+    self.saveAuras = {}
+    self.saveAuras['buff'] ={}
+    self.saveAuras['debuff']={}
+      
+  
+end
 function gw_set_buffframe()
 BuffFrame:Hide()
 BuffFrame:SetScript('OnShow',function(self) self:Hide() end)
-
-
-local player_buff_frame = CreateFrame('Frame','GwPlayerAuraFrame',UIParent,'GwPlayerAuraFrame')
-    player_buff_frame:SetScript('OnEvent',function() gw_playerUpdateAuras() end)
+    local player_buff_frame = CreateFrame('Frame','GwPlayerAuraFrame',UIParent,'GwPlayerAuraFrame')
+    GwPlayerAuraFrame.auras = self
+    GwPlayerAuraFrame.unit = 'player'
+    player_buff_frame:SetScript('OnEvent', function(self,event,unit)
+            if unit~='player' then return end
+            updateBuffLayout(GwPlayerAuraFrame,event)
+        end)
     player_buff_frame:RegisterEvent('UNIT_AURA')
     
     
@@ -30,13 +339,18 @@ local player_buff_frame = CreateFrame('Frame','GwPlayerAuraFrame',UIParent,'GwPl
     
     gw_actionbar_state_add_callback(gw_updatePlayerBuffFrameLocation)
     gw_updatePlayerBuffFrameLocation()
-    update_buff_timers('GwPlayerBuff')
-      _G['GwPlayerAuraFrame']:SetScript('OnUpdate',function() 
-            update_player_buff_timers('GwPlayerBuffItemFrame')    
-    end)
     
-    gw_playerUpdateAuras()
+    
+    loadAuras(GwPlayerAuraFrame)
+    updateBuffLayout(GwPlayerAuraFrame,event)
+   
 end
+
+
+
+-- Re do below
+
+
 
 local player_update_buff_Timer_cooldown = 0
 function update_player_buff_timers(thisName)

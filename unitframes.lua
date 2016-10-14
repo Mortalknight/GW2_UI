@@ -349,210 +349,11 @@ local function updateHealthValues(self,event)
     
 end
 
-function gw_set_auraType(self,typeAura)
-    
-    if self.typeAura==typeAura then return end
-    
-    if typeAura=='smallbuff'then
-        
-        self.icon:SetPoint('TOPLEFT',self,'TOPLEFT',1,-1)
-        self.icon:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',-1,1)
-        self.duration:SetFont(UNIT_NAME_FONT,11)
-                
-    end
-    
-    if typeAura=='bigBuff' then 
-        self.icon:SetPoint('TOPLEFT',self,'TOPLEFT',3,-3)
-        self.icon:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',-3,3)
-        self.duration:SetFont(UNIT_NAME_FONT,14)
-    end
-
-    self.typeAura = typeAura
-end
-
-
-function gw_get_buffs(unit,filter)
-    
-    local auraList = {}
-    local player = {}
-    for i=1,40 do
-        
-        if UnitBuff(unit,i,filter)~=nil  then 
-            auraList[i] = {}
-            auraList[i]['id'] = i 
-            
-            auraList[i]['name'],auraList[i]['rank'],auraList[i]['icon'],auraList[i]['count'],auraList[i]['dispelType'],auraList[i]['duration'],auraList[i]['expires'],auraList[i]['caster'],auraList[i]['isStealable'],auraList[i]['shouldConsolidate'],auraList[i]['spellID']  =  UnitBuff(unit,i,filter)  
-            
-            auraList[i]['timeremaning'] = auraList[i]['expires'] - GetTime()
-            
-            if auraList[i]['duration']<=0 then
-                  auraList[i]['timeremaning'] = 500001
-            end    
-        end
-    end
-    
-
-    
-    
-    return gw_sort_aura_table(auraList)
-    
-    
-end
-
-function gw_get_debuffs(unit,filter)
-    
-    local auraList = {}
-   
-    for i=1,40 do
-        
-        if UnitDebuff(unit,i,filter)~=nil  then 
-            auraList[i] = {}
-            auraList[i]['id'] = i 
-            
-            auraList[i]['name'],auraList[i]['rank'],auraList[i]['icon'],auraList[i]['count'],auraList[i]['dispelType'],auraList[i]['duration'],auraList[i]['expires'],auraList[i]['caster'],auraList[i]['isStealable'],auraList[i]['shouldConsolidate'],auraList[i]['spellID']  =  UnitDebuff(unit,i,filter)  
-            
-            auraList[i]['timeremaning'] = auraList[i]['expires'] - GetTime()
-            
-            if auraList[i]['duration']<=0 then
-                  auraList[i]['timeremaning'] = 500001
-            end    
-        end
-    end
-   
-    return gw_sort_aura_table(auraList)
-   
-end
-
-function gw_sort_aura_table(auraList)
-    local player = {}
-    local i = 1
-    for k,v in pairs(auraList) do
-        if v['caster']=='player' then
-            player[i] = {}
-            player[i] = v
-
-            i = i + 1
-        end
-    end
-    
-    table.sort(player, function(a,b) return a['timeremaning'] < b['timeremaning'] end)
-    table.sort(auraList, function(a,b) return a['timeremaning'] < b['timeremaning'] end)
-
-    local returnList ={}
-    local i = 1
-    for k,v in pairs(player) do
-        returnList[i] = {}
-        returnList[i] = v
-        i = i +1
-    end
-    for k,v in pairs(auraList) do
-        if v['caster']~='player' then
-            returnList[i] = {}
-            returnList[i] = v
-            i = i +1
-        end
-    end
-    
-    
-    return returnList
-end
-
-function gw_aura_animate_in(self)
-    
-    local endWidth = self:GetWidth()
-    
-    addToAnimation(self:GetName(),endWidth*2,endWidth,GetTime(),0.2,function(step) 
-        self:SetSize(step,step)
-    end)
-end
-
-function gw_aura_animate_out(self)
-    self.animating = true
-    
-    addToAnimation(self:GetName(),0,1,GetTime(),2,function(step) 
-    
-    local alpha = 1
-    
-            
-    if step<0.25 then
-        alpha = lerp(1,0.3,step/0.25)     
-    elseif step<0.5 and step>0.25 then
-        alpha = lerp(0.3,1,(step - 0.25)/0.25)            
-    elseif step<0.75 and step>0.5 then
-        alpha = lerp(1,0.3,(step - 0.5)/0.25)      
-    else
-        alpha = lerp(0.3,1,(step - 0.75)/0.25)                  
-    end
-                    
-    self:SetAlpha(alpha)
-                    
-    end,'noease',function() 
-        self.animating = false    
-    end)
-end
-
-
-function gw_set_buffData(self,buffs,i,oldBuffs)
-    
-   local b = buffs[i]
- 
-    if b~=nil and b['name']~=nil then
-        
-        local stacks = ''
-        local duration = ''
-        
-        if  b['caster']=='player' and (b['duration']>0 and b['duration']<120)then
-            gw_set_auraType(self,'bigBuff') 
-            self.cooldown:SetCooldown(b['expires'] - b['duration'],b['duration'])
-           
-        else
-            gw_set_auraType(self,'smallbuff') 
-        end
-        
-        if b['stacks']~=nil and b['stacks']>1 then
-           stacks = b['stacks'] 
-        end
-        if b['timeremaning']~=nil and b['timeremaning']>0 and b['timeremaning']<500000 then
-           duration = timeCount(b['timeremaning'])
-        end
-        
-        if b['expires']<1 or b['timeremaning']>500000  then
-            self.expires = nil
-        else
-            self.expires = b['expires']
-        end
-        
-        if self.auraType=='debuff' then
-            
-            if b['dispelType']~=nil then
-                self.background:SetVertexColor( GW_DEBUFF_COLOR[b['dispelType']].r, GW_DEBUFF_COLOR[b['dispelType']].g, GW_DEBUFF_COLOR[b['dispelType']].b)
-            else          
-                self.background:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b); 
-            end     
-        else
-            
-            if b['isStealable'] then
-                self.background:SetVertexColor(1,1,1)
-            else
-                self.background:SetVertexColor(0,0,0)
-            end
-            
-        end
-        
-        
-        self.auraid = b['id']
-        self.duration:SetText(duration)
-        self.stacks:SetText(stacks)
-        self.icon:SetTexture(b['icon'])
-    
-        return true
-    end
-    
-    return false
-end
 
 
 local function updateBuffLayout(self,event)
+    
+   -- if not self.displayAuras then return end
     
     local marginX = 3
     local marginY = 20
@@ -592,7 +393,7 @@ local function updateBuffLayout(self,event)
             list = debuffList
         end
         
-        if frameIndex==40 then
+        if frameIndex==41 then
             usedWidth = 0
             usedHeight = usedHeight + lineSize + marginY
             lineSize = smallSize 
@@ -651,9 +452,11 @@ local function loadAuras(self)
         frame = CreateFrame('Frame','Gw'..self.unit..'debuffFrame'..i,self.auras,'GwAuraFrame')
         frame.unit = self.unit
         frame.auraType = 'debuff'
-        self.saveAuras = {}
+       
     end
-  
+   self.saveAuras = {}
+   self.saveAuras['buff'] = {}
+   self.saveAuras['debuff'] = {}
 end
 local function target_OnEvent(self,event,unit)
     
@@ -807,6 +610,7 @@ function gw_unitframes_register_Target()
     NewUnitFrame.showHealthPrecentage=gwGetSetting('target_HEALTH_VALUE_TYPE')
     
     NewUnitFrame.classColor = gwGetSetting('target_CLASS_COLOR')
+    
     NewUnitFrame.debuffFilter = nil
     
     NewUnitFrame:SetScript('OnEvent',target_OnEvent)
