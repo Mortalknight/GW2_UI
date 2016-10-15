@@ -16,6 +16,7 @@ function gw_set_auraType(self,typeAura)
         self.icon:SetPoint('TOPLEFT',self,'TOPLEFT',1,-1)
         self.icon:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',-1,1)
         self.duration:SetFont(UNIT_NAME_FONT,11)
+        self.stacks:SetFont(UNIT_NAME_FONT,12,'OUTLINED')
                 
     end
     
@@ -23,6 +24,7 @@ function gw_set_auraType(self,typeAura)
         self.icon:SetPoint('TOPLEFT',self,'TOPLEFT',3,-3)
         self.icon:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',-3,3)
         self.duration:SetFont(UNIT_NAME_FONT,14)
+        self.stacks:SetFont(UNIT_NAME_FONT,14,'OUTLINED')
     end
 
     self.typeAura = typeAura
@@ -156,8 +158,8 @@ function gw_set_buffData(self,buffs,i,oldBuffs)
             gw_set_auraType(self,'smallbuff') 
         end
 
-        if b['stacks']~=nil and b['stacks']>1 then
-           stacks = b['stacks'] 
+        if b['count']~=nil and b['count']>1 then
+           stacks = b['count'] 
         end
         if b['timeremaning']~=nil and b['timeremaning']>0 and b['timeremaning']<500000 then
            duration = timeCount(b['timeremaning'])
@@ -298,10 +300,10 @@ end
 
 local function loadAuras(self)
     for i=1,40 do
-       local frame =  CreateFrame('Frame','GwPlayerbuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
+       local frame =  CreateFrame('Button','GwPlayerbuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
         frame.unit = 'player'
         frame.auraType = 'buff'
-        frame = CreateFrame('Frame','GwPlayerdebuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
+        frame = CreateFrame('Button','GwPlayerdebuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
         frame.unit = 'player'
         frame.auraType = 'debuff'
         

@@ -470,10 +470,10 @@ end
 
 local function loadAuras(self)
     for i=1,40 do
-       local frame =  CreateFrame('Frame','Gw'..self.unit..'buffFrame'..i,self.auras,'GwAuraFrame')
+       local frame =  CreateFrame('Button','Gw'..self.unit..'buffFrame'..i,self.auras,'GwAuraFrame')
         frame.unit = self.unit
         frame.auraType = 'buff'
-        frame = CreateFrame('Frame','Gw'..self.unit..'debuffFrame'..i,self.auras,'GwAuraFrame')
+        frame = CreateFrame('Button','Gw'..self.unit..'debuffFrame'..i,self.auras,'GwAuraFrame')
         frame.unit = self.unit
         frame.auraType = 'debuff'
        
