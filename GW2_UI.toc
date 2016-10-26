@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 70100
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
 
@@ -44,3 +44,4 @@ bank.lua
 party.lua
 raidframes.lua
 unitframes.lua
+

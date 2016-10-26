@@ -51,13 +51,14 @@ local gw_fade_frames = {}
 
 function gw_styleOveralChat()
 
-    
-    FriendsMicroButton:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-    FriendsMicroButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-    FriendsMicroButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-    FriendsMicroButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-    FriendsMicroButton:SetWidth(25) 
-    FriendsMicroButton:SetHeight(25) 
+    if FriendsMicroButton~=nil then
+        FriendsMicroButton:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        FriendsMicroButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        FriendsMicroButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        FriendsMicroButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        FriendsMicroButton:SetWidth(25) 
+        FriendsMicroButton:SetHeight(25) 
+    end
     
     CreateFrame('FRAME','GwChatContainer',UIParent,'GwChatContainer')
     GwChatContainer:SetPoint('TOPLEFT',ChatFrame1,'TOPLEFT',-35,5)
