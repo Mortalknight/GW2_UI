@@ -45,3 +45,9 @@ party.lua
 raidframes.lua
 unitframes.lua
 
+
+objectives/objectives.lua
+objectives/scenario.lua
+objectives/notifications.lua
+objectives/bonusObjective.lua
+objectives/bossFrames.lua

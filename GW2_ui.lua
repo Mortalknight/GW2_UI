@@ -746,6 +746,8 @@ l:SetScript('OnEvent',function(self,event,name)
             --Create experiencebar
             loadExperienceBar() 
         
+        
+        
        if gwGetSetting('FONTS_ENABLED') then
             gw_register_fonts()
         end  
@@ -758,8 +760,7 @@ l:SetScript('OnEvent',function(self,event,name)
         end
         if gwGetSetting('QUESTTRACKER_ENABLED') then
                --QUESTTRACKER
-            gw_load_questtracker()
-            gw_load_all_bossFrames()
+            gw_load_questTracker()
         end
         if gwGetSetting('TOOLTIPS_ENABLED') then
             gw_set_tooltips()

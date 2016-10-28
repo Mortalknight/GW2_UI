@@ -142,6 +142,7 @@ function gw_load_questtracker()
     GwQuestTracker:RegisterEvent("WORLD_STATE_TIMER_START");
 	GwQuestTracker:RegisterEvent("WORLD_STATE_TIMER_STOP");
 	GwQuestTracker:RegisterEvent("PROVING_GROUNDS_SCORE_UPDATE");
+    
 	GwQuestTracker:RegisterEvent("SCENARIO_COMPLETED");
 	GwQuestTracker:RegisterEvent("PLAYER_REGEN_DISABLED");
 	GwQuestTracker:RegisterEvent("PLAYER_REGEN_ENABLED");

@@ -1,5 +1,85 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+    <Frame name="GwQuestTrackerHeader" virtual="true">
+        <Size x="300" y="20"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer Level="ARTOWORK">
+        
+            </Layer>
+            <Layer Level="BACKGROUND">
+                <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icon-objective">
+                    <Size x="30" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="LEFT" x="-20" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer> 
+            <Layer Level="OVERLAY">
+                <FontString name="$parentString" text="Quests" parentKey="title" justifyH="LEFT"  justifyV="CENTER" >
+                     <Size x="300" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString> 
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.title:SetFont(UNIT_NAME_FONT,14)
+                
+                self.title:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    <Frame name="GwObjectivesNotification" hidden="true" virtual="true" parent="UIParent" frameStrata="LOW">
+        <Size x="300" y="1"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer Level="BACKGROUND">
+                <Texture name="compassBG"  file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                    <Color r="1" g="1" b="1" a="0.3"></Color>
+                    <Size x="300" y="70"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer> 
+            <Layer level="OVERLAY" >
+                <Texture name="$parenticon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                    <Size x="30" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-10"></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentString" text="Quest name" parentKey="title" justifyH="LEFT"  justifyV="TOP" >
+                     <Size x="300" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="-15"></Anchor>
+                    </Anchors>
+                </FontString> 
+                <FontString name="$parentSubString" parentKey="desc" text="Quest name" justifyH="LEFT"  justifyV="TOP" >
+                     <Size x="300" y="35"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" y="-39" ></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+       <Scripts>
+            <OnLoad>
+                self.title:SetFont(UNIT_NAME_FONT,14)
+                self.desc:SetFont(UNIT_NAME_FONT,12)
+                
+                self.title:SetShadowOffset(1,-1)
+                self.desc:SetShadowOffset(1,-1)
+           </OnLoad>
+        </Scripts>
+    </Frame>
     <Frame name="GwQuestTrackerRadar" virtual="true" parent="UIParent" frameStrata="LOW">
         <Size x="300" y="70"></Size>
         <Anchors>
@@ -97,7 +177,7 @@
         </Anchors>
         <Scripts>
             <OnMouseWheel>
-                delta = -delta * 10
+                delta = -delta * 15
                 local s = math.max(0,self:GetVerticalScroll() + delta)
               
                 self:SetVerticalScroll(s)
@@ -141,9 +221,24 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
                     </Anchors>
                 </Texture>
+                <Texture name="$parentHoverBg" parentKey="hover" hidden="true" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                    
+                    <Size x="300" y="70"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                
+                <Texture name="$parentFlare" parentKey="flare" hidden="true" file="Interface\AddOns\GW2_UI\textures\expflare">
+                    <Size x="150" y="150"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString name="$parentQuestName" text="Quest name" justifyH="LEFT">
+                <FontString name="$parentQuestName" parentKey="Header" text="Quest name" justifyH="LEFT">
                      <Size x="300" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -155,7 +250,7 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentQuestSubHeader" text="Quest name" justifyH="LEFT">
+                <FontString name="$parentQuestSubHeader" parentKey="SubHeader" text="" justifyH="LEFT">
                      <Size x="300" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="-25"></Anchor>
@@ -165,16 +260,14 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentHide">
-                <HitRectInsets>
-                    <AbsInset left="0" right="0" top="0" bottom="0"/>
-                </HitRectInsets>	
-                <Size x="270" y="30"></Size>
+         
+            <Button name="$parentHeaderButton" enableMouse="true" registerForClicks="AnyDown" parentKey="clickHeader">
+                <Size x="300" y="25"></Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-30"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" ></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentClickToTurnIn" parentKey="turnin">
+            <Button name="$parentClickToTurnIn" hidden="true" parentKey="turnin">
                 <size x="90" y="90"></size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
@@ -206,22 +299,41 @@
                     </OnHide>
                 </Scripts>
             </Button>
-            <Button name="$parentItemButton" inherits="QuestObjectiveItemButtonTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="-40" y="0"/>
-                </Anchors>
-            </Button> 
+            
    
         </Frames>
+        <Scripts>
+            <OnLoad>
+                self.Header:SetFont(UNIT_NAME_FONT,14)
+                self.SubHeader:SetFont(UNIT_NAME_FONT,12)
+                
+                self.Header:SetShadowOffset(1,-1)
+                self.SubHeader:SetShadowOffset(1,-1)
+            </OnLoad>
+            <OnEnter>
+                self.hover:Show()
+                addToAnimation(self:GetName()..'hover',0,1,GetTime(),0.1,function(step) 
+                    self.hover:SetAlpha(step - 0.3)
+                    self.hover:SetTexCoord(0,step,0,1)
+                
+                end)
+            </OnEnter>
+            <OnLeave>
+                self.hover:Hide()
+                if animations[self:GetName()..'hover']~=nil then
+                    animations[self:GetName()..'hover']['complete'] =true    
+                end
+            </OnLeave>
+        </Scripts>
     </Button>
-    <Frame name="GwQuesttrackerObjectiveNormal" parent="GwQuestTracker" virtual="true" >
-         <Size x="300" y="300"></Size>
+    <Frame name="GwQuesttrackerObjectiveNormal" enableMouse="false" virtual="true" >
+         <Size x="300" y="20"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentStatusBarBg"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture name="$parentStatusBarBg" parentKey="statusbarBg" hidden="true" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
                     <Size x="284" y="14"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
@@ -229,30 +341,38 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString name="$parentString" text="Objective text 1/2" justifyH="LEFT">
-                     <Size x="300" y="20"></Size>
+                <FontString name="$parentString" parentKey="ObjectiveText" text="Objective text 1/2" justifyH="LEFT">
+                     <Size x="280" y="20"></Size>
                     <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
         <Frames>
 
-            <StatusBar name="$parentStatusBar"  defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentStatusBar" hidden="true" parentKey="StatusBar">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-11" y="-21"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
-                    <Layer>
+                    <Layer level="ARTWORK">
                         <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                             <Size x="10" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentString" hidden="true" parentKey="progress" text="100" justifyH="CENTER">
+                            <Size x="280" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>                        
                     </Layer>
                 </Layers>
                 <Scripts>
@@ -265,7 +385,7 @@
                         
                             local min, max = self:GetMinMaxValues()
                             local v = self:GetValue()
-                            local width = math.max(0.001,math.min(10,(v/max)*100))
+                            local width = math.max(1,math.min(10,10*((v/max)/0.1)))
                             _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',280*(v/max),0)
                           
                             _G[BNAME..'Spark']:SetWidth(width)
@@ -277,8 +397,29 @@
             </StatusBar>
     
         </Frames>
+        <Scripts>
+           
+            <OnLoad>
+                self.ObjectiveText:SetFont(UNIT_NAME_FONT,12)
+                self.ObjectiveText:SetShadowOffset(1,-1)
+            
+                self.StatusBar.progress:SetFont(UNIT_NAME_FONT,11)
+                self.StatusBar.progress:SetShadowOffset(1,-1)
+            
+            
+            
+                self.StatusBar:SetScript('OnShow',function()
+                    self:SetHeight(50)
+                    self.statusbarBg:Show()
+                end) 
+                self.StatusBar:SetScript('OnHide',function()
+                    self:SetHeight(20)
+                    self.statusbarBg:Hide()
+                end)
+        </OnLoad>
+        </Scripts>
     </Frame>
-     <Frame name="GwQuesttrackerScenarioBlock" enableMouse="false" parent="GwQuestTracker" virtual="true" >
+     <Frame name="GwQuesttrackerScenarioBlock"  parent="GwQuestTracker" virtual="true" >
          <Size x="300" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -513,7 +654,7 @@
          </Scripts>
     </Frame>
     
-     <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame" parent="GwQuesttrackerContainerBossFrames" virtual="true" >
+     <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame"  virtual="true" >
          <Size x="300" y="35"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -526,7 +667,7 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                <Texture name="$parentIcon" parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
@@ -534,7 +675,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString name="$parentString" text="Objective text 1/2" justifyH="LEFT">
+                <FontString name="$parentString" parentKey="name" text="Objective text 1/2" justifyH="LEFT">
                      <Size x="300" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10"></Anchor>
@@ -544,7 +685,7 @@
         </Layers>
         <Frames>
 
-            <StatusBar name="$parentStatusBar"  defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentStatusBar" parentKey="health"  defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
