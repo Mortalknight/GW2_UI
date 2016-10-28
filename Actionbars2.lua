@@ -1,6 +1,6 @@
 local GW_BLIZZARD_HIDE_FRAMES ={
     
-    MainMenuBar,
+  --  MainMenuBar,
     MainMenuBarOverlayFrame,
     MainMenuBarTexture0,
     MainMenuBarTexture1,
@@ -417,15 +417,18 @@ function gw_updateCustomizableBars(barName,buttonName)
                 self:Hide()
             end
         end)   
-            hooksecurefunc(_G[buttonName..i..'Cooldown']:GetParent(), 'SetAlpha', function(self)
+         gw_actionbar_state_add_callback(function() 
+            local self = _G[buttonName..i..'Cooldown']
             local b = _G[buttonName..i..'Cooldown']
             local alpha = self:GetEffectiveAlpha()
             if alpha > 0.001 then
                 b:SetSwipeColor(0,0,0,alpha)
                 b:Show()
+ 
             else
                 b:Hide()
             end
+            
         end)
             
         end        
@@ -561,10 +564,13 @@ function gw_setbagFrame()
 end
 
 function gw_setLeaveVehicleButton()
+    
     MainMenuBarVehicleLeaveButton:HookScript('OnShow',function() 
         MainMenuBarVehicleLeaveButton:ClearAllPoints();
         MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0) 
+            MainMenuBarVehicleLeaveButton.SetPoint = function() end
     end)
+    
 end
 
 

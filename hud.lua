@@ -891,7 +891,7 @@ function create_micro_menu()
                 MainMenuMicroButton_SetNormal();
             end
 		
-    gw_UpdateMicroButtons() end);
+        gw_UpdateMicroButtons() end);
     
      GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
      GwMicroButtonStoreMicroButton:SetScript('OnMouseDown',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
