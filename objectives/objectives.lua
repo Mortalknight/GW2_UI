@@ -117,7 +117,7 @@ function GwParseObjectiveString(block, text, objectiveType,quantity)
         return true
     end
     
-    local  itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
+    local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
     if numItems==nil then
         numItems,numNeeded,itemName = string.match(text, "(%d+)/(%d+) (%S+)");
     end
@@ -126,8 +126,10 @@ function GwParseObjectiveString(block, text, objectiveType,quantity)
     
     if numItems~=nil and numNeeded~=nil and numNeeded>1 and numItems<numNeeded then
 
-        block.StatusBar:SetMinMaxValues(0, 100)
-        block.StatusBar:SetValue((numItems/numNeeded)*100)
+        block.StatusBar:Show()
+        block.StatusBar:SetMinMaxValues(0, numNeeded)
+        block.StatusBar:SetValue(numItems)
+        
         return true
     end
     return false
@@ -202,9 +204,11 @@ local function addObjective(block,text,finished,objectiveIndex)
         end
         
         if objectiveType=='progressbar' or GwParseObjectiveString(objectiveBlock, text) then
-            objectiveBlock.StatusBar:Show()
-            objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-            objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
+            if objectiveType=='progressbar' then
+                objectiveBlock.StatusBar:Show()
+                objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
+                objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
+            end
         else
             objectiveBlock.StatusBar:Hide()
         end
@@ -352,7 +356,7 @@ local function updateQuestItemPositions(index, height)
     
     if InCombatLockdown() then return end
     
-    height = height + GwQuesttrackerContainerScenario:GetHeight()
+    height = height + GwQuesttrackerContainerScenario:GetHeight() + 25
     
     if GwObjectivesNotification:IsShown() then height = height + 70 end
     
