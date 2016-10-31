@@ -37,7 +37,7 @@ tooltips.lua
 fader.lua
 actionbars2.lua
 playerhud.lua
-questtracker2.lua
+
 classpowers.lua
 bag.lua
 bank.lua

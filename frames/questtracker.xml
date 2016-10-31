@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Frame name="GwQuestTrackerHeader" virtual="true">
+    <Button name="GwQuestTrackerHeader" virtual="true">
         <Size x="300" y="20"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
@@ -31,9 +31,13 @@
                 self.title:SetFont(UNIT_NAME_FONT,14)
                 
                 self.title:SetShadowOffset(1,-1)
+
             </OnLoad>
+            <OnClick>
+        
+            </OnClick>
         </Scripts>
-    </Frame>
+    </Button>
     <Frame name="GwObjectivesNotification" hidden="true" virtual="true" parent="UIParent" frameStrata="LOW">
         <Size x="300" y="1"></Size>
         <Anchors>
@@ -312,7 +316,14 @@
             </OnLoad>
             <OnEnter>
                 self.hover:Show()
-                addToAnimation(self:GetName()..'hover',0,1,GetTime(),0.1,function(step) 
+                
+                if self.objectiveBlocks==nil then self.objectiveBlocks={} end
+                
+                for k,v in pairs(self.objectiveBlocks) do
+                    v.StatusBar.progress:Show()
+                end
+                
+                addToAnimation(self:GetName()..'hover',0,1,GetTime(),0.2,function(step) 
                     self.hover:SetAlpha(step - 0.3)
                     self.hover:SetTexCoord(0,step,0,1)
                 
@@ -320,6 +331,14 @@
             </OnEnter>
             <OnLeave>
                 self.hover:Hide()
+                
+                if self.objectiveBlocks==nil then self.objectiveBlocks={} end
+                
+                for k,v in pairs(self.objectiveBlocks) do
+                    v.StatusBar.progress:Hide()
+                end
+                
+                
                 if animations[self:GetName()..'hover']~=nil then
                     animations[self:GetName()..'hover']['complete'] =true    
                 end
@@ -381,7 +400,7 @@
                         if self.animationOld==nil then
                             self.animationOld=0
                         end
-                        hooksecurefunc(self,'SetValue',function() 
+                        hooksecurefunc(self,'SetValue',function(self) 
                         
                             local min, max = self:GetMinMaxValues()
                             local v = self:GetValue()
@@ -390,6 +409,7 @@
                           
                             _G[BNAME..'Spark']:SetWidth(width)
                             
+                            self.progress:SetText(v..' / '..max)
                         
                         end)
                     </OnLoad>
@@ -420,7 +440,7 @@
         </Scripts>
     </Frame>
      <Frame name="GwQuesttrackerScenarioBlock"  parent="GwQuestTracker" virtual="true" >
-         <Size x="300" y="300"></Size>
+         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
@@ -461,12 +481,12 @@
             <Scripts>
                 <OnShow>
                     self:GetParent().timerBackground:Show()
-                    self:GetParent().height =  self:GetParent().height + 40
+                  
                     
                  </OnShow>
                  <OnHide>
                      self:GetParent().timerBackground:Hide()
-                     self:GetParent().height = self:GetParent().height - 40
+                    
                  </OnHide>    
             </Scripts>
              </StatusBar>
@@ -492,12 +512,7 @@
                      </Layer>
                  </Layers>
                  <Scripts>
-                  <OnShow>
-                    self:GetParent().height =  self:GetParent().height + 30
-                 </OnShow>
-                 <OnHide>
-                     self:GetParent().height = self:GetParent().height - 30
-                 </OnHide>  
+              
                  </Scripts>
              </Frame>
              <Frame name="GwAffixFrame" hidden="true" parentKey="affixes">
@@ -614,18 +629,17 @@
                  </Frames>
                  <Scripts>
                      <OnShow>
-                        self:GetParent().height =  self:GetParent().height + 40
-                         self:SetHeight(40)
+                   
                      </OnShow>
                      <OnHide>
-                       self:GetParent().height = self:GetParent().height - 40
-                         self:SetHeight(0)
+               
                      </OnHide> 
                  </Scripts>
              </Frame>
         </Frames>
          <Scripts>
             <OnLoad>
+                self.height= self:GetHeight()
                 self.timerlabel = self.timer.timerlabel
                 self.timerString = self.timer.timerString
                 
@@ -648,7 +662,7 @@
                 self.timer:ClearAllPoints()
                 self.timer:SetPoint('TOPLEFT',self.affixes,'BOTTOMLEFT',-10,-15)
                 
-                self.timer:SetStatusBarColor(GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].r,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].g,GW_QUESTTRACKER_TYPE_COLORS['SCENARIO'].b)
+                self.timer:SetStatusBarColor(GW_TRAKCER_TYPE_COLOR['SCENARIO'].r,GW_TRAKCER_TYPE_COLOR['SCENARIO'].g,GW_TRAKCER_TYPE_COLOR['SCENARIO'].b)
              </OnLoad>
       
          </Scripts>

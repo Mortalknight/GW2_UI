@@ -1,5 +1,9 @@
 
 
+
+
+
+
 local function getObjectiveBlock(self,index)
     
     if _G[self:GetName()..'GwQuestObjective'..index]~=nil then return _G[self:GetName()..'GwQuestObjective'..index] end
@@ -51,8 +55,14 @@ end
 
 local function updateCurrentScenario()
     GwScenarioBlock.height = 1
+    
+    if GwQuestTrackerTimer:IsShown() then
+        GwScenarioBlock.height =   GwQuestTrackerTimer.height 
+    end
+    
     GwScenarioBlock.numObjectives = 0
     GwScenarioBlock:Show()
+    
     local scenarioName, currentStage, numStages, flags, _, _, completed, xp, money = C_Scenario.GetInfo();
     if ( numStages == 0 ) then 
         
@@ -90,7 +100,7 @@ local function updateCurrentScenario()
    
     local questLogIndex = 0
     
-    if questID~=nil or questID~=0 then
+    if questID~=nil then
         questLogIndex = GetQuestLogIndexByID(questID); 
     end
     
@@ -136,11 +146,110 @@ local function updateCurrentScenario()
     end
 
     
-     GwScenarioBlock.height = GwScenarioBlock.height + 5 
+    GwScenarioBlock.height = GwScenarioBlock.height + 5 
   
     GwScenarioBlock:SetHeight(GwScenarioBlock.height)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
         
+end
+
+local function scenarioTimerStop()
+    GwQuestTrackerTimer:SetScript('OnUpdate',nil) 
+    GwQuestTrackerTimer.timer:Hide()
+end
+
+
+
+local function scenarioTimerUpdate(...)
+    
+    GwQuestTrackerTimer.height = 1
+    
+	for i = 1, select("#", ...) do
+		local timerID = select(i, ...);
+		local _, elapsedTime, type = GetWorldElapsedTime(timerID);
+		if ( type == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE) then
+			local _, _, _, _, _, _, _, mapID = GetInstanceInfo();
+			if ( mapID ) then
+				local _, _, timeLimit = C_ChallengeMode.GetMapInfo(mapID);
+			--	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
+                GwQuestTrackerTimer:SetScript('OnUpdate',function()
+                    local _, elapsedTime,  type = GetWorldElapsedTime(timerID);
+                    GwQuestTrackerTimer.timer:SetValue (1 - (elapsedTime/timeLimit))
+                    GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(timeLimit - elapsedTime))
+                   
+                end)
+                GwQuestTrackerTimer.timer:Show()
+                GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+                gw_scenario_affixes()
+                
+				return;
+			end
+		elseif ( type == LE_WORLD_ELAPSED_TIMER_TYPE_PROVING_GROUND ) then
+			local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+			if (duration > 0) then
+			--	Scenario_ProvingGrounds_ShowBlock(timerID, elapsedTime, duration, diffID, currWave, maxWave);
+                  GwQuestTrackerTimer:SetScript('OnUpdate',function()
+                    local _, elapsedTime, type = GetWorldElapsedTime(timerID);
+                    GwQuestTrackerTimer.timer:SetValue (1 - (elapsedTime/duration))
+                        GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(duration - elapsedTime,false,true))
+                end)
+                 GwQuestTrackerTimer.timer:Show()
+                GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+				return;
+			end
+		end
+	end
+    GwQuestTrackerTimer.timer:Hide()
+    GwQuestTrackerTimer:SetScript('OnUpdate',nil)
+  
+  
+end
+
+function gw_scenario_affixes()
+    
+    local level, affixes, wasEnergized = C_ChallengeMode.GetActiveKeystoneInfo();
+    local i = 0
+    for k,v in pairs(affixes) do
+        if i == 0 then
+              GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+        end
+        local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
+        SetPortraitToTexture(_G['GwAffixFrame'..i], filedataid);
+
+        _G['GwAffixFrame'..i].affixID = affixID;
+
+        _G['GwAffixFrame'..i]:Show();
+        _G['GwAffixFrame']:Show();
+        i = i + 1
+    end
+    
+end
+
+local function scenarioTimerOnEvent(self, event, ...)
+    
+    
+	if ( event == "PLAYER_ENTERING_WORLD" ) then
+        -- ScenarioTimer_CheckTimers(GetWorldElapsedTimers());
+        scenarioTimerUpdate(GetWorldElapsedTimers())
+	elseif ( event == "WORLD_STATE_TIMER_START") then
+		local timerID = ...;
+		scenarioTimerUpdate(timerID);
+	elseif ( event == "WORLD_STATE_TIMER_STOP" ) then
+		local timerID = ...;
+        scenarioTimerStop()
+	elseif (event == "PROVING_GROUNDS_SCORE_UPDATE") then
+		local score = ...
+        GwQuestTrackerTimer.score.scoreString:SetText(score);
+        GwQuestTrackerTimer.score:Show()
+        GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+	elseif (event == "SPELL_UPDATE_COOLDOWN") then
+	--	ScenarioSpellButtons_UpdateCooldowns();
+	elseif (event == "CHALLENGE_MODE_START") then
+    	scenarioTimerUpdate(GetWorldElapsedTimers());
+    end
+    GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
+    updateCurrentScenario()
+    
 end
 
 
@@ -157,9 +266,27 @@ function gw_register_scenarioFrame()
 	GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED");
 	GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_COMPLETED");
     
+    
+    local timerBlock = CreateFrame('Button','GwQuestTrackerTimer',GwQuesttrackerContainerScenario,'GwQuesttrackerScenarioBlock')
+    
+    timerBlock:SetParent(GwQuesttrackerContainerScenario)
+    timerBlock:ClearAllPoints()
+    timerBlock:SetPoint('TOPRIGHT',GwQuesttrackerContainerScenario,'TOPRIGHT',0,0)
+    
+    timerBlock:RegisterEvent('PLAYER_ENTERING_WORLD')
+    timerBlock:RegisterEvent('WORLD_STATE_TIMER_START')
+    timerBlock:RegisterEvent('WORLD_STATE_TIMER_STOP')
+    timerBlock:RegisterEvent('PROVING_GROUNDS_SCORE_UPDATE')
+    timerBlock:RegisterEvent('SPELL_UPDATE_COOLDOWN')
+
+    timerBlock:SetScript('OnEvent',scenarioTimerOnEvent)
+    
+    
+    
+    
     local newBlock = CreateFrame('Button','GwScenarioBlock',GwQuesttrackerContainerScenario,'GwQuesttrackerObject')
     newBlock:SetParent(GwQuesttrackerContainerScenario)
-    newBlock:SetPoint('TOPRIGHT',GwQuesttrackerContainerScenario,'TOPRIGHT',0,0) 
+    newBlock:SetPoint('TOPRIGHT',timerBlock,'BOTTOMRIGHT',0,0) 
     newBlock.Header:SetText('')
     
     newBlock.color = GW_TRAKCER_TYPE_COLOR['SCENARIO']

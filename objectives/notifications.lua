@@ -37,7 +37,7 @@ function gwSetObjectiveNotification(key, title, desc, color)
     
     if color==nil then color = {r=1,g=1,b=1} end
     
-    if currentNotificationKey==key or not prioritys() then return end
+    if not prioritys(currentNotificationKey,key) then return end
 
     currentNotificationKey = key
     

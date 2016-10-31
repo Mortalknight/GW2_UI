@@ -37,10 +37,11 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
         else
             objectiveBlock.ObjectiveText:SetTextColor(1,1,1)
         end
-        
+ 
        if objectiveType=='progressbar' or GwParseObjectiveString(objectiveBlock, text) then
             objectiveBlock.StatusBar:Show()
             objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
+            objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
         else
             objectiveBlock.StatusBar:Hide()
         end
@@ -79,6 +80,9 @@ local function updateBonusObjective()
                 gwNewQuestAnimation(GwBonusObjectiveBlock)
                 savedQuests[questID] = true
             end
+            
+            GwBonusObjectiveBlock.questID = questID
+            
             GwBonusHeader:Show()
             GwupdateQuestItem(GwBonusItemButton,questLogIndex)
                 
@@ -95,7 +99,7 @@ local function updateBonusObjective()
                     simpleDesc = simpleDesc..', '..gwParseSimpleObjective(text)
                 end
                 
-                addObjectiveBlock(GwBonusObjectiveBlock,text,finished,objectiveIndex)
+                addObjectiveBlock(GwBonusObjectiveBlock,text,finished,objectiveIndex,objectiveType)
               
             end
             gwSetObjectiveNotification('EVENT','Event: '..text,simpleDesc, GW_TRAKCER_TYPE_COLOR['BONUS'])

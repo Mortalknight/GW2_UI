@@ -9,6 +9,40 @@ GW_TRAKCER_TYPE_COLOR['SCENARIO'] ={r=171/255,g=37/255,b=240/255}
 GW_TRAKCER_TYPE_COLOR['BOSS'] ={r=240/255,g=37/255,b=37/255}
 
 
+
+function gw_animate_wiggle(self)
+    if self.animation==nil then self.animation = 0 end
+    if self.doingAnimation == true then return end
+    self.doingAnimation = true
+    addToAnimation(self:GetName(),0,1,GetTime(),2,function()
+       
+       
+            
+        local prog = animations[self:GetName()]['progress']
+            
+         self.flare:SetRotation(lerp(0,1,prog))
+        
+        if prog<0.25 then
+            self.texture:SetRotation( lerp(0,-0.5,math.sin((prog/0.25) * math.pi * 0.5) ))
+            self.flare:SetAlpha(lerp(0,1,math.sin((prog/0.25) * math.pi * 0.5) ))
+        end
+        if prog>0.25 and prog<0.75 then
+             self.texture:SetRotation(lerp(-0.5,0.5, math.sin(((prog - 0.25)/0.5) * math.pi * 0.5)  ))
+           
+        end
+        if prog>0.75 then
+            self.texture:SetRotation(lerp(0.5,0, math.sin(((prog - 0.75)/0.25) * math.pi * 0.5)  ))
+        end
+            
+        if prog>0.25 then
+         self.flare:SetAlpha(lerp(1,0,((prog - 0.25)/0.75)))
+        end
+          
+    end,nil,function() self.doingAnimation = false end)
+    
+end
+
+
 function gwNewQuestAnimation(block)
     block.flare:Show()
     block.flare:SetAlpha(1)
@@ -170,6 +204,7 @@ local function addObjective(block,text,finished,objectiveIndex)
         if objectiveType=='progressbar' or GwParseObjectiveString(objectiveBlock, text) then
             objectiveBlock.StatusBar:Show()
             objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
+            objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
         else
             objectiveBlock.StatusBar:Hide()
         end
@@ -385,10 +420,9 @@ end
 
 
 local function QuestTracker_OnEvent(self,event,data1)
-   
-    if event=='QUEST_LOG_UPDATE' then
+
         updateQuestLogLayout(data1)
-    end
+   
     
 end
 
@@ -428,6 +462,24 @@ function gw_load_questTracker()
     
 
     GwQuesttrackerContainerQuests:RegisterEvent('QUEST_LOG_UPDATE')
+    GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ITEM_UPDATE");
+
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_REMOVED");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUESTLINE_UPDATE");
+
+	GwQuesttrackerContainerQuests:RegisterEvent("QUESTTASK_UPDATE");
+	GwQuesttrackerContainerQuests:RegisterEvent("TASK_PROGRESS_UPDATE");
+    
+    GwQuesttrackerContainerQuests:RegisterEvent("QUEST_WATCH_LIST_CHANGED");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_AUTOCOMPLETE");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ACCEPTED");	
+    
+    GwQuesttrackerContainerQuests:RegisterEvent("QUEST_GREETING");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_DETAIL");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_PROGRESS");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_COMPLETE");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_FINISHED");
+    
     GwQuesttrackerContainerQuests:SetScript('OnEvent',QuestTracker_OnEvent)
   
     
