@@ -78,7 +78,7 @@ local function updateBonusObjective()
         
         if numObjectives==nil then numObjectives = 0 end
         
-        if  not GwQuesttrackerContainerBonusObjectives.collapsed then
+        if isInArea then
             if text==nil then text ='' end
             GwBonusObjectiveBlock.Header:SetText(text)
             
@@ -95,19 +95,22 @@ local function updateBonusObjective()
             
    
             foundEvent = true
-            GwBonusObjectiveBlock:Show()
+          
+           
             for objectiveIndex = 1,numObjectives do
                 local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false);
-                
+
                 if simpleDesc=='' then
                     simpleDesc = gwParseSimpleObjective(text)
                 else
-                    simpleDesc = simpleDesc..', '..gwParseSimpleObjective(text)
+                        simpleDesc = simpleDesc..', '..gwParseSimpleObjective(text)
                 end
-                
-                addObjectiveBlock(GwBonusObjectiveBlock,text,finished,objectiveIndex,objectiveType)
-              
-            end
+
+                if not GwQuesttrackerContainerBonusObjectives.collapsed==true then
+                    addObjectiveBlock(GwBonusObjectiveBlock,text,finished,objectiveIndex,objectiveType)
+                end
+                end
+          
             gwSetObjectiveNotification('EVENT','Event: '..text,simpleDesc, GW_TRAKCER_TYPE_COLOR['BONUS'])
         end        
     end
@@ -116,6 +119,10 @@ local function updateBonusObjective()
         savedQuests = {}
         gwRemoveNotification('EVENT')
         GwBonusHeader:Hide()
+    else
+        if not GwQuesttrackerContainerBonusObjectives.collapsed==true then
+            GwBonusObjectiveBlock:Show() 
+        end
     end
     for  i=GwBonusObjectiveBlock.numObjectives + 1, 20 do
         if _G[GwBonusObjectiveBlock:GetName()..'GwQuestObjective'..i]~=nil then
@@ -123,7 +130,7 @@ local function updateBonusObjective()
         end
     end 
     
-    GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height)
+    GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 5)
     GwQuesttrackerContainerBonusObjectives:SetHeight(GwBonusObjectiveBlock.height + 20)
     
     gwQuestTrackerLayoutChanged()
@@ -158,7 +165,7 @@ function gw_register_bonusObjectiveFrame()
     local header = CreateFrame('Button','GwBonusHeader',GwQuesttrackerContainerBonusObjectives,'GwQuestTrackerHeader')
     header.icon:SetTexCoord(0,1,0.5,0.75)
     
-       GwQuesttrackerContainerBonusObjectives.collapsed = false
+    GwQuesttrackerContainerBonusObjectives.collapsed = false
      header:SetScript('OnClick',function(self) 
         local p = self:GetParent()
         if p.collapsed==nil or p.collapsed==false then
