@@ -52,8 +52,8 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
     
 end
 
-local function updateBonusObjective()
-
+local function updateBonusObjective(self,event)
+ 
     GwBonusObjectiveBlock.height = 1
     GwBonusObjectiveBlock.numObjectives = 0
     GwBonusObjectiveBlock:Hide()
@@ -77,7 +77,6 @@ local function updateBonusObjective()
         local simpleDesc = ''
         
         if numObjectives==nil then numObjectives = 0 end
-        
         if isInArea then
             if text==nil then text ='' end
             GwBonusObjectiveBlock.Header:SetText(text)

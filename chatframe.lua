@@ -51,13 +51,15 @@ local gw_fade_frames = {}
 
 function gw_styleOveralChat()
 
-    if FriendsMicroButton~=nil then
-        FriendsMicroButton:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-        FriendsMicroButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-        FriendsMicroButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-        FriendsMicroButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
-        FriendsMicroButton:SetWidth(25) 
-        FriendsMicroButton:SetHeight(25) 
+    if QuickJoinToastButton~=nil then
+        QuickJoinToastButton:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        QuickJoinToastButton:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        QuickJoinToastButton:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        QuickJoinToastButton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down'); 
+        QuickJoinToastButton:SetWidth(25) 
+        QuickJoinToastButton:SetHeight(25) 
+        QuickJoinToastButton:ClearAllPoints()
+        QuickJoinToastButton:SetPoint('RIGHT',GeneralDockManager,'LEFT',-3,-3)
     end
     
     CreateFrame('FRAME','GwChatContainer',UIParent,'GwChatContainer')
@@ -88,7 +90,7 @@ function gw_styleOveralChat()
     hooksecurefunc('FCFTab_UpdateColors',gw_setChatBackgroundColor)
     
     gw_fade_frames = {
-    FriendsMicroButton,
+    QuickJoinToastButton,
     GwChatContainer,
     GeneralDockManager,
     }
