@@ -63,6 +63,10 @@ local function updateBonusObjective()
  
     
     local tasks = GetTasksTable();
+    
+    if GwQuesttrackerContainerBonusObjectives.collapsed==true then
+         GwBonusHeader:Show()
+    end
 
     
     for k,v in pairs(tasks) do
@@ -72,7 +76,7 @@ local function updateBonusObjective()
         local questLogIndex = GetQuestLogIndexByID(questID);
         local simpleDesc = ''
         
-        if isInArea then
+        if  not GwQuesttrackerContainerBonusObjectives.collapsed then
             if text==nil then text ='' end
             GwBonusObjectiveBlock.Header:SetText(text)
             
@@ -138,13 +142,27 @@ function gw_register_bonusObjectiveFrame()
     newBlock:SetPoint('TOPRIGHT',GwQuesttrackerContainerBonusObjectives,'TOPRIGHT',0,-20) 
     newBlock.Header:SetText('')
     
+ 
+    
     newBlock.color = GW_TRAKCER_TYPE_COLOR['BONUS']
     newBlock.Header:SetTextColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     
     
-    local header = CreateFrame('Frame','GwBonusHeader',GwQuesttrackerContainerBonusObjectives,'GwQuestTrackerHeader')
+    local header = CreateFrame('Button','GwBonusHeader',GwQuesttrackerContainerBonusObjectives,'GwQuestTrackerHeader')
     header.icon:SetTexCoord(0,1,0.5,0.75)
+    
+       GwQuesttrackerContainerBonusObjectives.collapsed = false
+     header:SetScript('OnClick',function(self) 
+        local p = self:GetParent()
+        if p.collapsed==nil or p.collapsed==false then
+             p.collapsed = true
+                
+         else
+             p.collapsed = false
+         end    
+       updateBonusObjective()
+    end)
     header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['BONUS'].r,GW_TRAKCER_TYPE_COLOR['BONUS'].g,GW_TRAKCER_TYPE_COLOR['BONUS'].b)   
     header.title:SetText('Events')
   

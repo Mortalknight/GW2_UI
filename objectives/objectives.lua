@@ -390,7 +390,14 @@ local function updateQuestLogLayout(intent)
     local savedHeight = 0
     GwQuestHeader:Hide()
     
-    for i = 1, GetNumQuestWatches() do    
+    local numQuests = GetNumQuestWatches()
+    if GwQuesttrackerContainerQuests.collapsed==true then
+        GwQuestHeader:Show()
+        numQuests = 0
+    end
+         
+    
+    for i = 1, numQuests do    
         GwQuestHeader:Show()
         local block = getBlock(i)
         if block==nil then return end
@@ -403,7 +410,7 @@ local function updateQuestLogLayout(intent)
     end
     savedHeight = savedHeight + 20
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
-    for i=GetNumQuestWatches() + 1,25 do
+    for i=numQuests + 1,25 do
         if _G['GwQuestBlock'..i]~=nil then
            _G['GwQuestBlock'..i]:Hide() 
             GwupdateQuestItem(_G['GwQuestItemButton'..i],0) 
@@ -491,8 +498,19 @@ function gw_load_questTracker()
   
     
     
-    local header = CreateFrame('Frame','GwQuestHeader',GwQuesttrackerContainerQuests,'GwQuestTrackerHeader')
+    local header = CreateFrame('Button','GwQuestHeader',GwQuesttrackerContainerQuests,'GwQuestTrackerHeader')
     header.icon:SetTexCoord(0,1,0.25,0.5)
+    
+    header:SetScript('OnClick',function(self) 
+        local p = self:GetParent()
+        if p.collapsed==nil or p.collapsed==false then
+             p.collapsed = true
+                
+         else
+             p.collapsed = false
+         end    
+        updateQuestLogLayout('COLLAPSE')
+    end)
     header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['QUEST'].r,GW_TRAKCER_TYPE_COLOR['QUEST'].g,GW_TRAKCER_TYPE_COLOR['QUEST'].b)   
    
       updateQuestLogLayout()
