@@ -1,6 +1,7 @@
 GW_VERSION_STRING = 'GW2_UI v3.8.1'
 
 
+
 GW2UI_SETTINGS = {}
 GW_DEFAULT ={}
     
