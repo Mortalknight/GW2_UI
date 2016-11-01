@@ -76,6 +76,8 @@ local function updateBonusObjective()
         local questLogIndex = GetQuestLogIndexByID(questID);
         local simpleDesc = ''
         
+        if numObjectives==nil then numObjectives = 0 end
+        
         if  not GwQuesttrackerContainerBonusObjectives.collapsed then
             if text==nil then text ='' end
             GwBonusObjectiveBlock.Header:SetText(text)
