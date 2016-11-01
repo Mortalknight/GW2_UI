@@ -276,6 +276,8 @@ end
 
 local function updateQuest(block, questWatchId)
     
+
+    
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
@@ -404,6 +406,7 @@ local function updateQuestLogLayout(intent)
     for i=GetNumQuestWatches() + 1,25 do
         if _G['GwQuestBlock'..i]~=nil then
            _G['GwQuestBlock'..i]:Hide() 
+            GwupdateQuestItem(_G['GwQuestItemButton'..i],0) 
         end
     end
     
