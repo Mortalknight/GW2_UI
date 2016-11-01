@@ -136,6 +136,10 @@ function gw_register_bonusObjectiveFrame()
     
     
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_LOG_UPDATE");
+    GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUESTTASK_UPDATE");
+	GwQuesttrackerContainerBonusObjectives:RegisterEvent("TASK_PROGRESS_UPDATE");
+    
+    GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED");
 
     
     local newBlock = CreateFrame('Button','GwBonusObjectiveBlock',GwQuesttrackerContainerBonusObjectives,'GwQuesttrackerObject')
