@@ -796,6 +796,21 @@ function gw_breath_meter()
 
 end
 
+local function updateGuildButton()
+    
+    local numTotalMembers, numOnlineMaxLevelMembers, numOnlineMembers = GetNumGuildMembers();
+    
+    if numOnlineMembers~=nil and numOnlineMembers>0 then
+        GwMicroButtonGuildMicroButton.darkbg:Show()
+       _G['GwMicroButtonGuildMicroButtonString']:Show()
+       _G['GwMicroButtonGuildMicroButtonString']:SetText(numOnlineMembers)
+    else
+         GwMicroButtonGuildMicroButton.darkbg:Hide()
+        _G['GwMicroButtonGuildMicroButtonString']:Hide()
+    end
+    
+end
+
 
 local microButtonFrame = CreateFrame('Frame', 'GwMicroButtonFrame', UIParent,'GwMicroButtonFrame')
 
@@ -925,6 +940,9 @@ function create_micro_menu()
 
     
     
+    GwMicroButtonGuildMicroButton:SetScript('OnEvent', updateGuildButton)
+    GwMicroButtonGuildMicroButton:RegisterEvent('GUILD_ROSTER_UPDATE')
+    
     
     GwMicroButtonMainMenuMicroButton:SetScript('OnEnter', function() 
         
@@ -941,6 +959,7 @@ function create_micro_menu()
     
     
     gw_update_talentMicrobar()
+    updateGuildButton()
     
     
     gw_create_orderHallBar()
@@ -1072,6 +1091,8 @@ function gw_latencyInfoToolTip()
   
     
 end
+
+
 
 
 function gw_update_talentMicrobar()

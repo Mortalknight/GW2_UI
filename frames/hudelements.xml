@@ -692,6 +692,14 @@
                     <Anchors>
                         <Anchor point="TOP" relativePoint="BOTTOM" x="5" y="10"></Anchor>
                     </Anchors>
+                </Texture>   
+                <Texture name="$parentTextureDark" hidden="true" parentKey="darkbg" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
+                    <Color r="0" g="0" b="0" a="0.7"></Color>
+                    <Size  x="14" y="14">
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" x="5" y="10"></Anchor>
+                    </Anchors>
                 </Texture>
            
            
