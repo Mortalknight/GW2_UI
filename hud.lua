@@ -806,7 +806,7 @@ local function updateGuildButton()
         if numOnlineMembers>9 then
             GwMicroButtonGuildMicroButton.darkbg:SetSize(18,18)
         else
-            GwMicroButtonGuildMicroButton.darkbg:SetSize(16,16)
+            GwMicroButtonGuildMicroButton.darkbg:SetSize(14,14)
         end
         
        _G['GwMicroButtonGuildMicroButtonString']:Show()

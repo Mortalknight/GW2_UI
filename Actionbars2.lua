@@ -565,10 +565,21 @@ end
 
 function gw_setLeaveVehicleButton()
     
-    MainMenuBarVehicleLeaveButton:HookScript('OnShow',function() 
-        MainMenuBarVehicleLeaveButton:ClearAllPoints();
-        MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0) 
-            MainMenuBarVehicleLeaveButton.SetPoint = function() end
+    MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
+    MainMenuBarVehicleLeaveButton:ClearAllPoints()
+    MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0) 
+
+    MainMenuBarVehicleLeaveButton:HookScript('OnShow', function() 
+        MainMenuBarVehicleLeaveButton:SetScript('OnUpdate',function() 
+                if InCombatLockdown() then
+                        return
+                end 
+                MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0)  
+        end)
+    end)
+    
+    MainMenuBarVehicleLeaveButton:HookScript('OnHide', function()
+        MainMenuBarVehicleLeaveButton:SetScript('OnUpdate',nil)
     end)
     
 end
