@@ -114,9 +114,10 @@ function GwParseObjectiveString(block, text, objectiveType,quantity)
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity)
         block.StatusBar:Show()
+        block.StatusBar.precentage = true
         return true
     end
-    
+    block.StatusBar.precentage = false
     local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
     if numItems==nil then
         numItems,numNeeded,itemName = string.match(text, "(%d+)/(%d+) (%S+)");
@@ -212,7 +213,9 @@ local function addObjective(block,text,finished,objectiveIndex)
         else
             objectiveBlock.StatusBar:Hide()
         end
-        block.height = block.height + objectiveBlock:GetHeight()
+        local h = 20
+        if objectiveBlock.StatusBar:IsShown() then h = 50 end
+        block.height = block.height + h
         block.numObjectives = block.numObjectives + 1
     end
     
@@ -513,7 +516,7 @@ function gw_load_questTracker()
     end)
     header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['QUEST'].r,GW_TRAKCER_TYPE_COLOR['QUEST'].g,GW_TRAKCER_TYPE_COLOR['QUEST'].b)   
    
-      updateQuestLogLayout()
+    updateQuestLogLayout()
     loadQuestButtons()
     
     

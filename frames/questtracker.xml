@@ -409,7 +409,12 @@
                           
                             _G[BNAME..'Spark']:SetWidth(width)
                             
+                            if self.precentage==nil or self.precentage==false then
+                        
                             self.progress:SetText(v..' / '..max)
+                            else
+                                self.progress:SetText(math.floor((v/max)*100)..'%')
+                            end
                         
                         end)
                     </OnLoad>

@@ -12,15 +12,18 @@ local function getObjectiveBlock(self,index)
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
     
     local newBlock = CreateFrame('Frame',self:GetName()..'GwQuestObjective'..self.objectiveBlocksNum,self,'GwQuesttrackerObjectiveNormal')
-    self.objectiveBlocks[#self.objectiveBlocks] = newBlock
     newBlock:SetParent(self)
+    self.objectiveBlocks[ self.objectiveBlocksNum ] = newBlock
     if self.objectiveBlocksNum==1 then
         newBlock:SetPoint('TOPRIGHT',self,'TOPRIGHT',0,-25) 
     else
         newBlock:SetPoint('TOPRIGHT',_G[self:GetName()..'GwQuestObjective'..(self.objectiveBlocksNum - 1)],'BOTTOMRIGHT',0,0) 
     end
     
+
+    
     newBlock.StatusBar:SetStatusBarColor(self.color.r,self.color.g,self.color.b)
+
     
     return newBlock
 end
@@ -38,15 +41,19 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
             objectiveBlock.ObjectiveText:SetTextColor(1,1,1)
         end
  
-       if objectiveType=='progressbar' or GwParseObjectiveString(objectiveBlock, text) then
-            objectiveBlock.StatusBar:Show()
-            objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-            objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
+        if objectiveType=='progressbar' or GwParseObjectiveString(objectiveBlock, text) then
+            if objectiveType=='progressbar' then
+                objectiveBlock.StatusBar:Show()
+                objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
+                objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
+            end
         else
             objectiveBlock.StatusBar:Hide()
         end
-       
-        block.height = block.height + objectiveBlock:GetHeight()
+        
+        local h = 20
+        if objectiveBlock.StatusBar:IsShown() then h = 50 end
+        block.height = block.height + h
         block.numObjectives = block.numObjectives + 1
     end
     
@@ -54,7 +61,7 @@ end
 
 local function updateBonusObjective(self,event)
  
-    GwBonusObjectiveBlock.height = 1
+    GwBonusObjectiveBlock.height = 20
     GwBonusObjectiveBlock.numObjectives = 0
     GwBonusObjectiveBlock:Hide()
     GwupdateQuestItem(GwBonusItemButton,0)
@@ -179,4 +186,7 @@ function gw_register_bonusObjectiveFrame()
     header.title:SetText('Events')
   
     updateBonusObjective()
+    
+  
+    
 end

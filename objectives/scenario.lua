@@ -45,8 +45,9 @@ function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveType,quan
    
             objectiveBlock.StatusBar:Hide()
         end
-       
-        block.height = block.height + objectiveBlock:GetHeight()
+        local h = 20
+        if objectiveBlock.StatusBar:IsShown() then h = 50 end
+        block.height = block.height + h
         block.numObjectives = block.numObjectives + 1
     end
     
