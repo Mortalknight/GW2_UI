@@ -294,4 +294,5 @@ function gw_register_scenarioFrame()
     newBlock.Header:SetTextColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     updateCurrentScenario()
+    scenarioTimerOnEvent()
 end
