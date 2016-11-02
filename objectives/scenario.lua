@@ -214,6 +214,7 @@ function gw_scenario_affixes()
         if i == 0 then
               GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
         end
+        local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
         SetPortraitToTexture(_G['GwAffixFrame'..i], filedataid);
 
