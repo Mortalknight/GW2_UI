@@ -799,9 +799,16 @@ end
 local function updateGuildButton()
     
     local numTotalMembers, numOnlineMaxLevelMembers, numOnlineMembers = GetNumGuildMembers();
-    
+  
     if numOnlineMembers~=nil and numOnlineMembers>0 then
         GwMicroButtonGuildMicroButton.darkbg:Show()
+        
+        if numOnlineMembers>9 then
+            GwMicroButtonGuildMicroButton.darkbg:SetSize(18,18)
+        else
+            GwMicroButtonGuildMicroButton.darkbg:SetSize(14,14)
+        end
+        
        _G['GwMicroButtonGuildMicroButtonString']:Show()
        _G['GwMicroButtonGuildMicroButtonString']:SetText(numOnlineMembers)
     else
@@ -939,7 +946,14 @@ function create_micro_menu()
     gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton,HELP_BUTTON,'')
 
     
-    
+    GwMicroButtonGuildMicroButton.interval = 0
+    GwMicroButtonGuildMicroButton:SetScript('OnUpdate', function()
+            
+        if GwMicroButtonGuildMicroButton.interval>GetTime() then return end
+        GwMicroButtonGuildMicroButton.interval = GetTime() + 15
+        GuildRoster()
+            
+    end)
     GwMicroButtonGuildMicroButton:SetScript('OnEvent', updateGuildButton)
     GwMicroButtonGuildMicroButton:RegisterEvent('GUILD_ROSTER_UPDATE')
     
