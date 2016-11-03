@@ -169,7 +169,7 @@ end
 
 local function updateAchievementLayout(intent)
 
-    local savedHeight = 0
+    local savedHeight = 1
     GwAchievementHeader:Hide()
     local trackedAchievements = { GetTrackedAchievements() };
 
@@ -179,6 +179,7 @@ local function updateAchievementLayout(intent)
     if GwQuesttrackerContainerAchievement.collapsed==true then
         GwAchievementHeader:Show()
         numQuests = 0
+        savedHeight = 20
     end
     
     local _, instanceType = IsInInstance();
@@ -197,6 +198,8 @@ local function updateAchievementLayout(intent)
 	    end
 		
 		if ( showAchievement ) then
+            
+            if i==1 then savedHeight = 20 end
             
             GwAchievementHeader:Show()
             local block = getBlock(shownIndex)
@@ -217,7 +220,7 @@ local function updateAchievementLayout(intent)
         end
         
     end
-    savedHeight = savedHeight + 20
+   
     GwQuesttrackerContainerAchievement:SetHeight(savedHeight)
     
     for i=shownIndex,25 do

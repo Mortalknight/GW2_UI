@@ -408,17 +408,19 @@ end
 
 local function updateQuestLogLayout(intent)
 
-    local savedHeight = 0
+    local savedHeight = 1
     GwQuestHeader:Hide()
     
     local numQuests = GetNumQuestWatches()
     if GwQuesttrackerContainerQuests.collapsed==true then
         GwQuestHeader:Show()
         numQuests = 0
+        savedHeight = 20
     end
          
     
     for i = 1, numQuests do    
+        if i==1 then savedHeight = 20 end
         GwQuestHeader:Show()
         local block = getBlock(i)
         if block==nil then return end
@@ -429,7 +431,7 @@ local function updateQuestLogLayout(intent)
         savedHeight =savedHeight + block.height
         
     end
-    savedHeight = savedHeight + 20
+
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
     for i=numQuests + 1,25 do
         if _G['GwQuestBlock'..i]~=nil then
