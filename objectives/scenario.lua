@@ -58,7 +58,7 @@ local function updateCurrentScenario()
     GwScenarioBlock.height = 1
     
     if GwQuestTrackerTimer:IsShown() then
-        GwScenarioBlock.height =   GwQuestTrackerTimer.height 
+        GwScenarioBlock.height =  GwQuestTrackerTimer.height 
     end
     
     GwScenarioBlock.numObjectives = 0
@@ -216,8 +216,10 @@ function gw_scenario_affixes()
         end
         local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
-        SetPortraitToTexture(_G['GwAffixFrame'..i], filedataid);
-
+        
+        if filedataid~=nil then
+            SetPortraitToTexture(_G['GwAffixFrame'..i], filedataid);
+        end
         _G['GwAffixFrame'..i].affixID = affixID;
 
         _G['GwAffixFrame'..i]:Show();
