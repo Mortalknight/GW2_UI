@@ -83,7 +83,7 @@ local function addObjective(block,text,finished,objectiveIndex)
     if text  then
        
         objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(text)
+        objectiveBlock.ObjectiveText:SetText(GwFormatObjectiveNumbers(text))
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8,0.8,0.8)
         else
@@ -128,11 +128,11 @@ local function updateAchievementObjectives(block,blockIndex, achievementID)
             if ( description and bit.band(flags, EVALUATION_TREE_FLAG_PROGRESS_BAR) == EVALUATION_TREE_FLAG_PROGRESS_BAR ) then
                 -- progress bar
                 if ( string.find(strlower(quantityString), "interface\\moneyframe") ) then	-- no easy way of telling it's a money progress bar
-                   
-                    criteriaString = quantityString.." "..description;
-                    
+                                      
                      quantity = math.floor(quantity / (COPPER_PER_SILVER * SILVER_PER_GOLD));
                      totalQuantity = math.floor(totalQuantity / (COPPER_PER_SILVER * SILVER_PER_GOLD));
+                    
+                     criteriaString = quantity..'/'..totalQuantity..' '..description;
                 else
                     -- remove spaces so it matches the quest look, x/y
                     criteriaString = string.gsub(quantityString, " / ", "/").." "..description;

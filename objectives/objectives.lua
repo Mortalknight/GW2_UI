@@ -137,6 +137,22 @@ function GwParseObjectiveString(block, text, objectiveType,quantity)
     return false
 end
 
+function GwFormatObjectiveNumbers(text)
+
+    local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
+    if numItems==nil then
+        numItems,numNeeded,itemName = string.match(text, "(%d+)/(%d+) (%S+)");
+    end
+    numItems= tonumber(numItems)
+    numNeeded= tonumber(numNeeded)
+    
+    if numItems~=nil and numNeeded~=nil and numNeeded>1 and numItems<numNeeded then
+
+        return comma_value(numItems)..' / '..comma_value(numNeeded)..' '..itemName
+    end
+    return text
+end
+
 local function setBlockColor(block, string)
     block.color = GW_TRAKCER_TYPE_COLOR[string]
 end
@@ -198,7 +214,7 @@ local function addObjective(block,text,finished,objectiveIndex)
     if text  then
        
         objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(text)
+        objectiveBlock.ObjectiveText:SetText(GwFormatObjectiveNumbers(text))
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8,0.8,0.8)
         else
