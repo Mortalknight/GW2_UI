@@ -150,6 +150,13 @@ local function updateAchievementObjectives(block,blockIndex, achievementID)
             end 
         end
     end
+    
+    for  i=block.numObjectives + 1, 20 do
+        if _G[block:GetName()..'GwAchievementObjective'..i]~=nil then
+            _G[block:GetName()..'GwAchievementObjective'..i]:Hide()
+        end
+    end
+    
     block:SetHeight(block.height)
    
 end
