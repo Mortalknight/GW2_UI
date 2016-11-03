@@ -139,8 +139,9 @@ end
 
 function GwFormatObjectiveNumbers(text)
 
-    local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
-    if numItems==nil then
+   local  itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
+   
+    if itemName==nil then
         numItems,numNeeded,itemName = string.match(text, "(%d+)/(%d+) (%S+)");
     end
     numItems= tonumber(numItems)
