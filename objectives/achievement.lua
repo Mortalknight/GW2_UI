@@ -110,7 +110,7 @@ end
 
 local function updateAchievementObjectives(block,blockIndex, achievementID)
     
-    block.height = 25
+    block.height = 35
     block.numObjectives = 0
     
     local numIncomplete = 0
@@ -128,10 +128,14 @@ local function updateAchievementObjectives(block,blockIndex, achievementID)
             if ( description and bit.band(flags, EVALUATION_TREE_FLAG_PROGRESS_BAR) == EVALUATION_TREE_FLAG_PROGRESS_BAR ) then
                 -- progress bar
                 if ( string.find(strlower(quantityString), "interface\\moneyframe") ) then	-- no easy way of telling it's a money progress bar
-                    criteriaString = description;
+                   
+                    criteriaString = quantityString.." "..description;
                     
                      quantity = math.floor(quantity / (COPPER_PER_SILVER * SILVER_PER_GOLD));
                      totalQuantity = math.floor(totalQuantity / (COPPER_PER_SILVER * SILVER_PER_GOLD));
+                else
+                    -- remove spaces so it matches the quest look, x/y
+                    criteriaString = string.gsub(quantityString, " / ", "/").." "..description;
                 end
             else
                 -- for meta criteria look up the achievement name
@@ -142,13 +146,15 @@ local function updateAchievementObjectives(block,blockIndex, achievementID)
             
             
             
-            addObjective(block,gw_parse_criteria(quantity,totalQuantity,criteriaString),criteriaCompleted,criteriaIndex) 
+            addObjective(block,criteriaString,criteriaCompleted,criteriaIndex) 
                 
             if numIncomplete==MAX_OBJECTIVES then
                 addObjective(block,'....',false,MAX_OBJECTIVES+1) 
                 break
             end 
         end
+    else
+        addObjective(block,description,false,1) 
     end
     
     for  i=block.numObjectives + 1, 20 do
