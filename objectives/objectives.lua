@@ -246,7 +246,7 @@ function GwupdateQuestItem(button,questLogIndex)
     
      local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(questLogIndex); 
     
-    if item==nil then button:Hide() return end
+    if item==nil then   button:Hide()   return end
     
     
     button:SetID(questLogIndex);
@@ -382,9 +382,9 @@ local function updateExtraQuestItemPositions()
     
     GwScenarioItemButton:SetPoint('TOPLEFT',GwQuestTracker,'TOPRIGHT',-330, -height)
     
-    height = GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight()
+    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight()
     
-    GwBonusItemButton:SetPoint('TOPLEFT',GwQuestTracker,'TOPRIGHT',-330, -height)
+    GwBonusItemButton:SetPoint('TOPLEFT',GwQuestTracker,'TOPRIGHT',-330, -height + -25)
 end
 
 
@@ -419,6 +419,8 @@ local function updateQuestLogLayout(intent)
             GwupdateQuestItem(_G['GwQuestItemButton'..i],0) 
         end
     end
+    
+    gwQuestTrackerLayoutChanged()
     
 end
 
