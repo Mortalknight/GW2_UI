@@ -176,9 +176,10 @@ function gw_register_bonusObjectiveFrame()
         local p = self:GetParent()
         if p.collapsed==nil or p.collapsed==false then
              p.collapsed = true
-                
+            PlaySound("igMainMenuOptionCheckBoxOff");
          else
              p.collapsed = false
+            PlaySound("igMainMenuOptionCheckBoxOn");
          end    
        updateBonusObjective()
     end)

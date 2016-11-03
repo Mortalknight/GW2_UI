@@ -51,3 +51,4 @@ objectives/scenario.lua
 objectives/notifications.lua
 objectives/bonusObjective.lua
 objectives/bossFrames.lua
+objectives/achievement.lua

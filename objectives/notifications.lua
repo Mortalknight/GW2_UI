@@ -8,12 +8,17 @@ icons['EVENT'] ={tex='icon-objective',l=0,r=1,t=0.5,b=0.75}
 icons['SCENARIO'] ={tex='icon-objective',l=0,r=1,t=0.75,b=1}
 icons['BOSS'] ={tex='icon-boss',l=0,r=1,t=0,b=1}
 
+local notification_priority = {}
+notification_priority['SCENARIO'] = 1
+notification_priority['EVENT'] = 2
+notification_priority['BOSS'] = 3
+
 local function prioritys(a,b)
     
-    if a=='SCENARIO' and b=='EVENT' then return false end
-    if a=='SCENARIO' and b=='BOSS' then return false end
-        
-    return true
+    if a == nil or a=='' then return true end
+    if b == nil or b=='' then return false end
+
+    return (notification_priority[a]<notification_priority[b])
     
 end
 

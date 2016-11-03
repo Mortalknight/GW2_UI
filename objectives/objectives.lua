@@ -7,6 +7,7 @@ GW_TRAKCER_TYPE_COLOR['QUEST'] ={r=221/255,g=198/255,b=68/255}
 GW_TRAKCER_TYPE_COLOR['BONUS'] ={r=240/255,g=121/255,b=37/255}
 GW_TRAKCER_TYPE_COLOR['SCENARIO'] ={r=171/255,g=37/255,b=240/255}
 GW_TRAKCER_TYPE_COLOR['BOSS'] ={r=240/255,g=37/255,b=37/255}
+GW_TRAKCER_TYPE_COLOR['ACHIEVEMENT'] ={r=118/255,g=240/255,b=37/255}
 
 
 
@@ -362,6 +363,7 @@ local function updateQuestItemPositions(index, height)
     if InCombatLockdown() then return end
     
     height = height + GwQuesttrackerContainerScenario:GetHeight() + 25
+    height = height + GwQuesttrackerContainerAchievement:GetHeight() 
     
     if GwObjectivesNotification:IsShown() then height = height + 70 end
     
@@ -382,7 +384,7 @@ local function updateExtraQuestItemPositions()
     
     GwScenarioItemButton:SetPoint('TOPLEFT',GwQuestTracker,'TOPRIGHT',-330, -height)
     
-    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight()
+    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight()
     
     GwBonusItemButton:SetPoint('TOPLEFT',GwQuestTracker,'TOPRIGHT',-330, -height + -25)
 end
@@ -456,9 +458,11 @@ function gw_load_questTracker()
     CreateFrame('Frame','GwObjectivesNotification',GwQuestTracker,'GwObjectivesNotification')
     CreateFrame('Frame','GwQuesttrackerContainerBossFrames',GwQuestTracker,'GwQuesttrackerContainer') 
     CreateFrame('Frame','GwQuesttrackerContainerScenario',GwQuestTracker,'GwQuesttrackerContainer') 
+    CreateFrame('Frame','GwQuesttrackerContainerAchievement',GwQuestTracker,'GwQuesttrackerContainer') 
     
     CreateFrame('Frame','GwQuesttrackerContainerQuests',GwQuestTrackerScrollChild,'GwQuesttrackerContainer') 
     CreateFrame('Frame','GwQuesttrackerContainerBonusObjectives',GwQuestTrackerScrollChild,'GwQuesttrackerContainer')
+    GwQuesttrackerContainerAchievement:SetParent(GwQuestTrackerScrollChild)
     GwQuesttrackerContainerQuests:SetParent(GwQuestTrackerScrollChild)
     GwQuesttrackerContainerBonusObjectives:SetParent(GwQuestTrackerScrollChild)
     
@@ -473,7 +477,8 @@ function gw_load_questTracker()
     GwQuestTrackerScroll:SetPoint('BOTTOMRIGHT',GwQuestTracker,'BOTTOMRIGHT')
     
     GwQuestTrackerScrollChild:SetPoint('TOPRIGHT',GwQuestTrackerScroll,'TOPRIGHT')
-    GwQuesttrackerContainerQuests:SetPoint('TOPRIGHT',GwQuestTrackerScrollChild,'TOPRIGHT')
+    GwQuesttrackerContainerAchievement:SetPoint('TOPRIGHT',GwQuestTrackerScrollChild,'TOPRIGHT')
+    GwQuesttrackerContainerQuests:SetPoint('TOPRIGHT',GwQuesttrackerContainerAchievement,'BOTTOMRIGHT')
     GwQuesttrackerContainerBonusObjectives:SetPoint('TOPRIGHT',GwQuesttrackerContainerQuests,'BOTTOMRIGHT')
     
     GwQuestTrackerScrollChild:SetSize(400,2)
@@ -510,9 +515,10 @@ function gw_load_questTracker()
         local p = self:GetParent()
         if p.collapsed==nil or p.collapsed==false then
              p.collapsed = true
-                
+            PlaySound("igMainMenuOptionCheckBoxOff");
          else
              p.collapsed = false
+            PlaySound("igMainMenuOptionCheckBoxOn");
          end    
         updateQuestLogLayout('COLLAPSE')
     end)
@@ -524,6 +530,7 @@ function gw_load_questTracker()
     
     gw_register_bossFrames()
     gw_register_scenarioFrame()
+    gw_register_achievement()
     gw_register_bonusObjectiveFrame()
     
 end
