@@ -142,12 +142,12 @@ function GwFormatObjectiveNumbers(text)
    local  itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
    
     if itemName==nil then
-        numItems,numNeeded,itemName = string.match(text, "(%d+)/(%d+) (%S+)");
+        numItems,numNeeded,itemName = string.match(text, "(%d+)/(%d+) ((.*))");
     end
     numItems= tonumber(numItems)
     numNeeded= tonumber(numNeeded)
     
-    if numItems~=nil and numNeeded~=nil and numNeeded>1 and numItems<numNeeded then
+    if numItems~=nil and numNeeded~=nil then
 
         return comma_value(numItems)..' / '..comma_value(numNeeded)..' '..itemName
     end
