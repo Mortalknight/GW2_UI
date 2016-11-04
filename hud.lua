@@ -687,11 +687,11 @@ end
 action_hud_auras = {}
 
 function registerActionHudAura(aura,left,right)
-    local i = countTable(action_hud_auras)
-    action_hud_auras[i] = {}
-    action_hud_auras[i]['aura'] = aura
-    action_hud_auras[i]['left'] = left
-    action_hud_auras[i]['right'] = right
+
+    action_hud_auras[aura] = {}
+    action_hud_auras[aura]['aura'] = aura
+    action_hud_auras[aura]['left'] = left
+    action_hud_auras[aura]['right'] = right
 end
 local currentTexture = nil
 function select_actionhud_bg()
@@ -707,14 +707,18 @@ function select_actionhud_bg()
     if UnitAffectingCombat('player') then
          right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat';
          left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat';
+        
+        for i=1,40 do
+            local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID =  UnitBuff('player',i) 
+            if spellID~=nil and action_hud_auras[spellID] ~=nil then
+                left=action_hud_auras[spellID]['left']
+                right=action_hud_auras[spellID]['right']
+            end
+        end
+        
     end
     
-    for k,v in pairs(action_hud_auras) do
-       if UnitAura('player',action_hud_auras[k]['aura']) then
-            left=action_hud_auras[k]['left']
-            right=action_hud_auras[k]['right']
-        end
-    end
+ 
     if currentTexture~=left then
         currentTexture = left
         _G['GwActionBarHudLEFT']:SetTexture(left)
@@ -755,10 +759,12 @@ function combat_hud_healthstate()
     end
 end
 
-registerActionHudAura('Avenging Wrath','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy')
-registerActionHudAura('Rapid Fire','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_leafs','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_leafs')
-registerActionHudAura('Bear Form','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear')
-registerActionHudAura('Cat Form','Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat')
+registerActionHudAura(31842,'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy')
+registerActionHudAura(31884,'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy')
+
+registerActionHudAura(5487,'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear')
+registerActionHudAura(768,'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat')
+registerActionHudAura(51271,'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost','Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost')
 
 
 function gw_breath_meter()
