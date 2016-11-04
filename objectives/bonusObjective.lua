@@ -34,7 +34,7 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
     if text then
        
         objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(GwFormatObjectiveNumbers(text))
+        objectiveBlock.ObjectiveText:SetText(text)
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8,0.8,0.8)
         else
