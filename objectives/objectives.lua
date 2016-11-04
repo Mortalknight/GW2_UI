@@ -522,6 +522,12 @@ function gw_load_questTracker()
 	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_PROGRESS");
 	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_COMPLETE");
 	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_FINISHED");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_POI_UPDATE");
+	GwQuesttrackerContainerQuests:RegisterEvent("PLAYER_MONEY");
+	GwQuesttrackerContainerQuests:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED");
+	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ACCEPTED");
+    
+
     
     GwQuesttrackerContainerQuests:SetScript('OnEvent',QuestTracker_OnEvent)
   
