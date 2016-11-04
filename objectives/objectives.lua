@@ -1,4 +1,6 @@
 local blockIndex = 0
+local waitForUpdate = false
+local updatedThisFrame = false
 local blocks = {}
 local savedQuests = {}
 
@@ -161,6 +163,7 @@ end
 
 local function getObjectiveBlock(self,index)
     
+   
     if _G[self:GetName()..'GwQuestObjective'..index]~=nil then return _G[self:GetName()..'GwQuestObjective'..index] end
     
     if self.objectiveBlocksNum==nil then self.objectiveBlocksNum = 0 end
@@ -209,13 +212,13 @@ end
 local function addObjective(block,text,finished,objectiveIndex) 
     
     
-    if finished==true then return end
+   if finished==true then return end
     local objectiveBlock = getObjectiveBlock(block,objectiveIndex)
     
     if text  then
        
         objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(GwFormatObjectiveNumbers(text))
+        objectiveBlock.ObjectiveText:SetText(text)
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8,0.8,0.8)
         else
@@ -241,20 +244,19 @@ end
 
 local function updateQuestObjective(block,numObjectives,isComplete)
 
+    if isComplete then return end
+    local addedObjectives = 1
     for objectiveIndex = 1, numObjectives do
        
         local text, objectiveType, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
-        
-        addObjective(block,text,finished,objectiveIndex)
-        
+        if not finished then
+            addObjective(block,text,finished,addedObjectives)
+            addedObjectives = addedObjectives + 1
+        end
     end
     
 end
-function GetLeaderBoardDetails (boardIndex,questIndex)
-  local leaderboardTxt, itemType, isDone = GetQuestLogLeaderBoard (boardIndex,questIndex);
-  local i, j, itemName, numItems, numNeeded = string.find(leaderboardTxt, "(.*):%s*([%d]+)%s*/%s*([%d]+)");
-  return itemType, itemName, numItems, numNeeded, isDone;
-end
+
 
 function GwupdateQuestItem(button,questLogIndex)
     
@@ -262,7 +264,7 @@ function GwupdateQuestItem(button,questLogIndex)
     
     if button==nil then return end
     
-     local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(questLogIndex); 
+    local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(questLogIndex); 
     
     if item==nil then   button:Hide()   return end
     
@@ -323,10 +325,7 @@ local function updateQuest(block, questWatchId)
        
         GwupdateQuestItem(_G['GwQuestItemButton'..questWatchId],questLogIndex)
         
-        
-        if requiredMoney~=nil and requiredMoney>GetMoney() then
-           addObjective(block,GetMoneyString(GetMoney()).." / "..GetMoneyString(requiredMoney),finished, block.numObjectives+1)            
-        end
+ 
 
         if ( isComplete and isComplete < 0 ) then
 				isComplete = false;
@@ -336,6 +335,11 @@ local function updateQuest(block, questWatchId)
 			end
         
         updateQuestObjective(block, numObjectives,isComplete)
+        
+               
+        if requiredMoney~=nil and requiredMoney>GetMoney() then
+           addObjective(block,GetMoneyString(GetMoney()).." / "..GetMoneyString(requiredMoney),finished, block.numObjectives+1)            
+        end
         
         if isComplete then
             
@@ -408,6 +412,12 @@ end
 
 
 local function updateQuestLogLayout(intent)
+    
+    if updatedThisFrame then
+        waitForUpdate  = true
+    end
+        
+    updatedThisFrame = true
 
     local savedHeight = 1
     GwQuestHeader:Hide()
@@ -430,9 +440,8 @@ local function updateQuestLogLayout(intent)
         updateQuestItemPositions(i,savedHeight)
         
         savedHeight =savedHeight + block.height
-        
+       
     end
-
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
     for i=numQuests + 1,25 do
         if _G['GwQuestBlock'..i]~=nil then
@@ -527,6 +536,15 @@ function gw_load_questTracker()
 	GwQuesttrackerContainerQuests:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED");
 	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ACCEPTED");
     
+    
+    GwQuesttrackerContainerQuests:SetScript('OnUpdate', function() 
+        if waitForUpdate then
+            updateQuestLogLayout('update')
+            waitForUpdate = false
+        end
+        updatedThisFrame = false
+    end)
+    
 
     
     GwQuesttrackerContainerQuests:SetScript('OnEvent',QuestTracker_OnEvent)
@@ -549,7 +567,7 @@ function gw_load_questTracker()
     end)
     header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['QUEST'].r,GW_TRAKCER_TYPE_COLOR['QUEST'].g,GW_TRAKCER_TYPE_COLOR['QUEST'].b)   
    
-    updateQuestLogLayout()
+    updateQuestLogLayout('load')
     loadQuestButtons()
     
     
