@@ -263,12 +263,13 @@ function gw_register_scenarioFrame()
     
     
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_UPDATE");
-	GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_CRITERIA_UPDATE");
+	GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_CRITERIA_UPDATE");	
     
 	GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED_INDOORS");
 	GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 	GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED");
 	GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_COMPLETED");
+	GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_SPELL_UPDATE");
     
     
     local timerBlock = CreateFrame('Button','GwQuestTrackerTimer',GwQuesttrackerContainerScenario,'GwQuesttrackerScenarioBlock')
