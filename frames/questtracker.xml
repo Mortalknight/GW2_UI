@@ -265,11 +265,23 @@
         </Layers>
         <Frames>
          
-            <Button name="$parentHeaderButton" enableMouse="true" registerForClicks="AnyDown" parentKey="clickHeader">
+            <Button name="$parentHeaderButton"  hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="clickHeader">
                 <Size x="300" y="25"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" ></Anchor>
                 </Anchors>
+                <Scripts>
+                    <OnEnter>
+                      
+                        self.oldColor = {}
+                        self.oldColor.r, self.oldColor.g, self.oldColor.b = self:GetParent().Header:GetTextColor()
+                        self:GetParent().Header:SetTextColor(self.oldColor.r*2,self.oldColor.g*2,self.oldColor.b*2)
+                    </OnEnter>
+                    <OnLeave>
+                        if self.oldColor==nil then return end
+                        self:GetParent().Header:SetTextColor(self.oldColor.r,self.oldColor.g,self.oldColor.b)
+                    </OnLeave>
+                </Scripts>
             </Button>
             <Button name="$parentClickToTurnIn" hidden="true" parentKey="turnin">
                 <size x="90" y="90"></size>

@@ -199,7 +199,7 @@ local function getBlock(blockIndex)
     else
         newBlock:SetPoint('TOPRIGHT',_G['GwQuestBlock'..(blockIndex - 1)],'BOTTOMRIGHT',0,0) 
     end
-    
+    newBlock.clickHeader:Show() 
     setBlockColor(newBlock,'QUEST')
     newBlock.Header:SetTextColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
