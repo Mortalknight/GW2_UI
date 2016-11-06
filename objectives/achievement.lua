@@ -1,5 +1,5 @@
 local MAX_OBJECTIVES = 10
-function achievementOnClick(block, mouseButton)
+local function achievementOnClick(block, mouseButton)
 	if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
 		local achievementLink = GetAchievementLink(block.id);
 		if ( achievementLink ) then
@@ -121,6 +121,7 @@ local function updateAchievementObjectives(block,blockIndex, achievementID)
       
     if ( numCriteria > 0 ) then
         for criteriaIndex = 1, numCriteria do
+           
             local criteriaString, criteriaType, criteriaCompleted, quantity, totalQuantity, name, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfo(achievementID, criteriaIndex);	
            
             if not criteriaCompleted then numIncomplete = numIncomplete +1 end
@@ -230,7 +231,7 @@ local function updateAchievementLayout(intent)
     end
     
     gwQuestTrackerLayoutChanged()
-    
+   
 end
 
 

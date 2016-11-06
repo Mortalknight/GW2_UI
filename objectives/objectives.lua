@@ -66,18 +66,21 @@ end
 
 local function loadQuestButtons()
     for i=1,25 do
-        local actionButton = CreateFrame('Button','GwQuestItemButton'..i,GwQuestTracker,'QuestObjectiveItemButtonTemplate')
+        local actionButton = CreateFrame('Button','GwQuestItemButton'..i,GwQuestTracker,'GwQuestItemTemplate')
         actionButton.icon:SetTexCoord(0.1,0.9,0.1,0.9)
         actionButton.NormalTexture:SetTexture(nil)
+        actionButton:RegisterForClicks("AnyUp");
     end
     
-    local actionButton = CreateFrame('Button','GwBonusItemButton',GwQuestTracker,'QuestObjectiveItemButtonTemplate')
+    local actionButton = CreateFrame('Button','GwBonusItemButton',GwQuestTracker,'GwQuestItemTemplate')
     actionButton.icon:SetTexCoord(0.1,0.9,0.1,0.9)
     actionButton.NormalTexture:SetTexture(nil) 
+     actionButton:RegisterForClicks("AnyUp");
     
-    local actionButton = CreateFrame('Button','GwScenarioItemButton',GwQuestTracker,'QuestObjectiveItemButtonTemplate')
+    local actionButton = CreateFrame('Button','GwScenarioItemButton',GwQuestTracker,'GwQuestItemTemplate')
     actionButton.icon:SetTexCoord(0.1,0.9,0.1,0.9)
     actionButton.NormalTexture:SetTexture(nil)
+     actionButton:RegisterForClicks("AnyUp");
     
     
     
@@ -270,15 +273,23 @@ function GwupdateQuestItem(button,questLogIndex)
     
     
     button:SetID(questLogIndex);
+
+    button:SetAttribute("type",'item')
+    button:SetAttribute('item',GetItemInfo(link))
+
+    
     button.charges =  charges;
     button.rangeTimer = -1;
     SetItemButtonTexture(button,  item);
     SetItemButtonCount(button,  charges);
+    
+	
     QuestObjectiveItem_UpdateCooldown(button);
     button:Show();
     
     
 end
+
 
 local function quest_update_POI(questID,questLogIndex)
     
@@ -413,8 +424,10 @@ end
 
 local function updateQuestLogLayout(intent)
     
-    if updatedThisFrame then
+    
+    if updatedThisFrame and intent~='update' then
         waitForUpdate  = true
+        
     end
         
     updatedThisFrame = true
@@ -471,9 +484,10 @@ end
 local function QuestTracker_OnEvent(self,event,data1)
 
         updateQuestLogLayout(data1)
-   
-    
+
 end
+
+
 
 function gw_load_questTracker()
     ObjectiveTrackerFrame:Hide()
@@ -567,8 +581,9 @@ function gw_load_questTracker()
     end)
     header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['QUEST'].r,GW_TRAKCER_TYPE_COLOR['QUEST'].g,GW_TRAKCER_TYPE_COLOR['QUEST'].b)   
    
-    updateQuestLogLayout('load')
     loadQuestButtons()
+    updateQuestLogLayout('load')
+    
     
     
     gw_register_bossFrames()
