@@ -18,7 +18,7 @@ local function prioritys(a,b)
     if a == nil or a=='' then return true end
     if b == nil or b=='' then return false end
 
-    return (notification_priority[a]<notification_priority[b])
+    return (notification_priority[a]>notification_priority[b])
     
 end
 
