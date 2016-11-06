@@ -6,6 +6,7 @@ local GW_CURRENT_HIGHLIGHT_FRAME = nil
 function gw_raidframe_hideBlizzard()
     CompactRaidFrameManager:UnregisterAllEvents()
     CompactRaidFrameManager:Hide()
+    CompactRaidFrameContainer:UnregisterAllEvents()
 
 end
 
@@ -14,7 +15,7 @@ function gw_register_raidframes()
     
     hooksecurefunc("CompactRaidFrameManager_UpdateShown", gw_raidframe_hideBlizzard)
     CompactRaidFrameManager:HookScript('OnShow', gw_raidframe_hideBlizzard)
-    CompactRaidFrameContainer:UnregisterAllEvents()
+    
     
     CreateFrame('Frame','GwRaidFrameContainer',UIParent,'GwRaidFrameContainer')
     
