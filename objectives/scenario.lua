@@ -75,10 +75,20 @@ local function updateCurrentScenario()
             gwRemoveNotification('SCENARIO')
             GwScenarioBlock:Hide()
         end
-         GwupdateQuestItem(GwScenarioItemButton, 0)
-        GwScenarioBlock:SetHeight(GwScenarioBlock.height)
-        GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
-        return 
+        GwupdateQuestItem(GwScenarioItemButton, 0)
+        for  i=GwScenarioBlock.numObjectives + 1, 20 do
+        if _G[GwScenarioBlock:GetName()..'GwQuestObjective'..i]~=nil then
+            _G[GwScenarioBlock:GetName()..'GwQuestObjective'..i]:Hide()
+        end
+    end
+
+    
+    GwScenarioBlock.height = GwScenarioBlock.height + 5 
+  
+    GwScenarioBlock:SetHeight(GwScenarioBlock.height)
+    GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
+        return
+         
     end
 
 
