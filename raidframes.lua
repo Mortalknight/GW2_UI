@@ -4,13 +4,22 @@ local GW_CURRENT_HIGHLIGHT_FRAME = nil
 
 
 function gw_raidframe_hideBlizzard()
+    if InCombatLockdown() then return end
+    
     CompactRaidFrameManager:UnregisterAllEvents()
     CompactRaidFrameManager:Hide()
     CompactRaidFrameContainer:UnregisterAllEvents()
+    
+    local compact_raid = CompactRaidFrameManager_GetSetting("IsShown")
+    if compact_raid and compact_raid ~= "0" then
+        CompactRaidFrameManager_SetSetting("IsShown", "0")
+    end
 
 end
 
+
 function gw_register_raidframes()
+    
     gw_raidframe_hideBlizzard()
     
     hooksecurefunc("CompactRaidFrameManager_UpdateShown", gw_raidframe_hideBlizzard)

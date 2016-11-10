@@ -1,0 +1,434 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    
+    <Frame name="GwPaperDollStat" enableMouse="true" virtual="true">
+        <Size x="92" y="30"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\statsicon">
+                    <Size x="30" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="Value" text="Not Loaded" justifyV="CENTER" justifyH="LEFT">
+                    <Size x="72" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="35"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Label" text="" justifyH="LEFT">
+                    <Size x="72" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.Value:SetFont(UNIT_NAME_FONT,14)
+                self.Label:SetFont(UNIT_NAME_FONT,1)
+                self.Label:SetTextColor(0,0,0,0)
+            </OnLoad>
+            <OnEnter>
+                if ( not self.tooltip ) then
+                return;
+                end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:SetText(self.tooltip);
+                if ( self.tooltip2 ) then
+                GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g,        NORMAL_FONT_COLOR.b, true);
+                end
+                GameTooltip:Show();
+            
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+        </Scripts>
+    </Frame>
+    
+    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton"  registerForClicks="LeftButtonUp RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
+        <Size x="49" y="49"></Size>
+        <Layers>
+        <Layer level="BACKGROUND">
+                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
+                    <Size x="49" y="49"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                     <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
+                </Texture>
+            </Layer>
+  
+        </Layers>
+        
+        <Scripts>
+            <OnLoad> 
+                gwPaperDollSlotButton_OnLoad(self)
+            </OnLoad>   
+            <OnShow> 
+                gwPaperDollSlotButton_OnShow(self)
+            </OnShow>
+            <OnHide> 
+                gwPaperDollSlotButton_OnHide(self)
+            </OnHide>
+            <OnEvent>
+                gwPaperDollSlotButton_OnEvent(self, event, ...);
+			</OnEvent>
+            <OnClick>
+                
+              if ( IsModifiedClick() ) then
+					gwPaperDollSlotButton_OnModifiedClick(self, button);
+             
+				else
+					gwPaperDollSlotButton_OnClick(self, button);
+				end
+			</OnClick>
+            <OnDragStart>
+                gwPaperDollSlotButton_OnClick(self, "LeftButton");
+            </OnDragStart>
+            <OnReceiveDrag>
+				gwPaperDollSlotButton_OnClick(self, "LeftButton");
+			</OnReceiveDrag>
+            <OnEnter>
+              gwPaperDollSlotButton_OnEnter(self,motion)
+			</OnEnter> 
+            <OnLeave>
+              gwPaperDollSlotButton_OnLeave(self,motion)
+			</OnLeave>
+        </Scripts>
+    </Button>
+    
+    <Frame name="GwDressingRoom" virtual="true">
+        <Size x="608" y="621"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="608" y="621"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                    <Size x="50" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-145" y="-45"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="characterName" text="Unknown" justifyH="LEFT">
+                    <Size x="180" y="20"></Size>
+                    <Anchors>
+                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="characterData" text="Level %d class" justifyH="LEFT">
+                    <Size x="180" y="20"></Size>
+                    <Anchors>
+                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-25"></Anchor>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="itemLevel" text="100" justifyH="LEFT">
+                    <Size x="180" y="20"></Size>
+                    <Anchors>
+                         <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="GwPapaerDollStats">
+                <Size x="184" y="301"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-105"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\statsbg">
+                            <Size x="256" y="512"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="header" text="Attributes" justifyH="LEFT">
+                            <Size x="180" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="2"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        self.header:SetFont(DAMAGE_TEXT_FONT, 14)
+                        self:RegisterEvent("PLAYER_ENTERING_WORLD");
+                        
+                        self:RegisterEvent("CHARACTER_POINTS_CHANGED");
+                        self:RegisterEvent("UNIT_MODEL_CHANGED");
+                        self:RegisterEvent("UNIT_LEVEL");
+                        self:RegisterEvent("UNIT_STATS");
+                        self:RegisterEvent("UNIT_RANGEDDAMAGE");
+                        self:RegisterEvent("UNIT_ATTACK_POWER");
+                        self:RegisterEvent("UNIT_RANGED_ATTACK_POWER");
+                        self:RegisterEvent("UNIT_ATTACK");
+                        self:RegisterEvent("UNIT_SPELL_HASTE");
+                        self:RegisterEvent("UNIT_RESISTANCES");
+                        self:RegisterEvent("PLAYER_GUILD_UPDATE");
+                        self:RegisterEvent("SKILL_LINES_CHANGED");
+                        self:RegisterEvent("COMBAT_RATING_UPDATE");
+                        self:RegisterEvent("MASTERY_UPDATE");
+                        self:RegisterEvent("SPEED_UPDATE");
+                        self:RegisterEvent("LIFESTEAL_UPDATE");
+                        self:RegisterEvent("AVOIDANCE_UPDATE");
+                        self:RegisterEvent("KNOWN_TITLES_UPDATE");
+                        self:RegisterEvent("UNIT_NAME_UPDATE");
+                        self:RegisterEvent("PLAYER_TALENT_UPDATE");
+                        self:RegisterEvent("BAG_UPDATE");
+                        self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
+                        self:RegisterEvent("PLAYER_BANKSLOTS_CHANGED");
+                        self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE");
+                        self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS");
+                        self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");
+                        self:RegisterUnitEvent("UNIT_DAMAGE", "player");
+                        self:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player");
+                        self:RegisterUnitEvent("UNIT_MAXHEALTH", "player");
+                        self:RegisterUnitEvent("UNIT_AURA", "player");
+                        self:RegisterEvent("SPELL_POWER_CHANGED");
+                        self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION");
+                    </OnLoad>
+                    <OnEvent>
+                        gwPaperDollStats_OnEvent(self,event,...)
+                    </OnEvent>
+                </Scripts>
+            </Frame>
+            <Frame name="$parentGear">
+                <Size x="184" y="301"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="10"></Anchor>
+                </Anchors>
+                <Frames>
+                    <Button name="GwPaperDollHeadSlot" parentKey="head" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                    </Button> 
+                    <Button name="GwPaperDollShoulderSlot" parentKey="shoulder" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.head" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button> 
+       
+                    <Button name="GwPaperDollWristSlot" parentKey="wrists" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.shoulder" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollHandsSlot" parentKey="hands" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.wrists" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                   
+                    <Button name="GwPaperDollChestSlot" parentKey="chest" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.hands" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollWaistSlot" parentKey="waist" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.chest" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollLegsSlot" parentKey="legs" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.waist" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollFeetSlot" parentKey="feet" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.legs" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollMainHandSlot" parentKey="weapon" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.feet" relativePoint="BOTTOMLEFT" x="0" y="-20"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollSecondaryHandSlot" parentKey="offhand" inherits="GwPaperDollButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.weapon" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    
+                    <Button name="GwPaperDollTabardSlot" parentKey="tabard" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeTo="GwPapaerDollStats"  relativePoint="BOTTOMRIGHT" x="-5" y="-20"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollShirtSlot" parentKey="shirt" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollTrinket0Slot" parentKey="trinket1" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollTrinket1Slot" parentKey="trinket2" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button> 
+                    <Button name="GwPaperDollFinger0Slot" parentKey="finger1" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollFinger1Slot" parentKey="finger2" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                           <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollNeckSlot" parentKey="neck" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="GwPaperDollBackSlot" parentKey="back" inherits="GwPaperDollButtonTemplate">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                              <Anchor point="TOPRIGHT" relativeKey="$parent.neck" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                    </Button>
+                </Frames>
+                <Scripts>
+                    <OnLoad>
+                        self.head.BACKGROUND:SetTexCoord(0,0.25,0,0.25)
+                        self.shoulder.BACKGROUND:SetTexCoord(0.5,0.75,0.5,0.75)
+                        self.back.BACKGROUND:SetTexCoord(0.75,1,0,0.25)
+                        self.wrists.BACKGROUND:SetTexCoord(0.75,1,0.25,0.5)
+                        self.hands.BACKGROUND:SetTexCoord(0,0.25,0.75,1)
+                        self.chest.BACKGROUND:SetTexCoord(0.75,1,0.5,0.75)
+                        self.waist.BACKGROUND:SetTexCoord(0.25,0.5,0.5,0.75)
+                        self.legs.BACKGROUND:SetTexCoord(0,0.25,0.5,0.75)
+                        self.feet.BACKGROUND:SetTexCoord(0.5,0.75,0.25,0.5)
+                        self.weapon.BACKGROUND:SetTexCoord(0.25,0.5,0.25,0.5)
+                        self.offhand.BACKGROUND:SetTexCoord(0,0.25,0.25,0.5)
+                        
+                        self.finger1.BACKGROUND:SetTexCoord(0.5,0.75,0,0.25)
+                        self.finger2.BACKGROUND:SetTexCoord(0.5,0.75,0,0.25)
+                        self.neck.BACKGROUND:SetTexCoord(0.25,0.5,0,0.25)
+                        self.trinket1.BACKGROUND:SetTexCoord(0.5,0.75,0.75,1)
+                        self.trinket2.BACKGROUND:SetTexCoord(0.5,0.75,0.75,1)
+                        
+                        self.shirt.BACKGROUND:SetTexCoord(0.75,1,0.5,0.75)
+                        self.tabard.BACKGROUND:SetTexCoord(0.25,0.5,0.75,1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelPanningFrame ModelWithZoomTemplate ModelTemplate" enableMouse="true"  parentKey="model">
+                <Size x="355" y="598"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self:SetUnit('player')
+                        self:SetPosition(0.8,0,0)
+                        self:SetRotation(-0.15)
+
+						Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp);
+				
+                    </OnLoad>
+                </Scripts>
+            </PlayerModel>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                self.characterName:SetFont(UNIT_NAME_FONT, 14)
+                self.characterData:SetFont(UNIT_NAME_FONT, 12)
+                self.itemLevel:SetFont(UNIT_NAME_FONT, 24)
+                
+                locallocalizedClass, englishClass, classIndex = UnitClass('player');
+                
+                gw_setClassIcon(self.classIcon,classIndex)
+                self.classIcon:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
+                
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true">
+        <Size x="853" y="50"></Size>
+        <Anchors>
+            <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
+        </Anchors>
+        <Scripts>
+            <OnLoad>
+                self:RegisterForDrag("LeftButton");
+            </OnLoad>
+            <OnDragStart>self:StartMoving();</OnDragStart>
+            <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
+        </Scripts>
+    </Frame>
+    <Frame name="GwCharacterWindow" enableMouse="true" frameStrata="HIGH" virtual="true">
+        <Size x="853" y="627"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg">
+                     <Size x="853" y="853"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
+                    <Size x="512" y="64"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right">
+                    <Size x="512" y="64"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                 <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                    <Size x="40" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>   
+            
+            </Layer>
+        </Layers>
+    </Frame>
+    
+</Ui>

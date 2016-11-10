@@ -793,6 +793,9 @@ l:SetScript('OnEvent',function(self,event,name)
             gw_create_bankframe()
         end 
         
+        
+        gw_register_character_window()
+        
         gw_breath_meter()
         
             --Create unitframes

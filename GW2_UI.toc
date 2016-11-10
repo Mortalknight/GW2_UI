@@ -21,6 +21,7 @@ frames/party.xml
 frames/raidframes.xml
 
 frames/unitframes.xml
+frames/character.xml
 
 
 GW2_ui.lua
@@ -52,3 +53,5 @@ objectives/notifications.lua
 objectives/bonusObjective.lua
 objectives/bossFrames.lua
 objectives/achievement.lua
+
+character/character.lua

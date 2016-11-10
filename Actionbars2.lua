@@ -279,6 +279,13 @@ function gw_setupActionbars()
     end)
 end
 
+function gwShowAttr()
+    for i=1,12 do
+        local BUTTON =  _G['ActionButton'..i]
+        print(BUTTON:GetAttribute('type'))
+    end
+end
+
 function gw_updateMainBar()
     
     local MAIN_MENU_BAR_BUTTON_SIZE =48
@@ -297,6 +304,7 @@ function gw_updateMainBar()
             BUTTON_PADDING = BUTTON_PADDING + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
             
             BUTTON:SetSize(MAIN_MENU_BAR_BUTTON_SIZE,MAIN_MENU_BAR_BUTTON_SIZE)
+            
             
             gw_setActionButtonStyle('ActionButton'..i)
             gw_updatehotkey(BUTTON)
