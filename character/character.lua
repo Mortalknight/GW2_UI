@@ -192,8 +192,9 @@ function gwPaperDollUpdateStats()
             end
             
 			if ( showStat ) then
-                
+            
                 statFrame =  gwPaperDollGetStatListFrame(GwPapaerDollStats,numShownStats)
+                statFrame.stat = stat.stat
 				statFrame.onEnterFunc = nil;
 				PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player");
                 
@@ -225,9 +226,21 @@ end
 
 function gwPaperDollSetStatIcon(self, stat)
     
+    local newTexture = 'Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon'
     if STATS_ICONS[stat]~=nil then
+       
+        -- If mastery we use need to use class icon
+        if stat=='MASTERY' then
+            gw_setClassIcon(self.icon,classIndex)
+            newTexture='Interface\\AddOns\\GW2_UI\\textures\\party\\classicons'
+        else
+            
         self.icon:SetTexCoord(STATS_ICONS[stat].l,STATS_ICONS[stat].r,STATS_ICONS[stat].t,STATS_ICONS[stat].b)
-        return
+     end
+    end
+    
+    if newTexture~=self.icon:GetTexture() then
+        self.icon:SetTexture(newTexture)
     end
 
     
@@ -357,6 +370,20 @@ function gwPaperDollSlotButton_Update (self)
 			SetItemButtonTextureVertexColor(self, 1.0, 1.0, 1.0);
 			
 		end
+        
+         local current, maximum = GetInventoryItemDurability(self:GetID());
+        if current~=nil and(current/maximum)<0.5 then
+            self.repairIcon:Show()
+            if (current/maximum)==0 then
+                self.repairIcon:SetTexCoord(0,1,0.5,1)
+            else
+                self.repairIcon:SetTexCoord(0,1,0,0.5)
+            end
+            
+        else
+            self.repairIcon:Hide()
+        end
+        
 		if ( cooldown ) then
 			local start, duration, enable = GetInventoryItemCooldown("player", self:GetID());
 			CooldownFrame_Set(cooldown, start, duration, enable);
