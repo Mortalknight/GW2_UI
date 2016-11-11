@@ -434,26 +434,15 @@ function gw_dodgebar_onevent(self,event,unit)
                 local name = GetSpellInfo(v)
                 if name~=nil then       
                 
-                    for r=1,7 do
-                        for c=1,3 do
-                       
-                            local _, _, _, selected, _, spellid = GetTalentInfo(r,c,GetActiveSpecGroup(), false, "player")
-                            if spellid==v then
-                                isTalent = true
-                                if selected then
-                                    isSelected = true
-                                end
-                            end
-                            
-                        end
-                    end
-                
-                    if  (isTalent==true and isSelected==true) or isTalent==false then     
-                        charges, maxCharges, start, duration = GetSpellCharges(v)
-                        foundADash = true
-                        GwDodgeBar.spellId = v
-                        if charges~=nil and charges<maxCharges then
-                           gw_update_dodgebar(start,duration,maxCharges,charges)
+                    if  IsSpellKnown(v)  then     
+                    
+                      local  charges, maxCharges, start, duration = GetSpellCharges(v)
+                        
+                        if charges~=nil and charges<=maxCharges then
+                            foundADash = true
+                            GwDodgeBar.spellId = v
+                            gw_update_dodgebar(start,duration,maxCharges,charges)
+                            break
                         end
                     end
                 end
@@ -470,7 +459,7 @@ end
 
 function gw_update_dodgebar(start,duration,chargesMax,charges)
     
-
+    print(start,duration,chargesMax,charges)
     
     if chargesMax>1 and chargesMax<3 then
         _G['GwDodgeBarSep1']:Show()
@@ -493,13 +482,14 @@ function gw_update_dodgebar(start,duration,chargesMax,charges)
  --   GwDodgeBar.spark.anim:SetDuration(1)  
   --  GwDodgeBar.spark.anim:Play()
 
-    
+    if chargesMax==charges then return end
 
     addToAnimation('GwDodgeBar',0,1,start,duration,function()
             
         local p = animations['GwDodgeBar']['progress']
         local c = (charges + p) / chargesMax
         local t = lerp(1,-1,c) +1.4
+       
         GwDodgeBar.fill:SetTexCoord(0,1*c,0,1)
         GwDodgeBar.fill:SetWidth(114*c)
             
