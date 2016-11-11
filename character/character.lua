@@ -83,8 +83,9 @@ local function getBagSlotFrame(i)
     
 end
 
-local function updateBagItemListAll()
+ function GwupdateBagItemListAll()
     
+    if selectedInventorySlot~=nil then return end
       
     local gridIndex = 1
     local itemIndex = 1
@@ -211,11 +212,9 @@ function updateBagItemButton(button)
             button.repairIcon:Hide()
         end
        
-        button:SetScript('OnEnter', function()
-            GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
-            GameTooltip:SetItemByID(id) 
-            GameTooltip:Show() 
-        end)
+        button.UpdateTooltip = function () GameTooltip:SetOwner(button, "ANCHOR_RIGHT", 6, -EquipmentFlyoutFrame.buttonFrame:GetHeight() - 6); setTooltip(); end;
+	
+        
 
 		GwSetItemButtonQuality(button, quality,id);
 
@@ -391,9 +390,7 @@ function gwPaperDollUpdateStats()
 		
 	end
 
-    
--- PaperDollFormatStat(name, base, posBuff, negBuff)
--- FormatPaperDollTooltipStat(name, base, posBuff, negBuff)
+
 end
 
 function gwPaperDollSetStatIcon(self, stat)
@@ -606,7 +603,7 @@ function GwPaperDollResetBagInventory()
     
     GwPaperDollSelectedIndicator:Hide()
     selectedInventorySlot = nil
-    updateBagItemListAll()
+    GwupdateBagItemListAll()
     
 end
 

@@ -141,14 +141,16 @@
 			</OnLeave>
         </Scripts>
     </Button>
-    <Button name="GwPaperDollBagItem" inherits="GwPaperDollButtonTemplate" virtual="true">
+    <Button name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true">
         <Scripts>
             <OnLoad>gwActionButtonGlobalStyle(self) </OnLoad>
-            <OnEnter> self.UpdateTooltip() </OnEnter>
+            <OnEnter>
+                self:SetScript('OnUpdate',self.UpdateTooltip)
+                GameTooltip:Show() </OnEnter>
             <OnClick>GwPaperDollBagItem_OnClick(self)</OnClick>
-            <OnLeave>GameTooltip:Hide() </OnLeave>
+            <OnLeave>self:SetScript('OnUpdate',nil) GameTooltip:Hide() </OnLeave>
             <OnShow> </OnShow>
-            <OnHide> </OnHide>
+            <OnHide></OnHide>
         </Scripts>
     </Button>
     
@@ -167,6 +169,15 @@
                 </Texture>
             </Layer>
         </Layers>
+        <Scripts>
+            <OnLoad>
+                self:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
+                GwupdateBagItemListAll()
+            </OnLoad>
+            <OnEvent>
+                GwupdateBagItemListAll()
+            </OnEvent>
+        </Scripts>
     </Frame>
     
     <Button name="GwDressingRoom" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
