@@ -651,6 +651,7 @@ function gw_register_character_window()
     CreateFrame('Frame','GwCharacterWindowMoverFrame',UIParent,'GwCharacterWindowMoverFrame')
     CreateFrame('Frame','GwCharacterWindow',UIParent,'GwCharacterWindow')
     CreateFrame('Button','GwDressingRoom',GwCharacterWindow,'GwDressingRoom')
+    CreateFrame('Frame','GwCharacterMenu',GwCharacterWindow,'GwCharacterMenu')
     CreateFrame('Frame','GwPaperDollBagItemList',GwCharacterWindow,'GwPaperDollBagItemList')
     CreateFrame('Frame','GwPaperDollSelectedIndicator',GwCharacterWindow,'GwPaperDollSelectedIndicator')
     

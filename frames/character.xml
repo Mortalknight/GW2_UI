@@ -153,8 +153,82 @@
             <OnHide></OnHide>
         </Scripts>
     </Button>
+     <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+       
+         <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
+         <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
+                    <Size x="10" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+             </Layer>
+         </Layers>
+         <Scripts>
+             <OnLoad>
+                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+                 
+                 self:GetFontString():SetTextColor(1,1,1,1)
+                 self:GetFontString():SetShadowColor(0,0,0,0)
+                 self:GetFontString():SetShadowOffset(1,-1)
+                 self:GetFontString():SetFont(DAMAGE_TEXT_FONT,16)
+                 self:GetFontString():SetJustifyH('LEFT')
+                 self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
+
+             </OnLoad> 
+         </Scripts>
+    </Button>   
+    <Button name="GwCharacterMenuButtonTemplate2" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+       
+          <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
+                    <Size x="10" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+             </Layer>
+         </Layers>
+         <Scripts>
+             <OnLoad>
+                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+                 self:SetNormalTexture(nil)
+                 self:GetFontString():SetTextColor(1,1,1,1)
+                 self:GetFontString():SetShadowColor(0,0,0,0)
+                 self:GetFontString():SetShadowOffset(1,-1)
+                 self:GetFontString():SetFont(DAMAGE_TEXT_FONT,16)
+                 self:GetFontString():SetJustifyH('LEFT')
+                 self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
+
+             </OnLoad> 
+         </Scripts>
+    </Button>
+    <Frame name="GwCharacterMenu" hidden="true" virtual="true">
+        <Size x="231" y="498"></Size>
+        <Anchors>   
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
+        </Anchors>
+        <Frames>
+            <Button name="$parentEquipment" parentKey="equipmentMenu" inherits="GwCharacterMenuButtonTemplate" text="Equipment" >
+                <Size x="231" y="36"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
+                </Anchors>
+            </Button>  
+            <Button name="$parentOutfits" inherits="GwCharacterMenuButtonTemplate2" text="Item Sets" >
+                <Size x="231" y="36"></Size>
+                
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.equipmentMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>   
     
-    <Frame name="GwPaperDollBagItemList" virtual="true">
+    <Frame name="GwPaperDollBagItemList" hidden="false" virtual="true">
         <Size x="231" y="498"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-70"></Anchor>
