@@ -459,7 +459,6 @@ end
 
 function gw_update_dodgebar(start,duration,chargesMax,charges)
     
-    print(start,duration,chargesMax,charges)
     
     if chargesMax>1 and chargesMax<3 then
         _G['GwDodgeBarSep1']:Show()
