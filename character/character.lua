@@ -300,6 +300,11 @@ function gwPaperDollSlotButton_OnEvent (self, event, ...)
 			gwPaperDollSlotButton_Update(self);
 		end
 	end
+    if ( event == "BAG_UPDATE_COOLDOWN" ) then
+	
+			gwPaperDollSlotButton_Update(self);
+	
+	end
 end
 
 function gwPaperDollSlotButton_OnEnter (self)
@@ -345,8 +350,6 @@ function gwPaperDollSlotButton_OnClick (self, button)
 				MerchantFrame_SetRefundItem(self, 1);
 			end
 		end
-	else
-		UseInventoryItem(self:GetID());
 	end
 end
 
@@ -371,7 +374,7 @@ function gwPaperDollSlotButton_Update (self)
 			
 		end
         
-         local current, maximum = GetInventoryItemDurability(self:GetID());
+        local current, maximum = GetInventoryItemDurability(self:GetID());
         if current~=nil and(current/maximum)<0.5 then
             self.repairIcon:Show()
             if (current/maximum)==0 then
@@ -395,6 +398,8 @@ function gwPaperDollSlotButton_Update (self)
 
 	local quality = GetInventoryItemQuality("player", self:GetID());
 	GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", self:GetID()));
+    
+  
 
 
 end
