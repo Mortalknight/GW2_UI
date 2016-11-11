@@ -66,6 +66,7 @@ PAPERDOLL_STATCATEGORIES= {
 			[9] = { stat = "BLOCK", hideAt = 0, roles =  { "TANK" } },
 ]]--
 
+local EquipSlotList = {}
 local bagItemList = {}
 local numBagSlotFrames = 0
 local selectedInventorySlot = nil
@@ -82,9 +83,61 @@ local function getBagSlotFrame(i)
     
 end
 
+local function updateBagItemListAll()
+    
+      
+    local gridIndex = 1
+    local itemIndex = 1
+    local x = 10
+    local y = 15
+    
+    for k,v in pairs(EquipSlotList) do 
+     
+        local id = v
+
+        wipe(bagItemList)
+
+        GetInventoryItemsForSlot(id, bagItemList) 
+
+
+        for location, itemID in next, bagItemList do
+
+            if not ( location - id == ITEM_INVENTORY_LOCATION_PLAYER ) then -- Remove the currently equipped item from the list
+
+                local itemFrame = getBagSlotFrame(itemIndex)
+                itemFrame.location = location
+
+                updateBagItemButton(itemFrame)
+
+
+                itemFrame:SetPoint('TOPLEFT',x,-y)    
+                itemFrame:Show()
+                itemFrame.itemSlot = id
+                gridIndex = gridIndex + 1
+
+                x = x + 49 + 3
+
+                if gridIndex>4 then
+                    gridIndex = 1 
+                    x = 10
+                    y = y + 49 +3
+                end
+                itemIndex = itemIndex + 1
+                if itemIndex>36 then break end
+            end
+
+        end
+    end
+    for i=itemIndex,numBagSlotFrames do
+        if _G['gwPaperDollBagSlotButton'..i]~=nil then  _G['gwPaperDollBagSlotButton'..i]:Hide() end
+    end
+    
+end
+
 local function updateBagItemList(itemButton)
     
     local id = itemButton.id or itemButton:GetID();
+    if selectedInventorySlot~=id then return end
     
     wipe(bagItemList)
     
@@ -107,18 +160,19 @@ local function updateBagItemList(itemButton)
             
             itemFrame:SetPoint('TOPLEFT',x,-y)    
             itemFrame:Show()
+            itemFrame.itemSlot = id
             gridIndex = gridIndex + 1
             
             x = x + 49 + 3
   
             if gridIndex>4 then
                 gridIndex = 1 
-                x = 0
+                x = 10
                 y = y + 49 +3
             end
             itemIndex = itemIndex + 1
 		end
-       
+       if itemIndex>36 then break end
     end
     for i=itemIndex,numBagSlotFrames do
         if _G['gwPaperDollBagSlotButton'..i]~=nil then  _G['gwPaperDollBagSlotButton'..i]:Hide() end
@@ -173,11 +227,11 @@ function GwPaperDollBagItem_OnClick (self)
 	local action = function() end
 		
     if ( self.location ) then
-        if ( UnitAffectingCombat("player") and not INVSLOTS_EQUIPABLE_IN_COMBAT[selectedInventorySlot] ) then
+        if ( UnitAffectingCombat("player") and not INVSLOTS_EQUIPABLE_IN_COMBAT[self.itemSlot] ) then
             UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0);
             return;
         end
-        local action = EquipmentManager_EquipItemByLocation(self.location, selectedInventorySlot);
+        local action = EquipmentManager_EquipItemByLocation(self.location, self.itemSlot);
         EquipmentManager_RunAction(action);
     end
 end
@@ -390,6 +444,7 @@ function gwPaperDollSlotButton_OnLoad(self)
 	local slotName = self:GetName();
 	local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName,12));
 	self:SetID(id);
+    EquipSlotList[#EquipSlotList + 1] =id
 	self.checkRelic = checkRelic;
 
 
@@ -423,6 +478,7 @@ function gwPaperDollSlotButton_OnEvent (self, event, ...)
 	if ( event == "PLAYER_EQUIPMENT_CHANGED" ) then
 		if ( self:GetID() == arg1 ) then
 			gwPaperDollSlotButton_Update(self);
+            updateBagItemList(self)
             
 		end
 	end
@@ -469,8 +525,9 @@ function gwPaperDollSlotButton_OnClick (self, button,drag)
         
         GwPaperDollSelectedIndicator:SetPoint('LEFT',self,'LEFT',-16,0)
         GwPaperDollSelectedIndicator:Show()
-        updateBagItemList(self)
         selectedInventorySlot = self:GetID()
+        updateBagItemList(self)
+
         
         return
     end
@@ -543,9 +600,14 @@ function gwPaperDollSlotButton_Update (self)
 end
 
 
-function GwPaperDoll_OnClick()
-
+function GwPaperDollResetBagInventory()
+    
+    print('Reseting Inventory Display')
+    
     GwPaperDollSelectedIndicator:Hide()
+    selectedInventorySlot = nil
+    updateBagItemListAll()
+    
 end
 
 

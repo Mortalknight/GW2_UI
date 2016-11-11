@@ -278,9 +278,7 @@
                     <OnEvent>
                         gwPaperDollStats_OnEvent(self,event,...)
                     </OnEvent>
-                    <OnClick>
-                        GwPaperDoll_OnClick(self)
-                    </OnClick>
+                    
                 </Scripts>
             </Frame>
             <Frame name="$parentGear">
@@ -415,9 +413,10 @@
                         self.shirt.BACKGROUND:SetTexCoord(0.75,1,0.5,0.75)
                         self.tabard.BACKGROUND:SetTexCoord(0.25,0.5,0.75,1)
                     </OnLoad>
+                  
                 </Scripts>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelPanningFrame ModelWithZoomTemplate ModelTemplate" enableMouse="true"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelPanningFrame ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>
@@ -429,8 +428,9 @@
                         self:SetRotation(-0.15)
 
 						Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp);
-				
+				        self:HookScript('OnMouseDown', GwPaperDollResetBagInventory)
                     </OnLoad>
+                
                 </Scripts>
             </PlayerModel>
         </Frames>
@@ -446,6 +446,9 @@
                 self.classIcon:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
                 
             </OnLoad>
+            <OnClick>
+                  GwPaperDollResetBagInventory(self)
+            </OnClick>
         </Scripts>
     </Button>
     <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true">
