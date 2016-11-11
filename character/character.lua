@@ -66,6 +66,124 @@ PAPERDOLL_STATCATEGORIES= {
 			[9] = { stat = "BLOCK", hideAt = 0, roles =  { "TANK" } },
 ]]--
 
+local bagItemList = {}
+local numBagSlotFrames = 0
+local selectedInventorySlot = nil
+
+local function getBagSlotFrame(i)
+    
+    if _G['gwPaperDollBagSlotButton'..i]~=nil then return _G['gwPaperDollBagSlotButton'..i] end
+    
+    local f = CreateFrame('Button','gwPaperDollBagSlotButton'..i,GwPaperDollBagItemList,'GwPaperDollBagItem')
+    
+    numBagSlotFrames = numBagSlotFrames + 1
+    
+    return f
+    
+end
+
+local function updateBagItemList(itemButton)
+    
+    local id = itemButton.id or itemButton:GetID();
+    
+    wipe(bagItemList)
+    
+    GetInventoryItemsForSlot(id, bagItemList) 
+    
+    local gridIndex = 0
+    local itemIndex = 1
+    local x = 10
+    local y = 15
+    
+    for location, itemID in next, bagItemList do
+      
+        if not ( location - id == ITEM_INVENTORY_LOCATION_PLAYER ) then -- Remove the currently equipped item from the list
+		
+            local itemFrame = getBagSlotFrame(itemIndex)
+            itemFrame.location = location
+            
+            updateBagItemButton(itemFrame)
+            
+            
+            itemFrame:SetPoint('TOPLEFT',x,-y)    
+            itemFrame:Show()
+            gridIndex = gridIndex + 1
+            
+            x = x + 49 + 3
+  
+            if gridIndex>4 then
+                gridIndex = 1 
+                x = 0
+                y = y + 49 +3
+            end
+            itemIndex = itemIndex + 1
+		end
+       
+    end
+    for i=itemIndex,numBagSlotFrames do
+        if _G['gwPaperDollBagSlotButton'..i]~=nil then  _G['gwPaperDollBagSlotButton'..i]:Hide() end
+    end
+    
+end
+
+
+function updateBagItemButton(button)
+    local location = button.location;
+	if ( not location ) then
+		return;
+	end
+   local id, name, textureName, count, durability, maxDurability, invType, locked, start, duration, enable, setTooltip, quality = EquipmentManager_GetItemInfoByLocation(location);
+    button.ItemId = id
+	local broken = ( maxDurability and durability == 0 );
+	if ( textureName ) then
+		SetItemButtonTexture(button, textureName);
+		SetItemButtonCount(button, count);
+        if broken then
+			SetItemButtonTextureVertexColor(button, 0.9, 0, 0);
+		else
+			SetItemButtonTextureVertexColor(button, 1.0, 1.0, 1.0);
+		end
+        
+
+        if durability~=nil and(durability/maxDurability)<0.5 then
+            sebuttonlf.repairIcon:Show()
+            if (durability/maxDurability)==0 then
+                button.repairIcon:SetTexCoord(0,1,0.5,1)
+            else
+                button.repairIcon:SetTexCoord(0,1,0,0.5)
+            end
+            
+        else
+            button.repairIcon:Hide()
+        end
+       
+        button:SetScript('OnEnter', function()
+            GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
+            GameTooltip:SetItemByID(id) 
+            GameTooltip:Show() 
+        end)
+
+		GwSetItemButtonQuality(button, quality,id);
+
+    end
+end
+
+function GwPaperDollBagItem_OnClick (self)
+    
+	local action = function() end
+		
+    if ( self.location ) then
+        if ( UnitAffectingCombat("player") and not INVSLOTS_EQUIPABLE_IN_COMBAT[selectedInventorySlot] ) then
+            UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0);
+            return;
+        end
+        local action = EquipmentManager_EquipItemByLocation(self.location, selectedInventorySlot);
+        EquipmentManager_RunAction(action);
+    end
+end
+
+
+
 function gwPaperDollStats_QueuedUpdate(self)
 	self:SetScript("OnUpdate", nil);
 	gwPaperDollUpdateStats();
@@ -253,14 +371,8 @@ function gwPaperDollGetStatListFrame(self,i)
     
 end
 
-
-function gwPaperDollSlotButton_OnLoad(self)
-    self:RegisterForDrag("LeftButton");
-    self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-	local slotName = self:GetName();
-	local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName,12));
-	self:SetID(id);
-	self.checkRelic = checkRelic;
+function gwActionButtonGlobalStyle(self)
+  
     self.IconBorder:SetSize(self:GetSize(),self:GetSize())
     _G[self:GetName().."IconTexture"]:SetTexCoord(0.1,0.9,0.1,0.9)
     _G[self:GetName().."NormalTexture"]:SetSize(self:GetSize(),self:GetSize())
@@ -270,6 +382,19 @@ function gwPaperDollSlotButton_OnLoad(self)
     _G[self:GetName().."NormalTexture"]:SetTexture(nil)
     _G[self:GetName()]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
     _G[self:GetName()]:SetHighlightTexture(nil)
+   
+end
+function gwPaperDollSlotButton_OnLoad(self)
+    self:RegisterForDrag("LeftButton");
+    self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+	local slotName = self:GetName();
+	local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName,12));
+	self:SetID(id);
+	self.checkRelic = checkRelic;
+
+
+
+    gwActionButtonGlobalStyle(self)
    
 end
 function gwPaperDollSlotButton_OnShow (self)
@@ -298,6 +423,7 @@ function gwPaperDollSlotButton_OnEvent (self, event, ...)
 	if ( event == "PLAYER_EQUIPMENT_CHANGED" ) then
 		if ( self:GetID() == arg1 ) then
 			gwPaperDollSlotButton_Update(self);
+            
 		end
 	end
     if ( event == "BAG_UPDATE_COOLDOWN" ) then
@@ -338,7 +464,16 @@ function gwPaperDollSlotButton_OnModifiedClick (self, button)
 		SocketInventoryItem(self:GetID());
 	end
 end
-function gwPaperDollSlotButton_OnClick (self, button)
+function gwPaperDollSlotButton_OnClick (self, button,drag)
+    if drag==nil then 
+        
+        GwPaperDollSelectedIndicator:SetPoint('LEFT',self,'LEFT',-16,0)
+        GwPaperDollSelectedIndicator:Show()
+        updateBagItemList(self)
+        selectedInventorySlot = self:GetID()
+        
+        return
+    end
 	MerchantFrame_ResetRefundItem();
 	if ( button == "LeftButton" ) then
 		local type = GetCursorInfo();
@@ -350,6 +485,8 @@ function gwPaperDollSlotButton_OnClick (self, button)
 				MerchantFrame_SetRefundItem(self, 1);
 			end
 		end
+      
+
 	end
 end
 
@@ -360,6 +497,7 @@ function gwPaperDollSlotButton_OnLeave(self)
 end
 
 function gwPaperDollSlotButton_Update (self)
+    
 	local textureName = GetInventoryItemTexture("player", self:GetID());
 	local cooldown = _G[self:GetName().."Cooldown"];
 	if ( textureName ) then
@@ -404,6 +542,35 @@ function gwPaperDollSlotButton_Update (self)
 
 end
 
+
+function GwPaperDoll_OnClick()
+
+    GwPaperDollSelectedIndicator:Hide()
+end
+
+
+function GwPaperDollIndicatorAnimation(self)
+    local name = self:GetName()
+    local point , relat , relPoint , startX, yof = self:GetPoint()
+
+    addToAnimation(name,0,1,GetTime(),1,function(step) 
+            
+        local point , relat , relPoint , xof, yof = self:GetPoint()
+        if step<0.5 then
+            step = step/0.5
+            self:SetPoint(point,relat,relPoint,startX + (-8*step),yof)
+        else
+             step = (step - 0.5) /0.5
+            self:SetPoint(point,relat,relPoint,(startX - 8) + (8*step),yof)
+        end
+        
+    end,nil,function()
+        if self:IsShown() then
+            GwPaperDollIndicatorAnimation(self)
+        end
+    end)
+end
+
 function GwSetItemButtonQuality(button, quality, itemIDOrLink)
 
 	if quality then
@@ -418,15 +585,19 @@ function GwSetItemButtonQuality(button, quality, itemIDOrLink)
 	end
 end
 
+
+
 function gw_register_character_window()
    
     CreateFrame('Frame','GwCharacterWindowMoverFrame',UIParent,'GwCharacterWindowMoverFrame')
     CreateFrame('Frame','GwCharacterWindow',UIParent,'GwCharacterWindow')
-    CreateFrame('Frame','GwDressingRoom',GwCharacterWindow,'GwDressingRoom')
+    CreateFrame('Button','GwDressingRoom',GwCharacterWindow,'GwDressingRoom')
+    CreateFrame('Frame','GwPaperDollBagItemList',GwCharacterWindow,'GwPaperDollBagItemList')
+    CreateFrame('Frame','GwPaperDollSelectedIndicator',GwCharacterWindow,'GwPaperDollSelectedIndicator')
     
     PaperDollFrame:HookScript('OnShow',function() GwCharacterWindow:Show() end)
     PaperDollFrame:HookScript('OnHide',function() GwCharacterWindow:Hide() end)
-    GwCharacterWindow:Hide()
+ --   GwCharacterWindow:Hide()
     gwPaperDollUpdateStats()
     
 end

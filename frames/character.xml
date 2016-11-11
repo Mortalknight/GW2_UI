@@ -1,6 +1,28 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     
+    <Frame name="GwPaperDollSelectedIndicator" frameStrata="HIGH" toplevel="true" hidden="true" virtual="true">
+        <size x="16" y="32"></size>
+        <Anchors>
+            <Anchor point="LEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture  parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                    <Size x="16" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" x="0"></Anchor>
+                    </Anchors>
+                                
+                </Texture>
+           </Layer>
+        </Layers>
+        <Scripts>
+            <OnShow>
+                GwPaperDollIndicatorAnimation(self)
+            </OnShow>
+        </Scripts>
+    </Frame>
     <Frame name="GwPaperDollStat" enableMouse="true" virtual="true">
         <Size x="92" y="30"></Size>
         <Anchors>
@@ -56,7 +78,7 @@
         </Scripts>
     </Frame>
     
-    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton"  registerForClicks="LeftButtonUp RightButtonUp" inherits="ItemButtonTemplate SecureActionButtonTemplate" virtual="true">
+    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton"  registerForClicks="LeftButtonUp RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
         <Size x="49" y="49"></Size>
         <Layers>
         <Layer level="BACKGROUND">
@@ -106,10 +128,10 @@
 				end
 			</OnClick>
             <OnDragStart>
-                gwPaperDollSlotButton_OnClick(self, "LeftButton");
+                gwPaperDollSlotButton_OnClick(self, "LeftButton",true);
             </OnDragStart>
             <OnReceiveDrag>
-				gwPaperDollSlotButton_OnClick(self, "LeftButton");
+				gwPaperDollSlotButton_OnClick(self, "LeftButton",true);
 			</OnReceiveDrag>
             <OnEnter>
               gwPaperDollSlotButton_OnEnter(self,motion)
@@ -119,8 +141,35 @@
 			</OnLeave>
         </Scripts>
     </Button>
+    <Button name="GwPaperDollBagItem" inherits="GwPaperDollButtonTemplate" virtual="true">
+        <Scripts>
+            <OnLoad>gwActionButtonGlobalStyle(self) </OnLoad>
+            <OnEnter> self.UpdateTooltip() </OnEnter>
+            <OnClick>GwPaperDollBagItem_OnClick(self)</OnClick>
+            <OnLeave>GameTooltip:Hide() </OnLeave>
+            <OnShow> </OnShow>
+            <OnHide> </OnHide>
+        </Scripts>
+    </Button>
     
-    <Frame name="GwDressingRoom" virtual="true">
+    <Frame name="GwPaperDollBagItemList" virtual="true">
+        <Size x="231" y="498"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-70"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                    <Size x="256" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    
+    <Button name="GwDressingRoom" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
         <Size x="608" y="621"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
@@ -229,6 +278,9 @@
                     <OnEvent>
                         gwPaperDollStats_OnEvent(self,event,...)
                     </OnEvent>
+                    <OnClick>
+                        GwPaperDoll_OnClick(self)
+                    </OnClick>
                 </Scripts>
             </Frame>
             <Frame name="$parentGear">
@@ -395,7 +447,7 @@
                 
             </OnLoad>
         </Scripts>
-    </Frame>
+    </Button>
     <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true">
         <Size x="853" y="50"></Size>
         <Anchors>
