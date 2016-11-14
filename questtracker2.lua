@@ -1100,6 +1100,7 @@ function gw_scenario_affixes()
     local level, affixes, wasEnergized = C_ChallengeMode.GetActiveKeystoneInfo();
     local i = 0
     for k,v in pairs(affixes) do
+        local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
         SetPortraitToTexture(_G['GwAffixFrame'..i], filedataid);
 

@@ -21,6 +21,9 @@ local STATS_ICONS ={
     MOVESPEED  ={l=0.5,r=0.75,t=0.75,b=1},
 }
 
+local savedItemSlots = {}
+local savedPlayerTitles = {}
+
 local 
 PAPERDOLL_STATCATEGORIES= {
 	[1] = {
@@ -201,7 +204,7 @@ function updateBagItemButton(button)
         
 
         if durability~=nil and(durability/maxDurability)<0.5 then
-            sebuttonlf.repairIcon:Show()
+            button.repairIcon:Show()
             if (durability/maxDurability)==0 then
                 button.repairIcon:SetTexCoord(0,1,0.5,1)
             else
@@ -518,29 +521,27 @@ function gwPaperDollSlotButton_OnModifiedClick (self, button)
 	end
 end
 function gwPaperDollSlotButton_OnClick (self, button,drag)
-    if drag==nil then 
+   
+    MerchantFrame_ResetRefundItem();
+    if ( button == "LeftButton" ) then
+        local infoType = GetCursorInfo();
+        if ( type == "merchant" and MerchantFrame.extendedCost ) then
+            MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost);
+        else     
         
-        GwPaperDollSelectedIndicator:SetPoint('LEFT',self,'LEFT',-16,0)
-        GwPaperDollSelectedIndicator:Show()
-        selectedInventorySlot = self:GetID()
-        updateBagItemList(self)
-
-        
-        return
-    end
-	MerchantFrame_ResetRefundItem();
-	if ( button == "LeftButton" ) then
-		local type = GetCursorInfo();
-		if ( type == "merchant" and MerchantFrame.extendedCost ) then
-			MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost);
-		else
-			PickupInventoryItem(self:GetID());
-			if ( CursorHasItem() ) then
-				MerchantFrame_SetRefundItem(self, 1);
-			end
-		end
-      
-
+       
+            if not SpellIsTargeting() and (drag==nil and GwPaperDollBagItemList:IsShown()) then 
+                GwPaperDollSelectedIndicator:SetPoint('LEFT',self,'LEFT',-16,0)
+                GwPaperDollSelectedIndicator:Show()
+                selectedInventorySlot = self:GetID()
+                updateBagItemList(self)  
+            else
+                PickupInventoryItem(self:GetID());
+                if ( CursorHasItem() ) then
+                    MerchantFrame_SetRefundItem(self, 1);
+                end
+            end
+	   	end
 	end
 end
 
@@ -552,7 +553,20 @@ end
 
 function gwPaperDollSlotButton_Update (self)
     
-	local textureName = GetInventoryItemTexture("player", self:GetID());
+    if savedItemSlots[self:GetID()]==nil then
+        savedItemSlots[self:GetID()]=self
+        self.ignoreSlotCheck:SetScript('OnClick',function() 
+    
+            if not self.ignoreSlotCheck:GetChecked() then
+                EquipmentManagerIgnoreSlotForSave(self:GetID())
+            else
+                EquipmentManagerUnignoreSlotForSave(self:GetID())
+            end
+        end)
+        
+    end
+    
+    local textureName = GetInventoryItemTexture("player", self:GetID());
 	local cooldown = _G[self:GetName().."Cooldown"];
 	if ( textureName ) then
 		SetItemButtonTexture(self, textureName);
@@ -599,8 +613,6 @@ end
 
 function GwPaperDollResetBagInventory()
     
-    print('Reseting Inventory Display')
-    
     GwPaperDollSelectedIndicator:Hide()
     selectedInventorySlot = nil
     GwupdateBagItemListAll()
@@ -645,6 +657,236 @@ function GwSetItemButtonQuality(button, quality, itemIDOrLink)
 end
 
 
+function gwCharacterPanelToggle(frame)
+    
+    PlaySound("igMainMenuOptionCheckBoxOn");
+    
+    GwPaperDollBagItemList:Hide()
+    GwCharacterMenu:Hide()
+    GwPaperDollOutfits:Hide()
+    GwPaperTitles:Hide()
+    
+    if frame~=nil then frame:Show() end
+    
+end
+local function getNewEquipmentSetButton(i)
+    
+    if _G['GwPaperDollOutfitsButton'..i]~=nil then return _G['GwPaperDollOutfitsButton'..i] end
+    
+    local f = CreateFrame('Button','GwPaperDollOutfitsButton'..i,GwPaperDollOutfits,'GwPaperDollOutfitsButton')
+    
+    if i>1 then
+        _G['GwPaperDollOutfitsButton'..i]:SetPoint('TOPLEFT', _G['GwPaperDollOutfitsButton'..(i - 1)],'BOTTOMLEFT')
+    end
+    GwPaperDollOutfits.buttons = GwPaperDollOutfits.buttons + 1
+    
+    f:GetFontString():ClearAllPoints()
+    f:GetFontString():SetPoint('TOP',f,'TOP',0,-20)
+    
+    return f
+end
+
+ function GwOutfitsDrawItemSetList()
+    
+    if GwPaperDollOutfits.buttons ==nil then GwPaperDollOutfits.buttons = 0 end
+    
+    local numSets = GetNumEquipmentSets()
+    local numButtons = GwPaperDollOutfits.buttons
+    
+    if numSets>numButtons then
+        numButtons =numSets
+    end
+    local textureC = 1
+    
+    for i=1,numButtons do
+        if numSets>=i then
+            
+            local frame = getNewEquipmentSetButton(i)
+            
+            local name, texture, setID, isEquipped, _, _, _, numLost = GetEquipmentSetInfo(i);
+            
+            frame:Show()
+            frame.saveOutfit:Hide()
+            frame.deleteOutfit:Hide()
+            frame.equipOutfit:Hide()
+            frame.ddbg:Hide()
+            frame:SetHeight(49)
+            
+            
+      
+            frame:SetText(name)
+            frame.setName = name
+    
+            
+            if texture then
+                frame.icon:SetTexture(texture)
+            else
+                frame.icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark") 
+            end
+            
+           if textureC==1 then frame:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg')
+                textureC = 2
+            else
+                frame:SetNormalTexture(nil)
+               textureC = 1 
+            end       
+            
+            frame.setId = setID
+            
+            
+            
+        else
+            if _G['GwPaperDollOutfitsButton'..i]~=nil then
+                _G['GwPaperDollOutfitsButton'..i]:Hide()
+            end
+        end
+        
+    end
+    
+end
+
+function GwPaperDollOutfitsUpdateIngoredSlots(name)
+    print(name)
+   local ignoredSlots = GetEquipmentSetIgnoreSlots(name);
+    for slot, ignored in pairs(ignoredSlots) do
+        if ( ignored ) then
+            EquipmentManagerIgnoreSlotForSave(slot);
+            savedItemSlots[slot].ignoreSlotCheck:SetChecked(false)
+        else
+            EquipmentManagerUnignoreSlotForSave(slot);
+            savedItemSlots[slot].ignoreSlotCheck:SetChecked(true)
+        end
+    end 
+end
+
+function GwPaperDollOutfitsToggleIgnoredSlots(show)
+    
+    for k,v in pairs(savedItemSlots) do
+        if show then
+            v.ignoreSlotCheck:Show()
+        else
+            v.ignoreSlotCheck:Hide() 
+        end
+    end
+    
+end
+
+function GwPaperDollOutfits_OnEvent(self, event, ...)
+
+
+	if ( event == "EQUIPMENT_SWAP_FINISHED" ) then
+		local completed, setName = ...;
+		if ( completed ) then
+			PlaySoundKitID(1212); -- plays the equip sound for plate mail
+			if (self:IsShown()) then
+				self.selectedSetName = setName;
+				GwOutfitsDrawItemSetList();
+			end
+		end
+	end
+
+
+	if (self:IsShown()) then
+		if ( event == "EQUIPMENT_SETS_CHANGED" ) then
+			GwOutfitsDrawItemSetList();
+		elseif ( event == "PLAYER_EQUIPMENT_CHANGED" or event == "BAG_UPDATE" ) then
+            GwPaperDollOutfits:SetScript('OnUpdate',function(self)
+                    GwOutfitsDrawItemSetList()
+                    GwPaperDollOutfits:SetScript('OnUpdate',nil)
+            end)
+		end
+	end
+end 
+
+local function getNewTitlesButton(i)
+    
+    if _G['GwPaperDollTitleButton'..i]~=nil then return _G['GwPaperDollTitleButton'..i] end
+    
+    local f = CreateFrame('Button','GwPaperDollTitleButton'..i,GwPaperTitles,'GwCharacterMenuBlank')
+    
+    if i>1 then
+        _G['GwPaperDollTitleButton'..i]:SetPoint('TOPLEFT', _G['GwPaperDollTitleButton'..(i - 1)],'BOTTOMLEFT')
+    else
+        _G['GwPaperDollTitleButton'..i]:SetPoint('TOPLEFT',GwPaperTitles,'TOPLEFT')
+    end
+    f:SetWidth(231)
+    f:GetFontString():SetPoint('LEFT',5 ,0)
+    GwPaperTitles.buttons = GwPaperTitles.buttons + 1
+    
+ --   f:GetFontString():ClearAllPoints()
+--    f:GetFontString():SetPoint('TOP',f,'TOP',0,-20)
+    
+    return f
+end
+
+
+function GwPaperDollUpdateTitlesList()
+    
+    savedPlayerTitles[1] = {}
+    savedPlayerTitles[1].name ='       '
+    savedPlayerTitles[1].id =-1
+    
+    local tableIndex = 1
+    
+    for i = 1, GetNumTitles() do
+		if ( IsTitleKnown(i) ) then
+			tempName, playerTitle = GetTitleName(i);
+            if ( tempName and playerTitle ) then
+                tableIndex = tableIndex  + 1
+                local tempName, playerTitle = GetTitleName(i);
+                savedPlayerTitles[tableIndex]={}
+                savedPlayerTitles[tableIndex].name = strtrim(tempName);
+                savedPlayerTitles[tableIndex].id = i
+            end
+        end
+    end
+    
+    table.sort(savedPlayerTitles,function(a, b) return a.name < b.name end)
+    savedPlayerTitles[1].name = PLAYER_TITLE_NONE
+
+end
+function GwPaperDollUpdateTitlesLayout()
+    
+    local currentTitle = GetCurrentTitle();
+    local textureC = 1
+    local buttonId = 1
+    
+    for i=GwPaperTitles.scroll, #savedPlayerTitles  do
+    
+        if savedPlayerTitles[i]~=nil then 
+            local button = getNewTitlesButton(buttonId)
+            button:Show()
+            buttonId = buttonId + 1
+            button:SetText(savedPlayerTitles[i].name)
+            button:SetScript('OnClick', function() SetCurrentTitle(savedPlayerTitles[i].id)  end)
+
+            if textureC==1 then
+                button:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg')
+                textureC = 2
+            else
+                button:SetNormalTexture(nil)
+                textureC = 1 
+            end 
+
+            if currentTitle == savedPlayerTitles[i].id then
+                button:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+            end
+            if buttonId>21 then break end
+        end
+    end
+    
+    for i=buttonId,GwPaperTitles.buttons do
+         _G['GwPaperDollTitleButton'..i]:Hide()
+    end
+    
+end
+
+function GwPaperDollTitles_OnEvent()
+    GwPaperDollUpdateTitlesList()
+    GwPaperDollUpdateTitlesLayout()
+end
+
+
 
 function gw_register_character_window()
    
@@ -653,7 +895,35 @@ function gw_register_character_window()
     CreateFrame('Button','GwDressingRoom',GwCharacterWindow,'GwDressingRoom')
     CreateFrame('Frame','GwCharacterMenu',GwCharacterWindow,'GwCharacterMenu')
     CreateFrame('Frame','GwPaperDollBagItemList',GwCharacterWindow,'GwPaperDollBagItemList')
+    CreateFrame('Frame','GwPaperDollOutfits',GwCharacterWindow,'GwPaperDollOutfits')
+    CreateFrame('Frame','GwPaperTitles',GwCharacterWindow,'GwPaperTitles')
     CreateFrame('Frame','GwPaperDollSelectedIndicator',GwCharacterWindow,'GwPaperDollSelectedIndicator')
+    
+    GwPaperDollOutfits:SetScript('OnShow',GwOutfitsDrawItemSetList)
+    GwPaperDollOutfits:SetScript('OnHide',function() GwPaperDollOutfitsToggleIgnoredSlots(false) end)
+    GwOutfitsDrawItemSetList()
+    
+    
+    GwPaperDollUpdateTitlesList()
+    GwPaperDollUpdateTitlesLayout() 
+    
+    GwPaperTitles:HookScript('OnShow',function()
+            GwPaperDollUpdateTitlesList()
+            GwPaperDollUpdateTitlesLayout()
+        end)
+    
+    
+    hooksecurefunc('GearManagerDialogPopupOkay_OnClick',GwOutfitsDrawItemSetList)
+    GearManagerDialogPopup:SetScript('OnShow',function(self)
+            PlaySound("igCharacterInfoOpen");
+            self.name = nil;
+            self.isEdit = false;
+            RecalculateGearManagerDialogPopup();
+            RefreshEquipmentSetIconInfo();
+    end)
+    
+    
+
     
     PaperDollFrame:HookScript('OnShow',function() GwCharacterWindow:Show() end)
     PaperDollFrame:HookScript('OnHide',function() GwCharacterWindow:Hide() end)
