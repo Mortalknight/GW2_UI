@@ -346,9 +346,10 @@
                 self:SetHeight(49)
                 end
             </Onclick> 
+            
         </Scripts>
     </Button>
-    <Frame name="GwCharacterMenu" hidden="false" virtual="true">
+    <Frame name="GwCharacterMenu" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
         <Anchors>   
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
@@ -395,6 +396,11 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.titlesMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
+                   <Scripts>
+                    <OnClick>
+                          gwCharacterPanelToggle(GwPaperReputation)
+                    </OnClick>
+                </Scripts>
             </Button>
         </Frames>
     </Frame>   
@@ -438,6 +444,9 @@
             <OnHide>
             GwPaperDollResetBagInventory()
             </OnHide>
+            <OnShow>
+            GwupdateBagItemListAll()
+            </OnShow>
         </Scripts>
     </Frame> 
     <Button name="GwPaperDollOutfitsButton" inherits="GwPaperDollOutFitListButton" virtual="true">
@@ -457,6 +466,308 @@
             </Layer>
         </Layers>
     </Button>
+    <Button name="GwPaperDollReputationCat" text="notyetloaded" inherits="GwCharacterMenuBlank" virtual="true">
+        
+        <Size x="231" y="44"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="statusbarbg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="205" y="8"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="6"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
+                <Size x="201" y="4"></Size>
+                <Anchors>
+                  <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="8"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                            <Size x="10" y="4"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        
+                    </Layer>
+                  
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        
+                        self:SetMinMaxValues(0,1)
+                        self:SetStatusBarColor(240/255,240/255,155/255)
+                         
+                        local BNAME = self:GetName()
+                        hooksecurefunc(self,'SetValue',function(self) 
+                        
+                            local min, max = self:GetMinMaxValues()
+                            local v = self:GetValue()
+                            local width = math.max(1,math.min(10,10*((v/max)/0.1)))
+                            _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',201*(v/max),0)
+                          
+                            _G[BNAME..'Spark']:SetWidth(width)
+                            
+                          
+                        
+                        end)
+                    </OnLoad>
+                </Scripts>
+            </StatusBar>
+        </Frames>
+    
+    </Button>
+    
+    <Button name="GwReputationDetails" virtual="true">
+        <Size x="580" y="65"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Size x="245" y="100"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>  
+                     <Color r="1" g="1" b="1" a="0.5"></Color>
+                </Texture>
+          
+                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                        <Color r="0" g="0" b="0" a="0.5"></Color>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                         <Color r="0" g="0" b="0" a="0.5"></Color>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                         <Color r="0" g="0" b="0" a="0.5"></Color>
+                </Anchors>  
+                </Texture> 
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                         <Color r="0" g="0" b="0" a="0.5"></Color>
+                </Anchors>  
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="background2" file="Interface\AddOns\GW2_UI\textures\character\menu-hover">
+                <Size x="245" y="100"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>  
+                     <Color r="1" g="1" b="1" a="0.2"></Color>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="3">
+             <Texture parentKey="statusbarbg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                 <Size x="201" y="14"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="-2" y="2"></Anchor>
+                 
+                </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="name" text="Unknown" justifyH="LEFT">
+                    <Size x="560" y="20"></Size>
+                    <Anchors>
+                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                    </Anchors>
+                </FontString> 
+                <FontString parentKey="details" text="Unknown" justifyH="LEFT">
+                    <Size x="560" y="40"></Size>
+                    <Anchors>
+                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"  relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="currentRank" text="CURRENT" justifyH="LEFT">
+                    <Size x="100" y="15"></Size>
+                    <Anchors>
+                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"  relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString> 
+                <FontString parentKey="nextRank" text="NEXT" justifyH="RIGHT">
+                    <Size x="100" y="15"></Size>
+                    <Anchors>
+                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"  relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="favorit" hidden="true">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5">
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                             <TexCoords left="0.5" right="1" top="0.5" bottom="1" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnEnter>
+                        self.icon:SetTexCoord(0,0.5,0.5,1)
+                    </OnEnter>
+                    <OnLeave>
+                        if not self.isActive then
+                            self.icon:SetTexCoord(0.5,1,0.5,1)
+                        end
+                    </OnLeave>
+                </Scripts>
+            </Button>      
+            <Button parentKey="atwar" hidden="true">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.favorit" relativePoint="RIGHT" x="5">
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                             <TexCoords left="0" right="0.5" top="0" bottom="0.6" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnEnter>
+                        self.icon:SetTexCoord(0.5,1,0,0.5)
+                        
+                    </OnEnter>
+                    <OnLeave>
+                        if not self.isActive then
+                            self.icon:SetTexCoord(0,0.5,0,0.5)
+                        end
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
+                <Size x="201" y="10"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.name" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                            <Size x="10" y="4"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        
+                    </Layer>
+                  
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        
+                        self:SetMinMaxValues(0,1)
+                        self:SetStatusBarColor(240/255,240/255,155/255)
+                         
+                        local BNAME = self:GetName()
+                        hooksecurefunc(self,'SetValue',function(self) 
+                        
+                            local min, max = self:GetMinMaxValues()
+                            local v = self:GetValue()
+                            local width = math.max(1,math.min(10,10*((v/max)/0.1)))
+                            _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',self:GetWidth()*(v/max),0)
+                          
+                            _G[BNAME..'Spark']:SetWidth(width)
+                            
+                          
+                        
+                        end)
+                    </OnLoad>
+                </Scripts>
+            </StatusBar>
+        
+        </Frames>
+        
+        <Scripts>
+
+            <OnLoad>
+                self.details:SetPoint('TOPLEFT',self.StatusBar,'BOTTOMLEFT',0,-15)
+                
+                self.statusbarbg:SetPoint('TOPLEFT',self.StatusBar,'TOPLEFT',-2,2)
+                self.statusbarbg:SetPoint('BOTTOMRIGHT',self.StatusBar,'BOTTOMRIGHT',0,-2)
+                
+                
+                self.currentRank:SetPoint('TOPLEFT',self.StatusBar,'BOTTOMLEFT',0,-5)
+                self.nextRank:SetPoint('TOPRIGHT',self.StatusBar,'BOTTOMRIGHT',0,-5)
+                
+                self.currentRank:SetFont(DAMAGE_TEXT_FONT,11)
+                self.currentRank:SetTextColor(0.6,0.6,0.6)
+                
+                self.nextRank:SetFont(DAMAGE_TEXT_FONT,11)
+                self.nextRank:SetTextColor(0.6,0.6,0.6)
+                
+                self.name:SetFont(DAMAGE_TEXT_FONT,14)
+                self.name:SetTextColor(1,1,1,1)
+                
+                self.details:SetFont(UNIT_NAME_FONT,12)
+                self.details:SetTextColor(0.8,0.8,0.8,1)
+                
+                 self.details:Hide()
+            </OnLoad>
+            <OnClick>
+                if self.details:IsShown() then
+                    self.details:Hide()
+                    self:SetHeight(65)
+                    self.atwar:Hide()
+                    self.favorit:Hide()
+                else
+                    self.details:Show()
+                    self:SetHeight(140)
+                    self.atwar:Show()
+                    self.favorit:Show()
+                end
+            </OnClick>
+        </Scripts>
+    </Button>
+    
     <Frame name="GwPaperDollOutfits" hidden="true" virtual="true">
         <Size x="220" y="478"></Size>
         <Anchors>
@@ -513,7 +824,8 @@
                 </Button>
             </Frames>
     
-    </Frame><Frame name="GwPaperTitles"  hidden="true" virtual="true">
+    </Frame>
+    <Frame name="GwPaperTitles"  hidden="true" virtual="true">
         <Size x="220" y="478"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
@@ -558,6 +870,190 @@
             <OnMouseWheel>
                self.scroll = math.max(1,self.scroll + delta)
                 GwPaperDollUpdateTitlesLayout()
+            </OnMouseWheel>
+        </Scripts>
+    </Frame>
+ 
+    <Frame name="GwPaperReputation"  hidden="true" virtual="true">
+        <Size x="220" y="478"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                    <Size x="256" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        
+       
+        </Layers>
+             <Frames>
+                 <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Reputation" >
+                <Size x="231" y="50"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        gwCharacterPanelToggle(GwCharacterMenu)
+                    </OnClick>
+                </Scripts>
+                 </Button>  
+                 
+                 <EditBox name="$parentInput"  parentKey="input" autoFocus="false">
+                       <Size x="214" y="25"></Size>
+                     <Anchors>
+                         <Anchor point="TOPLEFT" relativeKey="$parent.backButton" relativePoint="BOTTOMLEFT" x="3" y="0"></Anchor>
+
+                     </Anchors>
+                     <Layers>
+                         <Layer level="BACKGROUND">
+                             <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                             
+                                 <Anchors>
+                                 <Anchor point="TOPLEFT" x="-3" y="0"></Anchor>
+                                 <Anchor point="BOTTOMRIGHT" x="3" y="0"></Anchor>
+                             </Anchors>
+                            
+                         </Texture>
+    
+                     </Layer>
+                </Layers>
+                <FontString inherits="ChatFontNormal" />
+                <Scripts>
+                    <OnTextChanged>
+                        local text = self:GetText()
+                        if text=='Search..' or text=='' then GwUpdateReputationDetails() return end
+                         GwUpdateReputationDetailsSearch(text)
+                    </OnTextChanged>
+                    <OnEscapePressed>
+                        self:ClearFocus()
+                        self:SetText("Search..")
+                    </OnEscapePressed>
+                    <OnEditFocusGained>
+                        if self:GetText()=='Search..' then
+                            self:SetText('')
+                        end
+                    </OnEditFocusGained>
+                    <OnEditFocusLost>
+                     if self:GetText()=='' then
+                        self:SetText('Search..')
+                    end
+                    </OnEditFocusLost>
+                    <OnLoad>
+                        self:SetText('Search..')
+                    </OnLoad>
+                    <OnEnterPressed>
+                       
+                    </OnEnterPressed>
+                </Scripts>
+            </EditBox>
+                 
+                 <ScrollFrame name="GwPaperReputationScrollFrame" enableMouse="true">
+                     <Size x="600" y="590"></Size>
+                     <Anchors>
+                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="105"></Anchor>
+                     </Anchors>
+                       <Frames>
+                    <Frame parentKey="scrollchild" enableMouse="false">
+                        <Size x="608" y="608"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        </Anchors>
+                    </Frame>
+               
+                    <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+                        <Size x="12" y="12"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
+                        </Anchors>
+                        
+   
+                        <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
+                            <Size x="12" y="100"/>
+                             <Anchors>
+                              <Anchor point="TOP" relativePoint="TOP" ></Anchor>
+                            </Anchors>
+                        </ThumbTexture>
+                        <Layers>
+                            <Layer>
+                                <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
+                                    <Anchors>
+                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnValueChanged>
+                                self:GetParent():SetVerticalScroll(value)
+                            </OnValueChanged>
+                            <OnLoad>
+                                self:SetValue(1)
+                            </OnLoad>
+                        </Scripts>
+                    </Slider>
+                    <Button name="$parentScrollButtonUp">
+                     <Size x="12" y="12"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                    <Layers>
+                        <Layer>
+                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                <Size x="12" y="12"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                    </Anchors>
+                            </Texture>
+                        </Layer>
+                    </Layers>
+                    </Button>         <Button name="$parentScrollButtonDown">
+                     <Size x="12" y="12"></Size>
+                        <Anchors>
+                       <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                    <Layers>
+                        <Layer>
+                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                <Size x="12" y="12"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                    </Anchors>
+                                  <TexCoords left="0" right="1" top="1" bottom="0" />
+                            </Texture>
+                        </Layer>
+                    </Layers>
+                    </Button>
+                     </Frames>
+                     <Scripts>
+                     <OnMouseWheel>
+                         delta = -delta * 15
+                         local s = math.max(0,self:GetVerticalScroll() + delta)
+              
+                         self:SetVerticalScroll(s)
+                     </OnMouseWheel>
+                         </Scripts>
+                 </ScrollFrame>
+            </Frames>
+        <Scripts>
+            <OnLoad>
+                 self.detailFrames = 0
+                 self.buttons = 0
+                self.scroll = 1
+                self:EnableMouseWheel(true)
+              
+            </OnLoad>
+            <OnMouseWheel>
+               self.scroll = math.max(1,self.scroll + delta)
+                GwPaperDollUpdateReputations()
             </OnMouseWheel>
         </Scripts>
     </Frame>
@@ -895,13 +1391,35 @@
                  <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
                     <Size x="40" y="512"></Size>
                     <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="20" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>   
             
             </Layer>
+            
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
+                    <Size x="84" y="84"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="18" y="-22" />
+                    </Anchors>
+                </Texture> 
+                 <FontString name="$parentHeaderString" parentKey="WindowHeader" text="Character" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="40"></Size>
+                    <Color r="1" b="0.73" g="0.93"></Color>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" x="10" y="38"></Anchor>
+                    </Anchors>
+                </FontString>  
+            </Layer>
         </Layers>
+        <Scripts>
+            <OnLoad>
+                self.WindowHeader:SetFont(DAMAGE_TEXT_FONT,20)
+                 self.WindowHeader:SetTextColor(255/255,241/255,209/255)
+            </OnLoad>
+        </Scripts>
     </Frame>
     
 </Ui>
