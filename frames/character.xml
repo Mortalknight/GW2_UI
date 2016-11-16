@@ -346,7 +346,9 @@
                 self:SetHeight(49)
                 end
             </Onclick> 
-            
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
         </Scripts>
     </Button>
     <Frame name="GwCharacterMenu" hidden="true" virtual="true">
@@ -547,16 +549,16 @@
                  <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
                         <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Anchors>  
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-2"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="2"></Anchor>
                          <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Anchors>  
                 </Texture>
@@ -624,10 +626,47 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button parentKey="favorit" hidden="true">
+            <Frame parentKey="controles" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
+                </Anchors>
+            <Frames>
+         
+            <Button parentKey="atwar">
                 <Size x="40" y="40"></Size>
                 <Anchors>
+                   
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5">
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                             <TexCoords left="0" right="0.5" top="0" bottom="0.5" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnEnter>
+                        self.icon:SetTexCoord(0.5,1,0,0.5)
+                        
+                    </OnEnter>
+                    <OnLeave>
+                        if not self.isActive then
+                            self.icon:SetTexCoord(0,0.5,0,0.5)
+                        end
+                    </OnLeave>
+                </Scripts>
+            </Button>
+                <Button parentKey="favorit" hidden="true">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                   <Anchor point="LEFT" relativeKey="$parent.atwar" relativePoint="RIGHT" x="5">
                     </Anchor>
                 </Anchors>
                 <Layers>
@@ -651,36 +690,78 @@
                         end
                     </OnLeave>
                 </Scripts>
-            </Button>      
-            <Button parentKey="atwar" hidden="true">
-                <Size x="40" y="40"></Size>
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.favorit" relativePoint="RIGHT" x="5">
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
-                            <Size x="40" y="40"></Size>
+            </Button>    
+                <CheckButton  parentKey="inactive" checked="false">
+                    <Size x="16" y="16"></Size>
+                    <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-60" y="5"></Anchor>
+                    </Anchors>
+                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                    <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                    <Layers>
+                        <Layer level="ARTWORK">
+                        <FontString parentKey="string" text="Unknown" justifyH="LEFT">
+                            <Size x="60" y="20"></Size>
                             <Anchors>
-                                <Anchor point="CENTER"></Anchor>
+                                <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
                             </Anchors>
-                             <TexCoords left="0" right="0.5" top="0" bottom="0.6" />
-                        </Texture>
-                    </Layer>
-                </Layers>
+                        </FontString>
+                            </Layer>
+                    </Layers>
+                    <Scripts>
+                        <OnLoad>
+                            self.string:SetFont(UNIT_NAME_FONT,12)
+                            self.string:SetText('Inactive')
+                        </OnLoad>
+                    </Scripts>
+                </CheckButton>
+                <CheckButton  parentKey="showAsBar" checked="false">
+                    <Size x="16" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-100" y="0"></Anchor>
+                    </Anchors>
+                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                    <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                    <Layers>
+                        <Layer level="ARTWORK">
+                        <FontString parentKey="string" text="Unknown" justifyH="LEFT">
+                            <Size x="100" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                            </Layer>
+                    </Layers>
+                    <Scripts>
+                        <OnLoad>
+                            self.string:SetFont(UNIT_NAME_FONT,12)
+                            self.string:SetText('Show as bar')
+                        </OnLoad>
+                    </Scripts>
+                </CheckButton>
+                </Frames>
                 <Scripts>
-                    <OnEnter>
-                        self.icon:SetTexCoord(0.5,1,0,0.5)
+                    <OnShow>
+                        self:GetParent().details:Show()
                         
-                    </OnEnter>
-                    <OnLeave>
-                        if not self.isActive then
-                            self.icon:SetTexCoord(0,0.5,0,0.5)
+                        if self.atwar.isShowAble then
+                            self.atwar:Show()
+                        else
+                            self.atwar:Hide()
+                        end  
+                        if self.favorit.isShowAble then
+                            self.favorit:Show()
+                        else
+                            self.favorit:Hide()
                         end
-                    </OnLeave>
+                        
+                    </OnShow>
+                    <OnHide>
+                         self:GetParent().details:Hide()
+                    </OnHide>
+              
                 </Scripts>
-            </Button>
+            </Frame>
             <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
                 <Size x="201" y="10"></Size>
                 <Anchors>
@@ -690,19 +771,59 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 
                 <Layers>
-                    <Layer level="ARTWORK">
+                    <Layer level="OVERLAY">
                         <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
-                            <Size x="10" y="4"></Size>
+                            <Size x="10" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        
                     </Layer>
+                        <Layer level="OVERLAY" textureSubLevel="2">
+                            <FontString parentKey="currentValue" text="Unknown" justifyH="LEFT">
+                                <Size x="180" y="20"></Size>
+                                <Anchors>
+                                    <Anchor point="LEFT" relativePoint="LEFT" x="5" y="0"></Anchor>
+                                </Anchors>
+                            </FontString>
+           
+                            <FontString parentKey="percentage" text="Unknown" justifyH="CENTER">
+                                <Size x="180" y="20"></Size>
+                                <Anchors>
+                                    <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                </Anchors>
+                            </FontString>
+                            <FontString parentKey="nextValue" text="Unknown" justifyH="RIGHT">
+                                <Size x="180" y="20"></Size>
+                                <Anchors>
+                                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-5" y="0"></Anchor>
+                                </Anchors>
+                            </FontString>
+                        </Layer>
+                   
                   
                 </Layers>
                 <Scripts>
                     <OnLoad>
+                        
+                        self.currentValue:SetFont(UNIT_NAME_FONT,12)
+                        self.percentage:SetFont(UNIT_NAME_FONT,12)
+                        self.nextValue:SetFont(UNIT_NAME_FONT,12)    
+                        
+                        self.currentValue:SetShadowColor(0,0,0,1)
+                        self.percentage:SetShadowColor(0,0,0,1)
+                        self.nextValue:SetShadowColor(0,0,0,1)  
+                        
+                        self.currentValue:SetShadowOffset(1,-1)
+                        self.percentage:SetShadowOffset(1,-1)
+                        self.nextValue:SetShadowOffset(1,-1)
+                   
+                        
+                         self:GetParent().currentValue = self.currentValue
+                         self:GetParent().percentage = self.percentage
+                         self:GetParent().nextValue = self.nextValue
+                         
+                        
                         
                         self:SetMinMaxValues(0,1)
                         self:SetStatusBarColor(240/255,240/255,155/255)
@@ -754,15 +875,17 @@
             </OnLoad>
             <OnClick>
                 if self.details:IsShown() then
-                    self.details:Hide()
+                    GwDetailFaction(self.factionIndex,false)
                     self:SetHeight(65)
-                    self.atwar:Hide()
-                    self.favorit:Hide()
+                    self.controles:Hide()
+                  
+                  
                 else
-                    self.details:Show()
+              
+                  GwDetailFaction(self.factionIndex,true)
                     self:SetHeight(140)
-                    self.atwar:Show()
-                    self.favorit:Show()
+                    self.controles:Show()
+                
                 end
             </OnClick>
         </Scripts>
@@ -868,7 +991,7 @@
                 GwPaperDollTitles_OnEvent()
             </OnEvent>
             <OnMouseWheel>
-               self.scroll = math.max(1,self.scroll + delta)
+               self.scroll = math.max(1,self.scroll + -delta)
                 GwPaperDollUpdateTitlesLayout()
             </OnMouseWheel>
         </Scripts>
@@ -1034,10 +1157,13 @@
                     </Button>
                      </Frames>
                      <Scripts>
+                         <OnLoad>
+                             self.slider:SetMinMaxValues(0,608)
+                         </OnLoad>
                      <OnMouseWheel>
                          delta = -delta * 15
                          local s = math.max(0,self:GetVerticalScroll() + delta)
-              
+                            self.slider:SetValue(s)
                          self:SetVerticalScroll(s)
                      </OnMouseWheel>
                          </Scripts>
@@ -1049,10 +1175,19 @@
                  self.buttons = 0
                 self.scroll = 1
                 self:EnableMouseWheel(true)
-              
+                
+                
+              self:RegisterEvent('UPDATE_FACTION')
+            
             </OnLoad>
+            <OnEvent>
+                GwUpdateSavedReputation()
+                if GwPaperReputation:IsShown() then
+                    GwUpdateReputationDisplayOldData()
+                end
+            </OnEvent>
             <OnMouseWheel>
-               self.scroll = math.max(1,self.scroll + delta)
+               self.scroll = math.max(1,self.scroll + -delta)
                 GwPaperDollUpdateReputations()
             </OnMouseWheel>
         </Scripts>
@@ -1420,6 +1555,24 @@
                  self.WindowHeader:SetTextColor(255/255,241/255,209/255)
             </OnLoad>
         </Scripts>
+        <Frames>
+              <Button name="$parentClose" text="" >
+                <Size x="20" y="20" />
+                <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
+                <PushedTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture >
+                <HighlightTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture >
+
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():Hide()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            
+        </Frames>
     </Frame>
     
 </Ui>
