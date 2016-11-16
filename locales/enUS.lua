@@ -196,6 +196,7 @@ GwLocalization['EXP_BAR_TOOLTIP_EXP_RESTING'] = ' (Resting)'
 GwLocalization['EXP_BAR_TOOLTIP_EXP_RESTED'] = 'Rested '
 GwLocalization['EXP_BAR_TOOLTIP_ARTIFACT'] = '\nArtifact: '
 GwLocalization['EXP_BAR_TOOLTIP_REP'] = ' Reputation'
+GwLocalization['EXP_BAR_TOOLTIP_HONOR'] = 'Honor ' 
 
 -- Party
 GwLocalization['PARTY_INVITE'] = 'Invite'
