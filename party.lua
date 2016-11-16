@@ -174,7 +174,7 @@ function gw_partyframe_OnEvent(self,event,unit)
         end
         self.powerbar:SetValue(powerPrecentage)
     end
-    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' then
+    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event == 'GROUP_ROSTER_UPDATE' then
             
         gw_update_partyFrameData(self)
     end
