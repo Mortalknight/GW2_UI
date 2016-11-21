@@ -181,7 +181,7 @@ function gw_partyframe_OnEvent(self,event,unit)
     if event=='UNIT_PHASE' or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
        gw_update_awaydata(self)
     end 
-    if event=='UNIT_AURA' and unit==self.unit then
+    if event=='UNIT_AURA' then
        gw_updatePartyFrameAuras(self,self.unit)
     end
     
