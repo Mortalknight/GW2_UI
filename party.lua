@@ -181,7 +181,7 @@ function gw_partyframe_OnEvent(self,event,unit)
     if event=='UNIT_PHASE' or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
        gw_update_awaydata(self)
     end 
-    if event=='UNIT_AURA' then
+    if event=='UNIT_AURA' and unit==self.unit then
        gw_updatePartyFrameAuras(self,self.unit)
     end
     
@@ -334,9 +334,6 @@ function gw_updatePartyFrameAuras(self,unit)
                 indexBuffFrame:SetScript('OnEnter',nil)
                 indexBuffFrame:SetScript('OnClick',nil) 
                 indexBuffFrame:SetScript('OnLeave',nil) 
-              
-            else
-                break
             end
         end
         
@@ -408,8 +405,6 @@ function gw_updatePartyFrameDebuffs(self,unit,x,y)
             
             if indexBuffFrame~=nil then
                 indexBuffFrame:Hide() 
-            else
-                break
             end
         end
         
