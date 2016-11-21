@@ -174,7 +174,7 @@ function gw_partyframe_OnEvent(self,event,unit)
         end
         self.powerbar:SetValue(powerPrecentage)
     end
-    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' then
+    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event == 'GROUP_ROSTER_UPDATE' then
             
         gw_update_partyFrameData(self)
     end
@@ -334,9 +334,6 @@ function gw_updatePartyFrameAuras(self,unit)
                 indexBuffFrame:SetScript('OnEnter',nil)
                 indexBuffFrame:SetScript('OnClick',nil) 
                 indexBuffFrame:SetScript('OnLeave',nil) 
-              
-            else
-                break
             end
         end
         
@@ -408,8 +405,6 @@ function gw_updatePartyFrameDebuffs(self,unit,x,y)
             
             if indexBuffFrame~=nil then
                 indexBuffFrame:Hide() 
-            else
-                break
             end
         end
         
