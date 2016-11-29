@@ -2,7 +2,7 @@
 
 
 
-
+local intGWQuestTrackerHeight = 0
 
 local function getObjectiveBlock(self,index)
     
@@ -158,8 +158,8 @@ local function updateCurrentScenario()
 
     
     GwScenarioBlock.height = GwScenarioBlock.height + 5 
-  
-    GwScenarioBlock:SetHeight(GwScenarioBlock.height)
+
+    GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
         
 end
@@ -167,6 +167,7 @@ end
 local function scenarioTimerStop()
     GwQuestTrackerTimer:SetScript('OnUpdate',nil) 
     GwQuestTrackerTimer.timer:Hide()
+	_G['GwAffixFrame']:Hide();
 end
 
 
@@ -174,6 +175,7 @@ end
 local function scenarioTimerUpdate(...)
     
     GwQuestTrackerTimer.height = 1
+	intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     
 	for i = 1, select("#", ...) do
 		local timerID = select(i, ...);
@@ -217,12 +219,13 @@ local function scenarioTimerUpdate(...)
 end
 
 function gw_scenario_affixes()
-
+    
     local level, affixes, wasEnergized = C_ChallengeMode.GetActiveKeystoneInfo();
     local i = 1
     for k,v in pairs(affixes) do
         if i == 1 then
               GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+			  intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
         end
         local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
@@ -242,7 +245,7 @@ end
 local function scenarioTimerOnEvent(self, event, ...)
     
     
-	if ( event == "PLAYER_ENTERING_WORLD" ) then
+	if ( event == "PLAYER_ENTERING_WORLD" or event == nil ) then
         -- ScenarioTimer_CheckTimers(GetWorldElapsedTimers());
         scenarioTimerUpdate(GetWorldElapsedTimers())
 	elseif ( event == "WORLD_STATE_TIMER_START") then

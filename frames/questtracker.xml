@@ -583,14 +583,14 @@
                     <Frame name="$parent1" parentKey="1">
                         <Size x="38" y="38"></Size>
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-20"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
                                 <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-20"></Anchor>
                                     </Anchors>
                                 </Texture>
                             </layer>
@@ -617,14 +617,14 @@
                     <Frame name="$parent2" parentKey="2">
                         <Size x="38" y="38"></Size>
                         <Anchors>
-                            <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
+                            <Anchor point="TOP" relativePoint="TOP" x="0" y="-20"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
                                 <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-20"></Anchor>
                                     </Anchors>
                                 </Texture>
                             </layer>
@@ -650,14 +650,14 @@
                     <Frame name="$parent3"  parentKey="3">
                         <Size x="38" y="38"></Size>
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="0"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
                                 <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-20"></Anchor>
                                     </Anchors>
                                 </Texture>
                             </layer>
