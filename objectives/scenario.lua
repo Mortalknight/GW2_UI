@@ -167,7 +167,6 @@ end
 local function scenarioTimerStop()
     GwQuestTrackerTimer:SetScript('OnUpdate',nil) 
     GwQuestTrackerTimer.timer:Hide()
-	_G['GwAffixFrame']:Hide();
 end
 
 
