@@ -2,7 +2,7 @@
 
 
 
-local intGWQuestTrackerHeight = 0
+
 
 local function getObjectiveBlock(self,index)
     
@@ -159,7 +159,7 @@ local function updateCurrentScenario()
     
     GwScenarioBlock.height = GwScenarioBlock.height + 5 
 
-    GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
+    GwScenarioBlock:SetHeight(GwScenarioBlock.height)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
         
 end
@@ -174,7 +174,6 @@ end
 local function scenarioTimerUpdate(...)
     
     GwQuestTrackerTimer.height = 1
-	intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     
 	for i = 1, select("#", ...) do
 		local timerID = select(i, ...);
@@ -224,7 +223,6 @@ function gw_scenario_affixes()
     for k,v in pairs(affixes) do
         if i == 1 then
               GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
-			  intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
         end
         local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
