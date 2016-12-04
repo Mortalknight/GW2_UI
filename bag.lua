@@ -213,7 +213,6 @@ function gw_bg_loadCurrency()
 end
 
 function gw_bag_toggleCurrency()
-    
     if GwCurrencyWindow:IsShown() then
         
         gw_bag_hideIcons(true)
@@ -228,6 +227,7 @@ function gw_bag_hideIcons(b)
   
     
     if b==true then
+		OpenAllBags()
         BagItemSearchBox:Show()
         GwBagFrameBagSpaceString:Show()
         GwBagButtonSettings:Show()
