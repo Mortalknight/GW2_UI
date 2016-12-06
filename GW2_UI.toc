@@ -22,6 +22,7 @@ frames/raidframes.xml
 
 frames/unitframes.xml
 frames/character.xml
+frames/spellbook.xml
 
 
 GW2_ui.lua
@@ -55,3 +56,4 @@ objectives/bossFrames.lua
 objectives/achievement.lua
 
 character/character.lua
+character/spellbook.lua
