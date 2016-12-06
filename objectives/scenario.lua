@@ -174,6 +174,7 @@ end
 local function scenarioTimerUpdate(...)
     
     GwQuestTrackerTimer.height = 1
+    local hasUpdatedAffixes = false;
     
 	for i = 1, select("#", ...) do
 		local timerID = select(i, ...);
@@ -192,7 +193,7 @@ local function scenarioTimerUpdate(...)
                 GwQuestTrackerTimer.timer:Show()
                 GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
                 gw_scenario_affixes()
-                
+                hasUpdatedAffixes = true;
 				return;
 			end
 		elseif ( type == LE_WORLD_ELAPSED_TIMER_TYPE_PROVING_GROUND ) then
@@ -212,7 +213,11 @@ local function scenarioTimerUpdate(...)
 	end
     GwQuestTrackerTimer.timer:Hide()
     GwQuestTrackerTimer:SetScript('OnUpdate',nil)
-  
+    
+    if hasUpdatedAffixes==false then
+        _G['GwAffixFrame']:Hide(); 
+    end
+    
   
 end
 
@@ -230,12 +235,17 @@ function gw_scenario_affixes()
         if filedataid~=nil then
             SetPortraitToTexture(_G['GwAffixFrame'..i..'Icon'], filedataid);
         end
-        _G['GwAffixFrame'..i..'Icon'].affixID = affixID;
-
+        _G['GwAffixFrame'..i].affixID = affixID;
+        _G['GwAffixFrame'..i]:Show();
         _G['GwAffixFrame'..i..'Icon']:Show();
         _G['GwAffixFrame']:Show();
         i = i + 1
     end
+    
+    if i==1 then
+       _G['GwAffixFrame']:Hide(); 
+    end
+    
     
 end
 
@@ -258,14 +268,14 @@ local function scenarioTimerOnEvent(self, event, ...)
         GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
 	elseif (event == "SPELL_UPDATE_COOLDOWN") then
 	--	ScenarioSpellButtons_UpdateCooldowns();
-	elseif (event == "CHALLENGE_MODE_START") then
+	elseif (event == "CHALLENGE_MODE_START" or event == "CHALLENGE_MODE_COMPLETED" or event == "CHALLENGE_MODE_MAPS_UPDATE" or event == "ZONE_CHANGED") then
     	scenarioTimerUpdate(GetWorldElapsedTimers());
     end
     GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
     updateCurrentScenario()
     
 end
-
+ 
 
 function gw_register_scenarioFrame()
     
@@ -293,6 +303,10 @@ function gw_register_scenarioFrame()
     timerBlock:RegisterEvent('WORLD_STATE_TIMER_STOP')
     timerBlock:RegisterEvent('PROVING_GROUNDS_SCORE_UPDATE')
     timerBlock:RegisterEvent('SPELL_UPDATE_COOLDOWN')
+    timerBlock:RegisterEvent('CHALLENGE_MODE_MAPS_UPDATE')
+    timerBlock:RegisterEvent('CHALLENGE_MODE_START')
+    timerBlock:RegisterEvent('CHALLENGE_MODE_COMPLETED')
+    timerBlock:RegisterEvent('ZONE_CHANGED')
 
     timerBlock:SetScript('OnEvent',scenarioTimerOnEvent)
     
