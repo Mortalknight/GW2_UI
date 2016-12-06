@@ -272,8 +272,8 @@ function gw_update_power_data(self,forcePowerType,powerToken,forceAnimationName)
 
     end
    
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
+    if GW_PowerBarColorCustom[powerToken] then
+        local pwcolor = GW_PowerBarColorCustom[powerToken]
         _G[self:GetName()..'Bar']:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         _G[self:GetName()..'CandySpark']:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
         _G[self:GetName()..'Candy']:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)

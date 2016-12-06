@@ -290,8 +290,8 @@ local function updatePowerValues(self,event)
     end
     
    
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
+    if GW_PowerBarColorCustom[powerToken] then
+        local pwcolor = GW_PowerBarColorCustom[powerToken]
         self.powerbar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
     

@@ -273,8 +273,8 @@ function gw_update_partyFrameData(self)
     local powerMax =   UnitPowerMax(self.unit,UnitPowerType(self.unit))
     local powerPrecentage = 0
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
+    if GW_PowerBarColorCustom[powerToken] then
+        local pwcolor = GW_PowerBarColorCustom[powerToken]
         self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
     

@@ -730,8 +730,8 @@ function updateCastingbar(thisName,unitToWatch)
         
     --Set The Color of the powerbar
     powerType, powerToken, altR, altG, altB = UnitPowerType(unitToWatch)
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
+    if GW_PowerBarColorCustom[powerToken] then
+        local pwcolor = GW_PowerBarColorCustom[powerToken]
         _G[thisName.."ManaBar"]:SetStatusBarColor(pwcolor.r,pwcolor.g,pwcolor.b)
     end
     

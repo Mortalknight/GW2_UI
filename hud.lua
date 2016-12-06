@@ -1,12 +1,12 @@
-PowerBarColorCustom = PowerBarColor;
+GW_PowerBarColorCustom = PowerBarColor;
 
-PowerBarColorCustom['MANA'] = {r=37/255,g=133/255,b=240/255}
-PowerBarColorCustom['RAGE'] = {r=240/255,g=66/255,b=37/255}
-PowerBarColorCustom['ENERGY'] = {r=240/255,g=200/255,b=37/255}
-PowerBarColorCustom['LUNAR'] = {r=130/255,g=172/255,b=230/255}
-PowerBarColorCustom['RUNIC_POWER'] = {r=37/255,g=214/255,b=240/255}
-PowerBarColorCustom['FOCUS'] = {r=240/255,g=121/255,b=37/255}
-PowerBarColorCustom['FURY'] = {r=166/255,g=37/255,b=240/255}
+GW_PowerBarColorCustom['MANA'] = {r=37/255,g=133/255,b=240/255}
+GW_PowerBarColorCustom['RAGE'] = {r=240/255,g=66/255,b=37/255}
+GW_PowerBarColorCustom['ENERGY'] = {r=240/255,g=200/255,b=37/255}
+GW_PowerBarColorCustom['LUNAR'] = {r=130/255,g=172/255,b=230/255}
+GW_PowerBarColorCustom['RUNIC_POWER'] = {r=37/255,g=214/255,b=240/255}
+GW_PowerBarColorCustom['FOCUS'] = {r=240/255,g=121/255,b=37/255}
+GW_PowerBarColorCustom['FURY'] = {r=166/255,g=37/255,b=240/255}
 
 
 
