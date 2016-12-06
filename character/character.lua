@@ -273,7 +273,7 @@ end
 function gwPaperDollStats_OnEvent(self,event,...)
     local unit = ...;
 	if ( event == "PLAYER_ENTERING_WORLD" or
-		event == "UNIT_MODEL_CHANGED" and unit == "player" ) then
+		event == "UNIT_MODEL_CHANGED" or event=='UNIT_NAME_UPDATE' and unit == "player" ) then
 		GwDressingRoom.model:SetUnit("player", false);
         gwPaperDollUpdateUnitData()
 		return;
@@ -1337,10 +1337,10 @@ function gw_register_character_window()
     
     PaperDollFrame:HookScript('OnShow',function() GwCharacterWindow:Show() end)
     PaperDollFrame:HookScript('OnHide',function() GwCharacterWindow:Hide() end)
- --   GwCharacterWindow:Hide()
+    GwCharacterWindow:Hide()
     gwPaperDollUpdateStats()
     
-    gwCharacterPanelToggle(GwPaperReputation)
+    gwCharacterPanelToggle(GwCharacterMenu)
     GwUpdateReputationDetails()
     
 end
