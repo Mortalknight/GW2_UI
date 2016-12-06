@@ -508,8 +508,14 @@ function gw_load_questTracker()
     GwQuesttrackerContainerQuests:SetParent(GwQuestTrackerScrollChild)
     GwQuesttrackerContainerBonusObjectives:SetParent(GwQuestTrackerScrollChild)
     
+    
+    if gwGetSetting('MINIMAP_ENABLED') then
     GwQuestTracker:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT')
     GwQuestTracker:SetPoint('BOTTOMRIGHT',Minimap,'TOPRIGHT')
+    else
+        GwQuestTracker:SetPoint('TOPRIGHT',Minimap,'BOTTOMRIGHT')
+        GwQuestTracker:SetPoint('BOTTOMRIGHT',UIParent,'BOTTOMRIGHT')
+    end
     
     GwObjectivesNotification:SetPoint('TOPRIGHT',GwQuestTracker,'TOPRIGHT')
     GwQuesttrackerContainerBossFrames:SetPoint('TOPRIGHT',GwObjectivesNotification,'BOTTOMRIGHT')
