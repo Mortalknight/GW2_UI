@@ -3,6 +3,7 @@ local GW_CURRENT_GROUP_TYPE = 'PARTY'
 local GW_READY_CHECK_INPROGRESS = false
 
 local GW_PORTRAIT_BACKGROUND = {}
+
 GW_PORTRAIT_BACKGROUND[1] = {l=0,r=0.828,t=0,b=0.166015625}
 GW_PORTRAIT_BACKGROUND[2] = {l=0,r=0.828,t=0.166015625,b=0.166015625*2}
 GW_PORTRAIT_BACKGROUND[3] = {l=0,r=0.828,t=0.166015625*2,b=0.166015625*3}
@@ -205,8 +206,7 @@ function gw_partyframe_OnEvent(self,event,unit,arg1)
     end
 	
     if event=='READY_CHECK_FINISHED' then
-        GW_READY_CHECK_INPROGRESS = false
-		addToAnimation("ReadyCheckPartyWait",0,1,GetTime(),2,function() end,nil,function()
+		addToAnimation("ReadyCheckPartyWait"..self.unit,0,1,GetTime(),2,function() end,nil,function()
 				self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons');
 				localizedClass, englishClass, classIndex = UnitClass(self.unit);
 				if classIndex~=nil and classIndex~=0 then
@@ -214,7 +214,6 @@ function gw_partyframe_OnEvent(self,event,unit,arg1)
 				end;
 			end)
     end
-   
 end
 
 function gw_update_awaydata(self)

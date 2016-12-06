@@ -305,7 +305,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     end
 
 	if event=='READY_CHECK_FINISHED' then
-		addToAnimation("ReadyCheckRaidWaitCheck",0,1,GetTime(),2,function() end,nil,function()
+		addToAnimation("ReadyCheckRaidWaitCheck"..self.unit,0,1,GetTime(),2,function() end,nil,function()
 				GW_READY_CHECK_INPROGRESS = false;
 				local classColor = gwGetSetting('RAID_CLASS_COLOR')
 				localizedClass, englishClass, classIndex = UnitClass(self.unit);
