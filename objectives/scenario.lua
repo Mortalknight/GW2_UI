@@ -54,7 +54,16 @@ function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveType,quan
 end
 
 
-local function updateCurrentScenario()
+local function updateCurrentScenario(isYielded)
+    
+    if isYielded==nil or isYielded==false then
+       GwQuesttrackerContainerScenario:SetScript('OnUpdate',function()
+                updateCurrentScenario(true)
+            GwQuesttrackerContainerScenario:SetScript('OnUpdate',nill)
+        end) 
+    end
+    
+    
     GwScenarioBlock.height = 1
     
     if GwQuestTrackerTimer:IsShown() then
