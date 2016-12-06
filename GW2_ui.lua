@@ -794,7 +794,7 @@ l:SetScript('OnEvent',function(self,event,name)
         end 
         
         
-        gw_register_character_window()
+      --  gw_register_character_window()
         
         gw_breath_meter()
         

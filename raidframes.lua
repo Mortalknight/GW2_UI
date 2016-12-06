@@ -254,8 +254,8 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         end
         self.manabar:SetValue(powerPrecentage)
         powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
-        if PowerBarColorCustom[powerToken] then
-            local pwcolor = PowerBarColorCustom[powerToken]
+        if GW_PowerBarColorCustom[powerToken] then
+            local pwcolor = GW_PowerBarColorCustom[powerToken]
             self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
     end
@@ -388,8 +388,8 @@ function gw_update_raidframeData(self)
     self.healthbar.absorbbar:SetValue(absorbPrecentage)
     
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
+    if GW_PowerBarColorCustom[powerToken] then
+        local pwcolor = GW_PowerBarColorCustom[powerToken]
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
     
