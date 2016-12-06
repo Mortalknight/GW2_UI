@@ -1,5 +1,7 @@
 local GW_CURRENT_GROUP_TYPE = 'PARTY'
 
+local GW_READY_CHECK_INPROGRESS = false
+
 local GW_PORTRAIT_BACKGROUND = {}
 GW_PORTRAIT_BACKGROUND[1] = {l=0,r=0.828,t=0,b=0.166015625}
 GW_PORTRAIT_BACKGROUND[2] = {l=0,r=0.828,t=0.166015625,b=0.166015625*2}
@@ -104,6 +106,7 @@ function gw_create_partyframe(i)
     frame:SetPoint('TOPLEFT',20,-104 + ((-85*i))+85)
     
     frame.unit=registerUnit
+	frame.ready = -1
     
     frame:SetAttribute("unit", registerUnit);
     frame:SetAttribute("*type1", 'target')
@@ -146,13 +149,18 @@ function gw_create_partyframe(i)
     frame:RegisterEvent("UNIT_LEVEL");
     frame:RegisterEvent("PARTY_CONVERTED_TO_RAID");
     frame:RegisterEvent("RAID_CONVERTED_TO_PARTY");
+	frame:RegisterEvent("READY_CHECK");
+    frame:RegisterEvent("READY_CHECK_CONFIRM");
+    frame:RegisterEvent("READY_CHECK_FINISHED");
+	
+	frame:SetScript('OnEvent',gw_partyframe_OnEvent)
     
     gw_update_partyFrameData(frame)
     
 end
 
-function gw_partyframe_OnEvent(self,event,unit)
-  
+function gw_partyframe_OnEvent(self,event,unit,arg1)
+
     if not UnitExists(self.unit) then return end
     if IsInRaid() then return end
     if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
@@ -165,7 +173,6 @@ function gw_partyframe_OnEvent(self,event,unit)
         gwBar(self.healthbar,healthPrec)
     end
     if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit==self.unit then
-        
         local power =   UnitPower(self.unit,UnitPowerType(self.unit))
         local powerMax =   UnitPowerMax(self.unit,UnitPowerType(self.unit))
         local powerPrecentage = 0
@@ -175,16 +182,38 @@ function gw_partyframe_OnEvent(self,event,unit)
         self.powerbar:SetValue(powerPrecentage)
     end
     if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event == 'GROUP_ROSTER_UPDATE' then
-            
         gw_update_partyFrameData(self)
     end
     if event=='UNIT_PHASE' or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
        gw_update_awaydata(self)
     end 
+	
     if event=='UNIT_AURA' and unit==self.unit then
        gw_updatePartyFrameAuras(self,self.unit)
     end
-    
+	
+	if event=='READY_CHECK' then
+        self.ready = -1
+        GW_READY_CHECK_INPROGRESS = true
+        gw_update_awaydata(self)
+        self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck')	
+    end
+	
+    if event=='READY_CHECK_CONFIRM' and unit==self.unit then
+        self.ready = arg1
+        gw_update_awaydata(self)
+    end
+	
+    if event=='READY_CHECK_FINISHED' then
+        GW_READY_CHECK_INPROGRESS = false
+		addToAnimation("ReadyCheckPartyWait",0,1,GetTime(),2,function() end,nil,function()
+				self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons');
+				localizedClass, englishClass, classIndex = UnitClass(self.unit);
+				if classIndex~=nil and classIndex~=0 then
+					gw_setClassIcon(self.classicon,classIndex);
+				end;
+			end)
+    end
    
 end
 
@@ -213,6 +242,22 @@ function gw_update_awaydata(self)
         end
     else
         self.portrait:SetTexture(nil)
+    end
+	
+	if GW_READY_CHECK_INPROGRESS==true then
+     
+        if self.ready == -1 then
+            self.classicon:SetTexCoord(0,1,0,0.25)
+        end
+        if self.ready==false then
+            self.classicon:SetTexCoord(0,1,0.25,0.50)
+        end 
+        if self.ready==true then
+            self.classicon:SetTexCoord(0,1,0.50,0.75)
+        end
+        if not self.classicon:IsShown() then
+            self.classicon:Show()
+        end
     end
      
 

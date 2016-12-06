@@ -182,11 +182,11 @@ function gw_create_raidframe(registerUnit)
 end
 
 function gw_toggle_partyframes_for_use(b)
-    
+	
     if InCombatLockdown() then return end
     
     if IsInRaid() then b=false end
-    
+	
     if b==true then
         if gwGetSetting('RAID_STYLE_PARTY')==true then
                 _G['GwCompactplayer']:Show()
@@ -303,14 +303,24 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         self.ready = arg1
         gw_update_raidframe_awayData(self)
     end
-    if event=='READY_CHECK_FINISHED' then
-        GW_READY_CHECK_INPROGRESS =false
-        gw_update_raidframe_awayData(self)
-        gw_updateClassIcon_texture(self,false)
-    end
-    
-    
-    
+
+	if event=='READY_CHECK_FINISHED' then
+		addToAnimation("ReadyCheckRaidWaitCheck",0,1,GetTime(),2,function() end,nil,function()
+				GW_READY_CHECK_INPROGRESS = false;
+				local classColor = gwGetSetting('RAID_CLASS_COLOR')
+				localizedClass, englishClass, classIndex = UnitClass(self.unit);
+				if classColor==true then
+					self.healthbar:SetStatusBarColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1);
+					if self.classicon:IsShown() then
+						self.classicon:Hide();
+					end
+				else
+					self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons');
+				end
+				self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
+				gw_setClassIcon(self.classicon,classIndex)
+			end)	
+	end
 end
 
 function gw_highlight_target_raidframe(self)
@@ -423,13 +433,14 @@ function gw_updateClassIcon_texture(self)
 end
 
 function gw_update_raidframe_awayData(self)
-  
+
     local classColor = gwGetSetting('RAID_CLASS_COLOR')
     local iconState = 1
     
     localizedClass, englishClass, classIndex = UnitClass(self.unit);
-    
-    if classIndex~=nil and classIndex~=0 and classColor==false then
+
+    if classIndex~=nil and classIndex~=0 and classColor==false and GW_READY_CHECK_INPROGRESS==false then
+		self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons')
         iconState = 1
     end
     
