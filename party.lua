@@ -206,6 +206,7 @@ function gw_partyframe_OnEvent(self,event,unit,arg1)
     end
 	
     if event=='READY_CHECK_FINISHED' then
+		GW_READY_CHECK_INPROGRESS = false
 		addToAnimation("ReadyCheckPartyWait"..self.unit,0,1,GetTime(),2,function() end,nil,function()
 				self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons');
 				localizedClass, englishClass, classIndex = UnitClass(self.unit);
