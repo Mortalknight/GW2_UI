@@ -59,7 +59,7 @@ local function updateCurrentScenario(isYielded)
     if isYielded==nil or isYielded==false then
        GwQuesttrackerContainerScenario:SetScript('OnUpdate',function()
                 updateCurrentScenario(true)
-            GwQuesttrackerContainerScenario:SetScript('OnUpdate',nill)
+            GwQuesttrackerContainerScenario:SetScript('OnUpdate',nil)
         end) 
     end
     

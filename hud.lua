@@ -309,7 +309,8 @@ local eName = experiencebar:GetName()
     experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
     experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE");
     experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING");
-    
+	experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN");
+	experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
     
     experiencebar:SetScript('OnEnter',  show_experiencebar_tooltip)
     experiencebar:SetScript('OnLeave', function() GameTooltip:Hide()
@@ -367,7 +368,7 @@ function show_experiencebar_tooltip()
         local artifactVal = artifactXP/xpForNextPoint
         
         
-        GameTooltip:AddLine('\nArtifact: '..artifactXP..' / '..xpForNextPoint,1,1,1)
+        GameTooltip:AddLine('\nArtifact: '..artifactXP..' / '..xpForNextPoint..' |cffa6a6a6 ('..math.floor((artifactXP/xpForNextPoint)*100) ..'%)|r',1,1,1)
     end
     
    
@@ -517,7 +518,7 @@ function update_experiencebar_data(self,event)
         local currentHonor = UnitHonor("player");
         local maxHonor = UnitHonorMax("player");
         valPrec = currentHonor/maxHonor
-        
+		
         gw_honor_vals = 'Honor '..comma_value((currentHonor)).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
         
         _G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
