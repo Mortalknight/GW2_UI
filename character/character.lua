@@ -310,7 +310,8 @@ function gwPaperDollStats_OnEvent(self,event,...)
 			event == "PLAYER_EQUIPMENT_CHANGED" or
 			event == "PLAYER_BANKSLOTS_CHANGED" or
 			event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
-			event == "PLAYER_DAMAGE_DONE_MODS") then
+			event == "PLAYER_DAMAGE_DONE_MODS" or
+			IsMounted()) then
 		self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate);
 	elseif (event == "PLAYER_TALENT_UPDATE") then
 		gwPaperDollUpdateUnitData();
