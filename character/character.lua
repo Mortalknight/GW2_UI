@@ -295,7 +295,8 @@ function gwPaperDollStats_OnEvent(self,event,...)
 				event == "UNIT_SPELL_HASTE" or
 				event == "UNIT_MAXHEALTH" or
 				event == "UNIT_AURA" or
-				event == "UNIT_RESISTANCES") then
+				event == "UNIT_RESISTANCES" or
+				IsMounted()) then
 			self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate);
 		end
 	end
