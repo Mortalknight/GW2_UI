@@ -262,11 +262,11 @@ function gwPaperDollUpdateUnitData()
     local spec = GetSpecialization();
     local localizedClass, englishClass, classIndex = UnitClass("player");
     local id, name, description, icon, background, role = GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
-    
-    
-    local data = 'Level '..UnitLevel('player')..' '..name..' '..localizedClass
-    
-    GwDressingRoom.characterData:SetText(data)
+
+	if name ~= nil then
+		local data = 'Level '..UnitLevel('player')..' '..name..' '..localizedClass	
+		GwDressingRoom.characterData:SetText(data)
+	end
     
 end
 
