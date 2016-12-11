@@ -308,17 +308,19 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
 		addToAnimation("ReadyCheckRaidWaitCheck"..self.unit,0,1,GetTime(),2,function() end,nil,function()
 				GW_READY_CHECK_INPROGRESS = false;
 				local classColor = gwGetSetting('RAID_CLASS_COLOR')
-				localizedClass, englishClass, classIndex = UnitClass(self.unit);
-				if classColor==true then
-					self.healthbar:SetStatusBarColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1);
-					if self.classicon:IsShown() then
-						self.classicon:Hide();
+				if UnitInRaid(self.unit)~=nil then
+					localizedClass, englishClass, classIndex = UnitClass(self.unit);
+					if classColor==true then
+						self.healthbar:SetStatusBarColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1);
+						if self.classicon:IsShown() then
+							self.classicon:Hide();
+						end
+					else
+						self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons');
 					end
-				else
-					self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons');
+					self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
+					gw_setClassIcon(self.classicon,classIndex)
 				end
-				self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
-				gw_setClassIcon(self.classicon,classIndex)
 			end)	
 	end
 end
