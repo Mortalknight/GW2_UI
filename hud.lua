@@ -303,7 +303,6 @@ local eName = experiencebar:GetName()
     update_experiencebar_data()
     
     experiencebar:SetScript('OnEvent',update_experiencebar_data)
-	experiencebar:SetScript('OnUpdate',nil)
     
     experiencebar:RegisterEvent('PLAYER_XP_UPDATE')
     experiencebar:RegisterEvent("UPDATE_FACTION");
@@ -410,11 +409,11 @@ end
 function update_experiencebar_data(self,event)
 	
 	if event=="CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground('player')~=nil then
-        local delayUpdateTime = GetTime() + 0.3;
-        GwExperienceFrame('OnUpdate', function()
+        local delayUpdateTime = GetTime() + 0.4;
+        GwExperienceFrame:SetScript('OnUpdate', function()
         if GetTime()<delayUpdateTime  then return end 
         update_experiencebar_data(self,nil) 
-        GwExperienceFrame('OnUpdate',nil)
+        GwExperienceFrame:SetScript('OnUpdate',nil)
         end)
     end
 	
@@ -519,7 +518,8 @@ function update_experiencebar_data(self,event)
     
     --If we are inside a pvp arena we show the honorbar
     gw_honor_vals = nil
-    if UnitLevel('player')==GetMaxPlayerLevel() and UnitInBattleground('player')~=nil then
+	
+    if (UnitLevel('player')==GetMaxPlayerLevel() and UnitInBattleground('player')~=nil) or (UnitLevel('player')==GetMaxPlayerLevel() and event == "PLAYER_ENTERING_BATTLEGROUND") then
         showBar1 = true
 		level =  UnitHonorLevel("player");
 		Nextlevel = math.min(level+1,GetMaxPlayerHonorLevel())
@@ -527,8 +527,8 @@ function update_experiencebar_data(self,event)
 		local currentHonor = UnitHonor("player");
 		local maxHonor = UnitHonorMax("player");
 		valPrec = currentHonor/maxHonor
-		
-		gw_honor_vals = 'Honor '..comma_value((currentHonor)).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+
+		gw_honor_vals = 'Honor '..comma_value(currentHonor).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
 		_G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
 			
     end
