@@ -292,7 +292,7 @@ gw_load_levelingrewads()
 
 local experiencebar =  CreateFrame('Frame', 'GwExperienceFrame',UIParent,'GwExperienceBar');
 local eName = experiencebar:GetName()
-    
+
       experiencebarAnimation = UnitXP('Player')/UnitXPMax('Player')
     
     _G['GwExperienceFrameArtifactBar'].artifactBarAnimation = 0
@@ -303,6 +303,7 @@ local eName = experiencebar:GetName()
     update_experiencebar_data()
     
     experiencebar:SetScript('OnEvent',update_experiencebar_data)
+	experiencebar:SetScript('OnUpdate',nil)
     
     experiencebar:RegisterEvent('PLAYER_XP_UPDATE')
     experiencebar:RegisterEvent("UPDATE_FACTION");
@@ -407,8 +408,16 @@ function gw_artifact_points()
 end
 
 function update_experiencebar_data(self,event)
-    
-
+	
+	if event=="CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground('player')~=nil then
+        local delayUpdateTime = GetTime() + 0.3;
+        GwExperienceFrame('OnUpdate', function()
+        if GetTime()<delayUpdateTime  then return end 
+        update_experiencebar_data(self,nil) 
+        GwExperienceFrame('OnUpdate',nil)
+        end)
+    end
+	
     gw_leveling_display_rewards()
     
     local showArtifact = HasArtifactEquipped()
@@ -430,6 +439,7 @@ function update_experiencebar_data(self,event)
     
     local restingIconString = ' |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t '
 
+	
     if not IsResting() then
         restingIconString = ''
     end
@@ -510,22 +520,17 @@ function update_experiencebar_data(self,event)
     --If we are inside a pvp arena we show the honorbar
     gw_honor_vals = nil
     if UnitLevel('player')==GetMaxPlayerLevel() and UnitInBattleground('player')~=nil then
-
         showBar1 = true
 		level =  UnitHonorLevel("player");
 		Nextlevel = math.min(level+1,GetMaxPlayerHonorLevel())
 		
-        if event == "CHAT_MSG_COMBAT_HONOR_GAIN" or event == "PLAYER_ENTERING_BATTLEGROUND" then
-			addToAnimation("GainHonor",0,1,GetTime(),0.2,function() end,nil,function()
-				local currentHonor = UnitHonor("player");
-				local maxHonor = UnitHonorMax("player");
-				valPrec = currentHonor/maxHonor
+		local currentHonor = UnitHonor("player");
+		local maxHonor = UnitHonorMax("player");
+		valPrec = currentHonor/maxHonor
 		
-				gw_honor_vals = 'Honor '..comma_value((currentHonor)).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
-        
-				_G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
-			end)
-        end 
+		gw_honor_vals = 'Honor '..comma_value((currentHonor)).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+		_G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
+			
     end
 
  --  experiencebarAnimation = 0.01

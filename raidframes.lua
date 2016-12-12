@@ -292,10 +292,10 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         gw_toggle_partyframes_for_use(false)
         GROUPD_TYPE='RAID'
     end
-    
+
     if event=='READY_CHECK' then
         self.ready = -1
-		if self.unit == "raid"..UnitInRaid(unit) then self.ready = true end
+		if IsInRaid() and self.unit == "raid"..UnitInRaid(unit) then self.ready = true end
         GW_READY_CHECK_INPROGRESS = true
         gw_update_raidframe_awayData(self)
         gw_updateClassIcon_texture(self,true)
