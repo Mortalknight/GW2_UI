@@ -512,17 +512,20 @@ function update_experiencebar_data(self,event)
     if UnitLevel('player')==GetMaxPlayerLevel() and UnitInBattleground('player')~=nil then
 
         showBar1 = true
-        level =  UnitHonorLevel("player");
-        Nextlevel = math.min(level+1,GetMaxPlayerHonorLevel())
-        
-        local currentHonor = UnitHonor("player");
-        local maxHonor = UnitHonorMax("player");
-        valPrec = currentHonor/maxHonor
+		level =  UnitHonorLevel("player");
+		Nextlevel = math.min(level+1,GetMaxPlayerHonorLevel())
 		
-        gw_honor_vals = 'Honor '..comma_value((currentHonor)).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+        if event == "CHAT_MSG_COMBAT_HONOR_GAIN" or event == "PLAYER_ENTERING_BATTLEGROUND" then
+			addToAnimation("GainHonor",0,1,GetTime(),0.2,function() end,nil,function()
+				local currentHonor = UnitHonor("player");
+				local maxHonor = UnitHonorMax("player");
+				valPrec = currentHonor/maxHonor
+		
+				gw_honor_vals = 'Honor '..comma_value((currentHonor)).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
         
-        _G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
-            
+				_G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
+			end)
+        end 
     end
 
  --  experiencebarAnimation = 0.01
