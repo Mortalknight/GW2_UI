@@ -56,13 +56,13 @@ end
 
 local function updateCurrentScenario(isYielded)
     
-    if isYielded==nil or isYielded==false then
-       GwQuesttrackerContainerScenario:SetScript('OnUpdate',function()
-                updateCurrentScenario(true)
-            GwQuesttrackerContainerScenario:SetScript('OnUpdate',nil)
-        end) 
-    end
-    
+	local delayUpdateTime = GetTime() + 0.4;
+	GwQuesttrackerContainerScenario:SetScript('OnUpdate', function()
+    if GetTime()<delayUpdateTime  then return end 
+    updateCurrentScenario() 
+    GwQuesttrackerContainerScenario:SetScript('OnUpdate',nil)
+    end)
+  
     
     GwScenarioBlock.height = 1
     
