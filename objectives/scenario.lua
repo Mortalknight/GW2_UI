@@ -54,9 +54,9 @@ function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveType,quan
 end
 
 
-local function updateCurrentScenario(isYielded)
+local function updateCurrentScenario()
     
-	local delayUpdateTime = GetTime() + 0.4;
+	local delayUpdateTime = GetTime() + 0.6;
 	GwQuesttrackerContainerScenario:SetScript('OnUpdate', function()
     if GetTime()<delayUpdateTime  then return end 
     updateCurrentScenario() 
@@ -129,11 +129,11 @@ local function updateCurrentScenario(isYielded)
     
     for criteriaIndex = 1, numCriteria do
         local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, __, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex);
-
         local objectiveType ='progressbar'
         if not isWeightedProgress then
             objectiveType = 'monster'
         end
+		if objectiveType == 'progressbar' then totalQuantity = 100 end
         addObjectiveBlock(GwScenarioBlock,gw_parse_criteria(quantity,totalQuantity,criteriaString),false,criteriaIndex,objectiveType,quantity) 
     end
     
