@@ -2,7 +2,7 @@
 
 
 
-
+local intGWQuestTrackerHeight = 0 
 
 local function getObjectiveBlock(self,index)
     
@@ -62,7 +62,6 @@ local function updateCurrentScenario()
     updateCurrentScenario() 
     GwQuesttrackerContainerScenario:SetScript('OnUpdate',nil)
     end)
-  
     
     GwScenarioBlock.height = 1
     
@@ -168,7 +167,7 @@ local function updateCurrentScenario()
     
     GwScenarioBlock.height = GwScenarioBlock.height + 5 
 
-    GwScenarioBlock:SetHeight(GwScenarioBlock.height)
+    GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
         
 end
@@ -176,6 +175,7 @@ end
 local function scenarioTimerStop()
     GwQuestTrackerTimer:SetScript('OnUpdate',nil) 
     GwQuestTrackerTimer.timer:Hide()
+	intGWQuestTrackerHeight = intGWQuestTrackerHeight - 40
 end
 
 
@@ -200,6 +200,7 @@ local function scenarioTimerUpdate(...)
                    
                 end)
                 GwQuestTrackerTimer.timer:Show()
+				intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 
                 GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
                 gw_scenario_affixes()
                 hasUpdatedAffixes = true;
@@ -228,9 +229,10 @@ local function scenarioTimerUpdate(...)
 			_G['GwAffixFrame'..i].affixID = nil
 			_G['GwAffixFrame'..i..'Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icon-boss')
 		end
-        _G['GwAffixFrame']:Hide(); 
+        _G['GwAffixFrame']:Hide();
     end
-    
+    local isInstance, instanceType = IsInInstance()
+	if isInstance == false then intGWQuestTrackerHeight = 0 end
   
 end
 
@@ -241,7 +243,8 @@ function gw_scenario_affixes()
     for k,v in pairs(affixes) do
         if i == 1 then
               GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
-        end
+			  intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 
+		end
         local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
         
