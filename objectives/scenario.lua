@@ -2,7 +2,6 @@
 
 
 
-local intGWQuestTrackerHeight = 0 
 
 local function getObjectiveBlock(self,index)
     
@@ -166,6 +165,12 @@ local function updateCurrentScenario()
 
     
     GwScenarioBlock.height = GwScenarioBlock.height + 5 
+	
+	local intGWQuestTrackerHeight
+	intGWQuestTrackerHeight = 0	
+	
+	if _G['GwAffixFrame']:IsShown() then intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 end
+	if GwQuestTrackerTimer.timer:IsShown() then intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 end
 
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
@@ -175,7 +180,6 @@ end
 local function scenarioTimerStop()
     GwQuestTrackerTimer:SetScript('OnUpdate',nil) 
     GwQuestTrackerTimer.timer:Hide()
-	intGWQuestTrackerHeight = intGWQuestTrackerHeight - 40
 end
 
 
@@ -200,7 +204,6 @@ local function scenarioTimerUpdate(...)
                    
                 end)
                 GwQuestTrackerTimer.timer:Show()
-				intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 
                 GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
                 gw_scenario_affixes()
                 hasUpdatedAffixes = true;
@@ -231,8 +234,6 @@ local function scenarioTimerUpdate(...)
 		end
         _G['GwAffixFrame']:Hide();
     end
-    local isInstance, instanceType = IsInInstance()
-	if isInstance == false then intGWQuestTrackerHeight = 0 end
   
 end
 
@@ -243,7 +244,6 @@ function gw_scenario_affixes()
     for k,v in pairs(affixes) do
         if i == 1 then
               GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
-			  intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 
 		end
         local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
