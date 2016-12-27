@@ -68,6 +68,8 @@
                 self.title:SetFont(UNIT_NAME_FONT,14)
                 
                 self.title:SetShadowOffset(1,-1)
+				
+				self.title:SetText(GwLocalization['TRACKER_QUEST_TITLE'])
 
             </OnLoad>
             <OnClick>
@@ -533,9 +535,13 @@
                 </Layer>
          </Layers>
             <Scripts>
+				<OnLoad>
+					
+				</OnLoad>
+			
                 <OnShow>
                     self:GetParent().timerBackground:Show()
-                  
+					self.timerlabel:SetText(GwLocalization['TRACKER_TIME_REMAINING'])
                     
                  </OnShow>
                  <OnHide>

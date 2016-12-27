@@ -45,6 +45,7 @@ function gw_create_bgframe()
 
     
    local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
+	GwBagFrameHeaderString:SetText(GwLocalization['INVENTORY_TITLE'])
     
     GwBagFrame:SetWidth(gwGetSetting('BAG_WIDTH'))
     GwCurrencyWindow.scrollchild:SetWidth(gwGetSetting('BAG_WIDTH') - 24 )
@@ -181,7 +182,7 @@ function gw_bg_loadCurrency()
                 GameTooltip:SetOwner(itemSlot,'ANCHOR_CURSOR')
                 GameTooltip:ClearLines()
                 GameTooltip:SetCurrencyToken(i) 
-                GameTooltip:AddLine('Click to track',1,1,1) 
+                GameTooltip:AddLine(GwLocalization['CLICK_TO_TRACK'],1,1,1) 
                 GameTooltip:Show() 
             end)
             
@@ -545,14 +546,14 @@ function gw_backFrameCompactToggle()
         gwSetSetting('BAG_ITEM_SIZE',32)
         BAG_ITEM_SIZE = 32
         gw_update_bag_icons(true)
-        return 'Large Icons';
+        return GwLocalization['EXPAND_ICONS']; --Local?
     end
     
     gwSetSetting('BAG_ITEM_SIZE',45)
     BAG_ITEM_SIZE = 45
     gw_update_bag_icons(true)
      
-    return 'Compact Icons';
+    return GwLocalization['COMPACT_ICONS']; --Local?
 end
 
 function gw_OnBagFrameChangeSize(self)

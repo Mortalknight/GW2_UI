@@ -264,11 +264,11 @@ function GwMapTimeOnEnter(self)
 	end
 	
 	GameTooltip:SetOwner(self, "ANCHOR_TOP",0,5)
-    GameTooltip:AddLine("Clock")
-    GameTooltip:AddLine("Shift-Click to switch between Local and Realm time",1,1,1,TRUE)
-    GameTooltip:AddLine("Right Click to open the Stopwatch",1,1,1,TRUE)
-    GameTooltip:AddLine("Left Click to toggle military time format",1,1,1,TRUE)
-	GameTooltip:AddDoubleLine("Display:",string,nil,nil,nil,1,1,0)
+    GameTooltip:AddLine(GwLocalization['MAP_CLOCK_TITLE'])
+    GameTooltip:AddLine(GwLocalization['MAP_CLOCK_LOCAL_REALM'],1,1,1,TRUE)
+    GameTooltip:AddLine(GwLocalization['MAP_CLOCK_STOPWATCH'],1,1,1,TRUE)
+    GameTooltip:AddLine(GwLocalization['MAP_CLOCK_MILITARY'],1,1,1,TRUE)
+	GameTooltip:AddDoubleLine(GwLocalization['MAP_CLOCK_DISPLAY'],string,nil,nil,nil,1,1,0)
     GameTooltip:SetMinimumWidth(100)								
 	GameTooltip:Show()
 end

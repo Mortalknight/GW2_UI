@@ -915,7 +915,7 @@ function gw_display_suggested()
     -- hide all the display info
     for i = 1, 1 do  
         if suggested[i]~=nil and suggested[i].title~=nil then
-            GwQuestTrackerRadarString:SetText('More adventures await:' )
+            GwQuestTrackerRadarString:SetText(GwLocalization['TRACKER_MORE_ADVENTURES'])
             GwQuestTrackerRadarSubString:SetText(suggested[i].title)       
             GwQuestTrackerRadarSubString:SetTextColor(1,1,1)       
         else

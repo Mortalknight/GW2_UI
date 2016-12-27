@@ -9,7 +9,6 @@ GW_PORTRAIT_BACKGROUND[2] = {l=0,r=0.828,t=0.166015625,b=0.166015625*2}
 GW_PORTRAIT_BACKGROUND[3] = {l=0,r=0.828,t=0.166015625*2,b=0.166015625*3}
 GW_PORTRAIT_BACKGROUND[4] = {l=0,r=0.828,t=0.166015625*3,b=0.166015625*4}
 
-GW_INVITE_PLAYER_NAME_STRING = 'Player Name'
 
 
 
@@ -20,6 +19,11 @@ local DebuffLists = {}
 function gw_manage_group_button()
     CreateFrame('Button','GwManageGroupButton',UIParent,'GwManageGroupButton')
     CreateFrame('Frame','GwGroupManage',UIParent,'GwGroupManage')
+	
+	GwButtonInviteToParty:SetText(GwLocalization['PARTY_INVITE'])
+	GwManageGroupLeaveButton:SetText(GwLocalization['PARTY_LEAVE'])
+	GwGroupReadyCheck:SetText(GwLocalization['PARTY_READY_CHECK'])
+	GwGroupRoleCheck:SetText(GwLocalization['PARTY_ROLE_CHECK'])
     
     tinsert(UISpecialFrames, "GwGroupManage") 
     local x = 10

@@ -157,6 +157,9 @@
                             <OnClick>
                                 PurchaseSlot()                                
                             </OnClick>
+							<OnLoad>
+								self:SetText(GwLocalization['BANK_BUY_SLOTS'])
+							</OnLoad>
                         </Scripts>
                     </Button>
                 </Frames>
@@ -302,6 +305,9 @@
                             <OnClick>
                                  DepositReagentBank()
                             </OnClick>
+							<OnLoad>
+								self:SetText(GwLocalization['REAGENT_BANK_DEPOSIT_ALL'])
+							</OnLoad>
                         </Scripts>
                     </Button>
                     <Button name="GwBuyRegentBank" inherits="GwStandardButton" text="Purchase">
@@ -320,7 +326,7 @@
                         self:RegisterEvent('REAGENTBANK_PURCHASED')
                         GwRegentHelpText:SetFont(UNIT_NAME_FONT,12)
                         GwRegentHelpText:SetShadowColor(1,1,1)
-                        BUY_REGENTBAG_TEXT = 'Purchase '..((GetReagentBankCost())/100/100)..'G'
+                        BUY_REGENTBAG_TEXT = GwLocalization['PURCHASE_REAGENT_BANK']..((GetReagentBankCost())/100/100)..'G'
                         GwBuyRegentBank:SetText(BUY_REGENTBAG_TEXT)
                         
                         if  IsReagentBankUnlocked() then
@@ -393,6 +399,9 @@
                                 SortBankBags();
                                 self:GetParent():Hide()
                             </OnClick>
+							<OnLoad>
+								self:SetText(GwLocalization['SORT_BANK'])
+							</OnLoad>
                         </Scripts>
                     </Button>
                     <Button text="Compact view">
@@ -409,9 +418,9 @@
                             </OnClick>
                             <OnLoad>
                                 if gwGetSetting('BANK_ITEM_SIZE')==45 then
-                                    self:SetText('Compact Icons')
+                                    self:SetText(GwLocalization['BANK_COMPACT_ICONS'])
                                 else
-                                    self:SetText('Large Icons')
+                                    self:SetText(GwLocalization['BANK_EXPAND_ICONS'])
                                 end
                             </OnLoad>
                         </Scripts>
@@ -880,7 +889,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button text="Sort bags">
+                    <Button name = "GwBagFrameDropDownSortBags" text="Sort bags">
                         <Size x="100" y="30"></Size>
                         <Anchors>
                             <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -893,6 +902,9 @@
                             SortBags();
                                 self:GetParent():Hide()
                             </OnClick>
+							<OnLoad>
+								self:SetText(GwLocalization['SORT_BAGS'])
+							</OnLoad>
                         </Scripts>
                     </Button>
                     <Button text="Compact view">
@@ -909,9 +921,9 @@
                             </OnClick>
                             <OnLoad>
                                 if gwGetSetting('BAG_ITEM_SIZE')==45 then
-                                    self:SetText('Compact Icons')
+                                    self:SetText(GwLocalization['COMPACT_ICONS'])
                                 else
-                                    self:SetText('Large Icons')
+                                    self:SetText(GwLocalization['EXPAND_ICONS'])
                                 end
                             </OnLoad>
                         </Scripts>

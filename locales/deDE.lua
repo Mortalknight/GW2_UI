@@ -1,4 +1,7 @@
 -- deDE localization
+
+local function GWUseThisLocalization()
+
 -- Create a global variable for the language strings
 GwLocalization = {}
 
@@ -9,13 +12,14 @@ GwLocalization['SETTINGS_RESET_TO_DEFAULT'] = 'Standardeinstellungen wiederherst
 GwLocalization['SETTINGS_ACCEPT'] = 'Annehmen'
 GwLocalization['SETTINGS_CANCEL'] = 'Abbrechen'
 GwLocalization['SETTINGS_VERSION'] = 'Version'
-GwLocalization['SETTINGS_SAVE_RELOAD'] = 'Speichern und neu laden'
+GwLocalization['SETTINGS_SAVE_RELOAD'] = 'Speichern und \nneu laden'
 GwLocalization['SETTINGS_DELETE'] = 'Löschen'
 GwLocalization['SETTINGS_ACTIVATE'] = 'Aktivieren'
 GwLocalization['SETTINGS_BUTTON'] = 'GW2 UI Einstellungen'
 GwLocalization['SETTING_LOCK_HUD'] = 'HUD sperren'
 
 GwLocalization['MODULES_CAT'] = 'MODULE'
+GwLocalization['MODULES_CAT_TOOLTIP']= 'Aktiviere oder deaktiviere Komponenten'
 GwLocalization['MODULES_DESC'] = 'Aktivere oder deaktiviere die Module die du brauchst oder nicht brauchst.'
 GwLocalization['MODULES_TOOLTIP'] = 'Aktivere oder deaktiviere UI Module.'
 GwLocalization['HEALTH_GLOBE'] = 'Gesundheitskugel'
@@ -76,7 +80,7 @@ GwLocalization['GROUP_TOOLTIP'] = 'Bearbeite die Gruppeneinstellungen.'
 GwLocalization['RAID_PARTY_STYLE'] = 'Gruppe im Raid-Layout anzeigen'
 GwLocalization['CLASS_COLOR_RAID'] = 'Klassenfarben nutzen'
 GwLocalization['POWER_BARS_RAID'] = 'Zeige Ressourcenbars'
-GwLocalization['DEBUFF_DISPELL'] = 'Zeige nur bannbare Schwächungszauber'
+GwLocalization['DEBUFF_DISPELL'] = 'Zeige nur bannbare \nSchwächungszauber'
 GwLocalization['RAID_CONT_HEIGHT'] = 'Bestimme die Größe der Schlachtzugseinheiten'
 GwLocalization['RAID_BAR_WIDTH'] = 'Bestimme die Breite der Schlachtzugseinheiten'
 GwLocalization['RAID_BAR_HEIGHT'] = 'Bestimme die Höhe der Schlachtzugseinheiten'
@@ -89,10 +93,15 @@ GwLocalization['PROFILES_DEFAULT_SETTINGS_PROMPT'] = 'Bist du sicher, dass du di
 GwLocalization['PROFILES_NEW_PROFILE'] = 'Neues Profil'
 GwLocalization['PROFILES_LOAD_BUTTON'] = 'Laden'
 GwLocalization['PROFILES_CREATED'] = 'Erstellt: '
-GwLocalization['PROFILES_CREATED_BY'] = 'Erstellt von: '
+GwLocalization['PROFILES_CREATED_BY'] = '\nErstellt von: '
+GwLocalization['PROFILES_LAST_UPDATE'] = '\nzuletzt aktualisiert: '
+GwLocalization['PROFILES_DELETE'] = 'Bist du sicher, dass du dieses Profil löschen möchtest?' 
+GwLocalization['PROFILES_MISSING_LOAD'] = 'If you see this message. We forgot to load some text. Dont worry we have very capable sample text just like this one to fill you with the information.' 
 
 
 GwLocalization['SETTINGS_NO_LOAD_ERROR'] = 'Einige Texte wurden nicht geladen, bitte versuche dein Interface neu zu laden.'
+
+GwLocalization['HUD_MOVE_ERR'] = 'Du kannst keine Elemente während dem Kampf verschieben!' 
 
 
     -- Settings Descriptions
@@ -150,21 +159,23 @@ GwLocalization['INVENTORY_TITLE'] = 'Inventar'
 GwLocalization['COMPACT_ICONS'] = 'Kompakte Icons'
 GwLocalization['EXPAND_ICONS'] = 'Erweiterte Icons'
 GwLocalization['SORT_BAGS'] = 'Taschen sortieren'
+GwLocalization['CLICK_TO_TRACK'] = 'Zum verfolgen klicken'
 
 -- Bank
 GwLocalization['BANK_TITLE'] = 'Bank'
 GwLocalization['REAGENT_BANK_TITLE'] = 'Reagenzienbank'
 GwLocalization['BANK_BUY_SLOTS'] = 'Kaufe mehr Slots'
 GwLocalization['REAGENT_BANK_DEPOSIT_ALL'] = 'Kaufe alle'
-GwLocalization['PURCHASE_REAGENT_BANK'] = 'Kaufen'
+GwLocalization['PURCHASE_REAGENT_BANK'] = 'Kaufen '
 GwLocalization['SORT_BANK'] = 'Bank sortieren'
 GwLocalization['BANK_COMPACT_ICONS'] = 'Kompakte Icons'
 GwLocalization['BANK_EXPAND_ICONS'] = 'Erweiterte Icons'
-GwLocalization['NAME_LOAD_ERROR'] = 'Name konnte nicht geladen werden.'
-GwLocalization['AMOUNT_LOAD_ERROR'] = 'Menge konnte nicht geladen werden.'
+GwLocalization['NAME_LOAD_ERROR'] = 'Name konnte nicht geladen werden'
+GwLocalization['AMOUNT_LOAD_ERROR'] = 'Menge konnte nicht geladen werden'
 
 -- Character
 GwLocalization['CHARACTER_TITLE'] = 'Held'
+GwLocalization['CHARACTER_HEADER'] = 'Charakter'
 GwLocalization['CHARACTER_NOT_LOADED'] = 'Nicht geladen.'
 GwLocalization['CHARCTER_EQUIP_OUTFIT'] = 'Ausrüsten'
 GwLocalization['CHARACTER_SAVE_OUTFIT'] = 'Speichern'
@@ -174,7 +185,7 @@ GwLocalization['CHARACTER_MENU_OUTFITS'] = 'Ausrüstungsmanager'
 GwLocalization['CHARACTER_MENU_TITLES'] = 'Titel'
 GwLocalization['CHARACTER_MENU_REPS'] = 'Ruf'
 GwLocalization['CHARACTER_MENU_EQUIPMENT_RETURN'] = 'Charakter: Ausrüstung'
-GwLocalization['CHARACTER_MENU_OUTFITS_RETURN'] = 'Charakter: Ausrüstungsmanager'
+GwLocalization['CHARACTER_MENU_OUTFITS_RETURN'] = 'Charakter: \nAusrüstungsmanager'
 GwLocalization['CHARACTER_MENU_TITLES_RETURN'] = 'Charakter: Titel'
 GwLocalization['CHARACTER_MENU_REPS_RETURN'] = 'Charakter: Ruf'
 GwLocalization['CHARACTER_NAME_UNKNOWN'] = 'Unbekannt'
@@ -183,8 +194,14 @@ GwLocalization['CHARACTER_LEVEL_CLASS'] = 'Level %n class'
 GwLocalization['CHARACTER_CURRENT_RANK'] = 'AKTUELL'
 GwLocalization['CHARACTER_NEXT_RANK'] = 'NÄCHSTER'
 GwLocalization['CHARACTER_REP_SEARCH'] = 'Suchen...'
+GwLocalization['CHARACTER_OUTFITS_SAVE'] = 'Bist du sicher, dass du das Outfit speichern möchtest"'
+GwLocalization['CHARACTER_OUTFITS_DELETE'] = 'Bist du sicher, dass du das Outfit löschen möchtest "'
+GwLocalization['CHARACTER_REPUTATION_INACTIVE'] = 'Inaktiv' 
+GwLocalization['CHARACTER_REPUTATION_TRACK'] = 'Als Bar anzeigen' 
+GwLocalization['CHARACTER_OUTFIT_NEW'] = 'Neues Outfit' 
 
 -- HUD
+GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'] = 'Beschädigte oder zerstörte Ausrüstung'
 GwLocalization['LEVEL_REWARDS'] = 'Belohnung für die nächsten Level'
 GwLocalization['LEVEL_REWARDS_RHEADER'] = 'BELOHNUNG'
 GwLocalization['LEVEL_REWARDS_LHEADER'] = 'LEVEL'
@@ -195,15 +212,23 @@ GwLocalization['EXP_BAR_TOOLTIP_EXP_VALUE'] = 'Erfahrung '
 GwLocalization['EXP_BAR_TOOLTIP_EXP_RESTING'] = ' (Erholen)'
 GwLocalization['EXP_BAR_TOOLTIP_EXP_RESTED'] = 'Ausgeruht '
 GwLocalization['EXP_BAR_TOOLTIP_ARTIFACT'] = '\nArtefakt: '
-GwLocalization['EXP_BAR_TOOLTIP_REP'] = ' Ruf'
+GwLocalization['EXP_BAR_TOOLTIP_REP'] = ' Ruf '
 GwLocalization['EXP_BAR_TOOLTIP_HONOR'] = 'Ehre '
+GwLocalization['GW_BAG_MICROBUTTON_STRING'] = 'Inventar' 
+GwLocalization['UPDATE_STRING_3'] = 'Ein  |cFFFF0000wichtiges|r update ist verfügbar.\nEs wird drigend empfohlen ein Umpdate durch zuführen.' 
+GwLocalization['UPDATE_STRING_2'] = 'Ein neues Update mit neuen Funktionen ist verfügbar.' 
+GwLocalization['UPDATE_STRING_1'] = 'Ein neues Update steht zum download bereit.' 
+GwLocalization['FPS_TOOLTIP_1'] = 'FPS ' 
+GwLocalization['FPS_TOOLTIP_2'] = 'Latenz (Home) ' 
+GwLocalization['FPS_TOOLTIP_3'] = 'Latenz (Welt) ' 
 
 -- Party
 GwLocalization['PARTY_INVITE'] = 'Einladen'
 GwLocalization['PARTY_LEAVE'] = 'Verlassen'
 GwLocalization['PARTY_READY_CHECK'] = 'Bereitschaftsabfrage'
-GwLocalization['PARTY_ROLE_CHECK'] = 'Rollen abfrage'
-GwLocalization['PARTY_CONVERT'] = 'In Schlachtzug umwandeln'
+GwLocalization['PARTY_ROLE_CHECK'] = 'Rollenabfrage'
+GwLocalization['PARTY_CONVERT'] = 'In Schlachtzug \numwandeln'
+GwLocalization['RAID_CONVERT'] = 'In eine Gruppe \numwandeln' 
 GwLocalization['PARTY_INVITE_STRING'] = 'Spielername'
 
 -- Quest Tracker
@@ -218,8 +243,19 @@ GwLocalization['QUEST_VIEW_ACCPET'] = 'Annehmen'
 GwLocalization['QUEST_VIEW_COMPLETE'] = 'Quest beenden'
 
 -- Map
-GwLocalization['MAP_CLOCK_TITLE'] = 'Titel'
+GwLocalization['MAP_CLOCK_TITLE'] = 'Uhr'
 GwLocalization['MAP_CLOCK_LOCAL_REALM'] = 'Shift-Klick zum wechseln zwischen Lokaler- und Serverzeit '
 GwLocalization['MAP_CLOCK_STOPWATCH'] = 'Rechts Klick zum öffnen der Stoppuhr'
 GwLocalization['MAP_CLOCK_MILITARY'] = 'Links Klick zum umschalten in das militärische Zeitformat.'
-GwLocalization['MAP_CLOCK_DISPLAY'] = 'Anzeigen:'
+GwLocalization['MAP_CLOCK_DISPLAY'] = 'Anzeigen: '
+
+end
+
+
+if GetLocale() == "deDE" then
+	GWUseThisLocalization()
+end
+
+-- After using this localization or deciding that we don"t need it, remove it from memory.
+GWUseThisLocalization = nil
+

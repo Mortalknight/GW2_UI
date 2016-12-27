@@ -1,4 +1,5 @@
 
+
 local settings_cat ={}
 local options = {}
 
@@ -38,9 +39,10 @@ function create_settings_window()
     
     
     GwMainMenuFrame = CreateFrame('Button','GwMainMenuFrame',GameMenuFrame,'GwStandardButton')
-    GwMainMenuFrame:SetText('GW2 UI Settings')
+    GwMainMenuFrame:SetText(GwLocalization['SETTINGS_BUTTON'])
     GwMainMenuFrame:ClearAllPoints()
     GwMainMenuFrame:SetPoint('TOP',GameMenuFrame,'BOTTOM',0,0 )
+	GwMainMenuFrame:SetSize(150,24)
     GwMainMenuFrame:SetScript('OnClick',function() sWindow:Show()
             if InCombatLockdown() then
                 return
@@ -51,77 +53,78 @@ function create_settings_window()
     lhb = CreateFrame('Button','GwLockHudButton',UIParent,'GwStandardButton')
     lhb:SetScript('OnClick',gw_lockHudObjects)
     lhb:ClearAllPoints()
-    lhb:SetText('Lock Hud')
+    lhb:SetText(GwLocalization['SETTING_LOCK_HUD'])
     lhb:SetPoint('TOP',UIParent,'TOP',0,0)
     lhb:Hide()
 
 
     
-    create_settings_cat('MODULES','Enable and disable components','GwSettingsModuleOption',0)
+    create_settings_cat(GwLocalization['MODULES_CAT'],GwLocalization['MODULES_CAT_TOOLTIP'],'GwSettingsModuleOption',0)
     
     
     
     
-    addOption('Health Globe','Health Bar Replacement','HEALTHGLOBE_ENABLED','GwSettingsModuleOption')
-    addOption('Power','Mana/Power Bar Replacement','POWERBAR_ENABLED','GwSettingsModuleOption')
-    addOption('Focus','Focus Frame Replacement','FOCUS_ENABLED','GwSettingsModuleOption')
-    addOption('Target','Target Frame Replacement','TARGET_ENABLED','GwSettingsModuleOption')
-    addOption('Chatbubbles', 'Use the GW2 Chatbubbles','CHATBUBBLES_ENABLED','GwSettingsModuleOption')
-    addOption('Minimap', 'Use the GW2 Minimap frame','MINIMAP_ENABLED','GwSettingsModuleOption')
-    addOption('Quest Tracker', 'Use the revamped Quest Tracker','QUESTTRACKER_ENABLED','GwSettingsModuleOption')
-    addOption('Tooltips', 'Use the GW2 Tooltips','TOOLTIPS_ENABLED','GwSettingsModuleOption')
-    addOption('Chat', 'Use the restyled Chat Frame','CHATFRAME_ENABLED','GwSettingsModuleOption')
-    addOption('Immersive Questing', 'Use the immersive Quest Screen','QUESTVIEW_ENABLED','GwSettingsModuleOption')
-    addOption('Player Auras', 'Move and resize player auras','PLAYER_BUFFS_ENABLED','GwSettingsModuleOption')
-    addOption('Action Bars', 'Use the GW2 styled action bars','ACTIONBARS_ENABLED','GwSettingsModuleOption')
-    addOption('Bags', 'Use the unified GW2 bag interface','BAGS_ENABLED','GwSettingsModuleOption')
-    addOption('Font', 'Use the GW2 fonts','FONTS_ENABLED','GwSettingsModuleOption')
-    addOption('Casting Bar', 'Use the GW2 casting bar','CASTINGBAR_ENABLED','GwSettingsModuleOption')
-    addOption('Class Power', 'Display class powers','CLASS_POWER','GwSettingsModuleOption')
-    addOption('Group', 'Raid and party','GROUP_FRAMES','GwSettingsModuleOption')
+    addOption(GwLocalization['HEALTH_GLOBE'],GwLocalization['HEALTH_GLOBE_DESC'],'HEALTHGLOBE_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['RESOURCE'],GwLocalization['RESOURCE_DESC'],'POWERBAR_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['FOCUS_FRAME'],GwLocalization['FOCUS_FRAME_DESC'],'FOCUS_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['TARGET_FRAME'],GwLocalization['TARGET_FRAME_DESC'],'TARGET_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['CHAT_BUBBLES'], GwLocalization['CHAT_BUBBLES_DESC'],'CHATBUBBLES_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['MINIMAP'], GwLocalization['MINIMAP_DESC'],'MINIMAP_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['QUEST_TRACKER'], GwLocalization['QUEST_TRACKER_DESC'],'QUESTTRACKER_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['TOOLTIPS'], GwLocalization['TOOLTIPS_DESC'],'TOOLTIPS_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['CHAT_FRAME'], GwLocalization['CHAT_FRAME_DESC'],'CHATFRAME_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['QUESTING_FRAME'], GwLocalization['QUESTING_FRAME_DESC'],'QUESTVIEW_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['PLAYER_AURAS'], GwLocalization['PLAYER_AURAS_DESC'],'PLAYER_BUFFS_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['ACTION_BARS'], GwLocalization['ACTION_BARS_DESC'],'ACTIONBARS_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['INVENTORY_FRAME'], GwLocalization['INVENTORY_FRAME_DESC'],'BAGS_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['FONTS'], GwLocalization['FONTS_DESC'],'FONTS_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['CASTING_BAR'], GwLocalization['CASTING_BAR_DESC'],'CASTINGBAR_ENABLED','GwSettingsModuleOption')
+    addOption(GwLocalization['CLASS_POWER'], GwLocalization['CLASS_POWER_DESC'],'CLASS_POWER','GwSettingsModuleOption')
+    addOption(GwLocalization['GROUP_FRAMES'], GwLocalization['GROUP_FRAMES_DESC'],'GROUP_FRAMES','GwSettingsModuleOption')
     
-    create_settings_cat('TARGET','Edit the target frame settings','GwSettingsTargetOptions',1)
+    create_settings_cat(GwLocalization['TARGET_CAT'],GwLocalization['TARGET_TOOLTIP'],'GwSettingsTargetOptions',1)
     
-    addOption('Target of Target','Display the target\'s target','target_TARGET_ENABLED','GwSettingsTargetOptions')
-    addOption('Health Value','Display health information','target_HEALTH_VALUE_ENABLED','GwSettingsTargetOptions')
-    addOption('Health Percentage','Display health info as a percentage','target_HEALTH_VALUE_TYPE','GwSettingsTargetOptions')
-    addOption('Class Color','Display class colored health bars','target_CLASS_COLOR','GwSettingsTargetOptions')
-    addOption('Show Debuffs','Display the target\'s debuffs','target_DEBUFFS','GwSettingsTargetOptions')
-    addOption('Show All debuffs','Display all target\'s buffs','target_BUFFS_FILTER_ALL','GwSettingsTargetOptions')
-    addOption('Show Buffs','Display the target\'s buffs','target_BUFFS','GwSettingsTargetOptions')
+    addOption(GwLocalization['TARGET_OF_TARGET'],GwLocalization['TARGET_OF_TARGET_DESC'],'target_TARGET_ENABLED','GwSettingsTargetOptions')
+    addOption(GwLocalization['HEALTH_VALUE'],GwLocalization['HEALTH_VALUE_DESC'],'target_HEALTH_VALUE_ENABLED','GwSettingsTargetOptions')
+    addOption(GwLocalization['HEALTH_PERCENTAGE'],GwLocalization['HEALTH_PERCENTAGE_DESC'],'target_HEALTH_VALUE_TYPE','GwSettingsTargetOptions')
+    addOption(GwLocalization['CLASS_COLOR'],GwLocalization['CLASS_COLOR_DESC'],'target_CLASS_COLOR','GwSettingsTargetOptions')
+    addOption(GwLocalization['SHOW_DEBUFFS'],GwLocalization['SHOW_DEBUFFS_DESC'],'target_DEBUFFS','GwSettingsTargetOptions')
+    addOption(GwLocalization['SHOW_ALL_DEBUFFS'],GwLocalization['SHOW_ALL_DEBUFFS_DESC'],'target_BUFFS_FILTER_ALL','GwSettingsTargetOptions')
+    addOption(GwLocalization['SHOW_BUFFS'],GwLocalization['SHOW_BUFFS_DESC'],'target_BUFFS','GwSettingsTargetOptions')
 
     
     
-    create_settings_cat('FOCUS','Edit focus frame settings','GwSettingsFocusOptions',2)
+    create_settings_cat(GwLocalization['FOCUS_CAT'],GwLocalization['FOCUS_TOOLTIP'],'GwSettingsFocusOptions',2)
     
-    addOption('Focus Target','Display the focus target','focus_TARGET_ENABLED','GwSettingsFocusOptions')
-    addOption('Health Value','Display health information','focus_HEALTH_VALUE_ENABLED','GwSettingsFocusOptions')
-    addOption('Health Percentage','Display health info as a percentage','focus_HEALTH_VALUE_TYPE','GwSettingsFocusOptions')
-    addOption('Class Color','Display class colored health bars','focus_CLASS_COLOR','GwSettingsFocusOptions')
-    addOption('Show Debuffs','Display the focus target\'s debuffs','focus_DEBUFFS','GwSettingsFocusOptions')
-    addOption('Show All debuffs','Display all focus target\'s buffs','focus_BUFFS_FILTER_ALL','GwSettingsFocusOptions')
-    addOption('Show Buffs','Display the focus target\'s buffs','focus_BUFFS','GwSettingsFocusOptions')
+    addOption(GwLocalization['FOCUS_TARGET'],GwLocalization['FOCUS_TARGET_DESC'],'focus_TARGET_ENABLED','GwSettingsFocusOptions')
+    addOption(GwLocalization['HEALTH_VALUE'],GwLocalization['HEALTH_VALUE_DESC'],'focus_HEALTH_VALUE_ENABLED','GwSettingsFocusOptions')
+    addOption(GwLocalization['HEALTH_PERCENTAGE'],GwLocalization['HEALTH_PERCENTAGE_DESC'],'focus_HEALTH_VALUE_TYPE','GwSettingsFocusOptions')
+    addOption(GwLocalization['CLASS_COLOR'],GwLocalization['CLASS_COLOR_DESC'],'focus_CLASS_COLOR','GwSettingsFocusOptions')
+    addOption(GwLocalization['SHOW_DEBUFFS'],GwLocalization['SHOW_DEBUFFS_DESC'],'focus_DEBUFFS','GwSettingsFocusOptions')
+    addOption(GwLocalization['SHOW_ALL_DEBUFFS'],GwLocalization['SHOW_ALL_DEBUFFS_DESC'],'focus_BUFFS_FILTER_ALL','GwSettingsFocusOptions')
+    addOption(GwLocalization['SHOW_BUFFS'],GwLocalization['SHOW_BUFFS_DESC'],'focus_BUFFS','GwSettingsFocusOptions')
    
    
-    create_settings_cat('HUD','Edit HUD settings','GwSettingsHudOptions',3)
-    addOption('Fade Actionbars','Fade the extra action bars','FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
-    addOption('Dynamic HUD','Change the HUD appearance','HUD_SPELL_SWAP','GwSettingsHudOptions')
-    addOption('Fade Chat','Fade the chat while inactive','CHATFRAME_FADE','GwSettingsHudOptions')
-    addOption('Hide Empty Slots','Hide empty action bar slots','HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
-    addOption('Toggle Compass','Toggle the quest tracker compass','SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
-    addOption('Advanced Casting Bar','Display name and icon of spell cast','CASTINGBAR_DATA','GwSettingsHudOptions')
-    addOptionDropdown('Hud Scale','Change the size of the HUD','HUD_SCALE','GwSettingsHudOptions',function() gwUpdateHudScale() end,{1,0.9,0.8},{'Normal','Small','Tiny'})
-    addOptionDropdown('Minimap Scale','Change the size of the Minimap','MINIMAP_SCALE','GwSettingsHudOptions',function() Minimap:SetSize(gwGetSetting('MINIMAP_SCALE'),gwGetSetting('MINIMAP_SCALE')) end,{250,200,140},{'Large','Medium','Normal'})
+    create_settings_cat(GwLocalization['HUD_CAT'],GwLocalization['HUD_TOOLTIP'],'GwSettingsHudOptions',3)
+	
+    addOption(GwLocalization['ACTION_BAR_FADE'],GwLocalization['ACTION_BAR_FADE_DESC'],'FADE_BOTTOM_ACTIONBAR','GwSettingsHudOptions')
+    addOption(GwLocalization['DYNAMIC_HUD'],GwLocalization['DYNAMIC_HUD_DESC'],'HUD_SPELL_SWAP','GwSettingsHudOptions')
+    addOption(GwLocalization['CHAT_FADE'],GwLocalization['CHAT_FADE_DESC'],'CHATFRAME_FADE','GwSettingsHudOptions')
+    addOption(GwLocalization['HIDE_EMPTY_SLOTS'],GwLocalization['HIDE_EMPTY_SLOTS_DESC'],'HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
+    addOption(GwLocalization['COMPASS_TOGGLE'],GwLocalization['COMPASS_TOGGLE_DESC'],'SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
+    addOption(GwLocalization['ADV_CAST_BAR'],GwLocalization['ADV_CAST_BAR_DESC'],'CASTINGBAR_DATA','GwSettingsHudOptions')
+    addOptionDropdown(GwLocalization['HUD_SCALE'],GwLocalization['HUD_SCALE_DESC'],'HUD_SCALE','GwSettingsHudOptions',function() gwUpdateHudScale() end,{1,0.9,0.8},{GwLocalization['HUD_SCALE_DEFAULT'],GwLocalization['HUD_SCALE_SMALL'],GwLocalization['HUD_SCALE_TINY']})
+    addOptionDropdown(GwLocalization['MINIMAP_SCALE'],GwLocalization['MINIMAP_SCALE_DESC'],'MINIMAP_SCALE','GwSettingsHudOptions',function() Minimap:SetSize(gwGetSetting('MINIMAP_SCALE'),gwGetSetting('MINIMAP_SCALE')) end,{250,200,140},{GwLocalization['MINIMAP_SCALE_LARGE'],GwLocalization['MINIMAP_SCALE_MEDIUM'],GwLocalization['MINIMAP_SCALE_DEFAULT']})
     
-    create_settings_cat('Group','Edit group settings','GwSettingsGroupframe',4)
+    create_settings_cat(GwLocalization['GROUP_CAT'],GwLocalization['GROUP_TOOLTIP'],'GwSettingsGroupframe',4)
     
-    addOption('Raid Styled Party','Use raid-style party frames','RAID_STYLE_PARTY','GwSettingsGroupframe')
+    addOption(GwLocalization['RAID_PARTY_STYLE'],GwLocalization['RAID_PARTY_STYLE_DESC'],'RAID_STYLE_PARTY','GwSettingsGroupframe')
     
-    addOption('Class Color','Use class color insted of class icons','RAID_CLASS_COLOR','GwSettingsGroupframe')
-    addOption('Power Bars','Display power bars','RAID_POWER_BARS','GwSettingsGroupframe')
-    addOption('Show Only Dispelable Debuffs','Only displays debuffs that you can dispell','RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
+    addOption(GwLocalization['CLASS_COLOR_RAID'],GwLocalization['CLASS_COLOR_RAID_DESC'],'RAID_CLASS_COLOR','GwSettingsGroupframe')
+    addOption(GwLocalization['POWER_BARS_RAID'],GwLocalization['POWER_BARS_RAID_DESC'],'RAID_POWER_BARS','GwSettingsGroupframe')
+    addOption(GwLocalization['DEBUFF_DISPELL'],GwLocalization['DEBUFF_DISPELL_DESC'],'RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
   
-    addOptionSlider('Raid Container Height','','RAID_UNITS_PER_COLUMN','GwSettingsGroupframe',function()
+    addOptionSlider(GwLocalization['RAID_CONT_HEIGHT'],GwLocalization['RAID_CONT_HEIGHT_DESC'],'RAID_UNITS_PER_COLUMN','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
                 GwRaidFrameContainer:SetHeight((gwGetSetting('RAID_HEIGHT') + 2) * gwGetSetting('RAID_UNITS_PER_COLUMN'))
                 GwRaidFrameContainerFrameMoveAble:SetHeight((gwGetSetting('RAID_HEIGHT') + 2) * gwGetSetting('RAID_UNITS_PER_COLUMN'))
@@ -131,20 +134,20 @@ function create_settings_window()
             end    
     end,1,80)
     
-    addOptionSlider('Raid Width','','RAID_WIDTH','GwSettingsGroupframe',function()
+    addOptionSlider(GwLocalization['RAID_BAR_WIDTH'],GwLocalization['RAID_BAR_WIDTH_DESC'],'RAID_WIDTH','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
                 gw_raidframes_update_layout() 
                 gw_raidframes_updateMoveablePosition()
             end
     end,55,200)
-    addOptionSlider('Raid Height','','RAID_HEIGHT','GwSettingsGroupframe',function()
+    addOptionSlider(GwLocalization['RAID_BAR_HEIGHT'],GwLocalization['RAID_BAR_HEIGHT_DESC'],'RAID_HEIGHT','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then
                 gw_raidframes_update_layout()   
                 gw_raidframes_updateMoveablePosition()
             end    
     end,47,100)
     
-    create_settings_cat('Profiles','Edit profiles','GwSettingsProfilesframe',5)
+    create_settings_cat(GwLocalization['PROFILES_CAT'],GwLocalization['PROFILES_TOOLTIP'],'GwSettingsProfilesframe',5)
     _G['GwSettingsLabel5'].iconbg:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga')
  
     
@@ -167,15 +170,15 @@ function create_settings_window()
     
     resetTodefault:SetPoint('TOPLEFT',15,0)
     
-    resetTodefault.name:SetText('Default Settings')
-    resetTodefault.desc:SetText('Load the default addon settings to your current profile')
+    resetTodefault.name:SetText(GwLocalization['PROFILES_DEFAULT_SETTINGS'])
+    resetTodefault.desc:SetText(GwLocalization['PROFILES_DEFAULT_SETTINGS_DESC'])
     resetTodefault.activateButton:SetScript('OnClick', function()
             
-        gwWarningPromt('Are you sure you want to load the default settings?\n\nAll previous settings will be lost.',function()
+        gwWarningPromt(GwLocalization['PROFILES_DEFAULT_SETTINGS_PROMPT'],function()
             gwResetToDefault()
         end)
     end)
-    resetTodefault.activateButton:SetText('Load')  
+    resetTodefault.activateButton:SetText(GwLocalization['PROFILES_LOAD_BUTTON'])  
     
     CreateFrame('Button','GwCreateNewProfile',GwSettingsProfilesframe.scrollchild,'GwCreateNewProfile')
     
@@ -216,7 +219,7 @@ function gw_Update_Profile_Window()
                 f.activateAble = false
             end
 
-            local description = 'Created: '..v['profileCreatedDate']..'\nCreated by: '..v['profileCreatedCharacter']..'\nLast updated: '..v['profileLastUpdated']
+            local description = GwLocalization['PROFILES_CREATED']..v['profileCreatedDate']..GwLocalization['PROFILES_CREATED_BY']..v['profileCreatedCharacter']..GwLocalization['PROFILES_LAST_UPDATE']..v['profileLastUpdated']
 
             f.name:SetText(v['profilename'])
             f.desc:SetText(description)
@@ -567,7 +570,7 @@ end
 function gw_lockHudObjects()
     
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage('You can not move elements during combat!')
+        DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['HUD_MOVE_ERR'])
         return
     end 
     lhb:Hide()

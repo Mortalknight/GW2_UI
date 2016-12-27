@@ -74,7 +74,7 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
             setQuestGiverAnimation()
             questState = 'TAKE'
             questStateSet = false
-            GwQuestviewFrameContainerAcceptButton:SetText("Skip")
+            GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_SKIP'])
             PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX') 
             hideBlizzardQuestFrame()
 
@@ -182,7 +182,7 @@ end
         
             GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
             setQuestGiverAnimation()
-            GwQuestviewFrameContainerAcceptButton:SetText("Skip")
+            GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_SKIP'])
         PlaySoundKitID(906)
         else
             questTextCompleted()
@@ -214,11 +214,11 @@ function questTextCompleted()
     end
     if questState=='COMPLETE' then
         showRewards()
-        GwQuestviewFrameContainerAcceptButton:SetText("Complete")
+        GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_COMPLETE'])
     else
         showRewards()
         GwQuestviewFrameContainerDialogString:SetText(GetObjectiveText())
-        GwQuestviewFrameContainerAcceptButton:SetText("Accept")
+        GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_ACCPET'])
     end
     questStateSet = true
 end

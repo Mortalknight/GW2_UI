@@ -212,7 +212,7 @@ function loadHudArt()
     
    _G['GwHudArtFrameRepair']:SetScript('OnEnter', function() GameTooltip:SetOwner(_G['GwHudArtFrameRepair'], "ANCHOR_CURSOR"); GameTooltip:ClearLines();
             
-    GameTooltip:AddLine('Damaged or broken equipment',1,1,1)
+    GameTooltip:AddLine(GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'],1,1,1)
             
     GameTooltip:Show() end)
     _G['GwHudArtFrameRepair']:SetScript('OnLeave', function() GameTooltip:Hide() end)
@@ -335,10 +335,10 @@ function show_experiencebar_tooltip()
     local rested = GetXPExhaustion()
     local isRestingString =''
     if IsResting() then
-        isRestingString =' (Resting)'
+        isRestingString = GwLocalization['EXP_BAR_TOOLTIP_EXP_RESTING']
     end
     
-    GameTooltip:AddLine('Experience'..isRestingString,1,1,1)
+    GameTooltip:AddLine(GwLocalization['EXP_BAR_TOOLTIP_EXP_TITLE']..isRestingString,1,1,1)
     
     if gw_reputation_vals~=nil then
           GameTooltip:AddLine( gw_reputation_vals,1,1,1)
@@ -348,11 +348,11 @@ function show_experiencebar_tooltip()
     end
     
     if UnitLevel('Player')<GetMaxPlayerLevel() then
-        GameTooltip:AddLine( 'Experience '..comma_value(valCurrent).." / "..comma_value(valMax)..' |cffa6a6a6 ('..math.floor((valCurrent/valMax)*100) ..'%)|r',1,1,1)
+        GameTooltip:AddLine(GwLocalization['EXP_BAR_TOOLTIP_EXP_VALUE']..comma_value(valCurrent).." / "..comma_value(valMax)..' |cffa6a6a6 ('..math.floor((valCurrent/valMax)*100) ..'%)|r',1,1,1)
     end
     
     if rested~=nil then
-         GameTooltip:AddLine('Rested '..comma_value(rested)..' |cffa6a6a6 ('..math.floor((rested/valMax)*100)..'%) |r',1,1,1)
+         GameTooltip:AddLine(GwLocalization['EXP_BAR_TOOLTIP_EXP_RESTED']..comma_value(rested)..' |cffa6a6a6 ('..math.floor((rested/valMax)*100)..'%) |r',1,1,1)
     end
     
     
@@ -368,7 +368,7 @@ function show_experiencebar_tooltip()
         local artifactVal = artifactXP/xpForNextPoint
         
         
-        GameTooltip:AddLine('\nArtifact: '..artifactXP..' / '..xpForNextPoint..' |cffa6a6a6 ('..math.floor((artifactXP/xpForNextPoint)*100) ..'%)|r',1,1,1)
+        GameTooltip:AddLine(GwLocalization['EXP_BAR_TOOLTIP_ARTIFACT']..artifactXP..' / '..xpForNextPoint..' |cffa6a6a6 ('..math.floor((artifactXP/xpForNextPoint)*100) ..'%)|r',1,1,1)
     end
     
    
@@ -471,7 +471,7 @@ function update_experiencebar_data(self,event)
                 Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
                 valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
                 
-                gw_reputation_vals = name..' Reputation '..comma_value((earnedValue - bottomValue)).." / "..comma_value((topValue - bottomValue))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+                gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((earnedValue - bottomValue)).." / "..comma_value((topValue - bottomValue))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
                 
                 showBar1 = true
                 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[reaction].r,GW_FACTION_BAR_COLORS[reaction].g,GW_FACTION_BAR_COLORS[reaction].b)
@@ -528,7 +528,7 @@ function update_experiencebar_data(self,event)
 		local maxHonor = UnitHonorMax("player");
 		valPrec = currentHonor/maxHonor
 
-		gw_honor_vals = 'Honor '..comma_value(currentHonor).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+		gw_honor_vals = GwLocalization['EXP_BAR_TOOLTIP_HONOR']..comma_value(currentHonor).." / "..comma_value(maxHonor)..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
 		_G['GwExperienceFrameBar']:SetStatusBarColor(1,0.2,0.2)
 			
     end
@@ -863,8 +863,6 @@ local CUSTOM_MICRO_BUTTONS={}
 local gw_latencyToolTipUpdate = 0
 local gw_frameRate = 0
 
-local GW_BAG_MICROBUTTON_STRING = 'Inventory'
-
 function create_micro_menu()
     
        
@@ -948,7 +946,7 @@ function create_micro_menu()
 --    gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton,'','')
     
     gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton,CHARACTER_BUTTON,'TOGGLECHARACTER0"')
-    gw_microButtonHookToolTip(GwMicroButtonBagMicroButton,GW_BAG_MICROBUTTON_STRING,'OPENALLBAGS')
+    gw_microButtonHookToolTip(GwMicroButtonBagMicroButton,GwLocalization['GW_BAG_MICROBUTTON_STRING'],'OPENALLBAGS')
     gw_microButtonHookToolTip(GwMicroButtonSpellbookMicroButton,SPELLBOOK_ABILITIES_BUTTON,'TOGGLESPELLBOOK')
     gw_microButtonHookToolTip(GwMicroButtonTalentMicroButton,TALENTS_BUTTON,'TOGGLETALENTS')
     gw_microButtonHookToolTip(GwMicroButtonAchievementMicroButton,ACHIEVEMENT_BUTTON,'TOGGLEACHIEVEMENT')
@@ -1051,19 +1049,19 @@ function gw_onReciveVersionCheck(self,event,prefix,message,dist,sender)
     if version==nil or subversion==nil or hotfix==nil then return end
     
     if version > Currentversion then
-        GwMicroButtonupdateicon.updateType ='An |cFFFF0000major|r update is available.\nIt\'s strongly recommended that you update.'
+        GwMicroButtonupdateicon.updateType = GwLocalization['UPDATE_STRING_3']
         GwMicroButtonupdateicon.updateTypeInt = 3
         GwMicroButtonupdateicon:Show()
     else
        
         if subversion > Currentsubversion then
-            GwMicroButtonupdateicon.updateType ='New update available containing new features.'
+            GwMicroButtonupdateicon.updateType = GwLocalization['UPDATE_STRING_2']
             GwMicroButtonupdateicon.updateTypeInt = 2
             GwMicroButtonupdateicon:Show() 
         else 
             
             if hotfix > Currenthotfix then
-                GwMicroButtonupdateicon.updateType ='New update available for download.'
+                GwMicroButtonupdateicon.updateType = GwLocalization['UPDATE_STRING_1'] 
                 GwMicroButtonupdateicon.updateTypeInt = 1
                 GwMicroButtonupdateicon:Show() 
             end
@@ -1112,9 +1110,9 @@ function gw_latencyInfoToolTip()
     GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_BOTTOMLEFT",16 + (GameTooltip:GetWidth()/2),-10); 
     GameTooltip:ClearLines();
     GameTooltip:AddLine(MAINMENU_BUTTON,1,1,1)
-    GameTooltip:AddLine('FPS '..gw_frameRate,0.8,0.8,0.8)
-    GameTooltip:AddLine('Latency (Home) '..lagHome,0.8,0.8,0.8)
-    GameTooltip:AddLine('Latency (World) '..lagWorld,0.8,0.8,0.8)
+    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_1']..gw_frameRate,0.8,0.8,0.8)
+    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_2']..lagHome,0.8,0.8,0.8)
+    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_3']..lagWorld,0.8,0.8,0.8)
     
     GameTooltip:Show()
   
@@ -1217,6 +1215,9 @@ end
 function gw_load_levelingrewads()
    CreateFrame('Frame','GwLevelingRewards',UIParent,'GwLevelingRewards') 
     tinsert(UISpecialFrames, "GwLevelingRewards") 
+	--GwLevelingRewardsHeader:SetText(GwLocalization['LEVEL_REWARDS'])
+	--GwLevelingRewardsrewardHeader:SetText(GwLocalization['LEVEL_REWARDS_RHEADER'])
+	--GwLevelingRewardslevelHeader:SetText(GwLocalization['LEVEL_REWARDS_LHEADER'])
 end
 
 
@@ -1289,7 +1290,7 @@ function gw_leveling_display_rewards()
                 if v['type']=='TALENT' then
                     
                     _G['GwLevelingRewardsItem'..i].icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talent-icon')
-                    _G['GwLevelingRewardsItem'..i].name:SetText('Talent Point')
+                    _G['GwLevelingRewardsItem'..i].name:SetText(GwLocalization['LEVEL_REWARDS_TALENT'])
                     _G['GwLevelingRewardsItem'..i]:SetScript('OnEnter',function() end)
                     _G['GwLevelingRewardsItem'..i]:SetScript('OnLeave',function() end)
                 end

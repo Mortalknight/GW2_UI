@@ -229,7 +229,7 @@
                     </OnEscapePressed>
                     <OnEditFocusGained>
                         local sT = self:GetText()
-                        if sT==GW_INVITE_PLAYER_NAME_STRING then
+                        if sT==GwLocalization['PARTY_INVITE_STRING'] then
                             self:SetText('')
                             self:SetTextColor(1,1,1,1)
                         end
@@ -237,14 +237,14 @@
                     <OnEditFocusLost>
                        local sT = self:GetText()
                         if sT==nil or sT=='' then
-                            self:SetText(GW_INVITE_PLAYER_NAME_STRING)
+                            self:SetText(GwLocalization['PARTY_INVITE_STRING'])
                             self:SetTextColor(1,1,1,0.5)
                         end
                     </OnEditFocusLost>
                     <OnLoad>
                        local sT = self:GetText()
                         if sT==nil or sT=='' then
-                            self:SetText(GW_INVITE_PLAYER_NAME_STRING)
+                            self:SetText(GwLocalization['PARTY_INVITE_STRING'])
                             self:SetTextColor(1,1,1,0.5)
                         end
                     </OnLoad>
@@ -256,7 +256,7 @@
                 </Scripts>
             </EditBox>
             <Button name="GwButtonInviteToParty" inherits="GwStandardButton" text="Invite">
-                <Size x="50" y="20" />
+                <Size x="80" y="20" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwManageGroupInviteBox" x="-5" y="-10"></Anchor>
                 </Anchors>
@@ -269,7 +269,7 @@
                 </Scripts>
             </Button>
             <Button name="GwManageGroupLeaveButton" inherits="GwStandardButton" text="Leave">
-                <Size x="50" y="20" />
+                <Size x="80" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="GwManageGroupInviteBox" x="5" y="-10"></Anchor>
                 </Anchors>
@@ -327,7 +327,7 @@
                         </Scripts>
                     </Button>   
                     <Button name="GwGroupRoleCheck" inherits="GwStandardButton" text="Role Check">
-                        <Size x="100" y="20" />
+                        <Size x="100" y="30" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-180"></Anchor>
                         </Anchors>
@@ -351,7 +351,7 @@
                         </Scripts>
                     </Button>
                     <Button name="GwGroupManagerConvert" inherits="GwStandardButton" text="Convert to Raid">
-                        <Size x="120" y="20" />
+                        <Size x="120" y="30" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-180"></Anchor>
                         </Anchors>
@@ -370,9 +370,9 @@
                                 end
                                 
                                  if IsInRaid() then
-                                    self:SetText('Convert to Party')
+                                    self:SetText(GwLocalization['RAID_CONVERT'])
                                 else
-                                     self:SetText('Convert to Raid')
+                                     self:SetText(GwLocalization['PARTY_CONVERT'])
                                 end
                             </OnEvent>
                             <OnClick>

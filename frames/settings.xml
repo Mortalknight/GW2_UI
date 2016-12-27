@@ -102,14 +102,14 @@
         </Layers>
             <Frames>
                 <Button name="$parentMoveHud" inherits="GwStandardButton" text="Move HUD">
-                     <Size x="85" y="24" />
+                     <Size x="100" y="28" />
 
                          <Anchors><Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="10" y="-5"/></Anchors>
 
                     <Scripts>
                         <OnClick>
                             if InCombatLockdown() then
-                                DEFAULT_CHAT_FRAME:AddMessage('You can not move elements during combat!')
+                                DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['HUD_MOVE_ERR'])
                                 return
                             end 
                             gw_moveHudObjects()
@@ -118,7 +118,7 @@
                 </Button> 
               
                 <Button name="$parentSave"  inherits="GwStandardButton" text="Save and Reload">
-                     <Size x="130" y="24" />
+                     <Size x="130" y="28" />
                     <Anchors><Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="-5"/></Anchors>
 
                     <Scripts>
@@ -163,6 +163,7 @@
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+									_G[self:GetName()..'Sub']:SetText(GwLocalization['MODULES_DESC'])
                                 </OnLoad>
                             </Scripts>
                         </Frame>
@@ -195,6 +196,7 @@
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+									_G[self:GetName()..'Sub']:SetText(GwLocalization['TARGET_DESC'])
                                 </OnLoad>
                             </Scripts>
                         </Frame>
@@ -227,6 +229,7 @@
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+									_G[self:GetName()..'Sub']:SetText(GwLocalization['FOCUS_DESC'])
                                 </OnLoad>
                             </Scripts>
                         </Frame>
@@ -260,6 +263,7 @@
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+									_G[self:GetName()..'Sub']:SetText(GwLocalization['HUD_DESC'])
                                 </OnLoad>
                             </Scripts>
                         </Frame>  
@@ -292,6 +296,7 @@
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+									_G[self:GetName()..'Sub']:SetText(GwLocalization['GROUP_DESC'])
                                 </OnLoad>
                             </Scripts>
                         </Frame> 
@@ -424,6 +429,7 @@
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,255/255,255/255)
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(125/255,125/255,125/255)
+									_G[self:GetName()..'Sub']:SetText(GwLocalization['PROFILES_DESC'])
                                     
                           
                                 </OnLoad>
@@ -459,6 +465,13 @@
                     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT,24)
                     GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT,12)
                     GwSettingsWindowVersionString:SetText(GW_VERSION_STRING)
+					GwSettingsWindowHeaderString:SetText(GwLocalization['SETTINGS_TITLE'])
+					GwSettingsWindowMoveHud:SetText(GwLocalization['MOVE_HUD_BUTTON'])
+					GwSettingsWindowSave:SetText(GwLocalization['SETTINGS_SAVE_RELOAD'])
+					
+
+					
+					
                 </OnLoad>
             </Scripts>
     </Frame>
@@ -742,7 +755,7 @@
                 
                 self.desc:SetFont(UNIT_NAME_FONT,12)
                 self.desc:SetTextColor(125/255,125/255,125/255)
-                
+                self.desc:SetText(GwLocalization['PROFILES_MISSING_LOAD'])
                                                
             </OnLoad>
             <OnEnter>
@@ -800,7 +813,7 @@
                         end
                     </OnEnter>
                     <OnClick>
-                        gwWarningPromt('Are you sure you want to delete this profile?',function() 
+                        gwWarningPromt(GwLocalization['PROFILES_DELETE'],function() 
                             gw_Delete_Settings_Profile(self:GetParent().profileID)
                             gw_Update_Profile_Window()
                         end)
@@ -808,6 +821,7 @@
                     <OnLoad>
                         self.string:SetFont(UNIT_NAME_FONT,12)
                         self.string:SetTextColor(255/255,255/255,255/255)
+						self.string:SetText(GwLocalization['SETTINGS_DELETE'])
                     </OnLoad>
                 </Scripts>
             </Button> 
@@ -829,6 +843,9 @@
                         gw_Set_Active_Profile(self:GetParent().profileID)                  gw_Update_Profile_Window()
                         self:Hide()
                     </OnClick>
+					<OnLoad>
+						self:SetText(GwLocalization['SETTINGS_ACTIVATE'])
+                    </OnLoad>
                 </Scripts>
             </Button>
         </Frames>
@@ -913,11 +930,14 @@
             </EditBox>
             
             <Button name="$parentAccept" inherits="GwStandardButton" text="Accept" parentKey="acceptButton">
-                <Size x="70" y="20" />
+                <Size x="85" y="20" />
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-100" y="15"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-110" y="15"></Anchor>
                 </Anchors>
                 <Scripts>
+					<OnLoad>
+						self:SetText(GwLocalization['SETTINGS_ACCEPT'] )
+					</OnLoad>
                     <OnClick>
                         if self:GetParent().method~=nil then
                             self:GetParent().method()
@@ -927,11 +947,14 @@
                 </Scripts>
             </Button>
             <Button name="$parentcancel" inherits="GwStandardButton" text="Cancel" parentKey="cancelButton">
-                <Size x="70" y="20" />
+                <Size x="85" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="15"></Anchor>
                 </Anchors>
                 <Scripts>
+					<OnLoad>
+						self:SetText(GwLocalization['SETTINGS_CANCEL'])
+					</OnLoad>
                     <OnClick>
                 
                         self:GetParent():Hide()
@@ -955,6 +978,7 @@
         <Scripts>
             <OnLoad>
                 self:SetWidth(self:GetTextWidth() + 10)
+				self:SetText(GwLocalization['PROFILES_NEW_PROFILE'])
             </OnLoad>
             <OnClick>
                 gwInputPromtPromt('New profile name',function() 

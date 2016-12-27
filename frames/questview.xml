@@ -124,6 +124,9 @@
                             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                         </Anchors>
                         <Scripts>
+						<OnLoad>
+                                GwQuestviewFrameContainerDeclineQuest:SetText(GwLocalization['QUEST_VIEW_DECLINE'])
+                            </OnLoad>
                             <OnClick>
                                 DeclineQuest();
                                 GwQuestviewFrame:Hide()

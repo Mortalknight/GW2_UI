@@ -73,7 +73,7 @@ function gw_create_bankframe()
        
         BankItemSearchBox:Hide()
         GwReagentBankFrame:Show()
-        GwBankFrameHeaderString:SetText('Reagents Bank')
+        GwBankFrameHeaderString:SetText(GwLocalization['REAGENT_BANK_TITLE'])
         GwReagentBankFrame:SetHeight(GwBankFrame:GetHeight())
             
         GwBuyMoreBank:Hide()
@@ -92,7 +92,7 @@ function gw_create_bankframe()
         for k,v in pairs(default_bank_frame) do
             v:Show()
         end
-        GwBankFrameHeaderString:SetText('Bank')
+        GwBankFrameHeaderString:SetText(GwLocalization['BANK_TITLE'])
         BankItemSearchBox:Show()
         GwReagentBankFrame:Hide()
         for i=5,12 do
@@ -513,7 +513,7 @@ function gw_bankFrameCompactToggle()
     else
         gw_update_bank_icons(false)
     end
-        return 'Large Icons';
+        return GwLocalization['BANK_EXPAND_ICONS'];
     end
     
     gwSetSetting('BANK_ITEM_SIZE',45)
@@ -524,6 +524,6 @@ function gw_bankFrameCompactToggle()
     else
         gw_update_bank_icons(false)
     end
-    return 'Compact Icons';
+    return GwLocalization['BANK_COMPACT_ICONS'];
     
 end

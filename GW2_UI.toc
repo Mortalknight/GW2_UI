@@ -57,3 +57,6 @@ objectives/achievement.lua
 
 character/character.lua
 character/spellbook.lua
+
+locales/deDE.lua
+locales/enUS.lua
