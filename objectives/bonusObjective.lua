@@ -185,7 +185,7 @@ function gw_register_bonusObjectiveFrame()
        updateBonusObjective()
     end)
     header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['BONUS'].r,GW_TRAKCER_TYPE_COLOR['BONUS'].g,GW_TRAKCER_TYPE_COLOR['BONUS'].b)   
-    header.title:SetText('Events')
+    header.title:SetText(GwLocalization['TRACKER_EVENTS'])
   
     updateBonusObjective()
     

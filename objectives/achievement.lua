@@ -264,7 +264,7 @@ function gw_register_achievement()
        updateAchievementLayout()
     end)
     header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['ACHIEVEMENT'].r,GW_TRAKCER_TYPE_COLOR['ACHIEVEMENT'].g,GW_TRAKCER_TYPE_COLOR['ACHIEVEMENT'].b)   
-    header.title:SetText('Achievements')
+    header.title:SetText(GwLocalization['TRACKER_ACHIEVEMENTS'])
     
     updateAchievementLayout()
     

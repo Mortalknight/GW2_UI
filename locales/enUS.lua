@@ -235,6 +235,8 @@ GwLocalization['PARTY_INVITE_STRING'] = 'Player Name'
 GwLocalization['TRACKER_QUEST_TITLE'] = 'Quests' 
 GwLocalization['TRACKER_TIME_REMAINING'] = 'Time Remaining' 
 GwLocalization['TRACKER_MORE_ADVENTURES'] = 'More adventures await:' 
+GwLocalization['TRACKER_ACHIEVEMENTS'] = 'Achievements' 
+GwLocalization['TRACKER_EVENTS'] = 'Events' 
 
 -- Quest View
 GwLocalization['QUEST_VIEW_DECLINE'] = 'Decline'
