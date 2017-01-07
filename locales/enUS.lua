@@ -221,6 +221,8 @@ GwLocalization['UPDATE_STRING_1'] = 'New update available for download.'
 GwLocalization['FPS_TOOLTIP_1'] = 'FPS ' 
 GwLocalization['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
 GwLocalization['FPS_TOOLTIP_3'] = 'Latency (World) ' 
+GwLocalization['MINIMAP_HOVER'] = 'Minimap details' 
+GwLocalization['MINIMAP_HOVER_TOOLTIP'] = 'Show Minimap details on mouseover' 
 
 -- Party
 GwLocalization['PARTY_INVITE'] = 'Invite' 

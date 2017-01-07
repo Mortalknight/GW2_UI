@@ -101,7 +101,7 @@ GwLocalization['PROFILES_MISSING_LOAD'] = 'If you see this message. We forgot to
 
 GwLocalization['SETTINGS_NO_LOAD_ERROR'] = 'Einige Texte wurden nicht geladen, bitte versuche dein Interface neu zu laden.'
 
-GwLocalization['HUD_MOVE_ERR'] = 'Du kannst keine Elemente während dem Kampf verschieben!' 
+GwLocalization['HUD_MOVE_ERR'] = 'Du kannst keine Elemente während des Kampfes verschieben!' 
 
 
     -- Settings Descriptions
@@ -221,6 +221,8 @@ GwLocalization['UPDATE_STRING_1'] = 'Ein neues Update steht zum download bereit.
 GwLocalization['FPS_TOOLTIP_1'] = 'FPS ' 
 GwLocalization['FPS_TOOLTIP_2'] = 'Latenz (Home) ' 
 GwLocalization['FPS_TOOLTIP_3'] = 'Latenz (Welt) ' 
+GwLocalization['MINIMAP_HOVER'] = 'Minimap Details' 
+GwLocalization['MINIMAP_HOVER_TOOLTIP'] = 'Zeige Minimapdetails bei Überfahren der Minimap mit der Maus' 
 
 -- Party
 GwLocalization['PARTY_INVITE'] = 'Einladen'

@@ -25,6 +25,7 @@ GW_DEFAULT['FONTS_ENABLED'] = true
 GW_DEFAULT['CASTINGBAR_ENABLED'] = true
 GW_DEFAULT['HIDEACTIONBAR_BACKGROUND_ENABLED'] = false
 GW_DEFAULT['SHOW_QUESTTRACKER_COMPASS'] = true
+GW_DEFAULT['MINIMAP_HOVER'] = true
 GW_DEFAULT['CLASS_POWER'] = true
 GW_DEFAULT['GROUP_FRAMES'] = true
 
@@ -794,7 +795,7 @@ l:SetScript('OnEvent',function(self,event,name)
         end 
         
         
-      --  gw_register_character_window()
+        gw_register_character_window()
         
         gw_breath_meter()
         

@@ -55,7 +55,7 @@ end
 
 local function updateCurrentScenario()
     
-	local delayUpdateTime = GetTime() + 0.6;
+	local delayUpdateTime = GetTime() + 0.8;
 	GwQuesttrackerContainerScenario:SetScript('OnUpdate', function()
     if GetTime()<delayUpdateTime  then return end 
     updateCurrentScenario() 

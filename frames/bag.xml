@@ -368,7 +368,7 @@
             </Button>
             
                  <Frame name="$parentDropDown" frameStrata="HIGH" hidden="true" frameLevel="8">
-                <Size x="100" y="60" ></Size>
+                <Size x="110" y="60" ></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeTO="GwBankButtonSettings" relativePoint="LEFT" y="-5"></Anchor>
                 </Anchors>
@@ -871,7 +871,7 @@
             </Button>
             
             <Frame name="$parentDropDown" frameStrata="HIGH" hidden="true" frameLevel="8">
-                <Size x="100" y="60" ></Size>
+                <Size x="120" y="60" ></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeTO="GwBagButtonSettings" relativePoint="LEFT" y="-5"></Anchor>
                 </Anchors>

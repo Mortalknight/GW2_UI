@@ -16,6 +16,7 @@ local animationIndex = 0
 local animationIndexY = 0
 local anim_thro = 0
 
+
 function gw_lfg_icon_animate()
 
 
@@ -222,17 +223,20 @@ end
 
 
     function hoverMiniMap()
-        for k,v in pairs(GW_MAP_FRAMES_HOVER) do
-              local child = _G[v]
-            UIFrameFadeIn(child, 0.2, child:GetAlpha(),1)
+		if gwGetSetting('MINIMAP_HOVER') then
+			for k,v in pairs(GW_MAP_FRAMES_HOVER) do
+					local child = _G[v]
+				UIFrameFadeIn(child, 0.2, child:GetAlpha(),1)
 
-        end
+			end
+		end
     end
     function hoverMiniMapOut()
-        for k,v in pairs(GW_MAP_FRAMES_HOVER) do
-                  local child = _G[v]
-            UIFrameFadeOut(child, 0.2, child:GetAlpha(),0)
-
+		if gwGetSetting('MINIMAP_HOVER') then
+			for k,v in pairs(GW_MAP_FRAMES_HOVER) do
+					local child = _G[v]
+				UIFrameFadeOut(child, 0.2, child:GetAlpha(),0)
+			end
         end
     end
 
