@@ -7,6 +7,7 @@ GW_MAP_FRAMES_HIDE[6] =MiniMapTrackingButton
 GW_MAP_FRAMES_HIDE[7] =GarrisonLandingPageMinimapButton
 GW_MAP_FRAMES_HIDE[8] =MiniMapTracking
 
+GW_MAP_FRAMES_HOVER = {}
 
 local animationIndex = 0
 local animationIndexY = 0
@@ -15,19 +16,14 @@ local anim_thro = 0
 
 function gwSetMinimapHover()
 	if gwGetSetting('MINIMAP_HOVER') == 'NONE' then
-		GW_MAP_FRAMES_HOVER = {}
 		GW_MAP_FRAMES_HOVER[1] = 'mapGradient'
 		GW_MAP_FRAMES_HOVER[2] = 'MinimapZoneText'
 		GW_MAP_FRAMES_HOVER[3] = 'GwMapTime'
 	elseif gwGetSetting('MINIMAP_HOVER') == 'CLOCK' then
-		GW_MAP_FRAMES_HOVER = {}
 		GW_MAP_FRAMES_HOVER[1] = 'mapGradient'
 		GW_MAP_FRAMES_HOVER[2] = 'MinimapZoneText'
 	elseif gwGetSetting('MINIMAP_HOVER') == 'ZONE' then
-		GW_MAP_FRAMES_HOVER = {}
 		GW_MAP_FRAMES_HOVER[3] = 'GwMapTime'
-	elseif gwGetSetting('MINIMAP_HOVER') == 'BOTH' then
-		GW_MAP_FRAMES_HOVER = {}
 	end
 end
 
