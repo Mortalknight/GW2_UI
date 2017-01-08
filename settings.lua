@@ -113,8 +113,8 @@ function create_settings_window()
     addOption(GwLocalization['HIDE_EMPTY_SLOTS'],GwLocalization['HIDE_EMPTY_SLOTS_DESC'],'HIDEACTIONBAR_BACKGROUND_ENABLED','GwSettingsHudOptions')
     addOption(GwLocalization['COMPASS_TOGGLE'],GwLocalization['COMPASS_TOGGLE_DESC'],'SHOW_QUESTTRACKER_COMPASS','GwSettingsHudOptions')
     addOption(GwLocalization['ADV_CAST_BAR'],GwLocalization['ADV_CAST_BAR_DESC'],'CASTINGBAR_DATA','GwSettingsHudOptions')
-	addOption(GwLocalization['MINIMAP_HOVER'],GwLocalization['MINIMAP_HOVER_TOOLTIP'],'MINIMAP_HOVER','GwSettingsHudOptions')
 	
+	addOptionDropdown(GwLocalization['MINIMAP_HOVER'],GwLocalization['MINIMAP_HOVER_TOOLTIP'],'MINIMAP_HOVER','GwSettingsHudOptions',function() gwSetMinimapHover() end,{'NONE','BOTH','CLOCK','ZONE'},{GwLocalization['MINIMAP_HOVER_1'],GwLocalization['MINIMAP_HOVER_2'],GwLocalization['MINIMAP_HOVER_3'],GwLocalization['MINIMAP_HOVER_4']})
     addOptionDropdown(GwLocalization['HUD_SCALE'],GwLocalization['HUD_SCALE_DESC'],'HUD_SCALE','GwSettingsHudOptions',function() gwUpdateHudScale() end,{1,0.9,0.8},{GwLocalization['HUD_SCALE_DEFAULT'],GwLocalization['HUD_SCALE_SMALL'],GwLocalization['HUD_SCALE_TINY']})
     addOptionDropdown(GwLocalization['MINIMAP_SCALE'],GwLocalization['MINIMAP_SCALE_DESC'],'MINIMAP_SCALE','GwSettingsHudOptions',function() Minimap:SetSize(gwGetSetting('MINIMAP_SCALE'),gwGetSetting('MINIMAP_SCALE')) end,{250,200,140},{GwLocalization['MINIMAP_SCALE_LARGE'],GwLocalization['MINIMAP_SCALE_MEDIUM'],GwLocalization['MINIMAP_SCALE_DEFAULT']})
     

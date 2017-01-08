@@ -7,15 +7,29 @@ GW_MAP_FRAMES_HIDE[6] =MiniMapTrackingButton
 GW_MAP_FRAMES_HIDE[7] =GarrisonLandingPageMinimapButton
 GW_MAP_FRAMES_HIDE[8] =MiniMapTracking
 
-GW_MAP_FRAMES_HOVER = {}
-GW_MAP_FRAMES_HOVER[1] = 'mapGradient'
-GW_MAP_FRAMES_HOVER[2] = 'MinimapZoneText'
-GW_MAP_FRAMES_HOVER[3] = 'GwMapTime'
 
 local animationIndex = 0
 local animationIndexY = 0
 local anim_thro = 0
 
+
+function gwSetMinimapHover()
+	if gwGetSetting('MINIMAP_HOVER') == 'NONE' then
+		GW_MAP_FRAMES_HOVER = {}
+		GW_MAP_FRAMES_HOVER[1] = 'mapGradient'
+		GW_MAP_FRAMES_HOVER[2] = 'MinimapZoneText'
+		GW_MAP_FRAMES_HOVER[3] = 'GwMapTime'
+	elseif gwGetSetting('MINIMAP_HOVER') == 'CLOCK' then
+		GW_MAP_FRAMES_HOVER = {}
+		GW_MAP_FRAMES_HOVER[1] = 'mapGradient'
+		GW_MAP_FRAMES_HOVER[2] = 'MinimapZoneText'
+	elseif gwGetSetting('MINIMAP_HOVER') == 'ZONE' then
+		GW_MAP_FRAMES_HOVER = {}
+		GW_MAP_FRAMES_HOVER[3] = 'GwMapTime'
+	elseif gwGetSetting('MINIMAP_HOVER') == 'BOTH' then
+		GW_MAP_FRAMES_HOVER = {}
+	end
+end
 
 function gw_lfg_icon_animate()
 
@@ -57,6 +71,8 @@ end
 function gw_set_minimap()
     
     local GwMinimapShadow = CreateFrame('Frame','GwMinimapShadow',Minimap,'GwMinimapShadow')
+	
+	gwSetMinimapHover()
 
     hooksecurefunc('EyeTemplate_OnUpdate',gw_lfg_icon_animate)
     hooksecurefunc('EyeTemplate_StopAnimating',gw_lfg_icon_animateStop)
@@ -223,21 +239,17 @@ end
 
 
     function hoverMiniMap()
-		if gwGetSetting('MINIMAP_HOVER') then
 			for k,v in pairs(GW_MAP_FRAMES_HOVER) do
 					local child = _G[v]
 				UIFrameFadeIn(child, 0.2, child:GetAlpha(),1)
 
 			end
-		end
     end
     function hoverMiniMapOut()
-		if gwGetSetting('MINIMAP_HOVER') then
 			for k,v in pairs(GW_MAP_FRAMES_HOVER) do
 					local child = _G[v]
 				UIFrameFadeOut(child, 0.2, child:GetAlpha(),0)
 			end
-        end
     end
 
 

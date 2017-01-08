@@ -222,7 +222,11 @@ GwLocalization['FPS_TOOLTIP_1'] = 'FPS '
 GwLocalization['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
 GwLocalization['FPS_TOOLTIP_3'] = 'Latency (World) ' 
 GwLocalization['MINIMAP_HOVER'] = 'Minimap details' 
-GwLocalization['MINIMAP_HOVER_TOOLTIP'] = 'Show Minimap details on mouseover' 
+GwLocalization['MINIMAP_HOVER_TOOLTIP'] = 'Show Minimap details on permenent.' 
+GwLocalization['MINIMAP_HOVER_1'] = 'Nothing' 
+GwLocalization['MINIMAP_HOVER_2'] = 'Both' 
+GwLocalization['MINIMAP_HOVER_3'] = 'Clock' 
+GwLocalization['MINIMAP_HOVER_4'] = 'Zone' 
 
 -- Party
 GwLocalization['PARTY_INVITE'] = 'Invite' 
