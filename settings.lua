@@ -81,6 +81,7 @@ function create_settings_window()
     addOption(GwLocalization['CASTING_BAR'], GwLocalization['CASTING_BAR_DESC'],'CASTINGBAR_ENABLED','GwSettingsModuleOption')
     addOption(GwLocalization['CLASS_POWER'], GwLocalization['CLASS_POWER_DESC'],'CLASS_POWER','GwSettingsModuleOption')
     addOption(GwLocalization['GROUP_FRAMES'], GwLocalization['GROUP_FRAMES_DESC'],'GROUP_FRAMES','GwSettingsModuleOption')
+    addOption(GwLocalization['CHARACTER_WINDOW'], GwLocalization['CHRACTER_WINDOW_DESC'],'USE_CHARACTER_WINDOW','GwSettingsModuleOption')
     
     create_settings_cat(GwLocalization['TARGET_CAT'],GwLocalization['TARGET_TOOLTIP'],'GwSettingsTargetOptions',1)
     

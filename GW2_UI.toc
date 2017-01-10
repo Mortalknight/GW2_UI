@@ -55,8 +55,12 @@ objectives/bonusObjective.lua
 objectives/bossFrames.lua
 objectives/achievement.lua
 
+
+
 character/character.lua
 character/spellbook.lua
+
+character/windowManager.lua
 
 locales/deDE.lua
 locales/enUS.lua

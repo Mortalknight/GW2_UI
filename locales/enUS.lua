@@ -39,6 +39,7 @@ GwLocalization['FONTS'] = 'Fonts'
 GwLocalization['CASTING_BAR'] = 'Casting Bar' 
 GwLocalization['CLASS_POWER'] = 'Class Power' 
 GwLocalization['GROUP_FRAMES'] = 'Group Frames' 
+GwLocalization['CHARACTER_WINDOW'] = 'Character Window' 
 
 GwLocalization['TARGET_CAT'] = 'TARGET' 
 GwLocalization['TARGET_DESC'] = 'Modify the target frame settings.'
@@ -120,6 +121,7 @@ GwLocalization['SETTINGS_NO_LOAD_ERROR'] = 'Some text has not loaded, please try
     GwLocalization['CASTING_BAR_DESC'] = 'Enable the GW2 style casting bar.' 
     GwLocalization['CLASS_POWER_DESC'] = 'Enable the alternate class powers.' 
     GwLocalization['GROUP_FRAMES_DESC'] = 'Replace the default UI group frames.' 
+    GwLocalization['CHRACTER_WINDOW_DESC'] = 'Replace the default character window.' 
 
     GwLocalization['TARGET_OF_TARGET_DESC'] = 'Enable the target of target frame.' 
     GwLocalization['HEALTH_VALUE_DESC'] = 'Show health as a numerical value.' 

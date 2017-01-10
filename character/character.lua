@@ -1335,10 +1335,21 @@ function gw_register_character_window()
     GwPaperReputationScrollFrame:SetScrollChild(GwPaperReputationScrollFrame.scrollchild)
     GwPaperDollUpdateReputations()
     
+    CharacterFrame:SetScript('OnShow',function() 
+            GwCharacterWindowMoverFrame:Show()
+            GwCharacterWindow:Show()
+            CharacterFrame:Hide()
+            GwCharacterWindow:Show(); 
+        end)
+    GwCharacterWindow:SetScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
 
+    tinsert(UISpecialFrames, "GwCharacterWindow") 
     
-    PaperDollFrame:HookScript('OnShow',function() GwCharacterWindow:Show() end)
-    PaperDollFrame:HookScript('OnHide',function() GwCharacterWindow:Hide() end)
+  
+    CharacterFrame:UnregisterAllEvents()
+    
+    
+   
     GwCharacterWindow:Hide()
     gwPaperDollUpdateStats()
     

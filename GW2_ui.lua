@@ -208,6 +208,7 @@ GW_DEFAULT['RAID_ONLY_DISPELL_DEBUFFS'] = false
 GW_DEFAULT['HUD_SCALE'] = 1
 GW_DEFAULT['MINIMAP_SCALE'] = 140
 GW_DEFAULT['CASTINGBAR_DATA'] = false
+GW_DEFAULT['USE_CHARACTER_WINDOW'] = true
 
 
 GW_DEFAULT['ACTIVE_PROFILE'] = nil
@@ -795,7 +796,7 @@ l:SetScript('OnEvent',function(self,event,name)
         end 
         
         
-        gw_register_character_window()
+        Gw_LoadWindows();
         
         gw_breath_meter()
         
