@@ -39,6 +39,7 @@ GwLocalization['FONTS'] = 'Schriftart'
 GwLocalization['CASTING_BAR'] = 'Zauberleiste'
 GwLocalization['CLASS_POWER'] = 'Klassenpower'
 GwLocalization['GROUP_FRAMES'] = 'Gruppenrahmen'
+GwLocalization['CHARACTER_WINDOW'] = 'Charakter Fenster' 
 
 GwLocalization['TARGET_CAT'] = 'ZIEL'
 GwLocalization['TARGET_DESC'] = 'Modifiziere die Einstellungen der Zieleinheit.'
@@ -122,6 +123,7 @@ GwLocalization['HUD_MOVE_ERR'] = 'Du kannst keine Elemente während des Kampfes 
     GwLocalization['CASTING_BAR_DESC'] = 'Aktiviere die Zauberleiste im GW2 Style.'
     GwLocalization['CLASS_POWER_DESC'] = 'Aktiviere die alternativen Klassen Powerbars.'
     GwLocalization['GROUP_FRAMES_DESC'] = 'Ersetze die Standard Gruppenfenster'
+	GwLocalization['CHRACTER_WINDOW_DESC'] = 'Ersetzt das Standard Charakter Fenster.'
 
     GwLocalization['TARGET_OF_TARGET_DESC'] = 'Aktiert das Ziel des Ziels.'
     GwLocalization['HEALTH_VALUE_DESC'] = 'Zeigt die Gesundheit als Wert an.'
