@@ -673,6 +673,8 @@ end
 function gwCharacterPanelToggle(frame)
     
     PlaySound("igMainMenuOptionCheckBoxOn");
+
+    GwCharacterWindow:Show()
     
     GwPaperDollBagItemList:Hide()
     GwCharacterMenu:Hide()
@@ -1336,24 +1338,55 @@ function gw_register_character_window()
     GwPaperDollUpdateReputations()
     
     CharacterFrame:SetScript('OnShow',function() 
-            GwCharacterWindowMoverFrame:Show()
-            GwCharacterWindow:Show()
-            CharacterFrame:Hide()
-            GwCharacterWindow:Show(); 
-        end)
-    GwCharacterWindow:SetScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
+          HideUIPanel(CharacterFrame);	
+    end)
+   
 
     tinsert(UISpecialFrames, "GwCharacterWindow") 
+     GwCharacterWindow:HookScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
+     GwCharacterWindow:HookScript('OnShow',function() GwCharacterWindowMoverFrame:Show() end)
     
   
     CharacterFrame:UnregisterAllEvents()
     
+    hooksecurefunc('ToggleCharacter',GwToggleCharacter)
     
    
     GwCharacterWindow:Hide()
     gwPaperDollUpdateStats()
     
-    gwCharacterPanelToggle(GwCharacterMenu)
+   
     GwUpdateReputationDetails()
+    
+    
+    
+end
+
+
+
+local CHARACTER_PANEL_OPEN = '';
+
+
+function GwToggleCharacter (tab, onlyShow)
+    
+    local CHARACTERFRAME_DEFAULTFRAMES= {}
+
+    CHARACTERFRAME_DEFAULTFRAMES['PaperDollFrame'] = GwCharacterMenu
+    CHARACTERFRAME_DEFAULTFRAMES['ReputationFrame'] = GwPaperReputation
+    CHARACTERFRAME_DEFAULTFRAMES['TokenFrame'] = GwCharacterMenu
+
+    if CHARACTERFRAME_DEFAULTFRAMES[tab]~=nil and CHARACTER_PANEL_OPEN~=tab  then
+        gwCharacterPanelToggle(CHARACTERFRAME_DEFAULTFRAMES[tab]);
+        CHARACTER_PANEL_OPEN = tab;
+        return
+    end
+    
+    if GwCharacterWindow:IsShown() then 
+        GwCharacterWindow:Hide();
+        CHARACTER_PANEL_OPEN=nil
+        return
+    end
+    
+    GwCharacterWindow:Show();
     
 end

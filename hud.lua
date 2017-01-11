@@ -1139,7 +1139,7 @@ end
 
 function gw_UpdateMicroButtons()
     
-   if ( CharacterFrame and CharacterFrame:IsShown() ) then
+   if ( CharacterFrame and CharacterFrame:IsShown() ) or (GwCharacterWindow and GwCharacterWindow:IsShown()) then
 		_G['GwMicroButtonCharacterMicroButton']:SetButtonState("PUSHED", true);
 	else
 		_G['GwMicroButtonCharacterMicroButton']:SetButtonState("NORMAL");
