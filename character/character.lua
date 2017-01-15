@@ -979,19 +979,19 @@ function GwPaperDollUpdateReputations()
             cMax = cMax + 8
 
             if isHeader and not isChild then
-             
+			
+				local header = getNewReputationCat(headerIndex)
+                header:Show()
+                CurrentOwner = header
+                header:SetText(name)
+
                 if CurrentOwner~=nil then
                     CurrentOwner.StatusBar:SetValue(cCur/cMax)
                 end
 
-
-
-               local header = getNewReputationCat(headerIndex)
-                header:Show()
-                CurrentOwner = header
-                header:SetText(name)
                 cCur = 0
                 cMax = 0
+
                 headerIndex = headerIndex + 1
 
                 header:SetScript('OnClick',function() GwReputationShowReputationHeader(factionIndex ) GwUpdateReputationDetails() end)
