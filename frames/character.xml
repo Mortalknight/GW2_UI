@@ -1508,6 +1508,19 @@
                     <OnLoad>
                         self:SetUnit('player')
                         self:SetPosition(0.8,0,0)
+                        
+                        local race, raceEn = UnitRace("Player");
+                        if raceEn=='Human' then
+                            self:SetPosition(0.6,0,0)
+                        elseif raceEn=='Worgen' then
+                            self:SetPosition(0.4,0,0)
+                        elseif raceEn=='Tauren' then
+                            self:SetPosition(0.6,0,0)
+                        elseif raceEn=='BloodElf' then
+                            self:SetPosition(0.6,0,-0.1)
+                        end
+                        
+                        
                         self:SetRotation(-0.15)
 
 						Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp);
