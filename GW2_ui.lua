@@ -1,4 +1,4 @@
-GW_VERSION_STRING = 'GW2_UI v4.0.4'
+GW_VERSION_STRING = 'GW2_UI @project-version@'
 
 
 
