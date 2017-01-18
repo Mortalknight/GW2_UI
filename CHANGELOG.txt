@@ -1,1 +1,28 @@
-Changelog:
+NEW
+
+Character panel has been added.
+     Equipment manager
+     Title manager
+     Reputation panel
+
+Added option to always display mini-map data.
+
+Localization has been added (enUS and deDe)
+
+
+
+BUGFIXES
+
+Fixed a bug where artifact progress bar did not display percentage.
+
+Artifact bar should no longer reset after dungeons.
+
+Fixed a bug where party frames would not load when converting from raid to party.
+
+Fixed a bug where honor progress bar would not update while in battlegrounds.
+
+Scenario information should now be displayed properly.
+
+Mythic+ should now display the correct foces .
+
+Quest-tracker should now use the correct height in dungeons.
