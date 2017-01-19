@@ -157,14 +157,14 @@
     </Button>
     
     <Frame name="GwGroupManage" enableMouse="true" hidden="true" virtual="true" parent="UIParent">
-        <Size x="245" y="100"></Size>
+        <Size x="245" y="200"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="50" y="-60"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
             <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
-                <Size x="245" y="100"></Size>
+                <Size x="245" y="200"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-10" y="10"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="10" y="-10"></Anchor>
@@ -280,16 +280,38 @@
                 </Scripts>
             </Button>
             <Frame name="GwGroupManagerInGroup">
-                <Size x="80" y="240"></Size>
+                <Size x="80" y="300"></Size>
                 <Anchors>
                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-10"></Anchor>
                 </Anchors>
+				<Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentTarget" text="TEST" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="5"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                
+                            </layer>
+							<layer level="OVERLAY">
+                                <FontString name="$parentGround" text="TEST" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-130"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                
+                            </layer>
+                        </Layers>
                 <Frames>
                     <Button name="GwGroupReadyCheck" inherits="GwStandardButton" text="Ready Check">
                         <NormalTexture file="Interface\AddOns\GW2_UI\textures\readycheck-button"></NormalTexture>
                         <Size x="235" y="30" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-140"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-350"></Anchor>
                         </Anchors>
                             <Layers>
                             <Layer level="OVERLAY">
@@ -329,7 +351,7 @@
                     <Button name="GwGroupRoleCheck" inherits="GwStandardButton" text="Role Check">
                         <Size x="100" y="30" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-180"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-385"></Anchor>
                         </Anchors>
                         <Scripts>
                             <OnLoad>
@@ -353,7 +375,7 @@
                     <Button name="GwGroupManagerConvert" inherits="GwStandardButton" text="Convert to Raid">
                         <Size x="120" y="30" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-180"></Anchor>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-385"></Anchor>
                         </Anchors>
                         <Scripts>
                             <OnLoad>
@@ -390,7 +412,7 @@
                     <OnLoad>
                         if IsInGroup() then
                             self:Show()
-                            GwGroupManage:SetHeight(250)
+                            GwGroupManage:SetHeight(460)
                             
                         else
                             self:Hide()
@@ -403,7 +425,12 @@
                         else 
                              GwManageGroupButton.icon:SetTexCoord(0,0.59375,0,0.2968)
                         end
-                        
+                        _G[self:GetName()..'Target']:SetFont(UNIT_NAME_FONT,14)
+                        _G[self:GetName()..'Target']:SetTextColor(255/255,241/255,209/255)
+						_G[self:GetName()..'Target']:SetText(GwLocalization['TARGET_MARKER'])
+						_G[self:GetName()..'Ground']:SetFont(UNIT_NAME_FONT,14)
+                        _G[self:GetName()..'Ground']:SetTextColor(255/255,241/255,209/255)
+						_G[self:GetName()..'Ground']:SetText(GwLocalization['GROUND_MARKER'])
                         
                         self:RegisterEvent('PARTY_MEMBERS_CHANGED')
                         self:RegisterEvent('GROUP_ROSTER_UPDATE')
@@ -413,7 +440,7 @@
                     <OnEvent>
                         if IsInGroup() then
                             self:Show()
-                            GwGroupManage:SetHeight(250)
+                            GwGroupManage:SetHeight(460)
                         else
                             self:Hide()
                             GwGroupManage:SetHeight(80)
@@ -456,6 +483,32 @@
             <OnClick>
                 SetRaidTarget("target", 1);
             </OnClick>
+        </Scripts>
+    </Button>
+	
+	<Button name="GwRaidGroundMarkerButton" virtual="true" inherits="SecureActionButtonTemplate">
+        <Size x="30" y="30" />
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentkey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                    <Size x="50" y="50" />
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                    <Color r="0.5" g="0.5" b="0.5"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                self.texture:SetBlendMode('ADD')
+            </OnEnter>
+            <OnLeave>
+                 self.texture:SetBlendMode('BLEND')
+            </OnLeave>
         </Scripts>
     </Button>
     

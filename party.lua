@@ -27,21 +27,43 @@ function gw_manage_group_button()
     
     tinsert(UISpecialFrames, "GwGroupManage") 
     local x = 10
-    local y = -8
-    for i=1,8 do
-
-        local f = CreateFrame('Button','GwRaidMarkerButton'..i,GwGroupManagerInGroup,'GwRaidMarkerButton') 
+    local y = -30
+    for i=1,17 do
+		if i <= 8 then
+			local f = CreateFrame('Button','GwRaidMarkerButton'..i,GwGroupManagerInGroup,'GwRaidMarkerButton') 
         
-        f:ClearAllPoints()
-        f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
-        f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
-        f:SetScript('OnClick',function()
+			f:ClearAllPoints()
+			f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
+			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
+			f:SetScript('OnClick',function()
             SetRaidTarget("target", i)
-        end)
+			end)
+        end
+		if i > 8 and i < 17 then
+			local f = CreateFrame('Button', 'GwRaidGroundMarkerButton'..i-8, GwGroupManagerInGroup, 'GwRaidGroundMarkerButton')
         
+			f:ClearAllPoints()
+			f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
+			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i-8)
+			f:SetAttribute("type","macro")
+			f:SetAttribute("macrotext","/wm "..i-8)
+		end
+		if i == 17 then
+			local f = CreateFrame('Button', 'GwRaidGroundMarkerButtonclear', GwGroupManagerInGroup, 'GwRaidGroundMarkerButton')
+        
+			f:ClearAllPoints()
+			f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
+			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..1)
+			f:SetAttribute("type","macro")
+			f:SetAttribute("macrotext","/cwm 9")
+		end
         x = x + 61
-        if i==4 then
-            y = y + -55; 
+        if i==4 or i == 8 or i == 12 or i == 16 then
+			if i==8 then
+				y = y + -80;
+			else
+				y = y + -55; 
+			end
             x=10
         end
         

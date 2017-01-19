@@ -161,6 +161,7 @@
                                 <OnLoad>
                                     _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+									_G[self:GetName()..'Header']:SetText(GwLocalization['MODULES_CAT_1'])
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
 									_G[self:GetName()..'Sub']:SetText(GwLocalization['MODULES_DESC'])
@@ -194,6 +195,7 @@
                                 <OnLoad>
                                     _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+									_G[self:GetName()..'Header']:SetText(GwLocalization['TARGET_CAT_1'])
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
 									_G[self:GetName()..'Sub']:SetText(GwLocalization['TARGET_DESC'])
@@ -227,6 +229,7 @@
                                 <OnLoad>
                                     _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+									_G[self:GetName()..'Header']:SetText(GwLocalization['FOCUS_CAT_1'])
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
 									_G[self:GetName()..'Sub']:SetText(GwLocalization['FOCUS_DESC'])
@@ -261,6 +264,7 @@
                                 <OnLoad>
                                     _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+									_G[self:GetName()..'Header']:SetText(GwLocalization['HUD_CAT_1'])
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
 									_G[self:GetName()..'Sub']:SetText(GwLocalization['HUD_DESC'])
@@ -294,6 +298,7 @@
                                 <OnLoad>
                                     _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+									_G[self:GetName()..'Header']:SetText(GwLocalization['GROUP_CAT_1'])
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
 									_G[self:GetName()..'Sub']:SetText(GwLocalization['GROUP_DESC'])
@@ -427,6 +432,7 @@
                                 <OnLoad>
                                     _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
                                     _G[self:GetName()..'Header']:SetTextColor(255/255,255/255,255/255)
+									_G[self:GetName()..'Header']:SetText(GwLocalization['PROFILES_CAT_1'])
                                     _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
                                     _G[self:GetName()..'Sub']:SetTextColor(125/255,125/255,125/255)
 									_G[self:GetName()..'Sub']:SetText(GwLocalization['PROFILES_DESC'])
