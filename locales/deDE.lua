@@ -171,9 +171,9 @@ GwLocalization['CLICK_TO_TRACK'] = 'Zum verfolgen klicken'
 
 -- Bank
 GwLocalization['BANK_TITLE'] = 'Bank'
-GwLocalization['REAGENT_BANK_TITLE'] = 'Reagenzienbank'
+GwLocalization['REAGENT_BANK_TITLE'] = 'Materialienbank'
 GwLocalization['BANK_BUY_SLOTS'] = 'Kaufe mehr Slots'
-GwLocalization['REAGENT_BANK_DEPOSIT_ALL'] = 'Kaufe alle'
+GwLocalization['REAGENT_BANK_DEPOSIT_ALL'] = 'Alles einlagern'
 GwLocalization['PURCHASE_REAGENT_BANK'] = 'Kaufen '
 GwLocalization['SORT_BANK'] = 'Bank sortieren'
 GwLocalization['BANK_COMPACT_ICONS'] = 'Kompakte Icons'
@@ -207,6 +207,8 @@ GwLocalization['CHARACTER_OUTFITS_DELETE'] = 'Bist du sicher, dass du das Outfit
 GwLocalization['CHARACTER_REPUTATION_INACTIVE'] = 'Inaktiv' 
 GwLocalization['CHARACTER_REPUTATION_TRACK'] = 'Als Bar anzeigen' 
 GwLocalization['CHARACTER_OUTFIT_NEW'] = 'Neues Outfit' 
+GwLocalization['CHARACTER_LEVEL'] = 'Level'
+GwLocalization['CHARACTER_ATTRIBUTES'] = 'Attribute'
 
 -- HUD
 GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'] = 'Beschädigte oder zerstörte Ausrüstung'
