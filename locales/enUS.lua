@@ -207,6 +207,8 @@ GwLocalization['CHARACTER_OUTFITS_DELETE'] = 'Are you sure you want to delete th
 GwLocalization['CHARACTER_REPUTATION_INACTIVE'] = 'Inactive' 
 GwLocalization['CHARACTER_REPUTATION_TRACK'] = 'Show as bar' 
 GwLocalization['CHARACTER_OUTFIT_NEW'] = 'New outfit' 
+GwLocalization['CHARACTER_LEVEL'] = 'Level'
+GwLocalization['CHARACTER_ATTRIBUTES'] = 'Attributes'
 
 -- HUD
 GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'] = 'Damaged or broken equipment' 
