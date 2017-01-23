@@ -208,7 +208,7 @@ GwLocalization['CHARACTER_REPUTATION_INACTIVE'] = '隐藏'
 GwLocalization['CHARACTER_REPUTATION_TRACK'] = '显示为经验条' 
 GwLocalization['CHARACTER_OUTFIT_NEW'] = '新的方案' 
 GwLocalization['CHARACTER_ATTRIBUTES'] = '属性' 
-GwLocalization['CHARACTER_LEVEL'] = '等级 ' 
+GwLocalization['CHARACTER_LEVEL'] = '等级' 
 
 -- 界面
 GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'] = '破损的装备'
