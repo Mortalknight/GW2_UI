@@ -1,4 +1,4 @@
-GW_PowerBarColorCustom = PowerBarColor;
+GW_PowerBarColorCustom = {}
 
 GW_PowerBarColorCustom['MANA'] = {r=37/255,g=133/255,b=240/255}
 GW_PowerBarColorCustom['RAGE'] = {r=240/255,g=66/255,b=37/255}
