@@ -28,6 +28,10 @@ GW_FACTION_BAR_COLORS = {
     [8] = {r = 0, g = 0.6, b = 0.1},
 };
 
+GW_FACTION_BAR_COLORS_HEADERS = {r=171/255,g=37/255,b=240/255}
+
+
+
 
 GW_COLOR_FRIENDLY = {
     [1] = {r = 88/255, g=170/255,b=68/255 },
