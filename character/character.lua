@@ -264,7 +264,7 @@ function gwPaperDollUpdateUnitData()
     local id, name, description, icon, background, role = GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
 
 	if name ~= nil then
-		local data = 'Level '..UnitLevel('player')..' '..name..' '..localizedClass	
+		local data = GwLocalization['CHARACTER_LEVEL']..' '..UnitLevel('player')..' '..name..' '..localizedClass	
 		GwDressingRoom.characterData:SetText(data)
 	end
     
@@ -358,7 +358,7 @@ function gwPaperDollUpdateStats()
 			local stat = PAPERDOLL_STATCATEGORIES[catIndex].stats[statIndex];
 			local showStat = true;
 			if ( stat.primary ) then
-				local primaryStat = select(7, GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player")));
+				local primaryStat = select(6, GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player")));
 				if ( stat.primary ~= primaryStat ) then
 					showStat = false;
 				end
@@ -1005,8 +1005,12 @@ function GwPaperDollUpdateReputations()
                 end 
             end
         end
+		
         if CurrentOwner~=nil then
             CurrentOwner.StatusBar:SetValue(cCur/cMax)
+			if cCur/cMax >= 1 and cMax ~= 0 then
+				CurrentOwner.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS_HEADERS.r,GW_FACTION_BAR_COLORS_HEADERS.g,GW_FACTION_BAR_COLORS_HEADERS.b)
+			end
         end
         
     end
@@ -1147,7 +1151,7 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
             
             
              frame.currentValue:SetText(comma_value(earnedValue - bottomValue))
-             frame.percentage:SetText((math.floor( ((earnedValue - bottomValue) / (topValue - bottomValue))*100) )..'%')
+			 frame.percentage:SetText((math.floor( round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0) )..'%')
              frame.nextValue:SetText(comma_value(topValue - bottomValue))
  
             

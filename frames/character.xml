@@ -1312,6 +1312,7 @@
                 <Scripts>
                     <OnLoad>
                         self.header:SetFont(DAMAGE_TEXT_FONT, 14)
+			self.header:SetText(GwLocalization['CHARACTER_ATTRIBUTES'])
                         self:RegisterEvent("PLAYER_ENTERING_WORLD");
                         
                         self:RegisterEvent("CHARACTER_POINTS_CHANGED");
