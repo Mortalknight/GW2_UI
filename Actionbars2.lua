@@ -260,7 +260,9 @@ function gw_setupActionbars()
     gw_hideBlizzardsActionbars() 
     gw_setMicroButtons()
     gw_setStanceBar()
-    gw_setPetBar()
+	if gwGetSetting('PETBAR_ENABLED') then
+        gw_setPetBar()
+    end
     gw_setbagFrame()
     gw_setLeaveVehicleButton()
     
