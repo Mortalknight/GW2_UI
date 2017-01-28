@@ -973,7 +973,7 @@ function GwPaperDollUpdateReputations()
     for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
         
         local  name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = returnReputationData(factionIndex)
-        if name~=nil then 
+		if name~=nil then 
             
             cCur = cCur + standingId
             cMax = cMax + 8
@@ -1005,11 +1005,13 @@ function GwPaperDollUpdateReputations()
                 end 
             end
         end
-		
+
         if CurrentOwner~=nil then
             CurrentOwner.StatusBar:SetValue(cCur/cMax)
 			if cCur/cMax >= 1 and cMax ~= 0 then
-				CurrentOwner.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS_HEADERS.r,GW_FACTION_BAR_COLORS_HEADERS.g,GW_FACTION_BAR_COLORS_HEADERS.b)
+				CurrentOwner.StatusBar:SetStatusBarColor(171/255,37/255,240/255)
+			else	
+				CurrentOwner.StatusBar:SetStatusBarColor(240/255,240/255,155/255)
 			end
         end
         
