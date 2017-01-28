@@ -28,6 +28,7 @@ GW_DEFAULT['SHOW_QUESTTRACKER_COMPASS'] = true
 GW_DEFAULT['MINIMAP_HOVER'] = 'NONE'
 GW_DEFAULT['CLASS_POWER'] = true
 GW_DEFAULT['GROUP_FRAMES'] = true
+GW_DEFAULT['PETBAR_ENABLED'] = true
 
 GW_DEFAULT['HUD_SPELL_SWAP'] = true
 
@@ -823,9 +824,13 @@ l:SetScript('OnEvent',function(self,event,name)
             gw_set_buffframe()
         end
         
+		
+		if gwGetSetting('PETBAR_ENABLED') then
+            gw_create_pet_frame()
+        end
+		
         
         if gwGetSetting('ACTIONBARS_ENABLED') then
-            gw_create_pet_frame()
             gw_setupActionbars()
           --  gw_set_actionbars()
         end  
@@ -843,7 +848,7 @@ l:SetScript('OnEvent',function(self,event,name)
             gw_register_raidframes()
         end
         
-    
+
         
         -- move error frame
         UIErrorsFrame:ClearAllPoints()

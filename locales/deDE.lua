@@ -41,6 +41,7 @@ GwLocalization['CASTING_BAR'] = 'Zauberleiste'
 GwLocalization['CLASS_POWER'] = 'Klassenpower'
 GwLocalization['GROUP_FRAMES'] = 'Gruppenrahmen'
 GwLocalization['CHARACTER_WINDOW'] = 'Charakter Fenster' 
+GwLocalization['PET_BAR'] = 'Begleiterfenster'
 
 GwLocalization['TARGET_CAT'] = 'ZIEL'
 GwLocalization['TARGET_CAT_1'] = 'Ziel'
@@ -130,6 +131,7 @@ GwLocalization['HUD_MOVE_ERR'] = 'Du kannst keine Elemente während des Kampfes 
     GwLocalization['CLASS_POWER_DESC'] = 'Aktiviere die alternativen Klassen Powerbars.'
     GwLocalization['GROUP_FRAMES_DESC'] = 'Ersetze die Standard Gruppenfenster'
 	GwLocalization['CHRACTER_WINDOW_DESC'] = 'Ersetzt das Standard Charakter Fenster.'
+	GwLocalization['PET_BAR_DESC'] = 'Benutze das verbesserten GW2 UI Begleiterfenster.'
 
     GwLocalization['TARGET_OF_TARGET_DESC'] = 'Aktiert das Ziel des Ziels.'
     GwLocalization['HEALTH_VALUE_DESC'] = 'Zeigt die Gesundheit als Wert an.'
