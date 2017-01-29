@@ -117,7 +117,7 @@ local function updateBonusObjective(self,event)
                 end
                 end
           
-            gwSetObjectiveNotification('EVENT','Event: '..text,simpleDesc, GW_TRAKCER_TYPE_COLOR['BONUS'])
+            gwSetObjectiveNotification('EVENT',GwLocalization['TRACKER_EVENT']..' : '..text,simpleDesc, GW_TRAKCER_TYPE_COLOR['BONUS'])
             break;
         end        
     end
