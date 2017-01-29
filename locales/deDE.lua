@@ -257,6 +257,7 @@ GwLocalization['TRACKER_TIME_REMAINING'] = 'Verbleibende Zeit'
 GwLocalization['TRACKER_MORE_ADVENTURES'] = 'Mehr Abenteuer warten:'
 GwLocalization['TRACKER_ACHIEVEMENTS'] = 'Erfolge' 
 GwLocalization['TRACKER_EVENTS'] = 'Events' 
+GwLocalization['TRACKER_EVENT'] = 'Event' 	
 
 -- Quest View
 GwLocalization['QUEST_VIEW_DECLINE'] = 'Ignorieren'
