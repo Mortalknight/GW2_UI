@@ -214,6 +214,12 @@ GW_DEFAULT['USE_CHARACTER_WINDOW'] = true
 
 GW_DEFAULT['ACTIVE_PROFILE'] = nil
 
+GW_DEFAULT['WARNIG_MESSAGE'] ={}
+GW_DEFAULT['WARNIG_MESSAGE']['point'] = 'TOP'
+GW_DEFAULT['WARNIG_MESSAGE']['relativePoint'] = 'TOP'
+GW_DEFAULT['WARNIG_MESSAGE']['xOfs'] =  0
+GW_DEFAULT['WARNIG_MESSAGE']['yOfs']  = 0
+
 
 
 
@@ -852,12 +858,11 @@ l:SetScript('OnEvent',function(self,event,name)
         
         -- move error frame
         UIErrorsFrame:ClearAllPoints()
-        UIErrorsFrame:SetPoint('TOP',UIParent,'TOP',0,0)
+		gw_register_movable_frame('errorframe',UIErrorsFrame,'WARNIG_MESSAGE','GwErrorFrameDummy')
+        UIErrorsFrame:SetPoint(gwGetSetting('WARNIG_MESSAGE')['point'],UIParent,gwGetSetting('WARNIG_MESSAGE')['relativePoint'],gwGetSetting('WARNIG_MESSAGE')['xOfs'],gwGetSetting('WARNIG_MESSAGE')['yOfs'])
         
         gwUpdateHudScale()
-             
-         
-        
+  
             
         
 end)
