@@ -138,7 +138,7 @@ GwLocalization['HUD_MOVE_ERR'] = 'Du kannst keine Elemente während des Kampfes 
     GwLocalization['HEALTH_PERCENTAGE_DESC'] = 'Zeigt die Gesundheit in Prozent an. Kann auch in Verbindung oder anstelle der Gesundheit als Wert angezeigt werden.'
     GwLocalization['CLASS_COLOR_DESC'] = 'Aktiviert die Klassenfarbe als Gesundheitsanzeige'
     GwLocalization['SHOW_DEBUFFS_DESC'] = 'Zeige die Schwächungszauber des Ziel, welche du zugefügt hast.'
-    GwLocalization['SHOW_ALL_DEBUFFS_DESC'] = 'Zeige alle Schächungszeuber des Ziels an.'
+    GwLocalization['SHOW_ALL_DEBUFFS_DESC'] = 'Zeige alle Schächungszauber des Ziels an.'
     GwLocalization['SHOW_BUFFS_DESC'] = 'Zeige die Stärkungszauber des Ziels.'
 
     GwLocalization['FOCUS_TARGET_DESC'] = 'Zeige das Focus Ziel an.'
@@ -155,7 +155,7 @@ GwLocalization['HUD_MOVE_ERR'] = 'Du kannst keine Elemente während des Kampfes 
     GwLocalization['RAID_PARTY_STYLE_DESC'] = 'Style die Gruppeneinheiten genau so wie die Schlachtzugseinheiten.'
     GwLocalization['CLASS_COLOR_RAID_DESC'] = 'Benutze die Klassenfarben, anstelle von Klassensymbolen.'
     GwLocalization['POWER_BARS_RAID_DESC'] = 'Zeige die Powerbars in den Schlachtzugseinheiten.'
-    GwLocalization['DEBUFF_DISPELL_DESC'] = 'Zige nur Schächungszauber an, die du entfernen kannst.'
+    GwLocalization['DEBUFF_DISPELL_DESC'] = 'Zeige nur Schächungszauber an, die du entfernen kannst.'
     GwLocalization['RAID_CONT_HEIGHT_DESC'] = 'Setze die maximale Höhe, welche das Schlachtzugsfenster anzeigen soll.'
     GwLocalization['RAID_BAR_WIDTH_DESC'] = 'Setze die Breite der Schlachtzugseinheiten.'
     GwLocalization['RAID_BAR_HEIGHT_DESC'] = 'Setze die Höhe der Schlachtzugseinheiten.'

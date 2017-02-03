@@ -609,7 +609,7 @@ function gw_raidframes_updateDebuffs(self)
     
     local filter = nil 
     if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
-        filter = 'RAID'
+        filter = 'CANCELABLE'
     end
     
     for i=1,20 do

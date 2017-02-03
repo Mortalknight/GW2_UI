@@ -257,7 +257,6 @@ function gwPaperDollStats_QueuedUpdate(self)
 end
 
 function gwPaperDollUpdateUnitData()
-    
     GwDressingRoom.characterName:SetText(UnitPVPName('player'))
     local spec = GetSpecialization();
     local localizedClass, englishClass, classIndex = UnitClass("player");
@@ -279,9 +278,9 @@ function gwPaperDollStats_OnEvent(self,event,...)
 		return;
     end
 
-	if ( not self:IsVisible() ) then
-		return;
-	end
+	--if ( not self:IsVisible() ) then
+		--return;
+	--end
 
 	if ( unit == "player" ) then
 		if ( event == "UNIT_LEVEL" ) then
