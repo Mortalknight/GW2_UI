@@ -414,7 +414,9 @@ function gwPaperDollSetStatIcon(self, stat)
     if STATS_ICONS[stat]~=nil then
        
         -- If mastery we use need to use class icon
+		
         if stat=='MASTERY' then
+			local localizedClass, englishClass, classIndex = UnitClass("player");
             gw_setClassIcon(self.icon,classIndex)
             newTexture='Interface\\AddOns\\GW2_UI\\textures\\party\\classicons'
         else
@@ -530,6 +532,7 @@ function gwPaperDollSlotButton_OnModifiedClick (self, button)
 	end
 	if ( IsModifiedClick("SOCKETITEM") ) then
 		SocketInventoryItem(self:GetID());
+		GwCharacterWindow:Hide();
 	end
 end
 function gwPaperDollSlotButton_OnClick (self, button,drag)
