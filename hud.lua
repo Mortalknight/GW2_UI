@@ -1324,6 +1324,21 @@ function gw_create_orderHallBar()
     GwOrderhallBar:RegisterUnitEvent("UNIT_AURA", "player");
     GwOrderhallBar:RegisterUnitEvent("UNIT_PHASE", "player");
     GwOrderhallBar:RegisterEvent("PLAYER_ALIVE");
+	
+	local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0);
+    if inOrderHall then
+		GwOrderhallBar:RegisterEvent("CURRENCY_DISPLAY_UPDATE");
+        GwOrderhallBar:RegisterEvent("DISPLAY_SIZE_CHANGED");
+        GwOrderhallBar:RegisterEvent("UI_SCALE_CHANGED");
+        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_COMPLETE");
+        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_UPDATE");
+        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_CATEGORIES_UPDATED");
+        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_ADDED");
+        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_REMOVED");
+		GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
+		GwOrderhallBar:RegisterEvent("MISSION_FINISHED");
+        GwOrderhallBar:RegisterEvent("UPDATE_BINDINGS");   
+	end
     
     GwOrderhallBar:SetScript('OnEvent',gw_orderHallBar_OnEvent)
     GwOrderhallBar:SetScript('OnShow',function() 
@@ -1360,20 +1375,7 @@ function gw_create_orderHallBar()
             
     end)
     
-	local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0);
-    if inOrderHall then
-		GwOrderhallBar:RegisterEvent("CURRENCY_DISPLAY_UPDATE");
-        GwOrderhallBar:RegisterEvent("DISPLAY_SIZE_CHANGED");
-        GwOrderhallBar:RegisterEvent("UI_SCALE_CHANGED");
-        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_COMPLETE");
-        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_UPDATE");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_CATEGORIES_UPDATED");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_ADDED");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_REMOVED");
-		GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
-		GwOrderhallBar:RegisterEvent("MISSION_FINISHED");
-        GwOrderhallBar:RegisterEvent("UPDATE_BINDINGS");   
-	end
+	
 	
     gw_orderHallBar_OnEvent(GwOrderhallBar)
     

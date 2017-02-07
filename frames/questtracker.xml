@@ -721,7 +721,7 @@
                 self.score.scorelabel:SetFont(UNIT_NAME_FONT,12)
                 
                 self.timer:ClearAllPoints()
-                self.timer:SetPoint('TOPLEFT',self.affixes,'BOTTOMLEFT',-10,-15)
+                --self.timer:SetPoint('TOPLEFT',self.affixes,'BOTTOMLEFT',-10,-15)
                 
                 self.timer:SetStatusBarColor(GW_TRAKCER_TYPE_COLOR['SCENARIO'].r,GW_TRAKCER_TYPE_COLOR['SCENARIO'].g,GW_TRAKCER_TYPE_COLOR['SCENARIO'].b)
              </OnLoad>

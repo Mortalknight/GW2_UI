@@ -244,6 +244,8 @@ function gw_scenario_affixes()
     for k,v in pairs(affixes) do
         if i == 1 then
               GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+			  GwQuestTrackerTimer.timer:ClearAllPoints()
+			  GwQuestTrackerTimer.timer:SetPoint('TOPLEFT',GwQuestTrackerTimer.affixes,'BOTTOMLEFT',-10,-15)
 		end
         local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID);
@@ -257,8 +259,11 @@ function gw_scenario_affixes()
         _G['GwAffixFrame']:Show();
         i = i + 1
     end
+	
     
     if i==1 then
+		GwQuestTrackerTimer.timer:ClearAllPoints()
+		GwQuestTrackerTimer.timer:SetPoint('TOPRIGHT',GwQuestTrackerTimer.affixes,'BOTTOMRIGHT',-10,20)
 		for i = 1,3 do
 			_G['GwAffixFrame'..i].affixID = nil
 			_G['GwAffixFrame'..i..'Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icon-boss')
