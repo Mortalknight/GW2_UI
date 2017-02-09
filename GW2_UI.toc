@@ -26,6 +26,7 @@ frames/spellbook.xml
 
 
 GW2_ui.lua
+flags.lua
 fonts.lua
 hud.lua
 buffs.lua

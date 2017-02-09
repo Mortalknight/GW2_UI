@@ -123,10 +123,11 @@ function create_settings_window()
     create_settings_cat(GwLocalization['GROUP_CAT'],GwLocalization['GROUP_TOOLTIP'],'GwSettingsGroupframe',4)
     
     addOption(GwLocalization['RAID_PARTY_STYLE'],GwLocalization['RAID_PARTY_STYLE_DESC'],'RAID_STYLE_PARTY','GwSettingsGroupframe')
-    
     addOption(GwLocalization['CLASS_COLOR_RAID'],GwLocalization['CLASS_COLOR_RAID_DESC'],'RAID_CLASS_COLOR','GwSettingsGroupframe')
     addOption(GwLocalization['POWER_BARS_RAID'],GwLocalization['POWER_BARS_RAID_DESC'],'RAID_POWER_BARS','GwSettingsGroupframe')
     addOption(GwLocalization['DEBUFF_DISPELL'],GwLocalization['DEBUFF_DISPELL_DESC'],'RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
+	
+	addOptionDropdown(GwLocalization['RAID_UNIT_FLAGS'],GwLocalization['RAID_UNIT_FLAGS_TOOLTIP'],'RAID_UNIT_FLAGS','GwSettingsGroupframe',function() end,{'NONE','DIFFERENT','ALL'},{GwLocalization['RAID_UNIT_FLAGS_1'],GwLocalization['RAID_UNIT_FLAGS_2'],GwLocalization['RAID_UNIT_FLAGS_3']})
   
     addOptionSlider(GwLocalization['RAID_CONT_HEIGHT'],GwLocalization['RAID_CONT_HEIGHT_DESC'],'RAID_UNITS_PER_COLUMN','GwSettingsGroupframe',function()
             if gwGetSetting('GROUP_FRAMES')==true then

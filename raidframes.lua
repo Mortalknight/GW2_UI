@@ -1,6 +1,8 @@
 local GROUPD_TYPE = 'PARTY'
 local GW_READY_CHECK_INPROGRESS = false
 local GW_CURRENT_HIGHLIGHT_FRAME = nil
+local guid_Player = UnitGUID('Player')
+local realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
 
 
 function gw_raidframe_hideBlizzard()
@@ -295,11 +297,13 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
 
     if event=='READY_CHECK' then
         self.ready = -1
+		if not IsInRaid() and self.unit == "player" then self.ready = true end
 		if IsInRaid() and self.unit == "raid"..UnitInRaid(unit) then self.ready = true end
         GW_READY_CHECK_INPROGRESS = true
         gw_update_raidframe_awayData(self)
         gw_updateClassIcon_texture(self,true)
     end
+	
     if event=='READY_CHECK_CONFIRM' and unit==self.unit then
         self.ready = arg1
         gw_update_raidframe_awayData(self)
@@ -360,7 +364,7 @@ end
 
 
 function gw_update_raidframeData(self)    
-   if not UnitExists(self.unit) then return end
+	if not UnitExists(self.unit) then return end
     
     self.guid = UnitGUID(self.unit)
     
@@ -401,14 +405,28 @@ function gw_update_raidframeData(self)
     nameRoleIcon['HEALER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t '
     nameRoleIcon['DAMAGER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t '
     nameRoleIcon['NONE'] = ''
-    
+	
+	local guid = UnitGUID(self.unit)
+	local realmid = string.match(guid, "^Player%-(%d+)")
+	
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
+	local realm = GetRealmName(self.unit)
+	local realmflag = ''
+	
+	if gwGetSetting('RAID_UNIT_FLAGS') == 'NONE' then
+		realmflag = ''
+	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'DIFFERENT' then
+		if gw_set_unit_flag[realmid] ~= gw_set_unit_flag[realmid_Player] then realmflag = gw_set_unit_flag[realmid] end
+	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'ALL' then
+		realmflag = gw_set_unit_flag[realmid]
+	end
+
     if nameRoleIcon[role]~=nil then
         nameString = nameRoleIcon[role]..nameString
     end
     
-    self.name:SetText(nameString)
+    self.name:SetText(nameString..' '..realmflag)
    
     gw_highlight_target_raidframe()
     
@@ -609,10 +627,10 @@ function gw_raidframes_updateDebuffs(self)
     
     local filter = nil 
     if gwGetSetting('RAID_ONLY_DISPELL_DEBUFFS') then
-        filter = 'CANCELABLE'
+        filter = 'RAID'
     end
     
-    for i=1,20 do
+    for i=1,40 do
         
         DebuffLists[i] ={}
         DebuffLists[i]['name'],  DebuffLists[i]['rank'],  DebuffLists[i]['icon'],  DebuffLists[i]['count'],  DebuffLists[i]['dispelType'],  DebuffLists[i]['duration'],  DebuffLists[i]['expires'],  DebuffLists[i]['caster'],  DebuffLists[i]['isStealable'],  DebuffLists[i]['shouldConsolidate'],      DebuffLists[i]['spellID']  =  UnitDebuff(self.unit,i,filter)
