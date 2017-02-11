@@ -1,8 +1,8 @@
 local GROUPD_TYPE = 'PARTY'
 local GW_READY_CHECK_INPROGRESS = false
 local GW_CURRENT_HIGHLIGHT_FRAME = nil
-local guid_Player = UnitGUID('Player')
-local realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
+local realmid_Player
+
 
 
 function gw_raidframe_hideBlizzard()
@@ -21,7 +21,6 @@ end
 
 
 function gw_register_raidframes()
-    
     gw_raidframe_hideBlizzard()
     
     hooksecurefunc("CompactRaidFrameManager_UpdateShown", gw_raidframe_hideBlizzard)
@@ -408,7 +407,11 @@ function gw_update_raidframeData(self)
 	
 	local guid = UnitGUID(self.unit)
 	local realmid = string.match(guid, "^Player%-(%d+)")
-	
+	local guid_Player = UnitGUID('Player')
+	if guid_Player ~= nil then 
+		realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
+	end
+
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
 	local realm = GetRealmName(self.unit)
