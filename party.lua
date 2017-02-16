@@ -15,10 +15,33 @@ GW_PORTRAIT_BACKGROUND[4] = {l=0,r=0.828,t=0.166015625*3,b=0.166015625*4}
 local buffLists = {}
 local DebuffLists = {}
 
+function gw_manage_group_button_delay(inCombat, action)
+	print(inCombat, action)
+	if  inCombat == true then
+		GwWorldMarkerManage:SetScript('OnUpdate', function()
+			local inCombat2 = UnitAffectingCombat('player')
+			print(inCombat2)
+			if inCombat2 == true then return end
+			gw_manage_group_button_delay(false, action)
+			GwWorldMarkerManage:SetScript('OnUpdate',nil)
+		end)
+	else
+		if action == 'hide' then
+			GwWorldMarkerManage:Hide()
+		elseif action == 'show' then
+			GwWorldMarkerManage:Show()
+		end
+	end
+
+end
+
+
+
 
 function gw_manage_group_button()
     CreateFrame('Button','GwManageGroupButton',UIParent,'GwManageGroupButton')
     CreateFrame('Frame','GwGroupManage',UIParent,'GwGroupManage')
+	CreateFrame('Frame','GwWorldMarkerManage',UIParent,'GwWorldMarkerManage')
 	
 	GwButtonInviteToParty:SetText(GwLocalization['PARTY_INVITE'])
 	GwManageGroupLeaveButton:SetText(GwLocalization['PARTY_LEAVE'])
@@ -28,8 +51,34 @@ function gw_manage_group_button()
     tinsert(UISpecialFrames, "GwGroupManage") 
     local x = 10
     local y = -30
-    for i=1,17 do
-		if i <= 8 then
+	
+	local xx = 1
+	local yy = -30
+	
+	for i = 1,9 do
+		if i < 9 then
+			local f = CreateFrame('Button', 'GwRaidGroundMarkerButton'..i, GwWorldMarkerManage, 'GwRaidGroundMarkerButton')
+        
+			f:ClearAllPoints()
+			f:SetPoint('TOPLEFT',GwWorldMarkerManage,'TOPLEFT',xx,yy)
+			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
+			f:SetAttribute("type","macro")
+			f:SetAttribute("macrotext","/wm "..i)
+		else
+			local f = CreateFrame('Button', 'GwRaidGroundMarkerButton'..i, GwWorldMarkerManage, 'GwRaidGroundMarkerButton')
+        
+			f:ClearAllPoints()
+			f:SetPoint('TOPLEFT',GwWorldMarkerManage,'TOPLEFT',xx,yy)
+			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i-1)
+			f:SetAttribute("type","macro")
+			f:SetAttribute("macrotext","/cwm 9")
+		end
+		
+		yy = yy + -37;
+	end
+	
+    for i=1,8 do
+
 			local f = CreateFrame('Button','GwRaidMarkerButton'..i,GwGroupManagerInGroup,'GwRaidMarkerButton') 
         
 			f:ClearAllPoints()
@@ -38,32 +87,11 @@ function gw_manage_group_button()
 			f:SetScript('OnClick',function()
             SetRaidTarget("target", i)
 			end)
-        end
-		if i > 8 and i < 17 then
-			local f = CreateFrame('Button', 'GwRaidGroundMarkerButton'..i-8, GwGroupManagerInGroup, 'GwRaidGroundMarkerButton')
-        
-			f:ClearAllPoints()
-			f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
-			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i-8)
-			f:SetAttribute("type","macro")
-			f:SetAttribute("macrotext","/wm "..i-8)
-		end
-		if i == 17 then
-			local f = CreateFrame('Button', 'GwRaidGroundMarkerButtonclear', GwGroupManagerInGroup, 'GwRaidGroundMarkerButton')
-        
-			f:ClearAllPoints()
-			f:SetPoint('TOPLEFT',GwGroupManagerInGroup,'TOPLEFT',x,y)
-			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..1)
-			f:SetAttribute("type","macro")
-			f:SetAttribute("macrotext","/cwm 9")
-		end
+
+		
         x = x + 61
-        if i==4 or i == 8 or i == 12 or i == 16 then
-			if i==8 then
-				y = y + -80;
-			else
-				y = y + -55; 
-			end
+        if i==4 then
+			y = y + -55; 
             x=10
         end
         

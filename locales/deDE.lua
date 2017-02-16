@@ -254,7 +254,7 @@ GwLocalization['PARTY_CONVERT'] = 'In Schlachtzug \numwandeln'
 GwLocalization['RAID_CONVERT'] = 'In eine Gruppe \numwandeln' 
 GwLocalization['PARTY_INVITE_STRING'] = 'Spielername'
 GwLocalization['TARGET_MARKER'] = 'Schlachtzug Symbole' 
-GwLocalization['GROUND_MARKER'] = 'Welt Markierungen' 
+GwLocalization['GROUND_MARKER'] = 'WM' 
 
 -- Quest Tracker
 GwLocalization['TRACKER_QUEST_TITLE'] = 'Quests'

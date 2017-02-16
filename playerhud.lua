@@ -39,29 +39,6 @@ function gw_create_pet_frame()
     GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos')['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
     
     
-    CreateFrame('Button','GwDodgeBar',UIParemt,'GwDodgeBar')
-    
-    local ag = GwDodgeBar.spark:CreateAnimationGroup()    
-    local anim = ag:CreateAnimation("Rotation")
-    GwDodgeBar.spark.anim = anim
-    ag:SetLooping("REPEAT")
-    
-    
-    GwDodgeBar.animation = 0
-    
-        
-    GwDodgeBar:SetScript('OnEvent', gw_dodgebar_onevent)
-    
-    GwDodgeBar:RegisterEvent('SPELL_UPDATE_COOLDOWN')
-    GwDodgeBar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    GwDodgeBar:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    GwDodgeBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    
-    
-
-    
-    gw_dodgebar_onevent()
-    
     
 end
 
@@ -210,6 +187,32 @@ function gw_create_player_hud()
     playerHealthGLobaBg:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     
     gw_update_health_data()
+	
+	
+	CreateFrame('Button','GwDodgeBar',UIParemt,'GwDodgeBar')
+    
+    local ag = GwDodgeBar.spark:CreateAnimationGroup()    
+    local anim = ag:CreateAnimation("Rotation")
+    GwDodgeBar.spark.anim = anim
+    ag:SetLooping("REPEAT")
+    
+    
+    GwDodgeBar.animation = 0
+    
+        
+    GwDodgeBar:SetScript('OnEvent', gw_dodgebar_onevent)
+    
+    GwDodgeBar:RegisterEvent('SPELL_UPDATE_COOLDOWN')
+    GwDodgeBar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    GwDodgeBar:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    GwDodgeBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    
+    
+
+    
+    gw_dodgebar_onevent()
+    
+    
     
 end
 
@@ -423,18 +426,16 @@ end
 
 
 function gw_dodgebar_onevent(self,event,unit)
-    
+
     local foundADash = false
-    local isTalent = false;
-    local isSelected = false;
-  
+
     local __,__,c = UnitClass('Player')
         if GW_DODGEBAR_SPELLS[c]~=nil then
             for k,v in pairs(GW_DODGEBAR_SPELLS[c]) do
                 local name = GetSpellInfo(v)
                 if name~=nil then       
                 
-                    if  IsSpellKnown(v)  then     
+                    if  IsPlayerSpell(v)  then     
                     
                       local  charges, maxCharges, start, duration = GetSpellCharges(v)
                         

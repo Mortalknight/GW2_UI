@@ -254,7 +254,7 @@ GwLocalization['PARTY_CONVERT'] = 'Convert to Raid'
 GwLocalization['RAID_CONVERT'] = 'Convert to Party' 
 GwLocalization['PARTY_INVITE_STRING'] = 'Player Name' 
 GwLocalization['TARGET_MARKER'] = 'Raid Markers' 
-GwLocalization['GROUND_MARKER'] = 'World Markers' 
+GwLocalization['GROUND_MARKER'] = 'WM' 
 
 -- Quest Tracker
 GwLocalization['TRACKER_QUEST_TITLE'] = 'Quests' 
