@@ -123,6 +123,7 @@ function gw_create_raidframe(registerUnit)
     
     frame.unit=registerUnit
     frame.ready = -1
+	frame.targetmarker = GetRaidTargetIndex(frame.unit)
     
     frame.healthbar.animationName ='GwCompact'..registerUnit..'animation'
     frame.healthbar.animationValue = 0 
@@ -171,6 +172,7 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent("READY_CHECK");
     frame:RegisterEvent("READY_CHECK_CONFIRM");
     frame:RegisterEvent("READY_CHECK_FINISHED");
+	frame:RegisterEvent("RAID_TARGET_UPDATE");
     frame:SetScript('OnEvent',gw_raidframe_OnEvent)
     
     frame:SetScript('OnUpdate',gw_raidFrame_OnUpdate)
@@ -180,6 +182,17 @@ function gw_create_raidframe(registerUnit)
         frame.manabar:Show()
     end
     
+end
+
+
+local function updateRaidMarkers(self)
+    local i = GetRaidTargetIndex(self.unit);
+	self.targetmarker = i 
+    if self.targetmarker==nil then self.classicon:SetTexture(nil) return end
+    self.classicon:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
+	if not self.classicon:IsShown() then
+        self.classicon:Show()
+    end
 end
 
 function gw_toggle_partyframes_for_use(b)
@@ -287,7 +300,9 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     if event=='UNIT_AURA' and unit==self.unit then
        gw_raidframes_updateAuras(self)
     end
-    
+    if event=='RAID_TARGET_UPDATE'  then
+       updateRaidMarkers(self) 
+    end
 
     if event=='PARTY_CONVERTED_TO_RAID' and GROUPD_TYPE=='PARTY' then
         gw_toggle_partyframes_for_use(false)
@@ -489,8 +504,12 @@ function gw_update_raidframe_awayData(self)
         gw_setDeadIcon(self.classicon)
         self.classicon:Show()
     end
-     
-   
+	
+    if self.targetmarker ~= nil then 
+		self.classicon:SetTexCoord(0,1,0,1)
+		updateRaidMarkers(self) 
+	end
+
     if GW_READY_CHECK_INPROGRESS==true then
      
         if self.ready == -1 then

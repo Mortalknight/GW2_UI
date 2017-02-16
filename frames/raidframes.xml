@@ -113,7 +113,6 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
-                            <TexCoords left="0" right="0.0625" top="0" bottom="1"/>
                             <Size x="25" y="25"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" ></Anchor>
