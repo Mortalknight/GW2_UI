@@ -501,6 +501,7 @@ function gw_update_raidframe_awayData(self)
         gw_setClassIcon(self.classicon,classIndex)
     end
     if iconState==2 then
+		if classColor==true then self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons') end
         gw_setDeadIcon(self.classicon)
         self.classicon:Show()
     end
