@@ -500,16 +500,17 @@ function gw_update_raidframe_awayData(self)
         self.healthbar:SetStatusBarColor(0.207,0.392,0.168)
         gw_setClassIcon(self.classicon,classIndex)
     end
-    if iconState==2 then
+	
+    if self.targetmarker ~= nil and GW_READY_CHECK_INPROGRESS ==false then 
+		self.classicon:SetTexCoord(0,1,0,1)
+		updateRaidMarkers(self) 
+	end
+	
+	if iconState==2 then
 		if classColor==true then self.classicon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\classicons') end
         gw_setDeadIcon(self.classicon)
         self.classicon:Show()
     end
-	
-    if self.targetmarker ~= nil then 
-		self.classicon:SetTexCoord(0,1,0,1)
-		updateRaidMarkers(self) 
-	end
 
     if GW_READY_CHECK_INPROGRESS==true then
      

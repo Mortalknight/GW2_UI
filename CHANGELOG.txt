@@ -1,28 +1,32 @@
 NEW
 
-Character panel has been added.
-     Equipment manager
-     Title manager
-     Reputation panel
+We have added a little extra for exalted reputations to feel more of an accomplishment.
+ 
+World markers will now be included in the raid tab.
 
-Added option to always display mini-map data.
+Added Target markers to the raidframes.
 
-Localization has been added (enUS and deDe)
+International flags for group members  option to classify their language / natifity.
 
+Quest progress update text is now movable.
+ 
+Added disable pet actionbar option.
 
-
+ 
 BUGFIXES
+ 
+Fixed a bug where primary stats weren't shown.
+ 
+Fixed a bug where the character model was too big.
+ 
+Fixed a bug where character info did not update after leveling up.
+ 
+Fixed a bug where character panel did not close when inspecting artifact  weapon.
 
-Fixed a bug where artifact progress bar did not display percentage.
+Fixed a bug with the mobility tracker.
 
-Artifact bar should no longer reset after dungeons.
+Fixed Mythix + timer position without Affixes.
 
-Fixed a bug where party frames would not load when converting from raid to party.
+Fixed a bug where the Mastery Icon changed randomly.
 
-Fixed a bug where honor progress bar would not update while in battlegrounds.
-
-Scenario information should now be displayed properly.
-
-Mythic+ should now display the correct foces .
-
-Quest-tracker should now use the correct height in dungeons.
+Fixed a buf where the "dead" Icon was not shown on raidframes.

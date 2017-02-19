@@ -16,11 +16,9 @@ local buffLists = {}
 local DebuffLists = {}
 
 function gw_manage_group_button_delay(inCombat, action)
-	print(inCombat, action)
 	if  inCombat == true then
 		GwWorldMarkerManage:SetScript('OnUpdate', function()
 			local inCombat2 = UnitAffectingCombat('player')
-			print(inCombat2)
 			if inCombat2 == true then return end
 			gw_manage_group_button_delay(false, action)
 			GwWorldMarkerManage:SetScript('OnUpdate',nil)

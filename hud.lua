@@ -1048,6 +1048,7 @@ function gw_onReciveVersionCheck(self,event,prefix,message,dist,sender)
   
     
     if version==nil or subversion==nil or hotfix==nil then return end
+	if Currentversion==nil or Currentsubversion==nil or Currenthotfix==nil then return end
     
     if version > Currentversion then
         GwMicroButtonupdateicon.updateType = GwLocalization['UPDATE_STRING_3']
