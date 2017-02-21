@@ -25,7 +25,7 @@ Fixed a bug where character panel did not close when inspecting artifact  weapon
 
 Fixed a bug with the mobility tracker.
 
-Fixed Mythix + timer position without Affixes.
+Fixed Mythic + timer position without Affixes.
 
 Fixed a bug where the Mastery Icon changed randomly.
 
