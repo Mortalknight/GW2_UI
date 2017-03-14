@@ -105,8 +105,9 @@ local function updateCurrentScenario()
     local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize = GetInstanceInfo() 
     if stageDescription==nil then stageDescription='' end
     if stageName==nil then stageName='' end
-    gwSetObjectiveNotification('SCENARIO',stageName..' |cFFFFFFFF '..difficultyName..'|r',stageDescription..' ', GW_TRAKCER_TYPE_COLOR['SCENARIO'])
-   
+	if difficultyName ~=nil then
+		gwSetObjectiveNotification('SCENARIO',stageName..' |cFFFFFFFF '..difficultyName..'|r',stageDescription..' ', GW_TRAKCER_TYPE_COLOR['SCENARIO'])
+	end
     
 
     --[[

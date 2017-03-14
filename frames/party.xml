@@ -549,7 +549,7 @@
         </Layers>
 		 <Scripts>
                     <OnLoad>
-                        if (( IsInGroup() and gwGetSetting('RAID_STYLE_PARTY') )or IsInRaid()) and UnitIsGroupLeader('player') then
+                        if (( IsInGroup() and gwGetSetting('RAID_STYLE_PARTY') )or IsInRaid()) and (UnitIsGroupLeader('player') or UnitIsGroupAssistant('player')) then
                             self:Show()
                         else
                             self:Hide()
@@ -565,7 +565,7 @@
                     </OnLoad>
                     <OnEvent>
 						inCombat = UnitAffectingCombat('player')
-                        if (( IsInGroup() and gwGetSetting('RAID_STYLE_PARTY') )or IsInRaid()) and UnitIsGroupLeader('player') then
+                        if (( IsInGroup() and gwGetSetting('RAID_STYLE_PARTY') )or IsInRaid()) and (UnitIsGroupLeader('player') or UnitIsGroupAssistant('player')) then
 							gw_manage_group_button_delay(inCombat,'show')
                         else
 							gw_manage_group_button_delay(inCombat,'hide')

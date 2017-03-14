@@ -32,11 +32,11 @@ end
 
 
 function gw_get_buffs(unit,filter)
-    
+    if filter == nil then filter = '' end
     local auraList = {}
     local player = {}
     for i=1,40 do
-        
+    
         if UnitBuff(unit,i,filter)~=nil  then 
             auraList[i] = {}
             auraList[i]['id'] = i 

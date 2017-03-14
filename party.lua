@@ -59,7 +59,7 @@ function gw_manage_group_button()
         
 			f:ClearAllPoints()
 			f:SetPoint('TOPLEFT',GwWorldMarkerManage,'TOPLEFT',xx,yy)
-			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i)
+			f:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\WM_'..i)	
 			f:SetAttribute("type","macro")
 			f:SetAttribute("macrotext","/wm "..i)
 		else
@@ -67,7 +67,7 @@ function gw_manage_group_button()
         
 			f:ClearAllPoints()
 			f:SetPoint('TOPLEFT',GwWorldMarkerManage,'TOPLEFT',xx,yy)
-			f:SetNormalTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcon_'..i-1)
+			f:SetNormalTexture('Interface\\BUTTONS\\UI-GROUPLOOT-PASS-DOWN')
 			f:SetAttribute("type","macro")
 			f:SetAttribute("macrotext","/cwm 9")
 		end
