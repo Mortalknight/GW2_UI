@@ -1155,7 +1155,12 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
             
             
              frame.currentValue:SetText(comma_value(earnedValue - bottomValue))
-			 frame.percentage:SetText((math.floor( round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0) )..'%')
+			 local percent = math.floor(round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0)
+			 if percent == -1 then 
+				frame.percentage:SetText('0%')
+			else
+				frame.percentage:SetText((math.floor( round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0) )..'%')
+			 end
              frame.nextValue:SetText(comma_value(topValue - bottomValue))
  
             

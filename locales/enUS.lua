@@ -96,6 +96,8 @@ GwLocalization['RAID_UNIT_FLAGS_TOOLTIP'] = 'Display a country flag based on the
 	GwLocalization['RAID_UNIT_FLAGS_1'] = 'None'
 	GwLocalization['RAID_UNIT_FLAGS_2'] = 'Different than own'
 	GwLocalization['RAID_UNIT_FLAGS_3'] = 'All'
+GwLocalization['RAID_MARKER'] = 'Show Raid Markers on Raidframes'
+GwLocalization['RAID_MARKER_DESC'] = 'Displayes the Target Markers on the Raid Unitframes'
 
 GwLocalization['PROFILES_CAT'] = 'PROFILES' 
 GwLocalization['PROFILES_CAT_1'] = 'Profiles' 

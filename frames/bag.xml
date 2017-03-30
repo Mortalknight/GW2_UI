@@ -610,13 +610,13 @@
             <FontString name="$parentCurrency1" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                 <Size x="100" y="40"></Size>
                  <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-160" y="-40"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" x="-165" y="-40"></Anchor>
                 </Anchors>
             </FontString>
             <Texture name="$parentCurrency1Texture" file="Interface\MoneyFrame\UI-GoldIcon">
                 <Size x="11" y="11"></Size>
                  <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-148" y="-25"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" x="-153" y="-25"></Anchor>
                 </Anchors>
                 <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
             </Texture>
@@ -624,13 +624,13 @@
             <FontString name="$parentCurrency2" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                 <Size x="100" y="40"></Size>
                  <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-210" y="-40"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" x="-215" y="-40"></Anchor>
                 </Anchors>
             </FontString>
             <Texture name="$parentCurrency2Texture" file="Interface\MoneyFrame\UI-GoldIcon">
                 <Size x="11" y="11"></Size>
                  <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-198" y="-25"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" x="-203" y="-25"></Anchor>
                 </Anchors>
                 <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
             </Texture>  
@@ -638,13 +638,13 @@
             <FontString name="$parentCurrency3" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                 <Size x="100" y="40"></Size>
                  <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-270" y="-40"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" x="-275" y="-40"></Anchor>
                 </Anchors>
             </FontString>
             <Texture name="$parentCurrency3Texture" file="Interface\MoneyFrame\UI-GoldIcon">
                 <Size x="11" y="11"></Size>
                  <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-258" y="-25"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" x="-263" y="-25"></Anchor>
                 </Anchors>
                 <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
             </Texture>

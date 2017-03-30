@@ -126,6 +126,7 @@ function create_settings_window()
     addOption(GwLocalization['CLASS_COLOR_RAID'],GwLocalization['CLASS_COLOR_RAID_DESC'],'RAID_CLASS_COLOR','GwSettingsGroupframe')
     addOption(GwLocalization['POWER_BARS_RAID'],GwLocalization['POWER_BARS_RAID_DESC'],'RAID_POWER_BARS','GwSettingsGroupframe')
     addOption(GwLocalization['DEBUFF_DISPELL'],GwLocalization['DEBUFF_DISPELL_DESC'],'RAID_ONLY_DISPELL_DEBUFFS','GwSettingsGroupframe')
+	addOption(GwLocalization['RAID_MARKER'],GwLocalization['RAID_MARKER_DESC'],'RAID_UNIT_MARKERS','GwSettingsGroupframe')
 	
 	addOptionDropdown(GwLocalization['RAID_UNIT_FLAGS'],GwLocalization['RAID_UNIT_FLAGS_TOOLTIP'],'RAID_UNIT_FLAGS','GwSettingsGroupframe',function() end,{'NONE','DIFFERENT','ALL'},{GwLocalization['RAID_UNIT_FLAGS_1'],GwLocalization['RAID_UNIT_FLAGS_2'],GwLocalization['RAID_UNIT_FLAGS_3']})
   

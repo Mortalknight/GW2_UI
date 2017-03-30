@@ -4,7 +4,6 @@ local GW_CURRENT_HIGHLIGHT_FRAME = nil
 local realmid_Player
 
 
-
 function gw_raidframe_hideBlizzard()
     if InCombatLockdown() then return end
     
@@ -300,7 +299,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     if event=='UNIT_AURA' and unit==self.unit then
        gw_raidframes_updateAuras(self)
     end
-    if event=='RAID_TARGET_UPDATE'  then
+    if event=='RAID_TARGET_UPDATE' and gwGetSetting('RAID_UNIT_MARKERS') == true then
        updateRaidMarkers(self) 
     end
 
@@ -472,7 +471,6 @@ function gw_updateClassIcon_texture(self)
 end
 
 function gw_update_raidframe_awayData(self)
-
     local classColor = gwGetSetting('RAID_CLASS_COLOR')
     local iconState = 1
     
@@ -501,7 +499,7 @@ function gw_update_raidframe_awayData(self)
         gw_setClassIcon(self.classicon,classIndex)
     end
 	
-    if self.targetmarker ~= nil and GW_READY_CHECK_INPROGRESS ==false then 
+    if self.targetmarker ~= nil and GW_READY_CHECK_INPROGRESS ==false and gwGetSetting('RAID_UNIT_MARKERS') ==true then 
 		self.classicon:SetTexCoord(0,1,0,1)
 		updateRaidMarkers(self) 
 	end

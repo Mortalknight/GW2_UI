@@ -59,7 +59,7 @@ function gw_manage_group_button()
         
 			f:ClearAllPoints()
 			f:SetPoint('TOPLEFT',GwWorldMarkerManage,'TOPLEFT',xx,yy)
-			f:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\WM_'..i)	
+			f:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\party\\raidicon_groundmarker_'..i)	
 			f:SetAttribute("type","macro")
 			f:SetAttribute("macrotext","/wm "..i)
 		else

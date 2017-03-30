@@ -464,7 +464,7 @@ function gw_update_player_money()
 
     GwBagFrameSilver:SetText(silver)
                  
-    GwBagFrameGold:SetText(gold)
+    GwBagFrameGold:SetText(comma_value(gold))
     
 end
 

@@ -391,17 +391,17 @@ end
 
 function gw_artifact_points()
     
-    local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+    local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
     
     local numPoints = pointsSpent;
-	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 	while totalXP >= xpForNextPoint and xpForNextPoint > 0 do
 		totalXP = totalXP - xpForNextPoint;
 
 		pointsSpent = pointsSpent + 1;
 		numPoints = numPoints + 1;
 
-		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 	end
 	return numPoints, totalXP, xpForNextPoint;
     

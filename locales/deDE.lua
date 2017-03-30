@@ -96,6 +96,8 @@ GwLocalization['RAID_UNIT_FLAGS_TOOLTIP'] = 'Zeige die Länderflaggen der Spiele
 	GwLocalization['RAID_UNIT_FLAGS_1'] = 'Keine'
 	GwLocalization['RAID_UNIT_FLAGS_2'] = 'Nur andere Länder als das Eigene'
 	GwLocalization['RAID_UNIT_FLAGS_3'] = 'Alle'
+GwLocalization['RAID_MARKER'] = 'Zeige die Zielmarkierungen auf den Raidframes'
+GwLocalization['RAID_MARKER_DESC'] = 'Die Zielmarkierungen werden auf den Schlachtzugeinheiten angezeigt'
 
 GwLocalization['PROFILES_CAT'] = 'PROFILE'
 GwLocalization['PROFILES_CAT_1'] = 'Profile'
