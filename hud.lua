@@ -391,17 +391,17 @@ end
 
 function gw_artifact_points()
     
-    local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+    local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
     
     local numPoints = pointsSpent;
-	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 	while totalXP >= xpForNextPoint and xpForNextPoint > 0 do
 		totalXP = totalXP - xpForNextPoint;
 
 		pointsSpent = pointsSpent + 1;
 		numPoints = numPoints + 1;
 
-		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 	end
 	return numPoints, totalXP, xpForNextPoint;
     
@@ -865,12 +865,6 @@ local gw_latencyToolTipUpdate = 0
 local gw_frameRate = 0
 
 function create_micro_menu()
-    
-       
-
-    
-    
-
     local mi = 1
     for k,v in pairs(MICRO_BUTTONS) do 
 
@@ -929,7 +923,7 @@ function create_micro_menu()
 		
         gw_UpdateMicroButtons() end);
     
-     GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
+     -- GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
      GwMicroButtonStoreMicroButton:SetScript('OnMouseDown',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
     
   
@@ -957,7 +951,7 @@ function create_micro_menu()
     gw_microButtonHookToolTip(GwMicroButtonCollectionsMicroButton,COLLECTIONS,'TOGGLECOLLECTIONS')
 
     gw_microButtonHookToolTip(GwMicroButtonEJMicroButton,ADVENTURE_JOURNAL,'TOGGLEENCOUNTERJOURNAL')
-    gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton,HELP_BUTTON,'')
+    -- gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton,HELP_BUTTON,'')
 
     
     GwMicroButtonGuildMicroButton.interval = 0
