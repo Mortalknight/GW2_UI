@@ -929,7 +929,7 @@ function create_micro_menu()
 		
         gw_UpdateMicroButtons() end);
     
-     GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
+    -- GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
      GwMicroButtonStoreMicroButton:SetScript('OnMouseDown',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
     
   
@@ -957,7 +957,7 @@ function create_micro_menu()
     gw_microButtonHookToolTip(GwMicroButtonCollectionsMicroButton,COLLECTIONS,'TOGGLECOLLECTIONS')
 
     gw_microButtonHookToolTip(GwMicroButtonEJMicroButton,ADVENTURE_JOURNAL,'TOGGLEENCOUNTERJOURNAL')
-    gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton,HELP_BUTTON,'')
+  --  gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton,HELP_BUTTON,'')
 
     
     GwMicroButtonGuildMicroButton.interval = 0
