@@ -401,7 +401,7 @@ function gw_artifact_points()
 		pointsSpent = pointsSpent + 1;
 		numPoints = numPoints + 1;
 
-		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 	end
 	return numPoints, totalXP, xpForNextPoint;
     
