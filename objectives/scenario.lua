@@ -194,7 +194,7 @@ local function scenarioTimerUpdate(...)
 		local timerID = select(i, ...);
 		local _, elapsedTime, type = GetWorldElapsedTime(timerID);
 		if ( type == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE) then
-			local _, _, _, _, _, _, _, mapID = GetInstanceInfo();
+			local mapID = C_ChallengeMode.GetActiveChallengeMapID()
 			if ( mapID ) then
 				local _, _, timeLimit = C_ChallengeMode.GetMapInfo(mapID);
 			--	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
