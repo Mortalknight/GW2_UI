@@ -1348,6 +1348,7 @@
                         self:RegisterEvent("SPELL_POWER_CHANGED");
                         self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION");
                         self:RegisterEvent("UNIT_NAME_UPDATE");
+			self.header:SetText(GwLocalization['CHARACTER_ATTRIBUTES'])
                     </OnLoad>
                     <OnEvent>
                         gwPaperDollStats_OnEvent(self,event,...)
