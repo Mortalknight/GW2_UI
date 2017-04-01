@@ -75,59 +75,6 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame name="GwClipHelper" frameStrata="BACKGROUND">
-                <Size x="100" y="100"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="130" />
-                </Anchors>
-                 <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture name="$parentLEFT" file="Interface\AddOns\GW2_UI\textures\clip" parentKey="Background">
-                            <Size x="100" y="100"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" />
-                            </Anchors>
-                        </Texture>   
-                     </Layer>
-                     <Layer level="OVERLAY">
-                        <FontString parentKey="Label" text="Hello!" justifyV="CENTER" justifyH="LEFT">
-                            <Size x="150" y="100"></Size>
-                            <Anchors>
-                                <Anchor point="BOTTOMLEFT" relativePoint="TOPRIGHT"  x="-20" y="-20"></Anchor>
-                            </Anchors>
-                        </FontString>
-                     </Layer>
-                     
-                </Layers>
-                <Scripts>
-                    <OnLoad>
-                       
-                        self.Label:SetFont(UNIT_NAME_FONT,12);
-               
-                        self.Label:SetTextColor(1,1,1,1);
-                        self.Label:SetShadowColor(0,0,0,1);
-                        
-                        self:RegisterEvent('PLAYER_REGEN_DISABLED');
-                        self:RegisterEvent('PLAYER_REGEN_ENABLED');
-                        self.Timer = GetTime() + 0.1;
-                        self:Hide();
-                      
-                    </OnLoad>
-                    <OnEvent>
-                        
-               
-                        if event=='PLAYER_REGEN_DISABLED'  then
-                            self.Label:SetText("Looks like you are killing a monster. Would you like me to help?");
-                            self.Timer = GetTime() + 10;
-                            self:Show();
-                        else
-                            self:Hide();
-                        end
-                        
-                    </OnEvent>
-             
-                </Scripts>
-            </Frame>
             <Frame name="GwActionBarHud" frameStrata="BACKGROUND">
                 <Size x="1024" y="256"></Size>
                 <Anchors>
