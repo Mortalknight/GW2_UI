@@ -315,7 +315,7 @@
                         local selectedSetName = GwPaperDollOutfits.selectedSetName;
                         if ( selectedSetName and selectedSetName ~= "") then
                             PlaySound("igCharacterInfoTab");	
-                            EquipmentManager_EquipSet(selectedSetName);
+                            UseEquipmentSet(selectedSetName);
                         end                        
                     </OnClick>
                 </Scripts>
@@ -973,7 +973,6 @@
                             
                             self.oldParent = GearManagerDialogPopup:GetParent()
 
-                            
                             GearManagerDialogPopup:Show();
                            
                             GearManagerDialogPopup:SetParent(GwDressingRoom)
@@ -981,10 +980,11 @@
                             
                             PaperDollEquipmentManagerPane.selectedSetName = nil;
                             PaperDollFrame_ClearIgnoredSlots();
-                            PaperDollEquipmentManagerPane_Update();
+                            
                             
                             PaperDollFrame_IgnoreSlot(4);
                             PaperDollFrame_IgnoreSlot(19);
+
                         </OnClick>
                     </Scripts>
                 </Button>

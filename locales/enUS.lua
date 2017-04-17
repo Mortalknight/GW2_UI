@@ -218,6 +218,7 @@ GwLocalization['CHARACTER_REPUTATION_TRACK'] = 'Show as bar'
 GwLocalization['CHARACTER_OUTFIT_NEW'] = 'New outfit' 
 GwLocalization['CHARACTER_LEVEL'] = 'Level'
 GwLocalization['CHARACTER_ATTRIBUTES'] = 'Attributes'
+GwLocalization['CHARACTER_PARAGON'] = 'Paragon'
 
 -- HUD
 GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'] = 'Damaged or broken equipment' 

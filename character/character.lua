@@ -1066,9 +1066,9 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
             
             local currentRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId)), gender);
             local nextRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId + 1)), gender);
+			
             
-            frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[standingId].r,GW_FACTION_BAR_COLORS[standingId].g,GW_FACTION_BAR_COLORS[standingId].b)
-            frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[standingId].r,GW_FACTION_BAR_COLORS[standingId].g,GW_FACTION_BAR_COLORS[standingId].b)
+            
             
             if textureC==1 then
                 frame.background:SetTexture(nil)
@@ -1078,10 +1078,9 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
                 textureC = 1 
             end 
 
-            frame.currentRank:SetText(currentRank)
-            frame.nextRank:SetText(nextRank)
-            frame.name:SetText(name..savedHeaderName)
-            frame.details:SetText(description)
+			frame.name:SetText(name..savedHeaderName)
+			frame.details:SetText(description)
+
             
             if atWarWith then
                 frame.controles.atwar.isActive = true
@@ -1153,20 +1152,43 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
             
             	SetFactionInactive(GetSelectedFaction());
             
-            
-             frame.currentValue:SetText(comma_value(earnedValue - bottomValue))
-			 local percent = math.floor(round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0)
-			 if percent == -1 then 
-				frame.percentage:SetText('0%')
+			if factionID and C_Reputation.IsFactionParagon(factionID) then
+				local currentValue, maxValueParagon  = C_Reputation.GetFactionParagonInfo(factionID)
+				frame.currentRank:SetText(currentRank)
+				frame.nextRank:SetText(GwLocalization['CHARACTER_PARAGON'])
+				
+				frame.currentValue:SetText(comma_value(currentValue))
+				frame.nextValue:SetText(comma_value(maxValueParagon))
+				
+				local percent = math.floor(round(((currentValue - 0) / (maxValueParagon - 0))*100),0)
+				frame.percentage:SetText((math.floor( round(((currentValue - 0) / (maxValueParagon - 0))*100),0) )..'%')
+				
+				frame.StatusBar:SetMinMaxValues(0, 1)
+				frame.StatusBar:SetValue((currentValue - 0) / (maxValueParagon - 0))	
+				
+				frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
+				frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
 			else
-				frame.percentage:SetText((math.floor( round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0) )..'%')
-			 end
-             frame.nextValue:SetText(comma_value(topValue - bottomValue))
- 
+			    frame.currentRank:SetText(currentRank)
+				frame.nextRank:SetText(nextRank)
+				frame.currentValue:SetText(comma_value(earnedValue - bottomValue))
+				local percent = math.floor(round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0)
+				if percent == -1 then 
+					frame.percentage:SetText('0%')
+				else
+					frame.percentage:SetText((math.floor( round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0) )..'%')
+				end
+				frame.nextValue:SetText(comma_value(topValue - bottomValue))
+				
+				frame.StatusBar:SetMinMaxValues(0, 1)
+				frame.StatusBar:SetValue((earnedValue - bottomValue) / (topValue - bottomValue))
+				
+				frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[standingId].r,GW_FACTION_BAR_COLORS[standingId].g,GW_FACTION_BAR_COLORS[standingId].b)
+				frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[standingId].r,GW_FACTION_BAR_COLORS[standingId].g,GW_FACTION_BAR_COLORS[standingId].b)
+			end
             
             
-            frame.StatusBar:SetMinMaxValues(0, 1)
-            frame.StatusBar:SetValue((earnedValue - bottomValue) / (topValue - bottomValue))
+            
  
 end
 

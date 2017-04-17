@@ -1,32 +1,9 @@
 NEW
 
-We have added a little extra for exalted reputations to feel more of an accomplishment.
- 
-World markers will now be included in the raid tab.
-
-Added Target markers to the raidframes.
-
-International flags for group members  option to classify their language / natifity.
-
-Quest progress update text is now movable.
- 
-Added disable pet actionbar option.
-
+Addes Paragon Reputation
  
 BUGFIXES
  
-Fixed a bug where primary stats weren't shown.
- 
-Fixed a bug where the character model was too big.
- 
-Fixed a bug where character info did not update after leveling up.
- 
-Fixed a bug where character panel did not close when inspecting artifact  weapon.
+Equip a Outfit in Character windows
 
-Fixed a bug with the mobility tracker.
-
-Fixed Mythic + timer position without Affixes.
-
-Fixed a bug where the Mastery Icon changed randomly.
-
-Fixed a bug where the "dead" Icon was not shown on raidframes.
+Create a new Outfit in Character window

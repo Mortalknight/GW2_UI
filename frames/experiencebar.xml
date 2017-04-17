@@ -82,7 +82,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbar" /> 
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" /> 
                 <Frames>
                     <Frame name="ExperienceBarSpark" frameLevel="4" >
                         <Size x="8" y="8" />

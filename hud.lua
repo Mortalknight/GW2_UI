@@ -27,6 +27,7 @@ GW_FACTION_BAR_COLORS = {
     [6] = {r = 0, g = 0.6, b = 0.1},
     [7] = {r = 0, g = 0.6, b = 0.1},
     [8] = {r = 0, g = 0.6, b = 0.1},
+	[9] = {r = 0.22,g=0.37,b=0.98},
 };
 
 
@@ -462,20 +463,29 @@ function update_experiencebar_data(self,event)
             name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
             canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex)
             if isWatched == true then
-                local name, reaction, min, max, value, factionID = GetWatchedFactionInfo();
-                local nextId = standingId+1
+				local name, reaction, min, max, value, factionID = GetWatchedFactionInfo();
+				if C_Reputation.IsFactionParagon(factionID) then
+					local currentValue, maxValueParagon  = C_Reputation.GetFactionParagonInfo(factionID)
+					valPrec = (currentValue - 0) / (maxValueParagon - 0)
+					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((currentValue - 0)).." / "..comma_value((maxValueParagon - 0))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+					
+					 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
+				else
+					valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
+					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((earnedValue - bottomValue)).." / "..comma_value((topValue - bottomValue))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+					
+					 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[reaction].r,GW_FACTION_BAR_COLORS[reaction].g,GW_FACTION_BAR_COLORS[reaction].b)
+				end
+		
+				local nextId = standingId+1
                 if nextId==nil then
                     nextId = standingId
                 end
                 level = getglobal("FACTION_STANDING_LABEL"..standingId)
 
                 Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
-                valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
-                
-                gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((earnedValue - bottomValue)).." / "..comma_value((topValue - bottomValue))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
-                
                 showBar1 = true
-                _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[reaction].r,GW_FACTION_BAR_COLORS[reaction].g,GW_FACTION_BAR_COLORS[reaction].b)
+               
             end
         end
     end
