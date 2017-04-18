@@ -63,5 +63,6 @@ character/spellbook.lua
 
 character/windowManager.lua
 
+locales/zhCN.lua
 locales/deDE.lua
 locales/enUS.lua
