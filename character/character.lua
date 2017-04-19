@@ -1178,10 +1178,18 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
 				else
 					frame.percentage:SetText((math.floor( round(((earnedValue - bottomValue) / (topValue - bottomValue))*100),0) )..'%')
 				end
+				
 				frame.nextValue:SetText(comma_value(topValue - bottomValue))
 				
 				frame.StatusBar:SetMinMaxValues(0, 1)
 				frame.StatusBar:SetValue((earnedValue - bottomValue) / (topValue - bottomValue))
+				
+				if currentRank == nextRank and earnedValue - bottomValue == 0 then
+					frame.percentage:SetText('100%')
+					frame.StatusBar:SetValue(1)
+					frame.nextValue:SetText()
+					frame.currentValue:SetText()
+				end 
 				
 				frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[standingId].r,GW_FACTION_BAR_COLORS[standingId].g,GW_FACTION_BAR_COLORS[standingId].b)
 				frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[standingId].r,GW_FACTION_BAR_COLORS[standingId].g,GW_FACTION_BAR_COLORS[standingId].b)

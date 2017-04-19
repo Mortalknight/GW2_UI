@@ -471,9 +471,16 @@ function update_experiencebar_data(self,event)
 					
 					 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
 				else
-					valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
-					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((earnedValue - bottomValue)).." / "..comma_value((topValue - bottomValue))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+					local currentRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId)), UnitSex("player"));
+					local nextRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId + 1)), UnitSex("player"));
 					
+					if currentRank == nextRank and earnedValue - bottomValue == 0 then
+						valPrec = 1
+						gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..'21,000 / 21,000 |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+					else 
+						valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
+						gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((earnedValue - bottomValue)).." / "..comma_value((topValue - bottomValue))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+					end
 					 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[reaction].r,GW_FACTION_BAR_COLORS[reaction].g,GW_FACTION_BAR_COLORS[reaction].b)
 				end
 		
