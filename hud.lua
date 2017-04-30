@@ -370,7 +370,7 @@ function show_experiencebar_tooltip()
         local artifactVal = artifactXP/xpForNextPoint
         
         
-        GameTooltip:AddLine(GwLocalization['EXP_BAR_TOOLTIP_ARTIFACT']..artifactXP..' / '..xpForNextPoint..' |cffa6a6a6 ('..math.floor((artifactXP/xpForNextPoint)*100) ..'%)|r',1,1,1)
+        GameTooltip:AddLine(GwLocalization['EXP_BAR_TOOLTIP_ARTIFACT']..comma_value(artifactXP)..' / '..comma_value(xpForNextPoint)..' |cffa6a6a6 ('..math.floor((artifactXP/xpForNextPoint)*100) ..'%)|r',1,1,1)
     end
     
    

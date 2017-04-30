@@ -110,12 +110,17 @@ function gw_updatehotkey(self, actionButtonType)
 	text = string.gsub(text, '(Right Arrow)', 'RT')
 	text = string.gsub(text, '(Up Arrow)', 'UP')
 	text = string.gsub(text, '(Down Arrow)', 'DN')
-		
+	
+	 
 	if hotkey:GetText() == _G['RANGE_INDICATOR'] then
 		hotkey:SetText('')
 	else
-		hotkey:SetText(text)
-    end
+		if gwGetSetting('BUTTON_ASSIGNMENTS') then
+			hotkey:SetText(text)
+		else
+			hotkey:SetText('')
+		end
+	end
 end
     function gw_setMicroButtons()
         MicroButtonPortrait:Hide()
@@ -310,7 +315,7 @@ function gw_updateMainBar()
             
             gw_setActionButtonStyle('ActionButton'..i)
             gw_updatehotkey(BUTTON)
-            
+
             _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMLEFT',BUTTON,'BOTTOMLEFT',0,0)
             _G['ActionButton'..i.."HotKey"]:SetPoint('BOTTOMRIGHT',BUTTON,'BOTTOMRIGHT',0,0)
             _G['ActionButton'..i..'HotKey']:SetFont(DAMAGE_TEXT_FONT,14,'OUTLINED')
@@ -351,12 +356,13 @@ function gw_updateMainBar()
                     
             end)
             
-            local hkBg = CreateFrame('Frame','GwHotKeyBackDropActionButton'..i, _G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionHotKeyBackDrop')
+			if gwGetSetting('BUTTON_ASSIGNMENTS') then 
+				local hkBg = CreateFrame('Frame','GwHotKeyBackDropActionButton'..i, _G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionHotKeyBackDrop')
             
-            hkBg:SetPoint('CENTER',_G['ActionButton'..i.."HotKey"],'CENTER',0,0)
-            _G['GwHotKeyBackDropActionButton'..i..'Texture']:SetParent(_G['ActionButton'..i.."HotKey"]:GetParent())
-            
-           
+				hkBg:SetPoint('CENTER',_G['ActionButton'..i.."HotKey"],'CENTER',0,0)
+				_G['GwHotKeyBackDropActionButton'..i..'Texture']:SetParent(_G['ActionButton'..i.."HotKey"]:GetParent())
+			end 
+			
             BUTTON:ClearAllPoints()
             BUTTON:SetPoint('LEFT',MainMenuBarArtFrame,'LEFT',BUTTON_PADDING -MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,0)
             
