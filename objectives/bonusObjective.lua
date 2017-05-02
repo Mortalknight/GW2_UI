@@ -195,7 +195,9 @@ local function updateBonusObjective(self,event)
     
     if foundEvent==false then
         savedQuests = {}
-        gwRemoveNotification('EVENT')
+        gwRemoveTrackerNotificationOfType('EVENT')
+         
+        gwRemoveTrackerNotificationOfType('BONUS')
         GwBonusHeader:Hide()
     else
         if not GwQuesttrackerContainerBonusObjectives.collapsed==true then
