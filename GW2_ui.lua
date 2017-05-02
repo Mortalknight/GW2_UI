@@ -620,13 +620,16 @@ function gw_setDeadIcon(self)
 end
 
 function isnan(n) return tostring(n) == '-1.#IND' end
-function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCallback)
+function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCallback,doCompleteOnOverider)
 
     newAnimation = true
     if animations[name]~=nil then
         if (animations[name]['start'] + animations[name]['duration'])>GetTime() then
             newAnimation = false
         end
+    end
+    if doCompleteOnOverider==nil then
+         newAnimation = true
     end
     
     if newAnimation==false then
@@ -638,6 +641,7 @@ function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCal
         animations[name]['completed'] = false
         animations[name]['easeing'] = easeing
         animations[name]['onCompleteCallback'] = onCompleteCallback
+      
     else
         animations[name] = {}
         animations[name]['start'] = start
@@ -649,6 +653,7 @@ function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCal
         animations[name]['completed'] = false
         animations[name]['easeing'] = easeing
         animations[name]['onCompleteCallback'] = onCompleteCallback
+
     end
    
 end

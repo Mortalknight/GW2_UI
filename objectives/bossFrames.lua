@@ -60,19 +60,43 @@ local function registerFrame(i)
     targetF:RegisterEvent('UNIT_HEALTH')
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED");
     
-    targetF:SetScript('OnShow',function(self) updateBossFrameHeight(self) gwSetObjectiveNotification('BOSS', UnitName(self.unit), '', GW_TRAKCER_TYPE_COLOR['BOSS'])  end)
-    targetF:SetScript('OnHide',function(self)
+    targetF:SetScript('OnShow',function(self) 
+
         updateBossFrameHeight(self) 
+
+
+        local compassData = {} 
+
+        compassData['TYPE']= 'BOSS'
+        compassData['TITLE']= 'Unknown'
+        compassData['ID']= 'boss_unknown'
+        compassData['QUESTID']= 'unknown'
+        compassData['COMPASS'] = false
+        compassData['DESC'] = ''
+
+        compassData['MAPID'] = 0
+        compassData['X'] = 0
+        compassData['Y'] = 0
+
+        compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['BOSS']
+        compassData['TITLE'] =  UnitName(self.unit)
+
+        gwAddTrackerNotification(compassData)
+    end )
+
+    
+        targetF:SetScript('OnHide',function(self)
+                    updateBossFrameHeight(self) 
         
-        local visible = false
-        for i=1,4 do
-            if _G['GwQuestTrackerBossFrame'..i]:IsShown() then
-                visible = true
-            end
-        end
-        if visible==false then
-           gwRemoveNotification('BOSS')     
-        end
+                    local visible = false
+                    for i=1,4 do
+                        if _G['GwQuestTrackerBossFrame'..i]:IsShown() then
+                            visible = true
+                        end
+                    end
+                    if visible==false then
+                        gwRemoveTrackerNotificationOfType('BOSS') 
+                    end
         
     end)
     

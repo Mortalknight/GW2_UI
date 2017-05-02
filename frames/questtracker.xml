@@ -113,8 +113,57 @@
                 </FontString>
             </Layer>
         </Layers>
+        <Frames>
+            <Frame name="$parentCompass" parentKey="compass">
+                <Size x="300" y="70"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-50" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+             
+                    <Layer textureSubLevel="2" Level="BACKGROUND">
+                <Texture  name="GwCompassRound" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
+                    <Size x="60" y="60"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="3"  Level="BACKGROUND">
+                <Texture name="GwCompassArrow" parentKey="arrow"  file="Interface\AddOns\GW2_UI\textures\compass-arrow">
+                    <Size x="60" y="60"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="4"  Level="BACKGROUND">
+                <Texture name="$parentIcon" parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\icon-objective">
+                    <Size x="30" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface\AddOns\GW2_UI\textures\expflare">
+                    <Size x="150" y="150"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="LEFT" y="0" x="20"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            
+                </Layers>
+              <Scripts>
+                <OnShow>
+                    gwNewQuestAnimation(self)  
+                </OnShow>    
+            </Scripts>
+            </Frame>
+        </Frames>
        <Scripts>
             <OnLoad>
+                self.animatingState =false
+                self.animating =false
                 self.title:SetFont(UNIT_NAME_FONT,14)
                 self.desc:SetFont(UNIT_NAME_FONT,12)
                 

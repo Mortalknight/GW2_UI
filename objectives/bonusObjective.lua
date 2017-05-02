@@ -59,6 +59,51 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
     
 end
 
+
+local function findBonusOnMap()
+   
+
+    local mapAreaID = GetCurrentMapAreaID();
+    local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(mapAreaID);
+    local compassData = {}
+    local numTaskPOIs = 0;
+   
+    if(taskInfo ~= nil) then
+        numTaskPOIs = #taskInfo;
+    end
+    
+    
+    local taskIconCount = 1;
+    if ( numTaskPOIs > 0 ) then
+        local GQ = countTable(GW_QUESTS) + 1
+        for _, info  in next, taskInfo do
+	    		
+          for k,v in pairs(info) do
+ 
+            end
+              
+            local isInArea, isOnMap, numObjectives, text = GetTaskInfo(info.questId)    
+            
+            if isOnMap then
+                compassData['TYPE']= 'EVENT_NEARBY'
+                compassData['TITLE']= 'Event nearby!  '..' |cFFFFFFFF '..text..'|r'
+                compassData['ID']=info.questId
+
+                compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['EVENT']
+                compassData['COMPASS'] = true
+                compassData['X'] =  info.x
+                compassData['Y'] =  info.y
+                compassData['QUESTID']= info.questId
+                compassData['MAPID'] = mapAreaID
+                gwAddTrackerNotification(compassData)
+            end
+            GQ = GQ+1
+        end
+	end
+	
+
+end
+
 local function updateBonusObjective(self,event)
  
     GwBonusObjectiveBlock.height = 20
@@ -82,9 +127,20 @@ local function updateBonusObjective(self,event)
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
         local questLogIndex = GetQuestLogIndexByID(questID);
         local simpleDesc = ''
+         local compassData = {}
+        
+        
+        if isOnMap then
+            local compassData = {}
+          
+            compassData['COMPASS'] = true
+        end
         
         if numObjectives==nil then numObjectives = 0 end
         if isInArea then
+            
+            
+            
             if text==nil then text ='' end
             GwBonusObjectiveBlock.Header:SetText(text)
             
@@ -105,6 +161,20 @@ local function updateBonusObjective(self,event)
            
             for objectiveIndex = 1,numObjectives do
                 local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false);
+                
+               
+                
+                compassData['TYPE']= 'EVENT'
+                compassData['TITLE']= text
+                compassData['ID']=questID
+           
+                compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['EVENT']
+                compassData['COMPASS'] = false
+                compassData['X'] = x
+                compassData['Y'] = y
+                compassData['QUESTID']= questID
+                compassData['MAPID'] = mapId
+                
 
                 if simpleDesc=='' then
                     simpleDesc = gwParseSimpleObjective(text)
@@ -115,9 +185,10 @@ local function updateBonusObjective(self,event)
                 if not GwQuesttrackerContainerBonusObjectives.collapsed==true then
                     addObjectiveBlock(GwBonusObjectiveBlock,text,finished,objectiveIndex,objectiveType)
                 end
-                end
+            end
           
-            gwSetObjectiveNotification('EVENT','Event: '..text,simpleDesc, GW_TRAKCER_TYPE_COLOR['BONUS'])
+           
+            gwAddTrackerNotification(compassData)
             break;
         end        
     end
@@ -146,7 +217,13 @@ end
 
 function gw_register_bonusObjectiveFrame()
     
-    GwQuesttrackerContainerBonusObjectives:SetScript('OnEvent',  updateBonusObjective)
+    GwQuesttrackerContainerBonusObjectives:SetScript('OnEvent',function(self,event)
+            gwRemoveTrackerNotificationOfType('EVENT')
+            gwRemoveTrackerNotificationOfType('EVENT_NEARBY')
+            gwRemoveTrackerNotificationOfType('BONUS')
+            findBonusOnMap()
+            updateBonusObjective(self,event)
+        end)
     
     
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_LOG_UPDATE");

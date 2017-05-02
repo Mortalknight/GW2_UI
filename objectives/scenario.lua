@@ -55,6 +55,23 @@ end
 
 local function updateCurrentScenario()
     
+    gwRemoveTrackerNotificationOfType('SCENARIO')
+    
+    local compassData = {} 
+   
+    compassData['TYPE']= 'SCENARIO'
+    compassData['TITLE']= 'Unknown Scenario'
+    compassData['ID']= 'unknown'
+    compassData['QUESTID']= 'unknown'
+    compassData['COMPASS'] = false
+
+    compassData['MAPID'] = 0
+    compassData['X'] = 0
+    compassData['Y'] = 0
+
+    compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['SCENARIO']
+
+    
 	local delayUpdateTime = GetTime() + 0.8;
 	GwQuesttrackerContainerScenario:SetScript('OnUpdate', function()
     if GetTime()<delayUpdateTime  then return end 
@@ -74,28 +91,32 @@ local function updateCurrentScenario()
     local scenarioName, currentStage, numStages, flags, _, _, completed, xp, money = C_Scenario.GetInfo();
     if ( numStages == 0 ) then 
         
-        local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize = GetInstanceInfo() 
+        local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize =     GetInstanceInfo() 
         if instanceType=='raid' then
-            gwSetObjectiveNotification('SCENARIO',name,difficultyName, GW_TRAKCER_TYPE_COLOR['SCENARIO'])
-            
+           
+           
+            compassData['TITLE']= name
+            compassData['DESC']= difficultyName
+              gwAddTrackerNotification(compassData)
+             
         else
             gwRemoveNotification('SCENARIO')
             GwScenarioBlock:Hide()
         end
         GwupdateQuestItem(GwScenarioItemButton, 0)
         for  i=GwScenarioBlock.numObjectives + 1, 20 do
-        if _G[GwScenarioBlock:GetName()..'GwQuestObjective'..i]~=nil then
-            _G[GwScenarioBlock:GetName()..'GwQuestObjective'..i]:Hide()
+            if _G[GwScenarioBlock:GetName()..'GwQuestObjective'..i]~=nil then
+                _G[GwScenarioBlock:GetName()..'GwQuestObjective'..i]:Hide()
+            end
         end
-    end
 
     
-    GwScenarioBlock.height = GwScenarioBlock.height + 5 
+        GwScenarioBlock.height = GwScenarioBlock.height + 5 
   
-    GwScenarioBlock:SetHeight(GwScenarioBlock.height)
-    GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
+        GwScenarioBlock:SetHeight(GwScenarioBlock.height)
+        GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
         return
-         
+       
     end
 
 
@@ -106,7 +127,12 @@ local function updateCurrentScenario()
     if stageDescription==nil then stageDescription='' end
     if stageName==nil then stageName='' end
 	if difficultyName ~=nil then
-		gwSetObjectiveNotification('SCENARIO',stageName..' |cFFFFFFFF '..difficultyName..'|r',stageDescription..' ', GW_TRAKCER_TYPE_COLOR['SCENARIO'])
+	
+        
+        compassData['TITLE']= stageName..' |cFFFFFFFF '..difficultyName..'|r'
+        compassData['DESC']= stageDescription..' '
+        gwAddTrackerNotification(compassData)
+       
 	end
     
 
@@ -175,6 +201,7 @@ local function updateCurrentScenario()
 
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
+     
         
 end
 
@@ -299,6 +326,10 @@ local function scenarioTimerOnEvent(self, event, ...)
     	scenarioTimerUpdate(GetWorldElapsedTimers());
     end
     GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
+    
+   
+
+    
     updateCurrentScenario()
     
 end

@@ -6,6 +6,7 @@ local savedQuests = {}
 
 GW_TRAKCER_TYPE_COLOR = {}
 GW_TRAKCER_TYPE_COLOR['QUEST'] ={r=221/255,g=198/255,b=68/255}
+GW_TRAKCER_TYPE_COLOR['EVENT'] ={r=240/255,g=121/255,b=37/255}
 GW_TRAKCER_TYPE_COLOR['BONUS'] ={r=240/255,g=121/255,b=37/255}
 GW_TRAKCER_TYPE_COLOR['SCENARIO'] ={r=171/255,g=37/255,b=240/255}
 GW_TRAKCER_TYPE_COLOR['BOSS'] ={r=240/255,g=37/255,b=37/255}
@@ -245,17 +246,54 @@ local function addObjective(block,text,finished,objectiveIndex)
     
 end
 
-local function updateQuestObjective(block,numObjectives,isComplete)
+local function updateQuestObjective(block,numObjectives,isComplete,title)
 
-    if isComplete then return end
+   
     local addedObjectives = 1
+    
+    local compass, x, y, o, mapId  =gwScanMapforObjective(block.questID) 
+    
+    if isComplete then compass = false end
+    
+    local compassData = {}
+  
+    local objectiveText = ''
+    if compass then
+        
+     
+           compassData['TYPE']= 'QUEST'
+           compassData['TITLE']= title
+           compassData['ID']=block.questID
+           
+           compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['QUEST']
+           compassData['COMPASS'] = true
+           compassData['X'] = x
+           compassData['Y'] = y
+           compassData['QUESTID']= block.questID
+           compassData['MAPID'] = mapId
+            
+        end
+    
     for objectiveIndex = 1, numObjectives do
        
+    
         local text, objectiveType, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
+        if compass and (objectiveIndex - 1)==o then
+  
+           objectiveText  = text
+        end
         if not finished then
             addObjective(block,text,finished,addedObjectives)
             addedObjectives = addedObjectives + 1
         end
+    end
+    
+    if compass then
+       compassData['DESC'] = objectiveText
+        if objectiveText~=nil and objectiveText~='' then
+            gwRemoveNotification(title)
+        end
+        gwAddTrackerNotification(compassData) 
     end
     
 end
@@ -345,7 +383,7 @@ local function updateQuest(block, questWatchId)
 				isComplete = true;
 			end
         
-        updateQuestObjective(block, numObjectives,isComplete)
+        updateQuestObjective(block, numObjectives,isComplete,title)
         
                
         if requiredMoney~=nil and requiredMoney>GetMoney() then
@@ -369,6 +407,12 @@ local function updateQuest(block, questWatchId)
             end
             
         end
+        
+       
+ 
+      
+        
+ 
         
         block.clickHeader:SetScript('OnClick', function() quest_update_POI(questID,questLogIndex) end)
         block:SetScript('OnClick', function() 
@@ -422,6 +466,7 @@ local function updateExtraQuestItemPositions()
 end
 
 
+
 local function updateQuestLogLayout(intent)
     
     
@@ -431,9 +476,12 @@ local function updateQuestLogLayout(intent)
     end
         
     updatedThisFrame = true
+    
+    gwRemoveTrackerNotificationOfType('QUEST')
 
     local savedHeight = 1
     GwQuestHeader:Hide()
+    gwRemoveQuestRadar()
     
     local numQuests = GetNumQuestWatches()
     if GwQuesttrackerContainerQuests.collapsed==true then
@@ -467,6 +515,71 @@ local function updateQuestLogLayout(intent)
     
 end
 
+function gwRequestQustlogUpdate()
+    updateQuestLogLayout()
+end
+
+function gwScanMapforObjective(questID)
+    if WorldMapFrame:IsShown() then return end
+
+    SetMapToCurrentZone()
+   
+    local scanMap = true
+    local maxZoom = false
+    local foundSomethingOnThisMap = false
+
+   SetCVar("questPOI", 1)
+    local max = 0
+    
+    while scanMap and max<5 do
+            
+        QuestPOIUpdateIcons()
+        local posX = 0
+        local posY = 0
+          
+        _, posX, posY, objective = QuestPOIGetIconInfo(questID) 
+          
+                 
+        if posX~=nil then
+           local mapId,currentFloor =  GetCurrentMapAreaID()
+            
+            SetMapToCurrentZone()
+         --   SetCVar("questPOI", cvar and 1 or 0)
+     
+            return true, posX, posY, objective, mapId 
+
+            
+        end
+    
+        if  maxZoom then
+            scanMap = false;
+        end
+        
+        if  ZoomOut() ~= nil then
+            if ( GetCurrentMapContinent() == WORLDMAP_AZEROTH_ID ) then
+                SetMapZoom(WORLDMAP_AZEROTH_ID);
+                maxZoom = true
+            elseif ( GetCurrentMapContinent() == WORLDMAP_OUTLAND_ID  )then
+                SetMapZoom(WORLDMAP_OUTLAND_ID);
+                maxZoom = true
+            elseif ( GetCurrentMapContinent() == WORLDMAP_DRAENOR_ID ) then
+                SetMapZoom(WORLDMAP_DRAENOR_ID);
+                maxZoom = true
+            else
+                SetMapZoom(WORLDMAP_AZEROTH_ID);
+                maxZoom = true
+            end
+        end
+
+        max =max +1
+    end
+         
+    SetMapToCurrentZone()
+  --  SetCVar("questPOI", cvar and 1 or 0)
+    return false
+ 
+end
+
 
 
 
@@ -484,6 +597,7 @@ end
 local function QuestTracker_OnEvent(self,event,data1)
 
         updateQuestLogLayout(data1)
+
 
 end
 
@@ -589,6 +703,7 @@ function gw_load_questTracker()
    
     loadQuestButtons()
     updateQuestLogLayout('load')
+    
     
     
     
