@@ -144,7 +144,7 @@ function gwSetObjectiveNotification()
          GwObjectivesNotification.compass:SetScript('OnUpdate', function(self)
                 if updateLimit<GetTime() then
                     gwSetObjectiveNotification()
-                    updateLimit  = GetTime() + 0.1
+                    updateLimit  = GetTime() + 5
                 end
                 gwUpdateRadarDirection(self)
             end)
