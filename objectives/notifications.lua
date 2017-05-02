@@ -38,6 +38,8 @@ end
 
 function gwAddTrackerNotification (data)
     
+    if data==nil or data['ID']==nil then return end
+    
     notifications[data['ID']] = data
     
     gwSetObjectiveNotification()
