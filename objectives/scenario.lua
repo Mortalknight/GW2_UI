@@ -100,7 +100,7 @@ local function updateCurrentScenario()
               gwAddTrackerNotification(compassData)
              
         else
-            gwRemoveNotification('SCENARIO')
+            gwRemoveTrackerNotificationOfType('SCENARIO')
             GwScenarioBlock:Hide()
         end
         GwupdateQuestItem(GwScenarioItemButton, 0)

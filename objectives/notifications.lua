@@ -61,22 +61,13 @@ function gwRemoveTrackerNotificationOfType(doType)
 end
 
 
-function gwRemoveQuestRadar()
-    if currentNotificationType=='QUEST' then
-        radarData = {}
-        gwSetObjectiveNotification(currentNotificationKey)
-        
-    end
-    
-end
-
 
 function gwRemoveNotification(key)
 
         currentNotificationKey=''
     
-        GwObjectivesNotification:SetHeight(1)
-    
+        
+
      
         GwObjectivesNotification.animatingState = false;
         GwObjectivesNotification.animating = true;
@@ -87,6 +78,7 @@ function gwRemoveNotification(key)
         end,nil, function()
                 GwObjectivesNotification.animating = false;
                 GwObjectivesNotification:Hide() 
+                    
                 gwQuestTrackerLayoutChanged()
             end,true)
     end
@@ -108,7 +100,7 @@ function gwSetObjectiveNotification()
         end
     end
     
-    if data==nil then gwRemoveNotification(currentNotificationKey) return end
+    if data==nil then  gwRemoveNotification(currentNotificationKey) return end
     
     local key =  data['KEY']
     local title = data['TITLE']
@@ -150,7 +142,7 @@ function gwSetObjectiveNotification()
          GwObjectivesNotification.compass:SetScript('OnUpdate', function(self)
                 if updateLimit<GetTime() then
                     gwSetObjectiveNotification()
-                    updateLimit  = GetTime() + 5
+                    updateLimit  = GetTime() + 0.1
                 end
                 gwUpdateRadarDirection(self)
             end)
@@ -177,7 +169,7 @@ function gwSetObjectiveNotification()
         dur = 0
     end
     
-    if not GwObjectivesNotification:IsShown() or GwObjectivesNotification.animating then
+    if not GwObjectivesNotification:IsShown() or (GwObjectivesNotification.animating and GwObjectivesNotification.animatingState == false) then
     GwObjectivesNotification:Show()
     GwObjectivesNotification.animating = true;
     GwObjectivesNotification.animatingState = true;
@@ -195,15 +187,6 @@ function gwSetObjectiveNotification()
     
 end
 
-
-function gwSetRadarPOI(data)
-
-   radarData[data['QUESTID']] = {};
-    
-    
-   radarData[data['QUESTID']] = data;
-    
-end
 
 function gwGetCompassPriority()
   

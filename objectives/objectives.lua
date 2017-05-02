@@ -289,10 +289,8 @@ local function updateQuestObjective(block,numObjectives,isComplete,title)
     end
     
     if compass then
-       compassData['DESC'] = objectiveText
-        if objectiveText~=nil and objectiveText~='' then
-            gwRemoveNotification(title)
-        end
+        compassData['DESC'] = objectiveText
+    
         gwAddTrackerNotification(compassData) 
     end
     
@@ -481,7 +479,7 @@ local function updateQuestLogLayout(intent)
 
     local savedHeight = 1
     GwQuestHeader:Hide()
-    gwRemoveQuestRadar()
+
     
     local numQuests = GetNumQuestWatches()
     if GwQuesttrackerContainerQuests.collapsed==true then
