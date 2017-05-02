@@ -72,7 +72,7 @@ end
 
 
 function gwRemoveNotification(key)
-    if currentNotificationKey==key then
+
         currentNotificationKey=''
     
         GwObjectivesNotification:SetHeight(1)
@@ -80,7 +80,7 @@ function gwRemoveNotification(key)
      
         GwObjectivesNotification.animatingState = false;
         GwObjectivesNotification.animating = true;
-
+        if GwObjectivesNotification:IsShown() then
         addToAnimation('notificationToggle', 70,1,GetTime(),1,function(step) 
                   GwObjectivesNotification:SetHeight(step)
               
@@ -88,11 +88,9 @@ function gwRemoveNotification(key)
                 GwObjectivesNotification.animating = false;
                 GwObjectivesNotification:Hide() 
                 gwQuestTrackerLayoutChanged()
-        end,true)
-        
-        
- 
+            end,true)
     end
+    
 end
 function gwSetObjectiveNotification()
     
