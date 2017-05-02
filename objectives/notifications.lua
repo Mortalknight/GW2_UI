@@ -88,19 +88,22 @@ function gwRemoveNotification(key)
 end
 function gwSetObjectiveNotification()
     
-    local data = notifications[gwGetCompassPriority()]
+    local data 
     
-    if data==nil then
-        for k,v in pairs( notifications) do
-            if data~=nil then
-                if prioritys(data['KEY'],notifications[k]['KEY']) then
-                    data = notifications[k]
-                end
-            else 
-                 data = notifications[k]
+    
+    for k,v in pairs( notifications) do
+        if data~=nil then
+            if prioritys(data['KEY'],notifications[k]['KEY']) then
+                data = notifications[k]
             end
+        else 
+            data = notifications[k]
         end
     end
+   
+    if data==nil then
+        data = notifications[gwGetCompassPriority()]
+     end
     
     if data==nil then  gwRemoveNotification(currentNotificationKey) return end
     
