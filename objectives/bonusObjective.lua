@@ -60,49 +60,7 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
 end
 
 
-local function findBonusOnMap()
-   
 
-    local mapAreaID = GetCurrentMapAreaID();
-    local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(mapAreaID);
-    local compassData = {}
-    local numTaskPOIs = 0;
-   
-    if(taskInfo ~= nil) then
-        numTaskPOIs = #taskInfo;
-    end
-    
-    
-    local taskIconCount = 1;
-    if ( numTaskPOIs > 0 ) then
-        local GQ = countTable(GW_QUESTS) + 1
-        for _, info  in next, taskInfo do
-	    		
-          for k,v in pairs(info) do
- 
-            end
-              
-            local isInArea, isOnMap, numObjectives, text = GetTaskInfo(info.questId)    
-            
-            if isOnMap then
-                compassData['TYPE']= 'EVENT_NEARBY'
-                compassData['TITLE']= 'Event nearby!  '..' |cFFFFFFFF '..text..'|r'
-                compassData['ID']=info.questId
-
-                compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['EVENT']
-                compassData['COMPASS'] = true
-                compassData['X'] =  info.x
-                compassData['Y'] =  info.y
-                compassData['QUESTID']= info.questId
-                compassData['MAPID'] = mapAreaID
-                gwAddTrackerNotification(compassData)
-            end
-            GQ = GQ+1
-        end
-	end
-	
-
-end
 
 local function updateBonusObjective(self,event)
  
@@ -127,11 +85,12 @@ local function updateBonusObjective(self,event)
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
         local questLogIndex = GetQuestLogIndexByID(questID);
         local simpleDesc = ''
-         local compassData = {}
+        local compassData = {}
         
         
         if isOnMap then
             local compassData = {}
+            compassData['TYPE']= 'EVENT'
           
             compassData['COMPASS'] = true
         end
@@ -223,7 +182,7 @@ function gw_register_bonusObjectiveFrame()
             gwRemoveTrackerNotificationOfType('EVENT')
             gwRemoveTrackerNotificationOfType('EVENT_NEARBY')
             gwRemoveTrackerNotificationOfType('BONUS')
-            findBonusOnMap()
+      
             updateBonusObjective(self,event)
         end)
     

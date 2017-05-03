@@ -15,6 +15,7 @@ icons['EVENT_NEARBY'] ={tex='icon-objective',l=0,r=1,t=0.5,b=0.75}
 icons['EVENT'] ={tex='icon-objective',l=0,r=1,t=0.5,b=0.75}
 icons['SCENARIO'] ={tex='icon-objective',l=0,r=1,t=0.75,b=1}
 icons['BOSS'] ={tex='icon-boss',l=0,r=1,t=0,b=1}
+icons['DEAD'] ={tex='party/icon-dead',l=0,r=1,t=0,b=1}
 
 local notification_priority = {}
 notification_priority['EVENT_NEARBY'] = 1
@@ -22,6 +23,7 @@ notification_priority['QUEST'] = 2
 notification_priority['SCENARIO'] =3
 notification_priority['EVENT'] = 4
 notification_priority['BOSS'] = 5
+notification_priority['DEAD'] = 6
 
 
 local updateLimit = 0
@@ -47,7 +49,7 @@ function gwAddTrackerNotification (data)
 end
 
 function gwRemoveTrackerNotification (notificationID)
-    
+    if data==nil or notificationID==nil then return end
     notifications[data['ID']] = nil;
     gwSetObjectiveNotification()
         
@@ -135,6 +137,7 @@ function gwSetObjectiveNotification()
     if useRadar then
         GwObjectivesNotification.compass:Show()
         GwObjectivesNotification.compass.data = data;
+        GwObjectivesNotification.compass.dataIndex = data['ID'];
         currentNotificationKey = key
     
         if icons[data['TYPE']]~=nil then
@@ -207,7 +210,9 @@ function gwGetCompassPriority()
     
     local posX, posY  = GetPlayerMapPosition("player");
      
-    if posX==nil then return end
+    if posX==nil then 
+        
+    return end
     
     
   
@@ -243,7 +248,10 @@ function gwUpdateRadarDirection(self)
       
     local pFaceing = GetPlayerFacing()
     local posX, posY  =GetPlayerMapPosition("player");
-    if posX==nil then return end
+    if posX==nil or posX==0 then
+        gwRemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
+        return
+    end
         
         local dir_x  =self.data['X'] - posX
         local dir_y  =self.data['Y'] - posY
@@ -261,8 +269,10 @@ function gwUpdateRadarDirection(self)
 		local sin,cos = math.sin(a) * square_half, math.cos(a) * square_half
 
         self.arrow:SetTexCoord(0.5-sin, 0.5+cos, 0.5+cos, 0.5+sin, 0.5-cos, 0.5-sin, 0.5+sin, 0.5-cos)
-    
 
 end
+
+
+
 
 

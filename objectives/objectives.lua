@@ -601,6 +601,37 @@ end
 
 
 
+local function playerDeadState (self,event) 
+        
+        if not UnitIsDeadOrGhost('PLAYER') then
+                gwRemoveTrackerNotificationOfType('DEAD')
+                return
+        end
+        
+            
+        local compassData = {}    
+            
+        local x, y = GetCorpseMapPosition()
+     
+           compassData['TYPE']= 'DEAD'
+           compassData['TITLE']= GwLocalization['TRACKER_RETRIVE_CORPSE']
+           compassData['ID']='playerDead'
+           
+           compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['DEAD']
+           compassData['COMPASS'] = true
+           compassData['X'] = x
+           compassData['Y'] = y
+           compassData['QUESTID']= ''
+            compassData['MAPID'] = ''
+            compassData['DESC'] = ''
+    
+            gwAddTrackerNotification(compassData) 
+            
+  
+end
+
+
+
 function gw_load_questTracker()
     ObjectiveTrackerFrame:Hide()
     ObjectiveTrackerFrame:SetScript('OnShow', function() ObjectiveTrackerFrame:Hide() end) 
@@ -710,4 +741,19 @@ function gw_load_questTracker()
     gw_register_achievement()
     gw_register_bonusObjectiveFrame()
     
+    GwObjectivesNotification:RegisterEvent('PLAYER_ALIVE')
+    GwObjectivesNotification:RegisterEvent('PLAYER_DEAD')
+    GwObjectivesNotification:RegisterEvent('PLAYER_UNGHOST')
+    
+	GwObjectivesNotification:RegisterEvent("ZONE_CHANGED_INDOORS");
+	GwObjectivesNotification:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+	GwObjectivesNotification:RegisterEvent("ZONE_CHANGED");
+    
+    GwObjectivesNotification:SetScript('OnEvent', playerDeadState)
+    
+    
+    playerDeadState(GwObjectivesNotification,'')
+    
+    
 end
+
