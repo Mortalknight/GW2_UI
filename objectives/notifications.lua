@@ -103,7 +103,7 @@ function gwSetObjectiveNotification()
         end
     end
    
-    if data==nil then
+    if data==nil and gwGetSetting('SHOW_QUESTTRACKER_COMPASS') then
         data = notifications[gwGetCompassPriority()]
      end
     
@@ -199,10 +199,6 @@ end
 function gwGetCompassPriority()
   
     
-    if gwGetSetting('SHOW_QUESTTRACKER_COMPASS')==false then
-        return nil
-    end
-         
    
     local closestIndex = nil
     local posX, posY  = 0
