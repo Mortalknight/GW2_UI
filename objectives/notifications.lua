@@ -203,8 +203,7 @@ function gwGetCompassPriority()
         return nil
     end
          
-    if WorldMapFrame:IsShown() then return nil end
-    
+   
     local closestIndex = nil
     local posX, posY  = 0
     
