@@ -95,12 +95,17 @@ function gwSetObjectiveNotification()
     
     
     for k,v in pairs( notifications) do
-        if data~=nil then
-            if prioritys(data['KEY'],notifications[k]['KEY']) then
+        
+
+        if not notifications['COMPASS'] and notifications[k]~=nil then
+        
+            if data~=nil then
+                if prioritys(data['KEY'],notifications[k]['KEY']) then
+                    data = notifications[k]
+                end
+            else 
                 data = notifications[k]
             end
-        else 
-            data = notifications[k]
         end
     end
    
@@ -108,7 +113,7 @@ function gwSetObjectiveNotification()
         data = notifications[gwGetCompassPriority()]
      end
     
-    if data==nil then  gwRemoveNotification(currentNotificationKey) return end
+    if data==nil then    gwRemoveNotification(currentNotificationKey)  return end
     
     local key =  data['KEY']
     local title = data['TITLE']

@@ -63,7 +63,12 @@ end
 
 
 local function updateBonusObjective(self,event)
- 
+    gwRemoveTrackerNotificationOfType('EVENT')
+    gwRemoveTrackerNotificationOfType('EVENT_NEARBY')
+    gwRemoveTrackerNotificationOfType('BONUS')
+             
+
+    
     GwBonusObjectiveBlock.height = 20
     GwBonusObjectiveBlock.numObjectives = 0
     GwBonusObjectiveBlock:Hide()
@@ -80,7 +85,8 @@ local function updateBonusObjective(self,event)
 
     
     for k,v in pairs(tasks) do
-       
+
+        
         local questID = v
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
         local questLogIndex = GetQuestLogIndexByID(questID);
@@ -159,9 +165,9 @@ local function updateBonusObjective(self,event)
     
     if foundEvent==false then
         savedQuests = {}
-        gwRemoveTrackerNotificationOfType('EVENT')
+--        gwRemoveTrackerNotificationOfType('EVENT')
          
-        gwRemoveTrackerNotificationOfType('BONUS')
+  --      gwRemoveTrackerNotificationOfType('BONUS')
         GwBonusHeader:Hide()
     else
         if not GwQuesttrackerContainerBonusObjectives.collapsed==true then
@@ -184,9 +190,7 @@ end
 function gw_register_bonusObjectiveFrame()
     
     GwQuesttrackerContainerBonusObjectives:SetScript('OnEvent',function(self,event)
-            gwRemoveTrackerNotificationOfType('EVENT')
-            gwRemoveTrackerNotificationOfType('EVENT_NEARBY')
-            gwRemoveTrackerNotificationOfType('BONUS')
+    
       
             updateBonusObjective(self,event)
         end)

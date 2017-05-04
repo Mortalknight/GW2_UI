@@ -753,7 +753,7 @@ function gw_load_questTracker()
     
     
     playerDeadState(GwObjectivesNotification,'')
-    
-    
+
+  
 end
 
