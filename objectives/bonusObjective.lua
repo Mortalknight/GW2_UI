@@ -98,6 +98,7 @@ local function updateBonusObjective(self,event)
         if numObjectives==nil then numObjectives = 0 end
         if isInArea then
             
+             compassData['TITLE']= text
             
             
             if text==nil then text ='' end
@@ -124,8 +125,9 @@ local function updateBonusObjective(self,event)
                
                 
                 compassData['TYPE']= 'EVENT'
-                compassData['TITLE']= text
+               
                 compassData['ID']=questID
+                
            
                 compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['EVENT']
                 compassData['COMPASS'] = false
@@ -146,6 +148,9 @@ local function updateBonusObjective(self,event)
                 end
             end
           
+            if simpleDesc~='' then
+                compassData['DESC']= simpleDesc
+            end
            
             gwAddTrackerNotification(compassData)
             break;

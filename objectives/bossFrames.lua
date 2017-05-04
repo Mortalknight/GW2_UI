@@ -89,12 +89,16 @@ local function registerFrame(i)
                     updateBossFrameHeight(self) 
         
                     local visible = false
-                    for i=1,4 do
-                        if _G['GwQuestTrackerBossFrame'..i]:IsShown() then
+                    for index=1,4 do
+                        if _G['GwQuestTrackerBossFrame'..index]:IsShown() then
                             visible = true
                         end
                     end
                     if visible==false then
+                        
+                    end
+            
+                    if i==1 then
                         gwRemoveTrackerNotificationOfType('BOSS') 
                     end
         

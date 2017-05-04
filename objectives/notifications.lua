@@ -57,10 +57,11 @@ end
 function gwRemoveTrackerNotificationOfType(doType)
     
     for k,v in pairs(notifications) do
-        if  notifications[k]['TYPE']==doType then
+        if  v['TYPE']==doType then
              notifications[k] = nil
         end
     end
+    gwSetObjectiveNotification()
         
 end
 
