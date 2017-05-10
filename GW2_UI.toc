@@ -23,6 +23,7 @@ frames/raidframes.xml
 frames/unitframes.xml
 frames/character.xml
 frames/spellbook.xml
+frames/toast.xml
 
 
 GW2_ui.lua
@@ -47,6 +48,7 @@ bank.lua
 party.lua
 raidframes.lua
 unitframes.lua
+toast.lua
 
 
 objectives/objectives.lua
