@@ -685,7 +685,12 @@ function gwCharacterPanelToggle(frame)
     
     GwPaperReputation:Hide()
     
-    if frame~=nil then frame:Show() end
+    if frame~=nil then
+        frame:Show() 
+    else
+        GwDressingRoom:Hide()
+        return
+    end
     
     if frame:GetName()=='GwPaperReputation' then GwDressingRoom:Hide() else GwDressingRoom:Show() end
     
@@ -1343,8 +1348,7 @@ end
 
 function gw_register_character_window()
    
-    CreateFrame('Frame','GwCharacterWindowMoverFrame',UIParent,'GwCharacterWindowMoverFrame')
-    CreateFrame('Frame','GwCharacterWindow',UIParent,'GwCharacterWindow')
+   
     CreateFrame('Button','GwDressingRoom',GwCharacterWindow,'GwDressingRoom')
     CreateFrame('Frame','GwCharacterMenu',GwCharacterWindow,'GwCharacterMenu')
     CreateFrame('Frame','GwPaperDollBagItemList',GwCharacterWindow,'GwPaperDollBagItemList')
@@ -1385,17 +1389,13 @@ function gw_register_character_window()
     end)
    
 
-    tinsert(UISpecialFrames, "GwCharacterWindow") 
-     GwCharacterWindow:HookScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
-     GwCharacterWindow:HookScript('OnShow',function() GwCharacterWindowMoverFrame:Show() end)
-    
   
     CharacterFrame:UnregisterAllEvents()
     
     hooksecurefunc('ToggleCharacter',GwToggleCharacter)
     
    
-    GwCharacterWindow:Hide()
+   
     gwPaperDollUpdateStats()
     
    
