@@ -1,7 +1,7 @@
 local toastList = {}
 local toastIndex = 0
 local lastShown
-local delayTime = 5
+local delayTime = 10
 
 
 function gwToastAnimateFlare(self,delta)
@@ -81,7 +81,7 @@ local function getBloack ()
     return f
 end
 
-local function toastRecive(self, itemLink, quantity, rollType, roll, specID, isCurrency, showFactionBG, lootSource, lessAwesome, isUpgraded, isPersonal, showRatedBG)
+local function toastRecive(itemLink, quantity, rollType, roll, specID, isCurrency, showFactionBG, lootSource, lessAwesome, isUpgraded, isPersonal, showRatedBG)
    
     local itemName, itemHyperLink, itemRarity, _, _, _, _, _, _, itemTexture = GetItemInfo(itemLink);
 	local baseQualityColor = ITEM_QUALITY_COLORS[baseQuality];
@@ -93,8 +93,11 @@ local function toastRecive(self, itemLink, quantity, rollType, roll, specID, isC
     
     frame.title:SetText(itemName)
     
-    frame.sub:SetText(format(LOOTUPGRADEFRAME_TITLE, _G["ITEM_QUALITY"..itemRarity.."_DESC"]));
-    
+    if isUpgraded then
+        frame.sub:SetText(format(LOOTUPGRADEFRAME_TITLE, _G["ITEM_QUALITY"..itemRarity.."_DESC"]));
+    else
+        frame.sub:SetText(''); 
+    end
        GwSetItemButtonQuality(frame, itemRarity,itemHyperLink)
     
     if ( lessAwesome ) then
@@ -113,13 +116,56 @@ function gwTestToast()
     toastRecive(nil, link,1,nil, nil,nil, nil,nil,nil,false,true,false,false)
 end
 
+local function onEvent(self,event,...)
+    
+    if ( event == "LOOT_ITEM_ROLL_WON" ) then
+		local itemLink, quantity, rollType, roll, isUpgraded = ...;
+		toastRecive(itemLink, quantity, rollType, roll, nil, nil, nil, nil, nil, isUpgraded);
+    elseif ( event == "SHOW_LOOT_TOAST" ) then
+		local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lootSource, lessAwesome, isUpgraded = ...;
+		if ( typeIdentifier == "item" ) then
+			toastRecive(itemLink, quantity, nil, nil, specID, nil, nil, nil, lessAwesome, isUpgraded, isPersonal);
+            
+		elseif ( typeIdentifier == "money" ) then
+		  
+		elseif ( isPersonal and (typeIdentifier == "currency") ) then
+			-- only toast currency for personal loot
+			toastRecive(itemLink, quantity, nil, nil, specID, true, false, lootSource);
+		end
+    	elseif ( event == "SHOW_PVP_FACTION_LOOT_TOAST" ) then
+		local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lessAwesome = ...;
+		if ( typeIdentifier == "item" ) then
+			toastRecive(itemLink, quantity, nil, nil, specID, false, true, nil, lessAwesome);
+		elseif ( typeIdentifier == "money" ) then
+		--	MoneyWonAlertSystem:AddAlert(quantity);
+		elseif ( typeIdentifier == "currency" ) then
+			toastRecive(itemLink, quantity, nil, nil, specID, true, true);
+		end
+	elseif ( event == "SHOW_RATED_PVP_REWARD_TOAST" ) then
+		local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lessAwesome = ...;
+		if ( typeIdentifier == "item" ) then
+			toastRecive(itemLink, quantity, nil, nil, specID, false, false, nil, lessAwesome, nil, nil, true);
+		elseif ( typeIdentifier == "money" ) then
+		--	MoneyWonAlertSystem:AddAlert(quantity);
+		elseif ( typeIdentifier == "currency" ) then
+			toastRecive(itemLink, quantity, nil, nil, specID, true, false, nil, nil, nil, nil, true);
+		end
+    elseif ( event == "SHOW_LOOT_TOAST_UPGRADE") then
+		local itemLink, quantity, specID, sex, baseQuality, isPersonal, lessAwesome = ...;
+		toastRecive(itemLink, quantity, specID, baseQuality, nil, nil, lessAwesome);
+    end
+end
+
 local function loadtoast()
     
     CreateFrame('FRAME','GwToastContainer',UIParent,'GwToastContainer')
     
    
-    
-    hooksecurefunc('LootWonAlertFrame_SetUp',toastRecive)
+        GwToastContainer:RegisterEvent('LOOT_ITEM_ROLL_WON')
+        GwToastContainer:RegisterEvent('SHOW_LOOT_TOAST')
+        GwToastContainer:RegisterEvent('SHOW_PVP_FACTION_LOOT_TOAST')
+        GwToastContainer:RegisterEvent('SHOW_RATED_PVP_REWARD_TOAST')
+        GwToastContainer:SetScript('OnEvent', onEvent)
 end
 
 
