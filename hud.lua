@@ -456,6 +456,8 @@ function update_experiencebar_data(self,event)
     
     local animationSpeed = 15
     
+    _G['GwExperienceFrameBar']:SetStatusBarColor(0.83,0.57,0)
+    
     gw_reputation_vals = nil
     ReputationWatchBar:Hide()
     if level==Nextlevel  then
