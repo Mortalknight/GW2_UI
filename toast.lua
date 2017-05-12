@@ -83,7 +83,20 @@ end
 
 local function toastRecive(itemLink, quantity, rollType, roll, specID, isCurrency, showFactionBG, lootSource, lessAwesome, isUpgraded, isPersonal, showRatedBG)
    
-    local itemName, itemHyperLink, itemRarity, _, _, _, _, _, _, itemTexture = GetItemInfo(itemLink);
+    local itemName, itemHyperLink, itemRarity, itemTexture;
+	if (isCurrency) then
+		itemName, _, itemTexture, _, _, _, _, itemRarity = GetCurrencyInfo(itemLink);
+		if ( lootSource == LOOT_SOURCE_GARRISON_CACHE ) then
+			itemName = format(GARRISON_RESOURCES_LOOT, quantity);
+		else
+			itemName = format(CURRENCY_QUANTITY_TEMPLATE, quantity, itemName);
+		end
+		itemHyperLink = itemLink;
+	else
+		itemName, itemHyperLink, itemRarity, _, _, _, _, _, _, itemTexture = GetItemInfo(itemLink);
+	end
+    
+    
 	local baseQualityColor = ITEM_QUALITY_COLORS[baseQuality];
 	local upgradeQualityColor = ITEM_QUALITY_COLORS[itemRarity];
     
@@ -113,7 +126,7 @@ end
 
 function gwTestToast()
     local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice = GetItemInfo("Treia's Handcrafted Shroud") 
-    toastRecive(nil, link,1,nil, nil,nil, nil,nil,nil,false,true,false,false)
+    toastRecive(link,1,nil, nil,nil, nil,nil,nil,false,true,false,false)
 end
 
 local function onEvent(self,event,...)
@@ -165,6 +178,7 @@ local function loadtoast()
         GwToastContainer:RegisterEvent('SHOW_LOOT_TOAST')
         GwToastContainer:RegisterEvent('SHOW_PVP_FACTION_LOOT_TOAST')
         GwToastContainer:RegisterEvent('SHOW_RATED_PVP_REWARD_TOAST')
+        GwToastContainer:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
         GwToastContainer:SetScript('OnEvent', onEvent)
 end
 
