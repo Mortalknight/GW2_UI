@@ -532,13 +532,13 @@ function gwScanMapforObjective(questID)
     while scanMap and max<5 do
             
         QuestPOIUpdateIcons()
-        local posX = 0
-        local posY = 0
+       
           
-        _, posX, posY, objective = QuestPOIGetIconInfo(questID) 
+        local _, posX, posY, objective = QuestPOIGetIconInfo(questID) 
           
                  
-        if posX~=nil or posX~=0 then
+        if posX~=nil and posX~=0 then
+
            local mapId,currentFloor =  GetCurrentMapAreaID()
             
             SetMapToCurrentZone()

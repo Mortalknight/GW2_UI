@@ -253,8 +253,9 @@ function gwUpdateRadarDirection(self)
       
     local pFaceing = GetPlayerFacing()
     local posX, posY  =GetPlayerMapPosition("player");
-    if posX==nil or posX==0 then
+    if posX==nil or posX==0  or self.data['X']==nil then
         gwRemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
+    
         return
     end
         
