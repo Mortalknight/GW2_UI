@@ -538,7 +538,7 @@ function gwScanMapforObjective(questID)
         _, posX, posY, objective = QuestPOIGetIconInfo(questID) 
           
                  
-        if posX~=nil then
+        if posX~=nil or posX~=0 then
            local mapId,currentFloor =  GetCurrentMapAreaID()
             
             SetMapToCurrentZone()

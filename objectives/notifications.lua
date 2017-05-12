@@ -110,7 +110,11 @@ function gwSetObjectiveNotification()
     end
    
     if data==nil and gwGetSetting('SHOW_QUESTTRACKER_COMPASS') then
-        data = notifications[gwGetCompassPriority()]
+        
+        local index = gwGetCompassPriority()
+        if index~=nil then 
+            data = notifications[index]
+        end
      end
     
     if data==nil then    gwRemoveNotification(currentNotificationKey)  return end
@@ -211,9 +215,9 @@ function gwGetCompassPriority()
     
     local posX, posY  = GetPlayerMapPosition("player");
      
-    if posX==nil then 
-        
-    return end
+    if posX==nil or posX==0 then 
+        return
+    end
     
     
   
