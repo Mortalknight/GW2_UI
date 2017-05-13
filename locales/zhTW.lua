@@ -1,3 +1,4 @@
+-- zhTW localization
 
 local function GWUseThisLocalization()
 -- Create a global variable for the language strings
@@ -248,6 +249,7 @@ GwLocalization["UPDATE_STRING_3"] = "有新版本! 包含|cFFFF0000重大更新|
 end
 
 local Locale = GetLocale()
+if Locale ~= "zhTW" then
 	GWUseThisLocalization()
 end
 
