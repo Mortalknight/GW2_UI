@@ -28,6 +28,12 @@
                         <Anchor point="CENTER" relativePoint="LEFT" x="30" y="-2"></Anchor>
                     </Anchors>
                 </Texture>
+                <Texture parentKey="flare2" name="$parentToastFlare" file="Interface\AddOns\GW2_UI\textures\expflare">
+                    <Size x="120" y= "120"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="LEFT" x="30" y="-2"></Anchor>
+                    </Anchors>
+                </Texture>
             </Layer>  
             <Layer level="BACKGROUND" textureSubLevel="3">
                 <Texture parentKey="icon">

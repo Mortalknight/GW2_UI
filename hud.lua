@@ -1256,7 +1256,7 @@ function gw_leveling_display_rewards()
     local spells = {GetSpecializationSpells(currentSpec)}
     for k,v in pairs(spells) do
         if v~=nil then
-        local tIndex = countTable(GW_LEVELING_REWARDS)+1
+        local tIndex =  #GW_LEVELING_REWARDS + 1
             GW_LEVELING_REWARDS[tIndex] = {}
             GW_LEVELING_REWARDS[tIndex]['type'] = 'SPELL'
             GW_LEVELING_REWARDS[tIndex]['id'] = v
@@ -1270,9 +1270,9 @@ function gw_leveling_display_rewards()
         
         if skillType=='FUTURESPELL' and spellId~=nil then
             local  shouldAdd = true
-            for k,v in pairs(GW_LEVELING_REWARDS) do if v['id']==spellId then shouldAdd=false end end
+            for k,v in pairs(GW_LEVELING_REWARDS) do if v['type']=='SPELL' and v['id']==spellId then shouldAdd=false end end
             if shouldAdd then
-            local tIndex = countTable(GW_LEVELING_REWARDS)+1
+            local tIndex = #GW_LEVELING_REWARDS + 1
            
                 GW_LEVELING_REWARDS[tIndex] = {}
                 GW_LEVELING_REWARDS[tIndex]['type'] = 'SPELL'

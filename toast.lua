@@ -2,6 +2,7 @@ local toastList = {}
 local toastIndex = 0
 local lastShown
 local delayTime = 10
+local talents = 0;
 
 
 function gwToastAnimateFlare(self,delta)
@@ -30,6 +31,7 @@ function gwToastAnimateFlare(self,delta)
         end
         local rot =  self.flare.rot  + (0.5 * delta) 
         self.flare:SetRotation(rot )
+        self.flare2:SetRotation(-rot )
         self.flare.rot = rot
 
 end
@@ -42,7 +44,7 @@ function gwToastOnShowAnimation(self)
     self.flare.doingAnimation = true
     addToAnimation(self.flare:GetName(),0,1,GetTime(),0.5,function(prog)
        
-        local l = lerp(250,120,math.sin((prog) * math.pi * 0.5) )
+        local l = lerp(400,120,math.sin((prog) * math.pi * 0.5) )
         self.flare:SetSize(l,l)
        
           
@@ -71,7 +73,7 @@ local function getBloack ()
         f:SetPoint('BOTTOMRIGHT',GwToastContainer,'BOTTOMRIGHT',0,0)
     else
         f:ClearAllPoints()
-        f:SetPoint('BOTTOMRIGHT',_G[lastShown]  ,'TOPRIGHT',0,5) 
+        f:SetPoint('BOTTOMRIGHT',_G[lastShown]  ,'TOPRIGHT',0,10) 
     end
  
     
@@ -123,10 +125,48 @@ local function toastRecive(itemLink, quantity, rollType, roll, specID, isCurrenc
     
 end
 
+local function newSpellLearned(spellID)
+    
+    local frame = getBloack()
+    
+    local  name, rank, icon = GetSpellInfo(spellID)
+    
+    frame.icon:SetTexture(icon)
+    
+    frame.title:SetText(name)
+    frame.sub:SetText('Unlocked')
+    
+    frame.IconBorder:SetVertexColor(0,0,0)
+    
+end
 
-function gwTestToast()
-    local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice = GetItemInfo("Treia's Handcrafted Shroud") 
-    toastRecive(link,1,nil, nil,nil, nil,nil,nil,false,true,false,false)
+local function newTalentPoint()
+    
+    local frame = getBloack()
+    
+    local  name, rank, icon = GetSpellInfo(spellID)
+    
+    frame.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talent-icon')
+    
+    frame.title:SetText('Talent Point')
+    frame.sub:SetText('A new talent point is avalible')
+    
+    frame.IconBorder:SetVertexColor(0,0,0,0)
+    
+end
+
+local function levelUp(level)
+    
+    local frame = getBloack()
+    
+    
+    frame.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\levelreward-icon')
+    
+    frame.title:SetText('Level Up!')
+    frame.sub:SetText('You reached level '..level)
+    
+    frame.IconBorder:SetVertexColor(0,0,0,0)
+    
 end
 
 local function onEvent(self,event,...)
@@ -166,6 +206,17 @@ local function onEvent(self,event,...)
     elseif ( event == "SHOW_LOOT_TOAST_UPGRADE") then
 		local itemLink, quantity, specID, sex, baseQuality, isPersonal, lessAwesome = ...;
 		toastRecive(itemLink, quantity, specID, baseQuality, nil, nil, lessAwesome);
+    
+    elseif ( event == "LEARNED_SPELL_IN_TAB") then
+		local spellID , tabId = ...;
+		  newSpellLearned(spellID)  
+    elseif ( event == "PLAYER_LEVEL_UP") then
+  
+        local level, hp, mp, talentPoints, strength, agility, stamina, intellect, spirit = ...
+        levelUp(level)
+        if talentPoints~=nil and talentPoints>0 then
+            newTalentPoint()
+        end
     end
 end
 
@@ -179,7 +230,23 @@ local function loadtoast()
         GwToastContainer:RegisterEvent('SHOW_PVP_FACTION_LOOT_TOAST')
         GwToastContainer:RegisterEvent('SHOW_RATED_PVP_REWARD_TOAST')
         GwToastContainer:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
+        GwToastContainer:RegisterEvent('LEARNED_SPELL_IN_TAB')
+        GwToastContainer:RegisterEvent('PLAYER_LEVEL_UP')
+  
         GwToastContainer:SetScript('OnEvent', onEvent)
+    
+        talents = GetNumUnspentTalents() 
+    
+   
+end
+
+
+function gwTestToast()
+    onEvent(GwToastContainer,'PLAYER_LEVEL_UP',1,2,2,1)
+end
+
+function gwTestToastSpell()
+    newSpellLearned(48181)  
 end
 
 
