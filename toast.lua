@@ -35,6 +35,34 @@ function gwToastAnimateFlare(self,delta)
         self.flare.rot = rot
 
 end
+function gw_animate_levelUp_wiggle(self)
+    if self.animation==nil then self.animation = 0 end
+    if self.doingAnimation == true then return end
+    self.doingAnimation = true
+    addToAnimation(self:GetName()..'wig',0,1,GetTime(),2,function(prog)
+       
+       
+        
+       
+        
+        if prog<0.25 then
+            self.icon:SetRotation( lerp(0,-0.25,math.sin((prog/0.25) * math.pi * 0.5) ))
+           
+        end
+        if prog>0.25 and prog<0.75 then
+             self.icon:SetRotation(lerp(-0.25,0.25, math.sin(((prog - 0.25)/0.5) * math.pi * 0.5)  ))
+           
+        end
+        if prog>0.75 then
+            self.icon:SetRotation(lerp(0.25,0, math.sin(((prog - 0.75)/0.25) * math.pi * 0.5)  ))
+        end
+            
+        if prog>0.25 then
+        end
+          
+    end,nil,function() self.doingAnimation = false end)
+    
+end
 function gwToastOnShowAnimation(self)
     
     self.removeTime = GetTime() + delayTime
@@ -53,18 +81,23 @@ function gwToastOnShowAnimation(self)
  
 end
 
-local function getBloack ()
+local function getBloack (t)
    
     local f
-    for k,v in pairs(toastList) do
+    local template = 'GwToast'
+    if t~=nil then template = t end
+    if toastList[template]==nil then
+        toastList[template] = {}
+    end
+    for k,v in pairs(toastList[template]) do
         if not v:IsShown() then
             f = v
             break
         end
     end
     if f==nil then
-       f= CreateFrame('BUTTON','GwToast'..toastIndex,GwToastContainer,'GwToast')
-        toastList[toastIndex] = v
+       f= CreateFrame('BUTTON','GwToast'..toastIndex,GwToastContainer,template)
+        toastList[template][toastIndex] = v
         toastIndex = toastIndex + 1
     end
     
@@ -157,10 +190,10 @@ end
 
 local function levelUp(level)
     
-    local frame = getBloack()
+    local frame = getBloack('GwToastLevelUp')
     
     
-    frame.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\levelreward-icon')
+   
     
     frame.title:SetText('Level Up!')
     frame.sub:SetText('You reached level '..level)
