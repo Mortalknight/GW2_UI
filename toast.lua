@@ -3,6 +3,7 @@ local toastIndex = 0
 local lastShown
 local delayTime = 10
 local talents = 0;
+local ignoreNewSpells = 0
 
 
 function gwToastAnimateFlare(self,delta)
@@ -240,7 +241,7 @@ local function onEvent(self,event,...)
 		local itemLink, quantity, specID, sex, baseQuality, isPersonal, lessAwesome = ...;
 		toastRecive(itemLink, quantity, specID, baseQuality, nil, nil, lessAwesome);
     
-    elseif ( event == "LEARNED_SPELL_IN_TAB") then
+    elseif ( event == "LEARNED_SPELL_IN_TAB" && ignoreNewSpells<GetTime()) then
 		local spellID , tabId = ...;
 		  newSpellLearned(spellID)  
     elseif ( event == "PLAYER_LEVEL_UP") then
@@ -250,6 +251,8 @@ local function onEvent(self,event,...)
         if talentPoints~=nil and talentPoints>0 then
             newTalentPoint()
         end
+      elseif ( event == "PLAYER_SPECIALIZATION_CHANGED") then
+        ignoreNewSpells = GetTime() + 1
     end
 end
 
@@ -265,6 +268,7 @@ local function loadtoast()
         GwToastContainer:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
         GwToastContainer:RegisterEvent('LEARNED_SPELL_IN_TAB')
         GwToastContainer:RegisterEvent('PLAYER_LEVEL_UP')
+        GwToastContainer:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
   
         GwToastContainer:SetScript('OnEvent', onEvent)
     
