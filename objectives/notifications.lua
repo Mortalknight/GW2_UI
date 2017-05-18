@@ -51,7 +51,7 @@ end
 function gwRemoveTrackerNotification (notificationID)
     if data==nil or notificationID==nil then return end
     notifications[data['ID']] = nil;
-    gwSetObjectiveNotification()
+ --   gwSetObjectiveNotification()
         
 end
 function gwRemoveTrackerNotificationOfType(doType)
@@ -61,7 +61,7 @@ function gwRemoveTrackerNotificationOfType(doType)
              notifications[k] = nil
         end
     end
-    gwSetObjectiveNotification()
+  --  gwSetObjectiveNotification()
         
 end
 
@@ -87,6 +87,7 @@ function gwRemoveNotification(key)
                 gwQuestTrackerLayoutChanged()
             end,true)
     end
+ 
     
 end
 function gwSetObjectiveNotification()
@@ -117,8 +118,8 @@ function gwSetObjectiveNotification()
         end
      end
     
-    if data==nil then    gwRemoveNotification(currentNotificationKey)  return end
-    
+    if data==nil then  gwRemoveNotification(currentNotificationKey)  return end
+
     local key =  data['KEY']
     local title = data['TITLE']
     local desc = data['DESC']
@@ -187,11 +188,13 @@ function gwSetObjectiveNotification()
         dur = 0
     end
     
-    if not GwObjectivesNotification:IsShown() or (GwObjectivesNotification.animating and GwObjectivesNotification.animatingState == false) then
+    if not GwObjectivesNotification:IsShown() then
+        
     GwObjectivesNotification:Show()
-    GwObjectivesNotification.animating = true;
-    GwObjectivesNotification.animatingState = true;
-        addToAnimation('notificationToggle', 1,70,GetTime(),dur,function(step) 
+
+        
+    GwStopAnimation(notificationToggle)
+    addToAnimation('notificationToggle', 1,70,GetTime(),dur,function(step) 
        
                 GwObjectivesNotification:SetHeight(step)
        end,nil, function()
@@ -232,7 +235,7 @@ function gwGetCompassPriority()
             local dy = v['Y'] - posY
             local dist = sqrt(dx * dx + dy * dy)
            
-            if dist<closest and dist<0.3 then
+            if dist<closest then
                 closest=dist
                 closestIndex = k
 

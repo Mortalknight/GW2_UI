@@ -526,8 +526,9 @@ function gwScanMapforObjective(questID)
     local maxZoom = false
     local foundSomethingOnThisMap = false
 
-   SetCVar("questPOI", 1)
+    SetCVar("questPOI", 1)
     local max = 0
+    local PposX, PposY  = GetPlayerMapPosition("player");
     
     while scanMap and max<5 do
             
@@ -537,7 +538,7 @@ function gwScanMapforObjective(questID)
         local _, posX, posY, objective = QuestPOIGetIconInfo(questID) 
           
                  
-        if posX~=nil and posX~=0 then
+        if posX~=nil and posX~=0 and PposX~=nil and PposX~=0 then
 
            local mapId,currentFloor =  GetCurrentMapAreaID()
             
@@ -612,8 +613,11 @@ local function playerDeadState (self,event)
         local compassData = {}    
             
         local x, y = GetCorpseMapPosition()
-     
-           compassData['TYPE']= 'DEAD'
+        local PposX, PposY  = GetPlayerMapPosition("player");
+    
+        if PposX==nil or PposX==0 then return end    
+    
+        compassData['TYPE']= 'DEAD'
            compassData['TITLE']= GwLocalization['TRACKER_RETRIVE_CORPSE']
            compassData['ID']='playerDead'
            
@@ -625,7 +629,7 @@ local function playerDeadState (self,event)
             compassData['MAPID'] = ''
             compassData['DESC'] = ''
     
-            gwAddTrackerNotification(compassData) 
+        gwAddTrackerNotification(compassData) 
             
   
 end
@@ -753,6 +757,14 @@ function gw_load_questTracker()
     
     
     playerDeadState(GwObjectivesNotification,'')
+    
+    GwQuestTracker.trot = 0
+    GwQuestTracker:SetScript('OnUpdate', function(self)
+            if  GwQuestTracker.trot < GetTime() then
+                 GwQuestTracker.trot = GetTime() + 1
+                gwSetObjectiveNotification() 
+            end
+    end)
 
   
 end
