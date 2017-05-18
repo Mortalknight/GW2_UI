@@ -659,6 +659,12 @@ function addToAnimation(name,from,to,start,duration,method,easeing,onCompleteCal
    
 end
 
+function GwStopAnimation(k)
+    if animations[k]~=nil then
+        animations[k]=nil
+    end
+end
+
 local l = CreateFrame("Frame",nil,UIParent)
 
 l:SetScript('OnUpdate',function() 
