@@ -1,4 +1,5 @@
 local toastList = {}
+local toastQueue = {}
 local toastIndex = 0
 local lastShown
 local delayTime = 10
@@ -80,6 +81,31 @@ function gwToastOnShowAnimation(self)
     end,nil,function() self.flare.doingAnimation = false end)
     
  
+end
+
+function toastQueueAdd(data)
+    toastQueue[#toastQueue + 1] = data 
+    GwToastContainer:SetScript('OnUpdate',function()
+            
+            if GwToastContainer.DisplayEventTimer~=nil and GwToastContainer.DisplayEventTimer>GetTime() then
+                return
+            end
+            GwToastContainer.DisplayEventTimer = GetTime() + 0.1
+            
+            local f = true
+            for k,v in pairs(toastQueue) do
+                if v~=nil and v['method']~=nil then
+                    v['method']()
+                    toastQueue[k] = nil
+                    f = false
+                    return
+                end
+            end
+            if f==true then
+                GwToastContainer:SetScript('OnUpdate',nil)
+            end
+            
+    end);
 end
 
 local function getBloack (t)
@@ -205,55 +231,71 @@ end
 
 local function onEvent(self,event,...)
     
+    local newEvent = {}
+    newEvent['event'] = event
+    newEvent['method'] = function() end
     if ( event == "LOOT_ITEM_ROLL_WON" ) then
 		local itemLink, quantity, rollType, roll, isUpgraded = ...;
-		toastRecive(itemLink, quantity, rollType, roll, nil, nil, nil, nil, nil, isUpgraded);
+          newEvent['method'] = function() toastRecive(itemLink, quantity, rollType, roll, nil, nil, nil, nil, nil, isUpgraded);
+            end
     elseif ( event == "SHOW_LOOT_TOAST" ) then
 		local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lootSource, lessAwesome, isUpgraded = ...;
 		if ( typeIdentifier == "item" ) then
-			toastRecive(itemLink, quantity, nil, nil, specID, nil, nil, nil, lessAwesome, isUpgraded, isPersonal);
+			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, nil, nil, nil, lessAwesome, isUpgraded, isPersonal);
+                end
             
 		elseif ( typeIdentifier == "money" ) then
 		  
 		elseif ( isPersonal and (typeIdentifier == "currency") ) then
 			-- only toast currency for personal loot
-			toastRecive(itemLink, quantity, nil, nil, specID, true, false, lootSource);
+			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, true, false, lootSource);
+                end
 		end
     	elseif ( event == "SHOW_PVP_FACTION_LOOT_TOAST" ) then
 		local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lessAwesome = ...;
 		if ( typeIdentifier == "item" ) then
-			toastRecive(itemLink, quantity, nil, nil, specID, false, true, nil, lessAwesome);
+			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, false, true, nil, lessAwesome);
+                end
 		elseif ( typeIdentifier == "money" ) then
 		--	MoneyWonAlertSystem:AddAlert(quantity);
 		elseif ( typeIdentifier == "currency" ) then
-			toastRecive(itemLink, quantity, nil, nil, specID, true, true);
+			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, true, true);
+                end
 		end
 	elseif ( event == "SHOW_RATED_PVP_REWARD_TOAST" ) then
 		local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lessAwesome = ...;
 		if ( typeIdentifier == "item" ) then
-			toastRecive(itemLink, quantity, nil, nil, specID, false, false, nil, lessAwesome, nil, nil, true);
+			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, false, false, nil, lessAwesome, nil, nil, true);
+                end
 		elseif ( typeIdentifier == "money" ) then
 		--	MoneyWonAlertSystem:AddAlert(quantity);
 		elseif ( typeIdentifier == "currency" ) then
-			toastRecive(itemLink, quantity, nil, nil, specID, true, false, nil, nil, nil, nil, true);
+			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, true, false, nil, nil, nil, nil, true);
+                end
 		end
     elseif ( event == "SHOW_LOOT_TOAST_UPGRADE") then
 		local itemLink, quantity, specID, sex, baseQuality, isPersonal, lessAwesome = ...;
-		toastRecive(itemLink, quantity, specID, baseQuality, nil, nil, lessAwesome);
+		  newEvent['method'] = function() toastRecive(itemLink, quantity, specID, baseQuality, nil, nil, lessAwesome);
+            end
     
-    elseif ( event == "LEARNED_SPELL_IN_TAB" && ignoreNewSpells<GetTime()) then
+    elseif ( event == "LEARNED_SPELL_IN_TAB" and ignoreNewSpells<GetTime()) then
 		local spellID , tabId = ...;
-		  newSpellLearned(spellID)  
+		   newEvent['method'] = function()  newSpellLearned(spellID)  end
     elseif ( event == "PLAYER_LEVEL_UP") then
   
         local level, hp, mp, talentPoints, strength, agility, stamina, intellect, spirit = ...
         levelUp(level)
         if talentPoints~=nil and talentPoints>0 then
-            newTalentPoint()
+              newEvent['method'] = function() newTalentPoint() end
         end
       elseif ( event == "PLAYER_SPECIALIZATION_CHANGED") then
-        ignoreNewSpells = GetTime() + 1
+        for k,v in pairs(toastQueue) do
+            if v~=nil and v['event']=='LEARNED_SPELL_IN_TAB' then
+                toastQueue[k] = nil
+            end
+        end
     end
+    toastQueueAdd(newEvent)
 end
 
 local function loadtoast()
