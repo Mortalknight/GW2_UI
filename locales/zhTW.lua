@@ -4,7 +4,15 @@ local function GWUseThisLocalization()
 -- Create a global variable for the language strings
 GwLocalization = {}
 
--- Strings
+--Fonts
+GwLocalization['FONT_NORMAL'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf' 
+GwLocalization['FONT_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf' 
+GwLocalization['FONT_NARROW'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
+GwLocalization['FONT_NARROW_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
+GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
+GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
+
+--Strings
 GwLocalization["ACTION_BAR_FADE"] = "淡出下方快捷列"
 GwLocalization["ACTION_BAR_FADE_DESC"] = "非戰鬥中隱藏額外快捷列。"
 GwLocalization["ACTION_BARS"] = "快捷列"
@@ -245,11 +253,9 @@ GwLocalization["TRACKER_TIME_REMAINING"] = "剩餘時間"
 GwLocalization["UPDATE_STRING_1"] = "有新版本! 已有更新可供下載。"
 GwLocalization["UPDATE_STRING_2"] = "有新版本! 包含新功能的更新可供下載。"
 GwLocalization["UPDATE_STRING_3"] = "有新版本! 包含|cFFFF0000重大更新|r可供下載。\\n強烈建議更新插件。"
-
 end
 
-local Locale = GetLocale()
-if Locale ~= "zhTW" then
+if GetLocale() == "zhTW" then
 	GWUseThisLocalization()
 end
 

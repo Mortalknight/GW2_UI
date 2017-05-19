@@ -22,12 +22,12 @@ end
 
 function gw_register_fonts() 
 
-	local normal ='Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
-	local bold ='Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
-	local narrow = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
-	local narrowBold = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
-	local light = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf'
-	local damage = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
+	local normal = GwLocalization['FONT_NORMAL']
+	local bold = GwLocalization['FONT_BOLD']
+	local narrow = GwLocalization['FONT_NARROW']
+	local narrowBold = GwLocalization['FONT_NARROW_BOLD']
+	local light = GwLocalization['FONT_LIGHT']
+	local damage = GwLocalization['FONT_DAMAGE']
 
 	-- game engine fonts
 	UNIT_NAME_FONT = damage 
