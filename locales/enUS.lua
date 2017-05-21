@@ -1,6 +1,6 @@
 -- enUS localization
 
-local function GwUseThisLocalization()
+local function GWUseThisLocalization()
 -- Create a global variable for the language strings
 GwLocalization = {}
 
