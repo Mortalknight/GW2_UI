@@ -1,6 +1,7 @@
 local intervalCd = 0
 local bubbles = {}
 local CHAT_BUBBLES_ACTIVE = {}
+local safeToChange = false
 
 function update_gwChat_bubbles(msg)
 
@@ -86,10 +87,26 @@ function gw_register_chatbubbles()
     f:RegisterEvent('CHAT_MSG_MONSTER_SAY')
     f:RegisterEvent('CHAT_MSG_MONSTER_WHISPER')
     f:RegisterEvent('CHAT_MSG_MONSTER_YELL')
+    f:RegisterEvent('UPDATE_INSTANCE_INFO')
+    f:RegisterEvent('ZONE_CHANGED')
     
     
 end
 function gw_chatbubbles_onevent(self,event,msg,arg2)
+    
+    if event=='UPDATE_INSTANCE_INFO' or event=='ZONE_CHANGED' then
+        local  name, typeOf, difficulty, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, mapID, instanceGroupSize = GetInstanceInfo()
+        
+        if typeOf==nil or typeOf=='scenario' or typeOf=='none' then
+           safeToChange = true 
+        else
+            safeToChange = false
+        end
+            
+        return  
+    end
+    
+    if safeToChange==false then return end
     
     local i = countTable(CHAT_BUBBLES_ACTIVE)
     CHAT_BUBBLES_ACTIVE[i] ={}
@@ -99,6 +116,8 @@ function gw_chatbubbles_onevent(self,event,msg,arg2)
     
 end
 function gw_chatbubbles_onupdate()
+
+if safeToChange==false then return end
     
 local wipe = true
   for k,v in pairs(CHAT_BUBBLES_ACTIVE) do
