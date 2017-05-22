@@ -44,7 +44,7 @@ function gwAddTrackerNotification (data)
     
     notifications[data['ID']] = data
     
-    gwSetObjectiveNotification()
+  --  gwSetObjectiveNotification()
         
 end
 
@@ -70,26 +70,35 @@ end
 function gwRemoveNotification(key)
 
         currentNotificationKey=''
-    
-        
-
-     
-        GwObjectivesNotification.animatingState = false;
-        GwObjectivesNotification.animating = true;
-        if GwObjectivesNotification:IsShown() then
-        addToAnimation('notificationToggle', 70,1,GetTime(),1,function(step) 
-                  GwObjectivesNotification:SetHeight(step)
-              
-        end,nil, function()
-                GwObjectivesNotification.animating = false;
-                GwObjectivesNotification:Hide() 
-                    
-                gwQuestTrackerLayoutChanged()
-            end,true)
-    end
- 
+        GwObjectivesNotification.shouldDisplay = false
     
 end
+
+
+function gwNotificationStateChanged(show)
+
+        if show then
+            GwObjectivesNotification:Show()
+        end
+        
+       addToAnimation('notificationToggle', 0,70,GetTime(),0.2,function(step) 
+       
+                if show==false then
+                   step = 70 - step
+                end
+            
+                GwObjectivesNotification:SetAlpha(step/70)
+                GwObjectivesNotification:SetHeight(step)
+       end,nil, function()
+                if not show then
+                    GwObjectivesNotification:Hide()
+                end
+                GwObjectivesNotification.animating = false;
+                gwQuestTrackerLayoutChanged()
+            
+        end,true) 
+end
+
 function gwSetObjectiveNotification()
     
     local data 
@@ -160,7 +169,7 @@ function gwSetObjectiveNotification()
         
          GwObjectivesNotification.compass:SetScript('OnUpdate', function(self)
                 if updateLimit<GetTime() then
-                    gwSetObjectiveNotification()
+                 --   gwSetObjectiveNotification()
                     updateLimit  = GetTime() + 5
                 end
                 gwUpdateRadarDirection(self)
@@ -177,33 +186,12 @@ function gwSetObjectiveNotification()
     GwObjectivesNotification.desc:SetText(desc)
     
     if desc==nil or desc=='' then
-          GwObjectivesNotification.title:SetPoint('TOP',GwObjectivesNotification, 'TOP' ,0 ,-30) 
+          GwObjectivesNotification.title:SetPoint('BOTTOM',GwObjectivesNotification, 'BOTTOM' ,0 ,30) 
     else
-          GwObjectivesNotification.title:SetPoint('TOP',GwObjectivesNotification, 'TOP' ,0 ,-15) 
+          GwObjectivesNotification.title:SetPoint('BOTTOM',GwObjectivesNotification, 'BOTTOM' ,0 ,15) 
     end
-    
-    
-    local dur = 1
-    if  GwObjectivesNotification.animatin==true then
-        dur = 0
-    end
-    
-    if not GwObjectivesNotification:IsShown() then
-        
-    GwObjectivesNotification:Show()
+    GwObjectivesNotification.shouldDisplay = true
 
-        
-    GwStopAnimation(notificationToggle)
-    addToAnimation('notificationToggle', 1,70,GetTime(),dur,function(step) 
-       
-                GwObjectivesNotification:SetHeight(step)
-       end,nil, function()
-                GwObjectivesNotification.animating = false;
-                gwQuestTrackerLayoutChanged()
-            
-        end,true)
-    
-    end
   
     
 end

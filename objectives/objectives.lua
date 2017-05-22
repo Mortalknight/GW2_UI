@@ -757,12 +757,25 @@ function gw_load_questTracker()
     
     
     playerDeadState(GwObjectivesNotification,'')
-    
-    GwQuestTracker.trot = 0
+    GwObjectivesNotification.shouldDisplay = false
+    GwQuestTracker.trot = GetTime() + 2
     GwQuestTracker:SetScript('OnUpdate', function(self)
             if  GwQuestTracker.trot < GetTime() then
-                 GwQuestTracker.trot = GetTime() + 1
+                
+                local state = GwObjectivesNotification.shouldDisplay
+               
+                
+                GwQuestTracker.trot = GetTime() + 1
                 gwSetObjectiveNotification() 
+           
+                
+                if state~=GwObjectivesNotification.shouldDisplay then
+                    state = GwObjectivesNotification.shouldDisplay
+                    gwNotificationStateChanged(state) 
+                end
+                
+                           
+                
             end
     end)
 
