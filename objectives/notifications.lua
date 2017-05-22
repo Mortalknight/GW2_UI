@@ -107,7 +107,7 @@ function gwSetObjectiveNotification()
     for k,v in pairs( notifications) do
         
 
-        if not notifications['COMPASS'] and notifications[k]~=nil then
+        if not notifications[k]['COMPASS'] and notifications[k]~=nil then
         
             if data~=nil then
                 if prioritys(data['KEY'],notifications[k]['KEY']) then
@@ -118,7 +118,7 @@ function gwSetObjectiveNotification()
             end
         end
     end
-   
+  
     if data==nil and gwGetSetting('SHOW_QUESTTRACKER_COMPASS') then
         
         local index = gwGetCompassPriority()

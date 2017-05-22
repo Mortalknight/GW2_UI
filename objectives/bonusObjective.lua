@@ -112,6 +112,7 @@ local function updateBonusObjective(self,event)
             
             if savedQuests[questID]==nil then
                 gwNewQuestAnimation(GwBonusObjectiveBlock)
+               PlaySound("UI_WorldQuest_Start");
                 savedQuests[questID] = true
             end
             
