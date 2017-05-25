@@ -24,6 +24,7 @@ frames/unitframes.xml
 frames/character.xml
 frames/spellbook.xml
 frames/toast.xml
+frames/battlegrounds.xml
 
 
 GW2_ui.lua
@@ -64,6 +65,9 @@ character/character.lua
 character/spellbook.lua
 
 character/windowManager.lua
+
+
+battlegrounds/battlegrounds.lua
 
 locales/deDE.lua
 locales/enUS.lua

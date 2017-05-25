@@ -217,6 +217,9 @@ GW_DEFAULT['USE_CHARACTER_WINDOW'] = true
 GW_DEFAULT['USE_SPELLBOOK_WINDOW'] = true
 
 
+GW_DEFAULT['USE_BATTLEGROUND_HUD'] = true
+
+
 GW_DEFAULT['ACTIVE_PROFILE'] = nil
 
 GW_DEFAULT['WARNIG_MESSAGE'] ={}
@@ -816,6 +819,9 @@ l:SetScript('OnEvent',function(self,event,name)
         if gwGetSetting('BAGS_ENABLED') then
             gw_create_bgframe()
             gw_create_bankframe()
+        end 
+         if gwGetSetting('USE_BATTLEGROUND_HUD') then
+             gwLoadBattlegrounds()
         end 
         
         
