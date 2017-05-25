@@ -70,4 +70,6 @@ character/windowManager.lua
 battlegrounds/battlegrounds.lua
 
 locales/deDE.lua
+locales/koKR.lua
+locales/zhTW.lua
 locales/enUS.lua
