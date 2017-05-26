@@ -73,8 +73,8 @@
         <Size x="32" y="32"></Size>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="3">
-                <Texture parentKey="background"  file="Interface\AddOns\GW2_UI\textures\battleground\base-background">
-                    <Size x="26" y="26"></Size>
+                <Texture parentKey="IconBackground"  file="Interface\AddOns\GW2_UI\textures\battleground\base-background">
+                    <Size x="32" y="32"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
@@ -82,7 +82,7 @@
             </Layer>  
             <Layer level="BACKGROUND" textureSubLevel="4">
                 <Texture parentKey="icon"  file="Interface\Minimap\POIIcons">
-                    <Size x="20" y="20"></Size>
+                    <Size x="32" y="32"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
