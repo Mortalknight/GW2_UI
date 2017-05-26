@@ -57,7 +57,7 @@ local function AB_onEvent(self,event,...)
         
         local uiType, state, hidden, text2, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3 = GetWorldStateUIInfo(2);
         
-
+        if text2==nil or text==nil then return end
        
     
         local current, max = getPointsNum(text)
@@ -91,7 +91,7 @@ local function pvpHud_onEvent(self,event)
     local  name, typeOf, difficulty, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, mapID, instanceGroupSize = GetInstanceInfo()
    
     if bgs[mapID]~=nil then
-         print(mapID)
+  
         GwBattleGroundScores:SetScript('OnEvent',bgs[mapID])
   
         
