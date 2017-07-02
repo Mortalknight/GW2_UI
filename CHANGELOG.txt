@@ -1,9 +1,21 @@
 NEW
 
-Addes Paragon Reputation
- 
-BUGFIXES
- 
-Equip a Outfit in Character windows
+    Compass has been added
+    
+    Can be disabled in settings window
+    
+    Option to hide keybinds has been added.
+    
+    zhTW localization has been added
 
-Create a new Outfit in Character window
+    koKR localization has been added
+
+BUGFIXES
+
+    Experience bar should now use the correct color
+
+    Fixed a bug where swapping targets in combat would cause an error
+
+    Chat-bubbles should now be disabled in instances
+
+    Performance Optimization
