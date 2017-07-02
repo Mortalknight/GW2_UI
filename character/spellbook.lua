@@ -14,7 +14,7 @@ function gwSpellBookSpell_onDrag(self)
 end
 
 
-local function updateSpellboo(tab)
+local function updateSpellbook(tab)
     
     local currentSpec = GetSpecialization() 
     local spells = {GetSpecializationSpells(currentSpec)}
@@ -29,10 +29,16 @@ local function updateSpellboo(tab)
     for i=from,to do
     
         local skillType, spellId =GetSpellBookItemInfo(i,'spell')
-        
-        if  spellId~=nil then
-           local  name, rank, icon = GetSpellInfo(spellId)
+
+        if  spellId~=nil  then
+            local name, rank, icon, castingTime, minRange, maxRange, spellID =  GetSpellInfo(spellId) 
+
             _G['GwSpellbookButton'..i].icon:SetTexture(icon)
+            _G['GwSpellbookButton'..i].title:SetText(name)
+            _G['GwSpellbookButton'..i].sub:SetText(rank)
+            
+            local height =  _G['GwSpellbookButton'..i].title:GetStringHeight() 
+            _G['GwSpellbookButton'..i].title:SetHeight(height)
         end
       
         
@@ -54,7 +60,7 @@ function gw_register_spellbook_window()
     local y = 0
     for i=1,21 do
        local f = CreateFrame('Frame', 'GwSpellbookButton'..i,GwSpellbook, 'GwSpellbookButton' ) 
-        f:SetPoint('TOPLEFT',GwSpellbook,'TOPLEFT',10 + (x*175), -10 + (y * -70) )
+        f:SetPoint('TOPLEFT',GwSpellbook,'TOPLEFT',10 + (x*200), -10 + (y * -70) )
         
         x=x+1
         if x>2 then
@@ -64,8 +70,8 @@ function gw_register_spellbook_window()
         
     end
     
- --   updateSpellboo()
-    
+    GwSpellbook:SetScript('OnShow',updateSpellbook)
+  --  updateSpellbook()    
     
 end
 

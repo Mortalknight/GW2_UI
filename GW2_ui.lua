@@ -821,7 +821,7 @@ l:SetScript('OnEvent',function(self,event,name)
             gw_create_bankframe()
         end 
          if gwGetSetting('USE_BATTLEGROUND_HUD') then
-             gwLoadBattlegrounds()
+             --gwLoadBattlegrounds()
         end 
         
         

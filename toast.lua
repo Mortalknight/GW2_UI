@@ -229,6 +229,16 @@ local function levelUp(level)
     
 end
 
+local function goldWon(amount)
+    
+    local frame = getBloack()
+    
+    frame.title:SetText('Gold')
+   	frame.sub:SetText(GetMoneyString(amount));
+    
+	PlaySoundKitID(31578);	--UI_EpicLoot_Toast 
+end
+
 local function onEvent(self,event,...)
     
     local newEvent = {}
@@ -257,7 +267,8 @@ local function onEvent(self,event,...)
 			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, false, true, nil, lessAwesome);
                 end
 		elseif ( typeIdentifier == "money" ) then
-		--	MoneyWonAlertSystem:AddAlert(quantity);
+
+             newEvent['method'] = function() goldWon(quantity) end
 		elseif ( typeIdentifier == "currency" ) then
 			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, true, true);
                 end
@@ -268,7 +279,7 @@ local function onEvent(self,event,...)
 			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, false, false, nil, lessAwesome, nil, nil, true);
                 end
 		elseif ( typeIdentifier == "money" ) then
-		--	MoneyWonAlertSystem:AddAlert(quantity);
+            newEvent['method'] = function() goldWon(quantity) end
 		elseif ( typeIdentifier == "currency" ) then
 			  newEvent['method'] = function() toastRecive(itemLink, quantity, nil, nil, specID, true, false, nil, nil, nil, nil, true);
                 end
@@ -328,5 +339,3 @@ function gwTestToastSpell()
     newSpellLearned(48181)  
 end
 
-
-loadtoast()
