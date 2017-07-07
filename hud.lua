@@ -474,10 +474,11 @@ function update_experiencebar_data(self,event)
 				if C_Reputation.IsFactionParagon(factionID) then
 					local currentValue, maxValueParagon  = C_Reputation.GetFactionParagonInfo(factionID)
 					
-					
-					repeat
-						currentValue = currentValue - 10000
-					until( currentValue < 10000 )
+					if currentValue > 10000 then
+						repeat
+							currentValue = currentValue - 10000
+						until( currentValue < 10000 )
+					end
 					valPrec = (currentValue - 0) / (maxValueParagon - 0)
 					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((currentValue - 0)).." / "..comma_value((maxValueParagon - 0))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
 					
