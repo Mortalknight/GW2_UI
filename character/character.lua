@@ -1161,11 +1161,18 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
 				local currentValue, maxValueParagon, _, hasReward  = C_Reputation.GetFactionParagonInfo(factionID)
 				if hasReward then 
 					--frame.paragon:Hide()
+					if currentValue > 10000 then 
+						repeat
+							currentValue = currentValue - 10000
+						until( currentValue < 10000 )
+					end
 				else
 					--frame.paragon:Hide()
-					repeat
-						currentValue = currentValue - 10000
-					until( currentValue < 10000 )
+					if currentValue > 10000 then 
+						repeat
+							currentValue = currentValue - 10000
+						until( currentValue < 10000 )
+					end
 				end
 				
 				
