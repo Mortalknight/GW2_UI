@@ -256,7 +256,7 @@ GwLocalization['UPDATE_STRING_3'] = 'An |cFFFF0000major|r update is available.\n
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" or Local ~= "zhTW" or Local ~= "koKR" then
+if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" then
 	GWUseThisLocalization()
 end
 
