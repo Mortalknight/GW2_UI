@@ -851,7 +851,7 @@
         </Scripts>
       
     </Button>
-    <Button name="GwStanceBarButton" parent="UIParent" virtual="true">
+    <Button name="GwStanceBarButton"  inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="40" y="40"></Size>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\stance-icon"></NormalTexture>
         <PushedTexture  file="Interface\AddOns\GW2_UI\textures\stance-icon"></PushedTexture >

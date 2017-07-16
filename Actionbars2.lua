@@ -507,7 +507,8 @@ function gw_setStanceBar()
     end
     
    
-    CreateFrame('Button', 'GwStanceBarButton',UIParent,'GwStanceBarButton')
+    CreateFrame('Button','GwStanceBarButton',UIParent,'GwStanceBarButton')
+    
     GwStanceBarButton:SetPoint('TOPRIGHT',ActionButton1,'TOPLEFT',-5,2)
     CreateFrame('Frame', 'GwStanceBarContainer',UIParent,nil)
     GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
@@ -549,15 +550,17 @@ function gw_setStanceBar()
     end
  
         
-    GwStanceBarContainer:SetAlpha(0)
+    GwStanceBarContainer:Hide()
     
-    GwStanceBarButton:SetScript('OnClick',function()
-        if GwStanceBarContainer:GetAlpha()>0 then
-                GwStanceBarContainer:SetAlpha(0)
+    GwStanceBarButton:SetFrameRef('GwStanceBarContainer',GwStanceBarContainer)
+    
+    GwStanceBarButton:SetAttribute("_onclick", [=[
+        if self:GetFrameRef('GwStanceBarContainer'):IsVisible() then
+            self:GetFrameRef('GwStanceBarContainer'):Hide()
         else
-                GwStanceBarContainer:SetAlpha(1)
+            self:GetFrameRef('GwStanceBarContainer'):Show()
         end
-    end) 
+    ]=]); 
 end
 
 
