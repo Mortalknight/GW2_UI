@@ -56,8 +56,8 @@ local function loadBaseFrame()
     
  --   tinsert(UISpecialFrames, "GwCharacterWindow") 
    
-    --GwCharacterWindow:HookScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
-    --GwCharacterWindow:HookScript('OnShow',function() GwCharacterWindowMoverFrame:Show() end)
+    GwCharacterWindow:HookScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
+    GwCharacterWindow:HookScript('OnShow',function() GwCharacterWindowMoverFrame:Show() end)
 
 
 
