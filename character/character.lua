@@ -1016,6 +1016,11 @@ function GwPaperDollUpdateReputations()
         end
 
         if CurrentOwner~=nil then
+            
+            if cMax==0 or cMax==nil then
+                cMax = 1;
+            end
+            
             CurrentOwner.StatusBar:SetValue(cCur/cMax)
 			if cCur/cMax >= 1 and cMax ~= 0 then
 				CurrentOwner.StatusBar:SetStatusBarColor(171/255,37/255,240/255)
