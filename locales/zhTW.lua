@@ -253,6 +253,9 @@ GwLocalization["TRACKER_TIME_REMAINING"] = "剩餘時間"
 GwLocalization["UPDATE_STRING_1"] = "有新版本! 已有更新可供下載。"
 GwLocalization["UPDATE_STRING_2"] = "有新版本! 包含新功能的更新可供下載。"
 GwLocalization["UPDATE_STRING_3"] = "有新版本! 包含|cFFFF0000重大更新|r可供下載。\\n強烈建議更新插件。"
+    
+GwLocalization['TALENTS_HEADER'] = 'Spells' 
+GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
 end
 
 if GetLocale() == "zhTW" then

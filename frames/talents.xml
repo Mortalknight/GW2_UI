@@ -1,0 +1,548 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    
+        <Frame name="GwTalentFrame" enableMouse="true" inherits="SecureHandlerBaseTemplate" protected="true" registerForClicks="LeftButtonUp" virtual="true">
+        <Size x="608" y="621"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+
+                <Texture  file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                    <Size x="512" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>  
+            <Layer level="BORDER">
+                <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyY="CENTER">
+                    <Size x="256" y="32"></Size>
+                    <Anchors>
+                       <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            </Layers>
+            <Scripts>
+                <OnLoad>
+                    
+                    
+                    self.title:SetFont(DAMAGE_TEXT_FONT,14)
+                    self.title:SetTextColor(1,1,1,1)
+                    self.title:SetShadowColor(0,0,0,1)  
+                    self.title:SetShadowOffset(1,-1)   
+                    self.title:SetText(GwLocalization['TALENTS_SPEC_HEADER'] )
+                    
+                    
+                    self:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED");
+                    self:RegisterEvent("UNIT_MODEL_CHANGED");
+                    self:RegisterEvent("UNIT_LEVEL");
+                    self:RegisterEvent("LEARNED_SPELL_IN_TAB");
+                    self:RegisterEvent("PLAYER_TALENT_UPDATE");
+                    self:RegisterEvent("PET_SPECIALIZATION_CHANGED");
+                    self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");
+                    self:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED");
+                    self:RegisterEvent("PLAYER_LEARN_TALENT_FAILED");
+                </OnLoad>
+            </Scripts>
+    </Frame>
+    
+    <Frame name="GwTalentsLevelLabel" virtual="true">
+        <Size x="30" y="30"></Size>
+        <Layers>
+            <Layer level="BORDER">
+                 <FontString parentKey="title" text="0" justifyH="CENTER" justifyY="CENTER">
+                    <Size x="32" y="32"></Size>
+                    <Anchors>
+                       <Anchor point="CENTER" relativePoint="CENTER" x="0" y="" ></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                
+                    self.title:SetFont(DAMAGE_TEXT_FONT,14)
+                    self.title:SetTextColor(0.7,0.7,0.7,1)
+                    self.title:SetShadowColor(0,0,0,0)  
+                    self.title:SetShadowOffset(1,-1)   
+        
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    
+    
+    <Button name="GwSpecFrame" enableMouse="true"  virtual="true">
+        <Size x="588" y="140"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="1024" y="256"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>  
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="80" y="80"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
+                    </Anchors>
+                        <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                    <Size x="90" y="90"></Size>
+                      <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER"  x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="info" enableMouse="false">
+                <Size x="460" y="140"></Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                 <Layers>
+                     <Layer level="OVERLAY">
+                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                           
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                             </Anchors>
+                             <Color a="0.6"></Color>
+                               <TexCoords left="1" right="0" top="0" bottom="1" />
+                         </Texture>
+                     </Layer>  
+                     <Layer level="OVERLAY" textureSubLevel="">
+                         <FontString parentKey="specTitle" text="Arcane" justifyH="LEFT">
+                             <Size x="200" y="20"></Size>
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" x="" y="-20"></Anchor>
+                             </Anchors>
+                         </FontString>
+                         <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
+                             <Size x="400" y="50"></Size>
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="" y="-5"></Anchor>
+                             </Anchors>
+                         </FontString>
+                     </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                     
+                        
+                        self.specTitle:SetFont(DAMAGE_TEXT_FONT,18)
+                        self.specTitle:SetTextColor(1,1,1,1)
+                        self.specTitle:SetShadowColor(0,0,0,1)  
+                        self.specTitle:SetShadowOffset(1,-1)   
+                        
+                        self.specDesc:SetFont(UNIT_NAME_FONT,14)
+                        self.specDesc:SetTextColor(0.8,0.8,0.8,1)
+                        self.specDesc:SetShadowColor(0,0,0,1)  
+                        self.specDesc:SetShadowOffset(1,-1)
+                        
+                    </OnLoad>
+                  
+                </Scripts>
+            </Frame>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                  
+                   self:RegisterForClicks("AnyUp");
+                
+                
+                local mask = UIParent:CreateMaskTexture()
+                mask:SetPoint("CENTER",self.icon,'CENTER',0,0)
+    
+                mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                mask:SetSize(80, 80)
+                self.icon:AddMaskTexture(mask)
+            </OnLoad>
+            <OnEnter>
+  
+            </OnEnter> 
+            <OnLeave>
+            
+            </OnLeave>
+            
+            <OnShow>
+                self:SetScript('OnUpdate',function(self,elapsed) 
+                    if MouseIsOver(self) then
+                        local r,g,b,a = self.background:GetVertexColor()
+                        self.background:SetVertexColor(r + (1 * elapsed),r + (1 * elapsed),r + (1 * elapsed),r + (1 * elapsed))
+                        return  
+                    end
+                    self.background:SetVertexColor(0.7,0.7,0.7,0.7)
+                end)
+            </OnShow>
+            <OnHide>
+                 self:SetScript('OnUpdate',nil)
+            </OnHide>
+            <OnUpdate>
+                
+            </OnUpdate>
+            <OnClick>
+                if not self.active then
+                SetSpecialization(self.specIndex)
+                end
+            </OnClick>
+        </Scripts>
+    </Button>
+    
+    
+    <Button name="GwTalentButton" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
+        <Size x="34" y="34"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+        </Anchors>
+            <Layers>
+                <Layer level="BACKGROUND" >
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                    <Size x="44" y="44"></Size>
+                      <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+                <Layer level="ARTWORK">
+                    <Texture parentKey="icon" textureSubLevel="2">
+        
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                    </Texture>
+                </Layer>   
+                <Layer level="OVERLAY">
+                    <Texture  alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                          <Size x="34" y="34"></Size>
+                         <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                        <Color r="1" b="0.6" g="1" a="0.9"></Color>
+                    </Texture>
+                    <Texture   file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="legendaryHighlight">
+                          <Size x="34" y="34"></Size>
+                         <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                        <Color r="1" g="0.662" b="0.13" a="0.9"></Color>
+                    </Texture>
+                </Layer>   
+    
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                if self:GetParent().active~=true then return end
+                GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT",0,0);
+                GameTooltip:ClearLines();
+                GameTooltip:SetSpellByID(self.spellId)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+            <OnDragStart>
+               if InCombatLockdown() or self.isPassive  then return end
+                
+                PickupSpell(self.spellId)
+            </OnDragStart>
+            <OnClick>
+                
+                    return LearnTalent(self.talentID);
+                
+            </OnClick>
+        </Scripts>
+    </Button>
+    
+    <Frame name="GwTalentLine" virtual="true">
+        <Size x="66" y="124"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="line" file="Interface\AddOns\GW2_UI\textures\talents\line">
+                    <Size x="66" y="66"></Size>
+                     
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    
+    
+    <Frame name="GwSpellbookMenu" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" virtual="true">
+        <Size x="231" y="621"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-15"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talent_background">
+                    <Size x="255" y="512"></Size>
+                    <Color r="1" g="1" b="1" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-5" y="8"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="GwspellbookTab1" inherits="SecureHandlerClickTemplate">
+                <Size x="77" y="50"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="TOP" x="-77" y="-30"></Anchor>
+                </Anchors>
+                <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
+                <Layers>
+                    <Layer level="BACKGROUND" >
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
+                            <Size x="128" y="128"></Size>
+                            <Anchors>
+                               <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture> 
+                    </Layer>
+                    <Layer level="BORDER">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_general">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            
+            </Button>   
+            <Button name="GwspellbookTab2" inherits="SecureHandlerClickTemplate">
+                <Size x="77" y="50"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="TOP" x="5" y="-30"></Anchor>
+                </Anchors>
+                <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
+                <Layers>
+                    <Layer level="BACKGROUND" >
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg">
+                            <Size x="128" y="128"></Size>
+                            <Anchors>
+                               <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture> 
+                    </Layer>
+                    <Layer level="BORDER">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Color r="0.92941" g="0.9176" b="0.7098"></Color>
+                        </Texture>
+                    </Layer>
+                </Layers>
+           
+            </Button>
+            <Button name="GwspellbookTab3" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate">
+                <Size x="77" y="50"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="TOP" x="88" y="-30"></Anchor>
+                </Anchors>
+                <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
+                <Layers>
+                    <Layer level="BACKGROUND" >
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
+                            <Size x="128" y="128"></Size>
+                            <Anchors>
+                               <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture> 
+                    </Layer>
+                    <Layer level="BORDER">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_pet">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+           
+            </Button>
+          
+        </Frames>
+        
+ 
+    </Frame>
+    
+    <Frame name="GwSpellbookContainerTab" virtual="true">
+        <Size x="231" y="621"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Frames>
+          <Frame parentKey="activeLabel">
+                <Size x="250" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-4" y="-32"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND" >
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep">
+                            <Size x="254" y="32"></Size>
+                            <Anchors>
+                               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture> 
+                    </Layer>
+                    <Layer level="BORDER">
+                        <FontString parentKey="title" text="Active" justifyH="LEFT" justifyY="CENTER">
+                             <Size x="256" y="32"></Size>
+                             <Anchors>
+                                 <Anchor point="LEFT" x="10" y="-2"></Anchor>
+                             </Anchors>
+                         </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>  
+            <Frame parentKey="passiveLabel">
+                <Size x="250" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-4" y="-32"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND" >
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep">
+                            <Size x="254" y="32"></Size>
+                            <Anchors>
+                               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture> 
+                    </Layer>
+                    <Layer level="BORDER">
+                        <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyY="CENTER">
+                             <Size x="256" y="32"></Size>
+                             <Anchors>
+                                 <Anchor point="LEFT" x="10" y="-2"></Anchor>
+                             </Anchors>
+                         </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                self:GetParent().activeLabel.title:SetFont(DAMAGE_TEXT_FONT,14)
+                self:GetParent().activeLabel.title:SetTextColor(1,1,1,1)
+                self:GetParent().activeLabel.title:SetShadowColor(0,0,0,1)  
+                self:GetParent().activeLabel.title:SetShadowOffset(1,-1)   
+                   
+                self:GetParent().passiveLabel.title:SetFont(DAMAGE_TEXT_FONT,14)
+                self:GetParent().passiveLabel.title:SetTextColor(1,1,1,1)
+                self:GetParent().passiveLabel.title:SetShadowColor(0,0,0,1)  
+                self:GetParent().passiveLabel.title:SetShadowOffset(1,-1)   
+                
+            </OnLoad>
+        </Scripts>
+            </Frame>
+        </Frames>
+
+    </Frame>
+    
+      
+    <Button name="GwSpellbookActionbutton" enableMouse="true" inherits="SecureActionButtonTemplate,SecureHandlerDragTemplate" virtual="true">
+         <Size x="40" y="40"></Size>
+                    <Layers>
+                <Layer level="BACKGROUND" >
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                    <Size x="50" y="50"></Size>
+                      <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+                <Layer level="ARTWORK">
+                    <Texture parentKey="icon" textureSubLevel="2">
+        
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                    </Texture>
+                </Layer>   
+                <Layer level="OVERLAY" >
+                    <Texture   file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow" parentKey="arrow">
+                        <Size x="16" y="32"></Size>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativePoint="RIGHT" x="5"></Anchor>
+                        </Anchors>
+                       
+                    </Texture>
+                </Layer>   
+                <Layer level="OVERLAY" textureSubLevel="2">
+                    <Texture   file="Interface\AddOns\GW2_UI\textures\talents\autocast" parentKey="autocast">
+                        <Size x="55" y="55"></Size>
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
+                        </Anchors>
+                       
+                    </Texture>
+                </Layer>
+                <Layer level="HIGHLIGHT">
+                    <Texture  alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                          <Size x="40" y="40"></Size>
+                         <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                        <Color r="1" b="0.6" g="1" a="0.9"></Color>
+                    </Texture>
+                 
+                </Layer>   
+          
+        </Layers>
+        <Frames>
+            <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
+        </Frames>
+        <Scripts>
+          <OnEnter>
+              GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT",0,0);
+              GameTooltip:ClearLines();
+             
+              if not self.isFlyout then
+                
+                GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
+              else
+                local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId); 
+                GameTooltip:AddLine(name)
+                GameTooltip:AddLine(desc)
+              end
+             
+                
+                GameTooltip:Show()
+            </OnEnter>
+            <OnDragStart>
+               if InCombatLockdown()  or self.isPassive or self.isFuture then return end
+                
+                PickupSpellBookItem(self.spellbookIndex,self.booktype)
+            </OnDragStart>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+    
+    
+    
+</Ui>

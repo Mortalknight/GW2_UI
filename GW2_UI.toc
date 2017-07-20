@@ -23,6 +23,7 @@ frames/raidframes.xml
 frames/unitframes.xml
 frames/character.xml
 frames/spellbook.xml
+frames/talents.xml
 frames/toast.xml
 frames/battlegrounds.xml
 
@@ -63,6 +64,8 @@ objectives/achievement.lua
 
 character/character.lua
 character/spellbook.lua
+character/talents.lua
+
 
 character/windowManager.lua
 

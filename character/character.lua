@@ -532,7 +532,9 @@ function gwPaperDollSlotButton_OnModifiedClick (self, button)
 	end
 	if ( IsModifiedClick("SOCKETITEM") ) then
 		SocketInventoryItem(self:GetID());
-		GwCharacterWindow:Hide();
+        if InCombatLockdown() then return end  
+            GwCharacterWindow:SetAttribute('windowPanelOpen',0)
+      
 	end
 end
 function gwPaperDollSlotButton_OnClick (self, button,drag)
@@ -676,7 +678,7 @@ function gwCharacterPanelToggle(frame)
     
     PlaySound("igMainMenuOptionCheckBoxOn");
 
-    GwCharacterWindow:Show()
+  
     
     GwPaperDollBagItemList:Hide()
     GwCharacterMenu:Hide()
@@ -1349,13 +1351,14 @@ end
 function gw_register_character_window()
    
    
-    CreateFrame('Button','GwDressingRoom',GwCharacterWindow,'GwDressingRoom')
-    CreateFrame('Frame','GwCharacterMenu',GwCharacterWindow,'GwCharacterMenu')
-    CreateFrame('Frame','GwPaperDollBagItemList',GwCharacterWindow,'GwPaperDollBagItemList')
-    CreateFrame('Frame','GwPaperDollOutfits',GwCharacterWindow,'GwPaperDollOutfits')
-    CreateFrame('Frame','GwPaperTitles',GwCharacterWindow,'GwPaperTitles')
-    CreateFrame('Frame','GwPaperReputation',GwCharacterWindow,'GwPaperReputation')
-    CreateFrame('Frame','GwPaperDollSelectedIndicator',GwCharacterWindow,'GwPaperDollSelectedIndicator')
+    CreateFrame('Frame','GwCharacterWindowContainer',GwCharacterWindow,'GwCharacterWindowContainer')
+    CreateFrame('Button','GwDressingRoom',GwCharacterWindowContainer,'GwDressingRoom')
+    CreateFrame('Frame','GwCharacterMenu',GwCharacterWindowContainer,'GwCharacterMenu')
+    CreateFrame('Frame','GwPaperDollBagItemList',GwCharacterWindowContainer,'GwPaperDollBagItemList')
+    CreateFrame('Frame','GwPaperDollOutfits',GwCharacterWindowContainer,'GwPaperDollOutfits')
+    CreateFrame('Frame','GwPaperTitles',GwCharacterWindowContainer,'GwPaperTitles')
+    CreateFrame('Frame','GwPaperReputation',GwCharacterWindowContainer,'GwPaperReputation')
+    CreateFrame('Frame','GwPaperDollSelectedIndicator',GwCharacterWindowContainer,'GwPaperDollSelectedIndicator')
     
     GwPaperDollOutfits:SetScript('OnShow',GwOutfitsDrawItemSetList)
     GwPaperDollOutfits:SetScript('OnHide',function() GwPaperDollOutfitsToggleIgnoredSlots(false) end)
@@ -1401,7 +1404,20 @@ function gw_register_character_window()
    
     GwUpdateReputationDetails()
     
+    GwCharacterWindowContainer:SetScript('OnShow',function() 
+        if CHARACTER_PANEL_OPEN==nil then
+           
+                gwCharacterPanelToggle(GwCharacterMenu)
+        end
+    end)
     
+     GwCharacterWindowContainer:HookScript('OnShow', function() 
+        GwCharacterWindow.windowIcon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\character-window-icon')
+        GwCharacterWindow.WindowHeader:SetText(GwLocalization['CHARACTER_HEADER'])
+    end)
+    
+    
+    return GwCharacterWindowContainer;
     
 end
 
@@ -1425,11 +1441,15 @@ function GwToggleCharacter (tab, onlyShow)
     end
     
     if GwCharacterWindow:IsShown() then 
-        GwCharacterWindow:Hide();
+
+        if not InCombatLockdown() then   
+            GwCharacterWindow:SetAttribute('windowPanelOpen',0)
+        end
+        
         CHARACTER_PANEL_OPEN=nil
         return
     end
     
-    GwCharacterWindow:Show();
+    
     
 end

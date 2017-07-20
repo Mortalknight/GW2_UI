@@ -17,16 +17,7 @@
                 </Texture>
             </Layer>
         </Layers>
-        <Scripts>
-           <OnEnter>
-               self.icon:SetTexCoord(0,0.5,0,0.625);
-            </OnEnter>
-            <OnLeave>
-                if self.active==nill or self.active==false then
-                self.icon:SetTexCoord(0.5,1,0,0.625);
-               end
-            </OnLeave>
-        </Scripts>
+     
     </Button>
     
     <Frame name="GwPaperDollSelectedIndicator" frameStrata="HIGH" toplevel="true" hidden="true" virtual="true">
@@ -1579,14 +1570,21 @@
             <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
         </Scripts>
     </Frame>
-    <Frame name="GwCharacterWindow" enableMouse="true" frameStrata="HIGH" virtual="true">
+    <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
+         <Size x="853" y="627"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
+        </Anchors>
+    </Frame>
+ 
+        <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true"  virtual="true" protected="true">
         <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
                      <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
@@ -1615,10 +1613,16 @@
             </Layer>
             
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
+                <Texture name="$parentLeft" parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
                     <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="18" y="-22" />
+                    </Anchors>
+                </Texture>   
+                <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                    <Size x="128" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture> 
                  <FontString name="$parentHeaderString" parentKey="WindowHeader" text="Character" inherits="GameFontNormalSmall" justifyH="LEFT">
@@ -1630,15 +1634,9 @@
                 </FontString>  
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.WindowHeader:SetFont(DAMAGE_TEXT_FONT,20)
-                 self.WindowHeader:SetTextColor(255/255,241/255,209/255)
-				self.WindowHeader:SetText(GwLocalization['CHARACTER_HEADER'])
-            </OnLoad>
-        </Scripts>
+   
         <Frames>
-              <Button name="$parentClose" text="" >
+              <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="" >
                 <Size x="20" y="20" />
                 <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>
                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
@@ -1647,14 +1645,17 @@
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                <Scripts>
-                    <OnClick>
-                        self:GetParent():Hide()
-                    </OnClick>
-                </Scripts>
+           
             </Button>
             
         </Frames>
     </Frame>
+    
+    <Button name="gwFrameCombatTogglerSpellbook" inherits="SecureActionButtonTemplate" virtual="true">
+        <Attributes>
+            <Attribute name="type" value="attribute" />
+            <Attribute name="attribute" attribute-frame="GwCharacterWindow" attribute-name="windowPanelOpen" attribute-value="2" />
+        </Attributes>
+    </Button>
     
 </Ui>

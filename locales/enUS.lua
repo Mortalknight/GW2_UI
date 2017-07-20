@@ -253,6 +253,8 @@ GwLocalization['TRACKER_TIME_REMAINING'] = 'Time Remaining'
 GwLocalization['UPDATE_STRING_1'] = 'New update available for download.' 
 GwLocalization['UPDATE_STRING_2'] = 'New update available containing new features.' 
 GwLocalization['UPDATE_STRING_3'] = 'An |cFFFF0000major|r update is available.\nIt\'s strongly recommended that you update.' 
+GwLocalization['TALENTS_HEADER'] = 'Spells' 
+GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
 end
 
 local Locale = GetLocale()

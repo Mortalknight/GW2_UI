@@ -864,7 +864,7 @@ local microButtonFrame = CreateFrame('Frame', 'GwMicroButtonFrame', UIParent,'Gw
 local microButtonPadding = 4 +12
 
 function create_micro_button(key)
-    local mf = CreateFrame('Button', 'GwMicroButton'..key, GwMicroButtonFrame,'GwMicroButtonTemplate')
+    local mf = CreateFrame('Button', 'GwMicroButton'..key, GwMicroButtonFrame,'SecureHandlerClickTemplate,GwMicroButtonTemplate')
     mf:SetPoint('CENTER',GwMicroButtonFrame,'TOPLEFT',microButtonPadding,-16);
     microButtonPadding = microButtonPadding + 24 + 4
     
@@ -908,15 +908,50 @@ function create_micro_menu()
 
     
     for k,v in pairs(CUSTOM_MICRO_BUTTONS) do   
-        create_micro_button(v)
+        if v~='SpellbookMicroButton' then
+            create_micro_button(v)
+        else
+           if not gwGetSetting('USE_TALENT_WINDOW') then
+                 create_micro_button(v)
+            end
+        end
     end
     
-    GwMicroButtonCharacterMicroButton:SetScript('OnMouseDown',function()  ToggleCharacter("PaperDollFrame"); gw_UpdateMicroButtons() end);
+    if gwGetSetting('USE_CHARACTER_WINDOW') then
+        
+        GwMicroButtonCharacterMicroButton:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
+        GwMicroButtonCharacterMicroButton:SetAttribute('_OnClick', [=[ 
+            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',1)
+        
+            ]=]);   
+        
+    else
+        
+        
+        GwMicroButtonCharacterMicroButton:SetScript('OnMouseDown',function()  ToggleCharacter("PaperDollFrame"); gw_UpdateMicroButtons() end);
+    end
     
     GwMicroButtonBagMicroButton:SetScript('OnMouseDown',function()  ToggleAllBags(); gw_UpdateMicroButtons() end);
     
-    GwMicroButtonSpellbookMicroButton:SetScript('OnMouseDown',function()  ToggleSpellBook(BOOKTYPE_SPELL); gw_UpdateMicroButtons() end);
-    GwMicroButtonTalentMicroButton:SetScript('OnMouseDown',function()  ToggleTalentFrame(); gw_UpdateMicroButtons() end);
+    
+    if  gwGetSetting('USE_TALENT_WINDOW') then
+         
+        GwMicroButtonTalentMicroButton:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
+        GwMicroButtonTalentMicroButton:SetAttribute('_OnClick', [=[ 
+            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',2)
+        
+            ]=]);   
+    else
+        
+        GwMicroButtonSpellbookMicroButton:SetScript('OnMouseDown',function()  ToggleSpellBook(BOOKTYPE_SPELL); gw_UpdateMicroButtons() end);
+        GwMicroButtonTalentMicroButton:SetScript('OnMouseDown',function()  ToggleTalentFrame(); gw_UpdateMicroButtons() end);
+    end 
+    
+    
+    
+    
+    
+    
     GwMicroButtonAchievementMicroButton:SetScript('OnMouseDown',function()  ToggleAchievementFrame(); gw_UpdateMicroButtons() end);
     GwMicroButtonQuestLogMicroButton:SetScript('OnMouseDown',function()  ToggleQuestLog(); gw_UpdateMicroButtons() end);
   
@@ -1098,7 +1133,7 @@ end
 
 
 function gw_microButtonHookToolTip(frame,text,action)
-    
+    if frame==nil then return end
     frame:SetScript('OnEnter', function() 
 
        gw_setToolTipForShow(frame,text,action)
@@ -1176,13 +1211,13 @@ function gw_UpdateMicroButtons()
 	else
 		_G['GwMicroButtonBagMicroButton']:SetButtonState("NORMAL");
     end
-    
-    if ( SpellBookFrame and SpellBookFrame:IsShown() ) then
-		_G['GwMicroButtonSpellbookMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonSpellbookMicroButton']:SetButtonState("NORMAL");
+    if _G['GwMicroButtonSpellbookMicroButton']~=nil then
+        if ( SpellBookFrame and SpellBookFrame:IsShown() ) then
+            _G['GwMicroButtonSpellbookMicroButton']:SetButtonState("PUSHED", true);
+        else
+            _G['GwMicroButtonSpellbookMicroButton']:SetButtonState("NORMAL");
+        end
     end
-    
     if ( PlayerTalentFrame and PlayerTalentFrame:IsShown() ) then
 		_G['GwMicroButtonTalentMicroButton']:SetButtonState("PUSHED", true);
 	else
