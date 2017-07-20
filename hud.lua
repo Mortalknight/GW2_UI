@@ -1099,7 +1099,20 @@ function gw_sendVersionCheck()
     if gw_sendUpdate_message_cooldown>GetTime() then return end
     gw_sendUpdate_message_cooldown = GetTime() + 10
 
-   SendAddonMessage('GW2_UI', GW_VERSION_STRING, "RAID")
+    local chatToSend = 'GUILD'
+    local inInstanceGroup = IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
+    if inInstanceGroup then
+    
+        chatToSend = 'INSTANCE_CHAT'
+        
+    elseif IsInGroup() then
+            chatToSend = 'PARTY'
+            if IsInRaid() then
+                chatToSend = 'RAID'
+            end
+            
+    end
+   SendAddonMessage('GW2_UI', GW_VERSION_STRING, chatToSend)
     
 end
 
