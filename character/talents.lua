@@ -119,14 +119,14 @@ local function setLineRotation(self,from,to)
     local y2 = 0
     
     if from==1 then
-        y1 = -16
+        y1 = -18
     elseif from==2 then
         y1 = -60
     elseif from==3 then
         y1 = -103     
     end
     if to==1 then
-        y2 = -16
+        y2 = -18
     elseif to==2 then
         y2 = -60
     elseif to==3 then
