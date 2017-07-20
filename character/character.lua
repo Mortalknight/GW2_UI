@@ -1160,7 +1160,24 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
             	SetFactionInactive(GetSelectedFaction());
             
 			if factionID and C_Reputation.IsFactionParagon(factionID) then
-				local currentValue, maxValueParagon  = C_Reputation.GetFactionParagonInfo(factionID)
+				local currentValue, maxValueParagon, _, hasReward  = C_Reputation.GetFactionParagonInfo(factionID)
+				if hasReward then 
+					--frame.paragon:Hide()
+					if currentValue > 10000 then 
+						repeat
+							currentValue = currentValue - 10000
+						until( currentValue < 10000 )
+					end
+				else
+					--frame.paragon:Hide()
+					if currentValue > 10000 then 
+						repeat
+							currentValue = currentValue - 10000
+						until( currentValue < 10000 )
+					end
+				end
+				
+				
 				frame.currentRank:SetText(currentRank)
 				frame.nextRank:SetText(GwLocalization['CHARACTER_PARAGON'])
 				

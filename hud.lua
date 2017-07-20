@@ -168,14 +168,14 @@ GW_LEVELING_REWARDS_DEFAULT[7]['id'] = 0
 GW_LEVELING_REWARDS_DEFAULT[7]['level'] = 100
 
 GW_DODGEBAR_SPELLS = {}
-GW_DODGEBAR_SPELLS[1] = {100, 198304}
+GW_DODGEBAR_SPELLS[1] = {100,198304}
 GW_DODGEBAR_SPELLS[2] = {190784}
-GW_DODGEBAR_SPELLS[3] = {781, 190925}
+GW_DODGEBAR_SPELLS[3] = {781,190925}
 GW_DODGEBAR_SPELLS[4] = {195457}
 GW_DODGEBAR_SPELLS[5] = {121536}
 GW_DODGEBAR_SPELLS[6] = {212552}
 GW_DODGEBAR_SPELLS[7] = {196884}
-GW_DODGEBAR_SPELLS[8] = {1953, 212653}
+GW_DODGEBAR_SPELLS[8] = {1953,212653}
 GW_DODGEBAR_SPELLS[9] = {48018}
 GW_DODGEBAR_SPELLS[10] = {109132,115008}
 GW_DODGEBAR_SPELLS[11] = {102280, 102401}
@@ -473,6 +473,12 @@ function update_experiencebar_data(self,event)
 				local name, reaction, min, max, value, factionID = GetWatchedFactionInfo();
 				if C_Reputation.IsFactionParagon(factionID) then
 					local currentValue, maxValueParagon  = C_Reputation.GetFactionParagonInfo(factionID)
+					
+					if currentValue > 10000 then
+						repeat
+							currentValue = currentValue - 10000
+						until( currentValue < 10000 )
+					end
 					valPrec = (currentValue - 0) / (maxValueParagon - 0)
 					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((currentValue - 0)).." / "..comma_value((maxValueParagon - 0))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
 					

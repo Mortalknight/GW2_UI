@@ -258,7 +258,7 @@ GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations'
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" or Local ~= "zhTW" or Local ~= "koKR" then
+if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" then
 	GWUseThisLocalization()
 end
 
