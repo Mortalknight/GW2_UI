@@ -1016,17 +1016,14 @@ function GwPaperDollUpdateReputations()
         end
 
         if CurrentOwner~=nil then
-            
-            if cMax==0 or cMax==nil then
-                cMax = 1;
-            end
-            
-            CurrentOwner.StatusBar:SetValue(cCur/cMax)
-			if cCur/cMax >= 1 and cMax ~= 0 then
-				CurrentOwner.StatusBar:SetStatusBarColor(171/255,37/255,240/255)
-			else	
-				CurrentOwner.StatusBar:SetStatusBarColor(240/255,240/255,155/255)
-			end
+            if cMax~=0 or cMax~=nil then
+                CurrentOwner.StatusBar:SetValue(cCur/cMax)
+				if cCur/cMax >= 1 and cMax ~= 0 then
+					CurrentOwner.StatusBar:SetStatusBarColor(171/255,37/255,240/255)
+				else	
+					CurrentOwner.StatusBar:SetStatusBarColor(240/255,240/255,155/255)
+				end	
+            end		
         end
         
     end
@@ -1174,6 +1171,7 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
 						until( currentValue < 10000 )
 					end
 				else
+					--
 					--frame.paragon:Hide()
 					if currentValue > 10000 then 
 						repeat
