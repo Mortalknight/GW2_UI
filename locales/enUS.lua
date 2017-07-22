@@ -257,6 +257,9 @@ GwLocalization['TALENTS_HEADER'] = 'Spells'
 GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
 GwLocalization['SPELLS_HEADER_ACTIVE'] = 'Active'
 GwLocalization['SPELLS_HEADER_PASSIVE'] = 'Passive'
+GwLocalization['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
+GwLocalization['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
+GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
 end
 
 local Locale = GetLocale()

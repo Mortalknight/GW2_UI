@@ -1186,14 +1186,37 @@ function gw_latencyInfoToolTip()
     
     gw_frameRate = intRound(GetFramerate());
     local down, up, lagHome, lagWorld = GetNetStats();
-   
+	local gw_addonMemory = 0
+	local gw_addonName = nil
+	--local gw_addonMemoryArray = {}
+	local gw_numAddons = GetNumAddOns()
+	
+	UpdateAddOnMemoryUsage()
+	
     GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_BOTTOMLEFT",16 + (GameTooltip:GetWidth()/2),-10); 
     GameTooltip:ClearLines();
     GameTooltip:AddLine(MAINMENU_BUTTON,1,1,1)
-    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_1']..gw_frameRate,0.8,0.8,0.8)
-    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_2']..lagHome,0.8,0.8,0.8)
-    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_3']..lagWorld,0.8,0.8,0.8)
-    
+    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_1']..gw_frameRate..' fps',0.8,0.8,0.8)
+    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_2']..lagHome..' ms',0.8,0.8,0.8)
+    GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_3']..lagWorld..' ms',0.8,0.8,0.8)
+	GameTooltip:AddLine(' ',0.8,0.8,0.8)
+	GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_4']..round(down,2)..' Kbps',0.8,0.8,0.8)
+	GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_5']..round(up,2)..' Kbps',0.8,0.8,0.8)
+	GameTooltip:AddLine(' ',0.8,0.8,0.8)
+
+	for i=1,gw_numAddons do
+		gw_addonMemory = gw_addonMemory + GetAddOnMemoryUsage(i)
+	end
+	
+	GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_6']..round(gw_addonMemory / 1024,2)..' MB',0.8,0.8,0.8)
+	
+	for i=1,gw_numAddons do
+		if IsAddOnLoaded(i) and GetAddOnMemoryUsage(i) ~= 0 then
+			gw_addonName = GetAddOnInfo(i)
+			gw_addonMemory = round(GetAddOnMemoryUsage(i) / 1024,2)
+			GameTooltip:AddLine('('..gw_addonMemory..' MB) '..gw_addonName,0.8,0.8,0.8)
+		end
+	end
     GameTooltip:Show()
   
     
