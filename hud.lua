@@ -1187,7 +1187,6 @@ function gw_latencyInfoToolTip()
     gw_frameRate = intRound(GetFramerate());
     local down, up, lagHome, lagWorld = GetNetStats();
 	local gw_addonMemory = 0
-	local gw_addonName = nil
 	--local gw_addonMemoryArray = {}
 	local gw_numAddons = GetNumAddOns()
 	
@@ -1211,10 +1210,9 @@ function gw_latencyInfoToolTip()
 	GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_6']..round(gw_addonMemory / 1024,2)..' MB',0.8,0.8,0.8)
 	
 	for i=1,gw_numAddons do
-		if IsAddOnLoaded(i) and GetAddOnMemoryUsage(i) ~= 0 then
-			gw_addonName = GetAddOnInfo(i)
-			gw_addonMemory = round(GetAddOnMemoryUsage(i) / 1024,2)
-			GameTooltip:AddLine('('..gw_addonMemory..' MB) '..gw_addonName,0.8,0.8,0.8)
+		gw_addonMemory = round(GetAddOnMemoryUsage(i) / 1024,2)
+		if IsAddOnLoaded(i) and gw_addonMemory ~= "0.00" then
+			GameTooltip:AddLine('('..gw_addonMemory..' MB) '..GetAddOnInfo(i),0.8,0.8,0.8)
 		end
 	end
     GameTooltip:Show()
