@@ -255,6 +255,8 @@ GwLocalization['UPDATE_STRING_2'] = 'New update available containing new feature
 GwLocalization['UPDATE_STRING_3'] = 'An |cFFFF0000major|r update is available.\nIt\'s strongly recommended that you update.' 
 GwLocalization['TALENTS_HEADER'] = 'Spells' 
 GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
+GwLocalization['SPELLS_HEADER_ACTIVE'] = 'Active'
+GwLocalization['SPELLS_HEADER_PASSIVE'] = 'Passive'
 end
 
 local Locale = GetLocale()

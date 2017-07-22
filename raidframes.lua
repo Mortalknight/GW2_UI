@@ -442,7 +442,9 @@ function gw_update_raidframeData(self)
     if nameRoleIcon[role]~=nil then
         nameString = nameRoleIcon[role]..nameString
     end
-    
+    if realmflag == nil then 
+		realmflag = ''
+	end
     self.name:SetText(nameString..' '..realmflag)
    
     gw_highlight_target_raidframe()

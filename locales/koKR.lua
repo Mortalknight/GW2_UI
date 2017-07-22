@@ -256,7 +256,9 @@ GwLocalization["UPDATE_STRING_1"] = "새로운 업데이트가 있습니다. 다
 GwLocalization["UPDATE_STRING_2"] = "새로운 기능이 포함 된 새로운 업데이트입니다."
 GwLocalization["UPDATE_STRING_3"] = "|cFFFF0000 중요한 |r 업데이트를 사용할 수 있습니다. 업데이트하는 것이 좋습니다."
 GwLocalization['TALENTS_HEADER'] = 'Spells' 
-GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
+GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations'
+GwLocalization['SPELLS_HEADER_ACTIVE'] = 'Active'
+GwLocalization['SPELLS_HEADER_PASSIVE'] = 'Passive'
 end
 
 if GetLocale() == "koKR" then

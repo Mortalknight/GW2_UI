@@ -253,8 +253,10 @@ GwLocalization['TRACKER_TIME_REMAINING'] = 'Verbleibende Zeit'
 GwLocalization['UPDATE_STRING_1'] = 'Ein neues Update steht zum download bereit.' 
 GwLocalization['UPDATE_STRING_2'] = 'Ein neues Update mit neuen Funktionen ist verfügbar.' 
 GwLocalization['UPDATE_STRING_3'] = 'Ein  |cFFFF0000wichtiges|r update ist verfügbar.\nEs wird drigend empfohlen ein Umpdate durch zuführen.' 
-GwLocalization['TALENTS_HEADER'] = 'Spells' 
-GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
+GwLocalization['TALENTS_HEADER'] = 'Zauber' 
+GwLocalization['TALENTS_SPEC_HEADER'] = 'Spezifikationen' 
+GwLocalization['SPELLS_HEADER_ACTIVE'] = 'Aktiv'
+GwLocalization['SPELLS_HEADER_PASSIVE'] = 'Passiv'
 end
 
 

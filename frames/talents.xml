@@ -446,12 +446,14 @@
                 self:GetParent().activeLabel.title:SetFont(DAMAGE_TEXT_FONT,14)
                 self:GetParent().activeLabel.title:SetTextColor(1,1,1,1)
                 self:GetParent().activeLabel.title:SetShadowColor(0,0,0,1)  
-                self:GetParent().activeLabel.title:SetShadowOffset(1,-1)   
+                self:GetParent().activeLabel.title:SetShadowOffset(1,-1)
+				self:GetParent().activeLabel.title:SetText(GwLocalization['SPELLS_HEADER_ACTIVE'])				
                    
                 self:GetParent().passiveLabel.title:SetFont(DAMAGE_TEXT_FONT,14)
                 self:GetParent().passiveLabel.title:SetTextColor(1,1,1,1)
                 self:GetParent().passiveLabel.title:SetShadowColor(0,0,0,1)  
-                self:GetParent().passiveLabel.title:SetShadowOffset(1,-1)   
+                self:GetParent().passiveLabel.title:SetShadowOffset(1,-1)
+				self:GetParent().passiveLabel.title:SetText(GwLocalization['SPELLS_HEADER_PASSIVE'])				
                 
             </OnLoad>
         </Scripts>

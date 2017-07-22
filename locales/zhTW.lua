@@ -256,6 +256,8 @@ GwLocalization["UPDATE_STRING_3"] = "有新版本! 包含|cFFFF0000重大更新|
     
 GwLocalization['TALENTS_HEADER'] = 'Spells' 
 GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
+GwLocalization['SPELLS_HEADER_ACTIVE'] = 'Active'
+GwLocalization['SPELLS_HEADER_PASSIVE'] = 'Passive'
 end
 
 if GetLocale() == "zhTW" then
