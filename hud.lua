@@ -1187,7 +1187,7 @@ function gw_latencyInfoToolTip()
     gw_frameRate = intRound(GetFramerate());
     local down, up, lagHome, lagWorld = GetNetStats();
 	local gw_addonMemory = 0
-	--local gw_addonMemoryArray = {}
+	local gw_addonMemoryArray = {}
 	local gw_numAddons = GetNumAddOns()
 	
 	UpdateAddOnMemoryUsage()
@@ -1209,14 +1209,27 @@ function gw_latencyInfoToolTip()
 	
 	GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_6']..round(gw_addonMemory / 1024,2)..' MB',0.8,0.8,0.8)
 	
-	for i=1,gw_numAddons do
-		gw_addonMemory = round(GetAddOnMemoryUsage(i) / 1024,2)
-		if IsAddOnLoaded(i) and gw_addonMemory ~= "0.00" then
-			GameTooltip:AddLine('('..gw_addonMemory..' MB) '..GetAddOnInfo(i),0.8,0.8,0.8)
-		end
+	gw_addonMemoryArray[0] = {}
+	gw_addonMemoryArray[0]['addonIndex'] = 0
+	gw_addonMemoryArray[0]['addonMemory'] =0
+	
+	for i = 1, gw_numAddons do
+		gw_addonMemoryArray[i] = {}
+		gw_addonMemoryArray[i]['addonIndex'] = i
+		gw_addonMemoryArray[i]['addonMemory'] = GetAddOnMemoryUsage(i)
 	end
+	
+	table.sort( gw_addonMemoryArray, function(a, b) return a['addonMemory'] > b['addonMemory'] end)
+	
+	for k,v in pairs(gw_addonMemoryArray) do
+			if v['addonIndex'] ~= 0 and (IsAddOnLoaded(v['addonIndex']) and v['addonMemory'] ~= 0) then
+				gw_addonMemory = round(v['addonMemory'] / 1024,2)
+				if gw_addonMemory ~= "0.00" then GameTooltip:AddLine('('..gw_addonMemory..' MB) '..GetAddOnInfo(v['addonIndex']),0.8,0.8,0.8) end
+			end
+	end
+	gw_addonMemoryArray = nil
+	
     GameTooltip:Show()
-  
     
 end
 
