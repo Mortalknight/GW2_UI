@@ -214,8 +214,8 @@ function gwGetCompassPriority()
   
     local closest = math.huge
     for k,v in pairs(notifications) do
-        if v['MAPID']~=nil then
-            
+        if v['MAPID']~=nil and UnitIsDead("player") ~= true and UnitIsGhost("player") ~= true then
+
             SetMapByID(v['MAPID'])
 
 
