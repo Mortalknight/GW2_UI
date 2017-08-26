@@ -1,6 +1,6 @@
 GW_MAP_FRAMES_HIDE ={}
 GW_MAP_FRAMES_HIDE[1] =MiniMapMailFrame 
-
+GW_MAP_FRAMES_HIDE[3] =MinimapCluster
 GW_MAP_FRAMES_HIDE[4] =MiniMapVoiceChatFrame
 GW_MAP_FRAMES_HIDE[5] =GameTimeFrame
 GW_MAP_FRAMES_HIDE[6] =MiniMapTrackingButton
@@ -240,12 +240,14 @@ end
 				UIFrameFadeIn(child, 0.2, child:GetAlpha(),1)
 
 			end
+			MinimapNorthTag:Hide()
     end
     function hoverMiniMapOut()
 			for k,v in pairs(GW_MAP_FRAMES_HOVER) do
 					local child = _G[v]
 				UIFrameFadeOut(child, 0.2, child:GetAlpha(),0)
 			end
+			MinimapNorthTag:Show()
     end
 
 
