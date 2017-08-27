@@ -249,7 +249,10 @@ end
 			end
 			MinimapNorthTag:Show()
     end
-
+	
+function GetMinimapShape()
+		return 'SQUARE'
+	end
 
 function GwMapTimeClick(self,button)
 	if button == "LeftButton" then
