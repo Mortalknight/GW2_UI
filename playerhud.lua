@@ -155,24 +155,39 @@ function gw_create_player_hud()
     
   --  RegisterUnitWatch(playerHealthGLobaBg)
     _G['GwPlayerHealthGlobeTextValue']:SetFont(DAMAGE_TEXT_FONT,16)
-    _G['GwPlayerHealthGlobeTextValue']:SetShadowColor(1, 1, 1, 0) 
+    _G['GwPlayerHealthGlobeTextValue']:SetShadowColor(1, 1, 1, 0)   
+    
+    _G['GwPlayerAbsorbGlobeTextValue']:SetFont(DAMAGE_TEXT_FONT,16)
+    _G['GwPlayerAbsorbGlobeTextValue']:SetShadowColor(1, 1, 1, 0) 
 
     
     for i = 1 , 8 do
        
         _G['GwPlayerHealthGlobeTextShadow'..i]:SetFont(DAMAGE_TEXT_FONT,16)
         _G['GwPlayerHealthGlobeTextShadow'..i]:SetShadowColor(1, 1, 1, 0) 
-        _G['GwPlayerHealthGlobeTextShadow'..i]:SetTextColor(0,0,0,1/i)
+        _G['GwPlayerHealthGlobeTextShadow'..i]:SetTextColor(0,0,0,1/i)     
+        
+        _G['GwPlayerAbsorbGlobeTextShadow'..i]:SetFont(DAMAGE_TEXT_FONT,16)
+        _G['GwPlayerAbsorbGlobeTextShadow'..i]:SetShadowColor(1, 1, 1, 0) 
+        _G['GwPlayerAbsorbGlobeTextShadow'..i]:SetTextColor(0,0,0,1/i)
     end
     _G['GwPlayerHealthGlobeTextShadow1']:SetPoint("CENTER",-1,0)
     _G['GwPlayerHealthGlobeTextShadow2']:SetPoint("CENTER",0,-1)
     _G['GwPlayerHealthGlobeTextShadow3']:SetPoint("CENTER",1,0)
     _G['GwPlayerHealthGlobeTextShadow4']:SetPoint("CENTER",0,1)
-    
     _G['GwPlayerHealthGlobeTextShadow5']:SetPoint("CENTER",-2,0)
     _G['GwPlayerHealthGlobeTextShadow6']:SetPoint("CENTER",0,-2)
     _G['GwPlayerHealthGlobeTextShadow7']:SetPoint("CENTER",2,0)
-    _G['GwPlayerHealthGlobeTextShadow8']:SetPoint("CENTER",0,2)
+    _G['GwPlayerHealthGlobeTextShadow8']:SetPoint("CENTER",0,2)  
+    
+    _G['GwPlayerAbsorbGlobeTextShadow1']:SetPoint("CENTER",-1,0)
+    _G['GwPlayerAbsorbGlobeTextShadow2']:SetPoint("CENTER",0,-1)
+    _G['GwPlayerAbsorbGlobeTextShadow3']:SetPoint("CENTER",1,0)
+    _G['GwPlayerAbsorbGlobeTextShadow4']:SetPoint("CENTER",0,1)
+    _G['GwPlayerAbsorbGlobeTextShadow5']:SetPoint("CENTER",-2,0)
+    _G['GwPlayerAbsorbGlobeTextShadow6']:SetPoint("CENTER",0,-2)
+    _G['GwPlayerAbsorbGlobeTextShadow7']:SetPoint("CENTER",2,0)
+    _G['GwPlayerAbsorbGlobeTextShadow8']:SetPoint("CENTER",0,2)
     
     
     playerHealthGLobaBg:SetScript('OnEvent',function(self,event,unit)
@@ -395,7 +410,8 @@ function gw_update_health_data()
             local healthPrecCandy = math.min(1, animations['healthGlobeAnimation']['progress'] + 0.02)
            
             if GwPlayerHealthGlobe.stringUpdateTime<GetTime() then
-            gw_update_health_text(healthMax*animations['healthGlobeAnimation']['progress'])
+                gw_update_health_text(healthMax*animations['healthGlobeAnimation']['progress'])
+                gw_update_absorb_text(absorb)
                 GwPlayerHealthGlobe.stringUpdateTime= GetTime() + 0.05
             end
             _G['GwPlayerHealthGlobeCandy']:SetHeight(healthPrecCandy*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
@@ -405,6 +421,7 @@ function gw_update_health_data()
             _G['GwPlayerHealthGlobeHealthBar']:SetTexCoord(0,1,  math.abs(animations['healthGlobeAnimation']['progress'] - 1),1) 
         end,nil,function() 
              gw_update_health_text(health)
+             gw_update_absorb_text(absorb)
         end)            
         GwPlayerHealthGlobe.animationCurrent = healthPrec;
 
@@ -420,6 +437,20 @@ function gw_update_health_text(text)
     _G['GwPlayerHealthGlobeTextValue']:SetText(v)
     for i = 1 , 8 do
         _G['GwPlayerHealthGlobeTextShadow'..i]:SetText(v)
+    end
+end
+
+function gw_update_absorb_text(text)
+    local v  = text;
+    if text<=0 then 
+        v = ''
+    else
+        v = comma_value(text)
+    end
+    
+    _G['GwPlayerAbsorbGlobeTextValue']:SetText(v)
+    for i = 1 , 8 do
+        _G['GwPlayerAbsorbGlobeTextShadow'..i]:SetText(v)
     end
 end
 

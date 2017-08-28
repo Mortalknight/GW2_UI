@@ -157,6 +157,84 @@
                     </Layer>
                 </Layers>
             </Frame>
+            <Frame frameLevel="2" enableMouse="false"  frameStrata="HIGH"   name="GwPlayerAbsorbGlobeText" >
+                <Size x="102" y="102"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="16"/>
+                    </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString  enableMouse="false" name="$parentShadow1" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString  enableMouse="false"  name="$parentShadow2" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow3" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow4" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow5" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow6" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString  enableMouse="false" name="$parentShadow7" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow8" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            
+                    </Layer>
+                    <Layer textureSubLevel="2" level="OVERLAY">
+                
+                        <FontString enableMouse="false"  name="$parentValue" text="100,000" fontSize="14" inherits="GameFontNormalSmall" justifyH="CENTER">
+                            <Size x="102" y="25"/>
+                            <Color r="1" b="0.2" g="1"></Color>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                
+                    </Layer>
+                </Layers>
+            </Frame>
             
         </Frames>
         
