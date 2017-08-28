@@ -10,11 +10,6 @@ windowsList[1] = {}
     windowsList[1]['ONCLICK'] =function()  ToggleCharacter("PaperDollFrame");  end;
     windowsList[1]['OPEN'] = 'ToggleTalentFrame';
 
- --windowsList[1] = {}
---    windowsList[1]['ONLOAD'] = gw_register_spellbook_window;
-  --  windowsList[1]['SETTING_NAME'] ='USE_SPELLBOOK_WINDOW';
---    windowsList[1]['TAB_ICON'] ='tabicon_character';
---    windowsList[1]['ONCLICK'] =function() ToggleSpellBook(BOOKTYPE_SPELL);  end;
 
     windowsList[2] = {}
     windowsList[2]['ONLOAD'] = gw_register_talent_window;
@@ -158,7 +153,18 @@ local function createTabIcon(iconName)
 end
 
 function Gw_LoadWindows()
+    
+    local anyThingToLoad = false;
+    for k,v in pairs(windowsList) do
+        if gwGetSetting(v['SETTING_NAME']) then
+            anyThingToLoad = true;
+        end
+    end
+    if not anyThingToLoad then return end
+    
     loadBaseFrame()
+    
+    
     for k,v in pairs(windowsList) do
         if gwGetSetting(v['SETTING_NAME']) then
             local ref = v['ONLOAD']();
