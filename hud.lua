@@ -917,7 +917,7 @@ function create_micro_menu()
         if v~='SpellbookMicroButton' then
             create_micro_button(v)
         else
-           if not gwGetSetting('USE_TALENT_WINDOW') then
+           if not gwGetSetting('USE_TALENT_WINDOW_DEV') then
                  create_micro_button(v)
             end
         end
@@ -940,7 +940,7 @@ function create_micro_menu()
     GwMicroButtonBagMicroButton:SetScript('OnMouseDown',function()  ToggleAllBags(); gw_UpdateMicroButtons() end);
     
     
-    if  gwGetSetting('USE_TALENT_WINDOW') then
+    if  gwGetSetting('USE_TALENT_WINDOW_DEV') then
          
         GwMicroButtonTalentMicroButton:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
         GwMicroButtonTalentMicroButton:SetAttribute('_OnClick', [=[ 
