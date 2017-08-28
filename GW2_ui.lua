@@ -867,7 +867,7 @@ l:SetScript('OnEvent',function(self,event,name)
         
                 
         if gwGetSetting('CHATBUBBLES_ENABLED') then
-            gw_register_chatbubbles()
+        --    gw_register_chatbubbles()
         end
         
         -- create new microbuttons

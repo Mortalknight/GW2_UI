@@ -7,6 +7,8 @@ Absorb number added to health globe.
 
 
 
+Chatbubbles have been disabled and will return at a later date.
+
 Paragon Reputation issues has been corrected.
 
 Update movement bar with correct spell IDs for some classes.
