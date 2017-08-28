@@ -225,7 +225,6 @@ local function updateCastValues(self,event)
     self.castingString:SetText(name)
     
    if texture~=nil and self.portrait~=nil then 
-        self.portrait:SetMask("Textures\\MinimapMask")
         self.portrait:SetTexture(texture)
     end
     
@@ -657,6 +656,18 @@ function gw_unitframes_register_Target()
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
     
+    
+     local mask = UIParent:CreateMaskTexture()
+    mask:SetPoint("CENTER",NewUnitFrame.portrait,'CENTER',0,0)
+    
+    
+      
+    mask:SetTexture("Textures\\MinimapMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetSize(58, 58)
+    NewUnitFrame.portrait:AddMaskTexture(mask)
+    
+    
+    
     GwaddTOClique(NewUnitFrame)
     
        NewUnitFrame.classColor = gwGetSetting('target_CLASS_COLOR')
@@ -728,7 +739,15 @@ function gw_unitframes_register_Focus()
     NewUnitFrame:SetPoint(gwGetSetting('focus_pos')['point'],UIParent,gwGetSetting('focus_pos')['relativePoint'],gwGetSetting('focus_pos')['xOfs'],gwGetSetting('focus_pos')['yOfs'])
     
     
-  
+                  
+    local mask = UIParent:CreateMaskTexture()
+    mask:SetPoint("CENTER",NewUnitFrame.portrait,'CENTER',0,0)
+    
+    
+      
+    mask:SetTexture("Textures\\MinimapMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetSize(58, 58)
+    NewUnitFrame.portrait:AddMaskTexture(mask)
 
     NewUnitFrame:SetAttribute("*type1", 'target')
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
