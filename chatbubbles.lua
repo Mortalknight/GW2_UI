@@ -45,7 +45,8 @@ local bi = 0
 for i=1,WorldFrame:GetNumChildren() do
         local v = select(i, WorldFrame:GetChildren())
         local b = v:GetBackdrop()
-        if b~=nill then
+        local p = v:IsProtected()
+        if b~=nill and not p then
             if b.bgFile == "Interface\\Tooltips\\ChatBubble-Background" or b.bgFile == "Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background" then
                 for i=1,v:GetNumRegions() do
                     

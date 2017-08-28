@@ -26,3 +26,5 @@ The minimap north tag now hides on hover, so as not to obscure the zone text.
 Fix for Immersion addon conflict when using the "Hide Minimap" option, where the vanilla minimap zone text UI would display after talking to an NPC.
 
 Addon icons now follow the minimap in a square shape  (Note: using a larger minimap will still cause the icons to overlap the minimap.)
+
+Unitframes will no longer trigger an error when target is using a spell.
