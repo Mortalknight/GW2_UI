@@ -1,3 +1,4 @@
+Game menu tooltip now display more data (Addon memory, up/download stats).
 
 Stancebar can now be fully toggled in combat.
 
