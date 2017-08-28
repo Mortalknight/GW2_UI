@@ -22,4 +22,4 @@ North Tag now hides on hover, so as not to obscure the zone text.
 
 Fix for Immersion addon conflict when using the "Hide Minimap" option, where the vanilla Minimap Zone Text UI would display after talking to an NPC.
 
-Addon icons now follow the minimap in a sqare shape  (Note that using a larger minimap will still cause the icons to overlap the minimap.)
+Addon icons now follow the minimap in a square shape  (Note that using a larger minimap will still cause the icons to overlap the minimap.)
