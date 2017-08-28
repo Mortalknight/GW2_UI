@@ -1,29 +1,28 @@
 NEW
 
-Game menu tooltip now display more data (Addon memory, up/download stats).
+The game menu tooltip now displays more information, including addon memory usage, and up/download statistics.
 
-Stancebar can now be fully toggled in combat.
+The stance bar can now be fully toggled whilst in combat.
 
-Absorb number added to health globe.
+Absorb number has been added to the health globe.
 
 
 
-BUGFIXES AND CORRECTIONS
 
-Chatbubbles have been disabled and will return at a later date.
+Chatbubbles have been temporarily disabled and will return at a later date.
 
 Paragon Reputation issues have been corrected.
 
-Update movement bar with correct spell IDs for some classes.
+Updated movement bar with correct spell IDs for some classes.
 
-Movement bar should now update with more correct information.
+The movement bar should now update with more correct information.
 
 Fixed some translation errors.
 
-Compass should no longer display errors when dead.
+The compass should no longer display errors when dead.
 
-North Tag now hides on hover, so as not to obscure the zone text.
+The minimap north tag now hides on hover, so as not to obscure the zone text.
 
-Fix for Immersion addon conflict when using the "Hide Minimap" option, where the vanilla Minimap Zone Text UI would display after talking to an NPC.
+Fix for Immersion addon conflict when using the "Hide Minimap" option, where the vanilla minimap zone text UI would display after talking to an NPC.
 
-Addon icons now follow the minimap in a square shape  (Note that using a larger minimap will still cause the icons to overlap the minimap.)
+Addon icons now follow the minimap in a square shape  (Note: using a larger minimap will still cause the icons to overlap the minimap.)
