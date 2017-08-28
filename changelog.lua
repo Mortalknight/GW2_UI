@@ -6,7 +6,6 @@ Absorb number added to health globe.
 
 
 
-M
 
 Paragon Reputation issues has been corrected.
 
