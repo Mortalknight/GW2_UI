@@ -178,6 +178,9 @@ function gw_create_raidframe(registerUnit)
     
     frame:SetScript('OnUpdate',gw_raidFrame_OnUpdate)
     
+    gw_raidframe_OnEvent(frame,'load')
+    
+    
     if gwGetSetting('RAID_POWER_BARS')==true then
         frame.healthbar:SetPoint('BOTTOMLEFT',frame,'BOTTOMLEFT',0,5)
         frame.manabar:Show()
@@ -244,11 +247,19 @@ function gw_unhookPlayer_raidframe()
     
 end
 
-function gw_raidframe_OnEvent(self,event,unit,arg1)
+local function setAbsorbAmount(self)
+    local healthMax = UnitHealthMax(self.unit)
+        local absorb = UnitGetTotalAbsorbs(self.unit)
     
-    if not UnitExists(self.unit) then return end
-    
-    if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
+        local absorbPrecentage = 0
+        
+        if absorb>0 and healthMax>0 then
+            absorbPrecentage = absorb/healthMax
+        end
+        self.healthbar.absorbbar:SetValue(absorbPrecentage)
+end
+
+local function setHealth(self)
        
         local health = UnitHealth(self.unit)
         local healthMax = UnitHealthMax(self.unit)
@@ -258,6 +269,60 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         end
         
         gwBar(self.healthbar,healthPrec)
+end
+
+
+local function setUnitName(self)
+    
+    local nameRoleIcon = {}
+    nameRoleIcon['TANK'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t '
+    nameRoleIcon['HEALER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t '
+    nameRoleIcon['DAMAGER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t '
+    nameRoleIcon['NONE'] = ''
+	
+	local guid = UnitGUID(self.unit)
+	local realmid = string.match(guid, "^Player%-(%d+)")
+	local guid_Player = UnitGUID('Player')
+	if guid_Player ~= nil then 
+		realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
+	end
+
+    local role = UnitGroupRolesAssigned(self.unit)
+    local nameString = UnitName(self.unit)
+	local realm = GetRealmName(self.unit)
+	local realmflag = ''
+	
+	if gwGetSetting('RAID_UNIT_FLAGS') == 'NONE' then
+		realmflag = ''
+	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'DIFFERENT' then
+		if gw_set_unit_flag[realmid] ~= gw_set_unit_flag[realmid_Player] then realmflag = gw_set_unit_flag[realmid] end
+	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'ALL' then
+		realmflag = gw_set_unit_flag[realmid]
+	end
+
+    if nameRoleIcon[role]~=nil then
+        nameString = nameRoleIcon[role]..nameString
+    end
+    if realmflag == nil then 
+		realmflag = ''
+	end
+    self.name:SetText(nameString..' '..realmflag)
+    
+end
+
+
+function gw_raidframe_OnEvent(self,event,unit,arg1)
+    
+    if not UnitExists(self.unit) then return end
+    
+    if event=='load' then
+       setAbsorbAmount(self) 
+       setHealth(self) 
+    end
+    
+    
+    if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
+        setHealth(self)
     end
     
     if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit==self.unit then
@@ -276,15 +341,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     end
     
     if event=='UNIT_ABSORB_AMOUNT_CHANGED' and unit==self.unit then
-        local healthMax = UnitHealthMax(self.unit)
-        local absorb = UnitGetTotalAbsorbs(self.unit)
-    
-        local absorbPrecentage = 0
-        
-        if absorb>0 and healthMax>0 then
-            absorbPrecentage = absorb/healthMax
-        end
-        self.healthbar.absorbbar:SetValue(absorbPrecentage)
+        setAbsorbAmount(self)
     end
     
     if (event=='UNIT_PHASE' and unit==self.unit) or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
@@ -384,43 +441,6 @@ function gw_highlight_target_raidframe(self)
 end
 
 
-local function setUnitName(self)
-    
-    local nameRoleIcon = {}
-    nameRoleIcon['TANK'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t '
-    nameRoleIcon['HEALER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t '
-    nameRoleIcon['DAMAGER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t '
-    nameRoleIcon['NONE'] = ''
-	
-	local guid = UnitGUID(self.unit)
-	local realmid = string.match(guid, "^Player%-(%d+)")
-	local guid_Player = UnitGUID('Player')
-	if guid_Player ~= nil then 
-		realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
-	end
-
-    local role = UnitGroupRolesAssigned(self.unit)
-    local nameString = UnitName(self.unit)
-	local realm = GetRealmName(self.unit)
-	local realmflag = ''
-	
-	if gwGetSetting('RAID_UNIT_FLAGS') == 'NONE' then
-		realmflag = ''
-	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'DIFFERENT' then
-		if gw_set_unit_flag[realmid] ~= gw_set_unit_flag[realmid_Player] then realmflag = gw_set_unit_flag[realmid] end
-	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'ALL' then
-		realmflag = gw_set_unit_flag[realmid]
-	end
-
-    if nameRoleIcon[role]~=nil then
-        nameString = nameRoleIcon[role]..nameString
-    end
-    if realmflag == nil then 
-		realmflag = ''
-	end
-    self.name:SetText(nameString..' '..realmflag)
-    
-end
 
 function gw_update_raidframeData(self)    
 	if not UnitExists(self.unit) then return end
