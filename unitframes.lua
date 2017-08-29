@@ -204,6 +204,7 @@ local function hideCastBar(self,event)
 end
 
 local function updateCastValues(self,event)
+
     
     local castType = 1
     
@@ -484,21 +485,13 @@ end
 local function target_OnEvent(self,event,unit)
     
     if event=='PLAYER_TARGET_CHANGED' or event=='ZONE_CHANGED' then
-        self.stepOnUpdate = 0
-        self:SetScript('OnUpdate',function() 
-                self.stepOnUpdate = self.stepOnUpdate + 1
-                
-                
-                if self.stepOnUpdate==1 then updateHealthValues(self,event) return end
-                if self.stepOnUpdate==2 then unitFrameData(self,event)  return end
-                if self.stepOnUpdate==3 then updatePowerValues(self,event)  return end
-                if self.stepOnUpdate==4 then      updateCastValues(self,event)  return end
-                if self.stepOnUpdate==5 then     updateRaidMarkers(self,event)  return end
-                if self.stepOnUpdate==6 then      updateBuffLayout(self,event)  return end
-            
-                if self.stepOnUpdate==7 then      self:SetScript('OnUpdate',nil)  return end
-               
-            end)
+      
+            updateHealthValues(self,event) 
+            unitFrameData(self,event)  
+            updatePowerValues(self,event)  
+            updateCastValues(self,event)  
+            updateRaidMarkers(self,event)  
+            updateBuffLayout(self,event)  
 
         return
     end
@@ -514,7 +507,15 @@ local function target_OnEvent(self,event,unit)
     end
     
     if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE') and unit==self.unit then
-        updateCastValues(self,event)
+        self:SetScript('OnUpdate', function()
+            if self.updatedCastThisFrame==nil or self.updatedCastThisFrame==false then
+                    updateCastValues(self,event)
+                    self.updatedCastThisFrame = true
+            end
+            self.updatedCastThisFrame = false;
+                self:SetScript('OnUpdate', nil)
+        end)
+        
         return
     end
     
@@ -537,20 +538,13 @@ local function focus_OnEvent(self,event,unit)
     
     if event=='PLAYER_FOCUS_CHANGED' or event=='ZONE_CHANGED' then
            self.stepOnUpdate = 0
-        self:SetScript('OnUpdate',function() 
-                self.stepOnUpdate = self.stepOnUpdate + 1
-                
-                
-                if self.stepOnUpdate==1 then updateHealthValues(self,event) return end
-                if self.stepOnUpdate==2 then unitFrameData(self,event)  return end
-                if self.stepOnUpdate==3 then updatePowerValues(self,event)  return end
-                if self.stepOnUpdate==4 then      updateCastValues(self,event)  return end
-                if self.stepOnUpdate==5 then     updateRaidMarkers(self,event)  return end
-                if self.stepOnUpdate==6 then      updateBuffLayout(self,event)  return end
-            
-                if self.stepOnUpdate==7 then      self:SetScript('OnUpdate',nil)  return end
-               
-            end)
+       
+            updateHealthValues(self,event) 
+            unitFrameData(self,event)  
+            updatePowerValues(self,event)  
+            updateCastValues(self,event)  
+            updateRaidMarkers(self,event)  
+            updateBuffLayout(self,event)  
         return
     end
     
@@ -565,7 +559,14 @@ local function focus_OnEvent(self,event,unit)
     end
     
     if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE') and unit==self.unit then
-        updateCastValues(self,event)
+        self:SetScript('OnUpdate', function()
+            if self.updatedCastThisFrame==nil or self.updatedCastThisFrame==false then
+                    updateCastValues(self,event)
+                    self.updatedCastThisFrame = true
+            end
+            self.updatedCastThisFrame = false;
+                self:SetScript('OnUpdate', nil)
+        end)
         return
     end
     
@@ -589,21 +590,13 @@ local function targettarget_OnEvent(self,event,unit,arg2)
     if  not UnitExists(self.unit) then return end
     
     if (event=='UNIT_TARGET' and unit=='target') or event=='PLAYER_TARGET_CHANGED' or event=='ZONE_CHANGED' then
-      self.stepOnUpdate = 0
-        self:SetScript('OnUpdate',function() 
-                self.stepOnUpdate = self.stepOnUpdate + 1
-                
-                
-                if self.stepOnUpdate==1 then updateHealthValues(self,event) return end
-                if self.stepOnUpdate==2 then unitFrameData(self,event)  return end
-                if self.stepOnUpdate==3 then updatePowerValues(self,event)  return end
-                if self.stepOnUpdate==4 then      updateCastValues(self,event)  return end
-                if self.stepOnUpdate==5 then     updateRaidMarkers(self,event)  return end
-              
-            
-                if self.stepOnUpdate==6 then      self:SetScript('OnUpdate',nil)  return end
-               
-            end)
+ 
+            updateHealthValues(self,event) 
+            unitFrameData(self,event)  
+            updatePowerValues(self,event)  
+            updateCastValues(self,event)  
+            updateRaidMarkers(self,event)  
+      
         return
     end
 
@@ -619,7 +612,14 @@ local function targettarget_OnEvent(self,event,unit,arg2)
     end
     
     if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE')  then
-        updateCastValues(self,event)
+         self:SetScript('OnUpdate', function()
+            if self.updatedCastThisFrame==nil or self.updatedCastThisFrame==false then
+                    updateCastValues(self,event)
+                    self.updatedCastThisFrame = true
+            end
+            self.updatedCastThisFrame = false;
+                self:SetScript('OnUpdate', nil)
+        end)
         return
     end
     
