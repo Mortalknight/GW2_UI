@@ -274,6 +274,8 @@ end
 
 local function setUnitName(self)
     
+    if self==nil or self.unit==nil then return end
+    
     local nameRoleIcon = {}
     nameRoleIcon['TANK'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t '
     nameRoleIcon['HEALER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t '
