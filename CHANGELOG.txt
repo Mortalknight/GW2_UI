@@ -8,8 +8,7 @@ Absorb number has been added to the health globe.
 
 
 
-
-Chatbubbles have been temporarily disabled and will return at a later date.
+FIXED
 
 Paragon Reputation issues have been corrected.
 
@@ -28,3 +27,9 @@ Fix for Immersion addon conflict when using the "Hide Minimap" option, where the
 Addon icons now follow the minimap in a square shape  (Note: using a larger minimap will still cause the icons to overlap the minimap.)
 
 Unitframes will no longer trigger an error when target is using a spell.
+
+
+
+KNOWN BUGS
+
+Chatbubbles have been temporarily disabled and will return at a later date.
