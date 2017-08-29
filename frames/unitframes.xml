@@ -28,19 +28,19 @@
                     </Anchors>
                 </Texture>
                 <Texture parentKey="healthbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                    <Size x="257" y="19"/>
+                    <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.portrait" relativePoint="RIGHT" x="5" y="0"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="powerbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                    <Size x="257" y="7"/>
+                    <Size x="215" y="7"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="2"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="castingbarBackground" file="Interface\AddOns\GW2_UI\textures\castingbars">
-                    <Size x="259" y="19"/>
+                    <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
@@ -57,7 +57,7 @@
                      
                 </Texture>
                 <Texture parentKey="absorbbarbg" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
-                    <Size x="253" y="15"/>
+                    <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
@@ -74,7 +74,7 @@
                 </Texture>
                 
                 <Texture parentKey="healthbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="253" y="15"/>
+                    <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                         
@@ -83,19 +83,19 @@
                 </Texture>
                 
                 <Texture parentKey="powerbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="253" y="3"/>
+                    <Size x="213" y="3"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.powerbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="castingbar" file="Interface\AddOns\GW2_UI\textures\castingbarshield">
-                    <Size x="253" y="12"/>
+                    <Size x="213" y="12"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
                 </Texture> 
                 <Texture parentKey="castingbarNormal" file="Interface\AddOns\GW2_UI\textures\castingbars">
-                    <Size x="253" y="16"/>
+                    <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
@@ -113,7 +113,7 @@
                 </Texture>
                 
                 <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
-                    <Size x="16" y="14"/>
+                    <Size x="16" y="13"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.castingbarNormal" relativePoint="RIGHT" x="0" y="0"></Anchor>
                     </Anchors>
@@ -121,14 +121,14 @@
                 </Texture>
                 
                 <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
-                    <Size x="253" y="15"/>
+                    <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
                 
                 </Texture>
                  <Texture parentKey="healthbarSpark"  file="Interface\AddOns\GW2_UI\textures\bloodspark" >
-                    <Size x="21" y="15"></Size>
+                    <Size x="21" y="13"></Size>
                      <Anchors>
                          <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                      </Anchors>
@@ -153,14 +153,14 @@
                 </FontString>
                 
                 <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="CENTER">
-                    <Size x="253" y="15"/>
+                    <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
                     </Anchors>
                 </FontString>
                 
                 <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="CENTER">
-                    <Size x="253" y="15"/>
+                    <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="7" y="0"></Anchor>
                     </Anchors>
@@ -182,9 +182,9 @@
         
         <Frames>
             <Frame parentKey="auras">
-                <Size x="257" y="100"/>
+                <Size x="215" y="100"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.castingbarBackground" relativePoint="BOTTOMLEFT" x="2" y="-2"></Anchor>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.castingbarBackground" relativePoint="BOTTOMLEFT" x="2" y="-15"></Anchor>
                 </Anchors>
             </Frame>
         </Frames>
@@ -211,7 +211,7 @@
                 
                 self.healthValue = 0
                 
-                self.barWidth = 253
+                self.barWidth = 212
             </OnLoad>
             <OnEnter>
                 if self.unit~=nil then
@@ -245,7 +245,7 @@
                     </Anchors>
                 </Texture>
                 <Texture parentKey="healthbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                    <Size x="150" y="19"/>
+                    <Size x="150" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT"  relativePoint="LEFT" x="5" y="-4"></Anchor>
                     </Anchors>
@@ -257,7 +257,7 @@
                     </Anchors>
                 </Texture>
                 <Texture parentKey="castingbarBackground" file="Interface\AddOns\GW2_UI\textures\castingbars">
-                    <Size x="150" y="19"/>
+                    <Size x="150" y="15"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
@@ -284,7 +284,7 @@
             <Layer level="ARTOWRK" textureSubLevel="4">
                 
                 <Texture parentKey="healthbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="146" y="15"/>
+                    <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                         
@@ -305,7 +305,7 @@
                     </Anchors>
                 </Texture> 
                 <Texture parentKey="castingbarNormal" file="Interface\AddOns\GW2_UI\textures\castingbars">
-                    <Size x="146" y="16"/>
+                    <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
