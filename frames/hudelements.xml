@@ -160,7 +160,7 @@
             <Frame frameLevel="2" enableMouse="false"  frameStrata="HIGH"   name="GwPlayerAbsorbGlobeText" >
                 <Size x="102" y="102"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="16"/>
+                        <Anchor point="CENTER" x="0" y="20"/>
                     </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
