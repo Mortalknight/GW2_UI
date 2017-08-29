@@ -1333,7 +1333,8 @@
 				_G['GwLevelingRewardsItem4'].name:SetText(GwLocalization['LEVEL_REWARDS'])	
             </OnLoad>
             <OnShow>
-                PlaySound("AchievementMenuOpen");
+              
+                PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN     );
                 self.animationValue = -400
                 local name = self:GetName()
                 local start = GetTime()

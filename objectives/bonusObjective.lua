@@ -93,6 +93,7 @@ local function updateBonusObjective(self,event)
         local simpleDesc = ''
         local compassData = {}
         
+       
         
         if isOnMap then
             local compassData = {}
@@ -104,6 +105,7 @@ local function updateBonusObjective(self,event)
         if numObjectives==nil then numObjectives = 0 end
         if isInArea then
             
+         
              compassData['TITLE']= text
             
             
@@ -112,7 +114,7 @@ local function updateBonusObjective(self,event)
             
             if savedQuests[questID]==nil then
                 gwNewQuestAnimation(GwBonusObjectiveBlock)
-               PlaySound("UI_WorldQuest_Start");
+                PlaySound(SOUNDKIT['UI_WORLDQUEST_START']);
                 savedQuests[questID] = true
             end
             
@@ -127,6 +129,7 @@ local function updateBonusObjective(self,event)
           
            
             for objectiveIndex = 1,numObjectives do
+                
                 local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false);
                 
                
@@ -225,10 +228,12 @@ function gw_register_bonusObjectiveFrame()
         local p = self:GetParent()
         if p.collapsed==nil or p.collapsed==false then
              p.collapsed = true
-            PlaySound("igMainMenuOptionCheckBoxOff");
+          
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
          else
              p.collapsed = false
-            PlaySound("igMainMenuOptionCheckBoxOn");
+         
+                   PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
          end    
        updateBonusObjective()
     end)

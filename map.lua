@@ -190,7 +190,8 @@ function gw_set_minimap()
     Minimap:SetScript("OnMouseDown", function(self, event)
           if event=='RightButton' then
                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5);
-                PlaySound("igMainMenuOptionCheckBoxOn");
+              
+                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON   );
             end
     end)
     
@@ -256,7 +257,7 @@ function GetMinimapShape()
 
 function GwMapTimeClick(self,button)
 	if button == "LeftButton" then
-		PlaySound("igMainMenuOptionCheckBoxOn")
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON   );
 		
 		if IsShiftKeyDown() then
 			TimeManager_ToggleLocalTime()
@@ -266,7 +267,7 @@ function GwMapTimeClick(self,button)
 		end
 	end
 	if button == "RightButton" then
-		PlaySound("igMainMenuQuit")
+		PlaySound(SOUNDKIT.IG_MAINMENU_QUIT    );
 		Stopwatch_Toggle()
 	end
 end

@@ -676,8 +676,9 @@ end
 
 function gwCharacterPanelToggle(frame)
     
-    PlaySound("igMainMenuOptionCheckBoxOn");
-
+   
+    
+    PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB       );
   
     
     GwPaperDollBagItemList:Hide()
@@ -821,7 +822,7 @@ function GwPaperDollOutfits_OnEvent(self, event, ...)
 	if ( event == "EQUIPMENT_SWAP_FINISHED" ) then
 		local completed, setName = ...;
 		if ( completed ) then
-			PlaySoundKitID(1212); -- plays the equip sound for plate mail
+			PlaySound(1212); -- plays the equip sound for plate mail
 			if (self:IsShown()) then
 				self.selectedSetName = setName;
 				GwOutfitsDrawItemSetList();
@@ -1396,7 +1397,7 @@ function gw_register_character_window()
     
     hooksecurefunc('GearManagerDialogPopupOkay_OnClick',GwOutfitsDrawItemSetList)
     GearManagerDialogPopup:SetScript('OnShow',function(self)
-            PlaySound("igCharacterInfoOpen");
+            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN       );
             self.name = nil;
             self.isEdit = false;
             RecalculateGearManagerDialogPopup();

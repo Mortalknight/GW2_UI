@@ -256,10 +256,11 @@ function gw_register_achievement()
         local p = self:GetParent()
         if p.collapsed==nil or p.collapsed==false then
              p.collapsed = true
-            PlaySound("igMainMenuOptionCheckBoxOff");
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF  );
+       
          else
              p.collapsed = false
-            PlaySound("igMainMenuOptionCheckBoxOn");
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON  );
          end    
        updateAchievementLayout()
     end)

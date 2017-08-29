@@ -265,7 +265,8 @@ function gw_move_bagbar()
                 if b=='RightButton' then
                     
                     local parent = _G[default_bag_frame_container[k]];
-                    PlaySound("igMainMenuOptionCheckBoxOn");
+                   
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON      );
                     ToggleDropDownMenu(1, nil, parent.FilterDropDown, self, 0, 0);    
                     
                 else

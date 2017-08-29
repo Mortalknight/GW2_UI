@@ -305,7 +305,9 @@
                     <OnClick>
                         local selectedSetName = GwPaperDollOutfits.selectedSetName;
                         if ( selectedSetName and selectedSetName ~= "") then
-                            PlaySound("igCharacterInfoTab");	
+   
+                            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB );
+                        
                             UseEquipmentSet(selectedSetName);
                         end                        
                     </OnClick>

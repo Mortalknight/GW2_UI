@@ -176,11 +176,12 @@ local function toastRecive(itemLink, quantity, rollType, roll, specID, isCurrenc
        GwSetItemButtonQuality(frame, itemRarity,itemHyperLink)
     
     if ( lessAwesome ) then
-		PlaySoundKitID(51402);	--UI_Raid_Loot_Toast_Lesser_Item_Won
+		PlaySound(51402);	--UI_Raid_Loot_Toast_Lesser_Item_Won
 	elseif ( isUpgraded ) then
-		PlaySoundKitID(51561);	-- UI_Warforged_Item_Loot_Toast
+		PlaySound(51561);	-- UI_Warforged_Item_Loot_Toast
 	else
-		PlaySoundKitID(31578);	--UI_EpicLoot_Toast
+		PlaySound(31578);	--UI_EpicLoot_Toast
+     
 	end
     
 end
@@ -236,7 +237,8 @@ local function goldWon(amount)
     frame.title:SetText('Gold')
    	frame.sub:SetText(GetMoneyString(amount));
     
-	PlaySoundKitID(31578);	--UI_EpicLoot_Toast 
+	PlaySound(31578);	--UI_EpicLoot_Toast 
+ 
 end
 
 local function onEvent(self,event,...)

@@ -984,10 +984,12 @@ function create_micro_menu()
                 
                 CloseMenus();
                 CloseAllWindows()
-                PlaySound("igMainMenuOpen");
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPEN );
+            
                 ShowUIPanel(GameMenuFrame);
 		  else
-                PlaySound("igMainMenuQuit");
+               
+                PlaySound(SOUNDKIT.IG_MAINMENU_QUIT  );
                 HideUIPanel(GameMenuFrame);
                 MainMenuMicroButton_SetNormal();
             end

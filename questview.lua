@@ -183,7 +183,8 @@ end
             GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
             setQuestGiverAnimation()
             GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_SKIP'])
-        PlaySoundKitID(906)
+   
+        PlaySound(906);
         else
             questTextCompleted()
         end
