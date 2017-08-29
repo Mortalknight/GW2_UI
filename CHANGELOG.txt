@@ -28,6 +28,10 @@ Addon icons now follow the minimap in a square shape  (Note: using a larger mini
 
 Unitframes will no longer trigger an error when target is using a spell.
 
+Raid frames will no longer display maximum absorb when reloading the UI.
+
+Raid frames now update the name of the unit more frequently.
+
 
 
 KNOWN BUGS
