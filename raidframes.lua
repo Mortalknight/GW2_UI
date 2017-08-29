@@ -172,6 +172,8 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent("READY_CHECK_CONFIRM");
     frame:RegisterEvent("READY_CHECK_FINISHED");
 	frame:RegisterEvent("RAID_TARGET_UPDATE");
+	frame:RegisterEvent("UNIT_NAME_UPDATE");
+	frame:RegisterEvent("LOADING_SCREEN_DISABLED");
     frame:SetScript('OnEvent',gw_raidframe_OnEvent)
     
     frame:SetScript('OnUpdate',gw_raidFrame_OnUpdate)
@@ -295,9 +297,15 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     end 
     if event=='UNIT_TARGET' and unit=='player' then
        gw_highlight_target_raidframe()
+    end 
+    if event=='UNIT_NAME_UPDATE' and unit==self.unit then
+       setUnitName()
     end
     if event=='UNIT_AURA' and unit==self.unit then
        gw_raidframes_updateAuras(self)
+    end
+    if event=='LOADING_SCREEN_DISABLED' then
+        gw_raidframes_updateAuras(self)
     end
     if event=='RAID_TARGET_UPDATE' and gwGetSetting('RAID_UNIT_MARKERS') == true then
        updateRaidMarkers(self) 
@@ -376,6 +384,44 @@ function gw_highlight_target_raidframe(self)
 end
 
 
+local function setUnitName(self)
+    
+    local nameRoleIcon = {}
+    nameRoleIcon['TANK'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t '
+    nameRoleIcon['HEALER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t '
+    nameRoleIcon['DAMAGER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t '
+    nameRoleIcon['NONE'] = ''
+	
+	local guid = UnitGUID(self.unit)
+	local realmid = string.match(guid, "^Player%-(%d+)")
+	local guid_Player = UnitGUID('Player')
+	if guid_Player ~= nil then 
+		realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
+	end
+
+    local role = UnitGroupRolesAssigned(self.unit)
+    local nameString = UnitName(self.unit)
+	local realm = GetRealmName(self.unit)
+	local realmflag = ''
+	
+	if gwGetSetting('RAID_UNIT_FLAGS') == 'NONE' then
+		realmflag = ''
+	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'DIFFERENT' then
+		if gw_set_unit_flag[realmid] ~= gw_set_unit_flag[realmid_Player] then realmflag = gw_set_unit_flag[realmid] end
+	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'ALL' then
+		realmflag = gw_set_unit_flag[realmid]
+	end
+
+    if nameRoleIcon[role]~=nil then
+        nameString = nameRoleIcon[role]..nameString
+    end
+    if realmflag == nil then 
+		realmflag = ''
+	end
+    self.name:SetText(nameString..' '..realmflag)
+    
+end
+
 function gw_update_raidframeData(self)    
 	if not UnitExists(self.unit) then return end
     
@@ -413,40 +459,8 @@ function gw_update_raidframeData(self)
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
     
-    local nameRoleIcon = {}
-    nameRoleIcon['TANK'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t '
-    nameRoleIcon['HEALER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t '
-    nameRoleIcon['DAMAGER'] = '|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t '
-    nameRoleIcon['NONE'] = ''
-	
-	local guid = UnitGUID(self.unit)
-	local realmid = string.match(guid, "^Player%-(%d+)")
-	local guid_Player = UnitGUID('Player')
-	if guid_Player ~= nil then 
-		realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
-	end
-
-    local role = UnitGroupRolesAssigned(self.unit)
-    local nameString = UnitName(self.unit)
-	local realm = GetRealmName(self.unit)
-	local realmflag = ''
-	
-	if gwGetSetting('RAID_UNIT_FLAGS') == 'NONE' then
-		realmflag = ''
-	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'DIFFERENT' then
-		if gw_set_unit_flag[realmid] ~= gw_set_unit_flag[realmid_Player] then realmflag = gw_set_unit_flag[realmid] end
-	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'ALL' then
-		realmflag = gw_set_unit_flag[realmid]
-	end
-
-    if nameRoleIcon[role]~=nil then
-        nameString = nameRoleIcon[role]..nameString
-    end
-    if realmflag == nil then 
-		realmflag = ''
-	end
-    self.name:SetText(nameString..' '..realmflag)
    
+    setUnitName(self)
     gw_highlight_target_raidframe()
     
     gw_update_raidframe_awayData(self)
