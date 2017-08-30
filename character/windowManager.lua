@@ -36,12 +36,14 @@ local function loadBaseFrame()
    
     
     GwCharacterWindow.close:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
+    GwCharacterWindow.close:SetFrameRef('GwCharacterWindowMoverFrame',GwCharacterWindowMoverFrame)
     
     GwCharacterWindow.close:SetAttribute("_onclick", [=[
      
         self:GetFrameRef('GwCharacterWindow'):Hide()
         if self:GetFrameRef('GwCharacterWindow'):IsVisible() then
               self:GetFrameRef('GwCharacterWindow'):Hide()
+              self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
         end
     ]=]); 
     
@@ -51,8 +53,8 @@ local function loadBaseFrame()
     
  --   tinsert(UISpecialFrames, "GwCharacterWindow") 
    
-    GwCharacterWindow:HookScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
-    GwCharacterWindow:HookScript('OnShow',function() GwCharacterWindowMoverFrame:Show() end)
+ --   GwCharacterWindow:HookScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
+--    GwCharacterWindow:HookScript('OnShow',function() GwCharacterWindowMoverFrame:Show() end)
 
 
 
@@ -71,6 +73,7 @@ local function loadBaseFrame()
         if button=='Escape' then self:Hide() end
     ]=]);
     GwCharacterWindow:Hide()
+    GwCharacterWindow:SetFrameRef('GwCharacterWindowMoverFrame',GwCharacterWindowMoverFrame)
     GwCharacterWindow:SetAttribute('_onattributechanged', [=[ 
        
         
@@ -98,6 +101,7 @@ local function loadBaseFrame()
   
         if not self:IsVisible() and value~=0 then
             self:Show()
+            self:GetFrameRef('GwCharacterWindowMoverFrame'):Show()
         end
         
 
@@ -110,6 +114,8 @@ local function loadBaseFrame()
         
         if value==0 then
             self:Hide()
+            self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
+        
         end
   
     ]=]);

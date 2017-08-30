@@ -678,7 +678,7 @@ function gwCharacterPanelToggle(frame)
     
    
     
-    PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB       );
+    
   
     
     GwPaperDollBagItemList:Hide()
@@ -1425,18 +1425,21 @@ function gw_register_character_window()
    
     GwUpdateReputationDetails()
     
-    GwCharacterWindowContainer:SetScript('OnShow',function() 
+    GwCharacterWindowContainer:HookScript('OnHide',function() 
+     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE );        
+    end)
+    GwCharacterWindowContainer:HookScript('OnShow',function() 
+            
+        GwCharacterWindow.windowIcon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\character-window-icon')
+        GwCharacterWindow.WindowHeader:SetText(GwLocalization['CHARACTER_HEADER'])
         if CHARACTER_PANEL_OPEN==nil then
            
                 gwCharacterPanelToggle(GwCharacterMenu)
+                PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN  );
         end
     end)
     
-     GwCharacterWindowContainer:HookScript('OnShow', function() 
-        GwCharacterWindow.windowIcon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\character-window-icon')
-        GwCharacterWindow.WindowHeader:SetText(GwLocalization['CHARACTER_HEADER'])
-    end)
-    
+   
     
     return GwCharacterWindowContainer;
     
