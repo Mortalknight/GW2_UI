@@ -1,3 +1,9 @@
+4.1.3
+ - Updated zhTW strings. (Thanks to gaspy10 on Curse)
+ - Fixed the health flare for the target of target frame.
+
+
+
 NEW
 
 The game menu tooltip now displays more information, including addon memory usage, and up/download statistics.
