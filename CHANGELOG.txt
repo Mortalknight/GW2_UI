@@ -1,3 +1,8 @@
+4.1.4
+ - Updated koKR strings. (Thanks to Billkind and Qwwaaaa from Curse.)
+ - Fixed the reputation window to correctly display Chromie's reputation ranks. (Unfortunately, due to an API limitation, we are unable to display what the next rank title is in this window.)
+
+
 4.1.3
  - Updated zhTW strings. (Thanks to gaspy10 on Curse)
  - Fixed the health flare for the target of target frame.
