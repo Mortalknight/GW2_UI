@@ -485,9 +485,12 @@ function update_experiencebar_data(self,event)
 					
 					 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
 				elseif (friendID ~= nil) then
-					valPrec = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
+					if ( nextFriendThreshold ) then
+						valPrec = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
+					else
+						valPrec = 1	
+					end
 					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((friendRep - friendThreshold)).." / "..comma_value((nextFriendThreshold - friendThreshold))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
-					
 					_G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
 				else
 					local currentRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId)), UnitSex("player"));
