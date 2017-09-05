@@ -1188,7 +1188,7 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
 				--if (nextFriendThreshold) then
 				
 					frame.currentRank:SetText(friendTextLevel)
-					frame.nextRank:SetText(friendTextLevel + 1)
+					--frame.nextRank:SetText(friendTextLevel + 1)
 					
 					frame.currentValue:SetText(comma_value(friendRep - friendThreshold))
 					local percent = math.floor(round(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))*100),0)
