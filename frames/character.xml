@@ -936,7 +936,7 @@
             <OnClick>
                 if self.details:IsShown() then
                     GwDetailFaction(self.factionIndex,false)
-                    self:SetHeight(65)
+                    self:SetHeight(80)
                     self.controles:Hide()
                   
                   

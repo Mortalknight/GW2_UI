@@ -1185,30 +1185,35 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
 				frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
 				frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
 			elseif (friendID ~= nil) then
-				--if (nextFriendThreshold) then
-				
-					frame.currentRank:SetText(friendTextLevel)
-					--frame.nextRank:SetText(friendTextLevel + 1)
-					
+			
+				frame.StatusBar:SetMinMaxValues(0, 1)
+				frame.currentRank:SetText(friendTextLevel)
+				frame.nextRank:SetText()
+
+			
+				frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
+				frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
+			
+				if ( nextFriendThreshold ) then
+
 					frame.currentValue:SetText(comma_value(friendRep - friendThreshold))
+					
 					local percent = math.floor(round(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))*100),0)
 					if percent == -1 then 
 						frame.percentage:SetText('0%')
 					else
 						frame.percentage:SetText((math.floor( round(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))*100),0) )..'%')
 					end
-					frame.nextValue:SetText(comma_value(nextFriendThreshold - friendThreshold))
-					
-					frame.StatusBar:SetMinMaxValues(0, 1)
-					frame.StatusBar:SetValue((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))
-					
-					frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
-					frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
-					
-					
-				--else
 				
-				--end
+					frame.StatusBar:SetValue((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))
+
+				else
+					--max rank
+					frame.StatusBar:SetValue(1)
+					frame.nextValue:SetText()
+					frame.currentValue:SetText()
+					frame.percentage:SetText('100%')
+				end
 			else
 			    frame.currentRank:SetText(currentRank)
 				frame.nextRank:SetText(nextRank)
