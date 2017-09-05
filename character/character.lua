@@ -1076,8 +1076,7 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
             
             local currentRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId)), gender);
             local nextRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId + 1)), gender);
-			
-            
+			local friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID);
             
             
             if textureC==1 then
@@ -1164,23 +1163,12 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
             
 			if factionID and C_Reputation.IsFactionParagon(factionID) then
 				local currentValue, maxValueParagon, _, hasReward  = C_Reputation.GetFactionParagonInfo(factionID)
-				if hasReward then 
-					--frame.paragon:Hide()
-					if currentValue > 10000 then 
-						repeat
-							currentValue = currentValue - 10000
-						until( currentValue < 10000 )
-					end
-				else
-					--
-					--frame.paragon:Hide()
-					if currentValue > 10000 then 
-						repeat
-							currentValue = currentValue - 10000
-						until( currentValue < 10000 )
-					end
+	
+				if currentValue > 10000 then 
+					repeat
+						currentValue = currentValue - 10000
+					until( currentValue < 10000 )
 				end
-				
 				
 				frame.currentRank:SetText(currentRank)
 				frame.nextRank:SetText(GwLocalization['CHARACTER_PARAGON'])
@@ -1196,6 +1184,31 @@ local function SetReputationDetailFrameData(frame,factionIndex,savedHeaderName,n
 				
 				frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
 				frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
+			elseif (friendID ~= nil) then
+				--if (nextFriendThreshold) then
+				
+					frame.currentRank:SetText(friendTextLevel)
+					frame.nextRank:SetText(friendTextLevel + 1)
+					
+					frame.currentValue:SetText(comma_value(friendRep - friendThreshold))
+					local percent = math.floor(round(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))*100),0)
+					if percent == -1 then 
+						frame.percentage:SetText('0%')
+					else
+						frame.percentage:SetText((math.floor( round(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))*100),0) )..'%')
+					end
+					frame.nextValue:SetText(comma_value(nextFriendThreshold - friendThreshold))
+					
+					frame.StatusBar:SetMinMaxValues(0, 1)
+					frame.StatusBar:SetValue((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))
+					
+					frame.background2:SetVertexColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
+					frame.StatusBar:SetStatusBarColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
+					
+					
+				--else
+				
+				--end
 			else
 			    frame.currentRank:SetText(currentRank)
 				frame.nextRank:SetText(nextRank)
