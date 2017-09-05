@@ -471,6 +471,7 @@ function update_experiencebar_data(self,event)
             canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex)
             if isWatched == true then
 				local name, reaction, min, max, value, factionID = GetWatchedFactionInfo();
+				local friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID);
 				if C_Reputation.IsFactionParagon(factionID) then
 					local currentValue, maxValueParagon  = C_Reputation.GetFactionParagonInfo(factionID)
 					
@@ -483,6 +484,11 @@ function update_experiencebar_data(self,event)
 					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((currentValue - 0)).." / "..comma_value((maxValueParagon - 0))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
 					
 					 _G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[9].r,GW_FACTION_BAR_COLORS[9].g,GW_FACTION_BAR_COLORS[9].b)
+				elseif (friendID ~= nil) then
+					valPrec = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
+					gw_reputation_vals = name..GwLocalization['EXP_BAR_TOOLTIP_REP']..comma_value((friendRep - friendThreshold)).." / "..comma_value((nextFriendThreshold - friendThreshold))..' |cffa6a6a6 ('..math.floor(valPrec*100) ..'%)|r',1,1,1
+					
+					_G['GwExperienceFrameBar']:SetStatusBarColor(GW_FACTION_BAR_COLORS[5].r,GW_FACTION_BAR_COLORS[5].g,GW_FACTION_BAR_COLORS[5].b)
 				else
 					local currentRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId)), UnitSex("player"));
 					local nextRank = GetText("FACTION_STANDING_LABEL"..math.min(8,math.max(1,standingId + 1)), UnitSex("player"));
@@ -504,6 +510,8 @@ function update_experiencebar_data(self,event)
                 level = getglobal("FACTION_STANDING_LABEL"..standingId)
 
                 Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
+				
+				
                 showBar1 = true
                
             end
