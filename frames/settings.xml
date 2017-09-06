@@ -6,6 +6,11 @@
           <FontHeight>
               <AbsValue val="14"/>
           </FontHeight>
+		  <Scripts>
+            <OnLoad>
+				 self:SetFont(GwLocalization['FONT_BOLD'],14)
+            </OnLoad>
+        </Scripts>
   </Font>
     <Frame name="GwSettingsMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="470" y="40"></Size>
