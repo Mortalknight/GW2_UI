@@ -23,7 +23,7 @@ local default_bag_frame_container ={
     'ContainerFrame6',
 }
 
-
+tinsert(UISpecialFrames, "GwBagFrame") 
 
 function gw_create_bgframe()
     
