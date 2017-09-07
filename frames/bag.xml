@@ -757,7 +757,7 @@
                 </OnLoad>
             </Scripts>
             </ScrollFrame>
-            <Button name="GwCurrencyIcon">
+            <Button name="GwCurrencyIcon" framelevel="10">
                 <Size x="32" y="32"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="2" y="-2" />
