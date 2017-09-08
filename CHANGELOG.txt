@@ -1,3 +1,6 @@
+4.1.6
+ - Fixed a bug in the reputation tracking. 
+
 4.1.5
  - Fixed a bug wherein the Settings menu would display incorrectly for players using Korean or Chinese (zhTW & zhCN) localization.
 
