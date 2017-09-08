@@ -511,7 +511,7 @@ function update_experiencebar_data(self,event)
                 if nextId==nil then
                     nextId = standingId
                 end
-                level = getglobal("FACTION_STANDING_LABEL"..standingId)l
+                level = getglobal("FACTION_STANDING_LABEL"..standingId)
 
                 Nextlevel = getglobal("FACTION_STANDING_LABEL"..nextId)
 				
