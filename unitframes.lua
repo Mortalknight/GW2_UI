@@ -636,6 +636,56 @@ local function targettarget_OnEvent(self,event,unit,arg2)
 
     
 end
+local function focustarget_OnEvent(self,event,unit,arg2)
+    
+    if  not UnitExists(self.unit) then return end
+    
+    if (event=='UNIT_TARGET' and unit=='focustarget') or event=='PLAYER_TARGET_CHANGED' or event=='PLAYER_FOCUS_CHANGED' or event=='ZONE_CHANGED' then
+        self.stepOnUpdate = 0
+        self:SetScript('OnUpdate',function() 
+                self.stepOnUpdate = self.stepOnUpdate + 1
+                
+                
+                if self.stepOnUpdate==1 then updateHealthValues(self,event) return end
+                if self.stepOnUpdate==2 then unitFrameData(self,event)  return end
+                if self.stepOnUpdate==3 then updatePowerValues(self,event)  return end
+                if self.stepOnUpdate==4 then      updateCastValues(self,event)  return end
+                if self.stepOnUpdate==5 then     updateRaidMarkers(self,event)  return end
+              
+            
+                if self.stepOnUpdate==6 then      self:SetScript('OnUpdate',nil)  return end
+               
+            end)
+        return
+    end
+
+    if (event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED')  then
+        
+        updateHealthValues(self,event)
+        return
+    end
+    
+    if (event=='UNIT_MAX_POWER' or event=='UNIT_POWER')  then
+        updatePowerValues(self,event)
+        return
+    end
+    
+    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE')  then
+        updateCastValues(self,event)
+        return
+    end
+    
+    if (event=='UNIT_SPELLCAST_CHANNEL_STOP' or event=='UNIT_SPELLCAST_STOP' or event=='UNIT_SPELLCAST_INTERRUPTED' or event=='UNIT_SPELLCAST_FAILED')  then
+        hideCastBar(self,event)
+        return
+    end
+    
+    if event=='RAID_TARGET_UPDATE' then
+       updateRaidMarkers(self,event) 
+    end
+
+    
+end
 
 function gw_unitframes_register_Target()
     
@@ -906,7 +956,7 @@ function gw_unitframes_register_Focusstarget()
     NewUnitFrame.classColor = gwGetSetting('target_CLASS_COLOR')
     NewUnitFrame.debuffFilter = nil
     
-    NewUnitFrame:SetScript('OnEvent',targettarget_OnEvent)
+    NewUnitFrame:SetScript('OnEvent',focustarget_OnEvent)
         
     NewUnitFrame:RegisterEvent("UNIT_TARGET");
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED");
