@@ -1010,7 +1010,8 @@ function create_micro_menu()
     
     -- GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
      GwMicroButtonStoreMicroButton:SetScript('OnMouseDown',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
-    
+        GwMicroButtonStoreMicroButton:SetScript('OnEnter',nil)
+        GwMicroButtonStoreMicroButton:SetScript('OnLeave',nil)
   
     
     
