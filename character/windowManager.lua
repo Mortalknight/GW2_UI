@@ -32,7 +32,7 @@ local function loadBaseFrame()
     GwCharacterWindow.WindowHeader:SetFont(DAMAGE_TEXT_FONT,20)
     GwCharacterWindow.WindowHeader:SetTextColor(255/255,241/255,209/255)
 	
-   
+   GwCharacterWindowMoverFrame:Hide()
    
     
     GwCharacterWindow.close:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
@@ -41,9 +41,9 @@ local function loadBaseFrame()
     GwCharacterWindow.close:SetAttribute("_onclick", [=[
      
         self:GetFrameRef('GwCharacterWindow'):Hide()
+        self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
         if self:GetFrameRef('GwCharacterWindow'):IsVisible() then
               self:GetFrameRef('GwCharacterWindow'):Hide()
-              self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
         end
     ]=]); 
     
@@ -70,7 +70,10 @@ local function loadBaseFrame()
     ]=]);
      GwCharacterWindow:SetAttribute('_onclick', [=[
         
-        if button=='Escape' then self:Hide() end
+        if button=='Escape' then
+            self:Hide()
+            self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
+        end
     ]=]);
     GwCharacterWindow:Hide()
     GwCharacterWindow:SetFrameRef('GwCharacterWindowMoverFrame',GwCharacterWindowMoverFrame)
