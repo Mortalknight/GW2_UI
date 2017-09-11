@@ -467,13 +467,18 @@ function gw_dodgebar_onevent(self,event,unit)
                 if name~=nil then       
                 
                     if  IsPlayerSpell(v)  then     
-                   
+                      
                       local  charges, maxCharges, start, duration = GetSpellCharges(v)
                         if charges~=nil and charges<=maxCharges then
                             foundADash = true
                             GwDodgeBar.spellId = v
                             gw_update_dodgebar(start,duration,maxCharges,charges)
                             break
+                        else
+                            local start, duration, enable = GetSpellCooldown(v)
+                            foundADash = true
+                            GwDodgeBar.spellId = v
+                            gw_update_dodgebar(start,duration,1,0)
                         end
                     end
                 end
