@@ -291,7 +291,7 @@ function GW_POWERTYPE_RUNE()
                     local runpadding = (42 * i) - 42
                     HOLY_POWER_FLARE_ANIMATION = 1
                     GwPlayerClassPowerFlare:ClearAllPoints()
-                    GwPlayerClassPowerFlare:SetPoint('CENTER',GwPlayerClassPower,'LEFT',(runpadding*i),0)
+                    GwPlayerClassPowerFlare:SetPoint('CENTER', _G['GwRuneTextureFill'..i],'CENTER',0,0)
                     addToAnimation('HOLY_POWER_FLARE_ANIMATION',HOLY_POWER_FLARE_ANIMATION,0,GetTime(),0.5,function()
 
                         GwPlayerClassPowerFlare:SetAlpha(animations['HOLY_POWER_FLARE_ANIMATION']['progress'])
@@ -618,9 +618,27 @@ function GW_SET_BARTYPE()
         return 
     end
     if PLAYER_CLASS==6 then
+        
         GwRuneBar:Show()     
         GwPlayerClassPowerBackground:SetTexture(nil)
         GwPlayerClassPowerFill:SetTexture(nil)
+        GwPlayerClassPowerFlare:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\runeflash')
+        GwPlayerClassPowerFlare:SetWidth(256)
+        GwPlayerClassPowerFlare:SetHeight(128)
+        
+        local texture  ="runes-blood";
+        
+        if PLAYER_SPECIALIZATION==2 then
+         texture  ="runes";
+        elseif PLAYER_SPECIALIZATION==3 then
+             texture  ="runes-unholy";
+        end
+        for i=1,6 do
+      
+                _G['GwRuneTextureFill'..i]:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\'..texture);
+                _G['GwRuneTexture'..i]:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\altpower\\'..texture);
+        end
+        
         return
    end
     if PLAYER_CLASS==7 then

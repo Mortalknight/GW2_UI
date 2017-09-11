@@ -345,7 +345,7 @@
             <Frame name="GwRuneBar" hidden="true">
                 <Size x="316" y="32"></Size>
                  <Anchors>
-                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="5" ></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">

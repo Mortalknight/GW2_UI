@@ -746,6 +746,25 @@ function registerActionHudAura(aura,left,right)
     action_hud_auras[aura]['right'] = right
 end
 local currentTexture = nil
+
+
+local function getSpecSpecificHud(left,right)
+
+    --hard coded for now
+    local playerClassName, playerClassEng, playerClass = UnitClass('player')
+    if playerClass==6 and GetSpecialization()==3 then
+        right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadow_unholy';
+        left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_unholy';
+    elseif playerClass==6 and GetSpecialization()==2 then
+        right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost';
+        left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost';
+    end
+    
+    return left,right
+
+
+end
+
 function select_actionhud_bg()
     if not gwGetSetting('HUD_SPELL_SWAP') then return end
     local right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadow';
@@ -759,6 +778,8 @@ function select_actionhud_bg()
     if UnitAffectingCombat('player') then
          right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat';
          left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat';
+        
+        left, right = getSpecSpecificHud(left,right)
         
         for i=1,40 do
             local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID =  UnitBuff('player',i) 
