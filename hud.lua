@@ -191,6 +191,19 @@ GW_MAIN_HUD_FRAMES = {
     'GwPlayerClassPower',
     'GwHudArtFrameRepair',
     'GwPlayerHealthGlobe',
+    'GwPlayerPetFrame',
+    'PetActionButton1',
+    'PetActionButton2',
+    'PetActionButton3',
+    'PetActionButton4',
+    'PetActionButton5',
+    'PetActionButton6',
+    'PetActionButton7',
+    'PetActionButton8',
+    'PetActionButton9',
+    'PetActionButton10',
+    'PetActionButton11',
+    'PetActionButton12',
 }
 GW_MAIN_HUD_FRAMES_OLD_STATE = {}
     

@@ -592,6 +592,7 @@ function gw_lockHudObjects()
         v:Hide()
     end
     gw_update_moveableframe_positions()
+    ReloadUI()
 end
 
 

@@ -6,7 +6,7 @@ function gw_create_pet_frame()
 --    playerPetFrame:SetPoint('BOTTOMLEFT',_G['PetActionBarFrame'],'BOTTOMLEFT',0,0)
 --    playerPetFrame:SetPoint('BOTTOMRIGHT',_G['PetActionBarFrame'],'BOTTOMRIGHT',0,0)
     
-    gw_register_movable_frame('petframe',GwPlayerPetFrame,'pet_pos','GwPetFrameDummy')
+    gw_register_movable_frame('petframe',GwPlayerPetFrame,'pet_pos','GwPetFrameDummy','PETBAR_LOCKED')
     
      
 
@@ -29,18 +29,68 @@ function gw_create_pet_frame()
     end)
     
     playerPetFrame:RegisterEvent('UNIT_PET')
+    playerPetFrame:RegisterEvent('UNIT_POWER')
+    playerPetFrame:RegisterEvent('UNIT_POWER_MAX')
     playerPetFrame:RegisterEvent('UNIT_HEALTH')
     playerPetFrame:RegisterEvent('UNIT_HEALTH_MAX')
     
     --_G['GwPlayerPetFramePortrait']
     gw_update_pet_data('UNIT_PET','player')
    
+    
+    if gwGetSetting('PETBAR_LOCKED')==true then
+
+        GwPlayerPetFrame:ClearAllPoints()
+        GwPlayerPetFrame:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',-372,86)
+ 
+        
+        playerPetFrame:SetFrameRef('GwPlayerPetFrame', GwPlayerPetFrame)
+        playerPetFrame:SetFrameRef('UIParent', UIParent)
+        playerPetFrame:SetFrameRef('MultiBarBottomLeft', MultiBarBottomLeft)
+        playerPetFrame:SetAttribute('_onstate-combat', [=[ 
+        
+        if self:GetFrameRef('MultiBarBottomLeft'):IsShown()==false then
+            return
+        end
+        
+      self:GetFrameRef('GwPlayerPetFrame'):ClearAllPoints()
+        if newstate == 'show' then
+         self:GetFrameRef('GwPlayerPetFrame'):SetPoint('BOTTOMRIGHT',self:GetFrameRef('UIParent'),'BOTTOM',-53,212)
+        end
+    ]=])
+    RegisterStateDriver(playerPetFrame, 'combat', '[combat] show; hide')
+        gw_actionbar_state_add_callback(gw_updatePetFrameLocation)
+        return
+    end
+    
     GwPlayerPetFrame:ClearAllPoints()
-    GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos')['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
+    GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos') ['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
+    
     
     
     
 end
+
+function gw_updatePetFrameLocation()
+    
+    if InCombatLockdown() then
+        return
+    end 
+    
+    local b = false
+    _G['GwPlayerPetFrame']:ClearAllPoints()
+     if MultiBarBottomLeft:GetAlpha()>0.0 and MultiBarBottomLeft:IsShown()  then
+          b = true
+    end
+    if b then
+        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT',UIParent,'BOTTOM',-53,212)
+    else
+        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT',UIParent,'BOTTOM',-53,120)
+    end
+    
+    
+end
+
 
 function gw_create_power_bar()
 
@@ -241,10 +291,27 @@ function gw_update_pet_data(event, unit)
     local healthMax = UnitHealthMax('pet')
     local healthprec =0
     
+     
+    local powerType, powerToken, altR, altG, altB = UnitPowerType('pet')
+    local resource = UnitPower('pet',powerType)
+    local resourceMax = UnitPowerMax('pet',powerType)
+    local resourcePrec = 0
+   
+    
     if health>0 and healthMax>0 then
          healthprec = health/healthMax
     end
     
+    if resource~=nil and resource>0 and resourceMax>0 then
+        resourcePrec = resource/resourceMax;
+    end
+    
+    if GW_PowerBarColorCustom[powerToken] then
+        local pwcolor = GW_PowerBarColorCustom[powerToken]
+        GwPlayerPetFrame.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    end
+    
+    GwPlayerPetFrame.resource:SetValue(resourcePrec)
    
        SetPortraitTexture(_G['GwPlayerPetFramePortrait'],'pet')
     

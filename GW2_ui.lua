@@ -29,6 +29,7 @@ GW_DEFAULT['MINIMAP_HOVER'] = 'NONE'
 GW_DEFAULT['CLASS_POWER'] = true
 GW_DEFAULT['GROUP_FRAMES'] = true
 GW_DEFAULT['PETBAR_ENABLED'] = true
+GW_DEFAULT['PETBAR_LOCKED'] = true
 
 GW_DEFAULT['BUTTON_ASSIGNMENTS'] = true
 
@@ -119,14 +120,14 @@ GW_DEFAULT['pet_pos'] ={}
 GW_DEFAULT['pet_pos']['point'] = 'BOTTOMLEFT'
 GW_DEFAULT['pet_pos']['relativePoint'] = 'BOTTOM'
 GW_DEFAULT['pet_pos']['xOfs'] =  -372
-GW_DEFAULT['pet_pos']['yOfs']  = 220  
+GW_DEFAULT['pet_pos']['yOfs']  = 86  
 
 GW_DEFAULT['castingbar_pos'] ={}
 GW_DEFAULT['castingbar_pos']['point'] = 'BOTTOM'
 GW_DEFAULT['castingbar_pos']['relativePoint'] = 'BOTTOM'
 GW_DEFAULT['castingbar_pos']['xOfs'] =  0
 GW_DEFAULT['castingbar_pos']['yOfs']  = 300
-    
+ 
     
     
 GW_DEFAULT['targettarget_pos'] ={}
@@ -336,7 +337,7 @@ function gwGetSettingsProfiles()
 
 end
 
-function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
+function gw_register_movable_frame(name,frame,settingsName,dummyFrame,lockAble)
     
     local moveframe = CreateFrame('Frame', name..'MoveAble',UIParent,dummyFrame);
 
@@ -353,6 +354,36 @@ function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
     moveframe:Hide()
     moveframe:RegisterForDrag("LeftButton")
     
+    
+    if lockAble~=nil then
+        
+        local lockFrame = CreateFrame('Button', name..'LockButton',moveframe,'GwDummyLockButton');
+        lockFrame:SetScript('OnClick', function() 
+                
+                
+            local dummyPoint = gwGetDefault(settingsName)
+            moveframe:ClearAllPoints()
+            moveframe:SetPoint(dummyPoint['point'],UIParent,dummyPoint['relativePoint'],dummyPoint['xOfs'],dummyPoint['yOfs'])
+            GW_MOVABLE_FRAMES[name]=moveframe
+            GW_MOVABLE_FRAMES_REF[name]=frame
+            GW_MOVABLE_FRAMES_SETTINGS_KEY[name]=settingsName    
+                
+                point, relativeTo, relativePoint, xOfs, yOfs = moveframe:GetPoint()
+            
+                new_point = gwGetSetting(settingsName)
+                new_point['point']=point
+                new_point['relativePoint'] =relativePoint
+                new_point['xOfs'] =math.floor(xOfs)
+                new_point['yOfs'] = math.floor(yOfs)
+                gwSetSetting(settingsName,new_point)    
+                
+                
+            gwSetSetting(lockAble,true);    
+        end)
+        
+    end
+    
+    
     moveframe:SetScript("OnDragStart", frame.StartMoving)
     moveframe:SetScript("OnDragStop", function(self)
         moveframe:StopMovingOrSizing()
@@ -364,6 +395,9 @@ function gw_register_movable_frame(name,frame,settingsName,dummyFrame)
         new_point['xOfs'] =math.floor(xOfs)
         new_point['yOfs'] = math.floor(yOfs)
         gwSetSetting(settingsName,new_point)
+            if lockAble~=nil then
+                gwSetSetting(lockAble,false);    
+            end
 
     end)
     

@@ -676,6 +676,31 @@
             </OnLoad>
         </Scripts>
     </Frame>
+    
+    <Button name="GwDummyLockButton" enableMouse="true"  virtual="true">
+        <Size x="20" y="20"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="5" ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_CURSOR"); 
+                GameTooltip:ClearLines();
+                GameTooltip:AddLine('Lock to default position',1,1,1)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+    
        <Frame name="GwDummyResize" enableMouse="true" movable="true"  virtual="true" frameStrata="DIALOG" parent="UIParent">
                 <Size x="40" y="40"></Size>
                 <Anchors>

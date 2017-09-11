@@ -461,12 +461,12 @@ end
 
 function gw_setPetBar()
     
-    local BUTTON_SIZE = 23;
+    local BUTTON_SIZE = 28;
     local BUTTON_MARGIN = 3;
     local USED_WIDTH = 0
     
     PetActionButton1:ClearAllPoints()
-    PetActionButton1:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',3,3)
+    PetActionButton1:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',3,30)
 
     for i=1,12 do
     
@@ -475,12 +475,48 @@ function gw_setPetBar()
             gw_updatehotkey(_G['PetActionButton'..i])
             
             _G['PetActionButton'..i]:SetSize(BUTTON_SIZE,BUTTON_SIZE)
-            gw_setActionButtonStyle('PetActionButton'..i)
+            if i < 4 then
+                _G['PetActionButton'..i]:SetSize(32,32)
+            elseif i==8 then
+                _G['PetActionButton'..i]:ClearAllPoints()
+                _G['PetActionButton'..i]:SetPoint('BOTTOM',_G['PetActionButton5'],'TOP',0,BUTTON_MARGIN);
+           
+            end
+           
             
-            if i>1 then
-                _G['PetActionButton'..i]:SetPoint('LEFT',PetActionButton1,'RIGHT',USED_WIDTH,0);
+            if i>1 and i~=8 then
+                _G['PetActionButton'..i]:ClearAllPoints()
+              
+                if i>3 then
+                    
+                     _G['PetActionButton'..i]:SetPoint('BOTTOMLEFT',_G['PetActionButton'..(i - 1)],'BOTTOMRIGHT',BUTTON_MARGIN,0);
+                else
+                   
+                    _G['PetActionButton'..i]:SetPoint('BOTTOMLEFT',_G['PetActionButton'..(i - 1)],'BOTTOMRIGHT',BUTTON_MARGIN,0);
+                end
+               
             end   
-            USED_WIDTH = (BUTTON_SIZE + BUTTON_MARGIN)*i
+            if _G['PetActionButton'..i..'Shine'] then
+                _G['PetActionButton'..i..'Shine']:SetSize(_G['PetActionButton'..i]:GetSize())
+               
+                
+                --for k,v in pairs(_G['PetActionButton'..i..'Shine'].sparkles) do 
+                --   v:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
+                --end
+               -- _G['PetActionButton'..i..'ShineAutoCastable']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
+            end
+            
+            if i==1 then
+                 
+                
+                hooksecurefunc('PetActionBar_Update',function()
+                        _G['PetActionButton1Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack')
+                        _G['PetActionButton2Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-follow')
+                        _G['PetActionButton3Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-place')
+                end)
+            end
+             gw_setActionButtonStyle('PetActionButton'..i)
+         
         end   
     end
     
