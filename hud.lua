@@ -792,7 +792,7 @@ function select_actionhud_bg()
          right = 'Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat';
          left = 'Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat';
         
-        left, right = getSpecSpecificHud(left,right)
+       
         
         for i=1,40 do
             local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID =  UnitBuff('player',i) 
