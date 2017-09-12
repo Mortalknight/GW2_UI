@@ -759,6 +759,13 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                
             </StatusBar>
+            <Frame parentKey="auras">
+                <Size x="0" y="30"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-85" y="0"></Anchor>
+                </Anchors>
+            </Frame>
         </Frames>
         
     </Button>

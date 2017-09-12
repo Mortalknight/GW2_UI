@@ -1,5 +1,124 @@
 local LastPlayerPowerType = 0
 
+
+local function updateBuffLayout(self,event)
+    
+
+    
+    local minIndex = 1
+    local maxIndex = 80
+    
+    if self.displayBuffs~=true then
+        minIndex = 40
+    end
+    if self.displayDebuffs~=true then
+        maxIndex = 40
+    end
+    
+    local marginX = 3
+    local marginY = 20
+    
+    
+    local usedWidth = 0
+    local usedHeight = 0
+    
+    local smallSize = 20
+    local bigSize = 28
+    local lineSize = smallSize
+    local maxSize = self.auras:GetWidth()
+    
+    local auraList = {}
+    local debuffList = {}
+    
+    auraList = gw_get_buffs(self.unit)
+    debuffList = gw_get_debuffs(self.unit,self.debuffFilter)
+    
+    local saveAuras = {}
+    
+    saveAuras['buff'] = {}
+    saveAuras['debuff'] = {}
+  
+    for frameIndex=minIndex,maxIndex do
+        
+        local index = frameIndex
+        local list = auraList
+        local newAura = true
+          
+        if frameIndex>40 then index = frameIndex - 40 end
+        
+        local frame = _G['Gw'..self.unit..'buffFrame'..index]
+        
+        if frameIndex>40 then
+            frame = _G['Gw'..self.unit..'debuffFrame'..index]
+            list = debuffList
+        end
+        
+        if frameIndex==41 then
+            usedWidth = 0
+            usedHeight = usedHeight + lineSize + marginY
+            lineSize = smallSize 
+        end
+        
+
+        
+        if gw_set_buffData(frame,list,index) then
+
+            if not frame:IsShown() then frame:Show() end
+
+            local isBig = frame.typeAura=='bigBuff'
+
+            local size = smallSize
+            if isBig then
+                size = bigSize
+                lineSize = bigSize
+               
+                for k,v in pairs(self.saveAuras[frame.auraType]) do
+                    if v==list[index]['name'] then
+                       newAura = false
+                    end
+                end
+                self.animating =false
+                saveAuras[frame.auraType][ #saveAuras[frame.auraType]+1] = list[index]['name']
+            end
+            frame:SetPoint('CENTER', self.auras,'BOTTOMRIGHT',-(usedWidth + (size/2)),usedHeight + (size/2) )
+            frame:SetSize(size,size)
+            if newAura  and isBig and event=='UNIT_AURA' then 
+                gw_aura_animate_in(frame)
+            end
+
+            usedWidth = usedWidth + size + marginX
+            if maxSize<usedWidth then
+                usedWidth = 0
+                usedHeight = usedHeight + lineSize + marginY
+                lineSize = smallSize
+            
+            end 
+        else
+            if frame:IsShown() then
+                frame:Hide()
+            end
+        end
+    end
+    
+    self.saveAuras = saveAuras
+    
+end
+
+local function loadAuras(self)
+    for i=1,40 do
+       local frame =  CreateFrame('Button','Gw'..self.unit..'buffFrame'..i,self.auras,'GwAuraFrame')
+        frame.unit = self.unit
+        frame.auraType = 'buff'
+        frame = CreateFrame('Button','Gw'..self.unit..'debuffFrame'..i,self.auras,'GwAuraFrame')
+        frame.unit = self.unit
+        frame.auraType = 'debuff'
+       
+    end
+   self.saveAuras = {}
+   self.saveAuras['buff'] = {}
+   self.saveAuras['debuff'] = {}
+end
+
 function gw_create_pet_frame()
     
     local playerPetFrame = CreateFrame('Button', 'GwPlayerPetFrame',UIParent, 'GwPlayerPetFrame');
@@ -27,12 +146,23 @@ function gw_create_pet_frame()
     playerPetFrame:HookScript('OnShow',function()
          gw_update_pet_data('UNIT_PET','player')
     end)
+    playerPetFrame.unit = 'pet'
+    
+    
+    playerPetFrame.displayBuffs= true
+    playerPetFrame.displayDebuffs=true
+    
+    
+    playerPetFrame.debuffFilter = 'player'
+    
+    loadAuras(playerPetFrame)
     
     playerPetFrame:RegisterEvent('UNIT_PET')
     playerPetFrame:RegisterEvent('UNIT_POWER')
     playerPetFrame:RegisterEvent('UNIT_POWER_MAX')
     playerPetFrame:RegisterEvent('UNIT_HEALTH')
     playerPetFrame:RegisterEvent('UNIT_HEALTH_MAX')
+    playerPetFrame:RegisterEvent('UNIT_AURA')
     
     --_G['GwPlayerPetFramePortrait']
     gw_update_pet_data('UNIT_PET','player')
@@ -286,6 +416,11 @@ function gw_update_pet_data(event, unit)
     
     if UnitExists('pet')==false then
         return
+    end
+    
+    if event=='UNIT_AURA' and unit=='pet' then
+        updateBuffLayout(GwPlayerPetFrame,event)
+       return 
     end
     
     local health = UnitHealth('pet')
