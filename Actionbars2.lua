@@ -172,6 +172,7 @@ function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
     if _G[buttonName..'NormalTexture2']~=nil then
         _G[buttonName..'NormalTexture2']:SetTexture(nil)
         _G[buttonName..'NormalTexture2']:Hide()
+        
     end
     if _G[buttonName..'AutoCastable']~=nil then
         _G[buttonName..'AutoCastable']:SetSize(_G[buttonName]:GetWidth(),_G[buttonName]:GetWidth())
@@ -513,8 +514,15 @@ function gw_setPetBar()
                         _G['PetActionButton1Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack')
                         _G['PetActionButton2Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-follow')
                         _G['PetActionButton3Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-place')
+                        for i=1,12 do
+    
+                            if _G['PetActionButton'..i]~=nil then
+                                _G['PetActionButton'..i..'NormalTexture2']:SetTexture(nil)
+                            end
+                        end
                 end)
             end
+            
              gw_setActionButtonStyle('PetActionButton'..i)
          
         end   
