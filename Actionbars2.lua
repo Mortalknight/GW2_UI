@@ -484,6 +484,7 @@ function gw_setPetBar()
            
             end
            
+           
             
             if i>1 and i~=8 then
                 _G['PetActionButton'..i]:ClearAllPoints()
@@ -514,6 +515,10 @@ function gw_setPetBar()
                         _G['PetActionButton1Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack')
                         _G['PetActionButton2Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-follow')
                         _G['PetActionButton3Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-place')
+                        
+                        _G['PetActionButton8Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-assist')
+                        _G['PetActionButton9Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-defense')
+                        _G['PetActionButton10Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-passive')
                         for i=1,12 do
     
                             if _G['PetActionButton'..i]~=nil then
