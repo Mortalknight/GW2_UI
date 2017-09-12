@@ -60,6 +60,7 @@ function gw_create_pet_frame()
     ]=])
     RegisterStateDriver(playerPetFrame, 'combat', '[combat] show; hide')
         gw_actionbar_state_add_callback(gw_updatePetFrameLocation)
+        gw_updatePetFrameLocation()
         return
     end
     
