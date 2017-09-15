@@ -294,7 +294,7 @@ function gw_powerbar_updateRegen(self)
             
     local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
          
-    _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[self:GetName()..'CandySpark']:SetPoint('LEFT',_G[self:GetName()].bar,'RIGHT',0,0)
+    _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[self:GetName()..'CandySpark']:SetPoint('LEFT',_G[self:GetName()].bar,'RIGHT',-2,0)
     _G[self:GetName()].bar:SetPoint('RIGHT',self,'LEFT',spark,0)
     _G[self:GetName()..'Bar']:SetValue(0)
     _G[self:GetName()..'Candy']:SetValue( 0 )
@@ -520,7 +520,7 @@ function gw_update_power_data(self,forcePowerType,powerToken,forceAnimationName)
             
         local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
         
-        _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[self:GetName()..'CandySpark']:SetPoint('LEFT',_G[self:GetName()].bar,'RIGHT',0,0)
+        _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[self:GetName()..'CandySpark']:SetPoint('LEFT',_G[self:GetName()].bar,'RIGHT',-2,0)
         _G[self:GetName()].bar:SetPoint('RIGHT',self,'LEFT',spark,0)
         _G[self:GetName()..'Bar']:SetValue(0)
         _G[self:GetName()..'Candy']:SetValue( 0 )
