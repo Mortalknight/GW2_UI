@@ -114,6 +114,55 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="bonusbar" hidden="true">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                 
+                    <Layer textureSubLevel="2" Level="BACKGROUND">
+                <Texture   file="Interface\AddOns\GW2_UI\textures\bonusobjective-background">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                     </Layer>
+                </Layers>
+                <Frames>
+                    <StatusBar parentKey="bar"  >
+                        <Size x="26" y="26"></Size>
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\bonusobjective-fill"/>
+                        <Scripts>
+                            <OnLoad>
+                                self:SetOrientation("VERTICAL")
+                                self:SetMinMaxValues(0,1)
+                                self:SetValue(0.5)
+                            </OnLoad>
+                        </Scripts>
+                    </StatusBar>
+                </Frames>
+                <Scripts>
+                    <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,0); 
+                                    GameTooltip:ClearLines()
+                                    
+                                   
+
+                                   
+                                    GameTooltip:SetText((self.progress*100).."%");
+                               
+                                    GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Frame>
             <Frame name="$parentCompass" parentKey="compass">
                 <Size x="300" y="70"></Size>
                 <Anchors>

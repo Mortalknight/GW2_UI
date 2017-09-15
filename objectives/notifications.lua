@@ -136,8 +136,9 @@ function gwSetObjectiveNotification()
     local useRadar = data['COMPASS']
     local x = data['X']
     local y = data['Y']
-    
-    
+    local progress = data['PROGRESS']
+
+   
     radarActive = useRadar
     
     if color==nil then color = {r=1,g=1,b=1} end
@@ -150,6 +151,16 @@ function gwSetObjectiveNotification()
     if icons[data['TYPE']]~=nil then
          GwObjectivesNotification.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\'..icons[data['TYPE']].tex)
          GwObjectivesNotification.icon:SetTexCoord(icons[data['TYPE']].l,icons[data['TYPE']].r,icons[data['TYPE']].t,icons[data['TYPE']].b)   
+    
+        if progress~=nil and icons[data['TYPE']] then
+            GwObjectivesNotification.bonusbar:Show()
+            GwObjectivesNotification.bonusbar.progress = progress;
+            GwObjectivesNotification.bonusbar.bar:SetValue(progress)
+            GwObjectivesNotification.icon:SetTexture(nil)
+        else
+              GwObjectivesNotification.bonusbar:Hide()
+        end
+    
     else
         GwObjectivesNotification.icon:SetTexture(nil)
     end
@@ -161,11 +172,12 @@ function gwSetObjectiveNotification()
         currentNotificationKey = key
     
         if icons[data['TYPE']]~=nil then
-        GwObjectivesNotification.compass.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\'..icons[data['TYPE']].tex)
-        GwObjectivesNotification.compass.icon:SetTexCoord(icons[data['TYPE']].l,icons[data['TYPE']].r,icons[data['TYPE']].t,icons[data['TYPE']].b)  
+            GwObjectivesNotification.compass.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\'..icons[data['TYPE']].tex)
+            GwObjectivesNotification.compass.icon:SetTexCoord(icons[data['TYPE']].l,icons[data['TYPE']].r,icons[data['TYPE']].t,icons[data['TYPE']].b)  
         else
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end
+      
         
          GwObjectivesNotification.compass:SetScript('OnUpdate', function(self)
                 if updateLimit<GetTime() then

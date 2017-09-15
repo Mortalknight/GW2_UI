@@ -137,7 +137,7 @@ function GwParseObjectiveString(block, text, objectiveType,quantity)
         block.StatusBar:Show()
         block.StatusBar:SetMinMaxValues(0, numNeeded)
         block.StatusBar:SetValue(numItems)
-        
+        block.progress = numItems/numNeeded
         return true
     end
     return false

@@ -31,6 +31,7 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
 
     local objectiveBlock = getObjectiveBlock(block,objectiveIndex)
      
+    local precentageComplete = 0;
     if text then
        
         objectiveBlock:Show()
@@ -46,7 +47,9 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
                 objectiveBlock.StatusBar:Show()
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
+                objectiveBlock.progress =GetQuestProgressBarPercent(block.questID)/100
             end
+            precentageComplete = objectiveBlock.progress
         else
             objectiveBlock.StatusBar:Hide()
         end
@@ -56,7 +59,7 @@ local function addObjectiveBlock(block,text,finished,objectiveIndex,objectiveTyp
         block.height = block.height + h
         block.numObjectives = block.numObjectives + 1
     end
-    
+    return precentageComplete 
 end
 
 
@@ -127,12 +130,20 @@ local function updateBonusObjective(self,event)
    
             foundEvent = true
           
+            compassData['PROGRESS']= 0
            
+            local numFinished = 0;
+            local numNotFinished = 0;
+            local objectiveProgress = 0;
             for objectiveIndex = 1,numObjectives do
                 
                 local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false);
                 
-               
+                if finished then
+                    numFinished = numFinished +1;
+                else
+                   numNotFinished = numNotFinished + 1; 
+                end
                 
                 compassData['TYPE']= 'EVENT'
                
@@ -154,7 +165,7 @@ local function updateBonusObjective(self,event)
                 end
 
                 if not GwQuesttrackerContainerBonusObjectives.collapsed==true then
-                    addObjectiveBlock(GwBonusObjectiveBlock,text,finished,objectiveIndex,objectiveType)
+                   objectiveProgress = objectiveProgress + addObjectiveBlock(GwBonusObjectiveBlock,text,finished,objectiveIndex,objectiveType)
                 end
             end
           
@@ -162,6 +173,9 @@ local function updateBonusObjective(self,event)
                 compassData['DESC']= simpleDesc
             end
            
+         
+            compassData['PROGRESS'] = (numFinished/numObjectives) + (objectiveProgress/numNotFinished)
+            
             gwAddTrackerNotification(compassData)
             break;
         end        
