@@ -66,6 +66,23 @@
 
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="4">
+                
+                <Texture parentKey="healthbarFlash" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Size x="213" y="13"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="healthbarFlashSpark"  file="Interface\AddOns\GW2_UI\textures\bloodspark" >
+                    <Size x="21" y="13"></Size>
+                     <Anchors>
+                         <Anchor point="LEFT" relativeKey="$parent.healthbarFlash" relativePoint="RIGHT" x="0" y="0"/>
+                     </Anchors>
+                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
+                </Texture>
+                
+            </Layer>
+            <Layer level="ARTOWRK" textureSubLevel="5">
                 <Texture file="Interface\AddOns\GW2_UI\textures\targetPortraitinner">
                     <Size x="65" y="65"></Size>
                     <Anchors>
@@ -102,7 +119,7 @@
                     <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="5">
+            <Layer level="ARTOWRK" textureSubLevel="6">
                 
                 
                 <Texture parentKey="prestigebg" file="Interface\AddOns\GW2_UI\textures\prestigebackground">
@@ -282,6 +299,24 @@
 
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="4">
+                <Texture parentKey="healthbarFlash" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Size x="146" y="13"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
+                        
+                    
+                    </Anchors>
+                </Texture>
+                   <Texture parentKey="healthbarFlashSpark"  file="Interface\AddOns\GW2_UI\textures\bloodspark" >
+                    <Size x="12" y="13"></Size>
+                     <Anchors>
+                         <Anchor point="LEFT" relativeKey="$parent.healthbarFlash" relativePoint="RIGHT" x="0" y="0"/>
+                     </Anchors>
+                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
+                     
+                </Texture>
+            </Layer>
+            <Layer level="ARTOWRK" textureSubLevel="5">
                 
                 <Texture parentKey="healthbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="146" y="13"/>
@@ -312,7 +347,7 @@
                     <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="5">
+            <Layer level="ARTOWRK" textureSubLevel="6">
                 
             
                 

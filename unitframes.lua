@@ -64,7 +64,21 @@ local function healthBarAnimation(self,powerPrec)
             
     local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
          
-    self.healthbarSpark:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)    self.healthbarSpark:SetPoint('LEFT',self.healthbarBackground,'LEFT',math.max(0,math.min(powerBarWidth - bit, math.floor(spark))),0)
+    self.healthbarFlashSpark:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)          self.healthbarFlashSpark:SetPoint('LEFT',self.healthbarBackground,'LEFT',math.max(0,math.min(powerBarWidth - bit, math.floor(spark))),0)
+    self.healthbarFlash:SetPoint('RIGHT',self.healthbarBackground,'LEFT',math.max(0,math.min(powerBarWidth,spark))+1,0) 
+end
+local function healthBarAnimationNormal(self,powerPrec)
+            
+    local powerBarWidth = self.barWidth
+    local bit = powerBarWidth/12        
+    local spark = bit * math.floor(12 * (powerPrec))
+    local spark_current = (bit * (12 * (powerPrec)) - spark) / bit 
+    local round_closest = (spark/powerBarWidth)
+            
+            
+    local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
+         
+    self.healthbarSpark:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)          self.healthbarSpark:SetPoint('LEFT',self.healthbarBackground,'LEFT',math.max(0,math.min(powerBarWidth - bit, math.floor(spark))),0)
     self.healthbar:SetPoint('RIGHT',self.healthbarBackground,'LEFT',math.max(0,math.min(powerBarWidth,spark))+2,0) 
 end
 
@@ -338,7 +352,7 @@ local function updateHealthValues(self,event)
     if self.healthTextThroth==nil then self.healthTextThroth=0 end
     
     local animationSpeed = dif(self.healthValue, healthPrecentage)
-    animationSpeed = math.min(1.00,math.max(0.1,1.00 * animationSpeed))
+    animationSpeed = math.min(1.00,math.max(0.2,2.00 * animationSpeed))
     
 
     if event=='UNIT_TARGET_CHANGED' or event=='FOCUS_TARGET_CHANGED' or event=='PLAYER_TARGET_CHANGED' then
@@ -346,6 +360,9 @@ local function updateHealthValues(self,event)
     end
 
     setAbsorbValue(self,absorb,absorbPrecentage,healthPrecentage,health,healthMax)
+    
+    healthBarAnimationNormal(self,healthPrecentage)
+    
     addToAnimation(self:GetName()..self.unit,self.healthValue,healthPrecentage,GetTime(),animationSpeed,function(step)
 
          healthBarAnimation(self,step)
