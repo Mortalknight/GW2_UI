@@ -521,24 +521,31 @@
                     <Layer level="ARTWORKD">
                    
                         <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
-                            <Size x="316" y="18"></Size>
+                            <Size x="316" y="12"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                            </Anchors>
                         </Texture>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
-                        </Anchors>
+                        <Texture parentKey="ironSkinBg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                            <Size x="316" y="4"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="13" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                      
                     </Layer>
                     
                 </Layers>
                 <Frames>
                     <Frame name="$parentcontainer" parentKey="bar">
-                        <Size x="312" y="14"></Size>
+                        <Size x="312" y="10"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="ARTWORKD" textureSubLevel="-1">
                                 <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
-                                    <Size x="312" y="14"></Size>
+                                    <Size x="312" y="10"></Size>
                                     <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
                                          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
@@ -547,7 +554,7 @@
                             </Layer>
                             <Layer level="ARTWORKD" textureSublevel="2">
                                 <Texture parentKey="texture1"  file="Interface\AddOns\GW2_UI\textures\staggaer-animation" >
-                                    <Size x="312" y="14"></Size>
+                                    <Size x="312" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
                                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
@@ -556,7 +563,7 @@
                             </Layer> 
                             <Layer level="ARTWORKD" textureSublevel="2">
                                 <Texture parentKey="texture2" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2" >
-                                    <Size x="312" y="14"></Size>
+                                    <Size x="312" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
                                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
@@ -565,7 +572,7 @@
                             </Layer>
                             <Layer level="ARTWORK" textureSubLevel="3">
                                 <Texture  parentKey="spark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
-                                    <Size x="14" y="14"></Size>
+                                    <Size x="10" y="10"></Size>
                                        <Anchors>
                                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
                                     </Anchors>
@@ -581,6 +588,55 @@
                                 GwStaggerBar.texture2 = self.texture2
                                 GwStaggerBar.fill = self.fill
                                 GwStaggerBar.fill:SetVertexColor(59/255,173/255,231/255)
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                    <StatusBar parentKey="ironskin"  defaultValue="0"  minValue="0" maxValue="23">
+                        <Size x="316" y="2"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.ironSkinBg" x="2" y="2" ></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                     
+                    </StatusBar>
+                </Frames>
+            </Frame>  
+            <Frame name="GwDiscPriest" hidden="true">
+                 <Size x="153" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORKD">
+                   
+                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                            <Size x="316" y="18"></Size>
+                        </Texture>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                        </Anchors>
+                    </Layer>
+                    
+                </Layers>
+                <Frames>
+                    <Frame name="$parentcontainer" parentKey="bar">
+                        <Size x="153" y="14"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <PlayerModel parentKey="overlay">
+                                <Size x="153" y="14"></Size>
+                                <Anchors>
+                                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                                </Anchors>
+                            </PlayerModel>
+                        </Frames>
+                        <Scripts>
+                            <OnLoad>
+                                self.overlay:SetModel('spells/cfx_priest_purgethewicked_statechest.m2')
+                                self.overlay:SetPosition(0,0,2)
+                                GwDiscPriest.bar.overlay:SetPosition(0,0,0)
                             </OnLoad>
                         </Scripts>
                     </Frame>
@@ -911,6 +967,42 @@
             </OnEnter>
 			<OnClick function="GameTimeFrame_OnClick"/>
         </Scripts>
+    </Button>
+    <Button  name="GwAddonToggle" virtual="true">
+        <Size x="40" y="40"/>
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar-Up"></NormalTexture>
+        <PushedTexture  file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
+    
+        <Scripts>
+          
+            <OnClick>
+                if not self.container:IsShown() then
+                    self.container:Show()
+                else
+                    self.container:Hide()
+                end
+            </OnClick>
+        </Scripts>
+        <Frames>
+            <Frame parentKey="container" hidden="true">
+                 <Size x="40" y="40"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="LEFT"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                                <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                
+            </Frame>
+        </Frames>
     </Button>
     <Button  name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="30" y="30"/>
