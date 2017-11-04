@@ -7,6 +7,56 @@ GW_MAP_FRAMES_HIDE[6] =MiniMapTrackingButton
 GW_MAP_FRAMES_HIDE[7] =GarrisonLandingPageMinimapButton
 GW_MAP_FRAMES_HIDE[8] =MiniMapTracking
 
+local Minimap_Addon_Buttons = {
+    
+    [1] = "MiniMapTrackingFrame",
+	[2] = "MiniMapMeetingStoneFrame",
+	[3] = "MiniMapMailFrame",
+	[4] = "MiniMapBattlefieldFrame",
+	[5] = "MiniMapWorldMapButton",
+	[6] = "MiniMapPing",
+	[7] = "MinimapBackdrop",
+	[8] = "MinimapZoomIn",
+	[9] = "MinimapZoomOut",
+	[10] = "BookOfTracksFrame",
+	[11] = "GatherNote",
+	[12] = "FishingExtravaganzaMini",
+	[13] = "MiniNotePOI",
+	[14] = "RecipeRadarMinimapIcon",
+	[15] = "FWGMinimapPOI",
+	[16] = "CartographerNotesPOI",
+	[17] = "MBB_MinimapButtonFrame",
+	[18] = "EnhancedFrameMinimapButton",
+	[19] = "GFW_TrackMenuFrame",
+	[20] = "GFW_TrackMenuButton",
+	[21] = "TDial_TrackingIcon",
+	[22] = "TDial_TrackButton",
+	[23] = "MiniMapTracking",
+	[24] = "GatherMatePin",
+	[25] = "HandyNotesPin",
+	[26] = "TimeManagerClockButton",
+	[27] = "GameTimeFrame",
+	[28] = "DA_Minimap",
+	[29] = "ElvConfigToggle",
+	[30] = "MiniMapInstanceDifficulty",
+	[31] = "MinimapZoneTextButton",
+	[32] = "GuildInstanceDifficulty",
+	[33] = "MiniMapVoiceChatFrame",
+	[34] = "MiniMapRecordingButton",
+	[35] = "QueueStatusMinimapButton",
+	[36] = "GatherArchNote",
+	[37] = "ZGVMarker",
+	[38] = "QuestPointerPOI",
+	[39] = "poiMinimap",
+	[40] = "MiniMapLFGFrame", 
+	[41] = "PremadeFilter_MinimapButton", 
+	[42] = "GarrisonMinimapButton",
+	[43] = "GwMapTime"
+    
+}
+
+
+
 GW_MAP_FRAMES_HOVER = {}
 
 local animationIndex = 0
@@ -26,6 +76,51 @@ function gwSetMinimapHover()
 		GW_MAP_FRAMES_HOVER[3] = 'GwMapTime'
 	end
 end
+
+
+local function stackMinimapIcons(self,event) 
+    
+    local foundFrames = false;
+    local framesToAdd = {}
+    
+    local children = {Minimap:GetChildren()};
+    for _, child in ipairs(children) do
+        if child:HasScript("OnClick") and not child.oshow and child:GetName() then
+            
+            local ignore = false
+            local childName = child:GetName()
+            for _, v in pairs(Minimap_Addon_Buttons) do 
+                if v==childName then
+                    ignore = true
+                    break;
+                end
+            end
+            if not ignore then
+                foundFrames = true
+                framesToAdd[#framesToAdd + 1] = child;
+            end
+        end
+    end
+    
+    if not foundFrames then return end
+    
+        
+    CreateFrame('Button','GwAddonToggle',UIParent,'GwAddonToggle')
+  
+    GwAddonToggle:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-7,-127)
+    GwAddonToggle.container:SetWidth(#framesToAdd * 40)
+    local frameIndex = 0
+    for _, frame in pairs(framesToAdd) do 
+        frame:SetParent(GwAddonToggle.container)
+        frame:ClearAllPoints()
+        frame:SetPoint('RIGHT',GwAddonToggle.container,'RIGHT',frameIndex*-40,0);
+        frameIndex = frameIndex + 1;
+        frame:SetScript('OnDragStart',nil)
+    end
+        
+    
+end
+
 
 function gw_lfg_icon_animate()
 
@@ -157,6 +252,8 @@ function gw_set_minimap()
     hooksecurefunc(Minimap,'SetScale',function()
 
     end)
+    
+    stackMinimapIcons()
     Minimap:SetScale(1.2)
     
     MinimapZoneText:ClearAllPoints()
@@ -197,11 +294,16 @@ function gw_set_minimap()
     
 
     Minimap:RegisterEvent("PLAYER_ENTERING_WORLD");
+    
+    
+  
+    
 
     Minimap:SetSize(gwGetSetting('MINIMAP_SCALE'),gwGetSetting('MINIMAP_SCALE'))
 
 
     hoverMiniMapOut()
+   
 
 
 end
@@ -290,4 +392,6 @@ function GwMapTimeOnEnter(self)
     GameTooltip:SetMinimumWidth(100)								
 	GameTooltip:Show()
 end
+
+
 
