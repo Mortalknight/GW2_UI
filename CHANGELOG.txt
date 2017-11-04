@@ -1,55 +1,18 @@
-4.1.6
- - Fixed a bug in the reputation tracking. 
+4.2.0
 
-4.1.5
- - Fixed a bug wherein the Settings menu would display incorrectly for players using Korean or Chinese (zhTW & zhCN) localization.
-
-4.1.4
- - Updated koKR strings. (Thanks to Billkind and Qwwaaaa from Curse.)
- - Fixed the reputation window to correctly display Chromie's reputation ranks. (Unfortunately, due to an API limitation, we are unable to display what the next rank title is in this window.)
-
-
-4.1.3
- - Updated zhTW strings. (Thanks to gaspy10 on Curse)
- - Fixed the health flare for the target of target frame.
-
-4.1.0
 NEW
 
-The game menu tooltip now displays more information, including addon memory usage, and up/download statistics.
-
-The stance bar can now be fully toggled whilst in combat.
-
-Absorb number has been added to the health globe.
-
-
+   - All new battleground interface. Starting with Arathi Basin, we've completely overhauled the battleground UI.
+   - Brand new icons for all Death Knights specializations.
+   - Icons for the Arcane Mage specialization have been redesigned.
+   - The pet frame has been completely rebuilt from the ground up.
+   - The mana bar and health globe animations have been improved.
+   - Brand new world quest completion globe, showing overall progress for the current world quest.
 
 FIXED
 
-Paragon Reputation issues have been corrected.
-
-Updated movement bar with correct spell IDs for some classes.
-
-The movement bar should now update with more correct information.
-
-Fixed some translation errors.
-
-The compass should no longer display errors when dead.
-
-The minimap north tag now hides on hover, so as not to obscure the zone text.
-
-Fix for Immersion addon conflict when using the "Hide Minimap" option, where the vanilla minimap zone text UI would display after talking to an NPC.
-
-Addon icons now follow the minimap in a square shape  (Note: using a larger minimap will still cause the icons to overlap the minimap.)
-
-Unitframes will no longer trigger an error when target is using a spell.
-
-Raid frames will no longer display maximum absorb when reloading the UI.
-
-Raid frames now update the name of the unit more frequently.
-
-
-
-KNOWN BUGS
-
-Chatbubbles have been temporarily disabled and will return at a later date.
+   - The character window mover frame should no longer obstruct frames when the window is closed.
+   - Fixed a UI taint issue with the Store button in the micromenu.
+   - The focus target frame should now update correctly. 
+   - Fixed an issue wherein spells with charges were not being properly tracked by the dodge bar.
+   - Fixed an issue wherein the dodge bar would not track the Mage talent Shimmer.

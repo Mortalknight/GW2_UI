@@ -189,37 +189,37 @@ local function updateAchievementLayout(intent)
     local shownIndex = 1
     
     for i = 1, numQuests do 
-        
-        local achievementID = trackedAchievements[i]
-        local _, achievementName, _, completed, _, _, _, description, _, icon, _, _, wasEarnedByMe = GetAchievementInfo(achievementID);
+		--if trackedAchievements[i] == intent then 
+			local achievementID = trackedAchievements[i]
+			local _, achievementName, _, completed, _, _, _, description, _, icon, _, _, wasEarnedByMe = GetAchievementInfo(achievementID);
 
-		local showAchievement = true;
-		if ( wasEarnedByMe ) then
-			showAchievement = false;
-	    end
+			local showAchievement = true;
+			if ( wasEarnedByMe ) then
+				showAchievement = false;
+			end
 		
-		if ( showAchievement ) then
+			if ( showAchievement ) then
             
-            if i==1 then savedHeight = 20 end
+				if i==1 then savedHeight = 20 end
             
-            GwAchievementHeader:Show()
-            local block = getBlock(shownIndex)
-            if block==nil then return end
-            block.id = achievementID
-            updateAchievementObjectives(block,shownIndex,achievementID)
+				GwAchievementHeader:Show()
+				local block = getBlock(shownIndex)
+				if block==nil then return end
+				block.id = achievementID
+				updateAchievementObjectives(block,shownIndex,achievementID)
             
-            block.Header:SetText(achievementName)
+				block.Header:SetText(achievementName)
             
             
-            block:Show()
+				block:Show()
             
-            block:SetScript('OnClick',achievementOnClick)
+				block:SetScript('OnClick',achievementOnClick)
             
-            savedHeight =savedHeight + block.height
+				savedHeight =savedHeight + block.height
             
-            shownIndex = shownIndex + 1
-        end
-        
+				shownIndex = shownIndex + 1
+			end
+		--end
     end
    
     GwQuesttrackerContainerAchievement:SetHeight(savedHeight)
@@ -243,6 +243,7 @@ function gw_register_achievement()
 
     GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED");
 	GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_UPDATE");
+	GwQuesttrackerContainerAchievement:RegisterEvent("ACHIEVEMENT_EARNED");
 
 
     
