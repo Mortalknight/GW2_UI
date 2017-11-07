@@ -977,9 +977,13 @@
           
             <OnClick>
                 if not self.container:IsShown() then
+					stackMinimapIcons();
                     self.container:Show()
+					
                 else
+					stackMinimapIcons();
                     self.container:Hide()
+					
                 end
             </OnClick>
         </Scripts>
