@@ -76,3 +76,4 @@ locales/deDE.lua
 locales/koKR.lua
 locales/zhTW.lua
 locales/enUS.lua
+locales/esMX.lua
