@@ -263,7 +263,7 @@ GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" then
+if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" then
 	GWUseThisLocalization()
 end
 
