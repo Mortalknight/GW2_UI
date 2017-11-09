@@ -110,14 +110,16 @@ end
     
         
     CreateFrame('Button','GwAddonToggle',UIParent,'GwAddonToggle')
-
-    GwAddonToggle:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-7,-127)
-    GwAddonToggle.container:SetWidth(#framesToAdd * 40)
+	GwAddonToggle:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-5.5,-127)
+	_G['GwAddonToggleTexture']:SetTexCoord(0,0.5,0,0.25)
+    
+    GwAddonToggle.container:SetWidth(#framesToAdd * 35)
+	GwAddonToggle:SetFrameStrata('HIGH')
     local frameIndex = 0
     for _, frame in pairs(framesToAdd) do 
         frame:SetParent(GwAddonToggle.container)
         frame:ClearAllPoints()
-        frame:SetPoint('RIGHT',GwAddonToggle.container,'RIGHT',frameIndex*-40,0);
+        frame:SetPoint('RIGHT',GwAddonToggle.container,'RIGHT',frameIndex*-36,0);
         frameIndex = frameIndex + 1;
         frame:SetScript('OnDragStart',nil)
     end

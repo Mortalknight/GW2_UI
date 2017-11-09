@@ -970,8 +970,17 @@
     </Button>
     <Button  name="GwAddonToggle" virtual="true">
         <Size x="40" y="40"/>
-        <NormalTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar-Up"></NormalTexture>
-        <PushedTexture  file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
+         <Layers>
+            <Layer level="OVERLAY">
+                <Texture name="$parentTexture"  file="Interface\AddOns\GW2_UI\textures\icon-module">
+                <Size x="35" y="35"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>   
+            </Layer>
+        </Layers>
+        
     
         <Scripts>
           
@@ -989,20 +998,50 @@
         </Scripts>
         <Frames>
             <Frame parentKey="container" hidden="true">
-                 <Size x="40" y="40"/>
+                 <Size x="40" y="35"/>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="LEFT"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
-                            <Size x="40" y="40"></Size>
+                            <Size x="40" y="35"></Size>
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                                <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="-2"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
+					<Layer level="ARTWORK" textureSubLevel="2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                </Anchors>  
+                </Texture> 
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>  
+                </Texture>
+            </Layer>
                 </Layers>
                 
             </Frame>
