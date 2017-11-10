@@ -62,6 +62,7 @@ GW_MAP_FRAMES_HOVER = {}
 local animationIndex = 0
 local animationIndexY = 0
 local anim_thro = 0
+local framesToAdd = {}
 
 
 function gwSetMinimapHover()
@@ -78,15 +79,18 @@ function gwSetMinimapHover()
 end
 
 
-local function stackMinimapIcons(self,event) 
+ function stackMinimapIcons(self,event) 
+ 
+	for _, frame in pairs(framesToAdd) do 
+        frame:SetParent(Minimap)
+    end
     
     local foundFrames = false;
-    local framesToAdd = {}
-    
+    framesToAdd = {}
+	
     local children = {Minimap:GetChildren()};
     for _, child in ipairs(children) do
-        if child:HasScript("OnClick") and not child.oshow and child:GetName() then
-            
+        if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
             local ignore = false
             local childName = child:GetName()
             for _, v in pairs(Minimap_Addon_Buttons) do 
@@ -106,14 +110,16 @@ local function stackMinimapIcons(self,event)
     
         
     CreateFrame('Button','GwAddonToggle',UIParent,'GwAddonToggle')
-  
-    GwAddonToggle:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-7,-127)
-    GwAddonToggle.container:SetWidth(#framesToAdd * 40)
+	GwAddonToggle:SetPoint('TOPRIGHT',Minimap,'TOPLEFT',-5.5,-127)
+	_G['GwAddonToggleTexture']:SetTexCoord(0,0.5,0,0.25)
+    
+    GwAddonToggle.container:SetWidth(#framesToAdd * 35)
+	GwAddonToggle:SetFrameStrata('HIGH')
     local frameIndex = 0
     for _, frame in pairs(framesToAdd) do 
         frame:SetParent(GwAddonToggle.container)
         frame:ClearAllPoints()
-        frame:SetPoint('RIGHT',GwAddonToggle.container,'RIGHT',frameIndex*-40,0);
+        frame:SetPoint('RIGHT',GwAddonToggle.container,'RIGHT',frameIndex*-36,0);
         frameIndex = frameIndex + 1;
         frame:SetScript('OnDragStart',nil)
     end

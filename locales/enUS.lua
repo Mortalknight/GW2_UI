@@ -146,7 +146,7 @@ GwLocalization['MINIMAP_HOVER_1'] = 'Nothing'
 GwLocalization['MINIMAP_HOVER_2'] = 'Both' 
 GwLocalization['MINIMAP_HOVER_3'] = 'Clock' 
 GwLocalization['MINIMAP_HOVER_4'] = 'Zone' 
-GwLocalization['MINIMAP_HOVER_TOOLTIP'] = 'Show Minimap details on permenent.' 
+GwLocalization['MINIMAP_HOVER_TOOLTIP'] = 'Always show Minimap details.' 
 GwLocalization['MINIMAP_SCALE'] = 'Minimap Scale' 
 GwLocalization['MINIMAP_SCALE_DEFAULT'] = 'Default' 
 GwLocalization['MINIMAP_SCALE_DESC'] = 'Change the Minimap size.' 
@@ -201,8 +201,8 @@ GwLocalization['RAID_BAR_WIDTH_DESC'] = 'Set the width of the raid units.'
 GwLocalization['RAID_CONT_HEIGHT'] = 'Set Raid Frame Container Height' 
 GwLocalization['RAID_CONT_HEIGHT_DESC'] = 'Set the maximum height that the raid frames can be displayed.' 
 GwLocalization['RAID_CONVERT'] = 'Convert to Party' 
-GwLocalization['RAID_MARKER'] = 'Show Raid Markers on Raidframes'
-GwLocalization['RAID_MARKER_DESC'] = 'Displayes the Target Markers on the Raid Unitframes'
+GwLocalization['RAID_MARKER'] = 'Show Raid Markers on Raid Frames'
+GwLocalization['RAID_MARKER_DESC'] = 'Displays the Target Markers on the Raid Unit Frames'
 GwLocalization['RAID_PARTY_STYLE'] = 'Raid Styled Party' 
 GwLocalization['RAID_PARTY_STYLE_DESC'] = 'Style the party frames like the raid frames.' 
 GwLocalization['RAID_UNIT_FLAGS'] = 'Show country flag'
@@ -233,7 +233,7 @@ GwLocalization['SHOW_DEBUFFS'] = 'Show Debuffs'
 GwLocalization['SHOW_DEBUFFS_DESC'] = 'Display the target\'s debuffs that you have inflicted.' 
 GwLocalization['SORT_BAGS'] = 'Sort Bags'  
 GwLocalization['SORT_BANK'] = 'Sort Bank' 
-GwLocalization['TARGET_CAT'] = 'TARGET' 
+GwLocalizati7on['TARGET_CAT'] = 'TARGET' 
 GwLocalization['TARGET_CAT_1'] = 'Target' 
 GwLocalization['TARGET_DESC'] = 'Modify the target frame settings.'
 GwLocalization['TARGET_FRAME'] = 'Target Frame' 
@@ -263,7 +263,7 @@ GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" then
+if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" then
 	GWUseThisLocalization()
 end
 
