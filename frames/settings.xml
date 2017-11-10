@@ -527,7 +527,7 @@
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="2">
                 <FontString name="$parentTitle" text="Settings"     inherits="GameFontNormalSmall" justifyH="LEFT">
-                    <Size x="256" y="25"></Size>
+                    <Size x="209" y="25"></Size>
                     <Color r="1" b="1" g="1"></Color>
                     <Anchors>
                         <Anchor point="LEFT" x="35" y="0"></Anchor>
