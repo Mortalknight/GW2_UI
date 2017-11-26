@@ -186,6 +186,7 @@ GwLocalization['PROFILES_MISSING_LOAD'] = 'If you see this message. We forgot to
 GwLocalization['PROFILES_NEW_PROFILE'] = 'New Profile' 
 GwLocalization['PROFILES_TOOLTIP'] = 'Add and remove profiles.' 
 GwLocalization['PURCHASE_REAGENT_BANK'] = 'Purchase ' 
+GwLocalization['QUEST_REQUIRED_ITEMS'] = 'Required Items:'     
 GwLocalization['QUEST_TRACKER'] = 'Quest Tracker' 
 GwLocalization['QUEST_TRACKER_DESC'] = 'Enable the revamped and improved quest tracker.' 
 GwLocalization['QUEST_VIEW_ACCPET'] = 'Accept' 
