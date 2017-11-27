@@ -38,10 +38,10 @@ function gw_style_questview_rewards()
     QuestInfoXPFrame.ReceiveText:SetTextColor(1,1,1)
     QuestInfoXPFrame.ReceiveText:SetShadowColor(0,0,0,1)
 
-    GwQuestviewFrameRequired:SetFont('UNIT_NAME_FONT',14)
-    GwQuestviewFrameRequired:SetTextColor(1,1,1)
-    GwQuestviewFrameRequired:SetShadowColor(0,0,0,1)
-    GwQuestviewFrameRequired:SetText(GwLocalization['QUEST_REQUIRED_ITEMS'])
+    GwQuestviewFrameContainerDialogRequired:SetFont('UNIT_NAME_FONT',14)
+    GwQuestviewFrameContainerDialogRequired:SetTextColor(1,1,1)
+    GwQuestviewFrameContainerDialogRequired:SetShadowColor(0,0,0,1)
+    GwQuestviewFrameContainerDialogRequired:SetText(GwLocalization['QUEST_REQUIRED_ITEMS'])
 end
 
 function gw_create_questview()
@@ -151,7 +151,7 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
         if event == 'QUEST_FINISHED' then
             QuestInfoRewardsFrame:Hide()
             QuestProgressRequiredMoneyFrame:Hide()
-            GwQuestviewFrameRequired:Hide()
+            GwQuestviewFrameContainerDialogRequired:Hide()
             for i = 1, 32, 1 do
                 local frame = _G["QuestProgressItem" .. i]
                 if (frame) then frame:Hide() end
@@ -311,11 +311,13 @@ function showRewards()
     local qinfoHeight = 300
     local qinfoTop = -20
 
+    gw_style_questview_rewards()
+    
     if (QUESTREQ["money"] > 0 or #QUESTREQ["currency"] > 0 or #QUESTREQ["stuff"] > 0) then
         qinfoHeight = 150
         qinfoTop = 55
                 
-        UIFrameFadeIn(GwQuestviewFrameRequired, 0.1, 0, 1)
+        UIFrameFadeIn(GwQuestviewFrameContainerDialogRequired, 0.1, 0, 1)
         
         if QUESTREQ["money"] > 0 then
             UIFrameFadeIn(QuestProgressRequiredMoneyFrame, 0.1,0,1)
@@ -351,9 +353,7 @@ function showRewards()
         QuestInfoRewardsFrame:ClearAllPoints();
         QuestInfoRewardsFrame:SetPoint('CENTER',GwQuestviewFrame,'CENTER',40,qinfoTop);
         QuestInfoRewardsFrame:SetFrameLevel(5)
-    end    
-
-    gw_style_questview_rewards()
+    end
 end
 
 function clearQuestReq()

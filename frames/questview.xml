@@ -23,15 +23,6 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="OVERLAY" textureSubLevel="2">
-                <FontString name="$parentRequired" inherits="QuestTitleFont" text="Test text" justifyH="LEFT" hidden="true">
-                    <Size x="400" y="100"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="40" y="-30" />
-                    </Anchors>
-                </FontString>
-            </Layer>
-
         </Layers>
         
         <Frames>
@@ -103,6 +94,12 @@
                                     <Size x="950" y="100"></Size>
                                     <Anchors>
                                         <Anchor point="TOP" relativePoint="TOP" x="0" y="0" />
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentRequired" inherits="QuestTitleFont" text="Test text" justifyH="LEFT" hidden="true">
+                                    <Size x="400" y="100"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="40" y="-30" />
                                     </Anchors>
                                 </FontString>
                             </Layer>
