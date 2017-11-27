@@ -91,12 +91,10 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
                 GwQuestviewFrameContainerGiverModel:SetUnit('npc')
                 PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX')
                 QUESTSTRING = splitQuest(GetProgressText())
-                QUESTSTRINGINT = 1
-                GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
-                GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_SKIP'])
-                setQuestGiverAnimation()
+                QUESTSTRINGINT = 0
                 questState = 'PROGRESS'
                 questStateSet = false
+                nextGossip()
             end
         end
         if event == 'QUEST_DETAIL' then
@@ -123,12 +121,10 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
             if not IsQuestCompletable() then
                 table.insert(QUESTSTRING, GetObjectiveText())
             end
-            QUESTSTRINGINT = 1
-            GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
-            GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_SKIP'])
-            setQuestGiverAnimation()
+            QUESTSTRINGINT = 0
             questState = 'TAKE'
             questStateSet = false
+            nextGossip()
         end
         if event == 'QUEST_COMPLETE' then
             if (questState ~= 'AUTOPROGRESS') then
@@ -146,12 +142,10 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
                     table.insert(QUESTSTRING, 1, QUESTREQ["text"][i])
                 end
             end
-            QUESTSTRINGINT = 1
-            GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
-            GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_SKIP'])
-            setQuestGiverAnimation()
+            QUESTSTRINGINT = 0
             questState = 'COMPLETE'
             questStateSet = false
+            nextGossip()
         end
 
         if event == 'QUEST_FINISHED' then
@@ -202,6 +196,7 @@ end)
                         AcknowledgeAutoAcceptQuest();
                     else
                         AcceptQuest();
+                        CloseQuest();
                     end
                 end
             elseif questState=='PROGRESS' then
@@ -209,13 +204,16 @@ end)
             else
                 if ( GetNumQuestChoices() == 0 ) then
                     GetQuestReward();
+                    CloseQuest()
                 elseif ( GetNumQuestChoices() == 1 ) then
                     GetQuestReward(1);
+                    CloseQuest()
                 else
                     if ( QuestInfoFrame.itemChoice == 0 ) then
                         QuestChooseRewardError();
                     else
                         GetQuestReward(QuestInfoFrame.itemChoice);
+                        CloseQuest()
                     end
                 end
             end
@@ -252,7 +250,9 @@ function nextGossip()
     if QUESTSTRINGINT<=count then
         GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
         setQuestGiverAnimation()
-        PlaySound(906);
+        if QUESTSTRINGINT ~= 1 then
+            PlaySound(906)
+        end
         if QUESTSTRINGINT==count then
             questTextCompleted()
         else
