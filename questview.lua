@@ -63,33 +63,27 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
     GwQuestviewFrame:SetScript("OnEvent",function(self,event,...)
             
         if event == 'QUEST_PROGRESS' then
+            hideBlizzardQuestFrame()
             clearQuestReq()
+            QUESTREQ["money"] = GetQuestMoneyToGet();
+            for i = GetNumQuestItems(), 1, -1 do
+                if (IsQuestItemHidden(i) == 0) then
+                    table.insert(QUESTREQ["stuff"], 1, { GetQuestItemInfo("required", i) })
+                end
+            end
+            for i = GetNumQuestCurrencies(), 1, -1 do
+                table.insert(QUESTREQ["currency"], 1, { GetQuestCurrencyInfo("required", i) })
+            end
+            if (QUESTREQ["money"] > 0 or #QUESTREQ["currency"] > 0 or #QUESTREQ["stuff"] > 0) then
+                QUESTREQ["text"] = splitQuest(GetProgressText())
+            end
             if IsQuestCompletable() then
                 -- there will be a QUEST_COMPLETE event shortly
-                hideBlizzardQuestFrame()
                 CompleteQuest();
-                QUESTREQ["money"] = GetQuestMoneyToGet();
-                for i = GetNumQuestItems(), 1, -1 do
-                    if (IsQuestItemHidden(i) == 0) then
-                        table.insert(QUESTREQ["stuff"], 1, { GetQuestItemInfo("required", i) })
-                    end
-                end
-                for i = GetNumQuestCurrencies(), 1, -1 do
-                    table.insert(QUESTREQ["currency"], 1, { GetQuestCurrencyInfo("required", i) })
-                end
-                if (QUESTREQ["money"] > 0 or #QUESTREQ["currency"] > 0 or #QUESTREQ["stuff"] > 0) then
-                    QUESTREQ["text"] = splitQuest(GetProgressText())
-                end
                 questState = 'AUTOPROGRESS'
                 questStateSet = false
             else
-                hideBlizzardQuestFrame()
-                clearQuestReq()
-                GwQuestviewFrame:Show()
-                GwQuestviewFrameContainerPlayerModel:SetUnit("player")
-                GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
-                GwQuestviewFrameContainerGiverModel:SetUnit('npc')
-                PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX')
+                showQuestFrame()
                 QUESTSTRING = splitQuest(GetProgressText())
                 QUESTSTRINGINT = 0
                 questState = 'PROGRESS'
@@ -99,24 +93,17 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
         end
         if event == 'QUEST_DETAIL' then
             local questStartItemID = ...;
-            if QuestGetAutoAccept() or (questStartItemID ~= nil and questStartItemID ~= 0) then
+            if (questStartItemID ~= nil and questStartItemID ~= 0) or QuestIsFromAreaTrigger() then
                 if gwGetSetting('QUESTTRACKER_ENABLED') then
                     AcknowledgeAutoAcceptQuest()
                 end
                 return
             end
-            if QuestIsFromAreaTrigger() then
-                print("QuestIsFromAreaTrigger is true")
-            end
             if (questState ~= 'AUTOPROGRESS') then
                 hideBlizzardQuestFrame()
                 clearQuestReq()
             end
-            GwQuestviewFrame:Show()
-            GwQuestviewFrameContainerPlayerModel:SetUnit("player")
-            GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
-            GwQuestviewFrameContainerGiverModel:SetUnit('npc')
-            PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX')
+            showQuestFrame()
             QUESTSTRING = splitQuest(GetQuestText())
             if not IsQuestCompletable() then
                 table.insert(QUESTSTRING, GetObjectiveText())
@@ -131,12 +118,8 @@ CreateFrame('Frame','GwQuestviewFrame',UIParent,'GwQuestviewFrame')
                 hideBlizzardQuestFrame()
                 clearQuestReq()
             end
-            GwQuestviewFrame:Show()
-            GwQuestviewFrameContainerPlayerModel:SetUnit("player")
-            GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
-            GwQuestviewFrameContainerGiverModel:SetUnit('npc')
-            PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX')
-            QUESTSTRING = splitQuest(GetRewardText())            
+            showQuestFrame()
+            QUESTSTRING = splitQuest(GetRewardText())
             if (#QUESTREQ["text"] > 0) then
                 for i = #QUESTREQ["text"], 1, -1 do
                     table.insert(QUESTSTRING, 1, QUESTREQ["text"][i])
@@ -240,7 +223,6 @@ end
 
 
 
-
 function nextGossip()
     QUESTSTRINGINT=QUESTSTRINGINT+1 
     count = 0
@@ -249,7 +231,7 @@ function nextGossip()
     end
     if QUESTSTRINGINT<=count then
         GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
-        setQuestGiverAnimation()
+        setQuestGiverAnimation(count)
         if QUESTSTRINGINT ~= 1 then
             PlaySound(906)
         end
@@ -263,7 +245,7 @@ function nextGossip()
     end
 end
 
-function setQuestGiverAnimation()
+function setQuestGiverAnimation(count)
       a = 60
     if QUESTSTRING[QUESTSTRINGINT] == nil then
         return
@@ -273,13 +255,118 @@ function setQuestGiverAnimation()
         a = 60
     end
     if s =='!' then
-        a = 74
+        a = 64
     end
     if s =='?' then
         a = 65
     end
+    GwQuestviewFrameContainerGiverModel:SetScript("OnAnimFinished", nil)
+    local anim_next = 0
+    local set1 = {60, 60, 169, 185, 186, 84}
+    local set2 = {66, 113}
+    if QUESTSTRINGINT>=count then
+        anim_next = set2[math.random(1,2)]
+    else
+        anim_next = set1[math.random(1,6)]
+    end
     GwQuestviewFrameContainerGiverModel:SetAnimation(a)
+    GwQuestviewFrameContainerGiverModel:SetScript("OnAnimFinished", function(self)
+        if anim_next then
+            self:SetAnimation(anim_next)
+            anim_next = 0
+        else
+            self:SetScript("OnAnimFinished", nil)
+            self:SetAnimation(0)
+        end
+    end)
+
+end
+
+function showQuestFrame()
+    GwQuestviewFrame:Show()
+    GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
+
+    setPMUnit(GwQuestviewFrameContainerPlayerModel, "player", 0)
     
+    if not GetUnitName("npc") or GetUnitName("npc") == GetUnitName("player") then
+        local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2"
+        GwQuestviewFrameContainerGiverModel:ClearModel()
+        GwQuestviewFrameContainerGiverModel:SetUnit("none")
+        GwQuestviewFrameContainerGiverModel:SetModel(board)
+        GwQuestviewFrameContainerGiverModel:SetFacing(-0.5)
+        GwQuestviewFrameContainerGiverModel:SetPosition(-15,1.9,-0.8)
+    else
+        setPMUnit(GwQuestviewFrameContainerGiverModel, "npc", 1)
+    end
+    PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX')
+end
+
+function setPMUnit(PM, unit, side, crace, cgender)
+    local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7
+    if side > 0 then
+        uY = -uY
+        uF = -uF
+    end
+    
+    -- Reset camera each time because it can bug out when the frame is hidden
+    PM:ClearModel()
+    PM:SetUnit("none")
+    
+    -- SetUnit does magical camera work to get things in frame so set facing & position first
+    PM:SetFacing(uF)
+    PM:SetPosition(uX, uY, uZ)
+    PM:SetUnit(unit)
+    if crace then
+        PM:SetCustomRace(crace, cgender)
+    end
+    
+    -- Check the auto camera alignment, adjust if needed; larger units tend to be placed
+    -- too high and too inward and smaller units vice-versa; this is hacky normalization
+    -- but is much more light-weight than analyzing model paths/categories
+    local cpos = {PM:GetCameraPosition()}
+    local ctar = {PM:GetCameraTarget()}
+    local zdiff = (cpos[3] / ctar[3])^4 / (cpos[1] - ctar[1])
+    local ydiff = (cpos[1] - ctar[1])
+    local dirty = 0
+    
+    if zdiff > 0.6 then
+        local adj = 0.04 * zdiff^2
+        if adj > 1 then adj = 1 end
+        uZ = uZ - adj
+        dirty = 1
+    elseif zdiff < 0.4 then
+        local adj = 0.02 / zdiff^1.5
+        if adj > 1 then adj = 1 end
+        uZ = uZ + adj
+        dirty = 1
+    end
+    if ydiff < 1.4 then
+        local adj = 0.15 * ydiff / 1.4
+        if adj > 1 then adj = 1 end
+        if side > 0 then
+            uY = uY - adj
+        else
+            uY = uY + adj
+        end
+        dirty = 1
+    elseif ydiff > 2 then
+        local adj = 0.15 * ydiff / 2
+        if adj > 1 then adj = 1 end
+        if side > 0 then
+            uY = uY + adj
+        else
+            uY = uY - adj
+        end
+        dirty = 1
+    end
+    if dirty then
+        PM:SetPosition(uX, uY, uZ)
+        PM:SetUnit(unit)
+        if crace then
+            PM:SetCustomRace(crace, cgender)
+        end
+    end
+        
 end
 
 function questTextCompleted()
@@ -290,6 +377,7 @@ function questTextCompleted()
         showRewards()
         GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_COMPLETE'])
     elseif questState=='PROGRESS' then
+        showRewards()
         GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization['QUEST_VIEW_SKIP'])
     else
         showRewards()
