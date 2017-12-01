@@ -705,80 +705,83 @@ function GwStopAnimation(k)
 end
 
 local l = CreateFrame("Frame",nil,UIParent)
+local OnUpdateActionBars = nil
+function GwOnUpdate()
+    if ADDOON_LOADED~=true or ADDOON_LOADED~=true then
+        return
+    end
+    local foundAnimation = false
+    local count = 0
+    for k,v in pairs(animations) do
+        count = count + 1
 
-l:SetScript('OnUpdate',function() 
-        
-        if ADDOON_LOADED~=true or ADDOON_LOADED~=true then
-            return
-        end
-        local foundAnimation = false
-        for k,v in pairs(animations) do 
-            
-            if v['completed']==false and GetTime()>=(v['start']+ v['duration']) then
-                if  v['easeing']==nil then
-                    v['progress'] = lerp(v['from'],v['to'],math.sin(1 * math.pi * 0.5))
-                else
-                    v['progress'] = lerp(v['from'],v['to'],1)
-                end
-                if  v['method']~=nil then
-                    v['method'](v['progress'])
-                end
-                
-                if v['onCompleteCallback']~=nil then
-                    v['onCompleteCallback']()
-                end
-                
-                v['completed'] = true
-                foundAnimation = true
-            end            
-            if v['completed']==false then
-                
-                if  v['easeing']==nil then
-                    v['progress'] = lerp(v['from'],v['to'],math.sin((GetTime() - v['start'])/v['duration'] * math.pi * 0.5))
-                else
-                    v['progress'] = lerp(v['from'],v['to'],(GetTime() - v['start'])/v['duration'])
-                end
-            v['method'](v['progress'])
-                foundAnimation = true
-            end
-        end
-        
-        if foundAnimation==false then
-            animations = {}
-        end
-        
-
-    
-        if gwGetSetting('ACTIONBARS_ENABLED') then
-            fadet_action_bar_check(MultiBarBottomLeft)
-            fadet_action_bar_check(MultiBarBottomRight)
-        end
-        
-        --Swim hud
-        
-        if  lastSwimState~=IsSwimming() then 
-            if IsSwimming() then
-                addToAnimation('swimAnimation',swimAnimation,1,GetTime(),0.1,function()
-                        local r,g,b = _G['GwActionBarHudRIGHTSWIM']:GetVertexColor()
-                        _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-                        _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-                end)   
-                swimAnimation = 1
+        if v['completed']==false and GetTime()>=(v['start']+ v['duration']) then
+            if  v['easeing']==nil then
+                v['progress'] = lerp(v['from'],v['to'],math.sin(1 * math.pi * 0.5))
             else
-                addToAnimation('swimAnimation',swimAnimation,0,GetTime(),3.0,function()
-                        local r,g,b = _G['GwActionBarHudRIGHTSWIM']:GetVertexColor()
-                        _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-                        _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-                end) 
-                swimAnimation = 0
+                v['progress'] = lerp(v['from'],v['to'],1)
             end
-            lastSwimState = IsSwimming()
-        end
-        
-        
-        
-        
+            if  v['method']~=nil then
+                v['method'](v['progress'])
+            end
 
+            if v['onCompleteCallback']~=nil then
+                v['onCompleteCallback']()
+            end
+
+            v['completed'] = true
+            foundAnimation = true
+        end
+        if v['completed']==false then
+
+            if  v['easeing']==nil then
+                v['progress'] = lerp(v['from'],v['to'],math.sin((GetTime() - v['start'])/v['duration'] * math.pi * 0.5))
+            else
+                v['progress'] = lerp(v['from'],v['to'],(GetTime() - v['start'])/v['duration'])
+            end
+        v['method'](v['progress'])
+            foundAnimation = true
+        end
+    end
+
+    if foundAnimation==false and count ~= 0 then
+        animations = {}
+    end
+
+    if OnUpdateActionBars then
+        OnUpdateActionBars()
+    end
+
+    --Swim hud
+    if  lastSwimState~=IsSwimming() then
+        if IsSwimming() then
+            addToAnimation('swimAnimation',swimAnimation,1,GetTime(),0.1,function()
+                    local r,g,b = _G['GwActionBarHudRIGHTSWIM']:GetVertexColor()
+                    _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
+                    _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
+            end)
+            swimAnimation = 1
+        else
+            addToAnimation('swimAnimation',swimAnimation,0,GetTime(),3.0,function()
+                    local r,g,b = _G['GwActionBarHudRIGHTSWIM']:GetVertexColor()
+                    _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
+                    _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
+            end)
+            swimAnimation = 0
+        end
+        lastSwimState = IsSwimming()
+    end
+end
+
+l.TotalElapsed = 0
+l:SetScript('OnUpdate', function(self, elapsed)
+    -- every frame is not needed; cap update calls at 60 FPS
+    self.TotalElapsed = self.TotalElapsed + elapsed
+    if self.TotalElapsed < 0.016 then
+        return
+    end
+    self.TotalElapsed = 0
+    GwOnUpdate()
 end)
 
 l:SetScript('OnEvent',function(self,event,name) 
@@ -896,6 +899,10 @@ l:SetScript('OnEvent',function(self,event,name)
         
         if gwGetSetting('ACTIONBARS_ENABLED') then
             gw_setupActionbars()
+            OnUpdateActionBars = function()
+                fadet_action_bar_check(MultiBarBottomLeft)
+                fadet_action_bar_check(MultiBarBottomRight)
+            end
           --  gw_set_actionbars()
         end  
         
@@ -942,4 +949,32 @@ function GwaddTOClique(frame)
     end
 end
 
-
+local waitTable = {};
+local waitFrame = nil;
+function gw_wait(delay, func, ...)
+    if type(delay) ~= "number" or type(func) ~= "function" then
+        return false
+    end
+    if waitFrame == nil then
+        waitFrame = CreateFrame("Frame", "GwWaitFrame", UIParent)
+        waitFrame:SetScript("OnUpdate", function(self, elapse)
+            local count = #waitTable
+            local i = 1
+            while(i <= count) do
+                local waitRecord = tremove(waitTable, i)
+                local d = tremove(waitRecord, 1)
+                local f = tremove(waitRecord, 1)
+                local p = tremove(waitRecord, 1)
+                if(d > elapse) then
+                    tinsert(waitTable, i, {d - elapse, f, p})
+                    i = i + 1
+                else
+                    count = count - 1
+                    f(unpack(p))
+                end
+            end
+        end)
+    end
+    tinsert(waitTable, {delay, func, {...}})
+    return true
+end
