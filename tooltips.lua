@@ -48,6 +48,17 @@ function move_tooltip_placemtn(self)
     self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 300)
 end
 
+local constBackdropArgs = {
+    bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background", 
+    edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border", 
+    tile = false, tileSize = 64, edgeSize = 32, 
+    insets = { left = 2, right = 2, top = 2, bottom = 2 }    
+}
+function gw_style_tooltip(self)
+    if  not self:IsShown() then return end
+    self:SetBackdrop(constBackdropArgs)
+end
+
 function gw_set_tooltips()
         
     GameTooltip:HookScript("OnTooltipSetUnit", function(self)
@@ -65,14 +76,7 @@ function gw_set_tooltips()
     end)
     for _, toStyle in ipairs(UNSTYLED) do
         if _G[toStyle] then
-            
-            _G[toStyle]:HookScript('OnUpdate',function(self)
-                    if  not self:IsShown() then return end
-                    _G[toStyle]:SetBackdrop({bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background", 
-                            edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border", 
-                            tile = false, tileSize = 64, edgeSize = 32, 
-                            insets = { left = 2, right = 2, top = 2, bottom = 2 }})
-                end)
+            _G[toStyle]:HookScript('OnUpdate', gw_style_tooltip)
         end
     end
 end

@@ -278,11 +278,14 @@ function gw_setupActionbars()
     
     MainMenuBarArtFrame:RegisterEvent('PET_BATTLE_CLOSE')
     MainMenuBarArtFrame:RegisterEvent('PET_BATTLE_OPENING_START')
+    MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
     MainMenuBarArtFrame:HookScript('OnEvent',function(self,event)
        if event=='PET_BATTLE_OPENING_START' then
            gwToggleMainHud(false)
         elseif event=='PET_BATTLE_CLOSE' then
            gwToggleMainHud(true)
+        elseif event=='PLAYER_EQUIPMENT_CHANGED' then
+            gwActionBarEquipUpdate()
         end
     end)
 end
@@ -322,40 +325,24 @@ function gw_updateMainBar()
             _G['ActionButton'..i..'HotKey']:SetFont(DAMAGE_TEXT_FONT,14,'OUTLINED')
             _G['ActionButton'..i..'HotKey']:SetTextColor(1,1,1)
             
+            if IsEquippedAction(BUTTON.action) then
+                local borname = 'ActionButton' .. i .. 'Border'
+                if _G[borname] then
+                    _G[borname]:SetVertexColor(0, 1.0, 0, 1)
+                end
+            end
+            
             local rangeIndicator = CreateFrame('FRAME','GwActionRangeIndicator'..i,_G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionRangeIndicator')
             rangeIndicator:SetFrameStrata('BACKGROUND',1)
             rangeIndicator:SetPoint('TOPLEFT',BUTTON,'BOTTOMLEFT',-1,-2)
             rangeIndicator:SetPoint('TOPRIGHT',BUTTON,'BOTTOMRIGHT',1,-2)
             _G['GwActionRangeIndicator'..i..'Texture']:SetVertexColor(147/255,19/255,2/255)
-             rangeIndicator:Hide()
-            
-            
-            
-            BUTTON:HookScript('OnUpdate',function(self)
-                local isUsable, notEnoughMana = IsUsableAction(BUTTON.action);
-                local valid = IsActionInRange(BUTTON.action);
-                local canCast = true
-                 _G['ActionButton'..i.."HotKey"]:SetVertexColor(1,1,1)
-  
-                if valid==false then
-                    canCast=false
-                end
-                if isUsable==false then
-                    canCast = false
-                end
-                if notEnoughMana then
-                   canCast = false     
-                end
-                    
-                if canCast==false then
-                    rangeIndicator:Show()
-                else
-                    rangeIndicator:Hide()
-                
-                end                
-                gw_actionButtonUpdate(BUTTON)
-                    
-            end)
+            rangeIndicator:Hide()
+
+            BUTTON['gw_RangeIndicator'] = rangeIndicator
+            BUTTON['gw_ButtonIndex'] = i
+            BUTTON['gw_TotalElapsed'] = 0
+            BUTTON:HookScript('OnUpdate', gw_actionButtonUpdate)
             
 			if gwGetSetting('BUTTON_ASSIGNMENTS') then 
 				local hkBg = CreateFrame('Frame','GwHotKeyBackDropActionButton'..i, _G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionHotKeyBackDrop')
@@ -423,7 +410,12 @@ function gw_updateCustomizableBars(barName,buttonName)
                 USED_HEIGHT = BUTTON_PADDING_y
             end
             
-            BUTTON:HookScript('OnUpdate',gw_actionButtonUpdate)
+            if IsEquippedAction(BUTTON.action) then
+                local borname = buttonName .. i .. "Border"
+                if _G[borname] then
+                    _G[borname]:SetVertexColor(0, 1.0, 0, 1)
+                end
+            end
             
             hooksecurefunc(_G[buttonName..i..'Cooldown'], 'SetCooldown', function(self)
             local alpha = self:GetEffectiveAlpha()
@@ -652,14 +644,41 @@ function gw_setLeaveVehicleButton()
     
 end
 
-
-function gw_actionButtonUpdate(self)
-    local BName = self:GetName()
-    if _G[BName.."Border"] then
-        if ( IsEquippedAction(self.action) ) then
-            local r,b,g = _G[BName.."Border"]:GetVertexColor()
-            _G[BName.."Border"]:SetVertexColor(r,b,g,1)
+function gwActionBarEquipUpdate()
+    local bars = {'MultiBarBottomRightButton', 'MultiBarBottomLeftButton', 'MultiBarRightButton', 'MultiBarLeftButton', 'ActionButton'}
+    for b = 1, #bars do
+        local barname = bars[b]
+        for i = 1, 12 do
+            local button = _G[barname .. i]
+            if button ~= nil then
+                if IsEquippedAction(button.action) then
+                    local borname = barname .. i .. 'Border'
+                    if _G[borname] then
+                        gw_wait(0.05, function()
+                            _G[borname]:SetVertexColor(0, 1.0, 0, 1)
+                        end)
+                    end
+                end
+            end
         end
-    end 
-      
+    end
+end
+
+function gw_actionButtonUpdate(self, elapsed)
+    _G['ActionButton' .. self.gw_ButtonIndex .. 'HotKey']:SetVertexColor(1,1,1)
+
+    local isUsable, notEnoughMana = IsUsableAction(self.action);
+    local valid = IsActionInRange(self.action);
+    local canCast = true
+    local rangeIndicator = self.gw_RangeIndicator
+  
+    if not valid or not isUsable or notEnoughMana then
+        canCast = false
+    end
+                    
+    if not canCast and not rangeIndicator:IsShown() then
+        rangeIndicator:Show()
+    elseif canCast and rangeIndicator:IsShown() then
+        rangeIndicator:Hide()
+    end
 end
