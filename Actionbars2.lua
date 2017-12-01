@@ -668,7 +668,7 @@ function gw_actionButtonUpdate(self, elapsed)
     _G['ActionButton' .. self.gw_ButtonIndex .. 'HotKey']:SetVertexColor(1,1,1)
 
     local isUsable, notEnoughMana = IsUsableAction(self.action);
-    local valid = IsActionInRange(self.action);
+    local valid = not ActionHasRange(self.action) or IsActionInRange(self.action);
     local canCast = true
     local rangeIndicator = self.gw_RangeIndicator
 
