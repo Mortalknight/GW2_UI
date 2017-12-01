@@ -1228,6 +1228,7 @@ function gw_getMicroButtonToolTip(text,action)
 	end 
 end
 
+local gw_addonMemoryArray = {}
 function gw_latencyInfoToolTip()
 
     if gw_latencyToolTipUpdate>GetTime() then return end
@@ -1236,8 +1237,13 @@ function gw_latencyInfoToolTip()
     gw_frameRate = intRound(GetFramerate());
     local down, up, lagHome, lagWorld = GetNetStats();
 	local gw_addonMemory = 0
-	local gw_addonMemoryArray = {}
 	local gw_numAddons = GetNumAddOns()
+    
+    -- wipe and reuse our memtable to avoid temp pre-GC bloat on the tooltip (still get a bit from the sort)
+    for i = 1, #gw_addonMemoryArray do
+        gw_addonMemoryArray[i]['addonIndex'] = 0
+        gw_addonMemoryArray[i]['addonMemory'] = 0
+    end
 	
 	UpdateAddOnMemoryUsage()
 	
@@ -1258,12 +1264,10 @@ function gw_latencyInfoToolTip()
 	
 	GameTooltip:AddLine(GwLocalization['FPS_TOOLTIP_6']..round(gw_addonMemory / 1024,2)..' MB',0.8,0.8,0.8)
 	
-	gw_addonMemoryArray[0] = {}
-	gw_addonMemoryArray[0]['addonIndex'] = 0
-	gw_addonMemoryArray[0]['addonMemory'] =0
-	
 	for i = 1, gw_numAddons do
-		gw_addonMemoryArray[i] = {}
+		if type(gw_addonMemoryArray[i]) ~= 'table' then
+            gw_addonMemoryArray[i] = {}
+        end
 		gw_addonMemoryArray[i]['addonIndex'] = i
 		gw_addonMemoryArray[i]['addonMemory'] = GetAddOnMemoryUsage(i)
 	end
@@ -1276,7 +1280,6 @@ function gw_latencyInfoToolTip()
 				if gw_addonMemory ~= "0.00" then GameTooltip:AddLine('('..gw_addonMemory..' MB) '..GetAddOnInfo(v['addonIndex']),0.8,0.8,0.8) end
 			end
 	end
-	gw_addonMemoryArray = nil
 	
     GameTooltip:Show()
     
