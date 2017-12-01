@@ -245,40 +245,67 @@ function nextGossip()
     end
 end
 
+local emotes = {
+    ["Idle"] = 0,
+    ["Talk"] = 60,
+    ["TalkExclamation"] = 64,
+    ["TalkQuestion"] = 65,
+    ["Bow"] = 66,
+    ["Point"] = 84,
+    ["Salute"] = 113,
+    ["Yes"] = 185,
+    ["No"] = 186
+}
+local mid_set = {"Idle", "Talk", "Yes", "No", "Point"}
+local end_set = {"Bow", "Salute"}
+local anim_next = 0
+local anim_playing = false
 function setQuestGiverAnimation(count)
-      a = 60
     if QUESTSTRING[QUESTSTRINGINT] == nil then
         return
         end
-    s = string.sub(QUESTSTRING[QUESTSTRINGINT],-1)
-    if s =='.' then
-        a = 60
+
+    if QUESTSTRINGINT == 1 then
+        GwQuestviewFrameContainerGiverModel:SetScript("OnAnimFinished", nil)
+        anim_next = 0
+        anim_playing = false
     end
-    if s =='!' then
-        a = 64
+        
+    -- determine main emote to play for this line
+    local a = emotes["Talk"]
+    local s = string.sub(QUESTSTRING[QUESTSTRINGINT],-1)
+    if QUESTSTRINGINT >= count then
+        a = emotes[end_set[math.random(1, #end_set)]]
+    elseif s =='!' then
+        a = emotes["TalkExclamation"]
+    elseif s =='?' then
+        a = emotes["TalkQuestion"]
     end
-    if s =='?' then
-        a = 65
-    end
-    GwQuestviewFrameContainerGiverModel:SetScript("OnAnimFinished", nil)
-    local anim_next = 0
-    local set1 = {60, 60, 169, 185, 186, 84}
-    local set2 = {66, 113}
-    if QUESTSTRINGINT>=count then
-        anim_next = set2[math.random(1,2)]
-    else
-        anim_next = set1[math.random(1,6)]
-    end
-    GwQuestviewFrameContainerGiverModel:SetAnimation(a)
-    GwQuestviewFrameContainerGiverModel:SetScript("OnAnimFinished", function(self)
-        if anim_next then
-            self:SetAnimation(anim_next)
-            anim_next = 0
+    
+    -- if playing something, don't interrupt to avoid spastic motions on click-thru
+    if anim_playing then
+        if a == emotes["Talk"] then
+            anim_next = emotes[mid_set[math.random(1, #mid_set)]]
         else
-            self:SetScript("OnAnimFinished", nil)
-            self:SetAnimation(0)
+            anim_next = a
         end
-    end)
+    else
+        anim_playing = true
+        if QUESTSTRINGINT < count then
+            anim_next = emotes[mid_set[math.random(1, #mid_set)]]
+        end
+        GwQuestviewFrameContainerGiverModel:SetScript("OnAnimFinished", function(self)
+            if anim_next ~= 0 then
+                self:SetAnimation(anim_next)
+                anim_next = 0
+            else
+                self:SetScript("OnAnimFinished", nil)
+                anim_playing = false
+                self:SetAnimation(0)
+            end
+        end)
+        GwQuestviewFrameContainerGiverModel:SetAnimation(a)
+    end
 
 end
 
