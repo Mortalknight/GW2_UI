@@ -46,8 +46,13 @@ GwCastingBar:SetScript("OnEvent",function(self,event,unitID,spell)
                     end
                         
                     local p = animations['castingbarAnimation']['progress']
+                     GwCastingBar.latency:ClearAllPoints()
+                        GwCastingBar.latency:SetPoint('RIGHT','GwCastingBar','RIGHT')
                     if castingType==2 then
                         p = 1 - animations['castingbarAnimation']['progress']
+                            GwCastingBar.latency:ClearAllPoints()
+                        GwCastingBar.latency:SetPoint('LEFT','GwCastingBar','LEFT')
+                        
                     end
                     
                     GwCastingBar.bar:SetWidth(math.max(1,p*176))
@@ -57,6 +62,10 @@ GwCastingBar:SetScript("OnEvent",function(self,event,unitID,spell)
                         
                     GwCastingBar.spark:SetWidth(math.min(15,math.max(1,p*176)))
                     GwCastingBar.bar:SetTexCoord(0,p,0.25,0.5)
+                        
+                    local down, up, lagHome, lagWorld = GetNetStats();
+                    lagWorld = lagWorld/1000
+                    GwCastingBar.latency:SetWidth( math.min(1,( lagWorld / (endTime - startTime)))*176 )
                             
             end,'noease')    
             castingbarAnimation = 0
@@ -126,6 +135,7 @@ end
 function gw_player_castingbar_values(name,icon)
     GwCastingBar.name:SetText(name)
     GwCastingBar.icon:SetTexture(icon)
+    GwCastingBar.latency:Show()
 end
 
 function gw_castingbar_reset()
