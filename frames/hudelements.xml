@@ -37,12 +37,28 @@
         </Layers>
         <Frames>
             
+            <Frame frameStrata="MEDIUM" enableMouse="false"  name="GwPlayerHealthGlobeAbsorbBackdrop" >
+                <Size x="102" y="102"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" x="0" y="1"/>
+                </Anchors>
+                <Layers>
+                  
+                    <Layer textureSubLevel="2" level="BACKGROUND">
+                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthFill-absorb">
+                            <Size x="102" y="102"></Size>
+  
+                        </Texture>
+                    </Layer >
+                </Layers>
+            </Frame>  
             <Frame frameStrata="MEDIUM" enableMouse="false"  name="GwPlayerHealthGlobeHealth" >
                 <Size x="102" y="102"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" x="0" y="1"/>
                 </Anchors>
                 <Layers>
+                  
                     <Layer textureSubLevel="3" level="BACKGROUND">
                         <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthFill">
                             <Size x="102" y="102"></Size>

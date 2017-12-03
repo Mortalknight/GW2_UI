@@ -620,6 +620,9 @@ function gw_update_health_data()
             _G['GwPlayerHealthGlobeCandy']:SetHeight(healthPrecCandy*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
             _G['GwPlayerHealthGlobeCandyBar']:SetTexCoord(0,1,  math.abs(healthPrecCandy - 1),1)  
             
+            _G['GwPlayerHealthGlobeAbsorbBackdrop']:SetHeight( math.min(1,animations['healthGlobeAnimation']['progress'] + absorbPrec)*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
+            _G['GwPlayerHealthGlobeAbsorbBackdropBar']:SetTexCoord(0,1,  math.abs( math.min(1,animations['healthGlobeAnimation']['progress'] + absorbPrec) - 1),1) 
+            
             _G['GwPlayerHealthGlobeHealth']:SetHeight(animations['healthGlobeAnimation']['progress']*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
             _G['GwPlayerHealthGlobeHealthBar']:SetTexCoord(0,1,  math.abs(animations['healthGlobeAnimation']['progress'] - 1),1) 
         end,nil,function() 
@@ -628,9 +631,10 @@ function gw_update_health_data()
         end)            
         GwPlayerHealthGlobe.animationCurrent = healthPrec;
 
-    
-    _G['GwPlayerHealthGlobeAbsorb']:SetHeight(absorbPrec*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
-    _G['GwPlayerHealthGlobeAbsorbBar']:SetTexCoord(0,1,  math.abs(absorbPrec - 1),1)  
+   
+    local absorbPrecOverflow = (healthPrec + absorbPrec) - 1 
+    _G['GwPlayerHealthGlobeAbsorb']:SetHeight(absorbPrecOverflow*_G['GwPlayerHealthGlobeHealthBar']:GetWidth())
+    _G['GwPlayerHealthGlobeAbsorbBar']:SetTexCoord(0,1,  math.abs(absorbPrecOverflow - 1),1)  
     
 end
 
