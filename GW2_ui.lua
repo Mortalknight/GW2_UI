@@ -977,4 +977,5 @@ function gw_wait(delay, func, ...)
     end
     tinsert(waitTable, {delay, func, {...}})
     return true
+
 end
