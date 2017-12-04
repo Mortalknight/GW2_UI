@@ -273,7 +273,11 @@ function gw_bg_loadCurrency()
                 y = 32
             end
             itemSlot.string:SetText(name)
-            itemSlot.amount:SetText(count..' / '..maximum)
+            if maximum == 0 then
+                itemSlot.amount:SetText(count)
+            else
+                itemSlot.amount:SetText(count..' / '..maximum)
+            end
             itemSlot.icon:SetTexture(icon)
             itemSlot.zebra:SetVertexColor(zebra,zebra,zebra,0.05)
             if isWatched then
