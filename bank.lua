@@ -164,7 +164,7 @@ function gw_create_bankframe()
     end
             
     GwBankButtonClose:HookScript('OnClick', function(self)
-        BankFrame:Hide()
+        CloseBankFrame()
     end)
     
     GwBankFrame:SetScript('OnHide',function() 
