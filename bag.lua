@@ -258,6 +258,9 @@ function gw_bg_loadCurrency()
             HeaderSlot:SetHeight(32)
       
         else
+            local link = GetCurrencyListLink(i)
+            local _, _, _, _, curid, _ = string.find(link, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+            name, count, icon, _, _, maximum, _, _ = GetCurrencyInfo(curid)
             local itemSlot = _G['GwcurrencyItem'..i]
             if itemSlot==nil then
                 itemSlot = CreateFrame('Button','GwcurrencyItem'..i,GwCurrencyWindow.scrollchild,'GwcurrencyItem')
