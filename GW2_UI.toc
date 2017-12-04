@@ -16,6 +16,7 @@ frames/hudelements.xml
 frames/settings.xml
 frames/questview.xml
 frames/bag.xml
+frames/bank.xml
 frames/questtracker.xml
 frames/party.xml
 frames/raidframes.xml

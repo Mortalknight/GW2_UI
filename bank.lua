@@ -24,12 +24,10 @@ local default_bank_frame_container ={
     'ContainerFrame12',
 }
 
-
-
 function gw_create_bankframe()
     
     BAG_ITEM_SIZE = gwGetSetting('BANK_ITEM_SIZE')
-   local fm= CreateFrame('Frame','GwBankMoverFrame',UIParent,'GwBagMoverFrame')
+    local fm= CreateFrame('Frame','GwBankMoverFrame',UIParent,'GwBankMoverFrame')
     GwBankMoverFrame:ClearAllPoints();
     GwBankMoverFrame:SetPoint('LEFT',UIParent,'LEFT',300,200)
     GwBankMoverFrame:HookScript('OnDragStop',gw_onBankMove)
@@ -431,7 +429,7 @@ end
 
 
 function gw_create_bank_item_background(name)
-    local bg = CreateFrame('Frame','GwBankItemBackdrop'..name,GwBankFrame,'GwBagItemBackdrop')
+    local bg = CreateFrame('Frame','GwBankItemBackdrop'..name,GwBankFrame,'GwBankItemBackdrop')
 
     return bg
 end
