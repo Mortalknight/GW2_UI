@@ -6,15 +6,6 @@
        <Anchors>
             <Anchor point="RIGHT" x="-256" y="256"></Anchor>
         </Anchors>
-        <Scripts>
-            <OnLoad>
-                self:RegisterForDrag("LeftButton");
-            </OnLoad>
-
-              <OnDragStart>self:StartMoving();</OnDragStart>
-              <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
-        </Scripts>
-        
     </Frame>
     <Frame name="GwBankFrame" frameStrata="HIGH" frameLevel="2" enableMouse="true"  parent="UIParent" virtual="true">
         <HitRectInsets>
@@ -97,24 +88,6 @@
             </Layer>
 
         </Layers>
-        <Scripts>
-            <OnLoad>
-                
-                GwBankFrameBagSpaceString:SetFont(UNIT_NAME_FONT,12)
-                GwBankFrameBagSpaceString:SetTextColor(255/255,255/255,255/255)
-                GwBankFrameBagSpaceString:SetShadowColor(0,0,0,0)
-                                
-                GwBankFrameHeaderString:SetFont(DAMAGE_TEXT_FONT,24)
-                
-               self:RegisterEvent('PLAYER_MONEY')
-               GwBankFrameHeaderString:SetFont(DAMAGE_TEXT_FONT,24)
-                
-             
-                
-                
-            </OnLoad>
-
-        </Scripts>
 
         <Frames>
             <Frame name="GwBuyMoreBank" virtual="true">
@@ -144,40 +117,8 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" relativeTo="GwBuyMoreBank" x="5" y="5"></Anchor>
                         </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                PurchaseSlot()                                
-                            </OnClick>
-							<OnLoad>
-								self:SetText(GwLocalization['BANK_BUY_SLOTS'])
-							</OnLoad>
-                        </Scripts>
                     </Button>
                 </Frames>
-                <Scripts>
-                    <OnEvent>
-                        if GetNumBankSlots()==7 then
-                            GwBuyMoreBank:Hide()
-                        end
-                        local cost = GetBankSlotCost()/100/100
-                        GwBuyMoreBankGold:SetText(cost)
-                    </OnEvent>
-                    <OnLoad>
-                        if GetNumBankSlots()==7 then
-                            GwBuyMoreBank:Hide()
-                        end
-                        local cost = GetBankSlotCost()/100/100
-                        GwBuyMoreBankGold:SetText(cost)
-                        GwBuyMoreBank:RegisterEvent('PLAYERBANKBAGSLOTS_CHANGED');
-                        GwBuyMoreBankGold:ClearAllPoints()
-                        GwBuyMoreBankGold:SetPoint('LEFT',GwButtonBuyBankSlots,'RIGHT',20,0)
-           
-                                     
-                        GwBuyMoreBankGold:SetFont(UNIT_NAME_FONT,12)
-                        GwBuyMoreBankGold:SetTextColor(221/255,187/255,68/255)
-         
-                    </OnLoad>
-                </Scripts>
             </Frame>
             <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
@@ -196,21 +137,6 @@
                    
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnLoad>
-                        self:RegisterForDrag("LeftButton");
-                    </OnLoad>
-
-                      <OnDragStart>
-                          gw_bankOnResizeStart(self)
-                          
-                        </OnDragStart>
-                      <OnDragStop>
-                        gw_bankOnResizeStop(self)
-                          
-                    </OnDragStop>
-                </Scripts>
-
             </Frame>
             <Button name="GwBankButton"  virtual="true">
                 <Size x="40" y="40"></Size>
@@ -229,18 +155,6 @@
                    
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnEnter>
-                        _G[self:GetName()..'Texture']:SetBlendMode('ADD')
-                    </OnEnter>
-                    <OnLeave>
-                        _G[self:GetName()..'Texture']:SetBlendMode('BLEND')
-                    </OnLeave>
-                    <OnClick>
-                        BankSlotsFrame:Show()
-                        ReagentBankFrame:Hide()
-                    </OnClick>
-                </Scripts>
             </Button>     
             <Button name="GwBankButton2"  virtual="true">
                 <Size x="40" y="40"></Size>
@@ -259,18 +173,6 @@
                    
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnEnter>
-                        _G[self:GetName()..'Texture']:SetBlendMode('ADD')
-                    </OnEnter>
-                    <OnLeave>
-                        _G[self:GetName()..'Texture']:SetBlendMode('BLEND')
-                    </OnLeave>
-                    <OnClick>
-                        BankSlotsFrame:Hide()
-                        ReagentBankFrame:Show()
-                    </OnClick>
-                </Scripts>
             </Button>
             
             <Frame name="GwReagentBankFrame" hidden="true" >
@@ -292,48 +194,13 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5"></Anchor>
                         </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                 DepositReagentBank()
-                            </OnClick>
-							<OnLoad>
-								self:SetText(GwLocalization['REAGENT_BANK_DEPOSIT_ALL'])
-							</OnLoad>
-                        </Scripts>
                     </Button>
                     <Button name="GwBuyRegentBank" inherits="GwStandardButton" text="Purchase">
                         <Anchors>
                             <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwRegentHelpText" x="0" y="-20"></Anchor>
                         </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                BuyReagentBank()                                
-                            </OnClick>
-                        </Scripts>
                     </Button>
                 </Frames>
-                <Scripts>
-                    <OnLoad>
-                        self:RegisterEvent('REAGENTBANK_PURCHASED')
-                        GwRegentHelpText:SetFont(UNIT_NAME_FONT,12)
-                        GwRegentHelpText:SetShadowColor(1,1,1)
-                        BUY_REGENTBAG_TEXT = GwLocalization['PURCHASE_REAGENT_BANK']..((GetReagentBankCost())/100/100)..'G'
-                        GwBuyRegentBank:SetText(BUY_REGENTBAG_TEXT)
-                        
-                        if  IsReagentBankUnlocked() then
-                            GwRegentHelpText:Hide()
-                            GwBuyRegentBank:Hide()
-                            GwBankDepositAllReagents:Show()
-                        end
-                    </OnLoad>
-                    <OnEvent>
-                        if  IsReagentBankUnlocked() then
-                            GwRegentHelpText:Hide()
-                            GwBuyRegentBank:Hide()
-                            GwBankDepositAllReagents:Show()
-                        end
-                    </OnEvent>
-                </Scripts>
             </Frame>
             <Button name="GwBankButtonSettings" text="" >
                 <Anchors>
@@ -347,15 +214,6 @@
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                <Scripts>
-                    <OnClick>
-                        if GwBankFrameDropDown:IsShown() then
-                            GwBankFrameDropDown:Hide()
-                        else
-                            GwBankFrameDropDown:Show()
-                        end
-                    </OnClick>
-                </Scripts>
             </Button>
             
                  <Frame name="$parentDropDown" frameStrata="HIGH" hidden="true" frameLevel="8">
@@ -377,44 +235,21 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button text="Sort Bank">
+                    <Button name="GwBankButtonSort" text="Sort Bank">
                         <Size x="100" y="30"></Size>
                         <Anchors>
                             <Anchor point="TOP" relativePoint="TOP"></Anchor>
                         </Anchors>
                         <NormalFont style="ChatBubbleFont"></NormalFont>
                         <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                        <Scripts>
-                            <OnClick>
-                                 PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
-                                SortBankBags();
-                                self:GetParent():Hide()
-                            </OnClick>
-							<OnLoad>
-								self:SetText(GwLocalization['SORT_BANK'])
-							</OnLoad>
-                        </Scripts>
                     </Button>
-                    <Button text="Compact view">
+                    <Button name="GwBankButtonCompact" text="Compact view">
                         <Size x="100" y="30"></Size>
                         <Anchors>
                             <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
                         </Anchors>
                         <NormalFont style="ChatBubbleFont"></NormalFont>
                         <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                        <Scripts>
-                            <OnClick>
-                                self:SetText(gw_bankFrameCompactToggle())
-                                self:GetParent():Hide()
-                            </OnClick>
-                            <OnLoad>
-                                if gwGetSetting('BANK_ITEM_SIZE')==45 then
-                                    self:SetText(GwLocalization['BANK_COMPACT_ICONS'])
-                                else
-                                    self:SetText(GwLocalization['BANK_EXPAND_ICONS'])
-                                end
-                            </OnLoad>
-                        </Scripts>
                     </Button>
                 </Frames>
             </Frame>
@@ -428,11 +263,6 @@
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                <Scripts>
-                    <OnClick>
-                        BankFrame:Hide()
-                    </OnClick>
-                </Scripts>
             </Button>
             <Frame name="GwBankContainer4">
                 <Anchors>

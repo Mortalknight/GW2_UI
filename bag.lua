@@ -35,26 +35,122 @@ function gw_create_bgframe()
     CreateFrame('Frame','gwNormalBagHolder',UIParent)
     gwNormalBagHolder:SetPoint('LEFT',UIParent,'RIGHT')
     gwNormalBagHolder:SetFrameStrata('HIGH')
-   local fm= CreateFrame('Frame','GwBagMoverFrame',UIParent,'GwBagMoverFrame') 
-    GwBagMoverFrame:HookScript('OnDragStop',gw_onBagMove)
+    local fm= CreateFrame('Frame','GwBagMoverFrame',UIParent,'GwBagMoverFrame')
     
-    GwBagMoverFrame:ClearAllPoints()
+    fm:RegisterForDrag('LeftButton')
+    fm:HookScript('OnDragStart', function(self)
+        self:StartMoving()
+    end)
+    fm:HookScript('OnDragStop', function(self)
+        self:StopMovingOrSizing()
+        local saveBagPos = {}
+        saveBagPos['point'], _, saveBagPos['relativePoint'], saveBagPos['xOfs'] , saveBagPos['yOfs'] = self:GetPoint()
+        gwSetSetting('BAG_POSITION',saveBagPos)
+    end)
+
+    fm:HookScript('OnDragStop',gw_onBagMove)
     
-    GwBagMoverFrame:SetPoint(gwGetSetting('BAG_POSITION')['point'],UIParent,gwGetSetting('BAG_POSITION')['relativePoint'],gwGetSetting('BAG_POSITION')['xOfs'],gwGetSetting('BAG_POSITION')['yOfs'])
+    fm:ClearAllPoints()
     
+    fm:SetPoint(gwGetSetting('BAG_POSITION')['point'],UIParent,gwGetSetting('BAG_POSITION')['relativePoint'],gwGetSetting('BAG_POSITION')['xOfs'],gwGetSetting('BAG_POSITION')['yOfs'])    
 
     
-   local f= CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
+    local f = CreateFrame('Frame','GwBagFrame',UIParent,'GwBagFrame') 
+
+    GwBagFrameBagSpaceString:SetFont(UNIT_NAME_FONT,12)
+    GwBagFrameBagSpaceString:SetTextColor(255/255,255/255,255/255)
+    GwBagFrameBagSpaceString:SetShadowColor(0,0,0,0)
+                
+    gw_update_free_slots()
+                    
+    GwBagFrameHeaderString:SetFont(DAMAGE_TEXT_FONT,24)
+                            
+    GwBagFrameBronze:SetFont(UNIT_NAME_FONT,12)
+    GwBagFrameBronze:SetTextColor(177/255,97/255,34/255)
+
+    GwBagFrameSilver:SetFont(UNIT_NAME_FONT,12)
+    GwBagFrameSilver:SetTextColor(170/255,170/255,170/255)
+
+    GwBagFrameGold:SetFont(UNIT_NAME_FONT,12)
+    GwBagFrameGold:SetTextColor(221/255,187/255,68/255)
+
+    GwBagFrameCurrency1:SetFont(UNIT_NAME_FONT,12)
+    GwBagFrameCurrency1:SetTextColor(1,1,1)       
+
+    GwBagFrameCurrency2:SetFont(UNIT_NAME_FONT,12)
+    GwBagFrameCurrency2:SetTextColor(1,1,1)        
+
+    GwBagFrameCurrency3:SetFont(UNIT_NAME_FONT,12)
+    GwBagFrameCurrency3:SetTextColor(1,1,1)
+
+    gw_update_player_money()
+    
+    GwBagFrame:SetScript('OnEvent', function(self, event, ...)
+        if event == 'PLAYER_MONEY' then
+            gw_update_player_money()
+        end
+    end)
+    GwBagFrame:RegisterEvent('PLAYER_MONEY')
+    
+    GwBagFrame:HookScript('OnSizeChanged', gw_OnBagFrameChangeSize)
+    
+    GwBagFrameResize:RegisterForDrag('LeftButton')
+    GwBagFrameResize:HookScript('OnDragStart', function(self)
+        self:StartMoving()
+        _, _, _, GW_BAG_RS_START_X, GW_BAG_RS_START_Y = self:GetPoint()
+        GwBagFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+        GwBagFrame:SetScript('OnUpdate', gw_onBagDragUpdate)
+    end)
+    GwBagFrameResize:HookScript('OnDragStop', function(self)
+        gw_bagOnResizeStop(self)
+    end)
+    
+    do
+        local dd = GwBagFrameDropDown
+        GwBagButtonSettings:HookScript('OnClick', function(self)
+            if dd:IsShown() then
+                dd:Hide()
+            else
+                dd:Show()
+            end
+        end)
+
+        GwBagFrameDropDownSortBags:HookScript('OnClick', function(self)
+            PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
+            SortBags();
+            dd:Hide()
+        end)
+        
+        GwBagFrameDropDownCompact:HookScript('OnClick', function(self)
+            self:SetText(gw_backFrameCompactToggle())
+            dd:Hide()
+        end)
+    end
+    GwBagFrameDropDownSortBags:SetText(GwLocalization['SORT_BAGS'])
+    if gwGetSetting('BAG_ITEM_SIZE') == 45 then
+        GwBagFrameDropDownCompact:SetText(GwLocalization['COMPACT_ICONS'])
+    else
+        GwBagFrameDropDownCompact:SetText(GwLocalization['EXPAND_ICONS'])
+    end
+    
+    GwBagButtonClose:HookScript('OnClick', function(self)
+        CloseAllBags()
+        if GwCurrencyWindow:IsShown() then
+            GwBagFrame:Hide()
+        end
+    end)
+    
 	GwBagFrameHeaderString:SetText(GwLocalization['INVENTORY_TITLE'])
     
-    GwBagFrame:SetWidth(gwGetSetting('BAG_WIDTH'))
+    f:SetWidth(gwGetSetting('BAG_WIDTH'))
+    
     GwCurrencyWindow.scrollchild:SetWidth(gwGetSetting('BAG_WIDTH') - 24 )
     gw_bagFrameOnResize(GwBagFrame,false)
     
-    GwBagFrame:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)
-    GwBagFrame:SetScript('OnShow',function() GwBagMoverFrame:Show() GwBagFrameResize:Show() end)
+    f:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)
+    f:SetScript('OnShow',function() GwBagMoverFrame:Show() GwBagFrameResize:Show() end)
     
-    GwBagFrame:Hide()
+    f:Hide()
     
 
     ContainerFrame1:HookScript('OnShow',function() gw_bag_hideIcons(true)  gw_bag_close() gw_relocate_searchbox() gw_update_bag_icons() GwBagContainer0:Show() end)
@@ -103,8 +199,26 @@ function gw_create_bgframe()
     ContainerFrame6:SetFrameLevel(5)
     
    
+    GwCurrencyWindow:HookScript('OnMouseWheel', function(self, delta)
+        delta = -delta * 10
+        local s = math.max(0,self:GetVerticalScroll() + delta)
+              
+        self:SetVerticalScroll(s)
+        self.slider:SetValue(s)
+    end)
+    GwCurrencyWindow.height = 0
+    GwCurrencyIcon:HookScript('OnClick', function(self)
+        gw_bag_toggleCurrency()
+    end)
     gw_bg_loadCurrency()
     
+    GwCurrencyWindow.slider:HookScript('OnValueChanged', function(self, value)
+        self:GetParent():SetVerticalScroll(value)
+    end)
+    
+    hooksecurefunc(GwBagFrame, 'SetPoint', function()
+        GwCurrencyWindow.scrollchild:SetWidth(GwBagFrame:GetWidth() - 24)
+    end)
     
     GwCurrencyWindow:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
     
@@ -130,6 +244,8 @@ function gw_bg_loadCurrency()
             if HeaderSlot==nil then
                 
                 HeaderSlot = CreateFrame('Frame','GwCurrencyHeader'..i,GwCurrencyWindow.scrollchild,'GwcurrencyCat')
+                HeaderSlot.string:SetFont(DAMAGE_TEXT_FONT, 14)
+                HeaderSlot.string:SetTextColor(1, 1, 1)
                 HeaderSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT + (-5))
                 HeaderSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT + (-5) +(-32))
              
@@ -143,12 +259,16 @@ function gw_bg_loadCurrency()
         else
             local itemSlot = _G['GwcurrencyItem'..i]
             if itemSlot==nil then
-               itemSlot = CreateFrame('Button','GwcurrencyItem'..i,GwCurrencyWindow.scrollchild,'GwcurrencyItem')
-               itemSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT)
-               itemSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT+(-32))
+                itemSlot = CreateFrame('Button','GwcurrencyItem'..i,GwCurrencyWindow.scrollchild,'GwcurrencyItem')
+                itemSlot.string:SetFont(UNIT_NAME_FONT, 12)
+                itemSlot.string:SetTextColor(1, 1, 1)
+                itemSlot.amount:SetFont(UNIT_NAME_FONT, 12)
+                itemSlot.amount:SetTextColor(1, 1, 1)
+                itemSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT)
+                itemSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT+(-32))
               
-               itemSlot.icon:ClearAllPoints()
-               itemSlot.icon:SetPoint('LEFT',0,0)
+                itemSlot.icon:ClearAllPoints()
+                itemSlot.icon:SetPoint('LEFT',0,0)
                 y = 32
             end
             itemSlot.string:SetText(name)
@@ -205,7 +325,7 @@ function gw_bg_loadCurrency()
     GwCurrencyWindow.slider:SetMinMaxValues(0, USED_CURRENCY_HEIGHT)
     GwCurrencyWindow.height = USED_CURRENCY_HEIGHT
     GwCurrencyWindow:SetScrollChild(GwCurrencyWindow.scrollchild)
-    
+
     for i=watchSlot,3 do
         _G['GwBagFrameCurrency'..i]:SetText('')
         _G['GwBagFrameCurrency'..i..'Texture']:SetTexture(nil)

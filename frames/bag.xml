@@ -6,24 +6,6 @@
        <Anchors>
             <Anchor point="RIGHT" x="-256" y="256"></Anchor>
         </Anchors>
-        <Scripts>
-            <OnLoad>
-                self:RegisterForDrag("LeftButton");
-            </OnLoad>
-
-              <OnDragStart>self:StartMoving();</OnDragStart>
-              <OnDragStop>self:StopMovingOrSizing();
-                  
-                  
-                  if self:GetName()~='GwBagMoverFrame' then return end
-                  local saveBagPos = {}
-                  saveBagPos['point'], _, saveBagPos['relativePoint'], saveBagPos['xOfs'] , saveBagPos['yOfs'] = self:GetPoint()
-  
-                  
-                  gwSetSetting('BAG_POSITION',saveBagPos)
-            </OnDragStop>
-        </Scripts>
-        
     </Frame>
     <Frame name="GwBagFrame" frameStrata="HIGH" frameLevel="2" enableMouse="true"  parent="UIParent" virtual="true">
         <HitRectInsets>
@@ -203,13 +185,6 @@
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                         </Anchors>
-                        <Scripts>
-                            <OnLoad>
-                                hooksecurefunc(GwBagFrame,'SetPoint',function() 
-                                  GwCurrencyWindow.scrollchild:SetWidth(GwBagFrame:GetWidth()-24)
-                                end)
-                            </OnLoad>
-                        </Scripts>
                     </Frame>
                
                     <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
@@ -236,14 +211,6 @@
                                 </Texture>
                             </Layer>
                         </Layers>
-                        <Scripts>
-                            <OnValueChanged>
-                                self:GetParent():SetVerticalScroll(value)
-                            </OnValueChanged>
-                            <OnLoad>
-                                self:SetValue(1)
-                            </OnLoad>
-                        </Scripts>
                     </Slider>
                     <Button name="$parentScrollButtonUp">
                      <Size x="12" y="12"></Size>
@@ -279,18 +246,6 @@
                     </Button>
                 </Frames>
 
-            <Scripts>
-            <OnMouseWheel>
-                delta = -delta * 10
-                local s = math.max(0,self:GetVerticalScroll() + delta)
-              
-                self:SetVerticalScroll(s)
-                self.slider:SetValue(s)
-            </OnMouseWheel>    
-                <OnLoad>
-                    GwCurrencyWindow.height = 0
-                </OnLoad>
-            </Scripts>
             </ScrollFrame>
             <Button name="GwCurrencyIcon" framelevel="10">
                 <Size x="32" y="32"></Size>
@@ -298,54 +253,8 @@
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="2" y="-2" />
                 </Anchors>
                <NormalTexture file="Interface\AddOns\GW2_UI\textures\currency-icon"></NormalTexture>
-                <Scripts>
-                    <OnClick>
-                        gw_bag_toggleCurrency();
-                    </OnClick>
-                </Scripts>
             </Button>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                
-                GwBagFrameBagSpaceString:SetFont(UNIT_NAME_FONT,12)
-                GwBagFrameBagSpaceString:SetTextColor(255/255,255/255,255/255)
-                GwBagFrameBagSpaceString:SetShadowColor(0,0,0,0)
-                
-                gw_update_free_slots()
-                
-                
-                self:RegisterEvent('PLAYER_MONEY')
-                GwBagFrameHeaderString:SetFont(DAMAGE_TEXT_FONT,24)
-                
-                
-                GwBagFrameBronze:SetFont(UNIT_NAME_FONT,12)
-                GwBagFrameBronze:SetTextColor(177/255,97/255,34/255)
-                
-                GwBagFrameSilver:SetFont(UNIT_NAME_FONT,12)
-                GwBagFrameSilver:SetTextColor(170/255,170/255,170/255)
-                
-                GwBagFrameGold:SetFont(UNIT_NAME_FONT,12)
-                GwBagFrameGold:SetTextColor(221/255,187/255,68/255)
-                
-                GwBagFrameCurrency1:SetFont(UNIT_NAME_FONT,12)
-                GwBagFrameCurrency1:SetTextColor(1,1,1)       
-                
-                GwBagFrameCurrency2:SetFont(UNIT_NAME_FONT,12)
-                GwBagFrameCurrency2:SetTextColor(1,1,1)        
-                
-                GwBagFrameCurrency3:SetFont(UNIT_NAME_FONT,12)
-                GwBagFrameCurrency3:SetTextColor(1,1,1)
-                
-                gw_update_player_money()
-            </OnLoad>
-            <OnEvent>
-                gw_update_player_money()
-            </OnEvent>
-            <OnSizeChanged function="gw_OnBagFrameChangeSize">
-            
-            </OnSizeChanged>
-        </Scripts>
 
         <Frames>
              <Frame name="GwBagFrameResize" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
@@ -365,21 +274,6 @@
                    
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnLoad>
-                        self:RegisterForDrag("LeftButton");
-                    </OnLoad>
-
-                      <OnDragStart>
-                          self:StartMoving();
-                          _,_,_,GW_BAG_RS_START_X,GW_BAG_RS_START_Y = self:GetPoint()
-                          GwBagFrame:SetPoint('BOTTOMRIGHT',self,'BOTTOMRIGHT',0,0);
-                          GwBagFrame:SetScript('OnUpdate',gw_onBagDragUpdate)
-                        </OnDragStart>
-                      <OnDragStop>
-                        gw_bagOnResizeStop(self)                         
-                    </OnDragStop>
-                </Scripts>
 
             </Frame>
             <Button name="GwBagButtonSettings" text="" >
@@ -394,15 +288,6 @@
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                <Scripts>
-                    <OnClick>
-                       if GwBagFrameDropDown:IsShown() then
-                            GwBagFrameDropDown:Hide()
-                        else
-                            GwBagFrameDropDown:Show()
-                        end
-                    </OnClick>
-                </Scripts>
             </Button>
             
             <Frame name="$parentDropDown" frameStrata="HIGH" hidden="true" frameLevel="8">
@@ -431,37 +316,14 @@
                         </Anchors>
                         <NormalFont style="ChatBubbleFont"></NormalFont>
                         <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                        <Scripts>
-                            <OnClick>
-                                PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
-                                SortBags();
-                                self:GetParent():Hide()
-                            </OnClick>
-							<OnLoad>
-								self:SetText(GwLocalization['SORT_BAGS'])
-							</OnLoad>
-                        </Scripts>
                     </Button>
-                    <Button text="Compact view">
+                    <Button name = "GwBagFrameDropDownCompact" text="Compact view">
                         <Size x="100" y="30"></Size>
                         <Anchors>
                             <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
                         </Anchors>
                         <NormalFont style="ChatBubbleFont"></NormalFont>
                         <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                        <Scripts>
-                            <OnClick>
-                                self:SetText(gw_backFrameCompactToggle())
-                                self:GetParent():Hide()
-                            </OnClick>
-                            <OnLoad>
-                                if gwGetSetting('BAG_ITEM_SIZE')==45 then
-                                    self:SetText(GwLocalization['COMPACT_ICONS'])
-                                else
-                                    self:SetText(GwLocalization['EXPAND_ICONS'])
-                                end
-                            </OnLoad>
-                        </Scripts>
                     </Button>
                 </Frames>
             </Frame>
@@ -476,14 +338,6 @@
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                <Scripts>
-                    <OnClick>
-                        CloseAllBags()
-                        if GwCurrencyWindow:IsShown() then
-                            GwBagFrame:Hide()
-                        end
-                    </OnClick>
-                </Scripts>
             </Button>
             <Frame name="GwBagContainer0">
                 <Anchors>
@@ -551,12 +405,6 @@
             </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.string:SetFont(DAMAGE_TEXT_FONT,14)
-                self.string:SetTextColor(1,1,1)
-            </OnLoad>
-        </Scripts>
     </Frame>  
     <Button name="GwcurrencyItem" virtual="true">
         <Size x="512" y="32"></Size>
@@ -598,15 +446,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.string:SetFont(UNIT_NAME_FONT,12)
-                self.string:SetTextColor(1,1,1)    
-                
-                self.amount:SetFont(UNIT_NAME_FONT,12)
-                self.amount:SetTextColor(1,1,1)
-            </OnLoad>
-        </Scripts>
     </Button>
     
 </Ui>

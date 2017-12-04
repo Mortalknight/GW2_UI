@@ -27,13 +27,145 @@ local default_bank_frame_container ={
 function gw_create_bankframe()
     
     BAG_ITEM_SIZE = gwGetSetting('BANK_ITEM_SIZE')
-    local fm= CreateFrame('Frame','GwBankMoverFrame',UIParent,'GwBankMoverFrame')
+    local fm = CreateFrame('Frame', 'GwBankMoverFrame', UIParent, 'GwBankMoverFrame')
+    fm:RegisterForDrag('LeftButton')
+    fm:HookScript('OnDragStart', function(self)
+        self:StartMoving()
+    end)
+    fm:HookScript('OnDragStop', function(self)
+        self:StopMovingOrSizing()
+    end)
+    
     GwBankMoverFrame:ClearAllPoints();
     GwBankMoverFrame:SetPoint('LEFT',UIParent,'LEFT',300,200)
     GwBankMoverFrame:HookScript('OnDragStop',gw_onBankMove)
 
  
-   local f= CreateFrame('Frame','GwBankFrame',UIParent,'GwBankFrame') 
+    local f = CreateFrame('Frame', 'GwBankFrame', UIParent, 'GwBankFrame') 
+    GwBankFrameBagSpaceString:SetFont(UNIT_NAME_FONT, 12)
+    GwBankFrameBagSpaceString:SetTextColor(1, 1, 1)
+    GwBankFrameBagSpaceString:SetShadowColor(0, 0, 0, 0)
+                                
+    GwBankFrameHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
+                
+    f:RegisterEvent('PLAYER_MONEY')
+    GwBankFrameHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
+    
+    GwBuyMoreBank:SetScript('OnEvent', function(self, event, ...)
+        if event == 'PLAYERBANKBAGSLOTS_CHANGED' then
+            if GetNumBankSlots() == 7 then
+                self:Hide()
+            end
+            local cost = GetBankSlotCost() / 100 / 100
+            GwBuyMoreBankGold:SetText(cost)
+        end
+    end)
+    if GetNumBankSlots() == 7 then
+        GwBuyMoreBank:Hide()
+    end
+    local cost = GetBankSlotCost() / 100 / 100
+    GwBuyMoreBankGold:SetText(cost)
+    GwBuyMoreBank:RegisterEvent('PLAYERBANKBAGSLOTS_CHANGED')
+    GwBuyMoreBankGold:ClearAllPoints()
+    GwBuyMoreBankGold:SetPoint('LEFT', GwButtonBuyBankSlots, 'RIGHT', 20, 0)
+    GwBuyMoreBankGold:SetFont(UNIT_NAME_FONT, 12)
+    GwBuyMoreBankGold:SetTextColor(221/255, 187/255, 68/255)
+    
+    GwBankFrameResize:RegisterForDrag('LeftButton')
+    GwBankFrameResize:HookScript('OnDragStart', function(self)
+        gw_bankOnResizeStart(self)
+    end) 
+    GwBankFrameResize:HookScript('OnDragStop', function(self)
+        gw_bankOnResizeStop(self)
+    end)
+    
+    GwButtonBuyBankSlots:HookScript('OnClick', function(self)
+        PurchaseSlot()        
+    end)
+    GwButtonBuyBankSlots:SetText(GwLocalization['BANK_BUY_SLOTS'])
+    
+    GwBankButton:HookScript('OnEnter', function(self)
+        _G[self:GetName() .. 'Texture']:SetBlendMode('ADD')
+    end)
+    GwBankButton:HookScript('OnLeave', function(self)
+        _G[self:GetName() .. 'Texture']:SetBlendMode('BLEND')
+    end)
+    GwBankButton:HookScript('OnClick', function(self)
+        BankSlotsFrame:Show()
+        ReagentBankFrame:Hide()
+    end)
+    
+    GwBankButton2:HookScript('OnEnter', function(self)
+        _G[self:GetName() .. 'Texture']:SetBlendMode('ADD')
+    end)
+    GwBankButton2:HookScript('OnLeave', function(self)
+        _G[self:GetName() .. 'Texture']:SetBlendMode('BLEND')
+    end)
+    GwBankButton2:HookScript('OnClick', function(self)
+        BankSlotsFrame:Hide()
+        ReagentBankFrame:Show()
+    end)
+    
+    GwBankDepositAllReagents:SetText(GwLocalization['REAGENT_BANK_DEPOSIT_ALL'])
+    GwBankDepositAllReagents:HookScript('OnClick', function(self)
+        DepositReagentBank()
+    end)
+    
+    GwBuyRegentBank:HookScript('OnClick', function(self)
+        BuyReagentBank()
+    end)
+    
+    GwReagentBankFrame:SetScript('OnEvent', function(self, event, ...)
+        if event == 'REAGENTBANK_PURCHASED' then
+            if IsReagentBankUnlocked() then
+                GwRegentHelpText:Hide()
+                GwBuyRegentBank:Hide()
+                GwBankDepositAllReagents:Show()
+            end
+        end
+    end)
+    GwReagentBankFrame:RegisterEvent('REAGENTBANK_PURCHASED')
+    GwRegentHelpText:SetFont(UNIT_NAME_FONT, 12)
+    GwRegentHelpText:SetShadowColor(1, 1, 1)
+    BUY_REGENTBAG_TEXT = GwLocalization['PURCHASE_REAGENT_BANK'] .. ((GetReagentBankCost()) / 100 / 100) .. 'G'
+    GwBuyRegentBank:SetText(BUY_REGENTBAG_TEXT)
+    if IsReagentBankUnlocked() then
+        GwRegentHelpText:Hide()
+        GwBuyRegentBank:Hide()
+        GwBankDepositAllReagents:Show()
+    end
+    
+    do
+        local dd = GwBankFrameDropDown
+        GwBankButtonSettings:HookScript('OnClick', function(self)
+            if dd:IsShown() then
+                dd:Hide()
+            else
+                dd:Show()
+            end
+        end)
+                
+        GwBankButtonSort:HookScript('OnClick', function(self)
+            PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
+            SortBankBags()
+            dd:Hide()
+        end)
+        GwBankButtonSort:SetText(GwLocalization['SORT_BANK'])
+                
+        GwBankButtonCompact:HookScript('OnClick', function(self)
+            self:SetText(gw_bankFrameCompactToggle())
+            dd:Hide()
+        end)
+        if gwGetSetting('BANK_ITEM_SIZE') == 45 then
+            GwBankButtonCompact:SetText(GwLocalization['BANK_COMPACT_ICONS'])
+        else
+            GwBankButtonCompact:SetText(GwLocalization['BANK_EXPAND_ICONS'])
+        end
+    end
+            
+    GwBankButtonClose:HookScript('OnClick', function(self)
+        BankFrame:Hide()
+    end)
     
     GwBankFrame:SetScript('OnHide',function() 
             GwBankMoverFrame:Hide() 
