@@ -200,12 +200,13 @@ function gw_create_bgframe()
     
    
     GwCurrencyWindow:HookScript('OnMouseWheel', function(self, delta)
-        delta = -delta * 10
+        delta = -delta * 30
         local s = math.max(0,self:GetVerticalScroll() + delta)
               
         self:SetVerticalScroll(s)
         self.slider:SetValue(s)
     end)
+    GwCurrencyWindow:EnableMouseWheel(true)
     GwCurrencyWindow.height = 0
     GwCurrencyIcon:HookScript('OnClick', function(self)
         gw_bag_toggleCurrency()
