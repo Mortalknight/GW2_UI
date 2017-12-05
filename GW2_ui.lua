@@ -989,26 +989,3 @@ function gw_wait(delay, func, ...)
     return true
 
 end
-
-function splitQuest(inputstr)
-    local sep = "[\.|!|?|>]%s+"
-    inputstr = inputstr:gsub ('\n',' ')
-    inputstr = inputstr:gsub (' %s+',' ')
-    inputstr = inputstr:gsub ('%.%.%.', '<E2><80><A6>')
-    local t={} ; i=1
-    for str in splitIter(inputstr, sep) do
-        if str ~= nil and str ~= '' then
-            t[i] = str
-            i = i + 1
-        end
-    end
-    return t
-end
-function splitIter(inputstr, pat)
-    local st, g = 1, string.gmatch(inputstr, "()("..pat..")")
-    local function getter(segs, seps, sep, cap1, ...)
-        st = sep and seps + #sep
-        return string.sub(inputstr, segs, seps or -1), cap1 or sep, ...
-    end
-    return function() if st then return getter(st, g()) end end
-end
