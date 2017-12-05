@@ -17,7 +17,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" parentKey="Texture"  file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
+                <Texture name="$parentBackground" parentKey="Texture" file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
                     <Size x="512" y="512"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
@@ -67,103 +67,97 @@
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
                     </Anchors>
                 </Texture>
-                <FontString name="$parentHeaderString" text="Inventory" inherits="GameFontNormalSmall" justifyH="LEFT">
-                <Size x="512" y="40"></Size>
-                <Color r="1" b="0.73" g="0.93"></Color>
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="30" y="40"></Anchor>
-                </Anchors>
-            </FontString>
+                <FontString parentKey="headerString" text="Inventory" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="40"></Size>
+                    <Color r="1" b="0.73" g="0.93"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="30" y="40"></Anchor>
+                    </Anchors>
+                </FontString>
             
-            <FontString name="$parentBagSpaceString" text="100/100" inherits="GameFontNormalSmall" justifyH="LEFT">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-8" />
-                </Anchors>
-                <Size x="200" y="24" />
-            </FontString>
-                
-            <FontString name="$parentBronze" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                <Size x="100" y="40"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-20" y="-40"></Anchor>
-                </Anchors>
-            </FontString>
-            <Texture name="$parentBronzeTexture" file="Interface\MoneyFrame\UI-CopperIcon">
-                <Size x="11" y="11"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-8" y="-25"></Anchor>
-                </Anchors>
-            </Texture>
-            <FontString name="$parentSilver" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                <Size x="100" y="40"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-60" y="-40"></Anchor>
-                </Anchors>
-            </FontString>
-            <Texture name="$parentSilverTexture" file="Interface\MoneyFrame\UI-SilverIcon">
-                <Size x="11" y="11"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-48" y="-25"></Anchor>
-                </Anchors>
-            </Texture> 
-                
-            <FontString name="$parentGold" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                <Size x="100" y="40"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-100" y="-40"></Anchor>
-                </Anchors>
-            </FontString>
-            <Texture name="$parentGoldTexture" file="Interface\MoneyFrame\UI-GoldIcon">
-                <Size x="11" y="11"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-88" y="-25"></Anchor>
-                </Anchors>
-            </Texture> 
-                
-                
-                
-            <FontString name="$parentCurrency1" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                <Size x="100" y="40"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-165" y="-40"></Anchor>
-                </Anchors>
-            </FontString>
-            <Texture name="$parentCurrency1Texture" file="Interface\MoneyFrame\UI-GoldIcon">
-                <Size x="11" y="11"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-153" y="-25"></Anchor>
-                </Anchors>
-                <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-            </Texture>
-                
-            <FontString name="$parentCurrency2" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                <Size x="100" y="40"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-215" y="-40"></Anchor>
-                </Anchors>
-            </FontString>
-            <Texture name="$parentCurrency2Texture" file="Interface\MoneyFrame\UI-GoldIcon">
-                <Size x="11" y="11"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-203" y="-25"></Anchor>
-                </Anchors>
-                <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-            </Texture>  
-                
-            <FontString name="$parentCurrency3" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                <Size x="100" y="40"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-275" y="-40"></Anchor>
-                </Anchors>
-            </FontString>
-            <Texture name="$parentCurrency3Texture" file="Interface\MoneyFrame\UI-GoldIcon">
-                <Size x="11" y="11"></Size>
-                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-263" y="-25"></Anchor>
-                </Anchors>
-                <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-            </Texture>
-            
+                <FontString parentKey="spaceString" text="100/100" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-8" />
+                    </Anchors>
+                    <Size x="200" y="24" />
+                </FontString>
+
+                <FontString parentKey="bronze" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-20" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="bronzeTexture" file="Interface\MoneyFrame\UI-CopperIcon">
+                    <Size x="11" y="11"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-8" y="-25"></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="silver" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-60" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="silverTexture" file="Interface\MoneyFrame\UI-SilverIcon">
+                    <Size x="11" y="11"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-48" y="-25"></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="gold" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-100" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="goldTexture" file="Interface\MoneyFrame\UI-GoldIcon">
+                    <Size x="11" y="11"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-88" y="-25"></Anchor>
+                    </Anchors>
+                </Texture> 
+
+                <FontString parentKey="currency1" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-165" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="currency1Texture" file="Interface\MoneyFrame\UI-GoldIcon">
+                    <Size x="11" y="11"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-153" y="-25"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>                
+                <FontString parentKey="currency2" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-215" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="currency2Texture" file="Interface\MoneyFrame\UI-GoldIcon">
+                    <Size x="11" y="11"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-203" y="-25"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>                  
+                <FontString parentKey="currency3" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-275" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="currency3Texture" file="Interface\MoneyFrame\UI-GoldIcon">
+                    <Size x="11" y="11"></Size>
+                     <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-263" y="-25"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>            
                 
             </Layer>
 
@@ -185,29 +179,25 @@
                 </Anchors>
                <NormalTexture file="Interface\AddOns\GW2_UI\textures\currency-icon"></NormalTexture>
             </Button>
-        </Frames>
-
-        <Frames>
-             <Frame name="GwBagFrameResize" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+            
+            <Frame name="GwBagFrameResize" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeTo="GwBagFrame" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
-                      <Layers>
+                <Layers>
                     <Layer level="OVERLAY">
                         <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\resize">
-                           
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                   
                     </Layer>
                 </Layers>
-
             </Frame>
-            <Button name="GwBagButtonSettings" text="" >
+            
+            <Button parentKey="buttonSettings" text="" >
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8" />
                 </Anchors>
@@ -219,48 +209,48 @@
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
-            </Button>
-            
-            <Frame name="$parentDropDown" frameStrata="HIGH" hidden="true" frameLevel="8">
-                <Size x="120" y="60" ></Size>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativeTO="GwBagButtonSettings" relativePoint="LEFT" y="-5"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY" textureSubLevel="8">
-                        <Texture file="nterface\AddOns\GW2_UI\textures\gwstatusbar" >
-                            <Color r="0" b="0" g="0"></Color>
-                            <Anchors>
-                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                                <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
-                                <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                                <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
                 <Frames>
-                    <Button name = "GwBagFrameDropDownSortBags" text="Sort bags">
-                        <Size x="100" y="30"></Size>
+                    <Frame parentKey="dropdown" frameStrata="HIGH" hidden="true" frameLevel="8">
+                        <Size x="120" y="60" ></Size>
                         <Anchors>
-                            <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
-                        <NormalFont style="ChatBubbleFont"></NormalFont>
-                        <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                    </Button>
-                    <Button name = "GwBagFrameDropDownCompact" text="Compact view">
-                        <Size x="100" y="30"></Size>
-                        <Anchors>
-                            <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
-                        </Anchors>
-                        <NormalFont style="ChatBubbleFont"></NormalFont>
-                        <HighlightFont style="ChatBubbleFont"></HighlightFont>
-                    </Button>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="8">
+                                <Texture file="nterface\AddOns\GW2_UI\textures\gwstatusbar" >
+                                    <Color r="0" b="0" g="0"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <Button parentKey="sortBags" text="Sort bags">
+                                <Size x="100" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                </Anchors>
+                                <NormalFont style="ChatBubbleFont"></NormalFont>
+                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                            </Button>
+                            <Button parentKey="compactBags" text="Compact view">
+                                <Size x="100" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
+                                </Anchors>
+                                <NormalFont style="ChatBubbleFont"></NormalFont>
+                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                            </Button>
+                        </Frames>
+                    </Frame>
                 </Frames>
-            </Frame>
-            
-            
-            <Button name="GwBagButtonClose" text="" >
+            </Button>
+                        
+            <Button parentKey="buttonClose" text="">
                 <Size x="20" y="20" />
                 <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>
                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
