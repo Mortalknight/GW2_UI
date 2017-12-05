@@ -461,8 +461,16 @@ function gw_update_bank_icons(smooth)
     end
     winsize = math.max(508, winsize)
   
-    local BANK_INDEX = 5
-    for BANK_INDEX = 5, 12 do
+    local bStart = 5
+    local bEnd = 12
+    local bStep = 1
+    if gwGetSetting('BANK_REVERSE_SORT') then
+        bStart = 12
+        bEnd = 5
+        bStep = -1
+    end
+    local BANK_INDEX = nil    
+    for BANK_INDEX = bStart, bEnd, bStep do
         local i = 40
         local run = true
         if BANK_INDEX > 5 then

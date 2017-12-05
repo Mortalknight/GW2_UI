@@ -291,6 +291,8 @@ function gw_bg_loadCurrency()
         if idx <= 0 or idx >= currencyCount then
             -- empty row (blank starter row, final row, and any empty entries)
             slot.item:Hide()
+            slot.item.CurrencyID = nil
+            slot.item.CurrencyIdx = nil
             slot.header:Hide()
         else
             local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maximum, hasLimit, curWeekly, _ = GetCurrencyListInfo(idx)
@@ -321,9 +323,10 @@ function gw_bg_loadCurrency()
                 
                 -- set zebra color by idx or watch status
                 zebra = idx % 2
-                slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
                 if isWatched then
                     slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
+                else
+                    slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
                 end
 
                 slot.item:Show()
@@ -512,7 +515,16 @@ function gw_update_bag_icons(smooth)
     end
     winsize = math.max(508, winsize)
   
-    for BAG_INDEX = 1, 5 do
+    local bStart = 1
+    local bEnd = 5
+    local bStep = 1
+    if gwGetSetting('BAG_REVERSE_SORT') then
+        bStart = 5
+        bEnd = 1
+        bStep = -1
+    end
+    local BAG_INDEX = nil
+    for BAG_INDEX = bStart, bEnd, bStep do
         local cfm = 'ContainerFrame' .. tostring(BAG_INDEX)
       
         if _G[cfm] and _G[cfm]:IsShown()  then
