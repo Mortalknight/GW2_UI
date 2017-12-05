@@ -1,10 +1,11 @@
 local BAG_ITEM_SIZE = 45
+local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
+local BAG_CURRENCY_SIZE = 32
 local BAG_WINDOW_SIZE = 480
 local BAG_WINDOW_CONTENT_HEIGHT = 0
-
-GW_BAG_RS_START_X = 0;
-GW_BAG_RS_START_Y = 0;
+local BAG_RS_START_X = 0;
+local BAG_RS_START_Y = 0;
 
 local default_bag_frame ={
     'MainMenuBarBackpackButton',
@@ -26,8 +27,6 @@ local default_bag_frame_container ={
 tinsert(UISpecialFrames, "GwBagFrame") 
 
 function gw_create_bgframe()
-    
-    
     BAG_WINDOW_SIZE = gwGetSetting('BAG_WIDTH')
     
     BAG_ITEM_SIZE = gwGetSetting('BAG_ITEM_SIZE')
@@ -41,14 +40,7 @@ function gw_create_bgframe()
     fm:HookScript('OnDragStart', function(self)
         self:StartMoving()
     end)
-    fm:HookScript('OnDragStop', function(self)
-        self:StopMovingOrSizing()
-        local saveBagPos = {}
-        saveBagPos['point'], _, saveBagPos['relativePoint'], saveBagPos['xOfs'] , saveBagPos['yOfs'] = self:GetPoint()
-        gwSetSetting('BAG_POSITION',saveBagPos)
-    end)
-
-    fm:HookScript('OnDragStop',gw_onBagMove)
+    fm:HookScript('OnDragStop', gw_onBagMove)
     
     fm:ClearAllPoints()
     
@@ -97,7 +89,7 @@ function gw_create_bgframe()
     GwBagFrameResize:RegisterForDrag('LeftButton')
     GwBagFrameResize:HookScript('OnDragStart', function(self)
         self:StartMoving()
-        _, _, _, GW_BAG_RS_START_X, GW_BAG_RS_START_Y = self:GetPoint()
+        _, _, _, BAG_RS_START_X, BAG_RS_START_Y = self:GetPoint()
         GwBagFrame:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
         GwBagFrame:SetScript('OnUpdate', gw_onBagDragUpdate)
     end)
@@ -142,9 +134,8 @@ function gw_create_bgframe()
     
 	GwBagFrameHeaderString:SetText(GwLocalization['INVENTORY_TITLE'])
     
-    f:SetWidth(gwGetSetting('BAG_WIDTH'))
+    f:SetWidth(BAG_WINDOW_SIZE)
     
-    GwCurrencyWindow.scrollchild:SetWidth(gwGetSetting('BAG_WIDTH') - 24 )
     gw_bagFrameOnResize(GwBagFrame,false)
     
     f:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)
@@ -199,177 +190,200 @@ function gw_create_bgframe()
     ContainerFrame6:SetFrameLevel(5)
     
    
-    GwCurrencyWindow:HookScript('OnMouseWheel', function(self, delta)
-        delta = -delta * 30
-        local s = math.max(0,self:GetVerticalScroll() + delta)
-              
-        self:SetVerticalScroll(s)
-        self.slider:SetValue(s)
+    -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
+    local curwin = GwCurrencyWindow
+    curwin.update = gw_bg_loadCurrency
+    curwin.scrollBar.doNotHide = true
+    gw_bg_currencySetup()
+    
+    -- update currency window when a currency update event occurs
+    curwin:SetScript('OnEvent', function(self, event, ...)
+        if event == 'CURRENCY_DISPLAY_UPDATE' then
+            if self:IsShown() then
+                gw_bg_loadCurrency()
+            end
+            gw_bg_watchCurrency()
+        end
     end)
-    GwCurrencyWindow:EnableMouseWheel(true)
-    GwCurrencyWindow.height = 0
+    GwCurrencyWindow:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
+    
+    -- update currency window when anyone adds a watch currency
+    hooksecurefunc('SetCurrencyBackpack', function()
+        if GwCurrencyWindow:IsShown() then
+            gw_bg_loadCurrency()
+        end
+        gw_bg_watchCurrency()
+    end)
+    
+    -- enable the bag window button to toggle between inv and currency
     GwCurrencyIcon:HookScript('OnClick', function(self)
         gw_bag_toggleCurrency()
     end)
-    gw_bg_loadCurrency()
-    
-    GwCurrencyWindow.slider:HookScript('OnValueChanged', function(self, value)
-        self:GetParent():SetVerticalScroll(value)
-    end)
-    
-    hooksecurefunc(GwBagFrame, 'SetPoint', function()
-        GwCurrencyWindow.scrollchild:SetWidth(GwBagFrame:GetWidth() - 24)
-    end)
-    
-    GwCurrencyWindow:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
-    
-    GwCurrencyWindow:SetScript('OnEvent',gw_bg_loadCurrency)
-    GwCurrencyWindow.slider:SetValue(1)
-    hooksecurefunc('SetCurrencyBackpack',gw_bg_loadCurrency)
-
 end
 
+function gw_bg_currencySetup()
+    local curwin = GwCurrencyWindow
+    HybridScrollFrame_CreateButtons(curwin, 'GwCurrencyRow', 12, 0, 'TOPLEFT', 'TOPLEFT', 0, 0, 'TOP', 'BOTTOM')
+    for i = 1, #curwin.buttons do
+        local slot = curwin.buttons[i]
+        slot:SetWidth(curwin:GetWidth() - 12)
+        slot.header.spaceString:SetFont(DAMAGE_TEXT_FONT, 14)
+        slot.header.spaceString:SetTextColor(1, 1, 1)
+        slot.item.spaceString:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.spaceString:SetTextColor(1, 1, 1)
+        slot.item.amount:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.amount:SetTextColor(1, 1, 1)
+        slot.item.icon:ClearAllPoints()
+        slot.item.icon:SetPoint('LEFT', 0, 0)
+        if not slot.item.ScriptsHooked then
+            slot.item:HookScript('OnClick', gw_bg_currencyOnClick)
+            slot.item:HookScript('OnEnter', gw_bg_currencyOnEnter)
+            slot.item:HookScript('OnLeave', gw_bg_currencyOnLeave)
+            slot.item.ScriptsHooked = true
+        end
+    end
+    
+    gw_bg_loadCurrency()
+    gw_bg_watchCurrency()
+end
+
+function gw_bg_currencyOnClick(self)
+    if not self.CurrencyID or not self.CurrencyIdx then
+        return
+    end
+    local _, _, _, _, isWatched, _ = GetCurrencyListInfo(self.CurrencyIdx)
+    local toggle = 1
+    if isWatched then
+        toggle = 0
+    end
+    SetCurrencyBackpack(self.CurrencyIdx, toggle)
+end
+
+function gw_bg_currencyOnEnter(self)
+    if not self.CurrencyID or not self.CurrencyIdx then
+        return
+    end
+    GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
+    GameTooltip:ClearLines()
+    GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+    GameTooltip:AddLine(GwLocalization['CLICK_TO_TRACK'], 1, 1, 1)
+    GameTooltip:Show()
+end
+
+function gw_bg_currencyOnLeave(self)
+    GameTooltip:Hide()
+end
 
 function gw_bg_loadCurrency()
     
-    local USED_CURRENCY_HEIGHT = 25
+    local USED_CURRENCY_HEIGHT = BAG_CURRENCY_SIZE
     local zebra = 1;
-    local watchSlot = 1
     
-    for i=1,GetCurrencyListSize() do
-         local y = 0
-        local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maximum, hasWeeklyLimit, currentWeeklyAmount, unknown = GetCurrencyListInfo(i)
-        
-        if isHeader then
-            local HeaderSlot = _G['GwCurrencyHeader'..i]
-            if HeaderSlot==nil then
-                
-                HeaderSlot = CreateFrame('Frame','GwCurrencyHeader'..i,GwCurrencyWindow.scrollchild,'GwcurrencyCat')
-                HeaderSlot.string:SetFont(DAMAGE_TEXT_FONT, 14)
-                HeaderSlot.string:SetTextColor(1, 1, 1)
-                HeaderSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT + (-5))
-                HeaderSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT + (-5) +(-32))
-             
-                
-              
-                y = 32 +5
-            end
-            HeaderSlot.string:SetText(name)
-            HeaderSlot:SetHeight(32)
-      
-        else
-            local link = GetCurrencyListLink(i)
-            local _, _, _, _, curid, _ = string.find(link, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-            name, count, icon, _, _, maximum, _, _ = GetCurrencyInfo(curid)
-            local itemSlot = _G['GwcurrencyItem'..i]
-            if itemSlot==nil then
-                itemSlot = CreateFrame('Button','GwcurrencyItem'..i,GwCurrencyWindow.scrollchild,'GwcurrencyItem')
-                itemSlot.string:SetFont(UNIT_NAME_FONT, 12)
-                itemSlot.string:SetTextColor(1, 1, 1)
-                itemSlot.amount:SetFont(UNIT_NAME_FONT, 12)
-                itemSlot.amount:SetTextColor(1, 1, 1)
-                itemSlot:SetPoint('TOPLEFT',GwCurrencyWindow.scrollchild,'TOPLEFT',10,-USED_CURRENCY_HEIGHT)
-                itemSlot:SetPoint('BOTTOMRIGHT',GwCurrencyWindow.scrollchild,'TOPRIGHT',0,-USED_CURRENCY_HEIGHT+(-32))
-              
-                itemSlot.icon:ClearAllPoints()
-                itemSlot.icon:SetPoint('LEFT',0,0)
-                y = 32
-            end
-            itemSlot.string:SetText(name)
-            if maximum == 0 then
-                itemSlot.amount:SetText(count)
-            else
-                itemSlot.amount:SetText(count..' / '..maximum)
-            end
-            itemSlot.icon:SetTexture(icon)
-            itemSlot.zebra:SetVertexColor(zebra,zebra,zebra,0.05)
-            if isWatched then
-                itemSlot.zebra:SetVertexColor(1,1,0,0.05)
-            end
-            if zebra==1 then
-                zebra = 0
-            else
-                zebra =1
-            end
-            itemSlot:SetHeight(32)
-            
-            itemSlot:SetScript('OnClick',function()
-                    
-                    local toggle = 1
-                    if isWatched then
-                        toggle=0
-                    end
-                    
-                    SetCurrencyBackpack(i,toggle)
-            end)
-          
-            itemSlot:SetScript('OnLeave', function()
-                GameTooltip:Hide()
-            end)
-            itemSlot:SetScript('OnEnter', function()
-                GameTooltip:SetOwner(itemSlot,'ANCHOR_CURSOR')
-                GameTooltip:ClearLines()
-                GameTooltip:SetCurrencyToken(i) 
-                GameTooltip:AddLine(GwLocalization['CLICK_TO_TRACK'],1,1,1) 
-                GameTooltip:Show() 
-            end)
-            
-            if isWatched and watchSlot<4 then
-                
-                _G['GwBagFrameCurrency'..watchSlot]:SetText(count)
-                _G['GwBagFrameCurrency'..watchSlot..'Texture']:SetTexture(icon)
-                
-                watchSlot = watchSlot + 1
-            end
-            
-        end
-        
-        
-       
-        
-        USED_CURRENCY_HEIGHT = USED_CURRENCY_HEIGHT + y
-        
-    end
-    GwCurrencyWindow.slider:SetMinMaxValues(0, USED_CURRENCY_HEIGHT)
-    GwCurrencyWindow.height = USED_CURRENCY_HEIGHT
-    GwCurrencyWindow:SetScrollChild(GwCurrencyWindow.scrollchild)
+    local curwin = GwCurrencyWindow
+    local offset = HybridScrollFrame_GetOffset(curwin)
+    local currencyCount = GetCurrencyListSize() + 1
+    for i = 1, #curwin.buttons do
+        local slot = curwin.buttons[i]
 
-    for i=watchSlot,3 do
-        _G['GwBagFrameCurrency'..i]:SetText('')
-        _G['GwBagFrameCurrency'..i..'Texture']:SetTexture(nil)
+        local idx = i + offset - 1
+        if idx == 0 then
+            -- empty blank starter row
+            slot.item:Hide()
+            slot.header:Hide()
+        elseif idx == currencyCount then
+            -- empty blank final row
+            slot.item:Hide()
+            slot.header:Hide()
+        elseif idx < currencyCount then
+            local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maximum, hasLimit, curWeekly, _ = GetCurrencyListInfo(idx)
+            if isHeader then
+                slot.item:Hide()
+                slot.item.CurrencyID = 0
+                slot.item.CurrencyIdx = 0
+                slot.header.spaceString:SetText(name)
+                slot.header:Show()
+            else
+                slot.header:Hide()
+                
+                -- parse out the currency ID and get more accurate info
+                local link = GetCurrencyListLink(idx)
+                local _, _, _, _, curid, _ = string.find(link, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%]%[]*)%]?|?h?|?r?")
+                name, count, icon, _, _, maximum, _, _ = GetCurrencyInfo(curid)
+                slot.item.CurrencyID = curid
+                slot.item.CurrencyIdx = idx
+                
+                -- set currency item values
+                slot.item.spaceString:SetText(name)
+                if maximum == 0 then
+                    slot.item.amount:SetText(comma_value(count))
+                else
+                    slot.item.amount:SetText(comma_value(count) .. ' / ' .. comma_value(maximum))
+                end
+                slot.item.icon:SetTexture(icon)
+                
+                -- set zebra color by idx or watch status
+                zebra = idx % 2
+                slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
+                if isWatched then
+                    slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
+                end
+
+                slot.item:Show()
+            end
+        else
+            slot.header:Hide()
+            slot.item:Hide()
+        end
+    
     end
     
+    USED_CURRENCY_HEIGHT = BAG_CURRENCY_SIZE * (currencyCount + 1)
+    HybridScrollFrame_Update(curwin, USED_CURRENCY_HEIGHT, BAG_CURRENCY_SIZE)
+end
+
+function gw_bg_watchCurrency()
+    local watchSlot = 1
+    local currencyCount = GetCurrencyListSize()
+    for i = 1, currencyCount do
+        local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maximum, hasLimit, curWeekly, _ = GetCurrencyListInfo(i)
+        if not isHeader and isWatched and watchSlot < 4 then
+            _G['GwBagFrameCurrency' .. watchSlot]:SetText(count)
+            _G['GwBagFrameCurrency' .. watchSlot .. 'Texture']:SetTexture(icon)
+            watchSlot = watchSlot + 1
+        end
+    end
+    
+    for i = watchSlot, 3 do
+        _G['GwBagFrameCurrency' .. i]:SetText('')
+        _G['GwBagFrameCurrency' .. i .. 'Texture']:SetTexture(nil)
+    end
 end
 
 function gw_bag_toggleCurrency()
-    if GwCurrencyWindow:IsShown() then
-        
+    if GwCurrencyWindow:IsShown() then        
         gw_bag_hideIcons(true)
     else
-         gw_bag_hideIcons(false)
+        gw_bag_hideIcons(false)
     end
-
-    
 end
 
 function gw_bag_hideIcons(b)
-  
-    
-    if b==true then
+    if b then
 		OpenAllBags()
         BagItemSearchBox:Show()
         GwBagFrameBagSpaceString:Show()
         GwBagButtonSettings:Show()
         GwCurrencyWindow:Hide()
         ContainerFrame1:Show()
-       
+        gw_bg_watchCurrency()
     else
         BagItemSearchBox:Hide()
         GwBagFrameBagSpaceString:Hide()
         GwBagButtonSettings:Hide()
         GwCurrencyWindow:Show()
         CloseAllBags()
-        
+        gw_bg_loadCurrency()
+        gw_bg_watchCurrency()
     end
 end
 
@@ -580,21 +594,15 @@ end
 
 
 function gw_update_player_money()
-   money = GetMoney(); 
+    money = GetMoney(); 
     
     local gold = math.floor(money / (COPPER_PER_SILVER * SILVER_PER_GOLD));
     local silver = math.floor((money - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER);
     local copper = mod(money, COPPER_PER_SILVER);
 
-                
-                
-
     GwBagFrameBronze:SetText(copper)
-
     GwBagFrameSilver:SetText(silver)
-                 
     GwBagFrameGold:SetText(comma_value(gold))
-    
 end
 
 function gw_update_free_slots()
@@ -611,8 +619,12 @@ function gw_update_free_slots()
         GwBagFrameBagSpaceString:SetText(bag_space_string); 
 end
 
-function gw_onBagMove()
-     GwBagFrameResize:SetPoint('BOTTOMRIGHT',GwBagFrame,'BOTTOMRIGHT',0,0)
+function gw_onBagMove(self)
+    self:StopMovingOrSizing()
+    local saveBagPos = {}
+    saveBagPos['point'], _, saveBagPos['relativePoint'], saveBagPos['xOfs'] , saveBagPos['yOfs'] = self:GetPoint()
+    gwSetSetting('BAG_POSITION',saveBagPos)
+    GwBagFrameResize:SetPoint('BOTTOMRIGHT',GwBagFrame,'BOTTOMRIGHT',0,0)
 end
 function gw_bagFrameOnResize(self,forceSize)
     if forceSize==nil then
@@ -651,6 +663,7 @@ function  gw_bagOnResizeStop(self)
     GwBagFrameResize:ClearAllPoints()
     GwBagFrameResize:SetPoint('BOTTOMRIGHT',GwBagFrame,'BOTTOMRIGHT',0,0) 
     GwBagMoverFrame:SetWidth(GwBagFrame:GetWidth()-40)
+    gw_bg_currencySetup()
 end
 function gw_onBagDragUpdate()
     

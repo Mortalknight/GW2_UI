@@ -3,7 +3,7 @@
     
     <Frame name="GwBagMoverFrame" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="470" y="40"></Size>
-       <Anchors>
+        <Anchors>
             <Anchor point="RIGHT" x="-256" y="256"></Anchor>
         </Anchors>
     </Frame>
@@ -38,7 +38,6 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-
                 <Texture name="$parentFooter" file="Interface\AddOns\GW2_UI\textures\bag\bagfooter">
                     <Size x="512" y="70"></Size>
                     <Anchors>
@@ -52,12 +51,11 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>
-                </Texture>               
-                
+                </Texture>
             </Layer>
     
             <Layer textureSubLevel="3">
-                 <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                <Texture file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
@@ -171,81 +169,14 @@
 
         </Layers>
         <Frames>
-            <ScrollFrame name="GwCurrencyWindow" hidden="true" parentKey="currencyWindow">
-                <Size x="512" y="512"></Size>
+            <ScrollFrame name="GwCurrencyWindow" hidden="true" parentKey="currencyWindow" inherits="HybridScrollFrameTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-24" y="0" />
                 </Anchors>
-                
                 <Frames>
-                    <Frame parentKey="scrollchild">
-                        <Size x="512" y="512"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
-                        </Anchors>
-                    </Frame>
-               
-                    <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
-                        <Size x="12" y="12"></Size>
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-32"></Anchor>
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="32"></Anchor>
-                        </Anchors>
-                        
-   
-                        <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
-                            <Size x="12" y="100"/>
-                             <Anchors>
-                              <Anchor point="TOP" relativePoint="TOP" ></Anchor>
-                            </Anchors>
-                        </ThumbTexture>
-                        <Layers>
-                            <Layer>
-                                <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
-                                    <Anchors>
-                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
-                                    </Anchors>
-                                </Texture>
-                            </Layer>
-                        </Layers>
-                    </Slider>
-                    <Button name="$parentScrollButtonUp">
-                     <Size x="12" y="12"></Size>
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-22"></Anchor>
-                        </Anchors>
-                    <Layers>
-                        <Layer>
-                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                                <Size x="12" y="12"></Size>
-                                    <Anchors>
-                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                                    </Anchors>
-                            </Texture>
-                        </Layer>
-                    </Layers>
-                    </Button>         <Button name="$parentScrollButtonDown">
-                     <Size x="12" y="12"></Size>
-                        <Anchors>
-                       <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="18"></Anchor>
-                        </Anchors>
-                    <Layers>
-                        <Layer>
-                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                                <Size x="12" y="12"></Size>
-                                    <Anchors>
-                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                                    </Anchors>
-                                  <TexCoords left="0" right="1" top="1" bottom="0" />
-                            </Texture>
-                        </Layer>
-                    </Layers>
-                    </Button>
+                    <Slider name="$parentScrollBar" inherits="GwHybridScrollBarTemplate" />
                 </Frames>
-
             </ScrollFrame>
             <Button name="GwCurrencyIcon" framelevel="10">
                 <Size x="32" y="32"></Size>
@@ -382,70 +313,67 @@
             </Layer>
         </Layers>
     </Frame>
-    <Frame name="GwcurrencyCat" virtual="true">
+
+    <Button name="GwCurrencyRow" parentKey="row" virtual="true">
         <Size x="512" y="32"></Size>
         <Anchors>
             <Anchors point="TOPLEFT"></Anchors>
         </Anchors>
-        <Layers>
-            <Layer>
-                <Texture name="$parentBackground"   file="Interface\AddOns\GW2_UI\textures\bag-sep">
-                     <Size x="512" y="32"></Size>
-                     <Anchors>
-                         <Anchors point="TOPLEFT"></Anchors>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="2">
-                <FontString name="$parentBagSpaceString" parentKey="string" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-5" />
-                </Anchors>
-                <Size x="200" y="24" />
-            </FontString>
-            </Layer>
-        </Layers>
-    </Frame>  
-    <Button name="GwcurrencyItem" virtual="true">
-        <Size x="512" y="32"></Size>
-        <Anchors>
-            <Anchors point="TOPLEFT"></Anchors>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                 <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                     <Size x="32" y="32"></Size>
-                     <Anchors>
-                         <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
-                         <Anchors point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchors>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer>
-                <Texture parentKey="icon">
-                     <Size x="32" y="32"></Size>
-                     <Anchors>
-                         <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
-                         <Anchors point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="32" y="-32"></Anchors>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="2">
-                <FontString name="$parentBagSpaceString" parentKey="string" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="42" y="-5" />
-                    </Anchors>
-                    <Size x="200" y="24" />
-                </FontString> 
-                <FontString name="$parentBagSpaceString" parentKey="amount" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="RIGHT">
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-5" y="-5" />
-                    </Anchors>
-                    <Size x="200" y="24" />
-                </FontString>
-            </Layer>
-        </Layers>
+        <Frames>
+            <Frame parentKey="header" setAllPoints="true">
+                <Layers>
+                    <Layer>
+                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                             <Size x="512" y="32"></Size>
+                             <Anchors>
+                                 <Anchors point="TOPLEFT"></Anchors>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="spaceString" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>  
+            <Button parentKey="item" setAllPoints="true" hidden="true">
+                <Layers>
+                    <Layer level="ARTWORK">
+                         <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                             <Size x="32" y="32"></Size>
+                             <Anchors>
+                                 <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
+                                 <Anchors point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchors>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon">
+                             <Size x="32" y="32"></Size>
+                             <Anchors>
+                                 <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
+                            </Anchors>
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="spaceString" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="42" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="24" />
+                        </FontString> 
+                        <FontString parentKey="amount" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-5" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
     </Button>
-    
 </Ui>

@@ -9,6 +9,7 @@
 ## SavedVariables: GW2UI_SETTINGS_PROFILES
 
 
+frames/shared.xml
 frames/target.xml
 frames/experiencebar.xml
 frames/hudart.xml
