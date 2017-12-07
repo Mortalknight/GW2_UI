@@ -351,11 +351,11 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     end 
     
     
-    if event=='PLAYER_TARGET_CHANGED' then
-       gw_highlight_target_raidframe()
+    if event=='PLAYER_TARGET_CHANGED' and UnitIsUnit('target',self.unit) then
+       gw_highlight_target_raidframe(self)
     end 
-    if event=='UNIT_TARGET' and unit=='player' then
-       gw_highlight_target_raidframe()
+    if event=='UNIT_TARGET' and unit=='player' and UnitIsUnit('target',self.unit) then
+       gw_highlight_target_raidframe(self)
     end 
     if event=='UNIT_NAME_UPDATE' and unit==self.unit then
        setUnitName()
@@ -365,6 +365,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     end
     if event=='LOADING_SCREEN_DISABLED' then
         gw_raidframes_updateAuras(self)
+        gw_update_raidframe_awayData(self)
     end
     if event=='RAID_TARGET_UPDATE' and gwGetSetting('RAID_UNIT_MARKERS') == true then
        updateRaidMarkers(self) 
@@ -415,29 +416,9 @@ function gw_highlight_target_raidframe(self)
     if GW_CURRENT_HIGHLIGHT_FRAME~=nil then
         GW_CURRENT_HIGHLIGHT_FRAME.targetHighlight:SetVertexColor(0,0,0,1)
     end
-    
-    if UnitIsUnit('target',_G['GwCompactplayer'].unit) then
-        _G['GwCompactplayer'].targetHighlight:SetVertexColor(1,1,1,1)
-        GW_CURRENT_HIGHLIGHT_FRAME = _G['GwCompactplayer']
-    end
-
+    GW_CURRENT_HIGHLIGHT_FRAME = self;
+    self.targetHighlight:SetVertexColor(1,1,1,1);
   
-    for i=1,80 do 
-        
-        if i<5 then
-           if UnitIsUnit('target',_G['GwCompactparty'..i].unit) then
-                _G['GwCompactparty'..i].targetHighlight:SetVertexColor(1,1,1,1)
-                GW_CURRENT_HIGHLIGHT_FRAME = _G['GwCompactparty'..i]
-            end 
-        end
-        
-        if UnitIsUnit('target',_G['GwCompactraid'..i].unit) then
-        _G['GwCompactraid'..i].targetHighlight:SetVertexColor(1,1,1,1)
-        else
-        _G['GwCompactraid'..i].targetHighlight:SetVertexColor(0,0,0,1)
-        end
-        
-    end
     
     
 end
@@ -483,7 +464,7 @@ function gw_update_raidframeData(self)
     
    
     setUnitName(self)
-    gw_highlight_target_raidframe()
+--    gw_highlight_target_raidframe()
     
     gw_update_raidframe_awayData(self)
      gw_raidframes_updateAuras(self)
@@ -496,7 +477,7 @@ function gw_raidFrame_OnUpdate(self)
     if self.onUpdateDelay==nil then self.onUpdateDelay=0 end
     if self.onUpdateDelay>GetTime() then return end
     self.onUpdateDelay = GetTime()+0.2
-    gw_update_raidframe_awayData(self)
+  --  gw_update_raidframe_awayData(self)
     
 end
 
