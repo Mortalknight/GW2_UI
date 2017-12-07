@@ -29,7 +29,7 @@ function create_classpowers()
     PLAYER_CLASS = playerClass
     
     local classPowerFrame = CreateFrame('Frame','GwPlayerClassPower',UIParent,'GwPlayerClassPower')
-    GwPlayerClassPower:SetScript('OnEvent',function(self,event) GW_UPDATE_CLASSPOWER(self,event) end)
+    GwPlayerClassPower:SetScript('OnEvent',function(self,event,unit) GW_UPDATE_CLASSPOWER(self,event,unit) end)
     
     
     
@@ -60,7 +60,7 @@ function select_altpower_type()
    
 end
 
-function GW_UPDATE_CLASSPOWER(self,event)
+function GW_UPDATE_CLASSPOWER(self,event,unit)
     
     
     
@@ -74,7 +74,7 @@ function GW_UPDATE_CLASSPOWER(self,event)
             GW_POWERTYPE_COMBOPOINT()
             return
         end
-            CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION](event)
+            CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION](event,unit)
         
     end
     
@@ -143,63 +143,80 @@ end
 
 function GW_LOOP_STAGGER()
  
-    GwStaggerBar.looping =true
-    addToAnimation('STAGGER_CLASS_POWER',0,1,GetTime(),10,function()
-            
-        local staggarPrec = CLASS_POWER/CLASS_POWER_MAX
-            
-        
-        local imagesize = 18/256
-            
-        local cord = staggarPrec
+    local staggerAmountClamped = math.min(1,GwBrewmaster.debugpre)
     
-        local l = animations['STAGGER_CLASS_POWER']['progress'] 
-        local r = l + imagesize
-            
-        local a = 1
-        local a2 = 0
-            
-        if animations['STAGGER_CLASS_POWER']['progress']<0.25 then
-             a = lerp(0,1,animations['STAGGER_CLASS_POWER']['progress'] /0.25)
-        elseif animations['STAGGER_CLASS_POWER']['progress']>0.75 then
-            a = lerp(1,0,(animations['STAGGER_CLASS_POWER']['progress']-0.75) /0.25)  
-        end
-            
-            
-        local r = lerp(37,240,staggarPrec/0.5) / 255
-        local g = lerp(240,200,staggarPrec/0.5) / 255
-        local b = lerp(152,37,staggarPrec/0.5) / 255 
-            
-        if animations['STAGGER_CLASS_POWER']['progress']>0.5 then
-        local p = (staggarPrec - 0.5) / 0.5
-         r = lerp(240,240,p) / 255
-         g = lerp(200,37,p) / 255
-         b = lerp(37,37,p) / 255
-        end  
         
-        GwStaggerBar.texture1:SetTexCoord(0,cord,l,r)
-        GwStaggerBar.texture2:SetTexCoord(0,cord,l,r)
-            
-            
-        GwStaggerBar.texture1:SetVertexColor(r,g,b,a)
-        GwStaggerBar.texture2:SetVertexColor(r,g,b,0)
-        GwStaggerBar.fill:SetVertexColor(r,g,b,1)
+  
+    
+    if GwBrewmaster.debugpre== 0 then
+        GwBrewmaster.stagger.blue:Hide()
+        GwBrewmaster.stagger.yellow:Hide()
+        GwBrewmaster.stagger.red:Hide()
+        GwBrewmaster.stagger.indicator:Hide()   
+        GwBrewmaster.stagger.indicatorText:Hide()   
+    elseif not GwBrewmaster.stagger.blue:IsShown() then
+            GwBrewmaster.stagger.blue:Show()
+            GwBrewmaster.stagger.yellow:Show()
+            GwBrewmaster.stagger.red:Show()
+            GwBrewmaster.stagger.indicator:Show();
+            GwBrewmaster.stagger.indicatorText:Show();
+    end
+ 
+    GwBrewmaster.stagger.blue:SetVertexColor(1,1,1,1)
+    GwBrewmaster.stagger.yellow:SetVertexColor(1,1,1,lerp(0,1, staggerAmountClamped/0.5) )
+    GwBrewmaster.stagger.red:SetVertexColor(1,1,1,lerp(0,1, (staggerAmountClamped - 0.5)/0.5) )
+    
+    GwBrewmaster.stagger.blue:SetTexCoord(0, staggerAmountClamped,0,1)
+    GwBrewmaster.stagger.yellow:SetTexCoord(0, staggerAmountClamped,0,1)
+    GwBrewmaster.stagger.red:SetTexCoord(0, staggerAmountClamped,0,1)  
+    
+    GwBrewmaster.stagger.blue:SetWidth(staggerAmountClamped*256)
+    GwBrewmaster.stagger.yellow:SetWidth(staggerAmountClamped*256)
+    GwBrewmaster.stagger.red:SetWidth(staggerAmountClamped*256)
+    
+    GwBrewmaster.stagger.indicator:SetPoint('LEFT',(staggerAmountClamped*256) - 13,-6)
+    GwBrewmaster.stagger.indicatorText:SetText(math.floor(GwBrewmaster.debugpre*100)..'%')
 
-    end,'noease',function()
-        
-        local staggarPrec = CLASS_POWER/CLASS_POWER_MAX
-        if staggarPrec>0 then
-            GW_LOOP_STAGGER()    
-        else
-           GwStaggerBar.looping =false     
-        end
-        
-        
-    end) 
-    
 end
 
-function GW_POWERTYPE_STAGGER()
+local function ironSkin_OnUpdate()
+
+    local precentage = math.min(1,math.max(0,(GwBrewmaster.ironskin.expires - GetTime())/23));
+    GwBrewmaster.stagger.ironartwork:SetAlpha(precentage)
+    GwBrewmaster.ironskin.fill:SetTexCoord(0, precentage,0,1)
+    GwBrewmaster.ironskin.fill:SetWidth(precentage*256)
+    
+    GwBrewmaster.ironskin.indicator:SetPoint('LEFT',math.min(252,(precentage*256)) - 13,19)
+    GwBrewmaster.ironskin.indicatorText:SetText(intRound(GwBrewmaster.ironskin.expires - GetTime())..'s')
+end
+
+function GW_POWERTYPE_STAGGER(event,unit)
+    if event==nil then
+        GwBrewmaster.debugpre =0;
+        GW_LOOP_STAGGER()
+         GwBrewmaster.ironskin:Hide()GwBrewmaster.stagger.ironartwork:Hide() 
+    end
+    
+    if event=='UNIT_AURA' and unit=='player' then
+        local found = false;
+        local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal,   spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = nil
+        for i=1,40 do
+            name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 =     UnitAura('player',i)
+           
+            if spellID==215479 then 
+                GwBrewmaster.ironskin.expires = expires;
+                 GwBrewmaster.ironskin:SetScript('OnUpdate',ironSkin_OnUpdate);
+                 GwBrewmaster.ironskin:Show()
+                 GwBrewmaster.stagger.ironartwork:Show()
+                found = true;
+                break 
+            end
+        end
+        if not found then GwBrewmaster.ironskin:SetScript('OnUpdate',nil);  GwBrewmaster.ironskin:Hide()GwBrewmaster.stagger.ironartwork:Hide() end
+        
+        return
+    end
+    
     
     local old_power = CLASS_POWER
     CLASS_POWER_MAX =  UnitHealthMax('player')
@@ -209,26 +226,9 @@ function GW_POWERTYPE_STAGGER()
     
     staggarPrec = math.max(0,math.min(staggarPrec,1))
     
-    addToAnimation('STAGGER_CLASS_POWER_FILL',GwStaggerBar.value,staggarPrec,GetTime(),0.1,function() 
-     
-        GwStaggerBar.bar:SetWidth(math.max(1,316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
-         GwStaggerBar.spark:ClearAllPoints()
-         GwStaggerBar.spark:SetPoint('RIGHT',GwStaggerBar.bar,'RIGHT',0,0)
-        local sparkwidth = 12
-        local sparkOpacity = 0
-        if (316*animations['STAGGER_CLASS_POWER_FILL']['progress'])<12 then
-            sparkwidth = math.max(0,1/ (316*animations['STAGGER_CLASS_POWER_FILL']['progress']))
-        end
+    GwBrewmaster.debugpre =staggarPrec;
+    GW_LOOP_STAGGER()
 
-         GwStaggerBar.spark:SetWidth(sparkwidth)
-         GwStaggerBar.spark:SetAlpha(sparkOpacity)
-    end)
-
-       GwStaggerBar.value = staggarPrec
-    
-    if GwStaggerBar.looping==nil or GwStaggerBar.looping==false and staggarPrec>0 then
-        GW_LOOP_STAGGER()
-    end
 
 end
 function GW_POWERTYPE_COMBOPOINT()
@@ -683,7 +683,7 @@ function GW_SET_BARTYPE()
    
     if PLAYER_CLASS==10 and PLAYER_SPECIALIZATION==1 then
          
-        GwStaggerBar:Show()     
+        GwBrewmaster:Show()     
    
         GwStaggerBar.loopValue= 0   
         GwPlayerClassPowerBackground:SetTexture(nil)
@@ -691,7 +691,7 @@ function GW_SET_BARTYPE()
         return
     end
     if PLAYER_CLASS==10 and PLAYER_SPECIALIZATION==3 then
-        GwStaggerBar:Hide()
+        GwBrewmaster:Hide()
         GwPlayerClassPowerBackground:SetHeight(32)
         GwPlayerClassPowerBackground:SetWidth(320)
         

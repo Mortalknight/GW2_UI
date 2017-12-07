@@ -528,6 +528,158 @@
                     </OnLoad>
                 </Scripts>
             </Frame>
+             <Frame name="GwBrewmaster" hidden="true">
+                 <Size x="316" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                  <Layers>
+                    <Layer level="ARTWORKD">
+                   
+                      </Layer>
+                 </Layers>
+                 <Frames>
+                    <Frame parentKey="stagger">
+                        <Size x="316" y="18"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORKD" textureSublevel="0">
+                                <Texture parentKey="artwork"  file="Interface\AddOns\GW2_UI\textures\altpower\monk\art-staggerd"  >
+                                    <Size x="512" y="64"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="22" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>   
+                            <Layer level="ARTWORKD" textureSublevel="1">
+                                      <Texture parentKey="ironartwork" hidden="true" file="Interface\AddOns\GW2_UI\textures\altpower\monk\art-ironskin"  >
+                                    <Size x="512" y="64"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="30" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>   
+                            <Layer level="ARTWORKD">
+                                <Texture  file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-bg"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer> 
+                            <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture parentKey="blue" file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-blue"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="3">
+                                <Texture parentKey="yellow" file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-yellow"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer> <Layer level="ARTWORKD" textureSublevel="4">
+                                <Texture parentKey="red" file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-red"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer>
+                             <Layer level="ARTWORKD" textureSublevel="5">
+                                <Texture parentKey="indicator" file="Interface\AddOns\GW2_UI\textures\altpower\monk\duration-bg"  >
+                                    <Size x="32" y="16"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="-6" ></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="1" right="0" top="1" bottom="0" />
+                                </Texture>  
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="6">
+                                <FontString parentKey="indicatorText" text="50%" justifyH="CENTER">
+                         
+                                    <Size x="32" y="16"/>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativeKey="$parent.indicator" x="0" y="-3"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                                
+                                self.indicatorText:SetFont(UNIT_NAME_FONT,11)
+                                
+                               
+                            </OnLoad>
+                        </Scripts>
+                    </Frame> 
+                     <Frame parentKey="ironskin" hidde="true">
+                        <Size x="316" y="18"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <Layers>
+                           
+                  
+                                <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture  parentKey="background" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin-bg"  >
+                                    <Size x="256" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="12" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer> 
+                      
+                            <Layer level="ARTWORKD" textureSublevel="3">
+                                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin"  >
+                                    <Size x="256" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.background" x="1" y="-1" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer>
+                      
+                             <Layer level="ARTWORKD" textureSublevel="4">
+                                <Texture parentKey="indicator" file="Interface\AddOns\GW2_UI\textures\altpower\monk\duration-bg"  >
+                                    <Size x="32" y="16"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="19" ></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="1" right="0" top="0" bottom="1" />
+                                </Texture>  
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="5">
+                                <FontString parentKey="indicatorText" text="50%" justifyH="CENTER">
+                         
+                                    <Size x="32" y="16"/>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativeKey="$parent.indicator" x="0" y="1"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                                
+                                self.indicatorText:SetFont(UNIT_NAME_FONT,11)
+                               self.expires = 0;
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                 </Frames>
+                 <Scripts>
+                    <OnLoad>
+                        self.debugpre = 0;
+                     </OnLoad>
+                 </Scripts>
+            </Frame>
             <Frame name="GwStaggerBar" hidden="true">
                  <Size x="316" y="18"></Size>
                  <Anchors>
