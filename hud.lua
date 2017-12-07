@@ -980,11 +980,12 @@ function create_micro_menu()
     else
         
         
-        GwMicroButtonCharacterMicroButton:SetScript('OnMouseDown',function()  ToggleCharacter("PaperDollFrame"); gw_UpdateMicroButtons() end);
+        GwMicroButtonCharacterMicroButton:SetScript('OnClick',function()  ToggleCharacter("PaperDollFrame"); gw_UpdateMicroButtons() end);
     end
+    GwMicroButtonCharacterMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
-    GwMicroButtonBagMicroButton:SetScript('OnMouseDown',function()  ToggleAllBags(); gw_UpdateMicroButtons() end);
-    
+    GwMicroButtonBagMicroButton:SetScript('OnClick',function()  ToggleAllBags(); gw_UpdateMicroButtons() end);
+    GwMicroButtonBagMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
     if  gwGetSetting('USE_TALENT_WINDOW_DEV') then
          
@@ -995,28 +996,35 @@ function create_micro_menu()
             ]=]);   
     else
         
-        GwMicroButtonSpellbookMicroButton:SetScript('OnMouseDown',function()  ToggleSpellBook(BOOKTYPE_SPELL); gw_UpdateMicroButtons() end);
-        GwMicroButtonTalentMicroButton:SetScript('OnMouseDown',function()  ToggleTalentFrame(); gw_UpdateMicroButtons() end);
+        GwMicroButtonSpellbookMicroButton:SetScript('OnClick',function()  ToggleSpellBook(BOOKTYPE_SPELL); gw_UpdateMicroButtons() end);
+        GwMicroButtonSpellbookMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+        GwMicroButtonTalentMicroButton:SetScript('OnClick',function()  ToggleTalentFrame(); gw_UpdateMicroButtons() end);        
     end 
+    GwMicroButtonTalentMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
     
     
     
     
-    
-    GwMicroButtonAchievementMicroButton:SetScript('OnMouseDown',function()  ToggleAchievementFrame(); gw_UpdateMicroButtons() end);
-    GwMicroButtonQuestLogMicroButton:SetScript('OnMouseDown',function()  ToggleQuestLog(); gw_UpdateMicroButtons() end);
+    GwMicroButtonAchievementMicroButton:SetScript('OnClick',function()  ToggleAchievementFrame(); gw_UpdateMicroButtons() end);
+    GwMicroButtonAchievementMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+    GwMicroButtonQuestLogMicroButton:SetScript('OnClick',function()  ToggleQuestLog(); gw_UpdateMicroButtons() end);
+    GwMicroButtonQuestLogMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
   
-    GwMicroButtonGuildMicroButton:SetScript('OnMouseDown',function()  ToggleGuildFrame(); gw_UpdateMicroButtons() end);
+    GwMicroButtonGuildMicroButton:SetScript('OnClick',function()  ToggleGuildFrame(); gw_UpdateMicroButtons() end);
+    GwMicroButtonGuildMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
-    GwMicroButtonLFDMicroButton:SetScript('OnMouseDown',function()  PVEFrame_ToggleFrame(); gw_UpdateMicroButtons() end);
+    GwMicroButtonLFDMicroButton:SetScript('OnClick',function() PVEFrame_ToggleFrame(); gw_UpdateMicroButtons() end);
+    GwMicroButtonLFDMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
-    GwMicroButtonCollectionsMicroButton:SetScript('OnMouseDown',function()                  ToggleCollectionsJournal();
+    GwMicroButtonCollectionsMicroButton:SetScript('OnClick',function()                  ToggleCollectionsJournal();
     gw_UpdateMicroButtons() end);
+    GwMicroButtonCollectionsMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
-    GwMicroButtonEJMicroButton:SetScript('OnMouseDown',function() ToggleEncounterJournal()  gw_UpdateMicroButtons() end);
+    GwMicroButtonEJMicroButton:SetScript('OnClick',function() ToggleEncounterJournal()  gw_UpdateMicroButtons() end);
+    GwMicroButtonEJMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
-     GwMicroButtonMainMenuMicroButton:SetScript('OnMouseDown',function() 
+     GwMicroButtonMainMenuMicroButton:SetScript('OnClick',function() 
             
         if ( not GameMenuFrame:IsShown() ) then
                 
@@ -1041,9 +1049,11 @@ function create_micro_menu()
             end
 		
         gw_UpdateMicroButtons() end);
+    GwMicroButtonMainMenuMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
     -- GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
-     GwMicroButtonStoreMicroButton:SetScript('OnMouseDown',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
+     GwMicroButtonStoreMicroButton:SetScript('OnClick',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
+    GwMicroButtonStoreMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
         GwMicroButtonStoreMicroButton:SetScript('OnEnter',nil)
         GwMicroButtonStoreMicroButton:SetScript('OnLeave',nil)
   
