@@ -260,6 +260,8 @@ GwLocalization["TRACKER_TIME_REMAINING"] = "Tiempo remanente"
 GwLocalization["UPDATE_STRING_1"] = "Nueva actualización disponible para descargar."
 GwLocalization["UPDATE_STRING_2"] = "Nueva actualización disponible conteniendo nuevas caracteristicas"
 GwLocalization["UPDATE_STRING_3"] = "Una actualización |cFFFF0000major|r esta disponible.\nEs altamente recomendable que actualices."
+GwLocalization['UNEQUIP_LEGENDARY'] = 'You must unequip that item in order to upgrade it.'
+GwLocalization['NOT_A_LEGENDARY'] = 'You cannot upgrade that item.'
 end
 
 

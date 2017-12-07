@@ -260,6 +260,8 @@ GwLocalization['SPELLS_HEADER_PASSIVE'] = 'Passiv'
 GwLocalization['FPS_TOOLTIP_4'] = 'Bandbreite (Download) '
 GwLocalization['FPS_TOOLTIP_5'] = 'Bandbreite (Upload) '
 GwLocalization['FPS_TOOLTIP_6'] = 'Speicher für Addons: '
+GwLocalization['UNEQUIP_LEGENDARY'] = 'You must unequip that item in order to upgrade it.'
+GwLocalization['NOT_A_LEGENDARY'] = 'You cannot upgrade that item.'
 end
 
 

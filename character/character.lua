@@ -538,21 +538,50 @@ function gwPaperDollSlotButton_OnModifiedClick (self, button)
 	end
 end
 function gwPaperDollSlotButton_OnClick (self, button,drag)
-   
     MerchantFrame_ResetRefundItem();
     if ( button == "LeftButton" ) then
-        local infoType = GetCursorInfo();
-        if ( type == "merchant" and MerchantFrame.extendedCost ) then
+        local infoType, _ = GetCursorInfo();
+        if ( infoType == "merchant" and MerchantFrame.extendedCost ) then
             MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost);
-        else     
-        
-       
-            if not SpellIsTargeting() and (drag==nil and GwPaperDollBagItemList:IsShown()) then 
+        else
+            if not SpellIsTargeting() and (drag==nil and GwPaperDollBagItemList:IsShown()) then
                 GwPaperDollSelectedIndicator:SetPoint('LEFT',self,'LEFT',-16,0)
                 GwPaperDollSelectedIndicator:Show()
                 selectedInventorySlot = self:GetID()
-                updateBagItemList(self)  
+                updateBagItemList(self)
             else
+                if SpellCanTargetItem() then
+                    local castingItem = nil
+                    for bag = 0, NUM_BAG_SLOTS do
+                        for slot = 1, GetContainerNumSlots(bag) do
+                            local id = GetContainerItemID(bag, slot)
+                            if id then
+                                local name, _ = GetItemInfo(id)
+                                if IsCurrentItem(id) then
+                                    castingItem = id
+                                    break
+                                end
+                            end
+                        end
+                        if castingItem then
+                            break
+                        end
+                    end
+                    if castingItem and castingItem == 154879 then
+                        -- Awoken Titan Essence causes PickupInventoryItem to behave as protected; no idea why
+                        -- So we display a nice message instead of a UI error
+                        local itemid = GetInventoryItemID("player", self:GetID())
+                        if itemid then
+                            local name, link, quality, _ = GetItemInfo(itemid)
+                            if quality == 5 then
+                                StaticPopup_Show('GW_UNEQUIP_LEGENDARY')
+                            else
+                                StaticPopup_Show('GW_NOT_A_LEGENDARY')
+                            end
+                            return
+                        end
+                    end
+                end
                 PickupInventoryItem(self:GetID());
                 if ( CursorHasItem() ) then
                     MerchantFrame_SetRefundItem(self, 1);
@@ -1458,7 +1487,22 @@ function gw_register_character_window()
         end
     end)
     
-   
+    StaticPopupDialogs['GW_UNEQUIP_LEGENDARY'] = {
+        text = GwLocalization['UNEQUIP_LEGENDARY'],
+        button1 = GwLocalization['SETTINGS_CANCEL'],
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3
+    }
+    StaticPopupDialogs['GW_NOT_A_LEGENDARY'] = {
+        text = GwLocalization['NOT_A_LEGENDARY'],
+        button1 = GwLocalization['SETTINGS_CANCEL'],
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3
+    }   
     
     return GwCharacterWindowContainer;
     

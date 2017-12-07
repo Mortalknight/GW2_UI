@@ -261,6 +261,8 @@ GwLocalization['SPELLS_HEADER_PASSIVE'] = 'Passive'
 GwLocalization['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
 GwLocalization['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
 GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
+GwLocalization['UNEQUIP_LEGENDARY'] = 'You must unequip that item in order to upgrade it.'
+GwLocalization['NOT_A_LEGENDARY'] = 'You cannot upgrade that item.'
 end
 
 local Locale = GetLocale()
