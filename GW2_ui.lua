@@ -475,36 +475,32 @@ function countTable(T)
   return c
 end
 
-function timeCount(numSec,com)
+function timeCount(numSec, com)
 	local nSeconds = tonumber(numSec)
-        if nSeconds==nil then
-            nSeconds = 0
-        end
-		if nSeconds == 0 then
-
-				coolTime = "0";
-		else
-			local	nHours = math.floor(nSeconds/3600);
-			local	nMins =  math.floor(nSeconds/60 - (nHours*60));
-			local	nSecs = math.floor(nSeconds - nHours*3600 - nMins *60);
-			local	nMilsecs = math.floor( ((nSeconds - nHours*3600 - nMins) * 10^1) + 0.5) / (10^1) 
-			
-            if nHours>0 then
-                coolTime =nHours..'h'
-            else
-                if nMins>0 then
-                     coolTime =nMins..'m'
-                else
-                    if com~=nil then
-                        coolTime = nMilsecs..'s'
-                    else
-                        coolTime =   nSecs..'s'
-                    end
-                end
-            end
-
-	end
-    return coolTime
+    if nSeconds == nil then
+        nSeconds = 0
+    end
+	if nSeconds == 0 then
+        return '0'
+    end
+    
+    local nHours = math.floor(nSeconds/3600)
+    if nHours > 0 then
+        return nHours .. 'h'
+    end
+    
+    local nMins = math.floor(nSeconds/60 - nHours*60)
+    if nMins > 0 then
+        return nMins .. 'm'
+    end
+        
+    if com ~= nil then
+        local nMilsecs = math.floor(((nSeconds - nHours*3600 - nMins) * 10^1) + 0.5) / (10^1)
+        return nMilsecs .. 's'
+    end
+    
+    local nSecs = math.floor(nSeconds - nHours*3600 - nMins*60)
+    return nSecs .. 's'
 end
 
 
