@@ -501,7 +501,7 @@ function GW_POWERTYPE_FOCUSRAGE(event, unit)
     CLASS_POWER = 0
     
     local count, spellID = nil
-    if event == 'UNIT_AURA' then
+    if event == 'UNIT_AURA' and unit == 'player' then
         for i = 1, 40 do
             _, _, _, count, _, _, _, _, _, _, spellID, _ = UnitAura('player', i)
             if spellID == 207982 or spellID == 204488 then
