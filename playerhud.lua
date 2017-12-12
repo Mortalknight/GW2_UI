@@ -227,17 +227,15 @@ function gw_create_power_bar()
 
     local playerPowerBar = CreateFrame('Frame', 'GwPlayerPowerBar',UIParent, 'GwPlayerPowerBar');
     
-    
-    playerPowerBar:SetScript('OnUpdate',gw_powerbar_updateRegen)
-    
     _G[playerPowerBar:GetName()..'CandySpark']:ClearAllPoints()
     
     playerPowerBar:SetScript('OnEvent',function(self,event,unit)
-            if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit=='player' then
+            if (event=='UNIT_POWER' or event=='UNIT_MAX_POWER') and unit=='player' then
                 gw_update_power_data(GwPlayerPowerBar) 
                 return
             end 
-            if event=='UPDATE_SHAPESHIFT_FORM' then
+            if event=='UPDATE_SHAPESHIFT_FORM' or event=='ACTIVE_TALENT_GROUP_CHANGED' then
+                GwPlayerPowerBar.lastPowerType = nil
                 gw_update_power_data(GwPlayerPowerBar) 
             end
     end)
@@ -245,22 +243,19 @@ function gw_create_power_bar()
     _G['GwPlayerPowerBarBarString']:SetFont(DAMAGE_TEXT_FONT,14)
 
     playerPowerBar:RegisterEvent("UNIT_POWER");
-    playerPowerBar:RegisterEvent("UNIT_MAX_POWER");
+    playerPowerBar:RegisterEvent("UNIT_MAXPOWER");
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM");
+    playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD");
     
     gw_update_power_data(GwPlayerPowerBar)
-
 end
 
 
 function gw_powerbar_updateRegen(self)
-    
-    
     if self.lostKnownPower==nil or self.powerMax==nil or self.lastUpdate==nil or self.animating==true then return end
     if self.lostKnownPower>=self.powerMax then return end
     if self.textUpdate==nil then self.textUpdate = 0 end
-    if self.powerType==nil or self.powerType==1 or self.powerType==6 or self.powerType==13 or self.powerType==8 then return end
     
    local decayRate = 1
    local inactiveRegen, activeRegen = GetPowerRegen()
@@ -276,7 +271,7 @@ function gw_powerbar_updateRegen(self)
     local power = self.lostKnownPower + addPower
     local powerMax = self.powerMax
     local powerPrec = 0
-    local powerBarWidth = _G[self:GetName()..'Bar']:GetWidth()
+    local powerBarWidth = self.powerBarWidth
     
      if power>0 and powerMax>0 then
          powerPrec = math.min(1,power/powerMax)
@@ -294,15 +289,13 @@ function gw_powerbar_updateRegen(self)
             
     local bI = math.min(16,math.max(1,math.floor(17 - (16*spark_current))))
          
-    _G[self:GetName()..'CandySpark']:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         _G[self:GetName()..'CandySpark']:SetPoint('LEFT',_G[self:GetName()].bar,'RIGHT',-2,0)
-    _G[self:GetName()].bar:SetPoint('RIGHT',self,'LEFT',spark,0)
-    _G[self:GetName()..'Bar']:SetValue(0)
-    _G[self:GetName()..'Candy']:SetValue( 0 )
-        
-   
+    self.powerCandySpark:SetTexCoord(bloodSpark[bI].left,bloodSpark[bI].right,bloodSpark[bI].top,bloodSpark[bI].bottom)         self.powerCandySpark:SetPoint('LEFT',self.bar,'RIGHT',-2,0)
+    self.bar:SetPoint('RIGHT',self,'LEFT',spark,0)
+    self.powerBar:SetValue(0)
+    self.powerCandy:SetValue( 0 )
 
     if self.textUpdate<GetTime() then
-        _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*powerPrec))
+        self.powerBarString:SetText(comma_value(powerMax*powerPrec))
         self.textUpdate = GetTime() + 0.2
     end
             
@@ -406,7 +399,7 @@ function gw_create_player_hud()
     
 
     
-    gw_dodgebar_onevent()
+    gw_dodgebar_onevent(GwDodgeBar, 'PLAYER_ENTERING_WORLD', 'player')
     
     
     
@@ -486,6 +479,7 @@ function gw_update_power_data(self,forcePowerType,powerToken,forceAnimationName)
     self.lostKnownPower =power
     self.powerMax =powerMax
     self.lastUpdate =GetTime()
+    self.powerBarWidth = powerBarWidth
     
     
      if power>0 and powerMax>0 then
@@ -533,10 +527,18 @@ function gw_update_power_data(self,forcePowerType,powerToken,forceAnimationName)
            
         end)            
       
-    
-    
-    
-
+    if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
+        self.lastPowerType = self.powerType
+        self.powerCandySpark = _G[self:GetName() .. 'CandySpark']
+        self.powerBar = _G[self:GetName() .. 'Bar']
+        self.powerCandy = _G[self:GetName() .. 'Candy']
+        self.powerBarString = _G[self:GetName() .. 'BarString']
+        if self.powerType==nil or self.powerType==1 or self.powerType==6 or self.powerType==13 or self.powerType==8 then
+            self:SetScript('OnUpdate', nil)
+        else
+            self:SetScript('OnUpdate', gw_powerbar_updateRegen)
+        end
+    end
 end
 
 function gw_healthGlobe_FlashComplete()
@@ -665,61 +667,75 @@ end
 
 function gw_dodgebar_onevent(self,event,unit)
 
-    local foundADash = false
-
-    local __,__,c = UnitClass('Player')
-        if GW_DODGEBAR_SPELLS[c]~=nil then
-            for k,v in pairs(GW_DODGEBAR_SPELLS[c]) do
+    if event == 'SPELL_UPDATE_COOLDOWN' then
+        if self.gwDashSpell then
+            local charges, maxCharges, start, duration
+            if self.gwMaxCharges > 1 then
+                charges, maxCharges, start, duration = GetSpellCharges(self.gwDashSpell)
+            else
+                charges = 0
+                maxCharges = 1
+                start, duration, _ = GetSpellCooldown(self.gwDashSpell)
+            end                
+            gw_update_dodgebar(start, duration, maxCharges, charges)
+        end
+    elseif event == 'PLAYER_SPECIALIZATION_CHANGED' or event == 'CHARACTER_POINTS_CHANGED' or event == 'PLAYER_ENTERING_WORLD' then
+        local foundADash = false
+        local _, _ , c = UnitClass('player')
+        self.gwMaxCharges = nil
+        self.gwDashSpell = nil
+        if GW_DODGEBAR_SPELLS[c] ~= nil then
+            for k, v in pairs(GW_DODGEBAR_SPELLS[c]) do
                 local name = GetSpellInfo(v)
-                if name~=nil then       
-                
-                    if  IsPlayerSpell(v)  then     
-               
-                      local  charges, maxCharges, start, duration = GetSpellCharges(v)
-                        if charges~=nil and charges<=maxCharges then
-                          
+                if name ~= nil then                       
+                    if IsPlayerSpell(v) then               
+                        self.gwDashSpell = v
+                        local charges, maxCharges, start, duration = GetSpellCharges(v)
+                        if charges ~= nil and charges <= maxCharges then
                             foundADash = true
                             GwDodgeBar.spellId = v
-                            gw_update_dodgebar(start,duration,maxCharges,charges)
+                            self.gwMaxCharges = maxCharges
+                            gw_update_dodgebar(start, duration, maxCharges, charges)
                             break
                         else
                             local start, duration, enable = GetSpellCooldown(v)
                             foundADash = true
                             GwDodgeBar.spellId = v
-                            gw_update_dodgebar(start,duration,1,0)
+                            self.gwMaxCharges = 1
+                            gw_update_dodgebar(start, duration, 1, 0)
                         end
                     end
                 end
             end
-    end
-    if foundADash==false then
-        GwDodgeBar:Hide()
-    else
-       GwDodgeBar:Show() 
-    end
+        end
+        if foundADash then
+            if self.gwMaxCharges > 1 and self.gwMaxCharges < 3 then
+                _G['GwDodgeBarSep1']:Show()
+            else
+                _G['GwDodgeBarSep1']:Hide()
+            end
     
+            if self.gwMaxCharges > 2 then
+                _G['GwDodgeBarSep2']:SetRotation(0.55) 
+                _G['GwDodgeBarSep3']:SetRotation(-0.55)
+        
+                _G['GwDodgeBarSep2']:Show() 
+                _G['GwDodgeBarSep3']:Show() 
+            else
+                _G['GwDodgeBarSep2']:Hide() 
+                _G['GwDodgeBarSep3']:Hide() 
+            end
+            GwDodgeBar:Show() 
+        else
+            GwDodgeBar:Hide()
+        end
+    end
 end
 
 
 function gw_update_dodgebar(start,duration,chargesMax,charges)
     
     
-    if chargesMax>1 and chargesMax<3 then
-        _G['GwDodgeBarSep1']:Show()
-    else
-        _G['GwDodgeBarSep1']:Hide()
-    end
-    
-    if chargesMax>2 then
-       _G['GwDodgeBarSep2']:SetRotation(0.55) 
-       _G['GwDodgeBarSep3']:SetRotation(-0.55)
-        
-        _G['GwDodgeBarSep2']:Show() 
-        _G['GwDodgeBarSep3']:Show() 
-    else
-        _G['GwDodgeBarSep2']:Hide() 
-        _G['GwDodgeBarSep3']:Hide() 
-    end
 
   --  GwDodgeBar.spark.anim:SetDegrees(63)
  --   GwDodgeBar.spark.anim:SetDuration(1)  

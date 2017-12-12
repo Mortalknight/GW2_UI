@@ -342,6 +342,7 @@ function gw_updateMainBar()
             BUTTON['gw_RangeIndicator'] = rangeIndicator
             BUTTON['gw_ButtonIndex'] = i
             BUTTON['gw_TotalElapsed'] = 0
+            BUTTON['gw_HotKey'] = _G['ActionButton' .. i .. 'HotKey']
             BUTTON:HookScript('OnUpdate', gw_actionButtonUpdate)
             
 			if gwGetSetting('BUTTON_ASSIGNMENTS') then 
@@ -665,7 +666,7 @@ function gwActionBarEquipUpdate()
 end
 
 function gw_actionButtonUpdate(self, elapsed)
-    _G['ActionButton' .. self.gw_ButtonIndex .. 'HotKey']:SetVertexColor(1,1,1)
+    self.gw_HotKey:SetVertexColor(1,1,1)
 
     local isUsable, notEnoughMana = IsUsableAction(self.action);
     local hasRange = ActionHasRange(self.action)
