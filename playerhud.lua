@@ -230,7 +230,7 @@ function gw_create_power_bar()
     _G[playerPowerBar:GetName()..'CandySpark']:ClearAllPoints()
     
     playerPowerBar:SetScript('OnEvent',function(self,event,unit)
-            if (event=='UNIT_POWER' or event=='UNIT_MAX_POWER') and unit=='player' then
+            if (event=='UNIT_POWER' or event=='UNIT_MAXPOWER') and unit=='player' then
                 gw_update_power_data(GwPlayerPowerBar) 
                 return
             end 
