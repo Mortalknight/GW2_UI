@@ -670,6 +670,7 @@ function gwActionButtonsUpdate(self, elapsed)
     local updateRange = false
     self.gw_TotalElapsed = self.gw_TotalElapsed + elapsed
     if self.gw_TotalElapsed > 0.016 then
+        self.gw_TotalElapsed = 0
         updateRange = true
     end
     for i = 1, 12 do
