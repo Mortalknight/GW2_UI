@@ -58,9 +58,12 @@ local GW_BARS= {
     MultiBarBottomRight,
 }
 
+function gwHideSelf(self)
+    self:Hide()
+end
 function gw_hideBlizzardsActionbars() 
     for k,v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
-       v:Hide() 
+        v:Hide() 
         if v.UnregisterAllEvents~=nil then
             v:UnregisterAllEvents() 
            
@@ -77,9 +80,7 @@ function gw_hideBlizzardsActionbars()
         if  object:IsObjectType('Button') then
             object:SetScript('OnClick', nil)
         end
-        hooksecurefunc(object, 'Show', function(self)
-                self:Hide()
-            end)
+        hooksecurefunc(object, 'Show', gwHideSelf)
 
         object:Hide()
     end
@@ -127,18 +128,24 @@ end
         GuildMicroButtonTabard:Hide()
         MainMenuBarPerformanceBar:Hide()
         TalentMicroButtonAlert:Hide()
-        TalentMicroButtonAlert:SetScript('OnShow',function(self) self:Hide() end)    
+        TalentMicroButtonAlert:SetScript('OnShow', gwHideSelf)
 
         for i=1, #MICRO_BUTTONS do
         
             if  _G[MICRO_BUTTONS[i]] then    
-                _G[MICRO_BUTTONS[i]]:SetScript('OnShow',function(self) self:Hide() end)    
+                _G[MICRO_BUTTONS[i]]:SetScript('OnShow', gwHideSelf)
                 _G[MICRO_BUTTONS[i]]:Hide()
             end
         end
     end
   
 
+function gwHideBackdrop(self)
+    _G[self:GetName() .. 'GwBackDrop']:Hide()
+end
+function gwShowBackdrop(self)
+    _G[self:GetName() .. 'GwBackDrop']:Show()
+end
 function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
     if _G[buttonName..'Icon']~=nil then
         _G[buttonName..'Icon']:SetTexCoord(0.1,0.9,0.1,0.9)
@@ -198,20 +205,23 @@ function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
     
     if hideUnused==true then
         _G[buttonName..'GwBackDrop']:Hide() 
-        _G[buttonName]:HookScript('OnHide', function(self) 
-                _G[buttonName..'GwBackDrop']:Hide() 
-            end)
-        _G[buttonName]:HookScript('OnShow', function(self) 
-                _G[buttonName..'GwBackDrop']:Show() 
-        end)
-          
-        
+        _G[buttonName]:HookScript('OnHide', gwHideBackdrop)
+        _G[buttonName]:HookScript('OnShow', gwShowBackdrop)
     end
 
     
 end
 
 
+function gwMainMenuOnEvent(self, event)
+    if event == 'PET_BATTLE_OPENING_START' then
+        gwToggleMainHud(false)
+    elseif event == 'PET_BATTLE_CLOSE' then
+        gwToggleMainHud(true)
+    elseif event == 'PLAYER_EQUIPMENT_CHANGED' then
+        gwActionBarEquipUpdate()
+    end
+end
 function gw_setupActionbars()
 
    local HIDE_ACTIONBARS_CVAR = gwGetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED')
@@ -272,22 +282,12 @@ function gw_setupActionbars()
     gw_setbagFrame()
     gw_setLeaveVehicleButton()
     
-    
     hooksecurefunc("ActionButton_UpdateHotkeys",  gw_updatehotkey)
-    
-    
+        
     MainMenuBarArtFrame:RegisterEvent('PET_BATTLE_CLOSE')
     MainMenuBarArtFrame:RegisterEvent('PET_BATTLE_OPENING_START')
     MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
-    MainMenuBarArtFrame:HookScript('OnEvent',function(self,event)
-       if event=='PET_BATTLE_OPENING_START' then
-           gwToggleMainHud(false)
-        elseif event=='PET_BATTLE_CLOSE' then
-           gwToggleMainHud(true)
-        elseif event=='PLAYER_EQUIPMENT_CHANGED' then
-            gwActionBarEquipUpdate()
-        end
-    end)
+    MainMenuBarArtFrame:HookScript('OnEvent', gwMainMenuOnEvent)
 end
 
 function gwShowAttr()
@@ -369,6 +369,15 @@ function gw_updateMainBar()
     MainMenuBarArtFrame:SetSize(BUTTON_PADDING,USED_HEIGHT)
 end
 
+function gwButtonCooldown(self)
+    local alpha = self:GetEffectiveAlpha()
+    if alpha > 0.001 then
+        self:SetSwipeColor(0, 0, 0, alpha)
+        self:Show()
+    else
+        self:Hide()
+    end
+end
 function gw_updateCustomizableBars(barName,buttonName) 
     
 
@@ -419,28 +428,11 @@ function gw_updateCustomizableBars(barName,buttonName)
                 end
             end
             
-            hooksecurefunc(_G[buttonName..i..'Cooldown'], 'SetCooldown', function(self)
-            local alpha = self:GetEffectiveAlpha()
-            if alpha > 0.001 then
-                self:SetSwipeColor(0,0,0,alpha)
-                self:Show()
-            else
-                self:Hide()
-            end
-        end)   
-         gw_actionbar_state_add_callback(function() 
-            local self = _G[buttonName..i..'Cooldown']
-            local b = _G[buttonName..i..'Cooldown']
-            local alpha = self:GetEffectiveAlpha()
-            if alpha > 0.001 then
-                b:SetSwipeColor(0,0,0,alpha)
-                b:Show()
- 
-            else
-                b:Hide()
-            end
-            
-        end)
+            hooksecurefunc(_G[buttonName..i..'Cooldown'], 'SetCooldown', gwButtonCooldown)
+            gw_actionbar_state_add_callback(function()
+                local b = _G[buttonName .. i .. 'Cooldown']
+                gwButtonCooldown(b)
+            end)
             
         end        
     end
@@ -454,6 +446,20 @@ function gw_updateCustomizableBars(barName,buttonName)
 end
 
 
+function gwPetBarUpdate()
+    _G['PetActionButton1Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack')
+    _G['PetActionButton2Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-follow')
+    _G['PetActionButton3Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-place')
+                        
+    _G['PetActionButton8Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-assist')
+    _G['PetActionButton9Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-defense')
+    _G['PetActionButton10Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-passive')
+    for i = 1, 12 do
+        if _G['PetActionButton' .. i] ~= nil then
+            _G['PetActionButton' .. i .. 'NormalTexture2']:SetTexture(nil)
+        end
+    end
+end
 function gw_setPetBar()
     
     local BUTTON_SIZE = 28;
@@ -503,32 +509,27 @@ function gw_setPetBar()
             end
             
             if i==1 then
-                 
-                
-                hooksecurefunc('PetActionBar_Update',function()
-                        _G['PetActionButton1Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack')
-                        _G['PetActionButton2Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-follow')
-                        _G['PetActionButton3Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-place')
-                        
-                        _G['PetActionButton8Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-assist')
-                        _G['PetActionButton9Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-defense')
-                        _G['PetActionButton10Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-passive')
-                        for i=1,12 do
-    
-                            if _G['PetActionButton'..i]~=nil then
-                                _G['PetActionButton'..i..'NormalTexture2']:SetTexture(nil)
-                            end
-                        end
-                end)
+                hooksecurefunc('PetActionBar_Update', gwPetBarUpdate)
             end
             
-             gw_setActionButtonStyle('PetActionButton'..i)
+            gw_setActionButtonStyle('PetActionButton' .. i)
          
         end   
     end
     
 end
 
+function gwStanceOnEvent(self, event)
+    if InCombatLockdown() then
+        return
+    end 
+
+    if GetNumShapeshiftForms() < 1 then
+        GwStanceBarButton:Hide()
+    else
+        GwStanceBarButton:Show()
+    end
+end
 function gw_setStanceBar()
     
     for i=1,12 do
@@ -571,20 +572,7 @@ function gw_setStanceBar()
     GwStanceBarButton:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
     GwStanceBarButton:RegisterEvent('UNIT_POWER')
     GwStanceBarButton:RegisterEvent('UNIT_HEALTH')
-    GwStanceBarButton:SetScript('OnEvent',function() 
-
-        if InCombatLockdown() then
-            return
-        end 
-
-        if  GetNumShapeshiftForms()<1 then
-            GwStanceBarButton:Hide()
-        else
-            GwStanceBarButton:Show()
-        end
-    end)
-    
-
+    GwStanceBarButton:SetScript('OnEvent', gwStanceOnEvent)
        
     if  GetNumShapeshiftForms()<1 then
         GwStanceBarButton:Hide()
@@ -625,24 +613,26 @@ function gw_setbagFrame()
     end 
 end
 
+function gwVehicleLeaveOnShow()
+    MainMenuBarVehicleLeaveButton:SetScript('OnUpdate', gwVehicleLeaveOnUpdate)
+end
+function gwVehicleLeaveOnHide()
+    MainMenuBarVehicleLeaveButton:SetScript('OnUpdate', nil)
+end
+function gwVehicleLeaveOnUpdate()
+    if InCombatLockdown() then
+        return
+    end 
+    MainMenuBarVehicleLeaveButton:SetPoint('LEFT', ActionButton12, 'RIGHT', 0, 0)
+end
 function gw_setLeaveVehicleButton()
     
     MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0) 
 
-    MainMenuBarVehicleLeaveButton:HookScript('OnShow', function() 
-        MainMenuBarVehicleLeaveButton:SetScript('OnUpdate',function() 
-                if InCombatLockdown() then
-                        return
-                end 
-                MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0)  
-        end)
-    end)
-    
-    MainMenuBarVehicleLeaveButton:HookScript('OnHide', function()
-        MainMenuBarVehicleLeaveButton:SetScript('OnUpdate',nil)
-    end)
+    MainMenuBarVehicleLeaveButton:HookScript('OnShow', gwVehicleLeaveOnShow)
+    MainMenuBarVehicleLeaveButton:HookScript('OnHide', gwVehicleLeaveOnHide)
     
 end
 
