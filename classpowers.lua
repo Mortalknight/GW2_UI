@@ -29,9 +29,7 @@ function create_classpowers()
     PLAYER_CLASS = playerClass
     
     local classPowerFrame = CreateFrame('Frame','GwPlayerClassPower',UIParent,'GwPlayerClassPower')
-    GwPlayerClassPower:SetScript('OnEvent',function(self,event,unit) GW_UPDATE_CLASSPOWER(self,event,unit) end)
-    
-    
+    GwPlayerClassPower:SetScript('OnEvent', GW_UPDATE_CLASSPOWER)
     
     GwPlayerClassPower:RegisterEvent("UNIT_POWER");
     GwPlayerClassPower:RegisterEvent("UNIT_MAX_POWER");
@@ -45,7 +43,7 @@ function create_classpowers()
     classPowerFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     
     select_altpower_type()
-    GW_UPDATE_CLASSPOWER()
+    GW_UPDATE_CLASSPOWER(GwPlayerClassPower, 'PLAYER_ENTERING_WORLD', 'player')
 end
 
 
@@ -497,41 +495,39 @@ function GW_FOCUS_RAGE_LOOP()
     
 end
 
-function GW_POWERTYPE_FOCUSRAGE()
-
+function GW_POWERTYPE_FOCUSRAGE(event, unit)
     local found = false
     local old_power = CLASS_POWER
     CLASS_POWER = 0
-     local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = nil
-    for i=1,40 do
-        name, rank, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, _, nameplateShowAll, timeMod, value1, value2, value3 = UnitAura('player',i)
-        if spellID==207982 or spellID==204488 then found=true break end
-    end
     
-
+    local count, spellID = nil
+    if event == 'UNIT_AURA' then
+        for i = 1, 40 do
+            _, _, _, count, _, _, _, _, _, _, spellID, _ = UnitAura('player', i)
+            if spellID == 207982 or spellID == 204488 then
+                found = true
+                break
+            end
+        end
+    end
           
-    if count==nil or found==false then count=0 end
-        CLASS_POWER = count
+    if count == nil or found == false then
+        count = 0
+    end
+    CLASS_POWER = count
     local animationSpeed = 0.2
-    if CLASS_POWER<=0 then
+    if CLASS_POWER <= 0 then
         animationSpeed = 0
     end
     
-    if CLASS_POWER>=3 then
+    if CLASS_POWER >= 3 then
        GW_FOCUS_RAGE_LOOP() 
     end
     
-    addToAnimation('FOCUS_RAGE_BAR',old_power,CLASS_POWER,GetTime(),animationSpeed,function()  
-                
+    addToAnimation('FOCUS_RAGE_BAR', old_power, CLASS_POWER, GetTime(), animationSpeed, function()
         GwFocusRage.bar:SetValue(animations['FOCUS_RAGE_BAR']['progress'])
-                
     end)
-
-
-
-
 end
-
 
 function GW_SET_BARTYPE()
     
