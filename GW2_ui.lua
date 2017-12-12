@@ -480,7 +480,7 @@ function timeCount(numSec, com)
     if nSeconds == nil then
         nSeconds = 0
     end
-	if nSeconds == 0 then
+    if nSeconds == 0 then
         return '0'
     end
     
@@ -489,17 +489,17 @@ function timeCount(numSec, com)
         return nHours .. 'h'
     end
     
-    local nMins = math.floor(nSeconds/60 - nHours*60)
+    local nMins = math.floor(nSeconds/60)
     if nMins > 0 then
         return nMins .. 'm'
     end
         
     if com ~= nil then
-        local nMilsecs = math.floor(((nSeconds - nHours*3600 - nMins) * 10^1) + 0.5) / (10^1)
+        local nMilsecs = math.max(math.floor((nSeconds * 10^1) + 0.5) / (10^1), 0)
         return nMilsecs .. 's'
     end
     
-    local nSecs = math.floor(nSeconds - nHours*3600 - nMins*60)
+    local nSecs = math.max(math.floor(nSeconds), 0)
     return nSecs .. 's'
 end
 
