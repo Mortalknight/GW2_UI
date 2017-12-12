@@ -307,8 +307,11 @@ function gw_updateMainBar()
     
     local BUTTON_PADDING = MAIN_MENU_BAR_BUTTON_MARGIN
     
+    MainMenuBarArtFrame.gw_ActionButtons = {}
+    MainMenuBarArtFrame.gw_TotalElapsed = 0
     for i=1,12 do
         local BUTTON =  _G['ActionButton'..i]
+        MainMenuBarArtFrame.gw_ActionButtons[i] = BUTTON
         
         if BUTTON~=nil then
             
@@ -340,10 +343,7 @@ function gw_updateMainBar()
             rangeIndicator:Hide()
 
             BUTTON['gw_RangeIndicator'] = rangeIndicator
-            BUTTON['gw_ButtonIndex'] = i
-            BUTTON['gw_TotalElapsed'] = 0
             BUTTON['gw_HotKey'] = _G['ActionButton' .. i .. 'HotKey']
-            BUTTON:HookScript('OnUpdate', gw_actionButtonUpdate)
             
 			if gwGetSetting('BUTTON_ASSIGNMENTS') then 
 				local hkBg = CreateFrame('Frame','GwHotKeyBackDropActionButton'..i, _G['ActionButton'..i.."HotKey"]:GetParent(),'GwActionHotKeyBackDrop')
@@ -363,6 +363,7 @@ function gw_updateMainBar()
             
         end       
     end
+    MainMenuBarArtFrame:HookScript('OnUpdate', gwActionButtonsUpdate)
     MainMenuBarArtFrame:ClearAllPoints()
     MainMenuBarArtFrame:SetPoint('TOP',UIParent,'BOTTOM',0,80)
     MainMenuBarArtFrame:SetSize(BUTTON_PADDING,USED_HEIGHT)
@@ -665,22 +666,33 @@ function gwActionBarEquipUpdate()
     end
 end
 
-function gw_actionButtonUpdate(self, elapsed)
-    self.gw_HotKey:SetVertexColor(1,1,1)
-
-    local isUsable, notEnoughMana = IsUsableAction(self.action);
-    local hasRange = ActionHasRange(self.action)
-    local inRange = IsActionInRange(self.action) -- false when not in range, nil when hasRange is lying
-    local canCast = true
-    local rangeIndicator = self.gw_RangeIndicator
-
-    if inRange ~= nil and hasRange and not inRange and isUsable and not notEnoughMana then
-        canCast = false
+function gwActionButtonsUpdate(self, elapsed)
+    local updateRange = false
+    self.gw_TotalElapsed = self.gw_TotalElapsed + elapsed
+    if self.gw_TotalElapsed > 0.016 then
+        updateRange = true
     end
+    for i = 1, 12 do
+        local button = self.gw_ActionButtons[i]
 
-    if not canCast and not rangeIndicator:IsShown() then
-        rangeIndicator:Show()
-    elseif canCast and rangeIndicator:IsShown() then
-        rangeIndicator:Hide()
+        button.gw_HotKey:SetVertexColor(1,1,1)
+
+        if updateRange then
+            local isUsable, notEnoughMana = IsUsableAction(button.action);
+            local hasRange = ActionHasRange(button.action)
+            local inRange = IsActionInRange(button.action) -- false when not in range, nil when hasRange is lying
+            local canCast = true
+            local rangeIndicator = button.gw_RangeIndicator
+
+            if inRange ~= nil and hasRange and not inRange and isUsable and not notEnoughMana then
+                canCast = false
+            end
+
+            if not canCast and not rangeIndicator:IsShown() then
+                rangeIndicator:Show()
+            elseif canCast and rangeIndicator:IsShown() then
+                rangeIndicator:Hide()
+            end
+        end
     end
 end
