@@ -477,7 +477,7 @@ function gw_raidFrame_OnUpdate(self)
     if self.onUpdateDelay==nil then self.onUpdateDelay=0 end
     if self.onUpdateDelay>GetTime() then return end
     self.onUpdateDelay = GetTime()+0.2
-  --  gw_update_raidframe_awayData(self)
+    gw_update_raidframe_awayData(self)
     
 end
 
