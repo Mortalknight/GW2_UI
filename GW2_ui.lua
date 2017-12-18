@@ -347,6 +347,39 @@ function gwGetSettingsProfiles()
 
 end
 
+function gwLockableOnClick(name, frame, moveframe, settingsName, lockAble)
+    local dummyPoint = gwGetDefault(settingsName)
+    moveframe:ClearAllPoints()
+    moveframe:SetPoint(dummyPoint['point'], UIParent, dummyPoint['relativePoint'], dummyPoint['xOfs'], dummyPoint['yOfs'])
+    GW_MOVABLE_FRAMES[name] = moveframe
+    GW_MOVABLE_FRAMES_REF[name] = frame
+    GW_MOVABLE_FRAMES_SETTINGS_KEY[name] = settingsName    
+                
+    local point, relativeTo, relativePoint, xOfs, yOfs = moveframe:GetPoint()
+            
+    local new_point = gwGetSetting(settingsName)
+    new_point['point'] = point
+    new_point['relativePoint'] = relativePoint
+    new_point['xOfs'] = math.floor(xOfs)
+    new_point['yOfs'] = math.floor(yOfs)
+    gwSetSetting(settingsName, new_point)
+
+    gwSetSetting(lockAble, true)
+end
+function gwMoveOnDragStop(moveframe, settingsName, lockAble)
+    moveframe:StopMovingOrSizing()
+    local point, relativeTo, relativePoint, xOfs, yOfs = moveframe:GetPoint()
+            
+    local new_point = gwGetSetting(settingsName)
+    new_point['point'] = point
+    new_point['relativePoint'] = relativePoint
+    new_point['xOfs'] = math.floor(xOfs)
+    new_point['yOfs'] = math.floor(yOfs)
+    gwSetSetting(settingsName, new_point)
+    if lockAble ~= nil then
+        gwSetSetting(lockAble, false)
+    end
+end
 function gw_register_movable_frame(name,frame,settingsName,dummyFrame,lockAble)
     
     local moveframe = CreateFrame('Frame', name..'MoveAble',UIParent,dummyFrame);
@@ -368,47 +401,15 @@ function gw_register_movable_frame(name,frame,settingsName,dummyFrame,lockAble)
     if lockAble~=nil then
         
         local lockFrame = CreateFrame('Button', name..'LockButton',moveframe,'GwDummyLockButton');
-        lockFrame:SetScript('OnClick', function() 
-                
-                
-            local dummyPoint = gwGetDefault(settingsName)
-            moveframe:ClearAllPoints()
-            moveframe:SetPoint(dummyPoint['point'],UIParent,dummyPoint['relativePoint'],dummyPoint['xOfs'],dummyPoint['yOfs'])
-            GW_MOVABLE_FRAMES[name]=moveframe
-            GW_MOVABLE_FRAMES_REF[name]=frame
-            GW_MOVABLE_FRAMES_SETTINGS_KEY[name]=settingsName    
-                
-                point, relativeTo, relativePoint, xOfs, yOfs = moveframe:GetPoint()
-            
-                new_point = gwGetSetting(settingsName)
-                new_point['point']=point
-                new_point['relativePoint'] =relativePoint
-                new_point['xOfs'] =math.floor(xOfs)
-                new_point['yOfs'] = math.floor(yOfs)
-                gwSetSetting(settingsName,new_point)    
-                
-                
-            gwSetSetting(lockAble,true);    
+        lockFrame:SetScript('OnClick', function()
+            gwLockableOnClick(name, frame, moveframe, settingsName, lockAble)
         end)
         
     end
-    
-    
-    moveframe:SetScript("OnDragStart", frame.StartMoving)
-    moveframe:SetScript("OnDragStop", function(self)
-        moveframe:StopMovingOrSizing()
-        point, relativeTo, relativePoint, xOfs, yOfs = moveframe:GetPoint()
-            
-        new_point = gwGetSetting(settingsName)
-        new_point['point']=point
-        new_point['relativePoint'] =relativePoint
-        new_point['xOfs'] =math.floor(xOfs)
-        new_point['yOfs'] = math.floor(yOfs)
-        gwSetSetting(settingsName,new_point)
-            if lockAble~=nil then
-                gwSetSetting(lockAble,false);    
-            end
 
+    moveframe:SetScript("OnDragStart", frame.StartMoving)
+    moveframe:SetScript("OnDragStop", function()
+        gwMoveOnDragStop(moveframe, settingsName, lockAble)
     end)
     
 end
@@ -565,83 +566,73 @@ function splitString(inputstr, sep,sep2,sep3)
         return t
 end
 
+function gwButtonAnimation(self, name, w)
+    local prog = animations[name]['progress']
+    local l = lerp(0, w, prog)
+            
+    _G[name..'OnHover']:SetPoint('RIGHT', self, 'LEFT', l, 0)
+    _G[name..'OnHover']:SetVertexColor(1, 1, 1, lerp(0, 1, ((prog) - 0.5)/0.5))
+end
 function gw_button_enter(self)
     local name = self:GetName()
     local startTime = GetTime()
-   local w = self:GetWidth()
+    local w = self:GetWidth()
     _G[name..'OnHover']:SetAlpha(1)
     
     self.animationValue = 0
     
-    addToAnimation(name,self.animationValue,1,GetTime(),0.2,function()
-        
-       local prog = animations[name]['progress']
-        local l = lerp(0,w,prog)
-            
-        _G[name..'OnHover']:SetPoint('RIGHT',self,'LEFT',l,0)
-            
-        _G[name..'OnHover']:SetVertexColor(1,1,1,lerp(0,1,((prog) - 0.5)/0.5))
-
-           
+    addToAnimation(name, self.animationValue, 1, GetTime(), 0.2, function()
+        gwButtonAnimation(self, name, w)
     end)
 end
 
 function gw_button_leave(self)
     local name = self:GetName()
     local startTime = GetTime()
-     local w = self:GetWidth()
-       _G[name..'OnHover']:SetAlpha(1)
+    local w = self:GetWidth()
+    _G[name..'OnHover']:SetAlpha(1)
     
     self.animationValue = 1
     
-    addToAnimation(name,self.animationValue,0,GetTime(),0.2,function()
-        
-       local prog = animations[name]['progress']
-        local l = lerp(0,w,prog)
-            
-        _G[name..'OnHover']:SetPoint('RIGHT',self,'LEFT',l,0)
-            
-        _G[name..'OnHover']:SetVertexColor(1,1,1,lerp(0,1,((prog) - 0.5)/0.5))
-
-           
+    addToAnimation(name, self.animationValue, 0, GetTime(), 0.2, function()
+        gwButtonAnimation(self, name, w)
     end)
 end
 
+function gwBarAnimation(self, barWidth, sparkWidth)
+    local snap = (animations[self.animationName]['progress']*100)/5
+            
+    local round_closest = 0.05 * snap
+  
+    local spark_min =  math.floor(snap)
+    local spark_max =  math.ceil(snap) 
+    local spark_current = snap
+
+    local spark_prec = spark_current - spark_min            
+                            
+    local spark = math.min(barWidth - sparkWidth,math.floor(barWidth*round_closest) - math.floor(sparkWidth*spark_prec))
+    local bI = 17 - math.max(1,intRound(16 * spark_prec))
+
+    self.spark:SetTexCoord(
+        bloodSpark[bI].left,
+        bloodSpark[bI].right,
+        bloodSpark[bI].top,
+        bloodSpark[bI].bottom)
+
+    self:SetValue(round_closest)
+    self.spark:ClearAllPoints()
+    self.spark:SetPoint('LEFT', spark, 0)
+end
 function gwBar(self,value)
 
     if self==nil then return end
     local barWidth = self:GetWidth()
     local sparkWidth = self.spark:GetWidth()
     
-    addToAnimation(self.animationName,self.animationValue,value,GetTime(),0.2,function()
-            
-        local snap = (animations[self.animationName]['progress']*100)/5
-            
-        local round_closest = 0.05 * snap
-  
-        local spark_min =  math.floor(snap)
-        local spark_max =  math.ceil(snap) 
-        local spark_current = snap
-
-        local spark_prec = spark_current - spark_min
-                
-                            
-        local spark = math.min(barWidth - sparkWidth,math.floor(barWidth*round_closest) - math.floor(sparkWidth*spark_prec))
-        local bI = 17 - math.max(1,intRound(16 * spark_prec))
-
-        self.spark:SetTexCoord(
-        bloodSpark[bI].left,
-        bloodSpark[bI].right,
-        bloodSpark[bI].top,
-        bloodSpark[bI].bottom)
-
-        self:SetValue(round_closest)
-        self.spark:ClearAllPoints()
-        self.spark:SetPoint('LEFT',spark,0)
-            
-            
-    end)            
-        self.animationValue = value;
+    addToAnimation(self.animationName, self.animationValue, value, GetTime(), 0.2, function()
+        gwBarAnimation(self, barWidth, sparkWidth)
+    end)
+    self.animationValue = value
 end
 function gw_setClassIcon(self,class)
     
@@ -712,6 +703,11 @@ end
 
 local l = CreateFrame("Frame",nil,UIParent)
 local OnUpdateActionBars = nil
+function gwSwimAnimation()
+    local r, g, b = _G['GwActionBarHudRIGHTSWIM']:GetVertexColor()
+    _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r, g, b, animations['swimAnimation']['progress'])
+    _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r, g, b, animations['swimAnimation']['progress'])
+end
 function GwOnUpdate()
     if ADDOON_LOADED~=true or ADDOON_LOADED~=true then
         return
@@ -761,18 +757,10 @@ function GwOnUpdate()
     --Swim hud
     if  lastSwimState~=IsSwimming() then
         if IsSwimming() then
-            addToAnimation('swimAnimation',swimAnimation,1,GetTime(),0.1,function()
-                    local r,g,b = _G['GwActionBarHudRIGHTSWIM']:GetVertexColor()
-                    _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-                    _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-            end)
+            addToAnimation('swimAnimation', swimAnimation, 1, GetTime(), 0.1, gwSwimAnimation)
             swimAnimation = 1
         else
-            addToAnimation('swimAnimation',swimAnimation,0,GetTime(),3.0,function()
-                    local r,g,b = _G['GwActionBarHudRIGHTSWIM']:GetVertexColor()
-                    _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-                    _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r,g,b,animations['swimAnimation']['progress']);
-            end)
+            addToAnimation('swimAnimation', swimAnimation, 0, GetTime(), 3.0, gwSwimAnimation)
             swimAnimation = 0
         end
         lastSwimState = IsSwimming()
@@ -790,153 +778,134 @@ l:SetScript('OnUpdate', function(self, elapsed)
     GwOnUpdate()
 end)
 
-l:SetScript('OnEvent',function(self,event,name) 
+function gwOnEvent(self, event, name)
+    if GW_UI_LOADED then
+        return
+    end
         
-        if GW_UI_LOADED then
-            return
-        end
-        
-        if event=='ADDON_LOADED' and name=='GW2_UI' then
-            ADDOON_LOADED = true;
-            SETTINGS_LOADED = true;
-            return    
-        end
-        if event=='ADDON_LOADED' and name~='GW2_UI' then
-            return
-        end
-        if event=='PLAYER_ENTERING_WORLD' then
-            PLAYER_ENTERING_WORLD = true;
-        end
+    if event == 'ADDON_LOADED' and name == 'GW2_UI' then
+        ADDOON_LOADED = true
+        SETTINGS_LOADED = true
+        return    
+    end
+    if event == 'ADDON_LOADED' and name ~= 'GW2_UI' then
+        return
+    end
+    if event == 'PLAYER_ENTERING_WORLD' then
+        PLAYER_ENTERING_WORLD = true;
+    end
 
-        GW_UI_LOADED = true
+    GW_UI_LOADED = true
             
-            --Create Settings window
-            create_settings_window()
-            display_options()
+    --Create Settings window
+    create_settings_window()
+    display_options()
             
-            --Create hud art
-            loadHudArt()
+    --Create hud art
+    loadHudArt()
             
-            --Create experiencebar
-            loadExperienceBar() 
+    --Create experiencebar
+    loadExperienceBar() 
         
+    if gwGetSetting('FONTS_ENABLED') then
+        gw_register_fonts()
+    end  
+    if gwGetSetting('CASTINGBAR_ENABLED') then
+        gw_register_castingbar()
+    end  
         
+    if gwGetSetting('MINIMAP_ENABLED') then
+        gw_set_minimap()
+    end
+    if gwGetSetting('QUESTTRACKER_ENABLED') then
+        --QUESTTRACKER
+        gw_load_questTracker()
+    end
+    if gwGetSetting('TOOLTIPS_ENABLED') then
+        gw_set_tooltips()
+    end
+    if gwGetSetting('QUESTVIEW_ENABLED') then
+        gw_create_questview()
+    end
+    if gwGetSetting('CHATFRAME_ENABLED') then            
+        gw_set_chatframe_bg()
+    end
+    --Create player hud
+    if gwGetSetting('HEALTHGLOBE_ENABLED') then    
+        gw_create_player_hud()
+    end
         
-       if gwGetSetting('FONTS_ENABLED') then
-            gw_register_fonts()
-        end  
-        if gwGetSetting('CASTINGBAR_ENABLED') then
-            gw_register_castingbar()
-        end  
+    if gwGetSetting('POWERBAR_ENABLED') then
+        gw_create_power_bar()
+    end
         
-       if gwGetSetting('MINIMAP_ENABLED') then
-            gw_set_minimap()
+    if gwGetSetting('CLASS_POWER') then
+        create_classpowers()
+    end
+
+    if gwGetSetting('BAGS_ENABLED') then
+        gw_create_bgframe()
+        gw_create_bankframe()
+    end 
+    if gwGetSetting('USE_BATTLEGROUND_HUD') then
+        gwLoadBattlegrounds()
+    end 
+        
+    Gw_LoadWindows();
+        
+    gw_breath_meter()
+        
+    --Create unitframes
+    if gwGetSetting('FOCUS_ENABLED') then
+        gw_unitframes_register_Focus()
+        if gwGetSetting('focus_TARGET_ENABLED') then         
+            gw_unitframes_register_Focusstarget()
         end
-        if gwGetSetting('QUESTTRACKER_ENABLED') then
-               --QUESTTRACKER
-            gw_load_questTracker()
+    end
+    if gwGetSetting('TARGET_ENABLED') then
+        gw_unitframes_register_Target()
+        if gwGetSetting('target_TARGET_ENABLED') then
+            gw_unitframes_register_Targetstarget()
         end
-        if gwGetSetting('TOOLTIPS_ENABLED') then
-            gw_set_tooltips()
+    end    
+        
+    --create buff frame        
+    if gwGetSetting('PLAYER_BUFFS_ENABLED') then
+        gw_set_buffframe()
+    end
+        		
+    if gwGetSetting('PETBAR_ENABLED') then
+        gw_create_pet_frame()
+    end
+        
+    if gwGetSetting('ACTIONBARS_ENABLED') then
+        gw_setupActionbars()
+        OnUpdateActionBars = function()
+            fadet_action_bar_check(MultiBarBottomLeft)
+            fadet_action_bar_check(MultiBarBottomRight)
         end
-        if gwGetSetting('QUESTVIEW_ENABLED') then
-            gw_create_questview()
-        end
-        if gwGetSetting('CHATFRAME_ENABLED') then
-            
-            gw_set_chatframe_bg()
-       
-        end
-            --Create player hud
-        if gwGetSetting('HEALTHGLOBE_ENABLED') then    
-            gw_create_player_hud()
-        end
-        
-        if gwGetSetting('POWERBAR_ENABLED') then
-            gw_create_power_bar()
-        end
-        
-        if gwGetSetting('CLASS_POWER') then
-            create_classpowers()
-        end
-        
-        
-        if gwGetSetting('BAGS_ENABLED') then
-            gw_create_bgframe()
-            gw_create_bankframe()
-        end 
-         if gwGetSetting('USE_BATTLEGROUND_HUD') then
-             gwLoadBattlegrounds()
-        end 
-        
-        
-        Gw_LoadWindows();
-        
-        gw_breath_meter()
-        
-            --Create unitframes
-        if gwGetSetting('FOCUS_ENABLED') then
-            gw_unitframes_register_Focus()
-            if gwGetSetting('focus_TARGET_ENABLED') then
-         
-                gw_unitframes_register_Focusstarget()
-            end
-        end
-        if gwGetSetting('TARGET_ENABLED') then
-             gw_unitframes_register_Target()
-            if gwGetSetting('target_TARGET_ENABLED') then
-               gw_unitframes_register_Targetstarget()
-                
-              
-            end
-        end
-        
-        
-        --create buff frame        
-        if gwGetSetting('PLAYER_BUFFS_ENABLED') then
-            gw_set_buffframe()
-        end
-        
-		
-		if gwGetSetting('PETBAR_ENABLED') then
-            gw_create_pet_frame()
-        end
-		
-        
-        if gwGetSetting('ACTIONBARS_ENABLED') then
-            gw_setupActionbars()
-            OnUpdateActionBars = function()
-                fadet_action_bar_check(MultiBarBottomLeft)
-                fadet_action_bar_check(MultiBarBottomRight)
-            end
-          --  gw_set_actionbars()
-        end  
-        
-                
-        if gwGetSetting('CHATBUBBLES_ENABLED') then
+    end  
+                        
+    if gwGetSetting('CHATBUBBLES_ENABLED') then
         --    gw_register_chatbubbles()
-        end
+    end
         
-        -- create new microbuttons
-        create_micro_menu()
+    -- create new microbuttons
+    create_micro_menu()
         
-        if gwGetSetting('GROUP_FRAMES') then
-            gw_register_partyframes()
-            gw_register_raidframes()
-        end
+    if gwGetSetting('GROUP_FRAMES') then
+        gw_register_partyframes()
+        gw_register_raidframes()
+    end
         
-
+    -- move error frame
+    UIErrorsFrame:ClearAllPoints()
+	gw_register_movable_frame('errorframe',UIErrorsFrame,'WARNIG_MESSAGE','GwErrorFrameDummy')
+    UIErrorsFrame:SetPoint(gwGetSetting('WARNIG_MESSAGE')['point'],UIParent,gwGetSetting('WARNIG_MESSAGE')['relativePoint'],gwGetSetting('WARNIG_MESSAGE')['xOfs'],gwGetSetting('WARNIG_MESSAGE')['yOfs'])
         
-        -- move error frame
-        UIErrorsFrame:ClearAllPoints()
-		gw_register_movable_frame('errorframe',UIErrorsFrame,'WARNIG_MESSAGE','GwErrorFrameDummy')
-        UIErrorsFrame:SetPoint(gwGetSetting('WARNIG_MESSAGE')['point'],UIParent,gwGetSetting('WARNIG_MESSAGE')['relativePoint'],gwGetSetting('WARNIG_MESSAGE')['xOfs'],gwGetSetting('WARNIG_MESSAGE')['yOfs'])
-        
-        gwUpdateHudScale()
-  
-            
-        
-end)
+    gwUpdateHudScale()    
+end
+l:SetScript('OnEvent', gwOnEvent)
 l:RegisterEvent('ADDON_LOADED')
 l:RegisterEvent('PLAYER_ENTERING_WORLD')
 
@@ -957,31 +926,31 @@ end
 
 local waitTable = {};
 local waitFrame = nil;
+function gwWaitOnUpdate(self, elapse)
+    local count = #waitTable
+    local i = 1
+    while(i <= count) do
+        local waitRecord = tremove(waitTable, i)
+        local d = tremove(waitRecord, 1)
+        local f = tremove(waitRecord, 1)
+        local p = tremove(waitRecord, 1)
+        if(d > elapse) then
+            tinsert(waitTable, i, {d - elapse, f, p})
+            i = i + 1
+        else
+            count = count - 1
+            f(unpack(p))
+        end
+    end
+end
 function gw_wait(delay, func, ...)
     if type(delay) ~= "number" or type(func) ~= "function" then
         return false
     end
     if waitFrame == nil then
         waitFrame = CreateFrame("Frame", "GwWaitFrame", UIParent)
-        waitFrame:SetScript("OnUpdate", function(self, elapse)
-            local count = #waitTable
-            local i = 1
-            while(i <= count) do
-                local waitRecord = tremove(waitTable, i)
-                local d = tremove(waitRecord, 1)
-                local f = tremove(waitRecord, 1)
-                local p = tremove(waitRecord, 1)
-                if(d > elapse) then
-                    tinsert(waitTable, i, {d - elapse, f, p})
-                    i = i + 1
-                else
-                    count = count - 1
-                    f(unpack(p))
-                end
-            end
-        end)
+        waitFrame:SetScript("OnUpdate", gwWaitOnUpdate)
     end
     tinsert(waitTable, {delay, func, {...}})
     return true
-
 end

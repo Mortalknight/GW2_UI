@@ -495,19 +495,21 @@ function GW_FOCUS_RAGE_LOOP()
     
 end
 
-function GW_POWERTYPE_FOCUSRAGE(event, unit)
+function GW_POWERTYPE_FOCUSRAGE(event, unit)    
+    if event ~= 'UNIT_AURA' or unit ~= 'player' then
+        return
+    end
+    
     local found = false
     local old_power = CLASS_POWER
     CLASS_POWER = 0
-    
     local count, spellID = nil
-    if event == 'UNIT_AURA' and unit == 'player' then
-        for i = 1, 40 do
-            _, _, _, count, _, _, _, _, _, _, spellID, _ = UnitAura('player', i)
-            if spellID == 207982 or spellID == 204488 then
-                found = true
-                break
-            end
+    
+    for i = 1, 40 do
+        _, _, _, count, _, _, _, _, _, _, spellID, _ = UnitAura('player', i)
+        if spellID == 207982 then
+            found = true
+            break
         end
     end
           
@@ -542,22 +544,14 @@ function GW_SET_BARTYPE()
    
     if PLAYER_CLASS==1 and PLAYER_SPECIALIZATION==1 then
         
-        local talentID, name, texture, selected, available, spellid, tier, column, _ = GetTalentInfo(5, 3, 1, false, "player")
+        local talentID, name, texture, selected, available, spellid, tier, column, _ = GetTalentInfo(6, 3, 1, false, "player")
 
         if selected then
             GwFocusRage:Show()
             GwPlayerClassPowerBackground:SetTexture(nil)
             GwPlayerClassPowerFill:SetTexture(nil)
             return
-        else
-            GwFocusRage:Hide() 
         end
-    end
-    if PLAYER_CLASS==1 and PLAYER_SPECIALIZATION==3 then
-        GwFocusRage:Show()
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        return
     end
     GwFocusRage:Hide()
     if PLAYER_CLASS==2 then
