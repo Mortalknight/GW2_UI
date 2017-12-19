@@ -1,3 +1,53 @@
+4.2.1 - We would like to welcome nezroy123 to the development team!
+
+NEW
+   - Added the minimap button consolidation area. The new button next to the minimap gathers all of the extra minimap buttons added by other addons and compiles them into an simple menu.
+   - GW2 UI is now available in Latin American Spanish. (Thanks to astral210 from Curseforge.)
+   - GW2 UI is now available in European Spanish.
+   - GW2 UI is now available in Russian. (Thanks to espenwald, timur_gir & xDark0ne from Curseforge.)
+   - The health globe absorb fill now has texture.
+   - A latency indicator was added to the cast bar.
+   - The Brewmaster Monk class power bar has received an additional art pass.
+
+REWORKS
+   - Immersive Questing has received an overhaul.
+      - Progress quest dialog is now available.
+      - Closing quest windows is more consistant.
+      - Auto-quests should now be correctly ignored.
+      - There should now be fewer or no instances of stale quest data not being reset between dialogs.
+      - The final quest line should now require fewer clicks.
+      - Quest text parsing has been overhauled.
+      - Required quest items are now displayed in the Immersive Questing window.
+      - Player Model frames now use more dynamic animations.
+      - Model animations have been adjusted for better flow.
+      - Player Model size and positioning have been readjusted.
+      - Automatic (pop-up) quests should now behave more consistantly.
+      - Added a new model to replace "talking to yourself".
+   - Bank and Bag windows have received an overhaul.
+      - The scrollwheel is now tracked when scrolling the currency window.
+      - Fixed instances of currencies showing incorrect maximum values.
+      - Resizing the windows now produces consistent padding.
+      - The window will no longer reposition itself when finished resizing.
+      - Columns will no longer be lost on custom sized windows when reloading the UI.
+      - Large icon size is slightly smaller.
+      - Bank and bag icon sizes can now be set independently.
+      - The free space indicator now works correctly.
+      - Bag container slots on the bank have been repositioned.
+      - The bank frame will now save its size and position.
+      - The bag icon has received an additional art pass.
+      - The option to reverse bank and bag display order has been added.
+      - The bag item backdrop artwork has received an additional art pass.
+
+FIXED
+   - Tracked achievements will now correctly update in the quest tracker when completed.
+   - Settings labels should now correctly wrap to a new line when using languages other than English.
+   - Fixed instances of the ESC key breaking.
+   - Fixed tainting issue when upgrading a legendary item.
+
+MISCELLANEOUS
+   - Addon performance improvements.
+
+
 4.2.0
 
 NEW
