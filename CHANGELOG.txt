@@ -1,7 +1,7 @@
 4.2.1 - We would like to welcome nezroy123 to the development team!
 
 NEW
-   - Added the minimap button consolidation area. The new button next to the minimap gathers all of the extra minimap buttons added by other addons and compiles them into an simple menu.
+   - Added the minimap button consolidation area. The new button next to the minimap gathers all the extra minimap buttons added by other addons and compiles them into a simple menu.
    - GW2 UI is now available in Latin American Spanish. (Thanks to astral210 from Curseforge.)
    - GW2 UI is now available in European Spanish.
    - GW2 UI is now available in Russian. (Thanks to espenwald, timur_gir & xDark0ne from Curseforge.)
@@ -12,7 +12,7 @@ NEW
 REWORKS
    - Immersive Questing has received an overhaul.
       - Progress quest dialog is now available.
-      - Closing quest windows is more consistant.
+      - Closing quest windows is more consistent.
       - Auto-quests should now be correctly ignored.
       - There should now be fewer or no instances of stale quest data not being reset between dialogs.
       - The final quest line should now require fewer clicks.
@@ -21,10 +21,10 @@ REWORKS
       - Player Model frames now use more dynamic animations.
       - Model animations have been adjusted for better flow.
       - Player Model size and positioning have been readjusted.
-      - Automatic (pop-up) quests should now behave more consistantly.
+      - Automatic (pop-up) quests should now behave more consistently.
       - Added a new model to replace "talking to yourself".
    - Bank and Bag windows have received an overhaul.
-      - The scrollwheel is now tracked when scrolling the currency window.
+      - The scroll wheel is now tracked when scrolling the currency window.
       - Fixed instances of currencies showing incorrect maximum values.
       - Resizing the windows now produces consistent padding.
       - The window will no longer reposition itself when finished resizing.
