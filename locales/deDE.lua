@@ -13,6 +13,7 @@ GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia-ital
 GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
 
 --Strings
+GwLocalization['QUEST_REQUIRED_ITEMS'] = 'Erforderliches Item:'   
 GwLocalization['ACTION_BAR_FADE'] = 'Aktionsleisten verblassen'
 GwLocalization['ACTION_BAR_FADE_DESC'] = 'Verblasst die zusätzlichen Aktionsleisten außerhalb des Kampfes.'
 GwLocalization['ACTION_BARS'] = 'Aktionsleisten'

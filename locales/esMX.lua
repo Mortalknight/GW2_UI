@@ -13,6 +13,7 @@ GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia-ital
 GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
 
 --Strings
+GwLocalization['QUEST_REQUIRED_ITEMS'] = 'Required Items:' 
 GwLocalization["ACTION_BAR_FADE"] = "Ocultar las barras de acción"
 GwLocalization["ACTION_BAR_FADE_DESC"] = "Ocultar las barras de acción adicionales fuera de combate."
 GwLocalization["ACTION_BARS"] = "Barras de Acción"
