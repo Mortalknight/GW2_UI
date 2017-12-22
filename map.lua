@@ -94,11 +94,12 @@ end
             local ignore = false
             local childName = child:GetName()
             for _, v in pairs(Minimap_Addon_Buttons) do 
-                if v==childName then
-                    ignore = true
-                    break;
-                end
-            end
+				local namecompare = string.sub(childName,1,string.len(v))
+				if v==namecompare then
+					ignore = true
+					break;
+				end
+			end
             if not ignore then
                 foundFrames = true
                 framesToAdd[#framesToAdd + 1] = child;
