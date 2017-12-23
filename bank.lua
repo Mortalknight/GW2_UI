@@ -67,7 +67,10 @@ function gw_create_bankframe()
 
         dd.sortBank:HookScript('OnClick', function(self)
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
-            SortBags();
+            SortBankBags()
+            if IsReagentBankUnlocked() then
+                SortReagentBankBags()
+            end
             dd:Hide()
         end)
         
