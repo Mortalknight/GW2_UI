@@ -211,7 +211,7 @@ end
 function gw_bagFrameHide()
     GwBagMoverFrame:Hide()
     GwBagFrameResize:Hide()
-    gw_bag_close()
+    CloseAllBags()
 end
 
 function gw_bagFrameShow()
