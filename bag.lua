@@ -124,8 +124,8 @@ function gw_create_bgframe()
         gw_bagOnResizeStop(self)
     end)
     
-    f:SetScript('OnHide',function() GwBagMoverFrame:Hide() GwBagFrameResize:Hide()  end)
-    f:SetScript('OnShow',function() GwBagMoverFrame:Show() GwBagFrameResize:Show() end)
+    f:SetScript('OnHide', gw_bagFrameHide)
+    f:SetScript('OnShow', gw_bagFrameShow)
     f:Hide()    
    
     -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
@@ -206,6 +206,17 @@ function gw_create_bgframe()
     BagItemSearchBox:RegisterEvent('BAG_UPDATE_DELAYED')
     BagItemSearchBox:RegisterEvent('BAG_UPDATE')
     
+end
+
+function gw_bagFrameHide()
+    GwBagMoverFrame:Hide()
+    GwBagFrameResize:Hide()
+    gw_bag_close()
+end
+
+function gw_bagFrameShow()
+    GwBagMoverFrame:Show()
+    GwBagFrameResize:Show()
 end
 
 function gw_bagFrameCompactToggle()
