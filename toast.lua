@@ -176,12 +176,11 @@ local function toastRecive(itemLink, quantity, rollType, roll, specID, isCurrenc
        GwSetItemButtonQuality(frame, itemRarity,itemHyperLink)
     
     if ( lessAwesome ) then
-		PlaySound(51402);	--UI_Raid_Loot_Toast_Lesser_Item_Won
+		PlaySound(SOUNDKIT.UI_RAID_LOOT_TOAST_LESSER_ITEM_WON);
 	elseif ( isUpgraded ) then
-		PlaySound(51561);	-- UI_Warforged_Item_Loot_Toast
+		PlaySound(SOUNDKIT.UI_WARFORGED_ITEM_LOOT_TOAST);
 	else
-		PlaySound(31578);	--UI_EpicLoot_Toast
-     
+     PlaySound(SOUNDKIT.UI_EPICLOOT_TOAST);
 	end
     
 end
@@ -237,12 +236,12 @@ local function goldWon(amount)
     frame.title:SetText('Gold')
    	frame.sub:SetText(GetMoneyString(amount));
     
-	PlaySound(31578);	--UI_EpicLoot_Toast 
+	PlaySound(SOUNDKIT.UI_EPICLOOT_TOAST);
+	
  
 end
 
 local function onEvent(self,event,...)
-    
     local newEvent = {}
     newEvent['event'] = event
     newEvent['method'] = function() end
@@ -339,5 +338,7 @@ end
 
 function gwTestToastSpell()
     newSpellLearned(48181)  
+	goldWon(50)
 end
 
+loadtoast()

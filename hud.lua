@@ -126,46 +126,7 @@ GW_TARGET_FRAME_ART = {
     ['prestige3'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p3',
     ['prestige4'] = 'Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p4',
 }
-GW_LEVELING_REWARD_AVALIBLE = false
-GW_LEVELING_REWARDS = {}
 
-GW_LEVELING_REWARDS_DEFAULT = {}
-
-
-GW_LEVELING_REWARDS_DEFAULT[1] = {}
-GW_LEVELING_REWARDS_DEFAULT[1]['type'] = 'TALENT'
-GW_LEVELING_REWARDS_DEFAULT[1]['id'] = 0
-GW_LEVELING_REWARDS_DEFAULT[1]['level'] = 15
-
-GW_LEVELING_REWARDS_DEFAULT[2] = {}
-GW_LEVELING_REWARDS_DEFAULT[2]['type'] = 'TALENT'
-GW_LEVELING_REWARDS_DEFAULT[2]['id'] = 0
-GW_LEVELING_REWARDS_DEFAULT[2]['level'] = 30
-
-GW_LEVELING_REWARDS_DEFAULT[3] = {}
-GW_LEVELING_REWARDS_DEFAULT[3]['type'] = 'TALENT'
-GW_LEVELING_REWARDS_DEFAULT[3]['id'] = 0
-GW_LEVELING_REWARDS_DEFAULT[3]['level'] = 45
-
-GW_LEVELING_REWARDS_DEFAULT[4] = {}
-GW_LEVELING_REWARDS_DEFAULT[4]['type'] = 'TALENT'
-GW_LEVELING_REWARDS_DEFAULT[4]['id'] = 0
-GW_LEVELING_REWARDS_DEFAULT[4]['level'] = 60
-
-GW_LEVELING_REWARDS_DEFAULT[5] = {}
-GW_LEVELING_REWARDS_DEFAULT[5]['type'] = 'TALENT'
-GW_LEVELING_REWARDS_DEFAULT[5]['id'] = 0
-GW_LEVELING_REWARDS_DEFAULT[5]['level'] = 75
-
-GW_LEVELING_REWARDS_DEFAULT[6] = {}
-GW_LEVELING_REWARDS_DEFAULT[6]['type'] = 'TALENT'
-GW_LEVELING_REWARDS_DEFAULT[6]['id'] = 0
-GW_LEVELING_REWARDS_DEFAULT[6]['level'] = 90
-
-GW_LEVELING_REWARDS_DEFAULT[7] = {}
-GW_LEVELING_REWARDS_DEFAULT[7]['type'] = 'TALENT'
-GW_LEVELING_REWARDS_DEFAULT[7]['id'] = 0
-GW_LEVELING_REWARDS_DEFAULT[7]['level'] = 100
 
 GW_DODGEBAR_SPELLS = {}
 GW_DODGEBAR_SPELLS[1] = {100,198304}
@@ -1398,15 +1359,45 @@ end
 
 
 function gw_leveling_display_rewards()
-    
-    for k,v in pairs(GW_LEVELING_REWARDS) do
-        GW_LEVELING_REWARDS[k] = nil
-    end
-    GW_LEVELING_REWARDS = GW_LEVELING_REWARDS_DEFAULT
+	GW_LEVELING_REWARDS = {}
+
+	GW_LEVELING_REWARDS[1] = {}
+	GW_LEVELING_REWARDS[1]['type'] = 'TALENT'
+	GW_LEVELING_REWARDS[1]['id'] = 0
+	GW_LEVELING_REWARDS[1]['level'] = 15
+
+	GW_LEVELING_REWARDS[2] = {}
+	GW_LEVELING_REWARDS[2]['type'] = 'TALENT'
+	GW_LEVELING_REWARDS[2]['id'] = 0
+	GW_LEVELING_REWARDS[2]['level'] = 30
+
+	GW_LEVELING_REWARDS[3] = {}
+	GW_LEVELING_REWARDS[3]['type'] = 'TALENT'
+	GW_LEVELING_REWARDS[3]['id'] = 0
+	GW_LEVELING_REWARDS[3]['level'] = 45
+
+	GW_LEVELING_REWARDS[4] = {}
+	GW_LEVELING_REWARDS[4]['type'] = 'TALENT'
+	GW_LEVELING_REWARDS[4]['id'] = 0
+	GW_LEVELING_REWARDS[4]['level'] = 60
+
+	GW_LEVELING_REWARDS[5] = {}
+	GW_LEVELING_REWARDS[5]['type'] = 'TALENT'
+	GW_LEVELING_REWARDS[5]['id'] = 0
+	GW_LEVELING_REWARDS[5]['level'] = 75
+
+	GW_LEVELING_REWARDS[6] = {}
+	GW_LEVELING_REWARDS[6]['type'] = 'TALENT'
+	GW_LEVELING_REWARDS[6]['id'] = 0
+	GW_LEVELING_REWARDS[6]['level'] = 90
+
+	GW_LEVELING_REWARDS[7] = {}
+	GW_LEVELING_REWARDS[7]['type'] = 'TALENT'
+	GW_LEVELING_REWARDS[7]['id'] = 0
+	GW_LEVELING_REWARDS[7]['level'] = 100
+	
     GW_LEVELING_REWARD_AVALIBLE = false
-    
-    
-    
+     
     local currentSpec = GetSpecialization() -- Get the player's current spec
     local spells = {GetSpecializationSpells(currentSpec)}
     for k,v in pairs(spells) do
@@ -1437,11 +1428,8 @@ function gw_leveling_display_rewards()
         end
         
     end
-    
-    
-   
-    
-    table.sort( GW_LEVELING_REWARDS, function(a,b) return a['level'] < b['level'] end)
+     
+    table.sort( GW_LEVELING_REWARDS, function(a,b) return a['level'] < b['level'] end)	
     
     local i = 1
     for k,v in pairs(GW_LEVELING_REWARDS) do
@@ -1464,7 +1452,6 @@ function gw_leveling_display_rewards()
                 
                 end
                 if v['type']=='TALENT' then
-                    
                     _G['GwLevelingRewardsItem'..i].icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talent-icon')
                     _G['GwLevelingRewardsItem'..i].name:SetText(GwLocalization['LEVEL_REWARDS_TALENT'])
                     _G['GwLevelingRewardsItem'..i]:SetScript('OnEnter',function() end)
