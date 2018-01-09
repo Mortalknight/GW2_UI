@@ -83,7 +83,7 @@
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-                    <Size x="1024" y="256"></Size>
+                    <Size x="588" y="140"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>

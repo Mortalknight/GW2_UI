@@ -281,17 +281,31 @@ local function loadTalents()
     
     local classDisplayName, class, classID = UnitClass('player');
     
+    local txR, txT, txH, txMH;
+    txR = 588/1024
+    txT = 0
+    txH = 140
+    txMH = 512
+    local specs = GetNumSpecializations()
+    if specs > 3 then
+        txMH = 1024
+    end
+    
     for i = 1, GetNumSpecializations() do
         local container = CreateFrame('Button','GwSpecFrame'..i,GwTalentFrame,'GwSpecFrame')
         
-            container:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT', 10, (-140 * i) +98 );
-            container.spec = i;
-          local  id, name, description, icon, background, role, primaryStat = GetSpecializationInfo(i)
+        container:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT', 10, (-140 * i) +98 );
+        container.spec = i;
+        local id, name, description, icon, background, role, primaryStat = GetSpecializationInfo(i)
         container.icon:SetTexture(icon);
         
         container.info.specTitle:SetText(name)
         container.info.specDesc:SetText(description)
-        container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\'..classID..'-'..i);
+        
+        txT = (i - 1) * txH
+        container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\'..classID)
+        container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
+        
         local last = 0;
   
         for row = 1, maxTalentRows do
