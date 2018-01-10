@@ -341,4 +341,4 @@ function gwTestToastSpell()
 	goldWon(50)
 end
 
-loadtoast()
+--loadtoast()
