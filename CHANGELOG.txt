@@ -1,3 +1,18 @@
+4.2.2
+
+FIXED
+   - Fixed an error with the minimap icon consolidation frame.
+   - Fixed a bug wherein the inventory icons may be out of sync.
+   - Fixed a bug wherein the bank sorting function would not sort the reagent bank.
+   - Fixed a bug wherein reverse sorting for the inventory would be disabled by default.
+   - Fixed a bug wherein the currency tab would become unsynced with the inventory frame.
+   - Fixed a bug wherein talent points would not be shown in the Next Level Rewards screen.
+   - Fixed a bug wherein the character window would display an error in patch 7.3.5.
+
+MISCELLANEOUS
+   - The Russian localization has been updated.
+ 
+
 4.2.1 - We would like to welcome nezroy123 to the development team!
 
 NEW
