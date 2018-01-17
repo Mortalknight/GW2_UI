@@ -1,3 +1,14 @@
+4.2.3
+
+NEW
+   - GW2 UI is now available in Brazilian Portuguese, thanks to Pyrefox from Curseforge!
+
+FIXED
+   - Fixed a bug wherein the inventory would not display correctly.
+
+MISCELLANEOUS
+   - Latin American Spanish strings have been updated, thanks to HackoJero84650 from Curseforge!
+
 4.2.2
 
 FIXED
