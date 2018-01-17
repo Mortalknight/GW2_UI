@@ -597,7 +597,7 @@ function gw_update_bag_icons(smooth)
                     end
                     if slotNormalTexture then
                         slotNormalTexture:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
-                        slot:SetNormalTexture(nil)
+                        slot:GetNormalTexture():SetAlpha(0.0)
                     end 
                     if slot.flash then
                         slot.flash:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
