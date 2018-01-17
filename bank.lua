@@ -415,7 +415,7 @@ function gw_update_reagents_icons(smooth)
             end
             if slotNormalTexture then
                 slotNormalTexture:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-                slot:SetNormalTexture(nil)
+                slot:GetNormalTexture():SetAlpha(0.0)
             end 
             if slot.flash then
                 slot.flash:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
@@ -531,7 +531,7 @@ function gw_update_bank_icons(smooth)
                     end
                     if slotNormalTexture then
                         slotNormalTexture:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-                        slot:SetNormalTexture(nil)
+                        slot:GetNormalTexture():SetAlpha(0.0)
                     end 
                     if slot.flash then
                         slot.flash:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
