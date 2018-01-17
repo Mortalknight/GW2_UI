@@ -13,7 +13,7 @@ GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia-ital
 GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
 
 --Strings
-GwLocalization['QUEST_REQUIRED_ITEMS'] = 'Required Items:' 
+GwLocalization['QUEST_REQUIRED_ITEMS'] = 'Objetos requeridos:' 
 GwLocalization["ACTION_BAR_FADE"] = "Ocultar las barras de acción"
 GwLocalization["ACTION_BAR_FADE_DESC"] = "Ocultar las barras de acción adicionales fuera de combate."
 GwLocalization["ACTION_BARS"] = "Barras de Acción"
@@ -189,7 +189,7 @@ GwLocalization["PROFILES_LOAD_BUTTON"] = "Cargar"
 GwLocalization["PROFILES_MISSING_LOAD"] = "Si ves este mensaje: Nos olvidamos de cargar texto. No te preocupes, tenemos texto de muestra muy capaz como este para darte la información."
 GwLocalization["PROFILES_NEW_PROFILE"] = "Nuevo Perfil"
 GwLocalization["PROFILES_TOOLTIP"] = "Agregar y remover profiles"
-GwLocalization["PURCHASE_REAGENT_BANK"] = "Comprar"
+GwLocalization["PURCHASE_REAGENT_BANK"] = "Comprar "
 GwLocalization["QUEST_TRACKER"] = "Rastreador de misión"
 GwLocalization["QUEST_TRACKER_DESC"] = "Activar el renovado y mejorado rastreador de misión"
 GwLocalization["QUEST_VIEW_ACCPET"] = "Aceptar"
@@ -261,8 +261,8 @@ GwLocalization["TRACKER_TIME_REMAINING"] = "Tiempo remanente"
 GwLocalization["UPDATE_STRING_1"] = "Nueva actualización disponible para descargar."
 GwLocalization["UPDATE_STRING_2"] = "Nueva actualización disponible conteniendo nuevas caracteristicas"
 GwLocalization["UPDATE_STRING_3"] = "Una actualización |cFFFF0000major|r esta disponible.\nEs altamente recomendable que actualices."
-GwLocalization['UNEQUIP_LEGENDARY'] = 'You must unequip that item in order to upgrade it.'
-GwLocalization['NOT_A_LEGENDARY'] = 'You cannot upgrade that item.'
+GwLocalization['UNEQUIP_LEGENDARY'] = 'No debe estar equipado para poder mejorarlo.'
+GwLocalization['NOT_A_LEGENDARY'] = 'No puedes mejorar ese objeto.'
 end
 
 

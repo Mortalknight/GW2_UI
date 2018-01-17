@@ -253,7 +253,7 @@ GwLocalization['TRACKER_RETRIVE_CORPSE'] = 'Retrieve your corpse'
 GwLocalization['TRACKER_TIME_REMAINING'] = 'Time Remaining' 
 GwLocalization['UPDATE_STRING_1'] = 'New update available for download.' 
 GwLocalization['UPDATE_STRING_2'] = 'New update available containing new features.' 
-GwLocalization['UPDATE_STRING_3'] = 'An |cFFFF0000major|r update is available.7It\'s strongly recommended that you update.' 
+GwLocalization['UPDATE_STRING_3'] = 'An |cFFFF0000major|r update is available.\nIt\'s strongly recommended that you update.' 
 GwLocalization['TALENTS_HEADER'] = 'Spells' 
 GwLocalization['TALENTS_SPEC_HEADER'] = 'Specializations' 
 GwLocalization['SPELLS_HEADER_ACTIVE'] = 'Active'
@@ -266,7 +266,7 @@ GwLocalization['NOT_A_LEGENDARY'] = 'You cannot upgrade that item.'
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" and Locale ~= "ruRU" then
+if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" and Locale ~= "ruRU" and Locale ~= "ptBR" then
 	GWUseThisLocalization()
 end
 
