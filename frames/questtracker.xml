@@ -154,7 +154,7 @@
                                    
 
                                    
-                                    GameTooltip:SetText((self.progress*100).."%");
+                                    GameTooltip:SetText(round(self.progress*100,0).."%");
                                
                                     GameTooltip:Show()
                     </OnEnter>
