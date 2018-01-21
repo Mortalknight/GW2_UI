@@ -60,20 +60,27 @@ function gw_style_tooltip(self)
 end
 
 function gw_set_tooltips()
-        
-    GameTooltip:HookScript("OnTooltipSetUnit", function(self)
-       move_tooltip_placemtn(self) 
-    end)
+	
+	if gwGetSetting('TOOLTIP_MOUSE') then
+		hooksecurefunc("GameTooltip_SetDefaultAnchor", function(s, p)
+			s:SetOwner(p, "ANCHOR_CURSOR")
+		end)
+	else
+		GameTooltip:HookScript("OnTooltipSetUnit", function(self)
+			move_tooltip_placemtn(self) 
+		end)
 
-    GameTooltip:HookScript("OnTooltipSetQuest", function(self)
-       move_tooltip_placemtn(self) 
-    end)
-   GameTooltip:HookScript("OnTooltipSetSpell", function(self)
-       move_tooltip_placemtn(self) 
-    end)
-    GameTooltip:HookScript("OnTooltipSetDefaultAnchor", function(self)
-       move_tooltip_placemtn(self) 
-    end)
+		GameTooltip:HookScript("OnTooltipSetQuest", function(self)
+			move_tooltip_placemtn(self) 
+		end)
+		GameTooltip:HookScript("OnTooltipSetSpell", function(self)
+			move_tooltip_placemtn(self) 
+		end)
+		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", function(self)
+			move_tooltip_placemtn(self) 
+		end)
+	end
+	
     for _, toStyle in ipairs(UNSTYLED) do
         if _G[toStyle] then
             _G[toStyle]:HookScript('OnUpdate', gw_style_tooltip)
