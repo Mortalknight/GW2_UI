@@ -82,3 +82,4 @@ locales/esMX.lua
 locales/esES.lua
 locales/ruRU.lua
 locales/ptBR.lua
+locales/frFR.lua

@@ -268,7 +268,7 @@ GwLocalization['NOT_A_LEGENDARY'] = 'You cannot upgrade that item.'
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" and Locale ~= "ruRU" and Locale ~= "ptBR" then
+if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" and Locale ~= "ruRU" and Locale ~= "ptBR" and Locale ~= "frFR" then
 	GWUseThisLocalization()
 end
 
