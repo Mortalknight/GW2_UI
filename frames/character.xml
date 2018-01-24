@@ -1547,7 +1547,7 @@
 						elseif raceEn=='Troll' then
                             self:SetPosition(0.2,0,-0.05)
 						elseif raceEn=='Scourge' then
-                            self:SetPosition(0.6,0,0)
+                           self:SetPosition(0.2,0,-0.05)
 						elseif raceEn=='Dwarf' then
                             self:SetPosition(0.3,0,0)
 						elseif raceEn=='Gnome' then
