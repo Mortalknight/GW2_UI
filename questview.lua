@@ -376,6 +376,11 @@ function setPMUnit(PM, unit, side, crace, cgender)
     -- but is much more light-weight than analyzing model paths/categories
     local cpos = {PM:GetCameraPosition()}
     local ctar = {PM:GetCameraTarget()}
+
+    if not cpos or not ctar or not cpos[1] or not cpos[3] or not ctar[1] or not ctar[3] then
+        return
+    end
+    
     local zdiff = (cpos[3] / ctar[3])^4 / (cpos[1] - ctar[1])
     local ydiff = (cpos[1] - ctar[1])
     local dirty = 0
