@@ -66,25 +66,32 @@ function gwNewQuestAnimation(block)
 end
 
 local function loadQuestButtons()
-    for i=1,25 do
-        local actionButton = CreateFrame('Button','GwQuestItemButton'..i,GwQuestTracker,'GwQuestItemTemplate')
+    local actionButton = nil
+    for i = 1, 25 do
+        actionButton = CreateFrame('Button','GwQuestItemButton'..i,GwQuestTracker,'GwQuestItemTemplate')
         actionButton.icon:SetTexCoord(0.1,0.9,0.1,0.9)
         actionButton.NormalTexture:SetTexture(nil)
-        actionButton:RegisterForClicks("AnyUp");
+        actionButton:RegisterForClicks("AnyUp")
+        actionButton:SetScript('OnShow', QuestObjectiveItem_OnHide)
+        actionButton:SetScript('OnHide', QuestObjectiveItem_OnHide)
+        actionButton:SetScript('OnEnter', QuestObjectiveItem_OnEnter)
     end
     
-    local actionButton = CreateFrame('Button','GwBonusItemButton',GwQuestTracker,'GwQuestItemTemplate')
+    actionButton = CreateFrame('Button','GwBonusItemButton',GwQuestTracker,'GwQuestItemTemplate')
     actionButton.icon:SetTexCoord(0.1,0.9,0.1,0.9)
     actionButton.NormalTexture:SetTexture(nil) 
-     actionButton:RegisterForClicks("AnyUp");
+    actionButton:RegisterForClicks("AnyUp")
+    actionButton:SetScript('OnShow', QuestObjectiveItem_OnHide)
+    actionButton:SetScript('OnHide', QuestObjectiveItem_OnHide)
+    actionButton:SetScript('OnEnter', QuestObjectiveItem_OnEnter)
     
-    local actionButton = CreateFrame('Button','GwScenarioItemButton',GwQuestTracker,'GwQuestItemTemplate')
+    actionButton = CreateFrame('Button','GwScenarioItemButton',GwQuestTracker,'GwQuestItemTemplate')
     actionButton.icon:SetTexCoord(0.1,0.9,0.1,0.9)
     actionButton.NormalTexture:SetTexture(nil)
-     actionButton:RegisterForClicks("AnyUp");
-    
-    
-    
+    actionButton:RegisterForClicks("AnyUp")
+    actionButton:SetScript('OnShow', QuestObjectiveItem_OnHide)
+    actionButton:SetScript('OnHide', QuestObjectiveItem_OnHide)
+    actionButton:SetScript('OnEnter', QuestObjectiveItem_OnEnter)
 end
 
 
@@ -165,6 +172,89 @@ local function setBlockColor(block, string)
 end
 
 
+function gwCreateObjectiveNormal(name, parent)
+    local f = CreateFrame('Frame', name, parent, 'GwQuesttrackerObjectiveNormal')
+    f.ObjectiveText:SetFont(UNIT_NAME_FONT, 12)
+    f.ObjectiveText:SetShadowOffset(-1, 1)
+    f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 11)
+    f.StatusBar.progress:SetShadowOffset(-1, 1)
+    f.StatusBar:SetScript('OnShow', function(self)
+        f:SetHeight(50)
+        f.statusbarBg:Show()
+    end)
+    f.StatusBar:SetScript('OnHide', function(self)
+        f:SetHeight(20)
+        f.statusbarBg:Hide()
+    end)
+    if f.StatusBar.animationOld == nil then
+        f.StatusBar.animationOld = 0
+    end
+    hooksecurefunc(f.StatusBar, 'SetValue', function(self)
+        local min, max = self:GetMinMaxValues()
+        local v = self:GetValue()
+        local width = math.max(1, math.min(10, 10 * ((v / max) /0.1)))
+        f.StatusBar.Spark:SetPoint('RIGHT', self, 'LEFT', 280 * (v / max), 0)
+        f.StatusBar.Spark:SetWidth(width)
+        if self.precentage == nil or self.precentage == false then
+            self.progress:SetText(v .. ' / ' .. max)
+        else
+            self.progress:SetText(math.floor((v / max) * 100) .. '%')
+        end
+    end)        
+    
+    return f
+end
+
+function gwCreateTrackerObject(name, parent)
+    local f = CreateFrame('Button', name, parent, 'GwQuesttrackerObject')
+    f.Header:SetFont(UNIT_NAME_FONT, 14)
+    f.SubHeader:SetFont(UNIT_NAME_FONT, 12)
+    f.Header:SetShadowOffset(1, -1)
+    f.SubHeader:SetShadowOffset(1, -1)
+    f:SetScript('OnEnter', function(self)
+        self.hover:Show()
+        if self.objectiveBlocks == nil then
+            self.objectiveBlocks = {}
+        end
+        for k, v in pairs(self.objectiveBlocks) do
+            v.StatusBar.progress:Show()
+        end
+        addToAnimation(self:GetName() .. 'hover', 0, 1, GetTime(), 0.2, function(step)
+            self.hover:SetAlpha(step - 0.3)
+            self.hover:SetTexCoord(0, step, 0, 1)
+        end)
+    end)
+    f:SetScript('OnLeave', function(self)
+        self.hover:Hide()
+        if self.objectiveBlocks == nil then
+            self.objectiveBlocks = {}
+        end
+        for k, v in pairs(self.objectiveBlocks) do
+            v.StatusBar.progress:Hide()
+        end
+        if animations[self:GetName() .. 'hover'] ~= nil then
+            animations[self:GetName() .. 'hover']['complete'] = true
+        end
+    end)
+    f.clickHeader:SetScript('OnEnter', function(self)
+        self.oldColor = {}
+        self.oldColor.r, self.oldColor.g, self.oldColor.b = self:GetParent().Header:GetTextColor()
+        self:GetParent().Header:SetTextColor(self.oldColor.r * 2, self.oldColor.g * 2, self.oldColor.b * 2)
+    end)
+    f.clickHeader:SetScript('OnLeave', function(self)
+        if self.oldColor == nil then return end
+        self:GetParent().Header:SetTextColor(self.oldColor.r, self.oldColor.g, self.oldColor.b)
+    end)
+    f.turnin:SetScript('OnShow', function(self)
+        self:SetScript('OnUpdate', gw_animate_wiggle)
+    end)
+    f.turnin:SetScript('OnHide', function(self)
+        self:SetScript('OnUpdate', nil)
+    end)
+    
+    return f
+end
+
 local function getObjectiveBlock(self,index)
     
    
@@ -175,7 +265,7 @@ local function getObjectiveBlock(self,index)
     
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
     
-    local newBlock = CreateFrame('Frame',self:GetName()..'GwQuestObjective'..self.objectiveBlocksNum,self,'GwQuesttrackerObjectiveNormal')
+    local newBlock = gwCreateObjectiveNormal(self:GetName() .. 'GwQuestObjective' .. self.objectiveBlocksNum, self)
     newBlock:SetParent(self)
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
     if self.objectiveBlocksNum==1 then
@@ -191,12 +281,10 @@ local function getObjectiveBlock(self,index)
 end
 
 local function getBlock(blockIndex)
-    
     if _G['GwQuestBlock'..blockIndex]~=nil then return _G['GwQuestBlock'..blockIndex] end
     
-
-    local newBlock = CreateFrame('Button','GwQuestBlock'..blockIndex,GwQuesttrackerContainerQuests,'GwQuesttrackerObject')
-     newBlock:SetParent(GwQuesttrackerContainerQuests)
+    local newBlock = gwCreateTrackerObject('GwQuestBlock' .. blockIndex, GwQuesttrackerContainerQuests)
+    newBlock:SetParent(GwQuesttrackerContainerQuests)
 
     if blockIndex==1 then
         newBlock:SetPoint('TOPRIGHT',GwQuesttrackerContainerQuests,'TOPRIGHT',0,-20) 
@@ -209,9 +297,6 @@ local function getBlock(blockIndex)
     newBlock.hover:SetVertexColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     return newBlock
 end
-
-
-
 
 local function addObjective(block,text,finished,objectiveIndex) 
     
@@ -637,15 +722,63 @@ end
 
 
 
+function gw_tracker_container_onUpdate(self)
+    if waitForUpdate then
+        updateQuestLogLayout('update')
+        waitForUpdate = false
+    end
+    updatedThisFrame = false
+end
+function gw_tracker_onUpdate(self)
+    if GwQuestTracker.trot < GetTime() then                
+        local state = GwObjectivesNotification.shouldDisplay
+            
+        GwQuestTracker.trot = GetTime() + 1
+        gwSetObjectiveNotification() 
+           
+        if state ~= GwObjectivesNotification.shouldDisplay then
+            state = GwObjectivesNotification.shouldDisplay
+            gwNotificationStateChanged(state)
+        end
+    end
+end
 function gw_load_questTracker()
+    
     ObjectiveTrackerFrame:Hide()
     ObjectiveTrackerFrame:SetScript('OnShow', function() ObjectiveTrackerFrame:Hide() end) 
     
-    CreateFrame('Frame','GwQuestTracker',UIParent,'GwQuestTracker') 
-    CreateFrame('ScrollFrame','GwQuestTrackerScroll',GwQuestTracker,'GwQuestTrackerScroll') 
-   
-    CreateFrame('Frame','GwQuestTrackerScrollChild',GwQuestTrackerScroll,'GwQuestTracker') 
-    CreateFrame('Frame','GwObjectivesNotification',GwQuestTracker,'GwObjectivesNotification')
+    CreateFrame('Frame', 'GwQuestTracker', UIParent, 'GwQuestTracker') 
+    
+    local fTraScr = CreateFrame('ScrollFrame', 'GwQuestTrackerScroll', GwQuestTracker, 'GwQuestTrackerScroll')
+    fTraScr:SetScript('OnMouseWheel', function(self, delta)
+        delta = -delta * 15
+        local s = math.max(0, self:GetVerticalScroll() + delta)
+        self:SetVerticalScroll(s)
+    end)
+
+    CreateFrame('Frame', 'GwQuestTrackerScrollChild', GwQuestTrackerScroll, 'GwQuestTracker')
+    
+    local fObjNot = CreateFrame('Frame', 'GwObjectivesNotification', GwQuestTracker, 'GwObjectivesNotification')
+    fObjNot.animatingState = false
+    fObjNot.animating = false
+    fObjNot.title:SetFont(UNIT_NAME_FONT, 14)
+    fObjNot.title:SetShadowOffset(1, -1)
+    fObjNot.desc:SetFont(UNIT_NAME_FONT, 12)
+    fObjNot.desc:SetShadowOffset(1, -1)    
+    fObjNot.bonusbar.bar:SetOrientation('VERTICAL')
+    fObjNot.bonusbar.bar:SetMinMaxValues(0, 1)
+    fObjNot.bonusbar.bar:SetValue(0.5)
+    fObjNot.bonusbar:SetScript('OnEnter', function(self)
+        GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMLEFT', 0, 0)
+        GameTooltip:ClearLines()
+        GameTooltip:SetText((self.progress * 100) .. '%')
+        GameTooltip:Show()
+    end)
+    fObjNot.bonusbar:SetScript('OnLeave', function(self)
+        GameTooltip:Hide()
+    end)
+    fObjNot.compass:SetScript('OnShow', gwNewQuestAnimation)
+    
     CreateFrame('Frame','GwQuesttrackerContainerBossFrames',GwQuestTracker,'GwQuesttrackerContainer') 
     CreateFrame('Frame','GwQuesttrackerContainerScenario',GwQuestTracker,'GwQuesttrackerContainer') 
     CreateFrame('Frame','GwQuesttrackerContainerAchievement',GwQuestTracker,'GwQuesttrackerContainer') 
@@ -705,22 +838,14 @@ function gw_load_questTracker()
 	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ACCEPTED");
     
     
-    GwQuesttrackerContainerQuests:SetScript('OnUpdate', function() 
-        if waitForUpdate then
-            updateQuestLogLayout('update')
-            waitForUpdate = false
-        end
-        updatedThisFrame = false
-    end)
+    GwQuesttrackerContainerQuests:SetScript('OnUpdate', gw_tracker_container_onUpdate)    
+    GwQuesttrackerContainerQuests:SetScript('OnEvent', QuestTracker_OnEvent)
     
-
-    
-    GwQuesttrackerContainerQuests:SetScript('OnEvent',QuestTracker_OnEvent)
-  
-    
-    
-    local header = CreateFrame('Button','GwQuestHeader',GwQuesttrackerContainerQuests,'GwQuestTrackerHeader')
-    header.icon:SetTexCoord(0,1,0.25,0.5)
+    local header = CreateFrame('Button', 'GwQuestHeader', GwQuesttrackerContainerQuests, 'GwQuestTrackerHeader')
+    header.icon:SetTexCoord(0, 1, 0.25, 0.5)
+    header.title:SetFont(UNIT_NAME_FONT, 14)
+    header.title:SetShadowOffset(1, -1)
+    header.title:SetText(GwLocalization['TRACKER_QUEST_TITLE'])
     
     header:SetScript('OnClick',function(self) 
         local p = self:GetParent()
@@ -738,9 +863,6 @@ function gw_load_questTracker()
    
     loadQuestButtons()
     updateQuestLogLayout('load')
-    
-    
-    
     
     gw_register_bossFrames()
     gw_register_scenarioFrame()
@@ -761,26 +883,6 @@ function gw_load_questTracker()
     playerDeadState(GwObjectivesNotification,'')
     GwObjectivesNotification.shouldDisplay = false
     GwQuestTracker.trot = GetTime() + 2
-    GwQuestTracker:SetScript('OnUpdate', function(self)
-            if  GwQuestTracker.trot < GetTime() then
-                
-                local state = GwObjectivesNotification.shouldDisplay
-               
-                
-                GwQuestTracker.trot = GetTime() + 1
-                gwSetObjectiveNotification() 
-           
-                
-                if state~=GwObjectivesNotification.shouldDisplay then
-                    state = GwObjectivesNotification.shouldDisplay
-                    gwNotificationStateChanged(state) 
-                end
-                
-                           
-                
-            end
-    end)
-
+    GwQuestTracker:SetScript('OnUpdate', gw_tracker_onUpdate)
   
 end
-

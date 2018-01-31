@@ -23,11 +23,6 @@
 		<Frames>
 			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
 		</Frames>
-		<Scripts>
-			<OnShow function="QuestObjectiveItem_OnHide"></OnShow>
-			<OnHide function="QuestObjectiveItem_OnHide"></OnHide>
-			<OnEnter function="QuestObjectiveItem_OnEnter"></OnEnter>
-		</Scripts>
 		<NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2">
 			<Size x="42" y="42"/>
 			<Anchors>
@@ -63,19 +58,6 @@
                 </FontString> 
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.title:SetFont(UNIT_NAME_FONT,14)
-                
-                self.title:SetShadowOffset(1,-1)
-				
-				self.title:SetText(GwLocalization['TRACKER_QUEST_TITLE'])
-
-            </OnLoad>
-            <OnClick>
-               
-            </OnClick>
-        </Scripts>
     </Button>
     <Frame name="GwObjectivesNotification" hidden="true" virtual="true" parent="UIParent" frameStrata="LOW">
         <Size x="300" y="1"></Size>
@@ -84,31 +66,31 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture name="compassBG"  file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture name="compassBG" file="Interface\AddOns\GW2_UI\textures\compas-bg">
                     <Color r="1" g="1" b="1" a="0.3"></Color>
                     <Size x="300" y="70"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-            </Layer> 
-            <Layer level="OVERLAY" >
+            </Layer>
+            <Layer level="OVERLAY">
                 <Texture name="$parenticon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\compas-bg">
                     <Size x="30" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-10"></Anchor>
                     </Anchors>
                 </Texture>
-                <FontString name="$parentString" text="Quest name" parentKey="title" justifyH="LEFT"  justifyV="TOP" >
-                     <Size x="300" y="20"></Size>
+                <FontString name="$parentString" text="Quest name" parentKey="title" justifyH="LEFT" justifyV="TOP">
+                    <Size x="300" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="-15"></Anchor>
                     </Anchors>
-                </FontString> 
-                <FontString name="$parentSubString" parentKey="desc" text="Quest name" justifyH="LEFT"  justifyV="TOP" >
-                     <Size x="300" y="35"></Size>
+                </FontString>
+                <FontString name="$parentSubString" parentKey="desc" text="Quest name" justifyH="LEFT" justifyV="TOP">
+                    <Size x="300" y="35"></Size>
                     <Anchors>
-                        <Anchor point="TOP" relativePoint="TOP" y="-39" ></Anchor>
+                        <Anchor point="TOP" relativePoint="TOP" y="-39"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -120,48 +102,24 @@
                     <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Layers>
-                 
                     <Layer textureSubLevel="2" Level="BACKGROUND">
-                <Texture   file="Interface\AddOns\GW2_UI\textures\bonusobjective-background">
-                    <Size x="40" y="40"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
-                    </Anchors>
-                </Texture>
-                     </Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\bonusobjective-background">
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
                 </Layers>
                 <Frames>
-                    <StatusBar parentKey="bar"  >
+                    <StatusBar parentKey="bar">
                         <Size x="26" y="26"></Size>
                         <Anchors>
                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\bonusobjective-fill"/>
-                        <Scripts>
-                            <OnLoad>
-                                self:SetOrientation("VERTICAL")
-                                self:SetMinMaxValues(0,1)
-                                self:SetValue(0.5)
-                            </OnLoad>
-                        </Scripts>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\bonusobjective-fill" />
                     </StatusBar>
                 </Frames>
-                <Scripts>
-                    <OnEnter>
-                        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,0); 
-                                    GameTooltip:ClearLines()
-                                    
-                                   
-
-                                   
-                                    GameTooltip:SetText(round(self.progress*100,0).."%");
-                               
-                                    GameTooltip:Show()
-                    </OnEnter>
-                    <OnLeave>
-                        GameTooltip:Hide()
-                    </OnLeave>
-                </Scripts>
             </Frame>
             <Frame name="$parentCompass" parentKey="compass">
                 <Size x="300" y="70"></Size>
@@ -169,161 +127,44 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-50" y="-5"></Anchor>
                 </Anchors>
                 <Layers>
-             
                     <Layer textureSubLevel="2" Level="BACKGROUND">
-                <Texture  name="GwCompassRound" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
-                    <Size x="60" y="60"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="3"  Level="BACKGROUND">
-                <Texture name="GwCompassArrow" parentKey="arrow"  file="Interface\AddOns\GW2_UI\textures\compass-arrow">
-                    <Size x="60" y="60"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="4"  Level="BACKGROUND">
-                <Texture name="$parentIcon" parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\icon-objective">
-                    <Size x="30" y="30"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface\AddOns\GW2_UI\textures\expflare">
-                    <Size x="150" y="150"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="LEFT" y="0" x="20"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            
+                        <Texture name="GwCompassRound" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
+                            <Size x="60" y="60"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="3" Level="BACKGROUND">
+                        <Texture name="GwCompassArrow" parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\compass-arrow">
+                            <Size x="60" y="60"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="4" Level="BACKGROUND">
+                        <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icon-objective">
+                            <Size x="30" y="30"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface\AddOns\GW2_UI\textures\expflare">
+                            <Size x="150" y="150"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="LEFT" y="0" x="20"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
                 </Layers>
-              <Scripts>
-                <OnShow>
-                    gwNewQuestAnimation(self)  
-                </OnShow>    
-            </Scripts>
             </Frame>
         </Frames>
-       <Scripts>
-            <OnLoad>
-                self.animatingState =false
-                self.animating =false
-                self.title:SetFont(UNIT_NAME_FONT,14)
-                self.desc:SetFont(UNIT_NAME_FONT,12)
-                
-                self.title:SetShadowOffset(1,-1)
-                self.desc:SetShadowOffset(1,-1)
-           </OnLoad>
-        </Scripts>
-    </Frame>
-    <Frame name="GwQuestTrackerRadar" virtual="true" parent="UIParent" frameStrata="LOW">
-        <Size x="300" y="70"></Size>
-        <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer Level="BACKGROUND">
-                <Texture name="compassBG"  file="Interface\AddOns\GW2_UI\textures\compas-bg">
-                    <Color r="1" g="1" b="1" a="0.3"></Color>
-                    <Size x="300" y="70"></Size>
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer> 
-            <Layer textureSubLevel="2" Level="BACKGROUND">
-                <Texture  name="GwCompassRound" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
-                    <Size x="60" y="60"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="3" Level="BACKGROUND">
-                <Texture name="GwCompassArrow"  file="Interface\AddOns\GW2_UI\textures\compass-arrow">
-                    <Size x="60" y="60"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="4" Level="BACKGROUND">
-                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-objective">
-                    <Size x="30" y="30"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="OVERLAY" >
-                <FontString name="$parentString" text="Quest name" justifyH="CENTER"  justifyV="CENTER" >
-                     <Size x="200" y="70"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
-                    </Anchors>
-                </FontString> 
-                <FontString name="$parentSubString" text="Quest name" justifyH="CENTER"  justifyV="CENTER" >
-                     <Size x="200" y="45"></Size>
-                    <Anchors>
-                        <Anchor point="TOP" relativePoint="CENTER" y="10" ></Anchor>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
-        <Scripts>
-            <OnLoad>
-                _G[self:GetName()..'String']:SetFont(DAMAGE_TEXT_FONT,14)
-                _G[self:GetName()..'SubString']:SetFont(UNIT_NAME_FONT,12)
-                _G[self:GetName()..'Icon']:SetVertexColor(GW_QUESTTRACKER_TYPE_COLORS['QUEST'].r,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].g,GW_QUESTTRACKER_TYPE_COLORS['QUEST'].b)
-                
-                _G[self:GetName()..'String']:SetShadowOffset(-1,-1)
-                _G[self:GetName()..'String']:SetShadowColor(0,0,0) 
-                
-                _G[self:GetName()..'SubString']:SetShadowOffset(-1,-1)
-                _G[self:GetName()..'SubString']:SetShadowColor(0,0,0)
-        
-                
-                
-                hooksecurefunc(_G[self:GetName()..'SubString'],'SetText',function(me,string)
-
-                    if string=='' or string==nil then
-                        _G[self:GetName()..'String']:SetPoint('CENTER',0,0)
-                        GwCompassArrow:Show();
-                        GwCompassRound:Show();
-                        compassBG:Show();
-                        GwQuestTrackerRadarIcon:Show();
-                    else
-                        _G[self:GetName()..'String']:SetPoint('CENTER',0,20)
-                        GwCompassArrow:Hide();
-                        GwCompassRound:Hide();
-                        compassBG:Hide();
-                        GwQuestTrackerRadarIcon:SetTexCoord(0,1,0,0.25);
-                    end
-                end)
-                 _G[self:GetName()..'SubString']:SetText('')
-                    
-       
-                
-            </OnLoad>
-        </Scripts>
     </Frame>
     <ScrollFrame name="GwQuestTrackerScroll" virtual="true">
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
-        <Scripts>
-            <OnMouseWheel>
-                delta = -delta * 15
-                local s = math.max(0,self:GetVerticalScroll() + delta)
-              
-                self:SetVerticalScroll(s)
-            </OnMouseWheel>
-        </Scripts>
     </ScrollFrame>
     <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW">
         <Size x="400" y="300"></Size>
@@ -331,24 +172,23 @@
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwQuesttrackerContainer"  parent="GwQuestTracker" virtual="true" frameStrata="LOW">
-         <Size x="300" y="300"></Size>
-        <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
-        </Anchors>
-    </Frame>  
-    <Frame name="GwQuesttrackerContainerProtected"  inherits="SecureHandlerStateTemplate" protected="true" parent="UIParent" virtual="true" >
-         <Size x="300" y="300"></Size>
+    <Frame name="GwQuesttrackerContainer" parent="GwQuestTracker" virtual="true" frameStrata="LOW">
+        <Size x="300" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
-    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true" >
+    <Frame name="GwQuesttrackerContainerProtected" inherits="SecureHandlerStateTemplate" protected="true" parent="UIParent" virtual="true">
+        <Size x="300" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
+        </Anchors>
+    </Frame>
+    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true">
         <HitRectInsets>
 			<AbsInset left="0" right="0" top="30" bottom="0"/>
-		</HitRectInsets>	
-         <Size x="300" y="300"></Size>
-   
+		</HitRectInsets>
+        <Size x="300" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
@@ -401,24 +241,11 @@
             </Layer>
         </Layers>
         <Frames>
-         
-            <Button name="$parentHeaderButton"  hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="clickHeader">
+            <Button name="$parentHeaderButton" hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="clickHeader">
                 <Size x="300" y="25"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" ></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnEnter>
-                      
-                        self.oldColor = {}
-                        self.oldColor.r, self.oldColor.g, self.oldColor.b = self:GetParent().Header:GetTextColor()
-                        self:GetParent().Header:SetTextColor(self.oldColor.r*2,self.oldColor.g*2,self.oldColor.b*2)
-                    </OnEnter>
-                    <OnLeave>
-                        if self.oldColor==nil then return end
-                        self:GetParent().Header:SetTextColor(self.oldColor.r,self.oldColor.g,self.oldColor.b)
-                    </OnLeave>
-                </Scripts>
             </Button>
             <Button name="$parentClickToTurnIn" hidden="true" parentKey="turnin">
                 <size x="90" y="90"></size>
@@ -443,59 +270,11 @@
                         </Texture> 
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnShow>
-                        self:SetScript('OnUpdate',gw_animate_wiggle)
-                    </OnShow>
-                    <OnHide>
-                        self:SetScript('OnUpdate',nil)
-                    </OnHide>
-                </Scripts>
             </Button>
-            
-   
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.Header:SetFont(UNIT_NAME_FONT,14)
-                self.SubHeader:SetFont(UNIT_NAME_FONT,12)
-                
-                self.Header:SetShadowOffset(1,-1)
-                self.SubHeader:SetShadowOffset(1,-1)
-            </OnLoad>
-            <OnEnter>
-                self.hover:Show()
-                
-                if self.objectiveBlocks==nil then self.objectiveBlocks={} end
-                
-                for k,v in pairs(self.objectiveBlocks) do
-                    v.StatusBar.progress:Show()
-                end
-                
-                addToAnimation(self:GetName()..'hover',0,1,GetTime(),0.2,function(step) 
-                    self.hover:SetAlpha(step - 0.3)
-                    self.hover:SetTexCoord(0,step,0,1)
-                
-                end)
-            </OnEnter>
-            <OnLeave>
-                self.hover:Hide()
-                
-                if self.objectiveBlocks==nil then self.objectiveBlocks={} end
-                
-                for k,v in pairs(self.objectiveBlocks) do
-                    v.StatusBar.progress:Hide()
-                end
-                
-                
-                if animations[self:GetName()..'hover']~=nil then
-                    animations[self:GetName()..'hover']['complete'] =true    
-                end
-            </OnLeave>
-        </Scripts>
     </Button>
-    <Frame name="GwQuesttrackerObjectiveNormal" enableMouse="false" virtual="true" >
-         <Size x="300" y="20"></Size>
+    <Frame name="GwQuesttrackerObjectiveNormal" enableMouse="false" virtual="true">
+        <Size x="300" y="20"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
@@ -510,7 +289,7 @@
             </Layer>
             <Layer level="OVERLAY">
                 <FontString name="$parentString" parentKey="ObjectiveText" text="Objective text 1/2" justifyH="LEFT">
-                     <Size x="280" y="20"></Size>
+                    <Size x="280" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10"></Anchor>
                     </Anchors>
@@ -518,16 +297,15 @@
             </Layer>
         </Layers>
         <Frames>
-
             <StatusBar name="$parentStatusBar" hidden="true" parentKey="StatusBar">
                 <Size x="280" y="10"></Size>
                 <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-11" y="-21"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-11" y="-21"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar" />
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                        <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" parentKey="Spark">
                             <Size x="10" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -540,149 +318,83 @@
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
                             </Anchors>
-                        </FontString>                        
+                        </FontString>
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnLoad>
-                        local BNAME = self:GetName()
-                        if self.animationOld==nil then
-                            self.animationOld=0
-                        end
-                        hooksecurefunc(self,'SetValue',function(self) 
-                        
-                            local min, max = self:GetMinMaxValues()
-                            local v = self:GetValue()
-                            local width = math.max(1,math.min(10,10*((v/max)/0.1)))
-                            _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',280*(v/max),0)
-                          
-                            _G[BNAME..'Spark']:SetWidth(width)
-                            
-                            if self.precentage==nil or self.precentage==false then
-                        
-                            self.progress:SetText(v..' / '..max)
-                            else
-                                self.progress:SetText(math.floor((v/max)*100)..'%')
-                            end
-                        
-                        end)
-                    </OnLoad>
-                </Scripts>
             </StatusBar>
-    
         </Frames>
-        <Scripts>
-           
-            <OnLoad>
-                self.ObjectiveText:SetFont(UNIT_NAME_FONT,12)
-                self.ObjectiveText:SetShadowOffset(1,-1)
-            
-                self.StatusBar.progress:SetFont(UNIT_NAME_FONT,11)
-                self.StatusBar.progress:SetShadowOffset(1,-1)
-            
-            
-            
-                self.StatusBar:SetScript('OnShow',function()
-                    self:SetHeight(50)
-                    self.statusbarBg:Show()
-                end) 
-                self.StatusBar:SetScript('OnHide',function()
-                    self:SetHeight(20)
-                    self.statusbarBg:Hide()
-                end)
-        </OnLoad>
-        </Scripts>
     </Frame>
-     <Frame name="GwQuesttrackerScenarioBlock"  parent="GwQuestTracker" virtual="true" >
-         <Size x="300" y="1"></Size>
+    <Frame name="GwQuesttrackerScenarioBlock" parent="GwQuestTracker" virtual="true">
+        <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
-         <Layers>
-             <Layer>
-               <Texture name="$parentStatusBarBg" hidden="true" parentKey="timerBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+        <Layers>
+            <Layer>
+                <Texture name="$parentStatusBarBg" hidden="true" parentKey="timerBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
                     <Size x="282" y="12"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
                     </Anchors>
                 </Texture>
-                 </Layer>
-         </Layers>
-         <Frames>
-             
-            <StatusBar name="$parentStatusBar" parentKey="timer" hidden="true" defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar name="$parentStatusBar" parentKey="timer" hidden="true" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="280" y="10"></Size>
                 <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar" />
                 <Layers>
-                <Layer level="ARTWORK">
-                <FontString parentKey="timerString" text="0:00" justifyH="RIGHT">
-                    <Size x="100" y="24"></Size>
-                     <Anchors>
-                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
-                     </Anchors>
-                 </FontString>
-                 <FontString parentKey="timerlabel" text="Time Remaining" justifyH="LEFT">
-                    <Size x="300" y="24"></Size>
-                     <Anchors>
-                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="20" y="22"></Anchor>
-                     </Anchors>
-                 </FontString>
-                </Layer>
-         </Layers>
-            <Scripts>
-				<OnLoad>
-					
-				</OnLoad>
-			
-                <OnShow>
-                    self:GetParent().timerBackground:Show()
-					self.timerlabel:SetText(GwLocalization['TRACKER_TIME_REMAINING'])
-                    
-                 </OnShow>
-                 <OnHide>
-                     self:GetParent().timerBackground:Hide()
-                    
-                 </OnHide>    
-            </Scripts>
-             </StatusBar>
-             <Frame name="$parentScore" hidden="true" parentKey="score">
-                 <Size x="280" y="10"></Size>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="timerString" text="0:00" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="timerlabel" text="Time Remaining" justifyH="LEFT">
+                            <Size x="300" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="20" y="22"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+            <Frame name="$parentScore" hidden="true" parentKey="score">
+                <Size x="280" y="10"></Size>
                 <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
-                 <Layers>
+                <Layers>
                     <Layer>
                         <FontString parentKey="scorelabel" text="0" justifyH="RIGHT">
                             <Size x="50" y="24"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="22"></Anchor>
                             </Anchors>
-                        </FontString>  
+                        </FontString>
                         <FontString parentKey="scoreString" text="0" justifyH="RIGHT">
                             <Size x="100" y="24"></Size>
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
                             </Anchors>
                         </FontString>
-                     </Layer>
-                 </Layers>
-                 <Scripts>
-              
-                 </Scripts>
-             </Frame>
-             <Frame name="GwAffixFrame" hidden="true" parentKey="affixes">
-                 <Size x="280" y="40"></Size>
-                 <Anchors>
-                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"></Anchor>
-                 </Anchors>
-                 <Layers>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame name="GwAffixFrame" hidden="true" parentKey="affixes">
+                <Size x="280" y="40"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
                     <Layer>
-                   
-                     </Layer>
-                 </Layers>
+
+                    </Layer>
+                </Layers>
                 <Frames>
                     <Frame name="$parent1" parentKey="1">
                         <Size x="38" y="38"></Size>
@@ -691,7 +403,7 @@
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -699,26 +411,7 @@
                                 </Texture>
                             </layer>
                         </Layers>
-                        <Scripts>
-                            <OnEnter>
-                             
-                                if self.affixID~=nil then
-                                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,50); 
-                                    GameTooltip:ClearLines()
-                                    
-                                    local name, description = C_ChallengeMode.GetAffixInfo(self.affixID);
-
-                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                                    GameTooltip:SetText(name, 1, 1, 1, 1, true);
-                                    GameTooltip:AddLine(description, nil, nil, nil, true);
-                                    GameTooltip:Show()
-                                end
-                            </OnEnter>
-                            <OnLeave>
-                                GameTooltip:Hide();
-                            </OnLeave>
-                        </Scripts>
-                 </Frame>  
+                    </Frame>
                     <Frame name="$parent2" parentKey="2">
                         <Size x="38" y="38"></Size>
                         <Anchors>
@@ -726,7 +419,7 @@
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -734,32 +427,15 @@
                                 </Texture>
                             </layer>
                         </Layers>
-                        <Scripts>
-                            <OnEnter>
-                                if self.affixID~=nil then
-                                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,50); 
-                                    GameTooltip:ClearLines()
-                                           local name, description = C_ChallengeMode.GetAffixInfo(self.affixID);
-
-                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                                    GameTooltip:SetText(name, 1, 1, 1, 1, true);
-                                    GameTooltip:AddLine(description, nil, nil, nil, true);
-                                    GameTooltip:Show()
-                                end
-                            </OnEnter>
-                            <OnLeave>
-                                GameTooltip:Hide();
-                            </OnLeave>
-                        </Scripts>
-                 </Frame>  
-                    <Frame name="$parent3"  parentKey="3">
+                    </Frame>
+                    <Frame name="$parent3" parentKey="3">
                         <Size x="38" y="38"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="0"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon"  file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -767,67 +443,13 @@
                                 </Texture>
                             </layer>
                         </Layers>
-                        <Scripts>
-                            <OnEnter>
-                                if self.affixID~=nil then
-                                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT",0,50); 
-                                    GameTooltip:ClearLines()
-                                          local name, description = C_ChallengeMode.GetAffixInfo(self.affixID);
-
-                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                                    GameTooltip:SetText(name, 1, 1, 1, 1, true);
-                                    GameTooltip:AddLine(description, nil, nil, nil, true);
-                                    GameTooltip:Show()
-                                end
-                            </OnEnter>
-                            <OnLeave>
-                                GameTooltip:Hide();
-                            </OnLeave>
-                        </Scripts>
-                 </Frame>
-                 </Frames>
-                 <Scripts>
-                     <OnShow>
-                   
-                     </OnShow>
-                     <OnHide>
-               
-                     </OnHide> 
-                 </Scripts>
-             </Frame>
+                    </Frame>
+                </Frames>
+            </Frame>
         </Frames>
-         <Scripts>
-            <OnLoad>
-                self.height= self:GetHeight()
-                self.timerlabel = self.timer.timerlabel
-                self.timerString = self.timer.timerString
-                
-                self.timerBackground:ClearAllPoints()
-                self.timerBackground:SetPoint('CENTER',self.timer,'CENTER')
-                
-                self.timerlabel:SetFont(UNIT_NAME_FONT,12)
-                self.timerlabel:SetTextColor(1,1,1)
-                self.timerString:SetFont(UNIT_NAME_FONT,12)
-         
-                self.timerString:SetTextColor(1,1,1)
-                self.timerString:SetShadowOffset(1,-1)
-                
-                self.score:ClearAllPoints()
-                self.score:SetPoint('TOPLEFT',self.timer,'BOTTOMLEFT',0,0)
-                
-                self.score.scoreString:SetFont(UNIT_NAME_FONT,12)
-                self.score.scorelabel:SetFont(UNIT_NAME_FONT,12)
-                
-                self.timer:ClearAllPoints()
-                --self.timer:SetPoint('TOPLEFT',self.affixes,'BOTTOMLEFT',-10,-15)
-                
-                self.timer:SetStatusBarColor(GW_TRAKCER_TYPE_COLOR['SCENARIO'].r,GW_TRAKCER_TYPE_COLOR['SCENARIO'].g,GW_TRAKCER_TYPE_COLOR['SCENARIO'].b)
-             </OnLoad>
-      
-         </Scripts>
     </Frame>
-    
-     <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame"  virtual="true" >
+
+    <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame" virtual="true">
          <Size x="300" y="35"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -867,5 +489,5 @@
             </StatusBar>
         </Frames>
     </Button>
-    
+
 </Ui>

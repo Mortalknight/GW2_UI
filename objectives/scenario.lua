@@ -12,7 +12,7 @@ local function getObjectiveBlock(self,index)
     
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
     
-    local newBlock = CreateFrame('Frame',self:GetName()..'GwQuestObjective'..self.objectiveBlocksNum,self,'GwQuesttrackerObjectiveNormal')
+    local newBlock = gwCreateObjectiveNormal(self:GetName() .. 'GwQuestObjective' .. self.objectiveBlocksNum, self)
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
     newBlock:SetParent(self)
     if self.objectiveBlocksNum==1 then
@@ -350,7 +350,71 @@ function gw_register_scenarioFrame()
 	GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_SPELL_UPDATE");
     
     
-    local timerBlock = CreateFrame('Button','GwQuestTrackerTimer',GwQuesttrackerContainerScenario,'GwQuesttrackerScenarioBlock')
+    local timerBlock = CreateFrame('Button', 'GwQuestTrackerTimer', GwQuesttrackerContainerScenario, 'GwQuesttrackerScenarioBlock')
+    timerBlock.height = timerBlock:GetHeight()
+    timerBlock.timerlabel = timerBlock.timer.timerlabel
+    timerBlock.timerString = timerBlock.timer.timerString
+    timerBlock.timerBackground:ClearAllPoints()
+    timerBlock.timerBackground:SetPoint('CENTER', timerBlock.timer, 'CENTER')
+    timerBlock.timerlabel:SetFont(UNIT_NAME_FONT, 12)
+    timerBlock.timerlabel:SetTextColor(1, 1, 1)
+    timerBlock.timerString:SetFont(UNIT_NAME_FONT, 12)
+    timerBlock.timerString:SetTextColor(1, 1, 1)
+    timerBlock.timerString:SetShadowOffset(1, -1)
+    timerBlock.score:ClearAllPoints()
+    timerBlock.score:SetPoint('TOPLEFT', timerBlock.timer, 'BOTTOMLEFT', 0, 0)
+    timerBlock.score.scoreString:SetFont(UNIT_NAME_FONT, 12)
+    timerBlock.score.scorelabel:SetFont(UNIT_NAME_FONT, 12)
+    timerBlock.timer:ClearAllPoints()
+    timerBlock.timer:SetScript('OnShow', function(self)
+        self:GetParent().timerBackground:Show()
+        self.timerlabel:SetText(GwLocalization['TRACKER_TIME_REMAINING'])
+    end)
+    timerBlock.timer:SetScript('OnHide', function(self)
+        self:GetParent().timerBackground:Hide()
+    end)
+    timerBlock.affixes['1']:SetScript('OnEnter', function(self)
+        if self.affixID ~= nil then
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
+            GameTooltip:ClearLines()
+            local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(name, 1, 1, 1, 1, true)
+            GameTooltip:AddLine(description, nil, nil, nil, true)
+            GameTooltip:Show()
+        end
+    end)
+    timerBlock.affixes['1']:SetScript('OnLeave', function(self)
+        GameTooltip:Hide()
+    end)
+    timerBlock.affixes['2']:SetScript('OnEnter', function(self)
+        if self.affixID ~= nil then
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
+            GameTooltip:ClearLines()
+            local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(name, 1, 1, 1, 1, true)
+            GameTooltip:AddLine(description, nil, nil, nil, true)
+            GameTooltip:Show()
+        end
+    end)
+    timerBlock.affixes['2']:SetScript('OnLeave', function(self)
+        GameTooltip:Hide()
+    end)
+    timerBlock.affixes['3']:SetScript('OnEnter', function(self)
+        if self.affixID ~= nil then
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
+            GameTooltip:ClearLines()
+            local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(name, 1, 1, 1, 1, true)
+            GameTooltip:AddLine(description, nil, nil, nil, true)
+            GameTooltip:Show()
+        end
+    end)
+    timerBlock.affixes['3']:SetScript('OnLeave', function(self)
+        GameTooltip:Hide()
+    end)
     
     timerBlock:SetParent(GwQuesttrackerContainerScenario)
     timerBlock:ClearAllPoints()
@@ -368,10 +432,7 @@ function gw_register_scenarioFrame()
 
     timerBlock:SetScript('OnEvent',scenarioTimerOnEvent)
     
-    
-    
-    
-    local newBlock = CreateFrame('Button','GwScenarioBlock',GwQuesttrackerContainerScenario,'GwQuesttrackerObject')
+    local newBlock = gwCreateTrackerObject('GwScenarioBlock', GwQuesttrackerContainerScenario)
     newBlock:SetParent(GwQuesttrackerContainerScenario)
     newBlock:SetPoint('TOPRIGHT',timerBlock,'BOTTOMRIGHT',0,0) 
     newBlock.Header:SetText('')

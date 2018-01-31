@@ -11,7 +11,7 @@ local function getObjectiveBlock(self,index)
     
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
     
-    local newBlock = CreateFrame('Frame',self:GetName()..'GwQuestObjective'..self.objectiveBlocksNum,self,'GwQuesttrackerObjectiveNormal')
+    local newBlock = gwCreateObjectiveNormal(self:GetName() .. 'GwQuestObjective' .. self.objectiveBlocksNum, self)
     newBlock:SetParent(self)
     self.objectiveBlocks[ self.objectiveBlocksNum ] = newBlock
     if self.objectiveBlocksNum==1 then
@@ -220,22 +220,21 @@ function gw_register_bonusObjectiveFrame()
     
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED");
 
-    
-    local newBlock = CreateFrame('Button','GwBonusObjectiveBlock',GwQuesttrackerContainerBonusObjectives,'GwQuesttrackerObject')
-    
+    local newBlock = gwCreateTrackerObject('GwBonusObjectiveBlock', GwQuesttrackerContainerBonusObjectives)
     newBlock:SetParent(GwQuesttrackerContainerBonusObjectives)
     newBlock:SetPoint('TOPRIGHT',GwQuesttrackerContainerBonusObjectives,'TOPRIGHT',0,-20) 
     newBlock.Header:SetText('')
-    
- 
     
     newBlock.color = GW_TRAKCER_TYPE_COLOR['BONUS']
     newBlock.Header:SetTextColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r,newBlock.color.g,newBlock.color.b)
     
     
-    local header = CreateFrame('Button','GwBonusHeader',GwQuesttrackerContainerBonusObjectives,'GwQuestTrackerHeader')
-    header.icon:SetTexCoord(0,1,0.5,0.75)
+    local header = CreateFrame('Button', 'GwBonusHeader', GwQuesttrackerContainerBonusObjectives, 'GwQuestTrackerHeader')
+    header.icon:SetTexCoord(0, 1, 0.5, 0.75)
+    header.title:SetFont(UNIT_NAME_FONT, 14)
+    header.title:SetShadowOffset(1, -1)
+    header.title:SetText(GwLocalization['TRACKER_QUEST_TITLE'])
     
     GwQuesttrackerContainerBonusObjectives.collapsed = false
      header:SetScript('OnClick',function(self) 

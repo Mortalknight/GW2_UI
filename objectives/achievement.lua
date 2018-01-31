@@ -38,7 +38,7 @@ local function getObjectiveBlock(self,index)
     
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
     
-    local newBlock = CreateFrame('Frame',self:GetName()..'GwAchievementObjective'..self.objectiveBlocksNum,self,'GwQuesttrackerObjectiveNormal')
+    local newBlock = gwCreateObjectiveNormal(self:GetName() .. 'GwAchievementObjective' .. self.objectiveBlocksNum, self)
     newBlock:SetParent(self)
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
     if self.objectiveBlocksNum==1 then
@@ -55,12 +55,10 @@ end
 
 
 local function getBlock(blockIndex)
-    
     if _G['GwAchivementBlock'..blockIndex]~=nil then return _G['GwAchivementBlock'..blockIndex] end
     
-
-    local newBlock = CreateFrame('Button','GwAchivementBlock'..blockIndex,GwQuesttrackerContainerAchievement,'GwQuesttrackerObject')
-     newBlock:SetParent(GwQuesttrackerContainerAchievement)
+    local newBlock = gwCreateTrackerObject('GwAchivementBlock' .. blockIndex, GwQuesttrackerContainerAchievement)
+    newBlock:SetParent(GwQuesttrackerContainerAchievement)
 
     if blockIndex==1 then
         newBlock:SetPoint('TOPRIGHT',GwQuesttrackerContainerAchievement,'TOPRIGHT',0,-20) 
@@ -249,8 +247,11 @@ function gw_register_achievement()
     
 
     
-    local header = CreateFrame('Button','GwAchievementHeader',GwQuesttrackerContainerAchievement,'GwQuestTrackerHeader')
-    header.icon:SetTexCoord(0,1,0,0.25)
+    local header = CreateFrame('Button', 'GwAchievementHeader', GwQuesttrackerContainerAchievement, 'GwQuestTrackerHeader')
+    header.icon:SetTexCoord(0, 1, 0, 0.25)
+    header.title:SetFont(UNIT_NAME_FONT, 14)
+    header.title:SetShadowOffset(1, -1)
+    header.title:SetText(GwLocalization['TRACKER_QUEST_TITLE'])
     
     GwQuesttrackerContainerAchievement.collapsed = false
      header:SetScript('OnClick',function(self) 
