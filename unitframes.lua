@@ -95,16 +95,17 @@ local function setUnitPortraitFrame(self,event)
     end
     
     if (UnitPrestige(self.unit)~=nil and UnitPrestige(self.unit)>0)   then
-        
         local p = UnitPrestige(self.unit)
-        
-        key = 'prestige'..p
+        if p > 4 then 
+			plvl = 4 
+		else
+			plvl = p
+		end
+        key = 'prestige'..plvl
         if GW_TARGET_FRAME_ART[key]~=nil then
             border = key
-
         end
-        
-        
+             
         self.prestigebg:Show()
         self.prestigeString:Show()
         self.prestigeString:SetText(p)
