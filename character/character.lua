@@ -1011,11 +1011,16 @@ function GwPaperDollUpdateReputations()
     
     for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
         
-        local  name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = returnReputationData(factionIndex)
+        local  name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID = returnReputationData(factionIndex)
+		local friendID = GetFriendshipReputation(factionID)
 		if name~=nil then 
-            
+
             cCur = cCur + standingId
-            cMax = cMax + 8
+			if friendID~=nil then
+				cMax = cMax + 7
+			else
+				cMax = cMax + 8
+			end
 
             if isHeader and not isChild then
 			
