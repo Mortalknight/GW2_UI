@@ -884,6 +884,8 @@ function gwOnEvent(self, event, name)
         OnUpdateActionBars = function()
             fadet_action_bar_check(MultiBarBottomLeft)
             fadet_action_bar_check(MultiBarBottomRight)
+			fadet_action_bar_check(MultiBarRight)
+			fadet_action_bar_check(MultiBarLeft)
         end
     end  
                         

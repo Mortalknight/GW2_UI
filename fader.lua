@@ -3,6 +3,8 @@ local action_bar_animations = {}
 local callback = {}
     action_bar_animations['MultiBarBottomRight'] = 0
     action_bar_animations['MultiBarBottomLeft'] = 0
+	action_bar_animations['MultiBarLeft'] = 0
+	action_bar_animations['MultiBarRight'] = 0
 
 function gw_actionbar_state_add_callback(m)
     local k = countTable(callback)+1
@@ -40,8 +42,10 @@ end
 local thro = 0
 MultiBarBottomLeft.lastFadeCheck = 0
 MultiBarBottomRight.lastFadeCheck = 0
+MultiBarRight.lastFadeCheck = 0
+MultiBarLeft.lastFadeCheck = 0
 function fadet_action_bar_check(self)
-    
+
     if self.lastFadeCheck>GetTime() then
         return
     end
