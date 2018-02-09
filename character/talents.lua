@@ -292,9 +292,9 @@ local function loadTalents()
     end
     
     for i = 1, GetNumSpecializations() do
-        local container = CreateFrame('Button','GwSpecFrame'..i,GwTalentFrame,'GwSpecFrame')
+        local container = CreateFrame('Button','GwSpecFrame'..i,GwSpecContainerFrame,'GwSpecFrame')
         
-        container:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT', 10, (-140 * i) +98 );
+        container:SetPoint('TOPLEFT',GwSpecContainerFrame,'TOPLEFT', 10, (-140 * i) +98 );
         container.spec = i;
         local id, name, description, icon, background, role, primaryStat = GetSpecializationInfo(i)
         container.icon:SetTexture(icon);
@@ -330,7 +330,7 @@ local function loadTalents()
             end
             if i==1 then
                 local talentLevels = CLASS_TALENT_LEVELS[classID] or CLASS_TALENT_LEVELS["DEFAULT"];
-                local numberDisplay = CreateFrame('Frame', 'GwTalentsLevelLabel'..row,GwTalentFrame,'GwTalentsLevelLabel');
+                local numberDisplay = CreateFrame('Frame', 'GwTalentsLevelLabel'..row,GwSpecContainerFrame,'GwTalentsLevelLabel');
                 numberDisplay:SetPoint('BOTTOM',fistOnRow,'TOP',0,13)
                 numberDisplay.title:SetText(talentLevels[row]);
             end
@@ -339,6 +339,76 @@ local function loadTalents()
     end
     updateActiveSpec();
 end
+
+
+local function updatePetTalents()
+    local current = GetSpecialization(false, true);
+
+    for i = 1, GetNumSpecializations(false,true) do
+        
+        local container = _G['GwPetSpecFrame'..i];
+        
+        container.specIndex = i;
+        if i==current then
+            container.active = true;
+            container.info:Hide();
+            container.background:SetDesaturated(false);
+        
+        else
+            container.active = false
+            container.info:Show();
+         
+            container.background:SetDesaturated(true);
+        end
+    end
+end
+local function loadPetTalents()
+    
+    local classDisplayName, class, classID = UnitClass('player');
+    
+    local txR, txT, txH, txMH;
+    txR = 588/1024
+    txT = 0
+    txH = 140
+    txMH = 512
+    local specs = GetNumSpecializations()
+    if specs > 3 then
+        txMH = 1024
+    end
+    
+    for i = 1, GetNumSpecializations(false,true) do
+        
+       
+        
+        local container = CreateFrame('Button','GwPetSpecFrame'..i,GwPetSpecContainerFrame,'GwSpecFrame')
+        container:ClearAllPoints();
+        
+        container:SetScript('OnClick',function() 
+            SetSpecialization(i,true)
+        end)
+     
+        container:SetPoint('TOPLEFT',GwSpecContainerFrame,'TOPLEFT', 10, (-140 * i) +98 );
+        
+    
+        container.spec = i;
+        local id, name, description, icon, background, role, primaryStat = GetSpecializationInfo(i,false,true)
+        container.icon:SetTexture(icon);
+        
+        container.info.specTitle:SetText(name)
+        container.info.specDesc:SetText(description)
+        
+        txT = (i - 1) * txH
+        container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\'..classID)
+        container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
+        
+        
+        
+    end  
+    updatePetTalents()
+end
+
+
+
 
 
 local function spellbookButton_onEvent(self)
@@ -558,8 +628,18 @@ local function updateSpellbookTab()
 end
 
 
+
 function gw_register_talent_window()
+  
      CreateFrame('Frame','GwTalentFrame',GwCharacterWindow,'SecureHandlerStateTemplate,GwTalentFrame')
+     CreateFrame('Frame','GwSpecContainerFrame',GwTalentFrame)
+        GwSpecContainerFrame:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT')
+        GwSpecContainerFrame:SetPoint('BOTTOMRIGHT',GwTalentFrame,'BOTTOMRIGHT') 
+    
+    CreateFrame('Frame','GwPetSpecContainerFrame',GwTalentFrame)
+        GwPetSpecContainerFrame:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT')
+        GwPetSpecContainerFrame:SetPoint('BOTTOMRIGHT',GwTalentFrame,'BOTTOMRIGHT')
+    
      CreateFrame('Frame','GwSpellbookMenu',GwTalentFrame,'GwSpellbookMenu')
     
     spellBookMenu_onLoad(GwSpellbookMenu)
@@ -617,6 +697,7 @@ function gw_register_talent_window()
     GwSpellbookContainerTab3:Hide()
     
     loadTalents();
+    loadPetTalents();
     updateSpellbookTab()
     
     
@@ -653,6 +734,8 @@ function gw_register_talent_window()
         GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab1',GwSpellbookContainerTab1)
         GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab2',GwSpellbookContainerTab2)
         GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab3',GwSpellbookContainerTab3)
+        GwSpellbookMenu:SetFrameRef('GwSpecContainerFrame',GwSpecContainerFrame)
+        GwSpellbookMenu:SetFrameRef('GwPetSpecContainerFrame',GwPetSpecContainerFrame)
         GwSpellbookMenu:SetAttribute('_onattributechanged', [=[ 
        
             if name~='tabopen' then return end
@@ -663,12 +746,18 @@ function gw_register_talent_window()
         
             if value==1 then
                 self:GetFrameRef('GwSpellbookContainerTab1'):Show()
+                self:GetFrameRef('GwSpecContainerFrame'):Show()
+                self:GetFrameRef('GwPetSpecContainerFrame'):Hide()
                 return 
             end   if value==2 then
                 self:GetFrameRef('GwSpellbookContainerTab2'):Show()
+                self:GetFrameRef('GwSpecContainerFrame'):Show()
+                self:GetFrameRef('GwPetSpecContainerFrame'):Hide()
                 return 
             end   if value==3 then
                 self:GetFrameRef('GwSpellbookContainerTab3'):Show()
+                self:GetFrameRef('GwSpecContainerFrame'):Hide()
+                self:GetFrameRef('GwPetSpecContainerFrame'):Show()
                 return 
             end
     

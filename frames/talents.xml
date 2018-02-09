@@ -202,6 +202,134 @@
             </OnClick>
         </Scripts>
     </Button>
+        
+    <Button name="GwPetSpecFrame" enableMouse="true"  virtual="true">
+        <Size x="196" y="140"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="196" y="140"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>  
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="80" y="80"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
+                    </Anchors>
+                        <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                    <Size x="90" y="90"></Size>
+                      <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER"  x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="info" enableMouse="false">
+                <Size x="196" y="140"></Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                 <Layers>
+                     <Layer level="OVERLAY">
+                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                           
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                             </Anchors>
+                             <Color a="0.6"></Color>
+                               <TexCoords left="1" right="0" top="0" bottom="1" />
+                         </Texture>
+                     </Layer>  
+                     <Layer level="OVERLAY" textureSubLevel="">
+                         <FontString parentKey="specTitle" text="Arcane" justifyH="LEFT">
+                             <Size x="200" y="20"></Size>
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" x="" y="-20"></Anchor>
+                             </Anchors>
+                         </FontString>
+                         <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
+                             <Size x="400" y="50"></Size>
+                             <Anchors>
+                                 <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="" y="-5"></Anchor>
+                             </Anchors>
+                         </FontString>
+                     </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                     
+                        
+                        self.specTitle:SetFont(DAMAGE_TEXT_FONT,18)
+                        self.specTitle:SetTextColor(1,1,1,1)
+                        self.specTitle:SetShadowColor(0,0,0,1)  
+                        self.specTitle:SetShadowOffset(1,-1)   
+                        
+                        self.specDesc:SetFont(UNIT_NAME_FONT,14)
+                        self.specDesc:SetTextColor(0.8,0.8,0.8,1)
+                        self.specDesc:SetShadowColor(0,0,0,1)  
+                        self.specDesc:SetShadowOffset(1,-1)
+                        
+                    </OnLoad>
+                  
+                </Scripts>
+            </Frame>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                  
+                   self:RegisterForClicks("AnyUp");
+                
+                
+                local mask = UIParent:CreateMaskTexture()
+                mask:SetPoint("CENTER",self.icon,'CENTER',0,0)
+    
+                mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                mask:SetSize(80, 80)
+                self.icon:AddMaskTexture(mask)
+            </OnLoad>
+            <OnEnter>
+  
+            </OnEnter> 
+            <OnLeave>
+            
+            </OnLeave>
+            
+            <OnShow>
+                self:SetScript('OnUpdate',function(self,elapsed) 
+                    if MouseIsOver(self) then
+                        local r,g,b,a = self.background:GetVertexColor()
+                        self.background:SetVertexColor(r + (1 * elapsed),r + (1 * elapsed),r + (1 * elapsed),r + (1 * elapsed))
+                        return  
+                    end
+                    self.background:SetVertexColor(0.7,0.7,0.7,0.7)
+                end)
+            </OnShow>
+            <OnHide>
+                 self:SetScript('OnUpdate',nil)
+            </OnHide>
+            <OnUpdate>
+                
+            </OnUpdate>
+            <OnClick>
+                if not self.active then
+                SetSpecialization(self.specIndex)
+                end
+            </OnClick>
+        </Scripts>
+    </Button>
     
     
     <Button name="GwTalentButton" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
