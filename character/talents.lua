@@ -385,7 +385,20 @@ local function loadPetTalents()
         
         container:SetScript('OnClick',function() 
             SetSpecialization(i,true)
+        end) 
+        
+        container:SetScript('OnEvent',function() 
+        
+          if GetPetTalentTree()==nil then
+                container:Hide()
+                else
+                container:Show()
+            end
         end)
+    
+        container:RegisterEvent("SKILL_LINES_CHANGED");
+        container:RegisterEvent("SPELLS_CHANGED");
+        container:RegisterEvent("LEARNED_SPELL_IN_TAB");	
      
         container:SetPoint('TOPLEFT',GwSpecContainerFrame,'TOPLEFT', 10, (-140 * i) +98 );
         
