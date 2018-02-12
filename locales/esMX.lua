@@ -265,6 +265,7 @@ GwLocalization["UPDATE_STRING_2"] = "Nueva actualización disponible conteniendo
 GwLocalization["UPDATE_STRING_3"] = "Una actualización |cFFFF0000major|r esta disponible.\nEs altamente recomendable que actualices."
 GwLocalization['UNEQUIP_LEGENDARY'] = 'No debe estar equipado para poder mejorarlo.'
 GwLocalization['NOT_A_LEGENDARY'] = 'No puedes mejorar ese objeto.'
+GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
 end
 
 

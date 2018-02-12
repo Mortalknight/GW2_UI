@@ -265,6 +265,7 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "必須先脫下裝備中的物品才能�
 GwLocalization["UPDATE_STRING_1"] = "有新版本! 已有更新可供下載。"
 GwLocalization["UPDATE_STRING_2"] = "有新版本! 包含新功能的更新可供下載。"
 GwLocalization["UPDATE_STRING_3"] = "有新版本! 包含|cFFFF0000重大更新|r可供下載。\n強烈建議更新插件。"
+GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
 end
 
 if GetLocale() == "zhTW" then

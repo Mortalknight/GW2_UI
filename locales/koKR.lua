@@ -265,6 +265,7 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "해당 아이템을 업그레이드하려
 GwLocalization["UPDATE_STRING_1"] = "새로운 업데이트가 있습니다. 다운로드 해주세요."
 GwLocalization["UPDATE_STRING_2"] = "새로운 기능이 포함 된 새로운 업데이트입니다."
 GwLocalization["UPDATE_STRING_3"] = "|cFFFF0000 중요한 |r 업데이트를 사용할 수 있습니다.\n\n업데이트하는 것이 좋습니다."
+GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
 end
 
 if GetLocale() == "koKR" then

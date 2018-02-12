@@ -646,30 +646,12 @@
             <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
         <Scripts>
-          <OnEnter>
-              GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT",0,0);
-              GameTooltip:ClearLines();
-             
-              if not self.isFlyout then
-                
-                GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
-              else
-                local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId); 
-                GameTooltip:AddLine(name)
-                GameTooltip:AddLine(desc)
-              end
-             
-                
-                GameTooltip:Show()
-            </OnEnter>
+
             <OnDragStart>
                if InCombatLockdown()  or self.isPassive or self.isFuture then return end
                 
                 PickupSpellBookItem(self.spellbookIndex,self.booktype)
             </OnDragStart>
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
         </Scripts>
     </Button>
     

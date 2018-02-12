@@ -265,6 +265,7 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "Вы должны снять этот п�
 GwLocalization["UPDATE_STRING_1"] = "Доступно новое обновление для загрузки."
 GwLocalization["UPDATE_STRING_2"] = "Доступно обновление с новыми возможностями."
 GwLocalization["UPDATE_STRING_3"] = "Доступно обновление |cFFFF0000major|r.\nНастоятельно рекомендуем обновиться."
+GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
 end
 
 

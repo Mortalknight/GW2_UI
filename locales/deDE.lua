@@ -265,6 +265,7 @@ GwLocalization['FPS_TOOLTIP_5'] = 'Bandbreite (Upload) '
 GwLocalization['FPS_TOOLTIP_6'] = 'Speicher für Addons: '
 GwLocalization['UNEQUIP_LEGENDARY'] = 'Du musst das Item erst ausziehen, bevor du es aufwerten kannst.'
 GwLocalization['NOT_A_LEGENDARY'] = 'Du kannst dieses Item nicht aufwerten.'
+GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Verfügbar ab Level '
 end
 
 

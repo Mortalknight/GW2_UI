@@ -691,7 +691,9 @@ function gw_register_talent_window()
             f:RegisterForDrag("LeftButton");
             f:RegisterEvent("SPELL_UPDATE_COOLDOWN");
             f:RegisterEvent("PET_BAR_UPDATE");
-
+			f:HookScript('OnEnter', gw_spell_buttonOnEnter)
+            f:HookScript('OnLeave', gw_spell_buttonOnLeave)
+			
 
 
 
@@ -804,6 +806,28 @@ function gw_register_talent_window()
     GwTalentFrame:Hide()
     return GwTalentFrame;
     
+end
+
+function gw_spell_buttonOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT",0,0);
+    GameTooltip:ClearLines();
+             
+    if not self.isFlyout then
+		GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
+    else
+        local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId); 
+        GameTooltip:AddLine(name)
+        GameTooltip:AddLine(desc)
+    end
+	if self.isFuture then 
+		GameTooltip:AddLine(' ')
+		GameTooltip:AddLine(GwLocalization['REQUIRED_LEVEL_SPELL']..GetSpellLevelLearned(self.spellId), 1, 1, 1)
+	end
+    GameTooltip:Show()
+end
+
+function gw_spell_buttonOnLeave(self)
+    GameTooltip:Hide()
 end
 function gwSetActiveSpellbookTab(i)
     GwActiveSpellTab = i
