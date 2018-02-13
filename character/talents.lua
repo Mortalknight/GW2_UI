@@ -108,8 +108,25 @@ local function hookTalentButton(self,container, row, index)
     mask:SetSize(34, 34)
     self.mask = mask;
    
+end
 
-    
+local function petSpecFrame_onShow(self)
+    self:SetScript('OnUpdate',function(self,elapsed) 
+            if MouseIsOver(self) then
+                if not self.info.spellPreview:IsShown() and not self.active then
+                    self.info.spellPreview:Show()
+                    self.info.specDesc:Hide()
+                end
+                local r,g,b,a = self.background:GetVertexColor()
+                self.background:SetVertexColor(r + (1 * elapsed),r + (1 * elapsed),r + (1 * elapsed),r + (1 * elapsed))
+                return  
+            end
+        
+            self.info.spellPreview:Hide()
+            self.info.specDesc:Show()
+
+            self.background:SetVertexColor(0.7,0.7,0.7,0.7)
+        end) 
 end
 
 local function setLineRotation(self,from,to)
@@ -342,8 +359,8 @@ end
 
 
 local function updatePetTalents()
-    local current = GetSpecialization(false, true);
-
+    local current = GetSpecialization(nil, true,GetSpecialization());
+   
     for i = 1, GetNumSpecializations(false,true) do
         
         local container = _G['GwPetSpecFrame'..i];
@@ -351,17 +368,86 @@ local function updatePetTalents()
         container.specIndex = i;
         if i==current then
             container.active = true;
-            container.info:Hide();
+            container.info.specDesc:Hide();
+            container.info.spellPreview:Show();
             container.background:SetDesaturated(false);
         
         else
             container.active = false
-            container.info:Show();
+            container.info.specDesc:Show();
+            container.info.spellPreview:Hide();
          
             container.background:SetDesaturated(true);
         end
     end
 end
+
+
+local function getPetSpecSpells(self,specID)
+
+    local specSpells = {GetSpecializationSpells(specID, nil, true, true)};
+    local index = 0;
+    local xPadding = 0
+    local yPadding = 0
+    for k=1,#specSpells,2 do
+        local button = CreateFrame('Button','GwPetSpecFrameSpec'..specID..'index'..index,self.info.spellPreview,'GwTalentButton')
+        
+        button:SetScript('OnClick',nil)
+        button.mask = UIParent:CreateMaskTexture()
+        button.mask:SetPoint("CENTER",button,'CENTER',0,0)
+    
+        button.mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        button.mask:SetSize(34, 34)
+        
+    
+        button:SetPoint('TOPLEFT',self.info,'TOPLEFT', xPadding, -50 + yPadding  );
+        if xPadding> 230 then
+            xPadding = 0 
+            yPadding = yPadding - 40 
+        else 
+            xPadding = xPadding + 40
+        end
+    
+        local name, rank, texture, castingTime, minRange, maxRange, spellID =  GetSpellInfo(specSpells[k]) 
+        local skillType, spellId = GetSpellBookItemInfo(specSpells[k])
+        local ispassive = IsPassiveSpell(specSpells[k])
+
+
+                
+                    button.spellId = specSpells[k];
+                    button.icon:SetTexture(texture);
+                   
+                   
+                    button.active = true;
+                    button.talentID = nil;
+                    button.available = available;
+                    button.known = known;
+ 
+          
+           
+                   button:EnableMouse(true) 
+                
+                if ispassive then
+
+                    button.legendaryHighlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight' ) 
+                    button.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight' ) 
+                    button.icon:AddMaskTexture(button.mask)
+                    button.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline');
+
+
+                else
+                    button.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight' ) 
+                    button.legendaryHighlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight' ) 
+                    button.icon:RemoveMaskTexture(button.mask)
+                    button.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border');
+                end
+                button.legendaryHighlight:Hide();
+                button.highlight:Hide();
+    
+        index = index + 1;
+    end
+end
+
 local function loadPetTalents()
     
     local classDisplayName, class, classID = UnitClass('player');
@@ -385,18 +471,24 @@ local function loadPetTalents()
         
         container:SetScript('OnClick',function() 
             SetSpecialization(i,true)
+        end)   
+        container:SetScript('OnShow',function() 
+           petSpecFrame_onShow(container)
         end) 
         
         container:SetScript('OnEvent',function() 
         
           if GetPetTalentTree()==nil then
                 container:Hide()
+                    return
                 else
                 container:Show()
             end
+                
+            updatePetTalents()
         end)
     
-        container:RegisterEvent("SKILL_LINES_CHANGED");
+        container:RegisterEvent("PET_SPECIALIZATION_CHANGED");
         container:RegisterEvent("SPELLS_CHANGED");
         container:RegisterEvent("LEARNED_SPELL_IN_TAB");	
      
@@ -414,7 +506,7 @@ local function loadPetTalents()
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\'..classID)
         container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
         
-        
+        getPetSpecSpells(container,i)
         
     end  
     updatePetTalents()

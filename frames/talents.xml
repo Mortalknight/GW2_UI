@@ -157,10 +157,20 @@
                     </OnLoad>
                   
                 </Scripts>
+                <Frames>
+                    <Frame parentKey="spellPreview" enableMouse="false">
+                    <Size x="460" y="140"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT"  relativeKey="$parent.specDesc" relativePoint="TOPLEFT" x="0" y="0"> </Anchor>
+                    </Anchors>
+                    </Frame>
+                </Frames>
             </Frame>
+        
         </Frames>
         <Scripts>
             <OnLoad>
+            
                   
                    self:RegisterForClicks("AnyUp");
                 
