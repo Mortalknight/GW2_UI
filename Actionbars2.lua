@@ -139,6 +139,16 @@ end
         end
     end
   
+function gwSetMultibarCols()
+    local cols = gwGetSetting('MULTIBAR_RIGHT_COLS')
+    gwDebug('setting multibar cols', cols)
+    local mb1 = gwGetSetting('MultiBarRight')
+    local mb2 = gwGetSetting('MultiBarLeft')
+    mb1['ButtonsPerRow'] = cols
+    mb2['ButtonsPerRow'] = cols
+    gwSetSetting('MultiBarRight', mb1)
+    gwSetSetting('MultiBarLeft', mb2)
+end
 
 function gwHideBackdrop(self)
     _G[self:GetName() .. 'GwBackDrop']:Hide()
