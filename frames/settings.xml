@@ -173,73 +173,81 @@
                                 </OnLoad>
                             </Scripts>
                         </Frame>
-                        <Frame hidden="true" name="GwSettingsTargetOptions">
+                        <Frame hidden="true" name="GwSettingsTargetFocus">
                             <Size x="660" y="480"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                             </Anchors>
-                            <Layers>
-                            <layer level="OVERLAY">
-                                <FontString name="$parentHeader" text="Target" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="512" y="25"></Size>
-                                    <Color r="1" b="1" g="1"></Color>
+                            <Frames>
+                                <Frame name="GwSettingsTargetOptions">
+                                    <Size x="660" y="240"></Size>
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                                     </Anchors>
-                                </FontString>
-                                <FontString name="$parentSub" text="Edit the target frame settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="512" y="25"></Size>
-                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Layers>
+                                        <Layer level="OVERLAY">
+                                            <FontString name="$parentHeader" text="Target" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                                <Size x="512" y="25"></Size>
+                                                <Color r="1" b="1" g="1"></Color>
+                                                <Anchors>
+                                                    <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                                </Anchors>
+                                            </FontString>
+                                            <FontString name="$parentSub" text="Edit the target frame settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                                <Size x="512" y="25"></Size>
+                                                <Color r="0.6" b="0.6" g="0.6"></Color>
+                                                <Anchors>
+                                                    <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                                </Anchors>
+                                            </FontString>
+                                        </Layer>
+                                    </Layers>
+                                    <Scripts>
+                                        <OnLoad>
+                                            _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                            _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+									        _G[self:GetName()..'Header']:SetText(GwLocalization['TARGET_CAT_1'])
+                                            _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                            _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+									        _G[self:GetName()..'Sub']:SetText(GwLocalization['TARGET_DESC'])
+                                        </OnLoad>
+                                    </Scripts>
+                                </Frame>
+                                <Frame name="GwSettingsFocusOptions">
+                                    <Size x="660" y="240"></Size>
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                        <Anchor point="TOPLEFT" x="0" y="-240"></Anchor>
                                     </Anchors>
-                                </FontString>
-                            </layer>
-                        </Layers>
-                            <Scripts>
-                                <OnLoad>
-                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
-                                    _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
-									_G[self:GetName()..'Header']:SetText(GwLocalization['TARGET_CAT_1'])
-                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
-                                    _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
-									_G[self:GetName()..'Sub']:SetText(GwLocalization['TARGET_DESC'])
-                                </OnLoad>
-                            </Scripts>
-                        </Frame>
-                        <Frame hidden="true" name="GwSettingsFocusOptions">
-                            <Size x="660" y="480"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-                            </Anchors>
-                            <Layers>
-                            <layer level="OVERLAY">
-                                <FontString name="$parentHeader" text="Focus" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="512" y="25"></Size>
-                                    <Color r="1" b="1" g="1"></Color>
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
-                                    </Anchors>
-                                </FontString>
-                                <FontString name="$parentSub" text="Edit focus frame settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="512" y="25"></Size>
-                                    <Color r="0.6" b="0.6" g="0.6"></Color>
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
-                                    </Anchors>
-                                </FontString>
-                            </layer>
-                        </Layers>
-                            <Scripts>
-                                <OnLoad>
-                                    _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
-                                    _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
-									_G[self:GetName()..'Header']:SetText(GwLocalization['FOCUS_CAT_1'])
-                                    _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
-                                    _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
-									_G[self:GetName()..'Sub']:SetText(GwLocalization['FOCUS_DESC'])
-                                </OnLoad>
-                            </Scripts>
+                                    <Layers>
+                                        <Layer level="OVERLAY">
+                                            <FontString name="$parentHeader" text="Focus" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                                <Size x="512" y="25"></Size>
+                                                <Color r="1" b="1" g="1"></Color>
+                                                <Anchors>
+                                                    <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                                </Anchors>
+                                            </FontString>
+                                            <FontString name="$parentSub" text="Edit focus frame settings."  inherits="GameFontNormalSmall" justifyH="LEFT">
+                                                <Size x="512" y="25"></Size>
+                                                <Color r="0.6" b="0.6" g="0.6"></Color>
+                                                <Anchors>
+                                                    <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                                </Anchors>
+                                            </FontString>
+                                        </Layer>
+                                    </Layers>
+                                    <Scripts>
+                                        <OnLoad>
+                                            _G[self:GetName()..'Header']:SetFont(DAMAGE_TEXT_FONT,20)
+                                            _G[self:GetName()..'Header']:SetTextColor(255/255,241/255,209/255)
+									        _G[self:GetName()..'Header']:SetText(GwLocalization['FOCUS_CAT_1'])
+                                            _G[self:GetName()..'Sub']:SetFont(UNIT_NAME_FONT,12)
+                                            _G[self:GetName()..'Sub']:SetTextColor(181/255,160/255,128/255)
+									        _G[self:GetName()..'Sub']:SetText(GwLocalization['FOCUS_DESC'])
+                                        </OnLoad>
+                                    </Scripts>
+                                </Frame>                                
+                            </Frames>
                         </Frame>
                         
                         <Frame hidden="true" name="GwSettingsHudOptions">

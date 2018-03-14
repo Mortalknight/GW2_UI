@@ -20,10 +20,6 @@ GW_PROFILE_ICONS_PRESET[4] = 'Interface\\icons\\spell_mage_overpowered'
 GW_PROFILE_ICONS_PRESET[5] = 'Interface\\icons\\achievement_boss_kingymiron'
 GW_PROFILE_ICONS_PRESET[6] = 'Interface\\icons\\spell_fire_elementaldevastation'
 
-
-
-
-
 function create_settings_window()
     CreateFrame('Frame','GwWarningPromt',UIParent,'GwWarningPromt')
     
@@ -84,7 +80,7 @@ function create_settings_window()
     addOption(GwLocalization['GROUP_FRAMES'], GwLocalization['GROUP_FRAMES_DESC'],'GROUP_FRAMES','GwSettingsModuleOption')
     addOption(GwLocalization['CHARACTER_WINDOW'], GwLocalization['CHRACTER_WINDOW_DESC'],'USE_CHARACTER_WINDOW','GwSettingsModuleOption')
     
-    create_settings_cat(GwLocalization['TARGET_CAT'],GwLocalization['TARGET_TOOLTIP'],'GwSettingsTargetOptions',1)
+    create_settings_cat(GwLocalization['TARGET_CAT'],GwLocalization['TARGET_TOOLTIP'],'GwSettingsTargetFocus',1)
     
     addOption(GwLocalization['TARGET_OF_TARGET'],GwLocalization['TARGET_OF_TARGET_DESC'],'target_TARGET_ENABLED','GwSettingsTargetOptions')
     addOption(GwLocalization['HEALTH_VALUE'],GwLocalization['HEALTH_VALUE_DESC'],'target_HEALTH_VALUE_ENABLED','GwSettingsTargetOptions')
@@ -93,11 +89,6 @@ function create_settings_window()
     addOption(GwLocalization['SHOW_DEBUFFS'],GwLocalization['SHOW_DEBUFFS_DESC'],'target_DEBUFFS','GwSettingsTargetOptions')
     addOption(GwLocalization['SHOW_ALL_DEBUFFS'],GwLocalization['SHOW_ALL_DEBUFFS_DESC'],'target_BUFFS_FILTER_ALL','GwSettingsTargetOptions')
     addOption(GwLocalization['SHOW_BUFFS'],GwLocalization['SHOW_BUFFS_DESC'],'target_BUFFS','GwSettingsTargetOptions')
-
-    
-    
-    create_settings_cat(GwLocalization['FOCUS_CAT'],GwLocalization['FOCUS_TOOLTIP'],'GwSettingsFocusOptions',2)
-    
     addOption(GwLocalization['FOCUS_TARGET'],GwLocalization['FOCUS_TARGET_DESC'],'focus_TARGET_ENABLED','GwSettingsFocusOptions')
     addOption(GwLocalization['HEALTH_VALUE'],GwLocalization['HEALTH_VALUE_DESC'],'focus_HEALTH_VALUE_ENABLED','GwSettingsFocusOptions')
     addOption(GwLocalization['HEALTH_PERCENTAGE'],GwLocalization['HEALTH_PERCENTAGE_DESC'],'focus_HEALTH_VALUE_TYPE','GwSettingsFocusOptions')
@@ -156,7 +147,7 @@ function create_settings_window()
     end,47,100)
     
     create_settings_cat(GwLocalization['PROFILES_CAT'],GwLocalization['PROFILES_TOOLTIP'],'GwSettingsProfilesframe',5)
-    _G['GwSettingsLabel5'].iconbg:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga')
+    _G['GwSettingsLabel4'].iconbg:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga')
  
     
     switch_settings_cat(0)
