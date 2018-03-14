@@ -55,6 +55,22 @@ function gw_create_bankframe()
     gw_update_free_bank_slots()
 
     -- setup settings button and its dropdown items
+    f.buttonSort:HookScript('OnClick', function(self)
+        PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
+        SortBankBags()
+        if IsReagentBankUnlocked() then
+            SortReagentBankBags()
+        end
+    end)
+    f.buttonSort:HookScript('OnEnter', function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(GwLocalization['SORT_BANK'], 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    f.buttonSort:HookScript('OnLeave', function() 
+        GameTooltip:Hide()  
+    end)
     do
         local dd = f.buttonSettings.dropdown
         f.buttonSettings:HookScript('OnClick', function(self)
@@ -65,25 +81,36 @@ function gw_create_bankframe()
             end
         end)
 
-        dd.sortBank:HookScript('OnClick', function(self)
-            PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
-            SortBankBags()
-            if IsReagentBankUnlocked() then
-                SortReagentBankBags()
-            end
-            dd:Hide()
-        end)
-        
         dd.compactBank:HookScript('OnClick', function(self)
             self:SetText(gw_bankFrameCompactToggle())
             dd:Hide()
         end)
         
-        dd.sortBank:SetText(GwLocalization['SORT_BANK'])
+        dd.bagOrder:HookScript('OnClick', function(self)
+            if gwGetSetting('BANK_REVERSE_SORT') then
+                dd.bagOrder:SetText(GwLocalization['BAG_ORDER_REVERSE'])
+                gwSetSetting('BANK_REVERSE_SORT', false)
+            else
+                dd.bagOrder:SetText(GwLocalization['BAG_ORDER_NORMAL'])
+                gwSetSetting('BANK_REVERSE_SORT', true)
+            end
+            if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
+                gw_update_reagents_icons(false)
+            else
+                gw_update_bank_icons()
+            end
+            dd:Hide()
+        end)        
+        
         if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
             dd.compactBank:SetText(GwLocalization['BANK_COMPACT_ICONS'])
         else
             dd.compactBank:SetText(GwLocalization['BANK_EXPAND_ICONS'])
+        end
+        if gwGetSetting('BANK_REVERSE_SORT') then
+            dd.bagOrder:SetText(GwLocalization['BAG_ORDER_NORMAL'])
+        else
+            dd.bagOrder:SetText(GwLocalization['BAG_ORDER_REVERSE'])
         end
     end
     

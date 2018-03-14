@@ -266,6 +266,12 @@ GwLocalization["UPDATE_STRING_1"] = "有新版本! 已有更新可供下載。"
 GwLocalization["UPDATE_STRING_2"] = "有新版本! 包含新功能的更新可供下載。"
 GwLocalization["UPDATE_STRING_3"] = "有新版本! 包含|cFFFF0000重大更新|r可供下載。\n強烈建議更新插件。"
 GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
+GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Sort to First Bag'
+GwLocalization['BAG_SORT_ORDER_LAST'] = 'Sort to Last Bag'
+GwLocalization['BAG_NEW_ORDER_FIRST'] = 'New Items to First Bag'
+GwLocalization['BAG_NEW_ORDER_LAST'] = 'New Items to Last Bag'
+GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
+GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
 end
 
 if GetLocale() == "zhTW" then

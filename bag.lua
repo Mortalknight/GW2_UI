@@ -74,6 +74,19 @@ function gw_create_bgframe()
     f:RegisterEvent('PLAYER_MONEY')
     
     -- setup settings button and its dropdown items
+    f.buttonSort:HookScript('OnClick', function(self)
+        PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
+        SortBags();        
+    end)
+    f.buttonSort:HookScript('OnEnter', function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(GwLocalization['SORT_BAGS'], 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    f.buttonSort:HookScript('OnLeave', function() 
+        GameTooltip:Hide()  
+    end)
     do
         local dd = f.buttonSettings.dropdown
         f.buttonSettings:HookScript('OnClick', function(self)
@@ -84,22 +97,64 @@ function gw_create_bgframe()
             end
         end)
 
-        dd.sortBags:HookScript('OnClick', function(self)
-            PlaySound(SOUNDKIT.UI_BAG_SORTING_01);
-            SortBags();
-            dd:Hide()
-        end)
-        
         dd.compactBags:HookScript('OnClick', function(self)
             self:SetText(gw_bagFrameCompactToggle())
             dd:Hide()
         end)
         
-        dd.sortBags:SetText(GwLocalization['SORT_BAGS'])
+        dd.newOrder:HookScript('OnClick', function(self)
+            if GetInsertItemsLeftToRight() then
+                dd.newOrder:SetText(GwLocalization['BAG_NEW_ORDER_LAST'])
+                SetInsertItemsLeftToRight(false)
+            else
+                dd.newOrder:SetText(GwLocalization['BAG_NEW_ORDER_FIRST'])
+                SetInsertItemsLeftToRight(true)
+            end
+            dd:Hide()
+        end)
+
+        dd.sortOrder:HookScript('OnClick', function(self)
+            if GetSortBagsRightToLeft() then
+                dd.sortOrder:SetText(GwLocalization['BAG_SORT_ORDER_FIRST'])
+                SetSortBagsRightToLeft(false)
+            else
+                dd.sortOrder:SetText(GwLocalization['BAG_SORT_ORDER_LAST'])
+                SetSortBagsRightToLeft(true)
+            end
+            dd:Hide()
+        end)    
+
+        dd.bagOrder:HookScript('OnClick', function(self)
+            if gwGetSetting('BAG_REVERSE_SORT') then
+                dd.bagOrder:SetText(GwLocalization['BAG_ORDER_REVERSE'])
+                gwSetSetting('BAG_REVERSE_SORT', false)
+            else
+                dd.bagOrder:SetText(GwLocalization['BAG_ORDER_NORMAL'])
+                gwSetSetting('BAG_REVERSE_SORT', true)
+            end
+            gw_update_bag_icons()
+            dd:Hide()
+        end)    
+        
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
             dd.compactBags:SetText(GwLocalization['COMPACT_ICONS'])
         else
             dd.compactBags:SetText(GwLocalization['EXPAND_ICONS'])
+        end
+        if GetInsertItemsLeftToRight() then
+            dd.newOrder:SetText(GwLocalization['BAG_NEW_ORDER_FIRST'])
+        else
+            dd.newOrder:SetText(GwLocalization['BAG_NEW_ORDER_LAST'])
+        end
+        if GetSortBagsRightToLeft() then
+            dd.sortOrder:SetText(GwLocalization['BAG_SORT_ORDER_LAST'])
+        else
+            dd.sortOrder:SetText(GwLocalization['BAG_SORT_ORDER_FIRST'])
+        end
+        if gwGetSetting('BAG_REVERSE_SORT') then
+            dd.bagOrder:SetText(GwLocalization['BAG_ORDER_NORMAL'])
+        else
+            dd.bagOrder:SetText(GwLocalization['BAG_ORDER_REVERSE'])
         end
     end
     
@@ -383,6 +438,7 @@ function gw_bag_hideIcons(b)
         BagItemSearchBox:Show()
         gwbf.spaceString:Show()
         gwbf.buttonSettings:Show()
+        gwbf.buttonSort:Show()
         gwbf.currencyWindow:Hide()
         ContainerFrame1:Show()
         gw_bg_watchCurrency()
@@ -390,6 +446,7 @@ function gw_bag_hideIcons(b)
         BagItemSearchBox:Hide()
         gwbf.spaceString:Hide()
         gwbf.buttonSettings:Hide()
+        gwbf.buttonSort:Hide()
         gwbf.currencyWindow:Show()
         CloseAllBags()
         gw_bg_loadCurrency()

@@ -266,6 +266,12 @@ GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
 GwLocalization['UNEQUIP_LEGENDARY'] = 'You must unequip that item in order to upgrade it.'
 GwLocalization['NOT_A_LEGENDARY'] = 'You cannot upgrade that item.'
 GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
+GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Sort to First Bag'
+GwLocalization['BAG_SORT_ORDER_LAST'] = 'Sort to Last Bag'
+GwLocalization['BAG_NEW_ORDER_FIRST'] = 'New Items to First Bag'
+GwLocalization['BAG_NEW_ORDER_LAST'] = 'New Items to Last Bag'
+GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
+GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
 end
 
 local Locale = GetLocale()

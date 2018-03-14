@@ -211,7 +211,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" frameStrata="HIGH" hidden="true" frameLevel="8">
-                        <Size x="120" y="60" ></Size>
+                        <Size x="160" y="120" ></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
@@ -229,7 +229,7 @@
                             </Layer>
                         </Layers>
                         <Frames>
-                            <Button parentKey="sortBags" text="Sort bags">
+                            <Button parentKey="compactBags" text="Compact view">
                                 <Size x="100" y="30"></Size>
                                 <Anchors>
                                     <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -237,7 +237,7 @@
                                 <NormalFont style="ChatBubbleFont"></NormalFont>
                                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                             </Button>
-                            <Button parentKey="compactBags" text="Compact view">
+                            <Button parentKey="sortOrder" text="Sort to Bottom">
                                 <Size x="100" y="30"></Size>
                                 <Anchors>
                                     <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
@@ -245,9 +245,38 @@
                                 <NormalFont style="ChatBubbleFont"></NormalFont>
                                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                             </Button>
+                            <Button parentKey="newOrder" text="Insert at Bottom">
+                                <Size x="100" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOP" relativePoint="TOP" y="-60"></Anchor>
+                                </Anchors>
+                                <NormalFont style="ChatBubbleFont"></NormalFont>
+                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                            </Button>
+                            <Button parentKey="bagOrder" text="Normal Bag Order">
+                                <Size x="100" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOP" relativePoint="TOP" y="-90"></Anchor>
+                                </Anchors>
+                                <NormalFont style="ChatBubbleFont"></NormalFont>
+                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                            </Button>
                         </Frames>
                     </Frame>
                 </Frames>
+            </Button>
+            <Button parentKey="buttonSort" text="" >
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-40" y="-8" />
+                </Anchors>
+                <Size x="24" y="24" />
+                <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Down"></PushedTexture >
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Down"></HighlightTexture >
+
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
                         
             <Button parentKey="buttonClose" text="">

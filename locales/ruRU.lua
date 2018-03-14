@@ -266,6 +266,12 @@ GwLocalization["UPDATE_STRING_1"] = "Доступно новое обновле�
 GwLocalization["UPDATE_STRING_2"] = "Доступно обновление с новыми возможностями."
 GwLocalization["UPDATE_STRING_3"] = "Доступно обновление |cFFFF0000major|r.\nНастоятельно рекомендуем обновиться."
 GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
+GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Sort to First Bag'
+GwLocalization['BAG_SORT_ORDER_LAST'] = 'Sort to Last Bag'
+GwLocalization['BAG_NEW_ORDER_FIRST'] = 'New Items to First Bag'
+GwLocalization['BAG_NEW_ORDER_LAST'] = 'New Items to Last Bag'
+GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
+GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
 end
 
 

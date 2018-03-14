@@ -266,6 +266,12 @@ GwLocalization["UPDATE_STRING_3"] = "Una actualización |cFFFF0000major|r esta d
 GwLocalization['UNEQUIP_LEGENDARY'] = 'No debe estar equipado para poder mejorarlo.'
 GwLocalization['NOT_A_LEGENDARY'] = 'No puedes mejorar ese objeto.'
 GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
+GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Sort to First Bag'
+GwLocalization['BAG_SORT_ORDER_LAST'] = 'Sort to Last Bag'
+GwLocalization['BAG_NEW_ORDER_FIRST'] = 'New Items to First Bag'
+GwLocalization['BAG_NEW_ORDER_LAST'] = 'New Items to Last Bag'
+GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
+GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
 end
 
 

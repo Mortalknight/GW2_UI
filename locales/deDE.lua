@@ -266,6 +266,12 @@ GwLocalization['FPS_TOOLTIP_6'] = 'Speicher für Addons: '
 GwLocalization['UNEQUIP_LEGENDARY'] = 'Du musst das Item erst ausziehen, bevor du es aufwerten kannst.'
 GwLocalization['NOT_A_LEGENDARY'] = 'Du kannst dieses Item nicht aufwerten.'
 GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Verfügbar ab Level '
+GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Sort to First Bag'
+GwLocalization['BAG_SORT_ORDER_LAST'] = 'Sort to Last Bag'
+GwLocalization['BAG_NEW_ORDER_FIRST'] = 'New Items to First Bag'
+GwLocalization['BAG_NEW_ORDER_LAST'] = 'New Items to Last Bag'
+GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
+GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
 end
 
 
