@@ -107,18 +107,20 @@ local function getNearestQuestPOI()
         local title, _, _, isHeader, _, isComplete, _, questID, _, _, isOnMap, hasLocalPOI, _ = GetQuestLogTitle(i)
         if not isHeader and not isComplete and hasLocalPOI then
             local _, poiX, poiY, o = QuestPOIGetIconInfo(questID)
-            local dx = posX - poiX
-            local dy = posY - poiY
-            local dist = sqrt(dx * dx + dy * dy)
-            if not closest or dist < closest then
-                closest = dist
-                local objectiveText = getQuestPOIText(i)
-                questCompass['DESC'] = objectiveText
-                questCompass['TITLE'] = title
-                questCompass['ID'] = questID
-                questCompass['X'] = poiX
-                questCompass['Y'] = poiY
-                questCompass['QUESTID'] = questID
+            if poiX then
+                local dx = posX - poiX
+                local dy = posY - poiY
+                local dist = sqrt(dx * dx + dy * dy)
+                if not closest or dist < closest then
+                    closest = dist
+                    local objectiveText = getQuestPOIText(i)
+                    questCompass['DESC'] = objectiveText
+                    questCompass['TITLE'] = title
+                    questCompass['ID'] = questID
+                    questCompass['X'] = poiX
+                    questCompass['Y'] = poiY
+                    questCompass['QUESTID'] = questID
+                end
             end
         end
     end
