@@ -709,7 +709,7 @@ function gwSwimAnimation()
     _G['GwActionBarHudRIGHTSWIM']:SetVertexColor(r, g, b, animations['swimAnimation']['progress'])
     _G['GwActionBarHudLEFTSWIM']:SetVertexColor(r, g, b, animations['swimAnimation']['progress'])
 end
-function GwOnUpdate()
+function GwOnUpdate(self, elapsed)
     if ADDOON_LOADED~=true or ADDOON_LOADED~=true then
         return
     end
@@ -768,6 +768,7 @@ function GwOnUpdate()
     end
 end
 
+--[[
 l.TotalElapsed = 0
 l:SetScript('OnUpdate', function(self, elapsed)
     -- every frame is not needed; cap update calls at 60 FPS
@@ -776,9 +777,11 @@ l:SetScript('OnUpdate', function(self, elapsed)
         return
     end
     self.TotalElapsed = 0
-    GwOnUpdate()
+    GwOnUpdate(self, elapsed)
 end)
-
+]]--
+l:SetScript('OnUpdate', GwOnUpdate)
+        
 function gwOnEvent(self, event, name)
     if GW_UI_LOADED then
         return
@@ -956,4 +959,19 @@ function gw_wait(delay, func, ...)
     end
     tinsert(waitTable, {delay, func, {...}})
     return true
+end
+
+local gwDebugTab = _G["ChatFrame3"]
+function gwDebug(...)
+    if gwDebugTab then
+        local msg = ''
+        for i = 1, select('#', ...) do
+            local arg = select(i, ...)
+            if arg == nil then
+                arg = 'nil'
+            end
+            msg = msg .. tostring(arg) .. ' '
+        end
+        gwDebugTab:AddMessage(GetTime() .. " " .. msg)
+    end
 end

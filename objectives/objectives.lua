@@ -172,36 +172,45 @@ local function setBlockColor(block, string)
 end
 
 
+local function statusBarOnShow(self)
+    local f = self:GetParent()
+    if not f then return end
+    f:SetHeight(50)
+    f.statusbarBg:Show()
+end
+local function statusBarOnHide(self)
+    local f = self:GetParent()
+    if not f then return end
+    f:SetHeight(20)
+    f.statusbarBg:Hide()
+end
+local function statusBarSetValue(self)
+    local f = self:GetParent()
+    if not f then return end
+    local min, max = self:GetMinMaxValues()
+    local v = self:GetValue()
+    local width = math.max(1, math.min(10, 10 * ((v / max) /0.1)))
+    f.StatusBar.Spark:SetPoint('RIGHT', self, 'LEFT', 280 * (v / max), 0)
+    f.StatusBar.Spark:SetWidth(width)
+    if self.precentage == nil or self.precentage == false then
+        self.progress:SetText(v .. ' / ' .. max)
+    else
+        self.progress:SetText(math.floor((v / max) * 100) .. '%')
+    end
+end
 function gwCreateObjectiveNormal(name, parent)
     local f = CreateFrame('Frame', name, parent, 'GwQuesttrackerObjectiveNormal')
     f.ObjectiveText:SetFont(UNIT_NAME_FONT, 12)
     f.ObjectiveText:SetShadowOffset(-1, 1)
     f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 11)
     f.StatusBar.progress:SetShadowOffset(-1, 1)
-    f.StatusBar:SetScript('OnShow', function(self)
-        f:SetHeight(50)
-        f.statusbarBg:Show()
-    end)
-    f.StatusBar:SetScript('OnHide', function(self)
-        f:SetHeight(20)
-        f.statusbarBg:Hide()
-    end)
     if f.StatusBar.animationOld == nil then
         f.StatusBar.animationOld = 0
     end
-    hooksecurefunc(f.StatusBar, 'SetValue', function(self)
-        local min, max = self:GetMinMaxValues()
-        local v = self:GetValue()
-        local width = math.max(1, math.min(10, 10 * ((v / max) /0.1)))
-        f.StatusBar.Spark:SetPoint('RIGHT', self, 'LEFT', 280 * (v / max), 0)
-        f.StatusBar.Spark:SetWidth(width)
-        if self.precentage == nil or self.precentage == false then
-            self.progress:SetText(v .. ' / ' .. max)
-        else
-            self.progress:SetText(math.floor((v / max) * 100) .. '%')
-        end
-    end)        
-    
+    f.StatusBar:SetScript('OnShow', statusBarOnShow)
+    f.StatusBar:SetScript('OnHide', statusBarOnHide)
+    hooksecurefunc(f.StatusBar, 'SetValue', statusBarSetValue)
+
     return f
 end
 
@@ -331,56 +340,17 @@ local function addObjective(block,text,finished,objectiveIndex)
     
 end
 
-local function updateQuestObjective(block,numObjectives,isComplete,title)
-
-   
+local function updateQuestObjective(block, numObjectives, isComplete, title)
     local addedObjectives = 1
-    
-    local compass, x, y, o, mapId  =gwScanMapforObjective(block.questID) 
-    
-    if isComplete then compass = false end
-    
-    local compassData = {}
-  
     local objectiveText = ''
-    if compass then
-        
-     
-           compassData['TYPE']= 'QUEST'
-           compassData['TITLE']= title
-           compassData['ID']=block.questID
-           
-           compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['QUEST']
-           compassData['COMPASS'] = true
-           compassData['X'] = x
-           compassData['Y'] = y
-           compassData['QUESTID']= block.questID
-           compassData['MAPID'] = mapId
-            
-        end
-    
     for objectiveIndex = 1, numObjectives do
-       
-    
         local text, objectiveType, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
-        if compass and (objectiveIndex - 1)==o then
-  
-           objectiveText  = text
-        end
         if not finished then
-            addObjective(block,text,finished,addedObjectives)
+            addObjective(block, text, finished, addedObjectives)
             addedObjectives = addedObjectives + 1
         end
     end
-    
-    if compass then
-        compassData['DESC'] = objectiveText
-    
-        gwAddTrackerNotification(compassData) 
-    end
-    
 end
-
 
 function GwupdateQuestItem(button,questLogIndex)
     
@@ -431,9 +401,6 @@ end
 
 
 local function updateQuest(block, questWatchId)
-    
-
-    
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
@@ -460,43 +427,35 @@ local function updateQuest(block, questWatchId)
         
  
 
-        if ( isComplete and isComplete < 0 ) then
-				isComplete = false;
-				questFailed = true;
-			elseif ( numObjectives == 0 and GetMoney() >= requiredMoney and not startEvent ) then
-				isComplete = true;
-			end
-        
-        updateQuestObjective(block, numObjectives,isComplete,title)
-        
+        if isComplete and isComplete < 0 then
+            isComplete = false
+			questFailed = true
+        elseif numObjectives == 0 and GetMoney() >= requiredMoney and not startEvent then
+            isComplete = true
+        end
+                
+        updateQuestObjective(block, numObjectives, isComplete, title)
                
-        if requiredMoney~=nil and requiredMoney>GetMoney() then
-           addObjective(block,GetMoneyString(GetMoney()).." / "..GetMoneyString(requiredMoney),finished, block.numObjectives+1)            
+        if requiredMoney~=nil and requiredMoney > GetMoney() then
+           addObjective(block, GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), finished, block.numObjectives + 1)
         end
         
         if isComplete then
-            
             if isAutoComplete then
-                addObjective(block,QUEST_WATCH_CLICK_TO_COMPLETE,false, block.numObjectives+1) 
+                addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1)
                 block.turnin:Show()
-                block.turnin:SetScript('OnClick',function() ShowQuestComplete(questLogIndex) end)
+                block.turnin:SetScript('OnClick', function() ShowQuestComplete(questLogIndex) end)
             else
                 local completionText = GetQuestLogCompletionText(questLogIndex);
             
                 if ( completionText ) then
-                    addObjective(block,completionText,false, block.numObjectives+1) 
+                    addObjective(block, completionText, false, block.numObjectives +1 ) 
                 else
-                    addObjective(block,QUEST_WATCH_QUEST_READY,false, block.numObjectives+1) 
+                    addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1)
                 end
             end
             
         end
-        
-       
- 
-      
-        
- 
         
         block.clickHeader:SetScript('OnClick', function() quest_update_POI(questID,questLogIndex) end)
         block:SetScript('OnClick', function() 
@@ -551,21 +510,9 @@ end
 
 
 
-local function updateQuestLogLayout(intent)
-    
-    
-    if updatedThisFrame and intent~='update' then
-        waitForUpdate  = true
-        
-    end
-        
-    updatedThisFrame = true
-    
-    gwRemoveTrackerNotificationOfType('QUEST')
-
+local function updateQuestLogLayout(intent, ...)
     local savedHeight = 1
     GwQuestHeader:Hide()
-
     
     local numQuests = GetNumQuestWatches()
     if GwQuesttrackerContainerQuests.collapsed==true then
@@ -573,14 +520,13 @@ local function updateQuestLogLayout(intent)
         numQuests = 0
         savedHeight = 20
     end
-         
     
     for i = 1, numQuests do    
         if i==1 then savedHeight = 20 end
         GwQuestHeader:Show()
         local block = getBlock(i)
         if block==nil then return end
-        updateQuest(block,i)
+        updateQuest(block, i)
         block:Show()
         updateQuestItemPositions(i,savedHeight)
         
@@ -603,132 +549,15 @@ function gwRequestQustlogUpdate()
     updateQuestLogLayout()
 end
 
-function gwScanMapforObjective(questID)
-    if WorldMapFrame:IsShown() then return end
-
-    SetMapToCurrentZone()
-   
-    local scanMap = true
-    local maxZoom = false
-    local foundSomethingOnThisMap = false
-
-    SetCVar("questPOI", 1)
-    local max = 0
-    local PposX, PposY  = GetPlayerMapPosition("player");
-    
-    while scanMap and max<5 do
-            
-        QuestPOIUpdateIcons()
-       
-          
-        local _, posX, posY, objective = QuestPOIGetIconInfo(questID) 
-          
-                 
-        if posX~=nil and posX~=0 and PposX~=nil and PposX~=0 then
-
-           local mapId,currentFloor =  GetCurrentMapAreaID()
-            
-            SetMapToCurrentZone()
-         --   SetCVar("questPOI", cvar and 1 or 0)
-     
-            return true, posX, posY, objective, mapId 
-
-            
-        end
-    
-        if  maxZoom then
-            scanMap = false;
-        end
-        
-        if  ZoomOut() ~= nil then
-            if ( GetCurrentMapContinent() == WORLDMAP_AZEROTH_ID ) then
-                SetMapZoom(WORLDMAP_AZEROTH_ID);
-                maxZoom = true
-            elseif ( GetCurrentMapContinent() == WORLDMAP_OUTLAND_ID  )then
-                SetMapZoom(WORLDMAP_OUTLAND_ID);
-                maxZoom = true
-            elseif ( GetCurrentMapContinent() == WORLDMAP_DRAENOR_ID ) then
-                SetMapZoom(WORLDMAP_DRAENOR_ID);
-                maxZoom = true
-            else
-                SetMapZoom(WORLDMAP_AZEROTH_ID);
-                maxZoom = true
-            end
-        end
-
-        max =max +1
-    end
-         
-    SetMapToCurrentZone()
-  --  SetCVar("questPOI", cvar and 1 or 0)
-    return false
- 
-end
-
-
-
-
 function gwQuestTrackerLayoutChanged()
-
     updateExtraQuestItemPositions()
-    
     GwQuestTrackerScroll:SetSize(400,GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight())
-    
-  
-
 end
 
-
-local function QuestTracker_OnEvent(self,event,data1)
-
-        updateQuestLogLayout(data1)
-
-
+function gwTrackerOnEvent(self, event, ...)
+    updateQuestLogLayout(...)
 end
 
-
-
-local function playerDeadState (self,event) 
-        
-        if not UnitIsDeadOrGhost('PLAYER') then
-                gwRemoveTrackerNotificationOfType('DEAD')
-                return
-        end
-        
-            
-        local compassData = {}    
-            
-        local x, y = GetCorpseMapPosition()
-        local PposX, PposY  = GetPlayerMapPosition("player");
-    
-        if PposX==nil or PposX==0 then return end    
-    
-        compassData['TYPE']= 'DEAD'
-           compassData['TITLE']= GwLocalization['TRACKER_RETRIVE_CORPSE']
-           compassData['ID']='playerDead'
-           
-           compassData['COLOR']=  GW_TRAKCER_TYPE_COLOR['DEAD']
-           compassData['COMPASS'] = true
-           compassData['X'] = x
-           compassData['Y'] = y
-           compassData['QUESTID']= ''
-            compassData['MAPID'] = ''
-            compassData['DESC'] = ''
-    
-        gwAddTrackerNotification(compassData) 
-            
-  
-end
-
-
-
-function gw_tracker_container_onUpdate(self)
-    if waitForUpdate then
-        updateQuestLogLayout('update')
-        waitForUpdate = false
-    end
-    updatedThisFrame = false
-end
 function gw_tracker_onUpdate(self)
     if GwQuestTracker.trot < GetTime() then                
         local state = GwObjectivesNotification.shouldDisplay
@@ -742,147 +571,123 @@ function gw_tracker_onUpdate(self)
         end
     end
 end
-function gw_load_questTracker()
-    
+local function bonusBarOnEnter(self)
+    GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMLEFT', 0, 0)
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(round(self.progress * 100, 0) .. '%')
+    GameTooltip:Show()
+end
+local function bonusBarOnLeave(self)
+    GameTooltip:Hide()
+end
+function gw_load_questTracker()    
     ObjectiveTrackerFrame:Hide()
     ObjectiveTrackerFrame:SetScript('OnShow', function() ObjectiveTrackerFrame:Hide() end) 
     
-    CreateFrame('Frame', 'GwQuestTracker', UIParent, 'GwQuestTracker') 
+    local fTracker = CreateFrame('Frame', 'GwQuestTracker', UIParent, 'GwQuestTracker')
     
-    local fTraScr = CreateFrame('ScrollFrame', 'GwQuestTrackerScroll', GwQuestTracker, 'GwQuestTrackerScroll')
+    local fTraScr = CreateFrame('ScrollFrame', 'GwQuestTrackerScroll', fTracker, 'GwQuestTrackerScroll')
     fTraScr:SetScript('OnMouseWheel', function(self, delta)
         delta = -delta * 15
         local s = math.max(0, self:GetVerticalScroll() + delta)
         self:SetVerticalScroll(s)
     end)
 
-    CreateFrame('Frame', 'GwQuestTrackerScrollChild', GwQuestTrackerScroll, 'GwQuestTracker')
+    local fScroll = CreateFrame('Frame', 'GwQuestTrackerScrollChild', fTraScr, 'GwQuestTracker')
     
-    local fObjNot = CreateFrame('Frame', 'GwObjectivesNotification', GwQuestTracker, 'GwObjectivesNotification')
-    fObjNot.animatingState = false
-    fObjNot.animating = false
-    fObjNot.title:SetFont(UNIT_NAME_FONT, 14)
-    fObjNot.title:SetShadowOffset(1, -1)
-    fObjNot.desc:SetFont(UNIT_NAME_FONT, 12)
-    fObjNot.desc:SetShadowOffset(1, -1)    
-    fObjNot.bonusbar.bar:SetOrientation('VERTICAL')
-    fObjNot.bonusbar.bar:SetMinMaxValues(0, 1)
-    fObjNot.bonusbar.bar:SetValue(0.5)
-    fObjNot.bonusbar:SetScript('OnEnter', function(self)
-        GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMLEFT', 0, 0)
-        GameTooltip:ClearLines()
-        GameTooltip:SetText((self.progress * 100) .. '%')
-        GameTooltip:Show()
-    end)
-    fObjNot.bonusbar:SetScript('OnLeave', function(self)
-        GameTooltip:Hide()
-    end)
-    fObjNot.compass:SetScript('OnShow', gwNewQuestAnimation)
+    local fNotify = CreateFrame('Frame', 'GwObjectivesNotification', fTracker, 'GwObjectivesNotification')
+    fNotify.animatingState = false
+    fNotify.animating = false
+    fNotify.title:SetFont(UNIT_NAME_FONT, 14)
+    fNotify.title:SetShadowOffset(1, -1)
+    fNotify.desc:SetFont(UNIT_NAME_FONT, 12)
+    fNotify.desc:SetShadowOffset(1, -1)    
+    fNotify.bonusbar.bar:SetOrientation('VERTICAL')
+    fNotify.bonusbar.bar:SetMinMaxValues(0, 1)
+    fNotify.bonusbar.bar:SetValue(0.5)
+    fNotify.bonusbar:SetScript('OnEnter', bonusBarOnEnter)
+    fNotify.bonusbar:SetScript('OnLeave', bonusBarOnLeave)
+    fNotify.compass:SetScript('OnShow', gwNewQuestAnimation)
     
-    CreateFrame('Frame','GwQuesttrackerContainerBossFrames',GwQuestTracker,'GwQuesttrackerContainer') 
-    CreateFrame('Frame','GwQuesttrackerContainerScenario',GwQuestTracker,'GwQuesttrackerContainer') 
-    CreateFrame('Frame','GwQuesttrackerContainerAchievement',GwQuestTracker,'GwQuesttrackerContainer') 
-    
-    CreateFrame('Frame','GwQuesttrackerContainerQuests',GwQuestTrackerScrollChild,'GwQuesttrackerContainer') 
-    CreateFrame('Frame','GwQuesttrackerContainerBonusObjectives',GwQuestTrackerScrollChild,'GwQuesttrackerContainer')
-    GwQuesttrackerContainerAchievement:SetParent(GwQuestTrackerScrollChild)
-    GwQuesttrackerContainerQuests:SetParent(GwQuestTrackerScrollChild)
-    GwQuesttrackerContainerBonusObjectives:SetParent(GwQuestTrackerScrollChild)
-    
+    local fBoss = CreateFrame('Frame', 'GwQuesttrackerContainerBossFrames', fTracker, 'GwQuesttrackerContainer') 
+    local fScen = CreateFrame('Frame', 'GwQuesttrackerContainerScenario', fTracker, 'GwQuesttrackerContainer') 
+    local fAchv = CreateFrame('Frame', 'GwQuesttrackerContainerAchievement', fTracker, 'GwQuesttrackerContainer')     
+    local fQuest = CreateFrame('Frame', 'GwQuesttrackerContainerQuests', fScroll, 'GwQuesttrackerContainer') 
+    local fBonus = CreateFrame('Frame', 'GwQuesttrackerContainerBonusObjectives', fScroll, 'GwQuesttrackerContainer')
+    fAchv:SetParent(fScroll)
+    fQuest:SetParent(fScroll)
+    fBonus:SetParent(fScroll)
     
     if gwGetSetting('MINIMAP_ENABLED') then
-    GwQuestTracker:SetPoint('TOPRIGHT',UIParent,'TOPRIGHT')
-    GwQuestTracker:SetPoint('BOTTOMRIGHT',Minimap,'TOPRIGHT')
+        fTracker:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT')
+        fTracker:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT')
     else
-        GwQuestTracker:SetPoint('TOPRIGHT',Minimap,'BOTTOMRIGHT')
-        GwQuestTracker:SetPoint('BOTTOMRIGHT',UIParent,'BOTTOMRIGHT')
+        fTracker:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT')
+        fTracker:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT')
     end
     
-    GwObjectivesNotification:SetPoint('TOPRIGHT',GwQuestTracker,'TOPRIGHT')
-    GwQuesttrackerContainerBossFrames:SetPoint('TOPRIGHT',GwObjectivesNotification,'BOTTOMRIGHT')
-    GwQuesttrackerContainerScenario:SetPoint('TOPRIGHT',GwQuesttrackerContainerBossFrames,'BOTTOMRIGHT')
+    fNotify:SetPoint('TOPRIGHT', fTracker, 'TOPRIGHT')
+    fBoss:SetPoint('TOPRIGHT', fNotify, 'BOTTOMRIGHT')
+    fScen:SetPoint('TOPRIGHT', fBoss,'BOTTOMRIGHT')
     
-    GwQuestTrackerScroll:SetPoint('TOPRIGHT',GwQuesttrackerContainerScenario,'BOTTOMRIGHT')
-    GwQuestTrackerScroll:SetPoint('BOTTOMRIGHT',GwQuestTracker,'BOTTOMRIGHT')
+    fTraScr:SetPoint('TOPRIGHT', fScen, 'BOTTOMRIGHT')
+    fTraScr:SetPoint('BOTTOMRIGHT', fTracker, 'BOTTOMRIGHT')
     
-    GwQuestTrackerScrollChild:SetPoint('TOPRIGHT',GwQuestTrackerScroll,'TOPRIGHT')
-    GwQuesttrackerContainerAchievement:SetPoint('TOPRIGHT',GwQuestTrackerScrollChild,'TOPRIGHT')
-    GwQuesttrackerContainerQuests:SetPoint('TOPRIGHT',GwQuesttrackerContainerAchievement,'BOTTOMRIGHT')
-    GwQuesttrackerContainerBonusObjectives:SetPoint('TOPRIGHT',GwQuesttrackerContainerQuests,'BOTTOMRIGHT')
+    fScroll:SetPoint('TOPRIGHT', fTraScr, 'TOPRIGHT')
+    fAchv:SetPoint('TOPRIGHT', fScroll, 'TOPRIGHT')
+    fQuest:SetPoint('TOPRIGHT', fAchv, 'BOTTOMRIGHT')
+    fBonus:SetPoint('TOPRIGHT', fQuest, 'BOTTOMRIGHT')
     
-    GwQuestTrackerScrollChild:SetSize(400,2)
-    GwQuestTrackerScroll:SetScrollChild(GwQuestTrackerScrollChild)
-    
+    fScroll:SetSize(400, 2)
+    fTraScr:SetScrollChild(fScroll)
 
-    GwQuesttrackerContainerQuests:RegisterEvent('QUEST_LOG_UPDATE')
-    GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ITEM_UPDATE");
-
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_REMOVED");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUESTLINE_UPDATE");
-
-	GwQuesttrackerContainerQuests:RegisterEvent("QUESTTASK_UPDATE");
-	GwQuesttrackerContainerQuests:RegisterEvent("TASK_PROGRESS_UPDATE");
+    fQuest:SetScript('OnEvent', gwTrackerOnEvent)
+    fQuest:RegisterEvent('QUEST_LOG_UPDATE')
+    fQuest:RegisterEvent('QUEST_ITEM_UPDATE')
+	fQuest:RegisterEvent('QUEST_REMOVED')
+	fQuest:RegisterEvent('QUESTLINE_UPDATE')
+	fQuest:RegisterEvent('QUESTTASK_UPDATE')
+	fQuest:RegisterEvent('TASK_PROGRESS_UPDATE')
+    fQuest:RegisterEvent('QUEST_WATCH_LIST_CHANGED')
+	fQuest:RegisterEvent('QUEST_AUTOCOMPLETE')
+	fQuest:RegisterEvent('QUEST_ACCEPTED')
+    fQuest:RegisterEvent('QUEST_GREETING')
+	fQuest:RegisterEvent('QUEST_DETAIL')
+	fQuest:RegisterEvent('QUEST_PROGRESS')
+	fQuest:RegisterEvent('QUEST_COMPLETE')
+	fQuest:RegisterEvent('QUEST_FINISHED')
+	fQuest:RegisterEvent('QUEST_POI_UPDATE')
+	fQuest:RegisterEvent('PLAYER_MONEY')
+	fQuest:RegisterEvent('SUPER_TRACKED_QUEST_CHANGED')
     
-    GwQuesttrackerContainerQuests:RegisterEvent("QUEST_WATCH_LIST_CHANGED");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_AUTOCOMPLETE");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ACCEPTED");	
-    
-    GwQuesttrackerContainerQuests:RegisterEvent("QUEST_GREETING");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_DETAIL");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_PROGRESS");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_COMPLETE");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_FINISHED");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_POI_UPDATE");
-	GwQuesttrackerContainerQuests:RegisterEvent("PLAYER_MONEY");
-	GwQuesttrackerContainerQuests:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED");
-	GwQuesttrackerContainerQuests:RegisterEvent("QUEST_ACCEPTED");
-    
-    
-    GwQuesttrackerContainerQuests:SetScript('OnUpdate', gw_tracker_container_onUpdate)    
-    GwQuesttrackerContainerQuests:SetScript('OnEvent', QuestTracker_OnEvent)
-    
-    local header = CreateFrame('Button', 'GwQuestHeader', GwQuesttrackerContainerQuests, 'GwQuestTrackerHeader')
+    local header = CreateFrame('Button', 'GwQuestHeader', fQuest, 'GwQuestTrackerHeader')
     header.icon:SetTexCoord(0, 1, 0.25, 0.5)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
     header.title:SetText(GwLocalization['TRACKER_QUEST_TITLE'])
     
-    header:SetScript('OnClick',function(self) 
+    header:SetScript('OnClick', function(self)
         local p = self:GetParent()
-        if p.collapsed==nil or p.collapsed==false then
-             p.collapsed = true
-            
-                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF  );
-         else
-             p.collapsed = false
-             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON  );
-         end    
+        if p.collapsed == nil or p.collapsed == false then
+            p.collapsed = true
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+        else
+            p.collapsed = false
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+        end    
         updateQuestLogLayout('COLLAPSE')
     end)
-    header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['QUEST'].r,GW_TRAKCER_TYPE_COLOR['QUEST'].g,GW_TRAKCER_TYPE_COLOR['QUEST'].b)   
+    header.title:SetTextColor(GW_TRAKCER_TYPE_COLOR['QUEST'].r, GW_TRAKCER_TYPE_COLOR['QUEST'].g, GW_TRAKCER_TYPE_COLOR['QUEST'].b)
    
     loadQuestButtons()
-    updateQuestLogLayout('load')
+    updateQuestLogLayout('LOAD')
     
     gw_register_bossFrames()
     gw_register_scenarioFrame()
     gw_register_achievement()
     gw_register_bonusObjectiveFrame()
     
-    GwObjectivesNotification:RegisterEvent('PLAYER_ALIVE')
-    GwObjectivesNotification:RegisterEvent('PLAYER_DEAD')
-    GwObjectivesNotification:RegisterEvent('PLAYER_UNGHOST')
-    
-	GwObjectivesNotification:RegisterEvent("ZONE_CHANGED_INDOORS");
-	GwObjectivesNotification:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-	GwObjectivesNotification:RegisterEvent("ZONE_CHANGED");
-    
-    GwObjectivesNotification:SetScript('OnEvent', playerDeadState)
-    
-    
-    playerDeadState(GwObjectivesNotification,'')
-    GwObjectivesNotification.shouldDisplay = false
-    GwQuestTracker.trot = GetTime() + 2
-    GwQuestTracker:SetScript('OnUpdate', gw_tracker_onUpdate)
-  
+    fNotify.shouldDisplay = false
+    fTracker.trot = GetTime() + 2
+    fTracker:SetScript('OnUpdate', gw_tracker_onUpdate)
 end
