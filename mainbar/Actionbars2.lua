@@ -315,7 +315,11 @@ local function updateMultiBar(barName, buttonName)
 
     multibar.gw_MultiButtons = {}
     multibar.gw_LastFadeCheck = -1
-    multibar.gw_FadeShowing = true
+    if multibar:IsShown() then
+        multibar.gw_FadeShowing = true
+    else
+        multibar.gw_FadeShowing = false
+    end
     
     for i = 1, 12 do
         local btn = _G[buttonName .. i]
@@ -394,6 +398,23 @@ function gwSetupActionbars()
     updateMultiBar('MultiBarBottomLeft', 'MultiBarBottomLeftButton')
     updateMultiBar('MultiBarRight', 'MultiBarRightButton')
     updateMultiBar('MultiBarLeft', 'MultiBarLeftButton')
+
+    MultiBarBottomLeft:HookScript('OnShow', function (self, event)
+        self.gw_FadeShowing = true
+        gw_updatePetFrameLocation()
+    end)
+    MultiBarBottomLeft:HookScript('OnHide', function (self, event)
+        self.gw_FadeShowing = false
+        gw_updatePetFrameLocation()
+    end)
+    MultiBarBottomRight:HookScript('OnShow', function (self, event)
+        self.gw_FadeShowing = true
+        gw_updatePlayerBuffFrameLocation()
+    end)
+    MultiBarBottomRight:HookScript('OnHide', function (self, event)
+        self.gw_FadeShowing = false
+        gw_updatePlayerBuffFrameLocation()
+    end)
  
     --gw_register_movable_frame(MultiBarBottomRight:GetName(),MultiBarBottomRight,'MultiBarBottomRight','VerticalActionBarDummy')
     --gw_register_movable_frame(MultiBarBottomLeft:GetName(),MultiBarBottomLeft,'MultiBarBottomLeft','VerticalActionBarDummy')

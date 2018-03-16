@@ -44,6 +44,7 @@ function gwActionBar_FadeCheck(self, elapsed)
         return
     end
     self.gw_LastFadeCheck = 0.1
+    if not self:IsShown() then return end
     
     if self:IsMouseOver(100, -100, -100, 100) or UnitAffectingCombat('player') then
         if not self.gw_FadeShowing then

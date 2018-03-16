@@ -791,7 +791,7 @@ function gwOnEvent(self, event, name)
     if event == 'ADDON_LOADED' and name == 'GW2_UI' then
         ADDOON_LOADED = true
         SETTINGS_LOADED = true
-        return    
+        return
     end
     if event == 'ADDON_LOADED' and name ~= 'GW2_UI' then
         return
@@ -810,14 +810,14 @@ function gwOnEvent(self, event, name)
     loadHudArt()
             
     --Create experiencebar
-    loadExperienceBar() 
+    loadExperienceBar()
         
     if gwGetSetting('FONTS_ENABLED') then
         gw_register_fonts()
-    end  
+    end
     if gwGetSetting('CASTINGBAR_ENABLED') then
         gw_register_castingbar()
-    end  
+    end
         
     if gwGetSetting('MINIMAP_ENABLED') then
         gw_set_minimap()
@@ -832,11 +832,11 @@ function gwOnEvent(self, event, name)
     if gwGetSetting('QUESTVIEW_ENABLED') then
         gw_create_questview()
     end
-    if gwGetSetting('CHATFRAME_ENABLED') then            
+    if gwGetSetting('CHATFRAME_ENABLED') then
         gw_set_chatframe_bg()
     end
     --Create player hud
-    if gwGetSetting('HEALTHGLOBE_ENABLED') then    
+    if gwGetSetting('HEALTHGLOBE_ENABLED') then
         gw_create_player_hud()
     end
         
@@ -851,10 +851,10 @@ function gwOnEvent(self, event, name)
     if gwGetSetting('BAGS_ENABLED') then
         gw_create_bgframe()
         gw_create_bankframe()
-    end 
+    end
     if gwGetSetting('USE_BATTLEGROUND_HUD') then
         gwLoadBattlegrounds()
-    end 
+    end
         
     Gw_LoadWindows();
         
@@ -863,7 +863,7 @@ function gwOnEvent(self, event, name)
     --Create unitframes
     if gwGetSetting('FOCUS_ENABLED') then
         gw_unitframes_register_Focus()
-        if gwGetSetting('focus_TARGET_ENABLED') then         
+        if gwGetSetting('focus_TARGET_ENABLED') then
             gw_unitframes_register_Focusstarget()
         end
     end
@@ -872,17 +872,19 @@ function gwOnEvent(self, event, name)
         if gwGetSetting('target_TARGET_ENABLED') then
             gw_unitframes_register_Targetstarget()
         end
-    end    
-        
-    --create buff frame        
+    end
+           
+    -- create buff frame
     if gwGetSetting('PLAYER_BUFFS_ENABLED') then
         gw_set_buffframe()
     end
-        		
+    
+    -- create pet frame
     if gwGetSetting('PETBAR_ENABLED') then
         gw_create_pet_frame()
     end
-        
+
+    -- create action bars
     if gwGetSetting('ACTIONBARS_ENABLED') then
         gwSetupActionbars()
         if gwGetSetting('FADE_BOTTOM_ACTIONBAR') then
@@ -894,7 +896,11 @@ function gwOnEvent(self, event, name)
             end
         end
     end
-                        
+
+    -- fix position of some things dependent on action bars
+    gw_updatePetFrameLocation()
+    gw_updatePlayerBuffFrameLocation()
+    
     if gwGetSetting('CHATBUBBLES_ENABLED') then
         --    gw_register_chatbubbles()
     end
@@ -912,7 +918,7 @@ function gwOnEvent(self, event, name)
 	gw_register_movable_frame('errorframe',UIErrorsFrame,'WARNIG_MESSAGE','GwErrorFrameDummy')
     UIErrorsFrame:SetPoint(gwGetSetting('WARNIG_MESSAGE')['point'],UIParent,gwGetSetting('WARNIG_MESSAGE')['relativePoint'],gwGetSetting('WARNIG_MESSAGE')['xOfs'],gwGetSetting('WARNIG_MESSAGE')['yOfs'])
         
-    gwUpdateHudScale()    
+    gwUpdateHudScale()
 end
 l:SetScript('OnEvent', gwOnEvent)
 l:RegisterEvent('ADDON_LOADED')
