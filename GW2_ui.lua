@@ -753,7 +753,7 @@ function GwOnUpdate(self, elapsed)
     end
 
     if OnUpdateActionBars then
-        OnUpdateActionBars()
+        OnUpdateActionBars(elapsed)
     end
 
     --Swim hud
@@ -884,14 +884,16 @@ function gwOnEvent(self, event, name)
     end
         
     if gwGetSetting('ACTIONBARS_ENABLED') then
-        gw_setupActionbars()
-        OnUpdateActionBars = function()
-            fadet_action_bar_check(MultiBarBottomLeft)
-            fadet_action_bar_check(MultiBarBottomRight)
-			fadet_action_bar_check(MultiBarRight)
-			fadet_action_bar_check(MultiBarLeft)
+        gwSetupActionbars()
+        if gwGetSetting('FADE_BOTTOM_ACTIONBAR') then
+            OnUpdateActionBars = function(elapsed)
+                gwActionBar_FadeCheck(MultiBarBottomLeft, elapsed)
+                gwActionBar_FadeCheck(MultiBarBottomRight, elapsed)
+                gwActionBar_FadeCheck(MultiBarRight, elapsed)
+                gwActionBar_FadeCheck(MultiBarLeft, elapsed)
+            end
         end
-    end  
+    end
                         
     if gwGetSetting('CHATBUBBLES_ENABLED') then
         --    gw_register_chatbubbles()

@@ -344,7 +344,7 @@ BuffFrame:SetScript('OnShow',function(self) self:Hide() end)
     ]=])
     RegisterStateDriver(fgw, 'combat', '[combat] show; hide')
     
-    gw_actionbar_state_add_callback(gw_updatePlayerBuffFrameLocation)
+    gwActionBar_AddStateCallback(gw_updatePlayerBuffFrameLocation)
     gw_updatePlayerBuffFrameLocation()
     
     
@@ -394,23 +394,15 @@ function update_player_buff_timers(thisName)
     end
 end
 function gw_updatePlayerBuffFrameLocation()
-    
     if InCombatLockdown() then
         return
-    end 
-    
-    local b = false
+    end
     _G['GwPlayerAuraFrame']:ClearAllPoints()
-     if MultiBarBottomRight:GetAlpha()>0.0 and MultiBarBottomRight:IsShown()  then
-          b = true
-    end
-    if b then
-        _G['GwPlayerAuraFrame']:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',53,212)
+    if MultiBarBottomRight.gw_FadeShowing then
+        _G['GwPlayerAuraFrame']:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOM', 53, 212)
     else
-        _G['GwPlayerAuraFrame']:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',53,120)
+        _G['GwPlayerAuraFrame']:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOM', 53, 120)
     end
-    
-    
 end
 
 function gw_playerUpdateAuras()

@@ -120,39 +120,32 @@ local function loadAuras(self)
 end
 
 function gw_create_pet_frame()
-    
-    local playerPetFrame = CreateFrame('Button', 'GwPlayerPetFrame',UIParent, 'GwPlayerPetFrame');
+    local playerPetFrame = CreateFrame('Button', 'GwPlayerPetFrame', UIParent, 'GwPlayerPetFrame');
 --    playerPetFrame:SetPoint('BOTTOMLEFT',_G['PetActionBarFrame'],'BOTTOMLEFT',0,0)
 --    playerPetFrame:SetPoint('BOTTOMRIGHT',_G['PetActionBarFrame'],'BOTTOMRIGHT',0,0)
     
-    gw_register_movable_frame('petframe',GwPlayerPetFrame,'pet_pos','GwPetFrameDummy','PETBAR_LOCKED')
-    
-     
-
+    gw_register_movable_frame('petframe', GwPlayerPetFrame, 'pet_pos', 'GwPetFrameDummy', 'PETBAR_LOCKED')
     
     playerPetFrame:SetAttribute("*type1", 'target')
     playerPetFrame:SetAttribute("*type2", "togglemenu")
     playerPetFrame:SetAttribute("unit", 'pet')
     playerPetFrame:EnableMouse(true)
     playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    RegisterUnitWatch(playerPetFrame);
+    RegisterUnitWatch(playerPetFrame)
     
-    _G['GwPlayerPetFrameHealth']:SetStatusBarColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b);
-    _G['GwPlayerPetFrameHealthString']:SetFont(UNIT_NAME_FONT,11)
+    _G['GwPlayerPetFrameHealth']:SetStatusBarColor(GW_COLOR_FRIENDLY[2].r, GW_COLOR_FRIENDLY[2].g, GW_COLOR_FRIENDLY[2].b)
+    _G['GwPlayerPetFrameHealthString']:SetFont(UNIT_NAME_FONT, 11)
     
-    playerPetFrame:SetScript('OnEvent',function(self, event ,unit)
-        gw_update_pet_data(event,unit)    
+    playerPetFrame:SetScript('OnEvent', function(self, event ,unit)
+        gw_update_pet_data(event, unit)
     end)
-    playerPetFrame:HookScript('OnShow',function()
-         gw_update_pet_data('UNIT_PET','player')
+    playerPetFrame:HookScript('OnShow', function()
+        gw_update_pet_data('UNIT_PET', 'player')
     end)
     playerPetFrame.unit = 'pet'
     
-    
-    playerPetFrame.displayBuffs= true
-    playerPetFrame.displayDebuffs=true
-    
-    
+    playerPetFrame.displayBuffs = true
+    playerPetFrame.displayDebuffs = true
     playerPetFrame.debuffFilter = 'player'
     
     loadAuras(playerPetFrame)
@@ -166,60 +159,43 @@ function gw_create_pet_frame()
     
     --_G['GwPlayerPetFramePortrait']
     gw_update_pet_data('UNIT_PET','player')
-   
     
-    if gwGetSetting('PETBAR_LOCKED')==true then
-
+    if gwGetSetting('PETBAR_LOCKED') == true then
         GwPlayerPetFrame:ClearAllPoints()
-        GwPlayerPetFrame:SetPoint('BOTTOMLEFT',UIParent,'BOTTOM',-372,86)
- 
-        
+        GwPlayerPetFrame:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOM', -372, 86)
         playerPetFrame:SetFrameRef('GwPlayerPetFrame', GwPlayerPetFrame)
         playerPetFrame:SetFrameRef('UIParent', UIParent)
         playerPetFrame:SetFrameRef('MultiBarBottomLeft', MultiBarBottomLeft)
-        playerPetFrame:SetAttribute('_onstate-combat', [=[ 
+        playerPetFrame:SetAttribute('_onstate-combat', [=[
+            if self:GetFrameRef('MultiBarBottomLeft'):IsShown()==false then
+                return
+            end
         
-        if self:GetFrameRef('MultiBarBottomLeft'):IsShown()==false then
-            return
-        end
-        
-      self:GetFrameRef('GwPlayerPetFrame'):ClearAllPoints()
-        if newstate == 'show' then
-         self:GetFrameRef('GwPlayerPetFrame'):SetPoint('BOTTOMRIGHT',self:GetFrameRef('UIParent'),'BOTTOM',-53,212)
-        end
-    ]=])
-    RegisterStateDriver(playerPetFrame, 'combat', '[combat] show; hide')
-        gw_actionbar_state_add_callback(gw_updatePetFrameLocation)
+            self:GetFrameRef('GwPlayerPetFrame'):ClearAllPoints()
+            if newstate == 'show' then
+                self:GetFrameRef('GwPlayerPetFrame'):SetPoint('BOTTOMRIGHT',self:GetFrameRef('UIParent'),'BOTTOM',-53,212)
+            end
+        ]=])
+        RegisterStateDriver(playerPetFrame, 'combat', '[combat] show; hide')
+        gwActionBar_AddStateCallback(gw_updatePetFrameLocation)
         gw_updatePetFrameLocation()
         return
     end
     
     GwPlayerPetFrame:ClearAllPoints()
-    GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'],UIParent,gwGetSetting('pet_pos') ['relativePoint'],gwGetSetting('pet_pos')['xOfs'],gwGetSetting('pet_pos')['yOfs'])
-    
-    
-    
-    
+    GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'], UIParent, gwGetSetting('pet_pos') ['relativePoint'],gwGetSetting('pet_pos')['xOfs'], gwGetSetting('pet_pos')['yOfs'])
 end
 
 function gw_updatePetFrameLocation()
-    
     if InCombatLockdown() then
         return
-    end 
-    
-    local b = false
+    end
     _G['GwPlayerPetFrame']:ClearAllPoints()
-     if MultiBarBottomLeft:GetAlpha()>0.0 and MultiBarBottomLeft:IsShown()  then
-          b = true
-    end
-    if b then
-        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT',UIParent,'BOTTOM',-53,212)
+    if MultiBarBottomLeft.gw_FadeShowing then
+        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 212)
     else
-        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT',UIParent,'BOTTOM',-53,120)
+        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 120)
     end
-    
-    
 end
 
 

@@ -1,68 +1,55 @@
-
-local action_bar_animations = {}
 local callback = {}
-    action_bar_animations['MultiBarBottomRight'] = 0
-    action_bar_animations['MultiBarBottomLeft'] = 0
-	action_bar_animations['MultiBarLeft'] = 0
-	action_bar_animations['MultiBarRight'] = 0
 
-function gw_actionbar_state_add_callback(m)
-    local k = countTable(callback)+1
-    callback[k] =m
+function gwActionBar_AddStateCallback(m)
+    local k = countTable(callback) + 1
+    callback[k] = m
 end
-function gw_actionbar_state_changed()
-    for k,v in pairs(callback) do
+
+local function actionBarStateChanged()
+    for k, v in pairs(callback) do
         v()
     end
 end
 
-
-function actionBarFrameShow(f,name)
-    if f:GetAlpha() == 0 then
-        addToAnimation(name, action_bar_animations[name],1,GetTime(),0.1,function()
-        f.Hidden = true  
+local function actionBarFrameShow(f, name)
+    GwStopAnimation(name)
+    f.gw_FadeShowing = true
+    actionBarStateChanged()
+    addToAnimation(name, 0, 1, GetTime(), 0.1, function()
         f:SetAlpha(animations[name]['progress'])
-                gw_actionbar_state_changed()
-        end,nil,function() gw_actionbar_state_changed() end)         
-        action_bar_animations[name] = 1
-    end
-end
-function actionBarFrameHide(f,name)
-    if f:GetAlpha() == 1 then
-         f.Hidden = false
-        addToAnimation(name, action_bar_animations[name],0,GetTime(),0.1,function()
-            f:SetAlpha(animations[name]['progress'])
-                gw_actionbar_state_changed()
-        end,nil, function() gw_actionbar_state_changed() end)         
-        action_bar_animations[name] = 0
-    end
+    end, nil, function()
+        for i = 1, 12 do
+            f.gw_MultiButtons[i].cooldown:SetDrawBling(true)
+        end
+        actionBarStateChanged()
+    end)
 end
 
+local function actionBarFrameHide(f, name)
+    GwStopAnimation(name)
+    f.gw_FadeShowing = false
+    for i = 1, 12 do
+        f.gw_MultiButtons[i].cooldown:SetDrawBling(false)
+    end
+addToAnimation(name, 1, 0, GetTime(), 0.1, function()
+        f:SetAlpha(animations[name]['progress'])
+    end, nil, function()
+        actionBarStateChanged()
+    end)
+end
 
-local thro = 0
-MultiBarBottomLeft.lastFadeCheck = 0
-MultiBarBottomRight.lastFadeCheck = 0
-MultiBarRight.lastFadeCheck = 0
-MultiBarLeft.lastFadeCheck = 0
-function fadet_action_bar_check(self)
-
-    if self.lastFadeCheck>GetTime() then
+function gwActionBar_FadeCheck(self, elapsed)
+    self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
+    if self.gw_LastFadeCheck > 0 then
         return
     end
-    self.lastFadeCheck = GetTime() + 0.3
+    self.gw_LastFadeCheck = 0.1
     
-    if self:IsMouseOver(100, -100, -100, 100)  or UnitAffectingCombat('player') then
-       actionBarFrameShow(self,self:GetName())
-    else
-        if UnitAffectingCombat('player') == false then
-          
-             if gwGetSetting('FADE_BOTTOM_ACTIONBAR')then
-                actionBarFrameHide(self,self:GetName())   
-            end 
+    if self:IsMouseOver(100, -100, -100, 100) or UnitAffectingCombat('player') then
+        if not self.gw_FadeShowing then
+            actionBarFrameShow(self, self:GetName())
         end
+    elseif self.gw_FadeShowing and UnitAffectingCombat('player') == false then
+        actionBarFrameHide(self, self:GetName())
     end
-    
-    if self:GetAlpha()>0.0 then
-                b = true
-            end
 end
