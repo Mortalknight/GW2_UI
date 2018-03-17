@@ -274,6 +274,7 @@ GwLocalization['BAG_ORDER_NORMAL'] = 'Normale Sortierung'
 GwLocalization['BAG_ORDER_REVERSE'] = 'Umgekehrte Sortierung'
 GwLocalization['STG_RIGHT_BAR_COLS'] = 'Rechte Aktionleistenbreite'
 GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Anzahl an Spalten für die zwei extra Aktionsleisten an der rechten Seite.'
+GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
 end
 
 

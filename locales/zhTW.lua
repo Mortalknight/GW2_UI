@@ -274,6 +274,7 @@ GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
 GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
 GwLocalization['STG_RIGHT_BAR_COLS'] = 'Right Bar Width'
 GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Number of columns in the two extra right-hand action bars.'
+GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
 end
 
 if GetLocale() == "zhTW" then

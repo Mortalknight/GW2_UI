@@ -1,7 +1,7 @@
 ## Interface: 70300
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
-
+## OptionalDeps: MoveAnything
 
 ## Author: deadend06
 
@@ -10,8 +10,11 @@
 
 GW2_ui.lua
 
+core/utils.lua
 core/shared.xml
 core/settings.xml
+core/settings_default.lua
+core/settings_api.lua
 core/flags.lua
 core/fonts.lua
 core/settings.lua
