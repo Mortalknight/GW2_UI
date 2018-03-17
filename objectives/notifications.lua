@@ -236,7 +236,6 @@ function gwSetObjectiveNotification()
     end
     
     if data == nil then
-        gwDebug("remove notification?")
         gwRemoveNotification(currentNotificationKey)
         return
     end
