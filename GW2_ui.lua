@@ -309,8 +309,32 @@ function GwOnUpdate(self, elapsed)
     end
 end
 
-l:SetScript('OnUpdate', GwOnUpdate)
-        
+-- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
+local function adjustFixedAnchors(self, relativeAlert)
+    if self.anchorFrame:IsShown() then
+        local pt, relTo, relPt, xOf, yOf = self.anchorFrame:GetPoint()
+        if pt == 'BOTTOM' and relTo:GetName() == 'UIParent' and relPt == 'BOTTOM' then
+            gwDebug('moving fixed alert frame from', pt, relTo:GetName(), relPt, xOf, yOf)
+            self.anchorFrame:ClearAllPoints()
+            self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+        end
+		return self.anchorFrame
+	end
+	return relativeAlert
+end
+local function updateAnchors(self)
+    self:CleanAnchorPriorities()
+
+    local relativeFrame = GwAlertFrameOffsetter
+    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
+        if alertFrameSubSystem.AdjustAnchors == AlertFrameJustAnchorMixin.AdjustAnchors then
+            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
+        else
+            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
+        end
+    end
+end
+
 function gwOnEvent(self, event, name)
     if loaded then return end
     if event ~= 'PLAYER_LOGIN' then return end
@@ -441,6 +465,27 @@ function gwOnEvent(self, event, name)
                 gwActionBar_FadeCheck(MultiBarLeft, elapsed)
             end
         end
+
+        -- frames using the alert frame subsystem have their positioning managed by UIParent
+        -- the secure code for that lives mostly in Interface/FrameXML/UIParent.lua
+        -- we can override the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
+        -- doing it there avoids any taint issues
+        -- we also exclude a few frames from the auto-positioning stuff regardless
+        GwAlertFrameOffsetter:SetHeight(205)
+        UIPARENT_MANAGED_FRAME_POSITIONS['ExtraActionBarFrame'] = nil
+        UIPARENT_MANAGED_FRAME_POSITIONS['ZoneAbilityFrame'] = nil
+        if not gwIsFrameModified('ExtraActionBarFrame') then
+            gwDebug('moving ExtraActionBarFrame')
+            ExtraActionBarFrame:ClearAllPoints()
+            ExtraActionBarFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 130)
+            ExtraActionBarFrame:SetFrameStrata('MEDIUM')
+        end
+        if not gwIsFrameModified('ZoneAbilityFrame') then
+            gwDebug('moving ZoneAbilityFrame')
+            ZoneAbilityFrame:ClearAllPoints()
+            ZoneAbilityFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 130)
+        end
+        AlertFrame.UpdateAnchors = updateAnchors
     end
 
     -- fix position of some things dependent on action bars
@@ -466,6 +511,8 @@ function gwOnEvent(self, event, name)
     if (forcedMABags) then
         gwNotice(GwLocalization['DISABLED_MA_BAGS'])
     end
+
+    l:SetScript('OnUpdate', GwOnUpdate)
 end
 l:SetScript('OnEvent', gwOnEvent)
 l:RegisterEvent('PLAYER_LOGIN')
