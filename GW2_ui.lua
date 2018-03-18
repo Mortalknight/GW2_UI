@@ -354,7 +354,7 @@ function gwOnEvent(self, event, name)
                 local arg = select(i, ...)
                 msg = msg .. tostring(arg) .. ' '
             end
-            debug_tab:AddMessage(GetTime() .. ' ' .. msg)
+            debug_tab:AddMessage(date("%H:%M:%S") .. ' ' .. msg)
         end
     end
 
