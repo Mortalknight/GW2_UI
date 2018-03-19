@@ -83,39 +83,22 @@ tests.BonusRoll = function(msg, editBox)
     BonusRollFrame_StartBonusRoll(242969, 1, 10, 1273, 14)
     BonusRollFrame.PromptFrame.RollButton:Disable()
     C_Timer.After(5, function()
-        BonusRollFrame.state = 'rolling'
-        BonusRollFrame.animFrame = 0
-        BonusRollFrame.animTime = 0
-		PlaySound(SOUNDKIT.UI_BONUS_LOOT_ROLL_START)
-		if BonusRollFrame.rollSound then
-			StopSound(BonusRollFrame.rollSound)
-		end
-		local _, soundHandle = PlaySound(SOUNDKIT.UI_BONUS_LOOT_ROLL_LOOP)
-		BonusRollFrame.rollSound = soundHandle;
-		BonusRollFrame.RollingFrame.LootSpinner:Show();
-		BonusRollFrame.RollingFrame.LootSpinnerFinal:Hide();
-		BonusRollFrame.StartRollAnim:Play();
+        BonusRollFrame_OnEvent(BonusRollFrame, 'BONUS_ROLL_STARTED')
     end)
-    -- BONUS_ROLL_RESULT event mock; Interface/FrameXML/LootFrame.lua
     C_Timer.After(7, function()
-		BonusRollFrame.state = 'slowing'
-		BonusRollFrame.rewardType = 'money'
-		BonusRollFrame.rewardLink = nil
-		BonusRollFrame.rewardQuantity = 20000
-		BonusRollFrame.rewardSpecID = nil
-		BonusRollFrame.StartRollAnim:Finish()
+        BonusRollFrame_OnEvent(BonusRollFrame, 'BONUS_ROLL_RESULT', 'money', nil, 20000, nil)
     end)
 end
 
 tests.TalkingHead = function(msg, editBox)
-    gwDebug("expected: talking head window appears Thalyssra voice line, goes away when complete (~8s)")
+    gwDebug("expected: talking head window appears with Thalyssra voice line, goes away when complete (~8s)")
     if not TalkingHeadFrame then
         TalkingHead_LoadUI()
     end
     TalkingHeadFrame_CloseImmediately()
     TalkingHeadFrame.MainFrame.Model:SetScript('OnModelLoaded', gwMocks.TalkingHeadFrame_OnModelLoaded)
     gwMocks.TalkingHeadFrame_PlayCurrent()
-    C_Timer.After(7.7, TalkingHeadFrame_Close)
+    C_Timer.After(7, TalkingHeadFrame_Close)
     C_Timer.After(9, function()
         TalkingHeadFrame.MainFrame.Model:SetScript('OnModelLoaded', TalkingHeadFrame_OnModelLoaded)
     end)
@@ -132,7 +115,7 @@ tests.TalkingHeadAchievement = function(msg, editBox)
     TalkingHeadFrame_CloseImmediately()
     TalkingHeadFrame.MainFrame.Model:SetScript('OnModelLoaded', gwMocks.TalkingHeadFrame_OnModelLoaded)
     gwMocks.TalkingHeadFrame_PlayCurrent()
-    C_Timer.After(7.7, TalkingHeadFrame_Close)
+    C_Timer.After(7, TalkingHeadFrame_Close)
     C_Timer.After(9, function()
         TalkingHeadFrame.MainFrame.Model:SetScript('OnModelLoaded', TalkingHeadFrame_OnModelLoaded)
     end)
