@@ -314,7 +314,7 @@ local function adjustFixedAnchors(self, relativeAlert)
     if self.anchorFrame:IsShown() then
         local pt, relTo, relPt, xOf, yOf = self.anchorFrame:GetPoint()
         if pt == 'BOTTOM' and relTo:GetName() == 'UIParent' and relPt == 'BOTTOM' then
-            gwDebug('moving fixed alert frame from', pt, relTo:GetName(), relPt, xOf, yOf)
+            gwDebug('moving', self.anchorFrame:GetName(), 'from', pt, relTo:GetName(), relPt, xOf, yOf)
             self.anchorFrame:ClearAllPoints()
             self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
         end
@@ -356,6 +356,7 @@ function gwOnEvent(self, event, name)
             end
             debug_tab:AddMessage(date("%H:%M:%S") .. ' ' .. msg)
         end
+        gwAlertTestsSetup()
     end
 
     --Create Settings window
