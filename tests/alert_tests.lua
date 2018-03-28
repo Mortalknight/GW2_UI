@@ -73,14 +73,14 @@ tests.DungeonCompleteAchievement = function(msg, editBox)
     if not AchievementFrame then
         AchievementFrame_LoadUI()
     end
-    DungeonCompletionAlertSystem:AddAlert(gwMocks.BuildLFGRewardData(false))
+    DungeonCompletionAlertSystem:AddAlert(gwMocks.BuildLFGRewardData())
     AchievementAlertSystem:AddAlert(34)
     AchievementAlertSystem:AddAlert(35)
 end
 
 tests.BonusRoll = function(msg, editBox)
-    gwDebug("expected: bonus roll window appears with 10s timer using Seal of Fate currency, rolls at 5s then 'wins' some gold, then goes away")
-    BonusRollFrame_StartBonusRoll(242969, 1, 10, 1273, 14)
+    gwDebug("expected: bonus roll window appears with 10s timer using Order Resources currency, rolls at 5s then 'wins' some gold, then goes away (if you do not have any Order Resources, window will not appear)")
+    BonusRollFrame_StartBonusRoll(242969, 1, 10, 1220, 14)
     BonusRollFrame.PromptFrame.RollButton:Disable()
     C_Timer.After(5, function()
         BonusRollFrame_OnEvent(BonusRollFrame, 'BONUS_ROLL_STARTED')

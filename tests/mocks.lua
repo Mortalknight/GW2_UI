@@ -31,7 +31,7 @@ end
 gwMocks.BuildLFGRewardData = function()
     local rewardData = {}
 
-    local name, typeID, subtypeID, iconTextureFile, moneyBase, moneyVar, experienceBase, experienceVar, numStrangers, numRewards = gwMocks.GetLFGCompletionReward()
+    local name, typeID, subtypeID, iconTextureFile, moneyBase, moneyVar, experienceBase, experienceVar, numStrangers, numRewards = gwMocks.GetLFGCompletionReward(false)
 
     rewardData.name = name;
     rewardData.subtypeID = subtypeID;
