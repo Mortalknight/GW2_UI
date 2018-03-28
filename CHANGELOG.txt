@@ -1,3 +1,25 @@
+4.2.4
+
+This release focuses a lot on background changes, to help improve framerates and general game performance whilst using the addon.
+We apologize that this has taken a while to release, and we're certainly not done, but we hope that this is a good foundation to build upon.
+Thank you all for your continued support and faith in us!
+
+NEW
+   - GW2 UI is now available in French, thanks to Branchecoeur, deadse, nufra, Tipenok, trezi13me, & xRaz___ from Curseforge!
+
+FIXED
+   - Reduced the size of Undead characters in the Character Window.
+
+MISCELLANEOUS
+   - The Prestige level border now shows are all Prestige Levels higher than 4.
+   - The side actionbars can now be set to fade when out of combat.
+   - Target and focus target settings panels have been unified.
+   - Added the option to anchor tooltips to the cursor.
+   - The column width of the side actionbars can now be adjusted.
+   - Various default UI frames have had their positions adjusted.
+
+
+
 4.2.3
 
 NEW
@@ -22,73 +44,3 @@ FIXED
 
 MISCELLANEOUS
    - The Russian localization has been updated.
- 
-
-4.2.1 - We would like to welcome nezroy123 to the development team!
-
-NEW
-   - Added the minimap button consolidation area. The new button next to the minimap gathers all the extra minimap buttons added by other addons and compiles them into a simple menu.
-   - GW2 UI is now available in Latin American Spanish. (Thanks to astral210 from Curseforge.)
-   - GW2 UI is now available in European Spanish.
-   - GW2 UI is now available in Russian. (Thanks to espenwald, timur_gir & xDark0ne from Curseforge.)
-   - The health globe absorb fill now has texture.
-   - A latency indicator was added to the cast bar.
-   - The Brewmaster Monk class power bar has received an additional art pass.
-
-REWORKS
-   - Immersive Questing has received an overhaul.
-      - Progress quest dialog is now available.
-      - Closing quest windows is more consistent.
-      - Auto-quests should now be correctly ignored.
-      - There should now be fewer or no instances of stale quest data not being reset between dialogs.
-      - The final quest line should now require fewer clicks.
-      - Quest text parsing has been overhauled.
-      - Required quest items are now displayed in the Immersive Questing window.
-      - Player Model frames now use more dynamic animations.
-      - Model animations have been adjusted for better flow.
-      - Player Model size and positioning have been readjusted.
-      - Automatic (pop-up) quests should now behave more consistently.
-      - Added a new model to replace "talking to yourself".
-   - Bank and Bag windows have received an overhaul.
-      - The scroll wheel is now tracked when scrolling the currency window.
-      - Fixed instances of currencies showing incorrect maximum values.
-      - Resizing the windows now produces consistent padding.
-      - The window will no longer reposition itself when finished resizing.
-      - Columns will no longer be lost on custom sized windows when reloading the UI.
-      - Large icon size is slightly smaller.
-      - Bank and bag icon sizes can now be set independently.
-      - The free space indicator now works correctly.
-      - Bag container slots on the bank have been repositioned.
-      - The bank frame will now save its size and position.
-      - The bag icon has received an additional art pass.
-      - The option to reverse bank and bag display order has been added.
-      - The bag item backdrop artwork has received an additional art pass.
-
-FIXED
-   - Tracked achievements will now correctly update in the quest tracker when completed.
-   - Settings labels should now correctly wrap to a new line when using languages other than English.
-   - Fixed instances of the ESC key breaking.
-   - Fixed tainting issue when upgrading a legendary item.
-
-MISCELLANEOUS
-   - Addon performance improvements.
-
-
-4.2.0
-
-NEW
-
-   - All new battleground interface. Starting with Arathi Basin, we've completely overhauled the battleground UI.
-   - Brand new icons for all Death Knights specializations.
-   - Icons for the Arcane Mage specialization have been redesigned.
-   - The pet frame has been completely rebuilt from the ground up.
-   - The mana bar and health globe animations have been improved.
-   - Brand new world quest completion globe, showing overall progress for the current world quest.
-
-FIXED
-
-   - The character window mover frame should no longer obstruct frames when the window is closed.
-   - Fixed a UI taint issue with the Store button in the micromenu.
-   - The focus target frame should now update correctly. 
-   - Fixed an issue wherein spells with charges were not being properly tracked by the dodge bar.
-   - Fixed an issue wherein the dodge bar would not track the Mage talent Shimmer.
