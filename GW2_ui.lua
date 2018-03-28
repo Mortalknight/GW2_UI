@@ -312,13 +312,22 @@ end
 -- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
 local function adjustFixedAnchors(self, relativeAlert)
     if self.anchorFrame:IsShown() then
-        local pt, relTo, relPt, xOf, yOf = self.anchorFrame:GetPoint()
+        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
+        local name = self.anchorFrame:GetName()
         if pt == 'BOTTOM' and relTo:GetName() == 'UIParent' and relPt == 'BOTTOM' then
-            gwDebug('moving', self.anchorFrame:GetName(), 'from', pt, relTo:GetName(), relPt, xOf, yOf)
-            self.anchorFrame:ClearAllPoints()
-            self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+            if name == 'TalkingHeadFrame' then
+                self.anchorFrame:ClearAllPoints()
+                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+            elseif name == 'GroupLootContainer' then
+                self.anchorFrame:ClearAllPoints()
+                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
+                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
+                else
+                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+                end
+            end
         end
-		return self.anchorFrame
+        return self.anchorFrame
 	end
 	return relativeAlert
 end
@@ -475,6 +484,8 @@ function gwOnEvent(self, event, name)
         GwAlertFrameOffsetter:SetHeight(205)
         UIPARENT_MANAGED_FRAME_POSITIONS['ExtraActionBarFrame'] = nil
         UIPARENT_MANAGED_FRAME_POSITIONS['ZoneAbilityFrame'] = nil
+        UIPARENT_MANAGED_FRAME_POSITIONS['GroupLootContainer'] = nil
+        UIPARENT_MANAGED_FRAME_POSITIONS['TalkingHeadFrame'] = nil
         if not gwIsFrameModified('ExtraActionBarFrame') then
             gwDebug('moving ExtraActionBarFrame')
             ExtraActionBarFrame:ClearAllPoints()

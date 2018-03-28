@@ -187,3 +187,71 @@ gwMocks.GetCurrentLineAnimationInfo = function()
     -- thalyssra line from "Left for Dead" WQ)
     return 0, 60, 60, 7.6910004615784
 end
+
+gwMocks.GetLootRollItemInfo = function(rollID)
+    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(18832)
+    -- return itemTexture, itemName, 1, itemRarity, true, true, true, true, 0, 0, 1, true
+    return itemTexture, itemName, 1, itemRarity, false, false, false, false, 1, 1, 1, true
+end
+
+gwMocks.GetLootRollTimeLeft = function(rollID)
+    if rollID then
+        return rollID - GetTime()
+    else
+        return 0
+    end
+end
+
+-- Interface/FrameXML/LootFrame.lua
+gwMocks.GroupLootFrame_OnShow = function(self)
+	local texture, name, count, quality, bindOnPickUp, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = gwMocks.GetLootRollItemInfo(self.rollID);
+	if (name == nil) then
+		GroupLootContainer_RemoveFrame(GroupLootContainer, self);
+		return;
+	end
+
+	self.IconFrame.Icon:SetTexture(texture);
+	self.IconFrame.Border:SetAtlas(LOOT_BORDER_BY_QUALITY[quality] or LOOT_BORDER_BY_QUALITY[LE_ITEM_QUALITY_UNCOMMON]);
+	self.Name:SetText(name);
+	local color = ITEM_QUALITY_COLORS[quality];
+	self.Name:SetVertexColor(color.r, color.g, color.b);
+	self.Border:SetVertexColor(color.r, color.g, color.b);
+	if ( count > 1 ) then
+		self.IconFrame.Count:SetText(count);
+		self.IconFrame.Count:Show();
+	else
+		self.IconFrame.Count:Hide();
+	end
+
+	if ( canNeed ) then
+		GroupLootFrame_EnableLootButton(self.NeedButton);
+		self.NeedButton.reason = nil;
+	else
+		GroupLootFrame_DisableLootButton(self.NeedButton);
+		self.NeedButton.reason = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed];
+	end
+	if ( canGreed) then
+		GroupLootFrame_EnableLootButton(self.GreedButton);
+		self.GreedButton.reason = nil;
+	else
+		GroupLootFrame_DisableLootButton(self.GreedButton);
+		self.GreedButton.reason = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed];
+	end
+	if ( canDisenchant) then
+		GroupLootFrame_EnableLootButton(self.DisenchantButton);
+		self.DisenchantButton.reason = nil;
+	else
+		GroupLootFrame_DisableLootButton(self.DisenchantButton);
+		self.DisenchantButton.reason = format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired);
+	end
+	self.Timer:SetFrameLevel(self:GetFrameLevel() - 1);
+end
+
+gwMocks.GroupLootFrame_OnUpdate = function(self, elapsed)
+	local left = gwMocks.GetLootRollTimeLeft(self:GetParent().rollID);
+	local min, max = self:GetMinMaxValues();
+	if ( (left < min) or (left > max) ) then
+		left = min;
+	end
+	self:SetValue(left);
+end
