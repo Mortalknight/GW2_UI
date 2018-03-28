@@ -500,7 +500,7 @@ function gwOnEvent(self, event, name)
     ]]--
         
     -- create new microbuttons
-    create_micro_menu()
+    gwCreateMicroMenu()
         
     if gwGetSetting('GROUP_FRAMES') then
         gw_register_partyframes()

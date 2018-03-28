@@ -897,220 +897,156 @@ function create_micro_button(key)
     return mf
 end
 
-local CUSTOM_MICRO_BUTTONS={}
+local CUSTOM_MICRO_BUTTONS = {}
 local gw_latencyToolTipUpdate = 0
 local gw_frameRate = 0
 
-function create_micro_menu()
-    
-       
-
-    
-    
-
+function gwCreateMicroMenu()
     local mi = 1
-    for k,v in pairs(MICRO_BUTTONS) do 
-
+    for k,v in pairs(MICRO_BUTTONS) do
         CUSTOM_MICRO_BUTTONS[mi] = v
-        if v=='CharacterMicroButton' then
-            mi = mi+1
+        if v == 'CharacterMicroButton' then
+            mi = mi + 1
             CUSTOM_MICRO_BUTTONS[mi] = 'BagMicroButton'
         end
-        mi = mi +1
+        mi = mi + 1
     end
-
     
-    for k,v in pairs(CUSTOM_MICRO_BUTTONS) do   
-        if v~='SpellbookMicroButton' then
+    for k,v in pairs(CUSTOM_MICRO_BUTTONS) do
+        if v ~= 'SpellbookMicroButton' then
             create_micro_button(v)
         else
-           if not gwGetSetting('USE_TALENT_WINDOW_DEV') then
-                 create_micro_button(v)
+            if not gwGetSetting('USE_TALENT_WINDOW_DEV') then
+                create_micro_button(v)
             end
         end
     end
     
     if gwGetSetting('USE_CHARACTER_WINDOW') then
-        
-        GwMicroButtonCharacterMicroButton:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
-        GwMicroButtonCharacterMicroButton:SetAttribute('_OnClick', [=[ 
-            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',1)
-        
-            ]=]);   
-        
+        GwMicroButtonCharacterMicroButton:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
+        GwMicroButtonCharacterMicroButton:SetAttribute('_OnClick', [=[
+            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen', 1)
+        ]=])
     else
-        
-        
-        GwMicroButtonCharacterMicroButton:SetScript('OnClick',function()  ToggleCharacter("PaperDollFrame"); gw_UpdateMicroButtons() end);
+        GwMicroButtonCharacterMicroButton:SetScript('OnClick', function() ToggleCharacter("PaperDollFrame") end)
     end
-    GwMicroButtonCharacterMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     
-    GwMicroButtonBagMicroButton:SetScript('OnClick',function()  ToggleAllBags(); gw_UpdateMicroButtons() end);
-    GwMicroButtonBagMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+    GwMicroButtonBagMicroButton:SetScript('OnClick', function() ToggleAllBags() end)
     
-    if  gwGetSetting('USE_TALENT_WINDOW_DEV') then
-         
-        GwMicroButtonTalentMicroButton:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
-        GwMicroButtonTalentMicroButton:SetAttribute('_OnClick', [=[ 
-            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',2)
-        
-            ]=]);   
+    if gwGetSetting('USE_TALENT_WINDOW_DEV') then
+        GwMicroButtonTalentMicroButton:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
+        GwMicroButtonTalentMicroButton:SetAttribute('_OnClick', [=[
+            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen', 2)
+        ]=])
     else
-        
-        GwMicroButtonSpellbookMicroButton:SetScript('OnClick',function()  ToggleSpellBook(BOOKTYPE_SPELL); gw_UpdateMicroButtons() end);
+        GwMicroButtonSpellbookMicroButton:SetScript('OnClick', function() ToggleSpellBook(BOOKTYPE_SPELL) end)
         GwMicroButtonSpellbookMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-        GwMicroButtonTalentMicroButton:SetScript('OnClick',function()  ToggleTalentFrame(); gw_UpdateMicroButtons() end);        
-    end 
-    GwMicroButtonTalentMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+        GwMicroButtonTalentMicroButton:SetScript('OnClick', function() ToggleTalentFrame() end)
+    end
     
+    GwMicroButtonAchievementMicroButton:SetScript('OnClick', function() ToggleAchievementFrame() end)
+    GwMicroButtonQuestLogMicroButton:SetScript('OnClick', function() ToggleQuestLog() end)
+    GwMicroButtonGuildMicroButton:SetScript('OnClick', function() ToggleGuildFrame() end)
+    GwMicroButtonLFDMicroButton:SetScript('OnClick', function() PVEFrame_ToggleFrame() end)
+    GwMicroButtonCollectionsMicroButton:SetScript('OnClick', function() ToggleCollectionsJournal() end)
+    GwMicroButtonEJMicroButton:SetScript('OnClick', function() ToggleEncounterJournal() end)
     
-    
-    
-    
-    GwMicroButtonAchievementMicroButton:SetScript('OnClick',function()  ToggleAchievementFrame(); gw_UpdateMicroButtons() end);
-    GwMicroButtonAchievementMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-    GwMicroButtonQuestLogMicroButton:SetScript('OnClick',function()  ToggleQuestLog(); gw_UpdateMicroButtons() end);
-    GwMicroButtonQuestLogMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-  
-    GwMicroButtonGuildMicroButton:SetScript('OnClick',function()  ToggleGuildFrame(); gw_UpdateMicroButtons() end);
-    GwMicroButtonGuildMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-    
-    GwMicroButtonLFDMicroButton:SetScript('OnClick',function() PVEFrame_ToggleFrame(); gw_UpdateMicroButtons() end);
-    GwMicroButtonLFDMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-    
-    GwMicroButtonCollectionsMicroButton:SetScript('OnClick',function()                  ToggleCollectionsJournal();
-    gw_UpdateMicroButtons() end);
-    GwMicroButtonCollectionsMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-    
-    GwMicroButtonEJMicroButton:SetScript('OnClick',function() ToggleEncounterJournal()  gw_UpdateMicroButtons() end);
-    GwMicroButtonEJMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-    
-     GwMicroButtonMainMenuMicroButton:SetScript('OnClick',function() 
-            
+    GwMicroButtonMainMenuMicroButton:SetScript('OnClick', function()
         if ( not GameMenuFrame:IsShown() ) then
-                
-                if ( VideoOptionsFrame:IsShown() ) then
-                    VideoOptionsFrameCancel:Click();
-                elseif ( AudioOptionsFrame:IsShown() ) then
-                    AudioOptionsFrameCancel:Click();
-                elseif ( InterfaceOptionsFrame:IsShown() ) then
-                    InterfaceOptionsFrameCancel:Click();
-                end
-                
-                CloseMenus();
-                CloseAllWindows()
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPEN );
-            
-                ShowUIPanel(GameMenuFrame);
-		  else
-               
-                PlaySound(SOUNDKIT.IG_MAINMENU_QUIT  );
-                HideUIPanel(GameMenuFrame);
-                MainMenuMicroButton_SetNormal();
+            if ( VideoOptionsFrame:IsShown() ) then
+                VideoOptionsFrameCancel:Click()
+            elseif ( AudioOptionsFrame:IsShown() ) then
+                AudioOptionsFrameCancel:Click()
+            elseif ( InterfaceOptionsFrame:IsShown() ) then
+                InterfaceOptionsFrameCancel:Click()
             end
-		
-        gw_UpdateMicroButtons() end);
-    GwMicroButtonMainMenuMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+            
+            CloseMenus()
+            CloseAllWindows()
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+            ShowUIPanel(GameMenuFrame)
+        else
+            PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
+            HideUIPanel(GameMenuFrame)
+            MainMenuMicroButton_SetNormal()
+        end
+    end)
     
-    -- GwMicroButtonHelpMicroButton:SetScript('OnMouseDown',function() ToggleHelpFrame()  gw_UpdateMicroButtons() end);
-     GwMicroButtonStoreMicroButton:SetScript('OnClick',function() ToggleStoreUI()  gw_UpdateMicroButtons() end);
-    GwMicroButtonStoreMicroButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-        GwMicroButtonStoreMicroButton:SetScript('OnEnter',nil)
-        GwMicroButtonStoreMicroButton:SetScript('OnLeave',nil)
-  
+    GwMicroButtonStoreMicroButton:SetScript('OnClick', ToggleStoreUI)
+    GwMicroButtonStoreMicroButton:SetScript('OnEnter', nil)
+    GwMicroButtonStoreMicroButton:SetScript('OnLeave', nil)
     
-    
-    
-    GwMicroButtonTalentMicroButton:SetScript('OnEvent',gw_update_talentMicrobar)
+    GwMicroButtonTalentMicroButton:SetScript('OnEvent', gw_update_talentMicrobar)
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_LEVEL_UP");
     GwMicroButtonTalentMicroButton:RegisterEvent("UPDATE_BINDINGS");
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE");
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED");
     
-    
---    gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton,'','')
-    
-    gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton,CHARACTER_BUTTON,'TOGGLECHARACTER0"')
-    gw_microButtonHookToolTip(GwMicroButtonBagMicroButton,GwLocalization['GW_BAG_MICROBUTTON_STRING'],'OPENALLBAGS')
-    gw_microButtonHookToolTip(GwMicroButtonSpellbookMicroButton,SPELLBOOK_ABILITIES_BUTTON,'TOGGLESPELLBOOK')
-    gw_microButtonHookToolTip(GwMicroButtonTalentMicroButton,TALENTS_BUTTON,'TOGGLETALENTS')
-    gw_microButtonHookToolTip(GwMicroButtonAchievementMicroButton,ACHIEVEMENT_BUTTON,'TOGGLEACHIEVEMENT')
-    gw_microButtonHookToolTip(GwMicroButtonQuestLogMicroButton,QUESTLOG_BUTTON,'TOGGLEQUESTLOG')
-    gw_microButtonHookToolTip(GwMicroButtonGuildMicroButton,GUILD,'TOGGLEGUILDTAB')
-    gw_microButtonHookToolTip(GwMicroButtonLFDMicroButton,DUNGEONS_BUTTON,'TOGGLEGROUPFINDER')
-    gw_microButtonHookToolTip(GwMicroButtonCollectionsMicroButton,COLLECTIONS,'TOGGLECOLLECTIONS')
-
-    gw_microButtonHookToolTip(GwMicroButtonEJMicroButton,ADVENTURE_JOURNAL,'TOGGLEENCOUNTERJOURNAL')
-  --  gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton,HELP_BUTTON,'')
-
+    gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton, CHARACTER_BUTTON, 'TOGGLECHARACTER0"')
+    gw_microButtonHookToolTip(GwMicroButtonBagMicroButton, GwLocalization['GW_BAG_MICROBUTTON_STRING'], 'OPENALLBAGS')
+    gw_microButtonHookToolTip(GwMicroButtonSpellbookMicroButton, SPELLBOOK_ABILITIES_BUTTON, 'TOGGLESPELLBOOK')
+    gw_microButtonHookToolTip(GwMicroButtonTalentMicroButton, TALENTS_BUTTON, 'TOGGLETALENTS')
+    gw_microButtonHookToolTip(GwMicroButtonAchievementMicroButton, ACHIEVEMENT_BUTTON, 'TOGGLEACHIEVEMENT')
+    gw_microButtonHookToolTip(GwMicroButtonQuestLogMicroButton, QUESTLOG_BUTTON, 'TOGGLEQUESTLOG')
+    gw_microButtonHookToolTip(GwMicroButtonGuildMicroButton, GUILD, 'TOGGLEGUILDTAB')
+    gw_microButtonHookToolTip(GwMicroButtonLFDMicroButton, DUNGEONS_BUTTON, 'TOGGLEGROUPFINDER')
+    gw_microButtonHookToolTip(GwMicroButtonCollectionsMicroButton, COLLECTIONS, 'TOGGLECOLLECTIONS')
+    gw_microButtonHookToolTip(GwMicroButtonEJMicroButton, ADVENTURE_JOURNAL, 'TOGGLEENCOUNTERJOURNAL')
     
     GwMicroButtonGuildMicroButton.interval = 0
-    GwMicroButtonGuildMicroButton:SetScript('OnUpdate', function()
-            
-        if GwMicroButtonGuildMicroButton.interval>GetTime() then return end
-        GwMicroButtonGuildMicroButton.interval = GetTime() + 15
+    GwMicroButtonGuildMicroButton:SetScript('OnUpdate', function(self, elapsed)
+        if self.interval > 0 then
+            self.interval = self.interval - elapsed
+            return
+        end
+        self.interval = 15.0
         GuildRoster()
-            
     end)
     GwMicroButtonGuildMicroButton:SetScript('OnEvent', updateGuildButton)
     GwMicroButtonGuildMicroButton:RegisterEvent('GUILD_ROSTER_UPDATE')
     
-    
-    GwMicroButtonMainMenuMicroButton:SetScript('OnEnter', function() 
-        
-        GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate',gw_latencyInfoToolTip)    
-        GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_CURSOR",0,ANCHOR_BOTTOMLEFT); 
-  
+    GwMicroButtonMainMenuMicroButton:SetScript('OnEnter', function()
+        GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate', gw_latencyInfoToolTip)
+        GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_CURSOR", 0, ANCHOR_BOTTOMLEFT)
     end)
     
-     GwMicroButtonMainMenuMicroButton:SetScript('OnLeave', function() 
-        GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate',nil)
+    GwMicroButtonMainMenuMicroButton:SetScript('OnLeave', function()
+        GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate', nil)
         GameTooltip:Hide()
     end)
-
-    
     
     gw_update_talentMicrobar()
     updateGuildButton()
     
-    
     gw_create_orderHallBar()
-    
     
     --Create update notifier
     local updateNotificationIcon = create_micro_button('updateicon')
     GwMicroButtonupdateicon.updateTypeInt = 0
     GwMicroButtonupdateicon:Hide()
       
-    updateNotificationIcon:SetScript('OnEnter', function() 
-        GameTooltip:SetOwner(updateNotificationIcon, "ANCHOR_BOTTOMLEFT",16 + (GameTooltip:GetWidth()/2),-10); 
-        GameTooltip:ClearLines();
-        GameTooltip:AddLine('GW2_UI',1,1,1)
-        GameTooltip:AddLine(updateNotificationIcon.updateType,1,1,1)
+    updateNotificationIcon:SetScript('OnEnter', function()
+        GameTooltip:SetOwner(updateNotificationIcon, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth()/2), -10)
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine('GW2_UI', 1, 1, 1)
+        GameTooltip:AddLine(updateNotificationIcon.updateType, 1, 1, 1)
         GameTooltip:Show()
-        
     end)
-    updateNotificationIcon:SetScript('OnLeave', function() 
+    updateNotificationIcon:SetScript('OnLeave', function()
          GameTooltip:Hide()
     end)
     RegisterAddonMessagePrefix("GW2_UI")
     
     updateNotificationIcon:RegisterEvent('CHAT_MSG_ADDON')
-    updateNotificationIcon:RegisterEvent("PARTY_MEMBERS_CHANGED");
-    updateNotificationIcon:RegisterEvent("RAID_ROSTER_UPDATE");
-    updateNotificationIcon:RegisterEvent("GROUP_ROSTER_UPDATE");
-
-    updateNotificationIcon:SetScript('OnEvent',function(self,event,prefix,message,dist,sender)
-            
-        if event=='CHAT_MSG_ADDON' then
-            gw_onReciveVersionCheck(self,event,prefix,message,dist,sender)
+    updateNotificationIcon:RegisterEvent('GROUP_ROSTER_UPDATE')
+    updateNotificationIcon:SetScript('OnEvent', function(self, event, prefix, message, dist, sender)
+        if event == 'CHAT_MSG_ADDON' then
+            gw_onReciveVersionCheck(self, event, prefix, message, dist, sender)
         else
             gw_sendVersionCheck()
         end
-            
-    end) 
-    
+    end)
 end
 
 gw_sendUpdate_message_cooldown = 0
@@ -1269,75 +1205,8 @@ function gw_update_talentMicrobar()
         _G['GwMicroButtonTalentMicroButtonTexture']:Hide()
         _G['GwMicroButtonTalentMicroButtonString']:Hide()
     end
-    
-    hooksecurefunc('UpdateMicroButtons',gw_UpdateMicroButtons)
         
 end
-
-function gw_UpdateMicroButtons()
-    
-   if ( CharacterFrame and CharacterFrame:IsShown() ) or (GwCharacterWindow and GwCharacterWindow:IsShown()) then
-		_G['GwMicroButtonCharacterMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonCharacterMicroButton']:SetButtonState("NORMAL");
-    end
-    
-    if ( GwBagFrame and GwBagFrame:IsShown() ) then
-		_G['GwMicroButtonBagMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonBagMicroButton']:SetButtonState("NORMAL");
-    end
-    if _G['GwMicroButtonSpellbookMicroButton']~=nil then
-        if ( SpellBookFrame and SpellBookFrame:IsShown() ) then
-            _G['GwMicroButtonSpellbookMicroButton']:SetButtonState("PUSHED", true);
-        else
-            _G['GwMicroButtonSpellbookMicroButton']:SetButtonState("NORMAL");
-        end
-    end
-    if ( PlayerTalentFrame and PlayerTalentFrame:IsShown() ) then
-		_G['GwMicroButtonTalentMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonTalentMicroButton']:SetButtonState("NORMAL");
-    end
-    
-    if ( AchievementFrame and AchievementFrame:IsShown() ) then
-		_G['GwMicroButtonAchievementMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonAchievementMicroButton']:SetButtonState("NORMAL");
-    end
-    
-    if ( WorldMapFrame and WorldMapFrame:IsShown() ) then
-		_G['GwMicroButtonQuestLogMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonQuestLogMicroButton']:SetButtonState("NORMAL");
-    end
-    
-    if ( GuildFrame and GuildFrame:IsShown() ) then
-		_G['GwMicroButtonGuildMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonGuildMicroButton']:SetButtonState("NORMAL");
-    end
-    
-      if ( PVEFrame and PVEFrame:IsShown() ) then
-		_G['GwMicroButtonLFDMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonLFDMicroButton']:SetButtonState("NORMAL");
-    end
-    
-    if ( EncounterJournal and EncounterJournal:IsShown() ) then
-		_G['GwMicroButtonEJMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonEJMicroButton']:SetButtonState("NORMAL");
-    end
-    if ( CollectionsJournal and CollectionsJournal:IsShown() ) then
-		_G['GwMicroButtonCollectionsMicroButton']:SetButtonState("PUSHED", true);
-	else
-		_G['GwMicroButtonCollectionsMicroButton']:SetButtonState("NORMAL");
-    end
-    
-end
-
-
 
 function ToggleGameMenuFrame()
    
