@@ -265,16 +265,16 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "Debes quitarte este objeto para mejorarlo
 GwLocalization["UPDATE_STRING_1"] = "Nueva actualización es disponible para descargar."
 GwLocalization["UPDATE_STRING_2"] = "Nueva actualización disponible que contiene nuevas características."
 GwLocalization["UPDATE_STRING_3"] = "Una actualización |cFFFF0000importante| está disponible.\n\nEs muy recomendable que actualice."
-GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Available at level '
-GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Sort to First Bag'
-GwLocalization['BAG_SORT_ORDER_LAST'] = 'Sort to Last Bag'
-GwLocalization['BAG_NEW_ORDER_FIRST'] = 'New Items to First Bag'
-GwLocalization['BAG_NEW_ORDER_LAST'] = 'New Items to Last Bag'
-GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
-GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
-GwLocalization['STG_RIGHT_BAR_COLS'] = 'Right Bar Width'
-GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Number of columns in the two extra right-hand action bars.'
-GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
+GwLocalization['REQUIRED_LEVEL_SPELL'] = 'Disponible en el nivel '
+GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Ordenar a la primera bolsa'
+GwLocalization['BAG_SORT_ORDER_LAST'] = 'Ordenar a la última bolsa'
+GwLocalization['BAG_NEW_ORDER_FIRST'] = 'Poner nuevos objetos en la primera bolsa'
+GwLocalization['BAG_NEW_ORDER_LAST'] = 'Poner nuevos objetos en la última bolsa'
+GwLocalization['BAG_ORDER_NORMAL'] = 'Orden normal de la bolsa'
+GwLocalization['BAG_ORDER_REVERSE'] = 'Orden inverso de la bolsa'
+GwLocalization['STG_RIGHT_BAR_COLS'] = 'Ancho de la barra derecha'
+GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Número de columnas en las dos barras de acción adicionales de la derecha'
+GwLocalization['DISABLED_MA_BAGS'] = "Desactivado el manejo de las bolsas de MoveAnything."
 end
 
 
