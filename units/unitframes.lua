@@ -22,6 +22,9 @@ local function updateHealthbarColor(self)
         local _, _, classIndex = UnitClass(self.unit)
         self.healthbar:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
         self.healthbarSpark:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
+        self.healthbarFlash:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
+        self.healthbarFlashSpark:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
+        
         self.nameString:SetTextColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
         
         local r,g,b,a = self.nameString:GetTextColor()
@@ -41,6 +44,8 @@ local function updateHealthbarColor(self)
 
         self.healthbar:SetVertexColor(friendlyColor.r,friendlyColor.g,friendlyColor.b,1)
         self.healthbarSpark:SetVertexColor(friendlyColor.r,friendlyColor.g,friendlyColor.b,1)
+        self.healthbarFlash:SetVertexColor(friendlyColor.r,friendlyColor.g,friendlyColor.b,1)
+        self.healthbarFlashSpark:SetVertexColor(friendlyColor.r,friendlyColor.g,friendlyColor.b,1)
         self.nameString:SetTextColor(friendlyColor.r,friendlyColor.g,friendlyColor.b,1)
     end
     

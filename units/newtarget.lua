@@ -738,6 +738,8 @@ function updateCastingbar(thisName,unitToWatch)
     if isFriend then
         if _G[thisName.."HealthBarSpark"] then
             _G[thisName.."HealthBarSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
+            _G[thisName.."HealthBarFlash"]:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
+            _G[thisName.."HealthBarFlashSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
             _G[thisName.."HealthBar"]:SetStatusBarColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
             _G[thisName].bar:SetVertexColor(GW_COLOR_FRIENDLY[1].r,GW_COLOR_FRIENDLY[1].g,GW_COLOR_FRIENDLY[1].b)
         end
@@ -746,6 +748,8 @@ function updateCastingbar(thisName,unitToWatch)
        
          if _G[thisName.."HealthBarSpark"] then
             _G[thisName.."HealthBarSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
+            _G[thisName.."HealthBarFlash"]:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
+            _G[thisName.."HealthBarFlashSpark"]:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
             _G[thisName.."HealthBar"]:SetStatusBarColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
             _G[thisName].bar:SetVertexColor(GW_COLOR_FRIENDLY[2].r,GW_COLOR_FRIENDLY[2].g,GW_COLOR_FRIENDLY[2].b)
         end
