@@ -1,3 +1,8 @@
+4.2.5
+
+FIXED
+   - Fixed a series of bugs caused by version 4.2.4.
+
 4.2.4
 
 This release focuses a lot on background changes, to help improve framerates and general game performance whilst using the addon.
