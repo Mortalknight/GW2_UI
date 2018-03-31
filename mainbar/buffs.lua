@@ -394,14 +394,14 @@ function update_player_buff_timers(thisName)
     end
 end
 function gw_updatePlayerBuffFrameLocation()
-    if InCombatLockdown() then
+    if InCombatLockdown() or not GwPlayerAuraFrame then
         return
     end
-    _G['GwPlayerAuraFrame']:ClearAllPoints()
+    GwPlayerAuraFrame:ClearAllPoints()
     if MultiBarBottomRight.gw_FadeShowing then
-        _G['GwPlayerAuraFrame']:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOM', 53, 212)
+        GwPlayerAuraFrame:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOM', 53, 212)
     else
-        _G['GwPlayerAuraFrame']:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOM', 53, 120)
+        GwPlayerAuraFrame:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOM', 53, 120)
     end
 end
 

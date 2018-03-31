@@ -187,14 +187,14 @@ function gw_create_pet_frame()
 end
 
 function gw_updatePetFrameLocation()
-    if InCombatLockdown() then
+    if InCombatLockdown() or not GwPlayerPetFrame then
         return
     end
-    _G['GwPlayerPetFrame']:ClearAllPoints()
+    GwPlayerPetFrame:ClearAllPoints()
     if MultiBarBottomLeft.gw_FadeShowing then
-        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 212)
+        GwPlayerPetFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 212)
     else
-        _G['GwPlayerPetFrame']:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 120)
+        GwPlayerPetFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 120)
     end
 end
 

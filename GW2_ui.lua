@@ -498,11 +498,11 @@ function gwOnEvent(self, event, name)
             ZoneAbilityFrame:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 130)
         end
         AlertFrame.UpdateAnchors = updateAnchors
-    end
 
-    -- fix position of some things dependent on action bars
-    gw_updatePetFrameLocation()
-    gw_updatePlayerBuffFrameLocation()
+        -- fix position of some things dependent on action bars
+        gw_updatePetFrameLocation()
+        gw_updatePlayerBuffFrameLocation()
+    end
     
     --[[
     if gwGetSetting('CHATBUBBLES_ENABLED') then
