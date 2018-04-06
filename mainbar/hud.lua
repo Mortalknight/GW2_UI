@@ -424,11 +424,14 @@ function update_experiencebar_data(self,event)
         restingIconString = ''
     end
     if rested==nil then
-        
         rested = 0
     end
-    rested = rested / valMax
-    
+
+	rested = (rested / valMax) + valPrec
+	if rested > 1 then 
+		rested = 1
+	end
+	
     if level<Nextlevel then
         showBar1 = true
     end
