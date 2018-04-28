@@ -1,8 +1,9 @@
-local questState = 'NONE'   
+local questState = 'NONE'
 local questStateSet = false
 local QUESTSTRING = {}
 local QUESTREQ = {["stuff"] = {}, ["currency"] = {}, ["money"] = 0, ["text"] = {}}
 local QUESTSTRINGINT = 0
+local QUEST_NPC_TYPE = 0
 QUESTVIEW_TEXT_ANIMATION = 0
 QUEST_VIEW_ANIMATION_THROT = 0
 
@@ -17,7 +18,6 @@ GwQuestviewFrameContainerAcceptButton
 
 ]]--
 
-local splitIter = nil
 local function splitIter(inputstr, pat)
     local st, g = 1, string.gmatch(inputstr, "()("..pat..")")
     local function getter(segs, seps, sep, cap1, ...)
@@ -27,7 +27,7 @@ local function splitIter(inputstr, pat)
     return function() if st then return getter(st, g()) end end
 end
 local function splitQuest(inputstr)
-    local sep = "[\.|!|?|>]%s+"
+    local sep = '[\\.|!|?|>]%s+'
     inputstr = inputstr:gsub ('\n',' ')
     inputstr = inputstr:gsub (' %s+',' ')
     inputstr = inputstr:gsub ('%.%.%.', '…')
@@ -271,12 +271,14 @@ end
 
 local emotes = {
     ["Idle"] = 0,
+    ["Dead"] = 6,
     ["Talk"] = 60,
     ["TalkExclamation"] = 64,
     ["TalkQuestion"] = 65,
     ["Bow"] = 66,
     ["Point"] = 84,
     ["Salute"] = 113,
+    ["Drowned"] = 132,
     ["Yes"] = 185,
     ["No"] = 186
 }
@@ -287,8 +289,13 @@ local anim_playing = false
 function setQuestGiverAnimation(count)
     if QUESTSTRING[QUESTSTRINGINT] == nil then
         return
-        end
+    end
 
+    if QUEST_NPC_TYPE ~= 3 then
+        -- showing board/non-NPC/dead model, don't need anims
+        return
+    end
+    
     if QUESTSTRINGINT == 1 then
         GwQuestviewFrameContainerGiverModel:SetScript("OnAnimFinished", nil)
         anim_next = 0
@@ -334,25 +341,32 @@ function setQuestGiverAnimation(count)
 end
 
 function showQuestFrame()
-    GwQuestviewFrame:Show()
     GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
 
     setPMUnit(GwQuestviewFrameContainerPlayerModel, "player", 0)
     
     if not GetUnitName("npc") or GetUnitName("npc") == GetUnitName("player") then
         local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2"
+        QUEST_NPC_TYPE = 1
         GwQuestviewFrameContainerGiverModel:ClearModel()
         GwQuestviewFrameContainerGiverModel:SetUnit("none")
         GwQuestviewFrameContainerGiverModel:SetModel(board)
         GwQuestviewFrameContainerGiverModel:SetFacing(-0.5)
         GwQuestviewFrameContainerGiverModel:SetPosition(-15,1.9,-0.8)
     else
-        setPMUnit(GwQuestviewFrameContainerGiverModel, "npc", 1)
+        if UnitIsDead("npc") then
+            QUEST_NPC_TYPE = 2
+            setPMUnit(GwQuestviewFrameContainerGiverModel, "npc", 1, true)
+        else
+            QUEST_NPC_TYPE = 3
+            setPMUnit(GwQuestviewFrameContainerGiverModel, "npc", 1)
+        end
     end
+    GwQuestviewFrame:Show()
     PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX')
 end
 
-function setPMUnit(PM, unit, side, crace, cgender)
+function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7
     if side > 0 then
         uY = -uY
@@ -415,6 +429,10 @@ function setPMUnit(PM, unit, side, crace, cgender)
         end
         dirty = 1
     end
+    if is_dead then
+        uZ = uZ + 0.3
+        dirty = 1
+    end
     if dirty then
         PM:SetPosition(uX, uY, uZ)
         PM:SetUnit(unit)
@@ -422,7 +440,10 @@ function setPMUnit(PM, unit, side, crace, cgender)
             PM:SetCustomRace(crace, cgender)
         end
     end
-        
+    if is_dead then
+        PM:SetAnimation(emotes.Dead)
+    end
+
 end
 
 function questTextCompleted()
