@@ -44,6 +44,14 @@ function create_classpowers()
     
     select_altpower_type()
     GW_UPDATE_CLASSPOWER(GwPlayerClassPower, 'PLAYER_ENTERING_WORLD', 'player')
+
+    -- show/hide stuff with override bar
+    OverrideActionBar:HookScript('OnShow', function()
+        classPowerFrame:SetAlpha(0)
+    end)
+    OverrideActionBar:HookScript('OnHide', function()
+        classPowerFrame:SetAlpha(1)
+    end)
 end
 
 

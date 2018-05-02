@@ -184,6 +184,11 @@ function gw_create_pet_frame()
     
     GwPlayerPetFrame:ClearAllPoints()
     GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'], UIParent, gwGetSetting('pet_pos') ['relativePoint'],gwGetSetting('pet_pos')['xOfs'], gwGetSetting('pet_pos')['yOfs'])
+
+    -- show/hide stuff with override bar
+    OverrideActionBar:HookScript('OnHide', function()
+        playerPetFrame:SetAlpha(1)
+    end)
 end
 
 function gw_updatePetFrameLocation()
@@ -225,6 +230,14 @@ function gw_create_power_bar()
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD");
     
     gw_update_power_data(GwPlayerPowerBar)
+
+    -- show/hide stuff with override bar
+    OverrideActionBar:HookScript('OnShow', function()
+        playerPowerBar:SetAlpha(0)
+    end)
+    OverrideActionBar:HookScript('OnHide', function()
+        playerPowerBar:SetAlpha(1)
+    end)
 end
 
 
@@ -377,13 +390,23 @@ function gw_create_player_hud()
     
     gw_dodgebar_onevent(GwDodgeBar, 'PLAYER_ENTERING_WORLD', 'player')
     
-    
+    -- show/hide stuff with override bar
+    OverrideActionBar:HookScript('OnShow', function()
+        GwPlayerHealthGlobe:Hide()
+    end)
+    OverrideActionBar:HookScript('OnHide', function()
+        GwPlayerHealthGlobe:Show()
+    end)
+
     
 end
 
 function gw_update_pet_data(event, unit)
-    
-    if UnitExists('pet')==false then
+    if not UnitExists('pet') then
+        return
+    end
+    if UnitExists('vehicle') and UnitIsUnit('pet', 'vehicle') then
+        GwPlayerPetFrame:SetAlpha(0)
         return
     end
     

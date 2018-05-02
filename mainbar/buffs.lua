@@ -350,7 +350,14 @@ BuffFrame:SetScript('OnShow',function(self) self:Hide() end)
     
     loadAuras(GwPlayerAuraFrame)
     updateBuffLayout(GwPlayerAuraFrame,event)
-   
+
+    -- show/hide stuff with override bar
+    OverrideActionBar:HookScript('OnShow', function()
+        player_buff_frame:Hide()
+    end)
+    OverrideActionBar:HookScript('OnHide', function()
+        player_buff_frame:Show()
+    end)
 end
 
 
