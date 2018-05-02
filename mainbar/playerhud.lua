@@ -392,10 +392,12 @@ function gw_create_player_hud()
     
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript('OnShow', function()
-        GwPlayerHealthGlobe:Hide()
+        GwPlayerHealthGlobe:SetAlpha(0)
+        GwHudArtFrame:SetAlpha(0)
     end)
     OverrideActionBar:HookScript('OnHide', function()
-        GwPlayerHealthGlobe:Show()
+        GwPlayerHealthGlobe:SetAlpha(1)
+        GwHudArtFrame:SetAlpha(1)
     end)
 
     

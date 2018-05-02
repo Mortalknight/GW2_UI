@@ -353,10 +353,10 @@ BuffFrame:SetScript('OnShow',function(self) self:Hide() end)
 
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript('OnShow', function()
-        player_buff_frame:Hide()
+        player_buff_frame:SetAlpha(0)
     end)
     OverrideActionBar:HookScript('OnHide', function()
-        player_buff_frame:Show()
+        player_buff_frame:SetAlpha(1)
     end)
 end
 
