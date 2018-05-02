@@ -342,10 +342,14 @@ end
 
 function showQuestFrame()
     GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
+    GwQuestviewFrame:Show()
 
     setPMUnit(GwQuestviewFrameContainerPlayerModel, "player", 0)
+
+    local npc_name = GetUnitName("npc")
+    local npc_type = UnitCreatureType("npc")
     
-    if not GetUnitName("npc") or GetUnitName("npc") == GetUnitName("player") then
+    if UnitIsUnit("npc", "player") then
         local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2"
         QUEST_NPC_TYPE = 1
         GwQuestviewFrameContainerGiverModel:ClearModel()
@@ -353,7 +357,7 @@ function showQuestFrame()
         GwQuestviewFrameContainerGiverModel:SetModel(board)
         GwQuestviewFrameContainerGiverModel:SetFacing(-0.5)
         GwQuestviewFrameContainerGiverModel:SetPosition(-15,1.9,-0.8)
-    else
+    elseif npc_name and npc_type then
         if UnitIsDead("npc") then
             QUEST_NPC_TYPE = 2
             setPMUnit(GwQuestviewFrameContainerGiverModel, "npc", 1, true)
@@ -362,7 +366,6 @@ function showQuestFrame()
             setPMUnit(GwQuestviewFrameContainerGiverModel, "npc", 1)
         end
     end
-    GwQuestviewFrame:Show()
     PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg",'SFX')
 end
 
