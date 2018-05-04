@@ -201,7 +201,6 @@ function gw_create_partyframe(i)
     frame:RegisterEvent("UNIT_AURA");
     frame:RegisterEvent("UNIT_LEVEL");
     frame:RegisterEvent("PARTY_CONVERTED_TO_RAID");
-    frame:RegisterEvent("RAID_CONVERTED_TO_PARTY");
 	frame:RegisterEvent("READY_CHECK");
     frame:RegisterEvent("READY_CHECK_CONFIRM");
     frame:RegisterEvent("READY_CHECK_FINISHED");
@@ -234,7 +233,7 @@ function gw_partyframe_OnEvent(self,event,unit,arg1)
         end
         self.powerbar:SetValue(powerPrecentage)
     end
-    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event == 'GROUP_ROSTER_UPDATE' or event == "RAID_CONVERTED_TO_PARTY" then
+    if event=='PARTY_MEMBERS_CHANGED' or event=='UNIT_LEVEL' or event == 'GROUP_ROSTER_UPDATE' then
         gw_update_partyFrameData(self)
     end
     if event=='UNIT_PHASE' or event=='PARTY_MEMBER_DISABLE' or event=='PARTY_MEMBER_ENABLE'  then
