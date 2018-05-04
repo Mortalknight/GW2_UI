@@ -538,7 +538,7 @@ local function target_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE') and unit==self.unit then
+    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START') and unit==self.unit then
         updateCastValues(self,event)
         return
     end
@@ -589,7 +589,7 @@ local function focus_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE') and unit==self.unit then
+    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START') and unit==self.unit then
         updateCastValues(self,event)
         return
     end
@@ -643,7 +643,7 @@ local function targettarget_OnEvent(self,event,unit,arg2)
         return
     end
     
-    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE')  then
+    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START')  then
         updateCastValues(self,event)
         return
     end
@@ -693,7 +693,7 @@ local function focustarget_OnEvent(self,event,unit,arg2)
         return
     end
     
-    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE')  then
+    if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START')  then
         updateCastValues(self,event)
         return
     end
@@ -787,8 +787,6 @@ function gw_unitframes_register_Target()
     
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START");
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_UPDATE");
-
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");
@@ -870,8 +868,6 @@ function gw_unitframes_register_Focus()
     
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START");
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_UPDATE");
-
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");
@@ -939,8 +935,6 @@ function gw_unitframes_register_Targetstarget()
     
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START");
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_UPDATE");
-
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");
@@ -1004,8 +998,6 @@ function gw_unitframes_register_Focusstarget()
     
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START");
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_UPDATE");
-
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP");
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");

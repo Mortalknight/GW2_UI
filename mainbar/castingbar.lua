@@ -23,7 +23,7 @@ GwCastingBar:SetScript("OnEvent",function(self,event,unitID,spell)
         if  unitID~='player' then
             return
         end
-        if event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE'or event=='UNIT_SPELLCAST_CHANNEL_UPDATE' then
+        if event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_CHANNEL_UPDATE' then
             if event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_CHANNEL_UPDATE' then
                 spell, subText, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo("player")
                 castingType = 2
@@ -91,7 +91,7 @@ GwCastingBar:SetScript("OnEvent",function(self,event,unitID,spell)
             gw_castingbar_reset()
             playeCasting = 0
         end
-        if  event=='UNIT_SPELLCAST_SUCCEEDED' or event=='UNIT_SPELLCAST_SUCCESS' then
+        if  event=='UNIT_SPELLCAST_SUCCEEDED' then
                 
                 GwCastingBar.animating =true
                 GwCastingBar.bar:SetTexCoord(0,1,0.5,0.75)
@@ -121,13 +121,10 @@ end)
 
 GwCastingBar:RegisterEvent("UNIT_SPELLCAST_START")
 GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-GwCastingBar:RegisterEvent("UNIT_SPELLCAST_UPDATE")
-
 GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
 GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
 GwCastingBar:RegisterEvent("UNIT_SPELLCAST_STOP")
 GwCastingBar:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-GwCastingBar:RegisterEvent("UNIT_SPELLCAST_SUCCESS")
 GwCastingBar:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 
 end

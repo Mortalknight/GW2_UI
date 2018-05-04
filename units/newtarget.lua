@@ -131,7 +131,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
      
    
         
-        if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_UPDATE' or event=='UNIT_SPELLCAST_CHANNEL_STOP' or event=='UNIT_SPELLCAST_STOP' or event=='UNIT_SPELLCAST_INTERRUPTED' or event=='UNIT_SPELLCAST_FAILED') and unit==unitToWatch then
+        if (event=='UNIT_SPELLCAST_START' or event=='UNIT_SPELLCAST_CHANNEL_START' or event=='UNIT_SPELLCAST_CHANNEL_STOP' or event=='UNIT_SPELLCAST_STOP' or event=='UNIT_SPELLCAST_INTERRUPTED' or event=='UNIT_SPELLCAST_FAILED') and unit==unitToWatch then
             updateCastingbar(thisName,unitToWatch)
         end
    
@@ -196,8 +196,6 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
     
     targetF:RegisterEvent("UNIT_SPELLCAST_START");
     targetF:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START");
-    targetF:RegisterEvent("UNIT_SPELLCAST_UPDATE");
-
     targetF:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP");
     targetF:RegisterEvent("UNIT_SPELLCAST_STOP");
     targetF:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");
