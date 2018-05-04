@@ -528,7 +528,7 @@ local function target_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED') and unit==self.unit then
+    if (event=='UNIT_HEALTH' or event=='UNIT_MAXHEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED') and unit==self.unit then
         updateHealthValues(self,event)
         return
     end
@@ -579,7 +579,7 @@ local function focus_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED') and unit==self.unit then
+    if (event=='UNIT_HEALTH' or event=='UNIT_MAXHEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED') and unit==self.unit then
         updateHealthValues(self,event)
         return
     end
@@ -632,7 +632,7 @@ local function targettarget_OnEvent(self,event,unit,arg2)
         return
     end
 
-    if (event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED')  then
+    if (event=='UNIT_HEALTH' or event=='UNIT_MAXHEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED')  then
         
         updateHealthValues(self,event)
         return
@@ -682,7 +682,7 @@ local function focustarget_OnEvent(self,event,unit,arg2)
         return
     end
 
-    if (event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED')  then
+    if (event=='UNIT_HEALTH' or event=='UNIT_MAXHEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED')  then
         
         updateHealthValues(self,event)
         return
@@ -771,7 +771,7 @@ function gw_unitframes_register_Target()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED");
 
     NewUnitFrame:RegisterEvent("UNIT_HEALTH");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_HEALTH");
+    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH");
     NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     NewUnitFrame:RegisterEvent("UNIT_TARGET");
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE");
@@ -854,7 +854,7 @@ function gw_unitframes_register_Focus()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED");
 
     NewUnitFrame:RegisterEvent("UNIT_HEALTH");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_HEALTH");
+    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH");
     NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     NewUnitFrame:RegisterEvent("UNIT_TARGET");
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE");
@@ -923,7 +923,7 @@ function gw_unitframes_register_Targetstarget()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED");
 
     NewUnitFrame:RegisterEvent("UNIT_HEALTH");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_HEALTH");
+    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH");
     NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     NewUnitFrame:RegisterEvent("UNIT_TARGET");
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE");
@@ -988,7 +988,7 @@ function gw_unitframes_register_Focusstarget()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED");
 
     NewUnitFrame:RegisterEvent("UNIT_HEALTH");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_HEALTH");
+    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH");
     NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     NewUnitFrame:RegisterEvent("UNIT_TARGET");
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE");

@@ -189,7 +189,7 @@ function gw_create_partyframe(i)
     frame.healthbar.animationValue = 0
     
     frame:RegisterEvent('UNIT_HEALTH')
-    frame:RegisterEvent('UNIT_HEALTH_MAX')
+    frame:RegisterEvent('UNIT_MAXHEALTH')
     frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     frame:RegisterEvent("UNIT_POWER");
     frame:RegisterEvent("UNIT_MAX_POWER");
@@ -216,7 +216,7 @@ function gw_partyframe_OnEvent(self,event,unit,arg1)
 
     if not UnitExists(self.unit) then return end
     if IsInRaid() then return end
-    if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
+    if event=='UNIT_HEALTH' or event=='UNIT_MAXHEALTH' and unit==self.unit then
         local health = UnitHealth(self.unit)
         local healthMax = UnitHealthMax(self.unit)
         local healthPrec = 0

@@ -210,7 +210,7 @@ function loadHudArt()
                 select_actionhud_bg()
             return
         end
-         if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit=='player' then
+         if event=='UNIT_HEALTH' or event=='UNIT_MAXHEALTH' and unit=='player' then
                 combat_hud_healthstate()
             return
         end
@@ -225,7 +225,7 @@ function loadHudArt()
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED");
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
     hudArtFrame:RegisterEvent("UNIT_HEALTH");
-    hudArtFrame:RegisterEvent("UNIT_MAX_HEALTH");
+    hudArtFrame:RegisterEvent("UNIT_MAXHEALTH");
     select_actionhud_bg()
     combat_hud_healthstate()
     

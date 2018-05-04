@@ -155,7 +155,7 @@ function gw_create_raidframe(registerUnit)
     
     
     frame:RegisterEvent('UNIT_HEALTH')
-    frame:RegisterEvent('UNIT_HEALTH_MAX')
+    frame:RegisterEvent('UNIT_MAXHEALTH')
     frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     frame:RegisterEvent("UNIT_POWER");
     frame:RegisterEvent("UNIT_MAX_POWER");
@@ -323,7 +323,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     end
     
     
-    if event=='UNIT_HEALTH' or event=='UNIT_MAX_HEALTH' and unit==self.unit then
+    if event=='UNIT_HEALTH' or event=='UNIT_MAXHEALTH' and unit==self.unit then
         setHealth(self)
     end
     

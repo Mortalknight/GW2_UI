@@ -56,7 +56,7 @@ local function registerFrame(i)
     _G['GwQuestTrackerBossFrame'..i..'Icon']:SetVertexColor(GW_TRAKCER_TYPE_COLOR['BOSS'].r,GW_TRAKCER_TYPE_COLOR['BOSS'].g,GW_TRAKCER_TYPE_COLOR['BOSS'].b)
 
     
-    targetF:RegisterEvent('UNIT_MAX_HEALTH')
+    targetF:RegisterEvent('UNIT_MAXHEALTH')
     targetF:RegisterEvent('UNIT_HEALTH')
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED");
     

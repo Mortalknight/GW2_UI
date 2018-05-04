@@ -154,7 +154,7 @@ function gw_create_pet_frame()
     playerPetFrame:RegisterEvent('UNIT_POWER')
     playerPetFrame:RegisterEvent('UNIT_POWER_MAX')
     playerPetFrame:RegisterEvent('UNIT_HEALTH')
-    playerPetFrame:RegisterEvent('UNIT_HEALTH_MAX')
+    playerPetFrame:RegisterEvent('UNIT_MAXHEALTH')
     playerPetFrame:RegisterEvent('UNIT_AURA')
     
     --_G['GwPlayerPetFramePortrait']
@@ -360,7 +360,7 @@ function gw_create_player_hud()
     end)
 
     playerHealthGLobaBg:RegisterEvent("UNIT_HEALTH");
-    playerHealthGLobaBg:RegisterEvent("UNIT_MAX_HEALTH");
+    playerHealthGLobaBg:RegisterEvent("UNIT_MAXHEALTH");
     playerHealthGLobaBg:RegisterEvent("PLAYER_ENTERING_WORLD");
     playerHealthGLobaBg:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     

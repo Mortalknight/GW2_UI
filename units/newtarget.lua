@@ -121,7 +121,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
 
         u = string.upper(u)     
         
-        if event =='UNIT_MAX_HEALTH' or event=='UNIT_HEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED' and unit==unitToWatch then   
+        if event =='UNIT_MAXHEALTH' or event=='UNIT_HEALTH' or event=='UNIT_ABSORB_AMOUNT_CHANGED' and unit==unitToWatch then   
             updatHealthValues(thisName,unitToWatch)
         end        
         -- if power changed add the change to animation
@@ -182,7 +182,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
     targetF:RegisterEvent("ZONE_CHANGED");
 
     targetF:RegisterEvent("UNIT_HEALTH");
-    targetF:RegisterEvent("UNIT_MAX_HEALTH");
+    targetF:RegisterEvent("UNIT_MAXHEALTH");
     targetF:RegisterEvent("UNIT_TARGET");
 
 
