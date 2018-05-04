@@ -32,7 +32,7 @@ function create_classpowers()
     GwPlayerClassPower:SetScript('OnEvent', GW_UPDATE_CLASSPOWER)
     
     GwPlayerClassPower:RegisterEvent("UNIT_POWER");
-    GwPlayerClassPower:RegisterEvent("UNIT_MAX_POWER");
+    GwPlayerClassPower:RegisterEvent("UNIT_MAXPOWER");
     GwPlayerClassPower:RegisterEvent("RUNE_POWER_UPDATE");
     GwPlayerClassPower:RegisterEvent("RUNE_TYPE_UPDATE");
     GwPlayerClassPower:RegisterEvent("UNIT_AURA");
@@ -332,7 +332,7 @@ function GW_POWERTYPE_MANABAR()
     _G['GwExtraPlayerPowerBarBarString']:SetFont(DAMAGE_TEXT_FONT,14)
 
     GwExtraPlayerPowerBar:RegisterEvent("UNIT_POWER");
-    GwExtraPlayerPowerBar:RegisterEvent("UNIT_MAX_POWER");
+    GwExtraPlayerPowerBar:RegisterEvent("UNIT_MAXPOWER");
     GwExtraPlayerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD");
     
     gw_update_power_data(GwExtraPlayerPowerBar,0,'MANA','GwExtraPowerBar')

@@ -192,7 +192,7 @@ function gw_create_partyframe(i)
     frame:RegisterEvent('UNIT_MAXHEALTH')
     frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     frame:RegisterEvent("UNIT_POWER");
-    frame:RegisterEvent("UNIT_MAX_POWER");
+    frame:RegisterEvent("UNIT_MAXPOWER");
     frame:RegisterEvent("PARTY_MEMBERS_CHANGED");
     frame:RegisterEvent("GROUP_ROSTER_UPDATE");
     frame:RegisterEvent("UNIT_PHASE");
@@ -225,7 +225,7 @@ function gw_partyframe_OnEvent(self,event,unit,arg1)
         end
         gwBar(self.healthbar,healthPrec)
     end
-    if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit==self.unit then
+    if event=='UNIT_POWER' or event=='UNIT_MAXPOWER' and unit==self.unit then
         local power =   UnitPower(self.unit,UnitPowerType(self.unit))
         local powerMax =   UnitPowerMax(self.unit,UnitPowerType(self.unit))
         local powerPrecentage = 0

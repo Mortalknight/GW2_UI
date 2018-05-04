@@ -158,7 +158,7 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent('UNIT_MAXHEALTH')
     frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     frame:RegisterEvent("UNIT_POWER");
-    frame:RegisterEvent("UNIT_MAX_POWER");
+    frame:RegisterEvent("UNIT_MAXPOWER");
 
     frame:RegisterEvent("UNIT_PHASE");
     frame:RegisterEvent("PARTY_MEMBER_DISABLE");
@@ -327,7 +327,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         setHealth(self)
     end
     
-    if event=='UNIT_POWER' or event=='UNIT_MAX_POWER' and unit==self.unit then
+    if event=='UNIT_POWER' or event=='UNIT_MAXPOWER' and unit==self.unit then
         local power =   UnitPower(self.unit,UnitPowerType(self.unit))
         local powerMax =   UnitPowerMax(self.unit,UnitPowerType(self.unit))
         local powerPrecentage = 0

@@ -125,7 +125,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
             updatHealthValues(thisName,unitToWatch)
         end        
         -- if power changed add the change to animation
-        if event=='UNIT_MAX_POWER' or event=='UNIT_POWER' and unit==unitToWatch then
+        if event=='UNIT_MAXPOWER' or event=='UNIT_POWER' and unit==unitToWatch then
             updatePowerValues(thisName,unitToWatch)
         end
      
@@ -190,7 +190,7 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
 
 
     targetF:RegisterEvent("UNIT_POWER");
-    targetF:RegisterEvent("UNIT_MAX_POWER");
+    targetF:RegisterEvent("UNIT_MAXPOWER");
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD");
     targetF:RegisterEvent("UNIT_AURA");
     

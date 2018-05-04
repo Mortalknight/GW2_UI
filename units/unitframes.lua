@@ -533,7 +533,7 @@ local function target_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_MAX_POWER' or event=='UNIT_POWER') and unit==self.unit then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER') and unit==self.unit then
         updatePowerValues(self,event)
         return
     end
@@ -584,7 +584,7 @@ local function focus_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_MAX_POWER' or event=='UNIT_POWER') and unit==self.unit then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER') and unit==self.unit then
         updatePowerValues(self,event)
         return
     end
@@ -638,7 +638,7 @@ local function targettarget_OnEvent(self,event,unit,arg2)
         return
     end
     
-    if (event=='UNIT_MAX_POWER' or event=='UNIT_POWER')  then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER')  then
         updatePowerValues(self,event)
         return
     end
@@ -688,7 +688,7 @@ local function focustarget_OnEvent(self,event,unit,arg2)
         return
     end
     
-    if (event=='UNIT_MAX_POWER' or event=='UNIT_POWER')  then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER')  then
         updatePowerValues(self,event)
         return
     end
@@ -781,7 +781,7 @@ function gw_unitframes_register_Target()
 
 
     NewUnitFrame:RegisterEvent("UNIT_POWER");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
     
@@ -864,7 +864,7 @@ function gw_unitframes_register_Focus()
 
 
     NewUnitFrame:RegisterEvent("UNIT_POWER");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
     
@@ -933,7 +933,7 @@ function gw_unitframes_register_Targetstarget()
 
 
     NewUnitFrame:RegisterEvent("UNIT_POWER");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
     
@@ -998,7 +998,7 @@ function gw_unitframes_register_Focusstarget()
 
 
     NewUnitFrame:RegisterEvent("UNIT_POWER");
-    NewUnitFrame:RegisterEvent("UNIT_MAX_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
     

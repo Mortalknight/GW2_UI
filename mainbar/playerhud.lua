@@ -152,7 +152,7 @@ function gw_create_pet_frame()
     
     playerPetFrame:RegisterEvent('UNIT_PET')
     playerPetFrame:RegisterEvent('UNIT_POWER')
-    playerPetFrame:RegisterEvent('UNIT_POWER_MAX')
+    playerPetFrame:RegisterEvent('UNIT_MAXPOWER')
     playerPetFrame:RegisterEvent('UNIT_HEALTH')
     playerPetFrame:RegisterEvent('UNIT_MAXHEALTH')
     playerPetFrame:RegisterEvent('UNIT_AURA')
