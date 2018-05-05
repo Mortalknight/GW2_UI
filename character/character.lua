@@ -307,7 +307,7 @@ function gwPaperDollStats_OnEvent(self,event,...)
 			event == "AVOIDANCE_UPDATE" or
 			event == "BAG_UPDATE" or
 			event == "PLAYER_EQUIPMENT_CHANGED" or
-			event == "PLAYER_BANKSLOTS_CHANGED" or
+			event == "PLAYERBANKSLOTS_CHANGED" or
 			event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
 			event == "PLAYER_DAMAGE_DONE_MODS" or
 			IsMounted()) then

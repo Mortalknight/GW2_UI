@@ -1354,7 +1354,7 @@
                         self:RegisterEvent("PLAYER_TALENT_UPDATE");
                         self:RegisterEvent("BAG_UPDATE");
                         self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
-                        self:RegisterEvent("PLAYER_BANKSLOTS_CHANGED");
+                        self:RegisterEvent("PLAYERBANKSLOTS_CHANGED");
                         self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE");
                         self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS");
                         self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");
