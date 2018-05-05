@@ -748,7 +748,7 @@ end
     
     if GwPaperDollOutfits.buttons ==nil then GwPaperDollOutfits.buttons = 0 end
     
-    local numSets = GetNumEquipmentSets()
+    local numSets = C_EquipmentSet.GetNumEquipmentSets()
     local numButtons = GwPaperDollOutfits.buttons
     
     if numSets>numButtons then
@@ -761,7 +761,7 @@ end
             
             local frame = getNewEquipmentSetButton(i)
             
-            local name, texture, setID, isEquipped, _, _, _, numLost = GetEquipmentSetInfo(i);
+            local name, texture, setID, isEquipped, _, _, _, numLost, _ = C_EquipmentSet.GetEquipmentSetInfo(i - 1)
             
             frame:Show()
             frame.saveOutfit:Hide()
@@ -770,27 +770,28 @@ end
             frame.ddbg:Hide()
             frame:SetHeight(49)
             
-            frame:SetScript('OnEnter',function(self) 
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                GameTooltip:SetEquipmentSet(self.setName);    
+            frame:SetScript('OnEnter',function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetEquipmentSet(self.setID)
                 self.standardOnClick(self)
             end)
       
             frame:SetText(name)
             frame.setName = name
+            frame.setID = setID
     
             
             if texture then
                 frame.icon:SetTexture(texture)
             else
-                frame.icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark") 
+                frame.icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
             end
             
-           if textureC==1 then frame:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg')
+            if textureC==1 then frame:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg')
                 textureC = 2
             else
                 frame:SetNormalTexture(nil)
-               textureC = 1 
+                textureC = 1
             end
             if isEquipped then
                 frame:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
@@ -800,13 +801,8 @@ end
                 frame:GetFontString():SetTextColor(1,0.3,0.3)
             else
                 --_G[frame:GetName()..'NormalTexture']:SetVertexColor(1,1,1)
-                 frame:GetFontString():SetTextColor(1,1,1)
+                frame:GetFontString():SetTextColor(1,1,1)
             end
-            
-            frame.setId = setID
-            
-            
-            
         else
             if _G['GwPaperDollOutfitsButton'..i]~=nil then
                 _G['GwPaperDollOutfitsButton'..i]:Hide()
@@ -817,18 +813,18 @@ end
     
 end
 
-function GwPaperDollOutfitsUpdateIngoredSlots(name)
+function GwPaperDollOutfitsUpdateIngoredSlots(id)
 
-   local ignoredSlots = GetEquipmentSetIgnoreSlots(name);
+   local ignoredSlots = C_EquipmentSet.GetIgnoredSlots(id)
     for slot, ignored in pairs(ignoredSlots) do
         if ( ignored ) then
-            EquipmentManagerIgnoreSlotForSave(slot);
+            C_EquipmentSet.IgnoreSlotForSave(slot)
             savedItemSlots[slot].ignoreSlotCheck:SetChecked(false)
         else
-            EquipmentManagerUnignoreSlotForSave(slot);
+            C_EquipmentSet.UnignoreSlotForSave(slot)
             savedItemSlots[slot].ignoreSlotCheck:SetChecked(true)
         end
-    end 
+    end
 end
 
 function GwPaperDollOutfitsToggleIgnoredSlots(show)
@@ -837,7 +833,7 @@ function GwPaperDollOutfitsToggleIgnoredSlots(show)
         if show then
             v.ignoreSlotCheck:Show()
         else
-            v.ignoreSlotCheck:Hide() 
+            v.ignoreSlotCheck:Hide()
         end
     end
     
@@ -851,7 +847,7 @@ function GwPaperDollOutfits_OnEvent(self, event, ...)
 		if ( completed ) then
 			PlaySound(1212); -- plays the equip sound for plate mail
 			if (self:IsShown()) then
-				self.selectedSetName = setName;
+				self.selectedSetID = C_EquipmentSet.GetEquipmentSetID(setName)
 				GwOutfitsDrawItemSetList();
 			end
 		end

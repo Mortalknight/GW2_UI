@@ -303,12 +303,12 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        local selectedSetName = GwPaperDollOutfits.selectedSetName;
-                        if ( selectedSetName and selectedSetName ~= "") then
+                        local selectedSetID = GwPaperDollOutfits.selectedSetID
+                        if ( selectedSetID ~= nil) then
    
-                            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB );
+                            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB )
                         
-                            UseEquipmentSet(selectedSetName);
+                            C_EquipmentSet.UseEquipmentSet(selectedSetID)
                         end                        
                     </OnClick>
                 </Scripts>
@@ -321,7 +321,7 @@
                 <Scripts>
                     <OnClick>
                         gwWarningPromt(GwLocalization['CHARACTER_OUTFITS_SAVE']..self:GetParent().setName..'"?',function()
-                         SaveEquipmentSet(self:GetParent().setName);
+                         C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
                             GwOutfitsDrawItemSetList()
                         end)
                                      
@@ -337,7 +337,7 @@
                        <Onclick>
                     gwWarningPromt(GwLocalization['CHARACTER_OUTFITS_DELETE']..self:GetParent().setName..'"?',function()
                            
-                        DeleteEquipmentSet(self:GetParent().setName)
+                        C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
                            
                         GwOutfitsDrawItemSetList()
                     end)    
@@ -350,7 +350,7 @@
                 if not  self.saveOutfit:IsShown() then
                 GwOutfitsDrawItemSetList()
                 GwPaperDollOutfitsToggleIgnoredSlots(true)
-                GwPaperDollOutfitsUpdateIngoredSlots(self.setName)
+                GwPaperDollOutfitsUpdateIngoredSlots(self.setID)
                 self:SetHeight(80)
                 self.saveOutfit:Show()
                 self.deleteOutfit:Show()
@@ -360,7 +360,7 @@
 				self.saveOutfit:SetText(GwLocalization['CHARACTER_SAVE_OUTFIT'])
 				self.equipOutfit:SetText(GwLocalization['CHARCTER_EQUIP_OUTFIT'])
                 
-                GwPaperDollOutfits.selectedSetName = self.setName
+                GwPaperDollOutfits.selectedSetID = self.setID
                 
                 else
      
@@ -995,7 +995,7 @@
                             GearManagerDialogPopup:SetParent(GwDressingRoom)
                             GearManagerDialogPopup:SetPoint('TOPLEFT',GwDressingRoom,'TOPRIGHT')
                             
-                            PaperDollEquipmentManagerPane.selectedSetName = nil;
+                            PaperDollEquipmentManagerPane.selectedSetID = nil;
                             PaperDollFrame_ClearIgnoredSlots();
                             
                             
