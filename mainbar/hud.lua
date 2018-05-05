@@ -1370,7 +1370,7 @@ function gw_create_orderHallBar()
         GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_ADDED");
         GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_REMOVED");
 		GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
-		GwOrderhallBar:RegisterEvent("MISSION_FINISHED");
+		GwOrderhallBar:RegisterEvent("GARRISON_MISSION_FINISHED");
         GwOrderhallBar:RegisterEvent("UPDATE_BINDINGS");   
 	end
     
@@ -1387,7 +1387,7 @@ function gw_create_orderHallBar()
         GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_ADDED");
         GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_REMOVED");
 		GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
-		GwOrderhallBar:RegisterEvent("MISSION_FINISHED");
+		GwOrderhallBar:RegisterEvent("GARRISON_MISSION_FINISHED");
         GwOrderhallBar:RegisterEvent("UPDATE_BINDINGS");    
             
     end)
@@ -1404,7 +1404,7 @@ function gw_create_orderHallBar()
         GwOrderhallBar:UnregisterEvent("GARRISON_FOLLOWER_ADDED");
         GwOrderhallBar:UnregisterEvent("GARRISON_FOLLOWER_REMOVED");
 		GwOrderhallBar:UnregisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
-		GwOrderhallBar:UnregisterEvent("MISSION_FINISHED");
+		GwOrderhallBar:UnregisterEvent("GARRISON_MISSION_FINISHED");
         GwOrderhallBar:UnregisterEvent("UPDATE_BINDINGS");    
             
     end)
