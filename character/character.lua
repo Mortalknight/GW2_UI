@@ -472,7 +472,6 @@ function gwPaperDollSlotButton_OnShow (self)
 	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED");
 	self:RegisterEvent("ITEM_LOCK_CHANGED");
 	self:RegisterEvent("CURSOR_UPDATE");
-	self:RegisterEvent("SHOW_COMPARE_TOOLTIP");
 	self:RegisterEvent("UPDATE_INVENTORY_ALERTS");
     gwPaperDollSlotButton_Update(self)
 
@@ -484,7 +483,6 @@ function gwPaperDollSlotButton_OnHide (self)
 	self:UnregisterEvent("ITEM_LOCK_CHANGED");
 	self:UnregisterEvent("CURSOR_UPDATE");
 	self:UnregisterEvent("BAG_UPDATE_COOLDOWN");
-	self:UnregisterEvent("SHOW_COMPARE_TOOLTIP");
 	self:UnregisterEvent("UPDATE_INVENTORY_ALERTS");
 end
 function gwPaperDollSlotButton_OnEvent (self, event, ...)
