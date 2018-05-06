@@ -408,17 +408,11 @@ function update_experiencebar_data(self,event)
     
     local level = UnitLevel('Player')
     local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel('Player') +1)
-    
-    
-    
-    
-    
+     
     local rested = GetXPExhaustion()
     local showBar1 = false
     local showBar2 = false
-    
     local restingIconString = ' |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t '
-
 	
     if not IsResting() then
         restingIconString = ''
@@ -426,8 +420,11 @@ function update_experiencebar_data(self,event)
     if rested==nil then
         rested = 0
     end
-
-	rested = (rested / valMax) + valPrec
+	if rested / valMax == 0 then
+		rested = 0
+	else
+		rested = (rested / valMax) + valPrec
+	end	
 	if rested > 1 then 
 		rested = 1
 	end
