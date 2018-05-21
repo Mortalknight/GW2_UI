@@ -417,13 +417,10 @@ function update_experiencebar_data(self,event)
     if not IsResting() then
         restingIconString = ''
     end
-    if rested==nil then
+    if rested==nil or (rested / valMax) == 0 then
         rested = 0
-    end
-	if rested / valMax == 0 then
-		rested = 0
 	else
-		rested = (rested / valMax) + valPrec
+		rested = (rested / valMax) --+ valPrec
 	end	
 	if rested > 1 then 
 		rested = 1
@@ -589,7 +586,6 @@ function update_experiencebar_data(self,event)
                 expFlare:SetPoint('CENTER',GwExperienceFrame,'LEFT',flarePoint,0);
                 
             end
-           
             _G['GwExperienceFrameBarRested']:SetValue(rested)
             _G['GwExperienceFrameBarRested']:SetPoint('LEFT',_G['GwExperienceFrameBar'],'LEFT',_G['GwExperienceFrameBar']:GetWidth()*animations['experiencebarAnimation']['progress'],0 )
       
@@ -1312,7 +1308,7 @@ function gw_leveling_display_rewards()
                     _G['GwLevelingRewardsItem'..i].name:SetText(name)
                     _G['GwLevelingRewardsItem'..i]:SetScript('OnEnter',function()
                     
-                        GameTooltip:SetOwner(GwLevelingRewards, "ANCHOR_NONE",0,0);
+                        GameTooltip:SetOwner(GwLevelingRewards, "ANCHOR_CURSOR",0,0);
                         GameTooltip:ClearLines();
                         GameTooltip:SetSpellByID(v['id'])
                         GameTooltip:Show()
