@@ -97,7 +97,7 @@ end
 
 function gwToggleMainHud(b)
     for k, v in pairs(GW_MAIN_HUD_FRAMES) do
-        if v ~= nil then
+        if v ~= nil and _G[v] then
             if b then
                 if GW_MAIN_HUD_FRAMES_OLD_STATE[k] then
                     _G[v]:Show()
