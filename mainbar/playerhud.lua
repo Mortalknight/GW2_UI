@@ -119,10 +119,23 @@ local function loadAuras(self)
    self.saveAuras['debuff'] = {}
 end
 
+local function updatePetFrameLocation()
+    if InCombatLockdown() or not GwPlayerPetFrame then
+        return
+    end
+    GwPlayerPetFrame:ClearAllPoints()
+    if MultiBarBottomLeft.gw_FadeShowing then
+        GwPlayerPetFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 212)
+    else
+        GwPlayerPetFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 120)
+    end
+end
+function gw_updatePetFrameLocation()
+    -- when PETBAR_LOCKED is set, this empty function is replaced by updatePetFrameLocation during init
+end
+
 function gw_create_pet_frame()
     local playerPetFrame = CreateFrame('Button', 'GwPlayerPetFrame', UIParent, 'GwPlayerPetFrame');
---    playerPetFrame:SetPoint('BOTTOMLEFT',_G['PetActionBarFrame'],'BOTTOMLEFT',0,0)
---    playerPetFrame:SetPoint('BOTTOMRIGHT',_G['PetActionBarFrame'],'BOTTOMRIGHT',0,0)
     
     gw_register_movable_frame('petframe', GwPlayerPetFrame, 'pet_pos', 'GwPetFrameDummy', 'PETBAR_LOCKED')
     
@@ -177,6 +190,7 @@ function gw_create_pet_frame()
             end
         ]=])
         RegisterStateDriver(playerPetFrame, 'combat', '[combat] show; hide')
+        gw_updatePetFrameLocation = updatePetFrameLocation
         gwActionBar_AddStateCallback(gw_updatePetFrameLocation)
         gw_updatePetFrameLocation()
         return
@@ -190,19 +204,6 @@ function gw_create_pet_frame()
         playerPetFrame:SetAlpha(1)
     end)
 end
-
-function gw_updatePetFrameLocation()
-    if InCombatLockdown() or not GwPlayerPetFrame then
-        return
-    end
-    GwPlayerPetFrame:ClearAllPoints()
-    if MultiBarBottomLeft.gw_FadeShowing then
-        GwPlayerPetFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 212)
-    else
-        GwPlayerPetFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -53, 120)
-    end
-end
-
 
 function gw_create_power_bar()
 
