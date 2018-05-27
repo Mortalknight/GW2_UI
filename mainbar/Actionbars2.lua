@@ -61,9 +61,6 @@ local GW_BARS= {
     MultiBarBottomRight,
 }
 
-function gwHideSelf(self)
-    self:Hide()
-end
 function gw_hideBlizzardsActionbars()
     for k,v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
         v:Hide()

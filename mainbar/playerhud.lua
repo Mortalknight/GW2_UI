@@ -293,6 +293,35 @@ function gw_powerbar_updateRegen(self)
     
 end
 
+local function update_repair_data()
+    local needRepair = false
+    local gearBroken = false
+    for i = 1, 23 do
+        local current, maximum = GetInventoryItemDurability(i)
+        if current ~= nil then
+            dur = current/maximum
+            if dur < 0.5 then
+                needRepair = true
+            end
+            if dur == 0 then
+                gearBroken = true
+            end
+        end
+    end
+     
+    if gearBroken then
+        GwHudArtFrameRepairTexture:SetTexCoord(0,1,0.5,1)
+    else
+        GwHudArtFrameRepairTexture:SetTexCoord(0,1,0,0.5)
+    end
+     
+    if needRepair then
+        GwHudArtFrameRepair:Show()
+    else
+        GwHudArtFrameRepair:Hide()
+    end
+end
+
 function gw_create_player_hud()
     
     PlayerFrame:SetScript("OnEvent", nil);
@@ -391,6 +420,23 @@ function gw_create_player_hud()
     
     gw_dodgebar_onevent(GwDodgeBar, 'PLAYER_ENTERING_WORLD', 'player')
     
+    -- setup hooks for the repair icon (and disable default repair frame)
+    DurabilityFrame:UnregisterAllEvents()
+    DurabilityFrame:HookScript('OnShow', gwHideSelf)
+    DurabilityFrame:Hide()
+    GwHudArtFrameRepair:SetScript('OnEvent', update_repair_data)
+    GwHudArtFrameRepair:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+    GwHudArtFrameRepair:SetScript('OnEnter', function()
+        GameTooltip:SetOwner(_G['GwHudArtFrameRepair'], "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'], 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    GwHudArtFrameRepair:SetScript('OnLeave', function()
+        GameTooltip:Hide()
+    end)
+    update_repair_data()
+
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript('OnShow', function()
         GwPlayerHealthGlobe:SetAlpha(0)

@@ -590,3 +590,7 @@ function gwIsFrameModified(f_name)
     if not MovAny then return false end
     return MovAny:IsModified(f_name)
 end
+
+function gwHideSelf(self)
+    self:Hide()
+end

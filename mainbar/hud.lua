@@ -150,7 +150,6 @@ GW_MAIN_HUD_FRAMES = {
     'GwPlayerPowerBar',
     'GwPlayerAuraFrame',
     'GwPlayerClassPower',
-    'GwHudArtFrameRepair',
     'GwPlayerHealthGlobe',
     'GwPlayerPetFrame',
     'PetActionButton1',
@@ -180,23 +179,6 @@ function loadHudArt()
     
     
     local hudArtFrame =  CreateFrame('Frame', 'GwHudArtFrame',UIParent,'GwHudArtFrame');
-    local GwHudArtFrameRepair =  CreateFrame('Frame', 'GwHudArtFrameRepair',UIParent,'GwRepair');
-    
-    _G['GwHudArtFrameRepair']:SetScript('OnEvent',update_repair_data)
-    
-    DurabilityFrame:UnregisterAllEvents()
-    DurabilityFrame:HookScript('OnShow',function(self) self:Hide() end)
-    DurabilityFrame:Hide()
-    _G['GwHudArtFrameRepair']:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
-    
-    update_repair_data()
-    
-   _G['GwHudArtFrameRepair']:SetScript('OnEnter', function() GameTooltip:SetOwner(_G['GwHudArtFrameRepair'], "ANCHOR_CURSOR"); GameTooltip:ClearLines();
-            
-    GameTooltip:AddLine(GwLocalization['DAMAGED_OR_BROKEN_EQUIPMENT'],1,1,1)
-            
-    GameTooltip:Show() end)
-    _G['GwHudArtFrameRepair']:SetScript('OnLeave', function() GameTooltip:Hide() end)
     
     
     hudArtFrame:SetScript('OnEvent',function(self,event,unit)
@@ -230,40 +212,6 @@ function loadHudArt()
     combat_hud_healthstate()
     
 end
-
-
-
-function update_repair_data()  
-   
-   local needRepair = false
-    local gearBroken = false;
-    for i=1,23 do
-       local current, maximum = GetInventoryItemDurability(i);
-        if current ~=nil then
-            dur = current/maximum
-            if dur < 0.5 then
-                needRepair = true
-            end
-            if dur==0 then
-                gearBroken = true
-            end
-        end
-    end
-    
-    if gearBroken then
-        _G['GwHudArtFrameRepairTexture']:SetTexCoord(0,1,0.5,1)
-    else
-        _G['GwHudArtFrameRepairTexture']:SetTexCoord(0,1,0,0.5)
-    end
-    
-    
-    if needRepair then
-        _G['GwHudArtFrameRepair']:Show()
-    else
-        _G['GwHudArtFrameRepair']:Hide()
-    end
-end
-
 
 local gw_reputation_vals = nil
 local gw_honor_vals = nil
