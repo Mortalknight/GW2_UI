@@ -596,62 +596,53 @@ function gwPaperDollSlotButton_OnLeave(self)
 end
 
 function gwPaperDollSlotButton_Update (self)
-    
-    if savedItemSlots[self:GetID()]==nil then
-        savedItemSlots[self:GetID()]=self
-        self.ignoreSlotCheck:SetScript('OnClick',function() 
-    
+    local slot = self:GetID()
+    if savedItemSlots[slot] == nil then
+        savedItemSlots[slot] = self
+        self.ignoreSlotCheck:SetScript('OnClick', function()
             if not self.ignoreSlotCheck:GetChecked() then
-                EquipmentManagerIgnoreSlotForSave(self:GetID())
+                C_EquipmentSet.IgnoreSlotForSave(self:GetID())
             else
-                EquipmentManagerUnignoreSlotForSave(self:GetID())
+                C_EquipmentSet.UnignoreSlotForSave(self:GetID())
             end
         end)
-        
     end
     
-    local textureName = GetInventoryItemTexture("player", self:GetID());
-	local cooldown = _G[self:GetName().."Cooldown"];
-	if ( textureName ) then
-		SetItemButtonTexture(self, textureName);
-		SetItemButtonCount(self, GetInventoryItemCount("player", self:GetID()));
-		if ( GetInventoryItemBroken("player", self:GetID())
-		  or GetInventoryItemEquippedUnusable("player", self:GetID()) ) then
-			SetItemButtonTextureVertexColor(self, 0.9, 0, 0);
-			
+    local textureName = GetInventoryItemTexture("player", slot)
+	local cooldown = _G[self:GetName() .. "Cooldown"]
+	if (textureName) then
+		SetItemButtonTexture(self, textureName)
+		SetItemButtonCount(self, GetInventoryItemCount("player", slot))
+		if (GetInventoryItemBroken("player", slot) or GetInventoryItemEquippedUnusable("player", slot)) then
+			SetItemButtonTextureVertexColor(self, 0.9, 0, 0)
 		else
-			SetItemButtonTextureVertexColor(self, 1.0, 1.0, 1.0);
-			
+			SetItemButtonTextureVertexColor(self, 1.0, 1.0, 1.0)
 		end
         
-        local current, maximum = GetInventoryItemDurability(self:GetID());
-        if current~=nil and(current/maximum)<0.5 then
+        local current, maximum = GetInventoryItemDurability(slot)
+        if current ~= nil and (current/maximum) < 0.5 then
             self.repairIcon:Show()
-            if (current/maximum)==0 then
-                self.repairIcon:SetTexCoord(0,1,0.5,1)
+            if (current/maximum) == 0 then
+                self.repairIcon:SetTexCoord(0, 1, 0.5, 1)
             else
-                self.repairIcon:SetTexCoord(0,1,0,0.5)
+                self.repairIcon:SetTexCoord(0, 1, 0, 0.5)
             end
-            
         else
             self.repairIcon:Hide()
         end
         
-		if ( cooldown ) then
-			local start, duration, enable = GetInventoryItemCooldown("player", self:GetID());
-			CooldownFrame_Set(cooldown, start, duration, enable);
+		if (cooldown) then
+			local start, duration, enable = GetInventoryItemCooldown("player", slot)
+			CooldownFrame_Set(cooldown, start, duration, enable)
 		end
-		self.hasItem = 1;
+		self.hasItem = 1
 	else
-        SetItemButtonTexture(self, nil);
+        SetItemButtonTexture(self, nil)
+        self.repairIcon:Hide()
     end
 
-	local quality = GetInventoryItemQuality("player", self:GetID());
-	GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", self:GetID()));
-    
-  
-
-
+	local quality = GetInventoryItemQuality("player", slot)
+	GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
 end
 
 
