@@ -1021,7 +1021,7 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
     </Frame>
-    <Button name="GwMicroButtonTemplate" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent"   virtual="true">
+    <Button name="GwMicroButtonTemplate" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW" enableMouse="true" virtual="true">
         <Size x="24" y="24"></Size>
         <Layers>
             <Layer level="OVERLAY">

@@ -275,6 +275,8 @@ GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
 GwLocalization['STG_RIGHT_BAR_COLS'] = 'Right Bar Width'
 GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Number of columns in the two extra right-hand action bars.'
 GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
+GwLocalization['FADE_MICROMENU'] = 'Fade Menu Bar'
+GwLocalization['FADE_MICROMENU_DESC'] = 'Fade the main micromenu when the mouse is not near.'
 end
 
 local Locale = GetLocale()

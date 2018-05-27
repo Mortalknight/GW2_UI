@@ -10,24 +10,29 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture name="$parentMenuBackDrop" file="Interface\AddOns\GW2_UI\textures\windowcornermenu" parentKey="Background">
+                <Texture name="$parentMenuBackDropHidden" file="Interface\AddOns\GW2_UI\textures\windowcorner">
                     <Size x="512" y="256"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
+
+                <Texture name="$parentMenuBackDrop" file="Interface\AddOns\GW2_UI\textures\windowcornermenu" parentKey="Background">
+                    <Size x="512" y="64"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
                 
-                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowcorner" parentKey="Background">
+                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowcorner">
                     <Size x="512" y="256"></Size>
                     <TexCoords left="1" right="0" top="0" bottom="1" />
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-       
-
                 
-                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder" parentKey="Background">
+                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder">
                     <Size x="512" y="256"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="512" y="0" />
@@ -35,7 +40,7 @@
                     </Anchors>
                 </Texture> 
 
-                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder-side" parentKey="Background">
+                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder-side">
                     <Size x="256" y="512"></Size>
                     <TexCoords left="0" right="1" top="1" bottom="0" />
                     <Anchors>
@@ -43,7 +48,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture> 
-                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder-side" parentKey="Background">
+                <Texture name="$parentWindowTint" file="Interface\AddOns\GW2_UI\textures\windowborder-side">
                     <Size x="256" y="512"></Size>
                     <TexCoords left="1" right="0" top="1" bottom="0" />
                     <Anchors>

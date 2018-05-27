@@ -275,6 +275,8 @@ GwLocalization['BAG_ORDER_REVERSE'] = 'Orden inverso de la bolsa'
 GwLocalization['STG_RIGHT_BAR_COLS'] = 'Ancho de la barra derecha'
 GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Número de columnas en las dos barras de acción adicionales de la derecha'
 GwLocalization['DISABLED_MA_BAGS'] = "Desactivado el manejo de las bolsas de MoveAnything."
+GwLocalization['FADE_MICROMENU'] = 'Fade Menu Bar'
+GwLocalization['FADE_MICROMENU_DESC'] = 'Fade the main micromenu when the mouse is not near.'
 end
 
 

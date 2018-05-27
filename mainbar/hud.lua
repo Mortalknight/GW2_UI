@@ -821,8 +821,8 @@ local microButtonFrame = CreateFrame('Frame', 'GwMicroButtonFrame', UIParent,'Gw
 local microButtonPadding = 4 +12
 
 function create_micro_button(key)
-    local mf = CreateFrame('Button', 'GwMicroButton'..key, GwMicroButtonFrame,'SecureHandlerClickTemplate,GwMicroButtonTemplate')
-    mf:SetPoint('CENTER',GwMicroButtonFrame,'TOPLEFT',microButtonPadding,-16);
+    local mf = CreateFrame('Button', 'GwMicroButton'..key, microButtonFrame,'SecureHandlerClickTemplate,GwMicroButtonTemplate')
+    mf:SetPoint('CENTER',microButtonFrame,'TOPLEFT',microButtonPadding,-16);
     microButtonPadding = microButtonPadding + 24 + 4
     
    mf:SetDisabledTexture('Interface\\AddOns\\GW2_UI\\textures\\'..key..'-Up'); 
@@ -844,6 +844,47 @@ end
 local CUSTOM_MICRO_BUTTONS = {}
 local gw_latencyToolTipUpdate = 0
 local gw_frameRate = 0
+
+local function microMenuFrameShow(f, name)
+    GwStopAnimation(name)
+    GwStopAnimation('GwHudArtFrameMenuBackDrop')
+    f.gw_FadeShowing = true
+    addToAnimation(name, 0, 1, GetTime(), 0.1, function()
+        f:SetAlpha(animations[name]['progress'])
+    end, nil, nil)
+    addToAnimation('GwHudArtFrameMenuBackDrop', 0, 1, GetTime(), 0.1, function()
+        GwHudArtFrameMenuBackDrop:SetAlpha(animations['GwHudArtFrameMenuBackDrop']['progress'])
+    end, nil, nil)
+end
+
+local function microMenuFrameHide(f, name)
+    GwStopAnimation(name)
+    GwStopAnimation('GwHudArtFrameMenuBackDrop')
+    f.gw_FadeShowing = false
+    addToAnimation(name, 1, 0, GetTime(), 0.1, function()
+        f:SetAlpha(animations[name]['progress'])
+    end, nil, nil)
+    addToAnimation('GwHudArtFrameMenuBackDrop', 1, 0, GetTime(), 0.1, function()
+        GwHudArtFrameMenuBackDrop:SetAlpha(animations['GwHudArtFrameMenuBackDrop']['progress'])
+    end, nil, nil)
+end
+
+local function microMenu_OnUpdate(self, elapsed)
+    self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
+    if self.gw_LastFadeCheck > 0 then
+        return
+    end
+    self.gw_LastFadeCheck = 0.1
+    if not self:IsShown() then return end
+    
+    if self:IsMouseOver(100, -100, -100, 100) then
+        if not self.gw_FadeShowing then
+            microMenuFrameShow(self, self:GetName())
+        end
+    elseif self.gw_FadeShowing then
+        microMenuFrameHide(self, self:GetName())
+    end
+end
 
 function gwCreateMicroMenu()
     local mi = 1
@@ -991,6 +1032,13 @@ function gwCreateMicroMenu()
             gw_sendVersionCheck()
         end
     end)
+
+    -- if set to fade micro menu, add fader
+    if gwGetSetting('FADE_MICROMENU') then
+        microButtonFrame.gw_LastFadeCheck = -1
+        microButtonFrame.gw_FadeShowing = true
+        microButtonFrame:SetScript('OnUpdate', microMenu_OnUpdate)
+    end
 end
 
 gw_sendUpdate_message_cooldown = 0
