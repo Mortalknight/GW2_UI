@@ -1,4 +1,4 @@
-
+local _, GW = ...
 
 local settings_cat ={}
 local options = {}
@@ -302,7 +302,7 @@ end
 
 function create_settings_cat(name,desc,frameName,icon)
     
-    local i = countTable(settings_cat)
+    local i = GW.countTable(settings_cat)
     settings_cat[i] = frameName
 
     local f = CreateFrame('Button','GwSettingsLabel'..i,UIParent,'GwSettingsLabel')
@@ -359,7 +359,7 @@ end
 
 function addOption(name,desc,optionName,frameName,callback)
     
-    local i = countTable(options)
+    local i = GW.countTable(options)
 
     options[i] = {}
     options[i]['name'] = name;
@@ -372,7 +372,7 @@ function addOption(name,desc,optionName,frameName,callback)
 end
 function addOptionSlider(name,desc,optionName,frameName,callback,min,max)
     
-    local i = countTable(options)
+    local i = GW.countTable(options)
 
     options[i] = {}
     options[i]['name'] = name;
@@ -387,7 +387,7 @@ function addOptionSlider(name,desc,optionName,frameName,callback,min,max)
 end
 function addOptionDropdown(name,desc,optionName,frameName,callback,options_list,option_names)
     
-    local i = countTable(options)
+    local i = GW.countTable(options)
 
     options[i] = {}
     options[i]['name'] = name;

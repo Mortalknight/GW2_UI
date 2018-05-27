@@ -1,3 +1,5 @@
+local _, GW = ...
+
 local intervalCd = 0
 local bubbles = {}
 local CHAT_BUBBLES_ACTIVE = {}
@@ -56,7 +58,7 @@ for i=1,WorldFrame:GetNumChildren() do
                        
                         
                         if frame.hasBeenStyled==nil then
-                        bi = countTable(bubbles)
+                        bi = GW.countTable(bubbles)
                         local fontstring = v
                  
                         bubbles[bi] = {}
@@ -109,7 +111,7 @@ function gw_chatbubbles_onevent(self,event,msg,arg2)
     
     if safeToChange==false then return end
     
-    local i = countTable(CHAT_BUBBLES_ACTIVE)
+    local i = GW.countTable(CHAT_BUBBLES_ACTIVE)
     CHAT_BUBBLES_ACTIVE[i] ={}
     CHAT_BUBBLES_ACTIVE[i]['msg'] =msg
     CHAT_BUBBLES_ACTIVE[i]['time'] =GetTime() +5

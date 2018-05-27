@@ -1,15 +1,85 @@
+local _, GW = ...
+
+local function normalUnitFrame_OnEnter(self)
+    if self.unit ~= nil then
+        GameTooltip:ClearLines()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(self.unit)
+        GameTooltip:Show()
+    end
+end
+
+local function normalUnitFrame_OnLeave(self)
+    GameTooltip:Hide()
+end
+
+local function createNormalUnitFrame(ftype)
+    local f = CreateFrame('Button', ftype, UIParent, 'GwNormalUnitFrame')
+
+    f.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthString:SetShadowOffset(1, -1)
+    
+    f.nameString:SetFont(UNIT_NAME_FONT, 14)
+    f.nameString:SetShadowOffset(1, -1)
+    
+    f.levelString:SetFont(UNIT_NAME_FONT, 14)
+    f.levelString:SetShadowOffset(1, -1)
+    
+    f.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingString:SetShadowOffset(1, -1)
+    
+    f.prestigeString:SetFont(UNIT_NAME_FONT, 12, 'OUTLINED')
+    
+    f.prestigebg:SetPoint('CENTER', f.prestigeString, 'CENTER', -1, 1)
+    
+    f.portrait:SetMask("Textures\\MinimapMask")
+    
+    f.healthValue = 0
+    
+    f.barWidth = 212
+    
+    f:SetScript('OnEnter', normalUnitFrame_OnEnter)
+    f:SetScript('OnLeave', normalUnitFrame_OnLeave)
+
+    return f
+end
+
+local function createNormalUnitFrameSmall()
+    local f = CreateFrame('Button', 'GwTargetsTargetUnitFrame', UIParent, 'GwNormalUnitFrameSmall')
+
+    f.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthString:SetShadowOffset(1, -1)
+    
+    f.nameString:SetFont(UNIT_NAME_FONT, 14)
+    f.nameString:SetShadowOffset(1, -1)
+    
+    f.levelString:SetFont(UNIT_NAME_FONT, 14)
+    f.levelString:SetShadowOffset(1, -1)
+    
+    f.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingString:SetShadowOffset(1, -1)
+    
+    f.healthValue = 0
+    
+    f.barWidth = 146
+
+    f:SetScript('OnEnter', normalUnitFrame_OnEnter)
+    f:SetScript('OnLeave', normalUnitFrame_OnLeave)
+
+    return f
+end
 
 local function updateHealthTextString(self,health,healthPrecentage)
        
         local healthString = ''
             
         if self.showHealthValue==true then
-            healthString = comma_value(health)
+            healthString = GW.comma_value(health)
         end
         if self.showHealthValue==true and self.showHealthPrecentage ==true then healthString= healthString..' - ' end
             
         if self.showHealthPrecentage ==true then
-            healthString = healthString..comma_value(healthPrecentage*100)..'%'
+            healthString = healthString..GW.comma_value(healthPrecentage*100)..'%'
         end            
             
         self.healthString:SetText(healthString) 
@@ -187,7 +257,7 @@ local function protectedCastAnimation(self, powerPrec)
 
             
             
-    local bI = math.min(7,math.max(1,intRound(7*spark_current)))
+    local bI = math.min(7,math.max(1,GW.intRound(7*spark_current)))
             
     self.castingbarSpark:SetWidth(math.min(32,32*(powerPrec/0.10)))
     self.castingbarSpark:SetPoint('LEFT',self.castingbar,'LEFT',math.max(0,sparkPoint),0)
@@ -357,7 +427,7 @@ local function updateHealthValues(self,event)
     
     if self.healthTextThroth==nil then self.healthTextThroth=0 end
     
-    local animationSpeed = dif(self.healthValue, healthPrecentage)
+    local animationSpeed = GW.dif(self.healthValue, healthPrecentage)
     animationSpeed = math.min(1.00,math.max(0.2,2.00 * animationSpeed))
     
 
@@ -492,19 +562,76 @@ local function updateBuffLayout(self,event)
     
 end
 
+local function auraFrame_OnUpdate(self, elapsed)
+    if GetTime() > self.throt and self:IsShown() and self.expires ~= nil then
+        self.throt = GetTime() + 0.2
+        self.duration:SetText(GW.timeCount( self.expires - GetTime()))
+    end
+end
+
+local function auraFrame_OnEnter(self)
+    if self:IsShown() and self.auraid ~= nil and self.unit ~= nil then
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+        GameTooltip:ClearLines()
+        if self.auraType == 'buff' then
+            GameTooltip:SetUnitBuff(self.unit, self.auraid)
+        else
+            GameTooltip:SetUnitDebuff(self.unit, self.auraid, self.debuffFilter)
+        end
+        GameTooltip:Show()
+    end
+end
+
+local function auraFrame_OnLeave(self)
+    GameTooltip:Hide()
+end
+
+local function auraFrame_OnClick(self, button, down)
+    if not InCombatLockdown() and self.auraType == 'buff' and button == 'RightButton' and self.unit == 'player' then
+        CancelUnitBuff("player", self.auraid)
+    end
+end
+
+function gwCreateAuraFrame(name, parent)
+    local f = CreateFrame('Button', name, parent, 'GwAuraFrame')
+    local fs = f.status
+
+    f.typeAura = 'smallbuff'
+    f.cooldown:SetDrawEdge(0)
+    f.cooldown:SetDrawSwipe(1)
+    f.cooldown:SetReverse(false)
+    f.cooldown:SetHideCountdownNumbers(true)
+    f.throt = 0
+
+    fs.stacks:SetFont(UNIT_NAME_FONT, 11, 'OUTLINED')
+    fs.duration:SetFont(UNIT_NAME_FONT, 10)
+    fs.duration:SetShadowOffset(1, -1)
+
+    fs:GetParent().duration = fs.duration
+    fs:GetParent().stacks = fs.stacks
+    fs:GetParent().icon = fs.icon
+
+    f:SetScript('OnUpdate', auraFrame_OnUpdate)
+    f:SetScript('OnEnter', auraFrame_OnEnter)
+    f:SetScript('OnLeave', auraFrame_OnLeave)
+    f:SetScript('OnClick', auraFrame_OnClick)
+    --f:SetAttribute('type2', 'cancelaura')
+
+    return f
+end
+
 local function loadAuras(self)
-    for i=1,40 do
-       local frame =  CreateFrame('Button','Gw'..self.unit..'buffFrame'..i,self.auras,'GwAuraFrame')
+    for i = 1, 40 do
+        local frame = gwCreateAuraFrame('Gw' .. self.unit .. 'buffFrame' .. i, self.auras)
         frame.unit = self.unit
         frame.auraType = 'buff'
-        frame = CreateFrame('Button','Gw'..self.unit..'debuffFrame'..i,self.auras,'GwAuraFrame')
+        frame = gwCreateAuraFrame('Gw' .. self.unit .. 'debuffFrame' .. i, self.auras)
         frame.unit = self.unit
         frame.auraType = 'debuff'
-       
     end
-   self.saveAuras = {}
-   self.saveAuras['buff'] = {}
-   self.saveAuras['debuff'] = {}
+    self.saveAuras = {}
+    self.saveAuras['buff'] = {}
+    self.saveAuras['debuff'] = {}
 end
 local function target_OnEvent(self,event,unit)
     
@@ -713,7 +840,7 @@ end
 function gw_unitframes_register_Target()
     
     
-    local NewUnitFrame = CreateFrame('Button','GwTargetUnitFrame',UIParent,'GwNormalUnitFrame')
+    local NewUnitFrame = createNormalUnitFrame('GwTargetUnitFrame')
     NewUnitFrame.unit='target'
     
     gw_register_movable_frame('targetframe',NewUnitFrame,'target_pos','GwTargetFrameTemplateDummy')
@@ -803,7 +930,7 @@ end
 function gw_unitframes_register_Focus()
     
     
-    local NewUnitFrame = CreateFrame('Button','GwFocusUnitFrame',UIParent,'GwNormalUnitFrame')
+    local NewUnitFrame = createNormalUnitFrame('GwFocusUnitFrame')
     NewUnitFrame.unit='focus'
     
     gw_register_movable_frame('focusframe',NewUnitFrame,'focus_pos','GwTargetFrameTemplateDummy')
@@ -884,7 +1011,7 @@ end
 function gw_unitframes_register_Targetstarget()
     
     
-    local NewUnitFrame = CreateFrame('Button','GwTargetsTargetUnitFrame',UIParent,'GwNormalUnitFrameSmall')
+    local NewUnitFrame = createNormalUnitFrameSmall()
     NewUnitFrame.unit='targettarget'
     
     gw_register_movable_frame('targettargetframe',NewUnitFrame,'targettarget_pos','GwTargetFrameTemplateDummy')
@@ -947,7 +1074,7 @@ end
 function gw_unitframes_register_Focusstarget()
     
     
-    local NewUnitFrame = CreateFrame('Button','GwTargetsTargetUnitFrame',UIParent,'GwNormalUnitFrameSmall')
+    local NewUnitFrame = createNormalUnitFrameSmall()
     NewUnitFrame.unit='focustarget'
     
     gw_register_movable_frame('focustargetframe',NewUnitFrame,'focustarget_pos','GwTargetFrameTemplateDummy')

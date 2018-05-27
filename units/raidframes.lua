@@ -1,3 +1,5 @@
+local _, GW = ...
+
 local GROUPD_TYPE = 'PARTY'
 local GW_READY_CHECK_INPROGRESS = false
 local GW_CURRENT_HIGHLIGHT_FRAME = nil
@@ -857,7 +859,7 @@ function gw_raidframes_sortByRole()
         if unitString=='party' then
             local role = UnitGroupRolesAssigned('player')
             if role==v then
-                sorted_array[countTable(sorted_array)+1] = 'player'
+                sorted_array[GW.countTable(sorted_array)+1] = 'player'
             end
         end
         
@@ -865,7 +867,7 @@ function gw_raidframes_sortByRole()
             if  UnitExists(unitString..i) then
                 local role = UnitGroupRolesAssigned(unitString..i)
                 if role==v then
-                    sorted_array[countTable(sorted_array)+1] = unitString..i
+                    sorted_array[GW.countTable(sorted_array)+1] = unitString..i
                 end
             end
         end

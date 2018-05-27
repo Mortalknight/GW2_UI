@@ -1,3 +1,8 @@
+local _, GW = ...
+local comma_value = GW.comma_value
+local round = GW.round
+local lerp = GW.lerp
+
 --GW_PowerBarColorCustom = PowerBarColor;
 GW_PowerBarColorCustom = {}
 
@@ -518,7 +523,7 @@ function update_experiencebar_data(self,event)
     local expSoundCooldown = 0
     local startTime = GetTime()
     
-    animationSpeed = dif(experiencebarAnimation, valPrec)
+    animationSpeed = GW.dif(experiencebarAnimation, valPrec)
     animationSpeed = math.min(15, math.max(5, 10 * animationSpeed))
 
     
@@ -1133,7 +1138,7 @@ function gw_latencyInfoToolTip()
     if gw_latencyToolTipUpdate>GetTime() then return end
     gw_latencyToolTipUpdate = GetTime() + 0.5
     
-    gw_frameRate = intRound(GetFramerate());
+    gw_frameRate = GW.intRound(GetFramerate());
     local down, up, lagHome, lagWorld = GetNetStats();
 	local gw_addonMemory = 0
 	local gw_numAddons = GetNumAddOns()
@@ -1209,13 +1214,54 @@ function ToggleGameMenuFrame()
     GameMenuFrame:Show()
 end
 
+local function levelingRewards_OnShow(self)
+    PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
+    self.animationValue = -400
+    local name = self:GetName()
+    local start = GetTime()
+    addToAnimation(name, self.animationValue, 0, start, 0.2, function()
+        local prog = animations[name]['progress']
+        local a = lerp(0, 1, (GetTime() - start) / 0.2)
+        self:SetAlpha(a)
+        self:SetPoint('CENTER', 0, prog)
+    end)
+end
 
 function gw_load_levelingrewads()
-   CreateFrame('Frame','GwLevelingRewards',UIParent,'GwLevelingRewards') 
-    tinsert(UISpecialFrames, "GwLevelingRewards") 
-	--GwLevelingRewardsHeader:SetText(GwLocalization['LEVEL_REWARDS'])
-	--GwLevelingRewardsrewardHeader:SetText(GwLocalization['LEVEL_REWARDS_RHEADER'])
-	--GwLevelingRewardslevelHeader:SetText(GwLocalization['LEVEL_REWARDS_LHEADER'])
+    local f = CreateFrame('Frame', 'GwLevelingRewards', UIParent, 'GwLevelingRewards')
+
+    f.header:SetFont(DAMAGE_TEXT_FONT, 24)
+    f.header:SetText(GwLocalization['LEVEL_REWARDS'])
+    
+    f.rewardHeader:SetFont(DAMAGE_TEXT_FONT, 11)
+    f.rewardHeader:SetTextColor(0.6, 0.6, 0.6)
+    f.rewardHeader:SetText(GwLocalization['LEVEL_REWARDS_RHEADER'])
+    
+    f.levelHeader:SetFont(DAMAGE_TEXT_FONT, 11)
+    f.levelHeader:SetTextColor(0.6, 0.6, 0.6)
+    f.levelHeader:SetText(GwLocalization['LEVEL_REWARDS_LHEADER'])
+    
+    GwCloseLevelingRewards:SetText(GwLocalization['LEVEL_REWARDS_CLOSE'])
+    
+    _G['GwLevelingRewardsItem1'].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem1'].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem1'].name:SetText(GwLocalization['LEVEL_REWARDS'])
+    
+    _G['GwLevelingRewardsItem2'].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem2'].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem2'].name:SetText(GwLocalization['LEVEL_REWARDS'])
+    
+    _G['GwLevelingRewardsItem3'].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem3'].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem3'].name:SetText(GwLocalization['LEVEL_REWARDS'])
+    
+    _G['GwLevelingRewardsItem4'].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem4'].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G['GwLevelingRewardsItem4'].name:SetText(GwLocalization['LEVEL_REWARDS'])
+
+    f:SetScript('OnShow', levelingRewards_OnShow)
+
+    tinsert(UISpecialFrames, "GwLevelingRewards")
 end
 
 

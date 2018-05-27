@@ -1,3 +1,6 @@
+local _, GW = ...
+local lerp = GW.lerp
+
 local extra_manabar_loaded = false
 
 HOLY_POWER_FLARE_ANIMATION = 0
@@ -193,7 +196,7 @@ local function ironSkin_OnUpdate()
     GwBrewmaster.ironskin.fill:SetWidth(precentage*256)
     
     GwBrewmaster.ironskin.indicator:SetPoint('LEFT',math.min(252,(precentage*256)) - 13,19)
-    GwBrewmaster.ironskin.indicatorText:SetText(intRound(GwBrewmaster.ironskin.expires - GetTime())..'s')
+    GwBrewmaster.ironskin.indicatorText:SetText(GW.intRound(GwBrewmaster.ironskin.expires - GetTime())..'s')
 end
 
 function GW_POWERTYPE_STAGGER(event,unit)

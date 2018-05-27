@@ -1,3 +1,6 @@
+local _, GW = ...
+local lerp = GW.lerp
+
 local LastPlayerPowerType = 0
 
 
@@ -105,18 +108,17 @@ local function updateBuffLayout(self,event)
 end
 
 local function loadAuras(self)
-    for i=1,40 do
-       local frame =  CreateFrame('Button','Gw'..self.unit..'buffFrame'..i,self.auras,'GwAuraFrame')
+    for i = 1, 40 do
+        local frame = gwCreateAuraFrame('Gw' .. self.unit .. 'buffFrame' .. i, self.auras)
         frame.unit = self.unit
         frame.auraType = 'buff'
-        frame = CreateFrame('Button','Gw'..self.unit..'debuffFrame'..i,self.auras,'GwAuraFrame')
+        frame = gwCreateAuraFrame('Gw' .. self.unit .. 'debuffFrame' .. i, self.auras)
         frame.unit = self.unit
         frame.auraType = 'debuff'
-       
     end
-   self.saveAuras = {}
-   self.saveAuras['buff'] = {}
-   self.saveAuras['debuff'] = {}
+    self.saveAuras = {}
+    self.saveAuras['buff'] = {}
+    self.saveAuras['debuff'] = {}
 end
 
 local function updatePetFrameLocation()
@@ -285,7 +287,7 @@ function gw_powerbar_updateRegen(self)
     self.powerCandy:SetValue( 0 )
 
     if self.textUpdate<GetTime() then
-        self.powerBarString:SetText(comma_value(powerMax*powerPrec))
+        self.powerBarString:SetText(GW.comma_value(powerMax*powerPrec))
         self.textUpdate = GetTime() + 0.2
     end
             
@@ -497,7 +499,7 @@ function gw_update_pet_data(event, unit)
                 _G['GwPlayerPetFrameHealth']:SetValue(animations['petBarAnimation']['progress'])
         end)
         GwPlayerPetFrameHealth.animationCurrent = healthprec
-        _G['GwPlayerPetFrameHealthString']:SetText(comma_value(health))
+        _G['GwPlayerPetFrameHealthString']:SetText(GW.comma_value(health))
   
    
   
@@ -567,7 +569,7 @@ function gw_update_power_data(self,forcePowerType,powerToken,forceAnimationName)
         _G[self:GetName()..'Bar']:SetValue(0)
         _G[self:GetName()..'Candy']:SetValue( 0 )
         
-        _G[self:GetName()..'BarString']:SetText(comma_value(powerMax*animations[self:GetName()]['progress']))
+        _G[self:GetName()..'BarString']:SetText(GW.comma_value(powerMax*animations[self:GetName()]['progress']))
             
            self.animationCurrent = powerPrec;
         end,'noease',function() 
@@ -690,7 +692,7 @@ end
 
 function gw_update_health_text(text)
     
-    local v = comma_value(text)
+    local v = GW.comma_value(text)
     _G['GwPlayerHealthGlobeTextValue']:SetText(v)
     for i = 1 , 8 do
         _G['GwPlayerHealthGlobeTextShadow'..i]:SetText(v)
@@ -702,7 +704,7 @@ function gw_update_absorb_text(text)
     if text<=0 then 
         v = ''
     else
-        v = comma_value(text)
+        v = GW.comma_value(text)
     end
     
     _G['GwPlayerAbsorbGlobeTextValue']:SetText(v)

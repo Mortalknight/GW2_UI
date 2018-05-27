@@ -1,6 +1,9 @@
+local _, GW = ...
+local timeCount = GW.timeCount
+local lerp = GW.lerp
+
 local buffLists = {}
 local DebuffLists = {}
-
 
 
 
@@ -299,14 +302,13 @@ local function updateBuffLayout(self,event)
 end
 
 local function loadAuras(self)
-    for i=1,40 do
-       local frame =  CreateFrame('Button','GwPlayerbuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
+    for i = 1, 40 do
+        local frame = gwCreateAuraFrame('GwPlayerbuffFrame' .. i, GwPlayerAuraFrame)
         frame.unit = 'player'
         frame.auraType = 'buff'
-        frame = CreateFrame('Button','GwPlayerdebuffFrame'..i,GwPlayerAuraFrame,'GwAuraFrame')
+        frame = gwCreateAuraFrame('GwPlayerdebuffFrame' .. i, GwPlayerAuraFrame)
         frame.unit = 'player'
         frame.auraType = 'debuff'
-        
     end
     self.saveAuras = {}
     self.saveAuras['buff'] ={}
@@ -315,15 +317,15 @@ local function loadAuras(self)
   
 end
 function gw_set_buffframe()
-BuffFrame:Hide()
-BuffFrame:SetScript('OnShow',function(self) self:Hide() end)
-    local player_buff_frame = CreateFrame('Frame','GwPlayerAuraFrame',UIParent,'GwPlayerAuraFrame')
+    BuffFrame:Hide()
+    BuffFrame:SetScript('OnShow', gwHideSelf)
+    local player_buff_frame = CreateFrame('Frame', 'GwPlayerAuraFrame', UIParent, 'GwPlayerAuraFrame')
     GwPlayerAuraFrame.auras = self
     GwPlayerAuraFrame.unit = 'player'
-    player_buff_frame:SetScript('OnEvent', function(self,event,unit)
-            if unit~='player' then return end
-            updateBuffLayout(GwPlayerAuraFrame,event)
-        end)
+    player_buff_frame:SetScript('OnEvent', function(self, event, unit)
+        if unit ~= 'player' then return end
+        updateBuffLayout(GwPlayerAuraFrame, event)
+    end)
     player_buff_frame:RegisterEvent('UNIT_AURA')
     
     

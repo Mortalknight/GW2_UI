@@ -1,3 +1,6 @@
+local _, GW = ...
+local lerp = GW.lerp
+
 local toastList = {}
 local toastQueue = {}
 local toastIndex = 0

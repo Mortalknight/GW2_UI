@@ -1,3 +1,6 @@
+local _, GW = ...
+local lerp = GW.lerp
+
 local playeCasting = 0
 local playerSpellStart = 0
 local playerSpellEnd = 0
@@ -42,7 +45,7 @@ GwCastingBar:SetScript("OnEvent",function(self,event,unitID,spell)
             addToAnimation('castingbarAnimation',0,1,startTime,endTime-startTime,function()    
                         
                     if gwGetSetting('CASTINGBAR_DATA') then
-                            GwCastingBar.time:SetText(timeCount(endTime - GetTime(),true))
+                            GwCastingBar.time:SetText(GW.timeCount(endTime - GetTime(),true))
                     end
                         
                     local p = animations['castingbarAnimation']['progress']

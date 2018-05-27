@@ -1,3 +1,5 @@
+local _, GW = ...
+
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
         if (UnitIsTapped("target")) and (not UnitIsTappedByPlayer("target")) then
@@ -7,7 +9,7 @@ if UnitIsTapDenied == nil then
     end
 end
 
-function countTable(T)
+GW.countTable = function(T)
     local c = 0
     if T ~= nil and type(T) == 'table' then
         for _ in pairs(T) do
@@ -17,7 +19,7 @@ function countTable(T)
     return c
 end
  
-function timeCount(numSec, com)
+GW.timeCount = function(numSec, com)
     local nSeconds = tonumber(numSec)
     if nSeconds == nil then
         nSeconds = 0
@@ -45,17 +47,17 @@ function timeCount(numSec, com)
     return nSecs .. 's'
 end
  
-function comma_value(n)
+GW.comma_value = function(n)
     n = round(n)
     local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
     return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
 end
 
-function round(number, decimals)
+GW.round = function(number, decimals)
     return (("%%.%df"):format(decimals)):format(number)
 end
 
-function intRound(v)
+GW.intRound = function(v)
     if v == nil then
         return 0
     end
@@ -66,7 +68,7 @@ function intRound(v)
     return vf
 end
 
-function dif(a,b)
+GW.dif = function(a,b)
     if a == nil then
         a = 0
     end
@@ -81,7 +83,7 @@ function dif(a,b)
     end
 end
 
-function lerp(v0, v1, t)
+GW.lerp = function(v0, v1, t)
     if v0 == nil then
         v0 = 0
     end
@@ -89,7 +91,7 @@ function lerp(v0, v1, t)
     return v0 + t * p
 end
 
-function length(T)
+GW.length = function(T)
     local count = 0
     for _ in pairs(T) do
         count = count + 1
@@ -97,7 +99,7 @@ function length(T)
     return count
 end
 
-function splitString(inputstr, sep, sep2, sep3)
+GW.splitString = function(inputstr, sep, sep2, sep3)
     if sep == nil then
         sep = "%s"
     end
@@ -117,6 +119,6 @@ function splitString(inputstr, sep, sep2, sep3)
     return t
 end
 
-function isnan(n)
+GW.isnan = function(n)
     return tostring(n) == '-1.#IND'
 end

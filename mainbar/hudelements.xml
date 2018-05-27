@@ -1641,55 +1641,6 @@
                         </Scripts>
                 </Button>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.header:SetFont(DAMAGE_TEXT_FONT,24)
-				self.header:SetText(GwLocalization['LEVEL_REWARDS'])
-                
-                self.rewardHeader:SetFont(DAMAGE_TEXT_FONT,11)
-                self.rewardHeader:SetTextColor(0.6,0.6,0.6)
-				self.rewardHeader:SetText(GwLocalization['LEVEL_REWARDS_RHEADER'])
-                
-                self.levelHeader:SetFont(DAMAGE_TEXT_FONT,11)
-                self.levelHeader:SetTextColor(0.6,0.6,0.6)
-				self.levelHeader:SetText(GwLocalization['LEVEL_REWARDS_LHEADER'])
-				
-				GwCloseLevelingRewards:SetText(GwLocalization['LEVEL_REWARDS_CLOSE'])
-                
-                
-                _G['GwLevelingRewardsItem1'].name:SetFont(DAMAGE_TEXT_FONT,14)
-                _G['GwLevelingRewardsItem1'].level:SetFont(DAMAGE_TEXT_FONT,14)
-				_G['GwLevelingRewardsItem1'].name:SetText(GwLocalization['LEVEL_REWARDS'])				
-                
-                _G['GwLevelingRewardsItem2'].name:SetFont(DAMAGE_TEXT_FONT,14)
-                _G['GwLevelingRewardsItem2'].level:SetFont(DAMAGE_TEXT_FONT,14)
-				_G['GwLevelingRewardsItem2'].name:SetText(GwLocalization['LEVEL_REWARDS'])	
-                
-                _G['GwLevelingRewardsItem3'].name:SetFont(DAMAGE_TEXT_FONT,14)
-                _G['GwLevelingRewardsItem3'].level:SetFont(DAMAGE_TEXT_FONT,14)
-				_G['GwLevelingRewardsItem3'].name:SetText(GwLocalization['LEVEL_REWARDS'])	
-                
-                _G['GwLevelingRewardsItem4'].name:SetFont(DAMAGE_TEXT_FONT,14)
-                _G['GwLevelingRewardsItem4'].level:SetFont(DAMAGE_TEXT_FONT,14)
-				_G['GwLevelingRewardsItem4'].name:SetText(GwLocalization['LEVEL_REWARDS'])	
-            </OnLoad>
-            <OnShow>
-              
-                PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN     );
-                self.animationValue = -400
-                local name = self:GetName()
-                local start = GetTime()
-                 addToAnimation(name,self.animationValue,0,start,0.2,function()
-        
-                    local prog = animations[name]['progress']
-                    local a = lerp(0,1,(GetTime()-start)/0.2)
-                    self:SetAlpha(a)
-                    self:SetPoint('CENTER',0,prog);
-                  
-                end)
-            </OnShow>  
-
-        </Scripts>
     </Frame>
     <Frame name="GwOrderhallBar" virtual="true">
         <Size x="100" y="32"></Size>

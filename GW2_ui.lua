@@ -1,3 +1,5 @@
+local _, GW = ...
+
 GW_VERSION_STRING = 'GW2_UI @project-version@'
 
 local loaded = false
@@ -120,10 +122,10 @@ animations = {}
 
 function gwButtonAnimation(self, name, w)
     local prog = animations[name]['progress']
-    local l = lerp(0, w, prog)
+    local l = GW.lerp(0, w, prog)
             
     _G[name..'OnHover']:SetPoint('RIGHT', self, 'LEFT', l, 0)
-    _G[name..'OnHover']:SetVertexColor(1, 1, 1, lerp(0, 1, ((prog) - 0.5)/0.5))
+    _G[name..'OnHover']:SetVertexColor(1, 1, 1, GW.lerp(0, 1, ((prog) - 0.5)/0.5))
 end
 
 function gw_button_enter(self)
@@ -161,7 +163,7 @@ function gwBarAnimation(self, barWidth, sparkWidth)
     local spark_prec = spark_current - spark_min
                             
     local spark = math.min(barWidth - sparkWidth, math.floor(barWidth * round_closest) - math.floor(sparkWidth * spark_prec))
-    local bI = 17 - math.max(1, intRound(16 * spark_prec))
+    local bI = 17 - math.max(1, GW.intRound(16 * spark_prec))
 
     self.spark:SetTexCoord(
         bloodSpark[bI].left,
@@ -262,9 +264,9 @@ function GwOnUpdate(self, elapsed)
         count = count + 1
         if v['completed'] == false and GetTime() >= (v['start'] + v['duration']) then
             if v['easeing'] == nil then
-                v['progress'] = lerp(v['from'], v['to'], math.sin(1 * math.pi * 0.5))
+                v['progress'] = GW.lerp(v['from'], v['to'], math.sin(1 * math.pi * 0.5))
             else
-                v['progress'] = lerp(v['from'], v['to'], 1)
+                v['progress'] = GW.lerp(v['from'], v['to'], 1)
             end
             if v['method'] ~= nil then
                 v['method'](v['progress'])
@@ -279,9 +281,9 @@ function GwOnUpdate(self, elapsed)
         end
         if v['completed'] == false then
             if v['easeing'] == nil then
-                v['progress'] = lerp(v['from'], v['to'], math.sin((GetTime() - v['start']) / v['duration'] * math.pi * 0.5))
+                v['progress'] = GW.lerp(v['from'], v['to'], math.sin((GetTime() - v['start']) / v['duration'] * math.pi * 0.5))
             else
-                v['progress'] = lerp(v['from'], v['to'], (GetTime() - v['start']) / v['duration'])
+                v['progress'] = GW.lerp(v['from'], v['to'], (GetTime() - v['start']) / v['duration'])
             end
             v['method'](v['progress'])
             foundAnimation = true

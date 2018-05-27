@@ -1,3 +1,5 @@
+local _, GW = ...
+local lerp = GW.lerp
 
 local unitFrameAnimations  = {}
 local buffLists = {}
@@ -348,7 +350,7 @@ function update_buff_timers(thisName)
             e = tonumber(_G[thisName..'DeBuffItemFrame'..i].expires)
             
             if d>0 then
-                buffDur = timeCount(e-GetTime());
+                buffDur = GW.timeCount(e-GetTime());
             end
             _G[thisName..'DeBuffItemFrame'..i..'CooldownBuffDuration']:SetText(buffDur)
         
@@ -360,7 +362,7 @@ function update_buff_timers(thisName)
             e = tonumber(_G[thisName..'BuffItemFrame'..i].expires)
             
             if d>0 then
-                buffDur = timeCount(e-GetTime());
+                buffDur = GW.timeCount(e-GetTime());
             end
             _G[thisName..'BuffItemFrame'..i..'BuffDuration']:SetText(buffDur)
         
@@ -610,14 +612,14 @@ function updateCastingbar(thisName,unitToWatch)
             
         healthValueText =''
         if gwGetSetting(unitToWatch..'_HEALTH_VALUE_ENABLED') then
-            healthValueText = comma_value(health)
+            healthValueText = GW.comma_value(health)
             if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
                 healthValueText = healthValueText..' - '
             end
         end
         if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
             local precentag_show = healthPrecentage*100
-            healthValueText = healthValueText..comma_value(precentag_show)..'%'
+            healthValueText = healthValueText..GW.comma_value(precentag_show)..'%'
     end
     _G[thisName.."HealthBarHealthBarString"]:SetText(healthValueText)
         
@@ -698,14 +700,14 @@ function updateCastingbar(thisName,unitToWatch)
    
     healthValueText =''
     if gwGetSetting(unitToWatch..'_HEALTH_VALUE_ENABLED') then
-        healthValueText = comma_value(health)
+        healthValueText = GW.comma_value(health)
         if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
             healthValueText = healthValueText..' - '
         end
     end
     if gwGetSetting(unitToWatch..'_HEALTH_VALUE_TYPE') then
         local precentag_show = healthPrecentage*100
-        healthValueText = healthValueText..comma_value(precentag_show)..'%'
+        healthValueText = healthValueText..GW.comma_value(precentag_show)..'%'
     end
     _G[thisName.."HealthBarHealthBarString"]:SetText(healthValueText)
         

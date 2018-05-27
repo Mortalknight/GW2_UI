@@ -1,7 +1,8 @@
+local _, GW = ...
 local callback = {}
 
 function gwActionBar_AddStateCallback(m)
-    local k = countTable(callback) + 1
+    local k = GW.countTable(callback) + 1
     callback[k] = m
 end
 

@@ -1,3 +1,5 @@
+local _, GW = ...
+
 local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
@@ -381,9 +383,9 @@ function gw_bg_loadCurrency()
                 -- set currency item values
                 slot.item.spaceString:SetText(name)
                 if maximum == 0 then
-                    slot.item.amount:SetText(comma_value(count))
+                    slot.item.amount:SetText(GW.comma_value(count))
                 else
-                    slot.item.amount:SetText(comma_value(count) .. ' / ' .. comma_value(maximum))
+                    slot.item.amount:SetText(GW.comma_value(count) .. ' / ' .. GW.comma_value(maximum))
                 end
                 slot.item.icon:SetTexture(icon)
                 
@@ -546,7 +548,7 @@ function gw_update_player_money(self)
 
     self.bronze:SetText(copper)
     self.silver:SetText(silver)
-    self.gold:SetText(comma_value(gold))
+    self.gold:SetText(GW.comma_value(gold))
 end
 
 function gw_update_free_slots()

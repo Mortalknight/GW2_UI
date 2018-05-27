@@ -1,3 +1,7 @@
+local _, GW = ...
+local round = GW.round
+local lerp = GW.lerp
+
 local blockIndex = 0
 local waitForUpdate = false
 local updatedThisFrame = false
@@ -162,7 +166,7 @@ function GwFormatObjectiveNumbers(text)
     
     if numItems~=nil and numNeeded~=nil then
 
-        return comma_value(numItems)..' / '..comma_value(numNeeded)..' '..itemName
+        return GW.comma_value(numItems)..' / '..GW.comma_value(numNeeded)..' '..itemName
     end
     return text
 end

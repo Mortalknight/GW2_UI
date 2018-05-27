@@ -1,3 +1,5 @@
+local _, GW = ...
+
 local GW_CURRENT_GROUP_TYPE = 'PARTY'
 
 local GW_READY_CHECK_INPROGRESS = false
@@ -402,7 +404,7 @@ function gw_updatePartyFrameAuras(self,unit)
             local buffDur = '';
             local stacks = '';
             if buffLists[unit][i]['duration']>0 then
-                buffDur = timeCount(buffLists[unit][i]['timeRemaining']);
+                buffDur = GW.timeCount(buffLists[unit][i]['timeRemaining']);
                 end
                   if buffLists[unit][i]['count']>1 then
                 stacks = buffLists[unit][i]['count'] 
@@ -473,7 +475,7 @@ function gw_updatePartyFrameDebuffs(self,unit,x,y)
                stacks = DebuffLists[unit][i]['count'] 
             end
             if DebuffLists[unit][i]['duration']>0 then
-                buffDur = timeCount(DebuffLists[unit][i]['timeRemaining']);
+                buffDur = GW.timeCount(DebuffLists[unit][i]['timeRemaining']);
             end
             indexBuffFrame.expires =DebuffLists[unit][i]['expires']
             indexBuffFrame.duration =DebuffLists[unit][i]['duration']

@@ -1,3 +1,7 @@
+local _, GW = ...
+local comma_value = GW.comma_value
+local round = GW.round
+
 local gender = UnitSex("player");
 
 local STATS_ICONS ={
