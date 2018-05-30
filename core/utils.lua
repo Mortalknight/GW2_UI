@@ -48,7 +48,7 @@ GW.timeCount = function(numSec, com)
 end
  
 GW.comma_value = function(n)
-    n = round(n)
+    n = GW.round(n)
     local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
     return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
 end
