@@ -593,13 +593,11 @@ function gw_update_bag_icons(smooth)
         bEnd = 1
         bStep = -1
     end
-    local BAG_INDEX = nil
     for BAG_INDEX = bStart, bEnd, bStep do
         local cfm = 'ContainerFrame' .. tostring(BAG_INDEX)
-      
+
         if _G[cfm] and _G[cfm]:IsShown()  then
-            local i = 40
-            while i > 0 do
+            for i = 40, 1, -1 do
                 local slot = _G[cfm .. 'Item' .. i]
                 if slot and slot:IsShown() then
                     if x > (winsize - 40) then
@@ -655,9 +653,8 @@ function gw_update_bag_icons(smooth)
                         slotQuesttexture:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
                     end
                     if slotNormalTexture then
-                        slotNormalTexture:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
-                        slot:GetNormalTexture():SetAlpha(0.0)
-                    end 
+                        slot:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal')
+                    end
                     if slot.flash then
                         slot.flash:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
                     end
@@ -666,7 +663,6 @@ function gw_update_bag_icons(smooth)
 
                     x = x + BAG_ITEM_SIZE + BAG_ITEM_PADDING
                 end
-                i = i - 1
             end
         end
     end

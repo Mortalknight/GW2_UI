@@ -441,9 +441,8 @@ function gw_update_reagents_icons(smooth)
                 end 
             end
             if slotNormalTexture then
-                slotNormalTexture:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-                slot:GetNormalTexture():SetAlpha(0.0)
-            end 
+                slot:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal')
+            end
             if slot.flash then
                 slot.flash:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
             end
@@ -557,9 +556,8 @@ function gw_update_bank_icons(smooth)
                         end
                     end
                     if slotNormalTexture then
-                        slotNormalTexture:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-                        slot:GetNormalTexture():SetAlpha(0.0)
-                    end 
+                        slot:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal')
+                    end
                     if slot.flash then
                         slot.flash:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
                     end
