@@ -751,12 +751,13 @@ end
     end
     local textureC = 1
     
+    local id_table = C_EquipmentSet.GetEquipmentSetIDs()
     for i=1,numButtons do
         if numSets>=i then
             
             local frame = getNewEquipmentSetButton(i)
             
-            local name, texture, setID, isEquipped, _, _, _, numLost, _ = C_EquipmentSet.GetEquipmentSetInfo(i - 1)
+            local name, texture, setID, isEquipped, _, _, _, numLost, _ = C_EquipmentSet.GetEquipmentSetInfo(id_table[i])
             
             frame:Show()
             frame.saveOutfit:Hide()
@@ -791,7 +792,7 @@ end
             if isEquipped then
                 frame:SetNormalTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
             end
-            if numLost>0 then
+            if numLost > 0 then
               --  _G[frame:GetName()..'NormalTexture']:SetVertexColor(1,0.3,0.3)
                 frame:GetFontString():SetTextColor(1,0.3,0.3)
             else
