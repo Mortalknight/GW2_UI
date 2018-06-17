@@ -321,10 +321,8 @@
                                 self:GetFontString():SetShadowColor(0,0,0,1)
                                 self:GetFontString():SetShadowOffset(1,-1)
                                 
-                                self:RegisterEvent('PARTY_MEMBERS_CHANGED')
                                 self:RegisterEvent('GROUP_ROSTER_UPDATE')
                                 self:RegisterEvent('RAID_ROSTER_UPDATE')
-                                self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
                             </OnLoad>
                             <OnEvent>
                                 if UnitIsGroupLeader('player') or UnitIsGroupAssistant('player') then
@@ -345,10 +343,8 @@
                         </Anchors>
                         <Scripts>
                             <OnLoad>
-                                self:RegisterEvent('PARTY_MEMBERS_CHANGED')
                                 self:RegisterEvent('GROUP_ROSTER_UPDATE')
                                 self:RegisterEvent('RAID_ROSTER_UPDATE')
-                                self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
                             </OnLoad>
                             <OnEvent>
                                 if UnitIsGroupLeader('player') or UnitIsGroupAssistant('player') then
@@ -369,10 +365,8 @@
                         </Anchors>
                         <Scripts>
                             <OnLoad>
-                                self:RegisterEvent('PARTY_MEMBERS_CHANGED')
                                 self:RegisterEvent('GROUP_ROSTER_UPDATE')
                                 self:RegisterEvent('RAID_ROSTER_UPDATE')
-                                self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
                             </OnLoad>
                             <OnEvent>
                                 if UnitIsGroupLeader('player') then
@@ -417,10 +411,8 @@
                         _G[self:GetName()..'Target']:SetTextColor(255/255,241/255,209/255)
 						_G[self:GetName()..'Target']:SetText(GwLocalization['TARGET_MARKER'])
                   
-                        self:RegisterEvent('PARTY_MEMBERS_CHANGED')
                         self:RegisterEvent('GROUP_ROSTER_UPDATE')
                         self:RegisterEvent('RAID_ROSTER_UPDATE')
-                        self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
 						self:RegisterEvent('PLAYER_REGEN_ENABLED')
                     </OnLoad>
                     <OnEvent>
@@ -554,10 +546,8 @@
                         else
                             self:Hide()
                         end                       
-                        self:RegisterEvent('PARTY_MEMBERS_CHANGED')
                         self:RegisterEvent('GROUP_ROSTER_UPDATE')
                         self:RegisterEvent('RAID_ROSTER_UPDATE')
-                        self:RegisterEvent('PARTY_CONVERTED_TO_RAID')
 						self:RegisterEvent('PLAYER_REGEN_ENABLED')
 						_G[self:GetName()..'Ground']:SetFont(UNIT_NAME_FONT,14)
                         _G[self:GetName()..'Ground']:SetTextColor(255/255,241/255,209/255)

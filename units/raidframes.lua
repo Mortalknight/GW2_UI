@@ -62,7 +62,6 @@ function gw_register_raidframes()
     
     
     
-    GwRaidFrameContainer:RegisterEvent("PARTY_MEMBERS_CHANGED");
     GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE");
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE");
 
@@ -159,7 +158,7 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent('UNIT_HEALTH')
     frame:RegisterEvent('UNIT_MAXHEALTH')
     frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    frame:RegisterEvent("UNIT_POWER");
+    frame:RegisterEvent("UNIT_POWER_FREQUENT");
     frame:RegisterEvent("UNIT_MAXPOWER");
 
     frame:RegisterEvent("UNIT_PHASE");
@@ -169,7 +168,6 @@ function gw_create_raidframe(registerUnit)
     frame:RegisterEvent("UNIT_LEVEL");
     frame:RegisterEvent("UNIT_TARGET");
     frame:RegisterEvent("PLAYER_TARGET_CHANGED");
-    frame:RegisterEvent("PARTY_CONVERTED_TO_RAID");
     frame:RegisterEvent("READY_CHECK");
     frame:RegisterEvent("READY_CHECK_CONFIRM");
     frame:RegisterEvent("READY_CHECK_FINISHED");
@@ -329,7 +327,7 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
         setHealth(self)
     end
     
-    if event=='UNIT_POWER' or event=='UNIT_MAXPOWER' and unit==self.unit then
+    if event=='UNIT_POWER_FREQUENT' or event=='UNIT_MAXPOWER' and unit==self.unit then
         local power =   UnitPower(self.unit,UnitPowerType(self.unit))
         local powerMax =   UnitPowerMax(self.unit,UnitPowerType(self.unit))
         local powerPrecentage = 0
@@ -371,11 +369,6 @@ function gw_raidframe_OnEvent(self,event,unit,arg1)
     end
     if event=='RAID_TARGET_UPDATE' and gwGetSetting('RAID_UNIT_MARKERS') == true then
        updateRaidMarkers(self) 
-    end
-
-    if event=='PARTY_CONVERTED_TO_RAID' and GROUPD_TYPE=='PARTY' then
-        gw_toggle_partyframes_for_use(false)
-        GROUPD_TYPE='RAID'
     end
 
     if event=='READY_CHECK' then

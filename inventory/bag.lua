@@ -469,6 +469,11 @@ function gw_move_bagbar()
         fv:SetNormalTexture(nil)
         fv:SetHighlightTexture(nil)
         fv.IconBorder:SetTexture(nil)
+
+        if v == 'MainMenuBarBackpackButton' then
+            MainMenuBarBackpackButton:SetSize(32,32)
+            -- resize it
+        end
         
         local s = fv:GetScript('OnClick')
         fv:SetScript('OnClick', function(self, b)

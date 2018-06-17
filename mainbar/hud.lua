@@ -388,7 +388,7 @@ function update_experiencebar_data(self,event)
     _G['GwExperienceFrameBar']:SetStatusBarColor(0.83,0.57,0)
     
     gw_reputation_vals = nil
-    ReputationWatchBar:Hide()
+    --8X ReputationWatchBar:Hide()
     if level==Nextlevel  then
         for factionIndex = 1, GetNumFactions() do
             name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
@@ -971,7 +971,7 @@ function gwCreateMicroMenu()
     GwMicroButtonTalentMicroButton:RegisterEvent("UPDATE_BINDINGS");
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE");
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
-    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED");
+    --8X GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED");
     
     gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton, CHARACTER_BUTTON, 'TOGGLECHARACTER0"')
     gw_microButtonHookToolTip(GwMicroButtonBagMicroButton, GwLocalization['GW_BAG_MICROBUTTON_STRING'], 'OPENALLBAGS')
@@ -1026,7 +1026,7 @@ function gwCreateMicroMenu()
     updateNotificationIcon:SetScript('OnLeave', function()
          GameTooltip:Hide()
     end)
-    RegisterAddonMessagePrefix("GW2_UI")
+    C_ChatInfo.RegisterAddonMessagePrefix("GW2_UI")
     
     updateNotificationIcon:RegisterEvent('CHAT_MSG_ADDON')
     updateNotificationIcon:RegisterEvent('GROUP_ROSTER_UPDATE')
@@ -1044,6 +1044,9 @@ function gwCreateMicroMenu()
         microButtonFrame.gw_FadeShowing = true
         microButtonFrame:SetScript('OnUpdate', microMenu_OnUpdate)
     end
+
+    -- hide the default microbar
+    MicroButtonAndBagsBar:Hide()
 end
 
 gw_sendUpdate_message_cooldown = 0

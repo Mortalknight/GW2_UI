@@ -34,10 +34,9 @@ function create_classpowers()
     local classPowerFrame = CreateFrame('Frame','GwPlayerClassPower',UIParent,'GwPlayerClassPower')
     GwPlayerClassPower:SetScript('OnEvent', GW_UPDATE_CLASSPOWER)
     
-    GwPlayerClassPower:RegisterEvent("UNIT_POWER");
+    GwPlayerClassPower:RegisterEvent("UNIT_POWER_FREQUENT");
     GwPlayerClassPower:RegisterEvent("UNIT_MAXPOWER");
     GwPlayerClassPower:RegisterEvent("RUNE_POWER_UPDATE");
-    GwPlayerClassPower:RegisterEvent("RUNE_TYPE_UPDATE");
     GwPlayerClassPower:RegisterEvent("UNIT_AURA");
 
     classPowerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
@@ -334,7 +333,7 @@ function GW_POWERTYPE_MANABAR()
     
     _G['GwExtraPlayerPowerBarBarString']:SetFont(DAMAGE_TEXT_FONT,14)
 
-    GwExtraPlayerPowerBar:RegisterEvent("UNIT_POWER");
+    GwExtraPlayerPowerBar:RegisterEvent("UNIT_POWER_FREQUENT");
     GwExtraPlayerPowerBar:RegisterEvent("UNIT_MAXPOWER");
     GwExtraPlayerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD");
     

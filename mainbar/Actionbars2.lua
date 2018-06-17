@@ -3,14 +3,16 @@ local MAIN_MENU_BAR_BUTTON_MARGIN = 5
 
 local GW_BLIZZARD_HIDE_FRAMES ={
     
-  --  MainMenuBar,
+    MainMenuBar,
+    MainMenuBarArtFrameBackground,
     MainMenuBarOverlayFrame,
     MainMenuBarTexture0,
     MainMenuBarTexture1,
     MainMenuBarTexture2,
     MainMenuBarTexture3,
-    MainMenuBarRightEndCap,
-    MainMenuBarLeftEndCap,
+    MainMenuBarArtFrame.LeftEndCap,
+    MainMenuBarArtFrame.RightEndCap,
+    MainMenuBarArtFrame.PageNumber,
     ReputationWatchBar,
     HonorWatchBar,
     ArtifactWatchBar,
@@ -63,10 +65,11 @@ local GW_BARS= {
 
 function gw_hideBlizzardsActionbars()
     for k,v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
-        v:Hide()
-        if v.UnregisterAllEvents~=nil then
-            v:UnregisterAllEvents()
-           
+        if v and v.Hide ~= nil then
+            v:Hide()
+            if v.UnregisterAllEvents ~= nil then
+                v:UnregisterAllEvents()
+            end
         end
     end
     for k,object in pairs(GW_BLIZZARD_FORCE_HIDE) do
@@ -305,9 +308,13 @@ local function updateMainBar()
         end
     end
     MainMenuBarArtFrame:HookScript('OnUpdate', gwActionButtons_OnUpdate)
+    local sx, sy = MainMenuBarArtFrame:GetSize()
+    gwDebug('mmbaf', sx, sy, btn_padding, used_height)
+    MainMenuBarArtFrame:SetSize(btn_padding, used_height)
     MainMenuBarArtFrame:ClearAllPoints()
     MainMenuBarArtFrame:SetPoint('TOP', UIParent, 'BOTTOM', 0, 80)
-    MainMenuBarArtFrame:SetSize(btn_padding, used_height)
+    sx, sy = MainMenuBarArtFrame:GetSize()
+    gwDebug('mmbaf2', sx, sy, btn_padding, used_height)
 end
 
 local function updateMultiBar(barName, buttonName)
@@ -433,7 +440,6 @@ function gwSetupActionbars()
     if gwGetSetting('PETBAR_ENABLED') then
         gw_setPetBar()
     end
-    gw_setbagFrame()
     gw_setLeaveVehicleButton()
      
     hooksecurefunc("ActionButton_UpdateHotkeys",  gwActionButton_UpdateHotkeys)
@@ -567,7 +573,7 @@ function gw_setStanceBar()
     GwStanceBarButton:RegisterEvent('CHARACTER_POINTS_CHANGED')
     GwStanceBarButton:RegisterEvent('PLAYER_ALIVE')
     GwStanceBarButton:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-    GwStanceBarButton:RegisterEvent('UNIT_POWER')
+    GwStanceBarButton:RegisterEvent('UNIT_POWER_FREQUENT')
     GwStanceBarButton:RegisterEvent('UNIT_HEALTH')
     GwStanceBarButton:SetScript('OnEvent', gwStanceOnEvent)
        
@@ -589,25 +595,6 @@ function gw_setStanceBar()
             self:GetFrameRef('GwStanceBarContainer'):Show()
         end
     ]=]);
-end
-
-
-function gw_setbagFrame()
-    
-      if not gwGetSetting('BAGS_ENABLED') then
-        CharacterBag0Slot:ClearAllPoints()
-        CharacterBag1Slot:ClearAllPoints()
-        CharacterBag2Slot:ClearAllPoints()
-        CharacterBag3Slot:ClearAllPoints()
-
-        MainMenuBarBackpackButton:SetPoint('RIGHT', ActionButton12, 'RIGHT', ActionButton12:GetWidth()+64, 0)
-
-        CharacterBag0Slot:SetPoint('LEFT', MainMenuBarBackpackButton, 'RIGHT', 0, 0)
-        CharacterBag1Slot:SetPoint('LEFT', CharacterBag0Slot, 'RIGHT', 0, 0)
-        CharacterBag2Slot:SetPoint('LEFT', CharacterBag1Slot, 'RIGHT', 0, 0)
-        CharacterBag3Slot:SetPoint('LEFT', CharacterBag2Slot, 'RIGHT', 0, 0)
-
-    end
 end
 
 function gwVehicleLeaveOnShow()

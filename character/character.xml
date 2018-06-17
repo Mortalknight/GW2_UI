@@ -1050,7 +1050,6 @@
                 GwPaperTitles.scroll = 1
                 self:EnableMouseWheel(true)
                 self:RegisterEvent('KNOWN_TITLES_UPDATE')
-                self:RegisterEvent('NEW_TITLE_EARNED')
                 self:RegisterEvent('UNIT_NAME_UPDATE')
 				self.backButton:SetText(GwLocalization['CHARACTER_MENU_TITLES_RETURN'])
             </OnLoad>
@@ -1517,7 +1516,7 @@
                   
                 </Scripts>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelPanningFrame ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>
@@ -1680,7 +1679,7 @@
     <Button name="gwFrameCombatTogglerSpellbook" inherits="SecureActionButtonTemplate" virtual="true">
         <Attributes>
             <Attribute name="type" value="attribute" />
-            <Attribute name="attribute" attribute-frame="GwCharacterWindow" attribute-name="windowPanelOpen" attribute-value="2" />
+            <Attribute name="attribute" attribute-frame="GwCharacterWindow" attribute-name="windowPanelOpen" attribute-value="2" value="2" />
         </Attributes>
     </Button>
     

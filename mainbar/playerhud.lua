@@ -166,7 +166,7 @@ function gw_create_pet_frame()
     loadAuras(playerPetFrame)
     
     playerPetFrame:RegisterEvent('UNIT_PET')
-    playerPetFrame:RegisterEvent('UNIT_POWER')
+    playerPetFrame:RegisterEvent('UNIT_POWER_FREQUENT')
     playerPetFrame:RegisterEvent('UNIT_MAXPOWER')
     playerPetFrame:RegisterEvent('UNIT_HEALTH')
     playerPetFrame:RegisterEvent('UNIT_MAXHEALTH')
@@ -214,7 +214,7 @@ function gw_create_power_bar()
     _G[playerPowerBar:GetName()..'CandySpark']:ClearAllPoints()
     
     playerPowerBar:SetScript('OnEvent',function(self,event,unit)
-            if (event=='UNIT_POWER' or event=='UNIT_MAXPOWER') and unit=='player' then
+            if (event=='UNIT_POWER_FREQUENT' or event=='UNIT_MAXPOWER') and unit=='player' then
                 gw_update_power_data(GwPlayerPowerBar) 
                 return
             end 
@@ -226,7 +226,7 @@ function gw_create_power_bar()
     
     _G['GwPlayerPowerBarBarString']:SetFont(DAMAGE_TEXT_FONT,14)
 
-    playerPowerBar:RegisterEvent("UNIT_POWER");
+    playerPowerBar:RegisterEvent("UNIT_POWER_FREQUENT");
     playerPowerBar:RegisterEvent("UNIT_MAXPOWER");
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM");
     playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");

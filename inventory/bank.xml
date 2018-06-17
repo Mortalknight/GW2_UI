@@ -96,7 +96,7 @@
                     <FontString name="GwBuyMoreBankGold" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                         <Size x="50" y="40"></Size>
                         <Anchors>
-                            <Anchor point="LEFT" relativeTo="GwButtonBuyBankSlots" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                            <Anchor point="LEFT" relativeTo="GwBuyMoreBank" relativePoint="RIGHT" x="0" y="0"></Anchor>
                         </Anchors>
                     </FontString>
                     <Texture name="GwBuyMoreBankGoldIcon" file="Interface\MoneyFrame\UI-GoldIcon">

@@ -169,6 +169,7 @@ local function setUnitPortraitFrame(self,event)
         border = unitClassIfication
     end
     
+    --[[
     if (UnitPrestige(self.unit)~=nil and UnitPrestige(self.unit)>0)   then
         local p = UnitPrestige(self.unit)
         if p > 4 then 
@@ -185,10 +186,10 @@ local function setUnitPortraitFrame(self,event)
         self.prestigeString:Show()
         self.prestigeString:SetText(p)
         
-    else
+    else ]]--
         self.prestigebg:Hide()
         self.prestigeString:Hide() 
-    end
+    --end
     
     self.background:SetTexture(GW_TARGET_FRAME_ART[border])
     
@@ -660,7 +661,7 @@ local function target_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER') and unit==self.unit then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER_FREQUENT') and unit==self.unit then
         updatePowerValues(self,event)
         return
     end
@@ -711,7 +712,7 @@ local function focus_OnEvent(self,event,unit)
         return
     end
     
-    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER') and unit==self.unit then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER_FREQUENT') and unit==self.unit then
         updatePowerValues(self,event)
         return
     end
@@ -765,7 +766,7 @@ local function targettarget_OnEvent(self,event,unit,arg2)
         return
     end
     
-    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER')  then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER_FREQUENT')  then
         updatePowerValues(self,event)
         return
     end
@@ -815,7 +816,7 @@ local function focustarget_OnEvent(self,event,unit,arg2)
         return
     end
     
-    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER')  then
+    if (event=='UNIT_MAXPOWER' or event=='UNIT_POWER_FREQUENT')  then
         updatePowerValues(self,event)
         return
     end
@@ -907,7 +908,7 @@ function gw_unitframes_register_Target()
    
 
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT");
     NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
@@ -988,7 +989,7 @@ function gw_unitframes_register_Focus()
    
 
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT");
     NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
@@ -1055,7 +1056,7 @@ function gw_unitframes_register_Targetstarget()
    
 
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT");
     NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
@@ -1118,7 +1119,7 @@ function gw_unitframes_register_Focusstarget()
    
 
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER");
+    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT");
     NewUnitFrame:RegisterEvent("UNIT_MAXPOWER");
     
     NewUnitFrame:RegisterEvent("UNIT_AURA");
