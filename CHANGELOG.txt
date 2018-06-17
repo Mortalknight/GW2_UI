@@ -1,7 +1,29 @@
+4.2.6
+
+NEW
+   - Add an option to fade the micromenu bar (upper left menu) when out of combat
+   - Repair icon visibility is now tied to the Health Globe visibility setting
+
+FIXED
+   - Fix ability to move the pet bar
+   - Reduce chance of utility conflicts which should fix number display issues
+   - Fix rested expbar and level rewards tooltips
+   - Fix an error when entering pet battles
+   - Fix visible border on bag items after first load
+   - Several fixes to hiding/showing UI on entering/leaving vehicle modes
+
+MISCELLANEOUS
+   - Remove setting to enable Chat Bubbles (currently not a supported feature)
+   - A number of fixes to C API usage and bogus events that should reduce random errors
+
+
+
 4.2.5
 
 FIXED
    - Fixed a series of bugs caused by version 4.2.4.
+
+
 
 4.2.4
 
