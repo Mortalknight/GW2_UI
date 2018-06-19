@@ -820,6 +820,27 @@ local function updateGuildButton()
     
 end
 
+local function updateInventoryButton()
+	local totalEmptySlots = 0
+	
+	for i=0,4 do
+		local numberOfFreeSlots, bagType = GetContainerNumFreeSlots(i);
+		
+		if numberOfFreeSlots~=nil then
+			totalEmptySlots = totalEmptySlots + numberOfFreeSlots
+		end
+	end
+	
+	GwMicroButtonBagMicroButton.darkbg:Show()
+	if totalEmptySlots>9 then
+		GwMicroButtonBagMicroButton.darkbg:SetSize(18,18)
+	else
+		GwMicroButtonBagMicroButton.darkbg:SetSize(14,14)
+	end
+	
+   _G['GwMicroButtonBagMicroButtonString']:Show()
+   _G['GwMicroButtonBagMicroButtonString']:SetText(totalEmptySlots)
+end
 
 local microButtonFrame = CreateFrame('Frame', 'GwMicroButtonFrame', UIParent,'GwMicroButtonFrame')
 
@@ -984,6 +1005,17 @@ function gwCreateMicroMenu()
     gw_microButtonHookToolTip(GwMicroButtonCollectionsMicroButton, COLLECTIONS, 'TOGGLECOLLECTIONS')
     gw_microButtonHookToolTip(GwMicroButtonEJMicroButton, ADVENTURE_JOURNAL, 'TOGGLEENCOUNTERJOURNAL')
     
+	GwMicroButtonBagMicroButton.interval = 0	
+    GwMicroButtonBagMicroButton:SetScript('OnUpdate', function()
+        if GwMicroButtonBagMicroButton.interval>GetTime() then 
+			return 
+		end
+		
+        GwMicroButtonBagMicroButton.interval = GetTime() + 1
+		updateInventoryButton()
+    end)
+	updateInventoryButton()
+	
     GwMicroButtonGuildMicroButton.interval = 0
     GwMicroButtonGuildMicroButton:SetScript('OnUpdate', function(self, elapsed)
         if self.interval > 0 then
