@@ -1006,15 +1006,15 @@ function gwCreateMicroMenu()
     gw_microButtonHookToolTip(GwMicroButtonEJMicroButton, ADVENTURE_JOURNAL, 'TOGGLEENCOUNTERJOURNAL')
     
 	GwMicroButtonBagMicroButton.interval = 0	
-    GwMicroButtonBagMicroButton:SetScript('OnUpdate', function()
-        if GwMicroButtonBagMicroButton.interval>GetTime() then 
+    GwMicroButtonBagMicroButton:SetScript('OnUpdate', function(self, elapsed)
+		self.interval = self.interval - elapsed
+        if self.interval > 0 then 
 			return 
 		end
 		
-        GwMicroButtonBagMicroButton.interval = GetTime() + 1
+        self.interval = 0.5
 		updateInventoryButton()
     end)
-	updateInventoryButton()
 	
     GwMicroButtonGuildMicroButton.interval = 0
     GwMicroButtonGuildMicroButton:SetScript('OnUpdate', function(self, elapsed)
