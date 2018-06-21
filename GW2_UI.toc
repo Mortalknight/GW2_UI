@@ -31,6 +31,7 @@ mainbar/playerhud.lua
 mainbar/classpowers.lua
 
 units/target.xml
+units/target.lua
 units/party.xml
 units/raidframes.xml
 units/unitframes.xml

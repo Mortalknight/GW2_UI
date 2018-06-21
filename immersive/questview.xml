@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    
+
     <Frame name="GwQuestviewFrame" hidden="true" frameStrata="DIALOG" enableMouse="true" virtual="true">
         <Size x="1024" y="512"></Size>
         <Anchors>
@@ -15,7 +15,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer textureSubLevel="2" >
+            <Layer textureSubLevel="2">
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\questviewbg">
                     <Size x="950" y="475"></Size>
                     <Anchors>
@@ -24,7 +24,7 @@
                 </Texture>
             </Layer>
         </Layers>
-        
+
         <Frames>
             <Frame name="$parentContainer">
                 <Size x="950" y="474"></Size>
@@ -32,19 +32,19 @@
                     <Anchor point="center" x="0" y="0" />
                 </Anchors>
                 <Frames>
-                    <PlayerModel  frameStrata="DIALOG" name="$parentPlayerModel">
+                    <PlayerModel frameStrata="DIALOG" name="$parentPlayerModel">
                         <Size x="750" y="474"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="1" />
                         </Anchors>
-                    </PlayerModel> 
+                    </PlayerModel>
                     <PlayerModel name="$parentGiverModel">
                         <Size x="750" y="474"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="1" />
                         </Anchors>
                     </PlayerModel>
-                    
+
                     <Button name="$parentDialog" frameStrata="DIALOG">
                         <Size x="950" y="474"></Size>
                         <Anchors>
@@ -65,7 +65,7 @@
                                     <Anchors>
                                         <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" />
                                     </Anchors>
-                      
+
                                 </FontString>
                                 <FontString name="$parentQuestTitle" inherits="GameFontNormal" text="Test text" justify="CENTER">
                                     <Size x="950" y="100"></Size>
@@ -81,44 +81,29 @@
                                 </FontString>
                             </Layer>
                         </Layers>
-                        <Scripts>
-                            <OnLoad>
-                                GwQuestviewFrameContainerDialogString:SetFont(STANDARD_TEXT_FONT,14)
-                                GwQuestviewFrameContainerDialogString:SetTextColor(1,1,1)
-                                              
-                                GwQuestviewFrameContainerDialogQuestTitle:SetTextColor(255/255,197/255,39/255)
-                                GwQuestviewFrameContainerDialogQuestTitle:SetFont(DAMAGE_TEXT_FONT,24)
-                            </OnLoad>
-                        </Scripts>
                     </Button>
-                    
-                                
+
                     <Button name="$parentAcceptButton" inherits="GwStandardButton">
                         <Size x="80" y="24" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
                         </Anchors>
-                 
+
                     </Button>
                     <Button name="$parentDeclineQuest" text="Decline" inherits="GwStandardButton">
                         <Size x="80" y="24" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                         </Anchors>
-                        <Scripts>
-						<OnLoad>
-                                GwQuestviewFrameContainerDeclineQuest:SetText(GwLocalization['QUEST_VIEW_DECLINE'])
-                            </OnLoad>
-                        </Scripts>
                     </Button>
-                    
+
                 </Frames>
             </Frame>
 
-            
+
         </Frames>
-        
+
     </Frame>
 
-    
+
 </Ui>

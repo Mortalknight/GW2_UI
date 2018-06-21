@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    
+
     <Button name="CharacterWindowTabSelect" egisterForClicks="LeftButtonUp RightButtonUp" virtual="true">
         <Size x="64" y="40"></Size>
         <Anchors>
@@ -8,18 +8,18 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture  parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\tabicon_character">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\tabicon_character">
                     <Size x="64" y="40"></Size>
                     <Anchors>
-                        <Anchor point="CENTER"  relativePoint="CENTER"></Anchor>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
-                    <TexCoords left="0" right="0.5" top="0" bottom="0.625"/>          
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.625"/>
                 </Texture>
             </Layer>
         </Layers>
-     
+
     </Button>
-    
+
     <Frame name="GwPaperDollSelectedIndicator" frameStrata="HIGH" toplevel="true" hidden="true" virtual="true">
         <size x="16" y="32"></size>
         <Anchors>
@@ -27,20 +27,15 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture  parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
                     <Size x="16" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" x="0"></Anchor>
                     </Anchors>
-                                
+
                 </Texture>
-           </Layer>
+            </Layer>
         </Layers>
-        <Scripts>
-            <OnShow>
-                GwPaperDollIndicatorAnimation(self)
-            </OnShow>
-        </Scripts>
     </Frame>
     <Frame name="GwPaperDollStat" enableMouse="true" virtual="true">
         <Size x="92" y="30"></Size>
@@ -69,46 +64,19 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.Value:SetFont(UNIT_NAME_FONT,14)
-                self.Label:SetFont(UNIT_NAME_FONT,1)
-                self.Label:SetTextColor(0,0,0,0)
-				self.Value:SetText(GwLocalization['CHARACTER_NOT_LOADED'])
-            </OnLoad>
-            <OnEnter>
-                if self.stat=='MASTERY' then
-                    Mastery_OnEnter(self)
-                    return
-                end
-                if ( not self.tooltip ) then
-                    return;
-                end
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                GameTooltip:SetText(self.tooltip);
-                if ( self.tooltip2 ) then
-                GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g,        NORMAL_FONT_COLOR.b, true);
-                end
-                GameTooltip:Show();
-            
-            </OnEnter>
-            <OnLeave>
-                GameTooltip:Hide();
-            </OnLeave>
-        </Scripts>
     </Frame>
-    
-    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton"  registerForClicks="LeftButtonUp RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
+
+    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
         <Size x="49" y="49"></Size>
         <Layers>
-        <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND">
                 <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
                     <Size x="49" y="49"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
-                     <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
+                    <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
@@ -116,84 +84,34 @@
                     <Size x="20" y="20"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                       
+
                     </Anchors>
-      
-                     <TexCoords left="0" right="1" top="0.5" bottom="1"/>
+
+                    <TexCoords left="0" right="1" top="0.5" bottom="1"/>
                 </Texture>
             </Layer>
-            
+
             <Frames>
-                <CheckButton hidden="true" name="$parentCheckButton"  checked="false">
-               
+                <CheckButton hidden="true" name="$parentCheckButton" checked="false">
+
                     <Size x="160" y="160"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10" y="0"></Anchor>
                     </Anchors>
                     <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
                     <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
-                    <Scripts>
-                        <OnLoad>
- 
-                        </OnLoad>
-                    </Scripts>
                 </CheckButton>
             </Frames>
-  
+
         </Layers>
-        
-        <Scripts>
-            <OnLoad> 
-                gwPaperDollSlotButton_OnLoad(self)
-            </OnLoad>   
-            <OnShow> 
-                gwPaperDollSlotButton_OnShow(self)
-            </OnShow>
-            <OnHide> 
-                gwPaperDollSlotButton_OnHide(self)
-            </OnHide>
-            <OnEvent>
-                gwPaperDollSlotButton_OnEvent(self, event, ...);
-			</OnEvent>
-            <OnClick>
-                
-              if ( IsModifiedClick() ) then
-					gwPaperDollSlotButton_OnModifiedClick(self, button);
-             
-				else
-					gwPaperDollSlotButton_OnClick(self, button);
-				end
-			</OnClick>
-            <OnDragStart>
-                gwPaperDollSlotButton_OnClick(self, "LeftButton",true);
-            </OnDragStart>
-            <OnReceiveDrag>
-				gwPaperDollSlotButton_OnClick(self, "LeftButton",true);
-			</OnReceiveDrag>
-            <OnEnter>
-              gwPaperDollSlotButton_OnEnter(self,motion)
-			</OnEnter> 
-            <OnLeave>
-              gwPaperDollSlotButton_OnLeave(self,motion)
-			</OnLeave>
-        </Scripts>
+
     </Button>
     <Button name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true">
-        <Scripts>
-            <OnLoad>gwActionButtonGlobalStyle(self) </OnLoad>
-            <OnEnter>
-                self:SetScript('OnUpdate',self.UpdateTooltip)
-                GameTooltip:Show() </OnEnter>
-            <OnClick>GwPaperDollBagItem_OnClick(self)</OnClick>
-            <OnLeave>self:SetScript('OnUpdate',nil) GameTooltip:Hide() </OnLeave>
-            <OnShow> </OnShow>
-            <OnHide></OnHide>
-        </Scripts>
     </Button>
-     <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
-       
-         <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
-         <Layers>
+    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
+        <Layers>
             <Layer>
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
                     <Size x="10" y="20"></Size>
@@ -201,24 +119,11 @@
                         <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-             </Layer>
-         </Layers>
-         <Scripts>
-             <OnLoad>
-                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-                 
-                 self:GetFontString():SetTextColor(1,1,1,1)
-                 self:GetFontString():SetShadowColor(0,0,0,0)
-                 self:GetFontString():SetShadowOffset(1,-1)
-                 self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
-                 self:GetFontString():SetJustifyH('LEFT')
-                 self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
-
-             </OnLoad> 
-         </Scripts>
-    </Button>   
+            </Layer>
+        </Layers>
+    </Button>
     <Button name="GwCharacterMenuButtonTemplate2" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
-          <Layers>
+        <Layers>
             <Layer>
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
                     <Size x="10" y="20"></Size>
@@ -226,25 +131,12 @@
                         <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-             </Layer>
-         </Layers>
-         <Scripts>
-             <OnLoad>
-                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-                 self:SetNormalTexture(nil)
-                 self:GetFontString():SetTextColor(1,1,1,1)
-                 self:GetFontString():SetShadowColor(0,0,0,0)
-                 self:GetFontString():SetShadowOffset(1,-1)
-                 self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
-                 self:GetFontString():SetJustifyH('LEFT')
-                 self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
-
-             </OnLoad> 
-         </Scripts>
+            </Layer>
+        </Layers>
     </Button>
     <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
-       
-          <Layers>
+
+        <Layers>
             <Layer layer="OVERLAY" textureSubLevel="8">
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
                     <Size x="32" y="32"></Size>
@@ -252,39 +144,14 @@
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
                     </Anchors>
                 </Texture>
-             </Layer>
-         </Layers>
-         <Scripts>
-             <OnLoad>
-                 self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-                 self:SetNormalTexture(nil)
-                 local fontString = self:GetFontString()
-                 fontString:SetTextColor(1,1,1,1)
-                fontString:SetShadowColor(0,0,0,0)
-                fontString:SetShadowOffset(1,-1)
-                fontString:SetFont(DAMAGE_TEXT_FONT,14)
-   
-        
-             </OnLoad> 
-         </Scripts>
+            </Layer>
+        </Layers>
     </Button>
     <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true">
-       
-         <Scripts>
-             <OnLoad>
-                 self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-                 self:SetNormalTexture(nil)
 
-                 local fontString = self:GetFontString()
-                 fontString:SetTextColor(1,1,1,1)
-                fontString:SetShadowColor(0,0,0,0)
-                fontString:SetShadowOffset(1,-1)
-                fontString:SetFont(DAMAGE_TEXT_FONT,14)
-             </OnLoad> 
-         </Scripts>
-    </Button>  
+    </Button>
     <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" jusifyH="LEFT" virtual="true">
-       <Layers>
+        <Layers>
             <Layer>
                 <Texture parentKey="ddbg" hidden="true" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
                     <Size x="32" y="30"></Size>
@@ -293,153 +160,65 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-           </Layer>
+            </Layer>
         </Layers>
         <Frames>
             <Button name="$parentEquipOutfit" hidden="true" parentKey="equipOutfit" inherits="GwStandardButton" text="Equip">
                 <Size x="70" y="20"></Size>
                 <Anchors>
-                    <Anchor  point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="5"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="5"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        local selectedSetID = GwPaperDollOutfits.selectedSetID
-                        if ( selectedSetID ~= nil) then
-   
-                            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB )
-                        
-                            C_EquipmentSet.UseEquipmentSet(selectedSetID)
-                        end                        
-                    </OnClick>
-                </Scripts>
-            </Button>  
+            </Button>
             <Button name="$parentSaveOutfit" hidden="true" parentKey="saveOutfit" inherits="GwStandardButton" text="Save">
                 <Size x="70" y="20"></Size>
                 <Anchors>
-                    <Anchor  point="LEFT" relativeKey="$parent.equipOutfit" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="LEFT" relativeKey="$parent.equipOutfit" relativePoint="RIGHT" x="0" y="0"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwWarningPromt(GwLocalization['CHARACTER_OUTFITS_SAVE']..self:GetParent().setName..'"?',function()
-                         C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
-                            GwOutfitsDrawItemSetList()
-                        end)
-                                     
-                    </OnClick>
-                </Scripts>
             </Button>
             <Button name="$parentDelete" parentKey="deleteOutfit" hidden="true" inherits="GwStandardButton" text="Delete">
                 <Size x="70" y="20"></Size>
                 <Anchors>
-                    <Anchor  point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"></Anchor>
                 </Anchors>
-                <Scripts>
-                       <Onclick>
-                    gwWarningPromt(GwLocalization['CHARACTER_OUTFITS_DELETE']..self:GetParent().setName..'"?',function()
-                           
-                        C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
-                           
-                        GwOutfitsDrawItemSetList()
-                    end)    
-                    </Onclick>
-                </Scripts>
             </Button>
         </Frames>
-        <Scripts>
-            <Onclick>
-                if not  self.saveOutfit:IsShown() then
-                GwOutfitsDrawItemSetList()
-                GwPaperDollOutfitsToggleIgnoredSlots(true)
-                GwPaperDollOutfitsUpdateIngoredSlots(self.setID)
-                self:SetHeight(80)
-                self.saveOutfit:Show()
-                self.deleteOutfit:Show()
-                self.equipOutfit:Show()
-                self.ddbg:Show()
-				self.deleteOutfit:SetText(GwLocalization['CHARACTER_DELETE_OUTFIT'])
-				self.saveOutfit:SetText(GwLocalization['CHARACTER_SAVE_OUTFIT'])
-				self.equipOutfit:SetText(GwLocalization['CHARCTER_EQUIP_OUTFIT'])
-                
-                GwPaperDollOutfits.selectedSetID = self.setID
-                
-                else
-     
-                self.saveOutfit:Hide()
-                self.deleteOutfit:Hide()
-                self.equipOutfit:Hide()
-                self.ddbg:Hide()
-                self:SetHeight(49)
-                end
-            </Onclick> 
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
-        </Scripts>
     </Button>
     <Frame name="GwCharacterMenu" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
-        <Anchors>   
+        <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
         </Anchors>
         <Frames>
-            <Button name="$parentEquipment" parentKey="equipmentMenu" inherits="GwCharacterMenuButtonTemplate" text="Equipment" >
+            <Button name="$parentEquipment" parentKey="equipmentMenu" inherits="GwCharacterMenuButtonTemplate" text="Equipment">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwPaperDollBagItemList)
-                    </OnClick>
-                </Scripts>
-            </Button>  
-            <Button name="$parentOutfits" parentKey="outfitsMenu" inherits="GwCharacterMenuButtonTemplate2" text="Outfits" >
+            </Button>
+            <Button name="$parentOutfits" parentKey="outfitsMenu" inherits="GwCharacterMenuButtonTemplate2" text="Outfits">
                 <Size x="231" y="36"></Size>
-                
+
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.equipmentMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                          gwCharacterPanelToggle(GwPaperDollOutfits)
-                    </OnClick>
-                </Scripts>
-            </Button>  
-            <Button name="$parentTitles" parentKey="titlesMenu" inherits="GwCharacterMenuButtonTemplate" text="Titles" >
+            </Button>
+            <Button name="$parentTitles" parentKey="titlesMenu" inherits="GwCharacterMenuButtonTemplate" text="Titles">
                 <Size x="231" y="36"></Size>
-                
+
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.outfitsMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                          gwCharacterPanelToggle(GwPaperTitles)
-                    </OnClick>
-                </Scripts>
             </Button>
-            <Button name="$parentReputation" parentKey="reputationMenu" inherits="GwCharacterMenuButtonTemplate2" text="Reputation" >
+            <Button name="$parentReputation" parentKey="reputationMenu" inherits="GwCharacterMenuButtonTemplate2" text="Reputation">
                 <Size x="231" y="36"></Size>
-                
+
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.titlesMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
-                   <Scripts>
-                    <OnClick>
-                          gwCharacterPanelToggle(GwPaperReputation)
-                    </OnClick>
-                </Scripts>
             </Button>
         </Frames>
-		<Scripts>
-			<OnLoad>
-				self.equipmentMenu:SetText(GwLocalization['CHARACTER_MENU_EQUIPMENT'])
-				self.outfitsMenu:SetText(GwLocalization['CHARACTER_MENU_OUTFITS'])
-				self.titlesMenu:SetText(GwLocalization['CHARACTER_MENU_TITLES'])
-				self.reputationMenu:SetText(GwLocalization['CHARACTER_MENU_REPS'])
-			</OnLoad>
-		</Scripts>
-    </Frame>   
-    
+    </Frame>
+
     <Frame name="GwPaperDollBagItemList" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
         <Anchors>
@@ -456,35 +235,14 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Equipment" >
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Equipment">
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="60"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-            </Button>  
+            </Button>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
-                GwupdateBagItemListAll()
-				self.backButton:SetText(GwLocalization['CHARACTER_MENU_EQUIPMENT_RETURN'])
-            </OnLoad>
-            <OnEvent>
-                GwupdateBagItemListAll()
-            </OnEvent>
-            <OnHide>
-            GwPaperDollResetBagInventory()
-            </OnHide>
-            <OnShow>
-            GwupdateBagItemListAll()
-            </OnShow>
-        </Scripts>
-    </Frame> 
+    </Frame>
     <Button name="GwPaperDollOutfitsButton" inherits="GwPaperDollOutFitListButton" virtual="true">
         <Size x="220" y="49"></Size>
         <Anchors>
@@ -497,13 +255,13 @@
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
-                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
                 </Texture>
             </Layer>
         </Layers>
     </Button>
     <Button name="GwPaperDollReputationCat" text="notyetloaded" inherits="GwCharacterMenuBlank" virtual="true">
-        
+
         <Size x="231" y="44"></Size>
         <Anchors>
             <Anchor point="TOPLEFT"></Anchor>
@@ -522,48 +280,27 @@
             <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
                 <Size x="201" y="4"></Size>
                 <Anchors>
-                  <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="8"></Anchor>
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="8"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-                
+
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                        <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                             <Size x="10" y="4"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        
+
                     </Layer>
-                  
+
                 </Layers>
-                <Scripts>
-                    <OnLoad>
-                        
-                        self:SetMinMaxValues(0,1)
-                        self:SetStatusBarColor(240/255,240/255,155/255)
-                         
-                        local BNAME = self:GetName()
-                        hooksecurefunc(self,'SetValue',function(self) 
-                        
-                            local min, max = self:GetMinMaxValues()
-                            local v = self:GetValue()
-                            local width = math.max(1,math.min(10,10*((v/max)/0.1)))
-                            _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',201*(v/max),0)
-                          
-                            _G[BNAME..'Spark']:SetWidth(width)
-                            
-                          
-                        
-                        end)
-                    </OnLoad>
-                </Scripts>
             </StatusBar>
         </Frames>
-    
+
     </Button>
-    
+
     <Button name="GwReputationDetails" virtual="true">
         <Size x="580" y="65"></Size>
         <Anchors>
@@ -572,253 +309,196 @@
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
-                <Size x="245" y="100"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                </Anchors>  
-                     <Color r="1" g="1" b="1" a="0.5"></Color>
+                    <Size x="245" y="100"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.5"></Color>
                 </Texture>
-          
-                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
                         <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>  
+                    </Anchors>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-2"></Anchor>
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="2"></Anchor>
-                         <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>  
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-2"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="2"></Anchor>
+                        <Color r="0" g="0" b="0" a="0.5"></Color>
+                    </Anchors>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
-                         <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>  
-                </Texture> 
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        <Color r="0" g="0" b="0" a="0.5"></Color>
+                    </Anchors>
+                </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
-                         <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>  
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                        <Color r="0" g="0" b="0" a="0.5"></Color>
+                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="background2" file="Interface\AddOns\GW2_UI\textures\character\menu-hover">
-                <Size x="245" y="100"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                </Anchors>  
-                     <Color r="1" g="1" b="1" a="0.2"></Color>
+                    <Size x="245" y="100"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.2"></Color>
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="3">
-             <Texture parentKey="statusbarbg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                 <Size x="201" y="14"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="-2" y="2"></Anchor>
-                 
-                </Anchors>
+                <Texture parentKey="statusbarbg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="201" y="14"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="-2" y="2"></Anchor>
+
+                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="name" text="Unknown" justifyH="LEFT">
                     <Size x="560" y="20"></Size>
                     <Anchors>
-                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
                     </Anchors>
-                </FontString> 
+                </FontString>
                 <FontString parentKey="details" text="Unknown" justifyH="LEFT">
                     <Size x="560" y="40"></Size>
                     <Anchors>
-                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"  relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="currentRank" text="CURRENT" justifyH="LEFT">
                     <Size x="100" y="15"></Size>
                     <Anchors>
-                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"  relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
                     </Anchors>
-                </FontString> 
+                </FontString>
                 <FontString parentKey="nextRank" text="NEXT" justifyH="RIGHT">
                     <Size x="100" y="15"></Size>
                     <Anchors>
-                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"  relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.StatusBar" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
-		
-		
-		<Button name="$parentparagon" hidden="true" parentKey="paragon">
-                <size x="90" y="90"></size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\rewards-icon">
-                             <size x="80" y="80"></size>
-                            <Anchors>
-                                <Anchor point="CENTER"></Anchor>
-                            </Anchors>
-                        </Texture> 
-                    </Layer>
-                </Layers>
-                <Scripts>
-                   
-                </Scripts>
-            </Button>
-			
-			
+
+
+        <Button name="$parentparagon" hidden="true" parentKey="paragon">
+            <size x="90" y="90"></size>
+            <Anchors>
+                <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
+            </Anchors>
+            <Layers>
+                <Layer level="ARTWORK">
+                    <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\rewards-icon">
+                        <size x="80" y="80"></size>
+                        <Anchors>
+                            <Anchor point="CENTER"></Anchor>
+                        </Anchors>
+                    </Texture>
+                </Layer>
+            </Layers>
+        </Button>
+
+
         <Frames>
             <Frame parentKey="controles" hidden="true">
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
-                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                 </Anchors>
-            <Frames>
-			
-         
-            <Button parentKey="atwar">
-                <Size x="40" y="40"></Size>
-                <Anchors>
-                   
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5">
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
-                            <Size x="40" y="40"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER"></Anchor>
-                            </Anchors>
-                             <TexCoords left="0" right="0.5" top="0" bottom="0.5" />
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <Scripts>
-                    <OnEnter>
-                        self.icon:SetTexCoord(0.5,1,0,0.5)
-                        
-                    </OnEnter>
-                    <OnLeave>
-                        if not self.isActive then
-                            self.icon:SetTexCoord(0,0.5,0,0.5)
-                        end
-                    </OnLeave>
-                </Scripts>
-            </Button>
-                <Button parentKey="favorit" hidden="true">
-                <Size x="40" y="40"></Size>
-                <Anchors>
-                   <Anchor point="LEFT" relativeKey="$parent.atwar" relativePoint="RIGHT" x="5">
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
-                            <Size x="40" y="40"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER"></Anchor>
-                            </Anchors>
-                             <TexCoords left="0.5" right="1" top="0.5" bottom="1" />
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <Scripts>
-                    <OnEnter>
-                        self.icon:SetTexCoord(0,0.5,0.5,1)
-                    </OnEnter>
-                    <OnLeave>
-                        if not self.isActive then
-                            self.icon:SetTexCoord(0.5,1,0.5,1)
-                        end
-                    </OnLeave>
-                </Scripts>
-            </Button>    
-                <CheckButton  parentKey="inactive" checked="false">
-                    <Size x="16" y="16"></Size>
-                    <Anchors>
-                           <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-60" y="5"></Anchor>
-                    </Anchors>
-                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                    <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
-                    <Layers>
-                        <Layer level="ARTWORK">
-                        <FontString parentKey="string" text="Unknown" justifyH="LEFT">
-                            <Size x="60" y="20"></Size>
-                            <Anchors>
-                                <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
+                <Frames>
+
+
+                    <Button parentKey="atwar">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+
+                            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5">
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK" textureSubLevel="2">
+                                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
+                                    <Size x="40" y="40"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER"></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0" right="0.5" top="0" bottom="0.5" />
+                                </Texture>
                             </Layer>
-                    </Layers>
-                    <Scripts>
-                        <OnLoad>
-                            self.string:SetFont(UNIT_NAME_FONT,12)
-                            self.string:SetText(GwLocalization['CHARACTER_REPUTATION_INACTIVE'])
-                        </OnLoad>
-                    </Scripts>
-                </CheckButton>
-                <CheckButton  parentKey="showAsBar" checked="false">
-                    <Size x="16" y="16"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-100" y="0"></Anchor>
-                    </Anchors>
-                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                    <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
-                    <Layers>
-                        <Layer level="ARTWORK">
-                        <FontString parentKey="string" text="Unknown" justifyH="LEFT">
-                            <Size x="100" y="20"></Size>
-                            <Anchors>
-                                <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
+                        </Layers>
+                    </Button>
+                    <Button parentKey="favorit" hidden="true">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.atwar" relativePoint="RIGHT" x="5">
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK" textureSubLevel="2">
+                                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
+                                    <Size x="40" y="40"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER"></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0.5" right="1" top="0.5" bottom="1" />
+                                </Texture>
                             </Layer>
-                    </Layers>
-                    <Scripts>
-                        <OnLoad>
-                            self.string:SetFont(UNIT_NAME_FONT,12)
-                            self.string:SetText(GwLocalization['CHARACTER_REPUTATION_TRACK'])
-                        </OnLoad>
-                    </Scripts>
-                </CheckButton>
+                        </Layers>
+                    </Button>
+                    <CheckButton parentKey="inactive" checked="false">
+                        <Size x="16" y="16"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-60" y="5"></Anchor>
+                        </Anchors>
+                        <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                        <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <FontString parentKey="string" text="Unknown" justifyH="LEFT">
+                                    <Size x="60" y="20"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </CheckButton>
+                    <CheckButton parentKey="showAsBar" checked="false">
+                        <Size x="16" y="16"></Size>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-100" y="0"></Anchor>
+                        </Anchors>
+                        <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                        <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <FontString parentKey="string" text="Unknown" justifyH="LEFT">
+                                    <Size x="100" y="20"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </CheckButton>
                 </Frames>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().details:Show()
-                        
-                        if self.atwar.isShowAble then
-                            self.atwar:Show()
-                        else
-                            self.atwar:Hide()
-                        end  
-                        if self.favorit.isShowAble then
-                            self.favorit:Show()
-                        else
-                            self.favorit:Hide()
-                        end
-                        
-                    </OnShow>
-                    <OnHide>
-                         self:GetParent().details:Hide()
-                    </OnHide>
-              
-                </Scripts>
             </Frame>
             <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
                 <Size x="201" y="10"></Size>
@@ -827,130 +507,46 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent.name" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-                
+
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                        <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                             <Size x="10" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
-                        <Layer level="OVERLAY" textureSubLevel="2">
-                            <FontString parentKey="currentValue" text="Unknown" justifyH="LEFT">
-                                <Size x="180" y="20"></Size>
-                                <Anchors>
-                                    <Anchor point="LEFT" relativePoint="LEFT" x="5" y="0"></Anchor>
-                                </Anchors>
-                            </FontString>
-           
-                            <FontString parentKey="percentage" text="Unknown" justifyH="CENTER">
-                                <Size x="180" y="20"></Size>
-                                <Anchors>
-                                    <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
-                                </Anchors>
-                            </FontString>
-                            <FontString parentKey="nextValue" text="Unknown" justifyH="RIGHT">
-                                <Size x="180" y="20"></Size>
-                                <Anchors>
-                                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-5" y="0"></Anchor>
-                                </Anchors>
-                            </FontString>
-                        </Layer>
-                   
-                  
-                </Layers>
-                <Scripts>
-                    <OnLoad>
-                        
-                        self.currentValue:SetFont(UNIT_NAME_FONT,12)
-                        self.percentage:SetFont(UNIT_NAME_FONT,12)
-                        self.nextValue:SetFont(UNIT_NAME_FONT,12)    
-                        
-                        self.currentValue:SetShadowColor(0,0,0,1)
-                        self.percentage:SetShadowColor(0,0,0,1)
-                        self.nextValue:SetShadowColor(0,0,0,1)  
-                        
-                        self.currentValue:SetShadowOffset(1,-1)
-                        self.percentage:SetShadowOffset(1,-1)
-                        self.nextValue:SetShadowOffset(1,-1)
-                   
-                        
-                         self:GetParent().currentValue = self.currentValue
-                         self:GetParent().percentage = self.percentage
-                         self:GetParent().nextValue = self.nextValue
-                         
-                        
-                        
-                        self:SetMinMaxValues(0,1)
-                        self:SetStatusBarColor(240/255,240/255,155/255)
-                         
-                        local BNAME = self:GetName()
-                        hooksecurefunc(self,'SetValue',function(self) 
-                        
-                            local min, max = self:GetMinMaxValues()
-                            local v = self:GetValue()
-                            local width = math.max(1,math.min(10,10*((v/max)/0.1)))
-                            _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',self:GetWidth()*(v/max),0)
-                          
-                            _G[BNAME..'Spark']:SetWidth(width)
-                            
-                          
-                        
-                        end)
-                    </OnLoad>
-                </Scripts>
-            </StatusBar>
-        
-        </Frames>
-        
-        <Scripts>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="currentValue" text="Unknown" justifyH="LEFT">
+                            <Size x="180" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="5" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
 
-            <OnLoad>
-                self.details:SetPoint('TOPLEFT',self.StatusBar,'BOTTOMLEFT',0,-15)
-                
-                self.statusbarbg:SetPoint('TOPLEFT',self.StatusBar,'TOPLEFT',-2,2)
-                self.statusbarbg:SetPoint('BOTTOMRIGHT',self.StatusBar,'BOTTOMRIGHT',0,-2)
-                
-                
-                self.currentRank:SetPoint('TOPLEFT',self.StatusBar,'BOTTOMLEFT',0,-5)
-                self.nextRank:SetPoint('TOPRIGHT',self.StatusBar,'BOTTOMRIGHT',0,-5)
-                
-                self.currentRank:SetFont(DAMAGE_TEXT_FONT,11)
-                self.currentRank:SetTextColor(0.6,0.6,0.6)
-                
-                self.nextRank:SetFont(DAMAGE_TEXT_FONT,11)
-                self.nextRank:SetTextColor(0.6,0.6,0.6)
-                
-                self.name:SetFont(DAMAGE_TEXT_FONT,14)
-                self.name:SetTextColor(1,1,1,1)
-                
-                self.details:SetFont(UNIT_NAME_FONT,12)
-                self.details:SetTextColor(0.8,0.8,0.8,1)
-                
-                 self.details:Hide()
-				 self.currentRank:SetText(GwLocalization['CHARACTER_CURRENT_RANK'])
-				 self.nextRank:SetText(GwLocalization['CHARACTER_NEXT_RANK'])
-            </OnLoad>
-            <OnClick>
-                if self.details:IsShown() then
-                    GwDetailFaction(self.factionIndex,false)
-                    self:SetHeight(80)
-                    self.controles:Hide()
-                  
-                  
-                else
-              
-                  GwDetailFaction(self.factionIndex,true)
-                    self:SetHeight(140)
-                    self.controles:Show()
-                
-                end
-            </OnClick>
-        </Scripts>
+                        <FontString parentKey="percentage" text="Unknown" justifyH="CENTER">
+                            <Size x="180" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="nextValue" text="Unknown" justifyH="RIGHT">
+                            <Size x="180" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-5" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+
+
+                </Layers>
+            </StatusBar>
+
+        </Frames>
+
     </Button>
-    
+
     <Frame name="GwPaperDollOutfits" hidden="true" virtual="true">
         <Size x="220" y="478"></Size>
         <Anchors>
@@ -965,56 +561,26 @@
                     </Anchors>
                 </Texture>
             </Layer>
-        
-       
+
+
         </Layers>
-             <Frames>
-                 <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Outfits" >
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Outfits">
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-                 </Button>  
-                <Button name="$parentNewOutfit" parentKey="newOutfit" inherits="GwStandardButton" text="New outfit">
-                    <Size x="100" y="20"></Size>
-                    <Anchors>
-                        <Anchor  point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="7"></Anchor>
-                    </Anchors>
-                    <Scripts>
-                        <OnClick>
-                            
-                            self.oldParent = GearManagerDialogPopup:GetParent()
+            </Button>
+            <Button name="$parentNewOutfit" parentKey="newOutfit" inherits="GwStandardButton" text="New outfit">
+                <Size x="100" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="7"></Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
 
-                            GearManagerDialogPopup:Show();
-                           
-                            GearManagerDialogPopup:SetParent(GwDressingRoom)
-                            GearManagerDialogPopup:SetPoint('TOPLEFT',GwDressingRoom,'TOPRIGHT')
-                            
-                            PaperDollEquipmentManagerPane.selectedSetID = nil;
-                            PaperDollFrame_ClearIgnoredSlots();
-                            
-                            
-                            PaperDollFrame_IgnoreSlot(4);
-                            PaperDollFrame_IgnoreSlot(19);
-
-                        </OnClick>
-                    </Scripts>
-                </Button>
-            </Frames>
-			<Scripts>
-			<OnLoad>
-				self.backButton:SetText(GwLocalization['CHARACTER_MENU_OUTFITS_RETURN'])
-				self.newOutfit:SetText(GwLocalization['CHARACTER_OUTFIT_NEW'])
-			</OnLoad>
-		</Scripts>
-    
     </Frame>
-    <Frame name="GwPaperTitles"  hidden="true" virtual="true">
+    <Frame name="GwPaperTitles" hidden="true" virtual="true">
         <Size x="220" y="478"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
@@ -1028,42 +594,20 @@
                     </Anchors>
                 </Texture>
             </Layer>
-        
-       
+
+
         </Layers>
-             <Frames>
-                 <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Titles" >
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Titles">
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-                 </Button>  
-            </Frames>
-        <Scripts>
-            <OnLoad>
-                 GwPaperTitles.buttons = 0
-                GwPaperTitles.scroll = 1
-                self:EnableMouseWheel(true)
-                self:RegisterEvent('KNOWN_TITLES_UPDATE')
-                self:RegisterEvent('UNIT_NAME_UPDATE')
-				self.backButton:SetText(GwLocalization['CHARACTER_MENU_TITLES_RETURN'])
-            </OnLoad>
-            <OnEvent>
-                GwPaperDollTitles_OnEvent()
-            </OnEvent>
-            <OnMouseWheel>
-               self.scroll = math.max(1,self.scroll + -delta)
-                GwPaperDollUpdateTitlesLayout()
-            </OnMouseWheel>
-        </Scripts>
+            </Button>
+        </Frames>
     </Frame>
- 
-    <Frame name="GwPaperReputation"  hidden="true" virtual="true">
+
+    <Frame name="GwPaperReputation" hidden="true" virtual="true">
         <Size x="220" y="478"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
@@ -1077,77 +621,45 @@
                     </Anchors>
                 </Texture>
             </Layer>
-        
-       
+
+
         </Layers>
-             <Frames>
-                 <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Reputation" >
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Reputation">
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-                 </Button>  
-                 
-                 <EditBox name="$parentInput"  parentKey="input" autoFocus="false">
-                       <Size x="214" y="25"></Size>
-                     <Anchors>
-                         <Anchor point="TOPLEFT" relativeKey="$parent.backButton" relativePoint="BOTTOMLEFT" x="3" y="0"></Anchor>
+            </Button>
 
-                     </Anchors>
-                     <Layers>
-                         <Layer level="BACKGROUND">
-                             <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                             
-                                 <Anchors>
-                                 <Anchor point="TOPLEFT" x="-3" y="0"></Anchor>
-                                 <Anchor point="BOTTOMRIGHT" x="3" y="0"></Anchor>
-                             </Anchors>
-                            
-                         </Texture>
-    
-                     </Layer>
+            <EditBox name="$parentInput" parentKey="input" autoFocus="false">
+                <Size x="214" y="25"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.backButton" relativePoint="BOTTOMLEFT" x="3" y="0"></Anchor>
+
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-3" y="0"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="3" y="0"></Anchor>
+                            </Anchors>
+
+                        </Texture>
+
+                    </Layer>
                 </Layers>
                 <FontString inherits="ChatFontNormal" />
-                <Scripts>
-                    <OnTextChanged>
-                        local text = self:GetText()
-                        if text==GwLocalization['CHARACTER_REP_SEARCH'] or text=='' then GwUpdateReputationDetails() return end
-                         GwUpdateReputationDetailsSearch(text)
-                    </OnTextChanged>
-                    <OnEscapePressed>
-                        self:ClearFocus()
-                        self:SetText(GwLocalization['CHARACTER_REP_SEARCH'])
-                    </OnEscapePressed>
-                    <OnEditFocusGained>
-                        if self:GetText()==GwLocalization['CHARACTER_REP_SEARCH'] then
-                            self:SetText('')
-                        end
-                    </OnEditFocusGained>
-                    <OnEditFocusLost>
-                     if self:GetText()=='' then
-                        self:SetText(GwLocalization['CHARACTER_REP_SEARCH'])
-                    end
-                    </OnEditFocusLost>
-                    <OnLoad>
-                        self:SetText(GwLocalization['CHARACTER_REP_SEARCH'])
-                    </OnLoad>
-                    <OnEnterPressed>
-                       
-                    </OnEnterPressed>
-                </Scripts>
             </EditBox>
-                 
-                 <ScrollFrame name="GwPaperReputationScrollFrame" enableMouse="true">
-                     <Size x="600" y="590"></Size>
-                     <Anchors>
-                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="105"></Anchor>
-                     </Anchors>
-                       <Frames>
+
+            <ScrollFrame name="GwPaperReputationScrollFrame" enableMouse="true">
+                <Size x="600" y="590"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="105"></Anchor>
+                </Anchors>
+                <Frames>
                     <Frame parentKey="scrollchild" enableMouse="false">
                         <Size x="608" y="608"></Size>
                         <Anchors>
@@ -1155,19 +667,19 @@
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                         </Anchors>
                     </Frame>
-               
+
                     <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
                         <Size x="12" y="12"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
                         </Anchors>
-                        
-   
+
+
                         <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
                             <Size x="12" y="100"/>
-                             <Anchors>
-                              <Anchor point="TOP" relativePoint="TOP" ></Anchor>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
                             </Anchors>
                         </ThumbTexture>
                         <Layers>
@@ -1180,83 +692,45 @@
                                 </Texture>
                             </Layer>
                         </Layers>
-                        <Scripts>
-                            <OnValueChanged>
-                                self:GetParent():SetVerticalScroll(value)
-                            </OnValueChanged>
-                            <OnLoad>
-                                self:SetValue(1)
-                            </OnLoad>
-                        </Scripts>
                     </Slider>
                     <Button name="$parentScrollButtonUp">
-                     <Size x="12" y="12"></Size>
+                        <Size x="12" y="12"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                         </Anchors>
-                    <Layers>
-                        <Layer>
-                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                                <Size x="12" y="12"></Size>
+                        <Layers>
+                            <Layer>
+                                <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                    <Size x="12" y="12"></Size>
                                     <Anchors>
                                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
                                     </Anchors>
-                            </Texture>
-                        </Layer>
-                    </Layers>
-                    </Button>         <Button name="$parentScrollButtonDown">
-                     <Size x="12" y="12"></Size>
-                        <Anchors>
-                       <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                        </Anchors>
-                    <Layers>
-                        <Layer>
-                            <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                                <Size x="12" y="12"></Size>
-                                    <Anchors>
-                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                                    </Anchors>
-                                  <TexCoords left="0" right="1" top="1" bottom="0" />
-                            </Texture>
-                        </Layer>
-                    </Layers>
+                                </Texture>
+                            </Layer>
+                        </Layers>
                     </Button>
-                     </Frames>
-                     <Scripts>
-                         <OnLoad>
-                             self.slider:SetMinMaxValues(0,608)
-                         </OnLoad>
-                     <OnMouseWheel>
-                         delta = -delta * 15
-                         local s = math.max(0,self:GetVerticalScroll() + delta)
-                            self.slider:SetValue(s)
-                         self:SetVerticalScroll(s)
-                     </OnMouseWheel>
-                         </Scripts>
-                 </ScrollFrame>
-            </Frames>
-        <Scripts>
-            <OnLoad>
-                self.detailFrames = 0
-                self.buttons = 0
-				self.scroll = 1
-				self:EnableMouseWheel(true)
-				self:RegisterEvent('UPDATE_FACTION')
-				self.backButton:SetText(GwLocalization['CHARACTER_MENU_REPS_RETURN'])
-            </OnLoad>
-            <OnEvent>
-                GwUpdateSavedReputation()
-                if GwPaperReputation:IsShown() then
-                    GwUpdateReputationDisplayOldData()
-                end
-            </OnEvent>
-            <OnMouseWheel>
-               self.scroll = math.max(1,self.scroll + -delta)
-                GwPaperDollUpdateReputations()
-            </OnMouseWheel>
-        </Scripts>
+                    <Button name="$parentScrollButtonDown">
+                        <Size x="12" y="12"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                    <Size x="12" y="12"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0" right="1" top="1" bottom="0" />
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                </Frames>
+            </ScrollFrame>
+        </Frames>
     </Frame>
-    
+
     <Button name="GwDressingRoom" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
         <Size x="608" y="621"></Size>
         <Anchors>
@@ -1283,26 +757,26 @@
                 <FontString parentKey="characterName" text="Unknown" justifyH="LEFT">
                     <Size x="180" y="20"></Size>
                     <Anchors>
-                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"></Anchor>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="characterData" text="Level %d class" justifyH="LEFT">
                     <Size x="180" y="20"></Size>
                     <Anchors>
-                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-25"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-25"></Anchor>
                     </Anchors>
                 </FontString>
-                
+
                 <FontString parentKey="itemLevel" text="100" justifyH="LEFT">
                     <Size x="180" y="20"></Size>
                     <Anchors>
-                         <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
+                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
         <Frames>
-            <Frame name="GwPapaerDollStats">
+            <Frame name="GwPaperDollStats">
                 <Size x="184" y="301"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-105"></Anchor>
@@ -1325,51 +799,6 @@
                         </FontString>
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnLoad>
-                        self.header:SetFont(DAMAGE_TEXT_FONT, 14)
-			self.header:SetText(GwLocalization['CHARACTER_ATTRIBUTES'])
-                        self:RegisterEvent("PLAYER_ENTERING_WORLD");
-                        
-                        self:RegisterEvent("CHARACTER_POINTS_CHANGED");
-                        self:RegisterEvent("UNIT_MODEL_CHANGED");
-                        self:RegisterEvent("UNIT_LEVEL");
-                        self:RegisterEvent("UNIT_STATS");
-                        self:RegisterEvent("UNIT_RANGEDDAMAGE");
-                        self:RegisterEvent("UNIT_ATTACK_POWER");
-                        self:RegisterEvent("UNIT_RANGED_ATTACK_POWER");
-                        self:RegisterEvent("UNIT_ATTACK");
-                        self:RegisterEvent("UNIT_SPELL_HASTE");
-                        self:RegisterEvent("UNIT_RESISTANCES");
-                        self:RegisterEvent("PLAYER_GUILD_UPDATE");
-                        self:RegisterEvent("SKILL_LINES_CHANGED");
-                        self:RegisterEvent("COMBAT_RATING_UPDATE");
-                        self:RegisterEvent("MASTERY_UPDATE");
-                        self:RegisterEvent("SPEED_UPDATE");
-                        self:RegisterEvent("LIFESTEAL_UPDATE");
-                        self:RegisterEvent("AVOIDANCE_UPDATE");
-                        self:RegisterEvent("KNOWN_TITLES_UPDATE");
-                        self:RegisterEvent("UNIT_NAME_UPDATE");
-                        self:RegisterEvent("PLAYER_TALENT_UPDATE");
-                        self:RegisterEvent("BAG_UPDATE");
-                        self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
-                        self:RegisterEvent("PLAYERBANKSLOTS_CHANGED");
-                        self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE");
-                        self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS");
-                        self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");
-                        self:RegisterUnitEvent("UNIT_DAMAGE", "player");
-                        self:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player");
-                        self:RegisterUnitEvent("UNIT_MAXHEALTH", "player");
-                        self:RegisterUnitEvent("UNIT_AURA", "player");
-                        self:RegisterEvent("SPELL_POWER_CHANGED");
-                        self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION");
-                        self:RegisterEvent("UNIT_NAME_UPDATE");
-                    </OnLoad>
-                    <OnEvent>
-                        gwPaperDollStats_OnEvent(self,event,...)
-                    </OnEvent>
-                    
-                </Scripts>
             </Frame>
             <Frame name="$parentGear">
                 <Size x="184" y="301"></Size>
@@ -1392,217 +821,297 @@
                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
-                    </Button> 
+                    </Button>
                     <Button name="GwPaperDollShoulderSlot" parentKey="shoulder" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.head" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
-                    </Button> 
-       
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
+                    </Button>
+
                     <Button name="GwPaperDollWristSlot" parentKey="wrists" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.shoulder" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollHandsSlot" parentKey="hands" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.wrists" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
-                   
+
                     <Button name="GwPaperDollChestSlot" parentKey="chest" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.hands" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollWaistSlot" parentKey="waist" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.chest" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollLegsSlot" parentKey="legs" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.waist" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollFeetSlot" parentKey="feet" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.legs" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollMainHandSlot" parentKey="weapon" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.feet" relativePoint="BOTTOMLEFT" x="0" y="-20"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollSecondaryHandSlot" parentKey="offhand" inherits="GwPaperDollButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.weapon" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
-                    
+
                     <Button name="GwPaperDollTabardSlot" parentKey="tabard" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativeTo="GwPapaerDollStats"  relativePoint="BOTTOMRIGHT" x="-5" y="-20"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                            <Anchor point="TOPRIGHT" relativeTo="GwPaperDollStats" relativePoint="BOTTOMRIGHT" x="-5" y="-20"></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollShirtSlot" parentKey="shirt" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollTrinket0Slot" parentKey="trinket1" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollTrinket1Slot" parentKey="trinket2" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
-                    </Button> 
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
+                    </Button>
                     <Button name="GwPaperDollFinger0Slot" parentKey="finger1" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollFinger1Slot" parentKey="finger2" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
-                           <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollNeckSlot" parentKey="neck" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                     <Button name="GwPaperDollBackSlot" parentKey="back" inherits="GwPaperDollButtonTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
-                              <Anchor point="TOPRIGHT" relativeKey="$parent.neck" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
-                        </Anchors>                         <Frames>                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">                                 <Size x="16" y="16"></Size>                                 <Anchors>                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>                                 </Anchors>                                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>                                 <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>                             </CheckButton>                         </Frames>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.neck" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
                     </Button>
                 </Frames>
-                <Scripts>
-                    <OnLoad>
-                        self.head.BACKGROUND:SetTexCoord(0,0.25,0,0.25)
-                        self.shoulder.BACKGROUND:SetTexCoord(0.5,0.75,0.5,0.75)
-                        self.back.BACKGROUND:SetTexCoord(0.75,1,0,0.25)
-                        self.wrists.BACKGROUND:SetTexCoord(0.75,1,0.25,0.5)
-                        self.hands.BACKGROUND:SetTexCoord(0,0.25,0.75,1)
-                        self.chest.BACKGROUND:SetTexCoord(0.75,1,0.5,0.75)
-                        self.waist.BACKGROUND:SetTexCoord(0.25,0.5,0.5,0.75)
-                        self.legs.BACKGROUND:SetTexCoord(0,0.25,0.5,0.75)
-                        self.feet.BACKGROUND:SetTexCoord(0.5,0.75,0.25,0.5)
-                        self.weapon.BACKGROUND:SetTexCoord(0.25,0.5,0.25,0.5)
-                        self.offhand.BACKGROUND:SetTexCoord(0,0.25,0.25,0.5)
-                        
-                        self.finger1.BACKGROUND:SetTexCoord(0.5,0.75,0,0.25)
-                        self.finger2.BACKGROUND:SetTexCoord(0.5,0.75,0,0.25)
-                        self.neck.BACKGROUND:SetTexCoord(0.25,0.5,0,0.25)
-                        self.trinket1.BACKGROUND:SetTexCoord(0.5,0.75,0.75,1)
-                        self.trinket2.BACKGROUND:SetTexCoord(0.5,0.75,0.75,1)
-                        
-                        self.shirt.BACKGROUND:SetTexCoord(0.75,1,0.5,0.75)
-                        self.tabard.BACKGROUND:SetTexCoord(0.25,0.5,0.75,1)
-                    </OnLoad>
-                  
-                </Scripts>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown" parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self:SetUnit('player')
-                        self:SetPosition(0.8,0,0)
-                        
-                        local race, raceEn = UnitRace("Player");
-                        if raceEn=='Human' then
-                            self:SetPosition(0.4,0,-0.05)
-                        elseif raceEn=='Worgen' then
-                            self:SetPosition(0.1,0,-0.1)
-                        elseif raceEn=='Tauren' then
-                            self:SetPosition(0.6,0,0)
-                        elseif raceEn=='BloodElf' then
-                            self:SetPosition(0.6,0,-0.1)
-						elseif raceEn=='Draenei' then
-                            self:SetPosition(0.3,0,-0.15)
-						elseif raceEn=='NightElf' then
-                            self:SetPosition(0.3,0,-0.15)
-						elseif raceEn=='Pandaren' then
-                            self:SetPosition(0.3,0,-0.15)
-						elseif raceEn=='Goblin' then
-                            self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Troll' then
-                            self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Scourge' then
-                           self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Dwarf' then
-                            self:SetPosition(0.3,0,0)
-						elseif raceEn=='Gnome' then
-                            self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Orc' then
-                            self:SetPosition(0.1,0,-0.15)
-                        end
-                        
-                        
-                        self:SetRotation(-0.15)
-
-						Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp);
-				        self:HookScript('OnMouseDown', GwPaperDollResetBagInventory)
-                    </OnLoad>
-                
-                </Scripts>
             </PlayerModel>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.characterName:SetFont(UNIT_NAME_FONT, 14)
-                self.characterData:SetFont(UNIT_NAME_FONT, 12)
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 24)
-                
-                locallocalizedClass, englishClass, classIndex = UnitClass('player');
-                
-                gw_setClassIcon(self.classIcon,classIndex)
-                self.classIcon:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
-                
-            </OnLoad>
-            <OnClick>
-                  GwPaperDollResetBagInventory(self)
-            </OnClick>
-        </Scripts>
     </Button>
     <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true">
         <Size x="853" y="50"></Size>
         <Anchors>
             <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
         </Anchors>
-        <Scripts>
-            <OnLoad>
-                self:RegisterForDrag("LeftButton");
-            </OnLoad>
-            <OnDragStart>self:StartMoving();</OnDragStart>
-            <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
-        </Scripts>
     </Frame>
     <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
-         <Size x="853" y="627"></Size>
+        <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
         </Anchors>
     </Frame>
- 
-        <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true"  virtual="true" protected="true">
+
+    <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true" virtual="true" protected="true">
         <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>
@@ -1610,7 +1119,7 @@
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
-                     <Size x="853" y="853"></Size>
+                    <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
                     </Anchors>
@@ -1627,60 +1136,62 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                 <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="20" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>
-                </Texture>   
-            
+                </Texture>
+
             </Layer>
-            
+
             <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture name="$parentLeft" parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
                     <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="18" y="-22" />
                     </Anchors>
-                </Texture>   
-                <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                     </Anchors>
-                </Texture> 
-                 <FontString name="$parentHeaderString" parentKey="WindowHeader" text="Character" inherits="GameFontNormalSmall" justifyH="LEFT">
+                </Texture>
+                <FontString name="$parentHeaderString" parentKey="WindowHeader" text="Character" inherits="GameFontNormalSmall" justifyH="LEFT">
                     <Size x="512" y="40"></Size>
                     <Color r="1" b="0.73" g="0.93"></Color>
                     <Anchors>
-                    <Anchor point="TOPLEFT" x="10" y="38"></Anchor>
+                        <Anchor point="TOPLEFT" x="10" y="38"></Anchor>
                     </Anchors>
-                </FontString>  
+                </FontString>
             </Layer>
         </Layers>
-   
+
         <Frames>
-              <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="" framelevel="10">
+            <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="" framelevel="10">
                 <Size x="20" y="20" />
-                <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
+                </Anchors>
                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
-                <PushedTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture >
-                <HighlightTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture >
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture >
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
-           
+
             </Button>
-            
+
         </Frames>
     </Frame>
-    
+
     <Button name="gwFrameCombatTogglerSpellbook" inherits="SecureActionButtonTemplate" virtual="true">
         <Attributes>
             <Attribute name="type" value="attribute" />
             <Attribute name="attribute" attribute-frame="GwCharacterWindow" attribute-name="windowPanelOpen" attribute-value="2" value="2" />
         </Attributes>
     </Button>
-    
+
 </Ui>

@@ -1,3 +1,5 @@
+local _, GW = ...
+
 local UNSTYLED = {
 	"GameTooltip",
 	"ShoppingTooltip1",
@@ -21,7 +23,7 @@ local UNSTYLED = {
 	"TRP2_MountTooltip",
 	"AltoTooltip",
 	"AltoScanningTooltip",
-	"ArkScanTooltipTemplate", 
+	"ArkScanTooltipTemplate",
 	"NxTooltipItem",
 	"NxTooltipD",
 	"DBMInfoFrame",
@@ -36,54 +38,72 @@ local UNSTYLED = {
 	"LibGroupInSpecTScanTip",
 	"RecountTempTooltip",
 	"VuhDoScanTooltip",
-	"XPerl_BottomTip", 
+	"XPerl_BottomTip",
 	"EventTraceTooltip",
 	"FrameStackTooltip",
 	"PetBattlePrimaryUnitTooltip",
 	"PetBattlePrimaryAbilityTooltip"
 }
 
-function move_tooltip_placemtn(self) 
-    self:ClearAllPoints()
-    self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 300)
+function move_tooltip_placemtn(self)
+	self:ClearAllPoints()
+	self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 300)
 end
 
 local constBackdropArgs = {
-    bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
-    edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border",
-    tile = false, tileSize = 64, edgeSize = 32,
-    insets = { left = 2, right = 2, top = 2, bottom = 2 }
+	bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
+	edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border",
+	tile = false,
+	tileSize = 64,
+	edgeSize = 32,
+	insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 function gw_style_tooltip(self)
-    if  not self:IsShown() then return end
-    self:SetBackdrop(constBackdropArgs)
+	if not self:IsShown() then
+		return
+	end
+	self:SetBackdrop(constBackdropArgs)
 end
 
 function gw_set_tooltips()
-	
-	if gwGetSetting('TOOLTIP_MOUSE') then
-		hooksecurefunc("GameTooltip_SetDefaultAnchor", function(s, p)
-			s:SetOwner(p, "ANCHOR_CURSOR")
-		end)
+	if gwGetSetting("TOOLTIP_MOUSE") then
+		hooksecurefunc(
+			"GameTooltip_SetDefaultAnchor",
+			function(s, p)
+				s:SetOwner(p, "ANCHOR_CURSOR")
+			end
+		)
 	else
-		GameTooltip:HookScript("OnTooltipSetUnit", function(self)
-			move_tooltip_placemtn(self) 
-		end)
+		GameTooltip:HookScript(
+			"OnTooltipSetUnit",
+			function(self)
+				move_tooltip_placemtn(self)
+			end
+		)
 
-		GameTooltip:HookScript("OnTooltipSetQuest", function(self)
-			move_tooltip_placemtn(self) 
-		end)
-		GameTooltip:HookScript("OnTooltipSetSpell", function(self)
-			move_tooltip_placemtn(self) 
-		end)
-		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", function(self)
-			move_tooltip_placemtn(self) 
-		end)
+		GameTooltip:HookScript(
+			"OnTooltipSetQuest",
+			function(self)
+				move_tooltip_placemtn(self)
+			end
+		)
+		GameTooltip:HookScript(
+			"OnTooltipSetSpell",
+			function(self)
+				move_tooltip_placemtn(self)
+			end
+		)
+		GameTooltip:HookScript(
+			"OnTooltipSetDefaultAnchor",
+			function(self)
+				move_tooltip_placemtn(self)
+			end
+		)
 	end
-	
-    for _, toStyle in ipairs(UNSTYLED) do
-        if _G[toStyle] then
-            _G[toStyle]:HookScript('OnUpdate', gw_style_tooltip)
-        end
-    end
+
+	for _, toStyle in ipairs(UNSTYLED) do
+		if _G[toStyle] then
+			_G[toStyle]:HookScript("OnUpdate", gw_style_tooltip)
+		end
+	end
 end

@@ -17,7 +17,7 @@
                 </Texture>
             </Layer>
         </Layers>
-		<Frames>
+        <Frames>
             <Button name="$parentScrollUpButton" parentKey="scrollUp">
                 <Size x="12" y="12"></Size>
                 <Anchors>
@@ -33,12 +33,12 @@
                         </Texture>
                     </Layer>
                 </Layers>
-				<Scripts>
-					<OnLoad function="HybridScrollFrameScrollUp_OnLoad"/>
-					<OnClick function="HybridScrollFrameScrollButton_OnClick"/>
-				</Scripts>
+                <Scripts>
+                    <OnLoad function="HybridScrollFrameScrollUp_OnLoad"/>
+                    <OnClick function="HybridScrollFrameScrollButton_OnClick"/>
+                </Scripts>
             </Button>
-            
+
             <Button name="$parentScrollDownButton" parentKey="scrollDown">
                 <Size x="12" y="12"></Size>
                 <Anchors>
@@ -55,20 +55,20 @@
                         </Texture>
                     </Layer>
                 </Layers>
-				<Scripts>
-					<OnLoad function="HybridScrollFrameScrollDown_OnLoad"/>
-					<OnClick function="HybridScrollFrameScrollButton_OnClick"/>
-				</Scripts>
+                <Scripts>
+                    <OnLoad function="HybridScrollFrameScrollDown_OnLoad"/>
+                    <OnClick function="HybridScrollFrameScrollButton_OnClick"/>
+                </Scripts>
             </Button>
-		</Frames>
-		<Scripts>
-			<OnValueChanged function="HybridScrollFrame_OnValueChanged"/>
-		</Scripts>
+        </Frames>
+        <Scripts>
+            <OnValueChanged function="HybridScrollFrame_OnValueChanged"/>
+        </Scripts>
         <ThumbTexture name="$parentThumbTexture" parentKey="thumbTexture" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
             <Size x="12" y="100"/>
             <Anchors>
-                <Anchor point="TOP" relativePoint="TOP" ></Anchor>
+                <Anchor point="TOP" relativePoint="TOP"></Anchor>
             </Anchors>
         </ThumbTexture>
-	</Slider>    
+    </Slider>
 </Ui>

@@ -11,46 +11,46 @@ end
 
 GW.countTable = function(T)
     local c = 0
-    if T ~= nil and type(T) == 'table' then
+    if T ~= nil and type(T) == "table" then
         for _ in pairs(T) do
             c = c + 1
         end
     end
     return c
 end
- 
+
 GW.timeCount = function(numSec, com)
     local nSeconds = tonumber(numSec)
     if nSeconds == nil then
         nSeconds = 0
     end
     if nSeconds == 0 then
-        return '0'
+        return "0"
     end
-    
-    local nHours = math.floor(nSeconds/3600)
+
+    local nHours = math.floor(nSeconds / 3600)
     if nHours > 0 then
-        return nHours .. 'h'
+        return nHours .. "h"
     end
-    
-    local nMins = math.floor(nSeconds/60)
+
+    local nMins = math.floor(nSeconds / 60)
     if nMins > 0 then
-        return nMins .. 'm'
+        return nMins .. "m"
     end
 
     if com ~= nil then
-        local nMilsecs = math.max(math.floor((nSeconds * 10^1) + 0.5) / (10^1), 0)
-        return nMilsecs .. 's'
+        local nMilsecs = math.max(math.floor((nSeconds * 10 ^ 1) + 0.5) / (10 ^ 1), 0)
+        return nMilsecs .. "s"
     end
-    
+
     local nSecs = math.max(math.floor(nSeconds), 0)
-    return nSecs .. 's'
+    return nSecs .. "s"
 end
- 
+
 GW.comma_value = function(n)
     n = GW.round(n)
-    local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
-    return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
+    local left, num, right = string.match(n, "^([^%d]*%d)(%d*)(.-)$")
+    return left .. (num:reverse():gsub("(%d%d%d)", "%1,"):reverse()) .. right
 end
 
 GW.round = function(number, decimals)
@@ -68,14 +68,14 @@ GW.intRound = function(v)
     return vf
 end
 
-GW.dif = function(a,b)
+GW.dif = function(a, b)
     if a == nil then
         a = 0
     end
     if b == nil then
         b = 0
     end
-    
+
     if a > b then
         return a - b
     else
@@ -103,14 +103,15 @@ GW.splitString = function(inputstr, sep, sep2, sep3)
     if sep == nil then
         sep = "%s"
     end
-    inputstr = inputstr:gsub ('\n','')
-    local t = {} ; i = 1
+    inputstr = inputstr:gsub("\n", "")
+    local t = {}
+    i = 1
     for str in string.gmatch(inputstr, "([^" .. sep .. "|" .. sep2 .. "|" .. sep3 .. "]+)") do
-        st, en, cap1, cap2, cap3 = string.find (inputstr, str)
+        st, en, cap1, cap2, cap3 = string.find(inputstr, str)
         if en ~= nil then
-            s = string.sub (inputstr, en + 1, en + 1)
-            if s ~= nil or s ~= '' then
-                str =  str..s
+            s = string.sub(inputstr, en + 1, en + 1)
+            if s ~= nil or s ~= "" then
+                str = str .. s
             end
         end
         t[i] = str
@@ -120,5 +121,5 @@ GW.splitString = function(inputstr, sep, sep2, sep3)
 end
 
 GW.isnan = function(n)
-    return tostring(n) == '-1.#IND'
+    return tostring(n) == "-1.#IND"
 end

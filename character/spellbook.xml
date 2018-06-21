@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    
+
     <Frame name="GwSpellbook" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
         <Size x="608" y="621"></Size>
         <Anchors>
@@ -15,20 +15,20 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            </Layers>
+        </Layers>
     </Frame>
-    
+
     <Button name="GwSpellbookButton" inherits="SecureFrameTemplate" virtual="true">
-         <Size x="50" y="50"></Size>
+        <Size x="50" y="50"></Size>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
-                   <Size x="60" y="60"></Size>
+                    <Size x="60" y="60"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
-                     <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
+                    <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLayer="2">
@@ -48,7 +48,7 @@
                         <Anchor point="LEFTTOP" relativePoint="LEFTTOP" x="65" y="-5"></Anchor>
                     </Anchors>
                 </FontString>
-                
+
                 <FontString parentKey="sub" text="Unknown" justifyH="LEFT" justifyV="TOP">
                     <Size x="120" y="40"></Size>
                     <Anchors>
@@ -57,20 +57,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.title:SetFont(UNIT_NAME_FONT,12)
-                self.sub:SetFont(UNIT_NAME_FONT,11)
-                self.sub:SetTextColor(0.8,.8,.8,1)
-                
-                self.title:SetShadowColor(0,0,0,1)
-                self.sub:SetShadowColor(0,0,0,1)
-                
-                self.title:SetShadowOffset(1,-1)
-                self.sub:SetShadowOffset(1,-1)
-            </OnLoad>
-        </Scripts>
     </Button>
-    
-    
+
 </Ui>
