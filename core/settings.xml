@@ -7,9 +7,7 @@
             <AbsValue val="14"/>
         </FontHeight>
         <Scripts>
-            <OnLoad>
-				 self:SetFont(GwLocalization['FONT_BOLD'], 14)
-            </OnLoad>
+            <OnLoad function="gw_button_font_black_OnLoad"/>
         </Scripts>
     </Font>
     <Frame name="GwSettingsMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
@@ -572,12 +570,8 @@
         </Layers>
 
         <Scripts>
-            <OnEnter>
-                gw_button_enter(self)
-            </OnEnter>
-            <OnLeave>
-                gw_button_leave(self)
-            </OnLeave>
+            <OnEnter function="GwStandardButton_OnEnter"/>
+            <OnLeave function="GwStandardButton_OnEnter"/>
         </Scripts>
 
     </Button>
@@ -666,7 +660,7 @@
         </Frames>
     </Button>
 
-    <Frame name="GwWarningPromt" hidden="true" frameStrata="DIALOG" enableMouse="true" topLevel="true" virtual="true">
+    <Frame name="GwWarningPrompt" hidden="true" frameStrata="DIALOG" enableMouse="true" topLevel="true" virtual="true">
         <Size x="350" y="150"></Size>
         <Anchors>
             <Anchor point="CENTER"></Anchor>

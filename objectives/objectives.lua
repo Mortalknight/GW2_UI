@@ -1,22 +1,25 @@
 local _, GW = ...
-local round = GW.round
+local RoundDec = GW.RoundDec
 local lerp = GW.lerp
+local GetSetting = GW.GetSetting
+local CommaValue = GW.CommaValue
+local NotificationStateChanged = GW.NotificationStateChanged
+local SetObjectiveNotification = GW.SetObjectiveNotification
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
 
-local blockIndex = 0
-local waitForUpdate = false
-local updatedThisFrame = false
-local blocks = {}
 local savedQuests = {}
 
-GW_TRAKCER_TYPE_COLOR = {}
-GW_TRAKCER_TYPE_COLOR["QUEST"] = {r = 221 / 255, g = 198 / 255, b = 68 / 255}
-GW_TRAKCER_TYPE_COLOR["EVENT"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
-GW_TRAKCER_TYPE_COLOR["BONUS"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
-GW_TRAKCER_TYPE_COLOR["SCENARIO"] = {r = 171 / 255, g = 37 / 255, b = 240 / 255}
-GW_TRAKCER_TYPE_COLOR["BOSS"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
-GW_TRAKCER_TYPE_COLOR["ACHIEVEMENT"] = {r = 37 / 255, g = 240 / 255, b = 172 / 255}
+local TRACKER_TYPE_COLOR = {}
+GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
+TRACKER_TYPE_COLOR["QUEST"] = {r = 221 / 255, g = 198 / 255, b = 68 / 255}
+TRACKER_TYPE_COLOR["EVENT"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
+TRACKER_TYPE_COLOR["BONUS"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
+TRACKER_TYPE_COLOR["SCENARIO"] = {r = 171 / 255, g = 37 / 255, b = 240 / 255}
+TRACKER_TYPE_COLOR["BOSS"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
+TRACKER_TYPE_COLOR["ACHIEVEMENT"] = {r = 37 / 255, g = 240 / 255, b = 172 / 255}
 
-function gw_animate_wiggle(self)
+local function wiggleAnim(self)
     if self.animation == nil then
         self.animation = 0
     end
@@ -24,7 +27,7 @@ function gw_animate_wiggle(self)
         return
     end
     self.doingAnimation = true
-    addToAnimation(
+    AddToAnimation(
         self:GetName(),
         0,
         1,
@@ -57,10 +60,10 @@ function gw_animate_wiggle(self)
     )
 end
 
-function gwNewQuestAnimation(block)
+local function NewQuestAnimation(block)
     block.flare:Show()
     block.flare:SetAlpha(1)
-    addToAnimation(
+    AddToAnimation(
         block:GetName() .. "flare",
         0,
         1,
@@ -81,9 +84,10 @@ function gwNewQuestAnimation(block)
         end
     )
 end
+GW.NewQuestAnimation = NewQuestAnimation
 
 local function loadQuestButtons()
-    local actionButton = nil
+    local actionButton
     for i = 1, 25 do
         actionButton = CreateFrame("Button", "GwQuestItemButton" .. i, GwQuestTracker, "GwQuestItemTemplate")
         actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -111,11 +115,11 @@ local function loadQuestButtons()
     actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
 end
 
-function gwParseSimpleObjective(text)
+local function ParseSimpleObjective(text)
     local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
 
     if itemName == nil then
-        numItems, numNeeded, itemName = string.match(text, "(%d+)/(%d+) (%S+)")
+        numItems, numNeeded, _ = string.match(text, "(%d+)/(%d+) (%S+)")
     end
     local ndString = ""
 
@@ -129,16 +133,18 @@ function gwParseSimpleObjective(text)
 
     return string.gsub(text, ndString, "")
 end
+GW.ParseSimpleObjective = ParseSimpleObjective
 
-function gw_parse_criteria(quantity, totalQuantity, criteriaString)
+local function ParseCriteria(quantity, totalQuantity, criteriaString)
     if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
         return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
     end
 
     return criteriaString
 end
+GW.ParseCriteria = ParseCriteria
 
-function GwParseObjectiveString(block, text, objectiveType, quantity)
+local function ParseObjectiveString(block, text, objectiveType, quantity)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity)
@@ -147,9 +153,9 @@ function GwParseObjectiveString(block, text, objectiveType, quantity)
         return true
     end
     block.StatusBar.precentage = false
-    local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
+    local _, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
     if numItems == nil then
-        numItems, numNeeded, itemName = string.match(text, "(%d+)/(%d+) (%S+)")
+        numItems, numNeeded, _ = string.match(text, "(%d+)/(%d+) (%S+)")
     end
     numItems = tonumber(numItems)
     numNeeded = tonumber(numNeeded)
@@ -163,8 +169,9 @@ function GwParseObjectiveString(block, text, objectiveType, quantity)
     end
     return false
 end
+GW.ParseObjectiveString = ParseObjectiveString
 
-function GwFormatObjectiveNumbers(text)
+local function FormatObjectiveNumbers(text)
     local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
 
     if itemName == nil then
@@ -174,16 +181,17 @@ function GwFormatObjectiveNumbers(text)
     numNeeded = tonumber(numNeeded)
 
     if numItems ~= nil and numNeeded ~= nil then
-        return GW.comma_value(numItems) .. " / " .. GW.comma_value(numNeeded) .. " " .. itemName
+        return CommaValue(numItems) .. " / " .. CommaValue(numNeeded) .. " " .. itemName
     end
     return text
 end
+GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 
 local function setBlockColor(block, string)
-    block.color = GW_TRAKCER_TYPE_COLOR[string]
+    block.color = TRACKER_TYPE_COLOR[string]
 end
 
-local function statusBarOnShow(self)
+local function statusBar_OnShow(self)
     local f = self:GetParent()
     if not f then
         return
@@ -191,7 +199,8 @@ local function statusBarOnShow(self)
     f:SetHeight(50)
     f.statusbarBg:Show()
 end
-local function statusBarOnHide(self)
+
+local function statusBar_OnHide(self)
     local f = self:GetParent()
     if not f then
         return
@@ -199,23 +208,25 @@ local function statusBarOnHide(self)
     f:SetHeight(20)
     f.statusbarBg:Hide()
 end
+
 local function statusBarSetValue(self)
     local f = self:GetParent()
     if not f then
         return
     end
-    local min, max = self:GetMinMaxValues()
+    local _, mx = self:GetMinMaxValues()
     local v = self:GetValue()
-    local width = math.max(1, math.min(10, 10 * ((v / max) / 0.1)))
-    f.StatusBar.Spark:SetPoint("RIGHT", self, "LEFT", 280 * (v / max), 0)
+    local width = math.max(1, math.min(10, 10 * ((v / mx) / 0.1)))
+    f.StatusBar.Spark:SetPoint("RIGHT", self, "LEFT", 280 * (v / mx), 0)
     f.StatusBar.Spark:SetWidth(width)
     if self.precentage == nil or self.precentage == false then
-        self.progress:SetText(v .. " / " .. max)
+        self.progress:SetText(v .. " / " .. mx)
     else
-        self.progress:SetText(math.floor((v / max) * 100) .. "%")
+        self.progress:SetText(math.floor((v / mx) * 100) .. "%")
     end
 end
-function gwCreateObjectiveNormal(name, parent)
+
+local function CreateObjectiveNormal(name, parent)
     local f = CreateFrame("Frame", name, parent, "GwQuesttrackerObjectiveNormal")
     f.ObjectiveText:SetFont(UNIT_NAME_FONT, 12)
     f.ObjectiveText:SetShadowOffset(-1, 1)
@@ -224,14 +235,15 @@ function gwCreateObjectiveNormal(name, parent)
     if f.StatusBar.animationOld == nil then
         f.StatusBar.animationOld = 0
     end
-    f.StatusBar:SetScript("OnShow", statusBarOnShow)
-    f.StatusBar:SetScript("OnHide", statusBarOnHide)
+    f.StatusBar:SetScript("OnShow", statusBar_OnShow)
+    f.StatusBar:SetScript("OnHide", statusBar_OnHide)
     hooksecurefunc(f.StatusBar, "SetValue", statusBarSetValue)
 
     return f
 end
+GW.CreateObjectiveNormal = CreateObjectiveNormal
 
-function gwCreateTrackerObject(name, parent)
+local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
     f.Header:SetFont(UNIT_NAME_FONT, 14)
     f.SubHeader:SetFont(UNIT_NAME_FONT, 12)
@@ -247,7 +259,7 @@ function gwCreateTrackerObject(name, parent)
             for k, v in pairs(self.objectiveBlocks) do
                 v.StatusBar.progress:Show()
             end
-            addToAnimation(
+            AddToAnimation(
                 self:GetName() .. "hover",
                 0,
                 1,
@@ -295,7 +307,7 @@ function gwCreateTrackerObject(name, parent)
     f.turnin:SetScript(
         "OnShow",
         function(self)
-            self:SetScript("OnUpdate", gw_animate_wiggle)
+            self:SetScript("OnUpdate", wiggleAnim)
         end
     )
     f.turnin:SetScript(
@@ -307,6 +319,7 @@ function gwCreateTrackerObject(name, parent)
 
     return f
 end
+GW.CreateTrackerObject = CreateTrackerObject
 
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
@@ -322,7 +335,7 @@ local function getObjectiveBlock(self, index)
 
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
-    local newBlock = gwCreateObjectiveNormal(self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self)
+    local newBlock = CreateObjectiveNormal(self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self)
     newBlock:SetParent(self)
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
     if self.objectiveBlocksNum == 1 then
@@ -347,7 +360,7 @@ local function getBlock(blockIndex)
         return _G["GwQuestBlock" .. blockIndex]
     end
 
-    local newBlock = gwCreateTrackerObject("GwQuestBlock" .. blockIndex, GwQuesttrackerContainerQuests)
+    local newBlock = CreateTrackerObject("GwQuestBlock" .. blockIndex, GwQuesttrackerContainerQuests)
     newBlock:SetParent(GwQuesttrackerContainerQuests)
 
     if blockIndex == 1 then
@@ -377,7 +390,7 @@ local function addObjective(block, text, finished, objectiveIndex)
             objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
         end
 
-        if objectiveType == "progressbar" or GwParseObjectiveString(objectiveBlock, text) then
+        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
             if objectiveType == "progressbar" then
                 objectiveBlock.StatusBar:Show()
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
@@ -397,9 +410,8 @@ end
 
 local function updateQuestObjective(block, numObjectives, isComplete, title)
     local addedObjectives = 1
-    local objectiveText = ""
     for objectiveIndex = 1, numObjectives do
-        local text, objectiveType, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
+        local text, _, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
         if not finished then
             addObjective(block, text, finished, addedObjectives)
             addedObjectives = addedObjectives + 1
@@ -407,7 +419,7 @@ local function updateQuestObjective(block, numObjectives, isComplete, title)
     end
 end
 
-function GwupdateQuestItem(button, questLogIndex)
+local function UpdateQuestItem(button, questLogIndex)
     if InCombatLockdown() then
         return
     end
@@ -416,7 +428,7 @@ function GwupdateQuestItem(button, questLogIndex)
         return
     end
 
-    local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(questLogIndex)
+    local link, item, charges, _ = GetQuestLogSpecialItemInfo(questLogIndex)
 
     if item == nil then
         button:Hide()
@@ -436,8 +448,9 @@ function GwupdateQuestItem(button, questLogIndex)
     QuestObjectiveItem_UpdateCooldown(button)
     button:Show()
 end
+GW.UpdateQuestItem = UpdateQuestItem
 
-local function quest_update_POI(questID, questLogIndex)
+local function updatePOI(questID, questLogIndex)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
     if (IsQuestWatched(questLogIndex)) then
@@ -457,26 +470,12 @@ local function updateQuest(block, questWatchId)
     block.numObjectives = 0
     block.turnin:Hide()
 
-    local questID,
-        title,
-        questLogIndex,
-        numObjectives,
-        requiredMoney,
-        isComplete,
-        startEvent,
-        isAutoComplete,
-        failureTime,
-        timeElapsed,
-        questType,
-        isTask,
-        isStory,
-        isOnMap,
-        hasLocalPOI = GetQuestWatchInfo(questWatchId)
+    local questID, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete, _ =
+        GetQuestWatchInfo(questWatchId)
 
     if questID then
         if savedQuests[questID] == nil then
-            gwNewQuestAnimation(block)
-
+            NewQuestAnimation(block)
             savedQuests[questID] = true
         end
 
@@ -487,7 +486,7 @@ local function updateQuest(block, questWatchId)
 
         --Quest item
 
-        GwupdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
+        UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
 
         if isComplete and isComplete < 0 then
             isComplete = false
@@ -531,7 +530,7 @@ local function updateQuest(block, questWatchId)
         block.clickHeader:SetScript(
             "OnClick",
             function()
-                quest_update_POI(questID, questLogIndex)
+                updatePOI(questID, questLogIndex)
             end
         )
         block:SetScript(
@@ -598,6 +597,20 @@ local function updateExtraQuestItemPositions()
     GwBonusItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height + -25)
 end
 
+--[[
+function gwRequestQustlogUpdate()
+    updateQuestLogLayout()
+end
+--]]
+local function QuestTrackerLayoutChanged()
+    updateExtraQuestItemPositions()
+    GwQuestTrackerScroll:SetSize(
+        400,
+        GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight()
+    )
+end
+GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
+
 local function updateQuestLogLayout(intent, ...)
     local savedHeight = 1
     GwQuestHeader:Hide()
@@ -628,52 +641,39 @@ local function updateQuestLogLayout(intent, ...)
     for i = numQuests + 1, 25 do
         if _G["GwQuestBlock" .. i] ~= nil then
             _G["GwQuestBlock" .. i]:Hide()
-            GwupdateQuestItem(_G["GwQuestItemButton" .. i], 0)
+            UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
         end
     end
 
-    gwQuestTrackerLayoutChanged()
+    QuestTrackerLayoutChanged()
 end
 
-function gwRequestQustlogUpdate()
-    updateQuestLogLayout()
-end
-
-function gwQuestTrackerLayoutChanged()
-    updateExtraQuestItemPositions()
-    GwQuestTrackerScroll:SetSize(
-        400,
-        GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight()
-    )
-end
-
-function gwTrackerOnEvent(self, event, ...)
+local function tracker_OnEvent(self, event, ...)
     updateQuestLogLayout(...)
 end
 
-function gw_tracker_onUpdate(self)
+local function tracker_OnUpdate(self)
     if GwQuestTracker.trot < GetTime() then
         local state = GwObjectivesNotification.shouldDisplay
 
         GwQuestTracker.trot = GetTime() + 1
-        gwSetObjectiveNotification()
+        SetObjectiveNotification()
 
         if state ~= GwObjectivesNotification.shouldDisplay then
             state = GwObjectivesNotification.shouldDisplay
-            gwNotificationStateChanged(state)
+            NotificationStateChanged(state)
         end
     end
 end
-local function bonusBarOnEnter(self)
+
+local function bonus_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 0)
     GameTooltip:ClearLines()
-    GameTooltip:SetText(round(self.progress * 100, 0) .. "%")
+    GameTooltip:SetText(RoundDec(self.progress * 100, 0) .. "%")
     GameTooltip:Show()
 end
-local function bonusBarOnLeave(self)
-    GameTooltip:Hide()
-end
-function gw_load_questTracker()
+
+local function LoadQuestTracker()
     ObjectiveTrackerFrame:Hide()
     ObjectiveTrackerFrame:SetScript(
         "OnShow",
@@ -706,9 +706,9 @@ function gw_load_questTracker()
     fNotify.bonusbar.bar:SetOrientation("VERTICAL")
     fNotify.bonusbar.bar:SetMinMaxValues(0, 1)
     fNotify.bonusbar.bar:SetValue(0.5)
-    fNotify.bonusbar:SetScript("OnEnter", bonusBarOnEnter)
-    fNotify.bonusbar:SetScript("OnLeave", bonusBarOnLeave)
-    fNotify.compass:SetScript("OnShow", gwNewQuestAnimation)
+    fNotify.bonusbar:SetScript("OnEnter", bonus_OnEnter)
+    fNotify.bonusbar:SetScript("OnLeave", GameTooltip_Hide)
+    fNotify.compass:SetScript("OnShow", NewQuestAnimation)
 
     local fBoss = CreateFrame("Frame", "GwQuesttrackerContainerBossFrames", fTracker, "GwQuesttrackerContainer")
     local fScen = CreateFrame("Frame", "GwQuesttrackerContainerScenario", fTracker, "GwQuesttrackerContainer")
@@ -719,7 +719,7 @@ function gw_load_questTracker()
     fQuest:SetParent(fScroll)
     fBonus:SetParent(fScroll)
 
-    if gwGetSetting("MINIMAP_ENABLED") then
+    if GetSetting("MINIMAP_ENABLED") then
         fTracker:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT")
         fTracker:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT")
     else
@@ -742,7 +742,7 @@ function gw_load_questTracker()
     fScroll:SetSize(400, 2)
     fTraScr:SetScrollChild(fScroll)
 
-    fQuest:SetScript("OnEvent", gwTrackerOnEvent)
+    fQuest:SetScript("OnEvent", tracker_OnEvent)
     fQuest:RegisterEvent("QUEST_LOG_UPDATE")
     fQuest:RegisterEvent("QUEST_ITEM_UPDATE")
     fQuest:RegisterEvent("QUEST_REMOVED")
@@ -781,20 +781,21 @@ function gw_load_questTracker()
         end
     )
     header.title:SetTextColor(
-        GW_TRAKCER_TYPE_COLOR["QUEST"].r,
-        GW_TRAKCER_TYPE_COLOR["QUEST"].g,
-        GW_TRAKCER_TYPE_COLOR["QUEST"].b
+        TRACKER_TYPE_COLOR["QUEST"].r,
+        TRACKER_TYPE_COLOR["QUEST"].g,
+        TRACKER_TYPE_COLOR["QUEST"].b
     )
 
     loadQuestButtons()
     updateQuestLogLayout("LOAD")
 
-    gw_register_bossFrames()
-    gw_register_scenarioFrame()
-    gw_register_achievement()
-    gw_register_bonusObjectiveFrame()
+    GW.LoadBossFrame()
+    GW.LoadScenarioFrame()
+    GW.LoadAchievementFrame()
+    GW.LoadBonusFrame()
 
     fNotify.shouldDisplay = false
     fTracker.trot = GetTime() + 2
-    fTracker:SetScript("OnUpdate", gw_tracker_onUpdate)
+    fTracker:SetScript("OnUpdate", tracker_OnUpdate)
 end
+GW.LoadQuestTracker = LoadQuestTracker

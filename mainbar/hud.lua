@@ -1,239 +1,43 @@
 local _, GW = ...
-local comma_value = GW.comma_value
-local round = GW.round
+local CommaValue = GW.CommaValue
+local RoundDec = GW.RoundDec
 local lerp = GW.lerp
+local GetSetting = GW.GetSetting
+local RoundInt = GW.RoundInt
+local Diff = GW.Diff
+local VERSION_STRING = GW.VERSION_STRING
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
+local StopAnimation = GW.StopAnimation
+local Self_Hide = GW.Self_Hide
+local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
---GW_PowerBarColorCustom = PowerBarColor;
-GW_PowerBarColorCustom = {}
-
-GW_PowerBarColorCustom["MANA"] = {r = 37 / 255, g = 133 / 255, b = 240 / 255}
-GW_PowerBarColorCustom["RAGE"] = {r = 240 / 255, g = 66 / 255, b = 37 / 255}
-GW_PowerBarColorCustom["ENERGY"] = {r = 240 / 255, g = 200 / 255, b = 37 / 255}
-GW_PowerBarColorCustom["LUNAR"] = {r = 130 / 255, g = 172 / 255, b = 230 / 255}
-GW_PowerBarColorCustom["RUNIC_POWER"] = {r = 37 / 255, g = 214 / 255, b = 240 / 255}
-GW_PowerBarColorCustom["FOCUS"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
-GW_PowerBarColorCustom["FURY"] = {r = 166 / 255, g = 37 / 255, b = 240 / 255}
-
-GW_DEBUFF_COLOR = {}
-GW_DEBUFF_COLOR["Curse"] = {r = 97 / 255, g = 72 / 255, b = 177 / 255}
-GW_DEBUFF_COLOR["Disease"] = {r = 177 / 255, g = 114 / 255, b = 72 / 255}
-GW_DEBUFF_COLOR["Magic"] = {r = 72 / 255, g = 94 / 255, b = 177 / 255}
-GW_DEBUFF_COLOR["Poison"] = {r = 94 / 255, g = 177 / 255, b = 72 / 255}
-
-GW_FACTION_BAR_COLORS = FACTION_BAR_COLORS
-GW_FACTION_BAR_COLORS = {
-    [1] = {r = 0.8, g = 0.3, b = 0.22},
-    [2] = {r = 0.8, g = 0.3, b = 0.22},
-    [3] = {r = 0.75, g = 0.27, b = 0},
-    [4] = {r = 0.9, g = 0.7, b = 0},
-    [5] = {r = 0, g = 0.6, b = 0.1},
-    [6] = {r = 0, g = 0.6, b = 0.1},
-    [7] = {r = 0, g = 0.6, b = 0.1},
-    [8] = {r = 0, g = 0.6, b = 0.1},
-    [9] = {r = 0.22, g = 0.37, b = 0.98}
-}
-
-GW_COLOR_FRIENDLY = {
-    [1] = {r = 88 / 255, g = 170 / 255, b = 68 / 255},
-    [2] = {r = 159 / 255, g = 36 / 255, b = 20 / 255},
-    [3] = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
-}
-
-bloodSpark = {}
-
-bloodSpark[0] = {left = 0, right = 0.125, top = 0, bottom = 0.5}
-bloodSpark[1] = {left = 0, right = 0.125, top = 0, bottom = 0.5}
-bloodSpark[2] = {left = 0.125, right = 0.125 * 2, top = 0, bottom = 0.5}
-bloodSpark[3] = {left = 0.125 * 2, right = 0.125 * 3, top = 0, bottom = 0.5}
-bloodSpark[4] = {left = 0.125 * 3, right = 0.125 * 4, top = 0, bottom = 0.5}
-bloodSpark[5] = {left = 0.125 * 4, right = 0.125 * 5, top = 0, bottom = 0.5}
-bloodSpark[6] = {left = 0.125 * 5, right = 0.125 * 6, top = 0, bottom = 0.5}
-bloodSpark[7] = {left = 0.125 * 6, right = 0.125 * 7, top = 0, bottom = 0.5}
-bloodSpark[8] = {left = 0.125 * 7, right = 0.125 * 8, top = 0, bottom = 0.5}
-
-bloodSpark[9] = {left = 0, right = 0.125, top = 0.5, bottom = 1}
-bloodSpark[10] = {left = 0.125, right = 0.125 * 2, top = 0.5, bottom = 1}
-bloodSpark[11] = {left = 0.125 * 2, right = 0.125 * 3, top = 0.5, bottom = 1}
-bloodSpark[12] = {left = 0.125 * 3, right = 0.125 * 4, top = 0.5, bottom = 1}
-bloodSpark[13] = {left = 0.125 * 4, right = 0.125 * 5, top = 0.5, bottom = 1}
-bloodSpark[14] = {left = 0.125 * 5, right = 0.125 * 6, top = 0.5, bottom = 1}
-bloodSpark[15] = {left = 0.125 * 6, right = 0.125 * 7, top = 0.5, bottom = 1}
-bloodSpark[16] = {left = 0.125 * 7, right = 0.125 * 8, top = 0.5, bottom = 1}
-
-bloodSpark[17] = {left = 0, right = 0.125, top = 0, bottom = 0.5}
-bloodSpark[18] = {left = 0.125, right = 0.125 * 2, top = 0, bottom = 0.5}
-bloodSpark[19] = {left = 0.125 * 2, right = 0.125 * 3, top = 0, bottom = 0.5}
-bloodSpark[20] = {left = 0.125 * 3, right = 0.125 * 4, top = 0, bottom = 0.5}
-bloodSpark[21] = {left = 0.125 * 4, right = 0.125 * 5, top = 0, bottom = 0.5}
-bloodSpark[22] = {left = 0.125 * 5, right = 0.125 * 6, top = 0, bottom = 0.5}
-bloodSpark[23] = {left = 0.125 * 6, right = 0.125 * 7, top = 0, bottom = 0.5}
-bloodSpark[24] = {left = 0.125 * 7, right = 0.125 * 8, top = 0, bottom = 0.5}
-
-GW_CLASS_ICONS = {}
-
-GW_CLASS_ICONS[0] = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1}
-
-GW_CLASS_ICONS[1] = {l = 0.0625 * 11, r = 0.0625 * 12, t = 0, b = 1}
-GW_CLASS_ICONS[2] = {l = 0.0625 * 10, r = 0.0625 * 11, t = 0, b = 1}
-GW_CLASS_ICONS[3] = {l = 0.0625 * 9, r = 0.0625 * 10, t = 0, b = 1}
-GW_CLASS_ICONS[4] = {l = 0.0625 * 8, r = 0.0625 * 9, t = 0, b = 1}
-GW_CLASS_ICONS[5] = {l = 0.0625 * 7, r = 0.0625 * 8, t = 0, b = 1}
-GW_CLASS_ICONS[6] = {l = 0.0625 * 6, r = 0.0625 * 7, t = 0, b = 1}
-GW_CLASS_ICONS[7] = {l = 0.0625 * 5, r = 0.0625 * 6, t = 0, b = 1}
-GW_CLASS_ICONS[8] = {l = 0.0625 * 4, r = 0.0625 * 5, t = 0, b = 1}
-GW_CLASS_ICONS[9] = {l = 0.0625 * 3, r = 0.0625 * 4, t = 0, b = 1}
-GW_CLASS_ICONS[10] = {l = 0.0625 * 2, r = 0.0625 * 3, t = 0, b = 1}
-GW_CLASS_ICONS[11] = {l = 0.0625 * 1, r = 0.0625 * 2, t = 0, b = 1}
-GW_CLASS_ICONS[12] = {l = 0, r = 0.0625 * 1, t = 0, b = 1}
-
-GW_CLASS_ICONS["dead"] = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1}
-
-GW_CLASS_COLORS_RAIDFRAME = {}
-
-GW_CLASS_COLORS_RAIDFRAME[1] = {r = 90 / 255, g = 54 / 255, b = 38 / 255} --Warrior
-GW_CLASS_COLORS_RAIDFRAME[2] = {r = 177 / 255, g = 72 / 255, b = 117 / 255} --Paladin
-GW_CLASS_COLORS_RAIDFRAME[3] = {r = 99 / 255, g = 125 / 255, b = 53 / 255} --Hunter
-GW_CLASS_COLORS_RAIDFRAME[4] = {r = 190 / 255, g = 183 / 255, b = 79 / 255} --Rogue
-GW_CLASS_COLORS_RAIDFRAME[5] = {r = 205 / 255, g = 205 / 255, b = 205 / 255} --Priest
-GW_CLASS_COLORS_RAIDFRAME[6] = {r = 148 / 255, g = 62 / 255, b = 62 / 255} --Death Knight
-GW_CLASS_COLORS_RAIDFRAME[7] = {r = 30 / 255, g = 44 / 255, b = 149 / 255} -- Shaman
-GW_CLASS_COLORS_RAIDFRAME[8] = {r = 62 / 255, g = 121 / 255, b = 149 / 255} -- Mage
-GW_CLASS_COLORS_RAIDFRAME[9] = {r = 125 / 255, g = 88 / 255, b = 154 / 255} -- Warlock
-GW_CLASS_COLORS_RAIDFRAME[10] = {r = 66 / 255, g = 151 / 255, b = 112 / 255} -- Monk
-GW_CLASS_COLORS_RAIDFRAME[11] = {r = 158 / 255, g = 103 / 255, b = 37 / 255} -- Druid
-GW_CLASS_COLORS_RAIDFRAME[12] = {r = 72 / 255, g = 38 / 255, b = 148 / 255} -- Demon Hunter
-
-GW_FACTION_COLOR = {}
-GW_FACTION_COLOR[1] = {r = 163 / 255, g = 46 / 255, b = 54 / 255}
-GW_FACTION_COLOR[2] = {r = 57 / 255, g = 115 / 255, b = 186 / 255}
-
-GW_TARGET_FRAME_ART = {
-    ["minus"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
-    ["minus"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
-    ["normal"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
-    ["elite"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowElit",
-    ["worldboss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowElit",
-    ["rare"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare",
-    ["rareelite"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare",
-    ["prestige1"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p1",
-    ["prestige2"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p2",
-    ["prestige3"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p3",
-    ["prestige4"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p4"
-}
-
-GW_DODGEBAR_SPELLS = {}
-GW_DODGEBAR_SPELLS[1] = {100, 198304}
-GW_DODGEBAR_SPELLS[2] = {190784}
-GW_DODGEBAR_SPELLS[3] = {781, 190925}
-GW_DODGEBAR_SPELLS[4] = {195457}
-GW_DODGEBAR_SPELLS[5] = {121536}
-GW_DODGEBAR_SPELLS[6] = {212552}
-GW_DODGEBAR_SPELLS[7] = {196884}
-GW_DODGEBAR_SPELLS[8] = {212653, 1953}
-GW_DODGEBAR_SPELLS[9] = {48018}
-GW_DODGEBAR_SPELLS[10] = {109132, 115008}
-GW_DODGEBAR_SPELLS[11] = {102280, 102401}
-GW_DODGEBAR_SPELLS[12] = {189110, 195072}
-
-GW_MAIN_HUD_FRAMES = {
-    "MainMenuBarArtFrame",
-    "GwHudArtFrame",
-    "MultiBarBottomRight",
-    "MultiBarBottomLeft",
-    "GwPlayerPowerBar",
-    "GwPlayerAuraFrame",
-    "GwPlayerClassPower",
-    "GwPlayerHealthGlobe",
-    "GwPlayerPetFrame",
-    "PetActionButton1",
-    "PetActionButton2",
-    "PetActionButton3",
-    "PetActionButton4",
-    "PetActionButton5",
-    "PetActionButton6",
-    "PetActionButton7",
-    "PetActionButton8",
-    "PetActionButton9",
-    "PetActionButton10",
-    "PetActionButton11",
-    "PetActionButton12"
-}
-GW_MAIN_HUD_FRAMES_OLD_STATE = {}
+-- forward function defs
+local displayRewards
+local createOrderBar
 
 local experiencebarAnimation = 0
 
-function loadHudArt()
-    local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
-
-    hudArtFrame:SetScript(
-        "OnEvent",
-        function(self, event, unit)
-            if event == "UNIT_AURA" and unit == "player" then
-                select_actionhud_bg()
-                return
-            end
-
-            if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
-                select_actionhud_bg()
-                return
-            end
-            if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" and unit == "player" then
-                combat_hud_healthstate()
-                return
-            end
-        end
-    )
-
-    hudArtFrame:RegisterEvent("UNIT_AURA")
-    hudArtFrame:RegisterEvent("PLAYER_ALIVE")
-    hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    hudArtFrame:RegisterEvent("UNIT_HEALTH")
-    hudArtFrame:RegisterEvent("UNIT_MAXHEALTH")
-    select_actionhud_bg()
-    combat_hud_healthstate()
-end
-
 local gw_reputation_vals = nil
 local gw_honor_vals = nil
-function loadExperienceBar()
-    gw_load_levelingrewads()
 
-    local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
-    GwlevelLableRightButton:SetScript("OnClick", gw_experienceBar_OnClick)
-    local eName = experiencebar:GetName()
+local function artifactPoints()
+    local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
 
-    experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
+    local numPoints = pointsSpent
+    local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
+    while totalXP >= xpForNextPoint and xpForNextPoint > 0 do
+        totalXP = totalXP - xpForNextPoint
 
-    _G["GwExperienceFrameArtifactBar"].artifactBarAnimation = 0
-    _G["GwExperienceFrameNextLevel"]:SetFont(UNIT_NAME_FONT, 12)
-    _G["GwExperienceFrameCurrentLevel"]:SetFont(UNIT_NAME_FONT, 12)
+        pointsSpent = pointsSpent + 1
+        numPoints = numPoints + 1
 
-    update_experiencebar_size()
-    update_experiencebar_data()
-
-    experiencebar:SetScript("OnEvent", update_experiencebar_data)
-
-    experiencebar:RegisterEvent("PLAYER_XP_UPDATE")
-    experiencebar:RegisterEvent("UPDATE_FACTION")
-    experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE")
-    experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
-    experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN")
-    experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-
-    experiencebar:SetScript("OnEnter", show_experiencebar_tooltip)
-    experiencebar:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip:Hide()
-            UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(), 1)
-            UIFrameFadeIn(_G["GwExperienceFrameArtifactBar"], 0.2, _G["GwExperienceFrameArtifactBar"]:GetAlpha(), 1)
-        end
-    )
+        xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
+    end
+    return numPoints, totalXP, xpForNextPoint
 end
 
-function show_experiencebar_tooltip()
+local function xpbar_OnEnter()
     GameTooltip:SetOwner(_G["GwExperienceFrame"], "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
 
@@ -257,8 +61,8 @@ function show_experiencebar_tooltip()
     if UnitLevel("Player") < GetMaxPlayerLevel() then
         GameTooltip:AddLine(
             GwLocalization["EXP_BAR_TOOLTIP_EXP_VALUE"] ..
-                comma_value(valCurrent) ..
-                    " / " .. comma_value(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
+                CommaValue(valCurrent) ..
+                    " / " .. CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
             1,
             1,
             1
@@ -268,7 +72,7 @@ function show_experiencebar_tooltip()
     if rested ~= nil then
         GameTooltip:AddLine(
             GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTED"] ..
-                comma_value(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
+                CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,
             1
@@ -281,15 +85,13 @@ function show_experiencebar_tooltip()
     local showArtifact = HasArtifactEquipped()
 
     if showArtifact then
-        local numPoints, artifactXP, xpForNextPoint = gw_artifact_points()
-
-        local artifactVal = artifactXP / xpForNextPoint
+        local _, artifactXP, xpForNextPoint = artifactPoints()
 
         GameTooltip:AddLine(
             GwLocalization["EXP_BAR_TOOLTIP_ARTIFACT"] ..
-                comma_value(artifactXP) ..
+                CommaValue(artifactXP) ..
                     " / " ..
-                        comma_value(xpForNextPoint) ..
+                        CommaValue(xpForNextPoint) ..
                             " |cffa6a6a6 (" .. math.floor((artifactXP / xpForNextPoint) * 100) .. "%)|r",
             1,
             1,
@@ -300,7 +102,7 @@ function show_experiencebar_tooltip()
     GameTooltip:Show()
 end
 
-function gw_experienceBar_OnClick()
+local function xpbar_OnClick()
     if HasArtifactEquipped() then
         SocketInventoryItem(16)
     else
@@ -308,35 +110,30 @@ function gw_experienceBar_OnClick()
     end
 end
 
-function gw_artifact_points()
-    local itemID,
-        altItemID,
-        name,
-        icon,
-        totalXP,
-        pointsSpent,
-        quality,
-        artifactAppearanceID,
-        appearanceModID,
-        itemAppearanceID,
-        altItemAppearanceID,
-        altOnTop,
-        artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+local function flareAnim()
+    GwXpFlare:Show()
 
-    local numPoints = pointsSpent
-    local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
-    while totalXP >= xpForNextPoint and xpForNextPoint > 0 do
-        totalXP = totalXP - xpForNextPoint
-
-        pointsSpent = pointsSpent + 1
-        numPoints = numPoints + 1
-
-        xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
-    end
-    return numPoints, totalXP, xpForNextPoint
+    AddToAnimation(
+        "GwXpFlare",
+        0,
+        1,
+        GetTime(),
+        1,
+        function(prog)
+            GwXpFlare.texture:SetAlpha(1)
+            GwXpFlare.texture:SetRotation(lerp(0, 3, prog))
+            if prog > 0.75 then
+                GwXpFlare.texture:SetAlpha(lerp(1, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
+            end
+        end,
+        nil,
+        function()
+            GwXpFlare:Hide()
+        end
+    )
 end
 
-function update_experiencebar_data(self, event)
+local function xpbar_OnEvent(self, event)
     if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil then
         local delayUpdateTime = GetTime() + 0.4
         GwExperienceFrame:SetScript(
@@ -345,13 +142,13 @@ function update_experiencebar_data(self, event)
                 if GetTime() < delayUpdateTime then
                     return
                 end
-                update_experiencebar_data(self, nil)
+                xpbar_OnEvent(self, nil)
                 GwExperienceFrame:SetScript("OnUpdate", nil)
             end
         )
     end
 
-    gw_leveling_display_rewards()
+    displayRewards()
 
     local showArtifact = HasArtifactEquipped()
 
@@ -405,16 +202,9 @@ function update_experiencebar_data(self, event)
                 isWatched,
                 isChild = GetFactionInfo(factionIndex)
             if isWatched == true then
-                local name, reaction, min, max, value, factionID = GetWatchedFactionInfo()
-                local friendID,
-                    friendRep,
-                    friendMaxRep,
-                    friendName,
-                    friendText,
-                    friendTexture,
-                    friendTextLevel,
-                    friendThreshold,
-                    nextFriendThreshold = GetFriendshipReputation(factionID)
+                local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
+                local friendID, friendRep, friendMaxRep, friendName, _, _, _, friendThreshold, nextFriendThreshold =
+                    GetFriendshipReputation(factionID)
                 if C_Reputation.IsFactionParagon(factionID) then
                     local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
 
@@ -427,18 +217,18 @@ function update_experiencebar_data(self, event)
                     gw_reputation_vals =
                         name ..
                             GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
-                                comma_value((currentValue - 0)) ..
+                                CommaValue((currentValue - 0)) ..
                                     " / " ..
-                                        comma_value((maxValueParagon - 0)) ..
+                                        CommaValue((maxValueParagon - 0)) ..
                                             " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
                         1,
                         1,
                         1
 
                     _G["GwExperienceFrameBar"]:SetStatusBarColor(
-                        GW_FACTION_BAR_COLORS[9].r,
-                        GW_FACTION_BAR_COLORS[9].g,
-                        GW_FACTION_BAR_COLORS[9].b
+                        FACTION_BAR_COLORS[9].r,
+                        FACTION_BAR_COLORS[9].g,
+                        FACTION_BAR_COLORS[9].b
                     )
                 elseif (friendID ~= nil) then
                     if (nextFriendThreshold) then
@@ -446,9 +236,9 @@ function update_experiencebar_data(self, event)
                         gw_reputation_vals =
                             friendName ..
                                 GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
-                                    comma_value((friendRep - friendThreshold)) ..
+                                    CommaValue((friendRep - friendThreshold)) ..
                                         " / " ..
-                                            comma_value((nextFriendThreshold - friendThreshold)) ..
+                                            CommaValue((nextFriendThreshold - friendThreshold)) ..
                                                 " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
                             1,
                             1,
@@ -458,18 +248,18 @@ function update_experiencebar_data(self, event)
                         gw_reputation_vals =
                             friendName ..
                                 GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
-                                    comma_value(friendMaxRep) ..
+                                    CommaValue(friendMaxRep) ..
                                         " / " ..
-                                            comma_value(friendMaxRep) ..
+                                            CommaValue(friendMaxRep) ..
                                                 " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
                             1,
                             1,
                             1
                     end
                     _G["GwExperienceFrameBar"]:SetStatusBarColor(
-                        GW_FACTION_BAR_COLORS[5].r,
-                        GW_FACTION_BAR_COLORS[5].g,
-                        GW_FACTION_BAR_COLORS[5].b
+                        FACTION_BAR_COLORS[5].r,
+                        FACTION_BAR_COLORS[5].g,
+                        FACTION_BAR_COLORS[5].b
                     )
                 else
                     local currentRank =
@@ -491,18 +281,18 @@ function update_experiencebar_data(self, event)
                         gw_reputation_vals =
                             name ..
                                 GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
-                                    comma_value((earnedValue - bottomValue)) ..
+                                    CommaValue((earnedValue - bottomValue)) ..
                                         " / " ..
-                                            comma_value((topValue - bottomValue)) ..
+                                            CommaValue((topValue - bottomValue)) ..
                                                 " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
                             1,
                             1,
                             1
                     end
                     _G["GwExperienceFrameBar"]:SetStatusBarColor(
-                        GW_FACTION_BAR_COLORS[reaction].r,
-                        GW_FACTION_BAR_COLORS[reaction].g,
-                        GW_FACTION_BAR_COLORS[reaction].b
+                        FACTION_BAR_COLORS[reaction].r,
+                        FACTION_BAR_COLORS[reaction].g,
+                        FACTION_BAR_COLORS[reaction].b
                     )
                 end
 
@@ -521,12 +311,12 @@ function update_experiencebar_data(self, event)
 
     if showArtifact then
         showBar2 = true
-        local numPoints, artifactXP, xpForNextPoint = gw_artifact_points()
+        local numPoints, artifactXP, xpForNextPoint = artifactPoints()
         local artifactVal = artifactXP / xpForNextPoint
 
         _G["GwExperienceFrameArtifactBarCandy"]:SetValue(artifactVal)
 
-        addToAnimation(
+        AddToAnimation(
             "artifactBarAnimation",
             _G["GwExperienceFrameArtifactBar"].artifactBarAnimation,
             artifactVal,
@@ -586,8 +376,8 @@ function update_experiencebar_data(self, event)
 
         gw_honor_vals =
             GwLocalization["EXP_BAR_TOOLTIP_HONOR"] ..
-                comma_value(currentHonor) ..
-                    " / " .. comma_value(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
+                CommaValue(currentHonor) ..
+                    " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
             1,
             1,
             1
@@ -601,22 +391,21 @@ function update_experiencebar_data(self, event)
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (UnitLevel("Player") / GetMaxPlayerLevel())))
     if (valPrec - experiencebarAnimation) > FlareBreakPoint then
         GainBigExp = true
-
-        gw_expFlare_animation()
+        flareAnim()
     end
 
     if experiencebarAnimation > valPrec then
         experiencebarAnimation = 0
     end
 
-    expFlare.soundCooldown = 0
+    GwXpFlare.soundCooldown = 0
     local expSoundCooldown = 0
     local startTime = GetTime()
 
-    animationSpeed = GW.dif(experiencebarAnimation, valPrec)
+    animationSpeed = Diff(experiencebarAnimation, valPrec)
     animationSpeed = math.min(15, math.max(5, 10 * animationSpeed))
 
-    addToAnimation(
+    AddToAnimation(
         "experiencebarAnimation",
         experiencebarAnimation,
         valPrec,
@@ -642,7 +431,7 @@ function update_experiencebar_data(self, event)
                 )
 
                 local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                expFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
+                GwXpFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
             end
             _G["GwExperienceFrameBarRested"]:SetValue(rested)
             _G["GwExperienceFrameBarRested"]:SetPoint(
@@ -653,7 +442,7 @@ function update_experiencebar_data(self, event)
                 0
             )
 
-            if GainBigExp and expFlare.soundCooldown < GetTime() then
+            if GainBigExp and GwXpFlare.soundCooldown < GetTime() then
                 expSoundCooldown =
                     math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
@@ -665,16 +454,16 @@ function update_experiencebar_data(self, event)
                 )
 
                 local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                expFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
+                GwXpFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
 
-                expFlare.soundCooldown = GetTime() + expSoundCooldown
+                GwXpFlare.soundCooldown = GetTime() + expSoundCooldown
                 PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
 
                 animations["experiencebarAnimation"]["from"] = step
             end
         end
     )
-    addToAnimation(
+    AddToAnimation(
         "GwExperienceFrameBarCandy",
         experiencebarAnimation,
         valPrec,
@@ -735,31 +524,7 @@ function update_experiencebar_data(self, event)
     end
 end
 
-function gw_expFlare_animation()
-    expFlare:Show()
-
-    addToAnimation(
-        "expFlare",
-        0,
-        1,
-        GetTime(),
-        1,
-        function(prog)
-            expFlare.texture:SetAlpha(1)
-
-            expFlare.texture:SetRotation(lerp(0, 3, prog))
-            if prog > 0.75 then
-                expFlare.texture:SetAlpha(lerp(1, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
-            end
-        end,
-        nil,
-        function()
-            expFlare:Hide()
-        end
-    )
-end
-
-function update_experiencebar_size()
+local function updateBarSize()
     local m = (UIParent:GetWidth() - 180) / 10
     for i = 1, 9 do
         local rm = (m * i) + 90
@@ -767,15 +532,15 @@ function update_experiencebar_size()
         _G["barsep" .. i]:SetPoint("LEFT", "GwExperienceFrame", "LEFT", rm, 0)
     end
 
-    local m = (UIParent:GetWidth() - 180)
+    m = (UIParent:GetWidth() - 180)
     dubbleBarSep:SetWidth(m)
     dubbleBarSep:ClearAllPoints()
     dubbleBarSep:SetPoint("LEFT", "GwExperienceFrame", "LEFT", 90, 0)
 end
 
-action_hud_auras = {}
+local action_hud_auras = {}
 
-function registerActionHudAura(aura, left, right)
+local function registerActionHudAura(aura, left, right)
     action_hud_auras[aura] = {}
     action_hud_auras[aura]["aura"] = aura
     action_hud_auras[aura]["left"] = left
@@ -783,6 +548,7 @@ function registerActionHudAura(aura, left, right)
 end
 local currentTexture = nil
 
+--[[
 local function getSpecSpecificHud(left, right)
     --hard coded for now
     local playerClassName, playerClassEng, playerClass = UnitClass("player")
@@ -796,9 +562,9 @@ local function getSpecSpecificHud(left, right)
 
     return left, right
 end
-
-function select_actionhud_bg()
-    if not gwGetSetting("HUD_SPELL_SWAP") then
+--]]
+local function selectBg()
+    if not GetSetting("HUD_SPELL_SWAP") then
         return
     end
     local right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow"
@@ -814,8 +580,7 @@ function select_actionhud_bg()
         left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat"
 
         for i = 1, 40 do
-            local name, icon, count, dispelType, duration, expires, caster, isStealable, nameplateShowPersonal, spellID =
-                UnitBuff("player", i)
+            local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i)
             if spellID ~= nil and action_hud_auras[spellID] ~= nil then
                 left = action_hud_auras[spellID]["left"]
                 right = action_hud_auras[spellID]["right"]
@@ -830,7 +595,7 @@ function select_actionhud_bg()
     end
 end
 
-function combat_hud_healthstate()
+local function combatHealthState()
     local unitHealthPrecentage = UnitHealth("player") / UnitHealthMax("player")
 
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
@@ -883,7 +648,7 @@ registerActionHudAura(
     "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost"
 )
 
-function gw_breath_meter()
+local function LoadBreathMeter()
     CreateFrame("Frame", "GwBreathMeter", UIParent, "GwBreathMeter")
     GwBreathMeter:Hide()
     GwBreathMeter:SetScript(
@@ -928,9 +693,10 @@ function gw_breath_meter()
         end
     )
 end
+GW.LoadBreathMeter = LoadBreathMeter
 
 local function updateGuildButton()
-    local numTotalMembers, numOnlineMaxLevelMembers, numOnlineMembers = GetNumGuildMembers()
+    local _, _, numOnlineMembers = GetNumGuildMembers()
 
     if numOnlineMembers ~= nil and numOnlineMembers > 0 then
         GwMicroButtonGuildMicroButton.darkbg:Show()
@@ -953,7 +719,7 @@ local function updateInventoryButton()
     local totalEmptySlots = 0
 
     for i = 0, 4 do
-        local numberOfFreeSlots, bagType = GetContainerNumFreeSlots(i)
+        local numberOfFreeSlots, _ = GetContainerNumFreeSlots(i)
 
         if numberOfFreeSlots ~= nil then
             totalEmptySlots = totalEmptySlots + numberOfFreeSlots
@@ -978,10 +744,12 @@ local microButtonPadding = 4 + 12
 local function fnMf_OnEnter(self)
     self:SetSize(28, 28)
 end
+
 local function fnMf_OnLeave(self)
     self:SetSize(24, 24)
 end
-function create_micro_button(key)
+
+local function createMicroButton(key)
     local mf =
         CreateFrame(
         "Button",
@@ -1013,10 +781,10 @@ local gw_latencyToolTipUpdate = 0
 local gw_frameRate = 0
 
 local function microMenuFrameShow(f, name)
-    GwStopAnimation(name)
-    GwStopAnimation("GwHudArtFrameMenuBackDrop")
+    StopAnimation(name)
+    StopAnimation("GwHudArtFrameMenuBackDrop")
     f.gw_FadeShowing = true
-    addToAnimation(
+    AddToAnimation(
         name,
         0,
         1,
@@ -1028,7 +796,7 @@ local function microMenuFrameShow(f, name)
         nil,
         nil
     )
-    addToAnimation(
+    AddToAnimation(
         "GwHudArtFrameMenuBackDrop",
         0,
         1,
@@ -1043,10 +811,10 @@ local function microMenuFrameShow(f, name)
 end
 
 local function microMenuFrameHide(f, name)
-    GwStopAnimation(name)
-    GwStopAnimation("GwHudArtFrameMenuBackDrop")
+    StopAnimation(name)
+    StopAnimation("GwHudArtFrameMenuBackDrop")
     f.gw_FadeShowing = false
-    addToAnimation(
+    AddToAnimation(
         name,
         1,
         0,
@@ -1058,7 +826,7 @@ local function microMenuFrameHide(f, name)
         nil,
         nil
     )
-    addToAnimation(
+    AddToAnimation(
         "GwHudArtFrameMenuBackDrop",
         1,
         0,
@@ -1091,7 +859,165 @@ local function microMenu_OnUpdate(self, elapsed)
     end
 end
 
-function gwCreateMicroMenu()
+local gw_sendUpdate_message_cooldown = 0
+local function sendVersionCheck()
+    if gw_sendUpdate_message_cooldown > GetTime() then
+        return
+    end
+    gw_sendUpdate_message_cooldown = GetTime() + 10
+
+    local chatToSend = "GUILD"
+    local inInstanceGroup = IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
+    if inInstanceGroup then
+        chatToSend = "INSTANCE_CHAT"
+    elseif IsInGroup() then
+        chatToSend = "PARTY"
+        if IsInRaid() then
+            chatToSend = "RAID"
+        end
+    end
+    SendAddonMessage("GW2_UI", VERSION_STRING, chatToSend)
+end
+
+local function receiveVersionCheck(self, event, prefix, message, dist, sender)
+    if prefix ~= "GW2_UI" then
+        return
+    end
+
+    local version, subversion, hotfix = string.match(message, "GW2_UI v(%d+).(%d+).(%d+)")
+    local Currentversion, Currentsubversion, Currenthotfix = string.match(VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)")
+
+    if version == nil or subversion == nil or hotfix == nil then
+        return
+    end
+    if Currentversion == nil or Currentsubversion == nil or Currenthotfix == nil then
+        return
+    end
+
+    if version > Currentversion then
+        GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_3"]
+        GwMicroButtonupdateicon.updateTypeInt = 3
+        GwMicroButtonupdateicon:Show()
+    else
+        if subversion > Currentsubversion then
+            GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_2"]
+            GwMicroButtonupdateicon.updateTypeInt = 2
+            GwMicroButtonupdateicon:Show()
+        else
+            if hotfix > Currenthotfix then
+                GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_1"]
+                GwMicroButtonupdateicon.updateTypeInt = 1
+                GwMicroButtonupdateicon:Show()
+            end
+        end
+    end
+end
+
+local function getToolTip(text, action)
+    if (GetBindingKey(action)) then
+        return text .. " |cffa6a6a6(" .. GetBindingText(GetBindingKey(action)) .. ")" .. FONT_COLOR_CODE_CLOSE
+    else
+        return text
+    end
+end
+
+local function setToolTip(frame, text, action)
+    GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
+    GameTooltip:ClearLines()
+    GameTooltip:AddLine(getToolTip(text, action), 1, 1, 1)
+    GameTooltip:Show()
+end
+
+local function hookToolTip(frame, text, action)
+    if frame == nil then
+        return
+    end
+    frame:SetScript(
+        "OnEnter",
+        function()
+            setToolTip(frame, text, action)
+            setToolTip(frame, text, action)
+        end
+    )
+    frame:SetScript("OnLeave", GameTooltip_Hide)
+end
+
+local gw_addonMemoryArray = {}
+local function latencyToolTip()
+    if gw_latencyToolTipUpdate > GetTime() then
+        return
+    end
+    gw_latencyToolTipUpdate = GetTime() + 0.5
+
+    gw_frameRate = RoundInt(GetFramerate())
+    local down, up, lagHome, lagWorld = GetNetStats()
+    local gw_addonMemory = 0
+    local gw_numAddons = GetNumAddOns()
+
+    -- wipe and reuse our memtable to avoid temp pre-GC bloat on the tooltip (still get a bit from the sort)
+    for i = 1, #gw_addonMemoryArray do
+        gw_addonMemoryArray[i]["addonIndex"] = 0
+        gw_addonMemoryArray[i]["addonMemory"] = 0
+    end
+
+    UpdateAddOnMemoryUsage()
+
+    GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
+    GameTooltip:ClearLines()
+    GameTooltip:AddLine(MAINMENU_BUTTON, 1, 1, 1)
+    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_1"] .. gw_frameRate .. " fps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_2"] .. lagHome .. " ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_3"] .. lagWorld .. " ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_4"] .. RoundDec(down, 2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_5"] .. RoundDec(up, 2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
+
+    for i = 1, gw_numAddons do
+        gw_addonMemory = gw_addonMemory + GetAddOnMemoryUsage(i)
+    end
+
+    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_6"] .. RoundDec(gw_addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
+
+    for i = 1, gw_numAddons do
+        if type(gw_addonMemoryArray[i]) ~= "table" then
+            gw_addonMemoryArray[i] = {}
+        end
+        gw_addonMemoryArray[i]["addonIndex"] = i
+        gw_addonMemoryArray[i]["addonMemory"] = GetAddOnMemoryUsage(i)
+    end
+
+    table.sort(
+        gw_addonMemoryArray,
+        function(a, b)
+            return a["addonMemory"] > b["addonMemory"]
+        end
+    )
+
+    for k, v in pairs(gw_addonMemoryArray) do
+        if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
+            gw_addonMemory = RoundDec(v["addonMemory"] / 1024, 2)
+            if gw_addonMemory ~= "0.00" then
+                GameTooltip:AddLine("(" .. gw_addonMemory .. " MB) " .. GetAddOnInfo(v["addonIndex"]), 0.8, 0.8, 0.8)
+            end
+        end
+    end
+
+    GameTooltip:Show()
+end
+
+local function talentMicro_OnEvent()
+    if GetNumUnspentTalents() > 0 then
+        _G["GwMicroButtonTalentMicroButtonTexture"]:Show()
+        _G["GwMicroButtonTalentMicroButtonString"]:Show()
+        _G["GwMicroButtonTalentMicroButtonString"]:SetText(GetNumUnspentTalents())
+    else
+        _G["GwMicroButtonTalentMicroButtonTexture"]:Hide()
+        _G["GwMicroButtonTalentMicroButtonString"]:Hide()
+    end
+end
+
+local function LoadMicroMenu()
     local mi = 1
     for k, v in pairs(MICRO_BUTTONS) do
         CUSTOM_MICRO_BUTTONS[mi] = v
@@ -1104,15 +1030,15 @@ function gwCreateMicroMenu()
 
     for k, v in pairs(CUSTOM_MICRO_BUTTONS) do
         if v ~= "SpellbookMicroButton" then
-            create_micro_button(v)
+            createMicroButton(v)
         else
-            if not gwGetSetting("USE_TALENT_WINDOW_DEV") then
-                create_micro_button(v)
+            if not GetSetting("USE_TALENT_WINDOW") then
+                createMicroButton(v)
             end
         end
     end
 
-    if gwGetSetting("USE_CHARACTER_WINDOW") then
+    if GetSetting("USE_CHARACTER_WINDOW") then
         GwMicroButtonCharacterMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         GwMicroButtonCharacterMicroButton:SetAttribute(
             "_OnClick",
@@ -1136,7 +1062,7 @@ function gwCreateMicroMenu()
         end
     )
 
-    if gwGetSetting("USE_TALENT_WINDOW_DEV") then
+    if GetSetting("USE_TALENT_WINDOW") then
         GwMicroButtonTalentMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         GwMicroButtonTalentMicroButton:SetAttribute(
             "_OnClick",
@@ -1225,23 +1151,23 @@ function gwCreateMicroMenu()
     GwMicroButtonStoreMicroButton:SetScript("OnEnter", nil)
     GwMicroButtonStoreMicroButton:SetScript("OnLeave", nil)
 
-    GwMicroButtonTalentMicroButton:SetScript("OnEvent", gw_update_talentMicrobar)
+    GwMicroButtonTalentMicroButton:SetScript("OnEvent", talentMicro_OnEvent)
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_LEVEL_UP")
     GwMicroButtonTalentMicroButton:RegisterEvent("UPDATE_BINDINGS")
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     --8X GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED");
 
-    gw_microButtonHookToolTip(GwMicroButtonCharacterMicroButton, CHARACTER_BUTTON, 'TOGGLECHARACTER0"')
-    gw_microButtonHookToolTip(GwMicroButtonBagMicroButton, GwLocalization["GW_BAG_MICROBUTTON_STRING"], "OPENALLBAGS")
-    gw_microButtonHookToolTip(GwMicroButtonSpellbookMicroButton, SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
-    gw_microButtonHookToolTip(GwMicroButtonTalentMicroButton, TALENTS_BUTTON, "TOGGLETALENTS")
-    gw_microButtonHookToolTip(GwMicroButtonAchievementMicroButton, ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
-    gw_microButtonHookToolTip(GwMicroButtonQuestLogMicroButton, QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
-    gw_microButtonHookToolTip(GwMicroButtonGuildMicroButton, GUILD, "TOGGLEGUILDTAB")
-    gw_microButtonHookToolTip(GwMicroButtonLFDMicroButton, DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-    gw_microButtonHookToolTip(GwMicroButtonCollectionsMicroButton, COLLECTIONS, "TOGGLECOLLECTIONS")
-    gw_microButtonHookToolTip(GwMicroButtonEJMicroButton, ADVENTURE_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
+    hookToolTip(GwMicroButtonCharacterMicroButton, CHARACTER_BUTTON, 'TOGGLECHARACTER0"')
+    hookToolTip(GwMicroButtonBagMicroButton, GwLocalization["GW_BAG_MICROBUTTON_STRING"], "OPENALLBAGS")
+    hookToolTip(GwMicroButtonSpellbookMicroButton, SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+    hookToolTip(GwMicroButtonTalentMicroButton, TALENTS_BUTTON, "TOGGLETALENTS")
+    hookToolTip(GwMicroButtonAchievementMicroButton, ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
+    hookToolTip(GwMicroButtonQuestLogMicroButton, QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
+    hookToolTip(GwMicroButtonGuildMicroButton, GUILD, "TOGGLEGUILDTAB")
+    hookToolTip(GwMicroButtonLFDMicroButton, DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
+    hookToolTip(GwMicroButtonCollectionsMicroButton, COLLECTIONS, "TOGGLECOLLECTIONS")
+    hookToolTip(GwMicroButtonEJMicroButton, ADVENTURE_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
 
     GwMicroButtonBagMicroButton.interval = 0
     GwMicroButtonBagMicroButton:SetScript(
@@ -1275,7 +1201,7 @@ function gwCreateMicroMenu()
     GwMicroButtonMainMenuMicroButton:SetScript(
         "OnEnter",
         function()
-            GwMicroButtonMainMenuMicroButton:SetScript("OnUpdate", gw_latencyInfoToolTip)
+            GwMicroButtonMainMenuMicroButton:SetScript("OnUpdate", latencyToolTip)
             GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_CURSOR", 0, ANCHOR_BOTTOMLEFT)
         end
     )
@@ -1284,17 +1210,16 @@ function gwCreateMicroMenu()
         "OnLeave",
         function()
             GwMicroButtonMainMenuMicroButton:SetScript("OnUpdate", nil)
-            GameTooltip:Hide()
+            GameTooltip_Hide()
         end
     )
 
-    gw_update_talentMicrobar()
+    talentMicro_OnEvent()
     updateGuildButton()
-
-    gw_create_orderHallBar()
+    createOrderBar()
 
     --Create update notifier
-    local updateNotificationIcon = create_micro_button("updateicon")
+    local updateNotificationIcon = createMicroButton("updateicon")
     GwMicroButtonupdateicon.updateTypeInt = 0
     GwMicroButtonupdateicon:Hide()
 
@@ -1308,12 +1233,7 @@ function gwCreateMicroMenu()
             GameTooltip:Show()
         end
     )
-    updateNotificationIcon:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip:Hide()
-        end
-    )
+    updateNotificationIcon:SetScript("OnLeave", GameTooltip_Hide)
     C_ChatInfo.RegisterAddonMessagePrefix("GW2_UI")
 
     updateNotificationIcon:RegisterEvent("CHAT_MSG_ADDON")
@@ -1322,15 +1242,15 @@ function gwCreateMicroMenu()
         "OnEvent",
         function(self, event, prefix, message, dist, sender)
             if event == "CHAT_MSG_ADDON" then
-                gw_onReciveVersionCheck(self, event, prefix, message, dist, sender)
+                receiveVersionCheck(self, event, prefix, message, dist, sender)
             else
-                gw_sendVersionCheck()
+                sendVersionCheck()
             end
         end
     )
 
     -- if set to fade micro menu, add fader
-    if gwGetSetting("FADE_MICROMENU") then
+    if GetSetting("FADE_MICROMENU") then
         microButtonFrame.gw_LastFadeCheck = -1
         microButtonFrame.gw_FadeShowing = true
         microButtonFrame:SetScript("OnUpdate", microMenu_OnUpdate)
@@ -1339,186 +1259,23 @@ function gwCreateMicroMenu()
     -- hide the default microbar
     MicroButtonAndBagsBar:Hide()
 end
+GW.LoadMicroMenu = LoadMicroMenu
 
-gw_sendUpdate_message_cooldown = 0
-
-function gw_sendVersionCheck()
-    if gw_sendUpdate_message_cooldown > GetTime() then
-        return
-    end
-    gw_sendUpdate_message_cooldown = GetTime() + 10
-
-    local chatToSend = "GUILD"
-    local inInstanceGroup = IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
-    if inInstanceGroup then
-        chatToSend = "INSTANCE_CHAT"
-    elseif IsInGroup() then
-        chatToSend = "PARTY"
-        if IsInRaid() then
-            chatToSend = "RAID"
-        end
-    end
-    SendAddonMessage("GW2_UI", GW_VERSION_STRING, chatToSend)
-end
-
-function gw_onReciveVersionCheck(self, event, prefix, message, dist, sender)
-    if prefix ~= "GW2_UI" then
-        return
-    end
-
-    local version, subversion, hotfix = string.match(message, "GW2_UI v(%d+).(%d+).(%d+)")
-    local Currentversion, Currentsubversion, Currenthotfix =
-        string.match(GW_VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)")
-
-    if version == nil or subversion == nil or hotfix == nil then
-        return
-    end
-    if Currentversion == nil or Currentsubversion == nil or Currenthotfix == nil then
-        return
-    end
-
-    if version > Currentversion then
-        GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_3"]
-        GwMicroButtonupdateicon.updateTypeInt = 3
-        GwMicroButtonupdateicon:Show()
-    else
-        if subversion > Currentsubversion then
-            GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_2"]
-            GwMicroButtonupdateicon.updateTypeInt = 2
-            GwMicroButtonupdateicon:Show()
-        else
-            if hotfix > Currenthotfix then
-                GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_1"]
-                GwMicroButtonupdateicon.updateTypeInt = 1
-                GwMicroButtonupdateicon:Show()
-            end
-        end
-    end
-end
-
-function gw_microButtonHookToolTip(frame, text, action)
-    if frame == nil then
-        return
-    end
-    frame:SetScript(
-        "OnEnter",
-        function()
-            gw_setToolTipForShow(frame, text, action)
-            gw_setToolTipForShow(frame, text, action)
-        end
-    )
-    frame:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip:Hide()
-        end
-    )
-end
-
-function gw_setToolTipForShow(frame, text, action)
-    GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
-    GameTooltip:ClearLines()
-    GameTooltip:AddLine(gw_getMicroButtonToolTip(text, action), 1, 1, 1)
-    GameTooltip:Show()
-end
-
-function gw_getMicroButtonToolTip(text, action)
-    if (GetBindingKey(action)) then
-        return text .. " |cffa6a6a6(" .. GetBindingText(GetBindingKey(action)) .. ")" .. FONT_COLOR_CODE_CLOSE
-    else
-        return text
-    end
-end
-
-local gw_addonMemoryArray = {}
-function gw_latencyInfoToolTip()
-    if gw_latencyToolTipUpdate > GetTime() then
-        return
-    end
-    gw_latencyToolTipUpdate = GetTime() + 0.5
-
-    gw_frameRate = GW.intRound(GetFramerate())
-    local down, up, lagHome, lagWorld = GetNetStats()
-    local gw_addonMemory = 0
-    local gw_numAddons = GetNumAddOns()
-
-    -- wipe and reuse our memtable to avoid temp pre-GC bloat on the tooltip (still get a bit from the sort)
-    for i = 1, #gw_addonMemoryArray do
-        gw_addonMemoryArray[i]["addonIndex"] = 0
-        gw_addonMemoryArray[i]["addonMemory"] = 0
-    end
-
-    UpdateAddOnMemoryUsage()
-
-    GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
-    GameTooltip:ClearLines()
-    GameTooltip:AddLine(MAINMENU_BUTTON, 1, 1, 1)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_1"] .. gw_frameRate .. " fps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_2"] .. lagHome .. " ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_3"] .. lagWorld .. " ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_4"] .. round(down, 2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_5"] .. round(up, 2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-
-    for i = 1, gw_numAddons do
-        gw_addonMemory = gw_addonMemory + GetAddOnMemoryUsage(i)
-    end
-
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_6"] .. round(gw_addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
-
-    for i = 1, gw_numAddons do
-        if type(gw_addonMemoryArray[i]) ~= "table" then
-            gw_addonMemoryArray[i] = {}
-        end
-        gw_addonMemoryArray[i]["addonIndex"] = i
-        gw_addonMemoryArray[i]["addonMemory"] = GetAddOnMemoryUsage(i)
-    end
-
-    table.sort(
-        gw_addonMemoryArray,
-        function(a, b)
-            return a["addonMemory"] > b["addonMemory"]
-        end
-    )
-
-    for k, v in pairs(gw_addonMemoryArray) do
-        if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
-            gw_addonMemory = round(v["addonMemory"] / 1024, 2)
-            if gw_addonMemory ~= "0.00" then
-                GameTooltip:AddLine("(" .. gw_addonMemory .. " MB) " .. GetAddOnInfo(v["addonIndex"]), 0.8, 0.8, 0.8)
-            end
-        end
-    end
-
-    GameTooltip:Show()
-end
-
-function gw_update_talentMicrobar()
-    if GetNumUnspentTalents() > 0 then
-        _G["GwMicroButtonTalentMicroButtonTexture"]:Show()
-        _G["GwMicroButtonTalentMicroButtonString"]:Show()
-        _G["GwMicroButtonTalentMicroButtonString"]:SetText(GetNumUnspentTalents())
-    else
-        _G["GwMicroButtonTalentMicroButtonTexture"]:Hide()
-        _G["GwMicroButtonTalentMicroButtonString"]:Hide()
-    end
-end
-
-function ToggleGameMenuFrame()
+--[[
+local function toggleGameMenuFrame()
     if GameMenuFrame:IsShown() then
         GameMenuFrame:Hide()
         return
     end
     GameMenuFrame:Show()
 end
-
+--]]
 local function levelingRewards_OnShow(self)
     PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
     self.animationValue = -400
     local name = self:GetName()
     local start = GetTime()
-    addToAnimation(
+    AddToAnimation(
         name,
         self.animationValue,
         0,
@@ -1533,7 +1290,7 @@ local function levelingRewards_OnShow(self)
     )
 end
 
-function gw_load_levelingrewads()
+local function loadRewards()
     local f = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
 
     f.header:SetFont(DAMAGE_TEXT_FONT, 24)
@@ -1574,7 +1331,7 @@ function gw_load_levelingrewads()
     tinsert(UISpecialFrames, "GwLevelingRewards")
 end
 
-function gw_leveling_display_rewards()
+displayRewards = function()
     GW_LEVELING_REWARDS = {}
 
     GW_LEVELING_REWARDS[1] = {}
@@ -1675,12 +1432,7 @@ function gw_leveling_display_rewards()
                         GameTooltip:Show()
                     end
                 )
-                _G["GwLevelingRewardsItem" .. i]:SetScript(
-                    "OnLeave",
-                    function()
-                        GameTooltip:Hide()
-                    end
-                )
+                _G["GwLevelingRewardsItem" .. i]:SetScript("OnLeave", GameTooltip_Hide)
             end
             if v["type"] == "TALENT" then
                 _G["GwLevelingRewardsItem" .. i].icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talent-icon")
@@ -1713,7 +1465,71 @@ function gw_leveling_display_rewards()
     end
 end
 
-function gw_create_orderHallBar()
+local function orderFollower_OnEnter(self)
+    if (self.name) then
+        GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
+        GameTooltip:ClearAllPoints()
+        GameTooltip:SetPoint("TOPLEFT", self.Count, "BOTTOMRIGHT", -20, -20)
+        GameTooltip:AddLine(self.name)
+        if (self.description) then
+            GameTooltip:AddLine(self.description, 1, 1, 1, true)
+        end
+        GameTooltip:Show()
+    end
+end
+
+local function createFollower(self, i)
+    local newFrame = CreateFrame("FRAME", "GwOrderHallFollower" .. i, self, "GwOrderHallFollower")
+    newFrame.Count:SetFont(UNIT_NAME_FONT, 14)
+    newFrame.Count:SetShadowOffset(1, -1)
+    newFrame:SetScript("OnEnter", orderFollower_OnEnter)
+    newFrame:SetScript("OnLeave", GameTooltip_Hide)
+    newFrame:SetParent(self)
+    newFrame:ClearAllPoints()
+    newFrame:SetPoint("LEFT", self.currency, "RIGHT", 100 * (i - 1), 0)
+    return newFrame
+end
+
+local function updateOrderBar(self)
+    local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(LE_FOLLOWER_TYPE_GARRISON_7_0)
+
+    for index, category in ipairs(categoryInfo) do
+        local categoryInfoFrame = _G["GwOrderHallFollower" .. index]
+        if _G["GwOrderHallFollower" .. index] == nil then
+            categoryInfoFrame = createFollower(self, index)
+        end
+
+        categoryInfoFrame.Icon:SetTexture(category.icon)
+        categoryInfoFrame.Icon:SetTexCoord(0, 1, 0.25, 0.75)
+        categoryInfoFrame.name = category.name
+        categoryInfoFrame.description = category.description
+
+        categoryInfoFrame.Count:SetFormattedText(ORDER_HALL_COMMANDBAR_CATEGORY_COUNT, category.count, category.limit)
+
+        categoryInfoFrame:Show()
+    end
+end
+
+local function orderBar_OnEvent(self, event)
+    if OrderHallCommandBar then
+        OrderHallCommandBar:SetShown(false)
+        OrderHallCommandBar:UnregisterAllEvents()
+        OrderHallCommandBar:SetScript("OnShow", Self_Hide)
+    end
+
+    local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0)
+    self:SetShown(inOrderHall)
+
+    local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(LE_GARRISON_TYPE_7_0)
+
+    local _, amount, _ = GetCurrencyInfo(primaryCurrency)
+    amount = BreakUpLargeNumbers(amount)
+    self.currency:SetText(amount)
+
+    updateOrderBar(self)
+end
+
+createOrderBar = function()
     CreateFrame("FRAME", "GwOrderhallBar", UIParent, "GwOrderhallBar")
     GwOrderhallBar.currency:SetFont(UNIT_NAME_FONT, 14)
     GwOrderhallBar.currency:SetShadowOffset(1, -1)
@@ -1737,7 +1553,7 @@ function gw_create_orderHallBar()
         GwOrderhallBar:RegisterEvent("UPDATE_BINDINGS")
     end
 
-    GwOrderhallBar:SetScript("OnEvent", gw_orderHallBar_OnEvent)
+    GwOrderhallBar:SetScript("OnEvent", orderBar_OnEvent)
     GwOrderhallBar:SetScript(
         "OnShow",
         function()
@@ -1772,78 +1588,75 @@ function gw_create_orderHallBar()
         end
     )
 
-    gw_orderHallBar_OnEvent(GwOrderhallBar)
+    orderBar_OnEvent(GwOrderhallBar)
 end
 
-function gw_orderHallBar_OnEvent(self, event)
-    if OrderHallCommandBar then
-        OrderHallCommandBar:SetShown(false)
-        OrderHallCommandBar:UnregisterAllEvents()
-        OrderHallCommandBar:SetScript(
-            "OnShow",
-            function(self)
-                self:Hide()
+local function LoadHudArt()
+    local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
+
+    hudArtFrame:SetScript(
+        "OnEvent",
+        function(self, event, unit)
+            if event == "UNIT_AURA" and unit == "player" then
+                selectBg()
+                return
             end
-        )
-    end
 
-    local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0)
-    self:SetShown(inOrderHall)
-
-    local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(LE_GARRISON_TYPE_7_0)
-
-    local currencyName, amount, currencyTexture = GetCurrencyInfo(primaryCurrency)
-    amount = BreakUpLargeNumbers(amount)
-    self.currency:SetText(amount)
-
-    gw_orderHallBar_Update_Follower(self)
-end
-
-function gw_orderHallBar_Update_Follower(self)
-    local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(LE_FOLLOWER_TYPE_GARRISON_7_0)
-
-    local numCategories = #categoryInfo
-
-    for index, category in ipairs(categoryInfo) do
-        local categoryInfoFrame = _G["GwOrderHallFollower" .. index]
-        if _G["GwOrderHallFollower" .. index] == nil then
-            categoryInfoFrame = gw_orderHallBar_createFollower(self, index)
+            if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
+                selectBg()
+                return
+            end
+            if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" and unit == "player" then
+                combatHealthState()
+                return
+            end
         end
+    )
 
-        categoryInfoFrame.Icon:SetTexture(category.icon)
-        categoryInfoFrame.Icon:SetTexCoord(0, 1, 0.25, 0.75)
-        categoryInfoFrame.name = category.name
-        categoryInfoFrame.description = category.description
-
-        categoryInfoFrame.Count:SetFormattedText(ORDER_HALL_COMMANDBAR_CATEGORY_COUNT, category.count, category.limit)
-
-        categoryInfoFrame:Show()
-    end
+    hudArtFrame:RegisterEvent("UNIT_AURA")
+    hudArtFrame:RegisterEvent("PLAYER_ALIVE")
+    hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    hudArtFrame:RegisterEvent("UNIT_HEALTH")
+    hudArtFrame:RegisterEvent("UNIT_MAXHEALTH")
+    selectBg()
+    combatHealthState()
 end
+GW.LoadHudArt = LoadHudArt
 
-local function gwOrderHallFollower_OnEnter(self)
-    if (self.name) then
-        GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-        GameTooltip:ClearAllPoints()
-        GameTooltip:SetPoint("TOPLEFT", self.Count, "BOTTOMRIGHT", -20, -20)
-        GameTooltip:AddLine(self.name)
-        if (self.description) then
-            GameTooltip:AddLine(self.description, 1, 1, 1, true)
+local function LoadXPBar()
+    loadRewards()
+
+    local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
+    GwlevelLableRightButton:SetScript("OnClick", xpbar_OnClick)
+
+    experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
+
+    _G["GwExperienceFrameArtifactBar"].artifactBarAnimation = 0
+    _G["GwExperienceFrameNextLevel"]:SetFont(UNIT_NAME_FONT, 12)
+    _G["GwExperienceFrameCurrentLevel"]:SetFont(UNIT_NAME_FONT, 12)
+
+    updateBarSize()
+    xpbar_OnEvent()
+
+    experiencebar:SetScript("OnEvent", xpbar_OnEvent)
+
+    experiencebar:RegisterEvent("PLAYER_XP_UPDATE")
+    experiencebar:RegisterEvent("UPDATE_FACTION")
+    experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE")
+    experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
+    experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN")
+    experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+
+    experiencebar:SetScript("OnEnter", xpbar_OnEnter)
+    experiencebar:SetScript(
+        "OnLeave",
+        function()
+            GameTooltip_Hide()
+            UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(), 1)
+            UIFrameFadeIn(_G["GwExperienceFrameArtifactBar"], 0.2, _G["GwExperienceFrameArtifactBar"]:GetAlpha(), 1)
         end
-        GameTooltip:Show()
-    end
+    )
 end
-local function gwOrderHallFollower_OnLeave(self)
-    GameTooltip:Hide()
-end
-function gw_orderHallBar_createFollower(self, i)
-    local newFrame = CreateFrame("FRAME", "GwOrderHallFollower" .. i, self, "GwOrderHallFollower")
-    newFrame.Count:SetFont(UNIT_NAME_FONT, 14)
-    newFrame.Count:SetShadowOffset(1, -1)
-    newFrame:SetScript("OnEnter", gwOrderHallFollower_OnEnter)
-    newFrame:SetScript("OnLeave", gwOrderHallFollower_OnLeave)
-    newFrame:SetParent(self)
-    newFrame:ClearAllPoints()
-    newFrame:SetPoint("LEFT", self.currency, "RIGHT", 100 * (i - 1), 0)
-    return newFrame
-end
+GW.LoadXPBar = LoadXPBar

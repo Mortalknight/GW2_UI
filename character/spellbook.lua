@@ -1,11 +1,11 @@
 local _, GW = ...
 
 local MAX_SPELLS = MAX_SPELLS
-local MAX_SKILLLINE_TABS = MAX_SKILLLINE_TABS
 local SPELLS_PER_PAGE = 21
 local MAX_SPELL_PAGES = ceil(MAX_SPELLS / SPELLS_PER_PAGE)
 local ACTIVE_PAGE = 1
 
+--[[
 function gwSpellBookSpell_onDrag(self)
     local slot, slotType = SpellBook_GetSpellBookSlot(self)
     if
@@ -16,6 +16,12 @@ function gwSpellBookSpell_onDrag(self)
     end
     self:SetChecked(false)
     PickupSpellBookItem(slot, SpellBookFrame.bookType)
+end
+--]]
+
+local function toggleSpellbook(bookType)
+    gwCharacterPanelToggle(nil)
+    GwSpellbook:Show()
 end
 
 local function updateSpellbook(tab)
@@ -28,10 +34,10 @@ local function updateSpellbook(tab)
     local to = MAX_SPELL_PAGES * ACTIVE_PAGE
 
     for i = from, to do
-        local skillType, spellId = GetSpellBookItemInfo(i, "spell")
+        local _, spellId = GetSpellBookItemInfo(i, "spell")
 
         if spellId ~= nil then
-            local name, rank, icon, castingTime, minRange, maxRange, spellID = GetSpellInfo(spellId)
+            local name, rank, icon, _, _, _, _ = GetSpellInfo(spellId)
 
             _G["GwSpellbookButton" .. i].icon:SetTexture(icon)
             _G["GwSpellbookButton" .. i].title:SetText(name)
@@ -43,12 +49,12 @@ local function updateSpellbook(tab)
     end
 end
 
-function gw_register_spellbook_window()
+local function LoadSpellbook()
     CreateFrame("Frame", "GwSpellbook", GwCharacterWindow, "GwSpellbook")
     CreateFrame("Frame", "GwSpellbookMenu", GwSpellbook, "GwCharacterMenu")
     -- TODO: does this need the GwCharacterMenu handlers?
 
-    hooksecurefunc("ToggleSpellBook", gwToggleSpellbook)
+    hooksecurefunc("ToggleSpellBook", toggleSpellbook)
 
     local x = 0
     local y = 0
@@ -76,8 +82,4 @@ function gw_register_spellbook_window()
     GwSpellbook:SetScript("OnShow", updateSpellbook)
     --  updateSpellbook()
 end
-
-function gwToggleSpellbook(bookType)
-    gwCharacterPanelToggle(nil)
-    GwSpellbook:Show()
-end
+GW.LoadSpellbook = LoadSpellbook

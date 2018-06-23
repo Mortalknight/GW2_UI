@@ -1,15 +1,11 @@
 local _, GW = ...
+local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
+local GetSetting = GW.GetSetting
+local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
+local AddToAnimation = GW.AddToAnimation
 
-local cTitle = ""
-local cDesc = ""
 local currentNotificationKey = ""
-local currentNotificationType = ""
-local radarActive = false
-local radarType = ""
-
 local notifications = {}
-
-local radarData = {}
 
 local icons = {}
 icons["QUEST"] = {tex = "icon-objective", l = 0, r = 1, t = 0.25, b = 0.5}
@@ -37,7 +33,7 @@ end
 
 local function getQuestPOIText(questLogIndex)
     local finalText = ""
-    local text, finished, objectiveType
+    local text, finished
     local numItemDropTooltips = GetNumQuestItemDrops(questLogIndex)
     if numItemDropTooltips and numItemDropTooltips > 0 then
         for i = 1, numItemDropTooltips do
@@ -64,6 +60,7 @@ local function getQuestPOIText(questLogIndex)
     return finalText
 end
 
+--[[
 local function getCompassPriority()
     local closestIndex = nil
     local posX, posY = GetPlayerMapPosition("player")
@@ -91,10 +88,10 @@ local function getCompassPriority()
 
     return closestIndex
 end
-
+--]]
 local questCompass = {
     ["TYPE"] = "QUEST",
-    ["COLOR"] = GW_TRAKCER_TYPE_COLOR["QUEST"],
+    ["COLOR"] = TRACKER_TYPE_COLOR["QUEST"],
     ["COMPASS"] = true
 }
 local function getNearestQuestPOI()
@@ -106,9 +103,9 @@ local function getNearestQuestPOI()
 
     local closest = nil
     for i = 1, numQuests do
-        local title, _, _, isHeader, _, isComplete, _, questID, _, _, isOnMap, hasLocalPOI, _ = GetQuestLogTitle(i)
+        local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI, _ = GetQuestLogTitle(i)
         if not isHeader and not isComplete and hasLocalPOI then
-            local _, poiX, poiY, o = QuestPOIGetIconInfo(questID)
+            local _, poiX, poiY, _ = QuestPOIGetIconInfo(questID)
             if poiX then
                 local dx = posX - poiX
                 local dy = posY - poiY
@@ -136,11 +133,11 @@ end
 local bodyCompass = {
     ["TYPE"] = "DEAD",
     ["ID"] = "playerDead",
-    ["COLOR"] = GW_TRAKCER_TYPE_COLOR["DEAD"],
+    ["COLOR"] = TRACKER_TYPE_COLOR["DEAD"],
     ["COMPASS"] = true
 }
 local function getBodyPOI()
-    local posX, posY = GetPlayerMapPosition("player")
+    local posX, _ = GetPlayerMapPosition("player")
     local x, y = GetCorpseMapPosition()
     if posX == nil or posX == 0 or x == nil or x == 0 then
         return nil
@@ -153,43 +150,47 @@ local function getBodyPOI()
     return bodyCompass
 end
 
-function gwAddTrackerNotification(data)
+local function AddTrackerNotification(data)
     if data == nil or data["ID"] == nil then
         return
     end
 
     notifications[data["ID"]] = data
 
-    --  gwSetObjectiveNotification()
+    --   SetObjectiveNotification()
 end
+GW.AddTrackerNotification = AddTrackerNotification
 
-function gwRemoveTrackerNotification(notificationID)
+local function RemoveTrackerNotification(notificationID)
     if data == nil or notificationID == nil then
         return
     end
     notifications[data["ID"]] = nil
-    --   gwSetObjectiveNotification()
+    --   SetObjectiveNotification()
 end
-function gwRemoveTrackerNotificationOfType(doType)
+GW.RemoveTrackerNotification = RemoveTrackerNotification
+
+local function RemoveTrackerNotificationOfType(doType)
     for k, v in pairs(notifications) do
         if v["TYPE"] == doType then
             notifications[k] = nil
         end
     end
-    --  gwSetObjectiveNotification()
+    --   SetObjectiveNotification()
 end
+GW.RemoveTrackerNotificationOfType = RemoveTrackerNotificationOfType
 
-function gwRemoveNotification(key)
+local function removeNotification(key)
     currentNotificationKey = ""
     GwObjectivesNotification.shouldDisplay = false
 end
 
-function gwNotificationStateChanged(show)
+local function NotificationStateChanged(show)
     if show then
         GwObjectivesNotification:Show()
     end
 
-    addToAnimation(
+    AddToAnimation(
         "notificationToggle",
         0,
         70,
@@ -209,13 +210,39 @@ function gwNotificationStateChanged(show)
                 GwObjectivesNotification:Hide()
             end
             GwObjectivesNotification.animating = false
-            gwQuestTrackerLayoutChanged()
+            QuestTrackerLayoutChanged()
         end,
         true
     )
 end
+GW.NotificationStateChanged = NotificationStateChanged
 
-function gwSetObjectiveNotification()
+local square_half = math.sqrt(0.5)
+local rad_135 = math.rad(135)
+local function updateRadar(self, elapsed)
+    self.TotalElapsed = self.TotalElapsed + elapsed
+    if self.TotalElapsed < 0.016 then
+        return
+    end
+    self.TotalElapsed = 0
+
+    local posX, posY = GetPlayerMapPosition("player")
+    if posX == nil or posX == 0 or self.data["X"] == nil then
+        RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
+        return
+    end
+
+    local pFacing = GetPlayerFacing()
+    local dir_x = self.data["X"] - posX
+    local dir_y = self.data["Y"] - posY
+    local a = math.atan2(dir_y, dir_x)
+    a = rad_135 - a - pFacing
+
+    local sin, cos = math.sin(a) * square_half, math.cos(a) * square_half
+    self.arrow:SetTexCoord(0.5 - sin, 0.5 + cos, 0.5 + cos, 0.5 + sin, 0.5 - cos, 0.5 - sin, 0.5 + sin, 0.5 - cos)
+end
+
+local function SetObjectiveNotification()
     local data
     for k, v in pairs(notifications) do
         if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
@@ -229,7 +256,7 @@ function gwSetObjectiveNotification()
         end
     end
 
-    if data == nil and gwGetSetting("SHOW_QUESTTRACKER_COMPASS") then
+    if data == nil and GetSetting("SHOW_QUESTTRACKER_COMPASS") then
         if UnitIsDeadOrGhost("PLAYER") then
             data = getBodyPOI()
         end
@@ -239,7 +266,7 @@ function gwSetObjectiveNotification()
     end
 
     if data == nil then
-        gwRemoveNotification(currentNotificationKey)
+        removeNotification(currentNotificationKey)
         return
     end
 
@@ -248,8 +275,6 @@ function gwSetObjectiveNotification()
     local desc = data["DESC"]
     local color = data["COLOR"]
     local useRadar = data["COMPASS"]
-    local x = data["X"]
-    local y = data["Y"]
     local progress = data["PROGRESS"]
 
     radarActive = useRadar
@@ -303,7 +328,7 @@ function gwSetObjectiveNotification()
         end
 
         GwObjectivesNotification.compass.TotalElapsed = 0
-        GwObjectivesNotification.compass:SetScript("OnUpdate", gwUpdateRadarDirection)
+        GwObjectivesNotification.compass:SetScript("OnUpdate", updateRadar)
         GwObjectivesNotification.icon:SetTexture(nil)
     else
         GwObjectivesNotification.compass:Hide()
@@ -321,28 +346,4 @@ function gwSetObjectiveNotification()
     end
     GwObjectivesNotification.shouldDisplay = true
 end
-
-local square_half = math.sqrt(0.5)
-local rad_135 = math.rad(135)
-function gwUpdateRadarDirection(self, elapsed)
-    self.TotalElapsed = self.TotalElapsed + elapsed
-    if self.TotalElapsed < 0.016 then
-        return
-    end
-    self.TotalElapsed = 0
-
-    local posX, posY = GetPlayerMapPosition("player")
-    if posX == nil or posX == 0 or self.data["X"] == nil then
-        gwRemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
-        return
-    end
-
-    local pFacing = GetPlayerFacing()
-    local dir_x = self.data["X"] - posX
-    local dir_y = self.data["Y"] - posY
-    local a = math.atan2(dir_y, dir_x)
-    a = rad_135 - a - pFacing
-
-    local sin, cos = math.sin(a) * square_half, math.cos(a) * square_half
-    self.arrow:SetTexCoord(0.5 - sin, 0.5 + cos, 0.5 + cos, 0.5 + sin, 0.5 - cos, 0.5 - sin, 0.5 + sin, 0.5 - cos)
-end
+GW.SetObjectiveNotification = SetObjectiveNotification

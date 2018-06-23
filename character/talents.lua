@@ -1,12 +1,13 @@
 local _, GW = ...
+local SetClassIcon = GW.SetClassIcon
 
 local maxTalentRows = 7
 local talentsPerRow = 3
 
-GwActiveSpellTab = 2
+--local GwActiveSpellTab = 2
 
-TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinates
-TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
+local TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinates
+local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
 
 -- T        - Texture
 -- C        - Canvas Frame (for anchoring)
@@ -15,7 +16,7 @@ TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
 -- w        - Width of line
 -- relPoint - Relative point on canvas to interpret coords (Default BOTTOMLEFT)
 
-function DrawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
+local function drawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
     if (not relPoint) then
         relPoint = "BOTTOMLEFT"
     end
@@ -67,7 +68,7 @@ function DrawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
     T:SetPoint("TOPRIGHT", C, relPoint, cx + Bwid, cy + Bhgt)
 end
 
-local function spellBookMenu_onLoad(self)
+local function menu_OnLoad(self)
     self:RegisterEvent("SPELLS_CHANGED")
     self:RegisterEvent("LEARNED_SPELL_IN_TAB")
     self:RegisterEvent("SKILL_LINES_CHANGED")
@@ -78,7 +79,7 @@ local function spellBookMenu_onLoad(self)
     self:RegisterEvent("ACTIVATE_GLYPH")
 end
 
-local function spellBookTab_onClick(self)
+local function tab_OnClick(self)
     GwspellbookTab1.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
     GwspellbookTab2.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
     GwspellbookTab3.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
@@ -86,10 +87,10 @@ local function spellBookTab_onClick(self)
     self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg")
 end
 
-local function spellBookTabHero_onLoad(self)
-    local localizedClass, englishClass, classIndex = UnitClass("player")
+local function hero_OnLoad(self)
+    local _, _, classIndex = UnitClass("player")
 
-    gw_setClassIcon(self.icon, classIndex)
+    SetClassIcon(self.icon, classIndex)
 end
 
 local function hookTalentButton(self, container, row, index)
@@ -110,31 +111,25 @@ local function hookTalentButton(self, container, row, index)
     self.mask = mask
 end
 
-local function petSpecFrame_onShow(self)
-    self:SetScript(
-        "OnUpdate",
-        function(self, elapsed)
-            if MouseIsOver(self) then
-                if not self.info.spellPreview:IsShown() and not self.active then
-                    self.info.spellPreview:Show()
-                    self.info.specDesc:Hide()
-                end
-                local r, g, b, a = self.background:GetVertexColor()
-                self.background:SetVertexColor(
-                    r + (1 * elapsed),
-                    r + (1 * elapsed),
-                    r + (1 * elapsed),
-                    r + (1 * elapsed)
-                )
-                return
-            end
-
-            self.info.spellPreview:Hide()
-            self.info.specDesc:Show()
-
-            self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
+local function petSpec_OnUpdate(self, elapsed)
+    if MouseIsOver(self) then
+        if not self.info.spellPreview:IsShown() and not self.active then
+            self.info.spellPreview:Show()
+            self.info.specDesc:Hide()
         end
-    )
+        local r, _, _, _ = self.background:GetVertexColor()
+        self.background:SetVertexColor(r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed))
+        return
+    end
+
+    self.info.spellPreview:Hide()
+    self.info.specDesc:Show()
+
+    self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
+end
+
+local function petSpecFrame_OnShow(self)
+    self:SetScript("OnUpdate", petSpec_OnUpdate)
 end
 
 local function setLineRotation(self, from, to)
@@ -156,7 +151,7 @@ local function setLineRotation(self, from, to)
         y2 = -103
     end
 
-    DrawRouteLine(self.line, self, 10, y1, 56, y2, 4, "TOPLEFT")
+    drawRouteLine(self.line, self, 10, y1, 56, y2, 4, "TOPLEFT")
 end
 
 local function updateActiveSpec()
@@ -182,7 +177,6 @@ local function updateActiveSpec()
         end
         local last = 0
         local lastIndex = 2
-        local lastRowAnySelected = true
         for row = 1, maxTalentRows do
             local anySelected = false
             local allAvalible = false
@@ -190,7 +184,7 @@ local function updateActiveSpec()
             local sel = nil
             for index = 1, talentsPerRow do
                 local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
-                local talentID, name, texture, selected, available, spellid, tier, column, _, _, known =
+                local talentID, _, texture, selected, available, spellid, _, _, _, _, known =
                     GetTalentInfo(row, index, 1, false, "player")
 
                 if not availible then
@@ -274,9 +268,6 @@ local function updateActiveSpec()
 
             if not sel then
                 _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Hide()
-                lastRowAnySelected = false
-            else
-                lastRowAnySelected = true
             end
 
             last = row
@@ -365,9 +356,6 @@ local function loadTalents()
             GameTooltip:SetSpellByID(self.spellId)
             GameTooltip:Show()
         end
-        local fnTalentButton_OnLeave = function(self)
-            GameTooltip:Hide()
-        end
         local fnTalentButton_OnDragStart = function(self)
             if InCombatLockdown() or self.isPassive then
                 return
@@ -395,7 +383,7 @@ local function loadTalents()
                     "GwTalentButton"
                 )
                 talentButton:SetScript("OnEnter", fnTalentButton_OnEnter)
-                talentButton:SetScript("OnLeave", fnTalentButton_OnLeave)
+                talentButton:SetScript("OnLeave", GameTooltip_Hide)
                 talentButton:SetScript("OnDragStart", fnTalentButton_OnDragStart)
                 talentButton:SetScript("OnClick", fnTalentButton_OnClick)
 
@@ -445,29 +433,28 @@ local function updatePetTalents()
     end
 end
 
+local function fnButton_OnEnter(self)
+    if self:GetParent().active ~= true then
+        return
+    end
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+    GameTooltip:ClearLines()
+    GameTooltip:SetSpellByID(self.spellId)
+    GameTooltip:Show()
+end
+
+local function fnButton_OnDragStart(self)
+    if InCombatLockdown() or self.isPassive then
+        return
+    end
+    PickupSpell(self.spellId)
+end
+
 local function getPetSpecSpells(self, specID)
     local specSpells = {GetSpecializationSpells(specID, nil, true, true)}
     local index = 0
     local xPadding = 0
     local yPadding = 0
-    local fnButton_OnEnter = function(self)
-        if self:GetParent().active ~= true then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-        GameTooltip:ClearLines()
-        GameTooltip:SetSpellByID(self.spellId)
-        GameTooltip:Show()
-    end
-    local fnButton_OnLeave = function(self)
-        GameTooltip:Hide()
-    end
-    local fnButton_OnDragStart = function(self)
-        if InCombatLockdown() or self.isPassive then
-            return
-        end
-        PickupSpell(self.spellId)
-    end
     for k = 1, #specSpells, 2 do
         local button =
             CreateFrame(
@@ -477,7 +464,7 @@ local function getPetSpecSpells(self, specID)
             "GwTalentButton"
         )
         button:SetScript("OnEnter", fnButton_OnEnter)
-        button:SetScript("OnLeave", fnButton_OnLeave)
+        button:SetScript("OnLeave", GameTooltip_Hide)
         button:SetScript("OnDragStart", fnButton_OnDragStart)
         button:SetScript("OnClick", nil)
         button.mask = UIParent:CreateMaskTexture()
@@ -498,8 +485,8 @@ local function getPetSpecSpells(self, specID)
             xPadding = xPadding + 40
         end
 
-        local name, rank, texture, castingTime, minRange, maxRange, spellID = GetSpellInfo(specSpells[k])
-        local skillType, spellId = GetSpellBookItemInfo(specSpells[k])
+        local _, _, texture, _, _, _, _ = GetSpellInfo(specSpells[k])
+        local _, _ = GetSpellBookItemInfo(specSpells[k])
         local ispassive = IsPassiveSpell(specSpells[k])
 
         button.spellId = specSpells[k]
@@ -591,7 +578,7 @@ local function loadPetTalents()
         container:SetScript(
             "OnShow",
             function()
-                petSpecFrame_onShow(container)
+                petSpecFrame_OnShow(container)
             end
         )
 
@@ -639,18 +626,18 @@ local function loadPetTalents()
     updatePetTalents()
 end
 
-local function spellbookButton_onEvent(self)
+local function spellButton_OnEvent(self)
     if not GwTalentFrame:IsShown() then
         return
     end
 
-    local start, duration, enable = GetSpellCooldown(self.spellbookIndex, self.booktype)
+    local start, duration, _ = GetSpellCooldown(self.spellbookIndex, self.booktype)
 
     if start ~= nil and duration ~= nil then
         self.cooldown:SetCooldown(start, duration)
     end
 
-    local autocastable, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
+    local _, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
 
     self.autocast:Hide()
     if autostate then
@@ -660,7 +647,7 @@ end
 
 local spellButtonIndex = 1
 local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellbookIndex, booktype, tab, name)
-    local autocastable, autostate = GetSpellAutocast(spellbookIndex, booktype)
+    local _, autostate = GetSpellAutocast(spellbookIndex, booktype)
 
     _G["GwSpellbookTab" .. tab .. "Actionbutton" .. spellButtonIndex].autocast:Hide()
     if autostate then
@@ -695,7 +682,7 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
 
     _G["GwSpellbookTab" .. tab .. "Actionbutton" .. spellButtonIndex].arrow:Hide()
 
-    _G["GwSpellbookTab" .. tab .. "Actionbutton" .. spellButtonIndex]:SetScript("OnEvent", spellbookButton_onEvent)
+    _G["GwSpellbookTab" .. tab .. "Actionbutton" .. spellButtonIndex]:SetScript("OnEvent", spellButton_OnEvent)
 
     if skillType == "FUTURESPELL" then
         _G["GwSpellbookTab" .. tab .. "Actionbutton" .. spellButtonIndex].icon:SetDesaturated(true)
@@ -736,15 +723,13 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
     end
 end
 
-local function updateSpellbookTab()
+local function updateTab()
     if InCombatLockdown() then
         return
     end
 
     for spellBookTabs = 1, 3 do
-        local name, texture, offset, numSpells = GetSpellTabInfo(spellBookTabs)
-
-        local flyOuts = {}
+        local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
 
         spellButtonIndex = 1
         local BOOKTYPE = "spell"
@@ -759,18 +744,17 @@ local function updateSpellbookTab()
 
         local boxIndex = 1
         local y = 1
-        local fPassive = false
         local indexToPassive = nil
         for i = 1, numSpells do
             local spellIndex = i + offset
-            local name, rank, icon, castingTime, minRange, maxRange, spellID = GetSpellInfo(spellIndex, BOOKTYPE)
+            local _, _, _, _, _, _, spellID = GetSpellInfo(spellIndex, BOOKTYPE)
             local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
 
             local ispassive = IsPassiveSpell(spellID)
 
             if not ispassive then
                 local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
-                local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
+                local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
                 setButtonStyle(ispassive, isFuture, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
 
@@ -811,14 +795,14 @@ local function updateSpellbookTab()
         if indexToPassive ~= nil then
             for i = indexToPassive, numSpells do
                 local spellIndex = i + offset
-                local name, rank, _, castingTime, minRange, maxRange, spellID = GetSpellInfo(spellIndex, BOOKTYPE)
+                local _, _, _, _, _, _, spellID = GetSpellInfo(spellIndex, BOOKTYPE)
 
                 local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
 
                 local ispassive = IsPassiveSpell(spellID)
 
                 local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
-                local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
+                local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
                 if ispassive then
                     y = y + 1
 
@@ -840,7 +824,6 @@ local function updateSpellbookTab()
 
                     spellButtonIndex = spellButtonIndex + 1
                     boxIndex = boxIndex + 1
-                    indexToPassive = spellIndex + 1
                 end
             end
         end
@@ -853,22 +836,45 @@ local function updateSpellbookTab()
     end
 end
 
-function gw_register_talent_window()
+local function spellButton_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+    GameTooltip:ClearLines()
+
+    if not self.isFlyout then
+        GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
+    else
+        local name, desc, _, _ = GetFlyoutInfo(self.spellId)
+        GameTooltip:AddLine(name)
+        GameTooltip:AddLine(desc)
+    end
+    if self.isFuture then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. GetSpellLevelLearned(self.spellId), 1, 1, 1)
+    end
+    GameTooltip:Show()
+end
+
+local function LoadTalents()
     local fmGTF = CreateFrame("Frame", "GwTalentFrame", GwCharacterWindow, "SecureHandlerStateTemplate,GwTalentFrame")
     fmGTF.title:SetFont(DAMAGE_TEXT_FONT, 14)
     fmGTF.title:SetTextColor(1, 1, 1, 1)
     fmGTF.title:SetShadowColor(0, 0, 0, 1)
     fmGTF.title:SetShadowOffset(1, -1)
     fmGTF.title:SetText(GwLocalization["TALENTS_SPEC_HEADER"])
-    fmGTF:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
+    fmGTF:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    fmGTF:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+    fmGTF:RegisterEvent("PLAYER_LEARN_PVP_TALENT_FAILED")
+    fmGTF:RegisterEvent("PLAYER_LEARN_TALENT_FAILED")
+    fmGTF:RegisterEvent("PLAYER_PVP_TALENT_UPDATE")
+    fmGTF:RegisterEvent("PLAYER_TALENT_UPDATE")
+    fmGTF:RegisterEvent("SPEC_INVOLUNTARILY_CHANGED")
+    fmGTF:RegisterEvent("TALENTS_INVOLUNTARILY_RESET")
+
+    --fmGTF:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
     fmGTF:RegisterEvent("UNIT_MODEL_CHANGED")
     fmGTF:RegisterEvent("UNIT_LEVEL")
     fmGTF:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    fmGTF:RegisterEvent("PLAYER_TALENT_UPDATE")
-    fmGTF:RegisterEvent("PET_SPECIALIZATION_CHANGED")
-    fmGTF:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    fmGTF:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED")
-    fmGTF:RegisterEvent("PLAYER_LEARN_TALENT_FAILED")
+    --fmGTF:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED")
 
     CreateFrame("Frame", "GwSpecContainerFrame", GwTalentFrame)
     GwSpecContainerFrame:SetPoint("TOPLEFT", GwTalentFrame, "TOPLEFT")
@@ -880,14 +886,14 @@ function gw_register_talent_window()
 
     CreateFrame("Frame", "GwSpellbookMenu", GwTalentFrame, "GwSpellbookMenu")
 
-    spellBookMenu_onLoad(GwSpellbookMenu)
+    menu_OnLoad(GwSpellbookMenu)
     GwSpellbookMenu:SetScript(
         "OnEvent",
         function()
             if not GwTalentFrame:IsShown() then
                 return
             end
-            updateSpellbookTab()
+            updateTab()
         end
     )
     fmGTF:SetScript(
@@ -950,8 +956,8 @@ function gw_register_talent_window()
             f:RegisterForDrag("LeftButton")
             f:RegisterEvent("SPELL_UPDATE_COOLDOWN")
             f:RegisterEvent("PET_BAR_UPDATE")
-            f:HookScript("OnEnter", gw_spell_buttonOnEnter)
-            f:HookScript("OnLeave", gw_spell_buttonOnLeave)
+            f:HookScript("OnEnter", spellButton_OnEnter)
+            f:HookScript("OnLeave", GameTooltip_Hide)
 
             line = line + 1
             x = x + 1
@@ -969,7 +975,7 @@ function gw_register_talent_window()
 
     loadTalents()
     loadPetTalents()
-    updateSpellbookTab()
+    updateTab()
 
     GwspellbookTab1:SetFrameRef("GwSpellbookMenu", GwSpellbookMenu)
     GwspellbookTab1:SetAttribute(
@@ -996,7 +1002,7 @@ function gw_register_talent_window()
 
     GwspellbookTab3:SetAttribute(
         "_onstate-petstate",
-        [=[ 
+        [=[
     if newstate == "nopet" then
        self:Hide()
         if self:GetFrameRef('GwSpellbookMenu'):GetAttribute('tabopen') then
@@ -1016,7 +1022,7 @@ function gw_register_talent_window()
     GwSpellbookMenu:SetFrameRef("GwPetSpecContainerFrame", GwPetSpecContainerFrame)
     GwSpellbookMenu:SetAttribute(
         "_onattributechanged",
-        [=[ 
+        [=[
        
             if name~='tabopen' then return end
             
@@ -1028,17 +1034,17 @@ function gw_register_talent_window()
                 self:GetFrameRef('GwSpellbookContainerTab1'):Show()
                 self:GetFrameRef('GwSpecContainerFrame'):Show()
                 self:GetFrameRef('GwPetSpecContainerFrame'):Hide()
-                return 
+                return
             end   if value==2 then
                 self:GetFrameRef('GwSpellbookContainerTab2'):Show()
                 self:GetFrameRef('GwSpecContainerFrame'):Show()
                 self:GetFrameRef('GwPetSpecContainerFrame'):Hide()
-                return 
+                return
             end   if value==3 then
                 self:GetFrameRef('GwSpellbookContainerTab3'):Show()
                 self:GetFrameRef('GwSpecContainerFrame'):Hide()
                 self:GetFrameRef('GwPetSpecContainerFrame'):Show()
-                return 
+                return
             end
     
   
@@ -1046,18 +1052,18 @@ function gw_register_talent_window()
     )
     GwSpellbookMenu:SetAttribute("tabOpen", 2)
 
-    GwspellbookTab1:HookScript("OnClick", spellBookTab_onClick)
-    GwspellbookTab2:HookScript("OnClick", spellBookTab_onClick)
-    GwspellbookTab3:HookScript("OnClick", spellBookTab_onClick)
+    GwspellbookTab1:HookScript("OnClick", tab_OnClick)
+    GwspellbookTab2:HookScript("OnClick", tab_OnClick)
+    GwspellbookTab3:HookScript("OnClick", tab_OnClick)
 
     GwspellbookTab3:HookScript(
         "OnHide",
         function()
-            spellBookTab_onClick(GwspellbookTab2)
+            tab_OnClick(GwspellbookTab2)
         end
     )
 
-    spellBookTabHero_onLoad(GwspellbookTab2)
+    hero_OnLoad(GwspellbookTab2)
 
     GwTalentFrame:HookScript(
         "OnShow",
@@ -1069,7 +1075,7 @@ function gw_register_talent_window()
             if InCombatLockdown() then
                 return
             end
-            updateSpellbookTab()
+            updateTab()
             updateActiveSpec()
         end
     )
@@ -1087,35 +1093,17 @@ function gw_register_talent_window()
     GwTalentFrame:Hide()
     return GwTalentFrame
 end
+GW.LoadTalents = LoadTalents
 
-function gw_spell_buttonOnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-    GameTooltip:ClearLines()
-
-    if not self.isFlyout then
-        GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
-    else
-        local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId)
-        GameTooltip:AddLine(name)
-        GameTooltip:AddLine(desc)
-    end
-    if self.isFuture then
-        GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. GetSpellLevelLearned(self.spellId), 1, 1, 1)
-    end
-    GameTooltip:Show()
-end
-
-function gw_spell_buttonOnLeave(self)
-    GameTooltip:Hide()
-end
-function gwSetActiveSpellbookTab(i)
-    GwActiveSpellTab = i
+--[[
+local function setActiveSpellbookTab(actTab)
+    GwActiveSpellTab = actTab
 
     for i = 1, 3 do
         _G["GwspellbookTab" .. i].background:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive"
         )
     end
-    updateSpellbookTab()
+    updateTab()
 end
+--]]

@@ -1,6 +1,7 @@
 local _, GW = ...
 
-GW_DEFAULT = {}
+local GW_DEFAULT = {}
+GW.DEFAULTS = GW_DEFAULT
 
 GW_DEFAULT["TARGET_ENABLED"] = true
 GW_DEFAULT["FOCUS_ENABLED"] = true

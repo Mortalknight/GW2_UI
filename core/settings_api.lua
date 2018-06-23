@@ -1,16 +1,18 @@
 local _, GW = ...
 
-GW2UI_SETTINGS = {}
+local GW_DEFAULT = GW.DEFAULTS
+local GW2UI_SETTINGS = {}
 
-function gwGetActiveProfile()
+local function GetActiveProfile()
     if GW2UI_SETTINGS_DB_03 == nil then
         GW2UI_SETTINGS_DB_03 = {}
     end
     return GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"]
 end
+GW.GetActiveProfile = GetActiveProfile
 
-function gwSetProfileSettings()
-    local profileIndex = gwGetActiveProfile()
+local function SetProfileSettings()
+    local profileIndex = GetActiveProfile()
 
     if profileIndex == nil then
         return
@@ -23,9 +25,15 @@ function gwSetProfileSettings()
         GW2UI_SETTINGS_PROFILES[profileIndex][k] = v
     end
 end
+GW.SetProfileSettings = SetProfileSettings
 
-function gwGetSetting(name)
-    local profileIndex = gwGetActiveProfile()
+local function GetDefault(name)
+    return GW_DEFAULT[name]
+end
+GW.GetDefault = GetDefault
+
+local function GetSetting(name)
+    local profileIndex = GetActiveProfile()
 
     if GW2UI_SETTINGS_PROFILES == nil then
         GW2UI_SETTINGS_PROFILES = {}
@@ -33,7 +41,7 @@ function gwGetSetting(name)
 
     if profileIndex ~= nil and GW2UI_SETTINGS_PROFILES[profileIndex] ~= nil then
         if GW2UI_SETTINGS_PROFILES[profileIndex][name] == nil then
-            GW2UI_SETTINGS_PROFILES[profileIndex][name] = gwGetDefault(name)
+            GW2UI_SETTINGS_PROFILES[profileIndex][name] = GetDefault(name)
         end
         return GW2UI_SETTINGS_PROFILES[profileIndex][name]
     end
@@ -42,14 +50,15 @@ function gwGetSetting(name)
         GW2UI_SETTINGS_DB_03 = GW_DEFAULT
     end
     if GW2UI_SETTINGS_DB_03[name] == nil then
-        GW2UI_SETTINGS_DB_03[name] = gwGetDefault(name)
+        GW2UI_SETTINGS_DB_03[name] = GetDefault(name)
     end
 
     return GW2UI_SETTINGS_DB_03[name]
 end
+GW.GetSetting = GetSetting
 
-function gwSetSetting(name, state)
-    local profileIndex = gwGetActiveProfile()
+local function SetSetting(name, state)
+    local profileIndex = GetActiveProfile()
 
     if profileIndex ~= nil and GW2UI_SETTINGS_PROFILES[profileIndex] ~= nil then
         GW2UI_SETTINGS_PROFILES[profileIndex][name] = state
@@ -59,12 +68,10 @@ function gwSetSetting(name, state)
 
     GW2UI_SETTINGS_DB_03[name] = state
 end
+GW.SetSetting = SetSetting
 
-function gwGetDefault(name)
-    return GW_DEFAULT[name]
-end
-function gwResetToDefault()
-    local profileIndex = gwGetActiveProfile()
+local function ResetToDefault()
+    local profileIndex = GetActiveProfile()
 
     if profileIndex ~= nil and GW2UI_SETTINGS_PROFILES[profileIndex] ~= nil then
         for k, v in pairs(GW_DEFAULT) do
@@ -75,10 +82,12 @@ function gwResetToDefault()
     end
     GW2UI_SETTINGS_DB_03 = GW_DEFAULT
 end
+GW.ResetToDefault = ResetToDefault
 
-function gwGetSettingsProfiles()
+local function GetSettingsProfiles()
     if GW2UI_SETTINGS_PROFILES == nil then
         GW2UI_SETTINGS_PROFILES = {}
     end
     return GW2UI_SETTINGS_PROFILES
 end
+GW.GetSettingsProfiles = GetSettingsProfiles

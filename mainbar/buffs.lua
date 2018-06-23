@@ -1,127 +1,22 @@
 local _, GW = ...
-local timeCount = GW.timeCount
-local lerp = GW.lerp
+local TimeCount = GW.TimeCount
+local AddActionBarCallback = GW.AddActionBarCallback
+local DEBUFF_COLOR = GW.DEBUFF_COLOR
+local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
+local CreateAuraFrame = GW.CreateAuraFrame
+local AddToAnimation = GW.AddToAnimation
+local Self_Hide = GW.Self_Hide
+local GetBuffs = GW.GetBuffs
+local GetDebuffs = GW.GetDebuffs
+local SetBuffData = GW.SetBuffData
 
 local buffLists = {}
 local DebuffLists = {}
 
-function gw_set_auraType(self, typeAura)
-    if self.typeAura == typeAura then
-        return
-    end
-
-    if typeAura == "smallbuff" then
-        self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
-        self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
-        self.duration:SetFont(UNIT_NAME_FONT, 11)
-        self.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
-    end
-
-    if typeAura == "bigBuff" then
-        self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
-        self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
-        self.duration:SetFont(UNIT_NAME_FONT, 14)
-        self.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
-    end
-
-    self.typeAura = typeAura
-end
-
-function gw_get_buffs(unit, filter)
-    if filter == nil then
-        filter = ""
-    end
-    local auraList = {}
-    local player = {}
-    for i = 1, 40 do
-        if UnitBuff(unit, i, filter) ~= nil then
-            auraList[i] = {}
-            auraList[i]["id"] = i
-
-            auraList[i]["name"],
-                auraList[i]["icon"],
-                auraList[i]["count"],
-                auraList[i]["dispelType"],
-                auraList[i]["duration"],
-                auraList[i]["expires"],
-                auraList[i]["caster"],
-                auraList[i]["isStealable"],
-                auraList[i]["shouldConsolidate"],
-                auraList[i]["spellID"] = UnitBuff(unit, i, filter)
-
-            gwDebug("expires", auraList[i]["expires"])
-            auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
-
-            if auraList[i]["duration"] <= 0 then
-                auraList[i]["timeremaning"] = 500001
-            end
-        end
-    end
-
-    return gw_sort_aura_table(auraList)
-end
-
-function gw_get_debuffs(unit, filter)
-    local auraList = {}
-
-    for i = 1, 40 do
-        if UnitDebuff(unit, i, filter) ~= nil then
-            auraList[i] = {}
-            auraList[i]["id"] = i
-
-            auraList[i]["name"],
-                auraList[i]["rank"],
-                auraList[i]["icon"],
-                auraList[i]["count"],
-                auraList[i]["dispelType"],
-                auraList[i]["duration"],
-                auraList[i]["expires"],
-                auraList[i]["caster"],
-                auraList[i]["isStealable"],
-                auraList[i]["shouldConsolidate"],
-                auraList[i]["spellID"] = UnitDebuff(unit, i, filter)
-
-            auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
-
-            if auraList[i]["duration"] <= 0 then
-                auraList[i]["timeremaning"] = 500001
-            end
-        end
-    end
-
-    return gw_sort_aura_table(auraList)
-end
-
-function gw_sort_aura_table(auraList)
-    table.sort(
-        auraList,
-        function(a, b)
-            return gwSortAuras(a, b)
-        end
-    )
-
-    return auraList
-end
-
-function gwSortAuras(a, b)
-    if a["caster"] == nil then
-        a["caster"] = ""
-    end
-    if b["caster"] == nil then
-        b["caster"] = ""
-    end
-
-    if a["caster"] == b["caster"] then
-        return a["timeremaning"] < b["timeremaning"]
-    end
-
-    return (b["caster"] ~= "player" and a["caster"] == "player")
-end
-
-function gw_aura_animate_in(self)
+local function AuraAnimateIn(self)
     local endWidth = self:GetWidth()
 
-    addToAnimation(
+    AddToAnimation(
         self:GetName(),
         endWidth * 2,
         endWidth,
@@ -132,11 +27,13 @@ function gw_aura_animate_in(self)
         end
     )
 end
+GW.AuraAnimateIn = AuraAnimateIn
 
-function gw_aura_animate_out(self)
+--[[
+local function auraAnimateOut(self)
     self.animating = true
 
-    addToAnimation(
+    AddToAnimation(
         self:GetName(),
         0,
         1,
@@ -163,64 +60,7 @@ function gw_aura_animate_out(self)
         end
     )
 end
-
-function gw_set_buffData(self, buffs, i, oldBuffs)
-    local b = buffs[i]
-
-    if b ~= nil and b["name"] ~= nil then
-        local stacks = ""
-        local duration = ""
-
-        if b["caster"] == "player" and (b["duration"] > 0 and b["duration"] < 120) then
-            gw_set_auraType(self, "bigBuff")
-
-            self.cooldown:SetCooldown(b["expires"] - b["duration"], b["duration"])
-        else
-            gw_set_auraType(self, "smallbuff")
-        end
-
-        if b["count"] ~= nil and b["count"] > 1 then
-            stacks = b["count"]
-        end
-        if b["timeremaning"] ~= nil and b["timeremaning"] > 0 and b["timeremaning"] < 500000 then
-            duration = timeCount(b["timeremaning"])
-        end
-
-        if b["expires"] < 1 or b["timeremaning"] > 500000 then
-            self.expires = nil
-        else
-            self.expires = b["expires"]
-        end
-
-        if self.auraType == "debuff" then
-            if b["dispelType"] ~= nil then
-                self.background:SetVertexColor(
-                    GW_DEBUFF_COLOR[b["dispelType"]].r,
-                    GW_DEBUFF_COLOR[b["dispelType"]].g,
-                    GW_DEBUFF_COLOR[b["dispelType"]].b
-                )
-            else
-                self.background:SetVertexColor(GW_COLOR_FRIENDLY[2].r, GW_COLOR_FRIENDLY[2].g, GW_COLOR_FRIENDLY[2].b)
-            end
-        else
-            if b["isStealable"] then
-                self.background:SetVertexColor(1, 1, 1)
-            else
-                self.background:SetVertexColor(0, 0, 0)
-            end
-        end
-
-        self.auraid = b["id"]
-        self.duration:SetText(duration)
-        self.stacks:SetText(stacks)
-        self.icon:SetTexture(b["icon"])
-
-        return true
-    end
-
-    return false
-end
-
+--]]
 local function updateBuffLayout(self, event)
     -- if not self.displayAuras then return end
 
@@ -235,11 +75,8 @@ local function updateBuffLayout(self, event)
     local lineSize = smallSize
     local maxSize = self:GetWidth()
 
-    local auraList = {}
-    local debuffList = {}
-
-    auraList = gw_get_buffs(self.unit)
-    debuffList = gw_get_debuffs(self.unit, self.debuffFilter)
+    local auraList = GetBuffs(self.unit)
+    local debuffList = GetDebuffs(self.unit, self.debuffFilter)
 
     local saveAuras = {}
 
@@ -268,7 +105,7 @@ local function updateBuffLayout(self, event)
             lineSize = smallSize
         end
 
-        if gw_set_buffData(frame, list, index) then
+        if SetBuffData(frame, list, index) then
             if not frame:IsShown() then
                 frame:Show()
             end
@@ -293,7 +130,7 @@ local function updateBuffLayout(self, event)
 
             frame:SetSize(size, size)
             if newAura and isBig and event == "UNIT_AURA" then
-                gw_aura_animate_in(frame)
+                AuraAnimateIn(frame)
             end
 
             usedWidth = usedWidth + size + marginX
@@ -302,10 +139,8 @@ local function updateBuffLayout(self, event)
                 usedHeight = usedHeight + lineSize + marginY
                 lineSize = smallSize
             end
-        else
-            if frame:IsShown() then
-                frame:Hide()
-            end
+        elseif frame and frame:IsShown() then
+            frame:Hide()
         end
     end
 
@@ -314,10 +149,10 @@ end
 
 local function loadAuras(self)
     for i = 1, 40 do
-        local frame = gwCreateAuraFrame("GwPlayerbuffFrame" .. i, GwPlayerAuraFrame)
+        local frame = CreateAuraFrame("GwPlayerbuffFrame" .. i, GwPlayerAuraFrame)
         frame.unit = "player"
         frame.auraType = "buff"
-        frame = gwCreateAuraFrame("GwPlayerdebuffFrame" .. i, GwPlayerAuraFrame)
+        frame = CreateAuraFrame("GwPlayerdebuffFrame" .. i, GwPlayerAuraFrame)
         frame.unit = "player"
         frame.auraType = "debuff"
     end
@@ -325,68 +160,10 @@ local function loadAuras(self)
     self.saveAuras["buff"] = {}
     self.saveAuras["debuff"] = {}
 end
-function gw_set_buffframe()
-    BuffFrame:Hide()
-    BuffFrame:SetScript("OnShow", gwHideSelf)
-    local player_buff_frame = CreateFrame("Frame", "GwPlayerAuraFrame", UIParent, "GwPlayerAuraFrame")
-    GwPlayerAuraFrame.auras = self
-    GwPlayerAuraFrame.unit = "player"
-    player_buff_frame:SetScript(
-        "OnEvent",
-        function(self, event, unit)
-            if unit ~= "player" then
-                return
-            end
-            updateBuffLayout(GwPlayerAuraFrame, event)
-        end
-    )
-    player_buff_frame:RegisterEvent("UNIT_AURA")
 
-    local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
-    fgw:SetFrameRef("GwPlayerAuraFrame", player_buff_frame)
-    fgw:SetFrameRef("UIParent", UIParent)
-    fgw:SetFrameRef("MultiBarBottomRight", MultiBarBottomRight)
-    fgw:SetAttribute(
-        "_onstate-combat",
-        [=[ 
-        
-        if self:GetFrameRef('MultiBarBottomRight'):IsShown()==false then
-            return
-        end
-        
-      self:GetFrameRef('GwPlayerAuraFrame'):ClearAllPoints()
-        if newstate == 'show' then
-         self:GetFrameRef('GwPlayerAuraFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',53,212)
-        end
-    ]=]
-    )
-    RegisterStateDriver(fgw, "combat", "[combat] show; hide")
-
-    gwActionBar_AddStateCallback(gw_updatePlayerBuffFrameLocation)
-    gw_updatePlayerBuffFrameLocation()
-
-    loadAuras(GwPlayerAuraFrame)
-    updateBuffLayout(GwPlayerAuraFrame, event)
-
-    -- show/hide stuff with override bar
-    OverrideActionBar:HookScript(
-        "OnShow",
-        function()
-            player_buff_frame:SetAlpha(0)
-        end
-    )
-    OverrideActionBar:HookScript(
-        "OnHide",
-        function()
-            player_buff_frame:SetAlpha(1)
-        end
-    )
-end
-
--- Re do below
-
+--[[
 local player_update_buff_Timer_cooldown = 0
-function update_player_buff_timers(thisName)
+local function updateBuffTimers(thisName)
     if player_update_buff_Timer_cooldown > GetTime() then
         return
     end
@@ -399,7 +176,7 @@ function update_player_buff_timers(thisName)
             e = tonumber(_G["playerDeBuffItemFrame" .. i].expires)
 
             if d > 0 then
-                buffDur = timeCount(e - GetTime())
+                buffDur = TimeCount(e - GetTime())
             end
             _G["playerDeBuffItemFrame" .. i .. "CooldownBuffDuration"]:SetText(buffDur)
         end
@@ -409,234 +186,14 @@ function update_player_buff_timers(thisName)
             e = tonumber(_G["GwPlayerBuffItemFrame" .. i].expires)
 
             if d > 0 then
-                buffDur = timeCount(e - GetTime())
+                buffDur = TimeCount(e - GetTime())
             end
             _G["GwPlayerBuffItemFrame" .. i .. "BuffDuration"]:SetText(buffDur)
         end
     end
 end
-function gw_updatePlayerBuffFrameLocation()
-    if InCombatLockdown() or not GwPlayerAuraFrame then
-        return
-    end
-    GwPlayerAuraFrame:ClearAllPoints()
-    if MultiBarBottomRight.gw_FadeShowing then
-        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 212)
-    else
-        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 120)
-    end
-end
-
-function gw_playerUpdateAuras()
-    unitToWatch = "player"
-    updatePlayerBuffLisr()
-    local x = 0
-    local y = 0
-    for i = 1, 40 do
-        local indexBuffFrame = _G["GwPlayerBuffItemFrame" .. i]
-        if buffLists[unitToWatch][i] then
-            local key = buffLists[unitToWatch][i]["key"]
-            if indexBuffFrame == nil then
-                indexBuffFrame =
-                    CreateFrame("Button", "GwPlayerBuffItemFrame" .. i, _G["GwPlayerAuraFrame"], "GwBuffIconBig")
-                indexBuffFrame:RegisterForClicks("RightButtonUp")
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetTextColor(1, 1, 1)
-                indexBuffFrame:SetParent(_G["GwPlayerAuraFrame"])
-            end
-            local margin = -indexBuffFrame:GetWidth() + -2
-            local marginy = indexBuffFrame:GetWidth() + 12
-            _G["GwPlayerBuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffLists[unitToWatch][i]["icon"])
-            _G["GwPlayerBuffItemFrame" .. i .. "BuffIcon"]:SetParent(_G["GwPlayerBuffItemFrame" .. i])
-            local buffDur = ""
-            local stacks = ""
-            if buffLists[unitToWatch][i]["duration"] > 0 then
-                buffDur = timeCount(buffLists[unitToWatch][i]["timeRemaining"])
-            end
-            if buffLists[unitToWatch][i]["count"] > 0 then
-                stacks = buffLists[unitToWatch][i]["count"]
-            end
-            indexBuffFrame.expires = buffLists[unitToWatch][i]["expires"]
-            indexBuffFrame.duration = buffLists[unitToWatch][i]["duration"]
-            _G["GwPlayerBuffItemFrame" .. i .. "BuffDuration"]:SetText(buffDur)
-            _G["GwPlayerBuffItemFrame" .. i .. "BuffStacks"]:SetText(stacks)
-            indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint("BOTTOMRIGHT", (margin * x), marginy * y)
-
-            indexBuffFrame:SetScript(
-                "OnEnter",
-                function()
-                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT", 28, 0)
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetUnitBuff(unitToWatch, key)
-                    GameTooltip:Show()
-                end
-            )
-            indexBuffFrame:SetScript(
-                "OnLeave",
-                function()
-                    GameTooltip:Hide()
-                end
-            )
-
-            indexBuffFrame:SetScript(
-                "OnClick",
-                function(self, button)
-                    if InCombatLockdown() then
-                        return
-                    end
-                    if button == "RightButton" then
-                        CancelUnitBuff("player", key)
-                    end
-                end
-            )
-
-            indexBuffFrame:Show()
-
-            x = x + 1
-            if x > 7 then
-                y = y + 1
-                x = 0
-            end
-        else
-            if indexBuffFrame ~= nil then
-                indexBuffFrame:Hide()
-                indexBuffFrame:SetScript("OnEnter", nil)
-                indexBuffFrame:SetScript("OnClick", nil)
-                indexBuffFrame:SetScript("OnLeave", nil)
-            else
-                break
-            end
-        end
-    end
-    gw_playerUpdateDeBuffs(x, y)
-end
-function gw_playerUpdateDeBuffs(x, y)
-    y = y + 1
-    x = 0
-    updatePlayerDeBuffList()
-
-    for i = 1, 40 do
-        local indexBuffFrame = _G["playerDeBuffItemFrame" .. i]
-        if DebuffLists[unitToWatch][i] then
-            local key = DebuffLists[unitToWatch][i]["key"]
-
-            if indexBuffFrame == nil then
-                indexBuffFrame =
-                    CreateFrame("Frame", "playerDeBuffItemFrame" .. i, _G["GwPlayerAuraFrame"], "GwDeBuffIcon")
-                indexBuffFrame:SetParent(_G["GwPlayerAuraFrame"])
-                _G["playerDeBuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(
-                    GW_COLOR_FRIENDLY[2].r,
-                    GW_COLOR_FRIENDLY[2].g,
-                    GW_COLOR_FRIENDLY[2].b
-                )
-
-                if
-                    DebuffLists[unitToWatch][i]["dispelType"] ~= nil and
-                        GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]] ~= nil
-                 then
-                    _G["playerDeBuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(
-                        GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]].r,
-                        GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]].g,
-                        GW_DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]].b
-                    )
-                end
-                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetDrawEdge(0)
-                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetDrawSwipe(1)
-                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetReverse(false)
-                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetHideCountdownNumbers(true)
-            end
-            _G["playerDeBuffItemFrame" .. i .. "IconBuffIcon"]:SetTexture(DebuffLists[unitToWatch][i]["icon"])
-            --    _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetParent(_G['playerDeBuffItemFrame'..i])
-            local buffDur = ""
-            local stacks = ""
-            if DebuffLists[unitToWatch][i]["count"] > 0 then
-                stacks = DebuffLists[unitToWatch][i]["count"]
-            end
-            if DebuffLists[unitToWatch][i]["duration"] > 0 then
-                buffDur = timeCount(DebuffLists[unitToWatch][i]["timeRemaining"])
-            end
-            indexBuffFrame.expires = DebuffLists[unitToWatch][i]["expires"]
-            indexBuffFrame.duration = DebuffLists[unitToWatch][i]["duration"]
-
-            _G["playerDeBuffItemFrame" .. i .. "CooldownBuffDuration"]:SetText(buffDur)
-            _G["playerDeBuffItemFrame" .. i .. "IconBuffStacks"]:SetText(stacks)
-
-            _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetCooldown(
-                DebuffLists[unitToWatch][i]["expires"] - DebuffLists[unitToWatch][i]["duration"],
-                DebuffLists[unitToWatch][i]["duration"]
-            )
-
-            indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint("BOTTOMRIGHT", (-32 * x), 42 * y)
-
-            indexBuffFrame:SetScript(
-                "OnEnter",
-                function()
-                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT")
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetUnitDebuff(unitToWatch, key)
-                    GameTooltip:Show()
-                end
-            )
-            indexBuffFrame:SetScript(
-                "OnLeave",
-                function()
-                    GameTooltip:Hide()
-                end
-            )
-
-            indexBuffFrame:Show()
-
-            x = x + 1
-            if x > 7 then
-                y = y + 1
-                x = 0
-            end
-        else
-            if indexBuffFrame ~= nil then
-                indexBuffFrame:Hide()
-            else
-                break
-            end
-        end
-    end
-end
-
-function updatePlayerBuffLisr()
-    unitToWatch = "Player"
-    buffLists[unitToWatch] = {}
-    for i = 1, 40 do
-        if UnitBuff(unitToWatch, i) then
-            buffLists[unitToWatch][i] = {}
-            buffLists[unitToWatch][i]["name"],
-                buffLists[unitToWatch][i]["icon"],
-                buffLists[unitToWatch][i]["count"],
-                buffLists[unitToWatch][i]["dispelType"],
-                buffLists[unitToWatch][i]["duration"],
-                buffLists[unitToWatch][i]["expires"],
-                buffLists[unitToWatch][i]["caster"],
-                buffLists[unitToWatch][i]["isStealable"],
-                buffLists[unitToWatch][i]["shouldConsolidate"],
-                buffLists[unitToWatch][i]["spellID"] = UnitBuff(unitToWatch, i)
-            buffLists[unitToWatch][i]["key"] = i
-            buffLists[unitToWatch][i]["timeRemaining"] = buffLists[unitToWatch][i]["expires"] - GetTime()
-            if buffLists[unitToWatch][i]["duration"] <= 0 then
-                buffLists[unitToWatch][i]["timeRemaining"] = 500000
-            end
-        end
-    end
-
-    table.sort(
-        buffLists[unitToWatch],
-        function(a, b)
-            return a["timeRemaining"] > b["timeRemaining"]
-        end
-    )
-end
-function updatePlayerDeBuffList()
+--]]
+local function updatePlayerDebuffList()
     unitToWatch = "Player"
     DebuffLists[unitToWatch] = {}
     for i = 1, 40 do
@@ -669,7 +226,209 @@ function updatePlayerDeBuffList()
     )
 end
 
-function gw_buff(self, data, buffIndex)
+local function updatePlayerDebuffs(x, y)
+    y = y + 1
+    x = 0
+    updatePlayerDebuffList()
+
+    for i = 1, 40 do
+        local indexBuffFrame = _G["playerDeBuffItemFrame" .. i]
+        if DebuffLists[unitToWatch][i] then
+            local key = DebuffLists[unitToWatch][i]["key"]
+
+            if indexBuffFrame == nil then
+                indexBuffFrame =
+                    CreateFrame("Frame", "playerDeBuffItemFrame" .. i, _G["GwPlayerAuraFrame"], "GwDeBuffIcon")
+                indexBuffFrame:SetParent(_G["GwPlayerAuraFrame"])
+                _G["playerDeBuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(
+                    COLOR_FRIENDLY[2].r,
+                    COLOR_FRIENDLY[2].g,
+                    COLOR_FRIENDLY[2].b
+                )
+
+                if
+                    DebuffLists[unitToWatch][i]["dispelType"] ~= nil and
+                        DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]] ~= nil
+                 then
+                    _G["playerDeBuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(
+                        DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]].r,
+                        DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]].g,
+                        DEBUFF_COLOR[DebuffLists[unitToWatch][i]["dispelType"]].b
+                    )
+                end
+                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetDrawEdge(0)
+                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetDrawSwipe(1)
+                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetReverse(false)
+                _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetHideCountdownNumbers(true)
+            end
+            _G["playerDeBuffItemFrame" .. i .. "IconBuffIcon"]:SetTexture(DebuffLists[unitToWatch][i]["icon"])
+            --    _G['playerDeBuffItemFrame'..i..'IconBuffIcon']:SetParent(_G['playerDeBuffItemFrame'..i])
+            local buffDur = ""
+            local stacks = ""
+            if DebuffLists[unitToWatch][i]["count"] > 0 then
+                stacks = DebuffLists[unitToWatch][i]["count"]
+            end
+            if DebuffLists[unitToWatch][i]["duration"] > 0 then
+                buffDur = TimeCount(DebuffLists[unitToWatch][i]["timeRemaining"])
+            end
+            indexBuffFrame.expires = DebuffLists[unitToWatch][i]["expires"]
+            indexBuffFrame.duration = DebuffLists[unitToWatch][i]["duration"]
+
+            _G["playerDeBuffItemFrame" .. i .. "CooldownBuffDuration"]:SetText(buffDur)
+            _G["playerDeBuffItemFrame" .. i .. "IconBuffStacks"]:SetText(stacks)
+
+            _G["playerDeBuffItemFrame" .. i .. "Cooldown"]:SetCooldown(
+                DebuffLists[unitToWatch][i]["expires"] - DebuffLists[unitToWatch][i]["duration"],
+                DebuffLists[unitToWatch][i]["duration"]
+            )
+
+            indexBuffFrame:ClearAllPoints()
+            indexBuffFrame:SetPoint("BOTTOMRIGHT", (-32 * x), 42 * y)
+
+            indexBuffFrame:SetScript(
+                "OnEnter",
+                function()
+                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT")
+                    GameTooltip:ClearLines()
+                    GameTooltip:SetUnitDebuff(unitToWatch, key)
+                    GameTooltip:Show()
+                end
+            )
+            indexBuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+
+            indexBuffFrame:Show()
+
+            x = x + 1
+            if x > 7 then
+                y = y + 1
+                x = 0
+            end
+        else
+            if indexBuffFrame ~= nil then
+                indexBuffFrame:Hide()
+            else
+                break
+            end
+        end
+    end
+end
+
+local function updatePlayerBuffList()
+    unitToWatch = "Player"
+    buffLists[unitToWatch] = {}
+    for i = 1, 40 do
+        if UnitBuff(unitToWatch, i) then
+            buffLists[unitToWatch][i] = {}
+            buffLists[unitToWatch][i]["name"],
+                buffLists[unitToWatch][i]["icon"],
+                buffLists[unitToWatch][i]["count"],
+                buffLists[unitToWatch][i]["dispelType"],
+                buffLists[unitToWatch][i]["duration"],
+                buffLists[unitToWatch][i]["expires"],
+                buffLists[unitToWatch][i]["caster"],
+                buffLists[unitToWatch][i]["isStealable"],
+                buffLists[unitToWatch][i]["shouldConsolidate"],
+                buffLists[unitToWatch][i]["spellID"] = UnitBuff(unitToWatch, i)
+            buffLists[unitToWatch][i]["key"] = i
+            buffLists[unitToWatch][i]["timeRemaining"] = buffLists[unitToWatch][i]["expires"] - GetTime()
+            if buffLists[unitToWatch][i]["duration"] <= 0 then
+                buffLists[unitToWatch][i]["timeRemaining"] = 500000
+            end
+        end
+    end
+
+    table.sort(
+        buffLists[unitToWatch],
+        function(a, b)
+            return a["timeRemaining"] > b["timeRemaining"]
+        end
+    )
+end
+
+--[[
+local function updatePlayerAuras()
+    unitToWatch = "player"
+    updatePlayerBuffList()
+    local x = 0
+    local y = 0
+    for i = 1, 40 do
+        local indexBuffFrame = _G["GwPlayerBuffItemFrame" .. i]
+        if buffLists[unitToWatch][i] then
+            local key = buffLists[unitToWatch][i]["key"]
+            if indexBuffFrame == nil then
+                indexBuffFrame =
+                    CreateFrame("Button", "GwPlayerBuffItemFrame" .. i, _G["GwPlayerAuraFrame"], "GwBuffIconBig")
+                indexBuffFrame:RegisterForClicks("RightButtonUp")
+                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
+                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
+                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetTextColor(1, 1, 1)
+                indexBuffFrame:SetParent(_G["GwPlayerAuraFrame"])
+            end
+            local margin = -indexBuffFrame:GetWidth() + -2
+            local marginy = indexBuffFrame:GetWidth() + 12
+            _G["GwPlayerBuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffLists[unitToWatch][i]["icon"])
+            _G["GwPlayerBuffItemFrame" .. i .. "BuffIcon"]:SetParent(_G["GwPlayerBuffItemFrame" .. i])
+            local buffDur = ""
+            local stacks = ""
+            if buffLists[unitToWatch][i]["duration"] > 0 then
+                buffDur = TimeCount(buffLists[unitToWatch][i]["timeRemaining"])
+            end
+            if buffLists[unitToWatch][i]["count"] > 0 then
+                stacks = buffLists[unitToWatch][i]["count"]
+            end
+            indexBuffFrame.expires = buffLists[unitToWatch][i]["expires"]
+            indexBuffFrame.duration = buffLists[unitToWatch][i]["duration"]
+            _G["GwPlayerBuffItemFrame" .. i .. "BuffDuration"]:SetText(buffDur)
+            _G["GwPlayerBuffItemFrame" .. i .. "BuffStacks"]:SetText(stacks)
+            indexBuffFrame:ClearAllPoints()
+            indexBuffFrame:SetPoint("BOTTOMRIGHT", (margin * x), marginy * y)
+
+            indexBuffFrame:SetScript(
+                "OnEnter",
+                function()
+                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT", 28, 0)
+                    GameTooltip:ClearLines()
+                    GameTooltip:SetUnitBuff(unitToWatch, key)
+                    GameTooltip:Show()
+                end
+            )
+            indexBuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+
+            indexBuffFrame:SetScript(
+                "OnClick",
+                function(self, button)
+                    if InCombatLockdown() then
+                        return
+                    end
+                    if button == "RightButton" then
+                        CancelUnitBuff("player", key)
+                    end
+                end
+            )
+
+            indexBuffFrame:Show()
+
+            x = x + 1
+            if x > 7 then
+                y = y + 1
+                x = 0
+            end
+        else
+            if indexBuffFrame ~= nil then
+                indexBuffFrame:Hide()
+                indexBuffFrame:SetScript("OnEnter", nil)
+                indexBuffFrame:SetScript("OnClick", nil)
+                indexBuffFrame:SetScript("OnLeave", nil)
+            else
+                break
+            end
+        end
+    end
+    updatePlayerDebuffs(x, y)
+end
+--]]
+local function Buff(self, data, buffIndex)
     --Buff icon
     self.icon:SetTexture(data["icon"])
 
@@ -686,7 +445,7 @@ function gw_buff(self, data, buffIndex)
         stacks = data["stacks"]
     end
     if data["duration"] ~= nil and data["duration"] > 0 then
-        duration = timeCount(data["timeRemaining"])
+        duration = TimeCount(data["timeRemaining"])
     end
 
     self.expires = data["expires"]
@@ -704,23 +463,19 @@ function gw_buff(self, data, buffIndex)
             GameTooltip:Show()
         end
     )
-    self:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip:Hide()
-        end
-    )
+    self:SetScript("OnLeave", GameTooltip_Hide)
 end
+GW.Buff = Buff
 
-function gw_hightlighted_debuff(self, data, buffindex)
+local function HighlightedDebuff(self, data, buffindex)
     if data["dispelType"] ~= nil then
         self.background:SetVertexColor(
-            GW_DEBUFF_COLOR[data["dispelType"]].r,
-            GW_DEBUFF_COLOR[data["dispelType"]].g,
-            GW_DEBUFF_COLOR[data["dispelType"]].b
+            DEBUFF_COLOR[data["dispelType"]].r,
+            DEBUFF_COLOR[data["dispelType"]].g,
+            DEBUFF_COLOR[data["dispelType"]].b
         )
     else
-        self.background:SetVertexColor(GW_COLOR_FRIENDLY[2].r, GW_COLOR_FRIENDLY[2].g, GW_COLOR_FRIENDLY[2].b)
+        self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     end
     self.cooldown:SetDrawEdge(0)
     self.cooldown:SetDrawSwipe(1)
@@ -735,7 +490,7 @@ function gw_hightlighted_debuff(self, data, buffindex)
         stacks = data["count"]
     end
     if data["duration"] > 0 then
-        buffDur = timeCount(data["timeRemaining"])
+        buffDur = TimeCount(data["timeRemaining"])
     end
 
     self.expires = data["expires"]
@@ -754,22 +509,19 @@ function gw_hightlighted_debuff(self, data, buffindex)
             GameTooltip:Show()
         end
     )
-    self:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip:Hide()
-        end
-    )
+    self:SetScript("OnLeave", GameTooltip_Hide)
 end
-function gw_debuff(self, data, buffindex, filter)
+GW.HighlightedDebuff = HighlightedDebuff
+
+local function Debuff(self, data, buffindex, filter)
     if data["dispelType"] ~= nil then
         self.background:SetVertexColor(
-            GW_DEBUFF_COLOR[data["dispelType"]].r,
-            GW_DEBUFF_COLOR[data["dispelType"]].g,
-            GW_DEBUFF_COLOR[data["dispelType"]].b
+            DEBUFF_COLOR[data["dispelType"]].r,
+            DEBUFF_COLOR[data["dispelType"]].g,
+            DEBUFF_COLOR[data["dispelType"]].b
         )
     else
-        self.background:SetVertexColor(GW_COLOR_FRIENDLY[2].r, GW_COLOR_FRIENDLY[2].g, GW_COLOR_FRIENDLY[2].b)
+        self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     end
     self.cooldown:SetDrawEdge(0)
     self.cooldown:SetDrawSwipe(1)
@@ -784,7 +536,7 @@ function gw_debuff(self, data, buffindex, filter)
         stacks = data["count"]
     end
     if data["duration"] ~= nil and data["duration"] > 0 then
-        buffDur = timeCount(data["timeRemaining"])
+        buffDur = TimeCount(data["timeRemaining"])
     end
 
     self.expires = data["expires"]
@@ -803,10 +555,78 @@ function gw_debuff(self, data, buffindex, filter)
             GameTooltip:Show()
         end
     )
-    self:SetScript(
-        "OnLeave",
+    self:SetScript("OnLeave", GameTooltip_Hide)
+end
+GW.Debuff = Debuff
+
+local function UpdatePlayerBuffFrame()
+    if InCombatLockdown() or not GwPlayerAuraFrame then
+        return
+    end
+    GwPlayerAuraFrame:ClearAllPoints()
+    if MultiBarBottomRight.gw_FadeShowing then
+        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 212)
+    else
+        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 120)
+    end
+end
+GW.UpdatePlayerBuffFrame = UpdatePlayerBuffFrame
+
+local function LoadBuffs()
+    BuffFrame:Hide()
+    BuffFrame:SetScript("OnShow", Self_Hide)
+    local player_buff_frame = CreateFrame("Frame", "GwPlayerAuraFrame", UIParent, "GwPlayerAuraFrame")
+    GwPlayerAuraFrame.auras = self
+    GwPlayerAuraFrame.unit = "player"
+    player_buff_frame:SetScript(
+        "OnEvent",
+        function(self, event, unit)
+            if unit ~= "player" then
+                return
+            end
+            updateBuffLayout(GwPlayerAuraFrame, event)
+        end
+    )
+    player_buff_frame:RegisterEvent("UNIT_AURA")
+
+    local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
+    fgw:SetFrameRef("GwPlayerAuraFrame", player_buff_frame)
+    fgw:SetFrameRef("UIParent", UIParent)
+    fgw:SetFrameRef("MultiBarBottomRight", MultiBarBottomRight)
+    fgw:SetAttribute(
+        "_onstate-combat",
+        [=[
+        
+        if self:GetFrameRef('MultiBarBottomRight'):IsShown()==false then
+            return
+        end
+        
+      self:GetFrameRef('GwPlayerAuraFrame'):ClearAllPoints()
+        if newstate == 'show' then
+         self:GetFrameRef('GwPlayerAuraFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',53,212)
+        end
+    ]=]
+    )
+    RegisterStateDriver(fgw, "combat", "[combat] show; hide")
+
+    AddActionBarCallback(UpdatePlayerBuffFrame)
+    UpdatePlayerBuffFrame()
+
+    loadAuras(GwPlayerAuraFrame)
+    updateBuffLayout(GwPlayerAuraFrame, event)
+
+    -- show/hide stuff with override bar
+    OverrideActionBar:HookScript(
+        "OnShow",
         function()
-            GameTooltip:Hide()
+            player_buff_frame:SetAlpha(0)
+        end
+    )
+    OverrideActionBar:HookScript(
+        "OnHide",
+        function()
+            player_buff_frame:SetAlpha(1)
         end
     )
 end
+GW.LoadBuffs = LoadBuffs

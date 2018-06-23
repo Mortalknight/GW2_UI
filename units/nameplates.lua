@@ -1,11 +1,29 @@
 local _, GW = ...
 
-local nPlates = CreateFrame("frame", nil, UIParent)
+--local nPlates = CreateFrame("frame", nil, UIParent)
 
 local Plates = {}
 local i = 1
 
-local function PlateAdd(Plate)
+local function plate_OnShow(Health, Cast, old_name, old_level)
+    Health:SetWidth(70)
+    Health:SetHeight(5)
+    Cast:SetWidth(70)
+    Cast:SetHeight(5)
+
+    r, g, b = Health:GetStatusBarColor()
+
+    if r == 0.99999779462814 and g == 0 and b == 0 then
+        Health:SetStatusBarColor(159 / 255, 36 / 255, 20 / 255)
+    end
+
+    Cast:SetStatusBarTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar")
+    Cast:SetBackdrop(backdrop)
+    Cast:SetBackdropColor(0, 0, 0, 0.8)
+    Cast:SetBackdropBorderColor(0, 0, 0, 0.8)
+end
+
+local function plateAdd(Plate)
     if Plate.hasBeenStyled ~= nil then
         return
     end
@@ -16,8 +34,8 @@ local function PlateAdd(Plate)
     local Health, Cast = f1:GetChildren()
     local old_name = f2:GetRegions()
 
-    local old_threat, hpborder, highlight, old_level, old_bossicon, raidicon, old_elite = f1:GetRegions()
-    local cbtexture, cbborder, old_cbshield, old_cbicon, old_cbname, cbnameshadow = Cast:GetRegions()
+    local old_threat, hpborder, _, old_level, _ = f1:GetRegions()
+    local _, cbborder, _, old_cbicon, _ = Cast:GetRegions()
 
     old_threat:Hide()
     hpborder:Hide()
@@ -77,12 +95,12 @@ local function PlateAdd(Plate)
         end
     )
 
-    setPlateOnShow(Health, Cast, old_name, old_level)
+    plate_OnShow(Health, Cast, old_name, old_level)
 
     Plate:SetScript(
         "OnShow",
         function(self)
-            setPlateOnShow(Health, Cast, old_name, old_level)
+            plate_OnShow(Health, Cast, old_name, old_level)
         end
     )
 
@@ -95,41 +113,19 @@ local function PlateAdd(Plate)
     Plate.hasBeenStyled = true
 end
 
-function setPlateOnShow(Health, Cast, old_name, old_level)
-    Health:SetWidth(70)
-    Health:SetHeight(5)
-    Cast:SetWidth(70)
-    Cast:SetHeight(5)
-
-    r, g, b = Health:GetStatusBarColor()
-
-    if r == 0.99999779462814 and g == 0 and b == 0 then
-        Health:SetStatusBarColor(159 / 255, 36 / 255, 20 / 255)
-    end
-
-    Cast:SetStatusBarTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar")
-    Cast:SetBackdrop(backdrop)
-    Cast:SetBackdropColor(0, 0, 0, 0.8)
-    Cast:SetBackdropBorderColor(0, 0, 0, 0.8)
-end
-
-local PlatesScan
-do
-    local select = select
-    function PlatesScan(...)
-        for index = 1, select("#", WorldFrame:GetChildren()) do
-            local frame = select(index, WorldFrame:GetChildren())
-            if not Plates[frame] and (frame:GetName() and frame:GetName():find("NamePlate%d")) then
-                if frame:IsShown() then
-                    PlateAdd(frame, Index)
-                end
+local function platesScan(...)
+    for index = 1, select("#", WorldFrame:GetChildren()) do
+        local frame = select(index, WorldFrame:GetChildren())
+        if not Plates[frame] and (frame:GetName() and frame:GetName():find("NamePlate%d")) then
+            if frame:IsShown() then
+                plateAdd(frame, Index)
             end
         end
     end
 end
 
 local thro = 0
-function update_gw_nameplates()
+local function LoadNameplates()
     if thro > GetTime() then
         return
     end
@@ -137,13 +133,10 @@ function update_gw_nameplates()
     thro = GetTime() + 0.01
 
     local ChildCount, NewChildCount = 0
-    local NextUpdate = 0
-    local pairs = pairs
     -- Check for new nameplates
     NewChildCount = WorldFrame:GetNumChildren()
     if (ChildCount ~= NewChildCount) then
-        ChildCount = NewChildCount
-
-        PlatesScan(WorldFrame:GetChildren(WorldFrame))
+        platesScan(WorldFrame:GetChildren(WorldFrame))
     end
 end
+GW.LoadNameplates = LoadNameplates

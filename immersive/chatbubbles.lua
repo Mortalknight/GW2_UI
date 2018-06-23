@@ -1,11 +1,45 @@
 local _, GW = ...
+local CountTable = GW.CountTable
 
-local intervalCd = 0
 local bubbles = {}
 local CHAT_BUBBLES_ACTIVE = {}
 local safeToChange = false
 
-function update_gwChat_bubbles(msg)
+local function getBubbles(msg)
+    local bi
+
+    for i = 1, WorldFrame:GetNumChildren() do
+        local v = select(i, WorldFrame:GetChildren())
+        local b = v:GetBackdrop()
+        local p = v:IsProtected()
+        if b ~= nill and not p then
+            if
+                b.bgFile == "Interface\\Tooltips\\ChatBubble-Background" or
+                    b.bgFile == "Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background"
+             then
+                for k = 1, v:GetNumRegions() do
+                    local frame = v
+                    local v2 = select(k, v:GetRegions())
+                    if v2:GetObjectType() == "FontString" then
+                        if frame.hasBeenStyled == nil then
+                            bi = CountTable(bubbles)
+                            local fontstring = v2
+
+                            bubbles[bi] = {}
+                            bubbles[bi]["frame"] = frame
+                            bubbles[bi]["fontstring"] = fontstring
+                            bubbles[bi]["bgFile"] = b.bgFile
+                            return bubbles[bi]
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
+local function update_gwChat_bubbles(msg)
     getBubbles(msg)
 
     for k, v in pairs(bubbles) do
@@ -42,69 +76,10 @@ function update_gwChat_bubbles(msg)
         end
     end
 end
-function getBubbles(msg)
-    local bi = 0
 
-    for i = 1, WorldFrame:GetNumChildren() do
-        local v = select(i, WorldFrame:GetChildren())
-        local b = v:GetBackdrop()
-        local p = v:IsProtected()
-        if b ~= nill and not p then
-            if
-                b.bgFile == "Interface\\Tooltips\\ChatBubble-Background" or
-                    b.bgFile == "Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background"
-             then
-                for i = 1, v:GetNumRegions() do
-                    local frame = v
-                    local v = select(i, v:GetRegions())
-                    if v:GetObjectType() == "FontString" then
-                        if frame.hasBeenStyled == nil then
-                            bi = GW.countTable(bubbles)
-                            local fontstring = v
-
-                            bubbles[bi] = {}
-                            bubbles[bi]["frame"] = frame
-                            bubbles[bi]["fontstring"] = fontstring
-                            bubbles[bi]["bgFile"] = b.bgFile
-                            return bubbles[bi]
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return nil
-end
-
-function gw_register_chatbubbles()
-    local f = CreateFrame("Frame", nil, nil)
-
-    f:SetScript("OnEvent", gw_chatbubbles_onevent)
-    f:SetScript("OnUpdate", gw_chatbubbles_onupdate)
-
-    f:RegisterEvent("CHAT_MSG_SAY")
-    f:RegisterEvent("CHAT_MSG_PARTY")
-    f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
-    f:RegisterEvent("CHAT_MSG_YELL")
-    f:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
-    f:RegisterEvent("CHAT_MSG_MONSTER_PARTY")
-    f:RegisterEvent("CHAT_MSG_MONSTER_SAY")
-    f:RegisterEvent("CHAT_MSG_MONSTER_WHISPER")
-    f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
-    f:RegisterEvent("UPDATE_INSTANCE_INFO")
-    f:RegisterEvent("ZONE_CHANGED")
-end
-function gw_chatbubbles_onevent(self, event, msg, arg2)
+local function chatbubbles_OnEvent(self, event, msg, arg2)
     if event == "UPDATE_INSTANCE_INFO" or event == "ZONE_CHANGED" then
-        local name,
-            typeOf,
-            difficulty,
-            difficultyName,
-            maxPlayers,
-            playerDifficulty,
-            isDynamicInstance,
-            mapID,
-            instanceGroupSize = GetInstanceInfo()
+        local _, typeOf, _ = GetInstanceInfo()
 
         if typeOf == nil or typeOf == "scenario" or typeOf == "none" then
             safeToChange = true
@@ -119,12 +94,13 @@ function gw_chatbubbles_onevent(self, event, msg, arg2)
         return
     end
 
-    local i = GW.countTable(CHAT_BUBBLES_ACTIVE)
+    local i = CountTable(CHAT_BUBBLES_ACTIVE)
     CHAT_BUBBLES_ACTIVE[i] = {}
     CHAT_BUBBLES_ACTIVE[i]["msg"] = msg
     CHAT_BUBBLES_ACTIVE[i]["time"] = GetTime() + 5
 end
-function gw_chatbubbles_onupdate()
+
+local function chatbubbles_OnUpdate()
     if safeToChange == false then
         return
     end
@@ -141,3 +117,23 @@ function gw_chatbubbles_onupdate()
         update_gwChat_bubbles()
     end
 end
+
+local function LoadChatBubbles()
+    local f = CreateFrame("Frame", nil, nil)
+
+    f:SetScript("OnEvent", chatbubbles_OnEvent)
+    f:SetScript("OnUpdate", chatbubbles_OnUpdate)
+
+    f:RegisterEvent("CHAT_MSG_SAY")
+    f:RegisterEvent("CHAT_MSG_PARTY")
+    f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+    f:RegisterEvent("CHAT_MSG_YELL")
+    f:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
+    f:RegisterEvent("CHAT_MSG_MONSTER_PARTY")
+    f:RegisterEvent("CHAT_MSG_MONSTER_SAY")
+    f:RegisterEvent("CHAT_MSG_MONSTER_WHISPER")
+    f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+    f:RegisterEvent("UPDATE_INSTANCE_INFO")
+    f:RegisterEvent("ZONE_CHANGED")
+end
+GW.LoadChatBubbles = LoadChatBubbles

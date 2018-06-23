@@ -1,13 +1,14 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
-GW_MAP_FRAMES_HIDE = {}
-GW_MAP_FRAMES_HIDE[1] = MiniMapMailFrame
-GW_MAP_FRAMES_HIDE[3] = MinimapCluster
-GW_MAP_FRAMES_HIDE[4] = MiniMapVoiceChatFrame
-GW_MAP_FRAMES_HIDE[5] = GameTimeFrame
-GW_MAP_FRAMES_HIDE[6] = MiniMapTrackingButton
-GW_MAP_FRAMES_HIDE[7] = GarrisonLandingPageMinimapButton
-GW_MAP_FRAMES_HIDE[8] = MiniMapTracking
+local MAP_FRAMES_HIDE = {}
+MAP_FRAMES_HIDE[1] = MiniMapMailFrame
+MAP_FRAMES_HIDE[3] = MinimapCluster
+MAP_FRAMES_HIDE[4] = MiniMapVoiceChatFrame
+MAP_FRAMES_HIDE[5] = GameTimeFrame
+MAP_FRAMES_HIDE[6] = MiniMapTrackingButton
+MAP_FRAMES_HIDE[7] = GarrisonLandingPageMinimapButton
+MAP_FRAMES_HIDE[8] = MiniMapTracking
 
 local Minimap_Addon_Buttons = {
     [1] = "MiniMapTrackingFrame",
@@ -55,27 +56,28 @@ local Minimap_Addon_Buttons = {
     [43] = "GwMapTime"
 }
 
-GW_MAP_FRAMES_HOVER = {}
+local MAP_FRAMES_HOVER = {}
 
 local animationIndex = 0
 local animationIndexY = 0
 local anim_thro = 0
 local framesToAdd = {}
 
-function gwSetMinimapHover()
-    if gwGetSetting("MINIMAP_HOVER") == "NONE" then
-        GW_MAP_FRAMES_HOVER[1] = "mapGradient"
-        GW_MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-        GW_MAP_FRAMES_HOVER[3] = "GwMapTime"
-    elseif gwGetSetting("MINIMAP_HOVER") == "CLOCK" then
-        GW_MAP_FRAMES_HOVER[1] = "mapGradient"
-        GW_MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-    elseif gwGetSetting("MINIMAP_HOVER") == "ZONE" then
-        GW_MAP_FRAMES_HOVER[3] = "GwMapTime"
+local function SetMinimapHover()
+    if GetSetting("MINIMAP_HOVER") == "NONE" then
+        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
+        MAP_FRAMES_HOVER[3] = "GwMapTime"
+    elseif GetSetting("MINIMAP_HOVER") == "CLOCK" then
+        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
+    elseif GetSetting("MINIMAP_HOVER") == "ZONE" then
+        MAP_FRAMES_HOVER[3] = "GwMapTime"
     end
 end
+GW.SetMinimapHover = SetMinimapHover
 
-function stackMinimapIcons(self, event)
+local function stackIcons(self, event)
     for _, frame in pairs(framesToAdd) do
         frame:SetParent(Minimap)
     end
@@ -109,10 +111,10 @@ function stackMinimapIcons(self, event)
     local fmGAT = CreateFrame("Button", "GwAddonToggle", UIParent, "GwAddonToggle")
     local fnGAT_OnClick = function(self, button)
         if not self.container:IsShown() then
-            stackMinimapIcons()
+            stackIcons()
             self.container:Show()
         else
-            stackMinimapIcons()
+            stackIcons()
             self.container:Hide()
         end
     end
@@ -132,7 +134,7 @@ function stackMinimapIcons(self, event)
     end
 end
 
-function gw_lfg_icon_animate()
+local function lfgAnim()
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\dungeon-animation")
 
     left = 0.125 * animationIndex
@@ -156,18 +158,113 @@ function gw_lfg_icon_animate()
     end
 end
 
-function gw_lfg_icon_animateStop()
+local function lfgAnimStop()
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\dungeon-animation")
     QueueStatusMinimapButtonIconTexture:SetTexCoord(5 * 0.125, 6 * 0.125, 0.5, 1)
 end
 
-function gw_set_minimap()
+local function hideMiniMapIcons()
+    for k, v in pairs(MAP_FRAMES_HIDE) do
+        if v then
+            v:Hide()
+            v:SetScript(
+                "OnShow",
+                function(self)
+                    self:Hide()
+                end
+            )
+        end
+    end
+
+    Minimap:SetScript(
+        "OnUpdate",
+        function()
+            if TimeManagerClockButton then
+                TimeManagerClockButton:Hide()
+                TimeManagerClockButton:SetScript(
+                    "OnShow",
+                    function(self)
+                        self:Hide()
+                    end
+                )
+                Minimap:SetScript("OnUpdate", nil)
+            end
+        end
+    )
+end
+
+local function hoverMiniMap()
+    for k, v in pairs(MAP_FRAMES_HOVER) do
+        local child = _G[v]
+        UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
+    end
+    MinimapNorthTag:Hide()
+end
+
+local function hoverMiniMapOut()
+    for k, v in pairs(MAP_FRAMES_HOVER) do
+        local child = _G[v]
+        UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
+    end
+    MinimapNorthTag:Show()
+end
+
+local function checkCursorOverMap()
+    if Minimap:IsMouseOver(100, -100, -100, 100) then
+    else
+        hoverMiniMapOut()
+        Minimap:SetScript("OnUpdate", nil)
+    end
+end
+
+-- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
+function GetMinimapShape()
+    return "SQUARE"
+end
+
+local function time_OnEnter(self)
+    local string
+
+    if GetCVarBool("timeMgrUseLocalTime") then
+        string = TIMEMANAGER_TOOLTIP_LOCALTIME:gsub(":", "")
+    else
+        string = TIMEMANAGER_TOOLTIP_REALMTIME:gsub(":", "")
+    end
+
+    GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
+    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_TITLE"])
+    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_LOCAL_REALM"], 1, 1, 1, TRUE)
+    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_STOPWATCH"], 1, 1, 1, TRUE)
+    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_MILITARY"], 1, 1, 1, TRUE)
+    GameTooltip:AddDoubleLine(GwLocalization["MAP_CLOCK_DISPLAY"], string, nil, nil, nil, 1, 1, 0)
+    GameTooltip:SetMinimumWidth(100)
+    GameTooltip:Show()
+end
+
+local function time_OnClick(self, button)
+    if button == "LeftButton" then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+        if IsShiftKeyDown() then
+            TimeManager_ToggleLocalTime()
+            time_OnEnter(self)
+        else
+            TimeManager_ToggleTimeFormat()
+        end
+    end
+    if button == "RightButton" then
+        PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
+        Stopwatch_Toggle()
+    end
+end
+
+local function LoadMinimap()
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
-    gwSetMinimapHover()
+    SetMinimapHover()
 
-    hooksecurefunc("EyeTemplate_OnUpdate", gw_lfg_icon_animate)
-    hooksecurefunc("EyeTemplate_StopAnimating", gw_lfg_icon_animateStop)
+    hooksecurefunc("EyeTemplate_OnUpdate", lfgAnim)
+    hooksecurefunc("EyeTemplate_StopAnimating", lfgAnimStop)
 
     QueueStatusMinimapButtonIconTexture:SetSize(40, 40)
     QueueStatusMinimapButtonIcon:SetSize(40, 40)
@@ -177,7 +274,6 @@ function gw_set_minimap()
 
     Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
 
-    local child = _G[v]
     Minimap:SetParent(UIParent)
 
     Minimap:SetFrameStrata("LOW")
@@ -196,8 +292,8 @@ function gw_set_minimap()
         self.Time:SetText(GameTime_GetTime(false))
     end
     GwMapTime:SetScript("OnUpdate", fnGwMapTime_OnUpdate)
-    GwMapTime:SetScript("OnClick", GwMapTimeClick)
-    GwMapTime:SetScript("OnEnter", GwMapTimeOnEnter)
+    GwMapTime:SetScript("OnClick", time_OnClick)
+    GwMapTime:SetScript("OnEnter", time_OnEnter)
     GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
 
     MinimapNorthTag:ClearAllPoints()
@@ -271,12 +367,9 @@ function gw_set_minimap()
         GameTooltip:AddLine(MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
         GameTooltip:Show()
     end
-    local funGwGarrisonButton_OnLeave = function(self)
-        GameTooltip:Hide()
-    end
     GwGarrisonButton:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
     GwGarrisonButton:SetScript("OnEnter", fnGwGarrisonButton_OnEnter)
-    GwGarrisonButton:SetScript("OnLeave", fnGwGarrisonButton_OnLeave)
+    GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
     GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
@@ -317,7 +410,7 @@ function gw_set_minimap()
         end
     )
 
-    stackMinimapIcons()
+    stackIcons()
     Minimap:SetScale(1.2)
 
     MinimapZoneText:ClearAllPoints()
@@ -365,99 +458,8 @@ function gw_set_minimap()
 
     Minimap:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    Minimap:SetSize(gwGetSetting("MINIMAP_SCALE"), gwGetSetting("MINIMAP_SCALE"))
+    Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
 
     hoverMiniMapOut()
 end
-function hideMiniMapIcons()
-    for k, v in pairs(GW_MAP_FRAMES_HIDE) do
-        if v then
-            v:Hide()
-            v:SetScript(
-                "OnShow",
-                function(self)
-                    self:Hide()
-                end
-            )
-        end
-    end
-
-    Minimap:SetScript(
-        "OnUpdate",
-        function()
-            if TimeManagerClockButton then
-                TimeManagerClockButton:Hide()
-                TimeManagerClockButton:SetScript(
-                    "OnShow",
-                    function(self)
-                        self:Hide()
-                    end
-                )
-                Minimap:SetScript("OnUpdate", nil)
-            end
-        end
-    )
-end
-
-function checkCursorOverMap()
-    if Minimap:IsMouseOver(100, -100, -100, 100) then
-    else
-        hoverMiniMapOut()
-        Minimap:SetScript("OnUpdate", nil)
-    end
-end
-
-function hoverMiniMap()
-    for k, v in pairs(GW_MAP_FRAMES_HOVER) do
-        local child = _G[v]
-        UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
-    end
-    MinimapNorthTag:Hide()
-end
-function hoverMiniMapOut()
-    for k, v in pairs(GW_MAP_FRAMES_HOVER) do
-        local child = _G[v]
-        UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
-    end
-    MinimapNorthTag:Show()
-end
-
-function GetMinimapShape()
-    return "SQUARE"
-end
-
-function GwMapTimeClick(self, button)
-    if button == "LeftButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-        if IsShiftKeyDown() then
-            TimeManager_ToggleLocalTime()
-            GwMapTimeOnEnter(self)
-        else
-            TimeManager_ToggleTimeFormat()
-        end
-    end
-    if button == "RightButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
-        Stopwatch_Toggle()
-    end
-end
-
-function GwMapTimeOnEnter(self)
-    local string
-
-    if GetCVarBool("timeMgrUseLocalTime") then
-        string = TIMEMANAGER_TOOLTIP_LOCALTIME:gsub(":", "")
-    else
-        string = TIMEMANAGER_TOOLTIP_REALMTIME:gsub(":", "")
-    end
-
-    GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_TITLE"])
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_LOCAL_REALM"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_STOPWATCH"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_MILITARY"], 1, 1, 1, TRUE)
-    GameTooltip:AddDoubleLine(GwLocalization["MAP_CLOCK_DISPLAY"], string, nil, nil, nil, 1, 1, 0)
-    GameTooltip:SetMinimumWidth(100)
-    GameTooltip:Show()
-end
+GW.LoadMinimap = LoadMinimap

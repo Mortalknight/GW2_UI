@@ -1,4 +1,6 @@
 local _, GW = ...
+local FACTION_COLOR = GW.FACTION_COLOR
+local AddToAnimation = GW.AddToAnimation
 
 local bgs = {}
 
@@ -14,7 +16,7 @@ local function capStateChanged(self)
     local fnScale = function(prog)
         self:SetScale(prog)
     end
-    addToAnimation(self:GetName(), 2, 1, GetTime(), 0.5, fnScale)
+    AddToAnimation(self:GetName(), 2, 1, GetTime(), 0.5, fnScale)
 end
 
 local function iconOverrider(self, icon)
@@ -40,15 +42,15 @@ local function iconOverrider(self, icon)
         self.icon:SetVertexColor(0, 0, 0)
     elseif iconState == 1 then
         self.IconBackground:SetVertexColor(1, 1, 1)
-        self.icon:SetVertexColor(GW_FACTION_COLOR[2].r, GW_FACTION_COLOR[2].g, GW_FACTION_COLOR[2].b)
+        self.icon:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
     elseif iconState == 2 then
-        self.IconBackground:SetVertexColor(GW_FACTION_COLOR[2].r, GW_FACTION_COLOR[2].g, GW_FACTION_COLOR[2].b)
+        self.IconBackground:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
         self.icon:SetVertexColor(0, 0, 0)
     elseif iconState == 3 then
         self.IconBackground:SetVertexColor(1, 1, 1)
-        self.icon:SetVertexColor(GW_FACTION_COLOR[1].r, GW_FACTION_COLOR[1].g, GW_FACTION_COLOR[1].b)
+        self.icon:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
     elseif iconState == 4 then
-        self.IconBackground:SetVertexColor(GW_FACTION_COLOR[1].r, GW_FACTION_COLOR[1].g, GW_FACTION_COLOR[1].b)
+        self.IconBackground:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
         self.icon:SetVertexColor(0, 0, 0)
     end
 
@@ -153,7 +155,7 @@ local function pvpHud_onEvent(self, event)
     end
 end
 
-function gwLoadBattlegrounds()
+local function LoadBattlegrounds()
     bgs = {
         [529] = {
             ["OnEvent"] = AB_onEvent,
@@ -190,8 +192,8 @@ function gwLoadBattlegrounds()
     CreateFrame("FRAME", "GwPvpHudManager", UIParent)
 
     local gwbgs = CreateFrame("FRAME", "GwBattleGroundScores", UIParent, "GwBattleGroundScores")
-    gwbgs.leftFlag:SetVertexColor(GW_FACTION_COLOR[1].r, GW_FACTION_COLOR[1].g, GW_FACTION_COLOR[1].b)
-    gwbgs.rightFlag:SetVertexColor(GW_FACTION_COLOR[2].r, GW_FACTION_COLOR[2].g, GW_FACTION_COLOR[2].b)
+    gwbgs.leftFlag:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
+    gwbgs.rightFlag:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
 
     gwbgs.scoreLeft:SetFont(UNIT_NAME_FONT, 30)
     gwbgs.scoreLeft:SetShadowColor(0, 0, 0, 1)
@@ -212,3 +214,4 @@ function gwLoadBattlegrounds()
     GwPvpHudManager:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     GwPvpHudManager:SetScript("OnEvent", pvpHud_onEvent)
 end
+GW.LoadBattlegrounds = LoadBattlegrounds

@@ -1,14 +1,22 @@
 local _, GW = ...
+local SetMinimapHover = GW.SetMinimapHover
+local CountTable = GW.CountTable
+local GetActiveProfile = GW.GetActiveProfile
+local SetProfileSettings = GW.SetProfileSettings
+local GetSetting = GW.GetSetting
+local SetSetting = GW.SetSetting
+local ResetToDefault = GW.ResetToDefault
+local GetSettingsProfiles = GW.GetSettingsProfiles
+local UpdateRaidFramesPosition = GW.UpdateRaidFramesPosition
+local UpdateRaidFramesLayout = GW.UpdateRaidFramesLayout
+local MOVABLE_FRAMES = GW.MOVABLE_FRAMES
+local UpdateFramePositions = GW.UpdateFramePositions
+local UpdateHudScale = GW.UpdateHudScale
+local Debug = GW.Debug
 
 local settings_cat = {}
 local options = {}
---
-
---[[
-
-GW_PROFILE_ICONS_PRESET[1] = 'Interface\\icons\\inv_corgi2'
-GW_PROFILE_ICONS_PRESET[2] = 'Interface\\icons\\inv_helmet_151'
-]] local GW_PROFILE_ICONS_PRESET = {}
+local GW_PROFILE_ICONS_PRESET = {}
 
 GW_PROFILE_ICONS_PRESET[0] = "Interface\\icons\\spell_druid_displacement"
 GW_PROFILE_ICONS_PRESET[1] = "Interface\\icons\\ability_socererking_arcanemines"
@@ -18,6 +26,27 @@ GW_PROFILE_ICONS_PRESET[4] = "Interface\\icons\\spell_mage_overpowered"
 GW_PROFILE_ICONS_PRESET[5] = "Interface\\icons\\achievement_boss_kingymiron"
 GW_PROFILE_ICONS_PRESET[6] = "Interface\\icons\\spell_fire_elementaldevastation"
 
+SLASH_GWSLASH1 = "/gw2"
+function SlashCmdList.GWSLASH(msg)
+    GwSettingsWindow:Show()
+    UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+end
+
+-- local forward function defs
+local updateProfiles = nil
+
+local function deleteProfile(index)
+    GW2UI_SETTINGS_PROFILES[index] = nil
+    if GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] ~= nil and GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] == index then
+        SetSetting("ACTIVE_PROFILE", nil)
+    end
+end
+
+local function setProfile(index)
+    GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
+    C_UI.Reload()
+end
+
 local function gwProfileItem_delete_OnEnter(self)
     if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
         self:GetParent().deleteButton:Show()
@@ -26,15 +55,17 @@ local function gwProfileItem_delete_OnEnter(self)
         self:GetParent().activateButton:Show()
     end
 end
+
 local function gwProfileItem_delete_OnClick(self, button)
-    gwWarningPromt(
+    GW.WarningPrompt(
         GwLocalization["PROFILES_DELETE"],
         function()
-            gw_Delete_Settings_Profile(self:GetParent().profileID)
-            gw_Update_Profile_Window()
+            deleteProfile(self:GetParent().profileID)
+            updateProfiles()
         end
     )
 end
+
 local function gwProfileItem_activate_OnEnter(self)
     if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
         self:GetParent().activateButton:Show()
@@ -43,11 +74,13 @@ local function gwProfileItem_activate_OnEnter(self)
         self:GetParent().deleteButton:Show()
     end
 end
+
 local function gwProfileItem_activate_OnClick(self, button)
-    gw_Set_Active_Profile(self:GetParent().profileID)
-    gw_Update_Profile_Window()
+    setProfile(self:GetParent().profileID)
+    updateProfiles()
     self:Hide()
 end
+
 local function gwProfileItem_OnLoad(self)
     self.name:SetFont(UNIT_NAME_FONT, 14)
     self.name:SetTextColor(1, 1, 1)
@@ -66,6 +99,7 @@ local function gwProfileItem_OnLoad(self)
     self.activateButton:SetScript("OnEnter", gwProfileItem_activate_OnEnter)
     self.activateButton:SetScript("OnClick", gwProfileItem_activate_OnClick)
 end
+
 local function gwProfileItem_OnEnter(self)
     if self.deleteable ~= nil and self.deleteable == true then
         self.deleteButton:Show()
@@ -75,6 +109,7 @@ local function gwProfileItem_OnEnter(self)
     end
     self.background:SetBlendMode("ADD")
 end
+
 local function gwProfileItem_OnLeave(self)
     if self.deleteable ~= nil and self.deleteable == true then
         self.deleteButton:Hide()
@@ -83,8 +118,412 @@ local function gwProfileItem_OnLeave(self)
     self.background:SetBlendMode("BLEND")
 end
 
-function create_settings_window()
-    local fmGWP = CreateFrame("Frame", "GwWarningPromt", UIParent, "GwWarningPromt")
+updateProfiles = function()
+    local currentProfile = GetActiveProfile()
+
+    local h = 0
+    local profiles = GetSettingsProfiles()
+    for i = 0, 6 do
+        local k = i
+        local v = profiles[i]
+        local f = _G["GwProfileItem" .. k]
+        if f == nil then
+            f = CreateFrame("Button", "GwProfileItem" .. k, GwSettingsProfilesframe.scrollchild, "GwProfileItem")
+            f:SetScript("OnEnter", gwProfileItem_OnEnter)
+            f:SetScript("OnLeave", gwProfileItem_OnLeave)
+            gwProfileItem_OnLoad(f)
+        end
+
+        if v ~= nil then
+            f:Show()
+            f.profileID = k
+            f.icon:SetTexture(GW_PROFILE_ICONS_PRESET[k])
+
+            f.deleteable = true
+            f.background:SetTexCoord(0, 1, 0, 0.5)
+            f.activateAble = true
+            if currentProfile == k then
+                f.background:SetTexCoord(0, 1, 0.5, 1)
+                f.activateAble = false
+            end
+
+            local description =
+                GwLocalization["PROFILES_CREATED"] ..
+                v["profileCreatedDate"] ..
+                    GwLocalization["PROFILES_CREATED_BY"] ..
+                        v["profileCreatedCharacter"] ..
+                            GwLocalization["PROFILES_LAST_UPDATE"] .. v["profileLastUpdated"]
+
+            f.name:SetText(v["profilename"])
+            f.desc:SetText(description)
+            f:SetPoint("TOPLEFT", 15, (-70 * h) + -120)
+            h = h + 1
+        else
+            f:Hide()
+        end
+    end
+
+    if h < 6 then
+        GwCreateNewProfile:Enable()
+    else
+        GwCreateNewProfile:Disable()
+    end
+
+    local scrollM = (120 + (70 * h))
+    local scroll = 0
+    local thumbheight = 1
+
+    if scrollM > 440 then
+        scroll = math.abs(440 - scrollM)
+        thumbheight = 100
+    end
+
+    GwSettingsProfilesframe.scrollFrame:SetScrollChild(GwSettingsProfilesframe.scrollchild)
+    GwSettingsProfilesframe.scrollFrame.maxScroll = scroll
+
+    GwSettingsProfilesframe.slider.thumb:SetHeight(thumbheight)
+    GwSettingsProfilesframe.slider:SetMinMaxValues(0, scroll)
+end
+
+local function addProfile(name)
+    local index = 0
+    local profileList = GetSettingsProfiles()
+
+    for i = 0, 7 do
+        index = i
+        if profileList[i] == nil then
+            break
+        end
+    end
+
+    if index > 6 then
+        return
+    end
+
+    GW2UI_SETTINGS_PROFILES[index] = {}
+    GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
+    GW2UI_SETTINGS_PROFILES[index]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
+    GW2UI_SETTINGS_PROFILES[index]["profileCreatedCharacter"] = GetUnitName("player", true)
+    GW2UI_SETTINGS_PROFILES[index]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
+
+    GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
+    SetProfileSettings()
+    updateProfiles()
+end
+
+local function switchCat(index)
+    for i = 0, 20 do
+        if _G["GwSettingsLabel" .. i] ~= nil then
+            _G["GwSettingsLabel" .. i].iconbg:Hide()
+        end
+    end
+
+    _G["GwSettingsLabel" .. index].iconbg:Show()
+
+    for k, v in pairs(settings_cat) do
+        if k ~= index then
+            _G[v]:Hide()
+        else
+            _G[v]:Show()
+            UIFrameFadeIn(_G[v], 0.2, 0, 1)
+        end
+    end
+end
+
+local function createCat(name, desc, frameName, icon)
+    local i = CountTable(settings_cat)
+    settings_cat[i] = frameName
+
+    local fnF_OnEnter = function(self)
+        _G[self:GetName() .. "Texture"]:SetBlendMode("ADD")
+    end
+    local fnF_OnLeave = function(self)
+        _G[self:GetName() .. "Texture"]:SetBlendMode("BLEND")
+    end
+    local f = CreateFrame("Button", "GwSettingsLabel" .. i, UIParent, "GwSettingsLabel")
+    f:SetScript("OnEnter", fnF_OnEnter)
+    f:SetScript("OnLeave", fnF_OnLeave)
+    f:SetPoint("TOPLEFT", -40, -32 + (-40 * i))
+
+    _G["GwSettingsLabel" .. i .. "Texture"]:SetTexCoord(0, 0.5, 0.25 * icon, 0.25 * (icon + 1))
+    if icon > 3 then
+        icon = icon - 4
+        _G["GwSettingsLabel" .. i .. "Texture"]:SetTexCoord(0.5, 1, 0.25 * icon, 0.25 * (icon + 1))
+    end
+
+    f:SetScript(
+        "OnEnter",
+        function()
+            GameTooltip:SetOwner(f, "ANCHOR_LEFT", 0, -40)
+            GameTooltip:ClearLines()
+            GameTooltip:AddLine(name, 1, 1, 1)
+            GameTooltip:AddLine(desc, 1, 1, 1)
+            GameTooltip:Show()
+        end
+    )
+    f:SetScript("OnLeave", GameTooltip_Hide)
+
+    f:SetScript(
+        "OnClick",
+        function(event)
+            switchCat(i)
+        end
+    )
+end
+
+local function addOption(name, desc, optionName, frameName, callback)
+    local i = CountTable(options)
+
+    options[i] = {}
+    options[i]["name"] = name
+    options[i]["desc"] = desc
+    options[i]["optionName"] = optionName
+    options[i]["frameName"] = frameName
+    options[i]["optionType"] = "boolean"
+    options[i]["callback"] = callback
+end
+
+local function addOptionSlider(name, desc, optionName, frameName, callback, min, max)
+    local i = CountTable(options)
+
+    options[i] = {}
+    options[i]["name"] = name
+    options[i]["desc"] = desc
+    options[i]["optionName"] = optionName
+    options[i]["frameName"] = frameName
+    options[i]["callback"] = callback
+    options[i]["min"] = min
+    options[i]["max"] = max
+    options[i]["optionType"] = "slider"
+end
+
+local function addOptionDropdown(name, desc, optionName, frameName, callback, options_list, option_names)
+    local i = CountTable(options)
+
+    options[i] = {}
+    options[i]["name"] = name
+    options[i]["desc"] = desc
+    options[i]["optionName"] = optionName
+    options[i]["frameName"] = frameName
+    options[i]["callback"] = callback
+
+    options[i]["optionType"] = "dropdown"
+    options[i]["options"] = {}
+    options[i]["options"] = options_list
+    options[i]["options_names"] = {}
+    options[i]["options_names"] = option_names
+end
+
+local settings_window_open_before_change = false
+local function moveHudObjects()
+    lhb:Show()
+    if GwSettingsWindow:IsShown() then
+        settings_window_open_before_change = true
+    end
+    GwSettingsWindow:Hide()
+    for k, v in pairs(MOVABLE_FRAMES) do
+        v:EnableMouse(true)
+        v:SetMovable(true)
+        v:Show()
+    end
+end
+
+local function lockHudObjects()
+    if InCombatLockdown() then
+        DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+        return
+    end
+    lhb:Hide()
+    if settings_window_open_before_change then
+        settings_window_open_before_change = false
+        GwSettingsWindow:Show()
+    end
+
+    for k, v in pairs(MOVABLE_FRAMES) do
+        v:EnableMouse(false)
+        v:SetMovable(false)
+        v:Hide()
+    end
+    UpdateFramePositions()
+    C_UI.Reload()
+end
+
+local function inputPrompt(text, method)
+    GwWarningPrompt.string:SetText(text)
+    GwWarningPrompt.method = method
+    GwWarningPrompt:Show()
+    GwWarningPrompt.input:Show()
+    GwWarningPrompt.input:SetText("")
+end
+
+local function setMultibarCols()
+    local cols = GetSetting("MULTIBAR_RIGHT_COLS")
+    Debug("setting multibar cols", cols)
+    local mb1 = GetSetting("MultiBarRight")
+    local mb2 = GetSetting("MultiBarLeft")
+    mb1["ButtonsPerRow"] = cols
+    mb2["ButtonsPerRow"] = cols
+    SetSetting("MultiBarRight", mb1)
+    SetSetting("MultiBarLeft", mb2)
+end
+
+local function WarningPrompt(text, method)
+    GwWarningPrompt.string:SetText(text)
+    GwWarningPrompt.method = method
+    GwWarningPrompt:Show()
+    GwWarningPrompt.input:Hide()
+end
+GW.WarningPrompt = WarningPrompt
+
+local function DisplaySettings()
+    local box_padding = 8
+    local pX = 244
+    local pY = -48
+
+    local padding = {}
+
+    for k, v in pairs(options) do
+        local newLine = false
+        if padding[v["frameName"]] == nil then
+            padding[v["frameName"]] = {}
+            padding[v["frameName"]]["x"] = box_padding
+            padding[v["frameName"]]["y"] = -55
+        end
+        optionFrameType = "GwOptionBox"
+        if v["optionType"] == "slider" then
+            optionFrameType = "GwOptionBoxSlider"
+            newLine = true
+        end
+        if v["optionType"] == "dropdown" then
+            optionFrameType = "GwOptionBoxDropDown"
+            newLine = true
+        end
+
+        local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v["frameName"]], optionFrameType)
+
+        of:ClearAllPoints()
+        if of:GetWidth() > 300 then
+            padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
+            padding[v["frameName"]]["x"] = box_padding
+        end
+        of:SetPoint("TOPLEFT", padding[v["frameName"]]["x"], padding[v["frameName"]]["y"])
+        _G["GwOptionBox" .. k .. "Title"]:SetText(v["name"])
+        _G["GwOptionBox" .. k .. "Title"]:SetFont(DAMAGE_TEXT_FONT, 12)
+        _G["GwOptionBox" .. k .. "Title"]:SetTextColor(1, 1, 1)
+        _G["GwOptionBox" .. k .. "Title"]:SetShadowColor(0, 0, 0, 1)
+
+        of:SetScript(
+            "OnEnter",
+            function()
+                GameTooltip:SetOwner(of, "ANCHOR_CURSOR", 0, 0)
+                GameTooltip:ClearLines()
+                GameTooltip:AddLine(v["name"], 1, 1, 1)
+                GameTooltip:AddLine(v["desc"], 1, 1, 1)
+                GameTooltip:Show()
+            end
+        )
+        of:SetScript("OnLeave", GameTooltip_Hide)
+
+        if v["optionType"] == "dropdown" then
+            local i = 1
+            local pre = _G["GwOptionBox" .. k].container
+            for key, val in pairs(v["options"]) do
+                local dd =
+                    CreateFrame(
+                    "Button",
+                    "GwOptionBox" .. "dropdown" .. i,
+                    _G[v["frameName"]].container,
+                    "GwDropDownItem"
+                )
+                dd:SetPoint("TOPRIGHT", pre, "BOTTOMRIGHT")
+                dd:SetParent(_G["GwOptionBox" .. k].container)
+
+                dd.string:SetFont(UNIT_NAME_FONT, 12)
+                _G["GwOptionBox" .. k].button.string:SetFont(UNIT_NAME_FONT, 12)
+                dd.string:SetText(v["options_names"][key])
+                pre = dd
+
+                if GetSetting(v["optionName"]) == val then
+                    _G["GwOptionBox" .. k].button.string:SetText(v["options_names"][key])
+                end
+
+                dd:SetScript(
+                    "OnClick",
+                    function()
+                        _G["GwOptionBox" .. k].button.string:SetText(v["options_names"][key])
+
+                        if _G["GwOptionBox" .. k].container:IsShown() then
+                            _G["GwOptionBox" .. k].container:Hide()
+                        else
+                            _G["GwOptionBox" .. k].container:Show()
+                        end
+
+                        SetSetting(v["optionName"], val)
+
+                        if v["callback"] ~= nil then
+                            v["callback"]()
+                        end
+                    end
+                )
+
+                i = i + 1
+            end
+            _G["GwOptionBox" .. k].button:SetScript(
+                "OnClick",
+                function()
+                    if _G["GwOptionBox" .. k].container:IsShown() then
+                        _G["GwOptionBox" .. k].container:Hide()
+                    else
+                        _G["GwOptionBox" .. k].container:Show()
+                    end
+                end
+            )
+        end
+
+        if v["optionType"] == "slider" then
+            _G["GwOptionBox" .. k .. "Slider"]:SetMinMaxValues(v["min"], v["max"])
+            _G["GwOptionBox" .. k .. "Slider"]:SetValue(GetSetting(v["optionName"]))
+            _G["GwOptionBox" .. k .. "Slider"]:SetScript(
+                "OnValueChanged",
+                function()
+                    SetSetting(v["optionName"], _G["GwOptionBox" .. k .. "Slider"]:GetValue())
+                    if v["callback"] ~= nil then
+                        v["callback"]()
+                    end
+                end
+            )
+        end
+        if v["optionType"] == "boolean" then
+            _G["GwOptionBox" .. k .. "CheckButton"]:SetChecked(GetSetting(v["optionName"]))
+            _G["GwOptionBox" .. k .. "CheckButton"]:SetScript(
+                "OnClick",
+                function()
+                    toSet = false
+                    if _G["GwOptionBox" .. k .. "CheckButton"]:GetChecked() then
+                        toSet = true
+                    end
+                    SetSetting(v["optionName"], toSet)
+
+                    if v["callback"] ~= nil then
+                        v["callback"]()
+                    end
+                end
+            )
+        end
+
+        if newLine == false then
+            padding[v["frameName"]]["x"] = padding[v["frameName"]]["x"] + of:GetWidth() + box_padding
+            if padding[v["frameName"]]["x"] > 440 then
+                padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
+                padding[v["frameName"]]["x"] = box_padding
+            end
+        end
+    end
+end
+GW.DisplaySettings = DisplaySettings
+
+local function LoadSettings()
+    local fmGWP = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
     fmGWP.string:SetFont(UNIT_NAME_FONT, 14)
     fmGWP.string:SetTextColor(1, 1, 1)
     fmGWP.acceptButton:SetText(GwLocalization["SETTINGS_ACCEPT"])
@@ -114,7 +553,7 @@ function create_settings_window()
     fmGWP.acceptButton:SetScript("OnClick", fnGWP_accept_OnClick)
     fmGWP.cancelButton:SetScript("OnClick", fnGWP_cancel_OnClick)
 
-    tinsert(UISpecialFrames, "GwWarningPromt")
+    tinsert(UISpecialFrames, "GwWarningPrompt")
 
     local fnMf_OnDragStart = function(self)
         self:StartMoving()
@@ -128,12 +567,13 @@ function create_settings_window()
     mf:SetScript("OnDragStop", fnMf_OnDragStop)
 
     local sWindow = CreateFrame("Frame", "GwSettingsWindow", UIParent, "GwSettingsWindow")
+    tinsert(UISpecialFrames, "GwSettingsWindow")
     local fmGSWMH = GwSettingsWindowMoveHud
     local fmGSWS = GwSettingsWindowSave
 
     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
     GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT, 12)
-    GwSettingsWindowVersionString:SetText(GW_VERSION_STRING)
+    GwSettingsWindowVersionString:SetText(GW.VERSION_STRING)
     GwSettingsWindowHeaderString:SetText(GwLocalization["SETTINGS_TITLE"])
     GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
     GwSettingsWindowSave:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
@@ -143,10 +583,10 @@ function create_settings_window()
             DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
             return
         end
-        gw_moveHudObjects()
+        moveHudObjects()
     end
     local fnGSWS_OnClick = function(self, button)
-        ReloadUI()
+        C_UI.Reload()
     end
     fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
     fmGSWS:SetScript("OnClick", fnGSWS_OnClick)
@@ -182,7 +622,7 @@ function create_settings_window()
     )
 
     lhb = CreateFrame("Button", "GwLockHudButton", UIParent, "GwStandardButton")
-    lhb:SetScript("OnClick", gw_lockHudObjects)
+    lhb:SetScript("OnClick", lockHudObjects)
     lhb:ClearAllPoints()
     lhb:SetText(GwLocalization["SETTING_LOCK_HUD"])
     lhb:SetPoint("TOP", UIParent, "TOP", 0, 0)
@@ -261,12 +701,7 @@ function create_settings_window()
     end
     GwSettingsButtonClose:SetScript("OnClick", fnGSBC_OnClick)
 
-    create_settings_cat(
-        GwLocalization["MODULES_CAT"],
-        GwLocalization["MODULES_CAT_TOOLTIP"],
-        "GwSettingsModuleOption",
-        0
-    )
+    createCat(GwLocalization["MODULES_CAT"], GwLocalization["MODULES_CAT_TOOLTIP"], "GwSettingsModuleOption", 0)
 
     addOption(
         GwLocalization["HEALTH_GLOBE"],
@@ -353,7 +788,7 @@ function create_settings_window()
         "GwSettingsModuleOption"
     )
 
-    create_settings_cat(GwLocalization["TARGET_CAT"], GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
+    createCat(GwLocalization["TARGET_CAT"], GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
     addOption(
         GwLocalization["TARGET_OF_TARGET"],
@@ -435,7 +870,7 @@ function create_settings_window()
     )
     addOption(GwLocalization["SHOW_BUFFS"], GwLocalization["SHOW_BUFFS_DESC"], "focus_BUFFS", "GwSettingsFocusOptions")
 
-    create_settings_cat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
+    createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
 
     addOption(
         GwLocalization["ACTION_BAR_FADE"],
@@ -493,7 +928,7 @@ function create_settings_window()
         "MINIMAP_HOVER",
         "GwSettingsHudOptions",
         function()
-            gwSetMinimapHover()
+            SetMinimapHover()
         end,
         {"NONE", "BOTH", "CLOCK", "ZONE"},
         {
@@ -509,7 +944,7 @@ function create_settings_window()
         "HUD_SCALE",
         "GwSettingsHudOptions",
         function()
-            gwUpdateHudScale()
+            UpdateHudScale()
         end,
         {1, 0.9, 0.8},
         {GwLocalization["HUD_SCALE_DEFAULT"], GwLocalization["HUD_SCALE_SMALL"], GwLocalization["HUD_SCALE_TINY"]}
@@ -520,7 +955,7 @@ function create_settings_window()
         "MINIMAP_SCALE",
         "GwSettingsHudOptions",
         function()
-            Minimap:SetSize(gwGetSetting("MINIMAP_SCALE"), gwGetSetting("MINIMAP_SCALE"))
+            Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
         end,
         {250, 200, 170},
         {
@@ -534,14 +969,12 @@ function create_settings_window()
         GwLocalization["STG_RIGHT_BAR_COLS_DESC"],
         "MULTIBAR_RIGHT_COLS",
         "GwSettingsHudOptions",
-        function()
-            gwSetMultibarCols()
-        end,
+        setMultibarCols,
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"}
     )
 
-    create_settings_cat(GwLocalization["GROUP_CAT"], GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe", 4)
+    createCat(GwLocalization["GROUP_CAT"], GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe", 4)
 
     addOption(
         GwLocalization["RAID_PARTY_STYLE"],
@@ -591,15 +1024,13 @@ function create_settings_window()
         "RAID_UNITS_PER_COLUMN",
         "GwSettingsGroupframe",
         function()
-            if gwGetSetting("GROUP_FRAMES") == true then
-                GwRaidFrameContainer:SetHeight(
-                    (gwGetSetting("RAID_HEIGHT") + 2) * gwGetSetting("RAID_UNITS_PER_COLUMN")
-                )
+            if GetSetting("GROUP_FRAMES") == true then
+                GwRaidFrameContainer:SetHeight((GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN"))
                 GwRaidFrameContainerFrameMoveAble:SetHeight(
-                    (gwGetSetting("RAID_HEIGHT") + 2) * gwGetSetting("RAID_UNITS_PER_COLUMN")
+                    (GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN")
                 )
-                gw_raidframes_update_layout()
-                gw_raidframes_updateMoveablePosition()
+                UpdateRaidFramesLayout()
+                UpdateRaidFramesPosition()
             end
         end,
         1,
@@ -612,9 +1043,9 @@ function create_settings_window()
         "RAID_WIDTH",
         "GwSettingsGroupframe",
         function()
-            if gwGetSetting("GROUP_FRAMES") == true then
-                gw_raidframes_update_layout()
-                gw_raidframes_updateMoveablePosition()
+            if GetSetting("GROUP_FRAMES") == true then
+                UpdateRaidFramesLayout()
+                UpdateRaidFramesPosition()
             end
         end,
         55,
@@ -626,24 +1057,19 @@ function create_settings_window()
         "RAID_HEIGHT",
         "GwSettingsGroupframe",
         function()
-            if gwGetSetting("GROUP_FRAMES") == true then
-                gw_raidframes_update_layout()
-                gw_raidframes_updateMoveablePosition()
+            if GetSetting("GROUP_FRAMES") == true then
+                UpdateRaidFramesLayout()
+                UpdateRaidFramesPosition()
             end
         end,
         47,
         100
     )
 
-    create_settings_cat(
-        GwLocalization["PROFILES_CAT"],
-        GwLocalization["PROFILES_TOOLTIP"],
-        "GwSettingsProfilesframe",
-        5
-    )
+    createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
     _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
 
-    switch_settings_cat(0)
+    switchCat(0)
     GwSettingsWindow:Hide()
 
     GwSettingsProfilesframe.slider:SetValue(0)
@@ -669,10 +1095,10 @@ function create_settings_window()
     resetTodefault.activateButton:SetScript(
         "OnClick",
         function()
-            gwWarningPromt(
+            GW.WarningPrompt(
                 GwLocalization["PROFILES_DEFAULT_SETTINGS_PROMPT"],
                 function()
-                    gwResetToDefault()
+                    ResetToDefault()
                 end
             )
         end
@@ -684,11 +1110,11 @@ function create_settings_window()
     fmGCNP:SetWidth(fmGCNP:GetTextWidth() + 10)
     fmGCNP:SetText(GwLocalization["PROFILES_NEW_PROFILE"])
     local fnGCNP_OnClick = function(self, button)
-        gwInputPromtPromt(
+        inputPrompt(
             "New profile name",
             function()
-                gw_Add_Settings_Profile(GwWarningPromt.input:GetText())
-                GwWarningPromt:Hide()
+                addProfile(GwWarningPrompt.input:GetText())
+                GwWarningPrompt:Hide()
             end
         )
     end
@@ -696,423 +1122,6 @@ function create_settings_window()
 
     GwCreateNewProfile:SetPoint("TOPLEFT", 15, -80)
 
-    gw_Update_Profile_Window()
+    updateProfiles()
 end
-
-function gw_Update_Profile_Window()
-    local currentProfile = gwGetActiveProfile()
-
-    local h = 0
-    local profiles = gwGetSettingsProfiles()
-    for i = 0, 6 do
-        local k = i
-        local v = profiles[i]
-        local f = _G["GwProfileItem" .. k]
-        if f == nil then
-            f = CreateFrame("Button", "GwProfileItem" .. k, GwSettingsProfilesframe.scrollchild, "GwProfileItem")
-            f:SetScript("OnEnter", gwProfileItem_OnEnter)
-            f:SetScript("OnLeave", gwProfileItem_OnLeave)
-            gwProfileItem_OnLoad(f)
-        end
-
-        if v ~= nil then
-            f:Show()
-            f.profileID = k
-            f.icon:SetTexture(GW_PROFILE_ICONS_PRESET[k])
-
-            f.deleteable = true
-            f.background:SetTexCoord(0, 1, 0, 0.5)
-            f.activateAble = true
-            if currentProfile == k then
-                f.background:SetTexCoord(0, 1, 0.5, 1)
-                f.activateAble = false
-            end
-
-            local description =
-                GwLocalization["PROFILES_CREATED"] ..
-                v["profileCreatedDate"] ..
-                    GwLocalization["PROFILES_CREATED_BY"] ..
-                        v["profileCreatedCharacter"] ..
-                            GwLocalization["PROFILES_LAST_UPDATE"] .. v["profileLastUpdated"]
-
-            f.name:SetText(v["profilename"])
-            f.desc:SetText(description)
-            f:SetPoint("TOPLEFT", 15, (-70 * h) + -120)
-            h = h + 1
-        else
-            f:Hide()
-        end
-    end
-
-    if h < 6 then
-        GwCreateNewProfile:Enable()
-    else
-        GwCreateNewProfile:Disable()
-    end
-
-    local scrollM = (120 + (70 * h))
-    local scroll = 0
-    local thumbheight = 1
-
-    if scrollM > 440 then
-        scroll = math.abs(440 - scrollM)
-        thumbheight = 100
-    end
-
-    GwSettingsProfilesframe.scrollFrame:SetScrollChild(GwSettingsProfilesframe.scrollchild)
-    GwSettingsProfilesframe.scrollFrame.maxScroll = scroll
-
-    GwSettingsProfilesframe.slider.thumb:SetHeight(thumbheight)
-    GwSettingsProfilesframe.slider:SetMinMaxValues(0, scroll)
-end
-
-function gw_Add_Settings_Profile(name)
-    local index = 0
-    local profileList = gwGetSettingsProfiles()
-
-    for i = 0, 7 do
-        index = i
-        if profileList[i] == nil then
-            break
-        end
-    end
-
-    if index > 6 then
-        return
-    end
-
-    GW2UI_SETTINGS_PROFILES[index] = {}
-    GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
-    GW2UI_SETTINGS_PROFILES[index]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
-    GW2UI_SETTINGS_PROFILES[index]["profileCreatedCharacter"] = GetUnitName("player", true)
-    GW2UI_SETTINGS_PROFILES[index]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
-
-    GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
-    gwSetProfileSettings()
-    gw_Update_Profile_Window()
-end
-
-function gw_Delete_Settings_Profile(index)
-    GW2UI_SETTINGS_PROFILES[index] = nil
-    if GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] ~= nil and GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] == index then
-        gwSetSetting("ACTIVE_PROFILE", nil)
-    end
-end
-
-function gw_Set_Active_Profile(index)
-    GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
-    ReloadUI()
-end
-
-function create_settings_cat(name, desc, frameName, icon)
-    local i = GW.countTable(settings_cat)
-    settings_cat[i] = frameName
-
-    local fnF_OnEnter = function(self)
-        _G[self:GetName() .. "Texture"]:SetBlendMode("ADD")
-    end
-    local fnF_OnLeave = function(self)
-        _G[self:GetName() .. "Texture"]:SetBlendMode("BLEND")
-    end
-    local f = CreateFrame("Button", "GwSettingsLabel" .. i, UIParent, "GwSettingsLabel")
-    f:SetScript("OnEnter", fnF_OnEnter)
-    f:SetScript("OnLeave", fnF_OnLeave)
-    f:SetPoint("TOPLEFT", -40, -32 + (-40 * i))
-
-    _G["GwSettingsLabel" .. i .. "Texture"]:SetTexCoord(0, 0.5, 0.25 * icon, 0.25 * (icon + 1))
-    if icon > 3 then
-        icon = icon - 4
-        _G["GwSettingsLabel" .. i .. "Texture"]:SetTexCoord(0.5, 1, 0.25 * icon, 0.25 * (icon + 1))
-    end
-
-    f:SetScript(
-        "OnEnter",
-        function()
-            GameTooltip:SetOwner(f, "ANCHOR_LEFT", 0, -40)
-            GameTooltip:ClearLines()
-            GameTooltip:AddLine(name, 1, 1, 1)
-            GameTooltip:AddLine(desc, 1, 1, 1)
-            GameTooltip:Show()
-        end
-    )
-    f:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip:Hide()
-        end
-    )
-
-    f:SetScript(
-        "OnClick",
-        function(event)
-            switch_settings_cat(i)
-        end
-    )
-end
-
-function switch_settings_cat(index)
-    for i = 0, 20 do
-        if _G["GwSettingsLabel" .. i] ~= nil then
-            _G["GwSettingsLabel" .. i].iconbg:Hide()
-        end
-    end
-
-    _G["GwSettingsLabel" .. index].iconbg:Show()
-
-    for k, v in pairs(settings_cat) do
-        if k ~= index then
-            _G[v]:Hide()
-        else
-            _G[v]:Show()
-            UIFrameFadeIn(_G[v], 0.2, 0, 1)
-        end
-    end
-end
-
-function addOption(name, desc, optionName, frameName, callback)
-    local i = GW.countTable(options)
-
-    options[i] = {}
-    options[i]["name"] = name
-    options[i]["desc"] = desc
-    options[i]["optionName"] = optionName
-    options[i]["frameName"] = frameName
-    options[i]["optionType"] = "boolean"
-    options[i]["callback"] = callback
-end
-function addOptionSlider(name, desc, optionName, frameName, callback, min, max)
-    local i = GW.countTable(options)
-
-    options[i] = {}
-    options[i]["name"] = name
-    options[i]["desc"] = desc
-    options[i]["optionName"] = optionName
-    options[i]["frameName"] = frameName
-    options[i]["callback"] = callback
-    options[i]["min"] = min
-    options[i]["max"] = max
-    options[i]["optionType"] = "slider"
-end
-function addOptionDropdown(name, desc, optionName, frameName, callback, options_list, option_names)
-    local i = GW.countTable(options)
-
-    options[i] = {}
-    options[i]["name"] = name
-    options[i]["desc"] = desc
-    options[i]["optionName"] = optionName
-    options[i]["frameName"] = frameName
-    options[i]["callback"] = callback
-
-    options[i]["optionType"] = "dropdown"
-    options[i]["options"] = {}
-    options[i]["options"] = options_list
-    options[i]["options_names"] = {}
-    options[i]["options_names"] = option_names
-end
-
-function display_options()
-    local box_padding = 8
-    local pX = 244
-    local pY = -48
-
-    local padding = {}
-
-    for k, v in pairs(options) do
-        local newLine = false
-        if padding[v["frameName"]] == nil then
-            padding[v["frameName"]] = {}
-            padding[v["frameName"]]["x"] = box_padding
-            padding[v["frameName"]]["y"] = -55
-        end
-        optionFrameType = "GwOptionBox"
-        if v["optionType"] == "slider" then
-            optionFrameType = "GwOptionBoxSlider"
-            newLine = true
-        end
-        if v["optionType"] == "dropdown" then
-            optionFrameType = "GwOptionBoxDropDown"
-            newLine = true
-        end
-
-        local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v["frameName"]], optionFrameType)
-
-        of:ClearAllPoints()
-        if of:GetWidth() > 300 then
-            padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
-            padding[v["frameName"]]["x"] = box_padding
-        end
-        of:SetPoint("TOPLEFT", padding[v["frameName"]]["x"], padding[v["frameName"]]["y"])
-        _G["GwOptionBox" .. k .. "Title"]:SetText(v["name"])
-        _G["GwOptionBox" .. k .. "Title"]:SetFont(DAMAGE_TEXT_FONT, 12)
-        _G["GwOptionBox" .. k .. "Title"]:SetTextColor(1, 1, 1)
-        _G["GwOptionBox" .. k .. "Title"]:SetShadowColor(0, 0, 0, 1)
-
-        of:SetScript(
-            "OnEnter",
-            function()
-                GameTooltip:SetOwner(of, "ANCHOR_CURSOR", 0, 0)
-                GameTooltip:ClearLines()
-                GameTooltip:AddLine(v["name"], 1, 1, 1)
-                GameTooltip:AddLine(v["desc"], 1, 1, 1)
-                GameTooltip:Show()
-            end
-        )
-        of:SetScript(
-            "OnLeave",
-            function()
-                GameTooltip:Hide()
-            end
-        )
-
-        if v["optionType"] == "dropdown" then
-            local i = 1
-            local pre = _G["GwOptionBox" .. k].container
-            for key, val in pairs(v["options"]) do
-                local dd =
-                    CreateFrame(
-                    "Button",
-                    "GwOptionBox" .. "dropdown" .. i,
-                    _G[v["frameName"]].container,
-                    "GwDropDownItem"
-                )
-                dd:SetPoint("TOPRIGHT", pre, "BOTTOMRIGHT")
-                dd:SetParent(_G["GwOptionBox" .. k].container)
-
-                dd.string:SetFont(UNIT_NAME_FONT, 12)
-                _G["GwOptionBox" .. k].button.string:SetFont(UNIT_NAME_FONT, 12)
-                dd.string:SetText(v["options_names"][key])
-                pre = dd
-
-                if gwGetSetting(v["optionName"]) == val then
-                    _G["GwOptionBox" .. k].button.string:SetText(v["options_names"][key])
-                end
-
-                dd:SetScript(
-                    "OnClick",
-                    function()
-                        _G["GwOptionBox" .. k].button.string:SetText(v["options_names"][key])
-
-                        if _G["GwOptionBox" .. k].container:IsShown() then
-                            _G["GwOptionBox" .. k].container:Hide()
-                        else
-                            _G["GwOptionBox" .. k].container:Show()
-                        end
-
-                        gwSetSetting(v["optionName"], val)
-
-                        if v["callback"] ~= nil then
-                            v["callback"]()
-                        end
-                    end
-                )
-
-                i = i + 1
-            end
-            _G["GwOptionBox" .. k].button:SetScript(
-                "OnClick",
-                function()
-                    if _G["GwOptionBox" .. k].container:IsShown() then
-                        _G["GwOptionBox" .. k].container:Hide()
-                    else
-                        _G["GwOptionBox" .. k].container:Show()
-                    end
-                end
-            )
-        end
-
-        if v["optionType"] == "slider" then
-            _G["GwOptionBox" .. k .. "Slider"]:SetMinMaxValues(v["min"], v["max"])
-            _G["GwOptionBox" .. k .. "Slider"]:SetValue(gwGetSetting(v["optionName"]))
-            _G["GwOptionBox" .. k .. "Slider"]:SetScript(
-                "OnValueChanged",
-                function()
-                    gwSetSetting(v["optionName"], _G["GwOptionBox" .. k .. "Slider"]:GetValue())
-                    if v["callback"] ~= nil then
-                        v["callback"]()
-                    end
-                end
-            )
-        end
-        if v["optionType"] == "boolean" then
-            _G["GwOptionBox" .. k .. "CheckButton"]:SetChecked(gwGetSetting(v["optionName"]))
-            _G["GwOptionBox" .. k .. "CheckButton"]:SetScript(
-                "OnClick",
-                function()
-                    toSet = false
-                    if _G["GwOptionBox" .. k .. "CheckButton"]:GetChecked() then
-                        toSet = true
-                    end
-                    gwSetSetting(v["optionName"], toSet)
-
-                    if v["callback"] ~= nil then
-                        v["callback"]()
-                    end
-                end
-            )
-        end
-
-        if newLine == false then
-            padding[v["frameName"]]["x"] = padding[v["frameName"]]["x"] + of:GetWidth() + box_padding
-            if padding[v["frameName"]]["x"] > 440 then
-                padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
-                padding[v["frameName"]]["x"] = box_padding
-            end
-        end
-    end
-end
-
-tinsert(UISpecialFrames, "GwSettingsWindow")
-
-SLASH_GWSLASH1 = "/gw2"
-function SlashCmdList.GWSLASH(msg)
-    GwSettingsWindow:Show()
-    UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
-end
-
-local settings_window_open_before_change = false
-function gw_moveHudObjects()
-    lhb:Show()
-    if GwSettingsWindow:IsShown() then
-        settings_window_open_before_change = true
-    end
-    GwSettingsWindow:Hide()
-    for k, v in pairs(GW_MOVABLE_FRAMES) do
-        v:EnableMouse(true)
-        v:SetMovable(true)
-        v:Show()
-    end
-end
-function gw_lockHudObjects()
-    if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
-        return
-    end
-    lhb:Hide()
-    if settings_window_open_before_change then
-        settings_window_open_before_change = false
-        GwSettingsWindow:Show()
-    end
-
-    for k, v in pairs(GW_MOVABLE_FRAMES) do
-        v:EnableMouse(false)
-        v:SetMovable(false)
-        v:Hide()
-    end
-    gw_update_moveableframe_positions()
-    ReloadUI()
-end
-
-function gwWarningPromt(text, method)
-    GwWarningPromt.string:SetText(text)
-    GwWarningPromt.method = method
-    GwWarningPromt:Show()
-    GwWarningPromt.input:Hide()
-end
-
-function gwInputPromtPromt(text, method)
-    GwWarningPromt.string:SetText(text)
-    GwWarningPromt.method = method
-    GwWarningPromt:Show()
-    GwWarningPromt.input:Show()
-    GwWarningPromt.input:SetText("")
-end
+GW.LoadSettings = LoadSettings

@@ -1,7 +1,13 @@
 local _, GW = ...
+local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
+local ParseObjectiveString = GW.ParseObjectiveString
+local FormatObjectiveNumbers = GW.FormatObjectiveNumbers
+local CreateObjectiveNormal = GW.CreateObjectiveNormal
+local CreateTrackerObject = GW.CreateTrackerObject
+local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 
 local MAX_OBJECTIVES = 10
-local function achievementOnClick(block, mouseButton)
+local function achievement_OnClick(block, mouseButton)
     if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
         local achievementLink = GetAchievementLink(block.id)
         if (achievementLink) then
@@ -26,8 +32,9 @@ local function achievementOnClick(block, mouseButton)
         end
     end
 end
+
 local function setBlockColor(block, string)
-    block.color = GW_TRAKCER_TYPE_COLOR[string]
+    block.color = TRACKER_TYPE_COLOR[string]
 end
 
 local function getObjectiveBlock(self, index)
@@ -45,7 +52,7 @@ local function getObjectiveBlock(self, index)
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
     local newBlock =
-        gwCreateObjectiveNormal(self:GetName() .. "GwAchievementObjective" .. self.objectiveBlocksNum, self)
+        CreateObjectiveNormal(self:GetName() .. "GwAchievementObjective" .. self.objectiveBlocksNum, self)
     newBlock:SetParent(self)
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
     if self.objectiveBlocksNum == 1 then
@@ -70,7 +77,7 @@ local function getBlock(blockIndex)
         return _G["GwAchivementBlock" .. blockIndex]
     end
 
-    local newBlock = gwCreateTrackerObject("GwAchivementBlock" .. blockIndex, GwQuesttrackerContainerAchievement)
+    local newBlock = CreateTrackerObject("GwAchivementBlock" .. blockIndex, GwQuesttrackerContainerAchievement)
     newBlock:SetParent(GwQuesttrackerContainerAchievement)
 
     if blockIndex == 1 then
@@ -93,14 +100,14 @@ local function addObjective(block, text, finished, objectiveIndex)
 
     if text then
         objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(GwFormatObjectiveNumbers(text))
+        objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
         else
             objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
         end
 
-        if objectiveType == "progressbar" or GwParseObjectiveString(objectiveBlock, text) then
+        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
             if objectiveType == "progressbar" then
                 objectiveBlock.StatusBar:Show()
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
@@ -126,8 +133,7 @@ local function updateAchievementObjectives(block, blockIndex, achievementID)
 
     local numCriteria = GetAchievementNumCriteria(achievementID)
 
-    local _, achievementName, _, completed, _, _, _, description, _, icon, _, _, wasEarnedByMe =
-        GetAchievementInfo(achievementID)
+    local _, _, _, _, _, _, _, description, _ = GetAchievementInfo(achievementID)
 
     if (numCriteria > 0) then
         for criteriaIndex = 1, numCriteria do
@@ -136,14 +142,11 @@ local function updateAchievementObjectives(block, blockIndex, achievementID)
                 criteriaCompleted,
                 quantity,
                 totalQuantity,
-                name,
+                _,
                 flags,
                 assetID,
                 quantityString,
-                criteriaID,
-                eligible,
-                duration,
-                elapsed = GetAchievementCriteriaInfo(achievementID, criteriaIndex)
+                _ = GetAchievementCriteriaInfo(achievementID, criteriaIndex)
 
             if not criteriaCompleted then
                 numIncomplete = numIncomplete + 1
@@ -199,16 +202,14 @@ local function updateAchievementLayout(intent)
         savedHeight = 20
     end
 
-    local _, instanceType = IsInInstance()
-    local displayOnlyArena = ArenaEnemyFrames and ArenaEnemyFrames:IsShown() and (instanceType == "arena")
+    local _ = IsInInstance()
 
     local shownIndex = 1
 
     for i = 1, numQuests do
         --if trackedAchievements[i] == intent then
         local achievementID = trackedAchievements[i]
-        local _, achievementName, _, completed, _, _, _, description, _, icon, _, _, wasEarnedByMe =
-            GetAchievementInfo(achievementID)
+        local _, achievementName, _, _, _, _, _, _, _, _, _, _, wasEarnedByMe = GetAchievementInfo(achievementID)
 
         local showAchievement = true
         if (wasEarnedByMe) then
@@ -232,7 +233,7 @@ local function updateAchievementLayout(intent)
 
             block:Show()
 
-            block:SetScript("OnClick", achievementOnClick)
+            block:SetScript("OnClick", achievement_OnClick)
 
             savedHeight = savedHeight + block.height
 
@@ -249,10 +250,10 @@ local function updateAchievementLayout(intent)
         end
     end
 
-    gwQuestTrackerLayoutChanged()
+    QuestTrackerLayoutChanged()
 end
 
-function gw_register_achievement()
+local function LoadAchievementFrame()
     GwQuesttrackerContainerAchievement:SetScript("OnEvent", updateAchievementLayout)
 
     GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED")
@@ -282,11 +283,12 @@ function gw_register_achievement()
         end
     )
     header.title:SetTextColor(
-        GW_TRAKCER_TYPE_COLOR["ACHIEVEMENT"].r,
-        GW_TRAKCER_TYPE_COLOR["ACHIEVEMENT"].g,
-        GW_TRAKCER_TYPE_COLOR["ACHIEVEMENT"].b
+        TRACKER_TYPE_COLOR["ACHIEVEMENT"].r,
+        TRACKER_TYPE_COLOR["ACHIEVEMENT"].g,
+        TRACKER_TYPE_COLOR["ACHIEVEMENT"].b
     )
     header.title:SetText(GwLocalization["TRACKER_ACHIEVEMENTS"])
 
     updateAchievementLayout()
 end
+GW.LoadAchievementFrame = LoadAchievementFrame

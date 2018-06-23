@@ -184,7 +184,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Frame name="expFlare" hidden="true" parentKey="flare">
+                    <Frame name="GwXpFlare" hidden="true" parentKey="flare">
                         <Size x="200" y="200"></Size>
                         <Anchors>
                             <Anchor point="CENTER" relativePoint="LEFT" x="200"></Anchor>

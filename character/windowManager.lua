@@ -1,9 +1,11 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
+
 local windowsList = {}
-hasBeenLoaded = false
+local hasBeenLoaded = false
 
 windowsList[1] = {}
-windowsList[1]["ONLOAD"] = gw_register_character_window
+windowsList[1]["ONLOAD"] = GW.LoadCharacter
 windowsList[1]["SETTING_NAME"] = "USE_CHARACTER_WINDOW"
 windowsList[1]["TAB_ICON"] = "tabicon_character"
 windowsList[1]["ONCLICK"] = function()
@@ -12,8 +14,8 @@ end
 windowsList[1]["OPEN"] = "ToggleTalentFrame"
 
 windowsList[2] = {}
-windowsList[2]["ONLOAD"] = gw_register_talent_window
-windowsList[2]["SETTING_NAME"] = "USE_TALENT_WINDOW_DEV"
+windowsList[2]["ONLOAD"] = GW.LoadTalents
+windowsList[2]["SETTING_NAME"] = "USE_TALENT_WINDOW"
 windowsList[2]["TAB_ICON"] = "tabicon_spellbook"
 windowsList[2]["ONCLICK"] = function()
     ToggleTalentFrame()
@@ -62,21 +64,14 @@ local function loadBaseFrame()
 
     GwCharacterWindow:SetAttribute("windowPanelOpen", 0)
 
-    --   tinsert(UISpecialFrames, "GwCharacterWindow")
-
-    --   GwCharacterWindow:HookScript('OnHide',function() GwCharacterWindowMoverFrame:Hide() end)
-    --    GwCharacterWindow:HookScript('OnShow',function() GwCharacterWindowMoverFrame:Show() end)
-
-    --  table.insert(UISpecialFrames, "GwCharacterWindow")
-
     GwCharacterWindow:SetAttribute(
         "_onshow",
-        [=[ 
+        [=[
         self:SetBindingClick(false,'ESCAPE',self:GetName(),'Escape')
         ]=]
     )
     GwCharacterWindow:SetAttribute("_onhide", [=[
-        self:ClearBindings()    
+        self:ClearBindings()
     ]=])
     GwCharacterWindow:SetAttribute(
         "_onclick",
@@ -92,22 +87,18 @@ local function loadBaseFrame()
     GwCharacterWindow:SetFrameRef("GwCharacterWindowMoverFrame", GwCharacterWindowMoverFrame)
     GwCharacterWindow:SetAttribute(
         "_onattributechanged",
-        [=[ 
-       
-        
-        if value==nil or value==true then return end       
-  
-        
+        [=[
+               
+        if value==nil or value==true then return end
+
         if value==1 and self:GetFrameRef('GwCharacterWindowContainer')~=nil and self:GetFrameRef('GwCharacterWindowContainer'):IsVisible()  then
             self:SetAttribute('windowPanelOpen',0)
             return
-        end 
+        end
         if value==2 and self:GetFrameRef('GwTalentFrame')~=nil and self:GetFrameRef('GwTalentFrame'):IsVisible() then
-             self:SetAttribute('windowPanelOpen',0)
+            self:SetAttribute('windowPanelOpen',0)
             return
         end
-        
-        
        
         if self:GetFrameRef('GwTalentFrame')~=nil then
             self:GetFrameRef('GwTalentFrame'):Hide()
@@ -115,17 +106,15 @@ local function loadBaseFrame()
         if self:GetFrameRef('GwCharacterWindowContainer')~=nil then
             self:GetFrameRef('GwCharacterWindowContainer'):Hide()
         end
-    
   
         if not self:IsVisible() and value~=0 then
             self:Show()
             self:GetFrameRef('GwCharacterWindowMoverFrame'):Show()
         end
-        
 
         if value==1 and self:GetFrameRef('GwCharacterWindowContainer')~=nil then
             self:GetFrameRef('GwCharacterWindowContainer'):Show()
-        end 
+        end
         if value==2 and self:GetFrameRef('GwTalentFrame')~=nil then
             self:GetFrameRef('GwTalentFrame'):Show()
         end
@@ -133,7 +122,6 @@ local function loadBaseFrame()
         if value==0 then
             self:Hide()
             self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
-        
         end
   
     ]=]
@@ -168,10 +156,10 @@ local function createTabIcon(iconName)
     return f
 end
 
-function Gw_LoadWindows()
+local function LoadCharacterWM()
     local anyThingToLoad = false
     for k, v in pairs(windowsList) do
-        if gwGetSetting(v["SETTING_NAME"]) then
+        if GetSetting(v["SETTING_NAME"]) then
             anyThingToLoad = true
         end
     end
@@ -182,7 +170,7 @@ function Gw_LoadWindows()
     loadBaseFrame()
 
     for k, v in pairs(windowsList) do
-        if gwGetSetting(v["SETTING_NAME"]) then
+        if GetSetting(v["SETTING_NAME"]) then
             local ref = v["ONLOAD"]()
 
             GwCharacterWindow:SetFrameRef(ref:GetName(), ref)
@@ -207,7 +195,7 @@ function Gw_LoadWindows()
         CharacterWindowTab1:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         CharacterWindowTab1:SetAttribute(
             "_OnClick",
-            [=[ 
+            [=[
                 self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',1)
         
             ]=]
@@ -232,7 +220,7 @@ function Gw_LoadWindows()
         CharacterWindowTab2:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         CharacterWindowTab2:SetAttribute(
             "_OnClick",
-            [=[ 
+            [=[
                 self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',2)
         
             ]=]
@@ -257,3 +245,4 @@ function Gw_LoadWindows()
         end
     end
 end
+GW.LoadCharacterWM = LoadCharacterWM

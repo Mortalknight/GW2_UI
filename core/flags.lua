@@ -1,6 +1,6 @@
 local _, GW = ...
-
-gw_set_unit_flag = {}
+GW.UnitFlags = {}
+local gw_set_unit_flag = GW.UnitFlags
 --US
 gw_set_unit_flag["1136"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\us:10:12:0:0|t"
 gw_set_unit_flag["1426"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\us:10:12:0:0|t"

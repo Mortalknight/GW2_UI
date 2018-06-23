@@ -1,22 +1,28 @@
 local _, GW = ...
+local CountTable = GW.CountTable
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
+local StopAnimation = GW.StopAnimation
+
 local callback = {}
 
-function gwActionBar_AddStateCallback(m)
-    local k = GW.countTable(callback) + 1
+local function AddActionBarCallback(m)
+    local k = CountTable(callback) + 1
     callback[k] = m
 end
+GW.AddActionBarCallback = AddActionBarCallback
 
-local function actionBarStateChanged()
+local function stateChanged()
     for k, v in pairs(callback) do
         v()
     end
 end
 
 local function actionBarFrameShow(f, name)
-    GwStopAnimation(name)
+    StopAnimation(name)
     f.gw_FadeShowing = true
-    actionBarStateChanged()
-    addToAnimation(
+    stateChanged()
+    AddToAnimation(
         name,
         0,
         1,
@@ -30,18 +36,18 @@ local function actionBarFrameShow(f, name)
             for i = 1, 12 do
                 f.gw_MultiButtons[i].cooldown:SetDrawBling(true)
             end
-            actionBarStateChanged()
+            stateChanged()
         end
     )
 end
 
 local function actionBarFrameHide(f, name)
-    GwStopAnimation(name)
+    StopAnimation(name)
     f.gw_FadeShowing = false
     for i = 1, 12 do
         f.gw_MultiButtons[i].cooldown:SetDrawBling(false)
     end
-    addToAnimation(
+    AddToAnimation(
         name,
         1,
         0,
@@ -52,12 +58,12 @@ local function actionBarFrameHide(f, name)
         end,
         nil,
         function()
-            actionBarStateChanged()
+            stateChanged()
         end
     )
 end
 
-function gwActionBar_FadeCheck(self, elapsed)
+local function FadeCheck(self, elapsed)
     self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
     if self.gw_LastFadeCheck > 0 then
         return
@@ -75,3 +81,4 @@ function gwActionBar_FadeCheck(self, elapsed)
         actionBarFrameHide(self, self:GetName())
     end
 end
+GW.FadeCheck = FadeCheck

@@ -1,4 +1,8 @@
 local _, GW = ...
+local AddTrackerNotification = GW.AddTrackerNotification
+local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
+local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
+local AddToClique = GW.AddToClique
 
 local function updateBossFrameHeight()
     local height = 1
@@ -10,7 +14,7 @@ local function updateBossFrameHeight()
     GwQuesttrackerContainerBossFrames:SetHeight(height)
 end
 
-local function bossFrameOnEvent(self)
+local function bossFrame_OnEvent(self)
     local health = UnitHealth(self.unit)
     local maxHealth = UnitHealthMax(self.unit)
     local healthPrecentage = 0
@@ -38,7 +42,7 @@ local function registerFrame(i)
     targetF:SetAttribute("*type1", "target")
     targetF:SetAttribute("*type2", "showmenu")
 
-    GwaddTOClique(targetF)
+    AddToClique(targetF)
 
     RegisterUnitWatch(targetF)
     targetF:EnableMouse(true)
@@ -48,14 +52,14 @@ local function registerFrame(i)
     targetF.name:SetShadowOffset(1, -1)
 
     _G["GwQuestTrackerBossFrame" .. i .. "StatusBar"]:SetStatusBarColor(
-        GW_TRAKCER_TYPE_COLOR["BOSS"].r,
-        GW_TRAKCER_TYPE_COLOR["BOSS"].g,
-        GW_TRAKCER_TYPE_COLOR["BOSS"].b
+        TRACKER_TYPE_COLOR["BOSS"].r,
+        TRACKER_TYPE_COLOR["BOSS"].g,
+        TRACKER_TYPE_COLOR["BOSS"].b
     )
     _G["GwQuestTrackerBossFrame" .. i .. "Icon"]:SetVertexColor(
-        GW_TRAKCER_TYPE_COLOR["BOSS"].r,
-        GW_TRAKCER_TYPE_COLOR["BOSS"].g,
-        GW_TRAKCER_TYPE_COLOR["BOSS"].b
+        TRACKER_TYPE_COLOR["BOSS"].r,
+        TRACKER_TYPE_COLOR["BOSS"].g,
+        TRACKER_TYPE_COLOR["BOSS"].b
     )
 
     targetF:RegisterEvent("UNIT_MAXHEALTH")
@@ -80,10 +84,10 @@ local function registerFrame(i)
             compassData["X"] = 0
             compassData["Y"] = 0
 
-            compassData["COLOR"] = GW_TRAKCER_TYPE_COLOR["BOSS"]
+            compassData["COLOR"] = TRACKER_TYPE_COLOR["BOSS"]
             compassData["TITLE"] = UnitName(self.unit)
 
-            gwAddTrackerNotification(compassData)
+            AddTrackerNotification(compassData)
         end
     )
 
@@ -92,6 +96,7 @@ local function registerFrame(i)
         function(self)
             updateBossFrameHeight(self)
 
+            --[[
             local visible = false
             for index = 1, 4 do
                 if _G["GwQuestTrackerBossFrame" .. index]:IsShown() then
@@ -100,17 +105,17 @@ local function registerFrame(i)
             end
             if visible == false then
             end
-
+            --]]
             if i == 1 then
-                gwRemoveTrackerNotificationOfType("BOSS")
+                RemoveTrackerNotificationOfType("BOSS")
             end
         end
     )
 
-    targetF:SetScript("OnEvent", bossFrameOnEvent)
+    targetF:SetScript("OnEvent", bossFrame_OnEvent)
 end
 
-function gw_register_bossFrames()
+local function LoadBossFrame()
     for i = 1, 4 do
         registerFrame(i)
         if _G["Boss" .. i .. "TargetFrame"] ~= nil then
@@ -120,3 +125,4 @@ function gw_register_bossFrames()
     end
     updateBossFrameHeight()
 end
+GW.LoadBossFrame = LoadBossFrame

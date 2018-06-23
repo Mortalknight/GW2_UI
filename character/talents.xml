@@ -248,8 +248,7 @@
         </Layers>
     </Frame>
 
-
-    <Frame name="GwSpellbookMenu" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" virtual="true">
+    <Frame name="GwSpellbookMenu" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate" virtual="true">
         <Size x="231" y="621"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-15"></Anchor>
@@ -347,8 +346,6 @@
             </Button>
 
         </Frames>
-
-
     </Frame>
 
     <Frame name="GwSpellbookContainerTab" virtual="true">

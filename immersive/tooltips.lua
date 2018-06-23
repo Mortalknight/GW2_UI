@@ -1,5 +1,7 @@
 local _, GW = ...
 
+local GetSetting = GW.GetSetting
+
 local UNSTYLED = {
 	"GameTooltip",
 	"ShoppingTooltip1",
@@ -45,7 +47,7 @@ local UNSTYLED = {
 	"PetBattlePrimaryAbilityTooltip"
 }
 
-function move_tooltip_placemtn(self)
+local function movePlacement(self)
 	self:ClearAllPoints()
 	self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 300)
 end
@@ -58,52 +60,32 @@ local constBackdropArgs = {
 	edgeSize = 32,
 	insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
-function gw_style_tooltip(self)
+
+local function styleTooltip(self)
 	if not self:IsShown() then
 		return
 	end
 	self:SetBackdrop(constBackdropArgs)
 end
 
-function gw_set_tooltips()
-	if gwGetSetting("TOOLTIP_MOUSE") then
-		hooksecurefunc(
-			"GameTooltip_SetDefaultAnchor",
-			function(s, p)
-				s:SetOwner(p, "ANCHOR_CURSOR")
-			end
-		)
-	else
-		GameTooltip:HookScript(
-			"OnTooltipSetUnit",
-			function(self)
-				move_tooltip_placemtn(self)
-			end
-		)
+local function anchorTooltip(self, p)
+	self:SetOwner(p, "ANCHOR_CURSOR")
+end
 
-		GameTooltip:HookScript(
-			"OnTooltipSetQuest",
-			function(self)
-				move_tooltip_placemtn(self)
-			end
-		)
-		GameTooltip:HookScript(
-			"OnTooltipSetSpell",
-			function(self)
-				move_tooltip_placemtn(self)
-			end
-		)
-		GameTooltip:HookScript(
-			"OnTooltipSetDefaultAnchor",
-			function(self)
-				move_tooltip_placemtn(self)
-			end
-		)
+local function LoadTooltips()
+	if GetSetting("TOOLTIP_MOUSE") then
+		hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
+	else
+		GameTooltip:HookScript("OnTooltipSetUnit", movePlacement)
+		GameTooltip:HookScript("OnTooltipSetQuest", movePlacement)
+		GameTooltip:HookScript("OnTooltipSetSpell", movePlacement)
+		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
 	end
 
 	for _, toStyle in ipairs(UNSTYLED) do
 		if _G[toStyle] then
-			_G[toStyle]:HookScript("OnUpdate", gw_style_tooltip)
+			_G[toStyle]:HookScript("OnUpdate", styleTooltip)
 		end
 	end
 end
+GW.LoadTooltips = LoadTooltips

@@ -1,12 +1,27 @@
 local _, GW = ...
 local lerp = GW.lerp
+local GetSetting = GW.GetSetting
+local TimeCount = GW.TimeCount
+local RegisterMovableFrame = GW.RegisterMovableFrame
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
 
-local playeCasting = 0
-local playerSpellStart = 0
-local playerSpellEnd = 0
-local castingbarAnimation = 0
+local playerCasting = 0
 
-function gw_register_castingbar()
+local function barValues(name, icon)
+    GwCastingBar.name:SetText(name)
+    GwCastingBar.icon:SetTexture(icon)
+    GwCastingBar.latency:Show()
+end
+
+local function barReset()
+    if animations["castingbarAnimation"] then
+        animations["castingbarAnimation"]["completed"] = true
+        animations["castingbarAnimation"]["duration"] = 0
+    end
+end
+
+local function LoadCastingBar()
     CastingBarFrame:Hide()
     CastingBarFrame:UnregisterAllEvents()
 
@@ -20,16 +35,16 @@ function gw_register_castingbar()
     GwCastingBar.spark:SetPoint("RIGHT", self.bar, "RIGHT")
 
     GwCastingBar:SetPoint(
-        gwGetSetting("castingbar_pos")["point"],
+        GetSetting("castingbar_pos")["point"],
         UIParent,
-        gwGetSetting("castingbar_pos")["relativePoint"],
-        gwGetSetting("castingbar_pos")["xOfs"],
-        gwGetSetting("castingbar_pos")["yOfs"]
+        GetSetting("castingbar_pos")["relativePoint"],
+        GetSetting("castingbar_pos")["xOfs"],
+        GetSetting("castingbar_pos")["yOfs"]
     )
 
     GwCastingBar:SetAlpha(0)
 
-    gw_register_movable_frame("castingbarframe", GwCastingBar, "castingbar_pos", "GwCastFrameDummy")
+    RegisterMovableFrame("castingbarframe", GwCastingBar, "castingbar_pos", "GwCastFrameDummy")
 
     GwCastingBar:SetScript(
         "OnEvent",
@@ -51,23 +66,23 @@ function gw_register_castingbar()
                         UnitCastingInfo("player")
                 end
 
-                if gwGetSetting("CASTINGBAR_DATA") then
-                    gw_player_castingbar_values(spell, icon)
+                if GetSetting("CASTINGBAR_DATA") then
+                    barValues(spell, icon)
                 end
 
                 startTime = startTime / 1000
                 endTime = endTime / 1000
-                gw_castingbar_reset()
+                barReset()
                 GwCastingBar.spark:Show()
-                addToAnimation(
+                AddToAnimation(
                     "castingbarAnimation",
                     0,
                     1,
                     startTime,
                     endTime - startTime,
                     function()
-                        if gwGetSetting("CASTINGBAR_DATA") then
-                            GwCastingBar.time:SetText(GW.timeCount(endTime - GetTime(), true))
+                        if GetSetting("CASTINGBAR_DATA") then
+                            GwCastingBar.time:SetText(TimeCount(endTime - GetTime(), true))
                         end
 
                         local p = animations["castingbarAnimation"]["progress"]
@@ -85,38 +100,35 @@ function gw_register_castingbar()
                         GwCastingBar.spark:SetWidth(math.min(15, math.max(1, p * 176)))
                         GwCastingBar.bar:SetTexCoord(0, p, 0.25, 0.5)
 
-                        local down, up, lagHome, lagWorld = GetNetStats()
+                        local _, _, _, lagWorld = GetNetStats()
                         lagWorld = lagWorld / 1000
                         GwCastingBar.latency:SetWidth(math.min(1, (lagWorld / (endTime - startTime))) * 176)
                     end,
                     "noease"
                 )
-                castingbarAnimation = 0
-
-                local uhm = (((GetTime() * 1000) - startTime) / (endTime - startTime)) * 100
 
                 UIFrameFadeIn(GwCastingBar, 0.1, 0, 1)
-                playeCasting = 1
+                playerCasting = 1
             end
 
             if event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
                 if GwCastingBar.animating == nil or GwCastingBar.animating == false then
                     UIFrameFadeOut(GwCastingBar, 0.2, 1, 0)
                 end
-                gw_castingbar_reset()
-                playeCasting = 0
+                barReset()
+                playerCasting = 0
             end
 
             if event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" then
-                gw_castingbar_reset()
-                playeCasting = 0
+                barReset()
+                playerCasting = 0
             end
             if event == "UNIT_SPELLCAST_SUCCEEDED" then
                 GwCastingBar.animating = true
                 GwCastingBar.bar:SetTexCoord(0, 1, 0.5, 0.75)
                 GwCastingBar.bar:SetWidth(176)
                 GwCastingBar.spark:Hide()
-                addToAnimation(
+                AddToAnimation(
                     "castingbarAnimationComplete",
                     0,
                     1,
@@ -133,7 +145,7 @@ function gw_register_castingbar()
                     nil,
                     function()
                         GwCastingBar.animating = false
-                        if playeCasting == 0 then
+                        if playerCasting == 0 then
                             if GwCastingBar:GetAlpha() > 0 then
                                 UIFrameFadeOut(GwCastingBar, 0.2, 1, 0)
                             end
@@ -152,16 +164,4 @@ function gw_register_castingbar()
     GwCastingBar:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
     GwCastingBar:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 end
-
-function gw_player_castingbar_values(name, icon)
-    GwCastingBar.name:SetText(name)
-    GwCastingBar.icon:SetTexture(icon)
-    GwCastingBar.latency:Show()
-end
-
-function gw_castingbar_reset()
-    if animations["castingbarAnimation"] then
-        animations["castingbarAnimation"]["completed"] = true
-        animations["castingbarAnimation"]["duration"] = 0
-    end
-end
+GW.LoadCastingBar = LoadCastingBar

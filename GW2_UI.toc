@@ -8,27 +8,18 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_SETTINGS_PROFILES
 
-GW2_ui.lua
-
+core/consts.lua
 core/utils.lua
-core/shared.xml
-core/settings.xml
 core/settings_default.lua
 core/settings_api.lua
+
+GW2_ui.lua
+
+core/shared.xml
+core/settings.xml
 core/flags.lua
 core/fonts.lua
 core/settings.lua
-
-mainbar/experiencebar.xml
-mainbar/hudart.xml
-mainbar/hudelements.xml
-mainbar/hud.lua
-mainbar/buffs.lua
-mainbar/castingbar.lua
-mainbar/fader.lua
-mainbar/actionbars2.lua
-mainbar/playerhud.lua
-mainbar/classpowers.lua
 
 units/target.xml
 units/target.lua
@@ -38,6 +29,17 @@ units/unitframes.xml
 units/raidframes.lua
 units/unitframes.lua
 units/party.lua
+
+mainbar/experiencebar.xml
+mainbar/hudart.xml
+mainbar/hudelements.xml
+mainbar/hud.lua
+mainbar/fader.lua
+mainbar/buffs.lua
+mainbar/castingbar.lua
+mainbar/actionbars2.lua
+mainbar/playerhud.lua
+mainbar/classpowers.lua
 
 inventory/bag.xml
 inventory/bank.xml
@@ -65,6 +67,10 @@ character/character.xml
 character/spellbook.xml
 character/talents.xml
 character/character.lua
+character/character_paperdoll.lua
+character/character_equipset.lua
+character/character_titles.lua
+character/character_reputation.lua
 character/spellbook.lua
 character/talents.lua
 character/windowManager.lua

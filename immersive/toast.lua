@@ -1,21 +1,21 @@
 local _, GW = ...
 local lerp = GW.lerp
+local AddToAnimation = GW.AddToAnimation
 
 local toastList = {}
 local toastQueue = {}
 local toastIndex = 0
 local lastShown
 local delayTime = 10
-local talents = 0
 local ignoreNewSpells = 0
 
-function gwToastAnimateFlare(self, delta)
+local function toastAnimateFlare(self, delta)
     if self.removeTime < GetTime() and self.animatingOut == false then
         self.animatingOut = true
 
         local point, relativeTo, relativePoint, xOffset, yOffset = self:GetPoint()
 
-        addToAnimation(
+        AddToAnimation(
             self:GetName(),
             0,
             1,
@@ -41,7 +41,8 @@ function gwToastAnimateFlare(self, delta)
     self.flare2:SetRotation(-rot)
     self.flare.rot = rot
 end
-function gw_animate_levelUp_wiggle(self)
+
+local function animateLevelUpWiggle(self)
     if self.animation == nil then
         self.animation = 0
     end
@@ -49,7 +50,7 @@ function gw_animate_levelUp_wiggle(self)
         return
     end
     self.doingAnimation = true
-    addToAnimation(
+    AddToAnimation(
         self:GetName() .. "wig",
         0,
         1,
@@ -65,9 +66,10 @@ function gw_animate_levelUp_wiggle(self)
             if prog > 0.75 then
                 self.icon:SetRotation(lerp(0.25, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
             end
-
+            --[[
             if prog > 0.25 then
             end
+            --]]
         end,
         nil,
         function()
@@ -75,7 +77,8 @@ function gw_animate_levelUp_wiggle(self)
         end
     )
 end
-function gwToastOnShowAnimation(self)
+
+local function toast_OnShow(self)
     self.removeTime = GetTime() + delayTime
     delayTime = delayTime + 5
     if self.flare.animation == nil then
@@ -85,7 +88,7 @@ function gwToastOnShowAnimation(self)
         return
     end
     self.flare.doingAnimation = true
-    addToAnimation(
+    AddToAnimation(
         self.flare:GetName(),
         0,
         1,
@@ -102,7 +105,7 @@ function gwToastOnShowAnimation(self)
     )
 end
 
-function toastQueueAdd(data)
+local function toastQueueAdd(data)
     toastQueue[#toastQueue + 1] = data
     GwToastContainer:SetScript(
         "OnUpdate",
@@ -128,12 +131,13 @@ function toastQueueAdd(data)
     )
 end
 
-local function gwToast_OnClick(self, button)
+local function toast_OnClick(self, button)
     self.removeTime = 0
 end
-local function gwToastlevelUp_OnUpdate(self, elapsed)
-    gwToastAnimateFlare(self, elapsed)
-    gw_animate_levelUp_wiggle(self)
+
+local function toastLevelUp_OnUpdate(self, elapsed)
+    toastAnimateFlare(self, elapsed)
+    animateLevelUpWiggle(self)
 end
 
 local function getBloack(t)
@@ -162,9 +166,9 @@ local function getBloack(t)
             f.sub:SetShadowOffset(1, -1)
             f.flare.rot = 1
             f.animatingOut = false
-            f:SetScript("OnClick", gwToast_OnClick)
-            f:SetScript("OnShow", gwToastOnShowAnimation)
-            f:SetScript("OnUpdate", gwToastAnimateFlare)
+            f:SetScript("OnClick", toast_OnClick)
+            f:SetScript("OnShow", toast_OnShow)
+            f:SetScript("OnUpdate", toastAnimateFlare)
         elseif (template == "GwToastLevelUp") then
             f.title:SetFont(UNIT_NAME_FONT, 14)
             f.sub:SetFont(UNIT_NAME_FONT, 12)
@@ -174,9 +178,9 @@ local function getBloack(t)
             f.sub:SetShadowOffset(1, -1)
             f.flare.rot = 1
             f.animatingOut = false
-            f:SetScript("OnClick", gwToast_OnClick)
-            f:SetScript("OnShow", gwToastOnShowAnimation)
-            f:SetScript("OnUpdate", gwToastlevelUp_OnUpdate)
+            f:SetScript("OnClick", toast_OnClick)
+            f:SetScript("OnShow", toast_OnShow)
+            f:SetScript("OnUpdate", toastLevelUp_OnUpdate)
         end
         toastList[template][toastIndex] = v
         toastIndex = toastIndex + 1
@@ -220,9 +224,6 @@ local function toastRecive(
         itemName, itemHyperLink, itemRarity, _, _, _, _, _, _, itemTexture = GetItemInfo(itemLink)
     end
 
-    local baseQualityColor = ITEM_QUALITY_COLORS[baseQuality]
-    local upgradeQualityColor = ITEM_QUALITY_COLORS[itemRarity]
-
     local frame = getBloack()
 
     frame.icon:SetTexture(itemTexture)
@@ -248,7 +249,7 @@ end
 local function newSpellLearned(spellID)
     local frame = getBloack()
 
-    local name, rank, icon = GetSpellInfo(spellID)
+    local name, _, icon = GetSpellInfo(spellID)
 
     frame.icon:SetTexture(icon)
 
@@ -261,7 +262,7 @@ end
 local function newTalentPoint()
     local frame = getBloack()
 
-    local name, rank, icon = GetSpellInfo(spellID)
+    local _ = GetSpellInfo(spellID)
 
     frame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talent-icon")
 
@@ -300,12 +301,13 @@ local function onEvent(self, event, ...)
             toastRecive(itemLink, quantity, rollType, roll, nil, nil, nil, nil, nil, isUpgraded)
         end
     elseif (event == "SHOW_LOOT_TOAST") then
-        local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lootSource, lessAwesome, isUpgraded = ...
+        local typeIdentifier, itemLink, quantity, specID, _, isPersonal, lootSource, lessAwesome, isUpgraded = ...
         if (typeIdentifier == "item") then
             newEvent["method"] = function()
                 toastRecive(itemLink, quantity, nil, nil, specID, nil, nil, nil, lessAwesome, isUpgraded, isPersonal)
             end
         elseif (typeIdentifier == "money") then
+            -- no op
         elseif (isPersonal and (typeIdentifier == "currency")) then
             -- only toast currency for personal loot
             newEvent["method"] = function()
@@ -313,7 +315,7 @@ local function onEvent(self, event, ...)
             end
         end
     elseif (event == "SHOW_PVP_FACTION_LOOT_TOAST") then
-        local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lessAwesome = ...
+        local typeIdentifier, itemLink, quantity, specID, _, _, lessAwesome = ...
         if (typeIdentifier == "item") then
             newEvent["method"] = function()
                 toastRecive(itemLink, quantity, nil, nil, specID, false, true, nil, lessAwesome)
@@ -328,7 +330,7 @@ local function onEvent(self, event, ...)
             end
         end
     elseif (event == "SHOW_RATED_PVP_REWARD_TOAST") then
-        local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lessAwesome = ...
+        local typeIdentifier, itemLink, quantity, specID, _, _, lessAwesome = ...
         if (typeIdentifier == "item") then
             newEvent["method"] = function()
                 toastRecive(itemLink, quantity, nil, nil, specID, false, false, nil, lessAwesome, nil, nil, true)
@@ -343,17 +345,17 @@ local function onEvent(self, event, ...)
             end
         end
     elseif (event == "SHOW_LOOT_TOAST_UPGRADE") then
-        local itemLink, quantity, specID, sex, baseQuality, isPersonal, lessAwesome = ...
+        local itemLink, quantity, specID, _, baseQuality, _, lessAwesome = ...
         newEvent["method"] = function()
             toastRecive(itemLink, quantity, specID, baseQuality, nil, nil, lessAwesome)
         end
     elseif (event == "LEARNED_SPELL_IN_TAB" and ignoreNewSpells < GetTime()) then
-        local spellID, tabId = ...
+        local spellID, _ = ...
         newEvent["method"] = function()
             newSpellLearned(spellID)
         end
     elseif (event == "PLAYER_LEVEL_UP") then
-        local level, hp, mp, talentPoints, strength, agility, stamina, intellect, spirit = ...
+        local level, _, _, talentPoints, _ = ...
         levelUp(level)
         if talentPoints ~= nil and talentPoints > 0 then
             newEvent["method"] = function()
@@ -370,7 +372,17 @@ local function onEvent(self, event, ...)
     toastQueueAdd(newEvent)
 end
 
-local function loadtoast()
+--[[
+local function gwTestToast()
+    onEvent(GwToastContainer, "PLAYER_LEVEL_UP", 1, 2, 2, 1)
+end
+
+local function gwTestToastSpell()
+    newSpellLearned(48181)
+    goldWon(50)
+end
+--]]
+local function LoadToast()
     CreateFrame("FRAME", "GwToastContainer", UIParent, "GwToastContainer")
 
     GwToastContainer:RegisterEvent("LOOT_ITEM_ROLL_WON")
@@ -383,17 +395,5 @@ local function loadtoast()
     GwToastContainer:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
     GwToastContainer:SetScript("OnEvent", onEvent)
-
-    talents = GetNumUnspentTalents()
 end
-
-function gwTestToast()
-    onEvent(GwToastContainer, "PLAYER_LEVEL_UP", 1, 2, 2, 1)
-end
-
-function gwTestToastSpell()
-    newSpellLearned(48181)
-    goldWon(50)
-end
-
---loadtoast()
+GW.LoadToast = LoadToast

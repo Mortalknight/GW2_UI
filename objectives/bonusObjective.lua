@@ -1,4 +1,14 @@
 local _, GW = ...
+local AddTrackerNotification = GW.AddTrackerNotification
+local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
+local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
+local NewQuestAnimation = GW.NewQuestAnimation
+local ParseSimpleObjective = GW.ParseSimpleObjective
+local ParseObjectiveString = GW.ParseObjectiveString
+local CreateObjectiveNormal = GW.CreateObjectiveNormal
+local CreateTrackerObject = GW.CreateTrackerObject
+local UpdateQuestItem = GW.UpdateQuestItem
+local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 
 local savedQuests = {}
 
@@ -16,7 +26,7 @@ local function getObjectiveBlock(self, index)
 
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
-    local newBlock = gwCreateObjectiveNormal(self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self)
+    local newBlock = CreateObjectiveNormal(self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self)
     newBlock:SetParent(self)
     self.objectiveBlocks[self.objectiveBlocksNum] = newBlock
     if self.objectiveBlocksNum == 1 then
@@ -35,6 +45,7 @@ local function getObjectiveBlock(self, index)
 
     return newBlock
 end
+
 local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity)
     local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
 
@@ -48,7 +59,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
             objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
         end
 
-        if objectiveType == "progressbar" or GwParseObjectiveString(objectiveBlock, text) then
+        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
             if objectiveType == "progressbar" then
                 objectiveBlock.StatusBar:Show()
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
@@ -71,14 +82,14 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
 end
 
 local function updateBonusObjective(self, event)
-    gwRemoveTrackerNotificationOfType("EVENT")
-    gwRemoveTrackerNotificationOfType("EVENT_NEARBY")
-    gwRemoveTrackerNotificationOfType("BONUS")
+    RemoveTrackerNotificationOfType("EVENT")
+    RemoveTrackerNotificationOfType("EVENT_NEARBY")
+    RemoveTrackerNotificationOfType("BONUS")
 
     GwBonusObjectiveBlock.height = 20
     GwBonusObjectiveBlock.numObjectives = 0
     GwBonusObjectiveBlock:Hide()
-    GwupdateQuestItem(GwBonusItemButton, 0)
+    UpdateQuestItem(GwBonusItemButton, 0)
 
     local foundEvent = false
 
@@ -96,9 +107,8 @@ local function updateBonusObjective(self, event)
         local compassData = {}
 
         if isOnMap then
-            local compassData = {}
+            --local compassData = {}
             compassData["TYPE"] = "EVENT"
-
             compassData["COMPASS"] = true
         end
 
@@ -114,7 +124,7 @@ local function updateBonusObjective(self, event)
             GwBonusObjectiveBlock.Header:SetText(text)
 
             if savedQuests[questID] == nil then
-                gwNewQuestAnimation(GwBonusObjectiveBlock)
+                NewQuestAnimation(GwBonusObjectiveBlock)
                 PlaySound(SOUNDKIT["UI_WORLDQUEST_START"])
                 savedQuests[questID] = true
             end
@@ -122,7 +132,7 @@ local function updateBonusObjective(self, event)
             GwBonusObjectiveBlock.questID = questID
 
             GwBonusHeader:Show()
-            GwupdateQuestItem(GwBonusItemButton, questLogIndex)
+            UpdateQuestItem(GwBonusItemButton, questLogIndex)
 
             foundEvent = true
 
@@ -132,7 +142,7 @@ local function updateBonusObjective(self, event)
             local numNotFinished = 0
             local objectiveProgress = 0
             for objectiveIndex = 1, numObjectives do
-                local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
+                local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
 
                 if finished then
                     numFinished = numFinished + 1
@@ -144,7 +154,7 @@ local function updateBonusObjective(self, event)
 
                 compassData["ID"] = questID
 
-                compassData["COLOR"] = GW_TRAKCER_TYPE_COLOR["EVENT"]
+                compassData["COLOR"] = TRACKER_TYPE_COLOR["EVENT"]
                 compassData["COMPASS"] = false
                 compassData["X"] = x
                 compassData["Y"] = y
@@ -152,15 +162,15 @@ local function updateBonusObjective(self, event)
                 compassData["MAPID"] = mapId
 
                 if simpleDesc == "" then
-                    simpleDesc = gwParseSimpleObjective(text)
+                    simpleDesc = ParseSimpleObjective(txt)
                 else
-                    simpleDesc = simpleDesc .. ", " .. gwParseSimpleObjective(text)
+                    simpleDesc = simpleDesc .. ", " .. ParseSimpleObjective(txt)
                 end
 
                 if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
                     objectiveProgress =
                         objectiveProgress +
-                        addObjectiveBlock(GwBonusObjectiveBlock, text, finished, objectiveIndex, objectiveType)
+                        addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
                 end
             end
 
@@ -170,16 +180,15 @@ local function updateBonusObjective(self, event)
 
             compassData["PROGRESS"] = (numFinished / numObjectives) + (objectiveProgress / numNotFinished)
 
-            gwAddTrackerNotification(compassData)
+            AddTrackerNotification(compassData)
             break
         end
     end
 
     if foundEvent == false then
         savedQuests = {}
-        --        gwRemoveTrackerNotificationOfType('EVENT')
-
-        --      gwRemoveTrackerNotificationOfType('BONUS')
+        --      RemoveTrackerNotificationOfType('EVENT')
+        --      RemoveTrackerNotificationOfType('BONUS')
         GwBonusHeader:Hide()
     else
         if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
@@ -195,10 +204,10 @@ local function updateBonusObjective(self, event)
     GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 5)
     GwQuesttrackerContainerBonusObjectives:SetHeight(GwBonusObjectiveBlock.height + 20)
 
-    gwQuestTrackerLayoutChanged()
+    QuestTrackerLayoutChanged()
 end
 
-function gw_register_bonusObjectiveFrame()
+local function LoadBonusFrame()
     GwQuesttrackerContainerBonusObjectives:SetScript(
         "OnEvent",
         function(self, event)
@@ -210,12 +219,12 @@ function gw_register_bonusObjectiveFrame()
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("TASK_PROGRESS_UPDATE")
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
 
-    local newBlock = gwCreateTrackerObject("GwBonusObjectiveBlock", GwQuesttrackerContainerBonusObjectives)
+    local newBlock = CreateTrackerObject("GwBonusObjectiveBlock", GwQuesttrackerContainerBonusObjectives)
     newBlock:SetParent(GwQuesttrackerContainerBonusObjectives)
     newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "TOPRIGHT", 0, -20)
     newBlock.Header:SetText("")
 
-    newBlock.color = GW_TRAKCER_TYPE_COLOR["BONUS"]
+    newBlock.color = TRACKER_TYPE_COLOR["BONUS"]
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
 
@@ -244,11 +253,12 @@ function gw_register_bonusObjectiveFrame()
         end
     )
     header.title:SetTextColor(
-        GW_TRAKCER_TYPE_COLOR["BONUS"].r,
-        GW_TRAKCER_TYPE_COLOR["BONUS"].g,
-        GW_TRAKCER_TYPE_COLOR["BONUS"].b
+        TRACKER_TYPE_COLOR["BONUS"].r,
+        TRACKER_TYPE_COLOR["BONUS"].g,
+        TRACKER_TYPE_COLOR["BONUS"].b
     )
     header.title:SetText(GwLocalization["TRACKER_EVENTS"])
 
     updateBonusObjective()
 end
+GW.LoadBonusFrame = LoadBonusFrame
