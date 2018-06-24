@@ -32,7 +32,7 @@ local function LoadCastingBar()
     GwCastingBar.time:SetFont(UNIT_NAME_FONT, 12)
     GwCastingBar.time:SetShadowOffset(1, -1)
     GwCastingBar.spark:ClearAllPoints()
-    GwCastingBar.spark:SetPoint("RIGHT", self.bar, "RIGHT")
+    GwCastingBar.spark:SetPoint("RIGHT", GwCastingBar.bar, "RIGHT")
 
     GwCastingBar:SetPoint(
         GetSetting("castingbar_pos")["point"],
@@ -58,11 +58,11 @@ local function LoadCastingBar()
                     event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
              then
                 if event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-                    spell, subText, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible =
+                    spell, subText, icon, startTime, endTime, isTradeSkill, notInterruptible =
                         UnitChannelInfo("player")
                     castingType = 2
                 else
-                    spell, rank, displayName, icon, startTime, endTime, isTradeSkill, castID, interrupt =
+                    spell, rank, icon, startTime, endTime, isTradeSkill, castID, interrupt =
                         UnitCastingInfo("player")
                 end
 

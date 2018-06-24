@@ -928,7 +928,7 @@ local function LoadSettings()
         "MINIMAP_HOVER",
         "GwSettingsHudOptions",
         function()
-            SetMinimapHover()
+            GW.SetMinimapHover()
         end,
         {"NONE", "BOTH", "CLOCK", "ZONE"},
         {
@@ -947,7 +947,11 @@ local function LoadSettings()
             UpdateHudScale()
         end,
         {1, 0.9, 0.8},
-        {GwLocalization["HUD_SCALE_DEFAULT"], GwLocalization["HUD_SCALE_SMALL"], GwLocalization["HUD_SCALE_TINY"]}
+        {
+			GwLocalization["HUD_SCALE_DEFAULT"], 
+			GwLocalization["HUD_SCALE_SMALL"], 
+			GwLocalization["HUD_SCALE_TINY"]
+		}
     )
     addOptionDropdown(
         GwLocalization["MINIMAP_SCALE"],

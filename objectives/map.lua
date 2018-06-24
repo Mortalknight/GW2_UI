@@ -72,7 +72,7 @@ local function SetMinimapHover()
         MAP_FRAMES_HOVER[1] = "mapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
     elseif GetSetting("MINIMAP_HOVER") == "ZONE" then
-        MAP_FRAMES_HOVER[3] = "GwMapTime"
+        MAP_FRAMES_HOVER[1] = "GwMapTime"
     end
 end
 GW.SetMinimapHover = SetMinimapHover
