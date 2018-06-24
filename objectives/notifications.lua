@@ -43,11 +43,11 @@ local function getQuestPOIText(questLogIndex)
             end
         end
     else
-        local numPOITooltips = WorldMapBlobFrame:GetNumTooltips()
+        --local numPOITooltips = QuestBlobDataProvider:GetNumTooltips()
         local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
         for i = 1, numObjectives do
             if numPOITooltips and (numPOITooltips == numObjectives) then
-                local questPOIIndex = WorldMapBlobFrame:GetTooltipIndex(i)
+                local questPOIIndex = QuestBlobDataProvider:GetTooltipIndex(i)
                 text, _, finished = GetQuestPOILeaderBoard(questPOIIndex, questLogIndex)
             else
                 text, _, finished = GetQuestLogLeaderBoard(i, questLogIndex)
@@ -95,7 +95,10 @@ local questCompass = {
     ["COMPASS"] = true
 }
 local function getNearestQuestPOI()
-    local posX, posY = GetPlayerMapPosition("player")
+	local mapID = C_Map.GetFallbackWorldMapID()
+    local posTable = C_Map.GetPlayerMapPosition(mapID,"player")
+	local posX, posY = posTable:GetXY()
+
     local numQuests, _ = GetNumQuestLogEntries()
     if posX == nil or posX == 0 or numQuests == nil then
         return
@@ -226,7 +229,9 @@ local function updateRadar(self, elapsed)
     end
     self.TotalElapsed = 0
 
-    local posX, posY = GetPlayerMapPosition("player")
+    local mapID = C_Map.GetBestMapForUnit("player")
+    local posTable = C_Map.GetPlayerMapPosition(mapID,"player")
+	local posX, posY = posTable:GetXY()
     if posX == nil or posX == 0 or self.data["X"] == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
         return
