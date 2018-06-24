@@ -58,7 +58,7 @@ local function LoadCastingBar()
                     event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
              then
                 if event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-                    spell, subText, icon, startTime, endTime, isTradeSkill, notInterruptible =
+                    spell, text, icon, startTime, endTime, isTradeSkill, notInterruptible =
                         UnitChannelInfo("player")
                     castingType = 2
                 else
