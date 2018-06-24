@@ -568,7 +568,7 @@ local function updateBuffLayout(self, event)
             frame:SetPoint("CENTER", self.auras, "TOPLEFT", usedWidth + (size / 2), -usedHeight - (size / 2))
             frame:SetSize(size, size)
             if newAura and isBig and event == "UNIT_AURA" then
-                AuraAnimateIn(frame)
+                GW.AuraAnimateIn(frame)
             end
 
             usedWidth = usedWidth + size + marginX
