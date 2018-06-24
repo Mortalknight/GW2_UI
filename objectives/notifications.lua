@@ -1,7 +1,7 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local GetSetting = GW.GetSetting
-local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
+--local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 local AddToAnimation = GW.AddToAnimation
 
 local currentNotificationKey = ""
@@ -210,7 +210,7 @@ local function NotificationStateChanged(show)
                 GwObjectivesNotification:Hide()
             end
             GwObjectivesNotification.animating = false
-            QuestTrackerLayoutChanged()
+            GW.QuestTrackerLayoutChanged()
         end,
         true
     )

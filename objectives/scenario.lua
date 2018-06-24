@@ -67,7 +67,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
 end
 
 local function updateCurrentScenario()
-    RemoveTrackerNotificationOfType("SCENARIO")
+    GW.RemoveTrackerNotificationOfType("SCENARIO")
 
     local compassData = {}
 
@@ -110,9 +110,9 @@ local function updateCurrentScenario()
         if instanceType == "raid" then
             compassData["TITLE"] = name
             compassData["DESC"] = difficultyName
-            AddTrackerNotification(compassData)
+            GW.AddTrackerNotification(compassData)
         else
-            RemoveTrackerNotificationOfType("SCENARIO")
+            GW.RemoveTrackerNotificationOfType("SCENARIO")
             GwScenarioBlock:Hide()
         end
         UpdateQuestItem(GwScenarioItemButton, 0)
@@ -141,7 +141,7 @@ local function updateCurrentScenario()
     if difficultyName ~= nil then
         compassData["TITLE"] = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
         compassData["DESC"] = stageDescription .. " "
-        AddTrackerNotification(compassData)
+        GW.AddTrackerNotification(compassData)
     end
     --
 

@@ -657,11 +657,11 @@ local function tracker_OnUpdate(self)
         local state = GwObjectivesNotification.shouldDisplay
 
         GwQuestTracker.trot = GetTime() + 1
-        SetObjectiveNotification()
+        GW.SetObjectiveNotification()
 
         if state ~= GwObjectivesNotification.shouldDisplay then
             state = GwObjectivesNotification.shouldDisplay
-            NotificationStateChanged(state)
+            GW.NotificationStateChanged(state)
         end
     end
 end
