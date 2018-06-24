@@ -414,42 +414,6 @@ local function gw_OnUpdate(self, elapsed)
     end
 end
 
--- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
-local function adjustFixedAnchors(self, relativeAlert)
-    if self.anchorFrame:IsShown() then
-        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
-        local name = self.anchorFrame:GetName()
-        if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
-            if name == "TalkingHeadFrame" then
-                self.anchorFrame:ClearAllPoints()
-                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-            elseif name == "GroupLootContainer" then
-                self.anchorFrame:ClearAllPoints()
-                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
-                else
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-                end
-            end
-        end
-        return self.anchorFrame
-    end
-    return relativeAlert
-end
-
-local function updateAnchors(self)
-    self:CleanAnchorPriorities()
-
-    local relativeFrame = GwAlertFrameOffsetter
-    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
-        if alertFrameSubSystem.AdjustAnchors == AlertFrameJustAnchorMixin.AdjustAnchors then
-            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
-        else
-            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
-        end
-    end
-end
-
 local function gw_OnEvent(self, event, name)
     if loaded then
         return
@@ -463,23 +427,9 @@ local function gw_OnEvent(self, event, name)
 
     -- hook debug output if relevant
     local dev_dbg_tab = GetSetting("DEV_DBG_CHAT_TAB")
-    if dev_dbg_tab and dev_dbg_tab > 0 then
+    if dev_dbg_tab and dev_dbg_tab > 0 and _G["ChatFrame" .. dev_dbg_tab] then
         print("hooking Debug to chat tab #" .. dev_dbg_tab)
         dbgTab = dev_dbg_tab
-        --[[
-        inDebug = function(...)
-            local debug_tab = _G["ChatFrame" .. dev_dbg_tab]
-            if not debug_tab then
-                return
-            end
-            local msg = ""
-            for i = 1, select("#", ...) do
-                local arg = select(i, ...)
-                msg = msg .. tostring(arg) .. " "
-            end
-            debug_tab:AddMessage(date("%H:%M:%S") .. " " .. msg)
-        end
-        --]]
         GW.AlertTestsSetup()
     end
 
