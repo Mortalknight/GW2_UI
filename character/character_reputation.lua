@@ -383,31 +383,15 @@ local function setDetail(
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.StatusBar:SetValue((currentValue - 0) / (maxValueParagon - 0))
 
-        frame.background2:SetVertexColor(
-            FACTION_BAR_COLORS[9].r,
-            FACTION_BAR_COLORS[9].g,
-            FACTION_BAR_COLORS[9].b
-        )
-        frame.StatusBar:SetStatusBarColor(
-            FACTION_BAR_COLORS[9].r,
-            FACTION_BAR_COLORS[9].g,
-            FACTION_BAR_COLORS[9].b
-        )
+        frame.background2:SetVertexColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
     elseif (friendID ~= nil) then
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.currentRank:SetText(friendTextLevel)
         frame.nextRank:SetText()
 
-        frame.background2:SetVertexColor(
-            FACTION_BAR_COLORS[5].r,
-            FACTION_BAR_COLORS[5].g,
-            FACTION_BAR_COLORS[5].b
-        )
-        frame.StatusBar:SetStatusBarColor(
-            FACTION_BAR_COLORS[5].r,
-            FACTION_BAR_COLORS[5].g,
-            FACTION_BAR_COLORS[5].b
-        )
+        frame.background2:SetVertexColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
 
         if (nextFriendThreshold) then
             frame.currentValue:SetText(CommaValue(friendRep - friendThreshold))
@@ -438,19 +422,21 @@ local function setDetail(
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(nextRank)
         frame.currentValue:SetText(CommaValue(earnedValue - bottomValue))
-        local percent = math.floor(RoundDec(((earnedValue - bottomValue) / (topValue - bottomValue)) * 100), 0)
+        local ldiff = topValue - bottomValue
+        if ldiff == 0 then
+            ldiff = 1
+        end
+        local percent = math.floor(RoundDec(((earnedValue - bottomValue) / ldiff) * 100), 0)
         if percent == -1 then
             frame.percentage:SetText("0%")
         else
-            frame.percentage:SetText(
-                (math.floor(RoundDec(((earnedValue - bottomValue) / (topValue - bottomValue)) * 100), 0)) .. "%"
-            )
+            frame.percentage:SetText(percent .. "%")
         end
 
-        frame.nextValue:SetText(CommaValue(topValue - bottomValue))
+        frame.nextValue:SetText(CommaValue(ldiff))
 
         frame.StatusBar:SetMinMaxValues(0, 1)
-        frame.StatusBar:SetValue((earnedValue - bottomValue) / (topValue - bottomValue))
+        frame.StatusBar:SetValue((earnedValue - bottomValue) / ldiff)
 
         if currentRank == nextRank and earnedValue - bottomValue == 0 then
             frame.percentage:SetText("100%")
