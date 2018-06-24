@@ -15,8 +15,8 @@ GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf
 --Strings
 GwLocalization['QUEST_REQUIRED_ITEMS'] = 'Erforderliches Item:'   
 GwLocalization['ACTION_BAR_FADE'] = 'Aktionsleisten verblassen'
-GwLocalization['ACTION_BAR_FADE_DESC'] = 'Verblasst die zusätzlichen Aktionsleisten außerhalb des Kampfes.'
-GwLocalization['ACTION_BARS'] = 'Aktionsleisten'
+GwLocalization['ACTION_BAR_FADE_DESC'] = 'Blendet die zusätzlichen Aktionsleisten außerhalb des Kampfes aus.'
+GwLocalization['ACTION_BARS'] = 'Aktionsleisten ausblenden'
 GwLocalization['ACTION_BARS_DESC'] = 'Benutze die verbesserten GW2 UI Aktionsleisten.'
 GwLocalization['ADV_CAST_BAR'] = 'Erweiterte Zauberleiste'
 GwLocalization['ADV_CAST_BAR_DESC'] = 'Aktiviere oder deaktiviere die erweiterte Zauberleiste.'
@@ -274,9 +274,9 @@ GwLocalization['BAG_ORDER_NORMAL'] = 'Normale Sortierung'
 GwLocalization['BAG_ORDER_REVERSE'] = 'Umgekehrte Sortierung'
 GwLocalization['STG_RIGHT_BAR_COLS'] = 'Rechte Aktionleistenbreite'
 GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Anzahl an Spalten für die zwei extra Aktionsleisten an der rechten Seite.'
-GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
-GwLocalization['FADE_MICROMENU'] = 'Fade Menu Bar'
-GwLocalization['FADE_MICROMENU_DESC'] = 'Fade the main micromenu when the mouse is not near.'
+GwLocalization['DISABLED_MA_BAGS'] = "MoveAnything's Taschen Handling ausgeschaltet."
+GwLocalization['FADE_MICROMENU'] = 'Micro Menü ausblenden'
+GwLocalization['FADE_MICROMENU_DESC'] = 'Blendet das Micro Menü aus, wenn die Maus nicht in der Nähe ist.'
 end
 
 
