@@ -70,6 +70,11 @@ local actionBarEquipUpdate
 local actionButtons_OnUpdate
 local multiButtons_OnUpdate
 
+-- override main action bar update positioning; we don't want dynamic positioning stuff
+MainMenuBarMixin.ChangeMenuBarSizeAndPosition = function(self, rightMultiBarShowing)
+    -- overrides FrameXML/MainMenuBar.lua line 352
+end
+
 local function hideBlizzardsActionbars()
     for k, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
         if v and v.Hide ~= nil then
@@ -318,7 +323,13 @@ local function updateMainBar()
     Debug("mmbaf", sx, sy, btn_padding, used_height)
     MainMenuBarArtFrame:SetSize(btn_padding, used_height)
     MainMenuBarArtFrame:ClearAllPoints()
-    MainMenuBarArtFrame:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
+    MainMenuBarArtFrame:SetPoint(
+        "TOP",
+        UIParent,
+        "BOTTOM",
+        (MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN) / 2,
+        80
+    )
     sx, sy = MainMenuBarArtFrame:GetSize()
     Debug("mmbaf2", sx, sy, btn_padding, used_height)
 end
