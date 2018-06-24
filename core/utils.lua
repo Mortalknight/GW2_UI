@@ -181,7 +181,7 @@ local function GetBuffs(unit, filter)
             auraList[i]["id"] = i
 
             auraList[i]["name"],
-                auraList[i]["icon"],
+				auraList[i]["icon"],
                 auraList[i]["count"],
                 auraList[i]["dispelType"],
                 auraList[i]["duration"],
@@ -212,7 +212,6 @@ local function GetDebuffs(unit, filter)
             auraList[i]["id"] = i
 
             auraList[i]["name"],
-                auraList[i]["rank"],
                 auraList[i]["icon"],
                 auraList[i]["count"],
                 auraList[i]["dispelType"],

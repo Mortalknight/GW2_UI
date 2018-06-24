@@ -1033,8 +1033,8 @@ local function LoadSettings()
                 GwRaidFrameContainerFrameMoveAble:SetHeight(
                     (GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN")
                 )
-                UpdateRaidFramesLayout()
-                UpdateRaidFramesPosition()
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
             end
         end,
         1,
@@ -1048,8 +1048,8 @@ local function LoadSettings()
         "GwSettingsGroupframe",
         function()
             if GetSetting("GROUP_FRAMES") == true then
-                UpdateRaidFramesLayout()
-                UpdateRaidFramesPosition()
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
             end
         end,
         55,
@@ -1062,8 +1062,8 @@ local function LoadSettings()
         "GwSettingsGroupframe",
         function()
             if GetSetting("GROUP_FRAMES") == true then
-                UpdateRaidFramesLayout()
-                UpdateRaidFramesPosition()
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
             end
         end,
         47,
@@ -1115,7 +1115,7 @@ local function LoadSettings()
     fmGCNP:SetText(GwLocalization["PROFILES_NEW_PROFILE"])
     local fnGCNP_OnClick = function(self, button)
         inputPrompt(
-            "New profile name",
+            GwLocalization["PROFILES_NEW_PROFILE"],
             function()
                 addProfile(GwWarningPrompt.input:GetText())
                 GwWarningPrompt:Hide()

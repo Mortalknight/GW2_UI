@@ -341,10 +341,10 @@ end
 local function updateCastValues(self, event)
     local castType = 1
 
-    local name, _, _, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(self.unit)
+    local name, _, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(self.unit)
 
     if name == nil then
-        name, _, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(self.unit)
+        name, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(self.unit)
         castType = 0
     end
 

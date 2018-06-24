@@ -876,7 +876,7 @@ local function sendVersionCheck()
             chatToSend = "RAID"
         end
     end
-    SendAddonMessage("GW2_UI", VERSION_STRING, chatToSend)
+    C_ChatInfo.SendAddonMessage("GW2_UI", VERSION_STRING, chatToSend)
 end
 
 local function receiveVersionCheck(self, event, prefix, message, dist, sender)

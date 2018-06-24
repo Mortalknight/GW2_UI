@@ -65,9 +65,9 @@ local function togglePartyFrames(b)
                 RegisterUnitWatch(_G["GwCompactparty" .. i])
             end
         end
-        TogglePartyRaid(true)
+        GW.TogglePartyRaid(true)
     else
-        TogglePartyRaid(false)
+        GW.TogglePartyRaid(false)
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
         for i = 1, 4 do
