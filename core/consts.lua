@@ -14,10 +14,13 @@ PowerBarColorCustom["FURY"] = {r = 166 / 255, g = 37 / 255, b = 240 / 255}
 
 local DEBUFF_COLOR = {}
 GW.DEBUFF_COLOR = DEBUFF_COLOR
+DEBUFF_COLOR["none"] = {r = 220 / 255, g = 0, b = 0}
 DEBUFF_COLOR["Curse"] = {r = 97 / 255, g = 72 / 255, b = 177 / 255}
 DEBUFF_COLOR["Disease"] = {r = 177 / 255, g = 114 / 255, b = 72 / 255}
 DEBUFF_COLOR["Magic"] = {r = 72 / 255, g = 94 / 255, b = 177 / 255}
 DEBUFF_COLOR["Poison"] = {r = 94 / 255, g = 177 / 255, b = 72 / 255}
+DEBUFF_COLOR[""] = DEBUFF_COLOR["none"]
+DEBUFF_COLOR[0] = DEBUFF_COLOR["none"]
 
 --GW_FACTION_BAR_COLORS = FACTION_BAR_COLORS
 --GW_FACTION_BAR_COLORS = {
