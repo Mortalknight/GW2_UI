@@ -326,7 +326,7 @@ local function updateDebuffs(self)
                 )
             end
 
-            Debuff(indexBuffFrame, DebuffLists[i], i, filter)
+            GW.Debuff(indexBuffFrame, DebuffLists[i], i, filter)
 
             indexBuffFrame:Show()
 
