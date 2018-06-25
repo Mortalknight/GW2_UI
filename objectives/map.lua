@@ -133,6 +133,7 @@ local function stackIcons(self, event)
         frame:SetScript("OnDragStart", nil)
     end
 end
+GW.AddForProfiling("map", "stackIcons", stackIcons)
 
 local function lfgAnim()
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\dungeon-animation")
@@ -157,11 +158,13 @@ local function lfgAnim()
         anim_thro = GetTime() + 0.5
     end
 end
+GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
 local function lfgAnimStop()
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\dungeon-animation")
     QueueStatusMinimapButtonIconTexture:SetTexCoord(5 * 0.125, 6 * 0.125, 0.5, 1)
 end
+GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
 
 local function hideMiniMapIcons()
     for k, v in pairs(MAP_FRAMES_HIDE) do
@@ -192,6 +195,7 @@ local function hideMiniMapIcons()
         end
     )
 end
+GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
 local function hoverMiniMap()
     for k, v in pairs(MAP_FRAMES_HOVER) do
@@ -200,6 +204,7 @@ local function hoverMiniMap()
     end
     MinimapNorthTag:Hide()
 end
+GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
 
 local function hoverMiniMapOut()
     for k, v in pairs(MAP_FRAMES_HOVER) do
@@ -208,6 +213,7 @@ local function hoverMiniMapOut()
     end
     MinimapNorthTag:Show()
 end
+GW.AddForProfiling("map", "hoverMiniMapOut", hoverMiniMapOut)
 
 local function checkCursorOverMap()
     if Minimap:IsMouseOver(100, -100, -100, 100) then
@@ -216,6 +222,7 @@ local function checkCursorOverMap()
         Minimap:SetScript("OnUpdate", nil)
     end
 end
+GW.AddForProfiling("map", "checkCursorOverMap", checkCursorOverMap)
 
 -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
 function GetMinimapShape()
@@ -240,6 +247,7 @@ local function time_OnEnter(self)
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
 end
+GW.AddForProfiling("map", "time_OnEnter", time_OnEnter)
 
 local function time_OnClick(self, button)
     if button == "LeftButton" then
@@ -257,6 +265,7 @@ local function time_OnClick(self, button)
         Stopwatch_Toggle()
     end
 end
+GW.AddForProfiling("map", "time_OnClick", time_OnClick)
 
 local function LoadMinimap()
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")

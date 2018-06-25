@@ -13,6 +13,7 @@ local function updateBossFrameHeight()
     end
     GwQuesttrackerContainerBossFrames:SetHeight(height)
 end
+GW.AddForProfiling("bossFrames", "updateBossFrameHeight", updateBossFrameHeight)
 
 local function bossFrame_OnEvent(self)
     local health = UnitHealth(self.unit)
@@ -26,6 +27,7 @@ local function bossFrame_OnEvent(self)
     self.name:SetText(UnitName(self.unit))
     self.health:SetValue(healthPrecentage)
 end
+GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
 
 local function registerFrame(i)
     local debug_unit_Track = "boss" .. i
@@ -114,6 +116,7 @@ local function registerFrame(i)
 
     targetF:SetScript("OnEvent", bossFrame_OnEvent)
 end
+GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
 local function LoadBossFrame()
     for i = 1, 4 do

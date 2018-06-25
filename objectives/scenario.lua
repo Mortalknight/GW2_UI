@@ -41,6 +41,7 @@ local function getObjectiveBlock(self, index)
 
     return newBlock
 end
+GW.AddForProfiling("scenario", "getObjectiveBlock", getObjectiveBlock)
 
 local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity)
     local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
@@ -65,6 +66,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
         block.numObjectives = block.numObjectives + 1
     end
 end
+GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
 local function updateCurrentScenario()
     GW.RemoveTrackerNotificationOfType("SCENARIO")
@@ -237,11 +239,13 @@ local function updateCurrentScenario()
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
 end
+GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 
 local function scenarioTimerStop()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
     GwQuestTrackerTimer.timer:Hide()
 end
+GW.AddForProfiling("scenario", "scenarioTimerStop", scenarioTimerStop)
 
 local function scenarioAffixes()
     local _, affixes, _ = C_ChallengeMode.GetActiveKeystoneInfo()
@@ -275,6 +279,7 @@ local function scenarioAffixes()
         _G["GwAffixFrame"]:Hide()
     end
 end
+GW.AddForProfiling("scenario", "scenarioAffixes", scenarioAffixes)
 
 local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer.height = 1
@@ -333,6 +338,7 @@ local function scenarioTimerUpdate(...)
         _G["GwAffixFrame"]:Hide()
     end
 end
+GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
 
 local function scenarioTimerOnEvent(self, event, ...)
     if (event == "PLAYER_ENTERING_WORLD" or event == nil) then
@@ -360,6 +366,7 @@ local function scenarioTimerOnEvent(self, event, ...)
 
     updateCurrentScenario()
 end
+GW.AddForProfiling("scenario", "scenarioTimerOnEvent", scenarioTimerOnEvent)
 
 local function LoadScenarioFrame()
     GwQuesttrackerContainerScenario:SetScript("OnEvent", updateCurrentScenario)

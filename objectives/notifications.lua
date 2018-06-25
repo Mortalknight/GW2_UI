@@ -31,6 +31,7 @@ local function prioritys(a, b)
     end
     return notification_priority[a] > notification_priority[b]
 end
+GW.AddForProfiling("notifications", "prioritys", prioritys)
 
 local function getQuestPOIText(questLogIndex)
     local finalText = ""
@@ -195,6 +196,7 @@ local function removeNotification(key)
     currentNotificationKey = ""
     GwObjectivesNotification.shouldDisplay = false
 end
+GW.AddForProfiling("notifications", "removeNotification", removeNotification)
 
 local function NotificationStateChanged(show)
     if show then

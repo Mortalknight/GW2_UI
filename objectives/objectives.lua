@@ -60,6 +60,7 @@ local function wiggleAnim(self)
         end
     )
 end
+GW.AddForProfiling("objectives", "wiggleAnim", wiggleAnim)
 
 local function NewQuestAnimation(block)
     block.flare:Show()
@@ -115,6 +116,7 @@ local function loadQuestButtons()
     actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
     actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
 end
+GW.AddForProfiling("objectives", "loadQuestButtons", loadQuestButtons)
 
 local function ParseSimpleObjective(text)
     local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
@@ -191,6 +193,7 @@ GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 local function setBlockColor(block, string)
     block.color = TRACKER_TYPE_COLOR[string]
 end
+GW.AddForProfiling("objectives", "setBlockColor", setBlockColor)
 
 local function statusBar_OnShow(self)
     local f = self:GetParent()
@@ -200,6 +203,7 @@ local function statusBar_OnShow(self)
     f:SetHeight(50)
     f.statusbarBg:Show()
 end
+GW.AddForProfiling("objectives", "statusBar_OnShow", statusBar_OnShow)
 
 local function statusBar_OnHide(self)
     local f = self:GetParent()
@@ -209,6 +213,7 @@ local function statusBar_OnHide(self)
     f:SetHeight(20)
     f.statusbarBg:Hide()
 end
+GW.AddForProfiling("objectives", "statusBar_OnHide", statusBar_OnHide)
 
 local function statusBarSetValue(self)
     local f = self:GetParent()
@@ -226,6 +231,7 @@ local function statusBarSetValue(self)
         self.progress:SetText(math.floor((v / mx) * 100) .. "%")
     end
 end
+GW.AddForProfiling("objectives", "statusBarSetValue", statusBarSetValue)
 
 local function CreateObjectiveNormal(name, parent)
     local f = CreateFrame("Frame", name, parent, "GwQuesttrackerObjectiveNormal")
@@ -355,6 +361,7 @@ local function getObjectiveBlock(self, index)
 
     return newBlock
 end
+GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
 
 local function getBlock(blockIndex)
     if _G["GwQuestBlock" .. blockIndex] ~= nil then
@@ -375,6 +382,7 @@ local function getBlock(blockIndex)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     return newBlock
 end
+GW.AddForProfiling("objectives", "getBlock", getBlock)
 
 local function addObjective(block, text, finished, objectiveIndex)
     if finished == true then
@@ -408,6 +416,7 @@ local function addObjective(block, text, finished, objectiveIndex)
         block.numObjectives = block.numObjectives + 1
     end
 end
+GW.AddForProfiling("objectives", "addObjective", addObjective)
 
 local function updateQuestObjective(block, numObjectives, isComplete, title)
     local addedObjectives = 1
@@ -419,6 +428,7 @@ local function updateQuestObjective(block, numObjectives, isComplete, title)
         end
     end
 end
+GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
 local function UpdateQuestItem(button, questLogIndex)
     if InCombatLockdown() then
@@ -465,6 +475,7 @@ local function updatePOI(questID, questLogIndex)
     SetSuperTrackedQuestID(questID)
     WorldMapFrame_OnUserChangedSuperTrackedQuest(questID)
 end
+GW.AddForProfiling("objectives", "updatePOI", updatePOI)
 
 local function updateQuest(block, questWatchId)
     block.height = 25
@@ -553,6 +564,7 @@ local function updateQuest(block, questWatchId)
     block.height = block.height + 5
     block:SetHeight(block.height)
 end
+GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
 local function updateQuestItemPositions(index, height)
     if _G["GwQuestItemButton" .. index] == nil then
@@ -572,6 +584,7 @@ local function updateQuestItemPositions(index, height)
 
     _G["GwQuestItemButton" .. index]:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 end
+GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
 local function updateExtraQuestItemPositions()
     if GwBonusItemButton == nil or GwScenarioItemButton == nil then
@@ -597,6 +610,7 @@ local function updateExtraQuestItemPositions()
 
     GwBonusItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height + -25)
 end
+GW.AddForProfiling("objectives", "updateExtraQuestItemPositions", updateExtraQuestItemPositions)
 
 --[[
 function gwRequestQustlogUpdate()
@@ -648,14 +662,17 @@ local function updateQuestLogLayout(intent, ...)
 
     QuestTrackerLayoutChanged()
 end
+GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
 local function tracker_OnEvent(self, event, ...)
     updateQuestLogLayout(...)
 end
+GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
 local function trackerNotification_OnEvent(self, event)
 	mapID = C_Map.GetBestMapForUnit("player")
 end
+GW.AddForProfiling("objectives", "trackerNotification_OnEvent", trackerNotification_OnEvent)
 
 local function tracker_OnUpdate()
     if GwQuestTracker.trot < GetTime() then
@@ -670,6 +687,7 @@ local function tracker_OnUpdate()
         end
     end
 end
+GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
 
 local function bonus_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 0)
@@ -677,6 +695,7 @@ local function bonus_OnEnter(self)
     GameTooltip:SetText(RoundDec(self.progress * 100, 0) .. "%")
     GameTooltip:Show()
 end
+GW.AddForProfiling("objectives", "bonus_OnEnter", bonus_OnEnter)
 
 local function LoadQuestTracker()
     ObjectiveTrackerFrame:Hide()

@@ -45,6 +45,7 @@ local function getObjectiveBlock(self, index)
 
     return newBlock
 end
+GW.AddForProfiling("bonusObjective", "getObjectiveBlock", getObjectiveBlock)
 
 local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity)
     local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
@@ -80,6 +81,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
     end
     return precentageComplete
 end
+GW.AddForProfiling("bonusObjective", "addObjectiveBlock", addObjectiveBlock)
 
 local function updateBonusObjective(self, event)
     RemoveTrackerNotificationOfType("EVENT")
@@ -206,6 +208,7 @@ local function updateBonusObjective(self, event)
 
     QuestTrackerLayoutChanged()
 end
+GW.AddForProfiling("bonusObjective", "updateBonusObjective", updateBonusObjective)
 
 local function LoadBonusFrame()
     GwQuesttrackerContainerBonusObjectives:SetScript(
