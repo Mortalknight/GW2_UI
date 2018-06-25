@@ -3,31 +3,12 @@ local TimeCount = GW.TimeCount
 local AddActionBarCallback = GW.AddActionBarCallback
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local AddToAnimation = GW.AddToAnimation
 local Self_Hide = GW.Self_Hide
-local GetBuffs = GW.GetBuffs
-local GetDebuffs = GW.GetDebuffs
-local SetBuffData = GW.SetBuffData
 local LoadAuras = GW.LoadAuras
+local UpdateBuffLayout = GW.UpdateBuffLayout
 
 local buffLists = {}
 local DebuffLists = {}
-
-local function AuraAnimateIn(self)
-    local endWidth = self:GetWidth()
-
-    AddToAnimation(
-        self:GetName(),
-        endWidth * 2,
-        endWidth,
-        GetTime(),
-        0.2,
-        function(step)
-            self:SetSize(step, step)
-        end
-    )
-end
-GW.AuraAnimateIn = AuraAnimateIn
 
 --[[
 local function auraAnimateOut(self)
@@ -61,92 +42,6 @@ local function auraAnimateOut(self)
     )
 end
 --]]
-local function updateBuffLayout(self, event)
-    -- if not self.displayAuras then return end
-
-    local marginX = 3
-    local marginY = 20
-
-    local usedWidth = 0
-    local usedHeight = 0
-
-    local smallSize = 28
-    local bigSize = 32
-    local lineSize = smallSize
-    local maxSize = self:GetWidth()
-
-    local auraList = GetBuffs(self.unit)
-    local debuffList = GetDebuffs(self.unit, self.debuffFilter)
-
-    local saveAuras = {}
-
-    saveAuras["buff"] = {}
-    saveAuras["debuff"] = {}
-
-    for frameIndex = 1, 80 do
-        local index = 41 - frameIndex
-        local list = auraList
-        local newAura = true
-
-        if frameIndex > 40 then
-            index = 41 - (frameIndex - 40)
-        end
-
-        local frame = _G["GwplayerbuffFrame" .. index]
-
-        if frameIndex > 40 then
-            frame = _G["GwplayerdebuffFrame" .. index]
-            list = debuffList
-        end
-
-        if frameIndex == 41 then
-            usedWidth = 0
-            usedHeight = usedHeight + lineSize + marginY
-            lineSize = smallSize
-        end
-
-        if SetBuffData(frame, list, index) then
-            if not frame:IsShown() then
-                frame:Show()
-            end
-
-            local isBig = frame.typeAura == "bigBuff"
-
-            local size = smallSize
-            if isBig then
-                size = bigSize
-                lineSize = bigSize
-
-                for k, v in pairs(self.saveAuras[frame.auraType]) do
-                    if v == list[index]["name"] then
-                        newAura = false
-                    end
-                end
-                self.animating = false
-                saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index]["name"]
-            end
-
-            frame:SetPoint("CENTER", self, "BOTTOMRIGHT", -usedWidth - (size / 2), usedHeight + (size / 2))
-
-            frame:SetSize(size, size)
-            if newAura and isBig and event == "UNIT_AURA" then
-                AuraAnimateIn(frame)
-            end
-
-            usedWidth = usedWidth + size + marginX
-            if maxSize < usedWidth then
-                usedWidth = 0
-                usedHeight = usedHeight + lineSize + marginY
-                lineSize = smallSize
-            end
-        elseif frame and frame:IsShown() then
-            frame:Hide()
-        end
-    end
-
-    self.saveAuras = saveAuras
-end
-
 --[[
 local player_update_buff_Timer_cooldown = 0
 local function updateBuffTimers(thisName)
@@ -570,7 +465,7 @@ local function LoadBuffs()
             if unit ~= "player" then
                 return
             end
-            updateBuffLayout(GwPlayerAuraFrame, event)
+            UpdateBuffLayout(GwPlayerAuraFrame, event, unit)
         end
     )
     player_buff_frame:RegisterEvent("UNIT_AURA")
@@ -599,7 +494,7 @@ local function LoadBuffs()
     UpdatePlayerBuffFrame()
 
     LoadAuras(GwPlayerAuraFrame, GwPlayerAuraFrame, "player")
-    updateBuffLayout(GwPlayerAuraFrame, event)
+    UpdateBuffLayout(GwPlayerAuraFrame, event, "player")
 
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript(

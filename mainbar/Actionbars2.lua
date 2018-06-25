@@ -14,6 +14,7 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LoadAuras = GW.LoadAuras
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local CommaValue = GW.CommaValue
+local UpdateBuffLayout = GW.UpdateBuffLayout
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
@@ -955,7 +956,7 @@ local function updatePetData(event, unit)
     end
 
     if event == "UNIT_AURA" and unit == "pet" then
-        GW.updateBuffLayout(GwPlayerPetFrame, event)
+        UpdateBuffLayout(GwPlayerPetFrame, event, unit)
         return
     end
 

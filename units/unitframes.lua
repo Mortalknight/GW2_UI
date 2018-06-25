@@ -1,8 +1,6 @@
 local _, GW = ...
-local GetBuffs = GW.GetBuffs
-local GetDebuffs = GW.GetDebuffs
-local AuraAnimateIn = GW.AuraAnimateIn
-local SetBuffData = GW.SetBuffData
+local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
+local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
@@ -15,8 +13,176 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Debug = GW.Debug
+
+local function sortAuras(a, b)
+    if a["caster"] == nil then
+        a["caster"] = ""
+    end
+    if b["caster"] == nil then
+        b["caster"] = ""
+    end
+
+    if a["caster"] == b["caster"] then
+        return a["timeremaning"] < b["timeremaning"]
+    end
+
+    return (b["caster"] ~= "player" and a["caster"] == "player")
+end
+
+local function sortAuraList(auraList)
+    table.sort(
+        auraList,
+        function(a, b)
+            return sortAuras(a, b)
+        end
+    )
+
+    return auraList
+end
+
+local function getBuffs(unit, filter)
+    if filter == nil then
+        filter = ""
+    end
+    local auraList = {}
+    for i = 1, 40 do
+        if UnitBuff(unit, i, filter) ~= nil then
+            auraList[i] = {}
+            auraList[i]["id"] = i
+
+            auraList[i]["name"],
+				auraList[i]["icon"],
+                auraList[i]["count"],
+                auraList[i]["dispelType"],
+                auraList[i]["duration"],
+                auraList[i]["expires"],
+                auraList[i]["caster"],
+                auraList[i]["isStealable"],
+                auraList[i]["shouldConsolidate"],
+                auraList[i]["spellID"] = UnitBuff(unit, i, filter)
+
+            auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
+
+            if auraList[i]["duration"] <= 0 then
+                auraList[i]["timeremaning"] = 500001
+            end
+        end
+    end
+
+    return sortAuraList(auraList)
+end
+
+local function getDebuffs(unit, filter)
+    local auraList = {}
+
+    for i = 1, 40 do
+        if UnitDebuff(unit, i, filter) ~= nil then
+            auraList[i] = {}
+            auraList[i]["id"] = i
+
+            auraList[i]["name"],
+                auraList[i]["icon"],
+                auraList[i]["count"],
+                auraList[i]["dispelType"],
+                auraList[i]["duration"],
+                auraList[i]["expires"],
+                auraList[i]["caster"],
+                auraList[i]["isStealable"],
+                auraList[i]["shouldConsolidate"],
+                auraList[i]["spellID"] = UnitDebuff(unit, i, filter)
+
+            auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
+
+            if auraList[i]["duration"] <= 0 then
+                auraList[i]["timeremaning"] = 500001
+            end
+        end
+    end
+
+    return sortAuraList(auraList)
+end
+
+local function setAuraType(self, typeAura)
+    if self.typeAura == typeAura then
+        return
+    end
+
+    if typeAura == "smallbuff" then
+        self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
+        self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
+        self.duration:SetFont(UNIT_NAME_FONT, 11)
+        self.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+    end
+
+    if typeAura == "bigBuff" then
+        self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
+        self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
+        self.duration:SetFont(UNIT_NAME_FONT, 14)
+        self.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+    end
+
+    self.typeAura = typeAura
+end
+
+local function setBuffData(self, buffs, i, oldBuffs)
+    if not self or not buffs then
+        return false
+    end
+    local b = buffs[i]
+    if b == nil or b["name"] == nil then
+        return false
+    end
+
+    local stacks = ""
+    local duration = ""
+
+    if b["caster"] == "player" and (b["duration"] > 0 and b["duration"] < 120) then
+        setAuraType(self, "bigBuff")
+
+        self.cooldown:SetCooldown(b["expires"] - b["duration"], b["duration"])
+    else
+        setAuraType(self, "smallbuff")
+    end
+
+    if b["count"] ~= nil and b["count"] > 1 then
+        stacks = b["count"]
+    end
+    if b["timeremaning"] ~= nil and b["timeremaning"] > 0 and b["timeremaning"] < 500000 then
+        duration = TimeCount(b["timeremaning"])
+    end
+
+    if b["expires"] < 1 or b["timeremaning"] > 500000 then
+        self.expires = nil
+    else
+        self.expires = b["expires"]
+    end
+
+    if self.auraType == "debuff" then
+        if b["dispelType"] ~= nil then
+            self.background:SetVertexColor(
+                DEBUFF_COLOR[b["dispelType"]].r,
+                DEBUFF_COLOR[b["dispelType"]].g,
+                DEBUFF_COLOR[b["dispelType"]].b
+            )
+        else
+            self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+        end
+    else
+        if b["isStealable"] then
+            self.background:SetVertexColor(1, 1, 1)
+        else
+            self.background:SetVertexColor(0, 0, 0)
+        end
+    end
+
+    self.auraid = b["id"]
+    self.duration:SetText(duration)
+    self.stacks:SetText(stacks)
+    self.icon:SetTexture(b["icon"])
+
+    return true
+end
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -494,15 +660,35 @@ local function updateHealthValues(self, event)
     )
 end
 
-local function updateBuffLayout(self, event)
+local function auraAnimateIn(self)
+    local endWidth = self:GetWidth()
+
+    AddToAnimation(
+        self:GetName(),
+        endWidth * 2,
+        endWidth,
+        GetTime(),
+        0.2,
+        function(step)
+            self:SetSize(step, step)
+        end
+    )
+end
+
+local function UpdateBuffLayout(self, event, anchorPos)
     local minIndex = 1
     local maxIndex = 80
 
-    if self.displayBuffs ~= true then
-        minIndex = 40
-    end
-    if self.displayDebuffs ~= true then
-        maxIndex = 40
+    local isPlayer = false
+    if anchorPos and anchorPos == "player" then
+        isPlayer = true
+    elseif anchorPos and anchorPos ~= "player" then
+        if self.displayBuffs ~= true then
+            minIndex = 40
+        end
+        if self.displayDebuffs ~= true then
+            maxIndex = 40
+        end
     end
 
     local marginX = 3
@@ -511,32 +697,59 @@ local function updateBuffLayout(self, event)
     local usedWidth = 0
     local usedHeight = 0
 
-    local smallSize = 20
-    local bigSize = 28
-    local lineSize = smallSize
-    local maxSize = self.auras:GetWidth()
+    local smallSize
+    local bigSize
+    local maxSize
 
-    local auraList = GetBuffs(self.unit)
-    local debuffList = GetDebuffs(self.unit, self.debuffFilter)
+    if isPlayer then
+        maxSize = self:GetWidth()
+        smallSize = 28
+        bigSize = 32
+    else
+        maxSize = self.auras:GetWidth()
+        smallSize = 20
+        bigSize = 28
+    end
+
+    local lineSize = smallSize
+
+    local auraList = getBuffs(self.unit)
+    local debuffList = getDebuffs(self.unit, self.debuffFilter)
 
     local saveAuras = {}
 
     saveAuras["buff"] = {}
     saveAuras["debuff"] = {}
 
+    local fUnit
+    if isPlayer then
+        fUnit = "player"
+    else
+        fUnit = self.unit
+    end
+
     for frameIndex = minIndex, maxIndex do
-        local index = frameIndex
+        local index
+        if isPlayer then
+            index = 41 - frameIndex
+        else
+            index = frameIndex
+        end
         local list = auraList
         local newAura = true
 
         if frameIndex > 40 then
-            index = frameIndex - 40
+            if isPlayer then
+                index = 41 - (frameIndex - 40)
+            else
+                index = frameIndex - 40
+            end
         end
 
-        local frame = _G["Gw" .. self.unit .. "buffFrame" .. index]
+        local frame = _G["Gw" .. fUnit .. "buffFrame" .. index]
 
         if frameIndex > 40 then
-            frame = _G["Gw" .. self.unit .. "debuffFrame" .. index]
+            frame = _G["Gw" .. fUnit .. "debuffFrame" .. index]
             list = debuffList
         end
 
@@ -546,7 +759,7 @@ local function updateBuffLayout(self, event)
             lineSize = smallSize
         end
 
-        if SetBuffData(frame, list, index) then
+        if setBuffData(frame, list, index) then
             if not frame:IsShown() then
                 frame:Show()
             end
@@ -566,10 +779,20 @@ local function updateBuffLayout(self, event)
                 self.animating = false
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index]["name"]
             end
-            frame:SetPoint("CENTER", self.auras, "TOPLEFT", usedWidth + (size / 2), -usedHeight - (size / 2))
+
+            local px = usedWidth + (size / 2)
+            local py = usedHeight + (size / 2)
+            if not anchorPos then
+                frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, -py)
+            elseif anchorPos == "pet" then
+                frame:SetPoint("CENTER", self.auras, "BOTTOMRIGHT", -px, py)
+            elseif anchorPos == "player" then
+                frame:SetPoint("CENTER", self, "BOTTOMRIGHT", -px, py)
+            end
+
             frame:SetSize(size, size)
             if newAura and isBig and event == "UNIT_AURA" then
-                GW.AuraAnimateIn(frame)
+                auraAnimateIn(frame)
             end
 
             usedWidth = usedWidth + size + marginX
@@ -578,16 +801,14 @@ local function updateBuffLayout(self, event)
                 usedHeight = usedHeight + lineSize + marginY
                 lineSize = smallSize
             end
-        else
-            if frame:IsShown() then
-                frame:Hide()
-            end
+        elseif frame and frame:IsShown() then
+            frame:Hide()
         end
     end
 
     self.saveAuras = saveAuras
 end
-GW.updateBuffLayout = updateBuffLayout
+GW.UpdateBuffLayout = UpdateBuffLayout
 
 local function auraFrame_OnUpdate(self, elapsed)
     if GetTime() > self.throt and self:IsShown() and self.expires ~= nil then
@@ -689,7 +910,7 @@ local function target_OnEvent(self, event, unit)
                     return
                 end
                 if self.stepOnUpdate == 6 then
-                    updateBuffLayout(self, event)
+                    UpdateBuffLayout(self, event)
                     return
                 end
 
@@ -736,7 +957,7 @@ local function target_OnEvent(self, event, unit)
     end
 
     if event == "UNIT_AURA" and unit == self.unit then
-        updateBuffLayout(self, event)
+        UpdateBuffLayout(self, event)
     end
 end
 
@@ -769,7 +990,7 @@ local function focus_OnEvent(self, event, unit)
                     return
                 end
                 if self.stepOnUpdate == 6 then
-                    updateBuffLayout(self, event)
+                    UpdateBuffLayout(self, event)
                     return
                 end
 
@@ -815,7 +1036,7 @@ local function focus_OnEvent(self, event, unit)
     end
 
     if event == "UNIT_AURA" and unit == self.unit then
-        updateBuffLayout(self, event)
+        UpdateBuffLayout(self, event)
     end
 end
 
