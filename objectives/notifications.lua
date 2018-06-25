@@ -143,8 +143,11 @@ local bodyCompass = {
 }
 local function getBodyPOI()
     local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
-    local posX, _ = posTable:GetXY()
     local corpTable = C_DeathInfo.GetCorpseMapPosition(currentMapID)
+    if posTable == nil or corpTable == nil then
+        return nil
+    end
+    local posX, _ = posTable:GetXY()
     local x, y = corpTable:GetXY()
     if posX == nil or posX == 0 or x == nil or x == 0 then
         return nil
