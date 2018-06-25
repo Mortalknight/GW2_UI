@@ -9,6 +9,7 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 
 local savedQuests = {}
+local mapID = ""
 
 local TRACKER_TYPE_COLOR = {}
 GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
@@ -652,12 +653,16 @@ local function tracker_OnEvent(self, event, ...)
     updateQuestLogLayout(...)
 end
 
-local function tracker_OnUpdate(self)
+local function trackerNotification_OnEvent(self, event)
+	mapID = C_Map.GetBestMapForUnit("player")
+end
+
+local function tracker_OnUpdate()
     if GwQuestTracker.trot < GetTime() then
         local state = GwObjectivesNotification.shouldDisplay
 
         GwQuestTracker.trot = GetTime() + 1
-        GW.SetObjectiveNotification()
+        GW.SetObjectiveNotification(mapID)
 
         if state ~= GwObjectivesNotification.shouldDisplay then
             state = GwObjectivesNotification.shouldDisplay
@@ -796,6 +801,9 @@ local function LoadQuestTracker()
 
     fNotify.shouldDisplay = false
     fTracker.trot = GetTime() + 2
+	fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
+	fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
+	fTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     fTracker:SetScript("OnUpdate", tracker_OnUpdate)
 end
 GW.LoadQuestTracker = LoadQuestTracker

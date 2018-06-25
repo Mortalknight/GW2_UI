@@ -5,6 +5,7 @@ local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
 
 local currentNotificationKey = ""
+local currentMapID = ""
 local notifications = {}
 
 local icons = {}
@@ -94,9 +95,8 @@ local questCompass = {
     ["COLOR"] = TRACKER_TYPE_COLOR["QUEST"],
     ["COMPASS"] = true
 }
-local function getNearestQuestPOI()
-	local mapID = C_Map.GetFallbackWorldMapID()
-    local posTable = C_Map.GetPlayerMapPosition(mapID,"player")
+local function getNearestQuestPOI(currentMapID)
+    local posTable = C_Map.GetPlayerMapPosition(currentMapID,"player")
 	local posX, posY = posTable:GetXY()
 
     local numQuests, _ = GetNumQuestLogEntries()
@@ -229,8 +229,7 @@ local function updateRadar(self, elapsed)
     end
     self.TotalElapsed = 0
 
-    local mapID = C_Map.GetBestMapForUnit("player")
-    local posTable = C_Map.GetPlayerMapPosition(mapID,"player")
+    local posTable = C_Map.GetPlayerMapPosition(currentMapID,"player")
 	local posX, posY = posTable:GetXY()
     if posX == nil or posX == 0 or self.data["X"] == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
@@ -247,7 +246,8 @@ local function updateRadar(self, elapsed)
     self.arrow:SetTexCoord(0.5 - sin, 0.5 + cos, 0.5 + cos, 0.5 + sin, 0.5 - cos, 0.5 - sin, 0.5 + sin, 0.5 - cos)
 end
 
-local function SetObjectiveNotification()
+local function SetObjectiveNotification(mapID)
+	currentMapID = mapID
     local data
     for k, v in pairs(notifications) do
         if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
@@ -266,7 +266,7 @@ local function SetObjectiveNotification()
             data = getBodyPOI()
         end
         if data == nil then
-            data = getNearestQuestPOI()
+            data = getNearestQuestPOI(currentMapID)
         end
     end
 
@@ -336,7 +336,7 @@ local function SetObjectiveNotification()
         GwObjectivesNotification.compass:SetScript("OnUpdate", updateRadar)
         GwObjectivesNotification.icon:SetTexture(nil)
     else
-        GwObjectivesNotification.compass:Hide()
+		GwObjectivesNotification.compass:Hide()
         GwObjectivesNotification.compass:SetScript("OnUpdate", nil)
     end
 
