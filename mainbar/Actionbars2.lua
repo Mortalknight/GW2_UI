@@ -33,7 +33,8 @@ local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuMaxLevelBar0,
     MainMenuMaxLevelBar1,
     MainMenuMaxLevelBar2,
-    MainMenuMaxLevelBar3
+    MainMenuMaxLevelBar3,
+    VerticalMultiBarsContainer
 }
 
 local GW_BLIZZARD_FORCE_HIDE = {
@@ -70,9 +71,30 @@ local actionBarEquipUpdate
 local actionButtons_OnUpdate
 local multiButtons_OnUpdate
 
--- override main action bar update positioning; we don't want dynamic positioning stuff
+-- override action bar update positioning; we don't want dynamic positioning stuff
+
+local function updateMultiActionBar(frame, var, pageVar)
+    -- overrides FrameXML/MultiActionBars.lua line 34
+    if (var and IsNormalActionBarState()) then
+        frame:SetShown(true)
+        VIEWABLE_ACTION_BAR_PAGES[pageVar] = nil
+    else
+        frame:SetShown(false)
+        VIEWABLE_ACTION_BAR_PAGES[pageVar] = 1
+    end
+end
+
 MainMenuBar.ChangeMenuBarSizeAndPosition = function(self, rightMultiBarShowing)
     -- overrides FrameXML/MainMenuBar.lua line 352
+end
+
+MultiActionBar_Update = function()
+    -- overrides FrameXML/MultiActionBar.lua line 53
+    updateMultiActionBar(MultiBarBottomLeft, SHOW_MULTI_ACTIONBAR_1, BOTTOMLEFT_ACTIONBAR_PAGE)
+    updateMultiActionBar(MultiBarBottomRight, SHOW_MULTI_ACTIONBAR_2, BOTTOMRIGHT_ACTIONBAR_PAGE)
+    updateMultiActionBar(MultiBarRight, SHOW_MULTI_ACTIONBAR_3, RIGHT_ACTIONBAR_PAGE)
+    updateMultiActionBar(MultiBarLeft, SHOW_MULTI_ACTIONBAR_3 and SHOW_MULTI_ACTIONBAR_4, LEFT_ACTIONBAR_PAGE)
+    UIParent_ManageFramePositions()
 end
 
 local function hideBlizzardsActionbars()
@@ -729,6 +751,11 @@ local function LoadActionBars()
     ) do
         UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
     end
+
+    -- one-time setup to separate multibars from default handling (FrameXML/MultiActionBar.lua line 53)
+    VerticalMultiBarsContainer:SetScript("OnEvent", nil)
+    MultiBarLeft:SetParent(UIParent)
+    MultiBarRight:SetParent(UIParent)
 
     updateMainBar()
     updateMultiBar("MultiBarBottomRight", "MultiBarBottomRightButton")
