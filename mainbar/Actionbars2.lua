@@ -12,6 +12,8 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LoadAuras = GW.LoadAuras
+local PowerBarColorCustom = GW.PowerBarColorCustom
+local CommaValue = GW.CommaValue
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5

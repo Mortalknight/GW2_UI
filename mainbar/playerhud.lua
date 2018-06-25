@@ -7,7 +7,6 @@ local CommaValue = GW.CommaValue
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
 local DODGEBAR_SPELLS = GW.DODGEBAR_SPELLS
-local CreateAuraFrame = GW.CreateAuraFrame
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
