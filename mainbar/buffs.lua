@@ -3,12 +3,12 @@ local TimeCount = GW.TimeCount
 local AddActionBarCallback = GW.AddActionBarCallback
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local CreateAuraFrame = GW.CreateAuraFrame
 local AddToAnimation = GW.AddToAnimation
 local Self_Hide = GW.Self_Hide
 local GetBuffs = GW.GetBuffs
 local GetDebuffs = GW.GetDebuffs
 local SetBuffData = GW.SetBuffData
+local LoadAuras = GW.LoadAuras
 
 local buffLists = {}
 local DebuffLists = {}
@@ -92,10 +92,10 @@ local function updateBuffLayout(self, event)
             index = 41 - (frameIndex - 40)
         end
 
-        local frame = _G["GwPlayerbuffFrame" .. index]
+        local frame = _G["GwplayerbuffFrame" .. index]
 
         if frameIndex > 40 then
-            frame = _G["GwPlayerdebuffFrame" .. index]
+            frame = _G["GwplayerdebuffFrame" .. index]
             list = debuffList
         end
 
@@ -145,20 +145,6 @@ local function updateBuffLayout(self, event)
     end
 
     self.saveAuras = saveAuras
-end
-
-local function loadAuras(self)
-    for i = 1, 40 do
-        local frame = CreateAuraFrame("GwPlayerbuffFrame" .. i, GwPlayerAuraFrame)
-        frame.unit = "player"
-        frame.auraType = "buff"
-        frame = CreateAuraFrame("GwPlayerdebuffFrame" .. i, GwPlayerAuraFrame)
-        frame.unit = "player"
-        frame.auraType = "debuff"
-    end
-    self.saveAuras = {}
-    self.saveAuras["buff"] = {}
-    self.saveAuras["debuff"] = {}
 end
 
 --[[
@@ -612,7 +598,7 @@ local function LoadBuffs()
     AddActionBarCallback(UpdatePlayerBuffFrame)
     UpdatePlayerBuffFrame()
 
-    loadAuras(GwPlayerAuraFrame)
+    LoadAuras(GwPlayerAuraFrame, GwPlayerAuraFrame, "player")
     updateBuffLayout(GwPlayerAuraFrame, event)
 
     -- show/hide stuff with override bar

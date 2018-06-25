@@ -1,13 +1,17 @@
 local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local UpdatePlayerBuffFrame = GW.UpdatePlayerBuffFrame
 local GetSetting = GW.GetSetting
 local ToggleMainHud = GW.ToggleMainHud
 local Wait = GW.Wait
 local Debug = GW.Debug
 local Self_Hide = GW.Self_Hide
-local FadeCheck = GW.FadeCheck
 local IsFrameModified = GW.IsFrameModified
+local CountTable = GW.CountTable
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
+local StopAnimation = GW.StopAnimation
+local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
+local LoadAuras = GW.LoadAuras
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
@@ -122,6 +126,102 @@ local function hideBlizzardsActionbars()
     end
 
     MainMenuBar:EnableMouse(false)
+end
+
+-- other things can register callbacks for when actionbar visibility/fade changes
+local callback = {}
+
+local function AddActionBarCallback(m)
+    local k = CountTable(callback) + 1
+    callback[k] = m
+end
+GW.AddActionBarCallback = AddActionBarCallback
+
+local function stateChanged()
+    for k, v in pairs(callback) do
+        v()
+    end
+end
+
+hooksecurefunc("ValidateActionBarTransition", stateChanged)
+
+-- fader logic (previously separated into fader.lua)
+local function actionBarFrameShow(f, name)
+    StopAnimation(name)
+    f.gw_FadeShowing = true
+    stateChanged()
+    AddToAnimation(
+        name,
+        0,
+        1,
+        GetTime(),
+        0.1,
+        function()
+            f:SetAlpha(animations[name]["progress"])
+        end,
+        nil,
+        function()
+            for i = 1, 12 do
+                f.gw_MultiButtons[i].cooldown:SetDrawBling(true)
+            end
+            stateChanged()
+        end
+    )
+end
+
+local function actionBarFrameHide(f, name)
+    StopAnimation(name)
+    f.gw_FadeShowing = false
+    for i = 1, 12 do
+        f.gw_MultiButtons[i].cooldown:SetDrawBling(false)
+    end
+    AddToAnimation(
+        name,
+        1,
+        0,
+        GetTime(),
+        0.1,
+        function()
+            f:SetAlpha(animations[name]["progress"])
+        end,
+        nil,
+        function()
+            stateChanged()
+        end
+    )
+end
+
+local function fadeCheck(self, elapsed)
+    self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
+    if self.gw_LastFadeCheck > 0 then
+        return
+    end
+    self.gw_LastFadeCheck = 0.1
+    if not self:IsShown() then
+        return
+    end
+
+    if self:IsMouseOver(100, -100, -100, 100) or UnitAffectingCombat("player") then
+        if not self.gw_FadeShowing then
+            actionBarFrameShow(self, self:GetName())
+        end
+    elseif self.gw_FadeShowing and UnitAffectingCombat("player") == false then
+        actionBarFrameHide(self, self:GetName())
+    end
+end
+
+local function fader_OnShow(self)
+    self.gw_FadeShowing = true
+    if self.gw_StateTrigger then
+        stateChanged()
+    end
+end
+
+local function fader_OnHide(self)
+    self.gw_FadeShowing = false
+    if self.gw_StateTrigger then
+        stateChanged()
+    end
 end
 
 local function updateHotkey(self, actionButtonType)
@@ -752,48 +852,30 @@ local function LoadActionBars()
         UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
     end
 
-    -- one-time setup to separate multibars from default handling (FrameXML/MultiActionBar.lua line 53)
+    -- separate multibars from default handling (FrameXML/MultiActionBar.lua line 53)
     VerticalMultiBarsContainer:SetScript("OnEvent", nil)
     MultiBarLeft:SetParent(UIParent)
     MultiBarRight:SetParent(UIParent)
 
+    -- setup fader logic
+    MultiBarBottomLeft.gw_StateTrigger = true
+    MultiBarBottomLeft:HookScript("OnShow", fader_OnShow)
+    MultiBarBottomLeft:HookScript("OnHide", fader_OnHide)
+    MultiBarBottomRight.gw_StateTrigger = true
+    MultiBarBottomRight:HookScript("OnShow", fader_OnShow)
+    MultiBarBottomRight:HookScript("OnHide", fader_OnHide)
+    MultiBarLeft:HookScript("OnShow", fader_OnShow)
+    MultiBarLeft:HookScript("OnHide", fader_OnHide)
+    MultiBarRight:HookScript("OnShow", fader_OnShow)
+    MultiBarRight:HookScript("OnHide", fader_OnHide)
+
+    -- init our bars
     updateMainBar()
     updateMultiBar("MultiBarBottomRight", "MultiBarBottomRightButton")
     updateMultiBar("MultiBarBottomLeft", "MultiBarBottomLeftButton")
     updateMultiBar("MultiBarRight", "MultiBarRightButton")
     updateMultiBar("MultiBarLeft", "MultiBarLeftButton")
 
-    MultiBarBottomLeft:HookScript(
-        "OnShow",
-        function(self, event)
-            self.gw_FadeShowing = true
-            GW.UpdatePetFrameLocation()
-        end
-    )
-    MultiBarBottomLeft:HookScript(
-        "OnHide",
-        function(self, event)
-            self.gw_FadeShowing = false
-            GW.UpdatePetFrameLocation()
-        end
-    )
-    MultiBarBottomRight:HookScript(
-        "OnShow",
-        function(self, event)
-            self.gw_FadeShowing = true
-            UpdatePlayerBuffFrame()
-        end
-    )
-    MultiBarBottomRight:HookScript(
-        "OnHide",
-        function(self, event)
-            self.gw_FadeShowing = false
-            UpdatePlayerBuffFrame()
-        end
-    )
-
-    --RegisterMovableFrame(MultiBarBottomRight:GetName(),MultiBarBottomRight,'MultiBarBottomRight','VerticalActionBarDummy')
-    --RegisterMovableFrame(MultiBarBottomLeft:GetName(),MultiBarBottomLeft,'MultiBarBottomLeft','VerticalActionBarDummy')
     RegisterMovableFrame(MultiBarRight:GetName(), MultiBarRight, "MultiBarRight", "VerticalActionBarDummy")
     RegisterMovableFrame(MultiBarLeft:GetName(), MultiBarLeft, "MultiBarLeft", "VerticalActionBarDummy")
 
@@ -835,20 +917,174 @@ local function LoadActionBars()
     end
     AlertFrame.UpdateAnchors = updateAnchors
 
-    -- fix position of some things dependent on action bars
-    GW.UpdatePetFrameLocation()
-    GW.UpdatePlayerBuffFrame()
-
     -- return handler for fading action bars
     if GetSetting("FADE_BOTTOM_ACTIONBAR") then
         return function(elapsed)
-            FadeCheck(MultiBarBottomLeft, elapsed)
-            FadeCheck(MultiBarBottomRight, elapsed)
-            FadeCheck(MultiBarRight, elapsed)
-            FadeCheck(MultiBarLeft, elapsed)
+            fadeCheck(MultiBarBottomLeft, elapsed)
+            fadeCheck(MultiBarBottomRight, elapsed)
+            fadeCheck(MultiBarRight, elapsed)
+            fadeCheck(MultiBarLeft, elapsed)
         end
     else
         return nil
     end
 end
 GW.LoadActionBars = LoadActionBars
+
+local function updatePetFrameLocation()
+    if InCombatLockdown() or not GwPlayerPetFrame then
+        return
+    end
+    GwPlayerPetFrame:ClearAllPoints()
+    if MultiBarBottomLeft.gw_FadeShowing then
+        GwPlayerPetFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+    else
+        GwPlayerPetFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+    end
+end
+
+local function updatePetData(event, unit)
+    if not UnitExists("pet") then
+        return
+    end
+    if UnitExists("vehicle") and UnitIsUnit("pet", "vehicle") then
+        GwPlayerPetFrame:SetAlpha(0)
+        return
+    end
+
+    if event == "UNIT_AURA" and unit == "pet" then
+        updateBuffLayout(GwPlayerPetFrame, event)
+        return
+    end
+
+    local health = UnitHealth("pet")
+    local healthMax = UnitHealthMax("pet")
+    local healthprec = 0
+
+    local powerType, powerToken, _ = UnitPowerType("pet")
+    local resource = UnitPower("pet", powerType)
+    local resourceMax = UnitPowerMax("pet", powerType)
+    local resourcePrec = 0
+
+    if health > 0 and healthMax > 0 then
+        healthprec = health / healthMax
+    end
+
+    if resource ~= nil and resource > 0 and resourceMax > 0 then
+        resourcePrec = resource / resourceMax
+    end
+
+    if PowerBarColorCustom[powerToken] then
+        local pwcolor = PowerBarColorCustom[powerToken]
+        GwPlayerPetFrame.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    end
+
+    GwPlayerPetFrame.resource:SetValue(resourcePrec)
+
+    SetPortraitTexture(_G["GwPlayerPetFramePortrait"], "pet")
+
+    if GwPlayerPetFrameHealth.animationCurrent == nil then
+        GwPlayerPetFrameHealth.animationCurrent = 0
+    end
+    AddToAnimation(
+        "petBarAnimation",
+        GwPlayerPetFrameHealth.animationCurrent,
+        healthprec,
+        GetTime(),
+        0.2,
+        function()
+            _G["GwPlayerPetFrameHealth"]:SetValue(animations["petBarAnimation"]["progress"])
+        end
+    )
+    GwPlayerPetFrameHealth.animationCurrent = healthprec
+    _G["GwPlayerPetFrameHealthString"]:SetText(CommaValue(health))
+end
+
+local function LoadPetFrame()
+    local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrame")
+
+    RegisterMovableFrame("petframe", GwPlayerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
+
+    playerPetFrame:SetAttribute("*type1", "target")
+    playerPetFrame:SetAttribute("*type2", "togglemenu")
+    playerPetFrame:SetAttribute("unit", "pet")
+    playerPetFrame:EnableMouse(true)
+    playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    RegisterUnitWatch(playerPetFrame)
+
+    _G["GwPlayerPetFrameHealth"]:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+    _G["GwPlayerPetFrameHealthString"]:SetFont(UNIT_NAME_FONT, 11)
+
+    playerPetFrame:SetScript(
+        "OnEvent",
+        function(self, event, unit)
+            updatePetData(event, unit)
+        end
+    )
+    playerPetFrame:HookScript(
+        "OnShow",
+        function()
+            updatePetData("UNIT_PET", "player")
+        end
+    )
+    playerPetFrame.unit = "pet"
+
+    playerPetFrame.displayBuffs = true
+    playerPetFrame.displayDebuffs = true
+    playerPetFrame.debuffFilter = "player"
+
+    LoadAuras(playerPetFrame, playerPetFrame.auras)
+
+    playerPetFrame:RegisterEvent("UNIT_PET")
+    playerPetFrame:RegisterEvent("UNIT_POWER_FREQUENT")
+    playerPetFrame:RegisterEvent("UNIT_MAXPOWER")
+    playerPetFrame:RegisterEvent("UNIT_HEALTH")
+    playerPetFrame:RegisterEvent("UNIT_MAXHEALTH")
+    playerPetFrame:RegisterEvent("UNIT_AURA")
+
+    --_G['GwPlayerPetFramePortrait']
+    updatePetData("UNIT_PET", "player")
+
+    if GetSetting("PETBAR_LOCKED") == true then
+        GwPlayerPetFrame:ClearAllPoints()
+        GwPlayerPetFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 86)
+        playerPetFrame:SetFrameRef("GwPlayerPetFrame", GwPlayerPetFrame)
+        playerPetFrame:SetFrameRef("UIParent", UIParent)
+        playerPetFrame:SetFrameRef("MultiBarBottomLeft", MultiBarBottomLeft)
+        playerPetFrame:SetAttribute(
+            "_onstate-combat",
+            [=[
+            if self:GetFrameRef('MultiBarBottomLeft'):IsShown()==false then
+                return
+            end
+        
+            self:GetFrameRef('GwPlayerPetFrame'):ClearAllPoints()
+            if newstate == 'show' then
+                self:GetFrameRef('GwPlayerPetFrame'):SetPoint('BOTTOMRIGHT',self:GetFrameRef('UIParent'),'BOTTOM',-53,212)
+            end
+        ]=]
+        )
+        RegisterStateDriver(playerPetFrame, "combat", "[combat] show; hide")
+        AddActionBarCallback(updatePetFrameLocation)
+        updatePetFrameLocation()
+        return
+    end
+
+    GwPlayerPetFrame:ClearAllPoints()
+    GwPlayerPetFrame:SetPoint(
+        GetSetting("pet_pos")["point"],
+        UIParent,
+        GetSetting("pet_pos")["relativePoint"],
+        GetSetting("pet_pos")["xOfs"],
+        GetSetting("pet_pos")["yOfs"]
+    )
+
+    -- show/hide stuff with override bar
+    OverrideActionBar:HookScript(
+        "OnHide",
+        function()
+            playerPetFrame:SetAlpha(1)
+        end
+    )
+end
+GW.LoadPetFrame = LoadPetFrame

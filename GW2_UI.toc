@@ -34,10 +34,9 @@ mainbar/experiencebar.xml
 mainbar/hudart.xml
 mainbar/hudelements.xml
 mainbar/hud.lua
-mainbar/fader.lua
+mainbar/actionbars2.lua
 mainbar/buffs.lua
 mainbar/castingbar.lua
-mainbar/actionbars2.lua
 mainbar/playerhud.lua
 mainbar/classpowers.lua
 

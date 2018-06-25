@@ -519,11 +519,6 @@ local function gw_OnEvent(self, event, name)
         end
     end
 
-    -- create buff frame
-    if GetSetting("PLAYER_BUFFS_ENABLED") then
-        GW.LoadBuffs()
-    end
-
     -- create pet frame
     if GetSetting("PETBAR_ENABLED") then
         GW.LoadPetFrame()
@@ -533,6 +528,12 @@ local function gw_OnEvent(self, event, name)
     if GetSetting("ACTIONBARS_ENABLED") then
         OnUpdateActionBars = GW.LoadActionBars()
     end
+
+    -- create buff frame
+    if GetSetting("PLAYER_BUFFS_ENABLED") then
+        GW.LoadBuffs()
+    end
+
     -- create new microbuttons
     --[[
     if GetSetting('CHATBUBBLES_ENABLED') then

@@ -16,6 +16,7 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
+local Debug = GW.Debug
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -642,19 +643,21 @@ local function CreateAuraFrame(name, parent)
 end
 GW.CreateAuraFrame = CreateAuraFrame
 
-local function loadAuras(self)
+local function LoadAuras(f, a, u)
+    local unit = u or f.unit
     for i = 1, 40 do
-        local frame = CreateAuraFrame("Gw" .. self.unit .. "buffFrame" .. i, self.auras)
-        frame.unit = self.unit
+        local frame = CreateAuraFrame("Gw" .. unit .. "buffFrame" .. i, a)
+        frame.unit = unit
         frame.auraType = "buff"
-        frame = CreateAuraFrame("Gw" .. self.unit .. "debuffFrame" .. i, self.auras)
-        frame.unit = self.unit
+        frame = CreateAuraFrame("Gw" .. unit .. "debuffFrame" .. i, a)
+        frame.unit = unit
         frame.auraType = "debuff"
     end
-    self.saveAuras = {}
-    self.saveAuras["buff"] = {}
-    self.saveAuras["debuff"] = {}
+    f.saveAuras = {}
+    f.saveAuras["buff"] = {}
+    f.saveAuras["debuff"] = {}
 end
+GW.LoadAuras = LoadAuras
 
 local function target_OnEvent(self, event, unit)
     if event == "PLAYER_TARGET_CHANGED" or event == "ZONE_CHANGED" then
@@ -1033,7 +1036,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
 
-    loadAuras(NewUnitFrame)
+    LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
     TargetFrame:SetScript("OnEvent", nil)
     TargetFrame:Hide()
@@ -1108,7 +1111,7 @@ local function LoadFocus()
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
     NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
 
-    loadAuras(NewUnitFrame)
+    LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
     FocusFrame:SetScript("OnEvent", nil)
     FocusFrame:Hide()
