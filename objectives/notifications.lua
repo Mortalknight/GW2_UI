@@ -60,6 +60,7 @@ local function getQuestPOIText(questLogIndex)
     end
     return finalText
 end
+GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
 
 --[[
 local function getCompassPriority()
@@ -96,8 +97,8 @@ local questCompass = {
     ["COMPASS"] = true
 }
 local function getNearestQuestPOI(currentMapID)
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID,"player")
-	local posX, posY = posTable:GetXY()
+    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
+    local posX, posY = posTable:GetXY()
 
     local numQuests, _ = GetNumQuestLogEntries()
     if posX == nil or posX == 0 or numQuests == nil then
@@ -132,6 +133,7 @@ local function getNearestQuestPOI(currentMapID)
         return nil
     end
 end
+GW.AddForProfiling("notifications", "getNearestQuestPOI", getNearestQuestPOI)
 
 local bodyCompass = {
     ["TYPE"] = "DEAD",
@@ -140,8 +142,10 @@ local bodyCompass = {
     ["COMPASS"] = true
 }
 local function getBodyPOI()
-    local posX, _ = GetPlayerMapPosition("player")
-    local x, y = GetCorpseMapPosition()
+    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
+    local posX, _ = posTable:GetXY()
+    local corpTable = C_DeathInfo.GetCorpseMapPosition(currentMapID)
+    local x, y = corpTable:GetXY()
     if posX == nil or posX == 0 or x == nil or x == 0 then
         return nil
     end
@@ -152,6 +156,7 @@ local function getBodyPOI()
 
     return bodyCompass
 end
+GW.AddForProfiling("notifications", "getBodyPOI", getBodyPOI)
 
 local function AddTrackerNotification(data)
     if data == nil or data["ID"] == nil then
@@ -229,8 +234,8 @@ local function updateRadar(self, elapsed)
     end
     self.TotalElapsed = 0
 
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID,"player")
-	local posX, posY = posTable:GetXY()
+    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
+    local posX, posY = posTable:GetXY()
     if posX == nil or posX == 0 or self.data["X"] == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
         return
@@ -245,9 +250,10 @@ local function updateRadar(self, elapsed)
     local sin, cos = math.sin(a) * square_half, math.cos(a) * square_half
     self.arrow:SetTexCoord(0.5 - sin, 0.5 + cos, 0.5 + cos, 0.5 + sin, 0.5 - cos, 0.5 - sin, 0.5 + sin, 0.5 - cos)
 end
+GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
 local function SetObjectiveNotification(mapID)
-	currentMapID = mapID
+    currentMapID = mapID
     local data
     for k, v in pairs(notifications) do
         if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
@@ -336,7 +342,7 @@ local function SetObjectiveNotification(mapID)
         GwObjectivesNotification.compass:SetScript("OnUpdate", updateRadar)
         GwObjectivesNotification.icon:SetTexture(nil)
     else
-		GwObjectivesNotification.compass:Hide()
+        GwObjectivesNotification.compass:Hide()
         GwObjectivesNotification.compass:SetScript("OnUpdate", nil)
     end
 
