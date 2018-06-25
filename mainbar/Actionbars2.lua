@@ -701,7 +701,7 @@ local function updateAnchors(self)
 
     local relativeFrame = GwAlertFrameOffsetter
     for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
-        if alertFrameSubSystem.AdjustAnchors == AlertFrameJustAnchorMixin.AdjustAnchors then
+        if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors then
             relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
         else
             relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)

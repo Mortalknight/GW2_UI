@@ -13,19 +13,19 @@ end
 
 gwMocks.GetLFGCompletionRewardItem = function(i)
     if i < 2 then
-        local _, _, texturePath, _ = GetCurrencyInfo(1166) -- timewarped badge
-        return texturePath, 5, false, nil
+        local cinfo = C_CurrencyInfo.GetBasicCurrencyInfo(1166) -- timewarped badge
+        return cinfo.icon, 5, false, nil
     else
-        local _, _, texturePath, _ = GetCurrencyInfo(1220) -- order resources
-        return texturePath, 500, false, nil
+        local cinfo = C_CurrencyInfo.GetBasicCurrencyInfo(1220) -- order resources
+        return cinfo.icon, 500, false, nil
     end
 end
 
 gwMocks.GetLFGCompletionRewardItemLink = function(i)
     if i < 2 then
-        return GetCurrencyLink(1166) -- timewarped badge
+        return GetCurrencyLink(1166, 3) -- timewarped badge
     else
-        return GetCurrencyLink(1220) -- order resources
+        return GetCurrencyLink(1220, 250) -- order resources
     end
 end
 
