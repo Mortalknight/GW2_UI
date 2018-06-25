@@ -587,6 +587,7 @@ local function updateBuffLayout(self, event)
 
     self.saveAuras = saveAuras
 end
+GW.updateBuffLayout = updateBuffLayout
 
 local function auraFrame_OnUpdate(self, elapsed)
     if GetTime() > self.throt and self:IsShown() and self.expires ~= nil then

@@ -955,7 +955,7 @@ local function updatePetData(event, unit)
     end
 
     if event == "UNIT_AURA" and unit == "pet" then
-        updateBuffLayout(GwPlayerPetFrame, event)
+        GW.updateBuffLayout(GwPlayerPetFrame, event)
         return
     end
 
