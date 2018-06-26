@@ -648,6 +648,11 @@ local function setStanceBar()
     )
 end
 
+local function setPossessBar()
+    PossessBarFrame:ClearAllPoints()
+    PossessBarFrame:SetPoint("BOTTOM", MainMenuBarArtFrame, "TOP", -110, 40)
+end
+
 local function vehicleLeave_OnUpdate()
     if InCombatLockdown() then
         return
@@ -885,6 +890,7 @@ local function LoadActionBars()
     hideBlizzardsActionbars()
     setMicroButtons()
     setStanceBar()
+    setPossessBar()
     if GetSetting("PETBAR_ENABLED") then
         setPetBar()
     end
