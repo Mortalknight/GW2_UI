@@ -375,7 +375,6 @@ local function getUnitDebuffs(unit)
         if UnitDebuff(unit, i) then
             DebuffLists[unit][i] = {}
             DebuffLists[unit][i]["name"],
-                DebuffLists[unit][i]["rank"],
                 DebuffLists[unit][i]["icon"],
                 DebuffLists[unit][i]["count"],
                 DebuffLists[unit][i]["dispelType"],

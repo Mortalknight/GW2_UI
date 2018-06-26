@@ -20,7 +20,6 @@ DEBUFF_COLOR["Disease"] = {r = 177 / 255, g = 114 / 255, b = 72 / 255}
 DEBUFF_COLOR["Magic"] = {r = 72 / 255, g = 94 / 255, b = 177 / 255}
 DEBUFF_COLOR["Poison"] = {r = 94 / 255, g = 177 / 255, b = 72 / 255}
 DEBUFF_COLOR[""] = DEBUFF_COLOR["none"]
-DEBUFF_COLOR[0] = DEBUFF_COLOR["none"]
 
 --GW_FACTION_BAR_COLORS = FACTION_BAR_COLORS
 --GW_FACTION_BAR_COLORS = {

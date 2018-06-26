@@ -6,6 +6,7 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Self_Hide = GW.Self_Hide
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
+local Debug = GW.Debug
 
 local buffLists = {}
 local DebuffLists = {}
@@ -81,7 +82,6 @@ local function updatePlayerDebuffList()
         if UnitDebuff(unitToWatch, i) then
             DebuffLists[unitToWatch][i] = {}
             DebuffLists[unitToWatch][i]["name"],
-                DebuffLists[unitToWatch][i]["rank"],
                 DebuffLists[unitToWatch][i]["icon"],
                 DebuffLists[unitToWatch][i]["count"],
                 DebuffLists[unitToWatch][i]["dispelType"],

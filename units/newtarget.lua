@@ -36,7 +36,6 @@ function updateDebuffList(unitToWatch)
         if UnitDebuff(unitToWatch, i, filter) then
             DebuffLists[unitToWatch][i] = {}
             DebuffLists[unitToWatch][i]["name"],
-                DebuffLists[unitToWatch][i]["rank"],
                 DebuffLists[unitToWatch][i]["icon"],
                 DebuffLists[unitToWatch][i]["count"],
                 DebuffLists[unitToWatch][i]["dispelType"],

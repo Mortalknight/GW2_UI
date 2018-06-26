@@ -274,7 +274,6 @@ local function updateDebuffs(self)
     for i = 1, 40 do
         DebuffLists[i] = {}
         DebuffLists[i]["name"],
-            DebuffLists[i]["rank"],
             DebuffLists[i]["icon"],
             DebuffLists[i]["count"],
             DebuffLists[i]["dispelType"],
