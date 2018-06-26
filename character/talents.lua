@@ -302,7 +302,7 @@ local function loadTalents()
         self:SetScript("OnUpdate", nil)
     end
     local fnContainer_OnClick = function(self, button)
-        if not self.active then
+        if not self.active and UnitLevel("player") > 9 then
             SetSpecialization(self.specIndex)
         end
     end
