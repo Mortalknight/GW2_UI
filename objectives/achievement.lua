@@ -32,12 +32,12 @@ local function achievement_OnClick(block, mouseButton)
         end
     end
 end
-GW.AddForProfiling("achivement", "achievement_OnClick", achievement_OnClick)
+GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)
 
 local function setBlockColor(block, string)
     block.color = TRACKER_TYPE_COLOR[string]
 end
-GW.AddForProfiling("achivement", "setBlockColor", setBlockColor)
+GW.AddForProfiling("achievement", "setBlockColor", setBlockColor)
 
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwAchievementObjective" .. index] ~= nil then
@@ -73,7 +73,7 @@ local function getObjectiveBlock(self, index)
 
     return newBlock
 end
-GW.AddForProfiling("achivement", "getObjectiveBlock", getObjectiveBlock)
+GW.AddForProfiling("achievement", "getObjectiveBlock", getObjectiveBlock)
 
 local function getBlock(blockIndex)
     if _G["GwAchivementBlock" .. blockIndex] ~= nil then
@@ -94,7 +94,7 @@ local function getBlock(blockIndex)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     return newBlock
 end
-GW.AddForProfiling("achivement", "getBlock", getBlock)
+GW.AddForProfiling("achievement", "getBlock", getBlock)
 
 local function addObjective(block, text, finished, objectiveIndex)
     if finished == true then
@@ -128,7 +128,7 @@ local function addObjective(block, text, finished, objectiveIndex)
         block.numObjectives = block.numObjectives + 1
     end
 end
-GW.AddForProfiling("achivement", "addObjective", addObjective)
+GW.AddForProfiling("achievement", "addObjective", addObjective)
 
 local function updateAchievementObjectives(block, blockIndex, achievementID)
     block.height = 35
@@ -194,7 +194,7 @@ local function updateAchievementObjectives(block, blockIndex, achievementID)
 
     block:SetHeight(block.height)
 end
-GW.AddForProfiling("achivement", "updateAchievementObjectives", updateAchievementObjectives)
+GW.AddForProfiling("achievement", "updateAchievementObjectives", updateAchievementObjectives)
 
 local function updateAchievementLayout(intent)
     local savedHeight = 1
@@ -258,7 +258,7 @@ local function updateAchievementLayout(intent)
 
     QuestTrackerLayoutChanged()
 end
-GW.AddForProfiling("achivement", "updateAchievementLayout", updateAchievementLayout)
+GW.AddForProfiling("achievement", "updateAchievementLayout", updateAchievementLayout)
 
 local function LoadAchievementFrame()
     GwQuesttrackerContainerAchievement:SetScript("OnEvent", updateAchievementLayout)

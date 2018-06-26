@@ -32,6 +32,7 @@ local function selectType()
     PLAYER_SPECIALIZATION = GetSpecialization()
     setBarType()
 end
+GW.AddForProfiling("classpowers", "selectType", selectType)
 
 local function updatePower(self, event, unit)
     if
@@ -50,6 +51,7 @@ local function updatePower(self, event, unit)
         CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION](event, unit)
     end
 end
+GW.AddForProfiling("classpowers", "updatePower", updatePower)
 
 local function powerSoulshard()
     CLASS_POWER_MAX = UnitPowerMax("player", 7)
@@ -58,6 +60,7 @@ local function powerSoulshard()
     GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.125 * CLASS_POWER_MAX, 0.125 * (CLASS_POWER_MAX + 1))
     GwPlayerClassPowerFill:SetTexCoord(0, 1, 0.125 * CLASS_POWER, 0.125 * (CLASS_POWER + 1))
 end
+GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
 
 local function powerHoly()
     local old_power = CLASS_POWER
@@ -84,6 +87,7 @@ local function powerHoly()
         )
     end
 end
+GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
 
 local function powerChi()
     local old_power = CLASS_POWER
@@ -110,6 +114,7 @@ local function powerChi()
         )
     end
 end
+GW.AddForProfiling("classpowers", "powerChi", powerChi)
 
 local function loopStagger()
     local staggerAmountClamped = math.min(1, GwBrewmaster.debugpre)
@@ -143,6 +148,7 @@ local function loopStagger()
     GwBrewmaster.stagger.indicator:SetPoint("LEFT", (staggerAmountClamped * 256) - 13, -6)
     GwBrewmaster.stagger.indicatorText:SetText(math.floor(GwBrewmaster.debugpre * 100) .. "%")
 end
+GW.AddForProfiling("classpowers", "loopStagger", loopStagger)
 
 local function ironSkin_OnUpdate()
     local precentage = math.min(1, math.max(0, (GwBrewmaster.ironskin.expires - GetTime()) / 23))
@@ -153,6 +159,7 @@ local function ironSkin_OnUpdate()
     GwBrewmaster.ironskin.indicator:SetPoint("LEFT", math.min(252, (precentage * 256)) - 13, 19)
     GwBrewmaster.ironskin.indicatorText:SetText(RoundInt(GwBrewmaster.ironskin.expires - GetTime()) .. "s")
 end
+GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
 
 local function powerStagger(event, unit)
     if event == nil then
@@ -195,6 +202,7 @@ local function powerStagger(event, unit)
     GwBrewmaster.debugpre = staggarPrec
     loopStagger()
 end
+GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
 
 powerCombo = function()
     local old_power = CLASS_POWER
@@ -221,6 +229,7 @@ powerCombo = function()
         )
     end
 end
+GW.AddForProfiling("classpowers", "powerCombo", powerCombo)
 
 local function powerRune()
     for i = 1, 6 do
@@ -285,6 +294,7 @@ local function powerRune()
         _G["GwRuneTexture" .. i]:SetTexCoord(0, 0.5, 0, 1)
     end
 end
+GW.AddForProfiling("classpowers", "powerRune", powerRune)
 
 local function powerMana()
     if extra_manabar_loaded then
@@ -315,6 +325,7 @@ local function powerMana()
 
     UpdatePowerData(GwExtraPlayerPowerBar, 0, "MANA", "GwExtraPowerBar")
 end
+GW.AddForProfiling("classpowers", "powerMana", powerMana)
 
 local function powerArcane()
     local old_power = CLASS_POWER
@@ -345,6 +356,7 @@ local function powerArcane()
         )
     end
 end
+GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
 local function loopMongooseAnim()
     GwMongooseBar.looping = true
@@ -398,6 +410,7 @@ local function loopMongooseAnim()
         end
     )
 end
+GW.AddForProfiling("classpowers", "loopMongooseAnim", loopMongooseAnim)
 
 local function powerMongoose()
     local old_power = CLASS_POWER
@@ -469,6 +482,7 @@ local function powerMongoose()
 
     GwMongooseBar.count:SetText(CLASS_POWER)
 end
+GW.AddForProfiling("classpowers", "powerMongoose", powerMongoose)
 
 local function loopRage()
     if GwFocusRage.looping ~= nil and GwFocusRage.looping ~= false then
@@ -506,6 +520,7 @@ local function loopRage()
         end
     )
 end
+GW.AddForProfiling("classpowers", "loopRage", loopRage)
 
 local function powerRage(event, unit)
     if event ~= "UNIT_AURA" or unit ~= "player" then
@@ -549,6 +564,7 @@ local function powerRage(event, unit)
         end
     )
 end
+GW.AddForProfiling("classpowers", "powerRage", powerRage)
 
 setBarType = function()
     GwPlayerClassPower:Show()
@@ -719,6 +735,7 @@ setBarType = function()
     end
     GwPlayerClassPower:Hide()
 end
+GW.AddForProfiling("classpowers", "setBarType", setBarType)
 
 CLASS_POWERS[1] = {}
 CLASS_POWERS[1][1] = powerRage
@@ -728,7 +745,7 @@ CLASS_POWERS[2] = {}
 CLASS_POWERS[2][3] = powerHoly
 
 CLASS_POWERS[3] = {}
-CLASS_POWERS[3][3] = powerMongoose
+--CLASS_POWERS[3][3] = powerMongoose
 
 CLASS_POWERS[6] = {}
 CLASS_POWERS[6][1] = powerRune
