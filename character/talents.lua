@@ -276,7 +276,7 @@ local function updateActiveSpec()
 end
 
 local function loadTalents()
-    local _, _, classID = UnitClass("player")
+    local _, englishClass, classID = UnitClass("player")
 
     local txR, txT, txH, txMH
     txR = 588 / 1024
@@ -396,7 +396,7 @@ local function loadTalents()
                 end
             end
             if i == 1 then
-                local talentLevels = CLASS_TALENT_LEVELS[classID] or CLASS_TALENT_LEVELS["DEFAULT"]
+                local talentLevels = CLASS_TALENT_LEVELS[englishClass] or CLASS_TALENT_LEVELS["DEFAULT"]
                 local numberDisplay =
                     CreateFrame("Frame", "GwTalentsLevelLabel" .. row, GwSpecContainerFrame, "GwTalentsLevelLabel")
                 numberDisplay.title:SetFont(DAMAGE_TEXT_FONT, 14)

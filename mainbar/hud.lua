@@ -1332,42 +1332,16 @@ local function loadRewards()
 end
 
 displayRewards = function()
-    GW_LEVELING_REWARDS = {}
-
-    GW_LEVELING_REWARDS[1] = {}
-    GW_LEVELING_REWARDS[1]["type"] = "TALENT"
-    GW_LEVELING_REWARDS[1]["id"] = 0
-    GW_LEVELING_REWARDS[1]["level"] = 15
-
-    GW_LEVELING_REWARDS[2] = {}
-    GW_LEVELING_REWARDS[2]["type"] = "TALENT"
-    GW_LEVELING_REWARDS[2]["id"] = 0
-    GW_LEVELING_REWARDS[2]["level"] = 30
-
-    GW_LEVELING_REWARDS[3] = {}
-    GW_LEVELING_REWARDS[3]["type"] = "TALENT"
-    GW_LEVELING_REWARDS[3]["id"] = 0
-    GW_LEVELING_REWARDS[3]["level"] = 45
-
-    GW_LEVELING_REWARDS[4] = {}
-    GW_LEVELING_REWARDS[4]["type"] = "TALENT"
-    GW_LEVELING_REWARDS[4]["id"] = 0
-    GW_LEVELING_REWARDS[4]["level"] = 60
-
-    GW_LEVELING_REWARDS[5] = {}
-    GW_LEVELING_REWARDS[5]["type"] = "TALENT"
-    GW_LEVELING_REWARDS[5]["id"] = 0
-    GW_LEVELING_REWARDS[5]["level"] = 75
-
-    GW_LEVELING_REWARDS[6] = {}
-    GW_LEVELING_REWARDS[6]["type"] = "TALENT"
-    GW_LEVELING_REWARDS[6]["id"] = 0
-    GW_LEVELING_REWARDS[6]["level"] = 90
-
-    GW_LEVELING_REWARDS[7] = {}
-    GW_LEVELING_REWARDS[7]["type"] = "TALENT"
-    GW_LEVELING_REWARDS[7]["id"] = 0
-    GW_LEVELING_REWARDS[7]["level"] = 100
+	local _, englishClass = UnitClass('player')
+    local talentLevels = CLASS_TALENT_LEVELS[englishClass] or CLASS_TALENT_LEVELS["DEFAULT"]
+	GW_LEVELING_REWARDS = {}
+	
+	for i = 1, 7 do
+		GW_LEVELING_REWARDS[i] = {}
+		GW_LEVELING_REWARDS[i]['type'] = 'TALENT'
+		GW_LEVELING_REWARDS[i]['id'] = 0
+		GW_LEVELING_REWARDS[i]['level'] = talentLevels[i]
+	end
 
     GW_LEVELING_REWARD_AVALIBLE = false
 
