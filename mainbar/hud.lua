@@ -86,13 +86,16 @@ local function xpbar_OnEnter()
 
     if showArtifact then
         local _, artifactXP, xpForNextPoint = artifactPoints()
+        local xpPct
+        if xpForNextPoint > 0 then
+            xpPct = math.floor((artifactXP / xpForNextPoint) * 100) .. "%"
+        else
+            xpPct = "n/a"
+        end
 
         GameTooltip:AddLine(
             GwLocalization["EXP_BAR_TOOLTIP_ARTIFACT"] ..
-                CommaValue(artifactXP) ..
-                    " / " ..
-                        CommaValue(xpForNextPoint) ..
-                            " |cffa6a6a6 (" .. math.floor((artifactXP / xpForNextPoint) * 100) .. "%)|r",
+                CommaValue(artifactXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r",
             1,
             1,
             1
@@ -312,7 +315,12 @@ local function xpbar_OnEvent(self, event)
     if showArtifact then
         showBar2 = true
         local numPoints, artifactXP, xpForNextPoint = artifactPoints()
-        local artifactVal = artifactXP / xpForNextPoint
+        local artifactVal
+        if xpForNextPoint > 0 then
+            artifactVal = artifactXP / xpForNextPoint
+        else
+            artifactVal = 0
+        end
 
         _G["GwExperienceFrameArtifactBarCandy"]:SetValue(artifactVal)
 
@@ -1332,16 +1340,16 @@ local function loadRewards()
 end
 
 displayRewards = function()
-	local _, englishClass = UnitClass('player')
+    local _, englishClass = UnitClass("player")
     local talentLevels = CLASS_TALENT_LEVELS[englishClass] or CLASS_TALENT_LEVELS["DEFAULT"]
-	GW_LEVELING_REWARDS = {}
-	
-	for i = 1, 7 do
-		GW_LEVELING_REWARDS[i] = {}
-		GW_LEVELING_REWARDS[i]['type'] = 'TALENT'
-		GW_LEVELING_REWARDS[i]['id'] = 0
-		GW_LEVELING_REWARDS[i]['level'] = talentLevels[i]
-	end
+    GW_LEVELING_REWARDS = {}
+
+    for i = 1, 7 do
+        GW_LEVELING_REWARDS[i] = {}
+        GW_LEVELING_REWARDS[i]["type"] = "TALENT"
+        GW_LEVELING_REWARDS[i]["id"] = 0
+        GW_LEVELING_REWARDS[i]["level"] = talentLevels[i]
+    end
 
     GW_LEVELING_REWARD_AVALIBLE = false
 
