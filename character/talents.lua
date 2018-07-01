@@ -227,12 +227,18 @@ local function updateActiveSpec()
                     button.highlight:Show()
                     button.legendaryHighlight:Hide()
 
-                    _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Show()
-                    setLineRotation(_G["GwTalentLine" .. i .. "-" .. last .. "-" .. row], lastIndex, index)
-                    lastIndex = index
+                    if lastIndex ~= -1 then
+                        _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Show()
+                        setLineRotation(_G["GwTalentLine" .. i .. "-" .. last .. "-" .. row], lastIndex, index)
+                    else
+                        _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Hide()
+                    end
 
                     if selected then
                         sel = true
+                        lastIndex = index
+                    elseif index == talentsPerRow and not sel then
+                        lastIndex = -1
                     end
                 else
                     button.legendaryHighlight:Hide()
