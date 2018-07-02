@@ -567,7 +567,7 @@ local function loadPetTalents()
                 petSpecFrame_OnShow(container)
             end
         )
-                container:SetScript(
+        container:SetScript(
             "OnEvent",
             function()
                 if GetPetTalentTree() == nil then
