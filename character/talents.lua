@@ -120,10 +120,13 @@ local function petSpec_OnUpdate(self, elapsed)
         local r, _, _, _ = self.background:GetVertexColor()
         self.background:SetVertexColor(r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed))
         return
+    elseif self.active then
+        self.info.spellPreview:Show()
+        self.info.specDesc:Hide()
+    else
+        self.info.spellPreview:Hide()
+        self.info.specDesc:Show()
     end
-
-    self.info.spellPreview:Hide()
-    self.info.specDesc:Show()
 
     self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
 end
@@ -418,7 +421,7 @@ local function loadTalents()
 end
 
 local function updatePetTalents()
-    local current = GetSpecialization(nil, true, GetSpecialization())
+    local current = GetSpecialization(nil, true)
 
     for i = 1, GetNumSpecializations(false, true) do
         local container = _G["GwPetSpecFrame" .. i]
@@ -535,25 +538,10 @@ local function loadPetTalents()
         txMH = 1024
     end
 
-    local fnContainer_OnUpdate = function(self, elapsed)
-        if MouseIsOver(self) then
-            local r, _, _, _ = self.background:GetVertexColor()
-            self.background:SetVertexColor(r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed))
-            return
-        end
-        self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
-    end
-    local fnContainer_OnShow = function(self)
-        self:SetScript("OnUpdate", fnContainer_OnUpdate)
-    end
     local fnContainer_OnHide = function(self)
         self:SetScript("OnUpdate", nil)
     end
-    local fnContainer_OnClick = function(self, button)
-        if not self.active then
-            SetSpecialization(self.specIndex)
-        end
-    end
+
     for i = 1, GetNumSpecializations(false, true) do
         local container = CreateFrame("Button", "GwPetSpecFrame" .. i, GwPetSpecContainerFrame, "GwSpecFrame")
         container:RegisterForClicks("AnyUp")
@@ -569,26 +557,17 @@ local function loadPetTalents()
         container:SetScript("OnEnter", nil)
         container:SetScript("OnLeave", nil)
         container:SetScript("OnUpdate", nil)
-        container:SetScript("OnShow", fnContainer_OnShow)
         container:SetScript("OnHide", fnContainer_OnHide)
-        container:SetScript("OnClick", fnContainer_OnClick)
 
         container:ClearAllPoints()
 
-        container:SetScript(
-            "OnClick",
-            function()
-                SetSpecialization(i, true)
-            end
-        )
         container:SetScript(
             "OnShow",
             function()
                 petSpecFrame_OnShow(container)
             end
         )
-
-        container:SetScript(
+                container:SetScript(
             "OnEvent",
             function()
                 if GetPetTalentTree() == nil then
@@ -597,7 +576,6 @@ local function loadPetTalents()
                 else
                     container:Show()
                 end
-
                 updatePetTalents()
             end
         )
@@ -761,6 +739,9 @@ local function updateTab()
             if not ispassive then
                 local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
                 local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
+                if name == nil then
+                    name = ""
+                end
 
                 setButtonStyle(ispassive, isFuture, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
 
@@ -809,6 +790,9 @@ local function updateTab()
 
                 local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
                 local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
+                if name == nil then
+                    name = ""
+                end
                 if ispassive then
                     y = y + 1
 
