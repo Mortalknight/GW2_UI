@@ -188,7 +188,6 @@ local function xpbar_OnEvent(self, event)
     _G["GwExperienceFrameBar"]:SetStatusBarColor(0.83, 0.57, 0)
 
     gw_reputation_vals = nil
-    --8X ReputationWatchBar:Hide()
     if level == Nextlevel then
         for factionIndex = 1, GetNumFactions() do
             name,
@@ -749,14 +748,6 @@ local microButtonFrame = CreateFrame("Frame", "GwMicroButtonFrame", UIParent, "G
 
 local microButtonPadding = 4 + 12
 
-local function fnMf_OnEnter(self)
-    self:SetSize(28, 28)
-end
-
-local function fnMf_OnLeave(self)
-    self:SetSize(24, 24)
-end
-
 local function createMicroButton(key)
     local mf =
         CreateFrame(
@@ -765,8 +756,6 @@ local function createMicroButton(key)
         microButtonFrame,
         "SecureHandlerClickTemplate,GwMicroButtonTemplate"
     )
-    mf:SetScript("OnEnter", fnMf_OnEnter)
-    mf:SetScript("OnLeave", fnMf_OnLeave)
     mf:SetPoint("CENTER", microButtonFrame, "TOPLEFT", microButtonPadding, -16)
     microButtonPadding = microButtonPadding + 24 + 4
 
@@ -1155,16 +1144,18 @@ local function LoadMicroMenu()
         end
     )
 
-    GwMicroButtonStoreMicroButton:SetScript("OnClick", ToggleStoreUI)
-    GwMicroButtonStoreMicroButton:SetScript("OnEnter", nil)
-    GwMicroButtonStoreMicroButton:SetScript("OnLeave", nil)
+    if GwMicroButtonHelpMicroButton ~= nil then
+        GwMicroButtonHelpMicroButton:SetScript("OnClick", ToggleHelpFrame)
+    end
+    if GwMicroButtonStoreMicroButton ~= nil then
+        GwMicroButtonStoreMicroButton:SetScript("OnClick", ToggleStoreUI)
+    end
 
     GwMicroButtonTalentMicroButton:SetScript("OnEvent", talentMicro_OnEvent)
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_LEVEL_UP")
     GwMicroButtonTalentMicroButton:RegisterEvent("UPDATE_BINDINGS")
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    --8X GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED");
 
     hookToolTip(GwMicroButtonCharacterMicroButton, CHARACTER_BUTTON, 'TOGGLECHARACTER0"')
     hookToolTip(GwMicroButtonBagMicroButton, GwLocalization["GW_BAG_MICROBUTTON_STRING"], "OPENALLBAGS")
