@@ -1098,7 +1098,7 @@
             </PlayerModel>
         </Frames>
     </Button>
-    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true">
+    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true" hidden="true">
         <Size x="853" y="50"></Size>
         <Anchors>
             <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
@@ -1111,7 +1111,7 @@
         </Anchors>
     </Frame>
 
-    <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true" virtual="true" protected="true">
+    <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true" virtual="true" protected="true" hidden="true">
         <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>
@@ -1170,7 +1170,7 @@
         </Layers>
 
         <Frames>
-            <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="" framelevel="10">
+            <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate" text="" framelevel="10">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
@@ -1186,12 +1186,4 @@
 
         </Frames>
     </Frame>
-
-    <Button name="gwFrameCombatTogglerSpellbook" inherits="SecureActionButtonTemplate" virtual="true">
-        <Attributes>
-            <Attribute name="type" value="attribute" />
-            <Attribute name="attribute" attribute-frame="GwCharacterWindow" attribute-name="windowPanelOpen" attribute-value="2" value="2" />
-        </Attributes>
-    </Button>
-
 </Ui>

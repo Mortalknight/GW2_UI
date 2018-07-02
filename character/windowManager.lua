@@ -8,21 +8,135 @@ windowsList[1] = {}
 windowsList[1]["ONLOAD"] = GW.LoadCharacter
 windowsList[1]["SETTING_NAME"] = "USE_CHARACTER_WINDOW"
 windowsList[1]["TAB_ICON"] = "tabicon_character"
-windowsList[1]["ONCLICK"] = function()
-    ToggleCharacter("PaperDollFrame")
-end
-windowsList[1]["OPEN"] = "ToggleTalentFrame"
+windowsList[1]["ONCLICK"] =
+    [=[
+    self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "paperdoll")
+]=]
 
 windowsList[2] = {}
 windowsList[2]["ONLOAD"] = GW.LoadTalents
 windowsList[2]["SETTING_NAME"] = "USE_TALENT_WINDOW"
 windowsList[2]["TAB_ICON"] = "tabicon_spellbook"
-windowsList[2]["ONCLICK"] = function()
-    ToggleTalentFrame()
-end
-windowsList[2]["OPEN"] = "ToggleTalentFrame"
+windowsList[2]["ONCLICK"] =
+    [=[
+    self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
+]=]
 
-local tabIndex = 1
+-- turn click events (geneated from key bind overrides) into the correct tab show/hide calls
+local charSecure_OnClick =
+    [=[
+    --print("secure click handler button: " .. button)
+    if button == "Close" then
+        self:SetAttribute("windowpanelopen", nil)
+    elseif button == "PaperDoll" then
+        self:SetAttribute("windowpanelopen", "paperdoll")
+    elseif button == "Reputation" then
+        self:SetAttribute("windowpanelopen", "paperdoll")
+    elseif button == "SpellBook" then
+        self:SetAttribute("windowpanelopen", "talents")
+    elseif button == "Talents" then
+        self:SetAttribute("windowpanelopen", "talents")
+    end
+    ]=]
+
+-- use the windowpanelopen attr to show/hide the char frame with correct tab open
+local charSecure_OnAttributeChanged =
+    [=[
+    if name ~= "windowpanelopen" then
+        return
+    end
+    --print("name", name, "value", value)
+    local fmCon = self:GetFrameRef("GwCharacterWindowContainer")
+    local fmTal = self:GetFrameRef("GwTalentFrame")
+    local fmMov = self:GetFrameRef("GwCharacterWindowMoverFrame")
+
+    if value == "talents" then
+        if fmTal ~= nil and fmTal:IsVisible() then
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            fmCon:Hide()
+            fmTal:Show()
+        end
+    elseif value == "paperdoll" then
+        if fmCon ~= nil and fmCon:IsVisible() then
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            fmCon:Show()
+            fmTal:Hide()
+        end
+    else
+        -- close window
+        fmCon:Hide()
+        fmTal:Hide()
+        fmMov:Hide()
+        self:Hide()
+        return
+    end
+
+    if not self:IsVisible() then
+        self:Show()
+        fmMov:Show()
+    end
+    ]=]
+
+-- securely hook ESC to close char window while it is showing
+local charSecure_OnShow =
+    [=[
+    local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
+    if keyEsc ~= nil then
+        self:SetBinding(false, keyEsc, "CLICK GwCharacterWindow:Close")
+    end
+    ]=]
+
+-- remove ESC hook so it does default stuff when char window not showing
+local charSecure_OnHide = [=[
+    self:ClearBindings()
+    ]=]
+
+-- the close button securely closes the char window
+local charCloseSecure_OnClick = [=[
+    self:GetParent():SetAttribute("windowpanelopen", nil)
+    ]=]
+
+local mover_OnDragStart = function(self)
+    self:StartMoving()
+end
+
+local mover_OnDragStop = function(self)
+    self:StopMovingOrSizing()
+end
+
+-- TODO: this doesn't work if bindings are updated in combat, but who does that?!
+local function mover_OnEvent(self, event)
+    if event ~= "UPDATE_BINDINGS" then
+        return
+    end
+    ClearOverrideBindings(self)
+
+    if CharacterWindowTab1 then
+        local keyPaperDoll = GetBindingKey("TOGGLECHARACTER0")
+        local keyReputation = GetBindingKey("TOGGLECHARACTER2")
+        if keyPaperDoll ~= nil then
+            SetOverrideBinding(self, false, keyPaperDoll, "CLICK GwCharacterWindow:PaperDoll")
+        end
+        if keyReputation ~= nil then
+            SetOverrideBinding(self, false, keyReputation, "CLICK GwCharacterWindow:Reputation")
+        end
+    end
+
+    if CharacterWindowTab2 then
+        local keySpellbook = GetBindingKey("TOGGLESPELLBOOK")
+        local keyTalents = GetBindingKey("TOGGLETALENTS")
+        if keySpellbook ~= nil then
+            SetOverrideBinding(self, false, keySpellbook, "CLICK GwCharacterWindow:SpellBook")
+        end
+        if keyTalents ~= nil then
+            SetOverrideBinding(self, false, keyTalents, "CLICK GwCharacterWindow:Talents")
+        end
+    end
+end
 
 local function loadBaseFrame()
     if hasBeenLoaded then
@@ -30,102 +144,25 @@ local function loadBaseFrame()
     end
     hasBeenLoaded = true
 
+    -- create the mover handle for the character window
     local fmGCWMF = CreateFrame("Frame", "GwCharacterWindowMoverFrame", UIParent, "GwCharacterWindowMoverFrame")
-    local fnGCWMF_OnDragStart = function(self)
-        self:StartMoving()
-    end
-    local fnGCWMF_OnDragStop = function(self)
-        self:StopMovingOrSizing()
-    end
-    fmGCWMF:SetScript("OnDragStart", fnGCWMF_OnDragStart)
-    fmGCWMF:SetScript("OnDragStop", fnGCWMF_OnDragStop)
+    fmGCWMF:SetScript("OnDragStart", mover_OnDragStart)
+    fmGCWMF:SetScript("OnDragStop", mover_OnDragStop)
     fmGCWMF:RegisterForDrag("LeftButton")
-    CreateFrame("Button", "GwCharacterWindow", UIParent, "GwCharacterWindow,")
+    fmGCWMF:SetScript("OnEvent", mover_OnEvent)
+    fmGCWMF:RegisterEvent("UPDATE_BINDINGS")
 
-    GwCharacterWindow.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
-    GwCharacterWindow.WindowHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-
-    GwCharacterWindowMoverFrame:Hide()
-
-    GwCharacterWindow.close:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-    GwCharacterWindow.close:SetFrameRef("GwCharacterWindowMoverFrame", GwCharacterWindowMoverFrame)
-
-    GwCharacterWindow.close:SetAttribute(
-        "_onclick",
-        [=[
-     
-        self:GetFrameRef('GwCharacterWindow'):Hide()
-        self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
-        if self:GetFrameRef('GwCharacterWindow'):IsVisible() then
-              self:GetFrameRef('GwCharacterWindow'):Hide()
-        end
-    ]=]
-    )
-
-    GwCharacterWindow:SetAttribute("windowPanelOpen", 0)
-
-    GwCharacterWindow:SetAttribute(
-        "_onshow",
-        [=[
-        self:SetBindingClick(false,'ESCAPE',self:GetName(),'Escape')
-        ]=]
-    )
-    GwCharacterWindow:SetAttribute("_onhide", [=[
-        self:ClearBindings()
-    ]=])
-    GwCharacterWindow:SetAttribute(
-        "_onclick",
-        [=[
-        
-        if button=='Escape' then
-            self:Hide()
-            self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
-        end
-    ]=]
-    )
-    GwCharacterWindow:Hide()
-    GwCharacterWindow:SetFrameRef("GwCharacterWindowMoverFrame", GwCharacterWindowMoverFrame)
-    GwCharacterWindow:SetAttribute(
-        "_onattributechanged",
-        [=[
-               
-        if value==nil or value==true then return end
-
-        if value==1 and self:GetFrameRef('GwCharacterWindowContainer')~=nil and self:GetFrameRef('GwCharacterWindowContainer'):IsVisible()  then
-            self:SetAttribute('windowPanelOpen',0)
-            return
-        end
-        if value==2 and self:GetFrameRef('GwTalentFrame')~=nil and self:GetFrameRef('GwTalentFrame'):IsVisible() then
-            self:SetAttribute('windowPanelOpen',0)
-            return
-        end
-       
-        if self:GetFrameRef('GwTalentFrame')~=nil then
-            self:GetFrameRef('GwTalentFrame'):Hide()
-        end
-        if self:GetFrameRef('GwCharacterWindowContainer')~=nil then
-            self:GetFrameRef('GwCharacterWindowContainer'):Hide()
-        end
-  
-        if not self:IsVisible() and value~=0 then
-            self:Show()
-            self:GetFrameRef('GwCharacterWindowMoverFrame'):Show()
-        end
-
-        if value==1 and self:GetFrameRef('GwCharacterWindowContainer')~=nil then
-            self:GetFrameRef('GwCharacterWindowContainer'):Show()
-        end
-        if value==2 and self:GetFrameRef('GwTalentFrame')~=nil then
-            self:GetFrameRef('GwTalentFrame'):Show()
-        end
-        
-        if value==0 then
-            self:Hide()
-            self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
-        end
-  
-    ]=]
-    )
+    -- create the character window and secure bind its tab open/close functions
+    local fmGCW = CreateFrame("Button", "GwCharacterWindow", UIParent, "GwCharacterWindow")
+    fmGCW.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    fmGCW.WindowHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    fmGCW:SetFrameRef("GwCharacterWindowMoverFrame", fmGCWMF)
+    fmGCW:SetAttribute("windowpanelopen", nil)
+    fmGCW:SetAttribute("_onclick", charSecure_OnClick)
+    fmGCW:SetAttribute("_onattributechanged", charSecure_OnAttributeChanged)
+    fmGCW:WrapScript(fmGCW, "OnShow", charSecure_OnShow)
+    fmGCW:WrapScript(fmGCW, "OnHide", charSecure_OnHide)
+    fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 end
 
 local function setTabIconState(self, b)
@@ -136,20 +173,18 @@ local function setTabIconState(self, b)
     end
 end
 
-local function createTabIcon(iconName)
+local function createTabIcon(iconName, tabIndex)
     local f =
         CreateFrame(
         "Button",
         "CharacterWindowTab" .. tabIndex,
         GwCharacterWindow,
-        "SecureHandlerClickTemplate,SecureHandlerStateTemplate,CharacterWindowTabSelect"
+        "SecureHandlerClickTemplate,CharacterWindowTabSelect"
     )
 
     f.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\" .. iconName)
 
     f:SetPoint("TOP", GwCharacterWindow, "TOPLEFT", -32, -25 + -((tabIndex - 1) * 45))
-
-    tabIndex = tabIndex + 1
 
     setTabIconState(f, false)
 
@@ -169,13 +204,18 @@ local function LoadCharacterWM()
 
     loadBaseFrame()
 
+    local tabIndex = 1
     for k, v in pairs(windowsList) do
         if GetSetting(v["SETTING_NAME"]) then
             local ref = v["ONLOAD"]()
 
             GwCharacterWindow:SetFrameRef(ref:GetName(), ref)
 
-            local f = createTabIcon(v["TAB_ICON"])
+            local f = createTabIcon(v["TAB_ICON"], tabIndex)
+            tabIndex = tabIndex + 1
+            f:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+            f:SetAttribute("_onclick", v["ONCLICK"])
+
             ref:HookScript(
                 "OnShow",
                 function()
@@ -191,58 +231,6 @@ local function LoadCharacterWM()
         end
     end
 
-    if CharacterWindowTab1 then
-        CharacterWindowTab1:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-        CharacterWindowTab1:SetAttribute(
-            "_OnClick",
-            [=[
-                self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',1)
-        
-            ]=]
-        )
-
-        CreateFrame(
-            "Button",
-            "gwFrameCombatTogglerCharacter",
-            UIParent,
-            "SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook"
-        )
-
-        gwFrameCombatTogglerCharacter:SetAttribute("type", "attribute")
-        gwFrameCombatTogglerCharacter:SetAttribute("attribute-frame", GwCharacterWindow)
-        gwFrameCombatTogglerCharacter:SetAttribute("attribute-name", "windowPanelOpen")
-        gwFrameCombatTogglerCharacter:SetAttribute("attribute-value", 1)
-        if GetBindingKey("TOGGLECHARACTER0") ~= nil then
-            SetBinding(GetBindingKey("TOGGLECHARACTER0"), "CLICK gwFrameCombatTogglerCharacter:LeftButton")
-        end
-    end
-    if CharacterWindowTab2 then
-        CharacterWindowTab2:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-        CharacterWindowTab2:SetAttribute(
-            "_OnClick",
-            [=[
-                self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',2)
-        
-            ]=]
-        )
-        CreateFrame(
-            "Button",
-            "gwFrameCombatTogglerSpellbook",
-            UIParent,
-            "SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook"
-        )
-
-        gwFrameCombatTogglerSpellbook:SetAttribute("type", "attribute")
-        gwFrameCombatTogglerSpellbook:SetAttribute("type2", "attribute")
-        gwFrameCombatTogglerSpellbook:SetAttribute("attribute-frame", GwCharacterWindow)
-        gwFrameCombatTogglerSpellbook:SetAttribute("attribute-name", "windowPanelOpen")
-        gwFrameCombatTogglerSpellbook:SetAttribute("attribute-value", 2)
-        if GetBindingKey("TOGGLESPELLBOOK") ~= nil then
-            SetBinding(GetBindingKey("TOGGLESPELLBOOK"), "CLICK gwFrameCombatTogglerSpellbook:LeftButton")
-        end
-        if GetBindingKey("TOGGLETALENTS") ~= nil then
-            SetBinding(GetBindingKey("TOGGLETALENTS"), "CLICK gwFrameCombatTogglerSpellbook:RightButton")
-        end
-    end
+    mover_OnEvent(GwCharacterWindowMoverFrame, "UPDATE_BINDINGS")
 end
 GW.LoadCharacterWM = LoadCharacterWM

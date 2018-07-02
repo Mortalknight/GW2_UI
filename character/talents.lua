@@ -1093,7 +1093,7 @@ local function LoadTalents()
                 return
             end
 
-            GwCharacterWindow:SetAttribute("windowPanelOpen", 2)
+            GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
         end
     )
     GwTalentFrame:Hide()

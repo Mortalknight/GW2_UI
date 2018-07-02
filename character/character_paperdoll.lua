@@ -186,7 +186,7 @@ local function itemSlot_OnModifiedClick(self, button)
         if InCombatLockdown() then
             return
         end
-        GwCharacterWindow:SetAttribute("windowPanelOpen", 0)
+        GwCharacterWindow:SetAttribute("windowpanelopen", nil)
     end
 end
 

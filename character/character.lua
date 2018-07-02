@@ -1,4 +1,5 @@
 local _, GW = ...
+local Debug = GW.Debug
 
 local CHARACTER_PANEL_OPEN = ""
 
@@ -25,6 +26,7 @@ local function characterPanelToggle(frame)
 end
 
 local function toggleCharacter(tab, onlyShow)
+    Debug("in toggleCharacter", tab, onlyShow)
     local CHARACTERFRAME_DEFAULTFRAMES = {}
 
     CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwCharacterMenu
@@ -39,7 +41,7 @@ local function toggleCharacter(tab, onlyShow)
 
     if GwCharacterWindow:IsShown() then
         if not InCombatLockdown() then
-            GwCharacterWindow:SetAttribute("windowPanelOpen", 0)
+            GwCharacterWindow:SetAttribute("windowpanelopen", nil)
         end
 
         CHARACTER_PANEL_OPEN = nil

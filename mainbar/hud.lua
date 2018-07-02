@@ -1049,10 +1049,10 @@ local function LoadMicroMenu()
     if GetSetting("USE_CHARACTER_WINDOW") then
         GwMicroButtonCharacterMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         GwMicroButtonCharacterMicroButton:SetAttribute(
-            "_OnClick",
+            "_onclick",
             [=[
-            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen', 1)
-        ]=]
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "paperdoll")
+            ]=]
         )
     else
         GwMicroButtonCharacterMicroButton:SetScript(
@@ -1073,10 +1073,10 @@ local function LoadMicroMenu()
     if GetSetting("USE_TALENT_WINDOW") then
         GwMicroButtonTalentMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         GwMicroButtonTalentMicroButton:SetAttribute(
-            "_OnClick",
+            "_onclick",
             [=[
-            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen', 2)
-        ]=]
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
+            ]=]
         )
     else
         GwMicroButtonSpellbookMicroButton:SetScript(
