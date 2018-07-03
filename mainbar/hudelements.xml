@@ -39,21 +39,21 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="pvp" frameStrata="WORLD" frameLevel="1">
+            <Frame parentKey="pvp" frameStrata="BACKGROUND" frameLevel="1">
                 <Size x="128" y="128"/>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="ally" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.85" hidden="true">
+                        <Texture parentKey="ally" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.33" hidden="true">
                             <Size x="128" y="128"></Size>
                             <TexCoords top="0" bottom="0.5" left="0" right="1"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP" x="0" y="23" />
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="horde" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.75" hidden="true">
+                        <Texture parentKey="horde" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.33" hidden="true">
                             <Size x="138" y="138"></Size>
                             <TexCoords top="0.51" bottom="1" left="0" right="1"/>
                             <Anchors>

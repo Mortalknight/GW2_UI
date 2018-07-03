@@ -20,6 +20,26 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+local function TimeParts(ms)
+    local nMS = tonumber(ms)
+    local nSec, nMin, nHr
+    if nMS == nil then
+        nMS = 0
+    end
+
+    nHr = math.floor(nMS / 1440000)
+    nMS = nMS - (nHr * 1440000)
+
+    nMin = math.floor(nMS / 60000)
+    nMS = nMS - (nMin * 60000)
+
+    nSec = math.floor(nMS / 1000)
+    nMS = nMS - (nSec * 1000)
+
+    return nHr, nMin, nSec, nMS
+end
+GW.TimeParts = TimeParts
+
 local function TimeCount(numSec, com)
     local nSeconds = tonumber(numSec)
     if nSeconds == nil then

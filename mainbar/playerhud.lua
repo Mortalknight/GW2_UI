@@ -7,6 +7,7 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
+local TimeParts = GW.TimeParts
 
 local function powerBar_OnUpdate(self)
     if self.lostKnownPower == nil or self.powerMax == nil or self.lastUpdate == nil or self.animating == true then
@@ -460,16 +461,32 @@ end
 GW.LoadPowerBar = LoadPowerBar
 
 local function selectPvp(self)
+    local prevFlag = self.pvp.pvpFlag
     if C_PvP.IsWarModeDesired() or GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player") then
-        local fac, _ = UnitFactionGroup("player")
-        if fac == "Horde" then
-            self.pvp.ally:Hide()
-            self.pvp.horde:Show()
-        else
-            self.pvp.ally:Show()
-            self.pvp.horde:Hide()
+        self.pvp.pvpFlag = true
+        if prevFlag ~= true then
+            local fac, _ = UnitFactionGroup("player")
+            if fac == "Horde" then
+                self.pvp.ally:Hide()
+                self.pvp.horde:Show()
+            else
+                self.pvp.ally:Show()
+                self.pvp.horde:Hide()
+            end
+            AddToAnimation(
+                "pvpMarkerFlash",
+                1,
+                0.33,
+                GetTime(),
+                3,
+                function()
+                    self.pvp.ally:SetAlpha(animations["pvpMarkerFlash"]["progress"])
+                    self.pvp.horde:SetAlpha(animations["pvpMarkerFlash"]["progress"])
+                end
+            )
         end
     else
+        self.pvp.pvpFlag = false
         self.pvp.ally:Hide()
         self.pvp.horde:Hide()
     end
@@ -487,6 +504,68 @@ local function globe_OnEvent(self, event, unit)
     elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
         selectPvp(self)
     end
+end
+
+local function globe_OnEnter(self)
+    local warmode = C_PvP.IsWarModeDesired()
+    local pvpdesired = GetPVPDesired("player")
+    local pvpactive = UnitIsPVP("player") or UnitIsPVPFreeForAll("player")
+
+    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+    GameTooltip:ClearLines()
+    if warmode or pvpdesired or pvpactive then
+        GameTooltip_SetTitle(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_ENABLED)
+    else
+        GameTooltip_SetTitle(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_DISABLED)
+    end
+    if warmode then
+        GameTooltip_AddNormalLine(GameTooltip, PVP_WARMODE_TOGGLE_ON, true)
+    else
+        if pvpdesired then
+            GameTooltip_AddNormalLine(GameTooltip, PVP_TOGGLE_ON_VERBOSE, true)
+        else
+            if pvpactive then
+                local pvpTime = GetPVPTimer()
+                if pvpTime > 0 and pvpTime < 301000 then
+                    local _, nMin, nSec, _ = TimeParts(pvpTime)
+                    GameTooltip_AddNormalLine(
+                        GameTooltip,
+                        TIME_REMAINING .. " " .. string.format(TIMER_MINUTES_DISPLAY, nMin, nSec)
+                    )
+                end
+                GameTooltip_AddNormalLine(GameTooltip, PVP_TOGGLE_OFF_VERBOSE, true)
+            else
+                GameTooltip_AddNormalLine(GameTooltip, PVP_WARMODE_TOGGLE_OFF, true)
+            end
+        end
+    end
+    GameTooltip:Show()
+    AddToAnimation(
+        "pvpMarkerFlash",
+        0.33,
+        1,
+        GetTime(),
+        0.5,
+        function()
+            self.pvp.ally:SetAlpha(animations["pvpMarkerFlash"]["progress"])
+            self.pvp.horde:SetAlpha(animations["pvpMarkerFlash"]["progress"])
+        end
+    )
+end
+
+local function globe_OnLeave(self)
+    GameTooltip_Hide()
+    AddToAnimation(
+        "pvpMarkerFlash",
+        1,
+        0.33,
+        GetTime(),
+        0.5,
+        function()
+            self.pvp.ally:SetAlpha(animations["pvpMarkerFlash"]["progress"])
+            self.pvp.horde:SetAlpha(animations["pvpMarkerFlash"]["progress"])
+        end
+    )
 end
 
 local function LoadPlayerHud()
@@ -541,6 +620,8 @@ local function LoadPlayerHud()
     _G["GwPlayerAbsorbGlobeTextShadow8"]:SetPoint("CENTER", 0, 2)
 
     playerHealthGLobaBg:SetScript("OnEvent", globe_OnEvent)
+    playerHealthGLobaBg:SetScript("OnEnter", globe_OnEnter)
+    playerHealthGLobaBg:SetScript("OnLeave", globe_OnLeave)
 
     playerHealthGLobaBg:RegisterEvent("UNIT_HEALTH")
     playerHealthGLobaBg:RegisterEvent("UNIT_MAXHEALTH")
