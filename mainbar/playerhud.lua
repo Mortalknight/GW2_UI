@@ -247,7 +247,7 @@ local function updateAbsorbText(text)
     end
 end
 
-local function updateHealthData()
+local function updateHealthData(self)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
     local healthPrec = 0.00001
@@ -263,24 +263,24 @@ local function updateHealthData()
         absorbPrec = math.min(math.max(0.0001, absorb / healthMax), 1)
     end
 
-    if healthPrec < 0.7 and (GwPlayerHealthGlobe.animating == false or GwPlayerHealthGlobe.animating == nil) then
+    if healthPrec < 0.7 and (self.animating == false or self.animating == nil) then
         globeFlashComplete()
     end
 
-    GwPlayerHealthGlobe.stringUpdateTime = 0
+    self.stringUpdateTime = 0
     AddToAnimation(
         "healthGlobeAnimation",
-        GwPlayerHealthGlobe.animationCurrent,
+        self.animationCurrent,
         healthPrec,
         GetTime(),
         0.2,
         function()
             local healthPrecCandy = math.min(1, animations["healthGlobeAnimation"]["progress"] + 0.02)
 
-            if GwPlayerHealthGlobe.stringUpdateTime < GetTime() then
+            if self.stringUpdateTime < GetTime() then
                 updateHealthText(healthMax * animations["healthGlobeAnimation"]["progress"])
                 updateAbsorbText(absorb)
-                GwPlayerHealthGlobe.stringUpdateTime = GetTime() + 0.05
+                self.stringUpdateTime = GetTime() + 0.05
             end
             _G["GwPlayerHealthGlobeCandy"]:SetHeight(healthPrecCandy * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth())
             _G["GwPlayerHealthGlobeCandyBar"]:SetTexCoord(0, 1, math.abs(healthPrecCandy - 1), 1)
@@ -312,7 +312,7 @@ local function updateHealthData()
             updateAbsorbText(absorb)
         end
     )
-    GwPlayerHealthGlobe.animationCurrent = healthPrec
+    self.animationCurrent = healthPrec
 
     local absorbPrecOverflow = (healthPrec + absorbPrec) - 1
     _G["GwPlayerHealthGlobeAbsorb"]:SetHeight(absorbPrecOverflow * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth())
@@ -459,6 +459,36 @@ local function LoadPowerBar()
 end
 GW.LoadPowerBar = LoadPowerBar
 
+local function selectPvp(self)
+    if C_PvP.IsWarModeDesired() or GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player") then
+        local fac, _ = UnitFactionGroup("player")
+        if fac == "Horde" then
+            self.pvp.ally:Hide()
+            self.pvp.horde:Show()
+        else
+            self.pvp.ally:Show()
+            self.pvp.horde:Hide()
+        end
+    else
+        self.pvp.ally:Hide()
+        self.pvp.horde:Hide()
+    end
+end
+
+local function globe_OnEvent(self, event, unit)
+    if unit ~= "player" then
+        return
+    end
+    if
+        event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "PLAYER_ENTERING_WORLD" or
+            event == "UNIT_ABSORB_AMOUNT_CHANGED"
+     then
+        updateHealthData(self)
+    elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
+        selectPvp(self)
+    end
+end
+
 local function LoadPlayerHud()
     PlayerFrame:SetScript("OnEvent", nil)
     PlayerFrame:Hide()
@@ -510,21 +540,18 @@ local function LoadPlayerHud()
     _G["GwPlayerAbsorbGlobeTextShadow7"]:SetPoint("CENTER", 2, 0)
     _G["GwPlayerAbsorbGlobeTextShadow8"]:SetPoint("CENTER", 0, 2)
 
-    playerHealthGLobaBg:SetScript(
-        "OnEvent",
-        function(self, event, unit)
-            if unit == "player" then
-                updateHealthData()
-            end
-        end
-    )
+    playerHealthGLobaBg:SetScript("OnEvent", globe_OnEvent)
 
     playerHealthGLobaBg:RegisterEvent("UNIT_HEALTH")
     playerHealthGLobaBg:RegisterEvent("UNIT_MAXHEALTH")
     playerHealthGLobaBg:RegisterEvent("PLAYER_ENTERING_WORLD")
     playerHealthGLobaBg:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
+    playerHealthGLobaBg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
+    playerHealthGLobaBg:RegisterEvent("PLAYER_FLAGS_CHANGED")
+    playerHealthGLobaBg:RegisterEvent("UNIT_FACTION")
 
-    updateHealthData()
+    updateHealthData(playerHealthGLobaBg)
+    selectPvp(playerHealthGLobaBg)
 
     local fmGDB = CreateFrame("Button", "GwDodgeBar", UIParemt, "GwDodgeBar")
     local fnGDB_OnEnter = function(self)

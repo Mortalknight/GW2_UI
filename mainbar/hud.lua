@@ -1564,27 +1564,24 @@ createOrderBar = function()
     orderBar_OnEvent(GwOrderhallBar)
 end
 
+local hud_OnEvent = function(self, event, unit)
+    if unit ~= "player" then
+        return
+    end
+
+    if event == "UNIT_AURA" then
+        selectBg()
+    elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
+        selectBg()
+    elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
+        combatHealthState()
+    end
+end
+
 local function LoadHudArt()
     local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
 
-    hudArtFrame:SetScript(
-        "OnEvent",
-        function(self, event, unit)
-            if event == "UNIT_AURA" and unit == "player" then
-                selectBg()
-                return
-            end
-
-            if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
-                selectBg()
-                return
-            end
-            if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" and unit == "player" then
-                combatHealthState()
-                return
-            end
-        end
-    )
+    hudArtFrame:SetScript("OnEvent", hud_OnEvent)
 
     hudArtFrame:RegisterEvent("UNIT_AURA")
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")

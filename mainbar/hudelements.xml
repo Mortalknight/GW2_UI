@@ -24,24 +24,45 @@
         </Anchors>
 
     </Button>
-    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" FrameLevel="2">
 
         <Size x="104" y="104"></Size>
         <Anchors>
             <Anchor point="BOTTOM" x="0" y="16"/>
         </Anchors>
         <Layers>
-            <Layer level="BACKGROUND">
+            <Layer level="BORDER">
                 <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\healthFill-bg">
                     <Color r="0" g="0" b="0"></Color>
                     <Size x="104" y="104"></Size>
                 </Texture>
             </Layer>
-
-
-
         </Layers>
         <Frames>
+            <Frame parentKey="pvp" frameStrata="LOW" frameLevel="1">
+                <Size x="128" y="128"/>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="ally" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.85" hidden="true">
+                            <Size x="128" y="128"></Size>
+                            <TexCoords top="0" bottom="0.5" left="0" right="1"/>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP" x="0" y="23" />
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="horde" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.75" hidden="true">
+                            <Size x="138" y="138"></Size>
+                            <TexCoords top="0.51" bottom="1" left="0" right="1"/>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP" x="0" y="33" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
             <Frame frameStrata="HIGH" name="GwHudArtFrameRepair">
                 <Size x="21" y="21"></Size>
                 <Anchors>
@@ -834,7 +855,7 @@
             </Frame>
         </Frames>
     </Frame>
-    <Button name="GwDodgeBar" virtual="true" parent="GwPlayerHealthGlobe" frameStrata="BACKGROUND">
+    <Button name="GwDodgeBar" virtual="true" parent="GwPlayerHealthGlobe" FrameLevel="1">
         <Size x="118" y="118"></Size>
         <Anchors>
             <Anchor point="CENTER" relativeTo="GwPlayerHealthGlobe" relativePoint="CENTER"></Anchor>
@@ -848,7 +869,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="1">
+            <Layer level="ARTWORK" textureSubLevel="1">
                 <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\dodgebar">
                     <Size x="114" y="114"></Size>
                     <Anchors>
@@ -862,7 +883,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture name="$parentSep1" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
                     <Size x="118" y="118"></Size>
                     <Anchors>
