@@ -39,7 +39,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="pvp" frameStrata="LOW" frameLevel="1">
+            <Frame parentKey="pvp" frameStrata="WORLD" frameLevel="1">
                 <Size x="128" y="128"/>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
