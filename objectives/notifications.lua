@@ -99,13 +99,12 @@ local questCompass = {
 }
 local function getNearestQuestPOI(currentMapID)
     local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
-    local posX, posY = posTable:GetXY()
-
     local numQuests, _ = GetNumQuestLogEntries()
-    if posX == nil or posX == 0 or numQuests == nil then
+    if posTable == nil or numQuests == nil then
         return
     end
 
+    local posX, posY = posTable:GetXY()
     local closest = nil
     for i = 1, numQuests do
         local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI, _ = GetQuestLogTitle(i)
@@ -240,11 +239,11 @@ local function updateRadar(self, elapsed)
     self.TotalElapsed = 0
 
     local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
-    local posX, posY = posTable:GetXY()
-    if posX == nil or posX == 0 or self.data["X"] == nil then
+    if posTable == nil or self.data["X"] == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
         return
     end
+    local posX, posY = posTable:GetXY()
 
     local pFacing = GetPlayerFacing()
     local dir_x = self.data["X"] - posX
