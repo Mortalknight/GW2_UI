@@ -266,15 +266,15 @@
         </Layers>
         <Frames>
             <Button name="GwspellbookTab1" inherits="SecureHandlerClickTemplate">
-                <Size x="77" y="50"></Size>
+                <Size x="60" y="50"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="TOP" x="-77" y="-30"></Anchor>
+                    <Anchor point="BOTTOM" relativePoint="TOP" x="-88" y="-30"></Anchor>
                 </Anchors>
                 <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
-                            <Size x="128" y="128"></Size>
+                            <Size x="100" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
                             </Anchors>
@@ -289,18 +289,17 @@
                         </Texture>
                     </Layer>
                 </Layers>
-
             </Button>
             <Button name="GwspellbookTab2" inherits="SecureHandlerClickTemplate">
-                <Size x="77" y="50"></Size>
+                <Size x="60" y="50"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="TOP" x="5" y="-30"></Anchor>
+                    <Anchor point="BOTTOM" relativePoint="TOP" x="-26" y="-30"></Anchor>
                 </Anchors>
                 <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg">
-                            <Size x="128" y="128"></Size>
+                            <Size x="100" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
                             </Anchors>
@@ -316,18 +315,42 @@
                         </Texture>
                     </Layer>
                 </Layers>
-
             </Button>
-            <Button name="GwspellbookTab3" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate">
-                <Size x="77" y="50"></Size>
+            <Button name="GwspellbookTab3" inherits="SecureHandlerClickTemplate">
+                <Size x="60" y="50"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="TOP" x="88" y="-30"></Anchor>
+                    <Anchor point="BOTTOM" relativePoint="TOP" x="37" y="-30"></Anchor>
                 </Anchors>
                 <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
-                            <Size x="128" y="128"></Size>
+                            <Size x="100" y="128"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_pvp">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="GwspellbookTab4" inherits="SecureHandlerClickTemplate">
+                <Size x="60" y="50"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="TOP" x="99" y="-30"></Anchor>
+                </Anchors>
+                <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
+                            <Size x="100" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
                             </Anchors>
@@ -342,9 +365,7 @@
                         </Texture>
                     </Layer>
                 </Layers>
-
             </Button>
-
         </Frames>
     </Frame>
 
@@ -402,12 +423,27 @@
                     </Layer>
                 </Layers>
             </Frame>
+            <Frame parentKey="messageLabel" hidden="true">
+                <Size x="250" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-4" y="-64"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <FontString parentKey="title" text="Message goes here." justifyH="LEFT" justifyY="CENTER">
+                            <Size x="256" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" x="10" y="-2"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
         </Frames>
 
     </Frame>
 
-
-    <Button name="GwSpellbookActionbutton" enableMouse="true" inherits="SecureActionButtonTemplate,SecureHandlerDragTemplate" virtual="true">
+    <Button name="GwSpellbookActiveButton" enableMouse="true" inherits="SecureActionButtonTemplate,SecureHandlerDragTemplate" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">
@@ -420,7 +456,6 @@
             </Layer>
             <Layer level="ARTWORK">
                 <Texture parentKey="icon" textureSubLevel="2">
-
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -434,7 +469,6 @@
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="5"></Anchor>
                     </Anchors>
-
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
@@ -454,13 +488,43 @@
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="0.9"></Color>
                 </Texture>
-
             </Layer>
-
         </Layers>
         <Frames>
             <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
+    </Button>
+
+    <Button name="GwSpellbookPassiveButton" enableMouse="true" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                    <Size x="50" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" textureSubLevel="2">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                    <Color r="1" b="0.6" g="1" a="0.9"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
     </Button>
 
 </Ui>

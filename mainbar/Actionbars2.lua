@@ -528,40 +528,32 @@ local function setPetBar()
     PetActionButton1:SetPoint("BOTTOMLEFT", GwPlayerPetFrame, "BOTTOMLEFT", 3, 30)
 
     for i = 1, 12 do
-        if _G["PetActionButton" .. i] ~= nil then
-            updateHotkey(_G["PetActionButton" .. i])
+        local btn = _G["PetActionButton" .. i]
+        local btnPrev = _G["PetActionButton" .. (i - 1)]
+        if btn ~= nil then
+            btn:SetParent(GwPlayerPetFrame)
+            updateHotkey(btn)
 
-            _G["PetActionButton" .. i]:SetSize(BUTTON_SIZE, BUTTON_SIZE)
+            btn:SetSize(BUTTON_SIZE, BUTTON_SIZE)
             if i < 4 then
-                _G["PetActionButton" .. i]:SetSize(32, 32)
+                btn:SetSize(32, 32)
             elseif i == 8 then
-                _G["PetActionButton" .. i]:ClearAllPoints()
-                _G["PetActionButton" .. i]:SetPoint("BOTTOM", _G["PetActionButton5"], "TOP", 0, BUTTON_MARGIN)
+                btn:ClearAllPoints()
+                btn:SetPoint("BOTTOM", _G["PetActionButton5"], "TOP", 0, BUTTON_MARGIN)
             end
 
             if i > 1 and i ~= 8 then
-                _G["PetActionButton" .. i]:ClearAllPoints()
+                btn:ClearAllPoints()
 
                 if i > 3 then
-                    _G["PetActionButton" .. i]:SetPoint(
-                        "BOTTOMLEFT",
-                        _G["PetActionButton" .. (i - 1)],
-                        "BOTTOMRIGHT",
-                        BUTTON_MARGIN,
-                        0
-                    )
+                    btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
                 else
-                    _G["PetActionButton" .. i]:SetPoint(
-                        "BOTTOMLEFT",
-                        _G["PetActionButton" .. (i - 1)],
-                        "BOTTOMRIGHT",
-                        BUTTON_MARGIN,
-                        0
-                    )
+                    btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
                 end
             end
-            if _G["PetActionButton" .. i .. "Shine"] then
-                _G["PetActionButton" .. i .. "Shine"]:SetSize(_G["PetActionButton" .. i]:GetSize())
+            local btnShine = _G["PetActionButton" .. i .. "Shine"]
+            if btnShine then
+                btnShine:SetSize(btn:GetSize())
 
             --for k,v in pairs(_G['PetActionButton'..i..'Shine'].sparkles) do
             --   v:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
@@ -571,6 +563,13 @@ local function setPetBar()
 
             if i == 1 then
                 hooksecurefunc("PetActionBar_Update", petBarUpdate)
+            end
+
+            if i <= 3 or i >= 8 then
+                btn:SetScript("OnDragStart", nil)
+                btn:SetAttribute("_ondragstart", nil)
+                btn:SetScript("OnReceiveDrag", nil)
+                btn:SetAttribute("_onreceivedrag", nil)
             end
 
             setActionButtonStyle("PetActionButton" .. i)

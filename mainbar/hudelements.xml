@@ -905,7 +905,7 @@
             </Layer>
         </Layers>
     </Button>
-    <Button name="GwPlayerPetFrame" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true">
+    <Button name="GwPlayerPetFrame" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="316" y="100"></Size>
         <HitRectInsets>
             <AbsInset left="0" right="0" top="0" bottom="30"/>
@@ -1208,7 +1208,7 @@
         </Frames>
     </Frame>
 
-    <Frame name="GwActionButtonBackDrop" frameStrata="LOW" topLevel="true" virtual="true">
+    <Frame name="GwActionButtonBackDrop" frameStrata="MEDIUM" topLevel="true" virtual="true" frameLevel="1">
         <Anchors>
             <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="-1" y="1"></Anchor>
             <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
