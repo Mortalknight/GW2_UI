@@ -1104,7 +1104,7 @@
             <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
+    <Frame name="GwPaperDoll" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
         <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>

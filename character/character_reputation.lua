@@ -702,7 +702,7 @@ local function updateDetailsSearch(s)
 end
 
 local function LoadCharacterReputation()
-    local fmGPR = CreateFrame("Frame", "GwPaperReputation", GwCharacterWindowContainer, "GwPaperReputation")
+    local fmGPR = CreateFrame("Frame", "GwPaperReputation", GwPaperDoll, "GwPaperReputation")
     fmGPR.detailFrames = 0
     fmGPR.buttons = 0
     fmGPR.scroll = 1

@@ -77,9 +77,9 @@ end
 GW.CharacterMenuButtonBack_OnClick = CharacterMenuButtonBack_OnClick
 
 local function LoadCharacter()
-    CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
+    CreateFrame("Frame", "GwPaperDoll", GwCharacterWindow, "GwPaperDoll")
 
-    local fmGCM = CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenu")
+    local fmGCM = CreateFrame("Frame", "GwCharacterMenu", GwPaperDoll, "GwCharacterMenu")
     local fnGCM_ToggleEquipment = function()
         characterPanelToggle(GwPaperDollBagItemList)
     end
@@ -140,13 +140,13 @@ local function LoadCharacter()
 
     hooksecurefunc("ToggleCharacter", toggleCharacter)
 
-    GwCharacterWindowContainer:HookScript(
+    GwPaperDoll:HookScript(
         "OnHide",
         function()
             PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
         end
     )
-    GwCharacterWindowContainer:HookScript(
+    GwPaperDoll:HookScript(
         "OnShow",
         function()
             GwCharacterWindow.windowIcon:SetTexture(
@@ -162,6 +162,6 @@ local function LoadCharacter()
 
     fmGCM:Show()
 
-    return GwCharacterWindowContainer
+    return GwPaperDoll
 end
 GW.LoadCharacter = LoadCharacter

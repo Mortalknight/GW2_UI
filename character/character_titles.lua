@@ -103,7 +103,7 @@ local function titles_OnEvent()
 end
 
 local function LoadCharacterTitles()
-    local fmGPT = CreateFrame("Frame", "GwPaperTitles", GwCharacterWindowContainer, "GwPaperTitles")
+    local fmGPT = CreateFrame("Frame", "GwPaperTitles", GwPaperDoll, "GwPaperTitles")
     fmGPT.buttons = 0
     fmGPT.scroll = 1
     fmGPT:EnableMouseWheel(true)

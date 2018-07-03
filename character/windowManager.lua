@@ -46,7 +46,7 @@ local charSecure_OnAttributeChanged =
         return
     end
     --print("name", name, "value", value)
-    local fmCon = self:GetFrameRef("GwCharacterWindowContainer")
+    local fmCon = self:GetFrameRef("GwPaperDoll")
     local fmTal = self:GetFrameRef("GwTalentFrame")
     local fmMov = self:GetFrameRef("GwCharacterWindowMoverFrame")
 

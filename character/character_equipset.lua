@@ -211,7 +211,7 @@ function local GwPaperDollOutfits_OnEvent(self, event, ...)
 end
 --]]
 local function LoadCharacterEquipset()
-    local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwCharacterWindowContainer, "GwPaperDollOutfits")
+    local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwPaperDoll, "GwPaperDollOutfits")
     local fnGPDO_newOutfit_OnClick = function(self, button)
         self.oldParent = GearManagerDialogPopup:GetParent()
         GearManagerDialogPopup:Show()

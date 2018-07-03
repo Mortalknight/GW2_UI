@@ -709,7 +709,7 @@ local function indicatorAnimation(self)
 end
 
 local function LoadCharacterPaperdoll()
-    local fmGDR = CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
+    local fmGDR = CreateFrame("Button", "GwDressingRoom", GwPaperDoll, "GwDressingRoom")
     local fmGDRG = GwDressingRoomGear
     local fmPD3M = PaperDoll3dModel
     local fmGPDS = GwPaperDollStats
@@ -852,7 +852,7 @@ local function LoadCharacterPaperdoll()
     fmGDR:SetScript("OnClick", resetBagInventory)
 
     local fmGPDBIL =
-        CreateFrame("Frame", "GwPaperDollBagItemList", GwCharacterWindowContainer, "GwPaperDollBagItemList")
+        CreateFrame("Frame", "GwPaperDollBagItemList", GwPaperDoll, "GwPaperDollBagItemList")
     fmGPDBIL:SetScript("OnEvent", updateBagItemListAll)
     fmGPDBIL:SetScript("OnHide", resetBagInventory)
     fmGPDBIL:SetScript("OnShow", updateBagItemListAll)
@@ -863,7 +863,7 @@ local function LoadCharacterPaperdoll()
     fmGPDBIL.backButton:SetScript("OnClick", CharacterMenuButtonBack_OnClick)
 
     local fmGPDSI =
-        CreateFrame("Frame", "GwPaperDollSelectedIndicator", GwCharacterWindowContainer, "GwPaperDollSelectedIndicator")
+        CreateFrame("Frame", "GwPaperDollSelectedIndicator", GwPaperDoll, "GwPaperDollSelectedIndicator")
     fmGPDSI:SetScript("OnShow", indicatorAnimation)
 
     updateStats()
