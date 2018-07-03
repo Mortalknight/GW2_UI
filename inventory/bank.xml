@@ -1,13 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwBankMoverFrame" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+    <Frame name="GwBankMoverFrame" frameStrata="HIGH" frameLevel="25" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="470" y="40"></Size>
         <Anchors>
             <Anchor point="RIGHT" x="-256" y="256"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwBankFrame" frameStrata="HIGH" frameLevel="2" enableMouse="true" parent="UIParent" virtual="true">
+    <Frame name="GwBankFrame" frameStrata="HIGH" frameLevel="22" enableMouse="true" parent="UIParent" virtual="true">
         <HitRectInsets>
             <AbsInset left="-40" right="0" top="0" bottom="-40"/>
         </HitRectInsets>
