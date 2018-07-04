@@ -271,6 +271,7 @@ local function updateBankIcons(smooth)
 
                     slot:ClearAllPoints()
 
+                    slot:SetFrameLevel(23)
                     slot:SetPoint("TOPLEFT", GwBankFrame, "TOPLEFT", x, -y)
                     slot:SetPoint("TOPRIGHT", GwBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y)
                     slot:SetPoint("BOTTOMLEFT", GwBankFrame, "TOPLEFT", x, -y - BANK_ITEM_SIZE)

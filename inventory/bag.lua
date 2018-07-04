@@ -167,6 +167,7 @@ local function updateBagIcons(smooth)
 
                     slot:ClearAllPoints()
 
+                    slot:SetFrameLevel(43)
                     slot:SetPoint("TOPLEFT", gwbf, "TOPLEFT", x, -y)
                     slot:SetPoint("TOPRIGHT", gwbf, "TOPLEFT", x + BAG_ITEM_SIZE, -y)
                     slot:SetPoint("BOTTOMLEFT", gwbf, "TOPLEFT", x, -y - BAG_ITEM_SIZE)

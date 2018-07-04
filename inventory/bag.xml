@@ -172,7 +172,7 @@
                     <Slider name="$parentScrollBar" inherits="GwHybridScrollBarTemplate" />
                 </Frames>
             </ScrollFrame>
-            <Button name="GwCurrencyIcon" framelevel="10">
+            <Button name="GwCurrencyIcon" framelevel="50">
                 <Size x="32" y="32"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="2" y="-2" />
@@ -180,7 +180,7 @@
                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\currency-icon"></NormalTexture>
             </Button>
 
-            <Frame name="GwBagFrameResize" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+            <Frame name="GwBagFrameResize" frameStrata="HIGH" frameLevel="50" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeTo="GwBagFrame" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -212,7 +212,7 @@
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
-                    <Frame parentKey="dropdown" frameStrata="HIGH" hidden="true" frameLevel="8">
+                    <Frame parentKey="dropdown" hidden="true" frameLevel="58">
                         <Size x="160" y="120"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
@@ -323,7 +323,7 @@
         </Frames>
     </Frame>
 
-    <Frame name="GwBagItemBackdrop" frameStrata="HIGH" frameLevel="5" enableMouse="false" virtual="true">
+    <Frame name="GwBagItemBackdrop" frameStrata="HIGH" frameLevel="35" enableMouse="false" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer textureSubLevel="-1" level="BACKGROUND">

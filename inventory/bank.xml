@@ -116,7 +116,7 @@
                     </Button>
                 </Frames>
             </Frame>
-            <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="5" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+            <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="25" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeTo="GwBankFrame" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -213,7 +213,7 @@
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
-                    <Frame parentKey="dropdown" frameStrata="HIGH" hidden="true" frameLevel="8">
+                    <Frame parentKey="dropdown" hidden="true" frameLevel="28">
                         <Size x="160" y="60"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
@@ -328,7 +328,7 @@
         </Frames>
     </Frame>
 
-    <Frame name="GwBankItemBackdrop" frameStrata="HIGH" frameLevel="5" enableMouse="false" virtual="true">
+    <Frame name="GwBankItemBackdrop" frameStrata="HIGH" frameLevel="15" enableMouse="false" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer textureSubLevel="-1" level="BACKGROUND">
