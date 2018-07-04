@@ -512,6 +512,15 @@ local function updateTab()
             if numSpells == nil then
                 numSpells = 0
             end
+            if numSpells == 0 then
+                fmTab.groups["active"]:Hide()
+                fmTab.groups["passive"]:Hide()
+                fmTab.groups["lock"]:Show()
+            else
+                fmTab.groups["active"]:Show()
+                fmTab.groups["passive"]:Show()
+                fmTab.groups["lock"]:Hide()
+            end
         end
 
         local activeIndex = 1
@@ -782,6 +791,18 @@ local function LoadTalents()
         psvGroup.label.title:SetShadowOffset(1, -1)
         psvGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_PASSIVE"])
         psvGroup.pool = CreateFramePool("Button", psvGroup, "GwSpellbookPassiveButton", passivePool_Resetter)
+
+        if tab == 4 then
+            local lockGroup = CreateFrame("Frame", nil, container, "GwSpellbookLockGroup")
+            container.groups["lock"] = lockGroup
+            lockGroup:ClearAllPoints()
+            lockGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
+            lockGroup.info:SetFont(DAMAGE_TEXT_FONT, 14)
+            lockGroup.info:SetTextColor(1, 1, 1, 1)
+            lockGroup.info:SetShadowColor(0, 0, 0, 1)
+            lockGroup.info:SetShadowOffset(1, -1)
+            lockGroup.info:SetText(SPELL_FAILED_NO_PET)
+        end
     end
 
     GwSpellbookContainerTab1:Hide()

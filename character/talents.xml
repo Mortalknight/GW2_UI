@@ -376,6 +376,31 @@
         </Anchors>
     </Frame>
 
+    <Frame name="GwSpellbookLockGroup" virtual="true">
+        <Size x="245" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\lock">
+                    <Size x="48" y="48"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="-50"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="info" text="Info" justifyH="CENTER" justifyY="CENTER">
+                    <Size x="245" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="-100"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+
     <Frame name="GwSpellbookButtonGroup" virtual="true" protected="true">
         <Size x="245" y="300"></Size>
         <Anchors>
