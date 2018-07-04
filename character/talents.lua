@@ -709,8 +709,8 @@ local function spellGroup_OnEvent(self)
 end
 GW.AddForProfiling("talents", "spellGroup_OnEvent", spellGroup_OnEvent)
 
-local function LoadTalents()
-    local fmGTF = CreateFrame("Frame", "GwTalentFrame", GwCharacterWindow, "SecureHandlerStateTemplate,GwTalentFrame")
+local function LoadTalents(tabContainer)
+    local fmGTF = CreateFrame("Frame", "GwTalentFrame", tabContainer, "SecureHandlerStateTemplate,GwTalentFrame")
     fmGTF.title:SetFont(DAMAGE_TEXT_FONT, 14)
     fmGTF.title:SetTextColor(1, 1, 1, 1)
     fmGTF.title:SetShadowColor(0, 0, 0, 1)
@@ -900,10 +900,6 @@ local function LoadTalents()
     GwTalentFrame:HookScript(
         "OnShow",
         function()
-            GwCharacterWindow.windowIcon:SetTexture(
-                "Interface\\AddOns\\GW2_UI\\textures\\character\\spellbook-window-icon"
-            )
-            GwCharacterWindow.WindowHeader:SetText(GwLocalization["TALENTS_HEADER"])
             if InCombatLockdown() then
                 return
             end
@@ -922,7 +918,6 @@ local function LoadTalents()
             GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
         end
     )
-    GwTalentFrame:Hide()
     return GwTalentFrame
 end
 GW.LoadTalents = LoadTalents

@@ -63,16 +63,16 @@ objectives/bossFrames.lua
 objectives/achievement.lua
 
 character/character.xml
-character/spellbook.xml
+character/paperdoll.xml
+character/reputation.xml
 character/talents.xml
-character/character.lua
-character/character_paperdoll.lua
-character/character_equipset.lua
-character/character_titles.lua
-character/character_reputation.lua
-character/spellbook.lua
+character/paperdoll.lua
+character/paperdoll_equipment.lua
+character/paperdoll_equipset.lua
+character/paperdoll_titles.lua
+character/reputation.lua
 character/talents.lua
-character/windowManager.lua
+character/character.lua
 
 battlegrounds/battlegrounds.xml
 battlegrounds/battlegrounds.lua

@@ -423,6 +423,10 @@ local function gw_OnEvent(self, event, name)
     end
     loaded = true
 
+    -- setup our frame pool
+    GW.Pools = CreatePoolCollection()
+
+    -- disable Move Anything bag handling
     disableMABags()
 
     -- hook debug output if relevant
@@ -446,6 +450,7 @@ local function gw_OnEvent(self, event, name)
     if GetSetting("FONTS_ENABLED") then
         GW.LoadFonts()
     end
+
     if GetSetting("CASTINGBAR_ENABLED") then
         GW.LoadCastingBar()
     end
@@ -453,19 +458,23 @@ local function gw_OnEvent(self, event, name)
     if GetSetting("MINIMAP_ENABLED") then
         GW.LoadMinimap()
     end
+
     if GetSetting("QUESTTRACKER_ENABLED") then
-        --QUESTTRACKER
         GW.LoadQuestTracker()
     end
+
     if GetSetting("TOOLTIPS_ENABLED") then
         GW.LoadTooltips()
     end
+
     if GetSetting("QUESTVIEW_ENABLED") then
         GW.LoadQuestview()
     end
+
     if GetSetting("CHATFRAME_ENABLED") then
         GW.LoadChat()
     end
+
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") then
         GW.LoadPlayerHud()
@@ -483,11 +492,12 @@ local function gw_OnEvent(self, event, name)
         GW.LoadBag()
         GW.LoadBank()
     end
+
     if GetSetting("USE_BATTLEGROUND_HUD") then
         GW.LoadBattlegrounds()
     end
 
-    GW.LoadCharacterWM()
+    GW.LoadCharacter()
 
     GW.LoadBreathMeter()
 

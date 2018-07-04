@@ -2,8 +2,8 @@ local _, GW = ...
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
-local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
-local CharacterMenuButtonBack_OnClick = GW.CharacterMenuButtonBack_OnClick
+--local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
+--local CharacterMenuButtonBack_OnClick = GW.CharacterMenuButtonBack_OnClick
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
 -- forward function defs
@@ -30,7 +30,8 @@ local function getNewCategory(i)
         return _G["GwPaperDollReputationCat" .. i]
     end
 
-    local f = CreateFrame("Button", "GwPaperDollReputationCat" .. i, GwPaperReputation, "GwPaperDollReputationCat")
+    local f =
+        CreateFrame("Button", "GwPaperDollReputationCat" .. i, GwPaperReputation.categories, "GwPaperDollReputationCat")
     CharacterMenuBlank_OnLoad(f)
     f.StatusBar:SetMinMaxValues(0, 1)
     f.StatusBar:SetStatusBarColor(240 / 255, 240 / 255, 155 / 255)
@@ -50,17 +51,17 @@ local function getNewCategory(i)
     if i > 1 then
         _G["GwPaperDollReputationCat" .. i]:SetPoint("TOPLEFT", _G["GwPaperDollReputationCat" .. (i - 1)], "BOTTOMLEFT")
     else
-        _G["GwPaperDollReputationCat" .. i]:SetPoint("TOPLEFT", GwPaperReputation, "TOPLEFT")
+        _G["GwPaperDollReputationCat" .. i]:SetPoint("TOPLEFT", GwPaperReputation.categories, "TOPLEFT")
     end
     f:SetWidth(231)
     f:GetFontString():SetPoint("TOPLEFT", 10, -10)
-    GwPaperReputation.buttons = GwPaperReputation.buttons + 1
+    GwPaperReputation.categories.buttons = GwPaperReputation.categories.buttons + 1
 
     return f
 end
 
 local function updateSavedReputation()
-    for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
+    for factionIndex = GwPaperReputation.categories.scroll, GetNumFactions() do
         savedReputation[factionIndex] = {}
         savedReputation[factionIndex].name,
             savedReputation[factionIndex].description,
@@ -229,7 +230,7 @@ local function getNewDetail(i)
         _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", GwPaperReputationScrollFrame.scrollchild, "TOPLEFT", 2, -10)
     end
 
-    GwPaperReputation.detailFrames = GwPaperReputation.detailFrames + 1
+    GwPaperReputation.categories.detailFrames = GwPaperReputation.categories.detailFrames + 1
 
     return f
 end
@@ -523,7 +524,7 @@ local function updateDetails()
         end
     end
 
-    for i = buttonIndex, GwPaperReputation.detailFrames do
+    for i = buttonIndex, GwPaperReputation.categories.detailFrames do
         _G["GwReputationDetails" .. i]:Hide()
     end
 
@@ -548,7 +549,7 @@ local function updateReputations()
     local cCur = 0
     local textureC = 1
 
-    for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
+    for factionIndex = GwPaperReputation.categories.scroll, GetNumFactions() do
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID =
             returnReputationData(factionIndex)
         local friendID = GetFriendshipReputation(factionID)
@@ -605,7 +606,7 @@ local function updateReputations()
         end
     end
 
-    for i = headerIndex, GwPaperReputation.buttons do
+    for i = headerIndex, GwPaperReputation.categories.buttons do
         _G["GwPaperDollReputationCat" .. i]:Hide()
     end
 end
@@ -686,7 +687,7 @@ local function updateDetailsSearch(s)
         end
     end
 
-    for i = buttonIndex, GwPaperReputation.detailFrames do
+    for i = buttonIndex, GwPaperReputation.categories.detailFrames do
         _G["GwReputationDetails" .. i]:Hide()
     end
 
@@ -701,28 +702,28 @@ local function updateDetailsSearch(s)
     reputationLastUpdateMethodParams = s
 end
 
-local function LoadCharacterReputation()
-    local fmGPR = CreateFrame("Frame", "GwPaperReputation", GwPaperDoll, "GwPaperReputation")
-    fmGPR.detailFrames = 0
-    fmGPR.buttons = 0
-    fmGPR.scroll = 1
-    fmGPR:EnableMouseWheel(true)
-    fmGPR:RegisterEvent("UPDATE_FACTION")
+local function LoadReputation(tabContainer)
+    local fmGPR = CreateFrame("Frame", "GwPaperReputation", tabContainer, "GwPaperReputation")
+    fmGPR.categories.detailFrames = 0
+    fmGPR.categories.buttons = 0
+    fmGPR.categories.scroll = 1
+    fmGPR.categories:EnableMouseWheel(true)
+    fmGPR.categories:RegisterEvent("UPDATE_FACTION")
     local fnGPR_OnEvent = function(self, event)
         updateSavedReputation()
         if GwPaperReputation:IsShown() then
             updateOldData()
         end
     end
-    fmGPR:SetScript("OnEvent", fnGPR_OnEvent)
+    fmGPR.categories:SetScript("OnEvent", fnGPR_OnEvent)
     local fnGPR_OnMouseWheel = function(self, delta)
         self.scroll = math.max(1, self.scroll + -delta)
         updateReputations()
     end
-    fmGPR:SetScript("OnMouseWheel", fnGPR_OnMouseWheel)
-    fmGPR.backButton:SetText(GwLocalization["CHARACTER_MENU_REPS_RETURN"])
-    CharacterMenuButtonBack_OnLoad(fmGPR.backButton)
-    fmGPR.backButton:SetScript("OnClick", CharacterMenuButtonBack_OnClick)
+    fmGPR.categories:SetScript("OnMouseWheel", fnGPR_OnMouseWheel)
+    --fmGPR.backButton:SetText(GwLocalization["CHARACTER_MENU_REPS_RETURN"])
+    --CharacterMenuButtonBack_OnLoad(fmGPR.backButton)
+    --fmGPR.backButton:SetScript("OnClick", CharacterMenuButtonBack_OnClick)
     fmGPR.input:SetText(GwLocalization["CHARACTER_REP_SEARCH"])
     fmGPR.input:SetScript("OnEnterPressed", nil)
     local fnGPR_input_OnTextChanged = function(self)
@@ -757,18 +758,28 @@ local function LoadCharacterReputation()
         self.slider:SetValue(s)
         self:SetVerticalScroll(s)
     end
-    GwPaperReputationScrollFrame:SetScript("OnMouseWheel", fnGPRSF_OnMouseWheel)
-    GwPaperReputationScrollFrame.slider:SetMinMaxValues(0, 608)
+
+    local fmSF = CreateFrame("Frame", nil, tabContainer, "GwRepDetailFrame")
+    fmSF.scroller:SetScript("OnMouseWheel", fnGPRSF_OnMouseWheel)
+    fmSF.scroller.slider:SetMinMaxValues(0, 608)
     local fnGPRSF_slider_OnValueChanged = function(self, value)
         self:GetParent():SetVerticalScroll(value)
     end
-    GwPaperReputationScrollFrame.slider:SetScript("OnValueChanged", fnGPRSF_slider_OnValueChanged)
-    GwPaperReputationScrollFrame.slider:SetValue(1)
+    fmSF.scroller.slider:SetScript("OnValueChanged", fnGPRSF_slider_OnValueChanged)
+    fmSF.scroller.slider:SetValue(1)
 
     updateSavedReputation()
-    GwPaperReputationScrollFrame:SetScrollChild(GwPaperReputationScrollFrame.scrollchild)
+    fmSF.scroller:SetScrollChild(fmSF.scroller.scrollchild)
     updateReputations()
 
     updateDetails()
 end
-GW.LoadCharacterReputation = LoadCharacterReputation
+GW.LoadReputation = LoadReputation
+
+--[[
+local function LoadReputation(tabContainer)
+    local fm = CreateFrame("Frame", nil, tabContainer, "GwCharacterTabContainer")
+    --return fm
+end
+GW.LoadReputation = LoadReputation
+--]]

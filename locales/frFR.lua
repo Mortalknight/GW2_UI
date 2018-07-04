@@ -277,6 +277,7 @@ GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Number of columns in the two extra 
 GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
 GwLocalization['FADE_MICROMENU'] = 'Fade Menu Bar'
 GwLocalization['FADE_MICROMENU_DESC'] = 'Fade the main micromenu when the mouse is not near.'
+GwLocalization['TALENTS_BUTTON_DESC'] = 'Enable the talents, specialization, and spellbook replacement.' 
 end
 
 

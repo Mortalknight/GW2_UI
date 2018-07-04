@@ -3,15 +3,17 @@
 NEW
    - Updated for 8.x Battle For Azeroth!
    - Added custom talent and spellbook panels to the character window
-   - Bag micro button now includes empty bag slot counter (contributor inzenir)
+   - Bag micro button now includes empty bag slot counter (contributor inzenir, CF#152)
    - Health globe now includes PvP/War Mode flag indicator (CF#95)
 
 FIXED
-   - Right-side multi action bars no longer show after load/zoning when set to fade (CF#137)
+   - Right-side multi action bars no longer show after load/zoning when set to fade (CF#137, CF#102)
    - Resolved multiple issues with character panel key bindings (including CF#107 and CF#121)
+   - The custom player aura frame can now be disabled without causing errors (CF#117)
 
 MISCELLANEOUS
    - A significant refactoring took place to reduce addon conflicts and taint issues
+   - Reputation has been moved to a top-level character tab
 
 
 

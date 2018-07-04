@@ -277,6 +277,7 @@ GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Anzahl an Spalten für die zwei ext
 GwLocalization['DISABLED_MA_BAGS'] = "MoveAnything's Taschen Handling ausgeschaltet."
 GwLocalization['FADE_MICROMENU'] = 'Micro Menü ausblenden'
 GwLocalization['FADE_MICROMENU_DESC'] = 'Blendet das Micro Menü aus, wenn die Maus nicht in der Nähe ist.'
+GwLocalization['TALENTS_BUTTON_DESC'] = 'Enable the talents, specialization, and spellbook replacement.' 
 end
 
 

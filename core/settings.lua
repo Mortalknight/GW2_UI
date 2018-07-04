@@ -787,6 +787,7 @@ local function LoadSettings()
         "USE_CHARACTER_WINDOW",
         "GwSettingsModuleOption"
     )
+    addOption(TALENTS_BUTTON, GwLocalization["TALENTS_BUTTON_DESC"], "USE_TALENT_WINDOW", "GwSettingsModuleOption")
 
     createCat(GwLocalization["TARGET_CAT"], GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
@@ -948,10 +949,10 @@ local function LoadSettings()
         end,
         {1, 0.9, 0.8},
         {
-			GwLocalization["HUD_SCALE_DEFAULT"], 
-			GwLocalization["HUD_SCALE_SMALL"], 
-			GwLocalization["HUD_SCALE_TINY"]
-		}
+            GwLocalization["HUD_SCALE_DEFAULT"],
+            GwLocalization["HUD_SCALE_SMALL"],
+            GwLocalization["HUD_SCALE_TINY"]
+        }
     )
     addOptionDropdown(
         GwLocalization["MINIMAP_SCALE"],
