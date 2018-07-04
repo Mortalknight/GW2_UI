@@ -394,26 +394,6 @@ local function loadTalents()
 end
 GW.AddForProfiling("talents", "loadTalents", loadTalents)
 
-local function spellButton_OnEvent(self)
-    if not GwTalentFrame:IsShown() then
-        return
-    end
-
-    local start, duration, _ = GetSpellCooldown(self.spellbookIndex, self.booktype)
-
-    if start ~= nil and duration ~= nil then
-        self.cooldown:SetCooldown(start, duration)
-    end
-
-    local _, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
-
-    self.autocast:Hide()
-    if autostate then
-        self.autocast:Show()
-    end
-end
-GW.AddForProfiling("talents", "spellButton_OnEvent", spellButton_OnEvent)
-
 local function spellButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
@@ -453,35 +433,6 @@ local spellButtonSecure_OnDragStart =
     return "clear", "spell", spellId
     ]=]
 
-local function clearButton(btn)
-    btn:SetAlpha(0)
-    btn:EnableMouse(false)
-    btn:SetScript("OnEnter", nil)
-    btn:SetScript("OnLeave", nil)
-    btn:SetScript("OnEvent", nil)
-    btn:SetAttribute("_ondragstart", nil)
-    btn:SetAttribute("flyout", nil)
-    btn:SetAttribute("flyoutDirection", nil)
-    btn:SetAttribute("type", nil)
-    btn:SetAttribute("spell", nil)
-    btn:SetAttribute("type2", nil)
-    btn:SetAttribute("*macrotext2", nil)
-    btn:SetAttribute("ispickable", nil)
-    btn.isFuture = nil
-    btn.spellbookIndex = nil
-    btn.booktype = nil
-    btn.spellId = nil
-    btn.isFlyout = nil
-    if btn.arrow then
-        btn.arrow:Hide()
-    end
-    if btn.autocast then
-        btn.autocast:Hide()
-    end
-    btn.isDirty = false
-end
-GW.AddForProfiling("talents", "clearButton", clearButton)
-
 local function setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
     btn.isDirty = true
     btn.isFuture = (skillType == "FUTURESPELL")
@@ -490,6 +441,7 @@ local function setButton(btn, spellId, skillType, icon, spellbookIndex, booktype
     btn.spellId = spellId
     btn.icon:SetTexture(icon)
     btn:SetAlpha(1)
+    btn:Show()
 
     if btn.isFuture then
         btn.icon:SetDesaturated(true)
@@ -511,10 +463,6 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
         btn.autocast:Hide()
     end
 
-    local secureDrag = false
-    btn.arrow:Hide()
-    btn:SetAttribute("flyout", nil)
-    btn:SetAttribute("flyoutDirection", nil)
     btn:SetAttribute("ispickable", false)
     btn.isFlyout = (skillType == "FLYOUT")
     if btn.isFlyout then
@@ -532,28 +480,15 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
         btn:SetAttribute("ispickable", true)
         btn:SetAttribute("type", "spell")
         btn:SetAttribute("spell", spellId)
-        secureDrag = true
     end
 
     btn:EnableMouse(true)
-    btn:SetScript("OnEvent", spellButton_OnEvent)
-    btn:SetScript("OnEnter", spellButton_OnEnter)
-    btn:SetScript("OnLeave", GameTooltip_Hide)
-    if not secureDrag then
-        btn:SetScript("OnDragStart", spellButton_OnDragStart)
-        btn:SetAttribute("_ondragstart", nil)
-    else
-        btn:SetAttribute("_ondragstart", spellButtonSecure_OnDragStart)
-    end
 end
 GW.AddForProfiling("talents", "setActiveButton", setActiveButton)
 
 local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
     setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
-
     btn:EnableMouse(true)
-    btn:SetScript("OnEnter", spellButton_OnEnter)
-    btn:SetScript("OnLeave", GameTooltip_Hide)
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
 
@@ -569,7 +504,6 @@ local function updateTab()
             _, _, offset, numSpells = GetSpellTabInfo(1)
         end
 
-        spellButtonIndex = 1
         local BOOKTYPE = "spell"
         if spellBookTabs == 4 then
             BOOKTYPE = "pet"
@@ -580,18 +514,14 @@ local function updateTab()
             end
         end
 
-        if numSpells == 0 then
-            fmTab.activeLabel:Hide()
-            fmTab.passiveLabel:Hide()
-            fmTab.messageLabel:Show()
-        else
-            fmTab.activeLabel:Show()
-            fmTab.passiveLabel:Show()
-            fmTab.messageLabel:Hide()
-        end
-
-        local passiveIndex = 1
         local activeIndex = 1
+        local activeGroup = fmTab.groups["active"]
+        local passiveIndex = 1
+        local passiveGroup = fmTab.groups["passive"]
+
+        activeGroup.pool:ReleaseAll()
+        activeGroup.poolNSD:ReleaseAll()
+        passiveGroup.pool:ReleaseAll()
 
         for i = 1, numSpells do
             local spellIndex = i + offset
@@ -599,41 +529,39 @@ local function updateTab()
             if name == nil then
                 name = ""
             end
+            local isPassive = IsPassiveSpell(spellIndex, BOOKTYPE)
+
             local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
             if BOOKTYPE == "pet" then
                 _, _, _, _, _, _, spellId = GetSpellInfo(spellIndex, BOOKTYPE)
             end
-            local isPassive = IsPassiveSpell(spellIndex, BOOKTYPE)
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
 
+            local btn
             if isPassive then
-                local btn = _G["GwSpellbookTab" .. spellBookTabs .. "PassiveButton" .. passiveIndex]
+                btn = passiveGroup.pool:Acquire()
+                local row = math.floor((passiveIndex - 1) / 5)
+                local col = (passiveIndex - 1) % 5
+                btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
                 setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
                 passiveIndex = passiveIndex + 1
             else
-                local btn = _G["GwSpellbookTab" .. spellBookTabs .. "ActiveButton" .. activeIndex]
+                if BOOKTYPE == "pet" or skillType == "FLYOUT" then
+                    btn = activeGroup.poolNSD:Acquire()
+                else
+                    btn = activeGroup.pool:Acquire()
+                end
+                local row = math.floor((activeIndex - 1) / 5)
+                local col = (activeIndex - 1) % 5
+                btn:SetPoint("TOPLEFT", activeGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
                 setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
                 activeIndex = activeIndex + 1
             end
         end
 
         local offY = (math.ceil((activeIndex - 1) / 5) * 50) + 66
-        fmTab.passiveLabel:ClearAllPoints()
-        fmTab.passiveLabel:SetPoint("TOPLEFT", fmTab, "TOPLEFT", -4, -offY)
-
-        for i = passiveIndex, 50 do
-            local btn = _G["GwSpellbookTab" .. spellBookTabs .. "PassiveButton" .. i]
-            if btn.isDirty then
-                clearButton(btn)
-            end
-        end
-
-        for i = activeIndex, 50 do
-            local btn = _G["GwSpellbookTab" .. spellBookTabs .. "ActiveButton" .. i]
-            if btn.isDirty then
-                clearButton(btn)
-            end
-        end
+        passiveGroup:ClearAllPoints()
+        passiveGroup:SetPoint("TOPLEFT", fmTab, "TOPLEFT", -4, -offY)
     end
 end
 GW.AddForProfiling("talents", "updateTab", updateTab)
@@ -679,6 +607,98 @@ local function spellTab_OnEnter(self)
     GameTooltip:Show()
 end
 GW.AddForProfiling("talents", "spellTab_OnEnter", spellTab_OnEnter)
+
+local function activePoolCommon_Resetter(self, btn)
+    btn:EnableMouse(false)
+    btn:RegisterForClicks("AnyUp")
+    btn:RegisterForDrag("LeftButton")
+    btn:Hide()
+    btn.arrow:Hide()
+    btn.autocast:Hide()
+    btn:SetScript("OnEnter", spellButton_OnEnter)
+    btn:SetScript("OnLeave", GameTooltip_Hide)
+    btn:SetScript("OnEvent", spellButton_OnEvent)
+    btn:SetAttribute("flyout", nil)
+    btn:SetAttribute("flyoutDirection", nil)
+    btn:SetAttribute("type", nil)
+    btn:SetAttribute("spell", nil)
+    btn:SetAttribute("type2", nil)
+    btn:SetAttribute("*macrotext2", nil)
+    btn:SetAttribute("ispickable", nil)
+    btn.isFuture = nil
+    btn.spellbookIndex = nil
+    btn.booktype = nil
+    btn.spellId = nil
+    btn.isFlyout = nil
+end
+GW.AddForProfiling("talents", "activePoolCommon_Resetter", activePoolCommon_Resetter)
+
+local function activePool_Resetter(self, btn)
+    activePoolCommon_Resetter(self, btn)
+    btn:SetAttribute("_ondragstart", spellButtonSecure_OnDragStart)
+end
+GW.AddForProfiling("talents", "activePool_Resetter", activePool_Resetter)
+
+local function activePoolNSD_Resetter(self, btn)
+    activePoolCommon_Resetter(self, btn)
+    btn:SetScript("OnDragStart", spellButton_OnDragStart)
+end
+GW.AddForProfiling("talents", "activePoolNSD_Resetter", activePoolNSD_Resetter)
+
+local function passivePool_Resetter(self, btn)
+    btn:EnableMouse(false)
+    btn:Hide()
+    btn:SetScript("OnEnter", spellButton_OnEnter)
+    btn:SetScript("OnLeave", GameTooltip_Hide)
+    btn.isFuture = nil
+    btn.spellbookIndex = nil
+    btn.booktype = nil
+    btn.spellId = nil
+
+    if not btn.mask then
+        local mask = UIParent:CreateMaskTexture()
+        mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
+        mask:SetTexture(
+            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+            "CLAMPTOBLACKADDITIVE",
+            "CLAMPTOBLACKADDITIVE"
+        )
+        mask:SetSize(40, 40)
+        btn.mask = mask
+        btn.icon:AddMaskTexture(mask)
+    end
+end
+GW.AddForProfiling("talents", "passivePool_Resetter", passivePool_Resetter)
+
+local function updateButton(self)
+    local start, duration, _ = GetSpellCooldown(self.spellbookIndex, self.booktype)
+
+    if start ~= nil and duration ~= nil then
+        self.cooldown:SetCooldown(start, duration)
+    end
+
+    local _, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
+
+    self.autocast:Hide()
+    if autostate then
+        self.autocast:Show()
+    end
+end
+GW.AddForProfiling("talents", "updateButton", updateButton)
+
+local function spellGroup_OnEvent(self)
+    if not GwTalentFrame:IsShown() or not self.pool or not self.poolNSD then
+        return
+    end
+
+    for btn in self.pool:EnumerateActive() do
+        updateButton(btn)
+    end
+    for btn in self.poolNSD:EnumerateActive() do
+        updateButton(btn)
+    end
+end
+GW.AddForProfiling("talents", "spellGroup_OnEvent", spellGroup_OnEvent)
 
 local function LoadTalents()
     local fmGTF = CreateFrame("Frame", "GwTalentFrame", GwCharacterWindow, "SecureHandlerStateTemplate,GwTalentFrame")
@@ -734,69 +754,34 @@ local function LoadTalents()
     for tab = 1, 4 do
         local container =
             CreateFrame("Frame", "GwSpellbookContainerTab" .. tab, GwSpellbookMenu, "GwSpellbookContainerTab")
-        container.activeLabel.title:SetFont(DAMAGE_TEXT_FONT, 14)
-        container.activeLabel.title:SetTextColor(1, 1, 1, 1)
-        container.activeLabel.title:SetShadowColor(0, 0, 0, 1)
-        container.activeLabel.title:SetShadowOffset(1, -1)
-        container.activeLabel.title:SetText(GwLocalization["SPELLS_HEADER_ACTIVE"])
+        local actGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
+        local psvGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
+        container.groups = {
+            ["active"] = actGroup,
+            ["passive"] = psvGroup
+        }
 
-        container.passiveLabel.title:SetFont(DAMAGE_TEXT_FONT, 14)
-        container.passiveLabel.title:SetTextColor(1, 1, 1, 1)
-        container.passiveLabel.title:SetShadowColor(0, 0, 0, 1)
-        container.passiveLabel.title:SetShadowOffset(1, -1)
-        container.passiveLabel.title:SetText(GwLocalization["SPELLS_HEADER_PASSIVE"])
+        actGroup:ClearAllPoints()
+        actGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
+        actGroup.label.title:SetFont(DAMAGE_TEXT_FONT, 14)
+        actGroup.label.title:SetTextColor(1, 1, 1, 1)
+        actGroup.label.title:SetShadowColor(0, 0, 0, 1)
+        actGroup.label.title:SetShadowOffset(1, -1)
+        actGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_ACTIVE"])
+        actGroup.pool = CreateFramePool("Button", actGroup, "GwSpellbookActiveButton", activePool_Resetter)
+        actGroup.poolNSD = CreateFramePool("Button", actGroup, "GwSpellbookActiveButtonNSD", activePoolNSD_Resetter)
+        actGroup:SetScript("OnEvent", spellGroup_OnEvent)
+        actGroup:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+        actGroup:RegisterEvent("PET_BAR_UPDATE")
 
-        container.messageLabel.title:SetFont(DAMAGE_TEXT_FONT, 14)
-        container.messageLabel.title:SetTextColor(1, 1, 1, 1)
-        container.messageLabel.title:SetShadowColor(0, 0, 0, 1)
-        container.messageLabel.title:SetShadowOffset(1, -1)
-        container.messageLabel.title:SetText(SPELL_FAILED_NO_PET)
-
-        for i = 1, 50 do
-            local f =
-                CreateFrame(
-                "Button",
-                "GwSpellbookTab" .. tab .. "ActiveButton" .. i,
-                container,
-                "GwSpellbookActiveButton"
-            )
-            f.isDirty = true
-
-            local row = math.floor((i - 1) / 5)
-            local col = (i - 1) % 5
-            f:SetPoint("TOPLEFT", container.activeLabel, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-
-            f:RegisterForClicks("AnyUp")
-            f:RegisterForDrag("LeftButton")
-            f:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-            f:RegisterEvent("PET_BAR_UPDATE")
-        end
-
-        for i = 1, 50 do
-            local f =
-                CreateFrame(
-                "Button",
-                "GwSpellbookTab" .. tab .. "PassiveButton" .. i,
-                container,
-                "GwSpellbookPassiveButton"
-            )
-            f.isDirty = true
-
-            local row = math.floor((i - 1) / 5)
-            local col = (i - 1) % 5
-            f:SetPoint("TOPLEFT", container.passiveLabel, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-
-            local mask = UIParent:CreateMaskTexture()
-            mask:SetPoint("CENTER", f.icon, "CENTER", 0, 0)
-            mask:SetTexture(
-                "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
-                "CLAMPTOBLACKADDITIVE",
-                "CLAMPTOBLACKADDITIVE"
-            )
-            mask:SetSize(40, 40)
-            f.mask = mask
-            f.icon:AddMaskTexture(mask)
-        end
+        psvGroup:ClearAllPoints()
+        psvGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -72)
+        psvGroup.label.title:SetFont(DAMAGE_TEXT_FONT, 14)
+        psvGroup.label.title:SetTextColor(1, 1, 1, 1)
+        psvGroup.label.title:SetShadowColor(0, 0, 0, 1)
+        psvGroup.label.title:SetShadowOffset(1, -1)
+        psvGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_PASSIVE"])
+        psvGroup.pool = CreateFramePool("Button", psvGroup, "GwSpellbookPassiveButton", passivePool_Resetter)
     end
 
     GwSpellbookContainerTab1:Hide()

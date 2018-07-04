@@ -369,16 +369,23 @@
         </Frames>
     </Frame>
 
-    <Frame name="GwSpellbookContainerTab" virtual="true">
-        <Size x="231" y="621"></Size>
+    <Frame name="GwSpellbookContainerTab" virtual="true" protected="true">
+        <Size x="245" y="615"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+    </Frame>
+
+    <Frame name="GwSpellbookButtonGroup" virtual="true" protected="true">
+        <Size x="245" y="300"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Frames>
-            <Frame parentKey="activeLabel">
+            <Frame parentKey="label">
                 <Size x="250" y="30"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-4" y="-32"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
@@ -390,47 +397,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <FontString parentKey="title" text="Active" justifyH="LEFT" justifyY="CENTER">
-                            <Size x="256" y="32"></Size>
-                            <Anchors>
-                                <Anchor point="LEFT" x="10" y="-2"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
-            <Frame parentKey="passiveLabel">
-                <Size x="250" y="30"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-4" y="-32"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep">
-                            <Size x="254" y="32"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer level="BORDER">
-                        <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyY="CENTER">
-                            <Size x="256" y="32"></Size>
-                            <Anchors>
-                                <Anchor point="LEFT" x="10" y="-2"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
-            <Frame parentKey="messageLabel" hidden="true">
-                <Size x="250" y="30"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-4" y="-64"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="BORDER">
-                        <FontString parentKey="title" text="Message goes here." justifyH="LEFT" justifyY="CENTER">
+                        <FontString parentKey="title" text="Title" justifyH="LEFT" justifyY="CENTER">
                             <Size x="256" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" x="10" y="-2"></Anchor>
@@ -440,10 +407,9 @@
                 </Layers>
             </Frame>
         </Frames>
-
     </Frame>
 
-    <Button name="GwSpellbookActiveButton" enableMouse="true" inherits="SecureActionButtonTemplate,SecureHandlerDragTemplate" virtual="true">
+    <Button name="GwSpellbookActiveButtonNSD" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">
@@ -493,6 +459,9 @@
         <Frames>
             <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
+    </Button>
+
+    <Button name="GwSpellbookActiveButton" inherits="SecureHandlerDragTemplate,GwSpellbookActiveButtonNSD" virtual="true">
     </Button>
 
     <Button name="GwSpellbookPassiveButton" enableMouse="true" virtual="true">
