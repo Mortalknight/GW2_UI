@@ -10,6 +10,7 @@ FIXED
    - Right-side multi action bars no longer show after load/zoning when set to fade (CF#137, CF#102)
    - Resolved multiple issues with character panel key bindings (including CF#107 and CF#121)
    - The custom player aura frame can now be disabled without causing errors (CF#117)
+   - Fix starting bag/bank icon size inconsistencies (CF#138)
 
 MISCELLANEOUS
    - A significant refactoring took place to reduce addon conflicts and taint issues

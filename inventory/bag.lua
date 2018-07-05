@@ -517,6 +517,10 @@ end
 local function LoadBag()
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
     BAG_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
+    if BAG_ITEM_SIZE > 40 then
+        BAG_ITEM_SIZE = 40
+        SetSetting("BAG_ITEM_SIZE", 40)
+    end
 
     CreateFrame("Frame", "gwNormalBagHolder", UIParent)
     gwNormalBagHolder:SetPoint("LEFT", UIParent, "RIGHT")

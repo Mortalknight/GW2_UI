@@ -415,6 +415,10 @@ end
 local function LoadBank()
     BANK_WINDOW_SIZE = GetSetting("BANK_WIDTH")
     BANK_ITEM_SIZE = GetSetting("BANK_ITEM_SIZE")
+    if BANK_ITEM_SIZE > 40 then
+        BANK_ITEM_SIZE = 40
+        SetSetting("BANK_ITEM_SIZE", 40)
+    end
 
     -- create mover frame, restore its saved position, and setup drag to move
     local bankPos = GetSetting("BANK_POSITION")
