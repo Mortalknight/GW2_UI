@@ -1,0 +1,24 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <ScrollFrame name="GwCurrencyWindow" inherits="HybridScrollFrameTemplate" virtual="true">
+        <Size x="580" y="576"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-18"></Anchor>
+        </Anchors>
+        <Frames>
+            <Slider parentKey="ScrollBar" inherits="GwHybridScrollBarTemplate" />
+        </Frames>
+    </ScrollFrame>
+
+    <ScrollFrame name="GwRaidInfo" inherits="HybridScrollFrameTemplate" virtual="true">
+        <Size x="580" y="576"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-18"></Anchor>
+        </Anchors>
+        <Frames>
+            <Slider parentKey="ScrollBar" inherits="GwHybridScrollBarTemplate" />
+        </Frames>
+    </ScrollFrame>
+
+</Ui>

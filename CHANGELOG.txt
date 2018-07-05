@@ -15,6 +15,7 @@ FIXED
 MISCELLANEOUS
    - A significant refactoring took place to reduce addon conflicts and taint issues
    - Reputation has been moved to a top-level character tab
+   - Currency has been moved from bags to a top-level character tab (CF#76)
 
 
 

@@ -108,4 +108,46 @@
 
         </Frames>
     </Frame>
+
+    <Frame name="GwCharacterMenu" virtual="true">
+        <Size x="231" y="498"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
+        </Anchors>
+    </Frame>
+
+    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+        <Size x="231" y="36"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+        </Anchors>
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
+                    <Size x="10" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+        <Layers>
+            <Layer layer="OVERLAY" textureSubLevel="8">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                    <Size x="32" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true">
+    </Button>
+
 </Ui>

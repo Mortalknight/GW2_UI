@@ -237,19 +237,23 @@ local function AddToAnimation(name, from, to, start, duration, method, easeing, 
 end
 GW.AddToAnimation = AddToAnimation
 
-local function buttonAnim(self, name, w)
+local function buttonAnim(self, name, w, hover)
     local prog = animations[name]["progress"]
     local l = GW.lerp(0, w, prog)
 
-    _G[name .. "OnHover"]:SetPoint("RIGHT", self, "LEFT", l, 0)
-    _G[name .. "OnHover"]:SetVertexColor(1, 1, 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
+    hover:SetPoint("RIGHT", self, "LEFT", l, 0)
+    hover:SetVertexColor(1, 1, 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
 end
 
 function GwStandardButton_OnEnter(self)
-    local name = self:GetName()
+    local name = tostring(self)
     local w = self:GetWidth()
-    _G[name .. "OnHover"]:SetAlpha(1)
+    local hover = self.hover
+    if not hover then
+        return
+    end
 
+    hover:SetAlpha(1)
     self.animationValue = 0
 
     AddToAnimation(
@@ -259,16 +263,20 @@ function GwStandardButton_OnEnter(self)
         GetTime(),
         0.2,
         function()
-            buttonAnim(self, name, w)
+            buttonAnim(self, name, w, hover)
         end
     )
 end
 
 function GwStandardButton_OnLeave(self)
-    local name = self:GetName()
+    local name = tostring(self)
     local w = self:GetWidth()
-    _G[name .. "OnHover"]:SetAlpha(1)
+    local hover = self.hover
+    if not hover then
+        return
+    end
 
+    hover:SetAlpha(1)
     self.animationValue = 1
 
     AddToAnimation(
@@ -278,7 +286,7 @@ function GwStandardButton_OnLeave(self)
         GetTime(),
         0.2,
         function()
-            buttonAnim(self, name, w)
+            buttonAnim(self, name, w, hover)
         end
     )
 end

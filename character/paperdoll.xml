@@ -87,50 +87,10 @@
         </Layers>
 
     </Button>
+
     <Button name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true">
     </Button>
-    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
 
-        <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
-        <Layers>
-            <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
-                    <Size x="10" y="20"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
-    <Button name="GwCharacterMenuButtonTemplate2" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
-        <Layers>
-            <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
-                    <Size x="10" y="20"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
-    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
-
-        <Layers>
-            <Layer layer="OVERLAY" textureSubLevel="8">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
-                    <Size x="32" y="32"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
-    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true">
-
-    </Button>
     <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" jusifyH="LEFT" virtual="true">
         <Layers>
             <Layer>
@@ -164,34 +124,6 @@
             </Button>
         </Frames>
     </Button>
-    <Frame name="GwCharacterMenu" virtual="true">
-        <Size x="231" y="498"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
-        </Anchors>
-        <Frames>
-            <Button name="$parentEquipment" parentKey="equipmentMenu" inherits="GwCharacterMenuButtonTemplate" text="Equipment">
-                <Size x="231" y="36"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentOutfits" parentKey="outfitsMenu" inherits="GwCharacterMenuButtonTemplate2" text="Outfits">
-                <Size x="231" y="36"></Size>
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.equipmentMenu" relativePoint="BOTTOMLEFT"></Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentTitles" parentKey="titlesMenu" inherits="GwCharacterMenuButtonTemplate" text="Titles">
-                <Size x="231" y="36"></Size>
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.outfitsMenu" relativePoint="BOTTOMLEFT"></Anchor>
-                </Anchors>
-            </Button>
-        </Frames>
-    </Frame>
 
     <Frame name="GwPaperDollBagItemList" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
@@ -662,13 +594,5 @@
             </PlayerModel>
         </Frames>
     </Button>
-    <!--
-    <Frame name="GwPaperDoll" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
-        <Size x="853" y="627"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
-        </Anchors>
-    </Frame>
-    -->
 
 </Ui>

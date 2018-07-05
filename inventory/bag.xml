@@ -163,15 +163,6 @@
 
         </Layers>
         <Frames>
-            <ScrollFrame name="GwCurrencyWindow" hidden="true" parentKey="currencyWindow" inherits="HybridScrollFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-24" y="0" />
-                </Anchors>
-                <Frames>
-                    <Slider name="$parentScrollBar" inherits="GwHybridScrollBarTemplate" />
-                </Frames>
-            </ScrollFrame>
             <Button name="GwCurrencyIcon" framelevel="50">
                 <Size x="32" y="32"></Size>
                 <Anchors>

@@ -7,7 +7,6 @@ local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
-local BAG_CURRENCY_SIZE = 32
 local BAG_WINDOW_SIZE = 480
 local BAG_WINDOW_CONTENT_HEIGHT = 0
 
@@ -242,170 +241,33 @@ local function compactToggle()
     return GwLocalization["COMPACT_ICONS"] --Local?
 end
 
-local function currency_OnClick(self)
-    if not self.CurrencyID or not self.CurrencyIdx then
-        return
-    end
-    local _, _, _, _, isWatched, _ = GetCurrencyListInfo(self.CurrencyIdx)
-    local toggle = 1
-    if isWatched then
-        toggle = 0
-    end
-    SetCurrencyBackpack(self.CurrencyIdx, toggle)
-end
-
-local function currency_OnEnter(self)
-    if not self.CurrencyID or not self.CurrencyIdx then
-        return
-    end
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
-    GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-    GameTooltip:AddLine(GwLocalization["CLICK_TO_TRACK"], 1, 1, 1)
-    GameTooltip:Show()
-end
-
-local function loadCurrency()
-    local USED_CURRENCY_HEIGHT
-    local zebra
-
-    local curwin = GwCurrencyWindow
-    local offset = HybridScrollFrame_GetOffset(curwin)
-    local currencyCount = GetCurrencyListSize() + 1
-    for i = 1, #curwin.buttons do
-        local slot = curwin.buttons[i]
-
-        local idx = i + offset - 1
-        if idx <= 0 or idx >= currencyCount then
-            -- empty row (blank starter row, final row, and any empty entries)
-            slot.item:Hide()
-            slot.item.CurrencyID = nil
-            slot.item.CurrencyIdx = nil
-            slot.header:Hide()
-        else
-            local count, icon, maximum
-            local name, isHeader, _, _, isWatched, _ = GetCurrencyListInfo(idx)
-            if isHeader then
-                slot.item:Hide()
-                slot.item.CurrencyID = nil
-                slot.item.CurrencyIdx = nil
-                slot.header.spaceString:SetText(name)
-                slot.header:Show()
-            else
-                slot.header:Hide()
-
-                -- parse out the currency ID to get more accurate info
-                local link = GetCurrencyListLink(idx)
-                local _, _, _, _, curid, _ =
-                    string.find(
-                    link,
-                    "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%]%[]*)%]?|?h?|?r?"
-                )
-                name, count, icon, _, _, maximum, _, _ = GetCurrencyInfo(curid)
-                slot.item.CurrencyID = curid
-                slot.item.CurrencyIdx = idx
-
-                -- set currency item values
-                slot.item.spaceString:SetText(name)
-                if maximum == 0 then
-                    slot.item.amount:SetText(CommaValue(count))
-                else
-                    slot.item.amount:SetText(CommaValue(count) .. " / " .. CommaValue(maximum))
-                end
-                slot.item.icon:SetTexture(icon)
-
-                -- set zebra color by idx or watch status
-                zebra = idx % 2
-                if isWatched then
-                    slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
-                else
-                    slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
-                end
-
-                slot.item:Show()
-            end
-        end
-    end
-
-    USED_CURRENCY_HEIGHT = BAG_CURRENCY_SIZE * (currencyCount + 1)
-    HybridScrollFrame_Update(curwin, USED_CURRENCY_HEIGHT, BAG_CURRENCY_SIZE)
-end
-
-local function watchCurrency()
+local function watchCurrency(self)
     local watchSlot = 1
     local currencyCount = GetCurrencyListSize()
     for i = 1, currencyCount do
         local _, isHeader, _, _, isWatched, count, icon, _ = GetCurrencyListInfo(i)
         if not isHeader and isWatched and watchSlot < 4 then
-            GwBagFrame["currency" .. tostring(watchSlot)]:SetText(count)
-            GwBagFrame["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(icon)
+            self["currency" .. tostring(watchSlot)]:SetText(count)
+            self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(icon)
             watchSlot = watchSlot + 1
         end
     end
 
     for i = watchSlot, 3 do
-        GwBagFrame["currency" .. tostring(i)]:SetText("")
-        GwBagFrame["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
+        self["currency" .. tostring(i)]:SetText("")
+        self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
     end
 end
 
-local function currencySetup()
-    local curwin = GwCurrencyWindow
-    local width = GwBagFrame:GetWidth() - 24
-    curwin:SetWidth(width)
-    HybridScrollFrame_CreateButtons(curwin, "GwCurrencyRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
-    for i = 1, #curwin.buttons do
-        local slot = curwin.buttons[i]
-        slot:SetWidth(curwin:GetWidth() - 12)
-        slot.header.spaceString:SetFont(DAMAGE_TEXT_FONT, 14)
-        slot.header.spaceString:SetTextColor(1, 1, 1)
-        slot.item.spaceString:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.spaceString:SetTextColor(1, 1, 1)
-        slot.item.amount:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.amount:SetTextColor(1, 1, 1)
-        slot.item.icon:ClearAllPoints()
-        slot.item.icon:SetPoint("LEFT", 0, 0)
-        if not slot.item.ScriptsHooked then
-            slot.item:HookScript("OnClick", currency_OnClick)
-            slot.item:HookScript("OnEnter", currency_OnEnter)
-            slot.item:HookScript("OnLeave", GameTooltip_Hide)
-            slot.item.ScriptsHooked = true
-        end
-    end
-
-    loadCurrency()
-    watchCurrency()
-end
-
-local function hideIcons(b)
+local function showIcons()
     local gwbf = GwBagFrame
-    if b then
-        OpenAllBags()
-        BagItemSearchBox:Show()
-        gwbf.spaceString:Show()
-        gwbf.buttonSettings:Show()
-        gwbf.buttonSort:Show()
-        gwbf.currencyWindow:Hide()
-        ContainerFrame1:Show()
-        watchCurrency()
-    else
-        BagItemSearchBox:Hide()
-        gwbf.spaceString:Hide()
-        gwbf.buttonSettings:Hide()
-        gwbf.buttonSort:Hide()
-        gwbf.currencyWindow:Show()
-        CloseAllBags()
-        loadCurrency()
-        watchCurrency()
-    end
-end
-
-local function toggleCurrency()
-    if GwCurrencyWindow:IsShown() then
-        hideIcons(true)
-    else
-        hideIcons(false)
-    end
+    watchCurrency(gwbf)
+    OpenAllBags()
+    BagItemSearchBox:Show()
+    gwbf.spaceString:Show()
+    gwbf.buttonSettings:Show()
+    gwbf.buttonSort:Show()
+    ContainerFrame1:Show()
 end
 
 local function CloseBags()
@@ -422,7 +284,7 @@ local function CloseBags()
             end
         end
     end
-    if not o and not GwCurrencyWindow:IsShown() then
+    if not o then
         GwBagFrame:Hide()
         return
     end
@@ -489,7 +351,6 @@ local function bagOnResizeStop(self)
     GwBagMoverFrame:SetPoint(mfPoint, UIParent, mfRelPoint, mfxOfs, mfyOfs)
     GwBagMoverFrame:SetWidth(newWidth)
     onBagMove(GwBagMoverFrame)
-    currencySetup()
 end
 
 local function onBagDragUpdate(self)
@@ -563,15 +424,33 @@ local function LoadBag()
     f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
     updateMoney(f)
 
+    f.currency1:SetFont(UNIT_NAME_FONT, 12)
+    f.currency1:SetTextColor(1, 1, 1)
+    f.currency2:SetFont(UNIT_NAME_FONT, 12)
+    f.currency2:SetTextColor(1, 1, 1)
+    f.currency3:SetFont(UNIT_NAME_FONT, 12)
+    f.currency3:SetTextColor(1, 1, 1)
+    watchCurrency(f)
+
+    -- update money and watch currencies when applicable
     f:SetScript(
         "OnEvent",
         function(self, event, ...)
             if event == "PLAYER_MONEY" then
                 updateMoney(self)
+            elseif event == "CURRENCY_DISPLAY_UPDATE" then
+                watchCurrency(self)
             end
         end
     )
     f:RegisterEvent("PLAYER_MONEY")
+    f:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    hooksecurefunc(
+        "SetCurrencyBackpack",
+        function()
+            watchCurrency(f)
+        end
+    )
 
     -- setup settings button and its dropdown items
     f.buttonSort:HookScript(
@@ -681,11 +560,11 @@ local function LoadBag()
     f.buttonClose:HookScript(
         "OnClick",
         function(self)
-            local f = self:GetParent()
+            --local f = self:GetParent()
             CloseAllBags()
-            if f.currencyWindow:IsShown() then
-                f:Hide()
-            end
+            --if f.currencyWindow:IsShown() then
+            --f:Hide()
+            --end
         end
     )
 
@@ -706,45 +585,24 @@ local function LoadBag()
     f:SetScript("OnShow", bagFrameShow)
     f:Hide()
 
-    -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
-    local curwin = f.currencyWindow
-    curwin.update = loadCurrency
-    curwin.scrollBar.doNotHide = true
-    f.currency1:SetFont(UNIT_NAME_FONT, 12)
-    f.currency1:SetTextColor(1, 1, 1)
-    f.currency2:SetFont(UNIT_NAME_FONT, 12)
-    f.currency2:SetTextColor(1, 1, 1)
-    f.currency3:SetFont(UNIT_NAME_FONT, 12)
-    f.currency3:SetTextColor(1, 1, 1)
-    currencySetup()
-
-    -- update currency window when a currency update event occurs
-    curwin:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            if event == "CURRENCY_DISPLAY_UPDATE" then
-                if self:IsShown() then
-                    loadCurrency()
-                end
-                watchCurrency()
-            end
+    -- enable the bag window currency button to open currency frame
+    --[[if GetSetting("USE_CHARACTER_WINDOW") then
+        -- the necessary frame ref gets set by the character.lua loader
+        GwCurrencyIcon:SetAttribute(
+            "_onclick",
+            [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "currency")
+            ]=]
+        )
+    else
+    --]]
+    GwCurrencyIcon:SetScript(
+        "OnClick",
+        function(self, button)
+            ToggleCharacter("TokenFrame")
         end
     )
-    curwin:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-
-    -- update currency window when anyone adds a watch currency
-    hooksecurefunc(
-        "SetCurrencyBackpack",
-        function()
-            if GwCurrencyWindow:IsShown() then
-                loadCurrency()
-            end
-            watchCurrency()
-        end
-    )
-
-    -- enable the bag window button to toggle between inv and currency
-    GwCurrencyIcon:HookScript("OnClick", toggleCurrency)
+    --end
 
     -- hook into default bag frames to re-use default bag bars and search box
     for i = 1, #default_bag_frame_container do
@@ -761,7 +619,7 @@ local function LoadBag()
             fv:HookScript(
                 "OnShow",
                 function()
-                    hideIcons(true)
+                    showIcons()
                     CloseBags()
                     if relocate then
                         relocate()

@@ -1,113 +1,101 @@
 local _, GW = ...
+local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
+local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
 local Debug = GW.Debug
 
 --local CHARACTER_PANEL_OPEN
 
+local fmMenu
+
 local function characterPanelToggle(frame)
+    fmMenu:Hide()
     GwPaperDollBagItemList:Hide()
-    GwCharacterMenu:Hide()
     GwPaperDollOutfits:Hide()
     GwPaperTitles:Hide()
 
-    if frame ~= nil then
-        frame:Show()
-    else
+    if frame == nil then
         GwDressingRoom:Hide()
         return
     end
 
+    frame:Show()
     GwDressingRoom:Show()
 end
 
 local function toggleCharacter(tab, onlyShow)
+    -- TODO: update bag frame to a secure stack, or at least the currency icon
     if InCombatLockdown() then
         return
     end
 
-    if GwCharacterWindow:IsShown() then
-        if not onlyShow then
-            GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-        end
-    else
+    if tab == "PaperDollFrame" then
         GwCharacterWindow:SetAttribute("windowpanelopen", "character")
+    elseif tab == "ReputationFrame" then
+        GwCharacterWindow:SetAttribute("windowpanelopen", "reputation")
+    elseif tab == "TokenFrame" then
+        GwCharacterWindow:SetAttribute("windowpanelopen", "currency")
+    else
+        if GwCharacterWindow:IsShown() then
+            if not onlyShow then
+                GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+            end
+        else
+            GwCharacterWindow:SetAttribute("windowpanelopen", "character")
+        end
     end
 end
 
-local function CharacterMenuBlank_OnLoad(self)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-    self:SetNormalTexture(nil)
-    local fontString = self:GetFontString()
-    fontString:SetTextColor(1, 1, 1, 1)
-    fontString:SetShadowColor(0, 0, 0, 0)
-    fontString:SetShadowOffset(1, -1)
-    fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+local function back_OnClick(self, button)
+    characterPanelToggle(fmMenu)
 end
-GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
+--GW.PDButtonBack_OnClick = PDButtonBack_OnClick
 
-local function CharacterMenuButtonBack_OnLoad(self)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-    self:SetNormalTexture(nil)
-    local fontString = self:GetFontString()
-    fontString:SetTextColor(1, 1, 1, 1)
-    fontString:SetShadowColor(0, 0, 0, 0)
-    fontString:SetShadowOffset(1, -1)
-    fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+local function menuItem_OnClick(self, button)
+    characterPanelToggle(self.ToggleMe)
 end
-GW.CharacterMenuButtonBack_OnLoad = CharacterMenuButtonBack_OnLoad
 
-local function CharacterMenuButtonBack_OnClick(self, button)
-    characterPanelToggle(GwCharacterMenu)
+local function menu_SetupBackButton(self, fmBtn, key)
+    fmBtn:SetText(GwLocalization[key])
+    CharacterMenuButtonBack_OnLoad(fmBtn)
+    fmBtn:SetScript("OnClick", back_OnClick)
 end
-GW.CharacterMenuButtonBack_OnClick = CharacterMenuButtonBack_OnClick
 
 local function LoadPaperDoll(tabContainer)
     --local fmPD = CreateFrame("Frame", "GwPaperDoll", tabContainer, "GwPaperDoll")
     GwPaperDoll = tabContainer
-    local fmPD = tabContainer
-    --local fmGCM = CreateFrame("Frame", "GwCharacterMenu", GwPaperDoll, "GwCharacterMenu")
-    local fmGCM = CreateFrame("Frame", "GwCharacterMenu", tabContainer, "GwCharacterMenu")
+    local fmDoll = tabContainer
 
-    local fnGCM_ToggleEquipment = function()
-        characterPanelToggle(GwPaperDollBagItemList)
-    end
-    local fnGCM_ToggleOutfits = function()
-        characterPanelToggle(GwPaperDollOutfits)
-    end
-    local fnGCM_ToggleTitles = function()
-        characterPanelToggle(GwPaperTitles)
-    end
-    fmGCM.equipmentMenu:SetScript("OnClick", fnGCM_ToggleEquipment)
-    fmGCM.equipmentMenu:SetText(GwLocalization["CHARACTER_MENU_EQUIPMENT"])
-    fmGCM.outfitsMenu:SetScript("OnClick", fnGCM_ToggleOutfits)
-    fmGCM.outfitsMenu:SetText(GwLocalization["CHARACTER_MENU_OUTFITS"])
-    fmGCM.titlesMenu:SetScript("OnClick", fnGCM_ToggleTitles)
-    fmGCM.titlesMenu:SetText(GwLocalization["CHARACTER_MENU_TITLES"])
-    local fnGCMMenu_OnLoad1 = function(self)
-        self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-        self:GetFontString():SetTextColor(1, 1, 1, 1)
-        self:GetFontString():SetShadowColor(0, 0, 0, 0)
-        self:GetFontString():SetShadowOffset(1, -1)
-        self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
-        self:GetFontString():SetJustifyH("LEFT")
-        self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
-    end
-    local fnGCMMenu_OnLoad2 = function(self)
-        self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-        self:SetNormalTexture(nil)
-        self:GetFontString():SetTextColor(1, 1, 1, 1)
-        self:GetFontString():SetShadowColor(0, 0, 0, 0)
-        self:GetFontString():SetShadowOffset(1, -1)
-        self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
-        self:GetFontString():SetJustifyH("LEFT")
-        self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
-    end
-    fnGCMMenu_OnLoad1(fmGCM.equipmentMenu)
-    fnGCMMenu_OnLoad1(fmGCM.titlesMenu)
-    fnGCMMenu_OnLoad2(fmGCM.outfitsMenu)
+    fmMenu = CreateFrame("Frame", nil, tabContainer, "GwCharacterMenu")
+    fmMenu.SetupBackButton = menu_SetupBackButton
 
-    GW.LoadCharacterPaperdoll()
-    GW.LoadCharacterEquipset()
-    GW.LoadCharacterTitles()
+    GW.LoadPDBagList(fmMenu)
+    GW.LoadPDEquipset(fmMenu)
+    GW.LoadPDTitles(fmMenu)
+
+    fmMenu.equipmentMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    fmMenu.equipmentMenu.ToggleMe = GwPaperDollBagItemList
+    fmMenu.equipmentMenu:SetScript("OnClick", menuItem_OnClick)
+    fmMenu.equipmentMenu:SetText(GwLocalization["CHARACTER_MENU_EQUIPMENT"])
+    fmMenu.equipmentMenu:ClearAllPoints()
+    fmMenu.equipmentMenu:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
+
+    fmMenu.outfitsMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    fmMenu.outfitsMenu.ToggleMe = GwPaperDollOutfits
+    fmMenu.outfitsMenu:SetScript("OnClick", menuItem_OnClick)
+    fmMenu.outfitsMenu:SetText(GwLocalization["CHARACTER_MENU_OUTFITS"])
+    fmMenu.outfitsMenu:ClearAllPoints()
+    fmMenu.outfitsMenu:SetPoint("TOPLEFT", fmMenu.equipmentMenu, "BOTTOMLEFT")
+
+    fmMenu.titlesMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    fmMenu.titlesMenu.ToggleMe = GwPaperTitles
+    fmMenu.titlesMenu:SetScript("OnClick", menuItem_OnClick)
+    fmMenu.titlesMenu:SetText(GwLocalization["CHARACTER_MENU_TITLES"])
+    fmMenu.titlesMenu:ClearAllPoints()
+    fmMenu.titlesMenu:SetPoint("TOPLEFT", fmMenu.outfitsMenu, "BOTTOMLEFT")
+
+    CharacterMenuButton_OnLoad(fmMenu.equipmentMenu, false)
+    CharacterMenuButton_OnLoad(fmMenu.outfitsMenu, true)
+    CharacterMenuButton_OnLoad(fmMenu.titlesMenu, false)
 
     CharacterFrame:SetScript(
         "OnShow",

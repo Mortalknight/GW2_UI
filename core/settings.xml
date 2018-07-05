@@ -558,7 +558,7 @@
 
         <Layers>
             <Layer textureSubLevel="3">
-                <Texture parentKey="hover" name="$parentOnHover" file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover">
+                <Texture parentKey="hover" file="Interface\AddOns\GW2_UI\textures\questviewbutton_hover">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -571,7 +571,7 @@
 
         <Scripts>
             <OnEnter function="GwStandardButton_OnEnter"/>
-            <OnLeave function="GwStandardButton_OnEnter"/>
+            <OnLeave function="GwStandardButton_OnLeave"/>
         </Scripts>
 
     </Button>

@@ -1,7 +1,5 @@
 local _, GW = ...
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
-local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
-local CharacterMenuButtonBack_OnClick = GW.CharacterMenuButtonBack_OnClick
 
 local savedPlayerTitles = {}
 
@@ -102,7 +100,7 @@ local function titles_OnEvent()
     updateLayout()
 end
 
-local function LoadCharacterTitles()
+local function LoadPDTitles(fmMenu)
     local fmGPT = CreateFrame("Frame", "GwPaperTitles", GwPaperDoll, "GwPaperTitles")
     fmGPT.buttons = 0
     fmGPT.scroll = 1
@@ -115,9 +113,7 @@ local function LoadCharacterTitles()
         updateLayout()
     end
     fmGPT:SetScript("OnMouseWheel", fnGPT_OnMouseWheel)
-    fmGPT.backButton:SetText(GwLocalization["CHARACTER_MENU_TITLES_RETURN"])
-    CharacterMenuButtonBack_OnLoad(fmGPT.backButton)
-    fmGPT.backButton:SetScript("OnClick", CharacterMenuButtonBack_OnClick)
+    fmMenu:SetupBackButton(fmGPT.backButton, "CHARACTER_MENU_TITLES_RETURN")
 
     updateTitles()
     updateLayout()
@@ -130,4 +126,4 @@ local function LoadCharacterTitles()
         end
     )
 end
-GW.LoadCharacterTitles = LoadCharacterTitles
+GW.LoadPDTitles = LoadPDTitles

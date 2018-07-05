@@ -5,7 +5,7 @@ local windowsList = {}
 local hasBeenLoaded = false
 
 windowsList[1] = {
-    ["OnLoad"] = GW.LoadPaperDoll,
+    ["OnLoad"] = "LoadPaperDoll",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwPaperDoll",
     ["TabIcon"] = "tabicon_character",
@@ -20,7 +20,7 @@ windowsList[1] = {
 }
 
 windowsList[2] = {
-    ["OnLoad"] = GW.LoadTalents,
+    ["OnLoad"] = "LoadTalents",
     ["SettingName"] = "USE_TALENT_WINDOW",
     ["RefName"] = "GwTalentFrame",
     ["TabIcon"] = "tabicon_spellbook",
@@ -36,7 +36,22 @@ windowsList[2] = {
 }
 
 windowsList[3] = {
-    ["OnLoad"] = GW.LoadReputation,
+    ["OnLoad"] = "LoadCurrency",
+    ["SettingName"] = "USE_CHARACTER_WINDOW",
+    ["RefName"] = "GwCurrencyFrame",
+    ["TabIcon"] = "tabicon_currency",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon",
+    ["HeaderText"] = CURRENCY,
+    ["Bindings"] = {
+        ["TOGGLECURRENCY"] = "Currency"
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "currency")
+    ]=]
+}
+
+windowsList[4] = {
+    ["OnLoad"] = "LoadReputation",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwReputationFrame",
     ["TabIcon"] = "tabicon_reputation",
@@ -60,6 +75,8 @@ local charSecure_OnClick =
         self:SetAttribute("windowpanelopen", "paperdoll")
     elseif button == "Reputation" then
         self:SetAttribute("windowpanelopen", "reputation")
+    elseif button == "Currency" then
+        self:SetAttribute("windowpanelopen", "currency")
     elseif button == "SpellBook" then
         self:SetAttribute("windowpanelopen", "talents")
     elseif button == "Talents" then
@@ -80,6 +97,8 @@ local charSecure_OnAttributeChanged =
     local showTal = flase
     local fmRep = self:GetFrameRef("GwReputationFrame")
     local showRep = flase
+    local fmCur = self:GetFrameRef("GwCurrencyFrame")
+    local showCur = flase
     
     local fmMov = self:GetFrameRef("GwCharacterWindowMoverFrame")
     local close = false
@@ -105,6 +124,13 @@ local charSecure_OnAttributeChanged =
         else
             showRep = true
         end
+    elseif fmCur ~= nil and value == "currency" then
+        if fmCur:IsVisible() then
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showCur = true
+        end
     else
         close = true
     end
@@ -128,6 +154,13 @@ local charSecure_OnAttributeChanged =
             fmRep:Show()
         else
             fmRep:Hide()
+        end
+    end
+    if fmCur then
+        if showCur and not close then
+            fmCur:Show()
+        else
+            fmCur:Hide()
         end
     end
 
@@ -176,7 +209,7 @@ local function mover_OnEvent(self, event)
     ClearOverrideBindings(self)
 
     for k, win in pairs(windowsList) do
-        if win.Bindings then
+        if win.TabFrame and win.Bindings then
             for key, click in pairs(win.Bindings) do
                 local keyBind = GetBindingKey(key)
                 if keyBind then
@@ -225,6 +258,11 @@ local function loadBaseFrame()
 
     -- the close button securely closes the char window
     fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
+
+    -- hook into inventory currency button
+    --if GwCurrencyIcon then
+    --    GwCurrencyIcon:SetFrameRef("GwCharacterWindow", fmGCW)
+    --end
 end
 
 local function setTabIconState(self, b)
@@ -301,7 +339,7 @@ local function LoadCharacter()
             container:SetScript("OnShow", container_OnShow)
             container:SetScript("OnHide", container_OnHide)
 
-            v.OnLoad(container)
+            GW[v.OnLoad](container)
 
             tabIndex = tabIndex + 1
         end
@@ -311,3 +349,42 @@ local function LoadCharacter()
     mover_OnEvent(GwCharacterWindowMoverFrame, "UPDATE_BINDINGS")
 end
 GW.LoadCharacter = LoadCharacter
+
+-- stuff for standard menu functionality
+local function CharacterMenuBlank_OnLoad(self)
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self:SetNormalTexture(nil)
+    local fontString = self:GetFontString()
+    fontString:SetTextColor(1, 1, 1, 1)
+    fontString:SetShadowColor(0, 0, 0, 0)
+    fontString:SetShadowOffset(1, -1)
+    fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+end
+GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
+
+local function CharacterMenuButton_OnLoad(self, odd)
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    if odd then
+        self:SetNormalTexture(nil)
+    else
+        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+    end
+    self:GetFontString():SetTextColor(1, 1, 1, 1)
+    self:GetFontString():SetShadowColor(0, 0, 0, 0)
+    self:GetFontString():SetShadowOffset(1, -1)
+    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
+    self:GetFontString():SetJustifyH("LEFT")
+    self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
+end
+GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
+
+local function CharacterMenuButtonBack_OnLoad(self)
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self:SetNormalTexture(nil)
+    local fontString = self:GetFontString()
+    fontString:SetTextColor(1, 1, 1, 1)
+    fontString:SetShadowColor(0, 0, 0, 0)
+    fontString:SetShadowOffset(1, -1)
+    fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+end
+GW.CharacterMenuButtonBack_OnLoad = CharacterMenuButtonBack_OnLoad

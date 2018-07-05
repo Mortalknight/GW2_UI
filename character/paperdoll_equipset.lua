@@ -1,7 +1,5 @@
 local _, GW = ...
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
-local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
-local CharacterMenuButtonBack_OnClick = GW.CharacterMenuButtonBack_OnClick
 local SavedItemSlots = GW.char_equipset_SavedItems
 local WarningPrompt = GW.WarningPrompt
 
@@ -210,7 +208,7 @@ function local GwPaperDollOutfits_OnEvent(self, event, ...)
     end
 end
 --]]
-local function LoadCharacterEquipset()
+local function LoadPDEquipset(fmMenu)
     local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwPaperDoll, "GwPaperDollOutfits")
     local fnGPDO_newOutfit_OnClick = function(self, button)
         self.oldParent = GearManagerDialogPopup:GetParent()
@@ -224,9 +222,7 @@ local function LoadCharacterEquipset()
     end
     fmGPDO.newOutfit:SetText(GwLocalization["CHARACTER_OUTFIT_NEW"])
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
-    fmGPDO.backButton:SetText(GwLocalization["CHARACTER_MENU_OUTFITS_RETURN"])
-    CharacterMenuButtonBack_OnLoad(fmGPDO.backButton)
-    fmGPDO.backButton:SetScript("OnClick", CharacterMenuButtonBack_OnClick)
+    fmMenu:SetupBackButton(fmGPDO.backButton, "CHARACTER_MENU_OUTFITS_RETURN")
 
     GwPaperDollOutfits:SetScript("OnShow", drawItemSetList)
     GwPaperDollOutfits:SetScript(
@@ -249,4 +245,4 @@ local function LoadCharacterEquipset()
         end
     )
 end
-GW.LoadCharacterEquipset = LoadCharacterEquipset
+GW.LoadPDEquipset = LoadPDEquipset

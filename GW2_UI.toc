@@ -65,14 +65,16 @@ objectives/achievement.lua
 character/character.xml
 character/paperdoll.xml
 character/reputation.xml
+character/currency.xml
 character/talents.xml
+character/character.lua
 character/paperdoll.lua
 character/paperdoll_equipment.lua
 character/paperdoll_equipset.lua
 character/paperdoll_titles.lua
 character/reputation.lua
+character/currency.lua
 character/talents.lua
-character/character.lua
 
 battlegrounds/battlegrounds.xml
 battlegrounds/battlegrounds.lua

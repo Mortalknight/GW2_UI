@@ -2,8 +2,6 @@ local _, GW = ...
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
---local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
---local CharacterMenuButtonBack_OnClick = GW.CharacterMenuButtonBack_OnClick
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
 -- forward function defs
@@ -775,11 +773,3 @@ local function LoadReputation(tabContainer)
     updateDetails()
 end
 GW.LoadReputation = LoadReputation
-
---[[
-local function LoadReputation(tabContainer)
-    local fm = CreateFrame("Frame", nil, tabContainer, "GwCharacterTabContainer")
-    --return fm
-end
-GW.LoadReputation = LoadReputation
---]]

@@ -1,6 +1,4 @@
 local _, GW = ...
-local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
-local CharacterMenuButtonBack_OnClick = GW.CharacterMenuButtonBack_OnClick
 GW.char_equipset_SavedItems = {}
 local SavedItemSlots = GW.char_equipset_SavedItems
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
@@ -708,7 +706,7 @@ local function indicatorAnimation(self)
     )
 end
 
-local function LoadCharacterPaperdoll()
+local function LoadPDBagList(fmMenu)
     local fmGDR = CreateFrame("Button", "GwDressingRoom", GwPaperDoll, "GwDressingRoom")
     local fmGDRG = GwDressingRoomGear
     local fmPD3M = PaperDoll3dModel
@@ -851,19 +849,15 @@ local function LoadCharacterPaperdoll()
     )
     fmGDR:SetScript("OnClick", resetBagInventory)
 
-    local fmGPDBIL =
-        CreateFrame("Frame", "GwPaperDollBagItemList", GwPaperDoll, "GwPaperDollBagItemList")
+    local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", GwPaperDoll, "GwPaperDollBagItemList")
     fmGPDBIL:SetScript("OnEvent", updateBagItemListAll)
     fmGPDBIL:SetScript("OnHide", resetBagInventory)
     fmGPDBIL:SetScript("OnShow", updateBagItemListAll)
     fmGPDBIL:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     updateBagItemListAll()
-    fmGPDBIL.backButton:SetText(GwLocalization["CHARACTER_MENU_EQUIPMENT_RETURN"])
-    CharacterMenuButtonBack_OnLoad(fmGPDBIL.backButton)
-    fmGPDBIL.backButton:SetScript("OnClick", CharacterMenuButtonBack_OnClick)
+    fmMenu:SetupBackButton(fmGPDBIL.backButton, "CHARACTER_MENU_EQUIPMENT_RETURN")
 
-    local fmGPDSI =
-        CreateFrame("Frame", "GwPaperDollSelectedIndicator", GwPaperDoll, "GwPaperDollSelectedIndicator")
+    local fmGPDSI = CreateFrame("Frame", "GwPaperDollSelectedIndicator", GwPaperDoll, "GwPaperDollSelectedIndicator")
     fmGPDSI:SetScript("OnShow", indicatorAnimation)
 
     updateStats()
@@ -885,4 +879,4 @@ local function LoadCharacterPaperdoll()
         preferredIndex = 3
     }
 end
-GW.LoadCharacterPaperdoll = LoadCharacterPaperdoll
+GW.LoadPDBagList = LoadPDBagList
