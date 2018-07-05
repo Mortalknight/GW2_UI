@@ -29,7 +29,7 @@ windowsList[2] = {
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
         ["TOGGLETALENTS"] = "Talents",
-        ["TOGGLEPETBOOK"] = "SpellBook"
+        ["TOGGLEPETBOOK"] = "PetBook"
     },
     ["OnClick"] = [=[
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
@@ -73,14 +73,22 @@ local charSecure_OnClick =
     if button == "Close" then
         self:SetAttribute("windowpanelopen", nil)
     elseif button == "PaperDoll" then
+        self:SetAttribute("keytoggle", true)
         self:SetAttribute("windowpanelopen", "paperdoll")
     elseif button == "Reputation" then
+        self:SetAttribute("keytoggle", true)
         self:SetAttribute("windowpanelopen", "reputation")
     elseif button == "Currency" then
+        self:SetAttribute("keytoggle", true)
         self:SetAttribute("windowpanelopen", "currency")
     elseif button == "SpellBook" then
-        self:SetAttribute("windowpanelopen", "talents")
+        self:SetAttribute("keytoggle", true)
+        self:SetAttribute("windowpanelopen", "spellbook")
+    elseif button == "PetBook" then
+        self:SetAttribute("keytoggle", true)
+        self:SetAttribute("windowpanelopen", "petbook")
     elseif button == "Talents" then
+        self:SetAttribute("keytoggle", true)
         self:SetAttribute("windowpanelopen", "talents")
     end
     ]=]
@@ -94,6 +102,7 @@ local charSecure_OnAttributeChanged =
 
     local fmDoll = self:GetFrameRef("GwPaperDoll")
     local showDoll = false
+    local fmSBM = self:GetFrameRef("GwSpellbookMenu")
     local fmTal = self:GetFrameRef("GwTalentFrame")
     local showTal = flase
     local fmRep = self:GetFrameRef("GwReputationFrame")
@@ -103,30 +112,53 @@ local charSecure_OnAttributeChanged =
     
     local fmMov = self:GetFrameRef("GwCharacterWindowMoverFrame")
     local close = false
+    local keytoggle = self:GetAttribute("keytoggle")
 
     if fmTal ~= nil and value == "talents" then
-        if fmTal:IsVisible() then
+        if keytoggle and fmTal:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
             showTal = true
         end
+    elseif fmTal ~= nil and value == "spellbook" then
+        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 2 then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showTal = true
+            fmSBM:SetAttribute("tabopen", 2)
+        end
+    elseif fmTal ~= nil and value == "petbook" then
+        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 4 then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showTal = true
+            fmSBM:SetAttribute("tabopen", 4)
+        end
     elseif fmDoll ~= nil and value == "paperdoll" then
-        if fmDoll:IsVisible() then
+        if keytoggle and fmDoll:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
             showDoll = true
         end
     elseif fmRep ~= nil and value == "reputation" then
-        if fmRep:IsVisible() then
+        if keytoggle and fmRep:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
             showRep = true
         end
     elseif fmCur ~= nil and value == "currency" then
-        if fmCur:IsVisible() then
+        if keytoggle and fmCur:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
@@ -134,6 +166,10 @@ local charSecure_OnAttributeChanged =
         end
     else
         close = true
+    end
+
+    if keytoggle then
+        self:SetAttribute("keytoggle", nil)
     end
 
     if fmDoll then

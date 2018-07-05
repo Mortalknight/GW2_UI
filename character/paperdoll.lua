@@ -28,20 +28,22 @@ local function toggleCharacter(tab, onlyShow)
         return
     end
 
-    if tab == "PaperDollFrame" then
-        GwCharacterWindow:SetAttribute("windowpanelopen", "character")
-    elseif tab == "ReputationFrame" then
+    if tab == "ReputationFrame" then
+        if not onlyShow then
+            GwCharacterWindow:SetAttribute("keytoggle", true)
+        end
         GwCharacterWindow:SetAttribute("windowpanelopen", "reputation")
     elseif tab == "TokenFrame" then
+        if not onlyShow then
+            GwCharacterWindow:SetAttribute("keytoggle", true)
+        end
         GwCharacterWindow:SetAttribute("windowpanelopen", "currency")
     else
-        if GwCharacterWindow:IsShown() then
-            if not onlyShow then
-                GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-            end
-        else
-            GwCharacterWindow:SetAttribute("windowpanelopen", "character")
+        -- PaperDollFrame or any other value
+        if not onlyShow then
+            GwCharacterWindow:SetAttribute("keytoggle", true)
         end
+        GwCharacterWindow:SetAttribute("windowpanelopen", "character")
     end
 end
 

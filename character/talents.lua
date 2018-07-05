@@ -67,23 +67,6 @@ local function drawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
 end
 GW.AddForProfiling("talents", "drawRouteLine", drawRouteLine)
 
-local function tab_OnClick(self)
-    GwspellbookTab1.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-    GwspellbookTab2.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-    GwspellbookTab3.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-    GwspellbookTab4.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-
-    self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg")
-end
-GW.AddForProfiling("talents", "tab_OnClick", tab_OnClick)
-
-local function hero_OnLoad(self)
-    local _, _, classIndex = UnitClass("player")
-
-    SetClassIcon(self.icon, classIndex)
-end
-GW.AddForProfiling("talents", "hero_OnLoad", hero_OnLoad)
-
 local function hookTalentButton(self, container, row, index)
     --  self:SetAttribute('macrotext1', '/click PlayerTalentFrameTalentsTalentRow'..row..'Talent'..index)
     self:RegisterForClicks("AnyUp")
@@ -421,6 +404,39 @@ local function spellButton_OnDragStart(self)
 end
 GW.AddForProfiling("talents", "spellButton_OnDragStart", spellButton_OnDragStart)
 
+local function spellButton_GlyphApply(self, unit, button, actionType)
+    GW.Debug("in glyph application", unit, button, actionType)
+    if HasPendingGlyphCast() then
+        --local slotType, spellId = GetSpellBookItemInfo(slot, SpellBookFrame.bookType);
+        local spellId = self.spellId
+        if self.skillType == "SPELL" then
+            if HasAttachedGlyph(spellId) then
+                if IsPendingGlyphRemoval() then
+                    StaticPopup_Show(
+                        "CONFIRM_GLYPH_REMOVAL",
+                        nil,
+                        nil,
+                        {name = GetCurrentGlyphNameForSpell(spellId), id = spellId}
+                    )
+                else
+                    StaticPopup_Show(
+                        "CONFIRM_GLYPH_PLACEMENT",
+                        nil,
+                        nil,
+                        {name = GetPendingGlyphName(), currentName = GetCurrentGlyphNameForSpell(spellId), id = spellId}
+                    )
+                end
+            else
+                AttachGlyphToSpell(spellId)
+            end
+        elseif self.skillType == "FLYOUT" then
+            SpellFlyout:Toggle(spellId, self, "RIGHT", 1, false, self.offSpecID, true)
+            SpellFlyout:SetBorderColor(181 / 256, 162 / 256, 90 / 256)
+        end
+    end
+end
+GW.AddForProfiling("talents", "spellButton_GlyphApply", spellButton_GlyphApply)
+
 local spellButtonSecure_OnDragStart =
     [=[
     local isPickable = self:GetAttribute("ispickable")
@@ -439,6 +455,7 @@ local function setButton(btn, spellId, skillType, icon, spellbookIndex, booktype
     btn.spellbookIndex = spellbookIndex
     btn.booktype = booktype
     btn.spellId = spellId
+    btn.skillType = skillType
     btn.icon:SetTexture(icon)
     btn:SetAlpha(1)
     btn:Show()
@@ -492,7 +509,7 @@ local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, b
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
 
-local function updateTab()
+local function updateTab(fmSpellbook)
     if InCombatLockdown() then
         return
     end
@@ -564,6 +581,47 @@ local function updateTab()
                 local col = (activeIndex - 1) % 5
                 btn:SetPoint("TOPLEFT", activeGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
                 setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+
+                -- check for should glyph highlight
+                if spellBookTabs == 2 then
+                    if HasAttachedGlyph(spellId) then
+                        btn.GlyphIcon:Show()
+                        if IsPendingGlyphRemoval() and fmSpellbook.glyphReason then
+                            btn.AbilityHighlight:Show()
+                            btn.AbilityHighlightAnim:Play()
+                            btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
+                        else
+                            btn.AbilityHighlightAnim:Stop()
+                            btn.AbilityHighlight:Hide()
+                            btn:SetAttribute("type1", nil)
+                        end
+                    else
+                        btn.GlyphIcon:Hide()
+                    end
+                    if fmSpellbook.glyphSlot == spellIndex then
+                        if (fmSpellbook.glyphReason == "USE_GLYPH") then
+                            btn.AbilityHighlight:Show()
+                            btn.AbilityHighlightAnim:Play()
+                            btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
+                            fmSpellbook.glyphBtn = btn
+                        else
+                            btn.AbilityHighlightAnim:Stop()
+                            btn.AbilityHighlight:Hide()
+                            fmSpellbook.glyphBtn = nil
+                            fmSpellbook.glyphSlot = nil
+                            fmSpellbook.glyphIndex = nil
+                            btn:SetAttribute("type1", nil)
+
+                            if (fmSpellbook.glyphReason == "ACTIVATE_GLYPH") then
+                                btn.GlyphActivate:Show()
+                                btn.GlyphIcon:Show()
+                                btn.GlyphTranslation:Show()
+                                btn.GlyphActivateAnim:Play()
+                            end
+                        end
+                    end
+                end
+
                 activeIndex = activeIndex + 1
             end
         end
@@ -577,7 +635,7 @@ GW.AddForProfiling("talents", "updateTab", updateTab)
 
 local function spellMenu_OnUpdate(self, elapsed)
     self:SetScript("OnUpdate", nil)
-    updateTab()
+    updateTab(self)
     self.queuedUpdateTab = false
 end
 GW.AddForProfiling("talents", "spellMenu_OnUpdate", spellMenu_OnUpdate)
@@ -634,10 +692,12 @@ local function activePoolCommon_Resetter(self, btn)
     btn:SetAttribute("type2", nil)
     btn:SetAttribute("*macrotext2", nil)
     btn:SetAttribute("ispickable", nil)
+    btn.GlyphApply = spellButton_GlyphApply
     btn.isFuture = nil
     btn.spellbookIndex = nil
     btn.booktype = nil
     btn.spellId = nil
+    btn.skillType = nil
     btn.isFlyout = nil
 end
 GW.AddForProfiling("talents", "activePoolCommon_Resetter", activePoolCommon_Resetter)
@@ -663,6 +723,7 @@ local function passivePool_Resetter(self, btn)
     btn.spellbookIndex = nil
     btn.booktype = nil
     btn.spellId = nil
+    btn.skillType = nil
 
     if not btn.mask then
         local mask = UIParent:CreateMaskTexture()
@@ -709,6 +770,84 @@ local function spellGroup_OnEvent(self)
 end
 GW.AddForProfiling("talents", "spellGroup_OnEvent", spellGroup_OnEvent)
 
+local function toggleSpellBook(bookType)
+    if InCombatLockdown() then
+        return
+    end
+    if bookType == BOOKTYPE_PROFESSION then
+        -- TODO: change this when profession book is avail
+        GwCharacterWindow:SetAttribute("windowpanelopen", "spellbook")
+    elseif bookType == BOOKTYPE_PET then
+        GwCharacterWindow:SetAttribute("windowpanelopen", "petbook")
+    else
+        -- BOOKTYPE_SPELL or any other type
+        GwCharacterWindow:SetAttribute("windowpanelopen", "spellbook")
+    end
+end
+GW.AddForProfiling("talents", "toggleSpellBook", toggleSpellBook)
+
+local function toggleTalentFrame()
+    if InCombatLockdown() then
+        return
+    end
+    GwCharacterWindow:SetAttribute("keytoggle", true)
+    GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
+end
+GW.AddForProfiling("talents", "toggleTalentFrame", toggleTalentFrame)
+
+local function spellBook_OnEvent(self, event, ...)
+    if
+        event == "SPELLS_CHANGED" or event == "LEARNED_SPELL_IN_TAB" or event == "PLAYER_GUILD_UPDATE" or
+            event == "PLAYER_SPECIALIZATION_CHANGED" or
+            event == ""
+     then
+        if not GwTalentFrame:IsShown() then
+            return
+        end
+        queueUpdateTab(self)
+    elseif event == "USE_GLYPH" or event == "ACTIVATE_GLYPH" then
+        -- open and highlight glyphable spell
+        local slot = ...
+        GW.Debug("in event", event, slot, IsPendingGlyphRemoval())
+        GwCharacterWindow:SetAttribute("windowpanelopen", "spellbook")
+        if IsPendingGlyphRemoval() then
+            self.glyphSlot = -1 -- highlight/cancel all
+        else
+            self.glyphSlot = slot
+        end
+        if event == "ACTIVATE_GLYPH" then
+            self.glyphCasting = true
+        else
+            self.glyphCasting = nil
+        end
+        self.glyphReason = event
+        queueUpdateTab(self) -- if already open OnShow won't fire again so queue here to be sure
+    elseif event == "CANCEL_GLYPH_CAST" then
+        -- dehiglight glyphable spell
+        GW.Debug("in event", event)
+        if self.glyphBtn then
+            self.glyphBtn.AbilityHighlightAnim:Stop()
+            self.glyphBtn.AbilityHighlight:Hide()
+            self.glyphBtn:SetAttribute("type1", nil)
+            self.glyphBtn = nil
+        end
+        if self.glyphSlot == -1 then
+            queueUpdateTab(self)
+        end
+        self.glyphSlot = nil
+        self.glyphReason = nil
+    elseif event == "CURRENT_SPELL_CAST_CHANGED" then
+        if self.glyphCasting and not IsCastingGlyph() then
+            self.glyphBtn = nil
+            self.glyphSlot = nil
+            self.glyphReason = nil
+            self.glyphCasting = nil
+            queueUpdateTab(self)
+        end
+    end
+end
+GW.AddForProfiling("talents", "spellBook_OnEvent", spellBook_OnEvent)
+
 local function LoadTalents(tabContainer)
     local fmGTF = CreateFrame("Frame", "GwTalentFrame", tabContainer, "SecureHandlerStateTemplate,GwTalentFrame")
     fmGTF.title:SetFont(DAMAGE_TEXT_FONT, 14)
@@ -740,29 +879,26 @@ local function LoadTalents(tabContainer)
     GwSpecContainerFrame:SetPoint("TOPLEFT", GwTalentFrame, "TOPLEFT")
     GwSpecContainerFrame:SetPoint("BOTTOMRIGHT", GwTalentFrame, "BOTTOMRIGHT")
 
-    local fmGSM = CreateFrame("Frame", "GwSpellbookMenu", GwTalentFrame, "GwSpellbookMenu")
-    fmGSM.queuedUpdateTab = false
-    fmGSM:SetScript(
-        "OnEvent",
-        function(self, event, unit)
-            if not GwTalentFrame:IsShown() then
-                return
-            end
-            queueUpdateTab(self)
-        end
-    )
-    fmGSM:RegisterEvent("SPELLS_CHANGED")
-    fmGSM:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    fmGSM:RegisterEvent("SKILL_LINES_CHANGED")
-    fmGSM:RegisterEvent("PLAYER_GUILD_UPDATE")
-    fmGSM:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    fmGSM:RegisterEvent("USE_GLYPH")
-    fmGSM:RegisterEvent("CANCEL_GLYPH_CAST")
-    fmGSM:RegisterEvent("ACTIVATE_GLYPH")
+    local fmSpellbook = CreateFrame("Frame", nil, GwTalentFrame, "GwSpellbookMenu")
+    -- TODO: change this to do all attribute stuff on container instead of menu
+    GwCharacterWindow:SetFrameRef("GwSpellbookMenu", fmSpellbook)
+
+    fmSpellbook.queuedUpdateTab = false
+    fmSpellbook:SetScript("OnEvent", spellBook_OnEvent)
+    fmSpellbook:RegisterEvent("SPELLS_CHANGED")
+    fmSpellbook:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    --fmSpellbook:RegisterEvent("SKILL_LINES_CHANGED") these two only for professions, separate window for that
+    --fmSpellbook:RegisterEvent("TRIAL_STATUS_UPDATE")
+    fmSpellbook:RegisterEvent("PLAYER_GUILD_UPDATE")
+    fmSpellbook:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    fmSpellbook:RegisterEvent("USE_GLYPH")
+    fmSpellbook:RegisterEvent("CANCEL_GLYPH_CAST")
+    fmSpellbook:RegisterEvent("ACTIVATE_GLYPH")
+    fmSpellbook:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
+    SpellBookFrame:UnregisterAllEvents()
 
     for tab = 1, 4 do
-        local container =
-            CreateFrame("Frame", "GwSpellbookContainerTab" .. tab, GwSpellbookMenu, "GwSpellbookContainerTab")
+        local container = CreateFrame("Frame", "GwSpellbookContainerTab" .. tab, fmSpellbook, "GwSpellbookContainerTab")
         local actGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
         local psvGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
         container.groups = {
@@ -811,31 +947,30 @@ local function LoadTalents(tabContainer)
     GwSpellbookContainerTab4:Hide()
 
     loadTalents()
-    updateTab()
+    updateTab(fmSpellbook)
 
-    GwspellbookTab1:SetFrameRef("GwSpellbookMenu", GwSpellbookMenu)
+    GwspellbookTab1:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     GwspellbookTab1:SetAttribute(
         "_onclick",
         [=[
-
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen',1)
         ]=]
     )
-    GwspellbookTab2:SetFrameRef("GwSpellbookMenu", GwSpellbookMenu)
+    GwspellbookTab2:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     GwspellbookTab2:SetAttribute(
         "_onclick",
         [=[
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen',2)
         ]=]
     )
-    GwspellbookTab3:SetFrameRef("GwSpellbookMenu", GwSpellbookMenu)
+    GwspellbookTab3:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     GwspellbookTab3:SetAttribute(
         "_onclick",
         [=[
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen',3)
         ]=]
     )
-    GwspellbookTab4:SetFrameRef("GwSpellbookMenu", GwSpellbookMenu)
+    GwspellbookTab4:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     GwspellbookTab4:SetAttribute(
         "_onclick",
         [=[
@@ -843,12 +978,27 @@ local function LoadTalents(tabContainer)
         ]=]
     )
 
-    GwSpellbookMenu:SetFrameRef("GwSpellbookContainerTab1", GwSpellbookContainerTab1)
-    GwSpellbookMenu:SetFrameRef("GwSpellbookContainerTab2", GwSpellbookContainerTab2)
-    GwSpellbookMenu:SetFrameRef("GwSpellbookContainerTab3", GwSpellbookContainerTab3)
-    GwSpellbookMenu:SetFrameRef("GwSpellbookContainerTab4", GwSpellbookContainerTab4)
-    GwSpellbookMenu:SetFrameRef("GwSpecContainerFrame", GwSpecContainerFrame)
-    GwSpellbookMenu:SetAttribute(
+    fmSpellbook:SetFrameRef("GwSpellbookContainerTab1", GwSpellbookContainerTab1)
+    fmSpellbook:SetFrameRef("GwSpellbookContainerTab2", GwSpellbookContainerTab2)
+    fmSpellbook:SetFrameRef("GwSpellbookContainerTab3", GwSpellbookContainerTab3)
+    fmSpellbook:SetFrameRef("GwSpellbookContainerTab4", GwSpellbookContainerTab4)
+    fmSpellbook:SetFrameRef("GwspellbookTab1", GwspellbookTab1)
+    fmSpellbook:SetFrameRef("GwspellbookTab2", GwspellbookTab2)
+    fmSpellbook:SetFrameRef("GwspellbookTab3", GwspellbookTab3)
+    fmSpellbook:SetFrameRef("GwspellbookTab4", GwspellbookTab4)
+    fmSpellbook:SetFrameRef("GwSpecContainerFrame", GwSpecContainerFrame)
+    fmSpellbook.UnselectAllTabs = function(self)
+        GwspellbookTab1.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
+        GwspellbookTab2.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
+        GwspellbookTab3.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
+        GwspellbookTab4.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
+    end
+    fmSpellbook.SelectTab = function(self, tab)
+        _G["GwspellbookTab" .. tab].background:SetTexture(
+            "Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg"
+        )
+    end
+    fmSpellbook:SetAttribute(
         "_onattributechanged",
         [=[
             if name ~= 'tabopen' then return end
@@ -857,23 +1007,28 @@ local function LoadTalents(tabContainer)
             self:GetFrameRef('GwSpellbookContainerTab2'):Hide()
             self:GetFrameRef('GwSpellbookContainerTab3'):Hide()
             self:GetFrameRef('GwSpellbookContainerTab4'):Hide()
+            self:CallMethod("UnselectAllTabs")
         
             if value == 1 then
                 self:GetFrameRef('GwSpellbookContainerTab1'):Show()
+                self:CallMethod("SelectTab", 1)
                 return
             elseif value == 2 then
                 self:GetFrameRef('GwSpellbookContainerTab2'):Show()
+                self:CallMethod("SelectTab", 2)
                 return
             elseif value == 3 then
                 self:GetFrameRef('GwSpellbookContainerTab3'):Show()
+                self:CallMethod("SelectTab", 3)
                 return
             elseif value == 4 then
                 self:GetFrameRef('GwSpellbookContainerTab4'):Show()
+                self:CallMethod("SelectTab", 4)
                 return
             end
         ]=]
     )
-    GwSpellbookMenu:SetAttribute("tabOpen", 2)
+    fmSpellbook:SetAttribute("tabOpen", 2)
 
     local _, specName, _ = GetSpecializationInfo(GetSpecialization())
     GwspellbookTab1.gwTipLabel = GENERAL_SPELLS
@@ -890,12 +1045,9 @@ local function LoadTalents(tabContainer)
     GwspellbookTab4:SetScript("OnEnter", spellTab_OnEnter)
     GwspellbookTab4:SetScript("OnLeave", GameTooltip_Hide)
 
-    GwspellbookTab1:HookScript("OnClick", tab_OnClick)
-    GwspellbookTab2:HookScript("OnClick", tab_OnClick)
-    GwspellbookTab3:HookScript("OnClick", tab_OnClick)
-    GwspellbookTab4:HookScript("OnClick", tab_OnClick)
-
-    hero_OnLoad(GwspellbookTab2)
+    -- set tab 2 to class icon
+    local _, _, classIndex = UnitClass("player")
+    SetClassIcon(GwspellbookTab2.icon, classIndex)
 
     GwTalentFrame:HookScript(
         "OnShow",
@@ -903,21 +1055,15 @@ local function LoadTalents(tabContainer)
             if InCombatLockdown() then
                 return
             end
-            updateTab()
+            updateTab(fmSpellbook)
             updateActiveSpec()
         end
     )
 
-    hooksecurefunc(
-        "ToggleTalentFrame",
-        function()
-            if InCombatLockdown() then
-                return
-            end
+    -- TODO: not sure if we want these or not
+    hooksecurefunc("ToggleTalentFrame", toggleTalentFrame)
+    hooksecurefunc("ToggleSpellBook", toggleSpellBook)
 
-            GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
-        end
-    )
     return GwTalentFrame
 end
 GW.LoadTalents = LoadTalents
