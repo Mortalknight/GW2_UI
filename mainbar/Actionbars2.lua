@@ -82,6 +82,11 @@ local multiButtons_OnUpdate
 
 local function updateMultiActionBar(frame, var, pageVar)
     -- overrides FrameXML/MultiActionBars.lua line 34
+    if InCombatLockdown() then
+        -- TODO: this causes bottomleft/right bars to not show if loading/reloading into combat
+        -- can we make this all a secure stack and/or use RegisterAutoHide/UnregisterAutoHide?
+        return
+    end
     if (var and IsNormalActionBarState()) then
         frame:SetShown(true)
         VIEWABLE_ACTION_BAR_PAGES[pageVar] = nil
@@ -209,7 +214,12 @@ local function fadeCheck(self, elapsed)
             actionBarFrameShow(self, self:GetName())
         end
     elseif self.gw_FadeShowing and UnitAffectingCombat("player") == false then
-        actionBarFrameHide(self, self:GetName())
+        local isFlyout =
+            (SpellFlyout and SpellFlyout:IsShown() and SpellFlyout:GetParent() and
+            SpellFlyout:GetParent():GetParent() == self)
+        if not isFlyout then
+            actionBarFrameHide(self, self:GetName())
+        end
     end
 end
 
