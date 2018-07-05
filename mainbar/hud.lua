@@ -774,8 +774,6 @@ local function createMicroButton(key)
 end
 
 local CUSTOM_MICRO_BUTTONS = {}
-local gw_latencyToolTipUpdate = 0
-local gw_frameRate = 0
 
 local function microMenuFrameShow(f, name)
     StopAnimation(name)
@@ -940,13 +938,14 @@ local function hookToolTip(frame, text, action)
 end
 
 local gw_addonMemoryArray = {}
-local function latencyToolTip()
-    if gw_latencyToolTipUpdate > GetTime() then
+local function latencyToolTip(self, elapsed)
+    if self.interval > 0 then
+        self.interval = self.interval - elapsed
         return
     end
-    gw_latencyToolTipUpdate = GetTime() + 0.5
+    self.interval = 1
 
-    gw_frameRate = RoundInt(GetFramerate())
+    local gw_frameRate = RoundInt(GetFramerate())
     local down, up, lagHome, lagWorld = GetNetStats()
     local gw_addonMemory = 0
     local gw_numAddons = GetNumAddOns()
@@ -971,33 +970,41 @@ local function latencyToolTip()
     GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
 
     for i = 1, gw_numAddons do
-        gw_addonMemory = gw_addonMemory + GetAddOnMemoryUsage(i)
+        if type(gw_addonMemoryArray[i]) ~= "table" then
+            gw_addonMemoryArray[i] = {}
+        end
+        local mem = GetAddOnMemoryUsage(i)
+        gw_addonMemoryArray[i]["addonIndex"] = i
+        gw_addonMemoryArray[i]["addonMemory"] = mem
+        gw_addonMemory = gw_addonMemory + mem
     end
 
     GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_6"] .. RoundDec(gw_addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
 
-    for i = 1, gw_numAddons do
-        if type(gw_addonMemoryArray[i]) ~= "table" then
-            gw_addonMemoryArray[i] = {}
-        end
-        gw_addonMemoryArray[i]["addonIndex"] = i
-        gw_addonMemoryArray[i]["addonMemory"] = GetAddOnMemoryUsage(i)
-    end
+    if self.inDebug then
+        table.sort(
+            gw_addonMemoryArray,
+            function(a, b)
+                return a["addonMemory"] > b["addonMemory"]
+            end
+        )
 
-    table.sort(
-        gw_addonMemoryArray,
-        function(a, b)
-            return a["addonMemory"] > b["addonMemory"]
-        end
-    )
-
-    for k, v in pairs(gw_addonMemoryArray) do
-        if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
-            gw_addonMemory = RoundDec(v["addonMemory"] / 1024, 2)
-            if gw_addonMemory ~= "0.00" then
-                GameTooltip:AddLine("(" .. gw_addonMemory .. " MB) " .. GetAddOnInfo(v["addonIndex"]), 0.8, 0.8, 0.8)
+        for k, v in pairs(gw_addonMemoryArray) do
+            if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
+                gw_addonMemory = RoundDec(v["addonMemory"] / 1024, 2)
+                if gw_addonMemory ~= "0.00" then
+                    GameTooltip:AddLine(
+                        "(" .. gw_addonMemory .. " MB) " .. GetAddOnInfo(v["addonIndex"]),
+                        0.8,
+                        0.8,
+                        0.8
+                    )
+                end
             end
         end
+    else
+        gw_addonMemory = RoundDec(GetAddOnMemoryUsage("GW2_UI") / 1024, 2)
+        GameTooltip:AddLine("(" .. gw_addonMemory .. " MB) GW2_UI", 0.8, 0.8, 0.8)
     end
 
     GameTooltip:Show()
@@ -1197,6 +1204,8 @@ local function LoadMicroMenu()
     GwMicroButtonGuildMicroButton:SetScript("OnEvent", updateGuildButton)
     GwMicroButtonGuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
 
+    GwMicroButtonMainMenuMicroButton.inDebug = GW.inDebug
+    GwMicroButtonMainMenuMicroButton.interval = 0
     GwMicroButtonMainMenuMicroButton:SetScript(
         "OnEnter",
         function()

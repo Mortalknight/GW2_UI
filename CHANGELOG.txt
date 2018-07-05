@@ -11,6 +11,7 @@ FIXED
    - Resolved multiple issues with character panel key bindings (including CF#107 and CF#121)
    - The custom player aura frame can now be disabled without causing errors (CF#117)
    - Fix starting bag/bank icon size inconsistencies (CF#138)
+   - Game menu hover is more efficient and also now only shows GW2 and total mem usage (CF#122)
 
 MISCELLANEOUS
    - A significant refactoring took place to reduce addon conflicts and taint issues

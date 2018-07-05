@@ -443,6 +443,9 @@ local function gw_OnEvent(self, event, name)
         print("hooking Debug to chat tab #" .. dev_dbg_tab)
         dbgTab = dev_dbg_tab
         GW.AlertTestsSetup()
+        GW.inDebug = true
+    else
+        GW.inDebug = false
     end
 
     --Create Settings window
