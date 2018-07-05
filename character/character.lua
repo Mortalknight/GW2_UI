@@ -28,7 +28,8 @@ windowsList[2] = {
     ["HeaderTextKey"] = "TALENTS_HEADER",
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
-        ["TOGGLETALENTS"] = "Talents"
+        ["TOGGLETALENTS"] = "Talents",
+        ["TOGGLEPETBOOK"] = "SpellBook"
     },
     ["OnClick"] = [=[
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
