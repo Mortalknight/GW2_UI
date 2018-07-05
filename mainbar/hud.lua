@@ -1021,6 +1021,27 @@ local function talentMicro_OnEvent()
     end
 end
 
+local function gwMicro_PositionAlert(alert)
+    if
+        (alert ~= CollectionsMicroButtonAlert and alert ~= LFDMicroButtonAlert and alert ~= EJMicroButtonAlert and
+            alert ~= StoreMicroButtonAlert)
+     then
+        return
+    end
+    alert.Arrow:ClearAllPoints()
+    alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
+    alert:ClearAllPoints()
+    alert:SetPoint("TOPLEFT", alert.GwMicroButton, "BOTTOMLEFT", -18, -20)
+end
+
+local function modifyMicroAlert(alert, microButton)
+    alert.GwMicroButton = microButton
+    alert.Arrow.Arrow:SetTexCoord(0.78515625, 0.99218750, 0.58789063, 0.54687500)
+    alert.Arrow.Glow:SetTexCoord(0.40625000, 0.66015625, 0.82812500, 0.77343750)
+    alert.Arrow.Glow:ClearAllPoints()
+    alert.Arrow.Glow:SetPoint("BOTTOM")
+end
+
 local function LoadMicroMenu()
     local mi = 1
     for k, v in pairs(MICRO_BUTTONS) do
@@ -1264,8 +1285,14 @@ local function LoadMicroMenu()
         microButtonFrame:SetScript("OnUpdate", microMenu_OnUpdate)
     end
 
-    -- hide the default microbar
+    -- fix tutorial alerts and hide the micromenu bar
     MicroButtonAndBagsBar:Hide()
+    -- talent alert is always hidden by actionbars because we have a custom # on the button instead
+    modifyMicroAlert(CollectionsMicroButtonAlert, GwMicroButtonCollectionsMicroButton)
+    modifyMicroAlert(LFDMicroButtonAlert, GwMicroButtonLFDMicroButton)
+    modifyMicroAlert(EJMicroButtonAlert, GwMicroButtonEJMicroButton)
+    modifyMicroAlert(StoreMicroButtonAlert, GwMicroButtonHelpMicroButton)
+    hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert)
 end
 GW.LoadMicroMenu = LoadMicroMenu
 

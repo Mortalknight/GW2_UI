@@ -198,6 +198,26 @@ tests.GroupLoot = function(msg, editBox)
     )
 end
 
+tests.CollectionsAlert = function(msg, editBox)
+    Debug("expected: yellow tutorial pin on collections button")
+    MainMenuMicroButton_ShowAlert(CollectionsMicroButtonAlert, COLLECTION_UNOPENED_PLURAL)
+end
+
+tests.LFDAlert = function(msg, editBox)
+    Debug("expected: yellow tutorial pin on group finder button")
+    MainMenuMicroButton_ShowAlert(LFDMicroButtonAlert, LFG_MICRO_BUTTON_SPEC_TUTORIAL)
+end
+
+tests.EJAlert = function(msg, editBox)
+    Debug("expected: yellow tutorial pin on encounter journal button")
+    MainMenuMicroButton_ShowAlert(EJMicroButtonAlert, AJ_MICRO_BUTTON_ALERT_TEXT)
+end
+
+tests.StoreAlert = function(msg, editBox)
+    Debug("expected: yellow tutorial pin on store button")
+    MainMenuMicroButton_ShowAlert(StoreMicroButtonAlert, STORE_MICRO_BUTTON_ALERT_TRIAL_CAP_REACHED)
+end
+
 local function AlertTestsSetup()
     _G["SLASH_GW_TEST_ALERT1"] = "/gwtestalert"
     SlashCmdList["GW_TEST_ALERT"] = function(msg, editBox)
