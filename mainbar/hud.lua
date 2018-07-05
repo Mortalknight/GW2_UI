@@ -1564,17 +1564,19 @@ createOrderBar = function()
     orderBar_OnEvent(GwOrderhallBar)
 end
 
-local hud_OnEvent = function(self, event, unit)
-    if unit ~= "player" then
-        return
-    end
-
+local hud_OnEvent = function(self, event, ...)
     if event == "UNIT_AURA" then
-        selectBg()
+        local unit = ...
+        if unit == "player" then
+            selectBg()
+        end
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         selectBg()
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
-        combatHealthState()
+        local unit = ...
+        if unit == "player" then
+            combatHealthState()
+        end
     end
 end
 
