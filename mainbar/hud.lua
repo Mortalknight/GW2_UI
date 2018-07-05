@@ -1205,12 +1205,12 @@ local function LoadMicroMenu()
     GwMicroButtonGuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
 
     GwMicroButtonMainMenuMicroButton.inDebug = GW.inDebug
-    GwMicroButtonMainMenuMicroButton.interval = 0
     GwMicroButtonMainMenuMicroButton:SetScript(
         "OnEnter",
-        function()
-            GwMicroButtonMainMenuMicroButton:SetScript("OnUpdate", latencyToolTip)
-            GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_CURSOR", 0, ANCHOR_BOTTOMLEFT)
+        function(self)
+            self.interval = 0
+            self:SetScript("OnUpdate", latencyToolTip)
+            GameTooltip:SetOwner(self, "ANCHOR_CURSOR", 0, ANCHOR_BOTTOMLEFT)
         end
     )
 
@@ -1269,15 +1269,6 @@ local function LoadMicroMenu()
 end
 GW.LoadMicroMenu = LoadMicroMenu
 
---[[
-local function toggleGameMenuFrame()
-    if GameMenuFrame:IsShown() then
-        GameMenuFrame:Hide()
-        return
-    end
-    GameMenuFrame:Show()
-end
---]]
 local function levelingRewards_OnShow(self)
     PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
     self.animationValue = -400
