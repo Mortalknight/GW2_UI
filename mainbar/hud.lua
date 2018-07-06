@@ -1057,7 +1057,7 @@ end
 local function gwMicro_PositionAlert(alert)
     if
         (alert ~= CollectionsMicroButtonAlert and alert ~= LFDMicroButtonAlert and alert ~= EJMicroButtonAlert and
-            alert ~= StoreMicroButtonAlert)
+            alert ~= StoreMicroButtonAlert and alert ~= CharacterMicroButtonAlert)
      then
         return
     end
@@ -1325,6 +1325,7 @@ local function LoadMicroMenu()
     modifyMicroAlert(LFDMicroButtonAlert, GwMicroButtonLFDMicroButton)
     modifyMicroAlert(EJMicroButtonAlert, GwMicroButtonEJMicroButton)
     modifyMicroAlert(StoreMicroButtonAlert, GwMicroButtonHelpMicroButton)
+    modifyMicroAlert(CharacterMicroButtonAlert, GwMicroButtonCharacterMicroButton)
     hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert)
 end
 GW.LoadMicroMenu = LoadMicroMenu
