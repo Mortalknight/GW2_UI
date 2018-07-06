@@ -69,7 +69,7 @@ local function xpbar_OnEnter()
         )
     end
 
-    if rested ~= nil then
+    if rested ~= nil and rested ~= 0 then
         GameTooltip:AddLine(
             GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTED"] ..
                 CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
@@ -83,6 +83,7 @@ local function xpbar_OnEnter()
     UIFrameFadeOut(_G["GwExperienceFrameArtifactBar"], 0.2, _G["GwExperienceFrameArtifactBar"]:GetAlpha(), 0)
 
     local showArtifact = HasArtifactEquipped()
+    local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
 
     if showArtifact then
         local _, artifactXP, xpForNextPoint = artifactPoints()
@@ -94,8 +95,22 @@ local function xpbar_OnEnter()
         end
 
         GameTooltip:AddLine(
-            GwLocalization["EXP_BAR_TOOLTIP_ARTIFACT"] ..
+            ARTIFACT_POWER ..
                 CommaValue(artifactXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r",
+            1,
+            1,
+            1
+        )
+    elseif azeriteItemLocation then
+        local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation) 
+        local xpPct
+        if xpForNextPoint > 0 then
+            xpPct = math.floor((azeriteXP / xpForNextPoint) * 100) .. "%"
+        else
+            xpPct = "n/a"
+        end
+        GameTooltip:AddLine(
+            AZERITE_POWER_BAR:format(CommaValue(azeriteXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r"),
             1,
             1,
             1
@@ -154,6 +169,12 @@ local function xpbar_OnEvent(self, event)
     displayRewards()
 
     local showArtifact = HasArtifactEquipped()
+    local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+    local artifactVal = 0
+    local numPoints = 0
+    local artifactXP = 0
+    local azeriteXP = 0
+    local xpForNextPoint = 0
 
     local valCurrent = UnitXP("Player")
     local valMax = UnitXPMax("Player")
@@ -313,14 +334,26 @@ local function xpbar_OnEvent(self, event)
 
     if showArtifact then
         showBar2 = true
-        local numPoints, artifactXP, xpForNextPoint = artifactPoints()
-        local artifactVal
+        numPoints, artifactXP, xpForNextPoint = artifactPoints()
+        
         if xpForNextPoint > 0 then
             artifactVal = artifactXP / xpForNextPoint
         else
             artifactVal = 0
         end
+    elseif azeriteItemLocation then
+        showBar2 = true
+        azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+        numPoints = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 
+        if xpForNextPoint > 0 then
+            artifactVal = azeriteXP / xpForNextPoint
+        else
+            artifactVal = 0
+        end
+    end 
+
+    if showBar2 then
         _G["GwExperienceFrameArtifactBarCandy"]:SetValue(artifactVal)
 
         AddToAnimation(
@@ -1644,6 +1677,7 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("UPDATE_FACTION")
     experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE")
+    experiencebar:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
     experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
     experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN")
     experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
