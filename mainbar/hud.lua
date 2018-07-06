@@ -11,6 +11,7 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local Self_Hide = GW.Self_Hide
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
+local Debug = GW.Debug
 
 -- forward function defs
 local displayRewards
@@ -83,9 +84,10 @@ local function xpbar_OnEnter()
     UIFrameFadeOut(_G["GwExperienceFrameArtifactBar"], 0.2, _G["GwExperienceFrameArtifactBar"]:GetAlpha(), 0)
 
     local showArtifact = HasArtifactEquipped()
+    local disabledArtifact = C_ArtifactUI.IsEquippedArtifactDisabled()
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
 
-    if showArtifact then
+    if showArtifact and disabledArtifact == false then
         local _, artifactXP, xpForNextPoint = artifactPoints()
         local xpPct
         if xpForNextPoint > 0 then
@@ -95,7 +97,7 @@ local function xpbar_OnEnter()
         end
 
         GameTooltip:AddLine(
-            ARTIFACT_POWER ..
+            ARTIFACT_POWER .. " " ..
                 CommaValue(artifactXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r",
             1,
             1,
@@ -169,6 +171,7 @@ local function xpbar_OnEvent(self, event)
     displayRewards()
 
     local showArtifact = HasArtifactEquipped()
+    local disabledArtifact = C_ArtifactUI.IsEquippedArtifactDisabled()
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
     local artifactVal = 0
     local numPoints = 0
@@ -332,7 +335,7 @@ local function xpbar_OnEvent(self, event)
         end
     end
 
-    if showArtifact then
+    if showArtifact and disabledArtifact == false then
         showBar2 = true
         numPoints, artifactXP, xpForNextPoint = artifactPoints()
         
