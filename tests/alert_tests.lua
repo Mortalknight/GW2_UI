@@ -218,6 +218,11 @@ tests.StoreAlert = function(msg, editBox)
     MainMenuMicroButton_ShowAlert(StoreMicroButtonAlert, STORE_MICRO_BUTTON_ALERT_TRIAL_CAP_REACHED)
 end
 
+tests.CharacterAlert = function(msg, editBox)
+    Debug("expected: yellow tutorial pin on character button")
+    MainMenuMicroButton_ShowAlert(CharacterMicroButtonAlert, CHARACTER_SHEET_MICRO_BUTTON_AZERITE_AVAILABLE)
+end
+
 local function AlertTestsSetup()
     _G["SLASH_GW_TEST_ALERT1"] = "/gwtestalert"
     SlashCmdList["GW_TEST_ALERT"] = function(msg, editBox)

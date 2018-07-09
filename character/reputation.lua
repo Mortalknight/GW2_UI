@@ -225,7 +225,7 @@ local function getNewDetail(i)
     if i > 1 then
         _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", _G["GwReputationDetails" .. (i - 1)], "BOTTOMLEFT", 0, -1)
     else
-        _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", GwPaperReputationScrollFrame.scrollchild, "TOPLEFT", 2, -10)
+        _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", GwPaperReputationScrollFrame.scrollchild, "TOPLEFT", 10, -10)
     end
 
     GwPaperReputation.categories.detailFrames = GwPaperReputation.categories.detailFrames + 1

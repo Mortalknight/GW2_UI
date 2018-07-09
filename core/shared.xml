@@ -4,12 +4,12 @@
     <Slider name="GwHybridScrollBarTemplate" parentKey="scrollBar" virtual="true">
         <Size x="12" y="12"></Size>
         <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-32"></Anchor>
-            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="32"></Anchor>
+            <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentTrack" parentKey="trackBG" file="Interface\AddOns\GW2_UI\textures\scrollbg">
+                <Texture parentKey="trackBG" file="Interface\AddOns\GW2_UI\textures\scrollbg">
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
                         <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
@@ -18,7 +18,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentScrollUpButton" parentKey="scrollUp">
+            <Button parentKey="scrollUp">
                 <Size x="12" y="12"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="12"></Anchor>
@@ -39,7 +39,7 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentScrollDownButton" parentKey="scrollDown">
+            <Button parentKey="scrollDown">
                 <Size x="12" y="12"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="-12"></Anchor>
@@ -64,7 +64,7 @@
         <Scripts>
             <OnValueChanged function="HybridScrollFrame_OnValueChanged"/>
         </Scripts>
-        <ThumbTexture name="$parentThumbTexture" parentKey="thumbTexture" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
+        <ThumbTexture parentKey="thumbTexture" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
             <Size x="12" y="100"/>
             <Anchors>
                 <Anchor point="TOP" relativePoint="TOP"></Anchor>

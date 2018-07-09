@@ -44,10 +44,20 @@
     </Frame>
 
     <Frame name="GwRepDetailFrame" virtual="true">
-        <Size x="600" y="627"></Size>
+        <Size x="608" y="621"></Size>
         <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="0"></Anchor>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
         </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="608" y="621"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
         <Frames>
             <ScrollFrame parentKey="scroller" name="GwPaperReputationScrollFrame" enableMouse="true">
                 <Size x="600" y="627"></Size>

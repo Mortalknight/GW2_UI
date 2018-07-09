@@ -128,7 +128,9 @@ end
 
 local function LoadCurrency(tabContainer)
     -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
-    local curwin = CreateFrame("ScrollFrame", nil, tabContainer, "GwCurrencyWindow")
+    local curwin_outer = CreateFrame("Frame", nil, tabContainer, "GwCurrencyWindow")
+    local curwin = curwin_outer.CurrencyScroll
+
     curwin.update = loadCurrency
     curwin.scrollBar.doNotHide = true
     currencySetup(curwin)
@@ -158,7 +160,7 @@ local function LoadCurrency(tabContainer)
     )
 
     -- setup the raid info window
-    local raidinfo = CreateFrame("ScrollFrame", nil, tabContainer, "GwCurrencyWindow")
+    local raidinfo = curwin_outer.RaidScroll
 
     -- setup a menu frame
     local fmMenu = CreateFrame("Frame", nil, tabContainer, "GwCharacterMenu")
