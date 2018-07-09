@@ -1,0 +1,221 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwProfessionsOverMenu" hidden="true" virtual="true">
+        <Size x="220" y="478"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                    <Size x="256" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Professions: Overview">
+                <Size x="231" y="50"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+
+    <Button name="GwProfessionsOverview" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
+        <Size x="608" y="621"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="608" y="621"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Button name="GwProfessionsButton" enableMouse="true" inherits="SecureActionButtonTemplate,SecureHandlerDragTemplate" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                    <Size x="50" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" textureSubLevel="2">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="name" text="Arcane" justifyH="LEFT">
+                    <Size x="150" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="RIGHT" x="10" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="AbilityHighlight" hidden="true" alpha="1" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight-Blue" useAtlasSize="true">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="SpellHighlightTexture" atlas="bags-newitem" useAtlasSize="false" alphaMode="ADD" hidden="true">
+                    <Size x="48" y="48"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                    <Color r="1" b="0.6" g="1" a="0.9"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="unlearn">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="LEFT" x="-5" y="0"/>
+                </Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture>
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture>
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+            </Button>
+            <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
+        </Frames>
+    </Button>
+
+    <Frame name="GwProfessionsOverFrame" virtual="true">
+        <Size x="588" y="110"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="588" y="110"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="588" y="110"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Color a="0.5"></Color>
+                    <TexCoords left="0.1" right="0.9" top="0.9" bottom="0.1" />
+                </Texture>
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="70" y="70"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="15" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.05" right="0.95" top="0.05" bottom="0.95" />
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                    <Size x="80" y="80"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="title" text="Arcane" justifyH="LEFT">
+                    <Size x="200" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="100" y="-20"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="desc" text="Arcane" justifyH="LEFT">
+                    <Size x="450" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.title" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="btn1" inherits="GwProfessionsButton">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="350" y="-10"></Anchor>
+                </Anchors>
+            </Button>
+            <Button parentKey="btn2" inherits="GwProfessionsButton">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="350" y="-60"></Anchor>
+                </Anchors>
+            </Button>
+            <Button parentKey="unlearn">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="LEFT" x="20" y="0"/>
+                </Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture>
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture>
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+            </Button>
+            <StatusBar min="0" max="1" parentKey="StatusBar">
+                <Size x="201" y="12"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="102" y="-80"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="3">
+                        <Texture parentKey="statusbarbg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                            <Size x="205" y="16"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="currentValue" text="Unknown" justifyH="CENTER">
+                            <Size x="180" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="bonusValue" text="Unknown" justifyH="RIGHT">
+                            <Size x="140" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+        </Frames>
+    </Frame>
+
+</Ui>

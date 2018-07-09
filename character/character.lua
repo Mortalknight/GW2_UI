@@ -37,6 +37,21 @@ windowsList[2] = {
 }
 
 windowsList[3] = {
+    ["OnLoad"] = "LoadProfessions",
+    ["SettingName"] = "USE_TALENT_WINDOW",
+    ["RefName"] = "GwProfessionsFrame",
+    ["TabIcon"] = "tabicon_professions",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon",
+    ["HeaderText"] = TRADE_SKILLS,
+    ["Bindings"] = {
+        ["TOGGLEPROFESSIONBOOK"] = "Professions"
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "professions")
+    ]=]
+}
+
+windowsList[4] = {
     ["OnLoad"] = "LoadCurrency",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwCurrencyFrame",
@@ -51,7 +66,7 @@ windowsList[3] = {
     ]=]
 }
 
-windowsList[4] = {
+windowsList[5] = {
     ["OnLoad"] = "LoadReputation",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwReputationFrame",
@@ -90,6 +105,9 @@ local charSecure_OnClick =
     elseif button == "Talents" then
         self:SetAttribute("keytoggle", true)
         self:SetAttribute("windowpanelopen", "talents")
+    elseif button == "Professions" then
+        self:SetAttribute("keytoggle", true)
+        self:SetAttribute("windowpanelopen", "professions")
     end
     ]=]
 
@@ -109,6 +127,8 @@ local charSecure_OnAttributeChanged =
     local showRep = flase
     local fmCur = self:GetFrameRef("GwCurrencyFrame")
     local showCur = flase
+    local fmProf = self:GetFrameRef("GwProfessionsFrame")
+    local showProf = false
     
     local fmMov = self:GetFrameRef("GwCharacterWindowMoverFrame")
     local close = false
@@ -139,6 +159,15 @@ local charSecure_OnAttributeChanged =
         else
             showTal = true
             fmSBM:SetAttribute("tabopen", 4)
+        end
+    elseif fmProf ~= nil and value == "professions" then
+        if keytoggle and fmProf:IsVisible() then -- and fmSBM and fmSBM:GetAttribute("tabopen") == 4 then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showProf = true
+            -- fmSBM:SetAttribute("tabopen", 4)
         end
     elseif fmDoll ~= nil and value == "paperdoll" then
         if keytoggle and fmDoll:IsVisible() then
@@ -184,6 +213,13 @@ local charSecure_OnAttributeChanged =
             fmTal:Show()
         else
             fmTal:Hide()
+        end
+    end
+    if fmProf then
+        if showProf and not close then
+            fmProf:Show()
+        else
+            fmProf:Hide()
         end
     end
     if fmRep then

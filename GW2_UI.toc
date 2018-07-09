@@ -67,6 +67,7 @@ character/paperdoll.xml
 character/reputation.xml
 character/currency.xml
 character/talents.xml
+character/professions.xml
 character/character.lua
 character/paperdoll.lua
 character/paperdoll_equipment.lua
@@ -75,6 +76,7 @@ character/paperdoll_titles.lua
 character/reputation.lua
 character/currency.lua
 character/talents.lua
+character/professions.lua
 
 battlegrounds/battlegrounds.xml
 battlegrounds/battlegrounds.lua
