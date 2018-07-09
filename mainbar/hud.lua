@@ -126,7 +126,13 @@ local function xpbar_OnClick()
     if HasArtifactEquipped() then
         SocketInventoryItem(16)
     else
-        GwLevelingRewards:Show()
+        if UnitLevel("Player") < GetMaxPlayerLevel("Player") then
+            if GwLevelingRewards:IsShown() then
+                GwLevelingRewards:Hide()
+            else
+                GwLevelingRewards:Show()
+            end
+        end
     end
 end
 
