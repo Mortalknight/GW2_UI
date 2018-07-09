@@ -130,7 +130,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
-                    <Color a="0.5"></Color>
+                    <Color a="0.25"></Color>
                     <TexCoords left="0.1" right="0.9" top="0.9" bottom="0.1" />
                 </Texture>
                 <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
@@ -141,7 +141,7 @@
                     <TexCoords left="0.05" right="0.95" top="0.05" bottom="0.95" />
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
-                    <Size x="80" y="80"></Size>
+                    <Size x="77" y="77"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
                     </Anchors>

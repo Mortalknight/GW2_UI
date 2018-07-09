@@ -181,13 +181,13 @@ local function updateOverview(fmOverview)
                 local txT = (p.idx - 1) * txH
                 fm.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/professions_overview_" .. p.atlas)
                 fm.background:SetTexCoord(0, txR, txT / 1024, (txT + txH) / 1024)
-                fm.background:SetAlpha(0.88)
+                fm.background:SetAlpha(0.5)
             else
                 fm.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/paperdollbg")
                 fm.background:SetTexCoord(0, 1, 1, 0)
                 fm.background:SetAlpha(1.0)
             end
-            SetDesaturation(fm.background, true)
+            SetDesaturation(fm.background, false)
             if i > 2 then
                 fm.unlearn:Hide()
             else
