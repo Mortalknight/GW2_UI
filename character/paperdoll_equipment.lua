@@ -410,6 +410,8 @@ local function stat_OnEnter(self)
     if self.stat == "MASTERY" then
         Mastery_OnEnter(self)
         return
+    elseif self.stat == "MOVESPEED" then
+        self.tooltip = STAT_MOVEMENT_SPEED
     end
     if (not self.tooltip) then
         return
@@ -419,7 +421,7 @@ local function stat_OnEnter(self)
     if (self.tooltip2) then
         GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
     end
-    GameTooltip_Hide()
+    GameTooltip:Show()
 end
 
 local function getBagSlotFrame(i)

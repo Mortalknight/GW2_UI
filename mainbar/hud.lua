@@ -123,7 +123,7 @@ local function xpbar_OnEnter()
 end
 
 local function xpbar_OnClick()
-    if HasArtifactEquipped() then
+    if HasArtifactEquipped() and C_ArtifactUI.IsEquippedArtifactDisabled() == false then
         SocketInventoryItem(16)
     else
         if UnitLevel("Player") < GetMaxPlayerLevel("Player") then
