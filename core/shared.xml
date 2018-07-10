@@ -2,17 +2,13 @@
 ..\FrameXML\UI.xsd">
 
     <Slider name="GwHybridScrollBarTemplate" parentKey="scrollBar" virtual="true">
-        <Size x="12" y="12"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
-            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
-        </Anchors>
+        <Size x="12" y="0"></Size>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="trackBG" file="Interface\AddOns\GW2_UI\textures\scrollbg">
                     <Anchors>
-                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                        <Anchor point="TOPRIGHT" x="-3"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-3"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -71,4 +67,16 @@
             </Anchors>
         </ThumbTexture>
     </Slider>
+
+    <ScrollFrame name="GwHybridScrollFrameTemplate" inherits="HybridScrollFrameTemplate" virtual="true">
+        <Frames>
+            <Slider inherits="GwHybridScrollBarTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
+                </Anchors>
+            </Slider>
+        </Frames>
+    </ScrollFrame>
+
 </Ui>
