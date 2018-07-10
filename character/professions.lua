@@ -79,8 +79,12 @@ end
 GW.AddForProfiling("professions", "unlearn_OnEnter", unlearn_OnEnter)
 
 local function unlearn_OnClick(self, button)
+    if InCombatLockdown() then
+        PlaySound(44310)
+        UIErrorsFrame:AddMessage(SPELL_FAILED_AFFECTING_COMBAT, 1.0, 0.1, 0.1, 1.0)
+        return
+    end
     local skill = self:GetParent()
-    Debug("skill info", skill.skillName, skill.profId)
     StaticPopup_Show("UNLEARN_SKILL", skill.skillName, nil, skill.profId)
 end
 GW.AddForProfiling("professions", "unlearn_OnClick", unlearn_OnClick)
@@ -94,13 +98,21 @@ end
 GW.AddForProfiling("professions", "unlearnSpec_OnEnter", unlearnSpec_OnEnter)
 
 local function unlearnSpec_OnClick(self, button)
+    if InCombatLockdown() then
+        PlaySound(44310)
+        UIErrorsFrame:AddMessage(SPELL_FAILED_AFFECTING_COMBAT, 1.0, 0.1, 0.1, 1.0)
+        return
+    end
     local skill = self:GetParent()
-    Debug("skill info", skill.skillName, skill.specIdx)
     StaticPopup_Show("UNLEARN_SPECIALIZATION", skill.skillName, nil, skill.specIdx)
 end
 GW.AddForProfiling("professions", "unlearnSpec_OnClick", unlearnSpec_OnClick)
 
 local function updateOverview(fmOverview)
+    if InCombatLockdown() then
+        return
+    end
+
     local fmProfs = fmOverview.profs
     local iProf1, iProf2, iArch, iFish, iCook, _ = GetProfessions()
 
@@ -173,8 +185,6 @@ local function updateOverview(fmOverview)
                 updateButton(fm.btn1, nil)
                 updateButton(fm.btn2, nil)
             end
-
-            Debug("prof info", name, profId, specId, specOff)
 
             if profId and profs[profId .. ""] then
                 local p = profs[profId .. ""]
@@ -253,7 +263,7 @@ end
 GW.AddForProfiling("professions", "queueUpdate", queueUpdate)
 
 local function overview_OnEvent(self, event, ...)
-    if event == "SKILL_LINES_CHANGED" or event == "TRIAL_STATUS_UPDATE" then
+    if event == "SKILL_LINES_CHANGED" or event == "TRIAL_STATUS_UPDATE" or event == "SPELLS_CHANGED" then
         if not self:IsShown() then
             return
         end
@@ -345,6 +355,7 @@ local function loadOverview(parent)
     fmOverview:SetScript("OnEvent", overview_OnEvent)
     fmOverview:RegisterEvent("SKILL_LINES_CHANGED")
     fmOverview:RegisterEvent("TRIAL_STATUS_UPDATE")
+    fmOverview:RegisterEvent("SPELLS_CHANGED")
 
     updateOverview(fmOverview)
 end

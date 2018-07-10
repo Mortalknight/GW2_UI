@@ -173,17 +173,6 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="350" y="-60"></Anchor>
                 </Anchors>
             </Button>
-            <Button parentKey="unlearn">
-                <Size x="20" y="20" />
-                <Anchors>
-                    <Anchor point="RIGHT" relativePoint="LEFT" x="20" y="0"/>
-                </Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
-                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture>
-                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture>
-                <NormalFont style="ChatBubbleFont"></NormalFont>
-                <HighlightFont style="ChatBubbleFont"></HighlightFont>
-            </Button>
             <StatusBar min="0" max="1" parentKey="StatusBar">
                 <Size x="201" y="12"></Size>
                 <Anchors>
@@ -215,6 +204,17 @@
                     </Layer>
                 </Layers>
             </StatusBar>
+            <Button parentKey="unlearn">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.StatusBar" relativePoint="LEFT" x="-5" y="0"/>
+                </Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture>
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture>
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+            </Button>
         </Frames>
     </Frame>
 
