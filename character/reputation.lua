@@ -840,8 +840,6 @@ local function LoadReputation(tabContainer)
 
     local fmDetail = CreateFrame("Frame", "GwRepDetailFrame", tabContainer, "GwRepDetailFrame")
     local sf = fmDetail.scroller
-    reputationLastUpdateMethod = updateDetails
-    sf.update = updateOldData
     sf.dynamic = function(offset)
         return dynamicOffset(sf, offset)
     end
@@ -851,5 +849,7 @@ local function LoadReputation(tabContainer)
     updateReputations()
 
     reputationSetup(sf)
+    sf.update = updateOldData
+    reputationLastUpdateMethod = updateDetails
 end
 GW.LoadReputation = LoadReputation
