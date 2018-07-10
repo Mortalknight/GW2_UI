@@ -156,6 +156,7 @@ local function updateOverview(fmOverview)
             else
                 fm.desc:SetText(nil)
             end
+            fm.desc:SetWidth(220)
             fm.StatusBar:SetValue(skill / skillMax)
             fm.StatusBar.currentValue:SetText(skill .. "/" .. skillMax)
             if skillMod and skillMod ~= 0 then
@@ -229,6 +230,7 @@ local function updateOverview(fmOverview)
                 fm.title:SetText(nil)
                 fm.desc:SetText(nil)
             end
+            fm.desc:SetWidth(450)
             fm.skillName = nil
             fm.profId = nil
             SetDesaturation(fm.icon, true)
