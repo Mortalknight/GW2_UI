@@ -1,6 +1,69 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
+    <Button name="GwCurrencyRow" virtual="true">
+        <Size x="512" y="32"></Size>
+        <Anchors>
+            <Anchors point="TOPLEFT"></Anchors>
+        </Anchors>
+        <Frames>
+            <Frame parentKey="header" setAllPoints="true">
+                <Layers>
+                    <Layer>
+                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchors point="TOPLEFT"></Anchors>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="spaceString" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Button parentKey="item" setAllPoints="true" hidden="true">
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
+                                <Anchors point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchors>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
+                            </Anchors>
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="spaceString" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="42" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="24" />
+                        </FontString>
+                        <FontString parentKey="amount" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-5" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+    </Button>
+
     <Frame name="GwCurrencyWindow" virtual="true">
         <Size x="608" y="621"></Size>
         <Anchors>
@@ -17,23 +80,17 @@
             </Layer>
         </Layers>
         <Frames>
-            <ScrollFrame parentKey="CurrencyScroll" inherits="HybridScrollFrameTemplate">
+            <ScrollFrame parentKey="CurrencyScroll" inherits="GwHybridScrollFrameTemplate">
                 <Size x="580" y="576"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
                 </Anchors>
-                <Frames>
-                    <Slider parentKey="ScrollBar" inherits="GwHybridScrollBarTemplate" />
-                </Frames>
             </ScrollFrame>
-            <ScrollFrame parentKey="RaidScroll" inherits="HybridScrollFrameTemplate" hidden="true">
+            <ScrollFrame parentKey="RaidScroll" inherits="GwHybridScrollFrameTemplate" hidden="true">
                 <Size x="580" y="576"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
                 </Anchors>
-                <Frames>
-                    <Slider parentKey="ScrollBar" inherits="GwHybridScrollBarTemplate" />
-                </Frames>
             </ScrollFrame>
         </Frames>
     </Frame>

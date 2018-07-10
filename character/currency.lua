@@ -88,8 +88,8 @@ local function loadCurrency(curwin)
         end
     end
 
-    USED_CURRENCY_HEIGHT = BAG_CURRENCY_SIZE * (currencyCount + 1)
-    HybridScrollFrame_Update(curwin, USED_CURRENCY_HEIGHT, BAG_CURRENCY_SIZE)
+    USED_CURRENCY_HEIGHT = BAG_CURRENCY_SIZE * currencyCount
+    HybridScrollFrame_Update(curwin, USED_CURRENCY_HEIGHT, 576)
 end
 
 local function currencySetup(curwin)
