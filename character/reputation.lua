@@ -28,6 +28,7 @@ local function detailFaction(factionIndex, boolean)
     end
     expandedFactions[factionIndex] = nil
 end
+GW.AddForProfiling("reputation", "detailFaction", detailFaction)
 
 local function getNewCategory(i)
     if _G["GwPaperDollReputationCat" .. i] ~= nil then
@@ -63,6 +64,7 @@ local function getNewCategory(i)
 
     return f
 end
+GW.AddForProfiling("reputation", "getNewCategory", getNewCategory)
 
 local function updateSavedReputation()
     for factionIndex = GwPaperReputation.categories.scroll, GetNumFactions() do
@@ -85,6 +87,7 @@ local function updateSavedReputation()
             savedReputation[factionIndex].canBeLFGBonus = GetFactionInfo(factionIndex)
     end
 end
+GW.AddForProfiling("reputation", "updateSavedReputation", updateSavedReputation)
 
 local function returnReputationData(factionIndex)
     if savedReputation[factionIndex] == nil then
@@ -102,30 +105,36 @@ local function returnReputationData(factionIndex)
         factionIndex
     ].canBeLFGBonus
 end
+GW.AddForProfiling("reputation", "returnReputationData", returnReputationData)
 
 local function showHeader(i)
     selectedReputationCat = i
 end
+GW.AddForProfiling("reputation", "showHeader", showHeader)
 
 local function detailsAtwar_OnEnter(self)
     self.icon:SetTexCoord(0.5, 1, 0, 0.5)
 end
+GW.AddForProfiling("reputation", "detailsAtwar_OnEnter", detailsAtwar_OnEnter)
 
 local function detailsAtwar_OnLeave(self)
     if not self.isActive then
         self.icon:SetTexCoord(0, 0.5, 0, 0.5)
     end
 end
+GW.AddForProfiling("reputation", "detailsAtwar_OnLeave", detailsAtwar_OnLeave)
 
 local function detailsFavorite_OnEnter(self)
     self.icon:SetTexCoord(0, 0.5, 0.5, 1)
 end
+GW.AddForProfiling("reputation", "detailsFavorite_OnEnter", detailsFavorite_OnEnter)
 
 local function detailsFavorite_OnLeave(self)
     if not self.isActive then
         self.icon:SetTexCoord(0.5, 1, 0.5, 1)
     end
 end
+GW.AddForProfiling("reputation", "detailsFavorite_OnLeave", detailsFavorite_OnLeave)
 
 local function detailsControls_OnShow(self)
     self:GetParent().details:Show()
@@ -141,10 +150,12 @@ local function detailsControls_OnShow(self)
         self.favorit:Hide()
     end
 end
+GW.AddForProfiling("reputation", "detailsControls_OnShow", detailsControls_OnShow)
 
 local function detailsControls_OnHide(self)
     self:GetParent().details:Hide()
 end
+GW.AddForProfiling("reputation", "detailsControls_OnHide", detailsControls_OnHide)
 
 local function details_OnClick(self, button)
     if self.item.details:IsShown() then
@@ -158,6 +169,7 @@ local function details_OnClick(self, button)
     end
     updateDetails()
 end
+GW.AddForProfiling("reputation", "details_OnClick", details_OnClick)
 
 local function setDetailEx(
     frame,
@@ -203,7 +215,11 @@ local function setDetailEx(
     --frame.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
     --end
 
-    frame.name:SetText(name .. savedHeaderName)
+    if savedHeaderName ~= nil and savedHeaderName ~= "" and savedHeaderName ~= name then
+        frame.name:SetText(name .. "  |cFFa0a0a0" .. savedHeaderName .. "|r")
+    else
+        frame.name:SetText(name)
+    end
     frame.details:SetText(description)
 
     if atWarWith then
@@ -381,6 +397,8 @@ local function setDetailEx(
         )
     end
 end
+GW.AddForProfiling("reputation", "setDetailEx", setDetailEx)
+
 local function setDetail(frame, dat)
     return setDetailEx(
         frame,
@@ -404,6 +422,7 @@ local function setDetail(frame, dat)
         dat.canBeLFGBonus
     )
 end
+GW.AddForProfiling("reputation", "setDetail", setDetail)
 
 local facData = {}
 updateDetails = function()
@@ -448,7 +467,7 @@ updateDetails = function()
         end
 
         if isHeader and isChild then
-            savedHeaderName = " |cFFa0a0a0" .. name .. "|r"
+            savedHeaderName = name
         end
 
         if not isChild then
@@ -498,6 +517,7 @@ updateDetails = function()
 
     reputationLastUpdateMethod = updateDetails
 end
+GW.AddForProfiling("reputation", "updateDetails", updateDetails)
 
 local function status_SetValue(self)
     local _, max = self:GetMinMaxValues()
@@ -506,6 +526,7 @@ local function status_SetValue(self)
     self.spark:SetPoint("RIGHT", self, "LEFT", self:GetWidth() * (v / max), 0)
     self.spark:SetWidth(width)
 end
+GW.AddForProfiling("reputation", "status_SetValue", status_SetValue)
 
 local function setupDetail(self)
     self.controles.atwar:SetScript("OnEnter", detailsAtwar_OnEnter)
@@ -554,6 +575,7 @@ local function setupDetail(self)
     self.nextRank:SetText(GwLocalization["CHARACTER_NEXT_RANK"])
     self:GetParent():SetScript("OnClick", details_OnClick)
 end
+GW.AddForProfiling("reputation", "setupDetail", setupDetail)
 
 local function reputationSetup(self)
     HybridScrollFrame_CreateButtons(
@@ -577,6 +599,7 @@ local function reputationSetup(self)
 
     updateDetails()
 end
+GW.AddForProfiling("reputation", "reputationSetup", reputationSetup)
 
 updateReputations = function()
     ExpandAllFactionHeaders()
@@ -648,16 +671,19 @@ updateReputations = function()
         _G["GwPaperDollReputationCat" .. i]:Hide()
     end
 end
+GW.AddForProfiling("reputation", "updateReputations", updateReputations)
 
 updateOldData = function()
     if reputationLastUpdateMethod ~= nil then
         reputationLastUpdateMethod(reputationLastUpdateMethodParams)
     end
 end
+GW.AddForProfiling("reputation", "updateOldData", updateOldData)
 
 local function reputationSearch(a, b)
     return string.find(a, b)
 end
+GW.AddForProfiling("reputation", "reputationSearch", reputationSearch)
 
 local function updateDetailsSearch(s)
     local fm = GwRepDetailFrame.scroller
@@ -708,7 +734,7 @@ local function updateDetailsSearch(s)
             end
 
             if isHeader and isChild then
-                savedHeaderName = " |cFFa0a0a0" .. name .. "|r"
+                savedHeaderName = name
             end
 
             if not isChild then
@@ -762,6 +788,7 @@ local function updateDetailsSearch(s)
     reputationLastUpdateMethod = updateDetailsSearch
     reputationLastUpdateMethodParams = s
 end
+GW.AddForProfiling("reputation", "updateDetailsSearch", updateDetailsSearch)
 
 local function dynamicOffset(self, offset)
     local heightSoFar = 0
@@ -789,6 +816,7 @@ local function dynamicOffset(self, offset)
 
     return element, scrollHeight
 end
+GW.AddForProfiling("reputation", "dynamicOffset", dynamicOffset)
 
 local function LoadReputation(tabContainer)
     local fmGPR = CreateFrame("Frame", "GwPaperReputation", tabContainer, "GwPaperReputation")
@@ -851,5 +879,7 @@ local function LoadReputation(tabContainer)
     reputationSetup(sf)
     sf.update = updateOldData
     reputationLastUpdateMethod = updateDetails
+
+    ReputationFrame:UnregisterAllEvents()
 end
 GW.LoadReputation = LoadReputation
