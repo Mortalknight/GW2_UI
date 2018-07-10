@@ -55,6 +55,7 @@ local function updateButton(self, spellIdx, unlearn)
         else
             self.unlearn:Hide()
         end
+        self:SetAlpha(1)
     else
         self.spellIdx = nil
         self.skillname = nil
@@ -66,6 +67,7 @@ local function updateButton(self, spellIdx, unlearn)
         self:SetAttribute("_ondragstart", nil)
         self:Disable()
         self.unlearn:Hide()
+        self:SetAlpha(0.5)
     end
 end
 GW.AddForProfiling("professions", "updateButton", updateButton)
