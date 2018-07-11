@@ -962,17 +962,22 @@ local function updatePetFrameLocation()
     end
 end
 
-local function updatePetData(event, unit)
-    if not UnitExists("pet") then
+local function updatePetData(self, event, unit)
+    if unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
+        if UnitHasVehiclePlayerFrameUI("player") then
+            self:SetAlpha(0)
+        else
+            self:SetAlpha(1)
+        end
         return
     end
-    if UnitExists("vehicle") and UnitIsUnit("pet", "vehicle") then
-        GwPlayerPetFrame:SetAlpha(0)
+
+    if not UnitExists("pet") then
         return
     end
 
     if event == "UNIT_AURA" and unit == "pet" then
-        UpdateBuffLayout(GwPlayerPetFrame, event, unit)
+        UpdateBuffLayout(self, event, unit)
         return
     end
 
@@ -995,10 +1000,10 @@ local function updatePetData(event, unit)
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
-        GwPlayerPetFrame.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
-    GwPlayerPetFrame.resource:SetValue(resourcePrec)
+    self.resource:SetValue(resourcePrec)
 
     SetPortraitTexture(_G["GwPlayerPetFramePortrait"], "pet")
 
@@ -1020,6 +1025,10 @@ local function updatePetData(event, unit)
 end
 
 local function LoadPetFrame()
+    -- disable default PetFrame stuff
+    PetFrame:UnregisterAllEvents()
+    PetFrame:SetScript("OnUpdate", nil)
+
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrame")
 
     RegisterMovableFrame("petframe", GwPlayerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
@@ -1034,16 +1043,11 @@ local function LoadPetFrame()
     _G["GwPlayerPetFrameHealth"]:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     _G["GwPlayerPetFrameHealthString"]:SetFont(UNIT_NAME_FONT, 11)
 
-    playerPetFrame:SetScript(
-        "OnEvent",
-        function(self, event, unit)
-            updatePetData(event, unit)
-        end
-    )
+    playerPetFrame:SetScript("OnEvent", updatePetData)
     playerPetFrame:HookScript(
         "OnShow",
-        function()
-            updatePetData("UNIT_PET", "player")
+        function(self)
+            updatePetData(self, "UNIT_PET", "player")
         end
     )
     playerPetFrame.unit = "pet"
@@ -1060,9 +1064,11 @@ local function LoadPetFrame()
     playerPetFrame:RegisterEvent("UNIT_HEALTH")
     playerPetFrame:RegisterEvent("UNIT_MAXHEALTH")
     playerPetFrame:RegisterEvent("UNIT_AURA")
+    playerPetFrame:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
+    playerPetFrame:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
 
     --_G['GwPlayerPetFramePortrait']
-    updatePetData("UNIT_PET", "player")
+    updatePetData(playerPetFrame, "UNIT_PET", "player")
 
     if GetSetting("PETBAR_LOCKED") == true then
         GwPlayerPetFrame:ClearAllPoints()
@@ -1096,14 +1102,6 @@ local function LoadPetFrame()
         GetSetting("pet_pos")["relativePoint"],
         GetSetting("pet_pos")["xOfs"],
         GetSetting("pet_pos")["yOfs"]
-    )
-
-    -- show/hide stuff with override bar
-    OverrideActionBar:HookScript(
-        "OnHide",
-        function()
-            playerPetFrame:SetAlpha(1)
-        end
     )
 end
 GW.LoadPetFrame = LoadPetFrame
