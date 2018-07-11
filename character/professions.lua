@@ -160,11 +160,10 @@ local function updateOverview(fmOverview)
             end
             fm.desc:SetWidth(220)
             fm.StatusBar:SetValue(skill / skillMax)
-            fm.StatusBar.currentValue:SetText(skill .. "/" .. skillMax)
             if skillMod and skillMod ~= 0 then
-                fm.StatusBar.bonusValue:SetText("(+" .. skillMod .. ")")
+                fm.StatusBar.currentValue:SetText(skill .. " +" .. skillMod .."/" .. skillMax)
             else
-                fm.StatusBar.bonusValue:SetText(nil)
+                fm.StatusBar.currentValue:SetText(skill .. "/" .. skillMax)
             end
             fm.StatusBar:Show()
             fm.btn1:Show()
@@ -312,13 +311,8 @@ local function loadOverview(parent)
         fm.desc:SetShadowOffset(1, -1)
 
         fm.StatusBar.currentValue:SetFont(UNIT_NAME_FONT, 12)
-        fm.StatusBar.bonusValue:SetFont(UNIT_NAME_FONT, 12)
-
         fm.StatusBar.currentValue:SetShadowColor(0, 0, 0, 1)
-        fm.StatusBar.bonusValue:SetShadowColor(0, 0, 0, 1)
-
         fm.StatusBar.currentValue:SetShadowOffset(1, -1)
-        fm.StatusBar.bonusValue:SetShadowOffset(1, -1)
 
         fm.StatusBar:SetMinMaxValues(0, 1)
         fm.StatusBar:SetValue(0)

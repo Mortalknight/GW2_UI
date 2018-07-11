@@ -195,12 +195,6 @@
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="bonusValue" text="Unknown" justifyH="RIGHT">
-                            <Size x="140" y="20"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
                     </Layer>
                 </Layers>
             </StatusBar>
