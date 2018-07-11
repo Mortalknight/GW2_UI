@@ -346,6 +346,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
     _G[buttonName]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
     _G[buttonName]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
     _G[buttonName]:SetCheckedTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
+    _G[buttonName .. "Name"]:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     if noBackDrop == nil or noBackDrop == false then
         local backDrop =
