@@ -411,7 +411,8 @@ local function stat_OnEnter(self)
         Mastery_OnEnter(self)
         return
     elseif self.stat == "MOVESPEED" then
-        self.tooltip = STAT_MOVEMENT_SPEED
+        MovementSpeed_OnEnter(self)
+        return
     end
     if (not self.tooltip) then
         return

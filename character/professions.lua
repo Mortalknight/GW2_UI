@@ -67,7 +67,7 @@ local function updateButton(self, spellIdx, unlearn)
         self:SetAttribute("_ondragstart", nil)
         self:Disable()
         self.unlearn:Hide()
-        self:SetAlpha(0.5)
+        self:SetAlpha(0)
     end
 end
 GW.AddForProfiling("professions", "updateButton", updateButton)
