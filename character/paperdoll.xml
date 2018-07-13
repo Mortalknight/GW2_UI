@@ -257,9 +257,9 @@
                     </Anchors>
                 </FontString>
                 <FontString parentKey="characterData" text="Level %d class" justifyH="LEFT">
-                    <Size x="180" y="20"></Size>
+                    <Size x="180" y="40"></Size>
                     <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-25"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-17"></Anchor>
                     </Anchors>
                 </FontString>
 

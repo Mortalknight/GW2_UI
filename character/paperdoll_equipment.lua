@@ -619,6 +619,7 @@ local function updateUnitData()
     if name ~= nil then
         local data =
             GwLocalization["CHARACTER_LEVEL"] .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
+        GwDressingRoom.characterData:SetWidth(180)
         GwDressingRoom.characterData:SetText(data)
     end
 end
