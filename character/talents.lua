@@ -1,5 +1,7 @@
 local _, GW = ...
 local SetClassIcon = GW.SetClassIcon
+local UpdatePvPTab = GW.UpdatePvPTab
+local CreatePvPTab = GW.CreatePvPTab
 
 local maxTalentRows = 7
 local talentsPerRow = 3
@@ -390,7 +392,11 @@ local function spellButton_OnEnter(self)
     end
     if self.isFuture then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. GetSpellLevelLearned(self.spellId), 1, 1, 1)
+        if self.unlockLevel then
+            GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. self.unlockLevel, 1, 1, 1)
+        else
+            GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. GetSpellLevelLearned(self.spellId), 1, 1, 1)
+        end
     end
     GameTooltip:Show()
 end
@@ -450,7 +456,6 @@ local spellButtonSecure_OnDragStart =
     ]=]
 
 local function setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
-    btn.isDirty = true
     btn.isFuture = (skillType == "FUTURESPELL")
     btn.spellbookIndex = spellbookIndex
     btn.booktype = booktype
@@ -509,126 +514,132 @@ local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, b
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
 
+local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
+    local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
+
+    local BOOKTYPE = "spell"
+    if spellBookTabs == 4 then
+        BOOKTYPE = "pet"
+        numSpells, petToken = HasPetSpells()
+        offset = 0
+        if numSpells == nil then
+            numSpells = 0
+        end
+        if numSpells == 0 then
+            fmTab.groups["active"]:Hide()
+            fmTab.groups["passive"]:Hide()
+            fmTab.groups["lock"]:Show()
+        else
+            fmTab.groups["active"]:Show()
+            fmTab.groups["passive"]:Show()
+            fmTab.groups["lock"]:Hide()
+        end
+    end
+
+    local activeIndex = 1
+    local activeGroup = fmTab.groups["active"]
+    local passiveIndex = 1
+    local passiveGroup = fmTab.groups["passive"]
+
+    activeGroup.pool:ReleaseAll()
+    activeGroup.poolNSD:ReleaseAll()
+    passiveGroup.pool:ReleaseAll()
+
+    for i = 1, numSpells do
+        local spellIndex = i + offset
+        local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
+        if name == nil then
+            name = ""
+        end
+        local isPassive = IsPassiveSpell(spellIndex, BOOKTYPE)
+
+        local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
+        if BOOKTYPE == "pet" then
+            _, _, _, _, _, _, spellId = GetSpellInfo(spellIndex, BOOKTYPE)
+        end
+        local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
+
+        local btn
+        if isPassive then
+            btn = passiveGroup.pool:Acquire()
+            local row = math.floor((passiveIndex - 1) / 5)
+            local col = (passiveIndex - 1) % 5
+            btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+            setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+            passiveIndex = passiveIndex + 1
+        else
+            if BOOKTYPE == "pet" or skillType == "FLYOUT" then
+                btn = activeGroup.poolNSD:Acquire()
+            else
+                btn = activeGroup.pool:Acquire()
+            end
+            local row = math.floor((activeIndex - 1) / 5)
+            local col = (activeIndex - 1) % 5
+            btn:SetPoint("TOPLEFT", activeGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+            setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+
+            -- check for should glyph highlight
+            if spellBookTabs == 2 then
+                if HasAttachedGlyph(spellId) then
+                    btn.GlyphIcon:Show()
+                    if IsPendingGlyphRemoval() and fmSpellbook.glyphReason then
+                        btn.AbilityHighlight:Show()
+                        btn.AbilityHighlightAnim:Play()
+                        btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
+                    else
+                        btn.AbilityHighlightAnim:Stop()
+                        btn.AbilityHighlight:Hide()
+                        btn:SetAttribute("type1", nil)
+                    end
+                else
+                    btn.GlyphIcon:Hide()
+                end
+                if fmSpellbook.glyphSlot == spellIndex then
+                    if (fmSpellbook.glyphReason == "USE_GLYPH") then
+                        btn.AbilityHighlight:Show()
+                        btn.AbilityHighlightAnim:Play()
+                        btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
+                        fmSpellbook.glyphBtn = btn
+                    else
+                        btn.AbilityHighlightAnim:Stop()
+                        btn.AbilityHighlight:Hide()
+                        fmSpellbook.glyphBtn = nil
+                        fmSpellbook.glyphSlot = nil
+                        fmSpellbook.glyphIndex = nil
+                        btn:SetAttribute("type1", nil)
+
+                        if (fmSpellbook.glyphReason == "ACTIVATE_GLYPH") then
+                            btn.GlyphActivate:Show()
+                            btn.GlyphIcon:Show()
+                            btn.GlyphTranslation:Show()
+                            btn.GlyphActivateAnim:Play()
+                        end
+                    end
+                end
+            end
+
+            activeIndex = activeIndex + 1
+        end
+    end
+
+    local offY = (math.ceil((activeIndex - 1) / 5) * 50) + 66
+    passiveGroup:ClearAllPoints()
+    passiveGroup:SetPoint("TOPLEFT", fmTab, "TOPLEFT", -4, -offY)
+end
+GW.AddForProfiling("talents", "updateRegTab", updateRegTab)
+
 local function updateTab(fmSpellbook)
     if InCombatLockdown() then
         return
     end
 
-    for spellBookTabs = 1, 4 do
-        local fmTab = _G["GwSpellbookContainerTab" .. spellBookTabs]
-        local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
-        if spellBookTabs == 3 then
-            _, _, offset, numSpells = GetSpellTabInfo(1)
+    for tab = 1, 4 do
+        local fmTab = fmSpellbook.tabContainers[tab]
+        if tab == 1 or tab == 2 or tab == 4 then
+            updateRegTab(fmSpellbook, fmTab, tab)
+        elseif tab == 3 then
+            UpdatePvPTab(fmSpellbook, fmTab)
         end
-
-        local BOOKTYPE = "spell"
-        if spellBookTabs == 4 then
-            BOOKTYPE = "pet"
-            numSpells, petToken = HasPetSpells()
-            offset = 0
-            if numSpells == nil then
-                numSpells = 0
-            end
-            if numSpells == 0 then
-                fmTab.groups["active"]:Hide()
-                fmTab.groups["passive"]:Hide()
-                fmTab.groups["lock"]:Show()
-            else
-                fmTab.groups["active"]:Show()
-                fmTab.groups["passive"]:Show()
-                fmTab.groups["lock"]:Hide()
-            end
-        end
-
-        local activeIndex = 1
-        local activeGroup = fmTab.groups["active"]
-        local passiveIndex = 1
-        local passiveGroup = fmTab.groups["passive"]
-
-        activeGroup.pool:ReleaseAll()
-        activeGroup.poolNSD:ReleaseAll()
-        passiveGroup.pool:ReleaseAll()
-
-        for i = 1, numSpells do
-            local spellIndex = i + offset
-            local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
-            if name == nil then
-                name = ""
-            end
-            local isPassive = IsPassiveSpell(spellIndex, BOOKTYPE)
-
-            local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
-            if BOOKTYPE == "pet" then
-                _, _, _, _, _, _, spellId = GetSpellInfo(spellIndex, BOOKTYPE)
-            end
-            local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
-
-            local btn
-            if isPassive then
-                btn = passiveGroup.pool:Acquire()
-                local row = math.floor((passiveIndex - 1) / 5)
-                local col = (passiveIndex - 1) % 5
-                btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-                setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
-                passiveIndex = passiveIndex + 1
-            else
-                if BOOKTYPE == "pet" or skillType == "FLYOUT" then
-                    btn = activeGroup.poolNSD:Acquire()
-                else
-                    btn = activeGroup.pool:Acquire()
-                end
-                local row = math.floor((activeIndex - 1) / 5)
-                local col = (activeIndex - 1) % 5
-                btn:SetPoint("TOPLEFT", activeGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-                setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
-
-                -- check for should glyph highlight
-                if spellBookTabs == 2 then
-                    if HasAttachedGlyph(spellId) then
-                        btn.GlyphIcon:Show()
-                        if IsPendingGlyphRemoval() and fmSpellbook.glyphReason then
-                            btn.AbilityHighlight:Show()
-                            btn.AbilityHighlightAnim:Play()
-                            btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
-                        else
-                            btn.AbilityHighlightAnim:Stop()
-                            btn.AbilityHighlight:Hide()
-                            btn:SetAttribute("type1", nil)
-                        end
-                    else
-                        btn.GlyphIcon:Hide()
-                    end
-                    if fmSpellbook.glyphSlot == spellIndex then
-                        if (fmSpellbook.glyphReason == "USE_GLYPH") then
-                            btn.AbilityHighlight:Show()
-                            btn.AbilityHighlightAnim:Play()
-                            btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
-                            fmSpellbook.glyphBtn = btn
-                        else
-                            btn.AbilityHighlightAnim:Stop()
-                            btn.AbilityHighlight:Hide()
-                            fmSpellbook.glyphBtn = nil
-                            fmSpellbook.glyphSlot = nil
-                            fmSpellbook.glyphIndex = nil
-                            btn:SetAttribute("type1", nil)
-
-                            if (fmSpellbook.glyphReason == "ACTIVATE_GLYPH") then
-                                btn.GlyphActivate:Show()
-                                btn.GlyphIcon:Show()
-                                btn.GlyphTranslation:Show()
-                                btn.GlyphActivateAnim:Play()
-                            end
-                        end
-                    end
-                end
-
-                activeIndex = activeIndex + 1
-            end
-        end
-
-        local offY = (math.ceil((activeIndex - 1) / 5) * 50) + 66
-        passiveGroup:ClearAllPoints()
-        passiveGroup:SetPoint("TOPLEFT", fmTab, "TOPLEFT", -4, -offY)
     end
 end
 GW.AddForProfiling("talents", "updateTab", updateTab)
@@ -775,8 +786,7 @@ local function toggleSpellBook(bookType)
         return
     end
     if bookType == BOOKTYPE_PROFESSION then
-        -- TODO: change this when profession book is avail
-        GwCharacterWindow:SetAttribute("windowpanelopen", "spellbook")
+        GwCharacterWindow:SetAttribute("windowpanelopen", "professions")
     elseif bookType == BOOKTYPE_PET then
         GwCharacterWindow:SetAttribute("windowpanelopen", "petbook")
     else
@@ -848,6 +858,53 @@ local function spellBook_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("talents", "spellBook_OnEvent", spellBook_OnEvent)
 
+local function createRegTab(fmSpellbook, tab)
+    local container = CreateFrame("Frame", nil, fmSpellbook, "GwSpellbookContainerTab")
+    local actGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
+    local psvGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
+    container.groups = {
+        ["active"] = actGroup,
+        ["passive"] = psvGroup
+    }
+
+    actGroup:ClearAllPoints()
+    actGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
+    actGroup.label.title:SetFont(DAMAGE_TEXT_FONT, 14)
+    actGroup.label.title:SetTextColor(1, 1, 1, 1)
+    actGroup.label.title:SetShadowColor(0, 0, 0, 1)
+    actGroup.label.title:SetShadowOffset(1, -1)
+    actGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_ACTIVE"])
+    actGroup.pool = CreateFramePool("Button", actGroup, "GwSpellbookActiveButton", activePool_Resetter)
+    actGroup.poolNSD = CreateFramePool("Button", actGroup, "GwSpellbookActiveButtonNSD", activePoolNSD_Resetter)
+    actGroup:SetScript("OnEvent", spellGroup_OnEvent)
+    actGroup:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+    actGroup:RegisterEvent("PET_BAR_UPDATE")
+
+    psvGroup:ClearAllPoints()
+    psvGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -72)
+    psvGroup.label.title:SetFont(DAMAGE_TEXT_FONT, 14)
+    psvGroup.label.title:SetTextColor(1, 1, 1, 1)
+    psvGroup.label.title:SetShadowColor(0, 0, 0, 1)
+    psvGroup.label.title:SetShadowOffset(1, -1)
+    psvGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_PASSIVE"])
+    psvGroup.pool = CreateFramePool("Button", psvGroup, "GwSpellbookPassiveButton", passivePool_Resetter)
+
+    if tab == 4 then
+        local lockGroup = CreateFrame("Frame", nil, container, "GwSpellbookLockGroup")
+        container.groups["lock"] = lockGroup
+        lockGroup:ClearAllPoints()
+        lockGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
+        lockGroup.info:SetFont(DAMAGE_TEXT_FONT, 14)
+        lockGroup.info:SetTextColor(1, 1, 1, 1)
+        lockGroup.info:SetShadowColor(0, 0, 0, 1)
+        lockGroup.info:SetShadowOffset(1, -1)
+        lockGroup.info:SetText(SPELL_FAILED_NO_PET)
+    end
+
+    return container
+end
+GW.AddForProfiling("talents", "createRegTab", createRegTab)
+
 local function LoadTalents(tabContainer)
     local fmGTF = CreateFrame("Frame", "GwTalentFrame", tabContainer, "SecureHandlerStateTemplate,GwTalentFrame")
     fmGTF.title:SetFont(DAMAGE_TEXT_FONT, 14)
@@ -883,12 +940,11 @@ local function LoadTalents(tabContainer)
     -- TODO: change this to do all attribute stuff on container instead of menu
     GwCharacterWindow:SetFrameRef("GwSpellbookMenu", fmSpellbook)
 
+    fmSpellbook.tabContainers = {}
     fmSpellbook.queuedUpdateTab = false
     fmSpellbook:SetScript("OnEvent", spellBook_OnEvent)
     fmSpellbook:RegisterEvent("SPELLS_CHANGED")
     fmSpellbook:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    --fmSpellbook:RegisterEvent("SKILL_LINES_CHANGED") these two only for professions, separate window for that
-    --fmSpellbook:RegisterEvent("TRIAL_STATUS_UPDATE")
     fmSpellbook:RegisterEvent("PLAYER_GUILD_UPDATE")
     fmSpellbook:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     fmSpellbook:RegisterEvent("USE_GLYPH")
@@ -898,53 +954,15 @@ local function LoadTalents(tabContainer)
     SpellBookFrame:UnregisterAllEvents()
 
     for tab = 1, 4 do
-        local container = CreateFrame("Frame", "GwSpellbookContainerTab" .. tab, fmSpellbook, "GwSpellbookContainerTab")
-        local actGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
-        local psvGroup = CreateFrame("Frame", nil, container, "GwSpellbookButtonGroup")
-        container.groups = {
-            ["active"] = actGroup,
-            ["passive"] = psvGroup
-        }
-
-        actGroup:ClearAllPoints()
-        actGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
-        actGroup.label.title:SetFont(DAMAGE_TEXT_FONT, 14)
-        actGroup.label.title:SetTextColor(1, 1, 1, 1)
-        actGroup.label.title:SetShadowColor(0, 0, 0, 1)
-        actGroup.label.title:SetShadowOffset(1, -1)
-        actGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_ACTIVE"])
-        actGroup.pool = CreateFramePool("Button", actGroup, "GwSpellbookActiveButton", activePool_Resetter)
-        actGroup.poolNSD = CreateFramePool("Button", actGroup, "GwSpellbookActiveButtonNSD", activePoolNSD_Resetter)
-        actGroup:SetScript("OnEvent", spellGroup_OnEvent)
-        actGroup:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-        actGroup:RegisterEvent("PET_BAR_UPDATE")
-
-        psvGroup:ClearAllPoints()
-        psvGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -72)
-        psvGroup.label.title:SetFont(DAMAGE_TEXT_FONT, 14)
-        psvGroup.label.title:SetTextColor(1, 1, 1, 1)
-        psvGroup.label.title:SetShadowColor(0, 0, 0, 1)
-        psvGroup.label.title:SetShadowOffset(1, -1)
-        psvGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_PASSIVE"])
-        psvGroup.pool = CreateFramePool("Button", psvGroup, "GwSpellbookPassiveButton", passivePool_Resetter)
-
-        if tab == 4 then
-            local lockGroup = CreateFrame("Frame", nil, container, "GwSpellbookLockGroup")
-            container.groups["lock"] = lockGroup
-            lockGroup:ClearAllPoints()
-            lockGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
-            lockGroup.info:SetFont(DAMAGE_TEXT_FONT, 14)
-            lockGroup.info:SetTextColor(1, 1, 1, 1)
-            lockGroup.info:SetShadowColor(0, 0, 0, 1)
-            lockGroup.info:SetShadowOffset(1, -1)
-            lockGroup.info:SetText(SPELL_FAILED_NO_PET)
+        if tab == 1 or tab == 2 or tab == 4 then
+            fmSpellbook.tabContainers[tab] = createRegTab(fmSpellbook, tab)
+        elseif tab == 3 then
+            fmSpellbook.tabContainers[tab] = CreatePvPTab(fmSpellbook)
         end
+        fmSpellbook:SetFrameRef("GwSpellbookContainerTab" .. tab, fmSpellbook.tabContainers[tab])
     end
 
-    GwSpellbookContainerTab1:Hide()
-    GwSpellbookContainerTab2:Show()
-    GwSpellbookContainerTab3:Hide()
-    GwSpellbookContainerTab4:Hide()
+    fmSpellbook.tabContainers[2]:Show()
 
     loadTalents()
     updateTab(fmSpellbook)
@@ -978,10 +996,6 @@ local function LoadTalents(tabContainer)
         ]=]
     )
 
-    fmSpellbook:SetFrameRef("GwSpellbookContainerTab1", GwSpellbookContainerTab1)
-    fmSpellbook:SetFrameRef("GwSpellbookContainerTab2", GwSpellbookContainerTab2)
-    fmSpellbook:SetFrameRef("GwSpellbookContainerTab3", GwSpellbookContainerTab3)
-    fmSpellbook:SetFrameRef("GwSpellbookContainerTab4", GwSpellbookContainerTab4)
     fmSpellbook:SetFrameRef("GwspellbookTab1", GwspellbookTab1)
     fmSpellbook:SetFrameRef("GwspellbookTab2", GwspellbookTab2)
     fmSpellbook:SetFrameRef("GwspellbookTab3", GwspellbookTab3)

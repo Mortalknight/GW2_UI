@@ -75,6 +75,7 @@ character/paperdoll_equipset.lua
 character/paperdoll_titles.lua
 character/reputation.lua
 character/currency.lua
+character/talents_pvp.lua
 character/talents.lua
 character/professions.lua
 

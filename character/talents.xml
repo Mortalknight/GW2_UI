@@ -8,7 +8,6 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-
                 <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
                     <Size x="512" y="32"></Size>
                     <Anchors>
@@ -369,7 +368,7 @@
         </Frames>
     </Frame>
 
-    <Frame name="GwSpellbookContainerTab" virtual="true" protected="true">
+    <Frame name="GwSpellbookContainerTab" virtual="true" protected="true" hidden="true">
         <Size x="245" y="615"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -399,6 +398,55 @@
                 </FontString>
             </Layer>
         </Layers>
+    </Frame>
+
+    <Frame name="GwSpellbookWMGroup" virtual="true">
+        <Size x="245" y="300"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Frames>
+            <Button parentKey="toggle">
+                <Size x="245" y="61"></Size>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="TOP" x="2" y="-35"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\warmode_off">
+                            <Size x="245" y="61"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Frame parentKey="label">
+                <Size x="250" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep">
+                            <Size x="254" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER">
+                        <FontString parentKey="title" text="Title" justifyH="LEFT" justifyY="CENTER">
+                            <Size x="256" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" x="10" y="-2"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
     </Frame>
 
     <Frame name="GwSpellbookButtonGroup" virtual="true" protected="true">
@@ -569,6 +617,136 @@
                 </Texture>
             </Layer>
         </Layers>
+    </Button>
+
+    <Button name="GwSpellbookActiveButtonPvP" enableMouse="true" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                    <Size x="50" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" textureSubLevel="2">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="AbilityHighlight" hidden="true" alpha="1" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight-Blue" useAtlasSize="true">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="SpellHighlightTexture" atlas="bags-newitem" useAtlasSize="false" alphaMode="ADD" hidden="true">
+                    <Size x="48" y="48"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                    <Color r="1" b="0.6" g="1" a="0.9"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Animations>
+            <AnimationGroup parentKey="AbilityHighlightAnim" setToFinalAlpha="true" looping="REPEAT">
+                <Alpha childKey="AbilityHighlight" duration="0.25" order="1" fromAlpha="0.5" toAlpha="1"/>
+                <Alpha childKey="AbilityHighlight" startDelay="0.5" duration="0.75" order="1" fromAlpha="1" toAlpha="0.5"/>
+            </AnimationGroup>
+        </Animations>
+    </Button>
+
+    <Button name="GwSpellbookPassiveButtonPvP" enableMouse="true" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                    <Size x="50" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" textureSubLevel="2">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                    <Color r="1" b="0.6" g="1" a="0.9"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Button name="GwSpellbookSlotButtonPvP" enableMouse="true" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                    <Size x="50" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" textureSubLevel="2" file="Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="AbilityHighlight" hidden="true" alpha="1" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight-Blue" useAtlasSize="true">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                    <Color r="1" b="0.6" g="1" a="0.9"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Animations>
+            <AnimationGroup parentKey="AbilityHighlightAnim" setToFinalAlpha="true" looping="REPEAT">
+                <Alpha childKey="AbilityHighlight" duration="0.25" order="1" fromAlpha="0.5" toAlpha="1"/>
+                <Alpha childKey="AbilityHighlight" startDelay="0.5" duration="0.75" order="1" fromAlpha="1" toAlpha="0.5"/>
+            </AnimationGroup>
+        </Animations>
     </Button>
 
 </Ui>
