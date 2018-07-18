@@ -11,7 +11,6 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local Self_Hide = GW.Self_Hide
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
-local Debug = GW.Debug
 
 -- forward function defs
 local displayRewards
@@ -97,14 +96,15 @@ local function xpbar_OnEnter()
         end
 
         GameTooltip:AddLine(
-            ARTIFACT_POWER .. " " ..
-                CommaValue(artifactXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r",
+            ARTIFACT_POWER ..
+                " " ..
+                    CommaValue(artifactXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r",
             1,
             1,
             1
         )
     elseif azeriteItemLocation then
-        local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation) 
+        local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
         local xpPct
         if xpForNextPoint > 0 then
             xpPct = math.floor((azeriteXP / xpForNextPoint) * 100) .. "%"
@@ -112,7 +112,9 @@ local function xpbar_OnEnter()
             xpPct = "n/a"
         end
         GameTooltip:AddLine(
-            AZERITE_POWER_BAR:format(CommaValue(azeriteXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r"),
+            AZERITE_POWER_BAR:format(
+                CommaValue(azeriteXP) .. " / " .. CommaValue(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r"
+            ),
             1,
             1,
             1
@@ -344,7 +346,7 @@ local function xpbar_OnEvent(self, event)
     if showArtifact and disabledArtifact == false then
         showBar2 = true
         numPoints, artifactXP, xpForNextPoint = artifactPoints()
-        
+
         if xpForNextPoint > 0 then
             artifactVal = artifactXP / xpForNextPoint
         else
@@ -360,7 +362,7 @@ local function xpbar_OnEvent(self, event)
         else
             artifactVal = 0
         end
-    end 
+    end
 
     if showBar2 then
         _G["GwExperienceFrameArtifactBarCandy"]:SetValue(artifactVal)
@@ -1066,7 +1068,8 @@ end
 local function gwMicro_PositionAlert(alert)
     if
         (alert ~= CollectionsMicroButtonAlert and alert ~= LFDMicroButtonAlert and alert ~= EJMicroButtonAlert and
-            alert ~= StoreMicroButtonAlert and alert ~= CharacterMicroButtonAlert)
+            alert ~= StoreMicroButtonAlert and
+            alert ~= CharacterMicroButtonAlert)
      then
         return
     end
@@ -1400,11 +1403,12 @@ local function loadRewards()
     tinsert(UISpecialFrames, "GwLevelingRewards")
 end
 
+local GW_LEVELING_REWARDS = {}
 displayRewards = function()
     local _, englishClass = UnitClass("player")
     local talentLevels = CLASS_TALENT_LEVELS[englishClass] or CLASS_TALENT_LEVELS["DEFAULT"]
-    GW_LEVELING_REWARDS = {}
 
+    wipe(GW_LEVELING_REWARDS)
     for i = 1, 7 do
         GW_LEVELING_REWARDS[i] = {}
         GW_LEVELING_REWARDS[i]["type"] = "TALENT"

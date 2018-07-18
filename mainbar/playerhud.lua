@@ -72,7 +72,7 @@ local function repair_OnEvent()
     for i = 1, 23 do
         local current, maximum = GetInventoryItemDurability(i)
         if current ~= nil then
-            dur = current / maximum
+            local dur = current / maximum
             if dur < 0.5 then
                 needRepair = true
             end
@@ -97,7 +97,7 @@ end
 
 local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationName)
     if forcePowerType == nil then
-        forcePowerType, powerToken, altR, altG, altB = UnitPowerType("player")
+        forcePowerType, powerToken, _ = UnitPowerType("player")
         forceAnimationName = "powerBarAnimation"
     end
 
