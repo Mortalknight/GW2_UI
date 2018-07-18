@@ -473,7 +473,7 @@ local function updatePOI(questID, questLogIndex)
         AddQuestWatch(questLogIndex, true)
     end
     SetSuperTrackedQuestID(questID)
-    WorldMapFrame_OnUserChangedSuperTrackedQuest(questID)
+   -- WorldMapFrame_OnUserChangedSuperTrackedQuest(questID)
 end
 GW.AddForProfiling("objectives", "updatePOI", updatePOI)
 
