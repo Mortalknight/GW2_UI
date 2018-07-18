@@ -774,7 +774,7 @@ CLASS_POWERS[9][3] = powerSoulshard
 
 CLASS_POWERS[10] = {}
 CLASS_POWERS[10][1] = powerStagger
-CLASS_POWERS[10][3] = powerChi
+CLASS_POWERS[10][2] = powerChi
 
 CLASS_POWERS[11] = {}
 CLASS_POWERS[11][1] = powerMana
@@ -800,9 +800,6 @@ local function LoadClassPowers()
     classPowerFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     classPowerFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
-    selectType()
-    updatePower(GwPlayerClassPower, "PLAYER_ENTERING_WORLD", "player")
-
     GwMongooseBar.texture1 = GwMongooseBar.bar.texture1
     GwMongooseBar.texture2 = GwMongooseBar.bar.texture2
     GwMongooseBar.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
@@ -824,6 +821,9 @@ local function LoadClassPowers()
     GwDiscPriest.bar.overlay:SetPosition(0, 0, 0)
 
     GwFocusRage.highlight = GwFocusRage.bar.highlight
+
+    selectType()
+    updatePower(GwPlayerClassPower, "PLAYER_ENTERING_WORLD", "player")
 
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript(
