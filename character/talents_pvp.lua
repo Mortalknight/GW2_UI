@@ -398,16 +398,10 @@ local function passivePool_Resetter(self, btn)
 end
 GW.AddForProfiling("talents_pvp", "passivePool_Resetter", passivePool_Resetter)
 
-local function toggle_Update(self)
-    self:SetEnabled(C_PvP.CanToggleWarMode())
-end
-GW.AddForProfiling("talents_pvp", "toggle_Update", toggle_Update)
-
 local function toggle_OnShow(self)
     self:RegisterEvent("PLAYER_FLAGS_CHANGED")
     self:RegisterEvent("ZONE_CHANGED")
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    toggle_Update(self)
 end
 GW.AddForProfiling("talents_pvp", "toggle_OnShow", toggle_OnShow)
 
@@ -417,13 +411,6 @@ local function toggle_OnHide(self)
     self:UnregisterEvent("ZONE_CHANGED")
 end
 GW.AddForProfiling("talents_pvp", "toggle_OnHide", toggle_OnHide)
-
-local function toggle_OnEvent(event, ...)
-    if (event == "PLAYER_FLAGS_CHANGED" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_NEW_AREA") then
-        toggle_Update(self)
-    end
-end
-GW.AddForProfiling("talents_pvp", "toggle_OnEvent", toggle_OnEvent)
 
 local function toggle_OnClick(self)
     if (C_PvP.CanToggleWarMode()) then
@@ -437,9 +424,7 @@ local function toggle_OnClick(self)
             PlaySound(SOUNDKIT.UI_WARMODE_ACTIVATE)
             self.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_on")
         end
-
         C_PvP.ToggleWarMode()
-        toggle_Update(self)
     end
 end
 GW.AddForProfiling("talents", "toggle_OnClick", toggle_OnClick)
@@ -493,12 +478,13 @@ local function CreatePvPTab(fmSpellbook)
     warGroup.label.title:SetShadowColor(0, 0, 0, 1)
     warGroup.label.title:SetShadowOffset(1, -1)
     warGroup.label.title:SetText(PVP_LABEL_WAR_MODE)
+    
     warGroup.toggle:SetScript("OnEnter", toggle_OnEnter)
     warGroup.toggle:SetScript("OnLeave", GameTooltip_Hide)
     warGroup.toggle:SetScript("OnShow", toggle_OnShow)
     warGroup.toggle:SetScript("OnHide", toggle_OnHide)
     warGroup.toggle:SetScript("OnClick", toggle_OnClick)
-    warGroup.toggle:SetScript("OnEvent", toggle_OnEvent)
+    warGroup.toggle:SetEnabled(true)
     if C_PvP.IsWarModeDesired() then
         warGroup.toggle.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_on")
     end
