@@ -182,15 +182,14 @@ local function itemSlot_OnModifiedClick(self, button)
 			OpenAzeriteEmpoweredItemUIFromItemLocation(itemLocation);
 		else
 			SocketInventoryItem(self:GetID());
-		end
-		return;
+        end
+        GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+		return
 	end
-	if ( HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID())) ) then
-		return;
+    if ( HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID())) ) then
+        GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+		return
 	end
-
-
-   
 end
 
 local function itemSlot_OnClick(self, button, drag)
