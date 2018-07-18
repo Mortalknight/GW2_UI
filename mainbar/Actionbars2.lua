@@ -278,29 +278,29 @@ end
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
     local btn = _G[buttonName]
 
-    if _G[buttonName .. "Icon"] ~= nil then
-        _G[buttonName .. "Icon"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    if btn.icon ~= nil then
+        btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
-    if _G[buttonName .. "HotKey"] ~= nil then
-        _G[buttonName .. "HotKey"]:ClearAllPoints()
-        _G[buttonName .. "HotKey"]:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
-        _G[buttonName .. "HotKey"]:SetJustifyH("CENTER")
+    if btn.HotKey ~= nil then
+        btn.HotKey:ClearAllPoints()
+        btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
+        btn.HotKey:SetJustifyH("CENTER")
     end
-    if _G[buttonName .. "Count"] ~= nil then
-        _G[buttonName .. "Count"]:ClearAllPoints()
-        _G[buttonName .. "Count"]:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
-        _G[buttonName .. "Count"]:SetJustifyH("RIGHT")
-        _G[buttonName .. "Count"]:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
-        _G[buttonName .. "Count"]:SetTextColor(1, 1, 0.6)
+    if btn.Count ~= nil then
+        btn.Count:ClearAllPoints()
+        btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
+        btn.Count:SetJustifyH("RIGHT")
+        btn.Count:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+        btn.Count:SetTextColor(1, 1, 0.6)
     end
 
-    if _G[buttonName .. "Border"] ~= nil then
-        _G[buttonName .. "Border"]:SetSize(btn:GetWidth(), btn:GetWidth())
-        _G[buttonName .. "Border"]:SetBlendMode("BLEND")
-        _G[buttonName .. "Border"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+    if btn.Border ~= nil then
+        btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.Border:SetBlendMode("BLEND")
+        btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
     end
-    if _G[buttonName .. "NormalTexture"] ~= nil then
-        _G[buttonName]:SetNormalTexture(nil)
+    if btn.NormalTexture ~= nil then
+        btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
     end
 
     if _G[buttonName .. "FloatingBG"] ~= nil then
@@ -310,19 +310,19 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
         _G[buttonName .. "NormalTexture2"]:Hide()
     end
-    if _G[buttonName .. "AutoCastable"] ~= nil then
-        _G[buttonName .. "AutoCastable"]:SetSize(btn:GetWidth(), btn:GetWidth())
+    if btn.AutoCastable ~= nil then
+        btn.AutoCastable:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
     btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
     btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
     btn:SetCheckedTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
-    _G[buttonName .. "Name"]:SetAlpha(0) --Hide Marco Name on Actionbutton
+    btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     if noBackDrop == nil or noBackDrop == false then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackDrop")
         local backDropSize = 1
-        if _G[buttonName]:GetWidth() > 40 then
+        if btn:GetWidth() > 40 then
             backDropSize = 2
         end
 
