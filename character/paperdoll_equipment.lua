@@ -176,16 +176,21 @@ local function actionButtonGlobalStyle(self)
 end
 
 local function itemSlot_OnModifiedClick(self, button)
-    if (HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID()))) then
-        return
-    end
-    if (IsModifiedClick("SOCKETITEM")) then
-        SocketInventoryItem(self:GetID())
-        if InCombatLockdown() then
-            return
-        end
-        GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-    end
+	if ( IsModifiedClick("EXPANDITEM") ) then
+		local itemLocation = ItemLocation:CreateFromEquipmentSlot(self:GetID());
+		if C_Item.DoesItemExist(itemLocation) and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(itemLocation) then
+			OpenAzeriteEmpoweredItemUIFromItemLocation(itemLocation);
+		else
+			SocketInventoryItem(self:GetID());
+		end
+		return;
+	end
+	if ( HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID())) ) then
+		return;
+	end
+
+
+   
 end
 
 local function itemSlot_OnClick(self, button, drag)
