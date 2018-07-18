@@ -2,6 +2,10 @@
 
 FIXED
    - Zone transitions should not cause intermittent map errors (CF#162)
+   - Resolve monk power bar problems (CF#161)
+   - Clicking quest name will no longer cause a lua error (CF#165)
+   - Warmode/pvp tooltip will now show properly outside of Org/SW
+   - Fixed actionbar and vehicle UI issues (CF#163, CF#164)
 
 
 

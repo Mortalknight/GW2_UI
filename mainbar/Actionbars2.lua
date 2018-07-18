@@ -78,37 +78,6 @@ local actionBarEquipUpdate
 local actionButtons_OnUpdate
 local multiButtons_OnUpdate
 
--- override action bar update positioning; we don't want dynamic positioning stuff
-
-local function updateMultiActionBar(frame, var, pageVar)
-    -- overrides FrameXML/MultiActionBars.lua line 34
-    if InCombatLockdown() then
-        -- TODO: this causes bottomleft/right bars to not show if loading/reloading into combat
-        -- can we make this all a secure stack and/or use RegisterAutoHide/UnregisterAutoHide?
-        return
-    end
-    if (var and IsNormalActionBarState()) then
-        frame:SetShown(true)
-        VIEWABLE_ACTION_BAR_PAGES[pageVar] = nil
-    else
-        frame:SetShown(false)
-        VIEWABLE_ACTION_BAR_PAGES[pageVar] = 1
-    end
-end
-
-MainMenuBar.ChangeMenuBarSizeAndPosition = function(self, rightMultiBarShowing)
-    -- overrides FrameXML/MainMenuBar.lua line 352
-end
-
-MultiActionBar_Update = function()
-    -- overrides FrameXML/MultiActionBar.lua line 53
-    updateMultiActionBar(MultiBarBottomLeft, SHOW_MULTI_ACTIONBAR_1, BOTTOMLEFT_ACTIONBAR_PAGE)
-    updateMultiActionBar(MultiBarBottomRight, SHOW_MULTI_ACTIONBAR_2, BOTTOMRIGHT_ACTIONBAR_PAGE)
-    updateMultiActionBar(MultiBarRight, SHOW_MULTI_ACTIONBAR_3, RIGHT_ACTIONBAR_PAGE)
-    updateMultiActionBar(MultiBarLeft, SHOW_MULTI_ACTIONBAR_3 and SHOW_MULTI_ACTIONBAR_4, LEFT_ACTIONBAR_PAGE)
-    UIParent_ManageFramePositions()
-end
-
 local function hideBlizzardsActionbars()
     for k, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
         if v and v.Hide ~= nil then
@@ -299,32 +268,34 @@ local function setMicroButtons()
 end
 
 local function hideBackdrop(self)
-    _G[self:GetName() .. "GwBackDrop"]:Hide()
+    self.gwBackdrop:Hide()
 end
 
 local function showBackdrop(self)
-    _G[self:GetName() .. "GwBackDrop"]:Show()
+    self.gwBackdrop:Show()
 end
 
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
+    local btn = _G[buttonName]
+
     if _G[buttonName .. "Icon"] ~= nil then
         _G[buttonName .. "Icon"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
     if _G[buttonName .. "HotKey"] ~= nil then
         _G[buttonName .. "HotKey"]:ClearAllPoints()
-        _G[buttonName .. "HotKey"]:SetPoint("CENTER", _G[buttonName], "BOTTOM", 0, 0)
+        _G[buttonName .. "HotKey"]:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
         _G[buttonName .. "HotKey"]:SetJustifyH("CENTER")
     end
     if _G[buttonName .. "Count"] ~= nil then
         _G[buttonName .. "Count"]:ClearAllPoints()
-        _G[buttonName .. "Count"]:SetPoint("TOPRIGHT", _G[buttonName], "TOPRIGHT", -3, -3)
+        _G[buttonName .. "Count"]:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         _G[buttonName .. "Count"]:SetJustifyH("RIGHT")
         _G[buttonName .. "Count"]:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
         _G[buttonName .. "Count"]:SetTextColor(1, 1, 0.6)
     end
 
     if _G[buttonName .. "Border"] ~= nil then
-        _G[buttonName .. "Border"]:SetSize(_G[buttonName]:GetWidth(), _G[buttonName]:GetWidth())
+        _G[buttonName .. "Border"]:SetSize(btn:GetWidth(), btn:GetWidth())
         _G[buttonName .. "Border"]:SetBlendMode("BLEND")
         _G[buttonName .. "Border"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
     end
@@ -340,30 +311,31 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
         _G[buttonName .. "NormalTexture2"]:Hide()
     end
     if _G[buttonName .. "AutoCastable"] ~= nil then
-        _G[buttonName .. "AutoCastable"]:SetSize(_G[buttonName]:GetWidth(), _G[buttonName]:GetWidth())
+        _G[buttonName .. "AutoCastable"]:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
-    _G[buttonName]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
-    _G[buttonName]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
-    _G[buttonName]:SetCheckedTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
+    btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
+    btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
+    btn:SetCheckedTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
     _G[buttonName .. "Name"]:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     if noBackDrop == nil or noBackDrop == false then
-        local backDrop =
-            CreateFrame("Frame", buttonName .. "GwBackDrop", _G[buttonName]:GetParent(), "GwActionButtonBackDrop")
+        local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackDrop")
         local backDropSize = 1
         if _G[buttonName]:GetWidth() > 40 then
             backDropSize = 2
         end
 
-        backDrop:SetPoint("TOPLEFT", _G[buttonName], "TOPLEFT", -backDropSize, backDropSize)
-        backDrop:SetPoint("BOTTOMRIGHT", _G[buttonName], "BOTTOMRIGHT", backDropSize, -backDropSize)
+        backDrop:SetPoint("TOPLEFT", btn, "TOPLEFT", -backDropSize, backDropSize)
+        backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
+
+        btn.gwBackdrop = backDrop
     end
 
     if hideUnused == true then
-        _G[buttonName .. "GwBackDrop"]:Hide()
-        _G[buttonName]:HookScript("OnHide", hideBackdrop)
-        _G[buttonName]:HookScript("OnShow", showBackdrop)
+        btn.gwBackdrop:Hide()
+        btn:HookScript("OnHide", hideBackdrop)
+        btn:HookScript("OnShow", showBackdrop)
     end
 end
 
@@ -426,6 +398,7 @@ local function updateMainBar()
 
             btn["gw_RangeIndicator"] = rangeIndicator
             btn["gw_HotKey"] = hotkey
+            btn.noGrid = nil
 
             if GetSetting("BUTTON_ASSIGNMENTS") then
                 local hkBg =
@@ -454,10 +427,39 @@ local function updateMainBar()
             end
         end
     end
-    MainMenuBarArtFrame:HookScript("OnUpdate", actionButtons_OnUpdate)
-    MainMenuBarArtFrame:ClearAllPoints()
-    MainMenuBarArtFrame:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
-    MainMenuBarArtFrame:SetSize(btn_padding, used_height)
+
+    -- TODO: gotta be a much better way to handle all this
+    -- default bar sizes in various circumstances:
+    --   with bottomright shown = 804
+    --   with bottomright hide  = 550
+    MainMenuBarArtFrame:SetScript("OnUpdate", actionButtons_OnUpdate)
+    MainMenuBarArtFrame:SetSize(btn_padding, used_height) -- width is always overriden later by action bar controller
+    hooksecurefunc(
+        "MultiActionBar_Update",
+        function()
+            if InCombatLockdown() then
+                return
+            end
+            local xOff
+            if SHOW_MULTI_ACTIONBAR_2 then
+                xOff = (804 - btn_padding) / 2
+                GW.Debug("showing multi action 2", xOff, SHOW_MULTI_ACTIONBAR_2)
+            else
+                xOff = -(btn_padding - 550) / 2
+                GW.Debug("hiding multi action 2", xOff, SHOW_MULTI_ACTIONBAR_2)
+            end
+            MainMenuBarArtFrame:ClearAllPoints()
+            MainMenuBarArtFrame:SetPoint("TOP", UIParent, "BOTTOM", xOff, 80)
+
+            MultiBarLeft:ClearAllPoints()
+            local pt = GetSetting("MultiBarLeft")
+            MultiBarLeft:SetPoint(pt.point, UIParent, pt.relativePoint, pt.xOfs, pt.yOfs)
+
+            MultiBarRight:ClearAllPoints()
+            pt = GetSetting("MultiBarRight")
+            MultiBarRight:SetPoint(pt.point, UIParent, pt.relativePoint, pt.xOfs, pt.yOfs)
+        end
+    )
 end
 
 local function updateMultiBar(barName, buttonName)
@@ -477,6 +479,7 @@ local function updateMultiBar(barName, buttonName)
         multibar.gw_FadeShowing = false
     end
 
+    local hideActionBarBG = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
     for i = 1, 12 do
         local btn = _G[buttonName .. i]
         multibar.gw_MultiButtons[i] = btn
@@ -486,10 +489,11 @@ local function updateMultiBar(barName, buttonName)
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
-            setActionButtonStyle(buttonName .. i, nil, GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
+            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
 
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", multibar, "TOPLEFT", btn_padding, -btn_padding_y)
+            btn.noGrid = nil
 
             btn_padding = btn_padding + settings.size + settings.margin
             btn_this_row = btn_this_row + 1
@@ -877,15 +881,15 @@ local function LoadActionBars()
 
     -- setup fader logic
     MultiBarBottomLeft.gw_StateTrigger = true
-    MultiBarBottomLeft:HookScript("OnShow", fader_OnShow)
-    MultiBarBottomLeft:HookScript("OnHide", fader_OnHide)
+    MultiBarBottomLeft:SetScript("OnShow", fader_OnShow)
+    MultiBarBottomLeft:SetScript("OnHide", fader_OnHide)
     MultiBarBottomRight.gw_StateTrigger = true
-    MultiBarBottomRight:HookScript("OnShow", fader_OnShow)
-    MultiBarBottomRight:HookScript("OnHide", fader_OnHide)
-    MultiBarLeft:HookScript("OnShow", fader_OnShow)
-    MultiBarLeft:HookScript("OnHide", fader_OnHide)
-    MultiBarRight:HookScript("OnShow", fader_OnShow)
-    MultiBarRight:HookScript("OnHide", fader_OnHide)
+    MultiBarBottomRight:SetScript("OnShow", fader_OnShow)
+    MultiBarBottomRight:SetScript("OnHide", fader_OnHide)
+    MultiBarLeft:SetScript("OnShow", fader_OnShow)
+    MultiBarLeft:SetScript("OnHide", fader_OnHide)
+    MultiBarRight:SetScript("OnShow", fader_OnShow)
+    MultiBarRight:SetScript("OnHide", fader_OnHide)
 
     -- init our bars
     updateMainBar()
