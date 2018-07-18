@@ -98,10 +98,13 @@ local questCompass = {
     ["COMPASS"] = true
 }
 local function getNearestQuestPOI(currentMapID)
+    if not currentMapID then
+        return nil
+    end
     local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
     local numQuests, _ = GetNumQuestLogEntries()
     if posTable == nil or numQuests == nil then
-        return
+        return nil
     end
 
     local posX, posY = posTable:GetXY()
@@ -142,6 +145,9 @@ local bodyCompass = {
     ["COMPASS"] = true
 }
 local function getBodyPOI()
+    if not currentMapID then
+        return nil
+    end
     local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
     local corpTable = C_DeathInfo.GetCorpseMapPosition(currentMapID)
     if posTable == nil or corpTable == nil then
@@ -232,6 +238,9 @@ GW.NotificationStateChanged = NotificationStateChanged
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self, elapsed)
+    if not currentMapID then
+        return
+    end
     self.TotalElapsed = self.TotalElapsed + elapsed
     if self.TotalElapsed < 0.016 then
         return

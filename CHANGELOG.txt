@@ -1,3 +1,10 @@
+5.0.1
+
+FIXED
+   - Zone transitions should not cause intermittent map errors (CF#162)
+
+
+
 5.0.0
 
 NEW
