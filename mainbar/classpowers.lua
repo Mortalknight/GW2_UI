@@ -7,9 +7,9 @@ local AddToAnimation = GW.AddToAnimation
 
 local extra_manabar_loaded = false
 
-HOLY_POWER_FLARE_ANIMATION = 0
+local HOLY_POWER_FLARE_ANIMATION = 0
 
-RUNE_TIMER_ANIMATIONS = {}
+local RUNE_TIMER_ANIMATIONS = {}
 RUNE_TIMER_ANIMATIONS[1] = 0
 RUNE_TIMER_ANIMATIONS[2] = 0
 RUNE_TIMER_ANIMATIONS[3] = 0
@@ -774,7 +774,7 @@ CLASS_POWERS[9][3] = powerSoulshard
 
 CLASS_POWERS[10] = {}
 CLASS_POWERS[10][1] = powerStagger
-CLASS_POWERS[10][2] = powerChi
+CLASS_POWERS[10][3] = powerChi
 
 CLASS_POWERS[11] = {}
 CLASS_POWERS[11][1] = powerMana

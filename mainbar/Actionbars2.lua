@@ -443,10 +443,8 @@ local function updateMainBar()
             local xOff
             if SHOW_MULTI_ACTIONBAR_2 then
                 xOff = (804 - btn_padding) / 2
-                GW.Debug("showing multi action 2", xOff, SHOW_MULTI_ACTIONBAR_2)
             else
                 xOff = -(btn_padding - 550) / 2
-                GW.Debug("hiding multi action 2", xOff, SHOW_MULTI_ACTIONBAR_2)
             end
             MainMenuBarArtFrame:ClearAllPoints()
             MainMenuBarArtFrame:SetPoint("TOP", UIParent, "BOTTOM", xOff, 80)
