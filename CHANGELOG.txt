@@ -2,6 +2,7 @@
 
 FIXED
    - Fix missing chi bar for windwalker monks (CF#170)
+   - Fix flicker on comparison tooltips (CF#166)
 
 
 5.0.1
