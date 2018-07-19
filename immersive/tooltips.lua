@@ -51,6 +51,7 @@ local function movePlacement(self)
 	self:ClearAllPoints()
 	self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 300)
 end
+GW.AddForProfiling("tooltips", "movePlacement", movePlacement)
 
 local constBackdropArgs = {
 	bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
@@ -60,17 +61,18 @@ local constBackdropArgs = {
 	edgeSize = 32,
 	insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
-
 local function styleTooltip(self)
 	if not self:IsShown() then
 		return
 	end
 	self:SetBackdrop(constBackdropArgs)
 end
+GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
 local function anchorTooltip(self, p)
 	self:SetOwner(p, "ANCHOR_CURSOR")
 end
+GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 
 local function LoadTooltips()
 	if GetSetting("TOOLTIP_MOUSE") then
@@ -82,9 +84,11 @@ local function LoadTooltips()
 		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
 	end
 
+	hooksecurefunc("GameTooltip_SetBackdropStyle", styleTooltip)
 	for _, toStyle in ipairs(UNSTYLED) do
-		if _G[toStyle] then
-			_G[toStyle]:HookScript("OnUpdate", styleTooltip)
+		local f = _G[toStyle]
+		if f then
+			f:HookScript("OnUpdate", styleTooltip)
 		end
 	end
 end
