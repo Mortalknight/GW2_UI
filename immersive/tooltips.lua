@@ -69,6 +69,17 @@ local function styleTooltip(self)
 end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
+local function tooltip_SetBackdropStyle(self, args)
+	if args and args ~= GAME_TOOLTIP_BACKDROP_STYLE_DEFAULT then
+		return
+	end
+	if not self:IsShown() then
+		return
+	end
+	self:SetBackdrop(constBackdropArgs)
+end
+GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
+
 local function anchorTooltip(self, p)
 	self:SetOwner(p, "ANCHOR_CURSOR")
 end
@@ -84,7 +95,7 @@ local function LoadTooltips()
 		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
 	end
 
-	hooksecurefunc("GameTooltip_SetBackdropStyle", styleTooltip)
+	hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 	for _, toStyle in ipairs(UNSTYLED) do
 		local f = _G[toStyle]
 		if f then
