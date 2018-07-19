@@ -104,6 +104,7 @@ local function hideBlizzardsActionbars()
 
     MainMenuBar:EnableMouse(false)
 end
+GW.AddForProfiling("Actionbars2", "hideBlizzardsActionbars", hideBlizzardsActionbars)
 
 -- other things can register callbacks for when actionbar visibility/fade changes
 local callback = {}
@@ -119,6 +120,7 @@ local function stateChanged()
         v()
     end
 end
+GW.AddForProfiling("Actionbars2", "stateChanged", stateChanged)
 
 hooksecurefunc("ValidateActionBarTransition", stateChanged)
 
@@ -145,6 +147,7 @@ local function actionBarFrameShow(f, name)
         end
     )
 end
+GW.AddForProfiling("Actionbars2", "actionBarFrameShow", actionBarFrameShow)
 
 local function actionBarFrameHide(f, name)
     StopAnimation(name)
@@ -167,6 +170,7 @@ local function actionBarFrameHide(f, name)
         end
     )
 end
+GW.AddForProfiling("Actionbars2", "actionBarFrameHide", actionBarFrameHide)
 
 local function fadeCheck(self, elapsed)
     self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
@@ -191,6 +195,7 @@ local function fadeCheck(self, elapsed)
         end
     end
 end
+GW.AddForProfiling("Actionbars2", "fadeCheck", fadeCheck)
 
 local function fader_OnShow(self)
     self.gw_FadeShowing = true
@@ -198,6 +203,7 @@ local function fader_OnShow(self)
         stateChanged()
     end
 end
+GW.AddForProfiling("Actionbars2", "fader_OnShow", fader_OnShow)
 
 local function fader_OnHide(self)
     self.gw_FadeShowing = false
@@ -205,6 +211,7 @@ local function fader_OnHide(self)
         stateChanged()
     end
 end
+GW.AddForProfiling("Actionbars2", "fader_OnHide", fader_OnHide)
 
 local function updateHotkey(self, actionButtonType)
     local hotkey = self.HotKey --_G[self:GetName() .. 'HotKey']
@@ -266,14 +273,17 @@ local function setMicroButtons()
         end
     end
 end
+GW.AddForProfiling("Actionbars2", "setMicroButtons", setMicroButtons)
 
 local function hideBackdrop(self)
     self.gwBackdrop:Hide()
 end
+GW.AddForProfiling("Actionbars2", "hideBackdrop", hideBackdrop)
 
 local function showBackdrop(self)
     self.gwBackdrop:Show()
 end
+GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
 
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
     local btn = _G[buttonName]
@@ -338,6 +348,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
         btn:HookScript("OnShow", showBackdrop)
     end
 end
+GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
 
 local function main_OnEvent(self, event)
     if event == "PET_BATTLE_OPENING_START" then
@@ -348,6 +359,7 @@ local function main_OnEvent(self, event)
         actionBarEquipUpdate()
     end
 end
+GW.AddForProfiling("Actionbars2", "main_OnEvent", main_OnEvent)
 
 --[[
 local function showAttr()
@@ -459,6 +471,7 @@ local function updateMainBar()
         end
     )
 end
+GW.AddForProfiling("Actionbars2", "updateMainBar", updateMainBar)
 
 local function updateMultiBar(barName, buttonName)
     local multibar = _G[barName]
@@ -517,6 +530,7 @@ local function updateMultiBar(barName, buttonName)
     multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
     multibar:SetSize(used_width, used_height)
 end
+GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
 
 local function petBarUpdate()
     _G["PetActionButton1Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack")
@@ -532,6 +546,7 @@ local function petBarUpdate()
         end
     end
 end
+GW.AddForProfiling("Actionbars2", "petBarUpdate", petBarUpdate)
 
 local function setPetBar()
     local BUTTON_SIZE = 28
@@ -589,6 +604,7 @@ local function setPetBar()
         end
     end
 end
+GW.AddForProfiling("Actionbars2", "setPetBar", setPetBar)
 
 local function stance_OnEvent(self, event)
     if InCombatLockdown() then
@@ -601,6 +617,7 @@ local function stance_OnEvent(self, event)
         GwStanceBarButton:Show()
     end
 end
+GW.AddForProfiling("Actionbars2", "stance_OnEvent", stance_OnEvent)
 
 local function setStanceBar()
     for i = 1, 12 do
@@ -659,11 +676,13 @@ local function setStanceBar()
     ]=]
     )
 end
+GW.AddForProfiling("Actionbars2", "setStanceBar", setStanceBar)
 
 local function setPossessBar()
     PossessBarFrame:ClearAllPoints()
     PossessBarFrame:SetPoint("BOTTOM", MainMenuBarArtFrame, "TOP", -110, 40)
 end
+GW.AddForProfiling("Actionbars2", "setPossessBar", setPossessBar)
 
 local function vehicleLeave_OnUpdate()
     if InCombatLockdown() then
@@ -671,14 +690,17 @@ local function vehicleLeave_OnUpdate()
     end
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 end
+GW.AddForProfiling("Actionbars2", "vehicleLeave_OnUpdate", vehicleLeave_OnUpdate)
 
 local function vehicleLeave_OnShow()
     MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", vehicleLeave_OnUpdate)
 end
+GW.AddForProfiling("Actionbars2", "vehicleLeave_OnShow", vehicleLeave_OnShow)
 
 local function vehicleLeave_OnHide()
     MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", nil)
 end
+GW.AddForProfiling("Actionbars2", "vehicleLeave_OnHide", vehicleLeave_OnHide)
 
 local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
@@ -688,6 +710,7 @@ local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:HookScript("OnShow", vehicleLeave_OnShow)
     MainMenuBarVehicleLeaveButton:HookScript("OnHide", vehicleLeave_OnHide)
 end
+GW.AddForProfiling("Actionbars2", "setLeaveVehicleButton", setLeaveVehicleButton)
 
 actionBarEquipUpdate = function()
     local bars = {
@@ -717,6 +740,7 @@ actionBarEquipUpdate = function()
         end
     end
 end
+GW.AddForProfiling("Actionbars2", "actionBarEquipUpdate", actionBarEquipUpdate)
 
 local function actionButtonFlashing(btn, elapsed)
     local flashtime = btn.flashtime
@@ -739,6 +763,7 @@ local function actionButtonFlashing(btn, elapsed)
 
     btn.flashtime = flashtime
 end
+GW.AddForProfiling("Actionbars2", "actionButtonFlashing", actionButtonFlashing)
 
 actionButtons_OnUpdate = function(self, elapsed)
     for i = 1, 12 do
@@ -804,6 +829,7 @@ multiButtons_OnUpdate = function(self, elapsed)
         end
     end
 end
+GW.AddForProfiling("Actionbars2", "multiButtons_OnUpdate", multiButtons_OnUpdate)
 
 -- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
 local function adjustFixedAnchors(self, relativeAlert)
@@ -827,6 +853,7 @@ local function adjustFixedAnchors(self, relativeAlert)
     end
     return relativeAlert
 end
+GW.AddForProfiling("Actionbars2", "adjustFixedAnchors", adjustFixedAnchors)
 
 local function updateAnchors(self)
     self:CleanAnchorPriorities()
@@ -840,6 +867,7 @@ local function updateAnchors(self)
         end
     end
 end
+GW.AddForProfiling("Actionbars2", "updateAnchors", updateAnchors)
 
 local function LoadActionBars()
     local HIDE_ACTIONBARS_CVAR = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
@@ -963,6 +991,7 @@ local function updatePetFrameLocation()
         GwPlayerPetFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
     end
 end
+GW.AddForProfiling("Actionbars2", "updatePetFrameLocation", updatePetFrameLocation)
 
 local function updatePetData(self, event, unit)
     if unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
@@ -1025,6 +1054,7 @@ local function updatePetData(self, event, unit)
     GwPlayerPetFrameHealth.animationCurrent = healthprec
     _G["GwPlayerPetFrameHealthString"]:SetText(CommaValue(health))
 end
+GW.AddForProfiling("Actionbars2", "updatePetData", updatePetData)
 
 local function LoadPetFrame()
     -- disable default PetFrame stuff
