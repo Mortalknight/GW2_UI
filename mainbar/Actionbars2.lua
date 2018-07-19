@@ -795,13 +795,13 @@ actionButtons_OnUpdate = function(self, elapsed)
 end
 GW.AddForProfiling("Actionbars2", "actionButtons_OnUpdate", actionButtons_OnUpdate)
 
+local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
+local in_R, in_G, in_B = LIGHTGRAY_FONT_COLOR:GetRGB()
 multiButtons_OnUpdate = function(self, elapsed)
     if not self.gw_FadeShowing then
         return -- don't need OnUpdate stuff if this bar is not visible
     end
 
-    local out_range_RGB = {RED_FONT_COLOR:GetRGB()}
-    local in_range_RGB = {LIGHTGRAY_FONT_COLOR:GetRGB()}
     for i = 1, 12 do
         local btn = self.gw_MultiButtons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
@@ -818,9 +818,9 @@ multiButtons_OnUpdate = function(self, elapsed)
                 local checksRange = (valid ~= nil)
                 local inRange = checksRange and valid
                 if checksRange and not inRange then
-                    btn.HotKey:SetVertexColor(unpack(out_range_RGB))
+                    btn.HotKey:SetVertexColor(out_R, out_G, out_B)
                 else
-                    btn.HotKey:SetVertexColor(unpack(in_range_RGB))
+                    btn.HotKey:SetVertexColor(in_R, in_G, in_B)
                 end
                 rangeTimer = TOOLTIP_UPDATE_TIME
             end
