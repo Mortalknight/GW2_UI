@@ -130,7 +130,7 @@ local function pvpHud_onEvent(self, event)
         activeBg = mapID
         GwBattleGroundScores:SetScript("OnEvent", bgs[mapID]["OnEvent"])
 
-        GwBattleGroundScores:RegisterEvent("UPDATE_WORLD_STATES")
+        GwBattleGroundScores:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
         GwBattleGroundScores:RegisterEvent("UPDATE_BATTLEFIELD_SCORE")
 
         GwBattleGroundScores:RegisterEvent("PLAYER_ENTERING_WORLD")
