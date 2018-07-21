@@ -1,7 +1,7 @@
 5.0.3
 
 FIXED
-    - Arathi PvP will no longer cause a lua error (CF#173)
+    - Disabled PvP HUD because of massive changes on Blizzard site (CF#173)
     - More actionbar fixes (CF#169... I hope)
 
 

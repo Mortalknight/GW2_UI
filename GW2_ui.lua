@@ -493,9 +493,9 @@ local function gw_OnEvent(self, event, name)
         GW.LoadBank()
     end
 
-    if GetSetting("USE_BATTLEGROUND_HUD") then
-        GW.LoadBattlegrounds()
-    end
+    --if GetSetting("USE_BATTLEGROUND_HUD") then
+       -- GW.LoadBattlegrounds()
+    --end
 
     GW.LoadCharacter()
 
