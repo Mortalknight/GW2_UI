@@ -143,28 +143,3 @@ DODGEBAR_SPELLS[9] = {48018}
 DODGEBAR_SPELLS[10] = {109132, 115008}
 DODGEBAR_SPELLS[11] = {102280, 102401}
 DODGEBAR_SPELLS[12] = {189110, 195072}
-
-local MAIN_HUD_FRAMES = {
-    "MainMenuBarArtFrame",
-    "GwHudArtFrame",
-    "MultiBarBottomRight",
-    "MultiBarBottomLeft",
-    "GwPlayerPowerBar",
-    "GwPlayerAuraFrame",
-    "GwPlayerClassPower",
-    "GwPlayerHealthGlobe",
-    "GwPlayerPetFrame",
-    "PetActionButton1",
-    "PetActionButton2",
-    "PetActionButton3",
-    "PetActionButton4",
-    "PetActionButton5",
-    "PetActionButton6",
-    "PetActionButton7",
-    "PetActionButton8",
-    "PetActionButton9",
-    "PetActionButton10",
-    "PetActionButton11",
-    "PetActionButton12"
-}
-GW.MAIN_HUD_FRAMES = MAIN_HUD_FRAMES

@@ -5,7 +5,6 @@ local SetSetting = GW.SetSetting
 local GetDefault = GW.GetDefault
 local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
-local MAIN_HUD_FRAMES = GW.MAIN_HUD_FRAMES
 local IsFrameModified = GW.IsFrameModified
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
@@ -167,32 +166,6 @@ local function UpdateFramePositions()
     end
 end
 GW.UpdateFramePositions = UpdateFramePositions
-
-local function UpdateHudScale(scale)
-    for k, v in pairs(MAIN_HUD_FRAMES) do
-        if _G[v] then
-            _G[v]:SetScale(GetSetting("HUD_SCALE"))
-        end
-    end
-end
-GW.UpdateHudScale = UpdateHudScale
-
-local MAIN_HUD_FRAMES_OLD_STATE = {}
-local function ToggleMainHud(b)
-    for k, v in pairs(MAIN_HUD_FRAMES) do
-        if v ~= nil and _G[v] then
-            if b then
-                if MAIN_HUD_FRAMES_OLD_STATE[k] then
-                    _G[v]:Show()
-                end
-            else
-                MAIN_HUD_FRAMES_OLD_STATE[k] = _G[v]:IsShown()
-                _G[v]:Hide()
-            end
-        end
-    end
-end
-GW.ToggleMainHud = ToggleMainHud
 
 -- https://us.battle.net/forums/en/wow/topic/6036615884
 if AchievementMicroButton_Update == nil then
@@ -359,13 +332,29 @@ end
 GW.StopAnimation = StopAnimation
 
 local l = CreateFrame("Frame", nil, UIParent)
-local OnUpdateActionBars = nil
+--local OnUpdateActionBars = nil
 
 local function swimAnim()
     local r, g, b = _G["GwActionBarHudRIGHTSWIM"]:GetVertexColor()
     _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
     _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
 end
+
+local updateCB = {}
+local function AddUpdateCB(func, payload)
+    if type(func) ~= "function" then
+        return
+    end
+
+    tinsert(
+        updateCB,
+        {
+            ["func"] = func,
+            ["payload"] = payload
+        }
+    )
+end
+GW.AddUpdateCB = AddUpdateCB
 
 local function gw_OnUpdate(self, elapsed)
     local foundAnimation = false
@@ -405,10 +394,6 @@ local function gw_OnUpdate(self, elapsed)
         table.wipe(animations)
     end
 
-    if OnUpdateActionBars then
-        OnUpdateActionBars(elapsed)
-    end
-
     --Swim hud
     if lastSwimState ~= IsSwimming() then
         if IsSwimming() then
@@ -419,6 +404,10 @@ local function gw_OnUpdate(self, elapsed)
             swimAnimation = 0
         end
         lastSwimState = IsSwimming()
+    end
+
+    for _, cb in ipairs(updateCB) do
+        cb.func(cb.payload, elapsed)
     end
 end
 
@@ -541,14 +530,15 @@ local function gw_OnEvent(self, event, name)
         end
     end
 
+    -- create action bars
+    if GetSetting("ACTIONBARS_ENABLED") then
+        --OnUpdateActionBars = GW.LoadActionBars()
+        GW.LoadActionBars()
+    end
+
     -- create pet frame
     if GetSetting("PETBAR_ENABLED") then
         GW.LoadPetFrame()
-    end
-
-    -- create action bars
-    if GetSetting("ACTIONBARS_ENABLED") then
-        OnUpdateActionBars = GW.LoadActionBars()
     end
 
     -- create buff frame
@@ -569,7 +559,7 @@ local function gw_OnEvent(self, event, name)
         GW.LoadRaidFrames()
     end
 
-    UpdateHudScale()
+    GW.UpdateHudScale()
 
     if (forcedMABags) then
         Notice(GwLocalization["DISABLED_MA_BAGS"])

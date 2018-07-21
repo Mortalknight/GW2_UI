@@ -2,6 +2,7 @@
 
 FIXED
     - Arathi PvP will no longer cause a lua error (CF#173)
+    - More actionbar fixes (CF#169... I hope)
 
 
 

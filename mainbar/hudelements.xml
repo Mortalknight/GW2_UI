@@ -370,12 +370,11 @@
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="110"></Anchor>
         </Anchors>
-
     </Frame>
     <Frame name="GwPlayerClassPower" frameStrata="HIGH" parent="UIParent" virtual="true">
         <Size x="316" y="18"></Size>
         <Anchors>
-            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-372" y="86"></Anchor>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-372" y="81"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
@@ -569,11 +568,6 @@
                 <Anchors>
                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="ARTWORKD">
-
-                    </Layer>
-                </Layers>
                 <Frames>
                     <Frame parentKey="stagger">
                         <Size x="316" y="18"></Size>
@@ -905,76 +899,6 @@
             </Layer>
         </Layers>
     </Button>
-    <Button name="GwPlayerPetFrame" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true">
-        <Size x="316" y="100"></Size>
-        <HitRectInsets>
-            <AbsInset left="0" right="0" top="0" bottom="30"/>
-        </HitRectInsets>
-        <Layers>
-            <Layer level="ARTWORK">
-
-                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
-                    <Color r="0" g="0" b="0" a="0.8"/>
-                    <Size x="232" y="18"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" x="0" y="4"/>
-                    </Anchors>
-                </Texture>
-                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\petportrait">
-                    <Size x="60" y="60"></Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.Background" x="0" y="-3"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer layer="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="portrait" alphaMode="add" name="$parentPortrait">
-                    <Size x="60" y="60"></Size>
-                    <TexCoords left="1" right="0" top="0" bottom="1" />
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.portraitBackground" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Frames>
-
-            <StatusBar name="$parentHealth" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-                <Size x="230" y="16"/>
-                <Anchors>
-                    <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
-                </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString name="$parentString" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Color r="1" g="1" b="1"></Color>
-                            <Size x="180" y="16"/>
-                            <Anchors>
-                                <Anchor point="CENTER" x="0" y="0"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </StatusBar>
-            <StatusBar parentKey="resource" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-                <Size x="230" y="2"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
-                </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-
-            </StatusBar>
-            <Frame parentKey="auras">
-                <Size x="0" y="30"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-85" y="0"></Anchor>
-                </Anchors>
-            </Frame>
-        </Frames>
-
-    </Button>
     <Frame name="GwMicroButtonFrame" topLevel="true" frameStrata="HIGH" parent="UIParent" virtual="true">
         <Size x="288" y="32"/>
         <Anchors>
@@ -1206,57 +1130,6 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\breathmeter"/>
             </StatusBar>
         </Frames>
-    </Frame>
-
-    <Frame name="GwActionButtonBackDrop" frameStrata="MEDIUM" virtual="true" frameLevel="1">
-        <Anchors>
-            <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="-1" y="1"></Anchor>
-            <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\spelliconempty">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Frame>
-    <Frame name="GwActionHotKeyBackDrop" virtual="true">
-        <Size x="18" y="18"></Size>
-        <Anchors>
-            <Anchor point="CENTER"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK" textureSubLevel="1">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
-                    <Color r="0" g="0" b="0" a="0.9"></Color>
-                    <Size x="20" y="20">
-                    </Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Frame>
-    <Frame name="GwActionRangeIndicator" virtual="true">
-        <Size x="20" y="4"></Size>
-        <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="-1">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Color r="0" g="0" b="0" a="1"></Color>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
-                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
     </Frame>
 
     <Frame name="GwChatContainer" frameStrata="BACKGROUND" virtual="true">

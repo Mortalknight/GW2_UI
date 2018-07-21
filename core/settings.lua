@@ -945,7 +945,7 @@ local function LoadSettings()
         "HUD_SCALE",
         "GwSettingsHudOptions",
         function()
-            UpdateHudScale()
+            GW.UpdateHudScale()
         end,
         {1, 0.9, 0.8},
         {

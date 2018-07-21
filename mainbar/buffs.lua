@@ -445,7 +445,7 @@ local function UpdatePlayerBuffFrame()
         return
     end
     GwPlayerAuraFrame:ClearAllPoints()
-    if MultiBarBottomRight.gw_FadeShowing then
+    if GwMultiBarBottomRight.gw_FadeShowing then
         GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 212)
     else
         GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 120)
@@ -473,7 +473,7 @@ local function LoadBuffs()
     local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
     fgw:SetFrameRef("GwPlayerAuraFrame", player_buff_frame)
     fgw:SetFrameRef("UIParent", UIParent)
-    fgw:SetFrameRef("MultiBarBottomRight", MultiBarBottomRight)
+    fgw:SetFrameRef("MultiBarBottomRight", GwMultiBarBottomRight)
     fgw:SetAttribute(
         "_onstate-combat",
         [=[

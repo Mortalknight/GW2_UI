@@ -33,8 +33,11 @@ units/party.lua
 mainbar/experiencebar.xml
 mainbar/hudart.xml
 mainbar/hudelements.xml
+mainbar/actionbars.xml
+mainbar/petbar.xml
 mainbar/hud.lua
 mainbar/actionbars2.lua
+mainbar/petbar.lua
 mainbar/buffs.lua
 mainbar/castingbar.lua
 mainbar/playerhud.lua
