@@ -172,7 +172,7 @@ local function powerStagger(event, unit)
     if event == "UNIT_AURA" and unit == "player" then
         local found = false
         for i = 1, 40 do
-            local _, _, _, _, _, _, expires, _, _, _, spellID, _ = UnitAura("player", i)
+            local _, _, _, _, _, expires, _, _, _, spellID, _ = UnitAura("player", i)
 
             if spellID == 215479 then
                 GwBrewmaster.ironskin.expires = expires
@@ -417,7 +417,7 @@ local function powerMongoose()
     CLASS_POWER = 0
     local found = false
     for i = 1, 40 do
-        local _, _, _, _, _, _, _, _, _, _, spellID, _ = UnitAura("player", i)
+        local _, _, _, _, _, _, _, _, _, spellID, _ = UnitAura("player", i)
         if spellID == 190931 then
             found = true
             break
@@ -533,7 +533,7 @@ local function powerRage(event, unit)
     local count, spellID = nil
 
     for i = 1, 40 do
-        _, _, _, count, _, _, _, _, _, _, spellID, _ = UnitAura("player", i)
+        _, _, count, _, _, _, _, _, _, spellID, _ = UnitAura("player", i)
         if spellID == 207982 then
             found = true
             break
@@ -800,6 +800,9 @@ local function LoadClassPowers()
     classPowerFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     classPowerFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
+    selectType()
+    updatePower(GwPlayerClassPower, "PLAYER_ENTERING_WORLD", "player")
+
     GwMongooseBar.texture1 = GwMongooseBar.bar.texture1
     GwMongooseBar.texture2 = GwMongooseBar.bar.texture2
     GwMongooseBar.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
@@ -821,9 +824,6 @@ local function LoadClassPowers()
     GwDiscPriest.bar.overlay:SetPosition(0, 0, 0)
 
     GwFocusRage.highlight = GwFocusRage.bar.highlight
-
-    selectType()
-    updatePower(GwPlayerClassPower, "PLAYER_ENTERING_WORLD", "player")
 
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript(

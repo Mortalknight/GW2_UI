@@ -633,7 +633,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORKD" textureSublevel="6">
-                                <FontString parentKey="indicatorText" text="50%" justifyH="CENTER">
+                                <FontString parentKey="indicatorText" text="50%" inherits="GameFontNormalSmall" justifyH="CENTER">
 
                                     <Size x="32" y="16"/>
                                     <Anchors>
@@ -679,7 +679,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORKD" textureSublevel="5">
-                                <FontString parentKey="indicatorText" text="50%" justifyH="CENTER">
+                                <FontString parentKey="indicatorText" text="50%" inherits="GameFontNormalSmall" justifyH="CENTER">
 
                                     <Size x="32" y="16"/>
                                     <Anchors>
