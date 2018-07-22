@@ -445,7 +445,7 @@ local function UpdatePlayerBuffFrame()
         return
     end
     GwPlayerAuraFrame:ClearAllPoints()
-    if GwMultiBarBottomRight.gw_FadeShowing then
+    if GwMultiBarBottomRight and GwMultiBarBottomRight.gw_FadeShowing then
         GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 212)
     else
         GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 120)
@@ -473,22 +473,24 @@ local function LoadBuffs()
     local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
     fgw:SetFrameRef("GwPlayerAuraFrame", player_buff_frame)
     fgw:SetFrameRef("UIParent", UIParent)
-    fgw:SetFrameRef("MultiBarBottomRight", GwMultiBarBottomRight)
-    fgw:SetAttribute(
-        "_onstate-combat",
-        [=[
+    if GwMultiBarBottomRight then
+        fgw:SetFrameRef("MultiBarBottomRight", GwMultiBarBottomRight)
+        fgw:SetAttribute(
+            "_onstate-combat",
+            [=[
         
-        if self:GetFrameRef('MultiBarBottomRight'):IsShown()==false then
-            return
-        end
+            if self:GetFrameRef('MultiBarBottomRight'):IsShown()==false then
+                return
+            end
         
-      self:GetFrameRef('GwPlayerAuraFrame'):ClearAllPoints()
-        if newstate == 'show' then
-         self:GetFrameRef('GwPlayerAuraFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',53,212)
-        end
-    ]=]
-    )
-    RegisterStateDriver(fgw, "combat", "[combat] show; hide")
+            self:GetFrameRef('GwPlayerAuraFrame'):ClearAllPoints()
+            if newstate == 'show' then
+                self:GetFrameRef('GwPlayerAuraFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',53,212)
+            end
+            ]=]
+        )
+        RegisterStateDriver(fgw, "combat", "[combat] show; hide")
+    end
 
     AddActionBarCallback(UpdatePlayerBuffFrame)
     UpdatePlayerBuffFrame()

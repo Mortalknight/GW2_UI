@@ -192,7 +192,7 @@ local function updatePetFrameLocation()
         return
     end
     GwPlayerPetFrame:ClearAllPoints()
-    if GwMultiBarBottomLeft.gw_FadeShowing then
+    if GwMultiBarBottomLeft and GwMultiBarBottomLeft.gw_FadeShowing then
         GwPlayerPetFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
     else
         GwPlayerPetFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
