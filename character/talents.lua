@@ -330,6 +330,11 @@ local function loadTalents()
             PickupSpell(self.spellId)
         end
         local fnTalentButton_OnClick = function(self, button)
+            if IsModifiedClick("CHATLINK") then
+                local link = GetSpellLink(self.spellId)
+                ChatEdit_InsertLink(link)
+                return
+            end
             return LearnTalent(self.talentID)
         end
         for row = 1, maxTalentRows do
@@ -489,19 +494,25 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
     btn.isFlyout = (skillType == "FLYOUT")
     if btn.isFlyout then
         btn.arrow:Show()
-        btn:SetAttribute("type", "flyout")
+        btn:SetAttribute("type1", "flyout")
         btn:SetAttribute("spell", spellId)
         btn:SetAttribute("flyout", spellId)
         btn:SetAttribute("flyoutDirection", "RIGHT")
     elseif not btn.isFuture and booktype == "pet" then
-        btn:SetAttribute("type", "spell")
+        btn:SetAttribute("type1", "spell")
         btn:SetAttribute("spell", spellId)
         btn:SetAttribute("type2", "macro")
         btn:SetAttribute("*macrotext2", "/petautocasttoggle " .. name)
+        btn:SetAttribute("shift-type1", "macro")
+        if spellId ~= nil then
+            btn:SetAttribute("*macrotext1", "/script ChatEdit_InsertLink(GetSpellLink(" .. spellId .."))")
+        end
     elseif not btn.isFuture then
         btn:SetAttribute("ispickable", true)
-        btn:SetAttribute("type", "spell")
+        btn:SetAttribute("type1", "spell")
         btn:SetAttribute("spell", spellId)
+        btn:SetAttribute("shift-type1", "macro")
+        btn:SetAttribute("*macrotext1", "/script ChatEdit_InsertLink(GetSpellLink(" .. spellId .."))")
     end
 
     btn:EnableMouse(true)
