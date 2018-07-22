@@ -121,7 +121,7 @@ local function fadeIn_OnFinished(self)
 end
 GW.AddForProfiling("Actionbars2", "fadeIn_OnFinished", fadeIn_OnFinished)
 
-local function actionBarFrameShow(f)
+local function actionBarFrameShow(f, instant)
     f.fadeOut:Stop()
     f.fadeIn:Stop()
 
@@ -130,7 +130,11 @@ local function actionBarFrameShow(f)
         stateChanged()
     end
 
-    f.fadeIn:Play()
+    if instant then
+        fadeIn_OnFinished(f.fadeIn)
+    else
+        f.fadeIn:Play()
+    end
 end
 GW.AddForProfiling("Actionbars2", "actionBarFrameShow", actionBarFrameShow)
 
@@ -143,7 +147,7 @@ local function fadeOut_OnFinished(self)
 end
 GW.AddForProfiling("Actionbars2", "fadeOut_OnFinished", fadeOut_OnFinished)
 
-local function actionBarFrameHide(f)
+local function actionBarFrameHide(f, instant)
     f.fadeOut:Stop()
     f.fadeIn:Stop()
 
@@ -152,7 +156,11 @@ local function actionBarFrameHide(f)
         f.gw_Buttons[i].cooldown:SetDrawBling(false)
     end
 
-    f.fadeOut:Play()
+    if instant then
+        fadeOut_OnFinished(f.fadeOut)
+    else
+        f.fadeOut:Play()
+    end
 end
 GW.AddForProfiling("Actionbars2", "actionBarFrameHide", actionBarFrameHide)
 
@@ -173,66 +181,70 @@ local function fadeCheck(self, forceCombat)
     end
 
     local mouseOut = self.gw_FadeBottomActionbar
+    local inLockdown = InCombatLockdown()
 
     for i = 1, 4 do
         local f = self["gw_Bar" .. i]
         if f then
-            local inFocus
-            if mouseOut then
-                if f:IsMouseOver(100, -100, -100, 100) then
-                    inFocus = true
+            if f.gw_NeedsToShow ~= nil and not inLockdown then
+                -- this should only be set on initial load and after a bar setting change
+                if f.gw_NeedsToShow then
+                    f:Show()
+                    actionBarFrameShow(f, true)
                 else
-                    inFocus = false
+                    f:Hide()
+                    actionBarFrameHide(f, true)
                 end
+                f.gw_NeedsToShow = nil
             else
-                inFocus = true
-            end
-            local isFlyout = false
-            if testFlyout and testFlyout == f then
-                isFlyout = true
-            end
-            local curAlpha = f:GetAlpha()
-            local busy = (f.fadeIn:IsPlaying() or f.fadeOut:IsPlaying())
+                local inFocus
+                if mouseOut then
+                    if f:IsMouseOver(100, -100, -100, 100) then
+                        inFocus = true
+                    else
+                        inFocus = false
+                    end
+                else
+                    inFocus = true
+                end
+                local isFlyout = false
+                if testFlyout and testFlyout == f then
+                    isFlyout = true
+                end
+                local curAlpha = f:GetAlpha()
+                local busy = (f.fadeIn:IsPlaying() or f.fadeOut:IsPlaying())
 
-            if not inVehicle and (inFocus or inCombat or isFlyout) then
-                -- should be showing
-                if not busy and curAlpha < 1.0 then
-                    actionBarFrameShow(f)
-                end
-            else
-                -- should not be showing
-                if not busy and curAlpha > 0.0 then
-                    actionBarFrameHide(f)
+                if f:IsShown() and not inVehicle and (inFocus or inCombat or isFlyout) then
+                    -- should be showing
+                    if not busy and curAlpha < 1.0 then
+                        actionBarFrameShow(f)
+                    end
+                else
+                    -- should not be showing
+                    if not busy and curAlpha > 0.0 then
+                        actionBarFrameHide(f, not f:IsShown())
+                    end
                 end
             end
         end
     end
+
+    if self.gw_NeedsLayout and not inLockdown then
+        local xOff
+        local btn_padding = self.gw_Width
+        if self.gw_Bar2:IsShown() then
+            xOff = (804 - btn_padding) / 2
+        else
+            xOff = -(btn_padding - 550) / 2
+        end
+        self:ClearAllPoints()
+        self:SetPoint("TOP", UIParent, "BOTTOM", xOff, 80)
+        self.gw_NeedsLayout = nil
+    end
 end
 GW.AddForProfiling("Actionbars2", "fadeCheck", fadeCheck)
 
-local function fader_OnShow(self)
-    self.gw_FadeShowing = true
-    local bar = self:GetParent()
-    bar.elapsedTimer = -1
-    bar.fadeTimer = -1
-    if self.gw_StateTrigger then
-        stateChanged()
-    end
-end
-GW.AddForProfiling("Actionbars2", "fader_OnShow", fader_OnShow)
-
-local function fader_OnHide(self)
-    self.gw_FadeShowing = false
-    local bar = self:GetParent()
-    bar.elapsedTimer = -1
-    bar.fadeTimer = -1
-    if self.gw_StateTrigger then
-        stateChanged()
-    end
-end
-GW.AddForProfiling("Actionbars2", "fader_OnHide", fader_OnHide)
-
-local function createFaderAnim(self, state, toggle)
+local function createFaderAnim(self, state)
     self.fadeOut = self:CreateAnimationGroup("fadeOut")
     self.fadeIn = self:CreateAnimationGroup("fadeIn")
     self.fadeOut:SetLooping("NONE")
@@ -255,16 +267,6 @@ local function createFaderAnim(self, state, toggle)
     local bar = self:GetParent()
     bar.elapsedTimer = -1
     bar.fadeTimer = -1
-    if toggle then
-        if self.gw_Custom then
-            self:Show()
-        end
-        self.gw_FadeShowing = true
-        self:SetScript("OnShow", fader_OnShow)
-        self:SetScript("OnHide", fader_OnHide)
-    else
-        self.gw_FadeShowing = false
-    end
 end
 
 local MAIN_HUD_FRAMES = {
@@ -475,39 +477,7 @@ local function main_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("Actionbars2", "main_OnEvent", main_OnEvent)
 
-local function updateMainBackdrops(fmActionbar)
-    local showBackdrops = GetCVar("alwaysShowActionBars")
-    for i, bdrop in ipairs(fmActionbar.gw_Backdrops) do
-        if
-            showBackdrops ~= "1" and
-                (fmActionbar.gw_Buttons[i] == nil or not HasAction(fmActionbar.gw_Buttons[i].action))
-         then
-            bdrop:Hide()
-        else
-            bdrop:Show()
-        end
-    end
-end
-GW.AddForProfiling("Actionbars2", "updateMainBackdrops", updateMainBackdrops)
-
--- default bar sizes in various circumstances:
---   with bottomright shown = 804
---   with bottomright hide  = 550
-local function updateBarLayout(fmActionbar, toggle)
-    local xOff
-    local btn_padding = fmActionbar.gw_Width
-    if toggle then
-        xOff = (804 - btn_padding) / 2
-    else
-        xOff = -(btn_padding - 550) / 2
-    end
-    fmActionbar:ClearAllPoints()
-    fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", xOff, 80)
-end
-GW.AddForProfiling("Actionbars2", "updateBarLayout", updateBarLayout)
-
 local function updateMainBar(toggle)
-    --local fmActionbar = CreateFrame("FRAME", "GwActionbar", UIParent, "GwActionbarTmpl")
     local fmActionbar = MainMenuBarArtFrame
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
@@ -534,7 +504,6 @@ local function updateMainBar(toggle)
             backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
             fmActionbar.gw_Backdrops[i] = backDrop
 
-            --btn:SetParent(fmActionbar) -- reparent button to our action bar
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
 
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
@@ -610,10 +579,7 @@ local function updateMainBar(toggle)
     hooksecurefunc(
         "MultiActionBar_Update",
         function()
-            if InCombatLockdown() then
-                return
-            end
-            updateBarLayout(fmActionbar, SHOW_MULTI_ACTIONBAR_2)
+            fmActionbar.gw_NeedsLayout = true
         end
     )
 
@@ -622,26 +588,47 @@ local function updateMainBar(toggle)
     MainMenuBar:SetScript("OnUpdate", nil)
     MainMenuBar:EnableMouse(false)
 
-    -- update mainbar button backdrops when action buttons change
-    --[[
-    hooksecurefunc(
-        "MultiActionBar_UpdateGridVisibility",
-        function()
-            updateMainBackdrops(fmActionbar)
-        end
-    )
-    hooksecurefunc(
-        "ActionBarController_UpdateAll",
-        function()
-            updateMainBackdrops(fmActionbar)
-        end
-    )
-    --]]
     return fmActionbar
 end
 GW.AddForProfiling("Actionbars2", "updateMainBar", updateMainBar)
 
-local function updateMultiBar(barName, buttonName, toggle, actionPage, state)
+local function trackBarChanges()
+    local fmActionbar = MainMenuBarArtFrame
+    if not fmActionbar then
+        return
+    end
+
+    local show1, show2, show3, show4
+    -- need explicit bool's because we test for nil as a separate case
+    if SHOW_MULTI_ACTIONBAR_1 then
+        show1 = true
+    else
+        show1 = false
+    end
+    if SHOW_MULTI_ACTIONBAR_2 then
+        show2 = true
+    else
+        show2 = false
+    end
+    if SHOW_MULTI_ACTIONBAR_3 then
+        show3 = true
+    else
+        show3 = false
+    end
+    if SHOW_MULTI_ACTIONBAR_3 and SHOW_MULTI_ACTIONBAR_4 then
+        show4 = true
+    else
+        show4 = false
+    end
+
+    fmActionbar.gw_Bar1.gw_NeedsToShow = show1
+    fmActionbar.gw_Bar2.gw_NeedsToShow = show2
+    fmActionbar.gw_Bar3.gw_NeedsToShow = show3
+    fmActionbar.gw_Bar4.gw_NeedsToShow = show4
+    fmActionbar.gw_NeedsLayout = true
+end
+
+local function updateMultiBar(barName, buttonName, actionPage, state)
     local multibar = _G[barName]
     local settings = GetSetting(barName)
     local used_width = 0
@@ -650,13 +637,9 @@ local function updateMultiBar(barName, buttonName, toggle, actionPage, state)
     local btn_padding_y = 0
     local btn_this_row = 0
 
-    local fmMultibar
+    local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
     if actionPage ~= nil then
-        fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
-        fmMultibar.gw_Custom = true
         fmMultibar:SetAttribute("actionpage", actionPage)
-    else
-        fmMultibar = multibar
     end
     fmMultibar.gw_Buttons = {}
 
@@ -706,14 +689,12 @@ local function updateMultiBar(barName, buttonName, toggle, actionPage, state)
     fmMultibar:SetSize(used_width, used_height)
 
     -- set fader logic
-    createFaderAnim(fmMultibar, state, toggle)
+    createFaderAnim(fmMultibar, state)
 
-    -- disable default multibar behaviors
-    if fmMultibar.gw_Custom then
-        multibar:UnregisterAllEvents()
-        multibar:SetScript("OnUpdate", nil)
-        multibar:EnableMouse(false)
-    end
+    -- disable default multibar behaviors and track settings changes
+    multibar:UnregisterAllEvents()
+    multibar:SetScript("OnUpdate", nil)
+    multibar:EnableMouse(false)
 
     return fmMultibar
 end
@@ -1041,33 +1022,32 @@ local function LoadActionBars()
     VerticalMultiBarsContainer:SetScript("OnEvent", nil)
     MultiBarLeft:SetParent(UIParent)
     MultiBarRight:SetParent(UIParent)
+    -- TODO: forcibly disable "stack" option since we don't support that
 
     -- init our bars
-    local showBotLeft, showBotRight, showLeft, showRight = GetActionBarToggles()
     local fmActionbar = updateMainBar(showBotRight)
     fmActionbar.gw_Bar1 =
-        updateMultiBar("MultiBarBottomLeft", "MultiBarBottomLeftButton", showBotLeft, BOTTOMLEFT_ACTIONBAR_PAGE, true)
+        updateMultiBar("MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
     fmActionbar.gw_Bar2 =
-        updateMultiBar(
-        "MultiBarBottomRight",
-        "MultiBarBottomRightButton",
-        showBotRight,
-        BOTTOMRIGHT_ACTIONBAR_PAGE,
-        true
-    )
-    fmActionbar.gw_Bar3 = updateMultiBar("MultiBarLeft", "MultiBarLeftButton", showLeft, LEFT_ACTIONBAR_PAGE)
-    fmActionbar.gw_Bar4 = updateMultiBar("MultiBarRight", "MultiBarRightButton", showRight, RIGHT_ACTIONBAR_PAGE)
-    updateBarLayout(MainMenuBarArtFrame, showBotRight)
+        updateMultiBar("MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
+    fmActionbar.gw_Bar3 = updateMultiBar("MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE)
+    fmActionbar.gw_Bar4 = updateMultiBar("MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE)
 
     RegisterMovableFrame("GwMultiBarRight", GwMultiBarRight, "MultiBarRight", "VerticalActionBarDummy")
     RegisterMovableFrame("GwMultiBarLeft", GwMultiBarLeft, "MultiBarLeft", "VerticalActionBarDummy")
 
+    -- hook existing multibars to track settings changes
+    hooksecurefunc("SetActionBarToggles", trackBarChanges)
+    trackBarChanges()
+
+    -- do stuff to other pieces of the blizz UI
     hideBlizzardsActionbars()
     setMicroButtons()
     setStanceBar()
     setPossessBar()
     setLeaveVehicleButton()
 
+    -- hook hotkey update calls so we can override styling changes
     hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey)
 
     -- frames using the alert frame subsystem have their positioning managed by UIParent
