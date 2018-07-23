@@ -3,6 +3,8 @@
 FIXED
     - More actionbar fixes (CF#169... I hope)
     - Allow shift-click to link spells and abilities in chat & macros
+    - Fix problems with HUD movers when HUD is scaled
+    - Handle API change in several class powers (CF#178)
 
 MISCELLANEOUS
     - Disabled PvP HUD for now because of API changes (CF#173)
