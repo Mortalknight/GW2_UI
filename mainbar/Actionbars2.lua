@@ -312,8 +312,12 @@ local function UpdateHudScale(scale)
     MainMenuBarArtFrame:SetScale(hudScale)
     for i, name in ipairs(MAIN_HUD_FRAMES) do
         local f = _G[name]
+        local fm = _G[name .. "MoveAble"]
         if f then
             f:SetScale(hudScale)
+        end
+        if fm then
+            fm:SetScale(hudScale)
         end
     end
 end
@@ -691,7 +695,7 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
     -- set fader logic
     createFaderAnim(fmMultibar, state)
 
-    -- disable default multibar behaviors and track settings changes
+    -- disable default multibar behaviors
     multibar:UnregisterAllEvents()
     multibar:SetScript("OnUpdate", nil)
     multibar:EnableMouse(false)
@@ -1017,12 +1021,6 @@ local function LoadActionBars()
     ) do
         UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
     end
-
-    -- separate multibars from default handling (FrameXML/MultiActionBar.lua line 53)
-    VerticalMultiBarsContainer:SetScript("OnEvent", nil)
-    MultiBarLeft:SetParent(UIParent)
-    MultiBarRight:SetParent(UIParent)
-    -- TODO: forcibly disable "stack" option since we don't support that
 
     -- init our bars
     local fmActionbar = updateMainBar(showBotRight)

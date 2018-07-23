@@ -188,14 +188,30 @@ end
 GW.AddForProfiling("petbar", "setPetBar", setPetBar)
 
 local function updatePetFrameLocation()
-    if InCombatLockdown() or not GwPlayerPetFrame then
+    local fPet = GwPlayerPetFrame
+    if not fPet or InCombatLockdown() then
         return
     end
-    GwPlayerPetFrame:ClearAllPoints()
-    if GwMultiBarBottomLeft and GwMultiBarBottomLeft.gw_FadeShowing then
-        GwPlayerPetFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+    local fMover = GwPlayerPetFrameMoveAble
+    local fBar = GwMultiBarBottomLeft
+    fPet:ClearAllPoints()
+    if fMover then
+        if not fMover.IsMoving then
+            fMover:ClearAllPoints()
+        else
+            fMover = nil
+        end
+    end
+    if fBar and fBar.gw_FadeShowing then
+        fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+        if fMover then
+            fMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+        end
     else
-        GwPlayerPetFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+        fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+        if fMover then
+            fMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+        end
     end
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
@@ -270,8 +286,6 @@ local function LoadPetFrame()
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
-    RegisterMovableFrame("petframe", playerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
-
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
     playerPetFrame:SetAttribute("unit", "pet")
@@ -321,6 +335,7 @@ local function LoadPetFrame()
             GetSetting("pet_pos")["yOfs"]
         )
     end
+    RegisterMovableFrame("GwPlayerPetFrame", playerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 
     setPetBar(playerPetFrame)
 end

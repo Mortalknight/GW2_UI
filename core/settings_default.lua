@@ -123,10 +123,10 @@ GW_DEFAULT["target_pos"]["xOfs"] = -56
 GW_DEFAULT["target_pos"]["yOfs"] = -100
 
 GW_DEFAULT["pet_pos"] = {}
-GW_DEFAULT["pet_pos"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["pet_pos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["pet_pos"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["pet_pos"]["xOfs"] = -372
-GW_DEFAULT["pet_pos"]["yOfs"] = 86
+GW_DEFAULT["pet_pos"]["xOfs"] = -53
+GW_DEFAULT["pet_pos"]["yOfs"] = 120
 
 GW_DEFAULT["castingbar_pos"] = {}
 GW_DEFAULT["castingbar_pos"]["point"] = "BOTTOM"

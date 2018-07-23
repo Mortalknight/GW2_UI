@@ -1031,7 +1031,7 @@ local function LoadSettings()
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GwRaidFrameContainer:SetHeight((GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN"))
-                GwRaidFrameContainerFrameMoveAble:SetHeight(
+                GwRaidFrameContainerMoveAble:SetHeight(
                     (GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN")
                 )
                 GW.UpdateRaidFramesLayout()

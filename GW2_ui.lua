@@ -94,9 +94,23 @@ local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
     SetSetting(lockAble, true)
 end
 
-local function moveOnDragStop(moveframe, settingsName, lockAble)
-    moveframe:StopMovingOrSizing()
-    local point, _, relativePoint, xOfs, yOfs = moveframe:GetPoint()
+local function lockFrame_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+    GameTooltip:ClearLines()
+    GameTooltip:AddLine("Lock to default position", 1, 1, 1)
+    GameTooltip:Show()
+end
+
+local function mover_OnDragStart(self)
+    self.IsMoving = true
+    self:StartMoving()
+end
+
+local function mover_OnDragStop(self)
+    local settingsName = self.gw_Settings
+    local lockAble = self.gw_Lockable
+    self:StopMovingOrSizing()
+    local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
     local new_point = GetSetting(settingsName)
     new_point["point"] = point
@@ -107,19 +121,16 @@ local function moveOnDragStop(moveframe, settingsName, lockAble)
     if lockAble ~= nil then
         SetSetting(lockAble, false)
     end
-end
 
-local function lockFrame_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
-    GameTooltip:AddLine("Lock to default position", 1, 1, 1)
-    GameTooltip:Show()
+    self.IsMoving = false
 end
 
 local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockAble)
     local moveframe = CreateFrame("Frame", name .. "MoveAble", UIParent, dummyFrame)
     moveframe:SetSize(frame:GetSize())
     moveframe.frameName:SetText(name)
+    moveframe.gw_Settings = settingsName
+    moveframe.gw_Lockable = lockAble
 
     local dummyPoint = GetSetting(settingsName)
     moveframe:ClearAllPoints()
@@ -148,13 +159,8 @@ local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockA
         )
     end
 
-    moveframe:SetScript("OnDragStart", frame.StartMoving)
-    moveframe:SetScript(
-        "OnDragStop",
-        function()
-            moveOnDragStop(moveframe, settingsName, lockAble)
-        end
-    )
+    moveframe:SetScript("OnDragStart", mover_OnDragStart)
+    moveframe:SetScript("OnDragStop", mover_OnDragStop)
 end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
@@ -494,7 +500,7 @@ local function gw_OnEvent(self, event, name)
     end
 
     --if GetSetting("USE_BATTLEGROUND_HUD") then
-       -- GW.LoadBattlegrounds()
+    -- GW.LoadBattlegrounds()
     --end
 
     GW.LoadCharacter()

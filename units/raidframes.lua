@@ -637,7 +637,7 @@ local function UpdateRaidFramesPosition()
     for i = 1, 40 do
         _G["GwRaidGridDisplay" .. i]:SetPoint(
             "TOPLEFT",
-            GwRaidFrameContainerFrameMoveAble,
+            GwRaidFrameContainerMoveAble,
             "TOPLEFT",
             USED_WIDTH,
             -USED_HEIGHT
@@ -851,15 +851,14 @@ local function LoadRaidFrames()
         GetSetting("raid_pos")["yOfs"]
     )
 
-    RegisterMovableFrame("GwRaidFrameContainerFrame", GwRaidFrameContainer, "raid_pos", "VerticalActionBarDummy")
+    RegisterMovableFrame("GwRaidFrameContainer", GwRaidFrameContainer, "raid_pos", "VerticalActionBarDummy")
 
     for i = 1, 40 do
-        local f =
-            CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainerFrameMoveAble, "VerticalActionBarDummy")
-        f:SetParent(GwRaidFrameContainerFrameMoveAble)
+        local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainerMoveAble, "VerticalActionBarDummy")
+        f:SetParent(GwRaidFrameContainerMoveAble)
         f.frameName:SetText("")
         f.Background:SetVertexColor(0.2, 0.2, 0.2, 1)
-        f:SetPoint("TOPLEFT", GwRaidFrameContainerFrameMoveAble, "TOPLEFT", 0, 0)
+        f:SetPoint("TOPLEFT", GwRaidFrameContainerMoveAble, "TOPLEFT", 0, 0)
     end
 
     createRaidFrame("player")
