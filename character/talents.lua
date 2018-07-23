@@ -480,6 +480,33 @@ local function setButton(btn, spellId, skillType, icon, spellbookIndex, booktype
 end
 GW.AddForProfiling("talents", "setButton", setButton)
 
+local function TalProfButton_OnModifiedClick(self)
+    local slot = self.spellbookIndex
+    local book = self.booktype
+    if IsModifiedClick("CHATLINK") then
+        if MacroFrameText and MacroFrameText:HasFocus() then
+            local spell, subSpell = GetSpellBookItemName(slot, book)
+            if spell and not IsPassiveSpell(slot, book) then
+                if subSpell and strlen(subSpell) > 0 then
+                    ChatEdit_InsertLink(spell .. "(" .. subSpell .. ")")
+                else
+                    ChatEdit_InsertLink(spell)
+                end
+            end
+        else
+            local profLink, profId = GetSpellTradeSkillLink(slot, book)
+            if profId then
+                ChatEdit_InsertLink(profLink)
+            else
+                ChatEdit_InsertLink(GetSpellLink(slot, book))
+            end
+        end
+    elseif IsModifiedClick("PICKUPACTION") and not InCombatLockdown() and not IsPassiveSpell(slot, book) then
+        PickupSpellBookItem(slot, book)
+    end
+end
+GW.TalProfButton_OnModifiedClick = TalProfButton_OnModifiedClick
+
 local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
     setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
 
@@ -495,24 +522,27 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
     if btn.isFlyout then
         btn.arrow:Show()
         btn:SetAttribute("type1", "flyout")
+        btn:SetAttribute("type2", "flyout")
         btn:SetAttribute("spell", spellId)
         btn:SetAttribute("flyout", spellId)
         btn:SetAttribute("flyoutDirection", "RIGHT")
     elseif not btn.isFuture and booktype == "pet" then
         btn:SetAttribute("type1", "spell")
-        btn:SetAttribute("spell", spellId)
         btn:SetAttribute("type2", "macro")
+        btn:SetAttribute("spell", spellId)
         btn:SetAttribute("*macrotext2", "/petautocasttoggle " .. name)
-        btn:SetAttribute("shift-type1", "macro")
-        if spellId ~= nil then
-            btn:SetAttribute("*macrotext1", "/script ChatEdit_InsertLink(GetSpellLink(" .. spellId .."))")
-        end
+        btn:SetAttribute("shift-type1", "modifiedClick")
+        btn:SetAttribute("shift-type2", "modifiedClick")
     elseif not btn.isFuture then
         btn:SetAttribute("ispickable", true)
         btn:SetAttribute("type1", "spell")
+        btn:SetAttribute("type2", "spell")
         btn:SetAttribute("spell", spellId)
-        btn:SetAttribute("shift-type1", "macro")
-        btn:SetAttribute("*macrotext1", "/script ChatEdit_InsertLink(GetSpellLink(" .. spellId .."))")
+        btn:SetAttribute("shift-type1", "modifiedClick")
+        btn:SetAttribute("shift-type2", "modifiedClick")
+    else
+        btn:SetAttribute("shift-type1", "modifiedClick")
+        btn:SetAttribute("shift-type2", "modifiedClick")
     end
 
     btn:EnableMouse(true)
@@ -521,6 +551,8 @@ GW.AddForProfiling("talents", "setActiveButton", setActiveButton)
 
 local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
     setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
+    btn:SetAttribute("shift-type1", "modifiedClick")
+    btn:SetAttribute("shift-type2", "modifiedClick")
     btn:EnableMouse(true)
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
@@ -699,7 +731,7 @@ GW.AddForProfiling("talents", "spellTab_OnEnter", spellTab_OnEnter)
 
 local function activePoolCommon_Resetter(self, btn)
     btn:EnableMouse(false)
-    btn:RegisterForClicks("AnyUp")
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:RegisterForDrag("LeftButton")
     btn:Hide()
     btn.arrow:Hide()
@@ -709,9 +741,11 @@ local function activePoolCommon_Resetter(self, btn)
     btn:SetScript("OnEvent", spellButton_OnEvent)
     btn:SetAttribute("flyout", nil)
     btn:SetAttribute("flyoutDirection", nil)
-    btn:SetAttribute("type", nil)
-    btn:SetAttribute("spell", nil)
+    btn:SetAttribute("type1", nil)
     btn:SetAttribute("type2", nil)
+    btn:SetAttribute("spell", nil)
+    btn:SetAttribute("shift-type1", nil)
+    btn:SetAttribute("shift-type2", nil)
     btn:SetAttribute("*macrotext2", nil)
     btn:SetAttribute("ispickable", nil)
     btn.GlyphApply = spellButton_GlyphApply
@@ -721,6 +755,7 @@ local function activePoolCommon_Resetter(self, btn)
     btn.spellId = nil
     btn.skillType = nil
     btn.isFlyout = nil
+    btn.modifiedClick = TalProfButton_OnModifiedClick
 end
 GW.AddForProfiling("talents", "activePoolCommon_Resetter", activePoolCommon_Resetter)
 
@@ -738,14 +773,18 @@ GW.AddForProfiling("talents", "activePoolNSD_Resetter", activePoolNSD_Resetter)
 
 local function passivePool_Resetter(self, btn)
     btn:EnableMouse(false)
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:Hide()
     btn:SetScript("OnEnter", spellButton_OnEnter)
     btn:SetScript("OnLeave", GameTooltip_Hide)
+    btn:SetAttribute("shift-type1", nil)
+    btn:SetAttribute("shift-type2", nil)
     btn.isFuture = nil
     btn.spellbookIndex = nil
     btn.booktype = nil
     btn.spellId = nil
     btn.skillType = nil
+    btn.modifiedClick = TalProfButton_OnModifiedClick
 
     if not btn.mask then
         local mask = UIParent:CreateMaskTexture()

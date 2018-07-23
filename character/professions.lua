@@ -1,8 +1,7 @@
 local _, GW = ...
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
---local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
-local Debug = GW.Debug
+local TalProfButton_OnModifiedClick = GW.TalProfButton_OnModifiedClick
 
 local profs = {
     ["185"] = {["tag"] = "cook", ["icon"] = 133971, ["atlas"] = "gather", ["idx"] = 6},
@@ -24,7 +23,7 @@ local profs = {
 local function profButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
-    GameTooltip:SetSpellBookItem(self.spellIdx, BOOKTYPE_PROFESSION)
+    GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
     GameTooltip:Show()
 end
 GW.AddForProfiling("professions", "profButton_OnEnter", profButton_OnEnter)
@@ -42,11 +41,16 @@ local function updateButton(self, spellIdx, unlearn)
     if spellIdx then
         local tex = GetSpellBookItemTexture(spellIdx, BOOKTYPE_PROFESSION)
         local name, _, spellId = GetSpellBookItemName(spellIdx, BOOKTYPE_PROFESSION)
-        self.spellIdx = spellIdx
+        self.spellbookIndex = spellIdx
+        self.booktype = BOOKTYPE_PROFESSION
         self.skillName = name
         self.icon:SetTexture(tex)
         self.name:SetText(name)
-        self:SetAttribute("type", "spell")
+        self.modifiedClick = TalProfButton_OnModifiedClick
+        self:SetAttribute("type1", "spell")
+        self:SetAttribute("type2", "spell")
+        self:SetAttribute("shift-type1", "modifiedClick")
+        self:SetAttribute("shift-type2", "modifiedClick")
         self:SetAttribute("spell", spellId)
         self:SetAttribute("_ondragstart", profButtonSecure_OnDragStart)
         self:Enable()
@@ -57,12 +61,16 @@ local function updateButton(self, spellIdx, unlearn)
         end
         self:SetAlpha(1)
     else
-        self.spellIdx = nil
+        self.spellbookIndex = nil
+        self.booktype = nil
         self.skillname = nil
         self.specIdx = nil
         self.icon:SetTexture(nil)
         self.name:SetText(nil)
-        self:SetAttribute("type", nil)
+        self:SetAttribute("type1", nil)
+        self:SetAttribute("type2", nil)
+        self:SetAttribute("shift-type1", nil)
+        self:SetAttribute("shift-type2", nil)
         self:SetAttribute("spell", nil)
         self:SetAttribute("_ondragstart", nil)
         self:Disable()
@@ -161,7 +169,7 @@ local function updateOverview(fmOverview)
             fm.desc:SetWidth(220)
             fm.StatusBar:SetValue(skill / skillMax)
             if skillMod and skillMod ~= 0 then
-                fm.StatusBar.currentValue:SetText(skill .. " +" .. skillMod .."/" .. skillMax)
+                fm.StatusBar.currentValue:SetText(skill .. " +" .. skillMod .. "/" .. skillMax)
             else
                 fm.StatusBar.currentValue:SetText(skill .. "/" .. skillMax)
             end

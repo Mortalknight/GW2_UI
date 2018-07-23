@@ -587,7 +587,7 @@
     <Button name="GwSpellbookActiveButton" inherits="SecureHandlerDragTemplate,GwSpellbookActiveButtonNSD" virtual="true">
     </Button>
 
-    <Button name="GwSpellbookPassiveButton" enableMouse="true" virtual="true">
+    <Button name="GwSpellbookPassiveButton" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">

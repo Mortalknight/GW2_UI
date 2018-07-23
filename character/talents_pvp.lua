@@ -134,14 +134,36 @@ local function updatePicks(self)
 end
 GW.AddForProfiling("talents_pvp", "updatePicks", updatePicks)
 
-local function spellButton_OnClick(self, button, down)
+local function button_OnModifiedClick(self)
     local tid = self.talentId
-    if tid and IsModifiedClick("CHATLINK") then
-        local link = GetPvpTalentLink(tid)
-        ChatEdit_InsertLink(link)
+    if not tid then
         return
     end
+    local isPassive
+    local _, name, _, _, _, sid, _ = GetPvpTalentInfoByID(tid)
+    if sid then
+        isPassive = IsPassiveSpell(sid)
+    end
+    if IsModifiedClick("CHATLINK") then
+        if MacroFrameText and MacroFrameText:HasFocus() then
+            if name and not isPassive then
+                ChatEdit_InsertLink(name)
+            end
+        else
+            local link = GetPvpTalentLink(tid)
+            ChatEdit_InsertLink(link)
+        end
+    elseif IsModifiedClick("PICKUPACTION") and not InCombatLockdown() and not isPassive then
+        PickupPvpTalent(tid)
+    end
+end
 
+local function spellButton_OnClick(self, button, down)
+    if IsModifiedClick() then
+        return button_OnModifiedClick(self)
+    end
+
+    local tid = self.talentId
     local fmSlots = self:GetParent()
     local fmTab = fmSlots:GetParent()
     local pickingSlot = fmTab.pickingSlot
@@ -166,6 +188,10 @@ local function slotButton_OnClick(self, button, down)
     if not self.isEnabled then
         return
     end
+    if IsModifiedClick() then
+        return button_OnModifiedClick(self)
+    end
+
     local fmSlots = self:GetParent()
     local fmTab = fmSlots:GetParent()
     if InCombatLockdown() then
@@ -173,13 +199,6 @@ local function slotButton_OnClick(self, button, down)
         UIErrorsFrame:AddMessage(ERR_AFFECTING_COMBAT, 1.0, 0.1, 0.1, 1.0)
         fmTab.pickingSlot = nil
     else
-        local tid = self.talentId
-        if tid and IsModifiedClick("CHATLINK") then
-            local link = GetPvpTalentLink(tid)
-            ChatEdit_InsertLink(link)
-            return
-        end
-
         if fmTab.pickingSlot == self.slotIndex then
             fmTab.pickingSlot = nil
         else
@@ -328,7 +347,7 @@ GW.UpdatePvPTab = UpdatePvPTab
 
 local function slotPool_Resetter(self, btn)
     btn:EnableMouse(false)
-    btn:RegisterForClicks("AnyUp")
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:RegisterForDrag("LeftButton")
     btn:Hide()
     btn:SetScript("OnEnter", slotButton_OnEnter)
@@ -358,7 +377,7 @@ GW.AddForProfiling("talents_pvp", "slotPool_Resetter", slotPool_Resetter)
 
 local function activePool_Resetter(self, btn)
     btn:EnableMouse(false)
-    btn:RegisterForClicks("AnyUp")
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:Hide()
     btn:SetScript("OnEnter", spellButton_OnEnter)
     btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -373,6 +392,7 @@ GW.AddForProfiling("talents_pvp", "activePool_Resetter", activePool_Resetter)
 
 local function passivePool_Resetter(self, btn)
     btn:EnableMouse(false)
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:Hide()
     btn:SetScript("OnEnter", spellButton_OnEnter)
     btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -478,7 +498,7 @@ local function CreatePvPTab(fmSpellbook)
     warGroup.label.title:SetShadowColor(0, 0, 0, 1)
     warGroup.label.title:SetShadowOffset(1, -1)
     warGroup.label.title:SetText(PVP_LABEL_WAR_MODE)
-    
+
     warGroup.toggle:SetScript("OnEnter", toggle_OnEnter)
     warGroup.toggle:SetScript("OnLeave", GameTooltip_Hide)
     warGroup.toggle:SetScript("OnShow", toggle_OnShow)
