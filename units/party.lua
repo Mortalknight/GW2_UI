@@ -162,9 +162,9 @@ local function manageButton()
         end
 
         if IsInRaid() then
-            self:SetText(GwLocalization["RAID_CONVERT"])
+            self:SetText(CONVERT_TO_PARTY)
         else
-            self:SetText(GwLocalization["PARTY_CONVERT"])
+            self:SetText(CONVERT_TO_RAID)
         end
     end
     local fnGGMC_OnClick = function(self, button)

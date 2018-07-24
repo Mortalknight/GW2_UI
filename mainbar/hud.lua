@@ -1001,6 +1001,8 @@ local function hookToolTip(frame, text, action)
 end
 GW.AddForProfiling("hud", "hookToolTip", hookToolTip)
 
+local ipTypes = {"IPv4", "IPv6"}
+
 local gw_addonMemoryArray = {}
 local function latencyToolTip(self, elapsed)
     if self.interval > 0 then
@@ -1010,7 +1012,8 @@ local function latencyToolTip(self, elapsed)
     self.interval = 1
 
     local gw_frameRate = RoundInt(GetFramerate())
-    local down, up, lagHome, lagWorld = GetNetStats()
+    local _, _, lagHome, lagWorld = GetNetStats()
+    local percent = floor(GetDownloadedPercentage()*100+0.5)
     local gw_addonMemory = 0
     local gw_numAddons = GetNumAddOns()
 
@@ -1025,14 +1028,21 @@ local function latencyToolTip(self, elapsed)
     GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
     GameTooltip:ClearLines()
     GameTooltip:AddLine(MAINMENU_BUTTON, 1, 1, 1)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_1"] .. gw_frameRate .. " fps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_2"] .. lagHome .. " ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_3"] .. lagWorld .. " ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_4"] .. RoundDec(down, 2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_5"] .. RoundDec(up, 2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(MAINMENUBAR_LATENCY_LABEL:format(lagHome, lagWorld), 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(" ")
+    if (GetCVarBool("useIPv6")) then
+		local ipTypeHome, ipTypeWorld = GetNetIpTypes()
+		GameTooltip:AddLine(MAINMENUBAR_PROTOCOLS_LABEL:format(ipTypes[ipTypeHome or 0] or UNKNOWN, ipTypes[ipTypeWorld or 0] or UNKNOWN), 0.8, 0.8, 0.8)
+		GameTooltip:AddLine(" ")
+	end
+    GameTooltip:AddLine(MAINMENUBAR_FPS_LABEL:format(gw_frameRate), 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(MAINMENUBAR_BANDWIDTH_LABEL:format(GetAvailableBandwidth()), 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(MAINMENUBAR_DOWNLOAD_PERCENT_LABEL:format(percent), 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(" ")
+    
     for i = 1, gw_numAddons do
         if type(gw_addonMemoryArray[i]) ~= "table" then
             gw_addonMemoryArray[i] = {}
@@ -1043,7 +1053,12 @@ local function latencyToolTip(self, elapsed)
         gw_addonMemory = gw_addonMemory + mem
     end
 
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_6"] .. RoundDec(gw_addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
+    if (gw_addonMemory > 1024) then
+        gw_addonMemory = gw_addonMemory / 1024
+        GameTooltip:AddLine(TOTAL_MEM_MB_ABBR:format(gw_addonMemory), 0.8, 0.8, 0.8)
+    else
+        GameTooltip:AddLine(TOTAL_MEM_MB_ABBR:format(gw_addonMemory), 0.8, 0.8, 0.8)
+    end
 
     if self.inDebug then
         table.sort(

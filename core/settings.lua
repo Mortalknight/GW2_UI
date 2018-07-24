@@ -770,7 +770,12 @@ local function LoadSettings()
         "ACTIONBARS_ENABLED",
         "GwSettingsModuleOption"
     )
-    addOption(GwLocalization["PET_BAR"], GwLocalization["PET_BAR_DESC"], "PETBAR_ENABLED", "GwSettingsModuleOption")
+    addOption(
+        BINDING_NAME_TOGGLECHARACTER3,
+        GwLocalization["PET_BAR_DESC"],
+        "PETBAR_ENABLED",
+        "GwSettingsModuleOption"
+    )
     addOption(
         INVENTORY_TOOLTIP,
         GwLocalization["INVENTORY_FRAME_DESC"],
@@ -797,7 +802,7 @@ local function LoadSettings()
         "GwSettingsModuleOption"
     )
     addOption(
-        GwLocalization["CHARACTER_WINDOW"],
+        BINDING_NAME_TOGGLECHARACTER0,
         GwLocalization["CHRACTER_WINDOW_DESC"],
         "USE_CHARACTER_WINDOW",
         "GwSettingsModuleOption"
@@ -818,7 +823,7 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
     addOption(
-        GwLocalization["HEALTH_VALUE"],
+        COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         GwLocalization["HEALTH_VALUE_DESC"],
         "target_HEALTH_VALUE_ENABLED",
         "GwSettingsTargetOptions"
@@ -860,7 +865,7 @@ local function LoadSettings()
         "GwSettingsFocusOptions"
     )
     addOption(
-        GwLocalization["HEALTH_VALUE"],
+        COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         GwLocalization["HEALTH_VALUE_DESC"],
         "focus_HEALTH_VALUE_ENABLED",
         "GwSettingsFocusOptions"
@@ -1031,7 +1036,7 @@ local function LoadSettings()
         "GwSettingsGroupframe"
     )
     addOption(
-        GwLocalization["RAID_MARKER"],
+        RAID_TARGET_ICON,
         GwLocalization["RAID_MARKER_DESC"],
         "RAID_UNIT_MARKERS",
         "GwSettingsGroupframe"
@@ -1045,7 +1050,7 @@ local function LoadSettings()
         function()
         end,
         {"NONE", "DIFFERENT", "ALL"},
-        {GwLocalization["RAID_UNIT_FLAGS_1"], GwLocalization["RAID_UNIT_FLAGS_2"], GwLocalization["RAID_UNIT_FLAGS_3"]}
+        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
     )
 
     addOptionSlider(
@@ -1138,10 +1143,10 @@ local function LoadSettings()
     local fmGCNP =
         CreateFrame("Button", "GwCreateNewProfile", GwSettingsProfilesframe.scrollchild, "GwCreateNewProfile")
     fmGCNP:SetWidth(fmGCNP:GetTextWidth() + 10)
-    fmGCNP:SetText(GwLocalization["PROFILES_NEW_PROFILE"])
+    fmGCNP:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     local fnGCNP_OnClick = function(self, button)
         inputPrompt(
-            GwLocalization["PROFILES_NEW_PROFILE"],
+            NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()
                 addProfile(GwWarningPrompt.input:GetText())
                 GwWarningPrompt:Hide()
