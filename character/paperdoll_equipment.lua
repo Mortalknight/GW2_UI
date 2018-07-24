@@ -27,6 +27,9 @@ local STATS_ICONS = {
     MOVESPEED = {l = 0.5, r = 0.75, t = 0.75, b = 1}
 }
 
+-- forward function defs
+local getBagSlotFrame
+
 local PAPERDOLL_STATCATEGORIES = {
     [1] = {
         categoryFrame = "AttributesCategory",
@@ -180,20 +183,20 @@ end
 GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButtonGlobalStyle)
 
 local function itemSlot_OnModifiedClick(self, button)
-	if ( IsModifiedClick("EXPANDITEM") ) then
-		local itemLocation = ItemLocation:CreateFromEquipmentSlot(self:GetID());
-		if C_Item.DoesItemExist(itemLocation) and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(itemLocation) then
-			OpenAzeriteEmpoweredItemUIFromItemLocation(itemLocation);
-		else
-			SocketInventoryItem(self:GetID());
+    if (IsModifiedClick("EXPANDITEM")) then
+        local itemLocation = ItemLocation:CreateFromEquipmentSlot(self:GetID())
+        if C_Item.DoesItemExist(itemLocation) and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(itemLocation) then
+            OpenAzeriteEmpoweredItemUIFromItemLocation(itemLocation)
+        else
+            SocketInventoryItem(self:GetID())
         end
         GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-		return
-	end
-    if ( HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID())) ) then
+        return
+    end
+    if (HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID()))) then
         GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-		return
-	end
+        return
+    end
 end
 GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnModifiedClick", itemSlot_OnModifiedClick)
 
@@ -449,7 +452,7 @@ local function stat_OnEnter(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "stat_OnEnter", stat_OnEnter)
 
-local function getBagSlotFrame(i)
+getBagSlotFrame = function(i)
     if _G["gwPaperDollBagSlotButton" .. i] ~= nil then
         return _G["gwPaperDollBagSlotButton" .. i]
     end
@@ -647,8 +650,7 @@ local function updateUnitData()
     local _, name, _, _, _, _ = GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
 
     if name ~= nil then
-        local data =
-        LEVEL .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
+        local data = LEVEL .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
         GwDressingRoom.characterData:SetWidth(180)
         GwDressingRoom.characterData:SetText(data)
     end

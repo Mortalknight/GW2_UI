@@ -1,3 +1,13 @@
+5.0.4
+
+FIXED
+    - Fix a Lua error that occurs when selecting equipment in hero panel (CF#183)
+
+MISCELLANEOUS
+    - Changed many strings to use default Blizz translations to simplify translation contributions
+
+
+
 5.0.3
 
 FIXED
