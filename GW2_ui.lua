@@ -6,6 +6,7 @@ local GetDefault = GW.GetDefault
 local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
+local Debug = GW.Debug
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
@@ -311,7 +312,6 @@ end
 GW.StopAnimation = StopAnimation
 
 local l = CreateFrame("Frame", nil, UIParent)
---local OnUpdateActionBars = nil
 
 local function swimAnim()
     local r, g, b = _G["GwActionBarHudRIGHTSWIM"]:GetVertexColor()
@@ -518,7 +518,6 @@ local function gw_OnEvent(self, event, name)
 
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") then
-        --OnUpdateActionBars = GW.LoadActionBars()
         GW.LoadActionBars()
     end
 
