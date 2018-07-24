@@ -23,6 +23,7 @@ local DebuffLists = {}
 local function inviteToGroup(str)
     InviteUnit(str)
 end
+GW.AddForProfiling("party", "inviteToGroup", inviteToGroup)
 
 local function manageButtonDelay(inCombat, action)
     if inCombat == true then
@@ -45,6 +46,7 @@ local function manageButtonDelay(inCombat, action)
         end
     end
 end
+GW.AddForProfiling("party", "manageButtonDelay", manageButtonDelay)
 
 local function manageButton()
     local fmGMGB = CreateFrame("Button", "GwManageGroupButton", UIParent, "GwManageGroupButton")
@@ -315,6 +317,7 @@ local function manageButton()
         end
     end
 end
+GW.AddForProfiling("party", "manageButton", manageButton)
 
 local function setPortrait(self, index)
     self.portraitBackground:SetTexCoord(
@@ -324,6 +327,7 @@ local function setPortrait(self, index)
         GW_PORTRAIT_BACKGROUND[index].b
     )
 end
+GW.AddForProfiling("party", "setPortrait", setPortrait)
 
 local function updateAwayData(self)
     local portraitIndex = 1
@@ -368,6 +372,7 @@ local function updateAwayData(self)
 
     setPortrait(self, portraitIndex)
 end
+GW.AddForProfiling("party", "updateAwayData", updateAwayData)
 
 local function getUnitDebuffs(unit)
     DebuffLists[unit] = {}
@@ -399,6 +404,7 @@ local function getUnitDebuffs(unit)
         end
     )
 end
+GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
 
 local function updatePartyDebuffs(self, unit, x, y)
     if x ~= 0 then
@@ -491,6 +497,7 @@ local function updatePartyDebuffs(self, unit, x, y)
         end
     end
 end
+GW.AddForProfiling("party", "updatePartyDebuffs", updatePartyDebuffs)
 
 local function getUnitBuffs(unit)
     buffLists[unit] = {}
@@ -522,6 +529,7 @@ local function getUnitBuffs(unit)
         end
     )
 end
+GW.AddForProfiling("party", "getUnitBuffs", getUnitBuffs)
 
 local function updatePartyAuras(self, unit)
     local x = 0
@@ -598,6 +606,7 @@ local function updatePartyAuras(self, unit)
     end
     updatePartyDebuffs(self, unit, x, y)
 end
+GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
 local function updatePartyData(self)
     if not UnitExists(self.unit) then
@@ -649,6 +658,7 @@ local function updatePartyData(self)
 
     updatePartyAuras(self, self.unit)
 end
+GW.AddForProfiling("party", "updatePartyData", updatePartyData)
 
 local function party_OnEvent(self, event, unit, arg1)
     if not UnitExists(self.unit) then
@@ -721,6 +731,7 @@ local function party_OnEvent(self, event, unit, arg1)
         )
     end
 end
+GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
 
 local function TogglePartyRaid(b)
     if b == true and not IsInRaid() then
@@ -805,6 +816,7 @@ local function createPartyFrame(i)
 
     updatePartyData(frame)
 end
+GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
 local function LoadPartyFrames()
     manageButton()

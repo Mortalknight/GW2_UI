@@ -36,6 +36,7 @@ local function artifactPoints()
     end
     return numPoints, totalXP, xpForNextPoint
 end
+GW.AddForProfiling("hud", "artifactPoints", artifactPoints)
 
 local function xpbar_OnEnter()
     GameTooltip:SetOwner(_G["GwExperienceFrame"], "ANCHOR_CURSOR")
@@ -123,6 +124,7 @@ local function xpbar_OnEnter()
 
     GameTooltip:Show()
 end
+GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
 
 local function xpbar_OnClick()
     if HasArtifactEquipped() and C_ArtifactUI.IsEquippedArtifactDisabled() == false then
@@ -137,6 +139,7 @@ local function xpbar_OnClick()
         end
     end
 end
+GW.AddForProfiling("hud", "xpbar_OnClick", xpbar_OnClick)
 
 local function flareAnim()
     GwXpFlare:Show()
@@ -160,6 +163,7 @@ local function flareAnim()
         end
     )
 end
+GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
 local function xpbar_OnEvent(self, event)
     if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil then
@@ -574,6 +578,7 @@ local function xpbar_OnEvent(self, event)
         experiencebarAnimation = 0
     end
 end
+GW.AddForProfiling("hud", "xpbar_OnEvent", xpbar_OnEvent)
 
 local function updateBarSize()
     local m = (UIParent:GetWidth() - 180) / 10
@@ -588,6 +593,7 @@ local function updateBarSize()
     dubbleBarSep:ClearAllPoints()
     dubbleBarSep:SetPoint("LEFT", "GwExperienceFrame", "LEFT", 90, 0)
 end
+GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
 local action_hud_auras = {}
 
@@ -598,6 +604,7 @@ local function registerActionHudAura(aura, left, right)
     action_hud_auras[aura]["right"] = right
 end
 local currentTexture = nil
+GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 
 --[[
 local function getSpecSpecificHud(left, right)
@@ -645,6 +652,7 @@ local function selectBg()
         _G["GwActionBarHudRIGHT"]:SetTexture(right)
     end
 end
+GW.AddForProfiling("hud", "selectBg", selectBg)
 
 local function combatHealthState()
     local unitHealthPrecentage = UnitHealth("player") / UnitHealthMax("player")
@@ -671,6 +679,7 @@ local function combatHealthState()
         _G["GwActionBarHudRIGHTBLOOD"]:SetVertexColor(1, 1, 1, 0)
     end
 end
+GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 
 registerActionHudAura(
     31842,
@@ -765,6 +774,7 @@ local function updateGuildButton()
         _G["GwMicroButtonGuildMicroButtonString"]:Hide()
     end
 end
+GW.AddForProfiling("hud", "updateGuildButton", updateGuildButton)
 
 local function updateInventoryButton()
     local totalEmptySlots = 0
@@ -787,6 +797,7 @@ local function updateInventoryButton()
     _G["GwMicroButtonBagMicroButtonString"]:Show()
     _G["GwMicroButtonBagMicroButtonString"]:SetText(totalEmptySlots)
 end
+GW.AddForProfiling("hud", "updateInventoryButton", updateInventoryButton)
 
 local microButtonFrame = CreateFrame("Frame", "GwMicroButtonFrame", UIParent, "GwMicroButtonFrame")
 
@@ -816,6 +827,7 @@ local function createMicroButton(key)
 
     return mf
 end
+GW.AddForProfiling("hud", "createMicroButton", createMicroButton)
 
 local CUSTOM_MICRO_BUTTONS = {}
 
@@ -848,6 +860,7 @@ local function microMenuFrameShow(f, name)
         nil
     )
 end
+GW.AddForProfiling("hud", "microMenuFrameShow", microMenuFrameShow)
 
 local function microMenuFrameHide(f, name)
     StopAnimation(name)
@@ -878,6 +891,7 @@ local function microMenuFrameHide(f, name)
         nil
     )
 end
+GW.AddForProfiling("hud", "microMenuFrameHide", microMenuFrameHide)
 
 local function microMenu_OnUpdate(self, elapsed)
     self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
@@ -897,6 +911,7 @@ local function microMenu_OnUpdate(self, elapsed)
         microMenuFrameHide(self, self:GetName())
     end
 end
+GW.AddForProfiling("hud", "microMenu_OnUpdate", microMenu_OnUpdate)
 
 local gw_sendUpdate_message_cooldown = 0
 local function sendVersionCheck()
@@ -917,6 +932,7 @@ local function sendVersionCheck()
     end
     C_ChatInfo.SendAddonMessage("GW2_UI", VERSION_STRING, chatToSend)
 end
+GW.AddForProfiling("hud", "sendVersionCheck", sendVersionCheck)
 
 local function receiveVersionCheck(self, event, prefix, message, dist, sender)
     if prefix ~= "GW2_UI" then
@@ -951,6 +967,7 @@ local function receiveVersionCheck(self, event, prefix, message, dist, sender)
         end
     end
 end
+GW.AddForProfiling("hud", "receiveVersionCheck", receiveVersionCheck)
 
 local function getToolTip(text, action)
     if (GetBindingKey(action)) then
@@ -959,6 +976,7 @@ local function getToolTip(text, action)
         return text
     end
 end
+GW.AddForProfiling("hud", "getToolTip", getToolTip)
 
 local function setToolTip(frame, text, action)
     GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
@@ -966,6 +984,7 @@ local function setToolTip(frame, text, action)
     GameTooltip:AddLine(getToolTip(text, action), 1, 1, 1)
     GameTooltip:Show()
 end
+GW.AddForProfiling("hud", "setToolTip", setToolTip)
 
 local function hookToolTip(frame, text, action)
     if frame == nil then
@@ -980,6 +999,7 @@ local function hookToolTip(frame, text, action)
     )
     frame:SetScript("OnLeave", GameTooltip_Hide)
 end
+GW.AddForProfiling("hud", "hookToolTip", hookToolTip)
 
 local gw_addonMemoryArray = {}
 local function latencyToolTip(self, elapsed)
@@ -1053,6 +1073,7 @@ local function latencyToolTip(self, elapsed)
 
     GameTooltip:Show()
 end
+GW.AddForProfiling("hud", "latencyToolTip", latencyToolTip)
 
 local function talentMicro_OnEvent()
     if GetNumUnspentTalents() > 0 then
@@ -1064,6 +1085,7 @@ local function talentMicro_OnEvent()
         _G["GwMicroButtonTalentMicroButtonString"]:Hide()
     end
 end
+GW.AddForProfiling("hud", "talentMicro_OnEvent", talentMicro_OnEvent)
 
 local function gwMicro_PositionAlert(alert)
     if
@@ -1078,6 +1100,7 @@ local function gwMicro_PositionAlert(alert)
     alert:ClearAllPoints()
     alert:SetPoint("TOPLEFT", alert.GwMicroButton, "BOTTOMLEFT", -18, -20)
 end
+GW.AddForProfiling("hud", "gwMicro_PositionAlert", gwMicro_PositionAlert)
 
 local function modifyMicroAlert(alert, microButton)
     alert.GwMicroButton = microButton
@@ -1086,6 +1109,7 @@ local function modifyMicroAlert(alert, microButton)
     alert.Arrow.Glow:ClearAllPoints()
     alert.Arrow.Glow:SetPoint("BOTTOM")
 end
+GW.AddForProfiling("hud", "modifyMicroAlert", modifyMicroAlert)
 
 local function LoadMicroMenu()
     local mi = 1
@@ -1361,6 +1385,7 @@ local function levelingRewards_OnShow(self)
         end
     )
 end
+GW.AddForProfiling("hud", "levelingRewards_OnShow", levelingRewards_OnShow)
 
 local function loadRewards()
     local f = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
@@ -1402,6 +1427,7 @@ local function loadRewards()
 
     tinsert(UISpecialFrames, "GwLevelingRewards")
 end
+GW.AddForProfiling("hud", "loadRewards", loadRewards)
 
 local GW_LEVELING_REWARDS = {}
 displayRewards = function()
@@ -1511,6 +1537,7 @@ displayRewards = function()
         end
     end
 end
+GW.AddForProfiling("hud", "displayRewards", displayRewards)
 
 local function orderFollower_OnEnter(self)
     if (self.name) then
@@ -1524,6 +1551,7 @@ local function orderFollower_OnEnter(self)
         GameTooltip:Show()
     end
 end
+GW.AddForProfiling("hud", "orderFollower_OnEnter", orderFollower_OnEnter)
 
 local function createFollower(self, i)
     local newFrame = CreateFrame("FRAME", "GwOrderHallFollower" .. i, self, "GwOrderHallFollower")
@@ -1536,6 +1564,7 @@ local function createFollower(self, i)
     newFrame:SetPoint("LEFT", self.currency, "RIGHT", 100 * (i - 1), 0)
     return newFrame
 end
+GW.AddForProfiling("hud", "createFollower", createFollower)
 
 local function updateOrderBar(self)
     local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(LE_FOLLOWER_TYPE_GARRISON_7_0)
@@ -1556,6 +1585,7 @@ local function updateOrderBar(self)
         categoryInfoFrame:Show()
     end
 end
+GW.AddForProfiling("hud", "updateOrderBar", updateOrderBar)
 
 local function orderBar_OnEvent(self, event)
     if OrderHallCommandBar then
@@ -1575,6 +1605,7 @@ local function orderBar_OnEvent(self, event)
 
     updateOrderBar(self)
 end
+GW.AddForProfiling("hud", "orderBar_OnEvent", orderBar_OnEvent)
 
 createOrderBar = function()
     CreateFrame("FRAME", "GwOrderhallBar", UIParent, "GwOrderhallBar")
@@ -1637,8 +1668,9 @@ createOrderBar = function()
 
     orderBar_OnEvent(GwOrderhallBar)
 end
+GW.AddForProfiling("hud", "createOrderBar", createOrderBar)
 
-local hud_OnEvent = function(self, event, ...)
+local function hud_OnEvent(self, event, ...)
     if event == "UNIT_AURA" then
         local unit = ...
         if unit == "player" then
@@ -1653,6 +1685,7 @@ local hud_OnEvent = function(self, event, ...)
         end
     end
 end
+GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 
 local function LoadHudArt()
     local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")

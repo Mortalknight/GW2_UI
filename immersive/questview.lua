@@ -28,6 +28,7 @@ local function splitIter(inputstr, pat)
         end
     end
 end
+GW.AddForProfiling("questview", "splitIter", splitIter)
 
 local function splitQuest(inputstr)
     local sep = "[\\.|!|?|>]%s+"
@@ -44,6 +45,7 @@ local function splitQuest(inputstr)
     end
     return t
 end
+GW.AddForProfiling("questview", "splitQuest", splitQuest)
 
 local function styleRewards()
     QuestInfoRewardsFrame.Header:SetFont("UNIT_NAME_FONT", 14)
@@ -71,11 +73,13 @@ local function styleRewards()
     GwQuestviewFrameContainerDialogRequired:SetShadowColor(0, 0, 0, 1)
     GwQuestviewFrameContainerDialogRequired:SetText(GwLocalization["QUEST_REQUIRED_ITEMS"])
 end
+GW.AddForProfiling("questview", "styleRewards", styleRewards)
 
 local function hideBlizzardQuestFrame()
     QuestFrame:ClearAllPoints()
     QuestFrame:SetPoint("RIGHT", UIParent, "LEFT", -800, 0)
 end
+GW.AddForProfiling("questview", "hideBlizzardQuestFrame", hideBlizzardQuestFrame)
 
 local emotes = {
     ["Idle"] = 0,
@@ -149,6 +153,7 @@ local function setQuestGiverAnimation(count)
         GwQuestviewFrameContainerGiverModel:SetAnimation(a)
     end
 end
+GW.AddForProfiling("questview", "setQuestGiverAnimation", setQuestGiverAnimation)
 
 local function showRewards()
     local xp = GetRewardXP()
@@ -221,6 +226,7 @@ local function showRewards()
         QuestInfoRewardsFrame:SetFrameLevel(5)
     end
 end
+GW.AddForProfiling("questview", "showRewards", showRewards)
 
 local function questTextCompleted()
     if questStateSet then
@@ -238,6 +244,7 @@ local function questTextCompleted()
     end
     questStateSet = true
 end
+GW.AddForProfiling("questview", "questTextCompleted", questTextCompleted)
 
 local function nextGossip()
     QUESTSTRINGINT = QUESTSTRINGINT + 1
@@ -260,6 +267,7 @@ local function nextGossip()
         questTextCompleted()
     end
 end
+GW.AddForProfiling("questview", "nextGossip", nextGossip)
 
 local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7
@@ -347,6 +355,7 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
         PM:SetAnimation(emotes.Dead)
     end
 end
+GW.AddForProfiling("questview", "setPMUnit", setPMUnit)
 
 local function showQuestFrame()
     GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
@@ -376,6 +385,7 @@ local function showQuestFrame()
     end
     PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg", "SFX")
 end
+GW.AddForProfiling("questview", "showQuestFrame", showQuestFrame)
 
 local function clearQuestReq()
     questState = "NONE"
@@ -404,6 +414,7 @@ local function clearQuestReq()
         QUESTREQ["text"][i] = nil
     end
 end
+GW.AddForProfiling("questview", "clearQuestReq", clearQuestReq)
 
 local function LoadQuestview()
     CreateFrame("Frame", "GwQuestviewFrame", UIParent, "GwQuestviewFrame")

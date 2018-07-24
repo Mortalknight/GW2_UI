@@ -77,6 +77,7 @@ local function setItemButtonQuality(button, quality, itemIDOrLink)
         button.IconBorder:Hide()
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "setItemButtonQuality", setItemButtonQuality)
 
 local function updateBagItemButton(button)
     local location = button.location
@@ -115,6 +116,7 @@ local function updateBagItemButton(button)
         setItemButtonQuality(button, quality, id)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "updateBagItemButton", updateBagItemButton)
 
 local function updateBagItemList(itemButton)
     local id = itemButton.id or itemButton:GetID()
@@ -162,6 +164,7 @@ local function updateBagItemList(itemButton)
         end
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "updateBagItemList", updateBagItemList)
 
 local function actionButtonGlobalStyle(self)
     self.IconBorder:SetSize(self:GetSize(), self:GetSize())
@@ -174,6 +177,7 @@ local function actionButtonGlobalStyle(self)
     _G[self:GetName()]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
     _G[self:GetName()]:SetHighlightTexture(nil)
 end
+GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButtonGlobalStyle)
 
 local function itemSlot_OnModifiedClick(self, button)
 	if ( IsModifiedClick("EXPANDITEM") ) then
@@ -191,6 +195,7 @@ local function itemSlot_OnModifiedClick(self, button)
 		return
 	end
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnModifiedClick", itemSlot_OnModifiedClick)
 
 local function itemSlot_OnClick(self, button, drag)
     MerchantFrame_ResetRefundItem()
@@ -245,6 +250,7 @@ local function itemSlot_OnClick(self, button, drag)
         end
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnClick", itemSlot_OnClick)
 
 local function itemSlot_OnClickRouter(self, button)
     if (IsModifiedClick()) then
@@ -253,24 +259,29 @@ local function itemSlot_OnClickRouter(self, button)
         itemSlot_OnClick(self, button)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnClickRouter", itemSlot_OnClickRouter)
 
 local function itemSlot_OnDragStart(self)
     itemSlot_OnClick(self, "LeftButton", true)
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnDragStart", itemSlot_OnDragStart)
 
 local function itemSlot_OnReceiveDrag(self)
     itemSlot_OnClick(self, "LeftButton", true)
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnReceiveDrag", itemSlot_OnReceiveDrag)
 
 local function bagSlot_OnEnter(self)
     self:SetScript("OnUpdate", self.UpdateTooltip)
     GameTooltip:Show()
 end
+GW.AddForProfiling("paperdoll_equipment", "bagSlot_OnEnter", bagSlot_OnEnter)
 
 local function bagSlot_OnLeave(self)
     self:SetScript("OnUpdate", nil)
     GameTooltip_Hide()
 end
+GW.AddForProfiling("paperdoll_equipment", "bagSlot_OnLeave", bagSlot_OnLeave)
 
 local function bagSlot_OnClick(self)
     if (self.location) then
@@ -282,6 +293,7 @@ local function bagSlot_OnClick(self)
         EquipmentManager_RunAction(action)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "bagSlot_OnClick", bagSlot_OnClick)
 
 local function itemSlot_OnLoad(self)
     self:RegisterForDrag("LeftButton")
@@ -294,6 +306,7 @@ local function itemSlot_OnLoad(self)
 
     actionButtonGlobalStyle(self)
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnLoad", itemSlot_OnLoad)
 
 local function updateItemSlot(self)
     local slot = self:GetID()
@@ -347,6 +360,7 @@ local function updateItemSlot(self)
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
 end
+GW.AddForProfiling("paperdoll_equipment", "updateItemSlot", updateItemSlot)
 
 local function itemSlot_OnShow(self)
     self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
@@ -357,6 +371,7 @@ local function itemSlot_OnShow(self)
     self:RegisterEvent("UPDATE_INVENTORY_ALERTS")
     updateItemSlot(self)
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnShow", itemSlot_OnShow)
 
 local function itemSlot_OnHide(self)
     self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
@@ -367,6 +382,7 @@ local function itemSlot_OnHide(self)
     self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
     self:UnregisterEvent("UPDATE_INVENTORY_ALERTS")
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnHide", itemSlot_OnHide)
 
 local function itemSlot_OnEvent(self, event, ...)
     local arg1, _ = ...
@@ -380,6 +396,7 @@ local function itemSlot_OnEvent(self, event, ...)
         updateItemSlot(self)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnEvent", itemSlot_OnEvent)
 
 local function itemSlot_OnEnter(self)
     self:RegisterEvent("MODIFIER_STATE_CHANGED")
@@ -403,12 +420,14 @@ local function itemSlot_OnEnter(self)
         CursorUpdate(self)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnEnter", itemSlot_OnEnter)
 
 local function itemSlot_OnLeave(self)
     self:UnregisterEvent("MODIFIER_STATE_CHANGED")
     GameTooltip_Hide()
     ResetCursor()
 end
+GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnLeave", itemSlot_OnLeave)
 
 local function stat_OnEnter(self)
     if self.stat == "MASTERY" then
@@ -428,6 +447,7 @@ local function stat_OnEnter(self)
     end
     GameTooltip:Show()
 end
+GW.AddForProfiling("paperdoll_equipment", "stat_OnEnter", stat_OnEnter)
 
 local function getBagSlotFrame(i)
     if _G["gwPaperDollBagSlotButton" .. i] ~= nil then
@@ -452,6 +472,7 @@ local function getBagSlotFrame(i)
 
     return f
 end
+GW.AddForProfiling("paperdoll_equipment", "getBagSlotFrame", getBagSlotFrame)
 
 local function updateBagItemListAll()
     if selectedInventorySlot ~= nil then
@@ -502,6 +523,7 @@ local function updateBagItemListAll()
         end
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "updateBagItemListAll", updateBagItemListAll)
 
 local function setStatIcon(self, stat)
     local newTexture = "Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon"
@@ -521,6 +543,7 @@ local function setStatIcon(self, stat)
         self.icon:SetTexture(newTexture)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "setStatIcon", setStatIcon)
 
 local function getStatListFrame(self, i)
     if _G["GwPaperDollStat" .. i] ~= nil then
@@ -538,6 +561,7 @@ local function getStatListFrame(self, i)
 
     return fm
 end
+GW.AddForProfiling("paperdoll_equipment", "getStatListFrame", getStatListFrame)
 
 local function updateStats()
     local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
@@ -608,11 +632,13 @@ local function updateStats()
         end
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "updateStats", updateStats)
 
 local function stats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
     updateStats()
 end
+GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpdate)
 
 local function updateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
@@ -627,6 +653,7 @@ local function updateUnitData()
         GwDressingRoom.characterData:SetText(data)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "updateUnitData", updateUnitData)
 
 local function stats_OnEvent(self, event, ...)
     local unit = ...
@@ -678,12 +705,14 @@ local function stats_OnEvent(self, event, ...)
         self:SetScript("OnUpdate", stats_QueuedUpdate)
     end
 end
+GW.AddForProfiling("paperdoll_equipment", "stats_OnEvent", stats_OnEvent)
 
 local function resetBagInventory()
     GwPaperDollSelectedIndicator:Hide()
     selectedInventorySlot = nil
     updateBagItemListAll()
 end
+GW.AddForProfiling("paperdoll_equipment", "resetBagInventory", resetBagInventory)
 
 local function indicatorAnimation(self)
     local name = self:GetName()
@@ -713,6 +742,7 @@ local function indicatorAnimation(self)
         end
     )
 end
+GW.AddForProfiling("paperdoll_equipment", "indicatorAnimation", indicatorAnimation)
 
 local function LoadPDBagList(fmMenu)
     local fmGDR = CreateFrame("Button", "GwDressingRoom", GwPaperDoll, "GwDressingRoom")

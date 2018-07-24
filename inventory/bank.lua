@@ -48,6 +48,7 @@ local function moveBankBagBar()
         y = y + 32
     end
 end
+GW.AddForProfiling("bank", "moveBankBagBar", moveBankBagBar)
 
 local function relocateBankSearchBox()
     local sb = BankItemSearchBox
@@ -78,6 +79,7 @@ local function relocateBankSearchBox()
     sb:SetFrameLevel(5)
     BankItemAutoSortButton:Hide()
 end
+GW.AddForProfiling("bank", "relocateBankSearchBox", relocateBankSearchBox)
 
 local function updateFreeBankSlots(reagents)
     local free
@@ -99,6 +101,7 @@ local function updateFreeBankSlots(reagents)
     local bank_space_string = free .. " / " .. full
     GwBankFrame.spaceString:SetText(bank_space_string)
 end
+GW.AddForProfiling("bank", "updateFreeBankSlots", updateFreeBankSlots)
 
 local function onBankMove(self)
     self:StopMovingOrSizing()
@@ -107,11 +110,13 @@ local function onBankMove(self)
     SetSetting("BANK_POSITION", saveBankPos)
     GwBankFrameResize:SetPoint("BOTTOMRIGHT", GwBankFrame, "BOTTOMRIGHT", 0, 0)
 end
+GW.AddForProfiling("bank", "onBankMove", onBankMove)
 
 local function createItemBackground(name)
     local bg = CreateFrame("Frame", "GwBankItemBackdrop" .. name, GwBankFrame, "GwBankItemBackdrop")
     return bg
 end
+GW.AddForProfiling("bank", "createItemBackground", createItemBackground)
 
 local function updateReagentsIcons(smooth)
     local x = 8
@@ -197,6 +202,7 @@ local function updateReagentsIcons(smooth)
     SetSetting("BANK_WIDTH", BANK_WINDOW_SIZE)
     gwbf:SetSize(BANK_WINDOW_SIZE, BANK_WINDOW_CONTENT_HEIGHT)
 end
+GW.AddForProfiling("bank", "updateReagentsIcons", updateReagentsIcons)
 
 local function updateBankIcons(smooth)
     moveBankBagBar()
@@ -331,6 +337,7 @@ local function updateBankIcons(smooth)
     SetSetting("BANK_WIDTH", BANK_WINDOW_SIZE)
     gwbf:SetSize(BANK_WINDOW_SIZE, BANK_WINDOW_CONTENT_HEIGHT)
 end
+GW.AddForProfiling("bank", "updateBankIcons", updateBankIcons)
 
 local function bankOnResizeStop(self)
     GwBankFrame:SetScript("OnUpdate", nil)
@@ -361,6 +368,7 @@ local function bankOnResizeStop(self)
     GwBankMoverFrame:SetWidth(newWidth)
     onBankMove(GwBankMoverFrame)
 end
+GW.AddForProfiling("bank", "bankOnResizeStop", bankOnResizeStop)
 
 local function onBankDragUpdate(self)
     local point, relative, framerela, xPos, yPos = GwBankFrameResize:GetPoint()
@@ -378,6 +386,7 @@ local function onBankDragUpdate(self)
         end
     end
 end
+GW.AddForProfiling("bank", "onBankDragUpdate", onBankDragUpdate)
 
 local function compactToggle()
     if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
@@ -400,6 +409,7 @@ local function compactToggle()
     end
     return GwLocalization["BANK_COMPACT_ICONS"]
 end
+GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
 local function onBankFrameChangeSize(self)
     --[[
@@ -411,6 +421,7 @@ local function onBankFrameChangeSize(self)
     self.Texture:SetTexCoord(0, w, 0, h)
     --]]
 end
+GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
 
 local function LoadBank()
     BANK_WINDOW_SIZE = GetSetting("BANK_WIDTH")

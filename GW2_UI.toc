@@ -49,12 +49,12 @@ inventory/bag.lua
 inventory/bank.lua
 
 immersive/questview.xml
-immersive/toast.xml
+#immersive/toast.xml
 immersive/questview.lua
 immersive/chatframe.lua
-immersive/chatbubbles.lua
+#immersive/chatbubbles.lua
 immersive/tooltips.lua
-immersive/toast.lua
+#immersive/toast.lua
 
 objectives/questtracker.xml
 objectives/map.lua

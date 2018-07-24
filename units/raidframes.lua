@@ -32,6 +32,7 @@ local function hideBlizzardRaidFrame()
         CompactRaidFrameManager_SetSetting("IsShown", "0")
     end
 end
+GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
 
 local function updateRaidMarkers(self)
     local i = GetRaidTargetIndex(self.unit)
@@ -45,6 +46,7 @@ local function updateRaidMarkers(self)
         self.classicon:Show()
     end
 end
+GW.AddForProfiling("raidframes", "updateRaidMarkers", updateRaidMarkers)
 
 local function togglePartyFrames(b)
     if InCombatLockdown() then
@@ -76,6 +78,7 @@ local function togglePartyFrames(b)
         end
     end
 end
+GW.AddForProfiling("raidframes", "togglePartyFrames", togglePartyFrames)
 
 local function unhookPlayerFrame()
     if InCombatLockdown() then
@@ -93,6 +96,7 @@ local function unhookPlayerFrame()
         _G["GwCompactplayer"]:Hide()
     end
 end
+GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
 
 local function setAbsorbAmount(self)
     local healthMax = UnitHealthMax(self.unit)
@@ -105,6 +109,7 @@ local function setAbsorbAmount(self)
     end
     self.healthbar.absorbbar:SetValue(absorbPrecentage)
 end
+GW.AddForProfiling("raidframes", "setAbsorbAmount", setAbsorbAmount)
 
 local function setHealth(self)
     local health = UnitHealth(self.unit)
@@ -116,6 +121,7 @@ local function setHealth(self)
 
     Bar(self.healthbar, healthPrec)
 end
+GW.AddForProfiling("raidframes", "setHealth", setHealth)
 
 local function setUnitName(self)
     if self == nil or self.unit == nil then
@@ -157,6 +163,7 @@ local function setUnitName(self)
     end
     self.name:SetText(nameString .. " " .. realmflag)
 end
+GW.AddForProfiling("raidframes", "setUnitName", setUnitName)
 
 local function highlightTargetFrame(self)
     if GW_CURRENT_HIGHLIGHT_FRAME ~= nil then
@@ -165,6 +172,7 @@ local function highlightTargetFrame(self)
     GW_CURRENT_HIGHLIGHT_FRAME = self
     self.targetHighlight:SetVertexColor(1, 1, 1, 1)
 end
+GW.AddForProfiling("raidframes", "highlightTargetFrame", highlightTargetFrame)
 
 local function updateClassIcon(self)
     if b == false then
@@ -173,6 +181,7 @@ local function updateClassIcon(self)
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck")
     end
 end
+GW.AddForProfiling("raidframes", "updateClassIcon", updateClassIcon)
 
 local function updateAwayData(self)
     local classColor = GetSetting("RAID_CLASS_COLOR")
@@ -257,6 +266,7 @@ local function updateAwayData(self)
         self.aggroborder:Hide()
     end
 end
+GW.AddForProfiling("raidframes", "updateAwayData", updateAwayData)
 
 local function updateDebuffs(self)
     local widthLimit = self:GetWidth() / 2
@@ -349,6 +359,7 @@ local function updateDebuffs(self)
         end
     end
 end
+GW.AddForProfiling("raidframes", "updateDebuffs", updateDebuffs)
 
 local function updateAuras(self)
     local buffIndex = 1
@@ -452,6 +463,7 @@ local function updateAuras(self)
 
     updateDebuffs(self)
 end
+GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 
 local function raidframe_OnEvent(self, event, unit, arg1)
     if not UnitExists(self.unit) then
@@ -566,6 +578,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         )
     end
 end
+GW.AddForProfiling("raidframes", "raidframe_OnEvent", raidframe_OnEvent)
 
 local function updateFrameData(self)
     if not UnitExists(self.unit) then
@@ -610,6 +623,7 @@ local function updateFrameData(self)
     updateAwayData(self)
     updateAuras(self)
 end
+GW.AddForProfiling("raidframes", "updateFrameData", updateFrameData)
 
 local function raidframe_OnUpdate(self)
     if not UnitExists(self.unit) then
@@ -624,6 +638,7 @@ local function raidframe_OnUpdate(self)
     self.onUpdateDelay = GetTime() + 0.2
     updateAwayData(self)
 end
+GW.AddForProfiling("raidframes", "raidframe_OnUpdate", raidframe_OnUpdate)
 
 local function UpdateRaidFramesPosition()
     local WIDTH = GetSetting("RAID_WIDTH")
@@ -687,6 +702,7 @@ local function sortByRole()
     end
     return sorted_array
 end
+GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 
 local function UpdateRaidFramesLayout()
     if InCombatLockdown() then
@@ -832,6 +848,7 @@ local function createRaidFrame(registerUnit)
         frame.manabar:Show()
     end
 end
+GW.AddForProfiling("raidframes", "createRaidFrame", createRaidFrame)
 
 local function LoadRaidFrames()
     hideBlizzardRaidFrame()

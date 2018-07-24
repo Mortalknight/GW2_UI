@@ -269,10 +269,12 @@ local charCloseSecure_OnClick = [=[
 local mover_OnDragStart = function(self)
     self:StartMoving()
 end
+GW.AddForProfiling("character", "mover_OnDragStart", mover_OnDragStart)
 
 local mover_OnDragStop = function(self)
     self:StopMovingOrSizing()
 end
+GW.AddForProfiling("character", "mover_OnDragStop", mover_OnDragStop)
 
 -- TODO: this doesn't work if bindings are updated in combat, but who does that?!
 local function mover_OnEvent(self, event)
@@ -292,6 +294,7 @@ local function mover_OnEvent(self, event)
         end
     end
 end
+GW.AddForProfiling("character", "mover_OnEvent", mover_OnEvent)
 
 local function loadBaseFrame()
     if hasBeenLoaded then
@@ -337,6 +340,7 @@ local function loadBaseFrame()
     --    GwCurrencyIcon:SetFrameRef("GwCharacterWindow", fmGCW)
     --end
 end
+GW.AddForProfiling("character", "loadBaseFrame", loadBaseFrame)
 
 local function setTabIconState(self, b)
     if b then
@@ -345,6 +349,7 @@ local function setTabIconState(self, b)
         self.icon:SetTexCoord(0.505, 1, 0, 0.625)
     end
 end
+GW.AddForProfiling("character", "setTabIconState", setTabIconState)
 
 local function createTabIcon(iconName, tabIndex)
     local f = CreateFrame("Button", nil, GwCharacterWindow, "GwCharacterTabSelect")
@@ -353,16 +358,19 @@ local function createTabIcon(iconName, tabIndex)
     setTabIconState(f, false)
     return f
 end
+GW.AddForProfiling("character", "createTabIcon", createTabIcon)
 
 local function container_OnShow(self)
     setTabIconState(self.TabFrame, true)
     self.CharWindow.windowIcon:SetTexture(self.HeaderIcon)
     self.CharWindow.WindowHeader:SetText(self.HeaderText)
 end
+GW.AddForProfiling("character", "container_OnShow", container_OnShow)
 
 local function container_OnHide(self)
     setTabIconState(self.TabFrame, false)
 end
+GW.AddForProfiling("character", "container_OnHide", container_OnHide)
 
 local function charTab_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
@@ -370,7 +378,7 @@ local function charTab_OnEnter(self)
     GameTooltip_AddNormalLine(GameTooltip, self.gwTipLabel)
     GameTooltip:Show()
 end
-GW.AddForProfiling("talents", "charTab_OnEnter", charTab_OnEnter)
+GW.AddForProfiling("character", "charTab_OnEnter", charTab_OnEnter)
 
 local function LoadCharacter()
     local anyThingToLoad = false

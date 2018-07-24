@@ -25,6 +25,7 @@ local function getNewTitlesButton(i)
 
     return f
 end
+GW.AddForProfiling("character_titles", "getNewTitlesButton", getNewTitlesButton)
 
 local function updateTitles()
     savedPlayerTitles[1] = {}
@@ -54,6 +55,7 @@ local function updateTitles()
     )
     savedPlayerTitles[1].name = PLAYER_TITLE_NONE
 end
+GW.AddForProfiling("character_titles", "updateTitles", updateTitles)
 
 local function updateLayout()
     local currentTitle = GetCurrentTitle()
@@ -94,11 +96,13 @@ local function updateLayout()
         _G["GwPaperDollTitleButton" .. i]:Hide()
     end
 end
+GW.AddForProfiling("character_titles", "updateLayout", updateLayout)
 
 local function titles_OnEvent()
     updateTitles()
     updateLayout()
 end
+GW.AddForProfiling("character_titles", "titles_OnEvent", titles_OnEvent)
 
 local function LoadPDTitles(fmMenu)
     local fmGPT = CreateFrame("Frame", "GwPaperTitles", GwPaperDoll, "GwPaperTitles")

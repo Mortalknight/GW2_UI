@@ -106,6 +106,7 @@ local function updatePlayerDebuffList()
         end
     )
 end
+GW.AddForProfiling("buffs", "updatePlayerDebuffList", updatePlayerDebuffList)
 
 local function updatePlayerDebuffs(x, y)
     y = y + 1
@@ -193,6 +194,7 @@ local function updatePlayerDebuffs(x, y)
         end
     end
 end
+GW.AddForProfiling("buffs", "updatePlayerDebuffs", updatePlayerDebuffs)
 
 local function updatePlayerBuffList()
     unitToWatch = "Player"
@@ -225,6 +227,7 @@ local function updatePlayerBuffList()
         end
     )
 end
+GW.AddForProfiling("buffs", "updatePlayerBuffList", updatePlayerBuffList)
 
 --[[
 local function updatePlayerAuras()

@@ -67,6 +67,7 @@ local function disableMABags()
     MAOptNoBags:SetEnabled(false)
     forcedMABags = true
 end
+GW.AddForProfiling("index", "disableMABags", disableMABags)
 
 local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
     local dummyPoint = GetDefault(settingsName)
@@ -93,6 +94,7 @@ local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
 
     SetSetting(lockAble, true)
 end
+GW.AddForProfiling("index", "lockableOnClick", lockableOnClick)
 
 local function lockFrame_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -100,11 +102,13 @@ local function lockFrame_OnEnter(self)
     GameTooltip:AddLine("Lock to default position", 1, 1, 1)
     GameTooltip:Show()
 end
+GW.AddForProfiling("index", "lockFrame_OnEnter", lockFrame_OnEnter)
 
 local function mover_OnDragStart(self)
     self.IsMoving = true
     self:StartMoving()
 end
+GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 
 local function mover_OnDragStop(self)
     local settingsName = self.gw_Settings
@@ -124,6 +128,7 @@ local function mover_OnDragStop(self)
 
     self.IsMoving = false
 end
+GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
 local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockAble)
     local moveframe = CreateFrame("Frame", name .. "MoveAble", UIParent, dummyFrame)
@@ -223,6 +228,7 @@ local function buttonAnim(self, name, w, hover)
     hover:SetPoint("RIGHT", self, "LEFT", l, 0)
     hover:SetVertexColor(1, 1, 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
 end
+GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 
 function GwStandardButton_OnEnter(self)
     local name = tostring(self)
@@ -294,6 +300,7 @@ local function barAnimation(self, barWidth, sparkWidth)
     self.spark:ClearAllPoints()
     self.spark:SetPoint("LEFT", spark, 0)
 end
+GW.AddForProfiling("index", "barAnimation", barAnimation)
 
 local function Bar(self, value)
     if self == nil then
@@ -345,6 +352,7 @@ local function swimAnim()
     _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
     _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
 end
+GW.AddForProfiling("index", "swimAnim", swimAnim)
 
 local updateCB = {}
 local function AddUpdateCB(func, payload)
@@ -416,6 +424,7 @@ local function gw_OnUpdate(self, elapsed)
         cb.func(cb.payload, elapsed)
     end
 end
+GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
 local function gw_OnEvent(self, event, name)
     if loaded then
@@ -573,6 +582,7 @@ local function gw_OnEvent(self, event, name)
 
     l:SetScript("OnUpdate", gw_OnUpdate)
 end
+GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
 l:SetScript("OnEvent", gw_OnEvent)
 l:RegisterEvent("PLAYER_LOGIN")
 
@@ -607,6 +617,7 @@ local function wait_OnUpdate(self, elapse)
         end
     end
 end
+GW.AddForProfiling("index", "wait_OnUpdate", wait_OnUpdate)
 
 local function Wait(delay, func, ...)
     if type(delay) ~= "number" or type(func) ~= "function" then

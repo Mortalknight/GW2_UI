@@ -63,35 +63,6 @@ local function getQuestPOIText(questLogIndex)
 end
 GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
 
---[[
-local function getCompassPriority()
-    local closestIndex = nil
-    local posX, posY = GetPlayerMapPosition("player")
-    if posX == nil or posX == 0 then
-        return
-    end
-
-    local closest = math.huge
-    for k, v in pairs(notifications) do
-        if v["MAPID"] ~= nil then
-            --SetMapByID(v['MAPID'])
-            local dx = v["X"] - posX
-            local dy = v["Y"] - posY
-            local dist = sqrt(dx * dx + dy * dy)
-            if dist < closest then
-                closest = dist
-                closestIndex = k
-            end
-        end
-    end
-
-    if closestIndex == nil then
-        return
-    end
-
-    return closestIndex
-end
---]]
 local questCompass = {
     ["TYPE"] = "QUEST",
     ["COLOR"] = TRACKER_TYPE_COLOR["QUEST"],

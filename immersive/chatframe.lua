@@ -40,6 +40,7 @@ local gw_fade_frames = {}
 local function chatFader(frame, to, from)
     UIFrameFadeIn(frame, 2, from, to)
 end
+GW.AddForProfiling("chatframe", "chatFader", chatFader)
 
 local function setChatBackgroundColor()
     for i = 1, 10 do
@@ -55,6 +56,7 @@ local function setChatBackgroundColor()
         end
     end
 end
+GW.AddForProfiling("chatframe", "setChatBackgroundColor", setChatBackgroundColor)
 
 local function handleChatFrameFadeIn(chatFrame)
     if not GetSetting("CHATFRAME_FADE") then
@@ -79,6 +81,7 @@ local function handleChatFrameFadeIn(chatFrame)
     _G[frameName .. "ButtonFrame"]:Show()
     ChatFrameMenuButton:Show()
 end
+GW.AddForProfiling("chatframe", "handleChatFrameFadeIn", handleChatFrameFadeIn)
 
 local function handleChatFrameFadeOut(chatFrame)
     if not GetSetting("CHATFRAME_FADE") then
@@ -107,6 +110,7 @@ local function handleChatFrameFadeOut(chatFrame)
     _G[frameName .. "ButtonFrame"]:Hide()
     ChatFrameMenuButton:Hide()
 end
+GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut)
 
 local function styleChatWindow(useId)
     local cf = _G["ChatFrame" .. useId]
@@ -234,6 +238,7 @@ local function styleChatWindow(useId)
     _G["ChatFrame" .. useId .. "EditBoxFocusLeft"]:SetTexture(nil)
     _G["ChatFrame" .. useId .. "EditBoxFocusMid"]:SetTexture(nil)
 end
+GW.AddForProfiling("chatframe", "styleChatWindow", styleChatWindow)
 
 local function chatBackgroundOnResize(self)
     local w, h = self:GetSize()
@@ -243,6 +248,7 @@ local function chatBackgroundOnResize(self)
 
     self.texture:SetTexCoord(0, w, 1 - h, 1)
 end
+GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
 
 local function LoadChat()
     if QuickJoinToastButton ~= nil then

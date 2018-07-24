@@ -15,6 +15,7 @@ local function currency_OnClick(self)
     end
     SetCurrencyBackpack(self.CurrencyIdx, toggle)
 end
+GW.AddForProfiling("currency", "currency_OnClick", currency_OnClick)
 
 local function currency_OnEnter(self)
     if not self.CurrencyID or not self.CurrencyIdx then
@@ -26,6 +27,7 @@ local function currency_OnEnter(self)
     GameTooltip:AddLine(GwLocalization["CLICK_TO_TRACK"], 1, 1, 1)
     GameTooltip:Show()
 end
+GW.AddForProfiling("currency", "currency_OnEnter", currency_OnEnter)
 
 local function loadCurrency(curwin)
     local USED_CURRENCY_HEIGHT
@@ -91,6 +93,7 @@ local function loadCurrency(curwin)
     USED_CURRENCY_HEIGHT = BAG_CURRENCY_SIZE * currencyCount
     HybridScrollFrame_Update(curwin, USED_CURRENCY_HEIGHT, 576)
 end
+GW.AddForProfiling("currency", "loadCurrency", loadCurrency)
 
 local function currencySetup(curwin)
     HybridScrollFrame_CreateButtons(curwin, "GwCurrencyRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
@@ -115,6 +118,7 @@ local function currencySetup(curwin)
 
     loadCurrency(curwin)
 end
+GW.AddForProfiling("currency", "currencySetup", currencySetup)
 
 local function menuItem_OnClick(self, button)
     local menuItems = self:GetParent().items
@@ -125,6 +129,7 @@ local function menuItem_OnClick(self, button)
     self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
     self.ToggleMe:Show()
 end
+GW.AddForProfiling("currency", "menuItem_OnClick", menuItem_OnClick)
 
 local function LoadCurrency(tabContainer)
     -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons

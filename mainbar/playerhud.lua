@@ -65,6 +65,7 @@ local function powerBar_OnUpdate(self)
 
     self.animationCurrent = powerPrec
 end
+GW.AddForProfiling("playerhud", "powerBar_OnUpdate", powerBar_OnUpdate)
 
 local function repair_OnEvent()
     local needRepair = false
@@ -94,6 +95,7 @@ local function repair_OnEvent()
         GwHudArtFrameRepair:Hide()
     end
 end
+GW.AddForProfiling("playerhud", "repair_OnEvent", repair_OnEvent)
 
 local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationName)
     if forcePowerType == nil then
@@ -225,6 +227,7 @@ local function globeFlashComplete()
         end
     )
 end
+GW.AddForProfiling("playerhud", "globeFlashComplete", globeFlashComplete)
 
 local function updateHealthText(text)
     local v = CommaValue(text)
@@ -233,6 +236,7 @@ local function updateHealthText(text)
         _G["GwPlayerHealthGlobeTextShadow" .. i]:SetText(v)
     end
 end
+GW.AddForProfiling("playerhud", "updateHealthText", updateHealthText)
 
 local function updateAbsorbText(text)
     local v
@@ -247,6 +251,7 @@ local function updateAbsorbText(text)
         _G["GwPlayerAbsorbGlobeTextShadow" .. i]:SetText(v)
     end
 end
+GW.AddForProfiling("playerhud", "updateAbsorbText", updateAbsorbText)
 
 local function updateHealthData(self)
     local health = UnitHealth("Player")
@@ -319,6 +324,7 @@ local function updateHealthData(self)
     _G["GwPlayerHealthGlobeAbsorb"]:SetHeight(absorbPrecOverflow * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth())
     _G["GwPlayerHealthGlobeAbsorbBar"]:SetTexCoord(0, 1, math.abs(absorbPrecOverflow - 1), 1)
 end
+GW.AddForProfiling("playerhud", "updateHealthData", updateHealthData)
 
 local function updateDodgeBar(start, duration, chargesMax, charges)
     --  GwDodgeBar.spark.anim:SetDegrees(63)
@@ -345,6 +351,7 @@ local function updateDodgeBar(start, duration, chargesMax, charges)
     )
     GwDodgeBar.animation = 0
 end
+GW.AddForProfiling("playerhud", "updateDodgeBar", updateDodgeBar)
 
 local function dodgeBar_OnEvent(self, event, unit)
     if event == "SPELL_UPDATE_COOLDOWN" then
@@ -414,6 +421,7 @@ local function dodgeBar_OnEvent(self, event, unit)
         end
     end
 end
+GW.AddForProfiling("playerhud", "dodgeBar_OnEvent", dodgeBar_OnEvent)
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
@@ -491,6 +499,7 @@ local function selectPvp(self)
         self.pvp.horde:Hide()
     end
 end
+GW.AddForProfiling("playerhud", "selectPvp", selectPvp)
 
 local function globe_OnEvent(self, event, unit)
     if unit ~= "player" then
@@ -505,6 +514,7 @@ local function globe_OnEvent(self, event, unit)
         selectPvp(self)
     end
 end
+GW.AddForProfiling("playerhud", "globe_OnEvent", globe_OnEvent)
 
 local function globe_OnEnter(self)
     local warmode = C_PvP.IsWarModeDesired()
@@ -552,6 +562,7 @@ local function globe_OnEnter(self)
         end
     )
 end
+GW.AddForProfiling("playerhud", "globe_OnEnter", globe_OnEnter)
 
 local function globe_OnLeave(self)
     GameTooltip_Hide()
@@ -567,6 +578,7 @@ local function globe_OnLeave(self)
         end
     )
 end
+GW.AddForProfiling("playerhud", "globe_OnLeave", globe_OnLeave)
 
 local function LoadPlayerHud()
     PlayerFrame:SetScript("OnEvent", nil)

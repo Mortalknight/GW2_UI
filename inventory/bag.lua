@@ -32,11 +32,13 @@ local function bagFrameHide()
     GwBagFrameResize:Hide()
     CloseAllBags()
 end
+GW.AddForProfiling("bag", "bagFrameHide", bagFrameHide)
 
 local function bagFrameShow()
     GwBagMoverFrame:Show()
     GwBagFrameResize:Show()
 end
+GW.AddForProfiling("bag", "bagFrameShow", bagFrameShow)
 
 local function moveBagbar()
     local y = 25
@@ -79,6 +81,7 @@ local function moveBagbar()
         y = y + 32
     end
 end
+GW.AddForProfiling("bag", "moveBagbar", moveBagbar)
 
 local function updateMoney(self)
     if not self then
@@ -94,6 +97,7 @@ local function updateMoney(self)
     self.silver:SetText(silver)
     self.gold:SetText(CommaValue(gold))
 end
+GW.AddForProfiling("bag", "updateMoney", updateMoney)
 
 local function updateFreeSlots()
     local free = 0
@@ -108,10 +112,12 @@ local function updateFreeSlots()
     local bag_space_string = free .. " / " .. full
     GwBagFrame.spaceString:SetText(bag_space_string)
 end
+GW.AddForProfiling("bag", "updateFreeSlots", updateFreeSlots)
 
 local function createItemBackground(name)
     return CreateFrame("Frame", "GwBagItemBackdrop" .. name, GwBagFrame, "GwBagItemBackdrop")
 end
+GW.AddForProfiling("bag", "createItemBackground", createItemBackground)
 
 local function updateBagIcons(smooth)
     moveBagbar()
@@ -226,6 +232,7 @@ local function updateBagIcons(smooth)
     SetSetting("BAG_WIDTH", BAG_WINDOW_SIZE)
     gwbf:SetSize(BAG_WINDOW_SIZE, BAG_WINDOW_CONTENT_HEIGHT)
 end
+GW.AddForProfiling("bag", "updateBagIcons", updateBagIcons)
 
 local function compactToggle()
     if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
@@ -240,6 +247,7 @@ local function compactToggle()
     updateBagIcons()
     return GwLocalization["COMPACT_ICONS"] --Local?
 end
+GW.AddForProfiling("bag", "compactToggle", compactToggle)
 
 local function watchCurrency(self)
     local watchSlot = 1
@@ -258,6 +266,7 @@ local function watchCurrency(self)
         self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
     end
 end
+GW.AddForProfiling("bag", "watchCurrency", watchCurrency)
 
 local function showIcons()
     local gwbf = GwBagFrame
@@ -269,6 +278,7 @@ local function showIcons()
     gwbf.buttonSort:Show()
     ContainerFrame1:Show()
 end
+GW.AddForProfiling("bag", "showIcons", showIcons)
 
 local function CloseBags()
     local o = false
@@ -318,6 +328,7 @@ local function relocateSearchBox()
     sb.ClearAllPoints = function()
     end
 end
+GW.AddForProfiling("bag", "relocateSearchBox", relocateSearchBox)
 
 local function onBagMove(self)
     self:StopMovingOrSizing()
@@ -326,6 +337,7 @@ local function onBagMove(self)
     SetSetting("BAG_POSITION", saveBagPos)
     GwBagFrameResize:SetPoint("BOTTOMRIGHT", GwBagFrame, "BOTTOMRIGHT", 0, 0)
 end
+GW.AddForProfiling("bag", "onBagMove", onBagMove)
 
 local function bagOnResizeStop(self)
     GwBagFrame:SetScript("OnUpdate", nil)
@@ -352,6 +364,7 @@ local function bagOnResizeStop(self)
     GwBagMoverFrame:SetWidth(newWidth)
     onBagMove(GwBagMoverFrame)
 end
+GW.AddForProfiling("bag", "bagOnResizeStop", bagOnResizeStop)
 
 local function onBagDragUpdate(self)
     local point, relative, framerela, xPos, yPos = GwBagFrameResize:GetPoint()
@@ -365,6 +378,7 @@ local function onBagDragUpdate(self)
         updateBagIcons(true)
     end
 end
+GW.AddForProfiling("bag", "onBagDragUpdate", onBagDragUpdate)
 
 local function onBagFrameChangeSize(self)
     local w, h = self:GetSize()
@@ -374,6 +388,7 @@ local function onBagFrameChangeSize(self)
 
     self.Texture:SetTexCoord(0, w, 0, h)
 end
+GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
 
 local function LoadBag()
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")

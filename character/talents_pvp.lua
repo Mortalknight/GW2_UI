@@ -77,6 +77,7 @@ local function updateButton(btn, slotInfo, selectedTalents)
         btn.isPickable = false
     end
 end
+GW.AddForProfiling("talents_pvp", "updateButton", updateButton)
 
 local function updatePicks(self)
     local fmTab = self:GetParent()
@@ -157,6 +158,7 @@ local function button_OnModifiedClick(self)
         PickupPvpTalent(tid)
     end
 end
+GW.AddForProfiling("talents_pvp", "button_OnModifiedClick", button_OnModifiedClick)
 
 local function spellButton_OnClick(self, button, down)
     if IsModifiedClick() then

@@ -29,6 +29,7 @@ local function sortAuras(a, b)
 
     return (b["caster"] ~= "player" and a["caster"] == "player")
 end
+GW.AddForProfiling("unitframes", "sortAuras", sortAuras)
 
 local function sortAuraList(auraList)
     table.sort(
@@ -40,6 +41,7 @@ local function sortAuraList(auraList)
 
     return auraList
 end
+GW.AddForProfiling("unitframes", "sortAuraList", sortAuraList)
 
 local function getBuffs(unit, filter)
     if filter == nil then
@@ -52,7 +54,7 @@ local function getBuffs(unit, filter)
             auraList[i]["id"] = i
 
             auraList[i]["name"],
-				auraList[i]["icon"],
+                auraList[i]["icon"],
                 auraList[i]["count"],
                 auraList[i]["dispelType"],
                 auraList[i]["duration"],
@@ -72,6 +74,7 @@ local function getBuffs(unit, filter)
 
     return sortAuraList(auraList)
 end
+GW.AddForProfiling("unitframes", "getBuffs", getBuffs)
 
 local function getDebuffs(unit, filter)
     local auraList = {}
@@ -102,6 +105,7 @@ local function getDebuffs(unit, filter)
 
     return sortAuraList(auraList)
 end
+GW.AddForProfiling("unitframes", "getDebuffs", getDebuffs)
 
 local function setAuraType(self, typeAura)
     if self.typeAura == typeAura then
@@ -124,6 +128,7 @@ local function setAuraType(self, typeAura)
 
     self.typeAura = typeAura
 end
+GW.AddForProfiling("unitframes", "setAuraType", setAuraType)
 
 local function setBuffData(self, buffs, i, oldBuffs)
     if not self or not buffs then
@@ -183,6 +188,7 @@ local function setBuffData(self, buffs, i, oldBuffs)
 
     return true
 end
+GW.AddForProfiling("unitframes", "setBuffData", setBuffData)
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -192,6 +198,7 @@ local function normalUnitFrame_OnEnter(self)
         GameTooltip:Show()
     end
 end
+GW.AddForProfiling("unitframes", "normalUnitFrame_OnEnter", normalUnitFrame_OnEnter)
 
 local function createNormalUnitFrame(ftype)
     local f = CreateFrame("Button", ftype, UIParent, "GwNormalUnitFrame")
@@ -223,6 +230,7 @@ local function createNormalUnitFrame(ftype)
 
     return f
 end
+GW.AddForProfiling("unitframes", "createNormalUnitFrame", createNormalUnitFrame)
 
 local function createNormalUnitFrameSmall()
     local f = CreateFrame("Button", "GwTargetsTargetUnitFrame", UIParent, "GwNormalUnitFrameSmall")
@@ -248,6 +256,7 @@ local function createNormalUnitFrameSmall()
 
     return f
 end
+GW.AddForProfiling("unitframes", "createNormalUnitFrameSmall", createNormalUnitFrameSmall)
 
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
@@ -265,6 +274,7 @@ local function updateHealthTextString(self, health, healthPrecentage)
 
     self.healthString:SetText(healthString)
 end
+GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
@@ -326,6 +336,7 @@ local function updateHealthbarColor(self)
         self.nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
     end
 end
+GW.AddForProfiling("unitframes", "updateHealthbarColor", updateHealthbarColor)
 
 local function healthBarAnimation(self, powerPrec)
     local powerBarWidth = self.barWidth
@@ -356,6 +367,7 @@ local function healthBarAnimation(self, powerPrec)
         0
     )
 end
+GW.AddForProfiling("unitframes", "healthBarAnimation", healthBarAnimation)
 
 local function healthBarAnimationNormal(self, powerPrec)
     local powerBarWidth = self.barWidth
@@ -386,6 +398,7 @@ local function healthBarAnimationNormal(self, powerPrec)
         0
     )
 end
+GW.AddForProfiling("unitframes", "healthBarAnimationNormal", healthBarAnimationNormal)
 
 local function setUnitPortraitFrame(self, event)
     if self.portrait == nil or self.background == nil then
@@ -424,6 +437,7 @@ local function setUnitPortraitFrame(self, event)
 
     self.background:SetTexture(TARGET_FRAME_ART[border])
 end
+GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
 
 local function updateRaidMarkers(self, event)
     local i = GetRaidTargetIndex(self.unit)
@@ -433,6 +447,7 @@ local function updateRaidMarkers(self, event)
     end
     self.raidmarker:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. i)
 end
+GW.AddForProfiling("unitframes", "updateRaidMarkers", updateRaidMarkers)
 
 local function setUnitPortrait(self, evnt)
     if self.portrait == nil then
@@ -441,6 +456,7 @@ local function setUnitPortrait(self, evnt)
     SetPortraitTexture(self.portrait, self.unit)
     self.activePortrait = ""
 end
+GW.AddForProfiling("unitframes", "setUnitPortrait", setUnitPortrait)
 
 local function unitFrameData(self, event)
     local level = UnitLevel(self.unit)
@@ -461,6 +477,7 @@ local function unitFrameData(self, event)
 
     setUnitPortraitFrame(self, event)
 end
+GW.AddForProfiling("unitframes", "unitFrameData", unitFrameData)
 
 local function normalCastBarAnimation(self, powerPrec)
     local powerBarWidth = self.barWidth
@@ -468,6 +485,7 @@ local function normalCastBarAnimation(self, powerPrec)
     self.castingbarNormal:SetTexCoord(0, powerPrec, 0.25, 0.5)
     self.castingbarNormalSpark:SetWidth(math.max(1, math.min(16, 16 * (powerPrec / 0.10))))
 end
+GW.AddForProfiling("unitframes", "normalCastBarAnimation", normalCastBarAnimation)
 
 local function protectedCastAnimation(self, powerPrec)
     local powerBarWidth = self.barWidth
@@ -482,6 +500,7 @@ local function protectedCastAnimation(self, powerPrec)
     self.castingbar:SetTexCoord(0, math.min(1, math.max(0, 0.0625 * segment)), 0, 1)
     self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
 end
+GW.AddForProfiling("unitframes", "protectedCastAnimation", protectedCastAnimation)
 
 local function hideCastBar(self, event)
     self.castingbarBackground:Hide()
@@ -504,6 +523,7 @@ local function hideCastBar(self, event)
         animations["GwUnitFrame" .. self.unit .. "Cast"]["duration"] = 0
     end
 end
+GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
 
 local function updateCastValues(self, event)
     local castType = 1
@@ -567,6 +587,7 @@ local function updateCastValues(self, event)
         "noease"
     )
 end
+GW.AddForProfiling("unitframes", "updateCastValues", updateCastValues)
 
 local function updatePowerValues(self, event)
     local powerType, powerToken, _ = UnitPowerType(self.unit)
@@ -593,6 +614,7 @@ local function updatePowerValues(self, event)
 
     self.powerbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * powerPrecentage)))
 end
+GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
 local function setAbsorbValue(self, absorb, absorbPrecentage, healthPrecentage, health, healthMax)
     local absorbAmount = healthPrecentage + absorbPrecentage
@@ -607,6 +629,7 @@ local function setAbsorbValue(self, absorb, absorbPrecentage, healthPrecentage, 
     self.absorbbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
     self.absorbbar:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
 end
+GW.AddForProfiling("unitframes", "setAbsorbValue", setAbsorbValue)
 
 local function updateHealthValues(self, event)
     local health = UnitHealth(self.unit)
@@ -659,6 +682,7 @@ local function updateHealthValues(self, event)
         end
     )
 end
+GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 
 local function auraAnimateIn(self)
     local endWidth = self:GetWidth()
@@ -674,6 +698,7 @@ local function auraAnimateIn(self)
         end
     )
 end
+GW.AddForProfiling("unitframes", "auraAnimateIn", auraAnimateIn)
 
 local function UpdateBuffLayout(self, event, anchorPos)
     local minIndex = 1
@@ -816,6 +841,7 @@ local function auraFrame_OnUpdate(self, elapsed)
         self.duration:SetText(TimeCount(self.expires - GetTime()))
     end
 end
+GW.AddForProfiling("unitframes", "auraFrame_OnUpdate", auraFrame_OnUpdate)
 
 local function auraFrame_OnEnter(self)
     if self:IsShown() and self.auraid ~= nil and self.unit ~= nil then
@@ -829,12 +855,14 @@ local function auraFrame_OnEnter(self)
         GameTooltip:Show()
     end
 end
+GW.AddForProfiling("unitframes", "auraFrame_OnEnter", auraFrame_OnEnter)
 
 local function auraFrame_OnClick(self, button, down)
     if not InCombatLockdown() and self.auraType == "buff" and button == "RightButton" and self.unit == "player" then
         CancelUnitBuff("player", self.auraid)
     end
 end
+GW.AddForProfiling("unitframes", "auraFrame_OnClick", auraFrame_OnClick)
 
 local function CreateAuraFrame(name, parent)
     local f = CreateFrame("Button", name, parent, "GwAuraFrame")
@@ -960,6 +988,7 @@ local function target_OnEvent(self, event, unit)
         UpdateBuffLayout(self, event)
     end
 end
+GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
 
 local function focus_OnEvent(self, event, unit)
     if event == "PLAYER_FOCUS_CHANGED" or event == "ZONE_CHANGED" then
@@ -1039,6 +1068,7 @@ local function focus_OnEvent(self, event, unit)
         UpdateBuffLayout(self, event)
     end
 end
+GW.AddForProfiling("unitframes", "focus_OnEvent", focus_OnEvent)
 
 local function targettarget_OnEvent(self, event, unit, arg2)
     if not UnitExists(self.unit) then
@@ -1110,6 +1140,7 @@ local function targettarget_OnEvent(self, event, unit, arg2)
         updateRaidMarkers(self, event)
     end
 end
+GW.AddForProfiling("unitframes", "targettarget_OnEvent", targettarget_OnEvent)
 
 local function focustarget_OnEvent(self, event, unit, arg2)
     if not UnitExists(self.unit) then
@@ -1185,6 +1216,7 @@ local function focustarget_OnEvent(self, event, unit, arg2)
         updateRaidMarkers(self, event)
     end
 end
+GW.AddForProfiling("unitframes", "focustarget_OnEvent", focustarget_OnEvent)
 
 local function LoadTarget()
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame")

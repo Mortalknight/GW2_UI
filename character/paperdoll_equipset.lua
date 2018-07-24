@@ -29,6 +29,7 @@ local function toggleIgnoredSlots(show)
         end
     end
 end
+GW.AddForProfiling("character_equipset", "toggleIgnoredSlots", toggleIgnoredSlots)
 
 local function outfitListButton_OnClick(self, button)
     if not self.saveOutfit:IsShown() then
@@ -53,6 +54,7 @@ local function outfitListButton_OnClick(self, button)
         self:SetHeight(49)
     end
 end
+GW.AddForProfiling("character_equipset", "outfitListButton_OnClick", outfitListButton_OnClick)
 
 local function outfitEquipButton_OnClick(self, button)
     local selectedSetID = GwPaperDollOutfits.selectedSetID
@@ -62,6 +64,7 @@ local function outfitEquipButton_OnClick(self, button)
         C_EquipmentSet.UseEquipmentSet(selectedSetID)
     end
 end
+GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEquipButton_OnClick)
 
 local function outfitSaveButton_OnClick(self, button)
     WarningPrompt(
@@ -72,6 +75,7 @@ local function outfitSaveButton_OnClick(self, button)
         end
     )
 end
+GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
 
 local function outfitDeleteButton_OnClick(self, button)
     WarningPrompt(
@@ -83,6 +87,7 @@ local function outfitDeleteButton_OnClick(self, button)
         end
     )
 end
+GW.AddForProfiling("character_equipset", "outfitDeleteButton_OnClick", outfitDeleteButton_OnClick)
 
 local function getNewEquipmentSetButton(i)
     if _G["GwPaperDollOutfitsButton" .. i] ~= nil then
@@ -109,6 +114,7 @@ local function getNewEquipmentSetButton(i)
 
     return f
 end
+GW.AddForProfiling("character_equipset", "getNewEquipmentSetButton", getNewEquipmentSetButton)
 
 drawItemSetList = function()
     if GwPaperDollOutfits.buttons == nil then
@@ -179,6 +185,7 @@ drawItemSetList = function()
         end
     end
 end
+GW.AddForProfiling("character_equipset", "drawItemSetList", drawItemSetList)
 
 --[[
 function local GwPaperDollOutfits_OnEvent(self, event, ...)

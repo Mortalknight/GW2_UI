@@ -13,6 +13,7 @@ local function barValues(name, icon)
     GwCastingBar.icon:SetTexture(icon)
     GwCastingBar.latency:Show()
 end
+GW.AddForProfiling("castingbar", "barValues", barValues)
 
 local function barReset()
     if animations["castingbarAnimation"] then
@@ -20,6 +21,7 @@ local function barReset()
         animations["castingbarAnimation"]["duration"] = 0
     end
 end
+GW.AddForProfiling("castingbar", "barReset", barReset)
 
 local function LoadCastingBar()
     CastingBarFrame:Hide()

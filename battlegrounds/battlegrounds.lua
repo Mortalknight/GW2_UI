@@ -11,6 +11,7 @@ local function getPointsNum(t)
 
     return score, max
 end
+GW.AddForProfiling("battlegrounds", "getPointsNum", getPointsNum)
 
 local function capStateChanged(self)
     local fnScale = function(prog)
@@ -18,6 +19,7 @@ local function capStateChanged(self)
     end
     AddToAnimation(self:GetName(), 2, 1, GetTime(), 0.5, fnScale)
 end
+GW.AddForProfiling("battlegrounds", "capStateChanged", capStateChanged)
 
 local function iconOverrider(self, icon)
     if bgs[activeBg]["icons"][icon] == nil then
@@ -56,6 +58,7 @@ local function iconOverrider(self, icon)
 
     return true
 end
+GW.AddForProfiling("battlegrounds", "iconOverrider", iconOverrider)
 
 local function setIcon(self, icon)
     if self.savedIconIndex ~= icon then
@@ -71,10 +74,12 @@ local function setIcon(self, icon)
     self.icon:SetTexture("Interface\\Minimap\\POIIcons")
     self.icon:SetTexCoord(x1, x2, y1, y2)
 end
+GW.AddForProfiling("battlegrounds", "setIcon", setIcon)
 
 local function LandMarkFrameSetPoint_noTimer(i)
     _G["GwBattleLandMarkFrame" .. i]:SetPoint("CENTER", GwBattleGroundScores.MID, "BOTTOMLEFT", (36) * (i - 1) + 18, 45)
 end
+GW.AddForProfiling("battlegrounds", "LandMarkFrameSetPoint_noTimer", LandMarkFrameSetPoint_noTimer)
 
 local function getLandMarkFrame(i)
     if _G["GwBattleLandMarkFrame" .. i] == nil then
@@ -89,6 +94,7 @@ local function getLandMarkFrame(i)
     end
     return _G["GwBattleLandMarkFrame" .. i]
 end
+GW.AddForProfiling("battlegrounds", "getLandMarkFrame", getLandMarkFrame)
 
 local function AB_onEvent(self, event, ...)
     local _, _, _, text, _, _, _, _, _, _, _, _ = GetWorldStateUIInfo(1)
@@ -122,6 +128,7 @@ local function AB_onEvent(self, event, ...)
         end
     end
 end
+GW.AddForProfiling("battlegrounds", "AB_onEvent", AB_onEvent)
 
 local function pvpHud_onEvent(self, event)
     local _, _, _, _, _, _, _, mapID, _ = GetInstanceInfo()
@@ -154,6 +161,7 @@ local function pvpHud_onEvent(self, event)
         GwBattleGroundScores:Hide()
     end
 end
+GW.AddForProfiling("battlegrounds", "pvpHud_onEvent", pvpHud_onEvent)
 
 local function LoadBattlegrounds()
     bgs = {
