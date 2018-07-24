@@ -1420,7 +1420,7 @@ local function loadRewards()
         GwLevelingRewards:Hide()
     end
     GwCloseLevelingRewards:SetScript("OnClick", fnGwCloseLevelingRewards_OnClick)
-    GwCloseLevelingRewards:SetText(close)
+    GwCloseLevelingRewards:SetText(CLOSE)
 
     _G["GwLevelingRewardsItem1"].name:SetFont(DAMAGE_TEXT_FONT, 14)
     _G["GwLevelingRewardsItem1"].level:SetFont(DAMAGE_TEXT_FONT, 14)
@@ -1524,7 +1524,7 @@ displayRewards = function()
             end
             if v["type"] == "TALENT" then
                 _G["GwLevelingRewardsItem" .. i].icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talent-icon")
-                _G["GwLevelingRewardsItem" .. i].name:SetText(GwLocalization["LEVEL_REWARDS_TALENT"])
+                _G["GwLevelingRewardsItem" .. i].name:SetText(BONUS_TALENTS)
                 _G["GwLevelingRewardsItem" .. i]:SetScript(
                     "OnEnter",
                     function()
