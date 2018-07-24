@@ -81,7 +81,7 @@ local function manageButton()
     end
     local fnGMGIB_OnEditFocusGained = function(self)
         local sT = self:GetText()
-        if sT == GwLocalization["PARTY_INVITE_STRING"] then
+        if sT == CALENDAR_PLAYER_NAME then
             self:SetText("")
             self:SetTextColor(1, 1, 1, 1)
         end
@@ -89,7 +89,7 @@ local function manageButton()
     local fnGMGIB_OnEditFocusLost = function(self)
         local sT = self:GetText()
         if sT == nil or sT == "" then
-            self:SetText(GwLocalization["PARTY_INVITE_STRING"])
+            self:SetText(CALENDAR_PLAYER_NAME)
             self:SetTextColor(1, 1, 1, 0.5)
         end
     end
@@ -104,7 +104,7 @@ local function manageButton()
     fmGMGIB:SetScript("OnEnterPressed", fnGMGIB_OnEnterPressed)
     local sT = fmGMGIB:GetText()
     if sT == nil or sT == "" then
-        fmGMGIB:SetText(GwLocalization["PARTY_INVITE_STRING"])
+        fmGMGIB:SetText(CALENDAR_PLAYER_NAME)
         fmGMGIB:SetTextColor(1, 1, 1, 0.5)
     end
 
@@ -195,7 +195,7 @@ local function manageButton()
         end
         _G[self:GetName() .. "Target"]:SetFont(UNIT_NAME_FONT, 14)
         _G[self:GetName() .. "Target"]:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-        _G[self:GetName() .. "Target"]:SetText(GwLocalization["TARGET_MARKER"])
+        _G[self:GetName() .. "Target"]:SetText(RAID_TARGET_ICON)
 
         self:RegisterEvent("GROUP_ROSTER_UPDATE")
         self:RegisterEvent("RAID_ROSTER_UPDATE")
@@ -250,10 +250,10 @@ local function manageButton()
     fmGWMM:SetScript("OnEvent", fnGWMM_OnEvent)
     fnGWMM_OnLoad(fmGWMM)
 
-    GwButtonInviteToParty:SetText(GwLocalization["PARTY_INVITE"])
-    GwManageGroupLeaveButton:SetText(GwLocalization["PARTY_LEAVE"])
-    GwGroupReadyCheck:SetText(GwLocalization["PARTY_READY_CHECK"])
-    GwGroupRoleCheck:SetText(GwLocalization["PARTY_ROLE_CHECK"])
+    GwButtonInviteToParty:SetText(PARTY_INVITE)
+    GwManageGroupLeaveButton:SetText(EXIT)
+    GwGroupReadyCheck:SetText(QUEUED_STATUS_READY_CHECK_IN_PROGRESS)
+    GwGroupRoleCheck:SetText(QUEUED_STATUS_ROLE_CHECK_IN_PROGRESS)
 
     tinsert(UISpecialFrames, "GwGroupManage")
     local x = 10

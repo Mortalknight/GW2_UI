@@ -117,7 +117,7 @@ local function LoadPDTitles(fmMenu)
         updateLayout()
     end
     fmGPT:SetScript("OnMouseWheel", fnGPT_OnMouseWheel)
-    fmMenu:SetupBackButton(fmGPT.backButton, "CHARACTER_MENU_TITLES_RETURN")
+    fmMenu:SetupBackButton(fmGPT.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
 
     updateTitles()
     updateLayout()

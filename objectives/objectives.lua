@@ -788,7 +788,7 @@ local function LoadQuestTracker()
     header.icon:SetTexCoord(0, 1, 0.25, 0.5)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
-    header.title:SetText(GwLocalization["TRACKER_QUEST_TITLE"])
+    header.title:SetText(QUESTS_LABEL)
 
     header:SetScript(
         "OnClick",

@@ -648,7 +648,7 @@ local function updateUnitData()
 
     if name ~= nil then
         local data =
-            GwLocalization["CHARACTER_LEVEL"] .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
+        LEVEL .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
         GwDressingRoom.characterData:SetWidth(180)
         GwDressingRoom.characterData:SetText(data)
     end
@@ -837,7 +837,7 @@ local function LoadPDBagList(fmMenu)
     fmPD3M:HookScript("OnMouseDown", resetBagInventory)
 
     fmGPDS.header:SetFont(DAMAGE_TEXT_FONT, 14)
-    fmGPDS.header:SetText(GwLocalization["CHARACTER_ATTRIBUTES"])
+    fmGPDS.header:SetText(STAT_CATEGORY_ATTRIBUTES)
     fmGPDS:SetScript("OnEvent", stats_OnEvent)
     fmGPDS:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmGPDS:RegisterEvent("CHARACTER_POINTS_CHANGED")
@@ -893,7 +893,7 @@ local function LoadPDBagList(fmMenu)
     fmGPDBIL:SetScript("OnShow", updateBagItemListAll)
     fmGPDBIL:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     updateBagItemListAll()
-    fmMenu:SetupBackButton(fmGPDBIL.backButton, "CHARACTER_MENU_EQUIPMENT_RETURN")
+    fmMenu:SetupBackButton(fmGPDBIL.backButton, CHARACTER .. ": " .. BAG_FILTER_EQUIPMENT)
 
     local fmGPDSI = CreateFrame("Frame", "GwPaperDollSelectedIndicator", GwPaperDoll, "GwPaperDollSelectedIndicator")
     fmGPDSI:SetScript("OnShow", indicatorAnimation)
@@ -902,7 +902,7 @@ local function LoadPDBagList(fmMenu)
 
     StaticPopupDialogs["GW_UNEQUIP_LEGENDARY"] = {
         text = GwLocalization["UNEQUIP_LEGENDARY"],
-        button1 = GwLocalization["SETTINGS_CANCEL"],
+        button1 = CANCEL,
         timeout = 0,
         whileDead = true,
         hideOnEscape = true,
@@ -910,7 +910,7 @@ local function LoadPDBagList(fmMenu)
     }
     StaticPopupDialogs["GW_NOT_A_LEGENDARY"] = {
         text = GwLocalization["NOT_A_LEGENDARY"],
-        button1 = GwLocalization["SETTINGS_CANCEL"],
+        button1 = CANCEL,
         timeout = 0,
         whileDead = true,
         hideOnEscape = true,

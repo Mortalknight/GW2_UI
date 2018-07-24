@@ -534,7 +534,7 @@ local function setupDetail(self)
     self.controles.favorit:SetScript("OnEnter", detailsFavorite_OnEnter)
     self.controles.favorit:SetScript("OnLeave", detailsFavorite_OnLeave)
     self.controles.inactive.string:SetFont(UNIT_NAME_FONT, 12)
-    self.controles.inactive.string:SetText(GwLocalization["CHARACTER_REPUTATION_INACTIVE"])
+    self.controles.inactive.string:SetText(FACTION_INACTIVE)
     self.controles.showAsBar.string:SetFont(UNIT_NAME_FONT, 12)
     self.controles.showAsBar.string:SetText(GwLocalization["CHARACTER_REPUTATION_TRACK"])
     self.controles:SetScript("OnShow", detailsControls_OnShow)
@@ -572,7 +572,7 @@ local function setupDetail(self)
     self.details:SetTextColor(0.8, 0.8, 0.8, 1)
     self.details:Hide()
     self.details:SetWidth(self.StatusBar:GetWidth())
-    self.currentRank:SetText(GwLocalization["CHARACTER_CURRENT_RANK"])
+    self.currentRank:SetText(REFORGE_CURRENT)
     self.nextRank:SetText(GwLocalization["CHARACTER_NEXT_RANK"])
     self:GetParent():SetScript("OnClick", details_OnClick)
 end
@@ -838,11 +838,11 @@ local function LoadReputation(tabContainer)
         updateReputations()
     end
     fmGPR.categories:SetScript("OnMouseWheel", fnGPR_OnMouseWheel)
-    fmGPR.input:SetText(GwLocalization["CHARACTER_REP_SEARCH"])
+    fmGPR.input:SetText(SEARCH .. "...")
     fmGPR.input:SetScript("OnEnterPressed", nil)
     local fnGPR_input_OnTextChanged = function(self)
         local text = self:GetText()
-        if text == GwLocalization["CHARACTER_REP_SEARCH"] or text == "" then
+        if text == SEARCH .. "..." or text == "" then
             updateDetails()
             return
         end
@@ -851,18 +851,18 @@ local function LoadReputation(tabContainer)
     fmGPR.input:SetScript("OnTextChanged", fnGPR_input_OnTextChanged)
     local fnGPR_input_OnEscapePressed = function(self)
         self:ClearFocus()
-        self:SetText(GwLocalization["CHARACTER_REP_SEARCH"])
+        self:SetText(SEARCH .. "...")
     end
     fmGPR.input:SetScript("OnEscapePressed", fnGPR_input_OnEscapePressed)
     local fnGPR_input_OnEditFocusGained = function(self)
-        if self:GetText() == GwLocalization["CHARACTER_REP_SEARCH"] then
+        if self:GetText() == SEARCH .. "..." then
             self:SetText("")
         end
     end
     fmGPR.input:SetScript("OnEditFocusGained", fnGPR_input_OnEditFocusGained)
     local fnGPR_input_OnEditFocusLost = function(self)
         if self:GetText() == "" then
-            self:SetText(GwLocalization["CHARACTER_REP_SEARCH"])
+            self:SetText(SEARCH .. "...")
         end
     end
     fmGPR.input:SetScript("OnEditFocusLost", fnGPR_input_OnEditFocusLost)

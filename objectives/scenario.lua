@@ -401,7 +401,7 @@ local function LoadScenarioFrame()
         "OnShow",
         function(self)
             self:GetParent().timerBackground:Show()
-            self.timerlabel:SetText(GwLocalization["TRACKER_TIME_REMAINING"])
+            self.timerlabel:SetText(TIME_REMAINING)
         end
     )
     timerBlock.timer:SetScript(

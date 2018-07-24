@@ -398,9 +398,9 @@ local function spellButton_OnEnter(self)
     if self.isFuture then
         GameTooltip:AddLine(" ")
         if self.unlockLevel then
-            GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. self.unlockLevel, 1, 1, 1)
+            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
         else
-            GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. GetSpellLevelLearned(self.spellId), 1, 1, 1)
+            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(GetSpellLevelLearned(self.spellId)), 1, 1, 1)  
         end
     end
     GameTooltip:Show()
@@ -923,7 +923,7 @@ local function createRegTab(fmSpellbook, tab)
     actGroup.label.title:SetTextColor(1, 1, 1, 1)
     actGroup.label.title:SetShadowColor(0, 0, 0, 1)
     actGroup.label.title:SetShadowOffset(1, -1)
-    actGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_ACTIVE"])
+    actGroup.label.title:SetText(ACTIVE_PETS)
     actGroup.pool = CreateFramePool("Button", actGroup, "GwSpellbookActiveButton", activePool_Resetter)
     actGroup.poolNSD = CreateFramePool("Button", actGroup, "GwSpellbookActiveButtonNSD", activePoolNSD_Resetter)
     actGroup:SetScript("OnEvent", spellGroup_OnEvent)
@@ -936,7 +936,7 @@ local function createRegTab(fmSpellbook, tab)
     psvGroup.label.title:SetTextColor(1, 1, 1, 1)
     psvGroup.label.title:SetShadowColor(0, 0, 0, 1)
     psvGroup.label.title:SetShadowOffset(1, -1)
-    psvGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_PASSIVE"])
+    psvGroup.label.title:SetText(SPELL_PASSIVE)
     psvGroup.pool = CreateFramePool("Button", psvGroup, "GwSpellbookPassiveButton", passivePool_Resetter)
 
     if tab == 4 then
@@ -961,7 +961,7 @@ local function LoadTalents(tabContainer)
     fmGTF.title:SetTextColor(1, 1, 1, 1)
     fmGTF.title:SetShadowColor(0, 0, 0, 1)
     fmGTF.title:SetShadowOffset(1, -1)
-    fmGTF.title:SetText(GwLocalization["TALENTS_SPEC_HEADER"])
+    fmGTF.title:SetText(SPECIALIZATION)
     fmGTF:SetScript(
         "OnEvent",
         function(self)

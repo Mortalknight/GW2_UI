@@ -452,7 +452,7 @@ local function LoadBank()
     updateBankIcons()
 
     f.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
-    f.headerString:SetText(GwLocalization["BANK_TITLE"])
+    f.headerString:SetText(BANK)
 
     f.spaceString:SetFont(UNIT_NAME_FONT, 12)
     f.spaceString:SetTextColor(1, 1, 1)
@@ -475,7 +475,7 @@ local function LoadBank()
         function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
             GameTooltip:ClearLines()
-            GameTooltip:AddLine(GwLocalization["SORT_BANK"], 1, 1, 1)
+            GameTooltip:AddLine(BAG_CLEANUP_BANK, 1, 1, 1)
             GameTooltip:Show()
         end
     )
@@ -628,10 +628,10 @@ local function LoadBank()
             PurchaseSlot()
         end
     )
-    GwButtonBuyBankSlots:SetText(GwLocalization["BANK_BUY_SLOTS"])
+    GwButtonBuyBankSlots:SetText(BANK_BAG_PURCHASE)
 
     -- setup reagent bank stuff
-    GwBankDepositAllReagents:SetText(GwLocalization["REAGENT_BANK_DEPOSIT_ALL"])
+    GwBankDepositAllReagents:SetText(REAGENTBANK_DEPOSIT)
     GwBankDepositAllReagents:HookScript(
         "OnClick",
         function(self)
@@ -661,7 +661,7 @@ local function LoadBank()
     GwReagentBankFrame:RegisterEvent("REAGENTBANK_PURCHASED")
     GwRegentHelpText:SetFont(UNIT_NAME_FONT, 12)
     GwRegentHelpText:SetShadowColor(1, 1, 1)
-    BUY_REGENTBAG_TEXT = GwLocalization["PURCHASE_REAGENT_BANK"] .. ((GetReagentBankCost()) / 100 / 100) .. "G"
+    BUY_REGENTBAG_TEXT = PURCHASE .. " " .. ((GetReagentBankCost()) / 100 / 100) .. "G"
     GwBuyRegentBank:SetText(BUY_REGENTBAG_TEXT)
     if IsReagentBankUnlocked() then
         GwRegentHelpText:Hide()
@@ -681,7 +681,7 @@ local function LoadBank()
 
             BankItemSearchBox:Hide()
             GwReagentBankFrame:Show()
-            GwBankFrame.headerString:SetText(GwLocalization["REAGENT_BANK_TITLE"])
+            GwBankFrame.headerString:SetText(REAGENT_BANK)
             GwReagentBankFrame:SetHeight(GwBankFrame:GetHeight())
 
             GwBuyMoreBank:Hide()
@@ -701,7 +701,7 @@ local function LoadBank()
             for k, v in pairs(default_bank_frame) do
                 v:Show()
             end
-            GwBankFrame.headerString:SetText(GwLocalization["BANK_TITLE"])
+            GwBankFrame.headerString:SetText(BANK)
             BankItemSearchBox:Show()
             GwReagentBankFrame:Hide()
             for i = 5, 12 do

@@ -90,9 +90,9 @@ local function gwProfileItem_OnLoad(self)
 
     self.deleteButton.string:SetFont(UNIT_NAME_FONT, 12)
     self.deleteButton.string:SetTextColor(255 / 255, 255 / 255, 255 / 255)
-    self.deleteButton.string:SetText(GwLocalization["SETTINGS_DELETE"])
+    self.deleteButton.string:SetText(DELETE)
 
-    self.activateButton:SetText(GwLocalization["SETTINGS_ACTIVATE"])
+    self.activateButton:SetText(ACTIVATE)
 
     self.deleteButton:SetScript("OnEnter", gwProfileItem_delete_OnEnter)
     self.deleteButton:SetScript("OnClick", gwProfileItem_delete_OnClick)
@@ -526,8 +526,8 @@ local function LoadSettings()
     local fmGWP = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
     fmGWP.string:SetFont(UNIT_NAME_FONT, 14)
     fmGWP.string:SetTextColor(1, 1, 1)
-    fmGWP.acceptButton:SetText(GwLocalization["SETTINGS_ACCEPT"])
-    fmGWP.cancelButton:SetText(GwLocalization["SETTINGS_CANCEL"])
+    fmGWP.acceptButton:SetText(ACCEPT)
+    fmGWP.cancelButton:SetText(CANCEL)
     local fnGWP_input_OnEscapePressed = function(self)
         self:ClearFocus()
     end
@@ -574,7 +574,7 @@ local function LoadSettings()
     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
     GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsWindowVersionString:SetText(GW.VERSION_STRING)
-    GwSettingsWindowHeaderString:SetText(GwLocalization["SETTINGS_TITLE"])
+    GwSettingsWindowHeaderString:SetText(CHAT_CONFIGURATION)
     GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
     GwSettingsWindowSave:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
 
@@ -637,14 +637,14 @@ local function LoadSettings()
 
     GwSettingsTargetOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsTargetOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    GwSettingsTargetOptionsHeader:SetText(GwLocalization["TARGET_CAT_1"])
+    GwSettingsTargetOptionsHeader:SetText(TARGET)
     GwSettingsTargetOptionsSub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsTargetOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsTargetOptionsSub:SetText(GwLocalization["TARGET_DESC"])
 
     GwSettingsFocusOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsFocusOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    GwSettingsFocusOptionsHeader:SetText(GwLocalization["FOCUS_CAT_1"])
+    GwSettingsFocusOptionsHeader:SetText(FOCUS)
     GwSettingsFocusOptionsSub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsFocusOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsFocusOptionsSub:SetText(GwLocalization["FOCUS_DESC"])
@@ -658,7 +658,7 @@ local function LoadSettings()
 
     GwSettingsGroupframeHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsGroupframeHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    GwSettingsGroupframeHeader:SetText(GwLocalization["GROUP_CAT_1"])
+    GwSettingsGroupframeHeader:SetText(CHAT_MSG_PARTY)
     GwSettingsGroupframeSub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsGroupframeSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsGroupframeSub:SetText(GwLocalization["GROUP_DESC"])
@@ -709,30 +709,45 @@ local function LoadSettings()
         "HEALTHGLOBE_ENABLED",
         "GwSettingsModuleOption"
     )
-    addOption(GwLocalization["RESOURCE"], GwLocalization["RESOURCE_DESC"], "POWERBAR_ENABLED", "GwSettingsModuleOption")
     addOption(
-        GwLocalization["FOCUS_FRAME"],
+        DISPLAY_POWER_BARS,
+        GwLocalization["RESOURCE_DESC"],
+        "POWERBAR_ENABLED",
+        "GwSettingsModuleOption"
+    )
+    addOption(
+        FOCUS,
         GwLocalization["FOCUS_FRAME_DESC"],
         "FOCUS_ENABLED",
         "GwSettingsModuleOption"
     )
     addOption(
-        GwLocalization["TARGET_FRAME"],
+        TARGET,
         GwLocalization["TARGET_FRAME_DESC"],
         "TARGET_ENABLED",
         "GwSettingsModuleOption"
     )
     --addOption(GwLocalization['CHAT_BUBBLES'], GwLocalization['CHAT_BUBBLES_DESC'],'CHATBUBBLES_ENABLED','GwSettingsModuleOption')
-    addOption(GwLocalization["MINIMAP"], GwLocalization["MINIMAP_DESC"], "MINIMAP_ENABLED", "GwSettingsModuleOption")
     addOption(
-        GwLocalization["QUEST_TRACKER"],
+        MINIMAP_LABEL,
+        GwLocalization["MINIMAP_DESC"],
+        "MINIMAP_ENABLED",
+        "GwSettingsModuleOption"
+    )
+    addOption(
+        QUEST_LOG,
         GwLocalization["QUEST_TRACKER_DESC"],
         "QUESTTRACKER_ENABLED",
         "GwSettingsModuleOption"
     )
-    addOption(GwLocalization["TOOLTIPS"], GwLocalization["TOOLTIPS_DESC"], "TOOLTIPS_ENABLED", "GwSettingsModuleOption")
     addOption(
-        GwLocalization["CHAT_FRAME"],
+        GwLocalization["TOOLTIPS"],
+        GwLocalization["TOOLTIPS_DESC"],
+        "TOOLTIPS_ENABLED",
+        "GwSettingsModuleOption"
+    )
+    addOption(
+        COMMUNITIES_ADD_TO_CHAT_DROP_DOWN_TITLE,
         GwLocalization["CHAT_FRAME_DESC"],
         "CHATFRAME_ENABLED",
         "GwSettingsModuleOption"
@@ -744,27 +759,27 @@ local function LoadSettings()
         "GwSettingsModuleOption"
     )
     addOption(
-        GwLocalization["PLAYER_AURAS"],
+        SCORE_POWER_UPS,
         GwLocalization["PLAYER_AURAS_DESC"],
         "PLAYER_BUFFS_ENABLED",
         "GwSettingsModuleOption"
     )
     addOption(
-        GwLocalization["ACTION_BARS"],
+        BINDING_HEADER_ACTIONBAR,
         GwLocalization["ACTION_BARS_DESC"],
         "ACTIONBARS_ENABLED",
         "GwSettingsModuleOption"
     )
     addOption(GwLocalization["PET_BAR"], GwLocalization["PET_BAR_DESC"], "PETBAR_ENABLED", "GwSettingsModuleOption")
     addOption(
-        GwLocalization["INVENTORY_FRAME"],
+        INVENTORY_TOOLTIP,
         GwLocalization["INVENTORY_FRAME_DESC"],
         "BAGS_ENABLED",
         "GwSettingsModuleOption"
     )
     addOption(GwLocalization["FONTS"], GwLocalization["FONTS_DESC"], "FONTS_ENABLED", "GwSettingsModuleOption")
     addOption(
-        GwLocalization["CASTING_BAR"],
+        SHOW_ENEMY_CAST,
         GwLocalization["CASTING_BAR_DESC"],
         "CASTINGBAR_ENABLED",
         "GwSettingsModuleOption"
@@ -787,12 +802,17 @@ local function LoadSettings()
         "USE_CHARACTER_WINDOW",
         "GwSettingsModuleOption"
     )
-    addOption(TALENTS_BUTTON, GwLocalization["TALENTS_BUTTON_DESC"], "USE_TALENT_WINDOW", "GwSettingsModuleOption")
+    addOption(
+        TALENTS_BUTTON,
+        GwLocalization["TALENTS_BUTTON_DESC"],
+        "USE_TALENT_WINDOW",
+        "GwSettingsModuleOption"
+    )
 
-    createCat(GwLocalization["TARGET_CAT"], GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
+    createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
     addOption(
-        GwLocalization["TARGET_OF_TARGET"],
+        SHOW_TARGET_OF_TARGET_TEXT,
         GwLocalization["TARGET_OF_TARGET_DESC"],
         "target_TARGET_ENABLED",
         "GwSettingsTargetOptions"
@@ -804,37 +824,37 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
     addOption(
-        GwLocalization["HEALTH_PERCENTAGE"],
+        RAID_HEALTH_TEXT_PERC,
         GwLocalization["HEALTH_PERCENTAGE_DESC"],
         "target_HEALTH_VALUE_TYPE",
         "GwSettingsTargetOptions"
     )
     addOption(
-        GwLocalization["CLASS_COLOR"],
+        CLASS_COLORS,
         GwLocalization["CLASS_COLOR_DESC"],
         "target_CLASS_COLOR",
         "GwSettingsTargetOptions"
     )
     addOption(
-        GwLocalization["SHOW_DEBUFFS"],
+        SHOW_DEBUFFS,
         GwLocalization["SHOW_DEBUFFS_DESC"],
         "target_DEBUFFS",
         "GwSettingsTargetOptions"
     )
     addOption(
-        GwLocalization["SHOW_ALL_DEBUFFS"],
+        SHOW_ALL_ENEMY_DEBUFFS_TEXT,
         GwLocalization["SHOW_ALL_DEBUFFS_DESC"],
         "target_BUFFS_FILTER_ALL",
         "GwSettingsTargetOptions"
     )
     addOption(
-        GwLocalization["SHOW_BUFFS"],
+        SHOW_BUFFS,
         GwLocalization["SHOW_BUFFS_DESC"],
         "target_BUFFS",
         "GwSettingsTargetOptions"
     )
     addOption(
-        GwLocalization["FOCUS_TARGET"],
+        MINIMAP_TRACKING_FOCUS,
         GwLocalization["FOCUS_TARGET_DESC"],
         "focus_TARGET_ENABLED",
         "GwSettingsFocusOptions"
@@ -846,30 +866,35 @@ local function LoadSettings()
         "GwSettingsFocusOptions"
     )
     addOption(
-        GwLocalization["HEALTH_PERCENTAGE"],
+        RAID_HEALTH_TEXT_PERC,
         GwLocalization["HEALTH_PERCENTAGE_DESC"],
         "focus_HEALTH_VALUE_TYPE",
         "GwSettingsFocusOptions"
     )
     addOption(
-        GwLocalization["CLASS_COLOR"],
+        CLASS_COLORS,
         GwLocalization["CLASS_COLOR_DESC"],
         "focus_CLASS_COLOR",
         "GwSettingsFocusOptions"
     )
     addOption(
-        GwLocalization["SHOW_DEBUFFS"],
+        SHOW_DEBUFFS,
         GwLocalization["SHOW_DEBUFFS_DESC"],
         "focus_DEBUFFS",
         "GwSettingsFocusOptions"
     )
     addOption(
-        GwLocalization["SHOW_ALL_DEBUFFS"],
+        SHOW_ALL_ENEMY_DEBUFFS_TEXT,
         GwLocalization["SHOW_ALL_DEBUFFS_DESC"],
         "focus_BUFFS_FILTER_ALL",
         "GwSettingsFocusOptions"
     )
-    addOption(GwLocalization["SHOW_BUFFS"], GwLocalization["SHOW_BUFFS_DESC"], "focus_BUFFS", "GwSettingsFocusOptions")
+    addOption(
+        SHOW_BUFFS,
+        GwLocalization["SHOW_BUFFS_DESC"],
+        "focus_BUFFS",
+        "GwSettingsFocusOptions"
+    )
 
     createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
 
@@ -933,10 +958,10 @@ local function LoadSettings()
         end,
         {"NONE", "BOTH", "CLOCK", "ZONE"},
         {
-            GwLocalization["MINIMAP_HOVER_1"],
-            GwLocalization["MINIMAP_HOVER_2"],
-            GwLocalization["MINIMAP_HOVER_3"],
-            GwLocalization["MINIMAP_HOVER_4"]
+            NONE_KEY,
+            STATUS_TEXT_BOTH,
+            TIMEMANAGER_TITLE,
+            ZONE
         }
     )
     addOptionDropdown(
@@ -949,8 +974,8 @@ local function LoadSettings()
         end,
         {1, 0.9, 0.8},
         {
-            GwLocalization["HUD_SCALE_DEFAULT"],
-            GwLocalization["HUD_SCALE_SMALL"],
+            DEFAULT,
+            SMALL,
             GwLocalization["HUD_SCALE_TINY"]
         }
     )
@@ -964,9 +989,9 @@ local function LoadSettings()
         end,
         {250, 200, 170},
         {
-            GwLocalization["MINIMAP_SCALE_LARGE"],
-            GwLocalization["MINIMAP_SCALE_MEDIUM"],
-            GwLocalization["MINIMAP_SCALE_DEFAULT"]
+            LARGE,
+            TIME_LEFT_MEDIUM,
+            DEFAULT
         }
     )
     addOptionDropdown(
@@ -979,28 +1004,28 @@ local function LoadSettings()
         {"1", "2", "3", "4", "6", "12"}
     )
 
-    createCat(GwLocalization["GROUP_CAT"], GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe", 4)
+    createCat(CHAT_MSG_PARTY, GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe", 4)
 
     addOption(
-        GwLocalization["RAID_PARTY_STYLE"],
+        USE_RAID_STYLE_PARTY_FRAMES,
         GwLocalization["RAID_PARTY_STYLE_DESC"],
         "RAID_STYLE_PARTY",
         "GwSettingsGroupframe"
     )
     addOption(
-        GwLocalization["CLASS_COLOR_RAID"],
+        RAID_USE_CLASS_COLORS,
         GwLocalization["CLASS_COLOR_RAID_DESC"],
         "RAID_CLASS_COLOR",
         "GwSettingsGroupframe"
     )
     addOption(
-        GwLocalization["POWER_BARS_RAID"],
+        DISPLAY_POWER_BARS,
         GwLocalization["POWER_BARS_RAID_DESC"],
         "RAID_POWER_BARS",
         "GwSettingsGroupframe"
     )
     addOption(
-        GwLocalization["DEBUFF_DISPELL"],
+        DISPLAY_ONLY_DISPELLABLE_DEBUFFS,
         GwLocalization["DEBUFF_DISPELL_DESC"],
         "RAID_ONLY_DISPELL_DEBUFFS",
         "GwSettingsGroupframe"

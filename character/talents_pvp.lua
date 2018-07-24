@@ -12,7 +12,7 @@ local function spellButton_OnEnter(self)
 
     if self.isFuture then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(GwLocalization["REQUIRED_LEVEL_SPELL"] .. self.unlockLevel, 1, 1, 1)
+        GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
     elseif self:GetParent():GetParent().pickingSlot then
         GameTooltip:AddLine(PVP_TALENT_SLOT_EMPTY, GREEN_FONT_COLOR:GetRGB())
     end
@@ -533,7 +533,7 @@ local function CreatePvPTab(fmSpellbook)
     actGroup.label.title:SetTextColor(1, 1, 1, 1)
     actGroup.label.title:SetShadowColor(0, 0, 0, 1)
     actGroup.label.title:SetShadowOffset(1, -1)
-    actGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_ACTIVE"])
+    actGroup.label.title:SetText(ACTIVE_PETS)
     actGroup.pool = CreateFramePool("Button", actGroup, "GwSpellbookActiveButtonPvP", activePool_Resetter)
 
     psvGroup:ClearAllPoints()
@@ -542,7 +542,7 @@ local function CreatePvPTab(fmSpellbook)
     psvGroup.label.title:SetTextColor(1, 1, 1, 1)
     psvGroup.label.title:SetShadowColor(0, 0, 0, 1)
     psvGroup.label.title:SetShadowOffset(1, -1)
-    psvGroup.label.title:SetText(GwLocalization["SPELLS_HEADER_PASSIVE"])
+    psvGroup.label.title:SetText(SPELL_PASSIVE)
     psvGroup.pool = CreateFramePool("Button", psvGroup, "GwSpellbookPassiveButtonPvP", passivePool_Resetter)
 
     return container

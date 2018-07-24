@@ -424,7 +424,7 @@ local function LoadBag()
     updateBagIcons()
 
     f.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
-    f.headerString:SetText(GwLocalization["INVENTORY_TITLE"])
+    f.headerString:SetText(INVENTORY_TOOLTIP)
 
     f.spaceString:SetFont(UNIT_NAME_FONT, 12)
     f.spaceString:SetTextColor(1, 1, 1)
@@ -480,7 +480,7 @@ local function LoadBag()
         function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
             GameTooltip:ClearLines()
-            GameTooltip:AddLine(GwLocalization["SORT_BAGS"], 1, 1, 1)
+            GameTooltip:AddLine(BAG_CLEANUP_BAGS, 1, 1, 1)
             GameTooltip:Show()
         end
     )

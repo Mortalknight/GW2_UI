@@ -236,7 +236,7 @@ local function LoadBonusFrame()
     header.icon:SetTexCoord(0, 1, 0.5, 0.75)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
-    header.title:SetText(GwLocalization["TRACKER_QUEST_TITLE"])
+    header.title:SetText(QUESTS_LABEL)
 
     GwQuesttrackerContainerBonusObjectives.collapsed = false
     header:SetScript(
@@ -260,7 +260,7 @@ local function LoadBonusFrame()
         TRACKER_TYPE_COLOR["BONUS"].g,
         TRACKER_TYPE_COLOR["BONUS"].b
     )
-    header.title:SetText(GwLocalization["TRACKER_EVENTS"])
+    header.title:SetText(EVENTS_LABEL)
 
     updateBonusObjective()
 end

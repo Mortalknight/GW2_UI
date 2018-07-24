@@ -60,7 +60,7 @@ end
 GW.AddForProfiling("paperdoll", "menuItem_OnClick", menuItem_OnClick)
 
 local function menu_SetupBackButton(self, fmBtn, key)
-    fmBtn:SetText(GwLocalization[key])
+    fmBtn:SetText(key)
     CharacterMenuButtonBack_OnLoad(fmBtn)
     fmBtn:SetScript("OnClick", back_OnClick)
 end
@@ -81,21 +81,21 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.equipmentMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
     fmMenu.equipmentMenu.ToggleMe = GwPaperDollBagItemList
     fmMenu.equipmentMenu:SetScript("OnClick", menuItem_OnClick)
-    fmMenu.equipmentMenu:SetText(GwLocalization["CHARACTER_MENU_EQUIPMENT"])
+    fmMenu.equipmentMenu:SetText(BAG_FILTER_EQUIPMENT)
     fmMenu.equipmentMenu:ClearAllPoints()
     fmMenu.equipmentMenu:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
 
     fmMenu.outfitsMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
     fmMenu.outfitsMenu.ToggleMe = GwPaperDollOutfits
     fmMenu.outfitsMenu:SetScript("OnClick", menuItem_OnClick)
-    fmMenu.outfitsMenu:SetText(GwLocalization["CHARACTER_MENU_OUTFITS"])
+    fmMenu.outfitsMenu:SetText(EQUIPMENT_MANAGER)
     fmMenu.outfitsMenu:ClearAllPoints()
     fmMenu.outfitsMenu:SetPoint("TOPLEFT", fmMenu.equipmentMenu, "BOTTOMLEFT")
 
     fmMenu.titlesMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
     fmMenu.titlesMenu.ToggleMe = GwPaperTitles
     fmMenu.titlesMenu:SetScript("OnClick", menuItem_OnClick)
-    fmMenu.titlesMenu:SetText(GwLocalization["CHARACTER_MENU_TITLES"])
+    fmMenu.titlesMenu:SetText(PAPERDOLL_SIDEBAR_TITLES)
     fmMenu.titlesMenu:ClearAllPoints()
     fmMenu.titlesMenu:SetPoint("TOPLEFT", fmMenu.outfitsMenu, "BOTTOMLEFT")
 

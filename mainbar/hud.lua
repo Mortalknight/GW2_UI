@@ -50,7 +50,7 @@ local function xpbar_OnEnter()
         isRestingString = GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTING"]
     end
 
-    GameTooltip:AddLine(GwLocalization["EXP_BAR_TOOLTIP_EXP_TITLE"] .. isRestingString, 1, 1, 1)
+    GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
 
     if gw_reputation_vals ~= nil then
         GameTooltip:AddLine(gw_reputation_vals, 1, 1, 1)
@@ -61,7 +61,7 @@ local function xpbar_OnEnter()
 
     if UnitLevel("Player") < GetMaxPlayerLevel() then
         GameTooltip:AddLine(
-            GwLocalization["EXP_BAR_TOOLTIP_EXP_VALUE"] ..
+            COMBAT_XP_GAIN .." " ..
                 CommaValue(valCurrent) ..
                     " / " .. CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
             1,
@@ -254,7 +254,7 @@ local function xpbar_OnEvent(self, event)
                     valPrec = (currentValue - 0) / (maxValueParagon - 0)
                     gw_reputation_vals =
                         name ..
-                            GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
+                            " " .. REPUTATION .. " " ..
                                 CommaValue((currentValue - 0)) ..
                                     " / " ..
                                         CommaValue((maxValueParagon - 0)) ..
@@ -273,7 +273,7 @@ local function xpbar_OnEvent(self, event)
                         valPrec = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
                         gw_reputation_vals =
                             friendName ..
-                                GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
+                                    " " .. REPUTATION .. " " ..
                                     CommaValue((friendRep - friendThreshold)) ..
                                         " / " ..
                                             CommaValue((nextFriendThreshold - friendThreshold)) ..
@@ -285,7 +285,7 @@ local function xpbar_OnEvent(self, event)
                         valPrec = 1
                         gw_reputation_vals =
                             friendName ..
-                                GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
+                                    " " .. REPUTATION .. " " ..
                                     CommaValue(friendMaxRep) ..
                                         " / " ..
                                             CommaValue(friendMaxRep) ..
@@ -309,7 +309,7 @@ local function xpbar_OnEvent(self, event)
                         valPrec = 1
                         gw_reputation_vals =
                             name ..
-                                GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
+                                    " " .. REPUTATION .. " "  ..
                                     "21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
                             1,
                             1,
@@ -318,7 +318,7 @@ local function xpbar_OnEvent(self, event)
                         valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
                         gw_reputation_vals =
                             name ..
-                                GwLocalization["EXP_BAR_TOOLTIP_REP"] ..
+                                    " " .. REPUTATION .. " " ..
                                     CommaValue((earnedValue - bottomValue)) ..
                                         " / " ..
                                             CommaValue((topValue - bottomValue)) ..
@@ -430,7 +430,7 @@ local function xpbar_OnEvent(self, event)
         valPrec = currentHonor / maxHonor
 
         gw_honor_vals =
-            GwLocalization["EXP_BAR_TOOLTIP_HONOR"] ..
+            HONOR .." " ..
                 CommaValue(currentHonor) ..
                     " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
             1,
@@ -1255,7 +1255,7 @@ local function LoadMicroMenu()
     GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
     hookToolTip(GwMicroButtonCharacterMicroButton, CHARACTER_BUTTON, 'TOGGLECHARACTER0"')
-    hookToolTip(GwMicroButtonBagMicroButton, GwLocalization["GW_BAG_MICROBUTTON_STRING"], "OPENALLBAGS")
+    hookToolTip(GwMicroButtonBagMicroButton, INVENTORY_TOOLTIP, "OPENALLBAGS")
     hookToolTip(GwMicroButtonSpellbookMicroButton, SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
     hookToolTip(GwMicroButtonTalentMicroButton, TALENTS_BUTTON, "TOGGLETALENTS")
     hookToolTip(GwMicroButtonAchievementMicroButton, ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
@@ -1395,17 +1395,17 @@ local function loadRewards()
 
     f.rewardHeader:SetFont(DAMAGE_TEXT_FONT, 11)
     f.rewardHeader:SetTextColor(0.6, 0.6, 0.6)
-    f.rewardHeader:SetText(GwLocalization["LEVEL_REWARDS_RHEADER"])
+    f.rewardHeader:SetText(REWARD)
 
     f.levelHeader:SetFont(DAMAGE_TEXT_FONT, 11)
     f.levelHeader:SetTextColor(0.6, 0.6, 0.6)
-    f.levelHeader:SetText(GwLocalization["LEVEL_REWARDS_LHEADER"])
+    f.levelHeader:SetText(LEVEL)
 
     local fnGwCloseLevelingRewards_OnClick = function(self, button)
         GwLevelingRewards:Hide()
     end
     GwCloseLevelingRewards:SetScript("OnClick", fnGwCloseLevelingRewards_OnClick)
-    GwCloseLevelingRewards:SetText(GwLocalization["LEVEL_REWARDS_CLOSE"])
+    GwCloseLevelingRewards:SetText(close)
 
     _G["GwLevelingRewardsItem1"].name:SetFont(DAMAGE_TEXT_FONT, 14)
     _G["GwLevelingRewardsItem1"].level:SetFont(DAMAGE_TEXT_FONT, 14)

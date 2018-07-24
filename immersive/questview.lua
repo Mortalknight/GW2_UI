@@ -234,13 +234,13 @@ local function questTextCompleted()
     end
     if questState == "COMPLETE" then
         showRewards()
-        GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization["QUEST_VIEW_COMPLETE"])
+        GwQuestviewFrameContainerAcceptButton:SetText(COMPLETE_QUEST)
     elseif questState == "PROGRESS" then
         showRewards()
         GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization["QUEST_VIEW_SKIP"])
     else
         showRewards()
-        GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization["QUEST_VIEW_ACCPET"])
+        GwQuestviewFrameContainerAcceptButton:SetText(QUEST_VIEW_ACCPET)
     end
     questStateSet = true
 end
@@ -422,7 +422,7 @@ local function LoadQuestview()
     GwQuestviewFrameContainerDialogString:SetTextColor(1, 1, 1)
     GwQuestviewFrameContainerDialogQuestTitle:SetTextColor(255 / 255, 197 / 255, 39 / 255)
     GwQuestviewFrameContainerDialogQuestTitle:SetFont(DAMAGE_TEXT_FONT, 24)
-    GwQuestviewFrameContainerDeclineQuest:SetText(GwLocalization["QUEST_VIEW_DECLINE"])
+    GwQuestviewFrameContainerDeclineQuest:SetText(IGNORE)
 
     GwQuestviewFrame:SetScript(
         "OnShow",

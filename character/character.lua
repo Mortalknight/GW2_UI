@@ -10,7 +10,7 @@ windowsList[1] = {
     ["RefName"] = "GwPaperDoll",
     ["TabIcon"] = "tabicon_character",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon",
-    ["HeaderTextKey"] = "CHARACTER_HEADER",
+    ["HeaderText"] = CHARACTER,
     ["Bindings"] = {
         ["TOGGLECHARACTER0"] = "PaperDoll"
     },
@@ -25,7 +25,7 @@ windowsList[2] = {
     ["RefName"] = "GwTalentFrame",
     ["TabIcon"] = "tabicon_spellbook",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
-    ["HeaderTextKey"] = "TALENTS_HEADER",
+    ["HeaderText"] = SPELLS,
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
         ["TOGGLETALENTS"] = "Talents",

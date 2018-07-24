@@ -41,9 +41,9 @@ local function outfitListButton_OnClick(self, button)
         self.deleteOutfit:Show()
         self.equipOutfit:Show()
         self.ddbg:Show()
-        self.deleteOutfit:SetText(GwLocalization["CHARACTER_DELETE_OUTFIT"])
-        self.saveOutfit:SetText(GwLocalization["CHARACTER_SAVE_OUTFIT"])
-        self.equipOutfit:SetText(GwLocalization["CHARCTER_EQUIP_OUTFIT"])
+        self.deleteOutfit:SetText(DELETE)
+        self.saveOutfit:SetText(SAVE)
+        self.equipOutfit:SetText(EQUIPSET_EQUIP)
 
         GwPaperDollOutfits.selectedSetID = self.setID
     else
@@ -227,9 +227,9 @@ local function LoadPDEquipset(fmMenu)
         PaperDollFrame_IgnoreSlot(4)
         PaperDollFrame_IgnoreSlot(19)
     end
-    fmGPDO.newOutfit:SetText(GwLocalization["CHARACTER_OUTFIT_NEW"])
+    fmGPDO.newOutfit:SetText(TRANSMOG_OUTFIT_NEW)
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
-    fmMenu:SetupBackButton(fmGPDO.backButton, "CHARACTER_MENU_OUTFITS_RETURN")
+    fmMenu:SetupBackButton(fmGPDO.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
 
     GwPaperDollOutfits:SetScript("OnShow", drawItemSetList)
     GwPaperDollOutfits:SetScript(
