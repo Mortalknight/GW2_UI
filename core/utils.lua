@@ -162,24 +162,25 @@ local function IsFrameModified(f_name)
 end
 GW.IsFrameModified = IsFrameModified
 
+local function Notice(...)
+    local msg_tab = _G["ChatFrame1"]
+    if not msg_tab then
+        return
+    end
+    local msg = ""
+    for i = 1, select("#", ...) do
+        local arg = select(i, ...)
+        msg = msg .. tostring(arg) .. " "
+    end
+    msg_tab:AddMessage("|cffC0C0F0GW2 UI|r: " .. msg)
+end
+GW.Notice = Notice
+
+--@debug@
 local function AddForProfiling(unit, name, ...)
     if not Profiler then
         return
     end
-    --[[
-    local variables = {}
-    local idx = 1
-    while true do
-        local ln, lv = debug.getlocal(2, idx)
-        if ln ~= nil then
-            variables[ln] = lv
-        else
-            break
-        end
-        idx = 1 + idx
-    end
-    _G["GW_" .. name] = variables
-    --]]
     local gName = "GW_" .. unit
     if not _G[gName] then
         _G[gName] = {}
@@ -187,4 +188,33 @@ local function AddForProfiling(unit, name, ...)
 
     _G[gName][name] = ...
 end
+
+local function inDebug(tab, ...)
+    local debug_tab = _G["ChatFrame" .. tab]
+    if not debug_tab then
+        return
+    end
+    local msg = ""
+    for i = 1, select("#", ...) do
+        local arg = select(i, ...)
+        msg = msg .. tostring(arg) .. " "
+    end
+    debug_tab:AddMessage(date("%H:%M:%S") .. " " .. msg)
+end
+
+local function Debug(...)
+    if GW.dbgTab then
+        inDebug(GW.dbgTab, ...)
+    end
+end
+--@end-debug@
+--[===[@non-debug@
+local function Debug()
+    return
+end
+local function AddForProfiling()
+    return
+end
+--@end-non-debug@]===]
+GW.Debug = Debug
 GW.AddForProfiling = AddForProfiling

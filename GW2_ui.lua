@@ -24,40 +24,6 @@ if Profiler then
     _G.GW_Addon_Scope = GW
 end
 
-local function Notice(...)
-    local msg_tab = _G["ChatFrame1"]
-    if not msg_tab then
-        return
-    end
-    local msg = ""
-    for i = 1, select("#", ...) do
-        local arg = select(i, ...)
-        msg = msg .. tostring(arg) .. " "
-    end
-    msg_tab:AddMessage("|cffC0C0F0GW2 UI|r: " .. msg)
-end
-GW.Notice = Notice
-
-local dbgTab = 0
-local function inDebug(tab, ...)
-    local debug_tab = _G["ChatFrame" .. tab]
-    if not debug_tab then
-        return
-    end
-    local msg = ""
-    for i = 1, select("#", ...) do
-        local arg = select(i, ...)
-        msg = msg .. tostring(arg) .. " "
-    end
-    debug_tab:AddMessage(date("%H:%M:%S") .. " " .. msg)
-end
-local function Debug(...)
-    if dbgTab then
-        inDebug(dbgTab, ...)
-    end
-end
-GW.Debug = Debug
-
 local function disableMABags()
     local bags = GetSetting("BAGS_ENABLED")
     if not bags or not MovAny or not MADB then
@@ -442,15 +408,20 @@ local function gw_OnEvent(self, event, name)
     disableMABags()
 
     -- hook debug output if relevant
+    --@debug@
     local dev_dbg_tab = GetSetting("DEV_DBG_CHAT_TAB")
     if dev_dbg_tab and dev_dbg_tab > 0 and _G["ChatFrame" .. dev_dbg_tab] then
         print("hooking Debug to chat tab #" .. dev_dbg_tab)
-        dbgTab = dev_dbg_tab
+        GW.dbgTab = dev_dbg_tab
         GW.AlertTestsSetup()
         GW.inDebug = true
     else
         GW.inDebug = false
     end
+    --@end-debug@
+    --[===[@non-debug@
+    GW.inDebug = false
+    --@end-non-debug@]===]
 
     --Create Settings window
     GW.LoadSettings()
@@ -577,7 +548,7 @@ local function gw_OnEvent(self, event, name)
     GW.UpdateHudScale()
 
     if (forcedMABags) then
-        Notice(GwLocalization["DISABLED_MA_BAGS"])
+        GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
     end
 
     l:SetScript("OnUpdate", gw_OnUpdate)
