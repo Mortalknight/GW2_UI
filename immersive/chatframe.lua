@@ -293,7 +293,10 @@ local function LoadChat()
     gw_fade_frames = {
         QuickJoinToastButton,
         GwChatContainer,
-        GeneralDockManager
+        GeneralDockManager,
+        ChatFrameChannelButton,
+        ChatFrameToggleVoiceDeafenButton,
+        ChatFrameToggleVoiceMuteButton
     }
 
     FCF_FadeOutChatFrame(_G["ChatFrame1"])
