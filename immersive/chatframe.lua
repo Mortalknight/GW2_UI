@@ -294,9 +294,7 @@ local function LoadChat()
         QuickJoinToastButton,
         GwChatContainer,
         GeneralDockManager,
-        ChatFrameChannelButton,
-        ChatFrameToggleVoiceDeafenButton,
-        ChatFrameToggleVoiceMuteButton
+        ChatFrameChannelButton
     }
 
     FCF_FadeOutChatFrame(_G["ChatFrame1"])

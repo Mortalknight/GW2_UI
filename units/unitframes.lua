@@ -707,7 +707,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local isPlayer = false
     if anchorPos and anchorPos == "player" then
         isPlayer = true
-    elseif anchorPos and anchorPos ~= "player" then
+    elseif anchorPos ~= "player" then
         if self.displayBuffs ~= true then
             minIndex = 40
         end
