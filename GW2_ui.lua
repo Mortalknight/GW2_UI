@@ -512,7 +512,7 @@ local function gw_OnEvent(self, event, name)
             Debug("moving UIErrorsFrame")
             UIErrorsFrame:ClearAllPoints()
             UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -190)
-            UIErrorsFrame:SetFont(GwLocalization["FONT_NORMAL"], 14)
+            UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14)
         end
     end
 
