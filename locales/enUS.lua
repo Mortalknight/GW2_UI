@@ -163,7 +163,7 @@ GwLocalization['TALENTS_BUTTON_DESC'] = 'Enable the talents, specialization, and
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" and Locale ~= "ruRU" and Locale ~= "ptBR" and Locale ~= "frFR" then
+if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" and Locale ~= "ruRU" and Locale ~= "ptBR" and Locale ~= "frFR" and Locale ~= "zhCN" then
 	GWUseThisLocalization()
 end
 
