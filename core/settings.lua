@@ -356,6 +356,14 @@ local function inputPrompt(text, method)
     GwWarningPrompt.input:SetText("")
 end
 
+local function inputDiscord(text, method, input)
+    GwDiscordPrompt.string:SetText(text)
+    GwDiscordPrompt.method = method
+    GwDiscordPrompt:Show()
+    GwDiscordPrompt.input:Show()
+    GwDiscordPrompt.input:SetText(input)
+end
+
 local function setMultibarCols()
     local cols = GetSetting("MULTIBAR_RIGHT_COLS")
     Debug("setting multibar cols", cols)
@@ -555,6 +563,24 @@ local function LoadSettings()
 
     tinsert(UISpecialFrames, "GwWarningPrompt")
 
+    local fmGWD = CreateFrame("Frame", "GwDiscordPrompt", UIParent, "GwDiscordPrompt")
+    fmGWD.string:SetFont(UNIT_NAME_FONT, 14)
+    fmGWD.string:SetTextColor(1, 1, 1)
+    fmGWD.acceptButton:SetText(ACCEPT)
+    local fmGWD_input_OnEscapePressed = function(self)
+        self:ClearFocus()
+    end
+    fmGWD.input:SetScript("OnEscapePressed", fmGWD_input_OnEscapePressed)
+    fmGWD.input:SetScript("OnEditFocusGained", nil)
+    fmGWD.input:SetScript("OnEditFocusLost", nil)
+    fmGWD.input:SetScript("OnEnterPressed", nil)
+    local fmGWD_accept_OnClick = function(self, button)
+        self:GetParent():Hide()
+    end
+    fmGWD.acceptButton:SetScript("OnClick", fmGWD_accept_OnClick)
+
+    tinsert(UISpecialFrames, "GwDiscordPrompt")
+
     local fnMf_OnDragStart = function(self)
         self:StartMoving()
     end
@@ -570,6 +596,7 @@ local function LoadSettings()
     tinsert(UISpecialFrames, "GwSettingsWindow")
     local fmGSWMH = GwSettingsWindowMoveHud
     local fmGSWS = GwSettingsWindowSave
+    local fmGSWD = GwSettingsWindowDiscord
 
     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
     GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT, 12)
@@ -588,8 +615,12 @@ local function LoadSettings()
     local fnGSWS_OnClick = function(self, button)
         C_UI.Reload()
     end
+    local fnGSWD_OnClick = function(self, button)
+        inputDiscord("Discord", nil, "https://discord.gg/MZZtRWt")
+    end
     fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
     fmGSWS:SetScript("OnClick", fnGSWS_OnClick)
+    fmGSWD:SetScript("OnClick", fnGSWD_OnClick)
 
     sWindow:SetScript(
         "OnShow",
