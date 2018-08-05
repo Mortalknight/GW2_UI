@@ -4,6 +4,8 @@ local GetSetting = GW.GetSetting
 
 local UNSTYLED = {
 	"GameTooltip",
+	"BattlePetTooltip",
+	"FloatingBattlePetTooltip",
 	"ShoppingTooltip1",
 	"ShoppingTooltip2",
 	"ShoppingTooltip3",
