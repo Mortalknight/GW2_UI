@@ -292,7 +292,7 @@ local function scenarioTimerUpdate(...)
             --local _, _, _, _, _, _, _, mapID = GetInstanceInfo();
             local mapID = C_ChallengeMode.GetActiveChallengeMapID()
             if (mapID) then
-                local _, _, timeLimit = C_ChallengeMode.GetMapInfo(mapID)
+                local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
                 --	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
                 GwQuestTrackerTimer:SetScript(
                     "OnUpdate",
