@@ -209,7 +209,7 @@ local function xpbar_OnEvent(self, event)
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
     else
-        rested = (rested / valMax) --+ valPrec
+        rested = rested / (valMax - valCurrent)
     end
     if rested > 1 then
         rested = 1
