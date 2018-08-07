@@ -2,6 +2,9 @@
 
 FIXED
     - Fix a Lua error that occurs when selecting equipment in hero panel (CF#183)
+    - Properly hide multibars during pet battles
+    - Error frame font now tied to font setting toggle (CF#196)
+    - Fix a legacy map API issue in M+
 
 MISCELLANEOUS
     - Changed many strings to use default Blizz translations to simplify translation contributions
