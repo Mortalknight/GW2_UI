@@ -307,6 +307,7 @@ local function powerMana()
     GwExtraPlayerPowerBar:SetParent(GwPlayerClassPower)
     GwExtraPlayerPowerBar:ClearAllPoints()
     GwExtraPlayerPowerBar:SetPoint("BOTTOMLEFT", GwPlayerClassPower, "BOTTOMLEFT", 0, 5)
+    GwExtraPlayerPowerBar:SetFrameStrata("MEDIUM")
 
     GwExtraPlayerPowerBar:SetScript(
         "OnEvent",

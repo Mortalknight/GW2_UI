@@ -123,7 +123,7 @@ local function stackIcons(self, event)
     _G["GwAddonToggleTexture"]:SetTexCoord(0, 0.5, 0, 0.25)
 
     GwAddonToggle.container:SetWidth(#framesToAdd * 35)
-    GwAddonToggle:SetFrameStrata("HIGH")
+    GwAddonToggle:SetFrameStrata("MEDIUM")
     local frameIndex = 0
     for _, frame in pairs(framesToAdd) do
         frame:SetParent(GwAddonToggle.container)
