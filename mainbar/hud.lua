@@ -423,7 +423,7 @@ local function xpbar_OnEvent(self, event)
      then
         showBar1 = true
         level = UnitHonorLevel("player")
-        Nextlevel = math.min(level + 1, GetMaxPlayerHonorLevel())
+        Nextlevel = level + 1
 
         local currentHonor = UnitHonor("player")
         local maxHonor = UnitHonorMax("player")
