@@ -734,6 +734,15 @@ setBarType = function()
         GwPlayerClassPowerFill:SetTexture(nil)
         return
     end
+
+    if PLAYER_CLASS == 11 and PLAYER_SPECIALIZATION == 1 then
+        if GwExtraPlayerPowerBar ~= nil then
+            GwExtraPlayerPowerBar:Show()
+        end
+        GwPlayerClassPowerBackground:SetTexture(nil)
+        GwPlayerClassPowerFill:SetTexture(nil)
+        return
+    end
     GwPlayerClassPower:Hide()
 end
 GW.AddForProfiling("classpowers", "setBarType", setBarType)
