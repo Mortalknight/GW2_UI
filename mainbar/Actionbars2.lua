@@ -459,8 +459,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
 end
 GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
 
-local function main_OnEvent(self, event, ...)
-    local unit = ...
+local function main_OnEvent(self, event, unit, _, _, vehicleID)
+    local unit = unit
     if event == "PET_BATTLE_OPENING_START" then
         toggleMainHud(false)
     elseif event == "PET_BATTLE_CLOSE" then
@@ -468,7 +468,7 @@ local function main_OnEvent(self, event, ...)
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
-        if event == "UNIT_ENTERED_VEHICLE" and (UnitHasVehicleUI("player") or OverrideActionBar:IsShown()) then
+        if (event == "UNIT_ENTERED_VEHICLE" and vehicleID > 0) and (UnitHasVehiclePlayerFrameUI("player") or OverrideActionBar:IsShown()) then
             toggleMainHud(false)
         else
             toggleMainHud(true)
