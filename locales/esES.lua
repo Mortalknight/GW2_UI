@@ -160,6 +160,13 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "Debes quitarte este objeto para mejorarlo
 GwLocalization["UPDATE_STRING_1"] = "Nueva actualización es disponible para descargar."
 GwLocalization["UPDATE_STRING_2"] = "Nueva actualización disponible que contiene nuevas características."
 GwLocalization["UPDATE_STRING_3"] = "Una actualización |cFFFF0000importante| está disponible.\n\nEs muy recomendable que actualice."
+GwLocalization['ALL_BINDINGS_SAVE'] = "All key bindings have been saved."
+GwLocalization['ALL_BINDINGS_DISCARD'] = "All newly set key bindings have been discarded."
+GwLocalization['BINDINGS_DESC'] = "Hover your mouse over any actionbutton to bind it. Press the escape key or right click to clear the current actionbutton's keybinding." 
+GwLocalization['BINDINGS_TRIGGER'] = "Trigger"
+GwLocalization['BINGSINGS_KEY'] = "Key"
+GwLocalization['BINGSINGS_CLEAR'] = "All key bindings cleared for"
+GwLocalization['BINGSINGS_BIND'] = "bound to"
 end
 
 

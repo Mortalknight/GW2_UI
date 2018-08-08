@@ -160,7 +160,13 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "你必须卸下以升级它"
 GwLocalization["UPDATE_STRING_1"] = "有可下载更新."
 GwLocalization["UPDATE_STRING_2"] = "有包含新功能的更新."
 GwLocalization["UPDATE_STRING_3"] = "有|cFFFF0000重要|r 版本升级.\n\n强烈建议您更新."
-
+GwLocalization['ALL_BINDINGS_SAVE'] = "All key bindings have been saved."
+GwLocalization['ALL_BINDINGS_DISCARD'] = "All newly set key bindings have been discarded."
+GwLocalization['BINDINGS_DESC'] = "Hover your mouse over any actionbutton to bind it. Press the escape key or right click to clear the current actionbutton's keybinding." 
+GwLocalization['BINDINGS_TRIGGER'] = "Trigger"
+GwLocalization['BINGSINGS_KEY'] = "Key"
+GwLocalization['BINGSINGS_CLEAR'] = "All key bindings cleared for"
+GwLocalization['BINGSINGS_BIND'] = "bound to"
 end
 
 if GetLocale() == "zhCN" then

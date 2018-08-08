@@ -104,19 +104,28 @@
 
             </Button>
 
-            <Button name="$parentDiscord" inherits="GwStandardButton" text="Join Discord">
-                <Size x="100" y="28" />
+            <Button name="$parentKeyBind" inherits="GwStandardButton" text="Keybind">
+                <Size x="120" y="28" />
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="200" y="-5"/>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="120" y="-5"/>
+                </Anchors>
+
+            </Button>
+
+            <Button name="$parentDiscord" inherits="GwStandardButton" text="Join Discord">
+                <Size x="120" y="28" />
+
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-140" y="-5"/>
                 </Anchors>
 
             </Button>
 
             <Button name="$parentSave" inherits="GwStandardButton" text="Save and Reload">
-                <Size x="130" y="28" />
+                <Size x="120" y="28" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="-5"/>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="-5"/>
                 </Anchors>
 
             </Button>

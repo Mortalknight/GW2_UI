@@ -20,6 +20,7 @@ core/settings.xml
 core/flags.lua
 core/fonts.lua
 core/settings.lua
+core/hover_binding.lua
 
 units/target.xml
 units/target.lua

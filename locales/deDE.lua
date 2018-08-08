@@ -160,6 +160,13 @@ GwLocalization['DISABLED_MA_BAGS'] = "MoveAnything's Taschen Handling ausgeschal
 GwLocalization['FADE_MICROMENU'] = 'Micro Menü ausblenden'
 GwLocalization['FADE_MICROMENU_DESC'] = 'Blendet das Micro Menü aus, wenn die Maus nicht in der Nähe ist.'
 GwLocalization['TALENTS_BUTTON_DESC'] = 'Aktiviert das GW2_UI Talent-, Berufs- und Zauberbuchfenster.'
+GwLocalization['ALL_BINDINGS_SAVE'] = "Alle Tastaturbelegungen wurden gespeichert."
+GwLocalization['ALL_BINDINGS_DISCARD'] = "Alle neu gesetzten Tastaturbelegungen wurden verworfen."
+GwLocalization['BINDINGS_DESC'] = "Bewegen Sie die Maus über eine beliebige Aktionstaste, um sie zu binden. Drücken Sie die Escape-Taste oder klicken Sie mit der rechten Maustaste, um die Tastaturkürzel der aktuellen Aktionstaste zu löschen." 
+GwLocalization['BINDINGS_TRIGGER'] = "Auslösen"
+GwLocalization['BINGSINGS_KEY'] = "Taste"
+GwLocalization['BINGSINGS_CLEAR'] = "Alle Tastaturbelegungen gelöscht für"
+GwLocalization['BINGSINGS_BIND'] = "gebunden an"
 end
 
 

@@ -160,6 +160,13 @@ GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
 GwLocalization['FADE_MICROMENU'] = 'Fade Menu Bar'
 GwLocalization['FADE_MICROMENU_DESC'] = 'Fade the main micromenu when the mouse is not near.'
 GwLocalization['TALENTS_BUTTON_DESC'] = 'Enable the talents, specialization, and spellbook replacement.' 
+GwLocalization['ALL_BINDINGS_SAVE'] = "All key bindings have been saved."
+GwLocalization['ALL_BINDINGS_DISCARD'] = "All newly set key bindings have been discarded."
+GwLocalization['BINDINGS_DESC'] = "Hover your mouse over any actionbutton to bind it. Press the escape key or right click to clear the current actionbutton's keybinding." 
+GwLocalization['BINDINGS_TRIGGER'] = "Trigger"
+GwLocalization['BINGSINGS_KEY'] = "Key"
+GwLocalization['BINGSINGS_CLEAR'] = "All key bindings cleared for"
+GwLocalization['BINGSINGS_BIND'] = "bound to"
 end
 
 local Locale = GetLocale()

@@ -1,5 +1,8 @@
 5.0.5
 
+NEW
+    - Add ability to bind Keys by hover
+    
 FIXED
     - Fix a actionbar overlapping issue (CF#37)
     - Fix some classpowerbar issues (colors and displaying) (CF#128)

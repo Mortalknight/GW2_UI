@@ -597,6 +597,7 @@ local function LoadSettings()
     local fmGSWMH = GwSettingsWindowMoveHud
     local fmGSWS = GwSettingsWindowSave
     local fmGSWD = GwSettingsWindowDiscord
+    local fmGSWKB = GwSettingsWindowKeyBind
 
     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
     GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT, 12)
@@ -618,9 +619,14 @@ local function LoadSettings()
     local fnGSWD_OnClick = function(self, button)
         inputDiscord("Discord", nil, "https://discord.gg/MZZtRWt")
     end
+    local fmGSWKB_OnClick = function(self, button)
+        GwSettingsWindow:Hide()
+        GW.hoverkeybinds()
+    end
     fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
     fmGSWS:SetScript("OnClick", fnGSWS_OnClick)
     fmGSWD:SetScript("OnClick", fnGSWD_OnClick)
+    fmGSWKB:SetScript("OnClick", fmGSWKB_OnClick)
 
     sWindow:SetScript(
         "OnShow",
