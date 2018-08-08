@@ -605,6 +605,7 @@ local function LoadSettings()
     GwSettingsWindowHeaderString:SetText(CHAT_CONFIGURATION)
     GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
     GwSettingsWindowSave:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
+    GwSettingsWindowKeyBind:SetText(KEY_BINDING)
 
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then

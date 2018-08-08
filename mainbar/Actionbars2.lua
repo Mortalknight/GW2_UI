@@ -468,7 +468,7 @@ local function main_OnEvent(self, event, ...)
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
-        if event == "UNIT_ENTERED_VEHICLE" and (UnitHasVehiclePlayerFrameUI("player") or OverrideActionBar:IsShown()) then
+        if event == "UNIT_ENTERED_VEHICLE" and (UnitHasVehicleUI("player") or OverrideActionBar:IsShown()) then
             toggleMainHud(false)
         else
             toggleMainHud(true)
