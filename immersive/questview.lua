@@ -240,7 +240,7 @@ local function questTextCompleted()
         GwQuestviewFrameContainerAcceptButton:SetText(GwLocalization["QUEST_VIEW_SKIP"])
     else
         showRewards()
-        GwQuestviewFrameContainerAcceptButton:SetText(QUEST_VIEW_ACCPET)
+        GwQuestviewFrameContainerAcceptButton:SetText(ACCEPT)
     end
     questStateSet = true
 end

@@ -84,14 +84,14 @@
                     </Button>
 
                     <Button name="$parentAcceptButton" inherits="GwStandardButton">
-                        <Size x="80" y="24" />
+                        <Size x="120" y="24" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
                         </Anchors>
 
                     </Button>
                     <Button name="$parentDeclineQuest" text="Decline" inherits="GwStandardButton">
-                        <Size x="80" y="24" />
+                        <Size x="120" y="24" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                         </Anchors>
