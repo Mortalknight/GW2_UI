@@ -290,8 +290,8 @@ local function toggleMainHud(b)
                     local bar = f:GetParent()
                     bar.elapsedTimer = -1
                     bar.fadeTimer = -1
-                elseif f.gw_OldToggleState ~= nil then
-                    f:SetAlpha(f.gw_OldToggleState)
+                else
+                    f:SetAlpha(1)
                 end
             else
                 if f.gw_FadeShowing ~= nil then
@@ -299,7 +299,6 @@ local function toggleMainHud(b)
                     bar.elapsedTimer = -1
                     bar.fadeTimer = -1
                 else
-                    f.gw_OldToggleState = f:GetAlpha()
                     f:SetAlpha(0)
                 end
             end

@@ -5,6 +5,7 @@ FIXED
     - Properly hide multibars during pet battles
     - Error frame font now tied to font setting toggle (CF#196)
     - Fix a legacy map API issue in M+
+    - Fix problem where UI can disappear after vehicles, taxis, etc. (CF#185, CF#193)
 
 MISCELLANEOUS
     - Changed many strings to use default Blizz translations to simplify translation contributions
