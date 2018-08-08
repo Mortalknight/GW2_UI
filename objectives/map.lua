@@ -368,18 +368,29 @@ local function LoadMinimap()
     )
 
     GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
-
-    local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
-    local fnGwGarrisonButton_OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -45)
-        GameTooltip:SetText(GARRISON_LANDING_PAGE_TITLE, 1, 1, 1)
-        GameTooltip:AddLine(MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
-        GameTooltip:Show()
+    
+    local garrisonType = C_Garrison.GetLandingPageGarrisonType()
+    if garrisonType > 0 then
+        local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
+        local fnGwGarrisonButton_OnEnter = function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -45)
+            if garrisonType == LE_GARRISON_TYPE_6_0 then
+                GameTooltip:SetText(GARRISON_LANDING_PAGE_TITLE, 1, 1, 1)
+                GameTooltip:AddLine(MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
+            elseif garrisonType == LE_GARRISON_TYPE_7_0 then
+                GameTooltip:SetText(ORDER_HALL_LANDING_PAGE_TITLE, 1, 1, 1)
+                GameTooltip:AddLine(MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
+            elseif garrisonType == LE_GARRISON_TYPE_8_0 then
+                GameTooltip:SetText(GARRISON_TYPE_8_0_LANDING_PAGE_TITLE, 1, 1, 1)
+                GameTooltip:AddLine(GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
+            end
+            GameTooltip:Show()
+        end
+        GwGarrisonButton:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
+        GwGarrisonButton:SetScript("OnEnter", fnGwGarrisonButton_OnEnter)
+        GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
+        GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
     end
-    GwGarrisonButton:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
-    GwGarrisonButton:SetScript("OnEnter", fnGwGarrisonButton_OnEnter)
-    GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
     local fnGwMailButton_OnEvent = function(self, event, ...)

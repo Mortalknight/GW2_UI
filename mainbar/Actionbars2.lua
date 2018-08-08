@@ -643,6 +643,7 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
     if actionPage ~= nil then
         fmMultibar:SetAttribute("actionpage", actionPage)
+        fmMultibar:SetFrameStrata("LOW")
     end
     fmMultibar.gw_Buttons = {}
 
