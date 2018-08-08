@@ -3,7 +3,7 @@ local bind, localmacros = CreateFrame("Frame", "HoverBind", UIParent), 0
 
 --SlashCmdList.MOUSEOVERBIND = function()
 local function hoverkeybinds ()
-	if InCombatLockdown() then print(ERR_AFFECTING_COMBAT) return end
+	if InCombatLockdown() then DEFAULT_CHAT_FRAME:AddMessage(ERR_AFFECTING_COMBAT) return end
 	if not bind.loaded then
 		local find = string.find
 		local _G = getfenv(0)
@@ -172,7 +172,7 @@ local function hoverkeybinds ()
 				for i = 1, #self.button.bindings do
 					SetBinding(self.button.bindings[i])
 				end
-				print(GwLocalization['BINGSINGS_CLEAR'] .." |cff00ff00" .. self.button.name .. "|r.")
+				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['BINGSINGS_CLEAR'] .." |cff00ff00" .. self.button.name .. "|r.")
 				self:Update(self.button, self.spellmacro)
 				if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
 				return
@@ -202,7 +202,7 @@ local function hoverkeybinds ()
 			else
 				SetBinding(alt .. ctrl .. shift .. key, self.spellmacro .. " " .. self.button.name)
 			end
-			print(alt .. ctrl .. shift .. key .. " |cff00ff00" .. GwLocalization['BINGSINGS_BIND'] .. " |r" .. self.button.name .. ".")
+			DEFAULT_CHAT_FRAME:AddMessage(alt .. ctrl .. shift .. key .. " |cff00ff00" .. GwLocalization['BINGSINGS_BIND'] .. " |r" .. self.button.name .. ".")
 			self:Update(self.button, self.spellmacro)
 			if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
 		end
@@ -218,10 +218,10 @@ local function hoverkeybinds ()
 		function bind:Deactivate(save)
 			if save then
 				SaveBindings(2)
-				print(GwLocalization['ALL_BINDINGS_SAVE'])
+				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['ALL_BINDINGS_SAVE'])
 			else
 				LoadBindings(2)
-				print(GwLocalization['ALL_BINDINGS_DISCARD'])
+				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['ALL_BINDINGS_DISCARD'])
 			end
 			self.enabled = false
 			self:HideFrame()

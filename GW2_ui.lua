@@ -411,7 +411,7 @@ local function gw_OnEvent(self, event, name)
     --@debug@
     local dev_dbg_tab = GetSetting("DEV_DBG_CHAT_TAB")
     if dev_dbg_tab and dev_dbg_tab > 0 and _G["ChatFrame" .. dev_dbg_tab] then
-        print("hooking Debug to chat tab #" .. dev_dbg_tab)
+        DEFAULT_CHAT_FRAME:AddMessage("hooking Debug to chat tab #" .. dev_dbg_tab)
         GW.dbgTab = dev_dbg_tab
         GW.AlertTestsSetup()
         GW.inDebug = true
