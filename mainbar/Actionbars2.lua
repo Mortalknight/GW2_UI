@@ -9,6 +9,7 @@ local AddUpdateCB = GW.AddUpdateCB
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
+local duringVehicle = false
 
 local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuBar,
@@ -213,6 +214,16 @@ local function fadeCheck(self, forceCombat)
                 end
                 local curAlpha = f:GetAlpha()
                 local busy = (f.fadeIn:IsPlaying() or f.fadeOut:IsPlaying())
+
+                if f:IsShown() and inVehicle and duringVehicle == false then
+                    f:Hide()
+                    duringVehicle = true
+                    return
+                elseif not f:IsShown() and not inVehicle and duringVehicle then
+                    f:Show()
+                    duringVehicle = false
+                    return
+                end
 
                 if f:IsShown() and not inVehicle and (inFocus or inCombat or isFlyout) then
                     -- should be showing
@@ -459,8 +470,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
 end
 GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
 
-local function main_OnEvent(self, event, unit, _, _, vehicleID)
-    local unit = unit
+local function main_OnEvent(self, event, ...)
+    local unit = ...
     if event == "PET_BATTLE_OPENING_START" then
         toggleMainHud(false)
     elseif event == "PET_BATTLE_CLOSE" then
@@ -468,7 +479,7 @@ local function main_OnEvent(self, event, unit, _, _, vehicleID)
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
-        if (event == "UNIT_ENTERED_VEHICLE" and vehicleID > 0) and (UnitHasVehiclePlayerFrameUI("player") or OverrideActionBar:IsShown()) then
+        if event == "UNIT_ENTERED_VEHICLE" and OverrideActionBar:IsShown() then
             toggleMainHud(false)
         else
             toggleMainHud(true)
