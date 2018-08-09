@@ -371,7 +371,7 @@
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="110"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwPlayerClassPower" frameStrata="HIGH" parent="UIParent" virtual="true">
+    <Frame name="GwPlayerClassPower" frameStrata="MEDIUM" parent="UIParent" virtual="true">
         <Size x="316" y="18"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-372" y="81"></Anchor>
