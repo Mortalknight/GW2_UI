@@ -370,7 +370,7 @@ local function LoadMinimap()
     GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
     
     local garrisonType = C_Garrison.GetLandingPageGarrisonType()
-    if garrisonType > 0 then
+    if garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or garrisonType == LE_GARRISON_TYPE_8_0 then
         local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
         local fnGwGarrisonButton_OnEnter = function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -45)
