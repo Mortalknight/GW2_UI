@@ -187,6 +187,7 @@
                 </Layers>
                 <Frames>
                     <Button name="GwBankDepositAllReagents" hidden="true" inherits="GwStandardButton" text="Deposit All">
+                        <Size x="180" y="24" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5"></Anchor>
                         </Anchors>

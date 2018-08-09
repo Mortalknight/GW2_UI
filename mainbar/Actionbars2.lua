@@ -166,7 +166,7 @@ GW.AddForProfiling("Actionbars2", "actionBarFrameHide", actionBarFrameHide)
 
 local function fadeCheck(self, forceCombat)
     local inVehicle = false
-    if UnitHasVehiclePlayerFrameUI("player") or OverrideActionBar:IsShown() or C_PetBattles.IsInBattle() then
+    if OverrideActionBar:IsShown() or C_PetBattles.IsInBattle() then
         inVehicle = true
     end
 
@@ -221,7 +221,7 @@ local function fadeCheck(self, forceCombat)
                     end
                 else
                     -- should not be showing
-                    if not busy and curAlpha > 0.0 and OverrideActionBar:IsShown() then
+                    if not busy and curAlpha > 0.0 then
                         actionBarFrameHide(f, not f:IsShown())
                     end
                 end
