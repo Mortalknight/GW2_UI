@@ -221,7 +221,7 @@ local function fadeCheck(self, forceCombat)
                     end
                 else
                     -- should not be showing
-                    if not busy and curAlpha > 0.0 then
+                    if not busy and curAlpha > 0.0 and OverrideActionBar:IsShown() then
                         actionBarFrameHide(f, not f:IsShown())
                     end
                 end

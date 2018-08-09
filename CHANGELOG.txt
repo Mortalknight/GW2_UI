@@ -7,6 +7,7 @@ FIXED
     - Fix a actionbar overlapping issue (CF#37)
     - Fix some classpowerbar issues (colors and displaying) (CF#128)
     - Fix some issues with the Garrison-/Orderhall Minimapbutton (CF#13)
+    - Fix problem where UI can disappear after vehicles, taxis, etc. (CF#200)
 
 
 
