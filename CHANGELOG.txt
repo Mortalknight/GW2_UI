@@ -3,6 +3,10 @@
 NEW
     - Add ability to bind Keys by hover
     - Minimap can now be placed at top or bottom (CF#113)
+	
+LOCALIZATION
+	- Simplified Chinese and Italian are now available, thanks to all of our volunteer translators from Curseforge!
+	- All existing localizations updated with new strings.
     
 FIXED
     - Fix a actionbar overlapping issue (CF#37)
