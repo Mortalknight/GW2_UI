@@ -167,7 +167,7 @@ GwLocalization['BINDINGS_TRIGGER'] = "Auslösen"
 GwLocalization['BINGSINGS_KEY'] = "Taste"
 GwLocalization['BINGSINGS_CLEAR'] = "Alle Tastaturbelegungen gelöscht für"
 GwLocalization['BINGSINGS_BIND'] = "gebunden an"
-GwLocalization['MINIMAP_POS'] = 'Minimap position'
+GwLocalization['MINIMAP_POS'] = 'Minikartenposition'
 end
 
 
