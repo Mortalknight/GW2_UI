@@ -217,10 +217,10 @@ local function hoverkeybinds ()
 		end
 		function bind:Deactivate(save)
 			if save then
-				SaveBindings(2)
+				SaveBindings(GetCurrentBindingSet())
 				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['ALL_BINDINGS_SAVE'])
 			else
-				LoadBindings(2)
+				LoadBindings(GetCurrentBindingSet())
 				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['ALL_BINDINGS_DISCARD'])
 			end
 			self.enabled = false
