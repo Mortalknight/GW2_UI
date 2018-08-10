@@ -167,6 +167,7 @@ GwLocalization['BINDINGS_TRIGGER'] = "Trigger"
 GwLocalization['BINGSINGS_KEY'] = "Key"
 GwLocalization['BINGSINGS_CLEAR'] = "All key bindings cleared for"
 GwLocalization['BINGSINGS_BIND'] = "bound to"
+GwLocalization['MINIMAP_POS'] = 'Minimap position'
 end
 
 

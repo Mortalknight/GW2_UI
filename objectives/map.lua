@@ -77,6 +77,45 @@ local function SetMinimapHover()
 end
 GW.SetMinimapHover = SetMinimapHover
 
+local function SetMinimapPosition()
+    local ourBuffBar = GetSetting("PLAYER_BUFFS_ENABLED")
+    local ourTracker = GetSetting("QUESTTRACKER_ENABLED")
+    local mapPos = GetSetting("MINIMAP_POS")
+    local mapSize = Minimap:GetHeight()
+
+    -- adjust minimap and minimap cluster placement/size (lots of default things anchor off cluster)
+    MinimapCluster:ClearAllPoints()
+    local mc_y = -50
+    local mc_x = 0
+    if ourBuffBar then
+        mc_y = 0
+    end
+    if ourTracker then
+        mc_x = -300
+    end
+    MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, mc_y)
+    Minimap:ClearAllPoints()
+    if mapPos == "TOP" then
+        if ourTracker then
+            MinimapCluster:SetHeight(5)
+            MinimapCluster:SetWidth(5)
+        else
+            MinimapCluster:SetHeight(mapSize + 60) -- extra room for pushing tracker, etc. further down
+            MinimapCluster:SetWidth(mapSize)
+        end
+        if ourBuffBar then
+            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
+        else
+            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -45)
+        end
+    else
+        Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
+        MinimapCluster:SetHeight(5)
+        MinimapCluster:SetWidth(5)
+    end
+end
+GW.SetMinimapPosition = SetMinimapPosition
+
 local function stackIcons(self, event)
     for _, frame in pairs(framesToAdd) do
         frame:SetParent(Minimap)
@@ -224,11 +263,6 @@ local function checkCursorOverMap()
 end
 GW.AddForProfiling("map", "checkCursorOverMap", checkCursorOverMap)
 
--- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
-function GetMinimapShape()
-    return "SQUARE"
-end
-
 local function time_OnEnter(self)
     local string
 
@@ -267,7 +301,14 @@ local function time_OnClick(self, button)
 end
 GW.AddForProfiling("map", "time_OnClick", time_OnClick)
 
+local function getMinimapShape()
+    return "SQUARE"
+end
+
 local function LoadMinimap()
+    -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
+    _G["GetMinimapShape"] = getMinimapShape
+
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
     SetMinimapHover()
@@ -278,13 +319,8 @@ local function LoadMinimap()
     QueueStatusMinimapButtonIconTexture:SetSize(40, 40)
     QueueStatusMinimapButtonIcon:SetSize(40, 40)
 
-    Minimap:ClearAllPoints()
-    Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
-
     Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
-
     Minimap:SetParent(UIParent)
-
     Minimap:SetFrameStrata("LOW")
 
     mapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
@@ -368,9 +404,12 @@ local function LoadMinimap()
     )
 
     GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
-    
+
     local garrisonType = C_Garrison.GetLandingPageGarrisonType()
-    if garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or garrisonType == LE_GARRISON_TYPE_8_0 then
+    if
+        garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or
+            garrisonType == LE_GARRISON_TYPE_8_0
+     then
         local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
         local fnGwGarrisonButton_OnEnter = function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -45)
@@ -479,6 +518,8 @@ local function LoadMinimap()
     Minimap:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
+
+    SetMinimapPosition()
 
     hoverMiniMapOut()
 end

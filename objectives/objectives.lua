@@ -3,8 +3,8 @@ local RoundDec = GW.RoundDec
 local lerp = GW.lerp
 local GetSetting = GW.GetSetting
 local CommaValue = GW.CommaValue
-local NotificationStateChanged = GW.NotificationStateChanged
-local SetObjectiveNotification = GW.SetObjectiveNotification
+--local NotificationStateChanged = GW.NotificationStateChanged
+--local SetObjectiveNotification = GW.SetObjectiveNotification
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 
@@ -473,7 +473,7 @@ local function updatePOI(questID, questLogIndex)
         AddQuestWatch(questLogIndex, true)
     end
     SetSuperTrackedQuestID(questID)
-   -- WorldMapFrame_OnUserChangedSuperTrackedQuest(questID)
+    -- WorldMapFrame_OnUserChangedSuperTrackedQuest(questID)
 end
 GW.AddForProfiling("objectives", "updatePOI", updatePOI)
 
@@ -670,7 +670,7 @@ end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
 local function trackerNotification_OnEvent(self, event)
-	mapID = C_Map.GetBestMapForUnit("player")
+    mapID = C_Map.GetBestMapForUnit("player")
 end
 GW.AddForProfiling("objectives", "trackerNotification_OnEvent", trackerNotification_OnEvent)
 
@@ -698,6 +698,14 @@ end
 GW.AddForProfiling("objectives", "bonus_OnEnter", bonus_OnEnter)
 
 local function LoadQuestTracker()
+    --local qt_enabled = GetSetting("QUESTTRACKER_ENABLED")
+    --local bars_enabled = GetSetting("ACTIONBARS_ENABLED")
+    local map_enabled = GetSetting("MINIMAP_ENABLED")
+    local map_position = GetSetting("MINIMAP_POS")
+
+    -- disable the default tracker
+    ObjectiveTrackerFrame:SetMovable(1)
+    ObjectiveTrackerFrame:SetUserPlaced(true)
     ObjectiveTrackerFrame:Hide()
     ObjectiveTrackerFrame:SetScript(
         "OnShow",
@@ -705,7 +713,12 @@ local function LoadQuestTracker()
             ObjectiveTrackerFrame:Hide()
         end
     )
+    ObjectiveTrackerFrame:UnregisterAllEvents()
+    ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
+    ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
+    ObjectiveTrackerFrame:SetScript("OnEvent", nil)
 
+    -- create our tracker
     local fTracker = CreateFrame("Frame", "GwQuestTracker", UIParent, "GwQuestTracker")
 
     local fTraScr = CreateFrame("ScrollFrame", "GwQuestTrackerScroll", fTracker, "GwQuestTrackerScroll")
@@ -743,9 +756,14 @@ local function LoadQuestTracker()
     fQuest:SetParent(fScroll)
     fBonus:SetParent(fScroll)
 
-    if GetSetting("MINIMAP_ENABLED") then
-        fTracker:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT")
-        fTracker:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT")
+    if map_enabled then
+        if map_position == "TOP" then
+            fTracker:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
+            fTracker:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 25)
+        else
+            fTracker:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT")
+            fTracker:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, 3)
+        end
     else
         fTracker:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
         fTracker:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT")
@@ -820,9 +838,9 @@ local function LoadQuestTracker()
 
     fNotify.shouldDisplay = false
     fTracker.trot = GetTime() + 2
-	fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
-	fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-	fTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
+    fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
+    fTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     fTracker:SetScript("OnUpdate", tracker_OnUpdate)
 end
 GW.LoadQuestTracker = LoadQuestTracker

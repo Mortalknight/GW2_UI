@@ -1027,7 +1027,8 @@ local function LoadActionBars()
             "MULTICASTACTIONBAR_YPOS",
             "MultiCastActionBarFrame",
             "PETACTIONBAR_YPOS",
-            "PETACTIONBAR_XPOS"
+            "PETACTIONBAR_XPOS",
+            "OBJTRACKER_OFFSET_X"
         }
     ) do
         UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil

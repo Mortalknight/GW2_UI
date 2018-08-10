@@ -1008,18 +1008,17 @@ local function LoadSettings()
         }
     )
     addOptionDropdown(
-        GwLocalization["HUD_SCALE"],
-        GwLocalization["HUD_SCALE_DESC"],
-        "HUD_SCALE",
+        GwLocalization["MINIMAP_POS"],
+        nil,
+        "MINIMAP_POS",
         "GwSettingsHudOptions",
         function()
-            GW.UpdateHudScale()
+            GW.SetMinimapPosition()
         end,
-        {1, 0.9, 0.8},
+        {"BOTTOM", "TOP"},
         {
-            DEFAULT,
-            SMALL,
-            GwLocalization["HUD_SCALE_TINY"]
+            TRACKER_SORT_MANUAL_BOTTOM,
+            TRACKER_SORT_MANUAL_TOP
         }
     )
     addOptionDropdown(
@@ -1035,6 +1034,21 @@ local function LoadSettings()
             LARGE,
             TIME_LEFT_MEDIUM,
             DEFAULT
+        }
+    )
+    addOptionDropdown(
+        GwLocalization["HUD_SCALE"],
+        GwLocalization["HUD_SCALE_DESC"],
+        "HUD_SCALE",
+        "GwSettingsHudOptions",
+        function()
+            GW.UpdateHudScale()
+        end,
+        {1, 0.9, 0.8},
+        {
+            DEFAULT,
+            SMALL,
+            GwLocalization["HUD_SCALE_TINY"]
         }
     )
     addOptionDropdown(
