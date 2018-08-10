@@ -96,6 +96,7 @@ locales/ruRU.lua
 locales/ptBR.lua
 locales/frFR.lua
 locales/zhCN.lua
+locales/itIT.lua
 
 tests/mocks.lua
 tests/alert_tests.lua
