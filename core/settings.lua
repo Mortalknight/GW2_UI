@@ -773,7 +773,7 @@ local function LoadSettings()
         "GwSettingsModuleOption"
     )
     addOption(
-        QUEST_LOG,
+        OBJECTIVES_TRACKER_LABEL,
         GwLocalization["QUEST_TRACKER_DESC"],
         "QUESTTRACKER_ENABLED",
         "GwSettingsModuleOption"
@@ -797,7 +797,7 @@ local function LoadSettings()
         "GwSettingsModuleOption"
     )
     addOption(
-        SCORE_POWER_UPS,
+        BUFFOPTIONS_LABEL,
         GwLocalization["PLAYER_AURAS_DESC"],
         "PLAYER_BUFFS_ENABLED",
         "GwSettingsModuleOption"
