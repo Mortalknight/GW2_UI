@@ -93,6 +93,7 @@ GwLocalization["MAP_CLOCK_STOPWATCH"] = "Clic derecho para abrir el cronómetro"
 GwLocalization["MINIMAP_DESC"] = "Utilizar el marco de minimapa de GW2 UI."
 GwLocalization["MINIMAP_HOVER"] = "Detalles de minimapa"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "Mostrar permanentemente los detalles de minimapa."
+GwLocalization["MINIMAP_POS"] = "Posición de minimapa"
 GwLocalization["MINIMAP_SCALE"] = "Escala de minimapa"
 GwLocalization["MINIMAP_SCALE_DESC"] = "Cambiar el tamaño de minimapa."
 GwLocalization["MODULES_CAT"] = "MÓDULOS"
@@ -167,7 +168,6 @@ GwLocalization['BINDINGS_TRIGGER'] = "Trigger"
 GwLocalization['BINGSINGS_KEY'] = "Key"
 GwLocalization['BINGSINGS_CLEAR'] = "All key bindings cleared for"
 GwLocalization['BINGSINGS_BIND'] = "bound to"
-GwLocalization['MINIMAP_POS'] = 'Minimap position'
 end
 
 
