@@ -215,11 +215,11 @@ local function fadeCheck(self, forceCombat)
                 local curAlpha = f:GetAlpha()
                 local busy = (f.fadeIn:IsPlaying() or f.fadeOut:IsPlaying())
 
-                if f:IsShown() and inVehicle and duringVehicle == false then
+                if f:IsShown() and inVehicle and duringVehicle == false and not inLockdown then
                     f:Hide()
                     duringVehicle = true
                     return
-                elseif not f:IsShown() and not inVehicle and duringVehicle then
+                elseif not f:IsShown() and not inVehicle and duringVehicle and not inLockdown then
                     f:Show()
                     duringVehicle = false
                     return
