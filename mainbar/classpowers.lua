@@ -392,13 +392,13 @@ local function loopMongooseAnim()
             local g = 37 / 255
             local b = 37 / 255
 
-            GwMongooseBar.texture1:SetTexCoord(0, cord, l, r)
-            GwMongooseBar.texture2:SetTexCoord(0, cord2, l, r)
+            GwMongooseBar.bar.texture1:SetTexCoord(0, cord, l, r)
+            GwMongooseBar.bar.texture2:SetTexCoord(0, cord2, l, r)
 
-            GwMongooseBar.texture1:SetWidth(math.max(1, 262 * precentage))
-            GwMongooseBar.texture2:SetWidth(math.max(1, 262 * precentage))
-            GwMongooseBar.texture1:SetVertexColor(r, g, b, a)
-            GwMongooseBar.texture2:SetVertexColor(r, g, b, a2)
+            GwMongooseBar.bar.texture1:SetWidth(math.max(1, 262 * precentage))
+            GwMongooseBar.bar.texture2:SetWidth(math.max(1, 262 * precentage))
+            GwMongooseBar.bar.texture1:SetVertexColor(r, g, b, a)
+            GwMongooseBar.bar.texture2:SetVertexColor(r, g, b, a2)
             --    GwStaggerBar.fill:SetVertexColor(r,g,b,1)
         end,
         "noease",
@@ -418,8 +418,8 @@ local function powerMongoose()
     CLASS_POWER = 0
     local found = false
     for i = 1, 40 do
-        local _, _, _, _, _, _, _, _, _, spellID, _ = UnitAura("player", i)
-        if spellID == 190931 then
+        _, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura("player", i)
+        if spellID == 259388 then
             found = true
             break
         end
@@ -441,7 +441,7 @@ local function powerMongoose()
             animations["MONGOOSEBITE_BAR"]["duration"] = 0
         end
 
-        GW_MONGOOSE_LOOP_ANIMATION()
+        loopMongooseAnim()
 
         AddToAnimation(
             "MONGOOSEBITE_BAR",
@@ -607,8 +607,8 @@ setBarType = function()
         GwMongooseBar.precentage = 0
         GwPlayerClassPowerBackground:SetTexture(nil)
         GwPlayerClassPowerFill:SetTexture(nil)
-        GwMongooseBar.texture1:SetVertexColor(1, 1, 1, 0)
-        GwMongooseBar.texture2:SetVertexColor(1, 1, 1, 0)
+        GwMongooseBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
+        GwMongooseBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
         GwMongooseBar.bar:SetValue(0)
         return
     end
@@ -755,7 +755,7 @@ CLASS_POWERS[2] = {}
 CLASS_POWERS[2][3] = powerHoly
 
 CLASS_POWERS[3] = {}
---CLASS_POWERS[3][3] = powerMongoose
+CLASS_POWERS[3][3] = powerMongoose
 
 CLASS_POWERS[6] = {}
 CLASS_POWERS[6][1] = powerRune

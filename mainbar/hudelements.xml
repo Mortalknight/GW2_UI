@@ -516,7 +516,7 @@
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="2">
 
-                        <FontString parentKey="count" justifyH="MIDDLE" justifyV="MIDDLE">
+                        <FontString parentKey="count" justifyH="MIDDLE" justifyV="MIDDLE" inherits="GameFontNormalSmall">
                             <Size x="45" y="45"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="5" y="0"></Anchor>

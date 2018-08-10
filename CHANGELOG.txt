@@ -10,6 +10,7 @@ FIXED
     - Fix some issues with the Garrison-/Orderhall Minimapbutton (CF#13)
     - Fix problem where UI can disappear after vehicles, taxis, etc. (CF#200)
     - Default objective tracker placement improved when using custom minimap/actionbars
+    - Fix Hunter MongooseBar
 
 
 
