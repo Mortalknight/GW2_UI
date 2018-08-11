@@ -412,13 +412,18 @@ local function setUnitPortraitFrame(self, event)
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
         border = unitClassIfication
     end
-    --[[
-    if (UnitPrestige(self.unit)~=nil and UnitPrestige(self.unit)>0)   then
-        local p = UnitPrestige(self.unit)
-        if p > 4 then
+
+    if (UnitHonorLevel(self.unit) ~= nil and UnitHonorLevel(self.unit) > 9)   then
+        local p = UnitHonorLevel(self.unit)
+    
+        if p > 200 then
 			plvl = 4
-		else
-			plvl = p
+		elseif p > 100 then
+            plvl = 3
+        elseif p > 50 then 
+            plvl = 2
+        elseif p > 10 then
+            plvl = 1
 		end
         key = 'prestige'..plvl
         if TARGET_FRAME_ART[key]~=nil then
@@ -427,13 +432,11 @@ local function setUnitPortraitFrame(self, event)
              
         self.prestigebg:Show()
         self.prestigeString:Show()
-        self.prestigeString:SetText(p)
-        
+        self.prestigeString:SetText(p)    
     else
-    --]]
-    self.prestigebg:Hide()
-    self.prestigeString:Hide()
-    --end
+        self.prestigebg:Hide()
+        self.prestigeString:Hide()
+    end
 
     self.background:SetTexture(TARGET_FRAME_ART[border])
 end
