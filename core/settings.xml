@@ -826,4 +826,54 @@
         </Frames>
     </Frame>
 
+     <Frame name="GwKeyBindPrompt" hidden="true" frameStrata="DIALOG" enableMouse="true" topLevel="true" virtual="true">
+        <Size x="350" y="150"></Size>
+        <Anchors>
+            <Anchor point="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                    <Size x="350" y="150"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.2" right="0.8" top="0.2" bottom="0.8" />
+                    <Color r="0.8" b="0.8" g="0.8" a="0.9"></Color>
+                </Texture>
+
+            </Layer>
+            <Layer textureSubLevel="2">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\warning-icon">
+                    <Size x="50" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="15" y="-15"></Anchor>
+                    </Anchors>
+
+                </Texture>
+                <FontString parentKey="string" text="Not yet loaded" justifyH="LEFT" justifyV="TOP">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="70" y="-15"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-15" y="15"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentAccept" inherits="GwStandardButton" text="Accept" parentKey="acceptButton">
+                <Size x="85" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-110" y="15"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentcancel" inherits="GwStandardButton" text="Cancel" parentKey="cancelButton">
+                <Size x="85" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="15"></Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+
 </Ui>

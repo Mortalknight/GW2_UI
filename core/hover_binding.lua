@@ -1,7 +1,6 @@
 local _, GW = ...
 local bind, localmacros = CreateFrame("Frame", "HoverBind", UIParent), 0
 
---SlashCmdList.MOUSEOVERBIND = function()
 local function hoverkeybinds ()
 	if InCombatLockdown() then DEFAULT_CHAT_FRAME:AddMessage(ERR_AFFECTING_COMBAT) return end
 	if not bind.loaded then
@@ -278,39 +277,33 @@ local function hoverkeybinds ()
 	end
 	if not bind.enabled then
 		bind:Activate()
-        GW.WarningPrompt(GwLocalization['BINDINGS_DESC'], nil)
+        GW.KeyBindPrompt(GwLocalization['BINDINGS_DESC'])
 	end
 end
 GW.hoverkeybinds = hoverkeybinds
---SLASH_MOUSEOVERBIND1 = "/gwkb"
 
-local fmGWP = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
-    fmGWP.string:SetFont(UNIT_NAME_FONT, 14)
-    fmGWP.string:SetTextColor(1, 1, 1)
-    fmGWP.acceptButton:SetText(SAVE)
-    fmGWP.cancelButton:SetText(CANCEL)
+local fmGWKB = CreateFrame("Frame", "GwKeyBindPrompt", UIParent, "GwKeyBindPrompt")
+fmGWKB.string:SetFont(UNIT_NAME_FONT, 14)
+fmGWKB.string:SetTextColor(1, 1, 1)
+fmGWKB.acceptButton:SetText(SAVE)
+fmGWKB.cancelButton:SetText(CANCEL)
     
-    fmGWP.input:SetScript("OnEscapePressed", nil)
-    fmGWP.input:SetScript("OnEditFocusGained", nil)
-    fmGWP.input:SetScript("OnEditFocusLost", nil)
-    fmGWP.input:SetScript("OnEnterPressed", nil)
-    local fnGWP_accept_OnClick = function()
-        bind:Deactivate(true)
-        GwWarningPrompt:Hide()
-    end
-    local fnGWP_cancel_OnClick = function()
-        bind:Deactivate(false)
-        GwWarningPrompt:Hide()
-    end
-    fmGWP.acceptButton:SetScript("OnClick", fnGWP_accept_OnClick)
-    fmGWP.cancelButton:SetScript("OnClick", fnGWP_cancel_OnClick)
-
-    tinsert(UISpecialFrames, "GwWarningPrompt")
-
-local function WarningPrompt(text, method)
-    GwWarningPrompt.string:SetText(text)
-    GwWarningPrompt.method = method
-    GwWarningPrompt:Show()
-    GwWarningPrompt.input:Hide()
+local fmGWKB_accept_OnClick = function()
+    bind:Deactivate(true)
+    GwKeyBindPrompt:Hide()
 end
-GW.WarningPrompt = WarningPrompt
+local fmGWKB_cancel_OnClick = function()
+    bind:Deactivate(false)
+    GwKeyBindPrompt:Hide()
+end
+fmGWKB.acceptButton:SetScript("OnClick", fmGWKB_accept_OnClick)
+fmGWKB.cancelButton:SetScript("OnClick", fmGWKB_cancel_OnClick)
+
+tinsert(UISpecialFrames, "GwKeyBindPrompt")
+
+local function KeyBindPrompt(text)
+    GwKeyBindPrompt.string:SetText(text)
+    GwKeyBindPrompt.method = nil
+    GwKeyBindPrompt:Show()
+end
+GW.KeyBindPrompt = KeyBindPrompt
