@@ -9,6 +9,7 @@ LOCALIZATION
 	- All existing localizations updated with new strings.
     
 FIXED
+    - Fix quest tracker moving to bottom of screen sometimes (CF#195, CF#168)
     - Fix a actionbar overlapping issue (CF#37)
     - Fix some classpowerbar issues (colors and displaying) (CF#128)
     - Fix some issues with the Garrison-/Orderhall Minimapbutton (CF#13)
