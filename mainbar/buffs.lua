@@ -449,7 +449,7 @@ local function UpdatePlayerBuffFrame()
     end
     GwPlayerAuraFrame:ClearAllPoints()
     if GwMultiBarBottomRight and GwMultiBarBottomRight.gw_FadeShowing then
-        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 212)
+        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 215)
     else
         GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 120)
     end
@@ -488,7 +488,7 @@ local function LoadBuffs()
         
             self:GetFrameRef('GwPlayerAuraFrame'):ClearAllPoints()
             if newstate == 'show' then
-                self:GetFrameRef('GwPlayerAuraFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',53,212)
+                self:GetFrameRef('GwPlayerAuraFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',53,215)
             end
             ]=]
         )
