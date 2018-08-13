@@ -23,13 +23,18 @@ local function hideBlizzardRaidFrame()
         return
     end
 
-    CompactRaidFrameManager:UnregisterAllEvents()
-    CompactRaidFrameManager:Hide()
-    CompactRaidFrameContainer:UnregisterAllEvents()
-
-    local compact_raid = CompactRaidFrameManager_GetSetting("IsShown")
-    if compact_raid and compact_raid ~= "0" then
-        CompactRaidFrameManager_SetSetting("IsShown", "0")
+    if CompactRaidFrameManager then
+        CompactRaidFrameManager:UnregisterAllEvents()
+        CompactRaidFrameManager:Hide()
+    end
+    if CompactRaidFrameContainer then
+        CompactRaidFrameContainer:UnregisterAllEvents()
+    end
+    if CompactRaidFrameManager_GetSetting then
+        local compact_raid = CompactRaidFrameManager_GetSetting("IsShown")
+        if compact_raid and compact_raid ~= "0" then
+            CompactRaidFrameManager_SetSetting("IsShown", "0")
+        end
     end
 end
 GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
@@ -853,8 +858,12 @@ GW.AddForProfiling("raidframes", "createRaidFrame", createRaidFrame)
 local function LoadRaidFrames()
     hideBlizzardRaidFrame()
 
-    hooksecurefunc("CompactRaidFrameManager_UpdateShown", hideBlizzardRaidFrame)
-    CompactRaidFrameManager:HookScript("OnShow", hideBlizzardRaidFrame)
+    if CompactRaidFrameManager_UpdateShown then
+        hooksecurefunc("CompactRaidFrameManager_UpdateShown", hideBlizzardRaidFrame)
+    end
+    if CompactRaidFrameManager then
+        CompactRaidFrameManager:HookScript("OnShow", hideBlizzardRaidFrame)
+    end
 
     CreateFrame("Frame", "GwRaidFrameContainer", UIParent, "GwRaidFrameContainer")
 

@@ -6,6 +6,7 @@ NEW
 FIXED
     - Un-break auto-quest tracking
     - Only show Hunter Mongoose bar when talented
+    - Test for disabled default CompactRaidFrame addon (CF#142)
 
 
 
