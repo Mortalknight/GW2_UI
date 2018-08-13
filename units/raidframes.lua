@@ -805,7 +805,7 @@ local function createRaidFrame(registerUnit)
 
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp")
+    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp", "Button4Up", "Button5Up")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript(
