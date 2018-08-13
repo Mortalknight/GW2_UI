@@ -1,3 +1,11 @@
+5.0.6
+
+FIXED
+    - Un-break auto-quest tracking
+    - Only show Hunter Mongoose bar when talented
+
+
+
 5.0.5
 
 NEW

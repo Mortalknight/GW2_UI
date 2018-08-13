@@ -602,15 +602,18 @@ setBarType = function()
         return
     end
     if PLAYER_CLASS == 3 then
-        GwMongooseBar:Show()
-        GwMongooseBar.looping = false
-        GwMongooseBar.precentage = 0
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        GwMongooseBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
-        GwMongooseBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
-        GwMongooseBar.bar:SetValue(0)
-        return
+        local _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player")
+        if selected then
+            GwMongooseBar:Show()
+            GwMongooseBar.looping = false
+            GwMongooseBar.precentage = 0
+            GwPlayerClassPowerBackground:SetTexture(nil)
+            GwPlayerClassPowerFill:SetTexture(nil)
+            GwMongooseBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
+            GwMongooseBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
+            GwMongooseBar.bar:SetValue(0)
+            return
+        end
     end
     if PLAYER_CLASS == 4 or PLAYER_CLASS == 11 and s == 1 then
         if GwExtraPlayerPowerBar ~= nil then
