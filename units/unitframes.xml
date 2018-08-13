@@ -184,7 +184,7 @@
                 </FontString>
 
                 <FontString parentKey="prestigeString" text="4" justifyH="CENTER" justifyV="CENTER">
-                    <Size x="26" y="26"/>
+                    <Size x="28" y="28"/>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="BOTTOMLEFT" x="20" y="18"></Anchor>
                     </Anchors>
