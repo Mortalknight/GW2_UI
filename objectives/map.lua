@@ -305,6 +305,49 @@ local function getMinimapShape()
     return "SQUARE"
 end
 
+local function garrisonBtn_OnEnter(self)
+    local garrisonType = self.gw_GarrisonType
+    if not garrisonType then
+        self.gw_GarrisonType = C_Garrison.GetLandingPageGarrisonType()
+        garrisonType = self.gw_GarrisonType
+    end
+    if not garrisonType then
+        return
+    end
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -45)
+    if garrisonType == LE_GARRISON_TYPE_6_0 then
+        GameTooltip:SetText(GARRISON_LANDING_PAGE_TITLE, 1, 1, 1)
+        GameTooltip:AddLine(MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
+    elseif garrisonType == LE_GARRISON_TYPE_7_0 then
+        GameTooltip:SetText(ORDER_HALL_LANDING_PAGE_TITLE, 1, 1, 1)
+        GameTooltip:AddLine(MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
+    elseif garrisonType == LE_GARRISON_TYPE_8_0 then
+        GameTooltip:SetText(GARRISON_TYPE_8_0_LANDING_PAGE_TITLE, 1, 1, 1)
+        GameTooltip:AddLine(GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
+    end
+    GameTooltip:Show()
+end
+
+local function garrisonBtn_OnEvent(self, event, ...)
+    if event ~= "GARRISON_UPDATE" then
+        return
+    end
+    self.gw_GarrisonType = C_Garrison.GetLandingPageGarrisonType()
+    local garrisonType = self.gw_GarrisonType
+    if not garrisonType then
+        self:Hide()
+        return
+    end
+    if
+        garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or
+            garrisonType == LE_GARRISON_TYPE_8_0
+     then
+        self:Show()
+    else
+        self:Hide()
+    end
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     _G["GetMinimapShape"] = getMinimapShape
@@ -405,31 +448,13 @@ local function LoadMinimap()
 
     GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
 
-    local garrisonType = C_Garrison.GetLandingPageGarrisonType()
-    if
-        garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or
-            garrisonType == LE_GARRISON_TYPE_8_0
-     then
-        local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
-        local fnGwGarrisonButton_OnEnter = function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -45)
-            if garrisonType == LE_GARRISON_TYPE_6_0 then
-                GameTooltip:SetText(GARRISON_LANDING_PAGE_TITLE, 1, 1, 1)
-                GameTooltip:AddLine(MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
-            elseif garrisonType == LE_GARRISON_TYPE_7_0 then
-                GameTooltip:SetText(ORDER_HALL_LANDING_PAGE_TITLE, 1, 1, 1)
-                GameTooltip:AddLine(MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
-            elseif garrisonType == LE_GARRISON_TYPE_8_0 then
-                GameTooltip:SetText(GARRISON_TYPE_8_0_LANDING_PAGE_TITLE, 1, 1, 1)
-                GameTooltip:AddLine(GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP, nil, nil, nil, true)
-            end
-            GameTooltip:Show()
-        end
-        GwGarrisonButton:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
-        GwGarrisonButton:SetScript("OnEnter", fnGwGarrisonButton_OnEnter)
-        GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
-        GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
-    end
+    local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
+    GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
+    GwGarrisonButton:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
+    GwGarrisonButton:SetScript("OnEnter", garrisonBtn_OnEnter)
+    GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
+    GwGarrisonButton:SetScript("OnEvent", garrisonBtn_OnEvent)
+    GwGarrisonButton:RegisterEvent("GARRISON_UPDATE")
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
     local fnGwMailButton_OnEvent = function(self, event, ...)

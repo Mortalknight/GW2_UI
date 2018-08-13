@@ -979,7 +979,7 @@
 
     </Button>
 
-    <Button name="GwGarrisonButton" frameStrata="LOW" toplevel="true" virtual="true">
+    <Button name="GwGarrisonButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
         <Size x="50" y="50"/>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\garrison-up"></NormalTexture>
         <PushedTexture file="Interface\AddOns\GW2_UI\textures\garrison-down"></PushedTexture >
