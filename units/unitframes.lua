@@ -416,13 +416,13 @@ local function setUnitPortraitFrame(self, event)
     if (UnitHonorLevel(self.unit) ~= nil and UnitHonorLevel(self.unit) > 9)   then
         local p = UnitHonorLevel(self.unit)
     
-        if p > 200 then
+        if p > 199 then
 			plvl = 4
-		elseif p > 100 then
+		elseif p > 99 then
             plvl = 3
-        elseif p > 50 then 
+        elseif p > 49 then 
             plvl = 2
-        elseif p > 10 then
+        elseif p > 9 then
             plvl = 1
 		end
         key = 'prestige'..plvl
