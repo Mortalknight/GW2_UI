@@ -303,7 +303,7 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="10"></Anchor>
                 </Anchors>
                 <Frames>
-                    <Button name="GwPaperDollHeadSlot" parentKey="head" inherits="GwPaperDollButtonTemplate">
+                    <Button name="GwPaperDollHeadSlot" parentKey="head" inherits="GwPaperDollButtonTemplate,PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -318,7 +318,7 @@
                             </CheckButton>
                         </Frames>
                     </Button>
-                    <Button name="GwPaperDollShoulderSlot" parentKey="shoulder" inherits="GwPaperDollButtonTemplate">
+                    <Button name="GwPaperDollShoulderSlot" parentKey="shoulder" inherits="GwPaperDollButtonTemplate,PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.head" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -365,7 +365,7 @@
                         </Frames>
                     </Button>
 
-                    <Button name="GwPaperDollChestSlot" parentKey="chest" inherits="GwPaperDollButtonTemplate">
+                    <Button name="GwPaperDollChestSlot" parentKey="chest" inherits="GwPaperDollButtonTemplate,PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.hands" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -552,7 +552,7 @@
                             </CheckButton>
                         </Frames>
                     </Button>
-                    <Button name="GwPaperDollNeckSlot" parentKey="neck" inherits="GwPaperDollButtonTemplate">
+                    <Button name="GwPaperDollNeckSlot" parentKey="neck" inherits="GwPaperDollButtonTemplate,PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>

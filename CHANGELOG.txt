@@ -3,6 +3,7 @@
 NEW
     - Add ability to bind Keys by hover
     - Minimap can now be placed at top or bottom (CF#113)
+    - Include Azerite item overlays in hero panel
 	
 LOCALIZATION
 	- Simplified Chinese and Italian are now available, thanks to all of our volunteer translators from Curseforge!
@@ -10,7 +11,7 @@ LOCALIZATION
     
 FIXED
     - Fix quest tracker moving to bottom of screen sometimes (CF#195, CF#168)
-    - Fix a actionbar overlapping issue (CF#37)
+    - Fix an actionbar overlapping issue (CF#37)
     - Fix some classpowerbar issues (colors and displaying) (CF#128)
     - Fix some issues with the Garrison-/Orderhall Minimapbutton (CF#13)
     - Fix problem where UI can disappear after vehicles, taxis, etc. (CF#200)

@@ -358,10 +358,20 @@ local function updateItemSlot(self)
     else
         SetItemButtonTexture(self, nil)
         self.repairIcon:Hide()
+        self.hasItem = false
     end
 
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
+
+    if self.HasPaperDollAzeriteItemOverlay then
+        self:SetAzeriteItem(self.hasItem and ItemLocation:CreateFromEquipmentSlot(slot) or nil)
+        if slot ~= 2 then
+            self.AzeriteTexture:SetSize(68, 56) -- equip slot; default is 57,46
+        else
+            self.AzeriteTexture:SetSize(50, 48) -- neck slot; default is 50,44
+        end
+    end
 end
 GW.AddForProfiling("paperdoll_equipment", "updateItemSlot", updateItemSlot)
 
