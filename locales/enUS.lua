@@ -171,7 +171,7 @@ GwLocalization['MINIMAP_POS'] = 'Minimap position'
 end
 
 local Locale = GetLocale()
-if Locale ~= "deDE" and Locale ~= "zhTW" and Locale ~= "koKR" and Locale ~= "esMX" and Locale ~= "esES" and Locale ~= "ruRU" and Locale ~= "ptBR" and Locale ~= "frFR" and Locale ~= "zhCN" and Locale ~= "itIT" then
+if Locale == "enGB" or Locale == "enUS" then
 	GWUseThisLocalization()
 end
 
