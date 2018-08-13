@@ -1705,6 +1705,12 @@ GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 local function LoadHudArt()
     local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
 
+    if not GetSetting("BORDER_ENABLED") and hudArtFrame.edgeTint then
+        for _, f in ipairs(hudArtFrame.edgeTint) do
+            f:Hide()
+        end
+    end
+    
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
 
     hudArtFrame:RegisterEvent("UNIT_AURA")

@@ -990,6 +990,12 @@ local function LoadSettings()
         "FADE_MICROMENU",
         "GwSettingsHudOptions"
     )
+    addOption(
+        DISPLAY_BORDERS,
+        nil,
+        "BORDER_ENABLED",
+        "GwSettingsHudOptions"
+    )
 
     addOptionDropdown(
         GwLocalization["MINIMAP_HOVER"],
