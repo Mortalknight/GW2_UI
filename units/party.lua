@@ -776,7 +776,7 @@ local function createPartyFrame(i)
 
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    frame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "Button4Up", "Button5Up")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript(
