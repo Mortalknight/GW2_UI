@@ -317,7 +317,7 @@ local function toggleMainHud(b, inCombat)
                 else
                     if inCombat == nil then
                         f:SetAlpha(0)
-                    elsif not inCombat then
+                    elseif not inCombat then
                         f:Hide()
                     end
                    -- f:SetAlpha(0)
