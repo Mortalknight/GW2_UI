@@ -215,11 +215,11 @@ local function fadeCheck(self, forceCombat)
                 local curAlpha = f:GetAlpha()
                 local busy = (f.fadeIn:IsPlaying() or f.fadeOut:IsPlaying())
 
-                if f:IsShown() and inVehicle and duringVehicle == false and not inLockdown then
+                if f:IsShown() and inVehicle and duringVehicle == false and not inCombat then
                     f:Hide()
                     duringVehicle = true
                     return
-                elseif not f:IsShown() and not inVehicle and duringVehicle and not inLockdown then
+                elseif not f:IsShown() and not inVehicle and duringVehicle and not inCombat then
                     f:Show()
                     duringVehicle = false
                     return
@@ -292,7 +292,7 @@ local MAIN_HUD_FRAMES = {
     "GwPlayerHealthGlobe",
     "GwPlayerPetFrame"
 }
-local function toggleMainHud(b)
+local function toggleMainHud(b, inCombat)
     for i, name in ipairs(MAIN_HUD_FRAMES) do
         local f = _G[name]
         if f then
@@ -302,7 +302,10 @@ local function toggleMainHud(b)
                     bar.elapsedTimer = -1
                     bar.fadeTimer = -1
                 else
-                    f:SetAlpha(1)
+                    if not inCombat then
+                        f:Show()
+                    end
+                    -- f:SetAlpha(1)
                 end
             else
                 if f.gw_FadeShowing ~= nil then
@@ -310,7 +313,10 @@ local function toggleMainHud(b)
                     bar.elapsedTimer = -1
                     bar.fadeTimer = -1
                 else
-                    f:SetAlpha(0)
+                    if not inCombat then
+                        f:Hide()
+                    end
+                   -- f:SetAlpha(0)
                 end
             end
         end
@@ -472,17 +478,18 @@ GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
 
 local function main_OnEvent(self, event, ...)
     local unit = ...
+    local inCombat = UnitAffectingCombat("player")
     if event == "PET_BATTLE_OPENING_START" then
-        toggleMainHud(false)
+        toggleMainHud(false, inCombat)
     elseif event == "PET_BATTLE_CLOSE" then
-        toggleMainHud(true)
+        toggleMainHud(true, inCombat)
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
         if event == "UNIT_ENTERED_VEHICLE" and OverrideActionBar:IsShown() then
-            toggleMainHud(false)
+            toggleMainHud(false, inCombat)
         else
-            toggleMainHud(true)
+            toggleMainHud(true, inCombat)
         end
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         local forceCombat = (event == "PLAYER_REGEN_DISABLED")
