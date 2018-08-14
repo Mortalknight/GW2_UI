@@ -302,7 +302,9 @@ local function toggleMainHud(b, inCombat)
                     bar.elapsedTimer = -1
                     bar.fadeTimer = -1
                 else
-                    if not inCombat then
+                    if inCombat == nil then
+                        f:SetAlpha(1)
+                    elseif not inCombat then
                         f:Show()
                     end
                     -- f:SetAlpha(1)
@@ -313,7 +315,9 @@ local function toggleMainHud(b, inCombat)
                     bar.elapsedTimer = -1
                     bar.fadeTimer = -1
                 else
-                    if not inCombat then
+                    if inCombat == nil then
+                        f:SetAlpha(0)
+                    elsif not inCombat then
                         f:Hide()
                     end
                    -- f:SetAlpha(0)
@@ -487,9 +491,9 @@ local function main_OnEvent(self, event, ...)
         actionBarEquipUpdate()
     elseif unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
         if event == "UNIT_ENTERED_VEHICLE" and OverrideActionBar:IsShown() then
-            toggleMainHud(false, inCombat)
+            toggleMainHud(false, nil)
         else
-            toggleMainHud(true, inCombat)
+            toggleMainHud(true, nil)
         end
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         local forceCombat = (event == "PLAYER_REGEN_DISABLED")
