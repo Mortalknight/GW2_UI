@@ -320,7 +320,7 @@ local function loadTalents()
             end
             GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
             GameTooltip:ClearLines()
-            GameTooltip:SetSpellByID(self.spellId)
+            GameTooltip:SetTalent(self.talentID)
             GameTooltip:Show()
         end
         local fnTalentButton_OnDragStart = function(self)
