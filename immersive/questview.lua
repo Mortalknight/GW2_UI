@@ -427,8 +427,7 @@ local function LoadQuestview()
     GwQuestviewFrame:SetScript(
         "OnShow",
         function()
-            UIFrameFadeIn(GwQuestviewFrameBackgroundBorder, 0.1, 0, 1)
-            UIFrameFadeIn(GwQuestviewFrameBackground, 0.5, 0, 1)
+            UIFrameFadeIn(GwQuestviewFrame, 0.2, 0, 1)
         end
     )
 

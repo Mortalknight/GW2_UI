@@ -7,19 +7,27 @@
             <Anchor point="center" x="0" y="0" />
         </Anchors>
         <Layers>
-            <Layer textureSubLevel="1" level="BACKGROUND">
-                <Texture name="$parentBackgroundBorder" file="Interface\AddOns\GW2_UI\textures\questviewborder">
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture file="Interface\AddOns\GW2_UI\textures\questview\border">
                     <Size x="1024" y="512"></Size>
                     <Anchors>
                         <Anchor point="center" x="0" y="0" />
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer textureSubLevel="2">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\questviewbg">
+            <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\questview\bg_legion">
                     <Size x="950" y="475"></Size>
                     <Anchors>
                         <Anchor point="center" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="3">
+                <Texture file="Interface\AddOns\GW2_UI\textures\questview\overlay_top">
+                    <Size x="950" y="237"></Size>
+                    <Anchors>
+                        <Anchor point="center" x="0" y="119" />
                     </Anchors>
                 </Texture>
             </Layer>
@@ -52,8 +60,8 @@
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\questviewbottom">
-                                    <Size x="950" y="475"></Size>
+                                <Texture file="Interface\AddOns\GW2_UI\textures\questview\overlay_bottom">
+                                    <Size x="952" y="475"></Size>
                                     <Anchors>
                                         <Anchor point="center" x="0" y="0" />
                                     </Anchors>
