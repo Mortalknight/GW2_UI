@@ -567,6 +567,109 @@ local function powerRage(event, unit)
 end
 GW.AddForProfiling("classpowers", "powerRage", powerRage)
 
+local function loopEnrage()
+    GwEnrageBar.looping = true
+    AddToAnimation(
+        "GW_ENRAGE_LOOP_ANIMATION",
+        0,
+        1,
+        GetTime(),
+        10,
+        function()
+            local precentage = GwEnrageBar.precentage
+
+            local imagesize = 18 / 262
+
+            local cord = precentage + 0.5
+            local cord2 = precentage
+
+            local l = animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"]
+
+            local a = 1
+            local a2 = 1
+
+            if animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] < 0.25 then
+                a = lerp(0, 1, animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] / 0.25)
+                a2 = lerp(0, 1, animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] / 0.25)
+            elseif animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] > 0.75 then
+                a = lerp(1, 0, (animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] - 0.75) / 0.25)
+                a2 = lerp(1, 0, (animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] - 0.75) / 0.25)
+            end
+
+            local r = 240 / 255
+            local g = 37 / 255
+            local b = 37 / 255
+
+            GwEnrageBar.bar.texture1:SetTexCoord(0, cord, l, r)
+            GwEnrageBar.bar.texture2:SetTexCoord(0, cord2, l, r)
+
+            GwEnrageBar.bar.texture1:SetWidth(math.max(1, 262 * precentage))
+            GwEnrageBar.bar.texture2:SetWidth(math.max(1, 262 * precentage))
+            GwEnrageBar.bar.texture1:SetVertexColor(r, g, b, a)
+            GwEnrageBar.bar.texture2:SetVertexColor(r, g, b, a2)
+            --    GwStaggerBar.fill:SetVertexColor(r,g,b,1)
+        end,
+        "noease",
+        function()
+            if GwEnrageBar.precentage > 0 then
+                loopEnrage()
+            else
+                GwEnrageBar.looping = false
+            end
+        end
+    )
+end
+GW.AddForProfiling("classpowers", "loopEnrage", loopEnrage)
+
+local function powerEnrage()
+    local found = false
+    local duration, expires, spellID
+    for i = 1, 40 do
+        _, _, _, _, duration, expires, _, _, _, spellID, _ = UnitAura("player", i)
+        if spellID == 184362 then
+            found = true
+            break
+        end
+    end
+
+    if found == true then
+        local pre = (expires - GetTime()) / duration
+
+        if animations["ENRAGE_BAR"] ~= nil then
+            animations["ENRAGE_BAR"]["completed"] = true
+            animations["ENRAGE_BAR"]["duration"] = 0
+        end
+
+        loopEnrage()
+
+        AddToAnimation(
+            "ENRAGE_BAR",
+            pre,
+            0,
+            GetTime(),
+            expires - GetTime(),
+            function()
+                GwEnrageBar.precentage = animations["ENRAGE_BAR"]["progress"]
+                GwEnrageBar.bar:SetValue(animations["ENRAGE_BAR"]["progress"])
+                GwEnrageBar.bar.spark:ClearAllPoints()
+                GwEnrageBar.bar.spark:SetPoint(
+                    "RIGHT",
+                    GwEnrageBar.bar,
+                    "LEFT",
+                    310 * animations["ENRAGE_BAR"]["progress"],
+                    0
+                )
+                GwEnrageBar.bar.spark:SetWidth(
+                    math.min(15, math.max(1, animations["ENRAGE_BAR"]["progress"] * 310))
+                )
+            end,
+            "noease"
+        )
+
+    end
+end
+GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
+
 setBarType = function()
     GwPlayerClassPower:Show()
     local s = GetShapeshiftFormID()
@@ -576,17 +679,29 @@ setBarType = function()
         return
     end
 
-    if PLAYER_CLASS == 1 and PLAYER_SPECIALIZATION == 1 then
-        local _, _, _, selected, _ = GetTalentInfo(6, 3, 1, false, "player")
-
-        if selected then
-            GwFocusRage:Show()
+    if PLAYER_CLASS == 1 then
+        if PLAYER_SPECIALIZATION == 1 then
+            local _, _, _, selected, _ = GetTalentInfo(6, 3, 1, false, "player")
+            if selected then
+                GwFocusRage:Show()
+                GwPlayerClassPowerBackground:SetTexture(nil)
+                GwPlayerClassPowerFill:SetTexture(nil)
+                return
+            end
+        elseif PLAYER_SPECIALIZATION == 2 then
+            GwEnrageBar:Show()
+            GwEnrageBar.looping = false
+            GwEnrageBar.precentage = 0
             GwPlayerClassPowerBackground:SetTexture(nil)
             GwPlayerClassPowerFill:SetTexture(nil)
+            GwEnrageBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
+            GwEnrageBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
+            GwEnrageBar.bar:SetValue(0)
             return
         end
     end
     GwFocusRage:Hide()
+    GwEnrageBar:Hide()
     if PLAYER_CLASS == 2 then
         GwPlayerClassPowerBackground:SetHeight(32)
         GwPlayerClassPowerBackground:SetWidth(320)
@@ -752,6 +867,7 @@ GW.AddForProfiling("classpowers", "setBarType", setBarType)
 
 CLASS_POWERS[1] = {}
 CLASS_POWERS[1][1] = powerRage
+CLASS_POWERS[1][2] = powerEnrage
 CLASS_POWERS[1][3] = powerRage
 
 CLASS_POWERS[2] = {}
@@ -837,6 +953,8 @@ local function LoadClassPowers()
     GwDiscPriest.bar.overlay:SetPosition(0, 0, 0)
 
     GwFocusRage.highlight = GwFocusRage.bar.highlight
+    GwEnrageBar.texture1 = GwEnrageBar.bar.texture1
+    GwEnrageBar.texture2 = GwEnrageBar.bar.texture2
 
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript(
