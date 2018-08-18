@@ -9,6 +9,7 @@ FIXED
     - Made the gold counter on the bag a bit wider for all the goblins out there
     - No more flickering on Azerite compare tooltips! (CF#211)
     - Totem frames (e.g. Black Ox Statue, Earth Elemental, etc.) should now show in the upper-right roughly where buffs used to be until we can build a better solution (CF#93)
+    - Voice chat button should now fade properly (CF#213)
 
 
 
