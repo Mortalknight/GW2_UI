@@ -1,3 +1,16 @@
+5.0.7
+
+NEW
+    - Changed the default quest BG texture and made it easier to replace this texture
+    - Add enrage class power bar for Fury Warriors
+    - Talents now show whether you can change them in the toolip just like the default UI
+
+FIXED
+    - Made the gold counter on the bag a bit wider for all the goblins out there
+    - No more flickering on Azerite compare tooltips! (CF#211)
+
+
+
 5.0.6
 
 NEW
