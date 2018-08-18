@@ -695,6 +695,17 @@ local function LoadPlayerHud()
     GwHudArtFrameRepair:SetScript("OnLeave", GameTooltip_Hide)
     repair_OnEvent()
 
+    -- grab the TotemFrame so it remains visible
+    if PlayerFrame and TotemFrame then
+        TotemFrame:SetParent(playerHealthGLobaBg)
+        PlayerFrame:ClearAllPoints()
+        PlayerFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -500, 50)
+        -- TODO: we can't position this directly; it's permanently attached to the PlayerFrame via SetPoints
+        -- in the TotemFrame OnUpdate that we can't override because combat lockdowns and whatnot, and simply
+        -- moving the PlayerFrame isn't ideal because its layout is highly variable; really we probably just
+        -- need to completely re-implement the TotemFrame with a custom version
+    end
+    
     -- show/hide stuff with override bar
     OverrideActionBar:HookScript(
         "OnShow",
