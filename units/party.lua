@@ -221,7 +221,7 @@ local function manageButton()
 
     local fnGWMM_OnLoad = function(self)
         if
-            ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
+            GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
                 (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
          then
             self:Show()
@@ -238,7 +238,7 @@ local function manageButton()
     local fnGWMM_OnEvent = function(self)
         inCombat = UnitAffectingCombat("player")
         if
-            ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
+            GetSetting("WORLD_MARKER_FRAME") and((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
                 (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
          then
             manageButtonDelay(inCombat, "show")

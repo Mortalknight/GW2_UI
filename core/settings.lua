@@ -1093,6 +1093,13 @@ local function LoadSettings()
         "RAID_ONLY_DISPELL_DEBUFFS",
         "GwSettingsGroupframe"
     )
+    
+    addOption(
+        WORLD_MARKER:format(0):gsub("%d", ""),
+        nil,
+        "WORLD_MARKER_FRAME",
+        "GwSettingsGroupframe"
+    )
     addOption(
         RAID_TARGET_ICON,
         GwLocalization["RAID_MARKER_DESC"],
