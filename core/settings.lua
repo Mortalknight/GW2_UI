@@ -1093,7 +1093,6 @@ local function LoadSettings()
         "RAID_ONLY_DISPELL_DEBUFFS",
         "GwSettingsGroupframe"
     )
-    
     addOption(
         WORLD_MARKER:format(0):gsub("%d", ""),
         nil,
