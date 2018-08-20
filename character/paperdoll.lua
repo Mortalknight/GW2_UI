@@ -103,6 +103,16 @@ local function LoadPaperDoll(tabContainer)
     CharacterMenuButton_OnLoad(fmMenu.outfitsMenu, true)
     CharacterMenuButton_OnLoad(fmMenu.titlesMenu, false)
 
+    --Added Pawn Support
+    if IsAddOnLoaded("Pawn") then
+        fmMenu.PawnButton = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+        fmMenu.PawnButton:SetText("Pawn")
+        fmMenu.PawnButton:SetScript("OnClick", function(self, button) PawnUIShow() GwCharacterWindow:SetAttribute("windowpanelopen", nil) end)
+        fmMenu.PawnButton:ClearAllPoints()
+        fmMenu.PawnButton:SetPoint("TOPLEFT", fmMenu.titlesMenu, "BOTTOMLEFT")
+        CharacterMenuButton_OnLoad(fmMenu.PawnButton, true)
+    end
+
     CharacterFrame:SetScript(
         "OnShow",
         function()
