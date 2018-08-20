@@ -105,12 +105,21 @@ local function LoadPaperDoll(tabContainer)
 
     --Added Pawn Support
     if IsAddOnLoaded("Pawn") then
-        fmMenu.PawnButton = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+        fmMenu.PawnButton = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
         fmMenu.PawnButton:SetText("Pawn")
-        fmMenu.PawnButton:SetScript("OnClick", function(self, button) PawnUIShow() GwCharacterWindow:SetAttribute("windowpanelopen", nil) end)
         fmMenu.PawnButton:ClearAllPoints()
         fmMenu.PawnButton:SetPoint("TOPLEFT", fmMenu.titlesMenu, "BOTTOMLEFT")
         CharacterMenuButton_OnLoad(fmMenu.PawnButton, true)
+
+        fmMenu.PawnButton:SetFrameRef("charwin", GwCharacterWindow)
+        fmMenu.PawnButton.pawn_ui_show = PawnUIShow
+        fmMenu.PawnButton:SetAttribute("_onclick", [=[
+            local fchar = self:GetFrameRef("charwin")
+            if fchar then
+                fchar:SetAttribute("windowpanelopen", nil)
+            end
+            self:CallMethod("pawn_ui_show")
+        ]=])
     end
 
     CharacterFrame:SetScript(
