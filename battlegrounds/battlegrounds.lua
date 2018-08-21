@@ -114,7 +114,7 @@ local function AB_onEvent(self, event, ...)
     local pointsAlliance = parsePoints(2)
     local pointsHorde = parsePoints(3)
 
-    if pointsAlliance == nil or pointsHorde == nil or activeMap == nil then
+    if pointsAlliance == nil or pointsHorde == nil or activeMap == 0 then
         return
     end
     
