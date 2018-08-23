@@ -149,6 +149,12 @@ local function setUnitName(self)
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
     local realmflag = ""
+    
+    if not nameString or nameString == UNKNOWNOBJECT then
+        self.nameNotLoaded = false;
+    else
+        self.nameNotLoaded = true;
+    end
 
     if GetSetting("RAID_UNIT_FLAGS") == "NONE" then
         realmflag = ""
@@ -167,6 +173,7 @@ local function setUnitName(self)
         realmflag = ""
     end
     self.name:SetText(nameString .. " " .. realmflag)
+    
 end
 GW.AddForProfiling("raidframes", "setUnitName", setUnitName)
 
@@ -475,6 +482,9 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         return
     end
 
+    if not self.nameNotLoaded then
+        setUnitName(self)
+    end
     if event == "load" then
         setAbsorbAmount(self)
         setHealth(self)
@@ -517,7 +527,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         highlightTargetFrame(self)
     end
     if event == "UNIT_NAME_UPDATE" and unit == self.unit then
-        setUnitName()
+        setUnitName(self)
     end
     if event == "UNIT_AURA" and unit == self.unit then
         updateAuras(self)
@@ -778,6 +788,7 @@ local function createRaidFrame(registerUnit)
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
         frame.aggroborder = frame.healthbar.absorbbar.aggroborder
+        frame.nameNotLoaded = false;
 
         frame.name:SetFont(UNIT_NAME_FONT, 12)
         frame.name:SetShadowOffset(-1, -1)
