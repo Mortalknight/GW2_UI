@@ -251,7 +251,7 @@ end
 GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
 
 local function LoadChat()
-    if QuickJoinToastButton ~= nil then
+    if QuickJoinToastButton then
         QuickJoinToastButton:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
         QuickJoinToastButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
         QuickJoinToastButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
@@ -259,7 +259,7 @@ local function LoadChat()
         QuickJoinToastButton:SetWidth(25)
         QuickJoinToastButton:SetHeight(25)
         QuickJoinToastButton:ClearAllPoints()
-        QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -3, -3)
+        QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
     end
 
     local fmGCC = CreateFrame("FRAME", "GwChatContainer", UIParent, "GwChatContainer")
