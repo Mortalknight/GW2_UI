@@ -802,6 +802,7 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("QUEST_POI_UPDATE")
     fQuest:RegisterEvent("PLAYER_MONEY")
     fQuest:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED")
+    fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
 
     local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
     header.icon:SetTexCoord(0, 1, 0.25, 0.5)
