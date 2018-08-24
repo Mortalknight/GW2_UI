@@ -334,9 +334,10 @@ local function SetObjectiveNotification(mapID)
     GwObjectivesNotification.desc:SetText(desc)
 
     if desc == nil or desc == "" then
-        GwObjectivesNotification.title:SetPoint("BOTTOM", GwObjectivesNotification, "BOTTOM", 0, 30)
+        GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
+        
     else
-        GwObjectivesNotification.title:SetPoint("BOTTOM", GwObjectivesNotification, "BOTTOM", 0, 15)
+        GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
     end
     GwObjectivesNotification.shouldDisplay = true
 end
