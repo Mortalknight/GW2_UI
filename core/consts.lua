@@ -34,7 +34,8 @@ local FACTION_BAR_COLORS = {
     [6] = {r = 0, g = 0.6, b = 0.1},
     [7] = {r = 0, g = 0.6, b = 0.1},
     [8] = {r = 0, g = 0.6, b = 0.1},
-    [9] = {r = 0.22, g = 0.37, b = 0.98}
+    [9] = {r = 0.22, g = 0.37, b = 0.98}, --Paragon
+    [10] = {r = 0.09, g = 0.29, b = 0.79} --Azerite
 }
 GW.FACTION_BAR_COLORS = FACTION_BAR_COLORS
 

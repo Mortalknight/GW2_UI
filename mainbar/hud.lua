@@ -366,6 +366,11 @@ local function xpbar_OnEvent(self, event)
         else
             artifactVal = 0
         end
+        _G["GwExperienceFrameArtifactBar"]:SetStatusBarColor(
+            FACTION_BAR_COLORS[10].r,
+            FACTION_BAR_COLORS[10].g,
+            FACTION_BAR_COLORS[10].b
+        )
     end
 
     if showBar2 then
