@@ -585,6 +585,18 @@ local function xpbar_OnEvent(self, event)
         _G["GwExperienceFrameBarCandy"]:SetValue(0)
         ExperienceBarSpark:Hide()
     end
+    if not showBar1 and showBar2 then
+        _G["GwExperienceFrameBar"]:Hide()
+        _G["GwExperienceFrameBarCandy"]:Hide()
+        _G["GwExperienceFrameBar"]:SetValue(0)
+        _G["GwExperienceFrameBarCandy"]:SetValue(0)
+        ExperienceBarSpark:Hide()
+        
+        _G["GwExperienceFrameArtifactBar"]:SetHeight(8)
+        _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(8)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(8)
+        _G["ArtifactBarSpark"]:SetHeight(8)
+    end
 
     if experiencebarAnimation > valPrec then
         experiencebarAnimation = 0
