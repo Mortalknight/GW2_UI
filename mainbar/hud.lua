@@ -544,58 +544,64 @@ local function xpbar_OnEvent(self, event)
 
     _G["GwExperienceFrameNextLevel"]:SetText(Nextlevel)
     _G["GwExperienceFrameCurrentLevel"]:SetText(restingIconString .. level)
-    if showBar1 and not showBar2 then
-        _G["GwExperienceFrameBar"]:SetHeight(8)
-        _G["GwExperienceFrameBarCandy"]:SetHeight(8)
-        _G["ExperienceBarSpark"]:SetHeight(8)
-        
-        _G["GwExperienceFrameArtifactBar"]:SetHeight(8)
-        _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(8)
-        _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(8)
-        _G["ArtifactBarSpark"]:SetHeight(8)
-    end
-
     if showBar1 and showBar2 then
+        _G["GwExperienceFrameBar"]:Show()
+        _G["GwExperienceFrameBarCandy"]:Show()
         _G["GwExperienceFrameBar"]:SetHeight(4)
         _G["GwExperienceFrameBarCandy"]:SetHeight(4)
         _G["ExperienceBarSpark"]:SetHeight(4)
-
+        ExperienceBarSpark:Show()
+        
+        _G["GwExperienceFrameArtifactBar"]:Show()
+        _G["GwExperienceFrameArtifactBarCandy"]:Show()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Show()
         _G["GwExperienceFrameArtifactBar"]:SetHeight(4)
         _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(4)
         _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(4)
         _G["ArtifactBarSpark"]:SetHeight(4)
         ArtifactBarSpark:Show()
-    end
+    elseif not showBar1 and showBar2 then
+        _G["GwExperienceFrameBar"]:Hide()
+        _G["GwExperienceFrameBarCandy"]:Hide()
+        _G["GwExperienceFrameBar"]:SetValue(0)
+        _G["GwExperienceFrameBarCandy"]:SetValue(0)
+        ExperienceBarSpark:Hide()
 
-    if not showBar2 then
-        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
-        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
-        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
-        ArtifactBarSpark:Hide()
-    end
-    if showBar1 then
-        ExperienceBarSpark:Show()
-        _G["GwExperienceFrameBar"]:Show()
-        _G["GwExperienceFrameBarCandy"]:Show()
-    end
-    if not showBar1 then
-        _G["GwExperienceFrameBar"]:Hide()
-        _G["GwExperienceFrameBarCandy"]:Hide()
-        _G["GwExperienceFrameBar"]:SetValue(0)
-        _G["GwExperienceFrameBarCandy"]:SetValue(0)
-        ExperienceBarSpark:Hide()
-    end
-    if not showBar1 and showBar2 then
-        _G["GwExperienceFrameBar"]:Hide()
-        _G["GwExperienceFrameBarCandy"]:Hide()
-        _G["GwExperienceFrameBar"]:SetValue(0)
-        _G["GwExperienceFrameBarCandy"]:SetValue(0)
-        ExperienceBarSpark:Hide()
-        
+        _G["GwExperienceFrameArtifactBar"]:Show()
+        _G["GwExperienceFrameArtifactBarCandy"]:Show()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Show()
         _G["GwExperienceFrameArtifactBar"]:SetHeight(8)
         _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(8)
         _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(8)
-        _G["ArtifactBarSpark"]:SetHeight(8)
+        _G["ArtifactBarSpark"]:SetHeight(4)
+        ArtifactBarSpark:Show()
+    elseif showBar1 and not showBar2 then
+        _G["GwExperienceFrameBar"]:Show()
+        _G["GwExperienceFrameBarCandy"]:Show()
+        _G["GwExperienceFrameBar"]:SetHeight(8)
+        _G["GwExperienceFrameBarCandy"]:SetHeight(8)
+        _G["ExperienceBarSpark"]:SetHeight(8)
+        ExperienceBarSpark:Show()
+
+        _G["GwExperienceFrameArtifactBar"]:Hide()
+        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
+        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
+        ArtifactBarSpark:Hide()
+    elseif not showBar1 and not showBar2 then 
+        _G["GwExperienceFrameBar"]:Hide()
+        _G["GwExperienceFrameBarCandy"]:Hide()
+        _G["GwExperienceFrameBar"]:SetValue(0)
+        _G["GwExperienceFrameBarCandy"]:SetValue(0)
+        ExperienceBarSpark:Hide()
+
+        _G["GwExperienceFrameArtifactBar"]:Hide()
+        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
+        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
+        ArtifactBarSpark:Hide()
     end
 
     if experiencebarAnimation > valPrec then
