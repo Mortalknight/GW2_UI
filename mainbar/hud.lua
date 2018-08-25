@@ -380,8 +380,7 @@ local function xpbar_OnEvent(self, event)
         AddToAnimation(
             "artifactBarAnimation",
             _G["GwExperienceFrameArtifactBar"].artifactBarAnimation,
-            --artifactVal,
-            1,
+            artifactVal,
             GetTime(),
             animationSpeed,
             function()
