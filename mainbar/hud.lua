@@ -371,6 +371,7 @@ local function xpbar_OnEvent(self, event)
             FACTION_BAR_COLORS[10].g,
             FACTION_BAR_COLORS[10].b
         )
+        _G["GwExperienceFrameArtifactBar"].animation:Show();
     end
 
     if showBar2 then
@@ -379,7 +380,8 @@ local function xpbar_OnEvent(self, event)
         AddToAnimation(
             "artifactBarAnimation",
             _G["GwExperienceFrameArtifactBar"].artifactBarAnimation,
-            artifactVal,
+            --artifactVal,
+            1,
             GetTime(),
             animationSpeed,
             function()
@@ -584,6 +586,42 @@ local function xpbar_OnEvent(self, event)
     end
 end
 GW.AddForProfiling("hud", "xpbar_OnEvent", xpbar_OnEvent)
+
+local function animateAzeriteBar(self,elapsed)
+    self:SetPoint(
+        "RIGHT",  
+        ArtifactBarSpark,
+        'RIGHT',
+        0,
+        0
+    )
+    speed = 0.01
+    self.prog = self.prog + (speed * elapsed)
+    if self.prog>1 then
+        self.prog = 0
+    end
+    
+    
+    self.texture1:SetTexCoord(0, _G["GwExperienceFrameArtifactBar"]:GetValue(), 0, 1)
+    self.texture2:SetTexCoord(_G["GwExperienceFrameArtifactBar"]:GetValue(), 0, 1,0)
+
+    if self.prog<0.2 then
+        self.texture2:SetVertexColor(1,1,1, lerp(0,1,self.prog/0.2 ))
+    elseif self.prog>0.8 then
+         self.texture2:SetVertexColor(1,1,1, lerp(1,0, (self.prog - 0.8)/0.2 ))
+    end
+    if self.prog>0.5 then
+        self.texture1:SetVertexColor(1,1,1, lerp(0.3    ,0, (self.prog - 0.5)/0.5 ))
+    elseif self.prog<0.5 then
+         self.texture1:SetVertexColor(1,1,1, lerp(0,0.3, self.prog / 0.5 ))
+    end
+      self.texture2:SetTexCoord(1 - self.prog, self.prog, 1,0)
+      
+
+   
+    
+    
+end
 
 local function updateBarSize()
     local m = (UIParent:GetWidth() - 180) / 10
@@ -1760,6 +1798,16 @@ local function LoadXPBar()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
     GwlevelLableRightButton:SetScript("OnClick", xpbar_OnClick)
+    
+    _G["GwExperienceFrameArtifactBar"].animation:SetScript('OnShow',function()
+            _G["GwExperienceFrameArtifactBar"].animation:SetScript('OnUpdate',function(self,elapsed)
+                animateAzeriteBar(_G["GwExperienceFrameArtifactBar"].animation,elapsed)
+            end)
+    end)
+    _G["GwExperienceFrameArtifactBar"].animation:SetScript('OnHide',function()
+           _G["GwExperienceFrameArtifactBar"].animation:SetScript('OnUpdate',nil)
+    end)
+
 
     experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
 

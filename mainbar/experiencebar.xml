@@ -138,6 +138,36 @@
                             </Layer>
                         </Layers>
                     </Frame>
+                    <Frame name="ExperienceBarAnimation" hidden="true" parentKey="animation" frameLevel="4">
+                        <Size x="1" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            <Anchor point="RIGHT" relativePoint="RIGHT"  x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                               <Texture parentKey="texture1" file="Interface\AddOns\GW2_UI\textures\expbar-azerite">
+                                   <Size x="8" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"  x="0" y="0"></Anchor>
+                                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture> 
+                                <Texture  parentKey="texture2" file="Interface\AddOns\GW2_UI\textures\expbar-azerite2">
+                                   <Size x="8" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"  x="0" y="0"></Anchor>
+                                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                                self.prog = 0;
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
                 </Frames>
             </StatusBar>
 
