@@ -548,6 +548,11 @@ local function xpbar_OnEvent(self, event)
         _G["GwExperienceFrameBar"]:SetHeight(8)
         _G["GwExperienceFrameBarCandy"]:SetHeight(8)
         _G["ExperienceBarSpark"]:SetHeight(8)
+        
+        _G["GwExperienceFrameArtifactBar"]:SetHeight(8)
+        _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(8)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(8)
+        _G["ArtifactBarSpark"]:SetHeight(8)
     end
 
     if showBar1 and showBar2 then
@@ -556,6 +561,7 @@ local function xpbar_OnEvent(self, event)
         _G["ExperienceBarSpark"]:SetHeight(4)
 
         _G["GwExperienceFrameArtifactBar"]:SetHeight(4)
+        _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(4)
         _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(4)
         _G["ArtifactBarSpark"]:SetHeight(4)
         ArtifactBarSpark:Show()

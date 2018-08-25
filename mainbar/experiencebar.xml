@@ -138,7 +138,7 @@
                             </Layer>
                         </Layers>
                     </Frame>
-                    <Frame name="ExperienceBarAnimation" hidden="true" parentKey="animation" frameLevel="4">
+                    <Frame name="$parentAnimation" hidden="true" parentKey="animation" frameLevel="4">
                         <Size x="1" y="8" />
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
