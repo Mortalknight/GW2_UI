@@ -164,7 +164,7 @@
                         </Layers>
                         <Scripts>
                             <OnLoad>
-                                self.prog = 0;
+                                self.prog = 0
                             </OnLoad>
                         </Scripts>
                     </Frame>

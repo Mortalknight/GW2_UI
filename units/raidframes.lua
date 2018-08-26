@@ -151,9 +151,9 @@ local function setUnitName(self)
     local realmflag = ""
     
     if not nameString or nameString == UNKNOWNOBJECT then
-        self.nameNotLoaded = false;
+        self.nameNotLoaded = false
     else
-        self.nameNotLoaded = true;
+        self.nameNotLoaded = true
     end
 
     if GetSetting("RAID_UNIT_FLAGS") == "NONE" then
@@ -788,7 +788,7 @@ local function createRaidFrame(registerUnit)
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
         frame.aggroborder = frame.healthbar.absorbbar.aggroborder
-        frame.nameNotLoaded = false;
+        frame.nameNotLoaded = false
 
         frame.name:SetFont(UNIT_NAME_FONT, 12)
         frame.name:SetShadowOffset(-1, -1)
