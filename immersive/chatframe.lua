@@ -73,7 +73,15 @@ local function handleChatFrameFadeIn(chatFrame)
     end
 
     for k, v in pairs(gw_fade_frames) do
-        chatFader(v, v:GetAlpha(), 1)
+        if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
+            if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
+                chatFader(v, v:GetAlpha(), 1)
+            elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
+                chatFader(v, v:GetAlpha(), 1)
+            end
+        else
+            chatFader(v, v:GetAlpha(), 1)
+        end   
     end
     local chatTab = _G[frameName .. "Tab"]
     chatFader(chatTab, chatTab:GetAlpha(), 1)
@@ -101,7 +109,15 @@ local function handleChatFrameFadeOut(chatFrame)
         end
     end
     for k, v in pairs(gw_fade_frames) do
-        UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
+        if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
+            if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
+                UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
+            elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
+                UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
+            end
+        else
+            UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
+        end
     end
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeOut(chatTab, 2, chatTab:GetAlpha(), 0)
@@ -294,7 +310,9 @@ local function LoadChat()
         QuickJoinToastButton,
         GwChatContainer,
         GeneralDockManager,
-        ChatFrameChannelButton
+        ChatFrameChannelButton,
+        ChatFrameToggleVoiceDeafenButton,
+        ChatFrameToggleVoiceMuteButton
     }
 
     FCF_FadeOutChatFrame(_G["ChatFrame1"])
