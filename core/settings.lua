@@ -996,6 +996,12 @@ local function LoadSettings()
         "BORDER_ENABLED",
         "GwSettingsHudOptions"
     )
+    addOption(
+        CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC,
+        nil,
+        "DYNAMIC_CAM",
+        "GwSettingsHudOptions"
+    )
 
     addOptionDropdown(
         GwLocalization["MINIMAP_HOVER"],

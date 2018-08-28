@@ -531,6 +531,12 @@ local function gw_OnEvent(self, event, name)
         GW.LoadBuffs()
     end
 
+    if GetSetting("DYNAMIC_CAM") then
+        ConsoleExec("ActionCam basic")
+    else
+        ConsoleExec("ActionCam default")
+    end
+
     -- create new microbuttons
     --[[
     if GetSetting('CHATBUBBLES_ENABLED') then
