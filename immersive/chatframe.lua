@@ -203,6 +203,8 @@ local function styleChatWindow(useId)
     ChatFrameMenuButton:SetHeight(20)
     ChatFrameMenuButton:SetWidth(20)
 
+    _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, 14)
+    
     _G["ChatFrame" .. useId .. "TabSelectedRight"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
     _G["ChatFrame" .. useId .. "TabSelectedLeft"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
     _G["ChatFrame" .. useId .. "TabSelectedMiddle"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactive")
@@ -283,7 +285,7 @@ local function LoadChat()
     fmGCC:SetPoint("TOPLEFT", ChatFrame1, "TOPLEFT", -35, 5)
     fmGCC:SetPoint("BOTTOMRIGHT", ChatFrame1EditBoxFocusRight, "BOTTOMRIGHT", 0, 0)
 
-    for i = 1, 10 do
+    for i = 1, NUM_CHAT_WINDOWS do
         styleChatWindow(i)
     end
 
