@@ -158,6 +158,16 @@ local function stackIcons(self, event)
         end
     end
     fmGAT:SetScript("OnClick", fnGAT_OnClick)
+    fmGAT:SetScript("OnUpdate", function(self)
+        if Minimap:IsShown() then
+            self:SetAlpha(1)
+            self:SetScript("OnClick", fnGAT_OnClick)
+
+        else
+            self:SetAlpha(0)
+            self:SetScript("OnClick", nil)
+        end
+    end)
     GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
     _G["GwAddonToggleTexture"]:SetTexCoord(0, 0.5, 0, 0.25)
 
@@ -175,6 +185,14 @@ end
 GW.AddForProfiling("map", "stackIcons", stackIcons)
 
 local function lfgAnim()
+    if Minimap:IsShown() then
+        QueueStatusMinimapButtonIcon:SetAlpha(1)
+
+    else
+        QueueStatusMinimapButtonIcon:SetAlpha(0)
+        return
+    end
+
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\dungeon-animation")
 
     left = 0.125 * animationIndex
@@ -438,6 +456,19 @@ local function LoadMinimap()
     GwCalendarButton:SetScript("OnShow", fnGwCalendarButton_OnShow)
     GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
     GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
+    GwCalendarButton:SetScript("OnUpdate", function(self)
+        if Minimap:IsShown() then
+            self:SetAlpha(1)
+            self:SetScript("OnClick", GameTimeFrame_OnClick)
+            self:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
+            self:SetScript("OnShow", fnGwCalendarButton_OnShow)
+        else
+            self:SetAlpha(0)
+            self:SetScript("OnClick", nil)
+            self:SetScript("OnEnter", nil)
+            self:SetScript("OnShow", nil)
+        end
+    end)
 
     GwCalendarButton:HookScript(
         "OnEvent",
@@ -454,6 +485,19 @@ local function LoadMinimap()
     GwGarrisonButton:SetScript("OnEnter", garrisonBtn_OnEnter)
     GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
     GwGarrisonButton:SetScript("OnEvent", garrisonBtn_OnEvent)
+    GwGarrisonButton:SetScript("OnUpdate", function(self)
+        if Minimap:IsShown() then
+            self:SetAlpha(1)
+            self:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
+            self:SetScript("OnEnter", garrisonBtn_OnEnter)
+            self:SetScript("OnLeave", GameTooltip_Hide)
+        else
+            self:SetAlpha(0)
+            self:SetScript("OnClick", nil)
+            self:SetScript("OnEnter", nil)
+            self:SetScript("OnLeave", nil)
+        end
+    end)
     GwGarrisonButton:RegisterEvent("GARRISON_UPDATE")
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
@@ -478,6 +522,17 @@ local function LoadMinimap()
     GwMailButton:SetScript("OnEvent", fnGwMailButton_OnEvent)
     GwMailButton:SetScript("OnEnter", fnGwMailButton_OnEnter)
     GwMailButton:SetScript("OnLeave", GameTooltip_Hide)
+    GwMailButton:SetScript("OnUpdate", function(self)
+        if Minimap:IsShown() then
+            self:SetAlpha(1)
+            self:SetScript("OnEnter", fnGwMailButton_OnEnter)
+            self:SetScript("OnLeave", GameTooltip_Hide)
+        else
+            self:SetAlpha(0)
+            self:SetScript("OnEnter", nil)
+            self:SetScript("OnLeave", nil)
+        end
+    end)
 
     GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
     GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
