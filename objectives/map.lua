@@ -452,21 +452,26 @@ local function LoadMinimap()
     end
     local fnGwCalendarButton_OnEnter = function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -70)
+        GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR, 1, 1, 1)
+        GameTooltip:Show()
     end
     GwCalendarButton:SetScript("OnShow", fnGwCalendarButton_OnShow)
     GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
+    GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
     GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
     GwCalendarButton:SetScript("OnUpdate", function(self)
         if Minimap:IsShown() then
             self:SetAlpha(1)
             self:SetScript("OnClick", GameTimeFrame_OnClick)
             self:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
+            self:SetScript("OnLeave", GameTooltip_Hide)
             self:SetScript("OnShow", fnGwCalendarButton_OnShow)
         else
             self:SetAlpha(0)
             self:SetScript("OnClick", nil)
             self:SetScript("OnEnter", nil)
             self:SetScript("OnShow", nil)
+            self:SetScript("OnLeave", nil)
         end
     end)
 
