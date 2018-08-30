@@ -1156,6 +1156,21 @@
             </Layer>
         </Layers>
     </Button>
+    <Button name="GwMapCoords" frameStrata="LOW" enableMouse="true" frameLevel="2" virtual="true">
+        <Size x="50" y="20"></Size>
+        <Anchors>
+            <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <FontString parentKey="Coords" justifyH="CENTER" justifyV="MIDDLE" inherits="Meno">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
     <Frame name="GwBreathMeter" frameStrata="LOW" virtual="true" parent="UIParent">
         <Size x="258" y="22"></Size>
         <Anchors>

@@ -168,6 +168,7 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "Você precisar desequipar aquele item par
 GwLocalization["UPDATE_STRING_1"] = "Nova atualização disponível para download."
 GwLocalization["UPDATE_STRING_2"] = "Nova atualização disponível com características novas."
 GwLocalization["UPDATE_STRING_3"] = "Uma atualização |cFFFF0000maior|r está disponível.\n\nÉ altamente recomendado que você atualize."
+GwLocalization['MINIMAP_COORDS'] = 'Coordinates'
 end
 
 

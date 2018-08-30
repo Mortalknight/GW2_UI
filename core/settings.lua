@@ -1011,12 +1011,16 @@ local function LoadSettings()
         function()
             GW.SetMinimapHover()
         end,
-        {"NONE", "BOTH", "CLOCK", "ZONE"},
+        {"NONE", "ALL", "CLOCK", "ZONE", "COORDS", "CLOCKZONE", "CLOCKCOORDS", "ZONECOORDS"},
         {
             NONE_KEY,
-            STATUS_TEXT_BOTH,
+            ALL,
             TIMEMANAGER_TITLE,
-            ZONE
+            ZONE,
+            GwLocalization['MINIMAP_COORDS'],
+            TIMEMANAGER_TITLE .. " + " .. ZONE,
+            TIMEMANAGER_TITLE .. " + " .. GwLocalization['MINIMAP_COORDS'],
+            ZONE .. " + " .. GwLocalization['MINIMAP_COORDS']
         }
     )
     addOptionDropdown(

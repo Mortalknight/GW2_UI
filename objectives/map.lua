@@ -53,7 +53,8 @@ local Minimap_Addon_Buttons = {
     [40] = "MiniMapLFGFrame",
     [41] = "PremadeFilter_MinimapButton",
     [42] = "GarrisonMinimapButton",
-    [43] = "GwMapTime"
+    [43] = "GwMapTime",
+    [44] = "GwMapCoords"
 }
 
 local MAP_FRAMES_HOVER = {}
@@ -68,10 +69,24 @@ local function SetMinimapHover()
         MAP_FRAMES_HOVER[1] = "mapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapTime"
+        MAP_FRAMES_HOVER[4] = "GwMapCoords"
     elseif GetSetting("MINIMAP_HOVER") == "CLOCK" then
         MAP_FRAMES_HOVER[1] = "mapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
+        MAP_FRAMES_HOVER[3] = "GwMapCoords"
     elseif GetSetting("MINIMAP_HOVER") == "ZONE" then
+        MAP_FRAMES_HOVER[1] = "GwMapTime"
+        MAP_FRAMES_HOVER[2] = "GwMapCoords"
+    elseif GetSetting("MINIMAP_HOVER") == "COORDS" then
+        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
+        MAP_FRAMES_HOVER[3] = "GwMapTime"
+    elseif GetSetting("MINIMAP_HOVER") == "CLOCKZONE" then
+        MAP_FRAMES_HOVER[1] = "GwMapCoords"
+    elseif GetSetting("MINIMAP_HOVER") == "CLOCKCOORDS" then
+        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
+    elseif GetSetting("MINIMAP_HOVER") == "ZONECOORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapTime"
     end
 end
@@ -323,6 +338,25 @@ local function getMinimapShape()
     return "SQUARE"
 end
 
+local function MapPositionToXY(arg)
+    local mapID = C_Map.GetBestMapForUnit(arg)
+    if mapID and arg then
+        local mapPos = C_Map.GetPlayerMapPosition(mapID, arg)
+        if mapPos then
+            return mapPos:GetXY()
+        end
+    end
+    return 0, 0
+end
+
+function shwcrd(num)
+    if num == nil then
+        return 0
+    else
+        return format("%1.1f", round(num * 1000) / 10)
+    end
+end
+
 local function garrisonBtn_OnEnter(self)
     local garrisonType = self.gw_GarrisonType
     if not garrisonType then
@@ -401,6 +435,19 @@ local function LoadMinimap()
     GwMapTime:SetScript("OnClick", time_OnClick)
     GwMapTime:SetScript("OnEnter", time_OnEnter)
     GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
+
+    GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
+    GwMapCoords.Coords:SetText("n/a")
+    GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
+    local MapCoordsMiniMap_OnUpdate = function(self)
+        local posX, posY = MapPositionToXY("player")
+        if ( posX == 0 and posY == 0 ) then
+            self.Coords:SetText("n/a")
+        else
+            self.Coords:SetText(shwcrd(posX).." / "..shwcrd(posY))
+        end
+    end
+    GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
