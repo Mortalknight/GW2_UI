@@ -353,7 +353,7 @@ function shwcrd(num)
     if num == nil then
         return 0
     else
-        return format("%1.1f", round(num * 1000) / 10)
+        return format("%1.1f", Round(num * 1000) / 10)
     end
 end
 
