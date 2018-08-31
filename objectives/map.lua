@@ -348,14 +348,7 @@ local function MapPositionToXY(arg)
     end
     return 0, 0
 end
-
-function shwcrd(num)
-    if num == nil then
-        return 0
-    else
-        return format("%1.1f", Round(num * 1000) / 10)
-    end
-end
+GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
 
 local function garrisonBtn_OnEnter(self)
     local garrisonType = self.gw_GarrisonType
@@ -399,6 +392,7 @@ local function garrisonBtn_OnEvent(self, event, ...)
         self:Hide()
     end
 end
+GW.AddForProfiling("map", "garrisonBtn_OnEvent", garrisonBtn_OnEvent)
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
@@ -441,10 +435,10 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     local MapCoordsMiniMap_OnUpdate = function(self)
         local posX, posY = MapPositionToXY("player")
-        if ( posX == 0 and posY == 0 ) then
+        if (posX == 0 and posY == 0) then
             self.Coords:SetText("n/a")
         else
-            self.Coords:SetText(shwcrd(posX).." / "..shwcrd(posY))
+            self.Coords:SetText(GW.RoundDec(posX * 1000 / 10) .. " / " .. GW.RoundDec(posY * 1000 / 10))
         end
     end
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
