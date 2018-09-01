@@ -1,3 +1,26 @@
+5.0.8
+
+NEW
+    - Add option to toggle Worldmarker
+    - Add Pawn Support to Hero window
+    - Make the Azeritbar more awesome
+    - Add Dynamic Cam Support
+    - Add Coordinats to Minimap
+
+
+FIXED
+    - Added PvP Arathi HUD back
+    - Raid Frames should display names propperly
+    - Fix a layout issue with quest items
+    - Level rewards window should now display passive skills with correct mask
+    - Fade all Chatbuttons
+    - All Chattabs now should have the correct font
+    - Minmap Buttons now fades when Minimap is hidden (CF#226)
+    - Raid Frames Auras now disappears when no longer present on a player
+    - Raid Frames Auras now correctly aligned
+
+
+
 5.0.7
 
 NEW
