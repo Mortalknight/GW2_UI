@@ -131,7 +131,7 @@ local function updateBagItemList(itemButton)
 
     GetInventoryItemsForSlot(id, bagItemList)
 
-    local gridIndex = 0
+    local gridIndex = 1
     local itemIndex = 1
     local x = 10
     local y = 15
