@@ -334,13 +334,20 @@ local function updateAwayData(self)
 
     posY, posX, posZ, instanceID = UnitPosition(self.unit)
     _, _, _, playerinstanceID = UnitPosition("player")
+    self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
+    _, _, classIndex = UnitClass(self.unit)
+    if classIndex ~= nil and classIndex ~= 0 then
+        SetClassIcon(self.classicon, classIndex)
+    end
 
     if playerinstanceID ~= instanceID then
         portraitIndex = 2
     end
 
-    if UnitInPhase(self.unit) ~= true then
+    if (not UnitInPhase(self.unit) or UnitIsWarModePhased(self.unit)) then
         portraitIndex = 4
+        self.classicon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
+        self.classicon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)
     end
     if UnitIsConnected(self.unit) ~= true then
         portraitIndex = 3
