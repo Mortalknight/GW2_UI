@@ -821,27 +821,27 @@ local function LoadPDBagList(fmMenu)
         fmPD3M:SetPosition(0.4, 0, -0.05)
     elseif raceEn == "Worgen" then
         fmPD3M:SetPosition(0.1, 0, -0.1)
-    elseif raceEn == "Tauren" then
+    elseif raceEn == "Tauren" or raceEn == "HighmountainTauren" then
         fmPD3M:SetPosition(0.6, 0, 0)
-    elseif raceEn == "BloodElf" then
-        fmPD3M:SetPosition(0.6, 0, -0.1)
-    elseif raceEn == "Draenei" then
+    elseif raceEn == "BloodElf" or raceEn == "VoidElf" then
+        fmPD3M:SetPosition(0.5, 0, 0)
+    elseif raceEn == "Draenei" or raceEn == "LightforgedDraenei" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "NightElf" then
+    elseif raceEn == "NightElf" or raceEn == "Nightborne" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "Pandaren" then
+    elseif raceEn == "Pandaren" or raceEn == "KulTiran" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
     elseif raceEn == "Goblin" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Troll" then
+    elseif raceEn == "Troll" or raceEn == "ZandalariTroll" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
     elseif raceEn == "Scourge" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Dwarf" then
+    elseif raceEn == "Dwarf" or raceEn == "DarkIronDwarf" then
         fmPD3M:SetPosition(0.3, 0, 0)
     elseif raceEn == "Gnome" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Orc" then
+    elseif raceEn == "Orc" or raceEn == "MagharOrc" then
         fmPD3M:SetPosition(0.1, 0, -0.15)
     end
     fmPD3M:SetRotation(-0.15)
