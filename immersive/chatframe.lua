@@ -202,8 +202,6 @@ local function styleChatWindow(useId)
 
     ChatFrameMenuButton:SetHeight(20)
     ChatFrameMenuButton:SetWidth(20)
-
-    _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, 14)
     
     _G["ChatFrame" .. useId .. "TabSelectedRight"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
     _G["ChatFrame" .. useId .. "TabSelectedLeft"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
@@ -255,6 +253,14 @@ local function styleChatWindow(useId)
     _G["ChatFrame" .. useId .. "EditBoxFocusRight"]:SetTexture(nil)
     _G["ChatFrame" .. useId .. "EditBoxFocusLeft"]:SetTexture(nil)
     _G["ChatFrame" .. useId .. "EditBoxFocusMid"]:SetTexture(nil)
+
+    local _, fontSize = GetChatWindowInfo(useId)
+    if fontSize > 0 then
+        _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, fontSize)
+    elseif fontSize == 0 then
+        --fontSize will be 0 if it's still at the default (14)
+		_G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, 14)
+    end
 end
 GW.AddForProfiling("chatframe", "styleChatWindow", styleChatWindow)
 
