@@ -253,13 +253,15 @@ local function styleChatWindow(useId)
     _G["ChatFrame" .. useId .. "EditBoxFocusRight"]:SetTexture(nil)
     _G["ChatFrame" .. useId .. "EditBoxFocusLeft"]:SetTexture(nil)
     _G["ChatFrame" .. useId .. "EditBoxFocusMid"]:SetTexture(nil)
-
-    local _, fontSize = GetChatWindowInfo(useId)
-    if fontSize > 0 then
-        _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, fontSize)
-    elseif fontSize == 0 then
-        --fontSize will be 0 if it's still at the default (14)
-		_G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, 14)
+    
+    if GetSetting("FONTS_ENABLED") then
+        local _, fontSize = GetChatWindowInfo(useId)
+        if fontSize > 0 then
+            _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, fontSize)
+        elseif fontSize == 0 then
+            --fontSize will be 0 if it's still at the default (14)
+            _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, 14)
+        end
     end
 end
 GW.AddForProfiling("chatframe", "styleChatWindow", styleChatWindow)
