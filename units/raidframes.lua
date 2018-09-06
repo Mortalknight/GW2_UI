@@ -882,6 +882,7 @@ local function LoadRaidFrames()
 
     GwRaidFrameContainer:SetHeight((GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN"))
 
+    GwRaidFrameContainer:ClearAllPoints();
     GwRaidFrameContainer:SetPoint(
         GetSetting("raid_pos")["point"],
         UIParent,
