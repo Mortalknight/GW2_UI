@@ -97,6 +97,7 @@ GwLocalization["LEVEL_REWARDS"] = "Premi di livello imminenti"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "Shift-Click per passare tra ora Locale e ora del Reame"
 GwLocalization["MAP_CLOCK_MILITARY"] = "Fai click con il tasto sinistro del mouse per attivare il formato dell'ora militare"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "Fare clic con il tasto destro per aprire il Cronometro"
+GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
 GwLocalization["MINIMAP_DESC"] = "Usa il riquadro minimappa dell'interfaccia GW2."
 GwLocalization["MINIMAP_HOVER"] = "Dettagli minimappa"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "Mostra sempre i dettagli della minimappa."

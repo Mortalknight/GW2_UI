@@ -97,6 +97,7 @@ GwLocalization["LEVEL_REWARDS"] = "即將獲得的升級獎勵"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "Shift+左鍵 切換本地和伺服器時間"
 GwLocalization["MAP_CLOCK_MILITARY"] = "左鍵 切換時間格式"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "右鍵 開啟碼表"
+GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
 GwLocalization["MINIMAP_DESC"] = "使用 GW2 UI 小地圖框架。"
 GwLocalization["MINIMAP_HOVER"] = "小地圖資訊"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "永遠顯示小地圖詳細資訊內容。"

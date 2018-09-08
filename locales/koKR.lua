@@ -81,6 +81,7 @@ GwLocalization["LEVEL_REWARDS"] = "다가오는 레벨 보상"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "쉬프트 클릭으로 로컬과 렐름 시간을 전환"
 GwLocalization["MAP_CLOCK_MILITARY"] = "왼쪽 클릭으로 군사 시간 형식 전환"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "오른쪽 클릭으로 스톱 워치 열기"
+GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
 GwLocalization["MINIMAP_DESC"] = "GW2 UI 스타일의 미니맵 사용."
 GwLocalization["MINIMAP_HOVER"] = "미니맵 세부"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "미니 맵 세부 정보를 영구히 표시하십시오,"
