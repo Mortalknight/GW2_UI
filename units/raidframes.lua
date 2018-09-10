@@ -351,7 +351,7 @@ local function updateDebuffs(self)
 
             indexBuffFrame:Show()
 
-          
+            buffIndex = buffIndex + 1
             x = x + 1
             if (margin * x) < (-(self:GetWidth() / 2)) then
                 y = y + 1
@@ -369,7 +369,7 @@ local function updateDebuffs(self)
                 indexBuffFrame:SetScript("OnLeave", nil)
             end
         end
-          buffIndex = buffIndex + 1
+          
     end
 end
 GW.AddForProfiling("raidframes", "updateDebuffs", updateDebuffs)
@@ -446,6 +446,7 @@ local function updateAuras(self)
             end
 
             x = x + 1
+            buffIndex = buffIndex + 1
             
             if (margin * x) < (-(self:GetWidth() / 2)) then
                 y = y + 1
@@ -459,7 +460,7 @@ local function updateAuras(self)
                 indexBuffFrame:SetScript("OnLeave", nil)
             end
         end
-        buffIndex = buffIndex + 1
+        
     end
 
     if spellTotrack then
