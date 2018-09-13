@@ -307,9 +307,10 @@ local function time_OnEnter(self)
 
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(TIMEMANAGER_TITLE)
+    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_MILITARY"], 1, 1, 1, TRUE)
     GameTooltip:AddLine(GwLocalization["MAP_CLOCK_LOCAL_REALM"], 1, 1, 1, TRUE)
     GameTooltip:AddLine(GwLocalization["MAP_CLOCK_STOPWATCH"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_MILITARY"], 1, 1, 1, TRUE)
+    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_TIMEMANAGER"], 1, 1, 1, TRUE)
     GameTooltip:AddDoubleLine(WORLD_MAP_FILTER_TITLE .. " ", string, nil, nil, nil, 1, 1, 0)
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
@@ -328,8 +329,12 @@ local function time_OnClick(self, button)
         end
     end
     if button == "RightButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
-        Stopwatch_Toggle()
+        if IsShiftKeyDown() then
+        	ToggleTimeManager()
+    	else
+            PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
+        	Stopwatch_Toggle()
+    	end
     end
 end
 GW.AddForProfiling("map", "time_OnClick", time_OnClick)

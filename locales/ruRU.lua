@@ -81,6 +81,7 @@ GwLocalization["LEVEL_REWARDS"] = "Награда за уровень"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "Shift-Нажатие для переключения между локальным и серверным временем"
 GwLocalization["MAP_CLOCK_MILITARY"] = "Нажатие левой кнопки для переключения на 24-х часовой формат"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "Нажатие правой кнопки для открытия секундомера"
+GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
 GwLocalization["MINIMAP_DESC"] = "Использовать миникарту в стиле GW2"
 GwLocalization["MINIMAP_HOVER"] = "Детали миникарты"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "Постоянно показывать детали миникарты."
