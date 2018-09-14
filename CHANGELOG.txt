@@ -1,3 +1,14 @@
+5.0.9
+
+NEW
+
+FIXED
+    - Group frames can now be moved properly to the right of the screen (CF#194)
+
+MISCELLANEOUS
+    - The minimap clock options have been updated to include time manager (credit Munsio)
+
+
 5.0.8
 
 NEW
