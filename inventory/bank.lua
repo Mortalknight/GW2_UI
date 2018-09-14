@@ -45,6 +45,20 @@ local function moveBankBagBar()
         v:SetHighlightTexture(nil)
         v.IconBorder:SetTexture(nil)
 
+        local s = v:GetScript("OnClick")
+        v:SetScript(
+            "OnClick",
+            function(self, b)
+                if b == "RightButton" then
+                    local parent = _G[default_bank_frame_container[k]]
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                    ToggleDropDownMenu(1, nil, parent.FilterDropDown, self, 32, 32)
+                else
+                    s(v)
+                end
+            end
+        )
+
         y = y + 32
     end
 end
