@@ -117,6 +117,14 @@
         <Frames>
             <Frame parentKey="item" setAllPoints="true">
                 <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="-1">
+                        <Texture parentKey="repbg" file="Interface/AddOns/GW2_UI/textures/rep/BFA/7thLegion">
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
                     <Layer level="ARTWORK">
                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
                             <Anchors>
@@ -125,7 +133,6 @@
                             </Anchors>
                             <Color r="1" g="1" b="1" a="1"></Color>
                         </Texture>
-
                         <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                             <Size x="2" y="2"></Size>
                             <Anchors>
@@ -157,6 +164,13 @@
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
                                 <Color r="0" g="0" b="0" a="0.5"></Color>
                             </Anchors>
+                        </Texture>
+                        <Texture parentKey="detailsbg">
+                            <Size x="548" y="50"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-60"></Anchor>
+                            </Anchors>
+                            <Color r="0" g="0" b="0" a="0.44"/>
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="2">

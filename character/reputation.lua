@@ -3,6 +3,7 @@ local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
+local RT = GW.REP_TEXTURES
 
 -- forward function defs
 local updateOldData
@@ -18,6 +19,10 @@ local INIT_Y = 2
 local OFF_Y = 10
 local DETAIL_H = 65
 local DETAIL_LG_H = (DETAIL_H * 2) + OFF_Y
+--local REPBG_T = 0.27
+--local REPBG_B = 0.73
+local REPBG_T = 0
+local REPBG_B = 0.464
 
 local expandedFactions = {}
 
@@ -138,6 +143,7 @@ GW.AddForProfiling("reputation", "detailsFavorite_OnLeave", detailsFavorite_OnLe
 
 local function detailsControls_OnShow(self)
     self:GetParent().details:Show()
+    self:GetParent().detailsbg:Show()
 
     if self.atwar.isShowAble then
         self.atwar:Show()
@@ -154,6 +160,7 @@ GW.AddForProfiling("reputation", "detailsControls_OnShow", detailsControls_OnSho
 
 local function detailsControls_OnHide(self)
     self:GetParent().details:Hide()
+    self:GetParent().detailsbg:Hide()
 end
 GW.AddForProfiling("reputation", "detailsControls_OnHide", detailsControls_OnHide)
 
@@ -162,10 +169,14 @@ local function details_OnClick(self, button)
         detailFaction(self.item.factionID, false)
         self:SetHeight(DETAIL_H)
         self.item.controles:Hide()
+        self.item.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)
+        self.item.repbg:SetDesaturated(true)
     else
         detailFaction(self.item.factionID, true)
         self:SetHeight(DETAIL_LG_H)
         self.item.controles:Show()
+        self.item.repbg:SetTexCoord(0, 1, 0, 1)
+        self.item.repbg:SetDesaturated(false)
     end
     updateDetails()
 end
@@ -196,12 +207,14 @@ local function setDetailEx(
     frame.factionIndex = factionIndex
     frame.factionID = factionID
 
+    local isExpanded = false
     if expandedFactions[factionID] == nil then
         frame.controles:Hide()
         frame:GetParent():SetHeight(DETAIL_H)
     else
         frame:GetParent():SetHeight(DETAIL_LG_H)
         frame.controles:Show()
+        isExpanded = true
     end
 
     local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), gender)
@@ -301,6 +314,18 @@ local function setDetailEx(
     )
 
     SetFactionInactive(GetSelectedFaction())
+
+    if factionID and RT[factionID] then
+        frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
+        if isExpanded then
+            frame.repbg:SetAlpha(0.85)
+        else
+            frame.repbg:SetAlpha(0.33)
+        end
+    else
+        GW.Debug("no faction", name, factionID)
+        frame.repbg:SetAlpha(0)
+    end
 
     if factionID and C_Reputation.IsFactionParagon(factionID) then
         local currentValue, maxValueParagon, _, _ = C_Reputation.GetFactionParagonInfo(factionID)
@@ -562,19 +587,36 @@ local function setupDetail(self)
     self.statusbarbg:SetPoint("BOTTOMRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -2)
     self.currentRank:SetPoint("TOPLEFT", self.StatusBar, "BOTTOMLEFT", 0, -5)
     self.nextRank:SetPoint("TOPRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -5)
+
     self.currentRank:SetFont(DAMAGE_TEXT_FONT, 11)
     self.currentRank:SetTextColor(0.6, 0.6, 0.6)
+    self.currentRank:SetShadowColor(0, 0, 0, 1)
+    self.currentRank:SetShadowOffset(1, -1)
+
     self.nextRank:SetFont(DAMAGE_TEXT_FONT, 11)
     self.nextRank:SetTextColor(0.6, 0.6, 0.6)
+    self.nextRank:SetShadowColor(0, 0, 0, 1)
+    self.nextRank:SetShadowOffset(1, -1)
+    
     self.name:SetFont(DAMAGE_TEXT_FONT, 14)
     self.name:SetTextColor(1, 1, 1, 1)
+    self.name:SetShadowColor(0, 0, 0, 1)
+    self.name:SetShadowOffset(1, -1)
+
     self.details:SetFont(UNIT_NAME_FONT, 12)
     self.details:SetTextColor(0.8, 0.8, 0.8, 1)
+    self.details:SetShadowColor(0, 0, 0, 1)
+    self.details:SetShadowOffset(1, -1)
     self.details:Hide()
     self.details:SetWidth(self.StatusBar:GetWidth())
+    self.detailsbg:Hide()
+
     self.currentRank:SetText(REFORGE_CURRENT)
     self.nextRank:SetText(GwLocalization["CHARACTER_NEXT_RANK"])
     self:GetParent():SetScript("OnClick", details_OnClick)
+
+    self.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)
+    self.repbg:SetDesaturated(true)
 end
 GW.AddForProfiling("reputation", "setupDetail", setupDetail)
 
