@@ -307,6 +307,11 @@ local function toggleMainHud(b, inCombat)
                     elseif not inCombat then
                         f:Show()
                     end
+                    if name == "GwPlayerClassPower" then
+                        if not f.visible then 
+                            f:Hide()
+                        end
+                    end
                     -- f:SetAlpha(1)
                 end
             else
@@ -315,6 +320,9 @@ local function toggleMainHud(b, inCombat)
                     bar.elapsedTimer = -1
                     bar.fadeTimer = -1
                 else
+                    if name == "GwPlayerClassPower" then
+                        f.visible = f:IsShown()
+                    end
                     if inCombat == nil then
                         f:SetAlpha(0)
                     elseif not inCombat then
