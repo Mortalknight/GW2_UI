@@ -4,6 +4,7 @@ NEW
 
 FIXED
     - Group frames can now be moved properly to the right of the screen (CF#194)
+    - Font sizing issues in chat have been fixed (CF#231, CF#232)
 
 MISCELLANEOUS
     - The minimap clock options have been updated to include time manager (credit Munsio)
