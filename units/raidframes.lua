@@ -309,7 +309,14 @@ local function updateDebuffs(self)
         local indexBuffFrame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. i]
         local created = false
         local shouldDisplay = false
-
+        --remove old debuff
+        if indexBuffFrame ~= nil then
+            indexBuffFrame:Hide()
+            indexBuffFrame:SetScript("OnEnter", nil)
+            indexBuffFrame:SetScript("OnClick", nil)
+            indexBuffFrame:SetScript("OnLeave", nil)
+        end   
+        --set new debuff
         if DebuffLists[i]["name"] ~= nil then
             shouldDisplay = true
         end
@@ -361,15 +368,7 @@ local function updateDebuffs(self)
             if widthLimit < (margin * x) then
                 widthLimitExceeded = true
             end
-        else
-            if indexBuffFrame ~= nil then
-                indexBuffFrame:Hide()
-                indexBuffFrame:SetScript("OnEnter", nil)
-                indexBuffFrame:SetScript("OnClick", nil)
-                indexBuffFrame:SetScript("OnLeave", nil)
-            end
-        end
-          
+        end    
     end
 end
 GW.AddForProfiling("raidframes", "updateDebuffs", updateDebuffs)
@@ -397,7 +396,15 @@ local function updateAuras(self)
                     not SpellIsSelfBuff(spellID)
             end
         end
-
+        --remove old buff
+        local indexBuffFrame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
+        if indexBuffFrame ~= nil then
+            indexBuffFrame:Hide()
+            indexBuffFrame:SetScript("OnEnter", nil)
+            indexBuffFrame:SetScript("OnClick", nil)
+            indexBuffFrame:SetScript("OnLeave", nil)
+        end
+        --set new buff
         local indexBuffFrame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex]
         local created = false
         if showThis then
@@ -452,15 +459,7 @@ local function updateAuras(self)
                 y = y + 1
                 x = 0
             end
-        else
-            if indexBuffFrame ~= nil then
-                indexBuffFrame:Hide()
-                indexBuffFrame:SetScript("OnEnter", nil)
-                indexBuffFrame:SetScript("OnClick", nil)
-                indexBuffFrame:SetScript("OnLeave", nil)
-            end
-        end
-        
+        end     
     end
 
     if spellTotrack then
