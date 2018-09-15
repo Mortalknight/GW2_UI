@@ -131,7 +131,6 @@ local function LoadCastingBar()
                 GwCastingBar.bar:SetTexCoord(0, 1, 0.5, 0.75)
                 GwCastingBar.bar:SetWidth(176)
                 GwCastingBar.spark:Hide()
-                        print(1)
                 AddToAnimation(
                     "castingbarAnimationComplete",
                     0,
