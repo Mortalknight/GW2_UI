@@ -304,7 +304,13 @@ local function scenarioTimerUpdate(...)
                     function()
                         local _, elapsedTime, _ = GetWorldElapsedTime(timerID)
                         GwQuestTrackerTimer.timer:SetValue(1 - (elapsedTime / timeLimit))
-                        GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(timeLimit - elapsedTime))
+                        if elapsedTime < timeLimit then
+                            GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(timeLimit - elapsedTime, false, true))
+                            GwQuestTrackerTimer.timerString:SetTextColor(1, 1, 1)
+                        else
+                            GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(0, false, true))
+                            GwQuestTrackerTimer.timerString:SetTextColor(255, 0, 0)
+                        end
                     end
                 )
                 GwQuestTrackerTimer.timer:Show()
