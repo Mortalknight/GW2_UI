@@ -8,10 +8,11 @@ local AddToAnimation = GW.AddToAnimation
 
 local playerCasting = 0
 
-local function barValues(name, icon)
+local function barValues(name, icon, spellid)
     GwCastingBar.name:SetText(name)
     GwCastingBar.icon:SetTexture(icon)
     GwCastingBar.latency:Show()
+    GwCastingBar.spellId = spellid
 end
 GW.AddForProfiling("castingbar", "barValues", barValues)
 
@@ -50,7 +51,7 @@ local function LoadCastingBar()
 
     GwCastingBar:SetScript(
         "OnEvent",
-        function(self, event, unitID, spell)
+        function(self, event, unitID, spellid)
             local castingType = 1
             if unitID ~= "player" then
                 return
@@ -69,7 +70,7 @@ local function LoadCastingBar()
                 end
 
                 if GetSetting("CASTINGBAR_DATA") then
-                    barValues(spell, icon)
+                    barValues(spell, icon, spellid)
                 end
 
                 startTime = startTime / 1000
@@ -125,11 +126,12 @@ local function LoadCastingBar()
                 barReset()
                 playerCasting = 0
             end
-            if event == "UNIT_SPELLCAST_SUCCEEDED" then
+            if event == "UNIT_SPELLCAST_SUCCEEDED" and GwCastingBar.spellId== spellid then
                 GwCastingBar.animating = true
                 GwCastingBar.bar:SetTexCoord(0, 1, 0.5, 0.75)
                 GwCastingBar.bar:SetWidth(176)
                 GwCastingBar.spark:Hide()
+                        print(1)
                 AddToAnimation(
                     "castingbarAnimationComplete",
                     0,
@@ -141,7 +143,7 @@ local function LoadCastingBar()
                             1,
                             1,
                             1,
-                            lerp(0.7, 1, animations["castingbarAnimationComplete"]["progress"])
+                            lerp(1, 0.7, animations["castingbarAnimationComplete"]["progress"])
                         )
                     end,
                     nil,
