@@ -116,6 +116,19 @@ local function setAbsorbAmount(self)
 end
 GW.AddForProfiling("raidframes", "setAbsorbAmount", setAbsorbAmount)
 
+local function setPredictionAmount(self)
+    local healthMax = UnitHealthMax(self.unit)
+    local health = UnitHealth(self.unit)
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+    local predictionPrecentage = 0
+
+    if (prediction > 0 and healthMax > 0) and (health < healthMax) then
+        predictionPrecentage = math.min((health / healthMax) + (prediction / healthMax), 1)
+    end
+    self.healthbar.predictionbar:SetValue(predictionPrecentage)
+end
+GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
+
 local function setHealth(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
@@ -489,6 +502,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
     end
     if event == "load" then
         setAbsorbAmount(self)
+        setPredictionAmount(self)
         setHealth(self)
     end
 
@@ -513,6 +527,10 @@ local function raidframe_OnEvent(self, event, unit, arg1)
 
     if event == "UNIT_ABSORB_AMOUNT_CHANGED" and unit == self.unit then
         setAbsorbAmount(self)
+    end
+
+    if event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
+        setPredictionAmount(self)
     end
 
     if
@@ -609,6 +627,8 @@ local function updateFrameData(self)
     local healthPrec = 0
     local absorb = UnitGetTotalAbsorbs(self.unit)
     local absorbPrecentage = 0
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+    local predictionPrecentage = 0
 
     local power = UnitPower(self.unit, UnitPowerType(self.unit))
     local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
@@ -621,12 +641,16 @@ local function updateFrameData(self)
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = math.min(absorb / healthMax, 1)
     end
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = math.min((healthPrec) + (prediction / healthMax), 1)
+    end
     if powerMax > 0 then
         powerPrecentage = power / powerMax
     end
     self.manabar:SetValue(powerPrecentage)
     Bar(self.healthbar, healthPrec)
     self.healthbar.absorbbar:SetValue(absorbPrecentage)
+    self.healthbar.predictionbar:SetValue(predictionPrecentage)
 
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
@@ -842,6 +866,7 @@ local function createRaidFrame(registerUnit)
     frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
     frame:RegisterEvent("UNIT_POWER_FREQUENT")
     frame:RegisterEvent("UNIT_MAXPOWER")
+    frame:RegisterEvent("UNIT_HEAL_PREDICTION")
 
     frame:RegisterEvent("UNIT_PHASE")
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")

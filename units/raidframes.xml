@@ -72,6 +72,14 @@
                             </Layer>
                         </Layers>
                     </StatusBar>
+                    <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
+                        <Size x="65" y="8"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
+                    </StatusBar>
                 </Frames>
             </StatusBar>
             <StatusBar parentKey="manabar" hidden="true" defaultValue="1" minValue="0" maxValue="1">
