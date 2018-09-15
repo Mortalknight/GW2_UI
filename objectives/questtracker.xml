@@ -415,7 +415,7 @@
                     <Frame name="$parent2" parentKey="2">
                         <Size x="38" y="38"></Size>
                         <Anchors>
-                            <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="75" y="0"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
@@ -429,6 +429,22 @@
                         </Layers>
                     </Frame>
                     <Frame name="$parent3" parentKey="3">
+                        <Size x="38" y="38"></Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                    <Size x="38" y="38"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                    </Frame>
+                    <Frame name="$parent4" parentKey="4">
                         <Size x="38" y="38"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="0"></Anchor>

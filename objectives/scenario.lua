@@ -277,7 +277,7 @@ local function scenarioAffixes()
     if i == 1 then
         GwQuestTrackerTimer.timer:ClearAllPoints()
         GwQuestTrackerTimer.timer:SetPoint("TOPRIGHT", GwQuestTrackerTimer.affixes, "BOTTOMRIGHT", -10, 20)
-        for k = 1, 3 do
+        for k = 1, 4 do
             _G["GwAffixFrame" .. k].affixID = nil
             _G["GwAffixFrame" .. k .. "Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icon-boss")
         end
@@ -336,7 +336,7 @@ local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
 
     if hasUpdatedAffixes == false then
-        for i = 1, 3 do
+        for i = 1, 4 do
             _G["GwAffixFrame" .. i].affixID = nil
             _G["GwAffixFrame" .. i .. "Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icon-boss")
         end
