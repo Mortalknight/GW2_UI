@@ -141,7 +141,12 @@ local function updateCurrentScenario()
         stageName = ""
     end
     if difficultyName ~= nil then
-        compassData["TITLE"] = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
+        local level, _, _ = C_ChallengeMode.GetActiveKeystoneInfo()
+        if level > 0 then
+            compassData["TITLE"] = stageName .. " |cFFFFFFFF " .. difficultyName .. " +" .. level .. "|r"
+        else
+            compassData["TITLE"] = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
+        end
         compassData["DESC"] = stageDescription .. " "
         GW.AddTrackerNotification(compassData)
     end
