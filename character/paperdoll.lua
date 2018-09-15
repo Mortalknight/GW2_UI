@@ -66,6 +66,27 @@ local function menu_SetupBackButton(self, fmBtn, key)
 end
 GW.AddForProfiling("paperdoll", "menu_SetupBackButton", menu_SetupBackButton)
 
+local function addAddonButton(name, setting, buttonName, shadow, anchor, showFunction)
+    if IsAddOnLoaded(name) and (setting == nil or setting == true) then
+        fmMenu.buttonName = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
+        fmMenu.buttonName:SetText(name)
+        fmMenu.buttonName:ClearAllPoints()
+        fmMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
+        CharacterMenuButton_OnLoad(fmMenu.buttonName, shadow)
+        fmMenu.buttonName:SetFrameRef("charwin", GwCharacterWindow)
+        fmMenu.buttonName.ui_show = showFunction
+        fmMenu.buttonName:SetAttribute("_onclick", [=[
+            local fchar = self:GetFrameRef("charwin")
+            if fchar then
+                fchar:SetAttribute("windowpanelopen", nil)
+            end
+            self:CallMethod("ui_show")
+        ]=])
+        nextShadow = not nextShadow
+        nextAnchor = fmMenu.buttonName
+    end
+end
+
 local function LoadPaperDoll(tabContainer)
     --local fmPD = CreateFrame("Frame", "GwPaperDoll", tabContainer, "GwPaperDoll")
     GwPaperDoll = tabContainer
@@ -103,31 +124,19 @@ local function LoadPaperDoll(tabContainer)
     CharacterMenuButton_OnLoad(fmMenu.outfitsMenu, true)
     CharacterMenuButton_OnLoad(fmMenu.titlesMenu, false)
 
-    --Added Pawn Support
-    if IsAddOnLoaded("Pawn") then
-        fmMenu.PawnButton = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
-        fmMenu.PawnButton:SetText("Pawn")
-        fmMenu.PawnButton:ClearAllPoints()
-        fmMenu.PawnButton:SetPoint("TOPLEFT", fmMenu.titlesMenu, "BOTTOMLEFT")
-        CharacterMenuButton_OnLoad(fmMenu.PawnButton, true)
+    --AddOn Support
+    nextShadow = true
+    nextAnchor = fmMenu.titlesMenu
+    addAddonButton("Pawn", nil, PawnButton, nextShadow, nextAnchor, PawnUIShow)
+    addAddonButton("Clique", GW.GetSetting("USE_TALENT_WINDOW"), CliqueButton, nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
+    addAddonButton("Outfitter", GW.GetSetting("USE_CHARACTER_WINDOW"), OutfitterButton, nextShadow, nextAnchor, function() Outfitter:OpenUI() end)
 
-        fmMenu.PawnButton:SetFrameRef("charwin", GwCharacterWindow)
-        fmMenu.PawnButton.pawn_ui_show = PawnUIShow
-        fmMenu.PawnButton:SetAttribute("_onclick", [=[
-            local fchar = self:GetFrameRef("charwin")
-            if fchar then
-                fchar:SetAttribute("windowpanelopen", nil)
-            end
-            self:CallMethod("pawn_ui_show")
-        ]=])
-    end
-
-    CharacterFrame:SetScript(
-        "OnShow",
-        function()
-            HideUIPanel(CharacterFrame)
-        end
-    )
+    --CharacterFrame:SetScript(
+        --"OnShow",
+        --function()
+            --HideUIPanel(CharacterFrame)
+        --end
+    --)
 
     CharacterFrame:UnregisterAllEvents()
 
