@@ -12,6 +12,7 @@ T[2163] = "BFA/Tortollans"
 T[2156] = "BFA/Talanji Expe"
 T[2158] = "BFA/Voldunai"
 T[2103] = "BFA/Zandalari Empire"
+T[2157] = "BFA/Honorbound"
 
 
 

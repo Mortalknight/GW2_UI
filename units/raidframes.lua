@@ -119,9 +119,7 @@ GW.AddForProfiling("raidframes", "setAbsorbAmount", setAbsorbAmount)
 
 
 local function setHealPrediction(self,predictionPrecentage)
-   
-    self.predictionbar:SetValue(predictionPrecentage) 
-    
+    self.predictionbar:SetValue(predictionPrecentage)    
 end
 GW.AddForProfiling("raidframes", "setHealPrediction", setHealPrediction)
 
@@ -142,13 +140,10 @@ end
 GW.AddForProfiling("raidframes", "setHealth", setHealth)
 
 local function setPredictionAmount(self)
-    local healthMax = UnitHealthMax(self.unit)
-    local health = UnitHealth(self.unit)
     local prediction = UnitGetIncomingHeals(self.unit) or 0
-  
+
     self.healPredictionAmount = prediction
     setHealth(self)
-   
 end
 GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
 
