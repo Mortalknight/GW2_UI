@@ -116,30 +116,42 @@ local function setAbsorbAmount(self)
 end
 GW.AddForProfiling("raidframes", "setAbsorbAmount", setAbsorbAmount)
 
-local function setPredictionAmount(self)
-    local healthMax = UnitHealthMax(self.unit)
-    local health = UnitHealth(self.unit)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local predictionPrecentage = 0
 
-    if (prediction > 0 and healthMax > 0) and (health < healthMax) then
-        predictionPrecentage = math.min((health / healthMax) + (prediction / healthMax), 1)
-    end
-    self.healthbar.predictionbar:SetValue(predictionPrecentage)
+
+local function setHealPrediction(self,predictionPrecentage)
+   
+    self.predictionbar:SetValue(predictionPrecentage) 
+    
 end
-GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
+GW.AddForProfiling("raidframes", "setHealPrediction", setHealPrediction)
 
 local function setHealth(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrec = 0
+    local predictionPrecentage = 0
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
-
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax~=0 then
+        predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
+    end
+    setHealPrediction(self,predictionPrecentage)
     Bar(self.healthbar, healthPrec)
 end
 GW.AddForProfiling("raidframes", "setHealth", setHealth)
+
+local function setPredictionAmount(self)
+    local healthMax = UnitHealthMax(self.unit)
+    local health = UnitHealth(self.unit)
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+  
+    self.healPredictionAmount = prediction
+    setHealth(self)
+   
+end
+GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
+
 
 local function setUnitName(self)
     if self == nil or self.unit == nil then
@@ -650,7 +662,7 @@ local function updateFrameData(self)
     self.manabar:SetValue(powerPrecentage)
     Bar(self.healthbar, healthPrec)
     self.healthbar.absorbbar:SetValue(absorbPrecentage)
-    self.healthbar.predictionbar:SetValue(predictionPrecentage)
+    self.predictionbar:SetValue(predictionPrecentage)
 
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
@@ -813,6 +825,7 @@ local function createRaidFrame(registerUnit)
         frame = CreateFrame("Button", "GwCompact" .. registerUnit, GwRaidFrameContainer, "GwRaidFrame")
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
+        frame.healthbar = frame.predictionbar.healthbar;
         frame.aggroborder = frame.healthbar.absorbbar.aggroborder
         frame.nameNotLoaded = false
 
@@ -835,6 +848,7 @@ local function createRaidFrame(registerUnit)
 
     frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
     frame.healthbar.animationValue = 0
+    
 
     frame.manabar.animationName = "GwCompact" .. registerUnit .. "manabaranimation"
     frame.manabar.animationValue = 0
@@ -887,7 +901,7 @@ local function createRaidFrame(registerUnit)
     raidframe_OnEvent(frame, "load")
 
     if GetSetting("RAID_POWER_BARS") == true then
-        frame.healthbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
+        frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
         frame.manabar:Show()
     end
 end
