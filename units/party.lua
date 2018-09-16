@@ -334,10 +334,12 @@ local function updateAwayData(self)
 
     posY, posX, posZ, instanceID = UnitPosition(self.unit)
     _, _, _, playerinstanceID = UnitPosition("player")
-    self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-    _, _, classIndex = UnitClass(self.unit)
-    if classIndex ~= nil and classIndex ~= 0 then
-        SetClassIcon(self.classicon, classIndex)
+    if not GW_READY_CHECK_INPROGRESS then 
+        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
+        _, _, classIndex = UnitClass(self.unit)
+        if classIndex ~= nil and classIndex ~= 0 then
+            SetClassIcon(self.classicon, classIndex)
+        end
     end
 
     if playerinstanceID ~= instanceID then
