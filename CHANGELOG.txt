@@ -2,11 +2,14 @@
 
 NEW
     - Add background imagery to reputation entries (credit v_riz_table_Kao)
+    - Mythic keystone level now visible in the objectives tracker (CF#234)
+    - Added link to Outfitter in hero panel that temporarily uses default character frame (CF#219)
 
 FIXED
     - Group frames can now be moved properly to the right of the screen (CF#194)
     - Font sizing issues in chat have been fixed (CF#231, CF#232)
     - Fix a scrolling issue and click-to-expand when searching issue in reputation list
+    - Hide health globe in pet battles when using custom action bars (CF#235)
 
 MISCELLANEOUS
     - The minimap clock options have been updated to include time manager (credit Munsio)
