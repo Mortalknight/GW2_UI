@@ -501,7 +501,45 @@ local function selectPvp(self)
 end
 GW.AddForProfiling("playerhud", "selectPvp", selectPvp)
 
+local MAIN_HUD_FRAMES = {
+    "GwHudArtFrame",
+    "GwPlayerPowerBar",
+    "GwPlayerAuraFrame",
+    "GwPlayerClassPower",
+    "GwPlayerHealthGlobe",
+    "GwPlayerPetFrame"
+}
+
+local function toggleMainHud(b, inCombat)
+    for i, name in ipairs(MAIN_HUD_FRAMES) do
+        local f = _G[name]
+        if f then
+            if b then
+                if not inCombat then
+                    f:Show()
+                end
+                if not f.visible then 
+                    f:Hide()
+                end
+            else    
+                f.visible = f:IsShown()
+                if not inCombat then
+                    f:Hide()
+                end
+            end
+        end
+    end
+end
+
 local function globe_OnEvent(self, event, unit)
+    --Hide Healtglobe if not using our Actionbars
+    local inCombat = UnitAffectingCombat("player")
+    if event == "PET_BATTLE_OPENING_START" then
+        toggleMainHud(false, inCombat)
+    elseif event == "PET_BATTLE_CLOSE" then
+        toggleMainHud(true, inCombat)
+    end
+
     if unit ~= "player" then
         return
     end
@@ -512,7 +550,7 @@ local function globe_OnEvent(self, event, unit)
         updateHealthData(self)
     elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
         selectPvp(self)
-    end
+    end 
 end
 GW.AddForProfiling("playerhud", "globe_OnEvent", globe_OnEvent)
 
@@ -642,6 +680,12 @@ local function LoadPlayerHud()
     playerHealthGLobaBg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     playerHealthGLobaBg:RegisterEvent("PLAYER_FLAGS_CHANGED")
     playerHealthGLobaBg:RegisterEvent("UNIT_FACTION")
+
+    -- Hide HealthGlobe if not using our Actionbars
+    if not GW.GetSetting("ACTIONBARS_ENABLED") then
+        playerHealthGLobaBg:RegisterEvent("PET_BATTLE_CLOSE")
+        playerHealthGLobaBg:RegisterEvent("PET_BATTLE_OPENING_START")
+    end
 
     updateHealthData(playerHealthGLobaBg)
     selectPvp(playerHealthGLobaBg)
