@@ -178,7 +178,7 @@ local function details_OnClick(self, button)
         self.item.repbg:SetTexCoord(0, 1, 0, 1)
         self.item.repbg:SetDesaturated(false)
     end
-    updateDetails()
+    updateOldData()
 end
 GW.AddForProfiling("reputation", "details_OnClick", details_OnClick)
 
@@ -318,9 +318,13 @@ local function setDetailEx(
     if factionID and RT[factionID] then
         frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
         if isExpanded then
+            frame.repbg:SetTexCoord(0, 1, 0, 1)
             frame.repbg:SetAlpha(0.85)
+            frame.repbg:SetDesaturated(false)
         else
+            frame.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)
             frame.repbg:SetAlpha(0.33)
+            frame.repbg:SetDesaturated(true)
         end
     else
         GW.Debug("no faction", name, factionID)
@@ -450,6 +454,7 @@ end
 GW.AddForProfiling("reputation", "setDetail", setDetail)
 
 local facData = {}
+local facOrder = {}
 updateDetails = function()
     local fm = GwRepDetailFrame.scroller
 
@@ -461,6 +466,7 @@ updateDetails = function()
     for k, v in pairs(facData) do
         v.loaded = false
     end
+    table.wipe(facOrder)
 
     -- run through factions to get data and total count for the selected category
     local savedHeaderName = ""
@@ -499,41 +505,42 @@ updateDetails = function()
             savedHeaderName = ""
         end
 
-        if not facData[idx] then
-            facData[idx] = {}
+        if not facData[factionID] then
+            facData[factionID] = {}
         end
-        facData[idx].loaded = true
-        facData[idx].factionIndex = idx
-        facData[idx].name = name
-        facData[idx].desc = desc
-        facData[idx].standingId = standingId
-        facData[idx].bottomValue = bottomValue
-        facData[idx].topValue = topValue
-        facData[idx].earnedValue = earnedValue
-        facData[idx].atWarWith = atWarWith
-        facData[idx].canToggleAtWar = canToggleAtWar
-        facData[idx].isHeader = isHeader
-        facData[idx].isCollapsed = isCollapsed
-        facData[idx].hasRep = hasRep
-        facData[idx].isWatched = isWatched
-        facData[idx].isChild = isChild
-        facData[idx].factionID = factionID
-        facData[idx].hasBonusRepGain = hasBonusRepGain
-        facData[idx].canBeLFGBonus = canBeLFGBonus
-        facData[idx].savedHeaderName = savedHeaderName
+        facOrder[#facOrder + 1] = factionID
+        facData[factionID].loaded = true
+        facData[factionID].factionIndex = idx
+        facData[factionID].name = name
+        facData[factionID].desc = desc
+        facData[factionID].standingId = standingId
+        facData[factionID].bottomValue = bottomValue
+        facData[factionID].topValue = topValue
+        facData[factionID].earnedValue = earnedValue
+        facData[factionID].atWarWith = atWarWith
+        facData[factionID].canToggleAtWar = canToggleAtWar
+        facData[factionID].isHeader = isHeader
+        facData[factionID].isCollapsed = isCollapsed
+        facData[factionID].hasRep = hasRep
+        facData[factionID].isWatched = isWatched
+        facData[factionID].isChild = isChild
+        facData[factionID].factionID = factionID
+        facData[factionID].hasBonusRepGain = hasBonusRepGain
+        facData[factionID].canBeLFGBonus = canBeLFGBonus
+        facData[factionID].savedHeaderName = savedHeaderName
     end
 
     -- run through hybridscroll buttons, setting appropriate faction data by offset & index
     for i = 1, #fm.buttons do
         local idx = i + offset
-        local repIdx = idx + selectedReputationCat
+        local factionID = facOrder[idx]
         local slot = fm.buttons[i].item
 
-        if idx > repCount or not facData[repIdx] or not facData[repIdx].loaded then
+        if idx > repCount or not factionID or not facData[factionID] or not facData[factionID].loaded then
             -- this is an empty/not used button
             slot:Hide()
         else
-            setDetail(slot, facData[repIdx])
+            setDetail(slot, facData[factionID])
         end
     end
 
@@ -739,12 +746,10 @@ local function updateDetailsSearch(s)
     for k, v in pairs(facData) do
         v.loaded = false
     end
+    table.wipe(facOrder)
 
     -- run through factions to get data and total count for the selected category
     local savedHeaderName = ""
-    local idxTbl = {}
-    local idxCount = 0
-    --for idx = selectedReputationCat + 1, GetNumFactions() do
     for idx = 1, GetNumFactions() do
         local name,
             desc,
@@ -784,44 +789,43 @@ local function updateDetailsSearch(s)
                 savedHeaderName = ""
             end
 
-            if not facData[idx] then
-                facData[idx] = {}
+            if not facData[factionID] then
+                facData[factionID] = {}
             end
-            idxCount = idxCount + 1
-            idxTbl[idxCount] = idx
-            facData[idx].loaded = true
-            facData[idx].factionIndex = idx
-            facData[idx].name = name
-            facData[idx].desc = desc
-            facData[idx].standingId = standingId
-            facData[idx].bottomValue = bottomValue
-            facData[idx].topValue = topValue
-            facData[idx].earnedValue = earnedValue
-            facData[idx].atWarWith = atWarWith
-            facData[idx].canToggleAtWar = canToggleAtWar
-            facData[idx].isHeader = isHeader
-            facData[idx].isCollapsed = isCollapsed
-            facData[idx].hasRep = hasRep
-            facData[idx].isWatched = isWatched
-            facData[idx].isChild = isChild
-            facData[idx].factionID = factionID
-            facData[idx].hasBonusRepGain = hasBonusRepGain
-            facData[idx].canBeLFGBonus = canBeLFGBonus
-            facData[idx].savedHeaderName = savedHeaderName
+            facOrder[#facOrder + 1] = factionID
+            facData[factionID].loaded = true
+            facData[factionID].factionIndex = idx
+            facData[factionID].name = name
+            facData[factionID].desc = desc
+            facData[factionID].standingId = standingId
+            facData[factionID].bottomValue = bottomValue
+            facData[factionID].topValue = topValue
+            facData[factionID].earnedValue = earnedValue
+            facData[factionID].atWarWith = atWarWith
+            facData[factionID].canToggleAtWar = canToggleAtWar
+            facData[factionID].isHeader = isHeader
+            facData[factionID].isCollapsed = isCollapsed
+            facData[factionID].hasRep = hasRep
+            facData[factionID].isWatched = isWatched
+            facData[factionID].isChild = isChild
+            facData[factionID].factionID = factionID
+            facData[factionID].hasBonusRepGain = hasBonusRepGain
+            facData[factionID].canBeLFGBonus = canBeLFGBonus
+            facData[factionID].savedHeaderName = savedHeaderName
         end
     end
 
     -- run through hybridscroll buttons, setting appropriate faction data by offset & index
     for i = 1, #fm.buttons do
         local idx = i + offset
+        local factionID = facOrder[idx]
         local slot = fm.buttons[i].item
 
-        if idx > idxCount then
+        if idx > repCount or not factionID or not facData[factionID] or not facData[factionID].loaded then
             -- this is an empty/not used button
             slot:Hide()
         else
-            local repIdx = idxTbl[idx]
-            setDetail(slot, facData[repIdx])
+            setDetail(slot, facData[factionID])
         end
     end
 
@@ -837,7 +841,8 @@ local function dynamicOffset(self, offset)
     local heightSoFar = 0
     local element = 0
     local scrollHeight = 0
-    for k, v in pairs(facData) do
+    for _, factionID in ipairs(facOrder) do
+        local v = facData[factionID]
         if v.loaded then
             local nextHeight
             if expandedFactions[v.factionID] then
