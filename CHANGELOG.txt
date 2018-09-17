@@ -3,8 +3,9 @@
 NEW
     - Add background imagery to reputation entries (credit v_riz_table_Kao)
     - Mythic keystone level now visible in the objectives tracker (CF#234)
-    - Added link to Outfitter in hero panel that temporarily uses default character frame (CF#219)
-    - Raid frames now have incoming heal prediction and clique support
+    - Add link to Outfitter in hero panel that temporarily uses default character frame (CF#219)
+    - Add link to Clique options that lets Clique use default spell panel for spell binding
+    - Raid frames now have incoming heal prediction
 
 FIXED
     - Group frames can now be moved properly to the right of the screen (CF#194)
