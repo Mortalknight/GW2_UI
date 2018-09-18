@@ -172,6 +172,11 @@ local function stackIcons(self, event)
             self.container:Hide()
         end
     end
+    local fnGAT_OnEvent = function(self, event,...)
+        if (event == "PLAYER_ENTERING_WORLD") then
+            stackIcons()
+        end
+    end
     fmGAT:SetScript("OnClick", fnGAT_OnClick)
     fmGAT:SetScript("OnUpdate", function(self)
         if Minimap:IsShown() then
@@ -183,6 +188,9 @@ local function stackIcons(self, event)
             self:SetScript("OnClick", nil)
         end
     end)
+    fmGAT:SetScript("OnEvent", fnGAT_OnEvent)
+    fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
+    
     GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
     _G["GwAddonToggleTexture"]:SetTexCoord(0, 0.5, 0, 0.25)
 
