@@ -116,10 +116,10 @@
                     </Button>
                 </Frames>
             </Frame>
-            <Button name="GwBankDepositAllReagentsBank" hidden="true" inherits="GwStandardButton" text="Deposit All">
+            <Button name="GwBankDepositAllReagents" hidden="true" inherits="GwStandardButton" text="Deposit All">
                 <Size x="180" y="24" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeTo="GwBankFrame" relativePoint="BOTTOMRIGHT" y="-5" x="-5"></Anchor>
+                    <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
                 </Anchors>
             </Button>
             <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="25" enableMouse="true" movable="true" parent="UIParent" virtual="true">

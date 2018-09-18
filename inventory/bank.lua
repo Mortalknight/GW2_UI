@@ -652,17 +652,6 @@ local function LoadBank()
             DepositReagentBank()
         end
     )
-    GwBankDepositAllReagentsBank:SetText(REAGENTBANK_DEPOSIT)
-    GwBankDepositAllReagentsBank:HookScript(
-        "OnClick",
-        function(self)
-            DepositReagentBank()
-        end
-    )
-    if GetNumBankSlots() == 7 then
-        GwBankDepositAllReagentsBank:ClearAllPoints()
-        GwBankDepositAllReagentsBank:SetPoint("TOPLEFT", GwBankFrame, "BOTTOMLEFT", 5, -5)
-    end
 
     GwBuyRegentBank:HookScript(
         "OnClick",
@@ -692,7 +681,10 @@ local function LoadBank()
         GwRegentHelpText:Hide()
         GwBuyRegentBank:Hide()
         GwBankDepositAllReagents:Show()
-        GwBankDepositAllReagentsBank:Show()
+        if GetNumBankSlots() < 7 then
+            GwBankDepositAllReagents:ClearAllPoints()
+            GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
+        end
     end
 
     ReagentBankFrame:HookScript(
@@ -714,11 +706,11 @@ local function LoadBank()
 
             if IsReagentBankUnlocked() then
                 updateReagentsIcons()
-
                 GwRegentHelpText:Hide()
                 GwBuyRegentBank:Hide()
                 GwBankDepositAllReagents:Show()
-                GwBankDepositAllReagentsBank:Hide()
+                GwBankDepositAllReagents:ClearAllPoints()
+                GwBankDepositAllReagents:SetPoint("TOPLEFT", GwBankFrame, "BOTTOMLEFT", 5, -5)
             end
         end
     )
@@ -738,7 +730,11 @@ local function LoadBank()
                 GwBuyMoreBank:Show()
             end
             if IsReagentBankUnlocked() then
-                GwBankDepositAllReagentsBank:Show()
+                GwBankDepositAllReagents:Show()
+                if GetNumBankSlots() < 7 then
+                    GwBankDepositAllReagents:ClearAllPoints()
+                    GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
+                end
             end
         end
     )
