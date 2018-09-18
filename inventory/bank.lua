@@ -729,12 +729,9 @@ local function LoadBank()
             if GetNumBankSlots() < 7 then
                 GwBuyMoreBank:Show()
             end
-            if IsReagentBankUnlocked() then
-                GwBankDepositAllReagents:Show()
-                if GetNumBankSlots() < 7 then
-                    GwBankDepositAllReagents:ClearAllPoints()
-                    GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
-                end
+            if IsReagentBankUnlocked() and GetNumBankSlots() < 7 then
+                GwBankDepositAllReagents:ClearAllPoints()
+                GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
             end
         end
     )
