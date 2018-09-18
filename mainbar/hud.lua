@@ -752,7 +752,6 @@ registerActionHudAura(
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
     "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy"
 )
-
 registerActionHudAura(
     5487,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear",
@@ -767,8 +766,14 @@ registerActionHudAura(
     51271,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost",
     "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost"
-)registerActionHudAura(
+)
+registerActionHudAura(
     162264,
+    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph"
+)
+registerActionHudAura(
+    187827,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
     "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph"
 )
