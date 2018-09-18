@@ -767,6 +767,10 @@ registerActionHudAura(
     51271,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost",
     "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost"
+)registerActionHudAura(
+    162264,
+    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph"
 )
 
 local function LoadBreathMeter()
