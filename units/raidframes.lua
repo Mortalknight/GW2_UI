@@ -185,15 +185,26 @@ local function setUnitName(self)
     elseif GetSetting("RAID_UNIT_FLAGS") == "ALL" then
         realmflag = gw_set_unit_flag[realmid]
     end
-
-    if nameRoleIcon[role] ~= nil then
-        nameString = nameRoleIcon[role] .. nameString
-    end
     if realmflag == nil then
         realmflag = ""
     end
+    if nameRoleIcon[role] ~= nil then
+        nameString = nameRoleIcon[role] .. nameString
+    end
+    if UnitIsGroupLeader(self.unit) then
+        nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-groupleader:15:15:0:-1|t" .. nameString
+    elseif UnitIsGroupAssistant(self.unit) then
+        nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-assist:15:15:0:-1|t" .. nameString
+    end
+    if self.index then
+        local _, _, _, _, _, _, _, _, _, role = GetRaidRosterInfo(self.index)
+        if role == "MAINTANK" then
+            nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-maintank:15:15:0:-1|t" .. nameString
+        elseif role == "MAINASSIST" then
+            nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-mainassist:15:15:0:-1|t" .. nameString
+        end 
+    end
     self.name:SetText(nameString .. " " .. realmflag)
-    
 end
 GW.AddForProfiling("raidframes", "setUnitName", setUnitName)
 
@@ -622,12 +633,13 @@ local function raidframe_OnEvent(self, event, unit, arg1)
 end
 GW.AddForProfiling("raidframes", "raidframe_OnEvent", raidframe_OnEvent)
 
-local function updateFrameData(self)
+local function updateFrameData(self, index)
     if not UnitExists(self.unit) then
         return
     end
 
     self.guid = UnitGUID(self.unit)
+    self.index = index
 
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
@@ -814,7 +826,7 @@ local function UpdateRaidFramesLayout()
 end
 GW.UpdateRaidFramesLayout = UpdateRaidFramesLayout
 
-local function createRaidFrame(registerUnit)
+local function createRaidFrame(registerUnit, index)
     local frame = _G["GwCompact" .. registerUnit]
     if _G["GwCompact" .. registerUnit] == nil then
         frame = CreateFrame("Button", "GwCompact" .. registerUnit, GwRaidFrameContainer, "GwRaidFrame")
@@ -840,6 +852,7 @@ local function createRaidFrame(registerUnit)
     frame.unit = registerUnit
     frame.ready = -1
     frame.targetmarker = GetRaidTargetIndex(frame.unit)
+    frame.index = index
 
     frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
     frame.healthbar.animationValue = 0
@@ -935,18 +948,19 @@ local function LoadRaidFrames()
         f:SetPoint("TOPLEFT", GwRaidFrameContainerMoveAble, "TOPLEFT", 0, 0)
     end
 
-    createRaidFrame("player")
+    createRaidFrame("player", nil)
     for i = 1, 4 do
-        createRaidFrame("party" .. i)
+        createRaidFrame("party" .. i, i)
     end
 
     for i = 1, 80 do
-        createRaidFrame("raid" .. i)
+        createRaidFrame("raid" .. i, i)
     end
     UpdateRaidFramesLayout()
 
     GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE")
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
+    GwRaidFrameContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     GwRaidFrameContainer:SetScript(
         "OnEvent",
@@ -964,12 +978,12 @@ local function LoadRaidFrames()
 
             UpdateRaidFramesLayout()
 
-            updateFrameData(_G["GwCompactplayer"])
+            updateFrameData(_G["GwCompactplayer"], nil)
             for i = 1, 80 do
                 if i < 5 then
-                    updateFrameData(_G["GwCompactparty" .. i])
+                    updateFrameData(_G["GwCompactparty" .. i], i)
                 end
-                updateFrameData(_G["GwCompactraid" .. i])
+                updateFrameData(_G["GwCompactraid" .. i], i)
             end
         end
     )
