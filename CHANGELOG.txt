@@ -6,6 +6,7 @@ NEW
     - Add link to Outfitter in hero panel that temporarily uses default character frame (CF#219)
     - Add link to Clique options that lets Clique use default spell panel for spell binding
     - Raid frames now have incoming heal prediction
+    - Add Leader, Assist, Mainassist and Maintank icon to raid frames
 
 FIXED
     - Group frames can now be moved properly to the right of the screen (CF#194)
@@ -14,9 +15,11 @@ FIXED
     - Hide health globe in pet battles when using custom action bars (CF#235)
     - High level M+ keys now properly show 4th affix
     - Fix some Minmap Button collecting issues (CF#212; credit Munsio)
+    - Display passive talents in spellbook
 
 MISCELLANEOUS
     - The minimap clock options have been updated to include time manager (credit Munsio)
+    - Add "Deposit all"-Button to bank view (credit Munsio)
 
 
 5.0.8
