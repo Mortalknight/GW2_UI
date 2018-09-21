@@ -207,7 +207,7 @@ local function stackIcons(self, event)
 end
 GW.AddForProfiling("map", "stackIcons", stackIcons)
 
-local function lfgAnim()
+local function lfgAnim(self,elapse)
     if Minimap:IsShown() then
         QueueStatusMinimapButtonIcon:SetAlpha(1)
 
@@ -215,34 +215,24 @@ local function lfgAnim()
         QueueStatusMinimapButtonIcon:SetAlpha(0)
         return
     end
-
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\dungeon-animation")
-
-    left = 0.125 * animationIndex
-    top = 0.5 * animationIndexY
-
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(left, 0.125 + left, top, top + 0.5)
-
-    if anim_thro < GetTime() then
-        animationIndex = animationIndex + 1
-        anim_thro = GetTime() + 0.1
-    end
-
-    if animationIndex > 4 and animationIndexY == 0 then
-        animationIndex = 0
-        animationIndexY = 1
-    end
-    if animationIndexY == 1 and animationIndex > 3 then
-        animationIndexY = 0
-        animationIndex = 0
-        anim_thro = GetTime() + 0.5
-    end
+     QueueStatusMinimapButton.animationCircle:Show()
+    
+    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    
+    local speed = 1.5;
+    local rot =  QueueStatusMinimapButton.animationCircle.background:GetRotation() + (speed * elapse);
+    
+    QueueStatusMinimapButton.animationCircle.background:SetRotation(rot);
+    QueueStatusMinimapButtonIconTexture:SetTexCoord(0,1,0,1)
+    
+   
 end
 GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
 local function lfgAnimStop()
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\dungeon-animation")
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(5 * 0.125, 6 * 0.125, 0.5, 1)
+    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    QueueStatusMinimapButton.animationCircle:Hide()
+    QueueStatusMinimapButtonIconTexture:SetTexCoord(0,1,0,1)
 end
 GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
 
@@ -418,8 +408,11 @@ local function LoadMinimap()
     hooksecurefunc("EyeTemplate_OnUpdate", lfgAnim)
     hooksecurefunc("EyeTemplate_StopAnimating", lfgAnimStop)
 
-    QueueStatusMinimapButtonIconTexture:SetSize(40, 40)
-    QueueStatusMinimapButtonIcon:SetSize(40, 40)
+    QueueStatusMinimapButtonIconTexture:SetSize(20, 20)
+    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    QueueStatusMinimapButtonIcon:SetSize(20, 20)
+    QueueStatusMinimapButton.animationCircle = CreateFrame("Frame","GwLFDAnimation",QueueStatusMinimapButton,"GwLFDAnimation")
+
 
     Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
     Minimap:SetParent(UIParent)

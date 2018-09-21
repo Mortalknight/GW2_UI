@@ -1633,5 +1633,22 @@
             </Layer>
         </Layers>
     </Frame>
+     <Frame name="GwLFDAnimation" virtual="true">
+        <Size x="35" y="35"></Size>
+        <Anchors>
+            <Anchor point="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTOWORK" textureSubLevel="-8">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\lfd-animation">
+                    <Size x="1" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+         </Layers>
+    </Frame>
 
 </Ui>
