@@ -387,8 +387,9 @@ GW.AddForProfiling("talents", "loadTalents", loadTalents)
 local function spellButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
-
-    if not self.isFlyout then
+    if self.skillType == "TALENT" then
+        GameTooltip:SetSpellByID(self.spellId)
+    elseif not self.isFlyout then
         GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
     else
         local name, desc, _, _ = GetFlyoutInfo(self.spellId)
@@ -604,12 +605,29 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
 
         local btn
         if isPassive then
-            btn = passiveGroup.pool:Acquire()
-            local row = math.floor((passiveIndex - 1) / 5)
-            local col = (passiveIndex - 1) % 5
-            btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-            setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
-            passiveIndex = passiveIndex + 1
+            local bolfound = false
+            for row = 1, maxTalentRows do
+                for index = 1, talentsPerRow do
+                    local _, nameTalent, _, selected, available, _, _, _, _, _, _ = GetTalentInfo(row, index, 1, false, "player")
+                    if selected and available then
+                        if name == nameTalent then
+                            bolfound = true
+                            break
+                        end
+                    end
+                end
+                if bolfound then 
+                    break
+                end
+            end
+            if not bolfound then 
+                btn = passiveGroup.pool:Acquire()
+                local row = math.floor((passiveIndex - 1) / 5)
+                local col = (passiveIndex - 1) % 5
+                btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+                setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+                passiveIndex = passiveIndex + 1
+            end
         else
             if BOOKTYPE == "pet" or skillType == "FLYOUT" then
                 btn = activeGroup.poolNSD:Acquire()
@@ -662,6 +680,25 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
             end
 
             activeIndex = activeIndex + 1
+        end
+    end
+    for row = 1, maxTalentRows do
+        local anySelected = false
+        for index = 1, talentsPerRow do
+            local _, name, icon, selected, available, spellId, _, _, _, _, _ = GetTalentInfo(row, index, 1, false, "player")
+            if selected and available then
+                local isPassive = IsPassiveSpell(spellId)
+                local btn
+                if isPassive then
+                    local skillType = "TALENT"
+                    btn = passiveGroup.pool:Acquire()
+                    local row = math.floor((passiveIndex - 1) / 5)
+                    local col = (passiveIndex - 1) % 5
+                    btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+                    setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)
+                    passiveIndex = passiveIndex + 1
+                end
+            end
         end
     end
 
