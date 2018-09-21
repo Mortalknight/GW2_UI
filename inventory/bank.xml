@@ -88,13 +88,13 @@
         <Frames>
             <Frame name="GwBuyMoreBank" virtual="true">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                    <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                 </Anchors>
-                <Size x="200" y="40"></Size>
+                <Size x="200" y="24"></Size>
                 <Layers>
                     <Layer>
                         <FontString name="GwBuyMoreBankGold" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                            <Size x="50" y="40"></Size>
+                            <Size x="20" y="24"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativeTo="GwBuyMoreBank" relativePoint="RIGHT" x="0" y="0"></Anchor>
                             </Anchors>
@@ -109,13 +109,19 @@
                 </Layers>
                 <Frames>
                     <Button name="GwButtonBuyBankSlots" inherits="GwStandardButton" text="Purchase More Slots">
-                        <Size x="158" y="32" />
+                        <Size x="180" y="24" />
                         <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" relativeTo="GwBuyMoreBank" x="5" y="5"></Anchor>
+                            <Anchor point="LEFT" relativePoint="LEFT" relativeTo="GwBuyMoreBank" x="5" y="0"></Anchor>
                         </Anchors>
                     </Button>
                 </Frames>
             </Frame>
+            <Button name="GwBankDepositAllReagents" hidden="true" inherits="GwStandardButton" text="Deposit All">
+                <Size x="180" y="24" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
+                </Anchors>
+            </Button>
             <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="25" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
@@ -189,7 +195,7 @@
                     <Button name="GwBankDepositAllReagents" hidden="true" inherits="GwStandardButton" text="Deposit All">
                         <Size x="180" y="24" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5"></Anchor>
+                            <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
                         </Anchors>
                     </Button>
                     <Button name="GwBuyRegentBank" inherits="GwStandardButton" text="Purchase">

@@ -675,12 +675,16 @@ local function LoadBank()
     GwReagentBankFrame:RegisterEvent("REAGENTBANK_PURCHASED")
     GwRegentHelpText:SetFont(UNIT_NAME_FONT, 12)
     GwRegentHelpText:SetShadowColor(1, 1, 1)
-    BUY_REGENTBAG_TEXT = PURCHASE .. " " .. ((GetReagentBankCost()) / 100 / 100) .. "G"
-    GwBuyRegentBank:SetText(BUY_REGENTBAG_TEXT)
+    BUY_REAGENTBANK_TEXT = PURCHASE .. " " .. ((GetReagentBankCost()) / 100 / 100) .. "G"
+    GwBuyRegentBank:SetText(BUY_REAGENTBANK_TEXT)
     if IsReagentBankUnlocked() then
         GwRegentHelpText:Hide()
         GwBuyRegentBank:Hide()
         GwBankDepositAllReagents:Show()
+        if GetNumBankSlots() < 7 then
+            GwBankDepositAllReagents:ClearAllPoints()
+            GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
+        end
     end
 
     ReagentBankFrame:HookScript(
@@ -702,10 +706,11 @@ local function LoadBank()
 
             if IsReagentBankUnlocked() then
                 updateReagentsIcons()
-
                 GwRegentHelpText:Hide()
                 GwBuyRegentBank:Hide()
                 GwBankDepositAllReagents:Show()
+                GwBankDepositAllReagents:ClearAllPoints()
+                GwBankDepositAllReagents:SetPoint("TOPLEFT", GwBankFrame, "BOTTOMLEFT", 5, -5)
             end
         end
     )
@@ -723,6 +728,10 @@ local function LoadBank()
             end
             if GetNumBankSlots() < 7 then
                 GwBuyMoreBank:Show()
+            end
+            if IsReagentBankUnlocked() and GetNumBankSlots() < 7 then
+                GwBankDepositAllReagents:ClearAllPoints()
+                GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
             end
         end
     )
