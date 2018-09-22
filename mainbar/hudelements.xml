@@ -81,9 +81,9 @@
             </Frame>
 
             <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeAbsorbBackdrop">
-                <Size x="102" y="102"></Size>
+                <Size x="101" y="101"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOM" x="0" y="1"/>
+                    <Anchor point="BOTTOM" x="0" y="2"/>
                 </Anchors>
                 <Layers>
 
@@ -107,23 +107,28 @@
                             <Size x="102" y="102"></Size>
 
                         </Texture>
-                    </Layer >
-                </Layers>
-            </Frame>
-            <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeCandy">
-                <Size x="102" y="102"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOM" x="0" y="1"/>
-                </Anchors>
-                <Layers>
-                    <Layer textureSubLevel="2" level="BACKGROUND">
-                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthfillCandy">
-                            <Color r="1" g="0.34" b="0" />
+                    </Layer > 
+                    <Layer textureSubLevel="4" level="BACKGROUND">
+                        <Texture  parentKey="spark" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark">
                             <Size x="102" y="102"></Size>
+                             <Anchors>
+                                 <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
+                                 <Anchor point="TOP" relativePoint="TOP" x="0" y="16"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer >
+                    <Layer textureSubLevel="5" level="BACKGROUND">
+                        <Texture  parentKey="spark2" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark2">
+                            <Size x="102" y="102"></Size>
+                               <Anchors>
+                                 <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
+                                 <Anchor point="TOP" relativePoint="TOP" x="0" y="8"/>
+                            </Anchors>
                         </Texture>
                     </Layer >
                 </Layers>
             </Frame>
+       
             <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeAbsorb">
                 <Size x="102" y="102"></Size>
                 <Anchors>
