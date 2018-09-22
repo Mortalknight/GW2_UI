@@ -682,21 +682,24 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
             activeIndex = activeIndex + 1
         end
     end
-    for row = 1, maxTalentRows do
-        local anySelected = false
-        for index = 1, talentsPerRow do
-            local _, name, icon, selected, available, spellId, _, _, _, _, _ = GetTalentInfo(row, index, 1, false, "player")
-            if selected and available then
-                local isPassive = IsPassiveSpell(spellId)
-                local btn
-                if isPassive then
-                    local skillType = "TALENT"
-                    btn = passiveGroup.pool:Acquire()
-                    local row = math.floor((passiveIndex - 1) / 5)
-                    local col = (passiveIndex - 1) % 5
-                    btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-                    setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)
-                    passiveIndex = passiveIndex + 1
+
+    if BOOKTYPE == "spell" and spellBookTabs == 2 then
+        for row = 1, maxTalentRows do
+            local anySelected = false
+            for index = 1, talentsPerRow do
+                local _, name, icon, selected, available, spellId, _, _, _, _, _ = GetTalentInfo(row, index, 1, false, "player")
+                if selected and available then
+                    local isPassive = IsPassiveSpell(spellId)
+                    local btn
+                    if isPassive then
+                        local skillType = "TALENT"
+                        btn = passiveGroup.pool:Acquire()
+                        local row = math.floor((passiveIndex - 1) / 5)
+                        local col = (passiveIndex - 1) % 5
+                        btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+                        setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)      
+                        passiveIndex = passiveIndex + 1
+                    end
                 end
             end
         end
