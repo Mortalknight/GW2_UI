@@ -53,8 +53,12 @@ local function powerBar_OnUpdate(self)
         bloodSpark[bI].top,
         bloodSpark[bI].bottom
     )
-    self.powerCandySpark:SetPoint("LEFT", self.bar, "RIGHT", -2, 0)
-    self.bar:SetPoint("RIGHT", self, "LEFT", spark, 0)
+    local barPoint = spark + 3
+    if powerPrec== 0 then  self.bar:Hide() else  self.bar:Show() end
+    
+    elf.powerCandySpark:SetPoint("LEFT", self.bar, "RIGHT", -2, 0)
+    self.bar:SetPoint("RIGHT", self, "LEFT", barPoint, 0)
+
     self.powerBar:SetValue(0)
     self.powerCandy:SetValue(0)
 
@@ -154,11 +158,17 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
                 bloodSpark[bI].bottom
             )
             _G[self:GetName() .. "CandySpark"]:SetPoint("LEFT", _G[self:GetName()].bar, "RIGHT", -2, 0)
-            _G[self:GetName()].bar:SetPoint("RIGHT", self, "LEFT", spark, 0)
+            local barPoint = spark + 3
+            if animations[self:GetName()]["progress"] == 0 then  _G[self:GetName()].bar:Hide() else  _G[self:GetName()].bar:Show() end
+            _G[self:GetName()].bar:SetPoint("RIGHT", self, "LEFT", barPoint, 0)
             _G[self:GetName() .. "Bar"]:SetValue(0)
             _G[self:GetName() .. "Candy"]:SetValue(0)
 
-            _G[self:GetName() .. "BarString"]:SetText(CommaValue(powerMax * animations[self:GetName()]["progress"]))
+            if self.stringUpdateTime==nil or self.stringUpdateTime < GetTime() then
+                 _G[self:GetName() .. "BarString"]:SetText(CommaValue(powerMax * animations[self:GetName()]["progress"]))
+                self.stringUpdateTime = GetTime() + 0.1
+            end
+           
 
             self.animationCurrent = powerPrec
         end,
