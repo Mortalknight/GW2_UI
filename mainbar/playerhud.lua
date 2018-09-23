@@ -56,7 +56,7 @@ local function powerBar_OnUpdate(self)
     local barPoint = spark + 3
     if powerPrec== 0 then  self.bar:Hide() else  self.bar:Show() end
     
-    elf.powerCandySpark:SetPoint("LEFT", self.bar, "RIGHT", -2, 0)
+    self.powerCandySpark:SetPoint("LEFT", self.bar, "RIGHT", -2, 0)
     self.bar:SetPoint("RIGHT", self, "LEFT", barPoint, 0)
 
     self.powerBar:SetValue(0)
