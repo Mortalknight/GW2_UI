@@ -283,8 +283,10 @@ local function updateHealthData(self)
     if absorb > 0 and healthMax > 0 then
         absorbPrec = math.min(math.max(0.001, absorb / healthMax), 1)
         _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:Show()
+         GwPlayerHealthGlobeAbsorbBackdrop.spark:Show();
     else
        _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:Hide(); 
+        GwPlayerHealthGlobeAbsorbBackdrop.spark:Hide();
     end
 
     if healthPrec < 0.5 and (self.animating == false or self.animating == nil) then
@@ -309,7 +311,7 @@ local function updateHealthData(self)
                 self.stringUpdateTime = GetTime() + 0.05
             end
             
-            local absorbPrecentage = animations["healthGlobeAnimation"]["progress"] + absorbPrec
+            local absorbPrecentage = (animations["healthGlobeAnimation"]["progress"] + absorbPrec) - 0.05
             if absorbPrec<=0.001   then absorbPrecentage = 0.01 end
             local healthAnimationReduction = math.max(0,math.min(1, animations["healthGlobeAnimation"]["progress"] - 0.05))
             if animations["healthGlobeAnimation"]["progress"]>=0.95 then  healthAnimationReduction = animations["healthGlobeAnimation"]["progress"] end
@@ -353,6 +355,8 @@ local function updateHealthData(self)
             GwPlayerHealthGlobeHealth.spark2:SetTexCoord(0,1, (0.25 * sprite) - 0.25,0.25*sprite)
             local r,g,b = lerpFlareColors( healthAnimationReduction )
             GwPlayerHealthGlobeHealth.spark2:SetVertexColor(r,g,b,1)
+            
+            GwPlayerHealthGlobeAbsorbBackdrop.spark:SetTexCoord(0,1, (0.25 * sprite) - 0.25,0.25*sprite)
            
           
             
@@ -746,6 +750,7 @@ local function LoadPlayerHud()
     mask:SetPoint('CENTER',GwPlayerHealthGlobe,'CENTER')
     GwPlayerHealthGlobeHealth.spark:AddMaskTexture(mask);
     GwPlayerHealthGlobeHealth.spark2:AddMaskTexture(mask);
+    GwPlayerHealthGlobeAbsorbBackdrop.spark:AddMaskTexture(mask);
     GwPlayerHealthGlobeHealth.spark.mask = mask;
     
 
