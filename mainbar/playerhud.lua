@@ -751,6 +751,7 @@ local function LoadPlayerHud()
     
   
     local mask = UIParent:CreateMaskTexture()
+    mask:SetParent(GwPlayerHealthGlobe);
     mask:SetTexture(
         "Textures\\MinimapMask",
         "CLAMPTOBLACKADDITIVE",
