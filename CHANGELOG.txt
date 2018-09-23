@@ -1,7 +1,7 @@
 5.0.9
 
 NEW
-    - Add background imagery to reputation entries (credit v_riz_table_Kao)
+    - Add background imagery to reputation entries (for the beginning: BfA and Legion; credit v_riz_table_Kao)
     - Mythic keystone level now visible in the objectives tracker (CF#234)
     - Add link to Outfitter in hero panel that temporarily uses default character frame (CF#219)
     - Add link to Clique options that lets Clique use default spell panel for spell binding
