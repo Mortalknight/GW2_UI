@@ -221,7 +221,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" hidden="true" frameLevel="28">
-                        <Size x="160" y="60"></Size>
+                        <Size x="200" y="60"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
