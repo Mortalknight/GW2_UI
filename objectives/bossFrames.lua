@@ -3,6 +3,7 @@ local AddTrackerNotification = GW.AddTrackerNotification
 local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToClique = GW.AddToClique
+local PowerBarColorCustom = GW.PowerBarColorCustom
 
 local function updateBossFrameHeight()
     local height = 1
@@ -20,12 +21,37 @@ local function bossFrame_OnEvent(self)
     local maxHealth = UnitHealthMax(self.unit)
     local healthPrecentage = 0
 
+    local powerType, powerToken, _ = UnitPowerType(self.unit)
+    local power = UnitPower(self.unit, powerType)
+    local powerMax = UnitPowerMax(self.unit, powerType)
+    local powerPrecentage = 0
+    print(powerToken)
     if health > 0 and maxHealth > 0 then
         healthPrecentage = health / maxHealth
     end
 
+    if power > 0 and powerMax > 0 then
+        powerPrecentage = power / powerMax
+    end
+
+    if power <= 0 then
+        self.power:Hide()
+        self.health:SetHeight(10)
+    else
+        self.power:Show()
+        self.health:SetHeight(8)
+    end
+
+    if PowerBarColorCustom[powerToken] then
+        local pwcolor = PowerBarColorCustom[powerToken]
+        self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    end
+
+   --self.power:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * powerPrecentage)))
+
     self.name:SetText(UnitName(self.unit))
     self.health:SetValue(healthPrecentage)
+    self.power:SetValue(powerPrecentage)
 end
 GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
 
@@ -66,6 +92,8 @@ local function registerFrame(i)
 
     targetF:RegisterEvent("UNIT_MAXHEALTH")
     targetF:RegisterEvent("UNIT_HEALTH")
+    targetF:RegisterEvent("UNIT_MAXPOWER")
+    targetF:RegisterEvent("UNIT_POWER_FREQUENT")
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
 
     targetF:SetScript(

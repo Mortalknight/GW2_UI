@@ -497,9 +497,16 @@
         <Frames>
 
             <StatusBar name="$parentStatusBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-                <Size x="280" y="10"></Size>
+                <Size x="280" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+            </StatusBar>
+            <StatusBar name="$parentStatusBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="280" y="2"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-28"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
             </StatusBar>
