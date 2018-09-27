@@ -25,7 +25,7 @@ local function bossFrame_OnEvent(self)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
     local powerPrecentage = 0
-    print(powerToken)
+
     if health > 0 and maxHealth > 0 then
         healthPrecentage = health / maxHealth
     end
@@ -46,8 +46,6 @@ local function bossFrame_OnEvent(self)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
-
-   --self.power:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * powerPrecentage)))
 
     self.name:SetText(UnitName(self.unit))
     self.health:SetValue(healthPrecentage)
