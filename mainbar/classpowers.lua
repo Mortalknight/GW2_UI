@@ -370,8 +370,6 @@ local function loopMongooseAnim()
         function()
             local precentage = GwMongooseBar.precentage
 
-            local imagesize = 18 / 262
-
             local cord = precentage + 0.5
             local cord2 = precentage
 
@@ -399,7 +397,6 @@ local function loopMongooseAnim()
             GwMongooseBar.bar.texture2:SetWidth(math.max(1, 262 * precentage))
             GwMongooseBar.bar.texture1:SetVertexColor(r, g, b, a)
             GwMongooseBar.bar.texture2:SetVertexColor(r, g, b, a2)
-            --    GwStaggerBar.fill:SetVertexColor(r,g,b,1)
         end,
         "noease",
         function()
@@ -484,6 +481,78 @@ local function powerMongoose()
     GwMongooseBar.count:SetText(CLASS_POWER)
 end
 GW.AddForProfiling("classpowers", "powerMongoose", powerMongoose)
+
+local function powerFrenzy()
+    local old_power = CLASS_POWER
+    CLASS_POWER = 0
+    local found = false
+    for i = 1, 40 do
+        _, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura("pet", i)
+        if spellID == 272790 then
+            found = true
+            break
+        end
+    end
+
+    CLASS_POWER_MAX = 3
+
+    if found == true then
+        if count == nil then
+            count = 1
+        end
+
+        CLASS_POWER = count
+
+        local pre = (expires - GetTime()) / duration
+
+        if animations["MONGOOSEBITE_BAR"] ~= nil then
+            animations["MONGOOSEBITE_BAR"]["completed"] = true
+            animations["MONGOOSEBITE_BAR"]["duration"] = 0
+        end
+
+        loopMongooseAnim()
+
+        AddToAnimation(
+            "MONGOOSEBITE_BAR",
+            pre,
+            0,
+            GetTime(),
+            expires - GetTime(),
+            function()
+                GwMongooseBar.precentage = animations["MONGOOSEBITE_BAR"]["progress"]
+                GwMongooseBar.bar:SetValue(animations["MONGOOSEBITE_BAR"]["progress"])
+                GwMongooseBar.bar.spark:ClearAllPoints()
+                GwMongooseBar.bar.spark:SetPoint(
+                    "RIGHT",
+                    GwMongooseBar.bar,
+                    "LEFT",
+                    262 * animations["MONGOOSEBITE_BAR"]["progress"],
+                    0
+                )
+                GwMongooseBar.bar.spark:SetWidth(
+                    math.min(15, math.max(1, animations["MONGOOSEBITE_BAR"]["progress"] * 262))
+                )
+            end,
+            "noease"
+        )
+
+        if CLASS_POWER > old_power then
+            AddToAnimation(
+                "MONGOOSEBITE_TEXT",
+                1,
+                0,
+                GetTime(),
+                0.5,
+                function()
+                    GwMongooseBar.flash:SetAlpha(animations["MONGOOSEBITE_TEXT"]["progress"])
+                end
+            )
+        end
+    end
+
+    GwMongooseBar.count:SetText(CLASS_POWER)
+end
+GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
 
 local function loopRage()
     if GwFocusRage.looping ~= nil and GwFocusRage.looping ~= false then
@@ -578,8 +647,6 @@ local function loopEnrage()
         function()
             local precentage = GwEnrageBar.precentage
 
-            local imagesize = 18 / 262
-
             local cord = precentage + 0.5
             local cord2 = precentage
 
@@ -607,7 +674,6 @@ local function loopEnrage()
             GwEnrageBar.bar.texture2:SetWidth(math.max(1, 262 * precentage))
             GwEnrageBar.bar.texture1:SetVertexColor(r, g, b, a)
             GwEnrageBar.bar.texture2:SetVertexColor(r, g, b, a2)
-            --    GwStaggerBar.fill:SetVertexColor(r,g,b,1)
         end,
         "noease",
         function()
@@ -717,8 +783,8 @@ setBarType = function()
         return
     end
     if PLAYER_CLASS == 3 then
-        local _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player")
-        if selected then
+        if PLAYER_SPECIALIZATION == 1 then
+            GW.Debug("show mongoose/frenzy bar")
             GwMongooseBar:Show()
             GwMongooseBar.looping = false
             GwMongooseBar.precentage = 0
@@ -728,6 +794,19 @@ setBarType = function()
             GwMongooseBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
             GwMongooseBar.bar:SetValue(0)
             return
+        elseif PLAYER_SPECIALIZATION == 3 then
+            local _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player")
+            if selected then
+                GwMongooseBar:Show()
+                GwMongooseBar.looping = false
+                GwMongooseBar.precentage = 0
+                GwPlayerClassPowerBackground:SetTexture(nil)
+                GwPlayerClassPowerFill:SetTexture(nil)
+                GwMongooseBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
+                GwMongooseBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
+                GwMongooseBar.bar:SetValue(0)
+                return
+            end
         end
     end
     if PLAYER_CLASS == 4 or PLAYER_CLASS == 11 and s == 1 then
@@ -874,6 +953,7 @@ CLASS_POWERS[2] = {}
 CLASS_POWERS[2][3] = powerHoly
 
 CLASS_POWERS[3] = {}
+CLASS_POWERS[3][1] = powerFrenzy
 CLASS_POWERS[3][3] = powerMongoose
 
 CLASS_POWERS[6] = {}
