@@ -16,19 +16,24 @@ local function updateBossFrameHeight()
 end
 GW.AddForProfiling("bossFrames", "updateBossFrameHeight", updateBossFrameHeight)
 
-local function bossFrame_OnEvent(self)
+local function updateBoss_Health(self)
     local health = UnitHealth(self.unit)
     local maxHealth = UnitHealthMax(self.unit)
     local healthPrecentage = 0
 
+    if health > 0 and maxHealth > 0 then
+        healthPrecentage = health / maxHealth
+    end
+
+    self.health:SetValue(healthPrecentage)
+end
+GW.AddForProfiling("bossFrames", "updateBoss_Health", updateBoss_Health)
+
+local function updateBoss_Power(self)
     local powerType, powerToken, _ = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
     local powerPrecentage = 0
-
-    if health > 0 and maxHealth > 0 then
-        healthPrecentage = health / maxHealth
-    end
 
     if power > 0 and powerMax > 0 then
         powerPrecentage = power / powerMax
@@ -47,9 +52,43 @@ local function bossFrame_OnEvent(self)
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
-    self.name:SetText(UnitName(self.unit))
-    self.health:SetValue(healthPrecentage)
     self.power:SetValue(powerPrecentage)
+end
+GW.AddForProfiling("bossFrames", "updateBoss_Power", updateBoss_Power)
+
+local function updateBoss_Name(self)
+    self.name:SetText(UnitName(self.unit))
+    if UnitName(self.unit) == UnitName("target") then
+        self.name:SetTextColor(255, 0, 0)
+    else
+        self.name:SetTextColor(1, 1, 1)
+    end
+end
+GW.AddForProfiling("bossFrames", "updateBoss_Name", updateBoss_Name)
+
+local function bossFrame_OnEvent(self, event, unit)
+    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH") and unit == self.unit then
+        updateBoss_Health(self)
+        return
+    end
+
+    if (event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT") and unit == self.unit then
+        updateBoss_Power(self)
+        return
+    end
+
+    if event == "PLAYER_TARGET_CHANGED" then
+        updateBoss_Name(self)
+        return
+    end  
+    
+    if event == "PLAYER_ENTERING_WORLD" then 
+        updateBoss_Health(self)
+        updateBoss_Power(self)
+        updateBoss_Name(self)
+        return
+    end
+
 end
 GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
 
@@ -93,6 +132,7 @@ local function registerFrame(i)
     targetF:RegisterEvent("UNIT_MAXPOWER")
     targetF:RegisterEvent("UNIT_POWER_FREQUENT")
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
+    targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     targetF:SetScript(
         "OnShow",
@@ -116,6 +156,9 @@ local function registerFrame(i)
             compassData["TITLE"] = UnitName(self.unit)
 
             AddTrackerNotification(compassData)
+            updateBoss_Health(self)
+            updateBoss_Power(self)
+            updateBoss_Name(self)
         end
     )
 
