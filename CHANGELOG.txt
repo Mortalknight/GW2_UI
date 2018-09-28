@@ -1,3 +1,16 @@
+5.0.10
+
+NEW
+    - Add frenzy counter for Beast Mastery Hunter's class power
+    - Protection Paladins and Warriors now have an active damage reduction class power bar
+
+FIXED
+    - Druid class power bars should behave more cleanly, especially when shape shifting and with affinities
+
+MISCELLANEOUS
+    - Major refactor of the class power system mainly for performance reasons
+
+
 5.0.9
 
 NEW

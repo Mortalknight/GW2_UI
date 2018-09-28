@@ -109,10 +109,10 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
 
     self.animating = true
 
-    local power = UnitPower("Player", forcePowerType)
-    local powerMax = UnitPowerMax("Player", forcePowerType)
-    local powerPrec = 0
-    local powerBarWidth = _G[self:GetName() .. "Bar"]:GetWidth()
+    local power = UnitPower("player", forcePowerType)
+    local powerMax = UnitPowerMax("player", forcePowerType)
+    local powerPrec
+    local powerBarWidth = self.statusBar:GetWidth()
 
     self.powerType = forcePowerType
     self.lostKnownPower = power
@@ -120,30 +120,36 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
     self.lastUpdate = GetTime()
     self.powerBarWidth = powerBarWidth
 
-    if power > 0 and powerMax > 0 then
+    if power >= 0 and powerMax > 0 then
         powerPrec = power / powerMax
+    else
+        powerPrec = 0
     end
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
-        _G[self:GetName() .. "Bar"]:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        _G[self:GetName() .. "CandySpark"]:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        _G[self:GetName() .. "Candy"]:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        _G[self:GetName()].bar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.statusBar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.candy.spark:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.candy:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.bar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
     if self.animationCurrent == nil then
-        self.animationCurren = 0
+        self.animationCurrent = 0
     end
 
+    if not self.animKey then
+        self.animKey = tostring(self)
+    end
+    local f = self
     AddToAnimation(
-        self:GetName(),
+        self.animKey,
         self.animationCurrent,
         powerPrec,
         GetTime(),
         0.2,
         function()
-            local powerPrec = animations[self:GetName()]["progress"]
+            local powerPrec = animations[f.animKey]["progress"]
             local bit = powerBarWidth / 15
             local spark = bit * math.floor(15 * (powerPrec))
 
@@ -151,39 +157,43 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
 
             local bI = math.min(16, math.max(1, math.floor(17 - (16 * spark_current))))
 
-            _G[self:GetName() .. "CandySpark"]:SetTexCoord(
+            f.candy.spark:SetTexCoord(
                 bloodSpark[bI].left,
                 bloodSpark[bI].right,
                 bloodSpark[bI].top,
                 bloodSpark[bI].bottom
             )
-            _G[self:GetName() .. "CandySpark"]:SetPoint("LEFT", _G[self:GetName()].bar, "RIGHT", -2, 0)
+            f.candy.spark:SetPoint("LEFT", f.bar, "RIGHT", -2, 0)
             local barPoint = spark + 3
-            if animations[self:GetName()]["progress"] == 0 then  _G[self:GetName()].bar:Hide() else  _G[self:GetName()].bar:Show() end
-            _G[self:GetName()].bar:SetPoint("RIGHT", self, "LEFT", barPoint, 0)
-            _G[self:GetName() .. "Bar"]:SetValue(0)
-            _G[self:GetName() .. "Candy"]:SetValue(0)
-
-            if self.stringUpdateTime==nil or self.stringUpdateTime < GetTime() then
-                 _G[self:GetName() .. "BarString"]:SetText(CommaValue(powerMax * animations[self:GetName()]["progress"]))
-                self.stringUpdateTime = GetTime() + 0.1
+            if animations[f.animKey]["progress"] == 0 then
+                f.bar:Hide()
+            else
+                f.bar:Show()
             end
-           
+            f.bar:SetPoint("RIGHT", f, "LEFT", barPoint, 0)
+            f.statusBar:SetValue(0)
+            f.candy:SetValue(0)
 
-            self.animationCurrent = powerPrec
+            if f.stringUpdateTime==nil or f.stringUpdateTime < GetTime() then
+                --f.statusBar.label:SetText(CommaValue(powerMax * animations[f.animKey]["progress"]))
+                f.statusBar.label:SetText(CommaValue(f.lostKnownPower))
+                f.stringUpdateTime = GetTime() + 0.1
+            end
+
+            f.animationCurrent = powerPrec
         end,
         "noease",
         function()
-            self.animating = false
+            f.animating = false
         end
     )
 
     if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
         self.lastPowerType = self.powerType
-        self.powerCandySpark = _G[self:GetName() .. "CandySpark"]
-        self.powerBar = _G[self:GetName() .. "Bar"]
-        self.powerCandy = _G[self:GetName() .. "Candy"]
-        self.powerBarString = _G[self:GetName() .. "BarString"]
+        self.powerCandySpark = self.candy.spark
+        self.powerBar = self.statusBar
+        self.powerCandy = self.candy
+        self.powerBarString = self.statusBar.label
         if
             self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or
                 self.powerType == 8
@@ -511,8 +521,8 @@ local function LoadPowerBar()
 
     _G["GwPlayerPowerBarBarString"]:SetFont(DAMAGE_TEXT_FONT, 14)
 
-    playerPowerBar:RegisterEvent("UNIT_POWER_FREQUENT")
-    playerPowerBar:RegisterEvent("UNIT_MAXPOWER")
+    playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -740,13 +750,13 @@ local function LoadPlayerHud()
     playerHealthGLobaBg:SetScript("OnEnter", globe_OnEnter)
     playerHealthGLobaBg:SetScript("OnLeave", globe_OnLeave)
 
-    playerHealthGLobaBg:RegisterEvent("UNIT_HEALTH")
-    playerHealthGLobaBg:RegisterEvent("UNIT_MAXHEALTH")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEALTH", "player")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     playerHealthGLobaBg:RegisterEvent("PLAYER_ENTERING_WORLD")
-    playerHealthGLobaBg:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     playerHealthGLobaBg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     playerHealthGLobaBg:RegisterEvent("PLAYER_FLAGS_CHANGED")
-    playerHealthGLobaBg:RegisterEvent("UNIT_FACTION")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_FACTION", "player")
     
     
   

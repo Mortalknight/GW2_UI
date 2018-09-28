@@ -5,10 +5,375 @@ local UpdatePowerData = GW.UpdatePowerData
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 
-local extra_manabar_loaded = false
+local CPWR_FRAME
 
-local HOLY_POWER_FLARE_ANIMATION = 0
+local function animFlare(f, scale, offset, duration, rotate)
+    scale = scale or 32
+    offset = offset or 0
+    duration = duration or 0.5
+    rotate = rotate or false
+    local ff = f.flare
+    local pwr = f.gwPower
+    ff:ClearAllPoints()
+    ff:SetPoint("CENTER", f, "LEFT", (scale * pwr) + offset, 0)
+    AddToAnimation(
+        "POWER_FLARE_ANIM",
+        1,
+        0,
+        GetTime(),
+        duration,
+        function()
+            local p = animations["POWER_FLARE_ANIM"]["progress"]
+            ff:SetAlpha(p)
+            if rotate then
+                ff:SetRotation(1 * p)
+            end
+        end
+    )
+end
+GW.AddForProfiling("classpowers", "powerFlare", powerFlare)
 
+local function decayCounter_OnAnim()
+    local f = CPWR_FRAME
+    local fdc = f.decayCounter
+    local p = animations["DECAYCOUNTER_BAR"]["progress"]
+    local px = p * 262
+    fdc.precentage = p
+    fdc.bar:SetValue(p)
+    fdc.bar.spark:ClearAllPoints()
+    fdc.bar.spark:SetPoint("RIGHT", fdc.bar, "LEFT", px, 0)
+    fdc.bar.spark:SetWidth(math.min(15, math.max(1, px)))
+end
+GW.AddForProfiling("classpowers", "decayCounter_OnAnim", decayCounter_OnAnim)
+
+local function decayCounterFlash_OnAnim()
+    local f = CPWR_FRAME
+    local fdc = f.decayCounter
+    fdc.flash:SetAlpha(animations["DECAYCOUNTER_TEXT"]["progress"])
+end
+GW.AddForProfiling("classpowers", "decayCounterFlash_OnAnim", decayCounterFlash_OnAnim)
+
+local function decay_OnAnim()
+    local f = CPWR_FRAME
+    local fd = f.decay
+    local p = animations["DECAY_BAR"]["progress"]
+    local px = p * 310
+    fd.precentage = p
+    fd.bar:SetValue(p)
+    fd.bar.spark:ClearAllPoints()
+    fd.bar.spark:SetPoint("RIGHT", fd.bar, "LEFT", px, 0)
+    fd.bar.spark:SetWidth(math.min(15, math.max(1, px)))
+end
+GW.AddForProfiling("classpowers", "decay_OnAnim", decay_OnAnim)
+
+local function findBuff(unit, searchID)
+    local name, count, duration, expires, spellID
+    for i = 1, 40 do
+        name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
+        if spellID == searchID then
+            return name, count, duration, expires
+        elseif not spellID then
+            break
+        end
+    end
+
+    return nil, nil, nil, nil
+end
+GW.AddForProfiling("classpowers", "findBuff", findBuff)
+
+-- MANA (multi class use)
+local function powerMana(self, event, ...)
+    local ptype = select(2, ...)
+    if event == "CLASS_POWER_INIT" or ptype == "MANA" then
+        UpdatePowerData(self.exbar, 0, "MANA", "GwExtraPowerBar")
+    end
+end
+GW.AddForProfiling("classpowers", "powerMana", powerMana)
+
+local function setManaBar(f)
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f.exbar:Show()
+
+    f:SetScript("OnEvent", powerMana)
+    powerMana(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+end
+GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
+
+-- COMBO POINTS (multi class use)
+local function powerCombo(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "COMBO_POINTS" then
+        return
+    end
+
+    local old_power = self.gwPower
+    old_power = old_power or -1
+
+    local pwrMax = UnitPowerMax("player", 4)
+    local pwr = UnitPower("player", 4)
+    local p = pwr - 1
+
+    self.gwPower = pwr
+
+    self.background:SetTexCoord(0, 1, 0.125 * (pwrMax - 1), 0.125 * pwrMax)
+    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+
+    if old_power < pwr and event ~= "CLASS_POWER_INIT" then
+        animFlare(self, 40)
+    end
+end
+GW.AddForProfiling("classpowers", "powerCombo", powerCombo)
+
+local function setComboBar(f)
+    f:SetHeight(40)
+    f:SetWidth(320)
+    f.background:SetHeight(32)
+    f.background:SetWidth(256)
+    f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-bg")
+    f.background:SetTexCoord(0, 1, 0.5, 1)
+    f.flare:SetWidth(128)
+    f.flare:SetHeight(128)
+    f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-flash")
+    f.fill:SetHeight(40)
+    f.fill:SetWidth(320)
+    f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo")
+
+    f:SetScript("OnEvent", powerCombo)
+    powerCombo(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+end
+GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
+
+-- WARRIOR
+local function powerEnrage(self, event, ...)
+    local _, _, duration, expires = findBuff("player", 184362)
+    if duration ~= nil then
+        local pre = (expires - GetTime()) / duration
+        AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
+    end
+end
+GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
+
+local function powerSBlock(self, event, ...)
+    local _, _, duration, expires = findBuff("player", 132404)
+    if duration ~= nil then
+        local pre = (expires - GetTime()) / duration
+        AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
+    end
+end
+GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
+
+local function setWarrior(f)
+    local spec = f.gwPlayerSpec
+
+    if spec == 2 or spec == 3 then
+        f.background:SetTexture(nil)
+        f.fill:SetTexture(nil)
+        local fd = f.decay
+        fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
+        fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
+        fd.bar:SetValue(0)
+        fd:Show()
+
+        if spec == 2 then -- fury
+            f:SetScript("OnEvent", powerEnrage)
+            powerEnrage(f, "CLASS_POWER_INIT")
+        elseif spec == 3 then -- prot
+            f:SetScript("OnEvent", powerSBlock)
+            powerSBlock(f, "CLASS_POWER_INIT")
+        end
+        f:RegisterUnitEvent("UNIT_AURA", "player")
+
+        return true
+    end
+
+    return false
+end
+GW.AddForProfiling("classpowers", "setWarrior", setWarrior)
+
+-- PALADIN
+local function powerSotR(self, event, ...)
+    local _, _, duration, expires = findBuff("player", 132403)
+    if duration ~= nil then
+        local pre = (expires - GetTime()) / duration
+        AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
+    end
+end
+GW.AddForProfiling("classpowers", "powerSotR", powerSotR)
+
+local function powerHoly(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" then
+        return
+    end
+
+    local old_power = self.gwPower
+    old_power = old_power or -1
+
+    local pwrMax = UnitPowerMax("player", 9)
+    local pwr = UnitPower("player", 9)
+    local p = pwr - 1
+
+    self.gwPower = pwr
+
+    self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
+    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+
+    if old_power < pwr and event ~= "CLASS_POWER_INIT" then
+        animFlare(self)
+    end
+end
+GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
+
+local function setPaladin(f)
+    local spec = f.gwPlayerSpec
+
+    if spec == 2 then -- prot
+        f.background:SetTexture(nil)
+        f.fill:SetTexture(nil)
+        local fd = f.decay
+        fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
+        fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
+        fd.bar:SetValue(0)
+        fd:Show()
+
+        f:SetScript("OnEvent", powerSotR)
+        powerSotR(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_AURA", "player")
+
+        return true
+    elseif spec == 3 then -- retribution
+        f:SetHeight(32)
+        f:SetWidth(320)
+        f.background:SetHeight(32)
+        f.background:SetWidth(320)
+        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower")
+        f.background:SetTexCoord(0, 1, 0.5, 1)
+        f.fill:SetHeight(32)
+        f.fill:SetWidth(320)
+        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower")
+
+        f:SetScript("OnEvent", powerHoly)
+        powerHoly(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+        return true
+    end
+
+    return false
+end
+GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
+
+-- HUNTER
+local function powerFrenzy(self, event, ...)
+    local fdc = self.decayCounter
+    local _, count, duration, expires = findBuff("pet", 272790)
+
+    if duration == nil then
+        fdc.count:SetText(0)
+        self.gwPower = -1
+        return
+    end
+
+    fdc.count:SetText(count)
+    local old_expires = self.gwPower
+    old_expires = old_expires or -1
+    self.gwPower = expires
+    if event == "CLASS_POWER_INIT" or expires > old_expires then
+        local pre = (expires - GetTime()) / duration
+        AddToAnimation("DECAYCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), decayCounter_OnAnim, "noease")
+        if event ~= "CLASS_POWER_INIT" then
+            AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
+        end
+    end
+end
+GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
+
+local function powerMongoose(self, event, ...)
+    local fdc = self.decayCounter
+    local _, count, duration, expires = findBuff("player", 259388)
+
+    if duration == nil then
+        fdc.count:SetText(0)
+        self.gwPower = -1
+        return
+    end
+
+    fdc.count:SetText(count)
+    local old_count = self.gwPower
+    old_count = old_count or -1
+    self.gwPower = count
+    if event == "CLASS_POWER_INIT" or count > old_count then
+        local pre = (expires - GetTime()) / duration
+        AddToAnimation("DECAYCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), decayCounter_OnAnim, "noease")
+        if event ~= "CLASS_POWER_INIT" then
+            AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
+        end
+    end
+end
+GW.AddForProfiling("classpowers", "powerMongoose", powerMongoose)
+
+local function setHunter(f)
+    local spec = f.gwPlayerSpec
+
+    local selected = false
+    if spec == 3 then
+        -- determine if mongoose talent is selected for survival
+        _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player")
+    end
+
+    if spec == 1 or (spec == 3 and selected) then
+        f.background:SetTexture(nil)
+        f.fill:SetTexture(nil)
+        local fdc = f.decayCounter
+        fdc.bar.texture1:SetVertexColor(1, 1, 1, 0)
+        fdc.bar.texture2:SetVertexColor(1, 1, 1, 0)
+        fdc.bar:SetValue(0)
+        fdc:Show()
+
+        if spec == 1 then -- beast mastery
+            f:SetScript("OnEvent", powerFrenzy)
+            powerFrenzy(f, "CLASS_POWER_INIT")
+            f:RegisterUnitEvent("UNIT_AURA", "pet")
+        elseif spec == 3 then -- survival
+            f:SetScript("OnEvent", powerMongoose)
+            powerMongoose(f, "CLASS_POWER_INIT")
+            f:RegisterUnitEvent("UNIT_AURA", "player")
+        end
+
+        return true
+    end
+
+    return false
+end
+GW.AddForProfiling("classpowers", "setHunter", setHunter)
+
+-- ROGUE
+local function setRogue(f)
+    setComboBar(f)
+    return true
+end
+GW.AddForProfiling("classpowers", "setRogue", setRogue)
+
+-- PRIEST
+local function setPriest(f)
+    local spec = f.gwPlayerSpec
+
+    if spec == 3 then -- shadow
+        setManaBar(f)
+        return true
+    end
+
+    return false
+end
+GW.AddForProfiling("classpowers", "setPriest", setPriest)
+
+-- DEATH KNIGHT
 local RUNE_TIMER_ANIMATIONS = {}
 RUNE_TIMER_ANIMATIONS[1] = 0
 RUNE_TIMER_ANIMATIONS[2] = 0
@@ -16,235 +381,25 @@ RUNE_TIMER_ANIMATIONS[3] = 0
 RUNE_TIMER_ANIMATIONS[4] = 0
 RUNE_TIMER_ANIMATIONS[5] = 0
 RUNE_TIMER_ANIMATIONS[6] = 0
-
-local CLASS_POWERS = {}
-
-local CLASS_POWER_MAX = 0
-local CLASS_POWER = 0
-local PLAYER_CLASS = 0
-local PLAYER_SPECIALIZATION = 0
-
--- foward function defs
-local powerCombo
-local setBarType
-
-local function selectType()
-    PLAYER_SPECIALIZATION = GetSpecialization()
-    setBarType()
-end
-GW.AddForProfiling("classpowers", "selectType", selectType)
-
-local function updatePower(self, event, unit)
-    if
-        event == "PLAYER_SPECIALIZATION_CHANGED" or event == "CHARACTER_POINTS_CHANGED" or
-            event == "UPDATE_SHAPESHIFT_FORM"
-     then
-        selectType()
-    end
-
-    if CLASS_POWERS[PLAYER_CLASS] ~= nil and CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION] ~= nil then
-        local s = GetShapeshiftFormID()
-        if s == 1 then
-            powerCombo()
-            return
-        end
-        CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION](event, unit)
-    end
-end
-GW.AddForProfiling("classpowers", "updatePower", updatePower)
-
-local function powerSoulshard()
-    CLASS_POWER_MAX = UnitPowerMax("player", 7)
-    CLASS_POWER = UnitPower("player", 7)
-
-    GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.125 * CLASS_POWER_MAX, 0.125 * (CLASS_POWER_MAX + 1))
-    GwPlayerClassPowerFill:SetTexCoord(0, 1, 0.125 * CLASS_POWER, 0.125 * (CLASS_POWER + 1))
-end
-GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
-
-local function powerHoly()
-    local old_power = CLASS_POWER
-    CLASS_POWER_MAX = UnitPowerMax("player", 9)
-    CLASS_POWER = UnitPower("player", 9)
-    local p = CLASS_POWER - 1
-
-    GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.125 * CLASS_POWER_MAX, 0.125 * (CLASS_POWER_MAX + 1))
-    GwPlayerClassPowerFill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
-
-    if old_power < CLASS_POWER then
-        HOLY_POWER_FLARE_ANIMATION = 1
-        GwPlayerClassPowerFlare:ClearAllPoints()
-        GwPlayerClassPowerFlare:SetPoint("CENTER", GwPlayerClassPower, "LEFT", (32 * CLASS_POWER), 0)
-        AddToAnimation(
-            "HOLY_POWER_FLARE_ANIMATION",
-            HOLY_POWER_FLARE_ANIMATION,
-            0,
-            GetTime(),
-            0.5,
-            function()
-                GwPlayerClassPowerFlare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"]["progress"])
-            end
-        )
-    end
-end
-GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
-
-local function powerChi()
-    local old_power = CLASS_POWER
-    CLASS_POWER_MAX = UnitPowerMax("player", 12)
-    CLASS_POWER = UnitPower("player", 12)
-    local p = CLASS_POWER - 1
-
-    GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.125 * (CLASS_POWER_MAX + 1), 0.125 * (CLASS_POWER_MAX + 2))
-    GwPlayerClassPowerFill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
-
-    if old_power < CLASS_POWER then
-        HOLY_POWER_FLARE_ANIMATION = 1
-        GwPlayerClassPowerFlare:ClearAllPoints()
-        GwPlayerClassPowerFlare:SetPoint("CENTER", GwPlayerClassPower, "LEFT", (32 * CLASS_POWER), 0)
-        AddToAnimation(
-            "HOLY_POWER_FLARE_ANIMATION",
-            HOLY_POWER_FLARE_ANIMATION,
-            0,
-            GetTime(),
-            0.5,
-            function()
-                GwPlayerClassPowerFlare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"]["progress"])
-            end
-        )
-    end
-end
-GW.AddForProfiling("classpowers", "powerChi", powerChi)
-
-local function loopStagger()
-    local staggerAmountClamped = math.min(1, GwBrewmaster.debugpre)
-
-    if GwBrewmaster.debugpre == 0 then
-        GwBrewmaster.stagger.blue:Hide()
-        GwBrewmaster.stagger.yellow:Hide()
-        GwBrewmaster.stagger.red:Hide()
-        GwBrewmaster.stagger.indicator:Hide()
-        GwBrewmaster.stagger.indicatorText:Hide()
-    elseif not GwBrewmaster.stagger.blue:IsShown() then
-        GwBrewmaster.stagger.blue:Show()
-        GwBrewmaster.stagger.yellow:Show()
-        GwBrewmaster.stagger.red:Show()
-        GwBrewmaster.stagger.indicator:Show()
-        GwBrewmaster.stagger.indicatorText:Show()
-    end
-
-    GwBrewmaster.stagger.blue:SetVertexColor(1, 1, 1, 1)
-    GwBrewmaster.stagger.yellow:SetVertexColor(1, 1, 1, lerp(0, 1, staggerAmountClamped / 0.5))
-    GwBrewmaster.stagger.red:SetVertexColor(1, 1, 1, lerp(0, 1, (staggerAmountClamped - 0.5) / 0.5))
-
-    GwBrewmaster.stagger.blue:SetTexCoord(0, staggerAmountClamped, 0, 1)
-    GwBrewmaster.stagger.yellow:SetTexCoord(0, staggerAmountClamped, 0, 1)
-    GwBrewmaster.stagger.red:SetTexCoord(0, staggerAmountClamped, 0, 1)
-
-    GwBrewmaster.stagger.blue:SetWidth(staggerAmountClamped * 256)
-    GwBrewmaster.stagger.yellow:SetWidth(staggerAmountClamped * 256)
-    GwBrewmaster.stagger.red:SetWidth(staggerAmountClamped * 256)
-
-    GwBrewmaster.stagger.indicator:SetPoint("LEFT", (staggerAmountClamped * 256) - 13, -6)
-    GwBrewmaster.stagger.indicatorText:SetText(math.floor(GwBrewmaster.debugpre * 100) .. "%")
-end
-GW.AddForProfiling("classpowers", "loopStagger", loopStagger)
-
-local function ironSkin_OnUpdate()
-    local precentage = math.min(1, math.max(0, (GwBrewmaster.ironskin.expires - GetTime()) / 23))
-    GwBrewmaster.stagger.ironartwork:SetAlpha(precentage)
-    GwBrewmaster.ironskin.fill:SetTexCoord(0, precentage, 0, 1)
-    GwBrewmaster.ironskin.fill:SetWidth(precentage * 256)
-
-    GwBrewmaster.ironskin.indicator:SetPoint("LEFT", math.min(252, (precentage * 256)) - 13, 19)
-    GwBrewmaster.ironskin.indicatorText:SetText(RoundInt(GwBrewmaster.ironskin.expires - GetTime()) .. "s")
-end
-GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
-
-local function powerStagger(event, unit)
-    if event == nil then
-        GwBrewmaster.debugpre = 0
-        loopStagger()
-        GwBrewmaster.ironskin:Hide()
-        GwBrewmaster.stagger.ironartwork:Hide()
-    end
-
-    if event == "UNIT_AURA" and unit == "player" then
-        local found = false
-        for i = 1, 40 do
-            local _, _, _, _, _, expires, _, _, _, spellID, _ = UnitAura("player", i)
-
-            if spellID == 215479 then
-                GwBrewmaster.ironskin.expires = expires
-                GwBrewmaster.ironskin:SetScript("OnUpdate", ironSkin_OnUpdate)
-                GwBrewmaster.ironskin:Show()
-                GwBrewmaster.stagger.ironartwork:Show()
-                found = true
-                break
-            end
-        end
-        if not found then
-            GwBrewmaster.ironskin:SetScript("OnUpdate", nil)
-            GwBrewmaster.ironskin:Hide()
-            GwBrewmaster.stagger.ironartwork:Hide()
-        end
-
-        return
-    end
-
-    CLASS_POWER_MAX = UnitHealthMax("player")
-    CLASS_POWER = UnitStagger("player")
-    --   CLASS_POWER =  168000
-    local staggarPrec = CLASS_POWER / CLASS_POWER_MAX
-
-    staggarPrec = math.max(0, math.min(staggarPrec, 1))
-
-    GwBrewmaster.debugpre = staggarPrec
-    loopStagger()
-end
-GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
-
-powerCombo = function()
-    local old_power = CLASS_POWER
-    CLASS_POWER_MAX = UnitPowerMax("player", 4)
-    CLASS_POWER = UnitPower("player", 4)
-    local p = CLASS_POWER - 1
-
-    GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.125 * (CLASS_POWER_MAX - 1), 0.125 * (CLASS_POWER_MAX))
-    GwPlayerClassPowerFill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
-
-    if old_power < CLASS_POWER then
-        HOLY_POWER_FLARE_ANIMATION = 1
-        GwPlayerClassPowerFlare:ClearAllPoints()
-        GwPlayerClassPowerFlare:SetPoint("CENTER", GwPlayerClassPower, "LEFT", (40 * CLASS_POWER), 0)
-        AddToAnimation(
-            "HOLY_POWER_FLARE_ANIMATION",
-            HOLY_POWER_FLARE_ANIMATION,
-            0,
-            GetTime(),
-            0.5,
-            function()
-                GwPlayerClassPowerFlare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"]["progress"])
-            end
-        )
-    end
-end
-GW.AddForProfiling("classpowers", "powerCombo", powerCombo)
-
-local function powerRune()
+local function powerRune(self, event, ...)
+    local f = self
+    local fr = self.runeBar
     for i = 1, 6 do
         local rune_start, rune_duration, rune_ready = GetRuneCooldown(i)
         if rune_start == nil then
             rune_start = GetTime()
             rune_duration = 0
         end
-        if rune_ready then
-            _G["GwRuneTextureFill" .. i]:SetTexCoord(0.5, 1, 0, 1)
-            _G["GwRuneTextureFill" .. i]:SetHeight(32)
-            _G["GwRuneTextureFill" .. i]:SetVertexColor(1, 1, 1)
-            if animations["RUNE_TIMER_ANIMATIONS" .. i] then
-                animations["RUNE_TIMER_ANIMATIONS" .. i]["completed"] = true
-                animations["RUNE_TIMER_ANIMATIONS" .. i]["duration"] = 0
+        local fFill = fr["runeTexFill" .. i]
+        local fTex = fr["runeTex" .. i]
+        local animId = "RUNE_TIMER_ANIMATIONS" .. i
+        if rune_ready and fFill then
+            fFill:SetTexCoord(0.5, 1, 0, 1)
+            fFill:SetHeight(32)
+            fFill:SetVertexColor(1, 1, 1)
+            if animations[animId] then
+                animations[animId]["completed"] = true
+                animations[animId]["duration"] = 0
             end
         else
             if rune_start == 0 then
@@ -252,801 +407,511 @@ local function powerRune()
             end
 
             AddToAnimation(
-                "RUNE_TIMER_ANIMATIONS" .. i,
+                animId,
                 RUNE_TIMER_ANIMATIONS[i],
                 1,
                 rune_start,
                 rune_duration,
                 function()
-                    _G["GwRuneTextureFill" .. i]:SetTexCoord(
-                        0.5,
-                        1,
-                        1 - animations["RUNE_TIMER_ANIMATIONS" .. i]["progress"],
-                        1
-                    )
-                    _G["GwRuneTextureFill" .. i]:SetHeight(32 * animations["RUNE_TIMER_ANIMATIONS" .. i]["progress"])
-
-                    _G["GwRuneTextureFill" .. i]:SetVertexColor(
-                        1,
-                        0.6 * animations["RUNE_TIMER_ANIMATIONS" .. i]["progress"],
-                        0.6 * animations["RUNE_TIMER_ANIMATIONS" .. i]["progress"]
-                    )
+                    fFill:SetTexCoord(0.5, 1, 1 - animations[animId]["progress"], 1)
+                    fFill:SetHeight(32 * animations[animId]["progress"])
+                    fFill:SetVertexColor(1, 0.6 * animations[animId]["progress"], 0.6 * animations[animId]["progress"])
                 end,
                 "noease",
                 function()
-                    HOLY_POWER_FLARE_ANIMATION = 1
-                    GwPlayerClassPowerFlare:ClearAllPoints()
-                    GwPlayerClassPowerFlare:SetPoint("CENTER", _G["GwRuneTextureFill" .. i], "CENTER", 0, 0)
+                    f.flare:ClearAllPoints()
+                    f.flare:SetPoint("CENTER", fFill, "CENTER", 0, 0)
                     AddToAnimation(
                         "HOLY_POWER_FLARE_ANIMATION",
-                        HOLY_POWER_FLARE_ANIMATION,
+                        1,
                         0,
                         GetTime(),
                         0.5,
                         function()
-                            GwPlayerClassPowerFlare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"]["progress"])
+                            f.flare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"]["progress"])
                         end
                     )
                 end
             )
             RUNE_TIMER_ANIMATIONS[i] = 0
         end
-        _G["GwRuneTexture" .. i]:SetTexCoord(0, 0.5, 0, 1)
+        fTex:SetTexCoord(0, 0.5, 0, 1)
     end
 end
 GW.AddForProfiling("classpowers", "powerRune", powerRune)
 
-local function powerMana()
-    if extra_manabar_loaded then
+local function setDeathKnight(f)
+    local spec = f.gwPlayerSpec
+
+    local fr = f.runeBar
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\runeflash")
+    f.flare:SetWidth(256)
+    f.flare:SetHeight(128)
+    fr:Show()
+
+    local texture = "runes-blood"
+    if spec == 2 then -- frost
+        texture = "runes"
+    elseif spec == 3 then -- unholy
+        texture = "runes-unholy"
+    end
+
+    for i = 1, 6 do
+        local fFill = fr["runeTexFill" .. i]
+        local fTex = fr["runeTex" .. i]
+        fFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\" .. texture)
+        fTex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\" .. texture)
+    end
+
+    f:SetScript("OnEvent", powerRune)
+    powerRune(f, "CLASS_POWER_INIT")
+    f:RegisterEvent("RUNE_POWER_UPDATE")
+
+    return true
+end
+GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
+
+-- SHAMAN
+local function setShaman(f)
+    local spec = f.gwPlayerSpec
+
+    if spec == 1 or spec == 2 then
+        -- ele and enh both use extra mana bar on left
+        setManaBar(f)
+        return true
+    end
+
+    return false
+end
+GW.AddForProfiling("classpowers", "setShaman", setShaman)
+
+-- MAGE
+local function powerArcane(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "ARCANE_CHARGES" then
         return
     end
-    extra_manabar_loaded = true
-    local GwExtraPlayerPowerBar = CreateFrame("Frame", "GwExtraPlayerPowerBar", UIParent, "GwPlayerPowerBar")
-    _G[GwExtraPlayerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()
 
-    GwExtraPlayerPowerBar:SetParent(GwPlayerClassPower)
-    GwExtraPlayerPowerBar:ClearAllPoints()
-    GwExtraPlayerPowerBar:SetPoint("BOTTOMLEFT", GwPlayerClassPower, "BOTTOMLEFT", 0, 5)
-    GwExtraPlayerPowerBar:SetFrameStrata("MEDIUM")
+    local old_power = self.gwPower
+    old_power = old_power or -1
 
-    GwExtraPlayerPowerBar:SetScript(
-        "OnEvent",
-        function(self, event, unit)
-            if unit == "player" then
-                UpdatePowerData(GwExtraPlayerPowerBar, 0, "MANA", "GwExtraPowerBar")
-            end
-        end
-    )
+    local pwr = UnitPower("player", 16)
+    local p = pwr - 1
 
-    _G["GwExtraPlayerPowerBarBarString"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    self.gwPower = pwr
 
-    GwExtraPlayerPowerBar:RegisterEvent("UNIT_POWER_FREQUENT")
-    GwExtraPlayerPowerBar:RegisterEvent("UNIT_MAXPOWER")
-    GwExtraPlayerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self.background:SetTexCoord(0, 1, 0.125 * 3, 0.125 * (3 + 1))
+    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
 
-    UpdatePowerData(GwExtraPlayerPowerBar, 0, "MANA", "GwExtraPowerBar")
-end
-GW.AddForProfiling("classpowers", "powerMana", powerMana)
-
-local function powerArcane()
-    local old_power = CLASS_POWER
-    CLASS_POWER_MAX = UnitPowerMax("player", 16)
-    CLASS_POWER = UnitPower("player", 16)
-    local p = CLASS_POWER - 1
-
-    GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.125 * 3, 0.125 * (3 + 1))
-    GwPlayerClassPowerFill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
-
-    if old_power < CLASS_POWER then
-        HOLY_POWER_FLARE_ANIMATION = 1
-        GwPlayerClassPowerFlare:ClearAllPoints()
-        GwPlayerClassPowerFlare:SetPoint("CENTER", GwPlayerClassPower, "LEFT", (64 * CLASS_POWER) - 32, 0)
-
-        AddToAnimation(
-            "HOLY_POWER_FLARE_ANIMATION",
-            HOLY_POWER_FLARE_ANIMATION,
-            0,
-            GetTime(),
-            2,
-            function()
-                local alpha = animations["HOLY_POWER_FLARE_ANIMATION"]["progress"]
-
-                GwPlayerClassPowerFlare:SetAlpha(alpha)
-                GwPlayerClassPowerFlare:SetRotation(1 * animations["HOLY_POWER_FLARE_ANIMATION"]["progress"])
-            end
-        )
+    if old_power < pwr and event ~= "CLASS_POWER_INIT" then
+        animFlare(self, 64, -32, 2, true)
     end
 end
 GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
-local function loopMongooseAnim()
-    GwMongooseBar.looping = true
-    AddToAnimation(
-        "GW_MONGOOSE_LOOP_ANIMATION",
-        0,
-        1,
-        GetTime(),
-        10,
-        function()
-            local precentage = GwMongooseBar.precentage
+local function setMage(f)
+    local spec = f.gwPlayerSpec
 
-            local cord = precentage + 0.5
-            local cord2 = precentage
+    if spec == 1 then -- arcane
+        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 70)
+        f:SetHeight(64)
+        f:SetWidth(512)
+        f.background:SetHeight(64)
+        f.background:SetWidth(512)
+        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane")
+        f.background:SetTexCoord(0, 1, 0.125 * 3, 0.125 * (3 + 1))
+        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane-flash")
+        f.flare:SetWidth(256)
+        f.flare:SetHeight(256)
+        f.fill:SetHeight(64)
+        f.fill:SetWidth(512)
+        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane")
+        f.background:SetVertexColor(0, 0, 0, 0.5)
 
-            local l = animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"]
+        f:SetScript("OnEvent", powerArcane)
+        powerArcane(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-            local a = 1
-            local a2 = 1
+        return true
+    end
 
-            if animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] < 0.25 then
-                a = lerp(0, 1, animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] / 0.25)
-                a2 = lerp(0, 1, animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] / 0.25)
-            elseif animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] > 0.75 then
-                a = lerp(1, 0, (animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] - 0.75) / 0.25)
-                a2 = lerp(1, 0, (animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] - 0.75) / 0.25)
-            end
+    return false
+end
+GW.AddForProfiling("classpowers", "setMage", setMage)
 
-            local r = 240 / 255
-            local g = 37 / 255
-            local b = 37 / 255
+-- WARLOCK
+local function powerSoulshard(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
+        return
+    end
 
-            GwMongooseBar.bar.texture1:SetTexCoord(0, cord, l, r)
-            GwMongooseBar.bar.texture2:SetTexCoord(0, cord2, l, r)
+    local pwrMax = UnitPowerMax("player", 7)
+    local pwr = UnitPower("player", 7)
 
-            GwMongooseBar.bar.texture1:SetWidth(math.max(1, 262 * precentage))
-            GwMongooseBar.bar.texture2:SetWidth(math.max(1, 262 * precentage))
-            GwMongooseBar.bar.texture1:SetVertexColor(r, g, b, a)
-            GwMongooseBar.bar.texture2:SetVertexColor(r, g, b, a2)
-        end,
-        "noease",
-        function()
-            if GwMongooseBar.precentage > 0 then
-                loopMongooseAnim()
+    self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
+    self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
+end
+GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
+
+local function setWarlock(f)
+    f:SetHeight(32)
+    f:SetWidth(256)
+    f.background:SetHeight(32)
+    f.background:SetWidth(128)
+    f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs-bg")
+    f.fill:SetHeight(32)
+    f.fill:SetWidth(256)
+    f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs")
+
+    f:SetScript("OnEvent", powerSoulshard)
+    powerSoulshard(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+    return true
+end
+GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
+
+-- MONK
+local function powerChi(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "CHI" then
+        return
+    end
+
+    local old_power = self.gwPower
+    old_power = old_power or -1
+
+    local pwrMax = UnitPowerMax("player", 12)
+    local pwr = UnitPower("player", 12)
+    local p = pwr - 1
+
+    self.gwPower = pwr
+
+    self.background:SetTexCoord(0, 1, 0.125 * (pwrMax + 1), 0.125 * (pwrMax + 2))
+    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+
+    if old_power < pwr and event ~= "CLASS_POWER_INIT" then
+        animFlare(self)
+    end
+end
+GW.AddForProfiling("classpowers", "powerChi", powerChi)
+
+local function loopStagger()
+    local f = CPWR_FRAME
+    local fb = f.brewmaster
+    local staggerAmountClamped = math.min(1, fb.debugpre)
+
+    if fb.debugpre == 0 then
+        fb.stagger.blue:Hide()
+        fb.stagger.yellow:Hide()
+        fb.stagger.red:Hide()
+        fb.stagger.indicator:Hide()
+        fb.stagger.indicatorText:Hide()
+    elseif not fb.stagger.blue:IsShown() then
+        fb.stagger.blue:Show()
+        fb.stagger.yellow:Show()
+        fb.stagger.red:Show()
+        fb.stagger.indicator:Show()
+        fb.stagger.indicatorText:Show()
+    end
+
+    fb.stagger.blue:SetVertexColor(1, 1, 1, 1)
+    fb.stagger.yellow:SetVertexColor(1, 1, 1, lerp(0, 1, staggerAmountClamped / 0.5))
+    fb.stagger.red:SetVertexColor(1, 1, 1, lerp(0, 1, (staggerAmountClamped - 0.5) / 0.5))
+
+    fb.stagger.blue:SetTexCoord(0, staggerAmountClamped, 0, 1)
+    fb.stagger.yellow:SetTexCoord(0, staggerAmountClamped, 0, 1)
+    fb.stagger.red:SetTexCoord(0, staggerAmountClamped, 0, 1)
+
+    fb.stagger.blue:SetWidth(staggerAmountClamped * 256)
+    fb.stagger.yellow:SetWidth(staggerAmountClamped * 256)
+    fb.stagger.red:SetWidth(staggerAmountClamped * 256)
+
+    fb.stagger.indicator:SetPoint("LEFT", (staggerAmountClamped * 256) - 13, -6)
+    fb.stagger.indicatorText:SetText(math.floor(fb.debugpre * 100) .. "%")
+end
+GW.AddForProfiling("classpowers", "loopStagger", loopStagger)
+
+local function ironSkin_OnUpdate()
+    local f = CPWR_FRAME
+    local fb = f.brewmaster
+    local precentage = math.min(1, math.max(0, (fb.ironskin.expires - GetTime()) / 23))
+    fb.stagger.ironartwork:SetAlpha(precentage)
+    fb.ironskin.fill:SetTexCoord(0, precentage, 0, 1)
+    fb.ironskin.fill:SetWidth(precentage * 256)
+
+    fb.ironskin.indicator:SetPoint("LEFT", math.min(252, (precentage * 256)) - 13, 19)
+    fb.ironskin.indicatorText:SetText(RoundInt(fb.ironskin.expires - GetTime()) .. "s")
+end
+GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
+
+local function powerStagger(self, event, ...)
+    local unit = select(1, ...)
+    local fb = self.brewmaster
+    if event == nil then
+        fb.debugpre = 0
+        loopStagger()
+        fb.ironskin:Hide()
+        fb.stagger.ironartwork:Hide()
+    end
+
+    if unit == "player" and event == "UNIT_AURA" then
+        local _, _, _, expires = findBuff("player", 215479)
+        if expires ~= nil then
+            fb.ironskin.expires = expires
+            fb.ironskin:SetScript("OnUpdate", ironSkin_OnUpdate)
+            fb.ironskin:Show()
+            fb.stagger.ironartwork:Show()
+        else
+            fb.ironskin:SetScript("OnUpdate", nil)
+            fb.ironskin:Hide()
+            fb.stagger.ironartwork:Hide()
+        end
+        return
+    end
+
+    local pwrMax = UnitHealthMax("player")
+    local pwr = UnitStagger("player")
+    --   CLASS_POWER =  168000
+    local staggarPrec = pwr / pwrMax
+
+    staggarPrec = math.max(0, math.min(staggarPrec, 1))
+
+    fb.debugpre = staggarPrec
+    loopStagger()
+end
+GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
+
+local function setMonk(f)
+    local spec = f.gwPlayerSpec
+
+    if spec == 1 then -- brewmaster
+        f.brewmaster:Show()
+        f.staggerBar.loopValue = 0
+        f.background:SetTexture(nil)
+        f.fill:SetTexture(nil)
+
+        f:SetScript("OnEvent", powerStagger)
+        powerStagger(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_AURA", "player")
+        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+        return true
+    elseif spec == 3 then -- ww
+        f:SetHeight(32)
+        f:SetWidth(256)
+        f.background:SetHeight(32)
+        f.background:SetWidth(320)
+        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi")
+        f.background:SetTexCoord(0, 1, 0.5, 1)
+        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi-flare")
+        f.fill:SetHeight(32)
+        f.fill:SetWidth(256)
+        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi")
+
+        f:SetScript("OnEvent", powerChi)
+        powerChi(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+        return true
+    end
+
+    return false
+end
+GW.AddForProfiling("classpowers", "setMonk", setMonk)
+
+-- DRUID
+local function setDruid(f)
+    local spec = f.gwPlayerSpec
+    local form = f.gwPlayerForm
+
+    -- determine affinity talent
+    local aff1, aff2, aff3
+    _, _, _, aff1, _ = GetTalentInfo(3, 1, 1, false, "player")
+    _, _, _, aff2, _ = GetTalentInfo(3, 2, 1, false, "player")
+    _, _, _, aff3, _ = GetTalentInfo(3, 3, 1, false, "player")
+
+    local barType = "none"
+    if spec == 1 then -- balance
+        if form == 1 and aff1 then
+            -- if in cat form with feral affinity, show combo points
+            barType = "combo"
+        elseif form ~= 4 and form ~= 29 and form ~= 27 and form ~= 3 then
+            -- show mana bar by default except in travel forms
+            barType = "mana"
+        end
+    elseif spec == 2 then -- feral
+        if form == 1 then
+            -- show combo points in cat form
+            barType = "combo"
+        elseif form == 5 then
+            -- show mana bar in bear form
+            barType = "mana"
+        end
+    elseif spec == 3 then -- guardian
+        if form == 1 then
+            if aff2 then
+                -- show combo points in cat form with feral affinity
+                barType = "combo"
             else
-                GwMongooseBar.looping = false
+                -- show mana in cat form without affinity
+                barType = "mana"
             end
+        elseif form == 5 then
+            -- show mana in bear form
+            barType = "mana"
         end
-    )
-end
-GW.AddForProfiling("classpowers", "loopMongooseAnim", loopMongooseAnim)
-
-local function powerMongoose()
-    local old_power = CLASS_POWER
-    CLASS_POWER = 0
-    local found = false
-    for i = 1, 40 do
-        _, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura("player", i)
-        if spellID == 259388 then
-            found = true
-            break
-        end
-    end
-
-    CLASS_POWER_MAX = 6
-
-    if found == true then
-        if count == nil then
-            count = 1
-        end
-
-        CLASS_POWER = count
-
-        local pre = (expires - GetTime()) / duration
-
-        if animations["MONGOOSEBITE_BAR"] ~= nil then
-            animations["MONGOOSEBITE_BAR"]["completed"] = true
-            animations["MONGOOSEBITE_BAR"]["duration"] = 0
-        end
-
-        loopMongooseAnim()
-
-        AddToAnimation(
-            "MONGOOSEBITE_BAR",
-            pre,
-            0,
-            GetTime(),
-            expires - GetTime(),
-            function()
-                GwMongooseBar.precentage = animations["MONGOOSEBITE_BAR"]["progress"]
-                GwMongooseBar.bar:SetValue(animations["MONGOOSEBITE_BAR"]["progress"])
-                GwMongooseBar.bar.spark:ClearAllPoints()
-                GwMongooseBar.bar.spark:SetPoint(
-                    "RIGHT",
-                    GwMongooseBar.bar,
-                    "LEFT",
-                    262 * animations["MONGOOSEBITE_BAR"]["progress"],
-                    0
-                )
-                GwMongooseBar.bar.spark:SetWidth(
-                    math.min(15, math.max(1, animations["MONGOOSEBITE_BAR"]["progress"] * 262))
-                )
-            end,
-            "noease"
-        )
-
-        if CLASS_POWER > old_power then
-            AddToAnimation(
-                "MONGOOSEBITE_TEXT",
-                1,
-                0,
-                GetTime(),
-                0.5,
-                function()
-                    GwMongooseBar.flash:SetAlpha(animations["MONGOOSEBITE_TEXT"]["progress"])
-                end
-            )
-        end
-    end
-
-    GwMongooseBar.count:SetText(CLASS_POWER)
-end
-GW.AddForProfiling("classpowers", "powerMongoose", powerMongoose)
-
-local function powerFrenzy()
-    local old_power = CLASS_POWER
-    CLASS_POWER = 0
-    local found = false
-    for i = 1, 40 do
-        _, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura("pet", i)
-        if spellID == 272790 then
-            found = true
-            break
-        end
-    end
-
-    CLASS_POWER_MAX = 3
-
-    if found == true then
-        if count == nil then
-            count = 1
-        end
-
-        CLASS_POWER = count
-
-        local pre = (expires - GetTime()) / duration
-
-        if animations["MONGOOSEBITE_BAR"] ~= nil then
-            animations["MONGOOSEBITE_BAR"]["completed"] = true
-            animations["MONGOOSEBITE_BAR"]["duration"] = 0
-        end
-
-        loopMongooseAnim()
-
-        AddToAnimation(
-            "MONGOOSEBITE_BAR",
-            pre,
-            0,
-            GetTime(),
-            expires - GetTime(),
-            function()
-                GwMongooseBar.precentage = animations["MONGOOSEBITE_BAR"]["progress"]
-                GwMongooseBar.bar:SetValue(animations["MONGOOSEBITE_BAR"]["progress"])
-                GwMongooseBar.bar.spark:ClearAllPoints()
-                GwMongooseBar.bar.spark:SetPoint(
-                    "RIGHT",
-                    GwMongooseBar.bar,
-                    "LEFT",
-                    262 * animations["MONGOOSEBITE_BAR"]["progress"],
-                    0
-                )
-                GwMongooseBar.bar.spark:SetWidth(
-                    math.min(15, math.max(1, animations["MONGOOSEBITE_BAR"]["progress"] * 262))
-                )
-            end,
-            "noease"
-        )
-
-        if CLASS_POWER > old_power then
-            AddToAnimation(
-                "MONGOOSEBITE_TEXT",
-                1,
-                0,
-                GetTime(),
-                0.5,
-                function()
-                    GwMongooseBar.flash:SetAlpha(animations["MONGOOSEBITE_TEXT"]["progress"])
-                end
-            )
-        end
-    end
-
-    GwMongooseBar.count:SetText(CLASS_POWER)
-end
-GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
-
-local function loopRage()
-    if GwFocusRage.looping ~= nil and GwFocusRage.looping ~= false then
-        return
-    end
-
-    GwFocusRage.looping = true
-
-    AddToAnimation(
-        "GW_MONGOOSE_LOOP_ANIMATION",
-        0,
-        1,
-        GetTime(),
-        2,
-        function()
-            local a = lerp(1, 0, (animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] - 0.5) / 0.5)
-
-            if animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] < 0.5 then
-                a = lerp(0, 1, animations["GW_MONGOOSE_LOOP_ANIMATION"]["progress"] / 0.5)
-            end
-            if CLASS_POWER < 3 then
-                a = 0
-            end
-
-            GwFocusRage.glow:SetAlpha(a)
-            GwFocusRage.highlight:SetAlpha(a)
-        end,
-        nil,
-        function()
-            GwFocusRage.looping = false
-
-            if GwFocusRage.bar:GetValue() == 3 then
-                loopRage()
-            end
-        end
-    )
-end
-GW.AddForProfiling("classpowers", "loopRage", loopRage)
-
-local function powerRage(event, unit)
-    if event ~= "UNIT_AURA" or unit ~= "player" then
-        return
-    end
-
-    local found = false
-    local old_power = CLASS_POWER
-    CLASS_POWER = 0
-    local count, spellID = nil
-
-    for i = 1, 40 do
-        _, _, count, _, _, _, _, _, _, spellID, _ = UnitAura("player", i)
-        if spellID == 207982 then
-            found = true
-            break
-        end
-    end
-
-    if count == nil or found == false then
-        count = 0
-    end
-    CLASS_POWER = count
-    local animationSpeed = 0.2
-    if CLASS_POWER <= 0 then
-        animationSpeed = 0
-    end
-
-    if CLASS_POWER >= 3 then
-        loopRage()
-    end
-
-    AddToAnimation(
-        "FOCUS_RAGE_BAR",
-        old_power,
-        CLASS_POWER,
-        GetTime(),
-        animationSpeed,
-        function()
-            GwFocusRage.bar:SetValue(animations["FOCUS_RAGE_BAR"]["progress"])
-        end
-    )
-end
-GW.AddForProfiling("classpowers", "powerRage", powerRage)
-
-local function loopEnrage()
-    GwEnrageBar.looping = true
-    AddToAnimation(
-        "GW_ENRAGE_LOOP_ANIMATION",
-        0,
-        1,
-        GetTime(),
-        10,
-        function()
-            local precentage = GwEnrageBar.precentage
-
-            local cord = precentage + 0.5
-            local cord2 = precentage
-
-            local l = animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"]
-
-            local a = 1
-            local a2 = 1
-
-            if animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] < 0.25 then
-                a = lerp(0, 1, animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] / 0.25)
-                a2 = lerp(0, 1, animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] / 0.25)
-            elseif animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] > 0.75 then
-                a = lerp(1, 0, (animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] - 0.75) / 0.25)
-                a2 = lerp(1, 0, (animations["GW_ENRAGE_LOOP_ANIMATION"]["progress"] - 0.75) / 0.25)
-            end
-
-            local r = 240 / 255
-            local g = 37 / 255
-            local b = 37 / 255
-
-            GwEnrageBar.bar.texture1:SetTexCoord(0, cord, l, r)
-            GwEnrageBar.bar.texture2:SetTexCoord(0, cord2, l, r)
-
-            GwEnrageBar.bar.texture1:SetWidth(math.max(1, 262 * precentage))
-            GwEnrageBar.bar.texture2:SetWidth(math.max(1, 262 * precentage))
-            GwEnrageBar.bar.texture1:SetVertexColor(r, g, b, a)
-            GwEnrageBar.bar.texture2:SetVertexColor(r, g, b, a2)
-        end,
-        "noease",
-        function()
-            if GwEnrageBar.precentage > 0 then
-                loopEnrage()
+    elseif spec == 4 then -- resto
+        if form == 1 then
+            if aff2 then
+                -- show combo points in cat form with feral affinity
+                barType = "combo"
             else
-                GwEnrageBar.looping = false
+                -- show mana in cat form without affinity
+                barType = "mana"
             end
-        end
-    )
-end
-GW.AddForProfiling("classpowers", "loopEnrage", loopEnrage)
-
-local function powerEnrage()
-    local found = false
-    local duration, expires, spellID
-    for i = 1, 40 do
-        _, _, _, _, duration, expires, _, _, _, spellID, _ = UnitAura("player", i)
-        if spellID == 184362 then
-            found = true
-            break
+        elseif form == 5 then
+            -- show mana in bear form
+            barType = "mana"
         end
     end
 
-    if found == true then
-        local pre = (expires - GetTime()) / duration
-
-        if animations["ENRAGE_BAR"] ~= nil then
-            animations["ENRAGE_BAR"]["completed"] = true
-            animations["ENRAGE_BAR"]["duration"] = 0
-        end
-
-        loopEnrage()
-
-        AddToAnimation(
-            "ENRAGE_BAR",
-            pre,
-            0,
-            GetTime(),
-            expires - GetTime(),
-            function()
-                GwEnrageBar.precentage = animations["ENRAGE_BAR"]["progress"]
-                GwEnrageBar.bar:SetValue(animations["ENRAGE_BAR"]["progress"])
-                GwEnrageBar.bar.spark:ClearAllPoints()
-                GwEnrageBar.bar.spark:SetPoint(
-                    "RIGHT",
-                    GwEnrageBar.bar,
-                    "LEFT",
-                    310 * animations["ENRAGE_BAR"]["progress"],
-                    0
-                )
-                GwEnrageBar.bar.spark:SetWidth(
-                    math.min(15, math.max(1, animations["ENRAGE_BAR"]["progress"] * 310))
-                )
-            end,
-            "noease"
-        )
-
+    if barType == "combo" then
+        setComboBar(f)
+        return true
+    elseif barType == "mana" then
+        setManaBar(f)
+        return true
+    else
+        return false
     end
 end
-GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
+GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
-setBarType = function()
-    GwPlayerClassPower:Show()
-    local s = GetShapeshiftFormID()
+local function selectType(f)
+    f:SetScript("OnEvent", nil)
+    f:UnregisterAllEvents()
 
-    if CLASS_POWERS[PLAYER_CLASS] == nil or CLASS_POWERS[PLAYER_CLASS][PLAYER_SPECIALIZATION] == nil then
-        GwPlayerClassPower:Hide()
-        return
+    local spec = GetSpecialization()
+    f.gwPlayerSpec = spec
+    local pClass = f.gwPlayerClass
+
+    -- hide all class power sub-pieces and reset anything needed
+    f.runeBar:Hide()
+    f.decayCounter:Hide()
+    f.brewmaster:Hide()
+    f.staggerBar:Hide()
+    f.disc:Hide()
+    f.decay:Hide()
+    f.exbar:Hide()
+    f.gwPower = -1
+    local showBar = false
+
+    if pClass == 1 then
+        showBar = setWarrior(f)
+    elseif pClass == 2 then
+        showBar = setPaladin(f)
+    elseif pClass == 3 then
+        showBar = setHunter(f)
+    elseif pClass == 4 then
+        showBar = setRogue(f)
+    elseif pClass == 5 then
+        showBar = setPriest(f)
+    elseif pClass == 6 then
+        showBar = setDeathKnight(f)
+    elseif pClass == 7 then
+        showBar = setShaman(f)
+    elseif pClass == 8 then
+        showBar = setMage(f)
+    elseif pClass == 9 then
+        showBar = setWarlock(f)
+    elseif pClass == 10 then
+        showBar = setMonk(f)
+    elseif pClass == 11 then
+        showBar = setDruid(f)
     end
 
-    if PLAYER_CLASS == 1 then
-        if PLAYER_SPECIALIZATION == 1 then
-            local _, _, _, selected, _ = GetTalentInfo(6, 3, 1, false, "player")
-            if selected then
-                GwFocusRage:Show()
-                GwPlayerClassPowerBackground:SetTexture(nil)
-                GwPlayerClassPowerFill:SetTexture(nil)
-                return
-            end
-        elseif PLAYER_SPECIALIZATION == 2 then
-            GwEnrageBar:Show()
-            GwEnrageBar.looping = false
-            GwEnrageBar.precentage = 0
-            GwPlayerClassPowerBackground:SetTexture(nil)
-            GwPlayerClassPowerFill:SetTexture(nil)
-            GwEnrageBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
-            GwEnrageBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
-            GwEnrageBar.bar:SetValue(0)
+    if showBar then
+        f:Show()
+    else
+        f:Hide()
+    end
+end
+GW.AddForProfiling("classpowers", "selectType", selectType)
+
+local function barChange_OnEvent(self, event, ...)
+    local f = self:GetParent()
+    if event == "UPDATE_SHAPESHIFT_FORM" then
+        -- this event fires often when form hasn't changed; check old form against current form
+        -- to prevent touching the bar unnecessarily (which causes annoying anim flickering)
+        local s = GetShapeshiftFormID()
+        if f.gwPlayerForm == s then
             return
         end
-    end
-    GwFocusRage:Hide()
-    GwEnrageBar:Hide()
-    if PLAYER_CLASS == 2 then
-        GwPlayerClassPowerBackground:SetHeight(32)
-        GwPlayerClassPowerBackground:SetWidth(320)
-
-        GwPlayerClassPower:SetHeight(32)
-        GwPlayerClassPower:SetWidth(320)
-        GwPlayerClassPowerBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower")
-        GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.5, 1)
-
-        GwPlayerClassPowerFill:SetHeight(32)
-        GwPlayerClassPowerFill:SetWidth(320)
-        GwPlayerClassPowerFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower")
-        return
-    end
-    if PLAYER_CLASS == 3 then
-        if PLAYER_SPECIALIZATION == 1 then
-            GW.Debug("show mongoose/frenzy bar")
-            GwMongooseBar:Show()
-            GwMongooseBar.looping = false
-            GwMongooseBar.precentage = 0
-            GwPlayerClassPowerBackground:SetTexture(nil)
-            GwPlayerClassPowerFill:SetTexture(nil)
-            GwMongooseBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
-            GwMongooseBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
-            GwMongooseBar.bar:SetValue(0)
-            return
-        elseif PLAYER_SPECIALIZATION == 3 then
-            local _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player")
-            if selected then
-                GwMongooseBar:Show()
-                GwMongooseBar.looping = false
-                GwMongooseBar.precentage = 0
-                GwPlayerClassPowerBackground:SetTexture(nil)
-                GwPlayerClassPowerFill:SetTexture(nil)
-                GwMongooseBar.bar.texture1:SetVertexColor(1, 1, 1, 0)
-                GwMongooseBar.bar.texture2:SetVertexColor(1, 1, 1, 0)
-                GwMongooseBar.bar:SetValue(0)
-                return
-            end
-        end
-    end
-    if PLAYER_CLASS == 4 or PLAYER_CLASS == 11 and s == 1 then
-        if GwExtraPlayerPowerBar ~= nil then
-            GwExtraPlayerPowerBar:Hide()
-        end
-
-        GwPlayerClassPowerBackground:SetHeight(32)
-        GwPlayerClassPowerBackground:SetWidth(256)
-
-        GwPlayerClassPower:SetHeight(40)
-        GwPlayerClassPower:SetWidth(320)
-        GwPlayerClassPowerFlare:SetWidth(128)
-        GwPlayerClassPowerFlare:SetHeight(128)
-        GwPlayerClassPowerBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-bg")
-        GwPlayerClassPowerFlare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-flash")
-        GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.5, 1)
-
-        GwPlayerClassPowerFill:SetHeight(40)
-        GwPlayerClassPowerFill:SetWidth(320)
-        GwPlayerClassPowerFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo")
-        return
+        f.gwPlayerForm = s
     end
 
-    if PLAYER_CLASS == 5 then
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        return
-    end
-    if PLAYER_CLASS == 6 then
-        GwRuneBar:Show()
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        GwPlayerClassPowerFlare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\runeflash")
-        GwPlayerClassPowerFlare:SetWidth(256)
-        GwPlayerClassPowerFlare:SetHeight(128)
-
-        local texture = "runes-blood"
-
-        if PLAYER_SPECIALIZATION == 2 then
-            texture = "runes"
-        elseif PLAYER_SPECIALIZATION == 3 then
-            texture = "runes-unholy"
-        end
-        for i = 1, 6 do
-            _G["GwRuneTextureFill" .. i]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\" .. texture)
-            _G["GwRuneTexture" .. i]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\" .. texture)
-        end
-
-        return
-    end
-    if PLAYER_CLASS == 7 then
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        return
-    end
-    if PLAYER_CLASS == 8 then
-        GwPlayerClassPower:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 70)
-        GwPlayerClassPowerBackground:SetHeight(64)
-        GwPlayerClassPowerBackground:SetWidth(512)
-
-        GwPlayerClassPower:SetHeight(64)
-        GwPlayerClassPower:SetWidth(512)
-        GwPlayerClassPowerBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane")
-        GwPlayerClassPowerFlare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane-flash")
-        GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.125 * 3, 0.125 * (3 + 1))
-
-        GwPlayerClassPowerFlare:SetWidth(256)
-        GwPlayerClassPowerFlare:SetHeight(256)
-
-        GwPlayerClassPowerFill:SetHeight(64)
-        GwPlayerClassPowerFill:SetWidth(512)
-        GwPlayerClassPowerFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane")
-
-        GwPlayerClassPowerBackground:SetVertexColor(0, 0, 0, 0.5)
-        return
-    end
-
-    if PLAYER_CLASS == 9 then
-        GwPlayerClassPowerBackground:SetHeight(32)
-        GwPlayerClassPowerBackground:SetWidth(128)
-        GwPlayerClassPower:SetHeight(32)
-        GwPlayerClassPower:SetWidth(256)
-        GwPlayerClassPowerBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs-bg")
-
-        GwPlayerClassPowerFill:SetHeight(32)
-        GwPlayerClassPowerFill:SetWidth(256)
-        GwPlayerClassPowerFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs")
-        return
-    end
-
-    if PLAYER_CLASS == 10 and PLAYER_SPECIALIZATION == 1 then
-        GwBrewmaster:Show()
-
-        GwStaggerBar.loopValue = 0
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        return
-    end
-    if PLAYER_CLASS == 10 and PLAYER_SPECIALIZATION == 3 then
-        GwBrewmaster:Hide()
-        GwPlayerClassPowerBackground:SetHeight(32)
-        GwPlayerClassPowerBackground:SetWidth(320)
-
-        GwPlayerClassPower:SetHeight(32)
-        GwPlayerClassPower:SetWidth(256)
-        GwPlayerClassPowerBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi")
-        GwPlayerClassPowerFlare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi-flare")
-        GwPlayerClassPowerBackground:SetTexCoord(0, 1, 0.5, 1)
-
-        GwPlayerClassPowerFill:SetHeight(32)
-        GwPlayerClassPowerFill:SetWidth(256)
-        GwPlayerClassPowerFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi")
-        return
-    end
-
-    if PLAYER_CLASS == 11 and s == 5 or s == 31 then
-        if GwExtraPlayerPowerBar ~= nil then
-            GwExtraPlayerPowerBar:Show()
-        end
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        return
-    end
-
-    if PLAYER_CLASS == 11 and PLAYER_SPECIALIZATION == 1 then
-        if GwExtraPlayerPowerBar ~= nil then
-            GwExtraPlayerPowerBar:Show()
-        end
-        GwPlayerClassPowerBackground:SetTexture(nil)
-        GwPlayerClassPowerFill:SetTexture(nil)
-        return
-    end
-    GwPlayerClassPower:Hide()
+    selectType(f)
 end
-GW.AddForProfiling("classpowers", "setBarType", setBarType)
-
-CLASS_POWERS[1] = {}
-CLASS_POWERS[1][1] = powerRage
-CLASS_POWERS[1][2] = powerEnrage
-CLASS_POWERS[1][3] = powerRage
-
-CLASS_POWERS[2] = {}
-CLASS_POWERS[2][3] = powerHoly
-
-CLASS_POWERS[3] = {}
-CLASS_POWERS[3][1] = powerFrenzy
-CLASS_POWERS[3][3] = powerMongoose
-
-CLASS_POWERS[6] = {}
-CLASS_POWERS[6][1] = powerRune
-CLASS_POWERS[6][2] = powerRune
-CLASS_POWERS[6][3] = powerRune
-
-CLASS_POWERS[4] = {}
-CLASS_POWERS[4][1] = powerCombo
-CLASS_POWERS[4][2] = powerCombo
-CLASS_POWERS[4][3] = powerCombo
-
-CLASS_POWERS[5] = {}
-CLASS_POWERS[5][3] = powerMana
-
-CLASS_POWERS[7] = {}
-CLASS_POWERS[7][1] = powerMana
-CLASS_POWERS[7][2] = powerMana
-
-CLASS_POWERS[8] = {}
-CLASS_POWERS[8][1] = powerArcane
-
-CLASS_POWERS[9] = {}
-CLASS_POWERS[9][1] = powerSoulshard
-CLASS_POWERS[9][2] = powerSoulshard
-CLASS_POWERS[9][3] = powerSoulshard
-
-CLASS_POWERS[10] = {}
-CLASS_POWERS[10][1] = powerStagger
-CLASS_POWERS[10][3] = powerChi
-
-CLASS_POWERS[11] = {}
-CLASS_POWERS[11][1] = powerMana
-CLASS_POWERS[11][2] = powerMana
-CLASS_POWERS[11][3] = powerMana
-CLASS_POWERS[11][4] = powerMana
 
 local function LoadClassPowers()
-    local _, _, playerClass = UnitClass("player")
+    local _, _, pClass = UnitClass("player")
 
-    PLAYER_CLASS = playerClass
+    local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
+    CPWR_FRAME = cpf
 
-    local classPowerFrame = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
-    GwPlayerClassPower:SetScript("OnEvent", updatePower)
+    cpf.gwPlayerClass = pClass
 
-    GwPlayerClassPower:RegisterEvent("UNIT_POWER_FREQUENT")
-    GwPlayerClassPower:RegisterEvent("UNIT_MAXPOWER")
-    GwPlayerClassPower:RegisterEvent("RUNE_POWER_UPDATE")
-    GwPlayerClassPower:RegisterEvent("UNIT_AURA")
+    -- create an extra mana power bar that is used sometimes
+    local exbar = CreateFrame("Frame", nil, cpf, "GwPlayerPowerBar")
+    cpf.exbar = exbar
+    exbar.candy.spark:ClearAllPoints()
+    exbar:ClearAllPoints()
+    exbar:SetPoint("BOTTOMLEFT", cpf, "BOTTOMLEFT", 0, 5)
+    exbar:SetFrameStrata("MEDIUM")
+    exbar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
 
-    classPowerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    classPowerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    classPowerFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    classPowerFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    -- set a bunch of other init styling stuff
+    cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+    cpf.brewmaster.debugpre = 0
+    cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 11)
+    cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 11)
+    cpf.brewmaster.ironskin.expires = 0
+    cpf.staggerBar.value = 0
+    cpf.staggerBar.spark = cpf.staggerBar.bar.spark
+    cpf.staggerBar.texture1 = cpf.staggerBar.bar.texture1
+    cpf.staggerBar.texture2 = cpf.staggerBar.bar.texture2
+    cpf.staggerBar.fill = cpf.staggerBar.bar.fill
+    cpf.staggerBar.fill:SetVertexColor(59 / 255, 173 / 255, 231 / 255)
+    cpf.disc.bar.overlay:SetModel("spells/cfx_priest_purgethewicked_statechest.m2")
+    cpf.disc.bar.overlay:SetPosition(0, 0, 2)
+    cpf.disc.bar.overlay:SetPosition(0, 0, 0)
 
-    selectType()
-    updatePower(GwPlayerClassPower, "PLAYER_ENTERING_WORLD", "player")
+    cpf.decay:SetScript("OnEvent", barChange_OnEvent)
+    cpf.decay:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    cpf.decay:RegisterEvent("PLAYER_ENTERING_WORLD")
+    cpf.decay:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    cpf.decay:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
-    GwMongooseBar.texture1 = GwMongooseBar.bar.texture1
-    GwMongooseBar.texture2 = GwMongooseBar.bar.texture2
-    GwMongooseBar.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+    cpf.gwPlayerForm = GetShapeshiftFormID()
 
-    GwBrewmaster.debugpre = 0
-    GwBrewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 11)
-    GwBrewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 11)
-    GwBrewmaster.ironskin.expires = 0
-
-    GwStaggerBar.value = 0
-    GwStaggerBar.spark = GwStaggerBar.bar.spark
-    GwStaggerBar.texture1 = GwStaggerBar.bar.texture1
-    GwStaggerBar.texture2 = GwStaggerBar.bar.texture2
-    GwStaggerBar.fill = GwStaggerBar.bar.fill
-    GwStaggerBar.fill:SetVertexColor(59 / 255, 173 / 255, 231 / 255)
-
-    GwDiscPriest.bar.overlay:SetModel("spells/cfx_priest_purgethewicked_statechest.m2")
-    GwDiscPriest.bar.overlay:SetPosition(0, 0, 2)
-    GwDiscPriest.bar.overlay:SetPosition(0, 0, 0)
-
-    GwFocusRage.highlight = GwFocusRage.bar.highlight
-    GwEnrageBar.texture1 = GwEnrageBar.bar.texture1
-    GwEnrageBar.texture2 = GwEnrageBar.bar.texture2
-
-    -- show/hide stuff with override bar
     OverrideActionBar:HookScript(
         "OnShow",
         function()
-            classPowerFrame:SetAlpha(0)
+            cpf:SetAlpha(0)
         end
     )
     OverrideActionBar:HookScript(
         "OnHide",
         function()
-            classPowerFrame:SetAlpha(1)
+            cpf:SetAlpha(1)
         end
     )
 end
