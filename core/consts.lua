@@ -6,6 +6,7 @@ GW.PowerBarColorCustom = PowerBarColorCustom
 PowerBarColorCustom["MANA"] = {r = 37 / 255, g = 133 / 255, b = 240 / 255}
 PowerBarColorCustom["RAGE"] = {r = 240 / 255, g = 66 / 255, b = 37 / 255}
 PowerBarColorCustom["ENERGY"] = {r = 240 / 255, g = 200 / 255, b = 37 / 255}
+PowerBarColorCustom["POWER_TYPE_ENERGY"] = PowerBarColorCustom["ENERGY"]
 PowerBarColorCustom["LUNAR_POWER"] = {r = 130 / 255, g = 172 / 255, b = 230 / 255}
 PowerBarColorCustom["RUNIC_POWER"] = {r = 37 / 255, g = 214 / 255, b = 240 / 255}
 PowerBarColorCustom["FOCUS"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
@@ -13,6 +14,12 @@ PowerBarColorCustom["FURY"] = {r = 166 / 255, g = 37 / 255, b = 240 / 255}
 PowerBarColorCustom["PAIN"] = {r = 255/255, g = 156/255, b = 0}
 PowerBarColorCustom["MAELSTROM"] = {r = 0.00, g = 0.50, b = 1.00}
 PowerBarColorCustom["INSANITY"] = {r = 0.40, g = 0, b = 0.80}
+PowerBarColorCustom["CHI"] = {r = 0.71, g = 1.0, b = 0.92}
+
+-- vehicle colors
+PowerBarColorCustom["AMMOSLOT"] = {r = 0.80, g = 0.60, b = 0.00}
+PowerBarColorCustom["FUEL"] = {r = 0.0, g = 0.55, b = 0.5}
+PowerBarColorCustom["STAGGER"] = {r = 0.52, g = 1.0, b = 0.52}
 
 local DEBUFF_COLOR = {}
 GW.DEBUFF_COLOR = DEBUFF_COLOR

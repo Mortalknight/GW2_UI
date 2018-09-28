@@ -30,7 +30,7 @@ end
 GW.AddForProfiling("bossFrames", "updateBoss_Health", updateBoss_Health)
 
 local function updateBoss_Power(self)
-    local powerType, powerToken, _ = UnitPowerType(self.unit)
+    local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
     local powerPrecentage = 0
@@ -50,6 +50,8 @@ local function updateBoss_Power(self)
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    else
+        self.power:SetStatusBarColor(altR, altG, altB)
     end
 
     self.power:SetValue(powerPrecentage)
@@ -57,8 +59,10 @@ end
 GW.AddForProfiling("bossFrames", "updateBoss_Power", updateBoss_Power)
 
 local function updateBoss_Name(self)
+    local guidBoss = UnitGUID(self.unit)
+    local guidTarget = UnitGUID("target")
     self.name:SetText(UnitName(self.unit))
-    if UnitName(self.unit) == UnitName("target") then
+    if guidBoss == guidTarget then
         self.name:SetTextColor(255, 0, 0)
     else
         self.name:SetTextColor(1, 1, 1)

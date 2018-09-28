@@ -542,7 +542,7 @@ local function updateQuest(block, questWatchId)
         block.clickHeader:SetScript(
             "OnClick",
             function()
-                updatePOI(questID, questLogIndex)
+                QuestLogPopupDetailFrame_Show(questLogIndex)
             end
         )
         block:SetScript(
