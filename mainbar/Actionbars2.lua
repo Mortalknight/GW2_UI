@@ -939,7 +939,7 @@ local function multiButtons_OnUpdate(self, elapsed, testRange)
 end
 GW.AddForProfiling("Actionbars2", "multiButtons_OnUpdate", multiButtons_OnUpdate)
 
-local updateCap = 60 / 1000 -- cap updates to 60 FPS
+local updateCap = 1 / 60 -- cap updates to 60 FPS
 actionBar_OnUpdate = function(self, elapsed)
     local testRange = false
     local testFade = false

@@ -439,7 +439,14 @@ local function LoadMinimap()
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
     GwMapCoords.Coords:SetText("n/a")
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
-    local MapCoordsMiniMap_OnUpdate = function(self)
+    GwMapCoords.elapsedTimer = -1
+    local updateCap = 1 / 5 -- cap coord update to 5 FPS
+    local MapCoordsMiniMap_OnUpdate = function(self, elapsed)
+        self.elapsedTimer = self.elapsedTimer - elapsed
+        if self.elapsedTimer > 0 then
+            return
+        end
+        self.elapsedTimer = updateCap
         local posX, posY = MapPositionToXY("player")
         if (posX == 0 and posY == 0) then
             self.Coords:SetText("n/a")
