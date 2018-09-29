@@ -313,7 +313,7 @@
 
     </Button>
 
-    <Frame name="GwPlayerPowerBar" parent="UIParent" virtual="true">
+    <Frame name="GwPlayerPowerBar" virtual="true">
         <Size x="318" y="20"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86"></Anchor>
