@@ -15,7 +15,6 @@ local AddToClique = GW.AddToClique
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
-local GW_CURRENT_HIGHLIGHT_FRAME = nil
 local realmid_Player
 
 local function hideBlizzardRaidFrame()
@@ -159,8 +158,7 @@ local function setUnitName(self)
     nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t "
     nameRoleIcon["NONE"] = ""
 
-    local guid = UnitGUID(self.unit)
-    local realmid = string.match(guid, "^Player%-(%d+)")
+    local realmid = string.match(self.guid, "^Player%-(%d+)")
     local guid_Player = UnitGUID("Player")
     if guid_Player ~= nil then
         realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
@@ -209,11 +207,13 @@ end
 GW.AddForProfiling("raidframes", "setUnitName", setUnitName)
 
 local function highlightTargetFrame(self)
-    if GW_CURRENT_HIGHLIGHT_FRAME ~= nil then
-        GW_CURRENT_HIGHLIGHT_FRAME.targetHighlight:SetVertexColor(0, 0, 0, 1)
+    local guidTarget = UnitGUID("target")
+
+    if self.guid == guidTarget then
+        self.targetHighlight:SetVertexColor(1, 1, 1, 1)
+    else
+        self.targetHighlight:SetVertexColor(0, 0, 0, 1)
     end
-    GW_CURRENT_HIGHLIGHT_FRAME = self
-    self.targetHighlight:SetVertexColor(1, 1, 1, 1)
 end
 GW.AddForProfiling("raidframes", "highlightTargetFrame", highlightTargetFrame)
 
@@ -558,10 +558,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         updateAwayData(self)
     end
 
-    if event == "PLAYER_TARGET_CHANGED" and UnitIsUnit("target", self.unit) then
-        highlightTargetFrame(self)
-    end
-    if event == "UNIT_TARGET" and unit == "player" and UnitIsUnit("target", self.unit) then
+    if event == "PLAYER_TARGET_CHANGED" then
         highlightTargetFrame(self)
     end
     if event == "UNIT_NAME_UPDATE" and unit == self.unit then
@@ -850,6 +847,7 @@ local function createRaidFrame(registerUnit, index)
     end
 
     frame.unit = registerUnit
+    frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
     frame.targetmarker = GetRaidTargetIndex(frame.unit)
     frame.index = index
