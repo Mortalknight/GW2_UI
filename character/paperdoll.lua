@@ -6,6 +6,7 @@ local Debug = GW.Debug
 --local CHARACTER_PANEL_OPEN
 
 local fmMenu
+local hideCharframe = true
 
 local function characterPanelToggle(frame)
     fmMenu:Hide()
@@ -129,14 +130,17 @@ local function LoadPaperDoll(tabContainer)
     nextAnchor = fmMenu.titlesMenu
     addAddonButton("Pawn", nil, PawnButton, nextShadow, nextAnchor, PawnUIShow)
     addAddonButton("Clique", GW.GetSetting("USE_TALENT_WINDOW"), CliqueButton, nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
-    addAddonButton("Outfitter", GW.GetSetting("USE_CHARACTER_WINDOW"), OutfitterButton, nextShadow, nextAnchor, function() Outfitter:OpenUI() end)
+    addAddonButton("Outfitter", GW.GetSetting("USE_CHARACTER_WINDOW"), OutfitterButton, nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
 
-    --CharacterFrame:SetScript(
-        --"OnShow",
-        --function()
-            --HideUIPanel(CharacterFrame)
-        --end
-    --)
+    CharacterFrame:SetScript(
+        "OnShow",
+        function()
+            if hideCharframe then
+                HideUIPanel(CharacterFrame)
+            end
+            hideCharframe = true
+        end
+    )
 
     CharacterFrame:UnregisterAllEvents()
 
