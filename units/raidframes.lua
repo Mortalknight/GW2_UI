@@ -158,7 +158,8 @@ local function setUnitName(self)
     nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t "
     nameRoleIcon["NONE"] = ""
 
-    local realmid = string.match(self.guid, "^Player%-(%d+)")
+    local guid = UnitGUID(self.unit)
+    local realmid = string.match(guid, "^Player%-(%d+)") 
     local guid_Player = UnitGUID("Player")
     if guid_Player ~= nil then
         realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
