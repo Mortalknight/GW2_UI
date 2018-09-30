@@ -26,6 +26,7 @@ local function updateBoss_Health(self)
     end
 
     self.health:SetValue(healthPrecentage)
+    self.health.value:SetText(GW.RoundInt(healthPrecentage * 100) .. "%")
 end
 GW.AddForProfiling("bossFrames", "updateBoss_Health", updateBoss_Health)
 
@@ -59,10 +60,11 @@ end
 GW.AddForProfiling("bossFrames", "updateBoss_Power", updateBoss_Power)
 
 local function updateBoss_Name(self)
-    local guidBoss = UnitGUID(self.unit)
+    --local guidBoss = UnitGUID(self.unit)
     local guidTarget = UnitGUID("target")
+
     self.name:SetText(UnitName(self.unit))
-    if guidBoss == guidTarget then
+    if self.guid == guidTarget then
         self.name:SetTextColor(255, 0, 0)
     else
         self.name:SetTextColor(1, 1, 1)
@@ -71,12 +73,12 @@ end
 GW.AddForProfiling("bossFrames", "updateBoss_Name", updateBoss_Name)
 
 local function bossFrame_OnEvent(self, event, unit)
-    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH") and unit == self.unit then
+    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH") then
         updateBoss_Health(self)
         return
     end
 
-    if (event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT") and unit == self.unit then
+    if (event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT") then
         updateBoss_Power(self)
         return
     end
@@ -106,6 +108,7 @@ local function registerFrame(i)
     targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
     targetF.unit = debug_unit_Track
+    targetF.guid = UnitGUID(targetF.unit)
     targetF:SetAttribute("unit", debug_unit_Track)
 
     targetF:SetAttribute("*type1", "target")
@@ -131,10 +134,10 @@ local function registerFrame(i)
         TRACKER_TYPE_COLOR["BOSS"].b
     )
 
-    targetF:RegisterEvent("UNIT_MAXHEALTH")
-    targetF:RegisterEvent("UNIT_HEALTH")
-    targetF:RegisterEvent("UNIT_MAXPOWER")
-    targetF:RegisterEvent("UNIT_POWER_FREQUENT")
+    targetF:RegisterUnitEvent("UNIT_MAXHEALTH", targetF.unit)
+    targetF:RegisterUnitEvent("UNIT_HEALTH", targetF.unit)
+    targetF:RegisterUnitEvent("UNIT_MAXPOWER", targetF.unit)
+    targetF:RegisterUnitEvent("UNIT_POWER_FREQUENT", targetF.unit)
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -160,6 +163,7 @@ local function registerFrame(i)
             compassData["TITLE"] = UnitName(self.unit)
 
             AddTrackerNotification(compassData)
+            self.guid = UnitGUID(self.unit)
             updateBoss_Health(self)
             updateBoss_Power(self)
             updateBoss_Name(self)
