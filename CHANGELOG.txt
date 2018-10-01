@@ -3,9 +3,14 @@
 NEW
     - Add frenzy counter for Beast Mastery Hunter's class power
     - Protection Paladins and Warriors now have an active damage reduction class power bar
+    - Add power bar to boss frames
+    - Add a new LFG icon animation
+    - Add a new health globe animation
+
 
 FIXED
     - Druid class power bars should behave more cleanly, especially when shape shifting and with affinities
+    - Fix a raid frame target border issue
 
 MISCELLANEOUS
     - Major refactor of the class power system mainly for performance reasons
