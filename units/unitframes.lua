@@ -978,10 +978,10 @@ local function target_OnEvent(self, event, unit)
     
     if
         (event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_STOP" or
-            event == "UNIT_SPELLCAST_FAILED") and
+        event == "UNIT_SPELLCAST_INTERRUPTED" or
+        event == "UNIT_SPELLCAST_FAILED") and
             unit == self.unit
      then
-        print(event, unit, self.unit)
         hideCastBar(self, event)
         return
     end
