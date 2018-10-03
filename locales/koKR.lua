@@ -5,12 +5,12 @@ local function GWUseThisLocalization()
 GwLocalization = {}
 
 --Fonts
-GwLocalization['FONT_NORMAL'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf' 
-GwLocalization['FONT_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf' 
-GwLocalization['FONT_NARROW'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
-GwLocalization['FONT_NARROW_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
-GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
-GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf'
+GwLocalization["FONT_NORMAL"] = "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf"
+GwLocalization["FONT_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf"
+GwLocalization["FONT_NARROW"] = "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf"
+GwLocalization["FONT_NARROW_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf"
+GwLocalization["FONT_LIGHT"] = "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf"
+GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf"
 
 --Strings
 GwLocalization["ACTION_BAR_FADE"] = "액션바 숨기기"
@@ -81,7 +81,7 @@ GwLocalization["LEVEL_REWARDS"] = "다가오는 레벨 보상"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "쉬프트 클릭으로 로컬과 렐름 시간을 전환"
 GwLocalization["MAP_CLOCK_MILITARY"] = "왼쪽 클릭으로 군사 시간 형식 전환"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "오른쪽 클릭으로 스톱 워치 열기"
-GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
+GwLocalization["MAP_CLOCK_TIMEMANAGER"] = "Shift-Right Click to open the Time Manager"
 GwLocalization["MINIMAP_DESC"] = "GW2 UI 스타일의 미니맵 사용."
 GwLocalization["MINIMAP_HOVER"] = "미니맵 세부"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "미니 맵 세부 정보를 영구히 표시하십시오,"
@@ -92,8 +92,8 @@ GwLocalization["MODULES_CAT_1"] = "모듈"
 GwLocalization["MODULES_CAT_TOOLTIP"] = "구성 요소 활성화 및 비활성화"
 GwLocalization["MODULES_DESC"] = "필요에 따라 필요하지 않은 모듈을 생성하거나 해제 할 수 있습니다."
 GwLocalization["MODULES_TOOLTIP"] = "UI 모듈을 활성화 또는 비활성화합니다."
-GwLocalization['MOUSE_TOOLTIP'] = 'Tooltip mouse anchor'
-GwLocalization['MOUSE_TOOLTIP_DESC'] = 'Show Tooltips at cursor'
+GwLocalization["MOUSE_TOOLTIP"] = "Tooltip mouse anchor"
+GwLocalization["MOUSE_TOOLTIP_DESC"] = "Show Tooltips at cursor"
 GwLocalization["MOVE_HUD_BUTTON"] = "HUD 이동"
 GwLocalization["NAME_LOAD_ERROR"] = "이름을 로드 할 수 없습니다."
 GwLocalization["NOT_A_LEGENDARY"] = "해당 아이템을 업그레이드 할 수 없습니다."
@@ -149,27 +149,27 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "해당 아이템을 업그레이드하려
 GwLocalization["UPDATE_STRING_1"] = "새로운 업데이트가 있습니다. 다운로드 해주세요."
 GwLocalization["UPDATE_STRING_2"] = "새로운 기능이 포함 된 새로운 업데이트입니다."
 GwLocalization["UPDATE_STRING_3"] = "|cFFFF0000 중요한 |r 업데이트를 사용할 수 있습니다.\n\n업데이트하는 것이 좋습니다."
-GwLocalization['BAG_SORT_ORDER_FIRST'] = 'Sort to First Bag'
-GwLocalization['BAG_SORT_ORDER_LAST'] = 'Sort to Last Bag'
-GwLocalization['BAG_NEW_ORDER_FIRST'] = 'New Items to First Bag'
-GwLocalization['BAG_NEW_ORDER_LAST'] = 'New Items to Last Bag'
-GwLocalization['BAG_ORDER_NORMAL'] = 'Normal Bag Order'
-GwLocalization['BAG_ORDER_REVERSE'] = 'Reverse Bag Order'
-GwLocalization['STG_RIGHT_BAR_COLS'] = 'Right Bar Width'
-GwLocalization['STG_RIGHT_BAR_COLS_DESC'] = 'Number of columns in the two extra right-hand action bars.'
-GwLocalization['DISABLED_MA_BAGS'] = "Disabled MoveAnything's bag handling."
-GwLocalization['FADE_MICROMENU'] = 'Fade Menu Bar'
-GwLocalization['FADE_MICROMENU_DESC'] = 'Fade the main micromenu when the mouse is not near.'
-GwLocalization['TALENTS_BUTTON_DESC'] = 'Enable the talents, specialization, and spellbook replacement.' 
-GwLocalization['ALL_BINDINGS_SAVE'] = "All key bindings have been saved."
-GwLocalization['ALL_BINDINGS_DISCARD'] = "All newly set key bindings have been discarded."
-GwLocalization['BINDINGS_DESC'] = "Hover your mouse over any actionbutton to bind it. Press the escape key or right click to clear the current actionbutton's keybinding." 
-GwLocalization['BINDINGS_TRIGGER'] = "Trigger"
-GwLocalization['BINGSINGS_KEY'] = "Key"
-GwLocalization['BINGSINGS_CLEAR'] = "All key bindings cleared for"
-GwLocalization['BINGSINGS_BIND'] = "bound to"
-GwLocalization['MINIMAP_POS'] = 'Minimap position'
-GwLocalization['MINIMAP_COORDS'] = '좌표'
+GwLocalization["BAG_SORT_ORDER_FIRST"] = "Sort to First Bag"
+GwLocalization["BAG_SORT_ORDER_LAST"] = "Sort to Last Bag"
+GwLocalization["BAG_NEW_ORDER_FIRST"] = "New Items to First Bag"
+GwLocalization["BAG_NEW_ORDER_LAST"] = "New Items to Last Bag"
+GwLocalization["BAG_ORDER_NORMAL"] = "Normal Bag Order"
+GwLocalization["BAG_ORDER_REVERSE"] = "Reverse Bag Order"
+GwLocalization["STG_RIGHT_BAR_COLS"] = "Right Bar Width"
+GwLocalization["STG_RIGHT_BAR_COLS_DESC"] = "Number of columns in the two extra right-hand action bars."
+GwLocalization["DISABLED_MA_BAGS"] = "Disabled MoveAnything's bag handling."
+GwLocalization["FADE_MICROMENU"] = "Fade Menu Bar"
+GwLocalization["FADE_MICROMENU_DESC"] = "Fade the main micromenu when the mouse is not near."
+GwLocalization["TALENTS_BUTTON_DESC"] = "Enable the talents, specialization, and spellbook replacement."
+GwLocalization["ALL_BINDINGS_SAVE"] = "All key bindings have been saved."
+GwLocalization["ALL_BINDINGS_DISCARD"] = "All newly set key bindings have been discarded."
+GwLocalization["BINDINGS_DESC"] = "Hover your mouse over any actionbutton to bind it. Press the escape key or right click to clear the current actionbutton's keybinding."
+GwLocalization["BINDINGS_TRIGGER"] = "Trigger"
+GwLocalization["BINGSINGS_KEY"] = "Key"
+GwLocalization["BINGSINGS_CLEAR"] = "All key bindings cleared for"
+GwLocalization["BINGSINGS_BIND"] = "bound to"
+GwLocalization["MINIMAP_POS"] = "Minimap position"
+GwLocalization["MINIMAP_COORDS"] = "좌표"
 end
 
 if GetLocale() == "koKR" then

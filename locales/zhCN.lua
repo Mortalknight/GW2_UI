@@ -5,12 +5,12 @@ local function GWUseThisLocalization()
 GwLocalization = {}
 
 --Fonts
-GwLocalization['FONT_NORMAL'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf' 
-GwLocalization['FONT_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf' 
-GwLocalization['FONT_NARROW'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
-GwLocalization['FONT_NARROW_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
-GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
-GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
+GwLocalization["FONT_NORMAL"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_NARROW"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_NARROW_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_LIGHT"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
 
 --Strings
 GwLocalization["ACTION_BAR_FADE"] = "隐藏动作栏"
@@ -32,8 +32,8 @@ GwLocalization["BUTTON_ASSIGNMENTS_DESC"] = "显示或隐藏快捷键上的按�
 GwLocalization["CASTING_BAR_DESC"] = "使用GW2风格的施法条."
 GwLocalization["CHARACTER_NEXT_RANK"] = "下一步"
 GwLocalization["CHARACTER_NOT_LOADED"] = "未载入."
-GwLocalization["CHARACTER_OUTFITS_DELETE"] = " 是否删除装备方案: "
-GwLocalization["CHARACTER_OUTFITS_SAVE"] = " 是否覆盖装备方案: "
+GwLocalization["CHARACTER_OUTFITS_DELETE"] = "是否删除装备方案: "
+GwLocalization["CHARACTER_OUTFITS_SAVE"] = "是否覆盖装备方案: "
 GwLocalization["CHARACTER_PARAGON"] = "巅峰"
 GwLocalization["CHARACTER_REPUTATION_TRACK"] = "经验条显示"
 GwLocalization["CHAT_BUBBLES"] = "聊天泡泡"
@@ -90,7 +90,7 @@ GwLocalization["LEVEL_REWARDS"] = "即将获得的等级奖励"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "Shift+左键切换本地或服务器时间"
 GwLocalization["MAP_CLOCK_MILITARY"] = "左键 切换时间制式"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "右键 打开计时器"
-GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
+GwLocalization["MAP_CLOCK_TIMEMANAGER"] = "Shift-Right Click to open the Time Manager"
 GwLocalization["MINIMAP_DESC"] = "使用GW2风格的方形小地图."
 GwLocalization["MINIMAP_HOVER"] = "小地图显示"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "始终显示小地图追踪."
@@ -161,15 +161,15 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "你必须卸下以升级它"
 GwLocalization["UPDATE_STRING_1"] = "有可下载更新."
 GwLocalization["UPDATE_STRING_2"] = "有包含新功能的更新."
 GwLocalization["UPDATE_STRING_3"] = "有|cFFFF0000重要|r 版本升级.\n\n强烈建议您更新."
-GwLocalization['ALL_BINDINGS_SAVE'] = "All key bindings have been saved."
-GwLocalization['ALL_BINDINGS_DISCARD'] = "All newly set key bindings have been discarded."
-GwLocalization['BINDINGS_DESC'] = "Hover your mouse over any actionbutton to bind it. Press the escape key or right click to clear the current actionbutton's keybinding." 
-GwLocalization['BINDINGS_TRIGGER'] = "Trigger"
-GwLocalization['BINGSINGS_KEY'] = "Key"
-GwLocalization['BINGSINGS_CLEAR'] = "All key bindings cleared for"
-GwLocalization['BINGSINGS_BIND'] = "bound to"
-GwLocalization['MINIMAP_POS'] = 'Minimap position'
-GwLocalization['MINIMAP_COORDS'] = 'Coordinates'
+GwLocalization["ALL_BINDINGS_SAVE"] = "All key bindings have been saved."
+GwLocalization["ALL_BINDINGS_DISCARD"] = "All newly set key bindings have been discarded."
+GwLocalization["BINDINGS_DESC"] = "Hover your mouse over any actionbutton to bind it. Press the escape key or right click to clear the current actionbutton's keybinding."
+GwLocalization["BINDINGS_TRIGGER"] = "Trigger"
+GwLocalization["BINGSINGS_KEY"] = "Key"
+GwLocalization["BINGSINGS_CLEAR"] = "All key bindings cleared for"
+GwLocalization["BINGSINGS_BIND"] = "bound to"
+GwLocalization["MINIMAP_POS"] = "Minimap position"
+GwLocalization["MINIMAP_COORDS"] = "Coordinates"
 end
 
 if GetLocale() == "zhCN" then

@@ -5,12 +5,12 @@ local function GWUseThisLocalization()
 GwLocalization = {}
 
 --Fonts
-GwLocalization['FONT_NORMAL'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf' 
-GwLocalization['FONT_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf' 
-GwLocalization['FONT_NARROW'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
-GwLocalization['FONT_NARROW_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
-GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
-GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf'
+GwLocalization["FONT_NORMAL"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_NARROW"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_NARROW_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_LIGHT"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
+GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
 
 --Strings
 GwLocalization["ACTION_BAR_FADE"] = "淡出快捷列"
@@ -97,7 +97,7 @@ GwLocalization["LEVEL_REWARDS"] = "即將獲得的升級獎勵"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "Shift+左鍵 切換本地和伺服器時間"
 GwLocalization["MAP_CLOCK_MILITARY"] = "左鍵 切換時間格式"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "右鍵 開啟碼表"
-GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
+GwLocalization["MAP_CLOCK_TIMEMANAGER"] = "Shift-Right Click to open the Time Manager"
 GwLocalization["MINIMAP_DESC"] = "使用 GW2 UI 小地圖框架。"
 GwLocalization["MINIMAP_HOVER"] = "小地圖資訊"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "永遠顯示小地圖詳細資訊內容。"
@@ -169,7 +169,7 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "必須先脫下裝備中的物品才能�
 GwLocalization["UPDATE_STRING_1"] = "有新版本! 已有更新可供下載。"
 GwLocalization["UPDATE_STRING_2"] = "有新版本! 包含新功能的更新可供下載。"
 GwLocalization["UPDATE_STRING_3"] = "有新版本! 包含|cFFFF0000重大更新|r可供下載。\n\n強烈建議更新插件。"
-GwLocalization['MINIMAP_COORDS'] = '坐标'
+GwLocalization["MINIMAP_COORDS"] = "坐标"
 end
 
 if GetLocale() == "zhTW" then

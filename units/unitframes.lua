@@ -455,7 +455,7 @@ local function updateRaidMarkers(self, event)
 end
 GW.AddForProfiling("unitframes", "updateRaidMarkers", updateRaidMarkers)
 
-local function setUnitPortrait(self, evnt)
+local function setUnitPortrait(self, event)
     if self.portrait == nil then
         return
     end
@@ -975,13 +975,13 @@ local function target_OnEvent(self, event, unit)
         updateCastValues(self, event)
         return
     end
-
+    
     if
         (event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_STOP" or
-            event == "UNIT_SPELLCAST_INTERRUPTED" or
             event == "UNIT_SPELLCAST_FAILED") and
             unit == self.unit
      then
+        print(event, unit, self.unit)
         hideCastBar(self, event)
         return
     end

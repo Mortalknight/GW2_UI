@@ -5,12 +5,12 @@ local function GWUseThisLocalization()
 GwLocalization = {}
 
 --Fonts
-GwLocalization['FONT_NORMAL'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf' 
-GwLocalization['FONT_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf' 
-GwLocalization['FONT_NARROW'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
-GwLocalization['FONT_NARROW_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
-GwLocalization['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf'
-GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
+GwLocalization["FONT_NORMAL"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
+GwLocalization["FONT_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
+GwLocalization["FONT_NARROW"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
+GwLocalization["FONT_NARROW_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
+GwLocalization["FONT_LIGHT"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf"
+GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 
 --Strings
 GwLocalization["ACTION_BAR_FADE"] = "Ocultar las barras de acción"
@@ -97,7 +97,7 @@ GwLocalization["LEVEL_REWARDS"] = "Próximas recompensas de nivel"
 GwLocalization["MAP_CLOCK_LOCAL_REALM"] = "Mayús-Clic para cambiar entre tiempo de local o reino."
 GwLocalization["MAP_CLOCK_MILITARY"] = "Clic izquierda para pasar el formato de tiempo militar"
 GwLocalization["MAP_CLOCK_STOPWATCH"] = "Clic derecho para abrir el cronómetro"
-GwLocalization['MAP_CLOCK_TIMEMANAGER'] = 'Shift-Right Click to open the Time Manager' 
+GwLocalization["MAP_CLOCK_TIMEMANAGER"] = "Shift-Right Click to open the Time Manager"
 GwLocalization["MINIMAP_DESC"] = "Utilizar el marco de minimapa de GW2 UI."
 GwLocalization["MINIMAP_HOVER"] = "Detalles de minimapa"
 GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "Mostrar permanentemente los detalles de minimapa."
@@ -169,7 +169,7 @@ GwLocalization["UNEQUIP_LEGENDARY"] = "Debes quitarte este objeto para mejorarlo
 GwLocalization["UPDATE_STRING_1"] = "Nueva actualización es disponible para descargar."
 GwLocalization["UPDATE_STRING_2"] = "Nueva actualización disponible que contiene nuevas características."
 GwLocalization["UPDATE_STRING_3"] = "Una actualización |cFFFF0000importante| está disponible.\n\nEs muy recomendable que actualice."
-GwLocalization['MINIMAP_COORDS'] = 'Coordenadas'
+GwLocalization["MINIMAP_COORDS"] = "Coordenadas"
 end
 
 
