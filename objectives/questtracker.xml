@@ -354,6 +354,18 @@
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
                             </Anchors>
                         </FontString>
+                        <FontString parentKey="timerStringChest2" text="0:00" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="timerStringChest3" text="0:00" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
                         <FontString parentKey="timerlabel" text="Time Remaining" justifyH="LEFT">
                             <Size x="300" y="24"></Size>
                             <Anchors>
@@ -463,20 +475,18 @@
                 </Frames>
             </Frame>
             <Frame name="TimerBarOverlay" hidden="true" frameLevel="5" toplevel="true">
-                <Size x="1" y="10"></Size>
+                <Size x="1" y="20"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="-20" />
                 </Anchors>
                 <Layers>
                     <Layer>
                         <Texture name="chest2" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
-                            <Size x="2" y="10"></Size>
+                            <Size x="2" y="23"></Size>
                         </Texture>
                         <Texture name="chest3" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
-                            <Size x="2" y="10"></Size>
+                            <Size x="2" y="23"></Size>
                         </Texture>
-
                     </Layer>
                 </Layers>
             </Frame>

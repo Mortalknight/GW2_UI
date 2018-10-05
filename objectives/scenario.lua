@@ -8,6 +8,9 @@ local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local UpdateQuestItem = GW.UpdateQuestItem
 
+local TIME_FOR_3 = 0.6
+local TIME_FOR_2 = 0.8
+
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
         return _G[self:GetName() .. "GwQuestObjective" .. index]
@@ -249,6 +252,8 @@ GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 local function scenarioTimerStop()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
     GwQuestTrackerTimer.timer:Hide()
+    GwQuestTrackerTimer.timerStringChest2:Hide()
+    GwQuestTrackerTimer.timerStringChest3:Hide()
     _G["TimerBarOverlay"]:Hide()
 end
 GW.AddForProfiling("scenario", "scenarioTimerStop", scenarioTimerStop)
@@ -299,12 +304,22 @@ local function scenarioTimerUpdate(...)
             local mapID = C_ChallengeMode.GetActiveChallengeMapID()
             if (mapID) then
                 local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
+                local time3 = timeLimit * TIME_FOR_3
+	            local time2 = timeLimit * TIME_FOR_2
                 --	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
+                --set Chest icon
+                _G["TimerBarOverlay"]:Show()
+                _G["chest2"]:ClearAllPoints()
+                _G["chest2"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * (1 - TIME_FOR_2) - 1, -6)
+                _G["chest3"]:ClearAllPoints()
+                _G["chest3"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * (1 - TIME_FOR_3) - 1, -6)
                 GwQuestTrackerTimer:SetScript(
                     "OnUpdate",
                     function()
                         local _, elapsedTime, _ = GetWorldElapsedTime(timerID)
                         GwQuestTrackerTimer.timer:SetValue(1 - (elapsedTime / timeLimit))
+                        _G["chest2"]:SetShown(elapsedTime < time2)
+                        _G["chest3"]:SetShown(elapsedTime < time3)
                         if elapsedTime < timeLimit then
                             GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(timeLimit - elapsedTime, false, true))
                             GwQuestTrackerTimer.timerString:SetTextColor(1, 1, 1)
@@ -312,17 +327,23 @@ local function scenarioTimerUpdate(...)
                             GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(0, false, true))
                             GwQuestTrackerTimer.timerString:SetTextColor(255, 0, 0)
                         end
+                        if elapsedTime < time3 then
+                            GwQuestTrackerTimer.timerStringChest3:SetText(GetTimeStringFromSeconds(time3 - elapsedTime, false, true))
+                            GwQuestTrackerTimer.timerStringChest2:SetText(GetTimeStringFromSeconds(time2 - elapsedTime, false, true))
+                            GwQuestTrackerTimer.timerStringChest3:Show()
+                            GwQuestTrackerTimer.timerStringChest2:Show()
+                        elseif elapsedTime < time2 then
+                            GwQuestTrackerTimer.timerStringChest2:SetText(GetTimeStringFromSeconds(time2 - elapsedTime, false, true))
+                            GwQuestTrackerTimer.timerStringChest2:Show()
+                            GwQuestTrackerTimer.timerStringChest3:Hide()
+                        else
+                            GwQuestTrackerTimer.timerStringChest2:Hide()
+                            GwQuestTrackerTimer.timerStringChest3:Hide()
+                        end
                     end
                 )
-                --set Chest icon
-                _G["TimerBarOverlay"]:Show()
-                _G["chest2"]:ClearAllPoints()
-                _G["chest2"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * 0.2 - 1, 0)
-                _G["chest3"]:ClearAllPoints()
-                _G["chest3"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * 0.4 - 1, 0)
-
                 GwQuestTrackerTimer.timer:Show()
-                GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+                GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 50
                 scenarioAffixes()
                 return
             end
@@ -347,6 +368,8 @@ local function scenarioTimerUpdate(...)
         end
     end
     GwQuestTrackerTimer.timer:Hide()
+    GwQuestTrackerTimer.timerStringChest2:Hide()
+    GwQuestTrackerTimer.timerStringChest3:Hide()
     _G["TimerBarOverlay"]:Hide()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
 
@@ -405,13 +428,26 @@ local function LoadScenarioFrame()
     timerBlock.height = timerBlock:GetHeight()
     timerBlock.timerlabel = timerBlock.timer.timerlabel
     timerBlock.timerString = timerBlock.timer.timerString
+    timerBlock.timerStringChest2 = timerBlock.timer.timerStringChest2
+    timerBlock.timerStringChest3 = timerBlock.timer.timerStringChest3
     timerBlock.timerBackground:ClearAllPoints()
     timerBlock.timerBackground:SetPoint("CENTER", timerBlock.timer, "CENTER")
     timerBlock.timerlabel:SetFont(UNIT_NAME_FONT, 12)
     timerBlock.timerlabel:SetTextColor(1, 1, 1)
+    timerBlock.timerlabel:SetShadowOffset(1, -1)
     timerBlock.timerString:SetFont(UNIT_NAME_FONT, 12)
     timerBlock.timerString:SetTextColor(1, 1, 1)
     timerBlock.timerString:SetShadowOffset(1, -1)
+    timerBlock.timerStringChest2:SetFont(UNIT_NAME_FONT, 10)
+    timerBlock.timerStringChest2:SetTextColor(1, 1, 1)
+    timerBlock.timerStringChest2:SetShadowOffset(1, -1)
+    timerBlock.timerStringChest2:ClearAllPoints()
+    timerBlock.timerStringChest2:SetPoint("RIGHT", _G["chest2"], "LEFT", -2, -6)
+    timerBlock.timerStringChest3:SetFont(UNIT_NAME_FONT, 10)
+    timerBlock.timerStringChest3:SetTextColor(1, 1, 1)
+    timerBlock.timerStringChest3:SetShadowOffset(1, -1)
+    timerBlock.timerStringChest3:ClearAllPoints()
+    timerBlock.timerStringChest3:SetPoint("RIGHT", _G["chest3"], "LEFT", -2, -6)
     timerBlock.score:ClearAllPoints()
     timerBlock.score:SetPoint("TOPLEFT", timerBlock.timer, "BOTTOMLEFT", 0, 0)
     timerBlock.score.scoreString:SetFont(UNIT_NAME_FONT, 12)
