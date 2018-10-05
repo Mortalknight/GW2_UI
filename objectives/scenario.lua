@@ -313,6 +313,12 @@ local function scenarioTimerUpdate(...)
                         end
                     end
                 )
+                --set Chest icon
+                _G["chest2"]:ClearAllPoints()
+                _G["chest2"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * 0.2 - 1, 0)
+                _G["chest3"]:ClearAllPoints()
+                _G["chest3"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * 0.4 - 1, 0)
+
                 GwQuestTrackerTimer.timer:Show()
                 GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
                 scenarioAffixes()
@@ -466,6 +472,21 @@ local function LoadScenarioFrame()
         end
     )
     timerBlock.affixes["3"]:SetScript("OnLeave", GameTooltip_Hide)
+    timerBlock.affixes["4"]:SetScript(
+        "OnEnter",
+        function(self)
+            if self.affixID ~= nil then
+                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
+                GameTooltip:ClearLines()
+                local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(name, 1, 1, 1, 1, true)
+                GameTooltip:AddLine(description, nil, nil, nil, true)
+                GameTooltip:Show()
+            end
+        end
+    )
+    timerBlock.affixes["4"]:SetScript("OnLeave", GameTooltip_Hide)
 
     timerBlock:SetParent(GwQuesttrackerContainerScenario)
     timerBlock:ClearAllPoints()

@@ -483,11 +483,10 @@ local function dodgeBar_OnEvent(self, event, unit)
             end
 
             if self.gwMaxCharges > 2 then
-                _G["GwDodgeBarSep2"]:SetRotation(0.55)
-                _G["GwDodgeBarSep3"]:SetRotation(-0.55)
+                _G["GwDodgeBarSep2"]:SetRotation(0.4)
+                _G["GwDodgeBarSep3"]:SetRotation(-0.4)
 
                 _G["GwDodgeBarSep2"]:Show()
-               -- _G["GwDodgeBarSep2"]:SetHeight(GwDodgeBar:GetHeight())
                 _G["GwDodgeBarSep3"]:Show()
             else
                 _G["GwDodgeBarSep2"]:Hide()
