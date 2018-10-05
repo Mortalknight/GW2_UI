@@ -6,11 +6,14 @@ NEW
     - Add power bar to boss frames
     - Add a new LFG icon animation
     - Add a new health globe animation
+    - Add two and three chest indicator for M+ timer
+    - Add background imagery to reputation entries (MoP, WoD, Cata, TLK)
 
 
 FIXED
     - Druid class power bars should behave more cleanly, especially when shape shifting and with affinities
     - Fix a raid frame target border issue
+    - Fix CF#241
 
 MISCELLANEOUS
     - Major refactor of the class power system mainly for performance reasons

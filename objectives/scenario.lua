@@ -249,6 +249,7 @@ GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 local function scenarioTimerStop()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
     GwQuestTrackerTimer.timer:Hide()
+    _G["TimerBarOverlay"]:Hide()
 end
 GW.AddForProfiling("scenario", "scenarioTimerStop", scenarioTimerStop)
 
@@ -314,6 +315,7 @@ local function scenarioTimerUpdate(...)
                     end
                 )
                 --set Chest icon
+                _G["TimerBarOverlay"]:Show()
                 _G["chest2"]:ClearAllPoints()
                 _G["chest2"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * 0.2 - 1, 0)
                 _G["chest3"]:ClearAllPoints()
@@ -345,6 +347,7 @@ local function scenarioTimerUpdate(...)
         end
     end
     GwQuestTrackerTimer.timer:Hide()
+    _G["TimerBarOverlay"]:Hide()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
 
     if hasUpdatedAffixes == false then
