@@ -886,13 +886,13 @@
                 <Texture name="$parentSep2" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
                     <Size x="118" y="118"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="20"/>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
                 <Texture name="$parentSep3" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
                     <Size x="118" y="118"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="20"/>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
             </Layer>

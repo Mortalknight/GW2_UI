@@ -411,7 +411,7 @@ local function setUnitPortraitFrame(self, event)
 
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
         border = unitClassIfication
-        if UnitLevel(self.unit) == -1 or UnitLevel(self.unit) == GetMaxPlayerLevel() + 2 then
+        if UnitLevel(self.unit) == -1 then
             border = "boss"
         end
     end

@@ -106,7 +106,7 @@ local function SetMinimapPosition()
         mc_y = 0
     end
     if ourTracker then
-        mc_x = -300
+        mc_x = -320
     end
     MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, mc_y)
     Minimap:ClearAllPoints()
