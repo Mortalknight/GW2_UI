@@ -383,10 +383,26 @@ local function scenarioTimerUpdate(...)
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
 
+local function scenarioTimerUpdateDeathCounter(self)
+    local count, timeLost = C_ChallengeMode.GetDeathCount()
+	self.deathcounter.count = count
+	self.deathcounter.timeLost = timeLost
+	if (timeLost and timeLost > 0 and count and count > 0) then
+		self.deathcounter:Show()
+        self.deathcounter.title:SetText(count)
+        self.deathcounter:ClearAllPoints()
+        self.deathcounter:SetPoint("LEFT", GwQuestTrackerTimer.timer, "RIGHT", -35, -14)
+	else
+		self.deathcounter:Hide()
+	end
+end
+GW.AddForProfiling("scenario", "scenarioTimerUpdateDeathCounter", scenarioTimerUpdateDeathCounter)
+
 local function scenarioTimerOnEvent(self, event, ...)
     if (event == "PLAYER_ENTERING_WORLD" or event == nil) then
         -- ScenarioTimer_CheckTimers(GetWorldElapsedTimers());
         scenarioTimerUpdate(GetWorldElapsedTimers())
+        scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
     elseif (event == "WORLD_STATE_TIMER_START") then
         local timerID = ...
         scenarioTimerUpdate(timerID)
@@ -404,6 +420,9 @@ local function scenarioTimerOnEvent(self, event, ...)
             event == "ZONE_CHANGED")
      then
         scenarioTimerUpdate(GetWorldElapsedTimers())
+        scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
+    elseif event == "CHALLENGE_MODE_DEATH_COUNT_UPDATED" then
+        scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
     end
     GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
 
@@ -526,6 +545,19 @@ local function LoadScenarioFrame()
         end
     )
     timerBlock.affixes["4"]:SetScript("OnLeave", GameTooltip_Hide)
+    timerBlock.deathcounter.title:SetFont(UNIT_NAME_FONT, 10)
+    timerBlock.deathcounter.title:SetTextColor(1, 1, 1)
+    timerBlock.deathcounter.title:SetShadowOffset(1, -1)
+    timerBlock.deathcounter:SetScript(
+        "OnEnter",
+        function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+	        GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(self.count), 1, 1, 1)
+	        GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(GetTimeStringFromSeconds(self.timeLost, false, true)))
+	        GameTooltip:Show()
+        end
+    )
+    timerBlock.deathcounter:SetScript("OnLeave", GameTooltip_Hide)
 
     timerBlock:SetParent(GwQuesttrackerContainerScenario)
     timerBlock:ClearAllPoints()
@@ -540,6 +572,7 @@ local function LoadScenarioFrame()
     timerBlock:RegisterEvent("CHALLENGE_MODE_START")
     timerBlock:RegisterEvent("CHALLENGE_MODE_COMPLETED")
     timerBlock:RegisterEvent("ZONE_CHANGED")
+    timerBlock:RegisterEvent("CHALLENGE_MODE_DEATH_COUNT_UPDATED")
 
     timerBlock:SetScript("OnEvent", scenarioTimerOnEvent)
 

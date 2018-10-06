@@ -490,9 +490,32 @@
                     </Layer>
                 </Layers>
             </Frame>
+            <Button name="GwDeathCounterButton" hidden="true" frameLevel="5" virtual="true" parentKey="deathcounter">
+                <Size x="30" y="15"></Size>
+                <Layers>
+                    <Layer Level="ARTOWORK">
+                    </Layer>
+                    <Layer Level="BACKGROUND">
+                        <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\icon-dead">
+                            <Size x="15" y="15"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer Level="OVERLAY">
+                        <FontString name="$parentString" text="TEST" parentKey="title" justifyH="RIGHT" justifyV="CENTER">
+                            <Size x="30" y="15"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
         </Frames>
     </Frame>
-
+    
     <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame" virtual="true">
         <Size x="300" y="35"></Size>
         <Anchors>

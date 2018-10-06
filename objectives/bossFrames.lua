@@ -65,9 +65,11 @@ local function updateBoss_Name(self)
 
     self.name:SetText(UnitName(self.unit))
     if self.guid == guidTarget then
-        self.name:SetTextColor(255, 0, 0)
+        --self.name:SetTextColor(255, 0, 0)
+        self.name:SetFont(UNIT_NAME_FONT, 14)
     else
-        self.name:SetTextColor(1, 1, 1)
+        --self.name:SetTextColor(1, 1, 1)
+        self.name:SetFont(UNIT_NAME_FONT, 12)
     end
 end
 GW.AddForProfiling("bossFrames", "updateBoss_Name", updateBoss_Name)
