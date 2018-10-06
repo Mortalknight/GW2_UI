@@ -474,17 +474,17 @@
                     </Frame>
                 </Frames>
             </Frame>
-            <Frame name="TimerBarOverlay" hidden="true" frameLevel="5" toplevel="true">
+            <Frame name="TimerBarOverlay" hidden="true" frameLevel="5" toplevel="true" parentKey="chestoverlay">
                 <Size x="1" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="-20" />
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture name="chest2" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
+                        <Texture name="chest2" parentKey="chest2" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
                             <Size x="2" y="23"></Size>
                         </Texture>
-                        <Texture name="chest3" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
+                        <Texture name="chest3" parentKey="chest3" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
                             <Size x="2" y="23"></Size>
                         </Texture>
                     </Layer>
@@ -504,7 +504,7 @@
                         </Texture>
                     </Layer>
                     <Layer Level="OVERLAY">
-                        <FontString name="$parentString" text="TEST" parentKey="title" justifyH="RIGHT" justifyV="CENTER">
+                        <FontString name="$parentString" text="TEST" parentKey="counterlabel" justifyH="RIGHT" justifyV="CENTER">
                             <Size x="30" y="15"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>

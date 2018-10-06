@@ -178,6 +178,7 @@ local function manageButton()
     fmGGMC:SetScript("OnClick", fnGGMC_OnClick)
     fmGGMC:RegisterEvent("GROUP_ROSTER_UPDATE")
     fmGGMC:RegisterEvent("RAID_ROSTER_UPDATE")
+    fmGGMC:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     local fnGMIG_OnLoad = function(self)
         if IsInGroup() then

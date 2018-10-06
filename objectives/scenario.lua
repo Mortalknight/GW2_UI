@@ -254,7 +254,8 @@ local function scenarioTimerStop()
     GwQuestTrackerTimer.timer:Hide()
     GwQuestTrackerTimer.timerStringChest2:Hide()
     GwQuestTrackerTimer.timerStringChest3:Hide()
-    _G["TimerBarOverlay"]:Hide()
+    GwQuestTrackerTimer.chestoverlay:Hide()
+    GwQuestTrackerTimer.deathcounter:Hide()
 end
 GW.AddForProfiling("scenario", "scenarioTimerStop", scenarioTimerStop)
 
@@ -308,18 +309,18 @@ local function scenarioTimerUpdate(...)
 	            local time2 = timeLimit * TIME_FOR_2
                 --	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
                 --set Chest icon
-                _G["TimerBarOverlay"]:Show()
-                _G["chest2"]:ClearAllPoints()
-                _G["chest2"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * (1 - TIME_FOR_2) - 1, -6)
-                _G["chest3"]:ClearAllPoints()
-                _G["chest3"]:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * (1 - TIME_FOR_3) - 1, -6)
+                GwQuestTrackerTimer.chestoverlay:Show()
+                GwQuestTrackerTimer.chestoverlay.chest2:ClearAllPoints()
+                GwQuestTrackerTimer.chestoverlay.chest2:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * (1 - TIME_FOR_2) - 1, -6)
+                GwQuestTrackerTimer.chestoverlay.chest3:ClearAllPoints()
+                GwQuestTrackerTimer.chestoverlay.chest3:SetPoint("LEFT", GwQuestTrackerTimer.timer, "LEFT", GwQuestTrackerTimer.timer:GetWidth() * (1 - TIME_FOR_3) - 1, -6)
                 GwQuestTrackerTimer:SetScript(
                     "OnUpdate",
                     function()
                         local _, elapsedTime, _ = GetWorldElapsedTime(timerID)
                         GwQuestTrackerTimer.timer:SetValue(1 - (elapsedTime / timeLimit))
-                        _G["chest2"]:SetShown(elapsedTime < time2)
-                        _G["chest3"]:SetShown(elapsedTime < time3)
+                        GwQuestTrackerTimer.chestoverlay.chest2:SetShown(elapsedTime < time2)
+                        GwQuestTrackerTimer.chestoverlay.chest3:SetShown(elapsedTime < time3)
                         if elapsedTime < timeLimit then
                             GwQuestTrackerTimer.timerString:SetText(GetTimeStringFromSeconds(timeLimit - elapsedTime, false, true))
                             GwQuestTrackerTimer.timerString:SetTextColor(1, 1, 1)
@@ -370,7 +371,8 @@ local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer.timer:Hide()
     GwQuestTrackerTimer.timerStringChest2:Hide()
     GwQuestTrackerTimer.timerStringChest3:Hide()
-    _G["TimerBarOverlay"]:Hide()
+    GwQuestTrackerTimer.chestoverlay:Hide()
+    GwQuestTrackerTimer.deathcounter:Hide()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
 
     if hasUpdatedAffixes == false then
@@ -388,10 +390,8 @@ local function scenarioTimerUpdateDeathCounter(self)
 	self.deathcounter.count = count
 	self.deathcounter.timeLost = timeLost
 	if (timeLost and timeLost > 0 and count and count > 0) then
-		self.deathcounter:Show()
-        self.deathcounter.title:SetText(count)
-        self.deathcounter:ClearAllPoints()
-        self.deathcounter:SetPoint("LEFT", GwQuestTrackerTimer.timer, "RIGHT", -35, -14)
+        self.deathcounter.counterlabel:SetText(count)
+        self.deathcounter:Show() 
 	else
 		self.deathcounter:Hide()
 	end
@@ -461,12 +461,17 @@ local function LoadScenarioFrame()
     timerBlock.timerStringChest2:SetTextColor(1, 1, 1)
     timerBlock.timerStringChest2:SetShadowOffset(1, -1)
     timerBlock.timerStringChest2:ClearAllPoints()
-    timerBlock.timerStringChest2:SetPoint("RIGHT", _G["chest2"], "LEFT", -2, -6)
+    timerBlock.timerStringChest2:SetPoint("RIGHT", timerBlock.chestoverlay.chest2, "LEFT", -2, -6)
     timerBlock.timerStringChest3:SetFont(UNIT_NAME_FONT, 10)
     timerBlock.timerStringChest3:SetTextColor(1, 1, 1)
     timerBlock.timerStringChest3:SetShadowOffset(1, -1)
     timerBlock.timerStringChest3:ClearAllPoints()
-    timerBlock.timerStringChest3:SetPoint("RIGHT", _G["chest3"], "LEFT", -2, -6)
+    timerBlock.timerStringChest3:SetPoint("RIGHT", timerBlock.chestoverlay.chest3, "LEFT", -2, -6)
+    timerBlock.deathcounter:ClearAllPoints()
+    timerBlock.deathcounter:SetPoint("LEFT", timerBlock.timer, "RIGHT", -35, -14)
+    timerBlock.deathcounter.counterlabel:SetFont(UNIT_NAME_FONT, 10)
+    timerBlock.deathcounter.counterlabel:SetTextColor(1, 1, 1)
+    timerBlock.deathcounter.counterlabel:SetShadowOffset(1, -1)
     timerBlock.score:ClearAllPoints()
     timerBlock.score:SetPoint("TOPLEFT", timerBlock.timer, "BOTTOMLEFT", 0, 0)
     timerBlock.score.scoreString:SetFont(UNIT_NAME_FONT, 12)
@@ -545,9 +550,6 @@ local function LoadScenarioFrame()
         end
     )
     timerBlock.affixes["4"]:SetScript("OnLeave", GameTooltip_Hide)
-    timerBlock.deathcounter.title:SetFont(UNIT_NAME_FONT, 10)
-    timerBlock.deathcounter.title:SetTextColor(1, 1, 1)
-    timerBlock.deathcounter.title:SetShadowOffset(1, -1)
     timerBlock.deathcounter:SetScript(
         "OnEnter",
         function(self)
