@@ -64,6 +64,7 @@ local function updateBoss_Name(self)
     local guidTarget = UnitGUID("target")
 
     self.name:SetText(UnitName(self.unit))
+    self.guid = UnitGUID(self.unit)
     if self.guid == guidTarget then
         --self.name:SetTextColor(255, 0, 0)
         self.name:SetFont(UNIT_NAME_FONT, 14)
@@ -73,6 +74,20 @@ local function updateBoss_Name(self)
     end
 end
 GW.AddForProfiling("bossFrames", "updateBoss_Name", updateBoss_Name)
+
+local function updateBoss_RaidMarkers(self)
+    local i = GetRaidTargetIndex(self.unit)
+    if i == nil then
+        self.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icon-boss")
+        self.icon:Show()
+        self.marker:Hide()
+        return
+    end
+    self.marker:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. i)
+    self.marker:Show()
+    self.icon:Hide()
+end
+GW.AddForProfiling("unitframes", "updateRaidMarkers", updateRaidMarkers)
 
 local function bossFrame_OnEvent(self, event, unit)
     if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH") then
@@ -90,10 +105,16 @@ local function bossFrame_OnEvent(self, event, unit)
         return
     end  
     
+    if event == "RAID_TARGET_UPDATE" then
+        updateBoss_RaidMarkers(self)
+        return
+    end
+    
     if event == "PLAYER_ENTERING_WORLD" then 
         updateBoss_Health(self)
         updateBoss_Power(self)
         updateBoss_Name(self)
+        updateBoss_RaidMarkers(self)
         return
     end
 
@@ -124,6 +145,7 @@ local function registerFrame(i)
 
     targetF.name:SetFont(UNIT_NAME_FONT, 12)
     targetF.name:SetShadowOffset(1, -1)
+    targetF.marker:Hide()
 
     _G["GwQuestTrackerBossFrame" .. i .. "StatusBar"]:SetStatusBarColor(
         TRACKER_TYPE_COLOR["BOSS"].r,
@@ -140,6 +162,7 @@ local function registerFrame(i)
     targetF:RegisterUnitEvent("UNIT_HEALTH", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_MAXPOWER", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_POWER_FREQUENT", targetF.unit)
+    targetF:RegisterEvent("RAID_TARGET_UPDATE")
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -165,10 +188,10 @@ local function registerFrame(i)
             compassData["TITLE"] = UnitName(self.unit)
 
             AddTrackerNotification(compassData)
-            self.guid = UnitGUID(self.unit)
             updateBoss_Health(self)
             updateBoss_Power(self)
             updateBoss_Name(self)
+            updateBoss_RaidMarkers(self)
         end
     )
 

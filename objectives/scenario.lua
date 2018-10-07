@@ -420,7 +420,6 @@ local function scenarioTimerOnEvent(self, event, ...)
             event == "ZONE_CHANGED")
      then
         scenarioTimerUpdate(GetWorldElapsedTimers())
-        scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
     elseif event == "CHALLENGE_MODE_DEATH_COUNT_UPDATED" then
         scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
     end
