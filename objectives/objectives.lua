@@ -461,21 +461,30 @@ local function UpdateQuestItem(button, questLogIndex)
 end
 GW.UpdateQuestItem = UpdateQuestItem
 
-local function updatePOI(questID, questLogIndex)
-    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+local function OnBlockClick(self, button)
+    if (ChatEdit_TryInsertQuestLinkForQuestID(self.questID)) then
+		return
+	end
 
-    if (IsQuestWatched(questLogIndex)) then
-        if (IsShiftKeyDown()) then
-            QuestObjectiveTracker_UntrackQuest(nil, questID)
-            return
-        end
-    else
-        AddQuestWatch(questLogIndex, true)
-    end
-    SetSuperTrackedQuestID(questID)
-    -- WorldMapFrame_OnUserChangedSuperTrackedQuest(questID)
+    if (button ~= "RightButton") then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		if (IsModifiedClick("QUESTWATCHTOGGLE")) then
+			QuestObjectiveTracker_UntrackQuest(nil, self.questID)
+		else
+			QuestMapFrame_OpenToQuestDetails(self.questID)
+		end
+	end
 end
-GW.AddForProfiling("objectives", "updatePOI", updatePOI)
+GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
+
+local function OnBlockClickHandler(self, button)
+    if self.questID == nil then 
+        OnBlockClick(self:GetParent(), button)
+    else
+        OnBlockClick(self, button)
+    end
+end
+GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function updateQuest(block, questWatchId)
     block.height = 25
@@ -538,19 +547,9 @@ local function updateQuest(block, questWatchId)
                 end
             end
         end
-
-        block.clickHeader:SetScript(
-            "OnClick",
-            function()
-                QuestLogPopupDetailFrame_Show(questLogIndex)
-            end
-        )
-        block:SetScript(
-            "OnClick",
-            function()
-                QuestLogPopupDetailFrame_Show(questLogIndex)
-            end
-        )
+        --questID, questLogIndex
+        block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
+        block:SetScript("OnClick", OnBlockClickHandler)
     end
     if block.objectiveBlocks == nil then
         block.objectiveBlocks = {}

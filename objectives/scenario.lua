@@ -293,6 +293,19 @@ local function scenarioAffixes()
 end
 GW.AddForProfiling("scenario", "scenarioAffixes", scenarioAffixes)
 
+local function scenarioTimerUpdateDeathCounter(self)
+    local count, timeLost = C_ChallengeMode.GetDeathCount()
+	self.deathcounter.count = count
+	self.deathcounter.timeLost = timeLost
+	if (timeLost and timeLost > 0 and count and count > 0) then
+        self.deathcounter.counterlabel:SetText(count)
+        self.deathcounter:Show() 
+	else
+		self.deathcounter:Hide()
+	end
+end
+GW.AddForProfiling("scenario", "scenarioTimerUpdateDeathCounter", scenarioTimerUpdateDeathCounter)
+
 local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer.height = 1
     local hasUpdatedAffixes = false
@@ -346,6 +359,7 @@ local function scenarioTimerUpdate(...)
                 GwQuestTrackerTimer.timer:Show()
                 GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 50
                 scenarioAffixes()
+                scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
                 return
             end
         elseif (wtype == LE_WORLD_ELAPSED_TIMER_TYPE_PROVING_GROUND) then
@@ -384,19 +398,6 @@ local function scenarioTimerUpdate(...)
     end
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
-
-local function scenarioTimerUpdateDeathCounter(self)
-    local count, timeLost = C_ChallengeMode.GetDeathCount()
-	self.deathcounter.count = count
-	self.deathcounter.timeLost = timeLost
-	if (timeLost and timeLost > 0 and count and count > 0) then
-        self.deathcounter.counterlabel:SetText(count)
-        self.deathcounter:Show() 
-	else
-		self.deathcounter:Hide()
-	end
-end
-GW.AddForProfiling("scenario", "scenarioTimerUpdateDeathCounter", scenarioTimerUpdateDeathCounter)
 
 local function scenarioTimerOnEvent(self, event, ...)
     if (event == "PLAYER_ENTERING_WORLD" or event == nil) then
