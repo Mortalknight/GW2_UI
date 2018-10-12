@@ -807,22 +807,21 @@ local function createPartyFrame(i)
     frame.healthbar.animationName = registerUnit .. "animation"
     frame.healthbar.animationValue = 0
 
-    frame:RegisterEvent("UNIT_HEALTH")
-    frame:RegisterEvent("UNIT_MAXHEALTH")
-    frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    frame:RegisterEvent("UNIT_POWER_FREQUENT")
-    frame:RegisterEvent("UNIT_MAXPOWER")
+    frame:SetScript("OnEvent", party_OnEvent)
+
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    frame:RegisterEvent("UNIT_PHASE")
+    frame:RegisterEvent("GROUP_ROSTER_UPDATE")
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
-    frame:RegisterEvent("UNIT_AURA")
-    frame:RegisterEvent("UNIT_LEVEL")
-    frame:RegisterEvent("READY_CHECK")
-    frame:RegisterEvent("READY_CHECK_CONFIRM")
-    frame:RegisterEvent("READY_CHECK_FINISHED")
 
-    frame:SetScript("OnEvent", party_OnEvent)
+    frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
+    frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
+    frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
+    frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
+    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
+    frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
+    frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
 
     updatePartyData(frame)
 end
