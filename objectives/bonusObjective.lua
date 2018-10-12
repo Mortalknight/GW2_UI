@@ -140,17 +140,9 @@ local function updateBonusObjective(self, event)
 
             compassData["PROGRESS"] = 0
 
-            local numFinished = 0
-            local numNotFinished = 0
             local objectiveProgress = 0
             for objectiveIndex = 1, numObjectives do
                 local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
-
-                if finished then
-                    numFinished = numFinished + 1
-                else
-                    numNotFinished = numNotFinished + 1
-                end
 
                 compassData["TYPE"] = "EVENT"
 
@@ -170,9 +162,11 @@ local function updateBonusObjective(self, event)
                 end
 
                 if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
-                    objectiveProgress =
-                        objectiveProgress +
-                        addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
+                    if finished then
+                        objectiveProgress = objectiveProgress + (1 / numObjectives) + addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
+                    else
+                        objectiveProgress = objectiveProgress + (addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType) / numObjectives)
+                    end
                 end
             end
 
@@ -180,7 +174,7 @@ local function updateBonusObjective(self, event)
                 compassData["DESC"] = simpleDesc
             end
 
-            compassData["PROGRESS"] = (numFinished / numObjectives) + (objectiveProgress / numNotFinished)
+            compassData["PROGRESS"] = objectiveProgress
 
             AddTrackerNotification(compassData)
             break
