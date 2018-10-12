@@ -773,28 +773,24 @@ local function registerNewUnitFrame(unitToWatch, frameType)
         _G[thisName .. "CastingBarCastingBarString"]:Show()
     end
 
+    targetF:SetScript("OnEvent", target_OnEvent)
+
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_FOCUS_CHANGED")
-
     targetF:RegisterEvent("ZONE_CHANGED")
-
-    targetF:RegisterEvent("UNIT_HEALTH")
-    targetF:RegisterEvent("UNIT_MAXHEALTH")
-    targetF:RegisterEvent("UNIT_TARGET")
-
-    targetF:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-
-    targetF:RegisterEvent("UNIT_POWER_FREQUENT")
-    targetF:RegisterEvent("UNIT_MAXPOWER")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
-    targetF:RegisterEvent("UNIT_AURA")
 
-    targetF:RegisterEvent("UNIT_SPELLCAST_START")
-    targetF:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-    targetF:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-    targetF:RegisterEvent("UNIT_SPELLCAST_STOP")
-    targetF:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-    targetF:RegisterEvent("UNIT_SPELLCAST_FAILED")
-
-    targetF:SetScript("OnEvent", target_OnEvent)
+    targetF:RegisterUnitEvent("UNIT_HEALTH", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_MAXHEALTH", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_TARGET", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_POWER_FREQUENT", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_MAXPOWER", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_AURA", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_SPELLCAST_START", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_SPELLCAST_STOP", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unitToWatch)
+    targetF:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unitToWatch)
 end

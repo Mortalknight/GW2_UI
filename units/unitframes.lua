@@ -842,9 +842,11 @@ end
 GW.UpdateBuffLayout = UpdateBuffLayout
 
 local function auraFrame_OnUpdate(self, elapsed)
-    if GetTime() > self.throt and self:IsShown() and self.expires ~= nil then
-        self.throt = GetTime() + 0.2
+    if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+        self.throt = 0.2
         self.duration:SetText(TimeCount(self.expires - GetTime()))
+    else
+        self.throt = self.throt - elapsed
     end
 end
 GW.AddForProfiling("unitframes", "auraFrame_OnUpdate", auraFrame_OnUpdate)
@@ -879,7 +881,7 @@ local function CreateAuraFrame(name, parent)
     f.cooldown:SetDrawSwipe(1)
     f.cooldown:SetReverse(false)
     f.cooldown:SetHideCountdownNumbers(true)
-    f.throt = 0
+    f.throt = -1
 
     fs.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
     fs.duration:SetFont(UNIT_NAME_FONT, 10)
@@ -1275,26 +1277,22 @@ local function LoadTarget()
 
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     -- NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED");
-
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
-
-    NewUnitFrame:RegisterEvent("UNIT_HEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    NewUnitFrame:RegisterEvent("UNIT_TARGET")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT")
-    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER")
-
-    NewUnitFrame:RegisterEvent("UNIT_AURA")
-
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
@@ -1350,26 +1348,22 @@ local function LoadFocus()
     NewUnitFrame:SetScript("OnEvent", focus_OnEvent)
 
     NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
-
-    NewUnitFrame:RegisterEvent("UNIT_HEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    NewUnitFrame:RegisterEvent("UNIT_TARGET")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT")
-    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER")
-
-    NewUnitFrame:RegisterEvent("UNIT_AURA")
-
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focus")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
@@ -1412,29 +1406,25 @@ local function LoadTargetOfTarget()
 
     NewUnitFrame:SetScript("OnEvent", targettarget_OnEvent)
 
-    NewUnitFrame:RegisterEvent("UNIT_TARGET")
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
-
-    NewUnitFrame:RegisterEvent("UNIT_HEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    NewUnitFrame:RegisterEvent("UNIT_TARGET")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT")
-    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER")
-
-    NewUnitFrame:RegisterEvent("UNIT_AURA")
-
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+    NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "targettarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "targettarget")
 end
 GW.LoadTargetOfTarget = LoadTargetOfTarget
 
@@ -1472,28 +1462,24 @@ local function LoadTargetOfFocus()
 
     NewUnitFrame:SetScript("OnEvent", focustarget_OnEvent)
 
-    NewUnitFrame:RegisterEvent("UNIT_TARGET")
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
-
-    NewUnitFrame:RegisterEvent("UNIT_HEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_MAXHEALTH")
-    NewUnitFrame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    NewUnitFrame:RegisterEvent("UNIT_TARGET")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
-    NewUnitFrame:RegisterEvent("UNIT_POWER_FREQUENT")
-    NewUnitFrame:RegisterEvent("UNIT_MAXPOWER")
-
-    NewUnitFrame:RegisterEvent("UNIT_AURA")
-
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-    NewUnitFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+    NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focustarget")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focustarget")
 end
 GW.LoadTargetOfFocus = LoadTargetOfFocus

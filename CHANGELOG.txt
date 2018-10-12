@@ -9,7 +9,6 @@ NEW
     - Add two and three chest indicator for M+ timer
     - Add background imagery to reputation entries (MoP, WoD, Cata, TLK)
 
-
 FIXED
     - Druid class power bars should behave more cleanly, especially when shape shifting and with affinities
     - Fix a raid frame target border issue
@@ -17,6 +16,7 @@ FIXED
 
 MISCELLANEOUS
     - Major refactor of the class power system mainly for performance reasons
+    - Performance fixes in all unit frame event handling
 
 
 5.0.9

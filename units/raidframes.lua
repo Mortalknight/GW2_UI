@@ -683,18 +683,15 @@ local function updateFrameData(self, index)
 end
 GW.AddForProfiling("raidframes", "updateFrameData", updateFrameData)
 
-local function raidframe_OnUpdate(self)
-    if not UnitExists(self.unit) then
+local function raidframe_OnUpdate(self, elapsed)
+    if self.onUpdateDelay ~= nil and self.onUpdateDelay > 0 then
+        self.onUpdateDelay = self.onUpdateDelay - elapsed
         return
     end
-    if self.onUpdateDelay == nil then
-        self.onUpdateDelay = 0
+    self.onUpdateDelay = 0.2
+    if UnitExists(self.unit) then
+        updateAwayData(self)
     end
-    if self.onUpdateDelay > GetTime() then
-        return
-    end
-    self.onUpdateDelay = GetTime() + 0.2
-    updateAwayData(self)
 end
 GW.AddForProfiling("raidframes", "raidframe_OnUpdate", raidframe_OnUpdate)
 
@@ -882,28 +879,29 @@ local function createRaidFrame(registerUnit, index)
         end
     )
 
-    frame:RegisterEvent("UNIT_HEALTH")
-    frame:RegisterEvent("UNIT_MAXHEALTH")
-    frame:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
-    frame:RegisterEvent("UNIT_POWER_FREQUENT")
-    frame:RegisterEvent("UNIT_MAXPOWER")
-    frame:RegisterEvent("UNIT_HEAL_PREDICTION")
+    frame:SetScript("OnEvent", raidframe_OnEvent)
+    frame:SetScript("OnUpdate", raidframe_OnUpdate)
 
-    frame:RegisterEvent("UNIT_PHASE")
-    frame:RegisterEvent("PARTY_MEMBER_DISABLE")
-    frame:RegisterEvent("PARTY_MEMBER_ENABLE")
-    frame:RegisterEvent("UNIT_AURA")
-    frame:RegisterEvent("UNIT_LEVEL")
-    frame:RegisterEvent("UNIT_TARGET")
     frame:RegisterEvent("PLAYER_TARGET_CHANGED")
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
     frame:RegisterEvent("RAID_TARGET_UPDATE")
-    frame:RegisterEvent("UNIT_NAME_UPDATE")
     frame:RegisterEvent("LOADING_SCREEN_DISABLED")
-    frame:SetScript("OnEvent", raidframe_OnEvent)
-    frame:SetScript("OnUpdate", raidframe_OnUpdate)
+    frame:RegisterEvent("PARTY_MEMBER_DISABLE")
+    frame:RegisterEvent("PARTY_MEMBER_ENABLE")
+
+    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
+    frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
+    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
+    frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
+    frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
+    frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
+    frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
+    frame:RegisterUnitEvent("UNIT_TARGET", registerUnit)
+    frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
 
     raidframe_OnEvent(frame, "load")
 
