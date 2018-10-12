@@ -380,6 +380,23 @@ local function getBlock(blockIndex)
     setBlockColor(newBlock, "QUEST")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
+    newBlock.joingroup:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    newBlock.joingroup:SetScript(
+        "OnClick",
+        function (self)
+            local p = self:GetParent()
+            LFGListUtil_FindQuestGroup(p.questID)
+        end
+    )
+    newBlock.joingroup:SetScript(
+        "OnEnter",
+        function (self)
+            GameTooltip:SetOwner(self)
+            GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
+            GameTooltip:Show()
+        end
+    )
+    newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
     return newBlock
 end
 GW.AddForProfiling("objectives", "getBlock", getBlock)
@@ -547,9 +564,14 @@ local function updateQuest(block, questWatchId)
                 end
             end
         end
-        --questID, questLogIndex
         block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
         block:SetScript("OnClick", OnBlockClickHandler)
+        --add groupfinder button
+        if C_LFGList.CanCreateQuestGroup(block.questID) then
+            block.joingroup:Show()
+        else
+            block.joingroup:Hide()
+        end
     end
     if block.objectiveBlocks == nil then
         block.objectiveBlocks = {}
