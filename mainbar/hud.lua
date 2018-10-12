@@ -1705,7 +1705,7 @@ end
 GW.AddForProfiling("hud", "updateOrderBar", updateOrderBar)
 
 local function orderBar_OnEvent(self, event)
-    if not GW.inWorld then
+    if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
         return
     end
     if OrderHallCommandBar then
@@ -1735,6 +1735,7 @@ createOrderBar = function()
     GwOrderhallBar:RegisterUnitEvent("UNIT_AURA", "player")
     GwOrderhallBar:RegisterUnitEvent("UNIT_PHASE", "player")
     GwOrderhallBar:RegisterEvent("PLAYER_ALIVE")
+    GwOrderhallBar:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0)
     if inOrderHall then
