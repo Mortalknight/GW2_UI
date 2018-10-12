@@ -272,7 +272,7 @@ local function LoadAchievementFrame()
     header.icon:SetTexCoord(0, 1, 0, 0.25)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
-    header.title:SetText(QUESTS_LABEL)
+    header.title:SetText(ACHIEVEMENTS)
 
     GwQuesttrackerContainerAchievement.collapsed = false
     header:SetScript(
@@ -293,8 +293,7 @@ local function LoadAchievementFrame()
         TRACKER_TYPE_COLOR["ACHIEVEMENT"].r,
         TRACKER_TYPE_COLOR["ACHIEVEMENT"].g,
         TRACKER_TYPE_COLOR["ACHIEVEMENT"].b
-    )
-    header.title:SetText(ACHIEVEMENTS)
+    ) 
 
     updateAchievementLayout()
 end

@@ -276,17 +276,16 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="" y="-35"></Anchor>
                 </Anchors>
-                 <Layers>
-                 <Layer level="ARTWORK" textureSubLevel="1">
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="1">
                         <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\LFDMicroButton-Down">
-                            
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTOMLEFT"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
-                     </Layers>
+                </Layers>
             </Button>
         </Frames>
     </Button>
