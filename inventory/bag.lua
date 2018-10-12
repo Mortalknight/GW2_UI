@@ -451,6 +451,9 @@ local function LoadBag()
     f:SetScript(
         "OnEvent",
         function(self, event, ...)
+            if not GW.inWorld then
+                return
+            end
             if event == "PLAYER_MONEY" then
                 updateMoney(self)
             elseif event == "CURRENCY_DISPLAY_UPDATE" then
@@ -660,6 +663,9 @@ local function LoadBag()
     BagItemSearchBox:SetScript(
         "OnEvent",
         function(self, event, ...)
+            if not GW.inWorld then
+                return
+            end
             if event == "BAG_UPDATE" or event == "BAG_UPDATE_DELAYED" then
                 relocateSearchBox()
                 updateBagIcons()

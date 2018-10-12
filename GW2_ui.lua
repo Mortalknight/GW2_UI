@@ -393,6 +393,11 @@ end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
 local function gw_OnEvent(self, event, name)
+    if event == "PLAYER_LEAVING_WORLD" then
+        GW.inWorld = false
+    elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
+        GW.inWorld = true
+    end
     if loaded then
         return
     end
@@ -561,6 +566,9 @@ end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
 l:SetScript("OnEvent", gw_OnEvent)
 l:RegisterEvent("PLAYER_LOGIN")
+l:RegisterEvent("PLAYER_LEAVING_WORLD")
+l:RegisterEvent("PLAYER_ENTERING_WORLD")
+l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 
 local function AddToClique(frame)
     if type(frame) == "string" then

@@ -858,7 +858,7 @@ end
 GW.AddForProfiling("talents", "updateButton", updateButton)
 
 local function spellGroup_OnEvent(self)
-    if not GwTalentFrame:IsShown() or not self.pool or not self.poolNSD then
+    if not GwTalentFrame:IsShown() or not self.pool or not self.poolNSD or not GW.inWorld then
         return
     end
 
@@ -901,7 +901,7 @@ local function spellBook_OnEvent(self, event, ...)
             event == "PLAYER_SPECIALIZATION_CHANGED" or
             event == ""
      then
-        if not GwTalentFrame:IsShown() then
+        if not GwTalentFrame:IsShown() or not GW.inWorld then
             return
         end
         queueUpdateTab(self)
@@ -1005,7 +1005,7 @@ local function LoadTalents(tabContainer)
     fmGTF:SetScript(
         "OnEvent",
         function(self)
-            if not self:IsShown() then
+            if not self:IsShown() or not GW.inWorld then
                 return
             end
             queueUpdateActiveSpec(self)

@@ -179,6 +179,9 @@ local function xpbar_OnEvent(self, event)
             end
         )
     end
+    if event == "UPDATE_FACTION" and not GW.inWorld then
+        return
+    end
 
     displayRewards()
 
@@ -1161,6 +1164,9 @@ end
 GW.AddForProfiling("hud", "latencyToolTip", latencyToolTip)
 
 local function talentMicro_OnEvent()
+    if not GW.inWorld then
+        return
+    end
     if GetNumUnspentTalents() > 0 then
         _G["GwMicroButtonTalentMicroButtonTexture"]:Show()
         _G["GwMicroButtonTalentMicroButtonString"]:Show()
@@ -1699,6 +1705,9 @@ end
 GW.AddForProfiling("hud", "updateOrderBar", updateOrderBar)
 
 local function orderBar_OnEvent(self, event)
+    if not GW.inWorld then
+        return
+    end
     if OrderHallCommandBar then
         OrderHallCommandBar:SetShown(false)
         OrderHallCommandBar:UnregisterAllEvents()

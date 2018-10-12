@@ -144,6 +144,9 @@ local function LoadCurrency(tabContainer)
     curwin:SetScript(
         "OnEvent",
         function(self, event, ...)
+            if not GW.inWorld then
+                return
+            end
             if event == "CURRENCY_DISPLAY_UPDATE" then
                 if self:IsShown() then
                     loadCurrency(self)

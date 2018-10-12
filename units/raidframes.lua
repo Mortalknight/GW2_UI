@@ -568,7 +568,10 @@ local function raidframe_OnEvent(self, event, unit, arg1)
     if event == "UNIT_AURA" and unit == self.unit then
         updateAuras(self)
     end
-    if event == "LOADING_SCREEN_DISABLED" then
+    if event == "PLAYER_ENTERING_WORLD" then
+        RequestRaidInfo()
+    end
+    if event == "UPDATE_INSTANCE_INFO" then
         updateAuras(self)
         updateAwayData(self)
     end
@@ -887,7 +890,8 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
     frame:RegisterEvent("RAID_TARGET_UPDATE")
-    frame:RegisterEvent("LOADING_SCREEN_DISABLED")
+    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    frame:RegisterEvent("UPDATE_INSTANCE_INFO")
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
 

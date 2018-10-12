@@ -874,6 +874,9 @@ local function LoadReputation(tabContainer)
     fmGPR.categories:EnableMouseWheel(true)
     fmGPR.categories:RegisterEvent("UPDATE_FACTION")
     local fnGPR_OnEvent = function(self, event)
+        if not GW.inWorld then
+            return
+        end
         updateSavedReputation()
         if GwPaperReputation:IsShown() then
             updateOldData()

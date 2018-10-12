@@ -72,6 +72,9 @@ end
 GW.AddForProfiling("playerhud", "powerBar_OnUpdate", powerBar_OnUpdate)
 
 local function repair_OnEvent()
+    if not GW.inWorld then
+        return
+    end
     local needRepair = false
     local gearBroken = false
     for i = 1, 23 do
@@ -432,6 +435,9 @@ GW.AddForProfiling("playerhud", "updateDodgeBar", updateDodgeBar)
 
 local function dodgeBar_OnEvent(self, event, unit)
     if event == "SPELL_UPDATE_COOLDOWN" then
+        if not GW.inWorld then
+            return
+        end
         if self.gwDashSpell then
             local charges, maxCharges, start, duration
             if self.gwMaxCharges > 1 then

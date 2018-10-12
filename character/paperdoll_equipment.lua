@@ -671,10 +671,14 @@ local function stats_OnEvent(self, event, ...)
     local unit = ...
     if
         (event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or
-            event == "UNIT_NAME_UPDATE" and unit == "player")
+            (event == "UNIT_NAME_UPDATE" and unit == "player"))
      then
         GwDressingRoom.model:SetUnit("player", false)
         updateUnitData()
+        return
+    end
+
+    if not GW.inWorld then
         return
     end
 

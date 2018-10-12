@@ -274,6 +274,9 @@ end
 GW.AddForProfiling("professions", "queueUpdate", queueUpdate)
 
 local function overview_OnEvent(self, event, ...)
+    if not GW.inWorld then
+        return
+    end
     if event == "SKILL_LINES_CHANGED" or event == "TRIAL_STATUS_UPDATE" or event == "SPELLS_CHANGED" then
         if not self:IsShown() then
             return
