@@ -71,8 +71,8 @@ local function powerBar_OnUpdate(self)
 end
 GW.AddForProfiling("playerhud", "powerBar_OnUpdate", powerBar_OnUpdate)
 
-local function repair_OnEvent()
-    if not GW.inWorld then
+local function repair_OnEvent(self, event, ...)
+    if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
         return
     end
     local needRepair = false
@@ -829,6 +829,7 @@ local function LoadPlayerHud()
     DurabilityFrame:Hide()
     GwHudArtFrameRepair:SetScript("OnEvent", repair_OnEvent)
     GwHudArtFrameRepair:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+    GwHudArtFrameRepair:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwHudArtFrameRepair:SetScript(
         "OnEnter",
         function()
