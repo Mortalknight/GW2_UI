@@ -110,7 +110,7 @@ local function bossFrame_OnEvent(self, event, unit)
         return
     end
     
-    if event == "PLAYER_ENTERING_WORLD" then 
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" then 
         updateBoss_Health(self)
         updateBoss_Power(self)
         updateBoss_Name(self)
@@ -162,6 +162,7 @@ local function registerFrame(i)
     targetF:RegisterUnitEvent("UNIT_HEALTH", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_MAXPOWER", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_POWER_FREQUENT", targetF.unit)
+    targetF:RegisterUnitEvent("UNIT_NAME_UPDATE", targetF.unit)
     targetF:RegisterEvent("RAID_TARGET_UPDATE")
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
