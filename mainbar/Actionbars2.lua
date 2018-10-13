@@ -559,7 +559,12 @@ local function trackBarChanges()
         show4 = false
     end
 
+    -- set that we'll need to immediately re-calc visible bars and mainbar offset (happens in fadeCheck)
     fmActionbar.gw_DirtySetting = true
+    fmActionbar.fadeTimer = -1
+    fmActionbar.elapsedTimer = -1
+
+    -- store the new enabled state for each multibar
     fmActionbar.gw_Bar1.gw_IsEnabled = show1
     fmActionbar.gw_Bar2.gw_IsEnabled = show2
     fmActionbar.gw_Bar3.gw_IsEnabled = show3
