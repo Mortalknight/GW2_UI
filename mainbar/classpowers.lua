@@ -81,6 +81,30 @@ local function findBuff(unit, searchID)
 end
 GW.AddForProfiling("classpowers", "findBuff", findBuff)
 
+local searchIDs = {}
+local function findBuffs(unit, ...)
+    local name, count, duration, expires, spellID
+    table.wipe(searchIDs)
+    for i = 1, select("#", ...) do
+        searchIDs["ID" .. select(i, ...)] = true
+    end
+    local results = nil
+    for i = 1, 40 do
+        name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
+        if not spellID then
+            break
+        elseif searchIDs["ID" .. spellID] then
+            if results == nil then
+                results = {}
+            end
+            results[#results + 1] = {name, count, duration, expires}
+        end
+    end
+
+    return results
+end
+GW.AddForProfiling("classpowers", "findBuffs", findBuffs)
+
 -- MANA (multi class use)
 local function powerMana(self, event, ...)
     local ptype = select(2, ...)
@@ -159,8 +183,24 @@ end
 GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
 
 local function powerSBlock(self, event, ...)
-    local _, _, duration, expires = findBuff("player", 132404)
-    if duration ~= nil then
+    local results
+    if self.gw_BolsterSelected then
+        results = findBuffs("player", 132404, 871, 12975)
+    else
+        results = findBuffs("player", 132404, 871)
+    end
+    if results == nil then
+        return
+    end
+    local duration = -1
+    local expires = -1
+    for i = 1, #results do
+        if results[i][4] > expires then
+            expires = results[i][4]
+            duration = results[i][3]
+        end
+    end
+    if expires > 0 then
         local pre = (expires - GetTime()) / duration
         AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
     end
@@ -169,11 +209,13 @@ GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
 
 local function setWarrior(f)
     local spec = f.gwPlayerSpec
+    local selected
 
     if spec == 2 or spec == 3 then
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fd = f.decay
+        fd.bar:SetStatusBarColor(0.45, 0.55, 0.60)
         fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
         fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
         fd.bar:SetValue(0)
@@ -183,6 +225,9 @@ local function setWarrior(f)
             f:SetScript("OnEvent", powerEnrage)
             powerEnrage(f, "CLASS_POWER_INIT")
         elseif spec == 3 then -- prot
+            -- determine if bolster talent is selected
+            _, _, _, selected, _ = GetTalentInfo(4, 3, 1, false, "player")
+            f.gw_BolsterSelected = selected
             f:SetScript("OnEvent", powerSBlock)
             powerSBlock(f, "CLASS_POWER_INIT")
         end
@@ -197,8 +242,19 @@ GW.AddForProfiling("classpowers", "setWarrior", setWarrior)
 
 -- PALADIN
 local function powerSotR(self, event, ...)
-    local _, _, duration, expires = findBuff("player", 132403)
-    if duration ~= nil then
+    local results = findBuffs("player", 132403, 31850, 212641)
+    if results == nil then
+        return
+    end
+    local duration = -1
+    local expires = -1
+    for i = 1, #results do
+        if results[i][4] > expires then
+            expires = results[i][4]
+            duration = results[i][3]
+        end
+    end
+    if expires > 0 then
         local pre = (expires - GetTime()) / duration
         AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
     end
@@ -236,6 +292,7 @@ local function setPaladin(f)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fd = f.decay
+        fd.bar:SetStatusBarColor(0.85, 0.65, 0)
         fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
         fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
         fd.bar:SetValue(0)
