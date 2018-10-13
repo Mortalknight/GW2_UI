@@ -36,10 +36,9 @@ local function updateTitles()
 
     for i = 1, GetNumTitles() do
         if (IsTitleKnown(i)) then
-            tempName, playerTitle = GetTitleName(i)
+            local tempName, playerTitle = GetTitleName(i)
             if (tempName and playerTitle) then
                 tableIndex = tableIndex + 1
-                local tempName, playerTitle = GetTitleName(i)
                 savedPlayerTitles[tableIndex] = {}
                 savedPlayerTitles[tableIndex].name = strtrim(tempName)
                 savedPlayerTitles[tableIndex].id = i

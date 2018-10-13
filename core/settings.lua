@@ -18,6 +18,8 @@ local settings_cat = {}
 local options = {}
 local GW_PROFILE_ICONS_PRESET = {}
 
+local lhb
+
 GW_PROFILE_ICONS_PRESET[0] = "Interface\\icons\\spell_druid_displacement"
 GW_PROFILE_ICONS_PRESET[1] = "Interface\\icons\\ability_socererking_arcanemines"
 GW_PROFILE_ICONS_PRESET[2] = "Interface\\icons\\ability_warrior_bloodbath"
@@ -397,7 +399,7 @@ local function DisplaySettings()
             padding[v["frameName"]]["x"] = box_padding
             padding[v["frameName"]]["y"] = -55
         end
-        optionFrameType = "GwOptionBox"
+        local optionFrameType = "GwOptionBox"
         if v["optionType"] == "slider" then
             optionFrameType = "GwOptionBoxSlider"
             newLine = true

@@ -560,6 +560,7 @@ GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
 
 local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
+    local petToken
 
     local BOOKTYPE = "spell"
     if spellBookTabs == 4 then
