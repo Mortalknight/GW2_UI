@@ -1447,6 +1447,9 @@ local function LoadMicroMenu()
 
     -- fix tutorial alerts and hide the micromenu bar
     MicroButtonAndBagsBar:Hide()
+    MicroButtonAndBagsBar:SetMovable(1)
+    MicroButtonAndBagsBar:SetUserPlaced(true)
+    MicroButtonAndBagsBar:SetMovable(0)
     -- talent alert is always hidden by actionbars because we have a custom # on the button instead
     modifyMicroAlert(CollectionsMicroButtonAlert, GwMicroButtonCollectionsMicroButton)
     modifyMicroAlert(LFDMicroButtonAlert, GwMicroButtonLFDMicroButton)

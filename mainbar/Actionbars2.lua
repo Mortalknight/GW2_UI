@@ -239,19 +239,6 @@ local function fadeCheck(self, forceCombat)
             end
         end
     end
-
-    if self.gw_NeedsLayout and not inLockdown then
-        local xOff
-        local btn_padding = self.gw_Width
-        if self.gw_Bar2:IsShown() then
-            xOff = (804 - btn_padding) / 2
-        else
-            xOff = -(btn_padding - 550) / 2
-        end
-        self:ClearAllPoints()
-        self:SetPoint("TOP", UIParent, "BOTTOM", xOff, 80)
-        self.gw_NeedsLayout = nil
-    end
 end
 GW.AddForProfiling("Actionbars2", "fadeCheck", fadeCheck)
 
@@ -308,11 +295,10 @@ local function toggleMainHud(b, inCombat)
                         f:Show()
                     end
                     if name == "GwPlayerClassPower" then
-                        if not f.visible then 
+                        if not f.visible then
                             f:Hide()
                         end
                     end
-                    -- f:SetAlpha(1)
                 end
             else
                 if f.gw_FadeShowing ~= nil then
@@ -328,7 +314,6 @@ local function toggleMainHud(b, inCombat)
                     elseif not inCombat then
                         f:Hide()
                     end
-                   -- f:SetAlpha(0)
                 end
             end
         end
@@ -511,6 +496,9 @@ local function main_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("Actionbars2", "main_OnEvent", main_OnEvent)
 
+local function GNDN()
+end
+
 local function updateMainBar(toggle)
     local fmActionbar = MainMenuBarArtFrame
 
@@ -598,9 +586,17 @@ local function updateMainBar(toggle)
         end
     end
 
-    AddUpdateCB(actionBar_OnUpdate, fmActionbar)
+    -- position the main action bar
+    fmActionbar:SetMovable(1)
+    fmActionbar:ClearAllPoints()
+    fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
     fmActionbar:SetSize(btn_padding, used_height)
+    fmActionbar:SetUserPlaced(true)
+    fmActionbar:SetMovable(0)
     fmActionbar.gw_Width = btn_padding
+
+    -- event/update handlers
+    AddUpdateCB(actionBar_OnUpdate, fmActionbar)
     fmActionbar.gw_FadeBottomActionbar = GetSetting("FADE_BOTTOM_ACTIONBAR")
     fmActionbar:RegisterEvent("PET_BATTLE_CLOSE")
     fmActionbar:RegisterEvent("PET_BATTLE_OPENING_START")
@@ -610,17 +606,17 @@ local function updateMainBar(toggle)
     fmActionbar:RegisterEvent("PLAYER_REGEN_DISABLED")
     fmActionbar:RegisterEvent("PLAYER_REGEN_ENABLED")
     fmActionbar:SetScript("OnEvent", main_OnEvent)
-    hooksecurefunc(
-        "MultiActionBar_Update",
-        function()
-            fmActionbar.gw_NeedsLayout = true
-        end
-    )
 
     -- disable default main action bar behaviors
     MainMenuBar:UnregisterAllEvents()
     MainMenuBar:SetScript("OnUpdate", nil)
     MainMenuBar:EnableMouse(false)
+    -- even with IsUserPlaced set, the Blizz multibar handlers mess with the width so kill that
+    MainMenuBar.ChangeMenuBarSizeAndPosition = GNDN
+    MainMenuBar.SetPositionForStatusBars = GNDN
+    MainMenuBar:SetMovable(1)
+    MainMenuBar:SetUserPlaced(true)
+    MainMenuBar:SetMovable(0)
 
     return fmActionbar
 end
@@ -659,7 +655,6 @@ local function trackBarChanges()
     fmActionbar.gw_Bar2.gw_NeedsToShow = show2
     fmActionbar.gw_Bar3.gw_NeedsToShow = show3
     fmActionbar.gw_Bar4.gw_NeedsToShow = show4
-    fmActionbar.gw_NeedsLayout = true
 end
 
 local function updateMultiBar(barName, buttonName, actionPage, state)
@@ -729,6 +724,8 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
     -- disable default multibar behaviors
     multibar:UnregisterAllEvents()
     multibar:SetScript("OnUpdate", nil)
+    multibar:SetScript("OnShow", nil)
+    multibar:SetScript("OnHide", nil)
     multibar:EnableMouse(false)
 
     return fmMultibar
@@ -1051,7 +1048,9 @@ local function LoadActionBars()
             "OBJTRACKER_OFFSET_X"
         }
     ) do
-        UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
+        if UIPARENT_MANAGED_FRAME_POSITIONS[frame] then
+            UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
+        end
     end
 
     -- init our bars

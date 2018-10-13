@@ -19,6 +19,7 @@ FIXED
 MISCELLANEOUS
     - Major refactor of the class power system mainly for performance reasons
     - Performance fixes in all unit frame event handling
+    - Toggling extra action bars in the Blizz interface settings won't take effect until leaving combat
 
 
 5.0.9
