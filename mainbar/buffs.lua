@@ -460,6 +460,7 @@ local function LoadBuffs()
     BuffFrame:Hide()
     BuffFrame:SetScript("OnShow", Self_Hide)
     local player_buff_frame = CreateFrame("Frame", "GwPlayerAuraFrame", UIParent, "GwPlayerAuraFrame")
+    GW.MixinHideDuringPet(player_buff_frame)
     GwPlayerAuraFrame.auras = self
     GwPlayerAuraFrame.unit = "player"
     player_buff_frame:SetScript(
@@ -481,18 +482,28 @@ local function LoadBuffs()
         fgw:SetAttribute(
             "_onstate-combat",
             [=[
-        
-            if self:GetFrameRef('MultiBarBottomRight'):IsShown()==false then
-                return
+            local mbar = self:GetFrameRef("MultiBarBottomRight")
+            local aura = self:GetFrameRef("GwPlayerAuraFrame")
+            local uip = self:GetFrameRef("UIParent")
+
+            if newstate == "test" then
+                if not mbar or not mbar:IsShown() then
+                    newstate = "low"
+                else
+                    newstate = "high"
+                end
             end
-        
-            self:GetFrameRef('GwPlayerAuraFrame'):ClearAllPoints()
-            if newstate == 'show' then
-                self:GetFrameRef('GwPlayerAuraFrame'):SetPoint('BOTTOMLEFT',self:GetFrameRef('UIParent'),'BOTTOM',53,215)
+
+            if newstate == "high" then
+                aura:ClearAllPoints()
+                aura:SetPoint("BOTTOMLEFT", uip, "BOTTOM", 53, 215)
+            elseif newstate == "low" then
+                aura:ClearAllPoints()
+                aura:SetPoint("BOTTOMLEFT", uip, "BOTTOM", 53, 120)
             end
             ]=]
         )
-        RegisterStateDriver(fgw, "combat", "[combat] show; hide")
+        RegisterStateDriver(fgw, "combat", "[combat] test; [overridebar] low; [vehicleui] low; none")
     end
 
     AddActionBarCallback(UpdatePlayerBuffFrame)
@@ -500,19 +511,5 @@ local function LoadBuffs()
 
     LoadAuras(GwPlayerAuraFrame, GwPlayerAuraFrame, "player")
     UpdateBuffLayout(GwPlayerAuraFrame, event, "player")
-
-    -- show/hide stuff with override bar
-    OverrideActionBar:HookScript(
-        "OnShow",
-        function()
-            player_buff_frame:SetAlpha(0)
-        end
-    )
-    OverrideActionBar:HookScript(
-        "OnHide",
-        function()
-            player_buff_frame:SetAlpha(1)
-        end
-    )
 end
 GW.LoadBuffs = LoadBuffs

@@ -8,18 +8,19 @@ NEW
     - Add a new health globe animation
     - M+ tracker updates: added two and three chest indicator and death counter
     - Add background imagery to reputation entries (MoP, WoD, Cata, TLK)
-    - Add LFG button to World Quests
+    - Add LFG button to Quests and World Quests (CF#125)
 
 FIXED
     - Druid class power bars should behave more cleanly, especially when shape shifting and with affinities
     - Fix a raid frame target border issue
     - Fix the dodge/dash bar "antennas" (CF#241)
     - Added logic to hopefully fix the loading screen crashing bug (CF#254)
+    - More fixes to vehicle UI behaviors (CF#251, possibly CF#244)
+    - Pet portaits should now update correctly when swapping pets
 
 MISCELLANEOUS
     - Major refactor of the class power system mainly for performance reasons
     - Performance fixes in all unit frame event handling
-    - Toggling extra action bars in the Blizz interface settings won't take effect until leaving combat
 
 
 5.0.9

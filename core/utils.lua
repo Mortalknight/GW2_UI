@@ -176,6 +176,87 @@ local function Notice(...)
 end
 GW.Notice = Notice
 
+local function securePetAndOverride(f, stateType)
+    if InCombatLockdown() then
+        return false
+    end
+    GW.Debug("add secure petandoverride to", f:GetName(), stateType)
+    f:SetAttribute("gw_WasShowing", f:IsShown())
+    f:SetAttribute(
+        "_onstate-petoverride",
+        [=[
+        if newstate == "show" then
+            if self:GetAttribute("gw_WasShowing") then
+                self:Show()
+            end
+        elseif newstate == "hide" then
+            self:SetAttribute("gw_WasShowing", self:IsShown())
+            self:Hide()
+        end
+    ]=]
+    )
+    if stateType == "petbattle" then
+        RegisterStateDriver(f, "petoverride", "[petbattle] hide; show")
+    elseif stateType == "override" then
+        RegisterStateDriver(f, "petoverride", "[overridebar] hide; [vehicleui] hide; show")
+    else
+        RegisterStateDriver(f, "petoverride", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; show")
+    end
+    return true
+end
+
+local function normPetAndOverride(f, stateType)
+    GW.Debug("add norm petandoverride to", f:GetName(), stateType)
+    local f_OnShow = function()
+        f.gw_WasShowing = f:IsShown()
+        f:Hide()
+    end
+    local f_OnHide = function()
+        if f.gw_WasShowing then
+            f:Show()
+        end
+    end
+
+    if stateType ~= "petbattle" then
+        OverrideActionBar:HookScript("OnShow", f_OnShow)
+        OverrideActionBar:HookScript("OnHide", f_OnHide)
+    end
+    if stateType ~= "override" then
+        PetBattleFrame:HookScript("OnShow", f_OnShow)
+        PetBattleFrame:HookScript("OnHide", f_OnHide)
+    end
+
+    return true
+end
+
+local function MixinHideDuringPet(f)
+    -- TODO: figure out how to do real mixins
+    if f:IsProtected() then
+        return securePetAndOverride(f, "petbattle")
+    else
+        return normPetAndOverride(f, "petbattle")
+    end
+end
+GW.MixinHideDuringPet = MixinHideDuringPet
+
+local function MixinHideDuringOverride(f)
+    if f:IsProtected() then
+        return securePetAndOverride(f, "override")
+    else
+        return normPetAndOverride(f, "override")
+    end
+end
+GW.MixinHideDuringOverride = MixinHideDuringOverride
+
+local function MixinHideDuringPetAndOverride(f)
+    if f:IsProtected() then
+        return securePetAndOverride(f)
+    else
+        return normPetAndOverride(f)
+    end
+end
+GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
+
 --@debug@
 local function AddForProfiling(unit, name, ...)
     if not Profiler then

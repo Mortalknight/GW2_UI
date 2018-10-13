@@ -217,22 +217,20 @@ end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
 
 local function updatePetData(self, event, unit)
-    if unit == "player" and (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") then
-        if event == "UNIT_ENTERED_VEHICLE" and (UnitHasVehiclePlayerFrameUI("player") or OverrideActionBar:IsShown()) then
-            self:SetAlpha(0)
-        else
-            self:SetAlpha(1)
-        end
-        return
-    end
-
     if not UnitExists("pet") then
         return
     end
 
-    if event == "UNIT_AURA" and unit == "pet" then
+    if event == "UNIT_AURA" then
         UpdateBuffLayout(self, event, unit)
         return
+    end
+
+    if event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+        SetPortraitTexture(_G["GwPlayerPetFramePortrait"], "pet")
+        if event ~= "UNIT_PET" then
+            return
+        end
     end
 
     local health = UnitHealth("pet")
@@ -258,8 +256,6 @@ local function updatePetData(self, event, unit)
     end
 
     self.resource:SetValue(resourcePrec)
-
-    SetPortraitTexture(_G["GwPlayerPetFramePortrait"], "pet")
 
     if GwPlayerPetFrameHealth.animationCurrent == nil then
         GwPlayerPetFrameHealth.animationCurrent = 0
@@ -291,7 +287,12 @@ local function LoadPetFrame()
     playerPetFrame:SetAttribute("unit", "pet")
     playerPetFrame:EnableMouse(true)
     playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    RegisterUnitWatch(playerPetFrame)
+    RegisterStateDriver(
+        playerPetFrame,
+        "visibility",
+        "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide"
+    )
+    -- TODO: When in override/vehicleui, we should show the pet auras/buffs as this can be important info
 
     _G["GwPlayerPetFrameHealth"]:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     _G["GwPlayerPetFrameHealthString"]:SetFont(UNIT_NAME_FONT, 11)
@@ -311,14 +312,14 @@ local function LoadPetFrame()
 
     LoadAuras(playerPetFrame, playerPetFrame.auras)
 
-    playerPetFrame:RegisterEvent("UNIT_PET")
-    playerPetFrame:RegisterEvent("UNIT_POWER_FREQUENT")
-    playerPetFrame:RegisterEvent("UNIT_MAXPOWER")
-    playerPetFrame:RegisterEvent("UNIT_HEALTH")
-    playerPetFrame:RegisterEvent("UNIT_MAXHEALTH")
-    playerPetFrame:RegisterEvent("UNIT_AURA")
-    playerPetFrame:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
-    playerPetFrame:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
+    playerPetFrame:RegisterUnitEvent("UNIT_PET", "player")
+    playerPetFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_MAXPOWER", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_HEALTH", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
 
     updatePetData(playerPetFrame, "UNIT_PET", "player")
 

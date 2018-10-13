@@ -17,6 +17,7 @@ local displayRewards
 local createOrderBar
 
 local experiencebarAnimation = 0
+local GW_LEVELING_REWARD_AVALIBLE
 
 local gw_reputation_vals = nil
 local gw_honor_vals = nil
@@ -227,6 +228,7 @@ local function xpbar_OnEvent(self, event)
     _G["GwExperienceFrameBar"]:SetStatusBarColor(0.83, 0.57, 0)
 
     gw_reputation_vals = nil
+    local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild
     if level == Nextlevel then
         for factionIndex = 1, GetNumFactions() do
             name,
@@ -615,13 +617,13 @@ GW.AddForProfiling("hud", "xpbar_OnEvent", xpbar_OnEvent)
 
 local function animateAzeriteBar(self, elapsed)
     self:SetPoint(
-        "RIGHT",  
+        "RIGHT",
         ArtifactBarSpark,
         'RIGHT',
         0,
         0
     )
-    speed = 0.01
+    local speed = 0.01
     self.prog = self.prog + (speed * elapsed)
     if self.prog > 1 then
         self.prog = 0
@@ -1813,6 +1815,7 @@ GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 
 local function LoadHudArt()
     local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
+    GW.MixinHideDuringPetAndOverride(hudArtFrame)
 
     if not GetSetting("BORDER_ENABLED") and hudArtFrame.edgeTint then
         for _, f in ipairs(hudArtFrame.edgeTint) do
@@ -1837,6 +1840,7 @@ local function LoadXPBar()
     loadRewards()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
+    GW.MixinHideDuringPet(experiencebar)
     GwlevelLableRightButton:SetScript("OnClick", xpbar_OnClick)
     
     _G["GwExperienceFrameArtifactBar"].animation:SetScript('OnShow', function()

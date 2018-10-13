@@ -865,12 +865,14 @@ local function LoadClassPowers()
     local _, _, pClass = UnitClass("player")
 
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
+    GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
 
     cpf.gwPlayerClass = pClass
 
     -- create an extra mana power bar that is used sometimes
     local exbar = CreateFrame("Frame", nil, cpf, "GwPlayerPowerBar")
+    GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
     exbar.candy.spark:ClearAllPoints()
     exbar:ClearAllPoints()
@@ -901,18 +903,5 @@ local function LoadClassPowers()
     cpf.decay:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
     cpf.gwPlayerForm = GetShapeshiftFormID()
-
-    OverrideActionBar:HookScript(
-        "OnShow",
-        function()
-            cpf:SetAlpha(0)
-        end
-    )
-    OverrideActionBar:HookScript(
-        "OnHide",
-        function()
-            cpf:SetAlpha(1)
-        end
-    )
 end
 GW.LoadClassPowers = LoadClassPowers

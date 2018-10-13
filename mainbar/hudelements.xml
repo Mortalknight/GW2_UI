@@ -24,7 +24,7 @@
         </Anchors>
 
     </Button>
-    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" FrameLevel="2">
+    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW" enableMouse="true" parent="UIParent" inherits="SecurehandlerStateTemplate,SecureUnitButtonTemplate" virtual="true" FrameLevel="2">
 
         <Size x="104" y="104"></Size>
         <Anchors>

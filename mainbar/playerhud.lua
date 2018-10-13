@@ -54,8 +54,12 @@ local function powerBar_OnUpdate(self)
         bloodSpark[bI].bottom
     )
     local barPoint = spark + 3
-    if powerPrec== 0 then  self.bar:Hide() else  self.bar:Show() end
-    
+    if powerPrec == 0 then
+        self.bar:Hide()
+    else
+        self.bar:Show()
+    end
+
     self.powerCandySpark:SetPoint("LEFT", self.bar, "RIGHT", -2, 0)
     self.bar:SetPoint("RIGHT", self, "LEFT", barPoint, 0)
 
@@ -177,7 +181,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
             f.statusBar:SetValue(0)
             f.candy:SetValue(0)
 
-            if f.stringUpdateTime==nil or f.stringUpdateTime < GetTime() then
+            if f.stringUpdateTime == nil or f.stringUpdateTime < GetTime() then
                 --f.statusBar.label:SetText(CommaValue(powerMax * animations[f.animKey]["progress"]))
                 f.statusBar.label:SetText(CommaValue(f.lostKnownPower))
                 f.stringUpdateTime = GetTime() + 0.1
@@ -276,18 +280,17 @@ local function updateAbsorbText(text)
 end
 GW.AddForProfiling("playerhud", "updateAbsorbText", updateAbsorbText)
 
-local healtGlobaFlareColors={}
+local healtGlobaFlareColors = {}
 
-healtGlobaFlareColors[0] = {r=79,g=10,b=5}
-healtGlobaFlareColors[1] = {r=212,g=32,b=4}
+healtGlobaFlareColors[0] = {r = 79, g = 10, b = 5}
+healtGlobaFlareColors[1] = {r = 212, g = 32, b = 4}
 
 local function lerpFlareColors(step)
-    
-    r = Lerp(healtGlobaFlareColors[0].r,healtGlobaFlareColors[1].r,step)
-    g = Lerp(healtGlobaFlareColors[0].g,healtGlobaFlareColors[1].g,step)
-    b = Lerp(healtGlobaFlareColors[0].b,healtGlobaFlareColors[1].b,step)
-    
-    return r/255, g/255, b/255
+    local r = Lerp(healtGlobaFlareColors[0].r, healtGlobaFlareColors[1].r, step)
+    local g = Lerp(healtGlobaFlareColors[0].g, healtGlobaFlareColors[1].g, step)
+    local b = Lerp(healtGlobaFlareColors[0].b, healtGlobaFlareColors[1].b, step)
+
+    return r / 255, g / 255, b / 255
 end
 GW.AddForProfiling("playerhud", "lerpFlareColors", lerpFlareColors)
 
@@ -306,10 +309,10 @@ local function updateHealthData(self)
     if absorb > 0 and healthMax > 0 then
         absorbPrec = math.min(math.max(0.001, absorb / healthMax), 1)
         _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:Show()
-         GwPlayerHealthGlobeAbsorbBackdrop.spark:Show();
+        GwPlayerHealthGlobeAbsorbBackdrop.spark:Show()
     else
-       _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:Hide(); 
-        GwPlayerHealthGlobeAbsorbBackdrop.spark:Hide();
+        _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:Hide()
+        GwPlayerHealthGlobeAbsorbBackdrop.spark:Hide()
     end
 
     if healthPrec < 0.5 and (self.animating == false or self.animating == nil) then
@@ -333,57 +336,41 @@ local function updateHealthData(self)
                 updateAbsorbText(absorb)
                 self.stringUpdateTime = GetTime() + 0.05
             end
-            
+
             local absorbPrecentage = (animations["healthGlobeAnimation"]["progress"] + absorbPrec) - 0.05
-            if absorbPrec<=0.001   then absorbPrecentage = 0.01 end
-            local healthAnimationReduction = math.max(0,math.min(1, animations["healthGlobeAnimation"]["progress"] - 0.05))
-            if animations["healthGlobeAnimation"]["progress"]>=0.95 then  healthAnimationReduction = animations["healthGlobeAnimation"]["progress"] end
-  
-            
+            if absorbPrec <= 0.001 then
+                absorbPrecentage = 0.01
+            end
+            local healthAnimationReduction =
+                math.max(0, math.min(1, animations["healthGlobeAnimation"]["progress"] - 0.05))
+            if animations["healthGlobeAnimation"]["progress"] >= 0.95 then
+                healthAnimationReduction = animations["healthGlobeAnimation"]["progress"]
+            end
 
             _G["GwPlayerHealthGlobeAbsorbBackdrop"]:SetHeight(
-                math.min(1, absorbPrecentage) *
-                    _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
+                math.min(1, absorbPrecentage) * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
             )
-            _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:SetTexCoord(
-                0,
-                1,
-                math.abs(math.min(1, absorbPrecentage) - 1),
-                1
-            )
+            _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:SetTexCoord(0, 1, math.abs(math.min(1, absorbPrecentage) - 1), 1)
 
             _G["GwPlayerHealthGlobeHealth"]:SetHeight(
                 healthAnimationReduction * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
             )
-            _G["GwPlayerHealthGlobeHealthBar"]:SetTexCoord(
-                0,
-                1,
-                math.abs(healthAnimationReduction - 1),
-                1
-            )
-            if healthPrec <animations["healthGlobeAnimation"]["progress"] then
-                GwPlayerHealthGlobeHealth.spark:SetAlpha(Lerp(1,0.5,( GetTime() - startTime)/ 0.2))
+            _G["GwPlayerHealthGlobeHealthBar"]:SetTexCoord(0, 1, math.abs(healthAnimationReduction - 1), 1)
+            if healthPrec < animations["healthGlobeAnimation"]["progress"] then
+                GwPlayerHealthGlobeHealth.spark:SetAlpha(Lerp(1, 0.5, (GetTime() - startTime) / 0.2))
             end
-        
-            
-        
-           
-            
-            local bit = _G["GwPlayerHealthGlobeHealthBar"]:GetWidth() / 20
-            local spark = bit * math.floor(4  * ( animations["healthGlobeAnimation"]["progress"]))
 
-            local spark_current = (bit * (4 * ( animations["healthGlobeAnimation"]["progress"])) - spark) / bit
+            local bit = _G["GwPlayerHealthGlobeHealthBar"]:GetWidth() / 20
+            local spark = bit * math.floor(4 * (animations["healthGlobeAnimation"]["progress"]))
+
+            local spark_current = (bit * (4 * (animations["healthGlobeAnimation"]["progress"])) - spark) / bit
             local sprite = math.min(4, math.max(1, math.floor(5 - (6 * spark_current))))
-            GwPlayerHealthGlobeHealth.spark:SetTexCoord(0,1, (0.25 * sprite) - 0.25,0.25*sprite)
-            GwPlayerHealthGlobeHealth.spark2:SetTexCoord(0,1, (0.25 * sprite) - 0.25,0.25*sprite)
-            local r,g,b = lerpFlareColors( healthAnimationReduction )
-            GwPlayerHealthGlobeHealth.spark2:SetVertexColor(r,g,b,1)
-            
-            GwPlayerHealthGlobeAbsorbBackdrop.spark:SetTexCoord(0,1, (0.25 * sprite) - 0.25,0.25*sprite)
-           
-          
-            
-   
+            GwPlayerHealthGlobeHealth.spark:SetTexCoord(0, 1, (0.25 * sprite) - 0.25, 0.25 * sprite)
+            GwPlayerHealthGlobeHealth.spark2:SetTexCoord(0, 1, (0.25 * sprite) - 0.25, 0.25 * sprite)
+            local r, g, b = lerpFlareColors(healthAnimationReduction)
+            GwPlayerHealthGlobeHealth.spark2:SetVertexColor(r, g, b, 1)
+
+            GwPlayerHealthGlobeAbsorbBackdrop.spark:SetTexCoord(0, 1, (0.25 * sprite) - 0.25, 0.25 * sprite)
         end,
         nil,
         function()
@@ -396,15 +383,13 @@ local function updateHealthData(self)
     local absorbPrecOverflow = (healthPrec + absorbPrec) - 1
     _G["GwPlayerHealthGlobeAbsorb"]:SetHeight(absorbPrecOverflow * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth())
     _G["GwPlayerHealthGlobeAbsorbBar"]:SetTexCoord(0, 1, math.abs(absorbPrecOverflow - 1), 1)
-    if absorbPrecOverflow>0.001 then
-        _G["GwPlayerHealthGlobeAbsorb"]:Show();
+    if absorbPrecOverflow > 0.001 then
+        _G["GwPlayerHealthGlobeAbsorb"]:Show()
     else
-        _G["GwPlayerHealthGlobeAbsorb"]:Hide(); 
+        _G["GwPlayerHealthGlobeAbsorb"]:Hide()
     end
 end
 GW.AddForProfiling("playerhud", "updateHealthData", updateHealthData)
-
-
 
 local function updateDodgeBar(start, duration, chargesMax, charges)
     --  GwDodgeBar.spark.anim:SetDegrees(63)
@@ -508,6 +493,7 @@ GW.AddForProfiling("playerhud", "dodgeBar_OnEvent", dodgeBar_OnEvent)
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
+    GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
     _G[playerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()
 
@@ -534,20 +520,6 @@ local function LoadPowerBar()
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     UpdatePowerData(GwPlayerPowerBar)
-
-    -- show/hide stuff with override bar
-    OverrideActionBar:HookScript(
-        "OnShow",
-        function()
-            playerPowerBar:SetAlpha(0)
-        end
-    )
-    OverrideActionBar:HookScript(
-        "OnHide",
-        function()
-            playerPowerBar:SetAlpha(1)
-        end
-    )
 end
 GW.LoadPowerBar = LoadPowerBar
 
@@ -584,48 +556,7 @@ local function selectPvp(self)
 end
 GW.AddForProfiling("playerhud", "selectPvp", selectPvp)
 
-local MAIN_HUD_FRAMES = {
-    "GwHudArtFrame",
-    "GwPlayerPowerBar",
-    "GwPlayerAuraFrame",
-    "GwPlayerClassPower",
-    "GwPlayerHealthGlobe",
-    "GwPlayerPetFrame"
-}
-
-local function toggleMainHud(b, inCombat)
-    for i, name in ipairs(MAIN_HUD_FRAMES) do
-        local f = _G[name]
-        if f then
-            if b then
-                if not inCombat then
-                    f:Show()
-                end
-                if not f.visible then 
-                    f:Hide()
-                end
-            else    
-                f.visible = f:IsShown()
-                if not inCombat then
-                    f:Hide()
-                end
-            end
-        end
-    end
-end
-
-local function globe_OnEvent(self, event, unit)
-    --Hide Healtglobe if not using our Actionbars
-    local inCombat = UnitAffectingCombat("player")
-    if event == "PET_BATTLE_OPENING_START" then
-        toggleMainHud(false, inCombat)
-    elseif event == "PET_BATTLE_CLOSE" then
-        toggleMainHud(true, inCombat)
-    end
-
-    if unit ~= "player" then
-        return
-    end
+local function globe_OnEvent(self, event, ...)
     if
         event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "PLAYER_ENTERING_WORLD" or
             event == "UNIT_ABSORB_AMOUNT_CHANGED"
@@ -633,7 +564,7 @@ local function globe_OnEvent(self, event, unit)
         updateHealthData(self)
     elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
         selectPvp(self)
-    end 
+    end
 end
 GW.AddForProfiling("playerhud", "globe_OnEvent", globe_OnEvent)
 
@@ -706,6 +637,9 @@ local function LoadPlayerHud()
     PlayerFrame:Hide()
 
     local playerHealthGLobaBg = CreateFrame("Button", "GwPlayerHealthGlobe", UIParent, "GwPlayerHealthGlobe")
+
+    GW.MixinHideDuringPetAndOverride(playerHealthGLobaBg)
+
     GwPlayerHealthGlobe.animationCurrent = 0
 
     playerHealthGLobaBg:EnableMouse(true)
@@ -756,38 +690,23 @@ local function LoadPlayerHud()
     playerHealthGLobaBg:SetScript("OnEnter", globe_OnEnter)
     playerHealthGLobaBg:SetScript("OnLeave", globe_OnLeave)
 
-    playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEALTH", "player")
-    playerHealthGLobaBg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     playerHealthGLobaBg:RegisterEvent("PLAYER_ENTERING_WORLD")
-    playerHealthGLobaBg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     playerHealthGLobaBg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     playerHealthGLobaBg:RegisterEvent("PLAYER_FLAGS_CHANGED")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEALTH", "player")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_FACTION", "player")
-    
-    
-  
+
     local mask = UIParent:CreateMaskTexture()
-    mask:SetParent(GwPlayerHealthGlobe);
-    mask:SetTexture(
-        "Textures\\MinimapMask",
-        "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE"
-    )
+    mask:SetParent(GwPlayerHealthGlobe)
+    mask:SetTexture("Textures\\MinimapMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(105, 105)
-    mask:SetPoint('CENTER',GwPlayerHealthGlobe,'CENTER')
-    GwPlayerHealthGlobeHealth.spark:AddMaskTexture(mask);
-    GwPlayerHealthGlobeHealth.spark2:AddMaskTexture(mask);
-    GwPlayerHealthGlobeAbsorbBackdrop.spark:AddMaskTexture(mask);
-    GwPlayerHealthGlobeHealth.spark.mask = mask;
-    
-
-    
-
-    -- Hide HealthGlobe if not using our Actionbars
-    if not GW.GetSetting("ACTIONBARS_ENABLED") then
-        playerHealthGLobaBg:RegisterEvent("PET_BATTLE_CLOSE")
-        playerHealthGLobaBg:RegisterEvent("PET_BATTLE_OPENING_START")
-    end
+    mask:SetPoint("CENTER", GwPlayerHealthGlobe, "CENTER")
+    GwPlayerHealthGlobeHealth.spark:AddMaskTexture(mask)
+    GwPlayerHealthGlobeHealth.spark2:AddMaskTexture(mask)
+    GwPlayerHealthGlobeAbsorbBackdrop.spark:AddMaskTexture(mask)
+    GwPlayerHealthGlobeHealth.spark.mask = mask
 
     updateHealthData(playerHealthGLobaBg)
     selectPvp(playerHealthGLobaBg)
@@ -847,26 +766,10 @@ local function LoadPlayerHud()
         TotemFrame:SetParent(playerHealthGLobaBg)
         PlayerFrame:ClearAllPoints()
         PlayerFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -500, 50)
-        -- TODO: we can't position this directly; it's permanently attached to the PlayerFrame via SetPoints
-        -- in the TotemFrame OnUpdate that we can't override because combat lockdowns and whatnot, and simply
-        -- moving the PlayerFrame isn't ideal because its layout is highly variable; really we probably just
-        -- need to completely re-implement the TotemFrame with a custom version
+    -- TODO: we can't position this directly; it's permanently attached to the PlayerFrame via SetPoints
+    -- in the TotemFrame OnUpdate that we can't override because combat lockdowns and whatnot, and simply
+    -- moving the PlayerFrame isn't ideal because its layout is highly variable; really we probably just
+    -- need to completely re-implement the TotemFrame with a custom version
     end
-    
-    -- show/hide stuff with override bar
-    OverrideActionBar:HookScript(
-        "OnShow",
-        function()
-            GwPlayerHealthGlobe:SetAlpha(0)
-            GwHudArtFrame:SetAlpha(0)
-        end
-    )
-    OverrideActionBar:HookScript(
-        "OnHide",
-        function()
-            GwPlayerHealthGlobe:SetAlpha(1)
-            GwHudArtFrame:SetAlpha(1)
-        end
-    )
 end
 GW.LoadPlayerHud = LoadPlayerHud
