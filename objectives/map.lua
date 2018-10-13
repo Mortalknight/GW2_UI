@@ -418,7 +418,7 @@ local function LoadMinimap()
     Minimap:SetParent(UIParent)
     Minimap:SetFrameStrata("LOW")
 
-    local mapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
+    mapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
     mapGradient:SetParent(GwMinimapShadow)
     mapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     mapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
