@@ -13,7 +13,7 @@ local POIList = {}
 local POIInfo = {}
 
 local activeBg = 0
-local activeMap = 0
+local activeMap
 
 
 local function parsePoints(id)
@@ -114,7 +114,7 @@ local function AB_onEvent(self, event, ...)
     local pointsAlliance = parsePoints(2)
     local pointsHorde = parsePoints(3)
 
-    if pointsAlliance == nil or pointsHorde == nil or activeMap == 0 then
+    if pointsAlliance == nil or pointsHorde == nil or not activeMap then
         return
     end
     
