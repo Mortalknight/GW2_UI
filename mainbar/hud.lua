@@ -782,6 +782,19 @@ registerActionHudAura(
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
     "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph"
 )
+registerActionHudAura(
+    215785,
+    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire"
+)registerActionHudAura(
+    77762,
+    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire"
+)registerActionHudAura(
+    201846,
+    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_storm",
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_storm"
+)
 
 local function LoadBreathMeter()
     CreateFrame("Frame", "GwBreathMeter", UIParent, "GwBreathMeter")
