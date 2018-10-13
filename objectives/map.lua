@@ -66,25 +66,25 @@ local framesToAdd = {}
 
 local function SetMinimapHover()
     if GetSetting("MINIMAP_HOVER") == "NONE" then
-        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapTime"
         MAP_FRAMES_HOVER[4] = "GwMapCoords"
     elseif GetSetting("MINIMAP_HOVER") == "CLOCK" then
-        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapCoords"
     elseif GetSetting("MINIMAP_HOVER") == "ZONE" then
         MAP_FRAMES_HOVER[1] = "GwMapTime"
         MAP_FRAMES_HOVER[2] = "GwMapCoords"
     elseif GetSetting("MINIMAP_HOVER") == "COORDS" then
-        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapTime"
     elseif GetSetting("MINIMAP_HOVER") == "CLOCKZONE" then
         MAP_FRAMES_HOVER[1] = "GwMapCoords"
     elseif GetSetting("MINIMAP_HOVER") == "CLOCKCOORDS" then
-        MAP_FRAMES_HOVER[1] = "mapGradient"
+        MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
     elseif GetSetting("MINIMAP_HOVER") == "ZONECOORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapTime"
@@ -418,10 +418,10 @@ local function LoadMinimap()
     Minimap:SetParent(UIParent)
     Minimap:SetFrameStrata("LOW")
 
-    mapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
-    mapGradient:SetParent(GwMinimapShadow)
-    mapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
-    mapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
+    GwMapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
+    GwMapGradient:SetParent(GwMinimapShadow)
+    GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
+    GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
@@ -467,7 +467,7 @@ local function LoadMinimap()
     MiniMapMailFrame:ClearAllPoints()
     MinimapZoneText:ClearAllPoints()
 
-    MinimapZoneText:SetParent(mapGradient)
+    MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
 
     GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", Minimap, 0, 30)
