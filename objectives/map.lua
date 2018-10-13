@@ -279,7 +279,9 @@ GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
 local function hoverMiniMapOut()
     for k, v in pairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
-        UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
+        if child~=nil then
+            UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
+        end
     end
     MinimapNorthTag:Show()
 end
