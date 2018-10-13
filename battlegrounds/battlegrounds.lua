@@ -15,7 +15,6 @@ local POIInfo = {}
 local activeBg = 0
 local activeMap
 
-
 local function parsePoints(id)
     local points = nil
     local text = GetIconAndTextWidgetVisualizationInfo(GetAllWidgetsBySetID(GetTopCenterWidgetSetID())[id].widgetID).text
@@ -111,13 +110,15 @@ end
 GW.AddForProfiling("battlegrounds", "getLandMarkFrame", getLandMarkFrame)
 
 local function AB_onEvent(self, event, ...)
-    local pointsAlliance = parsePoints(2)
-    local pointsHorde = parsePoints(3)
-
-    if pointsAlliance == nil or pointsHorde == nil or not activeMap then
+    if not activeMap then
         return
     end
-    
+    local pointsAlliance = parsePoints(2)
+    local pointsHorde = parsePoints(3)
+    if pointsAlliance == nil or pointsHorde == nil then
+        return
+    end
+
     self.scoreRight:SetText(pointsAlliance)
     self.scoreLeft:SetText(pointsHorde)
     self.timer:SetText("")
