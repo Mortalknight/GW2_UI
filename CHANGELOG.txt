@@ -15,7 +15,7 @@ FIXED
     - Fix a raid frame target border issue
     - Fix the dodge/dash bar "antennas" (CF#241)
     - Added logic to hopefully fix the loading screen crashing bug (CF#254)
-    - More fixes to vehicle UI behaviors (CF#251, possibly CF#244)
+    - More fixes to vehicle UI behaviors (CF#251, CF#253, possibly CF#244)
     - Pet portaits should now update correctly when swapping pets
     - Resolove some map errors that could occur on initial transition into Arathi Basin BG
     - Fix dodge/dash bar showing incorrect charge counts in some cases
