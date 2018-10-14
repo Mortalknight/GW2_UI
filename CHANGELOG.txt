@@ -2,7 +2,7 @@
 
 NEW
     - Add frenzy counter for Beast Mastery Hunter's class power
-    - Protection Paladins and Warriors now have an active damage reduction class power bar
+    - Protection Paladins and Warriors now have a damage reduction class power bar
     - Add power bar to boss frames (CF#240)
     - Add a new LFG icon animation
     - Add a new health globe animation
@@ -17,6 +17,8 @@ FIXED
     - Added logic to hopefully fix the loading screen crashing bug (CF#254)
     - More fixes to vehicle UI behaviors (CF#251, possibly CF#244)
     - Pet portaits should now update correctly when swapping pets
+    - Resolove some map errors that could occur on initial transition into Arathi Basin BG
+    - Fix dodge/dash bar showing incorrect charge counts in some cases
 
 MISCELLANEOUS
     - Major refactor of the class power system mainly for performance reasons

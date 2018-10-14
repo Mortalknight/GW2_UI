@@ -418,25 +418,51 @@ local function updateDodgeBar(start, duration, chargesMax, charges)
 end
 GW.AddForProfiling("playerhud", "updateDodgeBar", updateDodgeBar)
 
-local function dodgeBar_OnEvent(self, event, unit)
-    if event == "SPELL_UPDATE_COOLDOWN" then
+local function setupDodgeSep(maxCharges)
+    if maxCharges > 1 and maxCharges < 3 then
+        _G["GwDodgeBarSep1"]:Show()
+    else
+        _G["GwDodgeBarSep1"]:Hide()
+    end
+    if maxCharges > 2 then
+        _G["GwDodgeBarSep2"]:SetRotation(0.4)
+        _G["GwDodgeBarSep3"]:SetRotation(-0.4)
+
+        _G["GwDodgeBarSep2"]:Show()
+        _G["GwDodgeBarSep3"]:Show()
+    else
+        _G["GwDodgeBarSep2"]:Hide()
+        _G["GwDodgeBarSep3"]:Hide()
+    end
+end
+GW.AddForProfiling("playerhud", "setupDodgeSep", setupDodgeSep)
+
+local function dodgeBar_OnEvent(self, event, ...)
+    if event == "SPELL_UPDATE_COOLDOWN" or event == "SPELL_UPDATE_CHARGES" then
         if not GW.inWorld then
             return
         end
         if self.gwDashSpell then
-            local charges, maxCharges, start, duration
-            if self.gwMaxCharges > 1 then
-                charges, maxCharges, start, duration = GetSpellCharges(self.gwDashSpell)
-            else
+            local charges, maxCharges, start, duration = GetSpellCharges(self.gwDashSpell)
+            if charges == nil or maxCharges == nil or charges > maxCharges then
                 charges = 0
                 maxCharges = 1
+                if self.gwMaxCharges ~= 1 then
+                    setupDodgeSep(1)
+                    self.gwMaxCharges = 1
+                end
                 start, duration, _ = GetSpellCooldown(self.gwDashSpell)
+            else
+                if self.gwMaxCharges ~= maxCharges then
+                    setupDodgeSep(maxCharges)
+                    self.gwMaxCharges = maxCharges
+                end
             end
             updateDodgeBar(start, duration, maxCharges, charges)
         end
     elseif
         event == "PLAYER_SPECIALIZATION_CHANGED" or event == "CHARACTER_POINTS_CHANGED" or
-            event == "PLAYER_ENTERING_WORLD"
+            event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_TALENT_UPDATE"
      then
         local foundADash = false
         local _, _, c = UnitClass("player")
@@ -456,7 +482,7 @@ local function dodgeBar_OnEvent(self, event, unit)
                             updateDodgeBar(start, duration, maxCharges, charges)
                             break
                         else
-                            local start, duration, enable = GetSpellCooldown(v)
+                            start, duration, _ = GetSpellCooldown(v)
                             foundADash = true
                             GwDodgeBar.spellId = v
                             self.gwMaxCharges = 1
@@ -467,22 +493,7 @@ local function dodgeBar_OnEvent(self, event, unit)
             end
         end
         if foundADash then
-            if self.gwMaxCharges > 1 and self.gwMaxCharges < 3 then
-                _G["GwDodgeBarSep1"]:Show()
-            else
-                _G["GwDodgeBarSep1"]:Hide()
-            end
-
-            if self.gwMaxCharges > 2 then
-                _G["GwDodgeBarSep2"]:SetRotation(0.4)
-                _G["GwDodgeBarSep3"]:SetRotation(-0.4)
-
-                _G["GwDodgeBarSep2"]:Show()
-                _G["GwDodgeBarSep3"]:Show()
-            else
-                _G["GwDodgeBarSep2"]:Hide()
-                _G["GwDodgeBarSep3"]:Hide()
-            end
+            setupDodgeSep(self.gwMaxCharges)
             GwDodgeBar:Show()
         else
             GwDodgeBar:Hide()
@@ -518,6 +529,7 @@ local function LoadPowerBar()
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    playerPowerBar:RegisterEvent("PLAYER_TALENT_UPDATE")
 
     UpdatePowerData(GwPlayerPowerBar)
 end
@@ -736,6 +748,7 @@ local function LoadPlayerHud()
     GwDodgeBar:SetScript("OnEvent", dodgeBar_OnEvent)
 
     GwDodgeBar:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+    GwDodgeBar:RegisterEvent("SPELL_UPDATE_CHARGES")
     GwDodgeBar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     GwDodgeBar:RegisterEvent("CHARACTER_POINTS_CHANGED")
     GwDodgeBar:RegisterEvent("PLAYER_ENTERING_WORLD")
