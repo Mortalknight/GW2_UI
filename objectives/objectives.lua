@@ -95,26 +95,36 @@ local function loadQuestButtons()
         actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         actionButton.NormalTexture:SetTexture(nil)
         actionButton:RegisterForClicks("AnyUp")
-        actionButton:SetScript("OnShow", QuestObjectiveItem_OnHide)
+        actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
         actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
         actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+        actionButton:SetScript("OnLeave", GameTooltip_Hide)
+        actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
+        actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
+        
     end
 
     actionButton = CreateFrame("Button", "GwBonusItemButton", GwQuestTracker, "GwQuestItemTemplate")
     actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     actionButton.NormalTexture:SetTexture(nil)
     actionButton:RegisterForClicks("AnyUp")
-    actionButton:SetScript("OnShow", QuestObjectiveItem_OnHide)
+    actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
     actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
     actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    actionButton:SetScript("OnLeave", GameTooltip_Hide)
+    actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
+    actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
 
     actionButton = CreateFrame("Button", "GwScenarioItemButton", GwQuestTracker, "GwQuestItemTemplate")
     actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     actionButton.NormalTexture:SetTexture(nil)
     actionButton:RegisterForClicks("AnyUp")
-    actionButton:SetScript("OnShow", QuestObjectiveItem_OnHide)
+    actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
     actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
     actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    actionButton:SetScript("OnLeave", GameTooltip_Hide)
+    actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
+    actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
 end
 GW.AddForProfiling("objectives", "loadQuestButtons", loadQuestButtons)
 
@@ -401,7 +411,7 @@ local function getBlock(blockIndex)
 end
 GW.AddForProfiling("objectives", "getBlock", getBlock)
 
-local function addObjective(block, text, finished, objectiveIndex)
+local function addObjective(block, text, finished, objectiveIndex, objectiveType)
     if finished == true then
         return
     end
@@ -421,6 +431,7 @@ local function addObjective(block, text, finished, objectiveIndex)
                 objectiveBlock.StatusBar:Show()
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
+                objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100
             end
         else
             objectiveBlock.StatusBar:Hide()
@@ -438,9 +449,10 @@ GW.AddForProfiling("objectives", "addObjective", addObjective)
 local function updateQuestObjective(block, numObjectives, isComplete, title)
     local addedObjectives = 1
     for objectiveIndex = 1, numObjectives do
-        local text, _, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
+        --local text, _, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
+        local text, objectiveType, finished = GetQuestObjectiveInfo(block.questID, objectiveIndex, false)
         if not finished then
-            addObjective(block, text, finished, addedObjectives)
+            addObjective(block, text, finished, addedObjectives, objectiveType)
             addedObjectives = addedObjectives + 1
         end
     end
@@ -540,13 +552,14 @@ local function updateQuest(block, questWatchId)
                 block,
                 GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney),
                 finished,
-                block.numObjectives + 1
+                block.numObjectives + 1,
+                nil
             )
         end
 
         if isComplete then
             if isAutoComplete then
-                addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1)
+                addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
                 block.turnin:Show()
                 block.turnin:SetScript(
                     "OnClick",
@@ -558,9 +571,9 @@ local function updateQuest(block, questWatchId)
                 local completionText = GetQuestLogCompletionText(questLogIndex)
 
                 if (completionText) then
-                    addObjective(block, completionText, false, block.numObjectives + 1)
+                    addObjective(block, completionText, false, block.numObjectives + 1, nil)
                 else
-                    addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1)
+                    addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
                 end
             end
         end
