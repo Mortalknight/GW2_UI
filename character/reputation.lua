@@ -747,6 +747,9 @@ local function updateDetailsSearch(s)
         v.loaded = false
     end
     table.wipe(facOrder)
+    
+    --update saved reputations
+    updateSavedReputation()
 
     -- run through factions to get data and total count for the selected category
     local savedHeaderName = ""
