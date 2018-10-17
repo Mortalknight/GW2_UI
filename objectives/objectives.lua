@@ -18,6 +18,7 @@ TRACKER_TYPE_COLOR["EVENT"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
 TRACKER_TYPE_COLOR["BONUS"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
 TRACKER_TYPE_COLOR["SCENARIO"] = {r = 171 / 255, g = 37 / 255, b = 240 / 255}
 TRACKER_TYPE_COLOR["BOSS"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
+TRACKER_TYPE_COLOR["ARENA"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
 TRACKER_TYPE_COLOR["ACHIEVEMENT"] = {r = 37 / 255, g = 240 / 255, b = 172 / 255}
 
 local function wiggleAnim(self)
@@ -868,6 +869,7 @@ local function LoadQuestTracker()
     updateQuestLogLayout("LOAD")
 
     GW.LoadBossFrame()
+    GW.LoadArenaFrame()
     GW.LoadScenarioFrame()
     GW.LoadAchievementFrame()
     GW.LoadBonusFrame()

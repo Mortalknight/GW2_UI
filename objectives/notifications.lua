@@ -15,12 +15,14 @@ icons["EVENT"] = {tex = "icon-objective", l = 0, r = 1, t = 0.5, b = 0.75}
 icons["SCENARIO"] = {tex = "icon-objective", l = 0, r = 1, t = 0.75, b = 1}
 icons["BOSS"] = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1}
 icons["DEAD"] = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1}
+icons["ARENA"] = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1}
 
 local notification_priority = {}
 notification_priority["EVENT_NEARBY"] = 1
 notification_priority["SCENARIO"] = 2
 notification_priority["EVENT"] = 3
 notification_priority["BOSS"] = 4
+notification_priority["ARENA"] = 5
 
 local function prioritys(a, b)
     if a == nil or a == "" then
