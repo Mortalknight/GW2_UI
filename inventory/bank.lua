@@ -652,6 +652,14 @@ local function LoadBank()
             DepositReagentBank()
         end
     )
+    -- setup reagent bank stuff
+    GwBankDepositAllReagentsBank:SetText(REAGENTBANK_DEPOSIT)
+    GwBankDepositAllReagentsBank:HookScript(
+        "OnClick",
+        function(self)
+            DepositReagentBank()
+        end
+    )
 
     GwBuyRegentBank:HookScript(
         "OnClick",
@@ -667,7 +675,8 @@ local function LoadBank()
                 if IsReagentBankUnlocked() then
                     GwRegentHelpText:Hide()
                     GwBuyRegentBank:Hide()
-                    GwBankDepositAllReagents:Show()
+                    GwBankDepositAllReagents:Hide()
+                    GwBankDepositAllReagentsBank:Show()
                 end
             end
         end
@@ -680,10 +689,10 @@ local function LoadBank()
     if IsReagentBankUnlocked() then
         GwRegentHelpText:Hide()
         GwBuyRegentBank:Hide()
-        GwBankDepositAllReagents:Show()
+        GwBankDepositAllReagentsBank:Show()
         if GetNumBankSlots() < 7 then
-            GwBankDepositAllReagents:ClearAllPoints()
-            GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
+            GwBankDepositAllReagentsBank:ClearAllPoints()
+            GwBankDepositAllReagentsBank:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
         end
     end
 
@@ -708,6 +717,7 @@ local function LoadBank()
                 updateReagentsIcons()
                 GwRegentHelpText:Hide()
                 GwBuyRegentBank:Hide()
+                GwBankDepositAllReagentsBank:Hide()
                 GwBankDepositAllReagents:Show()
                 GwBankDepositAllReagents:ClearAllPoints()
                 GwBankDepositAllReagents:SetPoint("TOPLEFT", GwBankFrame, "BOTTOMLEFT", 5, -5)
@@ -723,6 +733,8 @@ local function LoadBank()
             GwBankFrame.headerString:SetText(BANK)
             BankItemSearchBox:Show()
             GwReagentBankFrame:Hide()
+            GwBankDepositAllReagents:Hide()
+            GwBankDepositAllReagentsBank:Show()
             for i = 5, 12 do
                 OpenBag(i)
             end

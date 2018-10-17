@@ -1884,6 +1884,7 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
     experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN")
     experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
     experiencebar:SetScript(

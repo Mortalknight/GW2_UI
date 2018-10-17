@@ -747,9 +747,6 @@ local function updateDetailsSearch(s)
         v.loaded = false
     end
     table.wipe(facOrder)
-    
-    --update saved reputations
-    updateSavedReputation()
 
     -- run through factions to get data and total count for the selected category
     local savedHeaderName = ""
@@ -911,6 +908,8 @@ local function LoadReputation(tabContainer)
         if self:GetText() == SEARCH .. "..." then
             self:SetText("")
         end
+        --update saved reputations
+        updateSavedReputation()
     end
     fmGPR.input:SetScript("OnEditFocusGained", fnGPR_input_OnEditFocusGained)
     local fnGPR_input_OnEditFocusLost = function(self)
