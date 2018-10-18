@@ -291,7 +291,7 @@ end
 GW.Bar = Bar
 
 local function SetClassIcon(self, class)
-    if class == nil or class > 12 then
+    if class == nil then
         class = 0
     end
 

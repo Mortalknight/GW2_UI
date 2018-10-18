@@ -8,7 +8,7 @@ local SetClassIcon = GW.SetClassIcon
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 
 local countArenaFrames = 0
-local prepFrameSet = false
+local countArenaPrepFrames = 0
 
 local nameRoleIcon = {}
     nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:16:16:0:0|t "
@@ -16,17 +16,17 @@ local nameRoleIcon = {}
     nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
     nameRoleIcon["NONE"] = ""
 
-local function updateArenaFrameHeight()
+local function updateArenaFrameHeight(frame)
     local height = 1
     local ii = 0
     for i = 1, 5 do 
-        if _G["GwQuestTrackerArenaFrame" .. i]:IsShown() then
+        if _G[frame .. i]:IsShown() then
             ii = i
         end
     end
     for i = 1, 5 do
-        if _G["GwQuestTrackerArenaFrame" .. i]:IsShown() then
-            height = height + (_G["GwQuestTrackerArenaFrame" .. i]:GetHeight() * ii)
+        if _G[frame .. i]:IsShown() then
+            height = height + (_G[frame .. i]:GetHeight() * ii)
             break
         end
     end
@@ -81,6 +81,7 @@ local function updateArena_Name(self)
     local guidTarget = UnitGUID("target")
     local specID = GetArenaOpponentSpec(self.id)
     local specName = ""
+    local nameString = UNKNOWEN
 
     if specID == nil then 
         return
@@ -144,6 +145,36 @@ local function arenaFrame_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 
+local function arenaPrepFrame_OnEvent(self, event)
+    if event == "ARENA_PREP_OPPONENT_SPECIALIZATIONS" then
+        local specID, gender = GetArenaOpponentSpec(self.id)
+        local nameString = UNKNOWEN
+        local className, classFile
+
+        if specID == nil then 
+            return
+        end
+        if specID and specID > 0 then
+            local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)
+            for i = 1, GetNumClasses() do
+                className, classFile = GetClassInfo(i)
+                if class == classFile then
+                    break
+                end
+            end
+            if nameRoleIcon[role] ~= nil then
+                nameString = nameRoleIcon[role] .. className .. " - " .. specName
+            end
+            self.name:SetText(nameString)
+            self.health:SetStatusBarColor(0.5, 0.5, 0.5)
+            self.power:SetStatusBarColor(0.5, 0.5, 0.5)
+            SetClassIcon(self.icon, class)
+            self:Show()
+        end
+    end   
+end
+GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
+
 local function registerFrame(i)
     local debug_unit_Track = "arena" .. i
 
@@ -183,7 +214,15 @@ local function registerFrame(i)
     targetF:SetScript(
         "OnShow",
         function(self)
-            updateArenaFrameHeight()
+            --Hide prep frames
+            for i = 1, 5 do
+                if _G["GwQuestTrackerArenaPrepFrame" .. i] :IsShown() then
+                    _G["GwQuestTrackerArenaPrepFrame" .. i]:Hide()
+                    _G["GwQuestTrackerArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
+                end
+            end
+
+            updateArenaFrameHeight("GwQuestTrackerArenaFrame")
 
             local compassData = {}
 
@@ -225,11 +264,22 @@ local function registerFrame(i)
         "OnHide",
         function()
             countArenaFrames = countArenaFrames - 1
-            updateArenaFrameHeight()
+            updateArenaFrameHeight("GwQuestTrackerArenaFrame")
             if countArenaFrames < 1 then
-                RemoveTrackerNotificationOfType("BOSS")
+                RemoveTrackerNotificationOfType("ARENA")
                 countArenaFrames = 0
             end
+        end
+    )
+
+    targetF:SetScript(
+        "OnUpdate",
+        function()
+            if _G["ArenaEnemyFrame" .. i .. "PetFrame"]:IsShown() then
+                _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetAlpha(0)
+                _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
+                _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEnter", nil)
+            end 
         end
     )
 
@@ -237,9 +287,56 @@ local function registerFrame(i)
 end
 GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 
+local function registerPrepFrame(i)
+    local targetF = CreateFrame("Button", "GwQuestTrackerArenaPrepFrame" .. i, GwQuestTracker, "GwQuestTrackerArenaPrepFrame")
+    local p = 70 + ((35 * i) - 35)
+
+    targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
+
+    targetF.id = i
+
+    targetF:EnableMouse(true)
+    targetF:RegisterForClicks("AnyDown")
+
+    targetF.name:SetFont(UNIT_NAME_FONT, 12)
+    targetF.name:SetShadowOffset(1, -1)
+
+    targetF:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+
+    targetF:SetScript(
+        "OnShow",
+        function(self)
+            updateArenaFrameHeight("GwQuestTrackerArenaPrepFrame")
+            local compassData = {}
+            compassData["TYPE"] = "ARENA"
+            compassData["ID"] = "arena_unknown"
+            compassData["QUESTID"] = "unknown"
+            compassData["COMPASS"] = false
+            compassData["MAPID"] = 0
+            compassData["X"] = 0
+            compassData["Y"] = 0
+            compassData["COLOR"] = TRACKER_TYPE_COLOR["ARENA"]
+            compassData["TITLE"] = ARENA
+            compassData["DESC"] = ARENA_IS_READY
+
+            AddTrackerNotification(compassData)
+            countArenaPrepFrames = countArenaPrepFrames + 1
+
+            --Hide Blizzard frames
+            for i = 1, 5 do
+                _G["ArenaPrepFrame" .. i]:SetAlpha(0)
+                _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
+            end
+        end
+    )
+    targetF:SetScript("OnEvent", arenaPrepFrame_OnEvent)
+end
+GW.AddForProfiling("arenaFrames", "registerPrepFrame", registerPrepFrame)
+
 local function LoadArenaFrame()
     for i = 1, 5 do
         registerFrame(i)
+        registerPrepFrame(i)
         if _G["ArenaEnemyFrame" .. i] ~= nil then
             _G["ArenaEnemyFrame" .. i]:Hide()
             _G["ArenaEnemyFrame" .. i]:SetScript("OnEvent", nil)
@@ -248,7 +345,11 @@ local function LoadArenaFrame()
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Hide()
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
         end
+        if _G["ArenaPrepFrame" .. i] ~= nil then
+            _G["ArenaPrepFrame" .. i]:Hide()
+            _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
+        end
     end
-    updateArenaFrameHeight()
+    updateArenaFrameHeight("GwQuestTrackerArenaFrame")
 end
 GW.LoadArenaFrame = LoadArenaFrame
