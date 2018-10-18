@@ -8,6 +8,13 @@ local SetClassIcon = GW.SetClassIcon
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 
 local countArenaFrames = 0
+local prepFrameSet = false
+
+local nameRoleIcon = {}
+    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:16:16:0:0|t "
+    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:16:16:0:0|t "
+    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
+    nameRoleIcon["NONE"] = ""
 
 local function updateArenaFrameHeight()
     local height = 1
@@ -73,17 +80,20 @@ GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 local function updateArena_Name(self)
     local guidTarget = UnitGUID("target")
     local specID = GetArenaOpponentSpec(self.id)
-    local specName = " "
+    local specName = ""
 
     if specID == nil then 
         return
     end
 
     if specID and specID > 0 then
-		_, specName = GetSpecializationInfoByID(specID, UnitSex(self.unit))
+        local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
+        if nameRoleIcon[role] ~= nil then
+            nameString = nameRoleIcon[role] .. UnitName(self.unit) .. " - " .. specName
+        end
 	end
 
-    self.name:SetText(UnitName(self.unit) .. " - " .. specName)
+    self.name:SetText(nameString)
     
     self.guid = UnitGUID(self.unit)
     self.classIndex = select(3, UnitClass(self.unit))
@@ -173,7 +183,7 @@ local function registerFrame(i)
     targetF:SetScript(
         "OnShow",
         function(self)
-            updateArenaFrameHeight(self)
+            updateArenaFrameHeight()
 
             local compassData = {}
 
@@ -237,7 +247,7 @@ local function LoadArenaFrame()
         if _G["ArenaEnemyFrame" .. i .. "PetFrame"] ~= nil then
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Hide()
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
-        end 
+        end
     end
     updateArenaFrameHeight()
 end
