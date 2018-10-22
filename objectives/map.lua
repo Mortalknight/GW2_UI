@@ -131,108 +131,29 @@ local function SetMinimapPosition()
 end
 GW.SetMinimapPosition = SetMinimapPosition
 
-local function stackIcons(self, event)
-    for _, frame in pairs(framesToAdd) do
-        frame:SetParent(Minimap)
-    end
-
-    local foundFrames = false
-    framesToAdd = {}
-
-    local children = {Minimap:GetChildren()}
-    for _, child in ipairs(children) do
-        if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
-            local ignore = false
-            local childName = child:GetName()
-            for _, v in pairs(Minimap_Addon_Buttons) do
-                local namecompare = string.sub(childName, 1, string.len(v))
-                if v == namecompare then
-                    ignore = true
-                    break
-                end
-            end
-            if not ignore then
-                foundFrames = true
-                framesToAdd[#framesToAdd + 1] = child
-            end
-        end
-    end
-
-    if not foundFrames then
-        return
-    end
-
-    local fmGAT = CreateFrame("Button", "GwAddonToggle", UIParent, "GwAddonToggle")
-    local fnGAT_OnClick = function(self, button)
-        if not self.container:IsShown() then
-            stackIcons()
-            self.container:Show()
-        else
-            stackIcons()
-            self.container:Hide()
-        end
-    end
-    local fnGAT_OnEvent = function(self, event,...)
-        if (event == "PLAYER_ENTERING_WORLD") then
-            stackIcons()
-        end
-    end
-    fmGAT:SetScript("OnClick", fnGAT_OnClick)
-    fmGAT:SetScript("OnUpdate", function(self)
-        if Minimap:IsShown() then
-            self:SetAlpha(1)
-            self:SetScript("OnClick", fnGAT_OnClick)
-
-        else
-            self:SetAlpha(0)
-            self:SetScript("OnClick", nil)
-        end
-    end)
-    fmGAT:SetScript("OnEvent", fnGAT_OnEvent)
-    fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
-    
-    GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
-    _G["GwAddonToggleTexture"]:SetTexCoord(0, 0.5, 0, 0.25)
-
-    GwAddonToggle.container:SetWidth(#framesToAdd * 35)
-    GwAddonToggle:SetFrameStrata("MEDIUM")
-    local frameIndex = 0
-    for _, frame in pairs(framesToAdd) do
-        frame:SetParent(GwAddonToggle.container)
-        frame:ClearAllPoints()
-        frame:SetPoint("RIGHT", GwAddonToggle.container, "RIGHT", frameIndex * -36, 0)
-        frameIndex = frameIndex + 1
-        frame:SetScript("OnDragStart", nil)
-    end
-end
-GW.AddForProfiling("map", "stackIcons", stackIcons)
-
-local function lfgAnim(self,elapse)
+local function lfgAnim(self, elapse)
     if Minimap:IsShown() then
         QueueStatusMinimapButtonIcon:SetAlpha(1)
-
     else
         QueueStatusMinimapButtonIcon:SetAlpha(0)
         return
     end
-     QueueStatusMinimapButton.animationCircle:Show()
-    
+    QueueStatusMinimapButton.animationCircle:Show()
+
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-    
-    local speed = 1.5;
-    local rot =  QueueStatusMinimapButton.animationCircle.background:GetRotation() + (speed * elapse);
-    
-    QueueStatusMinimapButton.animationCircle.background:SetRotation(rot);
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(0,1,0,1)
-    
-   
+
+    local speed = 1.5
+    local rot = QueueStatusMinimapButton.animationCircle.background:GetRotation() + (speed * elapse)
+
+    QueueStatusMinimapButton.animationCircle.background:SetRotation(rot)
+    QueueStatusMinimapButtonIconTexture:SetTexCoord(0, 1, 0, 1)
 end
 GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
 local function lfgAnimStop()
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
     QueueStatusMinimapButton.animationCircle:Hide()
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(0,1,0,1)
+    QueueStatusMinimapButtonIconTexture:SetTexCoord(0, 1, 0, 1)
 end
 GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
 
@@ -268,7 +189,7 @@ end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
 local function hoverMiniMap()
-    for k, v in pairs(MAP_FRAMES_HOVER) do
+    for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
         UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
     end
@@ -277,9 +198,9 @@ end
 GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
 
 local function hoverMiniMapOut()
-    for k, v in pairs(MAP_FRAMES_HOVER) do
+    for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
-        if child~=nil then
+        if child ~= nil then
             UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
         end
     end
@@ -330,11 +251,11 @@ local function time_OnClick(self, button)
     end
     if button == "RightButton" then
         if IsShiftKeyDown() then
-        	ToggleTimeManager()
-    	else
+            ToggleTimeManager()
+        else
             PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
-        	Stopwatch_Toggle()
-    	end
+            Stopwatch_Toggle()
+        end
     end
 end
 GW.AddForProfiling("map", "time_OnClick", time_OnClick)
@@ -386,18 +307,116 @@ local function garrisonBtn_OnEvent(self, event, ...)
     local garrisonType = self.gw_GarrisonType
     if not garrisonType then
         self:Hide()
+        self.gw_Showing = false
         return
     end
     if
         garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or
             garrisonType == LE_GARRISON_TYPE_8_0
      then
-        self:Show()
+        if Minimap:IsShown() then
+            self:Show()
+        end
+        self.gw_Showing = true
     else
         self:Hide()
+        self.gw_Showing = false
     end
 end
 GW.AddForProfiling("map", "garrisonBtn_OnEvent", garrisonBtn_OnEvent)
+
+local function stackIcons(self, event, ...)
+    for _, frame in pairs(framesToAdd) do
+        frame:SetParent(Minimap)
+    end
+
+    local foundFrames = false
+    table.wipe(framesToAdd)
+
+    local children = {Minimap:GetChildren()}
+    for _, child in ipairs(children) do
+        if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
+            local ignore = false
+            local childName = child:GetName()
+            for _, v in pairs(Minimap_Addon_Buttons) do
+                local namecompare = string.sub(childName, 1, string.len(v))
+                if v == namecompare then
+                    ignore = true
+                    break
+                end
+            end
+            if not ignore then
+                foundFrames = true
+                framesToAdd[#framesToAdd + 1] = child
+            end
+        end
+    end
+
+    if not foundFrames then
+        return
+    end
+
+    self.container:SetWidth(#framesToAdd * 35)
+    local frameIndex = 0
+    for _, frame in pairs(framesToAdd) do
+        frame:SetParent(self.container)
+        frame:ClearAllPoints()
+        frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -36, 0)
+        frameIndex = frameIndex + 1
+        frame:SetScript("OnDragStart", nil)
+    end
+end
+GW.AddForProfiling("map", "stackIcons", stackIcons)
+
+local function stack_OnEvent(self, event, ...)
+    if event == "PLAYER_ENTERING_WORLD" then
+        stackIcons(self)
+    end
+end
+GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
+
+local function stack_OnClick(self, button)
+    if not self.container:IsShown() then
+        stackIcons(self)
+        self.container:Show()
+    else
+        stackIcons(self)
+        self.container:Hide()
+    end
+end
+GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
+
+local function minimap_OnShow(self)
+    if GwCalendarButton then
+        GwCalendarButton:Show()
+    end
+    if GwAddonToggle and GwAddonToggle.gw_Showing then
+        GwAddonToggle:Show()
+    end
+    if GwGarrisonButton and GwGarrisonButton.gw_Showing then
+        GwGarrisonButton:Show()
+    end
+    if GwMailButton and GwMailButton.gw_Showing then
+        GwMailButton:Show()
+    end
+end
+GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
+
+local function minimap_OnHide(self)
+    if GwCalendarButton then
+        GwCalendarButton:Hide()
+    end
+    if GwAddonToggle then
+        GwAddonToggle:Hide()
+    end
+    if GwGarrisonButton then
+        GwGarrisonButton:Hide()
+    end
+    if GwMailButton then
+        GwMailButton:Hide()
+    end
+end
+GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
@@ -413,8 +432,8 @@ local function LoadMinimap()
     QueueStatusMinimapButtonIconTexture:SetSize(20, 20)
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
     QueueStatusMinimapButtonIcon:SetSize(20, 20)
-    QueueStatusMinimapButton.animationCircle = CreateFrame("Frame","GwLFDAnimation",QueueStatusMinimapButton,"GwLFDAnimation")
-
+    QueueStatusMinimapButton.animationCircle =
+        CreateFrame("Frame", "GwLFDAnimation", QueueStatusMinimapButton, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
     Minimap:SetParent(UIParent)
@@ -515,29 +534,7 @@ local function LoadMinimap()
     GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
     GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
     GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
-    GwCalendarButton:SetScript("OnUpdate", function(self)
-        if Minimap:IsShown() then
-            self:SetAlpha(1)
-            self:SetScript("OnClick", GameTimeFrame_OnClick)
-            self:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
-            self:SetScript("OnLeave", GameTooltip_Hide)
-            self:SetScript("OnShow", fnGwCalendarButton_OnShow)
-        else
-            self:SetAlpha(0)
-            self:SetScript("OnClick", nil)
-            self:SetScript("OnEnter", nil)
-            self:SetScript("OnShow", nil)
-            self:SetScript("OnLeave", nil)
-        end
-    end)
-
-    GwCalendarButton:HookScript(
-        "OnEvent",
-        function()
-            GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -30)
-        end
-    )
-
+    GwCalendarButton.gw_Showing = true
     GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
 
     local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
@@ -546,31 +543,23 @@ local function LoadMinimap()
     GwGarrisonButton:SetScript("OnEnter", garrisonBtn_OnEnter)
     GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
     GwGarrisonButton:SetScript("OnEvent", garrisonBtn_OnEvent)
-    GwGarrisonButton:SetScript("OnUpdate", function(self)
-        if Minimap:IsShown() then
-            self:SetAlpha(1)
-            self:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
-            self:SetScript("OnEnter", garrisonBtn_OnEnter)
-            self:SetScript("OnLeave", GameTooltip_Hide)
-        else
-            self:SetAlpha(0)
-            self:SetScript("OnClick", nil)
-            self:SetScript("OnEnter", nil)
-            self:SetScript("OnLeave", nil)
-        end
-    end)
+    GwGarrisonButton.gw_Showing = false
     GwGarrisonButton:RegisterEvent("GARRISON_UPDATE")
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
     local fnGwMailButton_OnEvent = function(self, event, ...)
         if (event == "UPDATE_PENDING_MAIL") then
             if (HasNewMail()) then
-                self:Show()
+                if Minimap:IsShown() then
+                    self:Show()
+                end
+                self.gw_Showing = true
                 if (GameTooltip:IsOwned(self)) then
                     MinimapMailFrameUpdate()
                 end
             else
                 self:Hide()
+                self.gw_Showing = false
             end
         end
     end
@@ -583,21 +572,20 @@ local function LoadMinimap()
     GwMailButton:SetScript("OnEvent", fnGwMailButton_OnEvent)
     GwMailButton:SetScript("OnEnter", fnGwMailButton_OnEnter)
     GwMailButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwMailButton:SetScript("OnUpdate", function(self)
-        if Minimap:IsShown() then
-            self:SetAlpha(1)
-            self:SetScript("OnEnter", fnGwMailButton_OnEnter)
-            self:SetScript("OnLeave", GameTooltip_Hide)
-        else
-            self:SetAlpha(0)
-            self:SetScript("OnEnter", nil)
-            self:SetScript("OnLeave", nil)
-        end
-    end)
-
+    GwMailButton.gw_Showing = false
     GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
     GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
     GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
+
+    local fmGAT = CreateFrame("Button", "GwAddonToggle", UIParent, "GwAddonToggle")
+    fmGAT:SetScript("OnClick", stack_OnClick)
+    fmGAT:SetScript("OnEvent", stack_OnEvent)
+    fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
+    fmGAT:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
+    GwAddonToggleTexture:SetTexCoord(0, 0.5, 0, 0.25)
+    fmGAT:SetFrameStrata("MEDIUM")
+    fmGAT.gw_Showing = true
+    stackIcons(fmGAT)
 
     GwDateText:SetFont(UNIT_NAME_FONT, 14)
     GwDateText:SetTextColor(0, 0, 0)
@@ -610,7 +598,6 @@ local function LoadMinimap()
         end
     )
 
-    stackIcons()
     Minimap:SetScale(1.2)
 
     MinimapZoneText:ClearAllPoints()
@@ -656,7 +643,8 @@ local function LoadMinimap()
         end
     )
 
-    Minimap:RegisterEvent("PLAYER_ENTERING_WORLD")
+    Minimap:HookScript("OnShow", minimap_OnShow)
+    Minimap:HookScript("OnHide", minimap_OnHide)
 
     Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
 

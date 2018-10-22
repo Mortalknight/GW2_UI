@@ -588,6 +588,7 @@ local function gw_OnEvent(self, event, ...)
             loadAddon(self)
         end
     elseif event == "PLAYER_LEAVING_WORLD" then
+        table.wipe(animations)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true

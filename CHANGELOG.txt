@@ -1,3 +1,9 @@
+5.0.11
+
+FIXED
+    - Fix an issue in minimap icon handling (CF#254)
+
+
 5.0.10
 
 NEW

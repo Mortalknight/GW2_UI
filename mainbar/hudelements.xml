@@ -1062,7 +1062,7 @@
             </Frame>
         </Frames>
     </Button>
-    <Button name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true">
+    <Button name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
         <Size x="30" y="30"/>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\mail"></NormalTexture>
         <PushedTexture file="Interface\AddOns\GW2_UI\textures\mail"></PushedTexture >
