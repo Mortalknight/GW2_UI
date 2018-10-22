@@ -1,7 +1,12 @@
 5.0.11
 
 FIXED
-    - Fix an issue in minimap icon handling (CF#254)
+    - Fix a major issue in minimap icon handling (CF#254/CF#258)
+    - Quests with progress bars and items should now show correctly in the tracker
+    - Reputation search bug squashed
+
+NEW
+    - Arena frames added to the objectives tracker
 
 
 5.0.10
