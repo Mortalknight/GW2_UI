@@ -869,7 +869,9 @@ local function LoadQuestTracker()
     updateQuestLogLayout("LOAD")
 
     GW.LoadBossFrame()
-    GW.LoadArenaFrame()
+    if not IsAddOnLoaded("sArena") then
+        GW.LoadArenaFrame()
+    end
     GW.LoadScenarioFrame()
     GW.LoadAchievementFrame()
     GW.LoadBonusFrame()
