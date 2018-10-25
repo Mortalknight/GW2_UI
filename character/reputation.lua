@@ -690,6 +690,7 @@ updateReputations = function()
                 header:SetScript(
                     "OnClick",
                     function()
+                        updateSavedReputation()
                         showHeader(factionIndex)
                         updateDetails()
                     end
