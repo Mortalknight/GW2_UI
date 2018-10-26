@@ -16,6 +16,34 @@ local nameRoleIcon = {}
     nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
     nameRoleIcon["NONE"] = ""
 
+local FractionIcon = {}
+    FractionIcon["Alliance"] = "|TInterface\\AddOns\\GW2_UI\\textures\\Alliance:16:16:0:0|t "
+    FractionIcon["Horde"] = "|TInterface\\AddOns\\GW2_UI\\textures\\Horde:16:16:0:0|t "
+    FractionIcon["NONE"] = ""
+
+local function setCompass()
+    local inBG = UnitInBattleground("player")
+    local isArena = IsActiveBattlefieldArena()
+    local compassData = {}
+    if isArena then
+        compassData["TITLE"] = ARENA
+        compassData["DESC"] = ARENA_IS_READY
+    else
+        compassData["TITLE"] = BATTLEGROUND
+        compassData["DESC"] = BATTLEGROUND_IS_READY
+    end
+    compassData["TYPE"] = "ARENA"
+    compassData["ID"] = "arena_unknown"
+    compassData["QUESTID"] = "unknown"
+    compassData["COMPASS"] = false
+    compassData["MAPID"] = 0
+    compassData["X"] = 0
+    compassData["Y"] = 0
+    compassData["COLOR"] = TRACKER_TYPE_COLOR["ARENA"]
+   
+    AddTrackerNotification(compassData)
+end
+
 local function updateArenaFrameHeight(frame)
     local height = 1
     local ii = 0
@@ -77,22 +105,34 @@ local function updateArena_Power(self)
 end
 GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 
-local function updateArena_Name(self)
+local function updateArena_Name(self, inBG, inArena)
     local guidTarget = UnitGUID("target")
     local specID = GetArenaOpponentSpec(self.id)
     local specName = ""
     local nameString = UNKNOWEN
 
-    if specID == nil then 
+    if inArena then
+        if specID == nil then
+            return
+        else
+            if specID and specID > 0 then
+                local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
+                if nameRoleIcon[role] ~= nil then
+                    nameString = nameRoleIcon[role] .. UnitName(self.unit) .. " - " .. specName
+                end
+            end
+        end
+    elseif inBG ~= nil then
+        local role = UnitGroupRolesAssigned(self.unit)
+        local englishFaction, localizedFaction = UnitFactionGroup(self.unit)
+        if role == nil or englishFaction == nil or localizedFaction == nil then 
+            return
+        else
+            nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. UnitName(self.unit)
+        end
+    else
         return
     end
-
-    if specID and specID > 0 then
-        local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
-        if nameRoleIcon[role] ~= nil then
-            nameString = nameRoleIcon[role] .. UnitName(self.unit) .. " - " .. specName
-        end
-	end
 
     self.name:SetText(nameString)
     
@@ -117,7 +157,8 @@ GW.AddForProfiling("arenaFrames", "updateArena_Name", updateArena_Name)
 
 local function arenaFrame_OnEvent(self, event, unit)
     local isArena = IsActiveBattlefieldArena()
-    if not isArena then
+    local inBG = UnitInBattleground("player")
+    if not isArena and inBG == nil then
         return
     end
 
@@ -132,14 +173,15 @@ local function arenaFrame_OnEvent(self, event, unit)
     end
 
     if event == "PLAYER_TARGET_CHANGED" then
-        updateArena_Name(self)
+        updateArena_Name(self, inBG, isArena)
         return
     end     
     
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" then 
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "PLAYER_ENTERING_BATTLEGROUND" then 
         updateArena_Health(self)
         updateArena_Power(self)
-        updateArena_Name(self)
+        updateArena_Name(self, inBG, isArena)
+        setCompass()
         return
     end
 end
@@ -147,6 +189,13 @@ GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 
 local function arenaPrepFrame_OnEvent(self, event)
     if event == "ARENA_PREP_OPPONENT_SPECIALIZATIONS" then
+        --Hide Blizzard frames
+        for i = 1, 5 do
+            if _G["ArenaPrepFrame" .. i] ~= nil then
+                 _G["ArenaPrepFrame" .. i]:SetAlpha(0)
+                _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
+            end
+        end
         local specID, gender = GetArenaOpponentSpec(self.id)
         local nameString = UNKNOWEN
         local className, classFile
@@ -210,39 +259,25 @@ local function registerFrame(i)
     targetF:RegisterUnitEvent("UNIT_NAME_UPDATE", targetF.unit)
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
+    targetF:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 
     targetF:SetScript(
         "OnShow",
         function(self)
             --Hide prep frames
             for i = 1, 5 do
-                if _G["GwQuestTrackerArenaPrepFrame" .. i] :IsShown() then
+                if _G["GwQuestTrackerArenaPrepFrame" .. i]:IsShown() then
                     _G["GwQuestTrackerArenaPrepFrame" .. i]:Hide()
                     _G["GwQuestTrackerArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
                 end
             end
 
             updateArenaFrameHeight("GwQuestTrackerArenaFrame")
+            setCompass()
 
-            local compassData = {}
-
-            compassData["TYPE"] = "ARENA"
-            compassData["ID"] = "arena_unknown"
-            compassData["QUESTID"] = "unknown"
-            compassData["COMPASS"] = false
-            compassData["DESC"] = ARENA_IS_READY
-
-            compassData["MAPID"] = 0
-            compassData["X"] = 0
-            compassData["Y"] = 0
-
-            compassData["COLOR"] = TRACKER_TYPE_COLOR["ARENA"]
-            compassData["TITLE"] = ARENA
-
-            AddTrackerNotification(compassData)
             updateArena_Health(self)
             updateArena_Power(self)
-            updateArena_Name(self)
+            updateArena_Name(self, inBG, isArena)
 
             countArenaFrames = countArenaFrames + 1
 
@@ -307,25 +342,15 @@ local function registerPrepFrame(i)
         "OnShow",
         function(self)
             updateArenaFrameHeight("GwQuestTrackerArenaPrepFrame")
-            local compassData = {}
-            compassData["TYPE"] = "ARENA"
-            compassData["ID"] = "arena_unknown"
-            compassData["QUESTID"] = "unknown"
-            compassData["COMPASS"] = false
-            compassData["MAPID"] = 0
-            compassData["X"] = 0
-            compassData["Y"] = 0
-            compassData["COLOR"] = TRACKER_TYPE_COLOR["ARENA"]
-            compassData["TITLE"] = ARENA
-            compassData["DESC"] = ARENA_IS_READY
-
-            AddTrackerNotification(compassData)
+            setCompass()
             countArenaPrepFrames = countArenaPrepFrames + 1
 
             --Hide Blizzard frames
             for i = 1, 5 do
-                _G["ArenaPrepFrame" .. i]:SetAlpha(0)
-                _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
+                if _G["ArenaPrepFrame" .. i] ~= nil then
+                     _G["ArenaPrepFrame" .. i]:SetAlpha(0)
+                    _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
+                end
             end
         end
     )
