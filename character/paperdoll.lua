@@ -132,6 +132,7 @@ local function LoadPaperDoll(tabContainer)
     addAddonButton("Pawn", nil, PawnButton, nextShadow, nextAnchor, PawnUIShow)
     addAddonButton("Clique", GW.GetSetting("USE_TALENT_WINDOW"), CliqueButton, nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
     addAddonButton("Outfitter", GW.GetSetting("USE_CHARACTER_WINDOW"), OutfitterButton, nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
+    addAddonButton("MyRolePlay", GW.GetSetting("USE_CHARACTER_WINDOW"), MyRolePlayButton, nextShadow, nextAnchor, function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end)
 
     CharacterFrame:SetScript(
         "OnShow",
