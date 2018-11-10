@@ -1129,23 +1129,73 @@ local function LoadSettings()
         {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
     )
 
-    addOptionSlider(
-        GwLocalization["RAID_CONT_HEIGHT"],
-        GwLocalization["RAID_CONT_HEIGHT_DESC"],
-        "RAID_UNITS_PER_COLUMN",
+    addOptionDropdown(
+        GwLocalization["RAID_GROW"],
+        GwLocalization["RAID_GROW"],
+        "RAID_GROW",
         "GwSettingsGroupframe",
         function()
             if GetSetting("GROUP_FRAMES") == true then
-                GwRaidFrameContainer:SetHeight((GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN"))
-                GwRaidFrameContainerMoveAble:SetHeight(
-                    (GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN")
-                )
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
         end,
-        1,
-        80
+        {"D+R", "D+L", "U+R", "U+L", "R+D", "R+U", "L+D", "L+U"},
+        {
+            GwLocalization["DOWN_AND_RIGHT"],
+            GwLocalization["DOWN_AND_LEFT"],
+            GwLocalization["UP_AND_RIGHT"],
+            GwLocalization["UP_AND_LEFT"],
+            GwLocalization["RIGHT_AND_DOWN"],
+            GwLocalization["RIGHT_AND_UP"],
+            GwLocalization["LEFT_AND_DOWN"],
+            GwLocalization["LEFT_AND_UP"]
+        }
+    )
+
+    addOptionSlider(
+        GwLocalization["RAID_UNITS_PER_COLUMN"],
+        GwLocalization["RAID_UNITS_PER_COLUMN_DESC"],
+        "RAID_UNITS_PER_COLUMN",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        0,
+        40
+    )
+
+    addOptionSlider(
+        GwLocalization["RAID_CONT_WIDTH"],
+        GwLocalization["RAID_CONT_WIDTH_DESC"],
+        "RAID_CONT_WIDTH",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        0,
+        GetScreenWidth()
+    )
+
+    addOptionSlider(
+        GwLocalization["RAID_CONT_HEIGHT"],
+        GwLocalization["RAID_CONT_HEIGHT_DESC"],
+        "RAID_CONT_HEIGHT",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        0,
+        GetScreenHeight()
     )
 
     addOptionSlider(
