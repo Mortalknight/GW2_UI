@@ -299,6 +299,19 @@ local function addOptionSlider(name, desc, optionName, frameName, callback, min,
     options[i]["optionType"] = "slider"
 end
 
+local function addOptionText(name, desc, optionName, frameName, callback, multiline)
+    local i = CountTable(options)
+
+    options[i] = {}
+    options[i]["name"] = name
+    options[i]["desc"] = desc
+    options[i]["optionName"] = optionName
+    options[i]["frameName"] = frameName
+    options[i]["callback"] = callback
+    options[i]["multiline"] = multiline
+    options[i]["optionType"] = "text"
+end
+
 local function addOptionDropdown(name, desc, optionName, frameName, callback, options_list, option_names)
     local i = CountTable(options)
 
@@ -393,11 +406,12 @@ local function DisplaySettings()
     local padding = {}
 
     for k, v in pairs(options) do
-        local newLine = false
+        local newLine, first = false, false
         if padding[v["frameName"]] == nil then
             padding[v["frameName"]] = {}
             padding[v["frameName"]]["x"] = box_padding
             padding[v["frameName"]]["y"] = -55
+            first = true
         end
         local optionFrameType = "GwOptionBox"
         if v["optionType"] == "slider" then
@@ -408,11 +422,15 @@ local function DisplaySettings()
             optionFrameType = "GwOptionBoxDropDown"
             newLine = true
         end
+        if v["optionType"] == "text" then
+            optionFrameType = "GwOptionBoxText"
+            newLine = true
+        end
 
         local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v["frameName"]], optionFrameType)
 
         of:ClearAllPoints()
-        if of:GetWidth() > 300 then
+        if not first and of:GetWidth() > 300 then
             padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
             padding[v["frameName"]]["x"] = box_padding
         end
@@ -503,6 +521,21 @@ local function DisplaySettings()
                 end
             )
         end
+
+        if v["optionType"] == "text" then
+            _G["GwOptionBox" .. k .. "Input"]:SetText(GetSetting(v["optionName"]) or "")
+            _G["GwOptionBox" .. k .. "Input"]:SetScript(
+                "OnEnterPressed",
+                function(self)
+                    self:ClearFocus()
+                    SetSetting(v["optionName"], self:GetText())
+                    if v["callback"] ~= nil then
+                        v["callback"]()
+                    end
+                end
+            )
+        end
+
         if v["optionType"] == "boolean" then
             _G["GwOptionBox" .. k .. "CheckButton"]:SetChecked(GetSetting(v["optionName"]))
             _G["GwOptionBox" .. k .. "CheckButton"]:SetScript(
@@ -702,6 +735,20 @@ local function LoadSettings()
     GwSettingsGroupframeSub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsGroupframeSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsGroupframeSub:SetText(GwLocalization["GROUP_DESC"])
+
+    GwSettingsAurasOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsAurasOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsAurasOptionsHeader:SetText(AURAS)
+    GwSettingsAurasOptionsSub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsAurasOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsAurasOptionsSub:SetText(GwLocalization["AURAS_DESC"])
+
+    GwSettingsIndicatorsOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsIndicatorsOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsIndicatorsOptionsHeader:SetText(GwLocalization["INDICATORS"])
+    GwSettingsIndicatorsOptionsSub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsIndicatorsOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsIndicatorsOptionsSub:SetText(GwLocalization["INDICATORS_DESC"])
 
     GwSettingsProfilesframeHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsProfilesframeHeader:SetTextColor(255 / 255, 255 / 255, 255 / 255)
@@ -1225,6 +1272,26 @@ local function LoadSettings()
         end,
         47,
         100
+    )
+
+    createCat(AURAS, GwLocalization["AURAS_TOOLTIP"], "GwSettingsAurasframe", 2)
+    
+    addOptionText(
+        GwLocalization["AURAS_IGNORE"],
+        GwLocalization["AURAS_IGNORE_DESC"],
+        "AURAS_IGNORE",
+        "GwSettingsAurasOptions",
+        function()
+        end
+    )
+    
+    addOptionText(
+        GwLocalization["AURAS_MISSING"],
+        GwLocalization["AURAS_MISSING_DESC"],
+        "AURAS_MISSING",
+        "GwSettingsAurasOptions",
+        function()
+        end
     )
 
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
