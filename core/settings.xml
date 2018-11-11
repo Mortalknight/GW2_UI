@@ -480,7 +480,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <CheckButton name="$parentCheckButton" checked="true">
+            <CheckButton name="$parentCheckButton" parentKey="checkbutton" checked="true">
                 <HitRectInsets left="0" right="0" top="0" bottom="0"/>
                 <Size x="16" y="16"></Size>
                 <Anchors>
@@ -509,7 +509,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Slider name="$parentSlider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+            <Slider name="$parentSlider" parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
                 <Size x="256" y="16"></Size>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-10"></Anchor>

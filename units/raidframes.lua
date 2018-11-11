@@ -443,7 +443,7 @@ local function updateAuras(self)
         -- Indicators
         if showThis then
             for _, pos in ipairs(INDICATORS) do
-                if spellID == GetSetting("INDICATOR_" .. pos) then
+                if spellID == GetSetting("INDICATOR_" .. pos, true) then
                     local frame = self["indicator" .. pos]
                     frame:Show()
 
