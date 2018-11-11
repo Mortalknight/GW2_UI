@@ -71,47 +71,46 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
                 <Frames>
                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
-                <Size x="65" y="8"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-                <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
-                            <Color r="0.207" g="0.392" b="0.168"></Color>
-                            <Anchors>
-                                <Anchor point="RIGHT" x="0" y="0"/>
-                            </Anchors>
-                            <Size x="7" y="8"></Size>
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <Frames>
-                    <StatusBar parentKey="absorbbar" defaultValue="1" minValue="0" maxValue="1">
                         <Size x="65" y="8"></Size>
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\absorbbar"/>
-
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                        <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
                         <Layers>
                             <Layer>
-                                <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
+                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                                    <Color r="0.207" g="0.392" b="0.168"></Color>
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-                                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                        <Anchor point="RIGHT" x="0" y="0"/>
                                     </Anchors>
+                                    <Size x="7" y="8"></Size>
                                 </Texture>
                             </Layer>
                         </Layers>
+                        <Frames>
+                            <StatusBar parentKey="absorbbar" defaultValue="1" minValue="0" maxValue="1">
+                                <Size x="65" y="8"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <BarTexture file="Interface\AddOns\GW2_UI\textures\absorbbar"/>
+
+                                <Layers>
+                                    <Layer>
+                                        <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                                <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
+                            </StatusBar>
+                        </Frames>
                     </StatusBar>
-                    
-                </Frames>
-            </StatusBar>
                 </Frames>
             </StatusBar>
          
@@ -125,6 +124,7 @@
                 <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
 
             </StatusBar>
+
             <StatusBar parentKey="indicatorBAR" orientation="VERTICAL" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="3" y="3"></Size>
                 <Anchors>
@@ -144,6 +144,13 @@
                         </Texture>
                     </Layer>
                 </Layers>
+                <Scripts>
+                    <OnUpdate>
+                        if self:IsShown() and self.expires and self.duration then
+                            self:SetValue((self.expires - GetTime()) / self.duration)
+                        end
+                    </OnUpdate>
+                </Scripts>
             </StatusBar>
 
             <Frame parentKey="indicatorTOPLEFT" inherits="GwRaidFrameIndicator">

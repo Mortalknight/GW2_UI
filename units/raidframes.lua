@@ -418,7 +418,6 @@ local function updateAuras(self)
     
     for _, pos in pairs(INDICATORS) do
         self['indicator' .. pos]:Hide()
-        self['indicator' .. pos]:SetScript("OnUpdate", nil)
     end
 
     for i = 1, 40 do
@@ -445,10 +444,10 @@ local function updateAuras(self)
             for _, pos in ipairs(INDICATORS) do
                 if spellID == GetSetting("INDICATOR_" .. pos, true) then
                     local frame = self["indicator" .. pos]
-                    frame:Show()
 
                     if pos == "BAR" then
-                        frame:SetScript("OnUpdate", function() frame:SetValue((expires - GetTime()) / duration) end)
+                        frame.expires = expires
+                        frame.duration = duration
                     else
                         if GetSetting("INDICATORS_ICON") then
                             frame.icon:SetTexture(icon)
@@ -465,6 +464,8 @@ local function updateAuras(self)
 
                         showThis = false
                     end
+                    
+                    frame:Show()
                 end
             end
         end
