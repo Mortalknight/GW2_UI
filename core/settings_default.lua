@@ -223,8 +223,6 @@ GW_DEFAULT["CASTINGBAR_DATA"] = false
 GW_DEFAULT["USE_CHARACTER_WINDOW"] = true
 GW_DEFAULT["USE_TALENT_WINDOW"] = true
 
-print(strjoin(", ", unpack(GW.MapTable(GW.AURAS_IGNORED, GetSpellInfo))))
-print(strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, GetSpellInfo))))
 GW_DEFAULT["AURAS_IGNORED"] = strjoin(", ", unpack(GW.MapTable(GW.AURAS_IGNORED, GetSpellInfo)))
 GW_DEFAULT["AURAS_MISSING"] = strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, GetSpellInfo)))
 GW_DEFAULT["INDICATORS_ICON"] = false
