@@ -21,11 +21,15 @@ local FractionIcon = {}
     FractionIcon["Horde"] = "|TInterface\\AddOns\\GW2_UI\\textures\\Horde:16:16:0:0|t "
     FractionIcon["NONE"] = ""
 
-local function setCompass()
-    local inBG = UnitInBattleground("player")
+local function setCompass(prepFrame)
     local isArena = IsActiveBattlefieldArena()
     local compassData = {}
-    if isArena then
+
+    if prepFrame == nil then 
+        prepFrame = false
+    end
+
+    if isArena or prepFrame then
         compassData["TITLE"] = ARENA
         compassData["DESC"] = ARENA_IS_READY
     else
@@ -342,7 +346,7 @@ local function registerPrepFrame(i)
         "OnShow",
         function(self)
             updateArenaFrameHeight("GwQuestTrackerArenaPrepFrame")
-            setCompass()
+            setCompass(true)
             countArenaPrepFrames = countArenaPrepFrames + 1
 
             --Hide Blizzard frames
