@@ -285,7 +285,7 @@ local function addOption(name, desc, optionName, frameName, callback)
     options[i]["callback"] = callback
 end
 
-local function addOptionSlider(name, desc, optionName, frameName, callback, min, max)
+local function addOptionSlider(name, desc, optionName, frameName, callback, min, max, margin)
     local i = CountTable(options)
 
     options[i] = {}
@@ -296,10 +296,11 @@ local function addOptionSlider(name, desc, optionName, frameName, callback, min,
     options[i]["callback"] = callback
     options[i]["min"] = min
     options[i]["max"] = max
+    options[i]["margin"] = margin
     options[i]["optionType"] = "slider"
 end
 
-local function addOptionText(name, desc, optionName, frameName, callback, multiline)
+local function addOptionText(name, desc, optionName, frameName, callback, multiline, margin)
     local i = CountTable(options)
 
     options[i] = {}
@@ -309,10 +310,11 @@ local function addOptionText(name, desc, optionName, frameName, callback, multil
     options[i]["frameName"] = frameName
     options[i]["callback"] = callback
     options[i]["multiline"] = multiline
+    options[i]["margin"] = margin
     options[i]["optionType"] = "text"
 end
 
-local function addOptionDropdown(name, desc, optionName, frameName, callback, options_list, option_names)
+local function addOptionDropdown(name, desc, optionName, frameName, callback, options_list, option_names, margin)
     local i = CountTable(options)
 
     options[i] = {}
@@ -321,12 +323,12 @@ local function addOptionDropdown(name, desc, optionName, frameName, callback, op
     options[i]["optionName"] = optionName
     options[i]["frameName"] = frameName
     options[i]["callback"] = callback
-
-    options[i]["optionType"] = "dropdown"
     options[i]["options"] = {}
     options[i]["options"] = options_list
     options[i]["options_names"] = {}
     options[i]["options_names"] = option_names
+    options[i]["margin"] = margin
+    options[i]["optionType"] = "dropdown"
 end
 
 local settings_window_open_before_change = false
@@ -406,7 +408,7 @@ local function DisplaySettings()
     local padding = {}
 
     for k, v in pairs(options) do
-        local newLine, first = false, false
+        local first, newLine = false, false
         if padding[v["frameName"]] == nil then
             padding[v["frameName"]] = {}
             padding[v["frameName"]]["x"] = box_padding
@@ -428,12 +430,13 @@ local function DisplaySettings()
         end
 
         local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v["frameName"]], optionFrameType)
-
-        of:ClearAllPoints()
-        if not first and of:GetWidth() > 300 then
-            padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
+        
+        if v["margin"] or newLine and not first or padding[v["frameName"]]["x"] > 440 then
+            padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + (pY + box_padding) * (v["margin"] and 2 or 1)
             padding[v["frameName"]]["x"] = box_padding
         end
+
+        of:ClearAllPoints()
         of:SetPoint("TOPLEFT", padding[v["frameName"]]["x"], padding[v["frameName"]]["y"])
         _G["GwOptionBox" .. k .. "Title"]:SetText(v["name"])
         _G["GwOptionBox" .. k .. "Title"]:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -556,10 +559,6 @@ local function DisplaySettings()
 
         if newLine == false then
             padding[v["frameName"]]["x"] = padding[v["frameName"]]["x"] + of:GetWidth() + box_padding
-            if padding[v["frameName"]]["x"] > 440 then
-                padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
-                padding[v["frameName"]]["x"] = box_padding
-            end
         end
     end
 end
@@ -1173,7 +1172,8 @@ local function LoadSettings()
         function()
         end,
         {"NONE", "DIFFERENT", "ALL"},
-        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
+        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL},
+        true
     )
 
     addOptionDropdown(
@@ -1277,9 +1277,9 @@ local function LoadSettings()
     createCat(AURAS, GwLocalization["AURAS_TOOLTIP"], "GwSettingsAurasframe", 2)
     
     addOptionText(
-        GwLocalization["AURAS_IGNORE"],
-        GwLocalization["AURAS_IGNORE_DESC"],
-        "AURAS_IGNORE",
+        GwLocalization["AURAS_IGNORED"],
+        GwLocalization["AURAS_IGNORED_DESC"],
+        "AURAS_IGNORED",
         "GwSettingsAurasOptions",
         function() end
     )
@@ -1292,20 +1292,36 @@ local function LoadSettings()
         function() end
     )
 
+    addOption(
+        GwLocalization["INDICATORS_ICON"],
+        GwLocalization["INDICATORS_ICON_DESC"],
+        "INDICATORS_ICON",
+        "GwSettingsIndicatorsOptions",
+        function () end
+    )
+
+    addOption(
+        GwLocalization["INDICATORS_TIME"],
+        GwLocalization["INDICATORS_TIME_DESC"],
+        "INDICATORS_TIME",
+        "GwSettingsIndicatorsOptions",
+        function () end
+    )
+
     local auras = GW.AURAS_INDICATORS[select(2, UnitClass("player"))]
-    local auraKeys = GW.MapTable(auras, function (v, i) return i end, true)
-    local auraVals = GW.MapTable(auras, function (v) return GetSpellInfo(v[2]) end)
-    tinsert(auraKeys, 1, "NONE")
+    local auraKeys = GW.MapTable(auras, function (_, i) return i end, true)
+    local auraVals = GW.MapTable(auras, function (_, i) return GetSpellInfo(i) end, true)
+    tinsert(auraKeys, 1, 0)
     tinsert(auraVals, 1, NONE_KEY)
 
-    for i,pos in ipairs({"TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}) do
+    for i,pos in ipairs(GW.INDICATORS) do
         local key = "INDICATOR_" .. pos
         addOptionDropdown(
             GwLocalization["INDICATOR_TITLE"]:format(GwLocalization[key]),
             GwLocalization["INDICATOR_DESC"]:format(GwLocalization[key]),
             key,
             "GwSettingsIndicatorsOptions",
-            function () end,
+            function () SetSetting(key, tonumber(GetSetting(key))) end,
             auraKeys,
             auraVals
         )

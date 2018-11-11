@@ -298,7 +298,7 @@
                             <Frame name="GwSettingsIndicatorsOptions">
                                 <Size x="660" y="240"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" x="0" y="-160"></Anchor>
+                                    <Anchor point="TOPLEFT" x="0" y="-130"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY">

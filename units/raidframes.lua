@@ -3,8 +3,11 @@ local gw_set_unit_flag = GW.UnitFlags
 local Debuff = GW.Debuff
 local GetSetting = GW.GetSetting
 local CountTable = GW.CountTable
+local SplitString = GW.SplitString
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
+local INDICATORS = GW.INDICATORS
+local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local TogglePartyRaid = GW.TogglePartyRaid
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
@@ -409,11 +412,17 @@ local function updateAuras(self)
     local buffIndex = 1
     local x = 0
     local y = 0
-    local spellTotrack = false
-    local spellToTrackExpires = 0
-    local spellToTrackDuration = 0
+    local ignored = GetSetting("AURAS_IGNORED")
+    local missing = GetSetting("AURAS_MISSING")
+    local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
+    
+    for _, pos in pairs(INDICATORS) do
+        self['indicator' .. pos]:Hide()
+        self['indicator' .. pos]:SetScript("OnUpdate", nil)
+    end
+
     for i = 1, 40 do
-        local _, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
+        local name, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
 
         local showThis = false
         if UnitBuff(self.unit, i) then
@@ -427,7 +436,39 @@ local function updateAuras(self)
                     (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and
                     not SpellIsSelfBuff(spellID)
             end
+
+            showThis = showThis and not (ignored:find(name) or missing:find(name))
+        end             
+
+        -- Indicators
+        if showThis then
+            for _, pos in ipairs(INDICATORS) do
+                if spellID == GetSetting("INDICATOR_" .. pos) then
+                    local frame = self["indicator" .. pos]
+                    frame:Show()
+
+                    if pos == "BAR" then
+                        frame:SetScript("OnUpdate", function() frame:SetValue((expires - GetTime()) / duration) end)
+                    else
+                        if GetSetting("INDICATORS_ICON") then
+                            frame.icon:SetTexture(icon)
+                        else
+                            frame.icon:SetColorTexture(unpack(indicators[spellID]))
+                        end
+
+                        if GetSetting("INDICATORS_TIME") then
+                            frame.cooldown:Show()
+                            frame.cooldown:SetCooldown(expires - duration, duration)
+                        else
+                            frame.cooldown:Hide()
+                        end
+
+                        showThis = false
+                    end
+                end
+            end
         end
+
         --remove old buff
         local indexBuffFrame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
         if indexBuffFrame ~= nil then
@@ -478,11 +519,6 @@ local function updateAuras(self)
             indexBuffFrame:SetScript("OnLeave", GameTooltip_Hide)
 
             indexBuffFrame:Show()
-            if spellID == 194384 then
-                spellTotrack = true
-                spellToTrackExpires = expires
-                spellToTrackDuration = duration
-            end
 
             x = x + 1
             buffIndex = buffIndex + 1
@@ -491,20 +527,7 @@ local function updateAuras(self)
                 y = y + 1
                 x = 0
             end
-        end     
-    end
-
-    if spellTotrack then
-        self.spelltracker:Show()
-        self.spelltracker:SetScript(
-            "OnUpdate",
-            function()
-                self.spelltracker:SetValue((spellToTrackExpires - GetTime()) / spellToTrackDuration)
-            end
-        )
-    else
-        self.spelltracker:Hide()
-        self.spelltracker:SetScript("OnUpdate", nil)
+        end
     end
 
     updateDebuffs(self)
