@@ -20,6 +20,19 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+local function MapTable(T, fn, withKey)
+    local t = {}
+    for k,v in pairs(T) do
+        if withKey then
+            t[k] = fn(v, k)
+        else
+            t[k] = fn(v)
+        end
+    end
+    return t
+end
+GW.MapTable = MapTable
+
 local function TimeParts(ms)
     local nMS = tonumber(ms)
     local nSec, nMin, nHr

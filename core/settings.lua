@@ -1281,8 +1281,7 @@ local function LoadSettings()
         GwLocalization["AURAS_IGNORE_DESC"],
         "AURAS_IGNORE",
         "GwSettingsAurasOptions",
-        function()
-        end
+        function() end
     )
     
     addOptionText(
@@ -1290,9 +1289,27 @@ local function LoadSettings()
         GwLocalization["AURAS_MISSING_DESC"],
         "AURAS_MISSING",
         "GwSettingsAurasOptions",
-        function()
-        end
+        function() end
     )
+
+    local auras = GW.AURAS_INDICATORS[select(2, UnitClass("player"))]
+    local auraKeys = GW.MapTable(auras, function (v, i) return i end, true)
+    local auraVals = GW.MapTable(auras, function (v) return GetSpellInfo(v[2]) end)
+    tinsert(auraKeys, 1, "NONE")
+    tinsert(auraVals, 1, NONE_KEY)
+
+    for i,pos in ipairs({"TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}) do
+        local key = "INDICATOR_" .. pos
+        addOptionDropdown(
+            GwLocalization["INDICATOR_TITLE"]:format(GwLocalization[key]),
+            GwLocalization["INDICATOR_DESC"]:format(GwLocalization[key]),
+            key,
+            "GwSettingsIndicatorsOptions",
+            function () end,
+            auraKeys,
+            auraVals
+        )
+    end
 
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
     _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
