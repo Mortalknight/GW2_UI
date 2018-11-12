@@ -1205,6 +1205,18 @@ local function LoadSettings()
         "RAID_UNIT_MARKERS",
         "GwSettingsGroupframe"
     )
+    addOption(
+        GwLocalization["RAID_SORT_BY_ROLE"],
+        GwLocalization["RAID_SORT_BY_ROLE_DESC"],
+        "RAID_SORT_BY_ROLE",
+        "GwSettingsGroupframe",
+        function ()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end
+    )
 
     addOptionDropdown(
         GwLocalization["RAID_UNIT_FLAGS"],
@@ -1214,8 +1226,7 @@ local function LoadSettings()
         function()
         end,
         {"NONE", "DIFFERENT", "ALL"},
-        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL},
-        {margin = true}
+        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
     )
 
     addOptionDropdown(

@@ -857,7 +857,7 @@ local function UpdateRaidFramesLayout()
     GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
 
     -- Position sorted players
-    local sorted = sortByRole()
+    local sorted = (not IsInRaid() or GetSetting("RAID_SORT_BY_ROLE")) and sortByRole() or {}
 
     for i, v in ipairs(sorted) do
         PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
