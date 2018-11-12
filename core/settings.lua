@@ -571,25 +571,29 @@ local function DisplaySettings()
         end
 
         if v.perSpec then
+            local onUpdate = function (self)
+                self:SetScript("OnUpdate", nil)
+                local val = GetSetting(v.optionName, true)
+
+                if v.optionType == "dropdown" then
+                    for i,value in pairs(v.options) do
+                        if value == val then self.button.string:SetText(v.options_names[i]) break end
+                    end
+                elseif v.optionType == "slider" then
+                    self.slider:SetValue(val)
+                elseif v.optionType == "text" then
+                    self.input:SetText(val)
+                elseif v.optionType == "boolean" then
+                    self.checkbutton:SetChecked(val)
+                end
+
+                if v.callback and v.optionType ~= "slider" then
+                    v.callback()
+                end
+            end
             _G["GwOptionBox" .. k]:SetScript("OnEvent", function (self, e)
                 if e == "PLAYER_SPECIALIZATION_CHANGED" then
-                    local val = GetSetting(v.optionName, true)
-
-                    if v.optionType == "dropdown" then
-                        for i,value in pairs(v.options) do
-                            if value == val then self.button.string:SetText(v.options_names[i]) break end
-                        end
-                    elseif v.optionType == "slider" then
-                        self.slider:SetValue(val)
-                    elseif v.optionType == "text" then
-                        self.input:SetText(val)
-                    elseif v.optionType == "boolean" then
-                        self.checkbutton:SetChecked(val)
-                    end
-
-                    if v.callback and v.optionType ~= "slider" then
-                        v.callback()
-                    end
+                    self:SetScript("OnUpdate", onUpdate)
                 end
             end)
             _G["GwOptionBox" .. k]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")

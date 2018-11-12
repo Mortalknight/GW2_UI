@@ -344,7 +344,8 @@ local function updateDebuffs(self)
 
         local indexBuffFrame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. i]
         local created = false
-        local shouldDisplay = false
+        local shouldDisplay = DebuffLists[i]["name"] and not ignored:find(DebuffLists[i]["name"])
+
         --remove old debuff
         if indexBuffFrame ~= nil then
             indexBuffFrame:Hide()
@@ -352,13 +353,14 @@ local function updateDebuffs(self)
             indexBuffFrame:SetScript("OnClick", nil)
             indexBuffFrame:SetScript("OnLeave", nil)
         end   
-        --set new debuff
-        shouldDisplay = DebuffLists[i]["name"] and not ignored:find(DebuffLists[i]["name"])
 
+        --set new debuff
         if shouldDisplay and widthLimitExceeded == false then
+            local name = "Gw" .. self:GetName() .. "DeBuffItemFrame" .. buffIndex
+            indexBuffFrame = _G[name]
             if indexBuffFrame == nil then
                 indexBuffFrame =
-                    CreateFrame("Button", "Gw" .. self:GetName() .. "DeBuffItemFrame" .. i, self, "GwDeBuffIcon")
+                    CreateFrame("Button", name, self, "GwDeBuffIcon")
                 indexBuffFrame:SetParent(self)
                 indexBuffFrame:SetFrameStrata("MEDIUM")
                 indexBuffFrame:SetSize(16, 16)
@@ -372,20 +374,8 @@ local function updateDebuffs(self)
                 indexBuffFrame:ClearAllPoints()
                 indexBuffFrame:SetPoint("BOTTOMLEFT", self.healthbar, "BOTTOMLEFT", 3 + (margin * x), 3 + (marginy * y))
 
-                _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. buffIndex .. "Icon"]:SetPoint(
-                    "TOPLEFT",
-                    indexBuffFrame,
-                    "TOPLEFT",
-                    1,
-                    -1
-                )
-                _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. buffIndex .. "Icon"]:SetPoint(
-                    "BOTTOMRIGHT",
-                    indexBuffFrame,
-                    "BOTTOMRIGHT",
-                    -1,
-                    1
-                )
+                _G[name .. "Icon"]:SetPoint("TOPLEFT", indexBuffFrame, "TOPLEFT", 1, -1)
+                _G[name .. "Icon"]:SetPoint("BOTTOMRIGHT", indexBuffFrame, "BOTTOMRIGHT", -1, 1)
             end
 
             GW.Debuff(indexBuffFrame, DebuffLists[i], i, filter)
@@ -395,8 +385,7 @@ local function updateDebuffs(self)
             buffIndex = buffIndex + 1
             x = x + 1
             if (margin * x) < (-(self:GetWidth() / 2)) then
-                y = y + 1
-                x = 0
+                x, y = 0, y + 1
             end
 
             if widthLimit < (margin * x) then
@@ -776,16 +765,16 @@ local function GetRaidFramesMeasures(full)
     if per > 0 and per < cells1 then
         cells1 = per
         if sizeMax1 > 0 then
-            sizePer1 = min(sizePer1, ((sizeMax1 - per * m) / per))
+            sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
         end
-    elseif sizeMax1 > 0 and sizeMax1 < cells1 * (sizePer1 + m) - m then
-        cells1 = floor((sizeMax1 + m) / (sizePer1 + m))
+    elseif sizeMax1 > 0 then
+        cells1 = max(1, min(cells1, floor((sizeMax1 + m) / (sizePer1 + m))))
     end
 
-    local cells2 = ceil(players / max(1, cells1))
+    local cells2 = ceil(players / cells1)
 
-    if sizeMax2 > 0 and sizeMax2 < cells2 * (sizePer2 + m) - m then
-        sizePer2 = (sizeMax2 + m) / cells2 - m
+    if sizeMax2 > 0 then
+        sizePer2 = min(sizePer2, (sizeMax2 + m) / cells2 - m)
     end
 
     -- Container size
@@ -857,6 +846,7 @@ GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 
 local function UpdateRaidFramesLayout()
     if InCombatLockdown() then
+        GwRaidFrameContainer:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     end
 
@@ -1054,6 +1044,10 @@ local function LoadRaidFrames()
                     updateFrameData(_G["GwCompactparty" .. i], i)
                 end
                 updateFrameData(_G["GwCompactraid" .. i], i)
+            end
+
+            if event == "PLAYER_REGEN_ENABLED" then
+                self:UnregisterEvent(event)
             end
         end
     )
