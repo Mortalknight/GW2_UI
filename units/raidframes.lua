@@ -322,6 +322,7 @@ local function updateDebuffs(self)
     local x = 0
     local y = 0
     local DebuffLists = {}
+    local ignored = GetSetting("AURAS_IGNORED")
 
     local filter = nil
     if GetSetting("RAID_ONLY_DISPELL_DEBUFFS") then
@@ -352,9 +353,7 @@ local function updateDebuffs(self)
             indexBuffFrame:SetScript("OnLeave", nil)
         end   
         --set new debuff
-        if DebuffLists[i]["name"] ~= nil then
-            shouldDisplay = true
-        end
+        shouldDisplay = DebuffLists[i]["name"] and not ignored:find(DebuffLists[i]["name"])
 
         if shouldDisplay and widthLimitExceeded == false then
             if indexBuffFrame == nil then
@@ -408,12 +407,70 @@ local function updateDebuffs(self)
 end
 GW.AddForProfiling("raidframes", "updateDebuffs", updateDebuffs)
 
+local function showBuffIcon(parent, icon, buffIndex, x, y, index, isMissing)
+    local name = "Gw" .. parent:GetName() .. "BuffItemFrame" .. buffIndex
+    local frame = _G[name]
+    local created = not frame
+
+    if created then
+        frame = CreateFrame("Button", name, parent, "GwBuffIconBig")
+        _G[name .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
+        _G[name .. "BuffDuration"]:SetTextColor(1, 1, 1)
+        _G[name .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+        _G[name .. "BuffStacks"]:SetTextColor(1, 1, 1)
+        frame:SetParent(parent)
+        frame:SetFrameStrata("MEDIUM")
+        frame:SetSize(14, 14)
+        frame:RegisterForClicks("RightButtonUp")
+
+        frame:SetScript("OnEnter", function (self)
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+            GameTooltip:ClearLines()
+            if self.isMissing then
+                GameTooltip:SetSpellBookItem(self.index, BOOKTYPE_SPELL)
+            else
+                GameTooltip:SetUnitBuff(self:GetParent().unit, self.index)
+            end
+
+            GameTooltip:Show()
+        end)
+        frame:SetScript("OnLeave", GameTooltip_Hide)
+    end
+    
+    local margin = -frame:GetWidth() + -2
+    local marginy = frame:GetWidth() + 2
+
+    if created then
+        frame:ClearAllPoints()
+        frame:SetPoint("BOTTOMRIGHT", parent.healthbar, "BOTTOMRIGHT", -3 + (margin * x), 3 + (marginy * y))
+    end
+
+    frame.index = index
+    frame.isMissing = isMissing
+
+    _G[name .. "BuffIcon"]:SetTexture(icon)
+    _G[name .. "BuffIcon"]:SetVertexColor(1, isMissing and .75 or 1, isMissing and .75 or 1)
+    _G[name .. "BuffDuration"]:SetText("")
+    _G[name .. "BuffStacks"]:SetText("")
+
+    frame:Show()
+
+    buffIndex = buffIndex + 1
+    x = x + 1
+
+    if (margin * x) < (-(parent:GetWidth() / 2)) then
+        x, y = 0, y + 1
+    end
+
+    return buffIndex, x, y
+end
+
 local function updateAuras(self)
     local buffIndex = 1
     local x = 0
     local y = 0
-    local ignored = GetSetting("AURAS_IGNORED")
     local missing = GetSetting("AURAS_MISSING")
+    local ignored = GetSetting("AURAS_IGNORED")
     local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
     
     for _, pos in pairs(INDICATORS) do
@@ -421,25 +478,54 @@ local function updateAuras(self)
     end
 
     for i = 1, 40 do
+        --remove old buff
+        local frame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
+        if frame then
+            frame:Hide()
+        end
+        
+        -- check missing
+        local name = UnitBuff(self.unit, i)
+        if name then
+            missing = missing:gsub(name, "")
+        end
+    end
+    
+    -- missing buffs
+    for i = 1, 1000 do
+        local name = GetSpellBookItemName(i, BOOKTYPE_SPELL)
+        if not name then
+            break
+        elseif missing:find(name) then
+            local icon = GetSpellBookItemTexture(i, BOOKTYPE_SPELL)
+            buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i, true)
+            break
+        end
+    end
+
+    missing = GetSetting("AURAS_MISSING")
+
+    for i = 1, 40 do
+        local showThis = false
         local name, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
 
-        local showThis = false
-        if UnitBuff(self.unit, i) then
-            local hasCustom, alwaysShowMine, showForMySpec =
-                SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-            if (hasCustom) then
-                showThis =
-                    showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
-            else
-                showThis =
-                    (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and
-                    not SpellIsSelfBuff(spellID)
-            end
+        if not name then
+            break
+        end
 
-            showThis = showThis and not (ignored:find(name) or missing:find(name))
-        end             
+        -- visibility
+        local hasCustom, alwaysShowMine, showForMySpec =
+            SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+        if (hasCustom) then
+            showThis =
+                showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
+        else
+            showThis =
+                (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and
+                not SpellIsSelfBuff(spellID)
+        end
 
-        -- Indicators
+        -- indicators
         if showThis then
             for _, pos in ipairs(INDICATORS) do
                 if spellID == GetSetting("INDICATOR_" .. pos, true) then
@@ -470,64 +556,9 @@ local function updateAuras(self)
             end
         end
 
-        --remove old buff
-        local indexBuffFrame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
-        if indexBuffFrame ~= nil then
-            indexBuffFrame:Hide()
-            indexBuffFrame:SetScript("OnEnter", nil)
-            indexBuffFrame:SetScript("OnClick", nil)
-            indexBuffFrame:SetScript("OnLeave", nil)
-        end
         --set new buff
-        local indexBuffFrame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex]
-        local created = false
-        if showThis then
-            if indexBuffFrame == nil then
-                indexBuffFrame =
-                    CreateFrame("Button", "Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex, self, "GwBuffIconBig")
-                indexBuffFrame:RegisterForClicks("RightButtonUp")
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetTextColor(1, 1, 1)
-                indexBuffFrame:SetParent(self)
-                indexBuffFrame:SetFrameStrata("MEDIUM")
-                indexBuffFrame:SetSize(14, 14)
-                created = true
-            end
-            local margin = -indexBuffFrame:GetWidth() + -2
-            local marginy = indexBuffFrame:GetWidth() + 2
-
-            if created then
-                indexBuffFrame:ClearAllPoints()
-                indexBuffFrame:SetPoint("BOTTOMRIGHT", self.healthbar, "BOTTOMRIGHT", -3 + (margin * x), 3 + (marginy * y))
-            end
-            _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex .. "BuffIcon"]:SetTexture(icon)
-            --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
-
-            _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex .. "BuffDuration"]:SetText("")
-            _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex .. "BuffStacks"]:SetText("")
-
-            indexBuffFrame:SetScript(
-                "OnEnter",
-                function()
-                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT", 28, 0)
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetUnitBuff(self.unit, i, "PLAYER|RAID")
-                    GameTooltip:Show()
-                end
-            )
-            indexBuffFrame:SetScript("OnLeave", GameTooltip_Hide)
-
-            indexBuffFrame:Show()
-
-            x = x + 1
-            buffIndex = buffIndex + 1
-            
-            if (margin * x) < (-(self:GetWidth() / 2)) then
-                y = y + 1
-                x = 0
-            end
+        if showThis and not (ignored:find(name) or missing:find(name)) then
+            buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i)
         end
     end
 
