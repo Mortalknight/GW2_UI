@@ -265,6 +265,62 @@
                             </layer>
                         </Layers>
                     </Frame>
+                    <Frame hidden="true" name="GwSettingsAurasframe">
+                        <Size x="660" y="480"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <Frame name="GwSettingsAurasOptions">
+                                <Size x="660" y="240"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY">
+                                        <FontString name="$parentHeader" text="Auras" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                            <Size x="512" y="25"></Size>
+                                            <Color r="1" b="1" g="1"></Color>
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                            </Anchors>
+                                        </FontString>
+                                        <FontString name="$parentSub" text="Edit aura settings." inherits="GameFontNormalSmall" justifyH="LEFT">
+                                            <Size x="512" y="25"></Size>
+                                            <Color r="0.6" b="0.6" g="0.6"></Color>
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                            </Frame>
+                            <Frame name="GwSettingsIndicatorsOptions">
+                                <Size x="660" y="240"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" x="0" y="-130"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY">
+                                        <FontString name="$parentHeader" text="Edit raid buff/debuff indicators" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                            <Size x="512" y="25"></Size>
+                                            <Color r="1" b="1" g="1"></Color>
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                            </Anchors>
+                                        </FontString>
+                                        <FontString name="$parentSub" text="Edit raid indicators." inherits="GameFontNormalSmall" justifyH="LEFT">
+                                            <Size x="512" y="25"></Size>
+                                            <Color r="0.6" b="0.6" g="0.6"></Color>
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                            </Frame>
+                        </Frames>
+                    </Frame>
                     <Frame hidden="true" name="GwSettingsProfilesframe">
                         <Size x="512" y="480"></Size>
                         <Anchors>
@@ -424,7 +480,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <CheckButton name="$parentCheckButton" checked="true">
+            <CheckButton name="$parentCheckButton" parentKey="checkbutton" checked="true">
                 <HitRectInsets left="0" right="0" top="0" bottom="0"/>
                 <Size x="16" y="16"></Size>
                 <Anchors>
@@ -453,7 +509,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Slider name="$parentSlider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+            <Slider name="$parentSlider" parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
                 <Size x="256" y="16"></Size>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-10"></Anchor>
@@ -562,6 +618,44 @@
                 </FontString>
             </Layer>
         </Layers>
+    </Button>
+
+    <Button name="GwOptionBoxText" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString name="$parentTitle" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="256" y="25"></Size>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <EditBox name="$parentInput" parentKey="input" autoFocus="false">
+                <Size x="256" y="20"></Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <FontString inherits="ChatFontNormal" />
+            </EditBox>
+        </Frames>
     </Button>
 
     <Button name="GwStandardButton" text="" virtual="true">

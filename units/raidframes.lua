@@ -3,8 +3,11 @@ local gw_set_unit_flag = GW.UnitFlags
 local Debuff = GW.Debuff
 local GetSetting = GW.GetSetting
 local CountTable = GW.CountTable
+local SplitString = GW.SplitString
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
+local INDICATORS = GW.INDICATORS
+local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local TogglePartyRaid = GW.TogglePartyRaid
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
@@ -319,6 +322,7 @@ local function updateDebuffs(self)
     local x = 0
     local y = 0
     local DebuffLists = {}
+    local ignored = GetSetting("AURAS_IGNORED")
 
     local filter = nil
     if GetSetting("RAID_ONLY_DISPELL_DEBUFFS") then
@@ -340,7 +344,8 @@ local function updateDebuffs(self)
 
         local indexBuffFrame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. i]
         local created = false
-        local shouldDisplay = false
+        local shouldDisplay = DebuffLists[i]["name"] and not ignored:find(DebuffLists[i]["name"])
+
         --remove old debuff
         if indexBuffFrame ~= nil then
             indexBuffFrame:Hide()
@@ -348,15 +353,14 @@ local function updateDebuffs(self)
             indexBuffFrame:SetScript("OnClick", nil)
             indexBuffFrame:SetScript("OnLeave", nil)
         end   
-        --set new debuff
-        if DebuffLists[i]["name"] ~= nil then
-            shouldDisplay = true
-        end
 
+        --set new debuff
         if shouldDisplay and widthLimitExceeded == false then
+            local name = "Gw" .. self:GetName() .. "DeBuffItemFrame" .. buffIndex
+            indexBuffFrame = _G[name]
             if indexBuffFrame == nil then
                 indexBuffFrame =
-                    CreateFrame("Button", "Gw" .. self:GetName() .. "DeBuffItemFrame" .. i, self, "GwDeBuffIcon")
+                    CreateFrame("Button", name, self, "GwDeBuffIcon")
                 indexBuffFrame:SetParent(self)
                 indexBuffFrame:SetFrameStrata("MEDIUM")
                 indexBuffFrame:SetSize(16, 16)
@@ -370,20 +374,8 @@ local function updateDebuffs(self)
                 indexBuffFrame:ClearAllPoints()
                 indexBuffFrame:SetPoint("BOTTOMLEFT", self.healthbar, "BOTTOMLEFT", 3 + (margin * x), 3 + (marginy * y))
 
-                _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. buffIndex .. "Icon"]:SetPoint(
-                    "TOPLEFT",
-                    indexBuffFrame,
-                    "TOPLEFT",
-                    1,
-                    -1
-                )
-                _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. buffIndex .. "Icon"]:SetPoint(
-                    "BOTTOMRIGHT",
-                    indexBuffFrame,
-                    "BOTTOMRIGHT",
-                    -1,
-                    1
-                )
+                _G[name .. "Icon"]:SetPoint("TOPLEFT", indexBuffFrame, "TOPLEFT", 1, -1)
+                _G[name .. "Icon"]:SetPoint("BOTTOMRIGHT", indexBuffFrame, "BOTTOMRIGHT", -1, 1)
             end
 
             GW.Debuff(indexBuffFrame, DebuffLists[i], i, filter)
@@ -393,8 +385,7 @@ local function updateDebuffs(self)
             buffIndex = buffIndex + 1
             x = x + 1
             if (margin * x) < (-(self:GetWidth() / 2)) then
-                y = y + 1
-                x = 0
+                x, y = 0, y + 1
             end
 
             if widthLimit < (margin * x) then
@@ -405,106 +396,159 @@ local function updateDebuffs(self)
 end
 GW.AddForProfiling("raidframes", "updateDebuffs", updateDebuffs)
 
+local function showBuffIcon(parent, icon, buffIndex, x, y, index, isMissing)
+    local name = "Gw" .. parent:GetName() .. "BuffItemFrame" .. buffIndex
+    local frame = _G[name]
+    local created = not frame
+
+    if created then
+        frame = CreateFrame("Button", name, parent, "GwBuffIconBig")
+        _G[name .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
+        _G[name .. "BuffDuration"]:SetTextColor(1, 1, 1)
+        _G[name .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+        _G[name .. "BuffStacks"]:SetTextColor(1, 1, 1)
+        frame:SetParent(parent)
+        frame:SetFrameStrata("MEDIUM")
+        frame:SetSize(14, 14)
+        frame:RegisterForClicks("RightButtonUp")
+
+        frame:SetScript("OnEnter", function (self)
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+            GameTooltip:ClearLines()
+            if self.isMissing then
+                GameTooltip:SetSpellBookItem(self.index, BOOKTYPE_SPELL)
+            else
+                GameTooltip:SetUnitBuff(self:GetParent().unit, self.index)
+            end
+
+            GameTooltip:Show()
+        end)
+        frame:SetScript("OnLeave", GameTooltip_Hide)
+    end
+    
+    local margin = -frame:GetWidth() + -2
+    local marginy = frame:GetWidth() + 2
+
+    if created then
+        frame:ClearAllPoints()
+        frame:SetPoint("BOTTOMRIGHT", parent.healthbar, "BOTTOMRIGHT", -3 + (margin * x), 3 + (marginy * y))
+    end
+
+    frame.index = index
+    frame.isMissing = isMissing
+
+    _G[name .. "BuffIcon"]:SetTexture(icon)
+    _G[name .. "BuffIcon"]:SetVertexColor(1, isMissing and .75 or 1, isMissing and .75 or 1)
+    _G[name .. "BuffDuration"]:SetText("")
+    _G[name .. "BuffStacks"]:SetText("")
+
+    frame:Show()
+
+    buffIndex = buffIndex + 1
+    x = x + 1
+
+    if (margin * x) < (-(parent:GetWidth() / 2)) then
+        x, y = 0, y + 1
+    end
+
+    return buffIndex, x, y
+end
+
 local function updateAuras(self)
     local buffIndex = 1
     local x = 0
     local y = 0
-    local spellTotrack = false
-    local spellToTrackExpires = 0
-    local spellToTrackDuration = 0
-    for i = 1, 40 do
-        local _, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
-
-        local showThis = false
-        if UnitBuff(self.unit, i) then
-            local hasCustom, alwaysShowMine, showForMySpec =
-                SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-            if (hasCustom) then
-                showThis =
-                    showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
-            else
-                showThis =
-                    (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and
-                    not SpellIsSelfBuff(spellID)
-            end
-        end
-        --remove old buff
-        local indexBuffFrame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
-        if indexBuffFrame ~= nil then
-            indexBuffFrame:Hide()
-            indexBuffFrame:SetScript("OnEnter", nil)
-            indexBuffFrame:SetScript("OnClick", nil)
-            indexBuffFrame:SetScript("OnLeave", nil)
-        end
-        --set new buff
-        local indexBuffFrame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex]
-        local created = false
-        if showThis then
-            if indexBuffFrame == nil then
-                indexBuffFrame =
-                    CreateFrame("Button", "Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex, self, "GwBuffIconBig")
-                indexBuffFrame:RegisterForClicks("RightButtonUp")
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetTextColor(1, 1, 1)
-                indexBuffFrame:SetParent(self)
-                indexBuffFrame:SetFrameStrata("MEDIUM")
-                indexBuffFrame:SetSize(14, 14)
-                created = true
-            end
-            local margin = -indexBuffFrame:GetWidth() + -2
-            local marginy = indexBuffFrame:GetWidth() + 2
-
-            if created then
-                indexBuffFrame:ClearAllPoints()
-                indexBuffFrame:SetPoint("BOTTOMRIGHT", self.healthbar, "BOTTOMRIGHT", -3 + (margin * x), 3 + (marginy * y))
-            end
-            _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex .. "BuffIcon"]:SetTexture(icon)
-            --   _G['Gw'..self:GetName()..'BuffItemFrame'..i..'BuffIcon']:SetParent(_G['Gw'..self:GetName()..'BuffItemFrame'..i])
-
-            _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex .. "BuffDuration"]:SetText("")
-            _G["Gw" .. self:GetName() .. "BuffItemFrame" .. buffIndex .. "BuffStacks"]:SetText("")
-
-            indexBuffFrame:SetScript(
-                "OnEnter",
-                function()
-                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT", 28, 0)
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetUnitBuff(self.unit, i, "PLAYER|RAID")
-                    GameTooltip:Show()
-                end
-            )
-            indexBuffFrame:SetScript("OnLeave", GameTooltip_Hide)
-
-            indexBuffFrame:Show()
-            if spellID == 194384 then
-                spellTotrack = true
-                spellToTrackExpires = expires
-                spellToTrackDuration = duration
-            end
-
-            x = x + 1
-            buffIndex = buffIndex + 1
-            
-            if (margin * x) < (-(self:GetWidth() / 2)) then
-                y = y + 1
-                x = 0
-            end
-        end     
+    local missing = GetSetting("AURAS_MISSING")
+    local ignored = GetSetting("AURAS_IGNORED")
+    local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
+    
+    for _, pos in pairs(INDICATORS) do
+        self['indicator' .. pos]:Hide()
     end
 
-    if spellTotrack then
-        self.spelltracker:Show()
-        self.spelltracker:SetScript(
-            "OnUpdate",
-            function()
-                self.spelltracker:SetValue((spellToTrackExpires - GetTime()) / spellToTrackDuration)
+    for i = 1, 40 do
+        --remove old buff
+        local frame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
+        if frame then
+            frame:Hide()
+        end
+        
+        -- check missing
+        local name = UnitBuff(self.unit, i)
+        if name then
+            missing = missing:gsub(name, "")
+        end
+    end
+    
+    -- missing buffs
+    for i = 1, 1000 do
+        local name = GetSpellBookItemName(i, BOOKTYPE_SPELL)
+        if not name then
+            break
+        elseif missing:find(name) then
+            local icon = GetSpellBookItemTexture(i, BOOKTYPE_SPELL)
+            buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i, true)
+            break
+        end
+    end
+
+    missing = GetSetting("AURAS_MISSING")
+
+    for i = 1, 40 do
+        local showThis = false
+        local name, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
+
+        if not name then
+            break
+        end
+
+        -- visibility
+        local hasCustom, alwaysShowMine, showForMySpec =
+            SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+        if (hasCustom) then
+            showThis =
+                showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
+        else
+            showThis =
+                (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and
+                not SpellIsSelfBuff(spellID)
+        end
+
+        -- indicators
+        if showThis then
+            for _, pos in ipairs(INDICATORS) do
+                if spellID == GetSetting("INDICATOR_" .. pos, true) then
+                    local frame = self["indicator" .. pos]
+
+                    if pos == "BAR" then
+                        frame.expires = expires
+                        frame.duration = duration
+                    else
+                        if GetSetting("INDICATORS_ICON") then
+                            frame.icon:SetTexture(icon)
+                        else
+                            frame.icon:SetColorTexture(unpack(indicators[spellID]))
+                        end
+
+                        if GetSetting("INDICATORS_TIME") then
+                            frame.cooldown:Show()
+                            frame.cooldown:SetCooldown(expires - duration, duration)
+                        else
+                            frame.cooldown:Hide()
+                        end
+
+                        showThis = false
+                    end
+                    
+                    frame:Show()
+                end
             end
-        )
-    else
-        self.spelltracker:Hide()
-        self.spelltracker:SetScript("OnUpdate", nil)
+        end
+
+        --set new buff
+        if showThis and not (ignored:find(name) or missing:find(name)) then
+            buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i)
+        end
     end
 
     updateDebuffs(self)
@@ -698,127 +742,144 @@ local function raidframe_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("raidframes", "raidframe_OnUpdate", raidframe_OnUpdate)
 
-local function UpdateRaidFramesPosition()
-    local WIDTH = GetSetting("RAID_WIDTH")
-    local HEIGHT = GetSetting("RAID_HEIGHT")
-    local MARGIN = 2
-    local WINDOW_SIZE = GwRaidFrameContainer:GetHeight()
+local function GetRaidFramesMeasures(full)
+    -- Get settings
+    local players = full and 40 or max(1, GetNumGroupMembers())
+    local grow = GetSetting("RAID_GROW")
+    local w = GetSetting("RAID_WIDTH")
+    local h = GetSetting("RAID_HEIGHT")
+    local cW = GetSetting("RAID_CONT_WIDTH")
+    local cH = GetSetting("RAID_CONT_HEIGHT")
+    local per = min(players, ceil(GetSetting("RAID_UNITS_PER_COLUMN")))
+    local m = 2
 
-    local USED_WIDTH = 0
-    local USED_HEIGHT = 0
+    -- Directions
+    local grow1, grow2 = strsplit("+", grow)
+    local isV = grow1 == "D" or grow1 == "U"
+
+    -- Rows, cols and cell size
+    local sizeMax1, sizePer1 = isV and cH or cW, isV and h or w
+    local sizeMax2, sizePer2 = isV and cW or cH, isV and w or h
+    local cells1 = players
+
+    if per > 0 and per < cells1 then
+        cells1 = per
+        if sizeMax1 > 0 then
+            sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
+        end
+    elseif sizeMax1 > 0 then
+        cells1 = max(1, min(cells1, floor((sizeMax1 + m) / (sizePer1 + m))))
+    end
+
+    local cells2 = ceil(players / cells1)
+
+    if sizeMax2 > 0 then
+        sizePer2 = min(sizePer2, (sizeMax2 + m) / cells2 - m)
+    end
+
+    -- Container size
+    local size1, size2 = cells1 * (sizePer1 + m) - m, cells2 * (sizePer2 + m) - m
+    sizeMax1, sizeMax1 = max(size1, sizeMax1), max(size2, sizeMax2)
+
+    return grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m
+end
+
+local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+    local isV = grow1 == "D" or grow1 == "U"
+    local isU = grow1 == "U" or grow2 == "U"
+    local isR = grow1 == "R" or grow2 == "R"
+
+    local dir1, dir2 = isU and 1 or -1, isR and 1 or -1
+    if not isV then
+        dir1, dir2 = dir2, dir1
+    end
+    
+    local pos1, pos2 = dir1 * ((i - 1) % cells1), dir2 * (ceil(i / cells1) - 1)
+
+    local a = (isU and "BOTTOM" or "TOP") .. (isR and "LEFT" or "RIGHT")
+    local w = isV and sizePer2 or sizePer1
+    local h = isV and sizePer1 or sizePer2
+    local x = (isV and pos2 or pos1) * (w + m)
+    local y = (isV and pos1 or pos2) * (h + m)
+
+    frame:ClearAllPoints()
+    frame:SetPoint(a, parent, a, x, y)
+    frame:SetSize(w, h)
+
+    if frame.healthbar then
+        frame.healthbar.spark:SetHeight(frame.healthbar:GetHeight())
+    end
+end
+
+local function UpdateRaidFramesPosition()
+    -- Get directions, rows, cols and sizing
+    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures(true)
+    local isV = grow1 == "D" or grow1 == "U"
+
+    GwRaidFrameContainerMoveAble:SetSize(isV and size2 or size1, isV and size1 or size2)
 
     for i = 1, 40 do
-        _G["GwRaidGridDisplay" .. i]:SetPoint(
-            "TOPLEFT",
-            GwRaidFrameContainerMoveAble,
-            "TOPLEFT",
-            USED_WIDTH,
-            -USED_HEIGHT
-        )
-        _G["GwRaidGridDisplay" .. i]:SetSize(WIDTH, HEIGHT)
-
-        USED_HEIGHT = USED_HEIGHT + HEIGHT + MARGIN
-
-        if (USED_HEIGHT + HEIGHT + MARGIN) > WINDOW_SIZE then
-            USED_HEIGHT = 0
-            USED_WIDTH = USED_WIDTH + WIDTH + MARGIN
-        end
+        PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainerMoveAble, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     end
 end
 GW.UpdateRaidFramesPosition = UpdateRaidFramesPosition
 
 local function sortByRole()
-    local sorted_array = {}
-
-    local roleIndex = {}
-    roleIndex[1] = "TANK"
-    roleIndex[2] = "HEALER"
-    roleIndex[3] = "DAMAGER"
-    roleIndex[4] = "NONE"
-
-    local unitString = "raid"
-    if not IsInRaid() then
-        unitString = "party"
-    end
+    local sorted = {}
+    local roleIndex = {"TANK", "HEALER", "DAMAGER", "NONE"}
+    local unitString = IsInRaid() and "raid" or "party"
 
     for k, v in pairs(roleIndex) do
-        if unitString == "party" then
-            local role = UnitGroupRolesAssigned("player")
-            if role == v then
-                sorted_array[CountTable(sorted_array) + 1] = "player"
-            end
+        if unitString == "party" and UnitGroupRolesAssigned("player") == v then
+            tinsert(sorted, "player")
         end
 
-        for i = 1, 80 do
-            if UnitExists(unitString .. i) then
-                local role = UnitGroupRolesAssigned(unitString .. i)
-                if role == v then
-                    sorted_array[CountTable(sorted_array) + 1] = unitString .. i
-                end
+        for i = 1, 40 do
+            if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
+                tinsert(sorted, unitString .. i)
             end
         end
     end
-    return sorted_array
+    return sorted
 end
 GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 
 local function UpdateRaidFramesLayout()
     if InCombatLockdown() then
+        GwRaidFrameContainer:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     end
 
-    local WIDTH = GetSetting("RAID_WIDTH")
-    local HEIGHT = GetSetting("RAID_HEIGHT")
-    local MARGIN = 2
-    local WINDOW_SIZE = GwRaidFrameContainer:GetHeight()
+    -- Get directions, rows, cols and sizing
+    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures()
+    local isV = grow1 == "D" or grow1 == "U"
+    
+    GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
 
-    local USED_WIDTH = 0
-    local USED_HEIGHT = 0
-
+    -- Position sorted players
     local sorted = sortByRole()
 
-    local sparkHeight = _G["GwCompactraid1"].healthbar:GetHeight()
-
-    for k, v in pairs(sorted) do
-        _G["GwCompact" .. v]:SetPoint("TOPLEFT", GwRaidFrameContainer, "TOPLEFT", USED_WIDTH, -USED_HEIGHT)
-        _G["GwCompact" .. v]:SetSize(WIDTH, HEIGHT)
-        _G["GwCompact" .. v].healthbar.spark:SetHeight(sparkHeight)
-
-        USED_HEIGHT = USED_HEIGHT + HEIGHT + MARGIN
-
-        if (USED_HEIGHT + HEIGHT + MARGIN) > WINDOW_SIZE then
-            USED_HEIGHT = 0
-            USED_WIDTH = USED_WIDTH + WIDTH + MARGIN
-        end
+    for i, v in ipairs(sorted) do
+        PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     end
 
-    for i = 1, 80 do
-        local frameHasBeenPlace = false
+    -- Position everyone else
+    for i = 1, 40 do
+        local placed = false
 
-        for k, v in pairs(sorted) do
-            local n = "GwCompactraid" .. i
-            local np = "GwCompactparty" .. i
-            local sn = "GwCompact" .. v
-            if n == sn or np == sn then
-                frameHasBeenPlace = true
+        for k, v in ipairs(sorted) do
+            if v == "raid" .. i or v == "party" .. i then
+                placed = true
+                break
             end
         end
-        if not frameHasBeenPlace then
+
+        if not placed then
             if i < 5 then
-                _G["GwCompactparty" .. i]:SetPoint("TOPLEFT", GwRaidFrameContainer, "TOPLEFT", USED_WIDTH, -USED_HEIGHT)
-                _G["GwCompactparty" .. i]:SetSize(WIDTH, HEIGHT)
-                _G["GwCompactparty" .. i].healthbar.spark:SetHeight(sparkHeight)
+                PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
-            _G["GwCompactraid" .. i]:SetPoint("TOPLEFT", GwRaidFrameContainer, "TOPLEFT", USED_WIDTH, -USED_HEIGHT)
-            _G["GwCompactraid" .. i]:SetSize(WIDTH, HEIGHT)
-            _G["GwCompactraid" .. i].healthbar.spark:SetHeight(sparkHeight)
 
-            USED_HEIGHT = USED_HEIGHT + HEIGHT + MARGIN
-
-            if (USED_HEIGHT + HEIGHT + MARGIN) > WINDOW_SIZE then
-                USED_HEIGHT = 0
-                USED_WIDTH = USED_WIDTH + WIDTH + MARGIN
-            end
+            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         end
     end
 end
@@ -928,8 +989,6 @@ local function LoadRaidFrames()
 
     CreateFrame("Frame", "GwRaidFrameContainer", UIParent, "GwRaidFrameContainer")
 
-    GwRaidFrameContainer:SetHeight((GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN"))
-
     GwRaidFrameContainer:ClearAllPoints();
     GwRaidFrameContainer:SetPoint(
         GetSetting("raid_pos")["point"],
@@ -954,7 +1013,7 @@ local function LoadRaidFrames()
         createRaidFrame("party" .. i, i)
     end
 
-    for i = 1, 80 do
+    for i = 1, 40 do
         createRaidFrame("raid" .. i, i)
     end
     UpdateRaidFramesLayout()
@@ -980,11 +1039,15 @@ local function LoadRaidFrames()
             UpdateRaidFramesLayout()
 
             updateFrameData(_G["GwCompactplayer"], nil)
-            for i = 1, 80 do
+            for i = 1, 40 do
                 if i < 5 then
                     updateFrameData(_G["GwCompactparty" .. i], i)
                 end
                 updateFrameData(_G["GwCompactraid" .. i], i)
+            end
+
+            if event == "PLAYER_REGEN_ENABLED" then
+                self:UnregisterEvent(event)
             end
         end
     )

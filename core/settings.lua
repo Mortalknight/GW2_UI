@@ -273,7 +273,7 @@ local function createCat(name, desc, frameName, icon)
     )
 end
 
-local function addOption(name, desc, optionName, frameName, callback)
+local function addOption(name, desc, optionName, frameName, callback, params)
     local i = CountTable(options)
 
     options[i] = {}
@@ -283,9 +283,13 @@ local function addOption(name, desc, optionName, frameName, callback)
     options[i]["frameName"] = frameName
     options[i]["optionType"] = "boolean"
     options[i]["callback"] = callback
+
+    if params then
+        for k,v in pairs(params) do options[i][k] = v end
+    end
 end
 
-local function addOptionSlider(name, desc, optionName, frameName, callback, min, max)
+local function addOptionSlider(name, desc, optionName, frameName, callback, min, max, params)
     local i = CountTable(options)
 
     options[i] = {}
@@ -297,9 +301,13 @@ local function addOptionSlider(name, desc, optionName, frameName, callback, min,
     options[i]["min"] = min
     options[i]["max"] = max
     options[i]["optionType"] = "slider"
+
+    if params then
+        for k,v in pairs(params) do options[i][k] = v end
+    end
 end
 
-local function addOptionDropdown(name, desc, optionName, frameName, callback, options_list, option_names)
+local function addOptionText(name, desc, optionName, frameName, callback, multiline, params)
     local i = CountTable(options)
 
     options[i] = {}
@@ -308,12 +316,32 @@ local function addOptionDropdown(name, desc, optionName, frameName, callback, op
     options[i]["optionName"] = optionName
     options[i]["frameName"] = frameName
     options[i]["callback"] = callback
+    options[i]["multiline"] = multiline
+    options[i]["optionType"] = "text"
 
-    options[i]["optionType"] = "dropdown"
+    if params then
+        for k,v in pairs(params) do options[i][k] = v end
+    end
+end
+
+local function addOptionDropdown(name, desc, optionName, frameName, callback, options_list, option_names, params)
+    local i = CountTable(options)
+
+    options[i] = {}
+    options[i]["name"] = name
+    options[i]["desc"] = desc
+    options[i]["optionName"] = optionName
+    options[i]["frameName"] = frameName
+    options[i]["callback"] = callback
     options[i]["options"] = {}
     options[i]["options"] = options_list
     options[i]["options_names"] = {}
     options[i]["options_names"] = option_names
+    options[i]["optionType"] = "dropdown"
+
+    if params then
+        for k,v in pairs(params) do options[i][k] = v end
+    end
 end
 
 local settings_window_open_before_change = false
@@ -393,31 +421,37 @@ local function DisplaySettings()
     local padding = {}
 
     for k, v in pairs(options) do
-        local newLine = false
-        if padding[v["frameName"]] == nil then
-            padding[v["frameName"]] = {}
-            padding[v["frameName"]]["x"] = box_padding
-            padding[v["frameName"]]["y"] = -55
+        local first, newLine = false, false
+        if padding[v.frameName] == nil then
+            padding[v.frameName] = {}
+            padding[v.frameName].x = box_padding
+            padding[v.frameName].y = -55
+            first = true
         end
         local optionFrameType = "GwOptionBox"
-        if v["optionType"] == "slider" then
+        if v.optionType == "slider" then
             optionFrameType = "GwOptionBoxSlider"
             newLine = true
         end
-        if v["optionType"] == "dropdown" then
+        if v.optionType == "dropdown" then
             optionFrameType = "GwOptionBoxDropDown"
             newLine = true
         end
+        if v.optionType == "text" then
+            optionFrameType = "GwOptionBoxText"
+            newLine = true
+        end
 
-        local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v["frameName"]], optionFrameType)
+        local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v.frameName], optionFrameType)
+        
+        if v.margin or newLine and not first or padding[v.frameName].x > 440 then
+            padding[v.frameName].y = padding[v.frameName].y + (pY + box_padding) * (v.margin and 2 or 1)
+            padding[v.frameName].x = box_padding
+        end
 
         of:ClearAllPoints()
-        if of:GetWidth() > 300 then
-            padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
-            padding[v["frameName"]]["x"] = box_padding
-        end
-        of:SetPoint("TOPLEFT", padding[v["frameName"]]["x"], padding[v["frameName"]]["y"])
-        _G["GwOptionBox" .. k .. "Title"]:SetText(v["name"])
+        of:SetPoint("TOPLEFT", padding[v.frameName].x, padding[v.frameName].y)
+        _G["GwOptionBox" .. k .. "Title"]:SetText(v.name)
         _G["GwOptionBox" .. k .. "Title"]:SetFont(DAMAGE_TEXT_FONT, 12)
         _G["GwOptionBox" .. k .. "Title"]:SetTextColor(1, 1, 1)
         _G["GwOptionBox" .. k .. "Title"]:SetShadowColor(0, 0, 0, 1)
@@ -427,22 +461,22 @@ local function DisplaySettings()
             function()
                 GameTooltip:SetOwner(of, "ANCHOR_CURSOR", 0, 0)
                 GameTooltip:ClearLines()
-                GameTooltip:AddLine(v["name"], 1, 1, 1)
-                GameTooltip:AddLine(v["desc"], 1, 1, 1)
+                GameTooltip:AddLine(v.name, 1, 1, 1)
+                GameTooltip:AddLine(v.desc, 1, 1, 1)
                 GameTooltip:Show()
             end
         )
         of:SetScript("OnLeave", GameTooltip_Hide)
 
-        if v["optionType"] == "dropdown" then
+        if v.optionType == "dropdown" then
             local i = 1
             local pre = _G["GwOptionBox" .. k].container
-            for key, val in pairs(v["options"]) do
+            for key, val in pairs(v.options) do
                 local dd =
                     CreateFrame(
                     "Button",
                     "GwOptionBox" .. "dropdown" .. i,
-                    _G[v["frameName"]].container,
+                    _G[v.frameName].container,
                     "GwDropDownItem"
                 )
                 dd:SetPoint("TOPRIGHT", pre, "BOTTOMRIGHT")
@@ -450,17 +484,17 @@ local function DisplaySettings()
 
                 dd.string:SetFont(UNIT_NAME_FONT, 12)
                 _G["GwOptionBox" .. k].button.string:SetFont(UNIT_NAME_FONT, 12)
-                dd.string:SetText(v["options_names"][key])
+                dd.string:SetText(v.options_names[key])
                 pre = dd
 
-                if GetSetting(v["optionName"]) == val then
-                    _G["GwOptionBox" .. k].button.string:SetText(v["options_names"][key])
+                if GetSetting(v.optionName, v.perSpec) == val then
+                    _G["GwOptionBox" .. k].button.string:SetText(v.options_names[key])
                 end
 
                 dd:SetScript(
                     "OnClick",
                     function()
-                        _G["GwOptionBox" .. k].button.string:SetText(v["options_names"][key])
+                        _G["GwOptionBox" .. k].button.string:SetText(v.options_names[key])
 
                         if _G["GwOptionBox" .. k].container:IsShown() then
                             _G["GwOptionBox" .. k].container:Hide()
@@ -468,10 +502,10 @@ local function DisplaySettings()
                             _G["GwOptionBox" .. k].container:Show()
                         end
 
-                        SetSetting(v["optionName"], val)
+                        SetSetting(v.optionName, val, v.perSpec)
 
-                        if v["callback"] ~= nil then
-                            v["callback"]()
+                        if v.callback ~= nil then
+                            v.callback()
                         end
                     end
                 )
@@ -490,21 +524,36 @@ local function DisplaySettings()
             )
         end
 
-        if v["optionType"] == "slider" then
-            _G["GwOptionBox" .. k .. "Slider"]:SetMinMaxValues(v["min"], v["max"])
-            _G["GwOptionBox" .. k .. "Slider"]:SetValue(GetSetting(v["optionName"]))
+        if v.optionType == "slider" then
+            _G["GwOptionBox" .. k .. "Slider"]:SetMinMaxValues(v.min, v.max)
+            _G["GwOptionBox" .. k .. "Slider"]:SetValue(GetSetting(v.optionName, v.perSpec))
             _G["GwOptionBox" .. k .. "Slider"]:SetScript(
                 "OnValueChanged",
                 function()
-                    SetSetting(v["optionName"], _G["GwOptionBox" .. k .. "Slider"]:GetValue())
-                    if v["callback"] ~= nil then
-                        v["callback"]()
+                    SetSetting(v.optionName, _G["GwOptionBox" .. k .. "Slider"]:GetValue(), v.perSpec)
+                    if v.callback ~= nil then
+                        v.callback()
                     end
                 end
             )
         end
-        if v["optionType"] == "boolean" then
-            _G["GwOptionBox" .. k .. "CheckButton"]:SetChecked(GetSetting(v["optionName"]))
+
+        if v.optionType == "text" then
+            _G["GwOptionBox" .. k .. "Input"]:SetText(GetSetting(v.optionName, v.perSpec) or "")
+            _G["GwOptionBox" .. k .. "Input"]:SetScript(
+                "OnEnterPressed",
+                function(self)
+                    self:ClearFocus()
+                    SetSetting(v.optionName, self:GetText(), v.perSpec)
+                    if v.callback ~= nil then
+                        v.callback()
+                    end
+                end
+            )
+        end
+
+        if v.optionType == "boolean" then
+            _G["GwOptionBox" .. k .. "CheckButton"]:SetChecked(GetSetting(v.optionName, v.perSpec))
             _G["GwOptionBox" .. k .. "CheckButton"]:SetScript(
                 "OnClick",
                 function()
@@ -512,21 +561,46 @@ local function DisplaySettings()
                     if _G["GwOptionBox" .. k .. "CheckButton"]:GetChecked() then
                         toSet = true
                     end
-                    SetSetting(v["optionName"], toSet)
+                    SetSetting(v.optionName, toSet, v.perSpec)
 
-                    if v["callback"] ~= nil then
-                        v["callback"]()
+                    if v.callback ~= nil then
+                        v.callback()
                     end
                 end
             )
         end
 
-        if newLine == false then
-            padding[v["frameName"]]["x"] = padding[v["frameName"]]["x"] + of:GetWidth() + box_padding
-            if padding[v["frameName"]]["x"] > 440 then
-                padding[v["frameName"]]["y"] = padding[v["frameName"]]["y"] + pY + box_padding
-                padding[v["frameName"]]["x"] = box_padding
+        if v.perSpec then
+            local onUpdate = function (self)
+                self:SetScript("OnUpdate", nil)
+                local val = GetSetting(v.optionName, true)
+
+                if v.optionType == "dropdown" then
+                    for i,value in pairs(v.options) do
+                        if value == val then self.button.string:SetText(v.options_names[i]) break end
+                    end
+                elseif v.optionType == "slider" then
+                    self.slider:SetValue(val)
+                elseif v.optionType == "text" then
+                    self.input:SetText(val)
+                elseif v.optionType == "boolean" then
+                    self.checkbutton:SetChecked(val)
+                end
+
+                if v.callback and v.optionType ~= "slider" then
+                    v.callback()
+                end
             end
+            _G["GwOptionBox" .. k]:SetScript("OnEvent", function (self, e)
+                if e == "PLAYER_SPECIALIZATION_CHANGED" then
+                    self:SetScript("OnUpdate", onUpdate)
+                end
+            end)
+            _G["GwOptionBox" .. k]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+        end
+
+        if newLine == false then
+            padding[v.frameName].x = padding[v.frameName].x + of:GetWidth() + box_padding
         end
     end
 end
@@ -702,6 +776,20 @@ local function LoadSettings()
     GwSettingsGroupframeSub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsGroupframeSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsGroupframeSub:SetText(GwLocalization["GROUP_DESC"])
+
+    GwSettingsAurasOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsAurasOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsAurasOptionsHeader:SetText(AURAS)
+    GwSettingsAurasOptionsSub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsAurasOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsAurasOptionsSub:SetText(GwLocalization["AURAS_DESC"])
+
+    GwSettingsIndicatorsOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsIndicatorsOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsIndicatorsOptionsHeader:SetText(GwLocalization["INDICATORS"])
+    GwSettingsIndicatorsOptionsSub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsIndicatorsOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsIndicatorsOptionsSub:SetText(GwLocalization["INDICATORS_DESC"])
 
     GwSettingsProfilesframeHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsProfilesframeHeader:SetTextColor(255 / 255, 255 / 255, 255 / 255)
@@ -1126,26 +1214,77 @@ local function LoadSettings()
         function()
         end,
         {"NONE", "DIFFERENT", "ALL"},
-        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
+        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL},
+        {margin = true}
+    )
+
+    addOptionDropdown(
+        GwLocalization["RAID_GROW"],
+        GwLocalization["RAID_GROW"],
+        "RAID_GROW",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        {"D+R", "D+L", "U+R", "U+L", "R+D", "R+U", "L+D", "L+U"},
+        {
+            GwLocalization["DOWN_AND_RIGHT"],
+            GwLocalization["DOWN_AND_LEFT"],
+            GwLocalization["UP_AND_RIGHT"],
+            GwLocalization["UP_AND_LEFT"],
+            GwLocalization["RIGHT_AND_DOWN"],
+            GwLocalization["RIGHT_AND_UP"],
+            GwLocalization["LEFT_AND_DOWN"],
+            GwLocalization["LEFT_AND_UP"]
+        }
+    )
+
+    addOptionSlider(
+        GwLocalization["RAID_UNITS_PER_COLUMN"],
+        GwLocalization["RAID_UNITS_PER_COLUMN_DESC"],
+        "RAID_UNITS_PER_COLUMN",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        0,
+        40
+    )
+
+    addOptionSlider(
+        GwLocalization["RAID_CONT_WIDTH"],
+        GwLocalization["RAID_CONT_WIDTH_DESC"],
+        "RAID_CONT_WIDTH",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        0,
+        GetScreenWidth()
     )
 
     addOptionSlider(
         GwLocalization["RAID_CONT_HEIGHT"],
         GwLocalization["RAID_CONT_HEIGHT_DESC"],
-        "RAID_UNITS_PER_COLUMN",
+        "RAID_CONT_HEIGHT",
         "GwSettingsGroupframe",
         function()
             if GetSetting("GROUP_FRAMES") == true then
-                GwRaidFrameContainer:SetHeight((GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN"))
-                GwRaidFrameContainerMoveAble:SetHeight(
-                    (GetSetting("RAID_HEIGHT") + 2) * GetSetting("RAID_UNITS_PER_COLUMN")
-                )
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
         end,
-        1,
-        80
+        0,
+        GetScreenHeight()
     )
 
     addOptionSlider(
@@ -1176,6 +1315,60 @@ local function LoadSettings()
         47,
         100
     )
+
+    createCat(AURAS, GwLocalization["AURAS_TOOLTIP"], "GwSettingsAurasframe", 2)
+    
+    addOptionText(
+        GwLocalization["AURAS_IGNORED"],
+        GwLocalization["AURAS_IGNORED_DESC"],
+        "AURAS_IGNORED",
+        "GwSettingsAurasOptions",
+        function() end
+    )
+    
+    addOptionText(
+        GwLocalization["AURAS_MISSING"],
+        GwLocalization["AURAS_MISSING_DESC"],
+        "AURAS_MISSING",
+        "GwSettingsAurasOptions",
+        function() end
+    )
+
+    addOption(
+        GwLocalization["INDICATORS_ICON"],
+        GwLocalization["INDICATORS_ICON_DESC"],
+        "INDICATORS_ICON",
+        "GwSettingsIndicatorsOptions",
+        function () end
+    )
+
+    addOption(
+        GwLocalization["INDICATORS_TIME"],
+        GwLocalization["INDICATORS_TIME_DESC"],
+        "INDICATORS_TIME",
+        "GwSettingsIndicatorsOptions",
+        function () end
+    )
+
+    local auras = GW.AURAS_INDICATORS[select(2, UnitClass("player"))]
+    local auraKeys = GW.MapTable(auras, function (_, i) return i end, true)
+    local auraVals = GW.MapTable(auras, function (_, i) return GetSpellInfo(i) end, true)
+    tinsert(auraKeys, 1, 0)
+    tinsert(auraVals, 1, NONE_KEY)
+
+    for i,pos in ipairs(GW.INDICATORS) do
+        local key = "INDICATOR_" .. pos
+        addOptionDropdown(
+            GwLocalization["INDICATOR_TITLE"]:format(GwLocalization[key]),
+            GwLocalization["INDICATOR_DESC"]:format(GwLocalization[key]),
+            key,
+            "GwSettingsIndicatorsOptions",
+            function () SetSetting(key, tonumber(GetSetting(key, true)), true) end,
+            auraKeys,
+            auraVals,
+            {perSpec = true}
+        )
+    end
 
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
     _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
