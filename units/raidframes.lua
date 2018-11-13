@@ -742,16 +742,27 @@ local function raidframe_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("raidframes", "raidframe_OnUpdate", raidframe_OnUpdate)
 
-local function GetRaidFramesMeasures(full)
+local function GetRaidFramesMeasures(players)
     -- Get settings
-    local players = full and 40 or max(1, GetNumGroupMembers())
     local grow = GetSetting("RAID_GROW")
     local w = GetSetting("RAID_WIDTH")
     local h = GetSetting("RAID_HEIGHT")
     local cW = GetSetting("RAID_CONT_WIDTH")
     local cH = GetSetting("RAID_CONT_HEIGHT")
-    local per = min(players, ceil(GetSetting("RAID_UNITS_PER_COLUMN")))
+    local per = ceil(GetSetting("RAID_UNITS_PER_COLUMN"))
+    local byRole = GetSetting("RAID_SORT_BY_ROLE")
     local m = 2
+
+    -- Determine # of players
+    if players or byRole or not IsInRaid() then
+        players = players == true and 40 or players or max(1, GetNumGroupMembers())
+    else
+        players = 1
+        for i = 1, 40 do
+            local name, _, grp = GetRaidRosterInfo(i)
+            players = max(name and (grp == 1 and i - 1 or grp * 5) or 0, players)
+        end
+    end
 
     -- Directions
     local grow1, grow2 = strsplit("+", grow)
@@ -760,15 +771,16 @@ local function GetRaidFramesMeasures(full)
     -- Rows, cols and cell size
     local sizeMax1, sizePer1 = isV and cH or cW, isV and h or w
     local sizeMax2, sizePer2 = isV and cW or cH, isV and w or h
+
     local cells1 = players
 
-    if per > 0 and per < cells1 then
+    if per > 0 then
         cells1 = per
         if sizeMax1 > 0 then
             sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
         end
     elseif sizeMax1 > 0 then
-        cells1 = max(1, min(cells1, floor((sizeMax1 + m) / (sizePer1 + m))))
+        cells1 = max(1, min(players, floor((sizeMax1 + m) / (sizePer1 + m))))
     end
 
     local cells2 = ceil(players / cells1)
@@ -846,7 +858,6 @@ GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 
 local function UpdateRaidFramesLayout()
     if InCombatLockdown() then
-        GwRaidFrameContainer:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     end
 
@@ -856,30 +867,21 @@ local function UpdateRaidFramesLayout()
     
     GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
 
-    -- Position sorted players
-    local sorted = (not IsInRaid() or GetSetting("RAID_SORT_BY_ROLE")) and sortByRole() or {}
-
-    for i, v in ipairs(sorted) do
-        PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-    end
-
-    -- Position everyone else
-    for i = 1, 40 do
-        local placed = false
-
-        for k, v in ipairs(sorted) do
-            if v == "raid" .. i or v == "party" .. i then
-                placed = true
-                break
-            end
+    if GetSetting("RAID_SORT_BY_ROLE") or not IsInRaid() then
+        -- Position continually
+        local sorted = sortByRole()
+        for i, v in ipairs(sorted) do
+            PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         end
-
-        if not placed then
-            if i < 5 then
-                PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+    else
+        -- Position by group
+        local pos = 0
+        for i = 1, 40 do
+            local name, _, grp = GetRaidRosterInfo(i)
+            pos = max(name and (grp - 1) * 5 or 0, pos) + 1
+            if pos <= 40 then
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, pos, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
-
-            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         end
     end
 end
@@ -1022,9 +1024,12 @@ local function LoadRaidFrames()
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
     GwRaidFrameContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    GwRaidFrameContainer:SetScript(
-        "OnEvent",
-        function(self, event)
+    GwRaidFrameContainer:SetScript("OnEvent", function(self)
+        if InCombatLockdown() then
+            self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        else
+            self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+
             if IsInRaid() == false and GROUPD_TYPE == "RAID" then
                 togglePartyFrames(true)
                 GROUPD_TYPE = "PARTY"
@@ -1045,12 +1050,8 @@ local function LoadRaidFrames()
                 end
                 updateFrameData(_G["GwCompactraid" .. i], i)
             end
-
-            if event == "PLAYER_REGEN_ENABLED" then
-                self:UnregisterEvent(event)
-            end
         end
-    )
+    end)
 
     if GetSetting("RAID_STYLE_PARTY") == false then
         UnregisterUnitWatch(_G["GwCompactplayer"])

@@ -235,7 +235,9 @@ GW.AURAS_INDICATORS = AURAS_INDICATORS
 -- Never show theses auras
 local AURAS_IGNORED = {
     57723, -- Sated
-    57724  -- Exhaustion
+    57724, -- Exhaustion
+    80354, -- Temporal Displacement
+    264689 -- Fatigued
 }
 GW.AURAS_IGNORED = AURAS_IGNORED
 
