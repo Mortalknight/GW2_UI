@@ -15,6 +15,7 @@ local SetClassIcon = GW.SetClassIcon
 local SetDeadIcon = GW.SetDeadIcon
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
+local FindInList = GW.FindInList
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
@@ -344,7 +345,7 @@ local function updateDebuffs(self)
 
         local indexBuffFrame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. i]
         local created = false
-        local shouldDisplay = DebuffLists[i]["name"] and not ignored:find(DebuffLists[i]["name"])
+        local shouldDisplay = DebuffLists[i]["name"] and not FindInList(ignored, DebuffLists[i]["name"])
 
         --remove old debuff
         if indexBuffFrame ~= nil then
@@ -476,7 +477,10 @@ local function updateAuras(self)
         -- check missing
         local name = UnitBuff(self.unit, i)
         if name then
-            missing = missing:gsub(name, "")
+            local s, e = FindInList(missing, name)
+            if s then
+                missing = missing:sub(1, s - 1) .. missing:sub(e + 1)
+            end
         end
     end
     
@@ -485,7 +489,7 @@ local function updateAuras(self)
         local name = GetSpellBookItemName(i, BOOKTYPE_SPELL)
         if not name then
             break
-        elseif missing:find(name) then
+        elseif FindInList(missing, name) then
             local icon = GetSpellBookItemTexture(i, BOOKTYPE_SPELL)
             buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i, true)
             break
@@ -546,7 +550,7 @@ local function updateAuras(self)
         end
 
         --set new buff
-        if showThis and not (ignored:find(name) or missing:find(name)) then
+        if showThis and not (FindInList(ignored, name) or FindInList(missing, name)) then
             buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i)
         end
     end
@@ -757,11 +761,17 @@ local function GetRaidFramesMeasures(players)
     if players or byRole or not IsInRaid() then
         players = players == true and 40 or players or max(1, GetNumGroupMembers())
     else
-        players = 1
+        local maxGrp, maxPos = 1, 0
         for i = 1, 40 do
-            local name, _, grp = GetRaidRosterInfo(i)
-            players = max(name and (grp == 1 and i - 1 or grp * 5) or 0, players)
+            local found, _, grp = GetRaidRosterInfo(i)
+            found = found or grp > 1
+            grp = found and grp or maxGrp + (maxPos >= 5 and 1 or 0)
+            maxGrp, maxPos = max(grp, maxGrp), (grp == maxGrp and maxPos or 0) + 1
+            if found then
+                players = (maxGrp - 1) * 5 + maxPos
+            end
         end
+        players = max(1, GetNumGroupMembers(), min(players or 0, 40))
     end
 
     -- Directions
@@ -867,18 +877,27 @@ local function UpdateRaidFramesLayout()
     
     GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
 
-    if GetSetting("RAID_SORT_BY_ROLE") or not IsInRaid() then
-        -- Position continually
-        local sorted = sortByRole()
-        for i, v in ipairs(sorted) do
-            PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-        end
-    else
-        -- Position by group
-        local pos = 0
-        for i = 1, 40 do
-            local name, _, grp = GetRaidRosterInfo(i)
-            pos = max(name and (grp - 1) * 5 or 0, pos) + 1
+    local unitString = IsInRaid() and "raid" or "party"
+    local sorted = (unitString == "party" or GetSetting("RAID_SORT_BY_ROLE")) and sortByRole() or {}
+
+    -- Position by role
+    for i, v in ipairs(sorted) do
+        PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+    end
+
+    -- Position by group
+    local maxGrp, maxPos, pos = 1, 0
+    for i = 1, 40 do
+        if not tContains(sorted, unitString .. i) then
+            if i < 5 then
+                PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+            end
+
+            local found, _, grp = GetRaidRosterInfo(i)
+            grp = (found or grp > 1) and grp or maxGrp + (maxPos >= 5 and 1 or 0)
+            maxGrp, maxPos = max(grp, maxGrp), (grp == maxGrp and maxPos or 0) + 1
+            pos = (grp - 1) * 5 + maxPos
+
             if pos <= 40 then
                 PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, pos, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end

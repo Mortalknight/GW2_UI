@@ -162,6 +162,20 @@ local function SplitString(inputstr, sep, sep2, sep3)
 end
 GW.SplitString = SplitString
 
+local function FindInList(list, str, i, del)
+    local del = "([^%s" .. (del or ",;") .. ")]?)"
+    str = del .. "(%s*)(" .. str .. ")(%s*)" .. del
+    i = i or 1
+    while i do
+        local s, e, a, b, m, c, d = list:find(str, i)
+        if s and a == "" and d == "" then
+            return s + #b, e - #c, m
+        end
+        i = e and e + 1
+    end
+end
+GW.FindInList = FindInList
+
 local function IsNAN(n)
     return tostring(n) == "-1.#IND"
 end
