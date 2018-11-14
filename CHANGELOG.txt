@@ -1,10 +1,17 @@
-5.0.12
+5.0.12 - We would like to welcome Shrugal to the development team!
 
 NEW
     - Option to sort raid frames by group instead of role
     - Additional options for raid layout and sizing
     - Support for hiding auras and showing missing buffs in raid frames
     - Configurable class buff indicators in raid frames
+    - Add link to MyRolePlay in hero panel that temporarily uses default character frame (CF#264)
+
+FIXED
+    - Castbar gets stuck on screen (CF#263)
+    - Fix some issues with the new Arena frames incl CF#261
+    - Fix Lua error at fraction window
+
 
 5.0.11
 
