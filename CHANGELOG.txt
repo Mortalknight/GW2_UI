@@ -1,3 +1,11 @@
+5.0.12
+
+NEW
+    - Option to sort raid frames by group instead of role
+    - Addional options for raid layout and sizing
+    - Support for hiding auras and showing missing buffs in raid frames
+    - Configurable class buff indicators in raid frames
+
 5.0.11
 
 FIXED
