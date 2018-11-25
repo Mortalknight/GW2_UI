@@ -3,6 +3,7 @@
 NEW
     - Option to sort raid frames by group instead of role
     - Additional options for raid layout and sizing
+    - Option to preview raid frames for different group sizes
     - Support for hiding auras and showing missing buffs in raid frames
     - Configurable class buff indicators in raid frames
     - Add link to MyRolePlay in hero panel that temporarily uses default character frame (CF#264)
