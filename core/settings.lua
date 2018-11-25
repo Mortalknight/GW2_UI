@@ -12,6 +12,8 @@ local UpdateRaidFramesLayout = GW.UpdateRaidFramesLayout
 local MOVABLE_FRAMES = GW.MOVABLE_FRAMES
 local UpdateFramePositions = GW.UpdateFramePositions
 local UpdateHudScale = GW.UpdateHudScale
+local StrUpper = GW.StrUpper
+local MapTable = GW.MapTable
 local Debug = GW.Debug
 
 local settings_cat = {}
@@ -1092,6 +1094,12 @@ local function LoadSettings()
         "DYNAMIC_CAM",
         "GwSettingsHudOptions"
     )
+    addOption(
+        WORLD_MARKER:format(0):gsub("%d", ""),
+        GwLocalization["WORLD_MARKER_DESC"],
+        "WORLD_MARKER_FRAME",
+        "GwSettingsHudOptions"
+    )
 
     addOptionDropdown(
         GwLocalization["MINIMAP_HOVER"],
@@ -1194,12 +1202,6 @@ local function LoadSettings()
         "GwSettingsGroupframe"
     )
     addOption(
-        WORLD_MARKER:format(0):gsub("%d", ""),
-        nil,
-        "WORLD_MARKER_FRAME",
-        "GwSettingsGroupframe"
-    )
-    addOption(
         RAID_TARGET_ICON,
         GwLocalization["RAID_MARKER_DESC"],
         "RAID_UNIT_MARKERS",
@@ -1229,6 +1231,14 @@ local function LoadSettings()
         {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
     )
 
+    local dirs, grow = {"DOWN", "UP", "RIGHT", "LEFT"}, {}
+    for i in pairs(dirs) do
+        local k = i <= 2 and 3 or 1
+        for j = k, k + 1 do
+            tinsert(grow, dirs[i] .. "+" .. dirs[j])
+        end
+    end
+
     addOptionDropdown(
         GwLocalization["RAID_GROW"],
         GwLocalization["RAID_GROW"],
@@ -1236,21 +1246,39 @@ local function LoadSettings()
         "GwSettingsGroupframe",
         function()
             if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesAnchor()
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
         end,
-        {"D+R", "D+L", "U+R", "U+L", "R+D", "R+U", "L+D", "L+U"},
-        {
-            GwLocalization["DOWN_AND_RIGHT"],
-            GwLocalization["DOWN_AND_LEFT"],
-            GwLocalization["UP_AND_RIGHT"],
-            GwLocalization["UP_AND_LEFT"],
-            GwLocalization["RIGHT_AND_DOWN"],
-            GwLocalization["RIGHT_AND_UP"],
-            GwLocalization["LEFT_AND_DOWN"],
-            GwLocalization["LEFT_AND_UP"]
-        }
+        grow,
+        MapTable(grow, function (dir)
+            local g1, g2 = strsplit("+", dir)
+            return StrUpper(GwLocalization["RAID_GROW_DIR"]:format(GwLocalization[g1], GwLocalization[g2]), 1, 1)
+        end)
+    )
+
+    local pos = {"POSITION", "GROWTH"}
+    for i,v in pairs({"TOP", "", "BOTTOM"}) do
+        for j,h in pairs({"LEFT", "", "RIGHT"}) do
+            tinsert(pos, (v .. h) == "" and "CENTER" or v .. h)
+        end
+    end
+
+    addOptionDropdown(
+        GwLocalization["RAID_ANCHOR"],
+        GwLocalization["RAID_ANCHOR_DESC"],
+        "RAID_ANCHOR",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesAnchor()
+            end
+        end,
+        pos,
+        MapTable(pos, function (pos, i)
+            return StrUpper(GwLocalization[i <= 2 and "RAID_ANCHOR_BY_" .. pos or pos], 1, 1)
+        end, true)
     )
 
     addOptionSlider(
@@ -1266,6 +1294,36 @@ local function LoadSettings()
         end,
         0,
         40
+    )
+
+    addOptionSlider(
+        GwLocalization["RAID_BAR_WIDTH"],
+        GwLocalization["RAID_BAR_WIDTH_DESC"],
+        "RAID_WIDTH",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        45,
+        300
+    )
+
+    addOptionSlider(
+        GwLocalization["RAID_BAR_HEIGHT"],
+        GwLocalization["RAID_BAR_HEIGHT_DESC"],
+        "RAID_HEIGHT",
+        "GwSettingsGroupframe",
+        function()
+            if GetSetting("GROUP_FRAMES") == true then
+                GW.UpdateRaidFramesLayout()
+                GW.UpdateRaidFramesPosition()
+            end
+        end,
+        15,
+        100
     )
 
     addOptionSlider(
@@ -1296,35 +1354,6 @@ local function LoadSettings()
         end,
         0,
         GetScreenHeight()
-    )
-
-    addOptionSlider(
-        GwLocalization["RAID_BAR_WIDTH"],
-        GwLocalization["RAID_BAR_WIDTH_DESC"],
-        "RAID_WIDTH",
-        "GwSettingsGroupframe",
-        function()
-            if GetSetting("GROUP_FRAMES") == true then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
-        end,
-        55,
-        200
-    )
-    addOptionSlider(
-        GwLocalization["RAID_BAR_HEIGHT"],
-        GwLocalization["RAID_BAR_HEIGHT_DESC"],
-        "RAID_HEIGHT",
-        "GwSettingsGroupframe",
-        function()
-            if GetSetting("GROUP_FRAMES") == true then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
-        end,
-        47,
-        100
     )
 
     createCat(AURAS, GwLocalization["AURAS_TOOLTIP"], "GwSettingsAurasframe", 2)
@@ -1362,16 +1391,17 @@ local function LoadSettings()
     )
 
     local auras = GW.AURAS_INDICATORS[select(2, UnitClass("player"))]
-    local auraKeys = GW.MapTable(auras, function (_, i) return i end, true)
-    local auraVals = GW.MapTable(auras, function (_, i) return GetSpellInfo(i) end, true)
+    local auraKeys = MapTable(auras, function (_, i) return i end, true)
+    local auraVals = MapTable(auras, function (_, i) return GetSpellInfo(i) end, true)
     tinsert(auraKeys, 1, 0)
     tinsert(auraVals, 1, NONE_KEY)
 
     for i,pos in ipairs(GW.INDICATORS) do
         local key = "INDICATOR_" .. pos
+        local t = StrUpper(GwLocalization[key] or GwLocalization[pos], 1, 1)
         addOptionDropdown(
-            GwLocalization["INDICATOR_TITLE"]:format(GwLocalization[key]),
-            GwLocalization["INDICATOR_DESC"]:format(GwLocalization[key]),
+            GwLocalization["INDICATOR_TITLE"]:format(t),
+            GwLocalization["INDICATOR_DESC"]:format(t),
             key,
             "GwSettingsIndicatorsOptions",
             function () SetSetting(key, tonumber(GetSetting(key, true)), true) end,

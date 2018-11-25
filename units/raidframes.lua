@@ -16,6 +16,7 @@ local SetDeadIcon = GW.SetDeadIcon
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local FindInList = GW.FindInList
+local IsIn = GW.IsIn
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
@@ -776,7 +777,7 @@ local function GetRaidFramesMeasures(players)
 
     -- Directions
     local grow1, grow2 = strsplit("+", grow)
-    local isV = grow1 == "D" or grow1 == "U"
+    local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Rows, cols and cell size
     local sizeMax1, sizePer1 = isV and cH or cW, isV and h or w
@@ -785,7 +786,7 @@ local function GetRaidFramesMeasures(players)
     local cells1 = players
 
     if per > 0 then
-        cells1 = per
+        cells1 = min(cells1, per)
         if sizeMax1 > 0 then
             sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
         end
@@ -807,9 +808,9 @@ local function GetRaidFramesMeasures(players)
 end
 
 local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-    local isV = grow1 == "D" or grow1 == "U"
-    local isU = grow1 == "U" or grow2 == "U"
-    local isR = grow1 == "R" or grow2 == "R"
+    local isV = grow1 == "DOWN" or grow1 == "UP"
+    local isU = grow1 == "UP" or grow2 == "UP"
+    local isR = grow1 == "RIGHT" or grow2 == "RIGHT"
 
     local dir1, dir2 = isU and 1 or -1, isR and 1 or -1
     if not isV then
@@ -833,13 +834,20 @@ local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer
     end
 end
 
+local function UpdateRaidFramesAnchor()
+    GwRaidFrameContainerMoveAble:GetScript("OnDragStop")(GwRaidFrameContainerMoveAble)
+end
+GW.UpdateRaidFramesAnchor = UpdateRaidFramesAnchor
+
 local function UpdateRaidFramesPosition()
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures(true)
-    local isV = grow1 == "D" or grow1 == "U"
+    local isV = grow1 == "DOWN" or grow1 == "UP"
 
+    -- Update size
     GwRaidFrameContainerMoveAble:SetSize(isV and size2 or size1, isV and size1 or size2)
 
+    -- Update unit frames
     for i = 1, 40 do
         PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainerMoveAble, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     end
@@ -873,7 +881,7 @@ local function UpdateRaidFramesLayout()
 
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures()
-    local isV = grow1 == "D" or grow1 == "U"
+    local isV = grow1 == "DOWN" or grow1 == "UP"
     
     GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
 
@@ -1021,6 +1029,28 @@ local function LoadRaidFrames()
 
     RegisterMovableFrame("GwRaidFrameContainer", GwRaidFrameContainer, "raid_pos", "VerticalActionBarDummy")
 
+    hooksecurefunc(GwRaidFrameContainerMoveAble, "StopMovingOrSizing", function (frame)
+        local anchor = GetSetting("RAID_ANCHOR")
+    
+        if anchor == "GROWTH" then
+            local g1, g2 = strsplit("+", GetSetting("RAID_GROW"))
+            anchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
+        end
+    
+        if anchor ~= "POSITION" then
+            local x = anchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or anchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
+            local y = anchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or anchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
+    
+            frame:ClearAllPoints()
+            frame:SetPoint(anchor, x, y)
+        end
+
+        if not InCombatLockdown() then
+            GwRaidFrameContainer:ClearAllPoints()
+            GwRaidFrameContainer:SetPoint(frame:GetPoint())
+        end
+    end)
+
     for i = 1, 40 do
         local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainerMoveAble, "VerticalActionBarDummy")
         f:SetParent(GwRaidFrameContainerMoveAble)
@@ -1037,6 +1067,8 @@ local function LoadRaidFrames()
     for i = 1, 40 do
         createRaidFrame("raid" .. i, i)
     end
+
+    UpdateRaidFramesPosition()
     UpdateRaidFramesLayout()
 
     GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE")
@@ -1085,7 +1117,5 @@ local function LoadRaidFrames()
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
     end
-
-    UpdateRaidFramesPosition()
 end
 GW.LoadRaidFrames = LoadRaidFrames

@@ -9,6 +9,14 @@ if UnitIsTapDenied == nil then
     end
 end
 
+local function IsIn(val, ...)
+    for i = 1, select("#", ...) do
+        if val == select(i, ...) then return true end
+    end
+    return false
+end
+GW.IsIn = IsIn
+
 local function CountTable(T)
     local c = 0
     if T ~= nil and type(T) == "table" then
@@ -175,6 +183,24 @@ local function FindInList(list, str, i, del)
     end
 end
 GW.FindInList = FindInList
+
+-- String upper and lower that are noops for locales without letter case
+local function StrUpper(str, i, j)
+    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+        return str
+    else
+        return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):upper() .. (j and str:sub(j + 1) or "")
+    end
+end
+GW.StrUpper = StrUpper
+local function StrLower(str, i, j)
+    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+        return str
+    else
+        return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):lower() .. (j and str:sub(j + 1) or "")
+    end
+end
+GW.StrLower = StrLower
 
 local function IsNAN(n)
     return tostring(n) == "-1.#IND"
