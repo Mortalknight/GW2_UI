@@ -22,6 +22,10 @@ local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
 local realmid_Player
 
+local previewSteps = {40, 20, 10, 5}
+local previewStep = 0
+local hudMoving = false
+
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then
         return
@@ -760,7 +764,7 @@ local function GetRaidFramesMeasures(players)
 
     -- Determine # of players
     if players or byRole or not IsInRaid() then
-        players = players == true and 40 or players or max(1, GetNumGroupMembers())
+        players = players or max(1, GetNumGroupMembers())
     else
         local maxGrp, maxPos = 1, 0
         for i = 1, 40 do
@@ -840,8 +844,10 @@ end
 GW.UpdateRaidFramesAnchor = UpdateRaidFramesAnchor
 
 local function UpdateRaidFramesPosition()
+    players = previewStep == 0 and 40 or previewSteps[previewStep]
+
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures(true)
+    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Update size
@@ -850,9 +856,25 @@ local function UpdateRaidFramesPosition()
     -- Update unit frames
     for i = 1, 40 do
         PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainerMoveAble, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+        if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
     end
 end
 GW.UpdateRaidFramesPosition = UpdateRaidFramesPosition
+
+local function ToggleRaidFramesPreview()
+    previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
+    if previewStep == 0 then
+        GwRaidFrameContainerMoveAble:EnableMouse(false)
+        GwRaidFrameContainerMoveAble:SetMovable(false)
+        GwRaidFrameContainerMoveAble:Hide()
+    else
+        GwRaidFrameContainerMoveAble:Show()
+        GwRaidFrameContainerMoveAble:EnableMouse(true)
+        GwRaidFrameContainerMoveAble:SetMovable(true)
+        UpdateRaidFramesPosition()
+    end
+    GwToggleRaidPreview:SetText(previewStep == 0 and "-" or previewSteps[previewStep])
+end
 
 local function sortByRole()
     local sorted = {}
@@ -1070,6 +1092,14 @@ local function LoadRaidFrames()
 
     UpdateRaidFramesPosition()
     UpdateRaidFramesLayout()
+
+    GwToggleRaidPreview:SetScript("OnClick", ToggleRaidFramesPreview)
+    GwSettingsWindowMoveHud:HookScript("OnClick", function ()
+        hudMoving = true
+        if previewStep == 0 then
+            ToggleRaidFramesPreview()
+        end
+    end)
 
     GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE")
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
