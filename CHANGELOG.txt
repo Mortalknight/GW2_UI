@@ -1,3 +1,10 @@
+5.0.13
+
+FIXED
+    - Added middle mouse button to party and raidframes
+    - Fix a bug that the raidframe target border stuck
+
+
 5.0.12 - We would like to welcome Shrugal to the development team!
 
 NEW

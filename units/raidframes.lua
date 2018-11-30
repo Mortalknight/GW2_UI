@@ -218,6 +218,7 @@ GW.AddForProfiling("raidframes", "setUnitName", setUnitName)
 
 local function highlightTargetFrame(self)
     local guidTarget = UnitGUID("target")
+    self.guid = UnitGUID(self.unit)
 
     if self.guid == guidTarget then
         self.targetHighlight:SetVertexColor(1, 1, 1, 1)
@@ -566,6 +567,7 @@ GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 
 local function raidframe_OnEvent(self, event, unit, arg1)
     if not UnitExists(self.unit) then
+        highlightTargetFrame(self)
         return
     end
 
@@ -980,7 +982,7 @@ local function createRaidFrame(registerUnit, index)
 
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp", "Button4Up", "Button5Up")
+    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp", "Button4Up", "Button5Up", "MiddleButtonUp")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript(
