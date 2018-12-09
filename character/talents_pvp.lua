@@ -435,7 +435,7 @@ end
 GW.AddForProfiling("talents_pvp", "toggle_OnHide", toggle_OnHide)
 
 local function toggle_OnClick(self)
-    if (C_PvP.CanToggleWarMode()) then
+    if (C_PvP.CanToggleWarMode(not C_PvP.IsWarModeDesired())) then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         local warmodeEnabled = C_PvP.IsWarModeDesired()
 
@@ -452,6 +452,9 @@ end
 GW.AddForProfiling("talents", "toggle_OnClick", toggle_OnClick)
 
 local function toggle_OnEnter(self)
+    local canToggleWarmodeOFF = C_PvP.CanToggleWarMode(false)
+    local canToggleWarmodeON = C_PvP.CanToggleWarMode(true)
+    
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     GameTooltip:SetText(PVP_LABEL_WAR_MODE, 1, 1, 1)
     if (C_PvP.IsWarModeDesired()) then
@@ -459,7 +462,7 @@ local function toggle_OnEnter(self)
         GameTooltip:AddLine(PVP_WAR_MODE_ENABLED, r, g, b, true)
     end
     GameTooltip:AddLine(PVP_WAR_MODE_DESCRIPTION, nil, nil, nil, true)
-    if (not C_PvP.CanToggleWarMode()) then
+    if ((not canToggleWarmodeOFF and not C_PvP.IsWarModeDesired()) or (canToggleWarmodeON or C_PvP.IsWarModeDesired())) == false then
         local text =
             UnitFactionGroup("player") == PLAYER_FACTION_GROUP[0] and PVP_WAR_MODE_NOT_NOW_HORDE or
             PVP_WAR_MODE_NOT_NOW_ALLIANCE
