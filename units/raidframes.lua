@@ -567,7 +567,6 @@ GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 
 local function raidframe_OnEvent(self, event, unit, arg1)
     if not UnitExists(self.unit) then
-        highlightTargetFrame(self)
         return
     end
 

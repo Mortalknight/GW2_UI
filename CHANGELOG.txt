@@ -1,5 +1,8 @@
 5.0.13
 
+NEW
+    - Add background imagery to reputation entries (BC, Classic, Others)
+
 FIXED
     - Added middle mouse button to party and raidframes
     - Fix a bug that the raidframe target border stuck
