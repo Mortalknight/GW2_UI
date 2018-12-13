@@ -269,6 +269,9 @@ local function nextGossip()
 end
 GW.AddForProfiling("questview", "nextGossip", nextGossip)
 
+local model_tweaks = {
+    [1717164] = {["z"] = -0.35}
+}
 local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7
     if side > 0 then
@@ -293,8 +296,9 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     -- but is much more light-weight than analyzing model paths/categories
     local cpos = {PM:GetCameraPosition()}
     local ctar = {PM:GetCameraTarget()}
+    local fileid = PM:GetModelFileID()
 
-    if not cpos or not ctar or not cpos[1] or not cpos[3] or not ctar[1] or not ctar[3] then
+    if not fileid or not cpos or not ctar or not cpos[1] or not cpos[3] or not ctar[1] or not ctar[3] then
         return
     end
 
@@ -344,8 +348,26 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
         uZ = uZ + 0.3
         dirty = 1
     end
+
+    local twk = model_tweaks[fileid]
+    if twk then
+        if twk.x then
+            uX = twk.x
+            dirty = 1
+        end
+        if twk.y then
+            uY = twk.y
+            dirty = 1
+        end
+        if twk.z then
+            uZ = twk.z
+            dirty = 1
+        end
+    end
+    
     if dirty then
         PM:SetPosition(uX, uY, uZ)
+        GW.Debug("set pos:", unit, fileid, uX, uY, uZ)
         PM:SetUnit(unit)
         if crace then
             PM:SetCustomRace(crace, cgender)
