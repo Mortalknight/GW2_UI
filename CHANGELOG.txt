@@ -1,3 +1,10 @@
+5.0.14
+
+FIXED
+    - Fix an error with the custom UI in Arathi Basin BG (and Brawl version)
+    - Jaina is now visible when using the immersive quest view in War Campaign quests
+
+
 5.0.13
 
 NEW
