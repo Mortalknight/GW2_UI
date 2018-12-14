@@ -16,12 +16,36 @@ local activeBg = 0
 local activeMap
 
 local function parsePoints(id)
-    local points = nil
-    local text = GetIconAndTextWidgetVisualizationInfo(GetAllWidgetsBySetID(GetTopCenterWidgetSetID())[id].widgetID).text
+    if not id then
+        return nil
+    end
 
+    local topid = GetTopCenterWidgetSetID()
+    if not topid then
+        return nil
+    end
+    
+    local wset = GetAllWidgetsBySetID(topid)
+    if not wset then
+        return nil
+    end
+
+    local widget = wset[id]
+    if not widget or not widget.widgetID then
+        return nil
+    end
+
+    local tvi = GetIconAndTextWidgetVisualizationInfo(widget.widgetID)
+    if not tvi or not tvi.text then
+        return nil
+    end
+
+    local points = nil
+    local text = tvi.text
     if text ~= nil then
         points = string.match(text, "(%d+)/")
     end
+
     return points
 end
 GW.AddForProfiling("battlegrounds", "parsePoints", parsePoints)
@@ -113,8 +137,8 @@ local function AB_onEvent(self, event, ...)
     if not activeMap then
         return
     end
-    local pointsAlliance = parsePoints(2)
-    local pointsHorde = parsePoints(3)
+    local pointsAlliance = parsePoints(1)
+    local pointsHorde = parsePoints(2)
     if pointsAlliance == nil or pointsHorde == nil then
         return
     end
@@ -148,6 +172,8 @@ GW.AddForProfiling("battlegrounds", "AB_onEvent", AB_onEvent)
 local function pvpHud_onEvent(self, event)
     local _, _, _, _, _, _, _, mapID, _ = GetInstanceInfo()
 
+    GW.Debug("pvp instance: ", mapID)
+    
     if bgs[mapID] ~= nil then
         activeBg = mapID
         activeMap = GetBestMapForUnit("player")
@@ -183,6 +209,36 @@ GW.AddForProfiling("battlegrounds", "pvpHud_onEvent", pvpHud_onEvent)
 local function LoadBattlegrounds()
     bgs = {
         [529] = {
+            ["OnEvent"] = AB_onEvent,
+            ["icons"] = {
+                [16] = {[1] = 0.25, [2] = 0.50, [3] = 0, [4] = 0.5, ["normalState"] = 16},
+                [17] = {[1] = 0.25, [2] = 0.50, [3] = 0, [4] = 0.5, ["normalState"] = 16},
+                [18] = {[1] = 0.25, [2] = 0.50, [3] = 0, [4] = 0.5, ["normalState"] = 16},
+                [19] = {[1] = 0.25, [2] = 0.50, [3] = 0, [4] = 0.5, ["normalState"] = 16},
+                [20] = {[1] = 0.25, [2] = 0.50, [3] = 0, [4] = 0.5, ["normalState"] = 16},
+                [21] = {[1] = 0, [2] = 0.25, [3] = 0, [4] = 0.5, ["normalState"] = 21},
+                [22] = {[1] = 0, [2] = 0.25, [3] = 0, [4] = 0.5, ["normalState"] = 21},
+                [23] = {[1] = 0, [2] = 0.25, [3] = 0, [4] = 0.5, ["normalState"] = 21},
+                [24] = {[1] = 0, [2] = 0.25, [3] = 0, [4] = 0.5, ["normalState"] = 21},
+                [25] = {[1] = 0, [2] = 0.25, [3] = 0, [4] = 0.5, ["normalState"] = 21},
+                [26] = {[1] = 0, [2] = 0.25, [3] = 0.5, [4] = 1, ["normalState"] = 26},
+                [27] = {[1] = 0, [2] = 0.25, [3] = 0.5, [4] = 1, ["normalState"] = 26},
+                [28] = {[1] = 0, [2] = 0.25, [3] = 0.5, [4] = 1, ["normalState"] = 26},
+                [29] = {[1] = 0, [2] = 0.25, [3] = 0.5, [4] = 1, ["normalState"] = 26},
+                [30] = {[1] = 0, [2] = 0.25, [3] = 0.5, [4] = 1, ["normalState"] = 26},
+                [31] = {[1] = 0.75, [2] = 1, [3] = 0, [4] = 0.5, ["normalState"] = 31},
+                [32] = {[1] = 0.75, [2] = 1, [3] = 0, [4] = 0.5, ["normalState"] = 31},
+                [33] = {[1] = 0.75, [2] = 1, [3] = 0, [4] = 0.5, ["normalState"] = 31},
+                [34] = {[1] = 0.75, [2] = 1, [3] = 0, [4] = 0.5, ["normalState"] = 31},
+                [35] = {[1] = 0.75, [2] = 1, [3] = 0, [4] = 0.5, ["normalState"] = 31},
+                [36] = {[1] = 0.5, [2] = 0.75, [3] = 0, [4] = 0.5, ["normalState"] = 36},
+                [37] = {[1] = 0.5, [2] = 0.75, [3] = 0, [4] = 0.5, ["normalState"] = 36},
+                [38] = {[1] = 0.5, [2] = 0.75, [3] = 0, [4] = 0.5, ["normalState"] = 36},
+                [39] = {[1] = 0.5, [2] = 0.75, [3] = 0, [4] = 0.5, ["normalState"] = 36},
+                [40] = {[1] = 0.5, [2] = 0.75, [3] = 0, [4] = 0.5, ["normalState"] = 36}
+            }
+        },
+        [1681] = {
             ["OnEvent"] = AB_onEvent,
             ["icons"] = {
                 [16] = {[1] = 0.25, [2] = 0.50, [3] = 0, [4] = 0.5, ["normalState"] = 16},
