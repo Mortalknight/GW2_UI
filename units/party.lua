@@ -810,9 +810,11 @@ local function createPartyFrame(i)
     frame:SetScript("OnEvent", party_OnEvent)
 
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    frame:RegisterEvent("GROUP_ROSTER_UPDATE")
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
+    frame:RegisterEvent("READY_CHECK")
+    frame:RegisterEvent("READY_CHECK_CONFIRM")
+    frame:RegisterEvent("READY_CHECK_FINISHED")
 
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
