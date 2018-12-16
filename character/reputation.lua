@@ -332,12 +332,19 @@ local function setDetailEx(
     end
 
     if factionID and C_Reputation.IsFactionParagon(factionID) then
-        local currentValue, maxValueParagon, _, _ = C_Reputation.GetFactionParagonInfo(factionID)
+        local currentValue, maxValueParagon, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
 
         if currentValue > 10000 then
             repeat
                 currentValue = currentValue - 10000
             until (currentValue < 10000)
+        end
+
+        if hasRewardPending then 
+            local nameReward = name .. "|TInterface\\AddOns\\GW2_UI\\textures\\rewards-icon:32:32:0:0|t"
+            frame.name:SetText(nameReward)
+        else
+            frame.name:SetText(name)
         end
 
         frame.currentRank:SetText(currentRank)
