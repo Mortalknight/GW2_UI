@@ -989,6 +989,12 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
     addOption(
+        GwLocalization["SHOW_ILVL"],
+        GwLocalization["SHOW_ILVL_DESC"],
+        "target_SHOW_ILVL",
+        "GwSettingsTargetOptions"
+    )
+    addOption(
         MINIMAP_TRACKING_FOCUS,
         GwLocalization["FOCUS_TARGET_DESC"],
         "focus_TARGET_ENABLED",

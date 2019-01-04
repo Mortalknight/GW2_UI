@@ -14,6 +14,8 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local Debug = GW.Debug
+local IsIn = GW.IsIn
+local unitIlvls = {}
 
 local function sortAuras(a, b)
     if a["caster"] == nil then
@@ -405,10 +407,10 @@ local function setUnitPortraitFrame(self, event)
         return
     end
 
+    local txt = nil
     local border = "normal"
 
     local unitClassIfication = UnitClassification(self.unit)
-
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
         border = unitClassIfication
         if UnitLevel(self.unit) == -1 then
@@ -416,26 +418,34 @@ local function setUnitPortraitFrame(self, event)
         end
     end
 
-    if (UnitHonorLevel(self.unit) ~= nil and UnitHonorLevel(self.unit) > 9)   then
-        local p = UnitHonorLevel(self.unit)
+    if GetSetting(self.unit .. "_SHOW_ILVL") and CanInspect(self.unit) then
+        local guid = UnitGUID(self.unit)
+        if guid and unitIlvls[guid] then
+            txt = unitIlvls[guid]
+        end
+    elseif (UnitHonorLevel(self.unit) ~= nil and UnitHonorLevel(self.unit) > 9)   then
+        txt = UnitHonorLevel(self.unit)
     
-        if p > 199 then
+        if txt > 199 then
 			plvl = 4
-		elseif p > 99 then
+		elseif txt > 99 then
             plvl = 3
-        elseif p > 49 then 
+        elseif txt > 49 then 
             plvl = 2
-        elseif p > 9 then
+        elseif txt > 9 then
             plvl = 1
-		end
+        end
+        
         key = 'prestige'..plvl
         if TARGET_FRAME_ART[key]~=nil then
             border = key
         end
-             
+    end
+
+    if txt then
         self.prestigebg:Show()
         self.prestigeString:Show()
-        self.prestigeString:SetText(p)    
+        self.prestigeString:SetText(txt)
     else
         self.prestigebg:Hide()
         self.prestigeString:Hide()
@@ -444,6 +454,38 @@ local function setUnitPortraitFrame(self, event)
     self.background:SetTexture(TARGET_FRAME_ART[border])
 end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
+
+local function updateAvgItemLevel(self, event, guid)
+    if guid == UnitGUID(self.unit) and CanInspect(self.unit) then
+        if UnitIsUnit(self.unit, "player") then
+            unitIlvls[guid] = floor((GetAverageItemLevel()))
+        else
+            local ilvl, n, retry = 0, 0
+            for i=INVSLOT_HEAD,INVSLOT_OFFHAND do
+                if i ~= INVSLOT_BODY then
+                    local tex = GetInventoryItemTexture(self.unit, i)
+                    local link = tex and GetInventoryItemLink(self.unit, i)
+                    local lvl =  link and select(4, GetItemInfo(link))
+                    if lvl then
+                        ilvl, n = ilvl + lvl, n + 1
+                    elseif tex then
+                        retry = true
+                    end
+                end
+            end
+    
+            if retry and not unitIlvls[guid] then
+                C_Timer.After(0, function () NotifyInspect(self.unit) end)
+            elseif n > 0 then
+                unitIlvls[guid] = floor(ilvl / n)
+                self:UnregisterEvent("INSPECT_READY")
+            end
+        end
+
+        setUnitPortraitFrame(self, event)
+    end
+end
+GW.AddForProfiling("unitframes", "updateAvgItemLevel", updateAvgItemLevel)
 
 local function updateRaidMarkers(self, event)
     local i = GetRaidTargetIndex(self.unit)
@@ -918,7 +960,15 @@ end
 GW.LoadAuras = LoadAuras
 
 local function target_OnEvent(self, event, unit)
-    if event == "PLAYER_TARGET_CHANGED" or event == "ZONE_CHANGED" then
+    if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED") then
+        if CanInspect(self.unit) and GetSetting("target_SHOW_ILVL") then
+            local guid = UnitGUID(self.unit)
+            if guid and not unitIlvls[guid] then
+                self:RegisterEvent("INSPECT_READY")
+                NotifyInspect(self.unit)
+            end
+        end
+
         self.stepOnUpdate = 0
         self:SetScript(
             "OnUpdate",
@@ -956,44 +1006,26 @@ local function target_OnEvent(self, event, unit)
                 end
             end
         )
-
-        return
-    end
-
-    if
-        (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_ABSORB_AMOUNT_CHANGED") and
-            unit == self.unit
-     then
-        updateHealthValues(self, event)
-        return
-    end
-
-    if (event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT") and unit == self.unit then
-        updatePowerValues(self, event)
-        return
-    end
-
-    if (event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START") and unit == self.unit then
-        updateCastValues(self, event)
-        return
-    end
-    
-    if
-        (event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_STOP" or
-        event == "UNIT_SPELLCAST_INTERRUPTED" or
-        event == "UNIT_SPELLCAST_FAILED") and
-            unit == self.unit
-     then
-        hideCastBar(self, event)
-        return
-    end
-
-    if event == "RAID_TARGET_UPDATE" then
+    elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
-    end
-
-    if event == "UNIT_AURA" and unit == self.unit then
-        UpdateBuffLayout(self, event)
+    elseif event == "INSPECT_READY" then
+        if not GetSetting("target_SHOW_ILVL") then
+            self:UnregisterEvent("INSPECT_READY")
+        else
+            updateAvgItemLevel(self, event, unit)
+        end
+    elseif unit == self.unit then
+        if event == "UNIT_AURA" then
+            UpdateBuffLayout(self, event)
+        elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED") then
+            updateHealthValues(self, event)
+        elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
+            updatePowerValues(self, event)
+        elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
+            updateCastValues(self, event)
+        elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
+            hideCastBar(self, event)
+        end
     end
 end
 GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
