@@ -311,7 +311,7 @@ end
 GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
 
 local PATTERN_ILVL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
-local PATTERN_ILVL_SCALED = ITEM_LEVEL_ALT:gsub("%%d", "%%d+")
+local PATTERN_ILVL_SCALED = ITEM_LEVEL_ALT:gsub("%(%%d%)", "%%((%%d)%%)"):gsub("%%d", "%%d+")
 
 -- Get an item's real level, scanning the tooltip if necessary
 local function GetRealItemLevel(link)
