@@ -310,6 +310,40 @@ local function MixinHideDuringPetAndOverride(f)
 end
 GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
 
+local PATTERN_ILVL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
+local PATTERN_ILVL_SCALED = ITEM_LEVEL_ALT:gsub("%%d", "%%d+")
+
+-- Get an item's real level, scanning the tooltip if necessary
+local function GetRealItemLevel(link)
+    local i, numBonusIds, linkLvl, upgradeLvl = 0, 0
+    for v in link:gmatch(":(%-?%d*)") do
+        i, v = i + 1, tonumber(v)
+        if i == 9 then
+            linkLvl = v
+        elseif i == 13 then
+            numBonusIds = v or 0
+        elseif i == 14 + numBonusIds then
+            upgradeLvl = v break
+        end
+    end
+
+    if linkLvl and upgradeLvl and linkLvl ~= upgradeLvl then
+        local tt = GWHiddenTooltip or CreateFrame("GameTooltip", "GWHiddenTooltip", nil, "GameTooltipTemplate")
+        tt:SetOwner(UIParent, "ANCHOR_NONE")
+        tt:ClearLines()
+        tt:SetHyperlink(link)
+
+        for i=2,min(3, tt:NumLines()) do
+            local line = _G["GWHiddenTooltipTextLeft" .. i]:GetText()
+            local lvl = line and tonumber(line:match(PATTERN_ILVL_SCALED) or line:match(PATTERN_ILVL))
+            if lvl then return lvl end
+        end
+    end
+
+    return (GetDetailedItemLevelInfo(link))
+end
+GW.GetRealItemLevel = GetRealItemLevel
+
 --@debug@
 local function AddForProfiling(unit, name, ...)
     if not Profiler then

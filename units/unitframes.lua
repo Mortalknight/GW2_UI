@@ -15,6 +15,7 @@ local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local Debug = GW.Debug
 local IsIn = GW.IsIn
+local GetRealItemLevel = GW.GetRealItemLevel
 local unitIlvls = {}
 
 local function sortAuras(a, b)
@@ -465,7 +466,7 @@ local function updateAvgItemLevel(self, event, guid)
                 if i ~= INVSLOT_BODY then
                     local tex = GetInventoryItemTexture(self.unit, i)
                     local link = tex and GetInventoryItemLink(self.unit, i)
-                    local lvl =  link and select(4, GetItemInfo(link))
+                    local lvl =  link and GetRealItemLevel(link)
                     if lvl then
                         ilvl, n = ilvl + lvl, n + 1
                     elseif tex then
