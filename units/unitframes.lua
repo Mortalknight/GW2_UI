@@ -962,11 +962,16 @@ GW.LoadAuras = LoadAuras
 
 local function target_OnEvent(self, event, unit)
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED") then
-        if CanInspect(self.unit) and GetSetting("target_SHOW_ILVL") then
+        if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GetSetting("target_SHOW_ILVL") then
             local guid = UnitGUID(self.unit)
-            if guid and not unitIlvls[guid] then
-                self:RegisterEvent("INSPECT_READY")
-                NotifyInspect(self.unit)
+            if guid then
+                if IsShiftKeyDown() then
+                    unitIlvls[guid] = nil
+                end
+                if not unitIlvls[guid] then
+                    self:RegisterEvent("INSPECT_READY")
+                    NotifyInspect(self.unit)
+                end
             end
         end
 
@@ -1007,6 +1012,8 @@ local function target_OnEvent(self, event, unit)
                 end
             end
         )
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        wipe(unitIlvls)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
     elseif event == "INSPECT_READY" then
@@ -1312,6 +1319,7 @@ local function LoadTarget()
     -- NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED");
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
+    NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "target")
