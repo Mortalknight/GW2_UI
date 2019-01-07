@@ -479,6 +479,7 @@ local function updateAvgItemLevel(self, event, guid)
                 C_Timer.After(0, function () NotifyInspect(self.unit) end)
             elseif n > 0 then
                 unitIlvls[guid] = floor(ilvl / n)
+                ClearInspectPlayer()
                 self:UnregisterEvent("INSPECT_READY")
             end
         end
@@ -1019,6 +1020,7 @@ local function target_OnEvent(self, event, unit)
     elseif event == "INSPECT_READY" then
         if not GetSetting("target_SHOW_ILVL") then
             self:UnregisterEvent("INSPECT_READY")
+            ClearInspectPlayer()
         else
             updateAvgItemLevel(self, event, unit)
         end
