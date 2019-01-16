@@ -38,16 +38,19 @@ local function outfitListButton_OnClick(self, button)
         updateIngoredSlots(self.setID)
         self:SetHeight(80)
         self.saveOutfit:Show()
+        self.editOutfit:Show()
         self.deleteOutfit:Show()
         self.equipOutfit:Show()
         self.ddbg:Show()
         self.deleteOutfit:SetText(DELETE)
         self.saveOutfit:SetText(SAVE)
+        self.editOutfit:SetText(EDIT)
         self.equipOutfit:SetText(EQUIPSET_EQUIP)
 
         GwPaperDollOutfits.selectedSetID = self.setID
     else
         self.saveOutfit:Hide()
+        self.editOutfit:Hide()
         self.deleteOutfit:Hide()
         self.equipOutfit:Hide()
         self.ddbg:Hide()
@@ -68,7 +71,7 @@ GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEqui
 
 local function outfitSaveButton_OnClick(self, button)
     WarningPrompt(
-        GwLocalization["CHARACTER_OUTFITS_SAVE"] .. self:GetParent().setName .. '"?',
+        GwLocalization["CHARACTER_OUTFITS_SAVE"] .. " (" .. self:GetParent().setName .. ")",
         function()
             C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
             drawItemSetList()
@@ -76,6 +79,19 @@ local function outfitSaveButton_OnClick(self, button)
     )
 end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
+
+local function outfitEditButton_OnClick(self, button)
+    GearManagerDialogPopup:SetParent(GwDressingRoom)
+    GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+    GearManagerDialogPopup:Show()
+    
+    local parent = self:GetParent()
+    GearManagerDialogPopup.isEdit = true
+    GearManagerDialogPopup.setID = parent.setID
+    GearManagerDialogPopup.origName = parent.setName
+	RecalculateGearManagerDialogPopup(parent.setName, parent.icon:GetTexture())
+end
+GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
 
 local function outfitDeleteButton_OnClick(self, button)
     WarningPrompt(
@@ -100,6 +116,7 @@ local function getNewEquipmentSetButton(i)
     CharacterMenuBlank_OnLoad(f)
     f.equipOutfit:SetScript("OnClick", outfitEquipButton_OnClick)
     f.saveOutfit:SetScript("OnClick", outfitSaveButton_OnClick)
+    f.editOutfit:SetScript("OnClick", outfitEditButton_OnClick)
     f.deleteOutfit:SetScript("OnClick", outfitDeleteButton_OnClick)
 
     if i > 1 then
@@ -139,6 +156,7 @@ drawItemSetList = function()
 
             frame:Show()
             frame.saveOutfit:Hide()
+            frame.editOutfit:Hide()
             frame.deleteOutfit:Hide()
             frame.equipOutfit:Hide()
             frame.ddbg:Hide()
