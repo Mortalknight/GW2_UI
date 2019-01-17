@@ -767,17 +767,14 @@ local function GetRaidFramesMeasures(players)
     if players or byRole or not IsInRaid() then
         players = players or max(1, GetNumGroupMembers())
     else
-        local maxGrp, maxPos = 1, 0
+        players = 0
         for i = 1, 40 do
-            local found, _, grp = GetRaidRosterInfo(i)
-            found = found or grp > 1
-            grp = found and grp or maxGrp + (maxPos >= 5 and 1 or 0)
-            maxGrp, maxPos = max(grp, maxGrp), (grp == maxGrp and maxPos or 0) + 1
-            if found then
-                players = (maxGrp - 1) * 5 + maxPos
+            local _, _, grp = GetRaidRosterInfo(i)
+            if grp >= ceil(players / 5) then
+                players = max((grp - 1) * 5, players) + 1
             end
         end
-        players = max(1, GetNumGroupMembers(), min(players or 0, 40))
+        players = max(1, players, GetNumGroupMembers())
     end
 
     -- Directions
@@ -897,6 +894,7 @@ local function sortByRole()
 end
 GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 
+local grpPos, noGrp = {}, {}
 local function UpdateRaidFramesLayout()
     if InCombatLockdown() then
         return
@@ -916,21 +914,32 @@ local function UpdateRaidFramesLayout()
         PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     end
 
+    wipe(grpPos) wipe(noGrp)
+
     -- Position by group
-    local maxGrp, maxPos, pos = 1, 0
     for i = 1, 40 do
         if not tContains(sorted, unitString .. i) then
             if i < 5 then
                 PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
 
-            local found, _, grp = GetRaidRosterInfo(i)
-            grp = (found or grp > 1) and grp or maxGrp + (maxPos >= 5 and 1 or 0)
-            maxGrp, maxPos = max(grp, maxGrp), (grp == maxGrp and maxPos or 0) + 1
-            pos = (grp - 1) * 5 + maxPos
+            local name, _, grp = GetRaidRosterInfo(i)
+            if name or grp > 1 then
+                grpPos[grp] = (grpPos[grp] or 0) + 1
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * 5 + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+            else
+                tinsert(noGrp, i)
+            end
+        end
+    end
 
-            if pos <= 40 then
-                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, pos, grow1, grow2, cells1, sizePer1, sizePer2, m)
+    -- Find spots for units with missing group info
+    for _,i in ipairs(noGrp) do
+        for grp=1,8 do
+            if (grpPos[grp] or 0) < 5 then
+                grpPos[grp] = (grpPos[grp] or 0) + 1
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * 5 + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                break
             end
         end
     end
