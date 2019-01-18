@@ -8,7 +8,7 @@
         </Anchors>
     </Frame>
     <Frame name="GwRaidFrameIndicator" frameLevel="6" hidden="true" virtual="true">
-        <Size x="12" y="12"/>
+        <Size x="13" y="13"/>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
@@ -25,6 +25,7 @@
                         <Anchor point="TOPLEFT" x=".7" y="-0.7"></Anchor>
                         <Anchor point="BOTTOMRIGHT" x="-0.7" y="0.7"></Anchor>
                     </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">

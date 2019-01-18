@@ -529,31 +529,29 @@ local function updateAuras(self)
             for _, pos in ipairs(INDICATORS) do
                 if spellID == GetSetting("INDICATOR_" .. pos, true) then
                     local frame = self["indicator" .. pos]
+                    local r, g, b = unpack(indicators[spellID])
 
                     if pos == "BAR" then
                         frame.expires = expires
                         frame.duration = duration
                     else
-
-                        if GetSetting("INDICATORS_ICON") then
-                            frame.icon:SetTexture(icon)
-                            frame.text:Hide()
+                        -- Stacks
+                        if count > 1 then
+                            frame.text:SetText(count)
+                            frame.text:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
+                            frame.text:Show()
                         else
-                            local r, g, b = unpack(indicators[spellID])
-                            frame.icon:SetColorTexture(r, g, b)
-
-                            if count > 1 then
-                                local lum = ((0.3*r + 0.6*g + 0.1*b) / 255) * ((expires - GetTime()) / duration < 0.5 and 0.7 or 1)
-                                local c = lum > 0.5 and 0 or 1
-    
-                                frame.text:SetText(count)
-                                frame.text:SetTextColor(c, c, c)
-                                frame.text:Show()
-                            else
-                                frame.text:Hide()
-                            end
+                            frame.text:Hide()
                         end
 
+                        -- Icon
+                        if GetSetting("INDICATORS_ICON") then
+                            frame.icon:SetTexture(icon)
+                        else
+                            frame.icon:SetColorTexture(r, g, b)
+                        end
+
+                        -- Cooldown
                         if GetSetting("INDICATORS_TIME") then
                             frame.cooldown:Show()
                             frame.cooldown:SetCooldown(expires - duration, duration)

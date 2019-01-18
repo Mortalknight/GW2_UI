@@ -3,7 +3,7 @@
 NEW
     - Added option to show target average item level instead of prestige level
     - Added "Edit" button to equipment sets to change name and icon
-    - Raid aura indicators now show stack count if > 1 and not showing the spell icon
+    - Raid aura indicators now show stack count for auras with more than one stacks
 
 FIXES
     - Fixed text of equipment set save dialog
