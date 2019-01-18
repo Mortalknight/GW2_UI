@@ -203,8 +203,8 @@ local AURAS_INDICATORS = {
         [223306] =  {0.7, 0.7, 0.3},    -- Bestow Faith
     },
     SHAMAN = {
-        [61295] =   {0.7, 0.3, 0.7},    -- Riptide
-        [974] =     {0.2, 0.2, 1},      -- Earth Shield
+        [61295] =   {0, 0.4, 0.53},     -- Riptide
+        [974] =     {0.42, 0.74, 0},    -- Earth Shield
     },
     MONK = {
         [119611] =  {0.3, 0.8, 0.6},    -- Renewing Mist

@@ -27,6 +27,15 @@
                     </Anchors>
                 </Texture>
             </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentText" parentKey="text" inherits="GameFontNormalSmall" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Color r="1" g="1" b="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
         </Layers>
         <Frames>
             <Cooldown name="$parentCooldown" parentKey="cooldown" reverse="true" hideCountdownNumbers="true" hidden="true" inherits="CooldownFrameTemplate">

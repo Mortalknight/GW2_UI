@@ -506,7 +506,7 @@ local function updateAuras(self)
 
     for i = 1, 40 do
         local showThis = false
-        local name, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
+        local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
 
         if not name then
             break
@@ -534,10 +534,24 @@ local function updateAuras(self)
                         frame.expires = expires
                         frame.duration = duration
                     else
+
                         if GetSetting("INDICATORS_ICON") then
                             frame.icon:SetTexture(icon)
+                            frame.text:Hide()
                         else
-                            frame.icon:SetColorTexture(unpack(indicators[spellID]))
+                            local r, g, b = unpack(indicators[spellID])
+                            frame.icon:SetColorTexture(r, g, b)
+
+                            if count > 1 then
+                                local lum = ((0.3*r + 0.6*g + 0.1*b) / 255) * ((expires - GetTime()) / duration < 0.5 and 0.7 or 1)
+                                local c = lum > 0.5 and 0 or 1
+    
+                                frame.text:SetText(count)
+                                frame.text:SetTextColor(c, c, c)
+                                frame.text:Show()
+                            else
+                                frame.text:Hide()
+                            end
                         end
 
                         if GetSetting("INDICATORS_TIME") then
