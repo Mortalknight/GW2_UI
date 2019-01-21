@@ -479,7 +479,7 @@ local function UpdateQuestItem(button, questLogIndex)
     button:SetID(questLogIndex)
 
     button:SetAttribute("type", "item")
-    button:SetAttribute("item", GetItemInfo(link))
+    button:SetAttribute("item", link)
 
     button.charges = charges
     button.rangeTimer = -1
