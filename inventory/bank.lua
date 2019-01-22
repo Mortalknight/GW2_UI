@@ -134,7 +134,7 @@ GW.AddForProfiling("bank", "createItemBackground", createItemBackground)
 
 local function updateReagentsIcons(smooth)
     local x = 8
-    local y = 72
+    local y = 40
     local mx = 0
     local gwbf = GwBankFrame
     local winsize = BANK_WINDOW_SIZE
@@ -805,7 +805,9 @@ local function LoadBank()
                 "OnHide",
                 function()
                     CloseBags()
-                    updateBankIcons()
+                    if not ReagentBankFrame:IsShown() then
+                        updateBankIcons()
+                    end
                     if fc then
                         fc:Hide()
                     end

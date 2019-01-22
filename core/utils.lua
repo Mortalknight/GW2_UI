@@ -375,6 +375,17 @@ local function Debug(...)
         inDebug(GW.dbgTab, ...)
     end
 end
+
+local function Trace()
+    print("------------------------- Trace -------------------------")
+    for i,v in ipairs({("\n"):split(debugstack(2))}) do
+        if v ~= "" then
+            print(i .. ": " .. v)
+        end
+    end
+    print("---------------------------------------------------------")
+end
+
 --@end-debug@
 --[===[@non-debug@
 local function Debug()
@@ -383,6 +394,10 @@ end
 local function AddForProfiling()
     return
 end
+local function Trace()
+    return
+end
 --@end-non-debug@]===]
 GW.Debug = Debug
+GW.Trace = Trace
 GW.AddForProfiling = AddForProfiling
