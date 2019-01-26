@@ -9,6 +9,8 @@ FIXES
     - Fixed text of equipment set save dialog
     - Fixed raid frame positioning problem happening since 8.1
     - Fixed reagent bank sizing
+    - Improved performance of detecting ignored and missing raid auras
+    - Re-enabled updating raid frames during combat (except size and position)
     
 MISCELLANEOUS
     - Changed shaman raid indicator colors to match the spell icon colors

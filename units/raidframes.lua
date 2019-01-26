@@ -15,7 +15,7 @@ local SetClassIcon = GW.SetClassIcon
 local SetDeadIcon = GW.SetDeadIcon
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
-local FindInList = GW.FindInList
+local FillTable = GW.FillTable
 local IsIn = GW.IsIn
 
 local GROUPD_TYPE = "PARTY"
@@ -25,6 +25,7 @@ local realmid_Player
 local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
 local hudMoving = false
+local missing, ignored = {}, {}
 
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then
@@ -329,7 +330,7 @@ local function updateDebuffs(self)
     local x = 0
     local y = 0
     local DebuffLists = {}
-    local ignored = GetSetting("AURAS_IGNORED")
+    FillTable(ignored, true, strsplit(",", GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ",")))
 
     local filter = nil
     if GetSetting("RAID_ONLY_DISPELL_DEBUFFS") then
@@ -351,7 +352,7 @@ local function updateDebuffs(self)
 
         local indexBuffFrame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. i]
         local created = false
-        local shouldDisplay = DebuffLists[i]["name"] and not FindInList(ignored, DebuffLists[i]["name"])
+        local shouldDisplay = DebuffLists[i]["name"] and not ignored[DebuffLists[i]["name"]]
 
         --remove old debuff
         if indexBuffFrame ~= nil then
@@ -465,9 +466,9 @@ local function updateAuras(self)
     local buffIndex = 1
     local x = 0
     local y = 0
-    local missing = GetSetting("AURAS_MISSING")
-    local ignored = GetSetting("AURAS_IGNORED")
     local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
+    FillTable(missing, true, strsplit(",", GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ",")))
+    FillTable(ignored, true, strsplit(",", GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ",")))
     
     for _, pos in pairs(INDICATORS) do
         self['indicator' .. pos]:Hide()
@@ -482,11 +483,8 @@ local function updateAuras(self)
         
         -- check missing
         local name = UnitBuff(self.unit, i)
-        if name then
-            local s, e = FindInList(missing, name)
-            if s then
-                missing = missing:sub(1, s - 1) .. missing:sub(e + 1)
-            end
+        if name and missing[name] then
+            missing[name] = false
         end
     end
     
@@ -495,14 +493,12 @@ local function updateAuras(self)
         local name = GetSpellBookItemName(i, BOOKTYPE_SPELL)
         if not name then
             break
-        elseif FindInList(missing, name) then
+        elseif missing[name] then
             local icon = GetSpellBookItemTexture(i, BOOKTYPE_SPELL)
             buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i, true)
             break
         end
     end
-
-    missing = GetSetting("AURAS_MISSING")
 
     for i = 1, 40 do
         local showThis = false
@@ -568,7 +564,7 @@ local function updateAuras(self)
         end
 
         --set new buff
-        if showThis and not (FindInList(ignored, name) or FindInList(missing, name)) then
+        if showThis and not (ignored[name] or missing[name] ~= nil) then
             buffIndex, x, y = showBuffIcon(self, icon, buffIndex, x, y, i)
         end
     end
@@ -820,6 +816,7 @@ local function GetRaidFramesMeasures(players)
 
     return grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m
 end
+GW.AddForProfiling("raidframes", "GetRaidFramesMeasures", GetRaidFramesMeasures)
 
 local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     local isV = grow1 == "DOWN" or grow1 == "UP"
@@ -839,9 +836,11 @@ local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer
     local x = (isV and pos2 or pos1) * (w + m)
     local y = (isV and pos1 or pos2) * (h + m)
 
-    frame:ClearAllPoints()
-    frame:SetPoint(a, parent, a, x, y)
-    frame:SetSize(w, h)
+    if not InCombatLockdown() then
+        frame:ClearAllPoints()
+        frame:SetPoint(a, parent, a, x, y)
+        frame:SetSize(w, h)
+    end
 
     if frame.healthbar then
         frame.healthbar.spark:SetHeight(frame.healthbar:GetHeight())
@@ -852,6 +851,7 @@ local function UpdateRaidFramesAnchor()
     GwRaidFrameContainerMoveAble:GetScript("OnDragStop")(GwRaidFrameContainerMoveAble)
 end
 GW.UpdateRaidFramesAnchor = UpdateRaidFramesAnchor
+GW.AddForProfiling("raidframes", "UpdateRaidFramesAnchor", UpdateRaidFramesAnchor)
 
 local function UpdateRaidFramesPosition()
     players = previewStep == 0 and 40 or previewSteps[previewStep]
@@ -870,6 +870,7 @@ local function UpdateRaidFramesPosition()
     end
 end
 GW.UpdateRaidFramesPosition = UpdateRaidFramesPosition
+GW.AddForProfiling("raidframes", "UpdateRaidFramesPosition", UpdateRaidFramesPosition)
 
 local function ToggleRaidFramesPreview()
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
@@ -908,15 +909,13 @@ GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 
 local grpPos, noGrp = {}, {}
 local function UpdateRaidFramesLayout()
-    if InCombatLockdown() then
-        return
-    end
-
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures()
     local isV = grow1 == "DOWN" or grow1 == "UP"
     
-    GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
+    if not InCombatLockdown() then
+        GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
+    end
 
     local unitString = IsInRaid() and "raid" or "party"
     local sorted = (unitString == "party" or GetSetting("RAID_SORT_BY_ROLE")) and sortByRole() or {}
@@ -957,6 +956,7 @@ local function UpdateRaidFramesLayout()
     end
 end
 GW.UpdateRaidFramesLayout = UpdateRaidFramesLayout
+GW.AddForProfiling("raidframes", "UpdateRaidFramesLayout", UpdateRaidFramesLayout)
 
 local function createRaidFrame(registerUnit, index)
     local frame = _G["GwCompact" .. registerUnit]
@@ -1132,27 +1132,27 @@ local function LoadRaidFrames()
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
             self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        end
 
-            if IsInRaid() == false and GROUPD_TYPE == "RAID" then
-                togglePartyFrames(true)
-                GROUPD_TYPE = "PARTY"
+        if IsInRaid() == false and GROUPD_TYPE == "RAID" then
+            togglePartyFrames(true)
+            GROUPD_TYPE = "PARTY"
+        end
+        if IsInRaid() and GROUPD_TYPE == "PARTY" then
+            togglePartyFrames(false)
+            GROUPD_TYPE = "RAID"
+        end
+
+        unhookPlayerFrame()
+
+        UpdateRaidFramesLayout()
+
+        updateFrameData(_G["GwCompactplayer"], nil)
+        for i = 1, 40 do
+            if i < 5 then
+                updateFrameData(_G["GwCompactparty" .. i], i)
             end
-            if IsInRaid() and GROUPD_TYPE == "PARTY" then
-                togglePartyFrames(false)
-                GROUPD_TYPE = "RAID"
-            end
-
-            unhookPlayerFrame()
-
-            UpdateRaidFramesLayout()
-
-            updateFrameData(_G["GwCompactplayer"], nil)
-            for i = 1, 40 do
-                if i < 5 then
-                    updateFrameData(_G["GwCompactparty" .. i], i)
-                end
-                updateFrameData(_G["GwCompactraid" .. i], i)
-            end
+            updateFrameData(_G["GwCompactraid" .. i], i)
         end
     end)
 

@@ -41,6 +41,20 @@ local function MapTable(T, fn, withKey)
 end
 GW.MapTable = MapTable
 
+local function FillTable(T, map, ...)
+    wipe(T)
+    for i=1,select("#", ...) do
+        local v = select(i, ...)
+        if map then
+            T[v] = true
+        else
+            tinsert(T, v)
+        end
+    end
+    return T
+end
+GW.FillTable = FillTable
+
 local function TimeParts(ms)
     local nMS = tonumber(ms)
     local nSec, nMin, nHr
