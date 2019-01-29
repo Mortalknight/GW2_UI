@@ -4,16 +4,19 @@ NEW
     - Added option to show target average item level instead of prestige level
     - Added "Edit" button to equipment sets to change name and icon
     - Raid aura indicators now show stack count for auras with more than one stack
+    - Added Paragon pending reward icon
 
 FIXES
-    - Fixed text of equipment set save dialog
+    - Fixed text of equipment set save and delete dialog
     - Fixed raid frame positioning problem happening since 8.1
     - Fixed reagent bank sizing
     - Improved performance of detecting ignored and missing raid auras
     - Re-enabled updating raid frames during combat (except size and position)
+    - Fixed ready check for party frames
     
 MISCELLANEOUS
     - Changed shaman raid indicator colors to match the spell icon colors
+
 
 5.0.15
 

@@ -105,28 +105,58 @@
         </Layers>
         <Frames>
             <Button name="$parentEquipOutfit" hidden="true" parentKey="equipOutfit" inherits="GwStandardButton" text="Equip">
-                <Size x="52.5" y="20"></Size>
+                <Size x="60" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="5"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentSaveOutfit" hidden="true" parentKey="saveOutfit" inherits="GwStandardButton" text="Save">
-                <Size x="52.5" y="20"></Size>
+            <Button name="$parentSaveOutfit" hidden="true" parentKey="saveOutfit" inherits="GwStandardButton">
+                <Size x="25" y="20"></Size>
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.equipOutfit" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.deleteOutfit" relativePoint="BOTTOMRIGHT" x="-65" y="5"></Anchor>
                 </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface\BUTTONS\UI-CheckBox-Check">
+                            <Size x="20" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Button>
-            <Button name="$parentEditOutfit" hidden="true" parentKey="editOutfit" inherits="GwStandardButton" text="Edit">
-                <Size x="52.5" y="20"></Size>
+            <Button name="$parentEditOutfit" hidden="true" parentKey="editOutfit" inherits="GwStandardButton">
+                <Size x="25" y="20"></Size>
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.saveOutfit" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.deleteOutfit" relativePoint="BOTTOMRIGHT" x="-35" y="5"></Anchor>
                 </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\MainMenuMicroButton-Up">
+                            <Size x="20" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Button>
-            <Button name="$parentDelete" parentKey="deleteOutfit" hidden="true" inherits="GwStandardButton" text="Delete">
-                <Size x="52.5" y="20"></Size>
+            <Button name="$parentDelete" parentKey="deleteOutfit" hidden="true" inherits="GwStandardButton">
+                <Size x="25" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"></Anchor>
                 </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface\BUTTONS\UI-StopButton">
+                            <Size x="20" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Button>
         </Frames>
     </Button>

@@ -42,9 +42,8 @@ local function outfitListButton_OnClick(self, button)
         self.deleteOutfit:Show()
         self.equipOutfit:Show()
         self.ddbg:Show()
-        self.deleteOutfit:SetText(DELETE)
-        self.saveOutfit:SetText(SAVE)
-        self.editOutfit:SetText(EDIT)
+        self.deleteOutfit.icon:SetDesaturated(true)
+        self.saveOutfit.icon:SetDesaturated(true)
         self.equipOutfit:SetText(EQUIPSET_EQUIP)
 
         GwPaperDollOutfits.selectedSetID = self.setID
@@ -95,7 +94,7 @@ GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditB
 
 local function outfitDeleteButton_OnClick(self, button)
     WarningPrompt(
-        GwLocalization["CHARACTER_OUTFITS_DELETE"] .. self:GetParent().setName .. '"?',
+        GwLocalization["CHARACTER_OUTFITS_DELETE"] .. " (" .. self:GetParent().setName .. ")",
         function()
             C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
 
@@ -116,8 +115,29 @@ local function getNewEquipmentSetButton(i)
     CharacterMenuBlank_OnLoad(f)
     f.equipOutfit:SetScript("OnClick", outfitEquipButton_OnClick)
     f.saveOutfit:SetScript("OnClick", outfitSaveButton_OnClick)
+    f.saveOutfit:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip_AddNormalLine(GameTooltip, SAVE)
+        GameTooltip:Show()
+    end)
+    f.saveOutfit:SetScript("OnLeave", GameTooltip_Hide)
     f.editOutfit:SetScript("OnClick", outfitEditButton_OnClick)
+    f.editOutfit:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip_AddNormalLine(GameTooltip, EDIT)
+        GameTooltip:Show()
+    end)
+    f.editOutfit:SetScript("OnLeave", GameTooltip_Hide)
     f.deleteOutfit:SetScript("OnClick", outfitDeleteButton_OnClick)
+    f.deleteOutfit:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip_AddNormalLine(GameTooltip, DELETE)
+        GameTooltip:Show()
+    end)
+    f.deleteOutfit:SetScript("OnLeave", GameTooltip_Hide)
 
     if i > 1 then
         _G["GwPaperDollOutfitsButton" .. i]:SetPoint("TOPLEFT", _G["GwPaperDollOutfitsButton" .. (i - 1)], "BOTTOMLEFT")
