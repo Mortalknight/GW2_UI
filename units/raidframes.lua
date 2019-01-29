@@ -545,13 +545,10 @@ local function updateBuffs(self)
     i, name = 0, true
     for mName,v in pairs(missing) do
         if v then
-            if spellBookIndex[mName] == nil then
-                spellBookIndex[mName] = false
-                while i < 1000 and name and mName ~= name do
-                    i, name = i + 1, GetSpellBookItemName(i + 1, BOOKTYPE_SPELL)
-                    if name and missing[name] ~= nil then
-                        spellBookIndex[name] = i
-                    end
+            while not spellBookIndex[mName] and i < 1000 and name do
+                i, name = i + 1, GetSpellBookItemName(i + 1, BOOKTYPE_SPELL)
+                if name and missing[name] ~= nil then
+                    spellBookIndex[name] = i
                 end
             end
 
