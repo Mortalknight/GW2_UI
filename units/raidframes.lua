@@ -395,8 +395,7 @@ end
 
 local function updateDebuffs(self)
     local widthLimit = self:GetWidth() / 2
-    local btnIndex = 1
-    local x, y, margin = 0, 0
+    local btnIndex, x, y, margin = 1, 0, 0, 0
     local filter = GetSetting("RAID_ONLY_DISPELL_DEBUFFS") and "RAID" or nil
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
@@ -491,8 +490,7 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
 end
 
 local function updateBuffs(self)
-    local btnIndex = 1
-    local x, y = 0, 0
+    local btnIndex, x, y = 1, 0, 0
     local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
