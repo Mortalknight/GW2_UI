@@ -1,6 +1,7 @@
 local _, GW = ...
 local gw_set_unit_flag = GW.UnitFlags
 local GetSetting = GW.GetSetting
+local SetSetting = GW.SetSetting
 local CountTable = GW.CountTable
 local SplitString = GW.SplitString
 local PowerBarColorCustom = GW.PowerBarColorCustom
@@ -367,32 +368,39 @@ local function onDebuffEnter(self)
     GameTooltip:Show()
 end
 
-local function showDebuffIcon(parent, i, btnIndex, x, y, icon, count, debuffType, duration, expires)
+local function onDebuffMouseUp(self, btn)
+    if btn == "RightButton" and IsShiftKeyDown() then
+        local name = UnitDebuff(self.unit, self.index, self.filter)
+        if name then
+            local s = GetSetting("AURAS_IGNORED") or ""
+            SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
+        end
+    end
+end
+
+local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
+    local size = 16
+    local marginX, marginY = x * (size + 2), y * (size + 2)
     local name = "Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex
     local frame = _G[name]
-    local created = not frame
 
-    if created then
+    if not frame then
         frame = CreateFrame("Button", name, parent, "GwDeBuffIcon")
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
-        frame:SetSize(16, 16)
+        frame:SetSize(size, size)
         frame.unit = parent.unit
-        
-        frame:EnableMouse(true)
-        frame:SetScript("OnEnter", onDebuffEnter)
-        frame:SetScript("OnLeave", GameTooltip_Hide)
-    end
-
-    local margin = frame:GetWidth() + 2
-    local marginy = frame:GetWidth() + 2
-    
-    if created then
         frame:ClearAllPoints()
-        frame:SetPoint("BOTTOMLEFT", parent.healthbar, "BOTTOMLEFT", 3 + (margin * x), 3 + (marginy * y))
+        frame:SetPoint("BOTTOMLEFT", parent.healthbar, "BOTTOMLEFT", marginX + 3, marginY + 3)
 
         _G[name .. "Icon"]:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
         _G[name .. "Icon"]:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
+        
+        frame:EnableMouse(true)
+        frame:RegisterForClicks("RightButtonUp")
+        frame:SetScript("OnEnter", onDebuffEnter)
+        frame:SetScript("OnLeave", GameTooltip_Hide)
+        frame:SetScript("OnMouseUp", onDebuffMouseUp)
     end
 
     if debuffType and DEBUFF_COLOR[debuffType] then
@@ -412,24 +420,23 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, icon, count, debuffType
     frame.duration = duration
     frame.cooldown:SetCooldown(0, 0)
     frame.index = i
+    frame.filter = filter
 
     _G[frame:GetName() .. "CooldownBuffDuration"]:SetText(expires and TimeCount(expires - GetTime()) or "")
     _G[frame:GetName() .. "IconBuffStacks"]:SetText((count or 1) > 1 and count or "")
 
     frame:Show()
 
-    btnIndex = btnIndex + 1
-    x = x + 1
-    if (margin * x) < (-(parent:GetWidth() / 2)) then
-        x, y = 0, y + 1
+    btnIndex, x, marginX = btnIndex + 1, x + 1, marginX + size + 2
+    if marginX > parent:GetWidth() / 2 then
+        x, y, marginX = 0, y + 1, 0
     end
 
-    return btnIndex, x, y, margin
+    return btnIndex, x, y, marginX
 end
 
 local function updateDebuffs(self)
-    local widthLimit = self:GetWidth() / 2
-    local btnIndex, x, y, margin = 1, 0, 0, 0
+    local btnIndex, x, y = 1, 0, 0
     local filter = GetSetting("RAID_ONLY_DISPELL_DEBUFFS") and "RAID" or nil
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
@@ -455,10 +462,10 @@ local function updateDebuffs(self)
             )
 
             if shouldDisplay then
-                btnIndex, x, y, margin = showDebuffIcon(self, i, btnIndex, x, y, icon, count, debuffType, duration, expires)
+                btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
             end
 
-            aurasDone = not debuffName or margin * x > widthLimit
+            aurasDone = not debuffName or y > 0
         end
     until framesDone and aurasDone
 end
@@ -475,33 +482,48 @@ local function onBuffEnter(self)
     GameTooltip:Show()
 end
 
+local function onBuffMouseUp(self, btn)
+    if btn == "RightButton" and IsShiftKeyDown() then
+        if self.isMissing then
+            local name = GetSpellBookItemName(self.index, BOOKTYPE_SPELL)
+            if name then
+                local s = (GetSetting("AURAS_MISSING") or ""):gsub("%s*,?%s*" .. name .. "%s*,?%s*", ", "):trim(", ")
+                SetSetting("AURAS_MISSING", s)
+            end
+        else
+            local name =  UnitBuff(self.unit, self.index)
+            if name then
+                local s = GetSetting("AURAS_IGNORED") or ""
+                SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
+            end
+        end
+    end
+end
+
 local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
+    local size = 14
+    local marginX, marginY = x * (size + 2), y * (size + 2)
     local name = "Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex
     local frame = _G[name]
-    local created = not frame
 
-    if created then
+    if not frame then
         frame = CreateFrame("Button", name, parent, "GwBuffIconBig")
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
         frame:SetSize(14, 14)
-
-        frame:EnableMouse(true)
-        frame:SetScript("OnEnter", onBuffEnter)
-        frame:SetScript("OnLeave", GameTooltip_Hide)
+        frame:ClearAllPoints()
+        frame:SetPoint("BOTTOMRIGHT", parent.healthbar, "BOTTOMRIGHT", -(marginX + 3), marginY + 3)
 
         _G[name .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
         _G[name .. "BuffDuration"]:SetTextColor(1, 1, 1)
         _G[name .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
         _G[name .. "BuffStacks"]:SetTextColor(1, 1, 1)
-    end
-    
-    local margin = -frame:GetWidth() + -2
-    local marginy = frame:GetWidth() + 2
 
-    if created then
-        frame:ClearAllPoints()
-        frame:SetPoint("BOTTOMRIGHT", parent.healthbar, "BOTTOMRIGHT", -3 + (margin * x), 3 + (marginy * y))
+        frame:EnableMouse(true)
+        frame:RegisterForClicks("RightButtonUp")
+        frame:SetScript("OnEnter", onBuffEnter)
+        frame:SetScript("OnLeave", GameTooltip_Hide)
+        frame:SetScript("OnMouseUp", onBuffMouseUp)
     end
 
     frame.index = i
@@ -514,13 +536,12 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
 
     frame:Show()
 
-    btnIndex = btnIndex + 1
-    x = x + 1
-    if (margin * x) < (-(parent:GetWidth() / 2)) then
+    btnIndex, x, marginX = btnIndex + 1, x + 1, marginX + size + 2
+    if marginX > parent:GetWidth() / 2 then
         x, y = 0, y + 1
     end
 
-    return btnIndex, x, y, margin
+    return btnIndex, x, y
 end
 
 local function updateBuffs(self)
