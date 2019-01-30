@@ -570,7 +570,7 @@ GW.AddForProfiling("playerhud", "selectPvp", selectPvp)
 
 local function globe_OnEvent(self, event, ...)
     if
-        event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "PLAYER_ENTERING_WORLD" or
+        event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" or event == "PLAYER_ENTERING_WORLD" or
             event == "UNIT_ABSORB_AMOUNT_CHANGED"
      then
         updateHealthData(self)
@@ -707,6 +707,7 @@ local function LoadPlayerHud()
     playerHealthGLobaBg:RegisterEvent("PLAYER_FLAGS_CHANGED")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEALTH", "player")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_FACTION", "player")
 
