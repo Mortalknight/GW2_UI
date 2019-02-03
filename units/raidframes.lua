@@ -633,7 +633,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setHealth(self)
     end
 
-    if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" and unit == self.unit then
+    if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         setHealth(self)
     end
 
@@ -1076,6 +1076,7 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
 
     frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)

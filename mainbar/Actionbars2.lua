@@ -694,6 +694,7 @@ local function setStanceBar()
     GwStanceBarButton:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     GwStanceBarButton:RegisterEvent("UNIT_POWER_FREQUENT")
     GwStanceBarButton:RegisterEvent("UNIT_HEALTH")
+    GwStanceBarButton:RegisterEvent("UNIT_HEALTH_FREQUENT")
     GwStanceBarButton:SetScript("OnEvent", stance_OnEvent)
 
     if GetNumShapeshiftForms() < 1 then

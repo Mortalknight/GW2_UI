@@ -1817,7 +1817,7 @@ local function hud_OnEvent(self, event, ...)
         end
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         selectBg()
-    elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
+    elseif event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" then
         local unit = ...
         if unit == "player" then
             combatHealthState()
@@ -1843,6 +1843,7 @@ local function LoadHudArt()
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     hudArtFrame:RegisterEvent("UNIT_HEALTH")
+    hudArtFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
     hudArtFrame:RegisterEvent("UNIT_MAXHEALTH")
     selectBg()
     combatHealthState()

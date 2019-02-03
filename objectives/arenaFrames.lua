@@ -166,7 +166,7 @@ local function arenaFrame_OnEvent(self, event, unit)
         return
     end
 
-    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH") then
+    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT") then
         updateArena_Health(self)
         return
     end
@@ -258,6 +258,7 @@ local function registerFrame(i)
 
     targetF:RegisterUnitEvent("UNIT_MAXHEALTH", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_HEALTH", targetF.unit)
+    targetF:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_MAXPOWER", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_POWER_FREQUENT", targetF.unit)
     targetF:RegisterUnitEvent("UNIT_NAME_UPDATE", targetF.unit)
