@@ -1,5 +1,8 @@
 5.0.17
 
+NEW
+    - Added option to show healthvalues on raidframes
+
 FIXES
     - Improved performance of displaying raid auras (~10x) to prevent stuttering in large raids
     - Re-enabled updating raid frames when the party/raid changes during combat

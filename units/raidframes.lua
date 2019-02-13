@@ -19,6 +19,8 @@ local AddToClique = GW.AddToClique
 local FillTable = GW.FillTable
 local IsIn = GW.IsIn
 local TimeCount = GW.TimeCount
+local CommaValue = GW.CommaValue
+local RoundDec = GW.RoundDec
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
@@ -135,6 +137,30 @@ local function setHealPrediction(self,predictionPrecentage)
 end
 GW.AddForProfiling("raidframes", "setHealPrediction", setHealPrediction)
 
+local function setHealthValue(self, healthCur, healthMax, healthPrec)
+    local healthsetting = GetSetting("RAID_UNIT_HEALTH")
+    local healthstring = ""
+
+    if healthsetting == "NONE" then
+        self.healthstring:Hide()
+        return
+    end
+
+    if healthsetting == "PREC" then
+        self.healthstring:SetText(RoundDec(healthPrec *100,0).. "%")
+        self.healthstring:SetJustifyH("LEFT")
+    elseif healthsetting == "HEALTH" then
+        self.healthstring:SetText(CommaValue(healthCur))
+        self.healthstring:SetJustifyH("LEFT")
+    elseif healthsetting == "LOSTHEALTH" then
+        if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
+        self.healthstring:SetText(healthstring)
+        self.healthstring:SetJustifyH("RIGHT")
+    end
+    self.healthstring:Show()
+end
+GW.AddForProfiling("raidframes", "setHealthValue", setHealthValue)
+
 local function setHealth(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
@@ -147,6 +173,7 @@ local function setHealth(self)
         predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
     end
     setHealPrediction(self,predictionPrecentage)
+    setHealthValue(self, health, healthMax, healthPrec)
     Bar(self.healthbar, healthPrec)
 end
 GW.AddForProfiling("raidframes", "setHealth", setHealth)
@@ -1009,6 +1036,7 @@ local function createRaidFrame(registerUnit, index)
     if _G["GwCompact" .. registerUnit] == nil then
         frame = CreateFrame("Button", "GwCompact" .. registerUnit, GwRaidFrameContainer, "GwRaidFrame")
         frame.name = _G[frame:GetName() .. "Data"].name
+        frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
         frame.healthbar = frame.predictionbar.healthbar;
         frame.aggroborder = frame.healthbar.absorbbar.aggroborder
@@ -1017,6 +1045,10 @@ local function createRaidFrame(registerUnit, index)
         frame.name:SetFont(UNIT_NAME_FONT, 12)
         frame.name:SetShadowOffset(-1, -1)
         frame.name:SetShadowColor(0, 0, 0, 1)
+
+        frame.healthstring:SetFont(UNIT_NAME_FONT, 11)
+        frame.healthstring:SetShadowOffset(-1, -1)
+        frame.healthstring:SetShadowColor(0, 0, 0, 1)
 
         hooksecurefunc(
             frame.healthbar,

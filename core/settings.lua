@@ -779,6 +779,13 @@ local function LoadSettings()
     GwSettingsGroupframeSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsGroupframeSub:SetText(GwLocalization["GROUP_DESC"])
 
+    GwSettingsGroupframe2Header:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsGroupframe2Header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsGroupframe2Header:SetText(CHAT_MSG_PARTY)
+    GwSettingsGroupframe2Sub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsGroupframe2Sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsGroupframe2Sub:SetText(GwLocalization["GROUP_DESC"])
+
     GwSettingsAurasOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsAurasOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     GwSettingsAurasOptionsHeader:SetText(AURAS)
@@ -1237,6 +1244,19 @@ local function LoadSettings()
         {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
     )
 
+    addOptionDropdown(    
+        COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+        nil,
+        "RAID_UNIT_HEALTH",
+        "GwSettingsGroupframe",
+        function()
+        end,
+        {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
+        {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}
+    )
+
+    createCat(CHAT_MSG_PARTY, GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe2", 4)
+
     local dirs, grow = {"DOWN", "UP", "RIGHT", "LEFT"}, {}
     for i in pairs(dirs) do
         local k = i <= 2 and 3 or 1
@@ -1245,11 +1265,11 @@ local function LoadSettings()
         end
     end
 
-    addOptionDropdown(
+        addOptionDropdown(
         GwLocalization["RAID_GROW"],
         GwLocalization["RAID_GROW"],
         "RAID_GROW",
-        "GwSettingsGroupframe",
+        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesAnchor()
@@ -1275,7 +1295,7 @@ local function LoadSettings()
         GwLocalization["RAID_ANCHOR"],
         GwLocalization["RAID_ANCHOR_DESC"],
         "RAID_ANCHOR",
-        "GwSettingsGroupframe",
+        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesAnchor()
@@ -1291,7 +1311,7 @@ local function LoadSettings()
         GwLocalization["RAID_UNITS_PER_COLUMN"],
         GwLocalization["RAID_UNITS_PER_COLUMN_DESC"],
         "RAID_UNITS_PER_COLUMN",
-        "GwSettingsGroupframe",
+        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -1306,7 +1326,7 @@ local function LoadSettings()
         GwLocalization["RAID_BAR_WIDTH"],
         GwLocalization["RAID_BAR_WIDTH_DESC"],
         "RAID_WIDTH",
-        "GwSettingsGroupframe",
+        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -1321,7 +1341,7 @@ local function LoadSettings()
         GwLocalization["RAID_BAR_HEIGHT"],
         GwLocalization["RAID_BAR_HEIGHT_DESC"],
         "RAID_HEIGHT",
-        "GwSettingsGroupframe",
+        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -1336,7 +1356,7 @@ local function LoadSettings()
         GwLocalization["RAID_CONT_WIDTH"],
         GwLocalization["RAID_CONT_WIDTH_DESC"],
         "RAID_CONT_WIDTH",
-        "GwSettingsGroupframe",
+        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -1351,7 +1371,7 @@ local function LoadSettings()
         GwLocalization["RAID_CONT_HEIGHT"],
         GwLocalization["RAID_CONT_HEIGHT_DESC"],
         "RAID_CONT_HEIGHT",
-        "GwSettingsGroupframe",
+        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
