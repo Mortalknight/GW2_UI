@@ -343,6 +343,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -358,6 +369,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.head" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -374,6 +396,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.shoulder" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -389,6 +422,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.wrists" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -405,6 +449,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.hands" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -420,6 +475,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.chest" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -435,6 +501,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.waist" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -450,6 +527,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.legs" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -465,6 +553,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.feet" relativePoint="BOTTOMLEFT" x="0" y="-20"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -480,6 +579,17 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.weapon" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -497,6 +607,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeTo="GwPaperDollStats" relativePoint="BOTTOMRIGHT" x="-5" y="-20"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -513,6 +634,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -529,6 +661,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -545,6 +688,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -561,6 +715,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -577,6 +742,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -593,6 +769,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>
@@ -609,6 +796,17 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.neck" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
                         </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="100" y="10"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
                                 <Size x="16" y="16"></Size>

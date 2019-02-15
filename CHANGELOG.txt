@@ -2,6 +2,7 @@
 
 NEW
     - Added option to show healthvalues on raidframes
+    - Added itemlevel to Hero window
 
 FIXES
     - Improved performance of displaying raid auras (~10x) to prevent stuttering in large raids

@@ -82,6 +82,25 @@ local function setItemButtonQuality(button, quality, itemIDOrLink)
 end
 GW.AddForProfiling("paperdoll_equipment", "setItemButtonQuality", setItemButtonQuality)
 
+local function setItemLevel(button, quality, itemLink)
+    button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+    if quality then
+        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+            button.itemlevel:SetTextColor(
+                BAG_ITEM_QUALITY_COLORS[quality].r,
+                BAG_ITEM_QUALITY_COLORS[quality].g,
+                BAG_ITEM_QUALITY_COLORS[quality].b,
+                1
+            )
+        end
+        local lvl = select(4, GetItemInfo(itemLink))
+        button.itemlevel:SetText(lvl)
+    else
+        button.itemlevel:SetText("")
+    end
+end
+GW.AddForProfiling("paperdoll_equipment", "setItemLevel", setItemLevel)
+
 local function updateBagItemButton(button)
     local location = button.location
     if (not location) then
@@ -363,6 +382,7 @@ local function updateItemSlot(self)
 
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
+    setItemLevel(self, quality, GetInventoryItemLink("player", slot))
 
     if self.HasPaperDollAzeriteItemOverlay then
         self:SetAzeriteItem(self.hasItem and ItemLocation:CreateFromEquipmentSlot(slot) or nil)
