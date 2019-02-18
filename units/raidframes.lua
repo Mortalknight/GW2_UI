@@ -157,6 +157,11 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
         self.healthstring:SetText(healthstring)
         self.healthstring:SetJustifyH("RIGHT")
     end
+    if healthCur == 0 then 
+        self.healthstring:SetTextColor(255, 0, 0)
+    else
+        self.healthstring:SetTextColor(1, 1, 1)
+    end
     self.healthstring:Show()
 end
 GW.AddForProfiling("raidframes", "setHealthValue", setHealthValue)
@@ -273,6 +278,7 @@ local function updateAwayData(self)
     local iconState = 1
 
     localizedClass, englishClass, classIndex = UnitClass(self.unit)
+    self.name:SetTextColor(1, 1, 1)
 
     if classIndex ~= nil and classIndex ~= 0 and classColor == false and GW_READY_CHECK_INPROGRESS == false then
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
@@ -312,6 +318,7 @@ local function updateAwayData(self)
             self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
         end
         SetDeadIcon(self.classicon)
+        self.name:SetTextColor(255, 0, 0)
         self.classicon:Show()
     end
 
