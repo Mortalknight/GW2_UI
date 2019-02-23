@@ -93,7 +93,7 @@ local function setItemLevel(button, quality, itemLink)
                 1
             )
         end
-        local lvl = select(4, GetItemInfo(itemLink))
+        local lvl = GW.GetRealItemLevel(itemLink)
         button.itemlevel:SetText(lvl)
     else
         button.itemlevel:SetText("")
