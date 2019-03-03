@@ -439,7 +439,11 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
         end
         local h = 20
         if objectiveBlock.StatusBar:IsShown() then
-            h = 40
+            if block.numObjectives >= 1 then
+                h = 50
+            else
+                h = 40
+            end
         end
         block.height = block.height + h
         block.numObjectives = block.numObjectives + 1

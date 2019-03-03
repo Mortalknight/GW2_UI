@@ -1597,8 +1597,8 @@ displayRewards = function()
     for k, v in pairs(GW_LEVELING_REWARDS) do
         if v["level"] > UnitLevel("player") then
             
-            if _G["GwLevelingRewardsItem" .. i].mask~=nil then
-                _G["GwLevelingRewardsItem" .. i].icon:AddMaskTexture(nil)
+            if _G["GwLevelingRewardsItem" .. i].mask ~= nil then
+                _G["GwLevelingRewardsItem" .. i].icon:RemoveMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
             end
             
             _G["GwLevelingRewardsItem" .. i]:Show()
@@ -1611,38 +1611,28 @@ displayRewards = function()
                 _G["GwLevelingRewardsItem" .. i].icon:SetTexture(icon)
                 _G["GwLevelingRewardsItem" .. i].name:SetText(name)
                 _G["GwLevelingRewardsItem" .. i]:SetScript(
-                    "OnEnter",
-                    function()
+                    "OnEnter", function()
                         GameTooltip:SetOwner(GwLevelingRewards, "ANCHOR_CURSOR", 0, 0)
                         GameTooltip:ClearLines()
                         GameTooltip:SetSpellByID(v["id"])
                         GameTooltip:Show()
-                    end
-                )
+                    end)
                 if IsPassiveSpell(v["id"]) then
                     if not _G["GwLevelingRewardsItem" .. i].mask then
-                    local mask = UIParent:CreateMaskTexture()
-                    mask:SetPoint("CENTER", _G["GwLevelingRewardsItem" .. i].icon, "CENTER", 0, 0)
-                    mask:SetTexture(
-                        "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
-                        "CLAMPTOBLACKADDITIVE",
-                        "CLAMPTOBLACKADDITIVE"
-                        )
-                    mask:SetSize(40, 40)
-                    _G["GwLevelingRewardsItem" .. i].mask = mask
-                    _G["GwLevelingRewardsItem" .. i].icon:AddMaskTexture(mask)
-                    else
-                        _G["GwLevelingRewardsItem" .. i].icon:AddMaskTexture(mask)
+                        local mask = UIParent:CreateMaskTexture()
+                        mask:SetPoint("CENTER", _G["GwLevelingRewardsItem" .. i].icon, "CENTER", 0, 0)
+                        mask:SetTexture(
+                            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+                            "CLAMPTOBLACKADDITIVE",
+                            "CLAMPTOBLACKADDITIVE"
+                            )
+                        mask:SetSize(40, 40)
+                        _G["GwLevelingRewardsItem" .. i].mask = mask
                     end
-                else
-                    if _G["GwLevelingRewardsItem" .. i].mask~=nil then
-                        _G["GwLevelingRewardsItem" .. i].icon:AddMaskTexture(nil)
-                    end
-                end
-                
+                    _G["GwLevelingRewardsItem" .. i].icon:AddMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
+                end    
                 _G["GwLevelingRewardsItem" .. i]:SetScript("OnLeave", GameTooltip_Hide)
-            end
-            if v["type"] == "TALENT" then
+            elseif v["type"] == "TALENT" then
                 _G["GwLevelingRewardsItem" .. i].icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talent-icon")
                 _G["GwLevelingRewardsItem" .. i].name:SetText(BONUS_TALENTS)
                 _G["GwLevelingRewardsItem" .. i]:SetScript(
