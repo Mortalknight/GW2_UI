@@ -618,6 +618,30 @@ local function updatePartyAuras(self, unit)
 end
 GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
+local function setUnitName(self)
+    local nameRoleIcon = {}
+    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:16:16:0:0|t "
+    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:16:16:0:0|t "
+    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
+    nameRoleIcon["NONE"] = ""
+
+    local role = UnitGroupRolesAssigned(self.unit)
+    local nameString = UnitName(self.unit)
+
+    if not nameString or nameString == UNKNOWNOBJECT then
+        self.nameNotLoaded = false
+    else
+        self.nameNotLoaded = true
+    end
+
+    if nameRoleIcon[role] ~= nil then
+        nameString = nameRoleIcon[role] .. nameString
+    end
+    
+    self.name:SetText(nameString)
+end
+GW.AddForProfiling("party", "setUnitName", setUnitName)
+
 local function updatePartyData(self)
     if not UnitExists(self.unit) then
         return
@@ -644,20 +668,7 @@ local function updatePartyData(self)
     self.powerbar:SetValue(powerPrecentage)
 
     updateAwayData(self)
-
-    local nameRoleIcon = {}
-    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:16:16:0:0|t "
-    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:16:16:0:0|t "
-    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
-    nameRoleIcon["NONE"] = ""
-
-    local role = UnitGroupRolesAssigned(self.unit)
-    local nameString = UnitName(self.unit)
-    if nameRoleIcon[role] ~= nil then
-        nameString = nameRoleIcon[role] .. nameString
-    end
-
-    self.name:SetText(nameString)
+    setUnitName(self)
 
     self.level:SetText(UnitLevel(self.unit))
 
@@ -677,6 +688,11 @@ local function party_OnEvent(self, event, unit, arg1)
     if IsInRaid() then
         return
     end
+
+    if not self.nameNotLoaded then
+        setUnitName(self)
+    end
+
     if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         local health = UnitHealth(self.unit)
         local healthMax = UnitHealthMax(self.unit)
@@ -701,7 +717,9 @@ local function party_OnEvent(self, event, unit, arg1)
     if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
         updateAwayData(self)
     end
-
+    if event == "UNIT_NAME_UPDATE" and unit == self.unit then
+        setUnitName(self)
+    end
     if event == "UNIT_AURA" and unit == self.unit then
         updatePartyAuras(self, self.unit)
     end
@@ -779,6 +797,7 @@ local function createPartyFrame(i)
 
     frame.unit = registerUnit
     frame.ready = -1
+    frame.nameNotLoaded = false
 
     frame:SetAttribute("unit", registerUnit)
     frame:SetAttribute("*type1", "target")
@@ -825,6 +844,7 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
+    frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
 
     updatePartyData(frame)
 end
