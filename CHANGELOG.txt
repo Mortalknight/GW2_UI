@@ -1,3 +1,11 @@
+5.0.18
+
+FIXES
+    - This is a bandaid fix for the ItemButton API change; for now items have unsightly ilvl
+      borders and the equipment selection tool doesn't show icons properly until a more
+      in-depth fix is available
+
+
 5.0.17
 
 NEW
