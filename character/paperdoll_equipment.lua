@@ -110,7 +110,7 @@ local function updateBagItemButton(button)
         EquipmentManager_GetItemInfoByLocation(location)
     button.ItemId = id
     local broken = (maxDurability and durability == 0)
-    --[[
+    
     if (textureName) then
         SetItemButtonTexture(button, textureName)
         SetItemButtonCount(button, count)
@@ -138,7 +138,7 @@ local function updateBagItemButton(button)
 
         --setItemButtonQuality(button, quality, id)
     end
-    --]]
+    
 end
 GW.AddForProfiling("paperdoll_equipment", "updateBagItemButton", updateBagItemButton)
 
@@ -191,15 +191,15 @@ end
 GW.AddForProfiling("paperdoll_equipment", "updateBagItemList", updateBagItemList)
 
 local function actionButtonGlobalStyle(self)
-    --self.IconBorder:SetSize(self:GetSize(), self:GetSize())
-    --_G[self:GetName() .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    --_G[self:GetName() .. "NormalTexture"]:SetSize(self:GetSize(), self:GetSize())
-    --_G[self:GetName() .. "NormalTexture"]:Hide()
-    --self.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+    self.IconBorder:SetSize(self:GetSize(), self:GetSize())
+    _G[self:GetName() .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    _G[self:GetName() .. "NormalTexture"]:SetSize(self:GetSize(), self:GetSize())
+    _G[self:GetName() .. "NormalTexture"]:Hide()
+    self.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
 
-    --_G[self:GetName() .. "NormalTexture"]:SetTexture(nil)
-    --_G[self:GetName()]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
-    --_G[self:GetName()]:SetHighlightTexture(nil)
+    _G[self:GetName() .. "NormalTexture"]:SetTexture(nil)
+    _G[self:GetName()]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
+    _G[self:GetName()]:SetHighlightTexture(nil)
 end
 GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButtonGlobalStyle)
 
@@ -489,7 +489,7 @@ getBagSlotFrame = function(i)
         return _G["gwPaperDollBagSlotButton" .. i]
     end
 
-    local f = CreateFrame("Button", "gwPaperDollBagSlotButton" .. i, GwPaperDollBagItemList, "GwPaperDollBagItem")
+    local f = CreateFrame("ItemButton", "gwPaperDollBagSlotButton" .. i, GwPaperDollBagItemList, "GwPaperDollBagItem")
     --f:SetScript("OnShow", itemSlot_OnShow)
     --f:SetScript("OnHide", itemSlot_OnHide)
     f:SetScript("OnEvent", itemSlot_OnEvent)
