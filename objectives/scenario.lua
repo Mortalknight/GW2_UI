@@ -109,7 +109,9 @@ local function updateCurrentScenario()
     GwScenarioBlock.numObjectives = 0
     GwScenarioBlock:Show()
 
-    local _, _, numStages, _ = C_Scenario.GetInfo()
+    local _, _, numStages, _, _, _, _, _, _, scenarioType = C_Scenario.GetInfo()
+    local inWarfront = (scenarioType == LE_SCENARIO_TYPE_WARFRONT)
+
     if (numStages == 0) then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
@@ -185,6 +187,29 @@ local function updateCurrentScenario()
             criteriaIndex,
             objectiveType,
             quantity
+        )
+    end
+
+    if inWarfront then 
+        local iname, iqty, iicon = GetCurrencyInfo(1541)  --iron
+        local wname, wqty, wicon = GetCurrencyInfo(1540)  -- wood
+        --Wood
+        addObjectiveBlock(
+            GwScenarioBlock,
+            ParseCriteria(wqty, 100, wname),
+            false,
+            numCriteria + 1,
+            "progressbar",
+            wqty
+        )
+        --Iron
+        addObjectiveBlock(
+            GwScenarioBlock,
+            ParseCriteria(iqty, 200, iname),
+            false,
+            numCriteria + 2,
+            "progressbar2",
+            iqty
         )
     end
 
@@ -435,6 +460,8 @@ local function LoadScenarioFrame()
 
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_UPDATE")
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
+    GwQuesttrackerContainerScenario:RegisterEvent("LOOT_CLOSED")
+    GwQuesttrackerContainerScenario:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 
     GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED_INDOORS")
     GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED_NEW_AREA")
