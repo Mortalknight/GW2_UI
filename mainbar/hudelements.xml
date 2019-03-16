@@ -1257,7 +1257,7 @@
                             </Anchors>
                         </FontString>
                         <FontString parentKey="level" text="110 " justifyH="RIGHT">
-                            <Size x="60" y="50"></Size>
+                            <Size x="70" y="50"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
                             </Anchors>
@@ -1292,7 +1292,7 @@
                             </Anchors>
                         </FontString>
                         <FontString parentKey="level" text="110 " justifyH="RIGHT">
-                            <Size x="60" y="50"></Size>
+                            <Size x="70" y="50"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
                             </Anchors>
@@ -1327,7 +1327,7 @@
                             </Anchors>
                         </FontString>
                         <FontString parentKey="level" text="110 " justifyH="RIGHT">
-                            <Size x="60" y="50"></Size>
+                            <Size x="70" y="50"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
                             </Anchors>
@@ -1362,7 +1362,7 @@
                             </Anchors>
                         </FontString>
                         <FontString parentKey="level" text="110 " justifyH="RIGHT">
-                            <Size x="60" y="50"></Size>
+                            <Size x="70" y="50"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
                             </Anchors>
