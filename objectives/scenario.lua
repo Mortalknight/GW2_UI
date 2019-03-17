@@ -191,12 +191,12 @@ local function updateCurrentScenario()
     end
 
     if inWarfront then 
-        local iname, iqty, iicon = GetCurrencyInfo(1541)  --iron
-        local wname, wqty, wicon = GetCurrencyInfo(1540)  -- wood
+        local wname, wqty, _, _, _, wmax = GetCurrencyInfo(1540)  --Wood
+        local iname, iqty, _, _, _, imax = GetCurrencyInfo(1541)  --Iron
         --Wood
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(wqty, 100, wname),
+            ParseCriteria(wqty, wmax, wname),
             false,
             numCriteria + 1,
             "progressbar",
@@ -205,11 +205,11 @@ local function updateCurrentScenario()
         --Iron
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(iqty, 200, iname),
+            ParseCriteria(iqty, imax, iname),
             false,
             numCriteria + 2,
-            "progressbar2",
-            iqty
+            "progressbar",
+            iqty / imax * 100
         )
     end
 

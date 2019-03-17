@@ -165,12 +165,6 @@ local function ParseObjectiveString(block, text, objectiveType, quantity)
         block.StatusBar:Show()
         block.StatusBar.precentage = true
         return true
-    elseif objectiveType == "progressbar2" then
-        block.StatusBar:SetMinMaxValues(0, 200)
-        block.StatusBar:SetValue(quantity)
-        block.StatusBar:Show()
-        block.StatusBar.precentage = true
-        return true
     end
     block.StatusBar.precentage = false
     local _, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
