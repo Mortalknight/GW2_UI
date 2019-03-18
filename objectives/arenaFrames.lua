@@ -113,7 +113,14 @@ local function updateArena_Name(self, inBG, inArena)
     local guidTarget = UnitGUID("target")
     local specID = GetArenaOpponentSpec(self.id)
     local specName = ""
-    local nameString = UNKNOWEN
+    local nameString = UNKNOWNOBJECT
+    local name
+
+    if UnitName(self.unit) ~= nil then 
+        name = UnitName(self.unit)
+    else 
+        name = UNKNOWNOBJECT
+    end
 
     if inArena then
         if specID == nil then
@@ -122,7 +129,7 @@ local function updateArena_Name(self, inBG, inArena)
             if specID and specID > 0 then
                 local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
                 if nameRoleIcon[role] ~= nil then
-                    nameString = nameRoleIcon[role] .. UnitName(self.unit) .. " - " .. specName
+                    nameString = nameRoleIcon[role] .. name .. " - " .. specName
                 end
             end
         end
@@ -132,7 +139,7 @@ local function updateArena_Name(self, inBG, inArena)
         if role == nil or englishFaction == nil or localizedFaction == nil then 
             return
         else
-            nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. UnitName(self.unit)
+            nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name
         end
     else
         return

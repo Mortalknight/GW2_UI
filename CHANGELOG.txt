@@ -1,3 +1,9 @@
+5.0.21
+
+FIXES
+    - Fix lua error in arena
+
+
 5.0.20
 
 NEW
