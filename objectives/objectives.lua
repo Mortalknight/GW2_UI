@@ -495,10 +495,15 @@ local function UpdateQuestItem(button, questLogIndex)
 end
 GW.UpdateQuestItem = UpdateQuestItem
 
-local function OnBlockClick(self, button)
+local function OnBlockClick(self, button, isHeader)
     if (ChatEdit_TryInsertQuestLinkForQuestID(self.questID)) then
 		return
-	end
+    end
+    
+    if isHeader then
+        SetSuperTrackedQuestID(self.questID)
+        return
+    end
 
     if (button ~= "RightButton") then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -506,16 +511,16 @@ local function OnBlockClick(self, button)
 			QuestObjectiveTracker_UntrackQuest(nil, self.questID)
 		else
 			QuestMapFrame_OpenToQuestDetails(self.questID)
-		end
+        end
 	end
 end
 GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
 
 local function OnBlockClickHandler(self, button)
     if self.questID == nil then 
-        OnBlockClick(self:GetParent(), button)
+        OnBlockClick(self:GetParent(), button, true)
     else
-        OnBlockClick(self, button)
+        OnBlockClick(self, button, false)
     end
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
