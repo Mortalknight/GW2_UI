@@ -1,3 +1,9 @@
+5.0.22
+
+NEW
+    - Added ignoring raid auras by shift+right clicking on them
+    - Added a tooltip showing money of characters on the same faction+realm to the bag money text
+
 5.0.21
 
 FIXES
