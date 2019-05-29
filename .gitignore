@@ -42,3 +42,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.psd
+
+# =========================
+# Editor Files
+# =========================
+
+.vscode
