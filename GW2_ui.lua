@@ -587,6 +587,7 @@ local function gw_OnEvent(self, event, ...)
             loaded = true
             loadAddon(self)
         end
+        GW.LoadStorage()
     elseif event == "PLAYER_LEAVING_WORLD" then
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then

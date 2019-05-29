@@ -6,7 +6,7 @@
 ## Author: deadend06
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
-## SavedVariables: GW2UI_SETTINGS_PROFILES
+## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
 core/consts.lua
 core/utils.lua
@@ -21,6 +21,7 @@ core/flags.lua
 core/fonts.lua
 core/settings.lua
 core/hover_binding.lua
+core/storage.lua
 
 units/target.xml
 units/target.lua

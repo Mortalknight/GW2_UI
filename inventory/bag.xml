@@ -170,6 +170,17 @@
                 </Anchors>
                 <NormalTexture file="Interface\AddOns\GW2_UI\textures\currency-icon"></NormalTexture>
             </Button>
+            <Button name="GwMoneyFrame" registerForClicks="RightButtonUp">
+                <Size x="180" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="0" y="-40"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
 
             <Frame name="GwBagFrameResize" frameStrata="HIGH" frameLevel="50" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
@@ -273,7 +284,6 @@
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-
             <Button parentKey="buttonClose" text="">
                 <Size x="20" y="20" />
                 <Anchors>
@@ -286,6 +296,7 @@
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
+
             <Frame name="GwBagContainer0">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
