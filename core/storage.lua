@@ -18,15 +18,13 @@ local SetStorage = function (...)
 
     local s, n = storage, select("#", ...)
 
-    for i=1, n-1 do
+    for i=1, n-2 do
         local k = select(i, ...)
-        if i == n-1 then
-            s[k] = select(n, ...)
-        else
-            s[k] = s[k] or {}
-            s = s[k]
-        end
+        s[k] = s[k] or {}
+        s = s[k]
     end
+
+    s[select(n-1, ...)] = select(n, ...)
 end
 GW.SetStorage = SetStorage
 
@@ -38,13 +36,10 @@ local GetStorage = function (...)
     local s, n = storage, select("#", ...)
 
     for i=1, n do
-        local k = select(i, ...)
-        if i == n or s[k] == nil then
-            return s[k]
-        else
-            s = s[k]
-        end
+        if s ~= nil then s = s[select(i, ...)] end
     end
+
+    return s
 end
 GW.GetStorage = GetStorage
 
@@ -52,8 +47,6 @@ GW.GetStorage = GetStorage
 local GetRealmStorage = function (...)
     local faction = UnitFactionGroup("player")
     local _, realm = UnitFullName("player")
-
-    SetStorage(faction, realm, GetStorage(faction, realm) or {})
 
     return GetStorage(faction, realm, ...)
 end
@@ -69,10 +62,15 @@ end
 GW.SetRealmStorage = SetRealmStorage
 
 -- Clear the whole storage or just a part of it
-local ClearStorage = function (s, k)
+local ClearStorage = function (...)
     if not storage then return end
 
-    s = s or storage
+    local n, s, k = select("#", ...), ...
+    if n > 0 and s == nil then
+        return
+    elseif type(s) ~= "table" then
+        s, k = storage, s
+    end
 
     if k then
         if type(s[k]) == "table" then
