@@ -1,7 +1,7 @@
 5.0.22
 
 NEW
-    - Added ignoring raid auras by shift+right clicking on them
+    - Added raid aura tooltips and ignoring auras by shift+right clicking on them while not in combat
     - Added a tooltip showing money of characters on the same faction+realm to the bag money text
 
 5.0.21

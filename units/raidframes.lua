@@ -364,13 +364,13 @@ GW.AddForProfiling("raidframes", "updateAwayData", updateAwayData)
 local function onDebuffEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
     GameTooltip:ClearLines()
-    GameTooltip:SetUnitDebuff(self.unit, self.index, self.filter)
+    GameTooltip:SetUnitDebuff(self:GetParent().unit, self.index, self.filter)
     GameTooltip:Show()
 end
 
 local function onDebuffMouseUp(self, btn)
     if btn == "RightButton" and IsShiftKeyDown() then
-        local name = UnitDebuff(self.unit, self.index, self.filter)
+        local name = UnitDebuff(self:GetParent().unit, self.index, self.filter)
         if name then
             local s = GetSetting("AURAS_IGNORED") or ""
             SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
@@ -389,18 +389,17 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
         frame:SetSize(size, size)
-        frame.unit = parent.unit
         frame:ClearAllPoints()
         frame:SetPoint("BOTTOMLEFT", parent.healthbar, "BOTTOMLEFT", marginX + 3, marginY + 3)
 
         _G[name .. "Icon"]:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
         _G[name .. "Icon"]:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
         
-        frame:EnableMouse(true)
-        frame:RegisterForClicks("RightButtonUp")
         frame:SetScript("OnEnter", onDebuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
         frame:SetScript("OnMouseUp", onDebuffMouseUp)
+        frame:EnableMouse(not InCombatLockdown())
+        frame:RegisterForClicks("RightButtonUp")
     end
 
     if debuffType and DEBUFF_COLOR[debuffType] then
@@ -491,7 +490,8 @@ local function onBuffMouseUp(self, btn)
                 SetSetting("AURAS_MISSING", s)
             end
         else
-            local name =  UnitBuff(self.unit, self.index)
+            print(self:GetParent().unit, self.index)
+            local name =  UnitBuff(self:GetParent().unit, self.index)
             if name then
                 local s = GetSetting("AURAS_IGNORED") or ""
                 SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
@@ -519,11 +519,11 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
         _G[name .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
         _G[name .. "BuffStacks"]:SetTextColor(1, 1, 1)
 
-        frame:EnableMouse(true)
-        frame:RegisterForClicks("RightButtonUp")
         frame:SetScript("OnEnter", onBuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
         frame:SetScript("OnMouseUp", onBuffMouseUp)
+        frame:EnableMouse(not InCombatLockdown())
+        frame:RegisterForClicks("RightButtonUp")
     end
 
     frame.index = i
@@ -549,7 +549,7 @@ local function updateBuffs(self)
     local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
-    
+
     for _, pos in pairs(INDICATORS) do
         self['indicator' .. pos]:Hide()
     end
@@ -669,24 +669,33 @@ end
 GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 
 local function raidframe_OnEvent(self, event, unit, arg1)
-    if not UnitExists(self.unit) then
-        return
+    if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
+        -- Enable or disable mouse handling on aura frames
+        local name, inCombat = self:GetName(), event == "PLAYER_REGEN_DISABLED"
+        for j=1,2 do
+            local i, aura, frame = 1, j == 1 and "Buff" or "Debuff"
+            repeat
+                frame, i = _G["Gw" .. name .. aura .. "ItemFrame" .. i], i + 1
+                if frame then
+                    frame:EnableMouse(not inCombat)
+                end
+            until not frame
+        end
     end
 
-    if not self.nameNotLoaded then
+    if not UnitExists(self.unit) then
+        return
+    elseif not self.nameNotLoaded then
         setUnitName(self)
     end
+
     if event == "load" then
         setAbsorbAmount(self)
         setPredictionAmount(self)
         setHealth(self)
-    end
-
-    if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
+    elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         setHealth(self)
-    end
-
-    if event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
+    elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
         local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
         local powerPrecentage = 0
@@ -699,44 +708,29 @@ local function raidframe_OnEvent(self, event, unit, arg1)
             local pwcolor = PowerBarColorCustom[powerToken]
             self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
-    end
-
-    if event == "UNIT_ABSORB_AMOUNT_CHANGED" and unit == self.unit then
+    elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" and unit == self.unit then
         setAbsorbAmount(self)
-    end
-
-    if event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
+    elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
-    end
-
-    if
+    elseif
         (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or
             event == "PARTY_MEMBER_ENABLE"
      then
         updateAwayData(self)
-    end
-
-    if event == "PLAYER_TARGET_CHANGED" then
+    elseif event == "PLAYER_TARGET_CHANGED" then
         highlightTargetFrame(self)
-    end
-    if event == "UNIT_NAME_UPDATE" and unit == self.unit then
+    elseif event == "UNIT_NAME_UPDATE" and unit == self.unit then
         setUnitName(self)
-    end
-    if event == "UNIT_AURA" and unit == self.unit then
+    elseif event == "UNIT_AURA" and unit == self.unit then
         updateAuras(self)
-    end
-    if event == "PLAYER_ENTERING_WORLD" then
+    elseif event == "PLAYER_ENTERING_WORLD" then
         RequestRaidInfo()
-    end
-    if event == "UPDATE_INSTANCE_INFO" then
+    elseif event == "UPDATE_INSTANCE_INFO" then
         updateAuras(self)
         updateAwayData(self)
-    end
-    if event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") == true then
+    elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") == true then
         updateRaidMarkers(self)
-    end
-
-    if event == "READY_CHECK" then
+    elseif event == "READY_CHECK" then
         self.ready = -1
         if not IsInRaid() and self.unit == "player" then
             self.ready = true
@@ -747,14 +741,10 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         GW_READY_CHECK_INPROGRESS = true
         updateAwayData(self)
         updateClassIcon(self, true)
-    end
-
-    if event == "READY_CHECK_CONFIRM" and unit == self.unit then
+    elseif event == "READY_CHECK_CONFIRM" and unit == self.unit then
         self.ready = arg1
         updateAwayData(self)
-    end
-
-    if event == "READY_CHECK_FINISHED" then
+    elseif event == "READY_CHECK_FINISHED" then
         AddToAnimation(
             "ReadyCheckRaidWaitCheck" .. self.unit,
             0,
@@ -1120,11 +1110,13 @@ local function createRaidFrame(registerUnit, index)
     frame:SetScript("OnUpdate", raidframe_OnUpdate)
 
     frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    frame:RegisterEvent("PLAYER_REGEN_ENABLED")
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
     frame:RegisterEvent("RAID_TARGET_UPDATE")
-    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     frame:RegisterEvent("UPDATE_INSTANCE_INFO")
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
