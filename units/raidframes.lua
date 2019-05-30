@@ -32,6 +32,7 @@ local previewStep = 0
 local hudMoving = false
 local missing, ignored = {}, {}
 local spellBookIndex = {}
+local spellBookSearched = 0
 
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then
@@ -490,7 +491,6 @@ local function onBuffMouseUp(self, btn)
                 SetSetting("AURAS_MISSING", s)
             end
         else
-            print(self:GetParent().unit, self.index)
             local name =  UnitBuff(self:GetParent().unit, self.index)
             if name then
                 local s = GetSetting("AURAS_IGNORED") or ""
@@ -563,25 +563,28 @@ local function updateBuffs(self)
         end
     until not name
 
-    i, name = 0, true
+    i = 0
     for mName,v in pairs(missing) do
         if v then
-            while not spellBookIndex[mName] and i < 1000 and name do
-                i, name = i + 1, GetSpellBookItemName(i + 1, BOOKTYPE_SPELL)
-                if name and missing[name] ~= nil then
-                    spellBookIndex[name] = i
+            while not spellBookIndex[mName] and spellBookSearched < 1000 do
+                spellBookSearched = spellBookSearched + 1
+                name = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
+                if not name then
+                    spellBookSearched = 1000
+                elseif missing[name] ~= nil and not spellBookIndex[name] then
+                    spellBookIndex[name] = spellBookSearched
                 end
             end
 
             if spellBookIndex[mName] then
                 local icon = GetSpellBookItemTexture(spellBookIndex[mName], BOOKTYPE_SPELL)
-                btnIndex, x, y = showBuffIcon(self, spellBookIndex[mName], btnIndex, x, y, icon, true)
+                i, btnIndex, x, y = i + 1, showBuffIcon(self, spellBookIndex[mName], btnIndex, x, y, icon, true)
             end
         end
     end
 
     -- current buffs
-    local i, framesDone, aurasDone = 0
+    local framesDone, aurasDone
     repeat
         i = i + 1
 
