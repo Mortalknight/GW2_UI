@@ -399,7 +399,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
         frame:SetScript("OnEnter", onDebuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
         frame:SetScript("OnMouseUp", onDebuffMouseUp)
-        frame:EnableMouse(not InCombatLockdown())
+        frame:EnableMouse(not InCombatLockdown() or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT"))
         frame:RegisterForClicks("RightButtonUp")
     end
 
@@ -522,7 +522,7 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
         frame:SetScript("OnEnter", onBuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
         frame:SetScript("OnMouseUp", onBuffMouseUp)
-        frame:EnableMouse(not InCombatLockdown())
+        frame:EnableMouse(not InCombatLockdown() or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT"))
         frame:RegisterForClicks("RightButtonUp")
     end
 
@@ -674,13 +674,13 @@ GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 local function raidframe_OnEvent(self, event, unit, arg1)
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         -- Enable or disable mouse handling on aura frames
-        local name, inCombat = self:GetName(), event == "PLAYER_REGEN_DISABLED"
+        local name, enable = self:GetName(), event == "PLAYER_REGEN_ENABLED" or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
         for j=1,2 do
             local i, aura, frame = 1, j == 1 and "Buff" or "Debuff"
             repeat
                 frame, i = _G["Gw" .. name .. aura .. "ItemFrame" .. i], i + 1
                 if frame then
-                    frame:EnableMouse(not inCombat)
+                    frame:EnableMouse(enable)
                 end
             until not frame
         end

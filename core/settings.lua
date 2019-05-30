@@ -1232,6 +1232,12 @@ local function LoadSettings()
             end
         end
     )
+    addOption(
+        GwLocalization["RAID_AURA_TOOLTIP_IN_COMBAT"],
+        GwLocalization["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"],
+        "RAID_AURA_TOOLTIP_IN_COMBAT",
+        "GwSettingsGroupframe"
+    )
 
     addOptionDropdown(
         GwLocalization["RAID_UNIT_FLAGS"],
