@@ -478,8 +478,9 @@ local function LoadBank()
         "OnClick",
         function(self)
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
-            SortBankBags()
-            if IsReagentBankUnlocked() then
+            if BankSlotsFrame:IsShown() then
+                SortBankBags()
+            elseif ReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
                 SortReagentBankBags()
             end
         end
