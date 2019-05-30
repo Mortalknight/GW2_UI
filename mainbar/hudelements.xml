@@ -1,0 +1,1787 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Font name="Meno" font="Interface\AddOns\GW2_UI\fonts\menomonia.ttf" virtual="true">
+        <FontHeight>
+            <AbsValue val="12"/>
+        </FontHeight>
+        <Shadow>
+            <Offset>
+                <AbsDimension x="2" y="-2"/>
+            </Offset>
+            <Color r="0" g="0" b="0" a="1"/>
+        </Shadow>
+    </Font>
+    <Button name="GwAlertFrameOffsetter" toplevel="true" parent="UIParent" frameStrata="BACKGROUND" frameLevel="1" enableMouse="false" hidden="true">
+        <Size x="800" y="140"/>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="0"/>
+		</Anchors>
+    </Button>
+    <Button name="GwPlayerHealthGlobeClickOverlay" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="HIGH"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
+        <Size x="104" y="104"></Size>
+        <Anchors>
+            <Anchor point="BOTTOM" x="0" y="16"/>
+        </Anchors>
+    
+    </Button>
+    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate"  virtual="true">
+	
+        <Size x="104" y="104"></Size>
+        <Anchors>
+            <Anchor point="BOTTOM" x="0" y="16"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\healthFill-bg">
+                    <Color r="0" g="0" b="0"></Color>
+                     <Size x="104" y="104"></Size>
+                </Texture>
+            </Layer>
+
+
+
+        </Layers>
+        <Frames>
+            <Frame frameStrata="HIGH" name="GwHudArtFrameRepair">
+                <Size x="21" y="21"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="35" y="5" />
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentTexture"  file="Interface\AddOns\GW2_UI\textures\repair" >
+                            <Size x="21" y="21"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame frameStrata="MEDIUM" enableMouse="false"  name="GwPlayerHealthGlobeHealth" >
+                <Size x="102" y="102"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" x="0" y="1"/>
+                </Anchors>
+                <Layers>
+                  
+                    <Layer textureSubLevel="3" level="BACKGROUND">
+                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthFill">
+                            <Size x="102" y="102"></Size>
+  
+                        </Texture>
+                    </Layer >
+                </Layers>
+            </Frame>      
+            <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeCandy" >
+                <Size x="102" y="102"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM" x="0" y="1"/>
+                    </Anchors>
+                <Layers>
+                    <Layer textureSubLevel="2" level="BACKGROUND">
+                        <Texture  name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthfillCandy">
+                            <Color r="1" g="0.34" b="0" /> 
+                            <Size x="102" y="102"></Size>
+                        </Texture>
+                    </Layer >
+                </Layers>
+            </Frame>
+            <Frame frameLevel="2" enableMouse="false"  frameStrata="HIGH"   name="GwPlayerHealthGlobeText" >
+                <Size x="102" y="102"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"/>
+                    </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString  enableMouse="false" name="$parentShadow1" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString  enableMouse="false"  name="$parentShadow2" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow3" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow4" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow5" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow6" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString  enableMouse="false" name="$parentShadow7" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                        <FontString enableMouse="false"  name="$parentShadow8" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="102" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            
+                    </Layer>
+                    <Layer textureSubLevel="2" level="OVERLAY">
+                
+                        <FontString enableMouse="false"  name="$parentValue" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                            <Size x="102" y="25"/>
+                            <Color r="1" b="1" g="1"></Color>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+        
+    </Button>
+    
+    <Frame  name="GwPlayerPowerBar" parent="UIParent" virtual="true">
+        <Size x="318" y="20"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86" ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                 
+                    <Size x="318" y="20"></Size>
+                </Texture>
+         
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
+                <Size x="314" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="2" y="0"/>
+                    <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
+                </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+             <StatusBar name="$parentCandy"  frameLevel="1" defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">   
+                <Size x="314" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="2" y="0"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarCandy"/>
+                <Layers>
+                 <Layer>
+                     <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark" >
+                      
+                         <Anchors>
+                             <Anchor point="RIGHT" x="0" y="0"/>
+                         </Anchors>
+                         <Size x="21" y="16"></Size>
+                    </Texture> 
+               
+                    </Layer>
+                 </Layers>
+            </StatusBar> 
+            <StatusBar name="$parentBar"   defaultValue="1"  minValue="0" maxValue="1" >
+                  
+                <Size x="314" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="2" y="0"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <Layers>
+                    <Layer level="OVERLAY" >
+                        <FontString name="$parentString"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                            <Color r="1" b="1" g="1"></Color>
+                            <Size x="316" y="16"/>
+                            <Anchors>
+                                <Anchor point="CENTER" x="5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                 
+                    </Layer>
+                </Layers>
+            </StatusBar>
+        </Frames>
+        
+    </Frame>
+    <Frame  name="GwPlayerAuraFrame"  inherits="SecureHandlerStateTemplate" protected="true" frameStrata="MEDIUM" parent="UIParent" virtual="true">
+        <Size x="316" y="18"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="110" ></Anchor>
+        </Anchors>
+        
+    </Frame>
+    <Frame  name="GwPlayerClassPower" frameStrata="HIGH" parent="UIParent" virtual="true">
+        <Size x="316" y="18"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-372" y="86" ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                 
+                    <Size x="316" y="18"></Size>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture name="$parentFill" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                 
+                    <Size x="316" y="18"></Size>
+                </Texture>
+            </Layer> 
+            <Layer textureSubLevel="8" level="OVERLAY">
+                <Texture name="$parentFlare" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare" >
+                    <Color r="1" g="1" b="1" a="0"></Color>
+                    <Size x="256" y="256"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="GwRuneBar" hidden="true">
+                <Size x="316" y="32"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="5" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture name="GwRuneTexture1" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTexture2" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="42" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTexture3" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="84" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTexture4" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="126" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTexture5" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="168" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTexture6" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="210" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture name="GwRuneTextureFill1" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTextureFill2" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="42" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTextureFill3" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="84" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTextureFill4" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="126" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTextureFill5" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="168" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="GwRuneTextureFill6" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="210" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                
+            </Frame>
+            <Frame name="GwMongooseBar" hidden="true">
+                 <Size x="266" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORKD">
+                    <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                            <Size x="266" y="18"></Size>
+                       
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                        </Anchors>
+                         </Texture>
+                        <Texture name="$parentBackground" alpha="0" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" >
+                            <Size x="80" y="80"></Size>
+                      
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="RIGHT" x="20" y="20" ></Anchor>
+                            </Anchors>
+                              <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                          </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                    
+                        <FontString parentKey="count" justifyH="MIDDLE" justifyV="MIDDLE">
+                            <Size x="45" y="45"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="5" y="0" ></Anchor>
+                            </Anchors>
+                        </FontString>
+                 
+                    </Layer>
+                    
+                </Layers>
+                <Frames>
+                     <StatusBar parentKey="bar"  defaultValue="1"  minValue="0" maxValue="1">
+                         <Size x="262" y="14"></Size>
+                         <Anchors>
+                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
+                         </Anchors>
+                         <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+     
+                         <BarColor r="0.623" g="0.141" b="0.078"></BarColor>
+                         <Layers>
+                             <Layer level="ARTWORK" textureSubLevel="1">
+                                 <Texture parentKey="texture1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation" >
+                                     <Size x="262" y="14"></Size>
+                                     <Anchors>
+                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                     </Anchors>
+                                 </Texture> 
+                                 <Texture parentKey="texture2" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2" >
+                                     <Size x="262" y="14"></Size>
+                                     <Anchors>
+                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                     </Anchors>
+                                 </Texture>   
+                             </Layer> <Layer level="ARTWORK" textureSubLevel="2">
+                                 <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
+                                     <Size x="1" y="14"></Size>
+                                     <Anchors>
+                                     <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                                     </Anchors>
+                                     <Color r="1" b="0.6" g="0.6" a="0.7"></Color>
+                                 </Texture>   
+                             </Layer>
+                         </Layers>
+                    </StatusBar>
+                </Frames>
+                <Scripts>
+                    <OnLoad>
+                        self.texture1 = self.bar.texture1
+                        self.texture2 = self.bar.texture2
+                        self.count:SetFont(DAMAGE_TEXT_FONT,24,'OUTLINED')
+                   
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+             <Frame name="GwBrewmaster" hidden="true">
+                 <Size x="316" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                  <Layers>
+                    <Layer level="ARTWORKD">
+                   
+                      </Layer>
+                 </Layers>
+                 <Frames>
+                    <Frame parentKey="stagger">
+                        <Size x="316" y="18"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORKD" textureSublevel="0">
+                                <Texture parentKey="artwork"  file="Interface\AddOns\GW2_UI\textures\altpower\monk\art-staggerd"  >
+                                    <Size x="512" y="64"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="22" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>   
+                            <Layer level="ARTWORKD" textureSublevel="1">
+                                      <Texture parentKey="ironartwork" hidden="true" file="Interface\AddOns\GW2_UI\textures\altpower\monk\art-ironskin"  >
+                                    <Size x="512" y="64"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="30" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>   
+                            <Layer level="ARTWORKD">
+                                <Texture  file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-bg"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer> 
+                            <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture parentKey="blue" file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-blue"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="3">
+                                <Texture parentKey="yellow" file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-yellow"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer> <Layer level="ARTWORKD" textureSublevel="4">
+                                <Texture parentKey="red" file="Interface\AddOns\GW2_UI\textures\altpower\monk\stagger-red"  >
+                                    <Size x="256" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer>
+                             <Layer level="ARTWORKD" textureSublevel="5">
+                                <Texture parentKey="indicator" file="Interface\AddOns\GW2_UI\textures\altpower\monk\duration-bg"  >
+                                    <Size x="32" y="16"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="-6" ></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="1" right="0" top="1" bottom="0" />
+                                </Texture>  
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="6">
+                                <FontString parentKey="indicatorText" text="50%" justifyH="CENTER">
+                         
+                                    <Size x="32" y="16"/>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativeKey="$parent.indicator" x="0" y="-3"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                                
+                                self.indicatorText:SetFont(UNIT_NAME_FONT,11)
+                                
+                               
+                            </OnLoad>
+                        </Scripts>
+                    </Frame> 
+                     <Frame parentKey="ironskin" hidde="true">
+                        <Size x="316" y="18"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <Layers>
+                           
+                  
+                                <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture  parentKey="background" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin-bg"  >
+                                    <Size x="256" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="12" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer> 
+                      
+                            <Layer level="ARTWORKD" textureSublevel="3">
+                                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin"  >
+                                    <Size x="256" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.background" x="1" y="-1" ></Anchor>
+                                    </Anchors>
+                                </Texture>  
+                            </Layer>
+                      
+                             <Layer level="ARTWORKD" textureSublevel="4">
+                                <Texture parentKey="indicator" file="Interface\AddOns\GW2_UI\textures\altpower\monk\duration-bg"  >
+                                    <Size x="32" y="16"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="3" y="19" ></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="1" right="0" top="0" bottom="1" />
+                                </Texture>  
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="5">
+                                <FontString parentKey="indicatorText" text="50%" justifyH="CENTER">
+                         
+                                    <Size x="32" y="16"/>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativeKey="$parent.indicator" x="0" y="1"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                                
+                                self.indicatorText:SetFont(UNIT_NAME_FONT,11)
+                               self.expires = 0;
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                 </Frames>
+                 <Scripts>
+                    <OnLoad>
+                        self.debugpre = 0;
+                     </OnLoad>
+                 </Scripts>
+            </Frame>
+            <Frame name="GwStaggerBar" hidden="true">
+                 <Size x="316" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORKD">
+                   
+                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                            <Size x="316" y="12"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="ironSkinBg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                            <Size x="316" y="4"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="13" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                      
+                    </Layer>
+                    
+                </Layers>
+                <Frames>
+                    <Frame name="$parentcontainer" parentKey="bar">
+                        <Size x="312" y="10"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORKD" textureSubLevel="-1">
+                                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
+                                    <Size x="312" y="10"></Size>
+                                    <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                                </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture parentKey="texture1"  file="Interface\AddOns\GW2_UI\textures\staggaer-animation" >
+                                    <Size x="312" y="10"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer> 
+                            <Layer level="ARTWORKD" textureSublevel="2">
+                                <Texture parentKey="texture2" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2" >
+                                    <Size x="312" y="10"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORK" textureSubLevel="3">
+                                <Texture  parentKey="spark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" >
+                                    <Size x="10" y="10"></Size>
+                                       <Anchors>
+                                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>    
+                              
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                                GwStaggerBar.value = 0   
+                                GwStaggerBar.spark = self.spark
+                                GwStaggerBar.texture1 = self.texture1
+                                GwStaggerBar.texture2 = self.texture2
+                                GwStaggerBar.fill = self.fill
+                                GwStaggerBar.fill:SetVertexColor(59/255,173/255,231/255)
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                    <StatusBar parentKey="ironskin"  defaultValue="0"  minValue="0" maxValue="23">
+                        <Size x="316" y="2"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.ironSkinBg" x="2" y="2" ></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                     
+                    </StatusBar>
+                </Frames>
+            </Frame>  
+            <Frame name="GwDiscPriest" hidden="true">
+                 <Size x="153" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORKD">
+                   
+                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" >
+                            <Size x="316" y="18"></Size>
+                        </Texture>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0" ></Anchor>
+                        </Anchors>
+                    </Layer>
+                    
+                </Layers>
+                <Frames>
+                    <Frame name="$parentcontainer" parentKey="bar">
+                        <Size x="153" y="14"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <PlayerModel parentKey="overlay">
+                                <Size x="153" y="14"></Size>
+                                <Anchors>
+                                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                                </Anchors>
+                            </PlayerModel>
+                        </Frames>
+                        <Scripts>
+                            <OnLoad>
+                                self.overlay:SetModel('spells/cfx_priest_purgethewicked_statechest.m2')
+                                self.overlay:SetPosition(0,0,2)
+                                GwDiscPriest.bar.overlay:SetPosition(0,0,0)
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                </Frames>
+            </Frame>
+            <Frame name="GwFocusRage" hidden="true">
+                 <Size x="256" y="18"></Size>
+                 <Anchors>
+                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\warrior-bar-bg">
+                            <Size x="256" y="18"></Size>
+                             <Anchors>
+                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTOWRK" textureSubLevel="-1">
+                        <Texture parentKey="glow" alpha="0" file="Interface\AddOns\GW2_UI\textures\warrior-bar-glow">
+                            <Size x="512" y="36"></Size>
+                             <Anchors>
+                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <StatusBar parentKey="bar"  defaultValue="0"  minValue="0" maxValue="3">
+                        <Size x="256" y="18"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\warrior-bar"/>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="highlight" alpha="0" file="Interface\AddOns\GW2_UI\textures\warrior-bar-highlight">
+                                    <Size x="256" y="18"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </StatusBar>
+                </Frames>
+                <Scripts>
+                    <OnLoad>
+                        self.highlight = self.bar.highlight
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+        </Frames>
+    </Frame>
+    <Button name="GwDodgeBar" virtual="true" parent="GwPlayerHealthGlobe" frameStrata="BACKGROUND">
+        <Size x="118" y="118"></Size>
+        <Anchors>
+            <Anchor point="CENTER" relativeTo="GwPlayerHealthGlobe" relativePoint="CENTER"  ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\dodgebar-bg" parentKey="Background">
+                    <Size x="118" y="118"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture>  
+            </Layer>
+            <Layer level="ARTOWRK" textureSubLevel="1">
+                 <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\dodgebar" >
+                    <Size x="114" y="114"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="1"/>
+                    </Anchors>
+                </Texture>
+                  <Texture parentKey="spark" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-spark" >
+                    <Size x="114" y="114"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture> 
+            </Layer> 
+            <Layer level="ARTOWRK" textureSubLevel="2">
+                 <Texture name="$parentSep1" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
+                    <Size x="118" y="118"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture> 
+                <Texture name="$parentSep2" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
+                    <Size x="118" y="118"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="20"/>
+                    </Anchors> 
+                </Texture>
+                    <Texture name="$parentSep3" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep" >
+                    <Size x="118" y="118"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="20"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+               self:SetScale(1.06)
+                GameTooltip:SetOwner(self,'ANCHOR_PRESERVE')
+                GameTooltip:ClearLines()
+                GameTooltip:SetSpellByID(self.spellId)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                self:SetScale(1)
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+    <Button name="GwPlayerPetFrame" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW"  enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate"  virtual="true">
+        <Size x="316" y="100"></Size>
+        <HitRectInsets>
+			<AbsInset left="0" right="0" top="0" bottom="30"/>
+		</HitRectInsets>
+        <Layers>
+            <Layer level="ARTWORK">
+       
+                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
+                       <Color r="0" g="0" b="0" a="0.8"/>
+                    <Size x="232" y="18"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" x="0" y="4"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\petportrait">
+                    <Size x="60" y="60"></Size>
+                    <Anchors>
+                       <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.Background" x="0" y="-3" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer  layer="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="portrait" alphaMode="add" name="$parentPortrait">
+                <Size x="60" y="60"></Size>
+                 <TexCoords left="1" right="0" top="0" bottom="1" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.portraitBackground" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <StatusBar name="$parentHealth" parentKey="health" defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                    <Size x="230" y="16"/>
+                    <Anchors>
+                        <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
+                    </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <Layers>
+                    <Layer level="OVERLAY" >
+                        <FontString name="$parentString"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                            <Color r="1" g="1" b="1"></Color>
+                            <Size x="180" y="16"/>
+                            <Anchors>
+                                <Anchor point="CENTER" x="0" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+            <StatusBar parentKey="resource" defaultValue="1"  minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                    <Size x="230" y="2"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
+                    </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+               
+            </StatusBar>
+            <Frame parentKey="auras">
+                <Size x="0" y="30"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-85" y="0"></Anchor>
+                </Anchors>
+            </Frame>
+        </Frames>
+        
+    </Button>
+    <Frame name="GwMicroButtonFrame"  topLevel="true" frameStrata="HIGH"  parent="UIParent"   virtual="true">
+        <Size x="288" y="32"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+    </Frame>
+    <Button name="GwMicroButtonTemplate" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW" enableMouse="true" virtual="true">
+        <Size x="24" y="24"></Size>
+        <Layers>
+            <Layer level="OVERLAY">
+              <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
+                    <Color r="1" g="0" b="0" a="1"></Color>
+                    <Size  x="14" y="14">
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="BOTTOM" x="6" y="3"></Anchor>
+                    </Anchors>
+                </Texture>   
+                <Texture name="$parentTextureDark" hidden="true" parentKey="darkbg" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
+                    <Color r="0" g="0" b="0" a="0.7"></Color>
+                    <Size  x="14" y="14">
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="BOTTOM" x="6" y="3"></Anchor>
+                    </Anchors>
+                </Texture>
+           
+           
+                <FontString name="$parentString"  fontSize="11" text="2" inherits="GameFontNormalSmall" justifyH="CENTER" justifyV="CENTER">
+                    <Color r="1" g="1" b="1" a="1"></Color>
+                    <Size x="24" y="24">
+                    </Size>
+                    <Anchors>
+                           <Anchor point="CENTER" relativePoint="BOTTOM" x="7" y="2"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                self:SetSize(28,28)
+            </OnEnter>
+            <OnLeave>
+                self:SetSize(24,24)
+            </OnLeave>
+        </Scripts>
+    </Button>
+    <Button  name="GwBuffIconBig" frameStrata="LOW" toplevel="true" virtual="true">
+        <Size x="26" y="26"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="backdrop"  file="Interface\AddOns\GW2_UI\textures\spelliconempty" >
+                    <Size x="26" y="26"/>
+   
+                    <Anchors>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer>
+                <Texture name="$parentBuffIcon"  file="Interface\AddOns\GW2_UI\textures\gwstatusbar" >
+                    <Size x="24" y="24"/>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+   
+                    <Anchors>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+    				</Anchors>
+                </Texture>
+                <FontString name="$parentBuffDuration"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="32" y="12"/>
+                    <Anchors>
+                        <Anchor point="BOTTOM" x="0" y="-12"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentBuffStacks"  fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="32" y="32"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("RightButtonUp");
+                _G[self:GetName()..'BuffDuration']:SetFont(UNIT_NAME_FONT,11)
+                _G[self:GetName()..'BuffDuration']:SetTextColor(1,1,1)
+                
+                _G[self:GetName()..'BuffStacks']:SetFont(UNIT_NAME_FONT,11,'OUTLINED')
+                _G[self:GetName()..'BuffStacks']:SetTextColor(1,1,1)
+			</OnLoad>
+		</Scripts>
+    </Button> 
+    
+    <Button  name="GwGarrisonButton" frameStrata="LOW" toplevel="true" virtual="true">
+        <Size x="50" y="50"/>
+         <NormalTexture file="Interface\AddOns\GW2_UI\textures\garrison-up"></NormalTexture>
+        <PushedTexture  file="Interface\AddOns\GW2_UI\textures\garrison-down"></PushedTexture >
+        <Scripts>
+      
+            <OnClick function="GarrisonLandingPageMinimapButton_OnClick"/>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-45);
+                GameTooltip:SetText(GARRISON_LANDING_PAGE_TITLE, 1, 1, 1);
+                GameTooltip:AddLine(MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP, nil, nil, nil, true);
+                GameTooltip:Show();
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+        </Scripts>			
+    </Button>
+    <Button  name="GwCalendarButton" virtual="true">
+        <Size x="40" y="40"/>
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar-Up"></NormalTexture>
+        <PushedTexture  file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="GwDateText" justifyH="CENTER" justifyV="MIDDLE">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
+                    </Anchors>
+                    
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnShow>
+				if (IsKioskModeEnabled()) then
+					self:Disable();
+				end
+			</OnShow>
+			<OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-70);
+            </OnEnter>
+        </Scripts>
+    </Button>
+    <Button  name="GwAddonToggle" virtual="true">
+        <Size x="40" y="40"/>
+         <Layers>
+            <Layer level="OVERLAY">
+                <Texture name="$parentTexture"  file="Interface\AddOns\GW2_UI\textures\icon-module">
+                <Size x="35" y="35"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>   
+            </Layer>
+        </Layers>
+        
+    
+        <Scripts>
+          
+            <OnClick>
+                if not self.container:IsShown() then
+					stackMinimapIcons();
+                    self.container:Show()
+					
+                else
+					stackMinimapIcons();
+                    self.container:Hide()
+					
+                end
+            </OnClick>
+        </Scripts>
+        <Frames>
+            <Frame parentKey="container" hidden="true">
+                 <Size x="40" y="35"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="LEFT"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                            <Size x="40" y="35"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="-2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+					<Layer level="ARTWORK" textureSubLevel="2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                </Anchors>  
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                </Anchors>  
+                </Texture> 
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>  
+                </Texture>
+            </Layer>
+                </Layers>
+                
+            </Frame>
+        </Frames>
+    </Button>
+    <Button  name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true">
+        <Size x="30" y="30"/>
+ 
+         <NormalTexture file="Interface\AddOns\GW2_UI\textures\mail"></NormalTexture>
+        <PushedTexture  file="Interface\AddOns\GW2_UI\textures\mail"></PushedTexture >
+        
+        <Scripts>
+            <OnLoad>
+                self:RegisterEvent("UPDATE_PENDING_MAIL");
+                self:SetFrameLevel(self:GetFrameLevel()+1)
+            </OnLoad>
+            <OnEvent>
+                if ( event == "UPDATE_PENDING_MAIL" ) then
+                if ( HasNewMail() ) then
+                self:Show();
+                if( GameTooltip:IsOwned(self) ) then
+                MinimapMailFrameUpdate();
+                end
+                else
+                self:Hide();
+                end
+                end
+            </OnEvent>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT",0,-55);
+                if( GameTooltip:IsOwned(self) ) then
+                MinimapMailFrameUpdate();
+                end
+            </OnEnter>							
+            <OnLeave function="GameTooltip_Hide"/>
+        </Scripts>
+      
+    </Button>
+    <Button name="GwStanceBarButton"  inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" virtual="true">
+        <Size x="40" y="40"></Size>
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\stance-icon"></NormalTexture>
+        <PushedTexture  file="Interface\AddOns\GW2_UI\textures\stance-icon"></PushedTexture >
+    </Button>
+    <Frame name="GwMapGradient" frameStrata="LOW" frameLevel="2" virtual="true">
+	
+        <Size x="32" y="32"></Size>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\gradient">
+                    <Color a="0.7"></Color>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    <Button name="GwMapTime" frameStrata="LOW" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
+        <Size x="50" y="20"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <FontString parentKey="Time" justifyH="CENTER" justifyV="MIDDLE" inherits="Meno">
+                <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>					
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                --TimeManager_LoadUI()
+                --TimeManagerClockButton:Hide()
+                --StopwatchFrame:SetParent("UIParent")
+                --self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+            </OnLoad>
+            <OnUpdate>
+                --self.Time:SetText(GameTime_GetTime(false))
+            </OnUpdate>
+            <OnClick function="GwMapTimeClick"/>
+            <OnEnter function="GwMapTimeOnEnter"/>
+			<OnLeave function="GameTooltip_Hide"/>
+        </Scripts>
+    </Button>
+    <Frame name="GwBreathMeter" frameStrata="LOW" virtual="true" parent="UIParent">
+        <Size x="258" y="22"></Size>
+        <Anchors>
+            <Anchor point="TOP" x="0" y="-200"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\breathmeter">
+                    <Color r="0.2" b="0.2" g="0.2" a="0.5"></Color>
+                    <Size x="258" y="22"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar name="$parentBar"  defaultValue="1"  minValue="0" maxValue="1">
+                <Size x="258" y="22"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" x="1" ></Anchor>
+                </Anchors>
+                 <BarTexture file="Interface\AddOns\GW2_UI\textures\breathmeter"/>
+            </StatusBar>
+        </Frames>
+    </Frame>
+    
+    <Frame name="GwActionButtonBackDrop" frameStrata="LOW" topLevel="true" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="-1" y="1"></Anchor>
+            <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\spelliconempty">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame> 
+    <Frame name="GwActionHotKeyBackDrop"  virtual="true">
+        <Size  x="18" y="18"></Size>
+        <Anchors>
+            <Anchor point="CENTER" ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
+                    <Color r="0" g="0" b="0" a="0.9"></Color>
+                    <Size  x="20" y="20">
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    <Frame name="GwActionRangeIndicator"  virtual="true">
+        <Size  x="20" y="4"></Size>
+         <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-1">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame> 
+    
+    <Frame name="GwChatContainer" frameStrata="BACKGROUND"  virtual="true">
+        <Size  x="20" y="4"></Size>
+         <Layers>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture name="$parentTexture" parentKey="texture" file="Interface\AddOns\GW2_UI\textures\chatframebackground">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" ></Anchor>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+             </Layer>
+             <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chatframeborder">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>  
+                 
+                 <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chatdockbg">
+                    <Size x="2" y="25"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+             <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture name="$parentEditBox" file="Interface\AddOns\GW2_UI\textures\chateditboxmid">
+                    <Size x="2" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" ></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" ></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnSizeChanged function="gw_chatBackgroundOnResize">
+               
+            </OnSizeChanged>
+        </Scripts>
+    </Frame>
+    <Frame name="GwLevelingRewards" hidden="true" virtual="true">
+        <Size x="376" y="361"></Size>
+        <Anchors>
+            <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                    <Size x="512" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="header" text="Upcoming Level Rewards">
+                    <Size x="376" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="rewardHeader" text="REWARD" justifyH="LEFT">
+                    <Size x="100" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-55"></Anchor>
+                    </Anchors>
+                </FontString> 
+                <FontString parentKey="levelHeader" text=" LEVEL" justifyH="RIGHT">
+                    <Size x="100" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-20" y="-55"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="$parentItem1">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="TOP" x="0" y="-90"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe"> 
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture> 
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                           
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="TOP" y="2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+            </Frame> 
+            <Frame name="$parentItem2">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem1" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe"> 
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+            </Frame> 
+            <Frame name="$parentItem3">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem2" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+            </Frame>   
+            <Frame name="$parentItem4">
+                <Size x="350" y="50"></Size>
+                 <Anchors>
+                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem3" x="0" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="BACKGROUND">
+                        <Texture parentKey="icon"  file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep"> 
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="level" text="110 " justifyH="RIGHT">
+                            <Size x="60" y="50"></Size>
+                              <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+                
+            </Frame>
+                  <Button name="GwCloseLevelingRewards" inherits="GwStandardButton" text="Close">
+                        <Size x="70" y="20" />
+                        <Anchors>
+                            <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="GwLevelingRewards" x="5" y="10"></Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GwLevelingRewards:Hide()                                
+                            </OnClick>
+                        </Scripts>
+                </Button>
+        </Frames>
+    </Frame>
+    <Frame name="GwOrderhallBar" virtual="true">
+        <Size x="100" y="32"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="400" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <FontString name="$parentCurrency" parentKey="currency" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="70" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                    </Anchors>
+                    
+                </FontString>
+                <Texture parentKey="currencyIcon"  atlas="legionmission-icon-currency" useAtlasSize="false">
+                    <Size x="24" y="24"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        
+        <Scripts>
+            <OnLoad>
+                self.currency:SetFont(UNIT_NAME_FONT,14)
+                self.currency:SetShadowOffset(1,-1)
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    
+    <Frame name="GwOrderHallFollower" virtual="true">
+        <Size x="100" y="32"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <FontString parentKey="Count" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="70" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                    </Anchors>
+                    
+                </FontString>
+                <Texture parentKey="Icon" >
+                    <Size x="35" y="18"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.Count:SetFont(UNIT_NAME_FONT,14)
+                self.Count:SetShadowOffset(1,-1)
+            </OnLoad>
+            <OnEnter>
+            if (self.name) then
+                GameTooltip:SetOwner(self, "ANCHOR_PRESERVE");
+                GameTooltip:ClearAllPoints();
+                GameTooltip:SetPoint("TOPLEFT", self.Count, "BOTTOMRIGHT", -20, -20);
+                GameTooltip:AddLine(self.name);
+                if (self.description) then
+                    GameTooltip:AddLine(self.description, 1, 1, 1, true);
+                end
+                GameTooltip:Show();
+            end
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+            
+        </Scripts>
+    </Frame>
+    <Frame name="GwMinimapShadow" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="Minimap" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativeTo="Minimap"  relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\mapshadow">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    <Frame name="GwCastingBar" virtual="true">
+        <Size x="176" y="15"></Size>
+        <Anchors>
+            <Anchor point="CENTER" ></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTOWORK">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                     <Size x="176" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="1" right="0" top="0" bottom="0.25" />
+                    <Color r="1" g="1" b="1" a="0.6"></Color>
+                </Texture> 
+            </Layer>
+            <Layer level="ARTOWORK" textureSubLevel="3">
+                <Texture parentKey="latency" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                     <Size x="176" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                     
+                    </Anchors>
+                    <Color r="1" g="0.4" b="0.4" a="0.5"></Color>
+                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
+                </Texture> 
+            </Layer>
+            <Layer level="ARTOWORK" textureSubLevel="2">
+                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                     <Size x="176" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
+                </Texture>
+            </Layer>
+            <Layer level="ARTOWORK" textureSubLevel="4">
+                 <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                     <Size x="15" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="bar" relativePoint="RIGHT"></Anchor>
+                    </Anchors>
+                     <Color r="1" g="1" b="1" a="0.7"></Color>
+                </Texture>
+            </Layer>
+             <Layer  level="ARTOWORK" textureSubLevel="4">
+                  <FontString parentKey="name" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="160" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                 <FontString parentKey="time" justifyH="RIGHT" justifyV="MIDDLE">
+                    <Size x="70" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                 
+                 <Texture parentKey="icon">
+                     <Size x="30" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                    </Anchors>
+                   <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+                 
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.latency:Hide()
+                self.name:SetFont(UNIT_NAME_FONT,12)
+                self.name:SetShadowOffset(1,-1) 
+                
+                self.time:SetFont(UNIT_NAME_FONT,12)
+                self.time:SetShadowOffset(1,-1)
+                
+                self.spark:ClearAllPoints()
+                self.spark:SetPoint('RIGHT',self.bar,'RIGHT')
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    
+    <Frame name="GwChatBubble" virtual="true" >
+        <Size x="300" y="100"></Size>
+        <Anchors>
+            <Anchor point="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTOWORK" textureSubLevel="-8">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\ChatBubble-Background">
+                     <Size x="1" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="left" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-left">
+                     <Size x="32" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                    </Anchors>
+                </Texture> 
+                <Texture parentKey="right" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-right">
+                     <Size x="32" y="1"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="bottom" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-bottom">
+                     <Size x="1" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-10"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="top" file="Interface\AddOns\GW2_UI\textures\chatbubbles\border-top">
+                     <Size x="1" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-10"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-25"></Anchor>
+                    </Anchors>
+                </Texture> 
+                
+                <Texture parentKey="cornerTopRight" file="Interface\AddOns\GW2_UI\textures\chatbubbles\corner-top-right">
+                     <Size x="32" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPRIGHT" x="-25"></Anchor>
+                      
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="cornerBottomRight" file="Interface\AddOns\GW2_UI\textures\chatbubbles\corner-bottom-right">
+                     <Size x="32" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMRIGHT" x="0"></Anchor>
+                      
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTOWORK" textureSubLevel="-7">
+                <FontString name="$parentString" parentKey="string"  text="Not yet loaded" justifyH="CENTER" justifyV="MIDDLE">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="10"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self.string:SetFont(UNIT_NAME_FONT,14)
+                self.string:SetTextColor(0,0,0,1)
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    
+</Ui>

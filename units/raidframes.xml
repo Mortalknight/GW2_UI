@@ -1,0 +1,132 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Frame name="GwRaidFrameContainer" virtual="true" parent="UIParent">
+        <Size x="300" y="400">
+        </Size>
+        <Anchors>
+            <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+        </Anchors>
+    </Frame>
+    <Button name="GwRaidFrame" frameStrata="LOW" toplevel="true" parent="GwRaidFrameContainer" inherits="SecureUnitButtonTemplate" virtual="true">
+        <Size x="55" y="47"></Size>
+        <Anchors>
+          <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture parentKey="targetHighlight" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusba">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="1" y="-1"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar parentKey="healthbar"  defaultValue="1"  minValue="0" maxValue="1">
+                <Size x="65" y="8"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark" >
+                            <Color  r="0.207" g="0.392" b="0.168"></Color>
+                            <Anchors>
+                                <Anchor point="RIGHT" x="0" y="0"/>
+                            </Anchors>
+                            <Size x="7" y="8"></Size>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+            <StatusBar parentKey="manabar" hidden="true" defaultValue="1"  minValue="0" maxValue="1">
+                <Size x="65" y="3"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="1" y="1"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
+       
+            </StatusBar>  
+            <StatusBar parentKey="spelltracker" orientation="VERTICAL" defaultValue="1"  minValue="0" maxValue="1">
+                <Size x="3" y="3"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="3"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarColor r="1" g="0.5" b="0"></BarColor>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="1"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="-1"></Anchor>
+                            </Anchors>
+                            <Color r="0" g="0" b="0"></Color>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+            
+            <Frame name="$parentData"  frameLevel="5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                            <Size x="25" y="25"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" ></Anchor>
+                            </Anchors>
+                        </Texture>
+                  
+                        <FontString name="$parentName" text="Unkown" parentKey="name" inherits="GameFontNormalSmall"   justifyH="LEFT">
+                            <Size x="100" y="10"/>
+                            <Color r="1" g="1" b="1"></Color>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-2"></Anchor>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-2" y="-2"></Anchor>
+                            </Anchors>
+                        </FontString>
+                
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                
+                self.name = _G[self:GetName()..'Data'].name
+                self.classicon = _G[self:GetName()..'Data'].classicon
+                
+                self.name:SetFont(UNIT_NAME_FONT,12)
+                self.name:SetShadowOffset(-1,-1)
+                self.name:SetShadowColor(0,0,0,1)
+                
+                hooksecurefunc(self.healthbar,'SetStatusBarColor',function(bar,r,g,b,a)
+                    self.healthbar.spark:SetVertexColor(r,g,b,a)
+                end)
+
+                
+            </OnLoad>
+        </Scripts>
+    </Button>
+</Ui>

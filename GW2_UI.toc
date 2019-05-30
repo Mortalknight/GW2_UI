@@ -1,0 +1,81 @@
+## Interface: 11302
+## Title: GW2 UI
+## Notes: Hud Replacement addon.
+## OptionalDeps: MoveAnything
+
+## Author: deadend06
+
+## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
+## SavedVariables: GW2UI_SETTINGS_PROFILES
+
+GW2_ui.lua
+
+core/utils.lua
+core/shared.xml
+core/settings.xml
+core/settings_default.lua
+core/settings_api.lua
+core/flags.lua
+core/fonts.lua
+core/settings.lua
+
+mainbar/experiencebar.xml
+mainbar/hudart.xml
+mainbar/hudelements.xml
+mainbar/hud.lua
+mainbar/buffs.lua
+mainbar/castingbar.lua
+mainbar/fader.lua
+mainbar/actionbars2.lua
+mainbar/playerhud.lua
+mainbar/classpowers.lua
+
+units/target.xml
+units/party.xml
+units/raidframes.xml
+units/unitframes.xml
+units/raidframes.lua
+units/unitframes.lua
+units/party.lua
+
+inventory/bag.xml
+inventory/bank.xml
+inventory/bag.lua
+inventory/bank.lua
+
+immersive/questview.xml
+immersive/toast.xml
+immersive/questview.lua
+immersive/chatframe.lua
+immersive/chatbubbles.lua
+immersive/tooltips.lua
+immersive/toast.lua
+
+objectives/questtracker.xml
+objectives/map.lua
+objectives/objectives.lua
+objectives/scenario.lua
+objectives/notifications.lua
+objectives/bonusObjective.lua
+objectives/bossFrames.lua
+objectives/achievement.lua
+
+character/character.xml
+character/character.lua
+character/windowManager.lua
+
+battlegrounds/battlegrounds.xml
+battlegrounds/battlegrounds.lua
+
+locales/deDE.lua
+locales/koKR.lua
+locales/zhTW.lua
+locales/enUS.lua
+locales/esMX.lua
+locales/esES.lua
+locales/ruRU.lua
+locales/ptBR.lua
+locales/frFR.lua
+
+tests/mocks.lua
+tests/alert_tests.lua
