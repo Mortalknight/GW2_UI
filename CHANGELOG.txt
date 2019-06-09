@@ -7,6 +7,7 @@ NEW
 
 FIXES
     - Fixed bank and reagent bank sorting giving error message or not working at all
+    - Fixed error message when right-clicking bag icons (CurseForge#276)
 
 
 5.0.21

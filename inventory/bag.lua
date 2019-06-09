@@ -72,11 +72,6 @@ local function moveBagbar()
                     local parent = _G[default_bag_frame_container[k]]
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                     ToggleDropDownMenu(1, nil, parent.FilterDropDown, self, 32, 32)
-                    if v == "MainMenuBarBackpackButton" then
-                        BackpackButton_UpdateChecked(fv)
-                    else
-                        BagSlotButton_UpdateChecked(fv)
-                    end
                 else
                     s(fv)
                 end
