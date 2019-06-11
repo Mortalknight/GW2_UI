@@ -4,6 +4,8 @@ NEW
     - Added ignoring auras by shift+right clicking on them
     - Added option to hide raid aura tooltips (and disable ignoring by shift+right clicking) while in combat
     - Added a tooltip showing money of characters on the same faction+realm to the bag money text
+    - Added ability to set specs to equipment sets (click on edit button)
+    - Added Questtracking by click on the questname
 
 FIXES
     - Fixed bank and reagent bank sorting giving error message or not working at all

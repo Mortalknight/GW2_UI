@@ -68,6 +68,51 @@ local function outfitEquipButton_OnClick(self, button)
 end
 GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEquipButton_OnClick)
 
+local function DropDownOutfit_OnLoad(self, button)
+    self.Dropdown = self:GetParent().DropDownOutfitFrame
+	UIDropDownMenu_Initialize(self.Dropdown, nil, "MENU")
+	UIDropDownMenu_SetInitializeFunction(self.Dropdown, GWGearSetEditButtonDropDown_Initialize)
+end
+
+function GWGearSetEditButtonDropDown_Initialize(dropdownFrame, level, menuList)
+	local gearSetButton = dropdownFrame:GetParent()
+	local info = UIDropDownMenu_CreateInfo();
+	info.text = EQUIPMENT_SET_EDIT;
+	info.notCheckable = true;
+	info.func = function() GearSetButton_Edit(gearSetButton) end
+	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+
+	info = UIDropDownMenu_CreateInfo();
+	info.text = EQUIPMENT_SET_ASSIGN_TO_SPEC;
+	info.isTitle = true;
+	info.notCheckable = true;
+	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+
+	local equipmentSetID = gearSetButton.setID;
+	for i = 1, GetNumSpecializations() do
+		info = UIDropDownMenu_CreateInfo();
+		info.checked = function()
+			return C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID) == i;
+		end;
+
+		info.func = function()
+			local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID);
+			if ( currentSpecIndex ~= i ) then
+				C_EquipmentSet.AssignSpecToEquipmentSet(equipmentSetID, i);
+			else
+				C_EquipmentSet.UnassignEquipmentSetSpec(equipmentSetID);
+			end
+
+			GearSetButton_UpdateSpecInfo(gearSetButton);
+			PaperDollEquipmentManagerPane_Update(true);
+		end;
+
+		local specID = GetSpecializationInfo(i);
+		info.text = select(2, GetSpecializationInfoByID(specID));
+		UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+	end
+end
+
 local function outfitSaveButton_OnClick(self, button)
     WarningPrompt(
         GwLocalization["CHARACTER_OUTFITS_SAVE"] .. " (" .. self:GetParent().setName .. ")",
@@ -79,18 +124,25 @@ local function outfitSaveButton_OnClick(self, button)
 end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
 
-local function outfitEditButton_OnClick(self, button)
+function outfitEditButton_OnClick(self, button)
+    if ( self.gearSetButton ~= self:GetParent() ) then
+		HideDropDownMenu(1);
+		self.gearSetButton = self:GetParent();
+    end   
+	ToggleDropDownMenu(1, nil, self:GetParent().DropDownOutfitFrame, self, 0, 0)
+end
+GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
+
+function GearSetButton_Edit(self, button)
     GearManagerDialogPopup:SetParent(GwDressingRoom)
     GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
     GearManagerDialogPopup:Show()
-    
-    local parent = self:GetParent()
+
     GearManagerDialogPopup.isEdit = true
-    GearManagerDialogPopup.setID = parent.setID
-    GearManagerDialogPopup.origName = parent.setName
-	RecalculateGearManagerDialogPopup(parent.setName, parent.icon:GetTexture())
+    GearManagerDialogPopup.setID = self.setID
+    GearManagerDialogPopup.origName = self.setName
+	RecalculateGearManagerDialogPopup(self.setName, self.icon:GetTexture())
 end
-GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
 
 local function outfitDeleteButton_OnClick(self, button)
     WarningPrompt(
@@ -194,6 +246,9 @@ drawItemSetList = function()
             frame:SetText(name)
             frame.setName = name
             frame.setID = setID
+
+            DropDownOutfit_OnLoad(frame.editOutfit, button)
+            GearSetButton_UpdateSpecInfo(frame)
 
             if texture then
                 frame.icon:SetTexture(texture)

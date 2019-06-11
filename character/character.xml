@@ -147,7 +147,5 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true">
-    </Button>
-
+    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true"/>
 </Ui>
