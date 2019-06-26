@@ -114,7 +114,6 @@
                     <Layer textureSubLevel="3" level="BACKGROUND">
                         <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthFill">
                             <Size x="102" y="102"></Size>
-
                         </Texture>
                     </Layer >
                     <Layer textureSubLevel="4" level="BACKGROUND">

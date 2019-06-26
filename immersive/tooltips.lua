@@ -49,7 +49,7 @@ local UNSTYLED = {
 
 local function movePlacement(self)
 	self:ClearAllPoints()
-	self:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, 300)
+	self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 300)
 end
 GW.AddForProfiling("tooltips", "movePlacement", movePlacement)
 
