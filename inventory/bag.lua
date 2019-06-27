@@ -162,6 +162,8 @@ local function updateBagIcons(smooth)
                     if backdrop == nil then
                         backdrop = createItemBackground(cfm .. "Item" .. i)
                     end
+                    slot:GetParent():ClearAllPoints()
+                    backdrop:ClearAllPoints()
                     backdrop:SetParent(_G[cfm])
                     backdrop:SetFrameLevel(1)
 
@@ -173,7 +175,6 @@ local function updateBagIcons(smooth)
                     _G["GwBagContainer" .. (BAG_INDEX - 1)]:SetSize(x, y)
 
                     slot:ClearAllPoints()
-
                     slot:SetFrameLevel(43)
                     slot:SetPoint("TOPLEFT", gwbf, "TOPLEFT", x, -y)
                     slot:SetPoint("TOPRIGHT", gwbf, "TOPLEFT", x + BAG_ITEM_SIZE, -y)
@@ -289,6 +290,7 @@ local function CloseBags()
         local cfm = _G["ContainerFrame" .. tostring(i)]
         if cfm and cfm:IsShown() then
             cfm:SetParent(gwNormalBagHolder)
+            gwNormalBagHolder:ClearAllPoints()
             cfm:ClearAllPoints()
             cfm:SetPoint("RIGHT", gwNormalBagHolder, "LEFT", 0, 0)
             if i < 6 then
@@ -337,6 +339,7 @@ local function onBagMove(self)
     local saveBagPos = {}
     saveBagPos["point"], _, saveBagPos["relativePoint"], saveBagPos["xOfs"], saveBagPos["yOfs"] = self:GetPoint()
     SetSetting("BAG_POSITION", saveBagPos)
+    GwBagFrameResize:ClearAllPoints()
     GwBagFrameResize:SetPoint("BOTTOMRIGHT", GwBagFrame, "BOTTOMRIGHT", 0, 0)
 end
 GW.AddForProfiling("bag", "onBagMove", onBagMove)
@@ -639,6 +642,7 @@ local function LoadBag()
         "OnDragStart",
         function(self)
             self:StartMoving()
+            GwBagFrame:ClearAllPoints()
             GwBagFrame:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
             GwBagFrame:SetScript("OnUpdate", onBagDragUpdate)
         end

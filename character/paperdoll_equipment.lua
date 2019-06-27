@@ -206,9 +206,24 @@ GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButto
 local function itemSlot_OnModifiedClick(self, button)
     if (IsModifiedClick("EXPANDITEM")) then
         local itemLocation = ItemLocation:CreateFromEquipmentSlot(self:GetID())
-        if C_Item.DoesItemExist(itemLocation) and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(itemLocation) then
-            OpenAzeriteEmpoweredItemUIFromItemLocation(itemLocation)
-        else
+        if C_Item.DoesItemExist(itemLocation) then
+            if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(itemLocation) then
+                if C_Item.CanViewItemPowers(itemLocation) then
+                    OpenAzeriteEmpoweredItemUIFromItemLocation(itemLocation)
+                    GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+                else
+                    UIErrorsFrame:AddExternalErrorMessage(AZERITE_PREVIEW_UNAVAILABLE_FOR_CLASS)
+                end
+                return
+            end
+
+            local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+			if heartItemLocation and heartItemLocation:IsEqualTo(itemLocation) then
+                OpenAzeriteEssenceUIFromItemLocation(itemLocation)
+                GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+				return
+			end
+
             SocketInventoryItem(self:GetID())
         end
         GwCharacterWindow:SetAttribute("windowpanelopen", nil)

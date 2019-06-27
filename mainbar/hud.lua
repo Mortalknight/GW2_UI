@@ -130,6 +130,11 @@ GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
 local function xpbar_OnClick()
     if HasArtifactEquipped() and C_ArtifactUI.IsEquippedArtifactDisabled() == false then
         SocketInventoryItem(16)
+    elseif C_AzeriteEmpoweredItem.IsHeartOfAzerothEquipped() then
+        local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+		if heartItemLocation and heartItemLocation:IsEqualTo(ItemLocation:CreateFromEquipmentSlot(2)) then
+            OpenAzeriteEssenceUIFromItemLocation(itemLocation)
+		end
     else
         if UnitLevel("Player") < GetMaxPlayerLevel("Player") then
             if GwLevelingRewards:IsShown() then

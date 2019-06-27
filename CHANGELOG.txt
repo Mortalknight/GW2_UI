@@ -1,3 +1,10 @@
+5.0.24
+
+FIXES
+    - Fixed Lua error when open Bags/Banks after moving
+    - Heart of Azeroth can now be opend from the hero window
+
+
 5.0.23
 
 Update for Patch 8.2.0

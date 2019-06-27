@@ -562,6 +562,7 @@ local function LoadBank()
         "OnDragStart",
         function(self)
             self:StartMoving()
+            GwBankFrame:ClearAllPoints()
             GwBankFrame:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
             GwBankFrame:SetScript("OnUpdate", onBankDragUpdate)
         end
