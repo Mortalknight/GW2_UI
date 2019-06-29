@@ -7,7 +7,7 @@
             <Anchor point="RIGHT" x="-256" y="256"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwBagFrame" frameStrata="HIGH" frameLevel="42" enableMouse="true" parent="UIParent" virtual="true">
+    <Frame name="GwBagFrame" frameStrata="HIGH" frameLevel="42" enableMouse="true" parent="UIParent" resizable="true" virtual="true">
         <HitRectInsets>
             <AbsInset left="-40" right="0" top="0" bottom="-40"/>
         </HitRectInsets>
@@ -182,10 +182,10 @@
                 </Scripts>
             </Button>
 
-            <Frame name="GwBagFrameResize" frameStrata="HIGH" frameLevel="50" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+            <Frame parentKey="sizer" frameLevel="50" enableMouse="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativeTo="GwBagFrame" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">

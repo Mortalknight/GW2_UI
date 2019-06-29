@@ -122,7 +122,6 @@ local function onBankMove(self)
     local saveBankPos = {}
     saveBankPos["point"], _, saveBankPos["relativePoint"], saveBankPos["xOfs"], saveBankPos["yOfs"] = self:GetPoint()
     SetSetting("BANK_POSITION", saveBankPos)
-    GwBankFrameResize:SetPoint("BOTTOMRIGHT", GwBankFrame, "BOTTOMRIGHT", 0, 0)
 end
 GW.AddForProfiling("bank", "onBankMove", onBankMove)
 
@@ -353,10 +352,7 @@ local function updateBankIcons(smooth)
 end
 GW.AddForProfiling("bank", "updateBankIcons", updateBankIcons)
 
-local function bankOnResizeStop(self)
-    GwBankFrame:SetScript("OnUpdate", nil)
-    self:StopMovingOrSizing()
-
+local function onBankResizeStop(self)
     BANK_WINDOW_SIZE = GwBankFrame:GetWidth()
     if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
         updateReagentsIcons()
@@ -366,8 +362,6 @@ local function bankOnResizeStop(self)
 
     GwBankFrame:ClearAllPoints()
     GwBankFrame:SetPoint("TOPLEFT", GwBankMoverFrame, "TOPLEFT", 20, -40)
-    GwBankFrameResize:ClearAllPoints()
-    GwBankFrameResize:SetPoint("BOTTOMRIGHT", GwBankFrame, "BOTTOMRIGHT", 0, 0)
 
     local mfPoint, _, mfRelPoint, mfxOfs, mfyOfs = GwBankMoverFrame:GetPoint()
     local newWidth = GwBankFrame:GetWidth() - 40
@@ -382,17 +376,16 @@ local function bankOnResizeStop(self)
     GwBankMoverFrame:SetWidth(newWidth)
     onBankMove(GwBankMoverFrame)
 end
-GW.AddForProfiling("bank", "bankOnResizeStop", bankOnResizeStop)
+GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
 
-local function onBankDragUpdate(self)
-    local point, relative, framerela, xPos, yPos = GwBankFrameResize:GetPoint()
-
+local function onBankFrameChangeSize(self)
     local w = self:GetWidth()
-    local h = self:GetHeight()
+    local isize = BANK_ITEM_SIZE + BANK_ITEM_PADDING
+    local cols = math.floor((w - 3) / isize)
 
-    if w < 508 or h < 340 then
-        GwBagFrameResize:StopMovingOrSizing()
-    else
+    if not self.gwPrevBagCols or self.gwPrevBagCols ~= cols then
+        GW.Debug("new cols is: ", cols)
+        self.gwPrevBagCols = cols
         if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
             updateReagentsIcons(true)
         else
@@ -400,7 +393,26 @@ local function onBankDragUpdate(self)
         end
     end
 end
-GW.AddForProfiling("bank", "onBankDragUpdate", onBankDragUpdate)
+GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
+
+local function onSizerMouseDown(self, btn)
+    if btn ~= "LeftButton" then
+        return
+    end
+    local bfm = self:GetParent()
+    bfm:StartSizing("BOTTOMRIGHT")
+end
+GW.AddForProfiling("bank", "onSizerMouseDown", onSizerMouseDown)
+
+local function onSizerMouseUp(self, btn)
+    if btn ~= "LeftButton" then
+        return
+    end
+    local bfm = self:GetParent()
+    bfm:StopMovingOrSizing()
+    onBankResizeStop(bfm)
+end
+GW.AddForProfiling("bank", "onSizerMouseUp", onSizerMouseUp)
 
 local function compactToggle()
     if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
@@ -424,18 +436,6 @@ local function compactToggle()
     return GwLocalization["BANK_COMPACT_ICONS"]
 end
 GW.AddForProfiling("bank", "compactToggle", compactToggle)
-
-local function onBankFrameChangeSize(self)
-    --[[
-    local w, h = self:GetSize()
-    
-    w = math.min(1, w / 768)
-    h = math.min(1, h / 512)
-    
-    self.Texture:SetTexCoord(0, w, 0, h)
-    --]]
-end
-GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
 
 local function LoadBank()
     BANK_WINDOW_SIZE = GetSetting("BANK_WIDTH")
@@ -556,23 +556,10 @@ local function LoadBank()
     )
 
     -- setup resizer stuff
+    f:SetMinResize(508, 340)
     f:HookScript("OnSizeChanged", onBankFrameChangeSize)
-    GwBankFrameResize:RegisterForDrag("LeftButton")
-    GwBankFrameResize:HookScript(
-        "OnDragStart",
-        function(self)
-            self:StartMoving()
-            GwBankFrame:ClearAllPoints()
-            GwBankFrame:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
-            GwBankFrame:SetScript("OnUpdate", onBankDragUpdate)
-        end
-    )
-    GwBankFrameResize:HookScript(
-        "OnDragStop",
-        function(self)
-            bankOnResizeStop(self)
-        end
-    )
+    f.sizer:HookScript("OnMouseDown", onSizerMouseDown)
+    f.sizer:HookScript("OnMouseUp", onSizerMouseUp)
 
     -- setup bank/reagent switching buttons
     GwBankButton:HookScript(
@@ -755,14 +742,12 @@ local function LoadBank()
         "OnHide",
         function()
             GwBankMoverFrame:Hide()
-            GwBankFrameResize:Hide()
         end
     )
     f:SetScript(
         "OnShow",
         function()
             GwBankMoverFrame:Show()
-            GwBankFrameResize:Show()
         end
     )
     BankFrame:HookScript(

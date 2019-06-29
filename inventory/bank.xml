@@ -7,7 +7,7 @@
             <Anchor point="RIGHT" x="-256" y="256"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwBankFrame" frameStrata="HIGH" frameLevel="22" enableMouse="true" parent="UIParent" virtual="true">
+    <Frame name="GwBankFrame" frameStrata="HIGH" frameLevel="22" enableMouse="true" parent="UIParent" resizable="true" virtual="true">
         <HitRectInsets>
             <AbsInset left="-40" right="0" top="0" bottom="-40"/>
         </HitRectInsets>
@@ -122,10 +122,10 @@
                     <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
                 </Anchors>
             </Button>
-            <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="25" enableMouse="true" movable="true" parent="UIParent" virtual="true">
+            <Frame frameLevel="25" enableMouse="true" parentKey="sizer">
                 <Size x="40" y="40"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativeTo="GwBankFrame" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">

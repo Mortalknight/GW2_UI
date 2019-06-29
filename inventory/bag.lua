@@ -34,14 +34,12 @@ local default_bag_frame_container = {
 
 local function bagFrameHide()
     GwBagMoverFrame:Hide()
-    GwBagFrameResize:Hide()
     CloseAllBags()
 end
 GW.AddForProfiling("bag", "bagFrameHide", bagFrameHide)
 
 local function bagFrameShow()
     GwBagMoverFrame:Show()
-    GwBagFrameResize:Show()
 end
 GW.AddForProfiling("bag", "bagFrameShow", bagFrameShow)
 
@@ -339,22 +337,17 @@ local function onBagMove(self)
     local saveBagPos = {}
     saveBagPos["point"], _, saveBagPos["relativePoint"], saveBagPos["xOfs"], saveBagPos["yOfs"] = self:GetPoint()
     SetSetting("BAG_POSITION", saveBagPos)
-    GwBagFrameResize:ClearAllPoints()
-    GwBagFrameResize:SetPoint("BOTTOMRIGHT", GwBagFrame, "BOTTOMRIGHT", 0, 0)
 end
 GW.AddForProfiling("bag", "onBagMove", onBagMove)
 
-local function bagOnResizeStop(self)
-    GwBagFrame:SetScript("OnUpdate", nil)
-    self:StopMovingOrSizing()
+local function onBagResizeStop(self)
+    GW.Debug("onBagResizeStop")
 
     BAG_WINDOW_SIZE = GwBagFrame:GetWidth()
     updateBagIcons()
 
     GwBagFrame:ClearAllPoints()
     GwBagFrame:SetPoint("TOPLEFT", GwBagMoverFrame, "TOPLEFT", 20, -40)
-    GwBagFrameResize:ClearAllPoints()
-    GwBagFrameResize:SetPoint("BOTTOMRIGHT", GwBagFrame, "BOTTOMRIGHT", 0, 0)
 
     local mfPoint, _, mfRelPoint, mfxOfs, mfyOfs = GwBagMoverFrame:GetPoint()
     local newWidth = GwBagFrame:GetWidth() - 40
@@ -369,31 +362,39 @@ local function bagOnResizeStop(self)
     GwBagMoverFrame:SetWidth(newWidth)
     onBagMove(GwBagMoverFrame)
 end
-GW.AddForProfiling("bag", "bagOnResizeStop", bagOnResizeStop)
+GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
-local function onBagDragUpdate(self)
-    local point, relative, framerela, xPos, yPos = GwBagFrameResize:GetPoint()
-
+local function onBagFrameChangeSize(self)
     local w = self:GetWidth()
-    local h = self:GetHeight()
+    local isize = BAG_ITEM_SIZE + BAG_ITEM_PADDING
+    local cols = math.floor((w - 3) / isize)
 
-    if w < 508 or h < 340 then
-        GwBagFrameResize:StopMovingOrSizing()
-    else
+    if not self.gwPrevBagCols or self.gwPrevBagCols ~= cols then
+        GW.Debug("new cols is: ", cols)
+        self.gwPrevBagCols = cols
         updateBagIcons(true)
     end
 end
-GW.AddForProfiling("bag", "onBagDragUpdate", onBagDragUpdate)
-
-local function onBagFrameChangeSize(self)
-    local w, h = self:GetSize()
-
-    w = math.min(1, w / 512)
-    h = math.min(1, h / 512)
-
-    self.Texture:SetTexCoord(0, w, 0, h)
-end
 GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
+
+local function onSizerMouseDown(self, btn)
+    if btn ~= "LeftButton" then
+        return
+    end
+    local bfm = self:GetParent()
+    bfm:StartSizing("BOTTOMRIGHT")
+end
+GW.AddForProfiling("bag", "onSizerMouseDown", onSizerMouseDown)
+
+local function onSizerMouseUp(self, btn)
+    if btn ~= "LeftButton" then
+        return
+    end
+    local bfm = self:GetParent()
+    bfm:StopMovingOrSizing()
+    onBagResizeStop(bfm)
+end
+GW.AddForProfiling("bag", "onSizerMouseUp", onSizerMouseUp)
 
 local function LoadBag()
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
@@ -453,48 +454,54 @@ local function LoadBag()
     watchCurrency(f)
 
     -- money tooltip
-    GwMoneyFrame:SetScript("OnEnter", function (self)
-        local list, total = GetRealmMoney()
-        if list then
-            GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:ClearLines()
+    GwMoneyFrame:SetScript(
+        "OnEnter",
+        function(self)
+            local list, total = GetRealmMoney()
+            if list then
+                GameTooltip:SetOwner(self, "ANCHOR_TOP")
+                GameTooltip:ClearLines()
 
-            -- list all players from the realm+faction
-            for name, money in pairs(list) do
-                local color = select(4, GetClassColor(GetCharClass(name)))
-                SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
-            end
+                -- list all players from the realm+faction
+                for name, money in pairs(list) do
+                    local color = select(4, GetClassColor(GetCharClass(name)))
+                    SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
+                end
 
-            -- add total gold on realm+faction
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-            SetTooltipMoney(GameTooltip, total, "TOOLTIP", TOTAL .. ":")
+                -- add total gold on realm+faction
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                SetTooltipMoney(GameTooltip, total, "TOOLTIP", TOTAL .. ":")
 
-            GameTooltip:Show()
+                GameTooltip:Show()
 
-            -- align money frames to the right
-            local maxWidth = 0
-            for i=1,GameTooltip.shownMoneyFrames do
-                local name = "GameTooltipMoneyFrame" .. i
-                local textWidth = _G[name .. "PrefixText"]:GetWidth()
-                local moneyWidth = select(4, _G[name .. "CopperButton"]:GetPoint(1))
-                maxWidth = max(maxWidth, textWidth + moneyWidth)
-            end
-            for i=1,GameTooltip.shownMoneyFrames do
-                local name = "GameTooltipMoneyFrame" .. i
-                local textWidth = _G[name .. "PrefixText"]:GetWidth()
-                _G[name .. "CopperButton"]:SetPoint("RIGHT", name .. "PrefixText", "RIGHT", maxWidth - textWidth, 0)
+                -- align money frames to the right
+                local maxWidth = 0
+                for i = 1, GameTooltip.shownMoneyFrames do
+                    local name = "GameTooltipMoneyFrame" .. i
+                    local textWidth = _G[name .. "PrefixText"]:GetWidth()
+                    local moneyWidth = select(4, _G[name .. "CopperButton"]:GetPoint(1))
+                    maxWidth = max(maxWidth, textWidth + moneyWidth)
+                end
+                for i = 1, GameTooltip.shownMoneyFrames do
+                    local name = "GameTooltipMoneyFrame" .. i
+                    local textWidth = _G[name .. "PrefixText"]:GetWidth()
+                    _G[name .. "CopperButton"]:SetPoint("RIGHT", name .. "PrefixText", "RIGHT", maxWidth - textWidth, 0)
+                end
             end
         end
-    end)
+    )
 
     -- clear money storage on right-click
-    GwMoneyFrame:SetScript("OnClick", function (self, button)
-        if button == "RightButton" then
-            ClearStorage(GetRealmStorage("MONEY"))
-            UpdateMoney()
-            GwMoneyFrame:GetScript("OnEnter")(GwMoneyFrame)
+    GwMoneyFrame:SetScript(
+        "OnClick",
+        function(self, button)
+            if button == "RightButton" then
+                ClearStorage(GetRealmStorage("MONEY"))
+                UpdateMoney()
+                GwMoneyFrame:GetScript("OnEnter")(GwMoneyFrame)
+            end
         end
-    end)
+    )
 
     -- update money and watch currencies when applicable
     f:SetScript(
@@ -624,30 +631,13 @@ local function LoadBag()
     end
 
     -- setup close button
-    f.buttonClose:HookScript(
-        "OnClick",
-        function(self)
-            --local f = self:GetParent()
-            CloseAllBags()
-            --if f.currencyWindow:IsShown() then
-            --f:Hide()
-            --end
-        end
-    )
+    f.buttonClose:HookScript("OnClick", CloseAllBags)
 
     -- setup resizer stuff
+    f:SetMinResize(508, 340)
     f:HookScript("OnSizeChanged", onBagFrameChangeSize)
-    GwBagFrameResize:RegisterForDrag("LeftButton")
-    GwBagFrameResize:HookScript(
-        "OnDragStart",
-        function(self)
-            self:StartMoving()
-            GwBagFrame:ClearAllPoints()
-            GwBagFrame:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
-            GwBagFrame:SetScript("OnUpdate", onBagDragUpdate)
-        end
-    )
-    GwBagFrameResize:HookScript("OnDragStop", bagOnResizeStop)
+    f.sizer:HookScript("OnMouseDown", onSizerMouseDown)
+    f.sizer:HookScript("OnMouseUp", onSizerMouseUp)
 
     f:SetScript("OnHide", bagFrameHide)
     f:SetScript("OnShow", bagFrameShow)
