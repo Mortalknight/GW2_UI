@@ -54,7 +54,8 @@ local Minimap_Addon_Buttons = {
     [41] = "PremadeFilter_MinimapButton",
     [42] = "GarrisonMinimapButton",
     [43] = "GwMapTime",
-    [44] = "GwMapCoords"
+    [44] = "GwMapCoords",
+    [45] = "WarfrontRareTrackerPin"
 }
 
 local MAP_FRAMES_HOVER = {}
