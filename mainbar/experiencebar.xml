@@ -106,19 +106,50 @@
                     </StatusBar>
                 </Frames>
             </StatusBar>
+            <StatusBar name="$parentRepuBarCandy" defaultValue="1" frameLevel="2" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+            </StatusBar>
+            <StatusBar name="$parentRepuBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="4"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+                <Frames>
+                    <Frame name="ExperienceRepuBarSpark" frameLevel="4">
+                        <Size x="8" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture name="expBarspark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                    <Size x="8" y="8"></Size>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </StatusBar>
             <StatusBar name="$parentArtifactBarCandy" defaultValue="1" frameLevel="2" minValue="0" maxValue="1">
                 <Size x="1" y="8" />
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="90" y="4" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="4"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
             </StatusBar>
             <StatusBar name="$parentArtifactBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
                 <Size x="1" y="8" />
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="90" y="4" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="4"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
                 <Frames>

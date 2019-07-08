@@ -53,9 +53,6 @@ local function xpbar_OnEnter()
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
 
-    if gw_reputation_vals ~= nil then
-        GameTooltip:AddLine(gw_reputation_vals, 1, 1, 1)
-    end
     if gw_honor_vals ~= nil then
         GameTooltip:AddLine(gw_honor_vals, 1, 1, 1)
     end
@@ -83,6 +80,7 @@ local function xpbar_OnEnter()
 
     UIFrameFadeOut(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(), 0)
     UIFrameFadeOut(_G["GwExperienceFrameArtifactBar"], 0.2, _G["GwExperienceFrameArtifactBar"]:GetAlpha(), 0)
+    UIFrameFadeOut(GwExperienceFrameRepuBar, 0.2, GwExperienceFrameRepuBar:GetAlpha(), 0)
 
     local showArtifact = HasArtifactEquipped()
     local disabledArtifact = C_ArtifactUI.IsEquippedArtifactDisabled()
@@ -121,6 +119,10 @@ local function xpbar_OnEnter()
             1,
             1
         )
+    end
+
+    if gw_reputation_vals ~= nil then
+        GameTooltip:AddLine(gw_reputation_vals, 1, 1, 1)
     end
 
     GameTooltip:Show()
@@ -203,13 +205,16 @@ local function xpbar_OnEvent(self, event)
     local valCurrent = UnitXP("Player")
     local valMax = UnitXPMax("Player")
     local valPrec = valCurrent / valMax
+    local valPrecRepu = 0
 
     local level = UnitLevel("Player")
     local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel("Player") + 1)
+    local lockLevelTextUnderMaxLevel = false
 
     local rested = GetXPExhaustion()
     local showBar1 = false
     local showBar2 = false
+    local showBar3 = false
     local restingIconString = " |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t "
 
     if not IsResting() then
@@ -226,6 +231,7 @@ local function xpbar_OnEvent(self, event)
 
     if level < Nextlevel then
         showBar1 = true
+        lockLevelTextUnderMaxLevel = true
     end
 
     local animationSpeed = 15
@@ -234,126 +240,125 @@ local function xpbar_OnEvent(self, event)
 
     gw_reputation_vals = nil
     local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild
-    if level == Nextlevel then
-        for factionIndex = 1, GetNumFactions() do
-            name,
-                description,
-                standingId,
-                bottomValue,
-                topValue,
-                earnedValue,
-                atWarWith,
-                canToggleAtWar,
-                isHeader,
-                isCollapsed,
-                hasRep,
-                isWatched,
-                isChild = GetFactionInfo(factionIndex)
-            if isWatched == true then
-                local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
-                local friendID, friendRep, friendMaxRep, friendName, _, _, _, friendThreshold, nextFriendThreshold =
-                    GetFriendshipReputation(factionID)
-                if C_Reputation.IsFactionParagon(factionID) then
-                    local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
+    for factionIndex = 1, GetNumFactions() do
+        name,
+            description,
+            standingId,
+            bottomValue,
+            topValue,
+            earnedValue,
+            atWarWith,
+            canToggleAtWar,
+            isHeader,
+            isCollapsed,
+            hasRep,
+            isWatched,
+            isChild = GetFactionInfo(factionIndex)
+        if isWatched == true then
+            local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
+            local friendID, friendRep, friendMaxRep, friendName, _, _, _, friendThreshold, nextFriendThreshold =
+                GetFriendshipReputation(factionID)
+            if C_Reputation.IsFactionParagon(factionID) then
+                local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
 
-                    if currentValue > 10000 then
-                        repeat
-                            currentValue = currentValue - 10000
-                        until (currentValue < 10000)
-                    end
-                    valPrec = (currentValue - 0) / (maxValueParagon - 0)
+                if currentValue > 10000 then
+                    repeat
+                        currentValue = currentValue - 10000
+                    until (currentValue < 10000)
+                end
+                valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
+                gw_reputation_vals =
+                    name ..
+                        " " .. REPUTATION .. " " ..
+                            CommaValue((currentValue - 0)) ..
+                                " / " ..
+                                    CommaValue((maxValueParagon - 0)) ..
+                                        " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
+                    1,
+                    1,
+                    1
+
+                _G["GwExperienceFrameRepuBar"]:SetStatusBarColor(
+                    FACTION_BAR_COLORS[9].r,
+                    FACTION_BAR_COLORS[9].g,
+                    FACTION_BAR_COLORS[9].b
+                )
+            elseif (friendID ~= nil) then
+                if (nextFriendThreshold) then
+                    valPrecRepu = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
                     gw_reputation_vals =
-                        name ..
-                            " " .. REPUTATION .. " " ..
-                                CommaValue((currentValue - 0)) ..
+                        friendName ..
+                                " " .. REPUTATION .. " " ..
+                                CommaValue((friendRep - friendThreshold)) ..
                                     " / " ..
-                                        CommaValue((maxValueParagon - 0)) ..
-                                            " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
+                                        CommaValue((nextFriendThreshold - friendThreshold)) ..
+                                            " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
                         1,
                         1,
                         1
-
-                    _G["GwExperienceFrameBar"]:SetStatusBarColor(
-                        FACTION_BAR_COLORS[9].r,
-                        FACTION_BAR_COLORS[9].g,
-                        FACTION_BAR_COLORS[9].b
-                    )
-                elseif (friendID ~= nil) then
-                    if (nextFriendThreshold) then
-                        valPrec = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
-                        gw_reputation_vals =
-                            friendName ..
-                                    " " .. REPUTATION .. " " ..
-                                    CommaValue((friendRep - friendThreshold)) ..
-                                        " / " ..
-                                            CommaValue((nextFriendThreshold - friendThreshold)) ..
-                                                " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
-                            1,
-                            1,
-                            1
-                    else
-                        valPrec = 1
-                        gw_reputation_vals =
-                            friendName ..
-                                    " " .. REPUTATION .. " " ..
-                                    CommaValue(friendMaxRep) ..
-                                        " / " ..
-                                            CommaValue(friendMaxRep) ..
-                                                " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
-                            1,
-                            1,
-                            1
-                    end
-                    _G["GwExperienceFrameBar"]:SetStatusBarColor(
-                        FACTION_BAR_COLORS[5].r,
-                        FACTION_BAR_COLORS[5].g,
-                        FACTION_BAR_COLORS[5].b
-                    )
                 else
-                    local currentRank =
-                        GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), UnitSex("player"))
-                    local nextRank =
-                        GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), UnitSex("player"))
-
-                    if currentRank == nextRank and earnedValue - bottomValue == 0 then
-                        valPrec = 1
-                        gw_reputation_vals =
-                            name ..
-                                    " " .. REPUTATION .. " "  ..
-                                    "21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
-                            1,
-                            1,
-                            1
-                    else
-                        valPrec = (earnedValue - bottomValue) / (topValue - bottomValue)
-                        gw_reputation_vals =
-                            name ..
-                                    " " .. REPUTATION .. " " ..
-                                    CommaValue((earnedValue - bottomValue)) ..
-                                        " / " ..
-                                            CommaValue((topValue - bottomValue)) ..
-                                                " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
-                            1,
-                            1,
-                            1
-                    end
-                    _G["GwExperienceFrameBar"]:SetStatusBarColor(
-                        FACTION_BAR_COLORS[reaction].r,
-                        FACTION_BAR_COLORS[reaction].g,
-                        FACTION_BAR_COLORS[reaction].b
-                    )
+                    valPrecRepu = 1
+                    gw_reputation_vals =
+                        friendName ..
+                                " " .. REPUTATION .. " " ..
+                                CommaValue(friendMaxRep) ..
+                                    " / " ..
+                                        CommaValue(friendMaxRep) ..
+                                            " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
+                        1,
+                        1,
+                        1
                 end
+                _G["GwExperienceFrameRepuBar"]:SetStatusBarColor(
+                    FACTION_BAR_COLORS[5].r,
+                    FACTION_BAR_COLORS[5].g,
+                    FACTION_BAR_COLORS[5].b
+                )
+            else
+                local currentRank =
+                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), UnitSex("player"))
+                local nextRank =
+                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), UnitSex("player"))
 
-                local nextId = standingId + 1
-                if nextId == nil then
-                    nextId = standingId
+                if currentRank == nextRank and earnedValue - bottomValue == 0 then
+                    valPrecRepu = 1
+                    gw_reputation_vals =
+                        name ..
+                                " " .. REPUTATION .. " "  ..
+                                "21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
+                        1,
+                        1,
+                        1
+                else
+                    valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
+                    gw_reputation_vals =
+                        name ..
+                                " " .. REPUTATION .. " " ..
+                                CommaValue((earnedValue - bottomValue)) ..
+                                    " / " ..
+                                        CommaValue((topValue - bottomValue)) ..
+                                            " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
+                        1,
+                        1,
+                        1
                 end
-                level = getglobal("FACTION_STANDING_LABEL" .. standingId)
-
-                Nextlevel = getglobal("FACTION_STANDING_LABEL" .. nextId)
-
-                showBar1 = true
+                _G["GwExperienceFrameRepuBar"]:SetStatusBarColor(
+                    FACTION_BAR_COLORS[reaction].r,
+                    FACTION_BAR_COLORS[reaction].g,
+                    FACTION_BAR_COLORS[reaction].b
+                )
             end
+
+            local nextId = standingId + 1
+            if nextId == nil then
+                nextId = standingId
+            end
+            if not lockLevelTextUnderMaxLevel then
+                level = getglobal("FACTION_STANDING_LABEL" .. standingId)
+                Nextlevel = getglobal("FACTION_STANDING_LABEL" .. nextId)
+            end
+
+            showBar3 = true
         end
     end
 
@@ -455,9 +460,6 @@ local function xpbar_OnEvent(self, event)
         _G["GwExperienceFrameBar"]:SetStatusBarColor(1, 0.2, 0.2)
     end
 
-    --  experiencebarAnimation = 0.01
-    --   valPrec = 0.8
-
     local GainBigExp = false
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (UnitLevel("Player") / GetMaxPlayerLevel())))
     if (valPrec - experiencebarAnimation) > FlareBreakPoint then
@@ -546,6 +548,38 @@ local function xpbar_OnEvent(self, event)
         end
     )
 
+    if showBar3 then
+        _G["GwExperienceFrameRepuBarCandy"]:SetValue(valPrecRepu)
+
+        AddToAnimation(
+            "repuBarAnimation",
+            _G["GwExperienceFrameRepuBar"].repuBarAnimation,
+            valPrecRepu,
+            GetTime(),
+            animationSpeed,
+            function()
+                ExperienceRepuBarSpark:SetWidth(
+                    math.max(
+                        8,
+                        math.min(
+                            9,
+                            _G["GwExperienceFrameRepuBar"]:GetWidth() *
+                                animations["repuBarAnimation"]["progress"]
+                        )
+                    )
+                )
+
+                _G["GwExperienceFrameRepuBar"]:SetValue(animations["repuBarAnimation"]["progress"])
+                ExperienceRepuBarSpark:SetPoint(
+                    "LEFT",
+                    _G["GwExperienceFrameRepuBar"]:GetWidth() * animations["repuBarAnimation"]["progress"] - 8,
+                    0
+                )
+            end
+        )
+        _G["GwExperienceFrameRepuBar"].repuBarAnimation = valPrecRepu
+    end
+
     experiencebarAnimation = valPrec
 
     if GW_LEVELING_REWARD_AVALIBLE then
@@ -554,13 +588,178 @@ local function xpbar_OnEvent(self, event)
 
     _G["GwExperienceFrameNextLevel"]:SetText(Nextlevel)
     _G["GwExperienceFrameCurrentLevel"]:SetText(restingIconString .. level)
-    if showBar1 and showBar2 then
+    if showBar1 and showBar2 and showBar3 then
+        _G["GwExperienceFrameBar"]:Show()
+        _G["GwExperienceFrameBarCandy"]:Show()
+        _G["GwExperienceFrameBar"]:SetHeight(2.66)
+        _G["GwExperienceFrameBarCandy"]:SetHeight(2.66)
+        _G["ExperienceBarSpark"]:SetHeight(2.66)
+        ExperienceBarSpark:Show()
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPRIGHT", -90, -4)
+        
+        _G["GwExperienceFrameArtifactBar"]:Show()
+        _G["GwExperienceFrameArtifactBarCandy"]:Show()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Show()
+        _G["GwExperienceFrameArtifactBar"]:SetHeight(2.66)
+        _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(2.66)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(2.66)
+        _G["ArtifactBarSpark"]:SetHeight(2.66)
+        ArtifactBarSpark:Show()
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPRIGHT", -90, -8)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPRIGHT", -90, -8)
+
+        _G["GwExperienceFrameRepuBar"]:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:Show()
+        _G["GwExperienceFrameRepuBar"]:SetHeight(2.66)
+        _G["GwExperienceFrameRepuBarCandy"]:SetHeight(2.66)
+        _G["ExperienceRepuBarSpark"]:SetHeight(2.66)
+        ExperienceRepuBarSpark:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPLEFT", 90, -12)
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPRIGHT", -90, -12)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPLEFT", 90, -12)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPRIGHT", -90, -12)
+    elseif showBar1 and not showBar2 and showBar3 then
         _G["GwExperienceFrameBar"]:Show()
         _G["GwExperienceFrameBarCandy"]:Show()
         _G["GwExperienceFrameBar"]:SetHeight(4)
         _G["GwExperienceFrameBarCandy"]:SetHeight(4)
         _G["ExperienceBarSpark"]:SetHeight(4)
         ExperienceBarSpark:Show()
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPRIGHT", -90, -4)
+        
+        _G["GwExperienceFrameArtifactBar"]:Hide()
+        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
+        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
+        ArtifactBarSpark:Hide()
+        
+        _G["GwExperienceFrameRepuBar"]:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:Show()
+        _G["GwExperienceFrameRepuBar"]:SetHeight(4)
+        _G["GwExperienceFrameRepuBarCandy"]:SetHeight(4)
+        _G["ExperienceRepuBarSpark"]:SetHeight(4)
+        ExperienceRepuBarSpark:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPRIGHT", -90, -8)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPRIGHT", -90, -8)
+    elseif not showBar1 and showBar2 and showBar3 then
+        _G["GwExperienceFrameBar"]:Hide()
+        _G["GwExperienceFrameBarCandy"]:Hide()
+        _G["GwExperienceFrameBar"]:SetValue(0)
+        _G["GwExperienceFrameBarCandy"]:SetValue(0)
+        ExperienceBarSpark:Hide()
+
+        _G["GwExperienceFrameArtifactBar"]:Show()
+        _G["GwExperienceFrameArtifactBarCandy"]:Show()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Show()
+        _G["GwExperienceFrameArtifactBar"]:SetHeight(4)
+        _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(4)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(4)
+        _G["ArtifactBarSpark"]:SetHeight(4)
+        ArtifactBarSpark:Show()
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPRIGHT", -90, -4)
+
+        _G["GwExperienceFrameRepuBar"]:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:Show()
+        _G["GwExperienceFrameRepuBar"]:SetHeight(4)
+        _G["GwExperienceFrameRepuBarCandy"]:SetHeight(4)
+        _G["ExperienceRepuBarSpark"]:SetHeight(4)
+        ExperienceRepuBarSpark:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPRIGHT", -90, -8)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPRIGHT", -90, -8)
+    elseif not showBar1 and not showBar2 and showBar3 then
+        _G["GwExperienceFrameBar"]:Hide()
+        _G["GwExperienceFrameBarCandy"]:Hide()
+        _G["GwExperienceFrameBar"]:SetValue(0)
+        _G["GwExperienceFrameBarCandy"]:SetValue(0)
+        ExperienceBarSpark:Hide()
+
+        _G["GwExperienceFrameArtifactBar"]:Hide()
+        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
+        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
+        ArtifactBarSpark:Hide()
+
+        _G["GwExperienceFrameRepuBar"]:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:Show()
+        _G["GwExperienceFrameRepuBar"]:SetHeight(8)
+        _G["GwExperienceFrameRepuBarCandy"]:SetHeight(8)
+        _G["ExperienceRepuBarSpark"]:SetHeight(8)
+        ExperienceRepuBarSpark:Show()
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPRIGHT", -90, -4)
+    elseif not showBar1 and not showBar2 and not showBar3 then
+        _G["GwExperienceFrameBar"]:Hide()
+        _G["GwExperienceFrameBarCandy"]:Hide()
+        _G["GwExperienceFrameBar"]:SetValue(0)
+        _G["GwExperienceFrameBarCandy"]:SetValue(0)
+        ExperienceBarSpark:Hide()
+
+        _G["GwExperienceFrameArtifactBar"]:Hide()
+        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
+        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
+        ArtifactBarSpark:Hide()
+
+        _G["GwExperienceFrameRepuBar"]:Hide()
+        _G["GwExperienceFrameRepuBarCandy"]:Hide()
+        _G["GwExperienceFrameRepuBar"]:SetValue(0)
+        _G["GwExperienceFrameRepuBarCandy"]:SetValue(0)
+        ExperienceRepuBarSpark:Hide()
+    elseif showBar1 and not showBar2 and not showBar3 then
+        _G["GwExperienceFrameBar"]:Show()
+        _G["GwExperienceFrameBarCandy"]:Show()
+        _G["GwExperienceFrameBar"]:SetHeight(8)
+        _G["GwExperienceFrameBarCandy"]:SetHeight(8)
+        _G["ExperienceBarSpark"]:SetHeight(8)
+        ExperienceBarSpark:Show()
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPRIGHT", -90, -4)
+
+        _G["GwExperienceFrameArtifactBar"]:Hide()
+        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
+        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
+        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
+        ArtifactBarSpark:Hide()
+
+        _G["GwExperienceFrameRepuBar"]:Hide()
+        _G["GwExperienceFrameRepuBarCandy"]:Hide()
+        _G["GwExperienceFrameRepuBar"]:SetValue(0)
+        _G["GwExperienceFrameRepuBarCandy"]:SetValue(0)
+        ExperienceRepuBarSpark:Hide()
+    elseif showBar1 and showBar2 and not showBar3 then
+        _G["GwExperienceFrameBar"]:Show()
+        _G["GwExperienceFrameBarCandy"]:Show()
+        _G["GwExperienceFrameBar"]:SetHeight(4)
+        _G["GwExperienceFrameBarCandy"]:SetHeight(4)
+        _G["ExperienceBarSpark"]:SetHeight(4)
+        ExperienceBarSpark:Show()
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameBar"]:SetPoint("TOPRIGHT", -90, -4)
         
         _G["GwExperienceFrameArtifactBar"]:Show()
         _G["GwExperienceFrameArtifactBarCandy"]:Show()
@@ -570,7 +769,17 @@ local function xpbar_OnEvent(self, event)
         _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(4)
         _G["ArtifactBarSpark"]:SetHeight(4)
         ArtifactBarSpark:Show()
-    elseif not showBar1 and showBar2 then
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPRIGHT", -90, -8)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPLEFT", 90, -8)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPRIGHT", -90, -8)
+
+        _G["GwExperienceFrameRepuBar"]:Hide()
+        _G["GwExperienceFrameRepuBarCandy"]:Hide()
+        _G["GwExperienceFrameRepuBar"]:SetValue(0)
+        _G["GwExperienceFrameRepuBarCandy"]:SetValue(0)
+        ExperienceRepuBarSpark:Hide()
+    elseif not showBar1 and showBar2 and not showBar3 then
         _G["GwExperienceFrameBar"]:Hide()
         _G["GwExperienceFrameBarCandy"]:Hide()
         _G["GwExperienceFrameBar"]:SetValue(0)
@@ -583,35 +792,18 @@ local function xpbar_OnEvent(self, event)
         _G["GwExperienceFrameArtifactBar"]:SetHeight(8)
         _G["GwExperienceFrameArtifactBarAnimation"]:SetHeight(8)
         _G["GwExperienceFrameArtifactBarCandy"]:SetHeight(8)
-        _G["ArtifactBarSpark"]:SetHeight(4)
+        _G["ArtifactBarSpark"]:SetHeight(8)
         ArtifactBarSpark:Show()
-    elseif showBar1 and not showBar2 then
-        _G["GwExperienceFrameBar"]:Show()
-        _G["GwExperienceFrameBarCandy"]:Show()
-        _G["GwExperienceFrameBar"]:SetHeight(8)
-        _G["GwExperienceFrameBarCandy"]:SetHeight(8)
-        _G["ExperienceBarSpark"]:SetHeight(8)
-        ExperienceBarSpark:Show()
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameArtifactBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPLEFT", 90, -4)
+        _G["GwExperienceFrameArtifactBar"]:SetPoint("TOPRIGHT", -90, -4)
 
-        _G["GwExperienceFrameArtifactBar"]:Hide()
-        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
-        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
-        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
-        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
-        ArtifactBarSpark:Hide()
-    elseif not showBar1 and not showBar2 then 
-        _G["GwExperienceFrameBar"]:Hide()
-        _G["GwExperienceFrameBarCandy"]:Hide()
-        _G["GwExperienceFrameBar"]:SetValue(0)
-        _G["GwExperienceFrameBarCandy"]:SetValue(0)
-        ExperienceBarSpark:Hide()
-
-        _G["GwExperienceFrameArtifactBar"]:Hide()
-        _G["GwExperienceFrameArtifactBarCandy"]:Hide()
-        _G["GwExperienceFrameArtifactBarAnimation"]:Hide()
-        _G["GwExperienceFrameArtifactBar"]:SetValue(0)
-        _G["GwExperienceFrameArtifactBarCandy"]:SetValue(0)
-        ArtifactBarSpark:Hide()
+        _G["GwExperienceFrameRepuBar"]:Hide()
+        _G["GwExperienceFrameRepuBarCandy"]:Hide()
+        _G["GwExperienceFrameRepuBar"]:SetValue(0)
+        _G["GwExperienceFrameRepuBarCandy"]:SetValue(0)
+        ExperienceRepuBarSpark:Hide()
     end
 
     if experiencebarAnimation > valPrec then
@@ -1863,6 +2055,7 @@ local function LoadXPBar()
 
     experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
 
+    _G["GwExperienceFrameRepuBar"].repuBarAnimation = 0
     _G["GwExperienceFrameArtifactBar"].artifactBarAnimation = 0
     _G["GwExperienceFrameNextLevel"]:SetFont(UNIT_NAME_FONT, 12)
     _G["GwExperienceFrameCurrentLevel"]:SetFont(UNIT_NAME_FONT, 12)
@@ -1889,6 +2082,7 @@ local function LoadXPBar()
             GameTooltip_Hide()
             UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(), 1)
             UIFrameFadeIn(_G["GwExperienceFrameArtifactBar"], 0.2, _G["GwExperienceFrameArtifactBar"]:GetAlpha(), 1)
+            UIFrameFadeIn(GwExperienceFrameRepuBar, 0.2, GwExperienceFrameRepuBar:GetAlpha(), 1)
         end
     )
 end

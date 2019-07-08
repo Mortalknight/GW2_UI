@@ -243,7 +243,7 @@ local function time_OnClick(self, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-        if IsShiftKeyDown() then
+        if not IsShiftKeyDown() then
             TimeManager_ToggleLocalTime()
             time_OnEnter(self)
         else
