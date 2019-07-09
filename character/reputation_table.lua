@@ -13,6 +13,8 @@ T[2156] = "BFA/Talanji Expe"
 T[2158] = "BFA/Voldunai"
 T[2103] = "BFA/Zandalari Empire"
 T[2157] = "BFA/Honorbound"
+T[2391] = "BFA/Meca"
+T[2400] = "BFA/Ankoan"
 
 -- Legion
 T[2170] = "Legion/Argus"

@@ -761,6 +761,7 @@ local function LoadBank()
         function()
             GwBankFrame:Show()
             BankFrame:ClearAllPoints()
+            BankFrame:GetParent():ClearAllPoints()
             BankFrame:SetPoint("RIGHT", UIParent, "LEFT", -2000, 0)
             for i = 5, 12 do
                 OpenBag(i)
