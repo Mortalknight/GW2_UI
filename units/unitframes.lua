@@ -222,7 +222,7 @@ local function createNormalUnitFrame(ftype)
 
     f.prestigebg:SetPoint("CENTER", f.prestigeString, "CENTER", -1, 1)
 
-    f.portrait:SetMask("Textures\\MinimapMask")
+    f.portrait:SetMask(186178)
 
     f.healthValue = 0
 
@@ -1295,7 +1295,7 @@ local function LoadTarget()
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
 
-    mask:SetTexture("Textures\\MinimapMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(mask)
 
@@ -1363,7 +1363,7 @@ local function LoadFocus()
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
 
-    mask:SetTexture("Textures\\MinimapMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(mask)
 

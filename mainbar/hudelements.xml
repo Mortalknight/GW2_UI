@@ -17,14 +17,14 @@
             <Anchor point="BOTTOM" x="0" y="0"/>
         </Anchors>
     </Button>
-    <Button name="GwPlayerHealthGlobeClickOverlay" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="HIGH" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+    <Button name="GwPlayerHealthGlobeClickOverlay" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="HIGH" enableMouse="true" inherits="SecureUnitButtonTemplate" virtual="true">
         <Size x="104" y="104"></Size>
         <Anchors>
             <Anchor point="BOTTOM" x="0" y="16"/>
         </Anchors>
 
     </Button>
-    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW" enableMouse="true" parent="UIParent" inherits="SecurehandlerStateTemplate,SecureUnitButtonTemplate" virtual="true" FrameLevel="2">
+    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW" enableMouse="true" inherits="SecurehandlerStateTemplate,SecureUnitButtonTemplate" virtual="true" FrameLevel="2">
 
         <Size x="104" y="104"></Size>
         <Anchors>
