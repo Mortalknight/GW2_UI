@@ -612,43 +612,46 @@ local function updateBuffs(self)
 
                 if shouldDisplay then
                     -- indicators
-                    for _, pos in ipairs(INDICATORS) do
-                        if spellID == GetSetting("INDICATOR_" .. pos, true) then
-                            local frame = self["indicator" .. pos]
-                            local r, g, b = unpack(indicators[spellID])
+                    local indicator = indicators[spellID]
+                    if indicator then
+                        for _, pos in ipairs(INDICATORS) do
+                            if GetSetting("INDICATOR_" .. pos, true) == (indicator[4] or spellID) then
+                                local frame = self["indicator" .. pos]
+                                local r, g, b = unpack(indicator)
 
-                            if pos == "BAR" then
-                                frame.expires = expires
-                                frame.duration = duration
-                            else
-                                -- Stacks
-                                if count > 1 then
-                                    frame.text:SetText(count)
-                                    frame.text:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
-                                    frame.text:Show()
+                                if pos == "BAR" then
+                                    frame.expires = expires
+                                    frame.duration = duration
                                 else
-                                    frame.text:Hide()
-                                end
+                                    -- Stacks
+                                    if count > 1 then
+                                        frame.text:SetText(count)
+                                        frame.text:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
+                                        frame.text:Show()
+                                    else
+                                        frame.text:Hide()
+                                    end
 
-                                -- Icon
-                                if GetSetting("INDICATORS_ICON") then
-                                    frame.icon:SetTexture(icon)
-                                else
-                                    frame.icon:SetColorTexture(r, g, b)
-                                end
+                                    -- Icon
+                                    if GetSetting("INDICATORS_ICON") then
+                                        frame.icon:SetTexture(icon)
+                                    else
+                                        frame.icon:SetColorTexture(r, g, b)
+                                    end
 
-                                -- Cooldown
-                                if GetSetting("INDICATORS_TIME") then
-                                    frame.cooldown:Show()
-                                    frame.cooldown:SetCooldown(expires - duration, duration)
-                                else
-                                    frame.cooldown:Hide()
-                                end
+                                    -- Cooldown
+                                    if GetSetting("INDICATORS_TIME") then
+                                        frame.cooldown:Show()
+                                        frame.cooldown:SetCooldown(expires - duration, duration)
+                                    else
+                                        frame.cooldown:Hide()
+                                    end
 
-                                shouldDisplay = false
+                                    shouldDisplay = false
+                                end
+                                
+                                frame:Show()
                             end
-                            
-                            frame:Show()
                         end
                     end
 

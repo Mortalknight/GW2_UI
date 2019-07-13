@@ -337,7 +337,6 @@ local function addOptionDropdown(name, desc, optionName, frameName, callback, op
     options[i]["callback"] = callback
     options[i]["options"] = {}
     options[i]["options"] = options_list
-    options[i]["options_names"] = {}
     options[i]["options_names"] = option_names
     options[i]["optionType"] = "dropdown"
 
@@ -1422,13 +1421,15 @@ local function LoadSettings()
         function () end
     )
 
-    local auras = GW.AURAS_INDICATORS[select(2, UnitClass("player"))]
-    local auraKeys = MapTable(auras, function (_, i) return i end, true)
-    local auraVals = MapTable(auras, function (_, i) return GetSpellInfo(i) end, true)
-    tinsert(auraKeys, 1, 0)
-    tinsert(auraVals, 1, NONE_KEY)
+    local auraKeys, auraVals = {0}, {NONE_KEY}
+    for spellID,indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
+        if not indicator[4] then
+            tinsert(auraKeys, spellID)
+            tinsert(auraVals, (GetSpellInfo(spellID)))
+        end
+    end
 
-    for i,pos in ipairs(GW.INDICATORS) do
+    for _,pos in ipairs(GW.INDICATORS) do
         local key = "INDICATOR_" .. pos
         local t = StrUpper(GwLocalization[key] or GwLocalization[pos], 1, 1)
         addOptionDropdown(

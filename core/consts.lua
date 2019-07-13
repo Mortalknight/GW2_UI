@@ -171,7 +171,7 @@ local INDICATORS = {"BAR", "TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT
 GW.INDICATORS = INDICATORS
 
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
--- Format: {class = {id = color, ...}, ...}
+-- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}
 local AURAS_INDICATORS = {
     PRIEST = {
         [194384] =  {1, 1, 0.66},       -- Atonement
@@ -194,9 +194,9 @@ local AURAS_INDICATORS = {
         [200389] =  {1, 1, 0.4},        -- Cultivation
     },
     PALADIN = {
-        [53563] =   {0.7, 0.3, 0.7},    -- Beacon of Light
-        [156910] =  {0.7, 0.3, 0.7},    -- Beacon of Faith
-        [200025] =  {0.7, 0.3, 0.7},    -- Beacon of Virtue
+        [53563] =   {1, 0.3, 0},        -- Beacon of Light
+        [156910] =  {0, 0.7, 1, 53563}, -- Beacon of Faith
+        [200025] =  {1, 0.85, 0, 53563},-- Beacon of Virtue
         [1022] =    {0.2, 0.2, 1},      -- Hand of Protection
         [1044] =    {0.89, 0.45, 0},    -- Hand of Freedom
         [6940] =    {0.89, 0.1, 0.1},   -- Hand of Sacrifice

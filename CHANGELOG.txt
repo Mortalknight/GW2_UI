@@ -1,4 +1,10 @@
+5.0.27
+
+MISCELLANEOUS
+    - Paladin beacons use the same indicator slot, and colors now match their spell icon colors
+
 5.0.26
+
 
 NEW
     - Track reputation while under max level
