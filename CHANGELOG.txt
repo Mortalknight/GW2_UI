@@ -1,5 +1,8 @@
 5.0.27
 
+FIXES
+    - Fixed bag close button not working at bank, vendor or mailbox
+
 MISCELLANEOUS
     - Paladin beacons use the same indicator slot, and colors now match their spell icon colors
 

@@ -631,7 +631,7 @@ local function LoadBag()
     end
 
     -- setup close button
-    f.buttonClose:HookScript("OnClick", CloseAllBags)
+    f.buttonClose:HookScript("OnClick", function () CloseAllBags() end)
 
     -- setup resizer stuff
     f:SetMinResize(508, 340)
