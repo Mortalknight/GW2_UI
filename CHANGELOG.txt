@@ -5,6 +5,7 @@ FIXES
 
 MISCELLANEOUS
     - Paladin beacons use the same indicator slot, and colors now match their spell icon colors
+    - Added indicator for "Glimmer of Light"
 
 
 5.0.26

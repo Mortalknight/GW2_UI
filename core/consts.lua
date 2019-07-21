@@ -201,6 +201,7 @@ local AURAS_INDICATORS = {
         [1044] =    {0.89, 0.45, 0},    -- Hand of Freedom
         [6940] =    {0.89, 0.1, 0.1},   -- Hand of Sacrifice
         [223306] =  {0.7, 0.7, 0.3},    -- Bestow Faith
+        [287280] =  {1, 0.5, 0},        -- Glimmer of Light
     },
     SHAMAN = {
         [61295] =   {0, 0.4, 0.53},     -- Riptide
