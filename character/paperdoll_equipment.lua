@@ -80,6 +80,7 @@ local function setItemButtonQuality(button, quality, itemIDOrLink)
         button.IconBorder:Hide()
     end
 end
+GW.setItemButtonQuality = setItemButtonQuality
 GW.AddForProfiling("paperdoll_equipment", "setItemButtonQuality", setItemButtonQuality)
 
 local function setItemLevel(button, quality, itemLink)

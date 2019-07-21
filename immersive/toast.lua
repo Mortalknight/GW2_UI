@@ -6,10 +6,11 @@ local toastList = {}
 local toastQueue = {}
 local toastIndex = 0
 local lastShown
-local delayTime = 10
+local delayTime = 5
 local ignoreNewSpells = 0
 
 local function toastAnimateFlare(self, delta)
+    if self.removeTime == nil then return end
     if self.removeTime < GetTime() and self.animatingOut == false then
         self.animatingOut = true
 
@@ -140,6 +141,11 @@ local function toastLevelUp_OnUpdate(self, elapsed)
     animateLevelUpWiggle(self)
 end
 
+local function toast_OnLeave(self)
+    self.removeTime = GetTime() + 5
+    GameTooltip_Hide()
+end
+
 local function getBloack(t)
     local f
     local template = "GwToast"
@@ -165,10 +171,12 @@ local function getBloack(t)
             f.title:SetShadowOffset(1, -1)
             f.sub:SetShadowOffset(1, -1)
             f.flare.rot = 1
+            f.removeTime = GetTime() + delayTime
             f.animatingOut = false
             f:SetScript("OnClick", toast_OnClick)
             f:SetScript("OnShow", toast_OnShow)
             f:SetScript("OnUpdate", toastAnimateFlare)
+            f:SetScript("OnLeave", toast_OnLeave)
         elseif (template == "GwToastLevelUp") then
             f.title:SetFont(UNIT_NAME_FONT, 14)
             f.sub:SetFont(UNIT_NAME_FONT, 12)
@@ -177,11 +185,14 @@ local function getBloack(t)
             f.title:SetShadowOffset(1, -1)
             f.sub:SetShadowOffset(1, -1)
             f.flare.rot = 1
+            f.removeTime = GetTime() + delayTime
             f.animatingOut = false
             f:SetScript("OnClick", toast_OnClick)
             f:SetScript("OnShow", toast_OnShow)
             f:SetScript("OnUpdate", toastLevelUp_OnUpdate)
+            f:SetScript("OnLeave", toast_OnLeave)
         end
+        delayTime = delayTime + 5
         toastList[template][toastIndex] = v
         toastIndex = toastIndex + 1
     end
@@ -211,7 +222,10 @@ local function toastRecive(
     isUpgraded,
     isPersonal,
     showRatedBG)
+
+    local frame = getBloack()
     local itemName, itemHyperLink, itemRarity, itemTexture
+
     if (isCurrency) then
         itemName, _, itemTexture, _, _, _, _, itemRarity = GetCurrencyInfo(itemLink)
         if (lootSource == LOOT_SOURCE_GARRISON_CACHE) then
@@ -224,18 +238,29 @@ local function toastRecive(
         itemName, itemHyperLink, itemRarity, _, _, _, _, _, _, itemTexture = GetItemInfo(itemLink)
     end
 
-    local frame = getBloack()
+    frame:SetScript("OnEnter", function(self)  
+        GameTooltip:SetOwner(frame.icon, "ANCHOR_TOPLEFT")
+        GameTooltip:ClearLines()
+        GameTooltip:SetHyperlink(itemLink)
+        GameTooltip:Show()
+        self.removeTime = nil
+        end)
 
     frame.icon:SetTexture(itemTexture)
 
     frame.title:SetText(itemName)
+    if itemRarity then
+        if itemRarity >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[itemRarity] then
+            frame.title:SetTextColor(BAG_ITEM_QUALITY_COLORS[itemRarity].r, BAG_ITEM_QUALITY_COLORS[itemRarity].g,BAG_ITEM_QUALITY_COLORS[itemRarity].b)
+        end
+    end
 
     if isUpgraded then
         frame.sub:SetText(format(LOOTUPGRADEFRAME_TITLE, _G["ITEM_QUALITY" .. itemRarity .. "_DESC"]))
     else
         frame.sub:SetText("")
     end
-    GwSetItemButtonQuality(frame, itemRarity, itemHyperLink)
+    GW.setItemButtonQuality(frame, itemRarity, itemHyperLink)
 
     if (lessAwesome) then
         PlaySound(SOUNDKIT.UI_RAID_LOOT_TOAST_LESSER_ITEM_WON)
@@ -254,7 +279,14 @@ local function newSpellLearned(spellID)
     frame.icon:SetTexture(icon)
 
     frame.title:SetText(name)
-    frame.sub:SetText("Unlocked")
+    frame.sub:SetText(SPELL_BUCKET_ABILITIES_UNLOCKED)
+    frame:SetScript("OnEnter", function(self)  
+        GameTooltip:SetOwner(frame.icon, "ANCHOR_TOPLEFT")
+        GameTooltip:ClearLines()
+        GameTooltip:SetSpellByID(spellID)
+        GameTooltip:Show()
+        self.removeTime = nil
+        end)
 
     frame.IconBorder:SetVertexColor(0, 0, 0)
 end
@@ -262,12 +294,11 @@ end
 local function newTalentPoint()
     local frame = getBloack()
 
-    local _ = GetSpellInfo(spellID)
-
     frame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talent-icon")
 
-    frame.title:SetText("Talent Point")
+    frame.title:SetText(BONUS_TALENTS)
     frame.sub:SetText("A new talent point is avalible")
+    frame:SetScript("OnEnter", nil)
 
     frame.IconBorder:SetVertexColor(0, 0, 0, 0)
 end
@@ -275,8 +306,9 @@ end
 local function levelUp(level)
     local frame = getBloack("GwToastLevelUp")
 
-    frame.title:SetText("Level Up!")
+    frame.title:SetText(PLAYER_LEVEL_UP)
     frame.sub:SetText("You reached level " .. level)
+    frame:SetScript("OnEnter", nil)
 
     frame.IconBorder:SetVertexColor(0, 0, 0, 0)
 end
@@ -284,8 +316,16 @@ end
 local function goldWon(amount)
     local frame = getBloack()
 
-    frame.title:SetText("Gold")
+    frame.title:SetText(BONUS_ROLL_REWARD_MONEY)
     frame.sub:SetText(GetMoneyString(amount))
+
+    frame:SetScript("OnEnter", function(self)  
+        GameTooltip:SetOwner(frame.icon, "ANCHOR_TOPLEFT")
+        GameTooltip:ClearLines()
+        SetTooltipMoney(GameTooltip, amount)
+        GameTooltip:Show()
+        self.removeTime = nil
+        end)
 
     PlaySound(SOUNDKIT.UI_EPICLOOT_TOAST)
 end
@@ -372,16 +412,16 @@ local function onEvent(self, event, ...)
     toastQueueAdd(newEvent)
 end
 
---[[
-local function gwTestToast()
+
+function gwTestToast()
     onEvent(GwToastContainer, "PLAYER_LEVEL_UP", 1, 2, 2, 1)
 end
 
-local function gwTestToastSpell()
+function gwTestToastSpell()
     newSpellLearned(48181)
     goldWon(50)
 end
---]]
+
 local function LoadToast()
     CreateFrame("FRAME", "GwToastContainer", UIParent, "GwToastContainer")
 
@@ -397,3 +437,4 @@ local function LoadToast()
     GwToastContainer:SetScript("OnEvent", onEvent)
 end
 GW.LoadToast = LoadToast
+
