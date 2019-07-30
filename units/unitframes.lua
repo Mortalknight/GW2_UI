@@ -595,10 +595,10 @@ local function updateCastValues(self, event)
 
     self.castingString:SetText(name)
 
-    if texture ~= nil and self.portrait ~= nil and (self.activePortrait == nil or self.activePortrait ~= texture) then
-        self.portrait:SetTexture(texture)
-        self.activePortrait = texture
-    end
+    --if texture ~= nil and self.portrait ~= nil and (self.activePortrait == nil or self.activePortrait ~= texture) then
+    --    self.portrait:SetTexture(texture)
+    --    self.activePortrait = texture
+    --end
 
     self.castingbarBackground:Show()
     self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", -2, -1)
