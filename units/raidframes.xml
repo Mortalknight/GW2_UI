@@ -195,7 +195,6 @@
                                 <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                             </Anchors>
                         </Texture>
-
                         <FontString name="$parentName" text="Unkown" parentKey="name" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="100" y="10"/>
                             <Color r="1" g="1" b="1"></Color>

@@ -31,10 +31,10 @@ local function setCompass(prepFrame)
 
     if isArena or prepFrame then
         compassData["TITLE"] = ARENA
-        compassData["DESC"] = ARENA_IS_READY
+        compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
     else
         compassData["TITLE"] = BATTLEGROUND
-        compassData["DESC"] = BATTLEGROUND_IS_READY
+        compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
     end
     compassData["TYPE"] = "ARENA"
     compassData["ID"] = "arena_unknown"
