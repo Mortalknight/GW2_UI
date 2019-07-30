@@ -1,5 +1,8 @@
 5.0.27
 
+NEW
+    - Added Reward Tooltip to WorldQuests
+
 FIXES
     - Fixed bag close button not working at bank, vendor or mailbox
 

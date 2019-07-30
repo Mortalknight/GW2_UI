@@ -132,6 +132,10 @@ local function updateBonusObjective(self, event)
             end
 
             GwBonusObjectiveBlock.questID = questID
+            GwBonusObjectiveBlock.id = questID
+
+            local module = CreateBonusObjectiveTrackerModule()
+            GwBonusObjectiveBlock.module = module
 
             GwBonusHeader:Show()
             UpdateQuestItem(GwBonusItemButton, questLogIndex)
@@ -226,6 +230,9 @@ local function LoadBonusFrame()
     newBlock:SetParent(GwQuesttrackerContainerBonusObjectives)
     newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "TOPRIGHT", 0, -20)
     newBlock.Header:SetText("")
+
+    newBlock:SetScript("OnEnter", BonusObjectiveTracker_ShowRewardsTooltip)
+    newBlock:SetScript("OnLeave", GameTooltip_Hide)
 
     newBlock.color = TRACKER_TYPE_COLOR["BONUS"]
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
