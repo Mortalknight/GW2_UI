@@ -999,43 +999,12 @@ local function target_OnEvent(self, event, unit)
             self.threattabbg:Hide()
         end
 
-        self.stepOnUpdate = 0
-        self:SetScript(
-            "OnUpdate",
-            function()
-                self.stepOnUpdate = self.stepOnUpdate + 1
-
-                if self.stepOnUpdate == 1 then
-                    updateHealthValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 2 then
-                    unitFrameData(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 3 then
-                    updatePowerValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 4 then
-                    updateCastValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 5 then
-                    updateRaidMarkers(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 6 then
-                    UpdateBuffLayout(self, event)
-                    return
-                end
-
-                if self.stepOnUpdate == 7 then
-                    self:SetScript("OnUpdate", nil)
-                    return
-                end
-            end
-        )
+        unitFrameData(self, event)
+        updateHealthValues(self, event)
+        updatePowerValues(self, event)
+        updateCastValues(self, event)
+        updateRaidMarkers(self, event)
+        UpdateBuffLayout(self, event)
     elseif event == "PLAYER_ENTERING_WORLD" then
         wipe(unitIlvls)
     elseif event == "RAID_TARGET_UPDATE" then
@@ -1067,43 +1036,12 @@ GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
 
 local function focus_OnEvent(self, event, unit)
     if event == "PLAYER_FOCUS_CHANGED" or event == "ZONE_CHANGED" then
-        self.stepOnUpdate = 0
-        self:SetScript(
-            "OnUpdate",
-            function()
-                self.stepOnUpdate = self.stepOnUpdate + 1
-
-                if self.stepOnUpdate == 1 then
-                    updateHealthValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 2 then
-                    unitFrameData(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 3 then
-                    updatePowerValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 4 then
-                    updateCastValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 5 then
-                    updateRaidMarkers(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 6 then
-                    UpdateBuffLayout(self, event)
-                    return
-                end
-
-                if self.stepOnUpdate == 7 then
-                    self:SetScript("OnUpdate", nil)
-                    return
-                end
-            end
-        )
+        unitFrameData(self, event)
+        updateHealthValues(self, event)
+        updatePowerValues(self, event)
+        updateCastValues(self, event)
+        updateRaidMarkers(self, event)
+        UpdateBuffLayout(self, event)
         return
     end
 
@@ -1151,39 +1089,11 @@ local function targettarget_OnEvent(self, event, unit, arg2)
     end
 
     if (event == "UNIT_TARGET" and unit == "target") or event == "PLAYER_TARGET_CHANGED" or event == "ZONE_CHANGED" then
-        self.stepOnUpdate = 0
-        self:SetScript(
-            "OnUpdate",
-            function()
-                self.stepOnUpdate = self.stepOnUpdate + 1
-
-                if self.stepOnUpdate == 1 then
-                    updateHealthValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 2 then
-                    unitFrameData(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 3 then
-                    updatePowerValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 4 then
-                    updateCastValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 5 then
-                    updateRaidMarkers(self, event)
-                    return
-                end
-
-                if self.stepOnUpdate == 6 then
-                    self:SetScript("OnUpdate", nil)
-                    return
-                end
-            end
-        )
+        unitFrameData(self, event)
+        updateHealthValues(self, event)
+        updatePowerValues(self, event)
+        updateCastValues(self, event)
+        updateRaidMarkers(self, event)
         return
     end
 
@@ -1227,39 +1137,11 @@ local function focustarget_OnEvent(self, event, unit, arg2)
             event == "PLAYER_FOCUS_CHANGED" or
             event == "ZONE_CHANGED"
      then
-        self.stepOnUpdate = 0
-        self:SetScript(
-            "OnUpdate",
-            function()
-                self.stepOnUpdate = self.stepOnUpdate + 1
-
-                if self.stepOnUpdate == 1 then
-                    updateHealthValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 2 then
-                    unitFrameData(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 3 then
-                    updatePowerValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 4 then
-                    updateCastValues(self, event)
-                    return
-                end
-                if self.stepOnUpdate == 5 then
-                    updateRaidMarkers(self, event)
-                    return
-                end
-
-                if self.stepOnUpdate == 6 then
-                    self:SetScript("OnUpdate", nil)
-                    return
-                end
-            end
-        )
+        unitFrameData(self, event)
+        updateHealthValues(self, event)
+        updatePowerValues(self, event)
+        updateCastValues(self, event)
+        updateRaidMarkers(self, event)
         return
     end
 
