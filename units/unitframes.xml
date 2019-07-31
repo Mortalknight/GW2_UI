@@ -14,19 +14,30 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="2">
+            <Layer level="ARTOWRK" textureSubLevel="1">
                 <Texture parentKey="portrait" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="58" y="58"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="25" y="-7"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
-                    <Size x="28" y="28"></Size>
+                <!-->
+                <Texture parentKey="raidtabbg" file="Interface\AddOns\GW2_UI\textures\unittab" alpha="0.0">
+                    <Size x="38" y="33"/>
                     <Anchors>
-                        <Anchor point="BOTTOM" relativeKey="$parent.portrait" relativePoint="RIGHT" x="0" y="28"></Anchor>
+                        <Anchor point="TOP" relativeKey="$parent.portrait" relativepoint="TOP" x="1" y="25"/>
                     </Anchors>
                 </Texture>
+                -->
+                <Texture parentKey="threattabbg" file="Interface\AddOns\GW2_UI\textures\unittab" alpha="0.0">
+                    <Size x="40" y="33"/>
+                    <TexCoords top="1.0" bottom="0.0" left="0.0" right="1.0" />
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativeKey="$parent.portrait" relativepoint="BOTTOM" x="1" y="-25"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTOWRK" textureSubLevel="2">
                 <Texture parentKey="healthbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
                     <Size x="215" y="15"/>
                     <Anchors>
@@ -48,7 +59,6 @@
                 </Texture>
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="3">
-
                 <Texture parentKey="castingbarSpark" file="Interface\AddOns\GW2_UI\textures\castingbarshieldspark">
                     <Size x="32" y="12"/>
                     <Anchors>
@@ -120,7 +130,12 @@
                 </Texture>
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="6">
-
+                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
+                    <Size x="28" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="TOPRIGHT" x="15" y="26"></Anchor>
+                    </Anchors>
+                </Texture>
 
                 <Texture parentKey="prestigebg" file="Interface\AddOns\GW2_UI\textures\prestigebackground">
                     <Size x="28" y="28"/>
@@ -176,10 +191,10 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="threatString" text="" justifyH="RIGHT" justifyV="CENTER">
-                    <Size x="215" y="15"/>
+                <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="CENTER">
+                    <Size x="38" y="30"/>
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.healthbarBackground" relativePoint="RIGHT" x="-5" y="0"></Anchor>
+                        <Anchor point="CENTER" relativeKey="$parent.threattabbg" relativePoint="CENTER" x="0" y="1"></Anchor>
                     </Anchors>
                 </FontString>
 

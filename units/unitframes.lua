@@ -16,6 +16,7 @@ local AddToClique = GW.AddToClique
 local Debug = GW.Debug
 local IsIn = GW.IsIn
 local GetRealItemLevel = GW.GetRealItemLevel
+local RoundDec = GW.RoundDec
 local unitIlvls = {}
 
 local function sortAuras(a, b)
@@ -212,7 +213,7 @@ local function createNormalUnitFrame(ftype)
     f.nameString:SetFont(UNIT_NAME_FONT, 14)
     f.nameString:SetShadowOffset(1, -1)
 
-    f.threatString:SetFont(STANDARD_TEXT_FONT, 8)
+    f.threatString:SetFont(STANDARD_TEXT_FONT, 11)
     f.threatString:SetShadowOffset(1, -1)
 
     f.levelString:SetFont(UNIT_NAME_FONT, 14)
@@ -671,12 +672,14 @@ GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
 local function updateThreatValues(self)
     self.threatStatus = UnitThreatSituation("player")
-    self.threatValue = select(3,UnitDetailedThreatSituation("player", self.unit))
+    self.threatValue = select(3, UnitDetailedThreatSituation("player", self.unit))
 
-    if self.threatValue  == nil then 
-        self.threatString:SetText("-")
+    if self.threatValue == nil then
+        self.threatString:SetText("")
+        self.threattabbg:SetAlpha(0.0)
     else
-        self.threatString:SetText(THREAT_TOOLTIP:format(GW.RoundDec(self.threatValue, 0)))
+        self.threatString:SetText(RoundDec(self.threatValue, 0) .. "%")
+        self.threattabbg:SetAlpha(1.0)
     end
 end
 GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
@@ -990,7 +993,11 @@ local function target_OnEvent(self, event, unit)
                 end
             end
         end
-        if self.showThreat then updateThreatValues(self) end
+        if self.showThreat then
+            updateThreatValues(self)
+        elseif self.threattabbg:IsShown() then
+            self.threattabbg:Hide()
+        end
 
         self.stepOnUpdate = 0
         self:SetScript(
@@ -1040,6 +1047,8 @@ local function target_OnEvent(self, event, unit)
         else
             updateAvgItemLevel(self, event, unit)
         end
+    elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
+        updateThreatValues(self)
     elseif unit == self.unit then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
@@ -1052,8 +1061,6 @@ local function target_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
             hideCastBar(self, event)
         end
-    elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
-        updateThreatValues(self)
     end
 end
 GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
@@ -1360,7 +1367,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
-    NewUnitFrame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
+    NewUnitFrame:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", "target")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
