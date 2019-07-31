@@ -1001,6 +1001,12 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
     addOption(
+        GwLocalization["SHOW_THREAT_VALUE"],
+        GwLocalization["SHOW_THREAT_VALUE"],
+        "target_THREAT_VALUE_ENABLED",
+        "GwSettingsTargetOptions"
+    )
+    addOption(
         MINIMAP_TRACKING_FOCUS,
         GwLocalization["FOCUS_TARGET_DESC"],
         "focus_TARGET_ENABLED",

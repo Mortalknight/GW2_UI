@@ -212,6 +212,9 @@ local function createNormalUnitFrame(ftype)
     f.nameString:SetFont(UNIT_NAME_FONT, 14)
     f.nameString:SetShadowOffset(1, -1)
 
+    f.threatString:SetFont(STANDARD_TEXT_FONT, 8)
+    f.threatString:SetShadowOffset(1, -1)
+
     f.levelString:SetFont(UNIT_NAME_FONT, 14)
     f.levelString:SetShadowOffset(1, -1)
 
@@ -666,6 +669,18 @@ local function updatePowerValues(self, event)
 end
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
+local function updateThreatValues(self)
+    self.threatStatus = UnitThreatSituation("player")
+    self.threatValue = select(3,UnitDetailedThreatSituation("player", self.unit))
+
+    if self.threatValue  == nil then 
+        self.threatString:SetText("-")
+    else
+        self.threatString:SetText(THREAT_TOOLTIP:format(GW.RoundDec(self.threatValue, 0)))
+    end
+end
+GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
+
 local function setAbsorbValue(self, absorb, absorbPrecentage, healthPrecentage, health, healthMax)
     local absorbAmount = healthPrecentage + absorbPrecentage
     local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
@@ -975,6 +990,7 @@ local function target_OnEvent(self, event, unit)
                 end
             end
         end
+        if self.showThreat then updateThreatValues(self) end
 
         self.stepOnUpdate = 0
         self:SetScript(
@@ -1036,6 +1052,8 @@ local function target_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
             hideCastBar(self, event)
         end
+    elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
+        updateThreatValues(self)
     end
 end
 GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
@@ -1315,10 +1333,15 @@ local function LoadTarget()
         NewUnitFrame.debuffFilter = nil
     end
 
+    NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
+    if NewUnitFrame.showThreat then
+        NewUnitFrame.threatStatus = nil
+        NewUnitFrame.threatValue = 0
+    end
+
     NewUnitFrame:SetScript("OnEvent", target_OnEvent)
 
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-    -- NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED");
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
     NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -1337,6 +1360,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
+    NewUnitFrame:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 

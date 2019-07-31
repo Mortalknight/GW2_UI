@@ -217,6 +217,7 @@ GwLocalization["TOPRIGHT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalizat
 GwLocalization["BOTTOMLEFT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLocalization["LEFT"])
 GwLocalization["BOTTOMRIGHT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLocalization["RIGHT"])
 GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Verlorene Gesundheit in Prozent"
+GwLocalization["SHOW_THREAT_VALUE"] = "Bedrohung anzeigen"
 end
 
 

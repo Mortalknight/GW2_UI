@@ -135,7 +135,9 @@ local function updateBonusObjective(self, event)
             GwBonusObjectiveBlock.id = questID
 
             local module = CreateBonusObjectiveTrackerModule()
+            module.ShowWorldQuests = true
             GwBonusObjectiveBlock.module = module
+            
 
             GwBonusHeader:Show()
             UpdateQuestItem(GwBonusItemButton, questLogIndex)

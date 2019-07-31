@@ -176,6 +176,13 @@
                     </Anchors>
                 </FontString>
 
+                <FontString parentKey="threatString" text="" justifyH="RIGHT" justifyV="CENTER">
+                    <Size x="215" y="15"/>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.healthbarBackground" relativePoint="RIGHT" x="-5" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+
                 <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="CENTER">
                     <Size x="215" y="15"/>
                     <Anchors>
@@ -460,5 +467,4 @@
         </Frames>
 
     </Button>
-
 </Ui>
