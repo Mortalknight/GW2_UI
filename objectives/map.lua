@@ -3,7 +3,6 @@ local GetSetting = GW.GetSetting
 
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
-MAP_FRAMES_HIDE[3] = MinimapCluster
 MAP_FRAMES_HIDE[4] = MiniMapVoiceChatFrame
 MAP_FRAMES_HIDE[5] = GameTimeFrame
 MAP_FRAMES_HIDE[6] = MiniMapTrackingButton
@@ -481,7 +480,7 @@ local function LoadMinimap()
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
 
-    MinimapCluster:Hide()
+    MinimapCluster:SetAlpha(0.0)
     MinimapBorder:Hide()
     MiniMapWorldMapButton:Hide()
 
