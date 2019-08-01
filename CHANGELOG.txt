@@ -8,6 +8,8 @@ NEW
 
 FIXES
     - Fixed bag close button not working at bank, vendor or mailbox
+    - Multiple tweaks to issues in target, unit, and focus frame behaviors
+    - Improve HUD performance in certain cases with event filtering
 
 MISCELLANEOUS
     - Paladin beacons use the same indicator slot, and colors now match their spell icon colors
