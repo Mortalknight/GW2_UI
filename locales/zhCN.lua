@@ -218,6 +218,7 @@ GwLocalization["BOTTOMLEFT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLoca
 GwLocalization["BOTTOMRIGHT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLocalization["RIGHT"])
 GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Health Remaining in percent"
 GwLocalization["SHOW_THREAT_VALUE"] = "Show threat"
+GwLocalization["MINIMAP_FPS"] = "Show FPS on minimap"
 end
 
 if GetLocale() == "zhCN" then

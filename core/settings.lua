@@ -1118,6 +1118,12 @@ local function LoadSettings()
         "WORLD_MARKER_FRAME",
         "GwSettingsHudOptions"
     )
+    addOption(
+        GwLocalization["MINIMAP_FPS"],
+        GwLocalization["MINIMAP_FPS"],
+        "MINIMAP_FPS",
+        "GwSettingsHudOptions"
+    )
 
     addOptionDropdown(
         GwLocalization["MINIMAP_HOVER"],

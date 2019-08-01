@@ -218,6 +218,7 @@ GwLocalization["BOTTOMLEFT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLoca
 GwLocalization["BOTTOMRIGHT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLocalization["RIGHT"])
 GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Verlorene Gesundheit in Prozent"
 GwLocalization["SHOW_THREAT_VALUE"] = "Bedrohung anzeigen"
+GwLocalization["MINIMAP_FPS"] = "FPS an der Minimap anzeigen"
 end
 
 

@@ -17,14 +17,14 @@
         </Anchors>
     </Frame>
     <Frame name="GwSettingsWindow" frameStrata="HIGH" enableMouse="true" parent="UIParent" virtual="true">
-        <Size x="512" y="512"></Size>
+        <Size x="512" y="550"></Size>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSettingsMoverFrame" relativePoint="TOP" x="20" y="-40"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBackground" parentKey="background" file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
-                    <Size x="512" y="512"></Size>
+                    <Size x="512" y="550"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />

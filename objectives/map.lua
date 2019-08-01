@@ -54,7 +54,8 @@ local Minimap_Addon_Buttons = {
     [42] = "GarrisonMinimapButton",
     [43] = "GwMapTime",
     [44] = "GwMapCoords",
-    [45] = "WarfrontRareTrackerPin"
+    [45] = "WarfrontRareTrackerPin",
+    [46] = "GwMapFPS"
 }
 
 local MAP_FRAMES_HOVER = {}
@@ -476,6 +477,25 @@ local function LoadMinimap()
         end
     end
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+
+    --FPS
+    if GetSetting("MINIMAP_FPS") then
+        GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
+        GwMapFPS.fps:SetText("n/a")
+        GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
+        GwMapFPS.elapsedTimer = -1
+        local updateCap = 1 / 5 -- cap fps update to 5 FPS
+        local MapFPSMiniMap_OnUpdate = function(self, elapsed)
+            self.elapsedTimer = self.elapsedTimer - elapsed
+            if self.elapsedTimer > 0 then
+                return
+            end
+            self.elapsedTimer = updateCap
+            local framerate = GetFramerate()
+            self.fps:SetText(GW.RoundDec(framerate) .. " FPS")
+        end
+        GwMapFPS:SetScript("OnUpdate", MapFPSMiniMap_OnUpdate)
+    end
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)

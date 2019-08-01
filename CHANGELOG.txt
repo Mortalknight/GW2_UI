@@ -2,7 +2,8 @@
 
 NEW
     - Added Reward Tooltip to WorldQuests
-    - Addes threat text on target
+    - Added threat text on target
+    - Added FPS to Minimap
 
 FIXES
     - Fixed bag close button not working at bank, vendor or mailbox

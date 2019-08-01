@@ -1072,7 +1072,6 @@
         <PushedTexture file="Interface\AddOns\GW2_UI\textures\stance-icon"></PushedTexture >
     </Button>
     <Frame name="GwMapGradient" frameStrata="LOW" frameLevel="2" virtual="true">
-
         <Size x="32" y="32"></Size>
         <Layers>
             <Layer>
@@ -1111,6 +1110,21 @@
         <Layers>
             <Layer>
                 <FontString parentKey="Coords" justifyH="CENTER" justifyV="MIDDLE" inherits="Meno">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+    <Button name="GwMapFPS" frameStrata="LOW" enableMouse="false" frameLevel="2" virtual="true">
+        <Size x="50" y="20"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <FontString parentKey="fps" justifyH="CENTER" justifyV="MIDDLE" inherits="Meno">
                     <Anchors>
                         <Anchor point="CENTER"/>
                     </Anchors>
