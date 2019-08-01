@@ -63,6 +63,7 @@ local EquipSlotList = {}
 local bagItemList = {}
 local numBagSlotFrames = 0
 local selectedInventorySlot = nil
+local durabilityFrame = nil
 
 local function setItemButtonQuality(button, quality, itemIDOrLink)
     if quality then
@@ -348,6 +349,22 @@ local function itemSlot_OnLoad(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnLoad", itemSlot_OnLoad)
 
+local function collectDurability(self)
+    local completeDurability = 0
+    local completeDurabilityNumItems = 0
+    for i = 1, 23 do
+        local current, maximum = GetInventoryItemDurability(i)
+            
+        if current ~= nil then
+            completeDurability = completeDurability + (current / maximum)
+            completeDurabilityNumItems = completeDurabilityNumItems + 1
+        end
+    end
+    local durability = 100 - GW.RoundDec(completeDurability / completeDurabilityNumItems) .. "%"
+    self.Value:SetText(durability)
+end
+GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
+
 local function updateItemSlot(self)
     local slot = self:GetID()
     if SavedItemSlots[slot] == nil then
@@ -486,6 +503,11 @@ local function stat_OnEnter(self)
         return
     elseif self.stat == "MOVESPEED" then
         MovementSpeed_OnEnter(self)
+        return
+    elseif self.stat == "DURABILITY" then
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:AddLine(DURABILITY)
+        GameTooltip:Show()
         return
     end
     if (not self.tooltip) then
@@ -682,12 +704,23 @@ local function updateStats()
             end
         end
     end
+    -- Add Durability Icon
+    statFrame = getStatListFrame(GwPaperDollStats, numShownStats)
+    statFrame.stat = "DURABILITY"
+    statFrame.onEnterFunc = nil
+    --Icon setzen
+    statFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\repair")
+    statFrame.icon:SetTexCoord(0, 1, 0, 0.5)
+    statFrame.icon:SetDesaturated(true)
+    statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
+    durabilityFrame = statFrame
 end
 GW.AddForProfiling("paperdoll_equipment", "updateStats", updateStats)
 
 local function stats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
     updateStats()
+    collectDurability(durabilityFrame)
 end
 GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpdate)
 
