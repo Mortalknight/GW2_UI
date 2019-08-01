@@ -671,7 +671,6 @@ end
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
 local function updateThreatValues(self)
-    self.threatStatus = UnitThreatSituation("player")
     self.threatValue = select(3, UnitDetailedThreatSituation("player", self.unit))
 
     if self.threatValue == nil then
@@ -1215,17 +1214,13 @@ local function LoadTarget()
 
     NewUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     NewUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")
+	
+    NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
 
     NewUnitFrame.debuffFilter = "player"
 
     if GetSetting("target_BUFFS_FILTER_ALL") == true then
         NewUnitFrame.debuffFilter = nil
-    end
-
-    NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
-    if NewUnitFrame.showThreat then
-        NewUnitFrame.threatStatus = nil
-        NewUnitFrame.threatValue = 0
     end
 
     NewUnitFrame:SetScript("OnEvent", target_OnEvent)
