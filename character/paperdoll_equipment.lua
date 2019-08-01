@@ -360,7 +360,7 @@ local function collectDurability(self)
             completeDurabilityNumItems = completeDurabilityNumItems + 1
         end
     end
-    local durability = 100 - GW.RoundDec(completeDurability / completeDurabilityNumItems) .. "%"
+    local durability = GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%"
     self.Value:SetText(durability)
 end
 GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
