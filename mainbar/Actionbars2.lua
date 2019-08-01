@@ -692,9 +692,8 @@ local function setStanceBar()
     GwStanceBarButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
     GwStanceBarButton:RegisterEvent("PLAYER_ALIVE")
     GwStanceBarButton:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    GwStanceBarButton:RegisterEvent("UNIT_POWER_FREQUENT")
-    GwStanceBarButton:RegisterEvent("UNIT_HEALTH")
-    GwStanceBarButton:RegisterEvent("UNIT_HEALTH_FREQUENT")
+    GwStanceBarButton:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    GwStanceBarButton:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     GwStanceBarButton:SetScript("OnEvent", stance_OnEvent)
 
     if GetNumShapeshiftForms() < 1 then

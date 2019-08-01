@@ -693,7 +693,7 @@ local function party_OnEvent(self, event, unit, arg1)
         setUnitName(self)
     end
 
-    if event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         local health = UnitHealth(self.unit)
         local healthMax = UnitHealthMax(self.unit)
         local healthPrec = 0
@@ -838,7 +838,6 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
-    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)

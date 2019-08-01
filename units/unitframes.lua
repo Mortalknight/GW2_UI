@@ -1021,7 +1021,7 @@ local function target_OnEvent(self, event, unit)
     elseif unit == self.unit then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
-        elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT") then
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
             updatePowerValues(self, event)
@@ -1046,7 +1046,7 @@ local function focus_OnEvent(self, event, unit)
     end
 
     if
-        (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED") and
+        (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED") and
             unit == self.unit
      then
         updateHealthValues(self, event)
@@ -1097,7 +1097,7 @@ local function targettarget_OnEvent(self, event, unit, arg2)
         return
     end
 
-    if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED") then
+    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED") then
         updateHealthValues(self, event)
         return
     end
@@ -1145,7 +1145,7 @@ local function focustarget_OnEvent(self, event, unit, arg2)
         return
     end
 
-    if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED") then
+    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED") then
         updateHealthValues(self, event)
         return
     end
@@ -1235,7 +1235,6 @@ local function LoadTarget()
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
     NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "target")
@@ -1308,7 +1307,6 @@ local function LoadFocus()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "focus")
@@ -1370,7 +1368,6 @@ local function LoadTargetOfTarget()
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "targettarget")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "targettarget")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "targettarget")
     NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "targettarget")
@@ -1427,7 +1424,6 @@ local function LoadTargetOfFocus()
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focustarget")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "focustarget")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focustarget")
     NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "focustarget")
