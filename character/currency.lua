@@ -190,7 +190,7 @@ local function loadRaidInfo(raidinfo)
                 instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(idx - raidInfoCount1)
 				difficultyName = RAID_INFO_WORLD_BOSS
                 slot.item.worldBossID = instanceID
-                slot.item.RaidInfoIdx = idx
+                slot.item.RaidInfoIdx = idx - raidInfoCount1
 				slot.item.instanceID = nil
                 slot.item.longInstanceID = nil
                 slot.item.extendedValue = false
