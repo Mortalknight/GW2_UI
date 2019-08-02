@@ -1,33 +1,83 @@
 local _, GW = ...
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
 
+local BAG_TITLE_SIZE = 32
 local savedPlayerTitles = {}
 
-local function getNewTitlesButton(i)
-    if _G["GwPaperDollTitleButton" .. i] ~= nil then
-        return _G["GwPaperDollTitleButton" .. i]
+local function title_OnClick(self)
+    if not self.TitleID or not self.TitleIdx then
+        return
     end
-
-    local f = CreateFrame("Button", "GwPaperDollTitleButton" .. i, GwPaperTitles, "GwCharacterMenuBlank")
-    CharacterMenuBlank_OnLoad(f)
-
-    if i > 1 then
-        _G["GwPaperDollTitleButton" .. i]:SetPoint("TOPLEFT", _G["GwPaperDollTitleButton" .. (i - 1)], "BOTTOMLEFT")
-    else
-        _G["GwPaperDollTitleButton" .. i]:SetPoint("TOPLEFT", GwPaperTitles, "TOPLEFT")
-    end
-    f:SetWidth(231)
-    f:GetFontString():SetPoint("LEFT", 5, 0)
-    GwPaperTitles.buttons = GwPaperTitles.buttons + 1
-
-    --   f:GetFontString():ClearAllPoints()
-    --    f:GetFontString():SetPoint('TOP',f,'TOP',0,-20)
-
-    return f
+    SetCurrentTitle(self.TitleID)
 end
-GW.AddForProfiling("character_titles", "getNewTitlesButton", getNewTitlesButton)
+GW.AddForProfiling("currency", "title_OnClick", title_OnClick)
 
-local function updateTitles()
+local function loadTitle(titlewin)
+    local USED_TITLE_HEIGHT
+    local KNOWEN_TITLE_COUNT = 0
+    local startj = 1
+	local zebra
+	
+	local offset = HybridScrollFrame_GetOffset(titlewin)
+    local titleCount = GetNumTitles()
+
+    --Count knowen titles
+    for i = 1, titleCount do
+        if IsTitleKnown(i) then
+            KNOWEN_TITLE_COUNT = KNOWEN_TITLE_COUNT + 1
+        end
+    end
+
+	for i = 1, #titlewin.buttons do
+        local slot = titlewin.buttons[i]
+        
+        local idx = i + offset
+        if idx > KNOWEN_TITLE_COUNT then
+            -- empty row (blank starter row, final row, and any empty entries)
+            slot.item:Hide()
+            slot.item.TitleID = nil
+            slot.item.TitleIdx = nil
+        else
+            local titleName, isPlayerTitle = GetTitleName(savedPlayerTitles[idx].id)
+            slot.item.TitleID = savedPlayerTitles[idx].id
+            slot.item.TitleIdx = idx
+            slot.item.name:SetText(savedPlayerTitles[idx].name)
+            
+            -- set zebra color by idx or watch status
+            local currentTitleId = GetCurrentTitle()
+            zebra = idx % 2
+            if currentTitleId == savedPlayerTitles[idx].id then
+                slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
+            else
+                slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
+            end
+
+            slot.item:Show()
+        end
+	end
+	
+    USED_TITLE_HEIGHT = BAG_TITLE_SIZE * KNOWEN_TITLE_COUNT
+    HybridScrollFrame_Update(titlewin, USED_TITLE_HEIGHT, 433)
+end
+
+local function titleSetup(titlewin)
+    HybridScrollFrame_CreateButtons(titlewin, "GwTitleRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
+	for i = 1, #titlewin.buttons do
+		local slot = titlewin.buttons[i]
+		slot:SetWidth(titlewin:GetWidth() - 12)
+        slot.item.name:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.name:SetTextColor(1, 1, 1)
+        if not slot.item.ScriptsHooked then
+            slot.item:HookScript("OnClick", title_OnClick)
+            slot.item.ScriptsHooked = true
+        end
+    end
+
+    loadTitle(titlewin)
+end
+GW.AddForProfiling("currency", "titleSetup", titleSetup)
+
+local function saveKnowenTitles()
     savedPlayerTitles[1] = {}
     savedPlayerTitles[1].name = "       "
     savedPlayerTitles[1].id = -1
@@ -35,7 +85,7 @@ local function updateTitles()
     local tableIndex = 1
 
     for i = 1, GetNumTitles() do
-        if (IsTitleKnown(i)) then
+        if IsTitleKnown(i) then
             local tempName, playerTitle = GetTitleName(i)
             if (tempName and playerTitle) then
                 tableIndex = tableIndex + 1
@@ -54,79 +104,34 @@ local function updateTitles()
     )
     savedPlayerTitles[1].name = PLAYER_TITLE_NONE
 end
-GW.AddForProfiling("character_titles", "updateTitles", updateTitles)
-
-local function updateLayout()
-    local currentTitle = GetCurrentTitle()
-    local textureC = 1
-    local buttonId = 1
-
-    for i = GwPaperTitles.scroll, #savedPlayerTitles do
-        if savedPlayerTitles[i] ~= nil then
-            local button = getNewTitlesButton(buttonId)
-            button:Show()
-            buttonId = buttonId + 1
-            button:SetText(savedPlayerTitles[i].name)
-            button:SetScript(
-                "OnClick",
-                function()
-                    SetCurrentTitle(savedPlayerTitles[i].id)
-                end
-            )
-
-            if textureC == 1 then
-                button:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
-                textureC = 2
-            else
-                button:SetNormalTexture(nil)
-                textureC = 1
-            end
-
-            if currentTitle == savedPlayerTitles[i].id then
-                button:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-            end
-            if buttonId > 21 then
-                break
-            end
-        end
-    end
-
-    for i = buttonId, GwPaperTitles.buttons do
-        _G["GwPaperDollTitleButton" .. i]:Hide()
-    end
-end
-GW.AddForProfiling("character_titles", "updateLayout", updateLayout)
-
-local function titles_OnEvent()
-    updateTitles()
-    updateLayout()
-end
-GW.AddForProfiling("character_titles", "titles_OnEvent", titles_OnEvent)
 
 local function LoadPDTitles(fmMenu)
-    local fmGPT = CreateFrame("Frame", "GwPaperTitles", GwPaperDoll, "GwPaperTitles")
-    fmGPT.buttons = 0
-    fmGPT.scroll = 1
-    fmGPT:EnableMouseWheel(true)
-    fmGPT:RegisterEvent("KNOWN_TITLES_UPDATE")
-    fmGPT:RegisterEvent("UNIT_NAME_UPDATE")
-    fmGPT:SetScript("OnEvent", titles_OnEvent)
-    local fnGPT_OnMouseWheel = function(self, delta)
-        self.scroll = math.max(1, self.scroll + -delta)
-        updateLayout()
-    end
-    fmGPT:SetScript("OnMouseWheel", fnGPT_OnMouseWheel)
-    fmMenu:SetupBackButton(fmGPT.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
-
-    updateTitles()
-    updateLayout()
-
-    GwPaperTitles:HookScript(
-        "OnShow",
-        function()
-            updateTitles()
-            updateLayout()
+	local titlewin_outer = CreateFrame("Frame", "GwTitleWindow", GwPaperDoll, "GwTitleWindow")
+    local titlewin = titlewin_outer.TitleScroll
+    
+	saveKnowenTitles()
+	titlewin.update = loadTitle
+	titlewin.scrollBar.doNotHide = true
+	titleSetup(titlewin)
+	
+	-- update title window when a title update event occurs
+	titlewin:SetScript(
+        "OnEvent",
+        function(self, event, ...)
+            if not GW.inWorld then
+                return
+            end
+            if event == "KNOWN_TITLES_UPDATE" or event == "UNIT_NAME_UPDATE" then
+                if self:IsShown() then
+                    saveKnowenTitles()
+                    loadTitle(self)
+                end
+            end
         end
     )
+    titlewin:RegisterEvent("KNOWN_TITLES_UPDATE")
+    titlewin:RegisterEvent("UNIT_NAME_UPDATE")
+	
+    fmMenu:SetupBackButton(titlewin:GetParent().backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
 end
 GW.LoadPDTitles = LoadPDTitles

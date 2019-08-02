@@ -12,7 +12,7 @@ local function characterPanelToggle(frame)
     fmMenu:Hide()
     GwPaperDollBagItemList:Hide()
     GwPaperDollOutfits:Hide()
-    GwPaperTitles:Hide()
+    GwTitleWindow:Hide()
 
     if frame == nil then
         GwDressingRoom:Hide()
@@ -116,7 +116,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.outfitsMenu:SetPoint("TOPLEFT", fmMenu.equipmentMenu, "BOTTOMLEFT")
 
     fmMenu.titlesMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
-    fmMenu.titlesMenu.ToggleMe = GwPaperTitles
+    fmMenu.titlesMenu.ToggleMe = GwTitleWindow
     fmMenu.titlesMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.titlesMenu:SetText(PAPERDOLL_SIDEBAR_TITLES)
     fmMenu.titlesMenu:ClearAllPoints()

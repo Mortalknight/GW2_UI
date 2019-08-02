@@ -5,6 +5,7 @@ NEW
     - Added threat text on target
     - Added FPS to Minimap
     - Added durability icon to character stats
+    - Added scrollbar to titles
 
 FIXES
     - Fixed bag close button not working at bank, vendor or mailbox
