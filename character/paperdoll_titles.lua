@@ -10,29 +10,20 @@ local function title_OnClick(self)
     end
     SetCurrentTitle(self.TitleID)
 end
-GW.AddForProfiling("currency", "title_OnClick", title_OnClick)
+GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
 
 local function loadTitle(titlewin)
     local USED_TITLE_HEIGHT
     local KNOWEN_TITLE_COUNT = 0
-    local startj = 1
 	local zebra
 	
 	local offset = HybridScrollFrame_GetOffset(titlewin)
-    local titleCount = GetNumTitles()
-
-    --Count knowen titles
-    for i = 1, titleCount do
-        if IsTitleKnown(i) then
-            KNOWEN_TITLE_COUNT = KNOWEN_TITLE_COUNT + 1
-        end
-    end
 
 	for i = 1, #titlewin.buttons do
         local slot = titlewin.buttons[i]
         
         local idx = i + offset
-        if idx > KNOWEN_TITLE_COUNT then
+        if idx > #savedPlayerTitles then
             -- empty row (blank starter row, final row, and any empty entries)
             slot.item:Hide()
             slot.item.TitleID = nil
@@ -56,9 +47,10 @@ local function loadTitle(titlewin)
         end
 	end
 	
-    USED_TITLE_HEIGHT = BAG_TITLE_SIZE * KNOWEN_TITLE_COUNT
+    USED_TITLE_HEIGHT = BAG_TITLE_SIZE * #savedPlayerTitles
     HybridScrollFrame_Update(titlewin, USED_TITLE_HEIGHT, 433)
 end
+GW.AddForProfiling("paperdoll_titles", "loadTitle", loadTitle)
 
 local function titleSetup(titlewin)
     HybridScrollFrame_CreateButtons(titlewin, "GwTitleRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
@@ -75,7 +67,7 @@ local function titleSetup(titlewin)
 
     loadTitle(titlewin)
 end
-GW.AddForProfiling("currency", "titleSetup", titleSetup)
+GW.AddForProfiling("paperdoll_titles", "titleSetup", titleSetup)
 
 local function saveKnowenTitles()
     savedPlayerTitles[1] = {}
@@ -104,6 +96,7 @@ local function saveKnowenTitles()
     )
     savedPlayerTitles[1].name = PLAYER_TITLE_NONE
 end
+GW.AddForProfiling("paperdoll_titles", "saveKnowenTitles", saveKnowenTitles)
 
 local function LoadPDTitles(fmMenu)
 	local titlewin_outer = CreateFrame("Frame", "GwTitleWindow", GwPaperDoll, "GwTitleWindow")
