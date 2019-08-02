@@ -10,6 +10,15 @@
             <OnLoad function="gw_button_font_black_OnLoad"/>
         </Scripts>
     </Font>
+    <Font name="gw_button_font_black_small" font="Interface\AddOns\GW2_UI\fonts\headlines.ttf" virtual="true">
+        <Color r="0" b="0" g="0"></Color>
+        <FontHeight>
+            <AbsValue val="10"/>
+        </FontHeight>
+        <Scripts>
+            <OnLoad function="gw_button_font_black_OnLoad"/>
+        </Scripts>
+    </Font>
     <Frame name="GwSettingsMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="470" y="40"></Size>
         <Anchors>

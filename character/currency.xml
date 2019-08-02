@@ -64,6 +64,62 @@
         </Frames>
     </Button>
 
+    <Button name="GwRaidInfoRow" virtual="true">
+        <Size x="512" y="55"></Size>
+        <Anchors>
+            <Anchors point="TOPLEFT"></Anchors>
+        </Anchors>
+        <Frames>
+            <Button parentKey="item" setAllPoints="true" hidden="true">
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                            <Size x="32" y="55"></Size>
+                            <Anchors>
+                                <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
+                                <Anchors point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchors>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="name" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="22" />
+                        </FontString>
+                        <FontString parentKey="difficult" text="Heroic" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="Left">
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="15" y="20" />
+                            </Anchors>
+                            <Size x="200" y="22" />
+                        </FontString>
+                        <FontString parentKey="reset" text="????" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-15" y="-5" />
+                            </Anchors>
+                            <Size x="200" y="22" />
+                        </FontString>
+                        <FontString parentKey="extended" text="" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="20" />
+                            </Anchors>
+                            <Size x="200" y="22" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button parentKey="extendButton" inherits="GwStandardButton" text="???" hidden="true" style="ChatBubbleFont">
+                        <Size x="210" y="13"/>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="15" y="5"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+            </Button>
+        </Frames>
+    </Button>
+
     <Frame name="GwCurrencyWindow" virtual="true">
         <Size x="608" y="621"></Size>
         <Anchors>
@@ -94,6 +150,5 @@
             </ScrollFrame>
         </Frames>
     </Frame>
-
 
 </Ui>

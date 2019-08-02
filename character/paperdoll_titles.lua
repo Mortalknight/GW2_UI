@@ -29,7 +29,6 @@ local function loadTitle(titlewin)
             slot.item.TitleID = nil
             slot.item.TitleIdx = nil
         else
-            local titleName, isPlayerTitle = GetTitleName(savedPlayerTitles[idx].id)
             slot.item.TitleID = savedPlayerTitles[idx].id
             slot.item.TitleIdx = idx
             slot.item.name:SetText(savedPlayerTitles[idx].name)
