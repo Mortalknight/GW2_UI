@@ -12,8 +12,8 @@ local TARGET_FRAME_ART = GW.TARGET_FRAME_ART
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local StopAnimation = GW.StopAnimation
 local AddToClique = GW.AddToClique
-local Debug = GW.Debug
 local IsIn = GW.IsIn
 local GetRealItemLevel = GW.GetRealItemLevel
 local RoundDec = GW.RoundDec
@@ -687,6 +687,7 @@ local function updateHealthValues(self, event)
     if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
         animationSpeed = 0
         self.healthValue = healthPrecentage
+        StopAnimation(self:GetName() .. self.unit)
     else
         animationSpeed = Diff(self.healthValue, healthPrecentage)
         animationSpeed = math.min(1.00, math.max(0.2, 2.00 * animationSpeed))
