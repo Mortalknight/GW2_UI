@@ -86,7 +86,7 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5" />
                             </Anchors>
-                            <Size x="200" y="22" />
+                            <Size x="300" y="22" />
                         </FontString>
                         <FontString parentKey="difficult" text="Heroic" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="Left">
                             <Anchors>
