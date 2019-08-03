@@ -315,7 +315,10 @@ local function menuItem_OnClick(self, button)
     end
     self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
     self.ToggleMe:Show()
-    if self:GetName() == "RaidInfo" then loadRaidInfo(self.ToggleMe) end
+    if self:GetName() == "RaidInfoFrame" then
+        RequestRaidInfo()
+        loadRaidInfo(self.ToggleMe) 
+    end
 end
 GW.AddForProfiling("currency", "menuItem_OnClick", menuItem_OnClick)
 
