@@ -317,7 +317,6 @@ local function menuItem_OnClick(self, button)
     self.ToggleMe:Show()
     if self:GetName() == "RaidInfoFrame" then
         RequestRaidInfo()
-        loadRaidInfo(self.ToggleMe) 
     end
 end
 GW.AddForProfiling("currency", "menuItem_OnClick", menuItem_OnClick)
