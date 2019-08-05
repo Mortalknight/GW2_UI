@@ -262,17 +262,15 @@ local function raidInfo_OnClick(self)
         self.extendButton.selectedWorldBossID = self.worldBossID
         selectedLongInstanceID = self.longInstanceID
         loadRaidInfo(self.frame)
-        SetupRaidExtendButton(self)
 	end
 end
 GW.AddForProfiling("currency", "raidInfo_OnClick", raidInfo_OnClick)
 
 local function raidInfoExtended_OnClick(self)
     if self:GetParent().RaidInfoIdx <= GetNumSavedInstances() then
-		SetSavedInstanceExtend(self:GetParent().RaidInfoIdx, self.doExtend)
-        RequestRaidInfo()
+        SetSavedInstanceExtend(self:GetParent().RaidInfoIdx, self.doExtend)
         selectedLongInstanceID = self:GetParent().longInstanceID
-        loadRaidInfo(self:GetParent().frame)
+        RequestRaidInfo()
 	end
 end
 GW.AddForProfiling("currency", "raidInfoExtended_OnClick", raidInfoExtended_OnClick)
