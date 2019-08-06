@@ -32,14 +32,14 @@
   </Button>
 
   <Frame name="GwTitleWindow" virtual="true" hidden ="true">
-    <Size x="220" y="478"/>
+    <Size x="230" y="478"/>
     <Anchors>
       <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"/>
     </Anchors>
     <Layers>
       <Layer level="ARTWORK">
-        <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-          <Size x="220" y="478"/>
+        <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+          <Size x="230" y="478"/>
           <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"/>
           </Anchors>
