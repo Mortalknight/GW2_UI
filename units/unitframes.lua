@@ -327,7 +327,7 @@ local function updateHealthbarColor(self)
         if isFriend ~= true then
             friendlyColor = COLOR_FRIENDLY[2]
         end
-        if UnitIsTapDenied("player") then
+        if UnitIsTapDenied(self.unit) then
             friendlyColor = COLOR_FRIENDLY[3]
         end
 
@@ -1040,6 +1040,8 @@ local function target_OnEvent(self, event, unit)
             updateCastValues(self, event)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP",    "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
             hideCastBar(self, event)
+        elseif event == "UNIT_FACTION" then
+            updateHealthbarColor(self)
         end
     end
 end
@@ -1204,6 +1206,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")    
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
