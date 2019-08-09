@@ -1198,13 +1198,13 @@
         </Layers>
         <Scripts>
             <OnLoad>
-                --TimeManager_LoadUI()
-                --TimeManagerClockButton:Hide()
-                --StopwatchFrame:SetParent("UIParent")
-                --self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+                TimeManager_LoadUI()
+                TimeManagerClockButton:Hide()
+                StopwatchFrame:SetParent("UIParent")
+                self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
             </OnLoad>
             <OnUpdate>
-                --self.Time:SetText(GameTime_GetTime(false))
+                self.Time:SetText(GameTime_GetTime(false))
             </OnUpdate>
             <OnClick function="GwMapTimeClick"/>
             <OnEnter function="GwMapTimeOnEnter"/>

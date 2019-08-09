@@ -1,6 +1,6 @@
 GW_MAP_FRAMES_HIDE ={}
 GW_MAP_FRAMES_HIDE[1] =MiniMapMailFrame 
-GW_MAP_FRAMES_HIDE[2] =MinimapCluster
+--GW_MAP_FRAMES_HIDE[2] =MinimapCluster
 GW_MAP_FRAMES_HIDE[3] =GameTimeFrame
 
 local Minimap_Addon_Buttons = {
@@ -146,12 +146,12 @@ function gw_set_minimap()
     mapGradient:SetPoint('TOPLEFT',Minimap,'TOPLEFT',0,0)
     mapGradient:SetPoint('TOPRIGHT',Minimap,'TOPRIGHT',0,0)
     
-    --GwMapTime = CreateFrame('Button','GwMapTime',Minimap,'GwMapTime')
+    GwMapTime = CreateFrame('Button','GwMapTime',Minimap,'GwMapTime')
     
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint('TOP',Minimap,0,0)
 
-    MinimapCluster:Hide()
+    --MinimapCluster:Hide()
     MinimapBorder:Hide()
     MiniMapWorldMapButton:Hide()
 
@@ -161,7 +161,7 @@ function gw_set_minimap()
     MinimapZoneText:SetParent(mapGradient)
     MinimapZoneText:SetDrawLayer('OVERLAY',2)
 
-    --GameTimeFrame:SetPoint('TOPLEFT',Minimap,-42,0)
+    GameTimeFrame:SetPoint('TOPLEFT',Minimap,-42,0)
     MiniMapMailFrame:SetPoint('TOPLEFT',Minimap,45,15)
 
     MinimapZoneText:SetTextColor(1,1,1)
@@ -170,7 +170,7 @@ function gw_set_minimap()
         MinimapZoneText:SetTextColor(1,1,1)
     end)
     
-    --GameTimeFrame:HookScript('OnShow', function(self) self:Hide() end)
+    GameTimeFrame:HookScript('OnShow', function(self) self:Hide() end)
     
     GwCalendarButton = CreateFrame('Button','GwCalendarButton',UIParent,'GwCalendarButton')
     
@@ -284,7 +284,7 @@ end
 function GetMinimapShape()
 		return 'SQUARE'
 	end
---[[
+
 function GwMapTimeClick(self,button)
 	if button == "LeftButton" then
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON   );
@@ -321,6 +321,6 @@ function GwMapTimeOnEnter(self)
     GameTooltip:SetMinimumWidth(100)								
 	GameTooltip:Show()
 end
-]]
+
 
 
