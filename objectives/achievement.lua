@@ -40,7 +40,7 @@ local function setBlockColor(block, string)
 end
 GW.AddForProfiling("achievement", "setBlockColor", setBlockColor)
 
-local function getObjectiveBlock(self, index, firstunfinishedobjectiv)
+local function getObjectiveBlock(self, firstunfinishedobjectiv)
     if _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives] ~= nil then
         return _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives]
     end
@@ -93,43 +93,33 @@ local function getBlock(blockIndex)
 end
 GW.AddForProfiling("achievement", "getBlock", getBlock)
 
-local function addObjective(block, text, finished, objectiveIndex, firstunfinishedobjectiv)
-    if finished then
+local function addObjective(block, text, finished, firstunfinishedobjectiv)
+    if finished and not text then
         return
     end
 
-    if text then
-        block.numObjectives = block.numObjectives + 1
+    block.numObjectives = block.numObjectives + 1
 
-        local objectiveBlock = getObjectiveBlock(block, objectiveIndex, firstunfinishedobjectiv)
+    local objectiveBlock = getObjectiveBlock(block, firstunfinishedobjectiv)
 
-        objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
-        if finished then
-            objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
-        else
-            objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
-        end
+    objectiveBlock:Show()
+    objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
+    objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
 
-        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
-            if objectiveType == "progressbar" then
-                objectiveBlock.StatusBar:Show()
-                objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-                objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.id))
-            end
-        else
-            objectiveBlock.StatusBar:Hide()
-        end
-        local h = 20
-        if objectiveBlock.StatusBar:IsShown() then
-            h = 50
-        end
-        block.height = block.height + h
+    if ParseObjectiveString(objectiveBlock, text) then
+        --added progressbar in ParseObjectiveString
+    else
+        objectiveBlock.StatusBar:Hide()
     end
+    local h = 20
+    if objectiveBlock.StatusBar:IsShown() then
+        h = 50
+    end
+    block.height = block.height + h
 end
 GW.AddForProfiling("achievement", "addObjective", addObjective)
 
-local function updateAchievementObjectives(block, blockIndex)
+local function updateAchievementObjectives(block)
     local numIncomplete = 0
     local numCriteria = GetAchievementNumCriteria(block.id)
     local description = select(8, GetAchievementInfo(block.id))
@@ -177,15 +167,15 @@ local function updateAchievementObjectives(block, blockIndex)
                     _, criteriaString = GetAchievementInfo(assetID)
                 end
             end
-            addObjective(block, criteriaString, criteriaCompleted, criteriaIndex, firstunfinishedobjectiv)
+            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv)
 
             if numIncomplete == MAX_OBJECTIVES then
-                addObjective(block, "....", false, MAX_OBJECTIVES + 1, firstunfinishedobjectiv)
+                addObjective(block, "....", false, firstunfinishedobjectiv)
                 break
             end
         end
     else
-        addObjective(block, description, false, 1, true)
+        addObjective(block, description, false, true)
     end
 
     for i = block.numObjectives + 1, 20 do
@@ -198,7 +188,7 @@ local function updateAchievementObjectives(block, blockIndex)
 end
 GW.AddForProfiling("achievement", "updateAchievementObjectives", updateAchievementObjectives)
 
-local function updateAchievementLayout(intent)
+local function updateAchievementLayout()
     local savedHeight = 1
     local shownIndex = 1
     local trackedAchievements = {GetTrackedAchievements()}
@@ -228,7 +218,7 @@ local function updateAchievementLayout(intent)
                 return
             end
             block.id = achievementID
-            updateAchievementObjectives(block, shownIndex)
+            updateAchievementObjectives(block)
 
             block.Header:SetText(achievementName)
 
@@ -255,11 +245,10 @@ end
 GW.AddForProfiling("achievement", "updateAchievementLayout", updateAchievementLayout)
 
 local function LoadAchievementFrame()
-    GwQuesttrackerContainerAchievement:SetScript("OnEvent", updateAchievementLayout)
-
     GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED")
     GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_UPDATE")
     GwQuesttrackerContainerAchievement:RegisterEvent("ACHIEVEMENT_EARNED")
+    GwQuesttrackerContainerAchievement:SetScript("OnEvent", updateAchievementLayout)
 
     local header =
         CreateFrame("Button", "GwAchievementHeader", GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")
