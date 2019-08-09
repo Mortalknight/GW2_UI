@@ -7,6 +7,7 @@ local CreateTrackerObject = GW.CreateTrackerObject
 local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 
 local MAX_OBJECTIVES = 10
+
 local function achievement_OnClick(block, mouseButton)
     if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
         local achievementLink = GetAchievementLink(block.id)
@@ -39,30 +40,26 @@ local function setBlockColor(block, string)
 end
 GW.AddForProfiling("achievement", "setBlockColor", setBlockColor)
 
-local function getObjectiveBlock(self, index)
-    if _G[self:GetName() .. "GwAchievementObjective" .. index] ~= nil then
-        return _G[self:GetName() .. "GwAchievementObjective" .. index]
+local function getObjectiveBlock(self, index, firstunfinishedobjectiv)
+    if _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives] ~= nil then
+        return _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives]
     end
 
-    if self.objectiveBlocksNum == nil then
-        self.objectiveBlocksNum = 0
-    end
-    if self.objectiveBlocks == nil then
+    if firstunfinishedobjectiv then
         self.objectiveBlocks = {}
     end
 
-    self.objectiveBlocksNum = self.objectiveBlocksNum + 1
-
-    local newBlock =
-        CreateObjectiveNormal(self:GetName() .. "GwAchievementObjective" .. self.objectiveBlocksNum, self)
+    local newBlock = CreateObjectiveNormal(self:GetName() .. "GwAchievementObjective" .. self.numObjectives, self)
     newBlock:SetParent(self)
+
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
-    if self.objectiveBlocksNum == 1 then
+
+    if firstunfinishedobjectiv then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
         newBlock:SetPoint(
             "TOPRIGHT",
-            _G[self:GetName() .. "GwAchievementObjective" .. (self.objectiveBlocksNum - 1)],
+            _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives - 1],
             "BOTTOMRIGHT",
             0,
             0
@@ -77,7 +74,7 @@ GW.AddForProfiling("achievement", "getObjectiveBlock", getObjectiveBlock)
 
 local function getBlock(blockIndex)
     if _G["GwAchivementBlock" .. blockIndex] ~= nil then
-        return _G["GwAchivementBlock" .. blockIndex]
+       return  _G["GwAchivementBlock" .. blockIndex]
     end
 
     local newBlock = CreateTrackerObject("GwAchivementBlock" .. blockIndex, GwQuesttrackerContainerAchievement)
@@ -96,13 +93,16 @@ local function getBlock(blockIndex)
 end
 GW.AddForProfiling("achievement", "getBlock", getBlock)
 
-local function addObjective(block, text, finished, objectiveIndex)
-    if finished == true then
+local function addObjective(block, text, finished, objectiveIndex, firstunfinishedobjectiv)
+    if finished then
         return
     end
-    local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
 
     if text then
+        block.numObjectives = block.numObjectives + 1
+
+        local objectiveBlock = getObjectiveBlock(block, objectiveIndex, firstunfinishedobjectiv)
+
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
         if finished then
@@ -115,7 +115,7 @@ local function addObjective(block, text, finished, objectiveIndex)
             if objectiveType == "progressbar" then
                 objectiveBlock.StatusBar:Show()
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-                objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
+                objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.id))
             end
         else
             objectiveBlock.StatusBar:Hide()
@@ -125,22 +125,20 @@ local function addObjective(block, text, finished, objectiveIndex)
             h = 50
         end
         block.height = block.height + h
-        block.numObjectives = block.numObjectives + 1
     end
 end
 GW.AddForProfiling("achievement", "addObjective", addObjective)
 
-local function updateAchievementObjectives(block, blockIndex, achievementID)
+local function updateAchievementObjectives(block, blockIndex)
+    local numIncomplete = 0
+    local numCriteria = GetAchievementNumCriteria(block.id)
+    local description = select(8, GetAchievementInfo(block.id))
+    local firstunfinishedobjectiv = false
+
     block.height = 35
     block.numObjectives = 0
 
-    local numIncomplete = 0
-
-    local numCriteria = GetAchievementNumCriteria(achievementID)
-
-    local _, _, _, _, _, _, _, description, _ = GetAchievementInfo(achievementID)
-
-    if (numCriteria > 0) then
+    if numCriteria > 0 then
         for criteriaIndex = 1, numCriteria do
             local criteriaString,
                 criteriaType,
@@ -150,11 +148,16 @@ local function updateAchievementObjectives(block, blockIndex, achievementID)
                 _,
                 flags,
                 assetID,
-                quantityString,
-                _ = GetAchievementCriteriaInfo(achievementID, criteriaIndex)
+                quantityString = GetAchievementCriteriaInfo(block.id, criteriaIndex)
 
             if not criteriaCompleted then
                 numIncomplete = numIncomplete + 1
+            end
+
+            if numIncomplete == 1 then 
+                firstunfinishedobjectiv = true
+            else
+                firstunfinishedobjectiv = false
             end
 
             if (description and bit.band(flags, EVALUATION_TREE_FLAG_PROGRESS_BAR) == EVALUATION_TREE_FLAG_PROGRESS_BAR) then
@@ -174,16 +177,15 @@ local function updateAchievementObjectives(block, blockIndex, achievementID)
                     _, criteriaString = GetAchievementInfo(assetID)
                 end
             end
-
-            addObjective(block, criteriaString, criteriaCompleted, criteriaIndex)
+            addObjective(block, criteriaString, criteriaCompleted, criteriaIndex, firstunfinishedobjectiv)
 
             if numIncomplete == MAX_OBJECTIVES then
-                addObjective(block, "....", false, MAX_OBJECTIVES + 1)
+                addObjective(block, "....", false, MAX_OBJECTIVES + 1, firstunfinishedobjectiv)
                 break
             end
         end
     else
-        addObjective(block, description, false, 1)
+        addObjective(block, description, false, 1, true)
     end
 
     for i = block.numObjectives + 1, 20 do
@@ -198,8 +200,10 @@ GW.AddForProfiling("achievement", "updateAchievementObjectives", updateAchieveme
 
 local function updateAchievementLayout(intent)
     local savedHeight = 1
-    GwAchievementHeader:Hide()
+    local shownIndex = 1
     local trackedAchievements = {GetTrackedAchievements()}
+
+    GwAchievementHeader:Hide() 
 
     local numQuests = #trackedAchievements
     if GwQuesttrackerContainerAchievement.collapsed == true then
@@ -208,21 +212,12 @@ local function updateAchievementLayout(intent)
         savedHeight = 20
     end
 
-    local _ = IsInInstance()
-
-    local shownIndex = 1
-
     for i = 1, numQuests do
-        --if trackedAchievements[i] == intent then
         local achievementID = trackedAchievements[i]
-        local _, achievementName, _, _, _, _, _, _, _, _, _, _, wasEarnedByMe = GetAchievementInfo(achievementID)
+        local achievementName = select(2, GetAchievementInfo(achievementID))
+        local wasEarnedByMe = select(13, GetAchievementInfo(achievementID))
 
-        local showAchievement = true
-        if (wasEarnedByMe) then
-            showAchievement = false
-        end
-
-        if (showAchievement) then
+        if not wasEarnedByMe then
             if i == 1 then
                 savedHeight = 20
             end
@@ -233,7 +228,7 @@ local function updateAchievementLayout(intent)
                 return
             end
             block.id = achievementID
-            updateAchievementObjectives(block, shownIndex, achievementID)
+            updateAchievementObjectives(block, shownIndex)
 
             block.Header:SetText(achievementName)
 
@@ -245,7 +240,6 @@ local function updateAchievementLayout(intent)
 
             shownIndex = shownIndex + 1
         end
-        --end
     end
 
     GwQuesttrackerContainerAchievement:SetHeight(savedHeight)
