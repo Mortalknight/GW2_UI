@@ -401,7 +401,7 @@ function gwOnEvent(self, event, name)
         gw_create_questview()
     end
     if gwGetSetting('CHATFRAME_ENABLED') then
-        gw_set_chatframe_bg()
+        --gw_set_chatframe_bg()
     end
     --Create player hud
     if gwGetSetting('HEALTHGLOBE_ENABLED') then
