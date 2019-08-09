@@ -500,7 +500,7 @@ local function OnBlockClick(self, button, isHeader)
 		return
     end
     
-    if isHeader then
+    if isHeader and not IsModifiedClick("QUESTWATCHTOGGLE") then
         SetSuperTrackedQuestID(self.questID)
         return
     end
