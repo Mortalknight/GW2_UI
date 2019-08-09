@@ -1,6 +1,6 @@
 GW_MAP_FRAMES_HIDE ={}
 GW_MAP_FRAMES_HIDE[1] =MiniMapMailFrame 
---GW_MAP_FRAMES_HIDE[2] =MinimapCluster
+GW_MAP_FRAMES_HIDE[2] =MinimapCluster
 GW_MAP_FRAMES_HIDE[3] =GameTimeFrame
 
 local Minimap_Addon_Buttons = {
@@ -151,7 +151,7 @@ function gw_set_minimap()
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint('TOP',Minimap,0,0)
 
-    --MinimapCluster:Hide()
+    MinimapCluster:Hide()
     MinimapBorder:Hide()
     MiniMapWorldMapButton:Hide()
 
