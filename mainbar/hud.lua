@@ -2,6 +2,8 @@ local _, GW = ...
 local comma_value = GW.comma_value
 local round = GW.round
 local lerp = GW.lerp
+local GW_LEVELING_REWARD_AVALIBLE
+local displayRewards
 
 --GW_PowerBarColorCustom = PowerBarColor;
 GW_PowerBarColorCustom = {}
@@ -215,37 +217,8 @@ end
 
 local gw_reputation_vals = nil
 local gw_honor_vals = nil
-function loadExperienceBar()
-    
---gw_load_levelingrewads()
 
-local experiencebar =  CreateFrame('Frame', 'GwExperienceFrame',UIParent,'GwExperienceBar');
-local eName = experiencebar:GetName()
 
-      experiencebarAnimation = UnitXP('Player')/UnitXPMax('Player')
-    
-    _G['GwExperienceFrameArtifactBar'].artifactBarAnimation = 0
-    _G['GwExperienceFrameNextLevel']:SetFont(UNIT_NAME_FONT,12)
-    _G['GwExperienceFrameCurrentLevel']:SetFont(UNIT_NAME_FONT,12)
-    
-    update_experiencebar_size()
-    update_experiencebar_data()
-    
-    experiencebar:SetScript('OnEvent',update_experiencebar_data)
-    
-    experiencebar:RegisterEvent('PLAYER_XP_UPDATE')
-    experiencebar:RegisterEvent("UPDATE_FACTION");
-    experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
-    experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING");
-	experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN");
-	experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
-    
-    experiencebar:SetScript('OnEnter',  show_experiencebar_tooltip)
-    experiencebar:SetScript('OnLeave', function() GameTooltip:Hide()
-            UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),1)
-            UIFrameFadeIn(_G['GwExperienceFrameArtifactBar'], 0.2, _G['GwExperienceFrameArtifactBar']:GetAlpha(),1)
-    end)  
-end
 
 function show_experiencebar_tooltip()  
     GameTooltip:SetOwner(_G['GwExperienceFrame'], "ANCHOR_CURSOR");
@@ -294,8 +267,7 @@ function update_experiencebar_data(self,event)
         end)
     end
 	
-    --gw_leveling_display_rewards()
-    
+    --displayRewards()
     
     local valCurrent = UnitXP('Player')
     local valMax = UnitXPMax('Player')
@@ -475,9 +447,9 @@ function update_experiencebar_data(self,event)
 
     experiencebarAnimation =valPrec
     
-    --if GW_LEVELING_REWARD_AVALIBLE then
-        --Nextlevel = Nextlevel..' |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:20:20:0:0|t'
-    --end
+    if GW_LEVELING_REWARD_AVALIBLE then
+        Nextlevel = Nextlevel..' |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:20:20:0:0|t'
+    end
     
     _G['GwExperienceFrameNextLevel']:SetText(Nextlevel);
     _G['GwExperienceFrameCurrentLevel']:SetText(restingIconString..level);
@@ -829,10 +801,7 @@ function gwCreateMicroMenu()
         GameTooltip:Hide()
     end)
     
-    --gw_update_talentMicrobar()
-    
-    --gw_create_orderHallBar()
-    
+    --gw_update_talentMicrobar()    
 
     -- if set to fade micro menu, add fader
     if gwGetSetting('FADE_MICROMENU') then
@@ -1009,7 +978,7 @@ function ToggleGameMenuFrame()
     GameMenuFrame:Show()
 end
 
---[[
+
 local function levelingRewards_OnShow(self)
     PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
     self.animationValue = -400
@@ -1024,285 +993,211 @@ local function levelingRewards_OnShow(self)
 end
 
 function gw_load_levelingrewads()
-    local f = CreateFrame('Frame', 'GwLevelingRewards', UIParent, 'GwLevelingRewards')
+    local f = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
 
     f.header:SetFont(DAMAGE_TEXT_FONT, 24)
-    f.header:SetText(GwLocalization['LEVEL_REWARDS'])
-    
+    f.header:SetText(GwLocalization["LEVEL_REWARDS"])
+
     f.rewardHeader:SetFont(DAMAGE_TEXT_FONT, 11)
     f.rewardHeader:SetTextColor(0.6, 0.6, 0.6)
-    f.rewardHeader:SetText(GwLocalization['LEVEL_REWARDS_RHEADER'])
-    
+    f.rewardHeader:SetText(REWARD)
+
     f.levelHeader:SetFont(DAMAGE_TEXT_FONT, 11)
     f.levelHeader:SetTextColor(0.6, 0.6, 0.6)
-    f.levelHeader:SetText(GwLocalization['LEVEL_REWARDS_LHEADER'])
-    
-    GwCloseLevelingRewards:SetText(GwLocalization['LEVEL_REWARDS_CLOSE'])
-    
-    _G['GwLevelingRewardsItem1'].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem1'].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem1'].name:SetText(GwLocalization['LEVEL_REWARDS'])
-    
-    _G['GwLevelingRewardsItem2'].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem2'].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem2'].name:SetText(GwLocalization['LEVEL_REWARDS'])
-    
-    _G['GwLevelingRewardsItem3'].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem3'].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem3'].name:SetText(GwLocalization['LEVEL_REWARDS'])
-    
-    _G['GwLevelingRewardsItem4'].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem4'].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G['GwLevelingRewardsItem4'].name:SetText(GwLocalization['LEVEL_REWARDS'])
+    f.levelHeader:SetText(LEVEL)
 
-    f:SetScript('OnShow', levelingRewards_OnShow)
+    local fnGwCloseLevelingRewards_OnClick = function(self, button)
+        GwLevelingRewards:Hide()
+    end
+    GwCloseLevelingRewards:SetScript("OnClick", fnGwCloseLevelingRewards_OnClick)
+    GwCloseLevelingRewards:SetText(CLOSE)
+
+    _G["GwLevelingRewardsItem1"].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem1"].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem1"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+
+    _G["GwLevelingRewardsItem2"].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem2"].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem2"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+
+    _G["GwLevelingRewardsItem3"].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem3"].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem3"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+
+    _G["GwLevelingRewardsItem4"].name:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem4"].level:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwLevelingRewardsItem4"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+
+    f:SetScript("OnShow", levelingRewards_OnShow)
 
     tinsert(UISpecialFrames, "GwLevelingRewards")
 end
 
 
-function gw_leveling_display_rewards()
-	GW_LEVELING_REWARDS = {}
+local GW_LEVELING_REWARDS = {}
+displayRewards = function()
+    local _, englishClass = UnitClass("player")
+    local talentLevels = CLASS_TALENT_LEVELS[englishClass] or CLASS_TALENT_LEVELS["DEFAULT"]
 
-	GW_LEVELING_REWARDS[1] = {}
-	GW_LEVELING_REWARDS[1]['type'] = 'TALENT'
-	GW_LEVELING_REWARDS[1]['id'] = 0
-	GW_LEVELING_REWARDS[1]['level'] = 15
+    wipe(GW_LEVELING_REWARDS)
+    for i = 1, 7 do
+        GW_LEVELING_REWARDS[i] = {}
+        GW_LEVELING_REWARDS[i]["type"] = "TALENT"
+        GW_LEVELING_REWARDS[i]["id"] = 0
+        GW_LEVELING_REWARDS[i]["level"] = talentLevels[i]
+    end
 
-	GW_LEVELING_REWARDS[2] = {}
-	GW_LEVELING_REWARDS[2]['type'] = 'TALENT'
-	GW_LEVELING_REWARDS[2]['id'] = 0
-	GW_LEVELING_REWARDS[2]['level'] = 30
-
-	GW_LEVELING_REWARDS[3] = {}
-	GW_LEVELING_REWARDS[3]['type'] = 'TALENT'
-	GW_LEVELING_REWARDS[3]['id'] = 0
-	GW_LEVELING_REWARDS[3]['level'] = 45
-
-	GW_LEVELING_REWARDS[4] = {}
-	GW_LEVELING_REWARDS[4]['type'] = 'TALENT'
-	GW_LEVELING_REWARDS[4]['id'] = 0
-	GW_LEVELING_REWARDS[4]['level'] = 60
-
-	GW_LEVELING_REWARDS[5] = {}
-	GW_LEVELING_REWARDS[5]['type'] = 'TALENT'
-	GW_LEVELING_REWARDS[5]['id'] = 0
-	GW_LEVELING_REWARDS[5]['level'] = 75
-
-	GW_LEVELING_REWARDS[6] = {}
-	GW_LEVELING_REWARDS[6]['type'] = 'TALENT'
-	GW_LEVELING_REWARDS[6]['id'] = 0
-	GW_LEVELING_REWARDS[6]['level'] = 90
-
-	GW_LEVELING_REWARDS[7] = {}
-	GW_LEVELING_REWARDS[7]['type'] = 'TALENT'
-	GW_LEVELING_REWARDS[7]['id'] = 0
-	GW_LEVELING_REWARDS[7]['level'] = 100
-	
     GW_LEVELING_REWARD_AVALIBLE = false
-     
-    local currentSpec = GetSpecialization()-- Get the player's current spec
+
+    local currentSpec = GetSpecialization() -- Get the player's current spec
     local spells = {GetSpecializationSpells(currentSpec)}
-    for k,v in pairs(spells) do
-        if v~=nil then
-        local tIndex =  #GW_LEVELING_REWARDS + 1
+    for k, v in pairs(spells) do
+        if v ~= nil then
+            local tIndex = #GW_LEVELING_REWARDS + 1
             GW_LEVELING_REWARDS[tIndex] = {}
-            GW_LEVELING_REWARDS[tIndex]['type'] = 'SPELL'
-            GW_LEVELING_REWARDS[tIndex]['id'] = v
-            GW_LEVELING_REWARDS[tIndex]['level'] = GetSpellLevelLearned(v)
+            GW_LEVELING_REWARDS[tIndex]["type"] = "SPELL"
+            GW_LEVELING_REWARDS[tIndex]["id"] = v
+            GW_LEVELING_REWARDS[tIndex]["level"] = GetSpellLevelLearned(v)
         end
     end
-    
-    for i=1,80 do
- 
-    local skillType, spellId =GetSpellBookItemInfo(i,'spell')
-        
-        if skillType=='FUTURESPELL' and spellId~=nil then
-            local  shouldAdd = true
-            for k,v in pairs(GW_LEVELING_REWARDS) do if v['type']=='SPELL' and v['id']==spellId then shouldAdd=false end end
+
+    for i = 1, 80 do
+        local skillType, spellId = GetSpellBookItemInfo(i, "spell")
+
+        if skillType == "FUTURESPELL" and spellId ~= nil then
+            local shouldAdd = true
+            for k, v in pairs(GW_LEVELING_REWARDS) do
+                if v["type"] == "SPELL" and v["id"] == spellId then
+                    shouldAdd = false
+                end
+            end
             if shouldAdd then
-            local tIndex = #GW_LEVELING_REWARDS + 1
-           
+                local tIndex = #GW_LEVELING_REWARDS + 1
+
                 GW_LEVELING_REWARDS[tIndex] = {}
-                GW_LEVELING_REWARDS[tIndex]['type'] = 'SPELL'
-                GW_LEVELING_REWARDS[tIndex]['id'] = spellId
-                GW_LEVELING_REWARDS[tIndex]['level'] = GetSpellLevelLearned(spellId)
+                GW_LEVELING_REWARDS[tIndex]["type"] = "SPELL"
+                GW_LEVELING_REWARDS[tIndex]["id"] = spellId
+                GW_LEVELING_REWARDS[tIndex]["level"] = GetSpellLevelLearned(spellId)
             end
         end
-        
     end
-     
-    table.sort( GW_LEVELING_REWARDS, function(a,b) return a['level'] < b['level'] end)	
-    
+
+    table.sort(
+        GW_LEVELING_REWARDS,
+        function(a, b)
+            return a["level"] < b["level"]
+        end
+    )
+
     local i = 1
-    for k,v in pairs(GW_LEVELING_REWARDS) do
-        if v['level']>UnitLevel('player') then
-             _G['GwLevelingRewardsItem'..i]:Show()
-             _G['GwLevelingRewardsItem'..i].level:SetText(v['level']..' |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:24:24:0:0|t ')
+    for k, v in pairs(GW_LEVELING_REWARDS) do
+        if v["level"] > UnitLevel("player") then
             
-                if v['type']=='SPELL' then
-                    name, rank, icon = GetSpellInfo(v['id'])
-                    _G['GwLevelingRewardsItem'..i].icon:SetTexture(icon)
-                    _G['GwLevelingRewardsItem'..i].name:SetText(name)
-                    _G['GwLevelingRewardsItem'..i]:SetScript('OnEnter',function()
-                    
-                        GameTooltip:SetOwner(GwLevelingRewards, "ANCHOR_CURSOR",0,0);
-                        GameTooltip:ClearLines();
-                        GameTooltip:SetSpellByID(v['id'])
+            if _G["GwLevelingRewardsItem" .. i].mask ~= nil then
+                _G["GwLevelingRewardsItem" .. i].icon:RemoveMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
+            end
+            
+            _G["GwLevelingRewardsItem" .. i]:Show()
+            _G["GwLevelingRewardsItem" .. i].level:SetText(
+                v["level"] .. " |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:24:24:0:0|t "
+            )
+
+            if v["type"] == "SPELL" then
+                name, rank, icon = GetSpellInfo(v["id"])
+                _G["GwLevelingRewardsItem" .. i].icon:SetTexture(icon)
+                _G["GwLevelingRewardsItem" .. i].name:SetText(name)
+                _G["GwLevelingRewardsItem" .. i]:SetScript(
+                    "OnEnter", function()
+                        GameTooltip:SetOwner(GwLevelingRewards, "ANCHOR_CURSOR", 0, 0)
+                        GameTooltip:ClearLines()
+                        GameTooltip:SetSpellByID(v["id"])
                         GameTooltip:Show()
                     end)
-                    _G['GwLevelingRewardsItem'..i]:SetScript('OnLeave',function() GameTooltip:Hide() end)
-                
-                end
-                if v['type']=='TALENT' then
-                    _G['GwLevelingRewardsItem'..i].icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talent-icon')
-                    _G['GwLevelingRewardsItem'..i].name:SetText(GwLocalization['LEVEL_REWARDS_TALENT'])
-                    _G['GwLevelingRewardsItem'..i]:SetScript('OnEnter',function() end)
-                    _G['GwLevelingRewardsItem'..i]:SetScript('OnLeave',function() end)
-                end
-                GW_LEVELING_REWARD_AVALIBLE = true
-            
+                if IsPassiveSpell(v["id"]) then
+                    if not _G["GwLevelingRewardsItem" .. i].mask then
+                        local mask = UIParent:CreateMaskTexture()
+                        mask:SetPoint("CENTER", _G["GwLevelingRewardsItem" .. i].icon, "CENTER", 0, 0)
+                        mask:SetTexture(
+                            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+                            "CLAMPTOBLACKADDITIVE",
+                            "CLAMPTOBLACKADDITIVE"
+                            )
+                        mask:SetSize(40, 40)
+                        _G["GwLevelingRewardsItem" .. i].mask = mask
+                    end
+                    _G["GwLevelingRewardsItem" .. i].icon:AddMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
+                end    
+                _G["GwLevelingRewardsItem" .. i]:SetScript("OnLeave", GameTooltip_Hide)
+            elseif v["type"] == "TALENT" then
+                _G["GwLevelingRewardsItem" .. i].icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talent-icon")
+                _G["GwLevelingRewardsItem" .. i].name:SetText(BONUS_TALENTS)
+                _G["GwLevelingRewardsItem" .. i]:SetScript(
+                    "OnEnter",
+                    function()
+                    end
+                )
+                _G["GwLevelingRewardsItem" .. i]:SetScript(
+                    "OnLeave",
+                    function()
+                    end
+                )
+            end
+            GW_LEVELING_REWARD_AVALIBLE = true
+
             i = i + 1
-            if i>4 then break end
+            if i > 4 then
+                break
+            end
         end
     end
-    
-    if i<5 then
-        while i<5 do
-           _G['GwLevelingRewardsItem'..i]:Hide()
-            i = i +1
+
+    if i < 5 then
+        while i < 5 do
+            _G["GwLevelingRewardsItem" .. i]:Hide()
+            i = i + 1
         end
     end
-    
-    
 end
 
-]]
-
---[[
-function gw_create_orderHallBar()
-    
-
-    
-    CreateFrame('FRAME','GwOrderhallBar',UIParent,'GwOrderhallBar') 
- 
-    GwOrderhallBar:RegisterUnitEvent("UNIT_AURA", "player");
-    GwOrderhallBar:RegisterUnitEvent("UNIT_PHASE", "player");
-    GwOrderhallBar:RegisterEvent("PLAYER_ALIVE");
-	
-	local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0);
-    if inOrderHall then
-		GwOrderhallBar:RegisterEvent("CURRENCY_DISPLAY_UPDATE");
-        GwOrderhallBar:RegisterEvent("DISPLAY_SIZE_CHANGED");
-        GwOrderhallBar:RegisterEvent("UI_SCALE_CHANGED");
-        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_COMPLETE");
-        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_UPDATE");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_CATEGORIES_UPDATED");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_ADDED");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_REMOVED");
-		GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
-		GwOrderhallBar:RegisterEvent("GARRISON_MISSION_FINISHED");
-        GwOrderhallBar:RegisterEvent("UPDATE_BINDINGS");   
-	end
-    
-    GwOrderhallBar:SetScript('OnEvent',gw_orderHallBar_OnEvent)
-    GwOrderhallBar:SetScript('OnShow',function() 
-    
-
-        GwOrderhallBar:RegisterEvent("CURRENCY_DISPLAY_UPDATE");
-        GwOrderhallBar:RegisterEvent("DISPLAY_SIZE_CHANGED");
-        GwOrderhallBar:RegisterEvent("UI_SCALE_CHANGED");
-        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_COMPLETE");
-        GwOrderhallBar:RegisterEvent("GARRISON_TALENT_UPDATE");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_CATEGORIES_UPDATED");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_ADDED");
-        GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_REMOVED");
-		GwOrderhallBar:RegisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
-		GwOrderhallBar:RegisterEvent("GARRISON_MISSION_FINISHED");
-        GwOrderhallBar:RegisterEvent("UPDATE_BINDINGS");    
-            
-    end)
-    
-    GwOrderhallBar:SetScript('OnHide',function() 
-    
-
-        GwOrderhallBar:UnregisterEvent("CURRENCY_DISPLAY_UPDATE");
-        GwOrderhallBar:UnregisterEvent("DISPLAY_SIZE_CHANGED");
-        GwOrderhallBar:UnregisterEvent("UI_SCALE_CHANGED");
-        GwOrderhallBar:UnregisterEvent("GARRISON_TALENT_COMPLETE");
-        GwOrderhallBar:UnregisterEvent("GARRISON_TALENT_UPDATE");
-        GwOrderhallBar:UnregisterEvent("GARRISON_FOLLOWER_CATEGORIES_UPDATED");
-        GwOrderhallBar:UnregisterEvent("GARRISON_FOLLOWER_ADDED");
-        GwOrderhallBar:UnregisterEvent("GARRISON_FOLLOWER_REMOVED");
-		GwOrderhallBar:UnregisterEvent("GARRISON_FOLLOWER_LIST_UPDATE");
-		GwOrderhallBar:UnregisterEvent("GARRISON_MISSION_FINISHED");
-        GwOrderhallBar:UnregisterEvent("UPDATE_BINDINGS");    
-            
-    end)
-    
-	
-	
-    gw_orderHallBar_OnEvent(GwOrderhallBar)
-    
-   
-end
-
-function gw_orderHallBar_OnEvent(self,event)
-
-    if OrderHallCommandBar then
-        OrderHallCommandBar:SetShown(false); 
-        OrderHallCommandBar:UnregisterAllEvents()
-        OrderHallCommandBar:SetScript('OnShow',function(self) self:Hide() end)
-    end
-    
-   
-    local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0);
-    self:SetShown(inOrderHall); 
- 
-    local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(LE_GARRISON_TYPE_7_0);
-
-    local currencyName, amount, currencyTexture = GetCurrencyInfo(primaryCurrency);
-	amount = BreakUpLargeNumbers(amount);
-    self.currency:SetText(amount);
-    
-    gw_orderHallBar_Update_Follower(self)
-    
-end
-
-
-function gw_orderHallBar_Update_Follower(self)
-   	local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(LE_FOLLOWER_TYPE_GARRISON_7_0);
-
-	local numCategories = #categoryInfo;
-
-	for index, category in ipairs(categoryInfo) do
-        local categoryInfoFrame =_G['GwOrderHallFollower'..index]
-        if _G['GwOrderHallFollower'..index]==nil then
-            categoryInfoFrame = gw_orderHallBar_createFollower(self,index)
+local function xpbar_OnClick()
+    if UnitLevel("Player") < GetMaxPlayerLevel("Player") then
+        if GwLevelingRewards:IsShown() then
+            GwLevelingRewards:Hide()
+        else
+            GwLevelingRewards:Show()
         end
-		
+    end
+end
+
+function loadExperienceBar()
+    
+    --gw_load_levelingrewads()
+    
+    local experiencebar =  CreateFrame('Frame', 'GwExperienceFrame',UIParent,'GwExperienceBar');
+    local eName = experiencebar:GetName()
+    
+          experiencebarAnimation = UnitXP('Player')/UnitXPMax('Player')
         
+        _G['GwExperienceFrameArtifactBar'].artifactBarAnimation = 0
+        _G['GwExperienceFrameNextLevel']:SetFont(UNIT_NAME_FONT,12)
+        _G['GwExperienceFrameCurrentLevel']:SetFont(UNIT_NAME_FONT,12)
         
-		categoryInfoFrame.Icon:SetTexture(category.icon);
-		categoryInfoFrame.Icon:SetTexCoord(0, 1, 0.25, 0.75);
-		categoryInfoFrame.name = category.name;
-		categoryInfoFrame.description = category.description;
+        update_experiencebar_size()
+        update_experiencebar_data()
 
-		categoryInfoFrame.Count:SetFormattedText(ORDER_HALL_COMMANDBAR_CATEGORY_COUNT, category.count, category.limit);
-	
-	
-		categoryInfoFrame:Show();
-	end 
-end
-
-function gw_orderHallBar_createFollower(self,i)
-   
-    local newFrame = CreateFrame('FRAME','GwOrderHallFollower'..i,self,'GwOrderHallFollower')
-    newFrame:SetParent(self)
-    newFrame:ClearAllPoints()
-    newFrame:SetPoint('LEFT',self.currency,'RIGHT',100*(i - 1),0)
-    return newFrame
-    
-end
-]]--
-
+        --GwlevelLableRightButton:SetScript("OnClick", xpbar_OnClick)
+        experiencebar:SetScript('OnEvent',update_experiencebar_data)
+        
+        experiencebar:RegisterEvent('PLAYER_XP_UPDATE')
+        experiencebar:RegisterEvent("UPDATE_FACTION");
+        experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
+        experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING");
+        experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN");
+        experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
+        
+        experiencebar:SetScript('OnEnter',  show_experiencebar_tooltip)
+        experiencebar:SetScript('OnLeave', function() GameTooltip:Hide()
+                UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(),1)
+                UIFrameFadeIn(_G['GwExperienceFrameArtifactBar'], 0.2, _G['GwExperienceFrameArtifactBar']:GetAlpha(),1)
+        end)  
+    end

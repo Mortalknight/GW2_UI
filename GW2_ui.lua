@@ -384,7 +384,7 @@ function gwOnEvent(self, event, name)
         gw_register_fonts()
     end
     if gwGetSetting('CASTINGBAR_ENABLED') then
-        gw_register_castingbar()
+        LoadCastingBar()
     end
         
     if gwGetSetting('MINIMAP_ENABLED') then

@@ -64,7 +64,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        gw_experienceBar_OnClick()
+                        --gw_experienceBar_OnClick() 
                     </OnClick>
                 </Scripts>
             </Button>
