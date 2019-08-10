@@ -686,7 +686,7 @@ function gw_unitframes_register_Target()
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint(gwGetSetting('target_pos')['point'],UIParent,gwGetSetting('target_pos')['relativePoint'],gwGetSetting('target_pos')['xOfs'],gwGetSetting('target_pos')['yOfs'])
-    --gw_register_movable_frame('targetframe',NewUnitFrame,'target_pos','GwTargetFrameTemplateDummy')
+    gw_register_movable_frame('targetframe', NewUnitFrame, 'target_pos', 'GwTargetFrameTemplateDummy')
 
     
     RegisterUnitWatch(NewUnitFrame);
@@ -760,7 +760,7 @@ function gw_unitframes_register_Targetstarget()
     local NewUnitFrame = createNormalUnitFrameSmall()
     NewUnitFrame.unit='targettarget'
     
-    gw_register_movable_frame('targettargetframe',NewUnitFrame,'targettarget_pos','GwTargetFrameTemplateDummy')
+    gw_register_movable_frame('targettargetframe',NewUnitFrame,'targettarget_pos','GwTargetFrameSmallTemplateDummy')
     
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint(gwGetSetting('targettarget_pos')['point'],UIParent,gwGetSetting('targettarget_pos')['relativePoint'],gwGetSetting('targettarget_pos')['xOfs'],gwGetSetting('targettarget_pos')['yOfs'])

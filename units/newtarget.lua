@@ -14,10 +14,6 @@ local gw_unitFrame_debufflist_old = {}
 
 
 function gw_registerNewUnitFrame(unitToWatch, frameType)
-    
-
-    
-
     unitFrameAnimations[unitToWatch..'healthAnimation'] = 0
     unitFrameAnimations[unitToWatch..'powerAnimation'] = 0
     unitFrameAnimations[unitToWatch..'castingAnimation'] = 0
@@ -25,28 +21,22 @@ function gw_registerNewUnitFrame(unitToWatch, frameType)
     bloodSparkThro[unitToWatch] = 0
     buffLists[unitToWatch] = {}
     DebuffLists[unitToWatch] = {}
-    
-
-    
+     
     local targetF = CreateFrame('Button', 'Gw'..unitToWatch..'Frame',UIParent,frameType);
     targetF.unit = unitToWatch
     
-    gw_register_movable_frame(unitToWatch..'frame',targetF,unitToWatch..'_pos',frameType..'Dummy')
+    gw_register_movable_frame(unitToWatch..'frame', targetF, unitToWatch..'_pos', frameType..'Dummy')
     
     local thisName = targetF:GetName();   
         _G[thisName..'Buffs']:SetScript('OnUpdate',function() 
             update_buff_timers(thisName)    
     end)
     
-    
-
     targetF:ClearAllPoints()
     targetF:SetPoint(gwGetSetting(unitToWatch..'_pos')['point'],UIParent,gwGetSetting(unitToWatch..'_pos')['relativePoint'],gwGetSetting(unitToWatch..'_pos')['xOfs'],gwGetSetting(unitToWatch..'_pos')['yOfs'])
 
-   
 
     targetF:SetAttribute("unit", unitToWatch);
-   -- targetF:SetFrameStrata('HIGH');
 
     targetF:SetAttribute("*type1", 'target')
     targetF:SetAttribute("*type2", "togglemenu")
