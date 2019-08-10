@@ -7,6 +7,7 @@ NEW
     - Added durability icon to character stats
     - Added scrollbar to titles
     - Added raid info to Hero window -> curreny tab
+    - Added dungeon difficulty to minimap
 
 FIXES
     - Fixed bag close button not working at bank, vendor or mailbox
