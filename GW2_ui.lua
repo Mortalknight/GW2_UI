@@ -398,7 +398,7 @@ function gwOnEvent(self, event, name)
         gw_set_tooltips()
     end
     if gwGetSetting('QUESTVIEW_ENABLED') then
-        gw_create_questview()
+        --gw_create_questview()
     end
     if gwGetSetting('CHATFRAME_ENABLED') then
         --gw_set_chatframe_bg()
