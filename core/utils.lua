@@ -78,6 +78,8 @@ GW.UnitChannelInfo = _G.UnitChannelInfo or function(unit)
 	end
 end
 
+
+
 GW.countTable = function(T)
     local c = 0
     if T ~= nil and type(T) == 'table' then

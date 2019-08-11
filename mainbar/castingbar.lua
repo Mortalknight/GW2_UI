@@ -54,17 +54,12 @@ function LoadCastingBar()
             if unitID ~= "player" then
                 return
             end
-            if
-                event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" or
-                    event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
-             then
+            if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" or event == "UNIT_SPELLCAST_DELAYED" then
                 if event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-                    spell, text, icon, startTime, endTime, isTradeSkill, notInterruptible =
-                        GW.UnitChannelInfo("player")
+                    spell, text, icon, startTime, endTime, isTradeSkill, notInterruptible, spellID = ChannelInfo()
                     castingType = 2
                 else
-                    spell, rank, icon, startTime, endTime, isTradeSkill, castID, interrupt =
-                        GW.UnitCastingInfo("player")
+                    spell, text, icon, startTime, endTime, isTradeSkill, castID, interrupt = CastingInfo()
                 end
 
                 if gwGetSetting("CASTINGBAR_DATA") then
@@ -164,4 +159,5 @@ function LoadCastingBar()
     GwCastingBar:RegisterEvent("UNIT_SPELLCAST_STOP")
     GwCastingBar:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
     GwCastingBar:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_DELAYED")
 end
