@@ -359,10 +359,15 @@ local function updateHealthValues(self,event)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrecentage = 0
 
-    if health>0 and healthMax>0 then
+    if health > 0 and healthMax > 0 then
         healthPrecentage = health/healthMax 
     end
     
+    if IsAddOnLoaded("RealMobHealth") then
+        if RealMobHealth.UnitHasHealthData(self.unit) then
+            health, healthMax = RealMobHealth.GetUnitHealth(self.unit)
+        end
+    end
     
     if self.healthTextThroth==nil then self.healthTextThroth=0 end
     
@@ -687,7 +692,6 @@ function gw_unitframes_register_Target()
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint(gwGetSetting('target_pos')['point'],UIParent,gwGetSetting('target_pos')['relativePoint'],gwGetSetting('target_pos')['xOfs'],gwGetSetting('target_pos')['yOfs'])
     gw_register_movable_frame('targetframe', NewUnitFrame, 'target_pos', 'GwTargetFrameTemplateDummy')
-
     
     RegisterUnitWatch(NewUnitFrame);
     NewUnitFrame:EnableMouse(true)
@@ -696,8 +700,6 @@ function gw_unitframes_register_Target()
     
      local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER",NewUnitFrame.portrait,'CENTER',0,0)
-    
-    
       
     mask:SetTexture("Textures\\MinimapMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(58, 58)
