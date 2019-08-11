@@ -181,7 +181,7 @@ end
 function gw_bag_hideIcons(b)
     local gwbf = GwBagFrame
     if b then
-		OpenAllBags()
+		OpenAllBags(gwbf)
         gwbf.spaceString:Show()
         gwbf.buttonSettings:Show()
         ContainerFrame1:Show()
