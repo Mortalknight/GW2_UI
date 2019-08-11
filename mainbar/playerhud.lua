@@ -202,9 +202,9 @@ function gw_create_pet_frame()
     GwPlayerPetFrame:SetPoint(gwGetSetting('pet_pos')['point'], UIParent, gwGetSetting('pet_pos') ['relativePoint'],gwGetSetting('pet_pos')['xOfs'], gwGetSetting('pet_pos')['yOfs'])
 
     -- show/hide stuff with override bar
-    OverrideActionBar:HookScript('OnHide', function()
-        playerPetFrame:SetAlpha(1)
-    end)
+    --OverrideActionBar:HookScript('OnHide', function()
+        --playerPetFrame:SetAlpha(1)
+    --end)
 end
 
 function gw_create_power_bar()
