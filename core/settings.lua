@@ -76,7 +76,7 @@ function create_settings_window()
     addOption(GwLocalization['INVENTORY_FRAME'], GwLocalization['INVENTORY_FRAME_DESC'],'BAGS_ENABLED','GwSettingsModuleOption')
     addOption(GwLocalization['FONTS'], GwLocalization['FONTS_DESC'],'FONTS_ENABLED','GwSettingsModuleOption')
     addOption(GwLocalization['CASTING_BAR'], GwLocalization['CASTING_BAR_DESC'],'CASTINGBAR_ENABLED','GwSettingsModuleOption')
-    --addOption(GwLocalization['CLASS_POWER'], GwLocalization['CLASS_POWER_DESC'],'CLASS_POWER','GwSettingsModuleOption')
+    addOption(GwLocalization['CLASS_POWER'], GwLocalization['CLASS_POWER_DESC'],'CLASS_POWER','GwSettingsModuleOption')
     addOption(GwLocalization['GROUP_FRAMES'], GwLocalization['GROUP_FRAMES_DESC'],'GROUP_FRAMES','GwSettingsModuleOption')
     --addOption(GwLocalization['CHARACTER_WINDOW'], GwLocalization['CHRACTER_WINDOW_DESC'],'USE_CHARACTER_WINDOW','GwSettingsModuleOption')
     

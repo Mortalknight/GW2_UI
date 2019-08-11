@@ -411,6 +411,9 @@ function gwOnEvent(self, event, name)
     if gwGetSetting('POWERBAR_ENABLED') then
         gw_create_power_bar()
     end
+    if gwGetSetting("CLASS_POWER") then
+        GW.LoadClassPowers()
+    end
 
     if gwGetSetting('BAGS_ENABLED') then
         gw_create_bgframe()
