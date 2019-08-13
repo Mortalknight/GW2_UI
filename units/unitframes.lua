@@ -1114,27 +1114,25 @@ local function focus_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("unitframes", "focus_OnEvent", focus_OnEvent)
 
-local function unittarget_OnEvent(self, event, unit)
-    if event == "RAID_TARGET_UPDATE" then
-        updateRaidMarkers(self, event)
+local function unittarget_OnUpdate(self, elapsed)
+    if self.unit == nil then
+        return
+    end
+    if self.totalElapsed > 0 then
+        self.totalElapsed = self.totalElapsed - elapsed
+        return
+    end
+    self.totalElapsed = 0.25
+    if not UnitExists(self.unit) then
         return
     end
 
-    if unit == nil or not UnitIsUnit(unit, self.unit) then
-        return
-    end
-
-    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT") then
-        updateHealthValues(self, event)
-    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-        updatePowerValues(self, event)
-    elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
-        updateCastValues(self, event)
-    elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP",    "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
-        hideCastBar(self, event)
-    end
+    updateRaidMarkers(self)
+    updateHealthValues(self, "UNIT_TARGET")
+    updatePowerValues(self)
+    updateCastValues(self)
 end
-GW.AddForProfiling("unitframes", "unittarget_OnEvent", unittarget_OnEvent)
+GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 
 local function LoadTarget()
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame")
@@ -1206,7 +1204,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")    
+    NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
@@ -1286,96 +1284,39 @@ local function LoadFocus()
 end
 GW.LoadFocus = LoadFocus
 
-local function LoadTargetOfTarget()
-    local NewUnitFrame = createNormalUnitFrameSmall("GwTargetTargetUnitFrame")
-    NewUnitFrame.unit = "targettarget"
+local function LoadTargetOfUnit(unit)
+    local f = createNormalUnitFrameSmall("Gw" .. unit .. "TargetUnitFrame")
+    local unitID = string.lower(unit) .. "target"
 
-    RegisterMovableFrame("targettargetframe", NewUnitFrame, "targettarget_pos", "GwTargetFrameTemplateDummy")
+    f.unit = unitID
 
-    NewUnitFrame:ClearAllPoints()
-    NewUnitFrame:SetPoint(
-        GetSetting("targettarget_pos")["point"],
+    RegisterMovableFrame(unitID .. "frame", f, unitID .. "_pos", "GwTargetFrameTemplateDummy")
+
+    f:ClearAllPoints()
+    f:SetPoint(
+        GetSetting(unitID .. "_pos")["point"],
         UIParent,
-        GetSetting("targettarget_pos")["relativePoint"],
-        GetSetting("targettarget_pos")["xOfs"],
-        GetSetting("targettarget_pos")["yOfs"]
+        GetSetting(unitID .. "_pos")["relativePoint"],
+        GetSetting(unitID .. "_pos")["xOfs"],
+        GetSetting(unitID .. "_pos")["yOfs"]
     )
 
-    NewUnitFrame:SetAttribute("*type1", "target")
-    NewUnitFrame:SetAttribute("*type2", "togglemenu")
-    NewUnitFrame:SetAttribute("unit", "targettarget")
-    RegisterUnitWatch(NewUnitFrame)
-    NewUnitFrame:EnableMouse(true)
-    NewUnitFrame:RegisterForClicks("AnyDown")
+    f:SetAttribute("*type1", "target")
+    f:SetAttribute("*type2", "togglemenu")
+    f:SetAttribute("unit", unitID)
+    RegisterUnitWatch(f)
+    f:EnableMouse(true)
+    f:RegisterForClicks("AnyDown")
 
-    AddToClique(NewUnitFrame)
+    AddToClique(f)
 
-    NewUnitFrame.showHealthValue = false
-    NewUnitFrame.showHealthPrecentage = false
+    f.showHealthValue = false
+    f.showHealthPrecentage = false
 
-    NewUnitFrame.classColor = GetSetting("target_CLASS_COLOR")
-    NewUnitFrame.debuffFilter = nil
+    f.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
+    f.debuffFilter = nil
 
-    NewUnitFrame:SetScript("OnEvent", unittarget_OnEvent)
-
-    NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "targettarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "targettarget")
+    f.totalElapsed = 0.25
+    f:SetScript("OnUpdate", unittarget_OnUpdate)
 end
-GW.LoadTargetOfTarget = LoadTargetOfTarget
-
-local function LoadTargetOfFocus()
-    local NewUnitFrame = createNormalUnitFrameSmall("GwFocusTargetUnitFrame")
-    NewUnitFrame.unit = "focustarget"
-
-    RegisterMovableFrame("focustargetframe", NewUnitFrame, "focustarget_pos", "GwTargetFrameTemplateDummy")
-
-    NewUnitFrame:ClearAllPoints()
-    NewUnitFrame:SetPoint(
-        GetSetting("focustarget_pos")["point"],
-        UIParent,
-        GetSetting("focustarget_pos")["relativePoint"],
-        GetSetting("focustarget_pos")["xOfs"],
-        GetSetting("focustarget_pos")["yOfs"]
-    )
-
-    NewUnitFrame:SetAttribute("*type1", "target")
-    NewUnitFrame:SetAttribute("*type2", "togglemenu")
-    NewUnitFrame:SetAttribute("unit", "focustarget")
-    RegisterUnitWatch(NewUnitFrame)
-    NewUnitFrame:EnableMouse(true)
-    NewUnitFrame:RegisterForClicks("AnyDown")
-
-    AddToClique(NewUnitFrame)
-
-    NewUnitFrame.showHealthValue = false
-    NewUnitFrame.showHealthPrecentage = false
-
-    NewUnitFrame.classColor = GetSetting("target_CLASS_COLOR")
-    NewUnitFrame.debuffFilter = nil
-
-    NewUnitFrame:SetScript("OnEvent", unittarget_OnEvent)
-
-    NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focustarget")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focustarget")
-end
-GW.LoadTargetOfFocus = LoadTargetOfFocus
+GW.LoadTargetOfUnit = LoadTargetOfUnit
