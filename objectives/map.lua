@@ -99,6 +99,7 @@ local function SetMinimapPosition()
     local ourBuffBar = GetSetting("PLAYER_BUFFS_ENABLED")
     local ourTracker = GetSetting("QUESTTRACKER_ENABLED")
     local mapPos = GetSetting("MINIMAP_POS")
+    local mapSize = Minimap:GetHeight()
 
     -- adjust minimap and minimap cluster placement (some default things anchor off cluster)
 
@@ -109,14 +110,13 @@ local function SetMinimapPosition()
 
     Minimap:ClearAllPoints()
     Minimap:SetParent(UIParent)
-    MinimapCluster:ClearAllPoints()
 
     if mapPos == "TOP" then
         if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -120)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 130 - mapSize)
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
         else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -170)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 80 - mapSize)
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -50)
         end
     else
