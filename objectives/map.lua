@@ -97,9 +97,15 @@ GW.SetMinimapHover = SetMinimapHover
 
 local function SetMinimapPosition()
     local ourBuffBar = GetSetting("PLAYER_BUFFS_ENABLED")
+    local ourTracker = GetSetting("QUESTTRACKER_ENABLED")
     local mapPos = GetSetting("MINIMAP_POS")
 
     -- adjust minimap and minimap cluster placement (some default things anchor off cluster)
+
+    local mc_x = 0
+    if ourTracker then
+        mc_x = -320
+    end
 
     Minimap:ClearAllPoints()
     Minimap:SetParent(UIParent)
@@ -107,17 +113,17 @@ local function SetMinimapPosition()
 
     if mapPos == "TOP" then
         if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", 0, -120)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -120)
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
         else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", 0, -170)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -170)
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -50)
         end
     else
         if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", 0, 187)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 187)
         else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", 0, 142)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 142)
         end
         Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
     end
