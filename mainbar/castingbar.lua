@@ -70,6 +70,7 @@ function LoadCastingBar()
                 endTime = endTime / 1000
                 barReset()
                 GwCastingBar.spark:Show()
+                GwStopAnimation("castingbarAnimation")
                 addToAnimation(
                     "castingbarAnimation",
                     0,
@@ -103,7 +104,9 @@ function LoadCastingBar()
                     "noease"
                 )
 
-                UIFrameFadeIn(GwCastingBar, 0.1, 0, 1)
+                if playerCasting ~= 1 then
+                    UIFrameFadeIn(GwCastingBar, 0.1, 0, 1)
+                end
                 playerCasting = 1
             end
 
