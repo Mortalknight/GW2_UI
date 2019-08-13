@@ -5,6 +5,7 @@ local TimeCount = GW.TimeCount
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local StopAnimation = GW.StopAnimation
 
 local playerCasting = 0
 
@@ -72,6 +73,7 @@ local function LoadCastingBar()
                 endTime = endTime / 1000
                 barReset()
                 GwCastingBar.spark:Show()
+                StopAnimation("castingbarAnimation")
                 AddToAnimation(
                     "castingbarAnimation",
                     0,
@@ -105,7 +107,9 @@ local function LoadCastingBar()
                     "noease"
                 )
 
-                UIFrameFadeIn(GwCastingBar, 0.1, 0, 1)
+                if playerCasting ~= 1 then
+                    UIFrameFadeIn(GwCastingBar, 0.1, 0, 1)
+                end
                 playerCasting = 1
             end
 
