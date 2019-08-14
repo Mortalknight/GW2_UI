@@ -76,40 +76,40 @@ end
 
 function GWGearSetEditButtonDropDown_Initialize(dropdownFrame, level, menuList)
 	local gearSetButton = dropdownFrame:GetParent()
-	local info = UIDropDownMenu_CreateInfo();
-	info.text = EQUIPMENT_SET_EDIT;
-	info.notCheckable = true;
+	local info = UIDropDownMenu_CreateInfo()
+	info.text = EQUIPMENT_SET_EDIT
+	info.notCheckable = true
 	info.func = function() GearSetButton_Edit(gearSetButton) end
 	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 
-	info = UIDropDownMenu_CreateInfo();
-	info.text = EQUIPMENT_SET_ASSIGN_TO_SPEC;
-	info.isTitle = true;
-	info.notCheckable = true;
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+	info = UIDropDownMenu_CreateInfo()
+	info.text = EQUIPMENT_SET_ASSIGN_TO_SPEC
+	info.isTitle = true
+	info.notCheckable = true
+	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 
-	local equipmentSetID = gearSetButton.setID;
+	local equipmentSetID = gearSetButton.setID
 	for i = 1, GetNumSpecializations() do
-		info = UIDropDownMenu_CreateInfo();
+		info = UIDropDownMenu_CreateInfo()
 		info.checked = function()
-			return C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID) == i;
-		end;
+			return C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID) == i
+		end
 
 		info.func = function()
-			local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID);
-			if ( currentSpecIndex ~= i ) then
-				C_EquipmentSet.AssignSpecToEquipmentSet(equipmentSetID, i);
+			local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID)
+			if currentSpecIndex ~= i then
+				C_EquipmentSet.AssignSpecToEquipmentSet(equipmentSetID, i)
 			else
-				C_EquipmentSet.UnassignEquipmentSetSpec(equipmentSetID);
+				C_EquipmentSet.UnassignEquipmentSetSpec(equipmentSetID)
 			end
 
-			GearSetButton_UpdateSpecInfo(gearSetButton);
-			PaperDollEquipmentManagerPane_Update(true);
-		end;
+			GearSetButton_UpdateSpecInfo(gearSetButton)
+			PaperDollEquipmentManagerPane_Update(true)
+		end
 
-		local specID = GetSpecializationInfo(i);
-		info.text = select(2, GetSpecializationInfoByID(specID));
-		UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+		local specID = GetSpecializationInfo(i)
+		info.text = select(2, GetSpecializationInfoByID(specID))
+		UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 	end
 end
 
@@ -125,9 +125,9 @@ end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
 
 function outfitEditButton_OnClick(self, button)
-    if ( self.gearSetButton ~= self:GetParent() ) then
-		HideDropDownMenu(1);
-		self.gearSetButton = self:GetParent();
+    if self.gearSetButton ~= self:GetParent() then
+		HideDropDownMenu(1)
+		self.gearSetButton = self:GetParent()
     end   
 	ToggleDropDownMenu(1, nil, self:GetParent().DropDownOutfitFrame, self, 0, 0)
 end

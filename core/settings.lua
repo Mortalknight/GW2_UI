@@ -1261,7 +1261,7 @@ local function LoadSettings()
         {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
     )
 
-    addOptionDropdown(    
+    addOptionDropdown(
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "RAID_UNIT_HEALTH",

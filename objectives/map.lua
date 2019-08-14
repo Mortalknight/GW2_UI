@@ -419,13 +419,12 @@ end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 -- Dungeon Difficulty
-
 local function GwMiniMapInstanceDifficulty_Update()
 	local _, instanceType, difficulty, _, maxPlayers, playerDifficulty, isDynamicInstance, _, instanceGroupSize = GetInstanceInfo()
 	local _, _, isHeroic, isChallengeMode, displayHeroic, displayMythic = GetDifficultyInfo(difficulty)
 
-	if ( IS_GUILD_GROUP ) then
-		if ( instanceGroupSize == 0 ) then
+	if IS_GUILD_GROUP then
+		if instanceGroupSize == 0 then
 			GwGuildInstanceDifficultyText:SetText("")
 			GwGuildInstanceDifficultyDarkBackground:SetAlpha(0)
 			GwGuildInstanceDifficulty.emblem:SetPoint("TOPLEFT", 12, -16)
@@ -434,14 +433,14 @@ local function GwMiniMapInstanceDifficulty_Update()
 			GwGuildInstanceDifficultyDarkBackground:SetAlpha(0.7)
 			GwGuildInstanceDifficulty.emblem:SetPoint("TOPLEFT", 12, -10)
 		end
-		GwGuildInstanceDifficultyText:ClearAllPoints();
-		if ( isHeroic or isChallengeMode or displayMythic or displayHeroic ) then
+		GwGuildInstanceDifficultyText:ClearAllPoints()
+		if isHeroic or isChallengeMode or displayMythic or displayHeroic then
 			local symbolTexture
-			if ( isChallengeMode ) then
+			if isChallengeMode then
 				symbolTexture = GwGuildInstanceDifficultyChallengeModeTexture
 				GwGuildInstanceDifficultyHeroicTexture:Hide()
 				GwGuildInstanceDifficultyMythicTexture:Hide()
-			elseif ( displayMythic ) then
+			elseif displayMythic then
 				symbolTexture = GwGuildInstanceDifficultyMythicTexture
 				GwGuildInstanceDifficultyHeroicTexture:Hide()
 				GwGuildInstanceDifficultyChallengeModeTexture:Hide()
@@ -451,10 +450,10 @@ local function GwMiniMapInstanceDifficulty_Update()
 				GwGuildInstanceDifficultyMythicTexture:Hide()
 			end
 			-- the 1 looks a little off when text is centered
-			if ( instanceGroupSize < 10 ) then
+			if instanceGroupSize < 10 then
 				symbolTexture:SetPoint("BOTTOMLEFT", 11, 7)
 				GwGuildInstanceDifficultyText:SetPoint("BOTTOMLEFT", 23, 8)
-			elseif ( instanceGroupSize > 19 ) then
+			elseif instanceGroupSize > 19 then
 				symbolTexture:SetPoint("BOTTOMLEFT", 8, 7)
 				GwGuildInstanceDifficultyText:SetPoint("BOTTOMLEFT", 20, 8)
 			else
@@ -469,24 +468,24 @@ local function GwMiniMapInstanceDifficulty_Update()
 			GwGuildInstanceDifficultyText:SetPoint("BOTTOM", 2, 8)
 		end
 		GwMiniMapInstanceDifficulty:Hide()
-		SetSmallGuildTabardTextures("player", GuildInstanceDifficulty.emblem, GuildInstanceDifficulty.background, GuildInstanceDifficulty.border)
+		SetSmallGuildTabardTextures("player", GwGuildInstanceDifficulty.emblem, GwGuildInstanceDifficulty.background, GwGuildInstanceDifficulty.border)
 		GwGuildInstanceDifficulty:Show()
         GwMiniMapChallengeMode:Hide()
-	elseif ( isChallengeMode ) then
+	elseif isChallengeMode then
         GwMiniMapChallengeMode:Show()
 		GwMiniMapInstanceDifficulty:Hide()
 		GwGuildInstanceDifficulty:Hide()
-	elseif ( instanceType == "raid" or isHeroic or displayMythic or displayHeroic ) then
+	elseif instanceType == "raid" or isHeroic or displayMythic or displayHeroic then
 		GwMiniMapInstanceDifficultyText:SetText(instanceGroupSize)
 		-- the 1 looks a little off when text is centered
 		local xOffset = 0
-		if ( instanceGroupSize >= 10 and instanceGroupSize <= 19 ) then
+		if instanceGroupSize >= 10 and instanceGroupSize <= 19 then
 			xOffset = -1
 		end
-		if ( displayMythic ) then
+		if displayMythic then
 			GwMiniMapInstanceDifficultyTexture:SetTexCoord(0.25, 0.5, 0.0703125, 0.4296875)
 			GwMiniMapInstanceDifficultyText:SetPoint("CENTER", xOffset, -9)
-		elseif ( isHeroic or displayHeroic ) then
+		elseif isHeroic or displayHeroic then
 			GwMiniMapInstanceDifficultyTexture:SetTexCoord(0, 0.25, 0.0703125, 0.4296875)
 			GwMiniMapInstanceDifficultyText:SetPoint("CENTER", xOffset, -9)
 		else
@@ -505,21 +504,21 @@ end
 GW.AddForProfiling("map", "GwMiniMapInstanceDifficulty_Update", GwMiniMapInstanceDifficulty_Update)
 
 local function GwMiniMapInstanceDifficulty_OnEvent(self, event, ...)
-	if ( event == "GUILD_PARTY_STATE_UPDATED" ) then
+	if event == "GUILD_PARTY_STATE_UPDATED" then
 		local isGuildGroup = ...
-		if ( isGuildGroup ~= IS_GUILD_GROUP ) then
+		if isGuildGroup ~= IS_GUILD_GROUP then
 			IS_GUILD_GROUP = isGuildGroup
 			GwMiniMapInstanceDifficulty_Update()
 		end
-	elseif ( event == "PLAYER_DIFFICULTY_CHANGED") then
+	elseif event == "PLAYER_DIFFICULTY_CHANGED" then
 		GwMiniMapInstanceDifficulty_Update()
-	elseif ( event == "UPDATE_INSTANCE_INFO" or event == "INSTANCE_GROUP_SIZE_CHANGED" ) then
+	elseif event == "UPDATE_INSTANCE_INFO" or event == "INSTANCE_GROUP_SIZE_CHANGED" then
 		RequestGuildPartyState()
 		GwMiniMapInstanceDifficulty_Update()
-	elseif ( event == "PLAYER_GUILD_UPDATE" ) then
-		local tabard = GuildInstanceDifficulty
+	elseif event == "PLAYER_GUILD_UPDATE" then
+		local tabard = GwGuildInstanceDifficulty
 		SetSmallGuildTabardTextures("player", tabard.emblem, tabard.background, tabard.border)
-		if ( IsInGuild() ) then
+		if IsInGuild() then
 			RequestGuildPartyState()
 		else
 			IS_GUILD_GROUP = nil

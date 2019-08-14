@@ -1057,7 +1057,7 @@ local function createRaidFrame(registerUnit, index)
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
-        frame.healthbar = frame.predictionbar.healthbar;
+        frame.healthbar = frame.predictionbar.healthbar
         frame.aggroborder = frame.healthbar.absorbbar.aggroborder
         frame.nameNotLoaded = false
 
@@ -1161,7 +1161,7 @@ local function LoadRaidFrames()
 
     CreateFrame("Frame", "GwRaidFrameContainer", UIParent, "GwRaidFrameContainer")
 
-    GwRaidFrameContainer:ClearAllPoints();
+    GwRaidFrameContainer:ClearAllPoints()
     GwRaidFrameContainer:SetPoint(
         GetSetting("raid_pos")["point"],
         UIParent,

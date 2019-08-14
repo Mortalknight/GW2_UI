@@ -4,6 +4,7 @@ local SavedItemSlots = GW.char_equipset_SavedItems
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
+local IsIn = GW.IsIn
 
 local STATS_ICONS = {
     STRENGTH = {l = 0.75, r = 1, t = 0.75, b = 1},
@@ -604,7 +605,7 @@ local function setStatIcon(self, stat)
         -- If mastery we use need to use class icon
 
         if stat == "MASTERY" then
-            local _, _, classIndex = UnitClass("player")
+            local classIndex = select(3, UnitClass("player"))
             SetClassIcon(self.icon, classIndex)
             newTexture = "Interface\\AddOns\\GW2_UI\\textures\\party\\classicons"
         else
@@ -727,8 +728,8 @@ GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpda
 local function updateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
     local spec = GetSpecialization()
-    local localizedClass, _, _ = UnitClass("player")
-    local _, name, _, _, _, _ = GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
+    local localizedClass = UnitClass("player")
+    local name = select(2, GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player")))
 
     if name ~= nil then
         local data = LEVEL .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
@@ -740,12 +741,10 @@ GW.AddForProfiling("paperdoll_equipment", "updateUnitData", updateUnitData)
 
 local function stats_OnEvent(self, event, ...)
     local unit = ...
-    if
-        (event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or
-            (event == "UNIT_NAME_UPDATE" and unit == "player"))
-     then
+    if IsIn(event, "PLAYER_ENTERING_WORLD", "UNIT_MODEL_CHANGED" , "UNIT_NAME_UPDATE") and unit == "player" then
         GwDressingRoom.model:SetUnit("player", false)
         updateUnitData()
+        collectDurability(durabilityFrame)
         return
     end
 
@@ -753,35 +752,16 @@ local function stats_OnEvent(self, event, ...)
         return
     end
 
-    if (unit == "player") then
-        if (event == "UNIT_LEVEL") then
+    if unit == "player" then
+        if event == "UNIT_LEVEL" then
             updateUnitData()
-        elseif
-            (event == "UNIT_DAMAGE" or event == "UNIT_ATTACK_SPEED" or event == "UNIT_RANGEDDAMAGE" or
-                event == "UNIT_ATTACK" or
-                event == "UNIT_STATS" or
-                event == "UNIT_RANGED_ATTACK_POWER" or
-                event == "UNIT_SPELL_HASTE" or
-                event == "UNIT_MAXHEALTH" or
-                event == "UNIT_AURA" or
-                event == "UNIT_RESISTANCES" or
-                IsMounted())
-         then
+        elseif IsIn(event, "UNIT_DAMAGE", "UNIT_ATTACK_SPEED", "UNIT_RANGEDDAMAGE", "UNIT_ATTACK", "UNIT_STATS", "UNIT_RANGED_ATTACK_POWER", "UNIT_SPELL_HASTE", 
+                "UNIT_MAXHEALTH", "UNIT_AURA", "UNIT_RESISTANCES", "SPEED_UPDATE") then
             self:SetScript("OnUpdate", stats_QueuedUpdate)
         end
     end
-
-    if
-        (event == "COMBAT_RATING_UPDATE" or event == "MASTERY_UPDATE" or event == "SPEED_UPDATE" or
-            event == "LIFESTEAL_UPDATE" or
-            event == "AVOIDANCE_UPDATE" or
-            event == "BAG_UPDATE" or
-            event == "PLAYER_EQUIPMENT_CHANGED" or
-            event == "PLAYERBANKSLOTS_CHANGED" or
-            event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
-            event == "PLAYER_DAMAGE_DONE_MODS" or
-            IsMounted())
-     then
+    if IsIn(event,"COMBAT_RATING_UPDATE", "MASTERY_UPDATE", "SPEED_UPDATE", "LIFESTEAL_UPDATE", "AVOIDANCE_UPDATE", "BAG_UPDATE", "PLAYER_EQUIPMENT_CHANGED", 
+            "PLAYERBANKSLOTS_CHANGED", "PLAYER_AVG_ITEM_LEVEL_UPDATE", "PLAYER_DAMAGE_DONE_MODS") then 
         self:SetScript("OnUpdate", stats_QueuedUpdate)
     elseif (event == "PLAYER_TALENT_UPDATE") then
         updateUnitData()
@@ -964,7 +944,7 @@ local function LoadPDBagList(fmMenu)
     fmGDR.characterName:SetFont(UNIT_NAME_FONT, 14)
     fmGDR.characterData:SetFont(UNIT_NAME_FONT, 12)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
-    local _, _, classIndex = UnitClass("player")
+    local classIndex = select(3, UnitClass("player"))
     SetClassIcon(fmGDR.classIcon, classIndex)
     fmGDR.classIcon:SetVertexColor(
         CLASS_COLORS_RAIDFRAME[classIndex].r,
