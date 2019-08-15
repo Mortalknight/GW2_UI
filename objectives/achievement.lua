@@ -94,7 +94,7 @@ end
 GW.AddForProfiling("achievement", "getBlock", getBlock)
 
 local function addObjective(block, text, finished, firstunfinishedobjectiv)
-    if finished and not text then
+    if finished or not text then
         return
     end
 
