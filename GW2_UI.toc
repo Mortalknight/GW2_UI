@@ -32,6 +32,11 @@ units/raidframes.lua
 units/unitframes.lua
 units/party.lua
 
+mainbar/micromenu.xml
+mainbar/micromenu.lua
+mainbar/orderbar.xml
+mainbar/orderbar.lua
+
 mainbar/experiencebar.xml
 mainbar/hudart.xml
 mainbar/hudelements.xml

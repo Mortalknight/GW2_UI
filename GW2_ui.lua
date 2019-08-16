@@ -564,6 +564,7 @@ local function loadAddon(self)
     end
     --]]
     GW.LoadMicroMenu()
+    GW.LoadOrderBar()
 
     if GetSetting("GROUP_FRAMES") then
         GW.LoadPartyFrames()

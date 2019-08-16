@@ -306,31 +306,6 @@ local function updateHotkey(self, actionButtonType)
 end
 GW.AddForProfiling("Actionbars2", "updateHotkey", updateHotkey)
 
-local function setMicroButtons()
-    MicroButtonPortrait:Hide()
-    GuildMicroButtonTabard:Hide()
-    MainMenuBarPerformanceBar:Hide()
-    TalentMicroButtonAlert:Hide()
-    TalentMicroButtonAlert:SetScript("OnShow", Self_Hide)
-    TalentMicroButtonAlert:SetScript("OnHide", nil)
-    TalentMicroButtonAlert:SetScript("OnEnter", nil)
-    TalentMicroButtonAlert:SetScript("OnLeave", nil)
-
-    for i = 1, #MICRO_BUTTONS do
-        if _G[MICRO_BUTTONS[i]] then
-            _G[MICRO_BUTTONS[i]]:SetScript("OnShow", Self_Hide)
-            _G[MICRO_BUTTONS[i]]:SetScript("OnHide", nil)
-            _G[MICRO_BUTTONS[i]]:SetScript("OnEnter", nil)
-            _G[MICRO_BUTTONS[i]]:SetScript("OnLeave", nil)
-            _G[MICRO_BUTTONS[i]]:SetScript("OnEvent", nil)
-            _G[MICRO_BUTTONS[i]]:SetScript("OnUpdate", nil)
-            _G[MICRO_BUTTONS[i]]:UnregisterAllEvents()
-            _G[MICRO_BUTTONS[i]]:Hide()
-        end
-    end
-end
-GW.AddForProfiling("Actionbars2", "setMicroButtons", setMicroButtons)
-
 local function hideBackdrop(self)
     self.gwBackdrop:Hide()
 end
@@ -986,7 +961,6 @@ local function LoadActionBars()
 
     -- do stuff to other pieces of the blizz UI
     hideBlizzardsActionbars()
-    setMicroButtons()
     setStanceBar()
     setPossessBar()
     setLeaveVehicleButton()
