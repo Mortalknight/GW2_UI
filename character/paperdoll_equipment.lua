@@ -5,6 +5,7 @@ local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
+local getContainerItemLinkByName = GW.getContainerItemLinkByName
 
 local STATS_ICONS = {
     STRENGTH = {l = 0.75, r = 1, t = 0.75, b = 1},
@@ -106,15 +107,19 @@ GW.AddForProfiling("paperdoll_equipment", "setItemLevel", setItemLevel)
 
 local function updateBagItemButton(button)
     local location = button.location
-    if (not location) then
+    if not location then
         return
     end
-    local id, _, textureName, count, durability, maxDurability, _, _, _, _, _, setTooltip, quality =
-        EquipmentManager_GetItemInfoByLocation(location)
-    button.ItemId = id
+    local id, name, textureName, count, durability, maxDurability, _, _, _, _, _, setTooltip, quality = EquipmentManager_GetItemInfoByLocation(location)
     local broken = (maxDurability and durability == 0)
+
+    button.ItemId = id
+    button.ItemLink = getContainerItemLinkByName(name)
+    if button.ItemLink == nil then 
+        button.ItemLink = GetInventoryItemLink("player", button.itemSlot)
+    end
     
-    if (textureName) then
+    if textureName then
         SetItemButtonTexture(button, textureName)
         SetItemButtonCount(button, count)
         if broken then
@@ -139,7 +144,10 @@ local function updateBagItemButton(button)
             setTooltip()
         end
 
-        --setItemButtonQuality(button, quality, id)
+        if button.ItemLink ~= nil then
+            setItemLevel(button, quality, button.ItemLink)
+        end
+        setItemButtonQuality(button, quality, id)
     end
     
 end
@@ -164,12 +172,12 @@ local function updateBagItemList(itemButton)
         if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
             local itemFrame = getBagSlotFrame(itemIndex)
             itemFrame.location = location
+            itemFrame.itemSlot = id
 
             updateBagItemButton(itemFrame)
 
             itemFrame:SetPoint("TOPLEFT", x, -y)
-            itemFrame:Show()
-            itemFrame.itemSlot = id
+            itemFrame:Show()            
             gridIndex = gridIndex + 1
 
             x = x + 49 + 3
@@ -569,12 +577,12 @@ local function updateBagItemListAll()
             if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
                 local itemFrame = getBagSlotFrame(itemIndex)
                 itemFrame.location = location
+                itemFrame.itemSlot = id
 
                 updateBagItemButton(itemFrame)
 
                 itemFrame:SetPoint("TOPLEFT", x, -y)
                 itemFrame:Show()
-                itemFrame.itemSlot = id
                 gridIndex = gridIndex + 1
 
                 x = x + 49 + 3

@@ -1,5 +1,8 @@
 5.0.28
 
+NEW
+    - Added itemlevel and itemborder quality to equipment selection
+
 FIXES
     - Fixed lua error in achievement tracking
 

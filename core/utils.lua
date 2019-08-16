@@ -358,6 +358,18 @@ local function GetRealItemLevel(link)
 end
 GW.GetRealItemLevel = GetRealItemLevel
 
+local function getContainerItemLinkByName(itemName)
+    for bag = 0, 4 do
+        for slot = 1, GetContainerNumSlots(bag) do
+            local item = GetContainerItemLink(bag, slot)
+            if item and item:find(itemName) then
+                return item
+            end
+        end
+    end
+end
+GW.getContainerItemLinkByName = getContainerItemLinkByName
+
 --@debug@
 local function AddForProfiling(unit, name, ...)
     if not Profiler then
