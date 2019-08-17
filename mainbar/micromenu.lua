@@ -360,7 +360,7 @@ local function setupMicroButtons()
                 return
             end
             self.interval = 15.0
-            GuildRoster()
+            C_GuildInfo.GuildRoster()
         end
     )
     GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
