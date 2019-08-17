@@ -5,6 +5,7 @@ NEW
 
 FIXES
     - Fixed lua error in achievement tracking
+    - Fixed multiple secure handler and in-combat issues with the micromenu
 
 
 5.0.27

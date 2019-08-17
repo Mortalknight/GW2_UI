@@ -1,36 +1,46 @@
 local _, GW = ...
-local RoundDec = GW.RoundDec
 local GetSetting = GW.GetSetting
-local RoundInt = GW.RoundInt
-local VERSION_STRING = GW.VERSION_STRING
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 
-local function updateGuildButton()
+local microButtonFrame
+
+local function updateGuildButton(self, event)
+    if event ~= "GUILD_ROSTER_UPDATE" then
+        return
+    end
+
+    local gmb = GuildMicroButton
+    if gmb == nil then
+        return
+    end
+
     local _, _, numOnlineMembers = GetNumGuildMembers()
 
     if numOnlineMembers ~= nil and numOnlineMembers > 0 then
-        GwMicroButtonGuildMicroButton.darkbg:Show()
+        gmb.GwNotifyDark:Show()
 
         if numOnlineMembers > 9 then
-            GwMicroButtonGuildMicroButton.darkbg:SetSize(18, 18)
+            gmb.GwNotifyText:SetText(numOnlineMembers)
         else
-            GwMicroButtonGuildMicroButton.darkbg:SetSize(14, 14)
+            gmb.GwNotifyText:SetText(numOnlineMembers .. " ")
         end
-
-        _G["GwMicroButtonGuildMicroButtonString"]:Show()
-        _G["GwMicroButtonGuildMicroButtonString"]:SetText(numOnlineMembers)
+        gmb.GwNotifyText:Show()
     else
-        GwMicroButtonGuildMicroButton.darkbg:Hide()
-        _G["GwMicroButtonGuildMicroButtonString"]:Hide()
+        gmb.GwNotifyDark:Hide()
+        gmb.GwNotifyText:Hide()
     end
 end
-GW.AddForProfiling("hud", "updateGuildButton", updateGuildButton)
+GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
 
 local function updateInventoryButton()
-    local totalEmptySlots = 0
+    local bmb = GwBagMicroButton
+    if bmb == nil then
+        return
+    end
 
+    local totalEmptySlots = 0
     for i = 0, 4 do
         local numberOfFreeSlots, _ = GetContainerNumFreeSlots(i)
 
@@ -39,49 +49,15 @@ local function updateInventoryButton()
         end
     end
 
-    GwMicroButtonBagMicroButton.darkbg:Show()
+    bmb.GwNotifyDark:Show()
     if totalEmptySlots > 9 then
-        GwMicroButtonBagMicroButton.darkbg:SetSize(18, 18)
+        bmb.GwNotifyText:SetText(totalEmptySlots)
     else
-        GwMicroButtonBagMicroButton.darkbg:SetSize(14, 14)
+        bmb.GwNotifyText:SetText(totalEmptySlots .. " ")
     end
-
-    _G["GwMicroButtonBagMicroButtonString"]:Show()
-    _G["GwMicroButtonBagMicroButtonString"]:SetText(totalEmptySlots)
+    bmb.GwNotifyText:Show()
 end
-GW.AddForProfiling("hud", "updateInventoryButton", updateInventoryButton)
-
-local microButtonFrame = CreateFrame("Frame", "GwMicroButtonFrame", UIParent, "GwMicroButtonFrame")
-
-local microButtonPadding = 4 + 12
-
-local function createMicroButton(key)
-    local mf =
-        CreateFrame(
-        "Button",
-        "GwMicroButton" .. key,
-        microButtonFrame,
-        "SecureHandlerClickTemplate,GwMicroButtonTemplate"
-    )
-    mf:SetPoint("CENTER", microButtonFrame, "TOPLEFT", microButtonPadding, -16)
-    microButtonPadding = microButtonPadding + 24 + 4
-
-    mf:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. key .. "-Up")
-    mf:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. key .. "-Up")
-    mf:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. key .. "-Up")
-    mf:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. key .. "-Up")
-
-    _G["GwMicroButton" .. key .. "String"]:SetFont(DAMAGE_TEXT_FONT, 12)
-    _G["GwMicroButton" .. key .. "String"]:SetShadowColor(0, 0, 0, 0)
-
-    _G["GwMicroButton" .. key .. "Texture"]:Hide()
-    _G["GwMicroButton" .. key .. "String"]:Hide()
-
-    return mf
-end
-GW.AddForProfiling("micromenu", "createMicroButton", createMicroButton)
-
-local CUSTOM_MICRO_BUTTONS = {}
+GW.AddForProfiling("micromenu", "updateInventoryButton", updateInventoryButton)
 
 local function microMenuFrameShow(f, name)
     StopAnimation(name)
@@ -165,179 +141,12 @@ local function microMenu_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("micromenu", "microMenu_OnUpdate", microMenu_OnUpdate)
 
-local gw_sendUpdate_message_cooldown = 0
-local function sendVersionCheck()
-    if gw_sendUpdate_message_cooldown > GetTime() then
-        return
-    end
-    gw_sendUpdate_message_cooldown = GetTime() + 10
-
-    local chatToSend = "GUILD"
-    local inInstanceGroup = IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
-    if inInstanceGroup then
-        chatToSend = "INSTANCE_CHAT"
-    elseif IsInGroup() then
-        chatToSend = "PARTY"
-        if IsInRaid() then
-            chatToSend = "RAID"
-        end
-    end
-    C_ChatInfo.SendAddonMessage("GW2_UI", VERSION_STRING, chatToSend)
-end
-GW.AddForProfiling("micromenu", "sendVersionCheck", sendVersionCheck)
-
-local function receiveVersionCheck(self, event, prefix, message, dist, sender)
-    if prefix ~= "GW2_UI" then
-        return
-    end
-
-    local version, subversion, hotfix = string.match(message, "GW2_UI v(%d+).(%d+).(%d+)")
-    local Currentversion, Currentsubversion, Currenthotfix = string.match(VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)")
-
-    if version == nil or subversion == nil or hotfix == nil then
-        return
-    end
-    if Currentversion == nil or Currentsubversion == nil or Currenthotfix == nil then
-        return
-    end
-
-    if version > Currentversion then
-        GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_3"]
-        GwMicroButtonupdateicon.updateTypeInt = 3
-        GwMicroButtonupdateicon:Show()
-    else
-        if subversion > Currentsubversion then
-            GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_2"]
-            GwMicroButtonupdateicon.updateTypeInt = 2
-            GwMicroButtonupdateicon:Show()
-        else
-            if hotfix > Currenthotfix then
-                GwMicroButtonupdateicon.updateType = GwLocalization["UPDATE_STRING_1"]
-                GwMicroButtonupdateicon.updateTypeInt = 1
-                GwMicroButtonupdateicon:Show()
-            end
-        end
-    end
-end
-GW.AddForProfiling("micromenu", "receiveVersionCheck", receiveVersionCheck)
-
-local ipTypes = {"IPv4", "IPv6"}
-
-local gw_addonMemoryArray = {}
-local function latencyToolTip(self, elapsed)
-    if self.interval > 0 then
-        self.interval = self.interval - elapsed
-        return
-    end
-    self.interval = 1
-
-    local gw_frameRate = RoundInt(GetFramerate())
-    local _, _, lagHome, lagWorld = GetNetStats()
-    local percent = floor(GetDownloadedPercentage() * 100 + 0.5)
-    local gw_addonMemory = 0
-    local gw_numAddons = GetNumAddOns()
-
-    -- wipe and reuse our memtable to avoid temp pre-GC bloat on the tooltip (still get a bit from the sort)
-    for i = 1, #gw_addonMemoryArray do
-        gw_addonMemoryArray[i]["addonIndex"] = 0
-        gw_addonMemoryArray[i]["addonMemory"] = 0
-    end
-
-    UpdateAddOnMemoryUsage()
-
-    GameTooltip:SetOwner(GwMicroButtonMainMenuMicroButton, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
-    GameTooltip:ClearLines()
-    GameTooltip:AddLine(MAINMENU_BUTTON, 1, 1, 1)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(MAINMENUBAR_LATENCY_LABEL:format(lagHome, lagWorld), 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ")
-    if (GetCVarBool("useIPv6")) then
-        local ipTypeHome, ipTypeWorld = GetNetIpTypes()
-        GameTooltip:AddLine(
-            MAINMENUBAR_PROTOCOLS_LABEL:format(
-                ipTypes[ipTypeHome or 0] or UNKNOWN,
-                ipTypes[ipTypeWorld or 0] or UNKNOWN
-            ),
-            0.8,
-            0.8,
-            0.8
-        )
-        GameTooltip:AddLine(" ")
-    end
-    GameTooltip:AddLine(MAINMENUBAR_FPS_LABEL:format(gw_frameRate), 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(MAINMENUBAR_BANDWIDTH_LABEL:format(GetAvailableBandwidth()), 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(MAINMENUBAR_DOWNLOAD_PERCENT_LABEL:format(percent), 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ")
-
-    for i = 1, gw_numAddons do
-        if type(gw_addonMemoryArray[i]) ~= "table" then
-            gw_addonMemoryArray[i] = {}
-        end
-        local mem = GetAddOnMemoryUsage(i)
-        gw_addonMemoryArray[i]["addonIndex"] = i
-        gw_addonMemoryArray[i]["addonMemory"] = mem
-        gw_addonMemory = gw_addonMemory + mem
-    end
-
-    if (gw_addonMemory > 1024) then
-        gw_addonMemory = gw_addonMemory / 1024
-        GameTooltip:AddLine(TOTAL_MEM_MB_ABBR:format(gw_addonMemory), 0.8, 0.8, 0.8)
-    else
-        GameTooltip:AddLine(TOTAL_MEM_MB_ABBR:format(gw_addonMemory), 0.8, 0.8, 0.8)
-    end
-
-    if self.inDebug then
-        table.sort(
-            gw_addonMemoryArray,
-            function(a, b)
-                return a["addonMemory"] > b["addonMemory"]
-            end
-        )
-
-        for k, v in pairs(gw_addonMemoryArray) do
-            if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
-                gw_addonMemory = RoundDec(v["addonMemory"] / 1024, 2)
-                if gw_addonMemory ~= "0.00" then
-                    GameTooltip:AddLine(
-                        "(" .. gw_addonMemory .. " MB) " .. GetAddOnInfo(v["addonIndex"]),
-                        0.8,
-                        0.8,
-                        0.8
-                    )
-                end
-            end
-        end
-    else
-        gw_addonMemory = RoundDec(GetAddOnMemoryUsage("GW2_UI") / 1024, 2)
-        GameTooltip:AddLine("(" .. gw_addonMemory .. " MB) GW2_UI", 0.8, 0.8, 0.8)
-    end
-
-    GameTooltip:Show()
-end
-GW.AddForProfiling("micromenu", "latencyToolTip", latencyToolTip)
-
-local function talentMicro_OnEvent()
-    if not GW.inWorld then
-        return
-    end
-    if GetNumUnspentTalents() > 0 then
-        _G["GwMicroButtonTalentMicroButtonTexture"]:Show()
-        _G["GwMicroButtonTalentMicroButtonString"]:Show()
-        _G["GwMicroButtonTalentMicroButtonString"]:SetText(GetNumUnspentTalents())
-    else
-        _G["GwMicroButtonTalentMicroButtonTexture"]:Hide()
-        _G["GwMicroButtonTalentMicroButtonString"]:Hide()
-    end
-end
-GW.AddForProfiling("micromenu", "talentMicro_OnEvent", talentMicro_OnEvent)
-
 local function gwMicro_PositionAlert(alert)
     if
         (alert ~= CollectionsMicroButtonAlert and alert ~= LFDMicroButtonAlert and alert ~= EJMicroButtonAlert and
             alert ~= StoreMicroButtonAlert and
-            alert ~= CharacterMicroButtonAlert)
+            alert ~= CharacterMicroButtonAlert and
+            alert ~= TalentMicroButtonAlert)
      then
         return
     end
@@ -354,223 +163,136 @@ local function modifyMicroAlert(alert, microButton)
     alert.Arrow.Glow:SetTexCoord(0.40625000, 0.66015625, 0.82812500, 0.77343750)
     alert.Arrow.Glow:ClearAllPoints()
     alert.Arrow.Glow:SetPoint("BOTTOM")
+
+    alert.Arrow:ClearAllPoints()
+    alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
+    alert:ClearAllPoints()
+    alert:SetPoint("TOPLEFT", microButton, "BOTTOMLEFT", -18, -20)
 end
 GW.AddForProfiling("micromenu", "modifyMicroAlert", modifyMicroAlert)
 
-local function getToolTip(text, action)
-    if (GetBindingKey(action)) then
-        return text .. " |cffa6a6a6(" .. GetBindingText(GetBindingKey(action)) .. ")" .. FONT_COLOR_CODE_CLOSE
-    else
-        return text
+local function reskinMicroButton(btn, name)
+    GW.Debug("reskin micro", name)
+    btn:SetParent(GwMicroButtonFrame)
+
+    local tex = "Interface/AddOns/GW2_UI/textures/" .. name .. "-Up"
+
+    btn:SetSize(24, 24)
+    btn:SetDisabledTexture(tex)
+    btn:SetNormalTexture(tex)
+    btn:SetPushedTexture(tex)
+    btn:SetHighlightTexture(tex)
+
+    if btn.Flash then
+        -- hide the flash frames off-screen
+        btn.Flash:ClearAllPoints()
+        btn.Flash:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 440)
     end
+
+    btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
+    btn.GwNotifyDark = btn:CreateTexture(nil, "OVERLAY")
+    btn.GwNotifyText = btn:CreateFontString(nil, "OVERLAY")
+
+    btn.GwNotify:SetSize(18, 18)
+    btn.GwNotify:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
+    btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/notification-backdrop")
+    btn.GwNotify:SetVertexColor(1, 0, 0, 1)
+    btn.GwNotify:Hide()
+
+    btn.GwNotifyDark:SetSize(18, 18)
+    btn.GwNotifyDark:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
+    btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/notification-backdrop")
+    btn.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
+    btn.GwNotifyDark:Hide()
+
+    btn.GwNotifyText:SetSize(24, 24)
+    btn.GwNotifyText:SetPoint("CENTER", btn, "BOTTOM", 7, 2)
+    btn.GwNotifyText:SetFont(DAMAGE_TEXT_FONT, 12)
+    btn.GwNotifyText:SetTextColor(1, 1, 1, 1)
+    btn.GwNotifyText:SetShadowColor(0, 0, 0, 0)
+    btn.GwNotifyText:Hide()
 end
-GW.AddForProfiling("micromenu", "getToolTip", getToolTip)
+GW.AddForProfiling("micromenu", "reskinMicroButton", reskinMicroButton)
 
-local function setToolTip(frame, text, action)
-    GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
-    GameTooltip:ClearLines()
-    GameTooltip:AddLine(getToolTip(text, action), 1, 1, 1)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("micromenu", "setToolTip", setToolTip)
-
-local function hookToolTip(frame, text, action)
-    if frame == nil then
-        return
-    end
-    frame:SetScript(
-        "OnEnter",
-        function()
-            setToolTip(frame, text, action)
-            setToolTip(frame, text, action)
-        end
-    )
-    frame:SetScript("OnLeave", GameTooltip_Hide)
-end
-GW.AddForProfiling("micromenu", "hookToolTip", hookToolTip)
-
-local function setMicroButtons()
-    MicroButtonPortrait:Hide()
-    GuildMicroButtonTabard:Hide()
-    MainMenuBarPerformanceBar:Hide()
-    TalentMicroButtonAlert:Hide()
-    TalentMicroButtonAlert:SetScript("OnShow", Self_Hide)
-    TalentMicroButtonAlert:SetScript("OnHide", nil)
-    TalentMicroButtonAlert:SetScript("OnEnter", nil)
-    TalentMicroButtonAlert:SetScript("OnLeave", nil)
-
+local function reskinMicroButtons()
     for i = 1, #MICRO_BUTTONS do
-        local b = _G[MICRO_BUTTONS[i]]
-        if b then
-            b:UnregisterAllEvents()
-            b:SetScript("OnShow", Self_Hide)
-            b:SetScript("OnHide", nil)
-            b:SetScript("OnEnter", nil)
-            b:SetScript("OnLeave", nil)
-            b:SetScript("OnEvent", nil)
-            b:SetScript("OnUpdate", nil)
-            b:Hide()
+        local name = MICRO_BUTTONS[i]
+        local btn = _G[name]
+        if btn then
+            reskinMicroButton(btn, name)
         end
+    end
+    if GwBagMicroButton then
+        reskinMicroButton(GwBagMicroButton, "BagMicroButton")
+    end
+    if GwCharacterMicroButton then
+        reskinMicroButton(GwCharacterMicroButton, "CharacterMicroButton")
+    end
+    if GwTalentMicroButton then
+        reskinMicroButton(GwTalentMicroButton, "TalentMicroButton")
     end
 end
-GW.AddForProfiling("micromenu", "setMicroButtons", setMicroButtons)
+GW.AddForProfiling("micromenu", "reskinMicroButtons", reskinMicroButtons)
 
-local function LoadMicroMenu()
-    local mi = 1
-    for k, v in pairs(MICRO_BUTTONS) do
-        CUSTOM_MICRO_BUTTONS[mi] = v
-        if v == "CharacterMicroButton" then
-            mi = mi + 1
-            CUSTOM_MICRO_BUTTONS[mi] = "BagMicroButton"
-        end
-        mi = mi + 1
+local function disableMicroButton(btn, hideOnly)
+    if hideOnly then
+        -- hide it off-screen but still want events to run for alerts/notifications
+        btn:ClearAllPoints()
+        btn:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+    else
+        btn:Disable()
+        btn:UnregisterAllEvents()
+        btn:SetScript("OnUpdate", nil)
+        btn:Hide()
     end
+end
 
-    for k, v in pairs(CUSTOM_MICRO_BUTTONS) do
-        if v ~= "SpellbookMicroButton" then
-            createMicroButton(v)
-        else
-            if not GetSetting("USE_TALENT_WINDOW") then
-                createMicroButton(v)
-            end
-        end
-    end
-
+local function setupMicroButtons()
+    -- CharacterMicroButton
+    -- we must determine if we are using the default char button (for default char window) or
+    -- if we need to use our own char button for the custom hero panel
+    local cref
     if GetSetting("USE_CHARACTER_WINDOW") then
-        GwMicroButtonCharacterMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-        GwMicroButtonCharacterMicroButton:SetAttribute(
+        cref = GwCharacterMicroButton
+        cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+        cref:SetAttribute(
             "_onclick",
             [=[
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "paperdoll")
+            local f = self:GetFrameRef("GwCharacterWindow")
+            f:SetAttribute("keytoggle", "1")
+            f:SetAttribute("windowpanelopen", "paperdoll")
             ]=]
         )
-    else
-        GwMicroButtonCharacterMicroButton:SetScript(
-            "OnClick",
-            function()
-                ToggleCharacter("PaperDollFrame")
-            end
-        )
-    end
 
-    GwMicroButtonBagMicroButton:SetScript(
+        disableMicroButton(CharacterMicroButton, true)
+        CharacterMicroButton.GwSetAnchorPoint = function(self)
+            self:ClearAllPoints()
+            self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+        end
+    else
+        cref = CharacterMicroButton
+        MicroButtonPortrait:Hide()
+
+        disableMicroButton(GwCharacterMicroButton)
+    end
+    cref.GwSetAnchorPoint = function(self)
+        -- this must also happen in the auto-layout update hook which is why we do it like this
+        self:ClearAllPoints()
+        self:SetPoint("TOPLEFT", GwMicroButtonFrame, "TOPLEFT", 5, -3)
+    end
+    cref:GwSetAnchorPoint()
+
+    -- GwBagMicroButton (custom)
+    GwBagMicroButton:ClearAllPoints()
+    GwBagMicroButton:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
+    GwBagMicroButton:HookScript(
         "OnClick",
         function()
             ToggleAllBags()
         end
     )
-
-    if GetSetting("USE_TALENT_WINDOW") then
-        GwMicroButtonTalentMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-        GwMicroButtonTalentMicroButton:SetAttribute(
-            "_onclick",
-            [=[
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
-            ]=]
-        )
-    else
-        GwMicroButtonSpellbookMicroButton:SetScript(
-            "OnClick",
-            function()
-                ToggleSpellBook(BOOKTYPE_SPELL)
-            end
-        )
-        GwMicroButtonSpellbookMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-        GwMicroButtonTalentMicroButton:SetScript(
-            "OnClick",
-            function()
-                ToggleTalentFrame()
-            end
-        )
-    end
-
-    GwMicroButtonAchievementMicroButton:SetScript(
-        "OnClick",
-        function()
-            ToggleAchievementFrame()
-        end
-    )
-    GwMicroButtonQuestLogMicroButton:SetScript(
-        "OnClick",
-        function()
-            ToggleQuestLog()
-        end
-    )
-    GwMicroButtonGuildMicroButton:SetScript(
-        "OnClick",
-        function()
-            ToggleGuildFrame()
-        end
-    )
-    GwMicroButtonLFDMicroButton:SetScript(
-        "OnClick",
-        function()
-            PVEFrame_ToggleFrame()
-        end
-    )
-    GwMicroButtonCollectionsMicroButton:SetScript(
-        "OnClick",
-        function()
-            ToggleCollectionsJournal()
-        end
-    )
-    GwMicroButtonEJMicroButton:SetScript(
-        "OnClick",
-        function()
-            ToggleEncounterJournal()
-        end
-    )
-
-    GwMicroButtonMainMenuMicroButton:SetScript(
-        "OnClick",
-        function()
-            if (not GameMenuFrame:IsShown()) then
-                if (VideoOptionsFrame:IsShown()) then
-                    VideoOptionsFrameCancel:Click()
-                elseif (AudioOptionsFrame:IsShown()) then
-                    AudioOptionsFrameCancel:Click()
-                elseif (InterfaceOptionsFrame:IsShown()) then
-                    InterfaceOptionsFrameCancel:Click()
-                end
-
-                CloseMenus()
-                CloseAllWindows()
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-                ShowUIPanel(GameMenuFrame)
-            else
-                PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
-                HideUIPanel(GameMenuFrame)
-                MainMenuMicroButton_SetNormal()
-            end
-        end
-    )
-
-    if GwMicroButtonHelpMicroButton ~= nil then
-        GwMicroButtonHelpMicroButton:SetScript("OnClick", ToggleHelpFrame)
-    end
-    if GwMicroButtonStoreMicroButton ~= nil then
-        GwMicroButtonStoreMicroButton:SetScript("OnClick", ToggleStoreUI)
-    end
-
-    GwMicroButtonTalentMicroButton:SetScript("OnEvent", talentMicro_OnEvent)
-    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_LEVEL_UP")
-    GwMicroButtonTalentMicroButton:RegisterEvent("UPDATE_BINDINGS")
-    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
-    GwMicroButtonTalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-
-    hookToolTip(GwMicroButtonCharacterMicroButton, CHARACTER_BUTTON, 'TOGGLECHARACTER0"')
-    hookToolTip(GwMicroButtonBagMicroButton, INVENTORY_TOOLTIP, "OPENALLBAGS")
-    hookToolTip(GwMicroButtonSpellbookMicroButton, SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
-    hookToolTip(GwMicroButtonTalentMicroButton, TALENTS_BUTTON, "TOGGLETALENTS")
-    hookToolTip(GwMicroButtonAchievementMicroButton, ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
-    hookToolTip(GwMicroButtonQuestLogMicroButton, QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
-    hookToolTip(GwMicroButtonGuildMicroButton, GUILD, "TOGGLEGUILDTAB")
-    hookToolTip(GwMicroButtonLFDMicroButton, DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-    hookToolTip(GwMicroButtonCollectionsMicroButton, COLLECTIONS, "TOGGLECOLLECTIONS")
-    hookToolTip(GwMicroButtonEJMicroButton, ADVENTURE_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
-
-    GwMicroButtonBagMicroButton.interval = 0
-    GwMicroButtonBagMicroButton:SetScript(
+    GwBagMicroButton.interval = 0
+    GwBagMicroButton:HookScript(
         "OnUpdate",
         function(self, elapsed)
             self.interval = self.interval - elapsed
@@ -583,8 +305,54 @@ local function LoadMicroMenu()
         end
     )
 
-    GwMicroButtonGuildMicroButton.interval = 0
-    GwMicroButtonGuildMicroButton:SetScript(
+    -- we must determine if we are using the default spell & talent buttons or if we need to
+    -- use our own talent button for the custom hero panel
+    local tref
+    if GetSetting("USE_TALENT_WINDOW") then
+        -- TalentMicroButton
+        tref = GwTalentMicroButton
+        tref:ClearAllPoints()
+        tref:SetPoint("BOTTOMLEFT", GwBagMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        tref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+        tref:SetAttribute(
+            "_onclick",
+            [=[
+            local f = self:GetFrameRef("GwCharacterWindow")
+            f:SetAttribute("keytoggle", "1")
+            f:SetAttribute("windowpanelopen", "talents")
+            ]=]
+        )
+
+        disableMicroButton(SpellbookMicroButton)
+        disableMicroButton(TalentMicroButton, true)
+    else
+        -- SpellbookMicroButton
+        SpellbookMicroButton:ClearAllPoints()
+        SpellbookMicroButton:SetPoint("BOTTOMLEFT", GwBagMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        -- TalentMicroButton
+        tref = TalentMicroButton
+        tref:ClearAllPoints()
+        tref:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        disableMicroButton(GwTalentMicroButton)
+    end
+
+    -- AchievementMicroButton
+    AchievementMicroButton:ClearAllPoints()
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+
+    -- QuestLogMicroButton
+    QuestLogMicroButton:ClearAllPoints()
+    QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
+
+    -- GuildMicroButton
+    GuildMicroButton:ClearAllPoints()
+    GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+    GuildMicroButtonTabard:Hide()
+    GuildMicroButton.interval = 0
+    GuildMicroButton:SetScript(
         "OnUpdate",
         function(self, elapsed)
             if self.interval > 0 then
@@ -595,58 +363,132 @@ local function LoadMicroMenu()
             GuildRoster()
         end
     )
-    GwMicroButtonGuildMicroButton:SetScript("OnEvent", updateGuildButton)
-    GwMicroButtonGuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
-
-    GwMicroButtonMainMenuMicroButton.inDebug = GW.inDebug
-    GwMicroButtonMainMenuMicroButton:SetScript(
-        "OnEnter",
-        function(self)
-            self.interval = 0
-            self:SetScript("OnUpdate", latencyToolTip)
-            GameTooltip:SetOwner(self, "ANCHOR_CURSOR", 0, ANCHOR_BOTTOMLEFT)
-        end
-    )
-
-    GwMicroButtonMainMenuMicroButton:SetScript(
-        "OnLeave",
-        function()
-            GwMicroButtonMainMenuMicroButton:SetScript("OnUpdate", nil)
-            GameTooltip_Hide()
-        end
-    )
-
-    talentMicro_OnEvent()
+    GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
+    GuildMicroButton:HookScript("OnEvent", updateGuildButton)
     updateGuildButton()
 
-    --Create update notifier
-    local updateNotificationIcon = createMicroButton("updateicon")
-    GwMicroButtonupdateicon.updateTypeInt = 0
-    GwMicroButtonupdateicon:Hide()
+    -- LFDMicroButton
+    LFDMicroButton.GwSetAnchorPoint = function(self)
+        -- this must also happen in the auto-layout update hook which is why we do it like this
+        self:ClearAllPoints()
+        self:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
+    end
+    LFDMicroButton:GwSetAnchorPoint()
 
-    updateNotificationIcon:SetScript(
-        "OnEnter",
+    -- EJMicroButton
+    EJMicroButton:ClearAllPoints()
+    EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
+
+    -- CollectionsMicroButton
+    CollectionsMicroButton:ClearAllPoints()
+    CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
+
+    -- MainMenuMicroButton
+    MainMenuMicroButton:ClearAllPoints()
+    MainMenuMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+    MainMenuBarPerformanceBar:Hide()
+    MainMenuBarDownload:Hide()
+    MainMenuMicroButton:HookScript(
+        "OnUpdate",
         function()
-            GameTooltip:SetOwner(updateNotificationIcon, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
-            GameTooltip:ClearLines()
-            GameTooltip:AddLine("GW2_UI", 1, 1, 1)
-            GameTooltip:AddLine(updateNotificationIcon.updateType, 1, 1, 1)
-            GameTooltip:Show()
+            -- the main menu button routinely updates its texture based on streaming download
+            -- status and net performance; we undo those changes here on each update interval
+            local m = MainMenuMicroButton
+            if m.updateInterval ~= PERFORMANCEBAR_UPDATE_INTERVAL then
+                return
+            end
+            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
+            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
+            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
+            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
+            MainMenuBarPerformanceBar:Hide()
+            MainMenuBarDownload:Hide()
         end
     )
-    updateNotificationIcon:SetScript("OnLeave", GameTooltip_Hide)
-    C_ChatInfo.RegisterAddonMessagePrefix("GW2_UI")
 
-    updateNotificationIcon:RegisterEvent("CHAT_MSG_ADDON")
-    updateNotificationIcon:RegisterEvent("GROUP_ROSTER_UPDATE")
-    updateNotificationIcon:SetScript(
-        "OnEvent",
-        function(self, event, prefix, message, dist, sender)
-            if event == "CHAT_MSG_ADDON" then
-                receiveVersionCheck(self, event, prefix, message, dist, sender)
-            else
-                sendVersionCheck()
+    -- HelpMicroButton
+    HelpMicroButton:ClearAllPoints()
+    HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
+
+    -- StoreMicroButton
+    StoreMicroButton:ClearAllPoints()
+    StoreMicroButton:SetPoint("BOTTOMLEFT", HelpMicroButton, "BOTTOMRIGHT", 4, 0)
+end
+GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
+
+local function LoadMicroMenu()
+    -- create our micro button container frame
+    microButtonFrame = CreateFrame("Frame", "GwMicroButtonFrame", UIParent, "GwMicroButtonFrame")
+
+    -- create a custom micro button for inventory, character, and talents
+    CreateFrame("Button", "GwBagMicroButton", UIParent, "MainMenuBarMicroButton")
+    GwBagMicroButton.tooltipText = MicroButtonTooltipText(INVENTORY_TOOLTIP, "OPENALLBAGS")
+    GwBagMicroButton.newbieText = nil
+
+    CreateFrame("Button", "GwCharacterMicroButton", UIParent, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+    GwCharacterMicroButton.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
+    GwCharacterMicroButton.newbieText = NEWBIE_TOOLTIP_CHARACTER
+
+    CreateFrame("Button", "GwTalentMicroButton", UIParent, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+    GwTalentMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
+    GwTalentMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
+
+    -- reskin all default (and custom) micro buttons to our styling
+    reskinMicroButtons()
+
+    -- re-do anchoring of the micro buttons to our preferred ordering and setup
+    -- custom button overrides & behaviors for each button where necessary
+    setupMicroButtons()
+
+    -- get rid of the super-persistent PvP talent selector alert
+    if not TalentMicroButton:HasTalentAlertToShow() then
+        TalentMicroButtonAlert:Hide()
+    end
+    hooksecurefunc(
+        "MainMenuMicroButton_ShowAlert",
+        function(f, t)
+            if f == TalentMicroButtonAlert and not TalentMicroButton:HasTalentAlertToShow() then
+                f:Hide()
             end
+        end
+    )
+
+    -- undo micro button position and visibility changes done by the auto-layout stuff
+    hooksecurefunc(
+        "UpdateMicroButtonsParent",
+        function()
+            for i = 1, #MICRO_BUTTONS do
+                _G[MICRO_BUTTONS[i]]:SetParent(GwMicroButtonFrame)
+            end
+        end
+    )
+    hooksecurefunc(
+        "MoveMicroButtons",
+        function()
+            if CharacterMicroButton.GwSetAnchorPoint then
+                CharacterMicroButton:GwSetAnchorPoint()
+            end
+            if LFDMicroButton.GwSetAnchorPoint then
+                LFDMicroButton:GwSetAnchorPoint()
+            end
+        end
+    )
+    hooksecurefunc(
+        "UpdateMicroButtons",
+        function()
+            HelpMicroButton:Show()
+            MicroButtonPortrait:Hide()
+        end
+    )
+    hooksecurefunc(
+        "GuildMicroButton_UpdateTabard",
+        function()
+            GuildMicroButtonTabard:Hide()
+            local m = GuildMicroButton
+            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
+            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
+            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
+            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
         end
     )
 
@@ -657,20 +499,25 @@ local function LoadMicroMenu()
         microButtonFrame:SetScript("OnUpdate", microMenu_OnUpdate)
     end
 
-    -- fix tutorial alerts and hide the micromenu bar
+    -- fix alert positions and hide the micromenu bar
     MicroButtonAndBagsBar:Hide()
     MicroButtonAndBagsBar:SetMovable(1)
     MicroButtonAndBagsBar:SetUserPlaced(true)
     MicroButtonAndBagsBar:SetMovable(0)
-    hooksecurefunc("UpdateMicroButtons", setMicroButtons)
-    setMicroButtons()
-
-    -- talent alert is always hidden by actionbars because we have a custom # on the button instead
-    modifyMicroAlert(CollectionsMicroButtonAlert, GwMicroButtonCollectionsMicroButton)
-    modifyMicroAlert(LFDMicroButtonAlert, GwMicroButtonLFDMicroButton)
-    modifyMicroAlert(EJMicroButtonAlert, GwMicroButtonEJMicroButton)
-    modifyMicroAlert(StoreMicroButtonAlert, GwMicroButtonHelpMicroButton)
-    modifyMicroAlert(CharacterMicroButtonAlert, GwMicroButtonCharacterMicroButton)
+    modifyMicroAlert(CollectionsMicroButtonAlert, CollectionsMicroButton)
+    modifyMicroAlert(LFDMicroButtonAlert, LFDMicroButton)
+    modifyMicroAlert(EJMicroButtonAlert, EJMicroButton)
+    modifyMicroAlert(StoreMicroButtonAlert, StoreMicroButton)
+    if GetSetting("USE_CHARACTER_WINDOW") then
+        modifyMicroAlert(CharacterMicroButtonAlert, GwCharacterMicroButton)
+    else
+        modifyMicroAlert(CharacterMicroButtonAlert, CharacterMicroButton)
+    end
+    if GetSetting("USE_TALENT_WINDOW") then
+        modifyMicroAlert(TalentMicroButtonAlert, GwTalentMicroButton)
+    else
+        modifyMicroAlert(TalentMicroButtonAlert, TalentMicroButton)
+    end
     hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert)
 end
 GW.LoadMicroMenu = LoadMicroMenu

@@ -8,38 +8,4 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwMicroButtonTemplate" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="LOW" enableMouse="true" virtual="true">
-        <Size x="24" y="24"></Size>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
-                    <Color r="1" g="0" b="0" a="1"></Color>
-                    <Size x="14" y="14">
-                    </Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="BOTTOM" x="6" y="3"></Anchor>
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentTextureDark" hidden="true" parentKey="darkbg" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
-                    <Color r="0" g="0" b="0" a="0.7"></Color>
-                    <Size x="14" y="14">
-                    </Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="BOTTOM" x="6" y="3"></Anchor>
-                    </Anchors>
-                </Texture>
-
-
-                <FontString name="$parentString" fontSize="11" text="2" inherits="GameFontNormalSmall" justifyH="CENTER" justifyV="CENTER">
-                    <Color r="1" g="1" b="1" a="1"></Color>
-                    <Size x="24" y="24">
-                    </Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="BOTTOM" x="7" y="2"></Anchor>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
-    </Button>
-
 </Ui>
