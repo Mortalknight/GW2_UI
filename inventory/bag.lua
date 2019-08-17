@@ -657,7 +657,10 @@ local function LoadBag()
     GwCurrencyIcon:SetScript(
         "OnClick",
         function(self, button)
-            ToggleCharacter("TokenFrame")
+            -- TODO: cannot do this properly until we make the whole bag frame secure
+            if not InCombatLockdown() then
+                ToggleCharacter("TokenFrame")
+            end
         end
     )
     --end
