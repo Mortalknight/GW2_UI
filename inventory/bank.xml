@@ -1,23 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwBankMoverFrame" frameStrata="HIGH" frameLevel="25" enableMouse="true" movable="true" parent="UIParent" virtual="true">
-        <Size x="470" y="40"></Size>
-        <Anchors>
-            <Anchor point="RIGHT" x="-256" y="256"></Anchor>
-        </Anchors>
-    </Frame>
-    <Frame name="GwBankFrame" frameStrata="HIGH" frameLevel="22" enableMouse="true" parent="UIParent" resizable="true" virtual="true">
+    <Frame name="GwBankFrameTemplate" frameStrata="HIGH" movable="true" resizable="true" virtual="true" hidden="true" toplevel="true" enablemouse="true">
         <HitRectInsets>
-            <AbsInset left="-40" right="0" top="0" bottom="-40"/>
+            <AbsInset left="-40" right="0" top="-40" bottom="-40"/>
         </HitRectInsets>
         <Size x="768" y="512"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="GwBankMoverFrame" relativePoint="TOPLEFT" x="20" y="-40"></Anchor>
-        </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" parentKey="Texture" file="Interface\AddOns\GW2_UI\textures\bag\bankbg">
+                <Texture parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/bag/bankbg">
                     <Size x="768" y="512"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
@@ -26,44 +17,42 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-
-                <Texture name="$parentFooter" file="Interface\AddOns\GW2_UI\textures\bag\bagfooter">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagfooter">
                     <Size x="512" y="70"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="2" />
                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="2" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-
             </Layer>
 
-            <Layer textureSubLevel="3">
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagicon">
+            <Layer level="BORDER">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagicon">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bottom-right">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
@@ -86,136 +75,74 @@
         </Layers>
 
         <Frames>
-            <Frame name="GwBuyMoreBank" virtual="true">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                </Anchors>
-                <Size x="200" y="24"></Size>
-                <Layers>
-                    <Layer>
-                        <FontString name="GwBuyMoreBankGold" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
-                            <Size x="20" y="24"></Size>
-                            <Anchors>
-                                <Anchor point="LEFT" relativeTo="GwBuyMoreBank" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <Texture name="GwBuyMoreBankGoldIcon" file="Interface\MoneyFrame\UI-GoldIcon">
-                            <Size x="11" y="11"></Size>
-                            <Anchors>
-                                <Anchor point="LEFT" relativeTo="GwBuyMoreBankGold" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <Frames>
-                    <Button name="GwButtonBuyBankSlots" inherits="GwStandardButton" text="Purchase More Slots">
-                        <Size x="180" y="24" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" relativeTo="GwBuyMoreBank" x="5" y="0"></Anchor>
-                        </Anchors>
-                    </Button>
-                </Frames>
-            </Frame>
-             <Button name="GwBankDepositAllReagentsBank" hidden="true" inherits="GwStandardButton" text="Deposit All">
-                <Size x="180" y="24" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
-                </Anchors>
-            </Button>
-            <Frame frameLevel="25" enableMouse="true" parentKey="sizer">
-                <Size x="40" y="40"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\resize">
-
-                            <Size x="32" y="32"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-
-                    </Layer>
-                </Layers>
-            </Frame>
-            <Button name="GwBankButton" virtual="true">
+            <Button parentKey="ItemTab">
                 <Size x="40" y="40"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-40" y="-20"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\bag\bankicons">
+                        <Texture parentKey="Icon" file="Interface/AddOns/GW2_UI/textures/bag/bankicons">
                             <TexCoords left="0" right="1" top="0.5" bottom="1" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="GwBankButton2" virtual="true">
+            <Button parentKey="ReagentTab">
                 <Size x="40" y="40"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-40" y="-60"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\bag\bankicons">
+                        <Texture parentKey="Icon" file="Interface/AddOns/GW2_UI/textures/bag/bankicons">
                             <TexCoords left="0" right="1" top="0" bottom="0.5" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-
                     </Layer>
                 </Layers>
             </Button>
 
-            <Frame name="GwReagentBankFrame" hidden="true">
-                <Size x="724" y="512"></Size>
+            <Frame parentkey="mover" frameLevel="25" enableMouse="true">
+                <Size y="40" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-30" y="0"></Anchor>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="sizer" frameLevel="25" enableMouse="true">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Layers>
-                    <Layer>
-                        <FontString name="GwRegentHelpText" text="REAGENT_BANK_HELP">
+                    <Layer level="OVERLAY">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/resize">
+                            <Size x="32" y="32"></Size>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                                <Anchor point="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
-                        </FontString>
+                        </Texture>
                     </Layer>
                 </Layers>
-                <Frames>
-                    <Button name="GwBankDepositAllReagents" hidden="true" inherits="GwStandardButton" text="Deposit All">
-                        <Size x="180" y="24" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
-                        </Anchors>
-                    </Button>
-                    <Button name="GwBuyRegentBank" inherits="GwStandardButton" text="Purchase">
-                        <Anchors>
-                            <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwRegentHelpText" x="0" y="-20"></Anchor>
-                        </Anchors>
-                    </Button>
-                </Frames>
             </Frame>
+
             <Button parentKey="buttonSettings" text="">
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8" />
-                </Anchors>
                 <Size x="24" y="24" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8"/>
                 </Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\MainMenuMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface\AddOns\GW2_UI\textures\MainMenuMicroButton-Down"></PushedTexture >
-                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\MainMenuMicroButton-Down"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></PushedTexture>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></HighlightTexture>
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
@@ -227,7 +154,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY" textureSubLevel="8">
-                                <Texture file="nterface\AddOns\GW2_UI\textures\gwstatusbar">
+                                <Texture file="nterface/AddOns/GW2_UI/textures/gwstatusbar">
                                     <Color r="0" b="0" g="0"></Color>
                                     <Anchors>
                                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -267,79 +194,54 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Down"></PushedTexture >
-                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Down"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-
-            <Button parentKey="buttonClose" text="">
+            <Button name="$parentClose" parentKey="buttonClose" text="">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
-                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture >
-                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-normal"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></PushedTexture>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></HighlightTexture>
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-            <Frame name="GwBankContainer4">
+
+            <Button parentKey="DepositAll" hidden="true" inherits="GwStandardButton" text="Deposit All">
+                <Size x="180" y="24" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="5" y="-6"></Anchor>
+                </Anchors>
+            </Button>
+
+            <Frame parentKey="ItemFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
                 </Anchors>
             </Frame>
-            <Frame name="GwBankContainer5">
+
+            <Frame parentKey="ReagentFrame" hidden="true">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer6">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer7">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer8">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer9">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer10">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer11">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer12">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
                 </Anchors>
             </Frame>
         </Frames>
     </Frame>
 
-    <Frame name="GwBankItemBackdrop" frameStrata="HIGH" frameLevel="15" enableMouse="false" virtual="true">
-        <Size x="40" y="40"></Size>
+    <ItemButton name="GwBankBagTemplate" inherits="BankItemButtonBagTemplate" virtual="true">
+        <Size x="28" y="28"></Size>
         <Layers>
-            <Layer textureSubLevel="-1" level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag\bagitembackdrop">
+            <Layer level="BACKGROUND">
+                <Texture parentKey="gwBackdrop" file="Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop">
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
@@ -349,6 +251,6 @@
                 </Texture>
             </Layer>
         </Layers>
-    </Frame>
+    </ItemButton>
 
 </Ui>

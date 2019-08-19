@@ -1,503 +1,536 @@
 local _, GW = ...
-local CloseBags = GW.CloseBags
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local EnableTooltip = GW.EnableTooltip
+local inv
 
 local BANK_ITEM_SIZE = 40
 local BANK_ITEM_LARGE_SIZE = 40
 local BANK_ITEM_COMPACT_SIZE = 32
 local BANK_ITEM_PADDING = 5
 local BANK_WINDOW_SIZE = 720
-local BANK_WINDOW_CONTENT_HEIGHT = 0
 
-local default_bank_frame = {
-    BankSlotsFrame.Bag1,
-    BankSlotsFrame.Bag2,
-    BankSlotsFrame.Bag3,
-    BankSlotsFrame.Bag4,
-    BankSlotsFrame.Bag5,
-    BankSlotsFrame.Bag6,
-    BankSlotsFrame.Bag7
-}
+-- adjusts the ItemButton layout flow when the bank window size changes (or on open)
+local function layoutBankItems(f)
+    local max_col = f:GetParent().gw_bag_cols
+    local row = 0
+    local col = 0
+    local rev = GetSetting("BANK_REVERSE_SORT")
 
-local default_bank_frame_container = {
-    "ContainerFrame6",
-    "ContainerFrame7",
-    "ContainerFrame8",
-    "ContainerFrame9",
-    "ContainerFrame10",
-    "ContainerFrame11",
-    "ContainerFrame12"
-}
+    local item_off = BANK_ITEM_SIZE + BANK_ITEM_PADDING
 
-local function moveBankBagBar()
-    local y = 120
-
-    for k, v in pairs(default_bank_frame) do
-        local iconTexture = v:GetRegions()
-
-        v:SetSize(28, 28)
-        v:ClearAllPoints()
-        v:SetParent(GwBankFrame)
-        v:SetPoint("TOPLEFT", GwBankFrame, "TOPLEFT", -34, -y)
-        iconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        v:SetNormalTexture(nil)
-        v:SetHighlightTexture(nil)
-        v.IconBorder:SetTexture(nil)
-
-        local s = v:GetScript("OnClick")
-        v:SetScript(
-            "OnClick",
-            function(self, b)
-                if b == "RightButton" then
-                    local parent = _G[default_bank_frame_container[k]]
-                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                    ToggleDropDownMenu(1, nil, parent.FilterDropDown, self, 32, 32)
-                else
-                    s(v)
-                end
-            end
-        )
-
-        y = y + 32
-    end
-end
-GW.AddForProfiling("bank", "moveBankBagBar", moveBankBagBar)
-
-local function relocateBankSearchBox()
-    local sb = BankItemSearchBox
-
-    sb:ClearAllPoints()
-    sb:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    sb:SetPoint("TOPLEFT", GwBankFrame, "TOPLEFT", 8, -40)
-    sb:SetPoint("TOPRIGHT", GwBankFrame, "TOPRIGHT", -8, -40)
-
-    sb.Left:SetTexture(nil)
-    sb.Right:SetTexture(nil)
-    BankItemSearchBoxSearchIcon:Hide()
-    sb.Middle:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagsearchbg")
-
-    sb:SetHeight(24)
-
-    sb.Middle:SetPoint("RIGHT", BankItemSearchBox, "RIGHT", 0, 0)
-
-    sb.Middle:SetHeight(24)
-    sb.Middle:SetTexCoord(0, 1, 0, 1)
-    sb.SetPoint = function()
-    end
-    sb.ClearAllPoints = function()
+    local iS = NUM_BAG_SLOTS
+    local iE = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+    local iD = 1
+    if rev then
+        iS = iE
+        iE = NUM_BAG_SLOTS
+        iD = -1
     end
 
-    sb:SetFrameLevel(5)
-    BankItemAutoSortButton:Hide()
-end
-GW.AddForProfiling("bank", "relocateBankSearchBox", relocateBankSearchBox)
-
-local function updateFreeBankSlots(reagents)
-    local free
-    local full
-
-    if reagents then
-        free = GetContainerNumFreeSlots(-3)
-        full = GetContainerNumSlots(-3)
-    else
-        free = GetContainerNumFreeSlots(-1)
-        full = GetContainerNumSlots(-1)
-        for i = 1, NUM_BANKBAGSLOTS do
-            free = free + GetContainerNumFreeSlots(i + NUM_BAG_SLOTS)
-            full = full + GetContainerNumSlots(i + NUM_BAG_SLOTS)
+    local lcf = inv.layoutContainerFrame
+    for i = iS, iE, iD do
+        local bag_id = i
+        if bag_id == NUM_BAG_SLOTS then
+            bag_id = BANK_CONTAINER
         end
+        local cf = f.Containers[bag_id]
+        local crev = (not rev and bag_id == BANK_CONTAINER) or (rev and bag_id ~= BANK_CONTAINER)
+        col, row = lcf(cf, max_col, row, col, crev, item_off)
     end
+end
+GW.AddForProfiling("bank", "layoutBankItems", layoutBankItems)
 
-    free = full - free
+-- adjusts the ItemButton layout flow when the bank window size changes (or on open)
+local function layoutReagentItems(f)
+    local max_col = f:GetParent().gw_bag_cols
+    local row = 0
+    local col = 0
+    local rev = GetSetting("BANK_REVERSE_SORT")
+
+    local item_off = BANK_ITEM_SIZE + BANK_ITEM_PADDING
+
+    local cf = f.Containers[REAGENTBANK_CONTAINER]
+    inv.layoutContainerFrame(cf, max_col, row, col, (not rev), item_off)
+end
+GW.AddForProfiling("bank", "layoutReagentItems", layoutReagentItems)
+
+-- adjusts the ItemButton layout flow when the bank window size changes (or on open)
+local function layoutItems(f)
+    if f.ItemFrame:IsShown() then
+        layoutBankItems(f.ItemFrame)
+    elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
+        layoutReagentItems(f.ReagentFrame)
+    end
+end
+GW.AddForProfiling("bank", "layoutItems", layoutItems)
+
+local function updateFreeSpaceString(free, full)
     local bank_space_string = free .. " / " .. full
     GwBankFrame.spaceString:SetText(bank_space_string)
 end
+GW.AddForProfiling("bank", "updateFreeSpaceString", updateFreeSpaceString)
+
+-- update the number of free bank slots available and set the display for it
+local function updateFreeBankSlots()
+    inv.updateFreeSlots(GwBankFrame.spaceString, NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS, BANK_CONTAINER)
+end
 GW.AddForProfiling("bank", "updateFreeBankSlots", updateFreeBankSlots)
 
-local function onBankMove(self)
-    self:StopMovingOrSizing()
-    local saveBankPos = {}
-    saveBankPos["point"], _, saveBankPos["relativePoint"], saveBankPos["xOfs"], saveBankPos["yOfs"] = self:GetPoint()
-    SetSetting("BANK_POSITION", saveBankPos)
+-- update the number of free reagent slots available and set the display for it
+local function updateFreeReagentSlots()
+    inv.updateFreeSlots(GwBankFrame.spaceString, REAGENTBANK_CONTAINER, REAGENTBANK_CONTAINER)
 end
-GW.AddForProfiling("bank", "onBankMove", onBankMove)
+GW.AddForProfiling("bank", "updateFreeReagentSlots", updateFreeReagentSlots)
 
-local function createItemBackground(name)
-    local bg = CreateFrame("Frame", "GwBankItemBackdrop" .. name, GwBankFrame, "GwBankItemBackdrop")
-    return bg
+-- update all bank items and bank bags
+local function updateBankContainers(f)
+    if not f.gw_took_bank then
+        inv.takeItemButtons(f.ItemFrame, BANK_CONTAINER)
+        f.gw_took_bank = true
+    end
+    if not f.gw_took_reagents then
+        inv.takeItemButtons(f.ReagentFrame, REAGENTBANK_CONTAINER)
+        f.gw_took_reagents = true
+    end
+    for bag_id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+        inv.takeItemButtons(f.ItemFrame, bag_id)
+    end
+    if f:IsShown() then
+        if f.ItemFrame:IsShown() then
+            updateFreeBankSlots()
+        elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
+            updateFreeReagentSlots()
+        end
+        layoutItems(f)
+    end
 end
-GW.AddForProfiling("bank", "createItemBackground", createItemBackground)
+GW.AddForProfiling("bank", "updateBankContainers", updateBankContainers)
 
-local function updateReagentsIcons(smooth)
-    local x = 8
-    local y = 40
-    local mx = 0
-    local gwbf = GwBankFrame
-    local winsize = BANK_WINDOW_SIZE
-    if smooth then
-        winsize = gwbf:GetWidth()
-    end
-    winsize = math.max(508, winsize)
-
-    for i = 1, 98 do
-        local FRAME_NAME = "ReagentBankFrameItem" .. i
-        local slot = _G[FRAME_NAME]
-        if slot and slot:IsShown() then
-            if x > (winsize - 40) then
-                mx = math.max(mx, x)
-                x = 8
-                y = y + BANK_ITEM_SIZE + BANK_ITEM_PADDING
-            end
-
-            local slotIcon = _G[FRAME_NAME .. "IconTexture"]
-            local slotNormalTexture = _G[FRAME_NAME .. "NormalTexture"]
-
-            local backdrop = _G["GwBankItemBackdrop" .. FRAME_NAME]
-            if backdrop == nil then
-                backdrop = createItemBackground(FRAME_NAME)
-            end
-            backdrop:SetParent(slot)
-            backdrop:SetFrameLevel(1)
-
-            backdrop:SetPoint("TOPLEFT", GwReagentBankFrame, "TOPLEFT", x, -y)
-            backdrop:SetPoint("TOPRIGHT", GwReagentBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y)
-            backdrop:SetPoint("BOTTOMLEFT", GwReagentBankFrame, "TOPLEFT", x, -y - BANK_ITEM_SIZE)
-            backdrop:SetPoint("BOTTOMRIGHT", GwReagentBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y - BANK_ITEM_SIZE)
-
-            GwReagentBankFrame:SetSize(x, y)
-
-            slot:ClearAllPoints()
-
-            slot:SetPoint("TOPLEFT", GwReagentBankFrame, "TOPLEFT", x, -y)
-            slot:SetPoint("TOPRIGHT", GwReagentBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y)
-            slot:SetPoint("BOTTOMLEFT", GwReagentBankFrame, "TOPLEFT", x, -y - BANK_ITEM_SIZE)
-            slot:SetPoint("BOTTOMRIGHT", GwReagentBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y - BANK_ITEM_SIZE)
-
-            if slot.IconBorder then
-                slot.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
-                slot.IconBorder:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-                if slot.IconBorder.GwhasBeenHooked == nil then
-                    hooksecurefunc(
-                        slot.IconBorder,
-                        "SetVertexColor",
-                        function()
-                            slot.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
-                        end
-                    )
-                    slot.IconBorder.GwhasBeenHooked = true
-                end
-            end
-            if slotNormalTexture then
-                slot:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
-            end
-            if slot.flash then
-                slot.flash:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-            end
-
-            slotIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-            x = x + BANK_ITEM_SIZE + BANK_ITEM_PADDING
-        end
+-- draws the bank bag slots in the correct order
+local function setBagBarOrder(f)
+    local x = -40
+    local bag_size = 28
+    local bag_padding = 4
+    local rev = GetSetting("BANK_REVERSE_SORT")
+    if rev then
+        y = -40 - ((bag_size + bag_padding) * (NUM_BANKBAGSLOTS - 1))
+    else
+        y = -40
     end
 
-    updateFreeBankSlots(true)
-    if smooth then
-        return
-    end
-
-    BANK_WINDOW_CONTENT_HEIGHT = math.max(350, y + BANK_ITEM_SIZE + (2 * BANK_ITEM_PADDING))
-    if mx ~= 0 then
-        BANK_WINDOW_SIZE = mx + BANK_ITEM_PADDING
-    end
-    SetSetting("BANK_WIDTH", BANK_WINDOW_SIZE)
-    gwbf:SetSize(BANK_WINDOW_SIZE, BANK_WINDOW_CONTENT_HEIGHT)
-end
-GW.AddForProfiling("bank", "updateReagentsIcons", updateReagentsIcons)
-
-local function updateBankIcons(smooth)
-    moveBankBagBar()
-
-    for k, v in pairs({BankSlotsFrame:GetRegions()}) do
-        if k > 100 then
-            break
-        end
-        if v.SetTexture ~= nil then
-            v:SetTexture(nil)
-        end
-    end
-
-    local x = 8
-    local y = 72
-    local ACTION_BUTTON_NAME
-    local ACTION_FRAME_NAME
-    local mx = 0
-    local gwbf = GwBankFrame
-    local winsize = BANK_WINDOW_SIZE
-    if smooth then
-        winsize = gwbf:GetWidth()
-    end
-    winsize = math.max(508, winsize)
-
-    local bStart = 5
-    local bEnd = 12
-    local bStep = 1
-    if GetSetting("BANK_REVERSE_SORT") then
-        bStart = 12
-        bEnd = 5
-        bStep = -1
-    end
-    for BANK_INDEX = bStart, bEnd, bStep do
-        local i
-        local run = true
-        if BANK_INDEX > 5 then
-            i = 40
-            ACTION_FRAME_NAME = "ContainerFrame" .. BANK_INDEX
-            ACTION_BUTTON_NAME = "ContainerFrame" .. BANK_INDEX .. "Item"
+    for bag_idx = 1, NUM_BANKBAGSLOTS do
+        local b = f.bags[bag_idx]
+        b:ClearAllPoints()
+        b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
+        if rev then
+            y = y + bag_size + bag_padding
         else
-            i = 1
-            ACTION_FRAME_NAME = "BankFrame"
-            ACTION_BUTTON_NAME = "BankFrameItem"
-        end
-        local cfm = _G[ACTION_FRAME_NAME]
-
-        if cfm and cfm:IsShown() then
-            while run do
-                local slot = _G[ACTION_BUTTON_NAME .. i]
-                if slot and slot:IsShown() then
-                    if x > (winsize - 40) then
-                        mx = math.max(mx, x)
-                        x = 8
-                        y = y + BANK_ITEM_SIZE + BANK_ITEM_PADDING
-                    end
-                    local slotIcon = _G[ACTION_BUTTON_NAME .. i .. "IconTexture"]
-                    local slotNormalTexture = _G[ACTION_BUTTON_NAME .. i .. "NormalTexture"]
-
-                    local backdrop = _G["GwBankItemBackdrop" .. ACTION_BUTTON_NAME .. i]
-                    if backdrop == nil then
-                        backdrop = createItemBackground(ACTION_BUTTON_NAME .. i)
-                    end
-                    backdrop:SetParent(_G[ACTION_BUTTON_NAME .. BANK_INDEX])
-                    backdrop:SetFrameLevel(1)
-                    backdrop:SetPoint("TOPLEFT", GwBankFrame, "TOPLEFT", x, -y)
-                    backdrop:SetPoint("TOPRIGHT", GwBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y)
-                    backdrop:SetPoint("BOTTOMLEFT", GwBankFrame, "TOPLEFT", x, -y - BANK_ITEM_SIZE)
-                    backdrop:SetPoint("BOTTOMRIGHT", GwBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y - BANK_ITEM_SIZE)
-
-                    _G["GwBankContainer" .. (BANK_INDEX - 1)]:SetSize(x, y)
-
-                    slot:ClearAllPoints()
-
-                    slot:SetFrameLevel(23)
-                    slot:SetPoint("TOPLEFT", GwBankFrame, "TOPLEFT", x, -y)
-                    slot:SetPoint("TOPRIGHT", GwBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y)
-                    slot:SetPoint("BOTTOMLEFT", GwBankFrame, "TOPLEFT", x, -y - BANK_ITEM_SIZE)
-                    slot:SetPoint("BOTTOMRIGHT", GwBankFrame, "TOPLEFT", x + BANK_ITEM_SIZE, -y - BANK_ITEM_SIZE)
-
-                    if slot.IconBorder then
-                        slot.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
-                        slot.IconBorder:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-                        if slot.IconBorder.GwhasBeenHooked == nil then
-                            hooksecurefunc(
-                                slot.IconBorder,
-                                "SetVertexColor",
-                                function()
-                                    slot.IconBorder:SetTexture(
-                                        "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder"
-                                    )
-                                end
-                            )
-                            slot.IconBorder.GwhasBeenHooked = true
-                        end
-                    end
-                    if slotNormalTexture then
-                        slot:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
-                    end
-                    if slot.flash then
-                        slot.flash:SetSize(BANK_ITEM_SIZE, BANK_ITEM_SIZE)
-                    end
-
-                    slotIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-                    x = x + BANK_ITEM_SIZE + BANK_ITEM_PADDING
-                end
-                if BANK_INDEX > 5 then
-                    i = i - 1
-                    if i == 0 then
-                        run = false
-                    end
-                else
-                    i = i + 1
-                    if i == 40 then
-                        run = false
-                    end
-                end
-            end
+            y = y - bag_size - bag_padding
         end
     end
-
-    updateFreeBankSlots()
-    if smooth then
-        return
-    end
-
-    BANK_WINDOW_CONTENT_HEIGHT = math.max(350, y + BANK_ITEM_SIZE + (2 * BANK_ITEM_PADDING))
-    if mx ~= 0 then
-        BANK_WINDOW_SIZE = mx + BANK_ITEM_PADDING
-    end
-    SetSetting("BANK_WIDTH", BANK_WINDOW_SIZE)
-    gwbf:SetSize(BANK_WINDOW_SIZE, BANK_WINDOW_CONTENT_HEIGHT)
 end
-GW.AddForProfiling("bank", "updateBankIcons", updateBankIcons)
+GW.AddForProfiling("bank", "setBagBarOrder", setBagBarOrder)
+
+local function bag_OnClick(self, button, down)
+    -- on left click, test if this is a purchase slot and do purchase confirm,
+    -- otherwise ensure that the bag stays open despite default toggle behavior
+    if button == "LeftButton" then
+        if self.gwHasBag then
+            OpenBag(self:GetBagID())
+            updateBankContainers(self:GetParent():GetParent())
+        elseif self.tooltipText == BANK_BAG_PURCHASE then
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+            StaticPopup_Show("CONFIRM_BUY_BANK_SLOT")
+        end
+    end
+end
+GW.AddForProfiling("bank", "bag_OnClick", bag_OnClick)
+
+-- creates the bank bag slot icons for the ItemFrame
+local function createBagBar(f)
+    f.bags = {}
+
+    local getBagId = function(self)
+        return self:GetID() + NUM_BAG_SLOTS
+    end
+
+    for bag_idx = 1, NUM_BANKBAGSLOTS do
+        local b = CreateFrame("ItemButton", nil, f, "GwBankBagTemplate")
+
+        -- We depend on a number of behaviors from the default BankItemButtonBagTemplate.
+        -- The ID set here is NOT the usual bag_id; rather it is a 1-based index of bank
+        -- bags used by helper methods provided by BankItemButtonBagTemplate.
+        b:SetID(bag_idx)
+        -- unlike BagSlotButtonTemplate, we must provide the GetBagID method ourself
+        b.GetBagID = getBagId
+
+        -- remove default of capturing right-click also (we handle right-click separately)
+        b:RegisterForClicks("LeftButtonUp")
+        b:HookScript("OnClick", bag_OnClick)
+        b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
+
+        inv.reskinBagBar(b)
+
+        f.bags[bag_idx] = b
+    end
+    setBagBarOrder(f)
+end
+GW.AddForProfiling("bank", "createBagBar", createBagBar)
+
+-- updates the contents of the bank bag slots
+local function updateBagBar(f)
+    local bank_slots, full = GetNumBankSlots()
+    for bag_idx = 1, NUM_BANKBAGSLOTS do
+        local b = f.bags[bag_idx]
+        local inv_id = b:GetInventorySlot()
+        local bag_tex = GetInventoryItemTexture("player", inv_id)
+        local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
+
+        b.icon:Show()
+        b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
+        local norm = b:GetNormalTexture()
+        norm:SetVertexColor(1, 1, 1, 0.75)
+        if bag_tex ~= nil then
+            b.gwHasBag = true
+            OpenBag(b:GetBagID()) -- default open valid bank bags immediately
+            b.icon:SetTexture(bag_tex)
+            local quality = GetInventoryItemQuality("player", inv_id)
+            if quality then
+                SetItemButtonQuality(b, quality, nil)
+            end
+            if IsInventoryItemLocked(inv_id) then
+                b.icon:SetDesaturated(true)
+            else
+                b.icon:SetDesaturated(false)
+            end
+        elseif bag_idx > bank_slots then
+            if not full and bag_idx == bank_slots + 1 then
+                b.tooltipText = BANK_BAG_PURCHASE
+                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
+                b.icon:SetTexCoord(0.2, 0.8, 0.2, 0.8)
+            else
+                b.tooltipText = GUILDBANK_TAB_LOCKED
+                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock")
+                b.icon:SetTexCoord(0.15, 0.85, 0.07, 0.85)
+            end
+        elseif slot_tex ~= nil then
+            b.tooltipText = BANK_BAG
+            b.icon:SetTexture(slot_tex)
+            b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        else
+            b.icon:Hide()
+        end
+    end
+end
+GW.AddForProfiling("bank", "updateBagBar", updateBagBar)
+
+-- adjusts the bank frame size to snap to the exact row/col sizing of contents
+local function snapFrameSize(f)
+    local cfs
+    if f.ItemFrame:IsShown() then
+        cfs = f.ItemFrame.Containers
+    elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
+        cfs = f.ReagentFrame.Containers
+    end
+    inv.snapFrameSize(f, cfs, BANK_ITEM_SIZE, BANK_ITEM_PADDING, 350)
+end
+GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
 
 local function onBankResizeStop(self)
-    BANK_WINDOW_SIZE = GwBankFrame:GetWidth()
-    if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
-        updateReagentsIcons()
-    else
-        updateBankIcons()
-    end
-
-    GwBankFrame:ClearAllPoints()
-    GwBankFrame:SetPoint("TOPLEFT", GwBankMoverFrame, "TOPLEFT", 20, -40)
-
-    local mfPoint, _, mfRelPoint, mfxOfs, mfyOfs = GwBankMoverFrame:GetPoint()
-    local newWidth = GwBankFrame:GetWidth() - 40
-    local oldWidth = GwBankMoverFrame:GetWidth()
-    if mfPoint == "TOP" then
-        mfxOfs = mfxOfs + ((newWidth - oldWidth) / 2)
-    elseif mfPoint == "RIGHT" then
-        mfxOfs = mfxOfs + (newWidth - oldWidth)
-    end
-    GwBankMoverFrame:ClearAllPoints()
-    GwBankMoverFrame:SetPoint(mfPoint, UIParent, mfRelPoint, mfxOfs, mfyOfs)
-    GwBankMoverFrame:SetWidth(newWidth)
-    onBankMove(GwBankMoverFrame)
+    BANK_WINDOW_SIZE = self:GetWidth()
+    SetSetting("BANK_WIDTH", BANK_WINDOW_SIZE)
+    inv.onMoved(self, "BANK_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
 
-local function onBankFrameChangeSize(self)
-    local w = self:GetWidth()
-    local isize = BANK_ITEM_SIZE + BANK_ITEM_PADDING
-    local cols = math.floor((w - 3) / isize)
+local function onBankFrameChangeSize(self, width, height, skip)
+    local cols = inv.colCount(BANK_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
 
-    if not self.gwPrevBagCols or self.gwPrevBagCols ~= cols then
-        GW.Debug("new cols is: ", cols)
-        self.gwPrevBagCols = cols
-        if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
-            updateReagentsIcons(true)
-        else
-            updateBankIcons(true)
+    if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
+        self.gw_bag_cols = cols
+        if not skip then
+            layoutItems(self)
         end
     end
 end
 GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
 
-local function onSizerMouseDown(self, btn)
-    if btn ~= "LeftButton" then
-        return
-    end
-    local bfm = self:GetParent()
-    bfm:StartSizing("BOTTOMRIGHT")
-end
-GW.AddForProfiling("bank", "onSizerMouseDown", onSizerMouseDown)
-
-local function onSizerMouseUp(self, btn)
-    if btn ~= "LeftButton" then
-        return
-    end
-    local bfm = self:GetParent()
-    bfm:StopMovingOrSizing()
-    onBankResizeStop(bfm)
-end
-GW.AddForProfiling("bank", "onSizerMouseUp", onSizerMouseUp)
-
+-- toggles the setting for compact/large icons
 local function compactToggle()
     if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
         BANK_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
-        SetSetting("BANK_ITEM_SIZE", BANK_ITEM_SIZE)
-        if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
-            updateReagentsIcons()
-        else
-            updateBankIcons()
-        end
+        SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
+        inv.resizeInventory()
         return GwLocalization["BANK_EXPAND_ICONS"]
     end
 
     BANK_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
-    SetSetting("BANK_ITEM_SIZE", BANK_ITEM_SIZE)
-    if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
-        updateReagentsIcons(false)
-    else
-        updateBankIcons()
-    end
+    SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
+    inv.resizeInventory()
     return GwLocalization["BANK_COMPACT_ICONS"]
 end
 GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
-local function LoadBank()
-    BANK_WINDOW_SIZE = GetSetting("BANK_WIDTH")
-    BANK_ITEM_SIZE = GetSetting("BANK_ITEM_SIZE")
-    if BANK_ITEM_SIZE > 40 then
-        BANK_ITEM_SIZE = 40
-        SetSetting("BANK_ITEM_SIZE", 40)
+-- reskin all the base BankFrame ItemButtons
+local function reskinBankItemButtons()
+    local items = GetContainerNumSlots(BANK_CONTAINER)
+    for i = 1, items do
+        local iname = "BankFrameItem" .. i
+        local b = _G[iname]
+        if b then
+            inv.reskinItemButton(iname, b)
+        end
+    end
+end
+GW.AddForProfiling("bank", "reskinBankItemButtons", reskinBankItemButtons)
+
+-- reskin all the ReagentBankFrame ItemButtons
+local function reskinReagentItemButtons()
+    local items = GetContainerNumSlots(REAGENTBANK_CONTAINER)
+    for i = 1, items do
+        local iname = "ReagentBankFrameItem" .. i
+        local b = _G[iname]
+        if b then
+            inv.reskinItemButton(iname, b)
+        end
+    end
+end
+GW.AddForProfiling("bank", "reskinReagentItemButtons", reskinReagentItemButtons)
+
+local function bank_OnShow(self)
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+    self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+    self:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
+    self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
+    self:RegisterEvent("ITEM_LOCKED")
+    self:RegisterEvent("ITEM_UNLOCKED")
+    self:RegisterEvent("BAG_UPDATE")
+    self:RegisterEvent("REAGENTBANK_PURCHASED")
+
+    -- do the important bits from BankFrame_OnShow
+    BankFrame:RegisterEvent("ITEM_LOCK_CHANGED")
+    BankFrame:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+    BankFrame:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
+    BankFrame:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
+    BankFrame:RegisterEvent("PLAYER_MONEY")
+    BankFrame:RegisterEvent("BAG_UPDATE_COOLDOWN")
+    BankFrame:RegisterEvent("INVENTORY_SEARCH_UPDATE")
+    BankFrame_UpdateItems(BankFrame)
+    UpdateBagSlotStatus()
+
+    -- make the reagent bank initialize itself
+    ReagentBankFrame_OnShow(ReagentBankFrame)
+    if not self.gw_reagent_skinned then
+        reskinReagentItemButtons()
+        self.gw_reagent_skinned = true
     end
 
-    -- create mover frame, restore its saved position, and setup drag to move
-    local bankPos = GetSetting("BANK_POSITION")
-    local fm = CreateFrame("Frame", "GwBankMoverFrame", UIParent, "GwBankMoverFrame")
-    fm:SetWidth(BANK_WINDOW_SIZE - 40)
-    fm:ClearAllPoints()
-    fm:SetPoint(bankPos.point, UIParent, bankPos.relativePoint, bankPos.xOfs, bankPos.yOfs)
-    fm:RegisterForDrag("LeftButton")
-    fm:HookScript(
-        "OnDragStart",
-        function(self)
-            self:StartMoving()
+    OpenAllBags(self)
+    updateBagBar(self.ItemFrame)
+    updateBankContainers(self)
+    snapFrameSize(self)
+end
+GW.AddForProfiling("bank", "bank_OnShow", bank_OnShow)
+
+local function bank_OnHide(self)
+    PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+    self:UnregisterAllEvents()
+    self:RegisterEvent("BANKFRAME_OPENED")
+    self:RegisterEvent("BANKFRAME_CLOSED")
+
+    -- do the important bits from BankFrame_OnHide
+    BankFrame:UnregisterEvent("ITEM_LOCK_CHANGED")
+    BankFrame:UnregisterEvent("PLAYERBANKSLOTS_CHANGED")
+    BankFrame:UnregisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
+    BankFrame:UnregisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
+    BankFrame:UnregisterEvent("PLAYER_MONEY")
+    BankFrame:UnregisterEvent("BAG_UPDATE_COOLDOWN")
+    BankFrame:UnregisterEvent("INVENTORY_SEARCH_UPDATE")
+    StaticPopup_Hide("CONFIRM_BUY_BANK_SLOT")
+    CloseAllBags(self)
+    CloseBankBagFrames()
+    CloseBankFrame()
+end
+GW.AddForProfiling("bank", "bank_OnHide", bank_OnHide)
+
+local function bank_OnEvent(self, event, ...)
+    if event == "BANKFRAME_OPENED" then
+        self:Show()
+    elseif event == "BANKFRAME_CLOSED" then
+        self:Hide()
+    elseif event == "PLAYERBANKSLOTS_CHANGED" then
+        local slot = select(1, ...)
+        if slot > NUM_BANKGENERIC_SLOTS then
+            -- a bank bag was un/equipped
+            updateBagBar(self.ItemFrame)
+            updateBankContainers(self)
+        else
+            -- an item was added to or removed from the base bank
+            if self.ItemFrame:IsShown() then
+                updateFreeBankSlots()
+            end
         end
-    )
-    fm:HookScript("OnDragStop", onBankMove)
+    elseif event == "PLAYERBANKBAGSLOTS_CHANGED" then
+        -- the # of bank bag slots has changed (probably a purchase)
+        updateBagBar(self.ItemFrame)
+        updateBankContainers(self)
+    elseif event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
+        -- check if the item un/locked is a bank bag and gray it out if so
+        local bag = select(1, ...)
+        local slot = select(2, ...)
+        if bag == BANK_CONTAINER and slot > NUM_BANKGENERIC_SLOTS then
+            local bag_id = slot - NUM_BANKGENERIC_SLOTS
+            local b = self.ItemFrame.bags[bag_id]
+            if b and b.icon and b.icon.SetDesaturated then
+                if event == "ITEM_LOCKED" then
+                    b.icon:SetDesaturated(true)
+                else
+                    b.icon:SetDesaturated(false)
+                end
+            end
+        end
+    elseif event == "BAG_UPDATE" then
+        local bag_id = select(1, ...)
+        if bag_id == BANK_CONTAINER or bag_id > NUM_BAG_SLOTS then
+            if self.ItemFrame:IsShown() then
+                updateFreeBankSlots()
+            end
+        elseif bag_id == REAGENTBANK_CONTAINER then
+            if self.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
+                updateFreeReagentSlots()
+            end
+        end
+    elseif event == "PLAYERREAGENTBANKSLOTS_CHANGED" then
+        if self.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
+            updateFreeReagentSlots()
+        end
+    elseif event == "REAGENTBANK_PURCHASED" then
+        ReagentBankFrameUnlockInfo:Hide()
+        ReagentBankFrameUnlockInfo:ClearAllPoints()
+        ReagentBankFrameUnlockInfo:SetParent(ReagentBankFrame)
+        updateBankContainers(self)
+    end
+end
+GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
+
+local function tab_OnEnter(self)
+    self.Icon:SetBlendMode("ADD")
+end
+GW.AddForProfiling("bank", "tab_OnEnter", tab_OnEnter)
+
+local function tab_OnLeave(self)
+    self.Icon:SetBlendMode("BLEND")
+end
+GW.AddForProfiling("bank", "tab_OnLeave", tab_OnLeave)
+
+local function LoadBank(helpers)
+    inv = helpers
+
+    BANK_WINDOW_SIZE = GetSetting("BANK_WIDTH")
+    BANK_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
+    if BANK_ITEM_SIZE > 40 then
+        BANK_ITEM_SIZE = 40
+        SetSetting("BAG_ITEM_SIZE", 40)
+    end
+
+    -- we don't want the BankFrame to try and show itself ever
+    BankFrame:UnregisterEvent("BANKFRAME_OPENED")
+    BankFrame:UnregisterEvent("BANKFRAME_CLOSED")
 
     -- create bank frame, restore its saved size, and init its many pieces
-    local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrame")
+    local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplate")
+    tinsert(UISpecialFrames, "GwBankFrame")
+    f:ClearAllPoints()
     f:SetWidth(BANK_WINDOW_SIZE)
-    updateBankIcons()
+    onBankFrameChangeSize(f, nil, nil, true)
 
+    -- setup show/hide
+    f:SetScript("OnShow", bank_OnShow)
+    f:SetScript("OnHide", bank_OnHide)
+    f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
+
+    -- setup movable stuff
+    local pos = GetSetting("BANK_POSITION")
+    f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    f.mover:RegisterForDrag("LeftButton")
+    f.mover.onMoveSetting = "BANK_POSITION"
+    f.mover:SetScript("OnDragStart", inv.onMoverDragStart)
+    f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
+
+    -- setup resizer stuff
+    f:SetMinResize(508, 340)
+    f:SetScript("OnSizeChanged", onBankFrameChangeSize)
+    f.sizer.onResizeStop = onBankResizeStop
+    f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
+    f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
+
+    -- reskin all the BankFrame ItemButtons
+    reskinBankItemButtons()
+
+    -- take the original search box
+    inv.reskinSearchBox(BankItemSearchBox)
+    inv.relocateSearchBox(BankItemSearchBox, f)
+
+    -- when we take ownership of ItemButtons, we need parent containers with IDs
+    -- set to the ID (bagId) of the original ContainerFrame we stole it from, in order
+    -- for all of the inherited ItemButton functionality to work normally
+    f.ItemFrame.Containers = {}
+    for i = 1, NUM_BANKBAGSLOTS + 1 do
+        local bag_id
+        if i == 1 then
+            bag_id = BANK_CONTAINER
+        else
+            bag_id = i + NUM_BAG_SLOTS - 1
+        end
+        local cf = CreateFrame("Frame", nil, f.ItemFrame)
+        cf.gw_items = {}
+        cf.gw_num_slots = 0
+        cf:SetAllPoints(f.ItemFrame)
+        cf:SetID(bag_id)
+        f.ItemFrame.Containers[bag_id] = cf
+    end
+    f.ReagentFrame.Containers = {}
+    local cf = CreateFrame("Frame", nil, f.ReagentFrame)
+    cf.gw_items = {}
+    cf.gw_num_slots = 0
+    cf:SetAllPoints(f.ReagentFrame)
+    cf:SetID(REAGENTBANK_CONTAINER)
+    f.ReagentFrame.Containers[REAGENTBANK_CONTAINER] = cf
+
+    -- create our bank bag slots
+    createBagBar(f.ItemFrame)
+
+    -- skin some things not done in XML
     f.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
     f.headerString:SetText(BANK)
-
     f.spaceString:SetFont(UNIT_NAME_FONT, 12)
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
-    updateFreeBankSlots()
+
+    -- setup initial events (more are added when open in bank_OnEvent)
+    f:SetScript("OnEvent", bank_OnEvent)
+    f:RegisterEvent("BANKFRAME_OPENED")
+    f:RegisterEvent("BANKFRAME_CLOSED")
 
     -- setup settings button and its dropdown items
     f.buttonSort:HookScript(
         "OnClick",
         function(self)
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
-            if BankSlotsFrame:IsShown() then
+            if self:GetParent().ItemFrame:IsShown() then
                 SortBankBags()
-            elseif ReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
+            elseif self:GetParent().ReagentFrame:IsShown() and IsReagentBankUnlocked() then
                 SortReagentBankBags()
             end
         end
     )
-    f.buttonSort:HookScript(
-        "OnEnter",
-        function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
-            GameTooltip:ClearLines()
-            GameTooltip:AddLine(BAG_CLEANUP_BANK, 1, 1, 1)
-            GameTooltip:Show()
-        end
-    )
-    f.buttonSort:HookScript("OnLeave", GameTooltip_Hide)
+    EnableTooltip(f.buttonSort, BAG_CLEANUP_BANK)
+
     do
+        EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        f.buttonSettings:HookScript(
+        f.buttonSettings:SetScript(
             "OnClick",
             function(self)
                 if dd:IsShown() then
@@ -508,7 +541,7 @@ local function LoadBank()
             end
         )
 
-        dd.compactBank:HookScript(
+        dd.compactBank:SetScript(
             "OnClick",
             function(self)
                 self:SetText(compactToggle())
@@ -516,7 +549,7 @@ local function LoadBank()
             end
         )
 
-        dd.bagOrder:HookScript(
+        dd.bagOrder:SetScript(
             "OnClick",
             function(self)
                 if GetSetting("BANK_REVERSE_SORT") then
@@ -526,11 +559,8 @@ local function LoadBank()
                     dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
                     SetSetting("BANK_REVERSE_SORT", true)
                 end
-                if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
-                    updateReagentsIcons(false)
-                else
-                    updateBankIcons()
-                end
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
                 dd:Hide()
             end
         )
@@ -547,289 +577,72 @@ local function LoadBank()
         end
     end
 
-    -- setup close button
-    f.buttonClose:HookScript(
+    -- setup bank/reagent switching tabs
+    f.ItemTab:SetScript("OnEnter", tab_OnEnter)
+    f.ItemTab:SetScript("OnLeave", tab_OnLeave)
+    f.ItemTab:SetScript(
         "OnClick",
         function(self)
-            CloseBankFrame()
-        end
-    )
-
-    -- setup resizer stuff
-    f:SetMinResize(508, 340)
-    f:HookScript("OnSizeChanged", onBankFrameChangeSize)
-    f.sizer:HookScript("OnMouseDown", onSizerMouseDown)
-    f.sizer:HookScript("OnMouseUp", onSizerMouseUp)
-
-    -- setup bank/reagent switching buttons
-    GwBankButton:HookScript(
-        "OnEnter",
-        function(self)
-            _G[self:GetName() .. "Texture"]:SetBlendMode("ADD")
-        end
-    )
-    GwBankButton:HookScript(
-        "OnLeave",
-        function(self)
-            _G[self:GetName() .. "Texture"]:SetBlendMode("BLEND")
-        end
-    )
-    GwBankButton:HookScript(
-        "OnClick",
-        function(self)
-            BankSlotsFrame:Show()
-            ReagentBankFrame:Hide()
-        end
-    )
-    GwBankButton2:HookScript(
-        "OnEnter",
-        function(self)
-            _G[self:GetName() .. "Texture"]:SetBlendMode("ADD")
-        end
-    )
-    GwBankButton2:HookScript(
-        "OnLeave",
-        function(self)
-            _G[self:GetName() .. "Texture"]:SetBlendMode("BLEND")
-        end
-    )
-    GwBankButton2:HookScript(
-        "OnClick",
-        function(self)
-            BankSlotsFrame:Hide()
-            ReagentBankFrame:Show()
-        end
-    )
-
-    -- setup buy bank stuff
-    GwBuyMoreBank:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            if event == "PLAYERBANKBAGSLOTS_CHANGED" then
-                if GetNumBankSlots() == 7 then
-                    self:Hide()
-                end
-                local cost = GetBankSlotCost() / 100 / 100
-                GwBuyMoreBankGold:SetText(cost)
-            end
-        end
-    )
-    if GetNumBankSlots() == 7 then
-        GwBuyMoreBank:Hide()
-    end
-    local cost = GetBankSlotCost() / 100 / 100
-    GwBuyMoreBankGold:SetText(cost)
-    GwBuyMoreBank:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
-    GwBuyMoreBankGold:ClearAllPoints()
-    GwBuyMoreBankGold:SetPoint("LEFT", GwButtonBuyBankSlots, "RIGHT", 20, 0)
-    GwBuyMoreBankGold:SetFont(UNIT_NAME_FONT, 12)
-    GwBuyMoreBankGold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
-
-    GwButtonBuyBankSlots:HookScript(
-        "OnClick",
-        function(self)
-            PurchaseSlot()
-        end
-    )
-    GwButtonBuyBankSlots:SetText(BANK_BAG_PURCHASE)
-
-    -- setup reagent bank stuff
-    GwBankDepositAllReagents:SetText(REAGENTBANK_DEPOSIT)
-    GwBankDepositAllReagents:HookScript(
-        "OnClick",
-        function(self)
-            DepositReagentBank()
-        end
-    )
-    -- setup reagent bank stuff
-    GwBankDepositAllReagentsBank:SetText(REAGENTBANK_DEPOSIT)
-    GwBankDepositAllReagentsBank:HookScript(
-        "OnClick",
-        function(self)
-            DepositReagentBank()
-        end
-    )
-
-    GwBuyRegentBank:HookScript(
-        "OnClick",
-        function(self)
-            BuyReagentBank()
-        end
-    )
-
-    GwReagentBankFrame:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            if event == "REAGENTBANK_PURCHASED" then
-                if IsReagentBankUnlocked() then
-                    GwRegentHelpText:Hide()
-                    GwBuyRegentBank:Hide()
-                    GwBankDepositAllReagents:Hide()
-                    GwBankDepositAllReagentsBank:Show()
-                end
-            end
-        end
-    )
-    GwReagentBankFrame:RegisterEvent("REAGENTBANK_PURCHASED")
-    GwRegentHelpText:SetFont(UNIT_NAME_FONT, 12)
-    GwRegentHelpText:SetShadowColor(1, 1, 1)
-    BUY_REAGENTBANK_TEXT = PURCHASE .. " " .. ((GetReagentBankCost()) / 100 / 100) .. "G"
-    GwBuyRegentBank:SetText(BUY_REAGENTBANK_TEXT)
-    if IsReagentBankUnlocked() then
-        GwRegentHelpText:Hide()
-        GwBuyRegentBank:Hide()
-        GwBankDepositAllReagentsBank:Show()
-        if GetNumBankSlots() < 7 then
-            GwBankDepositAllReagentsBank:ClearAllPoints()
-            GwBankDepositAllReagentsBank:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
-        end
-    end
-
-    ReagentBankFrame:HookScript(
-        "OnShow",
-        function()
-            for k, v in pairs(default_bank_frame) do
-                v:Hide()
-            end
-            for k, v in pairs(default_bank_frame_container) do
-                _G[v]:Hide()
-            end
-
-            BankItemSearchBox:Hide()
-            GwReagentBankFrame:Show()
-            GwBankFrame.headerString:SetText(REAGENT_BANK)
-            GwReagentBankFrame:SetHeight(GwBankFrame:GetHeight())
-
-            GwBuyMoreBank:Hide()
-
-            if IsReagentBankUnlocked() then
-                updateReagentsIcons()
-                GwRegentHelpText:Hide()
-                GwBuyRegentBank:Hide()
-                GwBankDepositAllReagentsBank:Hide()
-                GwBankDepositAllReagents:Show()
-                GwBankDepositAllReagents:ClearAllPoints()
-                GwBankDepositAllReagents:SetPoint("TOPLEFT", GwBankFrame, "BOTTOMLEFT", 5, -5)
-            end
-        end
-    )
-    ReagentBankFrame:HookScript(
-        "OnHide",
-        function()
-            for k, v in pairs(default_bank_frame) do
-                v:Show()
-            end
-            GwBankFrame.headerString:SetText(BANK)
-            BankItemSearchBox:Show()
-            GwReagentBankFrame:Hide()
-            GwBankDepositAllReagents:Hide()
-            GwBankDepositAllReagentsBank:Show()
-            for i = 5, 12 do
-                OpenBag(i)
-            end
-            if GetNumBankSlots() < 7 then
-                GwBuyMoreBank:Show()
-            end
-            if IsReagentBankUnlocked() and GetNumBankSlots() < 7 then
-                GwBankDepositAllReagents:ClearAllPoints()
-                GwBankDepositAllReagents:SetPoint("TOPRIGHT", GwBankFrame, "BOTTOMRIGHT", -5, -5)
-            end
-        end
-    )
-
-    -- hook into default bank frames to re-use default bank bars and search box
-    f:SetScript(
-        "OnHide",
-        function()
-            GwBankMoverFrame:Hide()
-        end
-    )
-    f:SetScript(
-        "OnShow",
-        function()
-            GwBankMoverFrame:Show()
-        end
-    )
-    BankFrame:HookScript(
-        "OnHide",
-        function()
-            GwBankFrame:Hide()
-        end
-    )
-    BankFrame:HookScript(
-        "OnShow",
-        function()
-            GwBankFrame:Show()
-            BankFrame:ClearAllPoints()
-            BankFrame:GetParent():ClearAllPoints()
-            BankFrame:SetPoint("RIGHT", UIParent, "LEFT", -2000, 0)
-            for i = 5, 12 do
-                OpenBag(i)
-            end
-        end
-    )
-    BankFrame:SetFrameStrata("HIGH")
-    BankFrame:SetFrameLevel(5)
-    f:Hide()
-
-    for i = 1, #default_bank_frame_container do
-        local fv = _G[default_bank_frame_container[i]]
-        fv:SetFrameStrata("HIGH")
-        fv:SetFrameLevel(5)
-
-        local fc = _G["GwBankContainer" .. tostring(i + 5)]
-        if fv then
-            fv:HookScript(
-                "OnShow",
-                function()
-                    CloseBags()
-                    updateBankIcons()
-                    if fc then
-                        fc:Show()
-                    end
-                end
-            )
-            fv:HookScript(
-                "OnHide",
-                function()
-                    CloseBags()
-                    if not ReagentBankFrame:IsShown() then
-                        updateBankIcons()
-                    end
-                    if fc then
-                        fc:Hide()
-                    end
-                end
-            )
-        end
-    end
-    BankFrame:HookScript(
-        "OnShow",
-        function()
-            CloseBags()
-            updateBankIcons()
-            relocateBankSearchBox()
-            GwBankContainer5:Show()
-        end
-    )
-
-    BankItemSearchBox:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            if not GW.inWorld then
+            local bf = self:GetParent()
+            if bf.ItemFrame:IsShown() then
                 return
             end
-            if event == "BAG_UPDATE" or event == "BAG_UPDATE_DELAYED" then
-                relocateBankSearchBox()
-                if GwReagentBankFrame:IsShown() and IsReagentBankUnlocked() then
-                    updateReagentsIcons()
-                else
-                    updateBankIcons()
-                end
-            end
+            bf.ItemFrame:Show()
+            bf.ReagentFrame:Hide()
+            bf.buttonSort.tooltipText = BAG_CLEANUP_BANK
+            updateBankContainers(bf)
+            snapFrameSize(bf)
         end
     )
-    BankItemSearchBox:RegisterEvent("BAG_UPDATE_DELAYED")
-    BankItemSearchBox:RegisterEvent("BAG_UPDATE")
+    EnableTooltip(f.ItemTab, BANK)
+    f.ReagentTab:SetScript("OnEnter", tab_OnEnter)
+    f.ReagentTab:SetScript("OnLeave", tab_OnLeave)
+    f.ReagentTab:SetScript(
+        "OnClick",
+        function(self)
+            local bf = self:GetParent()
+            if bf.ReagentFrame:IsShown() then
+                return
+            end
+            bf.ItemFrame:Hide()
+            bf.ReagentFrame:Show()
+            bf.buttonSort.tooltipText = BAG_CLEANUP_REAGENT_BANK
+            updateBankContainers(bf)
+            snapFrameSize(bf)
+        end
+    )
+    EnableTooltip(f.ReagentTab, REAGENT_BANK)
+
+    -- setup reagent bank stuff
+    f.DepositAll:SetText(REAGENTBANK_DEPOSIT)
+    f.DepositAll:SetScript(
+        "OnClick",
+        function(self)
+            DepositReagentBank()
+        end
+    )
+    if IsReagentBankUnlocked() then
+        f.DepositAll:Show()
+    else
+        -- steal the original help/purchase window
+        local hf = ReagentBankFrame.UnlockInfo
+        hf:SetParent(f.ReagentFrame)
+        MoneyFrame_Update(hf.CostMoneyFrame, GetReagentBankCost())
+        hf:ClearAllPoints()
+        hf:SetPoint("TOPLEFT", f.ReagentFrame, "TOPLEFT", 0, 0)
+        hf:SetPoint("BOTTOMRIGHT", f.ReagentFrame, "BOTTOMRIGHT", 0, 0)
+        hf:Show()
+    end
+
+    -- return a callback that should be called when item size changes
+    local changeItemSize = function()
+        BANK_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
+        reskinBankItemButtons()
+        reskinReagentItemButtons()
+        layoutItems(f)
+        snapFrameSize(f)
+        -- TODO: update the text on the compact icons config option
+    end
+    return changeItemSize
 end
 GW.LoadBank = LoadBank

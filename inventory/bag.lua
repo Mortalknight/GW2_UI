@@ -7,79 +7,48 @@ local GetRealmMoney = GW.GetRealmMoney
 local GetCharClass = GW.GetCharClass
 local GetRealmStorage = GW.GetRealmStorage
 local ClearStorage = GW.ClearStorage
+local inv
 
 local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
 local BAG_WINDOW_SIZE = 480
-local BAG_WINDOW_CONTENT_HEIGHT = 0
 
-local default_bag_frame = {
-    "MainMenuBarBackpackButton",
-    "CharacterBag0Slot",
-    "CharacterBag1Slot",
-    "CharacterBag2Slot",
-    "CharacterBag3Slot"
-}
+-- adjusts the ItemButton layout flow when the bag window size changes (or on open)
+local function layoutBagItems(f)
+    local max_col = f:GetParent().gw_bag_cols
+    local row = 0
+    local col = 0
+    local rev = GetSetting("BAG_REVERSE_SORT")
 
-local default_bag_frame_container = {
-    "ContainerFrame1",
-    "ContainerFrame2",
-    "ContainerFrame3",
-    "ContainerFrame4",
-    "ContainerFrame5",
-    "ContainerFrame6"
-}
+    local item_off = BAG_ITEM_SIZE + BAG_ITEM_PADDING
 
-local function bagFrameHide()
-    GwBagMoverFrame:Hide()
-    CloseAllBags()
-end
-GW.AddForProfiling("bag", "bagFrameHide", bagFrameHide)
+    local iS = BACKPACK_CONTAINER
+    local iE = NUM_BAG_SLOTS
+    local iD = 1
+    if rev then
+        iE = iS
+        iS = NUM_BAG_SLOTS
+        iD = -1
+    end
 
-local function bagFrameShow()
-    GwBagMoverFrame:Show()
-end
-GW.AddForProfiling("bag", "bagFrameShow", bagFrameShow)
-
-local function moveBagbar()
-    local y = 25
-
-    for k, v in pairs(default_bag_frame) do
-        local fv = _G[v]
-
-        fv:ClearAllPoints()
-        fv:SetParent(GwBagFrame)
-        fv:SetPoint("TOPLEFT", GwBagFrame, "TOPLEFT", -35, -y)
-        _G[v .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        fv:SetNormalTexture(nil)
-        fv:SetHighlightTexture(nil)
-        fv.IconBorder:SetTexture(nil)
-
-        if v == "MainMenuBarBackpackButton" then
-            MainMenuBarBackpackButton:SetSize(32, 32)
-        -- resize it
-        end
-
-        local s = fv:GetScript("OnClick")
-        fv:SetScript(
-            "OnClick",
-            function(self, b)
-                if b == "RightButton" then
-                    local parent = _G[default_bag_frame_container[k]]
-                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                    ToggleDropDownMenu(1, nil, parent.FilterDropDown, self, 32, 32)
-                else
-                    s(fv)
-                end
-            end
-        )
-
-        y = y + 32
+    local lcf = inv.layoutContainerFrame
+    for i = iS, iE, iD do
+        local bag_id = i
+        local cf = f.Containers[bag_id]
+        col, row = lcf(cf, max_col, row, col, (not rev), item_off)
     end
 end
-GW.AddForProfiling("bag", "moveBagbar", moveBagbar)
+GW.AddForProfiling("bag", "layoutBagItems", layoutBagItems)
+
+-- adjusts the ItemButton layout flow when the bag window size changes (or on open)
+local function layoutItems(f)
+    if f.ItemFrame:IsShown() then
+        layoutBagItems(f.ItemFrame)
+    end
+end
+GW.AddForProfiling("bag", "layoutItems", layoutItems)
 
 local function updateMoney(self)
     if not self then
@@ -98,157 +67,6 @@ local function updateMoney(self)
     UpdateMoney()
 end
 GW.AddForProfiling("bag", "updateMoney", updateMoney)
-
-local function updateFreeSlots()
-    local free = 0
-    local full = 0
-
-    for i = 0, NUM_BAG_SLOTS do
-        free = free + GetContainerNumFreeSlots(i)
-        full = full + GetContainerNumSlots(i)
-    end
-
-    free = full - free
-    local bag_space_string = free .. " / " .. full
-    GwBagFrame.spaceString:SetText(bag_space_string)
-end
-GW.AddForProfiling("bag", "updateFreeSlots", updateFreeSlots)
-
-local function createItemBackground(name)
-    return CreateFrame("Frame", "GwBagItemBackdrop" .. name, GwBagFrame, "GwBagItemBackdrop")
-end
-GW.AddForProfiling("bag", "createItemBackground", createItemBackground)
-
-local function updateBagIcons(smooth)
-    moveBagbar()
-    local x = 8
-    local y = 72
-    local mx = 0
-    local gwbf = GwBagFrame
-    local winsize = BAG_WINDOW_SIZE
-    if smooth then
-        winsize = gwbf:GetWidth()
-    end
-    winsize = math.max(508, winsize)
-
-    local bStart = 1
-    local bEnd = 5
-    local bStep = 1
-    if GetSetting("BAG_REVERSE_SORT") then
-        bStart = 5
-        bEnd = 1
-        bStep = -1
-    end
-    for BAG_INDEX = bStart, bEnd, bStep do
-        local cfm = "ContainerFrame" .. tostring(BAG_INDEX)
-
-        if _G[cfm] and _G[cfm]:IsShown() then
-            for i = 40, 1, -1 do
-                local slot = _G[cfm .. "Item" .. i]
-                if slot and slot:IsShown() then
-                    if x > (winsize - 40) then
-                        mx = math.max(mx, x)
-                        x = 8
-                        y = y + BAG_ITEM_SIZE + BAG_ITEM_PADDING
-                    end
-
-                    local slotIcon = _G[cfm .. "Item" .. i .. "IconTexture"]
-                    local slotNormalTexture = _G[cfm .. "Item" .. i .. "NormalTexture"]
-                    local slotQuesttexture = _G[cfm .. "Item" .. i .. "IconQuestTexture"]
-                    local slotCount = _G[cfm .. "Item" .. i .. "Count"]
-                    local backdrop = _G["GwBagItemBackdrop" .. cfm .. "Item" .. i]
-                    if backdrop == nil then
-                        backdrop = createItemBackground(cfm .. "Item" .. i)
-                    end
-                    slot:GetParent():ClearAllPoints()
-                    backdrop:ClearAllPoints()
-                    backdrop:SetParent(_G[cfm])
-                    backdrop:SetFrameLevel(1)
-
-                    backdrop:SetPoint("TOPLEFT", gwbf, "TOPLEFT", x, -y)
-                    backdrop:SetPoint("TOPRIGHT", gwbf, "TOPLEFT", x + BAG_ITEM_SIZE, -y)
-                    backdrop:SetPoint("BOTTOMLEFT", gwbf, "TOPLEFT", x, -y - BAG_ITEM_SIZE)
-                    backdrop:SetPoint("BOTTOMRIGHT", gwbf, "TOPLEFT", x + BAG_ITEM_SIZE, -y - BAG_ITEM_SIZE)
-
-                    _G["GwBagContainer" .. (BAG_INDEX - 1)]:SetSize(x, y)
-
-                    slot:ClearAllPoints()
-                    slot:SetFrameLevel(43)
-                    slot:SetPoint("TOPLEFT", gwbf, "TOPLEFT", x, -y)
-                    slot:SetPoint("TOPRIGHT", gwbf, "TOPLEFT", x + BAG_ITEM_SIZE, -y)
-                    slot:SetPoint("BOTTOMLEFT", gwbf, "TOPLEFT", x, -y - BAG_ITEM_SIZE)
-                    slot:SetPoint("BOTTOMRIGHT", gwbf, "TOPLEFT", x + BAG_ITEM_SIZE, -y - BAG_ITEM_SIZE)
-
-                    if slotCount then
-                        slotCount:ClearAllPoints()
-                        slotCount:SetPoint("TOPRIGHT", slotCount:GetParent(), "TOPRIGHT", 0, -3)
-                        slotCount:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
-                        slotCount:SetJustifyH("RIGHT")
-                    end
-
-                    if slot.IconBorder then
-                        slot.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
-                        slot.IconBorder:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
-                        if slot.IconBorder.GwhasBeenHooked == nil then
-                            hooksecurefunc(
-                                slot.IconBorder,
-                                "SetVertexColor",
-                                function()
-                                    slot.IconBorder:SetTexture(
-                                        "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder"
-                                    )
-                                end
-                            )
-                            slot.IconBorder.GwhasBeenHooked = true
-                        end
-                    end
-
-                    if slotQuesttexture then
-                        slotQuesttexture:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
-                    end
-                    if slotNormalTexture then
-                        slot:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
-                    end
-                    if slot.flash then
-                        slot.flash:SetSize(BAG_ITEM_SIZE, BAG_ITEM_SIZE)
-                    end
-
-                    slotIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-                    x = x + BAG_ITEM_SIZE + BAG_ITEM_PADDING
-                end
-            end
-        end
-    end
-
-    updateFreeSlots()
-    if smooth then
-        return
-    end
-
-    BAG_WINDOW_CONTENT_HEIGHT = math.max(350, y + BAG_ITEM_SIZE + (2 * BAG_ITEM_PADDING))
-    if mx ~= 0 then
-        BAG_WINDOW_SIZE = mx + BAG_ITEM_PADDING
-    end
-    SetSetting("BAG_WIDTH", BAG_WINDOW_SIZE)
-    gwbf:SetSize(BAG_WINDOW_SIZE, BAG_WINDOW_CONTENT_HEIGHT)
-end
-GW.AddForProfiling("bag", "updateBagIcons", updateBagIcons)
-
-local function compactToggle()
-    if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
-        BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
-        SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
-        updateBagIcons()
-        return GwLocalization["EXPAND_ICONS"] --Local?
-    end
-
-    BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
-    SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
-    updateBagIcons()
-    return GwLocalization["COMPACT_ICONS"] --Local?
-end
-GW.AddForProfiling("bag", "compactToggle", compactToggle)
 
 local function watchCurrency(self)
     local watchSlot = 1
@@ -269,134 +87,325 @@ local function watchCurrency(self)
 end
 GW.AddForProfiling("bag", "watchCurrency", watchCurrency)
 
-local function showIcons()
-    local gwbf = GwBagFrame
-    watchCurrency(gwbf)
-    OpenAllBags()
-    BagItemSearchBox:Show()
-    gwbf.spaceString:Show()
-    gwbf.buttonSettings:Show()
-    gwbf.buttonSort:Show()
-    ContainerFrame1:Show()
+local function updateFreeSpaceString(free, full)
+    local space_string = free .. " / " .. full
+    GwBagFrame.spaceString:SetText(space_string)
 end
-GW.AddForProfiling("bag", "showIcons", showIcons)
+GW.AddForProfiling("bag", "updateFreeSpaceString", updateFreeSpaceString)
 
-local function CloseBags()
-    local o = false
+-- update the number of free bag slots available and set the display for it
+local function updateFreeBagSlots()
+    inv.updateFreeSlots(GwBagFrame.spaceString, 1, NUM_BAG_SLOTS, BACKPACK_CONTAINER)
+end
+GW.AddForProfiling("bag", "updateFreeBagSlots", updateFreeBagSlots)
 
-    for i = 1, 12 do
-        local cfm = _G["ContainerFrame" .. tostring(i)]
-        if cfm and cfm:IsShown() then
-            cfm:SetParent(gwNormalBagHolder)
-            gwNormalBagHolder:ClearAllPoints()
-            cfm:ClearAllPoints()
-            cfm:SetPoint("RIGHT", gwNormalBagHolder, "LEFT", 0, 0)
-            if i < 6 then
-                o = true
-            end
+-- update all backpack bag items
+local function updateBagContainers(f)
+    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        inv.takeItemButtons(f.ItemFrame, bag_id)
+    end
+    if f.ItemFrame:IsShown() then
+        updateFreeBagSlots()
+        layoutItems(f)
+    end
+end
+GW.AddForProfiling("bag", "updateBagContainers", updateBagContainers)
+
+-- draws the backpack bag slots in the correct order
+local function setBagBarOrder(f)
+    local x = -40
+    local bag_size = 28
+    local bag_padding = 4
+    local rev = GetSetting("BAG_REVERSE_SORT")
+    if rev then
+        y = 5 - ((bag_size + bag_padding) * NUM_BAG_SLOTS)
+    else
+        y = 5
+    end
+
+    for bag_idx = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        local b = f.bags[bag_idx]
+        b:ClearAllPoints()
+        b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
+        if rev then
+            y = y + bag_size + bag_padding
+        else
+            y = y - bag_size - bag_padding
         end
     end
-    if not o then
-        GwBagFrame:Hide()
-        return
-    end
-    GwBagFrame:Show()
 end
-GW.CloseBags = CloseBags
+GW.AddForProfiling("bag", "setBagBarOrder", setBagBarOrder)
 
-local function relocateSearchBox()
-    local sb = BagItemSearchBox
-
-    sb:ClearAllPoints()
-    sb:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    sb:SetPoint("TOPLEFT", GwBagFrame, "TOPLEFT", 8, -40)
-    sb:SetPoint("TOPRIGHT", GwBagFrame, "TOPRIGHT", -8, -40)
-
-    sb.Left:SetTexture(nil)
-    sb.Right:SetTexture(nil)
-    BagItemSearchBoxSearchIcon:Hide()
-    sb.Middle:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagsearchbg")
-
-    sb:SetHeight(24)
-
-    sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
-
-    sb.Middle:SetHeight(24)
-    sb.Middle:SetTexCoord(0, 1, 0, 1)
-    sb.SetPoint = function()
-    end
-    sb.ClearAllPoints = function()
+local function bag_OnClick(self, button, down)
+    -- on left click, ensure that the bag stays open despite default toggle behavior
+    if button == "LeftButton" then
+        if self.gwHasBag then
+            OpenBag(self:GetBagID())
+            updateBagContainers(self:GetParent():GetParent())
+        end
     end
 end
-GW.AddForProfiling("bag", "relocateSearchBox", relocateSearchBox)
+GW.AddForProfiling("bag", "bag_OnClick", bag_OnClick)
 
-local function onBagMove(self)
-    self:StopMovingOrSizing()
-    local saveBagPos = {}
-    saveBagPos["point"], _, saveBagPos["relativePoint"], saveBagPos["xOfs"], saveBagPos["yOfs"] = self:GetPoint()
-    SetSetting("BAG_POSITION", saveBagPos)
+-- creates the bag slot icons for the ItemFrame
+local function createBagBar(f)
+    f.bags = {}
+
+    -- steal the existing main backpack button
+    local bp = MainMenuBarBackpackButton
+    bp:SetParent(f)
+    inv.reskinBagBar(bp)
+    bp:RegisterForClicks("LeftButtonUp")
+    bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
+    bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
+    f.bags[BACKPACK_CONTAINER] = bp
+    hooksecurefunc(
+        "MainMenuBarBackpackButton_UpdateFreeSlots",
+        function()
+            bp.Count:SetText(bp.freeSlots)
+        end
+    )
+    SetItemButtonQuality(bp, 1, nil)
+
+    -- create bag slot buttons for equippable bags
+    local cb0_id = CharacterBag0Slot:GetID()
+    local getInvId = function(self)
+        local inv_id, _ = GetInventorySlotInfo(strsub(self:GetName(), 10))
+        return inv_id
+    end
+    for bag_idx = 1, NUM_BAG_SLOTS do
+        -- this name MUST have a 9-letter prefix and match the style "CharacterBag0Slot"
+        -- because of hard-coded string parsing in PaperDollItemSlotButton_OnLoad
+        local name = "GwInvntry" .. "Bag" .. (bag_idx - 1) .. "Slot"
+        local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
+
+        -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
+        -- The ID set here is NOT the usual bag_id; rather it is an offset from the
+        -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
+        b:SetID(cb0_id + bag_idx - 1)
+        -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
+        b.GetInventorySlot = getInvId
+
+        -- remove default of capturing right-click also (we handle right-click separately)
+        b:RegisterForClicks("LeftButtonUp")
+        b:HookScript("OnClick", bag_OnClick)
+        b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
+
+        inv.reskinBagBar(b)
+
+        f.bags[bag_idx] = b
+    end
+
+    setBagBarOrder(f)
 end
-GW.AddForProfiling("bag", "onBagMove", onBagMove)
+GW.AddForProfiling("bag", "createBagBar", createBagBar)
+
+-- updates the contents of the backpack bag slots
+local function updateBagBar(f)
+    for bag_idx = 1, NUM_BAG_SLOTS do
+        local b = f.bags[bag_idx]
+        local inv_id = b:GetInventorySlot()
+        local bag_tex = GetInventoryItemTexture("player", inv_id)
+        local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
+
+        b.icon:Show()
+        b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
+        local norm = b:GetNormalTexture()
+        norm:SetVertexColor(1, 1, 1, 0.75)
+        if bag_tex ~= nil then
+            b.gwHasBag = true
+            b.icon:SetTexture(bag_tex)
+            if IsInventoryItemLocked(inv_id) then
+                b.icon:SetDesaturated(true)
+            else
+                b.icon:SetDesaturated(false)
+            end
+        elseif slot_tex ~= nil then
+            b.tooltipText = BANK_BAG
+            b.icon:SetTexture(slot_tex)
+            b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        else
+            b.icon:Hide()
+        end
+    end
+end
+GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
+
+-- adjusts the bag frame size to snap to the exact row/col sizing of contents
+local function snapFrameSize(f)
+    local cfs
+    if f.ItemFrame:IsShown() then
+        cfs = f.ItemFrame.Containers
+    end
+    inv.snapFrameSize(f, cfs, BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
+end
+GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
 
 local function onBagResizeStop(self)
-    GW.Debug("onBagResizeStop")
-
-    BAG_WINDOW_SIZE = GwBagFrame:GetWidth()
-    updateBagIcons()
-
-    GwBagFrame:ClearAllPoints()
-    GwBagFrame:SetPoint("TOPLEFT", GwBagMoverFrame, "TOPLEFT", 20, -40)
-
-    local mfPoint, _, mfRelPoint, mfxOfs, mfyOfs = GwBagMoverFrame:GetPoint()
-    local newWidth = GwBagFrame:GetWidth() - 40
-    local oldWidth = GwBagMoverFrame:GetWidth()
-    if mfPoint == "TOP" then
-        mfxOfs = mfxOfs + ((newWidth - oldWidth) / 2)
-    elseif mfPoint == "RIGHT" then
-        mfxOfs = mfxOfs + (newWidth - oldWidth)
-    end
-    GwBagMoverFrame:ClearAllPoints()
-    GwBagMoverFrame:SetPoint(mfPoint, UIParent, mfRelPoint, mfxOfs, mfyOfs)
-    GwBagMoverFrame:SetWidth(newWidth)
-    onBagMove(GwBagMoverFrame)
+    BAG_WINDOW_SIZE = self:GetWidth()
+    SetSetting("BAG_WIDTH", BAG_WINDOW_SIZE)
+    inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
-local function onBagFrameChangeSize(self)
-    local w = self:GetWidth()
-    local isize = BAG_ITEM_SIZE + BAG_ITEM_PADDING
-    local cols = math.floor((w - 3) / isize)
+local function onBagFrameChangeSize(self, width, height, skip)
+    local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
 
-    if not self.gwPrevBagCols or self.gwPrevBagCols ~= cols then
-        GW.Debug("new cols is: ", cols)
-        self.gwPrevBagCols = cols
-        updateBagIcons(true)
+    if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
+        self.gw_bag_cols = cols
+        if not skip then
+            layoutItems(self)
+        end
     end
 end
 GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
 
-local function onSizerMouseDown(self, btn)
-    if btn ~= "LeftButton" then
+-- toggles the setting for compact/large icons
+local function compactToggle()
+    if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
+        BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
+        SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
+        inv.resizeInventory()
+        return GwLocalization["EXPAND_ICONS"]
+    end
+
+    BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
+    SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
+    inv.resizeInventory()
+    return GwLocalization["COMPACT_ICONS"]
+end
+GW.AddForProfiling("bag", "compactToggle", compactToggle)
+
+-- deal with all the stupid permutations in which these can be called
+local function hookOpenBag(bag_id)
+    if not bag_id or bag_id ~= BACKPACK_CONTAINER then
         return
     end
-    local bfm = self:GetParent()
-    bfm:StartSizing("BOTTOMRIGHT")
+    local f = GwBagFrame
+    if not f:IsShown() then
+        C_Timer.After(0, function() f:Show() end)
+    end
 end
-GW.AddForProfiling("bag", "onSizerMouseDown", onSizerMouseDown)
-
-local function onSizerMouseUp(self, btn)
-    if btn ~= "LeftButton" then
+GW.AddForProfiling("bag", "hookOpenBag", hookOpenBag)
+local function hookOpenBackpack()
+    hookOpenBag(BACKPACK_CONTAINER)
+end
+GW.AddForProfiling("bag", "hookOpenBackpack", hookOpenBackpack)
+local function hookCloseBag(bag_id)
+    if not bag_id or bag_id ~= BACKPACK_CONTAINER then
         return
     end
-    local bfm = self:GetParent()
-    bfm:StopMovingOrSizing()
-    onBagResizeStop(bfm)
+    local f = GwBagFrame
+    if f:IsShown() then
+        C_Timer.After(0, function() f:Hide() end)
+    end
 end
-GW.AddForProfiling("bag", "onSizerMouseUp", onSizerMouseUp)
+GW.AddForProfiling("bag", "hookCloseBag", hookCloseBag)
+local function hookCloseBackpack()
+    hookCloseBag(BACKPACK_CONTAINER)
+end
+GW.AddForProfiling("bag", "hookCloseBackpack", hookCloseBackpack)
+local function hookToggleBackpack()
+    local f = GwBagFrame
+    if IsBagOpen(0) then
+        if not f:IsShown() then
+            C_Timer.After(0, function() f:Show() end)
+        end
+    else
+        if f:IsShown() then
+            C_Timer.After(0, function() f:Hide() end)
+        end
+    end
+end
+GW.AddForProfiling("bag", "hookToggleBackpack", hookToggleBackpack)
+local function hookToggleBag(bag_id)
+    if not bag_id or bag_id ~= BACKPACK_CONTAINER then
+        return
+    end
+    hookToggleBackpack()
+end
+GW.AddForProfiling("bag", "hookToggleBag", hookToggleBag)
 
-local function LoadBag()
+local function bag_OnShow(self)
+    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
+    self:RegisterEvent("ITEM_LOCKED")
+    self:RegisterEvent("ITEM_UNLOCKED")
+    self:RegisterEvent("BAG_UPDATE")
+    self:RegisterEvent("BAG_UPDATE_DELAYED")
+    if not IsBagOpen(BACKPACK_CONTAINER) then
+        OpenBackpack()
+    end
+    for i = 1, NUM_BAG_SLOTS do
+        if not IsBagOpen(i) then
+            OpenBag(i)
+        end
+    end
+
+    updateBagBar(self.ItemFrame)
+    updateBagContainers(self)
+    snapFrameSize(self)
+end
+GW.AddForProfiling("bag", "bag_OnShow", bag_OnShow)
+
+local function bag_OnHide(self)
+    PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
+    self:UnregisterAllEvents()
+    for i = 1, NUM_BAG_SLOTS do
+        if IsBagOpen(i) then
+            CloseBag(i)
+        end
+    end
+    if IsBagOpen(BACKPACK_CONTAINER) then
+        CloseBackpack()
+    end
+end
+GW.AddForProfiling("bag", "bag_OnHide", bag_OnHide)
+
+local function bag_OnEvent(self, event, ...)
+    if event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
+        -- check if the item un/locked is a character bag and gray it out if so
+        local bag = select(1, ...)
+        local slot = select(2, ...)
+        local cb0_id = CharacterBag0Slot:GetID()
+
+        if slot == nil and bag >= cb0_id and bag <= cb0_id + NUM_BAG_SLOTS then
+            local bag_id = bag - cb0_id + 1
+            local b = self.ItemFrame.bags[bag_id]
+            if b and b.icon and b.icon.SetDesaturated then
+                if event == "ITEM_LOCKED" then
+                    b.icon:SetDesaturated(true)
+                else
+                    b.icon:SetDesaturated(false)
+                end
+            end
+            self.gw_need_bag_rescan = bag_id
+        end
+    elseif event == "BAG_UPDATE" then
+        local bag_id = select(1, ...)
+        if bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER then
+            self.gw_need_bag_update = true
+        end
+    elseif event == "BAG_UPDATE_DELAYED" then
+        if self.gw_need_bag_rescan then
+            OpenBag(self.gw_need_bag_rescan)
+            self.gw_need_bag_rescan = nil
+            updateBagBar(self.ItemFrame)
+            updateBagContainers(self)
+            snapFrameSize(self)
+        end
+        if self.gw_need_bag_update then
+            self.gw_need_bag_update = false
+            if self.ItemFrame:IsShown() then
+                updateFreeBagSlots()
+            end
+        end
+    end
+end
+GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
+
+local function LoadBag(helpers)
+    inv = helpers
+
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
     BAG_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
     if BAG_ITEM_SIZE > 40 then
@@ -404,127 +413,82 @@ local function LoadBag()
         SetSetting("BAG_ITEM_SIZE", 40)
     end
 
-    CreateFrame("Frame", "gwNormalBagHolder", UIParent)
-    gwNormalBagHolder:SetPoint("LEFT", UIParent, "RIGHT")
-    gwNormalBagHolder:SetFrameStrata("HIGH")
+    -- create bag frame, restore its saved size, and init its many pieces
+    local f = CreateFrame("Frame", "GwBagFrame", UIParent, "GwBagFrameTemplate")
+    tinsert(UISpecialFrames, "GwBagFrame")
+    f.gw_state = "closed"
+    f:ClearAllPoints()
+    f:SetWidth(BAG_WINDOW_SIZE)
+    onBagFrameChangeSize(f, nil, nil, true)
 
-    -- create mover frame, restore its saved position, and setup drag to move
-    local bagPos = GetSetting("BAG_POSITION")
-    local fm = CreateFrame("Frame", "GwBagMoverFrame", UIParent, "GwBagMoverFrame")
-    fm:SetWidth(BAG_WINDOW_SIZE - 40)
-    fm:ClearAllPoints()
-    fm:SetPoint(bagPos.point, UIParent, bagPos.relativePoint, bagPos.xOfs, bagPos.yOfs)
-    fm:RegisterForDrag("LeftButton")
-    fm:HookScript(
-        "OnDragStart",
-        function(self)
-            self:StartMoving()
+    -- setup show/hide
+    f:SetScript("OnShow", bag_OnShow)
+    f:SetScript("OnHide", bag_OnHide)
+    f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
+
+    -- setup movable stuff
+    local pos = GetSetting("BAG_POSITION")
+    f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    f.mover:RegisterForDrag("LeftButton")
+    f.mover.onMoveSetting = "BAG_POSITION"
+    f.mover:SetScript("OnDragStart", inv.onMoverDragStart)
+    f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
+
+    -- setup resizer stuff
+    f:SetMinResize(508, 340)
+    f:SetScript("OnSizeChanged", onBagFrameChangeSize)
+    f.sizer.onResizeStop = onBagResizeStop
+    f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
+    f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
+
+    -- take the original search box
+    inv.reskinSearchBox(BagItemSearchBox)
+    hooksecurefunc(
+        "ContainerFrame_Update",
+        function()
+            inv.relocateSearchBox(BagItemSearchBox, f)
         end
     )
-    fm:HookScript("OnDragStop", onBagMove)
+    inv.relocateSearchBox(BagItemSearchBox, f)
 
-    -- create bag frame, restore its saved size, and init its many pieces
-    local f = CreateFrame("Frame", "GwBagFrame", UIParent, "GwBagFrame")
-    tinsert(UISpecialFrames, "GwBagFrame")
-    f:SetWidth(BAG_WINDOW_SIZE)
-    updateBagIcons()
+    -- when we take ownership of ItemButtons, we need parent containers with IDs
+    -- set to the ID (bagId) of the original ContainerFrame we stole it from, in order
+    -- for all of the inherited ItemButton functionality to work normally
+    f.ItemFrame.Containers = {}
+    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        local cf = CreateFrame("Frame", nil, f.ItemFrame)
+        cf.gw_items = {}
+        cf.gw_num_slots = 0
+        cf:SetAllPoints(f.ItemFrame)
+        cf:SetID(bag_id)
+        f.ItemFrame.Containers[bag_id] = cf
+    end
 
+    -- create our backpack bag slots
+    createBagBar(f.ItemFrame)
+
+    -- skin some things not done in XML
     f.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
     f.headerString:SetText(INVENTORY_TOOLTIP)
-
     f.spaceString:SetFont(UNIT_NAME_FONT, 12)
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
-    updateFreeSlots()
 
-    f.bronze:SetFont(UNIT_NAME_FONT, 12)
-    f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.silver:SetFont(UNIT_NAME_FONT, 12)
-    f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.gold:SetFont(UNIT_NAME_FONT, 12)
-    f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
-    updateMoney(f)
-
-    f.currency1:SetFont(UNIT_NAME_FONT, 12)
-    f.currency1:SetTextColor(1, 1, 1)
-    f.currency2:SetFont(UNIT_NAME_FONT, 12)
-    f.currency2:SetTextColor(1, 1, 1)
-    f.currency3:SetFont(UNIT_NAME_FONT, 12)
-    f.currency3:SetTextColor(1, 1, 1)
-    watchCurrency(f)
-
-    -- money tooltip
-    GwMoneyFrame:SetScript(
-        "OnEnter",
-        function(self)
-            local list, total = GetRealmMoney()
-            if list then
-                GameTooltip:SetOwner(self, "ANCHOR_TOP")
-                GameTooltip:ClearLines()
-
-                -- list all players from the realm+faction
-                for name, money in pairs(list) do
-                    local color = select(4, GetClassColor(GetCharClass(name)))
-                    SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
-                end
-
-                -- add total gold on realm+faction
-                GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                SetTooltipMoney(GameTooltip, total, "TOOLTIP", TOTAL .. ":")
-
-                GameTooltip:Show()
-
-                -- align money frames to the right
-                local maxWidth = 0
-                for i = 1, GameTooltip.shownMoneyFrames do
-                    local name = "GameTooltipMoneyFrame" .. i
-                    local textWidth = _G[name .. "PrefixText"]:GetWidth()
-                    local moneyWidth = select(4, _G[name .. "CopperButton"]:GetPoint(1))
-                    maxWidth = max(maxWidth, textWidth + moneyWidth)
-                end
-                for i = 1, GameTooltip.shownMoneyFrames do
-                    local name = "GameTooltipMoneyFrame" .. i
-                    local textWidth = _G[name .. "PrefixText"]:GetWidth()
-                    _G[name .. "CopperButton"]:SetPoint("RIGHT", name .. "PrefixText", "RIGHT", maxWidth - textWidth, 0)
-                end
-            end
+    -- setup initial events (more are added when open in bag_OnEvent)
+    f:SetScript("OnEvent", bag_OnEvent)
+    hooksecurefunc("OpenBag", hookOpenBag)
+    hooksecurefunc("CloseBag", hookCloseBag)
+    hooksecurefunc("ToggleBag", hookToggleBag)
+    hooksecurefunc("OpenBackpack", hookOpenBackpack)
+    hooksecurefunc("CloseBackpack", hookCloseBackpack)
+    hooksecurefunc("ToggleBackpack", hookToggleBackpack)
+    local bindings = {"TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"}
+    for _, b in pairs(bindings) do
+        local key = GetBindingKey(b)
+        if key then
+            SetOverrideBinding(f, false, key, "TOGGLEBACKPACK")
         end
-    )
-
-    -- clear money storage on right-click
-    GwMoneyFrame:SetScript(
-        "OnClick",
-        function(self, button)
-            if button == "RightButton" then
-                ClearStorage(GetRealmStorage("MONEY"))
-                UpdateMoney()
-                GwMoneyFrame:GetScript("OnEnter")(GwMoneyFrame)
-            end
-        end
-    )
-
-    -- update money and watch currencies when applicable
-    f:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            if not GW.inWorld then
-                return
-            end
-            if event == "PLAYER_MONEY" then
-                updateMoney(self)
-            elseif event == "CURRENCY_DISPLAY_UPDATE" then
-                watchCurrency(self)
-            end
-        end
-    )
-    f:RegisterEvent("PLAYER_MONEY")
-    f:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-    hooksecurefunc(
-        "SetCurrencyBackpack",
-        function()
-            watchCurrency(f)
-        end
-    )
+    end
 
     -- setup settings button and its dropdown items
     f.buttonSort:HookScript(
@@ -603,7 +567,8 @@ local function LoadBag()
                     dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
                     SetSetting("BAG_REVERSE_SORT", true)
                 end
-                updateBagIcons()
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
                 dd:Hide()
             end
         )
@@ -630,31 +595,80 @@ local function LoadBag()
         end
     end
 
-    -- setup close button
-    f.buttonClose:HookScript("OnClick", function () CloseAllBags() end)
+    -- setup money frame
+    f.bronze:SetFont(UNIT_NAME_FONT, 12)
+    f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
+    f.silver:SetFont(UNIT_NAME_FONT, 12)
+    f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
+    f.gold:SetFont(UNIT_NAME_FONT, 12)
+    f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 
-    -- setup resizer stuff
-    f:SetMinResize(508, 340)
-    f:HookScript("OnSizeChanged", onBagFrameChangeSize)
-    f.sizer:HookScript("OnMouseDown", onSizerMouseDown)
-    f.sizer:HookScript("OnMouseUp", onSizerMouseUp)
+    -- money frame tooltip
+    f.moneyFrame:SetScript(
+        "OnEnter",
+        function(self)
+            local list, total = GetRealmMoney()
+            if list then
+                GameTooltip:SetOwner(self, "ANCHOR_TOP")
+                GameTooltip:ClearLines()
 
-    f:SetScript("OnHide", bagFrameHide)
-    f:SetScript("OnShow", bagFrameShow)
-    f:Hide()
+                -- list all players from the realm+faction
+                for name, money in pairs(list) do
+                    local color = select(4, GetClassColor(GetCharClass(name)))
+                    SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
+                end
 
-    -- enable the bag window currency button to open currency frame
-    --[[if GetSetting("USE_CHARACTER_WINDOW") then
-        -- the necessary frame ref gets set by the character.lua loader
-        GwCurrencyIcon:SetAttribute(
-            "_onclick",
-            [=[
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "currency")
-            ]=]
-        )
-    else
-    --]]
-    GwCurrencyIcon:SetScript(
+                -- add total gold on realm+faction
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                SetTooltipMoney(GameTooltip, total, "TOOLTIP", TOTAL .. ":")
+
+                GameTooltip:Show()
+
+                -- align money frames to the right
+                local maxWidth = 0
+                for i = 1, GameTooltip.shownMoneyFrames do
+                    local name = "GameTooltipMoneyFrame" .. i
+                    local textWidth = _G[name .. "PrefixText"]:GetWidth()
+                    local moneyWidth = select(4, _G[name .. "CopperButton"]:GetPoint(1))
+                    maxWidth = max(maxWidth, textWidth + moneyWidth)
+                end
+                for i = 1, GameTooltip.shownMoneyFrames do
+                    local name = "GameTooltipMoneyFrame" .. i
+                    local textWidth = _G[name .. "PrefixText"]:GetWidth()
+                    _G[name .. "CopperButton"]:SetPoint("RIGHT", name .. "PrefixText", "RIGHT", maxWidth - textWidth, 0)
+                end
+            end
+        end
+    )
+
+    -- clear money storage on right-click
+    f.moneyFrame:SetScript(
+        "OnClick",
+        function(self, button)
+            if button == "RightButton" then
+                ClearStorage(GetRealmStorage("MONEY"))
+                UpdateMoney()
+                self:GetScript("OnEnter")(self)
+            end
+        end
+    )
+
+    -- update money when applicable
+    f.moneyFrame:SetScript(
+        "OnEvent",
+        function(self, event, ...)
+            if not GW.inWorld then
+                return
+            end
+            if event == "PLAYER_MONEY" then
+                updateMoney(self:GetParent())
+            end
+        end
+    )
+    f.moneyFrame:RegisterEvent("PLAYER_MONEY")
+    updateMoney(f)
+
+    f.currency:SetScript(
         "OnClick",
         function(self, button)
             -- TODO: cannot do this properly until we make the whole bag frame secure
@@ -663,60 +677,42 @@ local function LoadBag()
             end
         end
     )
-    --end
 
-    -- hook into default bag frames to re-use default bag bars and search box
-    for i = 1, #default_bag_frame_container do
-        local fv = _G[default_bag_frame_container[i]]
-        fv:SetFrameStrata("HIGH")
-        fv:SetFrameLevel(5)
+    -- setup watch currencies
+    f.currency1:SetFont(UNIT_NAME_FONT, 12)
+    f.currency1:SetTextColor(1, 1, 1)
+    f.currency2:SetFont(UNIT_NAME_FONT, 12)
+    f.currency2:SetTextColor(1, 1, 1)
+    f.currency3:SetFont(UNIT_NAME_FONT, 12)
+    f.currency3:SetTextColor(1, 1, 1)
 
-        local fc = _G["GwBagContainer" .. tostring(i - 1)]
-        local relocate = nil
-        if i == 1 then
-            relocate = relocateSearchBox
-        end
-        if fv and i < 6 then
-            fv:HookScript(
-                "OnShow",
-                function()
-                    showIcons()
-                    CloseBags()
-                    if relocate then
-                        relocate()
-                    end
-                    updateBagIcons()
-                    if fc then
-                        fc:Show()
-                    end
-                end
-            )
-            fv:HookScript(
-                "OnHide",
-                function()
-                    CloseBags()
-                    updateBagIcons()
-                    if fc then
-                        fc:Hide()
-                    end
-                end
-            )
-        end
-    end
-    BagItemSearchBox:SetScript(
+    f.currency:SetScript(
         "OnEvent",
         function(self, event, ...)
             if not GW.inWorld then
                 return
             end
-            if event == "BAG_UPDATE" or event == "BAG_UPDATE_DELAYED" then
-                relocateSearchBox()
-                updateBagIcons()
-            --updateFreeSlots()
+            if event == "CURRENCY_DISPLAY_UPDATE" then
+                watchCurrency(self:GetParent())
             end
         end
     )
-    BagItemSearchBox:RegisterEvent("BAG_UPDATE_DELAYED")
-    BagItemSearchBox:RegisterEvent("BAG_UPDATE")
+    f.currency:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    hooksecurefunc(
+        "SetCurrencyBackpack",
+        function()
+            watchCurrency(f)
+        end
+    )
+    watchCurrency(f)
+
+    -- return a callback that should be called when item size changes
+    local changeItemSize = function()
+        BAG_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
+        layoutItems(f)
+        snapFrameSize(f)
+        -- TODO: update the text on the compact icons config option
+    end
+    return changeItemSize
 end
 GW.LoadBag = LoadBag

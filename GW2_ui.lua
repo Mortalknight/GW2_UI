@@ -495,8 +495,7 @@ local function loadAddon(self)
     end
 
     if GetSetting("BAGS_ENABLED") then
-        GW.LoadBag()
-        GW.LoadBank()
+        GW.LoadInventory()
     end
 
     if GetSetting("USE_BATTLEGROUND_HUD") then
@@ -522,14 +521,12 @@ local function loadAddon(self)
 
         -- move zone text frame
         if not IsFrameModified("ZoneTextFrame") then
-            Debug("moving ZoneTextFrame")
             ZoneTextFrame:ClearAllPoints()
             ZoneTextFrame:SetPoint("TOP", UIParent, "TOP", 0, -175)
         end
 
         -- move error frame
         if not IsFrameModified("UIErrorsFrame") then
-            Debug("moving UIErrorsFrame")
             UIErrorsFrame:ClearAllPoints()
             UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -190)
             UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14)
@@ -652,3 +649,8 @@ local function Self_Hide(self)
     self:Hide()
 end
 GW.Self_Hide = Self_Hide
+
+local function Parent_Hide(self)
+    self:GetParent():Hide()
+end
+GW.Parent_Hide = Parent_Hide

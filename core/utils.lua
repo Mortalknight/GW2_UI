@@ -247,7 +247,6 @@ local function securePetAndOverride(f, stateType)
     if InCombatLockdown() then
         return false
     end
-    GW.Debug("add secure petandoverride to", f:GetName(), stateType)
     f:SetAttribute("gw_WasShowing", f:IsShown())
     f:SetAttribute(
         "_onstate-petoverride",
@@ -273,7 +272,6 @@ local function securePetAndOverride(f, stateType)
 end
 
 local function normPetAndOverride(f, stateType)
-    GW.Debug("add norm petandoverride to", f:GetName(), stateType)
     local f_OnShow = function()
         f.gw_WasShowing = f:IsShown()
         f:Hide()
@@ -369,6 +367,19 @@ local function getContainerItemLinkByName(itemName)
     end
 end
 GW.getContainerItemLinkByName = getContainerItemLinkByName
+
+local function frame_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
+    GameTooltip:ClearLines()
+    GameTooltip:AddLine(self.tooltipText, 1, 1, 1)
+    GameTooltip:Show()
+end
+local function EnableTooltip(self, text)
+    self.tooltipText = text
+    self:HookScript("OnEnter", frame_OnEnter)
+    self:HookScript("OnLeave", GameTooltip_Hide)
+end
+GW.EnableTooltip = EnableTooltip
 
 --@debug@
 local function AddForProfiling(unit, name, ...)
