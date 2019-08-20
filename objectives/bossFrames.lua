@@ -110,7 +110,7 @@ local function bossFrame_OnEvent(self, event, unit)
         return
     end
     
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" then 
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then 
         updateBoss_Health(self)
         updateBoss_Power(self)
         updateBoss_Name(self)
@@ -166,6 +166,7 @@ local function registerFrame(i)
     targetF:RegisterEvent("RAID_TARGET_UPDATE")
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
+    targetF:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 
     targetF:SetScript(
         "OnShow",
