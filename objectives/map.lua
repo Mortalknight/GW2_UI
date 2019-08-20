@@ -1,5 +1,6 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
+local RoundDec = GW.RoundDec
 
 local IS_GUILD_GROUP
 
@@ -580,14 +581,20 @@ local function LoadMinimap()
 
     GwMiniMapChallengeMode = CreateFrame("Frame", "GwMiniMapChallengeMode", Minimap, "GwMiniMapChallengeMode")
     GwMiniMapChallengeMode:SetParent(UIParent)
-    GwMiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)  
+    GwMiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
 
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
     TimeManagerClockButton:Hide()
     StopwatchFrame:SetParent("UIParent")
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    GwMapTime.total_elapsed = 0
     local fnGwMapTime_OnUpdate = function(self, elapsed)
+        if self.total_elapsed > 0 then
+            self.total_elapsed = self.total_elapsed - elapsed
+            return
+        end
+        self.total_elapsed = 0.1
         self.Time:SetText(GameTime_GetTime(false))
     end
     GwMapTime:SetScript("OnUpdate", fnGwMapTime_OnUpdate)
@@ -606,11 +613,15 @@ local function LoadMinimap()
             return
         end
         self.elapsedTimer = updateCap
+        if self:GetAlpha() <= 0 then
+            -- TODO: unhook the update completely when not in view in the generic hover handler
+            return
+        end
         local posX, posY = MapPositionToXY("player")
         if (posX == 0 and posY == 0) then
             self.Coords:SetText("n/a")
         else
-            self.Coords:SetText(GW.RoundDec(posX * 1000 / 10) .. " / " .. GW.RoundDec(posY * 1000 / 10))
+            self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
         end
     end
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
@@ -629,7 +640,7 @@ local function LoadMinimap()
             end
             self.elapsedTimer = updateCap
             local framerate = GetFramerate()
-            self.fps:SetText(GW.RoundDec(framerate) .. " FPS")
+            self.fps:SetText(RoundDec(framerate) .. " FPS")
         end
         GwMapFPS:SetScript("OnUpdate", MapFPSMiniMap_OnUpdate)
     end
