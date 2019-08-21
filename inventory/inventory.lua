@@ -262,7 +262,6 @@ local function bag_OnMouseDown(self, button)
         return
     end
 
---    GW.Debug("right button", button, bag_id)
     local bag_id = self:GetBagID()
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
         local cf = getContainerFrame(bag_id)
@@ -354,20 +353,17 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
 
     local rows = math.ceil(slots / cols)
---    GW.Debug("row count", rows, "col count", cols, "item size", BANK_ITEM_SIZE, "padding", BANK_ITEM_PADDING)
     local isize = size + padding
     f:SetHeight(max((isize * rows) + 75, min_height))
     f:SetWidth((isize * cols) + padding + 2)
 end
 GW.AddForProfiling("inventory", "snapFrameSize", snapFrameSize)
 
-local savePos = {}
 local function onMoved(self, setting, snap_size)
     if not self then
         return
     end
 
-    GW.Debug("onMoved", self, snap_size)
     self:StopMovingOrSizing()
     local x = self:GetLeft()
     local y = self:GetTop()
@@ -376,14 +372,19 @@ local function onMoved(self, setting, snap_size)
     self:ClearAllPoints()
     self:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
 
-    -- store the position
-    wipe(savePos)
-    savePos.point = "TOPLEFT"
-    savePos.relativePoint = "BOTTOMLEFT"
-    savePos.xOfs = x
-    savePos.yOfs = y
+    -- store the updated position
     if setting then
-        SetSetting(setting, savePos)
+        local pos = GetSetting(setting)
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point = "TOPLEFT"
+        pos.relativePoint = "BOTTOMLEFT"
+        pos.xOfs = x
+        pos.yOfs = y
+        SetSetting(setting, pos)
     end
 
     -- apply our snap sizing, if necessary
