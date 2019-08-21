@@ -154,7 +154,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY" textureSubLevel="8">
-                                <Texture file="nterface/AddOns/GW2_UI/textures/gwstatusbar">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
                                     <Color r="0" b="0" g="0"></Color>
                                     <Anchors>
                                         <Anchor point="TOP" relativePoint="TOP"></Anchor>

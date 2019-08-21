@@ -271,7 +271,7 @@ GW.AddForProfiling("inventory", "bag_OnMouseDown", bag_OnMouseDown)
 -- positions ItemButtons fluidly for this container
 local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
     if not cf or not cf.gw_num_slots or cf.gw_num_slots <= 0 then
-        return
+        return col, row
     end
 
     local nS = cf.gw_num_slots
