@@ -314,6 +314,12 @@ local function bank_OnShow(self)
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("REAGENTBANK_PURCHASED")
 
+    -- hide the bank frame off screen
+    BankFrame:ClearAllPoints()
+    BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+    BankSlotsFrame:Hide()
+    BankItemAutoSortButton:Hide()
+
     -- make the reagent bank initialize itself
     ReagentBankFrame_OnShow(ReagentBankFrame)
     if not self.gw_reagent_skinned then
