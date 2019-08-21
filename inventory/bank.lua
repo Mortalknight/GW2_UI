@@ -365,6 +365,7 @@ local function bank_OnEvent(self, event, ...)
             -- a bank bag was un/equipped
             updateBagBar(self.ItemFrame)
             updateBankContainers(self)
+            snapFrameSize(self)
         else
             -- an item was added to or removed from the base bank
             if self.ItemFrame:IsShown() then
@@ -375,6 +376,7 @@ local function bank_OnEvent(self, event, ...)
         -- the # of bank bag slots has changed (probably a purchase)
         updateBagBar(self.ItemFrame)
         updateBankContainers(self)
+        snapFrameSize(self)
     elseif event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
         -- check if the item un/locked is a bank bag and gray it out if so
         local bag = select(1, ...)
@@ -410,6 +412,7 @@ local function bank_OnEvent(self, event, ...)
         ReagentBankFrameUnlockInfo:ClearAllPoints()
         ReagentBankFrameUnlockInfo:SetParent(ReagentBankFrame)
         updateBankContainers(self)
+        snapFrameSize(self)
     end
 end
 GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
