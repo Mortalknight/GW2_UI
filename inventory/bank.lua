@@ -317,10 +317,8 @@ local function bank_OnShow(self)
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame.Bag1:ClearAllPoints()
-    BankSlotsFrame.Bag1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankItemAutoSortButton:ClearAllPoints()
-    BankItemAutoSortButton:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+    BankSlotsFrame:Hide()
+    BankItemAutoSortButton:Hide()
 
     -- make the reagent bank initialize itself
     ReagentBankFrame_OnShow(ReagentBankFrame)
