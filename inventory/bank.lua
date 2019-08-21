@@ -50,7 +50,7 @@ local function layoutReagentItems(f)
     local item_off = BANK_ITEM_SIZE + BANK_ITEM_PADDING
 
     local cf = f.Containers[REAGENTBANK_CONTAINER]
-    inv.layoutContainerFrame(cf, max_col, row, col, (not rev), item_off)
+    inv.layoutContainerFrame(cf, max_col, row, col, true, item_off)
 end
 GW.AddForProfiling("bank", "layoutReagentItems", layoutReagentItems)
 
