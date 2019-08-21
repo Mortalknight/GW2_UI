@@ -1,11 +1,14 @@
-5.0.28
+5.1.0
 
 NEW
     - Added itemlevel and itemborder quality to equipment selection
+    - Overhaul bank & bags to fix a number of issues
+    - Bag and character frames now "raise" on interaction
 
 FIXES
     - Fixed lua error in achievement tracking
     - Fixed multiple secure handler and in-combat issues with the micromenu
+    - Fixed getting an "empty UI" after visiting the bank and then zoning
 
 
 5.0.27
