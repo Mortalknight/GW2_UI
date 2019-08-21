@@ -37,7 +37,7 @@ local function layoutBagItems(f)
     for i = iS, iE, iD do
         local bag_id = i
         local cf = f.Containers[bag_id]
-        col, row = lcf(cf, max_col, row, col, (not rev), item_off)
+        col, row = lcf(cf, max_col, row, col, false, item_off)
     end
 end
 GW.AddForProfiling("bag", "layoutBagItems", layoutBagItems)

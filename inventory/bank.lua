@@ -35,8 +35,7 @@ local function layoutBankItems(f)
             bag_id = BANK_CONTAINER
         end
         local cf = f.Containers[bag_id]
-        local crev = (not rev and bag_id == BANK_CONTAINER) or (rev and bag_id ~= BANK_CONTAINER)
-        col, row = lcf(cf, max_col, row, col, crev, item_off)
+        col, row = lcf(cf, max_col, row, col, (bag_id == BANK_CONTAINER), item_off)
     end
 end
 GW.AddForProfiling("bank", "layoutBankItems", layoutBankItems)
