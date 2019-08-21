@@ -1,5 +1,6 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
+local SetSetting = GW.SetSetting
 
 local windowsList = {}
 local hasBeenLoaded = false
@@ -85,29 +86,30 @@ windowsList[5] = {
 local charSecure_OnClick =
     [=[
     --print("secure click handler button: " .. button)
+    local f = self:GetFrameRef("GwCharacterWindow")
     if button == "Close" then
-        self:SetAttribute("windowpanelopen", nil)
+        f:SetAttribute("windowpanelopen", nil)
     elseif button == "PaperDoll" then
-        self:SetAttribute("keytoggle", true)
-        self:SetAttribute("windowpanelopen", "paperdoll")
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "paperdoll")
     elseif button == "Reputation" then
-        self:SetAttribute("keytoggle", true)
-        self:SetAttribute("windowpanelopen", "reputation")
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "reputation")
     elseif button == "Currency" then
-        self:SetAttribute("keytoggle", true)
-        self:SetAttribute("windowpanelopen", "currency")
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "currency")
     elseif button == "SpellBook" then
-        self:SetAttribute("keytoggle", true)
-        self:SetAttribute("windowpanelopen", "spellbook")
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "spellbook")
     elseif button == "PetBook" then
-        self:SetAttribute("keytoggle", true)
-        self:SetAttribute("windowpanelopen", "petbook")
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "petbook")
     elseif button == "Talents" then
-        self:SetAttribute("keytoggle", true)
-        self:SetAttribute("windowpanelopen", "talents")
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "talents")
     elseif button == "Professions" then
-        self:SetAttribute("keytoggle", true)
-        self:SetAttribute("windowpanelopen", "professions")
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "professions")
     end
     ]=]
 
@@ -130,7 +132,6 @@ local charSecure_OnAttributeChanged =
     local fmProf = self:GetFrameRef("GwProfessionsFrame")
     local showProf = false
     
-    local fmMov = self:GetFrameRef("GwCharacterWindowMoverFrame")
     local close = false
     local keytoggle = self:GetAttribute("keytoggle")
 
@@ -238,12 +239,10 @@ local charSecure_OnAttributeChanged =
     end
 
     if close then
-        fmMov:Hide()
         self:Hide()
         self:CallMethod("SoundExit")
     elseif not self:IsVisible() then
         self:Show()
-        fmMov:Show()
         self:CallMethod("SoundOpen")
     else
         self:CallMethod("SoundSwap")
@@ -254,7 +253,7 @@ local charSecure_OnShow =
     [=[
     local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
     if keyEsc ~= nil then
-        self:SetBinding(false, keyEsc, "CLICK GwCharacterWindow:Close")
+        self:SetBinding(false, keyEsc, "CLICK GwCharacterWindowClick:Close")
     end
     ]=]
 
@@ -266,18 +265,58 @@ local charCloseSecure_OnClick = [=[
     self:GetParent():SetAttribute("windowpanelopen", nil)
     ]=]
 
-local mover_OnDragStart = function(self)
-    self:StartMoving()
-end
-GW.AddForProfiling("character", "mover_OnDragStart", mover_OnDragStart)
+local mover_OnDragStart = [=[
+    if button ~= "LeftButton" then
+        return
+    end
+    local f = self:GetParent()
+    if self:GetAttribute("isMoving") then
+        f:CallMethod("StopMovingOrSizing")
+    end
+    self:SetAttribute("isMoving", true)
+    self:GetParent():CallMethod("StartMoving")
+]=]
 
-local mover_OnDragStop = function(self)
-    self:StopMovingOrSizing()
+local mover_OnDragStop = [=[
+    if button ~= "LeftButton" then
+        return
+    end
+    if not self:GetAttribute("isMoving") then
+        return
+    end
+    self:SetAttribute("isMoving", false)
+    local f = self:GetParent()
+    f:CallMethod("StopMovingOrSizing")
+    local x, y, _ = f:GetRect()
+
+    -- re-anchor to UIParent after the move
+    f:ClearAllPoints()
+    f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y)
+
+    -- store the updated position
+    self:CallMethod("savePosition", x, y)
+]=]
+
+local function mover_SavePosition(self, x, y)
+    local setting = self.onMoveSetting
+    if setting then
+        local pos = GetSetting(setting)
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point = "BOTTOMLEFT"
+        pos.relativePoint = "BOTTOMLEFT"
+        pos.xOfs = x
+        pos.yOfs = y
+        SetSetting(setting, pos)
+    end
 end
-GW.AddForProfiling("character", "mover_OnDragStop", mover_OnDragStop)
+GW.AddForProfiling("character", "mover_SavePosition", mover_SavePosition)
 
 -- TODO: this doesn't work if bindings are updated in combat, but who does that?!
-local function mover_OnEvent(self, event)
+local function click_OnEvent(self, event)
     if event ~= "UPDATE_BINDINGS" then
         return
     end
@@ -288,7 +327,7 @@ local function mover_OnEvent(self, event)
             for key, click in pairs(win.Bindings) do
                 local keyBind = GetBindingKey(key)
                 if keyBind then
-                    SetOverrideBinding(self, false, keyBind, "CLICK GwCharacterWindow:" .. click)
+                    SetOverrideBinding(self, false, keyBind, "CLICK GwCharacterWindowClick:" .. click)
                 end
             end
         end
@@ -302,21 +341,13 @@ local function loadBaseFrame()
     end
     hasBeenLoaded = true
 
-    -- create the mover handle for the character window
-    local fmGCWMF = CreateFrame("Frame", "GwCharacterWindowMoverFrame", UIParent, "GwCharacterWindowMoverFrame")
-    fmGCWMF:SetScript("OnDragStart", mover_OnDragStart)
-    fmGCWMF:SetScript("OnDragStop", mover_OnDragStop)
-    fmGCWMF:RegisterForDrag("LeftButton")
-    fmGCWMF:SetScript("OnEvent", mover_OnEvent)
-    fmGCWMF:RegisterEvent("UPDATE_BINDINGS")
-
     -- create the character window and secure bind its tab open/close functions
-    local fmGCW = CreateFrame("Button", "GwCharacterWindow", UIParent, "GwCharacterWindow")
+    local fmGCW = CreateFrame("Frame", "GwCharacterWindow", UIParent, "GwCharacterWindowTemplate")
     fmGCW.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     fmGCW.WindowHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    fmGCW:SetFrameRef("GwCharacterWindowMoverFrame", fmGCWMF)
     fmGCW:SetAttribute("windowpanelopen", nil)
-    fmGCW:SetAttribute("_onclick", charSecure_OnClick)
+    fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
+    fmGCW.secure:SetFrameRef("GwCharacterWindow", fmGCW)
     fmGCW:SetAttribute("_onattributechanged", charSecure_OnAttributeChanged)
     fmGCW.SoundOpen = function(self)
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
@@ -334,6 +365,18 @@ local function loadBaseFrame()
 
     -- the close button securely closes the char window
     fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
+
+    -- setup movable stuff
+    local pos = GetSetting("HERO_POSITION")
+    fmGCW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    fmGCW.mover.onMoveSetting = "HERO_POSITION"
+    fmGCW.mover.savePosition = mover_SavePosition
+    fmGCW.mover:SetAttribute("_onmousedown", mover_OnDragStart)
+    fmGCW.mover:SetAttribute("_onmouseup", mover_OnDragStop)
+    
+    -- set binding change handlers
+    fmGCW.secure:HookScript("OnEvent", click_OnEvent)
+    fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
 
     -- hook into inventory currency button
     --if GwCurrencyIcon then
@@ -426,8 +469,8 @@ local function LoadCharacter()
         end
     end
 
-    -- set bindings on mover instead of char win to not interfere with secure ESC binding on char win
-    mover_OnEvent(GwCharacterWindowMoverFrame, "UPDATE_BINDINGS")
+    -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win
+    click_OnEvent(GwCharacterWindow.secure, "UPDATE_BINDINGS")
 end
 GW.LoadCharacter = LoadCharacter
 

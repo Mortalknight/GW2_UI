@@ -110,7 +110,7 @@
                 </Layers>
             </Button>
 
-            <Frame parentkey="mover" frameLevel="25" enableMouse="true">
+            <Frame parentkey="mover" enableMouse="true">
                 <Size y="40" />
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0"></Anchor>
@@ -118,7 +118,7 @@
                 </Anchors>
             </Frame>
 
-            <Frame parentKey="sizer" frameLevel="25" enableMouse="true">
+            <Frame parentKey="sizer" enableMouse="true">
                 <Size x="20" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>

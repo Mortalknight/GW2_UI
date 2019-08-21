@@ -26,18 +26,11 @@
         </Layers>
     </Button>
 
-    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true" hidden="true">
-        <Size x="853" y="50"></Size>
-        <Anchors>
-            <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
-        </Anchors>
-    </Frame>
-
-    <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true" virtual="true" protected="true" hidden="true" frameStrata="HIGH" toplevel="true">
+    <Frame name="GwCharacterWindowTemplate" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate" enableMouse="true" virtual="true" protected="true" hidden="true" frameStrata="HIGH" movable="true" resizable="true" toplevel="true">
+        <HitRectInsets>
+            <AbsInset left="-40" right="0" top="-40" bottom="-40"/>
+        </HitRectInsets>
         <Size x="853" y="627"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>
-        </Anchors>
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
@@ -92,6 +85,17 @@
         </Layers>
 
         <Frames>
+            <Button parentKey="secure" name="$parentClick" inherits="SecureHandlerClickTemplate" hidden="true">
+            </Button>
+
+            <Frame parentKey="mover" enableMouse="true" inherits="SecureHandlerMouseUpDownTemplate">
+                <Size y="40" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-30" y="0"></Anchor>
+                </Anchors>
+            </Frame>
+
             <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate" text="" framelevel="10">
                 <Size x="20" y="20" />
                 <Anchors>
