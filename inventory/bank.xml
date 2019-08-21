@@ -119,7 +119,7 @@
             </Frame>
 
             <Frame parentKey="sizer" frameLevel="25" enableMouse="true">
-                <Size x="40" y="40"></Size>
+                <Size x="20" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
@@ -128,7 +128,7 @@
                         <Texture file="Interface/AddOns/GW2_UI/textures/resize">
                             <Size x="32" y="32"></Size>
                             <Anchors>
-                                <Anchor point="CENTER" x="0" y="0"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
