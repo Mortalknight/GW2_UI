@@ -2,7 +2,7 @@
 
 NEW
     - Added itemlevel and itemborder quality to equipment selection
-    - Overhaul bank & bags to fix a number of issues
+    - Overhaul bank & bags to fix a number of issues (#206, #188)
     - Bag and character frames now "raise" on interaction
 
 FIXES

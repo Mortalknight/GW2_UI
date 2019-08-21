@@ -314,12 +314,6 @@ local function bank_OnShow(self)
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("REAGENTBANK_PURCHASED")
 
-    -- hide the bank frame off screen
-    BankFrame:ClearAllPoints()
-    BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:Hide()
-    BankItemAutoSortButton:Hide()
-
     -- make the reagent bank initialize itself
     ReagentBankFrame_OnShow(ReagentBankFrame)
     if not self.gw_reagent_skinned then
@@ -438,6 +432,14 @@ local function LoadBank(helpers)
     f:SetScript("OnShow", bank_OnShow)
     f:SetScript("OnHide", bank_OnHide)
     f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
+
+    -- re-hide the BankFrame any time it gets repositioned by UIParent stuff
+    hooksecurefunc(BankFrame, "Raise", function()
+        BankFrame:ClearAllPoints()
+        BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+        BankSlotsFrame:Hide()
+        BankItemAutoSortButton:Hide()
+    end)
 
     -- setup movable stuff
     local pos = GetSetting("BANK_POSITION")

@@ -274,7 +274,7 @@ local mover_OnDragStart = [=[
         f:CallMethod("StopMovingOrSizing")
     end
     self:SetAttribute("isMoving", true)
-    self:GetParent():CallMethod("StartMoving")
+    f:CallMethod("StartMoving")
 ]=]
 
 local mover_OnDragStop = [=[
