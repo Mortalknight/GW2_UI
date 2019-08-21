@@ -63,19 +63,13 @@ local function reskinItemButtons()
 end
 GW.AddForProfiling("inventory", "reskinItemButtons", reskinItemButtons)
 
-local function hookGenerateFrame(cf, num_slots, bag_id)
-    -- NOTE: this seems to work without causing taint
-    cf:ClearAllPoints()
-    cf:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-end
-GW.AddForProfiling("inventory", "hookGenerateFrame", hookGenerateFrame)
-
 local function hookUpdateAnchors()
---    GW.Debug("hookUpdate")
     for i = 1, NUM_CONTAINER_FRAMES do
         local cf = _G["ContainerFrame" .. i]
         if cf then
-            hookGenerateFrame(cf)
+            cf:ClearAllPoints()
+            cf:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+            cf:SetSize(10, 10)
         end
     end
 end
@@ -123,6 +117,27 @@ local function getContainerFrame(bag_id)
 end
 GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
 
+local function freeItemButtons(cf, p, bag_id)
+    -- return all of the ItemButtons we previously took before taking new ones, as long as
+    -- we are still the frame that took them to start with (bank/bag might have grabbed
+    -- them from each other in the mean-time)
+    if cf.gw_source ~= nil then
+        for i = 1, MAX_CONTAINER_ITEMS do
+            local item = cf.gw_items[i]
+            if item and item.gw_owner ~= nil and item.gw_owner == p then
+                item:SetParent(cf.gw_source)
+                item.gw_owner = nil
+                item:ClearAllPoints()
+                item:SetPoint("TOPLEFT", cf.gw_source, "TOPLEFT", 0, 0)
+            end
+        end
+        cf.gw_num_slots = 0
+        cf.gw_source = nil
+        wipe(cf.gw_items)
+    end
+end
+GW.AddForProfiling("inventory", "freeItemButtons", freeItemButtons)
+
 local function takeItemButtons(p, bag_id)
     if not p or not bag_id then
         return
@@ -136,18 +151,7 @@ local function takeItemButtons(p, bag_id)
     -- amazingly; this is probably brittle in the long-term though and we should
     -- someday re-implemenent all the ItemButton functionality ourselves
 
-    -- return all of the ItemButtons we previously took before taking new ones
-    if cf.gw_num_slots ~= 0 and cf.gw_source ~= nil then
-        for i = 1, cf.gw_num_slots do
-            local item = cf.gw_items[i]
-            if item then
-                item:SetParent(cf.gw_source)
-            end
-        end
-        cf.gw_num_slots = 0
-        cf.gw_source = nil
-        wipe(cf.gw_items)
-    end
+    freeItemButtons(cf, p, bag_id)
 
     local iname
     if bag_id == BANK_CONTAINER then
@@ -164,14 +168,16 @@ local function takeItemButtons(p, bag_id)
         cf.gw_source = b
         iname = b:GetName() .. "Item"
     end
+    cf.gw_owner = p
     
     local num_slots = GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
 
-    for i = 1, num_slots do
+    for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
         local item = _G[iname .. i]
         if item then
             item:SetParent(cf)
+            item.gw_owner = p
             cf.gw_items[i] = item
         end
     end
@@ -427,8 +433,7 @@ GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 local function LoadInventory()
     item_size = GetSetting("BAG_ITEM_SIZE")
 
-    -- anytime a default ContainerFrame is populated with a specific bagId, we hide it
-    --hooksecurefunc("ContainerFrame_GenerateFrame", hookGenerateFrame)
+    -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
 
     -- reskin all the multi-use ContainerFrame ItemButtons
@@ -450,11 +455,11 @@ local function LoadInventory()
     helpers.resizeInventory = resizeInventory
     helpers.getContainerFrame = getContainerFrame
     helpers.takeItemButtons = takeItemButtons
+    helpers.freeItemButtons = freeItemButtons
     helpers.reskinBagBar = reskinBagBar
     helpers.reskinSearchBox = reskinSearchBox
     helpers.relocateSearchBox = relocateSearchBox
     helpers.bag_OnMouseDown = bag_OnMouseDown
-    helpers.hookUpdateAnchors = hookUpdateAnchors
     helpers.layoutContainerFrame = layoutContainerFrame
     helpers.updateFreeSlots = updateFreeSlots
     helpers.snapFrameSize = snapFrameSize

@@ -50,6 +50,16 @@ local function layoutItems(f)
 end
 GW.AddForProfiling("bag", "layoutItems", layoutItems)
 
+-- adjusts the bag frame size to snap to the exact row/col sizing of contents
+local function snapFrameSize(f)
+    local cfs
+    if f.ItemFrame:IsShown() then
+        cfs = f.ItemFrame.Containers
+    end
+    inv.snapFrameSize(f, cfs, BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
+end
+GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
+
 local function updateMoney(self)
     if not self then
         return
@@ -101,15 +111,22 @@ GW.AddForProfiling("bag", "updateFreeBagSlots", updateFreeBagSlots)
 
 -- update all backpack bag items
 local function updateBagContainers(f)
-    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-        inv.takeItemButtons(f.ItemFrame, bag_id)
-    end
     if f.ItemFrame:IsShown() then
         updateFreeBagSlots()
         layoutItems(f)
+        snapFrameSize(f)
     end
 end
 GW.AddForProfiling("bag", "updateBagContainers", updateBagContainers)
+
+-- rescan ALL bag ItemButtons
+local function rescanBagContainers(f)
+    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        inv.takeItemButtons(f.ItemFrame, bag_id)
+    end
+    updateBagContainers(f)
+end
+GW.AddForProfiling("bag", "rescanBagContainers", rescanBagContainers)
 
 -- draws the backpack bag slots in the correct order
 local function setBagBarOrder(f)
@@ -139,9 +156,8 @@ GW.AddForProfiling("bag", "setBagBarOrder", setBagBarOrder)
 local function bag_OnClick(self, button, down)
     -- on left click, ensure that the bag stays open despite default toggle behavior
     if button == "LeftButton" then
-        if self.gwHasBag then
+        if self.gwHasBag and not IsBagOpen(self:GetBagID()) then
             OpenBag(self:GetBagID())
-            updateBagContainers(self:GetParent():GetParent())
         end
     end
 end
@@ -230,16 +246,6 @@ local function updateBagBar(f)
     end
 end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
-
--- adjusts the bag frame size to snap to the exact row/col sizing of contents
-local function snapFrameSize(f)
-    local cfs
-    if f.ItemFrame:IsShown() then
-        cfs = f.ItemFrame.Containers
-    end
-    inv.snapFrameSize(f, cfs, BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
-end
-GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
 
 local function onBagResizeStop(self)
     BAG_WINDOW_SIZE = self:GetWidth()
@@ -343,7 +349,6 @@ local function bag_OnShow(self)
 
     updateBagBar(self.ItemFrame)
     updateBagContainers(self)
-    snapFrameSize(self)
 end
 GW.AddForProfiling("bag", "bag_OnShow", bag_OnShow)
 
@@ -378,7 +383,7 @@ local function bag_OnEvent(self, event, ...)
                     b.icon:SetDesaturated(false)
                 end
             end
-            self.gw_need_bag_rescan = bag_id
+            self.gw_need_bag_rescan = true
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
@@ -387,11 +392,14 @@ local function bag_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
-            OpenBag(self.gw_need_bag_rescan)
-            self.gw_need_bag_rescan = nil
+            for bag_id = 1, NUM_BAG_SLOTS do
+                if not IsBagOpen(bag_id) then
+                    OpenBag(bag_id)
+                end
+            end
             updateBagBar(self.ItemFrame)
-            updateBagContainers(self)
-            snapFrameSize(self)
+            rescanBagContainers(self)
+            self.gw_need_bag_rescan = false
         end
         if self.gw_need_bag_update then
             self.gw_need_bag_update = false
@@ -463,6 +471,13 @@ local function LoadBag(helpers)
         cf:SetID(bag_id)
         f.ItemFrame.Containers[bag_id] = cf
     end
+
+    -- anytime a ContainerFrame is populated with a backpack bagId, we take its buttons
+    hooksecurefunc("ContainerFrame_GenerateFrame", function(frame, size, id)
+        if id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS then
+            rescanBagContainers(f)
+        end
+    end)
 
     -- create our backpack bag slots
     createBagBar(f.ItemFrame)
