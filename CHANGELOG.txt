@@ -1,3 +1,9 @@
+5.1.2
+
+NEW
+    - Bank now has a "default" container to be consistent with backpack view
+
+
 5.1.1
 
 NEW

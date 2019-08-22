@@ -71,7 +71,7 @@ local function snapFrameSize(f)
     elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
         cfs = f.ReagentFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, BANK_ITEM_SIZE, BANK_ITEM_PADDING, 350)
+    inv.snapFrameSize(f, cfs, BANK_ITEM_SIZE, BANK_ITEM_PADDING, 370)
 end
 GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
 
@@ -82,8 +82,13 @@ end
 GW.AddForProfiling("bank", "updateFreeSpaceString", updateFreeSpaceString)
 
 -- update the number of free bank slots available and set the display for it
-local function updateFreeBankSlots()
-    inv.updateFreeSlots(GwBankFrame.spaceString, NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS, BANK_CONTAINER)
+local function updateFreeBankSlots(self)
+    local free, _ = inv.updateFreeSlots(GwBankFrame.spaceString, NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS, BANK_CONTAINER)
+    local b = self.bags[0]
+    if b then
+        SetItemButtonCount(b, free)
+        b.tooltipAddLine = string.format(NUM_FREE_SLOTS, free)
+    end
 end
 GW.AddForProfiling("bank", "updateFreeBankSlots", updateFreeBankSlots)
 
@@ -105,7 +110,7 @@ local function updateBankContainers(f)
     end
     if f:IsShown() then
         if f.ItemFrame:IsShown() then
-            updateFreeBankSlots()
+            updateFreeBankSlots(f.ItemFrame)
         elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
             updateFreeReagentSlots()
         end
@@ -131,12 +136,12 @@ local function setBagBarOrder(f)
     local bag_padding = 4
     local rev = GetSetting("BANK_REVERSE_SORT")
     if rev then
-        y = -40 - ((bag_size + bag_padding) * (NUM_BANKBAGSLOTS - 1))
+        y = -40 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
     else
         y = -40
     end
 
-    for bag_idx = 1, NUM_BANKBAGSLOTS do
+    for bag_idx = 0, NUM_BANKBAGSLOTS do
         local b = f.bags[bag_idx]
         b:ClearAllPoints()
         b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
@@ -192,6 +197,24 @@ local function createBagBar(f)
 
         f.bags[bag_idx] = b
     end
+
+    -- create a fake bag frame for the base bank slots
+    local b = CreateFrame("ItemButton", nil, f, "GwBankBaseBagTemplate")
+    b:SetID(0)
+    b.GetBagID = function()
+        return BANK_CONTAINER
+    end
+    inv.reskinBagBar(b)
+    local norm = b:GetNormalTexture()
+    norm:SetVertexColor(1, 1, 1, 0.75)
+    SetItemButtonQuality(b, 1, nil)
+    EnableTooltip(b, BANK, "ANCHOR_RIGHT", 0)
+    b.icon:SetTexture(413587)
+    b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    b:RegisterForClicks("LeftButtonUp")
+    b:SetScript("OnClick", CloseBankFrame)
+    f.bags[0] = b
+
     setBagBarOrder(f)
 end
 GW.AddForProfiling("bank", "createBagBar", createBagBar)
@@ -201,6 +224,7 @@ local function updateBagBar(f)
     local bank_slots, full = GetNumBankSlots()
     for bag_idx = 1, NUM_BANKBAGSLOTS do
         local b = f.bags[bag_idx]
+        local bag_id = b:GetBagID()
         local inv_id = b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
@@ -211,7 +235,9 @@ local function updateBagBar(f)
         norm:SetVertexColor(1, 1, 1, 0.75)
         if bag_tex ~= nil then
             b.gwHasBag = true
-            OpenBag(b:GetBagID()) -- default open valid bank bags immediately
+            if not IsBagOpen(bag_id) then
+                OpenBag(bag_id) -- default open valid bank bags immediately
+            end
             b.icon:SetTexture(bag_tex)
             local quality = GetInventoryItemQuality("player", inv_id)
             if quality then
@@ -351,7 +377,6 @@ local function bank_OnEvent(self, event, ...)
         local slot = select(1, ...)
         if slot > NUM_BANKGENERIC_SLOTS then
             -- a bank bag was un/equipped
-            GW.Debug("rescan bank bags")
             for bag_id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
                 if not IsBagOpen(bag_id) then
                     OpenBag(bag_id)
@@ -362,7 +387,7 @@ local function bank_OnEvent(self, event, ...)
         else
             -- an item was added to or removed from the base bank
             if self.ItemFrame:IsShown() then
-                updateFreeBankSlots()
+                updateFreeBankSlots(self.ItemFrame)
             end
         end
     elseif event == "PLAYERBANKBAGSLOTS_CHANGED" then
@@ -387,7 +412,7 @@ local function bank_OnEvent(self, event, ...)
         local bag_id = select(1, ...)
         if bag_id == BANK_CONTAINER or bag_id > NUM_BAG_SLOTS then
             if self.ItemFrame:IsShown() then
-                updateFreeBankSlots()
+                updateFreeBankSlots(self.ItemFrame)
             end
         elseif bag_id == REAGENTBANK_CONTAINER then
             if self.ReagentFrame:IsShown() and IsReagentBankUnlocked() then

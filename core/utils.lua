@@ -369,13 +369,23 @@ end
 GW.getContainerItemLinkByName = getContainerItemLinkByName
 
 local function frame_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
-    GameTooltip:ClearLines()
-    GameTooltip:AddLine(self.tooltipText, 1, 1, 1)
+    GameTooltip:SetOwner(self, self.tooltipDir, 0, self.tooltipYoff)
+    GameTooltip:SetText(self.tooltipText, 1, 1, 1)
+    if self.tooltipAddLine then
+        GameTooltip:AddLine(self.tooltipAddLine)
+    end
     GameTooltip:Show()
 end
-local function EnableTooltip(self, text)
+local function EnableTooltip(self, text, dir, y_off)
     self.tooltipText = text
+    if not dir then
+        dir = "ANCHOR_LEFT"
+    end
+    if not y_off then
+        y_off = -40
+    end
+    self.tooltipDir = dir
+    self.tooltipYoff = y_off
     self:HookScript("OnEnter", frame_OnEnter)
     self:HookScript("OnLeave", GameTooltip_Hide)
 end

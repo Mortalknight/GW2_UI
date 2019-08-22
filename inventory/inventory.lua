@@ -212,7 +212,9 @@ local function reskinBagBar(b)
     high:ClearAllPoints()
     high:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
 
-    b.SlotHighlightTexture:SetAlpha(0)
+    if b.SlotHighlightTexture then
+        b.SlotHighlightTexture:SetAlpha(0)
+    end
 
     b:SetPushedTexture(nil)
 end
@@ -329,7 +331,7 @@ local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     end
 
     sp_str:SetText((full - free) .. " / " .. full)
-    --updateFreeSpaceString(full - free, full)
+    return free, full
 end
 GW.AddForProfiling("inventory", "updateFreeSlots", updateFreeSlots)
 
