@@ -475,3 +475,12 @@ local function LoadInventory()
     bank_resize = GW.LoadBank(helpers)
 end
 GW.LoadInventory = LoadInventory
+
+SLASH_GWWINRS1 = "/gw_win_reset"
+SlashCmdList["GWWINRS"] = function ()
+    GW.Debug("win reset")
+    SetSetting("BAG_POSITION", nil)
+    SetSetting("BANK_POSITION", nil)
+    SetSetting("HERO_POSITION", nil)
+    C_UI.Reload()
+end

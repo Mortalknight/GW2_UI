@@ -1,5 +1,8 @@
 5.1.1
 
+NEW
+    - Add the /gw_win_reset slash command to reset bag/bank/hero positions
+
 FIXES
     - Revert debug code showing default bags at the bank :) oops
 
