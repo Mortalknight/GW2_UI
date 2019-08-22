@@ -3,6 +3,10 @@
 NEW
     - Bank now has a "default" container to be consistent with backpack view
 
+FIXES
+    - Change default bag, bank, and hero window positions to be on-screen with
+      more resolutions (use /gw_win_reset to reset them to these defaults)
+
 
 5.1.1
 
