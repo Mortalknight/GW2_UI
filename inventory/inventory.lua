@@ -82,6 +82,10 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     local t = button.IconBorder
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
+
+    if GetSetting("BAG_ITEM_BORDER_HIDE") then
+        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
+    end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
 

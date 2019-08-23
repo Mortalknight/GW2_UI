@@ -212,7 +212,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" hidden="true" frameLevel="58">
-                        <Size x="200" y="120"></Size>
+                        <Size x="200" y="150"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
@@ -258,6 +258,14 @@
                                 <Size x="100" y="30"></Size>
                                 <Anchors>
                                     <Anchor point="TOP" relativePoint="TOP" y="-90"></Anchor>
+                                </Anchors>
+                                <NormalFont style="ChatBubbleFont"></NormalFont>
+                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                            </Button>
+                            <Button parentKey="itemBorder" text="Show Item Border">
+                                <Size x="100" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOP" relativePoint="TOP" y="-120"></Anchor>
                                 </Anchors>
                                 <NormalFont style="ChatBubbleFont"></NormalFont>
                                 <HighlightFont style="ChatBubbleFont"></HighlightFont>

@@ -588,6 +588,22 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.itemBorder:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_ITEM_BORDER_HIDE") then
+                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
+                    SetSetting("BAG_ITEM_BORDER_HIDE", false)
+                else
+                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
+                    SetSetting("BAG_ITEM_BORDER_HIDE", true)
+                end
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
+                dd:Hide()
+            end
+        )
+
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
             dd.compactBags:SetText(GwLocalization["COMPACT_ICONS"])
         else
@@ -607,6 +623,11 @@ local function LoadBag(helpers)
             dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
         else
             dd.bagOrder:SetText(GwLocalization["BAG_ORDER_REVERSE"])
+        end
+        if GetSetting("BAG_ITEM_BORDER_HIDE") then
+            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
+        else
+            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
         end
     end
 

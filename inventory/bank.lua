@@ -614,6 +614,22 @@ local function LoadBank(helpers)
             end
         )
 
+        dd.itemBorder:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_ITEM_BORDER_HIDE") then
+                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
+                    SetSetting("BAG_ITEM_BORDER_HIDE", false)
+                else
+                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
+                    SetSetting("BAG_ITEM_BORDER_HIDE", true)
+                end
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
+                dd:Hide()
+            end
+        )
+
         if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
             dd.compactBank:SetText(GwLocalization["BANK_COMPACT_ICONS"])
         else
@@ -623,6 +639,11 @@ local function LoadBank(helpers)
             dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
         else
             dd.bagOrder:SetText(GwLocalization["BAG_ORDER_REVERSE"])
+        end
+        if GetSetting("BAG_ITEM_BORDER_HIDE") then
+            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
+        else
+            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
         end
     end
 
