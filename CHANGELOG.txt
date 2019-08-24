@@ -1,3 +1,9 @@
+5.1.3
+
+FIXES
+    - The GW2 micromenu bar will now style properly with ElvUI is installed
+
+
 5.1.2
 
 NEW

@@ -416,7 +416,81 @@ local function setupMicroButtons()
 end
 GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
 
+local function checkElvUI()
+    -- ElvUI re-styles the MicroButton bar even if it is disabled in their options.
+    -- We check for that condition here, and force styling fixes if necessary. Or
+    -- skip touching it entirely if their MicroButton bar is enabled.
+    --
+    -- This works as-is because we know ElvUI will load before us. Otherwise we'll
+    -- have to get more in-depth with the ACE loading logic.
+    
+    -- get the ElvUI addon/ActionBars module from ACE
+    if not LibStub then
+        return false
+    end
+    local ace = LibStub("AceAddon-3.0")
+    if not ace then
+        return false
+    end
+    local elv = ace:GetAddon("ElvUI")
+    if not elv then
+        return false
+    end
+    local ab = elv:GetModule("ActionBars")
+    if not ab then
+        return false
+    end
+
+    -- check if the ElvUI microbar setting is enabled
+    if ab.db.microbar.enabled then
+        return true
+    end
+
+    -- at this point we know we should own the microbar; fix what ElvUI did to it
+    ElvUI_MicroBar = nil
+
+    for i = 1, #MICRO_BUTTONS do
+        local name = MICRO_BUTTONS[i]
+        local btn = _G[name]
+        if btn then
+            -- remove the backdrop ElvUI adds
+            if btn.backdrop then
+                btn.backdrop:Hide()
+                btn.backdrop = nil
+            end
+
+            -- undo the texture coords ElvUI applies
+            local pushed = btn:GetPushedTexture()
+            local normal = btn:GetNormalTexture()
+            local disabled = btn:GetDisabledTexture()
+
+            if pushed then
+                pushed:SetTexCoord(0, 1, 0, 1)
+            end
+            if normal then
+                normal:SetTexCoord(0, 1, 0, 1)
+            end
+            if disabled then
+                disabled:SetTexCoord(0, 1, 0, 1)
+            end
+
+            local high = btn:GetHighlightTexture()
+            if high then
+                high.Show = normal.Show
+                high:Show()
+            end
+        end
+    end
+
+    return false
+end
+
 local function LoadMicroMenu()
+    -- compatability with ElvUI (this one is their fault)
+    if checkElvUI() then
+        return
+    end
+
     -- create our micro button container frame
     microButtonFrame = CreateFrame("Frame", "GwMicroButtonFrame", UIParent, "GwMicroButtonFrame")
 
@@ -519,5 +593,6 @@ local function LoadMicroMenu()
         modifyMicroAlert(TalentMicroButtonAlert, TalentMicroButton)
     end
     hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert)
+
 end
 GW.LoadMicroMenu = LoadMicroMenu
