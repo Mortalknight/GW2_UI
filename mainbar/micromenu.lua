@@ -432,7 +432,7 @@ local function checkElvUI()
     if not ace then
         return false
     end
-    local elv = ace:GetAddon("ElvUI")
+    local elv = ace:GetAddon("ElvUI", true)
     if not elv then
         return false
     end
