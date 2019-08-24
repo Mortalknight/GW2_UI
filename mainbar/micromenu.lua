@@ -428,7 +428,7 @@ local function checkElvUI()
     if not LibStub then
         return false
     end
-    local ace = LibStub("AceAddon-3.0")
+    local ace = LibStub("AceAddon-3.0", true)
     if not ace then
         return false
     end
