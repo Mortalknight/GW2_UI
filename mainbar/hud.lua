@@ -668,9 +668,55 @@ function gw_breath_meter()
 
 end
 
+local function updateGuildButton()  
+    local bmb = GwMicroButtonSocialsMicroButton
+    if bmb == nil then
+        return
+    end
+
+    local _, _, numOnlineMembers = GetNumGuildMembers()
+
+    if numOnlineMembers ~= nil and numOnlineMembers > 0 then
+        bmb.darkbg:Show()
+        
+        if numOnlineMembers > 9 then
+            bmb.String:SetText(numOnlineMembers)
+        else
+            bmb.String:SetText(numOnlineMembers .. " ")
+        end
+        bmb.String:Show()
+    else
+        bmb.darkbg:Hide()
+        bmb.String:Hide()
+    end   
+end
+
+local function updateBagButton()  
+    local bmb = GwMicroButtonBagMicroButton
+    if bmb == nil then
+        return
+    end
+
+    local totalEmptySlots = 0
+    for i = 0, 4 do
+        local numberOfFreeSlots, _ = GetContainerNumFreeSlots(i)
+
+        if numberOfFreeSlots ~= nil then
+            totalEmptySlots = totalEmptySlots + numberOfFreeSlots
+        end
+    end
+
+    bmb.darkbg:Show()
+    if totalEmptySlots > 9 then
+        bmb.String:SetText(totalEmptySlots)
+    else
+        bmb.String:SetText(totalEmptySlots .. " ")
+    end
+    bmb.String:Show()
+end
+
 
 local microButtonFrame = CreateFrame('Frame', 'GwMicroButtonFrame', UIParent,'GwMicroButtonFrame')
-
 local microButtonPadding = 4 +12
 
 function create_micro_button(key)
@@ -790,6 +836,32 @@ function gwCreateMicroMenu()
     gw_microButtonHookToolTip(GwMicroButtonSocialsMicroButton, SOCIAL_BUTTON, 'TOGGLESOCIAL')
     gw_microButtonHookToolTip(GwMicroButtonWorldMapMicroButton, WORLDMAP_BUTTON, 'TOGGLEWORLDMAP')
     gw_microButtonHookToolTip(GwMicroButtonHelpMicroButton, PETITION_GAME_MASTER, 'TOGGLE_HELP')
+
+    GwMicroButtonBagMicroButton.interval = 0
+    GwMicroButtonBagMicroButton:HookScript(
+        "OnUpdate",
+        function(self, elapsed)
+            self.interval = self.interval - elapsed
+            if self.interval > 0 then
+                return
+            end
+
+            self.interval = 0.5
+            updateBagButton()
+        end
+    )
+
+    GwMicroButtonSocialsMicroButton.interval = 0
+    GwMicroButtonSocialsMicroButton:SetScript('OnUpdate', function(self, elapsed)
+        if self.interval > 0 then
+            self.interval = self.interval - elapsed
+            return
+        end
+        self.interval = 15.0
+        GuildRoster()
+    end)
+    GwMicroButtonSocialsMicroButton:SetScript('OnEvent', updateGuildButton)
+    GwMicroButtonSocialsMicroButton:RegisterEvent('GUILD_ROSTER_UPDATE')
     
     GwMicroButtonMainMenuMicroButton:SetScript('OnEnter', function()
         GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate', gw_latencyInfoToolTip)
