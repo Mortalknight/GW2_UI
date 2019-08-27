@@ -300,11 +300,11 @@ function gw_update_bag_icons(smooth)
     local bStart = 1
     local bEnd = 5
     local bStep = 1
-    if gwGetSetting('BAG_REVERSE_SORT') then
-        bStart = 5
-        bEnd = 1
-        bStep = -1
-    end
+    --if gwGetSetting('BAG_REVERSE_SORT') then
+        --bStart = 5
+        --bEnd = 1
+        --bStep = -1
+    --end
     for BAG_INDEX = bStart, bEnd, bStep do
         local cfm = 'ContainerFrame' .. tostring(BAG_INDEX)
 
