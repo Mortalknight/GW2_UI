@@ -252,32 +252,14 @@ local function setHealth(self)
         gwBar(self.healthbar,healthPrec)
 end
 
-
-local function setUnitName(self)
-    
-    if self==nil or self.unit==nil then return end
-	
-	local guid = UnitGUID(self.unit)
-	local realmid = string.match(guid, "^Player%-(%d+)")
-	local guid_Player = UnitGUID('Player')
-	if guid_Player ~= nil then 
-		realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
-	end
+local function setUnitName(self)  
+    if self == nil or self.unit == nil then 
+        return 
+    end
 
     local nameString = UnitName(self.unit)
-	local realm = GetRealmName(self.unit)
-	local realmflag = ''
-	
-	if gwGetSetting('RAID_UNIT_FLAGS') == 'NONE' then
-		realmflag = ''
-	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'DIFFERENT' then
-		if gw_set_unit_flag[realmid] ~= gw_set_unit_flag[realmid_Player] then realmflag = gw_set_unit_flag[realmid] end
-	elseif gwGetSetting('RAID_UNIT_FLAGS') == 'ALL' then
-		realmflag = gw_set_unit_flag[realmid]
-	end
 
-    self.name:SetText(nameString..' '..realmflag)
-    
+    self.name:SetText(nameString)  
 end
 
 
