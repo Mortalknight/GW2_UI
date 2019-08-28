@@ -528,7 +528,7 @@ local function updateCastValues(self, event)
         castType = 0
     end
 
-    if name == nil then
+    if name == nil or UnitName(self.unit) ~= UnitName("player") then
         hideCastBar(self, event)
         return
     end
@@ -537,11 +537,6 @@ local function updateCastValues(self, event)
     endTime = endTime / 1000
 
     self.castingString:SetText(name)
-
-    --if texture ~= nil and self.portrait ~= nil and (self.activePortrait == nil or self.activePortrait ~= texture) then
-    --    self.portrait:SetTexture(texture)
-    --    self.activePortrait = texture
-    --end
 
     self.castingbarBackground:Show()
     self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", -2, -1)
