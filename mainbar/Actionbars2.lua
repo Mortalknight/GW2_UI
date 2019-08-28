@@ -1,3 +1,9 @@
+local _, GW = ...
+local GetSetting = GW.GetSetting
+local SetSetting = GW.SetSetting
+local RegisterMovableFrame = GW.RegisterMovableFrame
+local Self_Hide = GW.Self_Hide
+local CountTable = GW.CountTable
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
 
@@ -24,31 +30,23 @@ local GW_BLIZZARD_HIDE_FRAMES ={
 	MainMenuMaxLevelBar3,
 }
 
-local GW_BLIZZARD_FORCE_HIDE = {
-    
+local GW_BLIZZARD_FORCE_HIDE = { 
     ReputationWatchBar,
     HonorWatchBar,
     MainMenuExpBar,
     ArtifactWatchBar,
     KeyRingButton,
-
     MainMenuBarTexture,
     MainMenuMaxLevelBar,
     MainMenuXPBarTexture,
-
     ReputationWatchBarTexture,
     ReputationXPBarTexture,
-
     MainMenuBarPageNumber,
-
     SlidingActionBarTexture0,
     SlidingActionBarTexture1,
-
     StanceBarLeft,
     StanceBarMiddle,
     StanceBarRight,
-			
-
     PossessBackground1,
     PossessBackground2,
 }
@@ -80,7 +78,7 @@ function gw_hideBlizzardsActionbars()
         if  object:IsObjectType('Button') then
             object:SetScript('OnClick', nil)
         end
-        hooksecurefunc(object, 'Show', gwHideSelf)
+        hooksecurefunc(object, 'Show', Self_Hide)
 
         object:Hide()
     end
@@ -115,7 +113,7 @@ function gwActionButton_UpdateHotkeys(self, actionButtonType)
 	if hotkey:GetText() == RANGE_INDICATOR then
 		hotkey:SetText('')
 	else
-		if gwGetSetting('BUTTON_ASSIGNMENTS') then
+		if GetSetting('BUTTON_ASSIGNMENTS') then
 			hotkey:SetText(text)
 		else
 			hotkey:SetText('')
@@ -135,7 +133,7 @@ function gwSetMicroButtons()
 
     for i = 1, #MICRO_BUTTONS do
         if _G[MICRO_BUTTONS[i]] then
-            _G[MICRO_BUTTONS[i]]:SetScript('OnShow', gwHideSelf)
+            _G[MICRO_BUTTONS[i]]:SetScript('OnShow', Self_Hide)
             _G[MICRO_BUTTONS[i]]:SetScript('OnHide', nil)
             _G[MICRO_BUTTONS[i]]:SetScript('OnEnter', nil)
             _G[MICRO_BUTTONS[i]]:SetScript('OnLeave', nil)
@@ -146,24 +144,15 @@ function gwSetMicroButtons()
         end
     end
 end
-  
-function gwSetMultibarCols()
-    local cols = gwGetSetting('MULTIBAR_RIGHT_COLS')
-    gwDebug('setting multibar cols', cols)
-    local mb1 = gwGetSetting('MultiBarRight')
-    local mb2 = gwGetSetting('MultiBarLeft')
-    mb1['ButtonsPerRow'] = cols
-    mb2['ButtonsPerRow'] = cols
-    gwSetSetting('MultiBarRight', mb1)
-    gwSetSetting('MultiBarLeft', mb2)
-end
 
 function gwHideBackdrop(self)
     _G[self:GetName() .. 'GwBackDrop']:Hide()
 end
+
 function gwShowBackdrop(self)
     _G[self:GetName() .. 'GwBackDrop']:Show()
 end
+
 function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
     if _G[buttonName..'Icon']~=nil then
         _G[buttonName..'Icon']:SetTexCoord(0.1,0.9,0.1,0.9)
@@ -210,7 +199,7 @@ function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
     
     
     if noBackDrop==nil or noBackDrop==false then
-        local backDrop = CreateFrame('Frame',buttonName..'GwBackDrop',_G[buttonName]:GetParent(),'GwActionButtonBackDrop')
+        local backDrop = CreateFrame('Frame', buttonName .. 'GwBackDrop', _G[buttonName]:GetParent(), 'GwActionButtonBackDrop')
         local backDropSize = 1
         if _G[buttonName]:GetWidth()>40 then
             backDropSize =2
@@ -232,11 +221,7 @@ end
 
 
 function gwMainMenuOnEvent(self, event)
-    if event == 'PET_BATTLE_OPENING_START' then
-        gwToggleMainHud(false)
-    elseif event == 'PET_BATTLE_CLOSE' then
-        gwToggleMainHud(true)
-    elseif event == 'PLAYER_EQUIPMENT_CHANGED' then
+    if event == 'PLAYER_EQUIPMENT_CHANGED' then
         gwActionBarEquipUpdate()
     end
 end
@@ -244,7 +229,6 @@ end
 function gwShowAttr()
     for i=1,12 do
         local BUTTON =  _G['ActionButton'..i]
-        print(BUTTON:GetAttribute('type'))
     end
 end
 
@@ -289,7 +273,7 @@ local function updateMainBar()
             btn['gw_RangeIndicator'] = rangeIndicator
             btn['gw_HotKey'] = hotkey
             
-			if gwGetSetting('BUTTON_ASSIGNMENTS') then
+			if GetSetting('BUTTON_ASSIGNMENTS') then
 				local hkBg = CreateFrame('Frame', 'GwHotKeyBackDropActionButton' .. i, hotkey:GetParent(), 'GwActionHotKeyBackDrop')
             
 				hkBg:SetPoint('CENTER', hotkey, 'CENTER', 0, 0)
@@ -312,7 +296,7 @@ end
 
 local function updateMultiBar(barName, buttonName)
     local multibar = _G[barName]
-    local settings = gwGetSetting(barName)
+    local settings = GetSetting(barName)
     local used_width = 0
     local used_height = settings['size']
     local btn_padding = 0
@@ -336,7 +320,7 @@ local function updateMultiBar(barName, buttonName)
 
             btn:SetSize(settings.size, settings.size)
             gwActionButton_UpdateHotkeys(btn)
-            gw_setActionButtonStyle(buttonName .. i, nil, gwGetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED'))
+            gw_setActionButtonStyle(buttonName .. i, nil, GetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED'))
 
             btn:ClearAllPoints()
             btn:SetPoint('TOPLEFT', multibar, 'TOPLEFT', btn_padding, -btn_padding_y)
@@ -366,81 +350,7 @@ local function updateMultiBar(barName, buttonName)
     multibar:SetSize(used_width, used_height)
 end
 
-function gwSetupActionbars()
 
-    local HIDE_ACTIONBARS_CVAR = gwGetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED')
-    if HIDE_ACTIONBARS_CVAR then
-        HIDE_ACTIONBARS_CVAR = 0
-    else
-        HIDE_ACTIONBARS_CVAR = 1
-    end
-        
-    SetCVar('alwaysShowActionBars', HIDE_ACTIONBARS_CVAR)
-              
-    for k, v in pairs(GW_BARS) do
-        v:SetParent(UIParent)
-    end
-     
-    for _, frame in pairs({
-        'MultiBarLeft',
-        'MultiBarRight',
-        'MultiBarBottomRight',
-        'MultiBarBottomLeft',
-
-        'StanceBarFrame',
-        'PossessBarFrame',
-
-        'MULTICASTACTIONBAR_YPOS',
-        'MultiCastActionBarFrame',
-
-        'PETACTIONBAR_YPOS',
-        'PETACTIONBAR_XPOS',
-    }) do
-        UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
-    end
- 
-    updateMainBar()
-    updateMultiBar('MultiBarBottomRight', 'MultiBarBottomRightButton')
-    updateMultiBar('MultiBarBottomLeft', 'MultiBarBottomLeftButton')
-    updateMultiBar('MultiBarRight', 'MultiBarRightButton')
-    updateMultiBar('MultiBarLeft', 'MultiBarLeftButton')
-
-    MultiBarBottomLeft:HookScript('OnShow', function (self, event)
-        self.gw_FadeShowing = true
-        gw_updatePetFrameLocation()
-    end)
-    MultiBarBottomLeft:HookScript('OnHide', function (self, event)
-        self.gw_FadeShowing = false
-        gw_updatePetFrameLocation()
-    end)
-    MultiBarBottomRight:HookScript('OnShow', function (self, event)
-        self.gw_FadeShowing = true
-        gw_updatePlayerBuffFrameLocation()
-    end)
-    MultiBarBottomRight:HookScript('OnHide', function (self, event)
-        self.gw_FadeShowing = false
-        gw_updatePlayerBuffFrameLocation()
-    end)
- 
-    --gw_register_movable_frame(MultiBarBottomRight:GetName(),MultiBarBottomRight,'MultiBarBottomRight','VerticalActionBarDummy')
-    --gw_register_movable_frame(MultiBarBottomLeft:GetName(),MultiBarBottomLeft,'MultiBarBottomLeft','VerticalActionBarDummy')
-    gw_register_movable_frame(MultiBarRight:GetName(),MultiBarRight,'MultiBarRight','VerticalActionBarDummy')
-    gw_register_movable_frame(MultiBarLeft:GetName(),MultiBarLeft,'MultiBarLeft','VerticalActionBarDummy')
-     
-    gw_hideBlizzardsActionbars()
-    gwSetMicroButtons()
-    gw_setStanceBar()
-    if gwGetSetting('PETBAR_ENABLED') then
-        gw_setPetBar()
-    end
-    gw_setbagFrame()
-    gw_setLeaveVehicleButton()
-     
-    hooksecurefunc("ActionButton_UpdateHotkeys",  gwActionButton_UpdateHotkeys)
-         
-    MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
-    MainMenuBarArtFrame:HookScript('OnEvent', gwMainMenuOnEvent)
-end
 
 function gwPetBarUpdate()
     _G['PetActionButton1Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack')
@@ -464,39 +374,27 @@ function gw_setPetBar()
     PetActionButton1:ClearAllPoints()
     PetActionButton1:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',3,30)
 
-    for i=1,12 do
-    
-        if _G['PetActionButton'..i]~=nil then
-            
-            gwActionButton_UpdateHotkeys(_G['PetActionButton'..i])
-            
+    for i=1,12 do  
+        if _G['PetActionButton'..i]~=nil then         
+            gwActionButton_UpdateHotkeys(_G['PetActionButton'..i])         
             _G['PetActionButton'..i]:SetSize(BUTTON_SIZE,BUTTON_SIZE)
             if i < 4 then
                 _G['PetActionButton'..i]:SetSize(32,32)
             elseif i==8 then
                 _G['PetActionButton'..i]:ClearAllPoints()
-                _G['PetActionButton'..i]:SetPoint('BOTTOM',_G['PetActionButton5'],'TOP',0,BUTTON_MARGIN);
-           
-            end
-           
-           
+                _G['PetActionButton'..i]:SetPoint('BOTTOM',_G['PetActionButton5'],'TOP',0,BUTTON_MARGIN);        
+            end         
             
             if i>1 and i~=8 then
-                _G['PetActionButton'..i]:ClearAllPoints()
-              
-                if i>3 then
-                    
+                _G['PetActionButton'..i]:ClearAllPoints()           
+                if i>3 then                  
                      _G['PetActionButton'..i]:SetPoint('BOTTOMLEFT',_G['PetActionButton'..(i - 1)],'BOTTOMRIGHT',BUTTON_MARGIN,0);
-                else
-                   
+                else                 
                     _G['PetActionButton'..i]:SetPoint('BOTTOMLEFT',_G['PetActionButton'..(i - 1)],'BOTTOMRIGHT',BUTTON_MARGIN,0);
-                end
-               
+                end              
             end
             if _G['PetActionButton'..i..'Shine'] then
-                _G['PetActionButton'..i..'Shine']:SetSize(_G['PetActionButton'..i]:GetSize())
-               
-                
+                _G['PetActionButton'..i..'Shine']:SetSize(_G['PetActionButton'..i]:GetSize())                              
                 --for k,v in pairs(_G['PetActionButton'..i..'Shine'].sparkles) do
                 --   v:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
                 --end
@@ -505,10 +403,8 @@ function gw_setPetBar()
             
             if i==1 then
                 hooksecurefunc('PetActionBar_Update', gwPetBarUpdate)
-            end
-            
-            gw_setActionButtonStyle('PetActionButton' .. i)
-         
+            end           
+            gw_setActionButtonStyle('PetActionButton' .. i)        
         end
     end
     
@@ -525,42 +421,33 @@ function gwStanceOnEvent(self, event)
         GwStanceBarButton:Show()
     end
 end
-function gw_setStanceBar()
-    
+function gw_setStanceBar()  
     for i=1,12 do
         if _G["StanceButton"..i]~=nil then
-            
-            
-        
-            if i>1 then
+         if i>1 then
                 _G["StanceButton"..i]:ClearAllPoints()
                 local last = i - 1
                 
                 _G["StanceButton"..i]:SetPoint('BOTTOM',_G['StanceButton'..last],'TOP',0,2)
-            end
-            
+            end          
             _G["StanceButton"..i]:SetSize(38,38)
             gw_setActionButtonStyle('StanceButton'..i,true)
           
         end
     end
-    
-   
+ 
     CreateFrame('Button','GwStanceBarButton',UIParent,'GwStanceBarButton')
     
     GwStanceBarButton:SetPoint('TOPRIGHT',ActionButton1,'TOPLEFT',-5,2)
     CreateFrame('Frame', 'GwStanceBarContainer',UIParent,nil)
     GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
     
-    StanceBarFrame:SetParent(GwStanceBarContainer)
-  
     StanceButton1:ClearAllPoints()
 	StanceButton1:SetPoint('BOTTOM', StanceBarFrame, 'BOTTOM', 0, 0)
-    
 
+    StanceBarFrame:SetParent(GwStanceBarContainer)
     StanceBarFrame:SetPoint('BOTTOMLEFT',GwStanceBarButton,'TOPLEFT',0,0)
     StanceBarFrame:SetPoint('BOTTOMRIGHT',GwStanceBarButton,'TOPRIGHT',0,0)
-
 
     GwStanceBarButton:RegisterEvent('CHARACTER_POINTS_CHANGED')
     GwStanceBarButton:RegisterEvent('PLAYER_ALIVE')
@@ -574,12 +461,9 @@ function gw_setStanceBar()
     else
         GwStanceBarButton:Show()
     end
- 
-        
-    GwStanceBarContainer:Hide()
-    
-    GwStanceBarButton:SetFrameRef('GwStanceBarContainer',GwStanceBarContainer)
-    
+   
+    GwStanceBarContainer:Hide()   
+    GwStanceBarButton:SetFrameRef('GwStanceBarContainer',GwStanceBarContainer)    
     GwStanceBarButton:SetAttribute("_onclick", [=[
         if self:GetFrameRef('GwStanceBarContainer'):IsVisible() then
             self:GetFrameRef('GwStanceBarContainer'):Hide()
@@ -590,9 +474,8 @@ function gw_setStanceBar()
 end
 
 
-function gw_setbagFrame()
-    
-      if not gwGetSetting('BAGS_ENABLED') then
+function gw_setbagFrame()   
+      if not GetSetting('BAGS_ENABLED') then
         CharacterBag0Slot:ClearAllPoints()
         CharacterBag1Slot:ClearAllPoints()
         CharacterBag2Slot:ClearAllPoints()
@@ -604,7 +487,6 @@ function gw_setbagFrame()
         CharacterBag1Slot:SetPoint('LEFT', CharacterBag0Slot, 'RIGHT', 0, 0)
         CharacterBag2Slot:SetPoint('LEFT', CharacterBag1Slot, 'RIGHT', 0, 0)
         CharacterBag3Slot:SetPoint('LEFT', CharacterBag2Slot, 'RIGHT', 0, 0)
-
     end
 end
 
@@ -620,15 +502,13 @@ function gwVehicleLeaveOnUpdate()
     end
     MainMenuBarVehicleLeaveButton:SetPoint('LEFT', ActionButton12, 'RIGHT', 0, 0)
 end
-function gw_setLeaveVehicleButton()
-    
+function gw_setLeaveVehicleButton()   
     MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0)
 
     MainMenuBarVehicleLeaveButton:HookScript('OnShow', gwVehicleLeaveOnShow)
-    MainMenuBarVehicleLeaveButton:HookScript('OnHide', gwVehicleLeaveOnHide)
-    
+    MainMenuBarVehicleLeaveButton:HookScript('OnHide', gwVehicleLeaveOnHide) 
 end
 
 function gwActionBarEquipUpdate()
@@ -736,3 +616,80 @@ function gwMultiButtons_OnUpdate(self, elapsed)
         end
     end
 end
+-- other things can register callbacks for when actionbar visibility/fade changes
+local callback = {}
+
+local function AddActionBarCallback(m)
+    local k = CountTable(callback) + 1
+    callback[k] = m
+end
+GW.AddActionBarCallback = AddActionBarCallback
+
+local function LoadActionBars()
+    local HIDE_ACTIONBARS_CVAR = GetSetting('HIDEACTIONBAR_BACKGROUND_ENABLED')
+    if HIDE_ACTIONBARS_CVAR then
+        HIDE_ACTIONBARS_CVAR = 0
+    else
+        HIDE_ACTIONBARS_CVAR = 1
+    end
+        
+    SetCVar('alwaysShowActionBars', HIDE_ACTIONBARS_CVAR)
+              
+    for k, v in pairs(GW_BARS) do
+        v:SetParent(UIParent)
+    end
+     
+    for _, frame in pairs({
+        'MultiBarLeft',
+        'MultiBarRight',
+        'MultiBarBottomRight',
+        'MultiBarBottomLeft',
+
+        'StanceBarFrame',
+        'PossessBarFrame',
+
+        'MULTICASTACTIONBAR_YPOS',
+        'MultiCastActionBarFrame',
+
+        'PETACTIONBAR_YPOS',
+        'PETACTIONBAR_XPOS',
+    }) do
+        UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
+    end
+ 
+    updateMainBar()
+    updateMultiBar('MultiBarBottomRight', 'MultiBarBottomRightButton')
+    updateMultiBar('MultiBarBottomLeft', 'MultiBarBottomLeftButton')
+    updateMultiBar('MultiBarRight', 'MultiBarRightButton')
+    updateMultiBar('MultiBarLeft', 'MultiBarLeftButton')
+
+    MultiBarBottomLeft:HookScript('OnShow', function (self, event)
+        self.gw_FadeShowing = true
+    end)
+    MultiBarBottomLeft:HookScript('OnHide', function (self, event)
+        self.gw_FadeShowing = false
+    end)
+    MultiBarBottomRight:HookScript('OnShow', function (self, event)
+        self.gw_FadeShowing = true
+        GW.UpdatePlayerBuffFrame()
+    end)
+    MultiBarBottomRight:HookScript('OnHide', function (self, event)
+        self.gw_FadeShowing = false
+        GW.UpdatePlayerBuffFrame()
+    end)
+ 
+    RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
+    RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
+     
+    gw_hideBlizzardsActionbars()
+    gwSetMicroButtons()
+    gw_setStanceBar()
+    gw_setbagFrame()
+    gw_setLeaveVehicleButton()
+     
+    hooksecurefunc("ActionButton_UpdateHotkeys",  gwActionButton_UpdateHotkeys)
+         
+    MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
+    MainMenuBarArtFrame:HookScript('OnEvent', gwMainMenuOnEvent)
+end
+GW.LoadActionBars = LoadActionBars

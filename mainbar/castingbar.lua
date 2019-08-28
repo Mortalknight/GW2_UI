@@ -1,10 +1,11 @@
 local _, GW = ...
 local lerp = GW.lerp
-
-local playeCasting = 0
-local playerSpellStart = 0
-local playerSpellEnd = 0
-local castingbarAnimation = 0
+local GetSetting = GW.GetSetting
+local TimeCount = GW.TimeCount
+local RegisterMovableFrame = GW.RegisterMovableFrame
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
+local StopAnimation = GW.StopAnimation
 
 local playerCasting = 0
 
@@ -14,6 +15,7 @@ local function barValues(name, icon, spellid)
     GwCastingBar.latency:Show()
     GwCastingBar.spellId = spellid
 end
+GW.AddForProfiling("castingbar", "barValues", barValues)
 
 local function barReset()
     if animations["castingbarAnimation"] then
@@ -21,8 +23,9 @@ local function barReset()
         animations["castingbarAnimation"]["duration"] = 0
     end
 end
+GW.AddForProfiling("castingbar", "barReset", barReset)
 
-function LoadCastingBar()
+local function LoadCastingBar()
     CastingBarFrame:Hide()
     CastingBarFrame:UnregisterAllEvents()
 
@@ -36,21 +39,22 @@ function LoadCastingBar()
     GwCastingBar.spark:SetPoint("RIGHT", GwCastingBar.bar, "RIGHT")
 
     GwCastingBar:SetPoint(
-        gwGetSetting("castingbar_pos")["point"],
+        GetSetting("castingbar_pos")["point"],
         UIParent,
-        gwGetSetting("castingbar_pos")["relativePoint"],
-        gwGetSetting("castingbar_pos")["xOfs"],
-        gwGetSetting("castingbar_pos")["yOfs"]
+        GetSetting("castingbar_pos")["relativePoint"],
+        GetSetting("castingbar_pos")["xOfs"],
+        GetSetting("castingbar_pos")["yOfs"]
     )
 
     GwCastingBar:SetAlpha(0)
 
-    gw_register_movable_frame("castingbarframe", GwCastingBar, "castingbar_pos", "GwCastFrameDummy")
+    RegisterMovableFrame("castingbarframe", GwCastingBar, "castingbar_pos", "GwCastFrameDummy")
 
     GwCastingBar:SetScript(
         "OnEvent",
         function(self, event, unitID, spellid)
             local castingType = 1
+            local spell, icon, startTime, endTime
             if unitID ~= "player" then
                 return
             end
@@ -62,7 +66,7 @@ function LoadCastingBar()
                     spell, text, icon, startTime, endTime, isTradeSkill, castID, interrupt = CastingInfo()
                 end
 
-                if gwGetSetting("CASTINGBAR_DATA") then
+                if GetSetting("CASTINGBAR_DATA") then
                     barValues(spell, icon, spellid)
                 end
 
@@ -70,16 +74,16 @@ function LoadCastingBar()
                 endTime = endTime / 1000
                 barReset()
                 GwCastingBar.spark:Show()
-                GwStopAnimation("castingbarAnimation")
-                addToAnimation(
+                StopAnimation("castingbarAnimation")
+                AddToAnimation(
                     "castingbarAnimation",
                     0,
                     1,
                     startTime,
                     endTime - startTime,
                     function()
-                        if gwGetSetting("CASTINGBAR_DATA") then
-                            GwCastingBar.time:SetText(GW.timeCount(endTime - GetTime(), true))
+                        if GetSetting("CASTINGBAR_DATA") then
+                            GwCastingBar.time:SetText(TimeCount(endTime - GetTime(), true))
                         end
 
                         local p = animations["castingbarAnimation"]["progress"]
@@ -127,7 +131,7 @@ function LoadCastingBar()
                 GwCastingBar.bar:SetTexCoord(0, 1, 0.5, 0.75)
                 GwCastingBar.bar:SetWidth(176)
                 GwCastingBar.spark:Hide()
-                addToAnimation(
+                AddToAnimation(
                     "castingbarAnimationComplete",
                     0,
                     1,
@@ -164,3 +168,4 @@ function LoadCastingBar()
     GwCastingBar:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     GwCastingBar:RegisterEvent("UNIT_SPELLCAST_DELAYED")
 end
+GW.LoadCastingBar = LoadCastingBar
