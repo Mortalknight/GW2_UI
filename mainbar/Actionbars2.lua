@@ -665,9 +665,11 @@ local function LoadActionBars()
 
     MultiBarBottomLeft:HookScript('OnShow', function (self, event)
         self.gw_FadeShowing = true
+        GW.updatePetFrameLocation()
     end)
     MultiBarBottomLeft:HookScript('OnHide', function (self, event)
         self.gw_FadeShowing = false
+        GW.updatePetFrameLocation()
     end)
     MultiBarBottomRight:HookScript('OnShow', function (self, event)
         self.gw_FadeShowing = true
@@ -678,8 +680,8 @@ local function LoadActionBars()
         GW.UpdatePlayerBuffFrame()
     end)
  
-    RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
-    RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
+    RegisterMovableFrame(MultiBarRight:GetName(), MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
+    RegisterMovableFrame(MultiBarLeft:GetName(), MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
      
     gw_hideBlizzardsActionbars()
     gwSetMicroButtons()

@@ -13,6 +13,12 @@ local function GWUseThisLocalization()
     GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese-font.ttf"
     
     --Strings
+    GwLocalization['FPS_TOOLTIP_1'] = 'FPS ' 
+	GwLocalization['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
+	GwLocalization['FPS_TOOLTIP_3'] = 'Latency (World) ' 
+	GwLocalization['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
+	GwLocalization['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
+	GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
     GwLocalization["ACTION_BAR_FADE"] = "隐藏动作栏"
     GwLocalization["ACTION_BAR_FADE_DESC"] = "当离开战斗时隐藏额外动作栏."
     GwLocalization["ACTION_BARS_DESC"] = "使用GW2风格的增强动作栏."

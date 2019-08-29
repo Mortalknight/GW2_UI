@@ -13,6 +13,12 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf"
 	
 	--Strings
+	GwLocalization["FPS_TOOLTIP_1"] = "FPS"
+	GwLocalization["FPS_TOOLTIP_2"] = "대기시간 (서버): "
+	GwLocalization["FPS_TOOLTIP_3"] = "대기시간 (세계): "
+	GwLocalization["FPS_TOOLTIP_4"] = "대역폭 (다운로드): "
+	GwLocalization["FPS_TOOLTIP_5"] = "대역폭 (업로드): "
+	GwLocalization["FPS_TOOLTIP_6"] = "애드온 메모리: "
 	GwLocalization["ACTION_BAR_FADE"] = "액션바 숨기기"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "전투 중 액션바 숨김"
 	GwLocalization["ACTION_BARS_DESC"] = "개선된 GW2 UI 액션바 사용"

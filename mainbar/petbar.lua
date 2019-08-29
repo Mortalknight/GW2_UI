@@ -215,6 +215,7 @@ local function updatePetFrameLocation()
     end
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
+GW.updatePetFrameLocation = updatePetFrameLocation
 
 local function SetPetHappiness(self)
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
@@ -344,7 +345,7 @@ local function LoadPetFrame()
     LoadAuras(playerPetFrame, playerPetFrame.auras)
 
     playerPetFrame:RegisterUnitEvent("UNIT_PET", "player")
-    playerPetFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_POWER_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MAXPOWER", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "pet")

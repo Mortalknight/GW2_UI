@@ -634,7 +634,6 @@ GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 
 local function LoadHudArt()
     local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
-    GW.MixinHideDuringPetAndOverride(hudArtFrame)
 
     if not GetSetting("BORDER_ENABLED") and hudArtFrame.edgeTint then
         for _, f in ipairs(hudArtFrame.edgeTint) do
@@ -657,7 +656,6 @@ GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
-    GW.MixinHideDuringPet(experiencebar)
 
     experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
 

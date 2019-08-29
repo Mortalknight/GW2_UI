@@ -1,4 +1,7 @@
 local _, GW = ...
+local AddToAnimation = GW.AddToAnimation
+local animations = GW.animations
+
 local MAX_COMBO_POINTS = 5
 
 local function animFlare(f, scale, offset, duration, rotate)
@@ -10,7 +13,7 @@ local function animFlare(f, scale, offset, duration, rotate)
     local pwr = f.gwPower
     ff:ClearAllPoints()
     ff:SetPoint("CENTER", f, "LEFT", (scale * pwr) + offset, 0)
-    addToAnimation(
+    AddToAnimation(
         "POWER_FLARE_ANIM",
         1,
         0,
@@ -65,7 +68,7 @@ local function setComboBar(f)
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    f:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
 end
 
 local function setRogue(f)

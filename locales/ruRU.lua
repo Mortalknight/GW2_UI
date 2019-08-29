@@ -13,6 +13,12 @@ local function GWUseThisLocalization()
 	GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
 	
 	--Strings
+	GwLocalization["FPS_TOOLTIP_1"] = "FPS "
+	GwLocalization["FPS_TOOLTIP_2"] = "Задержка (локальная) "
+	GwLocalization["FPS_TOOLTIP_3"] = "Задержка (мир) "
+	GwLocalization["FPS_TOOLTIP_4"] = "Трафик (получение) "
+	GwLocalization["FPS_TOOLTIP_5"] = "Трафик (отдача) "
+	GwLocalization["FPS_TOOLTIP_6"] = "Памяти на модификации: "
 	GwLocalization["ACTION_BAR_FADE"] = "Скрыть панели"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "Скрыть дополнительные панели при выходе из боя"
 	GwLocalization["ACTION_BARS_DESC"] = "Использовать усовершенствованные панели"

@@ -20,7 +20,7 @@ local function powerBar_OnUpdate(self)
         self.textUpdate = 0
     end
 
-    local decayRate = 1
+    local decayRate = 5
     local inactiveRegen, activeRegen = GetPowerRegen()
 
     local regen = inactiveRegen
@@ -455,14 +455,13 @@ GW.AddForProfiling("playerhud", "dodgeBar_OnEvent", dodgeBar_OnEvent)
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
-    GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
     _G[playerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()
 
     playerPowerBar:SetScript(
         "OnEvent",
         function(self, event, unit)
-            if (event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER") and unit == "player" then
+            if (event == "UNIT_POWER_UPDATE" or event == "UNIT_MAXPOWER") and unit == "player" then
                 UpdatePowerData(GwPlayerPowerBar)
                 return
             end
@@ -475,7 +474,7 @@ local function LoadPowerBar()
 
     _G["GwPlayerPowerBarBarString"]:SetFont(DAMAGE_TEXT_FONT, 14)
 
-    playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    playerPowerBar:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -591,7 +590,6 @@ local function LoadPlayerHud()
 
     local playerHealthGLobaBg = CreateFrame("Button", "GwPlayerHealthGlobe", UIParent, "GwPlayerHealthGlobe")
 
-    GW.MixinHideDuringPetAndOverride(playerHealthGLobaBg)
 
     GwPlayerHealthGlobe.animationCurrent = 0
 

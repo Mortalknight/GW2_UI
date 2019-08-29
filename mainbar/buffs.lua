@@ -54,7 +54,6 @@ local function LoadBuffs()
     BuffFrame:Hide()
     BuffFrame:SetScript("OnShow", Self_Hide)
     local player_buff_frame = CreateFrame("Frame", "GwPlayerAuraFrame", UIParent, "GwPlayerAuraFrame")
-    GW.MixinHideDuringPet(player_buff_frame)
     GwPlayerAuraFrame.auras = self
     GwPlayerAuraFrame.unit = "player"
     player_buff_frame:SetScript(

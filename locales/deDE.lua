@@ -13,6 +13,12 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 	
 	--Strings
+	GwLocalization['FPS_TOOLTIP_1'] = 'Bildrate '
+	GwLocalization['FPS_TOOLTIP_2'] = 'Latenz (Standort) '
+	GwLocalization['FPS_TOOLTIP_3'] = 'Latenz (Welt) '
+	GwLocalization['FPS_TOOLTIP_4'] = 'Bandbreite (Download) '
+	GwLocalization['FPS_TOOLTIP_5'] = 'Bandbreite (Upload) '
+	GwLocalization['FPS_TOOLTIP_6'] = 'Speicher für Addons: '
 	GwLocalization["QUEST_REQUIRED_ITEMS"] = "Erforderliches Item:"
 	GwLocalization["ACTION_BAR_FADE"] = "Aktionsleisten ausblenden"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "Blendet die zusätzlichen Aktionsleisten außerhalb des Kampfes aus."

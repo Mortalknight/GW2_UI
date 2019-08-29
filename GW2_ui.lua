@@ -8,7 +8,7 @@ local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.2'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.3'
 
 local loaded = false
 local forcedMABags = false
@@ -310,7 +310,61 @@ local function StopAnimation(k)
 end
 GW.StopAnimation = StopAnimation
 
+local callback = {}
+
+local function actionBarStateChanged()
+    for k, v in pairs(callback) do
+        v()
+    end
+end
+
+local function actionBarFrameShow(f, name)
+    StopAnimation(name)
+    f.gw_FadeShowing = true
+    actionBarStateChanged()
+    AddToAnimation(name, 0, 1, GetTime(), 0.1, function()
+        f:SetAlpha(animations[name]['progress'])
+    end, nil, function()
+        for i = 1, 12 do
+            f.gw_MultiButtons[i].cooldown:SetDrawBling(true)
+        end
+        actionBarStateChanged()
+    end)
+end
+
+local function actionBarFrameHide(f, name)
+    StopAnimation(name)
+    f.gw_FadeShowing = false
+    for i = 1, 12 do
+        f.gw_MultiButtons[i].cooldown:SetDrawBling(false)
+    end
+    AddToAnimation(name, 1, 0, GetTime(), 0.1, function()
+        f:SetAlpha(animations[name]['progress'])
+    end, nil, function()
+        actionBarStateChanged()
+    end)
+end
+
+local function FadeCheck(self, elapsed)
+    self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
+    if self.gw_LastFadeCheck > 0 then
+        return
+    end
+    self.gw_LastFadeCheck = 0.1
+    if not self:IsShown() then return end
+    
+    if self:IsMouseOver(100, -100, -100, 100) or UnitAffectingCombat('player') then
+        if not self.gw_FadeShowing then
+            actionBarFrameShow(self, self:GetName())
+        end
+    elseif self.gw_FadeShowing and UnitAffectingCombat('player') == false then
+        actionBarFrameHide(self, self:GetName())
+    end
+end
+GW.FadeCheck = FadeCheck
+
 local l = CreateFrame("Frame", nil, UIParent)
+local OnUpdateActionBars = nil
 
 local function swimAnim()
     local r, g, b = _G["GwActionBarHudRIGHTSWIM"]:GetVertexColor()
@@ -371,6 +425,10 @@ local function gw_OnUpdate(self, elapsed)
 
     if foundAnimation == false and count ~= 0 then
         table.wipe(animations)
+    end
+
+    if OnUpdateActionBars then
+        OnUpdateActionBars(elapsed)
     end
 
     --Swim hud
@@ -454,13 +512,6 @@ local function SetDeadIcon(self)
 end
 GW.SetDeadIcon = SetDeadIcon
 
-local function StopAnimation(k)
-    if animations[k] ~= nil then
-        animations[k] = nil
-    end
-end
-GW.StopAnimation = StopAnimation
-
 local l = CreateFrame("Frame", nil, UIParent)
 
 local function swimAnim()
@@ -485,62 +536,6 @@ local function AddUpdateCB(func, payload)
     )
 end
 GW.AddUpdateCB = AddUpdateCB
-
-local function gw_OnUpdate(self, elapsed)
-    local foundAnimation = false
-    local count = 0
-    for k, v in pairs(animations) do
-        count = count + 1
-        if v["completed"] == false and GetTime() >= (v["start"] + v["duration"]) then
-            if v["easeing"] == nil then
-                v["progress"] = GW.lerp(v["from"], v["to"], math.sin(1 * math.pi * 0.5))
-            else
-                v["progress"] = GW.lerp(v["from"], v["to"], 1)
-            end
-            if v["method"] ~= nil then
-                v["method"](v["progress"])
-            end
-
-            if v["onCompleteCallback"] ~= nil then
-                v["onCompleteCallback"]()
-            end
-
-            v["completed"] = true
-            foundAnimation = true
-        end
-        if v["completed"] == false then
-            if v["easeing"] == nil then
-                v["progress"] =
-                    GW.lerp(v["from"], v["to"], math.sin((GetTime() - v["start"]) / v["duration"] * math.pi * 0.5))
-            else
-                v["progress"] = GW.lerp(v["from"], v["to"], (GetTime() - v["start"]) / v["duration"])
-            end
-            v["method"](v["progress"])
-            foundAnimation = true
-        end
-    end
-
-    if foundAnimation == false and count ~= 0 then
-        table.wipe(animations)
-    end
-
-    --Swim hud
-    if lastSwimState ~= IsSwimming() then
-        if IsSwimming() then
-            AddToAnimation("swimAnimation", swimAnimation, 1, GetTime(), 0.1, swimAnim)
-            swimAnimation = 1
-        else
-            AddToAnimation("swimAnimation", swimAnimation, 0, GetTime(), 3.0, swimAnim)
-            swimAnimation = 0
-        end
-        lastSwimState = IsSwimming()
-    end
-
-    for _, cb in ipairs(updateCB) do
-        cb.func(cb.payload, elapsed)
-    end
-end
-GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
 local SCALE_HUD_FRAMES = {
     "GwHudArtFrame",
@@ -667,6 +662,14 @@ local function loadAddon(self)
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") then
         GW.LoadActionBars()
+        if GetSetting('FADE_BOTTOM_ACTIONBAR') then
+            OnUpdateActionBars = function(elapsed)
+                GW.FadeCheck(MultiBarBottomLeft, elapsed)
+                GW.FadeCheck(MultiBarBottomRight, elapsed)
+                GW.FadeCheck(MultiBarRight, elapsed)
+                GW.FadeCheck(MultiBarLeft, elapsed)
+            end
+        end
     end
 
     -- create pet frame

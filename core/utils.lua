@@ -1,7 +1,5 @@
 local _, GW = ...
 
-
-
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
         if (UnitIsTapped("target")) and (not UnitIsTappedByPlayer("target")) then
@@ -245,73 +243,6 @@ local function Notice(...)
 end
 GW.Notice = Notice
 
-local function securePetAndOverride(f, stateType)
-    if InCombatLockdown() then
-        return false
-    end
-    f:SetAttribute("gw_WasShowing", f:IsShown())
-    f:SetAttribute(
-        "_onstate-petoverride",
-        [=[
-        if newstate == "show" then
-            if self:GetAttribute("gw_WasShowing") then
-                self:Show()
-            end
-        elseif newstate == "hide" then
-            self:SetAttribute("gw_WasShowing", self:IsShown())
-            self:Hide()
-        end
-    ]=]
-    )
-    if stateType == "override" then
-        RegisterStateDriver(f, "petoverride", "[overridebar] hide; [vehicleui] hide; show")
-    else
-        RegisterStateDriver(f, "petoverride", "[overridebar] hide; [vehicleui] hide; show")
-    end
-    return true
-end
-
-local function normPetAndOverride(f, stateType)
-    local f_OnShow = function()
-        f.gw_WasShowing = f:IsShown()
-        f:Hide()
-    end
-    local f_OnHide = function()
-        if f.gw_WasShowing then
-            f:Show()
-        end
-    end
-
-    return true
-end
-
-local function MixinHideDuringPet(f)
-    -- TODO: figure out how to do real mixins
-    if f:IsProtected() then
-        return securePetAndOverride(f, "petbattle")
-    else
-        return normPetAndOverride(f, "petbattle")
-    end
-end
-GW.MixinHideDuringPet = MixinHideDuringPet
-
-local function MixinHideDuringOverride(f)
-    if f:IsProtected() then
-        return securePetAndOverride(f, "override")
-    else
-        return normPetAndOverride(f, "override")
-    end
-end
-GW.MixinHideDuringOverride = MixinHideDuringOverride
-
-local function MixinHideDuringPetAndOverride(f)
-    if f:IsProtected() then
-        return securePetAndOverride(f)
-    else
-        return normPetAndOverride(f)
-    end
-end
-GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
 
 local PATTERN_ILVL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
 local PATTERN_ILVL_SCALED = ITEM_LEVEL_ALT:gsub("%(%%d%)", "%%((%%d)%%)"):gsub("%%d", "%%d+")

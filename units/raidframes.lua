@@ -360,7 +360,7 @@ local function updateAuras(self)
     local spellToTrackExpires = 0
     local spellToTrackDuration = 0
     for i = 1, 40 do
-        local _, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
+        local _, icon, _, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i, "PLAYER")
 
         local showThis = false
         if UnitBuff(self.unit, i) then
@@ -454,7 +454,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setHealth(self)
     end
 
-    if event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
+    if event == "UNIT_POWER_UPDATE" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
         local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
         local powerPrecentage = 0
@@ -785,7 +785,7 @@ local function createRaidFrame(registerUnit, index)
 
     frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
-    frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
+    frame:RegisterUnitEvent("UNIT_POWER_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
@@ -844,7 +844,8 @@ local function LoadRaidFrames()
 
         if not InCombatLockdown() then
             GwRaidFrameContainer:ClearAllPoints()
-            GwRaidFrameContainer:SetPoint(frame:GetPoint())
+            local point, parent, relativePoint, xOffset, yOffset = frame:GetPoint()
+            GwRaidFrameContainer:SetPoint(point, frame, relativePoint, xOffset, yOffset)
         end
     end)
 

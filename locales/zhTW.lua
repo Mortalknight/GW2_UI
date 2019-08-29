@@ -13,6 +13,12 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese-font.ttf"
 	
 	--Strings
+	GwLocalization["FPS_TOOLTIP_1"] = "每秒幀數 "
+	GwLocalization["FPS_TOOLTIP_2"] = "網路延遲 (本地) "
+	GwLocalization["FPS_TOOLTIP_3"] = "網路延遲 (世界) "
+	GwLocalization["FPS_TOOLTIP_4"] = "頻寬 (下載) "
+	GwLocalization["FPS_TOOLTIP_5"] = "頻寬 (上傳) "
+	GwLocalization["FPS_TOOLTIP_6"] = "插件記憶體用量: "
 	GwLocalization["ACTION_BAR_FADE"] = "淡出快捷列"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "非戰鬥中隱藏額外快捷列。"
 	GwLocalization["ACTION_BARS_DESC"] = "使用 GW2 UI 風格加強型的快捷列。"

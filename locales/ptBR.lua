@@ -13,6 +13,12 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 	
 	--Strings
+	GwLocalization["FPS_TOOLTIP_1"] = "FPS "
+	GwLocalization["FPS_TOOLTIP_2"] = "Latência (Local) "
+	GwLocalization["FPS_TOOLTIP_3"] = "Latência (Global) "
+	GwLocalization["FPS_TOOLTIP_4"] = "Banda (Download) "
+	GwLocalization["FPS_TOOLTIP_5"] = "Banda (Upload) "
+	GwLocalization["FPS_TOOLTIP_6"] = "Memória dos Addons: "
 	GwLocalization["ACTION_BAR_FADE"] = "Ocultar Barra de Ações"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "Ocultar Barras de Ações adicionais quando fora de combate."
 	GwLocalization["ACTION_BARS_DESC"] = "Usar as Barras de Ações melhoradas pelo GW2 ui"
