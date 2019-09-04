@@ -8,7 +8,7 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
-libs/LibClassicDurations/LibClassicDurations.xml
+libs/libs.xml
 
 core/consts.lua
 core/utils.lua
