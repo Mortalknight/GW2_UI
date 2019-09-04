@@ -189,7 +189,7 @@ GW.AddForProfiling("petbar", "setPetBar", setPetBar)
 
 local function updatePetFrameLocation()
     local fPet = GwPlayerPetFrame
-    if not fPet or InCombatLockdown() then
+    if not fPet or InCombatLockdown() or not GetSetting("PETBAR_LOCKED") then
         return
     end
     local fMover = GwPlayerPetFrameMoveAble
@@ -372,5 +372,6 @@ local function LoadPetFrame()
     RegisterMovableFrame("GwPlayerPetFrame", playerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 
     setPetBar(playerPetFrame)
+    SetPetHappiness(playerPetFrame)
 end
 GW.LoadPetFrame = LoadPetFrame

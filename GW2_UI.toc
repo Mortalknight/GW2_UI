@@ -6,7 +6,9 @@
 ## Author: deadend06
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
-## SavedVariables: GW2UI_SETTINGS_PROFILES
+## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
+
+libs/LibClassicDurations/LibClassicDurations.xml
 
 core/consts.lua
 core/utils.lua
@@ -19,6 +21,7 @@ core/shared.xml
 core/settings.xml
 core/fonts.lua
 core/settings.lua
+core/storage.lua
 
 units/target.xml
 units/target.lua
@@ -47,7 +50,6 @@ mainbar/classpowers.lua
 
 inventory/bag.xml
 inventory/bank.xml
-inventory/inventory.lua
 inventory/bag.lua
 inventory/bank.lua
 

@@ -157,3 +157,87 @@ DODGEBAR_SPELLS[9] = {48018}
 DODGEBAR_SPELLS[10] = {109132, 115008}
 DODGEBAR_SPELLS[11] = {102280, 102401}
 DODGEBAR_SPELLS[12] = {189110, 195072}
+
+local INDICATORS = {"BAR", "TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
+GW.INDICATORS = INDICATORS
+
+-- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
+-- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}
+local AURAS_INDICATORS = {
+    PRIEST = {
+        [194384] =  {1, 1, 0.66},       -- Atonement
+        [41635] =   {1, 1, 0.66},       -- Prayer of Mending
+        [193065] =  {0.54, 0.21, 0.78}, -- Masochism
+        [139] =     {0.4, 0.7, 0.2},    -- Renew
+        [17] =      {0.7, 0.7, 0.7},    -- Power Word: Shield
+        [47788] =   {0.86, 0.45, 0},    -- Guardian Spirit
+        [33206] =   {0.47, 0.35, 0.74}  -- Pain Suppression
+    },
+    DRUID = {
+        [774] =     {0.8, 0.4, 0.8},    -- Rejuvenation
+        [155777] =  {0.8, 0.4, 0.8},    -- Germination
+        [8936] =    {0.2, 0.8, 0.2},    -- Regrowth
+        [33763] =   {0.4, 0.8, 0.2},    -- Lifebloom
+        [48438] =   {0.8, 0.4, 0},      -- Wild Growth
+        [207386] =  {0.4, 0.2, 0.8},    -- Spring Blossoms
+        [102351] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (Initial Buff)
+        [102352] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (HoT)
+        [200389] =  {1, 1, 0.4},        -- Cultivation
+    },
+    PALADIN = {
+        [53563] =   {1, 0.3, 0},        -- Beacon of Light
+        [156910] =  {0, 0.7, 1, 53563}, -- Beacon of Faith
+        [200025] =  {1, 0.85, 0, 53563},-- Beacon of Virtue
+        [1022] =    {0.2, 0.2, 1},      -- Hand of Protection
+        [1044] =    {0.89, 0.45, 0},    -- Hand of Freedom
+        [6940] =    {0.89, 0.1, 0.1},   -- Hand of Sacrifice
+        [223306] =  {0.7, 0.7, 0.3},    -- Bestow Faith
+        [287280] =  {1, 0.5, 0},        -- Glimmer of Light
+        [19834] =  {1, 0.5, 0},        -- Segen der Macht (TEST - NEEDS MAX RANK)
+    },
+    SHAMAN = {
+        [61295] =   {0, 0.4, 0.53},     -- Riptide
+        [974] =     {0.42, 0.74, 0},    -- Earth Shield
+    },
+    MONK = {
+        [119611] =  {0.3, 0.8, 0.6},    -- Renewing Mist
+        [116849] =  {0.2, 0.8, 0.2},    -- Life Cocoon
+        [124682] =  {0.8, 0.8, 0.25},   -- Enveloping Mist
+        [191840] =  {0.27, 0.62, 0.7},  -- Essence Font
+    },
+    ROGUE = {
+        [57934] =   {0.89, 0.09, 0.05}  -- Tricks of the Trade
+    },
+    WARRIOR = {
+        [114030] =  {0.2, 0.2, 1},      -- Vigilance
+        [3411] =    {0.89, 0.09, 0.05}  -- Intervene
+    },
+    HUNTER = {},
+    DEMONHUNTER = {},
+    WARLOCK = {},
+    MAGE = {},
+    DEATHKNIGHT = {},
+    PET = {
+        [193396] =  {0.6, 0.2, 0.8},    -- Demonic Empowerment
+        [19615] =   {0.89, 0.09, 0.05}, -- Frenzy
+        [136] =     {0.2, 0.8, 0.2}     -- Mend Pet
+    }
+}
+GW.AURAS_INDICATORS = AURAS_INDICATORS
+
+-- Never show theses auras
+local AURAS_IGNORED = {
+    57723, -- Sated
+    57724, -- Exhaustion
+    80354, -- Temporal Displacement
+    264689 -- Fatigued
+}
+GW.AURAS_IGNORED = AURAS_IGNORED
+
+-- Show these auras only when they are missing
+local AURAS_MISSING = {
+    21562,  -- Power Word: Fortitude
+    6673,   -- Battle Shout
+    1459    -- Arcane Intellect
+}
+GW.AURAS_MISSING = AURAS_MISSING

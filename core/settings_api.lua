@@ -45,22 +45,11 @@ local function GetSetting(name, perSpec)
         settings[name] = GetDefault(name)
     end
 
-    if perSpec then
-        local spec = GetSpecializationInfo(GetSpecialization())
-        if type(settings[name]) ~= "table" then
-            settings[name] = {[0] = settings[name]}
-        end
-        if settings[name][spec] == nil then
-            settings[name][spec] = settings[name][0]
-        end
-        return settings[name][spec]
-    else
-        return settings[name]
-    end
+    return settings[name]
 end
 GW.GetSetting = GetSetting
 
-local function SetSetting(name, state, perSpec)
+local function SetSetting(name, state)
     local profileIndex = GetActiveProfile()
     
     local settings = GW2UI_SETTINGS_DB_03
@@ -69,15 +58,7 @@ local function SetSetting(name, state, perSpec)
         settings["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
     end
 
-    if perSpec then
-        local spec = GetSpecializationInfo(GetSpecialization())
-        if type(settings[name]) ~= "table" then
-            settings[name] = {[0] = settings[name]}
-        end
-        settings[name][spec] = state
-    else
-        settings[name] = state
-    end
+    settings[name] = state
 end
 GW.SetSetting = SetSetting
 

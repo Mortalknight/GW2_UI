@@ -17,6 +17,8 @@ local AddToClique = GW.AddToClique
 local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local unitIlvls = {}
+local LibClassicDurations = LibStub("LibClassicDurations")
+LibClassicDurations:Register("GW2_UI")
 
 local function sortAuras(a, b)
     if a["caster"] == nil then
@@ -46,11 +48,18 @@ local function sortAuraList(auraList)
 end
 GW.AddForProfiling("unitframes", "sortAuraList", sortAuraList)
 
+local textureMapping = {
+	[1] = 16,	--Main hand
+	[2] = 17,	--Off-hand
+	[3] = 18,	--Ranged
+}
+
 local function getBuffs(unit, filter)
     if filter == nil then
         filter = ""
     end
     local auraList = {}
+
     for i = 1, 40 do
         if UnitBuff(unit, i, filter) ~= nil then
             auraList[i] = {}
@@ -67,10 +76,53 @@ local function getBuffs(unit, filter)
                 auraList[i]["shouldConsolidate"],
                 auraList[i]["spellID"] = UnitBuff(unit, i, filter)
 
+            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(unit, auraList[i]["spellID"], auraList[i]["caster"], auraList[i]["name"])
+
+            if auraList[i]["duration"] == 0 and durationNew then
+                auraList[i]["duration"] = durationNew
+                auraList[i]["expires"] = expirationTimeNew
+            end
+
             auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
 
             if auraList[i]["duration"] <= 0 then
                 auraList[i]["timeremaning"] = 500001
+            end
+        end
+    end
+
+    --Add temp weaponbuffs if unit is player
+    local tempCounter = #auraList
+
+    if unit == "player" then
+        local RETURNS_PER_ITEM = 4
+        local numVals = select("#", GetWeaponEnchantInfo())
+        local numItems = numVals / RETURNS_PER_ITEM
+
+        if numItems > 0 then
+            TemporaryEnchantFrame:Hide()
+            for itemIndex = numItems, 1, -1 do	--Loop through the items from the back
+                local hasEnchant, enchantExpiration, enchantCharges = select(RETURNS_PER_ITEM * (itemIndex - 1) + 1, GetWeaponEnchantInfo())
+                if hasEnchant then
+                    tempCounter = tempCounter + 1
+
+                    auraList[tempCounter] = {}
+                    auraList[tempCounter]["id"] = tempCounter
+                    auraList[tempCounter]["name"] = "WeaponTempEnchant"
+                    auraList[tempCounter]["icon"] = GetInventoryItemTexture("player", textureMapping[itemIndex])
+                    auraList[tempCounter]["spellID"] = textureMapping[itemIndex]
+                    auraList[tempCounter]["caster"] = "player"
+                    auraList[tempCounter]["duration"] = enchantExpiration
+                    auraList[tempCounter]["dispelType"] = "Curse"
+
+                    -- Show buff durations if necessary
+                    if enchantExpiration then
+                        auraList[tempCounter]["expires"] = enchantExpiration / 1000
+                        auraList[tempCounter]["timeremaning"] = auraList[tempCounter]["expires"]
+                    else
+                        auraList[tempCounter]["timeremaning"] = 500001
+                    end
+                end
             end
         end
     end
@@ -97,6 +149,13 @@ local function getDebuffs(unit, filter)
                 auraList[i]["isStealable"],
                 auraList[i]["shouldConsolidate"],
                 auraList[i]["spellID"] = UnitDebuff(unit, i, filter)
+
+            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(unit, auraList[i]["spellID"], auraList[i]["caster"], auraList[i]["name"])
+
+            if auraList[i]["duration"] == 0 and durationNew then
+                auraList[i]["duration"] = durationNew
+                auraList[i]["expires"] = expirationTimeNew
+            end
 
             auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
 
@@ -166,7 +225,7 @@ local function setBuffData(self, buffs, i, oldBuffs)
         self.expires = b["expires"]
     end
 
-    if self.auraType == "debuff" then
+    if self.auraType == "debuff" or b["name"] == "WeaponTempEnchant" then
         if b["dispelType"] ~= nil then
             self.background:SetVertexColor(
                 DEBUFF_COLOR[b["dispelType"]].r,
@@ -184,7 +243,12 @@ local function setBuffData(self, buffs, i, oldBuffs)
         end
     end
 
-    self.auraid = b["id"]
+    if b["name"] == "WeaponTempEnchant" then
+        self.auraid = b["spellID"]
+    else
+        self.auraid = b["id"]
+    end
+    self.isTempEnchant = b["name"]
     self.duration:SetText(duration)
     self.stacks:SetText(stacks)
     self.icon:SetTexture(b["icon"])
@@ -826,10 +890,14 @@ local function auraFrame_OnEnter(self)
     if self:IsShown() and self.auraid ~= nil and self.unit ~= nil then
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
         GameTooltip:ClearLines()
-        if self.auraType == "buff" then
-            GameTooltip:SetUnitBuff(self.unit, self.auraid)
+        if self.isTempEnchant == "WeaponTempEnchant" then
+            GameTooltip:SetInventoryItem("player", self.auraid)
         else
-            GameTooltip:SetUnitDebuff(self.unit, self.auraid, self.debuffFilter)
+            if self.auraType == "buff" then
+                GameTooltip:SetUnitBuff(self.unit, self.auraid)
+            else
+                GameTooltip:SetUnitDebuff(self.unit, self.auraid, self.debuffFilter)
+            end
         end
         GameTooltip:Show()
     end
@@ -839,6 +907,14 @@ GW.AddForProfiling("unitframes", "auraFrame_OnEnter", auraFrame_OnEnter)
 local function auraFrame_OnClick(self, button, down)
     if not InCombatLockdown() and self.auraType == "buff" and button == "RightButton" and self.unit == "player" then
         CancelUnitBuff("player", self.auraid)
+    elseif self.isTempEnchant == "WeaponTempEnchant" then
+        if self.auraid == 16 then
+            CancelItemTempEnchantment(1)
+        elseif self.auraid == 17 then
+            CancelItemTempEnchantment(2)
+        elseif self.auraid == 18 then
+            CancelItemTempEnchantment(3)
+        end
     end
 end
 GW.AddForProfiling("unitframes", "auraFrame_OnClick", auraFrame_OnClick)

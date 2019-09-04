@@ -351,66 +351,60 @@ local function updateMultiBar(barName, buttonName)
 end
 
 
-
-function gwPetBarUpdate()
-    _G['PetActionButton1Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack')
-    _G['PetActionButton2Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-follow')
-    _G['PetActionButton3Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-place')
-                        
-    _G['PetActionButton8Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-assist')
-    _G['PetActionButton9Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-defense')
-    _G['PetActionButton10Icon']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-passive')
+local function setStanceBar()
     for i = 1, 12 do
-        if _G['PetActionButton' .. i] ~= nil then
-            _G['PetActionButton' .. i .. 'NormalTexture2']:SetTexture(nil)
+        if _G["StanceButton" .. i] ~= nil then
+            if i == 1 then
+                _G["StanceButton" .. i]:ClearAllPoints()
+	            _G["StanceButton" .. i]:SetPoint('BOTTOM', StanceBarFrame, 'BOTTOM', 0, 0)
+            else
+                _G["StanceButton" .. i]:ClearAllPoints()
+                _G["StanceButton" .. i]:SetPoint('BOTTOM', _G['StanceButton' .. i - 1], 'TOP', 0, 2)
+            end          
+            _G["StanceButton" .. i]:SetSize(38, 38)
+            gw_setActionButtonStyle('StanceButton' .. i, true)
         end
     end
-end
-function gw_setPetBar()
-    
-    local BUTTON_SIZE = 28;
-    local BUTTON_MARGIN = 3;
-    
-    PetActionButton1:ClearAllPoints()
-    PetActionButton1:SetPoint('BOTTOMLEFT',GwPlayerPetFrame,'BOTTOMLEFT',3,30)
+ 
+    CreateFrame('Button', 'GwStanceBarButton', UIParent, 'GwStanceBarButton')
+    GwStanceBarButton:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
 
-    for i=1,12 do  
-        if _G['PetActionButton'..i]~=nil then         
-            gwActionButton_UpdateHotkeys(_G['PetActionButton'..i])         
-            _G['PetActionButton'..i]:SetSize(BUTTON_SIZE,BUTTON_SIZE)
-            if i < 4 then
-                _G['PetActionButton'..i]:SetSize(32,32)
-            elseif i==8 then
-                _G['PetActionButton'..i]:ClearAllPoints()
-                _G['PetActionButton'..i]:SetPoint('BOTTOM',_G['PetActionButton5'],'TOP',0,BUTTON_MARGIN);        
-            end         
-            
-            if i>1 and i~=8 then
-                _G['PetActionButton'..i]:ClearAllPoints()           
-                if i>3 then                  
-                     _G['PetActionButton'..i]:SetPoint('BOTTOMLEFT',_G['PetActionButton'..(i - 1)],'BOTTOMRIGHT',BUTTON_MARGIN,0);
-                else                 
-                    _G['PetActionButton'..i]:SetPoint('BOTTOMLEFT',_G['PetActionButton'..(i - 1)],'BOTTOMRIGHT',BUTTON_MARGIN,0);
-                end              
-            end
-            if _G['PetActionButton'..i..'Shine'] then
-                _G['PetActionButton'..i..'Shine']:SetSize(_G['PetActionButton'..i]:GetSize())                              
-                --for k,v in pairs(_G['PetActionButton'..i..'Shine'].sparkles) do
-                --   v:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
-                --end
-               -- _G['PetActionButton'..i..'ShineAutoCastable']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
-            end
-            
-            if i==1 then
-                hooksecurefunc('PetActionBar_Update', gwPetBarUpdate)
-            end           
-            gw_setActionButtonStyle('PetActionButton' .. i)        
-        end
+    if GetNumShapeshiftForms() == 1 then
+        StanceButton1:ClearAllPoints()
+        StanceButton1:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
+    else
+        CreateFrame('Frame', 'GwStanceBarContainer', UIParent, nil)
+        GwStanceBarContainer:SetPoint('BOTTOM', GwStanceBarButton, 'TOP', 0, 0)
+        
+        StanceBarFrame:SetParent(GwStanceBarContainer)
+        StanceBarFrame:SetPoint('BOTTOMLEFT', GwStanceBarButton, 'TOPLEFT', 0, 0)
+        StanceBarFrame:SetPoint('BOTTOMRIGHT', GwStanceBarButton, 'TOPRIGHT', 0, 0)
     end
-    
+
+    GwStanceBarButton:RegisterEvent('CHARACTER_POINTS_CHANGED')
+    GwStanceBarButton:RegisterEvent('PLAYER_ALIVE')
+    GwStanceBarButton:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+    GwStanceBarButton:RegisterEvent('UNIT_POWER_UPDATE')
+    GwStanceBarButton:RegisterEvent('UNIT_HEALTH')
+    GwStanceBarButton:SetScript('OnEvent', GW.gwStanceOnEvent)
+
+    if  GetNumShapeshiftForms() < 2 then
+        GwStanceBarButton:Hide()
+    else
+        GwStanceBarButton:Show()
+        GwStanceBarContainer:Hide()
+        GwStanceBarButton:SetFrameRef('GwStanceBarContainer', GwStanceBarContainer)
+    GwStanceBarButton:SetAttribute("_onclick", [=[
+        if self:GetFrameRef('GwStanceBarContainer'):IsVisible() then
+            self:GetFrameRef('GwStanceBarContainer'):Hide()
+        else
+            self:GetFrameRef('GwStanceBarContainer'):Show()
+        end
+    ]=])
+    end
 end
 
-function gwStanceOnEvent(self, event)
+local function StanceOnEvent(self, event)
     if InCombatLockdown() then
         return
     end
@@ -418,61 +412,11 @@ function gwStanceOnEvent(self, event)
     if GetNumShapeshiftForms() < 1 then
         GwStanceBarButton:Hide()
     else
+        setStanceBar()
         GwStanceBarButton:Show()
     end
 end
-function gw_setStanceBar()  
-    for i=1,12 do
-        if _G["StanceButton"..i]~=nil then
-         if i>1 then
-                _G["StanceButton"..i]:ClearAllPoints()
-                local last = i - 1
-                
-                _G["StanceButton"..i]:SetPoint('BOTTOM',_G['StanceButton'..last],'TOP',0,2)
-            end          
-            _G["StanceButton"..i]:SetSize(38,38)
-            gw_setActionButtonStyle('StanceButton'..i,true)
-          
-        end
-    end
- 
-    CreateFrame('Button','GwStanceBarButton',UIParent,'GwStanceBarButton')
-    
-    GwStanceBarButton:SetPoint('TOPRIGHT',ActionButton1,'TOPLEFT',-5,2)
-    CreateFrame('Frame', 'GwStanceBarContainer',UIParent,nil)
-    GwStanceBarContainer:SetPoint('BOTTOM',GwStanceBarButton,'TOP',0,0)
-    
-    StanceButton1:ClearAllPoints()
-	StanceButton1:SetPoint('BOTTOM', StanceBarFrame, 'BOTTOM', 0, 0)
-
-    StanceBarFrame:SetParent(GwStanceBarContainer)
-    StanceBarFrame:SetPoint('BOTTOMLEFT',GwStanceBarButton,'TOPLEFT',0,0)
-    StanceBarFrame:SetPoint('BOTTOMRIGHT',GwStanceBarButton,'TOPRIGHT',0,0)
-
-    GwStanceBarButton:RegisterEvent('CHARACTER_POINTS_CHANGED')
-    GwStanceBarButton:RegisterEvent('PLAYER_ALIVE')
-    GwStanceBarButton:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-    GwStanceBarButton:RegisterEvent('UNIT_POWER_UPDATE')
-    GwStanceBarButton:RegisterEvent('UNIT_HEALTH')
-    GwStanceBarButton:SetScript('OnEvent', gwStanceOnEvent)
-       
-    if  GetNumShapeshiftForms()<1 then
-        GwStanceBarButton:Hide()
-    else
-        GwStanceBarButton:Show()
-    end
-   
-    GwStanceBarContainer:Hide()   
-    GwStanceBarButton:SetFrameRef('GwStanceBarContainer',GwStanceBarContainer)    
-    GwStanceBarButton:SetAttribute("_onclick", [=[
-        if self:GetFrameRef('GwStanceBarContainer'):IsVisible() then
-            self:GetFrameRef('GwStanceBarContainer'):Hide()
-        else
-            self:GetFrameRef('GwStanceBarContainer'):Show()
-        end
-    ]=]);
-end
-
+GW.StanceOnEvent = StanceOnEvent
 
 function gw_setbagFrame()   
       if not GetSetting('BAGS_ENABLED') then
@@ -521,7 +465,7 @@ function gwActionBarEquipUpdate()
                 if IsEquippedAction(button.action) then
                     local borname = barname .. i .. 'Border'
                     if _G[borname] then
-                        gw_wait(0.05, function()
+                        GW.Wait(0.05, function()
                             _G[borname]:SetVertexColor(0, 1.0, 0, 1)
                         end)
                     end
@@ -680,12 +624,12 @@ local function LoadActionBars()
         GW.UpdatePlayerBuffFrame()
     end)
  
-    RegisterMovableFrame(MultiBarRight:GetName(), MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
-    RegisterMovableFrame(MultiBarLeft:GetName(), MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
+    RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
+    RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
      
     gw_hideBlizzardsActionbars()
     gwSetMicroButtons()
-    gw_setStanceBar()
+    setStanceBar()
     gw_setbagFrame()
     gw_setLeaveVehicleButton()
      

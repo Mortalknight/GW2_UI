@@ -309,9 +309,6 @@ end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
 local function minimap_OnShow(self)
-    if GwCalendarButton then
-        GwCalendarButton:Show()
-    end
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
     end
@@ -322,9 +319,6 @@ end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
 local function minimap_OnHide(self)
-    if GwCalendarButton then
-        GwCalendarButton:Hide()
-    end
     if GwAddonToggle then
         GwAddonToggle:Hide()
     end
@@ -428,24 +422,6 @@ local function LoadMinimap()
         end
     )
 
-    GwCalendarButton = CreateFrame("Button", "GwCalendarButton", UIParent, "GwCalendarButton")
-    local fnGwCalendarButton_OnShow = function(self)
-        if (IsKioskModeEnabled()) then
-            self:Disable()
-        end
-    end
-    local fnGwCalendarButton_OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -70)
-        GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR, 1, 1, 1)
-        GameTooltip:Show()
-    end
-    GwCalendarButton:SetScript("OnShow", fnGwCalendarButton_OnShow)
-    GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
-    GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
-    GwCalendarButton.gw_Showing = true
-    GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
-
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
     local fnGwMailButton_OnEvent = function(self, event, ...)
         if (event == "UPDATE_PENDING_MAIL") then
@@ -486,10 +462,6 @@ local function LoadMinimap()
     fmGAT:SetFrameStrata("MEDIUM")
     fmGAT.gw_Showing = true
     stackIcons(fmGAT)
-
-    GwDateText:SetFont(UNIT_NAME_FONT, 14)
-    GwDateText:SetTextColor(0, 0, 0)
-    GwDateText:SetText(date("%d"))
 
     hooksecurefunc(
         Minimap,

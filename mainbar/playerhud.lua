@@ -20,7 +20,10 @@ local function powerBar_OnUpdate(self)
         self.textUpdate = 0
     end
 
-    local decayRate = 5
+    local decayRate = 1
+    if self.powerToken == "MANA" then
+        decayRate = 5
+    end
     local inactiveRegen, activeRegen = GetPowerRegen()
 
     local regen = inactiveRegen
@@ -122,6 +125,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
     local powerBarWidth = self.statusBar:GetWidth()
 
     self.powerType = forcePowerType
+    self.powerToken = powerToken
     self.lostKnownPower = power
     self.powerMax = powerMax
     self.lastUpdate = GetTime()

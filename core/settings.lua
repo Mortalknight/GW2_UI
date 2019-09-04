@@ -574,7 +574,7 @@ local function DisplaySettings()
         if v.perSpec then
             local onUpdate = function (self)
                 self:SetScript("OnUpdate", nil)
-                local val = GetSetting(v.optionName, true)
+                local val = GetSetting(v.optionName)
 
                 if v.optionType == "dropdown" then
                     for i,value in pairs(v.options) do
@@ -593,11 +593,7 @@ local function DisplaySettings()
                 end
             end
             _G["GwOptionBox" .. k]:SetScript("OnEvent", function (self, e)
-                if e == "PLAYER_SPECIALIZATION_CHANGED" then
-                    self:SetScript("OnUpdate", onUpdate)
-                end
             end)
-            _G["GwOptionBox" .. k]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
         end
 
         if newLine == false then
@@ -763,6 +759,13 @@ local function LoadSettings()
     GwSettingsGroupframeSub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsGroupframeSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsGroupframeSub:SetText(GwLocalization["GROUP_DESC"])
+
+    GwSettingsGroupframe2Header:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsGroupframe2Header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsGroupframe2Header:SetText(CHAT_MSG_PARTY)
+    GwSettingsGroupframe2Sub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsGroupframe2Sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsGroupframe2Sub:SetText(GwLocalization["GROUP_DESC"])
 
     GwSettingsAurasOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsAurasOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
@@ -1235,6 +1238,63 @@ local function LoadSettings()
         0,
         GetScreenHeight()
     )
+
+    createCat(AURAS, GwLocalization["AURAS_TOOLTIP"], "GwSettingsAurasframe", 2)
+    
+    addOptionText(
+        GwLocalization["AURAS_IGNORED"],
+        GwLocalization["AURAS_IGNORED_DESC"],
+        "AURAS_IGNORED",
+        "GwSettingsAurasOptions",
+        function() end
+    )
+    
+    addOptionText(
+        GwLocalization["AURAS_MISSING"],
+        GwLocalization["AURAS_MISSING_DESC"],
+        "AURAS_MISSING",
+        "GwSettingsAurasOptions",
+        function() end
+    )
+
+    addOption(
+        GwLocalization["INDICATORS_ICON"],
+        GwLocalization["INDICATORS_ICON_DESC"],
+        "INDICATORS_ICON",
+        "GwSettingsIndicatorsOptions",
+        function () end
+    )
+
+    addOption(
+        GwLocalization["INDICATORS_TIME"],
+        GwLocalization["INDICATORS_TIME_DESC"],
+        "INDICATORS_TIME",
+        "GwSettingsIndicatorsOptions",
+        function () end
+    )
+
+    local auraKeys, auraVals = {0}, {NONE_KEY}
+    for spellID,indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
+        if not indicator[4] then
+            tinsert(auraKeys, spellID)
+            tinsert(auraVals, (GetSpellInfo(spellID)))
+        end
+    end
+
+    for _,pos in ipairs(GW.INDICATORS) do
+        local key = "INDICATOR_" .. pos
+        local t = StrUpper(GwLocalization[key] or GwLocalization[pos], 1, 1)
+        addOptionDropdown(
+            GwLocalization["INDICATOR_TITLE"]:format(t),
+            GwLocalization["INDICATOR_DESC"]:format(t),
+            key,
+            "GwSettingsIndicatorsOptions",
+            function () SetSetting(key, tonumber(GetSetting(key, true)), true) end,
+            auraKeys,
+            auraVals,
+            {perSpec = true}
+        )
+    end
 
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
     _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")

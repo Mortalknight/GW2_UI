@@ -116,12 +116,6 @@
                     </Button>
                 </Frames>
             </Frame>
-             <Button name="GwBankDepositAllReagentsBank" hidden="true" inherits="GwStandardButton" text="Deposit All">
-                <Size x="180" y="24" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
-                </Anchors>
-            </Button>
             <Frame name="GwBankFrameResize" frameStrata="HIGH" frameLevel="25" enableMouse="true" movable="true" parent="UIParent" virtual="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
@@ -158,53 +152,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="GwBankButton2" virtual="true">
-                <Size x="40" y="40"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-40" y="-60"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\bag\bankicons">
-                            <TexCoords left="0" right="1" top="0" bottom="0.5" />
-                            <Size x="32" y="32"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-
-                    </Layer>
-                </Layers>
-            </Button>
-
-            <Frame name="GwReagentBankFrame" hidden="true">
-                <Size x="724" y="512"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer>
-                        <FontString name="GwRegentHelpText" text="REAGENT_BANK_HELP">
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-                <Frames>
-                    <Button name="GwBankDepositAllReagents" hidden="true" inherits="GwStandardButton" text="Deposit All">
-                        <Size x="180" y="24" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeTo="GwBankFrame" relativePoint="BOTTOMLEFT" y="-5" x="5"></Anchor>
-                        </Anchors>
-                    </Button>
-                    <Button name="GwBuyRegentBank" inherits="GwStandardButton" text="Purchase">
-                        <Anchors>
-                            <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwRegentHelpText" x="0" y="-20"></Anchor>
-                        </Anchors>
-                    </Button>
-                </Frames>
-            </Frame>
+        
             <Button parentKey="buttonSettings" text="">
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8" />
@@ -259,21 +207,6 @@
                     </Frame>
                 </Frames>
             </Button>
-            <Button parentKey="buttonSort" text="">
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-40" y="-8" />
-                </Anchors>
-                <Size x="24" y="24" />
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
-                </Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Down"></PushedTexture >
-                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\BagMicroButton-Down"></HighlightTexture >
-
-                <NormalFont style="ChatBubbleFont"></NormalFont>
-                <HighlightFont style="ChatBubbleFont"></HighlightFont>
-            </Button>
 
             <Button parentKey="buttonClose" text="">
                 <Size x="20" y="20" />
@@ -287,11 +220,6 @@
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-            <Frame name="GwBankContainer4">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
             <Frame name="GwBankContainer5">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -323,11 +251,6 @@
                 </Anchors>
             </Frame>
             <Frame name="GwBankContainer11">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
-            <Frame name="GwBankContainer12">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>

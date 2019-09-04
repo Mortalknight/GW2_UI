@@ -76,6 +76,22 @@ local function setRogue(f)
     return true
 end
 
+-- DRUID
+local function setDruid(f)
+    local form = f.gwPlayerForm
+
+    if form == 3 then
+        barType = "combo"
+    end
+
+    if barType == "combo" then
+        setComboBar(f)
+    else
+        return false
+    end
+end
+GW.AddForProfiling("classpowers", "setDruid", setDruid)
+
 local function selectType(f)
     local pClass = f.gwPlayerClass
 
@@ -84,12 +100,34 @@ local function selectType(f)
 
     if pClass == 4 then
         showBar = setRogue(f)
+    elseif pClass == 11 then
+        showBar = setDruid(f)
     end
     if showBar then
         f:Show()
     else
         f:Hide()
     end
+end
+
+local function barChange_OnEvent(self, event, ...)
+    local f = self:GetParent()
+    if event == "UPDATE_SHAPESHIFT_FORM" then
+        -- this event fires often when form hasn't changed; check old form against current form
+        -- to prevent touching the bar unnecessarily (which causes annoying anim flickering)
+        local s = nil
+        for i = 1, GetNumShapeshiftForms() do
+            if select(3, GetShapeshiftFormInfo(i)) then
+                s = i
+            end
+        end
+        if f.gwPlayerForm == s then
+            return
+        end
+        f.gwPlayerForm = s
+    end
+
+    selectType(f)
 end
 
 local function LoadClassPowers()
@@ -99,6 +137,18 @@ local function LoadClassPowers()
     ComboFrame:SetScript("OnShow", function() ComboFrame:Hide() end)
 
     cpf.gwPlayerClass = pClass
+
+    for i = 1, GetNumShapeshiftForms() do
+        if select(3, GetShapeshiftFormInfo(i)) then
+            cpf.gwPlayerForm = i
+        end
+    end
+
+    cpf.decay:SetScript("OnEvent", barChange_OnEvent)
+    cpf.decay:RegisterEvent("PLAYER_ENTERING_WORLD")
+    cpf.decay:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    cpf.decay:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+
     selectType(cpf)
 end
 GW.LoadClassPowers = LoadClassPowers

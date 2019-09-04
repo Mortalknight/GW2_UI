@@ -2,6 +2,11 @@ local _, GW = ...
 local CommaValue = GW.CommaValue
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local UpdateMoney = GW.UpdateMoney
+local GetRealmMoney = GW.GetRealmMoney
+local GetCharClass = GW.GetCharClass
+local GetRealmStorage = GW.GetRealmStorage
+local ClearStorage = GW.ClearStorage
 
 local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
@@ -23,8 +28,7 @@ local default_bag_frame_container = {
     "ContainerFrame2",
     "ContainerFrame3",
     "ContainerFrame4",
-    "ContainerFrame5",
-    "ContainerFrame6"
+    "ContainerFrame5"
 }
 
 local function bagFrameHide()
@@ -63,18 +67,7 @@ local function moveBagbar()
         fv:SetScript(
             "OnClick",
             function(self, b)
-                if b == "RightButton" then
-                    local parent = _G[default_bag_frame_container[k]]
-                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                    ToggleDropDownMenu(1, nil, parent.FilterDropDown, self, 32, 32)
-                    if v == "MainMenuBarBackpackButton" then
-                        BackpackButton_UpdateChecked(fv)
-                    else
-                        BagSlotButton_UpdateChecked(fv)
-                    end
-                else
-                    s(fv)
-                end
+                s(fv)
             end
         )
 
@@ -96,6 +89,8 @@ local function updateMoney(self)
     self.bronze:SetText(copper)
     self.silver:SetText(silver)
     self.gold:SetText(CommaValue(gold))
+
+    UpdateMoney()
 end
 GW.AddForProfiling("bag", "updateMoney", updateMoney)
 
@@ -390,6 +385,51 @@ local function LoadBag()
     f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
     updateMoney(f)
 
+    -- money tooltip
+    GwMoneyFrame:SetScript("OnEnter", function (self)
+        local list, total = GetRealmMoney()
+        if list then
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:ClearLines()
+
+            -- list all players from the realm+faction
+            for name, money in pairs(list) do
+                if money > 0 then
+                    local color = select(4, GetClassColor(GetCharClass(name)))
+                    SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
+                end
+            end
+
+            -- add total gold on realm+faction
+            GameTooltip:AddLine(" ")
+            SetTooltipMoney(GameTooltip, total, "TOOLTIP", TOTAL .. ":")
+
+            GameTooltip:Show()
+
+            -- align money frames to the right
+            local maxWidth = 0
+            for i=1,GameTooltip.shownMoneyFrames do
+                local name = "GameTooltipMoneyFrame" .. i
+                local textWidth = _G[name .. "PrefixText"]:GetWidth()
+                local moneyWidth = select(4, _G[name .. "CopperButton"]:GetPoint(1))
+                maxWidth = max(maxWidth, textWidth + moneyWidth)
+            end
+            for i=1,GameTooltip.shownMoneyFrames do
+                local name = "GameTooltipMoneyFrame" .. i
+                local textWidth = _G[name .. "PrefixText"]:GetWidth()
+                _G[name .. "CopperButton"]:SetPoint("RIGHT", name .. "PrefixText", "RIGHT", maxWidth - textWidth, 0)
+            end
+        end
+    end)
+
+    -- clear money storage on right-click
+    GwMoneyFrame:SetScript("OnClick", function (self, button)
+        if button == "RightButton" then
+            ClearStorage(GetRealmStorage("MONEY"))
+            UpdateMoney()
+            GwMoneyFrame:GetScript("OnEnter")(GwMoneyFrame)
+        end
+    end)
 
     -- update money and watch currencies when applicable
     f:SetScript(

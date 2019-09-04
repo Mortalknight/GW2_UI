@@ -8,7 +8,7 @@ local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.3'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.4'
 
 local loaded = false
 local forcedMABags = false
@@ -83,7 +83,6 @@ GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 
 local function mover_OnDragStop(self)
     local settingsName = self.gw_Settings
-    print(self.gw_Settings)
     local lockAble = self.gw_Lockable
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
@@ -629,7 +628,7 @@ local function loadAddon(self)
 
     if GetSetting("BAGS_ENABLED") then
         GW.LoadBag()
-        --GW.LoadBank()
+        GW.LoadBank()
     end
 
     if GetSetting("USE_BATTLEGROUND_HUD") then
@@ -706,6 +705,7 @@ local function gw_OnEvent(self, event, ...)
             loaded = true
             loadAddon(self)
         end
+        GW.LoadStorage()
     elseif event == "PLAYER_LEAVING_WORLD" then
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then

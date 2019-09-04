@@ -80,25 +80,25 @@ function create_micro_button(key)
 end
 
 local function microMenuFrameShow(f, name)
-    GwStopAnimation(name)
-    GwStopAnimation("GwHudArtFrameMenuBackDrop")
+    StopAnimation(name)
+    StopAnimation("GwHudArtFrameMenuBackDrop")
     f.gw_FadeShowing = true
-    addToAnimation(name, 0, 1, GetTime(), 0.1, function()
+    AddToAnimation(name, 0, 1, GetTime(), 0.1, function()
         f:SetAlpha(animations[name]["progress"])
     end, nil, nil)
-    addToAnimation("GwHudArtFrameMenuBackDrop", 0, 1, GetTime(), 0.1, function()
+    AddToAnimation("GwHudArtFrameMenuBackDrop", 0, 1, GetTime(), 0.1, function()
         GwHudArtFrameMenuBackDrop:SetAlpha(animations["GwHudArtFrameMenuBackDrop"]["progress"])
     end, nil, nil)
 end
 
 local function microMenuFrameHide(f, name)
-    GwStopAnimation(name)
-    GwStopAnimation("GwHudArtFrameMenuBackDrop")
+    StopAnimation(name)
+    StopAnimation("GwHudArtFrameMenuBackDrop")
     f.gw_FadeShowing = false
-    addToAnimation(name, 1, 0, GetTime(), 0.1, function()
+    AddToAnimation(name, 1, 0, GetTime(), 0.1, function()
         f:SetAlpha(animations[name]["progress"])
     end, nil, nil)
-    addToAnimation("GwHudArtFrameMenuBackDrop", 1, 0, GetTime(), 0.1, function()
+    AddToAnimation("GwHudArtFrameMenuBackDrop", 1, 0, GetTime(), 0.1, function()
         GwHudArtFrameMenuBackDrop:SetAlpha(animations["GwHudArtFrameMenuBackDrop"]["progress"])
     end, nil, nil)
 end

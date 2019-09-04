@@ -1,4 +1,11 @@
-0.1.0
+0.0.4
 
-NEW
-    - First alpha for classic version
+- Added AuraDurationClassic
+- Added bank frame
+- Petframe can now be moved
+- Pet happiness now only visible for hunters
+- Fix some lua errors
+- Fix some bugs in raidframes
+- Added combopoints for druids
+- If a class has only one Stanceicon, it will be showen instead of the "Sweap-Button"
+- Added temp weapon enchants as buff
