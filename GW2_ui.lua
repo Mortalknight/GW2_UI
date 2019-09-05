@@ -8,7 +8,7 @@ local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.4'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.5'
 
 local loaded = false
 local forcedMABags = false
