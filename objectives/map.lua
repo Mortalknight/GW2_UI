@@ -275,6 +275,7 @@ local function stackIcons(self, event, ...)
     end
 
     if not foundFrames then
+        self:Hide()
         return
     end
 
@@ -327,8 +328,6 @@ local function minimap_OnHide(self)
     end
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
-
-
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
@@ -461,6 +460,8 @@ local function LoadMinimap()
     GwAddonToggleTexture:SetTexCoord(0, 0.5, 0, 0.25)
     fmGAT:SetFrameStrata("MEDIUM")
     fmGAT.gw_Showing = true
+    fmGAT:SetFrameStrata("HIGH")
+    fmGAT:SetFrameLevel(5)
     stackIcons(fmGAT)
 
     hooksecurefunc(
@@ -471,7 +472,6 @@ local function LoadMinimap()
     )
 
     Minimap:SetScale(1.2)
-
     MinimapZoneText:ClearAllPoints()
     MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
 

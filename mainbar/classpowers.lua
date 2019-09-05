@@ -79,6 +79,7 @@ end
 -- DRUID
 local function setDruid(f)
     local form = f.gwPlayerForm
+    local barType = "none"
 
     if form == 3 then
         barType = "combo"
@@ -86,6 +87,7 @@ local function setDruid(f)
 
     if barType == "combo" then
         setComboBar(f)
+        return true
     else
         return false
     end
@@ -93,6 +95,9 @@ end
 GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
 local function selectType(f)
+    f:SetScript("OnEvent", nil)
+    f:UnregisterAllEvents()
+
     local pClass = f.gwPlayerClass
 
     f.gwPower = -1
@@ -117,7 +122,8 @@ local function barChange_OnEvent(self, event, ...)
         -- to prevent touching the bar unnecessarily (which causes annoying anim flickering)
         local s = nil
         for i = 1, GetNumShapeshiftForms() do
-            if select(3, GetShapeshiftFormInfo(i)) then
+            local _, isActive = GetShapeshiftFormInfo(i)
+            if isActive then
                 s = i
             end
         end
@@ -125,9 +131,8 @@ local function barChange_OnEvent(self, event, ...)
             return
         end
         f.gwPlayerForm = s
+        selectType(f)
     end
-
-    selectType(f)
 end
 
 local function LoadClassPowers()
@@ -139,7 +144,8 @@ local function LoadClassPowers()
     cpf.gwPlayerClass = pClass
 
     for i = 1, GetNumShapeshiftForms() do
-        if select(3, GetShapeshiftFormInfo(i)) then
+        local _, isActive = GetShapeshiftFormInfo(i)
+        if isActive then
             cpf.gwPlayerForm = i
         end
     end

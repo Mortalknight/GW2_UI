@@ -1,4 +1,9 @@
-0.0.4
+0.5.0
+
+- Fix druid combobar (Cat)
+- Added target castbars (Blizzard removed the ability to distinguish between spell ranks in the combat log, so cast times are always based on the highest rank; No ability to detect if a cast was canceled, so the castbar runs to the end)
+
+0.4.0
 
 - Added AuraDurationClassic
 - Added bank frame

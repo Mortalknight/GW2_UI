@@ -17,7 +17,8 @@ local AddToClique = GW.AddToClique
 local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local unitIlvls = {}
-local LibClassicDurations = LibStub("LibClassicDurations")
+local LibClassicDurations = LibStub("LibClassicDurations", true)
+local LibCC = LibStub("LibClassicCasterino", true)
 LibClassicDurations:Register("GW2_UI")
 
 local function sortAuras(a, b)
@@ -585,14 +586,14 @@ GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
 local function updateCastValues(self, event)
     local castType = 1
 
-    local name, _, texture, startTime, endTime, _, _, notInterruptible, spellID = CastingInfo(self.unit)
+    local name, _, texture, startTime, endTime, _, _, notInterruptible, spellID = LibCC:UnitCastingInfo(self.unit)
 
     if name == nil then
-        name, _, texture, startTime, endTime, _, notInterruptible = ChannelInfo(self.unit)
+        name, _, texture, startTime, endTime, _, notInterruptible = LibCC:UnitChannelInfo(self.unit)
         castType = 0
     end
 
-    if name == nil or UnitName(self.unit) ~= UnitName("player") then
+    if name == nil  then
         hideCastBar(self, event)
         return
     end
@@ -994,14 +995,14 @@ local function target_OnEvent(self, event, unit)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
-    elseif UnitIsUnit(unit, self.unit) then
+    elseif UnitIsUnit(unit, self.unit) then       
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_UPDATE") then
             updatePowerValues(self, event)
-        elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
+        elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
             updateCastValues(self, event)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
             hideCastBar(self, event)
@@ -1085,6 +1086,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
     NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "target")
@@ -1092,13 +1094,26 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_POWER_UPDATE", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
-    NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
+    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "target")
+    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "target")
+    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "target")
+    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
+    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
+    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
+
+    local CastbarEventHandler = function(event, ...)
+        local self = NewUnitFrame
+        return target_OnEvent(self, event, ...)
+    end
+
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_START", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_DELAYED", CastbarEventHandler) -- only for player
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_STOP", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_FAILED", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_INTERRUPTED", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_CHANNEL_START", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler) -- only for player
+    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
