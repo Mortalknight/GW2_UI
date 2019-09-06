@@ -384,17 +384,15 @@ local function setStanceBar()
     GwStanceBarButton:RegisterEvent('CHARACTER_POINTS_CHANGED')
     GwStanceBarButton:RegisterEvent('PLAYER_ALIVE')
     GwStanceBarButton:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-    GwStanceBarButton:RegisterEvent('UNIT_POWER_UPDATE')
-    GwStanceBarButton:RegisterEvent('UNIT_HEALTH')
     GwStanceBarButton:SetScript('OnEvent', GW.gwStanceOnEvent)
 
-    if  GetNumShapeshiftForms() < 2 then
+    if GetNumShapeshiftForms() < 2 then
         GwStanceBarButton:Hide()
     else
         GwStanceBarButton:Show()
         GwStanceBarContainer:Hide()
         GwStanceBarButton:SetFrameRef('GwStanceBarContainer', GwStanceBarContainer)
-    GwStanceBarButton:SetAttribute("_onclick", [=[
+        GwStanceBarButton:SetAttribute("_onclick", [=[
         if self:GetFrameRef('GwStanceBarContainer'):IsVisible() then
             self:GetFrameRef('GwStanceBarContainer'):Hide()
         else

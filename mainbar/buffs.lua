@@ -66,8 +66,6 @@ local function LoadBuffs()
         end
     )
     player_buff_frame:RegisterEvent("UNIT_AURA")
-
-    player_buff_frame.interval = 0
     player_buff_frame:SetScript(
         "OnUpdate",
         function(self, elapsed)

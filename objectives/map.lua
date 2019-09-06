@@ -58,7 +58,11 @@ local Minimap_Addon_Buttons = {
     [44] = "GwMapCoords",
     [45] = "WarfrontRareTrackerPin",
     [46] = "GwMapFPS",
-    [47] = "QuestieFrame"
+    [47] = "QuestieFrame",
+    [48] = "miningminimap",
+    [49] = "herbalismminimap",
+    [50] = "fishminimap",
+    [41] = "treasureminimap"
 }
 
 local MAP_FRAMES_HOVER = {}

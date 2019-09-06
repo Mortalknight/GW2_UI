@@ -10,6 +10,18 @@
 
 libs/libs.xml
 
+locales/deDE.lua
+locales/koKR.lua
+locales/zhTW.lua
+locales/enUS.lua
+locales/esMX.lua
+locales/esES.lua
+locales/ruRU.lua
+locales/ptBR.lua
+locales/frFR.lua
+locales/zhCN.lua
+locales/itIT.lua
+
 core/consts.lua
 core/utils.lua
 core/settings_default.lua
@@ -59,18 +71,6 @@ objectives/map.lua
 
 battlegrounds/battlegrounds.xml
 battlegrounds/battlegrounds.lua
-
-locales/deDE.lua
-locales/koKR.lua
-locales/zhTW.lua
-locales/enUS.lua
-locales/esMX.lua
-locales/esES.lua
-locales/ruRU.lua
-locales/ptBR.lua
-locales/frFR.lua
-locales/zhCN.lua
-locales/itIT.lua
 
 tests/mocks.lua
 tests/alert_tests.lua
