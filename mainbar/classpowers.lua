@@ -4,6 +4,21 @@ local animations = GW.animations
 
 local MAX_COMBO_POINTS = 5
 
+local function findBuff(unit, searchID)
+    local spellID
+    for i = 1, 40 do
+        spellID = select(10, UnitBuff(unit, i))
+        if spellID == searchID then
+            return spellID
+        elseif not spellID then
+            break
+        end
+    end
+
+    return nil
+end
+GW.AddForProfiling("classpowers", "findBuff", findBuff)
+
 local function animFlare(f, scale, offset, duration, rotate)
     scale = scale or 32
     offset = offset or 0
@@ -81,7 +96,7 @@ local function setDruid(f)
     local form = f.gwPlayerForm
     local barType = "none"
 
-    if form == 3 then
+    if form == 768 then
         barType = "combo"
     end
 
@@ -120,17 +135,11 @@ local function barChange_OnEvent(self, event, ...)
     if event == "UPDATE_SHAPESHIFT_FORM" then
         -- this event fires often when form hasn't changed; check old form against current form
         -- to prevent touching the bar unnecessarily (which causes annoying anim flickering)
-        local s = nil
-        for i = 1, GetNumShapeshiftForms() do
-            local _, isActive = GetShapeshiftFormInfo(i)
-            if isActive then
-                s = i
-            end
-        end
-        if f.gwPlayerForm == s then
+        local results = findBuff("player", 768)
+        if f.gwPlayerForm == results then
             return
         end
-        f.gwPlayerForm = s
+        f.gwPlayerForm = results
         selectType(f)
     end
 end
@@ -142,13 +151,7 @@ local function LoadClassPowers()
     ComboFrame:SetScript("OnShow", function() ComboFrame:Hide() end)
 
     cpf.gwPlayerClass = pClass
-
-    for i = 1, GetNumShapeshiftForms() do
-        local _, isActive = GetShapeshiftFormInfo(i)
-        if isActive then
-            cpf.gwPlayerForm = i
-        end
-    end
+    cpf.gwPlayerForm = findBuff("player", 768)
 
     cpf.decay:SetScript("OnEvent", barChange_OnEvent)
     cpf.decay:RegisterEvent("PLAYER_ENTERING_WORLD")
