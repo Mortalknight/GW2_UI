@@ -354,6 +354,7 @@ local function stackIcons(self, event, ...)
     end
 
     if not foundFrames then
+        self:Hide()
         return
     end
 
