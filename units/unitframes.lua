@@ -19,6 +19,12 @@ local GetRealItemLevel = GW.GetRealItemLevel
 local RoundDec = GW.RoundDec
 local unitIlvls = {}
 
+local textureMapping = {
+	[1] = 16,	--Main hand
+	[2] = 17,	--Off-hand
+	[3] = 18,	--Ranged
+}
+
 local function sortAuras(a, b)
     if a["caster"] == nil then
         a["caster"] = ""
@@ -72,6 +78,42 @@ local function getBuffs(unit, filter)
 
             if auraList[i]["duration"] <= 0 then
                 auraList[i]["timeremaning"] = 500001
+            end
+        end
+    end
+
+    --Add temp weaponbuffs if unit is player
+    local tempCounter = #auraList
+
+    if unit == "player" then
+        local RETURNS_PER_ITEM = 4
+        local numVals = select("#", GetWeaponEnchantInfo())
+        local numItems = numVals / RETURNS_PER_ITEM
+
+        if numItems > 0 then
+            TemporaryEnchantFrame:Hide()
+            for itemIndex = numItems, 1, -1 do	--Loop through the items from the back
+                local hasEnchant, enchantExpiration, enchantCharges = select(RETURNS_PER_ITEM * (itemIndex - 1) + 1, GetWeaponEnchantInfo())
+                if hasEnchant then
+                    tempCounter = tempCounter + 1
+
+                    auraList[tempCounter] = {}
+                    auraList[tempCounter]["id"] = tempCounter
+                    auraList[tempCounter]["name"] = "WeaponTempEnchant"
+                    auraList[tempCounter]["icon"] = GetInventoryItemTexture("player", textureMapping[itemIndex])
+                    auraList[tempCounter]["spellID"] = textureMapping[itemIndex]
+                    auraList[tempCounter]["caster"] = "player"
+                    auraList[tempCounter]["duration"] = enchantExpiration
+                    auraList[tempCounter]["dispelType"] = "Curse"
+
+                    -- Show buff durations if necessary
+                    if enchantExpiration then
+                        auraList[tempCounter]["expires"] = enchantExpiration / 1000
+                        auraList[tempCounter]["timeremaning"] = auraList[tempCounter]["expires"]
+                    else
+                        auraList[tempCounter]["timeremaning"] = 500001
+                    end
+                end
             end
         end
     end
@@ -167,7 +209,7 @@ local function setBuffData(self, buffs, i, oldBuffs)
         self.expires = b["expires"]
     end
 
-    if self.auraType == "debuff" then
+    if self.auraType == "debuff" or b["name"] == "WeaponTempEnchant" then
         if b["dispelType"] ~= nil then
             self.background:SetVertexColor(
                 DEBUFF_COLOR[b["dispelType"]].r,
@@ -185,7 +227,12 @@ local function setBuffData(self, buffs, i, oldBuffs)
         end
     end
 
-    self.auraid = b["id"]
+    if b["name"] == "WeaponTempEnchant" then
+        self.auraid = b["spellID"]
+    else
+        self.auraid = b["id"]
+    end
+    self.isTempEnchant = b["name"]
     self.duration:SetText(duration)
     self.stacks:SetText(stacks)
     self.icon:SetTexture(b["icon"])

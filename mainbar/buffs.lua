@@ -35,6 +35,12 @@ local function LoadBuffs()
         end
     )
     player_buff_frame:RegisterEvent("UNIT_AURA")
+    player_buff_frame:SetScript(
+        "OnUpdate",
+        function(self, elapsed)
+            UpdateBuffLayout(GwPlayerAuraFrame, event, "player")
+        end
+    )
 
     local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
     fgw:SetFrameRef("GwPlayerAuraFrame", player_buff_frame)
