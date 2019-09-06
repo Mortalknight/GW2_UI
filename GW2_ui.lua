@@ -243,9 +243,6 @@ function GwStandardButton_OnLeave(self)
     )
 end
 
-function gw_button_font_black_OnLoad(self)
-    self:SetFont(GwLocalization["FONT_BOLD"], 14)
-end
 
 local function barAnimation(self, barWidth, sparkWidth)
     local snap = (animations[self.animationName]["progress"] * 100) / 5

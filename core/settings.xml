@@ -1,24 +1,50 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Font name="gw_button_font_black" font="Interface\AddOns\GW2_UI\fonts\headlines.ttf" virtual="true">
+	<FontFamily name="GW_Standard_Button_Font" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\GW2_UI\fonts\headlines.ttf" height="14"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Interface\AddOns\GW2_UI\fonts\korean.ttf" height="14"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Interface\AddOns\GW2_UI\fonts\chinese-font.ttf" height="14"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Interface\AddOns\GW2_UI\fonts\chinese-font.ttf" height="14"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Interface\AddOns\GW2_UI\fonts\headlines.ttf" height="14"/>
+		</Member>
+
+	</FontFamily>
+    	<FontFamily name="GW_Standard_Button_Font_Small" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\GW2_UI\fonts\headlines.ttf" height="10"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Interface\AddOns\GW2_UI\fonts\korean.ttf" height="10"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Interface\AddOns\GW2_UI\fonts\chinese-font.ttf" height="10"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Interface\AddOns\GW2_UI\fonts\chinese-font.ttf" height="10"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Interface\AddOns\GW2_UI\fonts\headlines.ttf" height="10"/>
+		</Member>
+	</FontFamily>
+
+    <Font name="gw_button_font_black" inherits="GW_Standard_Button_Font" virtual="true">
         <Color r="0" b="0" g="0"></Color>
-        <FontHeight>
-            <AbsValue val="14"/>
-        </FontHeight>
-        <Scripts>
-            <OnLoad function="gw_button_font_black_OnLoad"/>
-        </Scripts>
     </Font>
-    <Font name="gw_button_font_black_small" font="Interface\AddOns\GW2_UI\fonts\headlines.ttf" virtual="true">
+
+    <Font name="gw_button_font_black_small" inherits="GW_Standard_Button_Font_Small" virtual="true">
         <Color r="0" b="0" g="0"></Color>
-        <FontHeight>
-            <AbsValue val="10"/>
-        </FontHeight>
-        <Scripts>
-            <OnLoad function="gw_button_font_black_OnLoad"/>
-        </Scripts>
     </Font>
+
     <Frame name="GwSettingsMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="470" y="40"></Size>
         <Anchors>
@@ -726,11 +752,8 @@
 
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\button"></NormalTexture>
         <DisabledTexture file="Interface\AddOns\GW2_UI\textures\button_disable"></DisabledTexture>
-
-
         <NormalFont style="gw_button_font_black"></NormalFont>
         <HighlightFont style="gw_button_font_black"></HighlightFont>
-
         <Layers>
             <Layer textureSubLevel="3">
                 <Texture parentKey="hover" file="Interface\AddOns\GW2_UI\textures\button_hover">
@@ -743,12 +766,10 @@
                 </Texture>
             </Layer>
         </Layers>
-
         <Scripts>
             <OnEnter function="GwStandardButton_OnEnter"/>
             <OnLeave function="GwStandardButton_OnLeave"/>
         </Scripts>
-
     </Button>
 
 
