@@ -48,8 +48,9 @@ local UNSTYLED = {
 }
 
 local function movePlacement(self)
+	local settings = GetSetting("GameTooltipPos")
 	self:ClearAllPoints()
-	self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 300)
+	self:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
 end
 GW.AddForProfiling("tooltips", "movePlacement", movePlacement)
 
@@ -93,6 +94,20 @@ local function LoadTooltips()
 		GameTooltip:HookScript("OnTooltipSetQuest", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetSpell", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
+		RegisterMovableFrame("GwTooltip", GameTooltip, 'GameTooltipPos', 'VerticalActionBarDummy')
+		hooksecurefunc(GwTooltipMoveAble, "StopMovingOrSizing", function (frame)
+			local anchor = "TOPLEFT"
+			local x = anchor:sub(-4) == "LEFT" and frame:GetLeft()
+			local y = anchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight()
+
+			frame:ClearAllPoints()
+			frame:SetPoint(anchor, x, y)
+
+			if not InCombatLockdown() then
+				GameTooltip:ClearAllPoints()
+				GwRaidFrameContainer:SetPoint(frame:GetPoint())
+			end
+		end)
 	end
 
 	hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)

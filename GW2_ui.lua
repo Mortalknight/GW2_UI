@@ -99,7 +99,11 @@ GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
 local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockAble)
     local moveframe = CreateFrame("Frame", name .. "MoveAble", UIParent, dummyFrame)
-    moveframe:SetSize(frame:GetSize())
+    if frame == GameTooltip then
+        moveframe:SetSize(230, 80)
+    else
+        moveframe:SetSize(frame:GetSize())
+    end
     moveframe.frameName:SetText(name)
     moveframe.gw_Settings = settingsName
     moveframe.gw_Lockable = lockAble

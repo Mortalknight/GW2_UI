@@ -210,6 +210,12 @@ GW_DEFAULT["MultiBarLeft"]["margin"] = 2
 GW_DEFAULT["MultiBarLeft"]["ButtonsPerRow"] = 1
 GW_DEFAULT["MultiBarLeft"]["hideDefaultBackground"] = true
 
+GW_DEFAULT["GameTooltipPos"] = {}
+GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"
+GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"
+GW_DEFAULT["GameTooltipPos"]["xOfs"] = 0
+GW_DEFAULT["GameTooltipPos"]["yOfs"] = 300
+
 GW_DEFAULT["raid_pos"] = {}
 GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"
 GW_DEFAULT["raid_pos"]["relativePoint"] = "TOPLEFT"
