@@ -183,7 +183,8 @@ local function hoverMiniMapOut()
             UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
         end
     end
-    MinimapNorthTag:Show()
+    Minimap_UpdateRotationSetting()
+    MinimapCompassTexture:SetSize(300, 300)
 end
 GW.AddForProfiling("map", "hoverMiniMapOut", hoverMiniMapOut)
 
@@ -511,6 +512,15 @@ local function LoadMinimap()
             end
         end
     )
+
+    local Minimap_OnEvent = function(self, event, ...)
+        if event == "CVAR_UPDATE" then
+            Minimap_UpdateRotationSetting()
+            MinimapCompassTexture:SetSize(300, 300)
+        end
+    end
+    Minimap:SetScript("OnEvent", Minimap_OnEvent)
+    Minimap:RegisterEvent("CVAR_UPDATE")
 
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
