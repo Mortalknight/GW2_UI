@@ -376,7 +376,6 @@
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
-
                     </Anchors>
                 </Texture>
             </Layer>
@@ -386,7 +385,6 @@
                 <SwipeTexture>
                     <Color r="1" g="1" b="1" a="1"/>
                 </SwipeTexture>
-
                 <Size x="28" y="28"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
@@ -404,13 +402,11 @@
                 </Layers>
             </Cooldown>
             <Frame name="$parentIcon" frameStrata="HIGH" toplevel="true">
-
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="3" y="-3"/>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
                 </Anchors>
                 <Layers>
-
                     <Layer level="OVERLAY" textureSubLevel="2">
                         <Texture file="Interface\AddOns\GW2_UI\textures\icon-overlay">
                             <Size x="24" y="24"/>
@@ -431,17 +427,14 @@
                         <Texture name="$parentBuffIcon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                             <Size x="24" y="24"/>
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                             </Anchors>
                         </Texture>
-
                     </Layer>
                 </Layers>
             </Frame>
-
         </Frames>
         <Scripts>
             <OnLoad function="GwDeBuffIcon_OnLoad"/>
@@ -455,7 +448,6 @@
         </HitRectInsets>
         <Layers>
             <Layer level="BACKGROUND">
-
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\targetshadowmoveable">
                     <Size x="512" y="128"/>
                     <Anchors>
@@ -469,7 +461,6 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
                     </Anchors>
                 </FontString>
-
             </Layer>
         </Layers>
         <Scripts>
@@ -504,7 +495,6 @@
     </Button>
     <Button name="GwPetFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
         <Size x="328" y="100"></Size>
-
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
@@ -521,44 +511,14 @@
                     </Anchors>
                 </FontString>
             </Layer>
-
-
         </Layers>
         <Scripts>
             <OnLoad function="GwPetFrameDummy_OnLoad"/>
         </Scripts>
     </Button>
 
-    <Button name="GwErrorFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
-        <Size x="400" y="20"></Size>
-
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
-                    <Size x="400" y="20"></Size>
-                    <Anchors>
-                        <Anchor point="TOP" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
-                    <Size x="50" y="30"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="5"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-
-
-        </Layers>
-        <Scripts>
-            <OnLoad function="GwErrorFrameDummy_OnLoad"/>
-        </Scripts>
-    </Button>
-
     <Button name="GwCastFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
         <Size x="258" y="22"></Size>
-
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
@@ -570,13 +530,11 @@
                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
                     <Size x="50" y="30"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-30" y="5"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="5"/>
                     </Anchors>
                 </FontString>
             </Layer>
-
-
         </Layers>
         <Scripts>
             <OnLoad function="GwCastFrameDummy_OnLoad"/>
@@ -586,15 +544,11 @@
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
-
-
                     <Anchors>
                         <Anchor point="TOPLEFT" reletivePoint="TOPLEFT" x="0" y="0"/>
-
                         <Anchor point="TOPRIGHT" reletivePoint="TOPRIGHT" x="0" y="0"/>
                         <Anchor point="BOTTOMLEFT" reletivePoint="BOTTOMLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" reletivePoint="BOTTOMRIGHT" x="0" y="0"/>
-
                     </Anchors>
                 </Texture>
                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
@@ -605,9 +559,6 @@
                     </Anchors>
                 </FontString>
             </Layer>
-
-
-
         </Layers>
         <Scripts>
             <OnLoad function="VerticalActionBarDummy_OnLoad"/>
@@ -621,39 +572,8 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
-                </Texture>
+                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background"/>
             </Layer>
         </Layers>
     </Button>
-
-    <Frame name="GwDummyResize" enableMouse="true" movable="true" virtual="true" frameStrata="DIALOG" parent="UIParent">
-        <Size x="40" y="40"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\resize">
-                    <Size x="32" y="32"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-
-            </Layer>
-        </Layers>
-        <!--
-        <Scripts>
-            <OnLoad>
-                self:RegisterForDrag("LeftButton");
-            </OnLoad>
-            <OnDragStart>
-                self:StartMoving();
-            </OnDragStart>
-            <OnDragStop>
-            </OnDragStop>
-        </Scripts>
-        -->
-    </Frame>
 </Ui>

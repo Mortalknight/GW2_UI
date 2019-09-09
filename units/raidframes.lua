@@ -1096,7 +1096,7 @@ local function LoadRaidFrames()
 
     hooksecurefunc(GwRaidFrameContainerMoveAble, "StopMovingOrSizing", function (frame)
         local anchor = GetSetting("RAID_ANCHOR")
-    
+ 
         if anchor == "GROWTH" then
             local g1, g2 = strsplit("+", GetSetting("RAID_GROW"))
             anchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")

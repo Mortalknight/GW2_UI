@@ -117,7 +117,7 @@ GW.AddForProfiling("bag", "createItemBackground", createItemBackground)
 local function updateBagIcons(smooth)
     moveBagbar()
     local x = 8
-    local y = 72
+    local y = 40
     local mx = 0
     local gwbf = GwBagFrame
     local winsize = BAG_WINDOW_SIZE

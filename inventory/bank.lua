@@ -101,7 +101,7 @@ local function updateBankIcons(smooth)
     end
 
     local x = 8
-    local y = 72
+    local y = 40
     local ACTION_BUTTON_NAME
     local ACTION_FRAME_NAME
     local mx = 0

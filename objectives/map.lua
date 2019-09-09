@@ -402,11 +402,14 @@ local function LoadMinimap()
 
     MiniMapMailFrame:ClearAllPoints()
     MinimapZoneText:ClearAllPoints()
+    MiniMapTrackingFrame:ClearAllPoints()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
+    MiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
+    
 
     MinimapZoneText:SetTextColor(1, 1, 1)
 
