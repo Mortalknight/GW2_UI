@@ -43,7 +43,8 @@ local UNSTYLED = {
 	"VuhDoScanTooltip",
 	"XPerl_BottomTip",
 	"EventTraceTooltip",
-	"FrameStackTooltip"
+	"FrameStackTooltip",
+	"LibDBIconTooltip"
 }
 
 local function movePlacement(self)
