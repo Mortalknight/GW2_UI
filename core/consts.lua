@@ -49,6 +49,11 @@ local COLOR_FRIENDLY = {
 }
 GW.COLOR_FRIENDLY = COLOR_FRIENDLY
 
+local trackingTypes = {}
+GW.trackingTypes = trackingTypes
+
+trackingTypes[136025] = {l = (128 * (2 - 1)) / 1024, r = (128 *  (2)) /  1024, t = 0, b = 1}
+
 local bloodSpark = {}
 GW.BLOOD_SPARK = bloodSpark
 

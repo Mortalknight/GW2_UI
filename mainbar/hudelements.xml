@@ -668,6 +668,47 @@
             </Layer>
         </Layers>
     </Frame>
+
+    <Frame name="GwMiniMapTrackingFrame" enableMouse="true" hidden="true" virtual="true">
+        <Size>
+            <AbsDimension x="33" y="33"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="-15" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="GwMiniMapTrackingIcon" file="Interface\AddOns\GW2_UI\Textures\track-icons-map">
+                    <Size>
+                        <AbsDimension x="40" y="70"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnMouseUp>
+                if button == "RightButton" then
+                    CancelTrackingBuff()		
+                end
+            </OnMouseUp> 
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                GameTooltip:SetTrackingSpell();
+            </OnEnter>							
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Frame>
+
+
     <Button name="GwMapTime" frameStrata="LOW" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
         <Size x="50" y="20"></Size>
         <Anchors>

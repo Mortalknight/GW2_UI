@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local RoundDec = GW.RoundDec
+local trackingTypes = GW.trackingTypes
 
 local IS_GUILD_GROUP
 
@@ -403,14 +404,37 @@ local function LoadMinimap()
 
     MiniMapMailFrame:ClearAllPoints()
     MinimapZoneText:ClearAllPoints()
-    MiniMapTrackingFrame:ClearAllPoints()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
-    MiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
-    
+
+    MiniMapTrackingFrame:UnregisterAllEvents()
+    MiniMapTrackingFrame:SetScript("OnEvent", nil)
+    MiniMapTrackingFrame:Hide()
+    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
+    GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -35, 0)  
+    local icontype = GetTrackingTexture()
+    if icontype then
+        GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
+        GwMiniMapTrackingFrame:Show()
+    else
+        GwMiniMapTrackingFrame:Hide()
+    end
+    GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
+    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event) 
+        if event == "UNIT_AURA" then
+            local icontype = GetTrackingTexture()
+            if icontype then
+                print(icontype)
+                GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
+                GwMiniMapTrackingFrame:Show()
+            else
+                GwMiniMapTrackingFrame:Hide()
+            end
+        end
+    end)
 
     MinimapZoneText:SetTextColor(1, 1, 1)
 
