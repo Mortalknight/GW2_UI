@@ -384,7 +384,7 @@ local function setStanceBar()
     GwStanceBarButton:RegisterEvent('CHARACTER_POINTS_CHANGED')
     GwStanceBarButton:RegisterEvent('PLAYER_ALIVE')
     GwStanceBarButton:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-    GwStanceBarButton:SetScript('OnEvent', GW.gwStanceOnEvent)
+    GwStanceBarButton:SetScript('OnEvent', GW.StanceOnEvent)
 
     if GetNumShapeshiftForms() < 2 then
         GwStanceBarButton:Hide()
