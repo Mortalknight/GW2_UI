@@ -44,7 +44,8 @@ local UNSTYLED = {
 	"EventTraceTooltip",
 	"FrameStackTooltip",
 	"PetBattlePrimaryUnitTooltip",
-	"PetBattlePrimaryAbilityTooltip"
+	"PetBattlePrimaryAbilityTooltip",
+	"LibDBIconTooltip"
 }
 
 local function movePlacement(self)
