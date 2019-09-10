@@ -52,7 +52,9 @@ GW.COLOR_FRIENDLY = COLOR_FRIENDLY
 local trackingTypes = {}
 GW.trackingTypes = trackingTypes
 
-trackingTypes[136025] = {l = (128 * (2 - 1)) / 1024, r = (128 *  (2)) /  1024, t = 0, b = 1}
+trackingTypes[136025] = {l = 0.125, r = 0.250, t = 0, b = 0.5} --mining
+trackingTypes[133939] = {l = 0, r = 0.125, t = 0, b = 0.5} --herbalism
+trackingTypes[135974] = {l = 0.750, r = 0.875, t = 0, b = 0.5} --undead
 
 local bloodSpark = {}
 GW.BLOOD_SPARK = bloodSpark

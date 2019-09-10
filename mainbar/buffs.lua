@@ -84,8 +84,9 @@ local function LoadBuffs()
             local mbar = self:GetFrameRef("MultiBarBottomRight")
             local aura = self:GetFrameRef("GwPlayerAuraFrame")
             local uip = self:GetFrameRef("UIParent")
+            local protected = mbar:IsProtected()
 
-            if newstate == "test" then
+            if newstate == "test" and protected then
                 if not mbar or not mbar:IsShown() then
                     newstate = "low"
                 else

@@ -684,7 +684,7 @@
             <Layer level="BACKGROUND">
                 <Texture name="GwMiniMapTrackingIcon" file="Interface\AddOns\GW2_UI\Textures\track-icons-map">
                     <Size>
-                        <AbsDimension x="40" y="70"/>
+                        <AbsDimension x="40" y="40"/>
                     </Size>
                     <Anchors>
                         <Anchor point="TOPLEFT"/>

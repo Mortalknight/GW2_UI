@@ -259,6 +259,9 @@ local function updatePetData(self, event, unit)
     end
 
     if event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+        setPetBar(self)
+        UpdateBuffLayout(self, event, unit)
+        SetPetHappiness(self)
         SetPortraitTexture(_G["GwPlayerPetFramePortrait"], "pet")
         if event ~= "UNIT_PET" then
             return

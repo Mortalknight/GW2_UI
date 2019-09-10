@@ -53,6 +53,7 @@ local function moveBagbar()
         fv:ClearAllPoints()
         fv:SetParent(GwBagFrame)
         fv:SetPoint("TOPLEFT", GwBagFrame, "TOPLEFT", -35, -y)
+        fv:SetSize(32, 32)
         _G[v .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         fv:SetNormalTexture(nil)
         fv:SetHighlightTexture(nil)
@@ -497,11 +498,7 @@ local function LoadBag()
     f.buttonClose:HookScript(
         "OnClick",
         function(self)
-            --local f = self:GetParent()
             CloseAllBags()
-            --if f.currencyWindow:IsShown() then
-            --f:Hide()
-            --end
         end
     )
 

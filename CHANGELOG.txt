@@ -1,3 +1,9 @@
+0.6.0
+
+- Added custom tacking icons (if some is missing please tell uns the ID and type)
+- Make tooltip moveable
+- Small fixes
+
 0.5.0
 
 - Fix druid combobar (Cat)

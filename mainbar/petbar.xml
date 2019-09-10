@@ -72,11 +72,7 @@
 					<AbsDimension x="24" y="23"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="-7" y="-4"/>
-						</Offset>
-					</Anchor>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-23" y="-20"/>
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
