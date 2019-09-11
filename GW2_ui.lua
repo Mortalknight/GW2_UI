@@ -355,9 +355,13 @@ local function FadeCheck(self, elapsed)
     if self:IsMouseOver(100, -100, -100, 100) or UnitAffectingCombat('player') then
         if not self.gw_FadeShowing then
             actionBarFrameShow(self, self:GetName())
+            GW.updatePetFrameLocation()
+            GW.UpdatePlayerBuffFrame()
         end
     elseif self.gw_FadeShowing and UnitAffectingCombat('player') == false then
         actionBarFrameHide(self, self:GetName())
+        GW.updatePetFrameLocation() 
+        GW.UpdatePlayerBuffFrame()
     end
 end
 GW.FadeCheck = FadeCheck

@@ -86,7 +86,7 @@ local function LoadBuffs()
             local uip = self:GetFrameRef("UIParent")
             local protected = mbar:IsProtected()
 
-            if newstate == "test" and protected then
+            if newstate == "incombat" and protected then
                 if not mbar or not mbar:IsShown() then
                     newstate = "low"
                 else
@@ -103,7 +103,7 @@ local function LoadBuffs()
             end
             ]=]
         )
-        RegisterStateDriver(fgw, "combat", "[combat] test; [overridebar] low; [vehicleui] low; none")
+        RegisterStateDriver(fgw, "combat", "[combat] incombat; [overridebar] low; [vehicleui] low; none")
     end
 
     AddActionBarCallback(UpdatePlayerBuffFrame)
