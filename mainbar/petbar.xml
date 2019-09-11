@@ -8,7 +8,6 @@
         </HitRectInsets>
         <Layers>
             <Layer level="ARTWORK">
-
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
                     <Color r="0" g="0" b="0" a="0.8"/>
                     <Size x="232" y="18"/>
@@ -58,7 +57,6 @@
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-
             </StatusBar>
             <Frame parentKey="auras">
                 <Size x="0" y="30"></Size>
@@ -67,44 +65,7 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-85" y="0"></Anchor>
                 </Anchors>
             </Frame>
-            <Frame name="GwPetFrameHappiness" enableMouse="true" hidden="false">
-				<Size>
-					<AbsDimension x="24" y="23"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-23" y="-20"/>
-				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="GwPetFrameHappinessTexture" file="Interface\PetPaperDollFrame\UI-PetHappiness" setAllPoints="true">
-							<Size>
-								<AbsDimension x="24" y="23"/>
-							</Size>
-							<TexCoords left="0" right="0.1875" top="0" bottom="0.359375"/>
-						</Texture>			
-					</Layer>
-				</Layers>
-				<Scripts>
-					<OnEnter>
-						if self.tooltip then
-							GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-							GameTooltip:SetText(self.tooltip)
-							if self.tooltipDamage then
-								GameTooltip:AddLine(self.tooltipDamage, "", 1, 1, 1)
-							end
-							if self.tooltipLoyalty then
-								GameTooltip:AddLine(self.tooltipLoyalty, "", 1, 1, 1)
-							end
-							GameTooltip:Show()
-						end
-					</OnEnter>
-					<OnLeave>
-						GameTooltip:Hide()
-					</OnLeave>
-				</Scripts>
-			</Frame>
+            <Frame name="GwPetFrameHappinessInvisibleFrame" enableMouse="false" hidden="true"/>
         </Frames>
-
     </Button>
-
 </Ui>

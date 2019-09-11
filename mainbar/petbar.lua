@@ -220,27 +220,49 @@ GW.updatePetFrameLocation = updatePetFrameLocation
 local function SetPetHappiness(self)
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
     local hasPetUI, isHunterPet = HasPetUI()
-    
+
 	if not happiness or not isHunterPet then
-		GwPetFrameHappiness:Hide()
+        self.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
 		return
-	end
-	GwPetFrameHappiness:Show()
-	if happiness == 1 then
-		GwPetFrameHappinessTexture:SetTexCoord(0.375, 0.5625, 0, 0.359375)
-	elseif happiness == 2 then
-		GwPetFrameHappinessTexture:SetTexCoord(0.1875, 0.375, 0, 0.359375)
-	elseif happiness == 3 then
-		GwPetFrameHappinessTexture:SetTexCoord(0, 0.1875, 0, 0.359375)
     end
-	GwPetFrameHappiness.tooltip = _G["PET_HAPPINESS"  ..  happiness]
-	GwPetFrameHappiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
+    GwPetFrameHappinessInvisibleFrame:ClearAllPoints()
+    GwPetFrameHappinessInvisibleFrame:SetPoint(self.portraitBackground:GetPoint())
+    GwPetFrameHappinessInvisibleFrame:SetSize(self.portraitBackground:GetSize())
+    GwPetFrameHappinessInvisibleFrame:Show()
+
+    --Add tooltip to invisible frame
+    GwPetFrameHappinessInvisibleFrame:SetScript("OnEnter", function(self)
+        if GwPetFrameHappinessInvisibleFrame.tooltip then
+            GameTooltip:SetOwner(GwPetFrameHappinessInvisibleFrame, "ANCHOR_RIGHT")
+            GameTooltip:SetText(GwPetFrameHappinessInvisibleFrame.tooltip)
+            if GwPetFrameHappinessInvisibleFrame.tooltipDamage then
+                GameTooltip:AddLine(GwPetFrameHappinessInvisibleFrame.tooltipDamage, "", 1, 1, 1)
+            end
+            if GwPetFrameHappinessInvisibleFrame.tooltipLoyalty then
+                GameTooltip:AddLine(GwPetFrameHappinessInvisibleFrame.tooltipLoyalty, "", 1, 1, 1)
+            end
+            GameTooltip:Show()
+        end
+    end)
+    GwPetFrameHappinessInvisibleFrame:SetScript("OnLeave", GameTooltip_Hide)
+
+    if happiness == 1 then
+        self.portraitBackground:SetTexCoord(0.75, 1, 0, 1)
+    elseif happiness == 2 then
+        self.portraitBackground:SetTexCoord(0.25, 0.5, 0, 1)
+    elseif happiness == 3 then
+        self.portraitBackground:SetTexCoord(0.5, 0.75, 0, 1)
+    end
+    
+	GwPetFrameHappinessInvisibleFrame.tooltip = _G["PET_HAPPINESS"  ..  happiness]
+    GwPetFrameHappinessInvisibleFrame.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
+    
 	if loyaltyRate < 0 then
-		GwPetFrameHappiness.tooltipLoyalty = _G["LOSING_LOYALTY"]
+		GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = _G["LOSING_LOYALTY"]
 	elseif loyaltyRate > 0 then
-		GwPetFrameHappiness.tooltipLoyalty = _G["GAINING_LOYALTY"]
+		GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = _G["GAINING_LOYALTY"]
 	else
-		GwPetFrameHappiness.tooltipLoyalty = nil
+		GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = nil
 	end
 end
 
@@ -408,6 +430,5 @@ local function LoadPetFrame()
     RegisterMovableFrame("GwPlayerPetFrame", playerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 
     setPetBar(playerPetFrame)
-    SetPetHappiness(playerPetFrame)
 end
 GW.LoadPetFrame = LoadPetFrame

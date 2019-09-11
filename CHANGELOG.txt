@@ -5,6 +5,7 @@
 - Small fixes
 - If petbar is locked, the bar is now moving up and down with the left multibar if this one is fading in and out
 - The buffbar is now moving up and down with the right multibar if this one is fading in and out
+- Add custom hunter happiness (portrait frame background)
 
 0.5.0
 
