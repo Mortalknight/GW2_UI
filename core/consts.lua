@@ -56,6 +56,7 @@ trackingTypes[136025] = {l = 0.125, r = 0.250, t = 0, b = 0.5} --mining
 trackingTypes[133939] = {l = 0, r = 0.125, t = 0, b = 0.5} --herbalism
 trackingTypes[135974] = {l = 0.750, r = 0.875, t = 0, b = 0.5} --undead
 trackingTypes[132328] = {l = 0.875, r = 1, t = 0, b = 0.5} --beast
+trackingTypes[135942] = {l = 0, r = 0.125, t = 0.5, b = 1} --human
 
 local bloodSpark = {}
 GW.BLOOD_SPARK = bloodSpark
