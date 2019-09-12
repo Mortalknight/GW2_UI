@@ -464,7 +464,7 @@ local SCALE_HUD_FRAMES = {
     "MultiBarRight",
     "MultiBarLeft"
 }
-local function UpdateHudScale(scale)
+local function UpdateHudScale()
     local hudScale = GetSetting("HUD_SCALE")
     MainMenuBarArtFrame:SetScale(hudScale)
     for i, name in ipairs(SCALE_HUD_FRAMES) do
@@ -472,6 +472,9 @@ local function UpdateHudScale(scale)
         local fm = _G[name .. "MoveAble"]
         if f then
             f:SetScale(hudScale)
+        end
+        if name == "MultiBarRight" or name == "MultiBarLeft" then
+            fm = _G["Gw" .. name .. "MoveAble"]
         end
         if fm then
             fm:SetScale(hudScale)
@@ -604,8 +607,6 @@ local function loadAddon(self)
         GW.LoadRaidFrames()
     end
 
-    GW.UpdateHudScale()
-
     if (forcedMABags) then
         GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
     end
@@ -626,6 +627,7 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
+        GW.UpdateHudScale()
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)

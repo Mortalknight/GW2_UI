@@ -513,7 +513,7 @@
         <PushedTexture file="Interface\AddOns\GW2_UI\textures\mail"></PushedTexture >
     </Button>
     <Button name="GwStanceBarButton" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" virtual="true">
-        <Size x="40" y="40"></Size>
+        <Size x="30" y="30"></Size>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\stance-icon"></NormalTexture>
         <PushedTexture file="Interface\AddOns\GW2_UI\textures\stance-icon"></PushedTexture >
     </Button>

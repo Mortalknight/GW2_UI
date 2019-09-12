@@ -394,6 +394,8 @@ local function LoadBag()
             GameTooltip:ClearLines()
 
             -- list all players from the realm+faction
+            local _, realm = UnitFullName("player")
+            GameTooltip:AddDoubleLine(realm .. " " .. TOTAL, nil, nil, nil, 1, 1, 1)
             for name, money in pairs(list) do
                 if money > 0 then
                     local color = select(4, GetClassColor(GetCharClass(name)))
@@ -409,13 +411,13 @@ local function LoadBag()
 
             -- align money frames to the right
             local maxWidth = 0
-            for i=1,GameTooltip.shownMoneyFrames do
+            for i = 1, GameTooltip.shownMoneyFrames do
                 local name = "GameTooltipMoneyFrame" .. i
                 local textWidth = _G[name .. "PrefixText"]:GetWidth()
                 local moneyWidth = select(4, _G[name .. "CopperButton"]:GetPoint(1))
                 maxWidth = max(maxWidth, textWidth + moneyWidth)
             end
-            for i=1,GameTooltip.shownMoneyFrames do
+            for i = 1, GameTooltip.shownMoneyFrames do
                 local name = "GameTooltipMoneyFrame" .. i
                 local textWidth = _G[name .. "PrefixText"]:GetWidth()
                 _G[name .. "CopperButton"]:SetPoint("RIGHT", name .. "PrefixText", "RIGHT", maxWidth - textWidth, 0)

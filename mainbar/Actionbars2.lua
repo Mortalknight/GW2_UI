@@ -153,7 +153,7 @@ function gwShowBackdrop(self)
     _G[self:GetName() .. 'GwBackDrop']:Show()
 end
 
-function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
+function gw_setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton)
     if _G[buttonName..'Icon']~=nil then
         _G[buttonName..'Icon']:SetTexCoord(0.1,0.9,0.1,0.9)
     end
@@ -170,11 +170,16 @@ function gw_setActionButtonStyle(buttonName, noBackDrop,hideUnused)
         _G[buttonName.."Count"]:SetTextColor(1,1,0.6)
     end
     
-    if _G[buttonName..'Border']~=nil then
-
-        _G[buttonName..'Border']:SetSize(_G[buttonName]:GetWidth(),_G[buttonName]:GetWidth())
+    if _G[buttonName..'Border'] ~= nil then
         _G[buttonName..'Border']:SetBlendMode('BLEND')
-        _G[buttonName..'Border']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder')
+        if isStanceButton then
+            _G[buttonName..'Border']:Show()
+            _G[buttonName..'Border']:SetSize(_G[buttonName]:GetWidth(),_G[buttonName]:GetWidth())
+            _G[buttonName..'Border']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
+        else
+            _G[buttonName..'Border']:SetSize(_G[buttonName]:GetWidth(),_G[buttonName]:GetWidth())
+            _G[buttonName..'Border']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder')
+        end
     end
     if _G[buttonName..'NormalTexture']~=nil then
         _G[buttonName]:SetNormalTexture(nil)
@@ -352,7 +357,7 @@ end
 
 
 local function setStanceBar()
-    for i = 1, 12 do
+    for i = 1, 10 do
         if _G["StanceButton" .. i] ~= nil then
             if i == 1 then
                 _G["StanceButton" .. i]:ClearAllPoints()
@@ -361,13 +366,13 @@ local function setStanceBar()
                 _G["StanceButton" .. i]:ClearAllPoints()
                 _G["StanceButton" .. i]:SetPoint('BOTTOM', _G['StanceButton' .. i - 1], 'TOP', 0, 2)
             end          
-            _G["StanceButton" .. i]:SetSize(38, 38)
-            gw_setActionButtonStyle('StanceButton' .. i, true)
+            _G["StanceButton" .. i]:SetSize(30, 30)
+            gw_setActionButtonStyle('StanceButton' .. i, true, nil, true)
         end
     end
  
     CreateFrame('Button', 'GwStanceBarButton', UIParent, 'GwStanceBarButton')
-    GwStanceBarButton:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
+    GwStanceBarButton:SetPoint('BOTTOMRIGHT', ActionButton1, 'BOTTOMLEFT', -5, 0)
 
     if GetNumShapeshiftForms() == 1 then
         StanceButton1:ClearAllPoints()
@@ -402,8 +407,9 @@ local function setStanceBar()
     end
 end
 
-local function StanceOnEvent(self, event)
-    if InCombatLockdown() then
+local function StanceOnEvent(self, event, ...)
+    local unit = ...
+    if InCombatLockdown() or unit ~= "player" then
         return
     end
 
