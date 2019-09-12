@@ -8,6 +8,7 @@
 - Add custom hunter happiness (portrait frame background)
 - Fix MultiBarRight and MultiBarLeft was not scale after reload
 - Add custom border to stancebutton and make then smaller
+- Add itemquantity border to bags
 
 0.5.0
 

@@ -38,7 +38,8 @@ local function bagFrameHide()
 end
 GW.AddForProfiling("bag", "bagFrameHide", bagFrameHide)
 
-local function bagFrameShow()
+local function bagFrameShow(self)
+    self:RegisterEvent("BAG_UPDATE_DELAYED")
     GwBagMoverFrame:Show()
     GwBagFrameResize:Show()
 end
@@ -114,6 +115,26 @@ local function createItemBackground(name)
     return CreateFrame("Frame", "GwBagItemBackdrop" .. name, GwBagFrame, "GwBagItemBackdrop")
 end
 GW.AddForProfiling("bag", "createItemBackground", createItemBackground)
+
+local function SetItemButtonQuality()
+    for bag = 0, NUM_BAG_SLOTS do
+        for slot = 1, GetContainerNumSlots(bag) do
+            local btnID = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]:GetID()
+            local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
+            local btn = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]
+            if quality and btn then           
+                if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+                    btn.IconBorder:Show()
+                    btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+                else
+                    btn.IconBorder:Hide()
+                end
+            else
+                btn.IconBorder:Hide()
+            end
+        end
+    end
+end
 
 local function updateBagIcons(smooth)
     moveBagbar()
@@ -444,6 +465,10 @@ local function LoadBag()
             if event == "PLAYER_MONEY" then
                 updateMoney(self)
             end
+            if event == "BAG_UPDATE_DELAYED" then
+                updateBagIcons()
+                SetItemButtonQuality()
+            end 
         end
     )
     f:RegisterEvent("PLAYER_MONEY")
@@ -535,6 +560,7 @@ local function LoadBag()
                     showIcons()
                     CloseBags()
                     updateBagIcons()
+                    SetItemButtonQuality()
                     if fc then
                         fc:Show()
                     end
@@ -545,6 +571,7 @@ local function LoadBag()
                 function()
                     CloseBags()
                     updateBagIcons()
+                    SetItemButtonQuality()
                     if fc then
                         fc:Hide()
                     end
