@@ -12,6 +12,8 @@ GW.VERSION_STRING = 'GW2_UI_Classic v0.5'
 
 local loaded = false
 local scaleSet = false
+local mulitBarRightVisible = false
+local mulitBarLeftVisible = false
 local forcedMABags = false
 
 GW_MOVABLE_FRAMES = {}
@@ -451,6 +453,12 @@ local function gw_OnUpdate(self, elapsed)
         cb.func(cb.payload, elapsed)
     end
 
+    --Check if MulitBarRight is active or changed
+    if mulitBarRightVisible ~= MultiBarRight:IsShown() or mulitBarLeftVisible ~= MultiBarLeft:IsShown()  then
+        mulitBarRightVisible = MultiBarRight:IsShown()
+        mulitBarLeftVisible = MultiBarLeft:IsShown()
+        scaleSet = false
+    end
     if loaded and not scaleSet then
         scaleSet = true
         GW.UpdateHudScale()
