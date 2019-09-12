@@ -11,6 +11,7 @@ local Debug = GW.Debug
 GW.VERSION_STRING = 'GW2_UI_Classic v0.5'
 
 local loaded = false
+local scaleSet = false
 local forcedMABags = false
 
 GW_MOVABLE_FRAMES = {}
@@ -449,6 +450,11 @@ local function gw_OnUpdate(self, elapsed)
     for _, cb in ipairs(updateCB) do
         cb.func(cb.payload, elapsed)
     end
+
+    if loaded and not scaleSet then
+        scaleSet = true
+        GW.UpdateHudScale()
+    end
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
@@ -627,7 +633,6 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
-        GW.UpdateHudScale()
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)

@@ -441,6 +441,7 @@ local function LoadBank()
         function()
             GwBankMoverFrame:Hide()
             GwBankFrameResize:Hide()
+            f:SetScript("OnUpdate", nil)
         end
     )
     f:SetScript(
@@ -448,6 +449,10 @@ local function LoadBank()
         function()
             GwBankMoverFrame:Show()
             GwBankFrameResize:Show()
+            f:SetScript("OnUpdate", function()
+                BankFrame:ClearAllPoints()
+                BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+            end)
         end
     )
     BankFrame:HookScript(
