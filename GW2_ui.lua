@@ -11,9 +11,7 @@ local Debug = GW.Debug
 GW.VERSION_STRING = 'GW2_UI_Classic v0.5'
 
 local loaded = false
-local scaleSet = false
-local mulitBarRightVisible = false
-local mulitBarLeftVisible = false
+local hudScale = 1
 local forcedMABags = false
 
 GW_MOVABLE_FRAMES = {}
@@ -454,14 +452,15 @@ local function gw_OnUpdate(self, elapsed)
     end
 
     --Check if MulitBarRight is active or changed
-    if mulitBarRightVisible ~= MultiBarRight:IsShown() or mulitBarLeftVisible ~= MultiBarLeft:IsShown()  then
-        mulitBarRightVisible = MultiBarRight:IsShown()
-        mulitBarLeftVisible = MultiBarLeft:IsShown()
-        scaleSet = false
-    end
-    if loaded and not scaleSet then
-        scaleSet = true
-        GW.UpdateHudScale()
+    if (MultiBarRight or MultiBarLeft) and loaded then
+        if MultiBarRight:GetScale() ~= hudScale then 
+            _G["MultiBarRight"]:SetScale(hudScale)
+            _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
+        end
+        if MultiBarLeft:GetScale() ~= hudScale then 
+            _G["MultiBarLeft"]:SetScale(hudScale)
+            _G["GwMultiBarLeftMoveAble"]:SetScale(hudScale)
+        end
     end
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
@@ -479,7 +478,7 @@ local SCALE_HUD_FRAMES = {
     "MultiBarLeft"
 }
 local function UpdateHudScale()
-    local hudScale = GetSetting("HUD_SCALE")
+    hudScale = GetSetting("HUD_SCALE")
     MainMenuBarArtFrame:SetScale(hudScale)
     for i, name in ipairs(SCALE_HUD_FRAMES) do
         local f = _G[name]
@@ -620,6 +619,8 @@ local function loadAddon(self)
         GW.LoadPartyFrames()
         GW.LoadRaidFrames()
     end
+
+    GW.UpdateHudScale()
 
     if (forcedMABags) then
         GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
