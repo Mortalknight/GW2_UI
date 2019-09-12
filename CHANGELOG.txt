@@ -5,10 +5,10 @@
 - Small fixes
 - If petbar is locked, the bar is now moving up and down with the left multibar if this one is fading in and out
 - The buffbar is now moving up and down with the right multibar if this one is fading in and out
-- Add custom hunter happiness (portrait frame background)
+- Add custom hunter happiness texture (portrait frame background)
 - Fix MultiBarRight and MultiBarLeft was not scale after reload
-- Add custom border to stancebutton and make then smaller
-- Add itemquantity border to bags
+- Add custom border to stancebutton and make them smaller
+- Add itemquality border to bags and bag
 
 0.5.0
 

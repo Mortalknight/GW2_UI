@@ -89,6 +89,60 @@ local function createItemBackground(name)
 end
 GW.AddForProfiling("bank", "createItemBackground", createItemBackground)
 
+local function SetItemButtonQuality()
+    for i = 1, 24 do
+        local btnID = _G["BankFrameItem" .. i]:GetID()
+        local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(-1, btnID)
+        local btn = _G["BankFrameItem" .. i]
+        if btn then
+            if quality then           
+                if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+                    btn.IconBorder:Show()
+                    btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+                else
+                    btn.IconBorder:Hide()
+                end
+            else
+                btn.IconBorder:Hide()
+            end
+            if itemID ~= nil then
+                local isQuestItem = select(6, GetItemInfo(itemID))
+                if isQuestItem == BATTLE_PET_SOURCE_2 then 
+                    btn.IconBorder:Show()
+                    btn.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
+                end
+            end
+        end
+    end
+    for bag = 5, 11 do
+        for slot = 1, GetContainerNumSlots(bag) do
+            local btnID = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]:GetID()
+            local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
+            local btn = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]
+
+            if btn then
+                if quality then           
+                    if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+                    else
+                        btn.IconBorder:Hide()
+                    end
+                else
+                    btn.IconBorder:Hide()
+                end
+                if itemID ~= nil then
+                    local isQuestItem = select(6, GetItemInfo(itemID))
+                    if isQuestItem == BATTLE_PET_SOURCE_2 then 
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
+                    end
+                end
+            end
+        end
+    end
+end
+
 local function updateBankIcons(smooth)
     moveBankBagBar()
 
@@ -435,6 +489,19 @@ local function LoadBank()
     )
     GwButtonBuyBankSlots:SetText(BANK_BAG_PURCHASE)
 
+    f:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+    f:SetScript(
+        "OnEvent",
+        function(self, event, ...)
+            if not GW.inWorld then
+                return
+            end
+            if event == "PLAYERBANKSLOTS_CHANGED" or event == "BAG_UPDATE_DELAYED" then
+                SetItemButtonQuality()
+            end 
+        end
+    )
+
     -- hook into default bank frames to re-use default bank bars and search box
     f:SetScript(
         "OnHide",
@@ -442,6 +509,8 @@ local function LoadBank()
             GwBankMoverFrame:Hide()
             GwBankFrameResize:Hide()
             f:SetScript("OnUpdate", nil)
+            f:UnregisterEvent("PLAYERBANKSLOTS_CHANGED")
+            f:UnregisterEvent("BAG_UPDATE_DELAYED")
         end
     )
     f:SetScript(
@@ -449,6 +518,8 @@ local function LoadBank()
         function()
             GwBankMoverFrame:Show()
             GwBankFrameResize:Show()
+            f:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+            f:RegisterEvent("BAG_UPDATE_DELAYED")
             f:SetScript("OnUpdate", function()
                 BankFrame:ClearAllPoints()
                 BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
@@ -470,6 +541,7 @@ local function LoadBank()
             for i = 5, 12 do
                 OpenBag(i)
             end
+            SetItemButtonQuality()
         end
     )
     BankFrame:SetFrameStrata("HIGH")

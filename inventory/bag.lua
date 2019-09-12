@@ -31,7 +31,8 @@ local default_bag_frame_container = {
     "ContainerFrame5"
 }
 
-local function bagFrameHide()
+local function bagFrameHide(self)
+    self:UnregisterAllEvents()
     GwBagMoverFrame:Hide()
     GwBagFrameResize:Hide()
     CloseAllBags()
@@ -122,15 +123,25 @@ local function SetItemButtonQuality()
             local btnID = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]:GetID()
             local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
             local btn = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]
-            if quality and btn then           
-                if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-                    btn.IconBorder:Show()
-                    btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+
+            if btn then
+                if quality then           
+                    if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+                    else
+                        btn.IconBorder:Hide()
+                    end
                 else
                     btn.IconBorder:Hide()
                 end
-            else
-                btn.IconBorder:Hide()
+                if itemID ~= nil then
+                    local isQuestItem = select(6, GetItemInfo(itemID))
+                    if isQuestItem == BATTLE_PET_SOURCE_2 then 
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
+                    end
+                end
             end
         end
     end
@@ -464,8 +475,7 @@ local function LoadBag()
             end
             if event == "PLAYER_MONEY" then
                 updateMoney(self)
-            end
-            if event == "BAG_UPDATE_DELAYED" then
+            elseif event == "BAG_UPDATE_DELAYED" then
                 updateBagIcons()
                 SetItemButtonQuality()
             end 
@@ -571,7 +581,6 @@ local function LoadBag()
                 function()
                     CloseBags()
                     updateBagIcons()
-                    SetItemButtonQuality()
                     if fc then
                         fc:Hide()
                     end
