@@ -32,7 +32,7 @@ local default_bag_frame_container = {
 }
 
 local function bagFrameHide(self)
-    self:UnregisterAllEvents()
+    self:UnregisterEvent("BAG_UPDATE_DELAYED")
     GwBagMoverFrame:Hide()
     GwBagFrameResize:Hide()
     CloseAllBags()
@@ -475,13 +475,14 @@ local function LoadBag()
             end
             if event == "PLAYER_MONEY" then
                 updateMoney(self)
-            elseif event == "BAG_UPDATE_DELAYED" then
+            elseif event == "BAG_UPDATE_DELAYED" or event == "MERCHANT_SHOW" then
                 updateBagIcons()
                 SetItemButtonQuality()
             end 
         end
     )
     f:RegisterEvent("PLAYER_MONEY")
+    f:RegisterEvent("MERCHANT_SHOW")
 
     do
         local dd = f.buttonSettings.dropdown
