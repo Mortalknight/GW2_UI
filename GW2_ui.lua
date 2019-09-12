@@ -405,7 +405,7 @@ local SCALE_HUD_FRAMES = {
     "GwMultiBarRight",
     "GwMultiBarLeft"
 }
-local function UpdateHudScale(scale)
+local function UpdateHudScale()
     local hudScale = GetSetting("HUD_SCALE")
     MainMenuBarArtFrame:SetScale(hudScale)
     for i, name in ipairs(SCALE_HUD_FRAMES) do

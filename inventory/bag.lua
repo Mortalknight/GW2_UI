@@ -649,6 +649,8 @@ local function LoadBag(helpers)
                 GameTooltip:ClearLines()
 
                 -- list all players from the realm+faction
+                local _, realm = UnitFullName("player")
+                GameTooltip:AddDoubleLine(realm .. " " .. TOTAL, nil, nil, nil, 1, 1, 1)
                 for name, money in pairs(list) do
                     local color = select(4, GetClassColor(GetCharClass(name)))
                     SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))

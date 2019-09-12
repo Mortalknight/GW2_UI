@@ -316,7 +316,7 @@ local function showBackdrop(self)
 end
 GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
 
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
+local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton)
     local btn = _G[buttonName]
 
     if btn.icon ~= nil then
@@ -338,7 +338,12 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
     if btn.Border ~= nil then
         btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
         btn.Border:SetBlendMode("BLEND")
-        btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+        if isStanceButton then
+            btn.Border:Show()
+            btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
+        else
+            btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+        end
     end
     if btn.NormalTexture ~= nil then
         btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
@@ -622,8 +627,9 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
 
-local function stance_OnEvent(self, event)
-    if InCombatLockdown() then
+local function stance_OnEvent(self, event, ...)
+    local unit = ...
+    if InCombatLockdown() or unit ~= "player" then
         return
     end
 
@@ -646,8 +652,8 @@ local function setStanceBar()
                 _G["StanceButton" .. i]:ClearAllPoints()
                 _G["StanceButton" .. i]:SetPoint('BOTTOM', _G['StanceButton' .. i - 1], 'TOP', 0, 2)
             end
-            _G["StanceButton" .. i]:SetSize(38, 38)
-            setActionButtonStyle("StanceButton" .. i, true)
+            _G["StanceButton" .. i]:SetSize(30, 30)
+            setActionButtonStyle("StanceButton" .. i, true, nil ,true)
         end
     end
 
