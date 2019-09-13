@@ -9,7 +9,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.6'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.6.1'
 
 local loaded = false
 local hudScale = 1
@@ -454,13 +454,17 @@ local function gw_OnUpdate(self, elapsed)
 
     --Check if MulitBarRight is active or changed
     if (MultiBarRight or MultiBarLeft) and loaded and not InCombatLockdown() then
-        if MultiBarRight:GetScale() ~= hudScale then 
-            _G["MultiBarRight"]:SetScale(hudScale)
-            _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
+        if MultiBarRight then 
+            if MultiBarRight:GetScale() ~= hudScale then 
+                _G["MultiBarRight"]:SetScale(hudScale)
+                _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
+            end
         end
-        if MultiBarLeft:GetScale() ~= hudScale then 
-            _G["MultiBarLeft"]:SetScale(hudScale)
-            _G["GwMultiBarLeftMoveAble"]:SetScale(hudScale)
+        if MultiBarLeft then
+            if MultiBarLeft:GetScale() ~= hudScale then 
+                _G["MultiBarLeft"]:SetScale(hudScale)
+                _G["GwMultiBarLeftMoveAble"]:SetScale(hudScale)
+            end
         end
     end
 end

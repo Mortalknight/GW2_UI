@@ -420,8 +420,13 @@ local function LoadMinimap()
         GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
         GwMiniMapTrackingFrame:Show()
     else
-        if not trackingTypes[icontype] and icontype ~= nil then print(icontype, "Please tell this ID + Trackingtype the devs") end
-        GwMiniMapTrackingFrame:Hide()
+        if not trackingTypes[icontype] and icontype ~= nil then 
+            print("GW2_UI: Please tell the ID: " .. icontype .. " + Trackingtype the devs, so we can add the new custom tracking icons")
+            GwMiniMapTrackingIcon:SetTexture(icontype)
+            GwMiniMapTrackingFrame:Show()
+        else
+           GwMiniMapTrackingFrame:Hide() 
+        end
     end
     GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
     GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event) 
@@ -431,8 +436,13 @@ local function LoadMinimap()
                 GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
                 GwMiniMapTrackingFrame:Show()
             else
-                if not trackingTypes[icontype] and icontype ~= nil then print("GW2_UI: Please tell this ID: " .. icontype .. " + Trackingtype the devs") end
-                GwMiniMapTrackingFrame:Hide()
+                if not trackingTypes[icontype] and icontype ~= nil then 
+                    print("GW2_UI: Please tell the ID: " .. icontype .. " + Trackingtype the devs, so we can add the new custom tracking icons")
+                    GwMiniMapTrackingIcon:SetTexture(icontype)
+                    GwMiniMapTrackingFrame:Show()
+                else
+                   GwMiniMapTrackingFrame:Hide() 
+                end
             end
         end
     end)

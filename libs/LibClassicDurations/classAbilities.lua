@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 23
+local Type, Version = "SpellTable", 25
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -330,6 +330,7 @@ Spell( 2094 , { duration = 10 }) -- Blind
 
 Spell({ 8647, 8649, 8650, 11197, 11198 }, { duration = 30 }) -- Expose Armor
 Spell({ 703, 8631, 8632, 8633, 11289, 11290 }, { duration = 18 }) -- Garrote
+
 Spell({ 408, 8643 }, {
     duration = function(spellID, isSrcPlayer, comboPoints)
         local duration = spellID == 8643 and 1 or 0 -- if Rank 2, add 1s
