@@ -452,7 +452,7 @@ local function gw_OnUpdate(self, elapsed)
     end
 
     --Check if MulitBarRight is active or changed
-    if (MultiBarRight or MultiBarLeft) and loaded then
+    if (MultiBarRight or MultiBarLeft) and loaded and not InCombatLockdown() then
         if MultiBarRight:GetScale() ~= hudScale then 
             _G["MultiBarRight"]:SetScale(hudScale)
             _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
