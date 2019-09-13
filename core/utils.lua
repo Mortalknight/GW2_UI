@@ -83,24 +83,20 @@ local function TimeCount(numSec, com)
     if nSeconds == 0 then
         return "0"
     end
-
-    local nHours = math.floor(nSeconds / 3600)
-    if nHours > 0 then
-        return nHours .. "h"
+    if nSeconds >= 86400 then
+        return ceil(nSeconds / 86400) .. "d"
     end
-
-    local nMins = math.floor(nSeconds / 60)
-    if nMins > 0 then
-        return nMins .. "m"
+    if nSeconds >= 3600 then
+        return ceil(nSeconds / 3600) .. "h"
     end
-
+    if nSeconds >= 60 then
+        return ceil(nSeconds / 60) .. "m"
+    end  
     if com ~= nil then
         local nMilsecs = math.max(math.floor((nSeconds * 10 ^ 1) + 0.5) / (10 ^ 1), 0)
         return nMilsecs .. "s"
     end
-
-    local nSecs = math.max(math.floor(nSeconds), 0)
-    return nSecs .. "s"
+    return GW.RoundDec(nSeconds) .. "s"
 end
 GW.TimeCount = TimeCount
 
