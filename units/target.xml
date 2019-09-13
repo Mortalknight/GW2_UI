@@ -538,20 +538,20 @@
     </Button>
 
     <Button name="GwCastFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
-        <Size x="258" y="22"></Size>
+        <Size x="176" y="15"></Size>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
-                    <Size x="258" y="22"></Size>
+                    <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                    <Size x="0" y="0"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-30" y="5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="5"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>

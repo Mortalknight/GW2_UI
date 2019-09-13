@@ -7,6 +7,7 @@ local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
+local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
@@ -574,6 +575,20 @@ local function loadAddon(self)
     if (forcedMABags) then
         GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
     end
+
+    --Add Shared Media
+    --Font
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Light", "Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Headlines", "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf", LibSharedMedia.LOCALE_BIT_zhCN + LibSharedMedia.LOCALE_BIT_zhTW)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf", LibSharedMedia.LOCALE_BIT_koKR)
+
+    --Texture
+    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface\\AddOns\\GW2_UI\\Textures\\windowborder.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI 2", "Interface\\Addons\\GW2_UI\\Textures\\UI-Tooltip-Background.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
 
     self:SetScript("OnUpdate", gw_OnUpdate)
 end
