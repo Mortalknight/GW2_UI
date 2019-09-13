@@ -7,8 +7,9 @@ local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
+local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.5'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.6'
 
 local loaded = false
 local hudScale = 1
@@ -626,7 +627,17 @@ local function loadAddon(self)
         GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
     end
 
-    self:SetScript("OnUpdate", gw_OnUpdate)
+    --Add Shared Media
+    --Font
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Light", "Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Headlines", "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf", LibSharedMedia.LOCALE_BIT_zhCN + LibSharedMedia.LOCALE_BIT_zhTW)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf", LibSharedMedia.LOCALE_BIT_koKR)
+
+    --Texture
+    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface\\AddOns\\GW2_UI\\Textures\\profiles\\profiles-bg.tga")
+    self:SetScript("OnUpdate", gw_OnUpdate)    
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)
 

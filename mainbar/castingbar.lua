@@ -38,6 +38,7 @@ local function LoadCastingBar()
     GwCastingBar.spark:ClearAllPoints()
     GwCastingBar.spark:SetPoint("RIGHT", GwCastingBar.bar, "RIGHT")
 
+    GwCastingBar:ClearAllPoints()
     GwCastingBar:SetPoint(
         GetSetting("castingbar_pos")["point"],
         UIParent,
