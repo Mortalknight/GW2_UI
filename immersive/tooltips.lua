@@ -71,9 +71,9 @@ end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
 local function tooltip_SetBackdropStyle(self, args)
-	if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
-		return
-	end
+	--if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
+		--return
+	--end
 	if not self:IsShown() then
 		return
 	end
