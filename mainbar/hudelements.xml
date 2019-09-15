@@ -646,7 +646,6 @@
             <OnMouseUp>
                 if button == "RightButton" then
                     CancelTrackingBuff()
-                    GwMiniMapTrackingFrame.iconType	= nil	
                 end
             </OnMouseUp> 
             <OnEnter>
