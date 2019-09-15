@@ -105,7 +105,7 @@ local function LoadTooltips()
 
 			if not InCombatLockdown() then
 				GameTooltip:ClearAllPoints()
-				GwRaidFrameContainer:SetPoint(frame:GetPoint())
+				GameTooltip:SetPoint(frame:GetPoint())
 			end
 		end)
 	end
