@@ -98,15 +98,15 @@ local function LoadTooltips()
 		RegisterMovableFrame("GwTooltip", GameTooltip, 'GameTooltipPos', 'VerticalActionBarDummy')
 		hooksecurefunc(GwTooltipMoveAble, "StopMovingOrSizing", function (frame)
 			local anchor = "TOPLEFT"
-			local x = anchor:sub(-4) == "LEFT" and frame:GetLeft()
-			local y = anchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight()
+			local x = frame:GetLeft()
+			local y = frame:GetTop() - GetScreenHeight()
 
 			frame:ClearAllPoints()
 			frame:SetPoint(anchor, x, y)
 
 			if not InCombatLockdown() then
 				GameTooltip:ClearAllPoints()
-				GwRaidFrameContainer:SetPoint(frame:GetPoint())
+				GameTooltip:SetPoint(frame:GetPoint())
 			end
 		end)
 	end
