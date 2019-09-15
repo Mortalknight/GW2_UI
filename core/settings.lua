@@ -1007,6 +1007,12 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
     addOption(
+        GwLocalization["TARGET_COMBOPOINTS"],
+        GwLocalization["TARGET_COMBOPOINTS_DEC"],
+        "target_HOOK_COMBOPOINTS",
+        "GwSettingsTargetOptions"
+    )
+    addOption(
         MINIMAP_TRACKING_FOCUS,
         GwLocalization["FOCUS_TARGET_DESC"],
         "focus_TARGET_ENABLED",

@@ -4,6 +4,7 @@ local RoundInt = GW.RoundInt
 local UpdatePowerData = GW.UpdatePowerData
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local GetSetting = GW.GetSetting
 
 local CPWR_FRAME
 
@@ -115,9 +116,18 @@ end
 GW.AddForProfiling("classpowers", "powerMana", powerMana)
 
 local function setManaBar(f)
+    f.barType = "mana"
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
     f.exbar:Show()
+
+    if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
+        f:ClearAllPoints()
+        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
+        f:SetWidth(220)
+        f:SetHeight(30)
+        f:Hide()
+    end
 
     f:SetScript("OnEvent", powerMana)
     powerMana(f, "CLASS_POWER_INIT")
@@ -135,10 +145,15 @@ local function powerCombo(self, event, ...)
 
     local old_power = self.gwPower
     old_power = old_power or -1
+    
 
     local pwrMax = UnitPowerMax("player", 4)
     local pwr = UnitPower("player", 4)
     local p = pwr - 1
+
+    if pwr > 0 and not self:IsShown() then
+        self:Show()
+    end
 
     self.gwPower = pwr
 
@@ -152,6 +167,7 @@ end
 GW.AddForProfiling("classpowers", "powerCombo", powerCombo)
 
 local function setComboBar(f)
+    f.barType = "combo"
     f:SetHeight(40)
     f:SetWidth(320)
     f.background:SetHeight(32)
@@ -169,6 +185,14 @@ local function setComboBar(f)
     powerCombo(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+    if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", GwTargetUnitFrame.powerbar, "TOPLEFT", -8, 3)
+        f:SetWidth(220)
+        f:SetHeight(30)
+        f:Hide()
+    end
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 
@@ -913,9 +937,14 @@ local function barChange_OnEvent(self, event, ...)
             return
         end
         f.gwPlayerForm = s
+        selectType(f)
+    elseif event == "PLAYER_TARGET_CHANGED" then
+        if UnitExists("target") and UnitIsEnemy("player", "target") and f.barType == "combo" then
+            f:Show()
+        else
+            f:Hide()
+        end
     end
-
-    selectType(f)
 end
 
 local function LoadClassPowers()
@@ -960,5 +989,15 @@ local function LoadClassPowers()
     cpf.decay:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
     cpf.gwPlayerForm = GetShapeshiftFormID()
+
+    selectType(cpf)
+
+    if (pClass == 4 or pClass == 11) and (GetSetting("TARGET_ENABLED") and GetSetting("target_HOOK_COMBOPOINTS")) then
+        cpf.decay:RegisterEvent("PLAYER_TARGET_CHANGED")
+        if cpf.barType == "combo" then
+            cpf:Hide()
+        end
+    end
+    
 end
 GW.LoadClassPowers = LoadClassPowers

@@ -492,10 +492,6 @@ local function loadAddon(self)
         GW.LoadPowerBar()
     end
 
-    if GetSetting("CLASS_POWER") then
-        GW.LoadClassPowers()
-    end
-
     if GetSetting("BAGS_ENABLED") then
         GW.LoadInventory()
     end
@@ -533,6 +529,10 @@ local function loadAddon(self)
             UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -190)
             UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14)
         end
+    end
+
+    if GetSetting("CLASS_POWER") then
+        GW.LoadClassPowers()
     end
 
     -- create action bars
@@ -589,6 +589,7 @@ local function loadAddon(self)
     LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI 2", "Interface\\Addons\\GW2_UI\\Textures\\UI-Tooltip-Background.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\castinbar-white.tga")
 
     self:SetScript("OnUpdate", gw_OnUpdate)
 end

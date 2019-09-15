@@ -438,3 +438,4 @@ local function LoadToast()
 end
 GW.LoadToast = LoadToast
 
+LoadToast()
