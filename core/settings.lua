@@ -939,6 +939,12 @@ local function LoadSettings()
         "target_BUFFS",
         "GwSettingsTargetOptions"
     )
+    addOption(
+        GwLocalization["TARGET_COMBOPOINTS"],
+        GwLocalization["TARGET_COMBOPOINTS_DEC"],
+        "target_HOOK_COMBOPOINTS",
+        "GwSettingsTargetOptions"
+    )
 
     createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
 

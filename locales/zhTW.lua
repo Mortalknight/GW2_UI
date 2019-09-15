@@ -13,6 +13,8 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"
 	
 	--Strings
+	GwLocalization["TARGET_COMBOPOINTS"] = "Show Combopunkt on target"
+	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "SHow Combopunkt on target, below the healthbar"
 	GwLocalization["FPS_TOOLTIP_1"] = "每秒幀數 "
 	GwLocalization["FPS_TOOLTIP_2"] = "網路延遲 (本地) "
 	GwLocalization["FPS_TOOLTIP_3"] = "網路延遲 (世界) "

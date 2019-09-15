@@ -225,6 +225,8 @@ local function GWUseThisLocalization()
 	GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Health Remaining in percent"
 	GwLocalization["SHOW_THREAT_VALUE"] = "Show threat"
 	GwLocalization["MINIMAP_FPS"] = "Show FPS on minimap"
+	GwLocalization["TARGET_COMBOPOINTS"] = "Show Combopunkt on target"
+	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "SHow Combopunkt on target, below the healthbar"
 	end
 	
 	local Locale = GetLocale()

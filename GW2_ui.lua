@@ -559,10 +559,6 @@ local function loadAddon(self)
         GW.LoadPowerBar()
     end
 
-    if GetSetting("CLASS_POWER") then
-        GW.LoadClassPowers()
-    end
-
     if GetSetting("BAGS_ENABLED") then
         GW.LoadBag()
         GW.LoadBank()
@@ -593,6 +589,10 @@ local function loadAddon(self)
             UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -190)
             UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14)
         end
+    end
+
+    if GetSetting("CLASS_POWER") then
+        GW.LoadClassPowers()
     end
 
     -- create action bars

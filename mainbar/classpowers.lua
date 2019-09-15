@@ -1,6 +1,7 @@
 local _, GW = ...
 local AddToAnimation = GW.AddToAnimation
 local animations = GW.animations
+local GetSetting = GW.GetSetting
 
 local MAX_COMBO_POINTS = 5
 
@@ -55,7 +56,9 @@ local function powerCombo(self, event, ...)
 
     local pwr = GetComboPoints("player", "target")
     local p = pwr - 1
-
+    if pwr > 0 and not self:IsShown() then
+        self:Show()
+    end
     self.gwPower = pwr
 
     self.background:SetTexCoord(0, 1, 0.125 * (MAX_COMBO_POINTS - 1), 0.125 * MAX_COMBO_POINTS)
@@ -67,6 +70,7 @@ local function powerCombo(self, event, ...)
 end
 
 local function setComboBar(f)
+    --[[
     f:SetHeight(40)
     f:SetWidth(320)
     f.background:SetHeight(32)
@@ -79,6 +83,7 @@ local function setComboBar(f)
     f.fill:SetHeight(40)
     f.fill:SetWidth(320)
     f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo")
+    ]]
 
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
@@ -141,6 +146,12 @@ local function barChange_OnEvent(self, event, ...)
         end
         f.gwPlayerForm = results
         selectType(f)
+    elseif event == "PLAYER_TARGET_CHANGED" then
+        if UnitExists("target") and UnitIsEnemy("player", "target") then
+            f:Show()
+        else
+            f:Hide()
+        end
     end
 end
 
@@ -152,11 +163,18 @@ local function LoadClassPowers()
     cpf.gwPlayerClass = pClass
     cpf.gwPlayerForm = findBuff("player", 768)
 
-    cpf.decay:SetScript("OnEvent", barChange_OnEvent)
-    cpf.decay:RegisterEvent("PLAYER_ENTERING_WORLD")
-    cpf.decay:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    cpf.decay:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    cpf.Script:SetScript("OnEvent", barChange_OnEvent)
+    cpf.Script:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
     selectType(cpf)
+
+    if GetSetting("TARGET_ENABLED") and GetSetting("target_HOOK_COMBOPOINTS") then
+        cpf:ClearAllPoints()
+        cpf:SetPoint("TOPLEFT", GwTargetUnitFrame.powerbar, "TOPLEFT", -8, 3)
+        cpf.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
+        cpf:SetWidth(220)
+        cpf:SetHeight(30)
+        cpf:Hide()
+    end
 end
 GW.LoadClassPowers = LoadClassPowers

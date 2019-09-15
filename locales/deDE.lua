@@ -225,6 +225,8 @@ local function GWUseThisLocalization()
 	GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Verlorene Gesundheit in Prozent"
 	GwLocalization["SHOW_THREAT_VALUE"] = "Bedrohung anzeigen"
 	GwLocalization["MINIMAP_FPS"] = "FPS an der Minimap anzeigen"
+	GwLocalization["TARGET_COMBOPOINTS"] = "Zeige Combopunkt am Ziel"
+	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Zeige Combopunkt am Ziel unterhalb des Gesundheitsbalkens"
 	end
 	
 	
