@@ -1,10 +1,12 @@
-0.6.1
+0.7.0
 
 - Added SharedMedia (Font, Background, Statusbar)
 - Fix some lua error
 - Added more custom tracking icons
 - Update libs
 - Fix castingbar not safe position one some points on screen
+- Update mana and energy regen animation
+- Hook combopoints to unitframe option
 
 0.6.0
 

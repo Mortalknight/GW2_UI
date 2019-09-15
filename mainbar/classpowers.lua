@@ -148,7 +148,6 @@ local function LoadClassPowers()
     local _, _, pClass = UnitClass("player")
 
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
-    ComboFrame:SetScript("OnShow", function() ComboFrame:Hide() end)
 
     cpf.gwPlayerClass = pClass
     cpf.gwPlayerForm = findBuff("player", 768)

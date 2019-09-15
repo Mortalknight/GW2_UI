@@ -113,7 +113,7 @@ GW.AddForProfiling("playerhud", "repair_OnEvent", repair_OnEvent)
 
 local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationName)
     if forcePowerType == nil then
-        forcePowerType, powerToken, _ = UnitPowerType("player")
+        forcePowerType, powerToken = UnitPowerType("player")
         forceAnimationName = "powerBarAnimation"
     end
 
@@ -121,7 +121,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
 
     local power = UnitPower("player", forcePowerType)
     local powerMax = UnitPowerMax("player", forcePowerType)
-    local powerPrec
+    local powerPrec = 0
     local powerBarWidth = self.statusBar:GetWidth()
 
     self.powerType = forcePowerType
@@ -133,8 +133,6 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
 
     if power >= 0 and powerMax > 0 then
         powerPrec = power / powerMax
-    else
-        powerPrec = 0
     end
 
     if PowerBarColorCustom[powerToken] then
@@ -186,7 +184,6 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
             f.candy:SetValue(0)
 
             if f.stringUpdateTime == nil or f.stringUpdateTime < GetTime() then
-                --f.statusBar.label:SetText(CommaValue(powerMax * animations[f.animKey]["progress"]))
                 f.statusBar.label:SetText(CommaValue(f.lostKnownPower))
                 f.stringUpdateTime = GetTime() + 0.1
             end
@@ -205,13 +202,10 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
         self.powerBar = self.statusBar
         self.powerCandy = self.candy
         self.powerBarString = self.statusBar.label
-        if
-            self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or
-                self.powerType == 8
-         then
+        if self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or self.powerType == 8 then
             self:SetScript("OnUpdate", nil)
         else
-            self:SetScript("OnUpdate", powerBar_OnUpdate)
+            self:SetScript("OnUpdate", nil)
         end
     end
 end

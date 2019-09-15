@@ -695,12 +695,13 @@
         <Scripts>
             <OnMouseUp>
                 if button == "RightButton" then
-                    CancelTrackingBuff()		
+                    CancelTrackingBuff()
+                    GwMiniMapTrackingFrame.iconType	= nil	
                 end
             </OnMouseUp> 
             <OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-                GameTooltip:SetTrackingSpell();
+                GameTooltip:SetTrackingSpell()
             </OnEnter>							
             <OnLeave>
                 GameTooltip:Hide()

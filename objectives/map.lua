@@ -7,13 +7,14 @@ local IS_GUILD_GROUP
 
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
-MAP_FRAMES_HIDE[4] = MiniMapVoiceChatFrame
-MAP_FRAMES_HIDE[5] = GameTimeFrame
-MAP_FRAMES_HIDE[6] = MiniMapTrackingButton
-MAP_FRAMES_HIDE[8] = MiniMapTracking
+MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
+MAP_FRAMES_HIDE[3] = GameTimeFrame
+MAP_FRAMES_HIDE[4] = MiniMapTrackingButton
+MAP_FRAMES_HIDE[5] = MiniMapTracking
+MAP_FRAMES_HIDE[6] = MinimapToggleButton
 
 local Minimap_Addon_Buttons = {
-    [1] = "MiniMapTrackingFrame",
+    [1] = "MinimapToggleButton",
     [2] = "MiniMapMeetingStoneFrame",
     [3] = "MiniMapMailFrame",
     [4] = "MiniMapBattlefieldFrame",
@@ -42,22 +43,17 @@ local Minimap_Addon_Buttons = {
     [27] = "GameTimeFrame",
     [28] = "DA_Minimap",
     [29] = "ElvConfigToggle",
-    [30] = "MiniMapInstanceDifficulty",
     [31] = "MinimapZoneTextButton",
-    [32] = "GuildInstanceDifficulty",
     [33] = "MiniMapVoiceChatFrame",
     [34] = "MiniMapRecordingButton",
-    [35] = "QueueStatusMinimapButton",
     [36] = "GatherArchNote",
     [37] = "ZGVMarker",
     [38] = "QuestPointerPOI",
     [39] = "poiMinimap",
     [40] = "MiniMapLFGFrame",
     [41] = "PremadeFilter_MinimapButton",
-    [42] = "GarrisonMinimapButton",
     [43] = "GwMapTime",
     [44] = "GwMapCoords",
-    [45] = "WarfrontRareTrackerPin",
     [46] = "GwMapFPS",
     [47] = "QuestieFrame",
     [48] = "miningminimap",
@@ -103,37 +99,45 @@ GW.SetMinimapHover = SetMinimapHover
 
 local function SetMinimapPosition()
     local ourBuffBar = GetSetting("PLAYER_BUFFS_ENABLED")
-    local ourTracker = GetSetting("QUESTTRACKER_ENABLED")
+    --local ourTracker = GetSetting("QUESTTRACKER_ENABLED")
     local mapPos = GetSetting("MINIMAP_POS")
     local mapSize = Minimap:GetHeight()
-
+    ourTracker = false
     -- adjust minimap and minimap cluster placement (some default things anchor off cluster)
-
+    MinimapCluster:ClearAllPoints()
+    local mc_y = -50
     local mc_x = 0
-    if ourTracker then
-        mc_x = 0
+    if ourBuffBar then
+        mc_y = 0
     end
-
+    if ourTracker then
+        mc_x = -320
+    end
+    
     Minimap:ClearAllPoints()
-    Minimap:SetParent(UIParent)
-
     if mapPos == "TOP" then
+        if ourTracker then
+            MinimapCluster:SetHeight(5)
+            MinimapCluster:SetWidth(5)
+        else
+            MinimapCluster:SetHeight(mapSize + 60)
+            MinimapCluster:SetWidth(mapSize)
+        end
         if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 130 - mapSize)
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
         else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 80 - mapSize)
-            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -50)
+            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -45)
         end
+        MinimapCluster:SetPoint(Minimap:GetPoint())
     else
-        if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 187)
-        else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 142)
-        end
+        MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, mc_y)
         Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
+        MinimapCluster:SetHeight(5)
+        MinimapCluster:SetWidth(5)
     end
-
+    MinimapBackdrop:ClearAllPoints()
+    MinimapBackdrop:SetPoint(Minimap:GetPoint())
+    MinimapBackdrop:SetSize(Minimap:GetSize())
 end
 GW.SetMinimapPosition = SetMinimapPosition
 
@@ -416,7 +420,8 @@ local function LoadMinimap()
     GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
     GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -43, 0)  
     local icontype = GetTrackingTexture()
-    if icontype and trackingTypes[icontype] then
+    GwMiniMapTrackingFrame.iconType = icontype
+    if icontype and trackingTypes[icontype] and GwMiniMapTrackingFrame.iconType ~= icontype then
         GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
         GwMiniMapTrackingFrame:Show()
     else
@@ -425,23 +430,27 @@ local function LoadMinimap()
             GwMiniMapTrackingIcon:SetTexture(icontype)
             GwMiniMapTrackingFrame:Show()
         else
-           GwMiniMapTrackingFrame:Hide() 
+            GwMiniMapTrackingFrame.iconType = nil
+            GwMiniMapTrackingFrame:Hide() 
         end
     end
     GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
     GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event) 
         if event == "UNIT_AURA" then
             local icontype = GetTrackingTexture()
-            if icontype and trackingTypes[icontype] then
+            if icontype and trackingTypes[icontype] and GwMiniMapTrackingFrame.iconType ~= icontype then
+                GwMiniMapTrackingFrame.iconType = icontype
                 GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
                 GwMiniMapTrackingFrame:Show()
             else
-                if not trackingTypes[icontype] and icontype ~= nil then 
+                if not trackingTypes[icontype] and icontype ~= nil and GwMiniMapTrackingFrame.iconType ~= icontype then
+                    GwMiniMapTrackingFrame.iconType = icontype
                     print("GW2_UI: Please tell the ID: " .. icontype .. " + Trackingtype the devs, so we can add the new custom tracking icons")
                     GwMiniMapTrackingIcon:SetTexture(icontype)
                     GwMiniMapTrackingFrame:Show()
                 else
-                   GwMiniMapTrackingFrame:Hide() 
+                    GwMiniMapTrackingFrame.iconType = nil
+                    GwMiniMapTrackingFrame:Hide() 
                 end
             end
         end

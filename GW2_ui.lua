@@ -9,7 +9,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.6.1'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.7.0'
 
 local loaded = false
 local hudScale = 1
@@ -644,6 +644,7 @@ local function loadAddon(self)
     LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\UI-Tooltip-Background.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\castinbar-white.tga")
     self:SetScript("OnUpdate", gw_OnUpdate)    
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)

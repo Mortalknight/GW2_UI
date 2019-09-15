@@ -1126,6 +1126,7 @@ local function LoadTarget()
 
     TargetFrame:SetScript("OnEvent", nil)
     TargetFrame:Hide()
+    ComboFrame:SetScript("OnShow", function() ComboFrame:Hide() end)
 end
 GW.LoadTarget = LoadTarget
 
