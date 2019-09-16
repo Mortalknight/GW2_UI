@@ -488,13 +488,7 @@ local function updateQuest(block, questWatchId)
                     end
                 )
             else
-                local completionText = GetQuestLogCompletionText(questLogIndex)
-
-                if (completionText) then
-                    addObjective(block, completionText, false, block.numObjectives + 1, nil)
-                else
-                    addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
-                end
+                addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
             end
         end
         block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
