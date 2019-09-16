@@ -523,9 +523,9 @@ GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
 local function updateQuestLogLayout(intent, ...)
     local savedHeight = 1
-    GwQuestHeader:Hide()
-
     local numQuests = GetNumQuestWatches()
+    if numQuests == 0 then GwQuestHeader:Hide() end
+    
     if GwQuesttrackerContainerQuests.collapsed == true then
         GwQuestHeader:Show()
         numQuests = 0
