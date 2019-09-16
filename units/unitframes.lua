@@ -450,9 +450,7 @@ local function setUnitPortraitFrame(self, event)
         return
     end
 
-    local txt = nil
     local border = "normal"
-
     local unitClassIfication = UnitClassification(self.unit)
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
         border = unitClassIfication
@@ -467,7 +465,7 @@ local function setUnitPortraitFrame(self, event)
         for modId, idTable in pairs(DBM.ModLists) do
             for i, id in ipairs(DBM.ModLists[modId]) do
                 local mod = DBM:GetModByName(id)
-                if mod.creatureId == npcId then
+                if mod.creatureId ~= nil and mod.creatureId == npcId then
                     border = "boss"
                     break
                 end
