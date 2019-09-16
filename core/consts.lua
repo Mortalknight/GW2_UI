@@ -62,7 +62,7 @@ trackingTypes[135942] = {l = 0, r = 0.125, t = 0.5, b = 1} --human
 trackingTypes[136172] = {l = 0.250, r = 0.375, t = 0.5, b = 1} --demon
 trackingTypes[136217] = {l = 0.250, r = 0.375, t = 0.5, b = 1} --demon
 trackingTypes[135725] = {l = 0.375, r = 0.5, t = 0.5, b = 1} --treasure
---trackingTypes[] = {l = 0.125, r = 0.250, t = 0.5, b = 1} --fish
+trackingTypes[133888] = {l = 0.125, r = 0.250, t = 0.5, b = 1} --fish
 trackingTypes[134153] = {l = 0.5, r = 0.625, t = 0, b = 0.5} --Dragonkin
 trackingTypes[135861] = {l = 0.250, r = 0.375, t = 0, b = 0.5} --Elementals
 trackingTypes[132275] = {l = 0.375, r = 0.5, t = 0, b = 0.5} --Giants

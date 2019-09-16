@@ -421,35 +421,23 @@ local function LoadMinimap()
     GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -43, 0)
     GwMiniMapTrackingFrame.pClass = select(3, UnitClass("player"))
     local icontype = GetTrackingTexture()
-    if icontype == "132328" then icontype = icontype .. GwMiniMapTrackingFrame.pClass end
+    if icontype == 132328 then icontype = icontype .. GwMiniMapTrackingFrame.pClass end
     if icontype and trackingTypes[icontype] then
         GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
         GwMiniMapTrackingFrame:Show()
     else
-        if not trackingTypes[icontype] and icontype ~= nil then 
-            print("GW2_UI: Please tell the ID: " .. icontype .. " + Trackingtype the devs, so we can add the new custom tracking icons")
-            GwMiniMapTrackingIcon:SetTexture(icontype)
-            GwMiniMapTrackingFrame:Show()
-        else
-            GwMiniMapTrackingFrame:Hide() 
-        end
+        GwMiniMapTrackingFrame:Hide()
     end
     GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
     GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event) 
         if event == "UNIT_AURA" then
             local icontype = GetTrackingTexture()
-            if icontype == "132328" then icontype = icontype .. GwMiniMapTrackingFrame.pClass end
+            if icontype == 132328 then icontype = icontype .. GwMiniMapTrackingFrame.pClass end
             if icontype and trackingTypes[icontype] then
                 GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
                 GwMiniMapTrackingFrame:Show()
             else
-                if not trackingTypes[icontype] and icontype ~= nil then
-                    print("GW2_UI: Please tell the ID: " .. icontype .. " + Trackingtype the devs, so we can add the new custom tracking icons")
-                    GwMiniMapTrackingIcon:SetTexture(icontype)
-                    GwMiniMapTrackingFrame:Show()
-                else
-                    GwMiniMapTrackingFrame:Hide() 
-                end
+                GwMiniMapTrackingFrame:Hide()
             end
         end
     end)
