@@ -484,7 +484,7 @@ local function setUnitPortraitFrame(self, event)
     end
 
     --if DBM is load, check if target is a boss and set boss frame
-    if IsAddOnLoaded("DBM-Core") then
+    if IsAddOnLoaded("DBM-Core") and IsInInstance() then
         local npcId = DBM:GetUnitCreatureId(self.unit)
 
         for modId, idTable in pairs(DBM.ModLists) do
@@ -497,7 +497,7 @@ local function setUnitPortraitFrame(self, event)
             end
         end
     end
-    
+
     self.background:SetTexture(TARGET_FRAME_ART[border])
 end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
