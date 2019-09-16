@@ -1,3 +1,11 @@
+0.8.0
+
+- Added ability to hook combopoints to the traget frame
+- Added back Immersive Questing
+- Added back Questtracker
+- Added all tracking icons
+- Fix some bugs
+
 0.7.0
 
 - Added SharedMedia (Font, Background, Statusbar)

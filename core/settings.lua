@@ -846,9 +846,21 @@ local function LoadSettings()
         "GwSettingsModuleOption"
     )
     addOption(
+        OBJECTIVES_TRACKER_LABEL,
+        GwLocalization["QUEST_TRACKER_DESC"],
+        "QUESTTRACKER_ENABLED",
+        "GwSettingsModuleOption"
+    )
+    addOption(
         GwLocalization["TOOLTIPS"],
         GwLocalization["TOOLTIPS_DESC"],
         "TOOLTIPS_ENABLED",
+        "GwSettingsModuleOption"
+    )  
+    addOption(
+        GwLocalization["QUESTING_FRAME"],
+        GwLocalization["QUESTING_FRAME_DESC"],
+        "QUESTVIEW_ENABLED",
         "GwSettingsModuleOption"
     )
     addOption(

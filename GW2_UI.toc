@@ -66,8 +66,13 @@ inventory/bag.lua
 inventory/bank.lua
 
 immersive/tooltips.lua
+immersive/questview.xml
+immersive/questview.lua
 
 objectives/map.lua
+objectives/questtracker.xml
+objectives/objectives.lua
+objectives/notifications.lua
 
 battlegrounds/battlegrounds.xml
 battlegrounds/battlegrounds.lua

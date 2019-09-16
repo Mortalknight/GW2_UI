@@ -9,7 +9,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.7.0'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.8.0'
 
 local loaded = false
 local hudScale = 1
@@ -546,8 +546,16 @@ local function loadAddon(self)
         GW.LoadMinimap()
     end
 
+    if GetSetting("QUESTTRACKER_ENABLED") then
+        GW.LoadQuestTracker()
+    end
+
     if GetSetting("TOOLTIPS_ENABLED") then
         GW.LoadTooltips()
+    end
+
+    if GetSetting("QUESTVIEW_ENABLED") then
+        GW.LoadQuestview()
     end
 
     --Create player hud
