@@ -129,7 +129,15 @@ local function selectType(f)
         showBar = setDruid(f)
     end
     if showBar then
-        f:Show()
+        f:Show()   
+        if f.ourTarget and f.comboPointsOnTarget then
+            f:ClearAllPoints()
+            f:SetPoint("TOPLEFT", GwTargetUnitFrame.powerbar, "TOPLEFT", -8, 3)
+            f.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
+            f:SetWidth(220)
+            f:SetHeight(30)
+            f:Hide()
+        end
     else
         f:Hide()
     end
@@ -161,20 +169,13 @@ local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
 
     cpf.gwPlayerClass = pClass
+    cpf.ourTarget = GetSetting("TARGET_ENABLED")
+    cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
     cpf.gwPlayerForm = findBuff("player", 768)
 
     cpf.Script:SetScript("OnEvent", barChange_OnEvent)
     cpf.Script:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
     selectType(cpf)
-
-    if GetSetting("TARGET_ENABLED") and GetSetting("target_HOOK_COMBOPOINTS") then
-        cpf:ClearAllPoints()
-        cpf:SetPoint("TOPLEFT", GwTargetUnitFrame.powerbar, "TOPLEFT", -8, 3)
-        cpf.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
-        cpf:SetWidth(220)
-        cpf:SetHeight(30)
-        cpf:Hide()
-    end
 end
 GW.LoadClassPowers = LoadClassPowers
