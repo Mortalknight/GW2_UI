@@ -19,6 +19,7 @@ local RoundDec = GW.RoundDec
 local unitIlvls = {}
 local LibClassicDurations = LibStub("LibClassicDurations", true)
 local LibCC = LibStub("LibClassicCasterino", true)
+--local DBM = Module("DBM", true)
 LibClassicDurations:Register("GW2_UI")
 
 local function sortAuras(a, b)
@@ -459,7 +460,20 @@ local function setUnitPortraitFrame(self, event)
             border = "boss"
         end
     end
+    --if DBM is load, check if target is a boss and set boss frame
+    if IsAddOnLoaded("DBM-Core") then
+        local npcId = DBM:GetUnitCreatureId(self.unit)
 
+        for modId, idTable in pairs(DBM.ModLists) do
+            for i, id in ipairs(DBM.ModLists[modId]) do
+                local mod = DBM:GetModByName(id)
+                if mod.creatureId == npcId then
+                    border = "boss"
+                    break
+                end
+            end
+        end
+    end
     self.background:SetTexture(TARGET_FRAME_ART[border])
 end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)

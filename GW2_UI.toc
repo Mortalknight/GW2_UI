@@ -1,7 +1,7 @@
 ## Interface: 11302
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
-## OptionalDeps: MoveAnything
+## OptionalDeps: MoveAnything, RealMobHealth
 
 ## Author: deadend06
 
