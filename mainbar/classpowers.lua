@@ -955,6 +955,8 @@ local function LoadClassPowers()
     CPWR_FRAME = cpf
 
     cpf.gwPlayerClass = pClass
+    cpf.ourTarget = GetSetting("TARGET_ENABLED")
+    cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
 
     -- create an extra mana power bar that is used sometimes
     local exbar = CreateFrame("Frame", nil, cpf, "GwPlayerPowerBar")
@@ -992,7 +994,7 @@ local function LoadClassPowers()
 
     selectType(cpf)
 
-    if (pClass == 4 or pClass == 11) and (GetSetting("TARGET_ENABLED") and GetSetting("target_HOOK_COMBOPOINTS")) then
+    if (pClass == 4 or pClass == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget) then
         cpf.decay:RegisterEvent("PLAYER_TARGET_CHANGED")
         if cpf.barType == "combo" then
             cpf:Hide()
