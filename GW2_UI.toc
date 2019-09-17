@@ -29,6 +29,7 @@ core/settings_api.lua
 
 GW2_ui.lua
 
+core/versionApi.lua
 core/shared.xml
 core/settings.xml
 core/fonts.lua
@@ -64,6 +65,16 @@ inventory/bag.xml
 inventory/bank.xml
 inventory/bag.lua
 inventory/bank.lua
+
+character/reputation_table.lua
+character/stats.lua
+character/character.lua
+character/character.xml
+character/spellbook.lua
+character/spellbook.xml
+character/talents.lua
+character/talents.xml
+character/windowManager.lua
 
 immersive/tooltips.lua
 immersive/questview.xml

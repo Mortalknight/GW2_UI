@@ -202,6 +202,34 @@ local function buttonAnim(self, name, w, hover)
 end
 GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 
+--[[
+ Basic helper function for spritemaps
+
+ mapExample = {
+  width = 100,
+  height = 10,
+  colums = 5,
+  rows = 3
+}
+
+]]--
+local function getSprite(map,x,y)
+
+
+
+    local pw = (map.width / map.colums) / map.width
+    local ph = (map.height / map.rows) / map.height
+
+    local left = pw * (x - 1)
+    local right = pw * x
+
+    local top = ph * (y - 1)
+    local bottom = ph * y
+
+    return left, right, top, bottom;
+end
+GW.getSprite = getSprite
+
 function GwStandardButton_OnEnter(self)
     local name = tostring(self)
     local w = self:GetWidth()
@@ -354,7 +382,7 @@ local function FadeCheck(self, elapsed)
     end
     self.gw_LastFadeCheck = 0.1
     if not self:IsShown() then return end
-    
+
     if self:IsMouseOver(100, -100, -100, 100) or UnitAffectingCombat('player') then
         if not self.gw_FadeShowing then
             actionBarFrameShow(self, self:GetName())
@@ -627,13 +655,15 @@ local function loadAddon(self)
     if GetSetting("PLAYER_BUFFS_ENABLED") then
         GW.LoadBuffs()
     end
-
+    Gw_LoadWindows();
     GW.LoadMicroMenu()
 
     if GetSetting("GROUP_FRAMES") then
         GW.LoadPartyFrames()
         GW.LoadRaidFrames()
     end
+
+
 
     GW.UpdateHudScale()
 
