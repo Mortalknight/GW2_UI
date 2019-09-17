@@ -14,6 +14,7 @@ GW.VERSION_STRING = 'GW2_UI_Classic v0.8.0'
 local loaded = false
 local hudScale = 1
 local forcedMABags = false
+local ourActionbarsloaded = false
 
 GW_MOVABLE_FRAMES = {}
 GW_MOVABLE_FRAMES_REF = {}
@@ -453,7 +454,7 @@ local function gw_OnUpdate(self, elapsed)
     end
 
     --Check if MulitBarRight is active or changed
-    if (MultiBarRight or MultiBarLeft) and loaded and not InCombatLockdown() and GetSetting("ACTIONBARS_ENABLED") then
+    if (MultiBarRight or MultiBarLeft) and loaded and not InCombatLockdown() and ourActionbarsloaded then
         if MultiBarRight then 
             if MultiBarRight:GetScale() ~= hudScale then 
                 _G["MultiBarRight"]:SetScale(hudScale)
@@ -606,6 +607,7 @@ local function loadAddon(self)
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") then
         GW.LoadActionBars()
+        ourActionbarsloaded = true
         if GetSetting('FADE_BOTTOM_ACTIONBAR') then
             OnUpdateActionBars = function(elapsed)
                 GW.FadeCheck(MultiBarBottomLeft, elapsed)

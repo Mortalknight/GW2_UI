@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 25
+local Type, Version = "SpellTable", 27
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -34,7 +34,8 @@ Spell({ 13099, 13138, 16566 }, {
 Spell( 23451, { duration = 10 }) -- Battleground speed buff
 Spell( 23493, { duration = 10 }) -- Battleground heal buff
 Spell( 23505, { duration = 60 }) -- Battleground damage buff
-Spell({ 4068, 19769 }, { duration = 3 }) -- Iron Grenade, Thorium
+Spell({ 4068 }, { duration = 3 }) -- Iron Grenade
+Spell({ 19769 }, { duration = 3 }) -- Thorium Grenade
 Spell( 6615, { duration = 30, type = "BUFF" }) -- Free Action Potion
 Spell( 24364, { duration = 5, type = "BUFF" }) -- Living Action Potion
 Spell( 3169, { duration = 6, type = "BUFF" }) -- Limited Invulnerability Potion
@@ -100,7 +101,7 @@ Spell({ 14743, 27828 }, { duration = 6, type = "BUFF" }) -- Focused Casting (Mar
 Spell( 27827, { duration = 10, type = "BUFF" }) -- Spirit of Redemption
 Spell( 15271, { duration = 15, type = "BUFF" }) -- Spirit Tap
 
-Spell({ 2652, 19261, 19262, 19264, 19265, 19266 }, { duration = 600, type = "BUFF", castFilter = true }) -- Touch of Weakness
+Spell({ 2943, 19249, 19251, 19252, 19253, 19254 }, { duration = 120 }) -- Touch of Weakness Effect
 Spell({ 13896, 19271, 19273, 19274, 19275 }, { duration = 15, type = "BUFF" }) -- Feedback
 Spell({ 2651, 19289, 19291, 19292, 19293 }, { duration = 15, type = "BUFF" }) -- Elune's Grace
 Spell({ 9035, 19281, 19282, 19283, 19284, 19285 }, { duration = 120 }) -- Hex of Weakness
@@ -171,7 +172,7 @@ Spell({ 339, 1062, 5195, 5196, 9852, 9853 }, {
 }) -- Entangling Roots
 Spell({ 2908, 8955, 9901 }, { duration = 15 }) -- Soothe Animal
 Spell({ 770, 778, 9749, 9907 }, { duration = 40 }) -- Faerie Fire
-Spell({ 17390, 17391, 17392 }, { duration = 40 }) -- Faerie Fire (Feral)
+Spell({ 16857, 17390, 17391, 17392 }, { duration = 40 }) -- Faerie Fire (Feral)
 Spell({ 2637, 18657, 18658 }, {
     duration = function(spellID)
         if spellID == 2637 then return 20
