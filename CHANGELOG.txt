@@ -1,6 +1,7 @@
 0.9.0
 
 - Fix combopoint position under target if target is casting
+- Added custom border for raidbosses
 - Added ability to seperate MultiBarLeft and MultiBarRight
 - Fixed an error in Immersive Questing
 - Fixed an error where the MultiBarLeft and MultiBarRight change the size if you attack from stealth

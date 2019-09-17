@@ -222,7 +222,7 @@ local function manageButton()
 
 
     GwButtonInviteToParty:SetText(PARTY_INVITE)
-    GwManageGroupLeaveButton:SetText(EXIT)
+    GwManageGroupLeaveButton:SetText(PARTY_LEAVE)
     GwGroupReadyCheck:SetText(QUEUED_STATUS_READY_CHECK_IN_PROGRESS)
     GwGroupRoleCheck:SetText(QUEUED_STATUS_ROLE_CHECK_IN_PROGRESS)
 

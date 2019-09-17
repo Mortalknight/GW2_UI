@@ -224,7 +224,6 @@ function gw_setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceBut
     
 end
 
-
 function gwMainMenuOnEvent(self, event)
     if event == 'PLAYER_EQUIPMENT_CHANGED' then
         gwActionBarEquipUpdate()
@@ -630,14 +629,39 @@ local function LoadActionBars()
  
     RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
     RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
-    ActionBarController:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
-    hooksecurefunc('MultiActionBar_Update',function() 
+
+    hooksecurefunc('MultiActionBar_Update', function() 
         if InCombatLockdown() then return end
 
         local multibar = _G["MultiBarLeft"]
         local settings = GetSetting("MultiBarLeft")
         multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
     end)
+
+    local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
+    fgw:SetFrameRef("MultiBarLeft", MultiBarLeft)
+    fgw:SetFrameRef("MultiBarRight", MultiBarRight)
+    fgw:SetFrameRef("UIParent", UIParent)
+    fgw:SetFrameRef("GwMultiBarLeftMoveAble", GwMultiBarLeftMoveAble)
+    fgw:SetAttribute(
+        "_onstate-combat",
+        [=[
+        local mbar = self:GetFrameRef("MultiBarLeft")
+        local mbar2 = self:GetFrameRef("MultiBarRight")
+        local framePos = self:GetFrameRef("GwMultiBarLeftMoveAble")
+        local protected = mbar:IsProtected()
+
+        if newstate == "incombat" and protected then
+            print("1")
+            mbar:ClearAllPoints()
+            mbar:SetPoint(framePos:GetPoint())
+            mbar:SetScale(framePos:GetScale())
+            mbar2:SetScale(framePos:GetScale())
+        end
+
+        ]=]
+    )
+    RegisterStateDriver(fgw, "combat", "[combat] incombat; [overridebar] BonusBar; [vehicleui] low; none")
      
     gw_hideBlizzardsActionbars()
     gwSetMicroButtons()
@@ -648,6 +672,7 @@ local function LoadActionBars()
     hooksecurefunc("ActionButton_UpdateHotkeys",  gwActionButton_UpdateHotkeys)
          
     MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
+    MainMenuBarArtFrame:RegisterEvent('UPDATE_BONUS_ACTIONBAR')
     MainMenuBarArtFrame:HookScript('OnEvent', gwMainMenuOnEvent)
 end
 GW.LoadActionBars = LoadActionBars
