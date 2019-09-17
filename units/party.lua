@@ -643,7 +643,7 @@ local function party_OnEvent(self, event, unit, arg1)
         end
         self.powerbar:SetValue(powerPrecentage)
     end
-    if event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" then
+    if event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         updatePartyData(self)
     end
     if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
@@ -766,7 +766,8 @@ local function createPartyFrame(i)
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
-
+    
+    frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
