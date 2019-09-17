@@ -148,7 +148,8 @@ local TARGET_FRAME_ART = {
     ["prestige1"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p1",
     ["prestige2"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p2",
     ["prestige3"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p3",
-    ["prestige4"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p4"
+    ["prestige4"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_p4",
+    ["realboss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow-raidboss" 
 }
 GW.TARGET_FRAME_ART = TARGET_FRAME_ART
 
