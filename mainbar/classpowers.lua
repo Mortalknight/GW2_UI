@@ -132,7 +132,7 @@ local function selectType(f)
         f:Show()   
         if f.ourTarget and f.comboPointsOnTarget then
             f:ClearAllPoints()
-            f:SetPoint("TOPLEFT", GwTargetUnitFrame.powerbar, "TOPLEFT", -8, 3)
+            f:SetPoint("TOPLEFT", GwTargetUnitFrame.auras, "TOPLEFT", -8, 23)
             f.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
             f:SetWidth(220)
             f:SetHeight(30)

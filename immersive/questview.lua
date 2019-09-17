@@ -156,11 +156,7 @@ end
 GW.AddForProfiling("questview", "setQuestGiverAnimation", setQuestGiverAnimation)
 
 local function showRewards()
-    local xp = GetRewardXP()
     local money = GetRewardMoney()
-    local title = nil --GetRewardTitle()
-    local currency = 0 --GetNumRewardCurrencies()
-    local _, _, skillPoints = 0, 0, 0 --GetRewardSkillPoints()
     local items = GetNumQuestRewards()
     local spells = GetNumRewardSpells()
     local choices = GetNumQuestChoices()
@@ -215,7 +211,7 @@ local function showRewards()
         end
     end
 
-    if (xp > 0 or money > 0 or title or currency > 0 or skillPoints or items > 0 or spells > 0 or choices > 0) then
+    if (money > 0 or items > 0 or spells > 0 or choices > 0) then
         UIFrameFadeIn(QuestInfoRewardsFrame, 0.1, 0, 1)
         QuestInfoRewardsFrame:SetParent(GwQuestviewFrame)
         QuestInfoRewardsFrame:SetWidth(400)
@@ -444,7 +440,7 @@ local function LoadQuestview()
     GwQuestviewFrameContainerDialogString:SetTextColor(1, 1, 1)
     GwQuestviewFrameContainerDialogQuestTitle:SetTextColor(255 / 255, 197 / 255, 39 / 255)
     GwQuestviewFrameContainerDialogQuestTitle:SetFont(DAMAGE_TEXT_FONT, 24)
-    GwQuestviewFrameContainerDeclineQuest:SetText(IGNORE)
+    GwQuestviewFrameContainerDeclineQuest:SetText(DECLINE)
 
     GwQuestviewFrame:SetScript(
         "OnShow",

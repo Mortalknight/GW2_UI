@@ -630,6 +630,14 @@ local function LoadActionBars()
  
     RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
     RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
+    ActionBarController:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
+    hooksecurefunc('MultiActionBar_Update',function() 
+        if InCombatLockdown() then return end
+
+        local multibar = _G["MultiBarLeft"]
+        local settings = GetSetting("MultiBarLeft")
+        multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
+    end)
      
     gw_hideBlizzardsActionbars()
     gwSetMicroButtons()
