@@ -404,11 +404,30 @@ end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
 local function OnBlockClick(self, button, isHeader)
-    if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
-        ChatEdit_InsertLink(gsub(self.Header:GetText(), " *(.*)", "%1"))
-		return
+    if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
+        if button == "LeftButton" then
+            ChatEdit_InsertLink(gsub(self.Header:GetText(), " *(.*)", "%1"))
+        else
+            SelectQuestLogEntry(self.questLogIndex)
+            local chat = ""
+            local numObjectives = GetNumQuestLeaderBoards()
+            if numObjectives > 0 then
+                for objectiveIndex = 1, numObjectives do
+                    local objectiveText = GetQuestLogLeaderBoard(objectiveIndex)
+                    chat = chat .. objectiveText
+                    if objectiveIndex ~= numObjectives then
+                        chat = chat .. ", "
+                    end
+                end
+            else
+                local _, objectiveText = GetQuestLogQuestText()
+                chat = objectiveText
+            end
+            ChatEdit_GetActiveWindow():Insert(chat)
+        end
+        return
     end
-    if IsShiftKeyDown() then
+    if IsControlKeyDown() then
         local questID = GetQuestIDFromLogIndex(self.questLogIndex)
         for index, value in ipairs(QUEST_WATCH_LIST) do
             if value.id == questID then
@@ -421,12 +440,21 @@ local function OnBlockClick(self, button, isHeader)
         return
     end
 
-    if (button ~= "RightButton") then
+    if IsAddOnLoaded("QuestGuru") then
+        QuestLogFrame = QuestGuru
+    end
+    if button ~= "RightButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        QuestLogFrame:Show()
-        QuestLog_SetSelection(self.questLogIndex)
-        QuestLog_Update()
-	end
+        if QuestLogFrame:IsShown() and QuestLogFrame.selectedButtonID == self.questLogIndex then
+            QuestLogFrame:Hide()
+        else
+            QuestLogFrame:Show()
+            QuestLog_SetSelection(self.questLogIndex)
+            QuestLog_Update()
+        end
+    elseif button == "RightButton" and QuestLogFrame:IsShown() then
+        QuestLogFrame:Hide()
+    end
 end
 GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
 
