@@ -515,6 +515,13 @@ local function unitFrameData(self, event)
 
     self.nameString:SetText(name)
     self.levelString:SetText(level)
+    -- Color level number
+    if UnitCanAttack("player", self.unit) then
+        local color = GetCreatureDifficultyColor(level)
+        self.levelString:SetVertexColor(color.r, color.g, color.b)
+    else
+        self.levelString:SetVertexColor(1, 1, 1)
+    end
 
     updateHealthbarColor(self)
 
