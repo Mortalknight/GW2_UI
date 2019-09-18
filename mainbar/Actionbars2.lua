@@ -652,7 +652,6 @@ local function LoadActionBars()
         local protected = mbar:IsProtected()
 
         if newstate == "incombat" and protected then
-            print("1")
             mbar:ClearAllPoints()
             mbar:SetPoint(framePos:GetPoint())
             mbar:SetScale(framePos:GetScale())

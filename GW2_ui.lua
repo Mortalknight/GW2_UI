@@ -655,7 +655,12 @@ local function loadAddon(self)
     if GetSetting("PLAYER_BUFFS_ENABLED") then
         GW.LoadBuffs()
     end
-    Gw_LoadWindows();
+
+    if GetSetting("USE_CHARACTER_WINDOW") then
+        SetSetting("USE_CHARACTER_WINDOW", false)
+        --Gw_LoadWindows()
+    end
+
     GW.LoadMicroMenu()
 
     if GetSetting("GROUP_FRAMES") then
