@@ -1792,7 +1792,8 @@ function GwToggleCharacter (tab, onlyShow)
 
     CHARACTERFRAME_DEFAULTFRAMES['PaperDollFrame'] = GwCharacterMenu
     CHARACTERFRAME_DEFAULTFRAMES['ReputationFrame'] = GwPaperReputation
-    CHARACTERFRAME_DEFAULTFRAMES['TokenFrame'] = GwCharacterMenu
+    CHARACTERFRAME_DEFAULTFRAMES['SkillFrame'] = GwPaperSkills
+    CHARACTERFRAME_DEFAULTFRAMES['PetPaperDollFrame'] = GwPaperSkills
 
     if CHARACTERFRAME_DEFAULTFRAMES[tab]~=nil and CHARACTER_PANEL_OPEN~=tab  then
         gwCharacterPanelToggle(CHARACTERFRAME_DEFAULTFRAMES[tab]);

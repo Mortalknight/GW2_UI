@@ -1131,41 +1131,15 @@
             <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Scripts>
                     <OnLoad>
                         self:SetUnit('pet')
-                        self:SetPosition(0.8,0,0)
+                        self:SetPosition(-2,0,-0.5)
 
-                        local race, raceEn = UnitRace("Player");
-                        if raceEn=='Human' then
-                            self:SetPosition(0.4,0,-0.05)
-                        elseif raceEn=='Worgen' then
-                            self:SetPosition(0.1,0,-0.1)
-                        elseif raceEn=='Tauren' then
-                            self:SetPosition(0.6,0,0)
-                        elseif raceEn=='BloodElf' then
-                            self:SetPosition(0.6,0,-0.1)
-						elseif raceEn=='Draenei' then
-                            self:SetPosition(0.3,0,-0.15)
-						elseif raceEn=='NightElf' then
-                            self:SetPosition(0.3,0,-0.15)
-						elseif raceEn=='Pandaren' then
-                            self:SetPosition(0.3,0,-0.15)
-						elseif raceEn=='Goblin' then
-                            self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Troll' then
-                            self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Scourge' then
-                           self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Dwarf' then
-                            self:SetPosition(0.3,0,0)
-						elseif raceEn=='Gnome' then
-                            self:SetPosition(0.2,0,-0.05)
-						elseif raceEn=='Orc' then
-                            self:SetPosition(0.1,0,-0.15)
-                        end
+
 
 
                         self:SetRotation(-0.15)
@@ -1179,7 +1153,7 @@
                     <StatusBar name="$parentExpBar"  min="0" max="1" hidden="false" parentKey="expBar">
                         <Size x="380" y="10"></Size>
                         <Anchors>
-                          <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"  x="20" y="40"></Anchor>
+                          <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="40"></Anchor>
 
                         </Anchors>
                         <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>

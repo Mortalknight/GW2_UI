@@ -118,7 +118,6 @@ local function loadBaseFrame()
         if value==0 then
             self:Hide()
             self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
-
         end
 
     ]=]);
@@ -205,7 +204,7 @@ function Gw_LoadWindows()
         gwFrameCombatTogglerCharacter:SetAttribute('type', 'attribute')
         gwFrameCombatTogglerCharacter:SetAttribute('attribute-frame', GwCharacterWindow)
         gwFrameCombatTogglerCharacter:SetAttribute('attribute-name', 'windowPanelOpen')
-        gwFrameCombatTogglerCharacter:SetAttribute('attribute-value', "1")
+        gwFrameCombatTogglerCharacter:SetAttribute('attribute-value', 1)
         if GetBindingKey("TOGGLECHARACTER0")~=nil then
             SetBinding(GetBindingKey("TOGGLECHARACTER0"),"CLICK gwFrameCombatTogglerCharacter:LeftButton");
         end
