@@ -9,7 +9,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v0.8.0'
+GW.VERSION_STRING = 'GW2_UI_Classic v0.9.0'
 
 local loaded = false
 local hudScale = 1
@@ -656,10 +656,10 @@ local function loadAddon(self)
         GW.LoadBuffs()
     end
 
-    if GetSetting("USE_CHARACTER_WINDOW") then
-        SetSetting("USE_CHARACTER_WINDOW", false)
-        --Gw_LoadWindows()
-    end
+        if GetSetting("USE_CHARACTER_WINDOW") then
+            SetSetting("USE_CHARACTER_WINDOW", false)
+            --Gw_LoadWindows()
+        end
 
     GW.LoadMicroMenu()
 
