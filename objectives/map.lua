@@ -59,7 +59,8 @@ local Minimap_Addon_Buttons = {
     [48] = "miningminimap",
     [49] = "herbalismminimap",
     [50] = "fishminimap",
-    [41] = "treasureminimap"
+    [41] = "treasureminimap",
+    [42] = "GatherLite"
 }
 
 local MAP_FRAMES_HOVER = {}
