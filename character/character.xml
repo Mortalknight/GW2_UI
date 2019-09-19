@@ -1138,16 +1138,10 @@
                     <OnLoad>
                         self:SetUnit('pet')
                         self:SetPosition(-2,0,-0.5)
-
-
-
-
                         self:SetRotation(-0.15)
-
 						Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp);
 				        self:HookScript('OnMouseDown', GwPaperDollResetBagInventory)
                     </OnLoad>
-
                 </Scripts>
                 <Frames>
                     <StatusBar name="$parentExpBar"  min="0" max="1" hidden="false" parentKey="expBar">
@@ -1166,7 +1160,6 @@
                                     <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="-3" y="0"></Anchor>
                                     <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="3" y="0"></Anchor>
                                 </Anchors>
-
                             </Texture>
                         </Layer>
                             <Layer level="ARTWORK">
@@ -1176,29 +1169,21 @@
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>
-
                             </Layer>
-
                         </Layers>
                         <Scripts>
-
                             <OnLoad>
-
                                 self:SetMinMaxValues(0,1)
                                 self:SetStatusBarColor(240/255,240/255,155/255)
 
                                 local BNAME = self:GetName()
                                 hooksecurefunc(self,'SetValue',function(self)
-
                                     local min, max = self:GetMinMaxValues()
                                     local v = self:GetValue()
                                     local width = math.max(1,math.min(10,10*((v/max)/0.1)))
                                     _G[BNAME..'Spark']:SetPoint('RIGHT',self,'LEFT',self:GetWidth()*(v/max),0)
 
                                     _G[BNAME..'Spark']:SetWidth(width)
-
-
-
                                 end)
                             </OnLoad>
                         </Scripts>
@@ -1251,7 +1236,6 @@
                     	self:RegisterEvent("UNIT_ATTACK");
                     	self:RegisterEvent("UNIT_PET_TRAINING_POINTS");
                         self:RegisterEvent("UNIT_HAPPINESS");
-
                     </OnLoad>
                     <OnEvent>
                         gwPaperDollPetStats_OnEvent(self,event,...)
@@ -1259,7 +1243,6 @@
 
                 </Scripts>
             </Frame>
-
         </Frames>
         <Scripts>
             <OnLoad>
@@ -1268,7 +1251,7 @@
                 self.itemLevel:SetFont(UNIT_NAME_FONT, 24)
                 self.itemLevelLabel:SetFont(UNIT_NAME_FONT, 12)
                 self.itemLevelLabel:SetText(TRAINING_POINTS_LABEL)
-
+                self.backButton:SetText(CHARACTER .. ": " .. PET)
             </OnLoad>
         </Scripts>
     </Frame>
@@ -1991,7 +1974,7 @@
             </OnClick>
         </Scripts>
     </Button>
-    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true">
+    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true" frameStrata="HIGH">
         <Size x="853" y="50"></Size>
         <Anchors>
             <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
@@ -2004,7 +1987,7 @@
             <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
         </Scripts>
     </Frame>
-    <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
+    <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true" frameStrata="HIGH">
          <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
@@ -2017,7 +2000,7 @@
         </Anchors>
     </Frame>
 
-        <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true"  virtual="true" protected="true">
+        <Frame name="GwCharacterWindow" frameStrata="HIGH" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true"  virtual="true" protected="true">
         <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>

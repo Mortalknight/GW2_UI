@@ -4,7 +4,7 @@ local GetSetting = GW.GetSetting
 local questState = "NONE"
 local questStateSet = false
 local QUESTSTRING = {}
-local QUESTREQ = {["stuff"] = {}, ["currency"] = {}, ["money"] = 0, ["text"] = {}}
+local QUESTREQ = {["stuff"] = {}, ["money"] = 0, ["text"] = {}}
 local QUESTSTRINGINT = 0
 local QUEST_NPC_TYPE = 0
 
@@ -166,7 +166,7 @@ local function showRewards()
 
     styleRewards()
 
-    if (QUESTREQ["money"] > 0 or #QUESTREQ["currency"] > 0 or #QUESTREQ["stuff"] > 0) then
+    if (QUESTREQ["money"] > 0 or #QUESTREQ["stuff"] > 0) then
         qinfoHeight = 150
         qinfoTop = 55
 
@@ -179,7 +179,7 @@ local function showRewards()
             QuestProgressRequiredMoneyFrame:SetPoint("CENTER", GwQuestviewFrame, "CENTER", 0, -30)
             QuestProgressRequiredMoneyFrame:SetFrameLevel(5)
         end
-        local itemReq = #QUESTREQ["currency"] + #QUESTREQ["stuff"]
+        local itemReq = #QUESTREQ["stuff"]
         local itemHeight = 0
         local itemWidth = 0
         for i = 1, itemReq, 1 do
@@ -206,12 +206,12 @@ local function showRewards()
                     "OnEnter",
                     function()
                     end
-                ) -- TODO: tooltips disabled because it dies for currency types
+                )
             end
         end
     end
 
-    if (money > 0 or items > 0 or spells > 0 or choices > 0) then
+    if (money > 0 or items > 0 or spells > 0 or choices > 0) and questState ~= "PROGRESS" then
         UIFrameFadeIn(QuestInfoRewardsFrame, 0.1, 0, 1)
         QuestInfoRewardsFrame:SetParent(GwQuestviewFrame)
         QuestInfoRewardsFrame:SetWidth(400)
@@ -422,11 +422,6 @@ local function clearQuestReq()
         QUESTREQ["stuff"][i] = nil
     end
 
-    local countCurrency = #QUESTREQ["currency"]
-    for i = 0, countCurrency do
-        QUESTREQ["currency"][i] = nil
-    end
-
     local countText = #QUESTREQ["text"]
     for i = 0, countText do
         QUESTREQ["text"][i] = nil
@@ -466,10 +461,7 @@ local function LoadQuestview()
                         table.insert(QUESTREQ["stuff"], 1, {GetQuestItemInfo("required", i)})
                     end
                 end
-                for i = 0, 1, -1 do
-                    table.insert(QUESTREQ["currency"], 1, {GetQuestCurrencyInfo("required", i)})
-                end
-                if (QUESTREQ["money"] > 0 or #QUESTREQ["currency"] > 0 or #QUESTREQ["stuff"] > 0) then
+                if (QUESTREQ["money"] > 0 or #QUESTREQ["stuff"] > 0) then
                     QUESTREQ["text"] = splitQuest(GetProgressText())
                 end
                 if IsQuestCompletable() then

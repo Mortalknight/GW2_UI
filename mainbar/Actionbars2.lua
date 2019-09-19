@@ -296,6 +296,7 @@ local function updateMainBar()
     MainMenuBarArtFrame:ClearAllPoints()
     MainMenuBarArtFrame:SetPoint('TOP', UIParent, 'BOTTOM', 0, 80)
     MainMenuBarArtFrame:SetSize(btn_padding, used_height)
+    MainMenuBarArtFrame:SetFrameStrata("LOW")
 end
 
 local function updateMultiBar(barName, buttonName)
@@ -352,6 +353,7 @@ local function updateMultiBar(barName, buttonName)
     multibar:ClearAllPoints()
     multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
     multibar:SetSize(used_width, used_height)
+    multibar:SetFrameStrata("LOW")
 end
 
 
@@ -635,27 +637,32 @@ local function LoadActionBars()
 
         local multibar = _G["MultiBarLeft"]
         local settings = GetSetting("MultiBarLeft")
+        multibar:ClearAllPoints()
         multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
     end)
 
     local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
     fgw:SetFrameRef("MultiBarLeft", MultiBarLeft)
     fgw:SetFrameRef("MultiBarRight", MultiBarRight)
-    fgw:SetFrameRef("UIParent", UIParent)
+    fgw:SetFrameRef("GwMultiBarRightMoveAble", GwMultiBarRightMoveAble)
     fgw:SetFrameRef("GwMultiBarLeftMoveAble", GwMultiBarLeftMoveAble)
     fgw:SetAttribute(
         "_onstate-combat",
         [=[
-        local mbar = self:GetFrameRef("MultiBarLeft")
-        local mbar2 = self:GetFrameRef("MultiBarRight")
-        local framePos = self:GetFrameRef("GwMultiBarLeftMoveAble")
-        local protected = mbar:IsProtected()
+        local mbarL = self:GetFrameRef("MultiBarLeft")
+        local mbarR = self:GetFrameRef("MultiBarRight")
+        local framePosL = self:GetFrameRef("GwMultiBarLeftMoveAble")
+        local framePosR = self:GetFrameRef("GwMultiBarRightMoveAble")
+        local protected = mbarL:IsProtected()
 
         if newstate == "incombat" and protected then
-            mbar:ClearAllPoints()
-            mbar:SetPoint(framePos:GetPoint())
-            mbar:SetScale(framePos:GetScale())
-            mbar2:SetScale(framePos:GetScale())
+            mbarL:ClearAllPoints()
+            mbarL:SetPoint(framePosL:GetPoint())
+            mbarL:SetScale(framePosL:GetScale())
+
+            mbarR:ClearAllPoints()
+            mbarR:SetPoint(framePosR:GetPoint())
+            mbarR:SetScale(framePosR:GetScale())
         end
 
         ]=]
