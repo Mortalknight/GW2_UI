@@ -296,10 +296,6 @@ function gwPaperDollStats_OnEvent(self, event, ...)
 		return
     end
 
-	--if ( not self:IsVisible() ) then
-		--return;
-	--end
-
 	if unit == "player" then
 		if event == "UNIT_LEVEL" then
 			gwPaperDollUpdateUnitData()
@@ -312,7 +308,7 @@ function gwPaperDollStats_OnEvent(self, event, ...)
 				event == "UNIT_SPELL_HASTE" or
 				event == "UNIT_MAXHEALTH" or
 				event == "UNIT_AURA" or
-				event == "UNIT_RESISTANCES" or
+                event == "UNIT_RESISTANCES" or
 				IsMounted() then
 			self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
 		end
@@ -440,7 +436,7 @@ function gwPaperDollUpdateStats()
         statText, tooltip1, tooltip2 = GW.stats.getRangedAttackPower()
         grid, x, y, numShownStats = setStatFrame("RANGEDATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
-    
+
     --resitance
     for resistanceIndex = 1, 5 do
         statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
@@ -545,6 +541,7 @@ end
 function gwPaperDollSlotButton_OnLoad(self)
     self:RegisterForDrag("LeftButton")
     self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 	local slotName = self:GetName()
 	local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName, 12))
 	self:SetID(id);
@@ -560,7 +557,7 @@ function gwPaperDollSlotButton_OnShow(self)
 	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
 	self:RegisterEvent("ITEM_LOCK_CHANGED")
 	self:RegisterEvent("CURSOR_UPDATE")
-	self:RegisterEvent("UPDATE_INVENTORY_ALERTS")
+    self:RegisterEvent("UPDATE_INVENTORY_ALERTS")
     gwPaperDollSlotButton_Update(self)
 end
 
@@ -580,6 +577,10 @@ function gwPaperDollSlotButton_OnEvent(self, event, ...)
 		if self:GetID() == arg1 then
 			gwPaperDollSlotButton_Update(self)
             updateBagItemList(self)
+        end
+    elseif event == "UNIT_INVENTORY_CHANGED" then
+		if arg1 == "player" then
+			PaperDollItemSlotButton_Update(self)
 		end
 	end
     if event == "BAG_UPDATE_COOLDOWN" then
@@ -683,7 +684,7 @@ function gwPaperDollSlotButton_OnLeave(self)
 	ResetCursor()
 end
 
-function gwPaperDollSlotButton_Update (self)
+function gwPaperDollSlotButton_Update(self)
     local slot = self:GetID()
     if savedItemSlots[slot] == nil then
         savedItemSlots[slot] = self
@@ -1483,6 +1484,7 @@ function gw_register_character_window()
     GwUpdateSavedReputation()
     GwPaperReputationScrollFrame:SetScrollChild(GwPaperReputationScrollFrame.scrollchild)
     GwPaperDollUpdateReputations()
+
     GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)
     updateSkills()
 

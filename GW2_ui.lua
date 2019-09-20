@@ -679,8 +679,6 @@ local function loadAddon(self)
         GW.LoadRaidFrames()
     end
 
-
-
     GW.UpdateHudScale()
 
     if (forcedMABags) then

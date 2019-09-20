@@ -123,7 +123,6 @@
                      <TexCoords left="0" right="1" top="0.5" bottom="1"/>
                 </Texture>
             </Layer>
-
             <Frames>
                 <CheckButton hidden="true" name="$parentCheckButton"  checked="false">
 
@@ -133,16 +132,9 @@
                     </Anchors>
                     <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
                     <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
-                    <Scripts>
-                        <OnLoad>
-
-                        </OnLoad>
-                    </Scripts>
                 </CheckButton>
             </Frames>
-
         </Layers>
-
         <Scripts>
             <OnLoad>
                 gwPaperDollSlotButton_OnLoad(self)
@@ -154,28 +146,26 @@
                 gwPaperDollSlotButton_OnHide(self)
             </OnHide>
             <OnEvent>
-                gwPaperDollSlotButton_OnEvent(self, event, ...);
+                gwPaperDollSlotButton_OnEvent(self, event, ...)
 			</OnEvent>
             <OnClick>
-
-              if ( IsModifiedClick() ) then
-					gwPaperDollSlotButton_OnModifiedClick(self, button);
-
+                if IsModifiedClick() then
+					gwPaperDollSlotButton_OnModifiedClick(self, button)
 				else
-					gwPaperDollSlotButton_OnClick(self, button);
+					gwPaperDollSlotButton_OnClick(self, button)
 				end
 			</OnClick>
             <OnDragStart>
-                gwPaperDollSlotButton_OnClick(self, "LeftButton",true);
+                gwPaperDollSlotButton_OnClick(self, "LeftButton", true)
             </OnDragStart>
             <OnReceiveDrag>
-				gwPaperDollSlotButton_OnClick(self, "LeftButton",true);
+				gwPaperDollSlotButton_OnClick(self, "LeftButton", true)
 			</OnReceiveDrag>
             <OnEnter>
-              gwPaperDollSlotButton_OnEnter(self,motion)
+                gwPaperDollSlotButton_OnEnter(self, motion)
 			</OnEnter>
             <OnLeave>
-              gwPaperDollSlotButton_OnLeave(self,motion)
+                gwPaperDollSlotButton_OnLeave(self, motion)
 			</OnLeave>
         </Scripts>
     </Button>
@@ -473,10 +463,10 @@
                 GwupdateBagItemListAll()
             </OnEvent>
             <OnHide>
-            GwPaperDollResetBagInventory()
+                GwPaperDollResetBagInventory()
             </OnHide>
             <OnShow>
-            GwupdateBagItemListAll()
+                GwupdateBagItemListAll()
             </OnShow>
         </Scripts>
     </Frame>
@@ -1218,27 +1208,27 @@
                         self.header:SetFont(DAMAGE_TEXT_FONT, 14)
 			            self.header:SetText(STAT_CATEGORY_ATTRIBUTES)
 
-                        self:RegisterEvent("PET_UI_UPDATE");
-                    	self:RegisterEvent("PET_BAR_UPDATE");
-                    	self:RegisterEvent("PET_UI_CLOSE");
-                    	self:RegisterEvent("UNIT_PET");
-                    	self:RegisterEvent("UNIT_PET_EXPERIENCE");
-                    	self:RegisterEvent("UNIT_MODEL_CHANGED");
-                    	self:RegisterEvent("UNIT_LEVEL");
-                    	self:RegisterEvent("UNIT_RESISTANCES");
-                    	self:RegisterEvent("UNIT_STATS");
-                    	self:RegisterEvent("UNIT_DAMAGE");
-                    	self:RegisterEvent("UNIT_RANGEDDAMAGE");
-                    	self:RegisterEvent("UNIT_ATTACK_SPEED");
-                    	self:RegisterEvent("UNIT_ATTACK_POWER");
-                    	self:RegisterEvent("UNIT_RANGED_ATTACK_POWER");
-                    	self:RegisterEvent("UNIT_DEFENSE");
-                    	self:RegisterEvent("UNIT_ATTACK");
-                    	self:RegisterEvent("UNIT_PET_TRAINING_POINTS");
-                        self:RegisterEvent("UNIT_HAPPINESS");
+                        self:RegisterEvent("PET_UI_UPDATE")
+                    	self:RegisterEvent("PET_BAR_UPDATE")
+                    	self:RegisterEvent("PET_UI_CLOSE")
+                    	self:RegisterEvent("UNIT_PET")
+                    	self:RegisterEvent("UNIT_PET_EXPERIENCE")
+                    	self:RegisterEvent("UNIT_MODEL_CHANGED")
+                    	self:RegisterEvent("UNIT_LEVEL")
+                    	self:RegisterEvent("UNIT_RESISTANCES")
+                    	self:RegisterEvent("UNIT_STATS")
+                    	self:RegisterEvent("UNIT_DAMAGE")
+                    	self:RegisterEvent("UNIT_RANGEDDAMAGE")
+                    	self:RegisterEvent("UNIT_ATTACK_SPEED")
+                    	self:RegisterEvent("UNIT_ATTACK_POWER")
+                    	self:RegisterEvent("UNIT_RANGED_ATTACK_POWER")
+                    	self:RegisterEvent("UNIT_DEFENSE")
+                    	self:RegisterEvent("UNIT_ATTACK")
+                    	self:RegisterEvent("UNIT_PET_TRAINING_POINTS")
+                        self:RegisterEvent("UNIT_HAPPINESS")
                     </OnLoad>
                     <OnEvent>
-                        gwPaperDollPetStats_OnEvent(self,event,...)
+                        gwPaperDollPetStats_OnEvent(self, event, ...)
                     </OnEvent>
 
                 </Scripts>
@@ -1703,43 +1693,41 @@
                 <Scripts>
                     <OnLoad>
                         self.header:SetFont(DAMAGE_TEXT_FONT, 14)
-			self.header:SetText(STAT_CATEGORY_ATTRIBUTES)
-                        self:RegisterEvent("PLAYER_ENTERING_WORLD");
+			            self.header:SetText(STAT_CATEGORY_ATTRIBUTES)
+                        self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-                        self:RegisterEvent("CHARACTER_POINTS_CHANGED");
-                        self:RegisterEvent("UNIT_MODEL_CHANGED");
-                        self:RegisterEvent("UNIT_LEVEL");
-                        self:RegisterEvent("UNIT_STATS");
-                        self:RegisterEvent("UNIT_RANGEDDAMAGE");
-                        self:RegisterEvent("UNIT_ATTACK_POWER");
-                        self:RegisterEvent("UNIT_RANGED_ATTACK_POWER");
-                        self:RegisterEvent("UNIT_ATTACK");
-                        self:RegisterEvent("UNIT_SPELL_HASTE");
-                        self:RegisterEvent("UNIT_RESISTANCES");
-                        self:RegisterEvent("PLAYER_GUILD_UPDATE");
-                        self:RegisterEvent("SKILL_LINES_CHANGED");
-                        self:RegisterEvent("COMBAT_RATING_UPDATE");
+                        self:RegisterEvent("CHARACTER_POINTS_CHANGED")
+                        self:RegisterEvent("UNIT_MODEL_CHANGED")
+                        self:RegisterEvent("UNIT_LEVEL")
+                        self:RegisterEvent("UNIT_STATS")
+                        self:RegisterEvent("UNIT_RANGEDDAMAGE")
+                        self:RegisterEvent("UNIT_ATTACK_POWER")
+                        self:RegisterEvent("UNIT_RANGED_ATTACK_POWER")
+                        self:RegisterEvent("UNIT_ATTACK")
+                        self:RegisterEvent("UNIT_SPELL_HASTE")
+                        self:RegisterEvent("UNIT_RESISTANCES")
+                        self:RegisterEvent("PLAYER_GUILD_UPDATE")
+                        self:RegisterEvent("SKILL_LINES_CHANGED")
+                        self:RegisterEvent("COMBAT_RATING_UPDATE")
+                        self:RegisterEvent("UNIT_NAME_UPDATE")
+                        self:RegisterEvent("BAG_UPDATE")
+                        self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+                        self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+                        self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
+                        self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
+                        self:RegisterEvent("SPELL_POWER_CHANGED")
+                        self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION")
+                        self:RegisterEvent("UNIT_NAME_UPDATE")
+                        self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 
-                        self:RegisterEvent("UNIT_NAME_UPDATE");
-
-                        self:RegisterEvent("BAG_UPDATE");
-                        self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
-                        self:RegisterEvent("PLAYERBANKSLOTS_CHANGED");
-                        self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE");
-                        self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS");
-
-                        self:RegisterUnitEvent("UNIT_DAMAGE", "player");
-                        self:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player");
-                        self:RegisterUnitEvent("UNIT_MAXHEALTH", "player");
-                        self:RegisterUnitEvent("UNIT_AURA", "player");
-                        self:RegisterEvent("SPELL_POWER_CHANGED");
-                        self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION");
-                        self:RegisterEvent("UNIT_NAME_UPDATE");
+                        self:RegisterUnitEvent("UNIT_DAMAGE", "player")
+                        self:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player")
+                        self:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
+                        self:RegisterUnitEvent("UNIT_AURA", "player") 
                     </OnLoad>
                     <OnEvent>
-                        gwPaperDollStats_OnEvent(self,event,...)
+                        gwPaperDollStats_OnEvent(self, event, ...)
                     </OnEvent>
-
                 </Scripts>
             </Frame>
             <Frame name="$parentGear">
@@ -1895,17 +1883,14 @@
                         end
 
                         self.ammo.BACKGROUND:SetTexCoord(0.75,1,0.375,0.5)
-
                         self.finger1.BACKGROUND:SetTexCoord(0.5,0.75,0,0.125)
                         self.finger2.BACKGROUND:SetTexCoord(0.5,0.75,0,0.125)
                         self.neck.BACKGROUND:SetTexCoord(0.25,0.5,0,0.125)
                         self.trinket1.BACKGROUND:SetTexCoord(0.5,0.75,0.375,0.5)
                         self.trinket2.BACKGROUND:SetTexCoord(0.5,0.75,0.375,0.5)
-
                         self.shirt.BACKGROUND:SetTexCoord(0.75,1,0.25,0.375)
                         self.tabard.BACKGROUND:SetTexCoord(0.25,0.5,0.375,0.5)
                     </OnLoad>
-
                 </Scripts>
             </Frame>
             <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
@@ -1962,12 +1947,6 @@
                 self.characterName:SetFont(UNIT_NAME_FONT, 14)
                 self.characterData:SetFont(UNIT_NAME_FONT, 12)
                 self.itemLevel:SetFont(UNIT_NAME_FONT, 24)
-
-                locallocalizedClass, englishClass, classIndex = UnitClass('player');
-
-                -- NYI SetClassIcon(self.classIcon,classIndex)
-                -- NYI self.classIcon:SetVertexColor(GW_CLASS_COLORS_RAIDFRAME[classIndex].r,GW_CLASS_COLORS_RAIDFRAME[classIndex].g,GW_CLASS_COLORS_RAIDFRAME[classIndex].b,1)
-
             </OnLoad>
             <OnClick>
                   GwPaperDollResetBagInventory(self)
