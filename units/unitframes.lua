@@ -1128,7 +1128,7 @@ local function LoadTargetOfUnit(unit)
 
     f.unit = unitID
 
-    RegisterMovableFrame(unitID .. "frame", f, unitID .. "_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(unitID .. "frame", f, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy")
 
     f:ClearAllPoints()
     f:SetPoint(

@@ -99,6 +99,8 @@ local function mover_OnDragStop(self)
     if lockAble ~= nil then
         SetSetting(lockAble, false)
     end
+    _G[self.frame:GetName()]:ClearAllPoints()
+    _G[self.frame:GetName()]:SetPoint(self:GetPoint())
 
     self.IsMoving = false
 end
@@ -114,6 +116,7 @@ local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockA
     moveframe.frameName:SetText(name)
     moveframe.gw_Settings = settingsName
     moveframe.gw_Lockable = lockAble
+    moveframe.frame = frame
 
     local dummyPoint = GetSetting(settingsName)
     moveframe:ClearAllPoints()
