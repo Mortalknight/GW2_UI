@@ -899,6 +899,12 @@ local function LoadSettings()
         "GROUP_FRAMES",
         "GwSettingsModuleOption"
     )
+    addOption(
+        BINDING_NAME_TOGGLECHARACTER0,
+        GwLocalization["CHRACTER_WINDOW_DESC"],
+        "USE_CHARACTER_WINDOW",
+        "GwSettingsModuleOption"
+    )
 
     createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 

@@ -265,10 +265,7 @@ local function LoadMicroMenu()
         end
     )
    --end
---    GwMicroButtonCharacterMicroButton:SetScript("OnClick", function() ToggleCharacter("PaperDollFrame") end)
     GwMicroButtonBagMicroButton:SetScript("OnClick", function() ToggleAllBags() end)
---    GwMicroButtonSpellbookMicroButton:SetScript("OnClick", function() ToggleSpellBook(BOOKTYPE_SPELL) end)
---    GwMicroButtonTalentMicroButton:SetScript("OnClick", function() ToggleTalentFrame() end)
     GwMicroButtonQuestLogMicroButton:SetScript("OnClick", function() ToggleQuestLog() end)
     GwMicroButtonSocialsMicroButton:SetScript("OnClick", function() ToggleFriendsFrame() end)
     GwMicroButtonWorldMapMicroButton:SetScript("OnClick", function() ToggleWorldMap() end)

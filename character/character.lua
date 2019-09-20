@@ -794,7 +794,6 @@ function gwCharacterPanelToggle(frame)
         GwDressingRoom:Show()
         return
     end
-
     if frame:GetName() == "GwPaperReputation" or frame:GetName() == "GwPetContainer" then
         GwDressingRoom:Hide()
     else
@@ -1539,12 +1538,12 @@ end
 local CHARACTER_PANEL_OPEN = ""
 
 function GwToggleCharacter(tab, onlyShow)
-    local HARACTERFRAME_DEFAULTFRAMES= {}
+    local CHARACTERFRAME_DEFAULTFRAMES= {}
 
     CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwCharacterMenu
     CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
     CHARACTERFRAME_DEFAULTFRAMES["SkillFrame"] = GwPaperSkills
-    CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPaperSkills
+    CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
 
     if CHARACTERFRAME_DEFAULTFRAMES[tab] ~= nil and CHARACTER_PANEL_OPEN ~= tab  then
         gwCharacterPanelToggle(CHARACTERFRAME_DEFAULTFRAMES[tab])
@@ -1554,7 +1553,7 @@ function GwToggleCharacter(tab, onlyShow)
 
     if GwCharacterWindow:IsShown() then
         if not InCombatLockdown() then
-            GwCharacterWindow:SetAttribute("windowPanelOpen",   0)
+            GwCharacterWindow:SetAttribute("windowPanelOpen", 0)
         end
         CHARACTER_PANEL_OPEN = nil
         return

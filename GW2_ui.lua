@@ -666,9 +666,7 @@ local function loadAddon(self)
         GW.LoadBuffs()
     end
 
-    SetSetting("USE_CHARACTER_WINDOW", true)
     if GetSetting("USE_CHARACTER_WINDOW") then
-        --SetSetting("USE_CHARACTER_WINDOW", false)
         Gw_LoadWindows()
     end
 
