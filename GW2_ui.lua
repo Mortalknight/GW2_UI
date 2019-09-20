@@ -520,7 +520,8 @@ local SCALE_HUD_FRAMES = {
     "MultiBarBottomLeft",
     "MultiBarRight",
     "MultiBarLeft",
-    "GwCharacterWindow"
+    "GwCharacterWindow",
+    "GwCharacterWindowMoverFrame"
 }
 local function UpdateHudScale()
     hudScale = GetSetting("HUD_SCALE")
