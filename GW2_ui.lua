@@ -543,6 +543,10 @@ end
 GW.UpdateHudScale = UpdateHudScale
 
 local function loadAddon(self)
+    if GetSetting("PIXEL_PERFECTION") then
+        pixelPerfection()
+    end
+
     -- setup our frame pool
     GW.Pools = CreatePoolCollection()
 
