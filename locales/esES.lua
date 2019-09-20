@@ -13,8 +13,6 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 	
 	--Strings
-	GwLocalization["TARGET_COMBOPOINTS"] = "Show Combopunkt on target"
-	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "SHow Combopunkt on target, below the healthbar"
 	GwLocalization["FPS_TOOLTIP_1"] = "FPS "
 	GwLocalization["FPS_TOOLTIP_2"] = "Latencia (Hogar) "
 	GwLocalization["FPS_TOOLTIP_3"] = "Latencia (Mundo) "
@@ -227,6 +225,10 @@ local function GWUseThisLocalization()
 	GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Health Remaining in percent"
 	GwLocalization["SHOW_THREAT_VALUE"] = "Show threat"
 	GwLocalization["MINIMAP_FPS"] = "Show FPS on minimap"
+	GwLocalization["TARGET_COMBOPOINTS"] = "Show Combopoints on target"
+	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Show Combopoints on target, below the healthbar"
+	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Mode"
+	GwLocalization["PIXEL_PERFECTION_DESC"] = "Scales the UI into a Pixel Perfection mode. This depends on the screen resolution."
 	end
 	
 	

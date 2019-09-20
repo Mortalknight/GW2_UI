@@ -454,7 +454,7 @@ local function setUnitPortraitFrame(self, event)
     local unitClassIfication = UnitClassification(self.unit)
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
         border = unitClassIfication
-        if UnitLevel(self.unit) == -1 then
+        if UnitLevel(self.unit) == -1 and not UnitIsPlayer(self.unit) then
             border = "boss"
         end
     end
@@ -1128,7 +1128,7 @@ local function LoadTargetOfUnit(unit)
 
     f.unit = unitID
 
-    RegisterMovableFrame(unitID .. "frame", f, unitID .. "_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(unitID .. "frame", f, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy")
 
     f:ClearAllPoints()
     f:SetPoint(

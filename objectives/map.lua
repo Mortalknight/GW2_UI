@@ -490,8 +490,6 @@ local function LoadMinimap()
     GwAddonToggleTexture:SetTexCoord(0, 0.5, 0, 0.25)
     fmGAT:SetFrameStrata("MEDIUM")
     fmGAT.gw_Showing = true
-    fmGAT:SetFrameStrata("HIGH")
-    fmGAT:SetFrameLevel(5)
     stackIcons(fmGAT)
 
     hooksecurefunc(

@@ -899,7 +899,13 @@ local function LoadSettings()
         "GROUP_FRAMES",
         "GwSettingsModuleOption"
     )
-
+    --addOption(
+    --    BINDING_NAME_TOGGLECHARACTER0,
+    --    GwLocalization["CHRACTER_WINDOW_DESC"],
+    --    "USE_CHARACTER_WINDOW",
+    --    "GwSettingsModuleOption"
+    --)
+    SetSetting("USE_CHARACTER_WINDOW", false)
     createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
     addOption(
@@ -1005,6 +1011,12 @@ local function LoadSettings()
         DISPLAY_BORDERS,
         nil,
         "BORDER_ENABLED",
+        "GwSettingsHudOptions"
+    )
+    addOption(
+        GwLocalization["PIXEL_PERFECTION"],
+        GwLocalization["PIXEL_PERFECTION_DESC"],
+        "PIXEL_PERFECTION",
         "GwSettingsHudOptions"
     )
     addOptionDropdown(

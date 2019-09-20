@@ -225,22 +225,22 @@ local function LoadMicroMenu()
           self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',1)
            ]=]
        )
-   else
-       GwMicroButtonCharacterMicroButton:SetScript(
-           "OnClick",
-           function()
-               ToggleCharacter("PaperDollFrame")
-           end
-       )
-   end
+    else
+        GwMicroButtonCharacterMicroButton:SetScript(
+            "OnClick",
+            function()
+                ToggleCharacter("PaperDollFrame")
+            end
+        )
+    end
 
-   GwMicroButtonBagMicroButton:SetScript(
+    GwMicroButtonBagMicroButton:SetScript(
        "OnClick",
        function()
            ToggleAllBags()
        end
    )
-
+--[[
    if GetSetting("USE_TALENT_WINDOW") then
        GwMicroButtonTalentMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
        GwMicroButtonTalentMicroButton:SetAttribute(
@@ -250,24 +250,22 @@ local function LoadMicroMenu()
            ]=]
        )
    else
-       GwMicroButtonSpellbookMicroButton:SetScript(
-           "OnClick",
-           function()
-               ToggleSpellBook(BOOKTYPE_SPELL)
-           end
-       )
-       GwMicroButtonSpellbookMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-       GwMicroButtonTalentMicroButton:SetScript(
-           "OnClick",
-           function()
-               ToggleTalentFrame()
-           end
-       )
-   end
---    GwMicroButtonCharacterMicroButton:SetScript("OnClick", function() ToggleCharacter("PaperDollFrame") end)
+]]
+    GwMicroButtonSpellbookMicroButton:SetScript(
+        "OnClick",
+        function()
+            ToggleSpellBook(BOOKTYPE_SPELL)
+        end
+    )
+    GwMicroButtonSpellbookMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    GwMicroButtonTalentMicroButton:SetScript(
+        "OnClick",
+        function()
+            ToggleTalentFrame()
+        end
+    )
+   --end
     GwMicroButtonBagMicroButton:SetScript("OnClick", function() ToggleAllBags() end)
---    GwMicroButtonSpellbookMicroButton:SetScript("OnClick", function() ToggleSpellBook(BOOKTYPE_SPELL) end)
---    GwMicroButtonTalentMicroButton:SetScript("OnClick", function() ToggleTalentFrame() end)
     GwMicroButtonQuestLogMicroButton:SetScript("OnClick", function() ToggleQuestLog() end)
     GwMicroButtonSocialsMicroButton:SetScript("OnClick", function() ToggleFriendsFrame() end)
     GwMicroButtonWorldMapMicroButton:SetScript("OnClick", function() ToggleWorldMap() end)

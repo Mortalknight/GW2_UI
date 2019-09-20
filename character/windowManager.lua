@@ -79,7 +79,6 @@ local function loadBaseFrame()
     GwCharacterWindow:SetFrameRef('GwCharacterWindowMoverFrame',GwCharacterWindowMoverFrame)
     GwCharacterWindow:SetAttribute('_onattributechanged', [=[
 
-
         if value==nil or value==true then return end
 
 

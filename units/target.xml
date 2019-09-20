@@ -468,23 +468,20 @@
         </Scripts>
     </Button>
     <Button name="GwTargetFrameSmallTemplateDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
-        <Size x="146" y="128"/>
-        <HitRectInsets>
-            <AbsInset left="0" right="40" top="10" bottom="20"/>
-        </HitRectInsets>
+        <Size x="150" y="20"/>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
-                    <Size x="148" y="17"/>
+                    <Size x="150" y="20"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="0" y="-39"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-27"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="5" y="-27"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                    <Size x="0" y="0"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>

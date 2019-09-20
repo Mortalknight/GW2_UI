@@ -99,6 +99,8 @@ local function mover_OnDragStop(self)
     if lockAble ~= nil then
         SetSetting(lockAble, false)
     end
+    _G[self.frame:GetName()]:ClearAllPoints()
+    _G[self.frame:GetName()]:SetPoint(self:GetPoint())
 
     self.IsMoving = false
 end
@@ -114,6 +116,7 @@ local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockA
     moveframe.frameName:SetText(name)
     moveframe.gw_Settings = settingsName
     moveframe.gw_Lockable = lockAble
+    moveframe.frame = frame
 
     local dummyPoint = GetSetting(settingsName)
     moveframe:ClearAllPoints()
@@ -487,17 +490,27 @@ local function gw_OnUpdate(self, elapsed)
             if MultiBarRight:GetScale() ~= hudScale then
                 _G["MultiBarRight"]:SetScale(hudScale)
                 _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
+                _G["MultiBarRight"]:ClearAllPoints()
+                _G["MultiBarRight"]:SetPoint(_G["GwMultiBarRightMoveAble"]:GetPoint())
             end
         end
         if MultiBarLeft then
             if MultiBarLeft:GetScale() ~= hudScale then
                 _G["MultiBarLeft"]:SetScale(hudScale)
                 _G["GwMultiBarLeftMoveAble"]:SetScale(hudScale)
+                _G["MultiBarLeft"]:ClearAllPoints()
+                _G["MultiBarLeft"]:SetPoint(_G["GwMultiBarLeftMoveAble"]:GetPoint())
             end
         end
     end
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
+
+local function pixelPerfection()
+    local _, screenHeight = GetPhysicalScreenSize()
+    local scale = 768 / screenHeight
+    UIParent:SetScale(scale)
+end
 
 local SCALE_HUD_FRAMES = {
     "GwHudArtFrame",
@@ -509,7 +522,9 @@ local SCALE_HUD_FRAMES = {
     "MultiBarBottomRight",
     "MultiBarBottomLeft",
     "MultiBarRight",
-    "MultiBarLeft"
+    "MultiBarLeft",
+    "GwCharacterWindow",
+    "GwCharacterWindowMoverFrame"
 }
 local function UpdateHudScale()
     hudScale = GetSetting("HUD_SCALE")
@@ -531,6 +546,10 @@ end
 GW.UpdateHudScale = UpdateHudScale
 
 local function loadAddon(self)
+    if GetSetting("PIXEL_PERFECTION") then
+        pixelPerfection()
+    end
+
     -- setup our frame pool
     GW.Pools = CreatePoolCollection()
 
@@ -668,8 +687,6 @@ local function loadAddon(self)
         GW.LoadRaidFrames()
     end
 
-
-
     GW.UpdateHudScale()
 
     if (forcedMABags) then
@@ -706,6 +723,9 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
+        if GetSetting("PIXEL_PERFECTION") then
+            pixelPerfection()
+        end
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)

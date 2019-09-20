@@ -58,16 +58,16 @@
             <StatusBar name="$parentBarCandy" defaultValue="1" frameLevel="2" minValue="0" maxValue="1">
                 <Size x="1" y="8" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-6" />
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-6"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
             </StatusBar>
             <StatusBar name="$parentBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
                 <Size x="1" y="8" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-6" />
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-6"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
                 <Frames>
