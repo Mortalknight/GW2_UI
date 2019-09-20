@@ -391,7 +391,7 @@ local function FadeCheck(self, elapsed)
         end
     elseif self.gw_FadeShowing and UnitAffectingCombat('player') == false then
         actionBarFrameHide(self, self:GetName())
-        GW.updatePetFrameLocation() 
+        GW.updatePetFrameLocation()
         GW.UpdatePlayerBuffFrame()
     end
 end
@@ -483,14 +483,14 @@ local function gw_OnUpdate(self, elapsed)
 
     --Check if MulitBarRight is active or changed
     if (MultiBarRight or MultiBarLeft) and loaded and not InCombatLockdown() and ourActionbarsloaded then
-        if MultiBarRight then 
-            if MultiBarRight:GetScale() ~= hudScale then 
+        if MultiBarRight then
+            if MultiBarRight:GetScale() ~= hudScale then
                 _G["MultiBarRight"]:SetScale(hudScale)
                 _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
             end
         end
         if MultiBarLeft then
-            if MultiBarLeft:GetScale() ~= hudScale then 
+            if MultiBarLeft:GetScale() ~= hudScale then
                 _G["MultiBarLeft"]:SetScale(hudScale)
                 _G["GwMultiBarLeftMoveAble"]:SetScale(hudScale)
             end
@@ -656,10 +656,10 @@ local function loadAddon(self)
         GW.LoadBuffs()
     end
 
-        if GetSetting("USE_CHARACTER_WINDOW") then
-            SetSetting("USE_CHARACTER_WINDOW", false)
-            --Gw_LoadWindows()
-        end
+    if GetSetting("USE_CHARACTER_WINDOW") then
+        SetSetting("USE_TALENT_WINDOW", true)
+        Gw_LoadWindows()
+    end
 
     GW.LoadMicroMenu()
 
@@ -690,7 +690,7 @@ local function loadAddon(self)
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\castinbar-white.tga")
-    self:SetScript("OnUpdate", gw_OnUpdate)    
+    self:SetScript("OnUpdate", gw_OnUpdate)
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)
 

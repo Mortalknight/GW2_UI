@@ -10,14 +10,14 @@ windowsList[1] = {}
     windowsList[1]['ONCLICK'] =function()  ToggleCharacter("PaperDollFrame");  end;
     windowsList[1]['OPEN'] = 'ToggleTalentFrame';
 
---[[
+
     windowsList[2] = {}
     windowsList[2]['ONLOAD'] = gw_register_talent_window;
-    windowsList[2]['SETTING_NAME'] ='USE_TALENT_WINDOW_DEV';
-    windowsList[2]['TAB_ICON'] ='tabicon_spellbook';
+    windowsList[2]['SETTING_NAME'] ='USE_TALENT_WINDOW';
+    windowsList[2]['TAB_ICON'] ='tabicon-talents';
     windowsList[2]['ONCLICK'] =function() ToggleTalentFrame();  end;
     windowsList[2]['OPEN'] ='ToggleTalentFrame';
-]]
+
 local tabIndex = 1;
 
 
