@@ -425,16 +425,22 @@ function gwPaperDollUpdateStats()
 
     --ranged attack
     statText, tooltip1, tooltip2 = GW.stats.getRangedAttack()
+    if statText ~= nil then
     grid, x, y, numShownStats = setStatFrame("RANGEDATTACK", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+    end
 
     --ranged damage
     statText, tooltip1, tooltip2 = GW.stats.getRangedDamage()
-    grid, x, y, numShownStats = setStatFrame("RANGEDDAMAGE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+    if statText ~= nil then
+        grid, x, y, numShownStats = setStatFrame("RANGEDDAMAGE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+    end
 
     --ranged attack power
-    statText, tooltip1, tooltip2 = GW.stats.getRangedAttackPower()
-    grid, x, y, numShownStats = setStatFrame("RANGEDATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
+    if statText ~= nil then
+        statText, tooltip1, tooltip2 = GW.stats.getRangedAttackPower()
+        grid, x, y, numShownStats = setStatFrame("RANGEDATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+    end
+    
     --resitance
     for resistanceIndex = 1, 5 do
         statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)

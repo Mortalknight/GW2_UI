@@ -336,7 +336,10 @@ local function getRangedAttack(unit, prefix)
 
 	local hasRelic = UnitHasRelicSlot(unit);
 
-	local rangedAttackBase, rangedAttackMod = UnitRangedAttack(unit);
+	local rangedAttackBase, rangedAttackMod = UnitRangedAttack(unit)
+	if rangedAttackBase == 0 then
+		return nil
+	end
 
     local stat
     local tooltip
@@ -385,8 +388,11 @@ local function getRangedDamage(unit, prefix)
 
     local stat
 
+	local rangedAttackSpeed, minDamage, maxDamage, physicalBonusPos, physicalBonusNeg, percent = UnitRangedDamage(unit)
+	if rangedAttackSpeed == 0 then
+		return nil
+	end
 
-	local rangedAttackSpeed, minDamage, maxDamage, physicalBonusPos, physicalBonusNeg, percent = UnitRangedDamage(unit);
 	local displayMin = max(floor(minDamage),1);
 	local displayMax = max(ceil(maxDamage),1);
 
@@ -441,7 +447,7 @@ local function getRangedDamage(unit, prefix)
     local tooltip2 = ATTACK_SPEED_COLON..HIGHLIGHT_FONT_COLOR_CODE..format("%.2F", rangedAttackSpeed)..FONT_COLOR_CODE_CLOSE.."\n"
     tooltip2 = tooltip2.. DAMAGE_COLON..HIGHLIGHT_FONT_COLOR_CODE..tooltip..FONT_COLOR_CODE_CLOSE.."\n"
     tooltip2 = tooltip2.. DAMAGE_PER_SECOND..HIGHLIGHT_FONT_COLOR_CODE.. format("%.1F", damagePerSecond)..FONT_COLOR_CODE_CLOSE.."\n"
-    tooltip = HIGHLIGHT_FONT_COLOR_CODE..INVTYPE_RANGED..FONT_COLOR_CODE_CLOSE
+	tooltip = HIGHLIGHT_FONT_COLOR_CODE..INVTYPE_RANGED..FONT_COLOR_CODE_CLOSE
     return stat, tooltip, tooltip2
 
     --[[
