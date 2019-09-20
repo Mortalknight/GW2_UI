@@ -274,13 +274,13 @@ function gwPaperDollPetStats_OnEvent(self, event, ...)
     hasUI, isHunterPet = HasPetUI()
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and arg1 == "player") then
         if GwPetContainer:IsVisible() and not hasUI then
-            gwCharacterPanelToggle()
+            gwCharacterPanelToggle(GwCharacterMenu)
             GwCharacterMenu.petMenu:Hide()
             return
         end
     elseif event == "PET_UI_CLOSE" then
 		if GwPetContainer:IsVisible() then
-            gwCharacterPanelToggle()
+            gwCharacterPanelToggle(GwCharacterMenu)
             GwCharacterMenu.petMenu:Hide()
             return
         end
@@ -453,7 +453,7 @@ function gwPaperDollUpdatePetStats()
     local y = 0
 
     GwCharacterMenu.petMenu:Show()
-    GwDressingRoomPet.model:SetUnit("pet")
+    GwDressingRoomPet.model:SetUnit("pet")   
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet"))
 
     if isHunterPet then
@@ -470,19 +470,24 @@ function gwPaperDollUpdatePetStats()
         GwDressingRoomPet.itemLevelLabel:Show()
         GwDressingRoomPet.classIcon:Show()
         GwDressingRoomPet.model.expBar:Show()
+        GwDressingRoomPet.model:SetPosition(-2,0,-0.5)
+        GwDressingRoomPet.model:SetRotation(-0.15)
     else
         GwDressingRoomPet.model.expBar:Hide()
         GwDressingRoomPet.characterData:Hide()
         GwDressingRoomPet.itemLevel:Hide()
         GwDressingRoomPet.itemLevelLabel:Hide()
         GwDressingRoomPet.classIcon:Hide()
+        GwDressingRoomPet.model:SetPortraitZoom(-0.8)
+        GwDressingRoomPet.model.zoomLevel = -0.8
+        GwDressingRoomPet.model:SetRotation(0.5)
     end
 
     for primaryStatIndex = 1, 5 do
         statName, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex, "pet")
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
-	end
+    end
+    
     statText, tooltip1, tooltip2 = GW.stats.getAttackPower("pet")
     grid, x, y, numShownStats = setPetStatFrame("ATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 

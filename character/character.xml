@@ -1118,7 +1118,7 @@
                     </OnClick>
                 </Scripts>
             </Button>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate, ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -1127,9 +1127,7 @@
                 <Scripts>
                     <OnLoad>
                         self:SetUnit('pet')
-                        self:SetPosition(-2,0,-0.5)
-                        self:SetRotation(-0.15)
-						Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp);
+						Model_OnLoad(self, 4, -0.5, 0, CharacterModelFrame_OnMouseUp);
 				        self:HookScript('OnMouseDown', GwPaperDollResetBagInventory)
                     </OnLoad>
                 </Scripts>
@@ -1893,7 +1891,7 @@
                     </OnLoad>
                 </Scripts>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate, ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>
