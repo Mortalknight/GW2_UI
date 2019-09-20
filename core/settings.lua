@@ -686,6 +686,7 @@ local function LoadSettings()
         moveHudObjects()
     end
     local fnGSWS_OnClick = function(self, button)
+        if not GetSetting("USE_CHARACTER_WINDOW") then SetSetting("USE_TALENT_WINDOW", false) end
         C_UI.Reload()
     end
     local fnGSWD_OnClick = function(self, button)
@@ -899,13 +900,19 @@ local function LoadSettings()
         "GROUP_FRAMES",
         "GwSettingsModuleOption"
     )
-    --addOption(
-    --    BINDING_NAME_TOGGLECHARACTER0,
-    --    GwLocalization["CHRACTER_WINDOW_DESC"],
-    --    "USE_CHARACTER_WINDOW",
-    --    "GwSettingsModuleOption"
-    --)
-    SetSetting("USE_CHARACTER_WINDOW", false)
+    addOption(
+        BINDING_NAME_TOGGLECHARACTER0,
+        GwLocalization["CHRACTER_WINDOW_DESC"],
+        "USE_CHARACTER_WINDOW",
+        "GwSettingsModuleOption"
+    )
+    addOption(
+        TALENTS_BUTTON,
+        GwLocalization["TALENTS_BUTTON_DESC"],
+        "USE_TALENT_WINDOW",
+        "GwSettingsModuleOption"
+    )
+
     createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
     addOption(
