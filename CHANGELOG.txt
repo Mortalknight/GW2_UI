@@ -2,6 +2,10 @@
 
 - Added support for GatherLite after there Update
 - Added "Color level number"
+- Added Pixel Perfection-Mode
+- Fix a bug in Immersice Questing
+- Hide default Bliizard PetBarFrame
+- Fix position of exp bar
 
 0.9.0
 

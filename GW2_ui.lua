@@ -487,17 +487,27 @@ local function gw_OnUpdate(self, elapsed)
             if MultiBarRight:GetScale() ~= hudScale then 
                 _G["MultiBarRight"]:SetScale(hudScale)
                 _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
+                _G["MultiBarRight"]:ClearAllPoints()
+                _G["MultiBarRight"]:SetPoint(_G["GwMultiBarRightMoveAble"]:GetPoint())
             end
         end
         if MultiBarLeft then
             if MultiBarLeft:GetScale() ~= hudScale then 
                 _G["MultiBarLeft"]:SetScale(hudScale)
                 _G["GwMultiBarLeftMoveAble"]:SetScale(hudScale)
+                _G["MultiBarLeft"]:ClearAllPoints()
+                _G["MultiBarLeft"]:SetPoint(_G["GwMultiBarLeftMoveAble"]:GetPoint())
             end
         end
     end
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
+
+local function pixelPerfection()
+    local _, screenHeight = GetPhysicalScreenSize()
+    local scale = 768 / screenHeight
+    UIParent:SetScale(scale)
+end
 
 local SCALE_HUD_FRAMES = {
     "GwHudArtFrame",
@@ -656,10 +666,10 @@ local function loadAddon(self)
         GW.LoadBuffs()
     end
 
-    --SetSetting("USE_CHARACTER_WINDOW", true)
+    SetSetting("USE_CHARACTER_WINDOW", true)
     if GetSetting("USE_CHARACTER_WINDOW") then
-        SetSetting("USE_CHARACTER_WINDOW", false)
-        --Gw_LoadWindows()
+        --SetSetting("USE_CHARACTER_WINDOW", false)
+        Gw_LoadWindows()
     end
 
     GW.LoadMicroMenu()
@@ -707,6 +717,9 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
+        if GetSetting("PIXEL_PERFECTION") then
+            pixelPerfection()
+        end
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)

@@ -13,8 +13,10 @@ local function GWUseThisLocalization()
 	GwLocalization['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
 	
 	--Strings
-	GwLocalization["TARGET_COMBOPOINTS"] = "Show Combopunkt on target"
-	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "SHow Combopunkt on target, below the healthbar"
+	GwLocalization["TARGET_COMBOPOINTS"] = "Show Combopoints on target"
+	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Show Combopoints on target, below the healthbar"
+	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Mode"
+	GwLocalization["PIXEL_PERFECTION_DESC"] = "Scales the UI into a Pixel Perfection mode. This depends on the screen resolution."
 	GwLocalization["FPS_TOOLTIP_1"] = "FPS "
 	GwLocalization["FPS_TOOLTIP_2"] = "Задержка (локальная) "
 	GwLocalization["FPS_TOOLTIP_3"] = "Задержка (мир) "

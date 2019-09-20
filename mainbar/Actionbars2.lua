@@ -639,6 +639,8 @@ local function LoadActionBars()
         local settings = GetSetting("MultiBarLeft")
         multibar:ClearAllPoints()
         multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
+        multibar:SetScale(GwMultiBarLeftMoveAble:GetScale())
+        MultiBarRight:SetScale(GwMultiBarRightMoveAble:GetScale())
     end)
 
     local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")

@@ -1007,6 +1007,12 @@ local function LoadSettings()
         "BORDER_ENABLED",
         "GwSettingsHudOptions"
     )
+    addOption(
+        GwLocalization["PIXEL_PERFECTION"],
+        GwLocalization["PIXEL_PERFECTION_DESC"],
+        "PIXEL_PERFECTION",
+        "GwSettingsHudOptions"
+    )
     addOptionDropdown(
         GwLocalization["MINIMAP_HOVER"],
         GwLocalization["MINIMAP_HOVER_TOOLTIP"],

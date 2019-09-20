@@ -227,6 +227,8 @@ local function GWUseThisLocalization()
 	GwLocalization["MINIMAP_FPS"] = "FPS an der Minimap anzeigen"
 	GwLocalization["TARGET_COMBOPOINTS"] = "Zeige Combopunkt am Ziel"
 	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Zeige Combopunkt am Ziel unterhalb des Gesundheitsbalkens"
+	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Modus"
+	GwLocalization["PIXEL_PERFECTION_DESC"] = "Skaliert das UI in einen Pixel Perfection-Modus. Dieser ist abhängig von der Bildschirmauflösung."
 	end
 	
 	
