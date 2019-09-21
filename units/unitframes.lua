@@ -517,6 +517,7 @@ local function unitFrameData(self, event)
     self.levelString:SetText(level)
     -- Color level number
     if UnitCanAttack("player", self.unit) then
+        if level == "??" then level = 99
         local color = GetCreatureDifficultyColor(level)
         self.levelString:SetVertexColor(color.r, color.g, color.b)
     else
