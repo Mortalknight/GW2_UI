@@ -429,6 +429,5 @@ local function LoadPetFrame()
     RegisterMovableFrame("GwPlayerPetFrame", playerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 
     setPetBar(playerPetFrame)
-    PetActionBarFrame:Hide()
 end
 GW.LoadPetFrame = LoadPetFrame

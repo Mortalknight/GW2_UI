@@ -15,6 +15,7 @@ local loaded = false
 local hudScale = 1
 local forcedMABags = false
 local ourActionbarsloaded = false
+local ourPetbar = false
 
 GW_MOVABLE_FRAMES = {}
 GW_MOVABLE_FRAMES_REF = {}
@@ -503,6 +504,9 @@ local function gw_OnUpdate(self, elapsed)
             end
         end
     end
+    if PetActionBarFrame:IsShown() and ourPetbar and loaded then
+        PetActionBarFrame:Hide()
+    end
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
@@ -668,6 +672,7 @@ local function loadAddon(self)
     -- create pet frame
     if GetSetting("PETBAR_ENABLED") then
         GW.LoadPetFrame()
+        ourPetbar = true
     end
 
     -- create buff frame
