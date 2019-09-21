@@ -467,6 +467,15 @@ local function OnBlockClickHandler(self, button)
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
+local function getQuestInfoLevel(questID)
+    for i = 1, GetNumQuestLogEntries() do
+        local title, level, _, _, _, _, _, questID2 = GetQuestLogTitle(i)
+        if questID == questID2 then
+            return level
+        end
+    end
+end
+
 local function updateQuest(block, questWatchId)
     block.height = 25
     block.numObjectives = 0
@@ -481,10 +490,10 @@ local function updateQuest(block, questWatchId)
             savedQuests[questID] = true
         end
 
+        local qtitle = "[" .. getQuestInfoLevel(questID) .."] " .. title
         block.questID = questID
         block.questLogIndex = questLogIndex
-
-        block.Header:SetText(title)
+        block.Header:SetText(qtitle)
 
         if isComplete and isComplete < 0 then
             isComplete = false
@@ -536,11 +545,6 @@ local function updateQuest(block, questWatchId)
 end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
---[[
-function gwRequestQustlogUpdate()
-    updateQuestLogLayout()
-end
---]]
 local function QuestTrackerLayoutChanged()
     GwQuestTrackerScroll:SetSize(
         350,
