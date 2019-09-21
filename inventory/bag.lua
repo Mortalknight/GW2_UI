@@ -150,7 +150,7 @@ end
 local function updateBagIcons(smooth)
     moveBagbar()
     local x = 8
-    local y = 40
+    local y = 72
     local mx = 0
     local gwbf = GwBagFrame
     local winsize = BAG_WINDOW_SIZE
@@ -369,6 +369,41 @@ local function onBagFrameChangeSize(self)
 end
 GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
 
+-- (re)steals the default search boxes
+local function relocateSearchBox(sb, f)
+    if not sb or not f then
+        return
+    end
+
+    sb:SetParent(f)
+    sb:ClearAllPoints()
+    sb:SetPoint("TOPLEFT", f, "TOPLEFT", 8, -40)
+    sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -8, -40)
+    sb:SetHeight(24)
+end
+GW.relocateSearchBox = relocateSearchBox
+
+-- reskins the default search boxes
+local function reskinSearchBox(sb)
+    if not sb then
+        return
+    end
+
+    sb:SetFont(UNIT_NAME_FONT, 14)
+    sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
+    sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+
+    sb.Left:SetTexture(nil)
+    sb.Right:SetTexture(nil)
+    sb.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg")
+
+    sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
+
+    sb.Middle:SetHeight(24)
+    sb.Middle:SetTexCoord(0, 1, 0, 1)
+end
+GW.reskinSearchBox = reskinSearchBox
+
 local function LoadBag()
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
     BAG_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
@@ -417,6 +452,17 @@ local function LoadBag()
     f.gold:SetFont(UNIT_NAME_FONT, 12)
     f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
     updateMoney(f)
+
+    -- Create bag item search box
+    local BagItemSearchBox = CreateFrame("EditBox", "BagItemSearchBox", f, "BagSearchBoxTemplate")
+    reskinSearchBox(BagItemSearchBox)
+    hooksecurefunc(
+        "ContainerFrame_Update",
+        function()
+            relocateSearchBox(BagItemSearchBox, f)
+        end
+    )
+    relocateSearchBox(BagItemSearchBox, f)
 
     -- money tooltip
     GwMoneyFrame:SetScript("OnEnter", function (self)

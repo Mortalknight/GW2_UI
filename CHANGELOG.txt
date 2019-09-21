@@ -1,6 +1,7 @@
 0.9.5
 
 - Added level to QuestTracker
+- Added back Searchbar to bag and bank
 
 0.9.1
 
