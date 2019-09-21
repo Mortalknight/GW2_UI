@@ -219,11 +219,11 @@ function Gw_LoadWindows()
         gwFrameCombatTogglerSpellbook:SetAttribute('type', 'attribute')
         gwFrameCombatTogglerSpellbook:SetAttribute('type2', 'attribute')
         gwFrameCombatTogglerSpellbook:SetAttribute('attribute-frame', GwCharacterWindow)
-	   gwFrameCombatTogglerSpellbook:SetAttribute('attribute-name', 'windowPanelOpen')
-	   gwFrameCombatTogglerSpellbook:SetAttribute('attribute-value', 2)
-        if GetBindingKey("TOGGLESPELLBOOK")~=nil then
-            SetBinding(GetBindingKey("TOGGLESPELLBOOK"),"CLICK gwFrameCombatTogglerSpellbook:LeftButton");
-        end
+	    gwFrameCombatTogglerSpellbook:SetAttribute('attribute-name', 'windowPanelOpen')
+	    gwFrameCombatTogglerSpellbook:SetAttribute('attribute-value', 2)
+        --if GetBindingKey("TOGGLESPELLBOOK")~=nil then
+            --SetBinding(GetBindingKey("TOGGLESPELLBOOK"),"CLICK gwFrameCombatTogglerSpellbook:LeftButton");
+        --end
         if GetBindingKey("TOGGLETALENTS")~=nil then
             SetBinding(GetBindingKey("TOGGLETALENTS"),"CLICK gwFrameCombatTogglerSpellbook:RightButton");
         end
