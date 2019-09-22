@@ -712,6 +712,23 @@ local function loadAddon(self)
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\castinbar-white.tga")
+
+    --Check if we should show Welcomepage or Changelog
+    if GetSetting("GW2_UI_VERSION") == "WELCOME" then
+        --Show Welcome page
+        local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
+        GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
+        GwWelcomePage.welcome.header:SetText(GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] .. "\n\n" .. GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"])
+        GwWelcomePage.changelog:Hide()
+        GwWelcomePage.changelogORwelcome:SetText(GwLocalization["CHANGELOG"])
+        --Button
+        GwWelcomePage.close:SetScript("OnClick", function() GwWelcomePage:Hide() end)
+        
+    elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
+        --Show Changelog
+
+    end
+
     self:SetScript("OnUpdate", gw_OnUpdate)
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)
