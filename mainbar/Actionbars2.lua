@@ -651,7 +651,6 @@ local function LoadActionBars()
     fgw:SetAttribute(
         "_onstate-page",
         [=[
-            print(newstate)
         local mbarL = self:GetFrameRef("MultiBarLeft")
         local mbarR = self:GetFrameRef("MultiBarRight")
         local framePosL = self:GetFrameRef("GwMultiBarLeftMoveAble")
@@ -667,7 +666,6 @@ local function LoadActionBars()
             mbarR:SetPoint(framePosR:GetPoint())
             mbarR:SetScale(framePosR:GetScale())
         end
-
         ]=]
     )
     RegisterStateDriver(fgw, "page", "[vehicleui] 1; [possessbar] 2; [overridebar] 3; [shapeshift] 4; [bar:2] 5; [bar:3] 6; [bar:4] 7; [bar:5] 8; [bar:6] 9; [bonusbar:1] 10; [bonusbar:2] 11; [bonusbar:3] 12; [bonusbar:4] 13; 14")
