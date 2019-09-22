@@ -552,7 +552,7 @@ GW.UpdateHudScale = UpdateHudScale
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         pixelPerfection()
-        DEFAULT_CHAT_FRAME:AddMessage("GW2_UI: Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
     end
 
     -- setup our frame pool

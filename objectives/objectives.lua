@@ -468,10 +468,18 @@ end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function getQuestInfoLevel(questID)
+    local text = ""
     for i = 1, GetNumQuestLogEntries() do
-        local title, level, _, _, _, _, _, questID2 = GetQuestLogTitle(i)
+        local title, level, group, _, _, _, _, questID2 = GetQuestLogTitle(i)
         if questID == questID2 then
-            return level
+            if group == "Elite" then       
+                text = "[" .. level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-group-icon:12:12:0:0|t] "
+            elseif group == "Dungeon" then
+                text = "[" .. level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-dungeon-icon:12:12:0:0|t] "
+            else
+                text = "[" .. level .."] "
+            end
+            return text
         end
     end
 end
@@ -490,7 +498,7 @@ local function updateQuest(block, questWatchId)
             savedQuests[questID] = true
         end
 
-        local qtitle = "[" .. getQuestInfoLevel(questID) .."] " .. title
+        local qtitle = getQuestInfoLevel(questID) .. title
         block.questID = questID
         block.questLogIndex = questLogIndex
         block.Header:SetText(qtitle)
