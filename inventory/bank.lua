@@ -2,6 +2,8 @@ local _, GW = ...
 local CloseBags = GW.CloseBags
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local relocateSearchBox = GW.relocateSearchBox
+local reskinSearchBox = GW.reskinSearchBox
 
 local BANK_ITEM_SIZE = 40
 local BANK_ITEM_LARGE_SIZE = 40
@@ -156,7 +158,7 @@ local function updateBankIcons(smooth)
     end
 
     local x = 8
-    local y = 40
+    local y = 72
     local ACTION_BUTTON_NAME
     local ACTION_FRAME_NAME
     local mx = 0
@@ -381,6 +383,10 @@ local function LoadBank()
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
     updateFreeBankSlots()
+
+    local BankItemSearchBox = CreateFrame("EditBox", "BankItemSearchBox", f, "BagSearchBoxTemplate")
+    reskinSearchBox(BankItemSearchBox)
+    relocateSearchBox(BankItemSearchBox, f)
 
     -- setup settings button and its dropdown items
     do

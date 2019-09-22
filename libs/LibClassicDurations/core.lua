@@ -61,7 +61,7 @@ Usage example 2:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 22
+local MAJOR, MINOR = "LibClassicDurations", 23
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -679,6 +679,7 @@ local function GetGUIDAuraTime(dstGUID, spellName, spellID, srcGUID, isStacking)
             if not applicationTable then return end
             local durationFunc, startTime, auraType, comboPoints = unpack(applicationTable)
             local duration = cleanDuration(durationFunc, spellID, srcGUID, comboPoints)
+            if not duration then return nil end
             local mul = getDRMul(dstGUID, spellID)
             -- local mul = getDRMul(dstGUID, lastRankID)
             duration = duration * mul

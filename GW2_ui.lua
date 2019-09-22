@@ -550,8 +550,9 @@ end
 GW.UpdateHudScale = UpdateHudScale
 
 local function loadAddon(self)
-    if GetSetting("PIXEL_PERFECTION") then
+    if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         pixelPerfection()
+        DEFAULT_CHAT_FRAME:AddMessage("GW2_UI: Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings.")
     end
 
     -- setup our frame pool
@@ -727,7 +728,7 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
-        if GetSetting("PIXEL_PERFECTION") then
+        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
             pixelPerfection()
         end
     end
