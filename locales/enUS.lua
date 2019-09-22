@@ -3,7 +3,7 @@
 local function GWUseThisLocalization()
 	-- Create a global variable for the language strings
 	GwLocalization = {}
-	
+
 	--Fonts
 	GwLocalization["FONT_NORMAL"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
 	GwLocalization["FONT_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
@@ -11,11 +11,11 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_NARROW_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
 	GwLocalization["FONT_LIGHT"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf"
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
-	
+
 	--Strings
-	GwLocalization['FPS_TOOLTIP_1'] = 'FPS ' 
-	GwLocalization['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
-	GwLocalization['FPS_TOOLTIP_3'] = 'Latency (World) ' 
+	GwLocalization['FPS_TOOLTIP_1'] = 'FPS '
+	GwLocalization['FPS_TOOLTIP_2'] = 'Latency (Home) '
+	GwLocalization['FPS_TOOLTIP_3'] = 'Latency (World) '
 	GwLocalization['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
 	GwLocalization['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
 	GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
@@ -229,13 +229,16 @@ local function GWUseThisLocalization()
 	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Show Combopoints on target, below the healthbar"
 	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Mode"
 	GwLocalization["PIXEL_PERFECTION_DESC"] = "Scales the UI into a Pixel Perfection mode. This depends on the screen resolution."
+
+	GwLocalization["WELCOME_SPLASH_HEADER"] = "Welcome to GW2 UI"
+	GwLocalization["CHANGELOG"] = "Changelog"
+
 	end
-	
+
 	local Locale = GetLocale()
 	if Locale == "enGB" or Locale == "enUS" then
 		GWUseThisLocalization()
 	end
-	
+
 	-- After using this localization or deciding that we don"t need it, remove it from memory.
 	GWUseThisLocalization = nil
-	
