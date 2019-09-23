@@ -718,15 +718,75 @@ local function loadAddon(self)
         --Show Welcome page
         local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
         GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
-        GwWelcomePage.welcome.header:SetText(GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] .. "\n\n" .. GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"])
+        GwWelcomePage.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
+        GwWelcomePage.changelog.scroll.slider:SetMinMaxValues(0, GwWelcomePage.changelog.scroll.scrollchild.text:GetStringHeight())
+        GwWelcomePage.changelog.scroll.slider.thumb:SetHeight(100)
+        GwWelcomePage.changelog.scroll.slider:SetValue(1)
         GwWelcomePage.changelog:Hide()
+        GwWelcomePage.welcome:Show()
         GwWelcomePage.changelogORwelcome:SetText(GwLocalization["CHANGELOG"])
+        if GetSetting("PIXEL_PERFECTION") then
+            GwWelcomePage.welcome.pixelbutton:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+        end
         --Button
-        GwWelcomePage.close:SetScript("OnClick", function() GwWelcomePage:Hide() end)
-        
+        GwWelcomePage.movehud:SetScript("OnClick", function()
+            GwWelcomePage:Hide()
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+                return
+            end
+            GW.moveHudObjects()
+        end)
+        GwWelcomePage.welcome.pixelbutton:SetScript("OnClick", function(self)
+            if self:GetText() == GwLocalization["PIXEL_PERFECTION_ON"] then
+                pixelPerfection()
+                SetSetting("PIXEL_PERFECTION", true)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+            else
+                SetCVar("useUiScale", true)
+                SetCVar("useUiScale", false)
+                SetSetting("PIXEL_PERFECTION", false)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
+            end
+        end)     
+        --Save current Version
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
         --Show Changelog
-
+        local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
+        GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
+        GwWelcomePage.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
+        GwWelcomePage.changelog.scroll.slider:SetMinMaxValues(0, GwWelcomePage.changelog.scroll.scrollchild.text:GetStringHeight())
+        GwWelcomePage.changelog.scroll.slider.thumb:SetHeight(100)
+        GwWelcomePage.changelog.scroll.slider:SetValue(1)
+        GwWelcomePage.changelog:Show()
+        GwWelcomePage.welcome:Hide()
+        GwWelcomePage.changelogORwelcome:SetText(GwLocalization["WELCOME"])
+        if GetSetting("PIXEL_PERFECTION") then
+            GwWelcomePage.welcome.pixelbutton:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+        end
+        --Button
+        GwWelcomePage.movehud:SetScript("OnClick", function()
+            GwWelcomePage:Hide()
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+                return
+            end
+            GW.moveHudObjects()
+        end)
+        GwWelcomePage.welcome.pixelbutton:SetScript("OnClick", function(self)
+            if self:GetText() == GwLocalization["PIXEL_PERFECTION_ON"] then
+                pixelPerfection()
+                SetSetting("PIXEL_PERFECTION", true)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+            else
+                SetCVar("useUiScale", true)
+                SetCVar("useUiScale", false)
+                SetSetting("PIXEL_PERFECTION", false)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
+            end
+        end)  
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)    
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)

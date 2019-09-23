@@ -230,10 +230,13 @@ local function GWUseThisLocalization()
 	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Modus"
 	GwLocalization["PIXEL_PERFECTION_DESC"] = "Skaliert das UI in einen Pixel Perfection-Modus. Dieser ist abhängig von der Bildschirmauflösung."
 
-	GwLocalization["WELCOME_SPLASH_HEADER"] = "Welcome to GW2 UI"
+	GwLocalization["WELCOME_SPLASH_HEADER"] = "Willkommen beim GW2-UI"
 	GwLocalization["CHANGELOG"] = "Changelog"
-	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] = "GW2 UI is a full user interface replacement. We have built the user interface with a modular approach, this means that if you dislike a certain part of the addon - or have another you prefer for that function - you can just disable that part, whilst keeping the rest of the interface intact.\nSome of the modules available to you are an immersive questing window, a full inventory replacement, as well as a full character window replacement. There are many more that you can enjoy, just take a look in the settings menu to see what's available to you!"
-	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "What is 'Pixel Perfection'?\nGW2 UI has a built-in setting called 'Pixel Perfection Mode'. What this means for you is that your user interface will look as was intended, with crisper textures and better scaling. Of course, you can toggle this off in the settings menu should you prefer."
+	GwLocalization["WELCOME"] = "Willkommen"
+	GwLocalization["PIXEL_PERFECTION_ON"] = "Pixel Perfection-Modus an"
+	GwLocalization["PIXEL_PERFECTION_OFF"] = "Pixel Perfection-Modus aus"
+	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] = "Das GW2-UI ist ein vollständiger UI-Ersatz. Wir haben die Benutzeroberfläche modular aufgebaut, dies bedeutet, wenn du einen bestimmten Teil des Addons nicht magst - oder du hast ein anders Addon, dass du für die Funktion bevorzugst - kannst du diesen Teil einfach deaktivieren, während der Rest des UI's intakt bleibt.\nEinige der Module, die dir zur Verfügung stehen, sind ein umfassendes Questfenster, ein vollständiger Inventarersatz sowie ein vollständiger Charakterfesterersatz. Es gibt viel mehr welche du erleben kannst. Wirf einfach ein Blick in die Einstellungen und schaue was zur Verfügung steht."
+	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Was ist 'Pixel Perfection'?\n\nGW2 UI verfügt über eine integrierte Einstellung namens 'Pixel Perfection Mode'. Das bedeutet für dich, dass das UI wir vorgesehen aussieht, mit gestochen scharfen Texturen und einer besseren Skalierung. Natürlich kannst du dies in den Einstellungen ausschalten, falls du dies vorziehst."
 	end
 	
 	

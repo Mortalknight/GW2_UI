@@ -2,6 +2,7 @@
 
 - Added level to QuestTracker
 - Added back Searchbar to bag and bank
+- Added Welcome- and Changelog Page
 
 0.9.1
 

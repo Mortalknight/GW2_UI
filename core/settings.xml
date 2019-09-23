@@ -117,6 +117,13 @@
 
             </Button>
 
+            <Button name="$parentWelcome" inherits="GwStandardButton" text="Welcome">
+                <Size x="120" y="28" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="120" y="-5"/>
+                </Anchors>
+            </Button>
+
             <Button name="$parentDiscord" inherits="GwStandardButton" text="Join Discord">
                 <Size x="120" y="28" />
 
@@ -1014,7 +1021,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BORDER">
-						<FontString parentKey="header"  text="{welcome}"  justifyH="CENTER">
+						<FontString parentKey="header" text="{welcome}" justifyH="CENTER">
 						<Anchors>
 								<Anchor point="TOPLEFT" relativePoint="TOPLEFT"  x="0" y="5"></Anchor>
 								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="5"></Anchor>
@@ -1023,7 +1030,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Button parentKey="pixelbutton" inherits="GwStandardButton" text="Pixel-Perfect ">
+					<Button parentKey="pixelbutton" inherits="GwStandardButton" text="Pixel-Perfect">
 						<Size x="200" y="30"/>
 		                <Anchors>
 		                    <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="-10"/>
@@ -1061,27 +1068,97 @@
 							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
 							   <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
 						</Anchors>
-						  <Frames>
-					   <Frame parentKey="scrollchild" enableMouse="false">
-						  <Size x="231" y="600"></Size>
-						   <Anchors>
-							   <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-							   <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
-						   </Anchors>
-						   <Frames>
-						   </Frames>
-					   </Frame>
-
-						</Frames>
+						<Frames>
+                            <Frame parentKey="scrollchild" enableMouse="false">
+                                <Size x="231" y="600"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="BORDER">
+                                        <FontString parentKey="text" text="{welcome}" justifyH="LEFT">
+                                        <Anchors>
+                                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="5"></Anchor>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                            </Frame>
+                            <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+                                <Size x="12" y="12"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
+                                </Anchors>
+                                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
+                                    <Size x="12" y="100"/>
+                                    <Anchors>
+                                    <Anchor point="TOP" relativePoint="TOP" ></Anchor>
+                                    </Anchors>
+                                </ThumbTexture>
+                                <Layers>
+                                    <Layer>
+                                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
+                                            <Anchors>
+                                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                                <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
+                                <Scripts>
+                                    <OnValueChanged>
+                                        self:GetParent():SetVerticalScroll(value)
+                                    </OnValueChanged>
+                                    <OnLoad>
+                                        self:SetValue(1)
+                                    </OnLoad>
+                                </Scripts>
+                            </Slider>
+                            <Button name="$parentScrollButtonUp">
+                            <Size x="12" y="12"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                            <Layers>
+                                <Layer>
+                                    <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                        <Size x="12" y="12"></Size>
+                                            <Anchors>
+                                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                            </Anchors>
+                                    </Texture>
+                                </Layer>
+                            </Layers>
+                            </Button>
+                            <Button name="$parentScrollButtonDown">
+                                <Size x="12" y="12"></Size>
+                                    <Anchors>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                <Layers>
+                                    <Layer>
+                                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                                            <Size x="12" y="12"></Size>
+                                                <Anchors>
+                                                    <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                                </Anchors>
+                                            <TexCoords left="0" right="1" top="1" bottom="0" />
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
+                            </Button>
+					    </Frames>
 						<Scripts>
-
-						<OnMouseWheel>
-							delta = -delta * 15
-							local s = math.max(0,self:GetVerticalScroll() + delta)
-
-							self:SetVerticalScroll(s)
-						</OnMouseWheel>
-							</Scripts>
+                            <OnMouseWheel>
+                                delta = -delta * 15
+                                local s = math.max(0,self:GetVerticalScroll() + delta)
+                                self.slider:SetValue(s)
+                                self:SetVerticalScroll(s)
+                            </OnMouseWheel>
+						</Scripts>
 					</ScrollFrame>
 				</Frames>
 			</Frame>
@@ -1090,6 +1167,13 @@
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"  x="5" y="10"/>
 				</Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():Hide()
+                        GwSettingsWindow:Show()
+                        UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+                    </OnClick>
+                </Scripts>
 			</Button>
 			<Button parentKey="movehud" inherits="GwStandardButton" text="">
             <Size x="120" y="28"/>
@@ -1102,16 +1186,38 @@
 				<Anchors>
 					<Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.movehud"  x="125" y="0"/>
 				</Anchors>
+                <Scripts>
+                    <OnClick>
+                        if self:GetText() == GwLocalization["CHANGELOG"] then
+                            self:GetParent().changelog:Show()
+                            self:GetParent().welcome:Hide()
+                            self:SetText(GwLocalization["WELCOME"])
+                        else
+                            self:GetParent().changelog:Hide()
+                            self:GetParent().welcome:Show()
+                            self:SetText(GwLocalization["CHANGELOG"])
+                        end
+                    </OnClick>
+                </Scripts>
 			</Button>
 			<Button parentKey="close" inherits="GwStandardButton" text="Close">
             <Size x="120" y="28"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"   x="-5" y="10"/>
 				</Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():Hide()
+                    </OnClick>
+                </Scripts>
 			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>
+                self.changelog.scroll:SetScrollChild(self.changelog.scroll.scrollchild)
+                self.changelog.scroll.scrollchild:SetSize(self.changelog.scroll:GetSize())
+                self.changelog.scroll.scrollchild:SetWidth(self.changelog.scroll:GetWidth() - 20)
+
 				self.header:SetFont(DAMAGE_TEXT_FONT,30,"OUTLINE")
 				self.header:SetTextColor(1,0.95,0.8,1)
 
@@ -1121,15 +1227,19 @@
 				self.changelog.header:SetFont(DAMAGE_TEXT_FONT,14)
 				self.changelog.header:SetTextColor(0.8,0.75,0.6,1)
 
+                self.changelog.scroll.scrollchild.text:SetFont(DAMAGE_TEXT_FONT,14)
+				self.changelog.scroll.scrollchild.text:SetTextColor(0.8,0.75,0.6,1)
+
 				self.welcome.header:SetFont(DAMAGE_TEXT_FONT,14)
 				self.welcome.header:SetTextColor(0.8,0.75,0.6,1)
 
 				self.header:SetText(GwLocalization["WELCOME_SPLASH_HEADER"])
+                self.welcome.header:SetText(GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] .. "\n\n\n" .. GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"])
 
 				self.close:SetText(CLOSE)
 				self.movehud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
                 self.settings:SetText(CHAT_CONFIGURATION)
-				self.welcome.pixelbutton:SetText(GwLocalization["PIXEL_PERFECTION"])
+				self.welcome.pixelbutton:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
 
 				self.changelog.header:SetText(GwLocalization["CHANGELOG"])
 			</OnLoad>
