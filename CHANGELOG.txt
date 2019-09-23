@@ -1,10 +1,12 @@
 5.1.5
 
 NEW
+    - Added Welcome- and Changelog Page
+    - Added Pixel Perfection Mode
     - Added Move HUD option for tooltips
     - Stancebuttons have a owen border
     - Temp weapon enchants are now showen as buff
-    - Added option to set combpoint to the unitframe
+    - Added option to set combpoints to the unitframe
     - Added SharedMedia support (Fonts and Textures)
 
 FIXES

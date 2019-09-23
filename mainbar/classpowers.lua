@@ -186,7 +186,7 @@ local function setComboBar(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-    if f.ourTarget and f.comboPointsOnTarget) then
+    if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", GwTargetUnitFrame.auras, "TOPLEFT", -8, 23)
         f:SetWidth(220)
