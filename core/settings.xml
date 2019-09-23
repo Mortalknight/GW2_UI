@@ -1101,7 +1101,7 @@
 				</Layers>
 				<Frames>
 					<Button parentKey="pixelbutton" inherits="GwStandardButton" text="Pixel-Perfect">
-						<Size x="200" y="30"/>
+						<Size x="250" y="30"/>
 		                <Anchors>
 		                    <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="-10"/>
 		                </Anchors>
