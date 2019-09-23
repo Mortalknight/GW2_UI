@@ -44,6 +44,16 @@ local function disableMABags()
 end
 GW.AddForProfiling("index", "disableMABags", disableMABags)
 
+local function disableTitanPanelBarAdjusting()
+    local ourBars = GetSetting("ACTIONBARS_ENABLED")
+    if ourBars and IsAddOnLoaded("TitanClassic") then
+        TitanMovable_AddonAdjust("MultiBarRight", true)
+        TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
+        TitanMovable_AddonAdjust("MinimapCluster", true)
+    end
+end    
+        
+
 local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
     local dummyPoint = GetDefault(settingsName)
     moveframe:ClearAllPoints()
@@ -561,6 +571,9 @@ local function loadAddon(self)
 
     -- disable Move Anything bag handling
     disableMABags()
+
+    --disbale TitanPanelClaissc Adjustment
+    disableTitanPanelBarAdjusting()
 
     -- hook debug output if relevant
     --@debug@
