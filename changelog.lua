@@ -75,7 +75,7 @@ GW_CHANGELOGS = "\n\n0.9.1\n\n" .. GW_CHANGELOGS
 --VERSION 0.9.5
 GW_CHANGELOGS = "- Added level to QuestTracker\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added back Searchbar to bag and bank\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "- Added Welcomepage and Changelogpage\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added Welcome- and Changelog Page\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "0.9.5\n\n" .. GW_CHANGELOGS
 
 

@@ -229,7 +229,6 @@ local function GWUseThisLocalization()
 	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Zeige Combopunkt am Ziel unterhalb des Gesundheitsbalkens"
 	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Modus"
 	GwLocalization["PIXEL_PERFECTION_DESC"] = "Skaliert das UI in einen Pixel Perfection-Modus. Dieser ist abhängig von der Bildschirmauflösung."
-
 	GwLocalization["WELCOME_SPLASH_HEADER"] = "Willkommen beim GW2-UI"
 	GwLocalization["CHANGELOG"] = "Changelog"
 	GwLocalization["WELCOME"] = "Willkommen"

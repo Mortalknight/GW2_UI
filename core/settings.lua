@@ -671,7 +671,7 @@ local function LoadSettings()
     local fmGSWMH = GwSettingsWindowMoveHud
     local fmGSWS = GwSettingsWindowSave
     local fmGSWD = GwSettingsWindowDiscord
-    local fmGSWWELCOME = GwSettingsWindowWelcome
+    local fmGSWWELCOME = WelcomeScreen
 
     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
     GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT, 12)
@@ -679,7 +679,7 @@ local function LoadSettings()
     GwSettingsWindowHeaderString:SetText(CHAT_CONFIGURATION)
     GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
     GwSettingsWindowSave:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
-    GwSettingsWindowWelcome:SetText(GwLocalization["WELCOME"])
+    WelcomeScreen:SetText(GwLocalization["WELCOME"])
 
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then
@@ -721,7 +721,7 @@ local function LoadSettings()
         end)
         GwWelcomePage.welcome.pixelbutton:SetScript("OnClick", function(self)
             if self:GetText() == GwLocalization["PIXEL_PERFECTION_ON"] then
-                pixelPerfection()
+                GW.pixelPerfection()
                 SetSetting("PIXEL_PERFECTION", true)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
             else

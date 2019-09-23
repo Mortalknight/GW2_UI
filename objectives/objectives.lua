@@ -479,9 +479,9 @@ local function getQuestInfoLevel(questID)
             else
                 text = "[" .. level .."] "
             end
-            return text
         end
     end
+    return text
 end
 
 local function updateQuest(block, questWatchId)

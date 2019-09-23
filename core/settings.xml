@@ -117,13 +117,6 @@
 
             </Button>
 
-            <Button name="$parentWelcome" inherits="GwStandardButton" text="Welcome">
-                <Size x="120" y="28" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="120" y="-5"/>
-                </Anchors>
-            </Button>
-
             <Button name="$parentDiscord" inherits="GwStandardButton" text="Join Discord">
                 <Size x="120" y="28" />
 
@@ -170,6 +163,14 @@
                                 </FontString>
                             </layer>
                         </Layers>
+                        <Frames>
+                            <Button name="WelcomeScreen" inherits="GwStandardButton" text="Welcome">
+                                <Size x="120" y="22" />
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" x="-158" y="-10"/>
+                                </Anchors>
+                            </Button>
+                        </Frames>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsTargetFocus">
                         <Size x="660" y="480"></Size>

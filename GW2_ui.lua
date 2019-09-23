@@ -515,6 +515,7 @@ local function pixelPerfection()
     local scale = 768 / screenHeight
     UIParent:SetScale(scale)
 end
+GW.pixelPerfection = pixelPerfection
 
 local SCALE_HUD_FRAMES = {
     "GwHudArtFrame",
