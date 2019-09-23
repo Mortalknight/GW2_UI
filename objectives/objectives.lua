@@ -406,7 +406,7 @@ GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 local function OnBlockClick(self, button, isHeader)
     if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
         if button == "LeftButton" then
-            ChatEdit_InsertLink(gsub(self.Header:GetText(), " *(.*)", "%1"))
+            ChatEdit_InsertLink(gsub(self.title, " *(.*)", "%1"))
         else
             SelectQuestLogEntry(self.questLogIndex)
             local chat = ""
@@ -500,6 +500,7 @@ local function updateQuest(block, questWatchId)
 
         local qtitle = getQuestInfoLevel(questID) .. title
         block.questID = questID
+        block.title = title
         block.questLogIndex = questLogIndex
         block.Header:SetText(qtitle)
 
