@@ -582,6 +582,8 @@ local function loadTalents()
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
     GwTalentFrame.bottomBar.background:AddMaskTexture(mask)
+    GwTalentFrame.bottomBar:SetFrameStrata("HIGH")
+    GwTalentFrame.bottomBar:SetFrameLevel(5)
 
     for i = 1, GW.api.GetNumSpecializations() do
         TALENT_BRANCH_ARRAY[i]={}
