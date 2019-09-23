@@ -3,6 +3,7 @@
 - Added level to QuestTracker
 - Added back Searchbar to bag and bank
 - Added Welcome- and Changelog Page
+- Added TitanClassic Support (MultiBarRight should not move a bit down)
 
 0.9.1
 

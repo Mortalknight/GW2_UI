@@ -51,8 +51,7 @@ local function disableTitanPanelBarAdjusting()
         TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
         TitanMovable_AddonAdjust("MinimapCluster", true)
     end
-end    
-        
+end     
 
 local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
     local dummyPoint = GetDefault(settingsName)
