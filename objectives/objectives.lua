@@ -467,21 +467,15 @@ local function OnBlockClickHandler(self, button)
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
-local function getQuestInfoLevel(questID)
-    local text = ""
+local function getQuestInfoLevel(questID, block)
     for i = 1, GetNumQuestLogEntries() do
         local title, level, group, _, _, _, _, questID2 = GetQuestLogTitle(i)
         if questID == questID2 then
-            if group == "Elite" then       
-                text = "[" .. level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-group-icon:12:12:0:0|t] "
-            elseif group == "Dungeon" then
-                text = "[" .. level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-dungeon-icon:12:12:0:0|t] "
-            else
-                text = "[" .. level .."] "
-            end
+            block.level = level
+            block.group = group
+            break
         end
     end
-    return text
 end
 
 local function updateQuest(block, questWatchId)
@@ -497,12 +491,19 @@ local function updateQuest(block, questWatchId)
             NewQuestAnimation(block)
             savedQuests[questID] = true
         end
-
-        local qtitle = getQuestInfoLevel(questID) .. title
-        block.questID = questID
         block.title = title
+        getQuestInfoLevel(questID, block)
+        local text = ""
+        if block.group == "Elite" then       
+            text = "[" .. block.level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-group-icon:12:12:0:0|t] "
+        elseif block.group == "Dungeon" then
+            text = "[" .. block.level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-dungeon-icon:12:12:0:0|t] "
+        else
+            text = "[" .. block.level .."] "
+        end
+        block.questID = questID
         block.questLogIndex = questLogIndex
-        block.Header:SetText(qtitle)
+        block.Header:SetText(text .. title)
 
         if isComplete and isComplete < 0 then
             isComplete = false

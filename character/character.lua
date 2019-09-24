@@ -1470,7 +1470,6 @@ function GWupdateSkills()
     GwPaperSkills.scroll.scrollchild:SetHeight(y)
     GwPaperSkills.scroll.slider:SetMinMaxValues(0, skillsMaxValueScrollbar)
     GwPaperSkills.scroll.slider.thumb:SetHeight(100)
-    GwPaperSkills.scroll.slider:SetValue(1)
 end
 
 function gw_register_character_window()
@@ -1506,8 +1505,7 @@ function gw_register_character_window()
         self:GetParent().slider:SetValue(s)
         self:GetParent():SetVerticalScroll(s)
     end)
-    GwPaperSkills.scroll.slider:SetFrameStrata("HIGH")
-    GwPaperSkills.scroll.slider:SetFrameLevel(5)
+    GwPaperSkills.scroll.slider:SetValue(1)
 
     CharacterFrame:SetScript("OnShow", function()
           HideUIPanel(CharacterFrame)
