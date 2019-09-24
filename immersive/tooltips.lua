@@ -1,6 +1,7 @@
 local _, GW = ...
 
 local GetSetting = GW.GetSetting
+local RegisterMovableFrame = GW.RegisterMovableFrame
 
 local UNSTYLED = {
 	"GameTooltip",

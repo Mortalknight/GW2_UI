@@ -1,3 +1,11 @@
+5.1.6
+
+FIXES
+    - Update TOC for 8.2.5
+    - Remove deprecated hook for guild microbutton
+    - Fix missing helper definition in tooltip
+
+
 5.1.5
 
 NEW

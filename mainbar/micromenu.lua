@@ -554,17 +554,6 @@ local function LoadMicroMenu()
             MicroButtonPortrait:Hide()
         end
     )
-    hooksecurefunc(
-        "GuildMicroButton_UpdateTabard",
-        function()
-            GuildMicroButtonTabard:Hide()
-            local m = GuildMicroButton
-            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-        end
-    )
 
     -- if set to fade micro menu, add fader
     if GetSetting("FADE_MICROMENU") then
