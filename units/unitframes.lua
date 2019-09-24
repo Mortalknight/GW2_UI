@@ -26,14 +26,7 @@ local textureMapping = {
 }
 
 local function sortAuras(a, b)
-    if a["caster"] == nil then
-        a["caster"] = ""
-    end
-    if b["caster"] == nil then
-        b["caster"] = ""
-    end
-
-    if a["caster"] == b["caster"] then
+    if a["caster"] and b["caster"] and a["caster"] == b["caster"] then
         return a["timeremaning"] < b["timeremaning"]
     end
 
@@ -53,38 +46,42 @@ local function sortAuraList(auraList)
 end
 GW.AddForProfiling("unitframes", "sortAuraList", sortAuraList)
 
+local buffList = {}
+for i = 1, 40 do
+    buffList[i] = {}
+end
 local function getBuffs(unit, filter)
     if filter == nil then
         filter = ""
     end
-    local auraList = {}
+    local tempCounter = 1
     for i = 1, 40 do
+        table.wipe(buffList[i])
         if UnitBuff(unit, i, filter) ~= nil then
-            auraList[i] = {}
-            auraList[i]["id"] = i
+            local bli = buffList[i]
+            tempCounter = tempCounter + 1
+            bli["id"] = i
 
-            auraList[i]["name"],
-                auraList[i]["icon"],
-                auraList[i]["count"],
-                auraList[i]["dispelType"],
-                auraList[i]["duration"],
-                auraList[i]["expires"],
-                auraList[i]["caster"],
-                auraList[i]["isStealable"],
-                auraList[i]["shouldConsolidate"],
-                auraList[i]["spellID"] = UnitBuff(unit, i, filter)
+            bli["name"],
+                bli["icon"],
+                bli["count"],
+                bli["dispelType"],
+                bli["duration"],
+                bli["expires"],
+                bli["caster"],
+                bli["isStealable"],
+                bli["shouldConsolidate"],
+                bli["spellID"] = UnitBuff(unit, i, filter)
 
-            auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
+            bli["timeremaning"] = bli["expires"] - GetTime()
 
-            if auraList[i]["duration"] <= 0 then
-                auraList[i]["timeremaning"] = 500001
+            if bli["duration"] <= 0 then
+                bli["timeremaning"] = 500001
             end
         end
     end
 
     --Add temp weaponbuffs if unit is player
-    local tempCounter = #auraList
-
     if unit == "player" then
         local RETURNS_PER_ITEM = 4
         local numVals = select("#", GetWeaponEnchantInfo())
@@ -97,59 +94,67 @@ local function getBuffs(unit, filter)
                 if hasEnchant then
                     tempCounter = tempCounter + 1
 
-                    auraList[tempCounter] = {}
-                    auraList[tempCounter]["id"] = tempCounter
-                    auraList[tempCounter]["name"] = "WeaponTempEnchant"
-                    auraList[tempCounter]["icon"] = GetInventoryItemTexture("player", textureMapping[itemIndex])
-                    auraList[tempCounter]["spellID"] = textureMapping[itemIndex]
-                    auraList[tempCounter]["caster"] = "player"
-                    auraList[tempCounter]["duration"] = enchantExpiration
-                    auraList[tempCounter]["dispelType"] = "Curse"
+                    if buffList[tempCounter] then
+                        table.wipe(buffList[tempCounter])
+                    else
+                        buffList[tempCounter] = {}
+                    end
+                    local atc = buffList[tempCounter]
+                    atc["id"] = tempCounter
+                    atc["name"] = "WeaponTempEnchant"
+                    atc["icon"] = GetInventoryItemTexture("player", textureMapping[itemIndex])
+                    atc["spellID"] = textureMapping[itemIndex]
+                    atc["caster"] = "player"
+                    atc["duration"] = enchantExpiration
+                    atc["dispelType"] = "Curse"
 
                     -- Show buff durations if necessary
                     if enchantExpiration then
-                        auraList[tempCounter]["expires"] = enchantExpiration / 1000
-                        auraList[tempCounter]["timeremaning"] = auraList[tempCounter]["expires"]
+                        atc["expires"] = enchantExpiration / 1000
+                        atc["timeremaning"] = atc["expires"]
                     else
-                        auraList[tempCounter]["timeremaning"] = 500001
+                        atc["timeremaning"] = 500001
                     end
                 end
             end
         end
     end
 
-    return sortAuraList(auraList)
+    return sortAuraList(buffList)
 end
 GW.AddForProfiling("unitframes", "getBuffs", getBuffs)
 
+local debuffList = {}
+for i = 1, 40 do
+    debuffList[i] = {}
+end
 local function getDebuffs(unit, filter)
-    local auraList = {}
-
     for i = 1, 40 do
+        table.wipe(debuffList[i])
         if UnitDebuff(unit, i, filter) ~= nil then
-            auraList[i] = {}
-            auraList[i]["id"] = i
+            local dbi = debuffList[i]
+            dbi["id"] = i
 
-            auraList[i]["name"],
-                auraList[i]["icon"],
-                auraList[i]["count"],
-                auraList[i]["dispelType"],
-                auraList[i]["duration"],
-                auraList[i]["expires"],
-                auraList[i]["caster"],
-                auraList[i]["isStealable"],
-                auraList[i]["shouldConsolidate"],
-                auraList[i]["spellID"] = UnitDebuff(unit, i, filter)
+            dbi["name"],
+                dbi["icon"],
+                dbi["count"],
+                dbi["dispelType"],
+                dbi["duration"],
+                dbi["expires"],
+                dbi["caster"],
+                dbi["isStealable"],
+                dbi["shouldConsolidate"],
+                dbi["spellID"] = UnitDebuff(unit, i, filter)
 
-            auraList[i]["timeremaning"] = auraList[i]["expires"] - GetTime()
+                dbi["timeremaning"] = dbi["expires"] - GetTime()
 
-            if auraList[i]["duration"] <= 0 then
-                auraList[i]["timeremaning"] = 500001
+            if dbi["duration"] <= 0 then
+                dbi["timeremaning"] = 500001
             end
         end
     end
 
-    return sortAuraList(auraList)
+    return sortAuraList(debuffList)
 end
 GW.AddForProfiling("unitframes", "getDebuffs", getDebuffs)
 
@@ -867,7 +872,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local lineSize = smallSize
 
     local auraList = getBuffs(self.unit)
-    local debuffList = getDebuffs(self.unit, self.debuffFilter)
+    local dbList = getDebuffs(self.unit, self.debuffFilter)
 
     local saveAuras = {}
 
@@ -903,7 +908,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
 
         if frameIndex > 40 then
             frame = _G["Gw" .. fUnit .. "debuffFrame" .. index]
-            list = debuffList
+            list = dbList
         end
 
         if frameIndex == 41 then
