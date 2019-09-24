@@ -371,16 +371,19 @@ GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.4\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.1.5
-GW_CHANGELOGS = "   - Stacebar shows now the stancebutton if only one stance is known\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Stancebar shows the stancebutton if only one stance is known\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
 
+GW_CHANGELOGS = "   - Update TOC for 8.2.5\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Remove deprecated hook for guild microbutton\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Fixed CN & TW font issues\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - GW2_UI works fine with dominos if our Actionsbars are disabled\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 
 GW_CHANGELOGS = "   - Added SharedMedia support (Fonts and Textures)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added option to set combpoints to the unitframe\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "   - Temp weapon enchants are now showen as buff\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "   - Stancebuttons have a owen border\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Temp weapon enchants are now shown as buff\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Stancebuttons have own border\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added Move HUD option for tooltipsn" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added Welcome- and Changelog Page\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added Pixel Perfection Mode\n" .. GW_CHANGELOGS
