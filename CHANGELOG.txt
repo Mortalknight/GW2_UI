@@ -1,23 +1,17 @@
-5.1.6
-
-FIXES
-    - Update TOC for 8.2.5
-    - Remove deprecated hook for guild microbutton
-    - Fix missing helper definition in tooltip
-
-
 5.1.5
 
 NEW
     - Added Welcome- and Changelog Page
     - Added Pixel Perfection Mode
     - Added Move HUD option for tooltips
-    - Stancebuttons have a owen border
+    - Stancebuttons have a own border
     - Temp weapon enchants are now showen as buff
     - Added option to set combpoints to the unitframe
     - Added SharedMedia support (Fonts and Textures)
 
 FIXES
+    - Update TOC for 8.2.5
+    - Remove deprecated hook for guild microbutton
     - Fixed CN & TW font issues
     - GW2_UI works fine with dominos if our Actionsbars are disabled
 
