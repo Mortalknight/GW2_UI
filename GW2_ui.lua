@@ -761,7 +761,7 @@ local function loadAddon(self)
                 SetSetting("PIXEL_PERFECTION", false)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
             end
-        end)     
+        end)  
         --Save current Version
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
@@ -798,7 +798,8 @@ local function loadAddon(self)
                 SetSetting("PIXEL_PERFECTION", false)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
             end
-        end)  
+        end) 
+        --Save current Version
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)    
     end
 
