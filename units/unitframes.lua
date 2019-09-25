@@ -886,6 +886,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
         fUnit = self.unit
     end
 
+    local isBuff = false
     for frameIndex = minIndex, maxIndex do
         local index
         if isPlayer then
@@ -910,14 +911,16 @@ local function UpdateBuffLayout(self, event, anchorPos)
             frame = _G["Gw" .. fUnit .. "debuffFrame" .. index]
             list = dbList
         end
-
-        if frameIndex == 41 then
+        if frameIndex == 41 and isBuff then
             usedWidth = 0
             usedHeight = usedHeight + lineSize + marginY
             lineSize = smallSize
         end
 
         if setBuffData(frame, list, index) then
+            if frameIndex <= 40 then
+                isBuff = true
+            end
             if not frame:IsShown() then
                 frame:Show()
             end
