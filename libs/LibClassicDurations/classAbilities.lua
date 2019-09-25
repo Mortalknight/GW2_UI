@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 29
+local Type, Version = "SpellTable", 30
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -19,12 +19,16 @@ end
 -- https://github.com/rgd87/LibClassicDurations/issues/11
 lib.indirectRefreshSpells = {
     [GetSpellInfo(11597)] = { -- Sunder Armor
-        event = "SPELL_CAST_SUCCESS",
+        events = {
+            ["SPELL_CAST_SUCCESS"] = true
+        },
         targetSpellID = 11597,
     },
 
     [GetSpellInfo(10207)] = { -- Scorch
-        event = "SPELL_DAMAGE",
+        events = {
+            ["SPELL_DAMAGE"] = true
+        },
         targetSpellID = 22959, -- Fire Vulnerability
         condition = function(isMine) return isMine end,
         -- it'll refresg only from mages personal casts which is fine
@@ -33,23 +37,33 @@ lib.indirectRefreshSpells = {
 
     -- Shadow Weaving
     [GetSpellInfo(10894)] = { -- SW:Pain
-        event = "SPELL_PERIODIC_DAMAGE",
+        events = {
+            ["SPELL_AURA_APPLIED"] = true,
+            ["SPELL_AURA_REFRESH"] = true,
+        },
         targetSpellID = 15258, -- Shadow Weaving
         condition = function(isMine) return isMine end,
     },
     [GetSpellInfo(10947)] = { -- Mind Blast
-        event = "SPELL_DAMAGE",
+        events = {
+            ["SPELL_DAMAGE"] = true,
+        },
         targetSpellID = 15258, -- Shadow Weaving
         condition = function(isMine) return isMine end,
     },
     [GetSpellInfo(18807)] = { -- Mind Flay
-        event = "SPELL_PERIODIC_DAMAGE",
+        events = {
+            ["SPELL_AURA_APPLIED"] = true,
+            ["SPELL_AURA_REFRESH"] = true,
+        },
         targetSpellID = 15258, -- Shadow Weaving
         condition = function(isMine) return isMine end,
     },
 
     [GetSpellInfo(25357)] = { -- Healing Wave
-        event = "SPELL_CAST_SUCCESS",
+        events = {
+            ["SPELL_CAST_SUCCESS"] = true
+        },
         targetSpellID = 29203, -- Healing Way
     },
 
