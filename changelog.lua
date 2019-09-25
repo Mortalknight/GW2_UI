@@ -390,5 +390,11 @@ GW_CHANGELOGS = "   - Added Pixel Perfection Mode\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.5\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.1.6
+GW_CHANGELOGS = "   - Disable toast messages\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Change debuff position on target if target has no buffs\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.1.6\n\n" .. GW_CHANGELOGS
+
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

@@ -1,3 +1,10 @@
+5.1.6
+
+MISCELLANEOUS
+    - Disable toast messages
+    - Change debuff position on target if target has no buffs
+
+
 5.1.5
 
 NEW
