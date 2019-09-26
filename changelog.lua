@@ -77,6 +77,10 @@ GW_CHANGELOGS = "- Added level to QuestTracker\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added back Searchbar to bag and bank\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added Welcome- and Changelog Page\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added TitanClassic Support (MultiBarRight should not move a bit down)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Fix MultiBarLeft and Right finally (also when get attack in stealth)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added back Chatwindow\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added back Dynamic-Cam Mode\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Change debuff position on target and player if target/player has no buffs\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "0.9.5\n\n" .. GW_CHANGELOGS
 
 

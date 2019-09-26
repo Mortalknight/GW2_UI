@@ -893,7 +893,13 @@ local function LoadSettings()
         GwLocalization["TOOLTIPS_DESC"],
         "TOOLTIPS_ENABLED",
         "GwSettingsModuleOption"
-    )  
+    )
+    addOption(
+        COMMUNITIES_ADD_TO_CHAT_DROP_DOWN_TITLE,
+        GwLocalization["CHAT_FRAME_DESC"],
+        "CHATFRAME_ENABLED",
+        "GwSettingsModuleOption"
+    )
     addOption(
         GwLocalization["QUESTING_FRAME"],
         GwLocalization["QUESTING_FRAME_DESC"],
@@ -1021,6 +1027,7 @@ local function LoadSettings()
         "HUD_SPELL_SWAP",
         "GwSettingsHudOptions"
     )
+    addOption(GwLocalization["CHAT_FADE"], GwLocalization["CHAT_FADE_DESC"], "CHATFRAME_FADE", "GwSettingsHudOptions")
     addOption(
         GwLocalization["HIDE_EMPTY_SLOTS"],
         GwLocalization["HIDE_EMPTY_SLOTS_DESC"],
@@ -1061,6 +1068,12 @@ local function LoadSettings()
         DISPLAY_BORDERS,
         nil,
         "BORDER_ENABLED",
+        "GwSettingsHudOptions"
+    )
+    addOption(
+        CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC,
+        nil,
+        "DYNAMIC_CAM",
         "GwSettingsHudOptions"
     )
     addOption(

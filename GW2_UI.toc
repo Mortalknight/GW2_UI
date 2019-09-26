@@ -1,7 +1,7 @@
 ## Interface: 11302
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
-## OptionalDeps: MoveAnything, RealMobHealth
+## OptionalDeps: MoveAnything, RealMobHealth, TitanClassic
 
 ## Author: deadend06
 
@@ -80,6 +80,8 @@ character/windowManager.lua
 immersive/tooltips.lua
 immersive/questview.xml
 immersive/questview.lua
+immersive/chatbubbles.lua
+immersive/chatframe.lua
 
 objectives/map.lua
 objectives/questtracker.xml

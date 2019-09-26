@@ -624,6 +624,10 @@ local function loadAddon(self)
         GW.LoadQuestview()
     end
 
+    if GetSetting("CHATFRAME_ENABLED") then
+        GW.LoadChat()
+    end
+
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") then
         GW.LoadPlayerHud()
@@ -694,6 +698,12 @@ local function loadAddon(self)
         GW.LoadBuffs()
     end
 
+    if GetSetting("DYNAMIC_CAM") then
+        ConsoleExec("ActionCam basic")
+    else
+        ConsoleExec("ActionCam default")
+    end
+
     if GetSetting("USE_CHARACTER_WINDOW") then
         Gw_LoadWindows()
     end
@@ -710,6 +720,8 @@ local function loadAddon(self)
     if (forcedMABags) then
         GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
     end
+
+    --GW.LoadChatBubbles()
 
     --Add Shared Media
     --Font
