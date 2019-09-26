@@ -1988,7 +1988,7 @@
             </OnClick>
         </Scripts>
     </Button>
-    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true" frameStrata="HIGH">
+    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true" frameStrata="DIALOG">
         <Size x="853" y="50"></Size>
         <Anchors>
             <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
@@ -2001,7 +2001,7 @@
             <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
         </Scripts>
     </Frame>
-    <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true" frameStrata="HIGH">
+    <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true" frameStrata="DIALOG">
          <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
@@ -2014,7 +2014,7 @@
         </Anchors>
     </Frame>
 
-        <Frame name="GwCharacterWindow" frameStrata="HIGH" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true"  virtual="true" protected="true">
+        <Frame name="GwCharacterWindow" frameStrata="DIALOG" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true"  virtual="true" protected="true">
         <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>

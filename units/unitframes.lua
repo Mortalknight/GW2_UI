@@ -49,7 +49,7 @@ end
 GW.AddForProfiling("unitframes", "sortAuraList", sortAuraList)
 
 local buffList = {}
-for i = 1, 32 do
+for i = 1, 40 do
     buffList[i] = {}
 end
 local function getBuffs(unit, filter)
@@ -57,7 +57,7 @@ local function getBuffs(unit, filter)
         filter = ""
     end
     local tempCounter = 1
-    for i = 1, 32 do
+    for i = 1, 40 do
         table.wipe(buffList[i])
         if UnitBuff(unit, i, filter) ~= nil then
             local bli = buffList[i]
@@ -133,11 +133,11 @@ end
 GW.AddForProfiling("unitframes", "getBuffs", getBuffs)
 
 local debuffList = {}
-for i = 1, 16 do
+for i = 1, 40 do
     debuffList[i] = {}
 end
 local function getDebuffs(unit, filter)
-    for i = 1, 16 do
+    for i = 1, 40 do
         table.wipe(debuffList[i])
         if UnitDebuff(unit, i, filter) ~= nil then
             local dbi = debuffList[i]
@@ -746,17 +746,17 @@ GW.AddForProfiling("unitframes", "auraAnimateIn", auraAnimateIn)
 
 local function UpdateBuffLayout(self, event, anchorPos)
     local minIndex = 1
-    local maxIndex = 48
+    local maxIndex = 80
 
     local isPlayer = false
     if anchorPos and anchorPos == "player" then
         isPlayer = true
     elseif anchorPos ~= "player" then
         if self.displayBuffs ~= true then
-            minIndex = 32
+            minIndex = 40
         end
         if self.displayDebuffs ~= true then
-            maxIndex = 32
+            maxIndex = 40
         end
     end
 
@@ -801,36 +801,36 @@ local function UpdateBuffLayout(self, event, anchorPos)
     for frameIndex = minIndex, maxIndex do
         local index
         if isPlayer then
-            index = 33 - frameIndex
+            index = 41 - frameIndex
         else
             index = frameIndex
         end
         local list = auraList
         local newAura = true
 
-        if frameIndex > 32 then
+        if frameIndex > 40 then
             if isPlayer then
-                index = 33 - (frameIndex - 32)
+                index = 41 - (frameIndex - 40)
             else
-                index = frameIndex - 32
+                index = frameIndex - 40
             end
         end
 
         local frame = _G["Gw" .. fUnit .. "buffFrame" .. index]
 
-        if frameIndex > 32 then
+        if frameIndex > 40 then
             frame = _G["Gw" .. fUnit .. "debuffFrame" .. index]
             list = dbList
         end
 
-        if frameIndex == 33 and isBuff then
+        if frameIndex == 41 and isBuff then
             usedWidth = 0
             usedHeight = usedHeight + lineSize + marginY
             lineSize = smallSize
         end
 
         if setBuffData(frame, list, index) then
-            if frameIndex <= 32 then
+            if frameIndex <= 40 then
                 isBuff = true
             end
             if not frame:IsShown() then

@@ -488,7 +488,7 @@ local function LoadMinimap()
     fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmGAT:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
     GwAddonToggleTexture:SetTexCoord(0, 0.5, 0, 0.25)
-    fmGAT:SetFrameStrata("MEDIUM")
+    fmGAT:SetFrameStrata("HIGH")
     fmGAT.gw_Showing = true
     stackIcons(fmGAT)
 
