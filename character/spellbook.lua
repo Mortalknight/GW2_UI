@@ -7,19 +7,26 @@ local ACTIVE_PAGE = 1;
 
 function gw_spell_buttonOnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT",0,0);
-    GameTooltip:ClearLines();
+    GameTooltip:ClearLines()
+    local isPet = false
 
-    if not self.isFlyout then
-		GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
+    if self.booktype == "pet" then isPet = true end
+    if IsSpellKnown(self.spellId, isPet) then
+        if not self.isFlyout then
+            GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
+        else
+            local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId);
+            GameTooltip:AddLine(name)
+            GameTooltip:AddLine(desc)
+        end
+        if self.isFuture then
+        
+        end
     else
-        local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId);
-        GameTooltip:AddLine(name)
-        GameTooltip:AddLine(desc)
+        GameTooltip:SetSpellByID(self.spellId)
+        GameTooltip:AddLine(' ')
+        GameTooltip:AddLine("|cffff0000" .. REQUIRES_LABEL ..GARRISON_TIER .. " " .. self.requiredLevel .. "|r", 1, 1, 1)
     end
-	if self.isFuture then
-	--	GameTooltip:AddLine(' ')
-	--	GameTooltip:AddLine(GwLocalization['REQUIRED_LEVEL_SPELL']..GetSpellLevelLearned(self.spellId), 1, 1, 1)
-	end
     GameTooltip:Show()
 end
 
@@ -156,7 +163,6 @@ end
 
 local spellButtonIndex = 1;
 local function setButtonStyle(ispassive,isFuture,spellID,skillType,icon,spellbookIndex,booktype,tab,name,rank,level)
-
     local autocastable, autostate = GetSpellAutocast(spellbookIndex, booktype)
 
 
@@ -173,6 +179,7 @@ local function setButtonStyle(ispassive,isFuture,spellID,skillType,icon,spellboo
     _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:EnableMouse(true)
 
     _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].spellId =spellID
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].requiredLevel =level
     _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetTexture(icon)
 
      _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAlpha(1)
@@ -319,20 +326,16 @@ local function updateSpellbookTab()
                 local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE);
                 local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
-
-
                 needNewHeader = true
                 for k,v in pairs(GW.SpellsByLevel) do
                     for _,spell in pairs(v) do
                         local contains
                         if spell.requiredIds~=nil then
                             if spell.id==spellID then
-
                                 contains = GW.tableContains(spell.requiredIds,lastSkillid)
                             end
                             if contains then
                                 needNewHeader = false
-
                             end
                         end
 
@@ -343,7 +346,6 @@ local function updateSpellbookTab()
                     rank = header.buttons + 1
                 end
                 ]]
-
                 local mainButton = setButtonStyle(ispassive,isFuture,spellID,skillType,icon,spellIndex,BOOKTYPE,spellBookTabs,name,rank)
                 spellButtonIndex = spellButtonIndex + 1
                 boxIndex = boxIndex + 1;
@@ -379,9 +381,7 @@ local function updateSpellbookTab()
 
                 local lastBox = mainButton
                 for _,unknownSpellID in pairs(unlearnd) do
-
                     local futureRank = GetSpellSubtext(unknownSpellID.id)
-
                     local unKnownChildButton = setButtonStyle(ispassive,isFuture,unknownSpellID.id,'FUTURESPELL',icon,spellIndex,BOOKTYPE,spellBookTabs,name,futureRank,unknownSpellID.level)
 
                     knowSpells[#knowSpells +1] = unknownSpellID.id

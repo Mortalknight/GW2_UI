@@ -705,6 +705,7 @@ local function loadAddon(self)
     end
 
     if GetSetting("USE_CHARACTER_WINDOW") then
+        SetSetting("USE_SPELLBOOK_WINDOW", true)
         Gw_LoadWindows()
     end
 
