@@ -396,5 +396,10 @@ GW_CHANGELOGS = "   - Change debuff position on target if target has no buffs\n"
 GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.6\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.1.7
+GW_CHANGELOGS = "   - Update locals (zhTW, ptBR)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.1.7\n\n" .. GW_CHANGELOGS
+
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS
