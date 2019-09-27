@@ -261,7 +261,7 @@ function Gw_LoadWindows()
         gwFrameCombatTogglerSpellbook:SetAttribute('attribute-name', 'windowPanelOpen')
         gwFrameCombatTogglerSpellbook:SetAttribute('attribute-value', 3)
 
-        if GetBindingKey("TOGGLETALENTS")~=nil then
+        if GetBindingKey("TOGGLESPELLBOOK")~=nil then
             SetBinding(GetBindingKey("TOGGLESPELLBOOK"),"CLICK gwFrameCombatTogglerSpellbook:RightButton");
         end
     end

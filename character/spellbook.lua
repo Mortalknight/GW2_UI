@@ -613,7 +613,7 @@ function gw_register_spellbook_window()
                     GwSpellbook:HookScript('OnShow', function()
                         GwCharacterWindow.windowIcon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\spellbook-window-icon')
                         GwCharacterWindow.WindowHeader:SetText(SPELLBOOK)
-                               if InCombatLockdown() then return end
+                        if InCombatLockdown() then return end
                             updateSpellbookTab()
 
                     end)
@@ -626,7 +626,7 @@ function gw_register_spellbook_window()
 
 
 
-     hooksecurefunc('ToggleSpellBook',gwToggleSpellbook)
+     --hooksecurefunc('ToggleSpellBook',gwToggleSpellbook)
 
      -- Remove blizzard default panel
      SpellBookFrame:SetScript("OnShow", function()
