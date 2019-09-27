@@ -8,7 +8,7 @@ local MAX_NUM_TALENT_TIERS = 8
 local NUM_TALENT_COLUMNS = 4
 local TALENT_BRANCH_ARRAY = {}
 
-<<<<<<< HEAD
+
 GwActiveSpellTab = 2;
 
 
@@ -94,9 +94,7 @@ local function spellBookTabHero_onLoad(self)
 end
 
 local function hookTalentButton(self,container, row, index)
-=======
-local function hookTalentButton(self, container, row, index)
->>>>>>> origin/classic
+
     local w = container:GetWidth()
     local h = container:GetHeight()
     local x = (w / NUM_TALENT_COLUMNS) * (index - 1)
@@ -249,7 +247,7 @@ local function updateTalentTrees()
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
 
         TalentFrame.pointsSpent = pointsSpent
-<<<<<<< HEAD
+
         if pointsSpent<1 then
             TalentFrame.background:SetDesaturated(true);
         else
@@ -258,10 +256,7 @@ local function updateTalentTrees()
         TalentFrame.talentPoints = talentPoints ;
         TalentFrame.talentFrameId = f;
 
-=======
-        TalentFrame.talentPoints = talentPoints
-        TalentFrame.talentFrameId = f
->>>>>>> origin/classic
+
         TalentFrame.info.title:SetText(name)
         TalentFrame.info.points:SetText(pointsSpent)
 
@@ -366,25 +361,15 @@ local function loadTalents()
     mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
-<<<<<<< HEAD
-    --GwTalentFrame.bottomBar.background:AddMaskTexture(mask)
-=======
-    GwTalentFrame.bottomBar.background:AddMaskTexture(mask)
-    GwTalentFrame.bottomBar:SetFrameStrata("DIALOG")
-    GwTalentFrame.bottomBar:SetFrameLevel(50)
->>>>>>> origin/classic
+
 
     for i = 1, GW.api.GetNumSpecializations() do
         TALENT_BRANCH_ARRAY[i] = {}
         local container = CreateFrame('Button', 'GwLegacyTalentTree' .. i, GwTalentFrame, 'GwLegacyTalentTree')
 
-<<<<<<< HEAD
         container:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT', (284 * (i-1)) + 5,-92);
         container.spec = i;
-=======
-        container:SetPoint('TOPLEFT', GwTalentFrame, 'TOPLEFT', 284 * (i - 1), 0)
-        container.spec = i
->>>>>>> origin/classic
+
         local id, name, description, icon, background, role, primaryStat = GW.api.GetSpecializationInfo(i)
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
@@ -415,7 +400,6 @@ local function spellbookButton_onEvent(self)
 
     self.autocast:Hide()
     if autostate then
-<<<<<<< HEAD
          _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].autocast:Show();
     end
 
@@ -599,9 +583,7 @@ local function updateSpellbookTab()
             _G['GwSpellbookTab'..spellBookTabs..'Actionbutton'..i]:EnableMouse(false)
             _G['GwSpellbookTab'..spellBookTabs..'Actionbutton'..boxIndex]:SetScript('OnEvent',nil)
         end
-=======
-       self.autocast:Show()
->>>>>>> origin/classic
+
     end
 end
 
