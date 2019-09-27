@@ -358,6 +358,7 @@ local function moveHudObjects()
         v:Show()
     end
 end
+GW.moveHudObjects = moveHudObjects
 
 local function lockHudObjects()
     if InCombatLockdown() then
@@ -670,6 +671,7 @@ local function LoadSettings()
     local fmGSWMH = GwSettingsWindowMoveHud
     local fmGSWS = GwSettingsWindowSave
     local fmGSWD = GwSettingsWindowDiscord
+    local fmGSWWELCOME = WelcomeScreen
 
     GwSettingsWindowHeaderString:SetFont(DAMAGE_TEXT_FONT, 24)
     GwSettingsWindowVersionString:SetFont(UNIT_NAME_FONT, 12)
@@ -677,6 +679,8 @@ local function LoadSettings()
     GwSettingsWindowHeaderString:SetText(CHAT_CONFIGURATION)
     GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
     GwSettingsWindowSave:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
+    GwSettingsWindowDiscord:SetText(GwLocalization["DISCORD"])
+    WelcomeScreen:SetText(GwLocalization["WELCOME"])
 
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then
@@ -692,9 +696,49 @@ local function LoadSettings()
     local fnGSWD_OnClick = function(self, button)
         inputDiscord("Discord", nil, "https://discord.gg/MZZtRWt")
     end
+    local fmGSWWELCOME_OnClick = function(self, button)
+        GwSettingsWindow:Hide()
+        --Show Welcome page
+        local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
+        GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
+        GwWelcomePage.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
+        GwWelcomePage.changelog.scroll.slider:SetMinMaxValues(0, GwWelcomePage.changelog.scroll.scrollchild.text:GetStringHeight())
+        GwWelcomePage.changelog.scroll.slider.thumb:SetHeight(100)
+        GwWelcomePage.changelog.scroll.slider:SetValue(1)
+        GwWelcomePage.changelog:Hide()
+        GwWelcomePage.welcome:Show()
+        GwWelcomePage.changelogORwelcome:SetText(GwLocalization["CHANGELOG"])
+        if GetSetting("PIXEL_PERFECTION") then
+            GwWelcomePage.welcome.pixelbutton:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+        end
+        --Button
+        GwWelcomePage.movehud:SetScript("OnClick", function()
+            GwWelcomePage:Hide()
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+                return
+            end
+            GW.moveHudObjects()
+        end)
+        GwWelcomePage.welcome.pixelbutton:SetScript("OnClick", function(self)
+            if self:GetText() == GwLocalization["PIXEL_PERFECTION_ON"] then
+                GW.pixelPerfection()
+                SetSetting("PIXEL_PERFECTION", true)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+            else
+                SetCVar("useUiScale", true)
+                SetCVar("useUiScale", false)
+                SetSetting("PIXEL_PERFECTION", false)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
+            end
+        end)
+        --Save current Version
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
+    end
     fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
     fmGSWS:SetScript("OnClick", fnGSWS_OnClick)
     fmGSWD:SetScript("OnClick", fnGSWD_OnClick)
+    fmGSWWELCOME:SetScript("OnClick", fmGSWWELCOME_OnClick)
 
     sWindow:SetScript(
         "OnShow",
@@ -850,7 +894,13 @@ local function LoadSettings()
         GwLocalization["TOOLTIPS_DESC"],
         "TOOLTIPS_ENABLED",
         "GwSettingsModuleOption"
-    )  
+    )
+    addOption(
+        COMMUNITIES_ADD_TO_CHAT_DROP_DOWN_TITLE,
+        GwLocalization["CHAT_FRAME_DESC"],
+        "CHATFRAME_ENABLED",
+        "GwSettingsModuleOption"
+    )
     addOption(
         GwLocalization["QUESTING_FRAME"],
         GwLocalization["QUESTING_FRAME_DESC"],
@@ -978,6 +1028,7 @@ local function LoadSettings()
         "HUD_SPELL_SWAP",
         "GwSettingsHudOptions"
     )
+    addOption(GwLocalization["CHAT_FADE"], GwLocalization["CHAT_FADE_DESC"], "CHATFRAME_FADE", "GwSettingsHudOptions")
     addOption(
         GwLocalization["HIDE_EMPTY_SLOTS"],
         GwLocalization["HIDE_EMPTY_SLOTS_DESC"],
@@ -1018,6 +1069,12 @@ local function LoadSettings()
         DISPLAY_BORDERS,
         nil,
         "BORDER_ENABLED",
+        "GwSettingsHudOptions"
+    )
+    addOption(
+        CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC,
+        nil,
+        "DYNAMIC_CAM",
         "GwSettingsHudOptions"
     )
     addOption(
@@ -1301,10 +1358,18 @@ local function LoadSettings()
     )
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
-    for spellID,indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
+    for spellID, indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
         if not indicator[4] then
-            tinsert(auraKeys, spellID)
-            tinsert(auraVals, (GetSpellInfo(spellID)))
+            if IsSpellKnown(spellID) then
+                local name = ""
+                if string.len(GetSpellSubtext(spellID)) > 0 then 
+                    name = select(1, GetSpellInfo(spellID)) .. " (" .. GetSpellSubtext(spellID) ..")"
+                else
+                    name = select(1, GetSpellInfo(spellID))
+                end
+                tinsert(auraKeys, spellID)
+                tinsert(auraVals, name)
+            end
         end
     end
 

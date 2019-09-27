@@ -376,7 +376,7 @@ local function LoadBank()
     f:SetWidth(BANK_WINDOW_SIZE)
     updateBankIcons()
 
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
     f.headerString:SetText(BANK)
 
     f.spaceString:SetFont(UNIT_NAME_FONT, 12)

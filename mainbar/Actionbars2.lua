@@ -649,7 +649,7 @@ local function LoadActionBars()
     fgw:SetFrameRef("GwMultiBarRightMoveAble", GwMultiBarRightMoveAble)
     fgw:SetFrameRef("GwMultiBarLeftMoveAble", GwMultiBarLeftMoveAble)
     fgw:SetAttribute(
-        "_onstate-combat",
+        "_onstate-page",
         [=[
         local mbarL = self:GetFrameRef("MultiBarLeft")
         local mbarR = self:GetFrameRef("MultiBarRight")
@@ -657,7 +657,7 @@ local function LoadActionBars()
         local framePosR = self:GetFrameRef("GwMultiBarRightMoveAble")
         local protected = mbarL:IsProtected()
 
-        if newstate == "incombat" and protected then
+        if protected then
             mbarL:ClearAllPoints()
             mbarL:SetPoint(framePosL:GetPoint())
             mbarL:SetScale(framePosL:GetScale())
@@ -666,10 +666,9 @@ local function LoadActionBars()
             mbarR:SetPoint(framePosR:GetPoint())
             mbarR:SetScale(framePosR:GetScale())
         end
-
         ]=]
     )
-    RegisterStateDriver(fgw, "combat", "[combat] incombat; [overridebar] BonusBar; [vehicleui] low; none")
+    RegisterStateDriver(fgw, "page", "[vehicleui] 1; [possessbar] 2; [overridebar] 3; [shapeshift] 4; [bar:2] 5; [bar:3] 6; [bar:4] 7; [bar:5] 8; [bar:6] 9; [bonusbar:1] 10; [bonusbar:2] 11; [bonusbar:3] 12; [bonusbar:4] 13; 14")
      
     gw_hideBlizzardsActionbars()
     gwSetMicroButtons()

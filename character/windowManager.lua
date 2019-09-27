@@ -38,6 +38,7 @@ local function loadBaseFrame()
 
     GwCharacterWindow.WindowHeader:SetFont(DAMAGE_TEXT_FONT,20)
     GwCharacterWindow.WindowHeader:SetTextColor(255/255,241/255,209/255)
+    GwCharacterWindow:SetFrameLevel(5)
 
    GwCharacterWindowMoverFrame:Hide()
 

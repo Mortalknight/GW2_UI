@@ -437,7 +437,7 @@ local function LoadBag()
     f:SetWidth(BAG_WINDOW_SIZE)
     updateBagIcons()
 
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
     f.headerString:SetText(INVENTORY_TOOLTIP)
 
     f.spaceString:SetFont(UNIT_NAME_FONT, 12)

@@ -1433,10 +1433,14 @@ local function updateSkillItem(self)
     end
 end
 
-local function updateSkills()
+local skillsMaxValueScrollbar = 0
+function GWupdateSkills()
     local height = 50
     local y = 0
     local LastElement = nil
+
+    GwPaperSkills.scroll.scrollchild:SetSize(GwPaperSkills.scroll:GetSize())
+    GwPaperSkills.scroll.scrollchild:SetWidth(GwPaperSkills.scroll:GetWidth() - 20)
 
     for skillIndex = 1, GetNumSkillLines() do
         local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
@@ -1462,7 +1466,10 @@ local function updateSkills()
         f.bg:SetVertexColor(1, 1, 1, zebra)
         updateSkillItem(f)
     end
+    skillsMaxValueScrollbar = y / 1.5
     GwPaperSkills.scroll.scrollchild:SetHeight(y)
+    GwPaperSkills.scroll.slider:SetMinMaxValues(0, skillsMaxValueScrollbar)
+    GwPaperSkills.scroll.slider.thumb:SetHeight(100)
 end
 
 function gw_register_character_window()
@@ -1490,7 +1497,15 @@ function gw_register_character_window()
     GwPaperDollUpdateReputations()
 
     GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)
-    updateSkills()
+    GWupdateSkills()
+    GwPaperSkills.scroll.scrollchild:SetScript("OnMouseWheel", function(self, arg1)
+        local arg1 = -arg1 * 15
+        s = math.max(0, self:GetParent():GetVerticalScroll() + arg1)
+        if s > skillsMaxValueScrollbar then return end
+        self:GetParent().slider:SetValue(s)
+        self:GetParent():SetVerticalScroll(s)
+    end)
+    GwPaperSkills.scroll.slider:SetValue(1)
 
     CharacterFrame:SetScript("OnShow", function()
           HideUIPanel(CharacterFrame)

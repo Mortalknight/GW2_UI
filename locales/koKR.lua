@@ -215,25 +215,33 @@ local function GWUseThisLocalization()
 	GwLocalization["MINIMAP_POS"] = "Minimap position"
 	GwLocalization["MINIMAP_COORDS"] = "좌표"
 	GwLocalization["WORLD_MARKER_DESC"] = "Show menu for placing world markers when in raids."
-	GwLocalization["UP"] = "up"
-	GwLocalization["DOWN"] = "down"
-	GwLocalization["LEFT"] = "left"
-	GwLocalization["RIGHT"] = "right"
-	GwLocalization["TOP"] = "top"
-	GwLocalization["BOTTOM"] = "bottom"
-	GwLocalization["CENTER"] = "center"
+	GwLocalization["UP"] = "위"
+	GwLocalization["DOWN"] = "아래"
+	GwLocalization["LEFT"] = "왼쪽"
+	GwLocalization["RIGHT"] = "오른쪽"
+	GwLocalization["TOP"] = "상단"
+	GwLocalization["BOTTOM"] = "하단"
+	GwLocalization["CENTER"] = "중앙"
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])
 	GwLocalization["TOPRIGHT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["RIGHT"])
 	GwLocalization["BOTTOMLEFT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLocalization["LEFT"])
 	GwLocalization["BOTTOMRIGHT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLocalization["RIGHT"])
 	GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Health Remaining in percent"
-	GwLocalization["SHOW_THREAT_VALUE"] = "Show threat"
-	GwLocalization["MINIMAP_FPS"] = "Show FPS on minimap"
-	end
-	
-	if GetLocale() == "koKR" then
-		GWUseThisLocalization()
-	end
-	
-	-- After using this localization or deciding that we don"t need it, remove it from memory.
-	GWUseThisLocalization = nil
+	GwLocalization["SHOW_THREAT_VALUE"] = "위협 표시"
+	GwLocalization["MINIMAP_FPS"] = "미니맵에 FPS 표시"
+	GwLocalization["WELCOME_SPLASH_HEADER"] = "Welcome to GW2 UI"
+	GwLocalization["CHANGELOG"] = "Changelog"
+	GwLocalization["WELCOME"] = "Welcome"
+	GwLocalization["PIXEL_PERFECTION_ON"] = "Turn Pixel Perfection-Modus on"
+	GwLocalization["PIXEL_PERFECTION_OFF"] = "Turn Pixel Perfection-Modus off"
+	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] = "GW2 UI is a full user interface replacement. We have built the user interface with a modular approach, this means that if you dislike a certain part of the addon - or have another you prefer for that function - you can just disable that part, whilst keeping the rest of the interface intact.\nSome of the modules available to you are an immersive questing window, a full inventory replacement, as well as a full character window replacement. There are many more that you can enjoy, just take a look in the settings menu to see what's available to you!"
+	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "What is 'Pixel Perfection'?\nGW2 UI has a built-in setting called 'Pixel Perfection Mode'. What this means for you is that your user interface will look as was intended, with crisper textures and better scaling. Of course, you can toggle this off in the settings menu should you prefer."
+	GwLocalization["DISCORD"] = "Join Discord"
+end
+
+if GetLocale() == "koKR" then
+	GWUseThisLocalization()
+end
+
+-- After using this localization or deciding that we don"t need it, remove it from memory.
+GWUseThisLocalization = nil

@@ -59,6 +59,7 @@ local function GWUseThisLocalization()
 	GwLocalization["COMPASS_TOGGLE_DESC"] = "Aktiviere oder deaktiviere den Quest Tracker Kompass."
 	GwLocalization["DAMAGED_OR_BROKEN_EQUIPMENT"] = "Beschädigte oder zerstörte Ausrüstung"
 	GwLocalization["DEBUFF_DISPELL_DESC"] = "Zeige nur Schächungszauber an, die du entfernen kannst."
+	GwLocalization["DISCORD"] = "Discord beitreten"
 	GwLocalization["DYNAMIC_HUD"] = "Dynamisches HUD"
 	GwLocalization["DYNAMIC_HUD_DESC"] = "Aktiviere oder deaktivieren das dynamische Ändern des HUD Hintergrundes."
 	GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTED"] = "Ausgeruht "
@@ -229,6 +230,13 @@ local function GWUseThisLocalization()
 	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Zeige Combopunkt am Ziel unterhalb des Gesundheitsbalkens"
 	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Modus"
 	GwLocalization["PIXEL_PERFECTION_DESC"] = "Skaliert das UI in einen Pixel Perfection-Modus. Dieser ist abhängig von der Bildschirmauflösung."
+	GwLocalization["WELCOME_SPLASH_HEADER"] = "Willkommen beim GW2-UI"
+	GwLocalization["CHANGELOG"] = "Changelog"
+	GwLocalization["WELCOME"] = "Willkommen"
+	GwLocalization["PIXEL_PERFECTION_ON"] = "Pixel Perfection-Modus einschalten"
+	GwLocalization["PIXEL_PERFECTION_OFF"] = "Pixel Perfection-Modus ausschalten"
+	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] = "Das GW2-UI ist ein vollständiger UI-Ersatz. Wir haben die Benutzeroberfläche modular aufgebaut, dies bedeutet, wenn du einen bestimmten Teil des Addons nicht magst - oder du hast ein anders Addon, dass du für die Funktion bevorzugst - kannst du diesen Teil einfach deaktivieren, während der Rest des UI's intakt bleibt.\nEinige der Module, die dir zur Verfügung stehen, sind ein umfassendes Questfenster, ein vollständiger Inventarersatz sowie ein vollständiger Charakterfesterersatz. Es gibt viel mehr welche du erleben kannst. Wirf einfach ein Blick in die Einstellungen und schaue was zur Verfügung steht."
+	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Was ist 'Pixel Perfection'?\n\nGW2 UI verfügt über eine integrierte Einstellung namens 'Pixel Perfection Mode'. Das bedeutet für dich, dass das UI wir vorgesehen aussieht, mit gestochen scharfen Texturen und einer besseren Skalierung. Natürlich kannst du dies in den Einstellungen ausschalten, falls du dies vorziehst."
 	end
 	
 	

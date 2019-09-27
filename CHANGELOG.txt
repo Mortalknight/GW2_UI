@@ -2,6 +2,14 @@
 
 - Added level to QuestTracker
 - Added back Searchbar to bag and bank
+- Added Welcome- and Changelog Page
+- Added TitanClassic Support (MultiBarRight should not move a bit down)
+- Fix MultiBarLeft and Right finally (also when get attack in stealth)
+- Added back Chatwindow
+- Added back Dynamic-Cam Mode
+- Change debuff position on target and player if target/player has no buffs
+- Update locals (zhTW, ptBR)
+- Update Aura Indicator for raidframes
 
 0.9.1
 

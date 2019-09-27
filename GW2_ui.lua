@@ -44,6 +44,15 @@ local function disableMABags()
 end
 GW.AddForProfiling("index", "disableMABags", disableMABags)
 
+local function disableTitanPanelBarAdjusting()
+    local ourBars = GetSetting("ACTIONBARS_ENABLED")
+    if ourBars and IsAddOnLoaded("TitanClassic") then
+        TitanMovable_AddonAdjust("MultiBarRight", true)
+        TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
+        TitanMovable_AddonAdjust("MinimapCluster", true)
+    end
+end     
+
 local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
     local dummyPoint = GetDefault(settingsName)
     moveframe:ClearAllPoints()
@@ -515,6 +524,7 @@ local function pixelPerfection()
     local scale = 768 / screenHeight
     UIParent:SetScale(scale)
 end
+GW.pixelPerfection = pixelPerfection
 
 local SCALE_HUD_FRAMES = {
     "GwHudArtFrame",
@@ -552,7 +562,7 @@ GW.UpdateHudScale = UpdateHudScale
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         pixelPerfection()
-        DEFAULT_CHAT_FRAME:AddMessage("GW2_UI: Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
     end
 
     -- setup our frame pool
@@ -560,6 +570,9 @@ local function loadAddon(self)
 
     -- disable Move Anything bag handling
     disableMABags()
+
+    --disbale TitanPanelClaissc Adjustment
+    disableTitanPanelBarAdjusting()
 
     -- hook debug output if relevant
     --@debug@
@@ -609,6 +622,10 @@ local function loadAddon(self)
 
     if GetSetting("QUESTVIEW_ENABLED") then
         GW.LoadQuestview()
+    end
+
+    if GetSetting("CHATFRAME_ENABLED") then
+        GW.LoadChat()
     end
 
     --Create player hud
@@ -681,6 +698,12 @@ local function loadAddon(self)
         GW.LoadBuffs()
     end
 
+    if GetSetting("DYNAMIC_CAM") then
+        ConsoleExec("ActionCam basic")
+    else
+        ConsoleExec("ActionCam default")
+    end
+
     if GetSetting("USE_CHARACTER_WINDOW") then
         Gw_LoadWindows()
     end
@@ -698,6 +721,8 @@ local function loadAddon(self)
         GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
     end
 
+    --GW.LoadChatBubbles()
+
     --Add Shared Media
     --Font
     LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
@@ -712,6 +737,84 @@ local function loadAddon(self)
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\castinbar-white.tga")
+
+    --Check if we should show Welcomepage or Changelog
+    if GetSetting("GW2_UI_VERSION") == "WELCOME" then
+        --Show Welcome page
+        local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
+        GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
+        GwWelcomePage.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
+        GwWelcomePage.changelog.scroll.slider:SetMinMaxValues(0, GwWelcomePage.changelog.scroll.scrollchild.text:GetStringHeight())
+        GwWelcomePage.changelog.scroll.slider.thumb:SetHeight(100)
+        GwWelcomePage.changelog.scroll.slider:SetValue(1)
+        GwWelcomePage.changelog:Hide()
+        GwWelcomePage.welcome:Show()
+        GwWelcomePage.changelogORwelcome:SetText(GwLocalization["CHANGELOG"])
+        if GetSetting("PIXEL_PERFECTION") then
+            GwWelcomePage.welcome.pixelbutton:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+        end
+        --Button
+        GwWelcomePage.movehud:SetScript("OnClick", function()
+            GwWelcomePage:Hide()
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+                return
+            end
+            GW.moveHudObjects()
+        end)
+        GwWelcomePage.welcome.pixelbutton:SetScript("OnClick", function(self)
+            if self:GetText() == GwLocalization["PIXEL_PERFECTION_ON"] then
+                pixelPerfection()
+                SetSetting("PIXEL_PERFECTION", true)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+            else
+                SetCVar("useUiScale", true)
+                SetCVar("useUiScale", false)
+                SetSetting("PIXEL_PERFECTION", false)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
+            end
+        end)  
+        --Save current Version
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
+    elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
+        --Show Changelog
+        local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
+        GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
+        GwWelcomePage.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
+        GwWelcomePage.changelog.scroll.slider:SetMinMaxValues(0, GwWelcomePage.changelog.scroll.scrollchild.text:GetStringHeight())
+        GwWelcomePage.changelog.scroll.slider.thumb:SetHeight(100)
+        GwWelcomePage.changelog.scroll.slider:SetValue(1)
+        GwWelcomePage.changelog:Show()
+        GwWelcomePage.welcome:Hide()
+        GwWelcomePage.changelogORwelcome:SetText(GwLocalization["WELCOME"])
+        if GetSetting("PIXEL_PERFECTION") then
+            GwWelcomePage.welcome.pixelbutton:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+        end
+        --Button
+        GwWelcomePage.movehud:SetScript("OnClick", function()
+            GwWelcomePage:Hide()
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+                return
+            end
+            GW.moveHudObjects()
+        end)
+        GwWelcomePage.welcome.pixelbutton:SetScript("OnClick", function(self)
+            if self:GetText() == GwLocalization["PIXEL_PERFECTION_ON"] then
+                pixelPerfection()
+                SetSetting("PIXEL_PERFECTION", true)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_OFF"])
+            else
+                SetCVar("useUiScale", true)
+                SetCVar("useUiScale", false)
+                SetSetting("PIXEL_PERFECTION", false)
+                self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
+            end
+        end) 
+        --Save current Version
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)    
+    end
+
     self:SetScript("OnUpdate", gw_OnUpdate)
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)

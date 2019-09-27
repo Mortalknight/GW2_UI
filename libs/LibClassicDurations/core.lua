@@ -61,7 +61,7 @@ Usage example 2:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 23
+local MAJOR, MINOR = "LibClassicDurations", 24
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -451,7 +451,7 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
 
     if indirectRefreshSpells[spellName] then
         local refreshTable = indirectRefreshSpells[spellName]
-        if refreshTable.event == eventType then
+        if refreshTable.events[eventType] then
             local targetSpellID = refreshTable.targetSpellID
 
             local condition = refreshTable.condition
@@ -461,7 +461,6 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
             end
 
             RefreshTimer(srcGUID, dstGUID, targetSpellID)
-            return
         end
     end
 
