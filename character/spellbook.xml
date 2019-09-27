@@ -1,15 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    
+
     <Frame name="GwSpellbook" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
-        <Size x="608" y="621"></Size>
+            <Size x="853" y="627"></Size>
         <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-                    <Size x="608" y="621"></Size>
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed">
+                         <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
@@ -17,7 +17,7 @@
             </Layer>
             </Layers>
     </Frame>
-    
+
     <Button name="GwSpellbookButton" inherits="SecureFrameTemplate" virtual="true">
          <Size x="50" y="50"></Size>
         <Layers>
@@ -48,7 +48,7 @@
                         <Anchor point="LEFTTOP" relativePoint="LEFTTOP" x="65" y="-5"></Anchor>
                     </Anchors>
                 </FontString>
-                
+
                 <FontString parentKey="sub" text="Unknown" justifyH="LEFT" justifyV="TOP">
                     <Size x="120" y="40"></Size>
                     <Anchors>
@@ -62,15 +62,15 @@
                 self.title:SetFont(UNIT_NAME_FONT,12)
                 self.sub:SetFont(UNIT_NAME_FONT,11)
                 self.sub:SetTextColor(0.8,.8,.8,1)
-                
+
                 self.title:SetShadowColor(0,0,0,1)
                 self.sub:SetShadowColor(0,0,0,1)
-                
+
                 self.title:SetShadowOffset(1,-1)
                 self.sub:SetShadowOffset(1,-1)
             </OnLoad>
         </Scripts>
     </Button>
-    
-    
+
+
 </Ui>

@@ -1721,7 +1721,7 @@
                         self:RegisterUnitEvent("UNIT_DAMAGE", "player")
                         self:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player")
                         self:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
-                        self:RegisterUnitEvent("UNIT_AURA", "player") 
+                        self:RegisterUnitEvent("UNIT_AURA", "player")
                     </OnLoad>
                     <OnEvent>
                         gwPaperDollStats_OnEvent(self, event, ...)
@@ -1984,7 +1984,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
+                    <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
                      <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>

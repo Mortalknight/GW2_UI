@@ -18,6 +18,13 @@ windowsList[1] = {}
     windowsList[2]['ONCLICK'] =function() ToggleTalentFrame();  end;
     windowsList[2]['OPEN'] ='ToggleTalentFrame';
 
+    windowsList[3] = {}
+    windowsList[3]['ONLOAD'] = gw_register_spellbook_window;
+    windowsList[3]['SETTING_NAME'] ='USE_SPELLBOOK_WINDOW';
+    windowsList[3]['TAB_ICON'] ='tabicon_spellbook';
+    windowsList[3]['ONCLICK'] =function() ToggleSpellBook();  end;
+    windowsList[3]['OPEN'] ='ToggleSpellBook';
+
 local tabIndex = 1;
 
 
@@ -90,6 +97,10 @@ local function loadBaseFrame()
              self:SetAttribute('windowPanelOpen',0)
             return
         end
+        if value==3 and self:GetFrameRef('GwSpellbook')~=nil and  self:GetFrameRef('GwSpellbook'):IsVisible() then
+            self:SetAttribute('windowPanelOpen',0)
+            return
+        end
 
 
 
@@ -98,6 +109,9 @@ local function loadBaseFrame()
         end
         if self:GetFrameRef('GwCharacterWindowContainer')~=nil then
             self:GetFrameRef('GwCharacterWindowContainer'):Hide()
+        end
+        if self:GetFrameRef('GwSpellbook')~=nil then
+            self:GetFrameRef('GwSpellbook'):Hide()
         end
 
 
@@ -112,6 +126,9 @@ local function loadBaseFrame()
         end
         if value==2 and self:GetFrameRef('GwTalentFrame')~=nil then
             self:GetFrameRef('GwTalentFrame'):Show()
+        end
+        if value==3 and self:GetFrameRef('GwSpellbook')~=nil then
+            self:GetFrameRef('GwSpellbook'):Show()
         end
 
         if value==0 then
@@ -214,18 +231,37 @@ function Gw_LoadWindows()
                 self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',2)
 
             ]=]);
+        CreateFrame('Button','gwFrameCombatTogglerTalent',UIParent,'SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook')
+
+        gwFrameCombatTogglerTalent:SetAttribute('type', 'attribute')
+        gwFrameCombatTogglerTalent:SetAttribute('type2', 'attribute')
+        gwFrameCombatTogglerTalent:SetAttribute('attribute-frame', GwCharacterWindow)
+	    gwFrameCombatTogglerTalent:SetAttribute('attribute-name', 'windowPanelOpen')
+	    gwFrameCombatTogglerTalent:SetAttribute('attribute-value', 2)
+        --if GetBindingKey("TOGGLESPELLBOOK")~=nil then
+            --SetBinding(GetBindingKey("TOGGLESPELLBOOK"),"CLICK gwFrameCombatTogglerSpellbook:LeftButton");
+        --end
+        if GetBindingKey("TOGGLETALENTS")~=nil then
+            SetBinding(GetBindingKey("TOGGLETALENTS"),"CLICK gwFrameCombatTogglerTalent:RightButton");
+        end
+    end
+
+    if CharacterWindowTab3 then
+        CharacterWindowTab3:SetFrameRef('GwCharacterWindow',GwCharacterWindow)
+                CharacterWindowTab3:SetAttribute('_OnClick', [=[
+                self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',3)
+
+            ]=]);
         CreateFrame('Button','gwFrameCombatTogglerSpellbook',UIParent,'SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook')
 
         gwFrameCombatTogglerSpellbook:SetAttribute('type', 'attribute')
         gwFrameCombatTogglerSpellbook:SetAttribute('type2', 'attribute')
         gwFrameCombatTogglerSpellbook:SetAttribute('attribute-frame', GwCharacterWindow)
-	    gwFrameCombatTogglerSpellbook:SetAttribute('attribute-name', 'windowPanelOpen')
-	    gwFrameCombatTogglerSpellbook:SetAttribute('attribute-value', 2)
-        --if GetBindingKey("TOGGLESPELLBOOK")~=nil then
-            --SetBinding(GetBindingKey("TOGGLESPELLBOOK"),"CLICK gwFrameCombatTogglerSpellbook:LeftButton");
-        --end
+        gwFrameCombatTogglerSpellbook:SetAttribute('attribute-name', 'windowPanelOpen')
+        gwFrameCombatTogglerSpellbook:SetAttribute('attribute-value', 3)
+
         if GetBindingKey("TOGGLETALENTS")~=nil then
-            SetBinding(GetBindingKey("TOGGLETALENTS"),"CLICK gwFrameCombatTogglerSpellbook:RightButton");
+            SetBinding(GetBindingKey("TOGGLESPELLBOOK"),"CLICK gwFrameCombatTogglerSpellbook:RightButton");
         end
     end
 

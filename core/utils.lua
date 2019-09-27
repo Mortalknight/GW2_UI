@@ -28,6 +28,17 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+local function tableContains(t,val)
+    local b = false
+    for _,v in pairs(t) do
+        if v==val then
+            return true
+        end
+    end
+     return false
+end
+GW.tableContains = tableContains
+
 local function MapTable(T, fn, withKey)
     local t = {}
     for k,v in pairs(T) do
@@ -91,7 +102,7 @@ local function TimeCount(numSec, com)
     end
     if nSeconds >= 60 then
         return ceil(nSeconds / 60) .. "m"
-    end  
+    end
     if com ~= nil then
         local nMilsecs = math.max(math.floor((nSeconds * 10 ^ 1) + 0.5) / (10 ^ 1), 0)
         return nMilsecs .. "s"

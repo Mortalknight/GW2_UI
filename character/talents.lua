@@ -74,16 +74,7 @@ function DrawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
 end
 
 
-local function  spellBookMenu_onLoad(self)
-    self:RegisterEvent("SPELLS_CHANGED");
-    self:RegisterEvent("LEARNED_SPELL_IN_TAB");
-    self:RegisterEvent("SKILL_LINES_CHANGED");
-    self:RegisterEvent("PLAYER_GUILD_UPDATE");
-    --self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
-    --self:RegisterEvent("USE_GLYPH");
-    --self:RegisterEvent("CANCEL_GLYPH_CAST");
-    --self:RegisterEvent("ACTIVATE_GLYPH");
-end
+
 
 local function spellBookTab_onClick(self)
 
@@ -323,6 +314,11 @@ local function updateTalentTrees()
 
         local TalentFrame = _G["GwLegacyTalentTree"..f]
         TalentFrame.pointsSpent = pointsSpent
+        if pointsSpent<1 then
+            TalentFrame.background:SetDesaturated(true);
+        else
+            TalentFrame.background:SetDesaturated(false);
+        end
         TalentFrame.talentPoints = talentPoints ;
         TalentFrame.talentFrameId = f;
 
@@ -581,13 +577,13 @@ local function loadTalents()
 
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
-    GwTalentFrame.bottomBar.background:AddMaskTexture(mask)
+    --GwTalentFrame.bottomBar.background:AddMaskTexture(mask)
 
     for i = 1, GW.api.GetNumSpecializations() do
         TALENT_BRANCH_ARRAY[i]={}
         local container = CreateFrame('Button','GwLegacyTalentTree'..i,GwTalentFrame,'GwLegacyTalentTree')
 
-        container:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT', 284 * (i-1),0);
+        container:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT', (284 * (i-1)) + 5,-92);
         container.spec = i;
         local id, name, description, icon, background, role, primaryStat = GW.api.GetSpecializationInfo(i)
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\'..classID)
@@ -935,7 +931,7 @@ local function updateSpellbookTab()
             local spellIndex = i + offset
             local name, rank, icon, castingTime, minRange, maxRange, spellID =  GetSpellInfo(spellIndex,BOOKTYPE)
                 local skillType, spellId = GetSpellBookItemInfo(spellIndex,BOOKTYPE)
-
+                print(skillType)
 
                 local ispassive = IsPassiveSpell(spellID)
 
@@ -1226,8 +1222,8 @@ function gw_spell_buttonOnEnter(self)
         GameTooltip:AddLine(desc)
     end
 	if self.isFuture then
-		GameTooltip:AddLine(' ')
-		GameTooltip:AddLine(GwLocalization['REQUIRED_LEVEL_SPELL']..GetSpellLevelLearned(self.spellId), 1, 1, 1)
+	--	GameTooltip:AddLine(' ')
+	--	GameTooltip:AddLine(GwLocalization['REQUIRED_LEVEL_SPELL']..GetSpellLevelLearned(self.spellId), 1, 1, 1)
 	end
     GameTooltip:Show()
 end

@@ -22,6 +22,17 @@ locales/frFR.lua
 locales/zhCN.lua
 locales/itIT.lua
 
+character/data/ClassLoader.lua
+character/data/Druid.lua
+character/data/Hunter.lua
+character/data/Mage.lua
+character/data/Paladin.lua
+character/data/Priest.lua
+character/data/Rogue.lua
+character/data/Shaman.lua
+character/data/Warlock.lua
+character/data/Warrior.lua
+
 core/consts.lua
 core/utils.lua
 core/settings_default.lua
