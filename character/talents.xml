@@ -204,10 +204,10 @@
     </Button>
 
     <ScrollFrame name="GwSpellbookContainerTab" virtual="true">
-        <Size x="611" y="601"></Size>
+        <Size x="611" y="581"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="-37"></Anchor>
-            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="10"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
@@ -228,7 +228,7 @@
          </Layers>
         <Frames>
             <Frame parentKey="scrollchild" enableMouse="false">
-                <Size x="608" y="601"></Size>
+                <Size x="608" y="581"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
@@ -306,6 +306,7 @@
                  <OnLoad>
                      self:SetScrollChild(self.scrollchild)
                      self.slider:SetMinMaxValues(0,608)
+                     self.slider:SetValue(0)
                  </OnLoad>
              <OnMouseWheel>
                  if InCombatLockdown() then return end

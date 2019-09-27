@@ -136,14 +136,14 @@ local function getSpellBookHeader(tab)
          if (SpellbookHeaderIndex % 2) == 0 then
              local prev2 = _G['GwSpellbookContainerTab'..tab..'GwSpellbookActionBackground'..(SpellbookHeaderIndex - 2)]
              if prev2~=nil then
-                 f:SetPoint("TOPLEFT",prev2,"BOTTOMLEFT", 0,-15)
+                 f:SetPoint("TOPLEFT",prev2,"BOTTOMLEFT", 0,-5)
              else
                  f:SetPoint("TOPLEFT", prev,"TOPRIGHT", 0,0)
             end
             f.column = 1;
           else
               prev = _G['GwSpellbookContainerTab'..tab..'GwSpellbookActionBackground'..(SpellbookHeaderIndex - 2)]
-              f:SetPoint("TOPLEFT", prev,"BOTTOMLEFT", 0,-15)
+              f:SetPoint("TOPLEFT", prev,"BOTTOMLEFT", 0,-5)
           end
      else
          f.column = 2
@@ -357,7 +357,7 @@ local function updateSpellbookTab()
                     header = getSpellBookHeader(spellBookTabs)
                     header.title:SetText(name)
                     header.buttons = 1;
-                    header.height = 60
+                    header.height = 80
                 end
 
 
@@ -419,10 +419,11 @@ local function updateSpellbookTab()
             end
         end
 
+        scrollFrameHeight = _G['GwSpellbookContainerTab'..spellBookTabs]:GetHeight() - 50
         if column1>column2 then
-            _G['GwSpellbookContainerTab'..spellBookTabs].slider:SetMinMaxValues(0,math.max(0,column1 -_G['GwSpellbookContainerTab'..spellBookTabs]:GetHeight()))
+            _G['GwSpellbookContainerTab'..spellBookTabs].slider:SetMinMaxValues(0,math.max(0,column1 - scrollFrameHeight))
         else
-            _G['GwSpellbookContainerTab'..spellBookTabs].slider:SetMinMaxValues(0,math.max(0,column2 -_G['GwSpellbookContainerTab'..spellBookTabs]:GetHeight()))
+            _G['GwSpellbookContainerTab'..spellBookTabs].slider:SetMinMaxValues(0,math.max(0,column2 - scrollFrameHeight))
         end
 
 
