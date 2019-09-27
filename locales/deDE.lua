@@ -59,6 +59,7 @@ local function GWUseThisLocalization()
 	GwLocalization["COMPASS_TOGGLE_DESC"] = "Aktiviere oder deaktiviere den Quest Tracker Kompass."
 	GwLocalization["DAMAGED_OR_BROKEN_EQUIPMENT"] = "Beschädigte oder zerstörte Ausrüstung"
 	GwLocalization["DEBUFF_DISPELL_DESC"] = "Zeige nur Schächungszauber an, die du entfernen kannst."
+	GwLocalization["DISCORD"] = "Discord beitreten"
 	GwLocalization["DYNAMIC_HUD"] = "Dynamisches HUD"
 	GwLocalization["DYNAMIC_HUD_DESC"] = "Aktiviere oder deaktivieren das dynamische Ändern des HUD Hintergrundes."
 	GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTED"] = "Ausgeruht "

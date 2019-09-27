@@ -79,6 +79,7 @@ local function GWUseThisLocalization()
 	GwLocalization["DOWN"] = "下"
 	GwLocalization["DYNAMIC_HUD"] = "動態介面"
 	GwLocalization["DYNAMIC_HUD_DESC"] = "啟用或停用動態變換快捷列背景圖案。"
+	GwLocalization["DISCORD"] = "加入Discord"
 	GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTED"] = "休息加成"
 	GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTING"] = " (休息中)"
 	GwLocalization["EXPAND_ICONS"] = "大圖示"

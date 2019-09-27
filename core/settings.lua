@@ -679,6 +679,7 @@ local function LoadSettings()
     GwSettingsWindowHeaderString:SetText(CHAT_CONFIGURATION)
     GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
     GwSettingsWindowSave:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
+    GwSettingsWindowDiscord:SetText(GwLocalization["DISCORD"])
     WelcomeScreen:SetText(GwLocalization["WELCOME"])
 
     local fnGSWMH_OnClick = function(self, button)
@@ -1357,10 +1358,18 @@ local function LoadSettings()
     )
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
-    for spellID,indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
+    for spellID, indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
         if not indicator[4] then
-            tinsert(auraKeys, spellID)
-            tinsert(auraVals, (GetSpellInfo(spellID)))
+            if IsSpellKnown(spellID) then
+                local name = ""
+                if string.len(GetSpellSubtext(spellID)) > 0 then 
+                    name = select(1, GetSpellInfo(spellID)) .. " (" .. GetSpellSubtext(spellID) ..")"
+                else
+                    name = select(1, GetSpellInfo(spellID))
+                end
+                tinsert(auraKeys, spellID)
+                tinsert(auraVals, name)
+            end
         end
     end
 

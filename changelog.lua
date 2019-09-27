@@ -73,6 +73,7 @@ GW_CHANGELOGS = "- Fix position of exp bar\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n0.9.1\n\n" .. GW_CHANGELOGS
 
 --VERSION 0.9.5
+GW_CHANGELOGS = "- Update Aura Indicator for raidframes\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Update locals (zhTW, ptBR)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added level to QuestTracker\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added back Searchbar to bag and bank\n" .. GW_CHANGELOGS
