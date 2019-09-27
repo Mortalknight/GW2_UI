@@ -5,11 +5,109 @@ local SPELLS_PER_PAGE = 21;
 local MAX_SPELL_PAGES = ceil(MAX_SPELLS / SPELLS_PER_PAGE);
 local ACTIVE_PAGE = 1;
 
+function gw_spell_buttonOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT",0,0);
+    GameTooltip:ClearLines();
 
-local function spellBookTab_onClick(self)
+    if not self.isFlyout then
+		GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
+    else
+        local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId);
+        GameTooltip:AddLine(name)
+        GameTooltip:AddLine(desc)
+    end
+	if self.isFuture then
+	--	GameTooltip:AddLine(' ')
+	--	GameTooltip:AddLine(GwLocalization['REQUIRED_LEVEL_SPELL']..GetSpellLevelLearned(self.spellId), 1, 1, 1)
+	end
+    GameTooltip:Show()
+end
 
+function gw_spell_buttonOnLeave(self)
+    GameTooltip:Hide()
+end
+local function spellbookButton_onEvent(self)
+    if not GwTalentFrame:IsShown() then return end
+
+    local start, duration, enable = GetSpellCooldown(self.spellbookIndex, self.booktype)
+
+    if start ~= nil and duration ~= nil then
+        self.cooldown:SetCooldown(start, duration)
+    end
+
+    local autocastable, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
+
+    self.autocast:Hide()
+    if autostate then
+         _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].autocast:Show();
+    end
+
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].isPassive = ispassive;
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].isFuture = (skillType=='FUTURESPELL');
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].isFlyout = (skillType=='FLYOUT');
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].spellbookIndex = spellbookIndex
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].booktype = booktype
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:EnableMouse(true)
+
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].spellId =spellID
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetTexture(icon)
+
+     _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAlpha(1)
+
+
+    if booktype=='pet' then
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("type", "spell");
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("*spell", spellID)
+
+
+
+         _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("type2", "macro")
+         _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("*macrotext2", "/petautocasttoggle "..name)
+    else
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("type", "spell");
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("spell", spellID);
+    end
+
+
+
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].arrow:Hide()
+
+    _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetScript('OnEvent',spellbookButton_onEvent)
+
+
+    if skillType=='FUTURESPELL' then
+
+         _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetDesaturated(true);
+         _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetAlpha(0.5)
+    elseif skillType=='FLYOUT' then
+
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].arrow:Show()
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("type", "flyout");
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("flyout", spellID);
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAttribute("flyoutDirection", 'RIGHT');
+
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetDesaturated(false);
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetAlpha(1)
+    else
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetDesaturated(false);
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:SetAlpha(1)
+    end
+
+
+    if ispassive then
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight' )
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:AddMaskTexture(_G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].mask)
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline');
+    else
+
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight' )
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].icon:RemoveMaskTexture(_G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].mask)
+        _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border');
+    end
 
 end
+
+
 local function  spellBookMenu_onLoad(self)
     self:RegisterEvent("SPELLS_CHANGED");
     self:RegisterEvent("LEARNED_SPELL_IN_TAB");
@@ -337,6 +435,17 @@ local function updateSpellbookTab()
 
 end
 
+local function spellBookTab_onClick(self)
+
+    GwspellbookTab1.background:Hide()
+    GwspellbookTab2.background:Hide()
+    GwspellbookTab3.background:Hide()
+    GwspellbookTab4.background:Hide()
+    GwspellbookTab5.background:Hide()
+
+    self.background:Show()
+
+end
 
 function gw_register_spellbook_window()
     local classDisplayName, class, classID = UnitClass('player');
@@ -367,6 +476,10 @@ function gw_register_spellbook_window()
         menuItem.title:SetFont(DAMAGE_TEXT_FONT,14,"OUTLINE")
         menuItem.title:SetTextColor(0.7,0.7,0.5,1)
         menuItem.bg:SetVertexColor(1,1,1,zebra)
+
+        menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+        menuItem:SetNormalTexture(nil)
+        menuItem:SetText("")
 
         container.headers = {}
         local line = 0;
@@ -514,6 +627,12 @@ function gw_register_spellbook_window()
 
 
      hooksecurefunc('ToggleSpellBook',gwToggleSpellbook)
+
+     -- Remove blizzard default panel
+     SpellBookFrame:SetScript("OnShow", function()
+           HideUIPanel(SpellBookFrame)
+     end)
+     SpellBookFrame:UnregisterAllEvents()
 
     return GwSpellbook
 end

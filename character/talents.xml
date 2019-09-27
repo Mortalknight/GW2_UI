@@ -146,7 +146,7 @@
 
 
     </Frame>
-    <Button name="GwspellbookTab"  inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate" virtual="true">
+    <Button name="GwspellbookTab"  inherits="GwCharacterMenuBlank,SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="231" y="44"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -159,16 +159,22 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
+                    </Texture>
                     <Texture parentKey="bgstatic" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                         </Anchors>
                     </Texture>
-
-                </Texture>
-            </Layer>
-            <Layer level="BORDER">
+                    <Texture parentKey="background" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\button_hover" hidden="true" >
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Color r="1" g="1" b="0.6" a="0.1"/>
+                    </Texture>
+                </Layer>
+            <Layer level="OVERLAY">
                 <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\talents\tabicon_general">
                     <Size x="32" y="32"></Size>
                     <Anchors>
@@ -185,7 +191,16 @@
                 </FontString>
             </Layer>
         </Layers>
+        <Scripts>
+            <OnEnter>
+                GwStandardButton_OnEnter(self)
 
+            </OnEnter>
+            <OnLeave>
+                GwStandardButton_OnLeave(self)
+
+            </OnLeave>
+        </Scripts>
     </Button>
 
     <ScrollFrame name="GwSpellbookContainerTab" virtual="true">
