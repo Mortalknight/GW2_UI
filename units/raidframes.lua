@@ -1221,6 +1221,7 @@ local function LoadRaidFrames()
             ToggleRaidFramesPreview()
         end
     end)
+    GwToggleRaidPreview.label:SetText(PREVIEW)
 
     GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE")
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
