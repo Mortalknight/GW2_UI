@@ -8,6 +8,7 @@
 - Added back Chatwindow
 - Added back Dynamic-Cam Mode
 - Change debuff position on target and player if target/player has no buffs
+- Update locals (zhTW, ptBR)
 
 0.9.1
 
