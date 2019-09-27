@@ -178,7 +178,9 @@ local function setButtonStyle(ispassive,isFuture,spellID,skillType,icon,spellboo
      _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex]:SetAlpha(1)
 
      if rank~=nil then
-         _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].rank:SetText(rank)
+         --only digits for rank
+         local rankParsed = rank:gsub("%a", "")
+         _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].rank:SetText(rankParsed)
      else
          _G['GwSpellbookTab'..tab..'Actionbutton'..spellButtonIndex].rank:SetText("")
      end
@@ -311,10 +313,8 @@ local function updateSpellbookTab()
             local name, rank, icon, castingTime, minRange, maxRange, spellID =  GetSpellInfo(spellIndex,BOOKTYPE)
                 local skillType, spellId = GetSpellBookItemInfo(spellIndex,BOOKTYPE)
 
-
+                rank = GetSpellSubtext(spellID)
                 local ispassive = IsPassiveSpell(spellID)
-
-                --
 
                 local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE);
                 local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
@@ -338,10 +338,11 @@ local function updateSpellbookTab()
 
                     end
                 end
-                local rank
+        --[[        local rank
                 if not needNewHeader then
                     rank = header.buttons + 1
                 end
+                ]]
 
                 local mainButton = setButtonStyle(ispassive,isFuture,spellID,skillType,icon,spellIndex,BOOKTYPE,spellBookTabs,name,rank)
                 spellButtonIndex = spellButtonIndex + 1
@@ -379,7 +380,10 @@ local function updateSpellbookTab()
                 local lastBox = mainButton
                 for _,unknownSpellID in pairs(unlearnd) do
 
-                    local unKnownChildButton = setButtonStyle(ispassive,isFuture,unknownSpellID.id,'FUTURESPELL',icon,spellIndex,BOOKTYPE,spellBookTabs,name,header.buttons+1,unlearnd,unknownSpellID.level)
+                    local futureRank = GetSpellSubtext(unknownSpellID.id)
+
+                    local unKnownChildButton = setButtonStyle(ispassive,isFuture,unknownSpellID.id,'FUTURESPELL',icon,spellIndex,BOOKTYPE,spellBookTabs,name,futureRank,unknownSpellID.level)
+
                     knowSpells[#knowSpells +1] = unknownSpellID.id
                     unKnownChildButton:ClearAllPoints()
                     if header.buttons==6 then
