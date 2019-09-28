@@ -25,7 +25,7 @@ function gw_spell_buttonOnEnter(self)
         if self.requiredLevel <= UnitLevel("Player") then
             GameTooltip:AddLine("|c0423ff2f" .. AVAILABLE .. "|r", 1, 1, 1)
         else
-            GameTooltip:AddLine("|c00ff0000" .. UNLOCKS_AT_LABEL .. GARRISON_TIER .. " " .. self.requiredLevel .. "|r", 1, 1, 1)
+            GameTooltip:AddLine("|c00ff0000" .. UNLOCKS_AT_LABEL .. " "..LEVEL .. " " .. self.requiredLevel .. "|r", 1, 1, 1)
         end
     end
     GameTooltip:Show()
@@ -166,6 +166,11 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].rank:SetText("")
     end
     if level ~= nil then
+        if level>UnitLevel("player") then
+            _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-lock");
+        else
+            _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-unlock");
+        end
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:Show()
     else
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:Hide()
