@@ -28,7 +28,7 @@ GW.SpellsByLevel = {
 		{id = 633, cost = 300},
 		{id = 20287, cost = 300, requiredIds = {21084}}
 	},
-	[12] = {{id = 19834, cost = 1000, requiredIds = {19740}}, {id = 20162, cost = 1000, requiredIds = {21082}}},
+	[12] = {{id = 19834, cost = 1000, requiredIds = {19740}}, {id = 20162, cost = 1000, requiredIds = {21082}}, {id = 7328, cost = 0, requiredQuestIds = {1788, 1785}}},
 	[14] = {{id = 19742, cost = 2000}, {id = 647, cost = 2000, requiredIds = {639}}},
 	[16] = {{id = 7294, cost = 3000}, {id = 25780, cost = 3000}},
 	[18] = {
@@ -48,9 +48,10 @@ GW.SpellsByLevel = {
 		{id = 5599, cost = 5000, requiredIds = {1022}},
 		{id = 19850, cost = 5000, requiredIds = {19742}},
 		{id = 5588, cost = 5000, requiredIds = {853}},
-		{id = 10322, cost = 5000},
+		{id = 10322, cost = 5000, requiredIds = {7328}},
 		{id = 2878, cost = 5000}
 	},
+	--[25] = {{id = 20375, cost = 0, requiredTalentId = 20375}}, --Talent
 	[26] = {
 		{id = 1038, cost = 6000},
 		{id = 19939, cost = 6000, requiredIds = {19750}},
@@ -142,7 +143,7 @@ GW.SpellsByLevel = {
 	[52] = {
 		{id = 19838, cost = 34000, requiredIds = {19837}},
 		{id = 10313, cost = 34000, requiredIds = {10312}},
-		{id = 25782, cost = 46000, requiredIds = {19838}},
+		{id = 25782, cost = 46000},
 		{id = 24274, cost = 34000, requiredIds = {24275}},
 		{id = 20308, cost = 34000, requiredIds = {20307}},
 		{id = 19896, cost = 34000, requiredIds = {19895}},
@@ -151,7 +152,7 @@ GW.SpellsByLevel = {
 	[54] = {
 		{id = 20729, cost = 40000, requiredIds = {6940}},
 		{id = 19854, cost = 40000, requiredIds = {19853}},
-		{id = 25894, cost = 40000, requiredIds = {19854}},
+		{id = 25894, cost = 40000},
 		{id = 10308, cost = 40000, requiredIds = {5589}},
 		{id = 10329, cost = 40000, requiredIds = {10328}}
 	},
@@ -174,10 +175,10 @@ GW.SpellsByLevel = {
 		{id = 19900, cost = 46000, requiredIds = {19899}},
 		{id = 25898, cost = 2070, requiredTalentId = 20217},
 		{id = 25890, cost = 46000, requiredIds = {19979}},
-		{id = 25916, cost = 41400},
+		{id = 25916, cost = 41400, requiredIds = {25782}},
 		{id = 25895, cost = 46000, requiredIds = {1038}},
 		{id = 25899, cost = 2070, requiredIds = {20914}, requiredTalentId = 20911},
-		{id = 25918, cost = 46000},
+		{id = 25918, cost = 46000, requiredIds = {25894}},
 		{id = 24239, cost = 46000, requiredIds = {24274}},
 		{id = 20928, cost = 2070, requiredIds = {20927}, requiredTalentId = 20925},
 		{id = 10318, cost = 46000, requiredIds = {2812}},

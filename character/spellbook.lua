@@ -25,7 +25,11 @@ function gw_spell_buttonOnEnter(self)
     else
         GameTooltip:SetSpellByID(self.spellId)
         GameTooltip:AddLine(' ')
-        GameTooltip:AddLine("|cffff0000" .. REQUIRES_LABEL ..GARRISON_TIER .. " " .. self.requiredLevel .. "|r", 1, 1, 1)
+        if self.requiredLevel <= UnitLevel("Player") then
+            GameTooltip:AddLine("|c0423ff2f" .. AVAILABLE .. "|r", 1, 1, 1)
+        else
+            GameTooltip:AddLine("|c00ff0000" .. UNLOCKS_AT_LABEL .. GARRISON_TIER .. " " .. self.requiredLevel .. "|r", 1, 1, 1)
+        end
     end
     GameTooltip:Show()
 end
@@ -251,16 +255,35 @@ local function setButtonStyle(ispassive,isFuture,spellID,skillType,icon,spellboo
 
 end
 
-local function findHigherRank(t,spellID)
+local function findHigherRank(t, spellID, talentID)
     local si = spellID
-    for k,v in pairs(GW.SpellsByLevel) do
-        for _,spell in pairs(v) do
-            if spell.requiredIds~=nil then
-                for _,rid in pairs(spell.requiredIds) do
-                    if rid == si  then
+
+    for k, v in pairs(GW.SpellsByLevel) do
+        for _, spell in pairs(v) do
+            if spell.requiredIds ~= nil and spell.requiredTalentId == nil then
+                for _, rid in pairs(spell.requiredIds) do
+                    if rid == si then
                         if not IsSpellKnown(spell.id) then
-                            t[#t + 1] = {id=spell.id,level=k}
-                            t = findHigherRank(t,spell.id)
+                            t[#t + 1] = {id = spell.id, level = k}
+                            t = findHigherRank(t, spell.id)
+                            return t
+                        end
+                    end
+                end
+            elseif spell.requiredTalentId ~= nil and spell.requiredIds == nil then
+                if spell.requiredTalentId == si then
+                    if not IsSpellKnown(spell.id) then
+                        t[#t + 1] = {id = spell.id, level = k}
+                        t = findHigherRank(t, spell.id, spell.requiredTalentId)
+                        return t
+                    end
+                end
+            elseif spell.requiredTalentId ~= nil and spell.requiredIds ~= nil and talentID == spell.requiredTalentId  then
+                for _, rid in pairs(spell.requiredIds) do
+                    if rid == si and spell.requiredTalentId == talentID then
+                        if not IsSpellKnown(spell.id) then
+                            t[#t + 1] = {id = spell.id, level = k}
+                            t = findHigherRank(t, spell.id, spell.requiredTalentId)
                             return t
                         end
                     end
@@ -268,188 +291,169 @@ local function findHigherRank(t,spellID)
             end
         end
     end
+
     return t
 end
 
 local knowSpells = {}
 local function updateSpellbookTab()
-
-
     if InCombatLockdown() then return end
-
-
-    for spellBookTabs=1,5 do
-        local name, texture, offset, numSpells,offSpecID,shouldHide,specID = GetSpellTabInfo(spellBookTabs)
-
-
+    for spellBookTabs = 1, 5 do
+        local name, texture, offset, numSpells, offSpecID, shouldHide, specID = GetSpellTabInfo(spellBookTabs)
         local flyOuts = {}
-        SpellbookHeaderIndex = 1
-        spellButtonIndex = 1;
         local BOOKTYPE = 'spell'
-        if spellBookTabs==5 then
+
+        SpellbookHeaderIndex = 1
+        spellButtonIndex = 1
+
+        if spellBookTabs == 5 then
             BOOKTYPE='pet'
-            numSpells, petToken = HasPetSpells();
+            numSpells, petToken = HasPetSpells()
             offset = 0
             name = PET
             texture = "Interface\\AddOns\\GW2_UI\\textures\\talents\\tabicon_pet"
-           if numSpells==nil then
+            if numSpells == nil then
                 numSpells = 0
             end
         end
-        _G['GwspellbookTab'..spellBookTabs].icon:SetTexture(texture)
-        _G['GwspellbookTab'..spellBookTabs].title:SetText(name)
-        _G['GwSpellbookContainerTab'..spellBookTabs].title:SetText(name)
+        _G['GwspellbookTab' .. spellBookTabs].icon:SetTexture(texture)
+        _G['GwspellbookTab' .. spellBookTabs].title:SetText(name)
+        _G['GwSpellbookContainerTab' .. spellBookTabs].title:SetText(name)
 
-        local boxIndex = 1;
+        local boxIndex = 1
         local y = 1
         local fPassive = false
-        local indexToPassive =nil
+        local indexToPassive = nil
         local lastSkillid = 0
         local lastButton
         local header
         local headerPositionY = 0
         local needNewHeader = true
 
-        local column1 = 0;
-        local column2 = 0;
+        local column1 = 0
+        local column2 = 0
 
-        for i=1,numSpells do
-
+        for i = 1, numSpells do
             local hasHigherRank = false
             local spellIndex = i + offset
-            local name, rank, icon, castingTime, minRange, maxRange, spellID =  GetSpellInfo(spellIndex,BOOKTYPE)
-                local skillType, spellId = GetSpellBookItemInfo(spellIndex,BOOKTYPE)
+            local name, rank, icon, castingTime, minRange, maxRange, spellID =  GetSpellInfo(spellIndex, BOOKTYPE)
+            local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
+            local ispassive = IsPassiveSpell(spellID)
+            local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
+            local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
-                rank = GetSpellSubtext(spellID)
-                local ispassive = IsPassiveSpell(spellID)
+            rank = GetSpellSubtext(spellID)
 
-                local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE);
-                local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
+            --find requiredTalentID if needed
+            local requiredTalentID = nil
+            for k, v in pairs(GW.SpellsByLevel) do
+                for _, spell in pairs(v) do
+                    if spell.id == spellID and spell.requiredTalentId ~= nil then
+                        requiredTalentID = spell.requiredTalentId
+                    end
+                end
+            end
 
-                needNewHeader = true
-                for k,v in pairs(GW.SpellsByLevel) do
-                    for _,spell in pairs(v) do
-                        local contains
-                        if spell.requiredIds~=nil then
-                            if spell.id==spellID then
-                                contains = GW.tableContains(spell.requiredIds,lastSkillid)
-                            end
-                            if contains then
-                                needNewHeader = false
-                            end
+            needNewHeader = true
+            for k, v in pairs(GW.SpellsByLevel) do
+                for _, spell in pairs(v) do
+                    local contains
+                    if spell.requiredIds ~= nil then
+                        if spell.id == spellID then
+                            contains = GW.tableContains(spell.requiredIds, lastSkillid)
                         end
-
+                        if contains then
+                            needNewHeader = false
+                        end
                     end
                 end
-        --[[        local rank
-                if not needNewHeader then
-                    rank = header.buttons + 1
-                end
-                ]]
-                local mainButton = setButtonStyle(ispassive,isFuture,spellID,skillType,icon,spellIndex,BOOKTYPE,spellBookTabs,name,rank)
-                spellButtonIndex = spellButtonIndex + 1
-                boxIndex = boxIndex + 1;
-                knowSpells[#knowSpells +1] = spellID
+            end
 
-                local unlearnd = {}
+            local mainButton = setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
+            spellButtonIndex = spellButtonIndex + 1
+            boxIndex = boxIndex + 1
+            knowSpells[#knowSpells + 1] = {id = spellID, rqTalentID = requiredTalentID}
+            if knowSpells[#knowSpells].rqTalentID == lastSkillid then
+                needNewHeader = false
+            end
 
-                unlearnd = findHigherRank(unlearnd,spellID)
+            local unlearnd = {}
+            unlearnd = findHigherRank(unlearnd, spellID, requiredTalentID)
 
+            if needNewHeader then
+                header = getSpellBookHeader(spellBookTabs)
+                header.title:SetText(name)
+                header.buttons = 1
+                header.height = 80
+            end
 
-                if needNewHeader then
-                    header = getSpellBookHeader(spellBookTabs)
-                    header.title:SetText(name)
-                    header.buttons = 1;
-                    header.height = 80
-                end
-
-
-                mainButton:ClearAllPoints()
-                if needNewHeader then
-                    mainButton:SetPoint("TOPLEFT",header,"TOPLEFT",15,-35)
-                    header.firstButton = mainButton
+            mainButton:ClearAllPoints()
+            if needNewHeader then
+                mainButton:SetPoint("TOPLEFT", header, "TOPLEFT", 15, -35)
+                header.firstButton = mainButton
+            else
+                if header.buttons == 6 then
+                    mainButton:SetPoint("TOPLEFT", header.firstButton, "BOTTOMLEFT", 0, -5)
+                    header.height = header.height + 45
                 else
-
-                    if header.buttons==6 then
-                        mainButton:SetPoint("TOPLEFT",header.firstButton,"BOTTOMLEFT",0,-5)
-                        header.height =header.height + 45
-                    else
-                        mainButton:SetPoint("LEFT",lastButton,"RIGHT",5,0)
-                    end
-                    header.buttons =header.buttons +1;
+                    mainButton:SetPoint("LEFT", lastButton, "RIGHT", 5, 0)
                 end
+                header.buttons = header.buttons + 1
+            end
 
-                local lastBox = mainButton
-                for _,unknownSpellID in pairs(unlearnd) do
-                    local futureRank = GetSpellSubtext(unknownSpellID.id)
-                    local unKnownChildButton = setButtonStyle(ispassive,isFuture,unknownSpellID.id,'FUTURESPELL',icon,spellIndex,BOOKTYPE,spellBookTabs,name,futureRank,unknownSpellID.level)
+            local lastBox = mainButton
+            for _, unknownSpellID in pairs(unlearnd) do
+                local futureRank = GetSpellSubtext(unknownSpellID.id)
+                local unKnownChildButton = setButtonStyle(ispassive, isFuture, unknownSpellID.id, 'FUTURESPELL', icon, spellIndex, BOOKTYPE, spellBookTabs, name, futureRank, unknownSpellID.level)
 
-                    knowSpells[#knowSpells +1] = unknownSpellID.id
-                    unKnownChildButton:ClearAllPoints()
-                    if header.buttons==6 then
-                        unKnownChildButton:SetPoint("TOPLEFT",header.firstButton,"BOTTOMLEFT",0,-5)
-                        header.height =header.height + 45
-                    else
-                        unKnownChildButton:SetPoint("LEFT",lastBox,"RIGHT",5,0)
-                    end
-                    spellButtonIndex = spellButtonIndex + 1
-                    boxIndex = boxIndex + 1;
-                    lastBox = unKnownChildButton
-                    header.buttons =header.buttons +1;
+                knowSpells[#knowSpells + 1] = {id = unknownSpellID.id, rqTalentID = nil}
+                unKnownChildButton:ClearAllPoints()
+                if header.buttons == 6 then
+                    unKnownChildButton:SetPoint("TOPLEFT", header.firstButton, "BOTTOMLEFT", 0, -5)
+                    header.height = header.height + 45
+                else
+                    unKnownChildButton:SetPoint("LEFT", lastBox, "RIGHT", 5, 0)
                 end
-
-
-
-
-                header:SetHeight(header.height )
-
-
-
-
-                lastSkillid = spellID
-                lastButton = mainButton
-
-
-
-
-
+                spellButtonIndex = spellButtonIndex + 1
+                boxIndex = boxIndex + 1
+                lastBox = unKnownChildButton
+                header.buttons = header.buttons +1
+            end
+            header:SetHeight(header.height)
+            lastSkillid = spellID
+            lastButton = mainButton
         end
 
-        for _, h in pairs(_G['GwSpellbookContainerTab'..spellBookTabs].headers) do
-            if h.column==1 then
+        for _, h in pairs(_G['GwSpellbookContainerTab' .. spellBookTabs].headers) do
+            if h.column == 1 then
                 column1 = column1 + h.height
             else
                 column2 = column2 + h.height
             end
         end
 
-        scrollFrameHeight = _G['GwSpellbookContainerTab'..spellBookTabs]:GetHeight() - 50
-        if column1>column2 then
-            _G['GwSpellbookContainerTab'..spellBookTabs].slider:SetMinMaxValues(0,math.max(0,column1 - scrollFrameHeight))
+        scrollFrameHeight = _G['GwSpellbookContainerTab' .. spellBookTabs]:GetHeight() - 50
+        if column1 > column2 then
+            _G['GwSpellbookContainerTab' .. spellBookTabs].slider:SetMinMaxValues(0, math.max(0, column1 - scrollFrameHeight))
         else
-            _G['GwSpellbookContainerTab'..spellBookTabs].slider:SetMinMaxValues(0,math.max(0,column2 - scrollFrameHeight))
+            _G['GwSpellbookContainerTab' .. spellBookTabs].slider:SetMinMaxValues(0, math.max(0, column2 - scrollFrameHeight))
         end
 
-
-        for i=boxIndex,100 do
-            _G['GwSpellbookTab'..spellBookTabs..'Actionbutton'..i]:SetAlpha(0)
-            _G['GwSpellbookTab'..spellBookTabs..'Actionbutton'..i]:EnableMouse(false)
-            _G['GwSpellbookTab'..spellBookTabs..'Actionbutton'..boxIndex]:SetScript('OnEvent',nil)
+        for i = boxIndex, 100 do
+            _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:SetAlpha(0)
+            _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:EnableMouse(false)
+            _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. boxIndex]:SetScript('OnEvent', nil)
         end
     end
-
 end
 
 local function spellBookTab_onClick(self)
-
     GwspellbookTab1.background:Hide()
     GwspellbookTab2.background:Hide()
     GwspellbookTab3.background:Hide()
     GwspellbookTab4.background:Hide()
     GwspellbookTab5.background:Hide()
-
     self.background:Show()
-
 end
 
 function gw_register_spellbook_window()
