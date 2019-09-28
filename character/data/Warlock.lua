@@ -37,7 +37,7 @@ GW.SpellsByLevel = {
 	[6] = {{id = 1454, cost = 100}, {id = 695, cost = 100, requiredIds = {686}}},
 	[8] = {{id = 980, cost = 200}, {id = 5782, cost = 200}},
 	[10] = {
-		{id = 6201, cost = 300, requiredIds = {1120}},
+		{id = 6201, cost = 300},
 		{id = 696, cost = 300, requiredIds = {687}},
 		{id = 1120, cost = 300},
 		{id = 707, cost = 300, requiredIds = {348}}
@@ -50,7 +50,7 @@ GW.SpellsByLevel = {
 	[14] = {{id = 6222, cost = 900, requiredIds = {172}}, {id = 704, cost = 900}, {id = 689, cost = 900}},
 	[16] = {{id = 1455, cost = 1200, requiredIds = {1454}}, {id = 5697, cost = 1200}},
 	[18] = {
-		{id = 693, cost = 1500, requiredIds = {1120}},
+		{id = 693, cost = 1500},
 		{id = 1014, cost = 1500, requiredIds = {980}},
 		{id = 5676, cost = 1500}
 	},
@@ -113,7 +113,7 @@ GW.SpellsByLevel = {
 	},
 	[36] = {
 		{id = 17951, cost = 9000, requiredIds = {6366}},
-		{id = 2362, cost = 9000, requiredIds = {1120}},
+		{id = 2362, cost = 9000},
 		{id = 3700, cost = 9000, requiredIds = {3699}},
 		{id = 11687, cost = 9000, requiredIds = {1456}},
 		{id = 7641, cost = 9000, requiredIds = {1106}}
@@ -159,7 +159,7 @@ GW.SpellsByLevel = {
 	},
 	[48] = {
 		{id = 18930, cost = 700, requiredTalentId = 17962},
-		{id = 17727, cost = 14000, requiredIds = {2362}},
+		{id = 17727, cost = 14000},
 		{id = 11712, cost = 14000, requiredIds = {11711}},
 		{id = 18870, cost = 700, requiredIds = {18869}, requiredTalentId = 17877},
 		{id = 18880, cost = 700, requiredIds = {18879}, requiredTalentId = 18265},
