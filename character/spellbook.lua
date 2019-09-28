@@ -516,7 +516,7 @@ function gw_register_spellbook_window()
             self:Show()
         end
     ]=])
-    RegisterStateDriver(GwspellbookTab5, "petstate", "[target=pet,noexists] nopet" .. " [target=pet,help] hasPet")
+    RegisterStateDriver(GwspellbookTab5, "petstate", "[target=pet,noexists] nopet; [target=pet,help] hasPet;")
 
 
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab1',GwSpellbookContainerTab1)
