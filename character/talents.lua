@@ -8,80 +8,7 @@ local MAX_NUM_TALENT_TIERS = 8
 local NUM_TALENT_COLUMNS = 4
 local TALENT_BRANCH_ARRAY = {}
 
-
-GwActiveSpellTab = 2;
-
-
-
-TAXIROUTE_LINEFACTOR = 32/30; -- Multiplying factor for texture coordinates
-TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2; -- Half o that
-
--- T        - Texture
--- C        - Canvas Frame (for anchoring)
--- sx,sy    - Coordinate of start of line
--- ex,ey    - Coordinate of end of line
--- w        - Width of line
--- relPoint - Relative point on canvas to interpret coords (Default BOTTOMLEFT)
-
-
-function DrawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
-   if (not relPoint) then relPoint = "BOTTOMLEFT"; end
-
-   -- Determine dimensions and center point of line
-   local dx,dy = ex - sx, ey - sy;
-   local cx,cy = (sx + ex) / 2, (sy + ey) / 2;
-
-   -- Normalize direction if necessary
-   if (dx < 0) then
-      dx,dy = -dx,-dy;
-   end
-
-   -- Calculate actual length of line
-   local l = sqrt((dx * dx) + (dy * dy));
-
-   -- Quick escape if it's zero length
-   if (l == 0) then
-      T:SetTexCoord(0,0,0,0,0,0,0,0);
-      T:SetPoint("BOTTOMLEFT", C, relPoint, cx,cy);
-      T:SetPoint("TOPRIGHT",   C, relPoint, cx,cy);
-      return;
-   end
-
-   -- Sin and Cosine of rotation, and combination (for later)
-   local s,c = -dy / l, dx / l;
-   local sc = s * c;
-
-   -- Calculate bounding box size and texture coordinates
-   local Bwid, Bhgt, BLx, BLy, TLx, TLy, TRx, TRy, BRx, BRy;
-   if (dy >= 0) then
-      Bwid = ((l * c) - (w * s)) * TAXIROUTE_LINEFACTOR_2;
-      Bhgt = ((w * c) - (l * s)) * TAXIROUTE_LINEFACTOR_2;
-      BLx, BLy, BRy = (w / l) * sc, s * s, (l / w) * sc;
-      BRx, TLx, TLy, TRx = 1 - BLy, BLy, 1 - BRy, 1 - BLx;
-      TRy = BRx;
-   else
-      Bwid = ((l * c) + (w * s)) * TAXIROUTE_LINEFACTOR_2;
-      Bhgt = ((w * c) + (l * s)) * TAXIROUTE_LINEFACTOR_2;
-      BLx, BLy, BRx = s * s, -(l / w) * sc, 1 + (w / l) * sc;
-      BRy, TLx, TLy, TRy = BLx, 1 - BRx, 1 - BLx, 1 - BLy;
-      TRx = TLy;
-   end
-
-   -- Set texture coordinates and anchors
-   T:ClearAllPoints();
-   T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy);
-   T:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
-   T:SetPoint("TOPRIGHT",   C, relPoint, cx + Bwid, cy + Bhgt);
-end
-
-
-
-
-
-
-
-local function hookTalentButton(self,container, row, index)
-
+local function hookTalentButton(self, container, row, index)
     local w = container:GetWidth()
     local h = container:GetHeight()
     local x = (w / NUM_TALENT_COLUMNS) * (index - 1)
@@ -92,7 +19,7 @@ local function hookTalentButton(self,container, row, index)
 
     local mask = UIParent:CreateMaskTexture()
 
-    mask:SetPoint("CENTER", self, 'CENTER', 0,0 )
+    mask:SetPoint("CENTER", self, 'CENTER', 0, 0)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(self:GetSize())
     self.mask = mask
@@ -213,7 +140,7 @@ local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesa
 		requirementsMet = nil
 	end
 	for i = 1, select('#', ...), 3 do
-		tier = select(i, ...);
+		tier = select(i, ...)
 		column = select(i + 1, ...)
 		isLearnable = select(i + 2, ...)
 		if not isLearnable or forceDesaturated then
@@ -228,20 +155,20 @@ local function updateTalentTrees()
     if InCombatLockdown() then return end
 
     for f = 1, GW.api.GetNumSpecializations() do
-        local forceDesaturated, tierUnlocked;
-        local talentPoints = UnitCharacterPoints("player");
+        local forceDesaturated, tierUnlocked
+        local talentPoints = UnitCharacterPoints("player")
         local name, iconTexture, pointsSpent = GetTalentTabInfo(f)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
 
         TalentFrame.pointsSpent = pointsSpent
 
-        if pointsSpent<1 then
-            TalentFrame.background:SetDesaturated(true);
+        if pointsSpent < 1 then
+            TalentFrame.background:SetDesaturated(true)
         else
-            TalentFrame.background:SetDesaturated(false);
+            TalentFrame.background:SetDesaturated(false)
         end
-        TalentFrame.talentPoints = talentPoints ;
-        TalentFrame.talentFrameId = f;
+        TalentFrame.talentPoints = talentPoints 
+        TalentFrame.talentFrameId = f
 
 
         TalentFrame.info.title:SetText(name)
@@ -354,8 +281,8 @@ local function loadTalents()
         TALENT_BRANCH_ARRAY[i] = {}
         local container = CreateFrame('Button', 'GwLegacyTalentTree' .. i, GwTalentFrame, 'GwLegacyTalentTree')
 
-        container:SetPoint('TOPLEFT',GwTalentFrame,'TOPLEFT', (284 * (i-1)) + 5,-92);
-        container.spec = i;
+        container:SetPoint('TOPLEFT', GwTalentFrame, 'TOPLEFT', (284 * (i - 1)) + 5, -92)
+        container.spec = i
 
         local id, name, description, icon, background, role, primaryStat = GW.api.GetSpecializationInfo(i)
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
@@ -375,28 +302,24 @@ local function loadTalents()
 end
 
 function gw_register_talent_window()
-    CreateFrame('Frame','GwTalentFrame',GwCharacterWindow,'SecureHandlerStateTemplate,GwLegacyTalentFrame')
+    CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,' SecureHandlerStateTemplate,GwLegacyTalentFrame')
 
     loadTalents()
-     GwTalentFrame:SetScript('OnEvent',function()
+    GwTalentFrame:SetScript('OnEvent', function()
         if not GwTalentFrame:IsShown() then return end
-            updateTalentTrees()
-        end
-     )
-     GwTalentFrame:HookScript('OnShow', function()
+        updateTalentTrees()
+    end)
+    GwTalentFrame:HookScript('OnShow', function()
         GwCharacterWindow.windowIcon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\talents-window-icon')
         GwCharacterWindow.WindowHeader:SetText(TALENTS)
         if InCombatLockdown() then return end
         updateTalentTrees()
     end)
-
     hooksecurefunc('ToggleTalentFrame',function()
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute('windowPanelOpen', 2)
     end)
     GwTalentFrame:Hide()
 
-
-    return GwTalentFrame;
-
+    return GwTalentFrame
 end
