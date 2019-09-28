@@ -704,10 +704,9 @@ local function loadAddon(self)
         ConsoleExec("ActionCam default")
     end
 
-    if GetSetting("USE_CHARACTER_WINDOW") then
-        SetSetting("USE_SPELLBOOK_WINDOW", true)
-        Gw_LoadWindows()
-    end
+    --if GetSetting("USE_CHARACTER_WINDOW") then
+    Gw_LoadWindows()
+    --end
 
     GW.LoadMicroMenu()
 

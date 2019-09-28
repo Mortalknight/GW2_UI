@@ -690,7 +690,10 @@ local function LoadSettings()
         moveHudObjects()
     end
     local fnGSWS_OnClick = function(self, button)
-        if not GetSetting("USE_CHARACTER_WINDOW") then SetSetting("USE_TALENT_WINDOW", false) end
+        if not GetSetting("USE_CHARACTER_WINDOW") then
+            SetSetting("USE_TALENT_WINDOW", false)
+            SetSetting("USE_SPELLBOOK_WINDOW", false)
+        end
         C_UI.Reload()
     end
     local fnGSWD_OnClick = function(self, button)
@@ -960,6 +963,12 @@ local function LoadSettings()
         TALENTS_BUTTON,
         GwLocalization["TALENTS_BUTTON_DESC"],
         "USE_TALENT_WINDOW",
+        "GwSettingsModuleOption"
+    )
+    addOption(
+        SPELLBOOK,
+        SPELLBOOK_ABILITIES_BUTTON,
+        "USE_SPELLBOOK_WINDOW",
         "GwSettingsModuleOption"
     )
 
