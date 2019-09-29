@@ -2073,6 +2073,7 @@
         </Layers>
 
         <Frames>
+            <Button parentKey="secure" name="$parentClick" inherits="SecureHandlerClickTemplate" hidden="true"/>
               <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="" framelevel="10">
                 <Size x="20" y="20" />
                 <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>

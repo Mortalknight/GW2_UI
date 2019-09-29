@@ -6,25 +6,65 @@ windowsList[1] = {}
     windowsList[1]['ONLOAD'] = gw_register_character_window
     windowsList[1]['SETTING_NAME'] = 'USE_CHARACTER_WINDOW'
     windowsList[1]['TAB_ICON'] = 'tabicon_character'
-    windowsList[1]['ONCLICK'] = function() ToggleCharacter("PaperDollFrame") end
-    windowsList[1]['OPEN'] = 'ToggleTalentFrame'
     windowsList[1]['TAB_INDEX'] = 1
+    windowsList[1]["Bindings"] = {
+            ["TOGGLECHARACTER0"] = "PaperDoll",
+            ["TOGGLECHARACTER2"] = "Reputation",
+            ["TOGGLECHARACTER1"] = "Skills",
+            ["TOGGLECHARACTER3"] = "SkiPetPaperDollFramells"
+        }
+    windowsList[1]["OnClick"] = [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowPanelOpen", 1)
+        ]=]
+    windowsList[1]["gwFrameCombatToggle"] = "gwFrameCombatTogglerCharacter"
 
     windowsList[2] = {}
     windowsList[2]['ONLOAD'] = gw_register_talent_window
     windowsList[2]['SETTING_NAME'] = 'USE_TALENT_WINDOW'
     windowsList[2]['TAB_ICON'] = 'tabicon-talents'
-    windowsList[2]['ONCLICK'] = function() ToggleTalentFrame() end
-    windowsList[2]['OPEN'] = 'ToggleTalentFrame'
     windowsList[2]['TAB_INDEX'] = 2
+    windowsList[2]["Bindings"] = {
+            ["TOGGLETALENTS"] = "Talents"
+        }
+    windowsList[2]["OnClick"] = [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowPanelOpen", 2)
+        ]=]
+    windowsList[2]["gwFrameCombatToggle"] = "gwFrameCombatTogglerTalent"
 
     windowsList[3] = {}
     windowsList[3]['ONLOAD'] = gw_register_spellbook_window
     windowsList[3]['SETTING_NAME'] = 'USE_SPELLBOOK_WINDOW'
     windowsList[3]['TAB_ICON'] = 'tabicon_spellbook'
-    windowsList[3]['ONCLICK'] = function() ToggleSpellBook() end
-    windowsList[3]['OPEN'] = 'ToggleSpellBook'
     windowsList[3]['TAB_INDEX'] = 3
+    windowsList[3]["Bindings"] = {
+            ["TOGGLESPELLBOOK"] = "SpellBook",
+            ["TOGGLEPETBOOK"] = "PetBook"
+        }
+    windowsList[3]["OnClick"] = [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowPanelOpen", 3)
+        ]=]
+    windowsList[3]["gwFrameCombatToggle"] = "gwFrameCombatTogglerSpellbook"
+
+ -- TODO: this doesn't work if bindings are updated in combat, but who does that?!
+local function click_OnEvent(self, event)
+    if event ~= "UPDATE_BINDINGS" then
+        return
+    end
+    ClearOverrideBindings(self)
+
+    for k, win in pairs(windowsList) do
+        if win.TabFrame and win["Bindings"] then
+            for key, click in pairs(win["Bindings"]) do
+                local keyBind = GetBindingKey(key)
+                if keyBind then
+                    print(click)
+                    SetOverrideBinding(self, false, keyBind, "CLICK ".. win.TabFrame.clicker .. ":" .. click)
+                end
+            end
+        end
+    end
+end
+GW.AddForProfiling("character", "mover_OnEvent", mover_OnEvent)
 
 local function loadBaseFrame()
     if hasBeenLoaded then return end
@@ -32,11 +72,29 @@ local function loadBaseFrame()
 
     CreateFrame('Frame', 'GwCharacterWindowMoverFrame', UIParent,' GwCharacterWindowMoverFrame')
     CreateFrame('Button', 'GwCharacterWindow', UIParent, 'GwCharacterWindow')
+    GwCharacterWindow:SetFrameLevel(5)
+    GwCharacterWindowMoverFrame:Hide()
+
+    GwCharacterWindow:SetAttribute('windowPanelOpen', 0)
+
+    -- set binding change handlers
+    GwCharacterWindow.secure:HookScript("OnEvent", click_OnEvent)
+    GwCharacterWindow.secure:RegisterEvent("UPDATE_BINDINGS")
+
+    GwCharacterWindow.secure:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
 
     GwCharacterWindow.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwCharacterWindow.WindowHeader:SetTextColor(255/255, 241/255, 209/255)
-    GwCharacterWindow:SetFrameLevel(5)
-    GwCharacterWindowMoverFrame:Hide()
+
+    GwCharacterWindow.SoundOpen = function(self)
+        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
+    end
+    GwCharacterWindow.SoundSwap = function(self)
+        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
+    end
+    GwCharacterWindow.SoundExit = function(self)
+        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
+    end
 
     GwCharacterWindow.close:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
     GwCharacterWindow.close:SetFrameRef('GwCharacterWindowMoverFrame', GwCharacterWindowMoverFrame)
@@ -151,6 +209,7 @@ function Gw_LoadWindows()
             local ref = v['ONLOAD']()
             local f = createTabIcon(v['TAB_ICON'], v['TAB_INDEX'])
 
+            f.clicker = v["gwFrameCombatToggle"]
             GwCharacterWindow:SetFrameRef(ref:GetName(), ref)
             ref:HookScript('OnShow', function()
                 setTabIconState(f, true)
@@ -158,54 +217,20 @@ function Gw_LoadWindows()
             ref:HookScript('OnHide', function()
                 setTabIconState(f, false)
             end)
+            f:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
+            f:SetAttribute('_OnClick', v["OnClick"])
+            
+            local gwFrameCombatToggle = CreateFrame('Button', v["gwFrameCombatToggle"], UIParent, 'SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook')
+            gwFrameCombatToggle:SetAttribute('type', 'attribute')
+            gwFrameCombatToggle:SetAttribute('type2', 'attribute')
+            gwFrameCombatToggle:SetAttribute('attribute-frame', GwCharacterWindow)
+            gwFrameCombatToggle:SetAttribute('attribute-name', 'windowPanelOpen')
+            gwFrameCombatToggle:SetAttribute('attribute-value', v['TAB_INDEX'])
+            
+            v.TabFrame = f
         end
     end
 
-    if CharacterWindowTab1 then
-        CharacterWindowTab1:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
-        CharacterWindowTab1:SetAttribute('_OnClick', [=[
-            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen', 1)
-        ]=])
-        CreateFrame('Button', 'gwFrameCombatTogglerCharacter', UIParent, 'SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook')
-
-        gwFrameCombatTogglerCharacter:SetAttribute('type', 'attribute')
-        gwFrameCombatTogglerCharacter:SetAttribute('attribute-frame', GwCharacterWindow)
-        gwFrameCombatTogglerCharacter:SetAttribute('attribute-name', 'windowPanelOpen')
-        gwFrameCombatTogglerCharacter:SetAttribute('attribute-value', 1)
-        if GetBindingKey("TOGGLECHARACTER0") ~= nil then
-            SetBinding(GetBindingKey("TOGGLECHARACTER0"), "CLICK gwFrameCombatTogglerCharacter:LeftButton")
-        end
-    end
-    if CharacterWindowTab2 then
-        CharacterWindowTab2:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
-        CharacterWindowTab2:SetAttribute('_OnClick', [=[
-            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen', 2)
-        ]=])
-        CreateFrame('Button', 'gwFrameCombatTogglerTalent', UIParent, 'SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook')
-
-        gwFrameCombatTogglerTalent:SetAttribute('type', 'attribute')
-        gwFrameCombatTogglerTalent:SetAttribute('type2', 'attribute')
-        gwFrameCombatTogglerTalent:SetAttribute('attribute-frame', GwCharacterWindow)
-	    gwFrameCombatTogglerTalent:SetAttribute('attribute-name', 'windowPanelOpen')
-	    gwFrameCombatTogglerTalent:SetAttribute('attribute-value', 2)
-        if GetBindingKey("TOGGLETALENTS") ~= nil then
-            SetBinding(GetBindingKey("TOGGLETALENTS"), "CLICK gwFrameCombatTogglerTalent:RightButton")
-        end
-    end
-    if CharacterWindowTab3 then
-        CharacterWindowTab3:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
-        CharacterWindowTab3:SetAttribute('_OnClick', [=[
-            self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen', 3)
-        ]=])
-        CreateFrame('Button', 'gwFrameCombatTogglerSpellbook', UIParent, 'SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook')
-
-        gwFrameCombatTogglerSpellbook:SetAttribute('type', 'attribute')
-        gwFrameCombatTogglerSpellbook:SetAttribute('type2', 'attribute')
-        gwFrameCombatTogglerSpellbook:SetAttribute('attribute-frame', GwCharacterWindow)
-        gwFrameCombatTogglerSpellbook:SetAttribute('attribute-name', 'windowPanelOpen')
-        gwFrameCombatTogglerSpellbook:SetAttribute('attribute-value', 3)
-        if GetBindingKey("TOGGLESPELLBOOK") ~= nil then
-            SetBinding(GetBindingKey("TOGGLESPELLBOOK"), "CLICK gwFrameCombatTogglerSpellbook:RightButton")
-        end
-    end
+    -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win
+    click_OnEvent(GwCharacterWindow.secure, "UPDATE_BINDINGS")
 end
