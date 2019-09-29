@@ -28,6 +28,9 @@ function gw_spell_buttonOnEnter(self)
             GameTooltip:AddLine("|c00ff0000" .. UNLOCKS_AT_LABEL .. " "..LEVEL .. " " .. self.requiredLevel .. "|r", 1, 1, 1)
         end
     end
+    --debug
+    GameTooltip:AddLine(' ')
+    GameTooltip:AddLine('Spell ID '..self.spellId)
     GameTooltip:Show()
 end
 
@@ -217,35 +220,16 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
     return _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]
 end
 
-local function findHigherRank(t, spellID, talentID)
+local function findHigherRank(t,spellID)
     local si = spellID
-
-    for k, v in pairs(GW.SpellsByLevel) do
-        for _, spell in pairs(v) do
-            if spell.requiredIds ~= nil and spell.requiredTalentId == nil then
-                for _, rid in pairs(spell.requiredIds) do
-                    if rid == si then
+    for k,v in pairs(GW.SpellsByLevel) do
+        for _,spell in pairs(v) do
+            if spell.requiredIds~=nil then
+                for _,rid in pairs(spell.requiredIds) do
+                    if rid == si  then
                         if not IsSpellKnown(spell.id) then
-                            t[#t + 1] = {id = spell.id, level = k}
-                            t = findHigherRank(t, spell.id)
-                            return t
-                        end
-                    end
-                end
-            elseif spell.requiredTalentId ~= nil and spell.requiredIds == nil then
-                if spell.requiredTalentId == si then
-                    if not IsSpellKnown(spell.id) then
-                        t[#t + 1] = {id = spell.id, level = k}
-                        t = findHigherRank(t, spell.id, spell.requiredTalentId)
-                        return t
-                    end
-                end
-            elseif spell.requiredTalentId ~= nil and spell.requiredIds ~= nil and talentID == spell.requiredTalentId  then
-                for _, rid in pairs(spell.requiredIds) do
-                    if rid == si and spell.requiredTalentId == talentID then
-                        if not IsSpellKnown(spell.id) then
-                            t[#t + 1] = {id = spell.id, level = k}
-                            t = findHigherRank(t, spell.id, spell.requiredTalentId)
+                            t[#t + 1] = {id=spell.id,level=k}
+                            t = findHigherRank(t,spell.id)
                             return t
                         end
                     end
@@ -253,7 +237,6 @@ local function findHigherRank(t, spellID, talentID)
             end
         end
     end
-
     return t
 end
 
@@ -322,6 +305,7 @@ local function updateSpellbookTab()
                     local contains
                     if spell.requiredIds ~= nil then
                         if spell.id == spellID then
+
                             contains = GW.tableContains(spell.requiredIds, lastSkillid)
                         end
                         if contains then
