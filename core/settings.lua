@@ -690,10 +690,6 @@ local function LoadSettings()
         moveHudObjects()
     end
     local fnGSWS_OnClick = function(self, button)
-        if not GetSetting("USE_CHARACTER_WINDOW") then
-            SetSetting("USE_TALENT_WINDOW", false)
-            SetSetting("USE_SPELLBOOK_WINDOW", false)
-        end
         C_UI.Reload()
     end
     local fnGSWD_OnClick = function(self, button)
@@ -1371,13 +1367,15 @@ local function LoadSettings()
         if not indicator[4] then
             if IsSpellKnown(spellID) then
                 local name = ""
-                if string.len(GetSpellSubtext(spellID)) > 0 then 
-                    name = select(1, GetSpellInfo(spellID)) .. " (" .. GetSpellSubtext(spellID) ..")"
-                else
-                    name = select(1, GetSpellInfo(spellID))
+                if spellID ~= nil then
+                    if string.len(GetSpellSubtext(spellID)) > 0 then 
+                        name = select(1, GetSpellInfo(spellID)) .. " (" .. GetSpellSubtext(spellID) ..")"
+                    else
+                        name = select(1, GetSpellInfo(spellID))
+                    end
+                    tinsert(auraKeys, spellID)
+                    tinsert(auraVals, name)
                 end
-                tinsert(auraKeys, spellID)
-                tinsert(auraVals, name)
             end
         end
     end

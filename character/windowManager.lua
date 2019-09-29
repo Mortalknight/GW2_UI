@@ -8,7 +8,7 @@ windowsList[1] = {}
     windowsList[1]['TAB_ICON'] = 'tabicon_character'
     windowsList[1]['ONCLICK'] = function() ToggleCharacter("PaperDollFrame") end
     windowsList[1]['OPEN'] = 'ToggleTalentFrame'
-
+    windowsList[1]['TAB_INDEX'] = 1
 
     windowsList[2] = {}
     windowsList[2]['ONLOAD'] = gw_register_talent_window
@@ -16,6 +16,7 @@ windowsList[1] = {}
     windowsList[2]['TAB_ICON'] = 'tabicon-talents'
     windowsList[2]['ONCLICK'] = function() ToggleTalentFrame() end
     windowsList[2]['OPEN'] = 'ToggleTalentFrame'
+    windowsList[2]['TAB_INDEX'] = 2
 
     windowsList[3] = {}
     windowsList[3]['ONLOAD'] = gw_register_spellbook_window
@@ -23,8 +24,8 @@ windowsList[1] = {}
     windowsList[3]['TAB_ICON'] = 'tabicon_spellbook'
     windowsList[3]['ONCLICK'] = function() ToggleSpellBook() end
     windowsList[3]['OPEN'] = 'ToggleSpellBook'
+    windowsList[3]['TAB_INDEX'] = 3
 
-local tabIndex = 1
 local function loadBaseFrame()
     if hasBeenLoaded then return end
     hasBeenLoaded = true
@@ -49,11 +50,6 @@ local function loadBaseFrame()
     ]=])
 
     GwCharacterWindow:SetAttribute('windowPanelOpen', 0)
-    --tinsert(UISpecialFrames, "GwCharacterWindow")
-    --GwCharacterWindow:HookScript('OnHide', function() GwCharacterWindowMoverFrame:Hide() end)
-    --GwCharacterWindow:HookScript('OnShow', function() GwCharacterWindowMoverFrame:Show() end)
-    --table.insert(UISpecialFrames, "GwCharacterWindow")
-
     GwCharacterWindow:SetAttribute('_onshow', [=[
         self:SetBindingClick(false, 'ESCAPE', self:GetName(), 'Escape')
         ]=])
@@ -125,12 +121,13 @@ local function setTabIconState(self, b)
     end
 end
 
-local function createTabIcon(iconName)
+local usedTabs = 1
+local function createTabIcon(iconName, tabIndex)
     local f = CreateFrame('Button', 'CharacterWindowTab' .. tabIndex, GwCharacterWindow, 'SecureHandlerClickTemplate,SecureHandlerStateTemplate,CharacterWindowTabSelect')
 
     f.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\' .. iconName)
-    f:SetPoint('TOP', GwCharacterWindow, 'TOPLEFT', -32, -25 + -((tabIndex - 1) * 45))
-    tabIndex = tabIndex + 1
+    f:SetPoint('TOP', GwCharacterWindow, 'TOPLEFT', -32, -25 + -((usedTabs - 1) * 45))
+    usedTabs = usedTabs + 1
     setTabIconState(f, false)
 
     return f
@@ -152,7 +149,7 @@ function Gw_LoadWindows()
     for k, v in pairs(windowsList) do
         if GW.GetSetting(v['SETTING_NAME']) then
             local ref = v['ONLOAD']()
-            local f = createTabIcon(v['TAB_ICON'])
+            local f = createTabIcon(v['TAB_ICON'], v['TAB_INDEX'])
 
             GwCharacterWindow:SetFrameRef(ref:GetName(), ref)
             ref:HookScript('OnShow', function()
@@ -208,7 +205,7 @@ function Gw_LoadWindows()
         gwFrameCombatTogglerSpellbook:SetAttribute('attribute-name', 'windowPanelOpen')
         gwFrameCombatTogglerSpellbook:SetAttribute('attribute-value', 3)
         if GetBindingKey("TOGGLESPELLBOOK") ~= nil then
-            SetBinding(GetBindingKey("TOGGLESPELLBOOK"), "CLICK gwFrameCombatTogglerSpellbook:RightButton");
+            SetBinding(GetBindingKey("TOGGLESPELLBOOK"), "CLICK gwFrameCombatTogglerSpellbook:RightButton")
         end
     end
 end
