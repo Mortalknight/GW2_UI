@@ -57,7 +57,6 @@ local function click_OnEvent(self, event)
             for key, click in pairs(win["Bindings"]) do
                 local keyBind = GetBindingKey(key)
                 if keyBind then
-                    print(click)
                     SetOverrideBinding(self, false, keyBind, "CLICK ".. win.TabFrame.clicker .. ":" .. click)
                 end
             end
@@ -219,7 +218,7 @@ function Gw_LoadWindows()
             end)
             f:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
             f:SetAttribute('_OnClick', v["OnClick"])
-            
+
             local gwFrameCombatToggle = CreateFrame('Button', v["gwFrameCombatToggle"], UIParent, 'SecureActionButtonTemplate,gwFrameCombatTogglerSpellbook')
             gwFrameCombatToggle:SetAttribute('type', 'attribute')
             gwFrameCombatToggle:SetAttribute('type2', 'attribute')
