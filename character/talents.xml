@@ -267,7 +267,7 @@
                 </Anchors>
                 <Layers>
                   <Layer layer="OVERLAY" textureSubLevel="8">
-                      <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                      <Texture file="Interface\AddOns\GW2_UI\textures\character\forwardicon">
                           <Size x="32" y="32"></Size>
                           <Anchors>
                               <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
