@@ -82,6 +82,7 @@ local charSecure_OnAttributeChanged =
     if name ~= "windowpanelopen" then
         return
     end
+    local fmMover = self:GetFrameRef("GwCharacterWindowMoverFrame")
     local fmDoll = self:GetFrameRef("GwCharacterWindowContainer")
     local fmDollMenu = self:GetFrameRef("GwCharacterMenu")
     local fmDollRepu = self:GetFrameRef("GwPaperReputation")
@@ -233,9 +234,10 @@ local charSecure_OnAttributeChanged =
             fmDoll:Hide()
         end
     end
-
+    fmMover:Show()
     if close then
         self:Hide()
+        fmMover:Hide()
         self:CallMethod("SoundExit")
     elseif not self:IsVisible() then
         self:Show()

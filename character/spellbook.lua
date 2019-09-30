@@ -623,6 +623,9 @@ local function LoadSpellBook()
         if InCombatLockdown() then return end
         updateSpellbookTab()
     end)
+    if not InCombatLockdown() then
+        updateSpellbookTab()
+    end
     hooksecurefunc('ToggleSpellBook', function()
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute('windowPanelOpen', "spellbook")
