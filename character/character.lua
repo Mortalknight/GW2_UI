@@ -320,7 +320,7 @@ function gwPaperDollUpdatePetStats()
     GwCharacterMenu.petMenu:Show()
     GwDressingRoomPet.model:SetUnit("pet")   
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet"))
-
+    GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
         local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
         local totalPoints, spent = GetPetTrainingPoints()
