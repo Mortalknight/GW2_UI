@@ -411,6 +411,7 @@ end
 GW.FadeCheck = FadeCheck
 
 local l = CreateFrame("Frame", nil, UIParent)
+local HasPetUIFrame = CreateFrame("Frame", nil, UIParent)
 local OnUpdateActionBars = nil
 
 local function swimAnim()
@@ -818,6 +819,7 @@ end
 GW.AddForProfiling("index", "loadAddon", loadAddon)
 
 -- handles addon loading
+local setHasPetUI = false
 local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         if not loaded then
@@ -831,6 +833,22 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = true
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
             pixelPerfection()
+        end
+        if not setHasPetUI then
+            local delayUpdateTime = GetTime() + 0.4
+            HasPetUIFrame:SetScript(
+                "OnUpdate",
+                function()
+                    if GetTime() < delayUpdateTime then
+                        return
+                    end
+                    if GetSetting("USE_CHARACTER_WINDOW") then
+                        GwCharacterWindow:SetAttribute("HasPetUI", select(1, HasPetUI()))
+                    end
+                    setHasPetUI = true
+                    HasPetUIFrame:SetScript("OnUpdate", nil)
+                end
+            )
         end
     end
 end

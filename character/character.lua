@@ -1,5 +1,6 @@
 local _, GW = ...
 local comma_value = GW.comma_value
+local AddToAnimation = GW.AddToAnimation
 local round = GW.round
 local RT = GW.REP_TEXTURES
 local REPBG_T = 0
@@ -93,159 +94,6 @@ local PAPERDOLL_STATCATEGORIES= {
 		},
 	},
 }
---[[
-			[1] = { stat = "CRITCHANCE", hideAt = 0 },
-			[2] = { stat = "HASTE", hideAt = 0 },
-			[3] = { stat = "MASTERY", hideAt = 0 },
-			[4] = { stat = "VERSATILITY", hideAt = 0 },
-			[5] = { stat = "LIFESTEAL", hideAt = 0 },
-			[6] = { stat = "AVOIDANCE", hideAt = 0 },
-			[7] = { stat = "DODGE", roles =  { "TANK" } },
-			[8] = { stat = "PARRY", hideAt = 0, roles =  { "TANK" } },
-			[9] = { stat = "BLOCK", hideAt = 0, roles =  { "TANK" } },
-]]--
-local EquipSlotList = {}
-local bagItemList = {}
-local numBagSlotFrames = 0
-local selectedInventorySlot = nil
-
-local function getBagSlotFrame(i)
-    if _G["gwPaperDollBagSlotButton" .. i] ~= nil then return _G["gwPaperDollBagSlotButton" .. i] end
-    local f = CreateFrame("Button", "gwPaperDollBagSlotButton" .. i, GwPaperDollBagItemList, "GwPaperDollBagItem")
-    numBagSlotFrames = numBagSlotFrames + 1
-    return f
-end
-
-function GwupdateBagItemListAll()
-    if selectedInventorySlot ~= nil then return end
-
-    local gridIndex = 1
-    local itemIndex = 1
-    local x = 10
-    local y = 15
-
-    for k,v in pairs(EquipSlotList) do
-        local id = v
-        wipe(bagItemList)
-        GetInventoryItemsForSlot(id, bagItemList)
-
-        for location, itemID in next, bagItemList do
-            if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
-                local itemFrame = getBagSlotFrame(itemIndex)
-                itemFrame.location = location
-
-                updateBagItemButton(itemFrame)
-
-                itemFrame:SetPoint("TOPLEFT", x, -y)
-                itemFrame:Show()
-                itemFrame.itemSlot = id
-                gridIndex = gridIndex + 1
-
-                x = x + 49 + 3
-
-                if gridIndex > 4 then
-                    gridIndex = 1
-                    x = 10
-                    y = y + 49 + 3
-                end
-                itemIndex = itemIndex + 1
-                if itemIndex > 36 then break end
-            end
-        end
-    end
-    for i = itemIndex, numBagSlotFrames do
-        if _G["gwPaperDollBagSlotButton" .. i] ~= nil then _G["gwPaperDollBagSlotButton" .. i]:Hide() end
-    end
-end
-
-local function updateBagItemList(itemButton)
-    local id = itemButton.id or itemButton:GetID()
-    if selectedInventorySlot~=id then return end
-
-    wipe(bagItemList)
-    GetInventoryItemsForSlot(id, bagItemList)
-
-    local gridIndex = 0
-    local itemIndex = 1
-    local x = 10
-    local y = 15
-
-    for location, itemID in next, bagItemList do
-        if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
-            local itemFrame = getBagSlotFrame(itemIndex)
-            itemFrame.location = location
-
-            updateBagItemButton(itemFrame)
-
-            itemFrame:SetPoint("TOPLEFT", x, -y)
-            itemFrame:Show()
-            itemFrame.itemSlot = id
-            gridIndex = gridIndex + 1
-
-            x = x + 49 + 3
-
-            if gridIndex > 4 then
-                gridIndex = 1
-                x = 10
-                y = y + 49 + 3
-            end
-            itemIndex = itemIndex + 1
-		end
-       if itemIndex > 36 then break end
-    end
-    for i = itemIndex, numBagSlotFrames do
-        if _G["gwPaperDollBagSlotButton" .. i] ~= nil then _G["gwPaperDollBagSlotButton" .. i]:Hide() end
-    end
-end
-
-function updateBagItemButton(button)
-    --[[ NYI
-    local location = button.location;
-	if ( not location ) then
-		return
-	end
-   local id, name, textureName, count, durability, maxDurability, invType, locked, start, duration, enable, setTooltip, quality = EquipmentManager_GetItemInfoByLocation(location);
-    button.ItemId = id
-	local broken = ( maxDurability and durability == 0 );
-	if ( textureName ) then
-		SetItemButtonTexture(button, textureName);
-		SetItemButtonCount(button, count);
-        if broken then
-			SetItemButtonTextureVertexColor(button, 0.9, 0, 0);
-		else
-			SetItemButtonTextureVertexColor(button, 1.0, 1.0, 1.0);
-		end
-
-        if durability~=nil and(durability/maxDurability)<0.5 then
-            button.repairIcon:Show()
-            if (durability/maxDurability)==0 then
-                button.repairIcon:SetTexCoord(0,1,0.5,1)
-            else
-                button.repairIcon:SetTexCoord(0,1,0,0.5)
-            end
-
-        else
-            button.repairIcon:Hide()
-        end
-
-        button.UpdateTooltip = function () GameTooltip:SetOwner(button, "ANCHOR_RIGHT", 6, -EquipmentFlyoutFrame.buttonFrame:GetHeight() - 6); setTooltip(); end
-
-		GwSetItemButtonQuality(button, quality, id)
-    end
-    ]]--
-end
-
-function GwPaperDollBagItem_OnClick (self)
-	local action = function() end
-    if self.location then
-        if UnitAffectingCombat("player") and not INVSLOTS_EQUIPABLE_IN_COMBAT[self.itemSlot] then
-            UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1, 0.1, 0.1, 1)
-            return
-        end
-        local action = EquipmentManager_EquipItemByLocation(self.location, self.itemSlot)
-        EquipmentManager_RunAction(action)
-    end
-end
 
 function gwPaperDollStats_QueuedUpdate(self)
 	self:SetScript("OnUpdate", nil)
@@ -550,7 +398,6 @@ function gwPaperDollSlotButton_OnLoad(self)
 	local slotName = self:GetName()
 	local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName, 12))
 	self:SetID(id);
-    EquipSlotList[#EquipSlotList + 1] = id
 	self.checkRelic = checkRelic
 
     gwActionButtonGlobalStyle(self)
@@ -581,7 +428,6 @@ function gwPaperDollSlotButton_OnEvent(self, event, ...)
 	if event == "PLAYER_EQUIPMENT_CHANGED" then
 		if self:GetID() == arg1 then
 			gwPaperDollSlotButton_Update(self)
-            updateBagItemList(self)
         end
     elseif event == "UNIT_INVENTORY_CHANGED" then
 		if arg1 == "player" then
@@ -625,7 +471,7 @@ function gwPaperDollSlotButton_OnModifiedClick(self, button)
 	if IsModifiedClick("SOCKETITEM") then
 		SocketInventoryItem(self:GetID())
         if InCombatLockdown() then return end
-        GwCharacterWindow:SetAttribute("windowPanelOpen", 0)
+        GwCharacterWindow:SetAttribute("windowPanelOpen", nil)
 	end
 end
 
@@ -636,48 +482,41 @@ function gwPaperDollSlotButton_OnClick(self, button, drag)
         if infoType == "merchant" and MerchantFrame.extendedCost then
             MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost)
         else
-            if not SpellIsTargeting() and (drag == nil and GwPaperDollBagItemList:IsShown()) then
-                GwPaperDollSelectedIndicator:SetPoint("LEFT", self, "LEFT", -16, 0)
-                GwPaperDollSelectedIndicator:Show()
-                selectedInventorySlot = self:GetID()
-                updateBagItemList(self)
-            else
-                if SpellCanTargetItem() then
-                    local castingItem = nil
-                    for bag = 0, NUM_BAG_SLOTS do
-                        for slot = 1, GetContainerNumSlots(bag) do
-                            local id = GetContainerItemID(bag, slot)
-                            if id then
-                                local name, _ = GetItemInfo(id)
-                                if IsCurrentItem(id) then
-                                    castingItem = id
-                                    break
-                                end
+            if SpellCanTargetItem() then
+                local castingItem = nil
+                for bag = 0, NUM_BAG_SLOTS do
+                    for slot = 1, GetContainerNumSlots(bag) do
+                        local id = GetContainerItemID(bag, slot)
+                        if id then
+                            local name, _ = GetItemInfo(id)
+                            if IsCurrentItem(id) then
+                                castingItem = id
+                                break
                             end
                         end
-                        if castingItem then
-                            break
-                        end
                     end
-                    if castingItem and castingItem == 154879 then
-                        -- Awoken Titan Essence causes PickupInventoryItem to behave as protected; no idea why
-                        -- So we display a nice message instead of a UI error
-                        local itemid = GetInventoryItemID("player", self:GetID())
-                        if itemid then
-                            local name, link, quality, _ = GetItemInfo(itemid)
-                            if quality == 5 then
-                                StaticPopup_Show("GW_UNEQUIP_LEGENDARY")
-                            else
-                                StaticPopup_Show("GW_NOT_A_LEGENDARY")
-                            end
-                            return
-                        end
+                    if castingItem then
+                        break
                     end
                 end
-                PickupInventoryItem(self:GetID())
-                if CursorHasItem() then
-                    MerchantFrame_SetRefundItem(self, 1)
+                if castingItem and castingItem == 154879 then
+                    -- Awoken Titan Essence causes PickupInventoryItem to behave as protected; no idea why
+                    -- So we display a nice message instead of a UI error
+                    local itemid = GetInventoryItemID("player", self:GetID())
+                    if itemid then
+                        local name, link, quality, _ = GetItemInfo(itemid)
+                        if quality == 5 then
+                            StaticPopup_Show("GW_UNEQUIP_LEGENDARY")
+                        else
+                            StaticPopup_Show("GW_NOT_A_LEGENDARY")
+                        end
+                        return
+                    end
                 end
+            end
+            PickupInventoryItem(self:GetID())
+            if CursorHasItem() then
+                MerchantFrame_SetRefundItem(self, 1)
             end
 	   	end
 	end
@@ -739,31 +578,6 @@ function gwPaperDollSlotButton_Update(self)
 	GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
 end
 
-function GwPaperDollResetBagInventory()
-    GwPaperDollSelectedIndicator:Hide()
-    selectedInventorySlot = nil
-    GwupdateBagItemListAll()
-end
-
-function GwPaperDollIndicatorAnimation(self)
-    local name = self:GetName()
-    local point, relat, relPoint, startX, yof = self:GetPoint()
-
-    addToAnimation(name,0,1,GetTime(),1,function(step)
-        local point, relat, relPoint, xof, yof = self:GetPoint()
-        if step < 0.5 then
-            step = step / 0.5
-            self:SetPoint(point, relat, relPoint, startX + (-8 * step), yof)
-        else
-             step = (step - 0.5) / 0.5
-            self:SetPoint(point, relat, relPoint, (startX - 8) + (8 * step), yof)
-        end
-    end, nil, function()
-        if self:IsShown() then
-            GwPaperDollIndicatorAnimation(self)
-        end
-    end)
-end
 
 function GwSetItemButtonQuality(button, quality, itemIDOrLink)
 	if quality then
@@ -779,10 +593,7 @@ function GwSetItemButtonQuality(button, quality, itemIDOrLink)
 end
 
 function gwCharacterPanelToggle(frame)
-    GwPaperDollBagItemList:Hide()
     GwCharacterMenu:Hide()
-    GwPaperDollOutfits:Hide()
-    GwPaperTitles:Hide()
 
     GwPaperReputation:Hide()
     GwPaperSkills:Hide()
@@ -799,210 +610,6 @@ function gwCharacterPanelToggle(frame)
     else
         GwDressingRoom:Show()
     end
-end
-
-local function getNewEquipmentSetButton(i)
-    if _G["GwPaperDollOutfitsButton" .. i] ~= nil then return _G["GwPaperDollOutfitsButton" .. i] end
-
-    local f = CreateFrame("Button", "GwPaperDollOutfitsButton" .. i, GwPaperDollOutfits, "GwPaperDollOutfitsButton")
-
-    if i > 1 then
-        _G["GwPaperDollOutfitsButton" .. i]:SetPoint("TOPLEFT", _G["GwPaperDollOutfitsButton" .. (i - 1)], "BOTTOMLEFT")
-    end
-    GwPaperDollOutfits.buttons = GwPaperDollOutfits.buttons + 1
-    f.standardOnClick = f:GetScript("OnEnter")
-    f:GetFontString():ClearAllPoints()
-    f:GetFontString():SetPoint("TOP", f, "TOP", 0, -20)
-
-    return f
-end
-
-function GwOutfitsDrawItemSetList()
-    if GwPaperDollOutfits.buttons ==nil then GwPaperDollOutfits.buttons = 0 end
-
-    local numSets = C_EquipmentSet.GetNumEquipmentSets()
-    local numButtons = GwPaperDollOutfits.buttons
-
-    if numSets > numButtons then
-        numButtons = numSets
-    end
-    local textureC = 1
-    local id_table = C_EquipmentSet.GetEquipmentSetIDs()
-
-    for i = 1,numButtons do
-        if numSets >= i then
-            local frame = getNewEquipmentSetButton(i)
-            local name, texture, setID, isEquipped, _, _, _, numLost, _ = C_EquipmentSet.GetEquipmentSetInfo(id_table[i])
-
-            frame:Show()
-            frame.saveOutfit:Hide()
-            frame.deleteOutfit:Hide()
-            frame.equipOutfit:Hide()
-            frame.ddbg:Hide()
-            frame:SetHeight(49)
-            frame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetEquipmentSet(self.setID)
-                self.standardOnClick(self)
-            end)
-            frame:SetText(name)
-            frame.setName = name
-            frame.setID = setID
-
-            if texture then
-                frame.icon:SetTexture(texture)
-            else
-                frame.icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
-            end
-            if textureC==1 then frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
-                textureC = 2
-            else
-                frame:SetNormalTexture(nil)
-                textureC = 1
-            end
-            if isEquipped then
-                frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-            end
-            if numLost > 0 then
-              --  _G[frame:GetName().."NormalTexture"]:SetVertexColor(1,0.3,0.3)
-                frame:GetFontString():SetTextColor(1, 0.3, 0.3)
-            else
-                --_G[frame:GetName().."NormalTexture"]:SetVertexColor(1,1,1)
-                frame:GetFontString():SetTextColor(1, 1, 1)
-            end
-        else
-            if _G["GwPaperDollOutfitsButton" .. i] ~= nil then
-                _G["GwPaperDollOutfitsButton" .. i]:Hide()
-            end
-        end
-    end
-end
-
-function GwPaperDollOutfitsUpdateIngoredSlots(id)
-   local ignoredSlots = C_EquipmentSet.GetIgnoredSlots(id)
-    for slot, ignored in pairs(ignoredSlots) do
-        if ignored then
-            C_EquipmentSet.IgnoreSlotForSave(slot)
-            savedItemSlots[slot].ignoreSlotCheck:SetChecked(false)
-        else
-            C_EquipmentSet.UnignoreSlotForSave(slot)
-            savedItemSlots[slot].ignoreSlotCheck:SetChecked(true)
-        end
-    end
-end
-
-function GwPaperDollOutfitsToggleIgnoredSlots(show)
-    for k, v in pairs(savedItemSlots) do
-        if show then
-            v.ignoreSlotCheck:Show()
-        else
-            v.ignoreSlotCheck:Hide()
-        end
-    end
-end
-
-function GwPaperDollOutfits_OnEvent(self, event, ...)
-	if event == "EQUIPMENT_SWAP_FINISHED" then
-		local completed, setName = ...
-		if completed then
-			PlaySound(1212) -- plays the equip sound for plate mail
-			if self:IsShown() then
-				self.selectedSetID = C_EquipmentSet.GetEquipmentSetID(setName)
-				GwOutfitsDrawItemSetList()
-			end
-		end
-	end
-
-	if self:IsShown() then
-		if event == "EQUIPMENT_SETS_CHANGED" then
-			GwOutfitsDrawItemSetList()
-		elseif event == "PLAYER_EQUIPMENT_CHANGED" or event == "BAG_UPDATE" then
-            GwPaperDollOutfits:SetScript("OnUpdate", function(self)
-                GwOutfitsDrawItemSetList()
-                GwPaperDollOutfits:SetScript("OnUpdate", nil)
-            end)
-		end
-	end
-end
-
-local function getNewTitlesButton(i)
-    if _G["GwPaperDollTitleButton" .. i] ~= nil then return _G["GwPaperDollTitleButton" .. i] end
-
-    local f = CreateFrame("Button", "GwPaperDollTitleButton" .. i, GwPaperTitles, "GwCharacterMenuBlank")
-    if i > 1 then
-        _G["GwPaperDollTitleButton" .. i]:SetPoint("TOPLEFT", _G["GwPaperDollTitleButton" .. (i - 1)], "BOTTOMLEFT")
-    else
-        _G["GwPaperDollTitleButton" .. i]:SetPoint("TOPLEFT", GwPaperTitles, "TOPLEFT")
-    end
-    f:SetWidth(231)
-    f:GetFontString():SetPoint("LEFT", 5, 0)
-    GwPaperTitles.buttons = GwPaperTitles.buttons + 1
-
- --   f:GetFontString():ClearAllPoints()
---    f:GetFontString():SetPoint("TOP",f,"TOP",0,-20)
-    return f
-end
-
-function GwPaperDollUpdateTitlesList()
-    savedPlayerTitles[1] = {}
-    savedPlayerTitles[1].name ="       "
-    savedPlayerTitles[1].id =-1
-
-    local tableIndex = 1
-
-    for i = 1, GetNumTitles() do
-		if IsTitleKnown(i) then
-			tempName, playerTitle = GetTitleName(i);
-            if tempName and playerTitle then
-                tableIndex = tableIndex  + 1
-                local tempName, playerTitle = GetTitleName(i)
-                savedPlayerTitles[tableIndex]= {}
-                savedPlayerTitles[tableIndex].name = strtrim(tempName)
-                savedPlayerTitles[tableIndex].id = i
-            end
-        end
-    end
-
-    table.sort(savedPlayerTitles,function(a, b) return a.name < b.name end)
-    savedPlayerTitles[1].name = PLAYER_TITLE_NONE
-end
-
-function GwPaperDollUpdateTitlesLayout()
-    local currentTitle = GetCurrentTitle()
-    local textureC = 1
-    local buttonId = 1
-
-    for i = GwPaperTitles.scroll, #savedPlayerTitles do
-        if savedPlayerTitles[i] ~= nil then
-            local button = getNewTitlesButton(buttonId)
-            button:Show()
-            buttonId = buttonId + 1
-            button:SetText(savedPlayerTitles[i].name)
-            button:SetScript("OnClick", function() SetCurrentTitle(savedPlayerTitles[i].id) end)
-
-            if textureC==1 then
-                button:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
-                textureC = 2
-            else
-                button:SetNormalTexture(nil)
-                textureC = 1
-            end
-
-            if currentTitle == savedPlayerTitles[i].id then
-                button:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-            end
-            if buttonId > 21 then break end
-        end
-    end
-
-    for i=buttonId,GwPaperTitles.buttons do
-         _G["GwPaperDollTitleButton" .. i]:Hide()
-    end
-end
-
-function GwPaperDollTitles_OnEvent()
-    --GwPaperDollUpdateTitlesList()
-    --GwPaperDollUpdateTitlesLayout()
 end
 
 local function getNewReputationCat(i)
@@ -1219,32 +826,6 @@ local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName
 
     SetFactionInactive(GetSelectedFaction())
 
-        --[[
-    if factionID and C_Reputation.IsFactionParagon(factionID) then
-        local currentValue, maxValueParagon, _, hasReward  = C_Reputation.GetFactionParagonInfo(factionID)
-
-        if currentValue > 10000 then
-            repeat
-                currentValue = currentValue - 10000
-            until( currentValue < 10000 )
-        end
-
-
-        frame.currentRank:SetText(currentRank)
-        frame.nextRank:SetText(GwLocalization["CHARACTER_PARAGON"])
-
-        frame.currentValue:SetText(comma_value(currentValue))
-        frame.nextValue:SetText(comma_value(maxValueParagon))
-
-        local percent = math.floor(round(((currentValue - 0) / (maxValueParagon - 0))*100),0)
-        frame.percentage:SetText((math.floor( round(((currentValue - 0) / (maxValueParagon - 0))*100),0) ).."%")
-
-        frame.StatusBar:SetMinMaxValues(0, 1)
-        frame.StatusBar:SetValue((currentValue - 0) / (maxValueParagon - 0))
-
-        frame.background2:SetVertexColor(GW.FACTION_BAR_COLORS[9].r,GW.FACTION_BAR_COLORS[9].g,GW.FACTION_BAR_COLORS[9].b)
-        frame.StatusBar:SetStatusBarColor(GW.FACTION_BAR_COLORS[9].r,GW.FACTION_BAR_COLORS[9].g,GW.FACTION_BAR_COLORS[9].b)
-    ]]
     if friendID ~= nil then
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.currentRank:SetText(friendTextLevel)
@@ -1472,25 +1053,54 @@ function GWupdateSkills()
     GwPaperSkills.scroll.slider.thumb:SetHeight(100)
 end
 
-function gw_register_character_window()
+local CHARACTER_PANEL_OPEN = ""
+
+function GwToggleCharacter(tab, onlyShow)
+    local CHARACTERFRAME_DEFAULTFRAMES= {}
+
+    CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwCharacterMenu
+    CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
+    CHARACTERFRAME_DEFAULTFRAMES["SkillFrame"] = GwPaperSkills
+    CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
+
+    if CHARACTERFRAME_DEFAULTFRAMES[tab] ~= nil and CHARACTER_PANEL_OPEN ~= tab  then
+        gwCharacterPanelToggle(CHARACTERFRAME_DEFAULTFRAMES[tab])
+        CHARACTER_PANEL_OPEN = tab
+        if tab == "ReputationFrame" then
+            if not onlyShow then
+                GwCharacterWindow:SetAttribute("keytoggle", true)
+            end
+            GwCharacterWindow:SetAttribute("windowpanelopen", "reputation")
+        else
+            -- PaperDollFrame or any other value
+            if not onlyShow then
+                GwCharacterWindow:SetAttribute("keytoggle", true)
+            end
+            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
+        end
+
+        return
+    end
+
+    if GwCharacterWindow:IsShown() then
+        if not InCombatLockdown() then
+            GwCharacterWindow:SetAttribute("windowPanelOpen", nil)
+        end
+        CHARACTER_PANEL_OPEN = nil
+        return
+    end
+end
+
+local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
     CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenu")
-    CreateFrame("Frame", "GwPaperDollBagItemList", GwCharacterWindowContainer, "GwPaperDollBagItemList")
-    CreateFrame("Frame", "GwPaperDollOutfits", GwCharacterWindowContainer, "GwPaperDollOutfits")
-    CreateFrame("Frame", "GwPaperTitles", GwCharacterWindowContainer, "GwPaperTitles")
     CreateFrame("Frame", "GwPaperReputation", GwCharacterWindowContainer, "GwPaperReputation")
     CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
-    CreateFrame("Frame", "GwPaperDollSelectedIndicator", GwCharacterWindowContainer, "GwPaperDollSelectedIndicator")
 
     --Legacy pet window
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
     CreateFrame("Button", "GwDressingRoomPet", GwPetContainer, "GwPetPaperdoll")
-
-    GwPaperTitles:HookScript("OnShow", function()
-        GwPaperDollUpdateTitlesList()
-        GwPaperDollUpdateTitlesLayout()
-    end)
 
     GwUpdateSavedReputation()
     GwPaperReputationScrollFrame:SetScrollChild(GwPaperReputationScrollFrame.scrollchild)
@@ -1517,10 +1127,6 @@ function gw_register_character_window()
     gwPaperDollUpdateStats()
     gwPaperDollUpdatePetStats()
     GwUpdateReputationDetails()
-
-    GwCharacterWindowContainer:HookScript("OnHide" ,function()
-        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
-    end)
 
     GwCharacterWindowContainer:HookScript("OnShow", function()
         GwCharacterWindow.windowIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\character-window-icon")
@@ -1549,28 +1155,4 @@ function gw_register_character_window()
     }
     return GwCharacterWindowContainer
 end
-
-local CHARACTER_PANEL_OPEN = ""
-
-function GwToggleCharacter(tab, onlyShow)
-    local CHARACTERFRAME_DEFAULTFRAMES= {}
-
-    CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwCharacterMenu
-    CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
-    CHARACTERFRAME_DEFAULTFRAMES["SkillFrame"] = GwPaperSkills
-    CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
-
-    if CHARACTERFRAME_DEFAULTFRAMES[tab] ~= nil and CHARACTER_PANEL_OPEN ~= tab  then
-        gwCharacterPanelToggle(CHARACTERFRAME_DEFAULTFRAMES[tab])
-        CHARACTER_PANEL_OPEN = tab
-        return
-    end
-
-    if GwCharacterWindow:IsShown() then
-        if not InCombatLockdown() then
-            GwCharacterWindow:SetAttribute("windowPanelOpen", 0)
-        end
-        CHARACTER_PANEL_OPEN = nil
-        return
-    end
-end
+GW.LoadPaperDoll = LoadPaperDoll

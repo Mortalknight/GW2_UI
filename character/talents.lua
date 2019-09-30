@@ -301,7 +301,7 @@ local function loadTalents()
     updateTalentTrees()
 end
 
-function gw_register_talent_window()
+local function LoadTalents()
     CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,' SecureHandlerStateTemplate,GwLegacyTalentFrame')
 
     loadTalents()
@@ -317,9 +317,11 @@ function gw_register_talent_window()
     end)
     hooksecurefunc('ToggleTalentFrame',function()
         if InCombatLockdown() then return end
-        GwCharacterWindow:SetAttribute('windowPanelOpen', 2)
+        GwCharacterWindow:SetAttribute("keytoggle", true)
+        GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
     end)
     GwTalentFrame:Hide()
 
     return GwTalentFrame
 end
+GW.LoadTalents = LoadTalents

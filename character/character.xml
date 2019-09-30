@@ -20,28 +20,6 @@
 
     </Button>
 
-    <Frame name="GwPaperDollSelectedIndicator" frameStrata="HIGH" toplevel="true" hidden="true" virtual="true">
-        <size x="16" y="32"></size>
-        <Anchors>
-            <Anchor point="LEFT"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture  parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
-                    <Size x="16" y="32"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" x="0"></Anchor>
-                    </Anchors>
-
-                </Texture>
-           </Layer>
-        </Layers>
-        <Scripts>
-            <OnShow>
-                GwPaperDollIndicatorAnimation(self)
-            </OnShow>
-        </Scripts>
-    </Frame>
     <Frame name="GwPaperDollStat" enableMouse="true" virtual="true">
         <Size x="92" y="30"></Size>
         <Anchors>
@@ -169,18 +147,6 @@
 			</OnLeave>
         </Scripts>
     </Button>
-    <Button name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true">
-        <Scripts>
-            <OnLoad>gwActionButtonGlobalStyle(self) </OnLoad>
-            <OnEnter>
-                self:SetScript('OnUpdate',self.UpdateTooltip)
-                GameTooltip:Show() </OnEnter>
-            <OnClick>GwPaperDollBagItem_OnClick(self)</OnClick>
-            <OnLeave>self:SetScript('OnUpdate',nil) GameTooltip:Hide() </OnLeave>
-            <OnShow> </OnShow>
-            <OnHide></OnHide>
-        </Scripts>
-    </Button>
      <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
 
          <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
@@ -274,99 +240,6 @@
              </OnLoad>
          </Scripts>
     </Button>
-    <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" jusifyH="LEFT" virtual="true">
-       <Layers>
-            <Layer>
-                <Texture parentKey="ddbg" hidden="true" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
-                    <Size x="32" y="30"></Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                    </Anchors>
-                </Texture>
-           </Layer>
-        </Layers>
-        <Frames>
-            <Button name="$parentEquipOutfit" hidden="true" parentKey="equipOutfit" inherits="GwStandardButton" text="Equip">
-                <Size x="70" y="20"></Size>
-                <Anchors>
-                    <Anchor  point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="5"></Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        local selectedSetID = GwPaperDollOutfits.selectedSetID
-                        if ( selectedSetID ~= nil) then
-
-                            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB )
-
-                            C_EquipmentSet.UseEquipmentSet(selectedSetID)
-                        end
-                    </OnClick>
-                </Scripts>
-            </Button>
-            <Button name="$parentSaveOutfit" hidden="true" parentKey="saveOutfit" inherits="GwStandardButton" text="Save">
-                <Size x="70" y="20"></Size>
-                <Anchors>
-                    <Anchor  point="LEFT" relativeKey="$parent.equipOutfit" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwWarningPromt(GwLocalization['CHARACTER_OUTFITS_SAVE']..self:GetParent().setName..'"?',function()
-                         C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
-                            GwOutfitsDrawItemSetList()
-                        end)
-
-                    </OnClick>
-                </Scripts>
-            </Button>
-            <Button name="$parentDelete" parentKey="deleteOutfit" hidden="true" inherits="GwStandardButton" text="Delete">
-                <Size x="70" y="20"></Size>
-                <Anchors>
-                    <Anchor  point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"></Anchor>
-                </Anchors>
-                <Scripts>
-                       <Onclick>
-                    gwWarningPromt(GwLocalization['CHARACTER_OUTFITS_DELETE']..self:GetParent().setName..'"?',function()
-
-                        C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
-
-                        GwOutfitsDrawItemSetList()
-                    end)
-                    </Onclick>
-                </Scripts>
-            </Button>
-        </Frames>
-        <Scripts>
-            <Onclick>
-                if not  self.saveOutfit:IsShown() then
-                GwOutfitsDrawItemSetList()
-                GwPaperDollOutfitsToggleIgnoredSlots(true)
-                GwPaperDollOutfitsUpdateIngoredSlots(self.setID)
-                self:SetHeight(80)
-                self.saveOutfit:Show()
-                self.deleteOutfit:Show()
-                self.equipOutfit:Show()
-                self.ddbg:Show()
-				self.deleteOutfit:SetText(GwLocalization['CHARACTER_DELETE_OUTFIT'])
-				self.saveOutfit:SetText(GwLocalization['CHARACTER_SAVE_OUTFIT'])
-				self.equipOutfit:SetText(GwLocalization['CHARCTER_EQUIP_OUTFIT'])
-
-                GwPaperDollOutfits.selectedSetID = self.setID
-
-                else
-
-                self.saveOutfit:Hide()
-                self.deleteOutfit:Hide()
-                self.equipOutfit:Hide()
-                self.ddbg:Hide()
-                self:SetHeight(49)
-                end
-            </Onclick>
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
-        </Scripts>
-    </Button>
     <Frame name="GwCharacterMenu" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
         <Anchors>
@@ -425,68 +298,7 @@
 		</Scripts>
     </Frame>
 
-    <Frame name="GwPaperDollBagItemList" hidden="true" virtual="true">
-        <Size x="231" y="498"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-70"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
-                    <Size x="256" y="512"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Equipment" >
-                <Size x="231" y="50"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="60"></Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-            </Button>
-        </Frames>
-        <Scripts>
-            <OnLoad>
-                self:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
-                GwupdateBagItemListAll()
-				self.backButton:SetText(GwLocalization['CHARACTER_MENU_EQUIPMENT_RETURN'])
-            </OnLoad>
-            <OnEvent>
-                GwupdateBagItemListAll()
-            </OnEvent>
-            <OnHide>
-                GwPaperDollResetBagInventory()
-            </OnHide>
-            <OnShow>
-                GwupdateBagItemListAll()
-            </OnShow>
-        </Scripts>
-    </Frame>
-    <Button name="GwPaperDollOutfitsButton" inherits="GwPaperDollOutFitListButton" virtual="true">
-        <Size x="220" y="49"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
-                    <Size x="49" y="49"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    </Anchors>
-                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
+
     <Button name="GwPaperDollReputationCat" text="notyetloaded" inherits="GwCharacterMenuBlank" virtual="true">
 
         <Size x="231" y="44"></Size>
@@ -652,28 +464,6 @@
                 </FontString>
             </Layer>
         </Layers>
-
-
-		<Button name="$parentparagon" hidden="true" parentKey="paragon">
-                <size x="90" y="90"></size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\rewards-icon">
-                             <size x="80" y="80"></size>
-                            <Anchors>
-                                <Anchor point="CENTER"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <Scripts>
-
-                </Scripts>
-            </Button>
-
 
         <Frames>
             <Frame parentKey="controles" hidden="true">
@@ -944,119 +734,6 @@
         </Scripts>
     </Button>
 
-    <Frame name="GwPaperDollOutfits" hidden="true" virtual="true">
-        <Size x="220" y="478"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
-                    <Size x="256" y="512"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-
-
-        </Layers>
-             <Frames>
-                 <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Outfits" >
-                <Size x="231" y="50"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-                 </Button>
-                <Button name="$parentNewOutfit" parentKey="newOutfit" inherits="GwStandardButton" text="New outfit">
-                    <Size x="100" y="20"></Size>
-                    <Anchors>
-                        <Anchor  point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="7"></Anchor>
-                    </Anchors>
-                    <Scripts>
-                        <OnClick>
-
-                            self.oldParent = GearManagerDialogPopup:GetParent()
-
-                            GearManagerDialogPopup:Show();
-
-                            GearManagerDialogPopup:SetParent(GwDressingRoom)
-                            GearManagerDialogPopup:SetPoint('TOPLEFT',GwDressingRoom,'TOPRIGHT')
-
-                            PaperDollEquipmentManagerPane.selectedSetID = nil;
-                            PaperDollFrame_ClearIgnoredSlots();
-
-
-                            PaperDollFrame_IgnoreSlot(4);
-                            PaperDollFrame_IgnoreSlot(19);
-
-                        </OnClick>
-                    </Scripts>
-                </Button>
-            </Frames>
-			<Scripts>
-			<OnLoad>
-				self.backButton:SetText(GwLocalization['CHARACTER_MENU_OUTFITS_RETURN'])
-				self.newOutfit:SetText(GwLocalization['CHARACTER_OUTFIT_NEW'])
-			</OnLoad>
-		</Scripts>
-
-    </Frame>
-    <Frame name="GwPaperTitles"  hidden="true" virtual="true">
-        <Size x="220" y="478"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
-                    <Size x="256" y="512"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-
-
-        </Layers>
-             <Frames>
-                 <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Titles" >
-                <Size x="231" y="50"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-                 </Button>
-            </Frames>
-        <Scripts>
-            <OnLoad>
-                 GwPaperTitles.buttons = 0
-                GwPaperTitles.scroll = 1
-                self:EnableMouseWheel(true)
-
-                self:RegisterEvent('UNIT_NAME_UPDATE')
-				self.backButton:SetText(GwLocalization['CHARACTER_MENU_TITLES_RETURN'])
-            </OnLoad>
-            <OnEvent>
-                GwPaperDollTitles_OnEvent()
-            </OnEvent>
-            <OnMouseWheel>
-               self.scroll = math.max(1,self.scroll + -delta)
-                GwPaperDollUpdateTitlesLayout()
-            </OnMouseWheel>
-        </Scripts>
-    </Frame>
-
-
     <Frame name="GwPetPaperdoll" virtual="true">
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -1128,7 +805,6 @@
                     <OnLoad>
                         self:SetUnit('pet')
 						Model_OnLoad(self, 4, -0.5, 0, CharacterModelFrame_OnMouseUp);
-				        self:HookScript('OnMouseDown', GwPaperDollResetBagInventory)
                     </OnLoad>
                 </Scripts>
                 <Frames>
@@ -1971,7 +1647,6 @@
                         self:SetRotation(-0.15)
 
 						Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp);
-				        self:HookScript('OnMouseDown', GwPaperDollResetBagInventory)
                     </OnLoad>
 
                 </Scripts>
@@ -1983,9 +1658,6 @@
                 self.characterData:SetFont(UNIT_NAME_FONT, 12)
                 self.itemLevel:SetFont(UNIT_NAME_FONT, 24)
             </OnLoad>
-            <OnClick>
-                  GwPaperDollResetBagInventory(self)
-            </OnClick>
         </Scripts>
     </Button>
     <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true" frameStrata="HIGH">
@@ -2088,11 +1760,5 @@
 
         </Frames>
     </Frame>
-
-    <Button name="gwFrameCombatTogglerSpellbook" inherits="SecureActionButtonTemplate" virtual="true">
-        <Attributes>
-
-        </Attributes>
-    </Button>
 
 </Ui>

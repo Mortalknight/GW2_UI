@@ -220,10 +220,12 @@ local function LoadMicroMenu()
     if GetSetting("USE_CHARACTER_WINDOW") then
        GwMicroButtonCharacterMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
        GwMicroButtonCharacterMicroButton:SetAttribute(
-           "_onclick",
-           [=[
-          self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',1)
-           ]=]
+            "_onclick",
+            [=[
+            local f = self:GetFrameRef("GwCharacterWindow")
+            f:SetAttribute("keytoggle", "1")
+            f:SetAttribute("windowpanelopen", "paperdoll")
+            ]=]
        )
     else
         GwMicroButtonCharacterMicroButton:SetScript(
@@ -245,17 +247,13 @@ local function LoadMicroMenu()
        GwMicroButtonTalentMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
        GwMicroButtonTalentMicroButton:SetAttribute(
            "_onclick",
-           [=[
-           self:GetFrameRef('GwCharacterWindow'):SetAttribute('windowPanelOpen',2)
-           ]=]
+            [=[
+            local f = self:GetFrameRef("GwCharacterWindow")
+            f:SetAttribute("keytoggle", "1")
+            f:SetAttribute("windowpanelopen", "talents")
+            ]=]
        )
     else
-        GwMicroButtonSpellbookMicroButton:SetScript(
-            "OnClick",
-            function()
-                ToggleSpellBook(BOOKTYPE_SPELL)
-            end
-        )
         GwMicroButtonTalentMicroButton:SetScript(
             "OnClick",
             function()
@@ -263,7 +261,26 @@ local function LoadMicroMenu()
             end
         )
     end
-    GwMicroButtonSpellbookMicroButton:SetScript("OnClick", function() ToggleSpellBook(BOOKTYPE_SPELL) end )
+
+    if GetSetting("USE_SPELLBOOK_WINDOW") then
+        GwMicroButtonSpellbookMicroButton:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+        GwMicroButtonSpellbookMicroButton:SetAttribute(
+            "_onclick",
+             [=[
+             local f = self:GetFrameRef("GwCharacterWindow")
+             f:SetAttribute("keytoggle", "1")
+             f:SetAttribute("windowpanelopen", "spellbook")
+             ]=]
+        )
+     else
+        GwMicroButtonSpellbookMicroButton:SetScript(
+            "OnClick",
+            function()
+                ToggleSpellBook(BOOKTYPE_SPELL)
+            end
+        )
+     end
+
     GwMicroButtonBagMicroButton:SetScript("OnClick", function() ToggleAllBags() end)
     GwMicroButtonQuestLogMicroButton:SetScript("OnClick", function() ToggleQuestLog() end)
     GwMicroButtonSocialsMicroButton:SetScript("OnClick", function() ToggleFriendsFrame() end)

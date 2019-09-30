@@ -4,7 +4,7 @@ Author: d87
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicCasterino", 17
+local MAJOR, MINOR = "LibClassicCasterino", 18
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -280,7 +280,7 @@ end
 
 
 local Passthrough = function(self, event, unit, ...)
-    if unit == "player" then
+    if unit == "player" or UnitIsUnit(unit, "player") then
         callbacks:Fire(event, unit, ...)
     end
 end

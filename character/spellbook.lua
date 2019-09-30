@@ -39,7 +39,7 @@ function gw_spell_buttonOnLeave(self)
 end
 
 local function spellbookButton_onEvent(self)
-    if not GwTalentFrame:IsShown() then return end
+    if not GwSpellbook:IsShown() then return end
 
     local start, duration, enable = GetSpellCooldown(self.spellbookIndex, self.booktype)
 
@@ -402,14 +402,17 @@ local function spellBookTab_onClick(self)
     self.background:Show()
 end
 
-function gw_register_spellbook_window()
+local function LoadSpellBook()
     local classDisplayName, class, classID = UnitClass('player')
     CreateFrame('Frame', 'GwSpellbook', GwCharacterWindow, 'GwSpellbook')
     CreateFrame('Frame', 'GwSpellbookMenu', GwSpellbook, 'GwSpellbookMenu')
 
     spellBookMenu_onLoad(GwSpellbookMenu)
+    GwSpellbook:Hide()
     GwSpellbookMenu:SetScript('OnEvent', function()
-        if not GwSpellbook:IsShown() then return end
+        if not GwSpellbook:IsShown() then
+            return
+        end
         updateSpellbookTab()
     end)
 
@@ -554,7 +557,7 @@ function gw_register_spellbook_window()
     end)
     hooksecurefunc('ToggleSpellBook', function()
         if InCombatLockdown() then return end
-        GwCharacterWindow:SetAttribute('windowPanelOpen', 3)
+        GwCharacterWindow:SetAttribute('windowPanelOpen', "spellbook")
     end)
     --hooksecurefunc('ToggleSpellBook',gwToggleSpellbook)
 
@@ -566,3 +569,4 @@ function gw_register_spellbook_window()
 
     return GwSpellbook
 end
+GW.LoadSpellBook = LoadSpellBook
