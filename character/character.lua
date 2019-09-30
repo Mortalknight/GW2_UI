@@ -117,8 +117,20 @@ function gwPaperDollUpdateUnitData()
 	end
 end
 
+local ShowPetFrameAfterCombat = CreateFrame("Frame", nil, UIParent)
 function gwPaperDollPetStats_OnEvent(self, event, ...)
     if InCombatLockdown() then
+        ShowPetFrameAfterCombat:SetScript(
+            "OnUpdate",
+            function(self, event, ...)
+                local inCombat = UnitAffectingCombat("player")
+                if inCombat == true then
+                    return
+                end
+                gwPaperDollPetStats_OnEvent(self, event, ...)
+                ShowPetFrameAfterCombat:SetScript("OnUpdate", nil)
+            end
+        )
         return
     end
 
@@ -127,11 +139,13 @@ function gwPaperDollPetStats_OnEvent(self, event, ...)
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and arg1 == "player") then
         if GwPetContainer:IsVisible() and not hasUI then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
+            GwCharacterMenu.petMenu:Hide()
             return
         end
     elseif event == "PET_UI_CLOSE" then
 		if GwPetContainer:IsVisible() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
+            GwCharacterMenu.petMenu:Hide()
             return
         end
     end
@@ -295,6 +309,7 @@ function gwPaperDollUpdateStats()
 end
 function gwPaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
+    GwCharacterMenu.petMenu:Hide()
     if not hasUI then return end
 
     local numShownStats = 1
