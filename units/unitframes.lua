@@ -54,12 +54,12 @@ for i = 1, 40 do
 end
 local function getBuffs(unit, filter)
     if filter == nil then
-        filter = ""
+        filter = "HELPFUL"
     end
     local tempCounter = 1
     for i = 1, 40 do
         table.wipe(buffList[i])
-        if UnitBuff(unit, i, filter) ~= nil then
+        if LibClassicDurations:UnitAura(unit, i, filter) ~= nil then
             local bli = buffList[i]
             tempCounter = tempCounter + 1
             bli["id"] = i
@@ -73,7 +73,7 @@ local function getBuffs(unit, filter)
                 bli["caster"],
                 bli["isStealable"],
                 bli["shouldConsolidate"],
-                bli["spellID"] = UnitBuff(unit, i, filter)
+                bli["spellID"] = LibClassicDurations:UnitAura(unit, i, filter)
 
             local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(unit, bli["spellID"], bli["caster"], bli["name"])
 
@@ -1100,26 +1100,24 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_POWER_UPDATE", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
 
     local CastbarEventHandler = function(event, ...)
         local self = NewUnitFrame
         return target_OnEvent(self, event, ...)
     end
 
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_START", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_DELAYED", CastbarEventHandler) -- only for player
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_STOP", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_FAILED", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_INTERRUPTED", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_CHANNEL_START", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler) -- only for player
-    LibCC.RegisterCallback(NewUnitFrame,"UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_START", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_DELAYED", CastbarEventHandler) -- only for player
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_STOP", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_FAILED", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_INTERRUPTED", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_START", CastbarEventHandler)
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler) -- only for player
+    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
+
+    LibClassicDurations.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
+        target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
+    end)    
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 

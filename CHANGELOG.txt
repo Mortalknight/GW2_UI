@@ -10,6 +10,7 @@
 - Change debuff position on target and player if target/player has no buffs
 - Update locals (zhTW, ptBR)
 - Update Aura Indicator for raidframes
+- Added enemy buffs on targetframe
 
 0.9.1
 
