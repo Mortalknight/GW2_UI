@@ -343,6 +343,39 @@ local function createTabIcon(iconName, tabIndex)
     return f
 end
 
+local function styleCharacterMenuButton(self, shadow)
+    if shadow then
+        self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+        self:GetFontString():SetTextColor(1,1,1,1)
+        self:GetFontString():SetShadowColor(0,0,0,0)
+        self:GetFontString():SetShadowOffset(1,-1)
+        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
+        self:GetFontString():SetJustifyH('LEFT')
+        self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
+    else
+        self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+        self:SetNormalTexture(nil)
+        self:GetFontString():SetTextColor(1,1,1,1)
+        self:GetFontString():SetShadowColor(0,0,0,0)
+        self:GetFontString():SetShadowOffset(1,-1)
+        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
+        self:GetFontString():SetJustifyH('LEFT')
+        self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
+    end
+    self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+end
+
+local function styleCharacterMenuBackButton(self)
+    self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+    self:SetNormalTexture(nil)
+    local fontString = self:GetFontString()
+    fontString:SetTextColor(1,1,1,1)
+    fontString:SetShadowColor(0,0,0,0)
+    fontString:SetShadowOffset(1,-1)
+    fontString:SetFont(DAMAGE_TEXT_FONT,14)
+    self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+end
+
 function Gw_LoadWindows()
     local anyThingToLoad = false
     for k, v in pairs(windowsList) do
@@ -378,6 +411,44 @@ function Gw_LoadWindows()
                 GwCharacterWindow:SetFrameRef("GwPaperSkills", GwPaperSkills)
                 GwCharacterWindow:SetFrameRef("GwDressingRoom", GwDressingRoom)
                 GwCharacterWindow:SetFrameRef("GwPetContainer", GwPetContainer)
+
+                styleCharacterMenuButton(GwCharacterMenu.skillsMenu, true)
+                styleCharacterMenuButton(GwCharacterMenu.reputationMenu, false)
+                styleCharacterMenuButton(GwCharacterMenu.petMenu, true)
+                styleCharacterMenuBackButton(GwPaperSkills.backButton)
+                styleCharacterMenuBackButton(GwPaperReputation.backButton)
+                styleCharacterMenuBackButton(GwDressingRoomPet.backButton)
+
+                GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "paperdollskills")
+                ]=])
+                GwCharacterMenu.reputationMenu:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "reputation")
+                ]=])
+                GwCharacterMenu.petMenu:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "paperdollpet")
+                ]=])
+                GwPaperSkills.backButton:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "paperdoll")
+                ]=])
+                GwPaperReputation.backButton:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "paperdoll")
+                ]=])
+                GwDressingRoomPet.backButton:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "paperdoll")
+                ]=])
             end
             v.TabFrame = f
 

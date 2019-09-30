@@ -118,18 +118,20 @@ function gwPaperDollUpdateUnitData()
 end
 
 function gwPaperDollPetStats_OnEvent(self, event, ...)
+    if InCombatLockdown() then
+        return
+    end
+
     local unit = ...
     hasUI, isHunterPet = HasPetUI()
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and arg1 == "player") then
         if GwPetContainer:IsVisible() and not hasUI then
-            gwCharacterPanelToggle(GwCharacterMenu)
-            GwCharacterMenu.petMenu:Hide()
+            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
             return
         end
     elseif event == "PET_UI_CLOSE" then
 		if GwPetContainer:IsVisible() then
-            gwCharacterPanelToggle(GwCharacterMenu)
-            GwCharacterMenu.petMenu:Hide()
+            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
             return
         end
     end
@@ -1053,9 +1055,13 @@ function GWupdateSkills()
     GwPaperSkills.scroll.slider.thumb:SetHeight(100)
 end
 
+-
 local CHARACTER_PANEL_OPEN = ""
-
 function GwToggleCharacter(tab, onlyShow)
+    if InCombatLockdown() then
+        return
+    end
+
     local CHARACTERFRAME_DEFAULTFRAMES= {}
 
     CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwCharacterMenu
@@ -1071,6 +1077,16 @@ function GwToggleCharacter(tab, onlyShow)
                 GwCharacterWindow:SetAttribute("keytoggle", true)
             end
             GwCharacterWindow:SetAttribute("windowpanelopen", "reputation")
+        elseif tab == "SkillFrame" then
+            if not onlyShow then
+                GwCharacterWindow:SetAttribute("keytoggle", true)
+            end
+            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollskills")
+        elseif tab == "PetPaperDollFrame" then
+            if not onlyShow then
+                GwCharacterWindow:SetAttribute("keytoggle", true)
+            end
+            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollpet")
         else
             -- PaperDollFrame or any other value
             if not onlyShow then
@@ -1090,6 +1106,7 @@ function GwToggleCharacter(tab, onlyShow)
         return
     end
 end
+
 
 local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
@@ -1131,10 +1148,6 @@ local function LoadPaperDoll()
     GwCharacterWindowContainer:HookScript("OnShow", function()
         GwCharacterWindow.windowIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\character-window-icon")
         GwCharacterWindow.WindowHeader:SetText(CHARACTER)
-        if CHARACTER_PANEL_OPEN == nil then
-            gwCharacterPanelToggle(GwCharacterMenu)
-            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
-        end
     end)
 
     StaticPopupDialogs["GW_UNEQUIP_LEGENDARY"] = {

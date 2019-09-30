@@ -148,7 +148,6 @@
         </Scripts>
     </Button>
      <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
-
          <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
          <Layers>
             <Layer>
@@ -160,19 +159,6 @@
                 </Texture>
              </Layer>
          </Layers>
-         <Scripts>
-             <OnLoad>
-                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-
-                 self:GetFontString():SetTextColor(1,1,1,1)
-                 self:GetFontString():SetShadowColor(0,0,0,0)
-                 self:GetFontString():SetShadowOffset(1,-1)
-                 self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
-                 self:GetFontString():SetJustifyH('LEFT')
-                 self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
-
-             </OnLoad>
-         </Scripts>
     </Button>
     <Button name="GwCharacterMenuButtonTemplate2" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
           <Layers>
@@ -185,22 +171,8 @@
                 </Texture>
              </Layer>
          </Layers>
-         <Scripts>
-             <OnLoad>
-                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-                 self:SetNormalTexture(nil)
-                 self:GetFontString():SetTextColor(1,1,1,1)
-                 self:GetFontString():SetShadowColor(0,0,0,0)
-                 self:GetFontString():SetShadowOffset(1,-1)
-                 self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
-                 self:GetFontString():SetJustifyH('LEFT')
-                 self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
-
-             </OnLoad>
-         </Scripts>
     </Button>
     <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
-
           <Layers>
             <Layer layer="OVERLAY" textureSubLevel="8">
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
@@ -211,96 +183,56 @@
                 </Texture>
              </Layer>
          </Layers>
-         <Scripts>
-             <OnLoad>
-                 self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-                 self:SetNormalTexture(nil)
-                 local fontString = self:GetFontString()
-                 fontString:SetTextColor(1,1,1,1)
-                fontString:SetShadowColor(0,0,0,0)
-                fontString:SetShadowOffset(1,-1)
-                fontString:SetFont(DAMAGE_TEXT_FONT,14)
-
-
-             </OnLoad>
-         </Scripts>
     </Button>
     <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true">
-
          <Scripts>
              <OnLoad>
-                 self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-                 self:SetNormalTexture(nil)
-
-                 local fontString = self:GetFontString()
-                 fontString:SetTextColor(1,1,1,1)
+                self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+                self:SetNormalTexture(nil)
+                local fontString = self:GetFontString()
+                fontString:SetTextColor(1,1,1,1)
                 fontString:SetShadowColor(0,0,0,0)
                 fontString:SetShadowOffset(1,-1)
                 fontString:SetFont(DAMAGE_TEXT_FONT,14)
              </OnLoad>
          </Scripts>
     </Button>
-    <Frame name="GwCharacterMenu" hidden="true" virtual="true">
+    <Frame name="GwCharacterMenu" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
         </Anchors>
         <Frames>
-
-
-            <Button name="$parentSkills" parentKey="skillsMenu" inherits="GwCharacterMenuButtonTemplate" text="Skills" >
+            <Button name="$parentSkills" parentKey="skillsMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="Skills" >
                 <Size x="231" y="36"></Size>
-
                 <Anchors>
-                            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                          gwCharacterPanelToggle(GwPaperSkills)
-                    </OnClick>
-                </Scripts>
             </Button>
-            <Button name="$parentReputation" parentKey="reputationMenu" inherits="GwCharacterMenuButtonTemplate2" text="Reputation" >
+            <Button name="$parentReputation" parentKey="reputationMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="Reputation" >
                 <Size x="231" y="36"></Size>
-
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.skillsMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
-                   <Scripts>
-                    <OnClick>
-                          gwCharacterPanelToggle(GwPaperReputation)
-                    </OnClick>
-                </Scripts>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate" text="Reputation" >
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="Reputation" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.reputationMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
-                   <Scripts>
-                    <OnClick>
-                          gwCharacterPanelToggle(GwPetContainer)
-                    </OnClick>
-                </Scripts>
             </Button>
         </Frames>
 		<Scripts>
 			<OnLoad>
-
-			--	self.equipmentMenu:SetText(GwLocalization['CHARACTER_MENU_EQUIPMENT'])
-			--	self.outfitsMenu:SetText(GwLocalization['CHARACTER_MENU_OUTFITS'])
 				self.skillsMenu:SetText(SKILLS)
 				self.reputationMenu:SetText(REPUTATION)
                 self.petMenu:SetText(PET)
-
                 if not HasPetUI() then self.petMenu:Hide() end
 			</OnLoad>
 		</Scripts>
     </Frame>
 
-
     <Button name="GwPaperDollReputationCat" text="notyetloaded" inherits="GwCharacterMenuBlank" virtual="true">
-
         <Size x="231" y="44"></Size>
         <Anchors>
             <Anchor point="TOPLEFT"></Anchor>
@@ -734,7 +666,7 @@
         </Scripts>
     </Button>
 
-    <Frame name="GwPetPaperdoll" virtual="true">
+    <Frame name="GwPetPaperdoll" inherits="SecureHandlerBaseTemplate" virtual="true">
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -784,16 +716,11 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Pet" >
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="Character: Pet" >
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="13" y="-15"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
             </Button>
             <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate, ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
@@ -1031,22 +958,17 @@
         </Scripts>
     </Button>
 
-    <Frame name="GwPaperSkills"  hidden="true" virtual="true">
+    <Frame name="GwPaperSkills" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
         <Size x="231" y="600"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="0"></Anchor>
         </Anchors>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Skills" >
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="Character: Skills" >
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="-15"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
             </Button>
             <ScrollFrame parentKey="scroll" enableMouse="true">
                 <Size x="231" y="600"></Size>
@@ -1140,7 +1062,7 @@
         </Scripts>
     </Frame>
 
-    <Frame name="GwPaperReputation"  hidden="true" virtual="true">
+    <Frame name="GwPaperReputation" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
         <Size x="220" y="478"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
@@ -1155,19 +1077,13 @@
                 </Texture>
             </Layer>
         </Layers>
-             <Frames>
-                 <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Reputation" >
-                <Size x="231" y="50"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        gwCharacterPanelToggle(GwCharacterMenu)
-                    </OnClick>
-                </Scripts>
-                 </Button>
-
+            <Frames>
+                <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="Character: Reputation" >
+                    <Size x="231" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
+                    </Anchors>
+                </Button>
                  <EditBox name="$parentInput"  parentKey="input" autoFocus="false">
                        <Size x="214" y="25"></Size>
                      <Anchors>
@@ -1333,7 +1249,7 @@
         </Scripts>
     </Frame>
 
-    <Button name="GwDressingRoom" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
+    <Button name="GwDressingRoom" inherits="SecureHandlerBaseTemplate" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
         <Size x="608" y="621"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
@@ -1679,7 +1595,7 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
         </Anchors>
     </Frame>
-    <Frame name="GwPetContainer"  virtual="true">
+    <Frame name="GwPetContainer" inherits="SecureHandlerBaseTemplate" virtual="true">
          <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
