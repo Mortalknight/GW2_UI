@@ -1035,7 +1035,6 @@ function GWupdateSkills()
     GwPaperSkills.scroll.slider.thumb:SetHeight(100)
 end
 
--
 local CHARACTER_PANEL_OPEN = ""
 function GwToggleCharacter(tab, onlyShow)
     if InCombatLockdown() then
