@@ -594,26 +594,6 @@ function GwSetItemButtonQuality(button, quality, itemIDOrLink)
 	end
 end
 
-function gwCharacterPanelToggle(frame)
-    GwCharacterMenu:Hide()
-
-    GwPaperReputation:Hide()
-    GwPaperSkills:Hide()
-    GwPetContainer:Hide()
-
-    if frame ~= nil then
-        frame:Show()
-    else
-        GwDressingRoom:Show()
-        return
-    end
-    if frame:GetName() == "GwPaperReputation" or frame:GetName() == "GwPetContainer" then
-        GwDressingRoom:Hide()
-    else
-        GwDressingRoom:Show()
-    end
-end
-
 local function getNewReputationCat(i)
     if _G["GwPaperDollReputationCat" .. i] ~= nil then return _G["GwPaperDollReputationCat" .. i] end
 
@@ -1070,7 +1050,6 @@ function GwToggleCharacter(tab, onlyShow)
     CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
 
     if CHARACTERFRAME_DEFAULTFRAMES[tab] ~= nil and CHARACTER_PANEL_OPEN ~= tab  then
-        gwCharacterPanelToggle(CHARACTERFRAME_DEFAULTFRAMES[tab])
         CHARACTER_PANEL_OPEN = tab
         if tab == "ReputationFrame" then
             if not onlyShow then
