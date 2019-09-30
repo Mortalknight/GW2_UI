@@ -179,7 +179,7 @@
         </Scripts>
     </Button>
 
-    <ScrollFrame name="GwSpellbookContainerTab" virtual="true">
+    <Frame name="GwSpellbookContainerTab" virtual="true">
         <Size x="611" y="581"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="-37"/>
@@ -200,102 +200,87 @@
                         <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
                      </Anchors>
                  </FontString>
+                 <FontString parentKey="pages" text="0" justifyH="LEFT" justifyY="CENTER">
+                     <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="10"/>
+                     </Anchors>
+                 </FontString>
              </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="scrollchild" enableMouse="false">
-                <Size x="608" y="581"/>
+            <Frame name="$parentcontainer1"  parentKey="container1" enableMouse="false">
+                <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+
                 </Anchors>
-            </Frame>
-            <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
-                <Size x="12" y="12"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"/>
-                </Anchors>
-                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
-                    <Size x="12" y="100"/>
-                     <Anchors>
-                      <Anchor point="TOP" relativePoint="TOP" />
-                    </Anchors>
-                </ThumbTexture>
-                <Layers>
-                    <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
-                            <Anchors>
-                                <Anchor point="TOP" relativePoint="TOP"/>
-                                <Anchor point="BOTTOM" relativePoint="BOTTOM"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
                 <Scripts>
-                    <OnValueChanged>
-                        if InCombatLockdown() then return end
-                        self:GetParent():SetVerticalScroll(value)
-                    </OnValueChanged>
-                    <OnLoad>
-                        self:SetValue(1)
-                    </OnLoad>
+                    <OnShow>
+                        self:GetParent().pages:SetText(1)
+                    </OnShow>
                 </Scripts>
-            </Slider>
-            <Button name="$parentScrollButtonUp">
-             <Size x="12" y="12"/>
+            </Frame>
+            <Frame name="$parentcontainer2" parentKey="container2" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+
                 </Anchors>
-            <Layers>
-                <Layer>
-                    <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                        <Size x="12" y="12"/>
-                        <Anchors>
-                            <Anchor point="TOP" relativePoint="TOP"/>
-                        </Anchors>
-                    </Texture>
-                </Layer>
-            </Layers>
-            </Button>
-            <Button name="$parentScrollButtonDown">
-                <Size x="12" y="12"/>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(2)
+                    </OnShow>
+                </Scripts>
+            </Frame>
+            <Frame name="$parentcontainer3" parentKey="container3" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(3)
+                    </OnShow>
+                </Scripts>
+            </Frame>
+            <Button parentKey="left" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate"  >
+                <size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"  x="10" y="0" />
                 </Anchors>
                 <Layers>
-                    <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                            <Size x="12" y="12"/>
-                            <Anchors>
-                                <Anchor point="TOP" relativePoint="TOP"/>
-                            </Anchors>
-                            <TexCoords left="0" right="1" top="1" bottom="0" />
-                        </Texture>
-                    </Layer>
-                </Layers>
+                  <Layer layer="OVERLAY" textureSubLevel="8">
+                      <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                          <Size x="32" y="32"></Size>
+                          <Anchors>
+                              <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                          </Anchors>
+                      </Texture>
+                   </Layer>
+               </Layers>
+            </Button>
+            <Button parentKey="right" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate"  >
+                <size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="-10" y="0" />
+                </Anchors>
+                <Layers>
+                  <Layer layer="OVERLAY" textureSubLevel="8">
+                      <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                          <Size x="32" y="32"></Size>
+                          <Anchors>
+                              <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                          </Anchors>
+                      </Texture>
+                   </Layer>
+               </Layers>
             </Button>
         </Frames>
         <Scripts>
-            <OnLoad>
-                self:SetScrollChild(self.scrollchild)
-                self.slider:SetMinMaxValues(0, 608)
-                self.slider:SetValue(0)
-            </OnLoad>
-            <OnMouseWheel>
-                if InCombatLockdown() then return end
-                delta = -delta * 15
 
-                local s = self:GetVerticalScroll() + delta
-
-                local min, max = self.slider:GetMinMaxValues()
-                s = math.min(max, math.max(min, s))
-
-                self.slider:SetValue(s)
-                self:SetVerticalScroll(s)
-            </OnMouseWheel>
         </Scripts>
-    </ScrollFrame>
+    </Frame>
 
     <Frame name="GwSpellbookActionBackground" virtual="true">
         <Size x="304" y="64"/>

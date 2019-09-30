@@ -111,35 +111,53 @@ local function  spellBookMenu_onLoad(self)
 end
 
 local SpellbookHeaderIndex = 1
-local function getSpellBookHeader(tab)
+local function getSpellBookHeader(tab,pagingContainer)
     if _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex] ~= nil then
         local f = _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex]
-        SpellbookHeaderIndex = SpellbookHeaderIndex + 1
         return f
     end
 
-    local f = CreateFrame("Frame", 'GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex, _G['GwSpellbookContainerTab' .. tab].scrollchild, "GwSpellbookActionBackground"   )
-    _G['GwSpellbookContainerTab' .. tab].headers[#_G['GwSpellbookContainerTab' .. tab].headers + 1] = f
-    local prev = _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. (SpellbookHeaderIndex - 1)]
-    if prev ~= nil then
-        if (SpellbookHeaderIndex % 2) == 0 then
-            local prev2 = _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. (SpellbookHeaderIndex - 2)]
-            if prev2 ~= nil then
-                f:SetPoint("TOPLEFT", prev2, "BOTTOMLEFT", 0, -5)
-            else
-                f:SetPoint("TOPLEFT", prev, "TOPRIGHT", 0, 0)
+    local f = CreateFrame("Frame", 'GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex,  _G['GwSpellbookContainerTab' .. tab], "GwSpellbookActionBackground"   )
+
+
+    return f
+end
+
+local function setHeaderLocation(self,tab,pagingContainer)
+    local prev
+
+    if pagingContainer.headers[#pagingContainer.headers] ~=nil then
+        prev = pagingContainer.headers[#pagingContainer.headers]
+    end
+    self:ClearAllPoints()
+    self:SetParent(pagingContainer)
+
+    if prev~= nil then
+        if ((#pagingContainer.headers+1) % 2)==0 then
+            local prev2
+
+            if pagingContainer.headers[#pagingContainer.headers - 1]~=nil then
+                prev2 = pagingContainer.headers[#pagingContainer.headers - 1]
             end
-            f.column = 1
+            if prev2 ~= nil then
+                self:SetPoint("TOPLEFT", prev2, "BOTTOMLEFT", 0, -5)
+                self.column = 2
+            else
+                self:SetPoint("TOPLEFT", prev, "TOPRIGHT", 0, 0)
+                self.column = 2
+            end
         else
-            prev = _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. (SpellbookHeaderIndex - 2)]
-            f:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, -5)
+            prev =  pagingContainer.headers[#pagingContainer.headers - 1]
+            self:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, -5)
+            self.column = 1
         end
     else
-        f.column = 2
-        f:SetPoint("TOPLEFT", f:GetParent(), "TOPLEFT", 0, 0)
+        self:SetPoint("TOPLEFT", pagingContainer, "TOPLEFT", 0, 0)
+        self.column = 1
     end
-    SpellbookHeaderIndex = SpellbookHeaderIndex + 1
-    return f
+
+     pagingContainer.headers[#pagingContainer.headers + 1] = self
+     SpellbookHeaderIndex = SpellbookHeaderIndex + 1
 end
 
 local spellButtonIndex = 1
@@ -240,6 +258,99 @@ local function findHigherRank(t,spellID)
     return t
 end
 
+local function getHeaderHeight(pagingContainer,lastHeader)
+    local lastColumn = 1
+    if lastHeader~=nil then
+        lastColumn = lastHeader.column
+    end
+    local c1 =0
+    local c2 =0
+    for _, h in pairs(pagingContainer.headers) do
+        if h.column == 1 then
+        c1=c1 + h.height
+        else
+            c2=c2 + h.height
+        end
+    end
+    if lastColumn==2 then
+        return c1
+    end
+    return c2
+end
+
+local function setUpPaging(self)
+        --self:SetFrameRef('GwSpellbookMenu', GwSpellbookMenu)
+    local numPages = self.tabs
+
+    if self.tabs<2 then
+        self.left:Hide()
+        self.right:Hide()
+        self.pages:Hide()
+        return
+    end
+
+    self.left:Show()
+    self.right:Show()
+    self.pages:Show()
+
+    local methodLeft = [=[
+        if self:GetFrameRef('container2'):IsVisible() then
+            self:GetFrameRef('container1'):Show()
+            self:GetFrameRef('container2'):Hide()
+            self:GetFrameRef('right'):Show()
+            self:Hide()
+            return
+        end]=]
+
+        local methodRight = [=[
+            if self:GetFrameRef('container1'):IsVisible() then
+            self:GetFrameRef('container2'):Show()
+            self:GetFrameRef('container1'):Hide()
+            self:GetFrameRef('left'):Show()
+            ]=]
+
+            if numPages==2 then
+                methodRight=methodRight..[=[
+                self:Hide()
+                ]=]
+            end
+            methodRight=methodRight..[=[  return
+         end
+         ]=]
+    if numPages>2 then
+        methodLeft = methodLeft.. [=[
+        if self:GetFrameRef('container3'):IsVisible() then
+            self:GetFrameRef('container2'):Show()
+            self:GetFrameRef('container3'):Hide()
+            return
+        end
+        ]=]
+        methodRight = methodRight.. [=[
+        if self:GetFrameRef('container2'):IsVisible() then
+            self:GetFrameRef('container3'):Show()
+            self:GetFrameRef('container2'):Hide()
+            self:Hide()
+            return
+        end
+        ]=]
+
+    end
+
+    self.right:SetFrameRef('left', self.left)
+    self.right:SetFrameRef('container1', self.container1)
+    self.right:SetFrameRef('container2', self.container2)
+    self.right:SetFrameRef('container3', self.container3)
+
+    self.right:SetAttribute("_onclick",methodRight)
+
+    self.left:SetFrameRef('right', self.right)
+    self.left:SetFrameRef('container1', self.container1)
+    self.left:SetFrameRef('container2', self.container2)
+    self.left:SetFrameRef('container3', self.container3)
+
+    self.left:SetAttribute("_onclick",methodLeft)
+end
+
 local knowSpells = {}
 local function updateSpellbookTab()
     if InCombatLockdown() then return end
@@ -247,6 +358,10 @@ local function updateSpellbookTab()
         local name, texture, offset, numSpells, offSpecID, shouldHide, specID = GetSpellTabInfo(spellBookTabs)
         local flyOuts = {}
         local BOOKTYPE = 'spell'
+
+        local pagingID = 1;
+        local pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs..'container'..pagingID]
+        _G['GwSpellbookContainerTab' .. spellBookTabs].tabs = 1
 
         SpellbookHeaderIndex = 1
         spellButtonIndex = 1
@@ -275,8 +390,9 @@ local function updateSpellbookTab()
         local headerPositionY = 0
         local needNewHeader = true
 
-        local column1 = 0
-        local column2 = 0
+        pagingContainer.column1 = 0
+        pagingContainer.column2 = 0
+        pagingContainer.headers = {}
 
         for i = 1, numSpells do
             local hasHigherRank = false
@@ -327,13 +443,25 @@ local function updateSpellbookTab()
             unlearnd = findHigherRank(unlearnd, spellID, requiredTalentID)
 
             if needNewHeader then
-                header = getSpellBookHeader(spellBookTabs)
+                local currentHeight = getHeaderHeight(pagingContainer,header)
+                if currentHeight>(pagingContainer:GetHeight() - 120 ) then
+                    pagingID = pagingID + 1;
+                    pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs..'container'..pagingID]
+                    pagingContainer.headers = {}
+                    pagingContainer.column1 = 0
+                    pagingContainer.column2 = 0
+                    _G['GwSpellbookContainerTab' .. spellBookTabs].tabs = pagingID
+
+                end
+                header = getSpellBookHeader(spellBookTabs,pagingContainer)
+                setHeaderLocation(header,spellBookTabs,pagingContainer)
                 header.title:SetText(name)
                 header.buttons = 1
                 header.height = 80
             end
 
             mainButton:ClearAllPoints()
+            mainButton:SetParent(header)
             if needNewHeader then
                 mainButton:SetPoint("TOPLEFT", header, "TOPLEFT", 15, -35)
                 header.firstButton = mainButton
@@ -354,6 +482,7 @@ local function updateSpellbookTab()
 
                 knowSpells[#knowSpells + 1] = {id = unknownSpellID.id, rqTalentID = nil}
                 unKnownChildButton:ClearAllPoints()
+                unKnownChildButton:SetParent(header)
                 if header.buttons == 6 then
                     unKnownChildButton:SetPoint("TOPLEFT", header.firstButton, "BOTTOMLEFT", 0, -5)
                     header.height = header.height + 45
@@ -368,22 +497,11 @@ local function updateSpellbookTab()
             header:SetHeight(header.height)
             lastSkillid = spellID
             lastButton = mainButton
+
+            setUpPaging(_G['GwSpellbookContainerTab' .. spellBookTabs])
         end
 
-        for _, h in pairs(_G['GwSpellbookContainerTab' .. spellBookTabs].headers) do
-            if h.column == 1 then
-                column1 = column1 + h.height
-            else
-                column2 = column2 + h.height
-            end
-        end
 
-        scrollFrameHeight = _G['GwSpellbookContainerTab' .. spellBookTabs]:GetHeight() - 50
-        if column1 > column2 then
-            _G['GwSpellbookContainerTab' .. spellBookTabs].slider:SetMinMaxValues(0, math.max(0, column1 - scrollFrameHeight))
-        else
-            _G['GwSpellbookContainerTab' .. spellBookTabs].slider:SetMinMaxValues(0, math.max(0, column2 - scrollFrameHeight))
-        end
 
         for i = boxIndex, 100 do
             _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:SetAlpha(0)
@@ -427,20 +545,23 @@ local function LoadSpellBook()
         local container = CreateFrame('ScrollFrame', 'GwSpellbookContainerTab' .. tab,GwSpellbook, 'GwSpellbookContainerTab')
         container.title:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
         container.title:SetTextColor(0.9, 0.9, 0.7, 1)
+        container.pages:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+        container.pages:SetTextColor(0.7, 0.7, 0.5, 1)
         local zebra = tab % 2
         menuItem.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
         menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
+
         menuItem.bg:SetVertexColor(1, 1, 1, zebra)
         menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
         menuItem:SetNormalTexture(nil)
         menuItem:SetText("")
 
-        container.headers = {}
+
         local line = 0
         local x = 0
         local y = 0
         for i = 1, 100 do
-            local f = CreateFrame('Button', 'GwSpellbookTab' .. tab .. 'Actionbutton' .. i, container.scrollchild, 'GwSpellbookActionbutton')
+            local f = CreateFrame('Button', 'GwSpellbookTab' .. tab .. 'Actionbutton' .. i, container.container1, 'GwSpellbookActionbutton')
             local mask = UIParent:CreateMaskTexture()
             mask:SetPoint("CENTER", f, 'CENTER', 0, 0)
 
@@ -472,6 +593,7 @@ local function LoadSpellBook()
     GwSpellbookContainerTab3:Show()
     GwSpellbookContainerTab4:Hide()
     GwSpellbookContainerTab5:Hide()
+
 
     GwspellbookTab1:SetFrameRef('GwSpellbookMenu', GwSpellbookMenu)
     GwspellbookTab1:SetAttribute("_onclick", [=[
