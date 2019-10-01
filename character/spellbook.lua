@@ -180,6 +180,7 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:RemoveMaskTexture(_G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].mask)
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
     end
+    spellbookButton_onEvent(_G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex])
 
     return _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]
 end

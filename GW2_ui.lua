@@ -820,6 +820,7 @@ GW.AddForProfiling("index", "loadAddon", loadAddon)
 
 -- handles addon loading
 local setHasPetUI = false
+local setAttributeAfterCombat = CreateFrame("Frame", nil, UIParent)
 local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         if not loaded then
@@ -843,7 +844,21 @@ local function gw_OnEvent(self, event, ...)
                         return
                     end
                     if GetSetting("USE_CHARACTER_WINDOW") then
-                        GwCharacterWindow:SetAttribute("HasPetUI", select(1, HasPetUI()))
+                        if InCombatLockdown() then
+                            setAttributeAfterCombat:SetScript(
+                                "OnUpdate",
+                                function()
+                                    local inCombat = UnitAffectingCombat("player")
+                                    if inCombat == true then
+                                        return
+                                    end
+                                    GwCharacterWindow:SetAttribute("HasPetUI", select(1, HasPetUI()))
+                                    setAttributeAfterCombat:SetScript("OnUpdate", nil)
+                                end)
+                            return
+                        else
+                            GwCharacterWindow:SetAttribute("HasPetUI", select(1, HasPetUI()))
+                        end
                     end
                     setHasPetUI = true
                     HasPetUIFrame:SetScript("OnUpdate", nil)

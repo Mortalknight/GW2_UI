@@ -378,7 +378,22 @@ local function styleCharacterMenuBackButton(self)
     self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
 end
 
+local LoadCharWindowAfterCombat = CreateFrame("Frame", nil, UIParent)
 function Gw_LoadWindows()
+    if InCombatLockdown() then
+        LoadCharWindowAfterCombat:SetScript(
+            "OnUpdate",
+            function(self, event, ...)
+                local inCombat = UnitAffectingCombat("player")
+                if inCombat == true then
+                    return
+                end
+                Gw_LoadWindows()
+                LoadCharWindowAfterCombat:SetScript("OnUpdate", nil)
+            end)
+        return
+    end
+
     local anyThingToLoad = false
     for k, v in pairs(windowsList) do
         if GetSetting(v.SettingName) then
