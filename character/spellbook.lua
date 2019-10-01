@@ -53,6 +53,7 @@ local function  spellBookMenu_onLoad(self)
     self:RegisterEvent("LEARNED_SPELL_IN_TAB")
     self:RegisterEvent("SKILL_LINES_CHANGED")
     self:RegisterEvent("PLAYER_GUILD_UPDATE")
+    self:RegisterEvent("PLAYER_LEVEL_UP")
 end
 
 local SpellbookHeaderIndex = 1
