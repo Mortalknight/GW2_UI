@@ -59,231 +59,769 @@ GW:SetPreviousAbilityMap(
 )
 ]]
 
-GW.SpellsByLevel = {
-	[1] = {{id = 1126, cost = 10}},
-	[4] = {{id = 8921, cost = 100}, {id = 774, cost = 100}},
-	[6] = {{id = 467, cost = 100}, {id = 5177, cost = 100, requiredIds = {5176}}},
-	[8] = {{id = 339, cost = 200}, {id = 5186, cost = 200, requiredIds = {5185}}},
-	[10] = {
-		{id = 99, cost = 300, requiredIds = {5487}},
-		{id = 5232, cost = 300, requiredIds = {1126}},
-		{id = 8924, cost = 300, requiredIds = {8921}},
-		{id = 1058, cost = 300, requiredIds = {774}}
-	},
-	[12] = {{id = 5229, cost = 800, requiredIds = {5487}}, {id = 8936, cost = 800}},
-	[14] = {
-		{id = 5211, cost = 900, requiredIds = {5487}},
-		{id = 5187, cost = 900, requiredIds = {5186}},
-		{id = 782, cost = 900, requiredIds = {467}},
-		{id = 5178, cost = 900, requiredIds = {5177}}
-	},
-	[16] = {
-		{id = 8925, cost = 1800, requiredIds = {8924}},
-		{id = 1430, cost = 1800, requiredIds = {1058}},
-		{id = 779, cost = 1800, requiredIds = {5487}}
-	},
-	[18] = {
-		{id = 1062, cost = 1900, requiredIds = {339}},
-		{id = 770, cost = 1900},
-		{id = 2637, cost = 1900},
-		{id = 6808, cost = 1900, requiredIds = {6807}},
-		{id = 16810, cost = 95, requiredIds = {16689}, requiredTalentId = 16689},
-		{id = 8938, cost = 1900, requiredIds = {8936}}
-	},
-	[20] = {
-		{id = 768, cost = 2000},
-		{id = 1082, cost = 2000, requiredIds = {768}},
-		{id = 1735, cost = 2000, requiredIds = {99}},
-		{id = 5188, cost = 2000, requiredIds = {5187}},
-		{id = 6756, cost = 2000, requiredIds = {5232}},
-		{id = 5215, cost = 2000, requiredIds = {768}},
-		{id = 20484, cost = 2000},
-		{id = 1079, cost = 2000, requiredIds = {768}},
-		{id = 2912, cost = 2000}
-	},
-	[22] = {
-		{id = 8926, cost = 3000, requiredIds = {8925}},
-		{id = 2090, cost = 3000, requiredIds = {1430}},
-		{id = 5221, cost = 3000, requiredIds = {768}},
-		{id = 2908, cost = 3000},
-		{id = 5179, cost = 3000, requiredIds = {5178}}
-	},
-	[24] = {
-		{id = 1822, cost = 4000, requiredIds = {768}},
-		{id = 8939, cost = 4000, requiredIds = {8938}},
-		{id = 2782, cost = 4000},
-		{id = 780, cost = 4000, requiredIds = {779}},
-		{id = 1075, cost = 4000, requiredIds = {782}},
-		{id = 5217, cost = 4000, requiredIds = {768}}
-	},
-	[26] = {
-		{id = 2893, cost = 4500},
-		{id = 1850, cost = 4500, requiredIds = {768}},
-		{id = 5189, cost = 4500, requiredIds = {5188}},
-		{id = 6809, cost = 4500, requiredIds = {6808}},
-		{id = 8949, cost = 4500, requiredIds = {2912}}
-	},
-	[28] = {
-		{id = 5209, cost = 5000, requiredIds = {5487}},
-		{id = 3029, cost = 5000, requiredIds = {1082}},
-		{id = 8998, cost = 5000, requiredIds = {768}},
-		{id = 5195, cost = 5000, requiredIds = {1062}},
-		{id = 8927, cost = 5000, requiredIds = {8926}},
-		{id = 16811, cost = 250, requiredIds = {16810}, requiredTalentId = 16689},
-		{id = 2091, cost = 5000, requiredIds = {2090}},
-		{id = 9492, cost = 5000, requiredIds = {1079}}
-	},
-	[30] = {
-		{id = 6798, cost = 6000, requiredIds = {5211}},
-		{id = 778, cost = 6000, requiredIds = {770}},
-		{id = 17390, cost = 300, requiredIds = {16857}, requiredTalentId = 16857},
-		{id = 24974, cost = 300, requiredIds = {5570}, requiredTalentId = 5570},
-		{id = 5234, cost = 6000, requiredIds = {6756}},
-		{id = 20739, cost = 6000, requiredIds = {20484}},
-		{id = 8940, cost = 6000, requiredIds = {8939}},
-		{id = 6800, cost = 6000, requiredIds = {5221}},
-		{id = 740, cost = 6000},
-		{id = 783, cost = 6000},
-		{id = 5180, cost = 6000, requiredIds = {5179}}
-	},
-	[32] = {
-		{id = 9490, cost = 8000, requiredIds = {1735}},
-		{id = 22568, cost = 8000, requiredIds = {768}},
-		{id = 6778, cost = 8000, requiredIds = {5189}},
-		{id = 6785, cost = 8000, requiredIds = {768}},
-		{id = 5225, cost = 8000}
-	},
-	[34] = {
-		{id = 8972, cost = 10000, requiredIds = {6809}},
-		{id = 8928, cost = 10000, requiredIds = {8927}},
-		{id = 1823, cost = 10000, requiredIds = {1822}},
-		{id = 3627, cost = 10000, requiredIds = {2091}},
-		{id = 8950, cost = 10000, requiredIds = {8949}},
-		{id = 769, cost = 10000, requiredIds = {780}},
-		{id = 8914, cost = 10000, requiredIds = {1075}}
-	},
-	[36] = {
-		{id = 22842, cost = 11000, requiredIds = {5487}},
-		{id = 9005, cost = 11000, requiredIds = {768}},
-		{id = 8941, cost = 11000, requiredIds = {8940}},
-		{id = 9493, cost = 11000, requiredIds = {9492}},
-		{id = 6793, cost = 11000, requiredIds = {5217}}
-	},
-	[38] = {
-		{id = 5201, cost = 12000, requiredIds = {3029}},
-		{id = 5196, cost = 12000, requiredIds = {5195}},
-		{id = 8903, cost = 12000, requiredIds = {6778}},
-		{id = 18657, cost = 12000, requiredIds = {2637}},
-		{id = 16812, cost = 600, requiredIds = {16811}, requiredTalentId = 16689},
-		{id = 8992, cost = 12000, requiredIds = {6800}},
-		{id = 8955, cost = 12000, requiredIds = {2908}},
-		{id = 6780, cost = 12000, requiredIds = {5180}}
-	},
-	[40] = {
-		{id = 9000, cost = 14000, requiredIds = {8998}},
-		{id = 9634, cost = 14000, requiredIds = {5487}},
-		{id = 20719, cost = 14000, requiredIds = {768}},
-		{id = 22827, cost = 14000, requiredIds = {22568}},
-		{id = 16914, cost = 14000},
-		{id = 29166, cost = 14000},
-		{id = 24975, cost = 700, requiredIds = {24974}, requiredTalentId = 5570},
-		{id = 8907, cost = 14000, requiredIds = {5234}},
-		{id = 8929, cost = 14000, requiredIds = {8928}},
-		{id = 6783, cost = 14000, requiredIds = {5215}},
-		{id = 20742, cost = 14000, requiredIds = {20739}},
-		{id = 8910, cost = 14000, requiredIds = {3627}},
-		{id = 8918, cost = 14000, requiredIds = {740}}
-	},
-	[42] = {
-		{id = 9747, cost = 16000, requiredIds = {9490}},
-		{id = 9749, cost = 16000, requiredIds = {778}},
-		{id = 17391, cost = 800, requiredIds = {17390}, requiredTalentId = 16857},
-		{id = 9745, cost = 16000, requiredIds = {8972}},
-		{id = 6787, cost = 16000, requiredIds = {6785}},
-		{id = 9750, cost = 16000, requiredIds = {8941}},
-		{id = 8951, cost = 16000, requiredIds = {8950}}
-	},
-	[44] = {
-		{id = 22812, cost = 18000},
-		{id = 9758, cost = 18000, requiredIds = {8903}},
-		{id = 1824, cost = 18000, requiredIds = {1823}},
-		{id = 9752, cost = 18000, requiredIds = {9493}},
-		{id = 9754, cost = 18000, requiredIds = {769}},
-		{id = 9756, cost = 18000, requiredIds = {8914}}
-	},
-	[46] = {
-		{id = 8983, cost = 20000, requiredIds = {6798}},
-		{id = 9821, cost = 20000, requiredIds = {1850}},
-		{id = 22895, cost = 20000, requiredIds = {22842}},
-		{id = 9833, cost = 20000, requiredIds = {8929}},
-		{id = 9823, cost = 20000, requiredIds = {9005}},
-		{id = 9839, cost = 20000, requiredIds = {8910}},
-		{id = 9829, cost = 20000, requiredIds = {8992}},
-		{id = 8905, cost = 20000, requiredIds = {6780}}
-	},
-	[48] = {
-		{id = 9849, cost = 22000, requiredIds = {5201}},
-		{id = 9852, cost = 22000, requiredIds = {5196}},
-		{id = 22828, cost = 22000, requiredIds = {22827}},
-		{id = 16813, cost = 1100, requiredIds = {16812}, requiredTalentId = 16689},
-		{id = 9856, cost = 22000, requiredIds = {9750}},
-		{id = 9845, cost = 22000, requiredIds = {6793}}
-	},
-	[50] = {
-		{id = 9888, cost = 23000, requiredIds = {9758}},
-		{id = 17401, cost = 23000, requiredIds = {16914}},
-		{id = 24976, cost = 1150, requiredIds = {24975}, requiredTalentId = 5570},
-		{id = 9884, cost = 23000, requiredIds = {8907}},
-		{id = 9880, cost = 23000, requiredIds = {9745}},
-		{id = 9866, cost = 23000, requiredIds = {6787}},
-		{id = 20747, cost = 23000, requiredIds = {20742}},
-		{id = 9875, cost = 23000, requiredIds = {8951}},
-		{id = 9862, cost = 23000, requiredIds = {8918}}
-	},
-	[52] = {
-		{id = 9892, cost = 26000, requiredIds = {9000}},
-		{id = 9898, cost = 26000, requiredIds = {9747}},
-		{id = 9834, cost = 26000, requiredIds = {9833}},
-		{id = 9840, cost = 26000, requiredIds = {9839}},
-		{id = 9894, cost = 26000, requiredIds = {9752}}
-	},
-	[54] = {
-		{id = 9907, cost = 28000, requiredIds = {9749}},
-		{id = 17392, cost = 1400, requiredIds = {17391}, requiredTalentId = 16857},
-		{id = 9904, cost = 28000, requiredIds = {1824}},
-		{id = 9857, cost = 28000, requiredIds = {9856}},
-		{id = 9830, cost = 28000, requiredIds = {9829}},
-		{id = 9901, cost = 28000, requiredIds = {8955}},
-		{id = 9908, cost = 28000, requiredIds = {9754}},
-		{id = 9910, cost = 28000, requiredIds = {9756}},
-		{id = 9912, cost = 28000, requiredIds = {8905}}
-	},
-	[56] = {
-		{id = 22829, cost = 30000, requiredIds = {22828}},
-		{id = 22896, cost = 30000, requiredIds = {22895}},
-		{id = 9889, cost = 30000, requiredIds = {9888}},
-		{id = 9827, cost = 30000, requiredIds = {9823}}
-	},
-	[58] = {
-		{id = 9850, cost = 32000, requiredIds = {9849}},
-		{id = 9853, cost = 32000, requiredIds = {9852}},
-		{id = 18658, cost = 32000, requiredIds = {18657}},
-		{id = 9881, cost = 32000, requiredIds = {9880}},
-		{id = 9835, cost = 32000, requiredIds = {9834}},
-		{id = 17329, cost = 1600, requiredIds = {16813}, requiredTalentId = 16689},
-		{id = 9867, cost = 32000, requiredIds = {9866}},
-		{id = 9841, cost = 32000, requiredIds = {9840}},
-		{id = 9876, cost = 32000, requiredIds = {9875}}
-	},
-	[60] = {
-		{id = 17402, cost = 34000, requiredIds = {17401}},
-		{id = 24977, cost = 1700, requiredIds = {24976}, requiredTalentId = 5570},
-		{id = 9885, cost = 34000, requiredIds = {9884}},
-		{id = 9913, cost = 34000, requiredIds = {6783}},
-		{id = 20748, cost = 34000, requiredIds = {20747}},
-		{id = 9858, cost = 34000, requiredIds = {9857}},
-		{id = 9896, cost = 34000, requiredIds = {9894}},
-		{id = 9846, cost = 34000, requiredIds = {9845}},
-		{id = 9863, cost = 34000, requiredIds = {9862}}
-	}
+GW.SpellsByLevel =
+
+ {
+ [0] = {
+      -- @One-Handed Maces undefined
+      {id =198, isTalent =0},
+      -- @Two-Handed Maces undefined
+      {id =199, isTalent =0},
+      -- @Staves undefined
+      {id =227, isTalent =0},
+      -- @Daggers undefined
+      {id =1180, isTalent =0},
+      -- @Insect Swarm Rank 1
+      {id =5570, isTalent =1},
+      -- @Leather undefined
+      {id =9077, isTalent =0},
+      -- @Fist Weapons undefined
+      {id =15590, isTalent =0},
+      -- @Nature's Grasp Rank 1
+      {id =16689, isTalent =1},
+      -- @Improved Wrath Rank 1
+      {id =16814, isTalent =1},
+      -- @Improved Wrath Rank 2
+      {id =16815, requiredIds ={16814}, isTalent =1},
+      -- @Improved Wrath Rank 3
+      {id =16816, requiredIds ={16815}, isTalent =1},
+      -- @Improved Wrath Rank 4
+      {id =16817, requiredIds ={16816}, isTalent =1},
+      -- @Improved Wrath Rank 5
+      {id =16818, requiredIds ={16817}, isTalent =1},
+      -- @Nature's Reach Rank 1
+      {id =16819, isTalent =1},
+      -- @Nature's Reach Rank 2
+      {id =16820, requiredIds ={16819}, isTalent =1},
+      -- @Improved Moonfire Rank 1
+      {id =16821, isTalent =1},
+      -- @Improved Moonfire Rank 2
+      {id =16822, requiredIds ={16821}, isTalent =1},
+      -- @Improved Moonfire Rank 3
+      {id =16823, requiredIds ={16822}, isTalent =1},
+      -- @Improved Moonfire Rank 4
+      {id =16824, requiredIds ={16823}, isTalent =1},
+      -- @Improved Moonfire Rank 5
+      {id =16825, requiredIds ={16824}, isTalent =1},
+      -- @Natural Shapeshifter Rank 1
+      {id =16833, isTalent =1},
+      -- @Natural Shapeshifter Rank 2
+      {id =16834, requiredIds ={16833}, isTalent =1},
+      -- @Natural Shapeshifter Rank 3
+      {id =16835, requiredIds ={16834}, isTalent =1},
+      -- @Improved Thorns Rank 1
+      {id =16836, isTalent =1},
+      -- @Improved Thorns Rank 2
+      {id =16839, requiredIds ={16836}, isTalent =1},
+      -- @Improved Thorns Rank 3
+      {id =16840, requiredIds ={16839}, isTalent =1},
+      -- @Moonglow Rank 1
+      {id =16845, isTalent =1},
+      -- @Moonglow Rank 2
+      {id =16846, requiredIds ={16845}, isTalent =1},
+      -- @Moonglow Rank 3
+      {id =16847, requiredIds ={16846}, isTalent =1},
+      -- @Improved Starfire Rank 1
+      {id =16850, isTalent =1},
+      -- @Faerie Fire (Feral) Rank 1
+      {id =16857, isTalent =1},
+      -- @Feral Aggression Rank 1
+      {id =16858, isTalent =1},
+      -- @Feral Aggression Rank 2
+      {id =16859, requiredIds ={16858}, isTalent =1},
+      -- @Feral Aggression Rank 3
+      {id =16860, requiredIds ={16859}, isTalent =1},
+      -- @Feral Aggression Rank 4
+      {id =16861, requiredIds ={16860}, isTalent =1},
+      -- @Feral Aggression Rank 5
+      {id =16862, requiredIds ={16861}, isTalent =1},
+      -- @Omen of Clarity undefined
+      {id =16864, isTalent =1},
+      -- @Nature's Grace undefined
+      {id =16880, isTalent =1},
+      -- @Moonfury Rank 1
+      {id =16896, isTalent =1},
+      -- @Moonfury Rank 2
+      {id =16897, requiredIds ={16896}, isTalent =1},
+      -- @Moonfury Rank 3
+      {id =16899, requiredIds ={16897}, isTalent =1},
+      -- @Moonfury Rank 4
+      {id =16900, requiredIds ={16899}, isTalent =1},
+      -- @Moonfury Rank 5
+      {id =16901, requiredIds ={16900}, isTalent =1},
+      -- @Natural Weapons Rank 1
+      {id =16902, isTalent =1},
+      -- @Natural Weapons Rank 2
+      {id =16903, requiredIds ={16902}, isTalent =1},
+      -- @Natural Weapons Rank 3
+      {id =16904, requiredIds ={16903}, isTalent =1},
+      -- @Natural Weapons Rank 4
+      {id =16905, requiredIds ={16904}, isTalent =1},
+      -- @Natural Weapons Rank 5
+      {id =16906, requiredIds ={16905}, isTalent =1},
+      -- @Vengeance Rank 1
+      {id =16909, isTalent =1},
+      -- @Vengeance Rank 2
+      {id =16910, requiredIds ={16909}, isTalent =1},
+      -- @Vengeance Rank 3
+      {id =16911, requiredIds ={16910}, isTalent =1},
+      -- @Vengeance Rank 4
+      {id =16912, requiredIds ={16911}, isTalent =1},
+      -- @Vengeance Rank 5
+      {id =16913, requiredIds ={16912}, isTalent =1},
+      -- @Improved Entangling Roots Rank 1
+      {id =16918, isTalent =1},
+      -- @Improved Entangling Roots Rank 2
+      {id =16919, requiredIds ={16918}, isTalent =1},
+      -- @Improved Entangling Roots Rank 3
+      {id =16920, requiredIds ={16919}, isTalent =1},
+      -- @Improved Starfire Rank 2
+      {id =16923, requiredIds ={16850}, isTalent =1},
+      -- @Improved Starfire Rank 3
+      {id =16924, requiredIds ={16923}, isTalent =1},
+      -- @Improved Starfire Rank 4
+      {id =16925, requiredIds ={16924}, isTalent =1},
+      -- @Improved Starfire Rank 5
+      {id =16926, requiredIds ={16925}, isTalent =1},
+      -- @Thick Hide Rank 1
+      {id =16929, isTalent =1},
+      -- @Thick Hide Rank 2
+      {id =16930, requiredIds ={16929}, isTalent =1},
+      -- @Thick Hide Rank 3
+      {id =16931, requiredIds ={16930}, isTalent =1},
+      -- @Thick Hide Rank 4
+      {id =16932, requiredIds ={16931}, isTalent =1},
+      -- @Thick Hide Rank 5
+      {id =16933, requiredIds ={16932}, isTalent =1},
+      -- @Ferocity Rank 1
+      {id =16934, isTalent =1},
+      -- @Ferocity Rank 2
+      {id =16935, requiredIds ={16934}, isTalent =1},
+      -- @Ferocity Rank 3
+      {id =16936, requiredIds ={16935}, isTalent =1},
+      -- @Ferocity Rank 4
+      {id =16937, requiredIds ={16936}, isTalent =1},
+      -- @Ferocity Rank 5
+      {id =16938, requiredIds ={16937}, isTalent =1},
+      -- @Brutal Impact Rank 1
+      {id =16940, isTalent =1},
+      -- @Brutal Impact Rank 2
+      {id =16941, requiredIds ={16940}, isTalent =1},
+      -- @Sharpened Claws Rank 1
+      {id =16942, isTalent =1},
+      -- @Sharpened Claws Rank 2
+      {id =16943, requiredIds ={16942}, isTalent =1},
+      -- @Sharpened Claws Rank 3
+      {id =16944, requiredIds ={16943}, isTalent =1},
+      -- @Feral Instinct Rank 1
+      {id =16947, isTalent =1},
+      -- @Feral Instinct Rank 2
+      {id =16948, requiredIds ={16947}, isTalent =1},
+      -- @Feral Instinct Rank 3
+      {id =16949, requiredIds ={16948}, isTalent =1},
+      -- @Feral Instinct Rank 4
+      {id =16950, requiredIds ={16949}, isTalent =1},
+      -- @Feral Instinct Rank 5
+      {id =16951, requiredIds ={16950}, isTalent =1},
+      -- @Primal Fury Rank 2
+      {id =16961, isTalent =1},
+      -- @Improved Shred Rank 1
+      {id =16966, isTalent =1},
+      -- @Improved Shred Rank 2
+      {id =16968, requiredIds ={16966}, isTalent =1},
+      -- @Predatory Strikes Rank 1
+      {id =16972, isTalent =1},
+      -- @Predatory Strikes Rank 2
+      {id =16974, requiredIds ={16972}, isTalent =1},
+      -- @Predatory Strikes Rank 3
+      {id =16975, requiredIds ={16974}, isTalent =1},
+      -- @Feral Charge undefined
+      {id =16979, isTalent =1},
+      -- @Savage Fury Rank 1
+      {id =16998, isTalent =1},
+      -- @Savage Fury Rank 2
+      {id =16999, requiredIds ={16998}, isTalent =1},
+      -- @Feline Swiftness undefined
+      {id =17002, isTalent =1},
+      -- @Heart of the Wild Rank 1
+      {id =17003, isTalent =1},
+      -- @Heart of the Wild Rank 2
+      {id =17004, requiredIds ={17003}, isTalent =1},
+      -- @Heart of the Wild Rank 3
+      {id =17005, requiredIds ={17004}, isTalent =1},
+      -- @Heart of the Wild Rank 4
+      {id =17006, requiredIds ={17005}, isTalent =1},
+      -- @Leader of the Pack undefined
+      {id =17007, isTalent =1},
+      -- @Improved Mark of the Wild Rank 1
+      {id =17050, isTalent =1},
+      -- @Improved Mark of the Wild Rank 2
+      {id =17051, requiredIds ={17050}, isTalent =1},
+      -- @Improved Mark of the Wild Rank 3
+      {id =17053, requiredIds ={17051}, isTalent =1},
+      -- @Improved Mark of the Wild Rank 4
+      {id =17054, requiredIds ={17053}, isTalent =1},
+      -- @Improved Mark of the Wild Rank 5
+      {id =17055, requiredIds ={17054}, isTalent =1},
+      -- @Furor Rank 1
+      {id =17056, isTalent =1},
+      -- @Furor Rank 2
+      {id =17058, requiredIds ={17056}, isTalent =1},
+      -- @Furor Rank 3
+      {id =17059, requiredIds ={17058}, isTalent =1},
+      -- @Furor Rank 4
+      {id =17060, requiredIds ={17059}, isTalent =1},
+      -- @Furor Rank 5
+      {id =17061, requiredIds ={17060}, isTalent =1},
+      -- @Nature's Focus Rank 1
+      {id =17063, isTalent =1},
+      -- @Nature's Focus Rank 2
+      {id =17065, requiredIds ={17063}, isTalent =1},
+      -- @Nature's Focus Rank 3
+      {id =17066, requiredIds ={17065}, isTalent =1},
+      -- @Nature's Focus Rank 4
+      {id =17067, requiredIds ={17066}, isTalent =1},
+      -- @Nature's Focus Rank 5
+      {id =17068, requiredIds ={17067}, isTalent =1},
+      -- @Improved Healing Touch Rank 1
+      {id =17069, isTalent =1},
+      -- @Improved Healing Touch Rank 2
+      {id =17070, requiredIds ={17069}, isTalent =1},
+      -- @Improved Healing Touch Rank 3
+      {id =17071, requiredIds ={17070}, isTalent =1},
+      -- @Improved Healing Touch Rank 4
+      {id =17072, requiredIds ={17071}, isTalent =1},
+      -- @Improved Healing Touch Rank 5
+      {id =17073, requiredIds ={17072}, isTalent =1},
+      -- @Improved Regrowth Rank 1
+      {id =17074, isTalent =1},
+      -- @Improved Regrowth Rank 2
+      {id =17075, requiredIds ={17074}, isTalent =1},
+      -- @Improved Regrowth Rank 3
+      {id =17076, requiredIds ={17075}, isTalent =1},
+      -- @Improved Regrowth Rank 4
+      {id =17077, requiredIds ={17076}, isTalent =1},
+      -- @Improved Regrowth Rank 5
+      {id =17078, requiredIds ={17077}, isTalent =1},
+      -- @Improved Enrage Rank 1
+      {id =17079, isTalent =1},
+      -- @Improved Enrage Rank 2
+      {id =17082, requiredIds ={17079}, isTalent =1},
+      -- @Gift of Nature Rank 1
+      {id =17104, isTalent =1},
+      -- @Reflection Rank 1
+      {id =17106, isTalent =1},
+      -- @Reflection Rank 2
+      {id =17107, requiredIds ={17106}, isTalent =1},
+      -- @Reflection Rank 3
+      {id =17108, requiredIds ={17107}, isTalent =1},
+      -- @Improved Rejuvenation Rank 1
+      {id =17111, isTalent =1},
+      -- @Improved Rejuvenation Rank 2
+      {id =17112, requiredIds ={17111}, isTalent =1},
+      -- @Improved Rejuvenation Rank 3
+      {id =17113, requiredIds ={17112}, isTalent =1},
+      -- @Nature's Swiftness undefined
+      {id =17116, isTalent =1},
+      -- @Subtlety Rank 1
+      {id =17118, isTalent =1},
+      -- @Subtlety Rank 2
+      {id =17119, requiredIds ={17118}, isTalent =1},
+      -- @Subtlety Rank 3
+      {id =17120, requiredIds ={17119}, isTalent =1},
+      -- @Subtlety Rank 4
+      {id =17121, requiredIds ={17120}, isTalent =1},
+      -- @Subtlety Rank 5
+      {id =17122, requiredIds ={17121}, isTalent =1},
+      -- @Improved Tranquility Rank 1
+      {id =17123, isTalent =1},
+      -- @Improved Tranquility Rank 2
+      {id =17124, requiredIds ={17123}, isTalent =1},
+      -- @Improved Nature's Grasp Rank 1
+      {id =17245, isTalent =1},
+      -- @Improved Nature's Grasp Rank 2
+      {id =17247, requiredIds ={17245}, isTalent =1},
+      -- @Improved Nature's Grasp Rank 3
+      {id =17248, requiredIds ={17247}, isTalent =1},
+      -- @Improved Nature's Grasp Rank 4
+      {id =17249, requiredIds ={17248}, isTalent =1},
+      -- @Swiftmend undefined
+      {id =18562, isTalent =1},
+      -- @Moonkin Form Shapeshift
+      {id =24858, isTalent =1},
+      -- @Feline Swiftness undefined
+      {id =24866, isTalent =1},
+      -- @Heart of the Wild Rank 5
+      {id =24894, requiredIds ={17006}, isTalent =1},
+      -- @Gift of Nature Rank 2
+      {id =24943, requiredIds ={17104}, isTalent =1},
+      -- @Gift of Nature Rank 3
+      {id =24944, requiredIds ={24943}, isTalent =1},
+      -- @Gift of Nature Rank 4
+      {id =24945, requiredIds ={24944}, isTalent =1},
+      -- @Gift of Nature Rank 5
+      {id =24946, requiredIds ={24945}, isTalent =1},
+      -- @Tranquil Spirit Rank 1
+      {id =24968, isTalent =1},
+      -- @Tranquil Spirit Rank 2
+      {id =24969, requiredIds ={24968}, isTalent =1},
+      -- @Tranquil Spirit Rank 3
+      {id =24970, requiredIds ={24969}, isTalent =1},
+      -- @Tranquil Spirit Rank 4
+      {id =24971, requiredIds ={24970}, isTalent =1},
+      -- @Tranquil Spirit Rank 5
+      {id =24972, requiredIds ={24971}, isTalent =1},
+      -- @Fetish undefined
+      {id =27764, isTalent =0},
+       },
+[1] = {
+      -- @Mark of the Wild Rank 1
+      {id =1126, cost =10, isTalent =0},
+      -- @Wrath Rank 1
+      {id =5176, isTalent =0},
+      -- @Healing Touch Rank 1
+      {id =5185, isTalent =0},
+       },
+[4] = {
+      -- @Rejuvenation Rank 1
+      {id =774, cost =100, isTalent =0},
+      -- @Moonfire Rank 1
+      {id =8921, cost =100, isTalent =0},
+       },
+[6] = {
+      -- @Thorns Rank 1
+      {id =467, cost =100, isTalent =0},
+      -- @Wrath Rank 2
+      {id =5177, requiredIds ={5176}, cost =100, isTalent =0},
+       },
+[8] = {
+      -- @Entangling Roots Rank 1
+      {id =339, cost =200, isTalent =0},
+      -- @Healing Touch Rank 2
+      {id =5186, requiredIds ={5185}, cost =200, isTalent =0},
+       },
+[10] = {
+      -- @Demoralizing Roar Rank 1
+      {id =99, cost =300, isTalent =0},
+      -- @Rejuvenation Rank 2
+      {id =1058, requiredIds ={774}, cost =300, isTalent =0},
+      -- @Mark of the Wild Rank 2
+      {id =5232, requiredIds ={1126}, cost =300, isTalent =0},
+      -- @Bear Form Shapeshift
+      {id =5487, isTalent =0},
+      -- @Growl undefined
+      {id =6795, isTalent =0},
+      -- @Maul Rank 1
+      {id =6807, isTalent =0},
+      -- @Moonfire Rank 2
+      {id =8924, requiredIds ={8921}, cost =300, isTalent =0},
+      -- @Teleport: Moonglade undefined
+      {id =18960, isTalent =0},
+       },
+[12] = {
+      -- @Enrage undefined
+      {id =5229, cost =800, isTalent =0},
+      -- @Regrowth Rank 1
+      {id =8936, cost =800, isTalent =0},
+       },
+[14] = {
+      -- @Thorns Rank 2
+      {id =782, requiredIds ={467}, cost =900, isTalent =0},
+      -- @Wrath Rank 3
+      {id =5178, requiredIds ={5177}, cost =900, isTalent =0},
+      -- @Healing Touch Rank 3
+      {id =5187, requiredIds ={5186}, cost =900, isTalent =0},
+      -- @Bash Rank 1
+      {id =5211, cost =900, isTalent =0},
+      -- @Cure Poison undefined
+      {id =8946, isTalent =0},
+       },
+[16] = {
+      -- @Swipe Rank 1
+      {id =779, cost =1800, isTalent =0},
+      -- @Aquatic Form Shapeshift
+      {id =1066, isTalent =0},
+      -- @Rejuvenation Rank 3
+      {id =1430, requiredIds ={1058}, cost =1800, isTalent =0},
+      -- @Moonfire Rank 3
+      {id =8925, requiredIds ={8924}, cost =1800, isTalent =0},
+       },
+[18] = {
+      -- @Faerie Fire Rank 1
+      {id =770, cost =1900, isTalent =0},
+      -- @Entangling Roots Rank 2
+      {id =1062, requiredIds ={339}, cost =1900, isTalent =0},
+      -- @Hibernate Rank 1
+      {id =2637, cost =1900, isTalent =0},
+      -- @Maul Rank 2
+      {id =6808, requiredIds ={6807}, cost =1900, isTalent =0},
+      -- @Regrowth Rank 2
+      {id =8938, requiredIds ={8936}, cost =1900, isTalent =0},
+      -- @Nature's Grasp Rank 2
+      {id =16810, requiredIds ={16689}, cost =95, isTalent =0},
+       },
+[20] = {
+      -- @Cat Form Shapeshift
+      {id =768, cost =2000, isTalent =0},
+      -- @Rip Rank 1
+      {id =1079, cost =2000, isTalent =0},
+      -- @Claw Rank 1
+      {id =1082, cost =2000, isTalent =0},
+      -- @Demoralizing Roar Rank 2
+      {id =1735, requiredIds ={99}, cost =2000, isTalent =0},
+      -- @Starfire Rank 1
+      {id =2912, cost =2000, isTalent =0},
+      -- @Healing Touch Rank 4
+      {id =5188, requiredIds ={5187}, cost =2000, isTalent =0},
+      -- @Prowl Rank 1
+      {id =5215, cost =2000, isTalent =0},
+      -- @Mark of the Wild Rank 3
+      {id =6756, requiredIds ={5232}, cost =2000, isTalent =0},
+      -- @Rebirth Rank 1
+      {id =20484, cost =2000, isTalent =0},
+       },
+[22] = {
+      -- @Rejuvenation Rank 4
+      {id =2090, requiredIds ={1430}, cost =3000, isTalent =0},
+      -- @Soothe Animal Rank 1
+      {id =2908, cost =3000, isTalent =0},
+      -- @Wrath Rank 4
+      {id =5179, requiredIds ={5178}, cost =3000, isTalent =0},
+      -- @Shred Rank 1
+      {id =5221, cost =3000, isTalent =0},
+      -- @Moonfire Rank 4
+      {id =8926, requiredIds ={8925}, cost =3000, isTalent =0},
+       },
+[24] = {
+      -- @Swipe Rank 2
+      {id =780, requiredIds ={779}, cost =4000, isTalent =0},
+      -- @Thorns Rank 3
+      {id =1075, requiredIds ={782}, cost =4000, isTalent =0},
+      -- @Rake Rank 1
+      {id =1822, cost =4000, isTalent =0},
+      -- @Remove Curse undefined
+      {id =2782, cost =4000, isTalent =0},
+      -- @Tiger's Fury Rank 1
+      {id =5217, cost =4000, isTalent =0},
+      -- @Regrowth Rank 3
+      {id =8939, requiredIds ={8938}, cost =4000, isTalent =0},
+       },
+[26] = {
+      -- @Dash Rank 1
+      {id =1850, cost =4500, isTalent =0},
+      -- @Abolish Poison undefined
+      {id =2893, cost =4500, isTalent =0},
+      -- @Healing Touch Rank 5
+      {id =5189, requiredIds ={5188}, cost =4500, isTalent =0},
+      -- @Maul Rank 3
+      {id =6809, requiredIds ={6808}, cost =4500, isTalent =0},
+      -- @Starfire Rank 2
+      {id =8949, requiredIds ={2912}, cost =4500, isTalent =0},
+       },
+[28] = {
+      -- @Rejuvenation Rank 5
+      {id =2091, requiredIds ={2090}, cost =5000, isTalent =0},
+      -- @Claw Rank 2
+      {id =3029, requiredIds ={1082}, cost =5000, isTalent =0},
+      -- @Entangling Roots Rank 3
+      {id =5195, requiredIds ={1062}, cost =5000, isTalent =0},
+      -- @Challenging Roar undefined
+      {id =5209, cost =5000, isTalent =0},
+      -- @Moonfire Rank 5
+      {id =8927, requiredIds ={8926}, cost =5000, isTalent =0},
+      -- @Cower Rank 1
+      {id =8998, cost =5000, isTalent =0},
+      -- @Rip Rank 2
+      {id =9492, requiredIds ={1079}, cost =5000, isTalent =0},
+      -- @Nature's Grasp Rank 3
+      {id =16811, requiredIds ={16810}, cost =250, isTalent =0},
+       },
+[30] = {
+      -- @Tranquility Rank 1
+      {id =740, cost =6000, isTalent =0},
+      -- @Faerie Fire Rank 2
+      {id =778, requiredIds ={770}, cost =6000, isTalent =0},
+      -- @Travel Form Shapeshift
+      {id =783, cost =6000, isTalent =0},
+      -- @Wrath Rank 5
+      {id =5180, requiredIds ={5179}, cost =6000, isTalent =0},
+      -- @Mark of the Wild Rank 4
+      {id =5234, requiredIds ={6756}, cost =6000, isTalent =0},
+      -- @Bash Rank 2
+      {id =6798, requiredIds ={5211}, cost =6000, isTalent =0},
+      -- @Shred Rank 2
+      {id =6800, requiredIds ={5221}, cost =6000, isTalent =0},
+      -- @Regrowth Rank 4
+      {id =8940, requiredIds ={8939}, cost =6000, isTalent =0},
+      -- @Faerie Fire (Feral) Rank 2
+      {id =17390, requiredIds ={16857}, cost =300, isTalent =0},
+      -- @Rebirth Rank 2
+      {id =20739, requiredIds ={20484}, cost =6000, isTalent =0},
+      -- @Insect Swarm Rank 2
+      {id =24974, requiredIds ={5570}, cost =300, isTalent =0},
+       },
+[32] = {
+      -- @Track Humanoids undefined
+      {id =5225, cost =8000, isTalent =0},
+      -- @Healing Touch Rank 6
+      {id =6778, requiredIds ={5189}, cost =8000, isTalent =0},
+      -- @Ravage Rank 1
+      {id =6785, cost =8000, isTalent =0},
+      -- @Demoralizing Roar Rank 3
+      {id =9490, requiredIds ={1735}, cost =8000, isTalent =0},
+      -- @Ferocious Bite Rank 1
+      {id =22568, cost =8000, isTalent =0},
+       },
+[34] = {
+      -- @Swipe Rank 3
+      {id =769, requiredIds ={780}, cost =10000, isTalent =0},
+      -- @Rake Rank 2
+      {id =1823, requiredIds ={1822}, cost =10000, isTalent =0},
+      -- @Rejuvenation Rank 6
+      {id =3627, requiredIds ={2091}, cost =10000, isTalent =0},
+      -- @Thorns Rank 4
+      {id =8914, requiredIds ={1075}, cost =10000, isTalent =0},
+      -- @Moonfire Rank 6
+      {id =8928, requiredIds ={8927}, cost =10000, isTalent =0},
+      -- @Starfire Rank 3
+      {id =8950, requiredIds ={8949}, cost =10000, isTalent =0},
+      -- @Maul Rank 4
+      {id =8972, requiredIds ={6809}, cost =10000, isTalent =0},
+       },
+[36] = {
+      -- @Tiger's Fury Rank 2
+      {id =6793, requiredIds ={5217}, cost =11000, isTalent =0},
+      -- @Regrowth Rank 5
+      {id =8941, requiredIds ={8940}, cost =11000, isTalent =0},
+      -- @Pounce Rank 1
+      {id =9005, cost =11000, isTalent =0},
+      -- @Rip Rank 3
+      {id =9493, requiredIds ={9492}, cost =11000, isTalent =0},
+      -- @Frenzied Regeneration Rank 1
+      {id =22842, cost =11000, isTalent =0},
+       },
+[38] = {
+      -- @Entangling Roots Rank 4
+      {id =5196, requiredIds ={5195}, cost =12000, isTalent =0},
+      -- @Claw Rank 3
+      {id =5201, requiredIds ={3029}, cost =12000, isTalent =0},
+      -- @Wrath Rank 6
+      {id =6780, requiredIds ={5180}, cost =12000, isTalent =0},
+      -- @Healing Touch Rank 7
+      {id =8903, requiredIds ={6778}, cost =12000, isTalent =0},
+      -- @Soothe Animal Rank 2
+      {id =8955, requiredIds ={2908}, cost =12000, isTalent =0},
+      -- @Shred Rank 3
+      {id =8992, requiredIds ={6800}, cost =12000, isTalent =0},
+      -- @Nature's Grasp Rank 4
+      {id =16812, requiredIds ={16811}, cost =600, isTalent =0},
+      -- @Hibernate Rank 2
+      {id =18657, requiredIds ={2637}, cost =12000, isTalent =0},
+       },
+[40] = {
+      -- @Prowl Rank 2
+      {id =6783, requiredIds ={5215}, cost =14000, isTalent =0},
+      -- @Mark of the Wild Rank 5
+      {id =8907, requiredIds ={5234}, cost =14000, isTalent =0},
+      -- @Rejuvenation Rank 7
+      {id =8910, requiredIds ={3627}, cost =14000, isTalent =0},
+      -- @Tranquility Rank 2
+      {id =8918, requiredIds ={740}, cost =14000, isTalent =0},
+      -- @Moonfire Rank 7
+      {id =8929, requiredIds ={8928}, cost =14000, isTalent =0},
+      -- @Cower Rank 2
+      {id =9000, requiredIds ={8998}, cost =14000, isTalent =0},
+      -- @Dire Bear Form Shapeshift
+      {id =9634, cost =14000, isTalent =0},
+      -- @Hurricane Rank 1
+      {id =16914, cost =14000, isTalent =0},
+      -- @Feline Grace Passive
+      {id =20719, cost =14000, isTalent =0},
+      -- @Rebirth Rank 3
+      {id =20742, requiredIds ={20739}, cost =14000, isTalent =0},
+      -- @Ferocious Bite Rank 2
+      {id =22827, requiredIds ={22568}, cost =14000, isTalent =0},
+      -- @Insect Swarm Rank 3
+      {id =24975, requiredIds ={24974}, cost =700, isTalent =0},
+      -- @Innervate undefined
+      {id =29166, cost =14000, isTalent =0},
+       },
+[42] = {
+      -- @Ravage Rank 2
+      {id =6787, requiredIds ={6785}, cost =16000, isTalent =0},
+      -- @Starfire Rank 4
+      {id =8951, requiredIds ={8950}, cost =16000, isTalent =0},
+      -- @Maul Rank 5
+      {id =9745, requiredIds ={8972}, cost =16000, isTalent =0},
+      -- @Demoralizing Roar Rank 4
+      {id =9747, requiredIds ={9490}, cost =16000, isTalent =0},
+      -- @Faerie Fire Rank 3
+      {id =9749, requiredIds ={778}, cost =16000, isTalent =0},
+      -- @Regrowth Rank 6
+      {id =9750, requiredIds ={8941}, cost =16000, isTalent =0},
+      -- @Faerie Fire (Feral) Rank 3
+      {id =17391, requiredIds ={17390}, cost =800, isTalent =0},
+       },
+[44] = {
+      -- @Rake Rank 3
+      {id =1824, requiredIds ={1823}, cost =18000, isTalent =0},
+      -- @Rip Rank 4
+      {id =9752, requiredIds ={9493}, cost =18000, isTalent =0},
+      -- @Swipe Rank 4
+      {id =9754, requiredIds ={769}, cost =18000, isTalent =0},
+      -- @Thorns Rank 5
+      {id =9756, requiredIds ={8914}, cost =18000, isTalent =0},
+      -- @Healing Touch Rank 8
+      {id =9758, requiredIds ={8903}, cost =18000, isTalent =0},
+      -- @Barkskin undefined
+      {id =22812, cost =18000, isTalent =0},
+      -- @Barkskin Effect (DND) undefined
+      {id =22839, isTalent =0},
+       },
+[46] = {
+      -- @Wrath Rank 7
+      {id =8905, requiredIds ={6780}, cost =20000, isTalent =0},
+      -- @Bash Rank 3
+      {id =8983, requiredIds ={6798}, cost =20000, isTalent =0},
+      -- @Dash Rank 2
+      {id =9821, requiredIds ={1850}, cost =20000, isTalent =0},
+      -- @Pounce Rank 2
+      {id =9823, requiredIds ={9005}, cost =20000, isTalent =0},
+      -- @Shred Rank 4
+      {id =9829, requiredIds ={8992}, cost =20000, isTalent =0},
+      -- @Moonfire Rank 8
+      {id =9833, requiredIds ={8929}, cost =20000, isTalent =0},
+      -- @Rejuvenation Rank 8
+      {id =9839, requiredIds ={8910}, cost =20000, isTalent =0},
+      -- @Frenzied Regeneration Rank 2
+      {id =22895, requiredIds ={22842}, cost =20000, isTalent =0},
+       },
+[48] = {
+      -- @Tiger's Fury Rank 3
+      {id =9845, requiredIds ={6793}, cost =22000, isTalent =0},
+      -- @Claw Rank 4
+      {id =9849, requiredIds ={5201}, cost =22000, isTalent =0},
+      -- @Entangling Roots Rank 5
+      {id =9852, requiredIds ={5196}, cost =22000, isTalent =0},
+      -- @Regrowth Rank 7
+      {id =9856, requiredIds ={9750}, cost =22000, isTalent =0},
+      -- @Nature's Grasp Rank 5
+      {id =16813, requiredIds ={16812}, cost =1100, isTalent =0},
+      -- @Ferocious Bite Rank 3
+      {id =22828, requiredIds ={22827}, cost =22000, isTalent =0},
+       },
+[50] = {
+      -- @Tranquility Rank 3
+      {id =9862, requiredIds ={8918}, cost =23000, isTalent =0},
+      -- @Ravage Rank 3
+      {id =9866, requiredIds ={6787}, cost =23000, isTalent =0},
+      -- @Starfire Rank 5
+      {id =9875, requiredIds ={8951}, cost =23000, isTalent =0},
+      -- @Maul Rank 6
+      {id =9880, requiredIds ={9745}, cost =23000, isTalent =0},
+      -- @Mark of the Wild Rank 6
+      {id =9884, requiredIds ={8907}, cost =23000, isTalent =0},
+      -- @Healing Touch Rank 9
+      {id =9888, requiredIds ={9758}, cost =23000, isTalent =0},
+      -- @Hurricane Rank 2
+      {id =17401, requiredIds ={16914}, cost =23000, isTalent =0},
+      -- @Rebirth Rank 4
+      {id =20747, requiredIds ={20742}, cost =23000, isTalent =0},
+      -- @Gift of the Wild Rank 1
+      {id =21849, isTalent =0},
+      -- @Insect Swarm Rank 4
+      {id =24976, requiredIds ={24975}, cost =1150, isTalent =0},
+       },
+[52] = {
+      -- @Moonfire Rank 9
+      {id =9834, requiredIds ={9833}, cost =26000, isTalent =0},
+      -- @Rejuvenation Rank 9
+      {id =9840, requiredIds ={9839}, cost =26000, isTalent =0},
+      -- @Cower Rank 3
+      {id =9892, requiredIds ={9000}, cost =26000, isTalent =0},
+      -- @Rip Rank 5
+      {id =9894, requiredIds ={9752}, cost =26000, isTalent =0},
+      -- @Demoralizing Roar Rank 5
+      {id =9898, requiredIds ={9747}, cost =26000, isTalent =0},
+       },
+[54] = {
+      -- @Shred Rank 5
+      {id =9830, requiredIds ={9829}, cost =28000, isTalent =0},
+      -- @Regrowth Rank 8
+      {id =9857, requiredIds ={9856}, cost =28000, isTalent =0},
+      -- @Soothe Animal Rank 3
+      {id =9901, requiredIds ={8955}, cost =28000, isTalent =0},
+      -- @Rake Rank 4
+      {id =9904, requiredIds ={1824}, cost =28000, isTalent =0},
+      -- @Faerie Fire Rank 4
+      {id =9907, requiredIds ={9749}, cost =28000, isTalent =0},
+      -- @Swipe Rank 5
+      {id =9908, requiredIds ={9754}, cost =28000, isTalent =0},
+      -- @Thorns Rank 6
+      {id =9910, requiredIds ={9756}, cost =28000, isTalent =0},
+      -- @Wrath Rank 8
+      {id =9912, requiredIds ={8905}, cost =28000, isTalent =0},
+      -- @Faerie Fire (Feral) Rank 4
+      {id =17392, requiredIds ={17391}, cost =1400, isTalent =0},
+       },
+[56] = {
+      -- @Pounce Rank 3
+      {id =9827, requiredIds ={9823}, cost =30000, isTalent =0},
+      -- @Healing Touch Rank 10
+      {id =9889, requiredIds ={9888}, cost =30000, isTalent =0},
+      -- @Ferocious Bite Rank 4
+      {id =22829, requiredIds ={22828}, cost =30000, isTalent =0},
+      -- @Frenzied Regeneration Rank 3
+      {id =22896, requiredIds ={22895}, cost =30000, isTalent =0},
+       },
+[58] = {
+      -- @Moonfire Rank 10
+      {id =9835, requiredIds ={9834}, cost =32000, isTalent =0},
+      -- @Rejuvenation Rank 10
+      {id =9841, requiredIds ={9840}, cost =32000, isTalent =0},
+      -- @Claw Rank 5
+      {id =9850, requiredIds ={9849}, cost =32000, isTalent =0},
+      -- @Entangling Roots Rank 6
+      {id =9853, requiredIds ={9852}, cost =32000, isTalent =0},
+      -- @Ravage Rank 4
+      {id =9867, requiredIds ={9866}, cost =32000, isTalent =0},
+      -- @Starfire Rank 6
+      {id =9876, requiredIds ={9875}, cost =32000, isTalent =0},
+      -- @Maul Rank 7
+      {id =9881, requiredIds ={9880}, cost =32000, isTalent =0},
+      -- @Nature's Grasp Rank 6
+      {id =17329, requiredIds ={16813}, cost =1600, isTalent =0},
+      -- @Hibernate Rank 3
+      {id =18658, requiredIds ={18657}, cost =32000, isTalent =0},
+       },
+[60] = {
+      -- @Tiger's Fury Rank 4
+      {id =9846, requiredIds ={9845}, cost =34000, isTalent =0},
+      -- @Regrowth Rank 9
+      {id =9858, requiredIds ={9857}, cost =34000, isTalent =0},
+      -- @Tranquility Rank 4
+      {id =9863, requiredIds ={9862}, cost =34000, isTalent =0},
+      -- @Mark of the Wild Rank 7
+      {id =9885, requiredIds ={9884}, cost =34000, isTalent =0},
+      -- @Rip Rank 6
+      {id =9896, requiredIds ={9894}, cost =34000, isTalent =0},
+      -- @Prowl Rank 3
+      {id =9913, requiredIds ={6783}, cost =34000, isTalent =0},
+      -- @Hurricane Rank 3
+      {id =17402, requiredIds ={17401}, cost =34000, isTalent =0},
+      -- @Rebirth Rank 5
+      {id =20748, requiredIds ={20747}, cost =34000, isTalent =0},
+      -- @Gift of the Wild Rank 2
+      {id =21850, requiredIds ={21849}, isTalent =0},
+      -- @Insect Swarm Rank 5
+      {id =24977, requiredIds ={24976}, cost =1700, isTalent =0},
+      -- @Healing Touch Rank 11
+      {id =25297, requiredIds ={9889}, isTalent =0},
+      -- @Starfire Rank 7
+      {id =25298, requiredIds ={9876}, isTalent =0},
+      -- @Rejuvenation Rank 11
+      {id =25299, requiredIds ={9841}, isTalent =0},
+      -- @Ferocious Bite Rank 5
+      {id =31018, requiredIds ={22829}, isTalent =0}
+        }
 }

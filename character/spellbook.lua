@@ -237,6 +237,7 @@ local function setUpPaging(self)
         return
     end
 
+
     self.left:Show()
     self.right:Show()
     self.pages:Show()
@@ -299,7 +300,7 @@ local function setUpPaging(self)
     self.left:SetAttribute("_onclick",methodLeft)
 end
 
-local knowSpells = {}
+
 local function updateSpellbookTab()
     if InCombatLockdown() then return end
     for spellBookTabs = 1, 5 do
@@ -382,10 +383,7 @@ local function updateSpellbookTab()
             local mainButton = setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
             spellButtonIndex = spellButtonIndex + 1
             boxIndex = boxIndex + 1
-            knowSpells[#knowSpells + 1] = {id = spellID, rqTalentID = requiredTalentID}
-            if knowSpells[#knowSpells].rqTalentID == lastSkillid then
-                needNewHeader = false
-            end
+
 
             local unlearnd = {}
             unlearnd = findHigherRank(unlearnd, spellID, requiredTalentID)
@@ -428,7 +426,7 @@ local function updateSpellbookTab()
                 local futureRank = GetSpellSubtext(unknownSpellID.id)
                 local unKnownChildButton = setButtonStyle(ispassive, isFuture, unknownSpellID.id, 'FUTURESPELL', icon, spellIndex, BOOKTYPE, spellBookTabs, name, futureRank, unknownSpellID.level)
 
-                knowSpells[#knowSpells + 1] = {id = unknownSpellID.id, rqTalentID = nil}
+
                 unKnownChildButton:ClearAllPoints()
                 unKnownChildButton:SetParent(header)
                 if header.buttons == 6 then

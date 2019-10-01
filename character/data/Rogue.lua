@@ -128,140 +128,621 @@ GW:SetPreviousAbilityMap(
 	}
 )
 ]]
-GW.SpellsByLevel = {
-	[1] = {{id = 1784, cost = 10}},
-	[4] = {{id = 53, cost = 100}, {id = 921, cost = 100}},
-	[6] = {{id = 1776, cost = 100}, {id = 1757, cost = 100, requiredIds = {1752}}},
-	[8] = {{id = 5277, cost = 200}, {id = 6760, cost = 200, requiredIds = {2098}}},
-	[10] = {{id = 674, cost = 300}, {id = 6770, cost = 300}, {id = 5171, cost = 300}, {id = 2983, cost = 300}},
-	[12] = {{id = 2589, cost = 800, requiredIds = {53}}, {id = 1766, cost = 800}, {id = 3127, cost = 800}},
-	[14] = {{id = 8647, cost = 1200}, {id = 703, cost = 1200}, {id = 1758, cost = 1200, requiredIds = {1757}}},
-	[16] = {{id = 6761, cost = 1800, requiredIds = {6760}}, {id = 1966, cost = 1800}, {id = 1804, cost = 1800}},
-	[18] = {{id = 8676, cost = 2900}, {id = 1777, cost = 2900, requiredIds = {1776}}},
-	[20] = {
-		{id = 2590, cost = 3000, requiredIds = {2589}},
-		{id = 3420, cost = 3000, skills = {{skill = 40, level = 1}}},
-		{id = 1943, cost = 3000},
-		{id = 1785, cost = 3000, requiredIds = {1784}}
-	},
-	[22] = {
-		{id = 1725, cost = 4000},
-		{id = 8631, cost = 4000, requiredIds = {703}},
-		{id = 1759, cost = 4000, requiredIds = {1758}},
-		{id = 1856, cost = 4000, requiredIds = {1784}}
-	},
-	[24] = {
-		{id = 2836, cost = 5000},
-		{id = 6762, cost = 5000, requiredIds = {6761}},
-		{id = 5763, cost = 5000, skills = {{skill = 40, level = 100}}}
-	},
-	[26] = {
-		{id = 8724, cost = 6000, requiredIds = {8676}},
-		{id = 1833, cost = 6000},
-		{id = 8649, cost = 6000, requiredIds = {8647}},
-		{id = 1767, cost = 6000, requiredIds = {1766}}
-	},
-	[28] = {
-		{id = 2591, cost = 8000, requiredIds = {2590}},
-		{id = 6768, cost = 8000, requiredIds = {1966}},
-		{id = 8687, cost = 8000, skills = {{skill = 40, level = 120}}},
-		{id = 8639, cost = 8000, requiredIds = {1943}},
-		{id = 2070, cost = 8000, requiredIds = {6770}}
-	},
-	[30] = {
-		{id = 2835, cost = 10000, skills = {{skill = 40, level = 130}}},
-		{id = 1842, cost = 10000, requiredIds = {2836}},
-		{id = 8632, cost = 10000, requiredIds = {8631}},
-		{id = 408, cost = 10000},
-		{id = 1760, cost = 10000, requiredIds = {1759}}
-	},
-	[32] = {
-		{id = 8623, cost = 12000, requiredIds = {6762}},
-		{id = 8629, cost = 12000, requiredIds = {1777}},
-		{id = 13220, cost = 12000, skills = {{skill = 40, level = 140}}}
-	},
-	[34] = {
-		{id = 8725, cost = 14000, requiredIds = {8724}},
-		{id = 2094, cost = 14000, skills = {{skill = 40, level = 1}}},
-		{id = 6510, cost = 14000, skills = {{skill = 40, level = 150}}},
-		{id = 8696, cost = 14000, requiredIds = {2983}}
-	},
-	[36] = {
-		{id = 8721, cost = 16000, requiredIds = {2591}},
-		{id = 8650, cost = 16000, requiredIds = {8649}},
-		{id = 8691, cost = 16000, skills = {{skill = 40, level = 160}}},
-		{id = 8640, cost = 16000, requiredIds = {8639}}
-	},
-	[38] = {
-		{id = 2837, cost = 18000, skills = {{skill = 40, level = 170}}},
-		{id = 8633, cost = 18000, requiredIds = {8632}},
-		{id = 8694, cost = 18000, skills = {{skill = 40, level = 170}}},
-		{id = 8621, cost = 18000, requiredIds = {1760}}
-	},
-	[40] = {
-		{id = 8624, cost = 20000, requiredIds = {8623}},
-		{id = 8637, cost = 20000, requiredIds = {6768}},
-		{id = 1860, cost = 20000},
-		{id = 1786, cost = 20000, requiredIds = {1785}},
-		{id = 13228, cost = 20000, skills = {{skill = 40, level = 180}}}
-	},
-	[42] = {
-		{id = 11267, cost = 27000, requiredIds = {8725}},
-		{id = 1768, cost = 27000, requiredIds = {1767}},
-		{id = 6774, cost = 27000, requiredIds = {5171}},
-		{id = 1857, cost = 27000, requiredIds = {1856}}
-	},
-	[44] = {
-		{id = 11279, cost = 29000, requiredIds = {8721}},
-		{id = 11341, cost = 29000, skills = {{skill = 40, level = 200}}},
-		{id = 11273, cost = 29000, requiredIds = {8640}}
-	},
-	[46] = {
-		{id = 11357, cost = 31000, skills = {{skill = 40, level = 210}}},
-		{id = 11197, cost = 31000, requiredIds = {8650}},
-		{id = 11289, cost = 31000, requiredIds = {8633}},
-		{id = 11285, cost = 31000, requiredIds = {8629}},
-		{id = 17347, cost = 7750, requiredIds = {16511}},
-		{id = 11293, cost = 31000, requiredIds = {8621}}
-	},
-	[48] = {
-		{id = 11299, cost = 33000, requiredIds = {8624}},
-		{id = 11297, cost = 33000, requiredIds = {2070}},
-		{id = 13229, cost = 33000, skills = {{skill = 40, level = 220}}}
-	},
-	[50] = {
-		{id = 11268, cost = 35000, requiredIds = {11267}},
-		{id = 3421, cost = 35000, skills = {{skill = 40, level = 230}}},
-		{id = 8643, cost = 35000, requiredIds = {408}}
-	},
-	[52] = {
-		{id = 11280, cost = 46000, requiredIds = {11279}},
-		{id = 11303, cost = 46000, requiredIds = {8637}},
-		{id = 11342, cost = 46000, skills = {{skill = 40, level = 240}}},
-		{id = 11400, cost = 46000, skills = {{skill = 40, level = 240}}},
-		{id = 11274, cost = 46000, requiredIds = {11273}}
-	},
-	[54] = {
-		{id = 11358, cost = 48000, skills = {{skill = 40, level = 250}}},
-		{id = 11290, cost = 48000, requiredIds = {11289}},
-		{id = 11294, cost = 48000, requiredIds = {11293}}
-	},
-	[56] = {
-		{id = 11300, cost = 50000, requiredIds = {11299}},
-		{id = 11198, cost = 50000, requiredIds = {11197}},
-		{id = 13230, cost = 50000, skills = {{skill = 40, level = 260}}}
-	},
-	[58] = {
-		{id = 11269, cost = 52000, requiredIds = {11268}},
-		{id = 17348, cost = 13000, requiredIds = {17347}},
-		{id = 1769, cost = 52000, requiredIds = {1768}},
-		{id = 11305, cost = 52000, requiredIds = {8696}}
-	},
-	[60] = {
-		{id = 11281, cost = 54000, requiredIds = {11280}},
-		{id = 11286, cost = 54000, requiredIds = {11285}},
-		{id = 11343, cost = 54000, skills = {{skill = 40, level = 280}}},
-		{id = 11275, cost = 54000, requiredIds = {11274}},
-		{id = 1787, cost = 54000, requiredIds = {1786}}
-	}
+GW.SpellsByLevel =
+
+ {
+ [0] = {
+      -- @One-Handed Maces undefined
+      {id =198, isTalent =0},
+      -- @One-Handed Swords undefined
+      {id =201, isTalent =0},
+      -- @Bows undefined
+      {id =264, isTalent =0},
+      -- @Guns undefined
+      {id =266, isTalent =0},
+      -- @Dual Wield Passive
+      {id =674, isTalent =0},
+      -- @Daggers undefined
+      {id =1180, isTalent =0},
+      -- @Thrown undefined
+      {id =2567, isTalent =0},
+      -- @Crossbows undefined
+      {id =5011, isTalent =0},
+      -- @Leather undefined
+      {id =9077, isTalent =0},
+      -- @Precision Rank 1
+      {id =13705, isTalent =1},
+      -- @Dagger Specialization Rank 1
+      {id =13706, isTalent =1},
+      -- @Mace Specialization Rank 1
+      {id =13709, isTalent =1},
+      -- @Lightning Reflexes Rank 1
+      {id =13712, isTalent =1},
+      -- @Deflection Rank 1
+      {id =13713, isTalent =1},
+      -- @Dual Wield Specialization Rank 1
+      {id =13715, isTalent =1},
+      -- @Improved Sinister Strike Rank 1
+      {id =13732, isTalent =1},
+      -- @Improved Backstab Rank 1
+      {id =13733, isTalent =1},
+      -- @Improved Gouge Rank 1
+      {id =13741, isTalent =1},
+      -- @Endurance Rank 1
+      {id =13742, isTalent =1},
+      -- @Improved Sprint Rank 1
+      {id =13743, isTalent =1},
+      -- @Adrenaline Rush undefined
+      {id =13750, isTalent =1},
+      -- @Improved Kick Rank 1
+      {id =13754, isTalent =1},
+      -- @Lightning Reflexes Rank 2
+      {id =13788, requiredIds ={13712}, isTalent =1},
+      -- @Lightning Reflexes Rank 3
+      {id =13789, requiredIds ={13788}, isTalent =1},
+      -- @Lightning Reflexes Rank 4
+      {id =13790, requiredIds ={13789}, isTalent =1},
+      -- @Lightning Reflexes Rank 5
+      {id =13791, requiredIds ={13790}, isTalent =1},
+      -- @Improved Gouge Rank 3
+      {id =13792, requiredIds ={13793}, isTalent =1},
+      -- @Improved Gouge Rank 2
+      {id =13793, requiredIds ={13741}, isTalent =1},
+      -- @Mace Specialization Rank 2
+      {id =13800, requiredIds ={13709}, isTalent =1},
+      -- @Mace Specialization Rank 3
+      {id =13801, requiredIds ={13800}, isTalent =1},
+      -- @Mace Specialization Rank 4
+      {id =13802, requiredIds ={13801}, isTalent =1},
+      -- @Mace Specialization Rank 5
+      {id =13803, requiredIds ={13802}, isTalent =1},
+      -- @Dagger Specialization Rank 2
+      {id =13804, requiredIds ={13706}, isTalent =1},
+      -- @Dagger Specialization Rank 3
+      {id =13805, requiredIds ={13804}, isTalent =1},
+      -- @Dagger Specialization Rank 4
+      {id =13806, requiredIds ={13805}, isTalent =1},
+      -- @Dagger Specialization Rank 5
+      {id =13807, requiredIds ={13806}, isTalent =1},
+      -- @Precision Rank 2
+      {id =13832, requiredIds ={13705}, isTalent =1},
+      -- @Precision Rank 3
+      {id =13843, requiredIds ={13832}, isTalent =1},
+      -- @Precision Rank 4
+      {id =13844, requiredIds ={13843}, isTalent =1},
+      -- @Precision Rank 5
+      {id =13845, requiredIds ={13844}, isTalent =1},
+      -- @Dual Wield Specialization Rank 2
+      {id =13848, requiredIds ={13715}, isTalent =1},
+      -- @Dual Wield Specialization Rank 3
+      {id =13849, requiredIds ={13848}, isTalent =1},
+      -- @Dual Wield Specialization Rank 4
+      {id =13851, requiredIds ={13849}, isTalent =1},
+      -- @Dual Wield Specialization Rank 5
+      {id =13852, requiredIds ={13851}, isTalent =1},
+      -- @Deflection Rank 2
+      {id =13853, requiredIds ={13713}, isTalent =1},
+      -- @Deflection Rank 3
+      {id =13854, requiredIds ={13853}, isTalent =1},
+      -- @Deflection Rank 4
+      {id =13855, requiredIds ={13854}, isTalent =1},
+      -- @Deflection Rank 5
+      {id =13856, requiredIds ={13855}, isTalent =1},
+      -- @Improved Sinister Strike Rank 2
+      {id =13863, requiredIds ={13732}, isTalent =1},
+      -- @Improved Backstab Rank 2
+      {id =13865, requiredIds ={13733}, isTalent =1},
+      -- @Improved Backstab Rank 3
+      {id =13866, requiredIds ={13865}, isTalent =1},
+      -- @Improved Kick Rank 2
+      {id =13867, requiredIds ={13754}, isTalent =1},
+      -- @Endurance Rank 2
+      {id =13872, requiredIds ={13742}, isTalent =1},
+      -- @Improved Sprint Rank 2
+      {id =13875, requiredIds ={13743}, isTalent =1},
+      -- @Blade Flurry undefined
+      {id =13877, isTalent =1},
+      -- @Master of Deception Rank 1
+      {id =13958, isTalent =1},
+      -- @Sword Specialization Rank 1
+      {id =13960, isTalent =1},
+      -- @Sword Specialization Rank 2
+      {id =13961, requiredIds ={13960}, isTalent =1},
+      -- @Sword Specialization Rank 3
+      {id =13962, requiredIds ={13961}, isTalent =1},
+      -- @Sword Specialization Rank 4
+      {id =13963, requiredIds ={13962}, isTalent =1},
+      -- @Sword Specialization Rank 5
+      {id =13964, requiredIds ={13963}, isTalent =1},
+      -- @Master of Deception Rank 2
+      {id =13970, requiredIds ={13958}, isTalent =1},
+      -- @Master of Deception Rank 3
+      {id =13971, requiredIds ={13970}, isTalent =1},
+      -- @Master of Deception Rank 4
+      {id =13972, requiredIds ={13971}, isTalent =1},
+      -- @Master of Deception Rank 5
+      {id =13973, requiredIds ={13972}, isTalent =1},
+      -- @Camouflage Rank 1
+      {id =13975, isTalent =1},
+      -- @Initiative Rank 1
+      {id =13976, isTalent =1},
+      -- @Initiative Rank 2
+      {id =13979, requiredIds ={13976}, isTalent =1},
+      -- @Initiative Rank 3
+      {id =13980, requiredIds ={13979}, isTalent =1},
+      -- @Elusiveness Rank 1
+      {id =13981, isTalent =1},
+      -- @Setup Rank 1
+      {id =13983, isTalent =1},
+      -- @Opportunity Rank 1
+      {id =14057, isTalent =1},
+      -- @Camouflage Rank 2
+      {id =14062, requiredIds ={13975}, isTalent =1},
+      -- @Camouflage Rank 3
+      {id =14063, requiredIds ={14062}, isTalent =1},
+      -- @Camouflage Rank 4
+      {id =14064, requiredIds ={14063}, isTalent =1},
+      -- @Camouflage Rank 5
+      {id =14065, requiredIds ={14064}, isTalent =1},
+      -- @Elusiveness Rank 2
+      {id =14066, requiredIds ={13981}, isTalent =1},
+      -- @Setup Rank 2
+      {id =14070, requiredIds ={13983}, isTalent =1},
+      -- @Setup Rank 3
+      {id =14071, requiredIds ={14070}, isTalent =1},
+      -- @Opportunity Rank 2
+      {id =14072, requiredIds ={14057}, isTalent =1},
+      -- @Opportunity Rank 3
+      {id =14073, requiredIds ={14072}, isTalent =1},
+      -- @Opportunity Rank 4
+      {id =14074, requiredIds ={14073}, isTalent =1},
+      -- @Opportunity Rank 5
+      {id =14075, requiredIds ={14074}, isTalent =1},
+      -- @Improved Sap Rank 1
+      {id =14076, isTalent =1},
+      -- @Improved Ambush Rank 1
+      {id =14079, isTalent =1},
+      -- @Improved Ambush Rank 2
+      {id =14080, requiredIds ={14079}, isTalent =1},
+      -- @Improved Ambush Rank 3
+      {id =14081, requiredIds ={14080}, isTalent =1},
+      -- @Dirty Deeds Rank 1
+      {id =14082, isTalent =1},
+      -- @Dirty Deeds Rank 2
+      {id =14083, requiredIds ={14082}, isTalent =1},
+      -- @Improved Sap Rank 2
+      {id =14094, requiredIds ={14076}, isTalent =1},
+      -- @Improved Poisons Rank 1
+      {id =14113, isTalent =1},
+      -- @Improved Poisons Rank 2
+      {id =14114, requiredIds ={14113}, isTalent =1},
+      -- @Improved Poisons Rank 3
+      {id =14115, requiredIds ={14114}, isTalent =1},
+      -- @Improved Poisons Rank 4
+      {id =14116, requiredIds ={14115}, isTalent =1},
+      -- @Improved Poisons Rank 5
+      {id =14117, requiredIds ={14116}, isTalent =1},
+      -- @Lethality Rank 1
+      {id =14128, isTalent =1},
+      -- @Lethality Rank 2
+      {id =14132, requiredIds ={14128}, isTalent =1},
+      -- @Lethality Rank 3
+      {id =14135, requiredIds ={14132}, isTalent =1},
+      -- @Lethality Rank 4
+      {id =14136, requiredIds ={14135}, isTalent =1},
+      -- @Lethality Rank 5
+      {id =14137, requiredIds ={14136}, isTalent =1},
+      -- @Malice Rank 1
+      {id =14138, isTalent =1},
+      -- @Malice Rank 2
+      {id =14139, requiredIds ={14138}, isTalent =1},
+      -- @Malice Rank 3
+      {id =14140, requiredIds ={14139}, isTalent =1},
+      -- @Malice Rank 4
+      {id =14141, requiredIds ={14140}, isTalent =1},
+      -- @Malice Rank 5
+      {id =14142, requiredIds ={14141}, isTalent =1},
+      -- @Remorseless Attacks Rank 1
+      {id =14144, isTalent =1},
+      -- @Remorseless Attacks Rank 2
+      {id =14148, requiredIds ={14144}, isTalent =1},
+      -- @Ruthlessness Rank 1
+      {id =14156, isTalent =1},
+      -- @Murder Rank 1
+      {id =14158, isTalent =1},
+      -- @Murder Rank 2
+      {id =14159, requiredIds ={14158}, isTalent =1},
+      -- @Ruthlessness Rank 2
+      {id =14160, requiredIds ={14156}, isTalent =1},
+      -- @Ruthlessness Rank 3
+      {id =14161, requiredIds ={14160}, isTalent =1},
+      -- @Improved Eviscerate Rank 1
+      {id =14162, isTalent =1},
+      -- @Improved Eviscerate Rank 2
+      {id =14163, requiredIds ={14162}, isTalent =1},
+      -- @Improved Eviscerate Rank 3
+      {id =14164, requiredIds ={14163}, isTalent =1},
+      -- @Improved Slice and Dice Rank 1
+      {id =14165, isTalent =1},
+      -- @Improved Slice and Dice Rank 2
+      {id =14166, requiredIds ={14165}, isTalent =1},
+      -- @Improved Slice and Dice Rank 3
+      {id =14167, requiredIds ={14166}, isTalent =1},
+      -- @Improved Expose Armor Rank 1
+      {id =14168, isTalent =1},
+      -- @Improved Expose Armor Rank 2
+      {id =14169, requiredIds ={14168}, isTalent =1},
+      -- @Serrated Blades Rank 1
+      {id =14171, isTalent =1},
+      -- @Serrated Blades Rank 2
+      {id =14172, requiredIds ={14171}, isTalent =1},
+      -- @Serrated Blades Rank 3
+      {id =14173, requiredIds ={14172}, isTalent =1},
+      -- @Improved Kidney Shot Rank 1
+      {id =14174, isTalent =1},
+      -- @Improved Kidney Shot Rank 2
+      {id =14175, requiredIds ={14174}, isTalent =1},
+      -- @Improved Kidney Shot Rank 3
+      {id =14176, requiredIds ={14175}, isTalent =1},
+      -- @Cold Blood undefined
+      {id =14177, isTalent =1},
+      -- @Relentless Strikes undefined
+      {id =14179, isTalent =1},
+      -- @Premeditation undefined
+      {id =14183, isTalent =1},
+      -- @Preparation undefined
+      {id =14185, isTalent =1},
+      -- @Seal Fate Rank 1
+      {id =14186, isTalent =1},
+      -- @Seal Fate Rank 2
+      {id =14190, requiredIds ={14186}, isTalent =1},
+      -- @Seal Fate Rank 3
+      {id =14193, requiredIds ={14190}, isTalent =1},
+      -- @Seal Fate Rank 4
+      {id =14194, requiredIds ={14193}, isTalent =1},
+      -- @Seal Fate Rank 5
+      {id =14195, requiredIds ={14194}, isTalent =1},
+      -- @Riposte undefined
+      {id =14251, isTalent =1},
+      -- @Ghostly Strike undefined
+      {id =14278, isTalent =1},
+      -- @Vigor undefined
+      {id =14983, isTalent =1},
+      -- @Fist Weapons undefined
+      {id =15590, isTalent =0},
+      -- @Hemorrhage Rank 1
+      {id =16511, isTalent =1},
+      -- @Vile Poisons Rank 1
+      {id =16513, isTalent =1},
+      -- @Vile Poisons Rank 2
+      {id =16514, requiredIds ={16513}, isTalent =1},
+      -- @Vile Poisons Rank 3
+      {id =16515, requiredIds ={16514}, isTalent =1},
+      -- @Vile Poisons Rank 4
+      {id =16719, requiredIds ={16515}, isTalent =1},
+      -- @Vile Poisons Rank 5
+      {id =16720, requiredIds ={16719}, isTalent =1},
+      -- @Aggression Rank 1
+      {id =18427, isTalent =1},
+      -- @Aggression Rank 2
+      {id =18428, requiredIds ={18427}, isTalent =1},
+      -- @Aggression Rank 3
+      {id =18429, requiredIds ={18428}, isTalent =1},
+      -- @Sleight of Hand Rank 1
+      {id =30892, isTalent =1},
+      -- @Sleight of Hand Rank 2
+      {id =30893, requiredIds ={30892}, isTalent =1},
+      -- @Heightened Senses Rank 1
+      {id =30894, isTalent =1},
+      -- @Heightened Senses Rank 2
+      {id =30895, requiredIds ={30894}, isTalent =1},
+      -- @Deadliness Rank 1
+      {id =30902, isTalent =1},
+      -- @Deadliness Rank 2
+      {id =30903, requiredIds ={30902}, isTalent =1},
+      -- @Deadliness Rank 3
+      {id =30904, requiredIds ={30903}, isTalent =1},
+      -- @Deadliness Rank 4
+      {id =30905, requiredIds ={30904}, isTalent =1},
+      -- @Deadliness Rank 5
+      {id =30906, requiredIds ={30905}, isTalent =1},
+      -- @Weapon Expertise Rank 1
+      {id =30919, isTalent =1},
+      -- @Weapon Expertise Rank 2
+      {id =30920, requiredIds ={30919}, isTalent =1},
+       },
+[1] = {
+      -- @Sinister Strike Rank 1
+      {id =1752, isTalent =0},
+      -- @Stealth Rank 1
+      {id =1784, cost =10, isTalent =0},
+      -- @Pick Lock undefined
+      {id =1804, cost =1800, isTalent =0},
+      -- @Eviscerate Rank 1
+      {id =2098, isTalent =0},
+      -- @Shoot Bow undefined
+      {id =2480, isTalent =0},
+      -- @Throw undefined
+      {id =2764, isTalent =0},
+      -- @Parry Passive
+      {id =3127, isTalent =0},
+      -- @Shoot Gun undefined
+      {id =7918, isTalent =0},
+      -- @Shoot Crossbow undefined
+      {id =7919, isTalent =0},
+       },
+[4] = {
+      -- @Backstab Rank 1
+      {id =53, cost =100, isTalent =0},
+      -- @Pick Pocket undefined
+      {id =921, cost =100, isTalent =0},
+       },
+[6] = {
+      -- @Sinister Strike Rank 2
+      {id =1757, requiredIds ={1752}, cost =100, isTalent =0},
+      -- @Gouge Rank 1
+      {id =1776, cost =100, isTalent =0},
+       },
+[8] = {
+      -- @Evasion undefined
+      {id =5277, cost =200, isTalent =0},
+      -- @Eviscerate Rank 2
+      {id =6760, requiredIds ={2098}, cost =200, isTalent =0},
+       },
+[10] = {
+      -- @Sprint Rank 1
+      {id =2983, cost =300, isTalent =0},
+      -- @Slice and Dice Rank 1
+      {id =5171, cost =300, isTalent =0},
+      -- @Sap Rank 1
+      {id =6770, cost =300, isTalent =0},
+       },
+[12] = {
+      -- @Kick Rank 1
+      {id =1766, cost =800, isTalent =0},
+      -- @Backstab Rank 2
+      {id =2589, requiredIds ={53}, cost =800, isTalent =0},
+       },
+[14] = {
+      -- @Garrote Rank 1
+      {id =703, cost =1200, isTalent =0},
+      -- @Sinister Strike Rank 3
+      {id =1758, requiredIds ={1757}, cost =1200, isTalent =0},
+      -- @Expose Armor Rank 1
+      {id =8647, cost =1200, isTalent =0},
+       },
+[16] = {
+      -- @Feint Rank 1
+      {id =1966, cost =1800, isTalent =0},
+      -- @Eviscerate Rank 3
+      {id =6761, requiredIds ={6760}, cost =1800, isTalent =0},
+       },
+[18] = {
+      -- @Gouge Rank 2
+      {id =1777, requiredIds ={1776}, cost =2900, isTalent =0},
+      -- @Ambush Rank 1
+      {id =8676, cost =2900, isTalent =0},
+       },
+[20] = {
+      -- @Stealth Rank 2
+      {id =1785, requiredIds ={1784}, cost =3000, isTalent =0},
+      -- @Rupture Rank 1
+      {id =1943, cost =3000, isTalent =0},
+      -- @Backstab Rank 3
+      {id =2590, requiredIds ={2589}, cost =3000, isTalent =0},
+      -- @Poisons undefined
+      {id =2842, isTalent =0},
+      -- 7Crippling Poison Rank 1
+      {id =3420, cost =3000, isTalent =0},
+      -- 7Instant Poison Rank 1
+      {id =8681, isTalent =0},
+       },
+[22] = {
+      -- @Distract undefined
+      {id =1725, cost =4000, isTalent =0},
+      -- @Sinister Strike Rank 4
+      {id =1759, requiredIds ={1758}, cost =4000, isTalent =0},
+      -- @Vanish Rank 1
+      {id =1856, cost =4000, isTalent =0},
+      -- @Garrote Rank 2
+      {id =8631, requiredIds ={703}, cost =4000, isTalent =0},
+       },
+[24] = {
+      -- @Detect Traps Passive
+      {id =2836, cost =5000, isTalent =0},
+      -- 7Mind-numbing Poison Rank 1
+      {id =5763, cost =5000, isTalent =0},
+      -- @Eviscerate Rank 4
+      {id =6762, requiredIds ={6761}, cost =5000, isTalent =0},
+       },
+[26] = {
+      -- @Kick Rank 2
+      {id =1767, requiredIds ={1766}, cost =6000, isTalent =0},
+      -- @Cheap Shot undefined
+      {id =1833, cost =6000, isTalent =0},
+      -- @Expose Armor Rank 2
+      {id =8649, requiredIds ={8647}, cost =6000, isTalent =0},
+      -- @Ambush Rank 2
+      {id =8724, requiredIds ={8676}, cost =6000, isTalent =0},
+       },
+[28] = {
+      -- @Sap Rank 2
+      {id =2070, requiredIds ={6770}, cost =8000, isTalent =0},
+      -- @Backstab Rank 4
+      {id =2591, requiredIds ={2590}, cost =8000, isTalent =0},
+      -- @Feint Rank 2
+      {id =6768, requiredIds ={1966}, cost =8000, isTalent =0},
+      -- @Rupture Rank 2
+      {id =8639, requiredIds ={1943}, cost =8000, isTalent =0},
+      -- 7Instant Poison II Rank 2
+      {id =8687, cost =8000, isTalent =0},
+       },
+[30] = {
+      -- @Kidney Shot Rank 1
+      {id =408, cost =10000, isTalent =0},
+      -- @Sinister Strike Rank 5
+      {id =1760, requiredIds ={1759}, cost =10000, isTalent =0},
+      -- @Disarm Trap undefined
+      {id =1842, cost =10000, isTalent =0},
+      -- 7Deadly Poison Rank 1
+      {id =2835, cost =10000, isTalent =0},
+      -- @Garrote Rank 3
+      {id =8632, requiredIds ={8631}, cost =10000, isTalent =0},
+       },
+[32] = {
+      -- @Eviscerate Rank 5
+      {id =8623, requiredIds ={6762}, cost =12000, isTalent =0},
+      -- @Gouge Rank 3
+      {id =8629, requiredIds ={1777}, cost =12000, isTalent =0},
+      -- 7Wound Poison Rank 1
+      {id =13220, cost =12000, isTalent =0},
+       },
+[34] = {
+      -- @Blind undefined
+      {id =2094, cost =14000, isTalent =0},
+      -- 7Blinding Powder undefined
+      {id =6510, cost =14000, isTalent =0},
+      -- @Sprint Rank 2
+      {id =8696, requiredIds ={2983}, cost =14000, isTalent =0},
+      -- @Ambush Rank 3
+      {id =8725, requiredIds ={8724}, cost =14000, isTalent =0},
+       },
+[36] = {
+      -- @Rupture Rank 3
+      {id =8640, requiredIds ={8639}, cost =16000, isTalent =0},
+      -- @Expose Armor Rank 3
+      {id =8650, requiredIds ={8649}, cost =16000, isTalent =0},
+      -- 7Instant Poison III Rank 3
+      {id =8691, cost =16000, isTalent =0},
+      -- @Backstab Rank 5
+      {id =8721, requiredIds ={2591}, cost =16000, isTalent =0},
+       },
+[38] = {
+      -- 7Deadly Poison II Rank 2
+      {id =2837, cost =18000, isTalent =0},
+      -- @Sinister Strike Rank 6
+      {id =8621, requiredIds ={1760}, cost =18000, isTalent =0},
+      -- @Garrote Rank 4
+      {id =8633, requiredIds ={8632}, cost =18000, isTalent =0},
+      -- 7Mind-numbing Poison II Rank 2
+      {id =8694, cost =18000, isTalent =0},
+       },
+[40] = {
+      -- @Stealth Rank 3
+      {id =1786, requiredIds ={1785}, cost =20000, isTalent =0},
+      -- @Safe Fall Passive
+      {id =1860, cost =20000, isTalent =0},
+      -- @Eviscerate Rank 6
+      {id =8624, requiredIds ={8623}, cost =20000, isTalent =0},
+      -- @Feint Rank 3
+      {id =8637, requiredIds ={6768}, cost =20000, isTalent =0},
+      -- 7Wound Poison II Rank 2
+      {id =13228, cost =20000, isTalent =0},
+       },
+[42] = {
+      -- @Kick Rank 3
+      {id =1768, requiredIds ={1767}, cost =27000, isTalent =0},
+      -- @Vanish Rank 2
+      {id =1857, requiredIds ={1856}, cost =27000, isTalent =0},
+      -- @Slice and Dice Rank 2
+      {id =6774, requiredIds ={5171}, cost =27000, isTalent =0},
+      -- @Ambush Rank 4
+      {id =11267, requiredIds ={8725}, cost =27000, isTalent =0},
+       },
+[44] = {
+      -- @Rupture Rank 4
+      {id =11273, requiredIds ={8640}, cost =29000, isTalent =0},
+      -- @Backstab Rank 6
+      {id =11279, requiredIds ={8721}, cost =29000, isTalent =0},
+      -- 7Instant Poison IV Rank 4
+      {id =11341, cost =29000, isTalent =0},
+       },
+[46] = {
+      -- @Expose Armor Rank 4
+      {id =11197, requiredIds ={8650}, cost =31000, isTalent =0},
+      -- @Gouge Rank 4
+      {id =11285, requiredIds ={8629}, cost =31000, isTalent =0},
+      -- @Garrote Rank 5
+      {id =11289, requiredIds ={8633}, cost =31000, isTalent =0},
+      -- @Sinister Strike Rank 7
+      {id =11293, requiredIds ={8621}, cost =31000, isTalent =0},
+      -- 7Deadly Poison III Rank 3
+      {id =11357, cost =31000, isTalent =0},
+      -- @Hemorrhage Rank 2
+      {id =17347, requiredIds ={16511}, cost =7750, isTalent =0},
+       },
+[48] = {
+      -- @Sap Rank 3
+      {id =11297, requiredIds ={2070}, cost =33000, isTalent =0},
+      -- @Eviscerate Rank 7
+      {id =11299, requiredIds ={8624}, cost =33000, isTalent =0},
+      -- 7Wound Poison III Rank 3
+      {id =13229, cost =33000, isTalent =0},
+       },
+[50] = {
+      -- 7Crippling Poison II Rank 2
+      {id =3421, cost =35000, isTalent =0},
+      -- @Kidney Shot Rank 2
+      {id =8643, requiredIds ={408}, cost =35000, isTalent =0},
+      -- @Ambush Rank 5
+      {id =11268, requiredIds ={11267}, cost =35000, isTalent =0},
+       },
+[52] = {
+      -- @Rupture Rank 5
+      {id =11274, requiredIds ={11273}, cost =46000, isTalent =0},
+      -- @Backstab Rank 7
+      {id =11280, requiredIds ={11279}, cost =46000, isTalent =0},
+      -- @Feint Rank 4
+      {id =11303, requiredIds ={8637}, cost =46000, isTalent =0},
+      -- 7Instant Poison V Rank 5
+      {id =11342, cost =46000, isTalent =0},
+      -- 7Mind-numbing Poison III Rank 3
+      {id =11400, cost =46000, isTalent =0},
+       },
+[54] = {
+      -- @Garrote Rank 6
+      {id =11290, requiredIds ={11289}, cost =48000, isTalent =0},
+      -- @Sinister Strike Rank 8
+      {id =11294, requiredIds ={11293}, cost =48000, isTalent =0},
+      -- 7Deadly Poison IV Rank 4
+      {id =11358, cost =48000, isTalent =0},
+       },
+[56] = {
+      -- @Expose Armor Rank 5
+      {id =11198, requiredIds ={11197}, cost =50000, isTalent =0},
+      -- @Eviscerate Rank 8
+      {id =11300, requiredIds ={11299}, cost =50000, isTalent =0},
+      -- 7Wound Poison IV Rank 4
+      {id =13230, cost =50000, isTalent =0},
+       },
+[58] = {
+      -- @Kick Rank 4
+      {id =1769, requiredIds ={1768}, cost =52000, isTalent =0},
+      -- @Ambush Rank 6
+      {id =11269, requiredIds ={11268}, cost =52000, isTalent =0},
+      -- @Sprint Rank 3
+      {id =11305, requiredIds ={8696}, cost =52000, isTalent =0},
+      -- @Hemorrhage Rank 3
+      {id =17348, requiredIds ={17347}, cost =13000, isTalent =0},
+       },
+[60] = {
+      -- @Stealth Rank 4
+      {id =1787, requiredIds ={1786}, cost =54000, isTalent =0},
+      -- @Rupture Rank 6
+      {id =11275, requiredIds ={11274}, cost =54000, isTalent =0},
+      -- @Backstab Rank 8
+      {id =11281, requiredIds ={11280}, cost =54000, isTalent =0},
+      -- @Gouge Rank 5
+      {id =11286, requiredIds ={11285}, cost =54000, isTalent =0},
+      -- 7Instant Poison VI Rank 6
+      {id =11343, cost =54000, isTalent =0},
+      -- @Backstab Rank 9
+      {id =25300, requiredIds ={11281}, isTalent =0},
+      -- @Feint Rank 5
+      {id =25302, requiredIds ={11303}, isTalent =0},
+      -- 7Deadly Poison V Rank 5
+      {id =25347, isTalent =0},
+      -- @Eviscerate Rank 9
+      {id =31016, requiredIds ={11300}, isTalent =0}
+        }
 }
