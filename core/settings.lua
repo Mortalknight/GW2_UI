@@ -1202,6 +1202,16 @@ local function LoadSettings()
             end
         end
     )
+    addOptionDropdown(
+        COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+        nil,
+        "RAID_UNIT_HEALTH",
+        "GwSettingsGroupframe",
+        function()
+        end,
+        {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
+        {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}
+    )
 
     local dirs, grow = {"DOWN", "UP", "RIGHT", "LEFT"}, {}
     for i in pairs(dirs) do

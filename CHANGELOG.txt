@@ -12,6 +12,7 @@
 - Update Aura Indicator for raidframes
 - Added enemy buffs on targetframe
 - Added itemborder for professionbags
+- Added back Health option to raidframes
 
 0.9.1
 

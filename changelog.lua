@@ -85,8 +85,8 @@ GW_CHANGELOGS = "- Added back Dynamic-Cam Mode\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Change debuff position on target and player if target/player has no buffs\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added enemy buffs on targetframe\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added itemborder for professionbags\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added back Health option to raidframes\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "0.9.5\n\n" .. GW_CHANGELOGS
-
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 
