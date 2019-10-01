@@ -7,6 +7,7 @@ local GetRealmMoney = GW.GetRealmMoney
 local GetCharClass = GW.GetCharClass
 local GetRealmStorage = GW.GetRealmStorage
 local ClearStorage = GW.ClearStorage
+local BAG_TYP_COLORS = GW.BAG_TYP_COLORS
 
 local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
@@ -14,6 +15,11 @@ local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
 local BAG_WINDOW_SIZE = 480
 local BAG_WINDOW_CONTENT_HEIGHT = 0
+
+local CONTAINER_TYP_2 = 0
+local CONTAINER_TYP_3 = 0
+local CONTAINER_TYP_4 = 0
+local CONTAINER_TYP_5 = 0
 
 local default_bag_frame = {
     "MainMenuBarBackpackButton",
@@ -45,6 +51,24 @@ local function bagFrameShow(self)
     GwBagFrameResize:Show()
 end
 GW.AddForProfiling("bag", "bagFrameShow", bagFrameShow)
+
+local function getBagType()
+    for k, v in pairs(default_bag_frame) do
+        local fv = _G[v]
+        local bagItemLink = GetInventoryItemLink("player", fv:GetID())
+        if bagItemLink ~= nil and select(9,GetItemInfo(bagItemLink))=="INVTYPE_BAG" then
+            if v == "CharacterBag0Slot" then
+                CONTAINER_TYP_2 = GetItemFamily(bagItemLink)
+            elseif v == "CharacterBag1Slot" then
+                CONTAINER_TYP_3 = GetItemFamily(bagItemLink)
+            elseif v == "CharacterBag2Slot" then
+                CONTAINER_TYP_4 = GetItemFamily(bagItemLink)
+            elseif v == "CharacterBag3Slot" then
+                CONTAINER_TYP_5 = GetItemFamily(bagItemLink)
+            end
+        end
+    end
+end
 
 local function moveBagbar()
     local y = 25
@@ -118,6 +142,7 @@ end
 GW.AddForProfiling("bag", "createItemBackground", createItemBackground)
 
 local function SetItemButtonQuality()
+    getBagType()
     for bag = 0, NUM_BAG_SLOTS do
         for slot = 1, GetContainerNumSlots(bag) do
             local btnID = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]:GetID()
@@ -128,7 +153,7 @@ local function SetItemButtonQuality()
                 if quality then           
                     if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
                         btn.IconBorder:Show()
-                        btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+                        btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
                     else
                         btn.IconBorder:Hide()
                     end
@@ -141,6 +166,20 @@ local function SetItemButtonQuality()
                         btn.IconBorder:Show()
                         btn.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
                     end
+                end
+                --SetBorder for profession bags
+                if bag == 1 and CONTAINER_TYP_2 > 0 then
+                    btn.IconBorder:Show()
+                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_2].r, BAG_TYP_COLORS[CONTAINER_TYP_2].g, BAG_TYP_COLORS[CONTAINER_TYP_2].b)
+                elseif bag == 2 and CONTAINER_TYP_3 > 0 then
+                    btn.IconBorder:Show()
+                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_3].r, BAG_TYP_COLORS[CONTAINER_TYP_3].g, BAG_TYP_COLORS[CONTAINER_TYP_3].b)
+                elseif bag == 3 and CONTAINER_TYP_4 > 0 then
+                    btn.IconBorder:Show()
+                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_4].r, BAG_TYP_COLORS[CONTAINER_TYP_4].g, BAG_TYP_COLORS[CONTAINER_TYP_4].b)
+                elseif bag == 4 and CONTAINER_TYP_5 > 0 then
+                    btn.IconBorder:Show()
+                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_5].r, BAG_TYP_COLORS[CONTAINER_TYP_5].g, BAG_TYP_COLORS[CONTAINER_TYP_5].b)
                 end
             end
         end

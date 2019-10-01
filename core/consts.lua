@@ -38,9 +38,19 @@ local FACTION_BAR_COLORS = {
     [5] = {r = 0, g = 0.6, b = 0.1},
     [6] = {r = 0, g = 0.6, b = 0.1},
     [7] = {r = 0, g = 0.6, b = 0.1},
-    [8] = {r = 0, g = 0.6, b = 0.1},
+    [8] = {r = 0, g = 0.6, b = 0.1}
 }
 GW.FACTION_BAR_COLORS = FACTION_BAR_COLORS
+
+local BAG_TYP_COLORS = {
+    [1] = {r = 1, g = 1, b = 1},            --Quivers       1
+    [2] = {r = 1, g = 1, b = 1},            --Quivers       2
+    [3] = {r = 0.251, g = 0.878, b = 0.816},--Soul          3
+    [6] = {r = 0.451, g = 1, b = 0},        --Herbs         6
+    [7] = {r = 1, g = 0, b = 1}             --Enchanting    7
+
+}
+GW.BAG_TYP_COLORS = BAG_TYP_COLORS
 
 local COLOR_FRIENDLY = {
     [1] = {r = 88 / 255, g = 170 / 255, b = 68 / 255},
