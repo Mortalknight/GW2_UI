@@ -751,8 +751,7 @@ local function updateFrameData(self, index)
     end
     self.manabar:SetValue(powerPrecentage)
     Bar(self.healthbar, healthPrec)
-    self.predictionbar:SetValue(predictionPrecentage)
-    setHealPrediction(self, 0)
+    self.predictionbar:SetValue(0)
 
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
