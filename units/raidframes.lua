@@ -25,7 +25,6 @@ local RoundDec = GW.RoundDec
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
-local realmid_Player
 
 local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
@@ -33,6 +32,10 @@ local hudMoving = false
 local missing, ignored = {}, {}
 local spellBookIndex = {}
 local spellBookSearched = 0
+local frames = {}
+local IncHeal = {}
+
+local HealComm = LibStub("LibClassicHealComm-1.0", true)
 
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then
@@ -148,31 +151,41 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
 end
 GW.AddForProfiling("raidframes", "setHealthValue", setHealthValue)
 
+local function setHealPrediction(self)
+    local health = UnitHealth(self.unit)
+    local healthMax = UnitHealthMax(self.unit)
+    local healthPrec = 0
+    local predictionPrecentage = 0
+
+    if healthMax > 0 then
+        healthPrec = health / healthMax
+    end
+
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
+        predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
+    end
+
+    self.predictionbar:SetValue(predictionPrecentage)    
+end
+
 local function setHealth(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrec = 0
     local predictionPrecentage = 0
+
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
     if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax~=0 then
         predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
     end
-    --setHealPrediction(self,predictionPrecentage)
+
+    setHealPrediction(self, predictionPrecentage)
     setHealthValue(self, health, healthMax, healthPrec)
     Bar(self.healthbar, healthPrec)
 end
 GW.AddForProfiling("raidframes", "setHealth", setHealth)
-
-local function setPredictionAmount(self)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-
-    self.healPredictionAmount = prediction
-    setHealth(self)
-end
-GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
-
 
 local function setUnitName(self)
     if self == nil or self.unit == nil then
@@ -736,6 +749,7 @@ local function updateFrameData(self, index)
 
     self.guid = UnitGUID(self.unit)
     self.index = index
+    self.healPredictionAmount = 0
 
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
@@ -753,6 +767,7 @@ local function updateFrameData(self, index)
     end
     self.manabar:SetValue(powerPrecentage)
     Bar(self.healthbar, healthPrec)
+    setHealPrediction(self)
 
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
@@ -976,6 +991,33 @@ end
 GW.UpdateRaidFramesLayout = UpdateRaidFramesLayout
 GW.AddForProfiling("raidframes", "UpdateRaidFramesLayout", UpdateRaidFramesLayout)
 
+local function UpdateIncomingPredictionAmount(...)
+	for frame in pairs(frames) do
+		for i = 1, select("#", ...) do
+			if (select(i, ...) == frame.guid) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player", frame.unit) or UnitIsUnit("pet", frame.unit)) then
+                local amount = (HealComm:GetHealAmount(frame.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.guid) or 1)
+                frame.healPredictionAmount = amount
+                setHealPrediction(frame)
+				break
+			end
+		end
+	end
+end
+
+-- Handle callbacks from HealComm
+function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_ModifierChanged(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+function IncHeal:HealComm_GUIDDisappeared(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+
 local function createRaidFrame(registerUnit, index)
     local frame = _G["GwCompact" .. registerUnit]
     if _G["GwCompact" .. registerUnit] == nil then
@@ -983,6 +1025,7 @@ local function createRaidFrame(registerUnit, index)
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
+        frame.healthbar = frame.predictionbar.healthbar
         frame.nameNotLoaded = false
 
         frame.name:SetFont(UNIT_NAME_FONT, 12)
@@ -1002,6 +1045,7 @@ local function createRaidFrame(registerUnit, index)
         )
     end
 
+    frames[frame] = true
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
@@ -1056,7 +1100,6 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
-   -- frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
@@ -1066,6 +1109,7 @@ local function createRaidFrame(registerUnit, index)
     raidframe_OnEvent(frame, "load")
 
     if GetSetting("RAID_POWER_BARS") == true then
+        frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
         frame.manabar:Show()
     end
 end
@@ -1191,5 +1235,13 @@ local function LoadRaidFrames()
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
     end
+
+    --libHealComm setup
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
+    HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
 end
 GW.LoadRaidFrames = LoadRaidFrames

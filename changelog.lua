@@ -86,6 +86,7 @@ GW_CHANGELOGS = "- Change debuff position on target and player if target/player 
 GW_CHANGELOGS = "- Added enemy buffs on targetframe\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added itemborder for professionbags\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added back Health option to raidframes\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added HealPrediction for Raidframes: Used libHealComm - Works only if all others has also this lib installed and setup\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "0.9.5\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

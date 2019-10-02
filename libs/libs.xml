@@ -11,4 +11,7 @@
 	<Script file="libs\LibClassicDurations\npcAbilities.lua"/>
 
 	<Script file="libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
+
+	<Script file="libs\LibClassicHealComm-1.0\ChatThrottleLib.lua"/>
+	<Script file="libs\LibClassicHealComm-1.0\LibClassicHealComm-1.0.lua"/>
 </Ui>

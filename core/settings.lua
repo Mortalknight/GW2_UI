@@ -1378,7 +1378,7 @@ local function LoadSettings()
             if IsSpellKnown(spellID) then
                 local name = ""
                 if spellID ~= nil then
-                    if string.len(GetSpellSubtext(spellID)) > 0 then 
+                    if GetSpellSubtext(spellID) then 
                         name = select(1, GetSpellInfo(spellID)) .. " (" .. GetSpellSubtext(spellID) ..")"
                     else
                         name = select(1, GetSpellInfo(spellID))

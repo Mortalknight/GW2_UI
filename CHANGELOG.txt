@@ -13,6 +13,7 @@
 - Added enemy buffs on targetframe
 - Added itemborder for professionbags
 - Added back Health option to raidframes
+- Added HealPrediction for Raidframes: Used libHealComm - Works only if all others has also this lib installed and setup
 
 0.9.1
 
