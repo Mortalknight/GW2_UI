@@ -20,6 +20,7 @@ local layOnHands = {633 --[[Rank 1]], 2800 --[[Rank 2]], 10310 --[[Rank 3]]}
 GW.SpellsByLevel =
 
 
+
  {
  [0] = {
       -- @One-Handed Axes undefined
@@ -513,9 +514,9 @@ GW.SpellsByLevel =
       -- @Blessing of Sanctuary Rank 2
       {id =20912, requiredIds ={20911}, rank =2, baseId =20911, cost =1000, isTalent =1},
       -- @Seal of Command Rank 3
-      {id =20918, requiredIds ={20915}, rank =3, baseId =20375, cost =1000, isTalent =0},
+      {id =20918, requiredIds ={20915}, rank =3, baseId =20375, cost =1000, isTalent =1},
       -- @Consecration Rank 3
-      {id =20922, requiredIds ={20116}, rank =3, baseId =26573, cost =1000, isTalent =0},
+      {id =20922, requiredIds ={20116}, rank =3, baseId =26573, cost =1000, isTalent =1},
        },
 [42] = {
       -- @Cleanse undefined
@@ -575,11 +576,11 @@ GW.SpellsByLevel =
       -- @Seal of Light Rank 3
       {id =20348, requiredIds ={20347}, rank =3, baseId =20165, cost =28000, isTalent =0},
       -- @Blessing of Sanctuary Rank 3
-      {id =20913, requiredIds ={20912}, rank =3, baseId =20911, cost =1400, isTalent =0},
+      {id =20913, requiredIds ={20912}, rank =3, baseId =20911, cost =1400, isTalent =1},
       -- @Seal of Command Rank 4
-      {id =20919, requiredIds ={20918}, rank =4, baseId =20375, cost =1400, isTalent =0},
+      {id =20919, requiredIds ={20918}, rank =4, baseId =20375, cost =1400, isTalent =1},
       -- @Consecration Rank 4
-      {id =20923, requiredIds ={20922}, rank =4, baseId =26573, cost =1400, isTalent =0},
+      {id =20923, requiredIds ={20922}, rank =4, baseId =26573, cost =1400, isTalent =1},
       -- @Holy Shield Rank 2
       {id =20927, requiredIds ={20925}, rank =2, baseId =20925, cost =1400, isTalent =1},
        },
@@ -617,7 +618,7 @@ GW.SpellsByLevel =
       -- @Frost Resistance Aura Rank 3
       {id =19898, requiredIds ={19897}, rank =3, baseId =19888, cost =42000, isTalent =0},
       -- @Holy Shock Rank 3
-      {id =20930, requiredIds ={20929}, rank =3, baseId =20473, cost =2100, isTalent =0},
+      {id =20930, requiredIds ={20929}, rank =3, baseId =20473, cost =2100, isTalent =1},
        },
 [58] = {
       -- @Flash of Light Rank 6
@@ -643,13 +644,13 @@ GW.SpellsByLevel =
       -- @Redemption Rank 5
       {id =20773, requiredIds ={20772}, rank =5, baseId =7328, cost =46000, isTalent =0},
       -- @Blessing of Sanctuary Rank 4
-      {id =20914, requiredIds ={20913}, rank =4, baseId =20911, cost =2300, isTalent =0},
+      {id =20914, requiredIds ={20913}, rank =4, baseId =20911, cost =2300, isTalent =1},
       -- @Seal of Command Rank 5
-      {id =20920, requiredIds ={20919}, rank =5, baseId =20375, cost =2300, isTalent =0},
+      {id =20920, requiredIds ={20919}, rank =5, baseId =20375, cost =2300, isTalent =1},
       -- @Consecration Rank 5
-      {id =20924, requiredIds ={20923}, rank =5, baseId =26573, cost =2300, isTalent =0},
+      {id =20924, requiredIds ={20923}, rank =5, baseId =26573, cost =2300, isTalent =1},
       -- @Holy Shield Rank 3
-      {id =20928, requiredIds ={20927}, rank =3, baseId =20925, cost =2300, isTalent =0},
+      {id =20928, requiredIds ={20927}, rank =3, baseId =20925, cost =2300, isTalent =1},
       -- @Summon Charger Summon
       {id =23214, rank =NaN, isTalent =0},
       -- @Hammer of Wrath Rank 3
