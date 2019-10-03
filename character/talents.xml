@@ -106,7 +106,7 @@
         </Scripts>
     </Button>
 
-    <Frame name="GwSpellbookMenu" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate" virtual="true">
+    <Frame name="GwSpellbookMenu" inherits="SecureHandlerAttributeTemplate" virtual="true">
         <Size x="241" y="621"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-10"/>
@@ -124,7 +124,7 @@
         </Layers>
     </Frame>
 
-    <Button name="GwspellbookTab" inherits="GwCharacterMenuBlank,SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate" virtual="true">
+    <Button name="GwspellbookTab" inherits="GwCharacterMenuBlank,SecureHandlerStateTemplate,SecureHandlerClickTemplate,SecureHandlerBaseTemplate" virtual="true">
         <Size x="231" y="44"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -153,7 +153,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\talents\tabicon_general">
+                <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\levelreward-icon">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="10" y="0"/>
@@ -171,15 +171,15 @@
         </Layers>
         <Scripts>
             <OnEnter>
-                GwStandardButton_OnEnter(self)
+                --GwStandardButton_OnEnter(self)
             </OnEnter>
             <OnLeave>
-                GwStandardButton_OnLeave(self)
+            --    GwStandardButton_OnLeave(self)
             </OnLeave>
         </Scripts>
     </Button>
 
-    <Frame name="GwSpellbookContainerTab" virtual="true">
+    <Frame name="GwSpellbookContainerTab" inherits="SecureHandlerShowHideTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="611" y="581"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="-37"/>
@@ -208,7 +208,9 @@
              </Layer>
         </Layers>
         <Frames>
-            <Frame name="$parentcontainer1"  parentKey="container1" enableMouse="false">
+            <Frame parentKey="attrDummy" inherits="SecureHandlerAttributeTemplate">
+            </Frame>
+            <Frame name="$parentcontainer1"  parentKey="container1" inherits="SecureHandlerShowHideTemplate" enableMouse="false">
                 <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -220,7 +222,7 @@
                     </OnShow>
                 </Scripts>
             </Frame>
-            <Frame name="$parentcontainer2" parentKey="container2" enableMouse="false" hidden="true">
+            <Frame name="$parentcontainer2" parentKey="container2" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
                 <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -232,7 +234,7 @@
                     </OnShow>
                 </Scripts>
             </Frame>
-            <Frame name="$parentcontainer3" parentKey="container3" enableMouse="false" hidden="true">
+            <Frame name="$parentcontainer3" parentKey="container3" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
                 <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -244,10 +246,22 @@
                     </OnShow>
                 </Scripts>
             </Frame>
-            <Button parentKey="left" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate"  >
+            <Frame name="$parentcontainer4" parentKey="container4" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(4)
+                    </OnShow>
+                </Scripts>
+            </Frame>
+            <Button parentKey="left" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate"  >
                 <size x="32" y="32"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"  x="10" y="0" />
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"  x="-30" y="5" />
                 </Anchors>
                 <Layers>
                   <Layer layer="OVERLAY" textureSubLevel="8">
@@ -260,10 +274,10 @@
                    </Layer>
                </Layers>
             </Button>
-            <Button parentKey="right" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate"  >
+            <Button parentKey="right" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate"  >
                 <size x="32" y="32"/>
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="-10" y="0" />
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"  x="30" y="5" />
                 </Anchors>
                 <Layers>
                   <Layer layer="OVERLAY" textureSubLevel="8">
