@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="CharacterWindowTabSelect" egisterForClicks="LeftButtonUp RightButtonUp" virtual="true">
+    <Button name="CharacterWindowTabSelect" inherits="SecureHandlerClickTemplate" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
         <Size x="64" y="40"></Size>
         <Anchors>
             <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -1576,19 +1576,7 @@
             </OnLoad>
         </Scripts>
     </Button>
-    <Frame name="GwCharacterWindowMoverFrame" enableMouse="true" movable="true" virtual="true" frameStrata="HIGH">
-        <Size x="853" y="50"></Size>
-        <Anchors>
-            <Anchor point="LEFT" relativePoint="LEFT" x="150" y="400"></Anchor>
-        </Anchors>
-        <Scripts>
-            <OnLoad>
-                self:RegisterForDrag("LeftButton");
-            </OnLoad>
-            <OnDragStart>self:StartMoving();</OnDragStart>
-            <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
-        </Scripts>
-    </Frame>
+
     <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true" frameStrata="HIGH">
          <Size x="853" y="627"></Size>
         <Anchors>
@@ -1602,15 +1590,12 @@
         </Anchors>
     </Frame>
 
-        <Frame name="GwCharacterWindow" frameStrata="HIGH" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true"  virtual="true" protected="true">
+    <Frame name="GwCharacterWindow" inherits="SecureHandlerStateTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate,SecureHandlerClickTemplate" enableMouse="true" virtual="true" protected="true" hidden="true" frameStrata="HIGH" movable="true" resizable="true" toplevel="true">
         <Size x="853" y="627"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwCharacterWindowMoverFrame" x="0"></Anchor>
-        </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                    <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
-                     <Size x="853" y="853"></Size>
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
+                    <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
                     </Anchors>
@@ -1627,16 +1612,14 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                 <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                    <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="20" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-
             </Layer>
-
             <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture name="$parentLeft" parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
                     <Size x="84" y="84"></Size>
@@ -1650,30 +1633,35 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                 <FontString name="$parentHeaderString" parentKey="WindowHeader" text="Character" inherits="GameFontNormalSmall" justifyH="LEFT">
+                <FontString name="$parentHeaderString" parentKey="WindowHeader" text="Character" inherits="GameFontNormalSmall" justifyH="LEFT">
                     <Size x="512" y="40"></Size>
                     <Color r="1" b="0.73" g="0.93"></Color>
                     <Anchors>
-                    <Anchor point="TOPLEFT" x="10" y="38"></Anchor>
-                    </Anchors>
+                        <Anchor point="TOPLEFT" x="10" y="38"></Anchor>
+                        </Anchors>
                 </FontString>
             </Layer>
         </Layers>
-
         <Frames>
             <Button parentKey="secure" name="$parentClick" inherits="SecureHandlerClickTemplate" hidden="true"/>
-              <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="" framelevel="10">
-                <Size x="20" y="20" />
-                <Anchors><Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/></Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
-                <PushedTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture >
-                <HighlightTexture  file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture >
-
-                <NormalFont style="ChatBubbleFont"></NormalFont>
-                <HighlightFont style="ChatBubbleFont"></HighlightFont>
-
+            <Frame parentKey="mover" enableMouse="true" inherits="SecureHandlerMouseUpDownTemplate">
+                <Size y="40"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-30" y="0"></Anchor>
+                </Anchors>
+            </Frame>
+            <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate" text="" framelevel="10">
+                <Size x="20" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
+                </Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"/>
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"/>
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"/>
+                <NormalFont style="ChatBubbleFont"/>
+                <HighlightFont style="ChatBubbleFont"/>
             </Button>
-
         </Frames>
     </Frame>
 

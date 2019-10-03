@@ -151,21 +151,8 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
 end
 GW.AddForProfiling("raidframes", "setHealthValue", setHealthValue)
 
-local function setHealPrediction(self)
-    local health = UnitHealth(self.unit)
-    local healthMax = UnitHealthMax(self.unit)
-    local healthPrec = 0
-    local predictionPrecentage = 0
-
-    if healthMax > 0 then
-        healthPrec = health / healthMax
-    end
-
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
-        predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
-    end
-
-    self.predictionbar:SetValue(predictionPrecentage)    
+local function setHealPrediction(self, predictionPrecentage)
+    self.predictionbar:SetValue(predictionPrecentage)
 end
 
 local function setHealth(self)
@@ -177,7 +164,7 @@ local function setHealth(self)
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax~=0 then
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
         predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
     end
 
@@ -654,7 +641,6 @@ local function raidframe_OnEvent(self, event, unit, arg1)
     end
 
     if event == "load" then
-        --setPredictionAmount(self)
         setHealth(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         setHealth(self)
@@ -671,8 +657,6 @@ local function raidframe_OnEvent(self, event, unit, arg1)
             local pwcolor = PowerBarColorCustom[powerToken]
             self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
-    elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
-        --setPredictionAmount(self)
     elseif
         (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or
             event == "PARTY_MEMBER_ENABLE"
@@ -767,7 +751,7 @@ local function updateFrameData(self, index)
     end
     self.manabar:SetValue(powerPrecentage)
     Bar(self.healthbar, healthPrec)
-    setHealPrediction(self)
+    self.predictionbar:SetValue(0)
 
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
@@ -997,7 +981,7 @@ local function UpdateIncomingPredictionAmount(...)
 			if (select(i, ...) == frame.guid) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player", frame.unit) or UnitIsUnit("pet", frame.unit)) then
                 local amount = (HealComm:GetHealAmount(frame.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.guid) or 1)
                 frame.healPredictionAmount = amount
-                setHealPrediction(frame)
+                setHealth(frame)
 				break
 			end
 		end

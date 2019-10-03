@@ -9,6 +9,8 @@ windowsList[1] = {
     ['OnLoad'] = "LoadPaperDoll",
     ['SettingName'] = 'USE_CHARACTER_WINDOW',
     ['TabIcon'] = 'tabicon_character',
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon",
+    ["HeaderText"] = CHARACTER,
     ["Bindings"] = {
         ["TOGGLECHARACTER0"] = "PaperDoll",
         ["TOGGLECHARACTER2"] = "Reputation",
@@ -24,6 +26,8 @@ windowsList[2] = {
     ['OnLoad'] = "LoadTalents",
     ['SettingName'] = 'USE_TALENT_WINDOW',
     ['TabIcon'] = 'tabicon-talents',
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/talents-window-icon",
+    ["HeaderText"] = TALENTS,
     ["Bindings"] = {
         ["TOGGLETALENTS"] = "Talents"
     },
@@ -36,6 +40,8 @@ windowsList[3] = {
     ['OnLoad'] = "LoadSpellBook",
     ['SettingName'] = 'USE_SPELLBOOK_WINDOW',
     ['TabIcon'] = 'tabicon_spellbook',
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ["HeaderText"] = SPELLS,
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
         ["TOGGLEPETBOOK"] = "PetBook"
@@ -46,8 +52,7 @@ windowsList[3] = {
 }
 
 -- turn click events (generated from key bind overrides) into the correct tab show/hide calls
-local charSecure_OnClick =
-    [=[
+local charSecure_OnClick = [=[
     --print("secure click handler button: " .. button)
     local f = self:GetFrameRef("GwCharacterWindow")
     if button == "Close" then
@@ -74,15 +79,14 @@ local charSecure_OnClick =
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "paperdollskills")
     end
-    ]=]
+]=]
 
 -- use the windowpanelopen attr to show/hide the char frame with correct tab open
-local charSecure_OnAttributeChanged =
-    [=[
+local charSecure_OnAttributeChanged = [=[
     if name ~= "windowpanelopen" then
         return
     end
-    local fmMover = self:GetFrameRef("GwCharacterWindowMoverFrame")
+
     local fmDoll = self:GetFrameRef("GwCharacterWindowContainer")
     local fmDollMenu = self:GetFrameRef("GwCharacterMenu")
     local fmDollRepu = self:GetFrameRef("GwPaperReputation")
@@ -234,10 +238,9 @@ local charSecure_OnAttributeChanged =
             fmDoll:Hide()
         end
     end
-    fmMover:Show()
+
     if close then
         self:Hide()
-        fmMover:Hide()
         self:CallMethod("SoundExit")
     elseif not self:IsVisible() then
         self:Show()
@@ -245,8 +248,71 @@ local charSecure_OnAttributeChanged =
     else
         self:CallMethod("SoundSwap")
     end
-    ]=]
+]=]
 
+local mover_OnDragStart = [=[
+    if button ~= "LeftButton" then
+        return
+    end
+    local f = self:GetParent()
+    if self:GetAttribute("isMoving") then
+        f:CallMethod("StopMovingOrSizing")
+    end
+    self:SetAttribute("isMoving", true)
+    f:CallMethod("StartMoving")
+]=]
+
+local mover_OnDragStop = [=[
+    if button ~= "LeftButton" then
+        return
+    end
+    if not self:GetAttribute("isMoving") then
+        return
+    end
+    self:SetAttribute("isMoving", false)
+    local f = self:GetParent()
+    f:CallMethod("StopMovingOrSizing")
+    local x, y, _ = f:GetRect()
+
+    -- re-anchor to UIParent after the move
+    f:ClearAllPoints()
+    f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y)
+
+    -- store the updated position
+    self:CallMethod("savePosition", x, y)
+]=]
+
+local charSecure_OnShow = [=[
+    local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
+    if keyEsc ~= nil then
+        self:SetBinding(false, keyEsc, "CLICK GwCharacterWindowClick:Close")
+    end
+]=]
+
+local charSecure_OnHide = [=[
+    self:ClearBindings()
+]=]
+
+local charCloseSecure_OnClick = [=[
+    self:GetParent():SetAttribute("windowpanelopen", nil)
+]=]
+
+local function mover_SavePosition(self, x, y)
+    local setting = self.onMoveSetting
+    if setting then
+        local pos = GetSetting(setting)
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point = "BOTTOMLEFT"
+        pos.relativePoint = "BOTTOMLEFT"
+        pos.xOfs = x
+        pos.yOfs = y
+        SetSetting(setting, pos)
+    end
+end
 
  -- TODO: this doesn't work if bindings are updated in combat, but who does that?!
 local function click_OnEvent(self, event)
@@ -274,57 +340,41 @@ local function loadBaseFrame()
     end
     hasBeenLoaded = true
 
-    CreateFrame('Frame', 'GwCharacterWindowMoverFrame', UIParent,' GwCharacterWindowMoverFrame')
-    CreateFrame('Button', 'GwCharacterWindow', UIParent, 'GwCharacterWindow')
-    GwCharacterWindow:SetFrameLevel(5)
-    GwCharacterWindowMoverFrame:Hide()
-
-    GwCharacterWindow:SetAttribute('windowpanelopen', nil)
-    GwCharacterWindow:SetFrameRef('GwCharacterWindowMoverFrame', GwCharacterWindowMoverFrame)
-    GwCharacterWindow:SetAttribute("_onattributechanged", charSecure_OnAttributeChanged)
-    GwCharacterWindow.secure:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-    GwCharacterWindow.secure:SetAttribute("_onclick", charSecure_OnClick)
-
-    -- set binding change handlers
-    GwCharacterWindow.secure:HookScript("OnEvent", click_OnEvent)
-    GwCharacterWindow.secure:RegisterEvent("UPDATE_BINDINGS")
-
-    GwCharacterWindow.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
-    GwCharacterWindow.WindowHeader:SetTextColor(255/255, 241/255, 209/255)
-
-    GwCharacterWindow.SoundOpen = function(self)
+    local fmGCW = CreateFrame('Button', 'GwCharacterWindow', UIParent, 'GwCharacterWindow')
+    fmGCW.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    fmGCW.WindowHeader:SetTextColor(255/255, 241/255, 209/255)
+    fmGCW:SetAttribute('windowpanelopen', nil)
+    fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
+    fmGCW.secure:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+    fmGCW:SetAttribute("_onattributechanged", charSecure_OnAttributeChanged)
+    fmGCW.SoundOpen = function(self)
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
     end
-    GwCharacterWindow.SoundSwap = function(self)
+    fmGCW.SoundSwap = function(self)
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
     end
-    GwCharacterWindow.SoundExit = function(self)
+    fmGCW.SoundExit = function(self)
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
     end
 
-    GwCharacterWindow.close:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
-    GwCharacterWindow.close:SetFrameRef('GwCharacterWindowMoverFrame', GwCharacterWindowMoverFrame)
+    -- secure hook ESC to close char window when it is showing
+    fmGCW:WrapScript(fmGCW, "OnShow", charSecure_OnShow)
+    fmGCW:WrapScript(fmGCW, "OnHide", charSecure_OnHide)
 
-    GwCharacterWindow.close:SetAttribute("_onclick", [=[
-        self:GetFrameRef('GwCharacterWindow'):Hide()
-        self:GetFrameRef('GwCharacterWindowMoverFrame'):Hide()
-        if self:GetFrameRef('GwCharacterWindow'):IsVisible() then
-            self:GetFrameRef('GwCharacterWindow'):Hide()
-        end
-    ]=])
+    -- the close button securely closes the char window
+    fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
-    GwCharacterWindow:SetAttribute('_onshow', [=[
-        local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
+    -- setup movable stuff
+    local pos = GetSetting("HERO_POSITION")
+    fmGCW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    fmGCW.mover.onMoveSetting = "HERO_POSITION"
+    fmGCW.mover.savePosition = mover_SavePosition
+    fmGCW.mover:SetAttribute("_onmousedown", mover_OnDragStart)
+    fmGCW.mover:SetAttribute("_onmouseup", mover_OnDragStop)
 
-        if keyEsc ~= nil then
-            self:SetBinding(false, keyEsc, "CLICK GwCharacterWindowClick:Close")
-        end
-        ]=])
-    GwCharacterWindow:SetAttribute('_onhide', [=[
-        self:ClearBindings()
-    ]=])
-
-    GwCharacterWindow:Hide()
+    -- set binding change handlers
+    fmGCW.secure:HookScript("OnEvent", click_OnEvent)
+    fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
 end
 
 local function setTabIconState(self, b)
@@ -336,8 +386,7 @@ local function setTabIconState(self, b)
 end
 
 local function createTabIcon(iconName, tabIndex)
-    local f = CreateFrame('Button', 'CharacterWindowTab' .. tabIndex, GwCharacterWindow, 'SecureHandlerClickTemplate,SecureHandlerStateTemplate,CharacterWindowTabSelect')
-
+    local f = CreateFrame('Button', nil, GwCharacterWindow, '   CharacterWindowTabSelect')
     f.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\' .. iconName)
     f:SetPoint('TOP', GwCharacterWindow, 'TOPLEFT', -32, -25 + -((tabIndex - 1) * 45))
     setTabIconState(f, false)
@@ -378,6 +427,23 @@ local function styleCharacterMenuBackButton(self)
     self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
 end
 
+local function container_OnShow(self)
+    setTabIconState(self.TabFrame, true)
+    self.CharWindow.windowIcon:SetTexture(self.HeaderIcon)
+    self.CharWindow.WindowHeader:SetText(self.HeaderText)
+end
+
+local function container_OnHide(self)
+    setTabIconState(self.TabFrame, false)
+end
+
+local function charTab_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
+    GameTooltip:ClearLines()
+    GameTooltip_AddNormalLine(GameTooltip, self.gwTipLabel)
+    GameTooltip:Show()
+end
+
 local LoadCharWindowAfterCombat = CreateFrame("Frame", nil, UIParent)
 function Gw_LoadWindows()
     if InCombatLockdown() then
@@ -406,28 +472,34 @@ function Gw_LoadWindows()
 
     loadBaseFrame()
 
+    local fmGCW = GwCharacterWindow
     local tabIndex = 1
     for k, v in pairs(windowsList) do
         if GetSetting(v.SettingName) then
-            local ref = GW[v.OnLoad]()
-            local f = createTabIcon(v.TabIcon, tabIndex)
+            local container = GW[v.OnLoad]()
+            local tab = createTabIcon(v.TabIcon, tabIndex)
 
-            GwCharacterWindow:SetFrameRef(ref:GetName(), ref)
-            ref:HookScript('OnShow', function()
-                setTabIconState(f, true)
-            end)
-            ref:HookScript('OnHide', function()
-                setTabIconState(f, false)
-            end)
-            f:SetFrameRef('GwCharacterWindow', GwCharacterWindow)
-            f:SetAttribute('_OnClick', v.OnClick)
+            fmGCW:SetFrameRef(container:GetName(), container)
+            container:SetScript("OnShow", container_OnShow)
+            container:SetScript("OnHide", container_OnHide)
+            tab:SetFrameRef('GwCharacterWindow', fmGCW)
+            tab:SetAttribute('_OnClick', v.OnClick)
+            
+            container.TabFrame = tab
+            container.CharWindow = fmGCW
+            container.HeaderIcon = v.HeaderIcon
+            container.HeaderText = v.HeaderText
+            tab.gwTipLabel = v.HeaderText
 
-            if ref:GetName() == "GwCharacterWindowContainer" then
-                GwCharacterWindow:SetFrameRef("GwCharacterMenu", GwCharacterMenu)
-                GwCharacterWindow:SetFrameRef("GwPaperReputation", GwPaperReputation)
-                GwCharacterWindow:SetFrameRef("GwPaperSkills", GwPaperSkills)
-                GwCharacterWindow:SetFrameRef("GwDressingRoom", GwDressingRoom)
-                GwCharacterWindow:SetFrameRef("GwPetContainer", GwPetContainer)
+            tab:SetScript("OnEnter", charTab_OnEnter)
+            tab:SetScript("OnLeave", GameTooltip_Hide)
+
+            if container:GetName() == "GwCharacterWindowContainer" then
+                fmGCW:SetFrameRef("GwCharacterMenu", GwCharacterMenu)
+                fmGCW:SetFrameRef("GwPaperReputation", GwPaperReputation)
+                fmGCW:SetFrameRef("GwPaperSkills", GwPaperSkills)
+                fmGCW:SetFrameRef("GwDressingRoom", GwDressingRoom)
+                fmGCW:SetFrameRef("GwPetContainer", GwPetContainer)
 
                 styleCharacterMenuButton(GwCharacterMenu.skillsMenu, true)
                 styleCharacterMenuButton(GwCharacterMenu.reputationMenu, false)
@@ -467,12 +539,12 @@ function Gw_LoadWindows()
                     f:SetAttribute("windowpanelopen", "paperdoll")
                 ]=])
             end
-            v.TabFrame = f
+            v.TabFrame = tab
 
             tabIndex = tabIndex + 1
         end
     end
 
     -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win
-    click_OnEvent(GwCharacterWindow.secure, "UPDATE_BINDINGS")
+    click_OnEvent(fmGCW.secure, "UPDATE_BINDINGS")
 end
