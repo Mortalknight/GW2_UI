@@ -763,16 +763,17 @@ local function LoadSpellBook()
         end
     end
 
-     CreateFrame('ScrollFrame', 'GwSpellbookUnknown',GwSpellbook, 'GwSpellbookUnknown')
-     local menuItem = CreateFrame('Button', 'GwspellbookTab' .. 6,GwSpellbookMenu, 'GwspellbookTab')
-     menuItem:SetPoint("TOPLEFT", GwSpellbookMenu, "TOPLEFT", 0, -menuItem:GetHeight() * (6 - 1))
-     menuItem.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
-     menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
-     menuItem.bg:SetVertexColor(1, 1, 1, zebra)
-     menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-     menuItem:SetNormalTexture(nil)
-     menuItem:SetText("")
-     menuItem.title:SetText(GwLocalization["FUTURE_SPELLS"])
+    CreateFrame('ScrollFrame', 'GwSpellbookUnknown',GwSpellbook, 'GwSpellbookUnknown')
+    local menuItem = CreateFrame('Button', 'GwspellbookTab' .. 6,GwSpellbookMenu, 'GwspellbookTab')
+    menuItem:SetPoint("TOPLEFT", GwSpellbookMenu, "TOPLEFT", 0, -menuItem:GetHeight() * (6 - 1))
+    menuItem.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+    menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
+    menuItem.bg:SetVertexColor(1, 1, 1, zebra)
+    menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
+    menuItem:SetNormalTexture(nil)
+    menuItem:SetText("")
+    menuItem.title:SetText(GwLocalization["FUTURE_SPELLS"])
+    GwSpellbookUnknown.title:SetText(UNKNOWN)
 
 
     GwSpellbookContainerTab1:Hide()

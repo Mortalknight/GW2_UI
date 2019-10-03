@@ -227,6 +227,7 @@ local function GWUseThisLocalization()
 	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] = "GW2 UI 是一套完整的使用者介面，用來取代原本的遊戲介面。我們使用模組化的方式來建立這個使用者介面，意思是說，如果你不喜歡插件的某個部分，或是偏好使用其他插件的同類型功能，只要單獨停用該部分即可，仍然可以保持介面銜接的完整性。\nGW2 UI 提供的模組包含身歷其境的任務視窗，完整的背包和角色視窗替換介面，只要看一下設定選項，將會發現更多可供使用、你會喜愛的功能!"
 	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "什麼是 '完美細緻'?\n\nGW2 UI 內建了一項設定叫做 '完美細緻模式'，擁有更清晰的材質和更佳的縮放大小處理，讓每一個像素都趨近完美，使用者介面看起來能夠完全符合你的期望。當然，完全可以依據你的喜好來開關這個設定。"
 	GwLocalization["WORLD_MARKER_DESC"] = "在團隊中時顯示世界標記工具。"
+	GwLocalization["FUTURE_SPELLS"] = "Future Spells"
 	
 	--Composite
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])
