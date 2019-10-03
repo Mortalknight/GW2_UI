@@ -15,7 +15,7 @@ local frostResAura = {19888, 19897, 19898}
 local shadowResAura = {19876, 19895, 19896}
 local layOnHands = {633 --[[Rank 1]], 2800 --[[Rank 2]], 10310 --[[Rank 3]]}
 
---GW:SetPreviousAbilityMap({devotionAura, retAura, fireResAura, frostResAura, shadowResAura, layOnHands})
+GW:SetPreviousAbilityMap({devotionAura, retAura, fireResAura, frostResAura, shadowResAura, layOnHands})
 
 GW.SpellsByLevel =
 

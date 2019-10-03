@@ -56,3 +56,22 @@ function GW:SetPreviousAbilityMap(t)
     end
     self.previousAbilityMap = abilityMap
 end
+function GW.isHigherRankLearnd(spellId)
+    if (GW.previousAbilityMap == nil) then
+        return false,nil
+    end
+
+    if (not GW.previousAbilityMap[spellId]) then
+        return false,nil
+    end
+    local spellIndex, knownIndex = 0, 0
+    for i, otherId in ipairs(GW.previousAbilityMap[spellId]) do
+        if (otherId == spellId) then
+            spellIndex = i
+        end
+        if (IsSpellKnown(otherId) or IsPlayerSpell(otherId)) then
+            knownIndex = i
+        end
+    end
+    return   true,knownIndex <= spellIndex
+end

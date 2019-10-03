@@ -398,6 +398,13 @@ local function filterUnknownSpell(knownSpellID,spell)
             show = false
         end
     end
+
+    local filterLower,filter = GW.isHigherRankLearnd(spell.id)
+
+    if filterLower and not filter then
+        show = false
+    end
+
     return show
 end
 local function updateUnknownTab(knownSpellID)
