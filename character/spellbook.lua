@@ -618,8 +618,6 @@ local function LoadSpellBook()
     GwspellbookTab5:HookScript('OnClick', spellBookTab_onClick)
     GwspellbookTab5:HookScript('OnHide', function() spellBookTab_onClick(GwspellbookTab2) end)
     GwSpellbook:HookScript('OnShow', function()
-        GwCharacterWindow.windowIcon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\spellbook-window-icon')
-        GwCharacterWindow.WindowHeader:SetText(SPELLBOOK)
         if InCombatLockdown() then return end
         updateSpellbookTab()
     end)

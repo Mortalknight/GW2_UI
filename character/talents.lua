@@ -310,8 +310,6 @@ local function LoadTalents()
         updateTalentTrees()
     end)
     GwTalentFrame:HookScript('OnShow', function()
-        GwCharacterWindow.windowIcon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\talents-window-icon')
-        GwCharacterWindow.WindowHeader:SetText(TALENTS)
         if InCombatLockdown() then return end
         updateTalentTrees()
     end)

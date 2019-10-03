@@ -1138,27 +1138,6 @@ local function LoadPaperDoll()
     gwPaperDollUpdatePetStats()
     GwUpdateReputationDetails()
 
-    GwCharacterWindowContainer:HookScript("OnShow", function()
-        GwCharacterWindow.windowIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\character-window-icon")
-        GwCharacterWindow.WindowHeader:SetText(CHARACTER)
-    end)
-
-    StaticPopupDialogs["GW_UNEQUIP_LEGENDARY"] = {
-        text = GwLocalization["UNEQUIP_LEGENDARY"],
-        button1 = GwLocalization["SETTINGS_CANCEL"],
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3
-    }
-    StaticPopupDialogs["GW_NOT_A_LEGENDARY"] = {
-        text = GwLocalization["NOT_A_LEGENDARY"],
-        button1 = GwLocalization["SETTINGS_CANCEL"],
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3
-    }
     return GwCharacterWindowContainer
 end
 GW.LoadPaperDoll = LoadPaperDoll
