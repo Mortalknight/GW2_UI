@@ -666,9 +666,9 @@ GW.SpellsByLevel =
       -- @Greater Blessing of Salvation undefined
       {id =25895, cost =46000, isTalent =0},
       -- @Greater Blessing of Kings undefined
-      {id =25898, cost =2300, isTalent =0},
+      {id =25898, requiredIds ={20217}, rank =1, baseId =20217, cost =2300, isTalent =1},
       -- @Greater Blessing of Sanctuary Rank 1
-      {id =25899, rank =1, cost =2300, isTalent =0},
+      {id =25899, requiredIds ={20914}, rank =1, baseId =20911, cost =2300, isTalent =1},
       -- @Greater Blessing of Might Rank 2
       {id =25916, requiredIds ={25782}, rank =2, baseId =25782, cost =46000, isTalent =0},
       -- @Greater Blessing of Wisdom Rank 2
