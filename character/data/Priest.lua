@@ -7,15 +7,15 @@ GW.SpellsByLevel = GW.RaceFilter(
  {
  [0] = {
       -- @One-Handed Maces undefined
-      {id =198, isTalent =0},
+      {id =198, isTalent =0, isSkill =1},
       -- @Staves undefined
-      {id =227, isTalent =0},
+      {id =227, isTalent =0, isSkill =1},
       -- @Lightwell Rank 1
       {id =724, rank =1, isTalent =1},
       -- @Daggers undefined
-      {id =1180, isTalent =0},
+      {id =1180, isTalent =0, isSkill =1},
       -- @Wands undefined
-      {id =5009, isTalent =0},
+      {id =5009, isTalent =0, isSkill =1},
       -- @Power Infusion undefined
       {id =10060, isTalent =1},
       -- @Mental Agility Rank 1

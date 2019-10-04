@@ -380,8 +380,19 @@ local function setUnknowSpellButton(self,icon,spellID,rank,ispassive,level)
 
 end
 
-local function filterUnknownSpell(knownSpellID,spell)
+local function checkIfSkillShouldShown(skillID)
+    local skillNameToCheck =  GetSpellInfo(skillID)
+    for skillIndex = 1, GetNumSkillLines() do
+        local skillName, _, _, skillRank = GetSkillLineInfo(skillIndex)
+        if skillName == skillNameToCheck and skillRank > 0 then
+            return false
+        end
+    end
+    return true
+end
 
+
+local function filterUnknownSpell(knownSpellID,spell)
     local show = true
 
     if  GW.tableContains(knownSpellID,spell.id) then
@@ -398,6 +409,8 @@ local function filterUnknownSpell(knownSpellID,spell)
             -- if talent is the first rank we dont want to show it
             show = false
         end
+    elseif spell.isSkill ~= nil and spell.isSkill == 1 then --Check for skills
+        show = checkIfSkillShouldShown(spell.id)
     end
 
     local filterLower,filter = GW.isHigherRankLearnd(spell.id)

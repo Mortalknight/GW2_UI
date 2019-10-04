@@ -24,21 +24,19 @@ GW.SpellsByLevel =
  {
  [0] = {
       -- @One-Handed Axes undefined
-      {id =196, isTalent =0},
+      {id =196, isTalent =0, isSkill =1},
       -- @Two-Handed Axes undefined
-      {id =197, isTalent =0},
+      {id =197, isTalent =0, isSkill =1},
       -- @One-Handed Maces undefined
-      {id =198, isTalent =0},
+      {id =198, isTalent =0, isSkill =1},
       -- @Two-Handed Maces undefined
-      {id =199, isTalent =0},
+      {id =199, isTalent =0, isSkill =1},
       -- @Polearms undefined
-      {id =200, isTalent =0},
+      {id =200, isTalent =0, isSkill =1},
       -- @One-Handed Swords undefined
-      {id =201, isTalent =0},
+      {id =201, isTalent =0, isSkill =1},
       -- @Two-Handed Swords undefined
-      {id =202, isTalent =0},
-      -- @Plate Mail undefined
-      {id =750, isTalent =0},
+      {id =202, isTalent =0, isSkill =1},
       -- @Holy Power Rank 1
       {id =5923, rank =1, isTalent =1},
       -- @Holy Power Rank 2
@@ -48,11 +46,11 @@ GW.SpellsByLevel =
       -- @Holy Power Rank 4
       {id =5926, requiredIds ={5925}, rank =4, baseId =5923, isTalent =1},
       -- @Mail undefined
-      {id =8737, isTalent =0},
+      {id =8737, isTalent =0, isSkill =1},
       -- @Leather undefined
-      {id =9077, isTalent =0},
+      {id =9077, isTalent =0, isSkill =1},
       -- @Shield undefined
-      {id =9116, isTalent =0},
+      {id =9116, isTalent =0, isSkill =1},
       -- @Vindication Rank 1
       {id =9452, rank =1, isTalent =1},
       -- @Unyielding Faith Rank 1
@@ -517,6 +515,8 @@ GW.SpellsByLevel =
       {id =20918, requiredIds ={20915}, rank =3, baseId =20375, cost =1000, isTalent =1},
       -- @Consecration Rank 3
       {id =20922, requiredIds ={20116}, rank =3, baseId =26573, cost =1000, isTalent =1},
+       -- @Plate Mail undefined
+       {id =750, isTalent =0, isSkill =1},
        },
 [42] = {
       -- @Cleanse undefined
