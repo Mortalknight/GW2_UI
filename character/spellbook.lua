@@ -55,6 +55,7 @@ local function  spellBookMenu_onLoad(self)
     self:RegisterEvent("SKILL_LINES_CHANGED")
     self:RegisterEvent("PLAYER_GUILD_UPDATE")
     self:RegisterEvent("PLAYER_LEVEL_UP")
+    self:RegisterEvent("PLAYER_ALIVE")
 end
 
 local SpellbookHeaderIndex = 1
@@ -695,13 +696,13 @@ local function spellBookTab_onClick(self)
 end
 
 local function LoadSpellBook()
-    local classDisplayName, class, classID = UnitClass('player')
     CreateFrame('Frame', 'GwSpellbook', GwCharacterWindow, 'GwSpellbook')
     CreateFrame('Frame', 'GwSpellbookMenu', GwSpellbook, 'GwSpellbookMenu')
 
     spellBookMenu_onLoad(GwSpellbookMenu)
     GwSpellbook:Hide()
-    GwSpellbookMenu:SetScript('OnEvent', function()
+    GwSpellbookMenu:SetScript('OnEvent', function(self, event)
+        if event == "PLAYER_ALIVE" then updateSpellbookTab() end
         if not GwSpellbook:IsShown() then
             return
         end
@@ -874,13 +875,10 @@ local function LoadSpellBook()
     GwspellbookTab5:HookScript('OnClick', spellBookTab_onClick)
     GwspellbookTab5:HookScript('OnHide', function() spellBookTab_onClick(GwspellbookTab2) end)
     GwspellbookTab6:HookScript('OnClick', spellBookTab_onClick)
-    GwSpellbook:HookScript('OnShow', function()
+    GwSpellbookMenu:SetScript('OnShow', function()
         if InCombatLockdown() then return end
         updateSpellbookTab()
     end)
-    if not InCombatLockdown() then
-        updateSpellbookTab()
-    end
     hooksecurefunc('ToggleSpellBook', function()
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute('windowPanelOpen', "spellbook")
