@@ -318,7 +318,7 @@ function gwPaperDollUpdatePetStats()
     local y = 0
 
     GwCharacterMenu.petMenu:Show()
-    GwDressingRoomPet.model:SetUnit("pet")   
+    GwDressingRoomPet.model:SetUnit("pet")
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
@@ -352,7 +352,7 @@ function gwPaperDollUpdatePetStats()
         statName, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex, "pet")
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
-    
+
     statText, tooltip1, tooltip2 = GW.stats.getAttackPower("pet")
     grid, x, y, numShownStats = setPetStatFrame("ATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
@@ -1044,10 +1044,17 @@ function GWupdateSkills()
         f.bg:SetVertexColor(1, 1, 1, zebra)
         updateSkillItem(f)
     end
-    skillsMaxValueScrollbar = y / 1.5
-    GwPaperSkills.scroll.scrollchild:SetHeight(y)
-    GwPaperSkills.scroll.slider:SetMinMaxValues(0, skillsMaxValueScrollbar)
-    GwPaperSkills.scroll.slider.thumb:SetHeight(100)
+
+    GwPaperSkills.scroll.slider:SetMinMaxValues (0,math.max(0,y -GwPaperSkills.scroll:GetHeight()))
+    GwPaperSkills.scroll.slider.thumb:SetHeight((GwPaperSkills.scroll:GetHeight()/y) * GwPaperSkills.scroll.slider:GetHeight() )
+
+
+    --[[
+    GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight()/h) * GwSpellbookUnknown.slider:GetHeight() )
+    GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0,h - GwSpellbookUnknown.container:GetHeight()))
+    GwSpellbookUnknown.slider:SetValue(0)
+    ]]
+
 end
 
 local CHARACTER_PANEL_OPEN = ""
@@ -1119,11 +1126,13 @@ local function LoadPaperDoll()
     GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)
     GWupdateSkills()
     GwPaperSkills.scroll.scrollchild:SetScript("OnMouseWheel", function(self, arg1)
-        local arg1 = -arg1 * 15
-        s = math.max(0, self:GetParent():GetVerticalScroll() + arg1)
-        if s > skillsMaxValueScrollbar then return end
+
+        arg1 = -arg1 * 15
+        local min, max = self:GetParent().slider:GetMinMaxValues()
+        local s = math.min(max,math.max(self:GetParent():GetVerticalScroll()+arg1,min))
         self:GetParent().slider:SetValue(s)
         self:GetParent():SetVerticalScroll(s)
+
     end)
     GwPaperSkills.scroll.slider:SetValue(1)
 

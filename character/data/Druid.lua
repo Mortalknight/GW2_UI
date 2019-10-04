@@ -57,7 +57,7 @@ GW:SetPreviousAbilityMap(
 		dash
 	}
 )
-]]
+
 
 GW.SpellsByLevel =
 
