@@ -1016,6 +1016,7 @@ function GWupdateSkills()
     local height = 50
     local y = 0
     local LastElement = nil
+    local totlaHeight = 0
 
     GwPaperSkills.scroll.scrollchild:SetSize(GwPaperSkills.scroll:GetSize())
     GwPaperSkills.scroll.scrollchild:SetWidth(GwPaperSkills.scroll:GetWidth() - 20)
@@ -1043,10 +1044,11 @@ function GWupdateSkills()
         f.isHeader = isHeader
         f.bg:SetVertexColor(1, 1, 1, zebra)
         updateSkillItem(f)
+        totlaHeight = totlaHeight + f:GetHeight()
     end
+    GwPaperSkills.scroll.slider.thumb:SetHeight((GwPaperSkills.scroll:GetHeight()/totlaHeight) * GwPaperSkills.scroll.slider:GetHeight() )
+    GwPaperSkills.scroll.slider:SetMinMaxValues (0,math.max(0,totlaHeight - GwPaperSkills.scroll:GetHeight()))
 
-    GwPaperSkills.scroll.slider:SetMinMaxValues (0,math.max(0,y -GwPaperSkills.scroll:GetHeight()))
-    GwPaperSkills.scroll.slider.thumb:SetHeight((GwPaperSkills.scroll:GetHeight()/y) * GwPaperSkills.scroll.slider:GetHeight() )
 
 
     --[[
