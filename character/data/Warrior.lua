@@ -52,7 +52,7 @@ local battleShout = {
 	11551 --[[Rank 6]],
 	25289 --[[Rank 7]]
 }
---[[
+
 GW:SetPreviousAbilityMap(
 	{
 		rend,
@@ -77,7 +77,7 @@ GW:SetPreviousAbilityMap(
 		battleShout
 	}
 )
-]]
+
 GW.SpellsByLevel =
 
 
@@ -104,7 +104,7 @@ GW.SpellsByLevel =
       -- @Guns undefined
       {id =266, isTalent =0},
       -- @Dual Wield Passive
-      {id =674, rank =NaN, isTalent =0},
+      {id =674, isTalent =0},
       -- @Plate Mail undefined
       {id =750, isTalent =0},
       -- @Daggers undefined
@@ -470,7 +470,7 @@ GW.SpellsByLevel =
       -- @Heroic Strike Rank 1
       {id =78, rank =1, isTalent =0},
       -- @Block Passive
-      {id =107, rank =NaN, isTalent =0},
+      {id =107, isTalent =0},
       -- @Battle Stance undefined
       {id =2457, isTalent =0},
       -- @Shoot Bow undefined
@@ -478,7 +478,7 @@ GW.SpellsByLevel =
       -- @Throw undefined
       {id =2764, isTalent =0},
       -- @Parry Passive
-      {id =3127, rank =NaN, isTalent =0},
+      {id =3127, isTalent =0},
       -- @Battle Shout Rank 1
       {id =6673, rank =1, cost =10, isTalent =0},
       -- @Shoot Gun undefined
@@ -712,11 +712,11 @@ GW.SpellsByLevel =
       -- @Slam Rank 4
       {id =11605, requiredIds ={11604}, rank =4, baseId =1464, cost =56000, isTalent =0},
       -- @Mortal Strike Rank 3
-      {id =21552, requiredIds ={21551}, rank =3, baseId =12294, cost =2800, isTalent =0},
+      {id =21552, requiredIds ={21551}, rank =3, baseId =12294, cost =2800, isTalent =1},
       -- @Bloodthirst Rank 3
-      {id =23893, requiredIds ={23892}, rank =3, baseId =23881, cost =2800, isTalent =0},
+      {id =23893, requiredIds ={23892}, rank =3, baseId =23881, cost =2800, isTalent =1},
       -- @Shield Slam Rank 3
-      {id =23924, requiredIds ={23923}, rank =3, baseId =23922, cost =2800, isTalent =0},
+      {id =23924, requiredIds ={23923}, rank =3, baseId =23922, cost =2800, isTalent =1},
        },
 [56] = {
       -- @Heroic Strike Rank 8
@@ -742,11 +742,11 @@ GW.SpellsByLevel =
       -- @Cleave Rank 5
       {id =20569, requiredIds ={11609}, rank =5, baseId =845, cost =62000, isTalent =0},
       -- @Mortal Strike Rank 4
-      {id =21553, requiredIds ={21552}, rank =4, baseId =12294, cost =3100, isTalent =0},
+      {id =21553, requiredIds ={21552}, rank =4, baseId =12294, cost =3100, isTalent =1},
       -- @Bloodthirst Rank 4
-      {id =23894, requiredIds ={23893}, rank =4, baseId =23881, cost =3100, isTalent =0},
+      {id =23894, requiredIds ={23893}, rank =4, baseId =23881, cost =3100, isTalent =1},
       -- @Shield Slam Rank 4
-      {id =23925, requiredIds ={23924}, rank =4, baseId =23922, cost =3100, isTalent =0},
+      {id =23925, requiredIds ={23924}, rank =4, baseId =23922, cost =3100, isTalent =1},
       -- @Heroic Strike Rank 9
       {id =25286, requiredIds ={11567}, rank =9, baseId =78, isTalent =0},
       -- @Revenge Rank 6

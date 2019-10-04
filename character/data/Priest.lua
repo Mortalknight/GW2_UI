@@ -3,6 +3,7 @@ if (GW.currentClass ~= "PRIEST") then return end
 GW.SpellsByLevel = GW.RaceFilter(
 
 
+
  {
  [0] = {
       -- @One-Handed Maces undefined
@@ -526,9 +527,9 @@ GW.SpellsByLevel = GW.RaceFilter(
       -- @Holy Fire Rank 4
       {id =15264, requiredIds ={15263}, rank =4, baseId =14914, cost =14000, isTalent =0},
       -- @Holy Nova Rank 3
-      {id =15431, requiredIds ={15430}, rank =3, baseId =15237, cost =700, isTalent =0},
+      {id =15431, requiredIds ={15430}, rank =3, baseId =15237, cost =700, isTalent =1},
       -- @Mind Flay Rank 3
-      {id =17312, requiredIds ={17311}, rank =3, baseId =15407, cost =700, isTalent =0},
+      {id =17312, requiredIds ={17311}, rank =3, baseId =15407, cost =700, isTalent =1},
       -- @Devouring Plague Rank 3
       {id =19277, requiredIds ={19276}, rank =3, baseId =2944, race =5, cost =700, isTalent =0},
       -- @Shadowguard Rank 3
@@ -594,13 +595,13 @@ GW.SpellsByLevel = GW.RaceFilter(
       -- @Renew Rank 7
       {id =10927, requiredIds ={6078}, rank =7, baseId =139, cost =24000, isTalent =0},
       -- @Mind Flay Rank 4
-      {id =17313, requiredIds ={17312}, rank =4, baseId =15407, cost =1200, isTalent =0},
+      {id =17313, requiredIds ={17312}, rank =4, baseId =15407, cost =1200, isTalent =1},
       -- @Devouring Plague Rank 4
       {id =19278, requiredIds ={19277}, rank =4, baseId =2944, race =5, cost =1200, isTalent =0},
       -- @Shadowguard Rank 4
       {id =19310, requiredIds ={19309}, rank =4, baseId =18137, race =8, cost =1200, isTalent =0},
       -- @Holy Nova Rank 4
-      {id =27799, requiredIds ={15431}, rank =4, baseId =15237, cost =1200, isTalent =0},
+      {id =27799, requiredIds ={15431}, rank =4, baseId =15237, cost =1200, isTalent =1},
        },
 [46] = {
       -- @Resurrection Rank 4
@@ -638,7 +639,7 @@ GW.SpellsByLevel = GW.RaceFilter(
       -- @Prayer of Healing Rank 3
       {id =10960, requiredIds ={996}, rank =3, baseId =596, cost =30000, isTalent =0},
       -- @Divine Spirit Rank 3
-      {id =14819, requiredIds ={14818}, rank =3, baseId =14752, cost =1500, isTalent =0},
+      {id =14819, requiredIds ={14818}, rank =3, baseId =14752, cost =1500, isTalent =1},
       -- @Desperate Prayer Rank 6
       {id =19242, requiredIds ={19241}, rank =6, baseId =13908, races ={1, 3}, cost =1500, isTalent =0},
       -- @Touch of Weakness Rank 5
@@ -662,13 +663,13 @@ GW.SpellsByLevel = GW.RaceFilter(
       -- @Greater Heal Rank 3
       {id =10964, requiredIds ={10963}, rank =3, baseId =2060, cost =38000, isTalent =0},
       -- @Mind Flay Rank 5
-      {id =17314, requiredIds ={17313}, rank =5, baseId =15407, cost =1900, isTalent =0},
+      {id =17314, requiredIds ={17313}, rank =5, baseId =15407, cost =1900, isTalent =1},
       -- @Devouring Plague Rank 5
       {id =19279, requiredIds ={19278}, rank =5, baseId =2944, race =5, cost =1900, isTalent =0},
       -- @Shadowguard Rank 5
       {id =19311, requiredIds ={19310}, rank =5, baseId =18137, race =8, cost =1900, isTalent =0},
       -- @Holy Nova Rank 5
-      {id =27800, requiredIds ={27799}, rank =5, baseId =15237, cost =1900, isTalent =0},
+      {id =27800, requiredIds ={27799}, rank =5, baseId =15237, cost =1900, isTalent =1},
        },
 [54] = {
       -- @Power Word: Shield Rank 9
@@ -724,7 +725,7 @@ GW.SpellsByLevel = GW.RaceFilter(
       -- @Holy Fire Rank 8
       {id =15261, requiredIds ={15267}, rank =8, baseId =14914, cost =46000, isTalent =0},
       -- @Mind Flay Rank 6
-      {id =18807, requiredIds ={17314}, rank =6, baseId =15407, cost =2300, isTalent =0},
+      {id =18807, requiredIds ={17314}, rank =6, baseId =15407, cost =2300, isTalent =1},
       -- @Touch of Weakness Rank 6
       {id =19266, requiredIds ={19265}, rank =6, baseId =2652, race =5, cost =2300, isTalent =0},
       -- @Feedback Rank 5
@@ -748,13 +749,14 @@ GW.SpellsByLevel = GW.RaceFilter(
       -- @Prayer of Spirit Rank 1
       {id =27681, rank =1, cost =2300, isTalent =0},
       -- @Holy Nova Rank 6
-      {id =27801, requiredIds ={27800}, rank =6, baseId =15237, cost =2300, isTalent =0},
+      {id =27801, requiredIds ={27800}, rank =6, baseId =15237, cost =2300, isTalent =1},
       -- @Divine Spirit Rank 4
-      {id =27841, requiredIds ={14819}, rank =4, baseId =14752, cost =2300, isTalent =0},
+      {id =27841, requiredIds ={14819}, rank =4, baseId =14752, cost =2300, isTalent =1},
       -- @Lightwell Rank 3
-      {id =27871, requiredIds ={27870}, rank =3, baseId =724, cost =1500, isTalent =0}
+      {id =27871, requiredIds ={27870}, rank =3, baseId =724, cost =1500, isTalent =1}
         }
 }
+
 
 
 

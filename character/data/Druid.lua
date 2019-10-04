@@ -35,7 +35,7 @@ local rip = {1079 --[[Rank 1]], 9492 --[[Rank 2]], 9493 --[[Rank 3]], 9752 --[[R
 local bash = {5211, 6798, 8983}
 local dash = {1850, 9821}
 
---[[
+
 GW:SetPreviousAbilityMap(
 	{
 		faerieFireFeral,
@@ -349,7 +349,7 @@ GW.SpellsByLevel =
       -- @Swiftmend undefined
       {id =18562, isTalent =1},
       -- @Moonkin Form Shapeshift
-      {id =24858, rank =NaN, isTalent =1},
+      {id =24858, isTalent =1},
       -- @Feline Swiftness undefined
       {id =24866, isTalent =1},
       -- @Heart of the Wild Rank 5
@@ -409,7 +409,7 @@ GW.SpellsByLevel =
       -- @Mark of the Wild Rank 2
       {id =5232, requiredIds ={1126}, rank =2, baseId =1126, cost =300, isTalent =0},
       -- @Bear Form Shapeshift
-      {id =5487, rank =NaN, isTalent =0},
+      {id =5487, isTalent =0},
       -- @Growl undefined
       {id =6795, isTalent =0},
       -- @Maul Rank 1
@@ -441,7 +441,7 @@ GW.SpellsByLevel =
       -- @Swipe Rank 1
       {id =779, rank =1, cost =1800, isTalent =0},
       -- @Aquatic Form Shapeshift
-      {id =1066, rank =NaN, isTalent =0},
+      {id =1066, isTalent =0},
       -- @Rejuvenation Rank 3
       {id =1430, requiredIds ={1058}, rank =3, baseId =774, cost =1800, isTalent =0},
       -- @Moonfire Rank 3
@@ -463,7 +463,7 @@ GW.SpellsByLevel =
        },
 [20] = {
       -- @Cat Form Shapeshift
-      {id =768, rank =NaN, cost =2000, isTalent =0},
+      {id =768, cost =2000, isTalent =0},
       -- @Rip Rank 1
       {id =1079, rank =1, cost =2000, isTalent =0},
       -- @Claw Rank 1
@@ -535,7 +535,7 @@ GW.SpellsByLevel =
       -- @Rip Rank 2
       {id =9492, requiredIds ={1079}, rank =2, baseId =1079, cost =5000, isTalent =0},
       -- @Nature's Grasp Rank 3
-      {id =16811, requiredIds ={16810}, rank =3, baseId =16689, cost =250, isTalent =0},
+      {id =16811, requiredIds ={16810}, rank =3, baseId =16689, cost =250, isTalent =1},
        },
 [30] = {
       -- @Tranquility Rank 1
@@ -543,7 +543,7 @@ GW.SpellsByLevel =
       -- @Faerie Fire Rank 2
       {id =778, requiredIds ={770}, rank =2, baseId =770, cost =6000, isTalent =0},
       -- @Travel Form Shapeshift
-      {id =783, rank =NaN, cost =6000, isTalent =0},
+      {id =783, cost =6000, isTalent =0},
       -- @Wrath Rank 5
       {id =5180, requiredIds ={5179}, rank =5, baseId =5176, cost =6000, isTalent =0},
       -- @Mark of the Wild Rank 4
@@ -615,7 +615,7 @@ GW.SpellsByLevel =
       -- @Shred Rank 3
       {id =8992, requiredIds ={6800}, rank =3, baseId =5221, cost =12000, isTalent =0},
       -- @Nature's Grasp Rank 4
-      {id =16812, requiredIds ={16811}, rank =4, baseId =16689, cost =600, isTalent =0},
+      {id =16812, requiredIds ={16811}, rank =4, baseId =16689, cost =600, isTalent =1},
       -- @Hibernate Rank 2
       {id =18657, requiredIds ={2637}, rank =2, baseId =2637, cost =12000, isTalent =0},
        },
@@ -633,17 +633,17 @@ GW.SpellsByLevel =
       -- @Cower Rank 2
       {id =9000, requiredIds ={8998}, rank =2, baseId =8998, cost =14000, isTalent =0},
       -- @Dire Bear Form Shapeshift
-      {id =9634, rank =NaN, cost =14000, isTalent =0},
+      {id =9634, cost =14000, isTalent =0},
       -- @Hurricane Rank 1
       {id =16914, rank =1, cost =14000, isTalent =0},
       -- @Feline Grace Passive
-      {id =20719, rank =NaN, cost =14000, isTalent =0},
+      {id =20719, cost =14000, isTalent =0},
       -- @Rebirth Rank 3
       {id =20742, requiredIds ={20739}, rank =3, baseId =20484, cost =14000, isTalent =0},
       -- @Ferocious Bite Rank 2
       {id =22827, requiredIds ={22568}, rank =2, baseId =22568, cost =14000, isTalent =0},
       -- @Insect Swarm Rank 3
-      {id =24975, requiredIds ={24974}, rank =3, baseId =5570, cost =700, isTalent =0},
+      {id =24975, requiredIds ={24974}, rank =3, baseId =5570, cost =700, isTalent =1},
       -- @Innervate undefined
       {id =29166, cost =14000, isTalent =0},
        },
@@ -661,7 +661,7 @@ GW.SpellsByLevel =
       -- @Regrowth Rank 6
       {id =9750, requiredIds ={8941}, rank =6, baseId =8936, cost =16000, isTalent =0},
       -- @Faerie Fire (Feral) Rank 3
-      {id =17391, requiredIds ={17390}, rank =3, baseId =16857, cost =800, isTalent =0},
+      {id =17391, requiredIds ={17390}, rank =3, baseId =16857, cost =800, isTalent =1},
        },
 [44] = {
       -- @Rake Rank 3
@@ -707,7 +707,7 @@ GW.SpellsByLevel =
       -- @Regrowth Rank 7
       {id =9856, requiredIds ={9750}, rank =7, baseId =8936, cost =22000, isTalent =0},
       -- @Nature's Grasp Rank 5
-      {id =16813, requiredIds ={16812}, rank =5, baseId =16689, cost =1100, isTalent =0},
+      {id =16813, requiredIds ={16812}, rank =5, baseId =16689, cost =1100, isTalent =1},
       -- @Ferocious Bite Rank 3
       {id =22828, requiredIds ={22827}, rank =3, baseId =22568, cost =22000, isTalent =0},
        },
@@ -731,7 +731,7 @@ GW.SpellsByLevel =
       -- @Gift of the Wild Rank 1
       {id =21849, rank =1, isTalent =0},
       -- @Insect Swarm Rank 4
-      {id =24976, requiredIds ={24975}, rank =4, baseId =5570, cost =1150, isTalent =0},
+      {id =24976, requiredIds ={24975}, rank =4, baseId =5570, cost =1150, isTalent =1},
        },
 [52] = {
       -- @Moonfire Rank 9
@@ -763,7 +763,7 @@ GW.SpellsByLevel =
       -- @Wrath Rank 8
       {id =9912, requiredIds ={8905}, rank =8, baseId =5176, cost =28000, isTalent =0},
       -- @Faerie Fire (Feral) Rank 4
-      {id =17392, requiredIds ={17391}, rank =4, baseId =16857, cost =1400, isTalent =0},
+      {id =17392, requiredIds ={17391}, rank =4, baseId =16857, cost =1400, isTalent =1},
        },
 [56] = {
       -- @Pounce Rank 3
@@ -791,7 +791,7 @@ GW.SpellsByLevel =
       -- @Maul Rank 7
       {id =9881, requiredIds ={9880}, rank =7, baseId =6807, cost =32000, isTalent =0},
       -- @Nature's Grasp Rank 6
-      {id =17329, requiredIds ={16813}, rank =6, baseId =16689, cost =1600, isTalent =0},
+      {id =17329, requiredIds ={16813}, rank =6, baseId =16689, cost =1600, isTalent =1},
       -- @Hibernate Rank 3
       {id =18658, requiredIds ={18657}, rank =3, baseId =2637, cost =32000, isTalent =0},
        },
@@ -815,7 +815,7 @@ GW.SpellsByLevel =
       -- @Gift of the Wild Rank 2
       {id =21850, requiredIds ={21849}, rank =2, baseId =21849, isTalent =0},
       -- @Insect Swarm Rank 5
-      {id =24977, requiredIds ={24976}, rank =5, baseId =5570, cost =1700, isTalent =0},
+      {id =24977, requiredIds ={24976}, rank =5, baseId =5570, cost =1700, isTalent =1},
       -- @Healing Touch Rank 11
       {id =25297, requiredIds ={9889}, rank =11, baseId =5185, isTalent =0},
       -- @Starfire Rank 7

@@ -1,6 +1,6 @@
 local _, GW = ...
 if (GW.currentClass ~= "MAGE") then return end
-GW.SpellsByLevel = GW.FactionFilter(
+GW.SpellsByLevel = GW.RaceFilter(
 
 
  {
@@ -470,7 +470,7 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Fire Ward Rank 2
       {id =8457, requiredIds ={543}, rank =2, baseId =543, cost =8000, isTalent =0},
       -- @Pyroblast Rank 3
-      {id =12522, requiredIds ={12505}, rank =3, baseId =11366, cost =400, isTalent =0},
+      {id =12522, requiredIds ={12505}, rank =3, baseId =11366, cost =400, isTalent =1},
        },
 [32] = {
       -- 7Conjure Food Rank 4
@@ -502,7 +502,7 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Mana Shield Rank 3
       {id =8495, requiredIds ={8494}, rank =3, baseId =1463, cost =13000, isTalent =0},
       -- @Pyroblast Rank 4
-      {id =12523, requiredIds ={12522}, rank =4, baseId =11366, cost =650, isTalent =0},
+      {id =12523, requiredIds ={12522}, rank =4, baseId =11366, cost =650, isTalent =1},
       -- @Blast Wave Rank 2
       {id =13018, requiredIds ={11113}, rank =2, baseId =11113, cost =650, isTalent =1},
        },
@@ -556,7 +556,7 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Amplify Magic Rank 3
       {id =10169, requiredIds ={8455}, rank =3, baseId =1008, cost =18000, isTalent =0},
       -- @Pyroblast Rank 5
-      {id =12524, requiredIds ={12523}, rank =5, baseId =11366, cost =900, isTalent =0},
+      {id =12524, requiredIds ={12523}, rank =5, baseId =11366, cost =900, isTalent =1},
        },
 [44] = {
       -- @Frostbolt Rank 8
@@ -566,7 +566,7 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Mana Shield Rank 4
       {id =10191, requiredIds ={8495}, rank =4, baseId =1463, cost =23000, isTalent =0},
       -- @Blast Wave Rank 3
-      {id =13019, requiredIds ={13018}, rank =3, baseId =11113, cost =1150, isTalent =0},
+      {id =13019, requiredIds ={13018}, rank =3, baseId =11113, cost =1150, isTalent =1},
        },
 [46] = {
       -- @Fire Blast Rank 6
@@ -592,7 +592,7 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Flamestrike Rank 5
       {id =10215, requiredIds ={8423}, rank =5, baseId =2120, cost =28000, isTalent =0},
       -- @Pyroblast Rank 6
-      {id =12525, requiredIds ={12524}, rank =6, baseId =11366, cost =1400, isTalent =0},
+      {id =12525, requiredIds ={12524}, rank =6, baseId =11366, cost =1400, isTalent =1},
        },
 [50] = {
       -- 7Conjure Water Rank 6
@@ -622,9 +622,9 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Scorch Rank 6
       {id =10206, requiredIds ={10205}, rank =6, baseId =2948, cost =35000, isTalent =0},
       -- @Blast Wave Rank 4
-      {id =13020, requiredIds ={13019}, rank =4, baseId =11113, cost =1750, isTalent =0},
+      {id =13020, requiredIds ={13019}, rank =4, baseId =11113, cost =1750, isTalent =1},
       -- @Ice Barrier Rank 3
-      {id =13032, requiredIds ={13031}, rank =3, baseId =11426, cost =1750, isTalent =0},
+      {id =13032, requiredIds ={13031}, rank =3, baseId =11426, cost =1750, isTalent =1},
        },
 [54] = {
       -- @Fireball Rank 10
@@ -638,7 +638,7 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Frost Nova Rank 4
       {id =10230, requiredIds ={6131}, rank =4, baseId =122, cost =36000, isTalent =0},
       -- @Pyroblast Rank 7
-      {id =12526, requiredIds ={12525}, rank =7, baseId =11366, cost =1800, isTalent =0},
+      {id =12526, requiredIds ={12525}, rank =7, baseId =11366, cost =1800, isTalent =1},
        },
 [56] = {
       -- @Arcane Intellect Rank 5
@@ -662,7 +662,7 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Scorch Rank 7
       {id =10207, requiredIds ={10206}, rank =7, baseId =2948, cost =40000, isTalent =0},
       -- @Ice Barrier Rank 4
-      {id =13033, requiredIds ={13032}, rank =4, baseId =11426, cost =2000, isTalent =0},
+      {id =13033, requiredIds ={13032}, rank =4, baseId =11426, cost =2000, isTalent =1},
       -- @Mage Armor Rank 3
       {id =22783, requiredIds ={22782}, rank =3, baseId =6117, cost =40000, isTalent =0},
        },
@@ -684,9 +684,9 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Polymorph Rank 4
       {id =12826, requiredIds ={12825}, rank =4, baseId =118, cost =42000, isTalent =0},
       -- @Blast Wave Rank 5
-      {id =13021, requiredIds ={13020}, rank =5, baseId =11113, cost =2100, isTalent =0},
+      {id =13021, requiredIds ={13020}, rank =5, baseId =11113, cost =2100, isTalent =1},
       -- @Pyroblast Rank 8
-      {id =18809, requiredIds ={12526}, rank =8, baseId =11366, cost =2100, isTalent =0},
+      {id =18809, requiredIds ={12526}, rank =8, baseId =11366, cost =2100, isTalent =1},
       -- @Frostbolt Rank 11
       {id =25304, requiredIds ={10181}, rank =11, baseId =116, isTalent =0},
       -- @Fireball Rank 12
@@ -694,9 +694,9 @@ GW.SpellsByLevel = GW.FactionFilter(
       -- @Polymorph: Cow undefined
       {id =28270, isTalent =0},
       -- @Polymorph Turtle
-      {id =28271, rank =NaN, baseId =118, isTalent =0},
+      {id =28271, baseId =118, isTalent =0},
       -- @Polymorph Pig
-      {id =28272, rank =NaN, baseId =118, isTalent =0},
+      {id =28272, baseId =118, isTalent =0},
       -- @Frost Ward Rank 5
       {id =28609, requiredIds ={10177}, rank =5, baseId =6143, isTalent =0},
       -- 7Conjure Food Rank 7

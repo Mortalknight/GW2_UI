@@ -103,7 +103,7 @@ local eviscerate = {
 local sprint = {2983 --[[Rank 1]], 8696 --[[Rank 2]], 11305 --[[Rank 3]]}
 local sliceAndDice = {5171 --[[Rank 1]], 6774 --[[Rank 2]]}
 local vanish = {1856 --[[Rank 1]], 1857 --[[Rank 2]]}
---[[
+
 GW:SetPreviousAbilityMap(
 	{
 		stealth,
@@ -127,8 +127,9 @@ GW:SetPreviousAbilityMap(
 		vanish
 	}
 )
-]]
+
 GW.SpellsByLevel =
+
 
 
  {
@@ -142,7 +143,7 @@ GW.SpellsByLevel =
       -- @Guns undefined
       {id =266, isTalent =0},
       -- @Dual Wield Passive
-      {id =674, rank =NaN, isTalent =0},
+      {id =674, isTalent =0},
       -- @Daggers undefined
       {id =1180, isTalent =0},
       -- @Thrown undefined
@@ -466,7 +467,7 @@ GW.SpellsByLevel =
       -- @Throw undefined
       {id =2764, isTalent =0},
       -- @Parry Passive
-      {id =3127, rank =NaN, isTalent =0},
+      {id =3127, isTalent =0},
       -- @Shoot Gun undefined
       {id =7918, isTalent =0},
       -- @Shoot Crossbow undefined
@@ -550,7 +551,7 @@ GW.SpellsByLevel =
        },
 [24] = {
       -- @Detect Traps Passive
-      {id =2836, rank =NaN, cost =5000, isTalent =0},
+      {id =2836, cost =5000, isTalent =0},
       -- 7Mind-numbing Poison Rank 1
       {id =5763, rank =1, cost =5000, isTalent =0},
       -- @Eviscerate Rank 4
@@ -632,7 +633,7 @@ GW.SpellsByLevel =
       -- @Stealth Rank 3
       {id =1786, requiredIds ={1785}, rank =3, baseId =1784, cost =20000, isTalent =0},
       -- @Safe Fall Passive
-      {id =1860, rank =NaN, cost =20000, isTalent =0},
+      {id =1860, cost =20000, isTalent =0},
       -- @Eviscerate Rank 6
       {id =8624, requiredIds ={8623}, rank =6, baseId =2098, cost =20000, isTalent =0},
       -- @Feint Rank 3
@@ -724,7 +725,7 @@ GW.SpellsByLevel =
       -- @Sprint Rank 3
       {id =11305, requiredIds ={8696}, rank =3, baseId =2983, cost =52000, isTalent =0},
       -- @Hemorrhage Rank 3
-      {id =17348, requiredIds ={17347}, rank =3, baseId =16511, cost =13000, isTalent =0},
+      {id =17348, requiredIds ={17347}, rank =3, baseId =16511, cost =13000, isTalent =1},
        },
 [60] = {
       -- @Stealth Rank 4

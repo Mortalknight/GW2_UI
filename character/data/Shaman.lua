@@ -324,7 +324,7 @@ GW.SpellsByLevel =
        },
 [1] = {
       -- @Block Passive
-      {id =107, rank =NaN, isTalent =0},
+      {id =107, isTalent =0},
       -- @Healing Wave Rank 1
       {id =331, rank =1, isTalent =0},
       -- @Lightning Bolt Rank 1
@@ -490,7 +490,7 @@ GW.SpellsByLevel =
       -- @Nature Resistance Totem Rank 1
       {id =10595, rank =1, cost =7000, isTalent =0},
       -- @Reincarnation Passive
-      {id =20608, rank =NaN, cost =7000, isTalent =0},
+      {id =20608, cost =7000, isTalent =0},
        },
 [32] = {
       -- @Chain Lightning Rank 1
@@ -690,7 +690,7 @@ GW.SpellsByLevel =
       -- @Flametongue Totem Rank 4
       {id =16387, requiredIds ={10526}, rank =4, baseId =8227, cost =32000, isTalent =0},
       -- @Mana Tide Totem Rank 3
-      {id =17359, requiredIds ={17354}, rank =3, baseId =16190, cost =1600, isTalent =0},
+      {id =17359, requiredIds ={17354}, rank =3, baseId =16190, cost =1600, isTalent =1},
        },
 [60] = {
       -- @Earth Shock Rank 7

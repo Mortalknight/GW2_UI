@@ -518,7 +518,7 @@ local function updateUnknownTab(knownSpellID)
     end
 
     GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight()/h) * GwSpellbookUnknown.slider:GetHeight() )
-    GwSpellbookUnknown.slider:SetMinMaxValues(0,h - GwSpellbookUnknown.container:GetHeight())
+    GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0,h - GwSpellbookUnknown.container:GetHeight()))
     GwSpellbookUnknown.slider:SetValue(0)
     knownTalents = nil
 end

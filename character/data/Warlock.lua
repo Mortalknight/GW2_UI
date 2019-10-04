@@ -34,6 +34,7 @@ GW.TomesByLevel = {
 GW.SpellsByLevel =
 
 
+
  {
  [0] = {
       -- @One-Handed Swords undefined
@@ -349,7 +350,7 @@ GW.SpellsByLevel =
       -- @Demon Skin Rank 1
       {id =687, rank =1, isTalent =0},
       -- @Summon Imp Summon
-      {id =688, rank =NaN, isTalent =0},
+      {id =688, isTalent =0},
       -- @Shoot undefined
       {id =5019, isTalent =0},
        },
@@ -375,7 +376,7 @@ GW.SpellsByLevel =
       -- @Demon Skin Rank 2
       {id =696, requiredIds ={687}, rank =2, baseId =687, cost =300, isTalent =0},
       -- @Summon Voidwalker Summon
-      {id =697, rank =NaN, isTalent =0},
+      {id =697, isTalent =0},
       -- @Immolate Rank 2
       {id =707, requiredIds ={348}, rank =2, baseId =348, cost =300, isTalent =0},
       -- @Drain Soul Rank 1
@@ -419,7 +420,7 @@ GW.SpellsByLevel =
       -- @Demon Armor Rank 1
       {id =706, rank =1, cost =2000, isTalent =0},
       -- @Summon Succubus Summon
-      {id =712, rank =NaN, isTalent =0},
+      {id =712, isTalent =0},
       -- @Shadow Bolt Rank 4
       {id =1088, requiredIds ={705}, rank =4, baseId =686, cost =2000, isTalent =0},
       -- @Immolate Rank 3
@@ -431,7 +432,7 @@ GW.SpellsByLevel =
        },
 [22] = {
       -- @Eye of Kilrogg Summon
-      {id =126, rank =NaN, cost =2500, isTalent =0},
+      {id =126, cost =2500, isTalent =0},
       -- @Drain Life Rank 2
       {id =699, requiredIds ={689}, rank =2, baseId =689, cost =2500, isTalent =0},
       -- @Create Healthstone (Lesser) undefined
@@ -477,7 +478,7 @@ GW.SpellsByLevel =
        },
 [30] = {
       -- @Summon Felhunter Summon
-      {id =691, rank =NaN, isTalent =0},
+      {id =691, isTalent =0},
       -- @Drain Life Rank 3
       {id =709, requiredIds ={699}, rank =3, baseId =689, cost =6000, isTalent =0},
       -- @Demon Armor Rank 2
@@ -501,7 +502,7 @@ GW.SpellsByLevel =
       -- @Curse of Weakness Rank 4
       {id =7646, requiredIds ={6205}, rank =4, baseId =702, cost =7000, isTalent =0},
       -- @Shadowburn Rank 3
-      {id =18868, requiredIds ={18867}, rank =3, baseId =17877, cost =350, isTalent =0},
+      {id =18868, requiredIds ={18867}, rank =3, baseId =17877, cost =350, isTalent =1},
        },
 [34] = {
       -- @Create Healthstone undefined
@@ -543,13 +544,13 @@ GW.SpellsByLevel =
       -- @Howl of Terror Rank 1
       {id =5484, rank =1, cost =11000, isTalent =0},
       -- @Summon Felsteed Summon
-      {id =5784, rank =NaN, isTalent =0},
+      {id =5784, isTalent =0},
       -- @Immolate Rank 5
       {id =11665, requiredIds ={2941}, rank =5, baseId =348, cost =11000, isTalent =0},
       -- @Demon Armor Rank 3
       {id =11733, requiredIds ={1086}, rank =3, baseId =706, cost =11000, isTalent =0},
       -- @Shadowburn Rank 4
-      {id =18869, requiredIds ={18868}, rank =4, baseId =17877, cost =550, isTalent =0},
+      {id =18869, requiredIds ={18868}, rank =4, baseId =17877, cost =550, isTalent =1},
       -- 7Create Soulstone undefined
       {id =20755, cost =11000, isTalent =0},
        },
@@ -605,15 +606,15 @@ GW.SpellsByLevel =
       -- @Banish Rank 2
       {id =18647, requiredIds ={710}, rank =2, baseId =710, cost =14000, isTalent =0},
       -- @Shadowburn Rank 5
-      {id =18870, requiredIds ={18869}, rank =5, baseId =17877, cost =700, isTalent =0},
+      {id =18870, requiredIds ={18869}, rank =5, baseId =17877, cost =700, isTalent =1},
       -- @Siphon Life Rank 3
-      {id =18880, requiredIds ={18879}, rank =3, baseId =18265, cost =700, isTalent =0},
+      {id =18880, requiredIds ={18879}, rank =3, baseId =18265, cost =700, isTalent =1},
       -- @Conflagrate Rank 2
       {id =18930, requiredIds ={17962}, rank =2, baseId =17962, cost =700, isTalent =1},
        },
 [50] = {
       -- @Inferno Summon
-      {id =1122, rank =NaN, isTalent =0},
+      {id =1122, isTalent =0},
       -- @Immolate Rank 6
       {id =11667, requiredIds ={11665}, rank =6, baseId =348, cost =15000, isTalent =0},
       -- @Curse of Tongues Rank 2
@@ -655,7 +656,7 @@ GW.SpellsByLevel =
       -- @Howl of Terror Rank 2
       {id =17928, requiredIds ={5484}, rank =2, baseId =5484, cost =20000, isTalent =0},
       -- @Conflagrate Rank 3
-      {id =18931, requiredIds ={18930}, rank =3, baseId =17962, cost =1000, isTalent =0},
+      {id =18931, requiredIds ={18930}, rank =3, baseId =17962, cost =1000, isTalent =1},
        },
 [56] = {
       -- @Fear Rank 3
@@ -671,7 +672,7 @@ GW.SpellsByLevel =
       -- 7Create Firestone (Major) undefined
       {id =17953, cost =22000, isTalent =0},
       -- @Shadowburn Rank 6
-      {id =18871, requiredIds ={18870}, rank =6, baseId =17877, cost =1100, isTalent =0},
+      {id =18871, requiredIds ={18870}, rank =6, baseId =17877, cost =1100, isTalent =1},
        },
 [58] = {
       -- @Rain of Fire Rank 4
@@ -687,7 +688,7 @@ GW.SpellsByLevel =
       -- @Death Coil Rank 3
       {id =17926, requiredIds ={17925}, rank =3, baseId =6789, cost =24000, isTalent =0},
       -- @Siphon Life Rank 4
-      {id =18881, requiredIds ={18880}, rank =4, baseId =18265, cost =1200, isTalent =0},
+      {id =18881, requiredIds ={18880}, rank =4, baseId =18265, cost =1200, isTalent =1},
        },
 [60] = {
       -- @Curse of Doom undefined
@@ -707,13 +708,13 @@ GW.SpellsByLevel =
       -- @Ritual of Doom undefined
       {id =18540, isTalent =0},
       -- @Conflagrate Rank 4
-      {id =18932, requiredIds ={18931}, rank =4, baseId =17962, cost =1300, isTalent =0},
+      {id =18932, requiredIds ={18931}, rank =4, baseId =17962, cost =1300, isTalent =1},
       -- @Dark Pact Rank 3
-      {id =18938, requiredIds ={18937}, rank =3, baseId =18220, cost =1300, isTalent =0},
+      {id =18938, requiredIds ={18937}, rank =3, baseId =18220, cost =1300, isTalent =1},
       -- 7Create Soulstone (Major) undefined
       {id =20757, cost =26000, isTalent =0},
       -- @Summon Dreadsteed Summon
-      {id =23161, rank =NaN, isTalent =0},
+      {id =23161, isTalent =0},
       -- @Shadow Bolt Rank 10
       {id =25307, requiredIds ={11661}, rank =10, baseId =686, isTalent =0},
       -- @Immolate Rank 8

@@ -324,13 +324,13 @@ GW.SpellsByLevel =
        },
 [1] = {
       -- @Block Passive
-      {id =107, rank =NaN, isTalent =0},
+      {id =107, isTalent =0},
       -- @Devotion Aura Rank 1
       {id =465, rank =1, cost =10, isTalent =0},
       -- @Holy Light Rank 1
       {id =635, rank =1, isTalent =0},
       -- @Parry Passive
-      {id =3127, rank =NaN, isTalent =0},
+      {id =3127, isTalent =0},
       -- @Seal of Righteousness Rank 1
       {id =20154, rank =1, isTalent =0},
       -- @Seal of Righteousness Rank 1
@@ -504,7 +504,7 @@ GW.SpellsByLevel =
       -- @Hammer of Justice Rank 3
       {id =5589, requiredIds ={5588}, rank =3, baseId =853, cost =20000, isTalent =0},
       -- @Summon Warhorse Summon
-      {id =13819, rank =NaN, isTalent =0},
+      {id =13819, isTalent =0},
       -- @Shadow Resistance Aura Rank 2
       {id =19895, requiredIds ={19876}, rank =2, baseId =19876, cost =20000, isTalent =0},
       -- @Blessing of Light Rank 1
@@ -652,7 +652,7 @@ GW.SpellsByLevel =
       -- @Holy Shield Rank 3
       {id =20928, requiredIds ={20927}, rank =3, baseId =20925, cost =2300, isTalent =1},
       -- @Summon Charger Summon
-      {id =23214, rank =NaN, isTalent =0},
+      {id =23214, isTalent =0},
       -- @Hammer of Wrath Rank 3
       {id =24239, requiredIds ={24274}, rank =3, baseId =24275, cost =46000, isTalent =0},
       -- @Blessing of Wisdom Rank 6

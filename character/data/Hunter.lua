@@ -62,6 +62,7 @@ end
 GW.SpellsByLevel =
 
 
+
  {
  [0] = {
       -- @One-Handed Axes undefined
@@ -81,7 +82,7 @@ GW.SpellsByLevel =
       -- @Guns undefined
       {id =266, isTalent =0},
       -- @Dual Wield Passive
-      {id =674, rank =NaN, isTalent =0},
+      {id =674, isTalent =0},
       -- @Daggers undefined
       {id =1180, isTalent =0},
       -- @Thrown undefined
@@ -405,7 +406,7 @@ GW.SpellsByLevel =
       -- @Raptor Strike Rank 1
       {id =2973, rank =1, isTalent =0},
       -- @Parry Passive
-      {id =3127, rank =NaN, isTalent =0},
+      {id =3127, isTalent =0},
       -- @Shoot Gun undefined
       {id =7918, isTalent =0},
       -- @Shoot Crossbow undefined
@@ -621,7 +622,7 @@ GW.SpellsByLevel =
       -- @Immolation Trap Rank 3
       {id =14303, requiredIds ={14302}, rank =3, baseId =13795, cost =14000, isTalent =0},
       -- @Aimed Shot Rank 3
-      {id =20901, requiredIds ={20900}, rank =3, baseId =19434, cost =700, isTalent =0},
+      {id =20901, requiredIds ={20900}, rank =3, baseId =19434, cost =700, isTalent =1},
       -- @Natural Armor Rank 6
       {id =24560, requiredIds ={24559}, rank =6, baseId =24547, cost =2800, isTalent =0},
        },
@@ -683,7 +684,7 @@ GW.SpellsByLevel =
       -- @Explosive Trap Rank 2
       {id =14316, requiredIds ={13813}, rank =2, baseId =13813, cost =26000, isTalent =0},
       -- @Aimed Shot Rank 4
-      {id =20902, requiredIds ={20901}, rank =4, baseId =19434, cost =1300, isTalent =0},
+      {id =20902, requiredIds ={20901}, rank =4, baseId =19434, cost =1300, isTalent =1},
        },
 [46] = {
       -- @Viper Sting Rank 2
@@ -739,7 +740,7 @@ GW.SpellsByLevel =
       -- @Arcane Shot Rank 7
       {id =14286, requiredIds ={14285}, rank =7, baseId =3044, cost =40000, isTalent =0},
       -- @Aimed Shot Rank 5
-      {id =20903, requiredIds ={20902}, rank =5, baseId =19434, cost =2000, isTalent =0},
+      {id =20903, requiredIds ={20902}, rank =5, baseId =19434, cost =2000, isTalent =1},
        },
 [54] = {
       -- @Great Stamina Rank 9
@@ -749,7 +750,7 @@ GW.SpellsByLevel =
       -- @Explosive Trap Rank 3
       {id =14317, requiredIds ={14316}, rank =3, baseId =13813, cost =42000, isTalent =0},
       -- @Counterattack Rank 3
-      {id =20910, requiredIds ={20909}, rank =3, baseId =19306, cost =2100, isTalent =0},
+      {id =20910, requiredIds ={20909}, rank =3, baseId =19306, cost =2100, isTalent =1},
       -- @Natural Armor Rank 9
       {id =24631, requiredIds ={24562}, rank =9, baseId =24547, cost =8400, isTalent =0},
        },
@@ -793,9 +794,9 @@ GW.SpellsByLevel =
       -- @Tranquilizing Shot undefined
       {id =19801, isTalent =0},
       -- @Aimed Shot Rank 6
-      {id =20904, requiredIds ={20903}, rank =6, baseId =19434, cost =2500, isTalent =0},
+      {id =20904, requiredIds ={20903}, rank =6, baseId =19434, cost =2500, isTalent =1},
       -- @Wyvern Sting Rank 3
-      {id =24133, requiredIds ={24132}, rank =3, baseId =19386, cost =2500, isTalent =0},
+      {id =24133, requiredIds ={24132}, rank =3, baseId =19386, cost =2500, isTalent =1},
       -- @Natural Armor Rank 10
       {id =24632, requiredIds ={24631}, rank =10, baseId =24547, cost =10000, isTalent =0},
       -- @Multi-Shot Rank 5
