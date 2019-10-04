@@ -1127,13 +1127,13 @@ local function LoadPaperDoll()
 
     GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)
     GWupdateSkills()
-    GwPaperSkills.scroll.scrollchild:SetScript("OnMouseWheel", function(self, arg1)
+    GwPaperSkills.scroll:SetScript("OnMouseWheel", function(self, arg1)
 
         arg1 = -arg1 * 15
-        local min, max = self:GetParent().slider:GetMinMaxValues()
-        local s = math.min(max,math.max(self:GetParent():GetVerticalScroll()+arg1,min))
-        self:GetParent().slider:SetValue(s)
-        self:GetParent():SetVerticalScroll(s)
+        local min, max = self.slider:GetMinMaxValues()
+        local s = math.min(max,math.max(self:GetVerticalScroll()+arg1,min))
+        self.slider:SetValue(s)
+        self:SetVerticalScroll(s)
 
     end)
     GwPaperSkills.scroll.slider:SetValue(1)
