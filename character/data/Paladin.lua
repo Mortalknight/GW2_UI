@@ -364,7 +364,7 @@ GW.SpellsByLevel =
       -- @Devotion Aura Rank 2
       {id =10290, requiredIds ={465}, rank =2, baseId =465, cost =300, isTalent =0},
       -- @Seal of Righteousness Rank 2
-      {id =20287, requiredIds ={20154}, rank =2, baseId =20154, cost =300, isTalent =0},
+      {id =20287, requiredIds ={20154, 21084}, rank =2, baseId =20154, cost =300, isTalent =0},
        },
 [12] = {
       -- @Redemption Rank 1
