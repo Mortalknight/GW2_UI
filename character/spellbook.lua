@@ -55,7 +55,6 @@ local function  spellBookMenu_onLoad(self)
     self:RegisterEvent("SKILL_LINES_CHANGED")
     self:RegisterEvent("PLAYER_GUILD_UPDATE")
     self:RegisterEvent("PLAYER_LEVEL_UP")
-    self:RegisterEvent("PLAYER_ALIVE")
 end
 
 local SpellbookHeaderIndex = 1
@@ -530,9 +529,18 @@ local function updateUnknownTab(knownSpellID)
         h = h + GwSpellbookUnknown.container.headers[i]:GetHeight() + 2
     end
 
-    GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight()/h) * GwSpellbookUnknown.slider:GetHeight() )
-    GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0,h - GwSpellbookUnknown.container:GetHeight()))
-    GwSpellbookUnknown.slider:SetValue(0)
+    if h <= GwSpellbookUnknown.container:GetHeight() then
+        GwSpellbookUnknown.slider:Hide()
+        GwSpellbookUnknown.ScrollButtonUp:Hide()
+        GwSpellbookUnknown.ScrollButtonDown:Hide()
+    else
+        GwSpellbookUnknown.slider:Show()
+        GwSpellbookUnknown.ScrollButtonUp:Show()
+        GwSpellbookUnknown.ScrollButtonDown:Show()
+        GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight()/h) * GwSpellbookUnknown.slider:GetHeight() )
+        GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0,h - GwSpellbookUnknown.container:GetHeight()))
+        GwSpellbookUnknown.slider:SetValue(0)
+    end
     knownTalents = nil
 end
 
@@ -714,8 +722,7 @@ local function LoadSpellBook()
 
     spellBookMenu_onLoad(GwSpellbookMenu)
     GwSpellbook:Hide()
-    GwSpellbookMenu:SetScript('OnEvent', function(self, event)
-        if event == "PLAYER_ALIVE" then updateSpellbookTab() end
+    GwSpellbookMenu:SetScript('OnEvent', function()
         if not GwSpellbook:IsShown() then
             return
         end

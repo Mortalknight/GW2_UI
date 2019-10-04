@@ -134,7 +134,7 @@
                  </OnLoad>
              </Scripts>
          </Slider>
-         <Button name="$parentScrollButtonUp">
+         <Button name="$parentScrollButtonUp" parentKey="ScrollButtonUp">
              <Size x="12" y="12"></Size>
                  <Anchors>
                      <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
@@ -150,7 +150,7 @@
                  </Layer>
              </Layers>
          </Button>
-         <Button name="$parentScrollButtonDown">
+         <Button name="$parentScrollButtonDown" parentKey="ScrollButtonDown">
              <Size x="12" y="12"></Size>
                  <Anchors>
              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
