@@ -452,6 +452,7 @@
                 self:RegisterEvent("LEARNED_SPELL_IN_TAB")
                 self:RegisterEvent("CHARACTER_POINTS_CHANGED")
                 self:RegisterEvent("SPELLS_CHANGED")
+                self:RegisterEvent("PLAYER_LEVEL_UP")
             </OnLoad>
         </Scripts>
     </Frame>

@@ -309,7 +309,7 @@ local function LoadTalents()
         if not GwTalentFrame:IsShown() then return end
         updateTalentTrees()
     end)
-    GwTalentFrame:HookScript('OnShow', function()
+    GwTalentFrame:SetScript('OnShow', function()
         if InCombatLockdown() then return end
         updateTalentTrees()
     end)
