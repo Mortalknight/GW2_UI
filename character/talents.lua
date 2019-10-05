@@ -305,7 +305,10 @@ local function LoadTalents()
     CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,' SecureHandlerStateTemplate,GwLegacyTalentFrame')
 
     loadTalents()
-    GwTalentFrame:SetScript('OnEvent', function()
+    GwTalentFrame:SetScript('OnEvent', function(self, event)
+        if event == "CHARACTER_POINTS_CHANGED" then
+            GwTalentFrame.bottomBar.unspentPoints:SetText(UnitCharacterPoints("player"))
+        end
         if not GwTalentFrame:IsShown() then return end
         updateTalentTrees()
     end)
