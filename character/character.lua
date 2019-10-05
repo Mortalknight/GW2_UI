@@ -441,14 +441,14 @@ function gwPaperDollSlotButton_OnHide(self)
 end
 
 function gwPaperDollSlotButton_OnEvent(self, event, ...)
-	local arg1, arg2 = ...
+    local arg1, arg2 = ...
 	if event == "PLAYER_EQUIPMENT_CHANGED" then
-		if self:GetID() == arg1 then
+        if self:GetID() == arg1 then
 			gwPaperDollSlotButton_Update(self)
         end
     elseif event == "UNIT_INVENTORY_CHANGED" then
 		if arg1 == "player" then
-			PaperDollItemSlotButton_Update(self)
+			gwPaperDollSlotButton_Update(self)
 		end
 	end
     if event == "BAG_UPDATE_COOLDOWN" then
@@ -457,12 +457,8 @@ function gwPaperDollSlotButton_OnEvent(self, event, ...)
 end
 
 function gwPaperDollSlotButton_OnEnter(self)
-	self:RegisterEvent("MODIFIER_STATE_CHANGED")
-    --[[
-    if not EquipmentFlyout_SetTooltipAnchor(self) then
-
-    end
-    ]]--
+    self:RegisterEvent("MODIFIER_STATE_CHANGED")
+    
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	local hasItem, hasCooldown, repairCost = GameTooltip:SetInventoryItem("player", self:GetID(), nil, true)
 	if not hasItem then
@@ -499,43 +495,13 @@ function gwPaperDollSlotButton_OnClick(self, button, drag)
         if infoType == "merchant" and MerchantFrame.extendedCost then
             MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost)
         else
-            if SpellCanTargetItem() then
-                local castingItem = nil
-                for bag = 0, NUM_BAG_SLOTS do
-                    for slot = 1, GetContainerNumSlots(bag) do
-                        local id = GetContainerItemID(bag, slot)
-                        if id then
-                            local name, _ = GetItemInfo(id)
-                            if IsCurrentItem(id) then
-                                castingItem = id
-                                break
-                            end
-                        end
-                    end
-                    if castingItem then
-                        break
-                    end
-                end
-                if castingItem and castingItem == 154879 then
-                    -- Awoken Titan Essence causes PickupInventoryItem to behave as protected; no idea why
-                    -- So we display a nice message instead of a UI error
-                    local itemid = GetInventoryItemID("player", self:GetID())
-                    if itemid then
-                        local name, link, quality, _ = GetItemInfo(itemid)
-                        if quality == 5 then
-                            StaticPopup_Show("GW_UNEQUIP_LEGENDARY")
-                        else
-                            StaticPopup_Show("GW_NOT_A_LEGENDARY")
-                        end
-                        return
-                    end
-                end
-            end
             PickupInventoryItem(self:GetID())
             if CursorHasItem() then
                 MerchantFrame_SetRefundItem(self, 1)
             end
-	   	end
+        end
+    else
+        UseInventoryItem(self:GetID())
 	end
 end
 
@@ -547,21 +513,11 @@ end
 
 function gwPaperDollSlotButton_Update(self)
     local slot = self:GetID()
-    if savedItemSlots[slot] == nil then
-        savedItemSlots[slot] = self
-        self.ignoreSlotCheck:SetScript("OnClick", function()
-            if not self.ignoreSlotCheck:GetChecked() then
-                C_EquipmentSet.IgnoreSlotForSave(self:GetID())
-            else
-                C_EquipmentSet.UnignoreSlotForSave(self:GetID())
-            end
-        end)
-    end
-
     local textureName = GetInventoryItemTexture("player", slot)
-	local cooldown = _G[self:GetName() .. "Cooldown"]
+    local cooldown = _G[self:GetName() .. "Cooldown"]
+
 	if textureName then
-		SetItemButtonTexture(self, textureName)
+        SetItemButtonTexture(self, textureName)
 		SetItemButtonCount(self, GetInventoryItemCount("player", slot))
 		if (GetInventoryItemBroken("player", slot) or GetInventoryItemEquippedUnusable("player", slot)) then
 			SetItemButtonTextureVertexColor(self, 0.9, 0, 0)
@@ -585,7 +541,7 @@ function gwPaperDollSlotButton_Update(self)
 			local start, duration, enable = GetInventoryItemCooldown("player", slot)
 			CooldownFrame_Set(cooldown, start, duration, enable)
 		end
-		self.hasItem = 1
+        self.hasItem = 1
 	else
         SetItemButtonTexture(self, nil)
         self.repairIcon:Hide()

@@ -45,8 +45,6 @@ GW.SpellsByLevel =
       {id =5925, requiredIds ={5924}, rank =3, baseId =5923, isTalent =1},
       -- @Holy Power Rank 4
       {id =5926, requiredIds ={5925}, rank =4, baseId =5923, isTalent =1},
-      -- @Mail undefined
-      {id =8737, isTalent =0, isSkill =1},
       -- @Leather undefined
       {id =9077, isTalent =0, isSkill =1},
       -- @Shield undefined
