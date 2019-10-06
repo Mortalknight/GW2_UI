@@ -388,20 +388,19 @@
         </Scripts>
     </Button>
 
-    <Frame name="GwLegacyTalentFrame" enableMouse="true" inherits="SecureHandlerBaseTemplate" protected="true" registerForClicks="LeftButtonUp" virtual="true">
+    <Frame name="GwLegacyTalentFrame" enableMouse="true" inherits="SecureHandlerStateTemplate,SecureHandlerBaseTemplate" protected="true" registerForClicks="LeftButtonUp" virtual="true">
         <Size x="853" y="627"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
         </Anchors>
         <Layers>
-            <Layer level="BACKGROUND"/>
-            <Layer level="BORDER">
-                <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyY="CENTER">
-                    <Size x="256" y="32"/>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed">
+                         <Size x="853" y="853"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-10"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
-                </FontString>
+                </Texture>
             </Layer>
         </Layers>
         <Frames>
@@ -412,12 +411,15 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
-                            <Size x="512" y="87"/>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                            </Anchors>
-                        </Texture>
+
+                    <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                        <Size x="2" y="2"></Size>
+                        <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="-28"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="-28"></Anchor>
+                             <Color r="0" g="0" b="0" a="0.5"></Color>
+                    </Anchors>
+                    </Texture>
                     </Layer>
                     <Layer level="BORDER">
                         <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyY="CENTER">
@@ -442,10 +444,6 @@
                 self.bottomBar.unspentPointsLabel:SetTextColor(0.7, 0.7, 0.5, 1)
                 self.bottomBar.unspentPointsLabel:SetText(BONUS_TALENTS)
 
-                self.title:SetFont(DAMAGE_TEXT_FONT, 14)
-                self.title:SetTextColor(1, 1, 1, 1)
-                self.title:SetShadowColor(0, 0, 0, 1)
-                self.title:SetShadowOffset(1, -1)
 
                 self:RegisterEvent("UNIT_MODEL_CHANGED")
                 self:RegisterEvent("UNIT_LEVEL")

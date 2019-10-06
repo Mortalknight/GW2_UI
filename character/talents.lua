@@ -167,7 +167,7 @@ local function updateTalentTrees()
         else
             TalentFrame.background:SetDesaturated(false)
         end
-        TalentFrame.talentPoints = talentPoints 
+        TalentFrame.talentPoints = talentPoints
         TalentFrame.talentFrameId = f
 
 
@@ -302,7 +302,7 @@ local function loadTalents()
 end
 
 local function LoadTalents()
-    CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,' SecureHandlerStateTemplate,GwLegacyTalentFrame')
+    CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,'GwLegacyTalentFrame')
 
     loadTalents()
     GwTalentFrame:SetScript('OnEvent', function(self, event)
