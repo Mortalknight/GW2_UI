@@ -458,7 +458,7 @@ end
 
 function gwPaperDollSlotButton_OnEnter(self)
     self:RegisterEvent("MODIFIER_STATE_CHANGED")
-    
+
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	local hasItem, hasCooldown, repairCost = GameTooltip:SetInventoryItem("player", self:GetID(), nil, true)
 	if not hasItem then
@@ -966,6 +966,16 @@ local function updateSkillItem(self)
         self.bgstatic:Show()
     end
 end
+local function abandonProffesionOnClick(self)
+    local skillIndex = self:GetParent().skillIndex
+    local skillName = self:GetParent().skillName
+
+    GW.WarningPrompt(
+        UNLEARN_SKILL:format(skillName),
+        function()
+            AbandonSkill(skillIndex)
+        end)
+end
 
 local skillsMaxValueScrollbar = 0
 function GWupdateSkills()
@@ -985,11 +995,23 @@ function GWupdateSkills()
         local f = getSkillElement(skillIndex)
         local zebra = skillIndex % 2
 
+        f.skillIndex = skillIndex
+        f.skillName = skillName
         if LastElement==nil then
             f:SetPoint("TOPLEFT", 0, -y)
         else
             f:SetPoint("TOPLEFT", LastElement, "BOTTOMLEFT", 0, 0)
         end
+
+        if isAbandonable then
+            f.abandon:Show()
+            f.abandon:SetScript("OnClick",abandonProffesionOnClick)
+        else
+            f.abandon:Hide()
+            f.abandon:SetScript("OnClick",nil)
+        end
+
+
         LastElement = f
         y = y + height
         f.name:SetText(skillName)

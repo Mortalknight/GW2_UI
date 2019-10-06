@@ -937,6 +937,19 @@
                     </OnLoad>
                 </Scripts>
             </StatusBar>
+            <Button parentKey="abandon">
+                <Size x="20" y="20"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"/>
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"/>
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"/>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
         </Frames>
         <Scripts>
             <OnEnter>
@@ -1055,6 +1068,9 @@
             <OnLoad>
                 self.backButton:SetText(CHARACTER..": "..SKILLS)
                 self:RegisterEvent('CHAT_MSG_SKILL')
+                self:RegisterEvent('TRADE_SKILL_UPDATE')
+                self:RegisterEvent("SKILL_LINES_CHANGED");
+                self:RegisterEvent("CHARACTER_POINTS_CHANGED");
             </OnLoad>
             <OnEvent>
                 GWupdateSkills()
