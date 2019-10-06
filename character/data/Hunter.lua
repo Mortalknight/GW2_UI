@@ -63,38 +63,37 @@ GW.SpellsByLevel =
 
 
 
+
  {
  [0] = {
       -- @One-Handed Axes undefined
-      {id =196, isTalent =0},
+      {id =196, isTalent =0, isSkill =1},
       -- @Two-Handed Axes undefined
-      {id =197, isTalent =0},
+      {id =197, isTalent =0, isSkill =1},
       -- @Polearms undefined
-      {id =200, isTalent =0},
+      {id =200, isTalent =0, isSkill =1},
       -- @One-Handed Swords undefined
-      {id =201, isTalent =0},
+      {id =201, isTalent =0, isSkill =1},
       -- @Two-Handed Swords undefined
-      {id =202, isTalent =0},
+      {id =202, isTalent =0, isSkill =1},
       -- @Staves undefined
-      {id =227, isTalent =0},
+      {id =227, isTalent =0, isSkill =1},
       -- @Bows undefined
-      {id =264, isTalent =0},
+      {id =264, isTalent =0, isSkill =1},
       -- @Guns undefined
-      {id =266, isTalent =0},
+      {id =266, isTalent =0, isSkill =1},
       -- @Dual Wield Passive
-      {id =674, isTalent =0},
+      {id =674, isTalent =0, isSkill =1},
       -- @Daggers undefined
-      {id =1180, isTalent =0},
+      {id =1180, isTalent =0, isSkill =1},
       -- @Thrown undefined
-      {id =2567, isTalent =0},
+      {id =2567, isTalent =0, isSkill =1},
       -- @Crossbows undefined
-      {id =5011, isTalent =0},
-      -- @Mail undefined
-      {id =8737, isTalent =0},
+      {id =5011, isTalent =0, isSkill =1},
       -- @Leather undefined
-      {id =9077, isTalent =0},
+      {id =9077, isTalent =0, isSkill =1},
       -- @Fist Weapons undefined
-      {id =15590, isTalent =0},
+      {id =15590, isTalent =0, isSkill =1},
       -- @Humanoid Slaying Rank 1
       {id =19151, rank =1, isTalent =1},
       -- @Humanoid Slaying Rank 2
@@ -400,17 +399,17 @@ GW.SpellsByLevel =
       -- @Track Beasts undefined
       {id =1494, cost =10, isTalent =0},
       -- @Shoot Bow undefined
-      {id =2480, isTalent =0},
+      {id =2480, isTalent =0, isSkill =1},
       -- @Throw undefined
-      {id =2764, isTalent =0},
+      {id =2764, isTalent =0, isSkill =1},
       -- @Raptor Strike Rank 1
       {id =2973, rank =1, isTalent =0},
       -- @Parry Passive
-      {id =3127, isTalent =0},
+      {id =3127, isTalent =0, isSkill =1},
       -- @Shoot Gun undefined
-      {id =7918, isTalent =0},
+      {id =7918, isTalent =0, isSkill =1},
       -- @Shoot Crossbow undefined
-      {id =7919, isTalent =0},
+      {id =7919, isTalent =0, isSkill =1},
        },
 [4] = {
       -- @Serpent Sting Rank 1
@@ -635,6 +634,8 @@ GW.SpellsByLevel =
 [40] = {
       -- @Volley Rank 1
       {id =1510, rank =1, cost =18000, isTalent =0},
+      -- @Mail undefined
+      {id =8737, isTalent =0, isSkill =1},
       -- @Aspect of the Pack undefined
       {id =13159, cost =18000, isTalent =0},
       -- @Raptor Strike Rank 6

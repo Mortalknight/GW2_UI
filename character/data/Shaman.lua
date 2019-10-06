@@ -5,28 +5,27 @@ end
 GW.SpellsByLevel =
 
 
+
  {
  [0] = {
       -- @One-Handed Axes undefined
-      {id =196, isTalent =0},
+      {id =196, isTalent =0, isSkill =1},
       -- @Two-Handed Axes undefined
-      {id =197, isTalent =0},
+      {id =197, isTalent =0, isSkill =1},
       -- @One-Handed Maces undefined
-      {id =198, isTalent =0},
+      {id =198, isTalent =0, isSkill =1},
       -- @Two-Handed Maces undefined
-      {id =199, isTalent =0},
+      {id =199, isTalent =0, isSkill =1},
       -- @Staves undefined
-      {id =227, isTalent =0},
+      {id =227, isTalent =0, isSkill =1},
       -- @Daggers undefined
-      {id =1180, isTalent =0},
-      -- @Mail undefined
-      {id =8737, isTalent =0},
+      {id =1180, isTalent =0, isSkill =1},
       -- @Leather undefined
-      {id =9077, isTalent =0},
+      {id =9077, isTalent =0, isSkill =1},
       -- @Shield undefined
-      {id =9116, isTalent =0},
+      {id =9116, isTalent =0, isSkill =1},
       -- @Fist Weapons undefined
-      {id =15590, isTalent =0},
+      {id =15590, isTalent =0, isSkill =1},
       -- @Concussion Rank 1
       {id =16035, rank =1, isTalent =1},
       -- @Call of Flame Rank 1
@@ -268,7 +267,7 @@ GW.SpellsByLevel =
       -- @Ancestral Knowledge Rank 5
       {id =17489, requiredIds ={17488}, rank =5, baseId =17485, isTalent =1},
       -- @Totem undefined
-      {id =27763, isTalent =0},
+      {id =27763, isTalent =0, isSkill =1},
       -- @Elemental Warding Rank 1
       {id =28996, rank =1, isTalent =1},
       -- @Elemental Warding Rank 2
@@ -324,7 +323,7 @@ GW.SpellsByLevel =
        },
 [1] = {
       -- @Block Passive
-      {id =107, isTalent =0},
+      {id =107, isTalent =0, isSkill =1},
       -- @Healing Wave Rank 1
       {id =331, rank =1, isTalent =0},
       -- @Lightning Bolt Rank 1
@@ -565,6 +564,8 @@ GW.SpellsByLevel =
       {id =8134, requiredIds ={945}, rank =5, baseId =324, cost =12000, isTalent =0},
       -- @Windfury Weapon Rank 2
       {id =8235, requiredIds ={8232}, rank =2, baseId =8232, cost =12000, isTalent =0},
+      -- @Mail undefined
+      {id =8737, isTalent =0, isSkill =1},
       -- @Flame Shock Rank 4
       {id =10447, requiredIds ={8053}, rank =4, baseId =8050, cost =12000, isTalent =0},
        },

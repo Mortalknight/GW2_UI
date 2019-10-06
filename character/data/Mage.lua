@@ -3,16 +3,17 @@ if (GW.currentClass ~= "MAGE") then return end
 GW.SpellsByLevel = GW.RaceFilter(
 
 
+
  {
  [0] = {
       -- @One-Handed Swords undefined
-      {id =201, isTalent =0},
+      {id =201, isTalent =0, isSkill =1},
       -- @Staves undefined
-      {id =227, isTalent =0},
+      {id =227, isTalent =0, isSkill =1},
       -- @Daggers undefined
-      {id =1180, isTalent =0},
+      {id =1180, isTalent =0, isSkill =1},
       -- @Wands undefined
-      {id =5009, isTalent =0},
+      {id =5009, isTalent =0, isSkill =1},
       -- @Wand Specialization Rank 1
       {id =6057, rank =1, isTalent =1},
       -- @Wand Specialization Rank 2
@@ -308,7 +309,7 @@ GW.SpellsByLevel = GW.RaceFilter(
       -- @Arcane Intellect Rank 1
       {id =1459, rank =1, cost =10, isTalent =0},
       -- @Shoot undefined
-      {id =5019, isTalent =0},
+      {id =5019, isTalent =0, isSkill =1},
        },
 [4] = {
       -- @Frostbolt Rank 1

@@ -135,23 +135,23 @@ GW.SpellsByLevel =
  {
  [0] = {
       -- @One-Handed Maces undefined
-      {id =198, isTalent =0},
+      {id =198, isTalent =0, isSkill =1},
       -- @One-Handed Swords undefined
-      {id =201, isTalent =0},
+      {id =201, isTalent =0, isSkill =1},
       -- @Bows undefined
-      {id =264, isTalent =0},
+      {id =264, isTalent =0, isSkill =1},
       -- @Guns undefined
-      {id =266, isTalent =0},
+      {id =266, isTalent =0, isSkill =1},
       -- @Dual Wield Passive
-      {id =674, isTalent =0},
+      {id =674, isTalent =0, isSkill =1},
       -- @Daggers undefined
-      {id =1180, isTalent =0},
+      {id =1180, isTalent =0, isSkill =1},
       -- @Thrown undefined
-      {id =2567, isTalent =0},
+      {id =2567, isTalent =0, isSkill =1},
       -- @Crossbows undefined
-      {id =5011, isTalent =0},
+      {id =5011, isTalent =0, isSkill =1},
       -- @Leather undefined
-      {id =9077, isTalent =0},
+      {id =9077, isTalent =0, isSkill =1},
       -- @Precision Rank 1
       {id =13705, rank =1, isTalent =1},
       -- @Dagger Specialization Rank 1
@@ -411,7 +411,7 @@ GW.SpellsByLevel =
       -- @Vigor undefined
       {id =14983, isTalent =1},
       -- @Fist Weapons undefined
-      {id =15590, isTalent =0},
+      {id =15590, isTalent =0, isSkill =1},
       -- @Hemorrhage Rank 1
       {id =16511, rank =1, isTalent =1},
       -- @Vile Poisons Rank 1
@@ -463,15 +463,15 @@ GW.SpellsByLevel =
       -- @Eviscerate Rank 1
       {id =2098, rank =1, isTalent =0},
       -- @Shoot Bow undefined
-      {id =2480, isTalent =0},
+      {id =2480, isTalent =0, isSkill =1},
       -- @Throw undefined
-      {id =2764, isTalent =0},
+      {id =2764, isTalent =0, isSkill =1},
       -- @Parry Passive
-      {id =3127, isTalent =0},
+      {id =3127, isTalent =0, isSkill =1},
       -- @Shoot Gun undefined
-      {id =7918, isTalent =0},
+      {id =7918, isTalent =0, isSkill =1},
       -- @Shoot Crossbow undefined
-      {id =7919, isTalent =0},
+      {id =7919, isTalent =0, isSkill =1},
        },
 [4] = {
       -- @Backstab Rank 1

@@ -62,22 +62,23 @@ GW:SetPreviousAbilityMap(
 GW.SpellsByLevel =
 
 
+
  {
  [0] = {
       -- @One-Handed Maces undefined
-      {id =198, isTalent =0},
+      {id =198, isTalent =0, isSkill =1},
       -- @Two-Handed Maces undefined
-      {id =199, isTalent =0},
+      {id =199, isTalent =0, isSkill =1},
       -- @Staves undefined
-      {id =227, isTalent =0},
+      {id =227, isTalent =0, isSkill =1},
       -- @Daggers undefined
-      {id =1180, isTalent =0},
+      {id =1180, isTalent =0, isSkill =1},
       -- @Insect Swarm Rank 1
       {id =5570, rank =1, isTalent =1},
       -- @Leather undefined
-      {id =9077, isTalent =0},
+      {id =9077, isTalent =0, isSkill =1},
       -- @Fist Weapons undefined
-      {id =15590, isTalent =0},
+      {id =15590, isTalent =0, isSkill =1},
       -- @Nature's Grasp Rank 1
       {id =16689, rank =1, isTalent =1},
       -- @Improved Wrath Rank 1
@@ -373,7 +374,7 @@ GW.SpellsByLevel =
       -- @Tranquil Spirit Rank 5
       {id =24972, requiredIds ={24971}, rank =5, baseId =24968, isTalent =1},
       -- @Fetish undefined
-      {id =27764, isTalent =0},
+      {id =27764, isTalent =0, isSkill =1},
        },
 [1] = {
       -- @Mark of the Wild Rank 1

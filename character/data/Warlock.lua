@@ -38,13 +38,13 @@ GW.SpellsByLevel =
  {
  [0] = {
       -- @One-Handed Swords undefined
-      {id =201, isTalent =0},
+      {id =201, isTalent =0, isSkill =1},
       -- @Staves undefined
-      {id =227, isTalent =0},
+      {id =227, isTalent =0, isSkill =1},
       -- @Daggers undefined
-      {id =1180, isTalent =0},
+      {id =1180, isTalent =0, isSkill =1},
       -- @Wands undefined
-      {id =5009, isTalent =0},
+      {id =5009, isTalent =0, isSkill =1},
       -- @Cataclysm Rank 1
       {id =17778, rank =1, isTalent =1},
       -- @Cataclysm Rank 2
@@ -352,7 +352,7 @@ GW.SpellsByLevel =
       -- @Summon Imp Summon
       {id =688, isTalent =0},
       -- @Shoot undefined
-      {id =5019, isTalent =0},
+      {id =5019, isTalent =0, isSkill =1},
        },
 [4] = {
       -- @Corruption Rank 1
