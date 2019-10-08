@@ -6,6 +6,7 @@ local MAX_SPELL_PAGES = ceil(MAX_SPELLS / SPELLS_PER_PAGE)
 local ACTIVE_PAGE = 1
 
 function gw_spell_buttonOnEnter(self)
+    if self.spellId == nil then return end
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
     local isPet = false
@@ -181,6 +182,7 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
     end
     spellbookButton_onEvent(_G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex])
+    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:Show()
 
     return _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]
 end
@@ -779,6 +781,7 @@ local function LoadSpellBook()
             f:RegisterEvent("PET_BAR_UPDATE")
             f:HookScript('OnEnter', gw_spell_buttonOnEnter)
             f:HookScript('OnLeave', gw_spell_buttonOnLeave)
+            f:Hide()
 
             line = line + 1
             x = x + 1
