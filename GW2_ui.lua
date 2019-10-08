@@ -730,7 +730,7 @@ local function loadAddon(self)
     LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf", LibSharedMedia.LOCALE_BIT_koKR)
 
     --Texture
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface\\AddOns\\GW2_UI\\Textures\\windowborder.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI_White", "Interface\\AddOns\\GW2_UI\\Textures\\ChatBubble-Background.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\UI-Tooltip-Background.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
