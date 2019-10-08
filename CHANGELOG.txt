@@ -1,5 +1,8 @@
-0.9.5
+1.0.0
 
+- Added Character Panel
+- Added Talent Panel
+- Added Spellbook
 - Added level to QuestTracker
 - Added back Searchbar to bag and bank
 - Added Welcome- and Changelog Page
