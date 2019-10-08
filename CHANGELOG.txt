@@ -1,3 +1,9 @@
+5.1.7
+
+MISCELLANEOUS
+    - Tooltip now anchor to the bottom right of the Tooltip mover frame
+
+
 5.1.6
 
 MISCELLANEOUS
@@ -39,7 +45,7 @@ FIXES
 
 
 5.1.2
-
+7
 NEW
     - Bank now has a "default" container to be consistent with backpack view
 

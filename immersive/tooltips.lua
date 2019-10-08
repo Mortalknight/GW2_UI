@@ -98,9 +98,9 @@ local function LoadTooltips()
 		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
 		RegisterMovableFrame("GwTooltip", GameTooltip, 'GameTooltipPos', 'VerticalActionBarDummy')
 		hooksecurefunc(GwTooltipMoveAble, "StopMovingOrSizing", function (frame)
-			local anchor = "TOPLEFT"
-			local x = frame:GetLeft()
-			local y = frame:GetTop() - GetScreenHeight()
+			local anchor = "BOTTOMRIGHT"
+			local x = frame:GetRight() - GetScreenWidth()
+			local y = frame:GetBottom()
 
 			frame:ClearAllPoints()
 			frame:SetPoint(anchor, x, y)
