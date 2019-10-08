@@ -258,7 +258,7 @@ local function updateTalentTrees()
     end
 end
 
-local function loadTalents()
+local function loadTalentsFrames()
     local classDisplayName, class, classID = UnitClass('player')
     local txR, txT, txH, txMH
 
@@ -288,6 +288,10 @@ local function loadTalents()
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.background:AddMaskTexture(mask)
+        container.HookScript('OnShow',function()
+            if InCombatLockdown() then return end
+            updateTalentTrees()
+        end)
 
         for y = 1, MAX_NUM_TALENT_TIERS do
             TALENT_BRANCH_ARRAY[i][y] = {}
@@ -304,7 +308,7 @@ end
 local function LoadTalents()
     CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,'GwLegacyTalentFrame')
 
-    loadTalents()
+    loadTalentsFrames()
     GwTalentFrame:SetScript('OnEvent', function(self, event)
         if event == "CHARACTER_POINTS_CHANGED" then
             GwTalentFrame.bottomBar.unspentPoints:SetText(UnitCharacterPoints("player"))
