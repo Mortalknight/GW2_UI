@@ -288,7 +288,7 @@ local function loadTalentsFrames()
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.background:AddMaskTexture(mask)
-        container.HookScript('OnShow',function()
+        container:HookScript('OnShow',function()
             if InCombatLockdown() then return end
             updateTalentTrees()
         end)
