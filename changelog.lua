@@ -398,6 +398,7 @@ GW_CHANGELOGS = "\n\n5.1.6\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.1.7
 GW_CHANGELOGS = "   - Tooltip now anchor to the bottom right of the Tooltip mover frame\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Update locals (zhTW, ptBR)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.7\n\n" .. GW_CHANGELOGS
 

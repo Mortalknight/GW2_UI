@@ -2,6 +2,7 @@
 
 MISCELLANEOUS
     - Tooltip now anchor to the bottom right of the Tooltip mover frame
+    - Update locals (zhTW, ptBR)
 
 
 5.1.6

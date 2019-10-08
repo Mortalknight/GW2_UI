@@ -685,6 +685,7 @@ local function LoadSettings()
     GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
     GwSettingsWindowSave:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
     GwSettingsWindowKeyBind:SetText(KEY_BINDING)
+    GwSettingsWindowDiscord:SetText(GwLocalization["DISCORD"])
     WelcomeScreen:SetText(GwLocalization["WELCOME"])
 
     local fnGSWMH_OnClick = function(self, button)
