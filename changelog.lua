@@ -92,5 +92,9 @@ GW_CHANGELOGS = "- Added Talent Panel\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added Spellbook\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "1.0.0\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.1.0
+GW_CHANGELOGS = "- Tooltip now anchor to the bottom right of the Tooltip mover frame\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "1.1.0\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 
