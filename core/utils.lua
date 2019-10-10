@@ -75,6 +75,22 @@ local function TimeParts(ms)
 end
 GW.TimeParts = TimeParts
 
+local function GetCIDFromGUID(guid)
+	local type, _, playerdbID, _, _, cid, creationbits = strsplit("-", guid or "")
+	if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
+		return tonumber(cid)
+	elseif type and (type == "Player" or type == "Item") then
+		return tonumber(playerdbID)
+	end
+	return 0
+end
+
+local function GetUnitCreatureId(uId)
+	local guid = UnitGUID(uId)
+	return GetCIDFromGUID(guid)
+end
+GW.GetUnitCreatureId = GetUnitCreatureId
+
 local function TimeCount(numSec, com)
     local nSeconds = tonumber(numSec)
     if nSeconds == nil then

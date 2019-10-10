@@ -488,26 +488,39 @@ local function setUnitPortraitFrame(self, event)
         self.prestigeString:Hide()
     end
 
-   --if DBM is load, check if target is a boss and set boss frame
-   local foundDBMMod = false
-   if IsAddOnLoaded("DBM-Core") then
-       local npcId = DBM:GetUnitCreatureId(self.unit)
+    --if DBM or BigWigs is load, check if target is a boss and set boss frame
+    local foundBossMod = false
+    if IsAddOnLoaded("DBM-Core") then
+        local npcId = GW.GetUnitCreatureId(self.unit)
 
-       for modId, idTable in pairs(DBM.ModLists) do
-           for i, id in ipairs(DBM.ModLists[modId]) do
-               local mod = DBM:GetModByName(id)
-               if mod.creatureId ~= nil and mod.creatureId == npcId then
-                   foundDBMMod = true
-                   break
-               end
-           end
-       end
-   end
-   if foundDBMMod and border == "boss" then
-       border = "realboss"
-   elseif foundDBMMod and border ~= "boss" then
-       border = "boss"
-   end
+        for modId, idTable in pairs(DBM.ModLists) do
+            for i, id in ipairs(DBM.ModLists[modId]) do
+                local mod = DBM:GetModByName(id)
+                if mod.creatureId ~= nil and mod.creatureId == npcId then
+                    foundBossMod = true
+                    break
+                end
+            end
+            if foundBossMod then
+                break
+            end
+        end
+    elseif IsAddOnLoaded("BigWigs") then
+        local npcId = GW.GetUnitCreatureId(self.unit)
+        if BigWigs ~= nil then
+            local BWMods = BigWigs:GetEnableMobs()
+            if BWMods[npcId] ~= nil then
+                foundBossMod = true
+            end
+        end
+    end
+
+
+    if foundBossMod and border == "boss" then
+        border = "realboss"
+    elseif foundBossMod and border ~= "boss" then
+        border = "boss"
+    end
     self.background:SetTexture(TARGET_FRAME_ART[border])
 end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
