@@ -72,7 +72,7 @@ GW_CHANGELOGS = "- Hide default Bliizard PetBarFrame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Fix position of exp bar\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n0.9.1\n\n" .. GW_CHANGELOGS
 
---VERSION 0.9.5
+--VERSION 1.0.0
 GW_CHANGELOGS = "- Update Aura Indicator for raidframes\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Update locals (zhTW, ptBR)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added level to QuestTracker\n" .. GW_CHANGELOGS
@@ -87,7 +87,14 @@ GW_CHANGELOGS = "- Added enemy buffs on targetframe\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added itemborder for professionbags\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added back Health option to raidframes\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added HealPrediction for Raidframes: Used libHealComm - Works only if all others has also this lib installed and setup\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "0.9.5\n\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added Character Panel\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added Talent Panel\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added Spellbook\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "1.0.0\n\n" .. GW_CHANGELOGS
+
+--VERSION 1.1.0
+GW_CHANGELOGS = "- Tooltip now anchor to the bottom right of the Tooltip mover frame\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "1.1.0\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 

@@ -93,6 +93,11 @@
                     <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
                  </Anchors>
              </FontString>
+             <FontString parentKey="filltext" text="All Spells are known" justifyH="CENTER" justifyY="CENTER">
+                 <Anchors>
+                    <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.headerbg" x="50" y="-100"/>
+                 </Anchors>
+             </FontString>
          </Layer>
      </Layers>
      <Frames>
@@ -182,6 +187,10 @@
 
             self.title:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
             self.title:SetTextColor(0.9, 0.9, 0.7, 1)
+
+            self.filltext:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
+            self.filltext:SetTextColor(1, 1, 1, 0.5)
+            self.filltext:SetText(ADDON_NOT_AVAILABLE)
         </OnLoad>
     </Scripts>
     </ScrollFrame>

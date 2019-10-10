@@ -412,13 +412,11 @@
                 <Layers>
                     <Layer level="BACKGROUND">
 
-                    <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                        <Size x="2" y="2"></Size>
+                    <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents-window-header">
+                        <Size x="1024" y="512"/>
                         <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="-28"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="-28"></Anchor>
-                             <Color r="0" g="0" b="0" a="0.5"></Color>
-                    </Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        </Anchors>
                     </Texture>
                     </Layer>
                     <Layer level="BORDER">
@@ -439,9 +437,10 @@
         <Scripts>
             <OnLoad>
                 self.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
-                self.bottomBar.unspentPoints:SetTextColor(0.9, 0.9, 0.8, 1)
+                self.bottomBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)
+
                 self.bottomBar.unspentPointsLabel:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
-                self.bottomBar.unspentPointsLabel:SetTextColor(0.7, 0.7, 0.5, 1)
+                self.bottomBar.unspentPointsLabel:SetTextColor(0.85, 0.70, 0.29, 1)
                 self.bottomBar.unspentPointsLabel:SetText(BONUS_TALENTS)
 
 
@@ -508,7 +507,7 @@
             <OnLoad>
                 self.info.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
                 self.info.points:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-                self.info.points:SetTextColor(0.7, 0.7, 0.5, 1)
+                self.info.points:SetTextColor(0.87, 0.74, 0.29, 1)
             </OnLoad>
             <OnShow>
                 self:SetScript('OnUpdate', function(self, elapsed)
@@ -520,8 +519,6 @@
                     end
                     self.background:SetVertexColor(0.7, 0.7, 0.7, 0.5)
                 end)
-                if InCombatLockdown() then return end
-                updateTalentTrees()
             </OnShow>
             <OnHide>
                 self:SetScript('OnUpdate', nil)

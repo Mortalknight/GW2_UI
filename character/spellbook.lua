@@ -411,7 +411,7 @@ local function filterUnknownSpell(knownSpellID,spell)
             show = false
         end
     elseif spell.isSkill ~= nil and spell.isSkill == 1 then --Check for skills
-        show = checkIfSkillShouldShown(spell.id)
+        show = false
     end
 
     local filterLower,filter = GW.isHigherRankLearnd(spell.id)
@@ -529,6 +529,12 @@ local function updateUnknownTab(knownSpellID)
     local h = 20
     for i=1,#GwSpellbookUnknown.container.headers  do
         h = h + GwSpellbookUnknown.container.headers[i]:GetHeight() + 2
+    end
+
+    if #GwSpellbookUnknown.container.headers<1 then
+        GwSpellbookUnknown.filltext:Show()
+    else
+        GwSpellbookUnknown.filltext:Hide()
     end
 
     if h <= GwSpellbookUnknown.container:GetHeight() then

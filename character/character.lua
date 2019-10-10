@@ -495,6 +495,30 @@ function gwPaperDollSlotButton_OnClick(self, button, drag)
         if infoType == "merchant" and MerchantFrame.extendedCost then
             MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost)
         else
+            if SpellCanTargetItem() then
+                local castingItem = nil
+                for bag = 0, NUM_BAG_SLOTS do
+                    for slot = 1, GetContainerNumSlots(bag) do
+                        local id = GetContainerItemID(bag, slot)
+                        if id then
+                            local _, _ = GetItemInfo(id)
+                            if IsCurrentItem(id) then
+                                castingItem = id
+                                break
+                            end
+                        end
+                    end
+                    if castingItem then
+                        break
+                    end
+                end
+                if castingItem then
+                    -- PickupInventoryItem to behave as protected if we try to upgrade any item; no idea why
+                    -- So we display a nice message instead of a UI error
+                    StaticPopup_Show("UNEQUIP_LEGENDARY")
+                    return
+                end
+            end
             PickupInventoryItem(self:GetID())
             if CursorHasItem() then
                 MerchantFrame_SetRefundItem(self, 1)
@@ -1126,6 +1150,15 @@ local function LoadPaperDoll()
     gwPaperDollUpdateStats()
     gwPaperDollUpdatePetStats()
     GwUpdateReputationDetails()
+
+    StaticPopupDialogs["UNEQUIP_LEGENDARY"] = {
+        text = GwLocalization["UNEQUIP_LEGENDARY"],
+        button1 = CANCEL,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3
+    }
 
     return GwCharacterWindowContainer
 end
