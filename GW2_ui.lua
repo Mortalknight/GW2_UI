@@ -506,6 +506,7 @@ local function loadAddon(self)
 
     if GetSetting("BAGS_ENABLED") then
         GW.LoadInventory()
+        GW.SkinLooTFrame()
     end
 
     if GetSetting("USE_BATTLEGROUND_HUD") then
@@ -638,7 +639,7 @@ local function loadAddon(self)
                 SetSetting("PIXEL_PERFECTION", false)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
             end
-        end)     
+        end)
         --Save current Version
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
@@ -675,8 +676,8 @@ local function loadAddon(self)
                 SetSetting("PIXEL_PERFECTION", false)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
             end
-        end)  
-        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)    
+        end)
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)
