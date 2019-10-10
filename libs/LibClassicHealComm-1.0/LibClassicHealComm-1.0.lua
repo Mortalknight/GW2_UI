@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 20 $
+Revision: $Revision: 21 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 20
+local minor = 21
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -390,35 +390,37 @@ local function filterData(spells, filterGUID, bitFlag, time, ignoreGUID)
 	local healAmount = 0
 	local currentTime = GetTime()
 	
-	for _, pending in pairs(spells) do
-		if( pending.bitType and bit.band(pending.bitType, bitFlag) > 0 ) then
-			for i=1, #(pending), 5 do
-				local guid = pending[i]
-				if( guid == filterGUID or ignoreGUID ) then
-					local amount = pending[i + 1]
-					local stack = pending[i + 2]
-					local endTime = pending[i + 3]
-					endTime = endTime > 0 and endTime or pending.endTime
+	if spells then
+		for _, pending in pairs(spells) do
+			if( pending.bitType and bit.band(pending.bitType, bitFlag) > 0 ) then
+				for i=1, #(pending), 5 do
+					local guid = pending[i]
+					if( guid == filterGUID or ignoreGUID ) then
+						local amount = pending[i + 1]
+						local stack = pending[i + 2]
+						local endTime = pending[i + 3]
+						endTime = endTime > 0 and endTime or pending.endTime
 
-					-- Direct heals are easy, if they match the filter then return them
-					if( ( pending.bitType == DIRECT_HEALS ) and ( not time or endTime <= time ) ) then
-						healAmount = healAmount + amount * stack
-					-- Channeled heals and hots, have to figure out how many times it'll tick within the given time band
-					elseif( ( pending.bitType == HOT_HEALS or pending.bitType == CHANNEL_HEALS ) and endTime > currentTime ) then
-						local ticksLeft = pending[i + 4]
-						if( not time or time >= endTime ) then
-							healAmount = healAmount + (amount * stack) * ticksLeft
-						else
-							local secondsLeft = endTime - currentTime
-							local bandSeconds = time - currentTime
-							local ticks = math.floor(math.min(bandSeconds, secondsLeft) / pending.tickInterval)
-							local nextTickIn = secondsLeft % pending.tickInterval
-							local fractionalBand = bandSeconds % pending.tickInterval
-							if( nextTickIn > 0 and nextTickIn < fractionalBand ) then
-								ticks = ticks + 1
+						-- Direct heals are easy, if they match the filter then return them
+						if( ( pending.bitType == DIRECT_HEALS ) and ( not time or endTime <= time ) ) then
+							healAmount = healAmount + amount * stack
+						-- Channeled heals and hots, have to figure out how many times it'll tick within the given time band
+						elseif( ( pending.bitType == HOT_HEALS or pending.bitType == CHANNEL_HEALS ) and endTime > currentTime ) then
+							local ticksLeft = pending[i + 4]
+							if( not time or time >= endTime ) then
+								healAmount = healAmount + (amount * stack) * ticksLeft
+							else
+								local secondsLeft = endTime - currentTime
+								local bandSeconds = time - currentTime
+								local ticks = math.floor(math.min(bandSeconds, secondsLeft) / pending.tickInterval)
+								local nextTickIn = secondsLeft % pending.tickInterval
+								local fractionalBand = bandSeconds % pending.tickInterval
+								if( nextTickIn > 0 and nextTickIn < fractionalBand ) then
+									ticks = ticks + 1
+								end
+								
+								healAmount = healAmount + (amount * stack) * math.min(ticks, ticksLeft)
 							end
-							
-							healAmount = healAmount + (amount * stack) * math.min(ticks, ticksLeft)
 						end
 					end
 				end
@@ -432,7 +434,7 @@ end
 -- Gets healing amount using the passed filters
 function HealComm:GetHealAmount(guid, bitFlag, time, casterGUID)
 	local amount = 0
-	if( casterGUID and pendingHeals[casterGUID] ) then
+	if( casterGUID and (pendingHeals[casterGUID] or pendingHots[casterGUID]) ) then
 		amount = filterData(pendingHeals[casterGUID], guid, bitFlag, time) + filterData(pendingHots[casterGUID], guid, bitFlag, time)
 	elseif( not casterGUID ) then
 		for _, spells in pairs(pendingHeals) do
@@ -1585,6 +1587,18 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
 	-- New hot was applied
 	elseif( ( eventType == "SPELL_AURA_APPLIED" or eventType == "SPELL_AURA_REFRESH" or eventType == "SPELL_AURA_APPLIED_DOSE" ) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE ) then
 		if( hotData[spellID] and guidToUnit[destGUID] ) then
+		
+			-- check for a downranked hot
+			for i=1,32 do
+				local name = UnitBuff(guidToUnit[destGUID],i)
+				if name == spellName then
+					spellID = select(10, UnitBuff(guidToUnit[destGUID],i))
+					break
+				elseif not name then
+					break
+				end
+			end
+			
 			-- Single target so we can just send it off now thankfully
 			local type, amount, duration = CalculateHotHealing(destGUID, spellID)
 			if( type ) then
