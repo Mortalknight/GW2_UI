@@ -59,6 +59,7 @@ inventory/inventory.lua
 inventory/bag.lua
 inventory/bank.lua
 inventory/lootframe.xml
+inventory/lootframe.lua
 
 immersive/questview.xml
 immersive/toast.xml
