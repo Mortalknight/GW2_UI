@@ -66,8 +66,8 @@ trackingTypes[136025] = {l = 0.125, r = 0.250, t = 0, b = 0.5} --mining
 trackingTypes[133939] = {l = 0, r = 0.125, t = 0, b = 0.5} --herbalism
 trackingTypes[135974] = {l = 0.750, r = 0.875, t = 0, b = 0.5} --undead
 trackingTypes[136142] = {l = 0.750, r = 0.875, t = 0, b = 0.5} --undead
-trackingTypes[1323283] = {l = 0.875, r = 1, t = 0, b = 0.5} --beast for hunter
-trackingTypes[13232811] = {l = 0, r = 0.125, t = 0.5, b = 1} --human for druid
+trackingTypes["1323283"] = {l = 0.875, r = 1, t = 0, b = 0.5} --beast for hunter
+trackingTypes["13232811"] = {l = 0, r = 0.125, t = 0.5, b = 1} --human for druid
 trackingTypes[135942] = {l = 0, r = 0.125, t = 0.5, b = 1} --human
 trackingTypes[136172] = {l = 0.250, r = 0.375, t = 0.5, b = 1} --demon
 trackingTypes[136217] = {l = 0.250, r = 0.375, t = 0.5, b = 1} --demon
