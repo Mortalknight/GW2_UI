@@ -416,8 +416,8 @@ local function relocateSearchBox(sb, f)
 
     sb:SetParent(f)
     sb:ClearAllPoints()
-    sb:SetPoint("TOPLEFT", f, "TOPLEFT", 8, -40)
-    sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -8, -40)
+    sb:SetPoint("TOPLEFT", f, "TOPLEFT", 3, -40)
+    sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -3, -40)
     sb:SetHeight(24)
 end
 GW.relocateSearchBox = relocateSearchBox
@@ -440,6 +440,8 @@ local function reskinSearchBox(sb)
 
     sb.Middle:SetHeight(24)
     sb.Middle:SetTexCoord(0, 1, 0, 1)
+
+    sb.searchIcon:SetPoint("LEFT", 3, -1)
 end
 GW.reskinSearchBox = reskinSearchBox
 
