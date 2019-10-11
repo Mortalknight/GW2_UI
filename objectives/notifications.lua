@@ -227,6 +227,7 @@ local function updateRadar(self, elapsed)
     local posX, posY = posTable:GetXY()
 
     local pFacing = GetPlayerFacing()
+    if pFacing == nil then pFacing = 0 end
     local dir_x = self.data["X"] - posX
     local dir_y = self.data["Y"] - posY
     local a = math.atan2(dir_y, dir_x)
