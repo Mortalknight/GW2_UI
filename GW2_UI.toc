@@ -68,6 +68,7 @@ immersive/chatframe.lua
 #immersive/chatbubbles.lua
 immersive/tooltips.lua
 immersive/toast.lua
+immersive/mainmenu.lua
 
 objectives/questtracker.xml
 objectives/map.lua

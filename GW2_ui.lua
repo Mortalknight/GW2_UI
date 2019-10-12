@@ -202,6 +202,33 @@ local function buttonAnim(self, name, w, hover)
 end
 GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 
+--[[
+ Basic helper function for spritemaps
+ mapExample = {
+  width = 100,
+  height = 10,
+  colums = 5,
+  rows = 3
+}
+]]--
+local function getSprite(map,x,y)
+
+
+
+    local pw = (map.width / map.colums) / map.width
+    local ph = (map.height / map.rows) / map.height
+
+    local left = pw * (x - 1)
+    local right = pw * x
+
+    local top = ph * (y - 1)
+    local bottom = ph * y
+
+    return left, right, top, bottom;
+end
+GW.getSprite = getSprite
+
+
 function GwStandardButton_OnEnter(self)
     local name = tostring(self)
     local w = self:GetWidth()
@@ -461,6 +488,7 @@ local function loadAddon(self)
     --Create Settings window
     GW.LoadSettings()
     GW.DisplaySettings()
+    GW.SkinMainMenu()
 
     --Create hud art
     GW.LoadHudArt()

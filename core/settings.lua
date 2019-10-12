@@ -445,7 +445,7 @@ local function DisplaySettings()
         end
 
         local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v.frameName], optionFrameType)
-        
+
         if v.margin or newLine and not first or padding[v.frameName].x > 440 then
             padding[v.frameName].y = padding[v.frameName].y + (pY + box_padding) * (v.margin and 2 or 1)
             padding[v.frameName].x = box_padding
@@ -740,7 +740,7 @@ local function LoadSettings()
                 SetSetting("PIXEL_PERFECTION", false)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
             end
-        end)     
+        end)
         --Save current Version
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
@@ -764,21 +764,7 @@ local function LoadSettings()
     )
     mf:Hide()
 
-    GwMainMenuFrame = CreateFrame("Button", "GwMainMenuFrame", GameMenuFrame, "GwStandardButton")
-    GwMainMenuFrame:SetText(GwLocalization["SETTINGS_BUTTON"])
-    GwMainMenuFrame:ClearAllPoints()
-    GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
-    GwMainMenuFrame:SetSize(150, 24)
-    GwMainMenuFrame:SetScript(
-        "OnClick",
-        function()
-            sWindow:Show()
-            if InCombatLockdown() then
-                return
-            end
-            ToggleGameMenu()
-        end
-    )
+
 
     lhb = CreateFrame("Button", "GwLockHudButton", UIParent, "GwStandardButton")
     lhb:SetScript("OnClick", lockHudObjects)
@@ -1456,7 +1442,7 @@ local function LoadSettings()
     )
 
     createCat(AURAS, GwLocalization["AURAS_TOOLTIP"], "GwSettingsAurasframe", 2)
-    
+
     addOptionText(
         GwLocalization["AURAS_IGNORED"],
         GwLocalization["AURAS_IGNORED_DESC"],
@@ -1464,7 +1450,7 @@ local function LoadSettings()
         "GwSettingsAurasOptions",
         function() end
     )
-    
+
     addOptionText(
         GwLocalization["AURAS_MISSING"],
         GwLocalization["AURAS_MISSING_DESC"],
