@@ -2,6 +2,7 @@
 
 - Tooltip now anchor to the bottom right of the Tooltip mover frame
 - Added custom mainmenu
+- Added custom loot frame
 
 1.0.0
 

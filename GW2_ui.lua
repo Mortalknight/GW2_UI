@@ -641,6 +641,7 @@ local function loadAddon(self)
     if GetSetting("BAGS_ENABLED") then
         GW.LoadBag()
         GW.LoadBank()
+        GW.SkinLooTFrame()
     end
 
     if GetSetting("USE_BATTLEGROUND_HUD") then

@@ -77,6 +77,8 @@ inventory/bag.xml
 inventory/bank.xml
 inventory/bag.lua
 inventory/bank.lua
+inventory/lootframe.xml
+inventory/lootframe.lua
 
 character/reputation_table.lua
 character/stats.lua
