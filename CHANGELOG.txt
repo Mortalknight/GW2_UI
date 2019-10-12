@@ -1,6 +1,7 @@
 1.1.0
 
 - Tooltip now anchor to the bottom right of the Tooltip mover frame
+- Added custom mainmenu
 
 1.0.0
 

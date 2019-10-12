@@ -445,7 +445,7 @@ local function DisplaySettings()
         end
 
         local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v.frameName], optionFrameType)
-        
+
         if v.margin or newLine and not first or padding[v.frameName].x > 440 then
             padding[v.frameName].y = padding[v.frameName].y + (pY + box_padding) * (v.margin and 2 or 1)
             padding[v.frameName].x = box_padding
@@ -752,22 +752,6 @@ local function LoadSettings()
         end
     )
     mf:Hide()
-
-    GwMainMenuFrame = CreateFrame("Button", "GwMainMenuFrame", GameMenuFrame, "GwStandardButton")
-    GwMainMenuFrame:SetText(GwLocalization["SETTINGS_BUTTON"])
-    GwMainMenuFrame:ClearAllPoints()
-    GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
-    GwMainMenuFrame:SetSize(150, 24)
-    GwMainMenuFrame:SetScript(
-        "OnClick",
-        function()
-            sWindow:Show()
-            if InCombatLockdown() then
-                return
-            end
-            ToggleGameMenu()
-        end
-    )
 
     lhb = CreateFrame("Button", "GwLockHudButton", UIParent, "GwStandardButton")
     lhb:SetScript("OnClick", lockHudObjects)

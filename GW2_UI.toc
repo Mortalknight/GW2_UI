@@ -93,6 +93,7 @@ immersive/questview.xml
 immersive/questview.lua
 immersive/chatbubbles.lua
 immersive/chatframe.lua
+immersive/mainmenu.lua
 
 objectives/map.lua
 objectives/questtracker.xml

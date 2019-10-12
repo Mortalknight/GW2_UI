@@ -593,6 +593,7 @@ local function loadAddon(self)
     --Create Settings window
     GW.LoadSettings()
     GW.DisplaySettings()
+    GW.SkinMainMenu()
 
     --Create hud art
     GW.LoadHudArt()
