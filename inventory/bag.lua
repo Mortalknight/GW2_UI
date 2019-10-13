@@ -416,8 +416,8 @@ local function relocateSearchBox(sb, f)
 
     sb:SetParent(f)
     sb:ClearAllPoints()
-    sb:SetPoint("TOPLEFT", f, "TOPLEFT", 3, -40)
-    sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -3, -40)
+    sb:SetPoint("TOPLEFT", f, "TOPLEFT", 0, -40)
+    sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -10, -40)
     sb:SetHeight(24)
 end
 GW.relocateSearchBox = relocateSearchBox
@@ -432,6 +432,8 @@ local function reskinSearchBox(sb)
     sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
+    sb.Left:SetPoint("LEFT", 0, 0)
+
     sb.Left:SetTexture(nil)
     sb.Right:SetTexture(nil)
     sb.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg")
@@ -441,7 +443,7 @@ local function reskinSearchBox(sb)
     sb.Middle:SetHeight(24)
     sb.Middle:SetTexCoord(0, 1, 0, 1)
 
-    sb.searchIcon:SetPoint("LEFT", 3, -1)
+    sb.searchIcon:Hide()
 end
 GW.reskinSearchBox = reskinSearchBox
 
