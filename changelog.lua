@@ -403,6 +403,7 @@ GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added skinned loot frame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added skinned Gamemenu\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added skinned Popups\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added custom Ghost frame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.7\n\n" .. GW_CHANGELOGS
 

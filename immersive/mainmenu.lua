@@ -126,7 +126,7 @@ local function gwSetStaticPopupSize()
     end
 end
 
-local function StaticPopup()
+local function SkinStaticPopup()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
 
@@ -171,7 +171,7 @@ local function StaticPopup()
 
     hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
 end
-GW.StaticPopup = StaticPopup
+GW.SkinStaticPopup = SkinStaticPopup
 
 -------------------------------------------------------BNToastFrame-------------------------------------------------------
 local function resizeBNToastFrame()
@@ -179,7 +179,7 @@ local function resizeBNToastFrame()
     BNToastFrame.tex:SetSize(BNToastFrame:GetSize())
 end
 
-local function BNToastFrame()
+local function SkinBNToastFrame()
     local BNToastFrame = _G["BNToastFrame"]
 
     BNToastFrame:SetBackdrop(nil)
@@ -196,4 +196,42 @@ local function BNToastFrame()
 
     BNToastFrame:HookScript("OnShow", resizeBNToastFrame)
 end
-GW.BNToastFrame = BNToastFrame
+GW.SkinBNToastFrame = SkinBNToastFrame
+
+-------------------------------------------------------GhostFrame-------------------------------------------------------
+
+local function SkinGhostFrame()
+    local GhostFrame = _G["GhostFrame"]
+    
+    _G["GhostFrameLeft"]:Hide()
+    _G["GhostFrameMiddle"]:Hide()
+    _G["GhostFrameRight"]:Hide()
+
+    local tex = GhostFrame:CreateTexture("bg", "BACKGROUND")
+    tex:SetPoint("TOP", GhostFrame, "TOP", 0, 0)
+    tex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    tex:SetSize(_G["GhostFrameContentsFrame"]:GetSize())
+    GhostFrame.tex = tex
+    addHoverToButton(GhostFrame)
+
+    _G["GhostFrameContentsFrameText"]:SetTextColor(0, 0, 0, 1)
+    _G["GhostFrameContentsFrameText"]:SetShadowOffset(0, 0)
+
+    _G["GhostFrameContentsFrameIcon"]:SetTexture("Interface\\Icons\\spell_holy_guardianspirit")
+    _G["GhostFrameContentsFrameIcon"]:ClearAllPoints()
+    _G["GhostFrameContentsFrameIcon"]:SetPoint("RIGHT", _G["GhostFrameContentsFrameText"], "LEFT", -5, 0)
+    _G["GhostFrameContentsFrameIcon"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+    GhostFrame:SetScript("OnMouseUp", nil)
+    GhostFrame:SetScript("OnMouseDown", nil)
+
+    local r = {_G["GhostFrame"]:GetRegions()}
+    local i = 1
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "Texture" and i > 3 and i < 7 then
+           c:Hide()
+        end
+        i = i + 1
+    end
+end
+GW.SkinGhostFrame = SkinGhostFrame

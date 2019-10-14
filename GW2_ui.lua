@@ -489,8 +489,9 @@ local function loadAddon(self)
     GW.LoadSettings()
     GW.DisplaySettings()
     GW.SkinMainMenu()
-    GW.StaticPopup()
-    GW.BNToastFrame()
+    GW.SkinStaticPopup()
+    GW.SkinBNToastFrame()
+    GW.SkinGhostFrame()
 
     --Create hud art
     GW.LoadHudArt()
