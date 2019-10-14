@@ -169,6 +169,6 @@ local function StaticPopup()
         _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("BOTTOMRIGHT", _G["StaticPopup" .. i .. "EditBoxRight"],"TOPLEFT", 25, -3)
     end
 
-    hooksecurefunc("StaticPopup_Resize", gwSetStaticPopupSize)
+    hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
 end
 GW.StaticPopup = StaticPopup
