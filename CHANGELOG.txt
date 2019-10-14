@@ -1,5 +1,10 @@
 5.1.7
 
+NEW
+    - Added custom Loot frame
+    - Added custom Gamemenu
+    - Added custom Staticpopup
+
 MISCELLANEOUS
     - Tooltip now anchor to the bottom right of the Tooltip mover frame
     - Update locals (zhTW, ptBR)

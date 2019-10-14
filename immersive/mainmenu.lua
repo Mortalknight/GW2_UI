@@ -11,7 +11,7 @@ local BUTTONS = {
     {button = GameMenuButtonLogout, sprite={1,3} },
     {button = GameMenuButtonQuit, sprite={2,3} },
     {button = GameMenuButtonContinue, sprite={3,3} },
-
+    {button = GameMenuButtonRatings, sprite={3,1} }
 }
 
 local ICON_SPRITES = {
@@ -94,10 +94,35 @@ local function SkinMainMenu()
 end
 GW.SkinMainMenu = SkinMainMenu
 
+-------------------------------------------------------Skin Staticpopup-------------------------------------------------------
+local function addHoverToButton(self)
+    if not self.hover then
+        local hover = self:CreateTexture("hover", "ARTWORK")
+        hover:SetPoint("LEFT", self, "LEFT")
+        hover:SetPoint("TOP", self, "TOP")
+        hover:SetPoint("BOTTOM", self, "BOTTOM")
+        hover:SetPoint("RIGHT", self, "RIGHT")
+        hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\button_hover")
+        self.hover = hover
+        self.hover:SetAlpha(0)
+
+        self:SetScript("OnEnter", GwStandardButton_OnEnter)
+        self:SetScript("OnLeave", GwStandardButton_OnLeave)
+    end
+end
+
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
         StaticPopup.tex:SetSize(StaticPopup:GetSize())
+        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\warning-icon") 
+        for ii = 1, 5 do
+            if ii < 5 then
+                addHoverToButton(_G["StaticPopup" .. i .. "Button" .. ii])
+            else
+                addHoverToButton(_G["StaticPopup" .. i .. "ExtraButton"])
+            end
+        end
     end
 end
 
@@ -111,7 +136,7 @@ local function StaticPopup()
         StaticPopup.Border:Hide()
 
         local tex = StaticPopup:CreateTexture("bg", "BACKGROUND")
-        tex:SetPoint("TOP", StaticPopup,"TOP",0,0)
+        tex:SetPoint("TOP", StaticPopup, "TOP", 0, 0)
         tex:SetSize(StaticPopup:GetSize())
         tex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\manage-group-bg")
         StaticPopup.tex = tex
@@ -122,17 +147,14 @@ local function StaticPopup()
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "Button" .. ii]:GetHighlightTexture():SetVertexColor(0, 0, 0)
                 _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetTextColor(0, 0, 0, 1)
-                --local a = _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:GetHighlightFontObject()
-                --a = _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetTextColor(0, 0, 0, 1)
                 _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetShadowOffset(0, 0)
-                _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetDrawLayer("OVERLAY")
-
-                 
             else
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "ExtraButton"]:GetHighlightTexture():SetVertexColor(0, 0, 0)
                 _G["StaticPopup" .. i .. "ExtraButtonText"]:SetTextColor(0, 0, 0, 1)
                 _G["StaticPopup" .. i .. "ExtraButtonText"]:SetShadowOffset(0, 0)
             end
@@ -141,14 +163,10 @@ local function StaticPopup()
         --Change EditBox
         _G["StaticPopup" .. i .. "EditBoxLeft"]:Hide()
         _G["StaticPopup" .. i .. "EditBoxRight"]:Hide()
-        _G["StaticPopup" .. i .. "EditBoxMid"]:Hide()
-
-        local texEB = _G["StaticPopup" .. i .. "EditBox"]:CreateTexture("bg", "BACKGROUND")
-        texEB:SetPoint("TOPLEFT", _G["StaticPopup" .. i .. "EditBox"],"TOP", -5, 3)
-        texEB:SetPoint("BOTTOMRIGHT", _G["StaticPopup" .. i .. "EditBox"],"TOP", 5, -3)
-        texEB:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar-bg")
-        
-        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\warning-icon")
+        _G["StaticPopup" .. i .. "EditBoxMid"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar-bg")
+        _G["StaticPopup" .. i .. "EditBoxMid"]:ClearAllPoints()
+        _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("TOPLEFT", _G["StaticPopup" .. i .. "EditBoxLeft"],"BOTTOMRIGHT", -25, 3)
+        _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("BOTTOMRIGHT", _G["StaticPopup" .. i .. "EditBoxRight"],"TOPLEFT", 25, -3)
     end
 
     hooksecurefunc("StaticPopup_Resize", gwSetStaticPopupSize)

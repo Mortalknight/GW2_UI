@@ -400,6 +400,10 @@ GW_CHANGELOGS = "\n\n5.1.6\n\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Tooltip now anchor to the bottom right of the Tooltip mover frame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Update locals (zhTW, ptBR)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added skinned loot frame\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added skinned Gamemenu\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added skinned Popups\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.7\n\n" .. GW_CHANGELOGS
 
 
