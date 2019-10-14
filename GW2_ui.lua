@@ -490,6 +490,7 @@ local function loadAddon(self)
     GW.DisplaySettings()
     GW.SkinMainMenu()
     GW.StaticPopup()
+    GW.BNToastFrame()
 
     --Create hud art
     GW.LoadHudArt()
@@ -629,10 +630,12 @@ local function loadAddon(self)
 
     --Texture
     LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface\\AddOns\\GW2_UI\\Textures\\windowborder.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI 2", "Interface\\Addons\\GW2_UI\\Textures\\UI-Tooltip-Background.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI_2", "Interface\\Addons\\GW2_UI\\Textures\\UI-Tooltip-Background.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\castinbar-white.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_2", "Interface\\Addons\\GW2_UI\\Textures\\gwstatusbar.tga")
+    
 
     --Check if we should show Welcomepage or Changelog
     if GetSetting("GW2_UI_VERSION") == "WELCOME" then
