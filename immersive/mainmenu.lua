@@ -199,7 +199,6 @@ end
 GW.SkinBNToastFrame = SkinBNToastFrame
 
 -------------------------------------------------------GhostFrame-------------------------------------------------------
-
 local function SkinGhostFrame()
     local GhostFrame = _G["GhostFrame"]
     
@@ -235,3 +234,31 @@ local function SkinGhostFrame()
     end
 end
 GW.SkinGhostFrame = SkinGhostFrame
+
+-------------------------------------------------------QueueStatusFrame-------------------------------------------------------
+
+local constBackdropQueueStatusFrame = {
+	bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
+	edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border",
+	tile = false,
+	tileSize = 64,
+	edgeSize = 32,
+	insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+
+local function SkinQueueStatusFrame()
+    local QueueStatusFrame = _G["QueueStatusFrame"]
+
+    QueueStatusFrame:SetBackdrop(nil)
+    QueueStatusFrame.BorderTopLeft:Hide()
+    QueueStatusFrame.BorderTopRight:Hide()
+    QueueStatusFrame.BorderBottomRight:Hide()
+    QueueStatusFrame.BorderBottomLeft:Hide()
+    QueueStatusFrame.BorderTop:Hide()
+    QueueStatusFrame.BorderRight:Hide()
+    QueueStatusFrame.BorderBottom:Hide()
+    QueueStatusFrame.BorderLeft:Hide()
+    QueueStatusFrame.Background:Hide()
+    QueueStatusFrame:SetBackdrop(constBackdropQueueStatusFrame)
+end
+GW.SkinQueueStatusFrame = SkinQueueStatusFrame
