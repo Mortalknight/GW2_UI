@@ -494,6 +494,7 @@ local function loadAddon(self)
     GW.SkinGhostFrame()
     GW.SkinQueueStatusFrame()
     GW.SkinDeathRecapFrame()
+    GW.SkinDropDownList()
 
     --Create hud art
     GW.LoadHudArt()

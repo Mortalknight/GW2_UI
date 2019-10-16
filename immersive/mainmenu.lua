@@ -325,3 +325,14 @@ local function SkinDeathRecapFrame()
     hooksecurefunc("OpenDeathRecapUI", SkinDeathRecapFrame_Loaded)
 end
 GW.SkinDeathRecapFrame = SkinDeathRecapFrame
+
+-------------------------------------------------------DropDownList-------------------------------------------------------
+local function SkinDropDownList_OnShow(self)
+    _G[self:GetName() .. "MenuBackdrop"]:Hide()
+    self:SetBackdrop(constBackdropQueueStatusFrame)
+end
+
+local function SkinDropDownList()
+    hooksecurefunc("UIDropDownMenu_OnShow", SkinDropDownList_OnShow)
+end
+GW.SkinDropDownList = SkinDropDownList
