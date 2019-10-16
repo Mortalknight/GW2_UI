@@ -148,6 +148,7 @@ local function SkinStaticPopup()
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "Button" .. ii]:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\button_disable")
                 _G["StaticPopup" .. i .. "Button" .. ii]:GetHighlightTexture():SetVertexColor(0, 0, 0)
                 _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetTextColor(0, 0, 0, 1)
                 _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetShadowOffset(0, 0)
@@ -155,6 +156,7 @@ local function SkinStaticPopup()
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "ExtraButton"]:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\button_disable")
                 _G["StaticPopup" .. i .. "ExtraButton"]:GetHighlightTexture():SetVertexColor(0, 0, 0)
                 _G["StaticPopup" .. i .. "ExtraButtonText"]:SetTextColor(0, 0, 0, 1)
                 _G["StaticPopup" .. i .. "ExtraButtonText"]:SetShadowOffset(0, 0)
@@ -258,3 +260,68 @@ local function SkinQueueStatusFrame()
     QueueStatusFrame:SetBackdrop(constBackdropQueueStatusFrame)
 end
 GW.SkinQueueStatusFrame = SkinQueueStatusFrame
+
+-------------------------------------------------------DeathRecapFrame-------------------------------------------------------
+local function SkinDeathRecapFrame_Loaded()
+    local DeathRecapFrame = _G["DeathRecapFrame"]
+
+    DeathRecapFrame.CloseButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    DeathRecapFrame.CloseButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    DeathRecapFrame.CloseButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    DeathRecapFrame.CloseButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    local r = {DeathRecapFrame.CloseButton:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType()=="FontString" then
+            c:SetTextColor(0, 0, 0, 1)
+            c:SetShadowOffset(0, 0)
+        end
+    end
+    addHoverToButton(DeathRecapFrame.CloseButton)
+
+    DeathRecapFrame.CloseXButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
+    DeathRecapFrame.CloseXButton:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
+    DeathRecapFrame.CloseXButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+    DeathRecapFrame.CloseXButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+    DeathRecapFrame.CloseXButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    DeathRecapFrame.CloseXButton:SetSize(20, 20)
+    DeathRecapFrame.CloseXButton:ClearAllPoints()
+    DeathRecapFrame.CloseXButton:SetPoint("TOPRIGHT", -3, -3)
+
+    DeathRecapFrame:SetBackdrop(nil)
+    DeathRecapFrame:SetBackdrop(constBackdropQueueStatusFrame)
+    _G["DeathRecapFrameBorderTopLeft"]:Hide()
+    _G["DeathRecapFrameBorderTopRight"]:Hide()
+    _G["DeathRecapFrameBorderBottomLeft"]:Hide()
+    _G["DeathRecapFrameBorderBottomRight"]:Hide()
+    _G["DeathRecapFrameBorderTop"]:Hide()
+    _G["DeathRecapFrameBorderBottom"]:Hide()
+    _G["DeathRecapFrameBorderLeft"]:Hide()
+    _G["DeathRecapFrameBorderRight"]:Hide()
+    DeathRecapFrame.BackgroundInnerGlow:Hide()
+    DeathRecapFrame.Background:Hide()
+    DeathRecapFrame.Divider:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chatbubbles\\border-bottom")
+    DeathRecapFrame.Divider:ClearAllPoints()
+    DeathRecapFrame.Divider:SetPoint("TOPLEFT", 4, -25)
+    DeathRecapFrame.Divider:SetPoint("TOPRIGHT", -4, -25)
+
+    DeathRecapFrame.Recap1.SpellInfo.IconBorder:Hide()
+    DeathRecapFrame.Recap1.SpellInfo.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    DeathRecapFrame.Recap2.SpellInfo.IconBorder:Hide()
+    DeathRecapFrame.Recap2.SpellInfo.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    DeathRecapFrame.Recap3.SpellInfo.IconBorder:Hide()
+    DeathRecapFrame.Recap3.SpellInfo.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    DeathRecapFrame.Recap4.SpellInfo.IconBorder:Hide()
+    DeathRecapFrame.Recap4.SpellInfo.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    DeathRecapFrame.Recap5.SpellInfo.IconBorder:Hide()
+    DeathRecapFrame.Recap5.SpellInfo.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+    DeathRecapFrame.Recap1.tombstone:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\icon-dead")
+    DeathRecapFrame.Recap1.tombstone:SetSize(30, 30)
+    DeathRecapFrame.Recap1.tombstone:ClearAllPoints()
+    DeathRecapFrame.Recap1.tombstone:SetPoint("RIGHT", DeathRecapFrame.Recap1.DamageInfo.Amount, "LEFT", 0, 0)
+end
+
+local function SkinDeathRecapFrame()
+    hooksecurefunc("OpenDeathRecapUI", SkinDeathRecapFrame_Loaded)
+end
+GW.SkinDeathRecapFrame = SkinDeathRecapFrame
