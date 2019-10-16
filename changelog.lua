@@ -97,6 +97,8 @@ GW_CHANGELOGS = "- Tooltip now anchor to the bottom right of the Tooltip mover f
 GW_CHANGELOGS = "- Added custom mainmenu\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added custom loot frame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added custom staticpopup\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added Pet diet info\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Update libs\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "1.1.0\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

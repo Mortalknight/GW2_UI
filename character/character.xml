@@ -681,7 +681,7 @@
                 </Texture>
 
             </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2"> 
                 <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness">
                     <Size x="64" y="64"></Size>
                     <Anchors>
@@ -716,6 +716,18 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame name="GwPetFrameHappinessInvisibleFrame2" enableMouse="true" hidden="true">
+                <Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+						GameTooltip:SetText(format(PET_DIET_TEMPLATE,BuildListString(GetPetFoodTypes())))
+                        GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+            </Frame>
             <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="Character: Pet" >
                 <Size x="231" y="50"></Size>
                 <Anchors>

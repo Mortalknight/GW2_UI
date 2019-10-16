@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 21 $
+Revision: $Revision: 22 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 21
+local minor = 22
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -1293,6 +1293,7 @@ local function parseDirectHeal(casterGUID, spellID, amount, castTime, ...)
 	local endTime
 	if unit == "player" then
 		endTime = select(5, CastingInfo())
+		endTime = endTime / 1000
 	else
 		endTime = GetTime() + castTime
 	end
@@ -1322,6 +1323,8 @@ local function parseChannelHeal(casterGUID, spellID, amount, totalTicks, ...)
 	local startTime, endTime
 	if unit == "player" then
 		startTime, endTime = select(4, ChannelInfo())
+		startTime = startTime / 1000
+		endTime = endTime / 1000
 	else
 		startTime = GetTime()
 		endTime = GetTime() + (GetSpellInfo(spellID) == GetSpellInfo(136) and 5 or 10)

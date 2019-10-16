@@ -4,7 +4,7 @@ Author: d87
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicCasterino", 20
+local MAJOR, MINOR = "LibClassicCasterino", 21
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -183,7 +183,7 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
         end
     elseif eventType == "SPELL_CAST_FAILED" then
 
-            CastStop(srcGUID, "CAST", "FAILED")
+            CastStop(srcGUID, "CAST", "INTERRUPTED")
 
     elseif eventType == "SPELL_CAST_SUCCESS" then
             if isSrcPlayer then
@@ -220,7 +220,7 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
 
             CastStop(dstGUID, nil, "INTERRUPTED")
     elseif eventType == "UNIT_DIED" then
-            CastStop(dstGUID, nil, "FAILED")
+            CastStop(dstGUID, nil, "INTERRUPTED")
 
     elseif  eventType == "SPELL_AURA_APPLIED" or
             eventType == "SPELL_AURA_REFRESH" or
@@ -706,7 +706,7 @@ do
             local unit = GetUnitForFreshGUID(guid)
             if unit then
                 if GetUnitSpeed(unit) ~= 0 then
-                    CastStop(guid, nil, "FAILED")
+                    CastStop(guid, nil, "INTERRUPTED")
                     movecheckGUIDs[guid] = nil
                     return
                 end

@@ -1,11 +1,12 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 34
+local Type, Version = "SpellTable", 37
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
 local Talent = lib.Talent
+local INFINITY = math.huge
 
 local _, class = UnitClass("player")
 local locale = GetLocale()
@@ -39,6 +40,7 @@ if class == "MAGE" then
             ["SPELL_DAMAGE"] = true
         },
         targetSpellID = 22959, -- Fire Vulnerability
+        targetResistCheck = true,
         condition = function(isMine) return isMine end,
         -- it'll refresg only from mages personal casts which is fine
         -- because if mage doesn't have imp scorch then he won't even see a Fire Vulnerability timer
@@ -61,6 +63,7 @@ if class == "PRIEST" then
             ["SPELL_AURA_REFRESH"] = true,
         },
         targetSpellID = 15258, -- Shadow Weaving
+        targetResistCheck = true,
         condition = function(isMine) return isMine end,
     }
     lib.indirectRefreshSpells[GetSpellInfo(10947)] = { -- Mind Blast
@@ -68,6 +71,7 @@ if class == "PRIEST" then
             ["SPELL_DAMAGE"] = true,
         },
         targetSpellID = 15258, -- Shadow Weaving
+        targetResistCheck = true,
         condition = function(isMine) return isMine end,
     }
     lib.indirectRefreshSpells[GetSpellInfo(18807)] = { -- Mind Flay
@@ -76,6 +80,7 @@ if class == "PRIEST" then
             ["SPELL_AURA_REFRESH"] = true,
         },
         targetSpellID = 15258, -- Shadow Weaving
+        targetResistCheck = true,
         condition = function(isMine) return isMine end,
     }
 end
@@ -146,6 +151,9 @@ Spell( 7744, { duration = 5, type = "BUFF" }) -- Will of the Forsaken
 -------------
 -- PRIEST
 -------------
+
+Spell( 15473, { duration = INFINITY, type = "BUFF" }) -- Shadowform
+Spell( 14751, { duration = INFINITY, type = "BUFF" }) -- Inner focus
 
 -- Why long auras are disabled
 -- When you first get in combat log range with a player,
@@ -225,6 +233,14 @@ Spell({ 605, 10911, 10912 }, { duration = 60 }) -- Mind Control
 ---------------
 -- DRUID
 ---------------
+
+Spell( 768, { duration = INFINITY, type = "BUFF" }) -- Cat Form
+Spell( 783, { duration = INFINITY, type = "BUFF" }) -- Travel Form
+Spell( 5487, { duration = INFINITY, type = "BUFF" }) -- Bear Form
+Spell( 9634, { duration = INFINITY, type = "BUFF" }) -- Dire Bear Form
+Spell( 1066, { duration = INFINITY, type = "BUFF" }) -- Aquatic Form
+Spell( 24858, { duration = INFINITY, type = "BUFF" }) -- Moonkin Form
+Spell( 17116, { duration = INFINITY, type = "BUFF" }) -- Nature's Swiftness
 
 Spell({ 1126, 5232, 5234, 6756, 8907, 9884, 9885 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Mark of the Wild
 Spell({ 21849, 21850 }, { duration = 3600, type = "BUFF", castFilter = true }) -- Gift of the Wild
@@ -306,6 +322,10 @@ Spell({ 5570, 24974, 24975, 24976, 24977 }, { duration = 12, stacking = true }) 
 -- WARRIOR
 -------------
 
+Spell( 2457 , { duration = INFINITY, type = "BUFF" }) -- Battle Stance
+Spell( 2458 , { duration = INFINITY, type = "BUFF" }) -- Berserker Stance
+Spell( 71 , { duration = INFINITY, type = "BUFF" }) -- Def Stance
+
 Spell( 12294, { duration = 10 }) -- Mortal Strike Healing Reduction
 
 Spell({72, 1671, 1672}, { duration = 6 }) -- Shield Bash
@@ -382,6 +402,9 @@ Spell(5530, { duration = 3 }) -- Mace Specialization
 --------------
 -- ROGUE
 --------------
+
+Spell( 14177 , { duration = INFINITY, type = "BUFF" }) -- Cold Blood
+Spell({ 1784, 1785, 1786, 1787 } , { duration = INFINITY, type = "BUFF" }) -- Stealth
 
 Spell( 14278 , { duration = 7, type = "BUFF" }) -- Ghostly Strike
 Spell({ 16511, 17347, 17348 }, { duration = 15 }) -- Hemorrhage
@@ -533,6 +556,21 @@ Spell( 18093 ,{ duration = 3 }) -- Pyroclasm
 -- SHAMAN
 ---------------
 
+Spell({ 8185, 10534, 10535 }, { duration = INFINITY, type = "BUFF" }) -- Fire Resistance Totem
+Spell({ 8182, 10476, 10477 }, { duration = INFINITY, type = "BUFF" }) -- Frost Resistance Totem
+Spell({ 10596, 10598, 10599 }, { duration = INFINITY, type = "BUFF" }) -- Nature Resistance Totem
+Spell( 25909, { duration = INFINITY, type = "BUFF" }) -- Tranquil Air Totem
+Spell({ 5672, 6371, 6372, 10460, 10461 }, { duration = INFINITY, type = "BUFF" }) -- Healing Stream Totem
+Spell({ 5677, 10491, 10493, 10494 }, { duration = INFINITY, type = "BUFF" }) -- Mana Spring Totem
+Spell({ 8076, 8162, 8163, 10441, 25362 }, { duration = INFINITY, type = "BUFF" }) -- Strength of Earth Totem
+Spell({ 8836, 10626, 25360 }, { duration = INFINITY, type = "BUFF" }) -- Grace of Air Totem
+Spell({ 8072, 8156, 8157, 10403, 10404, 10405 }, { duration = INFINITY, type = "BUFF" }) -- Stoneskin Totem
+
+Spell( 8178 ,{ duration = 45, type = "BUFF" }) -- Grounding Totem Effect, no duration, but lasts 45s. Keeping for enemy buffs
+
+-- Using Druid's NS
+-- Spell( 16188, { duration = INFINITY, type = "BUFF" }) -- Nature's Swiftness
+
 Spell({ 324, 325, 905, 945, 8134, 10431, 10432 }, { duration = 600, type = "BUFF" }) -- Lightning Shield
 Spell( 546 ,{ duration = 600, type = "BUFF" }) -- Water Walkign
 Spell( 131 ,{ duration = 600, type = "BUFF" }) -- Water Breahing
@@ -545,13 +583,20 @@ Spell({ 8050, 8052, 8053, 10447, 10448, 29228 }, { duration = 12, stacking = tru
 Spell( 29203 ,{ duration = 15, type = "BUFF" }) -- Healing Way
 Spell({ 8034, 8037, 10458, 16352, 16353 }, { duration = 8 }) -- Frostbrand Attack
 Spell( 3600 ,{ duration = 5 }) -- Earthbind Totem
-Spell( 8178 ,{ duration = 45, type = "BUFF" }) -- Grounding Totem Effect, no duration, but lasts 45s. Keeping for enemy buffs
 
 --------------
 -- PALADIN
 --------------
 
--- Spell( 25780, { duration = 1800, type = "BUFF" }) -- Righteous Fury
+Spell( 19746, { duration = INFINITY, type = "BUFF" }) -- Concentration Aura
+Spell({ 465, 643, 1032, 10290, 10291, 10292, 10293 }, { duration = INFINITY, type = "BUFF" }) -- Devotion Aura
+Spell({ 19891, 19899, 19900 }, { duration = INFINITY, type = "BUFF" }) -- Fire Resistance Aura
+Spell({ 19888, 19897, 19898 }, { duration = INFINITY, type = "BUFF" }) -- Frost Resistance Aura
+Spell({ 19876, 19895, 19896 }, { duration = INFINITY, type = "BUFF" }) -- Shadow Resistance Aura
+Spell({ 7294, 10298, 10299, 10300, 10301 }, { duration = INFINITY, type = "BUFF" }) -- Retribution Aura
+
+
+Spell( 25780, { duration = 1800, type = "BUFF" }) -- Righteous Fury
 
 Spell({ 19740, 19834, 19835, 19836, 19837, 19838, 25291 }, { duration = 300, type = "BUFF" }) -- Blessing of Might
 Spell({ 25782, 25916 }, { duration = 900, type = "BUFF" }) -- Greater Blessing of Might
@@ -649,6 +694,14 @@ Spell( 20170 ,{ duration = 2 }) -- Seal of Justice stun
 -- HUNTER
 -------------
 
+Spell( 13161, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Beast
+Spell( 5118, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Cheetah
+Spell( 13159, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Pack
+Spell( 13163, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Monkey
+Spell({ 20043, 20190 }, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Wild
+Spell({ 13165, 14318, 14319, 14320, 14321, 14322, 25296 }, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Hawk
+Spell( 5384, { duration = INFINITY, type = "BUFF" }) -- Feign Death (Will it work?)
+
 Spell({ 19506, 20905, 20906 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Trueshot Aura
 --SKIPPING: Frenzy
 Spell({ 1130, 14323, 14324, 14325 }, { duration = 120 }) -- Hunter's Mark
@@ -693,10 +746,14 @@ Spell(24394, { duration = 3 }) -- Intimidation
 -- Spell(15571, { duration = 4 }) -- Daze from Aspect
 Spell(19185, { duration = 5 }) -- Entrapment
 Spell(25999, { duration = 1 }) -- Boar Charge
+Spell(1002, { duration = 60 }) -- Eye of the Beast
+Spell(1539, { duration = 20 }) -- Feed Pet Effect
 
 -------------
 -- MAGE
 -------------
+
+Spell( 12043, { duration = INFINITY, type = "BUFF" }) -- Presence of Mind
 
 Spell({ 1459, 1460, 1461, 10156, 10157 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Arcane Intellect
 Spell( 23028, { duration = 3600, type = "BUFF", castFilter = true }) -- Arcane Brilliance

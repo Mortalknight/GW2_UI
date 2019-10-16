@@ -1,4 +1,32 @@
 local _, GW = ...
+
+-------------------------------------------------------Skin functions-------------------------------------------------------
+local function addHoverToButton(self)
+    if not self.hover then
+        local hover = self:CreateTexture("hover", "ARTWORK")
+        hover:SetPoint("LEFT", self, "LEFT")
+        hover:SetPoint("TOP", self, "TOP")
+        hover:SetPoint("BOTTOM", self, "BOTTOM")
+        hover:SetPoint("RIGHT", self, "RIGHT")
+        hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\button_hover")
+        self.hover = hover
+        self.hover:SetAlpha(0)
+
+        self:SetScript("OnEnter", GwStandardButton_OnEnter)
+        self:SetScript("OnLeave", GwStandardButton_OnLeave)
+    end
+end
+
+local constBackdropQueueStatusFrame = {
+	bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
+	edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border",
+	tile = false,
+	tileSize = 64,
+	edgeSize = 32,
+	insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+
+-------------------------------------------------------Skin GameMenuFrame-------------------------------------------------------
 local BUTTONS = {
     {button = GameMenuButtonHelp, sprite={1,1} },
     {button = GameMenuButtonOptions, sprite={4,1} },
@@ -90,22 +118,6 @@ end
 GW.SkinMainMenu = SkinMainMenu
 
 -------------------------------------------------------Skin Staticpopup-------------------------------------------------------
-local function addHoverToButton(self)
-    if not self.hover then
-        local hover = self:CreateTexture("hover", "ARTWORK")
-        hover:SetPoint("LEFT", self, "LEFT")
-        hover:SetPoint("TOP", self, "TOP")
-        hover:SetPoint("BOTTOM", self, "BOTTOM")
-        hover:SetPoint("RIGHT", self, "RIGHT")
-        hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\button_hover")
-        self.hover = hover
-        self.hover:SetAlpha(0)
-
-        self:SetScript("OnEnter", GwStandardButton_OnEnter)
-        self:SetScript("OnLeave", GwStandardButton_OnLeave)
-    end
-end
-
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
@@ -121,7 +133,7 @@ local function gwSetStaticPopupSize()
     end
 end
 
-local function StaticPopup()
+local function SkinStaticPopup()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
 
@@ -141,6 +153,7 @@ local function StaticPopup()
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "Button" .. ii]:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\button_disable")
                 _G["StaticPopup" .. i .. "Button" .. ii]:GetHighlightTexture():SetVertexColor(0, 0, 0)
                 _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetTextColor(0, 0, 0, 1)
                 _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetShadowOffset(0, 0)
@@ -149,6 +162,7 @@ local function StaticPopup()
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "ExtraButton"]:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\button_disable")
                 _G["StaticPopup" .. i .. "ExtraButton"]:GetHighlightTexture():SetVertexColor(0, 0, 0)
                 _G["StaticPopup" .. i .. "ExtraButtonText"]:SetTextColor(0, 0, 0, 1)
                 _G["StaticPopup" .. i .. "ExtraButtonText"]:SetShadowOffset(0, 0)
@@ -166,4 +180,40 @@ local function StaticPopup()
 
     hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
 end
-GW.StaticPopup = StaticPopup
+GW.SkinStaticPopup = SkinStaticPopup
+
+-------------------------------------------------------BNToastFrame-------------------------------------------------------
+local function resizeBNToastFrame()
+    local BNToastFrame = _G["BNToastFrame"]
+    BNToastFrame.tex:SetSize(BNToastFrame:GetSize())
+end
+
+local function SkinBNToastFrame()
+    local BNToastFrame = _G["BNToastFrame"]
+
+    BNToastFrame:SetBackdrop(nil)
+
+    local tex = BNToastFrame:CreateTexture("bg", "BACKGROUND")
+    tex:SetPoint("TOP", BNToastFrame, "TOP", 0, 0)
+    tex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\manage-group-bg")
+    tex:SetSize(BNToastFrame:GetSize())
+    BNToastFrame.tex = tex
+
+    BNToastFrame.CloseButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
+    BNToastFrame.CloseButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+    BNToastFrame.CloseButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+
+    BNToastFrame:HookScript("OnShow", resizeBNToastFrame)
+end
+GW.SkinBNToastFrame = SkinBNToastFrame
+
+-------------------------------------------------------DropDownList-------------------------------------------------------
+local function UIDropDownMenu_OnUpdate(self)
+    _G[self:GetName() .. "MenuBackdrop"]:Hide()
+    self:SetBackdrop(constBackdropQueueStatusFrame)
+end
+
+local function SkinDropDownList()
+    hooksecurefunc("UIDropDownMenu_OnUpdate", UIDropDownMenu_OnUpdate)
+end
+GW.SkinDropDownList = SkinDropDownList

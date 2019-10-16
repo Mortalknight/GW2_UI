@@ -61,7 +61,7 @@ Usage example 2:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 25
+local MAJOR, MINOR = "LibClassicDurations", 28
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -102,7 +102,7 @@ local spells = lib.spells
 local npc_spells = lib.npc_spells
 local indirectRefreshSpells
 
-
+local INFINITY = math.huge
 local PURGE_INTERVAL = 900
 local PURGE_THRESHOLD = 1800
 local UNKNOWN_AURA_DURATION = 3600 -- 60m
@@ -421,14 +421,22 @@ local function SetTimer(srcGUID, dstGUID, dstName, dstFlags, spellID, spellName,
     guidAccessTimes[dstGUID] = now
 end
 
-local function NotifyGUIDBuffChange(dstGUID)
+local function FireToUnits(event, dstGUID)
     if dstGUID == UnitGUID("target") then
-        callbacks:Fire("UNIT_BUFF", "target")
+        callbacks:Fire(event, "target")
     end
     local nameplateUnit = nameplateUnitMap[dstGUID]
     if nameplateUnit then
-        callbacks:Fire("UNIT_BUFF", nameplateUnit)
+        callbacks:Fire(event, nameplateUnit)
     end
+end
+
+local function GetLastRankSpellID(spellName)
+    local spellID = spellNameToID[spellName]
+    if not spellID then
+        spellID = NPCspellNameToID[spellName]
+    end
+    return spellID
 end
 
 local lastSpellCastName
@@ -438,7 +446,8 @@ function f:UNIT_SPELLCAST_SUCCEEDED(event, unit, castID, spellID)
     lastSpellCastTime = GetTime()
 end
 
-local SunderArmorName = GetSpellInfo(11597)
+local lastResistSpellID
+local lastResistTime = 0
 ---------------------------
 -- COMBAT LOG HANDLER
 ---------------------------
@@ -460,6 +469,13 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
                 if not condition(isMine) then return end
             end
 
+            if refreshTable.targetResistCheck then
+                local now = GetTime()
+                if lastResistSpellID == targetSpellID and now - lastResistTime < 0.4 then
+                    return
+                end
+            end
+
             if refreshTable.applyAura then
                 local opts = spells[targetSpellID]
                 if opts then
@@ -473,18 +489,26 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
         end
     end
 
-    if auraType == "BUFF" or auraType == "DEBUFF" then
-        local isSrcPlayer = bit_band(srcFlags, COMBATLOG_OBJECT_TYPE_PLAYER) > 0
+    if  eventType == "SPELL_MISSED" and
+        bit_band(srcFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE
+    then
+        local missType = auraType
+        if missType == "RESIST" then
+            spellID = GetLastRankSpellID(spellName)
+            if not spellID then
+                return
+            end
 
+            lastResistSpellID = spellID
+            lastResistTime = GetTime()
+        end
+    end
+
+    if auraType == "BUFF" or auraType == "DEBUFF" then
         if spellID == 0 then
             -- so not to rewrite the whole thing to spellnames after the combat log change
             -- just treat everything as max rank id of that spell name
-            if isSrcPlayer then
-                spellID = spellNameToID[spellName]
-            else
-                spellID = NPCspellNameToID[spellName]
-            end
-
+            spellID = GetLastRankSpellID(spellName)
             if not spellID then
                 return
             end
@@ -512,7 +536,7 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
                 eventType == "SPELL_AURA_APPLIED" or
                 eventType == "SPELL_AURA_APPLIED_DOSE"
             then
-                if not opts.castFilter or
+                if  not opts.castFilter or
                     (lastSpellCastName == spellName and lastSpellCastTime + 1 > GetTime()) or
                     isEnemyBuff
                 then
@@ -527,7 +551,13 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
                 -- invalidate buff cache
                 buffCacheValid[dstGUID] = nil
 
-                NotifyGUIDBuffChange(dstGUID)
+                FireToUnits("UNIT_BUFF", dstGUID)
+                if  eventType == "SPELL_AURA_REFRESH" or
+                    eventType == "SPELL_AURA_APPLIED" or
+                    eventType == "SPELL_AURA_APPLIED_DOSE"
+                then
+                    FireToUnits("UNIT_BUFF_GAINED", dstGUID, spellID)
+                end
             end
         end
     end
@@ -538,7 +568,7 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
         guidAccessTimes[dstGUID] = nil
         local isDstFriendly = bit_band(dstFlags, COMBATLOG_OBJECT_REACTION_FRIENDLY) > 0
         if enableEnemyBuffTracking and not isDstFriendly then
-            NotifyGUIDBuffChange(dstGUID)
+            FireToUnits("UNIT_BUFF", dstGUID)
         end
         nameplateUnitMap[dstGUID] = nil
     end
@@ -553,7 +583,8 @@ local makeBuffInfo = function(spellID, applicationTable, dstGUID, srcGUID)
     local duration = cleanDuration(durationFunc, spellID, srcGUID, comboPoints) -- srcGUID isn't needed actually
     -- no DRs on buffs
     local expirationTime = startTime + duration
-    if duration == 0 then
+    if duration == INFINITY then
+        duration = 0
         expirationTime = 0
     end
     local now = GetTime()
@@ -775,3 +806,29 @@ function lib:UnregisterFrame(frame)
     end
 end
 lib.Unregister = lib.UnregisterFrame
+
+
+function lib:ToggleDebug()
+    if not lib.debug then
+        lib.debug = CreateFrame("Frame")
+        lib.debug:SetScript("OnEvent",function( self, event )
+            local timestamp, eventType, hideCaster,
+            srcGUID, srcName, srcFlags, srcFlags2,
+            dstGUID, dstName, dstFlags, dstFlags2,
+            spellID, spellName, spellSchool, auraType, amount = CombatLogGetCurrentEventInfo()
+            local isSrcPlayer = (bit_band(srcFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE)
+            if isSrcPlayer then
+                print (GetTime(), "ID:", spellID, spellName, eventType, srcFlags, srcGUID,"|cff00ff00==>|r", dstGUID, dstFlags, auraType, amount)
+            end
+        end)
+    end
+    if not lib.debug.enabled then
+        lib.debug:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        lib.debug.enabled = true
+        print("[LCD] Enabled combat log event display")
+    else
+        lib.debug:UnregisterAllEvents()
+        lib.debug.enabled = false
+        print("[LCD] Disabled combat log event display")
+    end
+end
