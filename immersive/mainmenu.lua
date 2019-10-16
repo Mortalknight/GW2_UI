@@ -1,17 +1,36 @@
 local _, GW = ...
+
+-------------------------------------------------------Skin functions-------------------------------------------------------
+local function addHoverToButton(self)
+    if not self.hover then
+        local hover = self:CreateTexture("hover", "ARTWORK")
+        hover:SetPoint("LEFT", self, "LEFT")
+        hover:SetPoint("TOP", self, "TOP")
+        hover:SetPoint("BOTTOM", self, "BOTTOM")
+        hover:SetPoint("RIGHT", self, "RIGHT")
+        hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\button_hover")
+        self.hover = hover
+        self.hover:SetAlpha(0)
+
+        self:SetScript("OnEnter", GwStandardButton_OnEnter)
+        self:SetScript("OnLeave", GwStandardButton_OnLeave)
+    end
+end
+
+-------------------------------------------------------Skin GameMenuFrame-------------------------------------------------------
 local BUTTONS = {
-    {button = GameMenuButtonHelp, sprite={1,1} },
-    {button = GameMenuButtonStore, sprite={2,1} },
-    {button = GameMenuButtonWhatsNew, sprite={3,1} },
-    {button = GameMenuButtonOptions, sprite={4,1} },
-    {button = GameMenuButtonUIOptions, sprite={1,2} },
-    {button = GameMenuButtonKeybindings, sprite={2,2} },
-    {button = GameMenuButtonMacros, sprite={3,2} },
-    {button = GameMenuButtonAddons, sprite={4,2} },
-    {button = GameMenuButtonLogout, sprite={1,3} },
-    {button = GameMenuButtonQuit, sprite={2,3} },
-    {button = GameMenuButtonContinue, sprite={3,3} },
-    {button = GameMenuButtonRatings, sprite={3,1} }
+    {button = GameMenuButtonHelp, sprite={1,1}},
+    {button = GameMenuButtonStore, sprite={2,1}},
+    {button = GameMenuButtonWhatsNew, sprite={3,1}},
+    {button = GameMenuButtonOptions, sprite={4,1}},
+    {button = GameMenuButtonUIOptions, sprite={1,2}},
+    {button = GameMenuButtonKeybindings, sprite={2,2}},
+    {button = GameMenuButtonMacros, sprite={3,2}},
+    {button = GameMenuButtonAddons, sprite={4,2}},
+    {button = GameMenuButtonLogout, sprite={1,3}},
+    {button = GameMenuButtonQuit, sprite={2,3}},
+    {button = GameMenuButtonContinue, sprite={3,3}},
+    {button = GameMenuButtonRatings, sprite={3,1}}
 }
 
 local ICON_SPRITES = {
@@ -21,11 +40,10 @@ local ICON_SPRITES = {
  rows = 4
 }
 
-
 local function applyButtonStyle()
     for _,f in pairs(BUTTONS) do
         local b = f.button
-        if b~=nil then
+        if b ~= nil then
 
             b.Right:Hide()
             b.Left:Hide()
@@ -54,7 +72,6 @@ local function applyButtonStyle()
 end
 
 local function SkinMainMenu()
-
     --Setup addon button
     GwMainMenuFrame = CreateFrame("Button", "GwMainMenuFrame", GameMenuFrame, "GameMenuButtonTemplate")
     GwMainMenuFrame:SetText(GwLocalization["SETTINGS_BUTTON"])
@@ -95,22 +112,6 @@ end
 GW.SkinMainMenu = SkinMainMenu
 
 -------------------------------------------------------Skin Staticpopup-------------------------------------------------------
-local function addHoverToButton(self)
-    if not self.hover then
-        local hover = self:CreateTexture("hover", "ARTWORK")
-        hover:SetPoint("LEFT", self, "LEFT")
-        hover:SetPoint("TOP", self, "TOP")
-        hover:SetPoint("BOTTOM", self, "BOTTOM")
-        hover:SetPoint("RIGHT", self, "RIGHT")
-        hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\button_hover")
-        self.hover = hover
-        self.hover:SetAlpha(0)
-
-        self:SetScript("OnEnter", GwStandardButton_OnEnter)
-        self:SetScript("OnLeave", GwStandardButton_OnLeave)
-    end
-end
-
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
@@ -201,10 +202,6 @@ GW.SkinBNToastFrame = SkinBNToastFrame
 -------------------------------------------------------GhostFrame-------------------------------------------------------
 local function SkinGhostFrame()
     local GhostFrame = _G["GhostFrame"]
-    
-    _G["GhostFrameLeft"]:Hide()
-    _G["GhostFrameMiddle"]:Hide()
-    _G["GhostFrameRight"]:Hide()
 
     local tex = GhostFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", GhostFrame, "TOP", 0, 0)
@@ -227,7 +224,7 @@ local function SkinGhostFrame()
     local r = {_G["GhostFrame"]:GetRegions()}
     local i = 1
     for _,c in pairs(r) do
-        if c:GetObjectType() == "Texture" and i > 3 and i < 7 then
+        if c:GetObjectType() == "Texture" and i < 7 then
            c:Hide()
         end
         i = i + 1
@@ -236,7 +233,6 @@ end
 GW.SkinGhostFrame = SkinGhostFrame
 
 -------------------------------------------------------QueueStatusFrame-------------------------------------------------------
-
 local constBackdropQueueStatusFrame = {
 	bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
 	edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border",
