@@ -69,6 +69,7 @@ local function styleTooltip(self)
 		return
 	end
 	self:SetBackdrop(constBackdropArgs)
+	_G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface\\Addons\\GW2_UI\\Textures\\castinbar-white")
 end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
@@ -94,6 +95,7 @@ local function LoadTooltips()
 	else
 		GameTooltip:HookScript("OnTooltipSetUnit", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetQuest", movePlacement)
+		GameTooltip:HookScript("OnTooltipSetItem", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetSpell", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
 		RegisterMovableFrame("GwTooltip", GameTooltip, 'GameTooltipPos', 'VerticalActionBarDummy')
