@@ -226,9 +226,9 @@ GW.SkinDropDownList = SkinDropDownList
 
 -------------------------------------------------------UIDropDownMenu-------------------------------------------------------
 local function SkinUIDropDownMenu_Initialize(self)
-    self.Left:Hide()
-    self.Middle:Hide()
-    self.Right:Hide()
+    if self.Left then self.Left:Hide() end
+    if self.Middle then self.Middle:Hide() end
+    if self.Right then self.Right:Hide() end
 
     self.Button.NormalTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
     self.Button:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
