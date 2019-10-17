@@ -17,7 +17,7 @@ local function addHoverToButton(self)
     end
 end
 
-local constBackdropQueueStatusFrame = {
+local constBackdropFrame = {
 	bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
 	edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border",
 	tile = false,
@@ -209,11 +209,42 @@ GW.SkinBNToastFrame = SkinBNToastFrame
 
 -------------------------------------------------------DropDownList-------------------------------------------------------
 local function UIDropDownMenu_OnUpdate(self)
+    _G[self:GetName() .. "Backdrop"]:Hide()
     _G[self:GetName() .. "MenuBackdrop"]:Hide()
-    self:SetBackdrop(constBackdropQueueStatusFrame)
+    self:SetBackdrop(constBackdropFrame)
+    for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
+        if _G[self:GetName() .. "Button" .. i .. "ExpandArrow"] then
+            _G[self:GetName() .. "Button" .. i .. "ExpandArrow"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\arrow_right")
+        end
+    end
 end
 
 local function SkinDropDownList()
     hooksecurefunc("UIDropDownMenu_OnUpdate", UIDropDownMenu_OnUpdate)
 end
 GW.SkinDropDownList = SkinDropDownList
+
+-------------------------------------------------------UIDropDownMenu-------------------------------------------------------
+local function SkinUIDropDownMenu_Initialize(self)
+    self.Left:Hide()
+    self.Middle:Hide()
+    self.Right:Hide()
+
+    self.Button.NormalTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+    self.Button:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+    self.Button:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+    self.Button:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+
+    local tex = self:CreateTexture("bg", "BACKGROUND")
+    tex:SetPoint("TOP", self, "TOP", 0, 0)
+    tex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar")
+    tex:SetPoint("TOPLEFT", self.Left, "BOTTOMRIGHT", 0, 23)
+    tex:SetPoint("BOTTOMRIGHT", self.Right, "TOPLEFT", 10, -20)
+    tex:SetVertexColor(0, 0, 0)
+    self.tex = tex
+end
+
+local function SkinUIDropDownMenu()
+    hooksecurefunc("UIDropDownMenu_Initialize", SkinUIDropDownMenu_Initialize)
+end
+GW.SkinUIDropDownMenu = SkinUIDropDownMenu

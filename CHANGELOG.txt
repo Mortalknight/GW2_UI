@@ -1,3 +1,7 @@
+1.2.0
+
+- Added custom UIDropDownMenu
+
 1.1.0
 
 - Tooltip now anchor to the bottom right of the Tooltip mover frame
