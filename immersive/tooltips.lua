@@ -97,7 +97,7 @@ local function LoadTooltips()
 	else
 		GameTooltip:HookScript("OnTooltipSetUnit", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetQuest", movePlacement)
-		GameTooltip:HookScript("OnTooltipSetItem", movePlacement)
+		--GameTooltip:HookScript("OnTooltipSetItem", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetSpell", movePlacement)
 		GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
 		RegisterMovableFrame("GwTooltip", GameTooltip, 'GameTooltipPos', 'VerticalActionBarDummy')
