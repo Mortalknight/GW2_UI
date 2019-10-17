@@ -98,5 +98,6 @@ T[68] = "Classic_Other/Undercity"
 T[889] = "Classic_Other/Warsong"
 T[589] = "Classic_Other/Wintersaber"
 T[270] = "Classic_Other/Zandalar Tribes"
+T[471] = "Classic_Other/Wildhammer"
 
 GW.REP_TEXTURES = T

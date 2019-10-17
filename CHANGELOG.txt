@@ -1,6 +1,7 @@
 1.2.0
 
 - Added custom UIDropDownMenu
+- Added repu background for Wildhammer Clan
 
 1.1.0
 
