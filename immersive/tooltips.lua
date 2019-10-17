@@ -70,7 +70,7 @@ local function styleTooltip(self)
 	end
 	self:SetBackdrop(constBackdropArgs)
 	if _G[self:GetName() .. "StatusBarTexture"] then
-		_G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface\\Addons\\GW2_UI\\Textures\\gwstatusbar")
+		_G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface\\Addons\\GW2_UI\\Textures\\castinbar-white")
 	end
 end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
