@@ -294,7 +294,11 @@ local function updateMainBar()
     end
     MainMenuBarArtFrame:HookScript('OnUpdate', gwActionButtons_OnUpdate)
     MainMenuBarArtFrame:ClearAllPoints()
-    MainMenuBarArtFrame:SetPoint('TOP', UIParent, 'BOTTOM', 0, 80)
+    if GetSetting("XPBAR_ENABLED") then
+        MainMenuBarArtFrame:SetPoint('TOP', UIParent, 'BOTTOM', 0, 80)
+    else
+        MainMenuBarArtFrame:SetPoint('TOP', UIParent, 'BOTTOM', 0, 66)
+    end
     MainMenuBarArtFrame:SetSize(btn_padding, used_height)
     MainMenuBarArtFrame:SetFrameStrata("LOW")
 end
@@ -351,7 +355,11 @@ local function updateMultiBar(barName, buttonName)
     end
     multibar:HookScript('OnUpdate', gwMultiButtons_OnUpdate)
     multibar:ClearAllPoints()
-    multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
+    if barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft" and not GetSetting("XPBAR_ENABLED") then
+        multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs -14)
+    else
+        multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
+    end
     multibar:SetSize(used_width, used_height)
     multibar:SetFrameStrata("LOW")
 end
