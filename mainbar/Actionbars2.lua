@@ -407,6 +407,11 @@ local function updateMainBar(toggle)
     fmActionbar.rangeTimer = -1
     fmActionbar.fadeTimer = -1
     fmActionbar.elapsedTimer = -1
+    local btn_yOff = 0
+
+    if not GetSetting("XPBAR_ENABLED") then
+        btn_yOff = -14
+    end
 
     for i = 1, 12 do
         local btn = _G["ActionButton" .. i]
@@ -474,7 +479,7 @@ local function updateMainBar(toggle)
                 fmActionbar,
                 "LEFT",
                 btn_padding - MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,
-                0
+                btn_yOff
             )
 
             if i == 6 then
@@ -610,7 +615,11 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
 
     fmMultibar:SetScript("OnUpdate", nil)
     fmMultibar:ClearAllPoints()
-    fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
+    if barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft" and not GetSetting("XPBAR_ENABLED") then
+        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs -14)
+    else
+        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
+    end
     fmMultibar:SetSize(used_width, used_height)
 
     -- set fader logic

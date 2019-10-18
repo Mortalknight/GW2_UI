@@ -5,6 +5,7 @@ NEW
     - Added custom Gamemenu
     - Added custom Staticpopup
     - Added custom Ghost frame
+    - Make XP-Bar as a module
 
 MISCELLANEOUS
     - Tooltip now anchor to the bottom right of the Tooltip mover frame

@@ -123,7 +123,11 @@ local function setManaBar(f)
 
     if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
         f:ClearAllPoints()
-        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
+        if GetSetting("XPBAR_ENABLED") then
+            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
+        else
+            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
+        end
         f:SetWidth(220)
         f:SetHeight(30)
         f:Hide()
@@ -596,7 +600,11 @@ local function setMage(f)
     local spec = f.gwPlayerSpec
 
     if spec == 1 then -- arcane
-        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 70)
+        if GetSetting("XPBAR_ENABLED") then
+            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 66)
+        else
+            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 52)
+        end
         f:SetHeight(64)
         f:SetWidth(512)
         f.background:SetHeight(64)
@@ -951,6 +959,11 @@ local function LoadClassPowers()
     local _, _, pClass = UnitClass("player")
 
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
+    if GW.GetSetting("XPBAR_ENABLED") then
+        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
+    else
+        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
+    end
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
 

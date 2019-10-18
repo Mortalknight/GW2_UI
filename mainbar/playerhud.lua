@@ -504,6 +504,11 @@ GW.AddForProfiling("playerhud", "dodgeBar_OnEvent", dodgeBar_OnEvent)
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
+    if GW.GetSetting("XPBAR_ENABLED") then
+        playerPowerBar:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", 53, 86)
+    else
+        playerPowerBar:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", 53, 72)
+    end
     GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
     _G[playerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()
@@ -649,6 +654,11 @@ local function LoadPlayerHud()
     PlayerFrame:Hide()
 
     local playerHealthGLobaBg = CreateFrame("Button", "GwPlayerHealthGlobe", UIParent, "GwPlayerHealthGlobe")
+    if GW.GetSetting("XPBAR_ENABLED") then
+        playerHealthGLobaBg:SetPoint('BOTTOM', 0, 16)
+    else
+        playerHealthGLobaBg:SetPoint('BOTTOM', 2)
+    end
 
     GW.MixinHideDuringPetAndOverride(playerHealthGLobaBg)
 
