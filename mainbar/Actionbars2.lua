@@ -6,6 +6,7 @@ local Self_Hide = GW.Self_Hide
 local IsFrameModified = GW.IsFrameModified
 local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
+local RoundInt = GW.RoundInt
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
@@ -592,6 +593,7 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
             btn.noGrid = nil
+            btn.changedColor = false
 
             btn_padding = btn_padding + settings.size + settings.margin
             btn_this_row = btn_this_row + 1
@@ -818,6 +820,31 @@ GW.AddForProfiling("Actionbars2", "actionButtons_OnUpdate", actionButtons_OnUpda
 
 local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
 local in_R, in_G, in_B = LIGHTGRAY_FONT_COLOR:GetRGB()
+local function changeVertexColorActionbars()
+    local fmActionbar = MainMenuBarArtFrame
+    local fmMultiBar
+    for y = 1, 4 do
+        if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
+        if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
+        if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
+        if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+        if fmMultiBar.gw_IsEnabled then
+            for i = 1, 12 do
+                local btn = fmMultiBar.gw_Buttons[i]
+                if btn.changedColor then
+                    local valid = IsActionInRange(btn.action)
+                    local checksRange = (valid ~= nil)
+                    local inRange = checksRange and valid                
+                    if checksRange and not inRange then
+                        btn.icon:SetVertexColor(out_R, out_G, out_B)
+                    end
+                end
+            end
+        end
+    end
+end
+GW.AddForProfiling("Actionbars2", "changeVertexColorActionbars", changeVertexColorActionbars)
+
 local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
@@ -831,9 +858,13 @@ local function multiButtons_OnUpdate(self, elapsed, testRange)
             local checksRange = (valid ~= nil)
             local inRange = checksRange and valid
             if checksRange and not inRange then
-                btn.HotKey:SetVertexColor(out_R, out_G, out_B)
+                btn.icon:SetVertexColor(out_R, out_G, out_B)
+                btn.changedColor = true
             else
-                btn.HotKey:SetVertexColor(in_R, in_G, in_B)
+                if btn.changedColor then
+                    btn.icon:SetVertexColor(1, 1, 1)
+                    btn.changedColor = false
+                end
             end
         end
     end
@@ -869,20 +900,20 @@ actionBar_OnUpdate = function(self, elapsed)
     end
 
     -- update action bar buttons
-    actionButtons_OnUpdate(self, elapsed, testRange)
+    actionButtons_OnUpdate(self, elapsed, testRange, testCooldown)
 
     -- update multibar buttons
     if self.gw_Bar1.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar1, elapsed, testRange)
+        multiButtons_OnUpdate(self.gw_Bar1, elapsed, testRange, testCooldown)
     end
     if self.gw_Bar2.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar2, elapsed, testRange)
+        multiButtons_OnUpdate(self.gw_Bar2, elapsed, testRange, testCooldown)
     end
     if self.gw_Bar3.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar3, elapsed, testRange)
+        multiButtons_OnUpdate(self.gw_Bar3, elapsed, testRange, testCooldown)
     end
     if self.gw_Bar4.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar4, elapsed, testRange)
+        multiButtons_OnUpdate(self.gw_Bar4, elapsed, testRange, testCooldown)
     end
 end
 GW.AddForProfiling("Actionbars2", "actionBar_OnUpdate", actionBar_OnUpdate)
@@ -970,6 +1001,8 @@ local function LoadActionBars()
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", trackBarChanges)
+    hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
+    
     trackBarChanges()
 
     -- do stuff to other pieces of the blizz UI
