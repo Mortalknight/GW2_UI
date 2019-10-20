@@ -603,7 +603,18 @@ local function loadAddon(self)
     GW.LoadHudArt()
 
     --Create experiencebar
-    GW.LoadXPBar()
+    if GetSetting("XPBAR_ENABLED") then
+        GW.LoadXPBar()
+    else
+        GwActionBarHud:ClearAllPoints()
+        GwActionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+        GwHudArtFrame.edgeTintBottom1:ClearAllPoints()
+        GwHudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+        GwHudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
+        GwHudArtFrame.edgeTintBottom2:ClearAllPoints()
+        GwHudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
+        GwHudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
+    end
 
     if GetSetting("FONTS_ENABLED") then
         GW.LoadFonts()

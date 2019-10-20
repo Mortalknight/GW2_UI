@@ -843,6 +843,12 @@ local function LoadSettings()
     createCat(GwLocalization["MODULES_CAT"], GwLocalization["MODULES_CAT_TOOLTIP"], "GwSettingsModuleOption", 0)
 
     addOption(
+        XPBAR_LABEL,
+        nil,
+        "XPBAR_ENABLED",
+        "GwSettingsModuleOption"
+    )
+    addOption(
         GwLocalization["HEALTH_GLOBE"],
         GwLocalization["HEALTH_GLOBE_DESC"],
         "HEALTHGLOBE_ENABLED",

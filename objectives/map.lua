@@ -128,7 +128,11 @@ local function SetMinimapPosition()
         else
             MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 142)
         end
-        Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
+        if GW.GetSetting("XPBAR_ENABLED") then
+            Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
+        else
+            Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 7)
+        end
     end
 end
 GW.SetMinimapPosition = SetMinimapPosition
