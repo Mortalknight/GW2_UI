@@ -105,6 +105,7 @@ GW_CHANGELOGS = "1.1.0\n\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added custom UIDropDownMenu\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added repu background for Wildhammer Clan\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Change range indicator for Multibars\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Make XP-Bar as a module\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "1.2.0\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

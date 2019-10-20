@@ -3,6 +3,7 @@
 - Added custom UIDropDownMenu
 - Added repu background for Wildhammer Clan
 - Change range indicator for Multibars
+- Make XP-Bar as a module
 
 1.1.0
 
