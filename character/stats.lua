@@ -478,7 +478,7 @@ local function getResitance(i,unit)
 	else
 		resistanceLevel = RESISTANCE_NONE
 	end
-	tooltip2 = format(RESISTANCE_TOOLTIP_SUBTEXT, _G["RESISTANCE_TYPE" .. 1], unitLevel, resistanceLevel)
+	tooltip2 = format(RESISTANCE_TOOLTIP_SUBTEXT, _G["RESISTANCE_TYPE" .. i], unitLevel, resistanceLevel)
 	return resistanceName, stat, tooltip, tooltip2
 end
 GW.stats.getResitance = getResitance
