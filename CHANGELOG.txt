@@ -5,8 +5,10 @@ NEW
     - Added custom Gamemenu
     - Added custom Staticpopup
     - Added custom Ghost frame
+    - Added some more custom frames like Dropdowns, etc.
     - Make XP-Bar as a module
-
+    - Change range indicator for Multibars
+    
 MISCELLANEOUS
     - Tooltip now anchor to the bottom right of the Tooltip mover frame
     - Update locals (zhTW, ptBR)

@@ -405,6 +405,8 @@ GW_CHANGELOGS = "   - Added skinned Gamemenu\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added skinned Popups\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added custom Ghost frame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Make XP-Bar as a module\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added some more custom frames like Dropdowns, etc.\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Change range indicator for Multibars\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.7\n\n" .. GW_CHANGELOGS
 

@@ -6,7 +6,6 @@ local Self_Hide = GW.Self_Hide
 local IsFrameModified = GW.IsFrameModified
 local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
-local RoundInt = GW.RoundInt
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
@@ -900,20 +899,20 @@ actionBar_OnUpdate = function(self, elapsed)
     end
 
     -- update action bar buttons
-    actionButtons_OnUpdate(self, elapsed, testRange, testCooldown)
+    actionButtons_OnUpdate(self, elapsed, testRange)
 
     -- update multibar buttons
     if self.gw_Bar1.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar1, elapsed, testRange, testCooldown)
+        multiButtons_OnUpdate(self.gw_Bar1, elapsed, testRange)
     end
     if self.gw_Bar2.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar2, elapsed, testRange, testCooldown)
+        multiButtons_OnUpdate(self.gw_Bar2, elapsed, testRange)
     end
     if self.gw_Bar3.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar3, elapsed, testRange, testCooldown)
+        multiButtons_OnUpdate(self.gw_Bar3, elapsed, testRange)
     end
     if self.gw_Bar4.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar4, elapsed, testRange, testCooldown)
+        multiButtons_OnUpdate(self.gw_Bar4, elapsed, testRange)
     end
 end
 GW.AddForProfiling("Actionbars2", "actionBar_OnUpdate", actionBar_OnUpdate)
