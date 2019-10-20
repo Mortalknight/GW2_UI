@@ -330,6 +330,7 @@ local function updateMultiBar(barName, buttonName)
             btn:ClearAllPoints()
             btn:SetPoint('TOPLEFT', multibar, 'TOPLEFT', btn_padding, -btn_padding_y)
 
+            btn.changedColor = false
             btn_padding = btn_padding + settings.size + settings.margin
             btn_this_row = btn_this_row + 1
             used_width = btn_padding
@@ -531,13 +532,34 @@ function gwActionButtons_OnUpdate(self, elapsed)
     end
 end
 
+local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
+local function changeVertexColorActionbars()
+    local fmMultiBar 
+    for y = 1, 4 do
+        if y == 1 then fmMultiBar = _G["MultiBarBottomRight"] end
+        if y == 2 then fmMultiBar = _G["MultiBarBottomLeft"] end
+        if y == 3 then fmMultiBar = _G["MultiBarLeft"] end
+        if y == 4 then fmMultiBar = _G["MultiBarRight"] end
+        for i = 1, 12 do
+            local btn = fmMultiBar.gw_MultiButtons[i]
+            if btn.changedColor then
+                local valid = IsActionInRange(btn.action)
+                local checksRange = (valid ~= nil)
+                local inRange = checksRange and valid                
+                if checksRange and not inRange then
+                    btn.icon:SetVertexColor(out_R, out_G, out_B)
+                end
+            end
+        end
+    end
+end
+GW.AddForProfiling("Actionbars2", "changeVertexColorActionbars", changeVertexColorActionbars)
+
 function gwMultiButtons_OnUpdate(self, elapsed)
     if not self.gw_FadeShowing then
         return -- don't need OnUpdate stuff if this bar is not visible
     end
 
-    local out_range_RGB = {RED_FONT_COLOR:GetRGB()}
-    local in_range_RGB = {LIGHTGRAY_FONT_COLOR:GetRGB()}
     for i = 1, 12 do
         local btn = self.gw_MultiButtons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
@@ -554,9 +576,13 @@ function gwMultiButtons_OnUpdate(self, elapsed)
                 local checksRange = (valid ~= nil)
                 local inRange = checksRange and valid
                 if checksRange and not inRange then
-                    btn.HotKey:SetVertexColor(unpack(out_range_RGB))
+                    btn.icon:SetVertexColor(out_R, out_G, out_B)
+                    btn.changedColor = true
                 else
-                    btn.HotKey:SetVertexColor(unpack(in_range_RGB))
+                    if btn.changedColor then
+                        btn.icon:SetVertexColor(1, 1, 1)
+                        btn.changedColor = false
+                    end
                 end
                 rangeTimer = TOOLTIP_UPDATE_TIME
             end
@@ -677,6 +703,7 @@ local function LoadActionBars()
     gw_setLeaveVehicleButton()
      
     hooksecurefunc("ActionButton_UpdateHotkeys",  gwActionButton_UpdateHotkeys)
+    hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
          
     MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
     MainMenuBarArtFrame:RegisterEvent('UPDATE_BONUS_ACTIONBAR')

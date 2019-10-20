@@ -2,6 +2,7 @@
 
 - Added custom UIDropDownMenu
 - Added repu background for Wildhammer Clan
+- Change range indicator for Multibars
 
 1.1.0
 
