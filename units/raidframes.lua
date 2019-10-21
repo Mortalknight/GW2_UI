@@ -42,6 +42,9 @@ local function hideBlizzardRaidFrame()
         return
     end
 
+    if _G["CompactRaidFrameManagerDisplayFrameHiddenModeToggle"] then
+        _G["CompactRaidFrameManagerDisplayFrameHiddenModeToggle"]:Hide()
+    end
     if CompactRaidFrameManager then
         CompactRaidFrameManager:UnregisterAllEvents()
         CompactRaidFrameManager:Hide()
