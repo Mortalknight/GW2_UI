@@ -1,3 +1,9 @@
+1.2.1
+
+- Fix a position error with the MultiBarBottomRight
+- Fix a tooltip error with resistence tooltips
+- Update libs
+
 1.2.0
 
 - Added custom UIDropDownMenu

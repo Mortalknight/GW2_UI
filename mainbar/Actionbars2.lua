@@ -356,7 +356,7 @@ local function updateMultiBar(barName, buttonName)
     end
     multibar:HookScript('OnUpdate', gwMultiButtons_OnUpdate)
     multibar:ClearAllPoints()
-    if barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft" and not GetSetting("XPBAR_ENABLED") then
+    if (barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft") and not GetSetting("XPBAR_ENABLED") then
         multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs -14)
     else
         multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)

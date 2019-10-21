@@ -4,7 +4,7 @@ Author: d87
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicCasterino", 21
+local MAJOR, MINOR = "LibClassicCasterino", 22
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -703,12 +703,15 @@ do
         while guid ~= nil do
             -- Removing while iterating here, but it doesn't matter
 
-            local unit = GetUnitForFreshGUID(guid)
-            if unit then
-                if GetUnitSpeed(unit) ~= 0 then
-                    CastStop(guid, nil, "INTERRUPTED")
-                    movecheckGUIDs[guid] = nil
-                    return
+            local timeStart = MOVECHECK_TIMEOUT - timeout
+            if timeStart > 0.25 then
+                local unit = GetUnitForFreshGUID(guid)
+                if unit then
+                    if GetUnitSpeed(unit) ~= 0 then
+                        CastStop(guid, nil, "INTERRUPTED")
+                        movecheckGUIDs[guid] = nil
+                        return
+                    end
                 end
             end
 

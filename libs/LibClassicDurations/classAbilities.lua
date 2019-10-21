@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 37
+local Type, Version = "SpellTable", 39
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -565,6 +565,8 @@ Spell({ 5677, 10491, 10493, 10494 }, { duration = INFINITY, type = "BUFF" }) -- 
 Spell({ 8076, 8162, 8163, 10441, 25362 }, { duration = INFINITY, type = "BUFF" }) -- Strength of Earth Totem
 Spell({ 8836, 10626, 25360 }, { duration = INFINITY, type = "BUFF" }) -- Grace of Air Totem
 Spell({ 8072, 8156, 8157, 10403, 10404, 10405 }, { duration = INFINITY, type = "BUFF" }) -- Stoneskin Totem
+Spell({ 16191, 17355, 17360 }, { duration = 12, type = "BUFF" }) -- Mana Tide Totem
+
 
 Spell( 8178 ,{ duration = 45, type = "BUFF" }) -- Grounding Totem Effect, no duration, but lasts 45s. Keeping for enemy buffs
 
@@ -598,23 +600,23 @@ Spell({ 7294, 10298, 10299, 10300, 10301 }, { duration = INFINITY, type = "BUFF"
 
 Spell( 25780, { duration = 1800, type = "BUFF" }) -- Righteous Fury
 
-Spell({ 19740, 19834, 19835, 19836, 19837, 19838, 25291 }, { duration = 300, type = "BUFF" }) -- Blessing of Might
-Spell({ 25782, 25916 }, { duration = 900, type = "BUFF" }) -- Greater Blessing of Might
+Spell({ 19740, 19834, 19835, 19836, 19837, 19838, 25291 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Might
+Spell({ 25782, 25916 }, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Might
 
-Spell({ 19742, 19850, 19852, 19853, 19854, 25290 }, { duration = 300, type = "BUFF" }) -- Blessing of Wisdom
-Spell({ 25894, 25918 }, { duration = 900, type = "BUFF" }) -- Greater Blessing of Might
+Spell({ 19742, 19850, 19852, 19853, 19854, 25290 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Wisdom
+Spell({ 25894, 25918 }, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Might
 
-Spell(20217, { duration = 300, type = "BUFF" }) -- Blessing of Kings
-Spell(25898, { duration = 900, type = "BUFF" }) -- Greater Blessing of Kings
+Spell(20217, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Kings
+Spell(25898, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Kings
 
-Spell({ 20911, 20912, 20913 }, { duration = 300, type = "BUFF" }) -- Blessing of Sanctuary
-Spell(25899, { duration = 900, type = "BUFF" }) -- Greater Blessing of Sanctuary
+Spell({ 20911, 20912, 20913 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Sanctuary
+Spell(25899, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Sanctuary
 
-Spell(1038, { duration = 300, type = "BUFF" }) -- Blessing of Salvation
-Spell(25895, { duration = 900, type = "BUFF" }) -- Greater Blessing of Salvation
+Spell(1038, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Salvation
+Spell(25895, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Salvation
 
-Spell({ 19977, 19978, 19979 }, { duration = 300, type = "BUFF" }) -- Blessing of Light
-Spell(25890, { duration = 900, type = "BUFF" }) -- Greater Blessing of Light
+Spell({ 19977, 19978, 19979 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Light
+Spell(25890, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Light
 
 Spell( 20066, { duration = 6 }) -- Repentance
 Spell({ 2878, 5627, 5627 }, {

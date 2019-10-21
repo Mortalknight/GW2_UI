@@ -9,7 +9,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v1.2.0'
+GW.VERSION_STRING = 'GW2_UI_Classic v1.2.1'
 
 local loaded = false
 local hudScale = 1

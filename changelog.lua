@@ -108,5 +108,11 @@ GW_CHANGELOGS = "- Change range indicator for Multibars\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Make XP-Bar as a module\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "1.2.0\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.2.1
+GW_CHANGELOGS = "- Update libs\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Fix a position error with the MultiBarBottomRight\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Fix a tooltip error with resistence tooltips\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "1.2.1\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 
