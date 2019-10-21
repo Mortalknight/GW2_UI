@@ -410,5 +410,10 @@ GW_CHANGELOGS = "   - Change range indicator for Multibars\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.7\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.1.8
+GW_CHANGELOGS = "   - Fix a position error with the MultiBarBottomRight\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.1.8\n\n" .. GW_CHANGELOGS
+
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

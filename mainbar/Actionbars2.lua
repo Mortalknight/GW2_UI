@@ -616,7 +616,7 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
 
     fmMultibar:SetScript("OnUpdate", nil)
     fmMultibar:ClearAllPoints()
-    if barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft" and not GetSetting("XPBAR_ENABLED") then
+    if (barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft") and not GetSetting("XPBAR_ENABLED") then
         fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs -14)
     else
         fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)

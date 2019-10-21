@@ -1,3 +1,8 @@
+5.1.8
+
+FIXES
+    - Fix a position error with the MultiBarBottomRight
+
 5.1.7
 
 NEW
