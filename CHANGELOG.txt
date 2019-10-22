@@ -1,3 +1,8 @@
+5.1.10
+
+NEW
+    - Make lootframe moveable (if not hooked under mouse)
+
 5.1.9
 
 FIXES
