@@ -495,3 +495,23 @@ local function SkinGearManagerDialogPopup()
     SkinGearManagerDialogPopup_OnShow()
 end
 GW.SkinGearManagerDialogPopup = SkinGearManagerDialogPopup
+
+-------------------------------------------------------LFGDungeonReadyStatus-------------------------------------------------------
+local function SkinLFGDungeonReadyStatus_OnUpdate()
+    local LFGDungeonReadyStatus = _G["LFGDungeonReadyStatus"]
+
+    LFGDungeonReadyStatus:SetBackdrop(nil)
+    LFGDungeonReadyStatus.Border:Hide()
+    _G["LFGDungeonReadyStatusCloseButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
+    _G["LFGDungeonReadyStatusCloseButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+    _G["LFGDungeonReadyStatusCloseButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+    _G["LFGDungeonReadyStatusCloseButton"]:SetSize(20, 20)
+    _G["LFGDungeonReadyStatusCloseButton"]:ClearAllPoints()
+    _G["LFGDungeonReadyStatusCloseButton"]:SetPoint("TOPRIGHT", -3, -3)
+
+    LFGDungeonReadyStatus:SetBackdrop(constBackdropFrame)
+end
+local function SkinLFGDungeonReadyStatus()
+    hooksecurefunc("LFGDungeonReadyPopup_Update", SkinLFGDungeonReadyStatus_OnUpdate)
+end
+GW.SkinLFGDungeonReadyStatus = SkinLFGDungeonReadyStatus

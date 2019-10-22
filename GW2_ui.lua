@@ -497,6 +497,7 @@ local function loadAddon(self)
     GW.SkinDropDownList()
     GW.SkinUIDropDownMenu()
     GW.SkinGearManagerDialogPopup()
+    GW.SkinLFGDungeonReadyStatus()
 
     --Create hud art
     GW.LoadHudArt()
