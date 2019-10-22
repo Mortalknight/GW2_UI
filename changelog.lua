@@ -415,5 +415,9 @@ GW_CHANGELOGS = "   - Fix a position error with the MultiBarBottomRight\n" .. GW
 GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.8\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.1.9
+GW_CHANGELOGS = "   - Fix a error in ptBR and zhTW local\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.1.9\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS
