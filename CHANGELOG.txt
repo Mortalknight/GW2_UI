@@ -1,6 +1,7 @@
 1.3.0
 
 - Make lootframe moveable (if not hooked under mouse)
+- Added a 'Skin'-Tab into settings
 
 1.2.1
 

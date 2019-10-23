@@ -9,7 +9,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v1.2.1'
+GW.VERSION_STRING = 'GW2_UI_Classic v1.3.0'
 
 local loaded = false
 local hudScale = 1
@@ -593,11 +593,40 @@ local function loadAddon(self)
     --Create Settings window
     GW.LoadSettings()
     GW.DisplaySettings()
-    GW.SkinMainMenu()
-    GW.SkinStaticPopup()
-    GW.SkinBNToastFrame()
-    GW.SkinDropDownList()
-    GW.SkinUIDropDownMenu()
+
+    --Create general skins
+    if GetSetting("MAINMENU_SKIN_ENABLED") then
+        GW.SkinMainMenu()
+    else
+        --Setup addon button
+        GwMainMenuFrame = CreateFrame("Button", "GwMainMenuFrame", GameMenuFrame, "GwStandardButton")
+        GwMainMenuFrame:SetText(GwLocalization["SETTINGS_BUTTON"])
+        GwMainMenuFrame:ClearAllPoints()
+        GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
+        GwMainMenuFrame:SetSize(150, 24)
+        GwMainMenuFrame:SetScript(
+            "OnClick",
+            function()
+                GwSettingsWindow:Show()
+                if InCombatLockdown() then
+                    return
+                end
+                ToggleGameMenu()
+            end
+        )
+    end
+    if GetSetting("STATICPOPUP_SKIN_ENABLED") then
+        GW.SkinStaticPopup()
+    end
+    if GetSetting("BNTOASTFRAME_SKIN_ENABLED") then
+        GW.SkinBNToastFrame()
+    end
+    if GetSetting("DROPDOWNLIST_SKIN_ENABLED") then
+        GW.SkinDropDownList()
+    end
+    if GetSetting("DROPDOWNMENU_SKIN_ENABLED") then
+        GW.SkinUIDropDownMenu()
+    end
 
     --Create hud art
     GW.LoadHudArt()

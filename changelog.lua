@@ -116,6 +116,7 @@ GW_CHANGELOGS = "1.2.1\n\n" .. GW_CHANGELOGS
 
 --VERSION 1.3.0
 GW_CHANGELOGS = "- Make lootframe moveable (if not hooked under mouse)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added a 'Skin'-Tab into settings\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "1.3.0\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS
