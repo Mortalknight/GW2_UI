@@ -65,7 +65,7 @@ Usage example 2:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 31
+local MAJOR, MINOR = "LibClassicDurations", 34
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -96,6 +96,9 @@ local buffCacheValid = lib.buffCacheValid
 lib.nameplateUnitMap = lib.nameplateUnitMap or {}
 local nameplateUnitMap = lib.nameplateUnitMap
 
+lib.castLog = lib.castLog or {}
+local castLog = lib.castLog
+
 lib.guidAccessTimes = lib.guidAccessTimes or {}
 local guidAccessTimes = lib.guidAccessTimes
 
@@ -104,7 +107,7 @@ local callbacks = lib.callbacks
 local guids = lib.guids
 local spells = lib.spells
 local npc_spells = lib.npc_spells
-local indirectRefreshSpells
+local indirectRefreshSpells = lib.indirectRefreshSpells
 
 local INFINITY = math.huge
 local PURGE_INTERVAL = 900
@@ -226,6 +229,7 @@ local function purgeOldGUIDs()
             buffCacheValid[guid] = nil
             buffCache[guid] = nil
             DRInfo[guid] = nil
+            castLog[guid] = nil
             tinsert(deleted, guid)
         end
     end
@@ -467,17 +471,33 @@ local function GetLastRankSpellID(spellName)
     return spellID
 end
 
+local eventSnapshot
+castLog.SetLastCast = function(self, srcGUID, spellID, timestamp)
+    self[srcGUID] = { spellID, timestamp }
+    guidAccessTimes[srcGUID] = timestamp
+end
+castLog.IsCurrent = function(self, srcGUID, spellID, timestamp, timeWindow)
+    local entry = self[srcGUID]
+    if entry then
+        local lastSpellID, lastTimestamp = entry[1], entry[2]
+        return lastSpellID == spellID and (timestamp - lastTimestamp < timeWindow)
+    end
+end
+
 local lastResistSpellID
 local lastResistTime = 0
 ---------------------------
 -- COMBAT LOG HANDLER
 ---------------------------
 function f:COMBAT_LOG_EVENT_UNFILTERED(event)
+    return self:CombatLogHandler(CombatLogGetCurrentEventInfo())
+end
 
+function f:CombatLogHandler(...)
     local timestamp, eventType, hideCaster,
     srcGUID, srcName, srcFlags, srcFlags2,
     dstGUID, dstName, dstFlags, dstFlags2,
-    spellID, spellName, spellSchool, auraType, amount = CombatLogGetCurrentEventInfo()
+    spellID, spellName, spellSchool, auraType = ...
 
     if indirectRefreshSpells[spellName] then
         local refreshTable = indirectRefreshSpells[spellName]
@@ -552,12 +572,37 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
 
         if opts then
             local castEventPass
-            if eventType == "SPELL_CAST_SUCCESS" and opts.castFilter then
-                -- For spells that have cast filter enabled, transform their CAST event into AURA_APPLIED
-                -- And give them a pass, while their normal AURA_APPLIED events get rejected without it
-                eventType = "SPELL_AURA_APPLIED"
-                auraType = opts.type == "BUFF" and "BUFF" or "DEBUFF"
-                castEventPass = true
+            if opts.castFilter then
+                -- Buff and Raidwide Buff events arrive in the following order:
+                -- 1571716930.161 ID: 21562 SPELL_AURA_APPLIED/REFRESH to Caster himself (if selfcast or raidwide)
+                -- 1571716930.161 ID: 21562 SPELL_CAST_SUCCESS on Cast Target
+                -- 1571716930.161 ID: 21562 SPELL_AURA_APPLIED/REFRESH to everyone else
+
+                -- For spells that have cast filter enabled:
+                    -- First APPLIED event gets snapshotted and otherwise ignored
+                    -- CAST event effectively sets castEventPass to true
+                    -- Snapshotted event now gets handled with cast pass
+                    -- All the following APPLIED events are accepted while cast pass is valid
+                    -- (Unconfirmed whether timestamp is the same even for a 40m raid)
+                local now = GetTime()
+                castEventPass = castLog:IsCurrent(srcGUID, spellID, now, 0.4)
+                if not castEventPass and (eventType == "SPELL_AURA_REFRESH" or eventType == "SPELL_AURA_APPLIED") then
+                    eventSnapshot = { timestamp, eventType, hideCaster,
+                    srcGUID, srcName, srcFlags, srcFlags2,
+                    dstGUID, dstName, dstFlags, dstFlags2,
+                    spellID, spellName, spellSchool, auraType }
+                    return
+                end
+
+                if eventType == "SPELL_CAST_SUCCESS" then
+                    -- Aura spell ID can be different from cast spell id
+                    -- But all buffs are usually simple spells and it's the same for them
+                    castLog:SetLastCast(srcGUID, spellID, now)
+                    if eventSnapshot then
+                        self:CombatLogHandler(unpack(eventSnapshot))
+                        eventSnapshot = nil
+                    end
+                end
             end
 
             local isEnemyBuff = not isDstFriendly and auraType == "BUFF"
