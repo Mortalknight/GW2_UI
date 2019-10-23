@@ -492,6 +492,23 @@ local function loadAddon(self)
     --Create general skins
     if GetSetting("MAINMENU_SKIN_ENABLED") then
         GW.SkinMainMenu()
+    else 
+        --Setup addon button
+        GwMainMenuFrame = CreateFrame("Button", "GwMainMenuFrame", GameMenuFrame, "GwStandardButton")
+        GwMainMenuFrame:SetText(GwLocalization["SETTINGS_BUTTON"])
+        GwMainMenuFrame:ClearAllPoints()
+        GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
+        GwMainMenuFrame:SetSize(150, 24)
+        GwMainMenuFrame:SetScript(
+            "OnClick",
+            function()
+                GwSettingsWindow:Show()
+                if InCombatLockdown() then
+                    return
+                end
+                ToggleGameMenu()
+            end
+        )
     end
     if GetSetting("STATICPOPUP_SKIN_ENABLED") then
         GW.SkinStaticPopup()
