@@ -2,6 +2,7 @@
 
 NEW
     - Make lootframe moveable (if not hooked under mouse)
+    - Added a "Skin"-Tab into settings
 
 5.1.9
 

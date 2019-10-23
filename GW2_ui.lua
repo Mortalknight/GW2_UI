@@ -488,16 +488,38 @@ local function loadAddon(self)
     --Create Settings window
     GW.LoadSettings()
     GW.DisplaySettings()
-    GW.SkinMainMenu()
-    GW.SkinStaticPopup()
-    GW.SkinBNToastFrame()
-    GW.SkinGhostFrame()
-    GW.SkinQueueStatusFrame()
-    GW.SkinDeathRecapFrame()
-    GW.SkinDropDownList()
-    GW.SkinUIDropDownMenu()
-    GW.SkinGearManagerDialogPopup()
-    GW.SkinLFGDungeonReadyStatus()
+
+    --Create general skins
+    if GetSetting("MAINMENU_SKIN_ENABLED") then
+        GW.SkinMainMenu()
+    end
+    if GetSetting("STATICPOPUP_SKIN_ENABLED") then
+        GW.SkinStaticPopup()
+    end
+    if GetSetting("BNTOASTFRAME_SKIN_ENABLED") then
+        GW.SkinBNToastFrame()
+    end
+    if GetSetting("GHOSTFRAME_SKIN_ENABLED") then
+        GW.SkinGhostFrame()
+    end
+    if GetSetting("QUEUESTATUSFRAME_SKIN_ENABLED") then
+        GW.SkinQueueStatusFrame()
+    end
+    if GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then
+        GW.SkinDeathRecapFrame()
+    end
+    if GetSetting("DROPDOWNLIST_SKIN_ENABLED") then
+        GW.SkinDropDownList()
+    end
+    if GetSetting("DROPDOWNMENU_SKIN_ENABLED") then
+        GW.SkinUIDropDownMenu()
+    end
+    if GetSetting("GEARMANAGERDIALOGPOPUP_SKIN_ENABLED") then
+        GW.SkinGearManagerDialogPopup()
+    end
+    if GetSetting("LFGDUNGEONREADYSTATUS_SKIN_ENABLED") then
+        GW.SkinLFGDungeonReadyStatus()
+    end
 
     --Create hud art
     GW.LoadHudArt()
