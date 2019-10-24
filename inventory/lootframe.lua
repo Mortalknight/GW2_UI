@@ -71,6 +71,7 @@ local function SkinLooTFrame()
         LootFrame:SetMovable(true)
         hooksecurefunc("LootFrame_Show", function(self)
             local pos = GW.GetSetting("LOOTFRAME_POSITION")
+            LootFrame:ClearAllPoints()
             LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
         end)
     end
