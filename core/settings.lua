@@ -1525,7 +1525,8 @@ local function LoadSettings()
     addOption("LFG Dungeon Ready Status", nil, "LFGDUNGEONREADYSTATUS_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     addOption("LFG List Invite Dialog", nil, "LFGLISTINVITEDIALOG_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     addOption("LFG List Application Dialog", nil, "LFGLISTAPPLICATIONDIALOG_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
-
+    addOption("LFG Dungeon Ready Dialog", nil, "LFGDUNGEONREADYDIALOG_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
+    
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
     _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
 
