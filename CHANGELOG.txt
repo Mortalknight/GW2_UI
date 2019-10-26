@@ -1,3 +1,11 @@
+5.1.11
+
+NEW
+    - Added two new skins
+
+FIXES
+    - Fix a lua error with moving lootframe
+
 5.1.10
 
 NEW

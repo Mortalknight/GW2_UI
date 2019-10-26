@@ -426,4 +426,11 @@ GW_CHANGELOGS = "   - Added a 'Skin'-Tab into settings\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.10\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.1.11
+GW_CHANGELOGS = "   - Fix a lua error with moving lootframe\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added two new skins\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.1.11\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
