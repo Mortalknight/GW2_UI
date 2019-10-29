@@ -241,6 +241,7 @@ function gwPaperDollUpdateStats()
 	local categoryYOffset = -5
 	local statYOffset = 0
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
+    local hasRanged = false
 
     avgItemLevel = nil or 0
     avgItemLevelEquipped = nil or 0
@@ -293,6 +294,7 @@ function gwPaperDollUpdateStats()
     statText, tooltip1, tooltip2 = GW.stats.getRangedDamage()
     if statText ~= nil then
         grid, x, y, numShownStats = setStatFrame("RANGEDDAMAGE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+        hasRanged = true
     end
 
     --ranged attack power
@@ -306,7 +308,53 @@ function gwPaperDollUpdateStats()
         statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
+
+    --extra Stats in tooltip
+    GwAttributeInvisibleFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE .. DEFENSE .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. BLOCK_CHANCE .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetBlockChance()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. PARRY_CHANCE .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetParryChance()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. DODGE_CHANCE .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetDodgeChance()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    
+    if UnitPowerType("player") == 0 then
+        GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "\n" .. HIGHLIGHT_FONT_COLOR_CODE .. MANA_REGEN .. FONT_COLOR_CODE_CLOSE .. "\n"
+        GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "MP5 (Casting): " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", select(2, GetManaRegen())) .. FONT_COLOR_CODE_CLOSE .. "\n"
+        GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "MP5 (Not Casting): " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetManaRegen()) .. FONT_COLOR_CODE_CLOSE .. "\n"
+        GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "MP5: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetPowerRegen()) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    
+    end
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "\n" .. HIGHLIGHT_FONT_COLOR_CODE .. MELEE .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. ITEM_MOD_HIT_MELEE_RATING_SHORT .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetHitModifier()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. MELEE_CRIT_CHANCE .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    
+    if hasRanged then
+        GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "\n" .. HIGHLIGHT_FONT_COLOR_CODE .. RANGED .. FONT_COLOR_CODE_CLOSE .. "\n"
+        GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. ITEM_MOD_HIT_RANGED_RATING_SHORT .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetHitModifier()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+        GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. RANGED_CRIT_CHANCE .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetRangedCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    end
+
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "\n" .. HIGHLIGHT_FONT_COLOR_CODE .. STAT_CATEGORY_SPELL .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. ITEM_MOD_HIT_SPELL_RATING_SHORT .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellHitModifier()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. SPELL_CRIT_CHANCE .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "\n" .. HIGHLIGHT_FONT_COLOR_CODE .. SPELL_BONUS .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. BONUS_HEALING .. ": " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusHealing()) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Shadow Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(6)) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Shadow Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(6)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Holy Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(2)) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Holy Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(2)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Fire Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(3)) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Fire Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(3)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Frost Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(5)) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Frost Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(5)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Arcane Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(7)) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Arcane Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(7)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Nature Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(4)) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Nature Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(4)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Physical Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(1)) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Physical Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(1)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
+
 end
+
 function gwPaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
     GwCharacterMenu.petMenu:Hide()
@@ -319,7 +367,7 @@ function gwPaperDollUpdatePetStats()
 
     GwCharacterMenu.petMenu:Show()
     GwDressingRoomPet.model:SetUnit("pet")
-    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet"))
+    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
         local happiness, damagePercentage, loyaltyRate = GetPetHappiness()

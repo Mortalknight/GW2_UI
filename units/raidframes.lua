@@ -35,7 +35,7 @@ local spellBookSearched = 0
 local frames = {}
 local IncHeal = {}
 
-local HealComm = LibStub("LibClassicHealComm-1.0", true)
+local HealComm = LibStub("LibHealComm-4.0", true)
 
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then

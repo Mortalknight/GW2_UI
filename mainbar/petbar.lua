@@ -228,7 +228,7 @@ local function SetPetHappiness(self)
     GwPetFrameHappinessInvisibleFrame:ClearAllPoints()
     GwPetFrameHappinessInvisibleFrame:SetPoint(self.portraitBackground:GetPoint())
     GwPetFrameHappinessInvisibleFrame:SetSize(self.portraitBackground:GetSize())
-    GwPetFrameHappinessInvisibleFrame:Show()
+    GwPetFrameHappinessInvisibleFrame:Show()  
 
     --Add tooltip to invisible frame
     GwPetFrameHappinessInvisibleFrame:SetScript("OnEnter", function(self)

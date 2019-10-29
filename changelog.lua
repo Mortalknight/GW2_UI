@@ -119,5 +119,12 @@ GW_CHANGELOGS = "- Make lootframe moveable (if not hooked under mouse)\n" .. GW_
 GW_CHANGELOGS = "- Added a 'Skin'-Tab into settings\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "1.3.0\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.4.0
+GW_CHANGELOGS = "- Change lib from LibClassicHealComm-1.0 to LibHealComm-4.0\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added pet level to pet frame\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Update libs\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added advanced char stats (hover over the 'Attribute'-label)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "1.4.0\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 

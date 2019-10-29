@@ -1385,6 +1385,59 @@
                     </OnEvent>
                 </Scripts>
             </Frame>
+            <Frame name="GwAttributeInvisibleFrame" enableMouse="false" hidden="true">
+                <Scripts>
+                    <OnLoad>
+                        self:RegisterEvent("PLAYER_ENTERING_WORLD")
+                        self:RegisterEvent("CHARACTER_POINTS_CHANGED")
+                        self:RegisterEvent("UNIT_MODEL_CHANGED")
+                        self:RegisterEvent("UNIT_LEVEL")
+                        self:RegisterEvent("UNIT_STATS")
+                        self:RegisterEvent("UNIT_RANGEDDAMAGE")
+                        self:RegisterEvent("UNIT_ATTACK_POWER")
+                        self:RegisterEvent("UNIT_RANGED_ATTACK_POWER")
+                        self:RegisterEvent("UNIT_ATTACK")
+                        self:RegisterEvent("UNIT_SPELL_HASTE")
+                        self:RegisterEvent("UNIT_RESISTANCES")
+                        self:RegisterEvent("PLAYER_GUILD_UPDATE")
+                        self:RegisterEvent("SKILL_LINES_CHANGED")
+                        self:RegisterEvent("COMBAT_RATING_UPDATE")
+                        self:RegisterEvent("UNIT_NAME_UPDATE")
+                        self:RegisterEvent("BAG_UPDATE")
+                        self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+                        self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+                        self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
+                        self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
+                        self:RegisterEvent("SPELL_POWER_CHANGED")
+                        self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION")
+                        self:RegisterEvent("UNIT_NAME_UPDATE")
+                        self:RegisterEvent("UNIT_INVENTORY_CHANGED")
+
+                        self:RegisterUnitEvent("UNIT_DAMAGE", "player")
+                        self:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player")
+                        self:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
+                        self:RegisterUnitEvent("UNIT_AURA", "player")
+
+                        GwAttributeInvisibleFrame:ClearAllPoints()
+                        GwAttributeInvisibleFrame:SetPoint(GwPapaerDollStats.header:GetPoint())
+                        GwAttributeInvisibleFrame:SetSize(GwPapaerDollStats.header:GetSize())
+                        GwAttributeInvisibleFrame:Show()  
+                    </OnLoad>
+                    <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                        
+                        GameTooltip:SetText(HIGHLIGHT_FONT_COLOR_CODE .. PET_BATTLE_STATS_LABEL .. FONT_COLOR_CODE_CLOSE)
+                        GameTooltip:AddLine(self.tooltip)
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                    <OnEvent>
+                        gwPaperDollStats_OnEvent(self, event, ...)
+                    </OnEvent>
+                </Scripts>
+            </Frame>
             <Frame name="$parentGear">
                 <Size x="184" y="301"></Size>
                 <Anchors>
