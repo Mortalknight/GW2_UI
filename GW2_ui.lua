@@ -546,6 +546,9 @@ local function loadAddon(self)
     if GetSetting("LFGDUNGEONREADYDIALOG_SKIN_ENABLED") then
         GW.SkinLFGDungeonReadyDialog()
     end
+    if GetSetting("LFGDUNGEONREADYDIALOG_SKIN_ENABLED") then
+        GW.SkinLFGInvitePopup()
+    end
     
     --Create hud art
     GW.LoadHudArt()

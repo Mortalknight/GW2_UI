@@ -635,3 +635,29 @@ local function SkinLFGListApplicationDialog()
     LFGListApplicationDialog:SetBackdrop(constBackdropFrame)
 end
 GW.SkinLFGListApplicationDialog = SkinLFGListApplicationDialog
+
+-------------------------------------------------------LFGInvitePopup-------------------------------------------------------
+local function SkinLFGInvitePopup()
+    local LFGListApplicationDialog = _G["LFGListApplicationDialog"]
+
+    LFGInvitePopup:SetBackdrop(nil)
+    LFGInvitePopup.Border:Hide()
+    LFGInvitePopupAcceptButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    LFGInvitePopupAcceptButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    LFGInvitePopupAcceptButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    LFGInvitePopupAcceptButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    LFGInvitePopupAcceptButton.Text:SetTextColor(0, 0, 0, 1)
+    LFGInvitePopupAcceptButton.Text:SetShadowOffset(0, 0)
+    addHoverToButton(LFGInvitePopupAcceptButton)
+
+    LFGInvitePopupDeclineButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    LFGInvitePopupDeclineButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    LFGInvitePopupDeclineButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    LFGInvitePopupDeclineButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    LFGInvitePopupDeclineButton.Text:SetTextColor(0, 0, 0, 1)
+    LFGInvitePopupDeclineButton.Text:SetShadowOffset(0, 0)
+    addHoverToButton(LFGInvitePopupDeclineButton)
+
+    LFGInvitePopup:SetBackdrop(constBackdropFrame)
+end
+GW.SkinLFGInvitePopup = SkinLFGInvitePopup
