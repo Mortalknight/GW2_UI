@@ -955,6 +955,18 @@ local function updateAnchors(self)
 end
 GW.AddForProfiling("Actionbars2", "updateAnchors", updateAnchors)
 
+local function changeFlyoutStyle(self)
+    if not self.FlyoutArrow then
+		return
+    end
+    
+    self.FlyoutBorder:Hide()
+    self.FlyoutBorderShadow:Hide()
+    SpellFlyoutHorizontalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
+    SpellFlyoutVerticalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
+    SpellFlyoutBackgroundEnd:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
+end
+
 local function LoadActionBars()
     local HIDE_ACTIONBARS_CVAR = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
     if HIDE_ACTIONBARS_CVAR then
@@ -1001,7 +1013,7 @@ local function LoadActionBars()
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", trackBarChanges)
     hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
-    
+    hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
     trackBarChanges()
 
     -- do stuff to other pieces of the blizz UI
