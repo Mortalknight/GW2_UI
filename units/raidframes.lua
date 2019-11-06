@@ -120,19 +120,21 @@ end
 GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
 
 local function setAbsorbAmount(self)
+    local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local absorb = UnitGetTotalAbsorbs(self.unit)
-
+    local healthPrec = 0
     local absorbPrecentage = 0
 
-    if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = absorb / healthMax
+    if healthMax > 0 then
+        healthPrec = health / healthMax
     end
-    self.healthbar.absorbbar:SetValue(absorbPrecentage)
+    if (absorb ~= nil or absorb == 0) and healthMax~=0 then
+        absorbPrecentage = math.min(healthPrec + (absorb / healthMax), 1)
+    end
+    self.absorbbar:SetValue(absorbPrecentage)
 end
 GW.AddForProfiling("raidframes", "setAbsorbAmount", setAbsorbAmount)
-
-
 
 local function setHealPrediction(self,predictionPrecentage)
     self.predictionbar:SetValue(predictionPrecentage)    
@@ -192,7 +194,6 @@ local function setPredictionAmount(self)
     setHealth(self)
 end
 GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
-
 
 local function setUnitName(self)
     if self == nil or self.unit == nil then
@@ -548,6 +549,7 @@ end
 local function updateBuffs(self)
     local btnIndex, x, y = 1, 0, 0
     local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
+    local i, name = 1
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
@@ -556,30 +558,32 @@ local function updateBuffs(self)
     end
 
     -- missing buffs
-    local i, name = 1
-    repeat
-        i, name = i + 1, UnitBuff(self.unit, i)
-        if name and missing[name] then
-            missing[name] = false
-        end
-    until not name
-
-    i = 0
-    for mName,v in pairs(missing) do
-        if v then
-            while not spellBookIndex[mName] and spellBookSearched < 1000 do
-                spellBookSearched = spellBookSearched + 1
-                name = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
-                if not name then
-                    spellBookSearched = 1000
-                elseif missing[name] ~= nil and not spellBookIndex[name] then
-                    spellBookIndex[name] = spellBookSearched
-                end
+    if not UnitIsDeadOrGhost(self.unit) then
+        
+        repeat
+            i, name = i + 1, UnitBuff(self.unit, i)
+            if name and missing[name] then
+                missing[name] = false
             end
+        until not name
 
-            if spellBookIndex[mName] then
-                local icon = GetSpellBookItemTexture(spellBookIndex[mName], BOOKTYPE_SPELL)
-                i, btnIndex, x, y = i + 1, showBuffIcon(self, spellBookIndex[mName], btnIndex, x, y, icon, true)
+        i = 0
+        for mName,v in pairs(missing) do
+            if v then
+                while not spellBookIndex[mName] and spellBookSearched < 1000 do
+                    spellBookSearched = spellBookSearched + 1
+                    name = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
+                    if not name then
+                        spellBookSearched = 1000
+                    elseif missing[name] ~= nil and not spellBookIndex[name] then
+                        spellBookIndex[name] = spellBookSearched
+                    end
+                end
+
+                if spellBookIndex[mName] then
+                    local icon = GetSpellBookItemTexture(spellBookIndex[mName], BOOKTYPE_SPELL)
+                    i, btnIndex, x, y = i + 1, showBuffIcon(self, spellBookIndex[mName], btnIndex, x, y, icon, true)
+                end
             end
         end
     end
@@ -700,8 +704,9 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setAbsorbAmount(self)
         setPredictionAmount(self)
         setHealth(self)
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED" and unit == self.unit then
         setHealth(self)
+        setAbsorbAmount(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
         local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
@@ -715,8 +720,6 @@ local function raidframe_OnEvent(self, event, unit, arg1)
             local pwcolor = PowerBarColorCustom[powerToken]
             self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
-    elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" and unit == self.unit then
-        setAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
     elseif
@@ -813,7 +816,7 @@ local function updateFrameData(self, index)
     end
 
     if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = math.min(absorb / healthMax, 1)
+        absorbPrecentage = math.min((healthPrec) + (absorb / healthMax), 1)
     end
     if prediction > 0 and healthMax > 0 then
         predictionPrecentage = math.min((healthPrec) + (prediction / healthMax), 1)
@@ -823,7 +826,7 @@ local function updateFrameData(self, index)
     end
     self.manabar:SetValue(powerPrecentage)
     Bar(self.healthbar, healthPrec)
-    self.healthbar.absorbbar:SetValue(absorbPrecentage)
+    self.absorbbar:SetValue(absorbPrecentage)
     self.predictionbar:SetValue(predictionPrecentage)
 
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
@@ -1057,8 +1060,9 @@ local function createRaidFrame(registerUnit, index)
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
-        frame.healthbar = frame.predictionbar.healthbar
-        frame.aggroborder = frame.healthbar.absorbbar.aggroborder
+        frame.absorbbar = frame.predictionbar.absorbbar
+        frame.healthbar = frame.absorbbar.healthbar
+        frame.aggroborder = frame.healthbar.aggroborder
         frame.nameNotLoaded = false
 
         frame.name:SetFont(UNIT_NAME_FONT, 12)

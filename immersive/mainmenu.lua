@@ -638,10 +638,9 @@ GW.SkinLFGListApplicationDialog = SkinLFGListApplicationDialog
 
 -------------------------------------------------------LFGInvitePopup-------------------------------------------------------
 local function SkinLFGInvitePopup()
-    local LFGListApplicationDialog = _G["LFGListApplicationDialog"]
-
     LFGInvitePopup:SetBackdrop(nil)
     LFGInvitePopup.Border:Hide()
+
     LFGInvitePopupAcceptButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
     LFGInvitePopupAcceptButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
     LFGInvitePopupAcceptButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
@@ -661,3 +660,36 @@ local function SkinLFGInvitePopup()
     LFGInvitePopup:SetBackdrop(constBackdropFrame)
 end
 GW.SkinLFGInvitePopup = SkinLFGInvitePopup
+
+-------------------------------------------------------ReadyCheckListenerFrame-------------------------------------------------------
+local function SkinReadyCheckListenerFrame()
+    ReadyCheckListenerFrame:SetBackdrop(nil)
+
+    ReadyCheckFrameYesButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    ReadyCheckFrameYesButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    ReadyCheckFrameYesButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    ReadyCheckFrameYesButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    ReadyCheckFrameYesButton.Text:SetTextColor(0, 0, 0, 1)
+    ReadyCheckFrameYesButton.Text:SetShadowOffset(0, 0)
+    addHoverToButton(ReadyCheckFrameYesButton)
+
+    ReadyCheckFrameNoButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    ReadyCheckFrameNoButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    ReadyCheckFrameNoButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+    ReadyCheckFrameNoButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    ReadyCheckFrameNoButton.Text:SetTextColor(0, 0, 0, 1)
+    ReadyCheckFrameNoButton.Text:SetShadowOffset(0, 0)
+    addHoverToButton(ReadyCheckFrameNoButton)
+
+    local r = {ReadyCheckListenerFrame:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "Texture" then
+            c:Hide()
+        end
+    end
+
+    ReadyCheckListenerFrame:SetBackdrop(constBackdropFrame)
+    ReadyCheckPortrait:Show()
+    ReadyCheckPortrait:SetDrawLayer("OVERLAY", 2)
+end
+GW.SkinReadyCheckListenerFrame = SkinReadyCheckListenerFrame

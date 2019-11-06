@@ -965,6 +965,15 @@ local function changeFlyoutStyle(self)
     SpellFlyoutHorizontalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
     SpellFlyoutVerticalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
     SpellFlyoutBackgroundEnd:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
+
+    local i = 1
+    local btn = _G["SpellFlyoutButton1"]
+    while btn do
+        btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
+        btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
+        i = i + 1
+        btn = _G["SpellFlyoutButton" .. i]
+    end
 end
 
 local function LoadActionBars()

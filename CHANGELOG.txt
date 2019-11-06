@@ -1,3 +1,10 @@
+5.1.12
+
+NEW
+    - Added new skins
+    - Added heal prediction to party frames
+
+
 5.1.11
 
 NEW

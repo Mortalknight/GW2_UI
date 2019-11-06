@@ -119,7 +119,7 @@ local function bossFrame_OnEvent(self, event, unit)
     end
 
 end
-GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
+GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent) 
 
 local function registerFrame(i)
     local debug_unit_Track = "boss" .. i

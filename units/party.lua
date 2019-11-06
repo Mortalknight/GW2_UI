@@ -8,6 +8,8 @@ local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local AddToClique =GW.AddToClique
+local CommaValue = GW.CommaValue
+local RoundDec = GW.RoundDec
 
 local GW_READY_CHECK_INPROGRESS = false
 
@@ -642,33 +644,101 @@ local function setUnitName(self)
 end
 GW.AddForProfiling("party", "setUnitName", setUnitName)
 
+local function setHealthValue(self, healthCur, healthMax, healthPrec)
+    self.healthsetting = GetSetting("RAID_UNIT_HEALTH")
+    local healthstring = ""
+
+    if self.healthsetting == "NONE" then
+        self.healthstring:Hide()
+        return
+    end
+
+    if self.healthsetting == "PREC" then
+        self.healthstring:SetText(RoundDec(healthPrec *100,0).. "%")
+        self.healthstring:SetJustifyH("LEFT")
+    elseif self.healthsetting == "HEALTH" then
+        self.healthstring:SetText(CommaValue(healthCur))
+        self.healthstring:SetJustifyH("LEFT")
+    elseif self.healthsetting == "LOSTHEALTH" then
+        if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
+        self.healthstring:SetText(healthstring)
+        self.healthstring:SetJustifyH("RIGHT")
+    end
+    if healthCur == 0 then 
+        self.healthstring:SetTextColor(255, 0, 0)
+    else
+        self.healthstring:SetTextColor(1, 1, 1)
+    end
+    self.healthstring:Show()
+end
+GW.AddForProfiling("party", "setHealthValue", setHealthValue)
+
+local function setHealPrediction(self, predictionPrecentage)
+    self.predictionbar:SetValue(predictionPrecentage)    
+end
+GW.AddForProfiling("party", "setHealPrediction", setHealPrediction)
+
+local function setHealth(self)
+    local health = UnitHealth(self.unit)
+    local healthMax = UnitHealthMax(self.unit)
+    local healthPrec = 0
+    local predictionPrecentage = 0
+    if healthMax > 0 then
+        healthPrec = health / healthMax
+    end
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax~=0 then
+        predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
+    end
+    setHealPrediction(self, predictionPrecentage)
+    setHealthValue(self, health, healthMax, healthPrec)
+    Bar(self.healthbar, healthPrec)
+end
+GW.AddForProfiling("party", "setHealth", setHealth)
+
+local function setPredictionAmount(self)
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+
+    self.healPredictionAmount = prediction
+    setHealth(self)
+end
+GW.AddForProfiling("party", "setPredictionAmount", setPredictionAmount)
+
 local function updatePartyData(self)
     if not UnitExists(self.unit) then
         return
     end
+
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrec = 0
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+    local predictionPrecentage = 0
+
     local power = UnitPower(self.unit, UnitPowerType(self.unit))
     local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
     local powerPrecentage = 0
+
     powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
-
-    if powerMax > 0 then
-        powerPrecentage = power / powerMax
-    end
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = math.min(healthPrec + (prediction / healthMax), 1)
+    end
+    if powerMax > 0 then
+        powerPrecentage = power / powerMax
+    end
     Bar(self.healthbar, healthPrec)
-    self.powerbar:SetValue(powerPrecentage)
+    self.predictionbar:SetValue(predictionPrecentage)
 
-    updateAwayData(self)
+    self.powerbar:SetValue(powerPrecentage)
+    setHealth(self)
     setUnitName(self)
+    updateAwayData(self)
 
     self.level:SetText(UnitLevel(self.unit))
 
@@ -689,18 +759,15 @@ local function party_OnEvent(self, event, unit, arg1)
         return
     end
 
+    if event == "load" then
+        setPredictionAmount(self)
+        setHealth(self)
+    end
     if not self.nameNotLoaded then
         setUnitName(self)
     end
-
     if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
-        local health = UnitHealth(self.unit)
-        local healthMax = UnitHealthMax(self.unit)
-        local healthPrec = 0
-        if healthMax > 0 then
-            healthPrec = health / healthMax
-        end
-        Bar(self.healthbar, healthPrec)
+        setHealth(self)
     end
     if event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
@@ -713,6 +780,9 @@ local function party_OnEvent(self, event, unit, arg1)
     end
     if event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         updatePartyData(self)
+    end
+    if event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
+        setPredictionAmount(self)
     end
     if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
         updateAwayData(self)
@@ -784,18 +854,21 @@ GW.TogglePartyRaid = TogglePartyRaid
 
 local function createPartyFrame(i)
     local registerUnit = "party" .. i
-    --  registerUnit = 'player'
-
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
+
     frame.name:SetFont(UNIT_NAME_FONT, 12)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
+    frame.healthbar = frame.predictionbar.healthbar
+    frame.healthstring = frame.healthbar.healthstring
+
     frame:SetScript("OnEvent", party_OnEvent)
 
     frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
 
     frame.unit = registerUnit
+    frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
     frame.nameNotLoaded = false
 
@@ -834,17 +907,20 @@ local function createPartyFrame(i)
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
+    frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
-    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
+
+    party_OnEvent(frame, "load")
 
     updatePartyData(frame)
 end

@@ -71,7 +71,6 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
-
                 </Texture>
 
             </Layer>

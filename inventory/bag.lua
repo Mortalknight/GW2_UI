@@ -483,7 +483,7 @@ local function LoadBag(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
     f.headerString:SetText(INVENTORY_TOOLTIP)
     f.spaceString:SetFont(UNIT_NAME_FONT, 12)
     f.spaceString:SetTextColor(1, 1, 1)
