@@ -8,7 +8,6 @@ local UNSTYLED = {
 	"ShoppingTooltip1",
 	"ShoppingTooltip2",
 	"ShoppingTooltip3",
-	"ItemRefTooltip",
 	"ItemRefShoppingTooltip1",
 	"ItemRefShoppingTooltip2",
 	"ItemRefShoppingTooltip3",
@@ -91,6 +90,22 @@ local function anchorTooltip(self, p)
 end
 GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 
+local function SkinItemRefTooltip_Update()
+	if ItemRefTooltip:IsShown() then
+		ItemRefCloseButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
+		ItemRefCloseButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+		ItemRefCloseButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+		ItemRefCloseButton:SetSize(20, 20)
+		ItemRefCloseButton:ClearAllPoints()
+		ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
+		ItemRefTooltip:SetBackdrop(constBackdropArgs)
+	end
+end
+local function SkinItemRefTooltip()
+    hooksecurefunc("SetItemRef", SkinItemRefTooltip_Update)
+end
+GW.SkinLFGListInviteDialog = SkinLFGListInviteDialog
+
 local function LoadTooltips()
 	if GetSetting("TOOLTIP_MOUSE") then
 		hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
@@ -115,7 +130,7 @@ local function LoadTooltips()
 			end
 		end)
 	end
-
+	SkinItemRefTooltip()
 	hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 	for _, toStyle in ipairs(UNSTYLED) do
 		local f = _G[toStyle]
