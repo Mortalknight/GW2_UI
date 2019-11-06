@@ -51,7 +51,7 @@ local function disableTitanPanelBarAdjusting()
         TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
         TitanMovable_AddonAdjust("MinimapCluster", true)
     end
-end     
+end
 
 local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
     local dummyPoint = GetDefault(settingsName)
@@ -529,7 +529,9 @@ GW.pixelPerfection = pixelPerfection
 
 local SCALE_HUD_FRAMES = {
     "GwHudArtFrame",
+    "GwPlayerHealthBar",
     "GwPlayerPowerBar",
+    "GwPlayerSubPowerBar",
     "GwPlayerAuraFrame",
     "GwPlayerClassPower",
     "GwPlayerHealthGlobe",
@@ -676,6 +678,7 @@ local function loadAddon(self)
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") then
         GW.LoadPlayerHud()
+        GW.LoadHealthBar()
     end
 
     if GetSetting("POWERBAR_ENABLED") then
@@ -817,7 +820,7 @@ local function loadAddon(self)
                 SetSetting("PIXEL_PERFECTION", false)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
             end
-        end)  
+        end)
         --Save current Version
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
@@ -854,9 +857,9 @@ local function loadAddon(self)
                 SetSetting("PIXEL_PERFECTION", false)
                 self:SetText(GwLocalization["PIXEL_PERFECTION_ON"])
             end
-        end) 
+        end)
         --Save current Version
-        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)    
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)

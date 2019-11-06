@@ -13,40 +13,40 @@ local function UpdatePlayerBuffFrame()
     end
     GwPlayerAuraFrame:ClearAllPoints()
     if MultiBarBottomRight and MultiBarBottomRight.gw_FadeShowing then
-        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 215)
+        GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 260)
     else
         GwPlayerAuraFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 53, 120)
     end
 end
 GW.UpdatePlayerBuffFrame = UpdatePlayerBuffFrame
 
-local function LoadDebuff(self, data, buffindex, filter)        
+local function LoadDebuff(self, data, buffindex, filter)
     if data['dispelType'] ~= nil then
         self.background:SetVertexColor(DEBUFF_COLOR[data['dispelType']].r, DEBUFF_COLOR[data['dispelType']].g, DEBUFF_COLOR[data['dispelType']].b)
-    else          
+    else
         self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b);
     end
     self.cooldown:SetDrawEdge(0)
     self.cooldown:SetDrawSwipe(1)
     self.cooldown:SetReverse(false)
-    self.cooldown:SetHideCountdownNumbers(true)       
+    self.cooldown:SetHideCountdownNumbers(true)
     self.icon:SetTexture(data['icon'])
-     
+
     local buffDur = ""
     local stacks  = ""
     if data['count'] ~= nil and data['count'] > 1 then
-        stacks = data['count'] 
+        stacks = data['count']
     end
-            
+
     self.expires =data['expires']
     self.duration =data['duration']
     self.cooldown:SetCooldown(0, 0)
-        
+
     _G[self:GetName() .. 'CooldownBuffDuration']:SetText(buffDur)
     _G[self:GetName() .. 'IconBuffStacks']:SetText(stacks)
-           
+
     self:SetScript('OnEnter', function() GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT"); GameTooltip:ClearLines(); GameTooltip:SetUnitDebuff(self.unit,buffindex,filter); GameTooltip:Show() end)
-    self:SetScript('OnLeave', function() GameTooltip:Hide() end)  
+    self:SetScript('OnLeave', function() GameTooltip:Hide() end)
 end
 GW.LoadDebuff = LoadDebuff
 
@@ -96,7 +96,7 @@ local function LoadBuffs()
 
             if newstate == "high" then
                 aura:ClearAllPoints()
-                aura:SetPoint("BOTTOMLEFT", uip, "BOTTOM", 53, 215)
+                aura:SetPoint("BOTTOMLEFT", uip, "BOTTOM", 53, 260)
             elseif newstate == "low" then
                 aura:ClearAllPoints()
                 aura:SetPoint("BOTTOMLEFT", uip, "BOTTOM", 53, 120)

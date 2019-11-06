@@ -681,7 +681,7 @@
                 </Texture>
 
             </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2"> 
+            <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness">
                     <Size x="64" y="64"></Size>
                     <Anchors>
@@ -1421,11 +1421,11 @@
                         GwAttributeInvisibleFrame:ClearAllPoints()
                         GwAttributeInvisibleFrame:SetPoint(GwPapaerDollStats.header:GetPoint())
                         GwAttributeInvisibleFrame:SetSize(GwPapaerDollStats.header:GetSize())
-                        GwAttributeInvisibleFrame:Show()  
+                        GwAttributeInvisibleFrame:Show()
                     </OnLoad>
                     <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        
+
                         GameTooltip:SetText(HIGHLIGHT_FONT_COLOR_CODE .. PET_BATTLE_STATS_LABEL .. FONT_COLOR_CODE_CLOSE)
                         GameTooltip:AddLine(self.tooltip)
                         GameTooltip:Show()

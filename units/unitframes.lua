@@ -684,7 +684,7 @@ local function updateHealthValues(self, event)
 
     if IsAddOnLoaded("RealMobHealth") then
         health, healthMax = RealMobHealth.GetUnitHealth(self.unit)
-        if health == nil or health < 0 then 
+        if health == nil or health < 0 then
             health = UnitHealth(self.unit)
         end
         if healthMax == nil or healthMax < 0 then
@@ -809,7 +809,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     else
         fUnit = self.unit
     end
-    
+
     local isBuff = false
     for frameIndex = minIndex, maxIndex do
         local index
@@ -1014,7 +1014,7 @@ local function target_OnEvent(self, event, unit)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
-    elseif UnitIsUnit(unit, self.unit) then       
+    elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
@@ -1130,7 +1130,7 @@ local function LoadTarget()
 
     LibClassicDurations.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
         target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
-    end)    
+    end)
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 

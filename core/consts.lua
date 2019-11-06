@@ -169,7 +169,7 @@ local TARGET_FRAME_ART = {
     ["rareelite"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare",
     ["worldboss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
     ["boss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_boss",
-    ["realboss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow-raidboss" 
+    ["realboss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow-raidboss"
 }
 GW.TARGET_FRAME_ART = TARGET_FRAME_ART
 
