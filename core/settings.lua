@@ -388,14 +388,6 @@ local function inputPrompt(text, method)
     GwWarningPrompt.input:SetText("")
 end
 
-local function inputDiscord(text, method, input)
-    GwDiscordPrompt.string:SetText(text)
-    GwDiscordPrompt.method = method
-    GwDiscordPrompt:Show()
-    GwDiscordPrompt.input:Show()
-    GwDiscordPrompt.input:SetText(input)
-end
-
 local function setMultibarCols()
     local cols = GetSetting("MULTIBAR_RIGHT_COLS")
     Debug("setting multibar cols", cols)
@@ -641,24 +633,6 @@ local function LoadSettings()
 
     tinsert(UISpecialFrames, "GwWarningPrompt")
 
-    local fmGWD = CreateFrame("Frame", "GwDiscordPrompt", UIParent, "GwDiscordPrompt")
-    fmGWD.string:SetFont(UNIT_NAME_FONT, 14)
-    fmGWD.string:SetTextColor(1, 1, 1)
-    fmGWD.acceptButton:SetText(ACCEPT)
-    local fmGWD_input_OnEscapePressed = function(self)
-        self:ClearFocus()
-    end
-    fmGWD.input:SetScript("OnEscapePressed", fmGWD_input_OnEscapePressed)
-    fmGWD.input:SetScript("OnEditFocusGained", nil)
-    fmGWD.input:SetScript("OnEditFocusLost", nil)
-    fmGWD.input:SetScript("OnEnterPressed", nil)
-    local fmGWD_accept_OnClick = function(self, button)
-        self:GetParent():Hide()
-    end
-    fmGWD.acceptButton:SetScript("OnClick", fmGWD_accept_OnClick)
-
-    tinsert(UISpecialFrames, "GwDiscordPrompt")
-
     local fnMf_OnDragStart = function(self)
         self:StartMoving()
     end
@@ -688,6 +662,32 @@ local function LoadSettings()
     GwSettingsWindowDiscord:SetText(GwLocalization["DISCORD"])
     WelcomeScreen:SetText(GwLocalization["WELCOME"])
 
+    StaticPopupDialogs["JOIN_DISCORD"] = {
+        text = GwLocalization["DISCORD"],
+        button2 = CLOSE,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        hasEditBox = 1,
+        hasWideEditBox = true,
+        editBoxWidth = 250,
+        EditBoxOnEscapePressed = function(self)
+            self:GetParent():Hide();
+        end,
+        OnShow = function(self)
+            self:SetWidth(420)
+			local editBox = _G[self:GetName() .. "EditBox"]
+			editBox:SetText("https://discord.gg/MZZtRWt")
+			editBox:SetFocus()
+			editBox:HighlightText(false)
+			local button = _G[self:GetName() .. "Button2"]
+			button:ClearAllPoints()
+			button:SetWidth(200)
+			button:SetPoint("CENTER", editBox, "CENTER", 0, -30)
+        end,
+        preferredIndex = 3
+    }
+
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then
             DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
@@ -699,7 +699,7 @@ local function LoadSettings()
         C_UI.Reload()
     end
     local fnGSWD_OnClick = function(self, button)
-        inputDiscord("Discord", nil, "https://discord.gg/MZZtRWt")
+        StaticPopup_Show("JOIN_DISCORD")
     end
     local fmGSWKB_OnClick = function(self, button)
         GwSettingsWindow:Hide()
@@ -1053,6 +1053,12 @@ local function LoadSettings()
         GwLocalization["TARGET_COMBOPOINTS"],
         GwLocalization["TARGET_COMBOPOINTS_DEC"],
         "target_HOOK_COMBOPOINTS",
+        "GwSettingsTargetOptions"
+    )
+    addOption(
+        GwLocalization["ADV_CAST_BAR"],
+        GwLocalization["ADV_CAST_BAR_DESC"],
+        "target_CASTINGBAR_DATA",
         "GwSettingsTargetOptions"
     )
     addOption(

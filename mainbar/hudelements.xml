@@ -1563,7 +1563,6 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-
                 <Texture parentKey="icon">
                     <Size x="30" y="30"></Size>
                     <Anchors>
@@ -1571,7 +1570,6 @@
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
-
             </Layer>
         </Layers>
     </Frame>

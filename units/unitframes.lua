@@ -274,6 +274,9 @@ local function createNormalUnitFrame(ftype)
     f.castingString:SetFont(UNIT_NAME_FONT, 12)
     f.castingString:SetShadowOffset(1, -1)
 
+    f.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingTimeString:SetShadowOffset(1, -1)
+
     f.prestigeString:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
 
     f.prestigebg:SetPoint("CENTER", f.prestigeString, "CENTER", -1, 1)
@@ -625,6 +628,10 @@ local function hideCastBar(self, event)
     self.castingbarBackground:Hide()
     self.castingString:Hide()
 
+    if self.castingTimeString then
+        self.castingTimeString:Hide()
+    end
+
     self.castingbar:Hide()
     self.castingbarSpark:Hide()
 
@@ -672,6 +679,9 @@ local function updateCastValues(self, event)
     self.castingbarBackground:Show()
     self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", -2, -1)
     self.castingString:Show()
+    if self.castingTimeString then
+        self.castingTimeString:Show()
+    end
 
     if notInterruptible then
         self.castingbarNormal:Hide()
@@ -694,6 +704,9 @@ local function updateCastValues(self, event)
         startTime,
         endTime - startTime,
         function(step)
+            if GetSetting("target_CASTINGBAR_DATA") and self.castingTimeString then
+                self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+            end
             if castType == 0 then
                 step = 1 - step
             end

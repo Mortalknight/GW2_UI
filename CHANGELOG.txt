@@ -3,7 +3,7 @@
 NEW
     - Added new skins
     - Added heal prediction to party frames
-
+    - Added casttime to target castbar
 
 5.1.11
 

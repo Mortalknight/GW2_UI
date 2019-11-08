@@ -64,7 +64,6 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbar" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
-
                 </Texture>
                 <Texture parentKey="absorbbarbg" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
                     <Size x="213" y="13"/>
@@ -72,10 +71,8 @@
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="4">
-
                 <Texture parentKey="healthbarFlash" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="213" y="13"/>
                     <Anchors>
@@ -89,7 +86,6 @@
                     </Anchors>
                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
                 </Texture>
-
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="5">
                 <Texture file="Interface\AddOns\GW2_UI\textures\targetPortraitinner">
@@ -98,16 +94,12 @@
                         <Anchor point="CENTER" relativeKey="$parent.portrait" relativePoint="CENTER"></Anchor>
                     </Anchors>
                 </Texture>
-
                 <Texture parentKey="healthbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
-
-
                     </Anchors>
                 </Texture>
-
                 <Texture parentKey="powerbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="213" y="3"/>
                     <Anchors>
@@ -135,14 +127,12 @@
                         <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="TOPRIGHT" x="15" y="26"></Anchor>
                     </Anchors>
                 </Texture>
-
                 <Texture parentKey="prestigebg" file="Interface\AddOns\GW2_UI\textures\prestigebackground">
                     <Size x="28" y="28"/>
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.prestigeString" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-
                 <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="13"/>
                     <Anchors>
@@ -150,13 +140,11 @@
                     </Anchors>
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
-
                 <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
                     <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
-
                 </Texture>
                 <Texture parentKey="healthbarSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
                     <Size x="21" y="13"></Size>
@@ -164,7 +152,6 @@
                         <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                     </Anchors>
                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
-
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
@@ -201,6 +188,13 @@
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="7" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="castingTimeString" justifyH="RIGHT" justifyV="MIDDLE">
+                    <Size x="70" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.castingbarBackground" relativePoint="RIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
 
@@ -286,8 +280,6 @@
                     <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
-
-
                     </Anchors>
                 </Texture>
                 <Texture parentKey="healthbarFlashSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
@@ -296,20 +288,15 @@
                         <Anchor point="LEFT" relativeKey="$parent.healthbarFlash" relativePoint="RIGHT" x="0" y="0"/>
                     </Anchors>
                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
-
                 </Texture>
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="5">
-
                 <Texture parentKey="healthbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
-
-
                     </Anchors>
                 </Texture>
-
                 <Texture parentKey="powerbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="146" y="3"/>
                     <Anchors>
@@ -331,9 +318,6 @@
                 </Texture>
             </Layer>
             <Layer level="ARTOWRK" textureSubLevel="6">
-
-
-
                 <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="14"/>
                     <Anchors>
@@ -341,7 +325,6 @@
                     </Anchors>
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
-
                 <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
                     <Size x="146" y="15"/>
                     <Anchors>
@@ -354,11 +337,9 @@
                         <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                     </Anchors>
                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
-
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-
                 <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="CENTER">
                     <Size x="100" y="15"/>
                     <Anchors>
