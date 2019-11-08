@@ -952,6 +952,8 @@ local function barChange_OnEvent(self, event, ...)
         else
             f:Hide()
         end
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+        selectType(f)
     end
 end
 
