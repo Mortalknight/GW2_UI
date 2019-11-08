@@ -120,17 +120,12 @@ end
 GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
 
 local function setAbsorbAmount(self)
-    local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local absorb = UnitGetTotalAbsorbs(self.unit)
-    local healthPrec = 0
     local absorbPrecentage = 0
 
-    if healthMax > 0 then
-        healthPrec = health / healthMax
-    end
-    if (absorb ~= nil or absorb == 0) and healthMax~=0 then
-        absorbPrecentage = math.min(healthPrec + (absorb / healthMax), 1)
+    if (absorb ~= nil or absorb == 0) and healthMax ~= 0 then
+        absorbPrecentage = math.min(absorb / healthMax, 1)
     end
     self.absorbbar:SetValue(absorbPrecentage)
 end
@@ -704,9 +699,8 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setAbsorbAmount(self)
         setPredictionAmount(self)
         setHealth(self)
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED" and unit == self.unit then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         setHealth(self)
-        setAbsorbAmount(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
         local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
@@ -720,6 +714,8 @@ local function raidframe_OnEvent(self, event, unit, arg1)
             local pwcolor = PowerBarColorCustom[powerToken]
             self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
+    elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" and unit == self.unit then
+        setAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
     elseif
@@ -814,9 +810,8 @@ local function updateFrameData(self, index)
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
-
     if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = math.min((healthPrec) + (absorb / healthMax), 1)
+        absorbPrecentage = math.min(absorb / healthMax, 1)
     end
     if prediction > 0 and healthMax > 0 then
         predictionPrecentage = math.min((healthPrec) + (prediction / healthMax), 1)
@@ -1060,8 +1055,8 @@ local function createRaidFrame(registerUnit, index)
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
-        frame.absorbbar = frame.predictionbar.absorbbar
-        frame.healthbar = frame.absorbbar.healthbar
+        frame.healthbar = frame.predictionbar.healthbar
+        frame.absorbbar = frame.healthbar.absorbbar
         frame.aggroborder = frame.healthbar.aggroborder
         frame.nameNotLoaded = false
 

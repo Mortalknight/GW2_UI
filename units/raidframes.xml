@@ -80,39 +80,39 @@
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
                 <Frames>
-                    <StatusBar parentKey="absorbbar" defaultValue="1" minValue="0" maxValue="1">
+                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
                         <Size x="65" y="8"></Size>
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\absorbbar-animated"/>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                        <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                                    <Color r="0.207" g="0.392" b="0.168"></Color>
+                                    <Anchors>
+                                        <Anchor point="RIGHT" x="0" y="0"/>
+                                    </Anchors>
+                                    <Size x="7" y="8"></Size>
+                                </Texture>
+                                <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
                         <Frames>
-                            <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
+                            <StatusBar parentKey="absorbbar" defaultValue="1" minValue="0" maxValue="1">
                                 <Size x="65" y="8"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
-                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
                                 </Anchors>
-                                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-                                <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
-                                <Layers>
-                                    <Layer>
-                                        <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
-                                            <Color r="0.207" g="0.392" b="0.168"></Color>
-                                            <Anchors>
-                                                <Anchor point="RIGHT" x="0" y="0"/>
-                                            </Anchors>
-                                            <Size x="7" y="8"></Size>
-                                        </Texture>
-                                        <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-                                                <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                                            </Anchors>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
+                                <BarTexture file="Interface\AddOns\GW2_UI\textures\absorbbar-animated"/>
                             </StatusBar>
                         </Frames>
                     </StatusBar>
