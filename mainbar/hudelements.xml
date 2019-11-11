@@ -199,7 +199,7 @@
     </Button>
 
     <Frame name="GwPlayerHealthBar" virtual="true">
-        <Size x="745" y="40"></Size>
+        <Size x="745" y="41"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86"></Anchor>
         </Anchors>
@@ -212,9 +212,9 @@
             </Layer>
             <Layer level="BORDER">
                 <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="740" y="36"/>
+                    <Size x="740" y="35"/>
                     <Anchors>
-                        <Anchor point="LEFT" x="2" y="0"/>
+                        <Anchor point="LEFT" x="3" y="0"/>
                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
@@ -254,7 +254,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="label" name="$parentString" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="healthString" name="$parentString" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" b="1" g="1"></Color>
                             <Size x="742" y="36"/>
                             <Anchors>
@@ -269,7 +269,7 @@
         </Frames>
     </Frame>
     <Frame name="GwPlayerPowerBar" virtual="true" parent="GwPlayerHealthBar">
-        <Size x="291" y="40"></Size>
+        <Size x="291" y="41"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86"></Anchor>
         </Anchors>
@@ -282,7 +282,7 @@
             </Layer>
             <Layer level="BORDER">
                 <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="285" y="36"/>
+                    <Size x="285" y="35"/>
                     <Anchors>
                         <Anchor point="LEFT" x="2" y="0"/>
                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
@@ -330,7 +330,7 @@
         </Frames>
     </Frame>
     <Frame name="GwPlayerSubPowerBar" virtual="true" parent="GwPlayerHealthBar">
-        <Size x="291" y="20"></Size>
+        <Size x="291" y="21"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86"></Anchor>
         </Anchors>

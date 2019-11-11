@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetClassColour = GW.GetClassColour
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local GetSetting = GW.GetSetting
@@ -326,6 +327,7 @@ end
 GW.AddForProfiling("unitframes", "createNormalUnitFrameSmall", createNormalUnitFrameSmall)
 
 local function updateHealthTextString(self, health, healthPrecentage)
+
     local healthString = ""
 
     if self.showHealthValue == true then
@@ -339,47 +341,52 @@ local function updateHealthTextString(self, health, healthPrecentage)
         healthString = healthString .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
-    self.healthString:SetText(healthString)
+    if healthString == "" then
+        healthString = self.lastKnownHealth
+    end
+
+    if self.healthString == nil then
+        self.statusBar.healthString:SetText(healthString)
+    else
+        self.healthString:SetText(healthString)
+    end
 end
+GW.UpdateHealthTextString = updateHealthTextString
 GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
-        local _, _, classIndex = UnitClass(self.unit)
+        local red, green, blue, _ = GetClassColour("Target")
+
         self.healthbar:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
+            red,
+            green,
+            blue
         )
         self.healthbarSpark:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
+            red,
+            green,
+            blue
         )
         self.healthbarFlash:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
+            red,
+            green,
+            blue
         )
         self.healthbarFlashSpark:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
+            red,
+            green,
+            blue
         )
-
         self.nameString:SetTextColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
+            red,
+            green,
+            blue
         )
 
-        local r, g, b, _ = self.nameString:GetTextColor()
-        self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)
+
+        --local r, g, b, _ = self.nameString:GetTextColor()
+        --self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)
     else
         local isFriend = UnitIsFriend("player", self.unit)
         local friendlyColor = COLOR_FRIENDLY[1]
@@ -673,7 +680,8 @@ local function updatePowerValues(self, event)
         self.powerbar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
-    self.powerbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * powerPrecentage)))
+    local powerBarWidth = math.min(self.barWidth, math.max(1, self.barWidth * powerPrecentage))
+    self.powerbar:SetWidth(powerBarWidth - 1)
 end
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
@@ -699,7 +707,7 @@ local function updateHealthValues(self, event)
         healthPrecentage = health / healthMax
     end
 
-    local animationSpeed
+    local animationSpeed = 0
 
     if event == "UNIT_TARGET" or event == "PLAYER_TARGET_CHANGED" then
         animationSpeed = 0
@@ -724,7 +732,6 @@ local function updateHealthValues(self, event)
             animationSpeed,
             function(step)
                 healthBarAnimation(self, step)
-
                 local hvsc = self.healthValueStepCount
                 if hvsc % 5 == 0 then
                     updateHealthTextString(self, healthMax * step, step)
@@ -985,20 +992,23 @@ end
 GW.LoadAuras = LoadAuras
 
 local function target_OnEvent(self, event, unit)
+
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED") then
         unitFrameData(self, event)
-        if (ttf) then unitFrameData(ttf, event) end
         updateHealthValues(self, event)
-        if (ttf) then updateHealthValues(ttf, event) end
         updatePowerValues(self, event)
-        if (ttf) then updatePowerValues(ttf, event) end
         updateCastValues(self, event)
-        if (ttf) then updateCastValues(ttf, event) end
         updateRaidMarkers(self, event)
-        if (ttf) then updateRaidMarkers(ttf, event) end
         UpdateBuffLayout(self, event)
+        if (ttf) then
+            unitFrameData(ttf, event)
+            updateHealthValues(ttf, event)
+            updatePowerValues(ttf, event)
+            updateCastValues(ttf, event)
+            updateRaidMarkers(ttf, event)
+        end
     elseif event == "UNIT_TARGET" and unit == "target" then
         if (ttf ~= nil) then
             if UnitExists("targettarget") then
@@ -1031,6 +1041,17 @@ local function target_OnEvent(self, event, unit)
     end
 end
 GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
+
+local function portrait_OnEvent(self, event)
+    if event == "RAID_TARGET_UPDATE" then
+        updateRaidMarkers(self, event)
+    elseif event == "PLAYER_UPDATE_RESTING" then
+        print("PLAYER_UPDATE_RESTING")
+    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+        SetPortraitTexture(self.portrait, self.unit)
+    end
+end
+GW.AddForProfiling("unitframes", "portrait_OnEvent", portrait_OnEvent)
 
 local function unittarget_OnUpdate(self, elapsed)
     if self.unit == nil then
@@ -1086,6 +1107,7 @@ local function LoadTarget()
     AddToClique(NewUnitFrame)
 
     NewUnitFrame.classColor = GetSetting("target_CLASS_COLOR")
+    --NewUnitFrame.classColor = GetClassColour("Target")
 
     NewUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
     NewUnitFrame.showHealthPrecentage = GetSetting("target_HEALTH_VALUE_TYPE")
@@ -1176,3 +1198,62 @@ local function LoadTargetOfUnit(unit)
     f:SetScript("OnUpdate", unittarget_OnUpdate)
 end
 GW.LoadTargetOfUnit = LoadTargetOfUnit
+
+
+local function LoadPortraitFrame()
+
+    PlayerFrame:SetScript("OnEvent", nil)
+    PlayerFrame:Hide()
+
+    DurabilityFrame:UnregisterAllEvents()
+    DurabilityFrame:HookScript("OnShow", GW.Self_Hide)
+    DurabilityFrame:Hide()
+
+    local frame = CreateFrame("Button", "GwPlayerPortrateFrame", UIParent, "GwPlayerPortrateFrame")
+    frame.unit = "Player"
+
+    --RegisterMovableFrame("portraitFrame", frame, "target_pos", "GwTargetFrameTemplateDummy")
+
+    frame.nameString:SetFont(UNIT_NAME_FONT, 14)
+    frame.nameString:SetShadowOffset(1, -1)
+    frame.nameString:SetText(UnitName(frame.unit))
+
+    local level = UnitLevel(frame.unit)
+
+    frame.levelString:SetFont(UNIT_NAME_FONT, 14)
+    frame.levelString:SetShadowOffset(1, -1)
+    frame.levelString:SetText(level)
+
+    frame.restMarker:Hide()
+
+    frame:EnableMouse(true)
+    frame:RegisterForClicks("AnyDown")
+
+    frame:SetAttribute("*type1", "target")
+    frame:SetAttribute("*type2", "togglemenu")
+    frame:SetAttribute("unit", "player")
+
+    frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "Player")
+    frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "Player")
+    frame:RegisterEvent("PLAYER_UPDATE_RESTING")
+    frame:RegisterEvent("RAID_TARGET_UPDATE")
+
+    frame:SetScript("OnEvent", portrait_OnEvent)
+
+    AddToClique(frame)
+
+    frame.portrait:SetMask(186178)
+
+    local mask = frame:CreateMaskTexture()
+    mask:SetPoint("CENTER", frame.portrait, "CENTER", 0, 0)
+    mask:SetTexture("Textures\\MinimapMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetSize(92, 92)
+    frame.portrait:AddMaskTexture(mask)
+
+    updateRaidMarkers(frame)
+
+    SetPortraitTexture(frame.portrait, frame.unit)
+
+    return frame
+end
+GW.LoadPortraitFrame = LoadPortraitFrame

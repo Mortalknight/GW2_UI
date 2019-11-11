@@ -422,6 +422,12 @@ local function Trace()
     print("---------------------------------------------------------")
 end
 
+local function GetClassColour(unit)
+    local localizedClass, englishClass, classIndex = UnitClass(unit)
+    return GetClassColor(englishClass)
+end
+GW.GetClassColour = GetClassColour
+
 --@end-debug@
 --[===[@non-debug@
 local function Debug()

@@ -10,6 +10,8 @@ local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
 local SetClassIcon = GW.SetClassIcon
+local UpdateHealthTextString = GW.UpdateHealthTextString
+local Diff = GW.Diff
 
 local function powerBar_OnUpdate(self)
     if self.lostKnownPower == nil or self.powerMax == nil or self.lastUpdate == nil or self.animating == true then
@@ -461,18 +463,47 @@ local function updateHealthData(self)
 end
 GW.AddForProfiling("playerhud", "updateHealthData", updateHealthData)
 
+local function updateHealthBarAnimation(self, healthPercent)
+    local frame = self
+    local healthPercent = animations[frame.animKey]["progress"]
+    local bit = frame.healthBarWidth / 15
+    local spark = bit * math.floor(15 * (healthPercent))
+
+    local spark_current = (bit * (15 * (healthPercent)) - spark) / bit
+
+    local bI = math.min(16, math.max(1, math.floor(17 - (16 * spark_current))))
+
+    frame.candy.spark:SetTexCoord(
+        bloodSpark[bI].left,
+        bloodSpark[bI].right,
+        bloodSpark[bI].top,
+        bloodSpark[bI].bottom
+    )
+    frame.candy.spark:SetPoint("LEFT", frame.bar, "RIGHT", -2, 0)
+    local barPoint = spark + 3
+    if animations[frame.animKey]["progress"] == 0 then
+        frame.bar:Hide()
+    else
+        frame.bar:Show()
+    end
+    frame.bar:SetPoint("RIGHT", frame, "LEFT", barPoint, 0)
+    frame.statusBar:SetValue(0)
+    frame.candy:SetValue(0)
+end
+GW.AddForProfiling("playerhud", "updateHealthBarAnimation", updateHealthBarAnimation)
+
 local function updateHealthBarData(self)
 
-    local health, healthMax, healthPrec, _ = getHealthData(self)
+    local frame = self
+    local health, healthMax, healthPrec, _ = getHealthData(frame)
     local healthPercent = 0
-    local healthBarWidth = self.statusBar:GetWidth()
+    local healthBarWidth = frame.statusBar:GetWidth()
 
-    self.animating = true
+    frame.animating = true
 
-    self.lastKnownHealth = health
-    self.healthMax = healthMax
-    self.lastUpdate = GetTime()
-    self.healthBarWidth = healthBarWidth
+    frame.healthMax = healthMax
+    frame.lastUpdate = GetTime()
+    frame.healthBarWidth = healthBarWidth
 
     if health >= 0 and healthMax > 0 then
         healthPercent = health / healthMax
@@ -480,64 +511,45 @@ local function updateHealthBarData(self)
 
     local localizedClass, englishClass, classIndex = UnitClass("player")
     local healthColorRed, healthColorGreen, healthColorBlue, _ = GetClassColor(englishClass)
-    self.statusBar:SetStatusBarColor(healthColorRed, healthColorGreen, healthColorBlue)
-    self.candy.spark:SetVertexColor(healthColorRed, healthColorGreen, healthColorBlue)
-    self.candy:SetStatusBarColor(healthColorRed, healthColorGreen, healthColorBlue)
-    self.bar:SetVertexColor(healthColorRed, healthColorGreen, healthColorBlue)
+    frame.statusBar:SetStatusBarColor(healthColorRed, healthColorGreen, healthColorBlue)
+    frame.candy.spark:SetVertexColor(healthColorRed, healthColorGreen, healthColorBlue)
+    frame.candy:SetStatusBarColor(healthColorRed, healthColorGreen, healthColorBlue)
+    frame.bar:SetVertexColor(healthColorRed, healthColorGreen, healthColorBlue)
 
-    if self.animationCurrent == nil then
-        self.animationCurrent = 0
+    if frame.animationCurrent == nil then
+        frame.animationCurrent = 0
     end
 
-    if not self.animKey then
-        self.animKey = tostring(self)
+    if not frame.animKey then
+        frame.animKey = tostring(frame)
     end
-    local f = self
+
+    frame.healthValueStepCount = 0
     AddToAnimation(
-        self.animKey,
-        self.animationCurrent,
+        frame.animKey,
+        frame.animationCurrent,
         healthPercent,
         GetTime(),
         0.2,
-        function()
-            local healthPercent = animations[f.animKey]["progress"]
-            local bit = healthBarWidth / 15
-            local spark = bit * math.floor(15 * (healthPercent))
-
-            local spark_current = (bit * (15 * (healthPercent)) - spark) / bit
-
-            local bI = math.min(16, math.max(1, math.floor(17 - (16 * spark_current))))
-
-            f.candy.spark:SetTexCoord(
-                bloodSpark[bI].left,
-                bloodSpark[bI].right,
-                bloodSpark[bI].top,
-                bloodSpark[bI].bottom
-            )
-            f.candy.spark:SetPoint("LEFT", f.bar, "RIGHT", -2, 0)
-            local barPoint = spark + 3
-            if animations[f.animKey]["progress"] == 0 then
-                f.bar:Hide()
-            else
-                f.bar:Show()
+        function(step)
+            updateHealthBarAnimation(frame, healthPercent)
+            local hvsc = frame.healthValueStepCount
+            if hvsc % 5 == 0 then
+                UpdateHealthTextString(frame, healthMax * step, step)
             end
-            f.bar:SetPoint("RIGHT", f, "LEFT", barPoint, 0)
-            f.statusBar:SetValue(0)
-            f.candy:SetValue(0)
+            frame.healthValueStepCount = hvsc + 1
+            frame.healthValue = step
 
-            if f.stringUpdateTime == nil or f.stringUpdateTime < GetTime() then
-                f.statusBar.label:SetText(CommaValue(f.lastKnownHealth))
-                f.stringUpdateTime = GetTime() + 0.1
-            end
-
-            f.animationCurrent = healthPercent
+            frame.animationCurrent = healthPercent
         end,
-        "noease",
+        nil,
         function()
-            f.animating = false
+            frame.animating = false
+            UpdateHealthTextString(frame, health, healthPercent)
         end
     )
-    self.animationCurrent = healthPrec
+    frame.animationCurrent = healthPercent
+    frame.lastKnownHealth = health
 end
 GW.AddForProfiling("playerhud", "updateHealthBarData", updateHealthBarData)
 
@@ -656,8 +668,8 @@ local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", GwPlayerHealthBar, "GwPlayerPowerBar")
     local playerSubPowerBar = CreateFrame("Frame", "GwPlayerSubPowerBar", GwPlayerHealthBar, "GwPlayerSubPowerBar")
     if GW.GetSetting("XPBAR_ENABLED") then
-        playerPowerBar:SetPoint("BOTTOMLEFT", GwPlayerHealthBar, "BOTTOMLEFT", 270, -44)
-        playerSubPowerBar:SetPoint("BOTTOMLEFT", GwPlayerHealthBar, "BOTTOMLEFT", 270, -65)
+        playerPowerBar:SetPoint("BOTTOMLEFT", GwPlayerHealthBar, "BOTTOMLEFT", 270, -45)
+        playerSubPowerBar:SetPoint("BOTTOMLEFT", GwPlayerHealthBar, "BOTTOMLEFT", 270, -67)
     else
         playerPowerBar:SetPoint("BOTTOMLEFT", GwPlayerHealthBar, "BOTTOMLEFT", 0, 0)
         playerSubPowerBar:SetPoint("BOTTOMLEFT", GwPlayerHealthBar, "BOTTOMLEFT", 0, 0)
@@ -736,6 +748,7 @@ GW.AddForProfiling("playerhud", "HealthBar_OnEvent", HealthBar_OnEvent)
 
 local function LoadHealthBar()
     local playerHealthBar = CreateFrame("Frame", "GwPlayerHealthBar", UIParent, "GwPlayerHealthBar")
+    playerHealthBar.showHealthValue = true
     local _, _, classIndex = UnitClass("Player")
     SetClassIcon(playerHealthBar.classIcon, classIndex)
     if GW.GetSetting("XPBAR_ENABLED") then
@@ -986,5 +999,6 @@ local function LoadPlayerHud()
     -- moving the PlayerFrame isn't ideal because its layout is highly variable; really we probably just
     -- need to completely re-implement the TotemFrame with a custom version
     end
+    playerHealthGLobaBg:Hide()
 end
 GW.LoadPlayerHud = LoadPlayerHud

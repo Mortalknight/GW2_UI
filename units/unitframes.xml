@@ -1,12 +1,62 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
-   
+    <Button name="GwPlayerPortrateFrame" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+        <Size x="92" y="92"></Size>
+        <Anchors>
+            <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="30"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\portraitBackground">
+                    <Size x="95" y="95"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="3">
+                <Texture parentKey="portrait" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\asd">
+                    <Size x="92" y="92"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
+                    <Size x="28" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativeKey="$parent.portrait" relativePoint="RIGHT" x="0" y="28"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="restMarker" file="Interface\AddOns\GW2_UI\textures\asd">
+                    <Size x="28" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativeKey="$parent.portrait" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="4">
+                <FontString parentKey="nameString" text="player" justifyH="CENTER" justifyV="CENTER">
+                    <Size x="150" y="15"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" x="0" y="-54"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="levelString" text="1" justifyH="CENTER" justifyV="CENTER">
+                    <Size x="100" y="15"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" x="-40" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+
     <Button name="GwNormalUnitFrame" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
-        <Size x="300" y="64"></Size>
+        <Size x="300" y="80"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
-            <Layer level="ARTOWRK">
+            <Layer level="ARTWORK">
                 <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\targetshadow">
                     <Size x="512" y="128"></Size>
                     <Anchors>
@@ -14,13 +64,13 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="portrait" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="58" y="58"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="25" y="-7"></Anchor>
                     </Anchors>
-                </Texture>  
+                </Texture>
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="28" y="28"></Size>
                     <Anchors>
@@ -28,13 +78,13 @@
                     </Anchors>
                 </Texture>
                 <Texture parentKey="healthbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                    <Size x="215" y="15"/>
+                    <Size x="215" y="30"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.portrait" relativePoint="RIGHT" x="5" y="0"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="powerbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                    <Size x="215" y="7"/>
+                    <Size x="215" y="10"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="2"></Anchor>
                     </Anchors>
@@ -47,18 +97,18 @@
                     <TexCoords left="1" right="0" top="0" bottom="0.25" />
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="3">
-                
+            <Layer level="ARTWORK" textureSubLevel="3">
+
                 <Texture parentKey="castingbarSpark" file="Interface\AddOns\GW2_UI\textures\castingbarshieldspark">
                     <Size x="32" y="12"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbar" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
-                     
+
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="4">
-                
+            <Layer level="ARTWORK" textureSubLevel="4">
+
                 <Texture parentKey="healthbarFlash" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="213" y="13"/>
                     <Anchors>
@@ -72,27 +122,23 @@
                      </Anchors>
                      <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
                 </Texture>
-                
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="5">
+            <Layer level="ARTWORK" textureSubLevel="5">
                 <Texture file="Interface\AddOns\GW2_UI\textures\targetPortraitinner">
                     <Size x="65" y="65"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.portrait" relativePoint="CENTER" ></Anchor>
                     </Anchors>
                 </Texture>
-                
                 <Texture parentKey="healthbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="213" y="13"/>
+                    <Size x="213" y="26"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
-                        
-                    
                     </Anchors>
                 </Texture>
-                
+
                 <Texture parentKey="powerbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="213" y="3"/>
+                    <Size x="211" y="6"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.powerbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                     </Anchors>
@@ -102,7 +148,7 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
-                </Texture> 
+                </Texture>
                 <Texture parentKey="castingbarNormal" file="Interface\AddOns\GW2_UI\textures\castingbars">
                     <Size x="213" y="13"/>
                     <Anchors>
@@ -111,9 +157,7 @@
                     <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="6">
-                
-                
+            <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="13"/>
                     <Anchors>
@@ -127,42 +171,35 @@
                          <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                      </Anchors>
                      <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
-                     
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                
                 <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="CENTER">
                     <Size x="150" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                
                 <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="CENTER">
                     <Size x="100" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                
-                <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="CENTER">
+                <FontString parentKey="healthString" text="unknown" justifyH="CENTER" justifyV="CENTER">
                     <Size x="215" y="15"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
+                        <Anchor point="CENTER" relativeKey="$parent.healthbarBackground" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-                
                 <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="CENTER">
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="7" y="0"></Anchor>
                     </Anchors>
-                </FontString>  
+                </FontString>
             </Layer>
-            
         </Layers>
-        
         <Frames>
             <Frame parentKey="auras">
                 <Size x="215" y="100"/>
@@ -171,18 +208,16 @@
                 </Anchors>
             </Frame>
         </Frames>
-    
     </Button>
-    
+
     <Button name="GwNormalUnitFrameSmall" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
         <Size x="150" y="64"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
-      
-            <Layer level="ARTOWRK" textureSubLevel="2">
-                
+            <Layer level="ARTWORK" textureSubLevel="2">
+
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="20" y="20"></Size>
                     <Anchors>
@@ -209,23 +244,23 @@
                     <TexCoords left="1" right="0" top="0" bottom="0.25" />
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="3">
-                
+            <Layer level="ARTWORK" textureSubLevel="3">
+
                 <Texture parentKey="castingbarSpark" file="Interface\AddOns\GW2_UI\textures\castingbarshieldspark">
                     <Size x="32" y="12"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbar" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
-                     
+
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="4">
+            <Layer level="ARTWORK" textureSubLevel="4">
                 <Texture parentKey="healthbarFlash" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
-                        
-                    
+
+
                     </Anchors>
                 </Texture>
                    <Texture parentKey="healthbarFlashSpark"  file="Interface\AddOns\GW2_UI\textures\bloodspark" >
@@ -234,20 +269,16 @@
                          <Anchor point="LEFT" relativeKey="$parent.healthbarFlash" relativePoint="RIGHT" x="0" y="0"/>
                      </Anchors>
                      <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
-                     
+
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="5">
-                
+            <Layer level="ARTWORK" textureSubLevel="5">
                 <Texture parentKey="healthbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
-                        
-                    
                     </Anchors>
                 </Texture>
-                
                 <Texture parentKey="powerbar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="146" y="3"/>
                     <Anchors>
@@ -259,7 +290,7 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
-                </Texture> 
+                </Texture>
                 <Texture parentKey="castingbarNormal" file="Interface\AddOns\GW2_UI\textures\castingbars">
                     <Size x="146" y="13"/>
                     <Anchors>
@@ -268,10 +299,7 @@
                     <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
-            <Layer level="ARTOWRK" textureSubLevel="6">
-                
-            
-                
+            <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="14"/>
                     <Anchors>
@@ -285,43 +313,35 @@
                          <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                      </Anchors>
                      <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
-                     
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                
                 <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="CENTER">
                     <Size x="100" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                
                 <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="CENTER">
                     <Size x="50" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                
                 <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="CENTER">
                     <Size x="146" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-                
                 <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="CENTER">
                     <Size x="146" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="7" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-                   
             </Layer>
-            
         </Layers>
-        
         <Frames>
             <Frame parentKey="auras">
                 <Size x="257" y="100"/>
@@ -330,9 +350,8 @@
                 </Anchors>
             </Frame>
         </Frames>
-    
     </Button>
-    
+
     <Button name="GwAuraFrame" enabledMouse="true" registerForClicks="RightButtonDown" hidden="true" virtual="true">
         <Size x="32" y="32"></Size>
         <Anchors>
@@ -346,7 +365,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
                     </Anchors>
                 <Color r="0" g="0" b="0"></Color>
-                </Texture>  
+                </Texture>
             </Layer>
             <Layer level="ARTWORK">
                 <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
@@ -355,7 +374,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
                 <Color r="0" g="0" b="0"></Color>
-                </Texture>                
+                </Texture>
             </Layer>
         </Layers>
         <Frames>
@@ -363,7 +382,7 @@
                 <SwipeTexture>
                     <Color r="1" g="1" b="1" a="1"/>
                 </SwipeTexture>
-                
+
                 <Anchors>
                     <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="1" y="-1"/>
                     <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
@@ -374,7 +393,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
                 </Anchors>
-                <Layers> 
+                <Layers>
                     <Layer level="OVERLAY">
                         <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                             <Anchors>
@@ -398,7 +417,7 @@
                                 <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="-10" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent.icon" relativePoint="BOTTOMRIGHT" x="10" y="0"/>
                             </Anchors>
-                        </FontString> 
+                        </FontString>
                         <FontString parentKey="duration" text="0.00" justifyH="CENTER" justifyV="BOTTOM">
                             <Size x="1" y="14"></Size>
                             <Anchors>
@@ -410,7 +429,6 @@
                 </Layers>
             </Frame>
         </Frames>
-        
     </Button>
 
 </Ui>
