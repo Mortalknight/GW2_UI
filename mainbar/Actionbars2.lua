@@ -8,7 +8,7 @@ local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
 
 local GW_BLIZZARD_HIDE_FRAMES ={
-    
+
   --  MainMenuBar,
     MainMenuBarOverlayFrame,
     MainMenuBarTexture0,
@@ -30,7 +30,7 @@ local GW_BLIZZARD_HIDE_FRAMES ={
 	MainMenuMaxLevelBar3,
 }
 
-local GW_BLIZZARD_FORCE_HIDE = { 
+local GW_BLIZZARD_FORCE_HIDE = {
     ReputationWatchBar,
     HonorWatchBar,
     MainMenuExpBar,
@@ -50,7 +50,7 @@ local GW_BLIZZARD_FORCE_HIDE = {
     PossessBackground1,
     PossessBackground2,
 }
-   
+
 local GW_BARS= {
     MainMenuBarArtFrame,
     MultiBarLeft,
@@ -64,17 +64,17 @@ function gw_hideBlizzardsActionbars()
         v:Hide()
         if v.UnregisterAllEvents~=nil then
             v:UnregisterAllEvents()
-           
+
         end
     end
     for k,object in pairs(GW_BLIZZARD_FORCE_HIDE) do
-     
+
         if object:IsObjectType('Frame') then
             object:UnregisterAllEvents()
             object:SetScript('OnEnter', nil)
             object:SetScript('OnLeave', nil)
         end
-        
+
         if  object:IsObjectType('Button') then
             object:SetScript('OnClick', nil)
         end
@@ -82,17 +82,17 @@ function gw_hideBlizzardsActionbars()
 
         object:Hide()
     end
-    
+
     MainMenuBar:EnableMouse(false)
-    
+
 end
 
 function gwActionButton_UpdateHotkeys(self, actionButtonType)
 	local hotkey = self.HotKey --_G[self:GetName() .. 'HotKey']
 	local text = hotkey:GetText()
-	
+
     if text == nil then return end
-    
+
 	text = string.gsub(text, '(s%-)', 'S')
 	text = string.gsub(text, '(a%-)', 'A')
 	text = string.gsub(text, '(c%-)', 'C')
@@ -109,7 +109,7 @@ function gwActionButton_UpdateHotkeys(self, actionButtonType)
 	text = string.gsub(text, '(Right Arrow)', 'RT')
 	text = string.gsub(text, '(Up Arrow)', 'UP')
 	text = string.gsub(text, '(Down Arrow)', 'DN')
-	 
+
 	if hotkey:GetText() == RANGE_INDICATOR then
 		hotkey:SetText('')
 	else
@@ -169,7 +169,7 @@ function gw_setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceBut
         _G[buttonName.."Count"]:SetFont(UNIT_NAME_FONT,14,'OUTLINED')
         _G[buttonName.."Count"]:SetTextColor(1,1,0.6)
     end
-    
+
     if _G[buttonName..'Border'] ~= nil then
         _G[buttonName..'Border']:SetBlendMode('BLEND')
         if isStanceButton then
@@ -184,44 +184,44 @@ function gw_setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceBut
     if _G[buttonName..'NormalTexture']~=nil then
         _G[buttonName]:SetNormalTexture(nil)
     end
-    
+
     if _G[buttonName..'FloatingBG']~=nil then
         _G[buttonName..'FloatingBG']:SetTexture(nil)
     end
     if _G[buttonName..'NormalTexture2']~=nil then
         _G[buttonName..'NormalTexture2']:SetTexture(nil)
         _G[buttonName..'NormalTexture2']:Hide()
-        
+
     end
     if _G[buttonName..'AutoCastable']~=nil then
         _G[buttonName..'AutoCastable']:SetSize(_G[buttonName]:GetWidth(),_G[buttonName]:GetWidth())
     end
-    
-    
+
+
     _G[buttonName]:SetPushedTexture('Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed')
     _G[buttonName]:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
     _G[buttonName]:SetCheckedTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
     _G[buttonName].Name:SetAlpha(0)
-    
+
     if noBackDrop==nil or noBackDrop==false then
         local backDrop = CreateFrame('Frame', buttonName .. 'GwBackDrop', _G[buttonName]:GetParent(), 'GwActionButtonBackDrop')
         local backDropSize = 1
         if _G[buttonName]:GetWidth()>40 then
             backDropSize =2
         end
-        
+
         backDrop:SetPoint('TOPLEFT',_G[buttonName],'TOPLEFT',-backDropSize,backDropSize)
         backDrop:SetPoint('BOTTOMRIGHT',_G[buttonName],'BOTTOMRIGHT',backDropSize,-backDropSize)
     end
-    
-    
+
+
     if hideUnused==true then
         _G[buttonName..'GwBackDrop']:Hide()
         _G[buttonName]:HookScript('OnHide', gwHideBackdrop)
         _G[buttonName]:HookScript('OnShow', gwShowBackdrop)
     end
 
-    
+
 end
 
 function gwMainMenuOnEvent(self, event)
@@ -244,10 +244,10 @@ local function updateMainBar()
     for i = 1, 12 do
         local btn = _G['ActionButton' .. i]
         MainMenuBarArtFrame.gw_ActionButtons[i] = btn
-        
+
         if btn ~= nil then
             btn:SetScript('OnUpdate', nil) -- disable the default button update handler
-            
+
             local hotkey = _G['ActionButton' .. i .. 'HotKey']
             btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
@@ -259,7 +259,7 @@ local function updateMainBar()
             hotkey:SetPoint('BOTTOMRIGHT', btn, 'BOTTOMRIGHT', 0, 0)
             hotkey:SetFont(DAMAGE_TEXT_FONT, 14, 'OUTLINED')
             hotkey:SetTextColor(1, 1, 1)
-            
+
             if IsEquippedAction(btn.action) then
                 local borname = 'ActionButton' .. i .. 'Border'
                 if _G[borname] then
@@ -276,17 +276,17 @@ local function updateMainBar()
 
             btn['gw_RangeIndicator'] = rangeIndicator
             btn['gw_HotKey'] = hotkey
-            
+
 			if GetSetting('BUTTON_ASSIGNMENTS') then
 				local hkBg = CreateFrame('Frame', 'GwHotKeyBackDropActionButton' .. i, hotkey:GetParent(), 'GwActionHotKeyBackDrop')
-            
+
 				hkBg:SetPoint('CENTER', hotkey, 'CENTER', 0, 0)
 				_G['GwHotKeyBackDropActionButton' .. i .. 'Texture']:SetParent(hotkey:GetParent())
 			end
-			
+
             btn:ClearAllPoints()
             btn:SetPoint('LEFT', MainMenuBarArtFrame, 'LEFT', btn_padding - MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE, 0)
-            
+
             if i == 6 then
                  btn_padding = btn_padding + 108
             end
@@ -319,7 +319,7 @@ local function updateMultiBar(barName, buttonName)
     else
         multibar.gw_FadeShowing = false
     end
-    
+
     for i = 1, 12 do
         local btn = _G[buttonName .. i]
         multibar.gw_MultiButtons[i] = btn
@@ -375,12 +375,12 @@ local function setStanceBar()
             else
                 _G["StanceButton" .. i]:ClearAllPoints()
                 _G["StanceButton" .. i]:SetPoint('BOTTOM', _G['StanceButton' .. i - 1], 'TOP', 0, 2)
-            end          
+            end
             _G["StanceButton" .. i]:SetSize(30, 30)
             gw_setActionButtonStyle('StanceButton' .. i, true, nil, true)
         end
     end
- 
+
     CreateFrame('Button', 'GwStanceBarButton', UIParent, 'GwStanceBarButton')
     GwStanceBarButton:SetPoint('BOTTOMRIGHT', ActionButton1, 'BOTTOMLEFT', -5, 0)
 
@@ -390,7 +390,7 @@ local function setStanceBar()
     else
         CreateFrame('Frame', 'GwStanceBarContainer', UIParent, nil)
         GwStanceBarContainer:SetPoint('BOTTOM', GwStanceBarButton, 'TOP', 0, 0)
-        
+
         StanceBarFrame:SetParent(GwStanceBarContainer)
         StanceBarFrame:SetPoint('BOTTOMLEFT', GwStanceBarButton, 'TOPLEFT', 0, 0)
         StanceBarFrame:SetPoint('BOTTOMRIGHT', GwStanceBarButton, 'TOPRIGHT', 0, 0)
@@ -432,7 +432,7 @@ local function StanceOnEvent(self, event, ...)
 end
 GW.StanceOnEvent = StanceOnEvent
 
-function gw_setbagFrame()   
+function gw_setbagFrame()
       if not GetSetting('BAGS_ENABLED') then
         CharacterBag0Slot:ClearAllPoints()
         CharacterBag1Slot:ClearAllPoints()
@@ -460,13 +460,13 @@ function gwVehicleLeaveOnUpdate()
     end
     MainMenuBarVehicleLeaveButton:SetPoint('LEFT', ActionButton12, 'RIGHT', 0, 0)
 end
-function gw_setLeaveVehicleButton()   
+function gw_setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint('LEFT',ActionButton12,'RIGHT',0,0)
 
     MainMenuBarVehicleLeaveButton:HookScript('OnShow', gwVehicleLeaveOnShow)
-    MainMenuBarVehicleLeaveButton:HookScript('OnHide', gwVehicleLeaveOnHide) 
+    MainMenuBarVehicleLeaveButton:HookScript('OnHide', gwVehicleLeaveOnHide)
 end
 
 function gwActionBarEquipUpdate()
@@ -518,11 +518,11 @@ function gwActionButtons_OnUpdate(self, elapsed)
         if (ActionButton_IsFlashing(btn)) then
             actionButtonFlashing(btn, elapsed)
         end
-    
+
         local rangeTimer = btn.rangeTimer
         if (rangeTimer) then
             rangeTimer = rangeTimer - elapsed
-    
+
             if (rangeTimer <= 0) then
                 local valid = IsActionInRange(btn.action)
                 local checksRange = (valid ~= nil)
@@ -534,7 +534,7 @@ function gwActionButtons_OnUpdate(self, elapsed)
                 end
                 rangeTimer = TOOLTIP_UPDATE_TIME
             end
-            
+
             btn.rangeTimer = rangeTimer
         end
     end
@@ -542,7 +542,7 @@ end
 
 local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
 local function changeVertexColorActionbars()
-    local fmMultiBar 
+    local fmMultiBar
     for y = 1, 4 do
         if y == 1 then fmMultiBar = _G["MultiBarBottomRight"] end
         if y == 2 then fmMultiBar = _G["MultiBarBottomLeft"] end
@@ -553,7 +553,7 @@ local function changeVertexColorActionbars()
             if btn.changedColor then
                 local valid = IsActionInRange(btn.action)
                 local checksRange = (valid ~= nil)
-                local inRange = checksRange and valid                
+                local inRange = checksRange and valid
                 if checksRange and not inRange then
                     btn.icon:SetVertexColor(out_R, out_G, out_B)
                 end
@@ -574,11 +574,11 @@ function gwMultiButtons_OnUpdate(self, elapsed)
         if (ActionButton_IsFlashing(btn)) then
             actionButtonFlashing(btn, elapsed)
         end
-    
+
         local rangeTimer = btn.rangeTimer
         if (rangeTimer) then
             rangeTimer = rangeTimer - elapsed
-    
+
             if (rangeTimer <= 0) then
                 local valid = IsActionInRange(btn.action)
                 local checksRange = (valid ~= nil)
@@ -594,7 +594,7 @@ function gwMultiButtons_OnUpdate(self, elapsed)
                 end
                 rangeTimer = TOOLTIP_UPDATE_TIME
             end
-            
+
             btn.rangeTimer = rangeTimer
         end
     end
@@ -615,13 +615,13 @@ local function LoadActionBars()
     else
         HIDE_ACTIONBARS_CVAR = 1
     end
-        
+
     SetCVar('alwaysShowActionBars', HIDE_ACTIONBARS_CVAR)
-              
+
     for k, v in pairs(GW_BARS) do
         v:SetParent(UIParent)
     end
-     
+
     for _, frame in pairs({
         'MultiBarLeft',
         'MultiBarRight',
@@ -639,7 +639,7 @@ local function LoadActionBars()
     }) do
         UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
     end
- 
+
     updateMainBar()
     updateMultiBar('MultiBarBottomRight', 'MultiBarBottomRightButton')
     updateMultiBar('MultiBarBottomLeft', 'MultiBarBottomLeftButton')
@@ -662,11 +662,11 @@ local function LoadActionBars()
         self.gw_FadeShowing = false
         GW.UpdatePlayerBuffFrame()
     end)
- 
+
     RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
     RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
 
-    hooksecurefunc('MultiActionBar_Update', function() 
+    hooksecurefunc('MultiActionBar_Update', function()
         if InCombatLockdown() then return end
 
         local multibar = _G["MultiBarLeft"]
@@ -702,17 +702,21 @@ local function LoadActionBars()
         end
         ]=]
     )
-    RegisterStateDriver(fgw, "page", "[vehicleui] 1; [possessbar] 2; [overridebar] 3; [shapeshift] 4; [bar:2] 5; [bar:3] 6; [bar:4] 7; [bar:5] 8; [bar:6] 9; [bonusbar:1] 10; [bonusbar:2] 11; [bonusbar:3] 12; [bonusbar:4] 13; 14")
-     
+    RegisterStateDriver(
+        fgw,
+        "page",
+        "[vehicleui] 1; [possessbar] 2; [overridebar] 3; [shapeshift] 4; [bar:2] 5; [bar:3] 6; [bar:4] 7; [bar:5] 8; [bar:6] 9; [bonusbar:1] 10; [bonusbar:2] 11; [bonusbar:3] 12; [bonusbar:4] 13; 14"
+    )
+
     gw_hideBlizzardsActionbars()
     gwSetMicroButtons()
     setStanceBar()
     gw_setbagFrame()
     gw_setLeaveVehicleButton()
-     
+
     hooksecurefunc("ActionButton_UpdateHotkeys",  gwActionButton_UpdateHotkeys)
     hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
-         
+
     MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
     MainMenuBarArtFrame:RegisterEvent('UPDATE_BONUS_ACTIONBAR')
     MainMenuBarArtFrame:HookScript('OnEvent', gwMainMenuOnEvent)
