@@ -85,7 +85,7 @@ local spellRankTableData = {
 	[6] = { 3627, 9750, 6778, 3472, 19943, 6078, 10916, 959, 10468, 13543, 11694, 11700 },
 	[7] = { 8910, 9856, 8903, 10328, 10927, 10917, 8005, 13544, 11695 },
 	[8] = { 9839, 9857, 9758, 10329, 10928, 10395, },
-	[9] = { 9840, 9858, 25292, 10929, 10396, },
+	[9] = { 9840, 9858, 25292, 10929, 10396, 9888, },
 	[10] = { 9841, 9889, 25315, 25357 },
 	[11] = { 25299, 25297, },
 }
@@ -797,7 +797,9 @@ if( playerClass == "DRUID" ) then
 
 		-- Calcualte direct and channeled heals
 		CalculateHealing = function(guid, spellID)
-			local spellName, spellRank = GetSpellInfo(spellID), SpellIDToRank[spellID]
+
+			local spellName = GetSpellInfo(spellID)
+			local spellRank = SpellIDToRank[spellID]
 			local healAmount = spellData[spellName].averages[spellRank]
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
@@ -2293,6 +2295,7 @@ function HealComm:UNIT_SPELLCAST_SENT(unit, targetName, castGUID, spellID)
 end
 
 function HealComm:UNIT_SPELLCAST_START(unit, cast, spellID)
+
 	local spellName = GetSpellInfo(spellID)
 	if (unit ~= "player" or not spellData[spellName] or UnitIsCharmed("player") or not UnitPlayerControlled("player") ) then return end
 	local castGUID = castGUIDs[spellID]
