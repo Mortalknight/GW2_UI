@@ -133,6 +133,10 @@ local function gwSetStaticPopupSize()
                 addHoverToButton(_G["StaticPopup" .. i .. "ExtraButton"])
             end
         end
+        _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:SetTexture(nil)
+        _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        _G["StaticPopup" .. i .. "ItemFrameNormalTexture"]:SetTexture(nil)
     end
 end
 
