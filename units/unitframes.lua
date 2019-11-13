@@ -996,6 +996,10 @@ local function UpdateBuffLayout(self, event, anchorPos)
             if newAura and isBig and event == "UNIT_AURA" then
                 auraAnimateIn(frame)
             end
+
+            if usedWidth == 0 then 
+                usedWidth = usedWidth + size + marginX
+            end
         elseif frame and frame:IsShown() then
             frame:Hide()
         end
