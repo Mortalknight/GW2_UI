@@ -1,3 +1,7 @@
+1.5.0
+- Fix chatframe moving and resizing error
+- Update libs
+
 1.4.0
 - Added advanced char stats (hover over the 'Attribute'-label)
 - Change lib from LibClassicHealComm-1.0 to LibHealComm-4.0

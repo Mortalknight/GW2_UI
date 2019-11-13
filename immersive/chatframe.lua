@@ -287,9 +287,15 @@ local function LoadChat()
     fmGCC:SetPoint("TOPLEFT", ChatFrame1, "TOPLEFT", -35, 5)
     fmGCC:SetPoint("BOTTOMRIGHT", ChatFrame1EditBoxRight, "BOTTOMRIGHT", 0, 0)
 
-    for i = 1, NUM_CHAT_WINDOWS do
+    for i = 1, FCF_GetNumActiveChatFrames() do
         styleChatWindow(i)
     end
+
+    hooksecurefunc("FCF_NewChatWindow", function()
+        for i = 1, FCF_GetNumActiveChatFrames() do
+            styleChatWindow(i)
+        end
+    end)
 
     hooksecurefunc(
         "FCFTab_UpdateColors",
