@@ -5,6 +5,9 @@ NEW
     - Added heal prediction to party frames
     - Added casttime to target castbar
 
+FIXES
+    - Fix chatframe moving and resizing error
+
 5.1.11
 
 NEW
