@@ -884,9 +884,13 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local smallSize
     local bigSize
     local maxSize
-
+    
     if isPlayer then
-        maxSize = self:GetWidth()
+        if MainMenuBarArtFrame.gw_Bar2.gw_IsEnabled and MainMenuBarArtFrame.gw_Bar2.gw_FadeShowing then
+            maxSize = MultiBarBottomRight:GetWidth()
+        else
+            maxSize = self:GetWidth()
+        end
         smallSize = 28
         bigSize = 32
     else
@@ -966,8 +970,19 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 self.animating = false
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index]["name"]
             end
-
-            local px = usedWidth + (size / 2)
+            
+            usedWidth = usedWidth + size + marginX
+            if maxSize < usedWidth then
+                usedWidth = 0
+                usedHeight = usedHeight + lineSize + marginY
+                lineSize = smallSize
+            end
+            if usedWidth > 0 then 
+                usedWidth2 = usedWidth - size - marginX
+            else
+                usedWidth2 = usedWidth
+            end
+            local px = usedWidth2  + (size / 2)
             local py = usedHeight + (size / 2)
             if not anchorPos then
                 frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, -py)
@@ -980,13 +995,6 @@ local function UpdateBuffLayout(self, event, anchorPos)
             frame:SetSize(size, size)
             if newAura and isBig and event == "UNIT_AURA" then
                 auraAnimateIn(frame)
-            end
-
-            usedWidth = usedWidth + size + marginX
-            if maxSize < usedWidth then
-                usedWidth = 0
-                usedHeight = usedHeight + lineSize + marginY
-                lineSize = smallSize
             end
         elseif frame and frame:IsShown() then
             frame:Hide()
