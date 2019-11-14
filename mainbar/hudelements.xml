@@ -265,6 +265,12 @@
                     </Layer>
                 </Layers>
             </StatusBar>
+            <Frame parentKey="auras">
+                <Size x="215" y="100"/>
+                <Anchors>
+                    <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" x="0" y="0"></Anchor>
+                </Anchors>
+            </Frame>
             <!-- "D:\Code\Git\GW2_UI\Textures\Druid_crest.tga" -->
         </Frames>
     </Frame>

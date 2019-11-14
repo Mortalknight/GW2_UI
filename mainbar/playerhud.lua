@@ -726,22 +726,16 @@ GW.LoadPowerBar = LoadPowerBar
 local function HealthBar_OnEvent(self, event, ...)
     if event == "UNIT_HEALTH_FREQUENT" then
         updateHealthBarData(self)
-
     elseif event == "UNIT_MAXHEALTH" then
         updateHealthBarData(self)
-
     elseif event == "UPDATE_SHAPESHIFT_FORM" then
         updateHealthBarData(self)
-
     elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
         updateHealthBarData(self)
-
     elseif event == "PLAYER_ENTERING_WORLD" then
         updateHealthBarData(self)
-
     --elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
-    --    selectPvp(self)
-
+    --    SelectPvp(self)
     end
 end
 GW.AddForProfiling("playerhud", "HealthBar_OnEvent", HealthBar_OnEvent)
@@ -749,6 +743,10 @@ GW.AddForProfiling("playerhud", "HealthBar_OnEvent", HealthBar_OnEvent)
 local function LoadHealthBar()
     local playerHealthBar = CreateFrame("Frame", "GwPlayerHealthBar", UIParent, "GwPlayerHealthBar")
     playerHealthBar.showHealthValue = true
+    auraXOffset = playerHealthBar:GetWidth() * 0.5
+    auraYOffset = (playerHealthBar:GetHeight() * 0.5) + 13
+    playerHealthBar.auras:SetPoint("CENTER", GwPlayerHealthBar, "CENTER", auraXOffset, auraYOffset)
+
     local _, _, classIndex = UnitClass("Player")
     SetClassIcon(playerHealthBar.classIcon, classIndex)
     if GW.GetSetting("XPBAR_ENABLED") then
@@ -760,12 +758,12 @@ local function LoadHealthBar()
     _G[playerHealthBar:GetName() .. "CandySpark"]:ClearAllPoints()
     _G["GwPlayerHealthBarBarString"]:SetFont(DAMAGE_TEXT_FONT, 18)
 
-    playerHealthBar:SetScript("OnEvent", HealthBar_OnEvent)
     playerHealthBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     playerHealthBar:RegisterEvent("PLAYER_ENTERING_WORLD")
     playerHealthBar:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "Player")
     playerHealthBar:RegisterUnitEvent("UNIT_MAXHEALTH", "Player")
     playerHealthBar:RegisterUnitEvent("UNIT_FACTION", "Player")
+    playerHealthBar:SetScript("OnEvent", HealthBar_OnEvent)
 
     playerHealthBar.animationCurrent = 0
 
@@ -773,7 +771,7 @@ local function LoadHealthBar()
 end
 GW.LoadHealthBar = LoadHealthBar
 
-local function selectPvp(self)
+local function SelectPvp(self)
     local prevFlag = self.pvp.pvpFlag
     if GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player") then
         self.pvp.pvpFlag = true
@@ -804,13 +802,13 @@ local function selectPvp(self)
         self.pvp.horde:Hide()
     end
 end
-GW.AddForProfiling("playerhud", "selectPvp", selectPvp)
+GW.AddForProfiling("playerhud", "SelectPvp", SelectPvp)
 
 local function globe_OnEvent(self, event, ...)
     if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" or event == "PLAYER_ENTERING_WORLD" then
         updateHealthData(self)
     elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
-        selectPvp(self)
+        SelectPvp(self)
     end
 end
 GW.AddForProfiling("playerhud", "globe_OnEvent", globe_OnEvent)
@@ -937,7 +935,7 @@ local function LoadPlayerHud()
     GwPlayerHealthGlobeHealth.spark.mask = mask
 
     updateHealthData(playerHealthGLobaBg)
-    selectPvp(playerHealthGLobaBg)
+    SelectPvp(playerHealthGLobaBg)
 
     local fmGDB = CreateFrame("Button", "GwDodgeBar", UIParemt, "GwDodgeBar")
     local fnGDB_OnEnter = function(self)
