@@ -1,3 +1,8 @@
+5.1.13
+
+FIXES
+    - Fix a loading error when action bars are disabled
+
 5.1.12
 
 NEW
