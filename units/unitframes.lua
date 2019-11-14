@@ -64,19 +64,20 @@ local function getBuffs(unit, filter)
             local bli = buffList[i]
             tempCounter = tempCounter + 1
             bli["id"] = i
-
             bli["name"],
-                bli["icon"],
-                bli["count"],
-                bli["dispelType"],
-                bli["duration"],
-                bli["expires"],
-                bli["caster"],
-                bli["isStealable"],
-                bli["shouldConsolidate"],
-                bli["spellID"] = LibClassicDurations:UnitAura(unit, i, filter)
+            bli["icon"],
+            bli["count"],
+            bli["dispelType"],
+            bli["duration"],
+            bli["expires"],
+            bli["caster"],
+            bli["isStealable"],
+            bli["shouldConsolidate"],
+            bli["spellID"] = LibClassicDurations:UnitAura(unit, i, filter)
 
-            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(unit, bli["spellID"], bli["caster"], bli["name"])
+            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(
+                unit, bli["spellID"], bli["caster"], bli["name"]
+            )
 
             if bli["duration"] == 0 and durationNew then
                 bli["duration"] = durationNew
@@ -143,19 +144,20 @@ local function getDebuffs(unit, filter)
         if UnitDebuff(unit, i, filter) ~= nil then
             local dbi = debuffList[i]
             dbi["id"] = i
-
             dbi["name"],
-                dbi["icon"],
-                dbi["count"],
-                dbi["dispelType"],
-                dbi["duration"],
-                dbi["expires"],
-                dbi["caster"],
-                dbi["isStealable"],
-                dbi["shouldConsolidate"],
-                dbi["spellID"] = UnitDebuff(unit, i, filter)
+            dbi["icon"],
+            dbi["count"],
+            dbi["dispelType"],
+            dbi["duration"],
+            dbi["expires"],
+            dbi["caster"],
+            dbi["isStealable"],
+            dbi["shouldConsolidate"],
+            dbi["spellID"] = UnitDebuff(unit, i, filter)
 
-            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(unit, dbi["spellID"], dbi["caster"], dbi["name"])
+            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(
+                unit, dbi["spellID"], dbi["caster"], dbi["name"]
+            )
 
             if dbi["duration"] == 0 and durationNew then
                 dbi["duration"] = durationNew
@@ -355,59 +357,59 @@ GW.UpdateHealthTextString = updateHealthTextString
 GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
 local function updateHealthbarColor(self)
-    if self.classColor == true and UnitIsPlayer(self.unit) then
-        local red, green, blue, _ = GetClassColour("Target")
+    local frame = self
+    if frame.classColor == true and UnitIsPlayer(frame.unit) then
+        local red, green, blue, _ = GetClassColour(frame.unit)
 
-        self.healthbar:SetVertexColor(
+        frame.healthbar:SetVertexColor(
             red,
             green,
             blue
         )
-        self.healthbarSpark:SetVertexColor(
+        frame.healthbarSpark:SetVertexColor(
             red,
             green,
             blue
         )
-        self.healthbarFlash:SetVertexColor(
+        frame.healthbarFlash:SetVertexColor(
             red,
             green,
             blue
         )
-        self.healthbarFlashSpark:SetVertexColor(
+        frame.healthbarFlashSpark:SetVertexColor(
             red,
             green,
             blue
         )
-        self.nameString:SetTextColor(
+        frame.nameString:SetTextColor(
             red,
             green,
             blue
         )
 
-
-        --local r, g, b, _ = self.nameString:GetTextColor()
-        --self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)
+        --local r, g, b, _ = frame.nameString:GetTextColor()
+        --frame.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)
     else
-        local isFriend = UnitIsFriend("player", self.unit)
+        local isFriend = UnitIsFriend("player", frame.unit)
         local friendlyColor = COLOR_FRIENDLY[1]
 
         if isFriend ~= true then
             friendlyColor = COLOR_FRIENDLY[2]
         end
-        if UnitIsTapDenied(self.unit) then
+        if UnitIsTapDenied(frame.unit) then
             friendlyColor = COLOR_FRIENDLY[3]
         end
 
-        self.healthbar:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarFlash:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarFlashSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.nameString:SetTextColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
+        frame.healthbar:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
+        frame.healthbarSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
+        frame.healthbarFlash:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
+        frame.healthbarFlashSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
+        frame.nameString:SetTextColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
     end
 
-    if (UnitLevel(self.unit) - UnitLevel("player")) <= -5 then
-        local r, g, b, _ = self.nameString:GetTextColor()
-        self.nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
+    if (UnitLevel(frame.unit) - UnitLevel("player")) <= -5 then
+        local r, g, b, _ = frame.nameString:GetTextColor()
+        frame.nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
     end
 end
 GW.AddForProfiling("unitframes", "updateHealthbarColor", updateHealthbarColor)
@@ -880,7 +882,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
             elseif anchorPos == "pet" then
                 frame:SetPoint("CENTER", self.auras, "BOTTOMRIGHT", -px, py)
             elseif anchorPos == "player" then
-                frame:SetPoint("CENTER", self, "BOTTOMRIGHT", -px, py)
+                frame:SetPoint("CENTER", GwPlayerHealthBar.auras, "CENTER", -px, py)
             end
 
             frame:SetSize(size, size)
@@ -1042,13 +1044,24 @@ local function target_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
 
+local function updateRestFrame(self)
+    local frame = self
+    if IsResting() then
+        frame.restMarker:Show()
+    else
+        frame.restMarker:Hide()
+    end
+end
+GW.AddForProfiling("unitframes", "updateRestFrame", updateRestFrame)
+
 local function portrait_OnEvent(self, event)
+    local frame = self
     if event == "RAID_TARGET_UPDATE" then
-        updateRaidMarkers(self, event)
+        updateRaidMarkers(frame, event)
     elseif event == "PLAYER_UPDATE_RESTING" then
-        print("PLAYER_UPDATE_RESTING")
+        updateRestFrame(frame)
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
-        SetPortraitTexture(self.portrait, self.unit)
+        SetPortraitTexture(frame.portrait, frame.unit)
     end
 end
 GW.AddForProfiling("unitframes", "portrait_OnEvent", portrait_OnEvent)
@@ -1163,15 +1176,15 @@ end
 GW.LoadTarget = LoadTarget
 
 local function LoadTargetOfUnit(unit)
-    local f = createNormalUnitFrameSmall("Gw" .. unit .. "TargetUnitFrame")
+    local frame = createNormalUnitFrameSmall("Gw" .. unit .. "TargetUnitFrame")
     local unitID = string.lower(unit) .. "target"
 
-    f.unit = unitID
+    frame.unit = unitID
 
-    RegisterMovableFrame(unitID .. "frame", f, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy")
+    RegisterMovableFrame(unitID .. "frame", frame, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy")
 
-    f:ClearAllPoints()
-    f:SetPoint(
+    frame:ClearAllPoints()
+    frame:SetPoint(
         GetSetting(unitID .. "_pos")["point"],
         UIParent,
         GetSetting(unitID .. "_pos")["relativePoint"],
@@ -1179,23 +1192,23 @@ local function LoadTargetOfUnit(unit)
         GetSetting(unitID .. "_pos")["yOfs"]
     )
 
-    f:SetAttribute("*type1", "target")
-    f:SetAttribute("*type2", "togglemenu")
-    f:SetAttribute("unit", unitID)
-    RegisterUnitWatch(f)
-    f:EnableMouse(true)
-    f:RegisterForClicks("AnyDown")
+    frame:SetAttribute("*type1", "target")
+    frame:SetAttribute("*type2", "togglemenu")
+    frame:SetAttribute("unit", unitID)
+    RegisterUnitWatch(frame)
+    frame:EnableMouse(true)
+    frame:RegisterForClicks("AnyDown")
 
-    AddToClique(f)
+    AddToClique(frame)
 
-    f.showHealthValue = false
-    f.showHealthPrecentage = false
+    frame.showHealthValue = false
+    frame.showHealthPrecentage = false
 
-    f.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
-    f.debuffFilter = nil
+    frame.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
+    frame.debuffFilter = nil
 
-    f.totalElapsed = 0.25
-    f:SetScript("OnUpdate", unittarget_OnUpdate)
+    frame.totalElapsed = 0.25
+    frame:SetScript("OnUpdate", unittarget_OnUpdate)
 end
 GW.LoadTargetOfUnit = LoadTargetOfUnit
 
@@ -1251,6 +1264,7 @@ local function LoadPortraitFrame()
     frame.portrait:AddMaskTexture(mask)
 
     updateRaidMarkers(frame)
+    updateRestFrame(frame)
 
     SetPortraitTexture(frame.portrait, frame.unit)
 
