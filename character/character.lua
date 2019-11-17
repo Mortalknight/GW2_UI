@@ -352,7 +352,6 @@ function gwPaperDollUpdateStats()
     GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Nature Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(4)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
     GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Physical Damage: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(1)) .. FONT_COLOR_CODE_CLOSE .. "\n"
     GwAttributeInvisibleFrame.tooltip = GwAttributeInvisibleFrame.tooltip .. "Physical Crit: " .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(1)) .."%" .. FONT_COLOR_CODE_CLOSE .. "\n"
-
 end
 
 function gwPaperDollUpdatePetStats()
@@ -1103,15 +1102,179 @@ function GWupdateSkills()
     end
     GwPaperSkills.scroll.slider.thumb:SetHeight((GwPaperSkills.scroll:GetHeight()/totlaHeight) * GwPaperSkills.scroll.slider:GetHeight() )
     GwPaperSkills.scroll.slider:SetMinMaxValues (0,math.max(0,totlaHeight - GwPaperSkills.scroll:GetHeight()))
+end
 
+function LoadHonorTab()
+    for i = 1, 6 do
+        local slot = CreateFrame("Frame", "GwPaperHonorDetails" .. i, GwPaperHonor, "GwHonorInfoRow")
+        slot:SetFrameLevel(3)
+        GwPaperHonor.buttons[i] = slot
+        if i == 1 then
+            slot:SetPoint("TOPLEFT")
+        else
+            slot:SetPoint("TOPLEFT", GwPaperHonor.buttons[i -1], "BOTTOMLEFT")
+        end
+        slot:SetWidth(GwPaperHonor:GetWidth() - 12)
+        slot.Header:SetFont(DAMAGE_TEXT_FONT, 18)
+        if i == 1 then
+            GWHonorFrameProgressBar:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameProgressBar:Show()
+        elseif i == 2 then
+            slot.Header:SetText(HONOR_THIS_SESSION)
+            local HKC = CreateFrame("Frame", "GWHonorFrameCurrentHK", GwPaperHonor, "HonorFrameHKButtonTemplate")
+            HKC:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -25)
+            HKC:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameCurrentHKValue:SetPoint("RIGHT")
+            GWHonorFrameCurrentHKText:SetFont(GWHonorFrameCurrentHKText:GetFont(), 14)
+            GWHonorFrameCurrentHKValue:SetFont(GWHonorFrameCurrentHKValue:GetFont(), 14)
+        
+            local DKC = CreateFrame("Frame", "GWHonorFrameCurrentDK", GwPaperHonor, "HonorFrameDKButtonTemplate")
+            DKC:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
+            DKC:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameCurrentDKValue:SetPoint("RIGHT")
+            GWHonorFrameCurrentDKText:SetFont(GWHonorFrameCurrentDKText:GetFont(), 14)
+            GWHonorFrameCurrentDKValue:SetFont(GWHonorFrameCurrentHKValue:GetFont(), 14)
+        elseif i == 3 then
+            slot.Header:SetText(HONOR_YESTERDAY)
+            local HKY = CreateFrame("Frame", "GWHonorFrameYesterdayHK", GwPaperHonor, "HonorFrameHKButtonTemplate")
+            HKY:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -25)
+            HKY:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameYesterdayHKValue:SetPoint("RIGHT")
+            GWHonorFrameYesterdayHKText:SetFont(GWHonorFrameYesterdayHKText:GetFont(), 14)
+            GWHonorFrameYesterdayHKValue:SetFont(GWHonorFrameYesterdayHKValue:GetFont(), 14)
+            
+            local DKY = CreateFrame("Frame", "GWHonorFrameYesterdayContribution", GwPaperHonor, "HonorFrameContributionButtonTemplate")
+            DKY:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
+            DKY:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameYesterdayContributionValue:SetPoint("RIGHT")
+            GWHonorFrameYesterdayContributionText:SetFont(GWHonorFrameYesterdayContributionText:GetFont(), 14)
+            GWHonorFrameYesterdayContributionValue:SetFont(GWHonorFrameYesterdayContributionValue:GetFont(), 14)
+        elseif i == 4 then
+            slot.Header:SetText(HONOR_THISWEEK)
+            local HKTW = CreateFrame("Frame", "GWHonorFrameThisWeekHK", GwPaperHonor, "HonorFrameHKButtonTemplate")
+            HKTW:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -25)
+            HKTW:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameThisWeekHKValue:SetPoint("RIGHT")
+            GWHonorFrameThisWeekHKText:SetFont(GWHonorFrameThisWeekHKText:GetFont(), 14)
+            GWHonorFrameThisWeekHKValue:SetFont(GWHonorFrameThisWeekHKValue:GetFont(), 14)
+            
+            local DKTW = CreateFrame("Frame", "GWHonorFrameThisWeekContribution", GwPaperHonor, "HonorFrameContributionButtonTemplate")
+            DKTW:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
+            DKTW:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameThisWeekContributionValue:SetPoint("RIGHT")
+            GWHonorFrameThisWeekContributionText:SetFont(GWHonorFrameThisWeekContributionText:GetFont(), 14)
+            GWHonorFrameThisWeekContributionValue:SetFont(GWHonorFrameThisWeekContributionValue:GetFont(), 14)
+        elseif i == 5 then
+            slot.Header:SetText(HONOR_LASTWEEK)
+            local HKLW = CreateFrame("Frame", "GWHonorFrameLastWeekHK", GwPaperHonor, "HonorFrameHKButtonTemplate")
+            HKLW:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -25)
+            HKLW:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameLastWeekHKValue:SetPoint("RIGHT")
+            GWHonorFrameLastWeekHKText:SetFont(GWHonorFrameLastWeekHKText:GetFont(), 14)
+            GWHonorFrameLastWeekHKValue:SetFont(GWHonorFrameLastWeekHKValue:GetFont(), 14)
 
+            local DKLW = CreateFrame("Frame", "GWHonorFrameLastWeekContribution", GwPaperHonor, "HonorFrameContributionButtonTemplate")
+            DKLW:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
+            DKLW:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameLastWeekContributionValue:SetPoint("RIGHT")
+            GWHonorFrameLastWeekContributionText:SetFont(GWHonorFrameLastWeekContributionText:GetFont(), 14)
+            GWHonorFrameLastWeekContributionValue:SetFont(GWHonorFrameLastWeekContributionValue:GetFont(), 14)
 
-    --[[
-    GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight()/h) * GwSpellbookUnknown.slider:GetHeight() )
-    GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0,h - GwSpellbookUnknown.container:GetHeight()))
-    GwSpellbookUnknown.slider:SetValue(0)
-    ]]
+            local DKLWS = CreateFrame("Frame", "GWHonorFrameLastWeekStanding", GwPaperHonor, "HonorFrameStandingButtonTemplate")
+            DKLWS:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -65)
+            DKLWS:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameLastWeekStandingValue:SetPoint("RIGHT")
+            GWHonorFrameLastWeekStandingText:SetFont(GWHonorFrameLastWeekStandingText:GetFont(), 14)
+            GWHonorFrameLastWeekStandingValue:SetFont(GWHonorFrameLastWeekStandingValue:GetFont(), 14)
+        elseif i == 6 then
+            slot.Header:SetText(HONOR_LIFETIME)
+            local HKLT = CreateFrame("Frame", "GWHonorFrameLifeTimeHK", GwPaperHonor, "HonorFrameHKButtonTemplate")
+            HKLT:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -25)
+            HKLT:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameLifeTimeHKValue:SetPoint("RIGHT")
+            GWHonorFrameLifeTimeHKText:SetFont(GWHonorFrameLifeTimeHKText:GetFont(), 14)
+            GWHonorFrameLifeTimeHKValue:SetFont(GWHonorFrameLifeTimeHKValue:GetFont(), 14)
+            
+            local DKLT = CreateFrame("Frame", "GWHonorFrameLifeTimeDK", GwPaperHonor, "HonorFrameDKButtonTemplate")
+            DKLT:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
+            DKLT:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameLifeTimeDKValue:SetPoint("RIGHT")
+            GWHonorFrameLifeTimeDKText:SetFont(GWHonorFrameLifeTimeDKText:GetFont(), 14)
+            GWHonorFrameLifeTimeDKValue:SetFont(GWHonorFrameLifeTimeDKValue:GetFont(), 14)
 
+            local LTR = CreateFrame("Frame", "GWHonorFrameLifeTimeRank", GwPaperHonor, "HonorFrameRankButtonTemplate")
+            LTR:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -65)
+            LTR:SetWidth(slot:GetWidth() - 25)
+            GWHonorFrameLifeTimeRankValue:SetPoint("RIGHT")
+            GWHonorFrameLifeTimeRankText:SetFont(GWHonorFrameLifeTimeRankText:GetFont(), 14)
+            GWHonorFrameLifeTimeRankValue:SetFont(GWHonorFrameLifeTimeRankValue:GetFont(), 14)
+        end
+    end
+end
+
+function UpdateHonorTab(updateAll)
+    local slot = GwPaperHonor.buttons[1]
+    local hk, dk, contribution, rank, highestRank, rankName, rankNumber
+    -- This only gets set on player entering the world
+    if updateAll then
+		-- Yesterday's values
+		hk, dk, contribution = GetPVPYesterdayStats()
+		GWHonorFrameYesterdayHKValue:SetText(hk)
+		GWHonorFrameYesterdayContributionValue:SetText(contribution)
+		-- This Week's values
+		hk, contribution = GetPVPThisWeekStats()
+		GWHonorFrameThisWeekHKValue:SetText(hk)
+		GWHonorFrameThisWeekContributionValue:SetText(contribution)
+		-- Last Week's values
+		hk, dk, contribution, rank = GetPVPLastWeekStats()
+		GWHonorFrameLastWeekHKValue:SetText(hk)
+		GWHonorFrameLastWeekContributionValue:SetText(contribution)
+		GWHonorFrameLastWeekStandingValue:SetText(rank)
+    end
+    
+	-- This session's values
+    hk, dk = GetPVPSessionStats()
+	GWHonorFrameCurrentHKValue:SetText(hk)
+    GWHonorFrameCurrentDKValue:SetText(dk)
+    
+    -- Lifetime stats
+	hk, dk, highestRank = GetPVPLifetimeStats()
+	GWHonorFrameLifeTimeHKValue:SetText(hk)
+	GWHonorFrameLifeTimeDKValue:SetText(dk)
+	rankName, rankNumber = GetPVPRankInfo(highestRank)
+	if not rankName then
+		rankName = NONE
+	end
+    GWHonorFrameLifeTimeRankValue:SetText(rankName)
+    
+    -- Set rank name and number
+	rankName, rankNumber = GetPVPRankInfo(UnitPVPRank("player"))
+	if not rankName then
+		rankName = NONE
+	end
+	slot.Header:SetText(rankName)
+    slot.Rank:SetText("("..RANK.." "..rankNumber..")")
+
+    -- Set icon
+	if rankNumber > 0 then
+		GWHonorFramePvPIcon:SetTexture(format("%s%02d","Interface\\PvPRankBadges\\PvPRank", rankNumber))
+        GWHonorFramePvPIcon:Show()
+        slot.Header:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT" , 50, -15)
+    else
+		GWHonorFramePvPIcon:Hide()
+    end
+
+    -- Set rank progress and bar color
+	local factionGroup, factionName = UnitFactionGroup("player")
+	if factionGroup == "Alliance" then
+		GWHonorFrameProgressBar:SetStatusBarColor(0.05, 0.15, 0.36)
+	else
+		GWHonorFrameProgressBar:SetStatusBarColor(0.63, 0.09, 0.09)
+    end
+	GWHonorFrameProgressBar:SetValue(GetPVPRankProgress())
+
+    -- Recenter rank text
+	slot.Header:SetPoint("TOP", "GwPaperHonor", "TOP", - slot.Rank:GetWidth() / 2 + 20, -83)
 end
 
 local CHARACTER_PANEL_OPEN = ""
@@ -1139,6 +1302,11 @@ function GwToggleCharacter(tab, onlyShow)
                 GwCharacterWindow:SetAttribute("keytoggle", true)
             end
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollskills")
+        elseif tab == "HonorFrame" then
+            if not onlyShow then
+                GwCharacterWindow:SetAttribute("keytoggle", true)
+            end
+            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollhonor")
         elseif tab == "PetPaperDollFrame" then
             if not onlyShow then
                 GwCharacterWindow:SetAttribute("keytoggle", true)
@@ -1170,6 +1338,7 @@ local function LoadPaperDoll()
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
     CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenu")
     CreateFrame("Frame", "GwPaperReputation", GwCharacterWindowContainer, "GwPaperReputation")
+    CreateFrame("Frame", "GwPaperHonor", GwCharacterWindowContainer, "GwPaperHonor")
     CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
 
     --Legacy pet window
@@ -1203,6 +1372,9 @@ local function LoadPaperDoll()
     gwPaperDollUpdateStats()
     gwPaperDollUpdatePetStats()
     GwUpdateReputationDetails()
+
+    GwPaperHonor.buttons = {}
+    LoadHonorTab()
 
     StaticPopupDialogs["UNEQUIP_LEGENDARY"] = {
         text = GwLocalization["UNEQUIP_LEGENDARY"],

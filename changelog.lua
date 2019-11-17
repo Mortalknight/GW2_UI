@@ -131,5 +131,9 @@ GW_CHANGELOGS = "- Fix chatframe moving and resizing error\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Update libs\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.5.0\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.6.0
+GW_CHANGELOGS = "- Added Honortab\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.6.0\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 
