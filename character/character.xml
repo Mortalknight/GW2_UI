@@ -1383,7 +1383,7 @@
 				<BarTexture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="border" file="Interface\AddOns\GW2_UI\textures\UI-Tooltip-Background">
+                        <Texture parentKey="border" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-3" y="3"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" x="3" y="-3"></Anchor>
