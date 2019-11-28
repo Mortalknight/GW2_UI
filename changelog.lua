@@ -434,8 +434,6 @@ GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.11\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.1.12
-GW_CHANGELOGS = "   - Fix chatframe moving and resizing error\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added new skins\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added heal prediction to party frames\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added casttime to target castbar\n" .. GW_CHANGELOGS
@@ -446,5 +444,12 @@ GW_CHANGELOGS = "\n\n5.1.12\n\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Fix a loading error when action bars are disabled\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.13\n\n" .. GW_CHANGELOGS
+
+--VERSION 5.1.14
+GW_CHANGELOGS = "   - Fix chatframe moving and resizing error\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added possibly to track more then one WQ\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.1.14\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

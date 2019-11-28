@@ -1,3 +1,12 @@
+5.1.14
+
+NEW
+    - Added possibly to track more then one WQ
+
+FIXES
+    - Fix chatframe moving and resizing error
+
+
 5.1.13
 
 FIXES
@@ -9,9 +18,6 @@ NEW
     - Added new skins
     - Added heal prediction to party frames
     - Added casttime to target castbar
-
-FIXES
-    - Fix chatframe moving and resizing error
 
 5.1.11
 

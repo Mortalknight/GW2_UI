@@ -1229,6 +1229,7 @@ local function LoadRaidFrames()
     GwRaidFrameContainer:SetScript("OnEvent", function(self)
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
+            return
         else
             self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end

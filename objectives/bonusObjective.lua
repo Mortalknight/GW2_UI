@@ -83,19 +83,67 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
 end
 GW.AddForProfiling("bonusObjective", "addObjectiveBlock", addObjectiveBlock)
 
+local function createNewBonusObjectiveBlock(blockIndex)
+    if _G["GwBonusObjectiveBlock" .. blockIndex] ~= nil then
+        return _G["GwBonusObjectiveBlock" .. blockIndex]
+    end
+
+    local newBlock = CreateTrackerObject("GwBonusObjectiveBlock" .. blockIndex, GwQuesttrackerContainerBonusObjectives)
+    newBlock:SetParent(GwQuesttrackerContainerBonusObjectives)
+
+    if blockIndex == 1 then
+        newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "TOPRIGHT", 0, -20)
+    else
+        newBlock:SetPoint("TOPRIGHT", _G["GwBonusObjectiveBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
+    end
+
+    newBlock.Header:SetText("")
+
+    newBlock:SetScript("OnEnter", BonusObjectiveTracker_ShowRewardsTooltip)
+    newBlock:SetScript("OnLeave", GameTooltip_Hide)
+
+    newBlock.color = TRACKER_TYPE_COLOR["BONUS"]
+    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
+    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
+
+    newBlock.joingroup:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    newBlock.joingroup:SetScript(
+                    "OnClick",
+                    function (self)
+                        local p = self:GetParent()
+                        LFGListUtil_FindQuestGroup(p.questID)
+                    end
+                )
+    newBlock.joingroup:SetScript(
+        "OnEnter",
+        function (self)
+            GameTooltip:SetOwner(self)
+            GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
+            GameTooltip:Show()
+        end
+    )
+    newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
+
+    newBlock.height = 20
+    newBlock.numObjectives = 0
+    newBlock:Hide()
+
+    return newBlock
+end
+
 local function updateBonusObjective(self, event)
     RemoveTrackerNotificationOfType("EVENT")
     RemoveTrackerNotificationOfType("EVENT_NEARBY")
     RemoveTrackerNotificationOfType("BONUS")
 
-    GwBonusObjectiveBlock.height = 20
-    GwBonusObjectiveBlock.numObjectives = 0
-    GwBonusObjectiveBlock:Hide()
     UpdateQuestItem(GwBonusItemButton, 0)
 
     local foundEvent = false
+    local savedHeight = 1
+    local shownBlocks = 0
 
     local tasks = GetTasksTable()
+    local i = 1
 
     if GwQuesttrackerContainerBonusObjectives.collapsed == true then
         GwBonusHeader:Show()
@@ -123,6 +171,17 @@ local function updateBonusObjective(self, event)
             if text == nil then
                 text = ""
             end
+            local GwBonusObjectiveBlock = createNewBonusObjectiveBlock(i)
+            if GwBonusObjectiveBlock == nil then
+                return
+            end
+            shownBlocks = shownBlocks + 1
+            GwBonusObjectiveBlock.height = 20
+            GwBonusObjectiveBlock.numObjectives = 0
+            if i == 1 then
+                savedHeight = 20
+            end
+            
             GwBonusObjectiveBlock.Header:SetText(text)
 
             if savedQuests[questID] == nil then
@@ -183,35 +242,45 @@ local function updateBonusObjective(self, event)
             compassData["PROGRESS"] = objectiveProgress
 
             AddTrackerNotification(compassData)
-            break
+            --break
+            savedHeight = savedHeight + GwBonusObjectiveBlock.height
+
+            if not GwQuesttrackerContainerBonusObjectives.collapsed then
+                --add groupfinder button
+                if C_LFGList.CanCreateQuestGroup(GwBonusObjectiveBlock.questID) then
+                    GwBonusObjectiveBlock.joingroup:Show()
+                else
+                    GwBonusObjectiveBlock.joingroup:Hide()
+                end
+                GwBonusObjectiveBlock:Show()
+            end
+            for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
+                if _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
+                    _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
+                end
+            end
+
+            GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 5)
+            GwQuesttrackerContainerBonusObjectives:SetHeight(GwBonusObjectiveBlock.height + 20)
+            i = i + 1
         end
     end
-
     if foundEvent == false then
         savedQuests = {}
-        --      RemoveTrackerNotificationOfType('EVENT')
-        --      RemoveTrackerNotificationOfType('BONUS')
         GwBonusHeader:Hide()
-    else
-        if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
-            --add groupfinder button
-            if C_LFGList.CanCreateQuestGroup(GwBonusObjectiveBlock.questID) then
-                GwBonusObjectiveBlock.joingroup:Show()
-            else
-                GwBonusObjectiveBlock.joingroup:Hide()
+        for i = 1, 20 do
+            if _G["GwBonusObjectiveBlock" .. i] ~= nil or i > shownBlocks then
+                _G["GwBonusObjectiveBlock" .. i]:Hide()
             end
-            GwBonusObjectiveBlock:Show()
+        end
+    else
+        for i = 1, 20 do
+            if _G["GwBonusObjectiveBlock" .. i] ~= nil and i > shownBlocks then
+                _G["GwBonusObjectiveBlock" .. i]:Hide()
+            end
         end
     end
-    for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
-        if _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
-            _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
-        end
-    end
-
-    GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 5)
-    GwQuesttrackerContainerBonusObjectives:SetHeight(GwBonusObjectiveBlock.height + 20)
-
+    
     QuestTrackerLayoutChanged()
 end
 GW.AddForProfiling("bonusObjective", "updateBonusObjective", updateBonusObjective)
@@ -228,38 +297,9 @@ local function LoadBonusFrame()
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("TASK_PROGRESS_UPDATE")
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
 
-    local newBlock = CreateTrackerObject("GwBonusObjectiveBlock", GwQuesttrackerContainerBonusObjectives)
-    newBlock:SetParent(GwQuesttrackerContainerBonusObjectives)
-    newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "TOPRIGHT", 0, -20)
-    newBlock.Header:SetText("")
+    
 
-    newBlock:SetScript("OnEnter", BonusObjectiveTracker_ShowRewardsTooltip)
-    newBlock:SetScript("OnLeave", GameTooltip_Hide)
-
-    newBlock.color = TRACKER_TYPE_COLOR["BONUS"]
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-
-    newBlock.joingroup:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-    newBlock.joingroup:SetScript(
-                    "OnClick",
-                    function (self)
-                        local p = self:GetParent()
-                        LFGListUtil_FindQuestGroup(p.questID)
-                    end
-                )
-    newBlock.joingroup:SetScript(
-        "OnEnter",
-        function (self)
-            GameTooltip:SetOwner(self)
-            GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
-            GameTooltip:Show()
-        end
-    )
-    newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
-
-    local header =
-        CreateFrame("Button", "GwBonusHeader", GwQuesttrackerContainerBonusObjectives, "GwQuestTrackerHeader")
+    local header = CreateFrame("Button", "GwBonusHeader", GwQuesttrackerContainerBonusObjectives, "GwQuestTrackerHeader")
     header.icon:SetTexCoord(0, 1, 0.5, 0.75)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
