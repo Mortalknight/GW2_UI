@@ -269,7 +269,7 @@ local function updateBonusObjective(self, event)
         savedQuests = {}
         GwBonusHeader:Hide()
         for i = 1, 20 do
-            if _G["GwBonusObjectiveBlock" .. i] ~= nil or i > shownBlocks then
+            if _G["GwBonusObjectiveBlock" .. i] ~= nil then
                 _G["GwBonusObjectiveBlock" .. i]:Hide()
             end
         end
