@@ -11,6 +11,7 @@ local UpdateQuestItem = GW.UpdateQuestItem
 local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 
 local savedQuests = {}
+local trackedEventIDs = {}
 
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
@@ -105,6 +106,9 @@ local function createNewBonusObjectiveBlock(blockIndex)
 
     hooksecurefunc("BonusObjectiveTracker_UntrackWorldQuest", function(questID)
         savedQuests[questID] = nil
+        if trackedEventIDs[questID] ~= nil then
+            trackedEventIDs[questID]["tracked"] = false
+        end
     end)
 
     newBlock.color = TRACKER_TYPE_COLOR["BONUS"]
@@ -141,123 +145,120 @@ local savedHeight = 1
 local shownBlocks = 0
 local blockIndex = 1
 
-local function setUpBlock(questID, tracked)
-    if savedQuests[questID] and not tracked then
-        return
-    end
-    
-    local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
-    local questLogIndex = GetQuestLogIndexByID(questID)
-    local simpleDesc = ""
-    local compassData = {}
+local function setUpBlock(questIDs)
+    for k, v in pairs(questIDs) do
+        local questID = v["ID"]
+        local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
+        local questLogIndex = GetQuestLogIndexByID(questID)
+        local simpleDesc = ""
+        local compassData = {}
 
-    if isOnMap then
-        compassData["TYPE"] = "EVENT"
-        compassData["COMPASS"] = true
-    end
-
-    if numObjectives == nil then
-        numObjectives = 0
-    end
-    if isInArea or tracked then
-        compassData["TITLE"] = text
-
-        if text == nil then
-            text = ""
-        end
-        local GwBonusObjectiveBlock = createNewBonusObjectiveBlock(blockIndex)
-        if GwBonusObjectiveBlock == nil then
-            return
-        end
-        shownBlocks = shownBlocks + 1
-        GwBonusObjectiveBlock.height = 20
-        GwBonusObjectiveBlock.numObjectives = 0
-        if blockIndex == 1 then
-            savedHeight = 20
-        end
-        
-        GwBonusObjectiveBlock.Header:SetText(text)
-
-        if savedQuests[questID] == nil then
-            --NewQuestAnimation(GwBonusObjectiveBlock)
-            --PlaySound(SOUNDKIT["UI_WORLDQUEST_START"])
-            savedQuests[questID] = true
-        end
-
-        GwBonusObjectiveBlock.questID = questID
-        GwBonusObjectiveBlock.id = questID
-        GwBonusObjectiveBlock.TrackedQuest = {}
-        GwBonusObjectiveBlock.TrackedQuest.questID = questID
-
-        local module = CreateBonusObjectiveTrackerModule()
-        module.ShowWorldQuests = true
-        GwBonusObjectiveBlock.module = module
-
-        GwBonusHeader:Show()
-        UpdateQuestItem(GwBonusItemButton, questLogIndex)
-
-        foundEvent = true
-
-        compassData["PROGRESS"] = 0
-
-        local objectiveProgress = 0
-        for objectiveIndex = 1, numObjectives do
-            local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
-
+        if isOnMap then
             compassData["TYPE"] = "EVENT"
+            compassData["COMPASS"] = true
+        end
 
-            compassData["ID"] = questID
+        if numObjectives == nil then
+            numObjectives = 0
+        end
+        if isInArea or v["tracked"] then
+            compassData["TITLE"] = text
 
-            compassData["COLOR"] = TRACKER_TYPE_COLOR["EVENT"]
-            compassData["COMPASS"] = false
-            compassData["X"] = x
-            compassData["Y"] = y
-            compassData["QUESTID"] = questID
-            compassData["MAPID"] = mapId
+            if text == nil then
+                text = ""
+            end
+            local GwBonusObjectiveBlock = createNewBonusObjectiveBlock(blockIndex)
+            if GwBonusObjectiveBlock == nil then
+                return
+            end
+            shownBlocks = shownBlocks + 1
+            GwBonusObjectiveBlock.height = 20
+            GwBonusObjectiveBlock.numObjectives = 0
+            if blockIndex == 1 then
+                savedHeight = 20
+            end
+            
+            GwBonusObjectiveBlock.Header:SetText(text)
 
-            if simpleDesc == "" then
-                simpleDesc = ParseSimpleObjective(txt)
-            else
-                simpleDesc = simpleDesc .. ", " .. ParseSimpleObjective(txt)
+            if savedQuests[questID] == nil then
+                NewQuestAnimation(GwBonusObjectiveBlock)
+                PlaySound(SOUNDKIT["UI_WORLDQUEST_START"])
+                savedQuests[questID] = true
             end
 
-            if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
-                if finished then
-                    objectiveProgress = objectiveProgress + (1 / numObjectives) + addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
+            GwBonusObjectiveBlock.questID = questID
+            GwBonusObjectiveBlock.id = questID
+            GwBonusObjectiveBlock.TrackedQuest = {}
+            GwBonusObjectiveBlock.TrackedQuest.questID = questID
+
+            local module = CreateBonusObjectiveTrackerModule()
+            module.ShowWorldQuests = true
+            GwBonusObjectiveBlock.module = module
+
+            GwBonusHeader:Show()
+            UpdateQuestItem(GwBonusItemButton, questLogIndex)
+
+            foundEvent = true
+
+            compassData["PROGRESS"] = 0
+
+            local objectiveProgress = 0
+            for objectiveIndex = 1, numObjectives do
+                local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
+
+                compassData["TYPE"] = "EVENT"
+                compassData["ID"] = questID
+                compassData["COLOR"] = TRACKER_TYPE_COLOR["EVENT"]
+                compassData["COMPASS"] = false
+                compassData["X"] = x
+                compassData["Y"] = y
+                compassData["QUESTID"] = questID
+                compassData["MAPID"] = mapId
+
+                if simpleDesc == "" then
+                    simpleDesc = ParseSimpleObjective(txt)
                 else
-                    objectiveProgress = objectiveProgress + (addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType) / numObjectives)
+                    simpleDesc = simpleDesc .. ", " .. ParseSimpleObjective(txt)
+                end
+
+                if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
+                    if finished then
+                        objectiveProgress = objectiveProgress + (1 / numObjectives) + addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
+                    else
+                        objectiveProgress = objectiveProgress + (addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType) / numObjectives)
+                    end
                 end
             end
-        end
 
-        if simpleDesc ~= "" then
-            compassData["DESC"] = simpleDesc
-        end
-
-        compassData["PROGRESS"] = objectiveProgress
-
-        AddTrackerNotification(compassData)
-
-        savedHeight = savedHeight + GwBonusObjectiveBlock.height
-
-        if not GwQuesttrackerContainerBonusObjectives.collapsed then
-            --add groupfinder button
-            if C_LFGList.CanCreateQuestGroup(GwBonusObjectiveBlock.questID) then
-                GwBonusObjectiveBlock.joingroup:Show()
-            else
-                GwBonusObjectiveBlock.joingroup:Hide()
+            if simpleDesc ~= "" then
+                compassData["DESC"] = simpleDesc
             end
-            GwBonusObjectiveBlock:Show()
-        end
-        for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
-            if _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
-                _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
-            end
-        end
 
-        GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 5)
-        GwQuesttrackerContainerBonusObjectives:SetHeight(GwBonusObjectiveBlock.height + 20)
-        blockIndex = blockIndex + 1
+            compassData["PROGRESS"] = objectiveProgress
+
+            AddTrackerNotification(compassData)
+
+            savedHeight = savedHeight + GwBonusObjectiveBlock.height
+
+            if not GwQuesttrackerContainerBonusObjectives.collapsed then
+                --add groupfinder button
+                if C_LFGList.CanCreateQuestGroup(GwBonusObjectiveBlock.questID) then
+                    GwBonusObjectiveBlock.joingroup:Show()
+                else
+                    GwBonusObjectiveBlock.joingroup:Hide()
+                end
+                GwBonusObjectiveBlock:Show()
+            end
+            for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
+                if _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
+                    _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
+                end
+            end
+
+            GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 5)
+            GwQuesttrackerContainerBonusObjectives:SetHeight(GwBonusObjectiveBlock.height + 20)
+            blockIndex = blockIndex + 1
+        end
     end
 end
 
@@ -278,15 +279,24 @@ local function updateBonusObjective(self, event)
     savedHeight = 1
     shownBlocks = 0
     blockIndex = 1
-    savedQuests = {}
+    trackedEventIDs = {}
+
     for i = 1, GetNumWorldQuestWatches() do
-        setUpBlock(GetWorldQuestWatchInfo(i), true)
+        if trackedEventIDs[GetWorldQuestWatchInfo(i)] == nil then
+            trackedEventIDs[GetWorldQuestWatchInfo(i)] = {}
+            trackedEventIDs[GetWorldQuestWatchInfo(i)]["ID"] = GetWorldQuestWatchInfo(i)
+            trackedEventIDs[GetWorldQuestWatchInfo(i)]["tracked"] = true
+        end
     end
 
     for k, v in pairs(tasks) do
-        setUpBlock(v, false)
+        if trackedEventIDs[v] == nil then
+            trackedEventIDs[v] = {}
+            trackedEventIDs[v]["ID"] = v
+            trackedEventIDs[v]["tracked"] = false
+        end
     end
-
+    setUpBlock(trackedEventIDs)
 
     if foundEvent == false then
         savedQuests = {}

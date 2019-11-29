@@ -1,7 +1,8 @@
 5.1.14
 
 NEW
-    - Added possibly to track more then one WQ
+    - Added possibly to show more then one WQ
+    - Added possibly to track WQ's
 
 FIXES
     - Fix chatframe moving and resizing error
