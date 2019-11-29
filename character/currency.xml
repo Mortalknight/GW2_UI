@@ -50,7 +50,7 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="42" y="-5" />
                             </Anchors>
-                            <Size x="200" y="24" />
+                            <Size x="350" y="24" />
                         </FontString>
                         <FontString parentKey="amount" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="RIGHT">
                             <Anchors>

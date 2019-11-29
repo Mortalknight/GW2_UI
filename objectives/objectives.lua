@@ -387,6 +387,7 @@ local function getBlock(blockIndex)
     else
         newBlock:SetPoint("TOPRIGHT", _G["GwQuestBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
+
     newBlock.clickHeader:Show()
     setBlockColor(newBlock, "QUEST")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
@@ -496,7 +497,13 @@ end
 GW.UpdateQuestItem = UpdateQuestItem
 
 local function OnBlockClick(self, button, isHeader)
-    if (ChatEdit_TryInsertQuestLinkForQuestID(self.questID)) then
+    if button == "RightButton" then
+        ObjectiveTracker_ToggleDropDown(self, QuestObjectiveTracker_OnOpenDropDown)
+        return
+    end
+    CloseDropDownMenus()
+
+    if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
 		return
     end
     
@@ -505,9 +512,9 @@ local function OnBlockClick(self, button, isHeader)
         return
     end
 
-    if (button ~= "RightButton") then
+    if button ~= "RightButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		if (IsModifiedClick("QUESTWATCHTOGGLE")) then
+		if IsModifiedClick("QUESTWATCHTOGGLE") then
 			QuestObjectiveTracker_UntrackQuest(nil, self.questID)
 		else
 			QuestMapFrame_OpenToQuestDetails(self.questID)
@@ -540,6 +547,7 @@ local function updateQuest(block, questWatchId)
         end
 
         block.questID = questID
+        block.id = questID
         block.questLogIndex = questLogIndex
 
         block.Header:SetText(title)
