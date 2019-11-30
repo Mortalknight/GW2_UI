@@ -56,8 +56,8 @@
                 <Texture parentKey="targetHighlight" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Color r="0" g="0" b="0" a="1"></Color>
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        <Anchor point="TOPLEFT" x="-1" y="1"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="1" y="-1"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -88,23 +88,17 @@
                         </Anchors>
                         <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                         <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
-                        <Layers>
-                            <Layer>
-                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
-                                    <Color r="0.207" g="0.392" b="0.168"></Color>
-                                    <Anchors>
-                                        <Anchor point="RIGHT" x="0" y="0"/>
-                                    </Anchors>
-                                    <Size x="7" y="8"></Size>
-                                </Texture>
-                                <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-                                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                                    </Anchors>
-                                </Texture>
-                            </Layer>
-                        </Layers>
+                            <Layers>
+                                <Layer>
+                                    <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                                        <Color r="0.207" g="0.392" b="0.168"></Color>
+                                        <Anchors>
+                                            <Anchor point="RIGHT" x="0" y="0"/>
+                                        </Anchors>
+                                        <Size x="7" y="8"></Size>
+                                    </Texture>
+                                </Layer>
+                            </Layers>
                         <Frames>
                             <StatusBar parentKey="absorbbar" defaultValue="1" minValue="0" maxValue="1">
                                 <Size x="65" y="8"></Size>
@@ -113,6 +107,16 @@
                                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
                                 </Anchors>
                                 <BarTexture file="Interface\AddOns\GW2_UI\textures\absorbbar-animated"/>
+                                <Layers>
+                                    <Layer>
+                                        <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                                <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
                             </StatusBar>
                         </Frames>
                     </StatusBar>

@@ -1057,7 +1057,7 @@ local function createRaidFrame(registerUnit, index)
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
         frame.healthbar = frame.predictionbar.healthbar
         frame.absorbbar = frame.healthbar.absorbbar
-        frame.aggroborder = frame.healthbar.aggroborder
+        frame.aggroborder = frame.absorbbar.aggroborder
         frame.nameNotLoaded = false
 
         frame.name:SetFont(UNIT_NAME_FONT, 12)
