@@ -61,12 +61,13 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
             objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
         end
 
-        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
+        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text, objectiveType, quantity) then
             if objectiveType == "progressbar" then
                 objectiveBlock.StatusBar:Show()
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
                 objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100
+                objectiveBlock.StatusBar.precentage = true
             end
             precentageComplete = objectiveBlock.progress
         else
@@ -99,9 +100,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     end
 
     newBlock.Header:SetText("")
-
-    newBlock:SetScript("OnEnter", BonusObjectiveTracker_ShowRewardsTooltip)
-    newBlock:SetScript("OnLeave", GameTooltip_Hide)
+    newBlock.event = true
     newBlock:SetScript("OnClick", BonusObjectiveTracker_OnBlockClick)
 
     hooksecurefunc("BonusObjectiveTracker_UntrackWorldQuest", function(questID)
@@ -269,11 +268,8 @@ local function updateBonusObjective(self, event)
 
     UpdateQuestItem(GwBonusItemButton, 0)
 
-    local tasks = GetTasksTable()   
-   
-    if GwQuesttrackerContainerBonusObjectives.collapsed == true then
-        GwBonusHeader:Show()
-    end
+    local tasks = GetTasksTable()
+    local EventToShow = false
 
     foundEvent = false
     savedHeight = 1
@@ -286,6 +282,7 @@ local function updateBonusObjective(self, event)
             trackedEventIDs[GetWorldQuestWatchInfo(i)] = {}
             trackedEventIDs[GetWorldQuestWatchInfo(i)]["ID"] = GetWorldQuestWatchInfo(i)
             trackedEventIDs[GetWorldQuestWatchInfo(i)]["tracked"] = true
+            EventToShow = true
         end
     end
 
@@ -294,8 +291,23 @@ local function updateBonusObjective(self, event)
             trackedEventIDs[v] = {}
             trackedEventIDs[v]["ID"] = v
             trackedEventIDs[v]["tracked"] = false
+            local isInArea = GetTaskInfo(v)
+            if isInArea then EventToShow = true end
         end
     end
+
+    if GwQuesttrackerContainerBonusObjectives.collapsed == true then
+        if EventToShow then
+            GwBonusHeader:Show()
+            foundEvent = true
+            trackedEventIDs = {}
+            savedHeight = 20
+        else
+            foundEvent = false
+            GwQuesttrackerContainerBonusObjectives.collapsed = false
+        end
+    end
+
     setUpBlock(trackedEventIDs)
 
     if foundEvent == false then

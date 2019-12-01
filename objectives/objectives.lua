@@ -288,6 +288,9 @@ local function CreateTrackerObject(name, parent)
                     self.hover:SetTexCoord(0, step, 0, 1)
                 end
             )
+            if self.event then
+                BonusObjectiveTracker_ShowRewardsTooltip(self)
+            end
         end
     )
     f:SetScript(
@@ -303,6 +306,7 @@ local function CreateTrackerObject(name, parent)
             if animations[self:GetName() .. "hover"] ~= nil then
                 animations[self:GetName() .. "hover"]["complete"] = true
             end
+            GameTooltip_Hide()
         end
     )
     f.clickHeader:SetScript(
@@ -434,6 +438,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
                 objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100
+                objectiveBlock.StatusBar.precentage = true
             end
         else
             objectiveBlock.StatusBar:Hide()
