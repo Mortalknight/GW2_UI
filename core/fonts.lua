@@ -81,6 +81,7 @@ local function LoadFonts()
 	setFont(FriendsFont_Large, bold)
 	setFont(GameFont_Gigantic, normal)
 	setFont(ChatBubbleFont, normal)
+	setFont(Fancy22Font, normal)
 
 	setFont(GameTooltipHeader, bold, 14, nil, -1, -1, 1, 1, 1, 1, 0, 0, 0)
 	setFont(Tooltip_Med, normal, 12, nil, -1, -1, 1, 1, 1, 1, 0, 0, 0)

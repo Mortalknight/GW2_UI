@@ -363,6 +363,11 @@ local function SkinDropDownList_OnShow(self)
             _G[self:GetName() .. "Button" .. i .. "ExpandArrow"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\arrow_right")
         end
     end
+    --Check if Raider.IO Entry is added
+    if IsAddOnLoaded("RaiderIO") and RaiderIO_CustomDropDownList then
+        _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
+        _G["RaiderIO_CustomDropDownList"]:SetBackdrop(constBackdropFrame)
+    end
 end
 
 local function SkinDropDownList()
@@ -697,3 +702,42 @@ local function SkinReadyCheckListenerFrame()
     ReadyCheckPortrait:SetDrawLayer("OVERLAY", 2)
 end
 GW.SkinReadyCheckListenerFrame = SkinReadyCheckListenerFrame
+
+-------------------------------------------------------TalkingHeadFrame-------------------------------------------------------
+local function SkinTalkingHeadFrame_OnShow()
+    TalkingHeadFrame.MainFrame.CloseButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
+    TalkingHeadFrame.MainFrame.CloseButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+    TalkingHeadFrame.MainFrame.CloseButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+    TalkingHeadFrame.MainFrame.CloseButton:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
+    TalkingHeadFrame.MainFrame.CloseButton:SetSize(25, 25)
+    TalkingHeadFrame.MainFrame.CloseButton:ClearAllPoints()
+    TalkingHeadFrame.MainFrame.CloseButton:SetPoint("TOPRIGHT", -30, -8)
+
+    TalkingHeadFrame.BackgroundFrame.TextBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\manage-group-bg")
+end
+
+local function SkinTalkingHeadFrame()
+    if TalkingHeadFrame then
+        hooksecurefunc("TalkingHeadFrame_PlayCurrent", SkinTalkingHeadFrame_OnShow)
+    else
+        hooksecurefunc("TalkingHead_LoadUI", SkinTalkingHeadFrame)
+    end
+end
+GW.SkinTalkingHeadFrame = SkinTalkingHeadFrame
+
+-------------------------------------------------------TimerTrackerFrame-------------------------------------------------------
+local function SkinTimerTrackerFrame_OnShow(self)
+    local Frame = _G[self:GetName() .. "StatusBar"]
+    if Frame then
+        Frame:SetStatusBarTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar")
+        _G[Frame:GetName() .. "Border"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\gwstatusbar-bg")
+        _G[Frame:GetName() .. "Border"]:SetSize(199, 14)
+        _G[Frame:GetName() .. "Border"]:ClearAllPoints()
+        _G[Frame:GetName() .. "Border"]:SetPoint(Frame:GetPoint())
+    end
+end
+
+local function SkinTimerTrackerFrame()
+    hooksecurefunc("StartTimer_SetGoTexture", SkinTimerTrackerFrame_OnShow)
+end
+GW.SkinTimerTrackerFrame = SkinTimerTrackerFrame

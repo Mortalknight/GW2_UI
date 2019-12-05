@@ -1534,6 +1534,8 @@ local function LoadSettings()
     addOption("LFG Dungeon Ready Dialog", nil, "LFGDUNGEONREADYDIALOG_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     addOption("LFG Invite Popup", nil, "LFGINVITEPOPUP_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     addOption("Ready Check Listener Frame", nil, "READYCHECKLISTENERFRAME_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
+    addOption("Talking Head Frame", nil, "TALKINGHEAD_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
+    addOption("Timer Tracker Frame", nil, "TIMERTRACKER_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
     _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")

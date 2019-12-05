@@ -552,6 +552,12 @@ local function loadAddon(self)
     if GetSetting("READYCHECKLISTENERFRAME_SKIN_ENABLED") then
         GW.SkinReadyCheckListenerFrame()
     end
+    if GetSetting("TALKINGHEAD_SKIN_ENABLED") then
+        GW.SkinTalkingHeadFrame()
+    end
+    if GetSetting("TIMERTRACKER_SKIN_ENABLED") then
+        GW.SkinTimerTrackerFrame()
+    end
 
     --Create hud art
     GW.LoadHudArt()

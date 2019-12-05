@@ -3,6 +3,7 @@
 NEW
     - Added possibly to show more then one WQ
     - Added possibly to track WQ's
+    - Added new skins
 
 FIXES
     - Fix chatframe moving and resizing error
