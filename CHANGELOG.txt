@@ -1,3 +1,7 @@
+
+1.6.1
+- Update libs
+
 1.6.0
 - Added Honortab
 
