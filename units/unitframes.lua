@@ -357,10 +357,7 @@ local function updateHealthbarColor(self)
         self.healthbarFlash:SetVertexColor(r, g, b, a)
         self.healthbarFlashSpark:SetVertexColor(r, g, b, a)
 
-        self.nameString:SetTextColor(r, g, b, a)
-
-        local r, g, b, _ = self.nameString:GetTextColor()
-        self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)
+        self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, a)
     else
         local isFriend = UnitIsFriend("player", self.unit)
         local friendlyColor = COLOR_FRIENDLY[1]
@@ -379,7 +376,7 @@ local function updateHealthbarColor(self)
         self.nameString:SetTextColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
     end
 
-    if (UnitLevel(self.unit) - UnitLevel("player")) <= -5 then
+    if (UnitLevel(self.unit) - UnitLevel("player")) <= -5 and not UnitIsPlayer(self.unit) then
         local r, g, b, _ = self.nameString:GetTextColor()
         self.nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
     end
