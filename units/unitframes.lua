@@ -782,6 +782,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local smallSize
     local bigSize
     local maxSize
+    local counterBuffs = 0
 
     if isPlayer then
         maxSize = self:GetWidth()
@@ -845,6 +846,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
         if setBuffData(frame, list, index) then
             if frameIndex <= 40 then
                 isBuff = true
+            elseif frameIndex > 40 and not isPlayer then
+                counterBuffs = counterBuffs + 1
             end
             if not frame:IsShown() then
                 frame:Show()
@@ -882,7 +885,12 @@ local function UpdateBuffLayout(self, event, anchorPos)
             end
 
             usedWidth = usedWidth + size + marginX
-            if maxSize < usedWidth then
+            if frameIndex > 40 and not isPlayer and counterBuffs == 8 then
+                counterBuffs = 0
+                usedWidth = 0
+                usedHeight = usedHeight + lineSize + marginY
+                lineSize = smallSize
+            elseif maxSize < usedWidth then
                 usedWidth = 0
                 usedHeight = usedHeight + lineSize + marginY
                 lineSize = smallSize

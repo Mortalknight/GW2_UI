@@ -1,6 +1,7 @@
 1.6.2
 - Added Questtarget to the Immersive dialouge (At the End)
-- Change Bag and Bank min sizing
+- Changed Bag and Bank min sizing
+- Changed target debuffs to 8 per row
 
 1.6.1
 - Update libs
