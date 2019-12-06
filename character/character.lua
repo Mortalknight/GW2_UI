@@ -107,7 +107,13 @@ function gwPaperDollUpdateUnitData()
     local id, name, description, icon, background, role = GW.api.GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
     local unitLevel = UnitLevel("player")
     GW.SetClassIcon(GwDressingRoom.classIcon, classIndex)
-    GwDressingRoom.classIcon:SetVertexColor(GW.CLASS_COLORS_RAIDFRAME[classIndex].r,GW.CLASS_COLORS_RAIDFRAME[classIndex].g,GW.CLASS_COLORS_RAIDFRAME[classIndex].b)
+    local r, g, b, a
+        if GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+            r, g, b, a = GetClassColor(englishClass)
+        else
+            r, g, b, a = GW.CLASS_COLORS_RAIDFRAME[classIndex].r, GW.CLASS_COLORS_RAIDFRAME[classIndex].g, GW.CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+        end
+    GwDressingRoom.classIcon:SetVertexColor(r, g, b, a)
 
 	if name ~= nil then
 		local data = GUILD_RECRUITMENT_LEVEL .. " " .. unitLevel .. " " .. name .. " " .. localizedClass

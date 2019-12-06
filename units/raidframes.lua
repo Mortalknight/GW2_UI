@@ -249,12 +249,13 @@ local function updateAwayData(self)
     end
 
     if iconState == 0 then
-        self.healthbar:SetStatusBarColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
+        local r, g, b, a
+        if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+            r, g, b, a = GetClassColor(englishClass)
+        else
+            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+        end
+        self.healthbar:SetStatusBarColor(r, g, b, a)
         if self.classicon:IsShown() then
             self.classicon:Hide()
         end
@@ -708,12 +709,13 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                 if UnitInRaid(self.unit) ~= nil then
                     localizedClass, englishClass, classIndex = UnitClass(self.unit)
                     if classColor == true then
-                        self.healthbar:SetStatusBarColor(
-                            CLASS_COLORS_RAIDFRAME[classIndex].r,
-                            CLASS_COLORS_RAIDFRAME[classIndex].g,
-                            CLASS_COLORS_RAIDFRAME[classIndex].b,
-                            1
-                        )
+                        local r, g, b, a
+                        if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+                            r, g, b, a = GetClassColor(englishClass)
+                        else
+                            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+                        end
+                        self.healthbar:SetStatusBarColor(r, g, b, a)
                         if self.classicon:IsShown() then
                             self.classicon:Hide()
                         end

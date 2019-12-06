@@ -345,38 +345,19 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
-        local _, _, classIndex = UnitClass(self.unit)
-        self.healthbar:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
-        self.healthbarSpark:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
-        self.healthbarFlash:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
-        self.healthbarFlashSpark:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
+        local _, classFilename, classIndex = UnitClass(self.unit)
+        local r, g, b, a
+        if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+            r, g, b, a = GetClassColor(classFilename)
+        else
+            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+        end
+        self.healthbar:SetVertexColor(r, g, b, a)
+        self.healthbarSpark:SetVertexColor(r, g, b, a)
+        self.healthbarFlash:SetVertexColor(r, g, b, a)
+        self.healthbarFlashSpark:SetVertexColor(r, g, b, a)
 
-        self.nameString:SetTextColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
+        self.nameString:SetTextColor(r, g, b, a)
 
         local r, g, b, _ = self.nameString:GetTextColor()
         self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)

@@ -1409,6 +1409,7 @@ local function LoadSettings()
     addOption("Battle.net Toast", nil, "BNTOASTFRAME_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     addOption("Drop-Down-List", nil, "DROPDOWNLIST_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     addOption("Drop-Down-Menu", nil, "DROPDOWNMENU_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
+    addOption("Use Blizzard Class Colors", nil, "BLIZZARDCLASSCOLOR_ENABLED", "GwSettingsGeneralSkinsOption")
 
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
     _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
