@@ -3,6 +3,7 @@
 - Changed Bag and Bank min sizing
 - Changed target debuffs to 8 per row
 - Added option under Skins 'Use Blizzard Class Colors'
+- Added Defense stat for Warrior, Druid and Paladin
 
 1.6.1
 - Update libs

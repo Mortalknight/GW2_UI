@@ -1542,11 +1542,7 @@
                         GwAttributeInvisibleFrame:Show()  
                     </OnLoad>
                     <OnEnter>
-                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        
-                        GameTooltip:SetText(HIGHLIGHT_FONT_COLOR_CODE .. PET_BATTLE_STATS_LABEL .. FONT_COLOR_CODE_CLOSE)
-                        GameTooltip:AddLine(self.tooltip)
-                        GameTooltip:Show()
+                        GWshowExtendedAttributes(self)
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide()
