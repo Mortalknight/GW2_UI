@@ -1,5 +1,6 @@
 1.6.2
 - Added Questtarget to the Immersive dialouge (At the End)
+- Change Bag and Bank min sizing
 
 1.6.1
 - Update libs

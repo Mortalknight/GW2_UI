@@ -196,7 +196,7 @@ local function updateBagIcons(smooth)
     if smooth then
         winsize = gwbf:GetWidth()
     end
-    winsize = math.max(508, winsize)
+    winsize = math.max(308, winsize)
 
     local bStart = 1
     local bEnd = 5
@@ -390,7 +390,7 @@ local function onBagDragUpdate(self)
     local w = self:GetWidth()
     local h = self:GetHeight()
 
-    if w < 508 or h < 340 then
+    if w < 308 or h < 340 then
         GwBagFrameResize:StopMovingOrSizing()
     else
         updateBagIcons(true)

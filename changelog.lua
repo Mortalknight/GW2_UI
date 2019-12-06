@@ -141,6 +141,7 @@ GW_CHANGELOGS = "\n\n1.6.1\n\n" .. GW_CHANGELOGS
 
 --VERSION 1.6.2
 GW_CHANGELOGS = "- Added Questtarget to the Immersive dialouge (At the End)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Change Bag and Bank min sizing\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.2\n\n" .. GW_CHANGELOGS
 
 

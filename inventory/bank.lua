@@ -167,7 +167,7 @@ local function updateBankIcons(smooth)
     if smooth then
         winsize = gwbf:GetWidth()
     end
-    winsize = math.max(508, winsize)
+    winsize = math.max(308, winsize)
 
     local bStart = 5
     local bEnd = 12
@@ -313,7 +313,7 @@ local function onBankDragUpdate(self)
     local w = self:GetWidth()
     local h = self:GetHeight()
 
-    if w < 508 or h < 340 then
+    if w < 308 or h < 340 then
         GwBagFrameResize:StopMovingOrSizing()
     else
         updateBankIcons(true)
