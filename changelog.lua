@@ -139,5 +139,10 @@ GW_CHANGELOGS = "\n\n1.6.0\n\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Update libs\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.1\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.6.2
+GW_CHANGELOGS = "- Added Questtarget to the Immersive dialouge (At the End)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.6.2\n\n" .. GW_CHANGELOGS
+
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 

@@ -491,7 +491,7 @@ local function LoadQuestview()
                     clearQuestReq()
                 end
                 showQuestFrame()
-                QUESTSTRING = splitQuest(GetQuestText())
+                QUESTSTRING = splitQuest(GetQuestText() .. GetProgressText())
                 if not IsQuestCompletable() then
                     table.insert(QUESTSTRING, GetObjectiveText())
                 end
