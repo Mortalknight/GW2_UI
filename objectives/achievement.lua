@@ -31,6 +31,8 @@ local function achievement_OnClick(block, mouseButton)
                 AchievementFrame_ToggleAchievementFrame()
             end
         end
+    else
+		ObjectiveTracker_ToggleDropDown(block, AchievementObjectiveTracker_OnOpenDropDown)
     end
 end
 GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)
