@@ -13,6 +13,7 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 	
 	--Strings
+	GwLocalization['WEAPON_SKILLS_HEADER'] = 'Waffenfertigkeiten' -- Do not touch
 	GwLocalization['FPS_TOOLTIP_1'] = 'Bildrate '
 	GwLocalization['FPS_TOOLTIP_2'] = 'Latenz (Standort) '
 	GwLocalization['FPS_TOOLTIP_3'] = 'Latenz (Welt) '

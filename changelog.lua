@@ -147,6 +147,8 @@ GW_CHANGELOGS = "- Added option under Skins 'Use Blizzard Class Colors'\n" .. GW
 GW_CHANGELOGS = "- Added Defense stat for Warrior, Druid and Paladin\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.2\n\n" .. GW_CHANGELOGS
 
+GW_CHANGELOGS = "- Fix lua error for druids\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.6.3\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS
 

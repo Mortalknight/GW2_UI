@@ -13,6 +13,7 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 	
 	--Strings
+	GwLocalization['WEAPON_SKILLS_HEADER'] = 'Weapon Skills' -- Do not touch
 	GwLocalization["ACTION_BAR_FADE"] = "Ocultar Barra de Ações"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "Ocultar Barras de Ações adicionais quando fora de combate."
 	GwLocalization["ACTION_BARS_DESC"] = "Usar as Barras de Ações melhoradas pelo GW2 ui"
