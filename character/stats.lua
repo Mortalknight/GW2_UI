@@ -147,7 +147,7 @@ local function getDefense(unit)
 		if isHeader ~= nil and isHeader then
 			currentHeader = skillName
 		else
-			if (currentHeader == WEAPON_SKILLS_HEADER and skillName == DEFENSE) then
+			if (currentHeader == GwLocalization["WEAPON_SKILLS_HEADER"] and skillName == DEFENSE) then
 				skillIndex = i
 				break
 			end
