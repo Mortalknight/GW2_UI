@@ -30,7 +30,6 @@
                     </Anchors>
                     <TexCoords left="0.7" right="1" top="0.35" bottom="1"/>
                 </Texture>
-
             </Layer>
             <Layer level="BORDER">
                 <FontString parentKey="headerString" text="ITEMS" inherits="GameFontNormalSmall" justifyH="LEFT">
@@ -42,12 +41,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.headerString:SetFont(DAMAGE_TEXT_FONT, 14)
-                self.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-            </OnLoad>
-        </Scripts>
     </Frame>
 
 </Ui>

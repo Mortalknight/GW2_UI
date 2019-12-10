@@ -7,19 +7,10 @@ local CommaValue = GW.CommaValue
 --local SetObjectiveNotification = GW.SetObjectiveNotification
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
 local mapID = ""
-
-local TRACKER_TYPE_COLOR = {}
-GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
-TRACKER_TYPE_COLOR["QUEST"] = {r = 221 / 255, g = 198 / 255, b = 68 / 255}
-TRACKER_TYPE_COLOR["EVENT"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
-TRACKER_TYPE_COLOR["BONUS"] = {r = 240 / 255, g = 121 / 255, b = 37 / 255}
-TRACKER_TYPE_COLOR["SCENARIO"] = {r = 171 / 255, g = 37 / 255, b = 240 / 255}
-TRACKER_TYPE_COLOR["BOSS"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
-TRACKER_TYPE_COLOR["ARENA"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
-TRACKER_TYPE_COLOR["ACHIEVEMENT"] = {r = 37 / 255, g = 240 / 255, b = 172 / 255}
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -204,6 +195,7 @@ GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 local function setBlockColor(block, string)
     block.color = TRACKER_TYPE_COLOR[string]
 end
+GW.setBlockColor = setBlockColor
 GW.AddForProfiling("objectives", "setBlockColor", setBlockColor)
 
 local function statusBar_OnShow(self)

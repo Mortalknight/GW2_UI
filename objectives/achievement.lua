@@ -5,6 +5,7 @@ local FormatObjectiveNumbers = GW.FormatObjectiveNumbers
 local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
+local setBlockColor = GW.setBlockColor
 
 local MAX_OBJECTIVES = 10
 
@@ -36,11 +37,6 @@ local function achievement_OnClick(block, mouseButton)
     end
 end
 GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)
-
-local function setBlockColor(block, string)
-    block.color = TRACKER_TYPE_COLOR[string]
-end
-GW.AddForProfiling("achievement", "setBlockColor", setBlockColor)
 
 local function getObjectiveBlock(self, firstunfinishedobjectiv)
     if _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives] ~= nil then

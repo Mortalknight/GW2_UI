@@ -60,6 +60,10 @@ local function SkinLooTFrame()
 
     CreateFrame("Frame","GwLootFrameTitle",LootFrame,"GwLootFrameTitle")
     GwLootFrameTitle:SetPoint("BOTTOMLEFT", LootFrameBg, "TOPLEFT")
+    GwLootFrameTitle:SetScript("OnLoad", function(self)
+        self.headerString:SetFont(DAMAGE_TEXT_FONT, 14)
+        self.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    end)
 
     if GetCVar("lootUnderMouse") == "0" then
         local pos = GW.GetSetting("LOOTFRAME_POSITION")

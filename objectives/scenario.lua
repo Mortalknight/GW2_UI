@@ -5,6 +5,7 @@ local ParseObjectiveString = GW.ParseObjectiveString
 local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local UpdateQuestItem = GW.UpdateQuestItem
+local setBlockColor = GW.setBlockColor
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
@@ -612,7 +613,7 @@ local function LoadScenarioFrame()
     newBlock:SetPoint("TOPRIGHT", timerBlock, "BOTTOMRIGHT", 0, 0)
     newBlock.Header:SetText("")
 
-    newBlock.color = TRACKER_TYPE_COLOR["SCENARIO"]
+    setBlockColor(newBlock, "SCENARIO")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     updateCurrentScenario()
