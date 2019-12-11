@@ -380,6 +380,7 @@ local function bagOnResizeStop(self)
     GwBagMoverFrame:ClearAllPoints()
     GwBagMoverFrame:SetPoint(mfPoint, UIParent, mfRelPoint, mfxOfs, mfyOfs)
     GwBagMoverFrame:SetWidth(newWidth)
+    GwBagFrameHeader:SetWidth(newWidth)
     onBagMove(GwBagMoverFrame)
 end
 GW.AddForProfiling("bag", "bagOnResizeStop", bagOnResizeStop)
@@ -395,6 +396,7 @@ local function onBagDragUpdate(self)
     else
         updateBagIcons(true)
     end
+    GwBagFrameHeader:SetWidth(w)
 end
 GW.AddForProfiling("bag", "onBagDragUpdate", onBagDragUpdate)
 
@@ -478,6 +480,7 @@ local function LoadBag()
     local f = CreateFrame("Frame", "GwBagFrame", UIParent, "GwBagFrame")
     tinsert(UISpecialFrames, "GwBagFrame")
     f:SetWidth(BAG_WINDOW_SIZE)
+    GwBagFrameHeader:SetWidth(fm:GetWidth())
     updateBagIcons()
 
     f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
