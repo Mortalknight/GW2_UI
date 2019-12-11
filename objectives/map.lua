@@ -46,6 +46,7 @@ local Minimap_Addon_Buttons = {
     [31] = "MinimapZoneTextButton",
     [33] = "MiniMapVoiceChatFrame",
     [34] = "MiniMapRecordingButton",
+    [35] = "MiniMapBattlefieldFrame",
     [36] = "GatherArchNote",
     [37] = "ZGVMarker",
     [38] = "QuestPointerPOI",
@@ -136,6 +137,37 @@ local function SetMinimapPosition()
     end
 end
 GW.SetMinimapPosition = SetMinimapPosition
+
+local function lfgAnimStop()
+    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    MiniMapBattlefieldFrame.animationCircle:Hide()
+    MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
+end
+GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
+
+local function lfgAnim(elapse)
+    if Minimap:IsShown() then
+        MiniMapBattlefieldIcon:SetAlpha(1)
+    else
+        MiniMapBattlefieldIcon:SetAlpha(0)
+        return
+    end
+    local status = GetBattlefieldStatus(1)
+    if status == "active" then
+        lfgAnimStop()
+        return
+    end
+    MiniMapBattlefieldFrame.animationCircle:Show()
+
+    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+
+    local speed = 1.5
+    local rot = MiniMapBattlefieldFrame.animationCircle.background:GetRotation() + (speed * elapse)
+
+    MiniMapBattlefieldFrame.animationCircle.background:SetRotation(rot)
+    MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
+end
+GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
 local function hideMiniMapIcons()
     for k, v in pairs(MAP_FRAMES_HIDE) do
@@ -343,6 +375,14 @@ local function LoadMinimap()
 
     SetMinimapHover()
 
+    hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnim)
+    --hooksecurefunc("EyeTemplate_StopAnimating", lfgAnimStop)
+
+    MiniMapBattlefieldIcon:SetSize(20, 20)
+    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    MiniMapBattlefieldIcon:SetSize(20, 20)
+    MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
+
     Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
     Minimap:SetParent(UIParent)
     Minimap:SetFrameStrata("LOW")
@@ -409,6 +449,8 @@ local function LoadMinimap()
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
+    MiniMapBattlefieldFrame:ClearAllPoints()
+    MiniMapBattlefieldFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
 
     MiniMapTrackingFrame:UnregisterAllEvents()
     MiniMapTrackingFrame:SetScript("OnEvent", nil)
@@ -447,6 +489,11 @@ local function LoadMinimap()
             MinimapZoneText:SetTextColor(1, 1, 1)
         end
     )
+
+    MiniMapBattlefieldBorder:SetTexture(nil)
+    BattlegroundShine:SetTexture(nil)
+    MiniMapBattlefieldFrame:ClearAllPoints()
+    MiniMapBattlefieldFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
 
     GameTimeFrame:HookScript(
         "OnShow",

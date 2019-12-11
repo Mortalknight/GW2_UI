@@ -26,6 +26,14 @@ local constBackdropFrame = {
 	insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 
+local constBackdropFrame2 = {
+	bgFile = "Interface\\AddOns\\GW2_UI\\textures\\party\\manage-group-bg",
+	tile = false,
+	tileSize = 64,
+	edgeSize = 32,
+	insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+
 -------------------------------------------------------Skin GameMenuFrame-------------------------------------------------------
 local BUTTONS = {
     {button = GameMenuButtonHelp, sprite={1,1} },
@@ -118,40 +126,19 @@ end
 GW.SkinMainMenu = SkinMainMenu
 
 -------------------------------------------------------Skin Staticpopup-------------------------------------------------------
-local function gwSetStaticPopupSize()
-    for i = 1, 4 do
-        local StaticPopup = _G["StaticPopup" .. i]
-        StaticPopup.tex:SetSize(StaticPopup:GetSize())
-        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\warning-icon") 
-        for ii = 1, 5 do
-            if ii < 5 then
-                addHoverToButton(_G["StaticPopup" .. i .. "Button" .. ii])
-            else
-                addHoverToButton(_G["StaticPopup" .. i .. "ExtraButton"])
-            end
-        end
-    end
-end
-
 local function SkinStaticPopup()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
 
-        StaticPopup:SetBackdrop(nil)
+        StaticPopup:SetBackdrop(constBackdropFrame2)
         StaticPopup.CoverFrame:Hide()
         StaticPopup.Separator:Hide()
-
-        local tex = StaticPopup:CreateTexture("bg", "BACKGROUND")
-        tex:SetPoint("TOP", StaticPopup,"TOP",0,0)
-        tex:SetSize(StaticPopup:GetWidth(), StaticPopup:GetHeight())
-        tex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\manage-group-bg")
-        StaticPopup.tex = tex
 
         --Style Buttons (upto 5)
         for ii = 1, 5 do
             if ii < 5 then
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
-                _G["StaticPopup" .. i .. "Button" .. ii]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "Button" .. ii]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button_hover")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "Button" .. ii]:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\button_disable")
                 _G["StaticPopup" .. i .. "Button" .. ii]:GetHighlightTexture():SetVertexColor(0, 0, 0)
@@ -160,7 +147,7 @@ local function SkinStaticPopup()
                 _G["StaticPopup" .. i .. "Button" .. ii .. "Text"]:SetDrawLayer("OVERLAY")
             else
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
-                _G["StaticPopup" .. i .. "ExtraButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
+                _G["StaticPopup" .. i .. "ExtraButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\button_hover")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\button")
                 _G["StaticPopup" .. i .. "ExtraButton"]:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\button_disable")
                 _G["StaticPopup" .. i .. "ExtraButton"]:GetHighlightTexture():SetVertexColor(0, 0, 0)
@@ -176,9 +163,9 @@ local function SkinStaticPopup()
         _G["StaticPopup" .. i .. "EditBoxMid"]:ClearAllPoints()
         _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("TOPLEFT", _G["StaticPopup" .. i .. "EditBoxLeft"],"BOTTOMRIGHT", -25, 3)
         _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("BOTTOMRIGHT", _G["StaticPopup" .. i .. "EditBoxRight"],"TOPLEFT", 25, -3)
-    end
 
-    hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
+        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\warning-icon") 
+    end
 end
 GW.SkinStaticPopup = SkinStaticPopup
 

@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 11303
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
 ## OptionalDeps: MoveAnything, RealMobHealth, TitanClassic
