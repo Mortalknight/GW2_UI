@@ -1,3 +1,6 @@
+1.6.5
+- Added Keyring
+
 1.6.4
 - Update libs
 - Error if acception an PvP invite: Workaround: If the invite pops up type /reload then you can accept the invite

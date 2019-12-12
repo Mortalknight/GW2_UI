@@ -157,4 +157,8 @@ GW_CHANGELOGS = "- Error if acception an PvP invite: Workaround: If the invite p
 GW_CHANGELOGS = "- Added BG queue icon\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.4\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.6.5
+GW_CHANGELOGS = "- Added Keyring\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.6.4\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS

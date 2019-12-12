@@ -9,7 +9,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v1.6.4'
+GW.VERSION_STRING = 'GW2_UI_Classic v1.6.5'
 
 local loaded = false
 local hudScale = 1
@@ -688,10 +688,6 @@ local function loadAddon(self)
         GW.SkinLooTFrame()
     end
 
-    if GetSetting("USE_BATTLEGROUND_HUD") then
-        --GW.LoadBattlegrounds()
-    end
-
     GW.LoadBreathMeter()
 
     --Create unitframes
@@ -764,8 +760,6 @@ local function loadAddon(self)
     if (forcedMABags) then
         GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
     end
-
-    --GW.LoadChatBubbles()
 
     --Add Shared Media
     --Font

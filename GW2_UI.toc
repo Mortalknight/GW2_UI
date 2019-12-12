@@ -93,7 +93,6 @@ character/windowManager.lua
 immersive/tooltips.lua
 immersive/questview.xml
 immersive/questview.lua
-immersive/chatbubbles.lua
 immersive/chatframe.lua
 immersive/mainmenu.lua
 
@@ -101,9 +100,3 @@ objectives/map.lua
 objectives/questtracker.xml
 objectives/objectives.lua
 objectives/notifications.lua
-
-battlegrounds/battlegrounds.xml
-battlegrounds/battlegrounds.lua
-
-tests/mocks.lua
-tests/alert_tests.lua

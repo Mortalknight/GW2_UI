@@ -21,6 +21,9 @@ local CONTAINER_TYP_3 = 0
 local CONTAINER_TYP_4 = 0
 local CONTAINER_TYP_5 = 0
 
+local keyringButtonCreated = false
+local currectkeyringbag = 1
+
 local default_bag_frame = {
     "MainMenuBarBackpackButton",
     "CharacterBag0Slot",
@@ -34,7 +37,8 @@ local default_bag_frame_container = {
     "ContainerFrame2",
     "ContainerFrame3",
     "ContainerFrame4",
-    "ContainerFrame5"
+    "ContainerFrame5",
+    "ContainerFrame6"
 }
 
 local function bagFrameHide(self)
@@ -100,6 +104,29 @@ local function moveBagbar()
 
         y = y + 32
     end
+    --Add Keyring (temp)
+    if not keyringButtonCreated then
+        local keyringbutton = CreateFrame("Button", "GWkeyringbutton", GwBagFrame, "GwKeyRingButtonTemp")
+        keyringbutton:SetPoint("TOPLEFT", GwBagFrame, "TOPLEFT", -35, -y)
+        keyringbutton:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+        keyringbutton.isShown = false
+        keyringbutton:SetScript("OnClick",
+            function(self)
+                self.isShown = not self.isShown
+                ToggleBag(-2)
+                GW.updateBagIcons()
+                GW.SetItemButtonQuality()
+                if self.isShown then
+                    self.border:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+                    self.border:Show()
+                else
+                    self.border:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+                    self.border:Hide()
+                end
+            end
+        )
+        keyringButtonCreated = true
+    end
 end
 GW.AddForProfiling("bag", "moveBagbar", moveBagbar)
 
@@ -142,49 +169,72 @@ end
 GW.AddForProfiling("bag", "createItemBackground", createItemBackground)
 
 local function SetItemButtonQuality()
+    if KeyRingButton then KeyRingButton:Hide() end
     getBagType()
-    for bag = 0, NUM_BAG_SLOTS do
-        for slot = 1, GetContainerNumSlots(bag) do
-            local btnID = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]:GetID()
-            local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
-            local btn = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]
+    currectkeyringbag = 1
+    local shoudadd = true
+    for bag = 0, NUM_BAG_SLOTS + 1 do
+        if bag <= NUM_BAG_SLOTS then
+            shoudadd = true
+            for slot = 1, GetContainerNumSlots(bag) do
+                local btnID = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]:GetID()
+                local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
+                local btn = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]
 
-            if btn then
-                if quality then           
-                    if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-                        btn.IconBorder:Show()
-                        btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+                if btn then
+                    if quality then           
+                        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+                            btn.IconBorder:Show()
+                            btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+                        else
+                            btn.IconBorder:Hide()
+                        end
                     else
                         btn.IconBorder:Hide()
                     end
-                else
-                    btn.IconBorder:Hide()
-                end
-                if itemID ~= nil then
-                    local isQuestItem = select(6, GetItemInfo(itemID))
-                    if isQuestItem == BATTLE_PET_SOURCE_2 then 
+                    if itemID ~= nil then
+                        local isQuestItem = select(6, GetItemInfo(itemID))
+                        if isQuestItem == BATTLE_PET_SOURCE_2 then 
+                            btn.IconBorder:Show()
+                            btn.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
+                        end
+                    end
+                    --SetBorder for profession bags
+                    if bag == 1 and CONTAINER_TYP_2 > 0 then
                         btn.IconBorder:Show()
-                        btn.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
+                        btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_2].r, BAG_TYP_COLORS[CONTAINER_TYP_2].g, BAG_TYP_COLORS[CONTAINER_TYP_2].b)
+                    elseif bag == 2 and CONTAINER_TYP_3 > 0 then
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_3].r, BAG_TYP_COLORS[CONTAINER_TYP_3].g, BAG_TYP_COLORS[CONTAINER_TYP_3].b)
+                    elseif bag == 3 and CONTAINER_TYP_4 > 0 then
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_4].r, BAG_TYP_COLORS[CONTAINER_TYP_4].g, BAG_TYP_COLORS[CONTAINER_TYP_4].b)
+                    elseif bag == 4 and CONTAINER_TYP_5 > 0 then
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_5].r, BAG_TYP_COLORS[CONTAINER_TYP_5].g, BAG_TYP_COLORS[CONTAINER_TYP_5].b)
+                    end
+                    if shoudadd then
+                        currectkeyringbag = currectkeyringbag + 1
+                        shoudadd = false
                     end
                 end
-                --SetBorder for profession bags
-                if bag == 1 and CONTAINER_TYP_2 > 0 then
-                    btn.IconBorder:Show()
-                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_2].r, BAG_TYP_COLORS[CONTAINER_TYP_2].g, BAG_TYP_COLORS[CONTAINER_TYP_2].b)
-                elseif bag == 2 and CONTAINER_TYP_3 > 0 then
-                    btn.IconBorder:Show()
-                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_3].r, BAG_TYP_COLORS[CONTAINER_TYP_3].g, BAG_TYP_COLORS[CONTAINER_TYP_3].b)
-                elseif bag == 3 and CONTAINER_TYP_4 > 0 then
-                    btn.IconBorder:Show()
-                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_4].r, BAG_TYP_COLORS[CONTAINER_TYP_4].g, BAG_TYP_COLORS[CONTAINER_TYP_4].b)
-                elseif bag == 4 and CONTAINER_TYP_5 > 0 then
-                    btn.IconBorder:Show()
-                    btn.IconBorder:SetVertexColor(BAG_TYP_COLORS[CONTAINER_TYP_5].r, BAG_TYP_COLORS[CONTAINER_TYP_5].g, BAG_TYP_COLORS[CONTAINER_TYP_5].b)
+                
+            end
+        else
+            --keyring
+            if GWkeyringbutton.isShown then
+                for slot = 1, GetContainerNumSlots(-2) do
+                    local btn = _G["ContainerFrame" .. currectkeyringbag .. "Item" .. slot]
+                    if btn then
+                        btn.IconBorder:Show()
+                        btn.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
+                    end
                 end
             end
         end
     end
 end
+GW.SetItemButtonQuality = SetItemButtonQuality
 
 local function updateBagIcons(smooth)
     moveBagbar()
@@ -199,10 +249,10 @@ local function updateBagIcons(smooth)
     winsize = math.max(308, winsize)
 
     local bStart = 1
-    local bEnd = 5
+    local bEnd = 6
     local bStep = 1
     if GetSetting("BAG_REVERSE_SORT") then
-        bStart = 5
+        bStart = 6
         bEnd = 1
         bStep = -1
     end
@@ -299,6 +349,7 @@ local function updateBagIcons(smooth)
     SetSetting("BAG_WIDTH", BAG_WINDOW_SIZE)
     gwbf:SetSize(BAG_WINDOW_SIZE, BAG_WINDOW_CONTENT_HEIGHT)
 end
+GW.updateBagIcons = updateBagIcons
 GW.AddForProfiling("bag", "updateBagIcons", updateBagIcons)
 
 local function compactToggle()
@@ -342,6 +393,18 @@ local function CloseBags()
     end
     if not o then
         GwBagFrame:Hide()
+        if GWkeyringbutton.isShown then
+            local cfm = _G["ContainerFrame" .. currectkeyringbag]
+            if cfm and cfm:IsShown() then
+                cfm:Hide()
+                GWkeyringbutton.isShown = false
+                if GWkeyringbutton.isShown then
+                    GWkeyringbutton.border:Show()
+                else
+                    GWkeyringbutton.border:Hide()
+                end
+            end
+        end
         return
     end
     GwBagFrame:Show()
@@ -510,6 +573,12 @@ local function LoadBag()
     )
     relocateSearchBox(BagItemSearchBox, f)
 
+    hooksecurefunc("UpdateContainerFrameAnchors", function()
+        if KeyRingButton then
+            KeyRingButton:Hide()
+        end
+    end)
+
     -- money tooltip
     GwMoneyFrame:SetScript("OnEnter", function (self)
         local list, total = GetRealmMoney()
@@ -654,9 +723,9 @@ local function LoadBag()
         local fv = _G[default_bag_frame_container[i]]
         fv:SetFrameStrata("HIGH")
         fv:SetFrameLevel(5)
-
+        
         local fc = _G["GwBagContainer" .. tostring(i - 1)]
-        if fv and i < 6 then
+        if fv and i < 7 then
             fv:HookScript(
                 "OnShow",
                 function()

@@ -72,7 +72,7 @@ local function manageButton()
     local fmGBITP = GwButtonInviteToParty
     local fmGMGLB = GwManageGroupLeaveButton
     local fmGGRC = GwGroupReadyCheck
-    local fmGGRlC = GwGroupRoleCheck
+    --local fmGGRlC = GwGroupRoleCheck
     local fmGGMC = GwGroupManagerConvert
     local fmGMIG = GwGroupManagerInGroup
 
@@ -139,20 +139,20 @@ local function manageButton()
     fmGGRC:RegisterEvent("GROUP_ROSTER_UPDATE")
     fmGGRC:RegisterEvent("RAID_ROSTER_UPDATE")
 
-    local fnGGRlC_OnEvent = function(self, event, ...)
-        if UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") then
-            self:Enable()
-        else
-            self:Disable()
-        end
-    end
-    local fnGGRlC_OnClick = function(self, button)
-        InitiateRolePoll()
-    end
-    fmGGRlC:SetScript("OnEvent", fnGGRlC_OnEvent)
-    fmGGRlC:SetScript("OnClick", fnGGRlC_OnClick)
-    fmGGRlC:RegisterEvent("GROUP_ROSTER_UPDATE")
-    fmGGRlC:RegisterEvent("RAID_ROSTER_UPDATE")
+    --local fnGGRlC_OnEvent = function(self, event, ...)
+    --    if UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") then
+    --        self:Enable()
+    --    else
+    --        self:Disable()
+    --    end
+    --end
+    --local fnGGRlC_OnClick = function(self, button)
+    --    InitiateRolePoll()
+    --end
+    --fmGGRlC:SetScript("OnEvent", fnGGRlC_OnEvent)
+    --fmGGRlC:SetScript("OnClick", fnGGRlC_OnClick)
+    --fmGGRlC:RegisterEvent("GROUP_ROSTER_UPDATE")
+    --fmGGRlC:RegisterEvent("RAID_ROSTER_UPDATE")
 
     local fnGGMC_OnEvent = function(self, event, ...)
         if UnitIsGroupLeader("player") then
@@ -224,7 +224,7 @@ local function manageButton()
     GwButtonInviteToParty:SetText(PARTY_INVITE)
     GwManageGroupLeaveButton:SetText(PARTY_LEAVE)
     GwGroupReadyCheck:SetText(QUEUED_STATUS_READY_CHECK_IN_PROGRESS)
-    GwGroupRoleCheck:SetText(QUEUED_STATUS_ROLE_CHECK_IN_PROGRESS)
+    --GwGroupRoleCheck:SetText(QUEUED_STATUS_ROLE_CHECK_IN_PROGRESS)
 
     tinsert(UISpecialFrames, "GwGroupManage")
     local x = 10

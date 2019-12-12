@@ -244,12 +244,14 @@
                             </Layer>
                         </Layers>
                     </Button>
+                    <!--
                     <Button name="GwGroupRoleCheck" inherits="GwStandardButton" text="Role Check">
                         <Size x="100" y="30" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-200"></Anchor>
                         </Anchors>
                     </Button>
+                    -->
                     <Button name="GwGroupManagerConvert" inherits="GwStandardButton" text="Convert to Raid">
                         <Size x="120" y="30" />
                         <Anchors>

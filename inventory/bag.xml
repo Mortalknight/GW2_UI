@@ -244,6 +244,11 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
             </Frame>
+            <Frame name="GwBagContainer5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                </Anchors>
+            </Frame>
         </Frames>
     </Frame>
 
@@ -262,4 +267,37 @@
             </Layer>
         </Layers>
     </Frame>
+
+    <Button name="GwKeyRingButtonTemp" virtual="true">
+        <Size x="32" y="32"></Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" file="Interface\ContainerFrame\KeyRing-Bag-Icon">
+                    <Size x="32" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+                </Texture>
+                <Texture parentKey="border" file="Interface\AddOns\GW2_UI\textures\UI-Quickslot-Depress" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-2" y="2"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="2" y="-2"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, 0)
+                GameTooltip:ClearLines()
+
+                GameTooltip:AddLine(KEYRING)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
 </Ui>

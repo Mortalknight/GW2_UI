@@ -522,7 +522,7 @@ GW.AddForProfiling("playerhud", "selectPvp", selectPvp)
 local function globe_OnEvent(self, event, ...)
     if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" or event == "PLAYER_ENTERING_WORLD" then
         updateHealthData(self)
-    elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
+    elseif event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
         selectPvp(self)
     end
 end
