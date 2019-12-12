@@ -22,12 +22,12 @@ local default_bank_frame = {
 }
 
 local default_bank_frame_container = {
-    "ContainerFrame6",
     "ContainerFrame7",
     "ContainerFrame8",
     "ContainerFrame9",
     "ContainerFrame10",
-    "ContainerFrame11"
+    "ContainerFrame11",
+    "ContainerFrame12"
 }
 
 local function moveBankBagBar()
@@ -116,7 +116,7 @@ local function SetItemButtonQuality()
             end
         end
     end
-    for bag = 5, 11 do
+    for bag = 6, 12 do
         for slot = 1, GetContainerNumSlots(bag) do
             local btnID = _G["ContainerFrame" .. bag + 1 .. "Item" .. slot]:GetID()
             local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
@@ -169,18 +169,18 @@ local function updateBankIcons(smooth)
     end
     winsize = math.max(308, winsize)
 
-    local bStart = 5
+    local bStart = 6
     local bEnd = 12
     local bStep = 1
     if GetSetting("BANK_REVERSE_SORT") then
         bStart = 12
-        bEnd = 5
+        bEnd = 6
         bStep = -1
     end
     for BANK_INDEX = bStart, bEnd, bStep do
         local i
         local run = true
-        if BANK_INDEX > 5 then
+        if BANK_INDEX > 6 then
             i = 40
             ACTION_FRAME_NAME = "ContainerFrame" .. BANK_INDEX
             ACTION_BUTTON_NAME = "ContainerFrame" .. BANK_INDEX .. "Item"
@@ -251,7 +251,7 @@ local function updateBankIcons(smooth)
 
                     x = x + BANK_ITEM_SIZE + BANK_ITEM_PADDING
                 end
-                if BANK_INDEX > 5 then
+                if BANK_INDEX > 6 then
                     i = i - 1
                     if i == 0 then
                         run = false
@@ -544,7 +544,7 @@ local function LoadBank()
             GwBankFrame:Show()
             BankFrame:ClearAllPoints()
             BankFrame:SetPoint("RIGHT", UIParent, "LEFT", -2000, 0)
-            for i = 5, 12 do
+            for i = 6, 12 do
                 OpenBag(i)
             end
             SetItemButtonQuality()
@@ -559,7 +559,7 @@ local function LoadBank()
         fv:SetFrameStrata("HIGH")
         fv:SetFrameLevel(5)
 
-        local fc = _G["GwBankContainer" .. tostring(i + 5)]
+        local fc = _G["GwBankContainer" .. tostring(i + 6)]
         if fv then
             fv:HookScript(
                 "OnShow",
@@ -588,7 +588,7 @@ local function LoadBank()
         function()
             CloseBags()
             updateBankIcons()
-            GwBankContainer5:Show()
+            GwBankContainer6:Show()
         end
     )
 end

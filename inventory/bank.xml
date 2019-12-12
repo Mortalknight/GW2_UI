@@ -220,11 +220,6 @@
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-            <Frame name="GwBankContainer5">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-            </Frame>
             <Frame name="GwBankContainer6">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -251,6 +246,11 @@
                 </Anchors>
             </Frame>
             <Frame name="GwBankContainer11">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                </Anchors>
+            </Frame>
+            <Frame name="GwBankContainer12">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
