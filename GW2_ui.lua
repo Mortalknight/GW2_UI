@@ -565,9 +565,6 @@ local function loadAddon(self)
         DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
     end
 
-    -- setup our frame pool
-    GW.Pools = CreatePoolCollection()
-
     -- disable Move Anything bag handling
     disableMABags()
 
@@ -580,7 +577,6 @@ local function loadAddon(self)
     if dev_dbg_tab and dev_dbg_tab > 0 and _G["ChatFrame" .. dev_dbg_tab] then
         DEFAULT_CHAT_FRAME:AddMessage("hooking Debug to chat tab #" .. dev_dbg_tab)
         GW.dbgTab = dev_dbg_tab
-        GW.AlertTestsSetup()
         GW.inDebug = true
     else
         GW.inDebug = false

@@ -29,7 +29,7 @@ local function GetDefault(name)
 end
 GW.GetDefault = GetDefault
 
-local function GetSetting(name, perSpec)
+local function GetSetting(name)
     local profileIndex = GetActiveProfile()
 
     if GW2UI_SETTINGS_PROFILES == nil then
