@@ -562,6 +562,21 @@ local function DisplaySettings()
                     end
                 end
             )
+            of:SetScript(
+                "OnClick",
+                function(self)
+                    toSet = true
+                    if _G[self:GetName()  .. "CheckButton"]:GetChecked() then
+                        toSet = false
+                    end
+                    _G[self:GetName() .. "CheckButton"]:SetChecked(toSet)
+                    SetSetting(v.optionName, toSet, v.perSpec)
+
+                    if v.callback ~= nil then
+                        v.callback()
+                    end
+                end
+            )
         end
 
         if v.perSpec then
