@@ -679,8 +679,7 @@ local function loadAddon(self)
     end
 
     if GetSetting("BAGS_ENABLED") then
-        GW.LoadBag()
-        GW.LoadBank()
+        GW.LoadInventory()
         GW.SkinLooTFrame()
     end
 

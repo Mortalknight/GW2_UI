@@ -75,6 +75,7 @@ mainbar/classpowers.lua
 
 inventory/bag.xml
 inventory/bank.xml
+inventory/inventory.lua
 inventory/bag.lua
 inventory/bank.lua
 inventory/lootframe.xml
