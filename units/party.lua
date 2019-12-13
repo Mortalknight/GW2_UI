@@ -18,6 +18,7 @@ GW_PORTRAIT_BACKGROUND[1] = {l = 0, r = 0.828, t = 0, b = 0.166015625}
 GW_PORTRAIT_BACKGROUND[2] = {l = 0, r = 0.828, t = 0.166015625, b = 0.166015625 * 2}
 GW_PORTRAIT_BACKGROUND[3] = {l = 0, r = 0.828, t = 0.166015625 * 2, b = 0.166015625 * 3}
 GW_PORTRAIT_BACKGROUND[4] = {l = 0, r = 0.828, t = 0.166015625 * 3, b = 0.166015625 * 4}
+GW_PORTRAIT_BACKGROUND[5] = {l = 0, r = 0.828, t = 0.166015625 * 4, b = 0.166015625 * 5}
 
 local buffLists = {}
 local DebuffLists = {}
@@ -274,8 +275,7 @@ local function manageButton()
 
     for i = 1, 9 do
         if i < 9 then
-            local f =
-                CreateFrame("Button", "GwRaidGroundMarkerButton" .. i, GwWorldMarkerManage, "GwRaidGroundMarkerButton")
+            local f = CreateFrame("Button", "GwRaidGroundMarkerButton" .. i, GwWorldMarkerManage, "GwRaidGroundMarkerButton")
             f:SetScript("OnEnter", fnF_OnEnter)
             f:SetScript("OnLeave", fnF_OnLeave)
             f:ClearAllPoints()
@@ -284,8 +284,7 @@ local function manageButton()
             f:SetAttribute("type", "macro")
             f:SetAttribute("macrotext", "/wm " .. i)
         else
-            local f =
-                CreateFrame("Button", "GwRaidGroundMarkerButton" .. i, GwWorldMarkerManage, "GwRaidGroundMarkerButton")
+            local f = CreateFrame("Button", "GwRaidGroundMarkerButton" .. i, GwWorldMarkerManage, "GwRaidGroundMarkerButton")
             f:SetScript("OnEnter", fnF_OnEnter)
             f:SetScript("OnLeave", fnF_OnLeave)
             f:ClearAllPoints()
@@ -339,10 +338,7 @@ local function updateAwayData(self)
     _, _, _, playerinstanceID = UnitPosition("player")
     if not GW_READY_CHECK_INPROGRESS then 
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-        _, _, classIndex = UnitClass(self.unit)
-        if classIndex ~= nil and classIndex ~= 0 then
-            SetClassIcon(self.classicon, classIndex)
-        end
+        SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
 
     if playerinstanceID ~= instanceID then
@@ -380,6 +376,10 @@ local function updateAwayData(self)
         if not self.classicon:IsShown() then
             self.classicon:Show()
         end
+    end
+
+    if UnitThreatSituation(self.unit) ~= nil and UnitThreatSituation(self.unit) > 2 then
+        portraitIndex = 5
     end
 
     setPortrait(self, portraitIndex)
@@ -742,20 +742,14 @@ local function updatePartyData(self)
 
     self.level:SetText(UnitLevel(self.unit))
 
-    localizedClass, englishClass, classIndex = UnitClass(self.unit)
-    if classIndex ~= nil and classIndex ~= 0 then
-        SetClassIcon(self.classicon, classIndex)
-    end
+    SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
 
     updatePartyAuras(self, self.unit)
 end
 GW.AddForProfiling("party", "updatePartyData", updatePartyData)
 
 local function party_OnEvent(self, event, unit, arg1)
-    if not UnitExists(self.unit) then
-        return
-    end
-    if IsInRaid() then
+    if not UnitExists(self.unit) or IsInRaid() then
         return
     end
 
@@ -768,8 +762,7 @@ local function party_OnEvent(self, event, unit, arg1)
     end
     if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         setHealth(self)
-    end
-    if event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
+    elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
         local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
         local powerPrecentage = 0
@@ -777,36 +770,25 @@ local function party_OnEvent(self, event, unit, arg1)
             powerPrecentage = power / powerMax
         end
         self.powerbar:SetValue(powerPrecentage)
-    end
-    if event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+    elseif event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         updatePartyData(self)
-    end
-    if event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
+    elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
-    end
-    if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
+    elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
         updateAwayData(self)
-    end
-    if event == "UNIT_NAME_UPDATE" and unit == self.unit then
+    elseif event == "UNIT_NAME_UPDATE" and unit == self.unit then
         setUnitName(self)
-    end
-    if event == "UNIT_AURA" and unit == self.unit then
+    elseif event == "UNIT_AURA" and unit == self.unit then
         updatePartyAuras(self, self.unit)
-    end
-
-    if event == "READY_CHECK" then
+    elseif event == "READY_CHECK" then
         self.ready = -1
         GW_READY_CHECK_INPROGRESS = true
         updateAwayData(self)
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck")
-    end
-
-    if event == "READY_CHECK_CONFIRM" and unit == self.unit then
+    elseif event == "READY_CHECK_CONFIRM" and unit == self.unit then
         self.ready = arg1
         updateAwayData(self)
-    end
-
-    if event == "READY_CHECK_FINISHED" then
+    elseif event == "READY_CHECK_FINISHED" then
         GW_READY_CHECK_INPROGRESS = false
         AddToAnimation(
             "ReadyCheckPartyWait" .. self.unit,
@@ -820,10 +802,7 @@ local function party_OnEvent(self, event, unit, arg1)
             function()
                 if UnitInParty(self.unit) ~= nil then
                     self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-                    localizedClass, englishClass, classIndex = UnitClass(self.unit)
-                    if classIndex ~= nil and classIndex ~= 0 then
-                        SetClassIcon(self.classicon, classIndex)
-                    end
+                    SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
                 end
             end
         )

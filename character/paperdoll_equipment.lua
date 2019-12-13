@@ -611,10 +611,8 @@ local function setStatIcon(self, stat)
     local newTexture = "Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon"
     if STATS_ICONS[stat] ~= nil then
         -- If mastery we use need to use class icon
-
         if stat == "MASTERY" then
-            local classIndex = select(3, UnitClass("player"))
-            SetClassIcon(self.icon, classIndex)
+            SetClassIcon(self.icon, select(3, UnitClass("player")))
             newTexture = "Interface\\AddOns\\GW2_UI\\textures\\party\\classicons"
         else
             self.icon:SetTexCoord(STATS_ICONS[stat].l, STATS_ICONS[stat].r, STATS_ICONS[stat].t, STATS_ICONS[stat].b)

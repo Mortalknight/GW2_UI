@@ -279,7 +279,7 @@ local function updateAwayData(self)
     localizedClass, englishClass, classIndex = UnitClass(self.unit)
     self.name:SetTextColor(1, 1, 1)
 
-    if classIndex ~= nil and classIndex ~= 0 and classColor == false and GW_READY_CHECK_INPROGRESS == false then
+    if classColor == false and GW_READY_CHECK_INPROGRESS == false then
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
         iconState = 1
     end
@@ -718,10 +718,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
-    elseif
-        (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or
-            event == "PARTY_MEMBER_ENABLE"
-     then
+    elseif (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
         updateAwayData(self)
     elseif event == "PLAYER_TARGET_CHANGED" then
         highlightTargetFrame(self)
@@ -764,7 +761,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                 GW_READY_CHECK_INPROGRESS = false
                 local classColor = GetSetting("RAID_CLASS_COLOR")
                 if UnitInRaid(self.unit) ~= nil then
-                    localizedClass, englishClass, classIndex = UnitClass(self.unit)
+                    _, _, classIndex = UnitClass(self.unit)
                     if classColor == true then
                         self.healthbar:SetStatusBarColor(
                             CLASS_COLORS_RAIDFRAME[classIndex].r,

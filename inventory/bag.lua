@@ -7,6 +7,7 @@ local GetRealmMoney = GW.GetRealmMoney
 local GetCharClass = GW.GetCharClass
 local GetRealmStorage = GW.GetRealmStorage
 local ClearStorage = GW.ClearStorage
+local EnableTooltip = GW.EnableTooltip
 local inv
 
 local BAG_ITEM_SIZE = 40
@@ -513,17 +514,9 @@ local function LoadBag(helpers)
             SortBags()
         end
     )
-    f.buttonSort:HookScript(
-        "OnEnter",
-        function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
-            GameTooltip:ClearLines()
-            GameTooltip:AddLine(BAG_CLEANUP_BAGS, 1, 1, 1)
-            GameTooltip:Show()
-        end
-    )
-    f.buttonSort:HookScript("OnLeave", GameTooltip_Hide)
+    EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)
     do
+        EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
         f.buttonSettings:HookScript(
             "OnClick",

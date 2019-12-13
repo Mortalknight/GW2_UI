@@ -1151,8 +1151,7 @@ local function LoadTalents(tabContainer)
     GwspellbookTab4:SetScript("OnLeave", GameTooltip_Hide)
 
     -- set tab 2 to class icon
-    local _, _, classIndex = UnitClass("player")
-    SetClassIcon(GwspellbookTab2.icon, classIndex)
+    SetClassIcon(GwspellbookTab2.icon, select(3, UnitClass("player")))
 
     GwTalentFrame:HookScript(
         "OnShow",
