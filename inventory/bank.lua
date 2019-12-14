@@ -207,7 +207,6 @@ local function createBagBar(f)
     inv.reskinBagBar(b)
     local norm = b:GetNormalTexture()
     norm:SetVertexColor(1, 1, 1, 0.75)
-    SetItemButtonQuality(b, 1, nil)
     EnableTooltip(b, BANK, "ANCHOR_RIGHT", 0)
     b.icon:SetTexture(413587)
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -239,10 +238,6 @@ local function updateBagBar(f)
                 OpenBag(bag_id) -- default open valid bank bags immediately
             end
             b.icon:SetTexture(bag_tex)
-            local quality = GetInventoryItemQuality("player", inv_id)
-            if quality then
-                SetItemButtonQuality(b, quality, nil)
-            end
             if IsInventoryItemLocked(inv_id) then
                 b.icon:SetDesaturated(true)
             else

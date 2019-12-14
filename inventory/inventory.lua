@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local BAG_TYP_COLORS = GW.BAG_TYP_COLORS
 
 -- reskins an ItemButton to use GW2_UI styling
 local item_size
@@ -50,6 +51,21 @@ local function reskinItemButton(iname, b)
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
+local function getContainerFrame(bag_id)
+    -- ContainerFrame assignment is not guaranteed; only safe approach is to
+    -- search every ContainerFrame and check its ID for a match.
+    for i = 1, NUM_CONTAINER_FRAMES do
+        local cf = _G["ContainerFrame" .. i] 
+        if cf and cf:GetID() == bag_id then
+            return cf
+        end
+    end
+
+    return nil
+end
+GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
+
+
 local function reskinItemButtons()
     for i = 1, NUM_CONTAINER_FRAMES do
         for j = 1, MAX_CONTAINER_ITEMS do
@@ -75,17 +91,68 @@ local function hookUpdateAnchors()
 end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
-local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
-    if not button.gwBackdrop then
-        return
+local function SetItemButtonQuality()
+    local iname
+    local ContainerTyp
+    for bag = 0, NUM_BAG_SLOTS do
+        local b = getContainerFrame(bag)
+        local num_slots = GetContainerNumSlots(bag)
+        if b then
+            for slot = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
+                iname = b:GetName() .. "Item"
+                local item = _G[iname .. slot]
+                local btnID = item:GetID()
+                local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
+                if item then
+                    item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                    item.IconBorder:SetAlpha(0.9)
+                    if quality then           
+                        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+                            item.IconBorder:Show()
+                            item.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+                        else
+                            item.IconBorder:Hide()
+                        end
+                    else
+                        item.IconBorder:Hide()
+                    end
+                    if itemID ~= nil then
+                        local isQuestItem = select(6, GetItemInfo(itemID))
+                        if isQuestItem == BATTLE_PET_SOURCE_2 then 
+                            item.IconBorder:Show()
+                            item.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
+                        end
+                    end
+                    --SetBorder for profession bags
+                    local bagItemLink = GetInventoryItemLink("player", CharacterBag0Slot:GetID() + bag - 1)
+                    if bagItemLink ~= nil and select(9, GetItemInfo(bagItemLink)) == "INVTYPE_BAG" then
+                        ContainerTyp = GetItemFamily(bagItemLink)
+                        if ContainerTyp > 0 then
+                            item.IconBorder:Show()
+                            item.IconBorder:SetVertexColor(BAG_TYP_COLORS[ContainerTyp].r, BAG_TYP_COLORS[ContainerTyp].g, BAG_TYP_COLORS[ContainerTyp].b)
+                        end
+                    end
+                end
+            end
+        end
     end
-    local t = button.IconBorder
-    t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-    t:SetAlpha(0.9)
-
-    t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
+    --Keyring
+    if IsBagOpen(KEYRING_CONTAINER) then
+        local b = getContainerFrame(KEYRING_CONTAINER)
+        local num_slots = GetContainerNumSlots(KEYRING_CONTAINER)
+        if b then
+            for slot = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
+                iname = b:GetName() .. "Item"
+                local item = _G[iname .. slot]
+                item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                item.IconBorder:SetAlpha(0.9)
+                item.IconBorder:Show()
+                item.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
+            end
+        end
+    end
 end
-GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
+GW.SetItemButtonQuality = SetItemButtonQuality
 
 local bag_resize
 local bank_resize
@@ -104,20 +171,6 @@ local function resizeInventory()
     end
 end
 GW.AddForProfiling("inventory", "resizeInventory", resizeInventory)
-
-local function getContainerFrame(bag_id)
-    -- ContainerFrame assignment is not guaranteed; only safe approach is to
-    -- search every ContainerFrame and check its ID for a match.
-    for i = -2, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i] 
-        if cf and cf:GetID() == bag_id then
-            return cf
-        end
-    end
-
-    return nil
-end
-GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
 
 local function freeItemButtons(cf, p, bag_id)
     -- return all of the ItemButtons we previously took before taking new ones, as long as
@@ -159,6 +212,20 @@ local function takeItemButtons(p, bag_id)
     if bag_id == BANK_CONTAINER then
         iname = "BankFrameItem"
         cf.gw_source = nil -- we never have to give back the bank ItemButtons
+    elseif bag_id == KEYRING_CONTAINER then
+        if IsBagOpen(bag_id) then
+            local b = getContainerFrame(bag_id)
+            if not b then
+                return
+            end
+
+            cf.gw_source = b
+            iname = b:GetName() .. "Item"
+        else
+            cf.gw_source = nil
+            cf.gw_num_slots = 0
+            return
+        end
     else
         local b = getContainerFrame(bag_id)
         if not b then
@@ -180,6 +247,7 @@ local function takeItemButtons(p, bag_id)
             cf.gw_items[i] = item
         end
     end
+    SetItemButtonQuality()
 end
 GW.AddForProfiling("inventory", "takeItemButtons", takeItemButtons)
 
@@ -437,28 +505,6 @@ local function onMoverDragStop(self)
 end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
-local function SetItemButtonQuality(button, quality, itemIDOrLink, suppressOverlays)
-	if itemIDOrLink then
-		button.IconBorder:SetTexture([[Interface\Common\WhiteIconFrame]])
-	else
-		button.IconBorder:SetTexture([[Interface\Common\WhiteIconFrame]])
-	end
-	button.IconOverlay:Hide()
-
-	if quality then
-		if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-			button.IconBorder:Show()
-			button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
-		else
-			button.IconBorder:Hide()
-		end
-	else
-		button.IconBorder:Hide()
-	end
-	button.IconBorder:Hide()
-end
-GW.SetItemButtonQuality = SetItemButtonQuality
-
 local function LoadInventory()
     item_size = GetSetting("BAG_ITEM_SIZE")
 
@@ -467,9 +513,6 @@ local function LoadInventory()
 
     -- reskin all the multi-use ContainerFrame ItemButtons
     reskinItemButtons()
-
-    -- whenever an ItemButton sets its quality ensure our custom border is being used
-    hooksecurefunc("SetItemButtonQuality", hookItemQuality)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do

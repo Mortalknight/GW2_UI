@@ -29,7 +29,7 @@ local function layoutBagItems(f)
     local iD = 1
     if rev then
         iE = iS
-        iS = NUM_BAG_SLOTS
+        iS = NUM_BAG_SLOTS + 1
         iD = -1
     end
 
@@ -39,6 +39,9 @@ local function layoutBagItems(f)
         
         if i <= NUM_BAG_SLOTS then
             local cf = f.Containers[bag_id]
+            col, row = lcf(cf, max_col, row, col, false, item_off)
+        elseif IsBagOpen(KEYRING_CONTAINER) then
+            local cf = f.Containers[KEYRING_CONTAINER]
             col, row = lcf(cf, max_col, row, col, false, item_off)
         end
     end
@@ -170,7 +173,6 @@ local function createBagBar(f)
             bp.Count:SetText(bp.freeSlots)
         end
     )
-    GW.SetItemButtonQuality(bp, 1, nil)
 
     -- create bag slot buttons for equippable bags
     local cb0_id = CharacterBag0Slot:GetID()
@@ -205,17 +207,16 @@ local function createBagBar(f)
     local b = CreateFrame("Button", "GWkeyringbutton", f, "GwKeyRingButtonTemp")
     b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
     b:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-    b.isShown = false
     b:SetScript("OnClick",
         function(self)
-            self.isShown = not self.isShown
-            ToggleBag(KEYRING_CONTAINER)
-            if self.isShown then
-                self.border:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
-                self.border:Show()
-            else
-                self.border:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+            if IsBagOpen(KEYRING_CONTAINER) then
+                CloseBag(KEYRING_CONTAINER)
                 self.border:Hide()
+                updateBagContainers(GwBagFrame)
+                rescanBagContainers(GwBagFrame)
+            else
+                OpenBag(KEYRING_CONTAINER)
+                self.border:Show()
             end
         end
     )   
@@ -249,6 +250,11 @@ local function updateBagBar(f)
         else
             b.icon:Hide()
         end
+    end
+    if IsBagOpen(KEYRING_CONTAINER) then
+        GWkeyringbutton.border:Show()
+    else
+        GWkeyringbutton.border:Hide()
     end
 end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
@@ -352,7 +358,11 @@ local function bag_OnShow(self)
             OpenBag(i)
         end
     end
-
+    if IsBagOpen(KEYRING_CONTAINER) then
+        GWkeyringbutton.border:Show()
+    else
+        GWkeyringbutton.border:Hide()
+    end
     updateBagBar(self.ItemFrame)
     updateBagContainers(self)
 end
@@ -361,13 +371,16 @@ GW.AddForProfiling("bag", "bag_OnShow", bag_OnShow)
 local function bag_OnHide(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self:UnregisterAllEvents()
-    for i = -2, NUM_BAG_SLOTS do
+    for i = 1, NUM_BAG_SLOTS do
         if IsBagOpen(i) then
             CloseBag(i)
         end
     end
     if IsBagOpen(BACKPACK_CONTAINER) then
         CloseBackpack()
+    end
+    if IsBagOpen(KEYRING_CONTAINER) then
+        CloseBag(KEYRING_CONTAINER)
     end
 end
 GW.AddForProfiling("bag", "bag_OnHide", bag_OnHide)
@@ -396,12 +409,16 @@ local function bag_OnEvent(self, event, ...)
         if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or bag == KEYRING_CONTAINER then
             self.gw_need_bag_update = true
         end
+        GW.SetItemButtonQuality()
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
-            for bag_id = -2, NUM_BAG_SLOTS do
+            for bag_id = 1, NUM_BAG_SLOTS do
                 if not IsBagOpen(bag_id) then
                     OpenBag(bag_id)
                 end
+            end
+            if not IsBagOpen(KEYRING_CONTAINER) then
+                OpenBag(KEYRING_CONTAINER)
             end
             updateBagBar(self.ItemFrame)
             rescanBagContainers(self)
@@ -413,6 +430,7 @@ local function bag_OnEvent(self, event, ...)
                 updateFreeBagSlots()
             end
         end
+        GW.SetItemButtonQuality()
     end
 end
 GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
