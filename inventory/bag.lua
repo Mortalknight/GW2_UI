@@ -262,6 +262,7 @@ GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
 local function onBagResizeStop(self)
     BAG_WINDOW_SIZE = self:GetWidth()
     SetSetting("BAG_WIDTH", BAG_WINDOW_SIZE)
+    GwBagFrame.Header:SetWidth(BAG_WINDOW_SIZE)
     inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
@@ -269,6 +270,7 @@ GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 local function onBagFrameChangeSize(self, width, height, skip)
     local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
 
+    self.Header:SetWidth(self:GetWidth())
     if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
         self.gw_bag_cols = cols
         if not skip then
@@ -409,7 +411,6 @@ local function bag_OnEvent(self, event, ...)
         if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or bag == KEYRING_CONTAINER then
             self.gw_need_bag_update = true
         end
-        GW.SetItemButtonQuality()
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
             for bag_id = 1, NUM_BAG_SLOTS do
@@ -430,7 +431,6 @@ local function bag_OnEvent(self, event, ...)
                 updateFreeBagSlots()
             end
         end
-        GW.SetItemButtonQuality()
     end
 end
 GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
@@ -451,6 +451,7 @@ local function LoadBag(helpers)
     f.gw_state = "closed"
     f:ClearAllPoints()
     f:SetWidth(BAG_WINDOW_SIZE)
+    f.Header:SetWidth(BAG_WINDOW_SIZE)
     onBagFrameChangeSize(f, nil, nil, true)
 
     -- setup show/hide
@@ -467,7 +468,7 @@ local function LoadBag(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(508, 340)
+    f:SetMinResize(304, 340)
     f:SetScript("OnSizeChanged", onBagFrameChangeSize)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)

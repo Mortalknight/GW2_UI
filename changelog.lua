@@ -165,4 +165,9 @@ GW_CHANGELOGS = "\n\n1.6.5\n\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Fix a bug in bankframes\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.6\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.6.7
+GW_CHANGELOGS = "- Redo Inventory to work with the keyring\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.6.6\n\n" .. GW_CHANGELOGS
+
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS

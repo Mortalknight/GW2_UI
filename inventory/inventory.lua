@@ -91,10 +91,11 @@ local function hookUpdateAnchors()
 end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
-local function SetItemButtonQuality()
+local function hookSetItemButtonQuality()
     local iname
     local ContainerTyp
-    for bag = 0, NUM_BAG_SLOTS do
+    --Bagframe
+    for bag = BACKPACK_CONTAINER, (NUM_BAG_SLOTS + NUM_BANKBAGSLOTS) do
         local b = getContainerFrame(bag)
         local num_slots = GetContainerNumSlots(bag)
         if b then
@@ -106,7 +107,7 @@ local function SetItemButtonQuality()
                 if item then
                     item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
                     item.IconBorder:SetAlpha(0.9)
-                    if quality then           
+                    if quality then        
                         if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
                             item.IconBorder:Show()
                             item.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
@@ -132,6 +133,34 @@ local function SetItemButtonQuality()
                             item.IconBorder:SetVertexColor(BAG_TYP_COLORS[ContainerTyp].r, BAG_TYP_COLORS[ContainerTyp].g, BAG_TYP_COLORS[ContainerTyp].b)
                         end
                     end
+                end
+            end
+        end
+    end
+    --BankFrame
+    iname = "BankFrameItem"
+    for slot = 1, NUM_BANKGENERIC_SLOTS do
+        local item = _G[iname .. slot]
+        local btnID = item:GetID()
+        local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(BANK_CONTAINER, btnID)
+        if item then
+            item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            item.IconBorder:SetAlpha(0.9)
+            if quality then           
+                if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+                    item.IconBorder:Show()
+                    item.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+                else
+                    item.IconBorder:Hide()
+                end
+            else
+                item.IconBorder:Hide()
+            end
+            if itemID ~= nil then
+                local isQuestItem = select(6, GetItemInfo(itemID))
+                if isQuestItem == BATTLE_PET_SOURCE_2 then 
+                    item.IconBorder:Show()
+                    item.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
                 end
             end
         end
@@ -247,7 +276,6 @@ local function takeItemButtons(p, bag_id)
             cf.gw_items[i] = item
         end
     end
-    SetItemButtonQuality()
 end
 GW.AddForProfiling("inventory", "takeItemButtons", takeItemButtons)
 
@@ -257,10 +285,12 @@ local function reskinBagBar(b)
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
     
-    b.Count:ClearAllPoints()
-    b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-    b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
-    b.Count:SetJustifyH("RIGHT")
+    if b.Count then
+        b.Count:ClearAllPoints()
+        b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
+        b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+        b.Count:SetJustifyH("RIGHT")
+    end
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
@@ -514,6 +544,9 @@ local function LoadInventory()
     -- reskin all the multi-use ContainerFrame ItemButtons
     reskinItemButtons()
 
+    -- whenever an ItemButton sets its quality ensure our custom border is being used
+    hooksecurefunc("SetItemButtonQuality", hookSetItemButtonQuality)
+
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do
         local cf = _G["ContainerFrame" .. i]
@@ -543,7 +576,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
     
     bag_resize = GW.LoadBag(helpers)
-    --bank_resize = GW.LoadBank(helpers)
+    bank_resize = GW.LoadBank(helpers)
 end
 GW.LoadInventory = LoadInventory
 
