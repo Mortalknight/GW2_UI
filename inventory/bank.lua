@@ -103,12 +103,12 @@ local function setBagBarOrder(f)
     local bag_padding = 4
     local rev = GetSetting("BANK_REVERSE_SORT")
     if rev then
-        y = -40 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
+        y = 5 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
     else
-        y = -40
+        y = 5
     end
 
-    for bag_idx = 1, NUM_BANKBAGSLOTS do --TOFO = 0
+    for bag_idx = 0, NUM_BANKBAGSLOTS do --TOFO = 0
         local b = f.bags[bag_idx]
         b:ClearAllPoints()
         b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
@@ -165,6 +165,23 @@ local function createBagBar(f)
         f.bags[bag_idx] = b
     end
 
+    -- create a fake bag frame for the base bank slots
+    local b = CreateFrame("Button", nil, f, "GwBankBagTemplate")
+    b:SetID(0)
+    b.GetBagID = function()
+        return BANK_CONTAINER
+    end
+    inv.reskinBagBar(b)
+    local norm = b:GetNormalTexture()
+    norm:SetVertexColor(1, 1, 1, 0.75)
+    GW.SetItemButtonQuality(b, 1, nil)
+    b:SetScript("OnEnter", nil)
+    EnableTooltip(b, BANK, "ANCHOR_RIGHT", 0)
+    b.icon:SetTexture(133633)
+    b:RegisterForClicks("LeftButtonUp")
+    b:SetScript("OnClick", CloseBankFrame)
+    f.bags[0] = b
+
     setBagBarOrder(f)
 end
 GW.AddForProfiling("bank", "createBagBar", createBagBar)
@@ -178,6 +195,13 @@ local function updateBagBar(f)
         local inv_id = b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
+        local bagLink = GetInventoryItemLink("player", inv_id)
+
+        if bagLink then
+            GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
+        else
+            GW.SetItemButtonQualityForBags(b, 1)
+        end
 
         b.icon:Show()
         b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
@@ -505,9 +529,6 @@ local function LoadBank(helpers)
             dd.bagOrder:SetText(GwLocalization["BAG_ORDER_REVERSE"])
         end
     end
-
-    -- setup bank/reagent switching tabs
-    EnableTooltip(f.ItemTab, BANK)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()

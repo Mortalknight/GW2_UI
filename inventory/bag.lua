@@ -42,6 +42,10 @@ local function layoutBagItems(f)
             col, row = lcf(cf, max_col, row, col, false, item_off)
         elseif IsBagOpen(KEYRING_CONTAINER) then
             local cf = f.Containers[KEYRING_CONTAINER]
+            if col ~= 0 then
+                row = row + 1
+                col = 0
+            end
             col, row = lcf(cf, max_col, row, col, false, item_off)
         end
     end
@@ -164,6 +168,7 @@ local function createBagBar(f)
     bp:SetParent(f)
     inv.reskinBagBar(bp)
     bp:RegisterForClicks("LeftButtonUp")
+    bp:SetChecked(false)
     bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
     bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
     f.bags[BACKPACK_CONTAINER] = bp
@@ -199,6 +204,13 @@ local function createBagBar(f)
         b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
+        local invID = ContainerIDToInventoryID(bag_idx)  
+        local bagLink = GetInventoryItemLink("player", invID)
+        if bagLink then
+            GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
+        else
+            GW.SetItemButtonQualityForBags(b, 1)
+        end
 
         f.bags[bag_idx] = b
     end
@@ -249,6 +261,13 @@ local function updateBagBar(f)
             b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
         else
             b.icon:Hide()
+        end
+        local invID = ContainerIDToInventoryID(bag_idx)  
+        local bagLink = GetInventoryItemLink("player", invID)
+        if bagLink then
+            GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
+        else
+            GW.SetItemButtonQualityForBags(b, 1)
         end
     end
     if IsBagOpen(KEYRING_CONTAINER) then
@@ -512,6 +531,12 @@ local function LoadBag(helpers)
         if (id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS) or id == KEYRING_CONTAINER then
             rescanBagContainers(f)
         end
+    end)
+
+    -- anytime a ContainerFrame shown we set it to unchecked and set the border
+    hooksecurefunc("ContainerFrame_OnShow", function(self)
+        MainMenuBarBackpackButton:SetChecked(false)
+        GW.SetItemButtonQualityForBags(MainMenuBarBackpackButton, 1)
     end)
 
     -- create our backpack bag slots
