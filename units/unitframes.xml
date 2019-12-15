@@ -212,11 +212,19 @@
             <Anchor point="CENTER" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\portraitBackground">
+                    <Size x="38" y="38"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="45" y="-5"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="portrait" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="32" y="32"></Size>
                     <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT" x="40" y="0"></Anchor>
+                        <Anchor point="CENTER" relativeKey="$parent.portraitBackground" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
@@ -232,7 +240,7 @@
                     </Anchors>
                 </Texture>
                 <Texture parentKey="powerbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                    <Size x="150" y="7"/>
+                    <Size x="150" y="6"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="2"></Anchor>
                     </Anchors>
@@ -428,5 +436,4 @@
             </Frame>
         </Frames>
     </Button>
-
 </Ui>
