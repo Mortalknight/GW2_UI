@@ -9,10 +9,7 @@ local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
 -- forward function defs
 local experiencebarAnimation = 0
-
 local gw_reputation_vals = nil
-local gw_honor_vals = nil
-
 
 local function xpbar_OnEnter()
     GameTooltip:SetOwner(_G["GwExperienceFrame"], "ANCHOR_CURSOR")
@@ -27,10 +24,6 @@ local function xpbar_OnEnter()
     end
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
-
-    if gw_honor_vals ~= nil then
-        GameTooltip:AddLine(gw_honor_vals, 1, 1, 1)
-    end
 
     if UnitLevel("Player") < GetMaxPlayerLevel() then
         GameTooltip:AddLine(
@@ -91,19 +84,6 @@ end
 GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
 local function xpbar_OnEvent(self, event)
-    if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil then
-        local delayUpdateTime = GetTime() + 0.4
-        GwExperienceFrame:SetScript(
-            "OnUpdate",
-            function()
-                if GetTime() < delayUpdateTime then
-                    return
-                end
-                xpbar_OnEvent(self, nil)
-                GwExperienceFrame:SetScript("OnUpdate", nil)
-            end
-        )
-    end
     if event == "UPDATE_FACTION" and not GW.inWorld then
         return
     end
@@ -202,29 +182,6 @@ local function xpbar_OnEvent(self, event)
     _G["GwExperienceFrameCurrentLevel"]:SetText(1, 1, 1)
     GwExperienceFrame.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
     GwExperienceFrame.labelLeft:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
-
-    --If we are inside a pvp arena we show the honorbar
-    gw_honor_vals = nil
-
-    if (UnitLevel("player") == GetMaxPlayerLevel() and UnitInBattleground("player") ~= nil) or (UnitLevel("player") == GetMaxPlayerLevel() and event == "PLAYER_ENTERING_BATTLEGROUND") then
-        showBar1 = true
-        level = UnitHonorLevel("player")
-        Nextlevel = level + 1
-
-        local currentHonor = UnitHonor("player")
-        local maxHonor = UnitHonorMax("player")
-        valPrec = currentHonor / maxHonor
-
-        gw_honor_vals =
-            HONOR ..
-                " " ..
-                    CommaValue(currentHonor) ..
-                        " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
-            1,
-            1,
-            1
-        _G["GwExperienceFrameBar"]:SetStatusBarColor(1, 0.2, 0.2)
-    end
 
     local GainBigExp = false
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (UnitLevel("Player") / GetMaxPlayerLevel())))
@@ -672,8 +629,6 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("UPDATE_FACTION")
     experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
-    experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN")
-    experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)

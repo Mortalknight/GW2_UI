@@ -18,8 +18,6 @@ local GW_BLIZZARD_HIDE_FRAMES ={
     MainMenuBarRightEndCap,
     MainMenuBarLeftEndCap,
     ReputationWatchBar,
-    HonorWatchBar,
-    ArtifactWatchBar,
     MainMenuExpBar,
     ActionBarUpButton,
     ActionBarDownButton,
@@ -32,9 +30,7 @@ local GW_BLIZZARD_HIDE_FRAMES ={
 
 local GW_BLIZZARD_FORCE_HIDE = { 
     ReputationWatchBar,
-    HonorWatchBar,
     MainMenuExpBar,
-    ArtifactWatchBar,
     KeyRingButton,
     MainMenuBarTexture,
     MainMenuMaxLevelBar,

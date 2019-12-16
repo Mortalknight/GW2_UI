@@ -167,7 +167,11 @@ GW_CHANGELOGS = "\n\n1.6.6\n\n" .. GW_CHANGELOGS
 
 --VERSION 1.6.7
 GW_CHANGELOGS = "- Redo Inventory to work with the keyring\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "\n\n1.6.6\n\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.6.7\n\n" .. GW_CHANGELOGS
+
+--VERSION 1.6.8
+GW_CHANGELOGS = "- Fix lua error in BGs for level 60 chars\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.6.8\n\n" .. GW_CHANGELOGS
 
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

@@ -1,3 +1,6 @@
+1.6.8
+- Fix lua error in BG's for level 60 chars
+
 1.6.7
 - Redo Inventory to work with the keyring
 
