@@ -324,6 +324,39 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="itemLevelFrame" hidden="false" virtual="true">
+                <Size x="180" y="20"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnEnter>
+                        local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
+                        local minItemLevel = C_PaperDollInfo.GetMinItemLevel()
+                        local displayItemLevel = math.max(minItemLevel or 0, avgItemLevelEquipped)
+
+                        displayItemLevel = floor(displayItemLevel)
+                        avgItemLevel = floor(avgItemLevel)
+
+                        self.tooltip = HIGHLIGHT_FONT_COLOR_CODE .. format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_AVERAGE_ITEM_LEVEL) .. " " .. avgItemLevel
+                        if displayItemLevel ~= avgItemLevel then
+                            self.tooltip = self.tooltip .. "  " .. format(STAT_AVERAGE_ITEM_LEVEL_EQUIPPED, avgItemLevelEquipped)
+                        end
+                        self.tooltip = self.tooltip .. FONT_COLOR_CODE_CLOSE
+                        self.tooltip2 = STAT_AVERAGE_ITEM_LEVEL_TOOLTIP
+                        if not self.tooltip then
+                            return
+                        end
+                        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+                        GameTooltip:SetText(self.tooltip)
+                        if self.tooltip2 then
+                            GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+                        end
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave function="GameTooltip_Hide"/>
+                </Scripts>
+            </Frame>
             <Frame name="GwPaperDollStats">
                 <Size x="184" y="301"></Size>
                 <Anchors>
