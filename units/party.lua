@@ -381,7 +381,7 @@ local function updateAwayData(self)
     if UnitThreatSituation(self.unit) ~= nil and UnitThreatSituation(self.unit) > 2 then
         portraitIndex = 5
     end
-
+    
     setPortrait(self, portraitIndex)
 end
 GW.AddForProfiling("party", "updateAwayData", updateAwayData)
@@ -774,7 +774,7 @@ local function party_OnEvent(self, event, unit, arg1)
         updatePartyData(self)
     elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
-    elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
+    elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
         updateAwayData(self)
     elseif event == "UNIT_NAME_UPDATE" and unit == self.unit then
         setUnitName(self)
@@ -898,6 +898,7 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
+    frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
 
     party_OnEvent(frame, "load")
 
