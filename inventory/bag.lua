@@ -7,6 +7,7 @@ local GetRealmMoney = GW.GetRealmMoney
 local GetCharClass = GW.GetCharClass
 local GetRealmStorage = GW.GetRealmStorage
 local ClearStorage = GW.ClearStorage
+local EnableTooltip = GW.EnableTooltip
 local inv
 
 local BAG_ITEM_SIZE = 40
@@ -267,6 +268,7 @@ local function updateBagBar(f)
         if bagLink then
             GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
         else
+            b:SetChecked(false)
             GW.SetItemButtonQualityForBags(b, 1)
         end
     end
@@ -566,6 +568,14 @@ local function LoadBag(helpers)
     end
 
     -- setup settings button and its dropdown items
+    f.buttonSort:HookScript(
+        "OnClick",
+        function(self)
+            PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
+            GW.SortBags()
+        end
+    )
+    EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)
     do
         local dd = f.buttonSettings.dropdown
         f.buttonSettings:HookScript(
@@ -583,6 +593,20 @@ local function LoadBag(helpers)
             "OnClick",
             function(self)
                 self:SetText(compactToggle())
+                dd:Hide()
+            end
+        )
+
+        dd.sortOrder:HookScript(
+            "OnClick",
+            function(self)
+                if GW.GetSortBagsRightToLeft() then
+                    dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_FIRST"])
+                    GW.SetSortBagsRightToLeft(false)
+                else
+                    dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_LAST"])
+                    GW.SetSortBagsRightToLeft(true)
+                end
                 dd:Hide()
             end
         )
@@ -607,6 +631,11 @@ local function LoadBag(helpers)
             dd.compactBags:SetText(GwLocalization["COMPACT_ICONS"])
         else
             dd.compactBags:SetText(GwLocalization["EXPAND_ICONS"])
+        end
+        if GW.GetSortBagsRightToLeft() then
+            dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_LAST"])
+        else
+            dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_FIRST"])
         end
         if GetSetting("BAG_REVERSE_SORT") then
             dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])

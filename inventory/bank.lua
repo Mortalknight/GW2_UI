@@ -480,6 +480,16 @@ local function LoadBank(helpers)
     f:RegisterEvent("BANKFRAME_CLOSED")
 
     -- setup settings button and its dropdown items
+    f.buttonSort:HookScript(
+        "OnClick",
+        function(self)
+            PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
+            if self:GetParent().ItemFrame:IsShown() then
+                GW.SortBankBags()
+            end
+        end
+    )
+    EnableTooltip(f.buttonSort, BAG_CLEANUP_BANK)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown

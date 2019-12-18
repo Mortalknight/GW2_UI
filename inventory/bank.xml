@@ -152,6 +152,21 @@
                     </Frame>
                 </Frames>
             </Button>
+            <Button parentKey="buttonSort" text="">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-40" y="-8" />
+                </Anchors>
+                <Size x="24" y="24" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
+                </Anchors>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></HighlightTexture >
+
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+            </Button>
             <Button name="$parentClose" parentKey="buttonClose" text="">
                 <Size x="20" y="20" />
                 <Anchors>
