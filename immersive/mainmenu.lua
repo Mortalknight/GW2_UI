@@ -43,10 +43,10 @@ local BUTTONS = {
 }
 
 local ICON_SPRITES = {
- width = 128,
- height = 128,
- colums = 4,
- rows = 4
+    width = 128,
+    height = 128,
+    colums = 4,
+    rows = 4
 }
 
 local function applyButtonStyle()
@@ -240,7 +240,7 @@ local function SkinGhostFrame()
     local i = 1
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" and i < 7 then
-           c:Hide()
+            c:Hide()
         end
         i = i + 1
     end
@@ -332,8 +332,8 @@ local function SkinDeathRecapFrame_Loaded()
                 local y = 1
                 for _,c in pairs(r) do
                     if c:GetObjectType() == "Texture" then
-                       if y == 4 then c:Hide() end
-                       y = y + 1
+                        if y == 4 then c:Hide() end
+                        y = y + 1
                     end
                 end
                 if _G["DetailsDeathRecapLine" .. i].graveIcon then
@@ -625,7 +625,6 @@ local function SkinLFGListApplicationDialog()
     LFGListApplicationDialog.CancelButton.Text:SetShadowOffset(0, 0)
     addHoverToButton(LFGListApplicationDialog.CancelButton)
 
-    
     local r = {LFGListApplicationDialog.Description:GetRegions()}
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then

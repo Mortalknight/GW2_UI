@@ -1,3 +1,12 @@
+5.1.15
+
+NEW
+    - Added aggroborder to partyframes
+
+MISCELLANEOUS
+    - Settings: Checkboxes now also toggle if click on the text
+
+
 5.1.14
 
 NEW

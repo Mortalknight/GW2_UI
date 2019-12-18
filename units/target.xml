@@ -378,7 +378,7 @@
     <Frame name="GwDeBuffIcon" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="32" y="32"/>
         <Layers>
-            <Layer Level="ARTWORK" textureSubLevel="0">
+            <Layer level="ARTWORK" textureSubLevel="0">
                 <Texture name="$parentOutline" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
 
                     <Color r="0" b="0" g="0" a="1"></Color>
@@ -388,7 +388,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer Level="ARTWORK" textureSubLevel="-1">
+            <Layer level="ARTWORK" textureSubLevel="-1">
                 <Texture parentKey="background" name="$parentDeBuffBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="24" y="24"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />

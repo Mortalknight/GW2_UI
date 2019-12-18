@@ -454,4 +454,11 @@ GW_CHANGELOGS = "   - Added new skins\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.14\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.1.15
+GW_CHANGELOGS = "   - Settings: Checkboxes now also toggle if click on the text\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added aggroborder to partyframes\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.1.15\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS

@@ -183,14 +183,11 @@ local function pvpHud_onEvent(self, event)
 
         GwBattleGroundScores:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
         GwBattleGroundScores:RegisterEvent("UPDATE_BATTLEFIELD_SCORE")
-
         GwBattleGroundScores:RegisterEvent("PLAYER_ENTERING_WORLD")
-
         GwBattleGroundScores:RegisterEvent("ZONE_CHANGED")
         GwBattleGroundScores:RegisterEvent("ZONE_CHANGED_INDOORS")
         GwBattleGroundScores:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         GwBattleGroundScores:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-
         GwBattleGroundScores:RegisterEvent("BATTLEGROUND_POINTS_UPDATE")
         GwBattleGroundScores:RegisterEvent("LFG_ROLE_CHECK_DECLINED")
         GwBattleGroundScores:RegisterEvent("LFG_ROLE_CHECK_SHOW")
