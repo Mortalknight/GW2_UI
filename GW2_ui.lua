@@ -673,9 +673,18 @@ local function loadAddon(self)
     end
 
     if GetSetting("DYNAMIC_CAM") then
-        ConsoleExec("ActionCam basic")
+        if GetCVar("test_cameraDynamicPitch") == "0" then
+            SetCVar("test_cameraDynamicPitch", true)
+        end
+        hooksecurefunc("StaticPopup_Show", function(which, text_arg1, text_arg2, data, insertedFrame)
+            if which == "EXPERIMENTAL_CVAR_WARNING" then
+                StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
+            end
+        end)
     else
-        ConsoleExec("ActionCam default")
+        if GetCVar("test_cameraDynamicPitch") == "1" then
+            SetCVar("test_cameraDynamicPitch", false)
+        end
     end
 
     -- create new microbuttons
