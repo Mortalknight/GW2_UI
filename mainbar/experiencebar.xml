@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+
     <Frame name="GwExperienceBar" frameStrata="MEDIUM" toplevel="true" parent="UIParent" virtual="true">
         <Size x="1" y="16"></Size>
         <Anchors>
@@ -21,9 +22,7 @@
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="-90" y="0"/>
                     </Anchors>
                 </Texture>
-
                 <Texture parentKey="labelLeft" name="$parentLevelLableTextureLeft" file="Interface\AddOns\GW2_UI\textures\level-label">
-
                     <Size x="128" y="32"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
@@ -86,7 +85,6 @@
                     </Frame>
                     <StatusBar name="$parentRested" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
                         <Size x="1" y="8" />
-
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                             <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"/>
@@ -129,7 +127,6 @@
                     </Frame>
                 </Frames>
             </StatusBar>
-
             <Frame name="ExperienceBarOverlay" frameLevel="5" toplevel="true">
                 <Size x="1" y="13"></Size>
                 <Anchors>
@@ -184,7 +181,6 @@
                     </Frame>
                 </Frames>
             </Frame>
-
         </Frames>
     </Frame>
 

@@ -34,7 +34,6 @@
                     <OnClick function="HybridScrollFrameScrollButton_OnClick"/>
                 </Scripts>
             </Button>
-
             <Button parentKey="scrollDown">
                 <Size x="12" y="12"></Size>
                 <Anchors>

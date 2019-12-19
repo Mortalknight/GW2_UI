@@ -44,7 +44,6 @@
                     </Anchors>
                 </Texture>
             </Layer>
-
             <Layer level="BORDER">
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bottom-right">
                     <Size x="128" y="128"></Size>
@@ -108,7 +107,6 @@
                     </Anchors>
                 </Texture>
             </Layer>
-
         </Layers>
         <Frames>
             <Button parentKey="moneyFrame" registerForClicks="RightButtonUp">
@@ -122,7 +120,6 @@
                     </OnLeave>
                 </Scripts>
             </Button>
-
             <Frame parentkey="mover" enableMouse="true">
                 <Size y="40" />
                 <Anchors>
@@ -130,7 +127,6 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-30" y="0"></Anchor>
                 </Anchors>
             </Frame>
-
             <Frame parentKey="sizer" enableMouse="true">
                 <Size x="20" y="20"></Size>
                 <Anchors>
@@ -147,7 +143,6 @@
                     </Layer>
                 </Layers>
             </Frame>
-
             <Button parentKey="buttonSettings" text="">
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8" />
@@ -159,7 +154,6 @@
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up"></NormalTexture>
                 <PushedTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></PushedTexture >
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></HighlightTexture >
-
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
@@ -221,7 +215,6 @@
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Up"></NormalTexture>
                 <PushedTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></PushedTexture >
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></HighlightTexture >
-
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
@@ -233,18 +226,15 @@
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-normal"></NormalTexture>
                 <PushedTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></PushedTexture >
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></HighlightTexture >
-
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-
             <Frame parentKey="ItemFrame">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
                 </Anchors>
             </Frame>
-
         </Frames>
     </Frame>
 
@@ -254,10 +244,10 @@
             <Layer level="BACKGROUND">
                 <Texture parentKey="gwBackdrop" file="Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop">
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -287,7 +277,6 @@
             <OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, 0)
                 GameTooltip:ClearLines()
-
                 GameTooltip:AddLine(KEYRING)
                 GameTooltip:Show()
             </OnEnter>

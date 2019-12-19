@@ -68,4 +68,5 @@
             <Frame name="GwPetFrameHappinessInvisibleFrame" enableMouse="false" hidden="true"/>
         </Frames>
     </Button>
+    
 </Ui>

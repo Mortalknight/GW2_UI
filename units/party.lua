@@ -25,29 +25,6 @@ local function inviteToGroup(str)
 end
 GW.AddForProfiling("party", "inviteToGroup", inviteToGroup)
 
-local function manageButtonDelay(inCombat, action)
-    if inCombat == true then
-        GwWorldMarkerManage:SetScript(
-            "OnUpdate",
-            function()
-                local inCombat2 = UnitAffectingCombat("player")
-                if inCombat2 == true then
-                    return
-                end
-                manageButtonDelay(false, action)
-                GwWorldMarkerManage:SetScript("OnUpdate", nil)
-            end
-        )
-    else
-        if action == "hide" then
-            GwWorldMarkerManage:Hide()
-        elseif action == "show" then
-            GwWorldMarkerManage:Show()
-        end
-    end
-end
-GW.AddForProfiling("party", "manageButtonDelay", manageButtonDelay)
-
 local function manageButton()
     local fmGMGB = CreateFrame("Button", "GwManageGroupButton", UIParent, "GwManageGroupButton")
     local fnGMGB_OnClick = function(self, button)

@@ -2,75 +2,21 @@
 ..\FrameXML\UI.xsd">
 
     <Frame name="GwSpellbook" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
-            <Size x="853" y="627"></Size>
+        <Size x="853" y="627"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed">
-                         <Size x="853" y="853"></Size>
+                    <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-            </Layer>
-            </Layers>
-    </Frame>
-
-    <Button name="GwSpellbookButton" inherits="SecureFrameTemplate" virtual="true">
-         <Size x="50" y="50"></Size>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
-                   <Size x="60" y="60"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                     <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
-                </Texture>
-            </Layer>
-            <Layer level="BACKGROUND" textureSubLayer="2">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
-                    <Size x="50" y="50"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-                </Texture>
-            </Layer>
-            <Layer level="BACKGROUND" textureSubLevel="3">
-                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="TOP">
-                    <Size x="120" y="30"></Size>
-                    <Anchors>
-                        <Anchor point="LEFTTOP" relativePoint="LEFTTOP" x="65" y="-5"></Anchor>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="sub" text="Unknown" justifyH="LEFT" justifyV="TOP">
-                    <Size x="120" y="40"></Size>
-                    <Anchors>
-                        <Anchor point="LEFTTOP" relativeKey="$parent.title" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                    </Anchors>
-                </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.title:SetFont(UNIT_NAME_FONT,12)
-                self.sub:SetFont(UNIT_NAME_FONT,11)
-                self.sub:SetTextColor(0.8,.8,.8,1)
-
-                self.title:SetShadowColor(0,0,0,1)
-                self.sub:SetShadowColor(0,0,0,1)
-
-                self.title:SetShadowOffset(1,-1)
-                self.sub:SetShadowOffset(1,-1)
-            </OnLoad>
-        </Scripts>
-    </Button>
+    </Frame>
 
     <ScrollFrame name="GwSpellbookUnknown" inherits="SecureHandlerShowHideTemplate" virtual="true" enableMouse="true">
         <Size x="568" y="581"/>
@@ -80,122 +26,120 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-            <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
-                <Size x="512" y="32"/>
+                <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                    <Size x="512" y="32"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="filltext" text="All Spells are known" justifyH="CENTER" justifyY="CENTER">
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.headerbg" x="50" y="-100"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="container" >
+                <Size x="568" y="581"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
-            </Texture>
-         </Layer>
-         <Layer level="BORDER">
-             <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
-                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
-                 </Anchors>
-             </FontString>
-             <FontString parentKey="filltext" text="All Spells are known" justifyH="CENTER" justifyY="CENTER">
-                 <Anchors>
-                    <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.headerbg" x="50" y="-100"/>
-                 </Anchors>
-             </FontString>
-         </Layer>
-     </Layers>
-     <Frames>
-         <Frame parentKey="container" >
-            <Size x="568" y="581"/>
-             <Anchors>
-                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-             </Anchors>
-         </Frame>
-         <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
-             <Size x="12" y="12"></Size>
-             <Anchors>
-                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
-                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
-             </Anchors>
-             <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
-                 <Size x="12" y="100"/>
-                 <Anchors>
-                 <Anchor point="TOP" relativePoint="TOP" ></Anchor>
-                 </Anchors>
-             </ThumbTexture>
-             <Layers>
-                 <Layer>
-                     <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
-                         <Anchors>
-                             <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                             <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
-                         </Anchors>
-                     </Texture>
-                 </Layer>
-             </Layers>
-             <Scripts>
-                 <OnValueChanged>
-                     if InCombatLockdown() then return end
-                     self:GetParent():SetVerticalScroll(value)
-                 </OnValueChanged>
-                 <OnLoad>
-                     self:SetValue(0)
-                 </OnLoad>
-             </Scripts>
-         </Slider>
-         <Button name="$parentScrollButtonUp" parentKey="ScrollButtonUp">
-             <Size x="12" y="12"></Size>
-                 <Anchors>
-                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
-                 </Anchors>
-             <Layers>
-                 <Layer>
-                     <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                         <Size x="12" y="12"></Size>
-                             <Anchors>
-                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                             </Anchors>
-                     </Texture>
-                 </Layer>
-             </Layers>
-         </Button>
-         <Button name="$parentScrollButtonDown" parentKey="ScrollButtonDown">
-             <Size x="12" y="12"></Size>
-                 <Anchors>
-             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                 </Anchors>
-             <Layers>
-                 <Layer>
-                     <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
-                         <Size x="12" y="12"></Size>
-                             <Anchors>
-                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                             </Anchors>
-                         <TexCoords left="0" right="1" top="1" bottom="0" />
-                     </Texture>
-                 </Layer>
-             </Layers>
-         </Button>
-     </Frames>
-    <Scripts>
-        <OnMouseWheel>
-            if InCombatLockdown() then return end
-            delta = -delta * 15
-            local min, max = self.slider:GetMinMaxValues()
-            local s = math.min(max,math.max(self:GetVerticalScroll()+delta,min))
-            self.slider:SetValue(s)
-            self:SetVerticalScroll(s)
-        </OnMouseWheel>
-        <OnLoad>
-            self:SetScrollChild(self.container)
+            </Frame>
+            <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+                <Size x="12" y="12"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
+                </Anchors>
+                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
+                    <Size x="12" y="100"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" ></Anchor>
+                    </Anchors>
+                </ThumbTexture>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnValueChanged>
+                        if InCombatLockdown() then return end
+                        self:GetParent():SetVerticalScroll(value)
+                    </OnValueChanged>
+                    <OnLoad>
+                        self:SetValue(0)
+                    </OnLoad>
+                </Scripts>
+            </Slider>
+            <Button name="$parentScrollButtonUp" parentKey="ScrollButtonUp">
+                <Size x="12" y="12"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                            <Size x="12" y="12"></Size>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="$parentScrollButtonDown" parentKey="ScrollButtonDown">
+                <Size x="12" y="12"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                            <Size x="12" y="12"></Size>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0" right="1" top="1" bottom="0" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnMouseWheel>
+                if InCombatLockdown() then return end
+                delta = -delta * 15
+                local min, max = self.slider:GetMinMaxValues()
+                local s = math.min(max,math.max(self:GetVerticalScroll()+delta,min))
+                self.slider:SetValue(s)
+                self:SetVerticalScroll(s)
+            </OnMouseWheel>
+            <OnLoad>
+                self:SetScrollChild(self.container)
 
-            self.title:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
-            self.title:SetTextColor(0.9, 0.9, 0.7, 1)
+                self.title:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+                self.title:SetTextColor(0.9, 0.9, 0.7, 1)
 
-            self.filltext:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
-            self.filltext:SetTextColor(1, 1, 1, 0.5)
-            self.filltext:SetText(ADDON_NOT_AVAILABLE)
-        </OnLoad>
-    </Scripts>
+                self.filltext:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
+                self.filltext:SetTextColor(1, 1, 1, 0.5)
+                self.filltext:SetText(ADDON_NOT_AVAILABLE)
+            </OnLoad>
+        </Scripts>
     </ScrollFrame>
-
-
 
     <Button name="GwSpellbookUnknownSpell" enableMouse="true"  virtual="true">
         <Size x="40" y="40"/>
@@ -274,66 +218,63 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                        <Texture parentKey="repbg" file="Interface/AddOns/GW2_UI/textures/rep/BFA/7thLegion">
-                            <Anchors>
-                                <Anchor point="TOPLEFT"></Anchor>
-                                <Anchor point="BOTTOMRIGHT"></Anchor>
-                            </Anchors>
-                            <Color r="1" g="1" b="1" a="0.5"/>
-                        </Texture>
+                <Texture parentKey="repbg" file="Interface/AddOns/GW2_UI/textures/rep/BFA/7thLegion">
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.5"/>
+                </Texture>
             </Layer>
             <Layer level="ARTWORK">
                 <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
-                <Size x="245" y="100"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                </Anchors>
-                     <Color r="1" g="1" b="1" a="0.5"></Color>
-                </Texture>
-
-                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                    <Size x="2" y="2"></Size>
+                    <Size x="245" y="100"></Size>
                     <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
-                        <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.5"></Color>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-2"></Anchor>
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="2"></Anchor>
-                         <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
-                         <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-2"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="2"></Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                     <Size x="2" y="2"></Size>
                     <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
-                         <Color r="0" g="0" b="0" a="0.5"></Color>
-                </Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0" a="0.5"></Color>
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="title" text="Unknown" justifyH="LEFT"  >
-
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="sub" text="" justifyH="LEFT">
-
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.title" x="10" ></Anchor>
                     </Anchors>
@@ -341,18 +282,17 @@
             </Layer>
         </Layers>
         <Scripts>
-                <OnLoad>
-                    self.title:SetFont(UNIT_NAME_FONT,14,"OUTLINE")
-                    self.sub:SetFont(UNIT_NAME_FONT,11,"OUTLINE")
-                </OnLoad>
-                <OnEnter>
-                    self.repbg:SetVertexColor(1,1,1,0.7)
-                </OnEnter>
-                <OnLeave>
-                    self.repbg:SetVertexColor(1,1,1,0.5)
-                </OnLeave>
+            <OnLoad>
+                self.title:SetFont(UNIT_NAME_FONT,14,"OUTLINE")
+                self.sub:SetFont(UNIT_NAME_FONT,11,"OUTLINE")
+            </OnLoad>
+            <OnEnter>
+                self.repbg:SetVertexColor(1,1,1,0.7)
+            </OnEnter>
+            <OnLeave>
+                self.repbg:SetVertexColor(1,1,1,0.5)
+            </OnLeave>
         </Scripts>
     </Frame>
-
 
 </Ui>

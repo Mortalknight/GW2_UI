@@ -44,7 +44,6 @@
                     </Anchors>
                 </Texture>
             </Layer>
-
             <Layer level="BORDER">
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagicon">
                     <Size x="128" y="128"></Size>
@@ -73,9 +72,7 @@
                 </FontString>
             </Layer>
         </Layers>
-
         <Frames>
-
             <Frame parentkey="mover" enableMouse="true">
                 <Size y="40" />
                 <Anchors>
@@ -83,7 +80,6 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-30" y="0"></Anchor>
                 </Anchors>
             </Frame>
-
             <Frame parentKey="sizer" enableMouse="true">
                 <Size x="20" y="20"></Size>
                 <Anchors>
@@ -100,7 +96,6 @@
                     </Layer>
                 </Layers>
             </Frame>
-
             <Button parentKey="buttonSettings" text="">
                 <Size x="24" y="24" />
                 <Anchors>
@@ -109,7 +104,6 @@
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up"></NormalTexture>
                 <PushedTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></PushedTexture>
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></HighlightTexture>
-
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
@@ -161,9 +155,8 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></PushedTexture >
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></PushedTexture>
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></HighlightTexture >
-
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
@@ -175,18 +168,15 @@
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-normal"></NormalTexture>
                 <PushedTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></PushedTexture>
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></HighlightTexture>
-
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-
             <Frame parentKey="ItemFrame">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
                 </Anchors>
             </Frame>
-
         </Frames>
     </Frame>
 

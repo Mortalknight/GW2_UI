@@ -174,7 +174,7 @@
                 --GwStandardButton_OnEnter(self)
             </OnEnter>
             <OnLeave>
-            --    GwStandardButton_OnLeave(self)
+                --GwStandardButton_OnLeave(self)
             </OnLeave>
         </Scripts>
     </Button>
@@ -193,19 +193,19 @@
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-             </Layer>
-             <Layer level="BORDER">
-                 <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
-                     <Anchors>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
+                    <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
-                     </Anchors>
-                 </FontString>
-                 <FontString parentKey="pages" text="0" justifyH="LEFT" justifyY="CENTER">
-                     <Anchors>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="pages" text="0" justifyH="LEFT" justifyY="CENTER">
+                    <Anchors>
                         <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="10"/>
-                     </Anchors>
-                 </FontString>
-             </Layer>
+                    </Anchors>
+                </FontString>
+            </Layer>
         </Layers>
         <Frames>
             <Frame parentKey="attrDummy" inherits="SecureHandlerAttributeTemplate">
@@ -214,7 +214,6 @@
                 <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-
                 </Anchors>
                 <Scripts>
                     <OnShow>
@@ -226,7 +225,6 @@
                 <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-
                 </Anchors>
                 <Scripts>
                     <OnShow>
@@ -238,7 +236,6 @@
                 <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-
                 </Anchors>
                 <Scripts>
                     <OnShow>
@@ -250,7 +247,6 @@
                 <Size x="608" y="541"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-
                 </Anchors>
                 <Scripts>
                     <OnShow>
@@ -264,15 +260,15 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"  x="-30" y="5" />
                 </Anchors>
                 <Layers>
-                  <Layer layer="OVERLAY" textureSubLevel="8">
-                      <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
-                          <Size x="32" y="32"></Size>
-                          <Anchors>
-                              <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                          </Anchors>
-                      </Texture>
-                   </Layer>
-               </Layers>
+                    <Layer layer="OVERLAY" textureSubLevel="8">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Button>
             <Button parentKey="right" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate"  >
                 <size x="32" y="32"/>
@@ -280,20 +276,17 @@
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"  x="30" y="5" />
                 </Anchors>
                 <Layers>
-                  <Layer layer="OVERLAY" textureSubLevel="8">
-                      <Texture file="Interface\AddOns\GW2_UI\textures\character\forwardicon">
-                          <Size x="32" y="32"></Size>
-                          <Anchors>
-                              <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                          </Anchors>
-                      </Texture>
-                   </Layer>
-               </Layers>
+                    <Layer layer="OVERLAY" textureSubLevel="8">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\forwardicon">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Button>
         </Frames>
-        <Scripts>
-
-        </Scripts>
     </Frame>
 
     <Frame name="GwSpellbookActionBackground" virtual="true">
@@ -303,7 +296,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND"/>
-             <Layer level="BORDER">
+            <Layer level="BORDER">
                 <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
                     <Size x="256" y="20"/>
                     <Anchors>
@@ -382,7 +375,6 @@
         <Scripts>
             <OnDragStart>
                 if InCombatLockdown() or self.isPassive or self.isFuture then return end
-
                 PickupSpellBookItem(self.spellbookIndex,self.booktype)
             </OnDragStart>
         </Scripts>
@@ -396,7 +388,7 @@
         <Layers>
             <Layer level="ARTWORK">
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed">
-                         <Size x="853" y="853"></Size>
+                    <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
@@ -411,7 +403,6 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-
                     <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents-window-header">
                         <Size x="1024" y="512"/>
                         <Anchors>
@@ -422,12 +413,12 @@
                     <Layer level="BORDER">
                         <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyY="CENTER">
                             <Anchors>
-                               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-20"/>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-20"/>
                             </Anchors>
                         </FontString>
                         <FontString parentKey="unspentPointsLabel" text="Unspent talent points" justifyH="LEFT" justifyY="CENTER">
                             <Anchors>
-                               <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.unspentPoints" x="0" y=""/>
+                                <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.unspentPoints" x="0" y=""/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -442,7 +433,6 @@
                 self.bottomBar.unspentPointsLabel:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
                 self.bottomBar.unspentPointsLabel:SetTextColor(0.85, 0.70, 0.29, 1)
                 self.bottomBar.unspentPointsLabel:SetText(BONUS_TALENTS)
-
 
                 self:RegisterEvent("UNIT_MODEL_CHANGED")
                 self:RegisterEvent("UNIT_LEVEL")

@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+
     <Button name="GwTargetFrameTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
         <Size x="378" y="82"/>
         <HitRectInsets>
@@ -8,13 +9,11 @@
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="Background">
-
                     <Size x="257" y="19"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="128" y="-38"/>
                     </Anchors>
                 </Texture>
-
                 <Texture name="$parentPowerBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="powerBackground">
                     <Size x="255" y="5"/>
                     <Color r="0" g="0" b="0" a="0.9"/>
@@ -22,23 +21,19 @@
                         <Anchor point="TOPLEFT" x="129" y="-56"/>
                     </Anchors>
                 </Texture>
-
                 <Texture name="$parentCastingBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="castingBackground">
                     <Size x="253" y="15"/>
-
                     <Color r="0" g="0" b="0" a="0.9"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="130" y="-63"/>
                     </Anchors>
                 </Texture>
-
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\targetshadow" parentKey="Background">
                     <Size x="512" y="128"/>
                     <Anchors>
                         <Anchor point="CENTER" x="-3" y="-4"/>
                     </Anchors>
                 </Texture>
-
             </Layer>
             <Layer textureSubLevel="1">
                 <Texture name="$parentPortrait" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\targetshadow" parentKey="Background">
@@ -61,11 +56,7 @@
                         <Anchor point="TOPLEFT" x="130" y="-20"/>
                     </Anchors>
                 </FontString>
-
-
-
             </Layer>
-
             <Layer textureSubLevel="2">
                 <Texture name="$parentPortraitFrame" file="Interface\AddOns\GW2_UI\textures\targetPortraitinner" parentKey="Background">
                     <Size x="65" y="65"/>
@@ -83,7 +74,6 @@
                 </Anchors>
             </Frame>
             <StatusBar name="$parentHealthBar" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-
                 <Size x="253" y="15"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="130" y="-40"/>
@@ -97,7 +87,6 @@
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"/>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
                             </Anchors>
-
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
@@ -108,7 +97,6 @@
                             </Anchors>
                         </FontString>
                         <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
-
                             <Anchors>
                                 <Anchor point="RIGHT" x="0" y="0"/>
                             </Anchors>
@@ -121,7 +109,6 @@
                 </Scripts>
             </StatusBar>
             <StatusBar name="$parentHealthBarCandy" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-
                 <Size x="253" y="15"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="130" y="-40"/>
@@ -170,12 +157,12 @@
             <Frame name="$parentDebuffs" parentKey="debuffs" hidden="true">
                 <Size x="10" y="10"/>
             </Frame>
-
         </Frames>
         <Scripts>
             <OnEvent function="target_OnEvent"/>
         </Scripts>
     </Button>
+
     <Button name="GwTargetFrameSmallTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
         <Size x="146" y="128"/>
         <HitRectInsets>
@@ -184,7 +171,6 @@
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg" parentKey="Background">
-
                     <Size x="150" y="19"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="-1" y="-37"/>
@@ -197,9 +183,7 @@
                         <Anchor point="TOPLEFT" x="0" y="-55"/>
                     </Anchors>
                 </Texture>
-
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\targetArrow" parentKey="Background">
-
                     <Size x="0" y="0"/>
                     <Anchors>
                         <Anchor point="LEFT" x="-25" y="17"/>
@@ -219,9 +203,7 @@
                         <Anchor point="TOPLEFT" x="0" y="-20"/>
                     </Anchors>
                 </FontString>
-
             </Layer>
-
         </Layers>
         <Frames >
             <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
@@ -247,13 +229,11 @@
                     </Layer>
                     <Layer level="BACKGROUND">
                         <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-
                             <Size x="253" y="15"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"/>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
                             </Anchors>
-
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
@@ -269,7 +249,6 @@
                     <OnLoad function="GwTargetFrameSmallTemplateHealthBar_OnLoad"/>
                 </Scripts>
             </StatusBar>
-
             <StatusBar name="$parentHealthBarCandy" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="146" y="15"/>
                 <Anchors>
@@ -277,7 +256,6 @@
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarcandy"/>
             </StatusBar>
-            
             <StatusBar name="$parentCastingBar" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="146" y="15"/>
                 <Anchors>
@@ -311,13 +289,12 @@
             <Frame name="$parentDebuffs" parentKey="debuffs" hidden="true">
                 <Size x="10" y="10"/>
             </Frame>
-
         </Frames>
         <Scripts>
             <OnEvent function="target_OnEvent"/>
-
         </Scripts>
     </Button>
+
     <Frame name="GwBuffIcon" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="20" y="20"/>
         <Layers>
@@ -333,7 +310,6 @@
                 <Texture name="$parentBuffIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="18" y="18"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-
                     <Anchors>
                         <Anchor point="CENTER" x="0" y=""/>
                     </Anchors>
@@ -356,12 +332,12 @@
             <OnLoad function="GwBuffIcon_OnLoad"/>
         </Scripts>
     </Frame>
+
     <Frame name="GwDeBuffIcon" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="32" y="32"/>
         <Layers>
             <Layer Level="ARTWORK" textureSubLevel="0">
                 <Texture name="$parentOutline" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-
                     <Color r="0" b="0" g="0" a="1"></Color>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
@@ -467,6 +443,7 @@
             <OnLoad function="GwTargetFrameTemplateDummy_OnLoad"/>
         </Scripts>
     </Button>
+
     <Button name="GwTargetFrameSmallTemplateDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
         <Size x="150" y="20"/>
         <Layers>
@@ -490,6 +467,7 @@
             <OnLoad function="GwTargetFrameSmallTemplateDummy_OnLoad"/>
         </Scripts>
     </Button>
+
     <Button name="GwPetFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
         <Size x="328" y="100"></Size>
         <Layers>
@@ -537,6 +515,7 @@
             <OnLoad function="GwCastFrameDummy_OnLoad"/>
         </Scripts>
     </Button>
+
     <Frame name="VerticalActionBarDummy" virtual="true" frameStrata="DIALOG" parent="UIParent" inherits="SecureHandlerBaseTemplate" protected="true">
         <Layers>
             <Layer level="BACKGROUND">
@@ -573,4 +552,5 @@
             </Layer>
         </Layers>
     </Button>
+
 </Ui>

@@ -32,7 +32,6 @@
                 </Texture>
             </Layer>
         </Layers>
-
         <Frames>
             <Frame name="$parentContainer">
                 <Size x="950" y="474"></Size>
@@ -52,7 +51,6 @@
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="1" />
                         </Anchors>
                     </PlayerModel>
-
                     <Button name="$parentDialog" frameStrata="DIALOG">
                         <Size x="950" y="474"></Size>
                         <Anchors>
@@ -73,7 +71,6 @@
                                     <Anchors>
                                         <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" />
                                     </Anchors>
-
                                 </FontString>
                                 <FontString name="$parentQuestTitle" inherits="GameFontNormal" text="Test text" justify="CENTER">
                                     <Size x="950" y="100"></Size>
@@ -90,13 +87,11 @@
                             </Layer>
                         </Layers>
                     </Button>
-
                     <Button name="$parentAcceptButton" inherits="GwStandardButton">
                         <Size x="120" y="24" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
                         </Anchors>
-
                     </Button>
                     <Button name="$parentDeclineQuest" text="Decline" inherits="GwStandardButton">
                         <Size x="120" y="24" />
@@ -104,13 +99,9 @@
                             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                         </Anchors>
                     </Button>
-
                 </Frames>
             </Frame>
-
-
         </Frames>
-
     </Frame>
 
 

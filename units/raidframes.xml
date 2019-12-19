@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+
     <Frame name="GwRaidFrameContainer" virtual="true" parent="UIParent">
         <Size x="300" y="400">
         </Size>
@@ -7,6 +8,7 @@
             <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
         </Anchors>
     </Frame>
+
     <Frame name="GwRaidFrameIndicator" frameLevel="6" hidden="true" virtual="true">
         <Size x="13" y="13"/>
         <Layers>
@@ -46,6 +48,7 @@
             </Cooldown>
         </Frames>
     </Frame>
+
     <Button name="GwRaidFrame" frameStrata="LOW" toplevel="true" parent="GwRaidFrameContainer" inherits="SecureUnitButtonTemplate" virtual="true">
         <Size x="55" y="47"></Size>
         <Anchors>
@@ -75,12 +78,12 @@
             <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="8"></Size>
                 <Anchors>
-                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
                 <Frames>
-                   <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
+                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
                         <Size x="65" y="8"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -102,8 +105,6 @@
                     </StatusBar>
                 </Frames>
             </StatusBar>
-
-         
             <StatusBar parentKey="manabar" hidden="true" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="3"></Size>
                 <Anchors>
@@ -112,9 +113,7 @@
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
-
             </StatusBar>
-
             <StatusBar parentKey="indicatorBAR" orientation="VERTICAL" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="3" y="3"></Size>
                 <Anchors>
@@ -142,7 +141,6 @@
                     </OnUpdate>
                 </Scripts>
             </StatusBar>
-
             <Frame parentKey="indicatorTOPLEFT" inherits="GwRaidFrameIndicator">
                 <Anchors><Anchor point="TOPLEFT" x="0.3" y="-0.3"></Anchor></Anchors>
             </Frame>
@@ -161,7 +159,6 @@
             <Frame parentKey="indicatorRIGHT" inherits="GwRaidFrameIndicator">
                 <Anchors><Anchor point="RIGHT" x="-0.3"></Anchor></Anchors>
             </Frame>
-
             <Frame name="$parentData" frameLevel="5">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -196,4 +193,5 @@
             </Frame>
         </Frames>
     </Button>
+
 </Ui>

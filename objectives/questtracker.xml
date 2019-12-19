@@ -1,14 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+
     <Button name="GwQuestTrackerHeader" virtual="true">
         <Size x="250" y="20"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
         </Anchors>
         <Layers>
-            <Layer Level="ARTOWORK">
-
-            </Layer>
+            <Layer Level="ARTWORK"/>
             <Layer Level="BACKGROUND">
                 <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icon-objective">
                     <Size x="30" y="30"></Size>
@@ -27,6 +26,7 @@
             </Layer>
         </Layers>
     </Button>
+
     <Frame name="GwObjectivesNotification" hidden="true" virtual="true" parent="UIParent" frameStrata="LOW">
         <Size x="250" y="1"></Size>
         <Anchors>
@@ -104,29 +104,34 @@
             </Frame>
         </Frames>
     </Frame>
+
     <ScrollFrame name="GwQuestTrackerScroll" virtual="true">
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </ScrollFrame>
+
     <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW">
         <Size x="350" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
+
     <Frame name="GwQuesttrackerContainer" parent="GwQuestTracker" virtual="true" frameStrata="LOW">
         <Size x="250" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
+
     <Frame name="GwQuesttrackerContainerProtected" inherits="SecureHandlerStateTemplate" protected="true" parent="UIParent" virtual="true">
         <Size x="250" y="300"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
+
     <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true">
         <HitRectInsets>
             <AbsInset left="0" right="0" top="30" bottom="0"/>
@@ -145,14 +150,12 @@
                     </Anchors>
                 </Texture>
                 <Texture name="$parentHoverBg" parentKey="hover" hidden="true" file="Interface\AddOns\GW2_UI\textures\compas-bg">
-
                     <Size x="250" y="70"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-
                 <Texture name="$parentFlare" parentKey="flare" hidden="true" file="Interface\AddOns\GW2_UI\textures\expflare">
                     <Size x="100" y="150"></Size>
                     <Anchors>
@@ -214,6 +217,7 @@
             </Button>
         </Frames>
     </Button>
+
     <Frame name="GwQuesttrackerObjectiveNormal" enableMouse="false" virtual="true">
         <Size x="250" y="20"></Size>
         <Anchors>
@@ -243,7 +247,7 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-11" y="-21"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar" />
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="ARTWORK">
                         <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" parentKey="Spark">
@@ -265,7 +269,7 @@
             </StatusBar>
         </Frames>
     </Frame>
-    
+
     <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame" virtual="true">
         <Size x="250" y="35"></Size>
         <Anchors>
@@ -302,7 +306,6 @@
             </Layer>
         </Layers>
         <Frames>
-
             <StatusBar name="$parentStatusBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="230" y="8"></Size>
                 <Anchors>
