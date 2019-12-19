@@ -1642,7 +1642,7 @@
                         self:SetUnit("player")
                         self:SetPosition(0.8, 0, 0)
 
-                        local _, raceEn = UnitRace("Player")
+                        local _, raceEN = UnitRace("Player")
                         if raceEN == "Human" then
                             self:SetPosition(0.4, 0, -0.05)
                         elseif raceEN == "Tauren" then
