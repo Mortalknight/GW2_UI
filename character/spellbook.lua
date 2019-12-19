@@ -104,8 +104,8 @@ local function setHeaderLocation(self,tab,pagingContainer)
         self.column = 1
     end
 
-     pagingContainer.headers[#pagingContainer.headers + 1] = self
-     SpellbookHeaderIndex = SpellbookHeaderIndex + 1
+    pagingContainer.headers[#pagingContainer.headers + 1] = self
+    SpellbookHeaderIndex = SpellbookHeaderIndex + 1
 end
 
 local spellButtonIndex = 1
@@ -134,7 +134,7 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].rank:SetText("")
     end
     if level ~= nil then
-        if level>UnitLevel("player") then
+        if level > UnitLevel("player") then
             _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-lock");
         else
             _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-unlock");
@@ -148,7 +148,9 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("type", "spell")
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("*spell", spellID)
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("type2", "macro")
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("*macrotext2", "/petautocasttoggle " .. name)
+        if name ~= nil then
+            _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("*macrotext2", "/petautocasttoggle " .. name)
+        end
     else
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("type", "spell")
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("spell", spellID)
@@ -606,7 +608,6 @@ local function updateSpellbookTab()
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
             local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
-
             knownSpellID[#knownSpellID + 1] = spellID
 
             --find requiredTalentID if needed
@@ -614,7 +615,7 @@ local function updateSpellbookTab()
             for k, v in pairs(GW.SpellsByLevel) do
                 for _, spell in pairs(v) do
                     if spell.id == spellID and spell.rank ~= nil then
-                        rank =spell.rank
+                        rank = spell.rank
                     end
                 end
             end
