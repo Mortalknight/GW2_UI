@@ -2,6 +2,7 @@
 
 NEW
     - Added aggroborder to partyframes
+    - Added option the set the Stancebar to the left or right of the Actionbar
 
 MISCELLANEOUS
     - Settings: Checkboxes now also toggle if click on the text

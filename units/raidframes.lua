@@ -263,7 +263,7 @@ local function highlightTargetFrame(self)
 end
 GW.AddForProfiling("raidframes", "highlightTargetFrame", highlightTargetFrame)
 
-local function updateClassIcon(self)
+local function updateClassIcon(self, b)
     if b == false then
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
     else

@@ -652,54 +652,83 @@ local function stance_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("Actionbars2", "stance_OnEvent", stance_OnEvent)
 
+local function getStanceBarButton()
+    if _G["GwStanceBarButton"] ~= nil then
+        return _G["GwStanceBarButton"]
+    else
+        local SBB = CreateFrame("Button", "GwStanceBarButton", UIParent, "GwStanceBarButton")
+
+        SBB:RegisterEvent("CHARACTER_POINTS_CHANGED")
+        SBB:RegisterEvent("PLAYER_ALIVE")
+        SBB:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+        SBB:SetScript("OnEvent", stance_OnEvent)
+        return SBB
+    end
+end
+
+local function getStanceBarContainer()
+    if _G["GwStanceBarContainer"] ~= nil then
+        return _G["GwStanceBarContainer"]
+    else
+        return CreateFrame("Frame", "GwStanceBarContainer", UIParent, nil)
+    end
+end
+
 local function setStanceBar()
+    local SBB = getStanceBarButton()
+    local SBC
+
     for i = 1, 12 do
         if _G["StanceButton" .. i] ~= nil then
             if i == 1 then
                 _G["StanceButton" .. i]:ClearAllPoints()
-	            _G["StanceButton" .. i]:SetPoint('BOTTOM', StanceBarFrame, 'BOTTOM', 0, 0)
+                _G["StanceButton" .. i]:SetPoint("BOTTOM", StanceBarFrame, "BOTTOM", 0, 0)
             else
                 _G["StanceButton" .. i]:ClearAllPoints()
-                _G["StanceButton" .. i]:SetPoint('BOTTOM', _G['StanceButton' .. i - 1], 'TOP', 0, 2)
+                _G["StanceButton" .. i]:SetPoint("BOTTOM", _G["StanceButton" .. i - 1], "TOP", 0, 2)
             end
             _G["StanceButton" .. i]:SetSize(30, 30)
             setActionButtonStyle("StanceButton" .. i, true, nil ,true)
         end
     end
 
-    CreateFrame("Button", "GwStanceBarButton", UIParent, "GwStanceBarButton")
-    GwStanceBarButton:SetPoint("TOPRIGHT", ActionButton1, "TOPLEFT", -5, 2)
+    SBB:ClearAllPoints()
+    if GetSetting("STANCEBAR_POSITION") == "LEFT" then
+        SBB:SetPoint('BOTTOMRIGHT', ActionButton1, 'BOTTOMLEFT', -5, 0)
+    else
+        SBB:SetPoint('BOTTOMLEFT', ActionButton12, 'BOTTOMRIGHT', 5, 0)
+    end
 
     if GetNumShapeshiftForms() == 1 then
         StanceButton1:ClearAllPoints()
-        StanceButton1:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
+        if GetSetting("STANCEBAR_POSITION") == "LEFT" then
+            StanceButton1:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
+        else
+            StanceButton1:SetPoint('TOPLEFT', ActionButton12, 'TOPRIGHT', 5, 2)
+        end
     else
-        CreateFrame('Frame', 'GwStanceBarContainer', UIParent, nil)
-        GwStanceBarContainer:SetPoint('BOTTOM', GwStanceBarButton, 'TOP', 0, 0)
+        SBC = getStanceBarContainer()
+        SBC:ClearAllPoints()
+        SBC:SetPoint('BOTTOM', SBB, 'TOP', 0, 0)
         
-        StanceBarFrame:SetParent(GwStanceBarContainer)
-        StanceBarFrame:SetPoint('BOTTOMLEFT', GwStanceBarButton, 'TOPLEFT', 0, 0)
-        StanceBarFrame:SetPoint('BOTTOMRIGHT', GwStanceBarButton, 'TOPRIGHT', 0, 0)
+        StanceBarFrame:SetParent(SBC)
+        StanceBarFrame:SetPoint("BOTTOMLEFT", SBB, "TOPLEFT", 0, 0)
+        StanceBarFrame:SetPoint("BOTTOMRIGHT", SBB, "TOPRIGHT", 0, 0)
     end
 
-    GwStanceBarButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    GwStanceBarButton:RegisterEvent("PLAYER_ALIVE")
-    GwStanceBarButton:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    GwStanceBarButton:SetScript("OnEvent", stance_OnEvent)
-
     if GetNumShapeshiftForms() < 2 then
-        GwStanceBarButton:Hide()
+        SBB:Hide()
     else
-        GwStanceBarButton:Show()
-        GwStanceBarContainer:Hide()
-        GwStanceBarButton:SetFrameRef("GwStanceBarContainer", GwStanceBarContainer)
-        GwStanceBarButton:SetAttribute(
+        SBB:Show()
+        SBC:Hide()
+        SBB:SetFrameRef("GwStanceBarContainer", SBC)
+        SBB:SetAttribute(
             "_onclick",
             [=[
-            if self:GetFrameRef('GwStanceBarContainer'):IsVisible() then
-                self:GetFrameRef('GwStanceBarContainer'):Hide()
+            if self:GetFrameRef("GwStanceBarContainer"):IsVisible() then
+                self:GetFrameRef("GwStanceBarContainer"):Hide()
             else
-                self:GetFrameRef('GwStanceBarContainer'):Show()
+                self:GetFrameRef("GwStanceBarContainer"):Show()
             end
         ]=]
         )

@@ -1,6 +1,7 @@
 ## Interface: 80205
 ## Title: GW2 UI
-## Notes: Hud Replacement addon.
+## Notes: HUD Replacement addon.
+## Notes-deDE: Ersetzt die Benutzeroberfläche.
 ## OptionalDeps: MoveAnything
 
 ## Author: deadend06

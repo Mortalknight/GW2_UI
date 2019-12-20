@@ -24,7 +24,7 @@ local function parsePoints(id)
     if not topid then
         return nil
     end
-    
+
     local wset = GetAllWidgetsBySetID(topid)
     if not wset then
         return nil
@@ -33,6 +33,15 @@ local function parsePoints(id)
     local widget = wset[id]
     if not widget or not widget.widgetID then
         return nil
+    end
+
+    local info = C_UIWidgetManager.GetDoubleStatusBarWidgetVisualizationInfo(widget.widgetID)
+    if info then
+        if id == 1 then
+            return info.leftBarValue
+        else
+            return info.rightBarValue
+        end
     end
 
     local tvi = GetIconAndTextWidgetVisualizationInfo(widget.widgetID)
@@ -49,6 +58,15 @@ local function parsePoints(id)
     return points
 end
 GW.AddForProfiling("battlegrounds", "parsePoints", parsePoints)
+
+local function getPoints(widget)
+    local widgetID = widget and widget.widgetID
+    local info = C_UIWidgetManager.GetDoubleStatusBarWidgetVisualizationInfo(widgetID)
+    if info then
+        return info.leftBarValue, info.rightBarValue
+    end
+    return 0, 0
+end
 
 local function capStateChanged(self)
     local fnScale = function(prog)
@@ -169,6 +187,30 @@ local function AB_onEvent(self, event, ...)
 end
 GW.AddForProfiling("battlegrounds", "AB_onEvent", AB_onEvent)
 
+local function SM_onEvent(self, event, ...)
+    if not activeMap then
+        return
+    end
+
+    local pointsAlliance = 0
+    local pointsHorde = 0
+
+    if event == "UPDATE_UI_WIDGET" then
+        pointsAlliance, pointsHorde = getPoints(...)
+    end
+    --local pointsAlliance = parsePoints(1)
+    --local pointsHorde = parsePoints(2)
+    print(pointsAlliance, pointsHorde)
+    if pointsAlliance == nil or pointsHorde == nil then
+        return
+    end
+
+    self.scoreRight:SetText(pointsAlliance)
+    self.scoreLeft:SetText(pointsHorde)
+    self.timer:SetText("")
+end
+GW.AddForProfiling("battlegrounds", "SM_onEvent", SM_onEvent)
+
 local function pvpHud_onEvent(self, event)
     local _, _, _, _, _, _, _, mapID, _ = GetInstanceInfo()
 
@@ -193,6 +235,7 @@ local function pvpHud_onEvent(self, event)
         GwBattleGroundScores:RegisterEvent("LFG_ROLE_CHECK_SHOW")
         GwBattleGroundScores:RegisterEvent("LFG_READY_CHECK_DECLINED")
         GwBattleGroundScores:RegisterEvent("LFG_READY_CHECK_SHOW")
+        GwBattleGroundScores:RegisterEvent("UPDATE_UI_WIDGET")
 
         GwBattleGroundScores:Show()
     else
@@ -264,6 +307,9 @@ local function LoadBattlegrounds()
                 [39] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36},
                 [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36}
             }
+        },
+        [727] = {
+            ["OnEvent"] = SM_onEvent
         }
     }
 
