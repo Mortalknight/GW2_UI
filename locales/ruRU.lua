@@ -239,6 +239,8 @@ local function GWUseThisLocalization()
 	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "What is 'Pixel Perfection'?\nGW2 UI has a built-in setting called 'Pixel Perfection Mode'. What this means for you is that your user interface will look as was intended, with crisper textures and better scaling. Of course, you can toggle this off in the settings menu should you prefer."
 	GwLocalization["DISCORD"] = "Join Discord"
 	GwLocalization["FUTURE_SPELLS"] = "Future Spells"
+	GwLocalization["STANCEBAR_POSITION"] = "Position of the Stancebar"
+	GwLocalization["STANCEBAR_POSITION_DESC"] = "Set the position of the Stancebar (Left or Right from the main Actionbar)"
 end
 
 

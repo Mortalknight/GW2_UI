@@ -732,6 +732,13 @@ local function LoadSettings()
     GwSettingsTargetOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsTargetOptionsSub:SetText(GwLocalization["TARGET_DESC"])
 
+    GwSettingsActionbarOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsActionbarOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsActionbarOptionsHeader:SetText(ACTIONBAR_LABEL)
+    GwSettingsActionbarOptionsSub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsActionbarOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsActionbarOptionsSub:SetText(ACTIONBARS_SUBTEXT)
+
     GwSettingsHudOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsHudOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     GwSettingsHudOptionsHeader:SetText(GwLocalization["HUD_CAT_1"])
@@ -974,14 +981,45 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
 
-    createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
-
+    createCat(ACTIONBAR_LABEL, nil, "GwSettingsActionbarOptions", 0)
     addOption(
         GwLocalization["ACTION_BAR_FADE"],
         GwLocalization["ACTION_BAR_FADE_DESC"],
         "FADE_BOTTOM_ACTIONBAR",
-        "GwSettingsHudOptions"
+        "GwSettingsActionbarOptions"
     )
+    addOption(
+        GwLocalization["HIDE_EMPTY_SLOTS"],
+        GwLocalization["HIDE_EMPTY_SLOTS_DESC"],
+        "HIDEACTIONBAR_BACKGROUND_ENABLED",
+        "GwSettingsActionbarOptions"
+    )
+    addOption(
+        GwLocalization["BUTTON_ASSIGNMENTS"],
+        GwLocalization["BUTTON_ASSIGNMENTS_DESC"],
+        "BUTTON_ASSIGNMENTS",
+        "GwSettingsActionbarOptions"
+    )
+    addOptionDropdown(
+        GwLocalization["STG_RIGHT_BAR_COLS"],
+        GwLocalization["STG_RIGHT_BAR_COLS_DESC"],
+        "MULTIBAR_RIGHT_COLS",
+        "GwSettingsActionbarOptions",
+        setMultibarCols,
+        {1, 2, 3, 4, 6, 12},
+        {"1", "2", "3", "4", "6", "12"}
+    )
+    addOptionDropdown(
+        GwLocalization["STANCEBAR_POSITION"],
+        GwLocalization["STANCEBAR_POSITION_DESC"],
+        "STANCEBAR_POSITION",
+        "GwSettingsActionbarOptions",
+        GW.setStanceBar,
+        {"LEFT", "RIGHT"},
+        {GwLocalization["LEFT"], GwLocalization["RIGHT"]}
+    )
+
+    createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
     addOption(
         GwLocalization["DYNAMIC_HUD"],
         GwLocalization["DYNAMIC_HUD_DESC"],
@@ -989,12 +1027,6 @@ local function LoadSettings()
         "GwSettingsHudOptions"
     )
     addOption(GwLocalization["CHAT_FADE"], GwLocalization["CHAT_FADE_DESC"], "CHATFRAME_FADE", "GwSettingsHudOptions")
-    addOption(
-        GwLocalization["HIDE_EMPTY_SLOTS"],
-        GwLocalization["HIDE_EMPTY_SLOTS_DESC"],
-        "HIDEACTIONBAR_BACKGROUND_ENABLED",
-        "GwSettingsHudOptions"
-    )
     addOption(
         GwLocalization["COMPASS_TOGGLE"],
         GwLocalization["COMPASS_TOGGLE_DESC"],
@@ -1005,12 +1037,6 @@ local function LoadSettings()
         GwLocalization["ADV_CAST_BAR"],
         GwLocalization["ADV_CAST_BAR_DESC"],
         "CASTINGBAR_DATA",
-        "GwSettingsHudOptions"
-    )
-    addOption(
-        GwLocalization["BUTTON_ASSIGNMENTS"],
-        GwLocalization["BUTTON_ASSIGNMENTS_DESC"],
-        "BUTTON_ASSIGNMENTS",
         "GwSettingsHudOptions"
     )
     addOption(
@@ -1102,15 +1128,6 @@ local function LoadSettings()
             SMALL,
             GwLocalization["HUD_SCALE_TINY"]
         }
-    )
-    addOptionDropdown(
-        GwLocalization["STG_RIGHT_BAR_COLS"],
-        GwLocalization["STG_RIGHT_BAR_COLS_DESC"],
-        "MULTIBAR_RIGHT_COLS",
-        "GwSettingsHudOptions",
-        setMultibarCols,
-        {1, 2, 3, 4, 6, 12},
-        {"1", "2", "3", "4", "6", "12"}
     )
 
     createCat(CHAT_MSG_PARTY, GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe", 4)

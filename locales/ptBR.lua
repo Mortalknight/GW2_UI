@@ -229,6 +229,8 @@ local function GWUseThisLocalization()
 	GwLocalization["WORLD_MARKER_DESC"] = "Mostrar menu para colocar marcadores quando está em raide."
 	GwLocalization["DISCORD"] = "Join Discord"
 	GwLocalization["FUTURE_SPELLS"] = "Future Spells"
+	GwLocalization["STANCEBAR_POSITION"] = "Position of the Stancebar"
+	GwLocalization["STANCEBAR_POSITION_DESC"] = "Set the position of the Stancebar (Left or Right from the main Actionbar)"
 
 	--Composite
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])

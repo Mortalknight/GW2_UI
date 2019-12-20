@@ -14,12 +14,6 @@ local function GWUseThisLocalization()
 	
 	--Strings
 	GwLocalization['WEAPON_SKILLS_HEADER'] = 'Waffenfertigkeiten' -- Do not touch
-	GwLocalization['FPS_TOOLTIP_1'] = 'Bildrate '
-	GwLocalization['FPS_TOOLTIP_2'] = 'Latenz (Standort) '
-	GwLocalization['FPS_TOOLTIP_3'] = 'Latenz (Welt) '
-	GwLocalization['FPS_TOOLTIP_4'] = 'Bandbreite (Download) '
-	GwLocalization['FPS_TOOLTIP_5'] = 'Bandbreite (Upload) '
-	GwLocalization['FPS_TOOLTIP_6'] = 'Speicher für Addons: '
 	GwLocalization["QUEST_REQUIRED_ITEMS"] = "Erforderliches Item:"
 	GwLocalization["ACTION_BAR_FADE"] = "Aktionsleisten ausblenden"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "Blendet die zusätzlichen Aktionsleisten außerhalb des Kampfes aus."
@@ -239,6 +233,8 @@ local function GWUseThisLocalization()
 	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT"] = "Das GW2-UI ist ein vollständiger UI-Ersatz. Wir haben die Benutzeroberfläche modular aufgebaut, dies bedeutet, wenn du einen bestimmten Teil des Addons nicht magst - oder du hast ein anders Addon, dass du für die Funktion bevorzugst - kannst du diesen Teil einfach deaktivieren, während der Rest des UI's intakt bleibt.\nEinige der Module, die dir zur Verfügung stehen, sind ein umfassendes Questfenster, ein vollständiger Inventarersatz sowie ein vollständiger Charakterfesterersatz. Es gibt viel mehr welche du erleben kannst. Wirf einfach ein Blick in die Einstellungen und schaue was zur Verfügung steht."
 	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Was ist 'Pixel Perfection'?\n\nGW2 UI verfügt über eine integrierte Einstellung namens 'Pixel Perfection Mode'. Das bedeutet für dich, dass das UI wie vorgesehen aussieht, mit gestochen scharfen Texturen und einer besseren Skalierung. Natürlich kannst du dies in den Einstellungen ausschalten, falls du dies vorziehst."
 	GwLocalization["FUTURE_SPELLS"] = "Zukünftige Zauber"
+	GwLocalization["STANCEBAR_POSITION"] = "Position der Stancebar"
+	GwLocalization["STANCEBAR_POSITION_DESC"] = "Setze die Position der Stancebar (Links oder recht von der Hauptaktionsleiste)"
 end
 	
 	

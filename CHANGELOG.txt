@@ -1,6 +1,7 @@
 1.6.9
 - Added sorting to bags and bank
     - Also for bags the option to sort to first or last bag (cogwheel at the bag)
+- Added option the set the Stancebar to the left or right of the Actionbar
 
 1.6.8
 - Fix lua error in BG's for level 60 chars

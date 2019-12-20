@@ -18,12 +18,6 @@ local function GWUseThisLocalization()
 	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Show Combopoints on target, below the healthbar"
 	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Mode"
 	GwLocalization["PIXEL_PERFECTION_DESC"] = "Scales the UI into a Pixel Perfection mode. This depends on the screen resolution."
-    GwLocalization['FPS_TOOLTIP_1'] = 'FPS ' 
-	GwLocalization['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
-	GwLocalization['FPS_TOOLTIP_3'] = 'Latency (World) ' 
-	GwLocalization['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
-	GwLocalization['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
-	GwLocalization['FPS_TOOLTIP_6'] = 'Memory for Addons: '
     GwLocalization["ACTION_BAR_FADE"] = "隐藏动作栏"
     GwLocalization["ACTION_BAR_FADE_DESC"] = "当离开战斗时隐藏额外动作栏."
     GwLocalization["ACTION_BARS_DESC"] = "使用GW2风格的增强动作栏."
@@ -239,6 +233,8 @@ local function GWUseThisLocalization()
     GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "What is 'Pixel Perfection'?\nGW2 UI has a built-in setting called 'Pixel Perfection Mode'. What this means for you is that your user interface will look as was intended, with crisper textures and better scaling. Of course, you can toggle this off in the settings menu should you prefer."
     GwLocalization["DISCORD"] = "Join Discord"
     GwLocalization["FUTURE_SPELLS"] = "Future Spells"
+    GwLocalization["STANCEBAR_POSITION"] = "Position of the Stancebar"
+	GwLocalization["STANCEBAR_POSITION_DESC"] = "Set the position of the Stancebar (Left or Right from the main Actionbar)"
 end
     
 if GetLocale() == "zhCN" then

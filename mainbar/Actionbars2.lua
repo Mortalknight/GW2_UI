@@ -8,8 +8,8 @@ local MAIN_MENU_BAR_BUTTON_SIZE = 48
 local MAIN_MENU_BAR_BUTTON_MARGIN = 5
 
 local GW_BLIZZARD_HIDE_FRAMES ={
-    
-  --  MainMenuBar,
+
+--  MainMenuBar,
     MainMenuBarOverlayFrame,
     MainMenuBarTexture0,
     MainMenuBarTexture1,
@@ -46,7 +46,7 @@ local GW_BLIZZARD_FORCE_HIDE = {
     PossessBackground1,
     PossessBackground2,
 }
-   
+
 local GW_BARS= {
     MainMenuBarArtFrame,
     MultiBarLeft,
@@ -60,11 +60,9 @@ function gw_hideBlizzardsActionbars()
         v:Hide()
         if v.UnregisterAllEvents~=nil then
             v:UnregisterAllEvents()
-           
         end
     end
     for k,object in pairs(GW_BLIZZARD_FORCE_HIDE) do
-     
         if object:IsObjectType('Frame') then
             object:UnregisterAllEvents()
             object:SetScript('OnEnter', nil)
@@ -84,11 +82,11 @@ function gw_hideBlizzardsActionbars()
 end
 
 function gwActionButton_UpdateHotkeys(self, actionButtonType)
-	local hotkey = self.HotKey --_G[self:GetName() .. 'HotKey']
+	local hotkey = self.HotKey
 	local text = hotkey:GetText()
-	
+
     if text == nil then return end
-    
+
 	text = string.gsub(text, '(s%-)', 'S')
 	text = string.gsub(text, '(a%-)', 'A')
 	text = string.gsub(text, '(c%-)', 'C')
@@ -105,7 +103,7 @@ function gwActionButton_UpdateHotkeys(self, actionButtonType)
 	text = string.gsub(text, '(Right Arrow)', 'RT')
 	text = string.gsub(text, '(Up Arrow)', 'UP')
 	text = string.gsub(text, '(Down Arrow)', 'DN')
-	 
+
 	if hotkey:GetText() == RANGE_INDICATOR then
 		hotkey:SetText('')
 	else
@@ -284,7 +282,7 @@ local function updateMainBar()
             btn:SetPoint('LEFT', MainMenuBarArtFrame, 'LEFT', btn_padding - MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE, 0)
             
             if i == 6 then
-                 btn_padding = btn_padding + 108
+                btn_padding = btn_padding + 108
             end
         end
     end
@@ -361,13 +359,37 @@ local function updateMultiBar(barName, buttonName)
     multibar:SetFrameStrata("LOW")
 end
 
+local function getStanceBarButton()
+    if _G["GwStanceBarButton"] ~= nil then
+        return _G["GwStanceBarButton"]
+    else
+        local SBB = CreateFrame('Button', 'GwStanceBarButton', UIParent, 'GwStanceBarButton')
+
+        SBB:RegisterEvent('CHARACTER_POINTS_CHANGED')
+        SBB:RegisterEvent('PLAYER_ALIVE')
+        SBB:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+        SBB:SetScript('OnEvent', GW.StanceOnEvent)
+        return SBB
+    end
+end
+
+local function getStanceBarContainer()
+    if _G["GwStanceBarContainer"] ~= nil then
+        return _G["GwStanceBarContainer"]
+    else
+        return CreateFrame('Frame', 'GwStanceBarContainer', UIParent, nil)
+    end
+end
 
 local function setStanceBar()
+    local SBB = getStanceBarButton()
+    local SBC
+
     for i = 1, 10 do
         if _G["StanceButton" .. i] ~= nil then
             if i == 1 then
                 _G["StanceButton" .. i]:ClearAllPoints()
-	            _G["StanceButton" .. i]:SetPoint('BOTTOM', StanceBarFrame, 'BOTTOM', 0, 0)
+                _G["StanceButton" .. i]:SetPoint('BOTTOM', StanceBarFrame, 'BOTTOM', 0, 0)
             else
                 _G["StanceButton" .. i]:ClearAllPoints()
                 _G["StanceButton" .. i]:SetPoint('BOTTOM', _G['StanceButton' .. i - 1], 'TOP', 0, 2)
@@ -376,34 +398,39 @@ local function setStanceBar()
             gw_setActionButtonStyle('StanceButton' .. i, true, nil, true)
         end
     end
- 
-    CreateFrame('Button', 'GwStanceBarButton', UIParent, 'GwStanceBarButton')
-    GwStanceBarButton:SetPoint('BOTTOMRIGHT', ActionButton1, 'BOTTOMLEFT', -5, 0)
+
+    SBB:ClearAllPoints()
+    if GetSetting("STANCEBAR_POSITION") == "LEFT" then
+        SBB:SetPoint('BOTTOMRIGHT', ActionButton1, 'BOTTOMLEFT', -5, 0)
+    else
+        SBB:SetPoint('BOTTOMLEFT', ActionButton12, 'BOTTOMRIGHT', 5, 0)
+    end
 
     if GetNumShapeshiftForms() == 1 then
         StanceButton1:ClearAllPoints()
-        StanceButton1:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
+        if GetSetting("STANCEBAR_POSITION") == "LEFT" then
+            StanceButton1:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
+        else
+            StanceButton1:SetPoint('TOPLEFT', ActionButton12, 'TOPRIGHT', 5, 2)
+        end
     else
-        CreateFrame('Frame', 'GwStanceBarContainer', UIParent, nil)
-        GwStanceBarContainer:SetPoint('BOTTOM', GwStanceBarButton, 'TOP', 0, 0)
+        SBC = getStanceBarContainer()
+        SBC:ClearAllPoints()
+        SBC:SetPoint('BOTTOM', SBB, 'TOP', 0, 0)
         
-        StanceBarFrame:SetParent(GwStanceBarContainer)
-        StanceBarFrame:SetPoint('BOTTOMLEFT', GwStanceBarButton, 'TOPLEFT', 0, 0)
-        StanceBarFrame:SetPoint('BOTTOMRIGHT', GwStanceBarButton, 'TOPRIGHT', 0, 0)
+        StanceBarFrame:SetParent(SBC)
+        StanceBarFrame:ClearAllPoints()
+        StanceBarFrame:SetPoint('BOTTOMLEFT', SBB, 'TOPLEFT', 0, 0)
+        StanceBarFrame:SetPoint('BOTTOMRIGHT', SBB, 'TOPRIGHT', 0, 0)
     end
 
-    GwStanceBarButton:RegisterEvent('CHARACTER_POINTS_CHANGED')
-    GwStanceBarButton:RegisterEvent('PLAYER_ALIVE')
-    GwStanceBarButton:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-    GwStanceBarButton:SetScript('OnEvent', GW.StanceOnEvent)
-
     if GetNumShapeshiftForms() < 2 then
-        GwStanceBarButton:Hide()
+        SBB:Hide()
     else
-        GwStanceBarButton:Show()
-        GwStanceBarContainer:Hide()
-        GwStanceBarButton:SetFrameRef('GwStanceBarContainer', GwStanceBarContainer)
-        GwStanceBarButton:SetAttribute("_onclick", [=[
+        SBB:Show()
+        SBC:Hide()
+        SBB:SetFrameRef('GwStanceBarContainer', SBC)
+        SBB:SetAttribute("_onclick", [=[
         if self:GetFrameRef('GwStanceBarContainer'):IsVisible() then
             self:GetFrameRef('GwStanceBarContainer'):Hide()
         else
@@ -412,6 +439,7 @@ local function setStanceBar()
     ]=])
     end
 end
+GW.setStanceBar = setStanceBar
 
 local function StanceOnEvent(self, event, ...)
     local unit = ...
@@ -429,7 +457,7 @@ end
 GW.StanceOnEvent = StanceOnEvent
 
 function gw_setbagFrame()   
-      if not GetSetting('BAGS_ENABLED') then
+    if not GetSetting('BAGS_ENABLED') then
         CharacterBag0Slot:ClearAllPoints()
         CharacterBag1Slot:ClearAllPoints()
         CharacterBag2Slot:ClearAllPoints()
@@ -613,11 +641,11 @@ local function LoadActionBars()
     end
         
     SetCVar('alwaysShowActionBars', HIDE_ACTIONBARS_CVAR)
-              
+
     for k, v in pairs(GW_BARS) do
         v:SetParent(UIParent)
     end
-     
+
     for _, frame in pairs({
         'MultiBarLeft',
         'MultiBarRight',
@@ -635,7 +663,7 @@ local function LoadActionBars()
     }) do
         UIPARENT_MANAGED_FRAME_POSITIONS[frame] = nil
     end
- 
+
     updateMainBar()
     updateMultiBar('MultiBarBottomRight', 'MultiBarBottomRightButton')
     updateMultiBar('MultiBarBottomLeft', 'MultiBarBottomLeftButton')
@@ -658,7 +686,7 @@ local function LoadActionBars()
         self.gw_FadeShowing = false
         GW.UpdatePlayerBuffFrame()
     end)
- 
+
     RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
     RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
 
@@ -699,16 +727,16 @@ local function LoadActionBars()
         ]=]
     )
     RegisterStateDriver(fgw, "page", "[vehicleui] 1; [possessbar] 2; [overridebar] 3; [shapeshift] 4; [bar:2] 5; [bar:3] 6; [bar:4] 7; [bar:5] 8; [bar:6] 9; [bonusbar:1] 10; [bonusbar:2] 11; [bonusbar:3] 12; [bonusbar:4] 13; 14")
-     
+
     gw_hideBlizzardsActionbars()
     gwSetMicroButtons()
     setStanceBar()
     gw_setbagFrame()
     gw_setLeaveVehicleButton()
-     
+
     hooksecurefunc("ActionButton_UpdateHotkeys",  gwActionButton_UpdateHotkeys)
     hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
-         
+
     MainMenuBarArtFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
     MainMenuBarArtFrame:RegisterEvent('UPDATE_BONUS_ACTIONBAR')
     MainMenuBarArtFrame:HookScript('OnEvent', gwMainMenuOnEvent)

@@ -229,6 +229,8 @@ local function GWUseThisLocalization()
 	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "什麼是 '完美細緻'?\n\nGW2 UI 內建了一項設定叫做 '完美細緻模式'，擁有更清晰的材質和更佳的縮放大小處理，讓每一個像素都趨近完美，使用者介面看起來能夠完全符合你的期望。當然，完全可以依據你的喜好來開關這個設定。"
 	GwLocalization["WORLD_MARKER_DESC"] = "在團隊中時顯示世界標記工具。"
 	GwLocalization["FUTURE_SPELLS"] = "Future Spells"
+	GwLocalization["STANCEBAR_POSITION"] = "Position of the Stancebar"
+	GwLocalization["STANCEBAR_POSITION_DESC"] = "Set the position of the Stancebar (Left or Right from the main Actionbar)"
 	
 	--Composite
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])
