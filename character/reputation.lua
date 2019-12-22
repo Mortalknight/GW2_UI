@@ -53,8 +53,13 @@ local function getNewCategory(i)
             local _, max = self:GetMinMaxValues()
             local v = self:GetValue()
             local width = math.max(1, math.min(10, 10 * ((v / max) / 0.1)))
-            _G[BNAME .. "Spark"]:SetPoint("RIGHT", self, "LEFT", 201 * (v / max), 0)
-            _G[BNAME .. "Spark"]:SetWidth(width)
+            if v == max then
+                _G[BNAME .. "Spark"]:Hide()
+            else
+                _G[BNAME .. "Spark"]:SetPoint("RIGHT", self, "LEFT", 201 * (v / max), 0)
+                _G[BNAME .. "Spark"]:SetWidth(width)
+                _G[BNAME .. "Spark"]:Show()
+            end
         end
     )
 
@@ -562,8 +567,13 @@ local function status_SetValue(self)
     local _, max = self:GetMinMaxValues()
     local v = self:GetValue()
     local width = math.max(1, math.min(10, 10 * ((v / max) / 0.1)))
-    self.spark:SetPoint("RIGHT", self, "LEFT", self:GetWidth() * (v / max), 0)
-    self.spark:SetWidth(width)
+    if v == max then
+        self.spark:Hide()
+    else
+        self.spark:SetPoint("RIGHT", self, "LEFT", self:GetWidth() * (v / max), 0)
+        self.spark:SetWidth(width)
+        self.spark:Show()
+    end
 end
 GW.AddForProfiling("reputation", "status_SetValue", status_SetValue)
 
@@ -598,7 +608,7 @@ local function setupDetail(self)
     hooksecurefunc(self.StatusBar, "SetValue", status_SetValue)
     self.details:SetPoint("TOPLEFT", self.StatusBar, "BOTTOMLEFT", 0, -25)
     self.statusbarbg:SetPoint("TOPLEFT", self.StatusBar, "TOPLEFT", -2, 2)
-    self.statusbarbg:SetPoint("BOTTOMRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -2)
+    self.statusbarbg:SetPoint("BOTTOMRIGHT", self.StatusBar, "BOTTOMRIGHT", 2, -2)
     self.currentRank:SetPoint("TOPLEFT", self.StatusBar, "BOTTOMLEFT", 0, -5)
     self.nextRank:SetPoint("TOPRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -5)
 

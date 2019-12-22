@@ -1,9 +1,6 @@
 local _, GW = ...
 local FACTION_COLOR = GW.FACTION_COLOR
 local AddToAnimation = GW.AddToAnimation
-local GetTopCenterWidgetSetID = C_UIWidgetManager.GetTopCenterWidgetSetID
-local GetAllWidgetsBySetID = C_UIWidgetManager.GetAllWidgetsBySetID
-local GetIconAndTextWidgetVisualizationInfo = C_UIWidgetManager.GetIconAndTextWidgetVisualizationInfo
 local GetAreaPOIForMap = C_AreaPoiInfo.GetAreaPOIForMap
 local GetAreaPOIInfo = C_AreaPoiInfo.GetAreaPOIInfo
 local GetBestMapForUnit = C_Map.GetBestMapForUnit
@@ -15,57 +12,15 @@ local POIInfo = {}
 local activeBg = 0
 local activeMap
 
-local function parsePoints(id)
-    if not id then
-        return nil
-    end
-
-    local topid = GetTopCenterWidgetSetID()
-    if not topid then
-        return nil
-    end
-
-    local wset = GetAllWidgetsBySetID(topid)
-    if not wset then
-        return nil
-    end
-
-    local widget = wset[id]
-    if not widget or not widget.widgetID then
-        return nil
-    end
-
-    local info = C_UIWidgetManager.GetDoubleStatusBarWidgetVisualizationInfo(widget.widgetID)
-    if info then
-        if id == 1 then
-            return info.leftBarValue
-        else
-            return info.rightBarValue
-        end
-    end
-
-    local tvi = GetIconAndTextWidgetVisualizationInfo(widget.widgetID)
-    if not tvi or not tvi.text then
-        return nil
-    end
-
-    local points = nil
-    local text = tvi.text
-    if text ~= nil then
-        points = string.match(text, "(%d+)/")
-    end
-
-    return points
-end
-GW.AddForProfiling("battlegrounds", "parsePoints", parsePoints)
+local pointsAlliance = 0
+local pointsHorde = 0
 
 local function getPoints(widget)
     local widgetID = widget and widget.widgetID
     local info = C_UIWidgetManager.GetDoubleStatusBarWidgetVisualizationInfo(widgetID)
     if info then
-        return info.leftBarValue, info.rightBarValue
+        pointsAlliance, pointsHorde = info.leftBarValue, info.rightBarValue
     end
-    return 0, 0
 end
 
 local function capStateChanged(self)
@@ -93,7 +48,7 @@ local function iconOverrider(self, icon)
     self.icon:SetTexCoord(x1, x2, y1, y2)
 
     local iconState = icon - bgs[activeBg]["icons"][icon]["normalState"]
-
+    print(icon)
     if iconState == 0 then -- no cap
         self.IconBackground:SetVertexColor(1, 1, 1)
         self.icon:SetVertexColor(0, 0, 0)
@@ -126,7 +81,7 @@ local function setIcon(self, icon)
     end
 
     local x1, x2, y1, y2 = GetPOITextureCoords(icon)
-    self.icon:SetTexture("Interface\\Minimap\\POIIcons")
+    self.icon:SetTexture("Interface/Minimap/POIIcons")
     self.icon:SetTexCoord(x1, x2, y1, y2)
 end
 GW.AddForProfiling("battlegrounds", "setIcon", setIcon)
@@ -155,8 +110,11 @@ local function AB_onEvent(self, event, ...)
     if not activeMap then
         return
     end
-    local pointsAlliance = parsePoints(1)
-    local pointsHorde = parsePoints(2)
+
+    if event == "UPDATE_UI_WIDGET" then
+        getPoints(...)
+    end
+    
     if pointsAlliance == nil or pointsHorde == nil then
         return
     end
@@ -179,6 +137,11 @@ local function AB_onEvent(self, event, ...)
 
         GwBattleGroundScores.MID:SetWidth(36 * i)
     end
+    for i = #POIList + 1, 10 do
+        if _G["GwBattleLandMarkFrame" .. i] ~= nil then
+            _G["GwBattleLandMarkFrame" .. i]:Hide()
+        end
+    end
     for i = 1, 5 do
         if _G["AlwaysUpFrame" .. i] ~= nil then
             _G["AlwaysUpFrame" .. i]:Hide()
@@ -187,20 +150,15 @@ local function AB_onEvent(self, event, ...)
 end
 GW.AddForProfiling("battlegrounds", "AB_onEvent", AB_onEvent)
 
-local function SM_onEvent(self, event, ...)
+local function OnlyPoints_onEvent(self, event, ...)
     if not activeMap then
         return
     end
 
-    local pointsAlliance = 0
-    local pointsHorde = 0
-
     if event == "UPDATE_UI_WIDGET" then
-        pointsAlliance, pointsHorde = getPoints(...)
+        getPoints(...)
     end
-    --local pointsAlliance = parsePoints(1)
-    --local pointsHorde = parsePoints(2)
-    print(pointsAlliance, pointsHorde)
+
     if pointsAlliance == nil or pointsHorde == nil then
         return
     end
@@ -217,6 +175,8 @@ local function pvpHud_onEvent(self, event)
     GW.Debug("pvp instance: ", mapID)
     
     if bgs[mapID] ~= nil then
+        pointsAlliance = 0
+        pointsHorde = 0
         activeBg = mapID
         activeMap = GetBestMapForUnit("player")
         UIWidgetTopCenterContainerFrame:Hide()
@@ -236,7 +196,7 @@ local function pvpHud_onEvent(self, event)
         GwBattleGroundScores:RegisterEvent("LFG_READY_CHECK_DECLINED")
         GwBattleGroundScores:RegisterEvent("LFG_READY_CHECK_SHOW")
         GwBattleGroundScores:RegisterEvent("UPDATE_UI_WIDGET")
-
+        
         GwBattleGroundScores:Show()
     else
         GwBattleGroundScores:UnregisterAllEvents()
@@ -248,7 +208,7 @@ GW.AddForProfiling("battlegrounds", "pvpHud_onEvent", pvpHud_onEvent)
 
 local function LoadBattlegrounds()
     bgs = {
-        [529] = {
+        [529] = { --Arathi
             ["OnEvent"] = AB_onEvent,
             ["icons"] = {
                 [16] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  ["normalState"] = 16},
@@ -278,7 +238,7 @@ local function LoadBattlegrounds()
                 [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36}
             }
         },
-        [1681] = {
+        [1681] = { --Arathi
             ["OnEvent"] = AB_onEvent,
             ["icons"] = {
                 [16] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  ["normalState"] = 16},
@@ -308,8 +268,59 @@ local function LoadBattlegrounds()
                 [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36}
             }
         },
-        [727] = {
-            ["OnEvent"] = SM_onEvent
+        [2107] = { --Arathi
+            ["OnEvent"] = AB_onEvent,
+            ["icons"] = {
+                [16] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  ["normalState"] = 16},
+                [17] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  ["normalState"] = 16},
+                [18] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  ["normalState"] = 16},
+                [19] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  ["normalState"] = 16},
+                [20] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  ["normalState"] = 16},
+                [21] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  ["normalState"] = 21},
+                [22] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  ["normalState"] = 21},
+                [23] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  ["normalState"] = 21},
+                [24] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  ["normalState"] = 21},
+                [25] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  ["normalState"] = 21},
+                [26] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    ["normalState"] = 26},
+                [27] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    ["normalState"] = 26},
+                [28] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    ["normalState"] = 26},
+                [29] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    ["normalState"] = 26},
+                [30] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    ["normalState"] = 26},
+                [31] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  ["normalState"] = 31},
+                [32] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  ["normalState"] = 31},
+                [33] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  ["normalState"] = 31},
+                [34] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  ["normalState"] = 31},
+                [35] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  ["normalState"] = 31},
+                [36] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36},
+                [37] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36},
+                [38] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36},
+                [39] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36},
+                [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36}
+            }
+        },
+        [727] = { --SilvershardMines
+            ["OnEvent"] = OnlyPoints_onEvent
+        },
+        [1803] = { --SeethingShore
+            ["OnEvent"] = OnlyPoints_onEvent
+        }--,
+        --[726] = {
+            --["OnEvent"] = OnlyPoints_onEvent
+        --}
+        ,
+        [998] = { --TempleOfKotmogu
+            ["OnEvent"] = AB_onEvent,
+            ["icons"] = {}
+        },
+        [761] = { --Gilneas
+            ["OnEvent"] = AB_onEvent,
+            ["icons"] = {
+                [26] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,  ["normalState"] = 26},
+                [27] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,  ["normalState"] = 26},
+                [28] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,  ["normalState"] = 26},
+                [29] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,  ["normalState"] = 26},
+                [30] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,  ["normalState"] = 26}
+            }
         }
     }
 
