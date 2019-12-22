@@ -4,7 +4,7 @@ Author: d87
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicCasterino", 28
+local MAJOR, MINOR = "LibClassicCasterino", 29
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -90,7 +90,14 @@ local makeCastUID = function(guid, spellName)
 end
 
 local function CastStart(srcGUID, castType, spellName, spellID, overrideCastTime, isSrcEnemyPlayer )
+    -- This cast time can't be used reliably because it's changing depending on player's own haste
     local _, _, icon, castTime = GetSpellInfo(spellID)
+    if castType == "CAST" then
+        local knownCastDuration = classCasts[spellID]
+        if knownCastDuration then
+            castTime = knownCastDuration*1000
+        end
+    end
     if castType == "CHANNEL" then
         local channelDuration = classChannelsByAura[spellID] or classChannelsByCast[spellID]
         castTime = channelDuration*1000

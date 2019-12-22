@@ -1,5 +1,7 @@
 local _, GW = ...
 local SetSetting = GW.SetSetting
+local GetSetting = GW.GetSetting
+local SortBagsRightToLeft
 
 CreateFrame('GameTooltip', 'SortBagsTooltip', nil, 'GameTooltipTemplate')
 
@@ -7,6 +9,7 @@ local CONTAINERS
 
 local function SortBags()
 	CONTAINERS = {0, 1, 2, 3, 4}
+	SortBagsRightToLeft = GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
 	for i = #CONTAINERS, 1, -1 do
 		if GetBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
 			tremove(CONTAINERS, i)
@@ -18,6 +21,7 @@ GW.SortBags = SortBags
 
 local function SortBankBags()
 	CONTAINERS = {-1, 5, 6, 7, 8, 9, 10}
+	SortBagsRightToLeft = GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
 	for i = #CONTAINERS, 1, -1 do
 		if GetBankBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
 			tremove(CONTAINERS, i)
@@ -28,13 +32,12 @@ end
 GW.SortBankBags = SortBankBags
 
 local function GetSortBagsRightToLeft(enabled)
-	return SortBagsRightToLeft
+	return GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
 end
 GW.GetSortBagsRightToLeft = GetSortBagsRightToLeft
 
 local function SetSortBagsRightToLeft(enabled)
 	SetSetting("SORT_BAGS_RIGHT_TO_LEFT", enabled)
-	SortBagsRightToLeft = enabled and 1 or nil
 end
 GW.SetSortBagsRightToLeft = SetSortBagsRightToLeft
 

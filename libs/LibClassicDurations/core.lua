@@ -19,7 +19,7 @@ Usage example 1:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 42
+local MAJOR, MINOR = "LibClassicDurations", 43
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -67,6 +67,7 @@ local INFINITY = math.huge
 local PURGE_INTERVAL = 900
 local PURGE_THRESHOLD = 1800
 local UNKNOWN_AURA_DURATION = 3600 -- 60m
+local BUFF_CACHE_EXPIRATION_TIME = 40
 
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 local UnitGUID = UnitGUID
@@ -674,7 +675,7 @@ local function RegenerateBuffList(dstGUID)
     end
 
     buffCache[dstGUID] = buffs
-    buffCacheValid[dstGUID] = true
+    buffCacheValid[dstGUID] = GetTime() + BUFF_CACHE_EXPIRATION_TIME -- Expiration timestamp
 end
 
 local FillInDuration = function(unit, buffName, icon, count, debuffType, duration, expirationTime, caster, canStealOrPurge, nps, spellId, ...)
@@ -692,7 +693,8 @@ function lib.UnitAuraDirect(unit, index, filter)
     if enableEnemyBuffTracking and filter == "HELPFUL" and not UnitIsFriend("player", unit) and not UnitAura(unit, 1, filter) then
         local unitGUID = UnitGUID(unit)
         if not unitGUID then return end
-        if not buffCacheValid[unitGUID] then
+        local isValid = buffCacheValid[unitGUID]
+        if not isValid or isValid < GetTime() then
             RegenerateBuffList(unitGUID)
         end
 

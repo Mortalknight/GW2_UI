@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 49
+local Type, Version = "SpellTable", 50
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -489,7 +489,8 @@ Spell({ 1943, 8639, 8640, 11273, 11274, 11275 }, { stacking = true,
         end
     end
 }) -- Rupture
--- SnD -- player-only, can skip
+
+Spell({ 5171, 6774 }, { duration = nil, type = "BUFF" }) -- SnD, to prevent fallback to incorrect db values
 
 Spell({ 2983, 8696, 11305 }, { duration = 15, type = "BUFF" }) -- Sprint
 Spell( 5277 ,{ duration = 15, type = "BUFF" }) -- Evasion
