@@ -109,97 +109,52 @@ local function SetItemButtonQualityForBags(button, quality, itemIDOrLink)
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
-local function hookSetItemButtonQuality()
-    local iname
-    local ContainerTyp
-    --Bagframe
-    for bag = BACKPACK_CONTAINER, (NUM_BAG_SLOTS + NUM_BANKBAGSLOTS) do
-        local b = getContainerFrame(bag)
-        local num_slots = GetContainerNumSlots(bag)
-        if b then
-            for slot = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
-                iname = b:GetName() .. "Item"
-                local item = _G[iname .. slot]
-                local btnID = item:GetID()
-                local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, btnID)
-                if item then
-                    item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-                    item.IconBorder:SetAlpha(0.9)
-                    if quality then        
-                        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-                            item.IconBorder:Show()
-                            item.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
-                        else
-                            item.IconBorder:Hide()
-                        end
-                    else
-                        item.IconBorder:Hide()
-                    end
-                    if itemID ~= nil then
-                        local isQuestItem = select(6, GetItemInfo(itemID))
-                        if isQuestItem == BATTLE_PET_SOURCE_2 then 
-                            item.IconBorder:Show()
-                            item.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
-                        end
-                    end
-                    --SetBorder for profession bags
-                    local bagItemLink = GetInventoryItemLink("player", CharacterBag0Slot:GetID() + bag - 1)
-                    if bagItemLink ~= nil and select(9, GetItemInfo(bagItemLink)) == "INVTYPE_BAG" then
-                        ContainerTyp = GetItemFamily(bagItemLink)
-                        if ContainerTyp > 0 then
-                            item.IconBorder:Show()
-                            item.IconBorder:SetVertexColor(BAG_TYP_COLORS[ContainerTyp].r, BAG_TYP_COLORS[ContainerTyp].g, BAG_TYP_COLORS[ContainerTyp].b)
-                        end
-                    end
-                end
-            end
-        end
+local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
+    local container = button:GetParent():GetID()
+    local isQuestItem = nil
+    
+    if itemIDOrLink then
+        isQuestItem = select(6, GetItemInfo(itemIDOrLink))
     end
-    --BankFrame
-    iname = "BankFrameItem"
-    for slot = 1, NUM_BANKGENERIC_SLOTS do
-        local item = _G[iname .. slot]
-        local btnID = item:GetID()
-        local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(BANK_CONTAINER, btnID)
-        if item then
-            item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-            item.IconBorder:SetAlpha(0.9)
-            if quality then           
-                if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-                    item.IconBorder:Show()
-                    item.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
-                else
-                    item.IconBorder:Hide()
-                end
-            else
-                item.IconBorder:Hide()
-            end
-            if itemID ~= nil then
-                local isQuestItem = select(6, GetItemInfo(itemID))
-                if isQuestItem == BATTLE_PET_SOURCE_2 then 
-                    item.IconBorder:Show()
-                    item.IconBorder:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border')
-                end
-            end
-        end
+
+	button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    button.IconOverlay:Hide()
+    button.IconBorder:SetAlpha(0.9)
+
+    --items
+	if quality then
+		if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+			button.IconBorder:Show()
+			button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+		else
+			button.IconBorder:Hide()
+		end
+	else
+		button.IconBorder:Hide()
     end
+
     --Keyring
-    if IsBagOpen(KEYRING_CONTAINER) then
-        local b = getContainerFrame(KEYRING_CONTAINER)
-        local num_slots = GetContainerNumSlots(KEYRING_CONTAINER)
-        if b then
-            for slot = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
-                iname = b:GetName() .. "Item"
-                local item = _G[iname .. slot]
-                item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-                item.IconBorder:SetAlpha(0.9)
-                item.IconBorder:Show()
-                item.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
-            end
+    if container == KEYRING_CONTAINER then
+        button.IconBorder:Show()
+        button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
+    end
+
+    --Quest Items
+    if isQuestItem == BATTLE_PET_SOURCE_2 then 
+        button.IconBorder:Show()
+        button.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
+    end
+
+    --Professionbags
+    local bagItemLink = GetInventoryItemLink("player", CharacterBag0Slot:GetID() + container - 1)
+    if bagItemLink ~= nil and select(9, GetItemInfo(bagItemLink)) == "INVTYPE_BAG" then
+        local ContainerTyp = GetItemFamily(bagItemLink)
+        if ContainerTyp > 0 then
+            button.IconBorder:Show()
+            button.IconBorder:SetVertexColor(BAG_TYP_COLORS[ContainerTyp].r, BAG_TYP_COLORS[ContainerTyp].g, BAG_TYP_COLORS[ContainerTyp].b)
         end
     end
 end
-GW.SetItemButtonQuality = SetItemButtonQuality
 
 local bag_resize
 local bank_resize

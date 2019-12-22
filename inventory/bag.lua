@@ -600,7 +600,7 @@ local function LoadBag(helpers)
         dd.sortOrder:HookScript(
             "OnClick",
             function(self)
-                if GW.GetSortBagsRightToLeft() then
+                if GetSetting("SORT_BAGS_RIGHT_TO_LEFT") then
                     dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_FIRST"])
                     GW.SetSortBagsRightToLeft(false)
                 else
@@ -632,7 +632,7 @@ local function LoadBag(helpers)
         else
             dd.compactBags:SetText(GwLocalization["EXPAND_ICONS"])
         end
-        if GW.GetSortBagsRightToLeft() then
+        if GetSetting("SORT_BAGS_RIGHT_TO_LEFT") then
             dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_LAST"])
         else
             dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_FIRST"])

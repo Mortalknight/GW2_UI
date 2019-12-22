@@ -166,7 +166,7 @@ local function createBagBar(f)
     end
 
     -- create a fake bag frame for the base bank slots
-    local b = CreateFrame("Button", nil, f, "GwBankBagTemplate")
+    local b = CreateFrame("Button", nil, f, "GwBankBaseBagTemplate")
     b:SetID(0)
     b.GetBagID = function()
         return BANK_CONTAINER
@@ -174,10 +174,10 @@ local function createBagBar(f)
     inv.reskinBagBar(b)
     local norm = b:GetNormalTexture()
     norm:SetVertexColor(1, 1, 1, 0.75)
-    GW.SetItemButtonQuality(b, 1, nil)
-    b:SetScript("OnEnter", nil)
+    GW.SetItemButtonQualityForBags(b, 1, nil)
     EnableTooltip(b, BANK, "ANCHOR_RIGHT", 0)
     b.icon:SetTexture(133633)
+    b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b:RegisterForClicks("LeftButtonUp")
     b:SetScript("OnClick", CloseBankFrame)
     f.bags[0] = b

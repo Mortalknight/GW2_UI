@@ -1,4 +1,5 @@
 local _, GW = ...
+local SetSetting = GW.SetSetting
 
 CreateFrame('GameTooltip', 'SortBagsTooltip', nil, 'GameTooltipTemplate')
 
@@ -32,6 +33,7 @@ end
 GW.GetSortBagsRightToLeft = GetSortBagsRightToLeft
 
 local function SetSortBagsRightToLeft(enabled)
+	SetSetting("SORT_BAGS_RIGHT_TO_LEFT", enabled)
 	SortBagsRightToLeft = enabled and 1 or nil
 end
 GW.SetSortBagsRightToLeft = SetSortBagsRightToLeft
