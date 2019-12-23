@@ -29,6 +29,9 @@ local STATS_ICONS = {
     MOVESPEED = {l = 0.5, r = 0.75, t = 0.75, b = 1}
 }
 
+local Slots = {"HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot"}
+local SlotsFriendly = {INVTYPE_HEAD, INVTYPE_SHOULDER, INVTYPE_CHEST, INVTYPE_WRIST, INVTYPE_HAND, INVTYPE_WAIST, INVTYPE_LEGS, INVTYPE_FEET, INVTYPE_WEAPONMAINHAND, INVTYPE_WEAPONOFFHAND}
+
 -- forward function defs
 local getBagSlotFrame
 
@@ -358,6 +361,67 @@ local function itemSlot_OnLoad(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnLoad", itemSlot_OnLoad)
 
+local function DurabilityTooltip(self)
+    local duravaltotal, duramaxtotal, durapercent = 0, 0, 0
+    local id
+    local valcol, id, duraval, duramax
+    local validItems = false
+
+    -- Create layout
+    GameTooltip:AddLine("|cffffffff")
+    GameTooltip:AddLine("|cffffffff")
+    GameTooltip:AddLine("|cffffffff")
+    _G["GameTooltipTextLeft1"]:SetText("|cffffffff"); _G["GameTooltipTextRight1"]:SetText("|cffffffff")
+    _G["GameTooltipTextLeft2"]:SetText("|cffffffff"); _G["GameTooltipTextRight2"]:SetText("|cffffffff")
+    _G["GameTooltipTextLeft3"]:SetText("|cffffffff"); _G["GameTooltipTextRight3"]:SetText("|cffffffff")
+
+    for k, slotName in ipairs(Slots) do
+        if GetInventorySlotInfo(slotName) then
+            id = GetInventorySlotInfo(slotName)
+            duraval, duramax = GetInventoryItemDurability(id)
+            if duraval ~= nil then
+                -- At least one item has durability stat
+                validItems = true
+                
+                -- Add to tooltip
+                durapercent = tonumber(GW.RoundDec(duraval / duramax * 100))
+                valcol = (durapercent >= 80 and "|cff00FF00") or (durapercent >= 60 and "|cff99FF00") or (durapercent >= 40 and "|cffFFFF00") or (durapercent >= 20 and "|cffFF9900") or (durapercent >= 0 and "|cffFF2000") or ("|cffFFFFFF")
+                _G["GameTooltipTextLeft1"]:SetText(DURABILITY)
+                _G["GameTooltipTextLeft2"]:SetText(_G["GameTooltipTextLeft2"]:GetText() .. SlotsFriendly[k] .. "|n")
+                _G["GameTooltipTextRight2"]:SetText(_G["GameTooltipTextRight2"]:GetText() ..  valcol .. durapercent .. "%" .. "|n")
+
+                duravaltotal = duravaltotal + duraval
+				duramaxtotal = duramaxtotal + duramax
+            end
+        end
+    end
+    if duravaltotal > 0 and duramaxtotal > 0 then
+        durapercent = duravaltotal / duramaxtotal * 100
+    else
+        durapercent = 0
+    end
+    if validItems == true then
+        -- Show overall durability in the tooltip
+        if durapercent >= 80 then valcol = "|cff00FF00"	elseif durapercent >= 60 then valcol = "|cff99FF00"	elseif durapercent >= 40 then valcol = "|cffFFFF00"	elseif durapercent >= 20 then valcol = "|cffFF9900"	elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
+        _G["GameTooltipTextLeft3"]:SetText(TOTAL .. " " .. valcol)
+        _G["GameTooltipTextRight3"]:SetText(valcol .. GW.RoundDec(durapercent) .. "%")
+
+        -- Show lines of the tooltip
+        GameTooltipTextLeft1:Show(); GameTooltipTextRight1:Show()
+        GameTooltipTextLeft2:Show(); GameTooltipTextRight2:Show()
+        GameTooltipTextLeft3:Show(); GameTooltipTextRight3:Show()
+        GameTooltipTextRight2:SetJustifyH("RIGHT")
+        GameTooltipTextRight3:SetJustifyH("RIGHT")
+        GameTooltip:Show()
+    else
+        -- No items have durability stat
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine("" .. DURABILITY, 1, 0.85, 0)
+        GameTooltip:Show()
+    end
+end
+GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
+
 local function collectDurability(self)
     local completeDurability = 0
     local completeDurabilityNumItems = 0
@@ -369,8 +433,7 @@ local function collectDurability(self)
             completeDurabilityNumItems = completeDurabilityNumItems + 1
         end
     end
-    local durability = GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%"
-    self.Value:SetText(durability)
+    self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
 end
 GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
 
@@ -515,8 +578,7 @@ local function stat_OnEnter(self)
         return
     elseif self.stat == "DURABILITY" then
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine(DURABILITY)
-        GameTooltip:Show()
+        DurabilityTooltip()
         return
     end
     if (not self.tooltip) then
