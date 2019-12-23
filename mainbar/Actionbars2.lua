@@ -686,6 +686,18 @@ local function LoadActionBars()
         self.gw_FadeShowing = false
         GW.UpdatePlayerBuffFrame()
     end)
+    MultiBarLeft:HookScript('OnShow', function (self, event)
+        self.gw_FadeShowing = true
+    end)
+    MultiBarLeft:HookScript('OnHide', function (self, event)
+        self.gw_FadeShowing = false
+    end)
+    MultiBarRight:HookScript('OnShow', function (self, event)
+        self.gw_FadeShowing = true
+    end)
+    MultiBarRight:HookScript('OnHide', function (self, event)
+        self.gw_FadeShowing = false
+    end)
 
     RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
     RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')

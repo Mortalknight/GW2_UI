@@ -307,9 +307,11 @@ local function getDamage(unit, prefix)
     if offhandSpeed then
         tooltip2 = tooltip2 .."\n"
         tooltip2 = tooltip2 .. HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_WEAPONOFFHAND .. FONT_COLOR_CODE_CLOSE .. "\n"
-        tooltip2 = tooltip2 .. ATTACK_SPEED_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", speed) .. FONT_COLOR_CODE_CLOSE .. "\n"
+        tooltip2 = tooltip2 .. ATTACK_SPEED_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", offhandSpeed) .. FONT_COLOR_CODE_CLOSE .. "\n"
         tooltip2 = tooltip2 .. DAMAGE_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. offhandDamageTooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
-        tooltip2 = tooltip2 .. DAMAGE_PER_SECOND .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", offhandDamagePerSecond) .. FONT_COLOR_CODE_CLOSE .. "\n"
+		tooltip2 = tooltip2 .. DAMAGE_PER_SECOND .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", offhandDamagePerSecond) .. FONT_COLOR_CODE_CLOSE .. "\n"
+		tooltip2 = tooltip2 .."\n"
+		tooltip2 = tooltip2 .. TOTAL .. " " .. DAMAGE .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", (damagePerSecond + offhandDamagePerSecond)) .. FONT_COLOR_CODE_CLOSE
     end
 
     return stat, tooltip, tooltip2

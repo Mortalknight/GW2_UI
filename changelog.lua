@@ -174,9 +174,10 @@ GW_CHANGELOGS = "- Fix lua error in BGs for level 60 chars\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.8\n\n" .. GW_CHANGELOGS
 
 --VERSION 1.6.9
+GW_CHANGELOGS = "- Added 'Total DPS' into the Damage stats tooltip\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Fix short freeze when open bag or bank\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added option the set the Stancebar to the left or right of the Actionbar\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "   - Also for bags the option to sort to first or last bag (cogwheel at the bag)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Also for bags the option to sort to first or last bag (cogwheel at the bag; counts for bag and bank)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added sorting to bags and bank\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.9\n\n" .. GW_CHANGELOGS
 
