@@ -44,7 +44,7 @@ local function setCompass(prepFrame)
     compassData["X"] = 0
     compassData["Y"] = 0
     compassData["COLOR"] = TRACKER_TYPE_COLOR["ARENA"]
-   
+
     AddTrackerNotification(compassData)
 end
 
@@ -188,7 +188,7 @@ local function arenaFrame_OnEvent(self, event, unit)
         return
     end     
     
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "PLAYER_ENTERING_BATTLEGROUND" then 
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "PLAYER_ENTERING_BATTLEGROUND" or event == "ARENA_OPPONENT_UPDATE" then 
         updateArena_Health(self)
         updateArena_Power(self)
         updateArena_Name(self, inBG, isArena)
@@ -203,7 +203,7 @@ local function arenaPrepFrame_OnEvent(self, event)
         --Hide Blizzard frames
         for i = 1, 5 do
             if _G["ArenaPrepFrame" .. i] ~= nil then
-                 _G["ArenaPrepFrame" .. i]:SetAlpha(0)
+                _G["ArenaPrepFrame" .. i]:SetAlpha(0)
                 _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
             end
         end
@@ -271,6 +271,7 @@ local function registerFrame(i)
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
     targetF:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    targetF:RegisterEvent("ARENA_OPPONENT_UPDATE")
 
     targetF:SetScript(
         "OnShow",
@@ -359,7 +360,7 @@ local function registerPrepFrame(i)
             --Hide Blizzard frames
             for i = 1, 5 do
                 if _G["ArenaPrepFrame" .. i] ~= nil then
-                     _G["ArenaPrepFrame" .. i]:SetAlpha(0)
+                    _G["ArenaPrepFrame" .. i]:SetAlpha(0)
                     _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
                 end
             end
@@ -376,10 +377,12 @@ local function LoadArenaFrame()
         if _G["ArenaEnemyFrame" .. i] ~= nil then
             _G["ArenaEnemyFrame" .. i]:Hide()
             _G["ArenaEnemyFrame" .. i]:SetScript("OnEvent", nil)
+            _G["ArenaEnemyFrame" .. i]:SetScript("OnShow", function(self) self:Hide() end)
         end
         if _G["ArenaEnemyFrame" .. i .. "PetFrame"] ~= nil then
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Hide()
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
+            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnShow", nil)
         end
         if _G["ArenaPrepFrame" .. i] ~= nil then
             _G["ArenaPrepFrame" .. i]:Hide()

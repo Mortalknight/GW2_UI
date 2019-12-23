@@ -818,7 +818,7 @@ local function LoadSettings()
 
     GwSettingsActionbarOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsActionbarOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    GwSettingsActionbarOptionsHeader:SetText(ACTIONBAR_LABEL)
+    GwSettingsActionbarOptionsHeader:SetText(BINDING_HEADER_ACTIONBAR)
     GwSettingsActionbarOptionsSub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsActionbarOptionsSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsActionbarOptionsSub:SetText(ACTIONBARS_SUBTEXT)
@@ -1013,6 +1013,12 @@ local function LoadSettings()
         "USE_TALENT_WINDOW",
         "GwSettingsModuleOption"
     )
+    addOption(
+        BATTLEGROUND,
+        nil,
+        "USE_BATTLEGROUND_HUD",
+        "GwSettingsModuleOption"
+    )
 
     createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
@@ -1125,7 +1131,7 @@ local function LoadSettings()
         "GwSettingsFocusOptions"
     )
 
-    createCat(ACTIONBAR_LABEL, nil, "GwSettingsActionbarOptions", 0)
+    createCat(BINDING_HEADER_ACTIONBAR, nil, "GwSettingsActionbarOptions", 0)
 
     addOption(
         GwLocalization["ACTION_BAR_FADE"],
