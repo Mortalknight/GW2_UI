@@ -81,7 +81,7 @@ local function getNearestQuestPOI(currentMapID)
     end
 
     local posX, posY = posTable:GetXY()
-    local closest = nil
+    local closest = false
     for i = 1, numQuests do
         local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI, _ = GetQuestLogTitle(i)
         if not isHeader and not isComplete and hasLocalPOI then
