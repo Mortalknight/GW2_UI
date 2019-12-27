@@ -953,6 +953,7 @@ local function barChange_OnEvent(self, event, ...)
             f:Hide()
         end
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+        f.gwPlayerForm = GetShapeshiftFormID()
         selectType(f)
     end
 end

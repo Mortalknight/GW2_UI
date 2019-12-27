@@ -9,6 +9,9 @@ NEW
 MISCELLANEOUS
     - Settings: Checkboxes now also toggle if click on the text
 
+FIXES
+    - Classpowerbar now changes if spec changed
+
 
 5.1.14
 

@@ -455,6 +455,8 @@ GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.14\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.1.15
+GW_CHANGELOGS = "   - Classpowerbar now changes if spec changed\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Settings: Checkboxes now also toggle if click on the text\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nMISCELLANEOUS\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Enhanced durability icon at hero panel\n" .. GW_CHANGELOGS
