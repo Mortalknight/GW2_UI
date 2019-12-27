@@ -1,7 +1,7 @@
 ## Interface: 11303
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
-## OptionalDeps: MoveAnything, RealMobHealth, TitanClassic
+## OptionalDeps: MoveAnything, TitanClassic, LibClassicDurations, Clique, RealMobHealth, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
 
 ## Author: deadend06
 
