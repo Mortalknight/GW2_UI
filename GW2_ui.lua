@@ -11,6 +11,11 @@ local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
+if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then 
+    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r You have installed GW2_UI classic version. Please install the retail version to use GW2_UI.")
+    return
+end
+
 local loaded = false
 local forcedMABags = false
 

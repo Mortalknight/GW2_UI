@@ -11,6 +11,7 @@ MISCELLANEOUS
 
 FIXES
     - Classpowerbar now changes if spec changed
+    - If minimap is on top now all icons on the minimap are accessable
 
 
 5.1.14

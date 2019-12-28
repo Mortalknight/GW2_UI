@@ -455,6 +455,7 @@ GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.14\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.1.15
+GW_CHANGELOGS = "   - If minimap is on top now all icons on the minimap are accessable\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Classpowerbar now changes if spec changed\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Settings: Checkboxes now also toggle if click on the text\n" .. GW_CHANGELOGS
