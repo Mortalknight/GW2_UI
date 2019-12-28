@@ -4,6 +4,8 @@
 - Added option the set the Stancebar to the left or right of the Actionbar
 - Fix short freeze when open bag or bank
 - Added "Total DPS" into the Damage stats tooltip
+- If minimap is on top now all icons on the minimap are accessable
+- Settings: Checkboxes now also toggle if click on the text
 
 1.6.8
 - Fix lua error in BG's for level 60 chars

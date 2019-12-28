@@ -19,7 +19,7 @@ Usage example 1:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 43
+local MAJOR, MINOR = "LibClassicDurations", 44
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -44,8 +44,7 @@ local DRInfo = lib.DRInfo
 lib.buffCache = lib.buffCache or {}
 local buffCache = lib.buffCache
 
-lib.buffCacheValid = lib.buffCacheValid or {}
-local buffCacheValid = lib.buffCacheValid
+local buffCacheValid = {}
 
 lib.nameplateUnitMap = lib.nameplateUnitMap or {}
 local nameplateUnitMap = lib.nameplateUnitMap

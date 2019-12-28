@@ -112,22 +112,27 @@ local function SetMinimapPosition()
         mc_x = -320
     end
 
+    MinimapCluster:ClearAllPoints()
     Minimap:ClearAllPoints()
     Minimap:SetParent(UIParent)
+    MinimapBackdrop:Hide()
+    MinimapZoneTextButton:Hide()
+
+    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
 
     if mapPos == "TOP" then
         if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 130 - mapSize)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -(mapSize + 60))
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
         else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 80 - mapSize)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -(mapSize + 110))
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -50)
         end
     else
         if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 187)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 0)
         else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 142)
+            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -50)
         end
         if GW.GetSetting("XPBAR_ENABLED") then
             Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)

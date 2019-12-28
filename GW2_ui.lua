@@ -9,7 +9,12 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = 'GW2_UI_Classic v1.6.9'
+GW.VERSION_STRING = "GW2_UI_Classic @project-version@"
+
+if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then 
+    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
+    return
+end
 
 local loaded = false
 local hudScale = 1
