@@ -115,7 +115,6 @@ local function SetMinimapPosition()
     MinimapCluster:ClearAllPoints()
     Minimap:ClearAllPoints()
     Minimap:SetParent(UIParent)
-    MinimapBackdrop:Hide()
     MinimapZoneTextButton:Hide()
 
     MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
