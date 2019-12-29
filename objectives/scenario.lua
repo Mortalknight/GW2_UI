@@ -104,6 +104,7 @@ local function updateCurrentScenario()
     )
 
     GwScenarioBlock.height = 1
+    GwQuestTrackerTimer.height = 1
 
     if GwQuestTrackerTimer:IsShown() then
         GwScenarioBlock.height = GwQuestTrackerTimer.height
@@ -174,8 +175,7 @@ local function updateCurrentScenario()
     UpdateQuestItem(GwScenarioItemButton, questLogIndex)
 
     for criteriaIndex = 1, numCriteria do
-        local criteriaString, _, _, quantity, totalQuantity, _, _, _, _, _, _, _, isWeightedProgress =
-            C_Scenario.GetCriteriaInfo(criteriaIndex)
+        local criteriaString, _, _, quantity, totalQuantity, _, _, _, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
         local objectiveType = "progressbar"
         if not isWeightedProgress then
             objectiveType = "monster"
@@ -214,9 +214,11 @@ local function updateCurrentScenario()
             "progressbar",
             iqty / imax * 100
         )
+        numCriteria = numCriteria + 2
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps()
+    local numCriteriaPrev = numCriteria
     for k, v in pairs(bonusSteps) do
         bonusStepIndex = v
         --[[
@@ -224,33 +226,41 @@ local function updateCurrentScenario()
             C_Scenario.GetInfo(bonusStepIndex)
         --]]
         local _, _, numCriteria = C_Scenario.GetStepInfo(bonusStepIndex)
+
         for criteriaIndex = 1, numCriteria do
-            if criteriaIndex == 1 then
-                addObjectiveBlock(
-                    GwScenarioBlock,
-                    ParseCriteria(quantity, totalQuantity, criteriaString),
-                    false,
-                    criteriaIndex,
-                    objectiveType,
-                    quantity
-                )
-            end
-
-            local criteriaString, _, _, quantity, totalQuantity, _ =
-                C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex)
-
+            local criteriaString, criteriaType, criteriaCompleted, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, criteriaFailed = C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex)
             local objectiveType = "progressbar"
             if not isWeightedProgress then
                 objectiveType = "monster"
             end
-            addObjectiveBlock(
-                GwScenarioBlock,
-                ParseCriteria(quantity, totalQuantity, criteriaString),
-                false,
-                criteriaIndex,
-                objectiveType,
-                quantity
-            )
+            -- timer bar
+            if (duration > 0 and elapsed <= duration and not (criteriaFailed or criteriaCompleted)) then
+                GwQuestTrackerTimer:SetScript(
+                    "OnUpdate",
+                    function()
+                        local elapsed = select(11, C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex))
+                        if elapsed and elapsed > 0 then
+                            GwQuestTrackerTimer.timer:SetValue(1 - (elapsed / duration))
+                            GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(duration - elapsed))
+                        end
+                    end
+                )
+                GwQuestTrackerTimer:Show()
+                GwQuestTrackerTimer.timer:Show()
+                GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+            else
+                GwQuestTrackerTimer.timer:Hide()
+                GwQuestTrackerTimer:SetScript("OnUpdate", nil)
+
+                addObjectiveBlock(
+                    GwScenarioBlock,
+                    ParseCriteria(quantity, totalQuantity, criteriaString),
+                    false,
+                    numCriteriaPrev + criteriaIndex,
+                    objectiveType,
+                    quantity
+                )
+            end
         end
     end
 
@@ -268,12 +278,10 @@ local function updateCurrentScenario()
     if _G["GwAffixFrame"]:IsShown() then
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
-    if GwQuestTrackerTimer.timer:IsShown() then
-        intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
-    end
 
+    GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
-    GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
+    GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height + GwQuestTrackerTimer.height)
 end
 GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 
@@ -399,9 +407,7 @@ local function scenarioTimerUpdate(...)
                     function()
                         local _, elapsedTime, _ = GetWorldElapsedTime(timerID)
                         GwQuestTrackerTimer.timer:SetValue(1 - (elapsedTime / duration))
-                        GwQuestTrackerTimer.timerString:SetText(
-                            getTimeStringFromSeconds(duration - elapsedTime)
-                        )
+                        GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(duration - elapsedTime))
                     end
                 )
                 GwQuestTrackerTimer.timer:Show()
@@ -444,10 +450,7 @@ local function scenarioTimerOnEvent(self, event, ...)
         GwQuestTrackerTimer.score.scoreString:SetText(score)
         GwQuestTrackerTimer.score:Show()
         GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
-    elseif
-        (event == "CHALLENGE_MODE_START" or event == "CHALLENGE_MODE_COMPLETED" or event == "CHALLENGE_MODE_MAPS_UPDATE" or
-            event == "ZONE_CHANGED")
-     then
+    elseif (event == "CHALLENGE_MODE_START" or event == "CHALLENGE_MODE_COMPLETED" or event == "CHALLENGE_MODE_MAPS_UPDATE" or event == "ZONE_CHANGED") then
         scenarioTimerUpdate(GetWorldElapsedTimers())
     elseif event == "CHALLENGE_MODE_DEATH_COUNT_UPDATED" then
         scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
@@ -506,7 +509,6 @@ local function LoadScenarioFrame()
     timerBlock.score:SetPoint("TOPLEFT", timerBlock.timer, "BOTTOMLEFT", 0, 0)
     timerBlock.score.scoreString:SetFont(UNIT_NAME_FONT, 12)
     timerBlock.score.scorelabel:SetFont(UNIT_NAME_FONT, 12)
-    timerBlock.timer:ClearAllPoints()
     timerBlock.timer:SetScript(
         "OnShow",
         function(self)

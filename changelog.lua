@@ -464,6 +464,7 @@ GW_CHANGELOGS = "   - Enhanced durability icon at hero panel\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added more Battleground HUD's\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added option the set the Stancebar to the left or right of the Actionbar\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added aggroborder to partyframes\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added timer to scenarios like Chromie\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.15\n\n" .. GW_CHANGELOGS
 

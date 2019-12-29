@@ -5,6 +5,7 @@ NEW
     - Added option the set the Stancebar to the left or right of the Actionbar
     - Added more Battleground HUD's
     - Enhanced durability icon at hero panel 
+    - Added timer to scenarios like Chromie
 
 MISCELLANEOUS
     - Settings: Checkboxes now also toggle if click on the text
