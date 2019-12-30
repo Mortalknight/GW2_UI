@@ -271,7 +271,7 @@
                     </Layer>
                 </Layers>
             </Button>
-             <Button name="$parentJoinGroup" hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="joingroup">
+            <Button name="$parentJoinGroup" hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="joingroup">
                 <Size x="25" y="25"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="" y="-25"></Anchor>

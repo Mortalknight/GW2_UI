@@ -78,6 +78,7 @@ local function updateCurrentScenario()
     GW.RemoveTrackerNotificationOfType("SCENARIO")
 
     local compassData = {}
+    local showTimerAsBonus = false
 
     compassData["TYPE"] = "SCENARIO"
     compassData["TITLE"] = "Unknown Scenario"
@@ -104,7 +105,6 @@ local function updateCurrentScenario()
     )
 
     GwScenarioBlock.height = 1
-    GwQuestTrackerTimer.height = 1
 
     if GwQuestTrackerTimer:IsShown() then
         GwScenarioBlock.height = GwQuestTrackerTimer.height
@@ -219,6 +219,8 @@ local function updateCurrentScenario()
 
     local bonusSteps = C_Scenario.GetBonusSteps()
     local numCriteriaPrev = numCriteria
+    local GwQuestTrackerTimerSavedHeight = 1
+
     for k, v in pairs(bonusSteps) do
         bonusStepIndex = v
         --[[
@@ -242,15 +244,18 @@ local function updateCurrentScenario()
                         if elapsed and elapsed > 0 then
                             GwQuestTrackerTimer.timer:SetValue(1 - (elapsed / duration))
                             GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(duration - elapsed))
+                        else
+                            GwQuestTrackerTimer:SetScript("OnUpdate", nil)
                         end
                     end
                 )
-                GwQuestTrackerTimer:Show()
                 GwQuestTrackerTimer.timer:Show()
-                GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+                GwQuestTrackerTimerSavedHeight = GwQuestTrackerTimerSavedHeight + 40
+                showTimerAsBonus = true
             else
-                GwQuestTrackerTimer.timer:Hide()
+                GwQuestTrackerTimerSavedHeight = 1
                 GwQuestTrackerTimer:SetScript("OnUpdate", nil)
+                GwQuestTrackerTimer.timer:Hide()
 
                 addObjectiveBlock(
                     GwScenarioBlock,
@@ -272,16 +277,23 @@ local function updateCurrentScenario()
 
     GwScenarioBlock.height = GwScenarioBlock.height + 5
 
-    local intGWQuestTrackerHeight
-    intGWQuestTrackerHeight = 0
+    local intGWQuestTrackerHeight = 0
 
     if _G["GwAffixFrame"]:IsShown() then
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
-    GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
+    if GwQuestTrackerTimer.timer:IsShown() then
+        intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
+    end
+
+    if showTimerAsBonus then
+        GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
+
+        GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
+    end
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
-    GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height + GwQuestTrackerTimer.height)
+    GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
 end
 GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 
