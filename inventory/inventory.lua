@@ -2,6 +2,10 @@ local _, GW = ...
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 
+
+-- global for this deprecated in 8.3; from ContainerFrame.lua
+local MAX_CONTAINER_ITEMS = 36
+
 -- reskins an ItemButton to use GW2_UI styling
 local item_size
 local function reskinItemButton(iname, b)
