@@ -114,7 +114,9 @@ local function SkinMainMenu()
     tex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\mainmenubg")
 
     GameMenuFrame.Border:Hide()
-    GameMenuFrameHeader:Hide()
+    if GameMenuFrameHeader then
+        GameMenuFrameHeader:Hide()
+    end
 
     applyButtonStyle()
 end

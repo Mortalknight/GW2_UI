@@ -996,7 +996,7 @@ local function LoadClassPowers()
     cpf.staggerBar.texture2 = cpf.staggerBar.bar.texture2
     cpf.staggerBar.fill = cpf.staggerBar.bar.fill
     cpf.staggerBar.fill:SetVertexColor(59 / 255, 173 / 255, 231 / 255)
-    cpf.disc.bar.overlay:SetModel("spells/cfx_priest_purgethewicked_statechest.m2")
+    cpf.disc.bar.overlay:SetModel(1372783)
     cpf.disc.bar.overlay:SetPosition(0, 0, 2)
     cpf.disc.bar.overlay:SetPosition(0, 0, 0)
 
