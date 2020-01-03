@@ -996,7 +996,7 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
 
-    createCat(ACTIONBAR_LABEL, nil, "GwSettingsActionbarOptions", 0)
+    createCat(ACTIONBAR_LABEL, nil, "GwSettingsActionbarOptions", 7)
     addOption(
         GwLocalization["ACTION_BAR_FADE"],
         GwLocalization["ACTION_BAR_FADE_DESC"],
