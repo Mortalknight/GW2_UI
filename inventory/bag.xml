@@ -255,11 +255,27 @@
     </CheckButton>
 
     <Button name="GwKeyRingButtonTemp" virtual="true">
-        <Size x="32" y="32"></Size>
+        <Size x="28" y="28"></Size>
         <Layers>
+            <Layer level="OVERLAY">
+				<Texture parentKey="IconBorder" file="Interface\Common\WhiteIconFrame" hidden="true">
+					<Size x="28" y="28"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+            <Layer level="OVERLAY" textureSubLevel="1">
+				<Texture parentKey="IconOverlay" hidden="true">
+					<Size x="28" y="28"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
             <Layer level="ARTWORK">
                 <Texture parentKey="icon" file="Interface\ContainerFrame\KeyRing-Bag-Icon">
-                    <Size x="32" y="32"></Size>
+                    <Size x="28" y="28"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                     </Anchors>
@@ -267,8 +283,8 @@
                 </Texture>
                 <Texture parentKey="border" file="Interface\AddOns\GW2_UI\textures\UI-Quickslot-Depress" hidden="true">
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="-2" y="2"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" x="2" y="-2"></Anchor>
+                        <Anchor point="TOPLEFT" x="-1" y="1"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="1" y="-1"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>

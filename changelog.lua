@@ -183,4 +183,8 @@ GW_CHANGELOGS = "   - Also for bags the option to sort to first or last bag (cog
 GW_CHANGELOGS = "- Added sorting to bags and bank\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.6.9\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.7.0
+GW_CHANGELOGS = "- Fix a bug which causes a conflict with other addons\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.7.0\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS

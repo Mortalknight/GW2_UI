@@ -220,16 +220,19 @@ local function createBagBar(f)
     local b = CreateFrame("Button", "GWkeyringbutton", f, "GwKeyRingButtonTemp")
     b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
     b:SetHighlightTexture('Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress')
+    GW.SetItemButtonQualityForBags(b, 1)
     b:SetScript("OnClick",
         function(self)
             if IsBagOpen(KEYRING_CONTAINER) then
                 CloseBag(KEYRING_CONTAINER)
                 self.border:Hide()
+                self.IconBorder:Show()
                 updateBagContainers(GwBagFrame)
                 rescanBagContainers(GwBagFrame)
             else
                 OpenBag(KEYRING_CONTAINER)
                 self.border:Show()
+                self.IconBorder:Hide()
             end
         end
     )   
@@ -274,8 +277,10 @@ local function updateBagBar(f)
     end
     if IsBagOpen(KEYRING_CONTAINER) then
         GWkeyringbutton.border:Show()
+        GWkeyringbutton.IconBorder:Hide()
     else
         GWkeyringbutton.border:Hide()
+        GWkeyringbutton.IconBorder:Show()
     end
 end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
@@ -383,8 +388,10 @@ local function bag_OnShow(self)
     end
     if IsBagOpen(KEYRING_CONTAINER) then
         GWkeyringbutton.border:Show()
+        GWkeyringbutton.IconBorder:Hide()
     else
         GWkeyringbutton.border:Hide()
+        GWkeyringbutton.IconBorder:Show()
     end
     updateBagBar(self.ItemFrame)
     updateBagContainers(self)
