@@ -1131,7 +1131,7 @@ local function LoadSettings()
         "GwSettingsFocusOptions"
     )
 
-    createCat(BINDING_HEADER_ACTIONBAR, nil, "GwSettingsActionbarOptions", 0)
+    createCat(BINDING_HEADER_ACTIONBAR, nil, "GwSettingsActionbarOptions", 7)
 
     addOption(
         GwLocalization["ACTION_BAR_FADE"],
