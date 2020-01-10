@@ -126,6 +126,17 @@ local function LoadPaperDoll(tabContainer)
     CharacterMenuButton_OnLoad(fmMenu.outfitsMenu, true)
     CharacterMenuButton_OnLoad(fmMenu.titlesMenu, false)
 
+    -- pull corruption thingy from default paperdoll
+    if (CharacterStatsPane and CharacterStatsPane.ItemLevelFrame) then
+        local cpt = CharacterStatsPane.ItemLevelFrame.Corruption
+        local attr = GwPaperDollStats
+        if (cpt and attr) then
+            cpt:SetParent(attr)
+            cpt:ClearAllPoints()
+            cpt:SetPoint("TOPRIGHT", attr, "TOPRIGHT", 22, 28)
+        end
+    end
+
     --AddOn Support
     nextShadow = true
     nextAnchor = fmMenu.titlesMenu
