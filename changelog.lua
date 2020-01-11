@@ -187,4 +187,11 @@ GW_CHANGELOGS = "\n\n1.6.9\n\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Fix a bug which causes a conflict with other addons\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.7.0\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.7.1
+GW_CHANGELOGS = "- Fix a lua error when hover the micromenu\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Update libs\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added X and Y offset for tooltip if anchor is set to cursor\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added durability icon to char stats\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.7.1\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS

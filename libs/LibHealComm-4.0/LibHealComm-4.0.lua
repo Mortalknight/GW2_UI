@@ -1,7 +1,7 @@
 if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then return end
 
 local major = "LibHealComm-4.0"
-local minor = 83
+local minor = 87
 assert(LibStub, format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -64,7 +64,7 @@ local UnitExists = UnitExists
 local UnitGUID = UnitGUID
 local UnitIsCharmed = UnitIsCharmed
 local UnitIsVisible = UnitIsVisible
-local UnitIsUnit = UnitIsUnit
+local UnitInRaid = UnitInRaid
 local UnitLevel = UnitLevel
 local UnitName = UnitName
 local UnitPlayerControlled = UnitPlayerControlled
@@ -142,7 +142,7 @@ if( not HealComm.compressGUID  ) then
 			local str
 			if strsub(guid,1,6) ~= "Player" then
 				for unit,pguid in pairs(activePets) do
-					if pguid == guid then
+					if pguid == guid and UnitExists(unit) then
 						str = "p-" .. strmatch(UnitGUID(unit), "^%w*-([-%w]*)$")
 					end
 				end
@@ -162,7 +162,11 @@ if( not HealComm.compressGUID  ) then
 			if( not str ) then return nil end
 			local guid
 			if strsub(str,1,2) == "p-" then
-				guid = activePets[HealComm.guidToUnit["Player-"..strsub(str,3)]]
+				local unit = HealComm.guidToUnit["Player-"..strsub(str,3)]
+				if not unit then
+					return nil
+				end
+				guid = activePets[unit]
 			else
 				guid = "Player-"..str
 			end
@@ -265,17 +269,19 @@ local function removeRecordList(pending, inc, comp, ...)
 		local guid = select(i, ...)
 		guid = comp and decompressGUID[guid] or guid
 
-		local id = pending[guid]
-		-- ticksLeft, endTime, stack, amount, guid
-		tremove(pending, id + 4)
-		tremove(pending, id + 3)
-		tremove(pending, id + 2)
-		local amount = tremove(pending, id + 1)
-		tremove(pending, id)
-		pending[guid] = nil
+		if guid then
+			local id = pending[guid]
+			-- ticksLeft, endTime, stack, amount, guid
+			tremove(pending, id + 4)
+			tremove(pending, id + 3)
+			tremove(pending, id + 2)
+			local amount = tremove(pending, id + 1)
+			tremove(pending, id)
+			pending[guid] = nil
 
-		-- Release the table
-		if( type(amount) == "table" ) then HealComm:DeleteTable(amount) end
+			-- Release the table
+			if( type(amount) == "table" ) then HealComm:DeleteTable(amount) end
+		end
 	end
 
 	-- Redo all the id maps
@@ -508,6 +514,118 @@ function HealComm:GetCasterHealAmount(guid, bitFlag, time)
 	local amount = pendingHeals[guid] and filterData(pendingHeals[guid], nil, bitFlag, time, true) or 0
 	amount = amount + (pendingHots[guid] and filterData(pendingHots[guid], nil, bitFlag, time, true) or 0)
 	return amount > 0 and amount or nil
+end
+
+function HealComm:GetHealAmountEx(dstGUID, dstBitFlag, dstTime, srcGUID, srcBitFlag, srcTime)
+	local dstAmount1 = 0
+	local dstAmount2 = 0
+	local srcAmount1 = 0
+	local srcAmount2 = 0
+
+	local currTime = GetTime()
+
+	dstBitFlag = dstBitFlag or ALL_HEALS
+	srcBitFlag = srcBitFlag or ALL_HEALS
+
+	for _, tbl in ipairs({pendingHeals, pendingHots}) do
+		for casterGUID, spells in pairs(tbl) do
+			local time
+
+			if casterGUID ~= srcGUID then
+				time = dstTime
+			else
+				time = srcTime
+			end
+
+			if spells then
+				for _, pending in pairs(spells) do
+					local bitType = pending.bitType or 0
+
+					if casterGUID ~= srcGUID then
+						bitType = bit.band(bitType, dstBitFlag)
+					else
+						bitType = bit.band(bitType, srcBitFlag)
+					end
+
+					if bitType > 0 then
+						for i = 1, #pending, 5 do
+							local targetGUID = pending[i]
+
+							if targetGUID == dstGUID then
+								local amount = pending[i + 1]
+								local stack = pending[i + 2]
+								local endTime = pending[i + 3]
+
+								endTime = endTime > 0 and endTime or pending.endTime
+
+								if endTime > currTime then
+									amount = amount * stack
+
+									local amount1 = 0
+									local amount2 = 0
+
+									if bitType == DIRECT_HEALS or bitType == BOMB_HEALS then
+										if not time or endTime <= time then
+											amount1 = amount
+										end
+
+										amount2 = amount
+									elseif bitType == HOT_HEALS or bitType == CHANNEL_HEALS then
+										local ticksLeft = pending[i + 4]
+										local ticks
+
+										if not time then
+											ticks = 1
+										elseif time >= endTime then
+											ticks = ticksLeft
+										else
+											local tickInterval = pending.tickInterval
+											local secondsLeft = endTime - currTime
+											local bandSeconds = max(time - currTime, 0)
+
+											ticks = floor(min(bandSeconds, secondsLeft) / tickInterval)
+
+											local nextTickIn = secondsLeft % tickInterval
+											local fractionalBand = bandSeconds % tickInterval
+
+											if nextTickIn > 0 and nextTickIn < fractionalBand then
+												ticks = ticks + 1
+											end
+										end
+
+										if ticks > ticksLeft then
+											ticks = ticksLeft
+										end
+
+										amount1 = amount * ticks
+										amount2 = amount * ticksLeft
+									end
+
+									if casterGUID ~= srcGUID then
+										dstAmount1 = dstAmount1 + amount1
+										dstAmount2 = dstAmount2 + amount2
+									else
+										srcAmount1 = srcAmount1 + amount1
+										srcAmount2 = srcAmount2 + amount2
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	dstAmount2 = dstAmount2 - dstAmount1
+	srcAmount2 = srcAmount2 - srcAmount1
+
+	dstAmount1 = dstAmount1 > 0 and dstAmount1 or nil
+	dstAmount2 = dstAmount2 > 0 and dstAmount2 or nil
+	srcAmount1 = srcAmount1 > 0 and srcAmount1 or nil
+	srcAmount2 = srcAmount2 > 0 and srcAmount2 or nil
+
+	return dstAmount1, dstAmount2, srcAmount1, srcAmount2
 end
 
 -- Healing class data
@@ -1223,7 +1341,7 @@ function HealComm:UNIT_AURA(unit)
 	-- Scan buffs
 	local id = 1
 	while( true ) do
-		local name, _, _, stack, _, _, _, _, _, _, spellID = UnitAura(unit, id, "HELPFUL")
+		local name, _, stack, _, _, _, _, _, _, spellID = UnitAura(unit, id, "HELPFUL")
 		if( not name ) then break end
 		-- Prevent buffs like Tree of Life that have the same name for the shapeshift/healing increase from being calculated twice
 		if( not alreadyAdded[name] ) then
@@ -1242,7 +1360,7 @@ function HealComm:UNIT_AURA(unit)
 	-- Scan debuffs
 	id = 1
 	while( true ) do
-		local name, _, _, stack, _, _, _, _, _, _, spellID = UnitAura(unit, id, "HARMFUL")
+		local name, _, stack, _, _, _, _, _, _, spellID = UnitAura(unit, id, "HARMFUL")
 		if( not name ) then break end
 
 		if( healingModifiers[spellID] ) then
@@ -1514,8 +1632,10 @@ local function parseHealEnd(casterGUID, pending, checkField, spellID, interrupte
 		for i=1, select("#", ...) do
 			local guid = decompressGUID[select(i, ...)]
 
-			tinsert(tempPlayerList, guid)
-			removeRecord(pending, guid)
+			if guid then
+				tinsert(tempPlayerList, guid)
+				removeRecord(pending, guid)
+			end
 		end
 	end
 
@@ -1832,8 +1952,9 @@ function HealComm:UNIT_SPELLCAST_START(unit, cast, spellID)
 
 	-- Figure out who we are healing and for how much
 	local bitType, amount, ticks, tickInterval = CalculateHealing(castGUID, spellID, castUnit)
-	local targets, amt = GetHealTargets(bitType, castGUID, max(amount, 0), spellID)
+	if not amount then return end
 
+	local targets, amt = GetHealTargets(bitType, castGUID, max(amount, 0), spellID)
 	if not targets then return end -- only here until I compress/decompress npcs
 
 	if( bitType == DIRECT_HEALS ) then
@@ -1999,7 +2120,7 @@ HealComm.UseAction = HealComm.CastSpell
 local function sanityCheckMapping()
 	for guid, unit in pairs(guidToUnit) do
 		-- Unit no longer exists, remove all healing for them
-		if( not UnitExists(unit) ) then
+		if guid ~= UnitGUID(unit) then
 			-- Check for (and remove) any active heals
 			for _, tbl in pairs({ pendingHeals, pendingHots }) do
 				if tbl[guid] then
@@ -2081,12 +2202,17 @@ end
 
 -- Keeps track of pet GUIDs, as pets are considered vehicles this will also map vehicle GUIDs to unit
 function HealComm:UNIT_PET(unit)
+	local guid = UnitGUID(unit)
+	unit = guidToUnit[guid]
+
+	if not unit then return end
+
 	local pet = self.unitToPet[unit]
-	local guid = pet and UnitGUID(pet)
+	local petGUID = pet and UnitGUID(pet)
 
 	-- We have an active pet guid from this user and it's different, kill it
 	local activeGUID = activePets[unit]
-	if( activeGUID and activeGUID ~= guid ) then
+	if activeGUID and activeGUID ~= petGUID then
 		removeAllRecords(activeGUID)
 
 		guidToUnit[activeGUID] = nil
@@ -2095,10 +2221,10 @@ function HealComm:UNIT_PET(unit)
 	end
 
 	-- Add the new record
-	if( guid ) then
-		guidToUnit[guid] = pet
-		guidToGroup[guid] = guidToGroup[UnitGUID(unit)]
-		activePets[unit] = guid
+	if petGUID then
+		guidToUnit[petGUID] = pet
+		guidToGroup[petGUID] = guidToGroup[guid]
+		activePets[unit] = petGUID
 	end
 end
 
@@ -2106,31 +2232,42 @@ end
 function HealComm:GROUP_ROSTER_UPDATE()
 	updateDistributionChannel()
 
-	-- Left raid, clear any cache we had
-	if( GetNumGroupMembers() == 0 ) then
-		clearGUIDData()
-		return
-	end
+	wipe(activePets)
 
-	local isInRaid = IsInRaid()
-	local unitType = isInRaid and "raid%d" or "party%d"
-	if not isInRaid then
-		guidToUnit[playerGUID or UnitGUID("player")] = "player"
-		guidToGroup[playerGUID or UnitGUID("player")] = 1 -- Player doesn't belong to 'party%d' unit.
-	end
-	-- Add new members
-	for i = 1, GetNumGroupMembers() do
-		local unit = format(unitType, i)
-		if( UnitExists(unit) ) then
-			local guid = UnitGUID(unit)
-			local lastGroup = guidToGroup[guid]
+	local function update(unit)
+		local guid = UnitGUID(unit)
+
+		if guid then
+			local raidID = UnitInRaid(unit)
+			local group = raidID and select(3, GetRaidRosterInfo(raidID)) or 1
+
 			guidToUnit[guid] = unit
-			guidToGroup[guid] = select(3, GetRaidRosterInfo(i))
+			guidToGroup[guid] = group
 
-			-- If the pets owners group changed then the pets group should be updated too
-			if guidToGroup[guid] ~= lastGroup then
-				self:UNIT_PET(unit)
+			local pet = self.unitToPet[unit]
+			local petGUID = pet and UnitGUID(pet)
+
+			activePets[unit] = petGUID
+
+			if petGUID then
+				guidToUnit[petGUID] = pet
+				guidToGroup[petGUID] = group
 			end
+		end
+	end
+
+	if GetNumGroupMembers() == 0 then
+		clearGUIDData()
+		update("player")
+	elseif not IsInRaid() then
+		update("player")
+
+		for i = 1, MAX_PARTY_MEMBERS do
+			update(format("party%d", i))
+		end
+	else
+		for i = 1, MAX_RAID_MEMBERS do
+			update(format("raid%d", i))
 		end
 	end
 
@@ -2184,6 +2321,8 @@ function HealComm:OnInitialize()
 
 			if spellName == FirstAid then
 				local healAmount =  spellData[spellName].averages[spellRank]
+				if not healAmount then return end
+
 				local ticks = spellData[spellName].ticks[spellRank]
 
 				return CHANNEL_HEALS, ceil(healAmount / ticks), ticks, spellData[spellName].interval

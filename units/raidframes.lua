@@ -22,6 +22,7 @@ local IsIn = GW.IsIn
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
+local UnitAura = _G.UnitAura
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
@@ -36,6 +37,7 @@ local frames = {}
 local IncHeal = {}
 
 local HealComm = LibStub("LibHealComm-4.0", true)
+local LibClassicDurations = LibStub("LibClassicDurations", true)
 
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then
@@ -404,7 +406,7 @@ local function updateDebuffs(self)
 
         -- show current debuffs
         if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, filter)
+            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitAura(self.unit, i, "HARMFUL")
             local shouldDisplay = debuffName and not (
                 ignored[debuffName]
                 or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
@@ -440,7 +442,7 @@ local function onBuffMouseUp(self, btn)
                 SetSetting("AURAS_MISSING", s)
             end
         else
-            local name =  UnitBuff(self:GetParent().unit, self.index)
+            local name = UnitAura(self:GetParent().unit, self.index, "HELPFUL")
             if name then
                 local s = GetSetting("AURAS_IGNORED") or ""
                 SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
@@ -506,7 +508,7 @@ local function updateBuffs(self)
     -- missing buffs
     local i, name = 1
     repeat
-        i, name = i + 1, UnitBuff(self.unit, i)
+        i, name = i + 1, UnitAura(self.unit, i, "HELPFUL")
         if name and missing[name] then
             missing[name] = false
         end
@@ -548,7 +550,7 @@ local function updateBuffs(self)
 
         -- show buffs
         if not aurasDone then
-            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
+            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitAura(self.unit, i, "HELPFUL")
             if name then
                 -- visibility
                 local shouldDisplay
@@ -1095,6 +1097,10 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterUnitEvent("UNIT_TARGET", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
 
+    LibClassicDurations.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
+        raidframe_OnEvent(frame, "UNIT_AURA", unit)
+    end) 
+
     raidframe_OnEvent(frame, "load")
 
     if GetSetting("RAID_POWER_BARS") == true then
@@ -1105,6 +1111,11 @@ end
 GW.AddForProfiling("raidframes", "createRaidFrame", createRaidFrame)
 
 local function LoadRaidFrames()
+    if LibClassicDurations then
+        LibClassicDurations:Register("GW2_UI")
+        UnitAura = LibClassicDurations.UnitAuraWrapper
+    end
+
     hideBlizzardRaidFrame()
 
     if CompactRaidFrameManager_UpdateShown then

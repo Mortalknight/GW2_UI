@@ -19,7 +19,7 @@ Usage example 1:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 44
+local MAJOR, MINOR = "LibClassicDurations", 49
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -214,18 +214,18 @@ local function addDRLevel(dstGUID, category)
 
     local catTable = guidTable[category]
     if not catTable then
-        guidTable[category] = {}
+        guidTable[category] = { level = 0, expires = 0}
         catTable = guidTable[category]
     end
 
     local now = GetTime()
     local isExpired = (catTable.expires or 0) <= now
-    if isExpired then
-        catTable.level = 1
-        catTable.expires = now + DRResetTime
-    else
-        catTable.level = catTable.level + 1
+    local oldDRLevel = catTable.level
+    if isExpired or oldDRLevel >= 3 then
+        catTable.level = 0
     end
+    catTable.level = catTable.level + 1
+    catTable.expires = now + DRResetTime
 end
 local function clearDRs(dstGUID)
     DRInfo[dstGUID] = nil
@@ -633,7 +633,8 @@ local makeBuffInfo = function(spellID, applicationTable, dstGUID, srcGUID)
     end
     local now = GetTime()
     if expirationTime > now then
-        return { name, icon, 0, nil, duration, expirationTime, nil, nil, nil, spellID, false, false, false, false, 1 }
+        local buffType = spells[spellID] and spells[spellID].buffType
+        return { name, icon, 0, buffType, duration, expirationTime, nil, nil, nil, spellID, false, false, false, false, 1 }
     end
 end
 

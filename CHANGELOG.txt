@@ -1,3 +1,9 @@
+1.7.1
+- Fix a lua error when hover the micromenu
+- Update libs
+- Added X and Y offset for tooltip if anchor is set to cursor
+- Added durability icon to char stats
+
 1.7.0
 - Fix a bug which causes a conflict with other addons
 

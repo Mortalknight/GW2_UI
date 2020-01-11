@@ -364,7 +364,7 @@ local function LoadPetFrame()
 
     playerPetFrame.displayBuffs = true
     playerPetFrame.displayDebuffs = true
-    playerPetFrame.debuffFilter = "player"
+    playerPetFrame.debuffFilter = "HARMFUL"
 
     LoadAuras(playerPetFrame, playerPetFrame.auras)
 

@@ -17,9 +17,9 @@ local AddToClique = GW.AddToClique
 local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local unitIlvls = {}
+local UnitAura = _G.UnitAura
 local LibClassicDurations = LibStub("LibClassicDurations", true)
 local LibCC = LibStub("LibClassicCasterino", true)
-LibClassicDurations:Register("GW2_UI")
 
 local textureMapping = {
 	[1] = 16,	--Main hand
@@ -52,35 +52,25 @@ local buffList = {}
 for i = 1, 40 do
     buffList[i] = {}
 end
-local function getBuffs(unit, filter)
-    if filter == nil then
-        filter = "HELPFUL"
-    end
+local function getBuffs(unit)
     local tempCounter = 1
     for i = 1, 40 do
         table.wipe(buffList[i])
-        if LibClassicDurations:UnitAura(unit, i, filter) ~= nil then
+        if UnitAura(unit, i, "HELPFUL") ~= nil then
             local bli = buffList[i]
             tempCounter = tempCounter + 1
             bli["id"] = i
 
             bli["name"],
-                bli["icon"],
-                bli["count"],
-                bli["dispelType"],
-                bli["duration"],
-                bli["expires"],
-                bli["caster"],
-                bli["isStealable"],
-                bli["shouldConsolidate"],
-                bli["spellID"] = LibClassicDurations:UnitAura(unit, i, filter)
-
-            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(unit, bli["spellID"], bli["caster"], bli["name"])
-
-            if bli["duration"] == 0 and durationNew then
-                bli["duration"] = durationNew
-                bli["expires"] = expirationTimeNew
-            end
+            bli["icon"],
+            bli["count"],
+            bli["dispelType"],
+            bli["duration"],
+            bli["expires"],
+            bli["caster"],
+            bli["isStealable"],
+            bli["shouldConsolidate"],
+            bli["spellID"] = UnitAura(unit, i, "HELPFUL")
 
             bli["timeremaning"] = bli["expires"] - GetTime()
 
@@ -139,27 +129,20 @@ end
 local function getDebuffs(unit, filter)
     for i = 1, 40 do
         table.wipe(debuffList[i])
-        if UnitDebuff(unit, i, filter) ~= nil then
+        if UnitAura(unit, i, filter) ~= nil then
             local dbi = debuffList[i]
             dbi["id"] = i
 
             dbi["name"],
-                dbi["icon"],
-                dbi["count"],
-                dbi["dispelType"],
-                dbi["duration"],
-                dbi["expires"],
-                dbi["caster"],
-                dbi["isStealable"],
-                dbi["shouldConsolidate"],
-                dbi["spellID"] = UnitDebuff(unit, i, filter)
-
-            local durationNew, expirationTimeNew = LibClassicDurations:GetAuraDurationByUnit(unit, dbi["spellID"], dbi["caster"], dbi["name"])
-
-            if dbi["duration"] == 0 and durationNew then
-                dbi["duration"] = durationNew
-                dbi["expires"] = expirationTimeNew
-            end
+            dbi["icon"],
+            dbi["count"],
+            dbi["dispelType"],
+            dbi["duration"],
+            dbi["expires"],
+            dbi["caster"],
+            dbi["isStealable"],
+            dbi["shouldConsolidate"],
+            dbi["spellID"] = UnitAura(unit, i, filter)
 
             dbi["timeremaning"] = dbi["expires"] - GetTime()
 
@@ -742,6 +725,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local isPlayer = false
     if anchorPos and anchorPos == "player" then
         isPlayer = true
+        self.debuffFilter = "HARMFUL"
     elseif anchorPos ~= "player" then
         if self.displayBuffs ~= true then
             minIndex = 40
@@ -1039,6 +1023,11 @@ end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 
 local function LoadTarget()
+    if LibClassicDurations then
+        LibClassicDurations:Register("GW2_UI")
+        UnitAura = LibClassicDurations.UnitAuraWrapper
+    end
+
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame")
     NewUnitFrame.unit = "target"
 
@@ -1079,10 +1068,10 @@ local function LoadTarget()
     NewUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     NewUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")
 
-    NewUnitFrame.debuffFilter = "player"
+    NewUnitFrame.debuffFilter = "PLAYER|HARMFUL"
 
     if GetSetting("target_BUFFS_FILTER_ALL") == true then
-        NewUnitFrame.debuffFilter = nil
+        NewUnitFrame.debuffFilter = "HARMFUL"
     end
 
     NewUnitFrame:SetScript("OnEvent", target_OnEvent)
@@ -1156,7 +1145,6 @@ local function LoadTargetOfUnit(unit)
     f.showHealthPrecentage = false
 
     f.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
-    f.debuffFilter = nil
 
     f.totalElapsed = 0.25
     f:SetScript("OnUpdate", unittarget_OnUpdate)

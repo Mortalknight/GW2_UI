@@ -105,7 +105,7 @@ end
 
 local function gw_getMicroButtonToolTip(text, action)
     if GetBindingKey(action) and text ~= nil then
-     return text .. " |cffa6a6a6(" .. GetBindingText(GetBindingKey(action)) .. ")" .. FONT_COLOR_CODE_CLOSE
+     return text .. " " .. NORMAL_FONT_COLOR_CODE .. "(" .. GetBindingText(GetBindingKey(action)) .. ")" .. FONT_COLOR_CODE_CLOSE
  else
      return text
  end
@@ -342,6 +342,7 @@ local function LoadMicroMenu()
     end)
     GwMicroButtonSocialsMicroButton:SetScript("OnEvent", updateGuildButton)
     GwMicroButtonSocialsMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
+
 
     GwMicroButtonMainMenuMicroButton:SetScript('OnEnter', function()
         GwMicroButtonMainMenuMicroButton:SetScript('OnUpdate', LatencyInfoToolTip)

@@ -7,7 +7,9 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
-local AddToClique =GW.AddToClique
+local AddToClique = GW.AddToClique
+local UnitAura = _G.UnitAura
+local LibClassicDurations = LibStub("LibClassicDurations", true)
 
 local GW_READY_CHECK_INPROGRESS = false
 
@@ -308,20 +310,23 @@ GW.AddForProfiling("party", "updateAwayData", updateAwayData)
 local function getUnitDebuffs(unit)
     DebuffLists[unit] = {}
     for i = 1, 40 do
-        if UnitDebuff(unit, i) then
+        if UnitAura(unit, i, "HARMFUL") then
             DebuffLists[unit][i] = {}
+            
             DebuffLists[unit][i]["name"],
-                DebuffLists[unit][i]["icon"],
-                DebuffLists[unit][i]["count"],
-                DebuffLists[unit][i]["dispelType"],
-                DebuffLists[unit][i]["duration"],
-                DebuffLists[unit][i]["expires"],
-                DebuffLists[unit][i]["caster"],
-                DebuffLists[unit][i]["isStealable"],
-                DebuffLists[unit][i]["shouldConsolidate"],
-                DebuffLists[unit][i]["spellID"] = UnitDebuff(unit, i)
+            DebuffLists[unit][i]["icon"],
+            DebuffLists[unit][i]["count"],
+            DebuffLists[unit][i]["dispelType"],
+            DebuffLists[unit][i]["duration"],
+            DebuffLists[unit][i]["expires"],
+            DebuffLists[unit][i]["caster"],
+            DebuffLists[unit][i]["isStealable"],
+            DebuffLists[unit][i]["shouldConsolidate"],
+            DebuffLists[unit][i]["spellID"] = UnitAura(unit, i, "HARMFUL")
+
             DebuffLists[unit][i]["key"] = i
             DebuffLists[unit][i]["timeRemaining"] = DebuffLists[unit][i]["expires"] - GetTime()
+
             if DebuffLists[unit][i]["duration"] <= 0 then
                 DebuffLists[unit][i]["timeRemaining"] = 500000
             end
@@ -433,18 +438,20 @@ GW.AddForProfiling("party", "updatePartyDebuffs", updatePartyDebuffs)
 local function getUnitBuffs(unit)
     buffLists[unit] = {}
     for i = 1, 40 do
-        if UnitBuff(unit, i) then
+        if UnitAura(unit, i, "HELPFUL") then
             buffLists[unit][i] = {}
+
             buffLists[unit][i]["name"],
-                buffLists[unit][i]["icon"],
-                buffLists[unit][i]["count"],
-                buffLists[unit][i]["dispelType"],
-                buffLists[unit][i]["duration"],
-                buffLists[unit][i]["expires"],
-                buffLists[unit][i]["caster"],
-                buffLists[unit][i]["isStealable"],
-                buffLists[unit][i]["shouldConsolidate"],
-                buffLists[unit][i]["spellID"] = UnitBuff(unit, i)
+            buffLists[unit][i]["icon"],
+            buffLists[unit][i]["count"],
+            buffLists[unit][i]["dispelType"],
+            buffLists[unit][i]["duration"],
+            buffLists[unit][i]["expires"],
+            buffLists[unit][i]["caster"],
+            buffLists[unit][i]["isStealable"],
+            buffLists[unit][i]["shouldConsolidate"],
+            buffLists[unit][i]["spellID"] = UnitAura(unit, i, "HELPFUL")
+
             buffLists[unit][i]["key"] = i
             buffLists[unit][i]["timeRemaining"] = buffLists[unit][i]["expires"] - GetTime()
             if buffLists[unit][i]["duration"] <= 0 then
@@ -754,11 +761,20 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
 
+    LibClassicDurations.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
+        party_OnEvent(frame, "UNIT_AURA", unit)
+    end) 
+
     updatePartyData(frame)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
 local function LoadPartyFrames()
+    if LibClassicDurations then
+        LibClassicDurations:Register("GW2_UI")
+        UnitAura = LibClassicDurations.UnitAuraWrapper
+    end
+
     manageButton()
 
     SetCVar("useCompactPartyFrames", 1)

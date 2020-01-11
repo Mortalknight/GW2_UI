@@ -573,6 +573,22 @@ local function DisplaySettings()
         if newLine == false then
             padding[v.frameName].x = padding[v.frameName].x + of:GetWidth() + box_padding
         end
+
+        if GetSetting("CURSOR_ANCHOR_TYPE") == "ANCHOR_CURSOR" then
+            if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                if _G["GwOptionBox" .. k .. "Input"] then
+                    _G["GwOptionBox" .. k .. "Input"]:Disable()
+                    SetSetting(v.optionName,"0")
+                    _G["GwOptionBox" .. k .. "Input"]:SetText("0")
+                end
+            end
+        else
+            if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                if _G["GwOptionBox" .. k .. "Input"] then
+                    _G["GwOptionBox" .. k .. "Input"]:Enable()
+                end
+            end
+        end
     end
 end
 GW.DisplaySettings = DisplaySettings
@@ -1055,12 +1071,6 @@ local function LoadSettings()
         "GwSettingsHudOptions"
     )
     addOption(
-        GwLocalization["MOUSE_TOOLTIP"],
-        GwLocalization["MOUSE_TOOLTIP_DESC"],
-        "TOOLTIP_MOUSE",
-        "GwSettingsHudOptions"
-    )
-    addOption(
         GwLocalization["FADE_MICROMENU"],
         GwLocalization["FADE_MICROMENU_DESC"],
         "FADE_MICROMENU",
@@ -1083,6 +1093,73 @@ local function LoadSettings()
         GwLocalization["PIXEL_PERFECTION_DESC"],
         "PIXEL_PERFECTION",
         "GwSettingsHudOptions"
+    )
+    addOption(
+        GwLocalization["MOUSE_TOOLTIP"],
+        GwLocalization["MOUSE_TOOLTIP_DESC"],
+        "TOOLTIP_MOUSE",
+        "GwSettingsHudOptions"
+    )
+    addOptionText(
+        GwLocalization['ANCHOR_CURSOR_OFFSET_X'],
+        GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"],
+        "ANCHOR_CURSOR_OFFSET_X",
+        "GwSettingsHudOptions",
+        function()
+            for k, v in pairs(options) do
+                if v.optionName == "ANCHOR_CURSOR_OFFSET_X" then
+                    SetSetting(v.optionName, _G["GwOptionBox" .. k .. "Input"]:GetNumber())
+                    _G["GwOptionBox" .. k .. "Input"]:SetText(_G["GwOptionBox" .. k .. "Input"]:GetNumber())
+                end
+            end
+        end
+    )
+    addOptionText(
+        GwLocalization['ANCHOR_CURSOR_OFFSET_Y'],
+        GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"],
+        "ANCHOR_CURSOR_OFFSET_Y",
+        "GwSettingsHudOptions",
+        function()
+            for k, v in pairs(options) do
+                if v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                    SetSetting(v.optionName, _G["GwOptionBox" .. k .. "Input"]:GetNumber())
+                    _G["GwOptionBox" .. k .. "Input"]:SetText(_G["GwOptionBox" .. k .. "Input"]:GetNumber())
+                end
+            end
+        end
+    )
+    addOptionDropdown(
+        GwLocalization["CURSOR_ANCHOR_TYPE"],
+        GwLocalization["CURSOR_ANCHOR_TYPE_DESC"],
+        "CURSOR_ANCHOR_TYPE",
+        "GwSettingsHudOptions",
+        function()
+            if GetSetting("CURSOR_ANCHOR_TYPE") == "ANCHOR_CURSOR" then
+                for k, v in pairs(options) do
+                    if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                        if _G["GwOptionBox" .. k .. "Input"] then
+                            _G["GwOptionBox" .. k .. "Input"]:Disable()
+                            SetSetting(v.optionName,"0")
+                            _G["GwOptionBox" .. k .. "Input"]:SetText("0")
+                        end
+                    end
+                end
+            else
+                for k, v in pairs(options) do
+                    if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                        if _G["GwOptionBox" .. k .. "Input"] then
+                            _G["GwOptionBox" .. k .. "Input"]:Enable()
+                        end
+                    end
+                end
+            end
+        end,
+        {'ANCHOR_CURSOR','ANCHOR_CURSOR_LEFT','ANCHOR_CURSOR_RIGHT'},
+        {
+            GwLocalization['CURSOR_ANCHOR'],
+            GwLocalization['ANCHOR_CURSOR_LEFT'],
+            GwLocalization['ANCHOR_CURSOR_RIGHT']
+        }
     )
     addOptionDropdown(
         GwLocalization["MINIMAP_HOVER"],

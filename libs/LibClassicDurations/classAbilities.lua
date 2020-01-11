@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 50
+local Type, Version = "SpellTable", 51
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -136,9 +136,9 @@ Spell( 23493, { duration = 10 }) -- Battleground heal buff
 Spell( 23505, { duration = 60 }) -- Battleground damage buff
 Spell({ 4068 }, { duration = 3 }) -- Iron Grenade
 Spell({ 19769 }, { duration = 3 }) -- Thorium Grenade
-Spell( 6615, { duration = 30, type = "BUFF" }) -- Free Action Potion
-Spell( 24364, { duration = 5, type = "BUFF" }) -- Living Action Potion
-Spell( 3169, { duration = 6, type = "BUFF" }) -- Limited Invulnerability Potion
+Spell( 6615, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Free Action Potion
+Spell( 24364, { duration = 5, type = "BUFF", buffType = "Magic" }) -- Living Action Potion
+Spell( 3169, { duration = 6, type = "BUFF", buffType = "Magic" }) -- Limited Invulnerability Potion
 Spell( 16621, { duration = 3, type = "BUFF" }) -- Invulnerable Mail
 Spell( 1090, { duration = 30 }) -- Magic Dust
 Spell( 13327, { duration = 30 }) -- Reckless Charge
@@ -146,7 +146,7 @@ Spell({ 26740, 13181 }, { duration = 20 }) -- Mind Control Cap + Backfire
 Spell( 11359, { duration = 30, type = "BUFF" }) -- Restorative Potion
 Spell( 6727, { duration = 30 }) -- Violet Tragan
 Spell( 5024, { duration = 10, type = "BUFF" }) -- Skull of Impending Doom
-Spell( 2379, { duration = 15, type = "BUFF" }) -- Swiftness Potion
+Spell( 2379, { duration = 15, type = "BUFF", buffType = "Magic" }) -- Swiftness Potion
 Spell( 5134, { duration = 10 }) -- Flash Bomb
 Spell( 23097, { duration = 5, type = "BUFF" }) -- Fire Reflector
 Spell( 23131, { duration = 5, type = "BUFF" }) -- Frost Reflector
@@ -185,7 +185,7 @@ Spell( 7744, { duration = 5, type = "BUFF" }) -- Will of the Forsaken
 -------------
 
 Spell( 15473, { duration = INFINITY, type = "BUFF" }) -- Shadowform
-Spell( 14751, { duration = INFINITY, type = "BUFF" }) -- Inner focus
+Spell( 14751, { duration = INFINITY, type = "BUFF", buffType = "Magic" }) -- Inner focus
 
 -- Why long auras are disabled
 -- When you first get in combat log range with a player,
@@ -194,16 +194,16 @@ Spell( 14751, { duration = INFINITY, type = "BUFF" }) -- Inner focus
 -- Long raid buffs now have cast filter, that is only if you directly casted a spell it'll register
 -- Cast Filter is ignored for enemies, so some personal buffs have it to still show enemy buffs
 
-Spell({ 1243, 1244, 1245, 2791, 10937, 10938 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Power Word: Fortitude
-Spell({ 21562, 21564 }, { duration = 3600, type = "BUFF", castFilter = true }) -- Prayer of Fortitude
-Spell({ 976, 10957, 10958 }, { duration = 600, type = "BUFF", castFilter = true }) -- Shadow Protection
-Spell( 27683, { duration = 600, type = "BUFF", castFilter = true }) -- Prayer of Shadow Protection
-Spell({ 14752, 14818, 14819, 27841 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Divine Spirit
-Spell( 27681, { duration = 3600, type = "BUFF", castFilter = true }) -- Prayer of Spirit
+Spell({ 1243, 1244, 1245, 2791, 10937, 10938 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Power Word: Fortitude
+Spell({ 21562, 21564 }, { duration = 3600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Prayer of Fortitude
+Spell({ 976, 10957, 10958 }, { duration = 600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Shadow Protection
+Spell( 27683, { duration = 600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Prayer of Shadow Protection
+Spell({ 14752, 14818, 14819, 27841 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Divine Spirit
+Spell( 27681, { duration = 3600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Prayer of Spirit
 
-Spell({ 588, 602, 1006, 7128, 10951, 10952 }, { duration = 600, type = "BUFF", castFilter = true }) -- Inner Fire
+Spell({ 588, 602, 1006, 7128, 10951, 10952 }, { duration = 600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Inner Fire
 
-Spell({ 14743, 27828 }, { duration = 6, type = "BUFF" }) -- Focused Casting (Martyrdom)
+Spell({ 14743, 27828 }, { duration = 6, type = "BUFF", buffType = "Magic" }) -- Focused Casting (Martyrdom)
 Spell( 27827, { duration = 10, type = "BUFF" }) -- Spirit of Redemption
 Spell( 15271, { duration = 15, type = "BUFF" }) -- Spirit Tap
 
@@ -212,12 +212,12 @@ Spell({ 13896, 19271, 19273, 19274, 19275 }, { duration = 15, type = "BUFF" }) -
 Spell({ 2651, 19289, 19291, 19292, 19293 }, { duration = 15, type = "BUFF" }) -- Elune's Grace
 Spell({ 9035, 19281, 19282, 19283, 19284, 19285 }, { duration = 120 }) -- Hex of Weakness
 
-Spell( 6346, { duration = 600, type = "BUFF" }) -- Fear Ward
-Spell({ 7001, 27873, 27874 }, { duration = 10, type = "BUFF" }) -- Lightwell Renew
-Spell( 552, { duration = 20, type = "BUFF" }) -- Abolish Disease
-Spell({ 17, 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901 }, {duration = 30, type = "BUFF" }) -- PWS
+Spell( 6346, { duration = 600, type = "BUFF", buffType = "Magic" }) -- Fear Ward
+Spell({ 7001, 27873, 27874 }, { duration = 10, type = "BUFF", buffType = "Magic" }) -- Lightwell Renew
+Spell( 552, { duration = 20, type = "BUFF", buffType = "Magic" }) -- Abolish Disease
+Spell({ 17, 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901 }, {duration = 30, type = "BUFF", buffType = "Magic" }) -- PWS
 Spell( 6788, { duration = 15 }) -- Weakened Soul
-Spell({ 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315 }, { duration = 15, type = "BUFF" }) -- Renew
+Spell({ 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315 }, { duration = 15, type = "BUFF", buffType = "Magic" }) -- Renew
 
 Spell( 15487, { duration = 5 }) -- Silence
 Spell({ 10797, 19296, 19299, 19302, 19303, 19304, 19305 }, { duration = 6, stacking = true }) -- starshards
@@ -232,7 +232,7 @@ Spell({ 9484, 9485, 10955 }, {
     end
 }) -- Shackle Undead
 
-Spell( 10060, { duration = 15, type = "BUFF" }) --Power Infusion
+Spell( 10060, { duration = 15, type = "BUFF", buffType = "Magic" }) --Power Infusion
 Spell({ 14914, 15261, 15262, 15263, 15264, 15265, 15266, 15267 }, { duration = 10, stacking = true }) -- Holy Fire, stacking?
 Spell({ 586, 9578, 9579, 9592, 10941, 10942 }, { duration = 10, type = "BUFF" }) -- Fade
 Spell({ 8122, 8124, 10888, 10890 }, { duration = 8,  }) -- Psychic Scream
@@ -272,23 +272,24 @@ Spell( 5487, { duration = INFINITY, type = "BUFF" }) -- Bear Form
 Spell( 9634, { duration = INFINITY, type = "BUFF" }) -- Dire Bear Form
 Spell( 1066, { duration = INFINITY, type = "BUFF" }) -- Aquatic Form
 Spell( 24858, { duration = INFINITY, type = "BUFF" }) -- Moonkin Form
-Spell( 17116, { duration = INFINITY, type = "BUFF" }) -- Nature's Swiftness
+Spell( 17116, { duration = INFINITY, type = "BUFF", buffType = "Magic" }) -- Nature's Swiftness
 
-Spell({ 1126, 5232, 5234, 6756, 8907, 9884, 9885 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Mark of the Wild
-Spell({ 21849, 21850 }, { duration = 3600, type = "BUFF", castFilter = true }) -- Gift of the Wild
-Spell( 19975, { duration = 12 }) -- Nature's Grasp root
-Spell({ 16689, 16810, 16811, 16812, 16813, 17329 }, { duration = 45, type = "BUFF" }) -- Nature's Grasp
-Spell( 16864, { duration = 600, type = "BUFF", castFilter = true }) -- Omen of Clarity
-Spell( 16870, { duration = 15, type = "BUFF" }) -- Clearcasting from OoC
+Spell({ 1126, 5232, 5234, 6756, 8907, 9884, 9885 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Mark of the Wild
+Spell({ 21849, 21850 }, { duration = 3600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Gift of the Wild
+Spell( 19975, { duration = 12, buffType = "Magic" }) -- Nature's Grasp root
+Spell({ 16689, 16810, 16811, 16812, 16813, 17329 }, { duration = 45, type = "BUFF", buffType = "Magic" }) -- Nature's Grasp
+Spell( 16864, { duration = 600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Omen of Clarity
+Spell( 16870, { duration = 15, type = "BUFF", buffType = "Magic" }) -- Clearcasting from OoC
 
 
 
 Spell( 19675, { duration = 4 }) -- Feral Charge
-Spell({ 467, 782, 1075, 8914, 9756, 9910 }, { duration = 600, type = "BUFF" }) -- Thorns
-Spell( 22812 ,{ duration = 15, type = "BUFF" }) -- Barkskin
+Spell({ 467, 782, 1075, 8914, 9756, 9910 }, { duration = 600, type = "BUFF", buffType = "Magic" }) -- Thorns
+Spell( 22812 ,{ duration = 15, type = "BUFF", buffType = "Magic" }) -- Barkskin
 --SKIPPING: Hurricane (Channeled)
 Spell({ 339, 1062, 5195, 5196, 9852, 9853 }, {
     pvpduration = 20,
+    buffType = "Magic",
     duration = function(spellID)
         if spellID == 339 then return 12
         elseif spellID == 1062 then return 15
@@ -343,11 +344,11 @@ Spell({ 1822, 1823, 1824, 9904 }, { duration = 9, stacking = true }) -- Rake
 Spell({ 1079, 9492, 9493, 9752, 9894, 9896 }, { duration = 12, stacking = true }) -- Rip
 Spell({ 5217, 6793, 9845, 9846 }, { name = "Tiger's Fury", duration = 6 })
 
-Spell( 2893 ,{ duration = 8, type = "BUFF" }) -- Abolish Poison
-Spell( 29166 , { duration = 20, type = "BUFF" }) -- Innervate
+Spell( 2893 ,{ duration = 8, type = "BUFF", buffType = "Magic" }) -- Abolish Poison
+Spell( 29166 , { duration = 20, type = "BUFF", buffType = "Magic" }) -- Innervate
 
-Spell({ 8936, 8938, 8939, 8940, 8941, 9750, 9856, 9857, 9858 }, { duration = 21, type = "BUFF" }) -- Regrowth
-Spell({ 774, 1058, 1430, 2090, 2091, 3627, 8910, 9839, 9840, 9841, 25299 }, { duration = 12, stacking = false, type = "BUFF" }) -- Rejuv
+Spell({ 8936, 8938, 8939, 8940, 8941, 9750, 9856, 9857, 9858 }, { duration = 21, type = "BUFF", buffType = "Magic" }) -- Regrowth
+Spell({ 774, 1058, 1430, 2090, 2091, 3627, 8910, 9839, 9840, 9841, 25299 }, { duration = 12, stacking = false, type = "BUFF", buffType = "Magic" }) -- Rejuv
 Spell({ 5570, 24974, 24975, 24976, 24977 }, { duration = 12, stacking = true }) -- Insect Swarm
 
 -------------
@@ -511,8 +512,8 @@ Spell( 14251 , { duration = 6 }) -- Riposte (disarm)
 ------------
 
 Spell({ 20707, 20762, 20763, 20764, 20765 }, { duration = 1800, type = "BUFF" }) -- Soulstone Resurrection
-Spell({ 687, 696 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Demon SKin
-Spell({ 706, 1086, 11733, 11734, 11735 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Demon Armor
+Spell({ 687, 696 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Demon SKin
+Spell({ 706, 1086, 11733, 11734, 11735 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Demon Armor
 Spell({ 18791 }, { duration = 1800, type = "BUFF", castFilter = true })  -- Touch of Shadow
 Spell({ 18789 }, { duration = 1800, type = "BUFF", castFilter = true })  -- Burning Wish
 Spell({ 18792 }, { duration = 1800, type = "BUFF", castFilter = true })  -- Fel Energy
@@ -527,7 +528,7 @@ Spell( 5697, { duration = 600 }) -- Unending Breath
 if class == "WARLOCK" then
     Spell({ 17794, 17798, 17797, 17799, 17800 }, { duration = 12 }) -- Shadow Vulnerability (Imp Shadow Bolt)
 end
-Spell({ 18288 }, { duration = 1800, type = "BUFF", castFilter = true })  -- Amplify Curse
+Spell({ 18288 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" })  -- Amplify Curse
 Spell({ 1714, 11719 }, { duration = 30 }) -- Curse of Tongues
 Spell({ 702, 1108, 6205, 7646, 11707, 11708 },{ duration = 120 }) -- Curse of Weakness
 Spell({ 17862, 17937 }, { duration = 300 }) -- Curse of Shadows
@@ -536,7 +537,6 @@ Spell({ 704, 7658, 7659, 11717 }, { duration = 120 }) -- Curse of Recklessness
 Spell( 603 ,{ duration = 60, stacking = true }) -- Curse of Doom
 Spell( 18223 ,{ duration = 12 }) -- Curse of Exhaustion
 Spell( 6358, {
-    pvpduration = 20,
     duration = function(spellID, isSrcPlayer)
         if isSrcPlayer then
             local mul = 1 + Talent(18754, 18755, 18756)*0.1
@@ -586,8 +586,8 @@ Spell({ 172, 6222, 6223, 7648, 11671, 11672, 25311 }, { stacking = true,
 })
 Spell({ 348, 707, 1094, 2941, 11665, 11667, 11668, 25309 },{ duration = 15, stacking = true }) -- Immolate
 
-Spell({ 6229, 11739, 11740, 28610 } ,{ duration = 30, type = "BUFF" }) -- Shadow Ward
-Spell({ 7812, 19438, 19440, 19441, 19442, 19443 }, { duration = 30, type = "BUFF" }) -- Sacrifice
+Spell({ 6229, 11739, 11740, 28610 } ,{ duration = 30, type = "BUFF", buffType = "Magic" }) -- Shadow Ward
+Spell({ 7812, 19438, 19440, 19441, 19442, 19443 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Sacrifice
 Spell({ 17877, 18867, 18868, 18869, 18870, 18871 }, { duration = 5 }) -- Shadowburn Debuff
 Spell( 18093 ,{ duration = 3 }) -- Pyroclasm
 
@@ -612,16 +612,16 @@ Spell( 8178 ,{ duration = 45, type = "BUFF" }) -- Grounding Totem Effect, no dur
 -- Using Druid's NS
 -- Spell( 16188, { duration = INFINITY, type = "BUFF" }) -- Nature's Swiftness
 
-Spell({ 324, 325, 905, 945, 8134, 10431, 10432 }, { duration = 600, type = "BUFF" }) -- Lightning Shield
-Spell( 546 ,{ duration = 600, type = "BUFF" }) -- Water Walkign
-Spell( 131 ,{ duration = 600, type = "BUFF" }) -- Water Breahing
+Spell({ 324, 325, 905, 945, 8134, 10431, 10432 }, { duration = 600, type = "BUFF", buffType = "Magic" }) -- Lightning Shield
+Spell( 546 ,{ duration = 600, type = "BUFF", buffType = "Magic" }) -- Water Walking
+Spell( 131 ,{ duration = 600, type = "BUFF", buffType = "Magic" }) -- Water Breahing
 Spell({ 16257, 16277, 16278, 16279, 16280 }, { duration = 15, type = "BUFF" }) -- Flurry
 
 Spell( 17364 ,{ duration = 12 }) -- Stormstrike
-Spell({ 16177, 16236, 16237 }, { duration = 15, type = "BUFF" }) -- Ancestral Fortitude from Ancestral Healing
+Spell({ 16177, 16236, 16237 }, { duration = 15, type = "BUFF", buffType = "Magic" }) -- Ancestral Fortitude from Ancestral Healing
 Spell({ 8056, 8058, 10472, 10473 }, { duration = 8 }) -- Frost Shock
 Spell({ 8050, 8052, 8053, 10447, 10448, 29228 }, { duration = 12, stacking = true }) -- Flame Shock
-Spell( 29203 ,{ duration = 15, type = "BUFF" }) -- Healing Way
+Spell( 29203 ,{ duration = 15, type = "BUFF", buffType = "Magic" }) -- Healing Way
 Spell({ 8034, 8037, 10458, 16352, 16353 }, { duration = 8 }) -- Frostbrand Attack
 Spell( 3600 ,{ duration = 5 }) -- Earthbind Totem
 
@@ -637,25 +637,25 @@ Spell({ 19876, 19895, 19896 }, { duration = INFINITY, type = "BUFF" }) -- Shadow
 Spell({ 7294, 10298, 10299, 10300, 10301 }, { duration = INFINITY, type = "BUFF" }) -- Retribution Aura
 
 
-Spell( 25780, { duration = 1800, type = "BUFF" }) -- Righteous Fury
+Spell( 25780, { duration = 1800, type = "BUFF", buffType = "Magic" }) -- Righteous Fury
 
-Spell({ 19740, 19834, 19835, 19836, 19837, 19838, 25291 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Might
-Spell({ 25782, 25916 }, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Might
+Spell({ 19740, 19834, 19835, 19836, 19837, 19838, 25291 }, { duration = 300, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Blessing of Might
+Spell({ 25782, 25916 }, { duration = 900, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Greater Blessing of Might
 
-Spell({ 19742, 19850, 19852, 19853, 19854, 25290 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Wisdom
-Spell({ 25894, 25918 }, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Might
+Spell({ 19742, 19850, 19852, 19853, 19854, 25290 }, { duration = 300, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Blessing of Wisdom
+Spell({ 25894, 25918 }, { duration = 900, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Greater Blessing of Might
 
-Spell(20217, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Kings
-Spell(25898, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Kings
+Spell(20217, { duration = 300, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Blessing of Kings
+Spell(25898, { duration = 900, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Greater Blessing of Kings
 
-Spell({ 20911, 20912, 20913 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Sanctuary
-Spell(25899, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Sanctuary
+Spell({ 20911, 20912, 20913 }, { duration = 300, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Blessing of Sanctuary
+Spell(25899, { duration = 900, type = "BUFF", castFilter = tru, buffType = "Magic" }) -- Greater Blessing of Sanctuary
 
-Spell(1038, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Salvation
-Spell(25895, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Salvation
+Spell(1038, { duration = 300, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Blessing of Salvation
+Spell(25895, { duration = 900, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Greater Blessing of Salvation
 
-Spell({ 19977, 19978, 19979 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Light
-Spell(25890, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Light
+Spell({ 19977, 19978, 19979 }, { duration = 300, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Blessing of Light
+Spell(25890, { duration = 900, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Greater Blessing of Light
 
 Spell( 20066, { duration = 6 }) -- Repentance
 Spell({ 2878, 5627, 5627 }, {
@@ -666,9 +666,10 @@ Spell({ 2878, 5627, 5627 }, {
     end
 }) -- Turn Undead
 
-Spell( 1044, { duration = 10, type = "BUFF" }) -- Blessing of Freedom
-Spell({ 6940, 20729 }, { duration = 30, type = "BUFF" }) -- Blessing of Sacrifice
+Spell( 1044, { duration = 10, type = "BUFF", buffType = "Magic" }) -- Blessing of Freedom
+Spell({ 6940, 20729 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Blessing of Sacrifice
 Spell({ 1022, 5599, 10278 }, { type = "BUFF",
+    buffType = "Magic",
     duration = function(spellID)
         if spellID == 1022 then return 6
         elseif spellID == 5599 then return 8
@@ -686,12 +687,12 @@ Spell({ 642, 1020 }, { type = "BUFF",
         return spellID == 642 and 10 or 12
     end
 }) -- Divine Shield
-Spell({ 20375, 20915, 20918, 20919, 20920 }, { duration = 30, type = "BUFF" }) -- Seal of Command
-Spell({ 21084, 20287, 20288, 20289, 20290, 20291, 20292, 20293 }, { duration = 30, type = "BUFF"}) -- Seal of Righteousness
-Spell({ 20162, 20305, 20306, 20307, 20308, 21082 }, { duration = 30, type = "BUFF" }) -- Seal of the Crusader
-Spell({ 20165, 20347, 20348, 20349 }, { duration = 30, type = "BUFF" }) -- Seal of Light
-Spell({ 20166, 20356, 20357 }, { duration = 30, type = "BUFF" }) -- Seal of Wisdom
-Spell( 20164 , { duration = 30, type = "BUFF" }) -- Seal of Justice
+Spell({ 20375, 20915, 20918, 20919, 20920 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Seal of Command
+Spell({ 21084, 20287, 20288, 20289, 20290, 20291, 20292, 20293 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Seal of Righteousness
+Spell({ 20162, 20305, 20306, 20307, 20308, 21082 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Seal of the Crusader
+Spell({ 20165, 20347, 20348, 20349 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Seal of Light
+Spell({ 20166, 20356, 20357 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Seal of Wisdom
+Spell( 20164 , { duration = 30, type = "BUFF", buffType = "Magic" }) -- Seal of Justice
 
 Spell({ 21183, 20188, 20300, 20301, 20302, 20303 }, { duration = 10 }) -- Judgement of the Crusader
 Spell({ 20185, 20344, 20345, 20346 }, {
@@ -725,10 +726,10 @@ Spell({ 853, 5588, 5589, 10308 }, {
     end
 }) -- Hammer of Justice
 
-Spell({ 20925, 20927, 20928 }, { duration = 10, type = "BUFF" }) -- Holy Shield
-Spell({ 20128, 20131, 20132, 20133, 20134 }, { duration = 10, type = "BUFF" }) -- Holy Shield
-Spell({ 67, 26017, 26018 }, { duration = 10, type = "BUFF" }) -- Vindication
-Spell({ 20050, 20052, 20053, 20054, 20055 }, { duration = 8, type = "BUFF" }) -- Vengeance
+Spell({ 20925, 20927, 20928 }, { duration = 10, type = "BUFF", buffType = "Magic" }) -- Holy Shield
+Spell({ 20128, 20131, 20132, 20133, 20134 }, { duration = 10, type = "BUFF" }) -- Redoubt
+Spell({ 67, 26017, 26018 }, { duration = 10, type = "BUFF", buffType = "Magic" }) -- Vindication
+Spell({ 20050, 20052, 20053, 20054, 20055 }, { duration = 8, type = "BUFF", buffType = "Magic" }) -- Vengeance
 Spell( 20170 ,{ duration = 2 }) -- Seal of Justice stun
 
 -------------
@@ -795,16 +796,16 @@ Spell({ 136, 3111, 3661, 3662, 13542, 13543, 13544 }, { duration = 5, type = "BU
 -- MAGE
 -------------
 
-Spell( 12043, { duration = INFINITY, type = "BUFF" }) -- Presence of Mind
+Spell( 12043, { duration = INFINITY, type = "BUFF", buffType = "Magic" }) -- Presence of Mind
 
-Spell({ 1459, 1460, 1461, 10156, 10157 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Arcane Intellect
-Spell( 23028, { duration = 3600, type = "BUFF", castFilter = true }) -- Arcane Brilliance
-Spell({ 6117, 22782, 22783 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Mage Armor
-Spell({ 168, 7300, 7301 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Frost Armor
-Spell({ 7302, 7320, 10219, 10220 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Ice Armor
+Spell({ 1459, 1460, 1461, 10156, 10157 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Arcane Intellect
+Spell( 23028, { duration = 3600, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Arcane Brilliance
+Spell({ 6117, 22782, 22783 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Mage Armor
+Spell({ 168, 7300, 7301 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Frost Armor
+Spell({ 7302, 7320, 10219, 10220 }, { duration = 1800, type = "BUFF", castFilter = true, buffType = "Magic" }) -- Ice Armor
 
-Spell( 2855, { duration = 120, type = "BUFF" }) -- Detect Magic
-Spell( 130, { duration = 1800, type = "BUFF" }) -- Slow Fall
+Spell( 2855, { duration = 120, type = "BUFF", buffType = "Magic" }) -- Detect Magic
+Spell( 130, { duration = 1800, type = "BUFF", buffType = "Magic" }) -- Slow Fall
 
 Spell({ 133, 143, 145, 3140, 8400, 8401, 8402, 10148, 10149, 10150, 10151, 25306 }, {
     stacking = true,
@@ -817,8 +818,8 @@ Spell({ 133, 143, 145, 3140, 8400, 8401, 8402, 10148, 10149, 10150, 10151, 25306
 }) -- Fireball
 Spell({ 11366, 12505, 12522, 12523, 12524, 12525, 12526, 18809 }, { duration = 12, stacking = true }) -- Pyroblast
 
-Spell({ 604, 8450, 8451, 10173, 10174 }, { duration = 600, type = "BUFF" }) -- Dampen Magic
-Spell({ 1008, 8455, 10169, 10170 }, { duration = 600, type = "BUFF" }) -- Amplify Magic
+Spell({ 604, 8450, 8451, 10173, 10174 }, { duration = 600, type = "BUFF", buffType = "Magic" }) -- Dampen Magic
+Spell({ 1008, 8455, 10169, 10170 }, { duration = 600, type = "BUFF", buffType = "Magic" }) -- Amplify Magic
 
 Spell(18469, { duration = 4 }) -- Imp CS Silence
 Spell({ 118, 12824, 12825, 12826, 28270, 28271, 28272 }, {
@@ -831,10 +832,10 @@ Spell({ 118, 12824, 12825, 12826, 28270, 28271, 28272 }, {
     end
 }) -- Polymorph
 Spell(11958, { duration = 10, type = "BUFF" }) -- Ice Block
-Spell({ 1463, 8494, 8495, 10191, 10192, 10193 }, { duration = 60, type = "BUFF" }) -- Mana Shield
-Spell({ 11426, 13031, 13032, 13033 }, { duration = 60, type = "BUFF" }) -- Ice Barrier
-Spell({ 543, 8457, 8458, 10223, 10225 }, { duration = 30, type = "BUFF" }) -- Fire Ward
-Spell({ 6143, 8461, 8462, 10177, 28609 }, { duration = 30, type = "BUFF" }) -- Frost Ward
+Spell({ 1463, 8494, 8495, 10191, 10192, 10193 }, { duration = 60, type = "BUFF", buffType = "Magic" }) -- Mana Shield
+Spell({ 11426, 13031, 13032, 13033 }, { duration = 60, type = "BUFF", buffType = "Magic" }) -- Ice Barrier
+Spell({ 543, 8457, 8458, 10223, 10225 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Fire Ward
+Spell({ 6143, 8461, 8462, 10177, 28609 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Frost Ward
 
 Spell(12355, { duration = 2 }) -- Impact
 Spell(12654, { duration = 4 }) -- Ignite

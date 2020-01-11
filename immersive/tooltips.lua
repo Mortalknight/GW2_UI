@@ -85,7 +85,7 @@ end
 GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 
 local function anchorTooltip(self, p)
-	self:SetOwner(p, "ANCHOR_CURSOR")
+	self:SetOwner(p, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
 end
 GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 

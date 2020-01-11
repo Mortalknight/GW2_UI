@@ -235,6 +235,20 @@ local function GWUseThisLocalization()
 	GwLocalization["FUTURE_SPELLS"] = "Zukünftige Zauber"
 	GwLocalization["STANCEBAR_POSITION"] = "Position der Stancebar"
 	GwLocalization["STANCEBAR_POSITION_DESC"] = "Setze die Position der Stancebar (Links oder recht von der Hauptaktionsleiste)"
+	GwLocalization['FPS_TOOLTIP_1'] = 'Bildrate '
+	GwLocalization['FPS_TOOLTIP_2'] = 'Latenz (Standort) '
+	GwLocalization['FPS_TOOLTIP_3'] = 'Latenz (Welt) '
+	GwLocalization['FPS_TOOLTIP_4'] = 'Bandbreite (Download) '
+	GwLocalization['FPS_TOOLTIP_5'] = 'Bandbreite (Upload) '
+	GwLocalization['FPS_TOOLTIP_6'] = 'Speicher für Addons: '
+	GwLocalization['CURSOR_ANCHOR_TYPE'] = "Mausanker Typ"
+	GwLocalization["CURSOR_ANCHOR_TYPE_DESC"] = "Wird nur angewendet, wenn die Option 'Tooltip an der Maus' aktiviert ist"
+	GwLocalization['CURSOR_ANCHOR'] = "Mausanker"
+	GwLocalization['ANCHOR_CURSOR_LEFT'] = 'Mausanker links'
+	GwLocalization['ANCHOR_CURSOR_RIGHT'] = 'Mausanker rechts'
+	GwLocalization['ANCHOR_CURSOR_OFFSET_X'] = 'Zeigeranker X-Versatz'
+	GwLocalization['ANCHOR_CURSOR_OFFSET_Y'] = 'Zeigeranker Y-Versatz'
+	GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"] = "Wird nur angewendet, wenn die Option 'Tooltip an der Maus' aktiviert und der Mausanker Typ NICHT 'Mausanker' ist"
 end
 	
 	
