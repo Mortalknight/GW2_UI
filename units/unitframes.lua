@@ -824,7 +824,6 @@ local function updateHealthValues(self, event)
         predictionbar:SetAlpha(0.0)
     else
         local predictionAmount = healthPrecentage + predictionPrecentage
-        local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
 
         predictionbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * predictionAmount)))
         predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
