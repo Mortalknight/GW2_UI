@@ -104,6 +104,30 @@
                     </Layer >
                 </Layers>
             </Frame>
+            <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobePredictionBackdrop">
+                <Size x="101" y="101"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" x="0" y="2"/>
+                </Anchors>
+                <Layers>
+                    <Layer textureSubLevel="4" level="BACKGROUND">
+                        <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark2">
+                            <Size x="102" y="102"></Size>
+                            <Color r="0.415" b="0.098" g="0.694" ></Color>
+                            <Anchors>
+                                <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
+                                <Anchor point="TOP" relativePoint="TOP" x="0" y="5"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer >
+                    <Layer textureSubLevel="2" level="BACKGROUND">
+                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthfill-incominghealing">
+                            <Size x="102" y="102"></Size>
+
+                        </Texture>
+                    </Layer >
+                </Layers>
+            </Frame>
             <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeHealth">
                 <Size x="102" y="102"></Size>
                 <Anchors>

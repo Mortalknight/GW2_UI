@@ -8,6 +8,7 @@ local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
+local IsIn = GW.IsIn
 
 local function powerBar_OnUpdate(self)
     if self.lostKnownPower == nil or self.powerMax == nil or self.lastUpdate == nil or self.animating == true then
@@ -299,8 +300,10 @@ local function updateHealthData(self)
     local healthMax = UnitHealthMax("Player")
     local healthPrec = 0.00001
     local absorb = UnitGetTotalAbsorbs("Player")
+    local prediction = UnitGetIncomingHeals("Player") or 0
 
     local absorbPrec = 0.00001
+    local predictionPrec = 0.00001
 
     if health > 0 and healthMax > 0 then
         healthPrec = math.max(0.0001, health / healthMax)
@@ -313,6 +316,15 @@ local function updateHealthData(self)
     else
         _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:Hide()
         GwPlayerHealthGlobeAbsorbBackdrop.spark:Hide()
+    end
+
+    if prediction > 0 and healthMax > 0 then
+        predictionPrec = math.min(math.max(0.001, prediction / healthMax), 1)
+        _G["GwPlayerHealthGlobePredictionBackdropBar"]:Show()
+        GwPlayerHealthGlobePredictionBackdrop.spark:Show()
+    else
+        _G["GwPlayerHealthGlobePredictionBackdropBar"]:Hide()
+        GwPlayerHealthGlobePredictionBackdrop.spark:Hide()
     end
 
     if healthPrec < 0.5 and (self.animating == false or self.animating == nil) then
@@ -341,8 +353,13 @@ local function updateHealthData(self)
             if absorbPrec <= 0.001 then
                 absorbPrecentage = 0.01
             end
-            local healthAnimationReduction =
-                math.max(0, math.min(1, animations["healthGlobeAnimation"]["progress"] - 0.05))
+
+            local predictionPrecentage = (animations["healthGlobeAnimation"]["progress"] + predictionPrec) - 0.05
+            if predictionPrec <= 0.001 then
+                predictionPrecentage = 0.01
+            end
+
+            local healthAnimationReduction = math.max(0, math.min(1, animations["healthGlobeAnimation"]["progress"] - 0.05))
             if animations["healthGlobeAnimation"]["progress"] >= 0.95 then
                 healthAnimationReduction = animations["healthGlobeAnimation"]["progress"]
             end
@@ -351,6 +368,11 @@ local function updateHealthData(self)
                 math.min(1, absorbPrecentage) * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
             )
             _G["GwPlayerHealthGlobeAbsorbBackdropBar"]:SetTexCoord(0, 1, math.abs(math.min(1, absorbPrecentage) - 1), 1)
+
+            _G["GwPlayerHealthGlobePredictionBackdrop"]:SetHeight(
+                math.min(1, predictionPrecentage) * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
+            )
+            _G["GwPlayerHealthGlobePredictionBackdropBar"]:SetTexCoord(0, 1, math.abs(math.min(1, predictionPrecentage) - 1), 1)
 
             _G["GwPlayerHealthGlobeHealth"]:SetHeight(
                 healthAnimationReduction * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
@@ -371,6 +393,7 @@ local function updateHealthData(self)
             GwPlayerHealthGlobeHealth.spark2:SetVertexColor(r, g, b, 1)
 
             GwPlayerHealthGlobeAbsorbBackdrop.spark:SetTexCoord(0, 1, (0.25 * sprite) - 0.25, 0.25 * sprite)
+            GwPlayerHealthGlobePredictionBackdrop.spark:SetTexCoord(0, 1, (0.25 * sprite) - 0.25, 0.25 * sprite)
         end,
         nil,
         function()
@@ -574,12 +597,9 @@ end
 GW.AddForProfiling("playerhud", "selectPvp", selectPvp)
 
 local function globe_OnEvent(self, event, ...)
-    if
-        event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" or event == "PLAYER_ENTERING_WORLD" or
-            event == "UNIT_ABSORB_AMOUNT_CHANGED"
-     then
+    if IsIn(event, "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "PLAYER_ENTERING_WORLD", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self)
-    elseif event == "WAR_MODE_STATUS_UPDATE" or event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FACTION" then
+    elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         selectPvp(self)
     end
 end
@@ -716,6 +736,7 @@ local function LoadPlayerHud()
     playerHealthGLobaBg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     playerHealthGLobaBg:RegisterEvent("PLAYER_FLAGS_CHANGED")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
+    playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_FACTION", "player")
@@ -728,6 +749,7 @@ local function LoadPlayerHud()
     GwPlayerHealthGlobeHealth.spark:AddMaskTexture(mask)
     GwPlayerHealthGlobeHealth.spark2:AddMaskTexture(mask)
     GwPlayerHealthGlobeAbsorbBackdrop.spark:AddMaskTexture(mask)
+    GwPlayerHealthGlobePredictionBackdrop.spark:AddMaskTexture(mask)
     GwPlayerHealthGlobeHealth.spark.mask = mask
 
     updateHealthData(playerHealthGLobaBg)

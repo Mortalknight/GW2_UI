@@ -4,6 +4,7 @@ NEW
     - Added X and Y offset for tooltip if anchor is set to cursor
     - Update for 8.3
     - Added healthprediction to target, target of target, focus and target of focus frame
+    - Added healthprediction to healthglobe
 
 
 5.1.15
