@@ -9,6 +9,10 @@ local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local UnitAura = _G.UnitAura
+local frames = {}
+local IncHeal = {}
+
+local HealComm = LibStub("LibHealComm-4.0", true)
 local LibClassicDurations = LibStub("LibClassicDurations", true)
 
 local GW_READY_CHECK_INPROGRESS = false
@@ -574,6 +578,9 @@ local function updatePartyData(self)
         self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
+    self.guid = UnitGUID(self.unit)
+    self.healPredictionAmount = 0
+
     if powerMax > 0 then
         powerPrecentage = power / powerMax
     end
@@ -613,9 +620,16 @@ local function party_OnEvent(self, event, unit, arg1)
         local health = UnitHealth(self.unit)
         local healthMax = UnitHealthMax(self.unit)
         local healthPrec = 0
+        local predictionPrecentage = 0
+
         if healthMax > 0 then
             healthPrec = health / healthMax
         end
+
+        if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
+            predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
+        end
+        self.predictionbar:SetValue(predictionPrecentage)
         Bar(self.healthbar, healthPrec)
     end
     if event == "UNIT_POWER_UPDATE" or event == "UNIT_MAXPOWER" and unit == self.unit then
@@ -707,6 +721,7 @@ local function createPartyFrame(i)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
+    frame.healthbar = frame.predictionbar.healthbar
     frame:SetScript("OnEvent", party_OnEvent)
 
     frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
@@ -714,6 +729,7 @@ local function createPartyFrame(i)
     frame.unit = registerUnit
     frame.ready = -1
     frame.nameNotLoaded = false
+    frame.guid = UnitGUID(frame.unit)
 
     frame:SetAttribute("unit", registerUnit)
     frame:SetAttribute("*type1", "target")
@@ -736,6 +752,7 @@ local function createPartyFrame(i)
     )
 
     AddToClique(frame)
+    frames[frame] = true
 
     frame.healthbar.spark:SetVertexColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
 
@@ -769,6 +786,33 @@ local function createPartyFrame(i)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
+local function UpdateIncomingPredictionAmount(...)
+	for frame in pairs(frames) do
+		for i = 1, select("#", ...) do
+			if (select(i, ...) == frame.guid) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player", frame.unit) or UnitIsUnit("pet", frame.unit)) then
+                local amount = (HealComm:GetHealAmount(frame.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.guid) or 1)
+                frame.healPredictionAmount = amount
+                party_OnEvent(frame, "UNIT_HEALTH", frame.unit)
+				break
+			end
+		end
+	end
+end
+
+-- Handle callbacks from HealComm
+function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_ModifierChanged(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+function IncHeal:HealComm_GUIDDisappeared(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+
 local function LoadPartyFrames()
     if LibClassicDurations then
         LibClassicDurations:Register("GW2_UI")
@@ -789,5 +833,13 @@ local function LoadPartyFrames()
     createPartyFrame(4)
 
     GwPartyFrame1:SetPoint("TOPLEFT", 20, -104)
+
+    --libHealComm setup
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
+    HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
 end
 GW.LoadPartyFrames = LoadPartyFrames

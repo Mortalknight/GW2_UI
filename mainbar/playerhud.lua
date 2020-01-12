@@ -8,6 +8,9 @@ local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
+local GWPlayerFrame = nil
+local IncHeal = {}
+local HealComm = LibStub("LibHealComm-4.0", true)
 
 local function powerBar_OnUpdate(self)
     if self.lostKnownPower == nil or self.powerMax == nil or self.lastUpdate == nil or self.animating == true then
@@ -281,9 +284,20 @@ local function updateHealthData(self)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
     local healthPrec = 0.00001
+    local predictionPrec = 0.00001
+    local prediction = self.healPredictionAmount
 
     if health > 0 and healthMax > 0 then
         healthPrec = math.max(0.0001, health / healthMax)
+    end
+
+    if prediction > 0 and healthMax > 0 then
+        predictionPrec = math.min(math.max(0.001, prediction / healthMax), 1)
+        _G["GwPlayerHealthGlobePredictionBackdropBar"]:Show()
+        GwPlayerHealthGlobePredictionBackdrop.spark:Show()
+    else
+        _G["GwPlayerHealthGlobePredictionBackdropBar"]:Hide()
+        GwPlayerHealthGlobePredictionBackdrop.spark:Hide()
     end
 
     if healthPrec < 0.5 and (self.animating == false or self.animating == nil) then
@@ -307,11 +321,21 @@ local function updateHealthData(self)
                 self.stringUpdateTime = GetTime() + 0.05
             end
 
+            local predictionPrecentage = (animations["healthGlobeAnimation"]["progress"] + predictionPrec) - 0.05
+            if predictionPrec <= 0.001 then
+                predictionPrecentage = 0.01
+            end
+
             local healthAnimationReduction =
                 math.max(0, math.min(1, animations["healthGlobeAnimation"]["progress"] - 0.05))
             if animations["healthGlobeAnimation"]["progress"] >= 0.95 then
                 healthAnimationReduction = animations["healthGlobeAnimation"]["progress"]
             end
+
+            _G["GwPlayerHealthGlobePredictionBackdrop"]:SetHeight(
+                math.min(1, predictionPrecentage) * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
+            )
+            _G["GwPlayerHealthGlobePredictionBackdropBar"]:SetTexCoord(0, 1, math.abs(math.min(1, predictionPrecentage) - 1), 1)
 
             _G["GwPlayerHealthGlobeHealth"]:SetHeight(
                 healthAnimationReduction * _G["GwPlayerHealthGlobeHealthBar"]:GetWidth()
@@ -330,6 +354,8 @@ local function updateHealthData(self)
             GwPlayerHealthGlobeHealth.spark2:SetTexCoord(0, 1, (0.25 * sprite) - 0.25, 0.25 * sprite)
             local r, g, b = lerpFlareColors(healthAnimationReduction)
             GwPlayerHealthGlobeHealth.spark2:SetVertexColor(r, g, b, 1)
+
+            GwPlayerHealthGlobePredictionBackdrop.spark:SetTexCoord(0, 1, (0.25 * sprite) - 0.25, 0.25 * sprite)
         end,
         nil,
         function()
@@ -587,6 +613,31 @@ local function globe_OnLeave(self)
 end
 GW.AddForProfiling("playerhud", "globe_OnLeave", globe_OnLeave)
 
+local function UpdateIncomingPredictionAmount(...)
+    for i = 1, select("#", ...) do
+        if (select(i, ...) == GWPlayerFrame.guid) and (UnitPlayerOrPetInParty(GWPlayerFrame.unit) or UnitPlayerOrPetInRaid(GWPlayerFrame.unit) or UnitIsUnit("player", GWPlayerFrame.unit) or UnitIsUnit("pet", GWPlayerFrame.unit)) then
+            local amount = (HealComm:GetHealAmount(GWPlayerFrame.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(GWPlayerFrame.guid) or 1)
+            GWPlayerFrame.healPredictionAmount = amount
+            updateHealthData(GWPlayerFrame)
+            break
+        end
+    end
+end
+
+-- Handle callbacks from HealComm
+function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_ModifierChanged(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+function IncHeal:HealComm_GUIDDisappeared(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+
 local function LoadPlayerHud()
     PlayerFrame:SetScript("OnEvent", nil)
     PlayerFrame:Hide()
@@ -637,6 +688,18 @@ local function LoadPlayerHud()
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     playerHealthGLobaBg:RegisterUnitEvent("UNIT_FACTION", "player")
+    playerHealthGLobaBg.unit = "Player"
+    playerHealthGLobaBg.guid = UnitGUID("Player")
+    playerHealthGLobaBg.healPredictionAmount = 0
+
+    --libHealComm setup
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
+    HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
+    GWPlayerFrame = playerHealthGLobaBg
 
     local mask = GwPlayerHealthGlobe:CreateMaskTexture()
     mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
@@ -645,6 +708,7 @@ local function LoadPlayerHud()
     mask:SetPoint("CENTER", GwPlayerHealthGlobe, "CENTER")
     GwPlayerHealthGlobeHealth.spark:AddMaskTexture(mask)
     GwPlayerHealthGlobeHealth.spark2:AddMaskTexture(mask)
+    GwPlayerHealthGlobePredictionBackdrop.spark:AddMaskTexture(mask)
     GwPlayerHealthGlobeHealth.spark.mask = mask
 
     updateHealthData(playerHealthGLobaBg)

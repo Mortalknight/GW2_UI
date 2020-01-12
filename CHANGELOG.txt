@@ -3,6 +3,8 @@
 - Update libs
 - Added X and Y offset for tooltip if anchor is set to cursor
 - Added durability icon to char stats
+- Added healthprediction to party, target and target of target frame
+- Added healthprediction to healthglobe
 
 1.7.0
 - Fix a bug which causes a conflict with other addons

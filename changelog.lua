@@ -188,6 +188,8 @@ GW_CHANGELOGS = "- Fix a bug which causes a conflict with other addons\n" .. GW_
 GW_CHANGELOGS = "\n\n1.7.0\n\n" .. GW_CHANGELOGS
 
 --VERSION 1.7.1
+GW_CHANGELOGS = "- Added healthprediction to healthglobe\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added healthprediction to party, target and target of target frame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Fix a lua error when hover the micromenu\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Update libs\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added X and Y offset for tooltip if anchor is set to cursor\n" .. GW_CHANGELOGS

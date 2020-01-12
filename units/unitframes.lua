@@ -18,8 +18,11 @@ local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local unitIlvls = {}
 local UnitAura = _G.UnitAura
+local frames = {}
+local IncHeal = {}
 local LibClassicDurations = LibStub("LibClassicDurations", true)
 local LibCC = LibStub("LibClassicCasterino", true)
+local HealComm = LibStub("LibHealComm-4.0", true)
 
 local textureMapping = {
 	[1] = 16,	--Main hand
@@ -479,6 +482,8 @@ GW.AddForProfiling("unitframes", "setUnitPortrait", setUnitPortrait)
 
 local function unitFrameData(self, event)
     local level = UnitLevel(self.unit)
+    self.guid = UnitGUID(self.unit)
+    self.healPredictionAmount = 0
     if level == -1 then
         level = "??"
     end
@@ -642,6 +647,7 @@ local function updateHealthValues(self, event)
     local health = 0
     local healthMax = 0
     local healthPrecentage = 0
+    local predictionPrecentage = 0
 
     if IsAddOnLoaded("RealMobHealth") then
         health, healthMax = RealMobHealth.GetUnitHealth(self.unit)
@@ -669,6 +675,22 @@ local function updateHealthValues(self, event)
     else
         animationSpeed = Diff(self.healthValue, healthPrecentage)
         animationSpeed = math.min(1.00, math.max(0.2, 2.00 * animationSpeed))
+    end
+
+    --prediction calc
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
+        predictionPrecentage = self.healPredictionAmount / healthMax
+    end
+
+    local predictionbar = self.predictionbar
+    if self.healPredictionAmount == 0 then
+        predictionbar:SetAlpha(0.0)
+    else
+        local predictionAmount = healthPrecentage + predictionPrecentage
+
+        predictionbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * predictionAmount)))
+        predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
+        predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
     end
 
     healthBarAnimation(self, healthPrecentage, true)
@@ -1022,6 +1044,33 @@ local function unittarget_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 
+local function UpdateIncomingPredictionAmount(...)
+	for frame in pairs(frames) do
+		for i = 1, select("#", ...) do
+			if (select(i, ...) == frame.guid) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player", frame.unit) or UnitIsUnit("pet", frame.unit)) then
+                local amount = (HealComm:GetHealAmount(frame.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.guid) or 1)
+                frame.healPredictionAmount = amount
+                updateHealthValues(frame)
+				break
+			end
+		end
+	end
+end
+
+-- Handle callbacks from HealComm
+function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
+	UpdateIncomingPredictionAmount(...)
+end
+function IncHeal:HealComm_ModifierChanged(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+function IncHeal:HealComm_GUIDDisappeared(event, guid)
+	UpdateIncomingPredictionAmount(guid)
+end
+
 local function LoadTarget()
     if LibClassicDurations then
         LibClassicDurations:Register("GW2_UI")
@@ -1048,6 +1097,7 @@ local function LoadTarget()
 
     RegisterUnitWatch(NewUnitFrame)
 
+    frames[NewUnitFrame] = true
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
 
@@ -1112,6 +1162,14 @@ local function LoadTarget()
     TargetFrame:SetScript("OnEvent", nil)
     TargetFrame:Hide()
     ComboFrame:SetScript("OnShow", function() ComboFrame:Hide() end)
+
+    --libHealComm setup
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
+    HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
+    HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
 end
 GW.LoadTarget = LoadTarget
 
@@ -1136,6 +1194,7 @@ local function LoadTargetOfUnit(unit)
     f:SetAttribute("*type2", "togglemenu")
     f:SetAttribute("unit", unitID)
     RegisterUnitWatch(f)
+    frames[f] = true
     f:EnableMouse(true)
     f:RegisterForClicks("AnyDown")
 

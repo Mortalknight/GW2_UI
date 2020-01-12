@@ -46,6 +46,12 @@
                     </Anchors>
                     <TexCoords left="1" right="0" top="0" bottom="0.25"/>
                 </Texture>
+                <Texture parentKey="predictionbar" file="Interface\AddOns\GW2_UI\textures\incominghealing">
+                    <Size x="213" y="13"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="3">
                 <Texture parentKey="castingbarSpark" file="Interface\AddOns\GW2_UI\textures\castingbarshieldspark">
@@ -187,6 +193,12 @@
                         <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="1" right="0" top="0" bottom="0.25"/>
+                </Texture>
+                <Texture parentKey="predictionbar" file="Interface\AddOns\GW2_UI\textures\incominghealing">
+                    <Size x="213" y="13"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
+                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="3">
