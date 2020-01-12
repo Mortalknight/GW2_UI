@@ -512,10 +512,12 @@ local function DisplaySettings()
         if v.optionType == "slider" then
             _G["GwOptionBox" .. k .. "Slider"]:SetMinMaxValues(v.min, v.max)
             _G["GwOptionBox" .. k .. "Slider"]:SetValue(GetSetting(v.optionName))
+            _G["GwOptionBox" .. k .. "Slider"].label:SetText(GW.RoundInt(GetSetting(v.optionName)))
             _G["GwOptionBox" .. k .. "Slider"]:SetScript(
                 "OnValueChanged",
                 function()
                     SetSetting(v.optionName, _G["GwOptionBox" .. k .. "Slider"]:GetValue())
+                    _G["GwOptionBox" .. k .. "Slider"].label:SetText(GW.RoundInt(_G["GwOptionBox" .. k .. "Slider"]:GetValue()))
                     if v.callback ~= nil then
                         v.callback()
                     end
@@ -576,16 +578,20 @@ local function DisplaySettings()
 
         if GetSetting("CURSOR_ANCHOR_TYPE") == "ANCHOR_CURSOR" then
             if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
-                if _G["GwOptionBox" .. k .. "Input"] then
-                    _G["GwOptionBox" .. k .. "Input"]:Disable()
-                    SetSetting(v.optionName,"0")
-                    _G["GwOptionBox" .. k .. "Input"]:SetText("0")
+                if _G["GwOptionBox" .. k .. "Slider"] then
+                    _G["GwOptionBox" .. k .. "Slider"]:Disable()
+                    SetSetting(v.optionName, 0)
+                    _G["GwOptionBox" .. k .. "Slider"]:SetValue(0)
+                    _G["GwOptionBox" .. k .. "Title"]:SetTextColor(0.82, 0.82, 0.82)
+                    _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(0.82, 0.82, 0.82)
                 end
             end
         else
             if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
-                if _G["GwOptionBox" .. k .. "Input"] then
-                    _G["GwOptionBox" .. k .. "Input"]:Enable()
+                if _G["GwOptionBox" .. k .. "Slider"] then
+                    _G["GwOptionBox" .. k .. "Slider"]:Enable()
+                    _G["GwOptionBox" .. k .. "Title"]:SetTextColor(1, 1, 1)
+                    _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(1, 1, 1)
                 end
             end
         end
@@ -1100,33 +1106,23 @@ local function LoadSettings()
         "TOOLTIP_MOUSE",
         "GwSettingsHudOptions"
     )
-    addOptionText(
+    addOptionSlider(
         GwLocalization['ANCHOR_CURSOR_OFFSET_X'],
         GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"],
         "ANCHOR_CURSOR_OFFSET_X",
         "GwSettingsHudOptions",
-        function()
-            for k, v in pairs(options) do
-                if v.optionName == "ANCHOR_CURSOR_OFFSET_X" then
-                    SetSetting(v.optionName, _G["GwOptionBox" .. k .. "Input"]:GetNumber())
-                    _G["GwOptionBox" .. k .. "Input"]:SetText(_G["GwOptionBox" .. k .. "Input"]:GetNumber())
-                end
-            end
-        end
+        nil,
+        -128,
+        128 
     )
-    addOptionText(
+    addOptionSlider(
         GwLocalization['ANCHOR_CURSOR_OFFSET_Y'],
         GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"],
         "ANCHOR_CURSOR_OFFSET_Y",
         "GwSettingsHudOptions",
-        function()
-            for k, v in pairs(options) do
-                if v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
-                    SetSetting(v.optionName, _G["GwOptionBox" .. k .. "Input"]:GetNumber())
-                    _G["GwOptionBox" .. k .. "Input"]:SetText(_G["GwOptionBox" .. k .. "Input"]:GetNumber())
-                end
-            end
-        end
+        nil,
+        -128,
+        128 
     )
     addOptionDropdown(
         GwLocalization["CURSOR_ANCHOR_TYPE"],
@@ -1137,18 +1133,22 @@ local function LoadSettings()
             if GetSetting("CURSOR_ANCHOR_TYPE") == "ANCHOR_CURSOR" then
                 for k, v in pairs(options) do
                     if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
-                        if _G["GwOptionBox" .. k .. "Input"] then
-                            _G["GwOptionBox" .. k .. "Input"]:Disable()
-                            SetSetting(v.optionName,"0")
-                            _G["GwOptionBox" .. k .. "Input"]:SetText("0")
+                        if _G["GwOptionBox" .. k .. "Slider"] then
+                            _G["GwOptionBox" .. k .. "Slider"]:Disable()
+                            SetSetting(v.optionName, 0)
+                            _G["GwOptionBox" .. k .. "Slider"]:SetValue(0)
+                            _G["GwOptionBox" .. k .. "Title"]:SetTextColor(0.82, 0.82, 0.82)
+                            _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(0.82, 0.82, 0.82)
                         end
                     end
                 end
             else
                 for k, v in pairs(options) do
                     if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
-                        if _G["GwOptionBox" .. k .. "Input"] then
-                            _G["GwOptionBox" .. k .. "Input"]:Enable()
+                        if _G["GwOptionBox" .. k .. "Slider"] then
+                            _G["GwOptionBox" .. k .. "Slider"]:Enable()
+                            _G["GwOptionBox" .. k .. "Title"]:SetTextColor(1, 1, 1)
+                            _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(1, 1, 1)
                         end
                     end
                 end

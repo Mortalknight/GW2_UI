@@ -556,12 +556,12 @@
         </Layers>
         <Frames>
             <Slider name="$parentSlider" parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
-                <Size x="256" y="16"></Size>
+                <Size x="245" y="16"></Size>
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10"></Anchor>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-25"></Anchor>
                 </Anchors>
                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                <ThumbTexture name="$parentThumb" file="Interface\AddOns\GW2_UI\textures\sliderhandle">
+                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\sliderhandle">
                     <Size x="16" y="16"/>
                 </ThumbTexture>
                 <Layers>
@@ -573,6 +573,18 @@
                             </Anchors>
                         </Texture>
                     </Layer>
+                    <Layer level="ARTWORK">
+						<FontString parentKey="label" inherits="GameFontNormalSmall" text="0" justifyH="LEFT">
+                            <Color r="1" b="1" g="1"></Color>
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT">
+									<Offset>
+										<AbsDimension x="4" y="1"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
                 </Layers>
             </Slider>
         </Frames>
