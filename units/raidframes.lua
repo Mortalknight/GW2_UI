@@ -173,7 +173,7 @@ local function setHealth(self)
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax~=0 then
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
         predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
     end
     setHealPrediction(self,predictionPrecentage)

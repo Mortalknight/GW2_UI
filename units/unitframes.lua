@@ -765,8 +765,10 @@ local function updateHealthValues(self, event)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local absorb = UnitGetTotalAbsorbs(self.unit)
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
     local healthPrecentage = 0
     local absorbPrecentage = 0
+    local predictionPrecentage = 0
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
@@ -778,6 +780,10 @@ local function updateHealthValues(self, event)
 
     if self.healthTextThroth == nil then
         self.healthTextThroth = 0
+    end
+
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = prediction / healthMax
     end
 
     local animationSpeed
@@ -810,6 +816,19 @@ local function updateHealthValues(self, event)
 
         absbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
         absbar:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
+    end
+
+    --prediction calc
+    local predictionbar = self.predictionbar
+    if prediction == 0 then
+        predictionbar:SetAlpha(0.0)
+    else
+        local predictionAmount = healthPrecentage + predictionPrecentage
+        local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+
+        predictionbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * predictionAmount)))
+        predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
+        predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
     end
 
     healthBarAnimation(self, healthPrecentage, true)
@@ -1145,13 +1164,13 @@ local function target_OnEvent(self, event, unit)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
-        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT") then
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
             updatePowerValues(self, event)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
             updateCastValues(self, event)
-        elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP",    "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
+        elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
             hideCastBar(self, event)
         elseif event == "UNIT_FACTION" then
             updateHealthbarColor(self)
@@ -1200,7 +1219,7 @@ local function focus_OnEvent(self, event, unit)
         return
     end
 
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED" then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED" or event == "UNIT_HEAL_PREDICTION" then
         updateHealthValues(self, event)
         return
     end
@@ -1318,6 +1337,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "target")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
@@ -1389,6 +1409,7 @@ local function LoadFocus()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "focus")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
