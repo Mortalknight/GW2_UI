@@ -1,3 +1,10 @@
+5.2.0
+
+NEW
+    - Added X and Y offset for tooltip if anchor is set to cursor
+    - Update for 8.3
+
+
 5.1.15
 
 NEW

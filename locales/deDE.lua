@@ -233,6 +233,14 @@ local function GWUseThisLocalization()
 	GwLocalization["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Was ist 'Pixel Perfection'?\n\nGW2 UI verfügt über eine integrierte Einstellung namens 'Pixel Perfection Mode'. Das bedeutet für dich, dass das UI wie vorgesehen aussieht, mit gestochen scharfen Texturen und einer besseren Skalierung. Natürlich kannst du dies in den Einstellungen ausschalten, falls du dies vorziehst."
 	GwLocalization["STANCEBAR_POSITION"] = "Position der Stancebar"
 	GwLocalization["STANCEBAR_POSITION_DESC"] = "Setze die Position der Stancebar (Links oder recht von der Hauptaktionsleiste)"
+	GwLocalization["CURSOR_ANCHOR_TYPE"] = "Mausanker Typ"
+	GwLocalization["CURSOR_ANCHOR_TYPE_DESC"] = "Wird nur angewendet, wenn die Option 'Tooltip an der Maus' aktiviert ist"
+	GwLocalization["CURSOR_ANCHOR"] = "Mausanker"
+	GwLocalization["ANCHOR_CURSOR_LEFT"] = "Mausanker links"
+	GwLocalization["ANCHOR_CURSOR_RIGHT"] = "Mausanker rechts"
+	GwLocalization["ANCHOR_CURSOR_OFFSET_X"] = "Zeigeranker X-Versatz"
+	GwLocalization["ANCHOR_CURSOR_OFFSET_Y"] = "Zeigeranker Y-Versatz"
+	GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"] = "Wird nur angewendet, wenn die Option 'Tooltip an der Maus' aktiviert und der Mausanker Typ NICHT 'Mausanker' ist"
 end
 
 

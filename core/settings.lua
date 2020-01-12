@@ -438,8 +438,8 @@ local function DisplaySettings()
 
         local of = CreateFrame("Button", "GwOptionBox" .. k, _G[v.frameName], optionFrameType)
 
-        if v.margin or newLine and not first or padding[v.frameName].x > 440 then
-            padding[v.frameName].y = padding[v.frameName].y + (pY + box_padding) * (v.margin and 2 or 1)
+        if newLine and not first or padding[v.frameName].x > 440 then
+            padding[v.frameName].y = padding[v.frameName].y + (pY + box_padding)
             padding[v.frameName].x = box_padding
         end
 
@@ -521,10 +521,12 @@ local function DisplaySettings()
         if v.optionType == "slider" then
             _G["GwOptionBox" .. k .. "Slider"]:SetMinMaxValues(v.min, v.max)
             _G["GwOptionBox" .. k .. "Slider"]:SetValue(GetSetting(v.optionName, v.perSpec))
+            _G["GwOptionBox" .. k .. "Slider"].label:SetText(GW.RoundInt(GetSetting(v.optionName)))
             _G["GwOptionBox" .. k .. "Slider"]:SetScript(
                 "OnValueChanged",
                 function()
                     SetSetting(v.optionName, _G["GwOptionBox" .. k .. "Slider"]:GetValue(), v.perSpec)
+                    _G["GwOptionBox" .. k .. "Slider"].label:SetText(GW.RoundInt(_G["GwOptionBox" .. k .. "Slider"]:GetValue()))
                     if v.callback ~= nil then
                         v.callback()
                     end
@@ -610,6 +612,26 @@ local function DisplaySettings()
 
         if newLine == false then
             padding[v.frameName].x = padding[v.frameName].x + of:GetWidth() + box_padding
+        end
+
+        if GetSetting("CURSOR_ANCHOR_TYPE") == "ANCHOR_CURSOR" then
+            if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                if _G["GwOptionBox" .. k .. "Slider"] then
+                    _G["GwOptionBox" .. k .. "Slider"]:Disable()
+                    SetSetting(v.optionName, 0)
+                    _G["GwOptionBox" .. k .. "Slider"]:SetValue(0)
+                    _G["GwOptionBox" .. k .. "Title"]:SetTextColor(0.82, 0.82, 0.82)
+                    _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(0.82, 0.82, 0.82)
+                end
+            end
+        else
+            if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                if _G["GwOptionBox" .. k .. "Slider"] then
+                    _G["GwOptionBox" .. k .. "Slider"]:Enable()
+                    _G["GwOptionBox" .. k .. "Title"]:SetTextColor(1, 1, 1)
+                    _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(1, 1, 1)
+                end
+            end
         end
     end
 end
@@ -1192,12 +1214,6 @@ local function LoadSettings()
         "GwSettingsHudOptions"
     )
     addOption(
-        GwLocalization["MOUSE_TOOLTIP"],
-        GwLocalization["MOUSE_TOOLTIP_DESC"],
-        "TOOLTIP_MOUSE",
-        "GwSettingsHudOptions"
-    )
-    addOption(
         GwLocalization["FADE_MICROMENU"],
         GwLocalization["FADE_MICROMENU_DESC"],
         "FADE_MICROMENU",
@@ -1233,7 +1249,67 @@ local function LoadSettings()
         "PIXEL_PERFECTION",
         "GwSettingsHudOptions"
     )
-
+    addOption(
+        GwLocalization["MOUSE_TOOLTIP"],
+        GwLocalization["MOUSE_TOOLTIP_DESC"],
+        "TOOLTIP_MOUSE",
+        "GwSettingsHudOptions"
+    )
+    addOptionSlider(
+        GwLocalization['ANCHOR_CURSOR_OFFSET_X'],
+        GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"],
+        "ANCHOR_CURSOR_OFFSET_X",
+        "GwSettingsHudOptions",
+        nil,
+        -128,
+        128 
+    )
+    addOptionSlider(
+        GwLocalization['ANCHOR_CURSOR_OFFSET_Y'],
+        GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"],
+        "ANCHOR_CURSOR_OFFSET_Y",
+        "GwSettingsHudOptions",
+        nil,
+        -128,
+        128 
+    )
+    addOptionDropdown(
+        GwLocalization["CURSOR_ANCHOR_TYPE"],
+        GwLocalization["CURSOR_ANCHOR_TYPE_DESC"],
+        "CURSOR_ANCHOR_TYPE",
+        "GwSettingsHudOptions",
+        function()
+            if GetSetting("CURSOR_ANCHOR_TYPE") == "ANCHOR_CURSOR" then
+                for k, v in pairs(options) do
+                    if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                        if _G["GwOptionBox" .. k .. "Slider"] then
+                            _G["GwOptionBox" .. k .. "Slider"]:Disable()
+                            SetSetting(v.optionName, 0)
+                            _G["GwOptionBox" .. k .. "Slider"]:SetValue(0)
+                            _G["GwOptionBox" .. k .. "Title"]:SetTextColor(0.82, 0.82, 0.82)
+                            _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(0.82, 0.82, 0.82)
+                        end
+                    end
+                end
+            else
+                for k, v in pairs(options) do
+                    if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
+                        if _G["GwOptionBox" .. k .. "Slider"] then
+                            _G["GwOptionBox" .. k .. "Slider"]:Enable()
+                            _G["GwOptionBox" .. k .. "Title"]:SetTextColor(1, 1, 1)
+                            _G["GwOptionBox" .. k .. "Slider"].label:SetTextColor(1, 1, 1)
+                        end
+                    end
+                end
+            end
+        end,
+        {'ANCHOR_CURSOR','ANCHOR_CURSOR_LEFT','ANCHOR_CURSOR_RIGHT'},
+        {
+            GwLocalization['CURSOR_ANCHOR'],
+            GwLocalization['ANCHOR_CURSOR_LEFT'],
+            GwLocalization['ANCHOR_CURSOR_RIGHT']
+        }
+    )
     addOptionDropdown(
         GwLocalization["MINIMAP_HOVER"],
         GwLocalization["MINIMAP_HOVER_TOOLTIP"],
@@ -1577,7 +1653,7 @@ local function LoadSettings()
     addOption("Timer Tracker Frame", nil, "TIMERTRACKER_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
-    _G["GwSettingsLabel4"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
+    _G["GwSettingsLabel8"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
 
     switchCat(0)
     GwSettingsWindow:Hide()

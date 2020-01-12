@@ -229,6 +229,14 @@ local function GWUseThisLocalization()
 	GwLocalization["DISCORD"] = "Join Discord"
 	GwLocalization["STANCEBAR_POSITION"] = "Position of the Stancebar"
 	GwLocalization["STANCEBAR_POSITION_DESC"] = "Set the position of the Stancebar (Left or Right from the main Actionbar)"
+	GwLocalization["CURSOR_ANCHOR_TYPE"] = "Cursor Anchor Type"
+	GwLocalization["CURSOR_ANCHOR_TYPE_DESC"] = "Take only effect if the option 'Cursor Tooltips' is activated"
+	GwLocalization["CURSOR_ANCHOR"] = "Cursor Anchor"
+	GwLocalization["ANCHOR_CURSOR_LEFT"] = "Cursor Anchor left"
+	GwLocalization["ANCHOR_CURSOR_RIGHT"] = "Cursor Anchor right"
+	GwLocalization["ANCHOR_CURSOR_OFFSET_X"] = "Cursor Anchor Offset X"
+	GwLocalization["ANCHOR_CURSOR_OFFSET_Y"] = "Cursor Anchor Offset Y"
+	GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"] = "Take only effect if the option 'Cursor Tooltips' is activated and the Cursoer Anchor is NOT 'Cursor Anchor'"
 
 	--Composite
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])

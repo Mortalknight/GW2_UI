@@ -52,14 +52,14 @@
         </Anchors>
     </Frame>
     <Frame name="GwSettingsWindow" frameStrata="HIGH" enableMouse="true" parent="UIParent" virtual="true">
-        <Size x="512" y="550"></Size>
+        <Size x="512" y="600"></Size>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSettingsMoverFrame" relativePoint="TOP" x="20" y="-40"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBackground" parentKey="background" file="Interface\AddOns\GW2_UI\textures\bag\bagbg">
-                    <Size x="512" y="550"></Size>
+                    <Size x="512" y="600"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
@@ -159,13 +159,13 @@
             </Button>
 
             <Frame name="$parentContainer">
-                <Size x="512" y="512"></Size>
+                <Size x="512" y="600"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Frames>
                     <Frame name="GwSettingsModuleOption">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -197,13 +197,13 @@
                         </Frames>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsTargetFocus">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
                         <Frames>
                             <Frame name="GwSettingsTargetOptions">
-                                <Size x="660" y="240"></Size>
+                                <Size x="660" y="300"></Size>
                                 <Anchors>
                                     <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                                 </Anchors>
@@ -253,7 +253,7 @@
                         </Frames>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsActionbarOptions">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -277,7 +277,7 @@
                         </Layers>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsHudOptions">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -301,7 +301,7 @@
                         </Layers>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsGroupframe">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -325,7 +325,7 @@
                         </Layers>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsGroupframe2">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -379,7 +379,7 @@
                         </Frames>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsAurasframe">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -409,7 +409,7 @@
                                 </Layers>
                             </Frame>
                             <Frame name="GwSettingsIndicatorsOptions">
-                                <Size x="660" y="240"></Size>
+                                <Size x="660" y="360"></Size>
                                 <Anchors>
                                     <Anchor point="TOPLEFT" x="0" y="-130"></Anchor>
                                 </Anchors>
@@ -435,7 +435,7 @@
                         </Frames>
                     </Frame>
                     <Frame name="GwSettingsGeneralSkinsOption">
-                        <Size x="660" y="480"></Size>
+                        <Size x="660" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -459,7 +459,7 @@
                         </Layers>
                     </Frame>
                     <Frame hidden="true" name="GwSettingsProfilesframe">
-                        <Size x="512" y="480"></Size>
+                        <Size x="512" y="600"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
@@ -645,9 +645,9 @@
         </Layers>
         <Frames>
             <Slider name="$parentSlider" parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
-                <Size x="256" y="16"></Size>
+                <Size x="235" y="16"></Size>
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10"></Anchor>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-25"></Anchor>
                 </Anchors>
                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
 
@@ -663,6 +663,18 @@
                             </Anchors>
                         </Texture>
                     </Layer>
+                     <Layer level="ARTWORK">
+						<FontString parentKey="label" inherits="GameFontNormalSmall" text="0" justifyH="LEFT">
+                            <Color r="1" b="1" g="1"></Color>
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT">
+									<Offset>
+										<AbsDimension x="4" y="1"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
                 </Layers>
             </Slider>
         </Frames>

@@ -468,4 +468,10 @@ GW_CHANGELOGS = "   - Added timer to scenarios like Chromie\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.15\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.2.0
+GW_CHANGELOGS = "   - Update for 8.3\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added X and Y offset for tooltip if anchor is set to cursor\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.2.0\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
