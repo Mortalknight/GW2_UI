@@ -1,3 +1,8 @@
+1.7.2
+- Now the correct resistence will be shown for player and pet
+- Advanced char stats: Redo MP5, now split into Item, Casting, Spirit
+- Fix an overlapping error with health on the healthglobe
+
 1.7.1
 - Fix a lua error when hover the micromenu
 - Update libs

@@ -196,4 +196,10 @@ GW_CHANGELOGS = "- Added X and Y offset for tooltip if anchor is set to cursor\n
 GW_CHANGELOGS = "- Added durability icon to char stats\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.7.1\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.7.2
+GW_CHANGELOGS = "- Now the correct resistence will be shown for player and pet\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Advanced char stats: Redo MP5, now split into Item, Casting, Spirit\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Fix an overlapping error with health on the healthglobe\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.7.2\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS

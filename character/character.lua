@@ -1,7 +1,7 @@
 local _, GW = ...
 local comma_value = GW.comma_value
 local AddToAnimation = GW.AddToAnimation
-local round = GW.round
+local RoundDec = GW.RoundDec
 local RT = GW.REP_TEXTURES
 local REPBG_T = 0
 local REPBG_B = 0.464
@@ -399,7 +399,7 @@ function gwPaperDollUpdateStats()
     end
 
     --resitance 
-    for resistanceIndex = 1, 5 do
+    for resistanceIndex = 2, 6 do
         statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
@@ -421,10 +421,9 @@ function GWshowExtendedAttributes(self)
     if UnitPowerType("player") == 0 then
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. MANA_REGEN .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine("MP5 (Casting): ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", select(2, GetManaRegen())) .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine("MP5 (Not Casting): ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetManaRegen()) .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine("MP5: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetPowerRegen()) .. FONT_COLOR_CODE_CLOSE)
-    
+        GameTooltip:AddDoubleLine(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. HELPFRAME_ITEM_TITLE .. "):", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5FromItems()) .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. PLAYERSTAT_SPELL_COMBAT .. "): ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5WhileCasting()) .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. ITEM_MOD_SPIRIT_SHORT .. "): ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5FromSpirit()) .. FONT_COLOR_CODE_CLOSE)
     end
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. MELEE .. FONT_COLOR_CODE_CLOSE)
@@ -446,20 +445,20 @@ function GWshowExtendedAttributes(self)
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. SPELL_BONUS .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(BONUS_HEALING .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusHealing()) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Shadow Damage: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(6)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Shadow Crit: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(6)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Holy Damage: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(2)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Holy Crit: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(2)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Fire Damage: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(3)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Fire Crit: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(3)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Frost Damage: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(5)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Frost Crit: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(5)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Arcane Damage: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(7)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Arcane Crit: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(7)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Nature Damage: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(4)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Nature Crit: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(4)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Physical Damage: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(1)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine("Physical Crit: ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(1)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL6 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(6)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL6 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(6)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL2 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(2)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL2 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(2)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL3 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(3)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL3 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(3)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL5 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(5)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL5 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(5)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL7 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(7)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL7 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(7)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL4 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(4)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL4 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(4)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(STRING_SCHOOL_PHYSICAL .. " " .. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(1)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(STRING_SCHOOL_PHYSICAL .. " " .. CRIT_ABBR .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(1)) .."%" .. FONT_COLOR_CODE_CLOSE)
 
     GameTooltip:Show()
 end
@@ -524,7 +523,7 @@ function gwPaperDollUpdatePetStats()
     statText, tooltip1, tooltip2 = GW.stats.getArmor("pet")
     grid, x, y, numShownStats = setPetStatFrame("ARMOR", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
-    for resistanceIndex = 1, 5 do
+    for resistanceIndex = 2, 6 do
         statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex, "pet")
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
@@ -980,11 +979,11 @@ local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName
             frame.currentValue:SetText(comma_value(friendRep - friendThreshold))
             frame.nextValue:SetText(comma_value(nextFriendThreshold - friendThreshold))
 
-            local percent = math.floor(round(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100), 0)
+            local percent = math.floor(RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100), 0)
             if percent == -1 then
                 frame.percentage:SetText("0%")
             else
-                frame.percentage:SetText((math.floor( round(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100), 0)) .. "%")
+                frame.percentage:SetText((math.floor(RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100), 0)) .. "%")
             end
             frame.StatusBar:SetValue((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))
         else

@@ -291,7 +291,7 @@ local function updateHealthData(self)
         healthPrec = math.max(0.0001, health / healthMax)
     end
 
-    if prediction > 0 and healthMax > 0 then
+    if prediction > 0 and healthMax > 0 and health < healthMax then
         predictionPrec = math.min(math.max(0.001, prediction / healthMax), 1)
         _G["GwPlayerHealthGlobePredictionBackdropBar"]:Show()
         GwPlayerHealthGlobePredictionBackdrop.spark:Show()

@@ -1,4 +1,6 @@
 local _, GW = ...
+local RoundDec = GW.RoundDec
+
 GW.stats = {}
 local PRIMARY_STATS={
     [1] ="STRENGTH",
@@ -476,7 +478,7 @@ local function getRangedAttackPower(unit, prefix)
 end
 GW.stats.getRangedAttackPower = getRangedAttackPower
 
-local function getResitance(i,unit)
+local function getResitance(i, unit)
 	local resistance
 	local positive
 	local negative
@@ -532,3 +534,77 @@ local function getResitance(i,unit)
 	return resistanceName, stat, tooltip, tooltip2
 end
 GW.stats.getResitance = getResitance
+
+-- Get MP5 from items
+local function MP5FromItems()
+    local mp5 = 0
+    for i = 1, 18 do
+        local itemLink = GetInventoryItemLink("player", i)
+        if itemLink then
+            local stats = GetItemStats(itemLink)
+            if stats then
+                local statMP5 = stats["ITEM_MOD_POWER_REGEN0_SHORT"]
+                if statMP5 then
+                    mp5 = mp5 + statMP5 + 1
+                end
+            end
+        end
+    end
+    return mp5
+end
+GW.stats.MP5FromItems = MP5FromItems
+
+local lastManaReg = 0
+
+-- Get MP5 from spirit
+local function MP5FromSpirit()
+    local base, _ = GetManaRegen() -- Returns mana reg per 1 second
+    if base < 1 then
+        base = lastManaReg
+    end
+    lastManaReg = base
+    return RoundDec(base, 0) * 5
+end
+GW.stats.MP5FromSpirit = MP5FromSpirit
+
+local function _GetTalentModifier()
+    local _, _, classId = UnitClass("player")
+    local mod = 0
+
+    if classId == 5 then -- Priest
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 8)
+        mod = points * 0.05 -- 0-15% from Meditation
+    end
+
+    if classId == 8 then -- Mage
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 12)
+        mod = points * 0.05 -- 0-15% Arcane Meditation
+    end
+
+    if classId == 11 then -- Druid
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(3, 6)
+        mod = points * 0.05 -- 0-15% from Reflection
+    end
+
+    return mod
+end
+
+-- Get manaregen while casting
+local function MP5WhileCasting()
+    local _, casting = GetManaRegen() -- Returns mana reg per 1 second
+    if casting < 1 then
+        casting = lastManaReg
+    end
+    lastManaReg = casting
+
+    local mod = _GetTalentModifier()
+    if mod > 0 then
+        casting = casting * mod
+    end
+
+    local mp5Items = MP5FromItems()
+    casting = (casting * 5) + mp5Items
+
+    return RoundDec(casting, 2)
+end
+GW.stats.MP5WhileCasting = MP5WhileCasting
