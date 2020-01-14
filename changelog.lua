@@ -469,6 +469,7 @@ GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.1.15\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.2.0
+GW_CHANGELOGS = "   - Added option to set Actionbar fade per Actionbar (show always, show in combat, show only on mouse over)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added healthprediction to healthglobe\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added healthprediction to target, target of target, focus and target of focus frame\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Update for 8.3\n" .. GW_CHANGELOGS

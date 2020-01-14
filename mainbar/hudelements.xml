@@ -113,7 +113,7 @@
                     <Layer textureSubLevel="4" level="BACKGROUND">
                         <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark2">
                             <Size x="102" y="102"></Size>
-                            <Color r="0.415" b="0.098" g="0.694" ></Color>
+                            <Color r="0.155" g="0.24" b="0.057"></Color>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
                                 <Anchor point="TOP" relativePoint="TOP" x="0" y="5"/>
@@ -123,7 +123,6 @@
                     <Layer textureSubLevel="2" level="BACKGROUND">
                         <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthfill-incominghealing">
                             <Size x="102" y="102"></Size>
-
                         </Texture>
                     </Layer >
                 </Layers>

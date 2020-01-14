@@ -5,6 +5,7 @@ NEW
     - Update for 8.3
     - Added healthprediction to target, target of target, focus and target of focus frame
     - Added healthprediction to healthglobe
+    - Added option to set Actionbar fade per Actionbar (Show always, show in combat, show only on mouse over)
 
 
 5.1.15

@@ -1156,12 +1156,6 @@ local function LoadSettings()
     createCat(BINDING_HEADER_ACTIONBAR, nil, "GwSettingsActionbarOptions", 7)
 
     addOption(
-        GwLocalization["ACTION_BAR_FADE"],
-        GwLocalization["ACTION_BAR_FADE_DESC"],
-        "FADE_BOTTOM_ACTIONBAR",
-        "GwSettingsActionbarOptions"
-    )
-    addOption(
         GwLocalization["HIDE_EMPTY_SLOTS"],
         GwLocalization["HIDE_EMPTY_SLOTS_DESC"],
         "HIDEACTIONBAR_BACKGROUND_ENABLED",
@@ -1191,8 +1185,44 @@ local function LoadSettings()
         {"LEFT", "RIGHT"},
         {GwLocalization["LEFT"], GwLocalization["RIGHT"]}
     )
-    createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
+    addOptionDropdown(
+        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR1_TEXT .. "' " .. SHOW,
+        nil,
+        "FADE_MULTIACTIONBAR_1",
+        "GwSettingsActionbarOptions",
+        nil,
+        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+    )
+    addOptionDropdown(
+        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR2_TEXT .. "' " .. SHOW,
+        nil,
+        "FADE_MULTIACTIONBAR_2",
+        "GwSettingsActionbarOptions",
+        nil,
+        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+    )
+    addOptionDropdown(
+        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR3_TEXT .. "' " .. SHOW,
+        nil,
+        "FADE_MULTIACTIONBAR_3",
+        "GwSettingsActionbarOptions",
+        nil,
+        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+    )
+    addOptionDropdown(
+        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR4_TEXT .. "' " .. SHOW,
+        nil,
+        "FADE_MULTIACTIONBAR_4",
+        "GwSettingsActionbarOptions",
+        nil,
+        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+    )
 
+    createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
 
     addOption(
         GwLocalization["DYNAMIC_HUD"],

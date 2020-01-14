@@ -183,6 +183,7 @@ local function fadeCheck(self, forceCombat)
 
     for i = 1, 4 do
         local f = self["gw_Bar" .. i]
+        local fadeOption = GetSetting("FADE_MULTIACTIONBAR_" .. i)
         if f then
             if isDirty and not inLockdown then
                 -- this should only be set after a bar setting change (including initial load)
@@ -195,7 +196,7 @@ local function fadeCheck(self, forceCombat)
                 end
             else
                 local inFocus
-                if mouseOut then
+                if fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT" then
                     if f:IsMouseOver(100, -100, -100, 100) then
                         inFocus = true
                     else
@@ -214,7 +215,7 @@ local function fadeCheck(self, forceCombat)
                 if not f.gw_IsEnabled then
                     forceHide = true
                 end
-                if f:IsShown() and forceHide ~= true and (inFocus or inCombat or isFlyout) then
+                if f:IsShown() and forceHide ~= true and ((inFocus and (fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT") and not inCombat) or (inFocus or (inCombat and fadeOption == "INCOMBAT")) or isFlyout or fadeOption == "ALWAYS") then
                     -- should be showing
                     if not busy and curAlpha < 1.0 then
                         actionBarFrameShow(f)
@@ -1038,10 +1039,8 @@ local function LoadActionBars()
 
     -- init our bars
     local fmActionbar = updateMainBar(showBotRight)
-    fmActionbar.gw_Bar1 =
-        updateMultiBar("MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
-    fmActionbar.gw_Bar2 =
-        updateMultiBar("MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
+    fmActionbar.gw_Bar1 = updateMultiBar("MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
+    fmActionbar.gw_Bar2 = updateMultiBar("MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
     fmActionbar.gw_Bar3 = updateMultiBar("MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE)
     fmActionbar.gw_Bar4 = updateMultiBar("MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE)
 
