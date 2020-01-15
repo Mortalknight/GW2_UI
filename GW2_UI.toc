@@ -21,7 +21,6 @@ GW2_ui.lua
 
 core/shared.xml
 core/settings.xml
-core/flags.lua
 core/fonts.lua
 core/settings.lua
 core/hover_binding.lua
