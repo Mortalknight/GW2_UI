@@ -478,6 +478,7 @@ GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.2.0\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.2.1
+GW_CHANGELOGS = "   - Add warning to unequip cloak to upgrade instead of throwing an error\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Fix immersive camera for King Phaoris\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Add Rajani & Uldum Accord rep graphics\n" .. GW_CHANGELOGS

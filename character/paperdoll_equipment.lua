@@ -280,9 +280,10 @@ local function itemSlot_OnClick(self, button, drag)
                             break
                         end
                     end
-                    if castingItem and castingItem == 154879 then
+                    if castingItem and (castingItem == 154879 or castingItem == 171335) then
                         -- Awoken Titan Essence causes PickupInventoryItem to behave as protected; no idea why
                         -- So we display a nice message instead of a UI error
+                        -- (Corrupting Core in BFA for cloak does this too)
                         local itemid = GetInventoryItemID("player", self:GetID())
                         if itemid then
                             local _, _, quality, _ = GetItemInfo(itemid)

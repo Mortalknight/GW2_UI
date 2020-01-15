@@ -2,10 +2,10 @@
 
 NEW
     - Add Rajani & Uldum Accord rep graphics
-    
+
 FIXES
     - Fix immersive camera for King Phaoris
-
+    - Add warning to unequip cloak to upgrade instead of throwing an error (temp fix)
 
 
 5.2.0
