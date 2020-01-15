@@ -1,3 +1,10 @@
+5.2.1
+
+FIXES
+    - Fix immersive camera for King Phaoris
+    
+
+
 5.2.0
 
 NEW

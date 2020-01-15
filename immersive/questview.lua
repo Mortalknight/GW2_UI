@@ -270,7 +270,8 @@ end
 GW.AddForProfiling("questview", "nextGossip", nextGossip)
 
 local model_tweaks = {
-    [1717164] = {["z"] = -0.35}
+    [1717164] = {["z"] = -0.35},
+    [415230] = {["z"] = 0}
 }
 local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7

@@ -477,4 +477,10 @@ GW_CHANGELOGS = "   - Added X and Y offset for tooltip if anchor is set to curso
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.2.0\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.2.1
+GW_CHANGELOGS = "   - Fix immersive camera for King Phaoris\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXES\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.2.1\n\n" .. GW_CHANGELOGS
+
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
