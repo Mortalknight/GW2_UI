@@ -16,6 +16,8 @@ T[2157] = "BFA/Honorbound"
 T[2391] = "BFA/Meca"
 T[2400] = "BFA/Ankoan"
 T[2373] = "BFA/Unshackled"
+T[2415] = "BFA/Rajani"
+T[2417] = "BFA/Uldum Accord"
 
 -- Legion
 T[2170] = "Legion/Argus"

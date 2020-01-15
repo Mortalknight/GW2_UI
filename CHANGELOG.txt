@@ -1,8 +1,11 @@
 5.2.1
 
+NEW
+    - Add Rajani & Uldum Accord rep graphics
+    
 FIXES
     - Fix immersive camera for King Phaoris
-    
+
 
 
 5.2.0
