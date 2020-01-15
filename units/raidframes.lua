@@ -1,5 +1,4 @@
 local _, GW = ...
-local gw_set_unit_flag = GW.UnitFlags
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local CountTable = GW.CountTable
@@ -22,10 +21,11 @@ local IsIn = GW.IsIn
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
+local LRI = LibStub("LibRealmInfo")
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
-local realmid_Player
+local playerLocal
 
 local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
@@ -201,12 +201,7 @@ local function setUnitName(self)
     nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t "
     nameRoleIcon["NONE"] = ""
 
-    local guid = UnitGUID(self.unit)
-    local realmid = string.match(guid, "^Player%-(%d+)") 
-    local guid_Player = UnitGUID("Player")
-    if guid_Player ~= nil then
-        realmid_Player = string.match(guid_Player, "^Player%-(%d+)")
-    end
+    local flagSetting = GetSetting("RAID_UNIT_FLAGS")
 
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
@@ -218,26 +213,30 @@ local function setUnitName(self)
         self.nameNotLoaded = true
     end
 
-    if GetSetting("RAID_UNIT_FLAGS") == "NONE" then
-        realmflag = ""
-    elseif GetSetting("RAID_UNIT_FLAGS") == "DIFFERENT" then
-        if gw_set_unit_flag[realmid] ~= gw_set_unit_flag[realmid_Player] then
-            realmflag = gw_set_unit_flag[realmid]
+    if flagSetting == "DIFFERENT" then
+        local realmLocal = select(5, LRI:GetRealmInfoByUnit(self.unit))
+
+        if playerLocal ~= realmLocal then
+            realmflag = REAL_FLAGS[realmLocal]
         end
-    elseif GetSetting("RAID_UNIT_FLAGS") == "ALL" then
-        realmflag = gw_set_unit_flag[realmid]
+    elseif flagSetting == "ALL" then
+        realmflag = REAL_FLAGS[select(5, LRI:GetRealmInfoByUnit(self.unit))]
     end
+
     if realmflag == nil then
         realmflag = ""
     end
+
     if nameRoleIcon[role] ~= nil then
         nameString = nameRoleIcon[role] .. nameString
     end
+
     if UnitIsGroupLeader(self.unit) then
         nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-groupleader:15:15:0:-3|t" .. nameString
     elseif UnitIsGroupAssistant(self.unit) then
         nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-assist:15:15:0:-3|t" .. nameString
     end
+
     if self.index then
         local _, _, _, _, _, _, _, _, _, role = GetRaidRosterInfo(self.index)
         if role == "MAINTANK" then
@@ -246,6 +245,7 @@ local function setUnitName(self)
             nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-mainassist:15:15:0:-3|t" .. nameString
         end 
     end
+
     self.name:SetText(nameString .. " " .. realmflag)
     self.name:SetWidth(self:GetWidth()-4)
 end
@@ -1266,5 +1266,7 @@ local function LoadRaidFrames()
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
     end
+
+    playerLocal = GetLocale()
 end
 GW.LoadRaidFrames = LoadRaidFrames

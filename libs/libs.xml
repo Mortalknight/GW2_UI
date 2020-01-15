@@ -4,4 +4,5 @@
 	<Script file="libs\CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
 
 	<Script file="libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
+	<Script file="libs\LibRealmInfo\LibRealmInfo.lua"/>
 </Ui>

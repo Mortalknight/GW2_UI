@@ -178,6 +178,23 @@ DODGEBAR_SPELLS[10] = {109132, 115008}
 DODGEBAR_SPELLS[11] = {102280, 102401}
 DODGEBAR_SPELLS[12] = {189110, 195072}
 
+local REAL_FLAGS = {
+    ["enUS"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\us:10:12:0:0|t",
+    ["ptBR"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\br:10:12:0:0|t",
+    ["ptPT"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\pt:10:12:0:0|t",
+    ["esMX"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\mx:10:12:0:0|t",
+    ["deDE"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\de:10:12:0:0|t",
+    ["enGB"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\gb:10:12:0:0|t",
+    ["koKR"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\kr:10:12:0:0|t",
+    ["frFR"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\fr:10:12:0:0|t",
+    ["esES"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\es:10:12:0:0|t",
+    ["itIT"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\it:10:12:0:0|t",
+    ["ruRU"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\ru:10:12:0:0|t",
+    ["zhTW"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\tw:10:12:0:0|t",
+    ["zhCN"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\cn:10:12:0:0|t"
+}
+GW.REAL_FLAGS = REAL_FLAGS
+
 local INDICATORS = {"BAR", "TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
 GW.INDICATORS = INDICATORS
 
