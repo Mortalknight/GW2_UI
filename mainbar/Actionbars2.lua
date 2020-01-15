@@ -177,7 +177,6 @@ local function fadeCheck(self, forceCombat)
         inCombat = true
     end
 
-    local mouseOut = self.gw_FadeBottomActionbar
     local inLockdown = InCombatLockdown()
     local isDirty = self.gw_DirtySetting
 
@@ -497,7 +496,6 @@ local function updateMainBar(toggle)
 
     -- event/update handlers
     AddUpdateCB(actionBar_OnUpdate, fmActionbar)
-    fmActionbar.gw_FadeBottomActionbar = GetSetting("FADE_BOTTOM_ACTIONBAR")
     fmActionbar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     fmActionbar:RegisterEvent("PLAYER_REGEN_DISABLED")
     fmActionbar:RegisterEvent("PLAYER_REGEN_ENABLED")
