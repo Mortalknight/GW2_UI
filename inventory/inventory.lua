@@ -90,6 +90,18 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     if GetSetting("BAG_ITEM_BORDER_HIDE") then
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
     end
+
+    if itemIDOrLink then
+        if not suppressOverlays then
+			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemIDOrLink) then
+				button.IconOverlay:SetAtlas("AzeriteIconFrame");
+				button.IconOverlay:Show();
+			elseif IsCorruptedItem(itemIDOrLink) then
+				button.IconOverlay:SetAtlas("Nzoth-inventory-icon");
+				button.IconOverlay:Show();
+            end
+        end
+    end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
 

@@ -419,7 +419,7 @@
                         </Frames>
                     </ItemButton>
 
-                    <ItemButton name="GwPaperDollWristSlot" parentKey="wrists" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollWristSlot" parentKey="wrists" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.shoulder" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -434,7 +434,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollHandsSlot" parentKey="hands" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollHandsSlot" parentKey="hands" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.wrists" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -465,7 +465,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollWaistSlot" parentKey="waist" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollWaistSlot" parentKey="waist" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.chest" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -480,7 +480,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollLegsSlot" parentKey="legs" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollLegsSlot" parentKey="legs" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.waist" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -495,7 +495,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollFeetSlot" parentKey="feet" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollFeetSlot" parentKey="feet" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.legs" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -510,7 +510,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollMainHandSlot" parentKey="weapon" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollMainHandSlot" parentKey="weapon" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.feet" relativePoint="BOTTOMLEFT" x="0" y="-20"></Anchor>
                         </Anchors>
@@ -525,7 +525,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollSecondaryHandSlot" parentKey="offhand" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollSecondaryHandSlot" parentKey="offhand" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.weapon" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
@@ -541,7 +541,7 @@
                         </Frames>
                     </ItemButton>
 
-                    <ItemButton name="GwPaperDollTabardSlot" parentKey="tabard" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollTabardSlot" parentKey="tabard" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeTo="GwPaperDollStats" relativePoint="BOTTOMRIGHT" x="-5" y="-20"></Anchor>
@@ -557,7 +557,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollShirtSlot" parentKey="shirt" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollShirtSlot" parentKey="shirt" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
@@ -573,7 +573,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollTrinket0Slot" parentKey="trinket1" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollTrinket0Slot" parentKey="trinket1" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.tabard" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
@@ -589,7 +589,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollTrinket1Slot" parentKey="trinket2" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollTrinket1Slot" parentKey="trinket2" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
@@ -605,7 +605,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollFinger0Slot" parentKey="finger1" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollFinger0Slot" parentKey="finger1" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.trinket1" relativePoint="TOPLEFT" x="-5" y="0"></Anchor>
@@ -621,7 +621,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollFinger1Slot" parentKey="finger2" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollFinger1Slot" parentKey="finger2" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.finger1" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>
@@ -653,7 +653,7 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-                    <ItemButton name="GwPaperDollBackSlot" parentKey="back" inherits="GwPaperDollButtonTemplate">
+                    <ItemButton name="GwPaperDollBackSlot" parentKey="back" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Size x="40" y="40"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.neck" relativePoint="BOTTOMRIGHT" x="0" y="-5"></Anchor>

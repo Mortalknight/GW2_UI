@@ -158,5 +158,12 @@ local function LoadPaperDoll(tabContainer)
     CharacterFrame:UnregisterAllEvents()
 
     hooksecurefunc("ToggleCharacter", toggleCharacter)
+    hooksecurefunc("PaperDollFrame_UpdateCorruptedItemGlows", function(glow)
+        for k, v in pairs(GW.char_equipset_SavedItems) do
+            if v.HasPaperDollAzeriteItemOverlay then
+                v:UpdateCorruptedGlow(ItemLocation:CreateFromEquipmentSlot(v:GetID()), glow)     
+            end
+        end
+    end)
 end
 GW.LoadPaperDoll = LoadPaperDoll
