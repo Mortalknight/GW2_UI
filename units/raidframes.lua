@@ -21,6 +21,7 @@ local IsIn = GW.IsIn
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
+local REAL_FLAGS = GW.REAL_FLAGS
 local LRI = LibStub("LibRealmInfo")
 
 local GROUPD_TYPE = "PARTY"
