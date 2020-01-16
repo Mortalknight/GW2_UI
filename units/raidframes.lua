@@ -21,7 +21,7 @@ local IsIn = GW.IsIn
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
-local REAL_FLAGS = GW.REAL_FLAGS
+local REALM_FLAGS = GW.REALM_FLAGS
 local LRI = LibStub("LibRealmInfo")
 
 local GROUPD_TYPE = "PARTY"
@@ -218,10 +218,10 @@ local function setUnitName(self)
         local realmLocal = select(5, LRI:GetRealmInfoByUnit(self.unit))
 
         if playerLocal ~= realmLocal then
-            realmflag = REAL_FLAGS[realmLocal]
+            realmflag = REALM_FLAGS[realmLocal]
         end
     elseif flagSetting == "ALL" then
-        realmflag = REAL_FLAGS[select(5, LRI:GetRealmInfoByUnit(self.unit))]
+        realmflag = REALM_FLAGS[select(5, LRI:GetRealmInfoByUnit(self.unit))]
     end
 
     if realmflag == nil then

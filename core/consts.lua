@@ -178,7 +178,7 @@ DODGEBAR_SPELLS[10] = {109132, 115008}
 DODGEBAR_SPELLS[11] = {102280, 102401}
 DODGEBAR_SPELLS[12] = {189110, 195072}
 
-local REAL_FLAGS = {
+local REALM_FLAGS = {
     ["enUS"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\us:10:12:0:0|t",
     ["ptBR"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\br:10:12:0:0|t",
     ["ptPT"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\pt:10:12:0:0|t",
@@ -193,7 +193,7 @@ local REAL_FLAGS = {
     ["zhTW"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\tw:10:12:0:0|t",
     ["zhCN"] = "|TInterface\\AddOns\\GW2_UI\\textures\\flags\\cn:10:12:0:0|t"
 }
-GW.REAL_FLAGS = REAL_FLAGS
+GW.REALM_FLAGS = REALM_FLAGS
 
 local INDICATORS = {"BAR", "TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
 GW.INDICATORS = INDICATORS
