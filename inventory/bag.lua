@@ -477,6 +477,11 @@ local function LoadBag(helpers)
     hooksecurefunc("ContainerFrame_GenerateFrame", function(frame, size, id)
         if id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS then
             rescanBagContainers(f)
+            if frame.ExtraBagSlotsHelpBox then
+                local h = frame.ExtraBagSlotsHelpBox
+                h:ClearAllPoints()
+                h:SetPoint("RIGHT", f, "TOPLEFT", -60, -90)
+            end
         end
     end)
 
