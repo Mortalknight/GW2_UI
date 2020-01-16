@@ -500,6 +500,14 @@ local function updateItemSlot(self)
             self.AzeriteTexture:SetSize(50, 48) -- neck slot; default is 50,44
         end
     end
+
+    if self.CorruptedHighlightTexture then
+        if slot ~= 15 then
+            self.CorruptedHighlightTexture:SetSize(84, 84)
+        else
+            self.CorruptedHighlightTexture:SetSize(70, 70)
+        end
+    end
 end
 GW.AddForProfiling("paperdoll_equipment", "updateItemSlot", updateItemSlot)
 
