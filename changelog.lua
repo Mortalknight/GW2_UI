@@ -197,6 +197,7 @@ GW_CHANGELOGS = "- Added durability icon to char stats\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.7.1\n\n" .. GW_CHANGELOGS
 
 --VERSION 1.7.2
+GW_CHANGELOGS = "- Added option to set Actionbar fade per Actionbar (Show always, show in combat, show only on mouse over)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Now the correct resistence will be shown for player and pet\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Advanced char stats: Redo MP5, now split into Item, Casting, Spirit\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Fix an overlapping error with health on the healthglobe\n" .. GW_CHANGELOGS

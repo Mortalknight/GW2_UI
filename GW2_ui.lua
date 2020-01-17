@@ -393,7 +393,7 @@ local function actionBarFrameHide(f, name)
     end)
 end
 
-local function FadeCheck(self, elapsed)
+local function FadeCheck(self, elapsed, fadeOption)
     self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
     if self.gw_LastFadeCheck > 0 then
         return
@@ -401,13 +401,36 @@ local function FadeCheck(self, elapsed)
     self.gw_LastFadeCheck = 0.1
     if not self:IsShown() then return end
 
-    if self:IsMouseOver(100, -100, -100, 100) or UnitAffectingCombat('player') then
-        if not self.gw_FadeShowing then
+    local testFlyout
+    if SpellFlyout and SpellFlyout:IsShown() and SpellFlyout:GetParent() then
+        testFlyout = SpellFlyout:GetParent():GetParent()
+    end
+
+    local inCombat = UnitAffectingCombat("player")
+
+    local inFocus
+    if fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT" then
+        if self:IsMouseOver(100, -100, -100, 100) then
+            inFocus = true
+        else
+            inFocus = false
+        end
+    else
+        inFocus = true
+    end
+    local isFlyout = false
+    if testFlyout and testFlyout == self then
+        isFlyout = true
+    end
+    local curAlpha = self:GetAlpha()
+
+    if (inFocus and (fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT") and not inCombat) or (inFocus or (inCombat and fadeOption == "INCOMBAT")) or isFlyout or fadeOption == "ALWAYS" then
+        if not self.gw_FadeShowing and curAlpha < 1.0 then
             actionBarFrameShow(self, self:GetName())
             GW.updatePetFrameLocation()
             GW.UpdatePlayerBuffFrame()
         end
-    elseif self.gw_FadeShowing and UnitAffectingCombat('player') == false then
+    elseif self.gw_FadeShowing and curAlpha > 0.0 then
         actionBarFrameHide(self, self:GetName())
         GW.updatePetFrameLocation()
         GW.UpdatePlayerBuffFrame()
@@ -719,12 +742,12 @@ local function loadAddon(self)
     if GetSetting("ACTIONBARS_ENABLED") then
         GW.LoadActionBars()
         ourActionbarsloaded = true
-        if GetSetting('FADE_BOTTOM_ACTIONBAR') then
+        if GetSetting("FADE_MULTIACTIONBAR_1") ~= "ALWAYS" or GetSetting("FADE_MULTIACTIONBAR_2") ~= "ALWAYS" or GetSetting("FADE_MULTIACTIONBAR_3") ~= "ALWAYS" or GetSetting("FADE_MULTIACTIONBAR_4") ~= "ALWAYS" then
             OnUpdateActionBars = function(elapsed)
-                GW.FadeCheck(MultiBarBottomLeft, elapsed)
-                GW.FadeCheck(MultiBarBottomRight, elapsed)
-                GW.FadeCheck(MultiBarRight, elapsed)
-                GW.FadeCheck(MultiBarLeft, elapsed)
+                if GetSetting("FADE_MULTIACTIONBAR_1") ~= "ALWAYS" then GW.FadeCheck(MultiBarBottomLeft, elapsed, GetSetting("FADE_MULTIACTIONBAR_1")) end
+                if GetSetting("FADE_MULTIACTIONBAR_2") ~= "ALWAYS" then GW.FadeCheck(MultiBarBottomRight, elapsed, GetSetting("FADE_MULTIACTIONBAR_2")) end
+                if GetSetting("FADE_MULTIACTIONBAR_3") ~= "ALWAYS" then GW.FadeCheck(MultiBarRight, elapsed, GetSetting("FADE_MULTIACTIONBAR_3")) end
+                if GetSetting("FADE_MULTIACTIONBAR_4") ~= "ALWAYS" then GW.FadeCheck(MultiBarLeft, elapsed, GetSetting("FADE_MULTIACTIONBAR_4")) end
             end
         end
     end

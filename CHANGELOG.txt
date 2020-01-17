@@ -2,6 +2,7 @@
 - Now the correct resistence will be shown for player and pet
 - Advanced char stats: Redo MP5, now split into Item, Casting, Spirit
 - Fix an overlapping error with health on the healthglobe
+- Added option to set Actionbar fade per Actionbar (Show always, show in combat, show only on mouse over)
 
 1.7.1
 - Fix a lua error when hover the micromenu

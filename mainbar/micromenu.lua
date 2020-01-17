@@ -179,8 +179,8 @@ end
 local function gw_microButtonHookToolTip(frame, text, action)
     if frame == nil then return end
     frame:SetScript("OnEnter", function()
-       gw_setToolTipForShow(frame, text, action)
-      end)
+        gw_setToolTipForShow(frame, text, action)
+    end)
     frame:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
