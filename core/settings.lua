@@ -1111,6 +1111,12 @@ local function LoadSettings()
         "GwSettingsTargetOptions"
     )
     addOption(
+        BUFFS_ON_TOP,
+        nil,
+        "target_AURAS_ON_TOP",
+        "GwSettingsTargetOptions"
+    )
+    addOption(
         MINIMAP_TRACKING_FOCUS,
         GwLocalization["FOCUS_TARGET_DESC"],
         "focus_TARGET_ENABLED",

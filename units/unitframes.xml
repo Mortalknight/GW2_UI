@@ -130,7 +130,7 @@
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="28" y="28"></Size>
                     <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="TOPRIGHT" x="15" y="26"></Anchor>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="TOPRIGHT" x="2" y="15"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="prestigebg" file="Interface\AddOns\GW2_UI\textures\prestigebackground">

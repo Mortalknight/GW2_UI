@@ -1003,7 +1003,11 @@ local function UpdateBuffLayout(self, event, anchorPos)
             local px = usedWidth2  + (size / 2)
             local py = usedHeight + (size / 2)
             if not anchorPos then
-                frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, -py)
+                if self.auraPositionTop then
+                    frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, py)
+                else
+                    frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, -py)
+                end
             elseif anchorPos == "pet" then
                 frame:SetPoint("CENTER", self.auras, "BOTTOMRIGHT", -px, py)
             elseif anchorPos == "player" then
@@ -1268,6 +1272,12 @@ GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 local function LoadTarget()
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame")
     NewUnitFrame.unit = "target"
+    NewUnitFrame.auraPositionTop = GetSetting("target_AURAS_ON_TOP")
+
+    if NewUnitFrame.auraPositionTop then
+        NewUnitFrame.auras:ClearAllPoints()
+        NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.nameString, "TOPLEFT", 2, 17)
+    end
 
     RegisterMovableFrame("targetframe", NewUnitFrame, "target_pos", "GwTargetFrameTemplateDummy")
 

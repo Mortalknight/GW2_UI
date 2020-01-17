@@ -155,7 +155,7 @@ local function powerCombo(self, event, ...)
     local pwr = UnitPower("player", 4)
     local p = pwr - 1
 
-    if pwr > 0 and not self:IsShown() then
+    if pwr > 0 and not self:IsShown() and UnitExists("target") then
         self:Show()
     end
 
@@ -192,7 +192,7 @@ local function setComboBar(f)
 
     if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", GwTargetUnitFrame.auras, "TOPLEFT", -8, 23)
+        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -10)
         f:SetWidth(220)
         f:SetHeight(30)
         f:Hide()
@@ -947,7 +947,7 @@ local function barChange_OnEvent(self, event, ...)
         f.gwPlayerForm = s
         selectType(f)
     elseif event == "PLAYER_TARGET_CHANGED" then
-        if UnitExists("target") and UnitIsEnemy("player", "target") and f.barType == "combo" then
+        if UnitExists("target") and UnitIsEnemy("player", "target") and f.barType == "combo" and not UnitIsDead("target") then
             f:Show()
         else
             f:Hide()
