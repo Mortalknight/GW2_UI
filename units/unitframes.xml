@@ -21,12 +21,6 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="25" y="-7"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
-                    <Size x="28" y="28"></Size>
-                    <Anchors>
-                        <Anchor point="BOTTOM" relativeKey="$parent.portrait" relativePoint="RIGHT" x="0" y="28"></Anchor>
-                    </Anchors>
-                </Texture>
                 <Texture parentKey="healthbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
                     <Size x="215" y="15"/>
                     <Anchors>
@@ -110,6 +104,12 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
+                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
+                    <Size x="28" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="TOPRIGHT" x="2" y="15"></Anchor>
+                    </Anchors>
+                </Texture>
                 <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="13"/>
                     <Anchors>

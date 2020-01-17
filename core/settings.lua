@@ -1017,6 +1017,12 @@ local function LoadSettings()
         "target_HOOK_COMBOPOINTS",
         "GwSettingsTargetOptions"
     )
+    addOption(
+        BUFFS_ON_TOP,
+        nil,
+        "target_AURAS_ON_TOP",
+        "GwSettingsTargetOptions"
+    )
 
     createCat(ACTIONBAR_LABEL, nil, "GwSettingsActionbarOptions", 7)
 

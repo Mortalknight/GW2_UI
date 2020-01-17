@@ -56,7 +56,8 @@ local function powerCombo(self, event, ...)
 
     local pwr = GetComboPoints("player", "target")
     local p = pwr - 1
-    if pwr > 0 and not self:IsShown() then
+
+    if pwr > 0 and not self:IsShown() and UnitExists("target") then
         self:Show()
     end
     self.gwPower = pwr
@@ -70,21 +71,6 @@ local function powerCombo(self, event, ...)
 end
 
 local function setComboBar(f)
-    --[[
-    f:SetHeight(40)
-    f:SetWidth(320)
-    f.background:SetHeight(32)
-    f.background:SetWidth(256)
-    f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-bg")
-    f.background:SetTexCoord(0, 1, 0.5, 1)
-    f.flare:SetWidth(128)
-    f.flare:SetHeight(128)
-    f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-flash")
-    f.fill:SetHeight(40)
-    f.fill:SetWidth(320)
-    f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo")
-    ]]
-
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
@@ -132,7 +118,7 @@ local function selectType(f)
         f:Show()   
         if f.ourTarget and f.comboPointsOnTarget then
             f:ClearAllPoints()
-            f:SetPoint("TOPLEFT", GwTargetUnitFrame.auras, "TOPLEFT", -8, 23)
+            f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -10)
             f.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
             f:SetWidth(220)
             f:SetHeight(30)
@@ -155,7 +141,7 @@ local function barChange_OnEvent(self, event, ...)
         f.gwPlayerForm = results
         selectType(f)
     elseif event == "PLAYER_TARGET_CHANGED" then
-        if UnitExists("target") and UnitIsEnemy("player", "target") then
+        if UnitExists("target") and UnitIsEnemy("player", "target") and not UnitIsDead("target") then
             f:Show()
         else
             f:Hide()
