@@ -51,7 +51,7 @@ local function LoadBuffs()
     --Movable stuff
     GwPlayerAuraFrame.secureHandler = fgw
     GwPlayerAuraFrame.anchor = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and "BOTTOMRIGHT" or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and "TOPRIGHT"
-    GwPlayerAuraFrame.yOff = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and 0 or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and -10
+    GwPlayerAuraFrame.yOff = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and 0 or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and 15
     RegisterMovableFrame("GwPlayerAuraFrame", GwPlayerAuraFrame, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
     hooksecurefunc(GwPlayerAuraFrameMoveAble, "StopMovingOrSizing", function (frame)
         local anchor = GwPlayerAuraFrame.anchor
