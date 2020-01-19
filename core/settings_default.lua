@@ -204,6 +204,13 @@ GW_DEFAULT["MultiBarBottomRight"]["hideDefaultBackground"] = true
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
 GW_DEFAULT["STANCEBAR_POSITION"] = "LEFT"
 
+GW_DEFAULT["PlayerBuffFrame"] = {}
+GW_DEFAULT["PlayerBuffFrame"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["PlayerBuffFrame"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
+GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
+
 GW_DEFAULT["MultiBarRight"] = {}
 GW_DEFAULT["MultiBarRight"]["point"] = "RIGHT"
 GW_DEFAULT["MultiBarRight"]["relativePoint"] = "RIGHT"

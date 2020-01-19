@@ -86,33 +86,52 @@ GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 local function mover_OnDragStop(self)
     local settingsName = self.gw_Settings
     local lockAble = self.gw_Lockable
+    local isMoved = self.gw_isMoved
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
     local new_point = GetSetting(settingsName)
-    new_point["point"] = point
-    new_point["relativePoint"] = relativePoint
-    new_point["xOfs"] = math.floor(xOfs)
-    new_point["yOfs"] = math.floor(yOfs)
+    new_point.point = point
+    new_point.relativePoint = relativePoint
+    new_point.xOfs = math.floor(xOfs)
+    new_point.yOfs = math.floor(yOfs)
     SetSetting(settingsName, new_point)
     if lockAble ~= nil then
         SetSetting(lockAble, false)
+    end
+    -- check if we need to know if the frame is on its default position
+    if isMoved ~= nil then
+        local defaultPoint = GetDefault(settingsName)
+        local growDirection = GetSetting(settingsName .. "_GrowDirection")
+        local frame = self.gw_frame
+        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and growDirection == "UP" then
+            frame.isMoved = false
+            frame.secureHandler:SetAttribute("isMoved", "false")
+        else
+            frame.isMoved = true
+            frame.secureHandler:SetAttribute("isMoved", "true")
+        end
     end
 
     self.IsMoving = false
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
-local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockAble)
+local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockAble, isMoved)
     local moveframe = CreateFrame("Frame", name .. "MoveAble", UIParent, dummyFrame)
     if frame == GameTooltip then
         moveframe:SetSize(230, 80)
+    elseif frame == GwPlayerAuraFrame then
+        moveframe:SetSize(316, 100)
+        moveframe:SetScale(frame:GetScale())
     else
         moveframe:SetSize(frame:GetSize())
     end
     moveframe.frameName:SetText(name)
     moveframe.gw_Settings = settingsName
     moveframe.gw_Lockable = lockAble
+    moveframe.gw_isMoved = isMoved
+    moveframe.gw_frame = frame
 
     local dummyPoint = GetSetting(settingsName)
     moveframe:ClearAllPoints()
@@ -139,6 +158,19 @@ local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockA
                 lockableOnClick(name, frame, moveframe, settingsName, lockAble)
             end
         )
+    end
+
+    if isMoved ~= nil then
+        local defaultPoint = GetDefault(settingsName)
+        local growDirection = GetSetting(settingsName .. "_GrowDirection")
+
+        if defaultPoint["point"] == dummyPoint["point"] and defaultPoint["relativePoint"] == dummyPoint["relativePoint"] and defaultPoint["xOfs"] == dummyPoint["xOfs"] and defaultPoint["yOfs"] == dummyPoint["yOfs"] and growDirection == "UP" then
+            frame.isMoved = false
+            frame.secureHandler:SetAttribute("isMoved", "false")
+        else
+            frame.isMoved = true
+            frame.secureHandler:SetAttribute("isMoved", "true")
+        end
     end
 
     moveframe:SetScript("OnDragStart", mover_OnDragStart)

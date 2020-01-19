@@ -560,6 +560,7 @@
             <OnLoad function="GwCastFrameDummy_OnLoad"/>
         </Scripts>
     </Button>
+
     <Frame name="VerticalActionBarDummy" virtual="true" frameStrata="DIALOG" parent="UIParent">
         <Layers>
             <Layer level="BACKGROUND">

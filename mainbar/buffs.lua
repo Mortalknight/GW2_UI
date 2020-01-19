@@ -3,10 +3,12 @@ local AddActionBarCallback = GW.AddActionBarCallback
 local Self_Hide = GW.Self_Hide
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
+local GetSetting = GW.GetSetting
+local RegisterMovableFrame = GW.RegisterMovableFrame
 local Debug = GW.Debug
 
 local function UpdatePlayerBuffFrame()
-    if InCombatLockdown() or not GwPlayerAuraFrame then
+    if InCombatLockdown() or not GwPlayerAuraFrame or GwPlayerAuraFrame.isMoved then
         return
     end
     GwPlayerAuraFrame:ClearAllPoints()
@@ -45,6 +47,30 @@ local function LoadBuffs()
     local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
     fgw:SetFrameRef("GwPlayerAuraFrame", player_buff_frame)
     fgw:SetFrameRef("UIParent", UIParent)
+
+    --Movable stuff
+    GwPlayerAuraFrame.secureHandler = fgw
+    GwPlayerAuraFrame.anchor = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and "BOTTOMRIGHT" or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and "TOPRIGHT"
+    GwPlayerAuraFrame.yOff = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and 0 or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and -10
+    RegisterMovableFrame("GwPlayerAuraFrame", GwPlayerAuraFrame, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
+    hooksecurefunc(GwPlayerAuraFrameMoveAble, "StopMovingOrSizing", function (frame)
+        local anchor = GwPlayerAuraFrame.anchor
+        local yOff = GwPlayerAuraFrame.yOff
+
+        if not InCombatLockdown() then
+            GwPlayerAuraFrame:ClearAllPoints()
+            GwPlayerAuraFrame:SetPoint(anchor, frame, anchor, 0, yOff)
+        end
+    end)
+    GwPlayerAuraFrame:ClearAllPoints()
+    GwPlayerAuraFrame:SetPoint(
+        GwPlayerAuraFrame.anchor,
+        GwPlayerAuraFrameMoveAble,
+        GwPlayerAuraFrame.anchor,
+        0,
+        GwPlayerAuraFrame.yOff
+    )
+
     if GwMultiBarBottomRight then
         fgw:SetFrameRef("MultiBarBottomRight", GwMultiBarBottomRight)
         fgw:SetAttribute(
@@ -52,9 +78,13 @@ local function LoadBuffs()
             [=[
             local mbar = self:GetFrameRef("MultiBarBottomRight")
             local aura = self:GetFrameRef("GwPlayerAuraFrame")
+            local auraIsMoved = self:GetAttribute("isMoved")
             local uip = self:GetFrameRef("UIParent")
             local protected = mbar:IsProtected()
 
+            if auraIsMoved then
+                newstate = "doNotTouch"
+            end
             if newstate == "test" and protected then
                 if not mbar or not mbar:IsShown() then
                     newstate = "low"
@@ -62,7 +92,6 @@ local function LoadBuffs()
                     newstate = "high"
                 end
             end
-
             if newstate == "high" then
                 aura:ClearAllPoints()
                 aura:SetPoint("BOTTOMLEFT", uip, "BOTTOM", 53, 215)

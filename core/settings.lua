@@ -1041,6 +1041,12 @@ local function LoadSettings()
         "USE_BATTLEGROUND_HUD",
         "GwSettingsModuleOption"
     )
+    addOption(
+        CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC,
+        nil,
+        "DYNAMIC_CAM",
+        "GwSettingsModuleOption"
+    )
 
     createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
@@ -1262,12 +1268,6 @@ local function LoadSettings()
         "GwSettingsHudOptions"
     )
     addOption(
-        CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC,
-        nil,
-        "DYNAMIC_CAM",
-        "GwSettingsHudOptions"
-    )
-    addOption(
         WORLD_MARKER:format(0):gsub("%d", ""),
         GwLocalization["WORLD_MARKER_DESC"],
         "WORLD_MARKER_FRAME",
@@ -1408,6 +1408,20 @@ local function LoadSettings()
             DEFAULT,
             SMALL,
             GwLocalization["HUD_SCALE_TINY"]
+        }
+    )
+    addOptionDropdown(
+        GwLocalization["PLAYER_AURA_GROW"],
+        nil,
+        "PlayerBuffFrame_GrowDirection",
+        "GwSettingsHudOptions",
+        function()
+            GW.UpdateHudScale()
+        end,
+        {"UP", "DOWN"},
+        {
+            GwLocalization["UP"],
+            GwLocalization["DOWN"]
         }
     )
 
