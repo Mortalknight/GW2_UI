@@ -486,6 +486,8 @@ GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.2.1\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.2.2
+GW_CHANGELOGS = "   - Add upgrade warning for higher tier cloak orbs\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Add option to show target auras on top\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Add Corruption border to the inventory\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS

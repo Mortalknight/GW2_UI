@@ -4,6 +4,9 @@ NEW
     - Add Corruption border to the inventory
     - Add option to show target auras on top
 
+FIXES
+    - Add upgrade warning for higher tier cloak orbs
+
 
 5.2.1
 
