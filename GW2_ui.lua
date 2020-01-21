@@ -122,10 +122,10 @@ local function mover_OnDragStop(self)
         local frame = self.frame
         if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and growDirection == "UP" then
             frame.isMoved = false
-            frame.secureHandler:SetAttribute("isMoved", "false")
+            frame.secureHandler:SetAttribute("isMoved", false)
         else
             frame.isMoved = true
-            frame.secureHandler:SetAttribute("isMoved", "true")
+            frame.secureHandler:SetAttribute("isMoved", true)
         end
     end
 
@@ -181,10 +181,10 @@ local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockA
         local growDirection = GetSetting(settingsName .. "_GrowDirection")
         if defaultPoint["point"] == dummyPoint["point"] and defaultPoint["relativePoint"] == dummyPoint["relativePoint"] and defaultPoint["xOfs"] == dummyPoint["xOfs"] and defaultPoint["yOfs"] == dummyPoint["yOfs"] and growDirection == "UP" then
             frame.isMoved = false
-            frame.secureHandler:SetAttribute("isMoved", "false")
+            frame.secureHandler:SetAttribute("isMoved", false)
         else
             frame.isMoved = true
-            frame.secureHandler:SetAttribute("isMoved", "true")
+            frame.secureHandler:SetAttribute("isMoved", true)
         end
     end
 
