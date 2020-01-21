@@ -1228,22 +1228,22 @@ local function focus_OnEvent(self, event, unit)
         return
     end
 
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_ABSORB_AMOUNT_CHANGED" or event == "UNIT_HEAL_PREDICTION" then
+    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthValues(self, event)
         return
     end
 
-    if event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT" then
+    if IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
         updatePowerValues(self, event)
         return
     end
 
-    if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" then
+    if IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
         updateCastValues(self, event)
         return
     end
 
-    if event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
+    if IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
         hideCastBar(self, event)
         return
     end
