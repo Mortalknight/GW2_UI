@@ -745,8 +745,10 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local maxIndex = 80
 
     local isPlayer = false
+    local playerGrowDirection
     if anchorPos and anchorPos == "player" then
         isPlayer = true
+        playerGrowDirection = GetSetting("PlayerBuffFrame_GrowDirection")
         self.debuffFilter = "HARMFUL"
     elseif anchorPos ~= "player" then
         if self.displayBuffs ~= true then
@@ -864,7 +866,11 @@ local function UpdateBuffLayout(self, event, anchorPos)
             elseif anchorPos == "pet" then
                 frame:SetPoint("CENTER", self.auras, "BOTTOMRIGHT", -px, py)
             elseif anchorPos == "player" then
-                frame:SetPoint("CENTER", self, "BOTTOMRIGHT", -px, py)
+                if playerGrowDirection == "UP" then
+                    frame:SetPoint("CENTER", self, "BOTTOMRIGHT", -px, py)
+                else
+                    frame:SetPoint("CENTER", self, "BOTTOMRIGHT", -px, -py)
+                end
             end
 
             frame:SetSize(size, size)

@@ -967,6 +967,13 @@ local function LoadSettings()
         "GwSettingsModuleOption"
     )
 
+    addOption(
+        GwLocalization["DYNAMIC_HUD"],
+        GwLocalization["DYNAMIC_HUD_DESC"],
+        "HUD_SPELL_SWAP",
+        "GwSettingsModuleOption"
+    )
+
     createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
 
     addOption(
@@ -1095,12 +1102,6 @@ local function LoadSettings()
 
     createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
 
-    addOption(
-        GwLocalization["DYNAMIC_HUD"],
-        GwLocalization["DYNAMIC_HUD_DESC"],
-        "HUD_SPELL_SWAP",
-        "GwSettingsHudOptions"
-    )
     addOption(GwLocalization["CHAT_FADE"], GwLocalization["CHAT_FADE_DESC"], "CHATFRAME_FADE", "GwSettingsHudOptions")
     addOption(
         GwLocalization["COMPASS_TOGGLE"],
@@ -1257,6 +1258,21 @@ local function LoadSettings()
             DEFAULT,
             SMALL,
             GwLocalization["HUD_SCALE_TINY"]
+        }
+    )
+
+    addOptionDropdown(
+        GwLocalization["PLAYER_AURA_GROW"],
+        nil,
+        "PlayerBuffFrame_GrowDirection",
+        "GwSettingsHudOptions",
+        function()
+            GW.UpdateHudScale()
+        end,
+        {"UP", "DOWN"},
+        {
+            GwLocalization["UP"],
+            GwLocalization["DOWN"]
         }
     )
 

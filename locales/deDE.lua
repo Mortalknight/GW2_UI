@@ -250,6 +250,7 @@ local function GWUseThisLocalization()
 	GwLocalization['ANCHOR_CURSOR_OFFSET_Y'] = 'Zeigeranker Y-Versatz'
 	GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"] = "Wird nur angewendet, wenn die Option 'Tooltip an der Maus' aktiviert und der Mausanker Typ NICHT 'Mausanker' ist"
 	GwLocalization["MOUSE_OVER"] = "Nur Maus über"
+	GwLocalization["PLAYER_AURA_GROW"] = "Bestimmt die Wachstumsrichtung der Spieler Auren"
 end
 	
 	

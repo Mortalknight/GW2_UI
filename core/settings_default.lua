@@ -203,6 +203,13 @@ GW_DEFAULT["MultiBarLeft"]["margin"] = 2
 GW_DEFAULT["MultiBarLeft"]["ButtonsPerRow"] = 1
 GW_DEFAULT["MultiBarLeft"]["hideDefaultBackground"] = true
 
+GW_DEFAULT["PlayerBuffFrame"] = {}
+GW_DEFAULT["PlayerBuffFrame"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["PlayerBuffFrame"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
+GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
+
 GW_DEFAULT["GameTooltipPos"] = {}
 GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"

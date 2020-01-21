@@ -4,6 +4,7 @@
 - Fix an overlapping error with health on the healthglobe
 - Added option to set Actionbar fade per Actionbar (Show always, show in combat, show only on mouse over)
 - Added option to show target auras on top
+- Make PlayerAuraFrame moveable
 
 1.7.1
 - Fix a lua error when hover the micromenu
