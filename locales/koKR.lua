@@ -242,6 +242,7 @@ local function GWUseThisLocalization()
 	GwLocalization["ANCHOR_CURSOR_OFFSET_Y"] = "Cursor Anchor Offset Y"
 	GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"] = "Take only effect if the option 'Cursor Tooltips' is activated and the Cursoer Anchor is NOT 'Cursor Anchor'"
 	GwLocalization["MOUSE_OVER"] = "Only Mouse over"
+	GwLocalization["PLAYER_AURA_GROW"] = "Set Player Aura grow directions"
 end
 
 if GetLocale() == "koKR" then

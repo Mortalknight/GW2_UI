@@ -3,6 +3,7 @@
 NEW
     - Add Corruption border to the inventory
     - Add option to show target auras on top
+    - Add option to move player auras
 
 FIXES
     - Add upgrade warning for higher tier cloak orbs
