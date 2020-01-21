@@ -243,7 +243,13 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
     statFrame.Value:SetText(statText)
     gwPaperDollSetStatIcon(statFrame, stat)
 
-    statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
+    statFrame:ClearAllPoints()
+    if stat == "DURABILITY" then
+        statFrame:SetPoint("TOPRIGHT", GwPapaerDollStats, "TOPRIGHT", 22, -1)
+        statFrame.icon:SetSize(25, 25)
+    else
+        statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
+    end
     grid, x, y = statGridPos(grid, x, y)
     return grid, x, y, index + 1
 end
@@ -405,7 +411,7 @@ function gwPaperDollUpdateStats()
     end
 
     --durability
-    grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, "DURABILITY", tooltip1, tooltip2, grid, x, y)
+    grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, "DURABILITY", nil, nil, grid, x, y)
 end
 
 function GWshowExtendedAttributes(self)

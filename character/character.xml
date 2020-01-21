@@ -29,19 +29,19 @@
                 <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\statsicon">
                     <Size x="35" y="35"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT"></Anchor>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="Value" text="Not Loaded" justifyV="CENTER" justifyH="LEFT">
                     <Size x="72" y="35"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="35"></Anchor>
+                        <Anchor point="LEFT" x="35"></Anchor>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="Label" text="" justifyH="LEFT">
                     <Size x="72" y="20"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="LEFT"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
