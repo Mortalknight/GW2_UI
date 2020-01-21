@@ -906,7 +906,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local maxSize
     
     if isPlayer then
-        if MainMenuBarArtFrame.gw_Bar2 and MainMenuBarArtFrame.gw_Bar2.gw_IsEnabled and MainMenuBarArtFrame.gw_Bar2.gw_FadeShowing then
+        if MainMenuBarArtFrame.gw_Bar2 and MainMenuBarArtFrame.gw_Bar2.gw_IsEnabled and MainMenuBarArtFrame.gw_Bar2.gw_FadeShowing and GwPlayerAuraFrame and not GwPlayerAuraFrame.isMoved then
             maxSize = MultiBarBottomRight:GetWidth()
         else
             maxSize = self:GetWidth()
