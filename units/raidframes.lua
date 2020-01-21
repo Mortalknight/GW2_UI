@@ -388,7 +388,7 @@ end
 
 local function updateDebuffs(self)
     local btnIndex, x, y = 1, 0, 0
-    local filter = GetSetting("RAID_ONLY_DISPELL_DEBUFFS") and "RAID" or nil
+    local filter = GetSetting("RAID_ONLY_DISPELL_DEBUFFS") and "|RAID" or ""
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
     local i, framesDone, aurasDone = 0
@@ -406,7 +406,7 @@ local function updateDebuffs(self)
 
         -- show current debuffs
         if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitAura(self.unit, i, "HARMFUL")
+            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitAura(self.unit, i, "HARMFUL" .. filter)
             local shouldDisplay = debuffName and not (
                 ignored[debuffName]
                 or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
