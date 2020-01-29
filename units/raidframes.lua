@@ -221,7 +221,10 @@ local function setUnitName(self)
             realmflag = REALM_FLAGS[realmLocal]
         end
     elseif flagSetting == "ALL" then
-        realmflag = REALM_FLAGS[select(5, LRI:GetRealmInfoByUnit(self.unit))]
+        local realmLocal = select(5, LRI:GetRealmInfoByUnit(self.unit))
+        if realmLocal ~= nil then
+            realmflag = REALM_FLAGS[realmLocal]
+        end
     end
 
     if realmflag == nil then
