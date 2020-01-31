@@ -1491,7 +1491,7 @@ local function LoadPaperDoll()
     GwPaperSkills.scroll.slider:SetValue(1)
 
     CharacterFrame:SetScript("OnShow", function()
-          --HideUIPanel(CharacterFrame)
+          HideUIPanel(CharacterFrame)
     end)
 
     CharacterFrame:UnregisterAllEvents()
