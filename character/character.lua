@@ -5,6 +5,7 @@ local RoundDec = GW.RoundDec
 local RT = GW.REP_TEXTURES
 local REPBG_T = 0
 local REPBG_B = 0.464
+local hasRanged = false
 
 local gender = UnitSex("player")
 
@@ -336,7 +337,6 @@ function gwPaperDollUpdateStats()
 	local categoryYOffset = -5
 	local statYOffset = 0
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
-    local hasRanged = false
 
     avgItemLevel = nil or 0
     avgItemLevelEquipped = nil or 0
@@ -417,54 +417,63 @@ end
 function GWshowExtendedAttributes(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                         
-    GameTooltip:SetText(HIGHLIGHT_FONT_COLOR_CODE .. PET_BATTLE_STATS_LABEL .. FONT_COLOR_CODE_CLOSE)
-
-    GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. DEFENSE .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(BLOCK_CHANCE .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetBlockChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(PARRY_CHANCE .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetParryChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DODGE_CHANCE .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetDodgeChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
-
-    if UnitPowerType("player") == 0 then
-        GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. MANA_REGEN .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. HELPFRAME_ITEM_TITLE .. "):", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5FromItems()) .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. PLAYERSTAT_SPELL_COMBAT .. "): ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5WhileCasting()) .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. ITEM_MOD_SPIRIT_SHORT .. "): ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5FromSpirit()) .. FONT_COLOR_CODE_CLOSE)
-    end
+    GameTooltip:SetText(STAT_CATEGORY_ATTRIBUTES)
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. MELEE .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(ITEM_MOD_HIT_MELEE_RATING_SHORT .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetHitModifier()) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(MELEE_CRIT_CHANCE .. ": ",  HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+
+    GameTooltip:AddLine(MELEE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. MELEE_CRIT_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_HIT_MELEE_RATING_SHORT .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetHitModifier()) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance:" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.MeleeHitMissChanceSameLevel() .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance (Level + 3):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.MeleeHitMissChanceBossLevel() .. FONT_COLOR_CODE_CLOSE)
     
     if hasRanged then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. RANGED .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine(ITEM_MOD_HIT_RANGED_RATING_SHORT .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetHitModifier()) .."%" .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine(RANGED_CRIT_CHANCE .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetRangedCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddLine(RANGED)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. RANGED_CRIT_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetRangedCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_HIT_RANGED_RATING_SHORT .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.RangeHitBonus() .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance:" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.RangeMissChanceSameLevel() .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance (Level + 3):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.RangeMissChanceBossLevel() .. FONT_COLOR_CODE_CLOSE)
+    end
+    
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(DEFENSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. BLOCK_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetBlockChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. PARRY_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetParryChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DODGE_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetDodgeChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+
+    if UnitPowerType("player") == 0 then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(MANA_REGEN)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. HELPFRAME_ITEM_TITLE .. "):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5FromItems()) .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. PLAYERSTAT_SPELL_COMBAT .. "): " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5WhileCasting()) .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. ITEM_MOD_SPIRIT_SHORT .. "): " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GW.stats.MP5FromSpirit()) .. FONT_COLOR_CODE_CLOSE)
     end
 
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. STAT_CATEGORY_SPELL .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(ITEM_MOD_HIT_SPELL_RATING_SHORT .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellHitModifier()) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(SPELL_CRIT_CHANCE .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddLine(STAT_CATEGORY_SPELL)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. SPELL_CRIT_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance()) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_HIT_SPELL_RATING_SHORT .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.SpellHitBonus() .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance:" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.SpellMissChanceSameLevel() .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance (Level + 3):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GW.stats.SpellMissChanceBossLevel() .. FONT_COLOR_CODE_CLOSE)
+    
 
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. SPELL_BONUS .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(BONUS_HEALING .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusHealing()) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL6 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(6)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL6 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(6)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL2 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(2)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL2 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(2)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL3 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(3)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL3 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(3)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL5 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(5)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL5 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(5)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL7 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(7)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL7 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(7)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL4 .. " ".. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(4)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(DAMAGE_SCHOOL4 .. " ".. CRIT_ABBR ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(4)) .."%" .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(STRING_SCHOOL_PHYSICAL .. " " .. DAMAGE ..": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(1)) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(STRING_SCHOOL_PHYSICAL .. " " .. CRIT_ABBR .. ": ", HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(1)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddLine(SPELL_BONUS)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. BONUS_HEALING .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusHealing()) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(6)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(6)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(2)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(2)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(3)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(3)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(5)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(5)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(7)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(7)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(4)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(4)) .."%" .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(1)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. CRIT_ABBR .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellCritChance(1)) .."%" .. FONT_COLOR_CODE_CLOSE)
 
     GameTooltip:Show()
 end
@@ -1482,7 +1491,7 @@ local function LoadPaperDoll()
     GwPaperSkills.scroll.slider:SetValue(1)
 
     CharacterFrame:SetScript("OnShow", function()
-          HideUIPanel(CharacterFrame)
+          --HideUIPanel(CharacterFrame)
     end)
 
     CharacterFrame:UnregisterAllEvents()

@@ -20,6 +20,28 @@ local RESITANCE_STATS = {
 }
 GW.stats.RESITANCE_STATS = RESITANCE_STATS
 
+local CHAR_EQUIP_SLOTS = {
+    ["Head"] = "HeadSlot",
+    ["Neck"] = "NeckSlot",
+    ["Shoulder"] = "ShoulderSlot",
+    ["Back"] = "BackSlot",
+    ["Chest"] = "ChestSlot",
+    ["Shirt"] = "ShirtSlot",
+    ["Tabard"] = "TabardSlot",
+    ["Wrist"] = "WristSlot",
+    ["Hands"] = "HandsSlot",
+    ["Wairst"] = "WaistSlot",
+    ["Legs"] = "LegsSlot",
+    ["Feet"] = "FeetSlot",
+    ["Finger1"] = "Finger0Slot",
+    ["Finger2"] = "Finger1Slot",
+    ["Trinket1"] = "Trinket0Slot",
+    ["Trinket2"] = "Trinket1Slot",
+    ["MainHand"] = "MainHandSlot",
+    ["OffHand"]  = "SecondaryHandSlot",
+    ["Range"] = "RangedSlot",
+}
+
 local function formateStat(name, base, posBuff, negBuff)
 	local effective = max(0, base + posBuff + negBuff)
 	local text = HIGHLIGHT_FONT_COLOR_CODE .. name .. " " .. effective
@@ -608,3 +630,193 @@ local function MP5WhileCasting()
     return RoundDec(casting, 2)
 end
 GW.stats.MP5WhileCasting = MP5WhileCasting
+
+local function _IsShapeshifted()
+    for i = 0, 40 do
+        local _, _, _, _, _, _, _, _, _, spellId, _ = UnitAura("player", i, "HELPFUL", "PLAYER")
+        if spellId == 5487 or spellId == 9634 or spellId == 768 then
+            return true
+        end
+    end
+    return false
+end
+
+local function _GetMissChanceByDifference(weaponSkill, defenseValue)
+    if (defenseValue - weaponSkill) <= 10 then
+        return 5 + (defenseValue - weaponSkill) * 0.1
+    else
+        return 6 + (defenseValue - weaponSkill - 10) * 0.4
+    end
+end
+
+
+local function MeleeHitMissChanceSameLevel()
+    local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
+    local playerLevel = UnitLevel("player")
+    local enemyDefenseValue = playerLevel * 5
+
+    local missChance = 0
+    if _IsShapeshifted() then
+        missChance = 6
+    else
+        missChance = _GetMissChanceByDifference(mainBase + mainMod, enemyDefenseValue)
+    end
+
+    local hitFromItems = GetHitModifier()
+    if hitFromItems then -- This needs to be checked because on dungeon entering it becomes nil
+        missChance = missChance - hitFromItems
+    end
+
+    if missChance < 0 then
+        missChance = 0
+    elseif missChance > 100 then
+        missChance = 100
+    end
+
+    return RoundDec(missChance, 2) .. "%"
+end
+GW.stats.MeleeHitMissChanceSameLevel = MeleeHitMissChanceSameLevel
+
+local function MeleeHitMissChanceBossLevel()
+    local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
+    local playerLevel = UnitLevel("player")
+    local enemyDefenseValue = (playerLevel + 3) * 5
+
+    local missChance = 0
+    if _IsShapeshifted() then
+        missChance = 9
+    else
+        missChance = _GetMissChanceByDifference(mainBase + mainMod, enemyDefenseValue)
+    end
+
+    local hitFromItems = GetHitModifier()
+    if hitFromItems then -- This needs to be checked because on dungeon entering it becomes nil
+        missChance = missChance - hitFromItems
+    end
+
+    if missChance < 0 then
+        missChance = 0
+    elseif missChance > 100 then
+        missChance = 100
+    end
+
+    return RoundDec(missChance, 2) .. "%"
+end
+GW.stats.MeleeHitMissChanceBossLevel = MeleeHitMissChanceBossLevel
+
+local function _GetRangeHitBonus()
+    local hitValue = 0
+    -- From Enchant
+    local slotId, _ = GetInventorySlotInfo(CHAR_EQUIP_SLOTS["Range"])
+    local itemLink = GetInventoryItemLink("player", slotId)
+    if itemLink then
+        local _, itemStringLink = GetItemInfo(itemLink)
+        if itemStringLink then
+            local _, _, _, _, _, Enchant, _, _, _, _, _, _, _, _ = string.find(itemStringLink,
+            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+            if (Enchant == "2523") then -- 3% Hit from Biznicks 247x128 Accurascope
+                hitValue = hitValue + 3
+            end
+        end
+    end
+    -- From Items
+    local hitFromItems = GetHitModifier()
+    if hitFromItems then -- This needs to be checked because on dungeon entering it becomes nil
+        hitValue = hitValue + hitFromItems
+    end
+
+    return hitValue
+end
+
+local function RangeHitBonus()
+    return RoundDec(_GetRangeHitBonus(), 2) .. "%"
+end
+GW.stats.RangeHitBonus = RangeHitBonus
+
+local function RangeMissChanceSameLevel()
+    local rangedAttackBase, rangedAttackMod = UnitRangedAttack("player")
+    local playerLevel = UnitLevel("player")
+    local enemyDefenseValue = playerLevel * 5
+
+    local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
+    missChance = missChance - _GetRangeHitBonus()
+
+    if missChance < 0 then
+        missChance = 0
+    elseif missChance > 100 then
+        missChance = 100
+    end
+
+    return RoundDec(missChance, 2) .. "%"
+end
+GW.stats.RangeMissChanceSameLevel = RangeMissChanceSameLevel
+
+-- Gets the range hit chance against enemies 3 level above the player level
+local function RangeMissChanceBossLevel()
+    local rangedAttackBase, rangedAttackMod = UnitRangedAttack("player")
+    local playerLevel = UnitLevel("player")
+    local enemyDefenseValue = (playerLevel + 3) * 5
+
+    local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
+    missChance = missChance - _GetRangeHitBonus()
+
+    return RoundDec(missChance, 2) .. "%"
+end
+GW.stats.RangeMissChanceBossLevel = RangeMissChanceBossLevel
+
+local function _GetTalentModifierSpellHit()
+    local _, _, classId = UnitClass("player")
+    local mod = 0
+
+    if classId == 5 then -- Priest
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(3, 5)
+        mod = points * 2 -- 0-10% from Shadow Focus
+    end
+
+    if classId == 8 then -- Mage
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(3, 3)
+        mod = points * 2 -- 0-6% from Elemental Precision
+    end
+
+    return mod
+end
+
+local function SpellHitBonus()
+    local hit = _GetTalentModifierSpellHit()
+    hit = hit + GetSpellHitModifier()
+
+    return RoundDec(hit, 2) .. "%"
+end
+GW.stats.SpellHitBonus = SpellHitBonus
+
+local function SpellMissChanceSameLevel()
+    local missChance = 3
+
+    missChance = missChance - _GetTalentModifierSpellHit()
+    missChance = missChance - GetSpellHitModifier()
+
+    if missChance < 0 then
+        missChance = 0
+    elseif missChance > 100 then
+        missChance = 100
+    end
+
+    return RoundDec(missChance, 2) .. "%"
+end
+GW.stats.SpellMissChanceSameLevel = SpellMissChanceSameLevel
+
+local function SpellMissChanceBossLevel()
+    local missChance = 16
+
+    missChance = missChance - _GetTalentModifierSpellHit()
+    missChance = missChance - GetSpellHitModifier()
+
+    if missChance < 0 then
+        missChance = 0
+    elseif missChance > 100 then
+        missChance = 100
+    end
+
+    return RoundDec(missChance, 2) .. "%"
+end
+GW.stats.SpellMissChanceBossLevel = SpellMissChanceBossLevel

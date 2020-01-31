@@ -205,4 +205,9 @@ GW_CHANGELOGS = "- Advanced char stats: Redo MP5, now split into Item, Casting, 
 GW_CHANGELOGS = "- Fix an overlapping error with health on the healthglobe\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.7.2\n\n" .. GW_CHANGELOGS
 
+--VERSION 1.7.3
+GW_CHANGELOGS = "- Added more stats to the extended stats (hover over the 'Attribute'-label)\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.7.3\n\n" .. GW_CHANGELOGS
+
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS
