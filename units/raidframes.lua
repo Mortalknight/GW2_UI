@@ -22,11 +22,10 @@ local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local REALM_FLAGS = GW.REALM_FLAGS
-local LRI = LibStub("LibRealmInfo")
+local LRI = LibStub("LibRealmInfo", true)
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
-local playerLocal
 
 local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
@@ -203,6 +202,7 @@ local function setUnitName(self)
     nameRoleIcon["NONE"] = ""
 
     local flagSetting = GetSetting("RAID_UNIT_FLAGS")
+    local playerLocal = GetLocale()
 
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
@@ -1270,7 +1270,5 @@ local function LoadRaidFrames()
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
     end
-
-    playerLocal = GetLocale()
 end
 GW.LoadRaidFrames = LoadRaidFrames

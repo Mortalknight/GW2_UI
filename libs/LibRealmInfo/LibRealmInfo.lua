@@ -125,7 +125,9 @@ function lib:GetRealmInfoByGUID(guid)
 	if realm == "" then
 		realm = GetRealmName()
 	end
-	return self:GetRealmInfo(realm)
+	if realm ~= nil then
+		return self:GetRealmInfo(realm)
+	end
 end
 
 ------------------------------------------------------------------------
