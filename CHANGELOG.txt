@@ -1,7 +1,6 @@
 1.7.3
 - Added more stats to the extended stats (hover over the 'Attribute'-label)
 
-
 1.7.2
 - Now the correct resistence will be shown for player and pet
 - Advanced char stats: Redo MP5, now split into Item, Casting, Spirit
