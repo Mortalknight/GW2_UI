@@ -494,4 +494,9 @@ GW_CHANGELOGS = "   - Add Corruption border to the inventory\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.2.2\n\n" .. GW_CHANGELOGS
 
+--VERSION 5.2.3
+GW_CHANGELOGS = "   - Mechagnomes should now display the same as base race in hero panel\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.2.3\n\n" .. GW_CHANGELOGS
+
 GW.GW_CHANGELOGS = GW_CHANGELOGS

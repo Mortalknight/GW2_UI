@@ -1,3 +1,8 @@
+5.2.3
+
+FIXES
+    - Mechagnomes should now display the same as base race in hero panel
+
 5.2.2
 
 NEW

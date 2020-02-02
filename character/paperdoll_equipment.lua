@@ -971,7 +971,7 @@ local function LoadPDBagList(fmMenu)
         fmPD3M:SetPosition(0.2, 0, -0.05)
     elseif raceEn == "Dwarf" or raceEn == "DarkIronDwarf" then
         fmPD3M:SetPosition(0.3, 0, 0)
-    elseif raceEn == "Gnome" then
+    elseif raceEn == "Gnome" or raceEn == "Mechagnome"then
         fmPD3M:SetPosition(0.2, 0, -0.05)
     elseif raceEn == "Orc" or raceEn == "MagharOrc" then
         fmPD3M:SetPosition(0.1, 0, -0.15)
