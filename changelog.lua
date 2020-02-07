@@ -501,6 +501,7 @@ GW_CHANGELOGS = "\n\n5.2.3\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.2.4
 GW_CHANGELOGS = "   - World marker placement keybinds added to 'Other' section of default bindings UI\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Added Corrupted Memento to scenario tracker in heroic vision\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.2.4\n\n" .. GW_CHANGELOGS
 

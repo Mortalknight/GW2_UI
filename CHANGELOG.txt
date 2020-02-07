@@ -2,7 +2,7 @@
 
 NEW
     - World marker placement keybinds added to 'Other' section of default bindings UI
-
+    - Added Corrupted Memento to scenario tracker in heroic vision
 
 5.2.3
 
