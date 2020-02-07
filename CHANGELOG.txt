@@ -1,3 +1,9 @@
+5.2.4
+
+NEW
+    - World marker placement keybinds added to 'Other' section of default bindings UI
+
+
 5.2.3
 
 FIXES

@@ -690,6 +690,8 @@ local function loadAddon(self)
         end
     end
 
+    GW.LoadMarkers()
+
     if GetSetting("CLASS_POWER") then
         GW.LoadClassPowers()
     end

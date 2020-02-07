@@ -34,6 +34,7 @@ units/unitframes.xml
 units/raidframes.lua
 units/unitframes.lua
 units/party.lua
+units/markers.lua
 
 mainbar/micromenu.xml
 mainbar/micromenu.lua

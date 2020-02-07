@@ -1,0 +1,11 @@
+<Bindings>
+    <Binding name="CLICK GW2UI_Markers_Button:WM8" header="GW2UI_MARKER_BINDINGS"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM6"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM3"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM1"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM5"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM7"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM2"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM4"/>
+    <Binding name="CLICK GW2UI_Markers_Button:WM9"/>
+</Bindings>
