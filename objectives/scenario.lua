@@ -114,6 +114,7 @@ local function updateCurrentScenario()
     GwScenarioBlock:Show()
 
     local _, _, numStages, _, _, _, _, _, _, scenarioType = C_Scenario.GetInfo()
+    local uiMap = C_Map.GetBestMapForUnit("player")
     local inWarfront = (scenarioType == LE_SCENARIO_TYPE_WARFRONT)
 
     if (numStages == 0) then
@@ -215,6 +216,16 @@ local function updateCurrentScenario()
             iqty / imax * 100
         )
         numCriteria = numCriteria + 2
+    elseif uiMap == 1469 or uiMap == 1470 then -- Heroic Vision for OP and SW
+        local cmname, cmqty = GetCurrencyInfo(1744) --Corrupted Memento
+        addObjectiveBlock(
+            GwScenarioBlock,
+            ParseCriteria(cmqty, 0, cmname),
+            false,
+            numCriteria + 1,
+            "monster",
+            cmqty
+        )
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps()

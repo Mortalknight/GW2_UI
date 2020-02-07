@@ -1,3 +1,8 @@
+5.2.4
+
+NEW
+    - Added Corrupted Memento to scenario tracker in heroic vision
+
 5.2.3
 
 FIXES

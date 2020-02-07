@@ -142,7 +142,11 @@ GW.ParseSimpleObjective = ParseSimpleObjective
 
 local function ParseCriteria(quantity, totalQuantity, criteriaString)
     if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
-        return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
+        if totalQuantity == 0 then
+            return string.format("%d %s", quantity, criteriaString)
+        else
+            return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
+        end
     end
 
     return criteriaString
