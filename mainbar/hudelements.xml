@@ -870,57 +870,6 @@
         </Frames>
     </Frame>
 
-    <Button name="GwDodgeBar" virtual="true" parent="GwPlayerHealthGlobe" FrameLevel="1">
-        <Size x="118" y="118"></Size>
-        <Anchors>
-            <Anchor point="CENTER" relativeTo="GwPlayerHealthGlobe" relativePoint="CENTER"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\dodgebar-bg" parentKey="Background">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="1">
-                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\dodgebar">
-                    <Size x="114" y="114"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="1"/>
-                    </Anchors>
-                </Texture>
-                <Texture parentKey="spark" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-spark">
-                    <Size x="114" y="114"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture name="$parentSep1" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentSep2" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentSep3" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
-
     <Button name="GwBuffIconBig" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="26" y="26"/>
         <Layers>

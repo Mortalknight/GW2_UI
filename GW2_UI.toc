@@ -46,6 +46,7 @@ mainbar/hudart.xml
 mainbar/hudelements.xml
 mainbar/actionbars.xml
 mainbar/petbar.xml
+mainbar/dodgebar.xml
 mainbar/hud.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
@@ -53,6 +54,7 @@ mainbar/buffs.lua
 mainbar/castingbar.lua
 mainbar/playerhud.lua
 mainbar/classpowers.lua
+mainbar/dodgebar.lua
 
 inventory/bag.xml
 inventory/bank.xml

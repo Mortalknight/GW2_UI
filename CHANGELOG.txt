@@ -1,8 +1,11 @@
-5.2.4
+5.3.0
 
 NEW
     - World marker placement keybinds added to 'Other' section of default bindings UI
     - Added Corrupted Memento to scenario tracker in heroic vision
+    - Rebuilt dodge bar for performance and graphical improvement
+    - Dodge bar now works as a secure button and can be bound to a key
+
 
 5.2.3
 

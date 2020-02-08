@@ -644,6 +644,7 @@ local function loadAddon(self)
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") then
         GW.LoadPlayerHud()
+        GW.LoadDodgeBar()
     end
 
     if GetSetting("POWERBAR_ENABLED") then

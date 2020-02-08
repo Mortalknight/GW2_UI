@@ -8,4 +8,5 @@
     <Binding name="CLICK GW2UI_Markers_Button:WM2"/>
     <Binding name="CLICK GW2UI_Markers_Button:WM4"/>
     <Binding name="CLICK GW2UI_Markers_Button:WM9"/>
+    <Binding name="CLICK GwDodgeBar:LeftButton" header="GW2UI_BINDINGS"/>
 </Bindings>

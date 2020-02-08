@@ -499,10 +499,12 @@ GW_CHANGELOGS = "   - Mechagnomes should now display the same as base race in he
 GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.2.3\n\n" .. GW_CHANGELOGS
 
---VERSION 5.2.4
+--VERSION 5.3.0
+GW_CHANGELOGS = "   - Dodge bar now works as a secure button and can be bound to a key\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Rebuilt dodge bar for performance and graphical improvement\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - World marker placement keybinds added to 'Other' section of default bindings UI\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added Corrupted Memento to scenario tracker in heroic vision\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "\n\n5.2.4\n\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n5.3.0\n\n" .. GW_CHANGELOGS
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS
