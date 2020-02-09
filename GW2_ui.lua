@@ -476,7 +476,8 @@ local SCALE_HUD_FRAMES = {
     "GwMultiBarBottomLeft",
     "GwMultiBarRight",
     "GwMultiBarLeft",
-    "GwCharacterWindow"
+    "GwCharacterWindow",
+    "GwDodgeBar"
 }
 local function UpdateHudScale()
     local hudScale = GetSetting("HUD_SCALE")
@@ -484,11 +485,15 @@ local function UpdateHudScale()
     for i, name in ipairs(SCALE_HUD_FRAMES) do
         local f = _G[name]
         local fm = _G[name .. "MoveAble"]
+        local sf = 1.0
         if f then
-            f:SetScale(hudScale)
+            if f.gwScaleMulti then
+                sf = f.gwScaleMulti
+            end
+            f:SetScale(hudScale * sf)
         end
         if fm then
-            fm:SetScale(hudScale)
+            fm:SetScale(hudScale * sf)
         end
     end
 end

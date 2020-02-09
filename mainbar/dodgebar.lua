@@ -1,5 +1,6 @@
 local _, GW = ...
 local Debug = GW.Debug
+local GetSetting = GW.GetSetting
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -232,15 +233,15 @@ end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
 local function LoadDodgeBar()
-    _G["BINDING_HEADER_GW2UI_BINDINGS"] = "GW2 UI Bindings"
-    _G["BINDING_NAME_CLICK GwDodgeBar:LeftButton"] = "Dodge Bar"
     Debug("LoadDodgeBar start")
+    _G["BINDING_HEADER_GW2UI_MOVE_BINDINGS"] = BINDING_HEADER_MOVEMENT
+    _G["BINDING_NAME_CLICK GwDodgeBar:LeftButton"] = DODGE
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, "GwDodgeBarTmpl")
     fmdb:ClearAllPoints()
     fmdb:SetFrameStrata("BACKGROUND")
-    fmdb:SetScale(1.1) -- doesn't quite line up with our current health globe; will adjust when I rewrite that too
+    fmdb.gwScaleMulti = 1.1 -- doesn't quite line up with our current health globe; will adjust when I rewrite that too
     fmdb:SetPoint("CENTER", GwPlayerHealthGlobe, "CENTER", 0, 44)
     fmdb:SetAttribute("*type1", "spell")
 
