@@ -1,6 +1,6 @@
 local _, GW = ...
 local Debug = GW.Debug
-local GetSetting = GW.GetSetting
+local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -186,6 +186,8 @@ local function dodge_OnEvent(self, event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
         initBar(self, true)
+        -- setup hook to hide the dodge bar when in vehicle/override UI
+        MixinHideDuringPetAndOverride(self)
 
     elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" then
         -- do remaining spell detail stuff that is (usually) not available yet in PEW
@@ -271,5 +273,6 @@ local function LoadDodgeBar()
     fmdb:RegisterEvent("SPELLS_CHANGED")
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+
 end
 GW.LoadDodgeBar = LoadDodgeBar
