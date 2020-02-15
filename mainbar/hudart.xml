@@ -16,13 +16,6 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentMenuBackDrop" file="Interface\AddOns\GW2_UI\textures\windowcornermenu" parentKey="Background">
-                    <Size x="512" y="64"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                    </Anchors>
-                </Texture>
-
                 <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowcorner">
                     <Size x="512" y="256"></Size>
                     <TexCoords left="1" right="0" top="0" bottom="1" />

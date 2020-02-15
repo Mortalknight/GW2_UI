@@ -1,10 +1,5 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
-local animations = GW.animations
-local AddToAnimation = GW.AddToAnimation
-local StopAnimation = GW.StopAnimation
-
-local microButtonFrame
 
 local function updateGuildButton(self, event)
     if event ~= "GUILD_ROSTER_UPDATE" then
@@ -34,9 +29,9 @@ local function updateGuildButton(self, event)
 end
 GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
 
-local function updateInventoryButton()
-    local bmb = GwBagMicroButton
-    if bmb == nil then
+local function bag_OnUpdate(self, elapsed)
+    self.interval = self.interval - elapsed
+    if self.interval > 0 then
         return
     end
 
@@ -49,97 +44,15 @@ local function updateInventoryButton()
         end
     end
 
-    bmb.GwNotifyDark:Show()
+    self.GwNotifyDark:Show()
     if totalEmptySlots > 9 then
-        bmb.GwNotifyText:SetText(totalEmptySlots)
+        self.GwNotifyText:SetText(totalEmptySlots)
     else
-        bmb.GwNotifyText:SetText(totalEmptySlots .. " ")
+        self.GwNotifyText:SetText(totalEmptySlots .. " ")
     end
-    bmb.GwNotifyText:Show()
+    self.GwNotifyText:Show()
 end
-GW.AddForProfiling("micromenu", "updateInventoryButton", updateInventoryButton)
-
-local function microMenuFrameShow(f, name)
-    StopAnimation(name)
-    StopAnimation("GwHudArtFrameMenuBackDrop")
-    f.gw_FadeShowing = true
-    AddToAnimation(
-        name,
-        0,
-        1,
-        GetTime(),
-        0.1,
-        function()
-            f:SetAlpha(animations[name]["progress"])
-        end,
-        nil,
-        nil
-    )
-    AddToAnimation(
-        "GwHudArtFrameMenuBackDrop",
-        0,
-        1,
-        GetTime(),
-        0.1,
-        function()
-            GwHudArtFrameMenuBackDrop:SetAlpha(animations["GwHudArtFrameMenuBackDrop"]["progress"])
-        end,
-        nil,
-        nil
-    )
-end
-GW.AddForProfiling("micromenu", "microMenuFrameShow", microMenuFrameShow)
-
-local function microMenuFrameHide(f, name)
-    StopAnimation(name)
-    StopAnimation("GwHudArtFrameMenuBackDrop")
-    f.gw_FadeShowing = false
-    AddToAnimation(
-        name,
-        1,
-        0,
-        GetTime(),
-        0.1,
-        function()
-            f:SetAlpha(animations[name]["progress"])
-        end,
-        nil,
-        nil
-    )
-    AddToAnimation(
-        "GwHudArtFrameMenuBackDrop",
-        1,
-        0,
-        GetTime(),
-        0.1,
-        function()
-            GwHudArtFrameMenuBackDrop:SetAlpha(animations["GwHudArtFrameMenuBackDrop"]["progress"])
-        end,
-        nil,
-        nil
-    )
-end
-GW.AddForProfiling("micromenu", "microMenuFrameHide", microMenuFrameHide)
-
-local function microMenu_OnUpdate(self, elapsed)
-    self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
-    if self.gw_LastFadeCheck > 0 then
-        return
-    end
-    self.gw_LastFadeCheck = 0.1
-    if not self:IsShown() then
-        return
-    end
-
-    if self:IsMouseOver(100, -100, -100, 100) then
-        if not self.gw_FadeShowing then
-            microMenuFrameShow(self, self:GetName())
-        end
-    elseif self.gw_FadeShowing then
-        microMenuFrameHide(self, self:GetName())
-    end
-end
-GW.AddForProfiling("micromenu", "microMenu_OnUpdate", microMenu_OnUpdate)
+GW.AddForProfiling("micromenu", "bag_OnUpdate", bag_OnUpdate)
 
 local function gwMicro_PositionAlert(alert)
     if
@@ -171,10 +84,8 @@ local function modifyMicroAlert(alert, microButton)
 end
 GW.AddForProfiling("micromenu", "modifyMicroAlert", modifyMicroAlert)
 
-local function reskinMicroButton(btn, name)
-    GW.Debug("reskin micro", name)
-    btn:SetParent(GwMicroButtonFrame)
-
+local function reskinMicroButton(btn, name, mbf)
+    btn:SetParent(mbf)
     local tex = "Interface/AddOns/GW2_UI/textures/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
@@ -214,22 +125,13 @@ local function reskinMicroButton(btn, name)
 end
 GW.AddForProfiling("micromenu", "reskinMicroButton", reskinMicroButton)
 
-local function reskinMicroButtons()
+local function reskinMicroButtons(mbf)
     for i = 1, #MICRO_BUTTONS do
         local name = MICRO_BUTTONS[i]
         local btn = _G[name]
         if btn then
-            reskinMicroButton(btn, name)
+            reskinMicroButton(btn, name, mbf)
         end
-    end
-    if GwBagMicroButton then
-        reskinMicroButton(GwBagMicroButton, "BagMicroButton")
-    end
-    if GwCharacterMicroButton then
-        reskinMicroButton(GwCharacterMicroButton, "CharacterMicroButton")
-    end
-    if GwTalentMicroButton then
-        reskinMicroButton(GwTalentMicroButton, "TalentMicroButton")
     end
 end
 GW.AddForProfiling("micromenu", "reskinMicroButtons", reskinMicroButtons)
@@ -247,13 +149,17 @@ local function disableMicroButton(btn, hideOnly)
     end
 end
 
-local function setupMicroButtons()
+local function setupMicroButtons(mbf)
     -- CharacterMicroButton
-    -- we must determine if we are using the default char button (for default char window) or
-    -- if we need to use our own char button for the custom hero panel
+    -- determine if we are using the default char button (for default charwin)
+    -- or if we need to create our own char button for the custom hero panel
     local cref
     if GetSetting("USE_CHARACTER_WINDOW") then
-        cref = GwCharacterMicroButton
+        cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
+        cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
+        reskinMicroButton(cref, "CharacterMicroButton", mbf)
+    
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         cref:SetAttribute(
             "_onclick",
@@ -272,47 +178,36 @@ local function setupMicroButtons()
     else
         cref = CharacterMicroButton
         MicroButtonPortrait:Hide()
-
-        disableMicroButton(GwCharacterMicroButton)
     end
     cref.GwSetAnchorPoint = function(self)
         -- this must also happen in the auto-layout update hook which is why we do it like this
         self:ClearAllPoints()
-        self:SetPoint("TOPLEFT", GwMicroButtonFrame, "TOPLEFT", 5, -3)
+        self:SetPoint("TOPLEFT", mbf, "TOPLEFT", 5, -3)
     end
     cref:GwSetAnchorPoint()
 
-    -- GwBagMicroButton (custom)
-    GwBagMicroButton:ClearAllPoints()
-    GwBagMicroButton:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
-    GwBagMicroButton:HookScript(
-        "OnClick",
-        function()
-            ToggleAllBags()
-        end
-    )
-    GwBagMicroButton.interval = 0
-    GwBagMicroButton:HookScript(
-        "OnUpdate",
-        function(self, elapsed)
-            self.interval = self.interval - elapsed
-            if self.interval > 0 then
-                return
-            end
+    -- custom bag microbutton
+    local bref = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    bref.tooltipText = MicroButtonTooltipText(INVENTORY_TOOLTIP, "OPENALLBAGS")
+    bref.newbieText = nil
+    reskinMicroButton(bref, "BagMicroButton", mbf)
 
-            self.interval = 0.5
-            updateInventoryButton()
-        end
-    )
+    bref:ClearAllPoints()
+    bref:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
+    bref:HookScript("OnClick", ToggleAllBags)
+    bref.interval = 0
+    bref:HookScript("OnUpdate", bag_OnUpdate)
 
-    -- we must determine if we are using the default spell & talent buttons or if we need to
-    -- use our own talent button for the custom hero panel
+    -- determine if we are using the default spell & talent buttons
+    -- or if we need our custom talent button for the hero panel
     local tref
     if GetSetting("USE_TALENT_WINDOW") then
-        -- TalentMicroButton
-        tref = GwTalentMicroButton
+        tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        tref.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
+        tref.newbieText = NEWBIE_TOOLTIP_TALENTS
+        reskinMicroButton(tref, "TalentMicroButton", mbf)
         tref:ClearAllPoints()
-        tref:SetPoint("BOTTOMLEFT", GwBagMicroButton, "BOTTOMRIGHT", 4, 0)
+        tref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
         tref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         tref:SetAttribute(
@@ -329,14 +224,15 @@ local function setupMicroButtons()
     else
         -- SpellbookMicroButton
         SpellbookMicroButton:ClearAllPoints()
-        SpellbookMicroButton:SetPoint("BOTTOMLEFT", GwBagMicroButton, "BOTTOMRIGHT", 4, 0)
+        SpellbookMicroButton:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
         -- TalentMicroButton
         tref = TalentMicroButton
         tref:ClearAllPoints()
         tref:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
 
-        disableMicroButton(GwTalentMicroButton)
+        -- we've added an extra button so expand the container a bit
+        f:SetWidth(f:GetWidth() + 28)
     end
 
     -- AchievementMicroButton
@@ -492,50 +388,19 @@ local function LoadMicroMenu()
     end
 
     -- create our micro button container frame
-    microButtonFrame = CreateFrame("Frame", "GwMicroButtonFrame", UIParent, "GwMicroButtonFrame")
-
-    -- create a custom micro button for inventory, character, and talents
-    CreateFrame("Button", "GwBagMicroButton", UIParent, "MainMenuBarMicroButton")
-    GwBagMicroButton.tooltipText = MicroButtonTooltipText(INVENTORY_TOOLTIP, "OPENALLBAGS")
-    GwBagMicroButton.newbieText = nil
-
-    CreateFrame("Button", "GwCharacterMicroButton", UIParent, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
-    GwCharacterMicroButton.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
-    GwCharacterMicroButton.newbieText = NEWBIE_TOOLTIP_CHARACTER
-
-    CreateFrame("Button", "GwTalentMicroButton", UIParent, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
-    GwTalentMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
-    GwTalentMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
+    local mbf = CreateFrame("Frame", nil, UIParent, "GwMicroButtonFrameTmpl")
 
     -- reskin all default (and custom) micro buttons to our styling
-    reskinMicroButtons()
+    reskinMicroButtons(mbf.cf)
 
     -- re-do anchoring of the micro buttons to our preferred ordering and setup
     -- custom button overrides & behaviors for each button where necessary
-    setupMicroButtons()
+    setupMicroButtons(mbf.cf)
 
-    -- get rid of the super-persistent PvP talent selector alert
-    if not TalentMicroButton:HasTalentAlertToShow() then
-        TalentMicroButtonAlert:Hide()
+    -- undo micro button position and visibility changes done by others
+    for i = 1, #MICRO_BUTTONS do
+        MICRO_BUTTONS[i] = nil
     end
-    hooksecurefunc(
-        "MainMenuMicroButton_ShowAlert",
-        function(f, t)
-            if f == TalentMicroButtonAlert and not TalentMicroButton:HasTalentAlertToShow() then
-                f:Hide()
-            end
-        end
-    )
-
-    -- undo micro button position and visibility changes done by the auto-layout stuff
-    hooksecurefunc(
-        "UpdateMicroButtonsParent",
-        function()
-            for i = 1, #MICRO_BUTTONS do
-                _G[MICRO_BUTTONS[i]]:SetParent(GwMicroButtonFrame)
-            end
-        end
-    )
     hooksecurefunc(
         "MoveMicroButtons",
         function()
@@ -561,11 +426,67 @@ local function LoadMicroMenu()
         end
     )
 
+    -- get rid of the super-persistent PvP talent selector alert
+    if not TalentMicroButton:HasTalentAlertToShow() then
+        TalentMicroButtonAlert:Hide()
+    end
+    hooksecurefunc(
+        "MainMenuMicroButton_ShowAlert",
+        function(f, t)
+            if f == TalentMicroButtonAlert and not TalentMicroButton:HasTalentAlertToShow() then
+                f:Hide()
+            end
+        end
+    )
+
     -- if set to fade micro menu, add fader
     if GetSetting("FADE_MICROMENU") then
-        microButtonFrame.gw_LastFadeCheck = -1
-        microButtonFrame.gw_FadeShowing = true
-        microButtonFrame:SetScript("OnUpdate", microMenu_OnUpdate)
+        mbf.cf:SetAttribute("fadeTime", 0.15)
+
+        local fo = mbf.cf:CreateAnimationGroup("fadeOut")
+        local fi = mbf.cf:CreateAnimationGroup("fadeIn")
+        local fadeOut = fo:CreateAnimation("Alpha")
+        local fadeIn = fi:CreateAnimation("Alpha")
+        fo:SetScript("OnFinished", function(self)
+            self:GetParent():SetAlpha(0)
+        end)
+        fadeOut:SetStartDelay(0.25)
+        fadeOut:SetFromAlpha(1.0)
+        fadeOut:SetToAlpha(0.0)
+        fadeOut:SetDuration(mbf.cf:GetAttribute("fadeTime"))
+        fadeIn:SetFromAlpha(0.0)
+        fadeIn:SetToAlpha(1.0)
+        fadeIn:SetDuration(mbf.cf:GetAttribute("fadeTime"))
+        mbf.cf.fadeOut = function(self)
+            fi:Stop()
+            fo:Stop()
+            fo:Play()
+        end
+        mbf.cf.fadeIn = function(self)
+            self:SetAlpha(1)
+            fi:Stop()
+            fo:Stop()
+            fi:Play()
+        end
+    
+        mbf:SetFrameRef("cf", mbf.cf)
+
+        mbf:SetAttribute("_onenter", [=[
+            local cf = self:GetFrameRef("cf")
+            if cf:IsShown() then
+                return
+            end
+            cf:UnregisterAutoHide()
+            cf:Show()
+            cf:CallMethod("fadeIn", cf)
+            cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
+        ]=])
+        mbf.cf:HookScript("OnLeave", function(self)
+            if not self:IsMouseOver() then
+                self:fadeOut()
+            end
+        end)
+        mbf.cf:Hide()
     end
 
     -- fix alert positions and hide the micromenu bar
