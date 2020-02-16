@@ -44,6 +44,9 @@ mainbar/orderbar.lua
 mainbar/experiencebar.xml
 mainbar/hudart.xml
 mainbar/hudelements.xml
+mainbar/healthglobe.xml
+mainbar/powerbar.xml
+mainbar/classpowers.xml
 mainbar/actionbars.xml
 mainbar/petbar.xml
 mainbar/dodgebar.xml
@@ -52,7 +55,8 @@ mainbar/actionbars2.lua
 mainbar/petbar.lua
 mainbar/buffs.lua
 mainbar/castingbar.lua
-mainbar/playerhud.lua
+mainbar/healthglobe.lua
+mainbar/powerbar.lua
 mainbar/classpowers.lua
 mainbar/dodgebar.lua
 
