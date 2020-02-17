@@ -239,6 +239,8 @@ local function GWUseThisLocalization()
 	GwLocalization["ANCHOR_CURSOR_OFFSET_DESC"] = "Take only effect if the option 'Cursor Tooltips' is activated and the Cursoer Anchor is NOT 'Cursor Anchor'"
 	GwLocalization["MOUSE_OVER"] = "Only Mouse over"
 	GwLocalization["PLAYER_AURA_GROW"] = "Set Player Aura grow directions"
+	GwLocalization["RED_OVERLAY"] = "Red overlay"
+	GwLocalization["MAINBAR_RANGE_INDICATOR"] = "Mainbar range indicator"
 
 	--Composite
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])

@@ -413,6 +413,7 @@ local function updateMainBar(toggle)
         btn_yOff = -14
     end
 
+    local rangeIndicatorSetting = GetSetting("MAINBAR_RANGEINDICATOR")
     for i = 1, 12 do
         local btn = _G["ActionButton" .. i]
         fmActionbar.gw_Buttons[i] = btn
@@ -441,6 +442,8 @@ local function updateMainBar(toggle)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
             hotkey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
             hotkey:SetTextColor(1, 1, 1)
+            btn.changedColor = false
+            btn.rangeIndicatorSetting = rangeIndicatorSetting
 
             if IsEquippedAction(btn.action) then
                 local borname = "ActionButton" .. i .. "Border"
@@ -823,6 +826,7 @@ local function actionButtonFlashing(btn, elapsed)
 end
 GW.AddForProfiling("Actionbars2", "actionButtonFlashing", actionButtonFlashing)
 
+local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
 local function actionButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
@@ -835,26 +839,47 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
             local valid = IsActionInRange(btn.action)
             local checksRange = (valid ~= nil)
             local inRange = checksRange and valid
-            if (not checksRange or inRange) then
-                btn.gw_RangeIndicator:Hide()
+            if checksRange and not inRange then
+                if btn.rangeIndicatorSetting == "RED_INDICATOR" then
+                    btn.gw_RangeIndicator:Show()
+                elseif btn.rangeIndicatorSetting == "RED_OVERLAY" then
+                    btn.icon:SetVertexColor(out_R, out_G, out_B)
+                    btn.changedColor = true
+                elseif btn.rangeIndicatorSetting == "BOTH" then
+                    btn.gw_RangeIndicator:Show()
+                    btn.icon:SetVertexColor(out_R, out_G, out_B)
+                    btn.changedColor = true
+                end
             else
-                btn.gw_RangeIndicator:Show()
+                if btn.rangeIndicatorSetting == "RED_INDICATOR" then
+                    btn.gw_RangeIndicator:Hide()
+                elseif btn.rangeIndicatorSetting == "RED_OVERLAY" then
+                    if btn.changedColor then
+                        btn.icon:SetVertexColor(1, 1, 1)
+                        btn.changedColor = false
+                    end
+                elseif btn.rangeIndicatorSetting == "BOTH" then
+                    btn.gw_RangeIndicator:Hide()
+                    if btn.changedColor then
+                        btn.icon:SetVertexColor(1, 1, 1)
+                        btn.changedColor = false
+                    end
+                end
             end
         end
     end
 end
 GW.AddForProfiling("Actionbars2", "actionButtons_OnUpdate", actionButtons_OnUpdate)
 
-local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
-local in_R, in_G, in_B = LIGHTGRAY_FONT_COLOR:GetRGB()
 local function changeVertexColorActionbars()
     local fmActionbar = MainMenuBarArtFrame
     local fmMultiBar
-    for y = 1, 4 do
+    for y = 1, 5 do
         if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
         if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
         if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
         if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+        if y == 5 then fmMultiBar = fmActionbar end
         if fmMultiBar.gw_IsEnabled then
             for i = 1, 12 do
                 local btn = fmMultiBar.gw_Buttons[i]

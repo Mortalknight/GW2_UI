@@ -1233,6 +1233,15 @@ local function LoadSettings()
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
     )
+    addOptionDropdown(
+        GwLocalization["MAINBAR_RANGE_INDICATOR"],
+        nil,
+        "MAINBAR_RANGEINDICATOR",
+        "GwSettingsActionbarOptions",
+        nil,
+        {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
+        {GwLocalization["INDICATOR_TITLE"]:format(RED_GEM), GwLocalization["RED_OVERLAY"],STATUS_TEXT_BOTH,NONE}
+    )
 
     createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)
 
