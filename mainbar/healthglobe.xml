@@ -1,43 +1,90 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwPlayerHealthGlobeClickOverlay" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="HIGH" enableMouse="true" inherits="SecureUnitButtonTemplate" virtual="true">
-        <Size x="104" y="104"></Size>
-        <Anchors>
-            <Anchor point="BOTTOM" x="0" y="16"/>
-        </Anchors>
-
-    </Button>
-    <Button name="GwPlayerHealthGlobe" registerForClicks="LeftButtonDown,RightButtonDown" topLevel="true" frameStrata="LOW" enableMouse="true" inherits="SecurehandlerStateTemplate,SecureUnitButtonTemplate" virtual="true" FrameLevel="2">
-
-        <Size x="104" y="104"></Size>
-        <Anchors>
-            <Anchor point="BOTTOM" x="0" y="16"/>
-        </Anchors>
-        <Layers>
-            <Layer level="BORDER">
-                <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\healthFill-bg">
-                    <Color r="0" g="0" b="0"></Color>
-                    <Size x="104" y="104"></Size>
-                </Texture>
-            </Layer>
-        </Layers>
+    <Button name="GwHealthGlobeTmpl" registerForClicks="LeftButtonDown,RightButtonDown" inherits="SecureActionButtonTemplate,SecureHandlerStateTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="2">
+    
+        <Size x="88" y="88"></Size>
         <Frames>
-            <Frame parentKey="pvp" frameStrata="BACKGROUND" frameLevel="1">
+            <Frame parentKey="fill">
+                <Size x="128" y="128"/>
+                <Anchors>
+                    <Anchor point="CENTER"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="1">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/globe/fill-whole">
+                            <Color r="0.506" g="0.059" b="0.008" a="1.0"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER" textureSubLevel="1">
+                        <Texture parentKey="grime" file="Interface/AddOns/GW2_UI/textures/globe/grime" alphaMode="BLEND" alpha="0.66">
+                            <Color r="1" g="0.25" b="0" a="0.5"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER" textureSubLevel="2">
+                        <Texture parentKey="absorb_under" parentArray="masked" file="Interface/AddOns/GW2_UI/textures/globe/fill-absorb" alpha="0.44">
+                            <Size x="128" y="256"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER" textureSubLevel="3">
+                        <Texture parentKey="anti" parentArray="masked" file="Interface/AddOns/GW2_UI/textures/globe/fill-anti">
+                            <Size x="128" y="256"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER" textureSubLevel="4">
+                        <Texture parentKey="pred" file="Interface/AddOns/GW2_UI/textures/globe/pred-line" alphaMode="BLEND" alpha="0.66">
+                            <Size x="128" y="8"/>
+                            <Color r="0.15" g="0.8" b="0.15" a="0.5"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER" textureSubLevel="5">
+                        <Texture parentKey="absorb_over" file="Interface/AddOns/GW2_UI/textures/globe/fill-shield" alpha="0.5" alphaMode="ADD">
+                            <Size x="128" y="256"/>
+                            <Color r="1" g="1" b="1" a="0.75"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <!-- masks for static art/background elements -->
+                        <MaskTexture parentKey="mask" file="Interface/AddOns/GW2_UI/textures/globe/mask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+                            <Size x="128" y="128"/>
+                        </MaskTexture>
+
+                        <!-- masks for the moving anti fill pieces -->
+                        <MaskTexture parentKey="maskb" file="Interface/AddOns/GW2_UI/textures/globe/mask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+                            <Size x="128" y="128"/>
+                        </MaskTexture>
+                        <MaskTexture parentKey="maska" file="Interface/AddOns/GW2_UI/textures/globe/absorb-mask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+                            <Size x="128" y="128"/>
+                        </MaskTexture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="border">
+                <Size x="128" y="128"/>
+                <Anchors>
+                    <Anchor point="CENTER"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER" textureSubLevel="6">
+                        <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/globe/border"/>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="pvp" frameStrata="BACKGROUND" frameLevel="2" alpha="0.44">
                 <Size x="128" y="128"/>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="ally" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.33" hidden="true">
+                        <Texture parentKey="ally" file="Interface/AddOns/GW2_UI/textures/globe/pvpmode" hidden="true">
                             <Size x="128" y="128"></Size>
                             <TexCoords top="0" bottom="0.5" left="0" right="1"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP" x="0" y="23" />
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="horde" file="Interface\AddOns\GW2_UI\textures\pvpmode" alpha="0.33" hidden="true">
+                        <Texture parentKey="horde" file="Interface/AddOns/GW2_UI/textures/globe/pvpmode" hidden="true">
                             <Size x="138" y="138"></Size>
                             <TexCoords top="0.51" bottom="1" left="0" right="1"/>
                             <Anchors>
@@ -47,185 +94,86 @@
                     </Layer>
                 </Layers>
             </Frame>
-            <Frame frameStrata="HIGH" name="GwHudArtFrameRepair">
+            <Frame parentKey="repair">
                 <Size x="21" y="21"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="35" y="5" />
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="33" y="0" />
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\repair">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/globe/repair">
                             <Size x="21" y="21"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" />
-                            </Anchors>
+                            <TexCoords top="0" bottom="0.5" left="0" right="1"/>
                         </Texture>
                     </Layer>
                 </Layers>
             </Frame>
-
-            <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeAbsorbBackdrop">
-                <Size x="101" y="101"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOM" x="0" y="2"/>
-                </Anchors>
-                <Layers>
-                    <Layer textureSubLevel="4" level="BACKGROUND">
-                        <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark2">
-                            <Size x="102" y="102"></Size>
-                            <Color r="0.8" b="0.778" g="0.727"></Color>
-                            <Anchors>
-                                <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
-                                <Anchor point="TOP" relativePoint="TOP" x="0" y="5"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer >
-                    <Layer textureSubLevel="2" level="BACKGROUND">
-                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthFill-absorb">
-                            <Size x="102" y="102"></Size>
-
-                        </Texture>
-                    </Layer >
-                </Layers>
-            </Frame>
-            <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobePredictionBackdrop">
-                <Size x="101" y="101"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOM" x="0" y="2"/>
-                </Anchors>
-                <Layers>
-                    <Layer textureSubLevel="4" level="BACKGROUND">
-                        <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark2">
-                            <Size x="102" y="102"></Size>
-                            <Color r="0.155" g="0.24" b="0.057"></Color>
-                            <Anchors>
-                                <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
-                                <Anchor point="TOP" relativePoint="TOP" x="0" y="5"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer >
-                    <Layer textureSubLevel="2" level="BACKGROUND">
-                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthfill-incominghealing">
-                            <Size x="102" y="102"></Size>
-                        </Texture>
-                    </Layer >
-                </Layers>
-            </Frame>
-            <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeHealth">
-                <Size x="102" y="102"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOM" x="0" y="1"/>
-                </Anchors>
-                <Layers>
-
-                    <Layer textureSubLevel="3" level="BACKGROUND">
-                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\healthFill">
-                            <Size x="102" y="102"></Size>
-                        </Texture>
-                    </Layer >
-                    <Layer textureSubLevel="4" level="BACKGROUND">
-                        <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark">
-                            <Size x="102" y="102"></Size>
-                            <Anchors>
-                                <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
-                                <Anchor point="TOP" relativePoint="TOP" x="0" y="16"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer >
-                    <Layer textureSubLevel="5" level="BACKGROUND">
-                        <Texture parentKey="spark2" file="Interface\AddOns\GW2_UI\textures\healthglobe_spark2">
-                            <Size x="102" y="102"></Size>
-                            <Anchors>
-                                <Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-1"/>
-                                <Anchor point="TOP" relativePoint="TOP" x="0" y="8"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer >
-                </Layers>
-            </Frame>
-
-            <Frame frameStrata="MEDIUM" enableMouse="false" name="GwPlayerHealthGlobeAbsorb">
-                <Size x="102" y="102"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOM" x="0" y="1"/>
-                </Anchors>
-                <Layers>
-                    <Layer textureSubLevel="4" level="BACKGROUND">
-                        <Texture name="$parentBar" file="Interface\AddOns\GW2_UI\textures\shieldfill">
-                            <Size x="102" y="102"></Size>
-
-                        </Texture>
-                    </Layer >
-                </Layers>
-            </Frame>
-            <Frame frameLevel="2" enableMouse="false" frameStrata="HIGH" name="GwPlayerHealthGlobeText">
+            <Frame parentKey="text_h" enableMouse="false">
                 <Size x="102" y="102"></Size>
                 <Anchors>
                     <Anchor point="CENTER" x="0" y="0"/>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString enableMouse="false" name="$parentShadow1" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow2" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow3" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow4" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString text="100,000" fontColor="white" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow5" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString text="100,000" fontColor="white" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow6" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow7" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow8" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="2"></Anchor>
                             </Anchors>
                         </FontString>
-
                     </Layer>
                     <Layer textureSubLevel="2" level="OVERLAY">
-
-                        <FontString enableMouse="false" name="$parentValue" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="value" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
@@ -236,74 +184,73 @@
                     </Layer>
                 </Layers>
             </Frame>
-            <Frame frameLevel="2" enableMouse="false" frameStrata="HIGH" name="GwPlayerAbsorbGlobeText">
+            <Frame parentKey="text_a" enableMouse="false">
                 <Size x="102" y="102"></Size>
                 <Anchors>
-                    <Anchor point="CENTER" x="0" y="20"/>
+                    <Anchor point="CENTER" x="0" y="17"/>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString enableMouse="false" name="$parentShadow1" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow2" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow3" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow4" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow5" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow6" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow7" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString enableMouse="false" name="$parentShadow8" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentArray="shadow" text="100,000" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="2"></Anchor>
                             </Anchors>
                         </FontString>
 
                     </Layer>
                     <Layer textureSubLevel="2" level="OVERLAY">
-
-                        <FontString enableMouse="false" name="$parentValue" text="100,000" fontSize="14" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="value" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="0.2" g="1"></Color>
                             <Anchors>
@@ -314,9 +261,7 @@
                     </Layer>
                 </Layers>
             </Frame>
-
         </Frames>
-
     </Button>
 
 </Ui>

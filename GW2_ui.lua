@@ -470,14 +470,14 @@ local SCALE_HUD_FRAMES = {
     "GwPlayerPowerBar",
     "GwPlayerAuraFrame",
     "GwPlayerClassPower",
-    "GwPlayerHealthGlobe",
     "GwPlayerPetFrame",
     "GwMultiBarBottomRight",
     "GwMultiBarBottomLeft",
     "GwMultiBarRight",
     "GwMultiBarLeft",
     "GwCharacterWindow",
-    "GwDodgeBar"
+    "GwDodgeBar",
+    "GwHealthGlobe"
 }
 local function UpdateHudScale()
     local hudScale = GetSetting("HUD_SCALE")

@@ -787,7 +787,7 @@ local function updateStats()
     statFrame.stat = "DURABILITY"
     statFrame.onEnterFunc = nil
     --Icon setzen
-    statFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\repair")
+    statFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
     statFrame.icon:SetTexCoord(0, 1, 0, 0.5)
     statFrame.icon:SetDesaturated(true)
     statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)

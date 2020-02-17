@@ -502,6 +502,7 @@ GW_CHANGELOGS = "\n\n5.2.3\n\n" .. GW_CHANGELOGS
 --VERSION 5.3.0
 GW_CHANGELOGS = "   - Dodge bar now works as a secure button and can be bound to a key\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Rebuilt dodge bar for performance and graphical improvement\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "   - Rebuilt health globe for performance and graphical improvement\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - World marker placement keybinds added to 'Other' section of default bindings UI\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Added Corrupted Memento to scenario tracker in heroic vision\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\nNEW\n" .. GW_CHANGELOGS

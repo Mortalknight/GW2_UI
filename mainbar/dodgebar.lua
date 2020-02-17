@@ -241,10 +241,9 @@ local function LoadDodgeBar()
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, "GwDodgeBarTmpl")
+    fmdb.gwScaleMulti = 1.1
     fmdb:ClearAllPoints()
-    fmdb:SetFrameStrata("BACKGROUND")
-    fmdb.gwScaleMulti = 1.1 -- doesn't quite line up with our current health globe; will adjust when I rewrite that too
-    fmdb:SetPoint("CENTER", GwPlayerHealthGlobe, "CENTER", 0, 44)
+    fmdb:SetPoint("CENTER", GwHealthGlobe, "CENTER", 0, 41)
     fmdb:SetAttribute("*type1", "spell")
 
     -- setting these values in the XML creates animation glitches so we do it here instead
