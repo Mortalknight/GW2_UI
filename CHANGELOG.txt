@@ -6,6 +6,7 @@ NEW
     - Rebuilt health globe for performance and graphical improvement
     - Rebuilt dodge bar for performance and graphical improvement
     - Dodge bar now works as a secure button and can be bound to a key
+    - Added option for range indicator on mainbar
 
 
 5.2.3

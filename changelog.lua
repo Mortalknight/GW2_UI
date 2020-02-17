@@ -500,6 +500,7 @@ GW_CHANGELOGS = "\nFIXED\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n5.2.3\n\n" .. GW_CHANGELOGS
 
 --VERSION 5.3.0
+GW_CHANGELOGS = "   - Added option for range indicator on mainbar\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Dodge bar now works as a secure button and can be bound to a key\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Rebuilt dodge bar for performance and graphical improvement\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "   - Rebuilt health globe for performance and graphical improvement\n" .. GW_CHANGELOGS
