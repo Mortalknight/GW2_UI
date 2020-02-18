@@ -5,6 +5,7 @@ local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
 local IsIn = GW.IsIn
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
+local GetSetting = GW.GetSetting
 
 local function repair_OnEvent(self, event, ...)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
@@ -137,9 +138,25 @@ local function updateHealthData(self, anims)
         pred:Hide()
     end
 
-    -- hard-set the text values for health/absorb
-    local hv = CommaValue(health)
-    local av = CommaValue(absorb)
+    -- hard-set the text values for health/absorb based on the user settings (%, value or both)
+    local hv = ""
+    local av = ""
+
+    if self.healthTextSetting == "PREC" then
+        hv = CommaValue(health / healthMax * 100) .. "%"
+    elseif self.healthTextSetting == "VALUE" then
+        hv = CommaValue(health)
+    elseif self.healthTextSetting == "BOTH" then
+        hv = CommaValue(health) .. " - " .. CommaValue(health / healthMax * 100) .. "%"
+    end
+
+    if self.absorbTextSetting == "PREC" then
+        av = CommaValue(absorb / healthMax * 100) .. "%"
+    elseif self.absorbTextSetting == "VALUE" then
+        av = CommaValue(absorb)
+    elseif self.absorbTextSetting == "BOTH" then
+        av = CommaValue(absorb) .. " - " .. CommaValue(absorb / healthMax * 100) .. "%"
+    end
 
     self.text_h.value:SetText(hv)
     self.text_a.value:SetText(av)
@@ -253,11 +270,15 @@ local function LoadHealthGlobe()
     hg.gwScaleMulti = 1.1
 
     -- position based on XP bar space
-    if GW.GetSetting("XPBAR_ENABLED") then
+    if GetSetting("XPBAR_ENABLED") then
         hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
     else
         hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
     end
+
+    --save settingsvalue for later use
+    hg.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+    hg.absorbTextSetting = GetSetting("PLAYER_UNIT_ABSORB")
 
     -- unit frame stuff
     hg:SetAttribute("*type1", "target")

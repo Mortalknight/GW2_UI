@@ -245,6 +245,8 @@ local function GWUseThisLocalization()
 	GwLocalization["PLAYER_AURA_GROW"] = "Set Player Aura grow directions"
 	GwLocalization["RED_OVERLAY"] = "Red overlay"
 	GwLocalization["MAINBAR_RANGE_INDICATOR"] = "Mainbar range indicator"
+	GwLocalization["PLAYER_ABSORB_VALUE_TEXT"] = "Show Shield value"
+	GwLocalization["PLAYER_DESC"] = "Modify the player frame settings."
 end
 
 if GetLocale() == "koKR" then

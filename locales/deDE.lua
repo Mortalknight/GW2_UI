@@ -245,6 +245,8 @@ local function GWUseThisLocalization()
 	GwLocalization["PLAYER_AURA_GROW"] = "Bestimmt die Wachstumsrichtung der Spieler Auren"
 	GwLocalization["RED_OVERLAY"] = "Rotes Overlay"
 	GwLocalization["MAINBAR_RANGE_INDICATOR"] = "Hauptaktionsleisten Reichweitenanzeige"
+	GwLocalization["PLAYER_ABSORB_VALUE_TEXT"] = "Schildwert anzeigen"
+	GwLocalization["PLAYER_DESC"] = "Modifiziere die Einstellungen der Spielereinheit."
 end
 
 

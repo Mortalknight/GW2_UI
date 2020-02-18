@@ -7,6 +7,7 @@ NEW
     - Rebuilt dodge bar for performance and graphical improvement
     - Dodge bar now works as a secure button and can be bound to a key
     - Added option for range indicator on mainbar
+    - Added option to show player health and absorb as %, value or both
 
 
 5.2.3

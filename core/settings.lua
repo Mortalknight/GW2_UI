@@ -817,6 +817,13 @@ local function LoadSettings()
     GwSettingsModuleOptionSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     GwSettingsModuleOptionSub:SetText(GwLocalization["MODULES_DESC"])
 
+    GwSettingsPlayerOptionHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsPlayerOptionHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsPlayerOptionHeader:SetText(PLAYER)
+    GwSettingsPlayerOptionSub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsPlayerOptionSub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsPlayerOptionSub:SetText(GwLocalization["PLAYER_DESC"])
+
     GwSettingsTargetOptionsHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     GwSettingsTargetOptionsHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     GwSettingsTargetOptionsHeader:SetText(TARGET)
@@ -1004,7 +1011,11 @@ local function LoadSettings()
         "BAGS_ENABLED",
         "GwSettingsModuleOption"
     )
-    addOption(GwLocalization["FONTS"], GwLocalization["FONTS_DESC"], "FONTS_ENABLED", "GwSettingsModuleOption")
+    addOption(GwLocalization["FONTS"],
+        GwLocalization["FONTS_DESC"],
+        "FONTS_ENABLED",
+        "GwSettingsModuleOption"
+    )
     addOption(
         SHOW_ENEMY_CAST,
         GwLocalization["CASTING_BAR_DESC"],
@@ -1046,6 +1057,43 @@ local function LoadSettings()
         nil,
         "DYNAMIC_CAM",
         "GwSettingsModuleOption"
+    )
+
+    createCat(PLAYER, GwLocalization["PLAYER_DESC"], "GwSettingsPlayerOption", 7)
+
+    addOptionDropdown(
+        GwLocalization["PLAYER_AURA_GROW"],
+        nil,
+        "PlayerBuffFrame_GrowDirection",
+        "GwSettingsPlayerOption",
+        function()
+            GW.UpdateHudScale()
+        end,
+        {"UP", "DOWN"},
+        {
+            GwLocalization["UP"],
+            GwLocalization["DOWN"]
+        }
+    )
+    addOptionDropdown(
+        COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+        nil,
+        "PLAYER_UNIT_HEALTH",
+        "GwSettingsPlayerOption",
+        function()
+        end,
+        {"NONE", "PREC", "VALUE", "BOTH"},
+        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}
+    )
+    addOptionDropdown(
+        GwLocalization["PLAYER_ABSORB_VALUE_TEXT"],
+        nil,
+        "PLAYER_UNIT_ABSORB",
+        "GwSettingsPlayerOption",
+        function()
+        end,
+        {"NONE", "PREC", "VALUE", "BOTH"},
+        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}
     )
 
     createCat(TARGET, GwLocalization["TARGET_TOOLTIP"], "GwSettingsTargetFocus", 1)
@@ -1251,7 +1299,11 @@ local function LoadSettings()
         "HUD_SPELL_SWAP",
         "GwSettingsHudOptions"
     )
-    addOption(GwLocalization["CHAT_FADE"], GwLocalization["CHAT_FADE_DESC"], "CHATFRAME_FADE", "GwSettingsHudOptions")
+    addOption(GwLocalization["CHAT_FADE"],
+        GwLocalization["CHAT_FADE_DESC"],
+        "CHATFRAME_FADE",
+        "GwSettingsHudOptions"
+    )
     addOption(
         GwLocalization["COMPASS_TOGGLE"],
         GwLocalization["COMPASS_TOGGLE_DESC"],
@@ -1417,20 +1469,6 @@ local function LoadSettings()
             DEFAULT,
             SMALL,
             GwLocalization["HUD_SCALE_TINY"]
-        }
-    )
-    addOptionDropdown(
-        GwLocalization["PLAYER_AURA_GROW"],
-        nil,
-        "PlayerBuffFrame_GrowDirection",
-        "GwSettingsHudOptions",
-        function()
-            GW.UpdateHudScale()
-        end,
-        {"UP", "DOWN"},
-        {
-            GwLocalization["UP"],
-            GwLocalization["DOWN"]
         }
     )
 
@@ -1712,7 +1750,7 @@ local function LoadSettings()
     addOption("Timer Tracker Frame", nil, "TIMERTRACKER_SKIN_ENABLED", "GwSettingsGeneralSkinsOption")
     
     createCat(GwLocalization["PROFILES_CAT"], GwLocalization["PROFILES_TOOLTIP"], "GwSettingsProfilesframe", 5)
-    _G["GwSettingsLabel8"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
+    _G["GwSettingsLabel9"].iconbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\settingsiconbg-2.tga")
 
     switchCat(0)
     GwSettingsWindow:Hide()
@@ -1721,8 +1759,7 @@ local function LoadSettings()
 
     GwSettingsProfilesframe.slider.thumb:SetHeight(200)
 
-    local resetTodefault =
-        CreateFrame("Button", "GwProfileItemDefault", GwSettingsProfilesframe.scrollchild, "GwProfileItem")
+    local resetTodefault = CreateFrame("Button", "GwProfileItemDefault", GwSettingsProfilesframe.scrollchild, "GwProfileItem")
     resetTodefault:SetScript("OnEnter", gwProfileItem_OnEnter)
     resetTodefault:SetScript("OnLeave", gwProfileItem_OnLeave)
     gwProfileItem_OnLoad(resetTodefault)
@@ -1750,8 +1787,7 @@ local function LoadSettings()
     )
     resetTodefault.activateButton:SetText(GwLocalization["PROFILES_LOAD_BUTTON"])
 
-    local fmGCNP =
-        CreateFrame("Button", "GwCreateNewProfile", GwSettingsProfilesframe.scrollchild, "GwCreateNewProfile")
+    local fmGCNP = CreateFrame("Button", "GwCreateNewProfile", GwSettingsProfilesframe.scrollchild, "GwCreateNewProfile")
     fmGCNP:SetWidth(fmGCNP:GetTextWidth() + 10)
     fmGCNP:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     local fnGCNP_OnClick = function(self, button)
