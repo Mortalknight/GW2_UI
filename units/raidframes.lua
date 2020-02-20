@@ -249,6 +249,9 @@ local function updateAwayData(self)
     if UnitIsDeadOrGhost(self.unit) then
         iconState = 2
     end
+    if UnitHasIncomingResurrection(self.unit) then
+        iconState = 3
+    end
 
     if iconState == 0 then
         local r, g, b, a
@@ -277,6 +280,12 @@ local function updateAwayData(self)
             self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
         end
         SetDeadIcon(self.classicon)
+        self.name:SetTextColor(255, 0, 0)
+        self.classicon:Show()
+    end
+    if iconState == 3 then
+        self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+        self.classicon:SetTexCoord(0, 1, 0, 1)
         self.name:SetTextColor(255, 0, 0)
         self.classicon:Show()
     end
