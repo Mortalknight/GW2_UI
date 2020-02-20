@@ -294,6 +294,9 @@ local function updateAwayData(self)
     if UnitIsDeadOrGhost(self.unit) then
         iconState = 2
     end
+    if UnitHasIncomingResurrection(self.unit) then
+        iconState = 3
+    end
 
     if iconState == 0 then
         self.healthbar:SetStatusBarColor(
@@ -321,6 +324,13 @@ local function updateAwayData(self)
             self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
         end
         SetDeadIcon(self.classicon)
+        self.name:SetTextColor(255, 0, 0)
+        self.classicon:Show()
+    end
+
+    if iconState == 3 then
+        self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+        self.classicon:SetTexCoord(0, 1, 0, 1)
         self.name:SetTextColor(255, 0, 0)
         self.classicon:Show()
     end
@@ -735,6 +745,8 @@ local function raidframe_OnEvent(self, event, unit, arg1)
     elseif event == "UPDATE_INSTANCE_INFO" then
         updateAuras(self)
         updateAwayData(self)
+    elseif event == "INCOMING_RESURRECT_CHANGED" then
+        updateAwayData(self)
     elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") == true then
         updateRaidMarkers(self)
     elseif event == "READY_CHECK" then
@@ -1127,6 +1139,7 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterEvent("UPDATE_INSTANCE_INFO")
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
+    frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
 
     frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
