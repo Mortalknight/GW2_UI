@@ -279,6 +279,10 @@ local function updateAwayData(self)
         self.classicon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
         self.classicon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)
     end
+    if UnitHasIncomingResurrection(self.unit) then
+        self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+        self.classicon:SetTexCoord(0, 1, 0, 1)
+    end
     if UnitIsConnected(self.unit) ~= true then
         portraitIndex = 3
     end
@@ -644,7 +648,7 @@ local function party_OnEvent(self, event, unit, arg1)
     if event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         updatePartyData(self)
     end
-    if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
+    if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "INCOMING_RESURRECT_CHANGED" then
         updateAwayData(self)
     end
     if event == "UNIT_NAME_UPDATE" and unit == self.unit then
@@ -767,6 +771,7 @@ local function createPartyFrame(i)
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
+    frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
     
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
