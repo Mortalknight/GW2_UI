@@ -341,19 +341,18 @@ local function updateAwayData(self)
     if iconState == 3 then
         self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
         self.classicon:SetTexCoord(0, 1, 0, 1)
-        self.name:SetTextColor(255, 0, 0)
+        self.name:SetTextColor(1, 1, 1)
         self.classicon:Show()
     end
     if iconState == 4 or iconState == 5 or iconState == 6 then
         if iconState == 4 then
-            self.classicon:SetTexture("Raid-Icon-SummonPending")
+            self.classicon:SetAtlas("Raid-Icon-SummonPending")
         elseif iconState == 5 then
-            self.classicon:SetTexture("Raid-Icon-SummonAccepted")
+            self.classicon:SetAtlas("Raid-Icon-SummonAccepted")
         elseif iconState == 6 then
-            self.classicon:SetTexture("Raid-Icon-SummonDeclined")
+            self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
         self.classicon:SetTexCoord(0, 1, 0, 1)
-        self.name:SetTextColor(255, 0, 0)
         self.classicon:Show()
     end
 
