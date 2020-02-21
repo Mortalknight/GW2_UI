@@ -10,6 +10,7 @@ local AddToAnimation = GW.AddToAnimation
 local AddToClique =GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
+local IsIn = GW.IsIn
 
 local GW_READY_CHECK_INPROGRESS = false
 
@@ -227,7 +228,7 @@ local function manageButton()
         if
             GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
                 (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
-         then
+        then
             self:Show()
         else
             self:Hide()
@@ -244,7 +245,7 @@ local function manageButton()
         if
             GetSetting("WORLD_MARKER_FRAME") and((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
                 (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
-         then
+        then
             manageButtonDelay(inCombat, "show")
         else
             manageButtonDelay(inCombat, "hide")
@@ -350,6 +351,24 @@ local function updateAwayData(self)
         self.classicon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
         self.classicon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)
     end
+
+    if UnitHasIncomingResurrection(self.unit) then
+        self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+        self.classicon:SetTexCoord(0, 1, 0, 1)
+    end
+
+    if C_IncomingSummon.HasIncomingSummon(self.unit) then
+        local status = C_IncomingSummon.IncomingSummonStatus(self.unit)
+        if status == Enum.SummonStatus.Pending then
+            self.classicon:SetAtlas("Raid-Icon-SummonPending")
+        elseif status == Enum.SummonStatus.Accepted then
+            self.classicon:SetAtlas("Raid-Icon-SummonAccepted")
+        elseif status == Enum.SummonStatus.Declined then
+            self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
+        end
+        self.classicon:SetTexCoord(0, 1, 0, 1)
+    end
+
     if UnitIsConnected(self.unit) ~= true then
         portraitIndex = 3
     end
@@ -770,11 +789,11 @@ local function party_OnEvent(self, event, unit, arg1)
             powerPrecentage = power / powerMax
         end
         self.powerbar:SetValue(powerPrecentage)
-    elseif event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+    elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED") then
         updatePartyData(self)
     elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
-    elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
+    elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         updateAwayData(self)
     elseif event == "UNIT_NAME_UPDATE" and unit == self.unit then
         setUnitName(self)
@@ -887,6 +906,8 @@ local function createPartyFrame(i)
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
     frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
+    frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
 
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
