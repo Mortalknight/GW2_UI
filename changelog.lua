@@ -211,7 +211,7 @@ GW_CHANGELOGS = "\n\n1.7.3\n\n" .. GW_CHANGELOGS
 
 --VERSION 1.7.4
 GW_CHANGELOGS = "- Remove RealMobHealth support - Blizzard delivery the correct values now in there API\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "- Added incoming resurrection icon to raidframes\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added incoming resurrection icon to raid and partyframes\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.7.4\n\n" .. GW_CHANGELOGS
 
 

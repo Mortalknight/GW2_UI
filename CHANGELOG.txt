@@ -1,5 +1,5 @@
 1.7.4
-- Added incoming resurrection icon to raidframes
+- Added incoming resurrection icon to raid and party
 - Remove RealMobHealth support - Blizzard delivery the correct values now in there API
 
 1.7.3
