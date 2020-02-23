@@ -1,5 +1,5 @@
 1.7.4
-- Added incoming resurrection icon to raidframes
+- Added incoming resurrection icon to raidframes and party
 
 1.7.3
 - Added more stats to the extended stats (hover over the 'Attribute'-label)

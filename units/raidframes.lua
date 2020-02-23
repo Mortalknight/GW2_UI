@@ -286,7 +286,7 @@ local function updateAwayData(self)
     if iconState == 3 then
         self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
         self.classicon:SetTexCoord(0, 1, 0, 1)
-        self.name:SetTextColor(255, 0, 0)
+        self.name:SetTextColor(1, 1, 1)
         self.classicon:Show()
     end
 
@@ -675,7 +675,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
     elseif
         (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or
             event == "PARTY_MEMBER_ENABLE"
-     then
+    then
         updateAwayData(self)
     elseif event == "PLAYER_TARGET_CHANGED" then
         highlightTargetFrame(self)
@@ -687,6 +687,8 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         RequestRaidInfo()
     elseif event == "UPDATE_INSTANCE_INFO" then
         updateAuras(self)
+        updateAwayData(self)
+    elseif event == "INCOMING_RESURRECT_CHANGED" then
         updateAwayData(self)
     elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") == true then
         updateRaidMarkers(self)
@@ -1095,6 +1097,7 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterEvent("UPDATE_INSTANCE_INFO")
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
+    frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
 
     frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
