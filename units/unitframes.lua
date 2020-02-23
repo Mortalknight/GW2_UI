@@ -644,23 +644,10 @@ end
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
 local function updateHealthValues(self, event)
-    local health = 0
-    local healthMax = 0
+    local health = UnitHealth(self.unit)
+    local healthMax = UnitHealthMax(self.unit)
     local healthPrecentage = 0
     local predictionPrecentage = 0
-
-    if IsAddOnLoaded("RealMobHealth") then
-        health, healthMax = RealMobHealth.GetUnitHealth(self.unit)
-        if health == nil or health < 0 then 
-            health = UnitHealth(self.unit)
-        end
-        if healthMax == nil or healthMax < 0 then
-            healthMax = UnitHealthMax(self.unit)
-        end
-    else
-        health = UnitHealth(self.unit)
-        healthMax = UnitHealthMax(self.unit)
-    end
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax

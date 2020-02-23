@@ -1,5 +1,6 @@
 1.7.4
 - Added incoming resurrection icon to raidframes
+- Remove RealMobHealth support - Blizzard delivery the correct values now in there API
 
 1.7.3
 - Added more stats to the extended stats (hover over the 'Attribute'-label)
