@@ -587,13 +587,14 @@ local SCALE_HUD_FRAMES = {
     "GwPlayerPowerBar",
     "GwPlayerAuraFrame",
     "GwPlayerClassPower",
-    "GwPlayerHealthGlobe",
     "GwPlayerPetFrame",
     "MultiBarBottomRight",
     "MultiBarBottomLeft",
     "MultiBarRight",
     "MultiBarLeft",
-    "GwCharacterWindow"
+    "GwCharacterWindow",
+    "GwDodgeBar",
+    "GwHealthGlobe"
 }
 local function UpdateHudScale()
     hudScale = GetSetting("HUD_SCALE")
@@ -601,14 +602,18 @@ local function UpdateHudScale()
     for i, name in ipairs(SCALE_HUD_FRAMES) do
         local f = _G[name]
         local fm = _G[name .. "MoveAble"]
+        local sf = 1.0
         if f then
-            f:SetScale(hudScale)
+            if f.gwScaleMulti then
+                sf = f.gwScaleMulti
+            end
+            f:SetScale(hudScale * sf)
         end
         if name == "MultiBarRight" or name == "MultiBarLeft" then
             fm = _G["Gw" .. name .. "MoveAble"]
         end
         if fm then
-            fm:SetScale(hudScale)
+            fm:SetScale(hudScale * sf)
         end
     end
 end
@@ -726,7 +731,8 @@ local function loadAddon(self)
 
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") then
-        GW.LoadPlayerHud()
+        GW.LoadHealthGlobe()
+        GW.LoadDodgeBar()
     end
 
     if GetSetting("POWERBAR_ENABLED") then

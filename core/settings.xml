@@ -161,6 +161,30 @@
                             </Button>
                         </Frames>
                     </Frame>
+                    <Frame name="GwSettingsPlayerOption">
+                        <Size x="660" y="600"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer level="OVERLAY">
+                                <FontString name="$parentHeader" text="PLAYER" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="1" b="1" g="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentSub" text="" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="512" y="25"></Size>
+                                    <Color r="0.6" b="0.6" g="0.6"></Color>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="5" y="-30"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </layer>
+                        </Layers>
+                    </Frame>
                     <Frame hidden="true" name="GwSettingsTargetFocus">
                         <Size x="660" y="480"></Size>
                         <Anchors>

@@ -213,66 +213,6 @@
         </Frames>
     </Button>
 
-    <Frame name="GwPlayerPowerBar" virtual="true">
-        <Size x="318" y="20"></Size>
-        <Anchors>
-            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
-                    <Size x="318" y="20"></Size>
-                </Texture>
-            </Layer>
-            <Layer level="BORDER">
-                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="314" y="16"/>
-                    <Anchors>
-                        <Anchor point="LEFT" x="2" y="0"/>
-                        <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Frames>
-            <StatusBar parentKey="candy" name="$parentCandy" frameLevel="1" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-                <Size x="314" y="16"/>
-                <Anchors>
-                    <Anchor point="LEFT" x="2" y="0"/>
-                </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarCandy"/>
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="spark" name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
-                            <Anchors>
-                                <Anchor point="RIGHT" x="0" y="0"/>
-                            </Anchors>
-                            <Size x="21" y="16"></Size>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </StatusBar>
-            <StatusBar parentKey="statusBar" name="$parentBar" defaultValue="1" minValue="0" maxValue="1">
-                <Size x="314" y="16"/>
-                <Anchors>
-                    <Anchor point="LEFT" x="2" y="0"/>
-                </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="label" name="$parentString" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Color r="1" b="1" g="1"></Color>
-                            <Size x="316" y="16"/>
-                            <Anchors>
-                                <Anchor point="CENTER" x="5" y="0"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </StatusBar>
-        </Frames>
-    </Frame>
-
     <Frame name="GwPlayerAuraFrame" inherits="SecureHandlerStateTemplate" protected="true" frameStrata="MEDIUM" parent="UIParent" virtual="true">
         <Size x="316" y="18"></Size>
         <Anchors>
@@ -310,57 +250,6 @@
             <Frame parentKey="Script" hidden="true"/>
         </Frames>
     </Frame>
-
-    <Button name="GwDodgeBar" virtual="true" parent="GwPlayerHealthGlobe" FrameLevel="1">
-        <Size x="118" y="118"></Size>
-        <Anchors>
-            <Anchor point="CENTER" relativeTo="GwPlayerHealthGlobe" relativePoint="CENTER"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\dodgebar-bg" parentKey="Background">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="1">
-                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\dodgebar">
-                    <Size x="114" y="114"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="1"/>
-                    </Anchors>
-                </Texture>
-                <Texture parentKey="spark" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-spark">
-                    <Size x="114" y="114"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture name="$parentSep1" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentSep2" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentSep3" hidden="true" file="Interface\AddOns\GW2_UI\textures\dodgebar-sep">
-                    <Size x="118" y="118"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
 
     <Button name="GwBuffIconBig" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="26" y="26"/>

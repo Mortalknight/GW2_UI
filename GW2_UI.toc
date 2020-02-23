@@ -1,7 +1,7 @@
 ## Interface: 11303
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
-## OptionalDeps: MoveAnything, TitanClassic, LibClassicDurations, Clique, RealMobHealth, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
+## OptionalDeps: MoveAnything, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
 
 ## Author: deadend06
 
@@ -63,15 +63,20 @@ mainbar/micromenu.lua
 mainbar/experiencebar.xml
 mainbar/hudart.xml
 mainbar/hudelements.xml
+mainbar/healthglobe.xml
+mainbar/powerbar.xml
 mainbar/actionbars.xml
 mainbar/petbar.xml
+mainbar/dodgebar.xml
 mainbar/hud.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
 mainbar/buffs.lua
 mainbar/castingbar.lua
-mainbar/playerhud.lua
+mainbar/healthglobe.lua
+mainbar/powerbar.lua
 mainbar/classpowers.lua
+mainbar/dodgebar.lua
 
 inventory/bag.xml
 inventory/bank.xml
