@@ -158,19 +158,6 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
             f.animating = false
         end
     )
-
-    if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
-        self.lastPowerType = self.powerType
-        self.powerCandySpark = self.candy.spark
-        self.powerBar = self.statusBar
-        self.powerCandy = self.candy
-        self.powerBarString = self.statusBar.label
-        if self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or self.powerType == 8 then
-            self:SetScript("OnUpdate", nil)
-        else
-            self:SetScript("OnUpdate", nil)
-        end
-    end
 end
 GW.UpdatePowerData = UpdatePowerData
 

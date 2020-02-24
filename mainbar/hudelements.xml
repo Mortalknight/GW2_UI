@@ -220,37 +220,6 @@
         </Anchors>
     </Frame>
 
-    <Frame name="GwPlayerClassPower" frameStrata="MEDIUM" parent="UIParent" virtual="true">
-        <Size x="320" y="40"></Size>
-        <Anchors>
-            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-372" y="81"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\altpower\combo-bg">
-                    <Size x="256" y="32"></Size>
-                </Texture>
-            </Layer>
-            <Layer level="OVERLAY">
-                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\altpower\combo">
-                    <Size x="320" y="40"></Size>
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="8" level="OVERLAY">
-                <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash">
-                    <Color r="1" g="1" b="1" a="0"></Color>
-                    <Size x="128" y="128"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Frames>
-            <Frame parentKey="Script" hidden="true"/>
-        </Frames>
-    </Frame>
-
     <Button name="GwBuffIconBig" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="26" y="26"/>
         <Layers>

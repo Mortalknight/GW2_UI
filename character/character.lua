@@ -10,17 +10,17 @@ local hasRanged = false
 local gender = UnitSex("player")
 
 local  statsIconsSprite = {
-  width = 256,
-  height = 512,
-  colums = 4,
-  rows = 8
+    width = 256,
+    height = 512,
+    colums = 4,
+    rows = 8
 }
 
 local  petStateSprite = {
-  width = 512,
-  height = 128,
-  colums = 4,
-  rows = 1
+    width = 512,
+    height = 128,
+    colums = 4,
+    rows = 1
 }
 
 local STATS_ICONS ={
@@ -67,34 +67,34 @@ local reputationLastUpdateMethodParams = nil
 local durabilityFrame = nil
 local expandedFactions = {}
 local PAPERDOLL_STATCATEGORIES= {
-	[1] = {
-		categoryFrame = "AttributesCategory",
-		stats = {
-			[1] = { stat = "STRENGTH", primary = LE_UNIT_STAT_STRENGTH },
-			[2] = { stat = "AGILITY", primary = LE_UNIT_STAT_AGILITY },
-			[3] = { stat = "INTELLECT", primary = LE_UNIT_STAT_INTELLECT },
-			[4] = { stat = "STAMINA" },
-			[5] = { stat = "ARMOR" },
-			[6] = { stat = "MANAREGEN", roles =  { "HEALER" } },
-		},
-	},
-	[2] = {
-		categoryFrame = "EnhancementsCategory",
-		stats = {
-			[1] = { stat = "CRITCHANCE", hideAt = 0 },
-			[2] = { stat = "HASTE", hideAt = 0 },
-			[3] = { stat = "MASTERY", hideAt = 0 },
-			[4] = { stat = "VERSATILITY", hideAt = 0 },
+    [1] = {
+        categoryFrame = "AttributesCategory",
+        stats = {
+            [1] = { stat = "STRENGTH", primary = LE_UNIT_STAT_STRENGTH },
+            [2] = { stat = "AGILITY", primary = LE_UNIT_STAT_AGILITY },
+            [3] = { stat = "INTELLECT", primary = LE_UNIT_STAT_INTELLECT },
+            [4] = { stat = "STAMINA" },
+            [5] = { stat = "ARMOR" },
+            [6] = { stat = "MANAREGEN", roles =  { "HEALER" } },
+        },
+    },
+    [2] = {
+        categoryFrame = "EnhancementsCategory",
+        stats = {
+            [1] = { stat = "CRITCHANCE", hideAt = 0 },
+            [2] = { stat = "HASTE", hideAt = 0 },
+            [3] = { stat = "MASTERY", hideAt = 0 },
+            [4] = { stat = "VERSATILITY", hideAt = 0 },
 
 
-			[5] = { stat = "DODGE",  },
-			[6] = { stat = "PARRY", hideAt = 0,  },
-			[7] = { stat = "BLOCK", hideAt = 0,  },
+            [5] = { stat = "DODGE",  },
+            [6] = { stat = "PARRY", hideAt = 0,  },
+            [7] = { stat = "BLOCK", hideAt = 0,  },
             [8] = { stat = "AVOIDANCE", hideAt = 0 },
             [9] = { stat = "LIFESTEAL", hideAt = 0 },
-			[10] = { stat = "MOVESPEED", hideAt = 0,  },
-		},
-	},
+            [10] = { stat = "MOVESPEED", hideAt = 0,  },
+        },
+    },
 }
 
 local function collectDurability(self)
@@ -113,7 +113,7 @@ end
 GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
 
 function gwPaperDollStats_QueuedUpdate(self)
-	self:SetScript("OnUpdate", nil)
+    self:SetScript("OnUpdate", nil)
     gwPaperDollUpdateStats()
     collectDurability(durabilityFrame)
 end
@@ -133,12 +133,12 @@ function gwPaperDollUpdateUnitData()
         end
     GwDressingRoom.classIcon:SetVertexColor(r, g, b, a)
 
-	if name ~= nil then
-		local data = GUILD_RECRUITMENT_LEVEL .. " " .. unitLevel .. " " .. name .. " " .. localizedClass
+    if name ~= nil then
+        local data = GUILD_RECRUITMENT_LEVEL .. " " .. unitLevel .. " " .. name .. " " .. localizedClass
         GwDressingRoom.characterData:SetText(data)
     else
         GwDressingRoom.characterData:SetFormattedText(PLAYER_LEVEL, unitLevel, UnitRace("player"), localizedClass)
-	end
+    end
 end
 
 local ShowPetFrameAfterCombat = CreateFrame("Frame", nil, UIParent)
@@ -167,7 +167,7 @@ function gwPaperDollPetStats_OnEvent(self, event, ...)
             return
         end
     elseif event == "PET_UI_CLOSE" then
-		if GwPetContainer:IsVisible() then
+        if GwPetContainer:IsVisible() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
             GwCharacterMenu.petMenu:Hide()
             return
@@ -178,50 +178,50 @@ end
 
 function gwPaperDollStats_OnEvent(self, event, ...)
     local unit = ...
-	if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or event=="UNIT_NAME_UPDATE" or event=="PLAYER_PVP_RANK_CHANGED" and unit == "player" then
-		GwDressingRoom.model:SetUnit("player", false)
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or event=="UNIT_NAME_UPDATE" or event=="PLAYER_PVP_RANK_CHANGED" and unit == "player" then
+        GwDressingRoom.model:SetUnit("player", false)
         gwPaperDollUpdateUnitData()
         collectDurability(durabilityFrame)
-		return
+        return
     end
 
-	if unit == "player" then
-		if event == "UNIT_LEVEL" then
-			gwPaperDollUpdateUnitData()
-		elseif event == "UNIT_DAMAGE" or
-				event == "UNIT_ATTACK_SPEED" or
-				event == "UNIT_RANGEDDAMAGE" or
-				event == "UNIT_ATTACK" or
-				event == "UNIT_STATS" or
-				event == "UNIT_RANGED_ATTACK_POWER" or
-				event == "UNIT_SPELL_HASTE" or
-				event == "UNIT_MAXHEALTH" or
-				event == "UNIT_AURA" or
+    if unit == "player" then
+        if event == "UNIT_LEVEL" then
+            gwPaperDollUpdateUnitData()
+        elseif event == "UNIT_DAMAGE" or
+                event == "UNIT_ATTACK_SPEED" or
+                event == "UNIT_RANGEDDAMAGE" or
+                event == "UNIT_ATTACK" or
+                event == "UNIT_STATS" or
+                event == "UNIT_RANGED_ATTACK_POWER" or
+                event == "UNIT_SPELL_HASTE" or
+                event == "UNIT_MAXHEALTH" or
+                event == "UNIT_AURA" or
                 event == "UNIT_RESISTANCES" or
                 event == "UPDATE_INVENTORY_ALERTS" or
-				IsMounted() then
-			self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
-		end
-	end
+                IsMounted() then
+            self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+        end
+    end
 
-	if event == "COMBAT_RATING_UPDATE" or
-			event == "SPEED_UPDATE" or
-			event == "LIFESTEAL_UPDATE" or
-			event == "AVOIDANCE_UPDATE" or
-			event == "BAG_UPDATE" or
-			event == "PLAYER_EQUIPMENT_CHANGED" or
-			event == "PLAYERBANKSLOTS_CHANGED" or
-			event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
-			event == "PLAYER_DAMAGE_DONE_MODS" or
-			IsMounted() then
-		self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
-	elseif event == "PLAYER_TALENT_UPDATE" then
-		gwPaperDollUpdateUnitData()
-		self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
-	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
-		gwPaperDollUpdateStats()
-	elseif event == "SPELL_POWER_CHANGED" then
-		self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+    if event == "COMBAT_RATING_UPDATE" or
+            event == "SPEED_UPDATE" or
+            event == "LIFESTEAL_UPDATE" or
+            event == "AVOIDANCE_UPDATE" or
+            event == "BAG_UPDATE" or
+            event == "PLAYER_EQUIPMENT_CHANGED" or
+            event == "PLAYERBANKSLOTS_CHANGED" or
+            event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
+            event == "PLAYER_DAMAGE_DONE_MODS" or
+            IsMounted() then
+        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+    elseif event == "PLAYER_TALENT_UPDATE" then
+        gwPaperDollUpdateUnitData()
+        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+    elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
+        gwPaperDollUpdateStats()
+    elseif event == "SPELL_POWER_CHANGED" then
+        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
     end
 end
 
@@ -229,9 +229,9 @@ local function statGridPos(grid, x, y)
     grid = grid + 1
     x = x + 92
     if grid > 2 then
-       grid = 1
-       x = 0
-       y = y + 30
+        grid = 1
+        x = 0
+        y = y + 30
     end
     return grid, x, y
 end
@@ -300,7 +300,7 @@ function GW_DurabilityTooltip(self)
                 _G["GameTooltipTextRight2"]:SetText(_G["GameTooltipTextRight2"]:GetText() ..  valcol .. durapercent .. "%" .. "|n")
 
                 duravaltotal = duravaltotal + duraval
-				duramaxtotal = duramaxtotal + duramax
+                duramaxtotal = duramaxtotal + duramax
             end
         end
     end
@@ -416,7 +416,7 @@ end
 
 function GWshowExtendedAttributes(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        
+
     GameTooltip:SetText(STAT_CATEGORY_ATTRIBUTES)
     GameTooltip:AddLine(" ")
 
@@ -552,7 +552,7 @@ function gwPaperDollSetStatIcon(self, stat)
     end
 
     if stat == "DURABILITY" then
-        newTexture = "Interface\\AddOns\\GW2_UI\\textures\\repair"
+        newTexture = "Interface\\AddOns\\GW2_UI\\textures\\globe\\repair"
         durabilityFrame = self
     end
 
@@ -591,80 +591,80 @@ function gwPaperDollSlotButton_OnLoad(self)
     self:RegisterForDrag("LeftButton")
     self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     self:RegisterEvent("UNIT_INVENTORY_CHANGED")
-	local slotName = self:GetName()
-	local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName, 12))
-	self:SetID(id);
-	self.checkRelic = checkRelic
+    local slotName = self:GetName()
+    local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName, 12))
+    self:SetID(id);
+    self.checkRelic = checkRelic
 
     gwActionButtonGlobalStyle(self)
 end
 
 function gwPaperDollSlotButton_OnShow(self)
-	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	self:RegisterEvent("MERCHANT_UPDATE")
-	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
-	self:RegisterEvent("ITEM_LOCK_CHANGED")
-	self:RegisterEvent("CURSOR_UPDATE")
+    self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    self:RegisterEvent("MERCHANT_UPDATE")
+    self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+    self:RegisterEvent("ITEM_LOCK_CHANGED")
+    self:RegisterEvent("CURSOR_UPDATE")
     self:RegisterEvent("UPDATE_INVENTORY_ALERTS")
     gwPaperDollSlotButton_Update(self)
 end
 
 function gwPaperDollSlotButton_OnHide(self)
-	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	self:UnregisterEvent("MERCHANT_UPDATE")
-	self:UnregisterEvent("PLAYERBANKSLOTS_CHANGED")
-	self:UnregisterEvent("ITEM_LOCK_CHANGED")
-	self:UnregisterEvent("CURSOR_UPDATE")
-	self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
-	self:UnregisterEvent("UPDATE_INVENTORY_ALERTS")
+    self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    self:UnregisterEvent("MERCHANT_UPDATE")
+    self:UnregisterEvent("PLAYERBANKSLOTS_CHANGED")
+    self:UnregisterEvent("ITEM_LOCK_CHANGED")
+    self:UnregisterEvent("CURSOR_UPDATE")
+    self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
+    self:UnregisterEvent("UPDATE_INVENTORY_ALERTS")
 end
 
 function gwPaperDollSlotButton_OnEvent(self, event, ...)
     local arg1, arg2 = ...
-	if event == "PLAYER_EQUIPMENT_CHANGED" then
+    if event == "PLAYER_EQUIPMENT_CHANGED" then
         if self:GetID() == arg1 then
-			gwPaperDollSlotButton_Update(self)
+            gwPaperDollSlotButton_Update(self)
         end
     elseif event == "UNIT_INVENTORY_CHANGED" then
-		if arg1 == "player" then
-			gwPaperDollSlotButton_Update(self)
-		end
-	end
+        if arg1 == "player" then
+            gwPaperDollSlotButton_Update(self)
+        end
+    end
     if event == "BAG_UPDATE_COOLDOWN" then
-		gwPaperDollSlotButton_Update(self)
-	end
+        gwPaperDollSlotButton_Update(self)
+    end
 end
 
 function gwPaperDollSlotButton_OnEnter(self)
     self:RegisterEvent("MODIFIER_STATE_CHANGED")
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	local hasItem, hasCooldown, repairCost = GameTooltip:SetInventoryItem("player", self:GetID(), nil, true)
-	if not hasItem then
-		local text = _G[strupper(strsub(self:GetName(), 12))]
-		if self.checkRelic and UnitHasRelicSlot("player") then
-			text = RELICSLOT
-		end
-		GameTooltip:SetText(text)
-	end
-	if InRepairMode() and repairCost and (repairCost > 0) then
-		GameTooltip:AddLine(REPAIR_COST, nil, nil, nil, true)
-		SetTooltipMoney(GameTooltip, repairCost)
-		GameTooltip:Show()
-	else
-		CursorUpdate(self)
-	end
+    local hasItem, hasCooldown, repairCost = GameTooltip:SetInventoryItem("player", self:GetID(), nil, true)
+    if not hasItem then
+        local text = _G[strupper(strsub(self:GetName(), 12))]
+        if self.checkRelic and UnitHasRelicSlot("player") then
+            text = RELICSLOT
+        end
+        GameTooltip:SetText(text)
+    end
+    if InRepairMode() and repairCost and (repairCost > 0) then
+        GameTooltip:AddLine(REPAIR_COST, nil, nil, nil, true)
+        SetTooltipMoney(GameTooltip, repairCost)
+        GameTooltip:Show()
+    else
+        CursorUpdate(self)
+    end
 end
 
 function gwPaperDollSlotButton_OnModifiedClick(self, button)
-	if HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID())) then
-		return
-	end
-	if IsModifiedClick("SOCKETITEM") then
-		SocketInventoryItem(self:GetID())
+    if HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID())) then
+        return
+    end
+    if IsModifiedClick("SOCKETITEM") then
+        SocketInventoryItem(self:GetID())
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute("windowPanelOpen", nil)
-	end
+    end
 end
 
 function gwPaperDollSlotButton_OnClick(self, button, drag)
@@ -705,7 +705,7 @@ function gwPaperDollSlotButton_OnClick(self, button, drag)
         end
     else
         UseInventoryItem(self:GetID())
-	end
+    end
 end
 
 function gwPaperDollSlotButton_OnLeave(self)
@@ -719,14 +719,14 @@ function gwPaperDollSlotButton_Update(self)
     local textureName = GetInventoryItemTexture("player", slot)
     local cooldown = _G[self:GetName() .. "Cooldown"]
 
-	if textureName then
+    if textureName then
         SetItemButtonTexture(self, textureName)
-		SetItemButtonCount(self, GetInventoryItemCount("player", slot))
-		if (GetInventoryItemBroken("player", slot) or GetInventoryItemEquippedUnusable("player", slot)) then
-			SetItemButtonTextureVertexColor(self, 0.9, 0, 0)
-		else
-			SetItemButtonTextureVertexColor(self, 1.0, 1.0, 1.0)
-		end
+        SetItemButtonCount(self, GetInventoryItemCount("player", slot))
+        if (GetInventoryItemBroken("player", slot) or GetInventoryItemEquippedUnusable("player", slot)) then
+            SetItemButtonTextureVertexColor(self, 0.9, 0, 0)
+        else
+            SetItemButtonTextureVertexColor(self, 1.0, 1.0, 1.0)
+        end
 
         local current, maximum = GetInventoryItemDurability(slot)
         if current ~= nil and (current / maximum) < 0.5 then
@@ -740,12 +740,12 @@ function gwPaperDollSlotButton_Update(self)
             self.repairIcon:Hide()
         end
 
-		if cooldown then
-			local start, duration, enable = GetInventoryItemCooldown("player", slot)
-			CooldownFrame_Set(cooldown, start, duration, enable)
-		end
+        if cooldown then
+            local start, duration, enable = GetInventoryItemCooldown("player", slot)
+            CooldownFrame_Set(cooldown, start, duration, enable)
+        end
         self.hasItem = 1
-	else
+    else
         SetItemButtonTexture(self, nil)
         self.repairIcon:Hide()
     end
@@ -756,16 +756,16 @@ end
 
 
 function GwSetItemButtonQuality(button, quality, itemIDOrLink)
-	if quality then
-		if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-			button.IconBorder:Show();
-			button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
-		else
-			button.IconBorder:Hide();
-		end
-	else
-		button.IconBorder:Hide();
-	end
+    if quality then
+        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+            button.IconBorder:Show();
+            button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
+        else
+            button.IconBorder:Hide();
+        end
+    else
+        button.IconBorder:Hide();
+    end
 end
 
 local function getNewReputationCat(i)
@@ -782,13 +782,11 @@ local function getNewReputationCat(i)
     f:GetFontString():SetPoint("TOPLEFT",10 ,-10)
     GwPaperReputation.buttons = GwPaperReputation.buttons + 1
 
- --   f:GetFontString():ClearAllPoints()
---    f:GetFontString():SetPoint("TOP",f,"TOP",0,-20)
     return f
 end
 
 function GwUpdateSavedReputation()
-     for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
+    for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
         savedReputation[factionIndex] = {}
         savedReputation[factionIndex].name, savedReputation[factionIndex].description, savedReputation[factionIndex].standingId, savedReputation[factionIndex].bottomValue, savedReputation[factionIndex].topValue,savedReputation[factionIndex].earnedValue, savedReputation[factionIndex].atWarWith, savedReputation[factionIndex].canToggleAtWar, savedReputation[factionIndex].isHeader, savedReputation[factionIndex].isCollapsed, savedReputation[factionIndex].hasRep, savedReputation[factionIndex].isWatched, savedReputation[factionIndex].isChild,  savedReputation[factionIndex].factionID, savedReputation[factionIndex].hasBonusRepGain, savedReputation[factionIndex].canBeLFGBonus = GetFactionInfo(factionIndex)
     end
@@ -841,17 +839,17 @@ function GwPaperDollUpdateReputations()
         if CurrentOwner ~= nil then
             if cMax ~= 0 and cMax ~= nil then
                 CurrentOwner.StatusBar:SetValue(cCur / cMax)
-				if cCur / cMax >= 1 and cMax ~= 0 then
-					CurrentOwner.StatusBar:SetStatusBarColor(171/255, 37/255, 240/255)
-				else
-					CurrentOwner.StatusBar:SetStatusBarColor(240/255, 240/255, 155/255)
-				end
+                if cCur / cMax >= 1 and cMax ~= 0 then
+                    CurrentOwner.StatusBar:SetStatusBarColor(171/255, 37/255, 240/255)
+                else
+                    CurrentOwner.StatusBar:SetStatusBarColor(240/255, 240/255, 155/255)
+                end
             end
         end
     end
 
     for i=headerIndex,GwPaperReputation.buttons do
-         _G["GwPaperDollReputationCat" .. i]:Hide()
+        _G["GwPaperDollReputationCat" .. i]:Hide()
     end
 end
 
@@ -1047,7 +1045,7 @@ function GwUpdateReputationDetails()
         if name ~= nil then
             if isHeader and not isChild then break end
             if isHeader and isChild then
-               savedHeaderName = " |cFFa0a0a0" .. name .. "|r"
+                savedHeaderName = " |cFFa0a0a0" .. name .. "|r"
             end
 
             if not isChild then
@@ -1063,7 +1061,7 @@ function GwUpdateReputationDetails()
     end
 
     for i=buttonIndex, GwPaperReputation.detailFrames do
-         _G["GwReputationDetails" .. i]:Hide()
+        _G["GwReputationDetails" .. i]:Hide()
     end
 
     GwPaperReputationScrollFrame:SetVerticalScroll(0)
@@ -1102,7 +1100,7 @@ function GwUpdateReputationDetailsSearch(s)
         local show = true
 
         if isHeader then
-           if not isChild then
+            if not isChild then
                 show = false
             end
         end
@@ -1117,7 +1115,7 @@ function GwUpdateReputationDetailsSearch(s)
     end
 
     for i = buttonIndex, GwPaperReputation.detailFrames do
-         _G["GwReputationDetails" .. i]:Hide()
+        _G["GwReputationDetails" .. i]:Hide()
     end
 
     GwPaperReputationScrollFrame:SetVerticalScroll(0)
@@ -1460,7 +1458,6 @@ function GwToggleCharacter(tab, onlyShow)
     end
 end
 
-
 local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
@@ -1480,7 +1477,6 @@ local function LoadPaperDoll()
     GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)
     GWupdateSkills()
     GwPaperSkills.scroll:SetScript("OnMouseWheel", function(self, arg1)
-
         arg1 = -arg1 * 15
         local min, max = self.slider:GetMinMaxValues()
         local s = math.min(max,math.max(self:GetVerticalScroll()+arg1,min))
@@ -1491,8 +1487,32 @@ local function LoadPaperDoll()
     GwPaperSkills.scroll.slider:SetValue(1)
 
     CharacterFrame:SetScript("OnShow", function()
-          HideUIPanel(CharacterFrame)
+        HideUIPanel(CharacterFrame)
     end)
+
+    GwDressingRoom.model:SetUnit("player")
+    GwDressingRoom.model:SetPosition(0.8, 0, 0)
+
+    local _, raceEN = UnitRace("Player")
+    if raceEN == "Human" then
+        GwDressingRoom.model:SetPosition(0.4, 0, -0.05)
+    elseif raceEN == "Tauren" then
+        GwDressingRoom.model:SetPosition(0.6, 0, 0)
+    elseif raceEN == "NightElf" then
+        GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
+    elseif raceEN == "Troll" then
+        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
+    elseif raceEN == "Scourge" then
+        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
+    elseif raceEN == "Dwarf" then
+        GwDressingRoom.model:SetPosition(0.3, 0, 0)
+    elseif raceEN == "Gnome" then
+        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
+    elseif raceEN == "Orc" then
+        GwDressingRoom.model:SetPosition(0.1, 0, -0.15)
+    end
+    GwDressingRoom.model:SetRotation(-0.15)
+    Model_OnLoad(GwDressingRoom.model, 4, 0, -0.1, CharacterModelFrame_OnMouseUp)
 
     CharacterFrame:UnregisterAllEvents()
     hooksecurefunc("ToggleCharacter", GwToggleCharacter)

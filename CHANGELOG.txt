@@ -1,6 +1,12 @@
-1.7.4
+1.8.0
 - Added incoming resurrection icon to raid and party
 - Remove RealMobHealth support - Blizzard delivery the correct values now in there API
+- Added option for range indicator on mainbar
+- Added option to show player health as %, value or both
+- Dodge bar now works as a secure button and can be bound to a key
+- Rebuilt dodge bar for performance and graphical improvement
+- Rebuilt health globe for performance and graphical improvement
+- Added extra manabar for druids in shapeshift form (testing)
 
 1.7.3
 - Added more stats to the extended stats (hover over the 'Attribute'-label)

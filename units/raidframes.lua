@@ -305,7 +305,10 @@ local function updateAwayData(self)
         end
     end
 
-    if UnitIsConnected(self.unit) ~= true then
+    if not UnitIsConnected(self.unit) then
+        self.classicon:SetTexture("Interface\\CharacterFrame\\Disconnect-Icon")
+        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:Show()
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 

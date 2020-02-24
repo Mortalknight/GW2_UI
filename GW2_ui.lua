@@ -247,21 +247,7 @@ local function buttonAnim(self, name, w, hover)
 end
 GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 
---[[
- Basic helper function for spritemaps
-
- mapExample = {
-  width = 100,
-  height = 10,
-  colums = 5,
-  rows = 3
-}
-
-]]--
 local function getSprite(map,x,y)
-
-
-
     local pw = (map.width / map.colums) / map.width
     local ph = (map.height / map.rows) / map.height
 
@@ -401,7 +387,7 @@ local function actionBarFrameShow(f, name)
         f:SetAlpha(animations[name]['progress'])
     end, nil, function()
         for i = 1, 12 do
-            f.gw_MultiButtons[i].cooldown:SetDrawBling(true)
+            f.gw_Buttons[i].cooldown:SetDrawBling(true)
         end
         actionBarStateChanged()
     end)
@@ -411,7 +397,7 @@ local function actionBarFrameHide(f, name)
     StopAnimation(name)
     f.gw_FadeShowing = false
     for i = 1, 12 do
-        f.gw_MultiButtons[i].cooldown:SetDrawBling(false)
+        f.gw_Buttons[i].cooldown:SetDrawBling(false)
     end
     AddToAnimation(name, 1, 0, GetTime(), 0.1, function()
         f:SetAlpha(animations[name]['progress'])
@@ -811,7 +797,7 @@ local function loadAddon(self)
         end
     end
 
-    Gw_LoadWindows()
+    GW.LoadWindows()
 
     GW.LoadMicroMenu()
 

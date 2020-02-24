@@ -209,10 +209,16 @@ GW_CHANGELOGS = "\n\n1.7.2\n\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Added more stats to the extended stats (hover over the 'Attribute'-label)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "\n\n1.7.3\n\n" .. GW_CHANGELOGS
 
---VERSION 1.7.4
+--VERSION 1.8.
+GW_CHANGELOGS = "- Added extra manabar for druids in shapeshift form (testing)\n" .. GW_CHANGELOGS
 GW_CHANGELOGS = "- Remove RealMobHealth support - Blizzard delivery the correct values now in there API\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "- Added incoming resurrection icon to raid and partyframes\n" .. GW_CHANGELOGS
-GW_CHANGELOGS = "\n\n1.7.4\n\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added incoming resurrection icon to raidframes\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added option to show player health as %, value or both\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Added option for range indicator on mainbar\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Dodge bar now works as a secure button and can be bound to a key\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Rebuilt dodge bar for performance and graphical improvement\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "- Rebuilt health globe for performance and graphical improvement\n" .. GW_CHANGELOGS
+GW_CHANGELOGS = "\n\n1.8.0\n\n" .. GW_CHANGELOGS
 
 
 GW.GW_CHANGELOGS = GW_CHANGELOGS

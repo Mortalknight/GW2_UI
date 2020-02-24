@@ -697,7 +697,7 @@
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="13" y="-15"></Anchor>
                 </Anchors>
             </Button>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate, ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -1634,38 +1634,11 @@
                     </OnLoad>
                 </Scripts>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate, ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self:SetUnit("player")
-                        self:SetPosition(0.8, 0, 0)
-
-                        local _, raceEN = UnitRace("Player")
-                        if raceEN == "Human" then
-                            self:SetPosition(0.4, 0, -0.05)
-                        elseif raceEN == "Tauren" then
-                            self:SetPosition(0.6, 0, 0)
-                        elseif raceEN == "NightElf" then
-                            self:SetPosition(0.3, 0, -0.15)
-                        elseif raceEN == "Troll" then
-                            self:SetPosition(0.2, 0, -0.05)
-                        elseif raceEN == "Scourge" then
-                            self:SetPosition(0.2, 0, -0.05)
-                        elseif raceEN == "Dwarf" then
-                            self:SetPosition(0.3, 0, 0)
-                        elseif raceEN == "Gnome" then
-                            self:SetPosition(0.2, 0, -0.05)
-                        elseif raceEN == "Orc" then
-                            self:SetPosition(0.1, 0, -0.15)
-                        end
-                        self:SetRotation(-0.15)
-                        Model_OnLoad(self, 4, 0, -0.1, CharacterModelFrame_OnMouseUp)
-                    </OnLoad>
-                </Scripts>
             </PlayerModel>
         </Frames>
         <Scripts>

@@ -962,13 +962,13 @@ local function LoadSettings()
         "GwSettingsModuleOption"
     )
     addOption(
-        TALENTS_BUTTON,
+        TALENTS,
         GwLocalization["TALENTS_BUTTON_DESC"],
         "USE_TALENT_WINDOW",
         "GwSettingsModuleOption"
     )
     addOption(
-        SPELLBOOK,
+        SPELLBOOK_ABILITIES_BUTTON,
         SPELLBOOK_ABILITIES_BUTTON,
         "USE_SPELLBOOK_WINDOW",
         "GwSettingsModuleOption"
@@ -1132,6 +1132,15 @@ local function LoadSettings()
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+    )
+    addOptionDropdown(
+        GwLocalization["MAINBAR_RANGE_INDICATOR"],
+        nil,
+        "MAINBAR_RANGEINDICATOR",
+        "GwSettingsActionbarOptions",
+        nil,
+        {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
+        {GwLocalization["INDICATOR_TITLE"]:format(RED_GEM), GwLocalization["RED_OVERLAY"], STATUS_TEXT_BOTH, NONE}
     )
 
     createCat(GwLocalization["HUD_CAT"], GwLocalization["HUD_TOOLTIP"], "GwSettingsHudOptions", 3)

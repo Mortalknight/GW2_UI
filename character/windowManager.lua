@@ -476,7 +476,7 @@ local function charTab_OnEnter(self)
 end
 
 local LoadCharWindowAfterCombat = CreateFrame("Frame", nil, UIParent)
-function Gw_LoadWindows()
+local function LoadWindows()
     if InCombatLockdown() then
         LoadCharWindowAfterCombat:SetScript(
             "OnUpdate",
@@ -485,7 +485,7 @@ function Gw_LoadWindows()
                 if inCombat == true then
                     return
                 end
-                Gw_LoadWindows()
+                LoadWindows()
                 LoadCharWindowAfterCombat:SetScript("OnUpdate", nil)
             end)
         return
@@ -592,3 +592,4 @@ function Gw_LoadWindows()
     -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win
     click_OnEvent(fmGCW.secure, "UPDATE_BINDINGS")
 end
+GW.LoadWindows = LoadWindows

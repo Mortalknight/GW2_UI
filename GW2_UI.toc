@@ -64,6 +64,7 @@ mainbar/experiencebar.xml
 mainbar/hudart.xml
 mainbar/hudelements.xml
 mainbar/healthglobe.xml
+mainbar/classpowers.xml
 mainbar/powerbar.xml
 mainbar/actionbars.xml
 mainbar/petbar.xml

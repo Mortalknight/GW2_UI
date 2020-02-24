@@ -252,6 +252,8 @@ local function GWUseThisLocalization()
     GwLocalization["MOUSE_OVER"] = "Only Mouse over"
     GwLocalization["PLAYER_AURA_GROW"] = "Set Player Aura grow directions"
     GwLocalization["PLAYER_DESC"] = "Modify the player frame settings."
+    GwLocalization["RED_OVERLAY"] = "Red overlay"
+	GwLocalization["MAINBAR_RANGE_INDICATOR"] = "Mainbar range indicator"
 end
 
 
