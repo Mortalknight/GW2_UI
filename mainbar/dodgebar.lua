@@ -13,7 +13,7 @@ DODGEBAR_SPELLS["ROGUE"] = "2983" -- Sprint
 --DODGEBAR_SPELLS["SHAMAN"] = "[spec:2] 58875" -- Spirit Walk if Enhance
 DODGEBAR_SPELLS["MAGE"] = "1953" -- Shimmer if talented, else Blink
 --DODGEBAR_SPELLS["WARLOCK"] = "[talent:5/3] 48020" -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
-DODGEBAR_SPELLS["DRUID"] = "1850" -- Tiger Dash if talented, else Wild Charge if talented (with all its sub-details for different forms), else Dash
+DODGEBAR_SPELLS["DRUID"] = "9821" -- Tiger Dash if talented, else Wild Charge if talented (with all its sub-details for different forms), else Dash
 
 local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty bar
 local FULL_IN_RAD = 2 * math.pi / 180 -- the angle in radians for a full bar

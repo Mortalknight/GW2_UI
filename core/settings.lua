@@ -1521,17 +1521,15 @@ local function LoadSettings()
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
         if not indicator[4] then
-            if IsSpellKnown(spellID) then
-                local name = ""
-                if spellID ~= nil then
-                    if GetSpellSubtext(spellID) then 
-                        name = select(1, GetSpellInfo(spellID)) .. " (" .. GetSpellSubtext(spellID) ..")"
-                    else
-                        name = select(1, GetSpellInfo(spellID))
-                    end
-                    tinsert(auraKeys, spellID)
-                    tinsert(auraVals, name)
+            local name = ""
+            if spellID ~= nil then
+                if GetSpellSubtext(spellID) then 
+                    name = select(1, GetSpellInfo(spellID)) .. " (" .. GetSpellSubtext(spellID) ..")"
+                else
+                    name = select(1, GetSpellInfo(spellID))
                 end
+                tinsert(auraKeys, spellID)
+                tinsert(auraVals, name)
             end
         end
     end
