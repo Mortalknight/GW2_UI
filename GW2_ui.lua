@@ -912,15 +912,15 @@ GW.AddForProfiling("index", "loadAddon", loadAddon)
 local setHasPetUI = false
 local setAttributeAfterCombat = CreateFrame("Frame", nil, UIParent)
 local function gw_OnEvent(self, event, ...)
-    if event == "PLAYER_LOGIN" then
+    if event == "PLAYER_LEAVING_WORLD" then
+        GW.inWorld = false
+    elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         if not loaded then
             loaded = true
             loadAddon(self)
         end
         GW.LoadStorage()
-    elseif event == "PLAYER_LEAVING_WORLD" then
-        GW.inWorld = false
-    elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
+        
         GW.inWorld = true
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
             pixelPerfection()

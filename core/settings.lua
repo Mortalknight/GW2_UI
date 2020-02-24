@@ -1544,7 +1544,7 @@ local function LoadSettings()
             GwLocalization["INDICATOR_DESC"]:format(t),
             key,
             "GwSettingsIndicatorsOptions",
-            function () SetSetting(key, tonumber(GetSetting(key, true)), true) end,
+            function () SetSetting(key, tonumber(GetSetting(key, true))) end,
             auraKeys,
             auraVals
         )
