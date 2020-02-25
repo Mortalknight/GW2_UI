@@ -281,6 +281,7 @@ local function LoadPetFrame()
     PetFrame:SetScript("OnUpdate", nil)
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
+    GW.RegisterScaleFrame(playerPetFrame)
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
@@ -336,8 +337,9 @@ local function LoadPetFrame()
             GetSetting("pet_pos")["yOfs"]
         )
     end
-    RegisterMovableFrame("GwPlayerPetFrame", playerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 
     setPetBar(playerPetFrame)
+
+    RegisterMovableFrame(playerPetFrame, "Pet", "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 end
 GW.LoadPetFrame = LoadPetFrame

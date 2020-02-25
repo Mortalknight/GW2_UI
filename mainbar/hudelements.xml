@@ -18,53 +18,6 @@
         </Anchors>
     </Button>
 
-    <Frame name="GwPlayerAuraFrame" inherits="SecureHandlerStateTemplate" protected="true" frameStrata="MEDIUM" parent="UIParent" virtual="true">
-        <Size x="316" y="18"></Size>
-        <Anchors>
-            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="110"></Anchor>
-        </Anchors>
-    </Frame>
-
-    <Button name="GwBuffIconBig" frameStrata="LOW" toplevel="true" virtual="true">
-        <Size x="26" y="26"/>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture name="backdrop" file="Interface\AddOns\GW2_UI\textures\spelliconempty">
-                    <Size x="26" y="26"/>
-
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer>
-                <Texture name="$parentBuffIcon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
-                    <Size x="24" y="24"/>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
-                    </Anchors>
-                </Texture>
-                <FontString name="$parentBuffDuration" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
-                    <Size x="32" y="12"/>
-                    <Anchors>
-                        <Anchor point="BOTTOM" x="0" y="-12"/>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentBuffStacks" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
-                    <Size x="32" y="32"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
-    </Button>
-
     <Button name="GwGarrisonButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
         <Size x="50" y="50"/>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\garrison-up"></NormalTexture>
@@ -90,12 +43,12 @@
         <Size x="40" y="40"/>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture name="$parentTexture" parentKey="Texture" file="Interface\AddOns\GW2_UI\textures\icon-module">
+                <Texture name="$parentTexture" parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/icon-module">
                     <Size x="35" y="35"></Size>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
-                    <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
+                    <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
                 </Texture>
             </Layer>
         </Layers>

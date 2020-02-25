@@ -126,6 +126,9 @@ local function actionBarFrameShow(f, instant)
     f.fadeIn:Stop()
 
     f.gw_FadeShowing = true
+    if not InCombatLockdown() then
+        f:SetAttribute("gw_FadeShowing", true)
+    end
     if f.gw_StateTrigger then
         stateChanged()
     end
@@ -152,6 +155,9 @@ local function actionBarFrameHide(f, instant)
     f.fadeIn:Stop()
 
     f.gw_FadeShowing = false
+    if not InCombatLockdown() then
+        f:SetAttribute("gw_FadeShowing", false)
+    end
     for i = 1, 12 do
         f.gw_Buttons[i].cooldown:SetDrawBling(false)
     end
@@ -558,7 +564,7 @@ local function trackBarChanges()
     fmActionbar.gw_Bar4.gw_IsEnabled = show4
 end
 
-local function updateMultiBar(barName, buttonName, actionPage, state)
+local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local multibar = _G[barName]
     local settings = GetSetting(barName)
     local used_width = 0
@@ -568,6 +574,7 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
     local btn_this_row = 0
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
+    GW.RegisterScaleFrame(fmMultibar)
     GW.MixinHideDuringPetAndOverride(fmMultibar)
     if actionPage ~= nil then
         fmMultibar:SetAttribute("actionpage", actionPage)
@@ -635,6 +642,14 @@ local function updateMultiBar(barName, buttonName, actionPage, state)
     multibar:SetScript("OnHide", nil)
     multibar:EnableMouse(false)
 
+    if barName == "MultiBarLeft" or barName == "MultiBarRight" then
+        RegisterMovableFrame(fmMultibar, barName, barName, "VerticalActionBarDummy")
+    elseif barName == "MultiBarBottomLeft" then
+        lm:RegisterMultiBarLeft(fmMultibar)
+    elseif barName == "MultiBarBottomRight" then
+        lm:RegisterMultiBarRight(fmMultibar)
+    end
+    
     return fmMultibar
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
@@ -1029,7 +1044,7 @@ local function changeFlyoutStyle(self)
     end
 end
 
-local function LoadActionBars()
+local function LoadActionBars(lm)
     local HIDE_ACTIONBARS_CVAR = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
     if HIDE_ACTIONBARS_CVAR then
         HIDE_ACTIONBARS_CVAR = 0
@@ -1062,13 +1077,10 @@ local function LoadActionBars()
 
     -- init our bars
     local fmActionbar = updateMainBar(showBotRight)
-    fmActionbar.gw_Bar1 = updateMultiBar("MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
-    fmActionbar.gw_Bar2 = updateMultiBar("MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
-    fmActionbar.gw_Bar3 = updateMultiBar("MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE)
-    fmActionbar.gw_Bar4 = updateMultiBar("MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE)
-
-    RegisterMovableFrame("GwMultiBarRight", GwMultiBarRight, "MultiBarRight", "VerticalActionBarDummy")
-    RegisterMovableFrame("GwMultiBarLeft", GwMultiBarLeft, "MultiBarLeft", "VerticalActionBarDummy")
+    fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
+    fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
+    fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE)
+    fmActionbar.gw_Bar4 = updateMultiBar(lm, "MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE)
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", trackBarChanges)

@@ -20,13 +20,14 @@ local function UpdatePlayerBuffFrame()
 end
 GW.UpdatePlayerBuffFrame = UpdatePlayerBuffFrame
 
-local function LoadBuffs()
+local function LoadAurasLegacy()
     BuffFrame:Hide()
     BuffFrame:SetScript("OnShow", Self_Hide)
     local player_buff_frame = CreateFrame("Frame", "GwPlayerAuraFrame", UIParent, "GwPlayerAuraFrame")
+    GW.RegisterScaleFrame(player_buff_frame)
     GW.MixinHideDuringPet(player_buff_frame)
-    GwPlayerAuraFrame.auras = self
-    GwPlayerAuraFrame.unit = "player"
+    player_buff_frame.auras = self
+    player_buff_frame.unit = "player"
     player_buff_frame:SetScript(
         "OnEvent",
         function(self, event, unit)
@@ -49,26 +50,16 @@ local function LoadBuffs()
     fgw:SetFrameRef("UIParent", UIParent)
 
     --Movable stuff
-    GwPlayerAuraFrame.secureHandler = fgw
-    GwPlayerAuraFrame.anchor = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and "BOTTOMRIGHT" or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and "TOPRIGHT"
-    GwPlayerAuraFrame.yOff = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and 0 or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and 15
-    RegisterMovableFrame("GwPlayerAuraFrame", GwPlayerAuraFrame, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
-    hooksecurefunc(GwPlayerAuraFrameMoveAble, "StopMovingOrSizing", function (frame)
-        local anchor = GwPlayerAuraFrame.anchor
-        local yOff = GwPlayerAuraFrame.yOff
-
-        if not InCombatLockdown() then
-            GwPlayerAuraFrame:ClearAllPoints()
-            GwPlayerAuraFrame:SetPoint(anchor, frame, anchor, 0, yOff)
-        end
-    end)
-    GwPlayerAuraFrame:ClearAllPoints()
-    GwPlayerAuraFrame:SetPoint(
-        GwPlayerAuraFrame.anchor,
-        GwPlayerAuraFrameMoveAble,
-        GwPlayerAuraFrame.anchor,
+    player_buff_frame.secureHandler = fgw
+    player_buff_frame.anchor = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and "BOTTOMRIGHT" or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and "TOPRIGHT" or "BOTTOMRIGHT"
+    player_buff_frame.yOff = GetSetting("PlayerBuffFrame_GrowDirection") == "UP" and 0 or GetSetting("PlayerBuffFrame_GrowDirection") == "DOWN" and 15 or 0
+    player_buff_frame:ClearAllPoints()
+    player_buff_frame:SetPoint(
+        player_buff_frame.anchor,
+        player_buff_frame.gwMover,
+        player_buff_frame.anchor,
         0,
-        GwPlayerAuraFrame.yOff
+        player_buff_frame.yOff
     )
 
     if GwMultiBarBottomRight then
@@ -107,7 +98,18 @@ local function LoadBuffs()
     AddActionBarCallback(UpdatePlayerBuffFrame)
     UpdatePlayerBuffFrame()
 
-    LoadAuras(GwPlayerAuraFrame, GwPlayerAuraFrame, "player")
-    UpdateBuffLayout(GwPlayerAuraFrame, event, "player")
+    LoadAuras(player_buff_frame, player_buff_frame, "player")
+    UpdateBuffLayout(player_buff_frame, event, "player")
+
+    RegisterMovableFrame(player_buff_frame, "Player Buffs", "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
+    hooksecurefunc(player_buff_frame.gwMover, "StopMovingOrSizing", function (frame)
+        local anchor = GwPlayerAuraFrame.anchor
+        local yOff = GwPlayerAuraFrame.yOff
+
+        if not InCombatLockdown() then
+            GwPlayerAuraFrame:ClearAllPoints()
+            GwPlayerAuraFrame:SetPoint(anchor, frame, anchor, 0, yOff)
+        end
+    end)
 end
-GW.LoadBuffs = LoadBuffs
+GW.LoadAurasLegacy = LoadAurasLegacy

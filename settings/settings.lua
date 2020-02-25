@@ -63,11 +63,7 @@ local function CreateCat(name, desc, panel, icon, bg)
     f:SetPoint("TOPLEFT", -40, -32 + (-40 * (i - 1)))
 
     -- set the icon requested
-    f.icon:SetTexCoord(0, 0.5, 0.25 * icon, 0.25 * (icon + 1))
-    if icon > 3 then
-        icon = icon - 4
-        f.icon:SetTexCoord(0.5, 1, 0.25 * icon, 0.25 * (icon + 1))
-    end
+    f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
 
     -- set the bg requested
     if bg then
@@ -144,10 +140,10 @@ local function moveHudObjects()
         settings_window_open_before_change = true
     end
     GwSettingsWindow:Hide()
-    for k, v in pairs(GW.MOVABLE_FRAMES) do
-        v:EnableMouse(true)
-        v:SetMovable(true)
-        v:Show()
+    for i, mf in pairs(GW.MOVABLE_FRAMES) do
+        mf:EnableMouse(true)
+        mf:SetMovable(true)
+        mf:Show()
     end
 end
 GW.moveHudObjects = moveHudObjects
@@ -163,10 +159,10 @@ local function lockHudObjects()
         GwSettingsWindow:Show()
     end
 
-    for k, v in pairs(GW.MOVABLE_FRAMES) do
-        v:EnableMouse(false)
-        v:SetMovable(false)
-        v:Hide()
+    for i, mf in ipairs(GW.MOVABLE_FRAMES) do
+        mf:EnableMouse(false)
+        mf:SetMovable(false)
+        mf:Hide()
     end
     GW.UpdateFramePositions()
     C_UI.Reload()

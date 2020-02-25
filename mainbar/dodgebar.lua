@@ -234,16 +234,16 @@ local function dodge_OnLeave(self)
 end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
-local function LoadDodgeBar()
+local function LoadDodgeBar(hg)
     Debug("LoadDodgeBar start")
     _G["BINDING_HEADER_GW2UI_MOVE_BINDINGS"] = BINDING_HEADER_MOVEMENT
     _G["BINDING_NAME_CLICK GwDodgeBar:LeftButton"] = DODGE
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, "GwDodgeBarTmpl")
-    fmdb.gwScaleMulti = 1.1
+    GW.RegisterScaleFrame(fmdb, 1.1)
     fmdb:ClearAllPoints()
-    fmdb:SetPoint("CENTER", GwHealthGlobe, "CENTER", 0, 41)
+    fmdb:SetPoint("CENTER", hg, "CENTER", 0, 41)
     fmdb:SetAttribute("*type1", "spell")
 
     -- setting these values in the XML creates animation glitches so we do it here instead
@@ -273,5 +273,6 @@ local function LoadDodgeBar()
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
+    return fmdb
 end
 GW.LoadDodgeBar = LoadDodgeBar

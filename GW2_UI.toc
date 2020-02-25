@@ -50,9 +50,13 @@ settings/hover_binding.lua
 settings/welcome.xml
 settings/welcome.lua
 
+core/auras.lua
+
 changelog.lua
 GW2_ui.lua
 
+units/aurabar.xml
+units/aurabar.lua
 units/target.xml
 units/target.lua
 units/party.xml
@@ -70,6 +74,8 @@ mainbar/orderbar.lua
 
 mainbar/experiencebar.xml
 mainbar/hudart.xml
+mainbar/aurabar_legacy.xml
+mainbar/aurabar.xml
 mainbar/hudelements.xml
 mainbar/healthglobe.xml
 mainbar/powerbar.xml
@@ -77,10 +83,12 @@ mainbar/classpowers.xml
 mainbar/actionbars.xml
 mainbar/petbar.xml
 mainbar/dodgebar.xml
+mainbar/layout.lua
 mainbar/hud.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
-mainbar/buffs.lua
+mainbar/aurabar_blizz_modified.lua
+mainbar/aurabar.lua
 mainbar/castingbar.lua
 mainbar/healthglobe.lua
 mainbar/powerbar.lua

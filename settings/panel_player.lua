@@ -1,5 +1,6 @@
 local _, GW = ...
 local addOptionDropdown = GW.AddOptionDropdown
+local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
@@ -14,18 +15,43 @@ local function LoadPlayerPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["PLAYER_DESC"])
 
-    createCat(PLAYER, L["PLAYER_DESC"], p, 7)
+    createCat(PLAYER, L["PLAYER_DESC"], p, 9)
 
+    addOptionDropdown(
+        p,
+        "Aura Style",
+        nil,
+        "PLAYER_AURA_STYLE",
+        nil,
+        {"LEGACY", "SECURE"},
+        {
+            "Legacy",
+            "Secure"
+        }
+    )
+    addOptionSlider(
+        p,
+        "Auras per Row",
+        nil,
+        "PLAYER_AURA_WRAP_NUM",
+        nil,
+        1,
+        20,
+        nil,
+        0
+    )
     addOptionDropdown(
         p,
         L["PLAYER_AURA_GROW"],
         nil,
         "PlayerBuffFrame_GrowDirection",
         GW.UpdateHudScale(),
-        {"UP", "DOWN"},
+        {"UP", "DOWN", "UPR", "DOWNR"},
         {
             L["UP"],
-            L["DOWN"]
+            L["DOWN"],
+            "Up and Right",
+            "Down and Right"
         }
     )
     addOptionDropdown(

@@ -178,6 +178,7 @@ GW.UpdatePowerData = UpdatePowerData
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
+    GW.RegisterScaleFrame(playerPowerBar)
     if GW.GetSetting("XPBAR_ENABLED") then
         playerPowerBar:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", 53, 86)
     else

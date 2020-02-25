@@ -1205,7 +1205,7 @@ local function LoadRaidFrames()
         GetSetting("raid_pos")["yOfs"]
     )
 
-    RegisterMovableFrame("GwRaidFrameContainer", GwRaidFrameContainer, "raid_pos", "VerticalActionBarDummy")
+    RegisterMovableFrame(GwRaidFrameContainer, "Raid Container", "raid_pos", "VerticalActionBarDummy")
 
     hooksecurefunc(GwRaidFrameContainerMoveAble, "StopMovingOrSizing", function (frame)
         local anchor = GetSetting("RAID_ANCHOR")

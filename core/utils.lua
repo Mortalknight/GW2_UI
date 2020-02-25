@@ -91,13 +91,14 @@ local function GetUnitCreatureId(uId)
 end
 GW.GetUnitCreatureId = GetUnitCreatureId
 
+local fstr = "%.0fs"
 local function TimeCount(numSec, com)
     local nSeconds = tonumber(numSec)
     if nSeconds == nil then
         nSeconds = 0
     end
     if nSeconds == 0 then
-        return "0"
+        return "0s"
     end
     if nSeconds >= 86400 then
         return ceil(nSeconds / 86400) .. "d"
@@ -107,12 +108,13 @@ local function TimeCount(numSec, com)
     end
     if nSeconds >= 60 then
         return ceil(nSeconds / 60) .. "m"
-    end  
+    end
     if com ~= nil then
         local nMilsecs = math.max(math.floor((nSeconds * 10 ^ 1) + 0.5) / (10 ^ 1), 0)
         return nMilsecs .. "s"
     end
-    return GW.RoundDec(nSeconds) .. "s"
+    -- inline this because we do it a lot
+    return fstr:format(nSeconds)
 end
 GW.TimeCount = TimeCount
 

@@ -131,7 +131,6 @@ local function updateHealthData(self, anims)
     if prediction > 0 then
         local h = (Y_RANGE * pp) - 2
         pred:ClearAllPoints()
-        GW.Debug("ppy", ppy_off + h - 3)
         pred:SetPoint("CENTER", self.fill, "CENTER", -hpx_off, math.min(ppy_off + h, 41))
         pred:Show()
     else
@@ -147,7 +146,7 @@ local function updateHealthData(self, anims)
     elseif self.healthTextSetting == "VALUE" then
         hv = CommaValue(health)
     elseif self.healthTextSetting == "BOTH" then
-        hv = CommaValue(health) .. " - " .. CommaValue(health / healthMax * 100) .. "%"
+        hv = CommaValue(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
     end
 
     if self.absorbTextSetting == "PREC" then
@@ -155,7 +154,7 @@ local function updateHealthData(self, anims)
     elseif self.absorbTextSetting == "VALUE" then
         av = CommaValue(absorb)
     elseif self.absorbTextSetting == "BOTH" then
-        av = CommaValue(absorb) .. " - " .. CommaValue(absorb / healthMax * 100) .. "%"
+        av = CommaValue(absorb) .. "\n" .. CommaValue(absorb / healthMax * 100) .. "%"
     end
 
     self.text_h.value:SetText(hv)
@@ -266,8 +265,8 @@ end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
 local function LoadHealthGlobe()
-    local hg = CreateFrame("Button", "GwHealthGlobe", UIParent, "GwHealthGlobeTmpl")
-    hg.gwScaleMulti = 1.1
+    local hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
+    GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space
     if GetSetting("XPBAR_ENABLED") then
@@ -327,20 +326,29 @@ local function LoadHealthGlobe()
     hg.fill.absorb_under.gwAnim = aa2
 
     -- set text/font stuff
-    hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, 14)
+    hg.hSize = 14
+    if hg.absorbTextSetting == "BOTH" then
+        hg.aSize = 12
+        hg.text_a:ClearAllPoints()
+        hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
+    else
+        hg.aSize = 14
+    end
+
+    hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
-    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, 14)
+    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
     hg.text_a.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
-        v:SetFont(DAMAGE_TEXT_FONT, 14)
+        v:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
         v:SetShadowColor(1, 1, 1, 0)
         v:SetTextColor(0, 0, 0, 1 / i)
     end
 
     for i, v in ipairs(hg.text_a.shadow) do
-        v:SetFont(DAMAGE_TEXT_FONT, 14)
+        v:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
         v:SetShadowColor(1, 1, 1, 0)
         v:SetTextColor(0, 0, 0, 1 / i)
     end
@@ -398,5 +406,6 @@ local function LoadHealthGlobe()
     pa2:SetToAlpha(0.33)
     pa2:SetDuration(0.1)
 
+    return hg
 end
 GW.LoadHealthGlobe = LoadHealthGlobe

@@ -66,7 +66,7 @@ NEW
     - Added aggroborder to partyframes
     - Added option the set the Stancebar to the left or right of the Actionbar
     - Added more Battleground HUD's
-    - Enhanced durability icon at hero panel 
+    - Enhanced durability icon at hero panel
     - Added timer to scenarios like Chromie
 
 MISCELLANEOUS
