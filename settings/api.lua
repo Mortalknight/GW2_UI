@@ -1,7 +1,6 @@
 local _, GW = ...
 
 local GW_DEFAULT = GW.DEFAULTS
-local GW2UI_SETTINGS = {}
 
 local function GetActiveProfile()
     if GW2UI_SETTINGS_DB_03 == nil then

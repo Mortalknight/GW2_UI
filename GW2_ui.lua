@@ -530,6 +530,7 @@ local function loadAddon(self)
     --Create Settings window
     GW.LoadSettings()
     GW.DisplaySettings()
+    GW.LoadHoverBinds()
 
     --Create general skins
     if GetSetting("MAINMENU_SKIN_ENABLED") then
@@ -772,7 +773,7 @@ local function loadAddon(self)
     --Check if we should show Welcomepage or Changelog
     if GetSetting("GW2_UI_VERSION") == "WELCOME" then
         --Show Welcome page
-        local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
+        local GwWelcomePage = CreateFrame("Frame", nil, UIParent, "GwWelcomePageTmpl")
         GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
         GwWelcomePage.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
         GwWelcomePage.changelog.scroll.slider:SetMinMaxValues(0, GwWelcomePage.changelog.scroll.scrollchild.text:GetStringHeight())
@@ -809,7 +810,7 @@ local function loadAddon(self)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
         --Show Changelog
-        local GwWelcomePage  = CreateFrame("Frame", nil, UIParent, "GwWelcomePage")
+        local GwWelcomePage = CreateFrame("Frame", nil, UIParent, "GwWelcomePageTmpl")
         GwWelcomePage.subHeader:SetText(GW.VERSION_STRING)
         GwWelcomePage.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
         GwWelcomePage.changelog.scroll.slider:SetMinMaxValues(0, GwWelcomePage.changelog.scroll.scrollchild.text:GetStringHeight())

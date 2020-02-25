@@ -13,18 +13,31 @@ libs/libs.xml
 
 core/consts.lua
 core/utils.lua
-core/settings_default.lua
-core/settings_api.lua
+core/shared.xml
+core/fonts.lua
+core/storage.lua
+
+settings/defaults.lua
+settings/api.lua
+settings/settings.xml
+settings/panel_modules.xml
+settings/panel_profiles.xml
+settings/panel_raid.xml
+settings/settings.lua
+settings/panel_modules.lua
+settings/panel_player.lua
+settings/panel_target.lua
+settings/panel_actionbar.lua
+settings/panel_hud.lua
+settings/panel_party.lua
+settings/panel_raid.lua
+settings/panel_auras.lua
+settings/panel_skins.lua
+settings/panel_profiles.lua
+settings/hover_binding.lua
 
 changelog.lua
 GW2_ui.lua
-
-core/shared.xml
-core/settings.xml
-core/fonts.lua
-core/settings.lua
-core/hover_binding.lua
-core/storage.lua
 
 units/target.xml
 units/target.lua

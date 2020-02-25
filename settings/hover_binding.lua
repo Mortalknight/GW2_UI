@@ -1,10 +1,19 @@
 local _, GW = ...
-local bind, localmacros = CreateFrame("Frame", "HoverBind", UIParent), 0
+local AddForProfiling = GW.AddForProfiling
 
-local function hoverkeybinds ()
+local bind = CreateFrame("Frame", "HoverBind", UIParent)
+local localmacros = 0
+
+local function keyBindPrompt(text)
+    GwKeyBindPrompt.string:SetText(text)
+    GwKeyBindPrompt.method = nil
+    GwKeyBindPrompt:Show()
+end
+AddForProfiling("hover_binding", "keyBindPrompt", keyBindPrompt)
+
+local function HoverKeyBinds()
 	if InCombatLockdown() then DEFAULT_CHAT_FRAME:AddMessage(ERR_AFFECTING_COMBAT) return end
 	if not bind.loaded then
-		local find = string.find
 		local _G = getfenv(0)
 
 		bind:SetFrameStrata("DIALOG")
@@ -277,33 +286,32 @@ local function hoverkeybinds ()
 	end
 	if not bind.enabled then
 		bind:Activate()
-        GW.KeyBindPrompt(GwLocalization['BINDINGS_DESC'])
+        keyBindPrompt(GwLocalization['BINDINGS_DESC'])
 	end
 end
-GW.hoverkeybinds = hoverkeybinds
+GW.HoverKeyBinds = HoverKeyBinds
 
-local fmGWKB = CreateFrame("Frame", "GwKeyBindPrompt", UIParent, "GwKeyBindPrompt")
-fmGWKB.string:SetFont(UNIT_NAME_FONT, 14)
-fmGWKB.string:SetTextColor(1, 1, 1)
-fmGWKB.acceptButton:SetText(SAVE)
-fmGWKB.cancelButton:SetText(CANCEL)
-    
-local fmGWKB_accept_OnClick = function()
+local fmGWKB_accept_OnClick = function(self, button)
     bind:Deactivate(true)
-    GwKeyBindPrompt:Hide()
+    self:GetParent():Hide()
 end
-local fmGWKB_cancel_OnClick = function()
+AddForProfiling("hover_binding", "fmGWKB_accept_OnClick", fmGWKB_accept_OnClick)
+
+local fmGWKB_cancel_OnClick = function(self, button)
     bind:Deactivate(false)
-    GwKeyBindPrompt:Hide()
+    self:GetParent():Hide()
 end
-fmGWKB.acceptButton:SetScript("OnClick", fmGWKB_accept_OnClick)
-fmGWKB.cancelButton:SetScript("OnClick", fmGWKB_cancel_OnClick)
+AddForProfiling("hover_binding", "fmGWKB_cancel_OnClick", fmGWKB_cancel_OnClick)
 
-tinsert(UISpecialFrames, "GwKeyBindPrompt")
+local function LoadHoverBinds()
+	local fmGWKB = CreateFrame("Frame", "GwKeyBindPrompt", UIParent, "GwKeyBindPromptTmpl")
+	fmGWKB.string:SetFont(UNIT_NAME_FONT, 14)
+	fmGWKB.string:SetTextColor(1, 1, 1)
+	fmGWKB.acceptButton:SetText(SAVE)
+	fmGWKB.cancelButton:SetText(CANCEL)
+	fmGWKB.acceptButton:SetScript("OnClick", fmGWKB_accept_OnClick)
+	fmGWKB.cancelButton:SetScript("OnClick", fmGWKB_cancel_OnClick)
 
-local function KeyBindPrompt(text)
-    GwKeyBindPrompt.string:SetText(text)
-    GwKeyBindPrompt.method = nil
-    GwKeyBindPrompt:Show()
+	tinsert(UISpecialFrames, "GwKeyBindPrompt")
 end
-GW.KeyBindPrompt = KeyBindPrompt
+GW.LoadHoverBinds = LoadHoverBinds
