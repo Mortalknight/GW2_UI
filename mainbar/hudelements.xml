@@ -63,7 +63,6 @@
                 </FontString>
             </Layer>
         </Layers>
-
     </Button>
 
     <Button name="GwGarrisonButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
@@ -77,7 +76,7 @@
         <PushedTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString name="GwDateText" justifyH="CENTER" justifyV="MIDDLE">
+                <FontString name="GwDateText" parentKey="Text" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
@@ -91,11 +90,12 @@
         <Size x="40" y="40"/>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\icon-module">
+                <Texture name="$parentTexture" parentKey="Texture" file="Interface\AddOns\GW2_UI\textures\icon-module">
                     <Size x="35" y="35"></Size>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                 </Texture>
             </Layer>
         </Layers>
@@ -460,7 +460,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame name="$parentItem1">
+            <Frame name="$parentItem1" parentKey="Item1">
                 <Size x="350" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="TOP" x="0" y="-90"></Anchor>
@@ -502,7 +502,7 @@
                     </layer>
                 </Layers>
             </Frame>
-            <Frame name="$parentItem2">
+            <Frame name="$parentItem2" parentKey="Item2">
                 <Size x="350" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem1" x="0" y="-5"></Anchor>
@@ -537,7 +537,7 @@
                     </layer>
                 </Layers>
             </Frame>
-            <Frame name="$parentItem3">
+            <Frame name="$parentItem3" parentKey="Item3">
                 <Size x="350" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem2" x="0" y="-5"></Anchor>
@@ -572,7 +572,7 @@
                     </layer>
                 </Layers>
             </Frame>
-            <Frame name="$parentItem4">
+            <Frame name="$parentItem4"  parentKey="Item4">
                 <Size x="350" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="GwLevelingRewardsItem3" x="0" y="-5"></Anchor>
@@ -606,9 +606,8 @@
                         </FontString>
                     </layer>
                 </Layers>
-
             </Frame>
-            <Button name="GwCloseLevelingRewards" inherits="GwStandardButton" text="Close">
+            <Button name="GwCloseLevelingRewards" parentKey="CloseButton" inherits="GwStandardButton" text="Close">
                 <Size x="70" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="GwLevelingRewards" x="5" y="10"></Anchor>

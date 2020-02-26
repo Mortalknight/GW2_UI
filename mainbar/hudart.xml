@@ -72,14 +72,14 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentLEFT" file="Interface\AddOns\GW2_UI\textures\leftshadow" parentKey="Background">
+                        <Texture name="$parentLEFT" parentKey="Left" file="Interface\AddOns\GW2_UI\textures\leftshadow">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                             </Anchors>
                         </Texture>
 
-                        <Texture name="$parentRIGHT" file="Interface\AddOns\GW2_UI\textures\rightshadow" parentKey="Background">
+                        <Texture name="$parentRIGHT" parentKey="Right" file="Interface\AddOns\GW2_UI\textures\rightshadow">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
@@ -88,14 +88,14 @@
                     </Layer>
 
                     <Layer textureSubLevel="3" level="BACKGROUND">
-                        <Texture name="$parentLEFTSWIM" file="Interface\AddOns\GW2_UI\textures\leftshadowswim" parentKey="Background">
+                        <Texture name="$parentLEFTSWIM" parentKey="LeftSwim" file="Interface\AddOns\GW2_UI\textures\leftshadowswim">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                             </Anchors>
                         </Texture>
 
-                        <Texture name="$parentRIGHTSWIM" file="Interface\AddOns\GW2_UI\textures\rightshadowswim" parentKey="Background">
+                        <Texture name="$parentRIGHTSWIM" parentKey="RightSwim" file="Interface\AddOns\GW2_UI\textures\rightshadowswim">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
@@ -103,14 +103,14 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="4" level="BACKGROUND">
-                        <Texture name="$parentLEFTBLOOD" file="Interface\AddOns\GW2_UI\textures\bloodLeft" parentKey="Background">
+                        <Texture name="$parentLEFTBLOOD" parentKey="LeftBlood" file="Interface\AddOns\GW2_UI\textures\bloodLeft">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                             </Anchors>
                         </Texture>
 
-                        <Texture name="$parentRIGHTBLOOD" file="Interface\AddOns\GW2_UI\textures\bloodRight" parentKey="Background">
+                        <Texture name="$parentRIGHTBLOOD" parentKey="RightBlood" file="Interface\AddOns\GW2_UI\textures\bloodRight">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />

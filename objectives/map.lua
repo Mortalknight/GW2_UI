@@ -713,6 +713,9 @@ local function LoadMinimap()
     GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
     GwCalendarButton.gw_Showing = true
     GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
+    GwCalendarButton.Text:SetFont(UNIT_NAME_FONT, 14)
+    GwCalendarButton.Text:SetTextColor(0, 0, 0)
+    GwCalendarButton.Text:SetText(date("%d"))
 
     local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
     GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
@@ -759,14 +762,9 @@ local function LoadMinimap()
     fmGAT:SetScript("OnEvent", stack_OnEvent)
     fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmGAT:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
-    GwAddonToggleTexture:SetTexCoord(0, 0.5, 0, 0.25)
     fmGAT:SetFrameStrata("MEDIUM")
     fmGAT.gw_Showing = true
     stackIcons(fmGAT)
-
-    GwDateText:SetFont(UNIT_NAME_FONT, 14)
-    GwDateText:SetTextColor(0, 0, 0)
-    GwDateText:SetText(date("%d"))
 
     hooksecurefunc(
         Minimap,

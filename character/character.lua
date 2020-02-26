@@ -418,7 +418,7 @@ GW.AddForProfiling("character", "container_OnHide", container_OnHide)
 local function charTab_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
     GameTooltip:ClearLines()
-    GameTooltip_AddNormalLine(GameTooltip, self.gwTipLabel)
+    GameTooltip_SetTitle(GameTooltip, self.gwTipLabel)
     GameTooltip:Show()
 end
 GW.AddForProfiling("character", "charTab_OnEnter", charTab_OnEnter)

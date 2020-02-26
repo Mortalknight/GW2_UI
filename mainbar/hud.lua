@@ -17,13 +17,14 @@ local gw_reputation_vals = nil
 local gw_honor_vals = nil
 
 local function xpbar_OnEnter()
-    GameTooltip:SetOwner(_G["GwExperienceFrame"], "ANCHOR_CURSOR")
+    GameTooltip:SetOwner(GwExperienceFrame, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
 
     local valCurrent = UnitXP("Player")
     local valMax = UnitXPMax("Player")
     local rested = GetXPExhaustion()
     local isRestingString = ""
+
     if IsResting() then
         isRestingString = GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTING"]
     end
@@ -90,7 +91,7 @@ end
 GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
 
 local function xpbar_OnClick()
-    if UnitLevel("Player") < GetMaxPlayerLevel("Player") then
+    if UnitLevel("Player") < GetMaxPlayerLevel() then
         if GwLevelingRewards:IsShown() then
             GwLevelingRewards:Hide()
         else
@@ -783,13 +784,13 @@ local function updateBarSize()
     for i = 1, 9 do
         local rm = (m * i) + 90
         _G["barsep" .. i]:ClearAllPoints()
-        _G["barsep" .. i]:SetPoint("LEFT", "GwExperienceFrame", "LEFT", rm, 0)
+        _G["barsep" .. i]:SetPoint("LEFT", GwExperienceFrame, "LEFT", rm, 0)
     end
 
     m = (UIParent:GetWidth() - 180)
     dubbleBarSep:SetWidth(m)
     dubbleBarSep:ClearAllPoints()
-    dubbleBarSep:SetPoint("LEFT", "GwExperienceFrame", "LEFT", 90, 0)
+    dubbleBarSep:SetPoint("LEFT", GwExperienceFrame, "LEFT", 90, 0)
 end
 GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
@@ -831,8 +832,8 @@ local function selectBg()
 
     if currentTexture ~= left then
         currentTexture = left
-        _G["GwActionBarHudLEFT"]:SetTexture(left)
-        _G["GwActionBarHudRIGHT"]:SetTexture(right)
+        GwActionBarHud.Left:SetTexture(left)
+        GwActionBarHud.Right:SetTexture(right)
     end
 end
 GW.AddForProfiling("hud", "selectBg", selectBg)
@@ -843,23 +844,23 @@ local function combatHealthState()
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
         unitHealthPrecentage = unitHealthPrecentage / 0.5
 
-        _G["GwActionBarHudLEFT"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        _G["GwActionBarHudRIGHT"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        GwActionBarHud.Left:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        GwActionBarHud.Right:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        GwActionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        GwActionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        _G["GwActionBarHudLEFTBLOOD"]:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
-        _G["GwActionBarHudRIGHTBLOOD"]:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        GwActionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        GwActionBarHud.RightBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
     else
-        _G["GwActionBarHudLEFT"]:SetVertexColor(1, 1, 1)
-        _G["GwActionBarHudRIGHT"]:SetVertexColor(1, 1, 1)
+        GwActionBarHud.Left:SetVertexColor(1, 1, 1)
+        GwActionBarHud.Right:SetVertexColor(1, 1, 1)
 
-        _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(1, 1, 1)
-        _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(1, 1, 1)
+        GwActionBarHud.LeftSwim:SetVertexColor(1, 1, 1)
+        GwActionBarHud.RightSwim:SetVertexColor(1, 1, 1)
 
-        _G["GwActionBarHudLEFTBLOOD"]:SetVertexColor(1, 1, 1, 0)
-        _G["GwActionBarHudRIGHTBLOOD"]:SetVertexColor(1, 1, 1, 0)
+        GwActionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 0)
+        GwActionBarHud.RightBlood:SetVertexColor(1, 1, 1, 0)
     end
 end
 GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
@@ -997,27 +998,27 @@ local function loadRewards()
     f.levelHeader:SetTextColor(0.6, 0.6, 0.6)
     f.levelHeader:SetText(LEVEL)
 
-    local fnGwCloseLevelingRewards_OnClick = function(self, button)
-        GwLevelingRewards:Hide()
+    local fnGwCloseLevelingRewards_OnClick = function(self)
+        self:GetParent():Hide()
     end
-    GwCloseLevelingRewards:SetScript("OnClick", fnGwCloseLevelingRewards_OnClick)
-    GwCloseLevelingRewards:SetText(CLOSE)
+    f.CloseButton:SetScript("OnClick", fnGwCloseLevelingRewards_OnClick)
+    f.CloseButton:SetText(CLOSE)
 
-    _G["GwLevelingRewardsItem1"].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem1"].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem1"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+    f.Item1.name:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item1.level:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item1.name:SetText(GwLocalization["LEVEL_REWARDS"])
 
-    _G["GwLevelingRewardsItem2"].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem2"].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem2"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+    f.Item2.name:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item2.level:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item2.name:SetText(GwLocalization["LEVEL_REWARDS"])
 
-    _G["GwLevelingRewardsItem3"].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem3"].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem3"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+    f.Item3.name:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item3.level:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item3.name:SetText(GwLocalization["LEVEL_REWARDS"])
 
-    _G["GwLevelingRewardsItem4"].name:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem4"].level:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["GwLevelingRewardsItem4"].name:SetText(GwLocalization["LEVEL_REWARDS"])
+    f.Item4.name:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item4.level:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.Item4.name:SetText(GwLocalization["LEVEL_REWARDS"])
 
     f:SetScript("OnShow", levelingRewards_OnShow)
 

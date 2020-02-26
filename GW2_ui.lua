@@ -380,9 +380,9 @@ GW.StopAnimation = StopAnimation
 local l = CreateFrame("Frame", nil, UIParent)
 
 local function swimAnim()
-    local r, g, b = _G["GwActionBarHudRIGHTSWIM"]:GetVertexColor()
-    _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
-    _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
+    local r, g, b = GwActionBarHud.RightSwim:GetVertexColor()
+    GwActionBarHud.RightSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
+    GwActionBarHud.LeftSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
 end
 GW.AddForProfiling("index", "swimAnim", swimAnim)
 
