@@ -9,6 +9,18 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
+locales/deDE.lua
+locales/koKR.lua
+locales/zhTW.lua
+locales/enUS.lua
+locales/esMX.lua
+locales/esES.lua
+locales/ruRU.lua
+locales/ptBR.lua
+locales/frFR.lua
+locales/zhCN.lua
+locales/itIT.lua
+
 libs/libs.xml
 
 core/consts.lua
@@ -35,6 +47,8 @@ settings/panel_auras.lua
 settings/panel_skins.lua
 settings/panel_profiles.lua
 settings/hover_binding.lua
+settings/welcome.xml
+settings/welcome.lua
 
 changelog.lua
 GW2_ui.lua
@@ -121,18 +135,6 @@ character/professions.lua
 
 battlegrounds/battlegrounds.xml
 battlegrounds/battlegrounds.lua
-
-locales/deDE.lua
-locales/koKR.lua
-locales/zhTW.lua
-locales/enUS.lua
-locales/esMX.lua
-locales/esES.lua
-locales/ruRU.lua
-locales/ptBR.lua
-locales/frFR.lua
-locales/zhCN.lua
-locales/itIT.lua
 
 tests/mocks.lua
 tests/alert_tests.lua

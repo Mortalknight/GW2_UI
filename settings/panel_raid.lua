@@ -5,17 +5,20 @@ local createCat = GW.CreateCat
 local MapTable = GW.MapTable
 local StrUpper = GW.StrUpper
 local GetSetting = GW.GetSetting
+local InitPanel = GW.InitPanel
+local AddForProfiling = GW.AddForProfiling
+local L = GwLocalization
 
 local function LoadRaidPanel(sWindow)
-    local pnl_group2 = CreateFrame("Frame", "GwSettingsGroupframe2", sWindow.panels, "GwSettingsRaidPanelTmpl")
-    pnl_group2.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    pnl_group2.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    pnl_group2.header:SetText(CHAT_MSG_PARTY)
-    pnl_group2.sub:SetFont(UNIT_NAME_FONT, 12)
-    pnl_group2.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    pnl_group2.sub:SetText(GwLocalization["GROUP_DESC"])
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsRaidPanelTmpl")
+    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetText(CHAT_MSG_PARTY)
+    p.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.sub:SetText(L["GROUP_DESC"])
 
-    createCat(CHAT_MSG_PARTY, GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe2", 4)
+    createCat(CHAT_MSG_PARTY, L["GROUP_TOOLTIP"], p, 4)
 
     local dirs, grow = {"DOWN", "UP", "RIGHT", "LEFT"}, {}
     for i in pairs(dirs) do
@@ -25,11 +28,11 @@ local function LoadRaidPanel(sWindow)
         end
     end
 
-        addOptionDropdown(
-        GwLocalization["RAID_GROW"],
-        GwLocalization["RAID_GROW"],
+    addOptionDropdown(
+        p,
+        L["RAID_GROW"],
+        L["RAID_GROW"],
         "RAID_GROW",
-        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesAnchor()
@@ -38,40 +41,47 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         grow,
-        MapTable(grow, function (dir)
-            local g1, g2 = strsplit("+", dir)
-            return StrUpper(GwLocalization["RAID_GROW_DIR"]:format(GwLocalization[g1], GwLocalization[g2]), 1, 1)
-        end)
+        MapTable(
+            grow,
+            function(dir)
+                local g1, g2 = strsplit("+", dir)
+                return StrUpper(L["RAID_GROW_DIR"]:format(L[g1], L[g2]), 1, 1)
+            end
+        )
     )
 
     local pos = {"POSITION", "GROWTH"}
-    for i,v in pairs({"TOP", "", "BOTTOM"}) do
-        for j,h in pairs({"LEFT", "", "RIGHT"}) do
+    for i, v in pairs({"TOP", "", "BOTTOM"}) do
+        for j, h in pairs({"LEFT", "", "RIGHT"}) do
             tinsert(pos, (v .. h) == "" and "CENTER" or v .. h)
         end
     end
 
     addOptionDropdown(
-        GwLocalization["RAID_ANCHOR"],
-        GwLocalization["RAID_ANCHOR_DESC"],
+        p,
+        L["RAID_ANCHOR"],
+        L["RAID_ANCHOR_DESC"],
         "RAID_ANCHOR",
-        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesAnchor()
             end
         end,
         pos,
-        MapTable(pos, function (pos, i)
-            return StrUpper(GwLocalization[i <= 2 and "RAID_ANCHOR_BY_" .. pos or pos], 1, 1)
-        end, true)
+        MapTable(
+            pos,
+            function(posi, i)
+                return StrUpper(L[i <= 2 and "RAID_ANCHOR_BY_" .. posi or posi], 1, 1)
+            end,
+            true
+        )
     )
 
     addOptionSlider(
-        GwLocalization["RAID_UNITS_PER_COLUMN"],
-        GwLocalization["RAID_UNITS_PER_COLUMN_DESC"],
+        p,
+        L["RAID_UNITS_PER_COLUMN"],
+        L["RAID_UNITS_PER_COLUMN_DESC"],
         "RAID_UNITS_PER_COLUMN",
-        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -83,10 +93,10 @@ local function LoadRaidPanel(sWindow)
     )
 
     addOptionSlider(
-        GwLocalization["RAID_BAR_WIDTH"],
-        GwLocalization["RAID_BAR_WIDTH_DESC"],
+        p,
+        L["RAID_BAR_WIDTH"],
+        L["RAID_BAR_WIDTH_DESC"],
         "RAID_WIDTH",
-        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -98,10 +108,10 @@ local function LoadRaidPanel(sWindow)
     )
 
     addOptionSlider(
-        GwLocalization["RAID_BAR_HEIGHT"],
-        GwLocalization["RAID_BAR_HEIGHT_DESC"],
+        p,
+        L["RAID_BAR_HEIGHT"],
+        L["RAID_BAR_HEIGHT_DESC"],
         "RAID_HEIGHT",
-        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -113,10 +123,10 @@ local function LoadRaidPanel(sWindow)
     )
 
     addOptionSlider(
-        GwLocalization["RAID_CONT_WIDTH"],
-        GwLocalization["RAID_CONT_WIDTH_DESC"],
+        p,
+        L["RAID_CONT_WIDTH"],
+        L["RAID_CONT_WIDTH_DESC"],
         "RAID_CONT_WIDTH",
-        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -128,10 +138,10 @@ local function LoadRaidPanel(sWindow)
     )
 
     addOptionSlider(
-        GwLocalization["RAID_CONT_HEIGHT"],
-        GwLocalization["RAID_CONT_HEIGHT_DESC"],
+        p,
+        L["RAID_CONT_HEIGHT"],
+        L["RAID_CONT_HEIGHT_DESC"],
         "RAID_CONT_HEIGHT",
-        "GwSettingsGroupframe2",
         function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
@@ -142,5 +152,6 @@ local function LoadRaidPanel(sWindow)
         GetScreenHeight()
     )
 
+    InitPanel(p)
 end
 GW.LoadRaidPanel = LoadRaidPanel

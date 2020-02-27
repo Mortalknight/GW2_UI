@@ -4,6 +4,9 @@ local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local InitPanel = GW.InitPanel
+local AddForProfiling = GW.AddForProfiling
+local L = GwLocalization
 
 local function setMultibarCols()
     local cols = GetSetting("MULTIBAR_RIGHT_COLS")
@@ -15,92 +18,85 @@ local function setMultibarCols()
     SetSetting("MultiBarRight", mb1)
     SetSetting("MultiBarLeft", mb2)
 end
+AddForProfiling("panel_actionbar", "setMultibarCols", setMultibarCols)
 
 local function LoadActionbarPanel(sWindow)
-    local pnl_action = CreateFrame("Frame", "GwSettingsActionbarOptions", sWindow.panels, "GwSettingsPanelTmpl")
-    pnl_action.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    pnl_action.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    pnl_action.header:SetText(BINDING_HEADER_ACTIONBAR)
-    pnl_action.sub:SetFont(UNIT_NAME_FONT, 12)
-    pnl_action.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    pnl_action.sub:SetText(ACTIONBARS_SUBTEXT)
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetText(BINDING_HEADER_ACTIONBAR)
+    p.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.sub:SetText(ACTIONBARS_SUBTEXT)
 
-    createCat(BINDING_HEADER_ACTIONBAR, nil, "GwSettingsActionbarOptions", 7)
+    createCat(BINDING_HEADER_ACTIONBAR, nil, p, 7)
 
-    addOption(
-        GwLocalization["HIDE_EMPTY_SLOTS"],
-        GwLocalization["HIDE_EMPTY_SLOTS_DESC"],
-        "HIDEACTIONBAR_BACKGROUND_ENABLED",
-        "GwSettingsActionbarOptions"
-    )
-    addOption(
-        GwLocalization["BUTTON_ASSIGNMENTS"],
-        GwLocalization["BUTTON_ASSIGNMENTS_DESC"],
-        "BUTTON_ASSIGNMENTS",
-        "GwSettingsActionbarOptions"
-    )
+    addOption(p, L["HIDE_EMPTY_SLOTS"], L["HIDE_EMPTY_SLOTS_DESC"], "HIDEACTIONBAR_BACKGROUND_ENABLED")
+    addOption(p, L["BUTTON_ASSIGNMENTS"], L["BUTTON_ASSIGNMENTS_DESC"], "BUTTON_ASSIGNMENTS")
     addOptionDropdown(
-        GwLocalization["STG_RIGHT_BAR_COLS"],
-        GwLocalization["STG_RIGHT_BAR_COLS_DESC"],
+        p,
+        L["STG_RIGHT_BAR_COLS"],
+        L["STG_RIGHT_BAR_COLS_DESC"],
         "MULTIBAR_RIGHT_COLS",
-        "GwSettingsActionbarOptions",
         setMultibarCols,
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"}
     )
     addOptionDropdown(
-        GwLocalization["STANCEBAR_POSITION"],
-        GwLocalization["STANCEBAR_POSITION_DESC"],
+        p,
+        L["STANCEBAR_POSITION"],
+        L["STANCEBAR_POSITION_DESC"],
         "STANCEBAR_POSITION",
-        "GwSettingsActionbarOptions",
         GW.setStanceBar,
         {"LEFT", "RIGHT"},
-        {GwLocalization["LEFT"], GwLocalization["RIGHT"]}
+        {L["LEFT"], L["RIGHT"]}
     )
     addOptionDropdown(
+        p,
         BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR1_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_1",
-        "GwSettingsActionbarOptions",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
     )
     addOptionDropdown(
+        p,
         BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR2_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_2",
-        "GwSettingsActionbarOptions",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
     )
     addOptionDropdown(
+        p,
         BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR3_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_3",
-        "GwSettingsActionbarOptions",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
     )
     addOptionDropdown(
+        p,
         BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR4_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_4",
-        "GwSettingsActionbarOptions",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, GwLocalization["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
     )
     addOptionDropdown(
-        GwLocalization["MAINBAR_RANGE_INDICATOR"],
+        p,
+        L["MAINBAR_RANGE_INDICATOR"],
         nil,
         "MAINBAR_RANGEINDICATOR",
-        "GwSettingsActionbarOptions",
         nil,
         {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
-        {GwLocalization["INDICATOR_TITLE"]:format(RED_GEM), GwLocalization["RED_OVERLAY"],STATUS_TEXT_BOTH,NONE}
+        {L["INDICATOR_TITLE"]:format(RED_GEM), L["RED_OVERLAY"], STATUS_TEXT_BOTH, NONE}
     )
+
+    InitPanel(p)
 end
 GW.LoadActionbarPanel = LoadActionbarPanel

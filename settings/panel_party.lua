@@ -3,88 +3,65 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
+local InitPanel = GW.InitPanel
+local AddForProfiling = GW.AddForProfiling
+local L = GwLocalization
 
 local function LoadPartyPanel(sWindow)
-    local pnl_group = CreateFrame("Frame", "GwSettingsGroupframe", sWindow.panels, "GwSettingsPanelTmpl")
-    pnl_group.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    pnl_group.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    pnl_group.header:SetText(CHAT_MSG_PARTY)
-    pnl_group.sub:SetFont(UNIT_NAME_FONT, 12)
-    pnl_group.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    pnl_group.sub:SetText(GwLocalization["GROUP_DESC"])
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetText(CHAT_MSG_PARTY)
+    p.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.sub:SetText(L["GROUP_DESC"])
 
-    createCat(CHAT_MSG_PARTY, GwLocalization["GROUP_TOOLTIP"], "GwSettingsGroupframe", 4)
+    createCat(CHAT_MSG_PARTY, L["GROUP_TOOLTIP"], p, 4)
 
+    addOption(p, USE_RAID_STYLE_PARTY_FRAMES, L["RAID_PARTY_STYLE_DESC"], "RAID_STYLE_PARTY")
+    addOption(p, RAID_USE_CLASS_COLORS, L["CLASS_COLOR_RAID_DESC"], "RAID_CLASS_COLOR")
+    addOption(p, DISPLAY_POWER_BARS, L["POWER_BARS_RAID_DESC"], "RAID_POWER_BARS")
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "RAID_ONLY_DISPELL_DEBUFFS")
+    addOption(p, RAID_TARGET_ICON, L["RAID_MARKER_DESC"], "RAID_UNIT_MARKERS")
     addOption(
-        USE_RAID_STYLE_PARTY_FRAMES,
-        GwLocalization["RAID_PARTY_STYLE_DESC"],
-        "RAID_STYLE_PARTY",
-        "GwSettingsGroupframe"
-    )
-    addOption(
-        RAID_USE_CLASS_COLORS,
-        GwLocalization["CLASS_COLOR_RAID_DESC"],
-        "RAID_CLASS_COLOR",
-        "GwSettingsGroupframe"
-    )
-    addOption(
-        DISPLAY_POWER_BARS,
-        GwLocalization["POWER_BARS_RAID_DESC"],
-        "RAID_POWER_BARS",
-        "GwSettingsGroupframe"
-    )
-    addOption(
-        DISPLAY_ONLY_DISPELLABLE_DEBUFFS,
-        GwLocalization["DEBUFF_DISPELL_DESC"],
-        "RAID_ONLY_DISPELL_DEBUFFS",
-        "GwSettingsGroupframe"
-    )
-    addOption(
-        RAID_TARGET_ICON,
-        GwLocalization["RAID_MARKER_DESC"],
-        "RAID_UNIT_MARKERS",
-        "GwSettingsGroupframe"
-    )
-    addOption(
-        GwLocalization["RAID_SORT_BY_ROLE"],
-        GwLocalization["RAID_SORT_BY_ROLE_DESC"],
+        p,
+        L["RAID_SORT_BY_ROLE"],
+        L["RAID_SORT_BY_ROLE_DESC"],
         "RAID_SORT_BY_ROLE",
-        "GwSettingsGroupframe",
-        function ()
+        function()
             if GetSetting("GROUP_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
         end
     )
-    addOption(
-        GwLocalization["RAID_AURA_TOOLTIP_IN_COMBAT"],
-        GwLocalization["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"],
-        "RAID_AURA_TOOLTIP_IN_COMBAT",
-        "GwSettingsGroupframe"
-    )
+    addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT")
 
     addOptionDropdown(
-        GwLocalization["RAID_UNIT_FLAGS"],
-        GwLocalization["RAID_UNIT_FLAGS_TOOLTIP"],
+        p,
+        L["RAID_UNIT_FLAGS"],
+        L["RAID_UNIT_FLAGS_TOOLTIP"],
         "RAID_UNIT_FLAGS",
-        "GwSettingsGroupframe",
-        function()
-        end,
+        nil,
         {"NONE", "DIFFERENT", "ALL"},
-        {NONE_KEY, GwLocalization["RAID_UNIT_FLAGS_2"], ALL}
+        {NONE_KEY, L["RAID_UNIT_FLAGS_2"], ALL}
     )
 
     addOptionDropdown(
+        p,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "RAID_UNIT_HEALTH",
-        "GwSettingsGroupframe",
-        function()
-        end,
+        nil,
         {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
-        {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}
+        {
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH
+        }
     )
 
+    InitPanel(p)
 end
 GW.LoadPartyPanel = LoadPartyPanel
