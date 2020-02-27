@@ -162,7 +162,7 @@ updateProfiles = function(self)
         end
     end
 
-    if h < 6 then
+    if h < 7 then
         self.createNew:Enable()
     else
         self.createNew:Disable()
@@ -298,7 +298,7 @@ local function LoadProfilesPanel(sWindow)
         inputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()
-                addProfile(up:GetParent(), GwWarningPrompt.input:GetText())
+                addProfile(p, GwWarningPrompt.input:GetText())
                 GwWarningPrompt:Hide()
             end
         )

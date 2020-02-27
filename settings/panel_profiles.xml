@@ -60,13 +60,13 @@
                 </Layers>
             </Button>
             <ScrollFrame parentKey="scrollFrame">
-                <Size x="480" y="442"/>
+                <Size x="480" y="500"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="0" y="-70"/>
                 </Anchors>
             </ScrollFrame>
             <Frame parentKey="scrollchild">
-                <Size x="480" y="442"/>
+                <Size x="480" y="500"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="0" y="0"/>
                     <Anchor point="BOTTOMRIGHT" x="0" y="0"/>

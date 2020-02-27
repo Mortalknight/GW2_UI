@@ -26,6 +26,7 @@ local function LoadModulesPanel(sWindow)
     p.sub:SetText(L["MODULES_DESC"])
 
     p.welcome.settings = sWindow
+    p.welcome:SetText(L["WELCOME"])
     p.welcome:SetScript("OnClick", welcome_OnClick)
 
     createCat(L["MODULES_CAT"], L["MODULES_CAT_TOOLTIP"], p, 0)
