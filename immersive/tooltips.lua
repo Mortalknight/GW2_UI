@@ -71,6 +71,9 @@ local function styleTooltip(self)
 	if _G[self:GetName() .. "StatusBarTexture"] then
 		_G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface\\Addons\\GW2_UI\\Textures\\castinbar-white")
 	end
+	if DBMInfoFrame then 
+        DBMInfoFrame:SetBackdrop(constBackdropArgs)
+    end
 end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
