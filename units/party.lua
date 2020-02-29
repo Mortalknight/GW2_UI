@@ -369,9 +369,7 @@ local function updateAwayData(self)
         self.classicon:SetTexCoord(0, 1, 0, 1)
     end
 
-    if UnitIsConnected(self.unit) ~= true then
-        self.classicon:SetTexture("Interface\\CharacterFrame\\Disconnect-Icon")
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+    if not UnitIsConnected(self.unit) then
         portraitIndex = 3
     end
 
