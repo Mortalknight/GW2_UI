@@ -437,3 +437,11 @@ end
 GW.Debug = Debug
 GW.Trace = Trace
 GW.AddForProfiling = AddForProfiling
+
+local function vernotes(ver, notes)
+    if not GW.GW_CHANGELOGS then
+        GW.GW_CHANGELOGS = ""
+    end
+    GW.GW_CHANGELOGS = GW.GW_CHANGELOGS .. "\n" .. ver .. "\n\n" .. notes .. "\n\n"
+end
+GW.vernotes = vernotes

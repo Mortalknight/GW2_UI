@@ -229,7 +229,6 @@ local function GWUseThisLocalization()
 	GwLocalization["BOTTOMRIGHT"] = ("%s %s"):format(GwLocalization["BOTTOM"], GwLocalization["RIGHT"])
 	GwLocalization["RAID_UNIT_LOST_HEALTH_PREC"] = "Health Remaining in percent"
 	GwLocalization["SHOW_THREAT_VALUE"] = "Show threat"
-	GwLocalization["MINIMAP_FPS"] = "Show FPS on minimap"
 	GwLocalization["WELCOME_SPLASH_HEADER"] = "Welcome to GW2 UI"
 	GwLocalization["CHANGELOG"] = "Changelog"
 	GwLocalization["WELCOME"] = "Welcome"

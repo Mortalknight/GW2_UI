@@ -1,0 +1,37 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwSettingsRaidPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
+        <Frames>
+            <Button name="GwToggleRaidPreview" inherits="GwStandardButton" text="-">
+                <Size x="24" y="24" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" x="-10" y="-10" />
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="label" text="Preview:" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                            <Color r="1" b="1" g="1"></Color>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="LEFT" x="-5" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+                        GameTooltip:ClearLines()
+                        GameTooltip:AddLine(GwLocalization["RAID_PREVIEW"], 1, 1, 1)
+                        GameTooltip:AddLine(GwLocalization["RAID_PREVIEW_DESC"], 1, 1, 1)
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+        </Frames>
+    </Frame>
+
+</Ui>

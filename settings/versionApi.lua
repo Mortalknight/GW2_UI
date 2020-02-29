@@ -1,6 +1,6 @@
 local _, GW = ...
 local _,_, _, version = GetBuildInfo()
-GW.api= {}
+GW.api = {}
 
 local function GetAverageItemLevel()
     if version>40000 then

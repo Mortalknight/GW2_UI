@@ -121,7 +121,6 @@ local function GWUseThisLocalization()
 	GwLocalization["MAP_CLOCK_TIMEMANAGER"] = "Shift-Botão Direito para abrir o Time Manager"
 	GwLocalization["MINIMAP_COORDS"] = "Coordenadas"
 	GwLocalization["MINIMAP_DESC"] = "Usar a unidade de Minimapa do GW2 UI"
-	GwLocalization["MINIMAP_FPS"] = "Mostrar FPS no mini mapa"
 	GwLocalization["MINIMAP_HOVER"] = "Detalhes do Minimapa"
 	GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "Sempre mostrar detalhes do Minimapa."
 	GwLocalization["MINIMAP_POS"] = "Posição do mini-mapa"

@@ -8,7 +8,6 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
-libs/libs.xml
 
 locales/deDE.lua
 locales/koKR.lua
@@ -22,6 +21,36 @@ locales/frFR.lua
 locales/zhCN.lua
 locales/itIT.lua
 
+libs/libs.xml
+
+core/consts.lua
+core/utils.lua
+core/shared.xml
+core/fonts.lua
+core/storage.lua
+
+settings/defaults.lua
+settings/api.lua
+settings/settings.xml
+settings/panel_modules.xml
+settings/panel_profiles.xml
+settings/panel_raid.xml
+settings/settings.lua
+settings/panel_modules.lua
+settings/panel_player.lua
+settings/panel_target.lua
+settings/panel_actionbar.lua
+settings/panel_hud.lua
+settings/panel_party.lua
+settings/panel_raid.lua
+settings/panel_auras.lua
+settings/panel_skins.lua
+settings/panel_profiles.lua
+settings/hover_binding.lua
+settings/welcome.xml
+settings/welcome.lua
+settings/versionApi.lua
+
 character/data/ClassLoader.lua
 character/data/Druid.lua
 character/data/Hunter.lua
@@ -33,20 +62,8 @@ character/data/Shaman.lua
 character/data/Warlock.lua
 character/data/Warrior.lua
 
-core/consts.lua
-core/utils.lua
-core/settings_default.lua
-core/settings_api.lua
-
 changelog.lua
 GW2_ui.lua
-
-core/versionApi.lua
-core/shared.xml
-core/settings.xml
-core/fonts.lua
-core/settings.lua
-core/storage.lua
 
 units/target.xml
 units/target.lua

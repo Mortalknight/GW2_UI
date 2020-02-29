@@ -122,7 +122,6 @@ local function GWUseThisLocalization()
 	GwLocalization["MAP_CLOCK_TIMEMANAGER"] = "Shift+右鍵 開啟時間管理員"
 	GwLocalization["MINIMAP_COORDS"] = "坐标"
 	GwLocalization["MINIMAP_DESC"] = "使用 GW2 UI 小地圖框架。"
-	GwLocalization["MINIMAP_FPS"] = "小地圖上顯示 FPS"
 	GwLocalization["MINIMAP_HOVER"] = "小地圖資訊"
 	GwLocalization["MINIMAP_HOVER_TOOLTIP"] = "永遠顯示小地圖詳細資訊內容。"
 	GwLocalization["MINIMAP_POS"] = "小地圖位置"

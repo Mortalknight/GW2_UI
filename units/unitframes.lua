@@ -18,8 +18,6 @@ local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local unitIlvls = {}
 local UnitAura = _G.UnitAura
-local frames = {}
-local IncHeal = {}
 local LibClassicDurations = LibStub("LibClassicDurations", true)
 local LibCC = LibStub("LibClassicCasterino", true)
 local HealComm = LibStub("LibHealComm-4.0", true)
@@ -1041,31 +1039,10 @@ local function unittarget_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 
-local function UpdateIncomingPredictionAmount(...)
-	for frame in pairs(frames) do
-		for i = 1, select("#", ...) do
-			if (select(i, ...) == frame.guid) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player", frame.unit) or UnitIsUnit("pet", frame.unit)) then
-                local amount = (HealComm:GetHealAmount(frame.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.guid) or 1)
-                frame.healPredictionAmount = amount
-                updateHealthValues(frame)
-				break
-			end
-		end
-	end
-end
-
--- Handle callbacks from HealComm
-function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
-	UpdateIncomingPredictionAmount(...)
-end
-function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
-	UpdateIncomingPredictionAmount(...)
-end
-function IncHeal:HealComm_ModifierChanged(event, guid)
-	UpdateIncomingPredictionAmount(guid)
-end
-function IncHeal:HealComm_GUIDDisappeared(event, guid)
-	UpdateIncomingPredictionAmount(guid)
+local function UpdateIncomingPredictionAmount(self)
+    local amount = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
+    self.healPredictionAmount = amount
+    updateHealthValues(self)
 end
 
 local function LoadTarget()
@@ -1101,7 +1078,6 @@ local function LoadTarget()
 
     RegisterUnitWatch(NewUnitFrame)
 
-    frames[NewUnitFrame] = true
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
 
@@ -1147,6 +1123,11 @@ local function LoadTarget()
         local self = NewUnitFrame
         return target_OnEvent(self, event, ...)
     end
+    -- Handle callbacks from HealComm
+    local HealCommEventHandler = function (event, casterGUID, spellID, healType, endTime, ...)
+        local self = NewUnitFrame
+        return UpdateIncomingPredictionAmount(self)
+    end
 
     LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_START", CastbarEventHandler)
     LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_DELAYED", CastbarEventHandler) -- only for player
@@ -1157,6 +1138,13 @@ local function LoadTarget()
     LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler) -- only for player
     LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
 
+    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealStarted", HealCommEventHandler)
+    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealUpdated", HealCommEventHandler)
+    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealStopped", HealCommEventHandler)
+    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealDelayed", HealCommEventHandler)
+    HealComm.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
+    HealComm.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
+
     LibClassicDurations.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
         target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
     end)    
@@ -1166,14 +1154,6 @@ local function LoadTarget()
     TargetFrame:SetScript("OnEvent", nil)
     TargetFrame:Hide()
     ComboFrame:SetScript("OnShow", function() ComboFrame:Hide() end)
-
-    --libHealComm setup
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
-    HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
 end
 GW.LoadTarget = LoadTarget
 
@@ -1198,7 +1178,6 @@ local function LoadTargetOfUnit(unit)
     f:SetAttribute("*type2", "togglemenu")
     f:SetAttribute("unit", unitID)
     RegisterUnitWatch(f)
-    frames[f] = true
     f:EnableMouse(true)
     f:RegisterForClicks("AnyDown")
 

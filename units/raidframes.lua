@@ -33,8 +33,6 @@ local hudMoving = false
 local missing, ignored = {}, {}
 local spellBookIndex = {}
 local spellBookSearched = 0
-local frames = {}
-local IncHeal = {}
 
 local HealComm = LibStub("LibHealComm-4.0", true)
 local LibClassicDurations = LibStub("LibClassicDurations", true)
@@ -996,31 +994,10 @@ end
 GW.UpdateRaidFramesLayout = UpdateRaidFramesLayout
 GW.AddForProfiling("raidframes", "UpdateRaidFramesLayout", UpdateRaidFramesLayout)
 
-local function UpdateIncomingPredictionAmount(...)
-	for frame in pairs(frames) do
-		for i = 1, select("#", ...) do
-			if (select(i, ...) == frame.guid) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player", frame.unit) or UnitIsUnit("pet", frame.unit)) then
-                local amount = (HealComm:GetHealAmount(frame.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.guid) or 1)
-                frame.healPredictionAmount = amount
-                setHealth(frame)
-				break
-			end
-		end
-	end
-end
-
--- Handle callbacks from HealComm
-function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
-	UpdateIncomingPredictionAmount(...)
-end
-function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
-	UpdateIncomingPredictionAmount(...)
-end
-function IncHeal:HealComm_ModifierChanged(event, guid)
-	UpdateIncomingPredictionAmount(guid)
-end
-function IncHeal:HealComm_GUIDDisappeared(event, guid)
-	UpdateIncomingPredictionAmount(guid)
+local function UpdateIncomingPredictionAmount(self)
+    local amount = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
+    self.healPredictionAmount = amount
+    setHealth(self)
 end
 
 local function createRaidFrame(registerUnit, index)
@@ -1050,7 +1027,6 @@ local function createRaidFrame(registerUnit, index)
         )
     end
 
-    frames[frame] = true
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
@@ -1060,7 +1036,6 @@ local function createRaidFrame(registerUnit, index)
     frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
     frame.healthbar.animationValue = 0
     
-
     frame.manabar.animationName = "GwCompact" .. registerUnit .. "manabaranimation"
     frame.manabar.animationValue = 0
 
@@ -1085,6 +1060,12 @@ local function createRaidFrame(registerUnit, index)
             GameTooltip:Show()
         end
     )
+
+    -- Handle callbacks from HealComm
+    local HealCommEventHandler = function (event, casterGUID, spellID, healType, endTime, ...)
+        local self = frame
+        return UpdateIncomingPredictionAmount(self)
+    end
 
     frame:SetScript("OnEvent", raidframe_OnEvent)
     frame:SetScript("OnUpdate", raidframe_OnUpdate)
@@ -1111,6 +1092,13 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_TARGET", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
+
+    HealComm.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)
+    HealComm.RegisterCallback(frame, "HealComm_HealUpdated", HealCommEventHandler)
+    HealComm.RegisterCallback(frame, "HealComm_HealStopped", HealCommEventHandler)
+    HealComm.RegisterCallback(frame, "HealComm_HealDelayed", HealCommEventHandler)
+    HealComm.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
+    HealComm.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
     LibClassicDurations.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
         raidframe_OnEvent(frame, "UNIT_AURA", unit)
@@ -1250,13 +1238,5 @@ local function LoadRaidFrames()
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
     end
-
-    --libHealComm setup
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
-    HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
 end
 GW.LoadRaidFrames = LoadRaidFrames
