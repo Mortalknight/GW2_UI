@@ -8,6 +8,8 @@ local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
+local CommaValue = GW.CommaValue
+local RoundDec = GW.RoundDec
 local UnitAura = _G.UnitAura
 
 local HealComm = LibStub("LibHealComm-4.0", true)
@@ -614,12 +616,11 @@ end
 GW.AddForProfiling("party", "setHealth", setHealth)
 
 local function setPredictionAmount(self)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
+    local prediction = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
 
     self.healPredictionAmount = prediction
     setHealth(self)
 end
-GW.AddForProfiling("party", "setPredictionAmount", setPredictionAmount)
 
 local function updatePartyData(self)
     if not UnitExists(self.unit) then
@@ -631,7 +632,7 @@ local function updatePartyData(self)
     local power = UnitPower(self.unit, UnitPowerType(self.unit))
     local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
     local powerPrecentage = 0
-    powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+    local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
@@ -760,13 +761,6 @@ local function TogglePartyRaid(b)
 end
 GW.TogglePartyRaid = TogglePartyRaid
 
-local function setPredictionAmount(self)
-    local prediction = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
-
-    self.healPredictionAmount = prediction
-    setHealth(self)
-end
-
 local function createPartyFrame(i)
     local registerUnit = "party" .. i
     --  registerUnit = 'player'
@@ -777,6 +771,7 @@ local function createPartyFrame(i)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
     frame.healthbar = frame.predictionbar.healthbar
+    frame.healthstring = frame.healthbar.healthstring
     frame:SetScript("OnEvent", party_OnEvent)
 
     frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)

@@ -318,7 +318,7 @@ local function updateAwayData(self)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 
-    if not UnitInPhase(self.unit) or UnitInRange(self.unit) ~= true then
+    if UnitIsConnected(self.unit) and (not UnitInPhase(self.unit) or not UnitInRange(self.unit)) then
         local r, g, b = self.healthbar:GetStatusBarColor()
         r = r * 0.3
         b = b * 0.3
