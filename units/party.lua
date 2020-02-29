@@ -666,7 +666,7 @@ end
 GW.AddForProfiling("party", "setUnitName", setUnitName)
 
 local function setHealthValue(self, healthCur, healthMax, healthPrec)
-    self.healthsetting = GetSetting("RAID_UNIT_HEALTH")
+    self.healthsetting = GetSetting("PARTY_UNIT_HEALTH")
     local healthstring = ""
 
     if self.healthsetting == "NONE" then
