@@ -32,6 +32,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, "Ready Check Listener Frame", nil, "READYCHECKLISTENERFRAME_SKIN_ENABLED")
     addOption(p, "Talking Head Frame", nil, "TALKINGHEAD_SKIN_ENABLED")
     addOption(p, "Timer Tracker Frame", nil, "TIMERTRACKER_SKIN_ENABLED")
+    addOption(p, "Immersion Addon", nil, "IMMERSIONADDON_SKIN_ENABLED")
 
     InitPanel(p)
 end

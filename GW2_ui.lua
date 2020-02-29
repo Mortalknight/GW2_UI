@@ -600,6 +600,9 @@ local function loadAddon(self)
     if GetSetting("TIMERTRACKER_SKIN_ENABLED") then
         GW.SkinTimerTrackerFrame()
     end
+    if GetSetting("IMMERSIONADDON_SKIN_ENABLED") then
+        GW.SkinImmersionAddonFrame()
+    end
 
     --Create hud art
     GW.LoadHudArt()
