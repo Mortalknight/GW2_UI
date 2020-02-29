@@ -177,6 +177,14 @@ local function setHealth(self)
 end
 GW.AddForProfiling("raidframes", "setHealth", setHealth)
 
+local function setPredictionAmount(self)
+    local prediction = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
+
+    self.healPredictionAmount = prediction
+    setHealth(self)
+end
+GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
+
 local function setUnitName(self)
     if self == nil or self.unit == nil then
         return
@@ -658,6 +666,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
 
     if event == "load" then
         setHealth(self)
+        setPredictionAmount(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
         setHealth(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
@@ -992,13 +1001,7 @@ local function UpdateRaidFramesLayout()
     end
 end
 GW.UpdateRaidFramesLayout = UpdateRaidFramesLayout
-GW.AddForProfiling("raidframes", "UpdateRaidFramesLayout", UpdateRaidFramesLayout)
-
-local function UpdateIncomingPredictionAmount(self)
-    local amount = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
-    self.healPredictionAmount = amount
-    setHealth(self)
-end
+GW.AddForProfiling("raidframes", "UpdateRaidFramesLayout", UpdateRaidFramesLayout)  
 
 local function createRaidFrame(registerUnit, index)
     local frame = _G["GwCompact" .. registerUnit]
@@ -1064,7 +1067,7 @@ local function createRaidFrame(registerUnit, index)
     -- Handle callbacks from HealComm
     local HealCommEventHandler = function (event, casterGUID, spellID, healType, endTime, ...)
         local self = frame
-        return UpdateIncomingPredictionAmount(self)
+        return setPredictionAmount(self)
     end
 
     frame:SetScript("OnEvent", raidframe_OnEvent)

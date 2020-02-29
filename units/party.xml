@@ -92,6 +92,15 @@
                                     <Size x="7" y="8"></Size>
                                 </Texture>
                             </Layer>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parenthealthstring" parentKey="healthstring" fontSize="8" text="50%" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="65" y="8"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
                         </Layers>
                     </StatusBar>
                 </Frames>

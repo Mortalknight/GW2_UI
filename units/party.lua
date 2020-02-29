@@ -560,6 +560,67 @@ local function setUnitName(self)
 end
 GW.AddForProfiling("party", "setUnitName", setUnitName)
 
+local function setHealthValue(self, healthCur, healthMax, healthPrec)
+    self.healthsetting = GetSetting("PARTY_UNIT_HEALTH")
+    local healthstring = ""
+
+    if self.healthsetting == "NONE" then
+        self.healthstring:Hide()
+        return
+    end
+
+    if self.healthsetting == "PREC" then
+        self.healthstring:SetText(RoundDec(healthPrec *100,0).. "%")
+        self.healthstring:SetJustifyH("LEFT")
+    elseif self.healthsetting == "HEALTH" then
+        self.healthstring:SetText(CommaValue(healthCur))
+        self.healthstring:SetJustifyH("LEFT")
+    elseif self.healthsetting == "LOSTHEALTH" then
+        if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
+        self.healthstring:SetText(healthstring)
+        self.healthstring:SetJustifyH("RIGHT")
+    end
+    if healthCur == 0 then 
+        self.healthstring:SetTextColor(255, 0, 0)
+    else
+        self.healthstring:SetTextColor(1, 1, 1)
+    end
+    self.healthstring:Show()
+end
+GW.AddForProfiling("party", "setHealthValue", setHealthValue)
+
+local function setHealPrediction(self, predictionPrecentage)
+    self.predictionbar:SetValue(predictionPrecentage)    
+end
+GW.AddForProfiling("party", "setHealPrediction", setHealPrediction)
+
+local function setHealth(self)
+    local health = UnitHealth(self.unit)
+    local healthMax = UnitHealthMax(self.unit)
+    local healthPrec = 0
+    local predictionPrecentage = 0
+
+    if healthMax > 0 then
+        healthPrec = health / healthMax
+    end
+
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
+        predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
+    end
+    setHealPrediction(self, predictionPrecentage)
+    setHealthValue(self, health, healthMax, healthPrec)
+    Bar(self.healthbar, healthPrec)
+end
+GW.AddForProfiling("party", "setHealth", setHealth)
+
+local function setPredictionAmount(self)
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+
+    self.healPredictionAmount = prediction
+    setHealth(self)
+end
+GW.AddForProfiling("party", "setPredictionAmount", setPredictionAmount)
+
 local function updatePartyData(self)
     if not UnitExists(self.unit) then
         return
@@ -609,26 +670,15 @@ local function party_OnEvent(self, event, unit, arg1)
     if IsInRaid() then
         return
     end
-
+    if event == "load" then
+        setPredictionAmount(self)
+        setHealth(self)
+    end
     if not self.nameNotLoaded then
         setUnitName(self)
     end
-
     if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" and unit == self.unit then
-        local health = UnitHealth(self.unit)
-        local healthMax = UnitHealthMax(self.unit)
-        local healthPrec = 0
-        local predictionPrecentage = 0
-
-        if healthMax > 0 then
-            healthPrec = health / healthMax
-        end
-
-        if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
-            predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
-        end
-        self.predictionbar:SetValue(predictionPrecentage)
-        Bar(self.healthbar, healthPrec)
+        setHealth(self)
     end
     if event == "UNIT_POWER_UPDATE" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
@@ -710,10 +760,11 @@ local function TogglePartyRaid(b)
 end
 GW.TogglePartyRaid = TogglePartyRaid
 
-local function UpdateIncomingPredictionAmount(self)
-    local amount = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
-    self.healPredictionAmount = amount
-    party_OnEvent(self, "UNIT_HEALTH", self.unit)
+local function setPredictionAmount(self)
+    local prediction = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
+
+    self.healPredictionAmount = prediction
+    setHealth(self)
 end
 
 local function createPartyFrame(i)
@@ -764,8 +815,8 @@ local function createPartyFrame(i)
 
     -- Handle callbacks from HealComm
     local HealCommEventHandler = function (event, casterGUID, spellID, healType, endTime, ...)
-        local self = NewUnitFrame
-        return UpdateIncomingPredictionAmount(self)
+        local self = frame
+        return setPredictionAmount(self)
     end
 
     frame:SetScript("OnEvent", party_OnEvent)
@@ -797,6 +848,8 @@ local function createPartyFrame(i)
     LibClassicDurations.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
         party_OnEvent(frame, "UNIT_AURA", unit)
     end) 
+
+    party_OnEvent(frame, "load")
 
     updatePartyData(frame)
 end
