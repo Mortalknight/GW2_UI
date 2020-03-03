@@ -13,6 +13,7 @@ NEW
     - Added option for range indicator on mainbar
     - Added option to show player health and absorb as %, value or both
     - Settings menu improvements
+    - Added HUD Scale option as a slider
 ]=]
 )
 
