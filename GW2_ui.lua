@@ -569,7 +569,6 @@ end
 GW.PixelPerfection = PixelPerfection
 
 local SCALE_HUD_FRAMES = {
-    "GwHudArtFrame",
     "GwPlayerPowerBar",
     "GwPlayerAuraFrame",
     "GwPlayerClassPower",

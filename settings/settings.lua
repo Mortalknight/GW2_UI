@@ -106,11 +106,12 @@ local function AddOption(panel, name, desc, optionName, callback, params)
 end
 GW.AddOption = AddOption
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers)
     local opt = AddOption(panel, name, desc, optionName, callback, params)
 
     opt["min"] = min
     opt["max"] = max
+    opt["decimalNumbers"] = decimalNumbers or 0
     opt["optionType"] = "slider"
 
     return opt
@@ -296,12 +297,26 @@ local function InitPanel(panel)
         if v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
             of.slider:SetValue(GetSetting(v.optionName))
-            of.slider.label:SetText(GW.RoundInt(GetSetting(v.optionName)))
             of.slider:SetScript(
                 "OnValueChanged",
                 function(self)
-                    SetSetting(v.optionName, self:GetValue())
-                    self.label:SetText(GW.RoundInt(self:GetValue()))
+                    SetSetting(v.optionName, self:GetValue(), v.perSpec)
+                    self:GetParent().input:SetText(GW.RoundDec(self:GetValue(), v.decimalNumbers))
+                    if v.callback ~= nil then
+                        v.callback()
+                    end
+                end
+            )
+            of.input:SetNumber(GW.RoundDec(GetSetting(v.optionName), v.decimalNumbers))
+            of.input:SetScript(
+                "OnEnterPressed",
+                function(self)
+                    self:ClearFocus()
+                    if self:GetNumber() > v.max then self:SetNumber(v.max) end
+                    if self:GetNumber() < v.min then self:SetNumber(v.min) end
+                    self:GetParent().slider:SetValue(self:GetNumber())
+                    SetSetting(v.optionName, self:GetParent().slider:GetValue(), v.perSpec)
+                    self:SetNumber(GW.RoundDec(self:GetParent().slider:GetValue(), v.decimalNumbers))
                     if v.callback ~= nil then
                         v.callback()
                     end
@@ -367,7 +382,8 @@ local function InitPanel(panel)
                     SetSetting(v.optionName, 0)
                     of.slider:SetValue(0)
                     of.title:SetTextColor(0.82, 0.82, 0.82)
-                    of.slider.label:SetTextColor(0.82, 0.82, 0.82)
+                    of.input:Disable()
+                    of.input:SetTextColor(0.82, 0.82, 0.82)
                 end
             end
         else
@@ -375,7 +391,8 @@ local function InitPanel(panel)
                 if of.slider then
                     of.slider:Enable()
                     of.title:SetTextColor(1, 1, 1)
-                    of.slider.label:SetTextColor(1, 1, 1)
+                    of.input:Enable()
+                    of.input:SetTextColor(1, 1, 1)
                 end
             end
         end

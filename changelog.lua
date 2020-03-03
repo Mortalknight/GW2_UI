@@ -13,6 +13,7 @@ v(
     - Rebuilt health globe for performance and graphical improvement
     - Added extra manabar for druids in shapeshift form (testing)
     - Add ability to bind Keys by hover
+    - Added HUD Scale option as a slider
 ]=]
 )
 

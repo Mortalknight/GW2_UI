@@ -227,7 +227,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwOptionBoxSliderTmpl" frameStrata="HIGH" virtual="true">
+        <Button name="GwOptionBoxSliderTmpl" frameStrata="HIGH" virtual="true">
         <Size x="500" y="40"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -245,9 +245,9 @@
         </Layers>
         <Frames>
             <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
-                <Size x="235" y="16"/>
+                <Size x="205" y="16"/>
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-25"/>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-55"/>
                 </Anchors>
                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
                 <ThumbTexture file="Interface/AddOns/GW2_UI/textures/sliderhandle">
@@ -262,20 +262,28 @@
                             </Anchors>
                         </Texture>
                     </Layer>
-                    <Layer level="ARTWORK">
-						<FontString parentKey="label" inherits="GameFontNormalSmall" text="0" justifyH="LEFT">
-                            <Color r="1" b="1" g="1"/>
-							<Anchors>
-								<Anchor point="LEFT" relativePoint="RIGHT">
-									<Offset>
-										<AbsDimension x="4" y="1"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-					</Layer>
                 </Layers>
             </Slider>
+            <EditBox parentKey="input" autoFocus="false">
+                <Size x="25" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-5" y="3"/>
+                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
+                            </Anchors>
+                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <FontString inherits="GameFontNormalSmall">
+                    <Color r="1" b="1" g="1"/>
+                </FontString>
+            </EditBox>
         </Frames>
     </Button>
 

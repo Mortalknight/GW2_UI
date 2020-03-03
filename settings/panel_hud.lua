@@ -29,6 +29,17 @@ local function LoadHudPanel(sWindow)
     addOption(p, L["MOUSE_TOOLTIP"], L["MOUSE_TOOLTIP_DESC"], "TOOLTIP_MOUSE")
     addOptionSlider(
         p,
+        L["HUD_SCALE"],
+        L["HUD_SCALE_DESC"],
+        "HUD_SCALE",
+        GW.UpdateHudScale,
+        0.5,
+        1.5,
+        nil,
+        2
+    )
+    addOptionSlider(
+        p,
         L["ANCHOR_CURSOR_OFFSET_X"],
         L["ANCHOR_CURSOR_OFFSET_DESC"],
         "ANCHOR_CURSOR_OFFSET_X",
@@ -97,19 +108,6 @@ local function LoadHudPanel(sWindow)
             LARGE,
             TIME_LEFT_MEDIUM,
             DEFAULT
-        }
-    )
-    addOptionDropdown(
-        p,
-        L["HUD_SCALE"],
-        L["HUD_SCALE_DESC"],
-        "HUD_SCALE",
-        GW.UpdateHudScale,
-        {1, 0.9, 0.8},
-        {
-            DEFAULT,
-            SMALL,
-            L["HUD_SCALE_TINY"]
         }
     )
 
