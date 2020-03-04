@@ -315,8 +315,8 @@ local function InitPanel(panel)
                     self:ClearFocus()
                     if self:GetNumber() > v.max then self:SetText(v.max) end
                     if self:GetNumber() < v.min then self:SetText(v.min) end
-		    self:SetText(RoundDec(self:GetParent().slider:GetValue(), v.decimalNumbers))
-		    self:GetParent().slider:SetValue(self:GetNumber())
+		    self:GetParent().slider:SetValue(RoundDec(self:GetNumber(), v.decimalNumbers))
+		    self:SetText(self:GetParent().slider:GetValue())
                     SetSetting(v.optionName, self:GetParent().slider:GetValue(), v.perSpec)
                     if v.callback ~= nil then
                         v.callback()
