@@ -301,8 +301,10 @@ local function InitPanel(panel)
             of.slider:SetScript(
                 "OnValueChanged",
                 function(self)
-                    SetSetting(v.optionName, RoundDec(self:GetValue(), v.decimalNumbers), v.perSpec)
-                    self:GetParent().input:SetText(RoundDec(self:GetValue(), v.decimalNumbers))
+                    local roundValue = RoundDec(self:GetValue(), v.decimalNumbers)
+
+                    SetSetting(v.optionName, roundValue, v.perSpec)
+                    self:GetParent().input:SetText(roundValue)
                     if v.callback ~= nil then
                         v.callback()
                     end
@@ -312,12 +314,15 @@ local function InitPanel(panel)
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
+                    local roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or 0
+
                     self:ClearFocus()
-                    if self:GetNumber() > v.max then self:SetText(v.max) end
-                    if self:GetNumber() < v.min then self:SetText(v.min) end
-		    self:GetParent().slider:SetValue(RoundDec(self:GetNumber(), v.decimalNumbers))
-		    self:SetText(self:GetParent().slider:GetValue())
-                    SetSetting(v.optionName, self:GetParent().slider:GetValue(), v.perSpec)
+                    if tonumber(roundValue) > v.max then self:SetText(v.max) end
+                    if tonumber(roundValue) < v.min then self:SetText(v.min) end
+                    roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or 0
+                    self:GetParent().slider:SetValue(roundValue)
+                    self:SetText(roundValue)
+                    SetSetting(v.optionName, roundValue, v.perSpec)
                     if v.callback ~= nil then
                         v.callback()
                     end
