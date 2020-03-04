@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local RoundDec = GW.RoundDec
 local Debug = GW.Debug
 local AddForProfiling = GW.AddForProfiling
 
@@ -300,23 +301,23 @@ local function InitPanel(panel)
             of.slider:SetScript(
                 "OnValueChanged",
                 function(self)
-                    SetSetting(v.optionName, self:GetValue(), v.perSpec)
-                    self:GetParent().input:SetText(GW.RoundDec(self:GetValue(), v.decimalNumbers))
+                    SetSetting(v.optionName, RoundDec(self:GetValue(), v.decimalNumbers), v.perSpec)
+                    self:GetParent().input:SetText(RoundDec(self:GetValue(), v.decimalNumbers))
                     if v.callback ~= nil then
                         v.callback()
                     end
                 end
             )
-            of.input:SetNumber(GW.RoundDec(GetSetting(v.optionName), v.decimalNumbers))
+            of.input:SetNumber(RoundDec(GetSetting(v.optionName), v.decimalNumbers))
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
                     self:ClearFocus()
-                    if self:GetNumber() > v.max then self:SetNumber(v.max) end
-                    if self:GetNumber() < v.min then self:SetNumber(v.min) end
-                    self:GetParent().slider:SetValue(self:GetNumber())
+                    if self:GetNumber() > v.max then self:SetText(v.max) end
+                    if self:GetNumber() < v.min then self:SetText(v.min) end
+		    self:SetText(RoundDec(self:GetParent().slider:GetValue(), v.decimalNumbers))
+		    self:GetParent().slider:SetValue(self:GetNumber())
                     SetSetting(v.optionName, self:GetParent().slider:GetValue(), v.perSpec)
-                    self:SetNumber(GW.RoundDec(self:GetParent().slider:GetValue(), v.decimalNumbers))
                     if v.callback ~= nil then
                         v.callback()
                     end
