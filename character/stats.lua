@@ -589,27 +589,77 @@ local function MP5FromSpirit()
 end
 GW.stats.MP5FromSpirit = MP5FromSpirit
 
-local function _GetTalentModifier()
+local function _GetTalentModifierMP5()
     local _, _, classId = UnitClass("player")
     local mod = 0
 
     if classId == 5 then -- Priest
         local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 8)
         mod = points * 0.05 -- 0-15% from Meditation
-    end
-
-    if classId == 8 then -- Mage
+    elseif classId == 8 then -- Mage
         local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 12)
         mod = points * 0.05 -- 0-15% Arcane Meditation
-    end
-
-    if classId == 11 then -- Druid
+    elseif classId == 11 then -- Druid
         local _, _, _, _, points, _, _, _ = GetTalentInfo(3, 6)
         mod = points * 0.05 -- 0-15% from Reflection
     end
 
     return mod
 end
+
+local function _HasSetBonusModifierMP5()
+    local _, _, classId = UnitClass("player")
+    local hasSetBonus = false
+    local setCounter = 0
+
+    for i = 1, 18 do
+        local itemLink = GetInventoryItemLink("player", i)
+        if itemLink then
+            local itemName = C_Item.GetItemNameByID(GetInventoryItemLink("player", i))
+
+            if itemName then
+                if classId == 5 then -- Priest
+                    if string.sub(itemName, -13) == "Transcendence" or string.sub(itemName, -11) == "Erhabenheit" or string.sub(itemName, -13) == "Trascendencia" or string.sub(itemName, -13) == "transcendance" or string.sub(itemName, -14) == "Transcendência" then
+                        setCounter = setCounter + 1
+                    end
+                elseif classId == 11 then -- Druid
+                    if string.sub(itemName, 1, 9) == "Stormrage" or string.sub(itemName, -9) == "Stormrage" or string.sub(itemName, -10) == "Tempestira" or string.sub(itemName, -11) == "Tempesfúria" then
+                        setCounter = setCounter + 1
+                    end
+                end
+            end
+        end
+    end
+
+    if setCounter >= 3 then
+        hasSetBonus = true
+    end
+
+    return hasSetBonus
+end
+
+local function _GetTalentModifierHolyCrit()
+    local _, _, classId = UnitClass("player")
+    local mod = 0
+
+    if classId == 2 then -- Paladin
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 13)
+        mod = points * 1 -- 0-5% Holy Power
+    elseif classId == 5 then -- Priest
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(2, 3)
+        mod = points * 1 -- 0-5% Holy Specialization
+    end
+
+    return mod
+end
+
+-- Get holy crit chance
+local function HolyCrit()
+    local crit = _GetTalentModifierHolyCrit()
+    crit = crit + GetSpellCritChance(2)
+    return RoundDec(GetSpellCritChance(2), 2) .. "%"
+end
+GW.stats.HolyCrit = HolyCrit
 
 -- Get manaregen while casting
 local function MP5WhileCasting()
@@ -619,7 +669,10 @@ local function MP5WhileCasting()
     end
     lastManaReg = casting
 
-    local mod = _GetTalentModifier()
+    local mod = _GetTalentModifierMP5()
+    if _HasSetBonusModifierMP5() then
+        mod = mod + 0.15
+    end
     if mod > 0 then
         casting = casting * mod
     end
@@ -630,6 +683,25 @@ local function MP5WhileCasting()
     return RoundDec(casting, 2)
 end
 GW.stats.MP5WhileCasting = MP5WhileCasting
+
+local function _GetTalentModifierSpellCrit()
+    local _, _, classId = UnitClass("player")
+    local mod = 0
+
+    if classId == 8 then -- Mage
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 15)
+        mod = points * 1 -- 0-3% Arcane Instability
+    end
+
+    return mod
+end
+
+local function SpellCrit()
+    local crit = _GetTalentModifierSpellCrit()
+    crit = crit + GetSpellCritChance()
+    return RoundDec(crit, 2) .. "%"
+end
+GW.stats.SpellCrit = SpellCrit
 
 local function _IsShapeshifted()
     for i = 0, 40 do
@@ -678,7 +750,7 @@ end
 GW.stats.MeleeHitMissChanceSameLevel = MeleeHitMissChanceSameLevel
 
 local function MeleeHitMissChanceBossLevel()
-    local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
+	local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
     local playerLevel = UnitLevel("player")
     local enemyDefenseValue = (playerLevel + 3) * 5
 
@@ -705,7 +777,7 @@ end
 GW.stats.MeleeHitMissChanceBossLevel = MeleeHitMissChanceBossLevel
 
 local function _GetRangeHitBonus()
-    local hitValue = 0
+	local hitValue = 0
     -- From Enchant
     local slotId, _ = GetInventorySlotInfo(CHAR_EQUIP_SLOTS["Range"])
     local itemLink = GetInventoryItemLink("player", slotId)

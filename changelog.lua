@@ -14,6 +14,12 @@ v(
     - Added extra manabar for druids in shapeshift form (testing)
     - Add ability to bind Keys by hover
     - Added HUD Scale option as a slider
+    - Advanced Character Stats: - Fixed miss chance calculation
+                                - Added Arcane Instability talent for mages to spell crit calculation
+                                - Added Holy Power talent for paladins to holy crit calculation
+                                - Added MP5-Bonus from T2 set bonuses
+                                - Add Priests holy crit talent to calculation
+
 ]=]
 )
 

@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local RoundDec = GW.RoundDec
 local Debug = GW.Debug
 local AddForProfiling = GW.AddForProfiling
 
@@ -300,8 +301,10 @@ local function InitPanel(panel)
             of.slider:SetScript(
                 "OnValueChanged",
                 function(self)
-                    SetSetting(v.optionName, self:GetValue(), v.perSpec)
-                    self:GetParent().input:SetText(GW.RoundDec(self:GetValue(), v.decimalNumbers))
+                    local roundValue = RoundDec(self:GetValue(), v.decimalNumbers)
+
+                    SetSetting(v.optionName, roundValue, v.perSpec)
+                    self:GetParent().input:SetText(roundValue)
                     if v.callback ~= nil then
                         v.callback()
                     end
@@ -311,12 +314,15 @@ local function InitPanel(panel)
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
+                    local roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or 0
+
                     self:ClearFocus()
-                    if self:GetNumber() > v.max then self:SetNumber(v.max) end
-                    if self:GetNumber() < v.min then self:SetNumber(v.min) end
-                    self:GetParent().slider:SetValue(self:GetNumber())
-                    SetSetting(v.optionName, self:GetParent().slider:GetValue(), v.perSpec)
-                    self:SetNumber(GW.RoundDec(self:GetParent().slider:GetValue(), v.decimalNumbers))
+                    if tonumber(roundValue) > v.max then self:SetText(v.max) end
+                    if tonumber(roundValue) < v.min then self:SetText(v.min) end
+                    roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or 0
+                    self:GetParent().slider:SetValue(roundValue)
+                    self:SetText(roundValue)
+                    SetSetting(v.optionName, roundValue, v.perSpec)
                     if v.callback ~= nil then
                         v.callback()
                     end
