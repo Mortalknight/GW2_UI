@@ -972,7 +972,7 @@ local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer
 end
 
 local function UpdateRaidFramesAnchor()
-    GwRaidFrameContainerMoveAble:GetScript("OnDragStop")(GwRaidFrameContainerMoveAble)
+    GwRaidFrameContainer.gwMover:GetScript("OnDragStop")(GwRaidFrameContainer.gwMover)
 end
 GW.UpdateRaidFramesAnchor = UpdateRaidFramesAnchor
 GW.AddForProfiling("raidframes", "UpdateRaidFramesAnchor", UpdateRaidFramesAnchor)
@@ -985,11 +985,11 @@ local function UpdateRaidFramesPosition()
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Update size
-    GwRaidFrameContainerMoveAble:SetSize(isV and size2 or size1, isV and size1 or size2)
+    GwRaidFrameContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
 
     -- Update unit frames
     for i = 1, 40 do
-        PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainerMoveAble, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+        PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
     end
 end
@@ -999,13 +999,13 @@ GW.AddForProfiling("raidframes", "UpdateRaidFramesPosition", UpdateRaidFramesPos
 local function ToggleRaidFramesPreview()
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
     if previewStep == 0 then
-        GwRaidFrameContainerMoveAble:EnableMouse(false)
-        GwRaidFrameContainerMoveAble:SetMovable(false)
-        GwRaidFrameContainerMoveAble:Hide()
+        GwRaidFrameContainer.gwMover:EnableMouse(false)
+        GwRaidFrameContainer.gwMover:SetMovable(false)
+        GwRaidFrameContainer.gwMover:Hide()
     else
-        GwRaidFrameContainerMoveAble:Show()
-        GwRaidFrameContainerMoveAble:EnableMouse(true)
-        GwRaidFrameContainerMoveAble:SetMovable(true)
+        GwRaidFrameContainer.gwMover:Show()
+        GwRaidFrameContainer.gwMover:EnableMouse(true)
+        GwRaidFrameContainer.gwMover:SetMovable(true)
         UpdateRaidFramesPosition()
     end
     GwToggleRaidPreview:SetText(previewStep == 0 and "-" or previewSteps[previewStep])
@@ -1207,7 +1207,7 @@ local function LoadRaidFrames()
 
     RegisterMovableFrame(GwRaidFrameContainer, "Raid Container", "raid_pos", "VerticalActionBarDummy")
 
-    hooksecurefunc(GwRaidFrameContainerMoveAble, "StopMovingOrSizing", function (frame)
+    hooksecurefunc(GwRaidFrameContainer.gwMover, "StopMovingOrSizing", function (frame)
         local anchor = GetSetting("RAID_ANCHOR")
     
         if anchor == "GROWTH" then
@@ -1230,11 +1230,11 @@ local function LoadRaidFrames()
     end)
 
     for i = 1, 40 do
-        local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainerMoveAble, "VerticalActionBarDummy")
-        f:SetParent(GwRaidFrameContainerMoveAble)
+        local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainer.gwMover, "VerticalActionBarDummy")
+        f:SetParent(GwRaidFrameContainer.gwMover)
         f.frameName:SetText("")
         f.Background:SetVertexColor(0.2, 0.2, 0.2, 1)
-        f:SetPoint("TOPLEFT", GwRaidFrameContainerMoveAble, "TOPLEFT", 0, 0)
+        f:SetPoint("TOPLEFT", GwRaidFrameContainer.gwMover, "TOPLEFT", 0, 0)
     end
 
     createRaidFrame("player", nil)
