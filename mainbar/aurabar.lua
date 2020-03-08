@@ -365,11 +365,10 @@ end
 GW.AddForProfiling("aurabar_secure", "getLegacyTempEnchant", getLegacyTempEnchant)
 
 local function newHeader(filter, secure)
-    local h, aura_tmpl
+    local h, w, aura_tmpl
     if secure then
         -- "secure" style auras
         h = CreateFrame("Frame", nil, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
-        GW.MixinHideDuringPet(h)
         aura_tmpl = "GwAuraSecureTmpl"
         h.GetAura = getSecureAura
         h.GetTempEnchant = getSecureTempEnchant
@@ -377,8 +376,8 @@ local function newHeader(filter, secure)
         h.GetAType = getSecureAType
     else
         -- "legacy" style auras
-        h = GW.CreateModifiedAuraHeader()
-        GW.MixinHideDuringPet(h)
+        w = GW.CreateModifiedAuraHeader()
+        h = w.inner
         aura_tmpl = "GwAuraTmpl"
         h.GetAura = getLegacyAura
         h.GetTempEnchant = getLegacyTempEnchant
@@ -461,7 +460,11 @@ local function newHeader(filter, secure)
     h:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
     h:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    return h
+    if w then
+        return w
+    else
+        return h
+    end
 end
 GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 
@@ -473,6 +476,9 @@ local function loadAuras(lm, secure)
     hb:SetAttribute("growDir", grow_dir)
     GW.RegisterScaleFrame(hb)
     hb:Show()
+    if hb.inner then
+        hb.inner:Show()
+    end
     RegisterMovableFrame(hb, "Player Buffs", "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
     if not hb.isMoved then
         hb:ClearAllPoints()
@@ -499,6 +505,9 @@ local function loadAuras(lm, secure)
         hd:SetPoint("BOTTOMLEFT", hb, "TOPLEFT", 0, 20)
     end
     hd:Show()
+    if hd.inner then
+        hd.inner:Show()
+    end
 end
 
 local function LoadPlayerAuras(lm)

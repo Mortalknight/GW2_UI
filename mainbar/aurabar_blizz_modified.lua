@@ -446,8 +446,20 @@ auraHeader_Update = function(self)
 end
 
 local function CreateModifiedAuraHeader()
-    h = CreateFrame("Frame", nil, UIParent)
-    h:Hide()
+	local wrap_num = GW.GetSetting("PLAYER_AURA_WRAP_NUM")
+	local grow_dir = GW.GetSetting("PlayerBuffFrame_GrowDirection")
+	w = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
+	w:Hide()
+	w:SetSize(wrap_num * 33, 33)
+	
+	h = CreateFrame("Frame", nil, w)
+	h:Hide()
+	h:ClearAllPoints()
+	if grow_dir == "UP" or grow_dir == "UPR" then
+		h:SetPoint("BOTTOM", w, "BOTTOM", 0, 0)
+	else
+		h:SetPoint("TOP", w, "TOP", 0, 0)
+	end
 
     h.buttons = {}
     h.tempenchants = {}
@@ -457,8 +469,10 @@ local function CreateModifiedAuraHeader()
     h:SetScript("OnUpdate", auraHeader_OnUpdate)
     h:SetScript("OnAttributeChanged", auraHeader_OnAttributeChanged)
     
-    auraHeader_OnLoad(h)
+	auraHeader_OnLoad(h)
+	
+	w.inner = h
 
-    return h
+    return w
 end
 GW.CreateModifiedAuraHeader = CreateModifiedAuraHeader
