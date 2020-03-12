@@ -13,7 +13,6 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf"		
 	
 	--Strings
-	GwLocalization['WEAPON_SKILLS_HEADER'] = 'Weapon Skills' -- Do not touch
 	GwLocalization["ACTION_BAR_FADE"] = "淡出快捷列"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "非戰鬥中隱藏額外快捷列。"
 	GwLocalization["ACTION_BARS_DESC"] = "使用 GW2 UI 風格加強型的快捷列。"

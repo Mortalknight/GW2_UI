@@ -156,36 +156,43 @@ local function getArmor(unit, prefix)
 end
 GW.stats.getArmor = getArmor
 
+local function _GetTalentModifierDefense()
+    local _, _, classId = UnitClass("player")
+    local mod = 0
+
+    if classId == 1 then -- Warrior
+        local _, _, _, _, points = GetTalentInfo(3, 2)
+        mod = points * 2 -- 0-10 Anticipation
+    end
+
+    return mod
+end
+
 local function getDefense(unit)
 	local numSkills = GetNumSkillLines()
 	local skillIndex = 0
-	local currentHeader = nil
 	local stat
     local tooltip
     local tooltip2
 
-	for i = 1, numSkills do
-		local skillName = select(1, GetSkillLineInfo(i))
-		local isHeader = select(2, GetSkillLineInfo(i))
+    for i = 1, numSkills do
+        local skillName = select(1, GetSkillLineInfo(i))
+        local isHeader = select(2, GetSkillLineInfo(i))
 
-		if isHeader ~= nil and isHeader then
-			currentHeader = skillName
-		else
-			if (currentHeader == GwLocalization["WEAPON_SKILLS_HEADER"] and skillName == DEFENSE) then
-				skillIndex = i
-				break
-			end
-		end
-	end
+        if (isHeader == nil or (not isHeader)) and (skillName == DEFENSE) then
+            skillIndex = i
+            break
+        end
+    end
 
-	local skillRank, skillModifier
-	if skillIndex > 0 then
-		skillRank = select(4, GetSkillLineInfo(skillIndex))
-		skillModifier = select(6, GetSkillLineInfo(skillIndex))
-	else
-		-- Use this as a backup, just in case something goes wrong
-		skillRank, skillModifier = UnitDefense(unit) --Not working properly
+    local skillRank = 0
+    local skillModifier = 0
+    if (skillIndex > 0) then
+        skillRank = select(4, GetSkillLineInfo(skillIndex))
+        skillModifier = select(6, GetSkillLineInfo(skillIndex))
 	end
+	
+	skillModifier = skillModifier + _GetTalentModifierDefense()
 
 	local posBuff = 0
 	local negBuff = 0
@@ -594,13 +601,13 @@ local function _GetTalentModifierMP5()
     local mod = 0
 
     if classId == 5 then -- Priest
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 8)
+        local _, _, _, _, points = GetTalentInfo(1, 8)
         mod = points * 0.05 -- 0-15% from Meditation
     elseif classId == 8 then -- Mage
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 12)
+        local _, _, _, _, points= GetTalentInfo(1, 12)
         mod = points * 0.05 -- 0-15% Arcane Meditation
     elseif classId == 11 then -- Druid
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(3, 6)
+        local _, _, _, _, points = GetTalentInfo(3, 6)
         mod = points * 0.05 -- 0-15% from Reflection
     end
 
@@ -643,10 +650,10 @@ local function _GetTalentModifierHolyCrit()
     local mod = 0
 
     if classId == 2 then -- Paladin
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 13)
+        local _, _, _, _, points = GetTalentInfo(1, 13)
         mod = points * 1 -- 0-5% Holy Power
     elseif classId == 5 then -- Priest
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(2, 3)
+        local _, _, _, _, points = GetTalentInfo(2, 3)
         mod = points * 1 -- 0-5% Holy Specialization
     end
 
@@ -689,7 +696,7 @@ local function _GetTalentModifierSpellCrit()
     local mod = 0
 
     if classId == 8 then -- Mage
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 15)
+        local _, _, _, _, points = GetTalentInfo(1, 15)
         mod = points * 1 -- 0-3% Arcane Instability
     end
 
@@ -717,7 +724,7 @@ local function _GetMissChanceByDifference(weaponSkill, defenseValue)
     if (defenseValue - weaponSkill) <= 10 then
         return 5 + (defenseValue - weaponSkill) * 0.1
     else
-        return 6 + (defenseValue - weaponSkill - 10) * 0.4
+        return 7 + (defenseValue - weaponSkill - 10) * 0.4
     end
 end
 
@@ -841,12 +848,12 @@ local function _GetTalentModifierSpellHit()
     local mod = 0
 
     if classId == 5 then -- Priest
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(3, 5)
+        local _, _, _, _, points = GetTalentInfo(3, 5)
         mod = points * 2 -- 0-10% from Shadow Focus
     end
 
     if classId == 8 then -- Mage
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(3, 3)
+        local _, _, _, _, points = GetTalentInfo(3, 3)
         mod = points * 2 -- 0-6% from Elemental Precision
     end
 
@@ -865,7 +872,10 @@ local function SpellMissChanceSameLevel()
     local missChance = 3
 
     missChance = missChance - _GetTalentModifierSpellHit()
-    missChance = missChance - GetSpellHitModifier()
+    local mod = GetSpellHitModifier()
+    if mod then
+        missChance = missChance - mod
+    end
 
     if missChance < 0 then
         missChance = 0
@@ -881,7 +891,10 @@ local function SpellMissChanceBossLevel()
     local missChance = 16
 
     missChance = missChance - _GetTalentModifierSpellHit()
-    missChance = missChance - GetSpellHitModifier()
+    local mod = GetSpellHitModifier()
+    if mod then
+        missChance = missChance - mod
+    end
 
     if missChance < 0 then
         missChance = 0

@@ -13,7 +13,6 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 	
 	--Strings
-	GwLocalization['WEAPON_SKILLS_HEADER'] = 'Waffenfertigkeiten' -- Do not touch
 	GwLocalization["QUEST_REQUIRED_ITEMS"] = "Erforderliches Item:"
 	GwLocalization["ACTION_BAR_FADE"] = "Aktionsleisten ausblenden"
 	GwLocalization["ACTION_BAR_FADE_DESC"] = "Blendet die zusätzlichen Aktionsleisten außerhalb des Kampfes aus."

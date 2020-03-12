@@ -1,8 +1,7 @@
-## Interface: 11303
+## Interface: 11304
 ## Title: GW2 UI
 ## Notes: Hud Replacement addon.
 ## OptionalDeps: MoveAnything, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
-
 ## Author: deadend06
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03

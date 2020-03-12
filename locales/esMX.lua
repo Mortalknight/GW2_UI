@@ -13,7 +13,6 @@ local function GWUseThisLocalization()
 	GwLocalization["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
 	
 	--Strings
-	GwLocalization['WEAPON_SKILLS_HEADER'] = 'Weapon Skills' -- Do not touch
 	GwLocalization["TARGET_COMBOPOINTS"] = "Show Combopoints on target"
 	GwLocalization["TARGET_COMBOPOINTS_DEC"] = "Show Combopoints on target, below the healthbar"
 	GwLocalization["PIXEL_PERFECTION"] = "Pixel Perfection-Mode"
