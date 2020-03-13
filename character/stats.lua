@@ -664,7 +664,7 @@ end
 local function HolyCrit()
     local crit = _GetTalentModifierHolyCrit()
     crit = crit + GetSpellCritChance(2)
-    return RoundDec(GetSpellCritChance(2), 2) .. "%"
+    return RoundDec(crit, 2) .. "%"
 end
 GW.stats.HolyCrit = HolyCrit
 
