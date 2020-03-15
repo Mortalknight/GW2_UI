@@ -470,7 +470,7 @@ GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 
 local function loadAuras(lm, secure)
     local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
-    local anchor = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+    local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
     -- create a new header for buffs
     local hb = newHeader("HELPFUL", secure)
@@ -485,30 +485,31 @@ local function loadAuras(lm, secure)
     if not hb.isMoved then
         local mbr = GwMultiBarBottomRight
 
-        hb:SetPoint(anchor, mbr, anchor, 0, 20)
+        hb:SetPoint(anchor_hb, mbr, anchor_hb, 0, 20)
     else
-        hb:SetPoint(anchor, hb.gwMover, anchor, 0, 0)
+        hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     end
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function (frame)
         local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
-        local anchor = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+        local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
         if not InCombatLockdown() then
             hb:ClearAllPoints()
-            hb:SetPoint(anchor, hb.gwMover, anchor, 0, 0)
+            hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
         end
     end)
 
     -- create a new header for debuffs
     local hd = newHeader("HARMFUL", secure)
+    local anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
     GW.RegisterScaleFrame(hd)
     lm:RegisterDebuffFrame(hd)
     hd:ClearAllPoints()
-    if grow_dir == "UP" or grow_dir == "DOWN" then
-        hd:SetPoint("BOTTOMRIGHT", hb, "TOPRIGHT", 0, 20)
+    if grow_dir == "DOWNR" or grow_dir == "DOWN" then
+        hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
     else
-        hd:SetPoint("BOTTOMLEFT", hb, "TOPLEFT", 0, 20)
+        hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
     end
     hd:Show()
     if hd.inner then
