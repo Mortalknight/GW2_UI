@@ -123,8 +123,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     if frame == GameTooltip then
         moveframe:SetSize(230, 80)
     elseif displayName == BUFFOPTIONS_LABEL then
-        local wrap_num = GW.GetSetting("PLAYER_AURA_WRAP_NUM")
-        moveframe:SetSize(wrap_num * 33, 100)
+        moveframe:SetSize(316, 100)
         moveframe:SetScale(frame:GetScale())
     else
         moveframe:SetSize(frame:GetSize())
