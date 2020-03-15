@@ -470,6 +470,7 @@ GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 
 local function loadAuras(lm, secure)
     local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
+    local anchor = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
     -- create a new header for buffs
     local hb = newHeader("HELPFUL", secure)
@@ -479,20 +480,25 @@ local function loadAuras(lm, secure)
     if hb.inner then
         hb.inner:Show()
     end
-    RegisterMovableFrame(hb, "Player Buffs", "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
+    RegisterMovableFrame(hb, BUFFOPTIONS_LABEL, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
+    hb:ClearAllPoints()
     if not hb.isMoved then
-        hb:ClearAllPoints()
         local mbr = GwMultiBarBottomRight
-        if grow_dir == "UPR" or grow_dir == "DOWNR" then
-            hb:SetPoint("BOTTOMLEFT", mbr, "TOPLEFT", 0, 20)
-        else
-            hb:SetPoint("BOTTOMRIGHT", mbr, "TOPRIGHT", 0, 20)
-        end
+
+        hb:SetPoint(anchor, mbr, anchor, 0, 20)
     else
-        hb:ClearAllPoints()
-        hb:SetPoint("BOTTOMLEFT", hb.gwMover, "BOTTOMLEFT", 0, 0)
+        hb:SetPoint(anchor, hb.gwMover, anchor, 0, 0)
     end
     lm:RegisterBuffFrame(hb)
+    hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function (frame)
+        local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
+        local anchor = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+
+        if not InCombatLockdown() then
+            hb:ClearAllPoints()
+            hb:SetPoint(anchor, hb.gwMover, anchor, 0, 0)
+        end
+    end)
 
     -- create a new header for debuffs
     local hd = newHeader("HARMFUL", secure)

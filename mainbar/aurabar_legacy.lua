@@ -101,7 +101,7 @@ local function LoadAurasLegacy()
     LoadAuras(player_buff_frame, player_buff_frame, "player")
     UpdateBuffLayout(player_buff_frame, event, "player")
 
-    RegisterMovableFrame(player_buff_frame, "Player Buffs", "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
+    RegisterMovableFrame(player_buff_frame, BUFFOPTIONS_LABEL, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
     hooksecurefunc(player_buff_frame.gwMover, "StopMovingOrSizing", function (frame)
         local anchor = GwPlayerAuraFrame.anchor
         local yOff = GwPlayerAuraFrame.yOff

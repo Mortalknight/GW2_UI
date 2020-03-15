@@ -144,6 +144,7 @@ local function moveHudObjects()
         mf:EnableMouse(true)
         mf:SetMovable(true)
         mf:Show()
+        print(mf:GetName())
     end
 end
 GW.moveHudObjects = moveHudObjects

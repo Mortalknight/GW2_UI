@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwLootFrameTitle" virtual="true">
+    <Frame name="GwLootFrameTitleTemp" virtual="true">
         <Size x="170" y="64"/>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"/>

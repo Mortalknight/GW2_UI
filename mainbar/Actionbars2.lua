@@ -642,8 +642,10 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar:SetScript("OnHide", nil)
     multibar:EnableMouse(false)
 
-    if barName == "MultiBarLeft" or barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, barName, barName, "VerticalActionBarDummy")
+    if barName == "MultiBarLeft" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy")
+    elseif barName == "MultiBarRight" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy")
     elseif barName == "MultiBarBottomLeft" then
         lm:RegisterMultiBarLeft(fmMultibar)
     elseif barName == "MultiBarBottomRight" then

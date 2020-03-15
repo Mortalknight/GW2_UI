@@ -340,6 +340,6 @@ local function LoadPetFrame()
 
     setPetBar(playerPetFrame)
 
-    RegisterMovableFrame(playerPetFrame, "Pet", "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 end
 GW.LoadPetFrame = LoadPetFrame

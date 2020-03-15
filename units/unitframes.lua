@@ -807,7 +807,7 @@ local function LoadTarget()
         NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.nameString, "TOPLEFT", 2, 17)
     end
 
-    RegisterMovableFrame(NewUnitFrame, "Target", "target_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy")
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint(
@@ -887,7 +887,7 @@ local function LoadFocus()
     local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame")
     NewUnitFrame.unit = "focus"
 
-    RegisterMovableFrame(NewUnitFrame, "Focus Target", "focus_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy")
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint(
@@ -961,7 +961,7 @@ local function LoadTargetOfUnit(unit)
 
     f.unit = unitID
 
-    RegisterMovableFrame(f, "Target of Unit", unitID .. "_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(f, SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameTemplateDummy")
 
     f:ClearAllPoints()
     f:SetPoint(

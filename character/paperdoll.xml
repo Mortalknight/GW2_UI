@@ -418,10 +418,24 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-
-                    <ItemButton name="GwPaperDollWristSlot" parentKey="wrists" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
+                    <ItemButton name="GwPaperDollChestSlot" parentKey="chest" inherits="GwPaperDollButtonTemplate,PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.shoulder" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
+                                <Size x="16" y="16"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                                </Anchors>
+                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                            </CheckButton>
+                        </Frames>
+                    </ItemButton>
+                    <ItemButton name="GwPaperDollWristSlot" parentKey="wrists" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.chest" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
@@ -449,25 +463,9 @@
                             </CheckButton>
                         </Frames>
                     </ItemButton>
-
-                    <ItemButton name="GwPaperDollChestSlot" parentKey="chest" inherits="GwPaperDollButtonTemplate,PaperDollAzeriteItemOverlayTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.hands" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                        </Anchors>
-                        <Frames>
-                            <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
-                                <Size x="16" y="16"></Size>
-                                <Anchors>
-                                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
-                                </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
-                            </CheckButton>
-                        </Frames>
-                    </ItemButton>
                     <ItemButton name="GwPaperDollWaistSlot" parentKey="waist" inherits="GwPaperDollButtonTemplate, PaperDollAzeriteItemOverlayTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.chest" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.hands" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                         </Anchors>
                         <Frames>
                             <CheckButton hidden="true" name="$parentCheckButton" parentKey="ignoreSlotCheck" checked="false">
