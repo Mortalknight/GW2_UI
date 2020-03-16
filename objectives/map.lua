@@ -197,10 +197,40 @@ local function hideMiniMapIcons()
 end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
+local function MapPositionToXY(arg)
+    local mapID = C_Map.GetBestMapForUnit(arg)
+    if mapID and arg then
+        local mapPos = C_Map.GetPlayerMapPosition(mapID, arg)
+        if mapPos then
+            return mapPos:GetXY()
+        end
+    end
+    return 0, 0
+end
+GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
+
+local function MapCoordsMiniMap_OnUpdate(self, elapsed)
+    self.elapsedTimer = self.elapsedTimer - elapsed
+    if self.elapsedTimer > 0 then
+        return
+    end
+    self.elapsedTimer = self.updateCap
+
+    local posX, posY = MapPositionToXY("player")
+    if (posX == 0 and posY == 0) then
+        self.Coords:SetText("n/a")
+    else
+        self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
+    end
+end
+
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
         UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
+        if child == GwMapCoords then
+            GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+        end
     end
     MinimapNorthTag:Hide()
 end
@@ -211,6 +241,9 @@ local function hoverMiniMapOut()
         local child = _G[v]
         if child ~= nil then
             UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
+            if child == GwMapCoords then
+                GwMapCoords:SetScript("OnUpdate", nil)
+            end
         end
     end
     MinimapNorthTag:Show()
@@ -273,18 +306,6 @@ local function getMinimapShape()
     return "SQUARE"
 end
 
-local function MapPositionToXY(arg)
-    local mapID = C_Map.GetBestMapForUnit(arg)
-    if mapID and arg then
-        local mapPos = C_Map.GetPlayerMapPosition(mapID, arg)
-        if mapPos then
-            return mapPos:GetXY()
-        end
-    end
-    return 0, 0
-end
-GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
-
 local function garrisonBtn_OnEnter(self)
     local garrisonType = self.gw_GarrisonType
     if not garrisonType then
@@ -319,10 +340,7 @@ local function garrisonBtn_OnEvent(self, event, ...)
         self.gw_Showing = false
         return
     end
-    if
-        garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or
-            garrisonType == LE_GARRISON_TYPE_8_0
-     then
+    if garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or garrisonType == LE_GARRISON_TYPE_8_0 then
         if Minimap:IsShown() then
             self:Show()
         end
@@ -615,25 +633,7 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetText("n/a")
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     GwMapCoords.elapsedTimer = -1
-    local updateCap = 1 / 5 -- cap coord update to 5 FPS
-    local MapCoordsMiniMap_OnUpdate = function(self, elapsed)
-        self.elapsedTimer = self.elapsedTimer - elapsed
-        if self.elapsedTimer > 0 then
-            return
-        end
-        self.elapsedTimer = updateCap
-        if self:GetAlpha() <= 0 then
-            -- TODO: unhook the update completely when not in view in the generic hover handler
-            return
-        end
-        local posX, posY = MapPositionToXY("player")
-        if (posX == 0 and posY == 0) then
-            self.Coords:SetText("n/a")
-        else
-            self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
-        end
-    end
-    GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+    GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
