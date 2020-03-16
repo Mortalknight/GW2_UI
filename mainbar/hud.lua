@@ -1268,5 +1268,8 @@ local function LoadXPBar()
             UIFrameFadeIn(GwExperienceFrame.RepuBar, 0.2, GwExperienceFrame.RepuBar:GetAlpha(), 1)
         end
     )
+
+    --Loss Of Control Icon Skin
+    LossOfControlFrame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 end
 GW.LoadXPBar = LoadXPBar

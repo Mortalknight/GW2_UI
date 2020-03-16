@@ -247,6 +247,9 @@ local function GWUseThisLocalization()
 	GwLocalization["MAINBAR_RANGE_INDICATOR"] = "Main Bar Range Indicator"
 	GwLocalization["PLAYER_ABSORB_VALUE_TEXT"] = "Show Shield Value"
 	GwLocalization["PLAYER_DESC"] = "Modify the player frame settings."
+	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
+	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
+	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
 end
 
 local Locale = GetLocale()

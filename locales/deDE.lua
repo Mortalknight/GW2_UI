@@ -247,8 +247,10 @@ local function GWUseThisLocalization()
 	GwLocalization["MAINBAR_RANGE_INDICATOR"] = "Hauptaktionsleisten Reichweitenanzeige"
 	GwLocalization["PLAYER_ABSORB_VALUE_TEXT"] = "Schildwert anzeigen"
 	GwLocalization["PLAYER_DESC"] = "Modifiziere die Einstellungen der Spielereinheit."
+	GwLocalization["GRID_BUTTON_SHOW"] = "Raster anzeigen"
+	GwLocalization["GRID_BUTTON_HIDE"] = "Raster ausblenden"
+	GwLocalization["GRID_SIZE_LABLE"] = "Rastergröße:"
 end
-
 
 if GetLocale() == "deDE" then
 	GWUseThisLocalization()

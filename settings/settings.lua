@@ -7,11 +7,97 @@ local AddForProfiling = GW.AddForProfiling
 
 local settings_cat = {}
 local lhb
+local mhgb
+local grid_align
+local grid
+local gridSize = 64
 
 SLASH_GWSLASH1 = "/gw2"
 function SlashCmdList.GWSLASH(msg)
     GwSettingsWindow:Show()
     UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+end
+
+local function Grid_GetRegion()
+	if grid then
+		if grid.regionCount and grid.regionCount > 0 then
+			local line = select(grid.regionCount, grid:GetRegions())
+			grid.regionCount = grid.regionCount - 1
+			line:SetAlpha(1)
+			return line
+		else
+			return grid:CreateTexture()
+		end
+	end
+end
+
+local function create_grid()
+	if not grid then
+		grid = CreateFrame("Frame", "GW_UI_Grid", UIParent)
+		grid:SetFrameStrata("BACKGROUND")
+	else
+		grid.regionCount = 0
+		local numRegions = grid:GetNumRegions()
+		for i = 1, numRegions do
+			local region = select(i, grid:GetRegions())
+			if region and region.IsObjectType and region:IsObjectType("Texture") then
+				grid.regionCount = grid.regionCount + 1
+				region:SetAlpha(0)
+			end
+		end
+	end    
+
+    local _, screenHeight = GetPhysicalScreenSize()
+    local size = (1 / 0.64) - ((1 - (768 / screenHeight)) / 0.64)
+	local width, height = UIParent:GetSize()
+	local ratio = width / height
+	local hStepheight = height * ratio
+	local wStep = width / gridSize
+	local hStep = hStepheight / gridSize
+
+	grid.boxSize = gridSize
+	grid:SetPoint("CENTER", UIParent)
+	grid:SetSize(width, height)
+	grid:Show()
+
+	for i = 0, gridSize do
+		local tx = Grid_GetRegion()
+		if i == gridSize / 2 then
+			tx:SetColorTexture(1, 0, 0)
+			tx:SetDrawLayer("BACKGROUND", 1)
+		else
+			tx:SetColorTexture(0, 0, 0)
+			tx:SetDrawLayer("BACKGROUND", 0)
+		end
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", i * wStep - (size / 2), 0)
+		tx:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", i * wStep + (size / 2), 0)
+	end
+
+	do
+		local tx = Grid_GetRegion()
+		tx:SetColorTexture(1, 0, 0)
+		tx:SetDrawLayer("BACKGROUND", 1)
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2) + (size / 2))
+		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + size / 2))
+	end
+
+	for i = 1, floor((height / 2) / hStep) do
+		local tx = Grid_GetRegion()
+		tx:SetColorTexture(0, 0, 0)
+		tx:SetDrawLayer("BACKGROUND", 0)
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 + i * hStep) + (size / 2))
+		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + i * hStep + size / 2))
+
+		tx = Grid_GetRegion()
+		tx:SetColorTexture(0, 0, 0)
+		tx:SetDrawLayer("BACKGROUND", 0)
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 - i * hStep) + (size / 2))
+		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 - i * hStep + size / 2))
+	end
 end
 
 local function switchCat(index)
@@ -133,9 +219,33 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
+local function Grid_Show_Hide()
+    if mhgb.Hide then
+        if grid then
+            grid:Hide()
+        end
+        grid_align:Hide()
+        mhgb.Hide = false
+        mhgb:SetText(GwLocalization["GRID_BUTTON_SHOW"])
+    else
+        if not grid then
+            create_grid()
+        elseif grid.boxSize ~= gridSize then
+            grid:Hide()
+            create_grid()
+        else
+            grid:Show()
+        end
+        grid_align:Show()
+        mhgb.Hide = true
+        mhgb:SetText(GwLocalization["GRID_BUTTON_HIDE"])
+    end
+end
+
 local settings_window_open_before_change = false
 local function moveHudObjects()
     lhb:Show()
+    mhgb:Show()
     if GwSettingsWindow:IsShown() then
         settings_window_open_before_change = true
     end
@@ -154,6 +264,8 @@ local function lockHudObjects()
         return
     end
     lhb:Hide()
+    mhgb:Hide()
+    grid_align:Hide()
     if settings_window_open_before_change then
         settings_window_open_before_change = false
         GwSettingsWindow:Show()
@@ -163,6 +275,9 @@ local function lockHudObjects()
         mf:EnableMouse(false)
         mf:SetMovable(false)
         mf:Hide()
+    end
+    if grid then
+		grid:Hide()
     end
     GW.UpdateFramePositions()
     C_UI.Reload()
@@ -559,6 +674,48 @@ local function LoadSettings()
     lhb:SetText(GwLocalization["SETTING_LOCK_HUD"])
     lhb:SetPoint("TOP", UIParent, "TOP", 0, 0)
     lhb:Hide()
+
+    mhgb = CreateFrame("Button", "GwHudGridButton", UIParent, "GwStandardButton")
+    mhgb:SetScript("OnClick", Grid_Show_Hide)
+    mhgb:ClearAllPoints()
+    mhgb:SetText(GwLocalization["GRID_BUTTON_SHOW"])
+    mhgb:SetPoint("TOP", UIParent, "TOP", 0, -26)
+    mhgb:Hide()
+    mhgb.Hide = false
+
+    grid_align = CreateFrame("EditBox", "GwHudGridButtonEditBox", UIParent, "GwStandardInputBox")
+    grid_align:SetPoint("TOP", UIParent, "TOP", 44, -55)
+	grid_align:SetScript("OnEscapePressed", function(eb)
+		eb:SetText(gridSize)
+		EditBox_ClearFocus(eb)
+	end)
+	grid_align:SetScript("OnEnterPressed", function(eb)
+		local text = eb:GetText()
+		if tonumber(text) then
+			if tonumber(text) <= 256 and tonumber(text) >= 4 then
+				gridSize = tonumber(text)
+			else
+				eb:SetText(gridSize)
+			end
+		else
+			eb:SetText(gridSize)
+        end
+        mhgb.Hide = false
+		Grid_Show_Hide()
+		EditBox_ClearFocus(eb)
+	end)
+	grid_align:SetScript("OnEditFocusLost", function(eb)
+		eb:SetText(gridSize)
+	end)
+	grid_align:SetScript("OnEditFocusGained", grid_align.HighlightText)
+	grid_align:SetScript("OnShow", function(eb)
+		EditBox_ClearFocus(eb)
+		eb:SetText(gridSize)
+    end)
+    grid_align.text = grid_align:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font")
+	grid_align.text:SetPoint("RIGHT", grid_align, "LEFT", -5, 0)
+	grid_align.text:SetText(GwLocalization["GRID_SIZE_LABLE"])
+    grid_align:Hide()
 
     GW.LoadModulesPanel(sWindow)
     GW.LoadPlayerPanel(sWindow)

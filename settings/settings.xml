@@ -435,6 +435,22 @@
         </Scripts>
     </Button>
 
+    <EditBox name="GwStandardInputBox" autoFocus="false" virtual="true">
+        <Size x="30" y="20"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-5" y="3"/>
+                        <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <FontString inherits="ChatFontNormal" />
+    </EditBox>
+
     <Frame name="GwWarningPrompt" hidden="true" frameStrata="DIALOG" enableMouse="true" topLevel="true" virtual="true">
         <Size x="350" y="150"/>
         <Anchors>
