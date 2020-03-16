@@ -220,12 +220,12 @@ end
 GW.AddOptionDropdown = AddOptionDropdown
 
 local function Grid_Show_Hide()
-    if mhgb.Hide then
+    if mhgb.forceHide then
         if grid then
             grid:Hide()
         end
         grid_align:Hide()
-        mhgb.Hide = false
+        mhgb.forceHide = false
         mhgb:SetText(GwLocalization["GRID_BUTTON_SHOW"])
     else
         if not grid then
@@ -237,7 +237,7 @@ local function Grid_Show_Hide()
             grid:Show()
         end
         grid_align:Show()
-        mhgb.Hide = true
+        mhgb.forceHide = true
         mhgb:SetText(GwLocalization["GRID_BUTTON_HIDE"])
     end
 end
@@ -681,7 +681,7 @@ local function LoadSettings()
     mhgb:SetText(GwLocalization["GRID_BUTTON_SHOW"])
     mhgb:SetPoint("TOP", UIParent, "TOP", 0, -26)
     mhgb:Hide()
-    mhgb.Hide = false
+    mhgb.forceHide = false
 
     grid_align = CreateFrame("EditBox", "GwHudGridButtonEditBox", UIParent, "GwStandardInputBox")
     grid_align:SetPoint("TOP", UIParent, "TOP", 44, -55)
@@ -700,7 +700,7 @@ local function LoadSettings()
 		else
 			eb:SetText(gridSize)
         end
-        mhgb.Hide = false
+        mhgb.forceHide = false
 		Grid_Show_Hide()
 		EditBox_ClearFocus(eb)
 	end)
