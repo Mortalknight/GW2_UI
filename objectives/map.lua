@@ -634,6 +634,7 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     GwMapCoords.elapsedTimer = -1
     GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
+    GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
