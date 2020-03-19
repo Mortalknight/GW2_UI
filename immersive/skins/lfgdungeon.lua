@@ -1,6 +1,6 @@
 local _, GW = ...
-local addHoverToButton = GW.skins.addHoverToButton
 local constBackdropFrame = GW.skins.constBackdropFrame
+local SkinButton = GW.skins.SkinButton
 
 -------------------------------------------------------LFGDungeonReadyStatus-------------------------------------------------------
 local function SkinLFGDungeonReadyStatus_OnUpdate()
@@ -8,9 +8,7 @@ local function SkinLFGDungeonReadyStatus_OnUpdate()
 
     LFGDungeonReadyStatus:SetBackdrop(nil)
     LFGDungeonReadyStatus.Border:Hide()
-    _G.LFGDungeonReadyStatusCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-    _G.LFGDungeonReadyStatusCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-    _G.LFGDungeonReadyStatusCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+    SkinButton(_G.LFGDungeonReadyStatusCloseButton, true)
     _G.LFGDungeonReadyStatusCloseButton:SetSize(20, 20)
     _G.LFGDungeonReadyStatusCloseButton:ClearAllPoints()
     _G.LFGDungeonReadyStatusCloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -31,28 +29,13 @@ local function SkinLFGDungeonReadyDialog_OnUpdate()
     LFGDungeonReadyDialog.background:Hide()
     LFGDungeonReadyDialog.filigree:Hide()
     LFGDungeonReadyDialog.bottomArt:Hide()
-    _G.LFGDungeonReadyDialogCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-    _G.LFGDungeonReadyDialogCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-    _G.LFGDungeonReadyDialogCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+    SkinButton(_G.LFGDungeonReadyDialogCloseButton, true)
     _G.LFGDungeonReadyDialogCloseButton:SetSize(20, 20)
     _G.LFGDungeonReadyDialogCloseButton:ClearAllPoints()
     _G.LFGDungeonReadyDialogCloseButton:SetPoint("TOPRIGHT", -3, -3)
 
-    LFGDungeonReadyDialog.enterButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button")
-    LFGDungeonReadyDialog.enterButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button")
-    LFGDungeonReadyDialog.enterButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button")
-    LFGDungeonReadyDialog.enterButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
-    LFGDungeonReadyDialog.enterButton.Text:SetTextColor(0, 0, 0, 1)
-    LFGDungeonReadyDialog.enterButton.Text:SetShadowOffset(0, 0)
-    addHoverToButton(LFGDungeonReadyDialog.enterButton)
-
-    LFGDungeonReadyDialog.leaveButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button")
-    LFGDungeonReadyDialog.leaveButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button")
-    LFGDungeonReadyDialog.leaveButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button")
-    LFGDungeonReadyDialog.leaveButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
-    LFGDungeonReadyDialog.leaveButton.Text:SetTextColor(0, 0, 0, 1)
-    LFGDungeonReadyDialog.leaveButton.Text:SetShadowOffset(0, 0)
-    addHoverToButton(LFGDungeonReadyDialog.leaveButton)
+    SkinButton(LFGDungeonReadyDialog.enterButton, false, true)
+    SkinButton(LFGDungeonReadyDialog.leaveButton, false, true)
 
     LFGDungeonReadyDialog.instanceInfo.underline:Hide()
     

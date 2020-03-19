@@ -1,5 +1,5 @@
 local _, GW = ...
-local addHoverToButton = GW.skins.addHoverToButton
+local SkinButton = GW.skins.SkinButton
 
 local function SkinGhostFrame()
     local GhostFrame = _G.GhostFrame
@@ -9,7 +9,7 @@ local function SkinGhostFrame()
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/button")
     tex:SetSize(_G.GhostFrameContentsFrame:GetSize())
     GhostFrame.tex = tex
-    addHoverToButton(GhostFrame)
+    SkinButton(GhostFrame, false, false, true)
 
     _G.GhostFrameContentsFrameText:SetTextColor(0, 0, 0, 1)
     _G.GhostFrameContentsFrameText:SetShadowOffset(0, 0)

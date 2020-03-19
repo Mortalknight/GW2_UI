@@ -1,6 +1,6 @@
 local _, GW = ...
-local addHoverToButton = GW.skins.addHoverToButton
 local constBackdropFrame = GW.skins.constBackdropFrame
+local SkinButton = GW.skins.SkinButton
 
 local function SkinGearManagerDialogPopup_OnShow()
     local GearManagerDialogPopup = _G.GearManagerDialogPopup
@@ -22,26 +22,12 @@ local function SkinGearManagerDialogPopup_OnShow()
     _G["GearManagerDialogPopupEditBoxMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
 
     local GearManagerDialogPopupCancel = _G.GearManagerDialogPopupCancel
-    GearManagerDialogPopupCancel:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button")
-    GearManagerDialogPopupCancel:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button")
-    GearManagerDialogPopupCancel:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button")
-    GearManagerDialogPopupCancel:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/button_disable")
-    GearManagerDialogPopupCancel:GetHighlightTexture():SetVertexColor(0, 0, 0)
-    GearManagerDialogPopupCancel.Text:SetTextColor(0, 0, 0, 1)
-    GearManagerDialogPopupCancel.Text:SetShadowOffset(0, 0)
+
+    SkinButton(GearManagerDialogPopupCancel, false, true)
     GearManagerDialogPopupCancel:ClearAllPoints()
     GearManagerDialogPopupCancel:SetPoint("BOTTOMRIGHT" ,-11, 20)
-    addHoverToButton(GearManagerDialogPopupCancel)
 
-    local GearManagerDialogPopupOkay = _G.GearManagerDialogPopupOkay
-    GearManagerDialogPopupOkay:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button")
-    GearManagerDialogPopupOkay:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button")
-    GearManagerDialogPopupOkay:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button")
-    GearManagerDialogPopupOkay:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/button_disable")
-    GearManagerDialogPopupOkay:GetHighlightTexture():SetVertexColor(0, 0, 0)
-    GearManagerDialogPopupOkay.Text:SetTextColor(0, 0, 0, 1)
-    GearManagerDialogPopupOkay.Text:SetShadowOffset(0, 0)
-    addHoverToButton(GearManagerDialogPopupOkay)
+    SkinButton(_G.GearManagerDialogPopupOkay, false, true)
 
     _G["GearManagerDialogPopupScrollFrameTop"]:Hide()
     _G["GearManagerDialogPopupScrollFrameBottom"]:Hide()

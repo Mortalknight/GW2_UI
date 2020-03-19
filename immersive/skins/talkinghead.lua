@@ -1,13 +1,11 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
+local SkinButton = GW.skins.SkinButton
 
 local function SkinTalkingHeadFrame_OnShow()
     local TalkingHeadFrame = _G.TalkingHeadFrame
     
-    TalkingHeadFrame.MainFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-    TalkingHeadFrame.MainFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-    TalkingHeadFrame.MainFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-    TalkingHeadFrame.MainFrame.CloseButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
+    SkinButton(TalkingHeadFrame.MainFrame.CloseButton, true)
     TalkingHeadFrame.MainFrame.CloseButton:SetSize(25, 25)
     TalkingHeadFrame.MainFrame.CloseButton:ClearAllPoints()
     TalkingHeadFrame.MainFrame.CloseButton:SetPoint("TOPRIGHT", -30, -8)

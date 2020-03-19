@@ -1,27 +1,13 @@
 local _, GW = ...
-local addHoverToButton = GW.skins.addHoverToButton
 local constBackdropFrame = GW.skins.constBackdropFrame
+local SkinButton = GW.skins.SkinButton
 
 local function SkinDeathRecapFrame_Loaded()
     local DeathRecapFrame = _G.DeathRecapFrame
-    DeathRecapFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button")
-    DeathRecapFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button")
-    DeathRecapFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button")
-    DeathRecapFrame.CloseButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
-    local r = {DeathRecapFrame.CloseButton:GetRegions()}
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "FontString" then
-            c:SetTextColor(0, 0, 0, 1)
-            c:SetShadowOffset(0, 0)
-        end
-    end
-    addHoverToButton(DeathRecapFrame.CloseButton)
 
-    DeathRecapFrame.CloseXButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-    DeathRecapFrame.CloseXButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-    DeathRecapFrame.CloseXButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-    DeathRecapFrame.CloseXButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-    DeathRecapFrame.CloseXButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    SkinButton(DeathRecapFrame.CloseButton, false, true)
+    SkinButton(DeathRecapFrame.CloseXButton, true)
+
     DeathRecapFrame.CloseXButton:SetSize(20, 20)
     DeathRecapFrame.CloseXButton:ClearAllPoints()
     DeathRecapFrame.CloseXButton:SetPoint("TOPRIGHT", -3, -3)
