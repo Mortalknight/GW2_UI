@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local RoundDec = GW.RoundDec
 
@@ -50,19 +51,19 @@ local function LatencyInfoToolTip()
     GameTooltip:ClearLines()
     GameTooltip_AddNewbieTip(MainMenuMicroButton, MainMenuMicroButton.tooltipText, 1.0, 1.0, 1.0, MainMenuMicroButton.newbieText)
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_1"] .. frameRate .." fps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_2"] .. lagHome .." ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_3"] .. lagWorld .." ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS_TOOLTIP_1"] .. frameRate .." fps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS_TOOLTIP_2"] .. lagHome .." ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS_TOOLTIP_3"] .. lagWorld .." ms", 0.8, 0.8, 0.8)
     GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_4"] .. RoundDec(down,2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_5"] .. RoundDec(up,2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS_TOOLTIP_4"] .. RoundDec(down,2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS_TOOLTIP_5"] .. RoundDec(up,2) .. " Kbps", 0.8, 0.8, 0.8)
     GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
 
     for i = 1, numAddons do
         addonMemory = addonMemory + GetAddOnMemoryUsage(i)
     end
 
-    GameTooltip:AddLine(GwLocalization["FPS_TOOLTIP_6"] .. RoundDec(addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS_TOOLTIP_6"] .. RoundDec(addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
 
     for i = 1, numAddons do
         if type(AddonMemoryArray[i]) ~= "table" then

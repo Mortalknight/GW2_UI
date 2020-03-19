@@ -19,6 +19,8 @@ v(
                                 - Added Holy Power talent for paladins to holy crit calculation
                                 - Added MP5-Bonus from T2 set bonuses
                                 - Add Priests holy crit talent to calculation
+    - Added Grid to Move HUD
+    - Added back Chatbubbles in none proteced areas
 
 ]=]
 )

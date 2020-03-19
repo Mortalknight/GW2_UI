@@ -1,10 +1,10 @@
 local _, GW = ...
+local L = GW.L
 local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local welcome_OnClick = function(self, button)
     if self.settings then
@@ -52,6 +52,7 @@ local function LoadModulesPanel(sWindow)
     addOption(p, TALENTS, L["TALENTS_BUTTON_DESC"], "USE_TALENT_WINDOW")
     addOption(p, SPELLBOOK_ABILITIES_BUTTON, SPELLBOOK_ABILITIES_BUTTON, "USE_SPELLBOOK_WINDOW")
     addOption(p, CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, "DYNAMIC_CAM")
+    addOption(p, CHAT_BUBBLES_TEXT, L["CHAT_BUBBLES_DESC"], "CHATBUBBLES_ENABLED")
 
     InitPanel(p)
 end

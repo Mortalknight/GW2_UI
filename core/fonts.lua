@@ -1,6 +1,7 @@
 local _, GW = ...
+local L = GW.L
 
-local fonts_frame = CreateFrame("frame",nil,UIParent)
+local fonts_frame = CreateFrame("frame", nil, UIParent)
 
 local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA, r, g, b, shadowR, shadowG, shadowB)
 	local _, oldSize, oldStyle = fontObject:GetFont()
@@ -22,12 +23,12 @@ local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA,
 end
 
 local function LoadFonts()
-	local normal = GwLocalization["FONT_NORMAL"]
-	local bold = GwLocalization["FONT_BOLD"]
-	local narrow = GwLocalization["FONT_NARROW"]
-	local narrowBold = GwLocalization["FONT_NARROW_BOLD"]
-	--local light = GwLocalization["FONT_LIGHT"]
-	local damage = GwLocalization["FONT_DAMAGE"]
+	local normal = L["FONT_NORMAL"]
+	local bold = L["FONT_BOLD"]
+	local narrow = L["FONT_NARROW"]
+	local narrowBold = L["FONT_NARROW_BOLD"]
+	--local light = L["FONT_LIGHT"]
+	local damage = L["FONT_DAMAGE"]
 
 	-- game engine fonts
 	UNIT_NAME_FONT = damage

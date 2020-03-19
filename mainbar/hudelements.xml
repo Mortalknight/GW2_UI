@@ -257,16 +257,16 @@
             </Layer>
         </Layers>
     </Button>
-
     <Button name="GwAddonToggle" virtual="true">
         <Size x="40" y="40"/>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\icon-module">
+                <Texture name="$parentTexture" parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/icon-module">
                     <Size x="35" y="35"></Size>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
+                    <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
                 </Texture>
             </Layer>
         </Layers>
@@ -317,10 +317,10 @@
                         </Texture>
                     </Layer>
                 </Layers>
+
             </Frame>
         </Frames>
     </Button>
-
     <Button name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
         <Size x="30" y="30"/>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\mail"></NormalTexture>

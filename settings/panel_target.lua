@@ -1,9 +1,9 @@
 local _, GW = ...
+local L = GW.L
 local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local function LoadTargetPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")

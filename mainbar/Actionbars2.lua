@@ -284,6 +284,8 @@ local function updateMultiBar(barName, buttonName)
     else
         multibar.gw_FadeShowing = false
     end
+
+    GW.RegisterScaleFrame(multibar)
     
     for i = 1, 12 do
         local btn = _G[buttonName .. i]
@@ -694,8 +696,8 @@ local function LoadActionBars()
         self.gw_FadeShowing = false
     end)
 
-    RegisterMovableFrame("GwMultiBarRight", MultiBarRight, 'MultiBarRight', 'VerticalActionBarDummy')
-    RegisterMovableFrame("GwMultiBarLeft", MultiBarLeft, 'MultiBarLeft', 'VerticalActionBarDummy')
+    RegisterMovableFrame(MultiBarRight, SHOW_MULTIBAR3_TEXT, 'MultiBarRight', 'VerticalActionBarDummy')
+    RegisterMovableFrame(MultiBarLeft, SHOW_MULTIBAR4_TEXT, 'MultiBarLeft', 'VerticalActionBarDummy')
 
     hooksecurefunc('MultiActionBar_Update', function() 
         if InCombatLockdown() then return end
@@ -704,15 +706,15 @@ local function LoadActionBars()
         local settings = GetSetting("MultiBarLeft")
         multibar:ClearAllPoints()
         multibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
-        multibar:SetScale(GwMultiBarLeftMoveAble:GetScale())
-        MultiBarRight:SetScale(GwMultiBarRightMoveAble:GetScale())
+        multibar:SetScale(MultiBarLeft.gwMover:GetScale())
+        MultiBarRight:SetScale(MultiBarRight.gwMover:GetScale())
     end)
 
     local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
     fgw:SetFrameRef("MultiBarLeft", MultiBarLeft)
     fgw:SetFrameRef("MultiBarRight", MultiBarRight)
-    fgw:SetFrameRef("GwMultiBarRightMoveAble", GwMultiBarRightMoveAble)
-    fgw:SetFrameRef("GwMultiBarLeftMoveAble", GwMultiBarLeftMoveAble)
+    fgw:SetFrameRef("GwMultiBarRightMoveAble", MultiBarRight.gwMover)
+    fgw:SetFrameRef("GwMultiBarLeftMoveAble", MultiBarLeft.gwMover)
     fgw:SetAttribute(
         "_onstate-page",
         [=[

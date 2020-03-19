@@ -7,39 +7,6 @@ local function updateLootFrameButtons()
     end
 end
 
-local function onMoverDragStart(self)
-    self:StartMoving()
-end
-GW.AddForProfiling("lootframe", "onMoverDragStart", onMoverDragStart)
-
-local function onMoverDragStop(self)
-    if not self then
-        return
-    end
-
-    self:StopMovingOrSizing()
-    local x = self:GetLeft()
-    local y = self:GetTop()
-
-    -- re-anchor to LootFrameBg after the move
-    self:ClearAllPoints()
-    self:SetPoint("TOPLEFT", nil, "BOTTOMLEFT", x, y)
-
-    -- store the updated position
-    local pos = GW.GetSetting("LOOTFRAME_POSITION")
-    if pos then
-        wipe(pos)
-    else
-        pos = {}
-    end
-    pos.point = "TOPLEFT"
-    pos.relativePoint = "BOTTOMLEFT"
-    pos.xOfs = x
-    pos.yOfs = y
-    GW.SetSetting("LOOTFRAME_POSITION", pos)
-end
-GW.AddForProfiling("lootframe", "onMoverDragStop", onMoverDragStop)
-
 local function SkinLooTFrame()
     LootFrameBg:Hide()
     LootFrameBg:SetPoint("TOPLEFT",0,-64)
@@ -65,19 +32,18 @@ local function SkinLooTFrame()
         end
     end
 
-    CreateFrame("Frame","GwLootFrameTitle",LootFrame,"GwLootFrameTitle")
-    GwLootFrameTitle:SetPoint("BOTTOMLEFT",LootFrameBg,"TOPLEFT")
+    local GwLootFrameTitle = CreateFrame("Frame", nil, LootFrame, "GwLootFrameTitleTemp")
+    GwLootFrameTitle:SetPoint("BOTTOMLEFT", LootFrameBg, "TOPLEFT")
+    GwLootFrameTitle.headerString:SetFont(DAMAGE_TEXT_FONT, 14)
+    GwLootFrameTitle.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     if GetCVar("lootUnderMouse") == "0" then
-        local pos = GW.GetSetting("LOOTFRAME_POSITION")
+        local pos = GetSetting("LOOTFRAME_POSITION")
         LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
-        LootFrame:SetScript("OnDragStart", onMoverDragStart)
-        LootFrame:SetScript("OnDragStop", onMoverDragStop)
-        LootFrame:EnableMouse(true)
-        LootFrame:RegisterForDrag("LeftButton")
-        LootFrame:SetMovable(true)
+        RegisterMovableFrame(LootFrame, "Loot window", "LOOTFRAME_POSITION", "VerticalActionBarDummy")
         hooksecurefunc("LootFrame_Show", function(self)
-            local pos = GW.GetSetting("LOOTFRAME_POSITION")
+            local pos = GetSetting("LOOTFRAME_POSITION")
+            LootFrame:ClearAllPoints()
             LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
         end)
     end

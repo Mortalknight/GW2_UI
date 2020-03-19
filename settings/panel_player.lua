@@ -1,9 +1,9 @@
 local _, GW = ...
+local L = GW.L
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local function LoadPlayerPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
@@ -14,7 +14,7 @@ local function LoadPlayerPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["PLAYER_DESC"])
 
-    createCat(PLAYER, L["PLAYER_DESC"], p, 7)
+    createCat(PLAYER, L["PLAYER_DESC"], p, 9)
 
     addOptionDropdown(
         p,

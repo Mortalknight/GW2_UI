@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local EnableTooltip = GW.EnableTooltip
@@ -264,13 +265,13 @@ local function compactToggle()
         BANK_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
         SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
         inv.resizeInventory()
-        return GwLocalization["BANK_EXPAND_ICONS"]
+        return L["BANK_EXPAND_ICONS"]
     end
 
     BANK_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
     SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
     inv.resizeInventory()
-    return GwLocalization["BANK_COMPACT_ICONS"]
+    return L["BANK_COMPACT_ICONS"]
 end
 GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
@@ -516,10 +517,10 @@ local function LoadBank(helpers)
             "OnClick",
             function(self)
                 if GetSetting("BANK_REVERSE_SORT") then
-                    dd.bagOrder:SetText(GwLocalization["BAG_ORDER_REVERSE"])
+                    dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
                     SetSetting("BANK_REVERSE_SORT", false)
                 else
-                    dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
+                    dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
                     SetSetting("BANK_REVERSE_SORT", true)
                 end
                 setBagBarOrder(f.ItemFrame)
@@ -529,14 +530,14 @@ local function LoadBank(helpers)
         )
 
         if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
-            dd.compactBank:SetText(GwLocalization["BANK_COMPACT_ICONS"])
+            dd.compactBank:SetText(L["BANK_COMPACT_ICONS"])
         else
-            dd.compactBank:SetText(GwLocalization["BANK_EXPAND_ICONS"])
+            dd.compactBank:SetText(L["BANK_EXPAND_ICONS"])
         end
         if GetSetting("BANK_REVERSE_SORT") then
-            dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
+            dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
         else
-            dd.bagOrder:SetText(GwLocalization["BAG_ORDER_REVERSE"])
+            dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
         end
     end
 

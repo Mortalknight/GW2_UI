@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local RoundDec = GW.RoundDec
 local trackingTypes = GW.trackingTypes
@@ -204,10 +205,40 @@ local function hideMiniMapIcons()
 end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
+local function MapPositionToXY(arg)
+    local mapID = C_Map.GetBestMapForUnit(arg)
+    if mapID and arg then
+        local mapPos = C_Map.GetPlayerMapPosition(mapID, arg)
+        if mapPos then
+            return mapPos:GetXY()
+        end
+    end
+    return 0, 0
+end
+GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
+
+local function MapCoordsMiniMap_OnUpdate(self, elapsed)
+    self.elapsedTimer = self.elapsedTimer - elapsed
+    if self.elapsedTimer > 0 then
+        return
+    end
+    self.elapsedTimer = self.updateCap
+
+    local posX, posY = MapPositionToXY("player")
+    if (posX == 0 and posY == 0) then
+        self.Coords:SetText("n/a")
+    else
+        self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
+    end
+end
+
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
         UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
+        if child == GwMapCoords then
+            GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+        end
     end
     MinimapNorthTag:Hide()
 end
@@ -218,6 +249,9 @@ local function hoverMiniMapOut()
         local child = _G[v]
         if child ~= nil then
             UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
+            if child == GwMapCoords then
+                GwMapCoords:SetScript("OnUpdate", nil)
+            end
         end
     end
     Minimap_UpdateRotationSetting()
@@ -245,9 +279,9 @@ local function time_OnEnter(self)
 
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(TIMEMANAGER_TITLE)
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_MILITARY"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_LOCAL_REALM"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(GwLocalization["MAP_CLOCK_STOPWATCH"], 1, 1, 1, TRUE)
+    GameTooltip:AddLine(L["MAP_CLOCK_MILITARY"], 1, 1, 1, TRUE)
+    GameTooltip:AddLine(L["MAP_CLOCK_LOCAL_REALM"], 1, 1, 1, TRUE)
+    GameTooltip:AddLine(L["MAP_CLOCK_STOPWATCH"], 1, 1, 1, TRUE)
     GameTooltip:AddDoubleLine(WORLD_MAP_FILTER_TITLE .. " ", string, nil, nil, nil, 1, 1, 0)
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
@@ -275,19 +309,6 @@ GW.AddForProfiling("map", "time_OnClick", time_OnClick)
 local function getMinimapShape()
     return "SQUARE"
 end
-
-local function MapPositionToXY(arg)
-    local mapID = C_Map.GetBestMapForUnit(arg)
-    if mapID and arg then
-        local mapPos = C_Map.GetPlayerMapPosition(mapID, arg)
-        if mapPos then
-            return mapPos:GetXY()
-        end
-    end
-    return 0, 0
-end
-GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
-
 
 local function stackIcons(self, event, ...)
     for _, frame in pairs(framesToAdd) do
@@ -419,24 +440,7 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetText("n/a")
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     GwMapCoords.elapsedTimer = -1
-    local updateCap = 1 / 5 -- cap coord update to 5 FPS
-    local MapCoordsMiniMap_OnUpdate = function(self, elapsed)
-        self.elapsedTimer = self.elapsedTimer - elapsed
-        if self.elapsedTimer > 0 then
-            return
-        end
-        self.elapsedTimer = updateCap
-        if self:GetAlpha() <= 0 then
-            -- TODO: unhook the update completely when not in view in the generic hover handler
-            return
-        end
-        local posX, posY = MapPositionToXY("player")
-        if (posX == 0 and posY == 0) then
-            self.Coords:SetText("n/a")
-        else
-            self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
-        end
-    end
+    GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
 
     MinimapNorthTag:ClearAllPoints()
@@ -542,8 +546,7 @@ local function LoadMinimap()
     fmGAT:SetScript("OnEvent", stack_OnEvent)
     fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmGAT:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
-    GwAddonToggleTexture:SetTexCoord(0, 0.5, 0, 0.25)
-    fmGAT:SetFrameStrata("HIGH")
+    fmGAT:SetFrameStrata("MEDIUM")
     fmGAT.gw_Showing = true
     stackIcons(fmGAT)
 

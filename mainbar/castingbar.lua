@@ -49,7 +49,7 @@ local function LoadCastingBar()
 
     GwCastingBar:SetAlpha(0)
 
-    RegisterMovableFrame("GwCastingbar", GwCastingBar, "castingbar_pos", "GwCastFrameDummy")
+    RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy")
 
     GwCastingBar:SetScript(
         "OnEvent",

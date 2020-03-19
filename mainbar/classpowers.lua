@@ -206,6 +206,7 @@ local function LoadClassPowers()
     local _, _, pClass = UnitClass("player")
 
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
+    GW.RegisterScaleFrame(cpf)
     if GW.GetSetting("XPBAR_ENABLED") then
         cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
     else

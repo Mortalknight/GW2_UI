@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local comma_value = GW.comma_value
 local AddToAnimation = GW.AddToAnimation
 local RoundDec = GW.RoundDec
@@ -862,6 +863,30 @@ local function getNewReputationDetail(i)
 
     local f = CreateFrame("Button", "GwReputationDetails" .. i, GwPaperReputationScrollFrame.scrollchild, "GwReputationDetails")
 
+    f.details:SetPoint("TOPLEFT", f.StatusBar, "BOTTOMLEFT", 0, -15)
+
+    f.statusbarbg:SetPoint("TOPLEFT", f.StatusBar, "TOPLEFT", -2, 2)
+    f.statusbarbg:SetPoint("BOTTOMRIGHT", f.StatusBar, "BOTTOMRIGHT", 0, -2)
+
+    f.currentRank:SetPoint("TOPLEFT", f.StatusBar, "BOTTOMLEFT", 0, -5)
+    f.nextRank:SetPoint("TOPRIGHT", f.StatusBar, "BOTTOMRIGHT", 0, -5)
+
+    f.currentRank:SetFont(DAMAGE_TEXT_FONT, 11)
+    f.currentRank:SetTextColor(0.6, 0.6, 0.6)
+
+    f.nextRank:SetFont(DAMAGE_TEXT_FONT, 11)
+    f.nextRank:SetTextColor(0.6, 0.6, 0.6)
+
+    f.name:SetFont(DAMAGE_TEXT_FONT, 14)
+    f.name:SetTextColor(1, 1, 1, 1)
+
+    f.details:SetFont(UNIT_NAME_FONT, 12)
+    f.details:SetTextColor(0.8, 0.8, 0.8, 1)
+
+    f.details:Hide()
+    f.currentRank:SetText(L["CHARACTER_CURRENT_RANK"])
+    f.nextRank:SetText(L["CHARACTER_NEXT_RANK"])
+
     if i > 1 then
         _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", _G["GwReputationDetails" .. (i - 1)],"BOTTOMLEFT", 0, -1)
     else
@@ -1470,6 +1495,7 @@ local function LoadPaperDoll()
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
     CreateFrame("Button", "GwDressingRoomPet", GwPetContainer, "GwPetPaperdoll")
 
+    GW.RegisterScaleFrame(GwCharacterWindow)
     GwUpdateSavedReputation()
     GwPaperReputationScrollFrame:SetScrollChild(GwPaperReputationScrollFrame.scrollchild)
     GwPaperDollUpdateReputations()
@@ -1525,7 +1551,7 @@ local function LoadPaperDoll()
     LoadHonorTab()
 
     StaticPopupDialogs["UNEQUIP_LEGENDARY"] = {
-        text = GwLocalization["UNEQUIP_LEGENDARY"],
+        text = L["UNEQUIP_LEGENDARY"],
         button1 = CANCEL,
         timeout = 0,
         whileDead = true,

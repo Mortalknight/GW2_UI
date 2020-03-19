@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
@@ -7,11 +8,97 @@ local AddForProfiling = GW.AddForProfiling
 
 local settings_cat = {}
 local lhb
+local mhgb
+local grid_align
+local grid
+local gridSize = 64
 
 SLASH_GWSLASH1 = "/gw2"
 function SlashCmdList.GWSLASH(msg)
     GwSettingsWindow:Show()
     UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+end
+
+local function Grid_GetRegion()
+	if grid then
+		if grid.regionCount and grid.regionCount > 0 then
+			local line = select(grid.regionCount, grid:GetRegions())
+			grid.regionCount = grid.regionCount - 1
+			line:SetAlpha(1)
+			return line
+		else
+			return grid:CreateTexture()
+		end
+	end
+end
+
+local function create_grid()
+	if not grid then
+		grid = CreateFrame("Frame", "GW_UI_Grid", UIParent)
+		grid:SetFrameStrata("BACKGROUND")
+	else
+		grid.regionCount = 0
+		local numRegions = grid:GetNumRegions()
+		for i = 1, numRegions do
+			local region = select(i, grid:GetRegions())
+			if region and region.IsObjectType and region:IsObjectType("Texture") then
+				grid.regionCount = grid.regionCount + 1
+				region:SetAlpha(0)
+			end
+		end
+	end    
+
+    local _, screenHeight = GetPhysicalScreenSize()
+    local size = (1 / 0.64) - ((1 - (768 / screenHeight)) / 0.64)
+	local width, height = UIParent:GetSize()
+	local ratio = width / height
+	local hStepheight = height * ratio
+	local wStep = width / gridSize
+	local hStep = hStepheight / gridSize
+
+	grid.boxSize = gridSize
+	grid:SetPoint("CENTER", UIParent)
+	grid:SetSize(width, height)
+	grid:Show()
+
+	for i = 0, gridSize do
+		local tx = Grid_GetRegion()
+		if i == gridSize / 2 then
+			tx:SetColorTexture(1, 0, 0)
+			tx:SetDrawLayer("BACKGROUND", 1)
+		else
+			tx:SetColorTexture(0, 0, 0)
+			tx:SetDrawLayer("BACKGROUND", 0)
+		end
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", i * wStep - (size / 2), 0)
+		tx:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", i * wStep + (size / 2), 0)
+	end
+
+	do
+		local tx = Grid_GetRegion()
+		tx:SetColorTexture(1, 0, 0)
+		tx:SetDrawLayer("BACKGROUND", 1)
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2) + (size / 2))
+		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + size / 2))
+	end
+
+	for i = 1, floor((height / 2) / hStep) do
+		local tx = Grid_GetRegion()
+		tx:SetColorTexture(0, 0, 0)
+		tx:SetDrawLayer("BACKGROUND", 0)
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 + i * hStep) + (size / 2))
+		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + i * hStep + size / 2))
+
+		tx = Grid_GetRegion()
+		tx:SetColorTexture(0, 0, 0)
+		tx:SetDrawLayer("BACKGROUND", 0)
+		tx:ClearAllPoints()
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 - i * hStep) + (size / 2))
+		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 - i * hStep + size / 2))
+	end
 end
 
 local function switchCat(index)
@@ -63,11 +150,7 @@ local function CreateCat(name, desc, panel, icon, bg)
     f:SetPoint("TOPLEFT", -40, -32 + (-40 * (i - 1)))
 
     -- set the icon requested
-    f.icon:SetTexCoord(0, 0.5, 0.25 * icon, 0.25 * (icon + 1))
-    if icon > 3 then
-        icon = icon - 4
-        f.icon:SetTexCoord(0.5, 1, 0.25 * icon, 0.25 * (icon + 1))
-    end
+    f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
 
     -- set the bg requested
     if bg then
@@ -137,36 +220,65 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
+local function Grid_Show_Hide()
+    if mhgb.forceHide then
+        if grid then
+            grid:Hide()
+        end
+        grid_align:Hide()
+        mhgb.forceHide = false
+        mhgb:SetText(L["GRID_BUTTON_SHOW"])
+    else
+        if not grid then
+            create_grid()
+        elseif grid.boxSize ~= gridSize then
+            grid:Hide()
+            create_grid()
+        else
+            grid:Show()
+        end
+        grid_align:Show()
+        mhgb.forceHide = true
+        mhgb:SetText(L["GRID_BUTTON_HIDE"])
+    end
+end
+
 local settings_window_open_before_change = false
 local function moveHudObjects()
     lhb:Show()
+    mhgb:Show()
     if GwSettingsWindow:IsShown() then
         settings_window_open_before_change = true
     end
     GwSettingsWindow:Hide()
-    for k, v in pairs(GW.MOVABLE_FRAMES) do
-        v:EnableMouse(true)
-        v:SetMovable(true)
-        v:Show()
+    for i, mf in pairs(GW.MOVABLE_FRAMES) do
+        mf:EnableMouse(true)
+        mf:SetMovable(true)
+        mf:Show()
     end
 end
 GW.moveHudObjects = moveHudObjects
 
 local function lockHudObjects()
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+        DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
         return
     end
     lhb:Hide()
+    mhgb:Hide()
+    grid_align:Hide()
     if settings_window_open_before_change then
         settings_window_open_before_change = false
         GwSettingsWindow:Show()
     end
 
-    for k, v in pairs(GW.MOVABLE_FRAMES) do
-        v:EnableMouse(false)
-        v:SetMovable(false)
-        v:Hide()
+    for i, mf in ipairs(GW.MOVABLE_FRAMES) do
+        mf:EnableMouse(false)
+        mf:SetMovable(false)
+        mf:Hide()
+    end
+    if grid then
+		grid:Hide()
     end
     GW.UpdateFramePositions()
     C_UI.Reload()
@@ -461,13 +573,13 @@ local function LoadSettings()
     sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
     sWindow.versionString:SetText(GW.VERSION_STRING)
     sWindow.headerString:SetText(CHAT_CONFIGURATION)
-    GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
-    fmGSWS:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
+    GwSettingsWindowMoveHud:SetText(L["MOVE_HUD_BUTTON"])
+    fmGSWS:SetText(L["SETTINGS_SAVE_RELOAD"])
     fmGSWKB:SetText(KEY_BINDING)
-    fmGSWD:SetText(GwLocalization["DISCORD"])
+    fmGSWD:SetText(L["DISCORD"])
 
     StaticPopupDialogs["JOIN_DISCORD"] = {
-        text = GwLocalization["DISCORD"],
+        text = L["DISCORD"],
         button2 = CLOSE,
         timeout = 0,
         whileDead = true,
@@ -494,7 +606,7 @@ local function LoadSettings()
 
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then
-            DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+            DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
             return
         end
         moveHudObjects()
@@ -526,14 +638,71 @@ local function LoadSettings()
             mf:Hide()
         end
     )
+    sWindow:SetScript(
+        "OnEvent",
+        function(self, event)
+            if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
+                self:Hide()
+                mf:Hide()
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                sWindow.wasOpen = true
+            elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
+                self:Show()
+                mf:Show()
+                sWindow.wasOpen = false
+            end
+        end
+    )
     mf:Hide()
 
     lhb = CreateFrame("Button", "GwLockHudButton", UIParent, "GwStandardButton")
     lhb:SetScript("OnClick", lockHudObjects)
     lhb:ClearAllPoints()
-    lhb:SetText(GwLocalization["SETTING_LOCK_HUD"])
+    lhb:SetText(L["SETTING_LOCK_HUD"])
     lhb:SetPoint("TOP", UIParent, "TOP", 0, 0)
     lhb:Hide()
+
+    mhgb = CreateFrame("Button", "GwHudGridButton", UIParent, "GwStandardButton")
+    mhgb:SetScript("OnClick", Grid_Show_Hide)
+    mhgb:ClearAllPoints()
+    mhgb:SetText(L["GRID_BUTTON_SHOW"])
+    mhgb:SetPoint("TOP", UIParent, "TOP", 0, -26)
+    mhgb:Hide()
+    mhgb.forceHide = false
+
+    grid_align = CreateFrame("EditBox", "GwHudGridButtonEditBox", UIParent, "GwStandardInputBox")
+    grid_align:SetPoint("TOP", UIParent, "TOP", 44, -55)
+	grid_align:SetScript("OnEscapePressed", function(eb)
+		eb:SetText(gridSize)
+		EditBox_ClearFocus(eb)
+	end)
+	grid_align:SetScript("OnEnterPressed", function(eb)
+		local text = eb:GetText()
+		if tonumber(text) then
+			if tonumber(text) <= 256 and tonumber(text) >= 4 then
+				gridSize = tonumber(text)
+			else
+				eb:SetText(gridSize)
+			end
+		else
+			eb:SetText(gridSize)
+        end
+        mhgb.forceHide = false
+		Grid_Show_Hide()
+		EditBox_ClearFocus(eb)
+	end)
+	grid_align:SetScript("OnEditFocusLost", function(eb)
+		eb:SetText(gridSize)
+	end)
+	grid_align:SetScript("OnEditFocusGained", grid_align.HighlightText)
+	grid_align:SetScript("OnShow", function(eb)
+		EditBox_ClearFocus(eb)
+		eb:SetText(gridSize)
+    end)
+    grid_align.text = grid_align:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font")
+	grid_align.text:SetPoint("RIGHT", grid_align, "LEFT", -5, 0)
+	grid_align.text:SetText(L["GRID_SIZE_LABLE"])
+    grid_align:Hide()
 
     GW.LoadModulesPanel(sWindow)
     GW.LoadPlayerPanel(sWindow)

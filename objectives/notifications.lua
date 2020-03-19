@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
@@ -124,7 +125,7 @@ local function getBodyPOI()
 
     bodyCompass["X"] = x
     bodyCompass["Y"] = y
-    bodyCompass["TITLE"] = GwLocalization["TRACKER_RETRIVE_CORPSE"]
+    bodyCompass["TITLE"] = L["TRACKER_RETRIVE_CORPSE"]
 
     return bodyCompass
 end

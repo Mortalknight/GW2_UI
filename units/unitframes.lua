@@ -1065,7 +1065,7 @@ local function LoadTarget()
     NewUnitFrame:SetAttribute("*type1", NewUnitFrame.unit)
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
 
-    RegisterMovableFrame("targetframe", NewUnitFrame, "target_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy")
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint(
@@ -1163,7 +1163,7 @@ local function LoadTargetOfUnit(unit)
 
     f.unit = unitID
 
-    RegisterMovableFrame(unitID .. "frame", f, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy")
+    RegisterMovableFrame(f, SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy")
 
     f:ClearAllPoints()
     f:SetPoint(

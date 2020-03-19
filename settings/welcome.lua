@@ -1,7 +1,7 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
-local L = GwLocalization
 local AddForProfiling = GW.AddForProfiling
 
 local wpanel

@@ -232,7 +232,7 @@ local function LoadDodgeBar()
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, "GwDodgeBarTmpl")
-    fmdb.gwScaleMulti = 1.1
+    GW.RegisterScaleFrame(fmdb, 1.1)
     fmdb:ClearAllPoints()
     fmdb:SetPoint("CENTER", GwHealthGlobe, "CENTER", 0, 41)
     fmdb:SetAttribute("*type1", "spell")

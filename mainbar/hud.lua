@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local CommaValue = GW.CommaValue
 local lerp = GW.lerp
 local GetSetting = GW.GetSetting
@@ -20,7 +21,7 @@ local function xpbar_OnEnter()
     local rested = GetXPExhaustion()
     local isRestingString = ""
     if IsResting() then
-        isRestingString = GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTING"]
+        isRestingString = L["EXP_BAR_TOOLTIP_EXP_RESTING"]
     end
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
@@ -40,7 +41,7 @@ local function xpbar_OnEnter()
 
     if rested ~= nil and rested ~= 0 then
         GameTooltip:AddLine(
-            GwLocalization["EXP_BAR_TOOLTIP_EXP_RESTED"] ..
+            L["EXP_BAR_TOOLTIP_EXP_RESTED"] ..
                 CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,

@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local CommaValue = GW.CommaValue
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
@@ -116,7 +117,7 @@ local function updateHealthData(self, anims)
     elseif self.healthTextSetting == "VALUE" then
         hv = CommaValue(health)
     elseif self.healthTextSetting == "BOTH" then
-        hv = CommaValue(health) .. " - " .. CommaValue(health / healthMax * 100) .. "%"
+        hv = CommaValue(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
     end
 
     self.text_h.value:SetText(hv)
@@ -204,7 +205,7 @@ GW.AddForProfiling("healthglobe", "fill_OnFinish", fill_OnFinish)
 local function repair_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
-    GameTooltip:AddLine(GwLocalization["DAMAGED_OR_BROKEN_EQUIPMENT"], 1, 1, 1)
+    GameTooltip:AddLine(L["DAMAGED_OR_BROKEN_EQUIPMENT"], 1, 1, 1)
     GameTooltip:Show()
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
@@ -236,7 +237,7 @@ end
 
 local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GwHealthGlobe", UIParent, "GwHealthGlobeTmpl")
-    hg.gwScaleMulti = 1.1
+    GW.RegisterScaleFrame(playerPowerBar, 1.1)
 
     -- position based on XP bar space
     if GetSetting("XPBAR_ENABLED") then

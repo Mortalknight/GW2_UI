@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionText = GW.AddOptionText
@@ -8,7 +9,6 @@ local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local function LoadAurasPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")

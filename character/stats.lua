@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local RoundDec = GW.RoundDec
 
 GW.stats = {}
@@ -171,7 +172,7 @@ local function getDefense(unit)
 		if isHeader ~= nil and isHeader then
 			currentHeader = skillName
 		else
-			if (currentHeader == GwLocalization["WEAPON_SKILLS_HEADER"] and skillName == DEFENSE) then
+			if (currentHeader == L["WEAPON_SKILLS_HEADER"] and skillName == DEFENSE) then
 				skillIndex = i
 				break
 			end

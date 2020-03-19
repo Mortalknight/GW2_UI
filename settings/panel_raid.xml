@@ -18,18 +18,6 @@
                         </FontString>
                     </Layer>
                 </Layers>
-                <Scripts>
-                    <OnEnter>
-                        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
-                        GameTooltip:ClearLines()
-                        GameTooltip:AddLine(GwLocalization["RAID_PREVIEW"], 1, 1, 1)
-                        GameTooltip:AddLine(GwLocalization["RAID_PREVIEW_DESC"], 1, 1, 1)
-                        GameTooltip:Show()
-                    </OnEnter>
-                    <OnLeave>
-                        GameTooltip:Hide()
-                    </OnLeave>
-                </Scripts>
             </Button>
         </Frames>
     </Frame>

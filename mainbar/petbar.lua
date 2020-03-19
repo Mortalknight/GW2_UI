@@ -192,7 +192,7 @@ local function updatePetFrameLocation()
     if not fPet or InCombatLockdown() or not GetSetting("PETBAR_LOCKED") then
         return
     end
-    local fMover = GwPlayerPetFrameMoveAble
+    local fMover = GwPlayerPetFrame.gwMover
     local fBar = MultiBarBottomLeft
     fPet:ClearAllPoints()
     if fMover then
@@ -337,6 +337,7 @@ local function LoadPetFrame()
     PetFrame:SetScript("OnUpdate", nil)
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
+    GW.RegisterScaleFrame(playerPetFrame)
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
@@ -426,7 +427,7 @@ local function LoadPetFrame()
             GetSetting("pet_pos")["yOfs"]
         )
     end
-    RegisterMovableFrame("GwPlayerPetFrame", playerPetFrame, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
 
     setPetBar(playerPetFrame)
 end

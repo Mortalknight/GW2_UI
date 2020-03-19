@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local AddForProfiling = GW.AddForProfiling
 
 local bind = CreateFrame("Frame", "HoverBind", UIParent)
@@ -62,7 +63,7 @@ local function HoverKeyBinds()
 				self.button.id = SpellBook_GetSpellBookSlot(self.button)
 				self.button.name = GetSpellBookItemName(self.button.id, SpellBookFrame.bookType)
 				
-				GameTooltip:AddLine(GwLocalization['BINDINGS_TRIGGER'])
+				GameTooltip:AddLine(L['BINDINGS_TRIGGER'])
 				GameTooltip:Show()
 				GameTooltip:SetScript("OnHide", function(self)
 					self:SetOwner(bind, "ANCHOR_NONE")
@@ -72,7 +73,7 @@ local function HoverKeyBinds()
 					if #bind.button.bindings == 0 then
 						self:AddLine(NOT_BOUND, .6, .6, .6)
 					else
-						self:AddDoubleLine(KEY_BINDING, GwLocalization['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+						self:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
 						for i = 1, #bind.button.bindings do
 							self:AddDoubleLine(i, bind.button.bindings[i])
 						end
@@ -95,7 +96,7 @@ local function HoverKeyBinds()
 					if #bind.button.bindings == 0 then
 						GameTooltip:AddLine(NOT_BOUND, .6, .6, .6)
 					else
-						GameTooltip:AddDoubleLine(KEY_BINDING, GwLocalization['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+						GameTooltip:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
 						for i = 1, #bind.button.bindings do
 							GameTooltip:AddDoubleLine(KEY_BINDING .. i, bind.button.bindings[i], 1, 1, 1)
 						end
@@ -113,7 +114,7 @@ local function HoverKeyBinds()
 					self.button.bindstring = (spellmacro == "STANCE" and "SHAPESHIFTBUTTON" or "BONUSACTIONBUTTON") ..self.button.id
 				end
 				
-				GameTooltip:AddLine(GwLocalization['BINDINGS_TRIGGER'])
+				GameTooltip:AddLine(L['BINDINGS_TRIGGER'])
 				GameTooltip:Show()
 				GameTooltip:SetScript("OnHide", function(self)
 					self:SetOwner(bind, "ANCHOR_NONE")
@@ -123,7 +124,7 @@ local function HoverKeyBinds()
 					if #bind.button.bindings == 0 then
 						self:AddLine(NOT_BOUND, .6, .6, .6)
 					else
-						self:AddDoubleLine(KEY_BINDING, GwLocalization['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+						self:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
 						for i = 1, #bind.button.bindings do
 							self:AddDoubleLine(i, bind.button.bindings[i])
 						end
@@ -154,7 +155,7 @@ local function HoverKeyBinds()
 					end
 				end
 				
-				GameTooltip:AddLine(GwLocalization['BINDINGS_TRIGGER'])
+				GameTooltip:AddLine(L['BINDINGS_TRIGGER'])
 				GameTooltip:Show()
 				GameTooltip:SetScript("OnHide", function(self)
 					self:SetOwner(bind, "ANCHOR_NONE")
@@ -164,7 +165,7 @@ local function HoverKeyBinds()
 					if #bind.button.bindings == 0 then
 						self:AddLine(NOT_BOUND, .6, .6, .6)
 					else
-						self:AddDoubleLine(KEY_BINDING, GwLocalization['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+						self:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
 						for i = 1, #bind.button.bindings do
 							self:AddDoubleLine(i, bind.button.bindings[i])
 						end
@@ -180,7 +181,7 @@ local function HoverKeyBinds()
 				for i = 1, #self.button.bindings do
 					SetBinding(self.button.bindings[i])
 				end
-				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['BINGSINGS_CLEAR'] .." |cff00ff00" .. self.button.name .. "|r.")
+				DEFAULT_CHAT_FRAME:AddMessage(L['BINGSINGS_CLEAR'] .." |cff00ff00" .. self.button.name .. "|r.")
 				self:Update(self.button, self.spellmacro)
 				if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
 				return
@@ -210,7 +211,7 @@ local function HoverKeyBinds()
 			else
 				SetBinding(alt .. ctrl .. shift .. key, self.spellmacro .. " " .. self.button.name)
 			end
-			DEFAULT_CHAT_FRAME:AddMessage(alt .. ctrl .. shift .. key .. " |cff00ff00" .. GwLocalization['BINGSINGS_BIND'] .. " |r" .. self.button.name .. ".")
+			DEFAULT_CHAT_FRAME:AddMessage(alt .. ctrl .. shift .. key .. " |cff00ff00" .. L['BINGSINGS_BIND'] .. " |r" .. self.button.name .. ".")
 			self:Update(self.button, self.spellmacro)
 			if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
 		end
@@ -226,10 +227,10 @@ local function HoverKeyBinds()
 		function bind:Deactivate(save)
 			if save then
 				AttemptToSaveBindings(GetCurrentBindingSet())
-				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['ALL_BINDINGS_SAVE'])
+				DEFAULT_CHAT_FRAME:AddMessage(L['ALL_BINDINGS_SAVE'])
 			else
 				LoadBindings(GetCurrentBindingSet())
-				DEFAULT_CHAT_FRAME:AddMessage(GwLocalization['ALL_BINDINGS_DISCARD'])
+				DEFAULT_CHAT_FRAME:AddMessage(L['ALL_BINDINGS_DISCARD'])
 			end
 			self.enabled = false
 			self:HideFrame()
@@ -286,7 +287,7 @@ local function HoverKeyBinds()
 	end
 	if not bind.enabled then
 		bind:Activate()
-        keyBindPrompt(GwLocalization['BINDINGS_DESC'])
+        keyBindPrompt(L['BINDINGS_DESC'])
 	end
 end
 GW.HoverKeyBinds = HoverKeyBinds

@@ -592,31 +592,6 @@
             </StatusBar>
         </Frames>
         <Scripts>
-            <OnLoad>
-                self.details:SetPoint("TOPLEFT", self.StatusBar, "BOTTOMLEFT", 0, -15)
-
-                self.statusbarbg:SetPoint("TOPLEFT", self.StatusBar, "TOPLEFT", -2, 2)
-                self.statusbarbg:SetPoint("BOTTOMRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -2)
-
-                self.currentRank:SetPoint("TOPLEFT", self.StatusBar, "BOTTOMLEFT", 0, -5)
-                self.nextRank:SetPoint("TOPRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -5)
-
-                self.currentRank:SetFont(DAMAGE_TEXT_FONT, 11)
-                self.currentRank:SetTextColor(0.6, 0.6, 0.6)
-
-                self.nextRank:SetFont(DAMAGE_TEXT_FONT, 11)
-                self.nextRank:SetTextColor(0.6, 0.6, 0.6)
-
-                self.name:SetFont(DAMAGE_TEXT_FONT, 14)
-                self.name:SetTextColor(1, 1, 1, 1)
-
-                self.details:SetFont(UNIT_NAME_FONT, 12)
-                self.details:SetTextColor(0.8, 0.8, 0.8, 1)
-
-                self.details:Hide()
-                self.currentRank:SetText(GwLocalization["CHARACTER_CURRENT_RANK"])
-                self.nextRank:SetText(GwLocalization["CHARACTER_NEXT_RANK"])
-            </OnLoad>
             <OnClick>
                 if self.details:IsShown() then
                     GwDetailFaction(self.factionIndex, false)

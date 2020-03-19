@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local MAX_SPELLS = MAX_SPELLS
 local MAX_SKILLLINE_TABS = MAX_SKILLLINE_TABS
 local SPELLS_PER_PAGE = 21
@@ -799,12 +800,12 @@ local function LoadSpellBook()
     menuItem:SetPoint("TOPLEFT", GwSpellbookMenu, "TOPLEFT", 0, -menuItem:GetHeight() * (6 - 1))
     menuItem.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
     menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
-    menuItem.title:SetText(GwLocalization["FUTURE_SPELLS"])
+    menuItem.title:SetText(L["FUTURE_SPELLS"])
     menuItem.bg:SetVertexColor(1, 1, 1, zebra)
     menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
     menuItem:SetNormalTexture(nil)
     menuItem:SetText("")
-    GwSpellbookUnknown.title:SetText(GwLocalization["FUTURE_SPELLS"])
+    GwSpellbookUnknown.title:SetText(L["FUTURE_SPELLS"])
 
 
     GwSpellbookContainerTab1:Hide()

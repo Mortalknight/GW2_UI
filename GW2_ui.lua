@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local RoundInt = GW.RoundInt
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
@@ -22,14 +23,8 @@ local forcedMABags = false
 local ourActionbarsloaded = false
 local ourPetbar = false
 
-GW_MOVABLE_FRAMES = {}
-GW_MOVABLE_FRAMES_REF = {}
-GW_MOVABLE_FRAMES_SETTINGS_KEY = {}
-
 local MOVABLE_FRAMES = {}
 GW.MOVABLE_FRAMES = MOVABLE_FRAMES
-local MOVABLE_FRAMES_REF = {}
-local MOVABLE_FRAMES_SETTINGS_KEY = {}
 
 local swimAnimation = 0
 local lastSwimState = true
@@ -58,21 +53,23 @@ local function disableTitanPanelBarAdjusting()
     end
 end     
 
-local function lockableOnClick(name, frame, moveframe, settingsName, lockAble)
+local function lockableOnClick(self, btn)
+    local mf = self:GetParent()
+    --local f = mf.gw_frame
+    local settingsName = mf.gw_Settings
+    local lockAble = mf.gw_Lockable
+
     local dummyPoint = GetDefault(settingsName)
-    moveframe:ClearAllPoints()
-    moveframe:SetPoint(
+    mf:ClearAllPoints()
+    mf:SetPoint(
         dummyPoint["point"],
         UIParent,
         dummyPoint["relativePoint"],
         dummyPoint["xOfs"],
         dummyPoint["yOfs"]
     )
-    MOVABLE_FRAMES[name] = moveframe
-    MOVABLE_FRAMES_REF[name] = frame
-    MOVABLE_FRAMES_SETTINGS_KEY[name] = settingsName
 
-    local point, _, relativePoint, xOfs, yOfs = moveframe:GetPoint()
+    local point, _, relativePoint, xOfs, yOfs = mf:GetPoint()
 
     local new_point = GetSetting(settingsName)
     new_point["point"] = point
@@ -133,21 +130,25 @@ local function mover_OnDragStop(self)
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
-local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockAble, isMoved)
-    local moveframe = CreateFrame("Frame", name .. "MoveAble", UIParent, dummyFrame)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, lockAble, isMoved)
+    local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
+    frame.gwMover = moveframe
     if frame == GameTooltip then
         moveframe:SetSize(230, 80)
     elseif frame == GwPlayerAuraFrame then
         moveframe:SetSize(316, 100)
+        moveframe:SetScale(frame:GetScale())
     else
         moveframe:SetSize(frame:GetSize())
     end
-    moveframe.frameName:SetText(name)
     moveframe.gw_Settings = settingsName
     moveframe.gw_Lockable = lockAble
-    moveframe.frame = frame
     moveframe.gw_isMoved = isMoved
+    moveframe.gw_frame = frame
 
+    if moveframe.frameName and moveframe.frameName.SetText then
+        moveframe.frameName:SetText(displayName)
+    end
     local dummyPoint = GetSetting(settingsName)
     moveframe:ClearAllPoints()
     moveframe:SetPoint(
@@ -157,23 +158,16 @@ local function RegisterMovableFrame(name, frame, settingsName, dummyFrame, lockA
         dummyPoint["xOfs"],
         dummyPoint["yOfs"]
     )
-
-    MOVABLE_FRAMES[name] = moveframe
-    MOVABLE_FRAMES_REF[name] = frame
-    MOVABLE_FRAMES_SETTINGS_KEY[name] = settingsName
+    local num = #MOVABLE_FRAMES
+    MOVABLE_FRAMES[num + 1] = moveframe
     moveframe:Hide()
     moveframe:RegisterForDrag("LeftButton")
 
     if lockAble ~= nil then
-        local lockFrame = CreateFrame("Button", name .. "LockButton", moveframe, "GwDummyLockButton")
+        local lockFrame = CreateFrame("Button", nil, moveframe, "GwDummyLockButton")
         lockFrame:SetScript("OnEnter", lockFrame_OnEnter)
         lockFrame:SetScript("OnLeave", GameTooltip_Hide)
-        lockFrame:SetScript(
-            "OnClick",
-            function()
-                lockableOnClick(name, frame, moveframe, settingsName, lockAble)
-            end
-        )
+        lockFrame:SetScript("OnClick", lockableOnClick)
     end
 
     if isMoved ~= nil then
@@ -194,10 +188,11 @@ end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
 local function UpdateFramePositions()
-    for k, v in pairs(MOVABLE_FRAMES_REF) do
-        local newp = GetSetting(MOVABLE_FRAMES_SETTINGS_KEY[k])
-        v:ClearAllPoints()
-        MOVABLE_FRAMES_REF[k]:SetPoint(newp["point"], UIParent, newp["relativePoint"], newp["xOfs"], newp["yOfs"])
+    for i, mf in pairs(MOVABLE_FRAMES) do
+        local f = mf.gw_frame
+        local newp = GetSetting(mf.gw_Settings)
+        f:ClearAllPoints()
+        f:SetPoint(newp["point"], UIParent, newp["relativePoint"], newp["xOfs"], newp["yOfs"])
     end
 end
 GW.UpdateFramePositions = UpdateFramePositions
@@ -540,18 +535,18 @@ local function gw_OnUpdate(self, elapsed)
     if (MultiBarRight or MultiBarLeft) and loaded and not InCombatLockdown() and ourActionbarsloaded then
         if MultiBarRight then
             if MultiBarRight:GetScale() ~= hudScale then
-                _G["MultiBarRight"]:SetScale(hudScale)
-                _G["GwMultiBarRightMoveAble"]:SetScale(hudScale)
-                _G["MultiBarRight"]:ClearAllPoints()
-                _G["MultiBarRight"]:SetPoint(_G["GwMultiBarRightMoveAble"]:GetPoint())
+                MultiBarRight:SetScale(hudScale)
+                MultiBarRight.gwMover:SetScale(hudScale)
+                MultiBarRight:ClearAllPoints()
+                MultiBarRight:SetPoint(MultiBarRight.gwMover:GetPoint())
             end
         end
         if MultiBarLeft then
             if MultiBarLeft:GetScale() ~= hudScale then
-                _G["MultiBarLeft"]:SetScale(hudScale)
-                _G["GwMultiBarLeftMoveAble"]:SetScale(hudScale)
-                _G["MultiBarLeft"]:ClearAllPoints()
-                _G["MultiBarLeft"]:SetPoint(_G["GwMultiBarLeftMoveAble"]:GetPoint())
+                MultiBarLeft:SetScale(hudScale)
+                MultiBarLeft.gwMover:SetScale(hudScale)
+                MultiBarLeft:ClearAllPoints()
+                MultiBarLeft:SetPoint(MultiBarLeft.gwMover:GetPoint())
             end
         end
     end
@@ -568,41 +563,37 @@ local function PixelPerfection()
 end
 GW.PixelPerfection = PixelPerfection
 
-local SCALE_HUD_FRAMES = {
-    "GwPlayerPowerBar",
-    "GwPlayerAuraFrame",
-    "GwPlayerClassPower",
-    "GwPlayerPetFrame",
-    "MultiBarBottomRight",
-    "MultiBarBottomLeft",
-    "MultiBarRight",
-    "MultiBarLeft",
-    "GwCharacterWindow",
-    "GwDodgeBar",
-    "GwHealthGlobe"
-}
+local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
     hudScale = GetSetting("HUD_SCALE")
     MainMenuBarArtFrame:SetScale(hudScale)
-    for i, name in ipairs(SCALE_HUD_FRAMES) do
-        local f = _G[name]
-        local fm = _G[name .. "MoveAble"]
-        local sf = 1.0
+    for i, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
+            local fm = f.gwMover
+            local sf = 1.0
             if f.gwScaleMulti then
                 sf = f.gwScaleMulti
             end
             f:SetScale(hudScale * sf)
-        end
-        if name == "MultiBarRight" or name == "MultiBarLeft" then
-            fm = _G["Gw" .. name .. "MoveAble"]
-        end
-        if fm then
-            fm:SetScale(hudScale * sf)
+            if fm then
+                fm:SetScale(hudScale * sf)
+            end
         end
     end
 end
 GW.UpdateHudScale = UpdateHudScale
+
+local function RegisterScaleFrame(f, modifier)
+    if not f then
+        return
+    end
+    if modifier and modifier > 0 then
+        f.gwScaleMulti = modifier
+    end
+    local num = #SCALE_HUD_FRAMES
+    SCALE_HUD_FRAMES[num + 1] = f
+end
+GW.RegisterScaleFrame = RegisterScaleFrame
 
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
@@ -641,17 +632,18 @@ local function loadAddon(self)
     else
         --Setup addon button
         GwMainMenuFrame = CreateFrame("Button", "GwMainMenuFrame", GameMenuFrame, "GwStandardButton")
-        GwMainMenuFrame:SetText(GwLocalization["SETTINGS_BUTTON"])
+        GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
         GwMainMenuFrame:ClearAllPoints()
         GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
         GwMainMenuFrame:SetSize(150, 24)
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
-                GwSettingsWindow:Show()
                 if InCombatLockdown() then
+                    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
                     return
                 end
+                GwSettingsWindow:Show()
                 ToggleGameMenu()
             end
         )
@@ -796,6 +788,10 @@ local function loadAddon(self)
         end
     end
 
+    if GetSetting("CHATBUBBLES_ENABLED") then
+        GW.LoadChatBubbles()
+    end
+
     GW.LoadWindows()
 
     GW.LoadMicroMenu()
@@ -808,23 +804,23 @@ local function loadAddon(self)
     GW.UpdateHudScale()
 
     if (forcedMABags) then
-        GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
+        GW.Notice(L["DISABLED_MA_BAGS"])
     end
 
     --Add Shared Media
     --Font
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Light", "Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Headlines", "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\chinese.ttf", LibSharedMedia.LOCALE_BIT_zhCN + LibSharedMedia.LOCALE_BIT_zhTW)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface\\AddOns\\GW2_UI\\fonts\\korean.ttf", LibSharedMedia.LOCALE_BIT_koKR)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/menomonia.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Light", "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Headlines", "Interface/AddOns/GW2_UI/fonts/headlines.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/chinese.ttf", LibSharedMedia.LOCALE_BIT_zhCN + LibSharedMedia.LOCALE_BIT_zhTW)
+    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/korean.ttf", LibSharedMedia.LOCALE_BIT_koKR)
 
     --Texture
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI_White", "Interface\\AddOns\\GW2_UI\\Textures\\ChatBubble-Background.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\UI-Tooltip-Background.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface\\Addons\\GW2_UI\\Textures\\castingbar.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface\\Addons\\GW2_UI\\Textures\\breathmeter.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface\\Addons\\GW2_UI\\Textures\\castinbar-white.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI_White", "Interface/AddOns/GW2_UI/Textures/ChatBubble-Background.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface/Addons/GW2_UI/Textures/UI-Tooltip-Background.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface/Addons/GW2_UI/Textures/castingbar.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface/Addons/GW2_UI/Textures/breathmeter.tga")
+    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface/Addons/GW2_UI/Textures/castinbar-white.tga")
 
     --Check if we should show Welcomepage or Changelog
     if GetSetting("GW2_UI_VERSION") == "WELCOME" then
