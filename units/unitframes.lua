@@ -331,7 +331,7 @@ local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
         local _, classFilename, classIndex = UnitClass(self.unit)
         local r, g, b, a
-        if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+        if self.blizzardclasscolor then
             r, g, b, a = GetClassColor(classFilename)
         else
             r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
@@ -1090,6 +1090,7 @@ local function LoadTarget()
 
     AddToClique(NewUnitFrame)
 
+    NewUnitFrame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     NewUnitFrame.classColor = GetSetting("target_CLASS_COLOR")
 
     NewUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
@@ -1186,6 +1187,7 @@ local function LoadTargetOfUnit(unit)
     f.showHealthValue = false
     f.showHealthPrecentage = false
 
+    f.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     f.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
 
     f.totalElapsed = 0.25

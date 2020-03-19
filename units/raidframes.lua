@@ -259,7 +259,7 @@ local function updateAwayData(self)
 
     if iconState == 0 then
         local r, g, b, a
-        if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+        if self.blizzardclasscolor then
             r, g, b, a = GetClassColor(englishClass)
         else
             r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
@@ -731,7 +731,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                     localizedClass, englishClass, classIndex = UnitClass(self.unit)
                     if classColor == true then
                         local r, g, b, a
-                        if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+                        if self.blizzardclasscolor then
                             r, g, b, a = GetClassColor(englishClass)
                         else
                             r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
@@ -740,7 +740,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                         if self.classicon:IsShown() then
                             self.classicon:Hide()
                         end
-                    else
+                    else    
                         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
                     end
                     self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
@@ -1033,6 +1033,7 @@ local function createRaidFrame(registerUnit, index)
     frame.ready = -1
     frame.targetmarker = GetRaidTargetIndex(frame.unit)
     frame.index = index
+    frame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
 
     frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
     frame.healthbar.animationValue = 0
