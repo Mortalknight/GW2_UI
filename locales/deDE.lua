@@ -7,15 +7,14 @@ local function GWUseThisLocalization()
 	GW.L = L
 	
 	--Fonts
-	L["FONT_NORMAL"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
-	L["FONT_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
-	L["FONT_NARROW"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
-	L["FONT_LIGHT"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf"
-	L["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
+	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
+	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 	
 	--Strings
-	L['WEAPON_SKILLS_HEADER'] = 'Waffenfertigkeiten' -- Do not touch
 	L["QUEST_REQUIRED_ITEMS"] = "Erforderliches Item:"
 	L["ACTION_BAR_FADE"] = "Aktionsleisten ausblenden"
 	L["ACTION_BAR_FADE_DESC"] = "Blendet die zusätzlichen Aktionsleisten außerhalb des Kampfes aus."

@@ -7,15 +7,14 @@ local function GWUseThisLocalization()
 	GW.L = L
 	
 	--Fonts
-	L['FONT_NORMAL'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf' 
-	L['FONT_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf' 
-	L['FONT_NARROW'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
-	L['FONT_NARROW_BOLD'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf'
-	L['FONT_LIGHT'] = 'Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf'
-	L['FONT_DAMAGE'] = 'Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf'
+	L['FONT_NORMAL'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf' 
+	L['FONT_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf' 
+	L['FONT_NARROW'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
+	L['FONT_NARROW_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
+	L['FONT_LIGHT'] = 'Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf'
+	L['FONT_DAMAGE'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf'
 	
 	--Strings
-	L['WEAPON_SKILLS_HEADER'] = 'Оружейные навыки' -- Do not touch
 	L["TARGET_COMBOPOINTS"] = "Show Combopoints on target"
 	L["TARGET_COMBOPOINTS_DEC"] = "Show Combopoints on target, below the healthbar"
 	L["PIXEL_PERFECTION"] = "Pixel Perfection-Mode"

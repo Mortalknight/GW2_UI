@@ -317,10 +317,6 @@ local function setUpPaging(self)
 
     self.attrDummy:SetAttribute('_onattributechanged',glueMethod)
     self.attrDummy:SetAttribute('page', 'left')
-
-
-
-
 end
 
 local UNKNOW_SPELL_MAX_INDEX = 0

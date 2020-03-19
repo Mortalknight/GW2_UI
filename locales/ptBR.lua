@@ -6,15 +6,14 @@ local function GWUseThisLocalization()
 	local L = {}
 	GW.L = L
 	--Fonts
-	L["FONT_NORMAL"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
-	L["FONT_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
-	L["FONT_NARROW"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia.ttf"
-	L["FONT_LIGHT"] = "Interface\\AddOns\\GW2_UI\\fonts\\menomonia-italic.ttf"
-	L["FONT_DAMAGE"] = "Interface\\AddOns\\GW2_UI\\fonts\\headlines.ttf"
+	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
+	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 	
 	--Strings
-	L['WEAPON_SKILLS_HEADER'] = 'Weapon Skills' -- Do not touch
 	L["ACTION_BAR_FADE"] = "Ocultar Barra de Ações"
 	L["ACTION_BAR_FADE_DESC"] = "Ocultar Barras de Ações adicionais quando fora de combate."
 	L["ACTION_BARS_DESC"] = "Usar as Barras de Ações melhoradas pelo GW2 ui"
@@ -247,7 +246,7 @@ local function GWUseThisLocalization()
 	L["GRID_BUTTON_HIDE"] = "Hide grid"
 	L["GRID_SIZE_LABLE"] = "Grid Size:"
 	L["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
-
+	
 	--Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
 	L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
