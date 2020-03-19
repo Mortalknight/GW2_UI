@@ -277,7 +277,7 @@ local function updateAwayData(self)
     local classColor = GetSetting("RAID_CLASS_COLOR")
     local iconState = 1
 
-    localizedClass, englishClass, classIndex = UnitClass(self.unit)
+    local localizedClass, englishClass, classIndex = UnitClass(self.unit)
     self.name:SetTextColor(1, 1, 1)
 
     if classColor == false and GW_READY_CHECK_INPROGRESS == false then
@@ -306,12 +306,13 @@ local function updateAwayData(self)
     end
 
     if iconState == 0 then
-        self.healthbar:SetStatusBarColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
+        local r, g, b, a
+        if self.blizzardclasscolor then
+            r, g, b, a = GetClassColor(englishClass)
+        else
+            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+        end
+        self.healthbar:SetStatusBarColor(r, g, b, a)
         if self.classicon:IsShown() then
             self.classicon:Hide()
         end
@@ -798,14 +799,15 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                 GW_READY_CHECK_INPROGRESS = false
                 local classColor = GetSetting("RAID_CLASS_COLOR")
                 if UnitInRaid(self.unit) ~= nil then
-                    _, _, classIndex = UnitClass(self.unit)
+                    local _, englishClass, classIndex = UnitClass(self.unit)
                     if classColor == true then
-                        self.healthbar:SetStatusBarColor(
-                            CLASS_COLORS_RAIDFRAME[classIndex].r,
-                            CLASS_COLORS_RAIDFRAME[classIndex].g,
-                            CLASS_COLORS_RAIDFRAME[classIndex].b,
-                            1
-                        )
+                        local r, g, b, a
+                        if self.blizzardclasscolor then
+                            r, g, b, a = GetClassColor(englishClass)
+                        else
+                            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+                        end
+                        self.healthbar:SetStatusBarColor(r, g, b, a)
                         if self.classicon:IsShown() then
                             self.classicon:Hide()
                         end
@@ -1114,6 +1116,7 @@ local function createRaidFrame(registerUnit, index)
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
+    frame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     frame.targetmarker = GetRaidTargetIndex(frame.unit)
     frame.index = index
 

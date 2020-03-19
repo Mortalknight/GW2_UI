@@ -5,6 +5,7 @@ local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
+local GetSetting = GW.GetSetting
 local getContainerItemLinkByName = GW.getContainerItemLinkByName
 
 local STATS_ICONS = {
@@ -1021,14 +1022,14 @@ local function LoadPDBagList(fmMenu)
     fmGDR.characterName:SetFont(UNIT_NAME_FONT, 14)
     fmGDR.characterData:SetFont(UNIT_NAME_FONT, 12)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
-    local classIndex = select(3, UnitClass("player"))
+    local _, englishClass, classIndex = UnitClass("player")
     SetClassIcon(fmGDR.classIcon, classIndex)
-    fmGDR.classIcon:SetVertexColor(
-        CLASS_COLORS_RAIDFRAME[classIndex].r,
-        CLASS_COLORS_RAIDFRAME[classIndex].g,
-        CLASS_COLORS_RAIDFRAME[classIndex].b,
-        1
-    )
+    if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
+        r, g, b, a = GetClassColor(englishClass)
+    else
+        r, g, b, a = GW.CLASS_COLORS_RAIDFRAME[classIndex].r, GW.CLASS_COLORS_RAIDFRAME[classIndex].g, GW.CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+    end
+    fmGDR.classIcon:SetVertexColor(r, g, b, a, 1)
     fmGDR:SetScript("OnClick", resetBagInventory)
 
     local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", GwPaperDoll, "GwPaperDollBagItemList")

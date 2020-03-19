@@ -114,40 +114,18 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
-        local _, _, classIndex = UnitClass(self.unit)
-        self.healthbar:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
-        self.healthbarSpark:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
-        self.healthbarFlash:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
-        self.healthbarFlashSpark:SetVertexColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
+        local _, englishClass, classIndex = UnitClass(self.unit)
+        local r, g, b, a
+        if self.blizzardclasscolor then
+            r, g, b, a = GetClassColor(englishClass)
+        else
+            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
+        end
+        self.healthbar:SetVertexColor(r, g, b, a)
+        self.healthbarSpark:SetVertexColor(r, g, b, a)
+        self.healthbarFlash:SetVertexColor(r, g, b, a)
+        self.healthbarFlashSpark:SetVertexColor(r, g, b, a)
 
-        self.nameString:SetTextColor(
-            CLASS_COLORS_RAIDFRAME[classIndex].r,
-            CLASS_COLORS_RAIDFRAME[classIndex].g,
-            CLASS_COLORS_RAIDFRAME[classIndex].b,
-            1
-        )
-
-        local r, g, b, _ = self.nameString:GetTextColor()
         self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)
     else
         local isFriend = UnitIsFriend("player", self.unit)
@@ -836,6 +814,7 @@ local function LoadTarget()
 
     AddToClique(NewUnitFrame)
 
+    NewUnitFrame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     NewUnitFrame.classColor = GetSetting("target_CLASS_COLOR")
 
     NewUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
@@ -917,6 +896,7 @@ local function LoadFocus()
     NewUnitFrame.showHealthValue = GetSetting("focus_HEALTH_VALUE_ENABLED")
     NewUnitFrame.showHealthPrecentage = GetSetting("focus_HEALTH_VALUE_TYPE")
 
+    NewUnitFrame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     NewUnitFrame.classColor = GetSetting("focus_CLASS_COLOR")
 
     NewUnitFrame.displayBuffs = GetSetting("focus_BUFFS")
@@ -984,6 +964,7 @@ local function LoadTargetOfUnit(unit)
     f.showHealthValue = false
     f.showHealthPrecentage = false
 
+    f.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     f.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
     f.debuffFilter = nil
 
