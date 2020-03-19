@@ -52,8 +52,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "是否確定要儲存裝備設定?"
 	GwLocalization["CHARACTER_PARAGON"] = "巔峰"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "顯示於經驗值欄位"
-	GwLocalization["CHAT_BUBBLES"] = "聊天泡泡"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。"
+	GwLocalization["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。(Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "淡出聊天視窗"
 	GwLocalization["CHAT_FADE_DESC"] = "允許非使用中淡出聊天視窗。"
 	GwLocalization["CHAT_FRAME_DESC"] = "使用加強型的聊天視窗。"
@@ -246,6 +245,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 
 	--Composite
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])

@@ -52,8 +52,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "Tem certeza que deseja salvar a vestimenta?"
 	GwLocalization["CHARACTER_PARAGON"] = "Paragon"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "Mostrar como uma barra"
-	GwLocalization["CHAT_BUBBLES"] = "Balões de Conversa"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "Substituir os Balões de conversa da UI padrão"
+	GwLocalization["CHAT_BUBBLES_DESC"] = "Substituir os Balões de conversa da UI padrão (Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "Ocultar conversa"
 	GwLocalization["CHAT_FADE_DESC"] = "Permitir que a conversa seja ocultada quando não estiver em uso."
 	GwLocalization["CHAT_FRAME_DESC"] = "Habilitar janela de conversa aprimorada."
@@ -246,6 +245,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 
 	--Composite
 	GwLocalization["TOPLEFT"] = ("%s %s"):format(GwLocalization["TOP"], GwLocalization["LEFT"])

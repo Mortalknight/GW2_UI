@@ -37,8 +37,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "Bist du sicher, dass du das Outfit speichern möchtest?"
 	GwLocalization["CHARACTER_PARAGON"] = "Huldigend"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "Als Bar anzeigen"
-	GwLocalization["CHAT_BUBBLES"] = "Sprechblasen"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "Ersetze die standard Sprechblasen."
+	GwLocalization["CHAT_BUBBLES_DESC"] = "Ersetze die standard Sprechblasen. (Nur in nicht sicheren Bereichen)"
 	GwLocalization["CHAT_FADE"] = "Chat verblassen"
 	GwLocalization["CHAT_FADE_DESC"] = "Erlaube den Chat zu verblassen, wenn dieser nicht genutzt wird."
 	GwLocalization["CHAT_FRAME_DESC"] = "Aktiviere das erweiterte Chatfenster."
@@ -250,6 +249,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Raster anzeigen"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Raster ausblenden"
 	GwLocalization["GRID_SIZE_LABLE"] = "Rastergröße:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Einstellungen sind im Kampf nicht verfügbar!"
 end
 
 if GetLocale() == "deDE" then

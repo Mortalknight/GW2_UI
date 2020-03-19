@@ -14,6 +14,8 @@ NEW
     - Added option to show player health and absorb as %, value or both
     - Settings menu improvements
     - Added HUD Scale option as a slider
+    - Added Grid to Move HUD
+    - Added back Chatbubbles in none proteced areas
 ]=]
 )
 

@@ -36,8 +36,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "이 의상을 저장하시겠습니까?"
 	GwLocalization["CHARACTER_PARAGON"] = "불멸의 동맹"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "막대로 표시"
-	GwLocalization["CHAT_BUBBLES"] = "말 풍선"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "기본 말풍선 교체"
+	GwLocalization["CHAT_BUBBLES_DESC"] = "기본 말풍선 교체 (Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "채팅 숨기기"
 	GwLocalization["CHAT_FADE_DESC"] = "채팅을 사용하지 않을 시 자동 숨김. "
 	GwLocalization["CHAT_FRAME_DESC"] = "향상된 채팅 창 사용"
@@ -250,6 +249,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 end
 
 if GetLocale() == "koKR" then

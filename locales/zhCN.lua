@@ -52,8 +52,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "是否覆盖装备方案: "
 	GwLocalization["CHARACTER_PARAGON"] = "巅峰"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "经验条显示"
-	GwLocalization["CHAT_BUBBLES"] = "聊天泡泡"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "使用GW2风格的聊天泡泡."
+	GwLocalization["CHAT_BUBBLES_DESC"] = "使用GW2风格的聊天泡泡. (Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "聊天框渐隐"
 	GwLocalization["CHAT_FADE_DESC"] = "当不使用聊天栏时渐隐."
 	GwLocalization["CHAT_FRAME_DESC"] = "使用GW2风格的聊天框体."
@@ -250,6 +249,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 end
 
 if GetLocale() == "zhCN" then

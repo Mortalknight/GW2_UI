@@ -37,8 +37,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "Estas seguro que queres guardar este Traje?"
 	GwLocalization["CHARACTER_PARAGON"] = "Dechado"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "Mostrar como barra"
-	GwLocalization["CHAT_BUBBLES"] = "Burbujas de chat"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "Reemplazar las burbujas de chat por defecto."
+	GwLocalization["CHAT_BUBBLES_DESC"] = "Reemplazar las burbujas de chat por defecto. (Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "Desvanecer chat"
 	GwLocalization["CHAT_FADE_DESC"] = "Permitir que el chat desvanezca fuera de uso"
 	GwLocalization["CHAT_FRAME_DESC"] = "Activar la ventana de chat mejorada"
@@ -250,6 +249,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 end
 
 

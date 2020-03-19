@@ -22,6 +22,7 @@ locales/zhCN.lua
 locales/itIT.lua
 
 libs/libs.xml
+immersive/skins/skins.xml
 
 core/consts.lua
 core/utils.lua
@@ -107,10 +108,9 @@ immersive/questview.xml
 immersive/toast.xml
 immersive/questview.lua
 immersive/chatframe.lua
-#immersive/chatbubbles.lua
+immersive/chatbubbles.lua
 immersive/tooltips.lua
 immersive/toast.lua
-immersive/mainmenu.lua
 
 objectives/questtracker.xml
 objectives/map.lua

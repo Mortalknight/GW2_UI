@@ -49,8 +49,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "¿Estás seguro que quieres guardar el atuendo?"
 	GwLocalization["CHARACTER_PARAGON"] = "Paragón"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "Mostrar como barra"
-	GwLocalization["CHAT_BUBBLES"] = "Bocadillos de chat"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "Reemplazar los bocadillos de chat de IU predeterminados. "
+	GwLocalization["CHAT_BUBBLES_DESC"] = "Reemplazar los bocadillos de chat de IU predeterminados. (Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "Ocultar el chat"
 	GwLocalization["CHAT_FADE_DESC"] = "Permitir al chat ocultarse cuando no esté en uso."
 	GwLocalization["CHAT_FRAME_DESC"] = "Activar la ventana de chat mejorada."
@@ -250,6 +249,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 end
 
 

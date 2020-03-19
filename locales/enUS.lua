@@ -36,8 +36,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "Are you sure you want to save the outfit?"
 	GwLocalization["CHARACTER_PARAGON"] = "Paragon"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "Show as bar"
-	GwLocalization["CHAT_BUBBLES"] = "Chat Bubbles"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "Replace the default UI chat bubbles."
+	GwLocalization["CHAT_BUBBLES_DESC"] = "Replace the default UI chat bubbles. (Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "Fade Chat"
 	GwLocalization["CHAT_FADE_DESC"] = "Allow the chat to fade when not in use."
 	GwLocalization["CHAT_FRAME_DESC"] = "Enable the improved chat window."
@@ -250,6 +249,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 end
 
 local Locale = GetLocale()

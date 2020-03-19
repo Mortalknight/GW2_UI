@@ -4,6 +4,7 @@ local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 local Debug = GW.Debug
 local AddForProfiling = GW.AddForProfiling
+local L = GwLocalization
 
 local settings_cat = {}
 local lhb
@@ -666,6 +667,23 @@ local function LoadSettings()
             mf:Hide()
         end
     )
+    sWindow:SetScript(
+        "OnEvent",
+        function(self, event)
+            if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
+                self:Hide()
+                mf:Hide()
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                sWindow.wasOpen = true
+            elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
+                self:Show()
+                mf:Show()
+                sWindow.wasOpen = false
+            end
+        end
+    )
+    sWindow:RegisterEvent("PLAYER_REGEN_DISABLED")
+    sWindow:RegisterEvent("PLAYER_REGEN_ENABLED")
     mf:Hide()
 
     lhb = CreateFrame("Button", "GwLockHudButton", UIParent, "GwStandardButton")

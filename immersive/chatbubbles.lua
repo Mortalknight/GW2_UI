@@ -1,139 +1,116 @@
 local _, GW = ...
-local CountTable = GW.CountTable
 
-local bubbles = {}
-local CHAT_BUBBLES_ACTIVE = {}
-local safeToChange = false
+--Message caches
+local messageToSender = {}
 
-local function getBubbles(msg)
-    local bi
+local constBackdropFrame = {
+	bgFile = "Interface/AddOns/GW2_UI/textures/ChatBubble-Background",
+	edgeFile = ""; --"Interface/AddOns/GW2_UI/textures/chatbubbles/corner-bottom-right",
+	tile = false,
+	tileSize = 64,
+	edgeSize = 32,
+	insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
 
-    for i = 1, WorldFrame:GetNumChildren() do
-        local v = select(i, WorldFrame:GetChildren())
-        local b = v:GetBackdrop()
-        local p = v:IsProtected()
-        if b ~= nill and not p then
-            if
-                b.bgFile == "Interface\\Tooltips\\ChatBubble-Background" or
-                    b.bgFile == "Interface\\AddOns\\GW2_UI\\textures\\ChatBubble-Background"
-             then
-                for k = 1, v:GetNumRegions() do
-                    local frame = v
-                    local v2 = select(k, v:GetRegions())
-                    if v2:GetObjectType() == "FontString" then
-                        if frame.hasBeenStyled == nil then
-                            bi = CountTable(bubbles)
-                            local fontstring = v2
-
-                            bubbles[bi] = {}
-                            bubbles[bi]["frame"] = frame
-                            bubbles[bi]["fontstring"] = fontstring
-                            bubbles[bi]["bgFile"] = b.bgFile
-                            return bubbles[bi]
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return nil
+local function UpdateFontColor(frame)
+    frame.text:SetFont(UNIT_NAME_FONT, 12)
+    frame.text:SetTextColor(0, 0, 0, 1)
 end
 
-local function update_gwChat_bubbles(msg)
-    getBubbles(msg)
+local function AddChatBubbleName(chatBubble, name)
+	if not name then return end
 
-    for k, v in pairs(bubbles) do
-        local bgFrame = v["frame"]
-        local fontString = v["fontstring"]
-        b = v["bgFile"]
+	chatBubble.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, name)
+end
 
-        if fontString ~= nil then
-            fontString:SetFont(DAMAGE_TEXT_FONT, 14)
-            fontString:SetTextColor(0, 0, 0)
+local function UpdateBubbleBorder(self)
+    UpdateFontColor(self)
 
-            if bgFrame.hasBeenStyled == nil then
-                local backdrop = nil
-                bgFrame:SetBackdrop(backdrop)
+	if not self.text then return end
 
-                bgFrame.hasBeenStyled = true
-                local newBubble = CreateFrame("Frame", "GwChatBubble", bgFrame, "GwChatBubble")
-                newBubble.string:SetFont(UNIT_NAME_FONT, 14)
-                newBubble.string:SetTextColor(0, 0, 0, 1)
-                bgFrame:SetScale(0.6)
-                newBubble:ClearAllPoints()
-                newBubble:SetPoint("TOPLEFT", bgFrame, "TOPLEFT", 0, 0)
-                newBubble:SetPoint("BOTTOMRIGHT", bgFrame, "BOTTOMRIGHT", 0, 0)
+	local name = self.Name and self.Name:GetText()
+	if name then self.Name:SetText() end
 
-                newBubble.string:SetText(fontString:GetText())
-
-                bgFrame:HookScript(
-                    "OnShow",
-                    function()
-                        newBubble.string:SetText(fontString:GetText())
-                    end
-                )
-            end
-        end
+	local text = self.text:GetText()
+	if text  then
+		AddChatBubbleName(self, messageToSender[text])
     end
 end
 
-local function chatbubbles_OnEvent(self, event, msg, arg2)
-    if event == "UPDATE_INSTANCE_INFO" or event == "ZONE_CHANGED" then
-        local _, typeOf, _ = GetInstanceInfo()
+local function SkinBubble(frame)
+	if frame:IsForbidden() then return end
 
-        if typeOf == nil or typeOf == "scenario" or typeOf == "none" then
-            safeToChange = true
-        else
-            safeToChange = false
-        end
-
-        return
+	for i = 1, frame:GetNumRegions() do
+		local region = select(i, frame:GetRegions())
+		if region:IsObjectType("Texture") then
+			region:SetTexture()
+		elseif region:IsObjectType("FontString") then
+			frame.text = region
+		end
     end
 
-    if safeToChange == false then
-        return
-    end
+    local name = frame:CreateFontString(nil, "BORDER")
+	name:SetPoint("TOPLEFT", 5, 5)
+	name:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -5, -5)
+    name:SetFont(UNIT_NAME_FONT, 12 * 0.85, "OUTLINED")
+    name:SetTextColor(0, 0, 0, 1)
+	name:SetJustifyH("LEFT")
+	frame.Name = name
 
-    local i = CountTable(CHAT_BUBBLES_ACTIVE)
-    CHAT_BUBBLES_ACTIVE[i] = {}
-    CHAT_BUBBLES_ACTIVE[i]["msg"] = msg
-    CHAT_BUBBLES_ACTIVE[i]["time"] = GetTime() + 5
+    frame:SetBackdrop(constBackdropFrame)
+
+    frame:HookScript("OnShow", UpdateBubbleBorder)
+	frame:SetFrameStrata("DIALOG") --Doesn't work currently in Legion due to a bug on Blizzards end
+	UpdateBubbleBorder(frame)
+
+	frame.isSkinnedGW2_UI = true
 end
 
-local function chatbubbles_OnUpdate()
-    if safeToChange == false then
-        return
-    end
+local function ChatBubble_OnEvent(self, event, msg, sender, _, _, _, _, _, _, _, _, _, guid)
+	messageToSender[msg] = Ambiguate(sender, "none")
+end
 
-    local wipe = true
-    for k, v in pairs(CHAT_BUBBLES_ACTIVE) do
-        if v["time"] > GetTime() then
-            wipe = false
-        end
-    end
-    if wipe == true then
-        CHAT_BUBBLES_ACTIVE = {}
-    else
-        update_gwChat_bubbles()
-    end
+local function ChatBubble_OnUpdate(self, elapsed)
+	if not self then return end
+	if not self.lastupdate then
+		self.lastupdate = -2 -- wait 2 seconds before hooking frames
+	end
+
+	self.lastupdate = self.lastupdate + elapsed
+	if self.lastupdate < 0.1 then return end
+	self.lastupdate = 0
+
+	for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
+		if not chatBubble.isSkinnedGW2_UI then
+			SkinBubble(chatBubble)
+		end
+	end
+end
+
+local function ToggleChatBubbleScript(self)
+    local _, instanceType = GetInstanceInfo()
+	if instanceType == "none" then
+		self.BubbleFrame:SetScript("OnEvent", ChatBubble_OnEvent)
+		self.BubbleFrame:SetScript("OnUpdate", ChatBubble_OnUpdate)
+	else
+		self.BubbleFrame:SetScript("OnEvent", nil)
+		self.BubbleFrame:SetScript("OnUpdate", nil)
+
+		--Clear caches
+		wipe(messageToSender)
+	end
 end
 
 local function LoadChatBubbles()
-    local f = CreateFrame("Frame", nil, nil)
+    local f = CreateFrame("Frame")
 
-    f:SetScript("OnEvent", chatbubbles_OnEvent)
-    f:SetScript("OnUpdate", chatbubbles_OnUpdate)
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
+    f:SetScript("OnEvent", ToggleChatBubbleScript)
 
-    f:RegisterEvent("CHAT_MSG_SAY")
-    f:RegisterEvent("CHAT_MSG_PARTY")
-    f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
-    f:RegisterEvent("CHAT_MSG_YELL")
-    f:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
-    f:RegisterEvent("CHAT_MSG_MONSTER_PARTY")
-    f:RegisterEvent("CHAT_MSG_MONSTER_SAY")
-    f:RegisterEvent("CHAT_MSG_MONSTER_WHISPER")
-    f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
-    f:RegisterEvent("UPDATE_INSTANCE_INFO")
-    f:RegisterEvent("ZONE_CHANGED")
+    f.BubbleFrame = CreateFrame("Frame")
+	f.BubbleFrame:RegisterEvent("CHAT_MSG_SAY")
+	f.BubbleFrame:RegisterEvent("CHAT_MSG_YELL")
+	f.BubbleFrame:RegisterEvent("CHAT_MSG_MONSTER_SAY")
+    f.BubbleFrame:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 end
 GW.LoadChatBubbles = LoadChatBubbles

@@ -52,8 +52,7 @@ local function GWUseThisLocalization()
 	GwLocalization["CHARACTER_OUTFITS_SAVE"] = "Вы уверены, что хотите сохранить этот набор?"
 	GwLocalization["CHARACTER_PARAGON"] = "Образец"
 	GwLocalization["CHARACTER_REPUTATION_TRACK"] = "Отображать полосу"
-	GwLocalization["CHAT_BUBBLES"] = "Облачка чата"
-	GwLocalization["CHAT_BUBBLES_DESC"] = "Заменить стандартные облачка чата."
+	GwLocalization["CHAT_BUBBLES_DESC"] = "Заменить стандартные облачка чата. (Only in not proteced areas)"
 	GwLocalization["CHAT_FADE"] = "Затемнить чат"
 	GwLocalization["CHAT_FADE_DESC"] = "Затемнять неактивный чат."
 	GwLocalization["CHAT_FRAME_DESC"] = "Использовать интерфейс GW2 UI для окна чата."
@@ -250,6 +249,7 @@ local function GWUseThisLocalization()
 	GwLocalization["GRID_BUTTON_SHOW"] = "Show grid"
 	GwLocalization["GRID_BUTTON_HIDE"] = "Hide grid"
 	GwLocalization["GRID_SIZE_LABLE"] = "Grid Size:"
+	GwLocalization["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
 end
 
 

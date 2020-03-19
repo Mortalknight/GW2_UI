@@ -7,6 +7,7 @@ local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
+local L = GwLocalization
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
@@ -535,18 +536,19 @@ local function loadAddon(self)
         GW.SkinMainMenu()
     else
         --Setup addon button
-        GwMainMenuFrame = CreateFrame("Button", "GwMainMenuFrame", GameMenuFrame, "GwStandardButton")
-        GwMainMenuFrame:SetText(GwLocalization["SETTINGS_BUTTON"])
+        local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GwStandardButton")
+        GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
         GwMainMenuFrame:ClearAllPoints()
-        GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
+        GwMainMenuFrame:SetPoint("TOP", _G.GameMenuFrame, "BOTTOM", 0, 0)
         GwMainMenuFrame:SetSize(150, 24)
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
-                GwSettingsWindow:Show()
                 if InCombatLockdown() then
+                    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
                     return
                 end
+                GwSettingsWindow:Show()
                 ToggleGameMenu()
             end
         )
@@ -601,6 +603,9 @@ local function loadAddon(self)
     end
     if GetSetting("IMMERSIONADDON_SKIN_ENABLED") then
         GW.SkinImmersionAddonFrame()
+    end
+    if GetSetting("FLIGHTMAP_SKIN_ENABLED") then
+        GW.SkinFlightMap()
     end
 
     --Create hud art
@@ -736,12 +741,10 @@ local function loadAddon(self)
         end
     end
 
-    -- create new microbuttons
-    --[[
-    if GetSetting('CHATBUBBLES_ENABLED') then
+    if GetSetting("CHATBUBBLES_ENABLED") then
         GW.LoadChatBubbles()
     end
-    --]]
+    -- create new microbuttons
     GW.LoadMicroMenu()
     GW.LoadOrderBar()
 
@@ -753,7 +756,7 @@ local function loadAddon(self)
     GW.UpdateHudScale()
 
     if (forcedMABags) then
-        GW.Notice(GwLocalization["DISABLED_MA_BAGS"])
+        GW.Notice(L["DISABLED_MA_BAGS"])
     end
 
     --Add Shared Media
