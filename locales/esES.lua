@@ -257,6 +257,7 @@ local function GWUseThisLocalization()
 	L["GRID_BUTTON_HIDE"] = "Hide grid"
 	L["GRID_SIZE_LABLE"] = "Grid Size:"
 	L["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
+	L["INVTYPE_RANGED"] = "A distancia"
 end
 	
 

@@ -252,7 +252,8 @@ local function GWUseThisLocalization()
 	L["GRID_BUTTON_SHOW"] = "Show grid"
 	L["GRID_BUTTON_HIDE"] = "Hide grid"
 	L["GRID_SIZE_LABLE"] = "Grid Size:"
-	L["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"	
+	L["HIDE_SETTING_IN_COMBAT"] = "Settings are not available in combat!"
+	L["INVTYPE_RANGED"] = "Ranged"
 
 	--Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

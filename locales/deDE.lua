@@ -257,6 +257,7 @@ local function GWUseThisLocalization()
 	L["GRID_BUTTON_HIDE"] = "Raster ausblenden"
 	L["GRID_SIZE_LABLE"] = "Rastergröße:"
 	L["HIDE_SETTING_IN_COMBAT"] = "Einstellungen sind im Kampf nicht verfügbar!"
+	L["INVTYPE_RANGED"] = "Distanz"
 end
 	
 	
