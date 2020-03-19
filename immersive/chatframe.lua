@@ -330,5 +330,20 @@ local function LoadChat()
     }
 
     FCF_FadeOutChatFrame(_G["ChatFrame1"])
+
+    --Skin ChatMenus
+    local ChatMenus = {
+		"ChatMenu",
+		"EmoteMenu",
+		"LanguageMenu",
+		"VoiceMacroMenu",
+	}
+
+	for i = 1, #ChatMenus do
+        _G[ChatMenus[i]]:HookScript("OnShow", 
+            function(self)
+                self:SetBackdrop(GW.skins.constBackdropFrame)
+            end)
+	end
 end
 GW.LoadChat = LoadChat

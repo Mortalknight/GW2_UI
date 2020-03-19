@@ -35,7 +35,6 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, "Immersion Addon", nil, "IMMERSIONADDON_SKIN_ENABLED")
     addOption(p, FLIGHT_MAP, nil, "FLIGHTMAP_SKIN_ENABLED")
     
-
     InitPanel(p)
 end
 GW.LoadSkinsPanel = LoadSkinsPanel

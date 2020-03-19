@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function resizeBNToastFrame()
-    _G.BNToastFrame.tex:SetSize(BNToastFrame:GetSize())
+    _G.BNToastFrame.tex:SetSize(_G.BNToastFrame:GetSize())
 end
 
 local function SkinBNToastFrame()

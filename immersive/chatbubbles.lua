@@ -5,7 +5,7 @@ local messageToSender = {}
 
 local constBackdropFrame = {
 	bgFile = "Interface/AddOns/GW2_UI/textures/ChatBubble-Background",
-	edgeFile = ""; --"Interface/AddOns/GW2_UI/textures/chatbubbles/corner-bottom-right",
+	edgeFile = "", --"Interface/AddOns/GW2_UI/textures/chatbubbles/corner-bottom-right",
 	tile = false,
 	tileSize = 64,
 	edgeSize = 32,
