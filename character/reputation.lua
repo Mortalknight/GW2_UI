@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
@@ -124,6 +125,10 @@ GW.AddForProfiling("reputation", "showHeader", showHeader)
 
 local function detailsAtwar_OnEnter(self)
     self.icon:SetTexCoord(0.5, 1, 0, 0.5)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(REPUTATION_AT_WAR_DESCRIPTION, nil, nil, nil, nil, true)
+    GameTooltip:Show()
 end
 GW.AddForProfiling("reputation", "detailsAtwar_OnEnter", detailsAtwar_OnEnter)
 
@@ -131,11 +136,16 @@ local function detailsAtwar_OnLeave(self)
     if not self.isActive then
         self.icon:SetTexCoord(0, 0.5, 0, 0.5)
     end
+    GameTooltip:Hide()
 end
 GW.AddForProfiling("reputation", "detailsAtwar_OnLeave", detailsAtwar_OnLeave)
 
 local function detailsFavorite_OnEnter(self)
     self.icon:SetTexCoord(0, 0.5, 0.5, 1)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(SET_FACTION_LFG_BONUS_REP_TOOLTIP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
 end
 GW.AddForProfiling("reputation", "detailsFavorite_OnEnter", detailsFavorite_OnEnter)
 
@@ -143,8 +153,25 @@ local function detailsFavorite_OnLeave(self)
     if not self.isActive then
         self.icon:SetTexCoord(0.5, 1, 0.5, 1)
     end
+    GameTooltip:Hide()
 end
 GW.AddForProfiling("reputation", "detailsFavorite_OnLeave", detailsFavorite_OnLeave)
+
+local function detailsInactive_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(REPUTATION_MOVE_TO_INACTIVE, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("reputation", "detailsInactive_OnEnter", detailsInactive_OnEnter)
+
+local function detailsShowAsBar_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(REPUTATION_SHOW_AS_XP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("reputation", "detailsShowAsBar_OnEnter", detailsShowAsBar_OnEnter)
 
 local function detailsControls_OnShow(self)
     self:GetParent().details:Show()
@@ -255,18 +282,32 @@ local function setDetailEx(
     end
 
     if isWatched then
-        frame.controles.showAsBar:SetChecked(true)
+        frame.controles.showAsBar.checkbutton:SetChecked(true)
     else
-        frame.controles.showAsBar:SetChecked(false)
+        frame.controles.showAsBar.checkbutton:SetChecked(false)
     end
 
     if IsFactionInactive(factionIndex) then
-        frame.controles.inactive:SetChecked(true)
+        frame.controles.inactive.checkbutton:SetChecked(true)
     else
-        frame.controles.inactive:SetChecked(false)
+        frame.controles.inactive.checkbutton:SetChecked(false)
     end
 
     frame.controles.inactive:SetScript(
+        "OnClick",
+        function()
+            if IsFactionInactive(factionIndex) then
+                SetFactionActive(factionIndex)
+            else
+                SetFactionInactive(factionIndex)
+            end
+            updateSavedReputation()
+            updateReputations()
+            updateOldData()
+        end
+    )
+
+    frame.controles.inactive.checkbutton:SetScript(
         "OnClick",
         function()
             if IsFactionInactive(factionIndex) then
@@ -317,6 +358,18 @@ local function setDetailEx(
             updateOldData()
         end
     )
+    frame.controles.showAsBar.checkbutton:SetScript(
+        "OnClick",
+        function()
+            if isWatched then
+                SetWatchedFactionIndex(0)
+            else
+                SetWatchedFactionIndex(factionIndex)
+            end
+            updateSavedReputation()
+            updateOldData()
+        end
+    )
 
     SetFactionInactive(GetSelectedFaction())
 
@@ -353,7 +406,7 @@ local function setDetailEx(
         end
 
         frame.currentRank:SetText(currentRank)
-        frame.nextRank:SetText(GwLocalization["CHARACTER_PARAGON"])
+        frame.nextRank:SetText(L["CHARACTER_PARAGON"])
 
         frame.currentValue:SetText(CommaValue(currentValue))
         frame.nextValue:SetText(CommaValue(maxValueParagon))
@@ -582,10 +635,20 @@ local function setupDetail(self)
     self.controles.atwar:SetScript("OnLeave", detailsAtwar_OnLeave)
     self.controles.favorit:SetScript("OnEnter", detailsFavorite_OnEnter)
     self.controles.favorit:SetScript("OnLeave", detailsFavorite_OnLeave)
+    self.controles.inactive:SetScript("OnEnter", detailsInactive_OnEnter)
+    self.controles.inactive:SetScript("OnLeave", GameTooltip_Hide)
+    self.controles.inactive.checkbutton:SetScript("OnEnter", detailsInactive_OnEnter)
+    self.controles.inactive.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
+    self.controles.showAsBar:SetScript("OnEnter", detailsShowAsBar_OnEnter)
+    self.controles.showAsBar:SetScript("OnLeave", GameTooltip_Hide)
+    self.controles.showAsBar.checkbutton:SetScript("OnEnter", detailsShowAsBar_OnEnter)
+    self.controles.showAsBar.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
     self.controles.inactive.string:SetFont(UNIT_NAME_FONT, 12)
     self.controles.inactive.string:SetText(FACTION_INACTIVE)
+    self.controles.inactive:SetWidth(self.controles.inactive.string:GetWidth())
     self.controles.showAsBar.string:SetFont(UNIT_NAME_FONT, 12)
-    self.controles.showAsBar.string:SetText(GwLocalization["CHARACTER_REPUTATION_TRACK"])
+    self.controles.showAsBar.string:SetText(SHOW_FACTION_ON_MAINSCREEN)
+    self.controles.showAsBar:SetWidth(self.controles.showAsBar.string:GetWidth())
     self.controles:SetScript("OnShow", detailsControls_OnShow)
     self.controles:SetScript("OnHide", detailsControls_OnHide)
     self.StatusBar.currentValue:SetFont(UNIT_NAME_FONT, 12)
@@ -636,7 +699,7 @@ local function setupDetail(self)
     self.detailsbg:Hide()
 
     self.currentRank:SetText(REFORGE_CURRENT)
-    self.nextRank:SetText(GwLocalization["CHARACTER_NEXT_RANK"])
+    self.nextRank:SetText(L["CHARACTER_NEXT_RANK"])
     self:GetParent():SetScript("OnClick", details_OnClick)
 
     self.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)

@@ -263,42 +263,58 @@
                                     </Layer>
                                 </Layers>
                             </Button>
-                            <CheckButton parentKey="inactive" checked="false">
-                                <Size x="16" y="16"></Size>
+                            <Button parentKey="inactive" checked="false">
+                                <Size x="100" y="20"/>
                                 <Anchors>
-                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-60" y="5"></Anchor>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="5"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
                                 <Layers>
-                                    <Layer level="ARTWORK">
-                                        <FontString parentKey="string" text="Unknown" justifyH="LEFT">
-                                            <Size x="60" y="20"></Size>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="string" text="Unknown" justifyH="RIGHT">
+                                            <Size x="60" y="20"/>
                                             <Anchors>
-                                                <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
+                                                <Anchor point="RIGHT" x="5" y="0"></Anchor>
                                             </Anchors>
                                         </FontString>
                                     </Layer>
                                 </Layers>
-                            </CheckButton>
-                            <CheckButton parentKey="showAsBar" checked="false">
-                                <Size x="16" y="16"></Size>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="showAsBar" checked="false">
+                                <Size x="200" y="20"/>
                                 <Anchors>
-                                    <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-100" y="0"></Anchor>
+                                    <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-15" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
                                 <Layers>
-                                    <Layer level="ARTWORK">
-                                        <FontString parentKey="string" text="Unknown" justifyH="LEFT">
-                                            <Size x="100" y="20"></Size>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="string" text="Unknown" justifyH="RIGHT">
+                                            <Size x="200" y="20"/>
                                             <Anchors>
-                                                <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
+                                                <Anchor point="RIGHT" x="5" y="0"></Anchor>
                                             </Anchors>
                                         </FontString>
                                     </Layer>
                                 </Layers>
-                            </CheckButton>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="10"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
                         </Frames>
                     </Frame>
                     <StatusBar min="0" max="1" hidden="false" parentKey="StatusBar">

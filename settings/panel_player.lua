@@ -1,10 +1,10 @@
 local _, GW = ...
+local L = GW.L
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local function LoadPlayerPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")

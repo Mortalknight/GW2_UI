@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local TimeCount = GW.TimeCount
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local GetSetting = GW.GetSetting
@@ -238,7 +239,7 @@ local function manageButton()
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
         _G[self:GetName() .. "Ground"]:SetFont(UNIT_NAME_FONT, 14)
         _G[self:GetName() .. "Ground"]:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-        _G[self:GetName() .. "Ground"]:SetText(GwLocalization["GROUND_MARKER"])
+        _G[self:GetName() .. "Ground"]:SetText(L["GROUND_MARKER"])
     end
     local fnGWMM_OnEvent = function(self)
         inCombat = UnitAffectingCombat("player")

@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
 local SavedItemSlots = GW.char_equipset_SavedItems
 local WarningPrompt = GW.WarningPrompt
@@ -115,7 +116,7 @@ end
 
 local function outfitSaveButton_OnClick(self, button)
     WarningPrompt(
-        GwLocalization["CHARACTER_OUTFITS_SAVE"] .. " (" .. self:GetParent().setName .. ")",
+        TRANSMOG_OUTFIT_CONFIRM_SAVE:format(self:GetParent().setName),
         function()
             C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
             drawItemSetList()
@@ -146,7 +147,7 @@ end
 
 local function outfitDeleteButton_OnClick(self, button)
     WarningPrompt(
-        GwLocalization["CHARACTER_OUTFITS_DELETE"] .. " (" .. self:GetParent().setName .. ")",
+        TRANSMOG_OUTFIT_CONFIRM_DELETE:format(self:GetParent().setName),
         function()
             C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
 

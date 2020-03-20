@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 
@@ -448,8 +449,8 @@ local function LoadCharacter()
             container.CharWindow = GwCharacterWindow
             container.HeaderIcon = v.HeaderIcon
             if v.HeaderTextKey then
-                container.HeaderText = GwLocalization[v.HeaderTextKey]
-                tab.gwTipLabel = GwLocalization[v.HeaderTextKey]
+                container.HeaderText = L[v.HeaderTextKey]
+                tab.gwTipLabel = L[v.HeaderTextKey]
             else
                 container.HeaderText = v.HeaderText
                 tab.gwTipLabel = v.HeaderText

@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 GW.char_equipset_SavedItems = {}
 local SavedItemSlots = GW.char_equipset_SavedItems
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
@@ -704,7 +705,7 @@ local function getStatListFrame(self, i)
 
     local fm = CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
     fm.Value:SetFont(UNIT_NAME_FONT, 14)
-    fm.Value:SetText(GwLocalization["CHARACTER_NOT_LOADED"])
+    fm.Value:SetText(ERRORS)
     fm.Label:SetFont(UNIT_NAME_FONT, 1)
     fm.Label:SetTextColor(0, 0, 0, 0)
 
@@ -1046,7 +1047,7 @@ local function LoadPDBagList(fmMenu)
     updateStats()
 
     StaticPopupDialogs["GW_UNEQUIP_LEGENDARY"] = {
-        text = GwLocalization["UNEQUIP_LEGENDARY"],
+        text = L["UNEQUIP_LEGENDARY"],
         button1 = CANCEL,
         timeout = 0,
         whileDead = true,
@@ -1054,7 +1055,7 @@ local function LoadPDBagList(fmMenu)
         preferredIndex = 3
     }
     StaticPopupDialogs["GW_NOT_A_LEGENDARY"] = {
-        text = GwLocalization["NOT_A_LEGENDARY"],
+        text = L["NOT_A_LEGENDARY"],
         button1 = CANCEL,
         timeout = 0,
         whileDead = true,

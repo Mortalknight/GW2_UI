@@ -1,5 +1,5 @@
 local _, GW = ...
-local L = GwLocalization
+local L = GW.L
 
 local BUTTONS = {
     {button = _G.GameMenuButtonHelp, sprite={1,1}},

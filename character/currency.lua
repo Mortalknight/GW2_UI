@@ -1,20 +1,44 @@
 local _, GW = ...
+local L = GW.L
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local CommaValue = GW.CommaValue
 
 local BAG_CURRENCY_SIZE = 32
 local selectedLongInstanceID = nil
 
+local function checkNumWatched()
+    local numWatched = 0
+
+    for i = 1, GetCurrencyListSize() do
+        local isWatched = select(5, GetCurrencyListInfo(i))
+        if isWatched then
+            numWatched = numWatched + 1
+        end
+    end
+
+    return numWatched
+end
+GW.AddForProfiling("currency", "checkNumWatched", checkNumWatched)
+
 local function currency_OnClick(self)
-    if not self.CurrencyID or not self.CurrencyIdx then
-        return
+    if IsModifiedClick("TOKENWATCHTOGGLE") then
+        if not self.CurrencyID or not self.CurrencyIdx then
+            return
+        end
+        local _, _, _, _, isWatched, _ = GetCurrencyListInfo(self.CurrencyIdx)
+
+        if not isWatched then
+            if checkNumWatched() >= MAX_WATCHED_TOKENS then
+                UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, MAX_WATCHED_TOKENS), 1.0, 0.1, 0.1, 1.0)
+                return
+            end
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            SetCurrencyBackpack(self.CurrencyIdx, 1)
+        else
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+            SetCurrencyBackpack(self.CurrencyIdx, 0)
+        end
     end
-    local _, _, _, _, isWatched, _ = GetCurrencyListInfo(self.CurrencyIdx)
-    local toggle = 1
-    if isWatched then
-        toggle = 0
-    end
-    SetCurrencyBackpack(self.CurrencyIdx, toggle)
 end
 GW.AddForProfiling("currency", "currency_OnClick", currency_OnClick)
 
@@ -25,7 +49,9 @@ local function currency_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
     GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-    GameTooltip:AddLine(GwLocalization["CLICK_TO_TRACK"], 1, 1, 1)
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(SHOW_ON_BACKPACK, 1, 1, 1)
+    GameTooltip:AddLine(TOKEN_SHOW_ON_BACKPACK, nil, nil, nil, true)
     GameTooltip:Show()
 end
 GW.AddForProfiling("currency", "currency_OnEnter", currency_OnEnter)

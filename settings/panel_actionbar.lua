@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
@@ -6,7 +7,6 @@ local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local function setMultibarCols()
     local cols = GetSetting("MULTIBAR_RIGHT_COLS")

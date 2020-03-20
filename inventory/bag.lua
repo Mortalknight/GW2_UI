@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local CommaValue = GW.CommaValue
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
@@ -273,13 +274,13 @@ local function compactToggle()
         BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
         SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
         inv.resizeInventory()
-        return GwLocalization["EXPAND_ICONS"]
+        return L["EXPAND_ICONS"]
     end
 
     BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
     SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
     inv.resizeInventory()
-    return GwLocalization["COMPACT_ICONS"]
+    return L["COMPACT_ICONS"]
 end
 GW.AddForProfiling("bag", "compactToggle", compactToggle)
 
@@ -546,10 +547,10 @@ local function LoadBag(helpers)
             "OnClick",
             function(self)
                 if GetInsertItemsLeftToRight() then
-                    dd.newOrder:SetText(GwLocalization["BAG_NEW_ORDER_LAST"])
+                    dd.newOrder:SetText(L["BAG_NEW_ORDER_LAST"])
                     SetInsertItemsLeftToRight(false)
                 else
-                    dd.newOrder:SetText(GwLocalization["BAG_NEW_ORDER_FIRST"])
+                    dd.newOrder:SetText(L["BAG_NEW_ORDER_FIRST"])
                     SetInsertItemsLeftToRight(true)
                 end
                 dd:Hide()
@@ -560,10 +561,10 @@ local function LoadBag(helpers)
             "OnClick",
             function(self)
                 if GetSortBagsRightToLeft() then
-                    dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_FIRST"])
+                    dd.sortOrder:SetText(L["BAG_SORT_ORDER_FIRST"])
                     SetSortBagsRightToLeft(false)
                 else
-                    dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_LAST"])
+                    dd.sortOrder:SetText(L["BAG_SORT_ORDER_LAST"])
                     SetSortBagsRightToLeft(true)
                 end
                 dd:Hide()
@@ -574,10 +575,10 @@ local function LoadBag(helpers)
             "OnClick",
             function(self)
                 if GetSetting("BAG_REVERSE_SORT") then
-                    dd.bagOrder:SetText(GwLocalization["BAG_ORDER_REVERSE"])
+                    dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
                     SetSetting("BAG_REVERSE_SORT", false)
                 else
-                    dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
+                    dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
                     SetSetting("BAG_REVERSE_SORT", true)
                 end
                 setBagBarOrder(f.ItemFrame)
@@ -603,24 +604,24 @@ local function LoadBag(helpers)
         )
 
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
-            dd.compactBags:SetText(GwLocalization["COMPACT_ICONS"])
+            dd.compactBags:SetText(L["COMPACT_ICONS"])
         else
-            dd.compactBags:SetText(GwLocalization["EXPAND_ICONS"])
+            dd.compactBags:SetText(L["EXPAND_ICONS"])
         end
         if GetInsertItemsLeftToRight() then
-            dd.newOrder:SetText(GwLocalization["BAG_NEW_ORDER_FIRST"])
+            dd.newOrder:SetText(L["BAG_NEW_ORDER_FIRST"])
         else
-            dd.newOrder:SetText(GwLocalization["BAG_NEW_ORDER_LAST"])
+            dd.newOrder:SetText(L["BAG_NEW_ORDER_LAST"])
         end
         if GetSortBagsRightToLeft() then
-            dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_LAST"])
+            dd.sortOrder:SetText(L["BAG_SORT_ORDER_LAST"])
         else
-            dd.sortOrder:SetText(GwLocalization["BAG_SORT_ORDER_FIRST"])
+            dd.sortOrder:SetText(L["BAG_SORT_ORDER_FIRST"])
         end
         if GetSetting("BAG_REVERSE_SORT") then
-            dd.bagOrder:SetText(GwLocalization["BAG_ORDER_NORMAL"])
+            dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
         else
-            dd.bagOrder:SetText(GwLocalization["BAG_ORDER_REVERSE"])
+            dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
         end
         if GetSetting("BAG_ITEM_BORDER_HIDE") then
             dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)

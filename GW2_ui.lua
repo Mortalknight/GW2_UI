@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local RoundInt = GW.RoundInt
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
@@ -7,7 +8,6 @@ local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
-local L = GwLocalization
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 GW.VERSION_STRING = "GW2_UI @project-version@"

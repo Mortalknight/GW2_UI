@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local CommaValue = GW.CommaValue
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
@@ -25,6 +26,7 @@ local function repair_OnEvent(self, event, ...)
             end
         end
     end
+    self.gearBroken = gearBroken
 
     if gearBroken then
         self.icon:SetTexCoord(0, 1, 0.5, 1)
@@ -259,7 +261,11 @@ GW.AddForProfiling("healthglobe", "fill_OnFinish", fill_OnFinish)
 local function repair_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
-    GameTooltip:AddLine(GwLocalization["DAMAGED_OR_BROKEN_EQUIPMENT"], 1, 1, 1)
+    if self.gearBroken then
+        GameTooltip:AddLine(TUTORIAL_TITLE37, 1, 1, 1)
+    else
+        GameTooltip:AddLine(TUTORIAL_TITLE36, 1, 1, 1)
+    end
     GameTooltip:Show()
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)

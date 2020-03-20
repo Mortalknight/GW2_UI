@@ -1,10 +1,10 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 local Debug = GW.Debug
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local settings_cat = {}
 local lhb
@@ -227,7 +227,7 @@ local function Grid_Show_Hide()
         end
         grid_align:Hide()
         mhgb.forceHide = false
-        mhgb:SetText(GwLocalization["GRID_BUTTON_SHOW"])
+        mhgb:SetText(L["GRID_BUTTON_SHOW"])
     else
         if not grid then
             create_grid()
@@ -239,7 +239,7 @@ local function Grid_Show_Hide()
         end
         grid_align:Show()
         mhgb.forceHide = true
-        mhgb:SetText(GwLocalization["GRID_BUTTON_HIDE"])
+        mhgb:SetText(L["GRID_BUTTON_HIDE"])
     end
 end
 
@@ -261,7 +261,7 @@ GW.moveHudObjects = moveHudObjects
 
 local function lockHudObjects()
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+        DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
         return
     end
     lhb:Hide()
@@ -602,13 +602,13 @@ local function LoadSettings()
     sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
     sWindow.versionString:SetText(GW.VERSION_STRING)
     sWindow.headerString:SetText(CHAT_CONFIGURATION)
-    GwSettingsWindowMoveHud:SetText(GwLocalization["MOVE_HUD_BUTTON"])
-    fmGSWS:SetText(GwLocalization["SETTINGS_SAVE_RELOAD"])
+    GwSettingsWindowMoveHud:SetText(L["MOVE_HUD_BUTTON"])
+    fmGSWS:SetText(L["SETTINGS_SAVE_RELOAD"])
     fmGSWKB:SetText(KEY_BINDING)
-    fmGSWD:SetText(GwLocalization["DISCORD"])
+    fmGSWD:SetText(L["DISCORD"])
 
     StaticPopupDialogs["JOIN_DISCORD"] = {
-        text = GwLocalization["DISCORD"],
+        text = L["DISCORD"],
         button2 = CLOSE,
         timeout = 0,
         whileDead = true,
@@ -635,7 +635,7 @@ local function LoadSettings()
 
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then
-            DEFAULT_CHAT_FRAME:AddMessage(GwLocalization["HUD_MOVE_ERR"])
+            DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
             return
         end
         moveHudObjects()
@@ -689,14 +689,14 @@ local function LoadSettings()
     lhb = CreateFrame("Button", "GwLockHudButton", UIParent, "GwStandardButton")
     lhb:SetScript("OnClick", lockHudObjects)
     lhb:ClearAllPoints()
-    lhb:SetText(GwLocalization["SETTING_LOCK_HUD"])
+    lhb:SetText(L["SETTING_LOCK_HUD"])
     lhb:SetPoint("TOP", UIParent, "TOP", 0, 0)
     lhb:Hide()
 
     mhgb = CreateFrame("Button", "GwHudGridButton", UIParent, "GwStandardButton")
     mhgb:SetScript("OnClick", Grid_Show_Hide)
     mhgb:ClearAllPoints()
-    mhgb:SetText(GwLocalization["GRID_BUTTON_SHOW"])
+    mhgb:SetText(L["GRID_BUTTON_SHOW"])
     mhgb:SetPoint("TOP", UIParent, "TOP", 0, -26)
     mhgb:Hide()
     mhgb.forceHide = false
@@ -732,7 +732,7 @@ local function LoadSettings()
     end)
     grid_align.text = grid_align:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font")
 	grid_align.text:SetPoint("RIGHT", grid_align, "LEFT", -5, 0)
-	grid_align.text:SetText(GwLocalization["GRID_SIZE_LABLE"])
+	grid_align.text:SetText(L["GRID_SIZE_LABLE"])
     grid_align:Hide()
 
     GW.LoadModulesPanel(sWindow)

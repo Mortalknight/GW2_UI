@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local createCat = GW.CreateCat
 local GetActiveProfile = GW.GetActiveProfile
 local SetProfileSettings = GW.SetProfileSettings
@@ -6,7 +7,6 @@ local SetSetting = GW.SetSetting
 local ResetToDefault = GW.ResetToDefault
 local GetSettingsProfiles = GW.GetSettingsProfiles
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local GW_PROFILE_ICONS_PRESET = {}
 GW_PROFILE_ICONS_PRESET[0] = 538514 -- Interface/icons/spell_druid_displacement

@@ -1253,6 +1253,14 @@ local function LoadRaidFrames()
     UpdateRaidFramesLayout()
 
     GwToggleRaidPreview:SetScript("OnClick", ToggleRaidFramesPreview)
+    GwToggleRaidPreview:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(L["RAID_PREVIEW"], 1, 1, 1)
+        GameTooltip:AddLine(L["RAID_PREVIEW_DESC"], 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    GwToggleRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
     GwSettingsWindowMoveHud:HookScript("OnClick", function ()
         hudMoving = true
         if previewStep == 0 then

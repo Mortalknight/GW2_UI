@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local addOption = GW.AddOption
 local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
@@ -6,16 +7,15 @@ local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
-local L = GwLocalization
 
 local function LoadHudPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(GwLocalization["HUD_CAT_1"])
+    p.header:SetText(L["HUD_CAT_1"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(GwLocalization["HUD_DESC"])
+    p.sub:SetText(L["HUD_DESC"])
 
     createCat(L["HUD_CAT"], L["HUD_TOOLTIP"], p, 3)
 
