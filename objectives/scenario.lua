@@ -278,6 +278,7 @@ local function updateCurrentScenario()
                 )
             end
         end
+        numCriteriaPrev = numCriteriaPrev + numCriteria
     end
 
     for i = GwScenarioBlock.numObjectives + 1, 20 do

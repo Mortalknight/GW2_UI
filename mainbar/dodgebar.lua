@@ -186,6 +186,7 @@ local function dodge_OnEvent(self, event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
         initBar(self, true)
+        setupBar(self)
         -- setup hook to hide the dodge bar when in vehicle/override UI
         MixinHideDuringPetAndOverride(self)
 

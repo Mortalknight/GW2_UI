@@ -45,3 +45,18 @@ local function SkinLFGDungeonReadyDialog()
     hooksecurefunc("LFGDungeonReadyPopup_Update", SkinLFGDungeonReadyDialog_OnUpdate)
 end
 GW.SkinLFGDungeonReadyDialog = SkinLFGDungeonReadyDialog
+
+-------------------------------------------------------LFDRoleCheckPopup-------------------------------------------------------
+local function SkinLFDRoleCheckPopup_OnUpdate()
+    local LFDRoleCheckPopup = _G.LFDRoleCheckPopup
+
+    LFDRoleCheckPopup:SetBackdrop(nil)
+    LFDRoleCheckPopup:SetBackdrop(constBackdropFrame)
+    LFDRoleCheckPopup.Border:Hide()
+    SkinButton(_G.LFDRoleCheckPopupAcceptButton, false, true)
+    SkinButton(_G.LFDRoleCheckPopupDeclineButton, false, true) 
+end
+local function SkinLFDRoleCheckPopup()
+    hooksecurefunc("LFDRoleCheckPopup_Update", SkinLFDRoleCheckPopup_OnUpdate)
+end
+GW.SkinLFDRoleCheckPopup = SkinLFDRoleCheckPopup
