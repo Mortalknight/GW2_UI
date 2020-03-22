@@ -858,6 +858,39 @@ function GwReputationShowReputationHeader(i)
     selectedReputationCat = i
 end
 
+local function detailsAtwar_OnEnter(self)
+    self.icon:SetTexCoord(0.5, 1, 0, 0.5)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(REPUTATION_AT_WAR_DESCRIPTION, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("reputation", "detailsAtwar_OnEnter", detailsAtwar_OnEnter)
+
+local function detailsAtwar_OnLeave(self)
+    if not self.isActive then
+        self.icon:SetTexCoord(0, 0.5, 0, 0.5)
+    end
+    GameTooltip:Hide()
+end
+GW.AddForProfiling("reputation", "detailsAtwar_OnLeave", detailsAtwar_OnLeave)
+
+local function detailsShowAsBar_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(REPUTATION_SHOW_AS_XP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("reputation", "detailsShowAsBar_OnEnter", detailsShowAsBar_OnEnter)
+
+local function detailsInactive_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(REPUTATION_MOVE_TO_INACTIVE, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("reputation", "detailsInactive_OnEnter", detailsInactive_OnEnter)
+
 local function getNewReputationDetail(i)
     if _G["GwReputationDetails" .. i] ~= nil then return _G["GwReputationDetails" .. i] end
 
@@ -882,6 +915,26 @@ local function getNewReputationDetail(i)
 
     f.details:SetFont(UNIT_NAME_FONT, 12)
     f.details:SetTextColor(0.8, 0.8, 0.8, 1)
+
+    f.controles.inactive:SetScript("OnEnter", detailsInactive_OnEnter)
+    f.controles.inactive:SetScript("OnLeave", GameTooltip_Hide)
+    f.controles.inactive.checkbutton:SetScript("OnEnter", detailsInactive_OnEnter)
+    f.controles.inactive.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
+
+    f.controles.showAsBar:SetScript("OnEnter", detailsShowAsBar_OnEnter)
+    f.controles.showAsBar:SetScript("OnLeave", GameTooltip_Hide)
+    f.controles.showAsBar.checkbutton:SetScript("OnEnter", detailsShowAsBar_OnEnter)
+    f.controles.showAsBar.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
+
+    f.controles.inactive.string:SetFont(UNIT_NAME_FONT, 12)
+    f.controles.inactive.string:SetText(FACTION_INACTIVE)
+    f.controles.inactive:SetWidth(f.controles.inactive.string:GetWidth())
+    f.controles.showAsBar.string:SetFont(UNIT_NAME_FONT, 12)
+    f.controles.showAsBar.string:SetText(SHOW_FACTION_ON_MAINSCREEN)
+    f.controles.showAsBar:SetWidth(f.controles.showAsBar.string:GetWidth())
+
+    f.controles.atwar:SetScript("OnEnter", detailsAtwar_OnEnter)
+    f.controles.atwar:SetScript("OnLeave", detailsAtwar_OnLeave)
 
     f.details:Hide()
     f.currentRank:SetText(L["CHARACTER_CURRENT_RANK"])
@@ -952,15 +1005,15 @@ local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName
     end
 
     if isWatched then
-        frame.controles.showAsBar:SetChecked(true)
+        frame.controles.showAsBar.checkbutton:SetChecked(true)
     else
-        frame.controles.showAsBar:SetChecked(false)
+        frame.controles.showAsBar.checkbutton:SetChecked(false)
     end
 
     if IsFactionInactive(factionIndex) then
-        frame.controles.inactive:SetChecked(true)
+        frame.controles.inactive.checkbutton:SetChecked(true)
     else
-        frame.controles.inactive:SetChecked(false)
+        frame.controles.inactive.checkbutton:SetChecked(false)
     end
 
     frame.controles.inactive:SetScript("OnClick", function()
@@ -974,16 +1027,16 @@ local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName
         GwUpdateReputationDisplayOldData()
     end)
 
-    if canBeLFGBonus then
-        frame.controles.favorit.isShowAble = true
-        frame.controles.favorit:SetScript("OnClick", function()
-            ReputationBar_SetLFBonus(factionID)
-            GwUpdateSavedReputation()
-            GwUpdateReputationDisplayOldData()
-        end)
-    else
-        frame.controles.favorit.isShowAble = false
-    end
+    frame.controles.inactive.checkbutton:SetScript("OnClick", function()
+        if IsFactionInactive(factionIndex) then
+            SetFactionActive(factionIndex)
+        else
+            SetFactionInactive(factionIndex)
+        end
+        GwUpdateSavedReputation()
+        GwPaperDollUpdateReputations()
+        GwUpdateReputationDisplayOldData()
+    end)
 
     frame.controles.atwar:SetScript("OnClick", function()
         FactionToggleAtWar(factionIndex)
@@ -994,6 +1047,16 @@ local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName
     end)
 
     frame.controles.showAsBar:SetScript("OnClick", function()
+        if isWatched then
+            SetWatchedFactionIndex(0)
+        else
+            SetWatchedFactionIndex(factionIndex)
+        end
+        GwUpdateSavedReputation()
+        GwUpdateReputationDisplayOldData()
+    end)
+
+    frame.controles.showAsBar.checkbutton:SetScript("OnClick", function()
         if isWatched then
             SetWatchedFactionIndex(0)
         else
@@ -1192,6 +1255,7 @@ local function updateSkillItem(self)
         self.bgstatic:Show()
     end
 end
+
 local function abandonProffesionOnClick(self)
     local skillIndex = self:GetParent().skillIndex
     local skillName = self:GetParent().skillName
@@ -1200,7 +1264,14 @@ local function abandonProffesionOnClick(self)
         UNLEARN_SKILL:format(skillName),
         function()
             AbandonSkill(skillIndex)
-        end)
+        end
+    )
+end
+
+local function abandonProffesionOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(UNLEARN_SKILL_TOOLTIP)
+    GameTooltip:Show()
 end
 
 local skillsMaxValueScrollbar = 0
@@ -1231,10 +1302,14 @@ function GWupdateSkills()
 
         if isAbandonable then
             f.abandon:Show()
-            f.abandon:SetScript("OnClick",abandonProffesionOnClick)
+            f.abandon:SetScript("OnClick", abandonProffesionOnClick)
+            f.abandon:SetScript("OnEnter", abandonProffesionOnEnter)
+            f.abandon:SetScript("OnLeave", GameTooltip_Hide)
         else
             f.abandon:Hide()
-            f.abandon:SetScript("OnClick",nil)
+            f.abandon:SetScript("OnClick", nil)
+            f.abandon:SetScript("OnEnter", nil)
+            f.abandon:SetScript("OnLeave", nil)
         end
 
 

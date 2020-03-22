@@ -3,8 +3,7 @@ local _, GW = ...
 
 local function GWUseThisLocalization()
 	-- Create a global variable for the language strings
-	local L = {}
-	GW.L = L
+	local L = GW.L
 	
 	--Fonts
 	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
@@ -43,11 +42,6 @@ local function GWUseThisLocalization()
 	L["BUTTON_ASSIGNMENTS_DESC"] = "액션바 슬롯 할당 활성화 또는 비활성화"
 	L["CASTING_BAR_DESC"] = "GW2 시전바 활성화"
 	L["CHARACTER_NEXT_RANK"] = "다음"
-	L["CHARACTER_NOT_LOADED"] = "로드 되지 않음."
-	L["CHARACTER_OUTFITS_DELETE"] = "정말로 이 의상을 지우시겠습니까?"
-	L["CHARACTER_OUTFITS_SAVE"] = "이 의상을 저장하시겠습니까?"
-	L["CHARACTER_PARAGON"] = "불멸의 동맹"
-	L["CHARACTER_REPUTATION_TRACK"] = "막대로 표시"
 	L["CHAT_BUBBLES_DESC"] = "기본 말풍선 교체"
 	L["CHAT_FADE"] = "채팅 숨기기"
 	L["CHAT_FADE_DESC"] = "채팅을 사용하지 않을 시 자동 숨김. "

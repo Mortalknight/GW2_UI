@@ -3,8 +3,7 @@ local _, GW = ...
 
 local function GWUseThisLocalization()
 	-- Create a global variable for the language strings
-	local L = {}
-	GW.L = L
+	local L = GW.L
 	
 	--Fonts
 	L['FONT_NORMAL'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf' 
@@ -43,11 +42,6 @@ local function GWUseThisLocalization()
 	L["BUTTON_ASSIGNMENTS_DESC"] = "Включить или выключить подпись клавиш панели"
 	L["CASTING_BAR_DESC"] = "Включить стиль GW2 для полоски каста"
 	L["CHARACTER_NEXT_RANK"] = "Следующий"
-	L["CHARACTER_NOT_LOADED"] = "Не загружено."
-	L["CHARACTER_OUTFITS_DELETE"] = "Вы уверены, что хотите удалить этот набор?"
-	L["CHARACTER_OUTFITS_SAVE"] = "Вы уверены, что хотите сохранить этот набор?"
-	L["CHARACTER_PARAGON"] = "Парагон"
-	L["CHARACTER_REPUTATION_TRACK"] = "Показать полоску"
 	L["CHAT_BUBBLES_DESC"] = "Заменить стандартный UI чата облаками."
 	L["CHAT_FADE"] = "Затемнить чат"
 	L["CHAT_FADE_DESC"] = "Разрешить затемнение чата, когда он не используется."

@@ -3,8 +3,7 @@ local _, GW = ...
 
 local function GWUseThisLocalization()
 	-- Create a global variable for the language strings
-	local L = {}
-	GW.L = L
+	local L = GW.L
     
     --Fonts
     L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
@@ -43,11 +42,6 @@ local function GWUseThisLocalization()
     L["BUTTON_ASSIGNMENTS_DESC"] = "显示或隐藏快捷键上的按键提示文字."
     L["CASTING_BAR_DESC"] = "使用GW2风格的施法条."
     L["CHARACTER_NEXT_RANK"] = "下一步"
-    L["CHARACTER_NOT_LOADED"] = "未载入."
-    L["CHARACTER_OUTFITS_DELETE"] = "是否删除装备方案: "
-    L["CHARACTER_OUTFITS_SAVE"] = "是否覆盖装备方案: "
-    L["CHARACTER_PARAGON"] = "巅峰"
-    L["CHARACTER_REPUTATION_TRACK"] = "经验条显示"
     L["CHAT_BUBBLES_DESC"] = "使用GW2风格的聊天泡泡."
     L["CHAT_FADE"] = "聊天框渐隐"
     L["CHAT_FADE_DESC"] = "当不使用聊天栏时渐隐."

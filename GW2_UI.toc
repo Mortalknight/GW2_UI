@@ -8,10 +8,10 @@
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
 
+locales/enUS.lua
 locales/deDE.lua
 locales/koKR.lua
 locales/zhTW.lua
-locales/enUS.lua
 locales/esMX.lua
 locales/esES.lua
 locales/ruRU.lua
@@ -21,7 +21,6 @@ locales/zhCN.lua
 locales/itIT.lua
 
 libs/libs.xml
-immersive/skins/skins.xml
 
 core/consts.lua
 core/utils.lua
@@ -115,6 +114,7 @@ character/talents.lua
 character/talents.xml
 character/windowManager.lua
 
+immersive/skins/skins.xml
 immersive/tooltips.lua
 immersive/questview.xml
 immersive/questview.lua

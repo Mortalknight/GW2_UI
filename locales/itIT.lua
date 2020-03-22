@@ -3,8 +3,7 @@ local _, GW = ...
 
 local function GWUseThisLocalization()
 	-- Create a global variable for the language strings
-	local L = {}
-	GW.L = L
+	local L = GW.L
     
     --Fonts
     L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
@@ -50,11 +49,6 @@ local function GWUseThisLocalization()
     L["BUTTON_ASSIGNMENTS_DESC"] = "Abilita o Disabilita l'auto-assegnamento delle magie sulla barra delle azioni"
     L["CASTING_BAR_DESC"] = "Abilita la barra di lancio in stile Gw2."
     L["CHARACTER_NEXT_RANK"] = "PROSSIMO"
-    L["CHARACTER_NOT_LOADED"] = "Non caricato."
-    L["CHARACTER_OUTFITS_DELETE"] = "Sei sicuro di voler eliminare questo vestito?"
-    L["CHARACTER_OUTFITS_SAVE"] = "Sei sicuro di voler salvare questo vestito?"
-    L["CHARACTER_PARAGON"] = "Esemplare"
-    L["CHARACTER_REPUTATION_TRACK"] = "Mostra come barra"
     L["CHAT_BUBBLES_DESC"] = "Rimpiazza le nuvolette di dialogo dell'interfaccia utente predefinita."
     L["CHAT_FADE"] = "Dissolvi Chat"
     L["CHAT_FADE_DESC"] = "Permetti alla chat di dissolversi quando non in uso."

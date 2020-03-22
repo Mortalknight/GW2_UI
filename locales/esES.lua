@@ -3,8 +3,7 @@ local _, GW = ...
 
 local function GWUseThisLocalization()
 	-- Create a global variable for the language strings
-	local L = {}
-	GW.L = L
+	local L = GW.L
 	
 	--Fonts
 	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
@@ -52,11 +51,6 @@ local function GWUseThisLocalization()
 	L["BUTTON_ASSIGNMENTS_DESC"] = "Activar o desactivar las asignaciones de huecos de barra de acción"
 	L["CASTING_BAR_DESC"] = "Activar la barra de casteo de GW2 UI"
 	L["CHARACTER_NEXT_RANK"] = "SIGUIENTE"
-	L["CHARACTER_NOT_LOADED"] = "Sin cargar."
-	L["CHARACTER_OUTFITS_DELETE"] = "¿Estás seguro que quieres borrar el atuendo?"
-	L["CHARACTER_OUTFITS_SAVE"] = "¿Estás seguro que quieres guardar el atuendo?"
-	L["CHARACTER_PARAGON"] = "Paragón"
-	L["CHARACTER_REPUTATION_TRACK"] = "Mostrar como barra"
 	L["CHAT_BUBBLES_DESC"] = "Reemplazar los bocadillos de chat de IU predeterminados. "
 	L["CHAT_FADE"] = "Ocultar el chat"
 	L["CHAT_FADE_DESC"] = "Permitir al chat ocultarse cuando no esté en uso."

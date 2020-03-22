@@ -397,112 +397,77 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                 </Anchors>
-            <Frames>
-
-            <Button parentKey="atwar">
-                <Size x="40" y="40"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5">
-                </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
-                            <Size x="40" y="40"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER"></Anchor>
-                            </Anchors>
-                            <TexCoords left="0" right="0.5" top="0" bottom="0.5" />
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <Scripts>
-                    <OnEnter>
-                        self.icon:SetTexCoord(0.5, 1, 0, 0.5)
-                    </OnEnter>
-                    <OnLeave>
-                        if not self.isActive then
-                            self.icon:SetTexCoord(0, 0.5, 0, 0.5)
-                        end
-                    </OnLeave>
-                </Scripts>
-            </Button>
-            <Button parentKey="favorit" hidden="true">
-                <Size x="40" y="40"></Size>
-                <Anchors>
-                <Anchor point="LEFT" relativeKey="$parent.atwar" relativePoint="RIGHT" x="5">
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
-                            <Size x="40" y="40"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER"></Anchor>
-                            </Anchors>
-                            <TexCoords left="0.5" right="1" top="0.5" bottom="1" />
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <Scripts>
-                    <OnEnter>
-                        self.icon:SetTexCoord(0, 0.5, 0.5, 1)
-                    </OnEnter>
-                    <OnLeave>
-                        if not self.isActive then
-                            self.icon:SetTexCoord(0.5, 1, 0.5, 1)
-                        end
-                    </OnLeave>
-                </Scripts>
-            </Button>
-                <CheckButton  parentKey="inactive" checked="false">
-                    <Size x="16" y="16"></Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-60" y="5"></Anchor>
-                    </Anchors>
-                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                    <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
-                    <Layers>
-                        <Layer level="ARTWORK">
-                            <FontString parentKey="string" text="Unknown" justifyH="LEFT">
-                                <Size x="60" y="20"></Size>
+                <Frames>
+                    <Button parentKey="atwar">
+                        <Size x="40" y="40"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5">
+                        </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK" textureSubLevel="2">
+                                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\reputation-icons">
+                                    <Size x="40" y="40"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER"></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0" right="0.5" top="0" bottom="0.5" />
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <Button parentKey="inactive" checked="false">
+                        <Size x="100" y="20"/>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="5"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="string" text="Unknown" justifyH="RIGHT">
+                                    <Size x="60" y="20"/>
+                                    <Anchors>
+                                        <Anchor point="RIGHT" x="5" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <CheckButton parentKey="checkbutton" checked="false">
+                                <Size x="16" y="16"/>
                                 <Anchors>
-                                    <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
+                                    <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                 </Anchors>
-                            </FontString>
-                        </Layer>
-                    </Layers>
-                    <Scripts>
-                        <OnLoad>
-                            self.string:SetFont(UNIT_NAME_FONT, 12)
-                            self.string:SetText(FACTION_INACTIVE)
-                        </OnLoad>
-                    </Scripts>
-                </CheckButton>
-                <CheckButton  parentKey="showAsBar" checked="false">
-                    <Size x="16" y="16"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-100" y="0"></Anchor>
-                    </Anchors>
-                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                    <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
-                    <Layers>
-                        <Layer level="ARTWORK">
-                            <FontString parentKey="string" text="Unknown" justifyH="LEFT">
-                                <Size x="100" y="20"></Size>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                            </CheckButton>
+                        </Frames>
+                    </Button>
+                    <Button parentKey="showAsBar" checked="false">
+                        <Size x="200" y="20"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-15" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="string" text="Unknown" justifyH="RIGHT">
+                                    <Size x="200" y="20"/>
+                                    <Anchors>
+                                        <Anchor point="RIGHT" x="5" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <CheckButton parentKey="checkbutton" checked="false">
+                                <Size x="16" y="16"/>
                                 <Anchors>
-                                    <Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0"></Anchor>
+                                    <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                 </Anchors>
-                            </FontString>
-                        </Layer>
-                    </Layers>
-                    <Scripts>
-                        <OnLoad>
-                            self.string:SetFont(UNIT_NAME_FONT, 12)
-                            self.string:SetText(SHOW_FACTION_ON_MAINSCREEN)
-                        </OnLoad>
-                    </Scripts>
-                </CheckButton>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                            </CheckButton>
+                        </Frames>
+                    </Button>
                 </Frames>
                 <Scripts>
                     <OnShow>
@@ -511,11 +476,6 @@
                             self.atwar:Show()
                         else
                             self.atwar:Hide()
-                        end
-                        if self.favorit.isShowAble then
-                            self.favorit:Show()
-                        else
-                            self.favorit:Hide()
                         end
                     </OnShow>
                     <OnHide>

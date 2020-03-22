@@ -3,8 +3,8 @@ local _, GW = ...
 
 local function GWUseThisLocalization()
 	-- Create a global variable for the language strings
-	local L = {}
-	GW.L = L
+	local L = GW.L
+
 	--Fonts
 	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
 	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
@@ -48,11 +48,6 @@ local function GWUseThisLocalization()
 	L["CENTER"] = "中"
 	L["CHANGELOG"] = "更新資訊"
 	L["CHARACTER_NEXT_RANK"] = "下一個"
-	L["CHARACTER_NOT_LOADED"] = "未載入。"
-	L["CHARACTER_OUTFITS_DELETE"] = "是否確定要刪除裝備設定?"
-	L["CHARACTER_OUTFITS_SAVE"] = "是否確定要儲存裝備設定?"
-	L["CHARACTER_PARAGON"] = "巔峰"
-	L["CHARACTER_REPUTATION_TRACK"] = "顯示於經驗值欄位"
 	L["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。"
 	L["CHAT_FADE"] = "淡出聊天視窗"
 	L["CHAT_FADE_DESC"] = "允許非使用中淡出聊天視窗。"

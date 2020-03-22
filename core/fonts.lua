@@ -41,7 +41,7 @@ local function LoadFonts()
 
 	-- default values
 	UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = 14
-	CHAT_FONT_HEIGHTS = {12, 13, 14, 15, 16, 18, 20, 22}
+	CHAT_FONT_HEIGHTS = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
 
 	setFont(ChatFontNormal, narrow, nil, nil, .75, -.75, 1)
 	setFont(NumberFontNormal, narrow, 12, "", 1.25, -1.25, 1)
@@ -69,12 +69,9 @@ local function LoadFonts()
 	setFont(SystemFont_Shadow_Huge3, normal)
 	setFont(SystemFont_OutlineThick_Huge4, bold)
 	setFont(SystemFont_OutlineThick_WTF, normal)
-	-- setFont(GameTooltipHeader, normal)
 	setFont(SpellFont_Small, normal)
 	setFont(InvoiceFont_Med, normal)
 	setFont(InvoiceFont_Small, normal)
-	-- setFont(Tooltip_Med, normal)
-	-- setFont(Tooltip_Small, normal)
 	setFont(AchievementFont_Small, normal)
 	setFont(ReputationDetailFont, normal)
 	setFont(FriendsFont_Normal, normal)
@@ -82,6 +79,7 @@ local function LoadFonts()
 	setFont(FriendsFont_Large, bold)
 	setFont(GameFont_Gigantic, normal)
 	setFont(ChatBubbleFont, normal)
+	setFont(Fancy22Font, normal)
 
 	setFont(GameTooltipHeader, bold, 14, nil, -1, -1, 1, 1, 1, 1, 0, 0, 0)
 	setFont(Tooltip_Med, normal, 12, nil, -1, -1, 1, 1, 1, 1, 0, 0, 0)
@@ -107,6 +105,10 @@ local function LoadFonts()
 	setFont(RaidWarningFrameSlot2, narrow, 12, "", .75, -.75, .75)
 	setFont(RaidBossEmoteFrameSlot1, narrow, 12, "", .75, -.75, .75)
 	setFont(RaidBossEmoteFrameSlot2, narrow, 12, "", .75, -.75, .75)
+
+	setFont(InvoiceFont_Med, normal)
+	setFont(InvoiceFont_Small, normal)
+	setFont(MailFont_Large, normal)
 
 	RaidBossEmoteFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
 	RaidBossEmoteFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
