@@ -136,12 +136,12 @@ local function setupBar(self)
 
     -- sort out separators for multi charges
     local af = self.arcfill
-    if maxCharges > 1 and maxCharges < 3 then
+    if maxCharges == 2 then
         af.sep50:Show()
     else
         af.sep50:Hide()
     end
-    if maxCharges > 2 then
+    if maxCharges == 3 then
         af.sep33:Show()
         af.sep66:Show()
     else
@@ -181,12 +181,14 @@ local function dodge_OnEvent(self, event, ...)
             return
         end
         local charges, maxCharges, start, duration = GetSpellCharges(self.spellId)
+        if self.gwMaxCharges ~= maxCharges then 
+            setupBar(self)
+        end
         updateAnim(self, start, duration, charges, maxCharges)
 
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
         initBar(self, true)
-        setupBar(self)
         -- setup hook to hide the dodge bar when in vehicle/override UI
         MixinHideDuringPetAndOverride(self)
 
@@ -274,6 +276,7 @@ local function LoadDodgeBar(hg)
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
+    Debug("LoadDodgeBar done")
     return fmdb
 end
 GW.LoadDodgeBar = LoadDodgeBar

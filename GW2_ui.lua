@@ -66,8 +66,6 @@ local function lockableOnClick(self, btn)
     new_point["yOfs"] = math.floor(yOfs)
     SetSetting(settingsName, new_point)
 
-    SetSetting(lockAble, true)
-
     --if 'PlayerBuffFrame', set also the grow direction to default
     if settingsName == "PlayerBuffFrame" then
         SetSetting(settingsName .. "_GrowDirection", "UP")

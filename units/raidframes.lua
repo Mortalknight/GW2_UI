@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local CountTable = GW.CountTable
