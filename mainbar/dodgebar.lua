@@ -1,4 +1,5 @@
 local _, GW = ...
+local Wait = GW.Wait
 local Debug = GW.Debug
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 
@@ -181,9 +182,6 @@ local function dodge_OnEvent(self, event, ...)
             return
         end
         local charges, maxCharges, start, duration = GetSpellCharges(self.spellId)
-        if self.gwMaxCharges ~= maxCharges then 
-            setupBar(self)
-        end
         updateAnim(self, start, duration, charges, maxCharges)
 
     elseif event == "PLAYER_ENTERING_WORLD" then
@@ -193,9 +191,15 @@ local function dodge_OnEvent(self, event, ...)
         MixinHideDuringPetAndOverride(self)
 
     elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" then
-        -- do remaining spell detail stuff that is (usually) not available yet in PEW
-        initBar(self, false)
-        setupBar(self)
+        -- do remaining spell detail stuff that is (usually) not available yet in PEW or if we are not in world
+        if not GW.inWorld or not self.spellId then
+            return
+        end
+        -- add a delay because spell infos sometimes not ready
+        Wait(0.05, function()
+            initBar(self, false)
+            setupBar(self)
+        end)
     end
 end
 GW.AddForProfiling("dodgebar", "dodge_OnEvent", dodge_OnEvent)

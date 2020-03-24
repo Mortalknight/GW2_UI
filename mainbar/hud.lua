@@ -1,6 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local CommaValue = GW.CommaValue
+local Wait = GW.Wait
 local lerp = GW.lerp
 local GetSetting = GW.GetSetting
 local Diff = GW.Diff
@@ -137,17 +138,7 @@ GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
 local function xpbar_OnEvent(self, event)
     if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil then
-        local delayUpdateTime = GetTime() + 0.4
-        GwExperienceFrame:SetScript(
-            "OnUpdate",
-            function()
-                if GetTime() < delayUpdateTime then
-                    return
-                end
-                xpbar_OnEvent(self, nil)
-                GwExperienceFrame:SetScript("OnUpdate", nil)
-            end
-        )
+        Wait(0.4, xpbar_OnEvent(self, nil))
     end
     if event == "UPDATE_FACTION" and not GW.inWorld then
         return
