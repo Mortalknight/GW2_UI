@@ -614,6 +614,9 @@ local function loadAddon(self)
     if GetSetting("ADDONLIST_SKIN_ENABLED") then
         GW.skinAddonList()
     end
+    if GetSetting("SETTINGS_SKIN_ENABLED") then
+        GW.skinSystemSettings()
+    end
 
     --Create hud art
     GW.LoadHudArt()

@@ -92,6 +92,84 @@ local function SkinCheckButton(button)
 end
 GW.skins.SkinCheckButton = SkinCheckButton
 
+local tabs = {
+    "LeftDisabled",
+    "MiddleDisabled",
+    "RightDisabled",
+    "Left",
+    "Middle",
+    "Right"
+}
+
+local function SkinTab(tabButton)
+    tabButton:SetBackdrop(nil)
+
+    if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/unittab") end
+    if tabButton.SetHighlightTexture then 
+        tabButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/unittab")
+        tabButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
+    end
+    if tabButton.SetPushedTexture then tabButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/unittab") end
+    if tabButton.SetDisabledTexture then tabButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/unittab") end
+
+    if tabButton.Text then
+        --tabButton.Text:SetTextColor(0, 0, 0, 1)
+        tabButton.Text:SetShadowOffset(0, 0)
+    end
+
+    local r = {tabButton:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            --c:SetTextColor(0, 0, 0, 1)
+            c:SetShadowOffset(0, 0)
+        end
+    end
+
+    for _, object in pairs(tabs) do
+        local tex = _G[tabButton:GetName() .. object]
+        if tex then
+            tex:SetTexture()
+        end
+    end
+end
+GW.skins.SkinTab = SkinTab
+
+function SkinSliderFrame(frame)
+	local orientation = frame:GetOrientation()
+    local SIZE = 12
+    
+    frame:SetBackdrop(nil)
+    frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/sliderhandle")
+
+	local thumb = frame:GetThumbTexture()
+    thumb:SetSize(SIZE - 2, SIZE - 2)
+    
+    local tex = frame:CreateTexture("bg", "BACKGROUND")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/sliderbg")
+    frame.tex = tex
+
+	if orientation == "VERTICAL" then
+        frame:SetWidth(SIZE)
+        frame.tex:SetPoint("TOP", frame, "TOP")
+        frame.tex:SetPoint("BOTTOM", frame, "BOTTOM")
+	else
+        frame:SetHeight(SIZE)
+        frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
+        frame.tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
+
+		for i = 1, frame:GetNumRegions() do
+			local region = select(i, frame:GetRegions())
+			if region and region:IsObjectType("FontString") then
+				local point, anchor, anchorPoint, x, y = region:GetPoint()
+				if strfind(anchorPoint, "BOTTOM") then
+					region:SetPoint(point, anchor, anchorPoint, x, y - 4)
+				end
+			end
+		end
+    end
+end
+GW.skins.SkinSliderFrame = SkinSliderFrame
+
 local function SkinDropDownMenu(self)
     if self.Left then self.Left:Hide() end
     if self.Middle then self.Middle:Hide() end
