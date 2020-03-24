@@ -17,6 +17,7 @@
     <Script file="immersive\skins\flightmap.lua"/>
     <Script file="immersive\skins\addonManager.lua"/>
     <Script file="immersive\skins\systemsettings.lua"/>
+    <Script file="immersive\skins\bindings.lua"/>
 
 	<Script file="immersive\skins\addons\immersion.lua"/>
 </Ui>

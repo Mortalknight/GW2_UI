@@ -5,7 +5,7 @@ local SkinButton = GW.skins.SkinButton
 local SkinDropDownMenu = GW.skins.SkinDropDownMenu
 local SkinCheckButton = GW.skins.SkinCheckButton
 
-local function skinAddonList()
+local function SkinAddonList()
     local AddonList = _G.AddonList
 
     AddonList.NineSlice:Hide()
@@ -65,4 +65,4 @@ local function skinAddonList()
     _G.AddonListScrollFrameScrollBarScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
     _G.AddonListScrollFrameScrollBarScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
 end
-GW.skinAddonList = skinAddonList
+GW.SkinAddonList = SkinAddonList

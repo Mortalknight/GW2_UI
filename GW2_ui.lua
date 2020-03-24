@@ -612,10 +612,13 @@ local function loadAddon(self)
         GW.SkinFlightMap()
     end
     if GetSetting("ADDONLIST_SKIN_ENABLED") then
-        GW.skinAddonList()
+        GW.SkinAddonList()
     end
     if GetSetting("SETTINGS_SKIN_ENABLED") then
-        GW.skinSystemSettings()
+        GW.SkinSystemSettings()
+    end
+    if GetSetting("BINDINGS_SKIN_ENABLED") then
+        GW.SkinBindingsUI()
     end
 
     --Create hud art

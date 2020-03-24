@@ -37,7 +37,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, "Use Blizzard Class Colors", nil, "BLIZZARDCLASSCOLOR_ENABLED")
     addOption(p, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED")
     addOption(p, SYSTEMOPTIONS_MENU, nil, "SETTINGS_SKIN_ENABLED")
-    
+    addOption(p, KEY_BINDINGS, nil, "BINDINGS_SKIN_ENABLED")
     
     InitPanel(p)
 end

@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrame = GW.skins.constBackdropFrame
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local SkinButton = GW.skins.SkinButton
 local SkinDropDownMenu = GW.skins.SkinDropDownMenu
@@ -31,7 +30,7 @@ local InterfaceOptions = {
     _G.AudioOptionsVoicePanelChatMode2,
 }
 
-local function skinSystemSettings()
+local function SkinSystemSettings()
     local VideoOptionsFrame = _G.VideoOptionsFrame
 
     VideoOptionsFrame.Header.CenterBG:Hide()
@@ -75,4 +74,4 @@ local function skinSystemSettings()
 		end
 	end
 end
-GW.skinSystemSettings = skinSystemSettings
+GW.SkinSystemSettings = SkinSystemSettings
