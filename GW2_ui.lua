@@ -620,10 +620,12 @@ local function loadAddon(self)
     if GetSetting("BINDINGS_SKIN_ENABLED") then
         GW.SkinBindingsUI()
     end
-
-    GW.SkinInterfaceOptions()
-
-    GW.SkinMacroOptions()
+    if GetSetting("INTERFACE_SKIN_ENABLED") then
+        GW.SkinInterfaceOptions()
+    end
+    if GetSetting("MACRO_SKIN_ENABLED") then
+        GW.SkinMacroOptions()
+    end
 
     --Create hud art
     GW.LoadHudArt()

@@ -38,6 +38,8 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED")
     addOption(p, SYSTEMOPTIONS_MENU, nil, "SETTINGS_SKIN_ENABLED")
     addOption(p, KEY_BINDINGS, nil, "BINDINGS_SKIN_ENABLED")
+    addOption(p, UIOPTIONS_MENU, nil, "INTERFACE_SKIN_ENABLED")
+    addOption(p, MACRO, nil, "MACRO_SKIN_ENABLED")
     
     InitPanel(p)
 end
