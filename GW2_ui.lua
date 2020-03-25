@@ -621,6 +621,10 @@ local function loadAddon(self)
         GW.SkinBindingsUI()
     end
 
+    GW.SkinInterfaceOptions()
+
+    GW.SkinMacroOptions()
+
     --Create hud art
     GW.LoadHudArt()
 

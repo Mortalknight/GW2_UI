@@ -72,6 +72,6 @@ local function SkinSystemSettings()
 				end
 			end
 		end
-	end
+    end
 end
 GW.SkinSystemSettings = SkinSystemSettings

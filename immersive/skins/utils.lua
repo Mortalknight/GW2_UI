@@ -50,7 +50,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
         else
             if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button") end
             if button.SetHighlightTexture then 
-                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button")
+                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button_hover")
                 button:GetHighlightTexture():SetVertexColor(0, 0, 0)
             end
             if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button") end
@@ -86,7 +86,7 @@ GW.skins.SkinButton = SkinButton
 local function SkinCheckButton(button)
     if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/checkbox") end
     if button.SetCheckedTexture then button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked") end
-    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/checkbox") end
+    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked") end
     if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/checkbox") end
     if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal") end
 end
@@ -169,6 +169,68 @@ function SkinSliderFrame(frame)
     end
 end
 GW.skins.SkinSliderFrame = SkinSliderFrame
+
+local function SkinScrollFrame(frame)
+    if frame.scrollBorderTop then frame.scrollBorderTop:Hide() end
+    if frame.scrollBorderBottom then frame.scrollBorderBottom:Hide() end
+    if frame.scrollFrameScrollBarBackground then frame.scrollFrameScrollBarBackground:Hide() end
+    if frame.scrollBorderMiddle then
+        frame.scrollBorderMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
+        frame.scrollBorderMiddle:SetSize(3, frame.scrollBorderMiddle:GetSize())
+        frame.scrollBorderMiddle:ClearAllPoints()
+        frame.scrollBorderMiddle:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
+        frame.scrollBorderMiddle:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
+    end
+
+    if _G[frame:GetName() .. "ScrollBarTop"] then _G[frame:GetName() .. "ScrollBarTop"]:Hide() end
+    if _G[frame:GetName() .. "ScrollBarBottom"] then _G[frame:GetName() .. "ScrollBarBottom"]:Hide() end
+    if _G[frame:GetName() .. "ScrollBarMiddle"] then
+        _G[frame:GetName() .. "ScrollBarMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
+        _G[frame:GetName() .. "ScrollBarMiddle"]:SetSize(3, _G[frame:GetName() .. "ScrollBarMiddle"]:GetSize())
+        _G[frame:GetName() .. "ScrollBarMiddle"]:ClearAllPoints()
+        _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
+        _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
+    end
+    
+    if _G[frame:GetName() .. "Top"] then _G[frame:GetName() .. "Top"]:Hide() end
+    if _G[frame:GetName() .. "Bottom"] then _G[frame:GetName() .. "Bottom"]:Hide() end
+    if _G[frame:GetName() .. "Middle"] then
+        _G[frame:GetName() .. "Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
+        _G[frame:GetName() .. "Middle"]:SetSize(3, _G[frame:GetName() .. "Middle"]:GetSize())
+        _G[frame:GetName() .. "Middle"]:ClearAllPoints()
+        _G[frame:GetName() .. "Middle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
+        _G[frame:GetName() .. "Middle"]:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
+    end
+end
+GW.skins.SkinScrollFrame = SkinScrollFrame
+
+local function GrabScrollBarElement(frame, element)
+    local FrameName = frame:GetDebugName()
+    return frame[element] or FrameName and (_G[FrameName..element] or strfind(FrameName, element)) or nil
+end
+
+local function SkinScrollBar(frame)
+    local parent = frame:GetParent()
+    local ScrollUpButton = GrabScrollBarElement(frame, 'ScrollUpButton') or GrabScrollBarElement(frame, 'UpButton') or GrabScrollBarElement(frame, 'ScrollUp') or GrabScrollBarElement(parent, 'scrollUp')
+    local ScrollDownButton = GrabScrollBarElement(frame, 'ScrollDownButton') or GrabScrollBarElement(frame, 'DownButton') or GrabScrollBarElement(frame, 'ScrollDown') or GrabScrollBarElement(parent, 'scrollDown')
+    local Thumb = GrabScrollBarElement(frame, 'ThumbTexture') or GrabScrollBarElement(frame, 'thumbTexture') or frame.GetThumbTexture and frame:GetThumbTexture()
+
+    ScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
+    ScrollUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowup_down")
+    ScrollUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowup_down")
+    ScrollUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
+
+    ScrollDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
+    ScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    ScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    ScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
+
+    if Thumb then
+        Thumb:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbarmiddle")
+        Thumb:SetSize(12, Thumb:GetSize())
+    end
+end
+GW.skins.SkinScrollBar = SkinScrollBar
 
 local function SkinDropDownMenu(self)
     if self.Left then self.Left:Hide() end

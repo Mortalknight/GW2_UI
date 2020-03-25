@@ -2,6 +2,8 @@ local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local SkinButton = GW.skins.SkinButton
 local SkinCheckButton = GW.skins.SkinCheckButton
+local SkinScrollBar = GW.skins.SkinScrollBar
+local SkinScrollFrame = GW.skins.SkinScrollFrame
 
 local function SkinBindingsUI()
     KeyBindingFrame_LoadUI()
@@ -37,24 +39,16 @@ local function SkinBindingsUI()
     SkinCheckButton(KeyBindingFrame.characterSpecificButton)
     KeyBindingFrame.characterSpecificButton:SetSize(15, 15)
     
-    KeyBindingFrame.scrollFrame.scrollBorderTop:Hide()
-    KeyBindingFrame.scrollFrame.scrollBorderBottom:Hide()
-    KeyBindingFrame.scrollFrame.scrollBorderMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
-    KeyBindingFrame.scrollFrame.scrollBorderMiddle:SetSize(3, KeyBindingFrame.scrollFrame.scrollBorderMiddle:GetSize())
-    KeyBindingFrame.scrollFrame.scrollBorderMiddle:ClearAllPoints()
-    KeyBindingFrame.scrollFrame.scrollBorderMiddle:SetPoint("TOPLEFT", KeyBindingFrame.scrollFrame, "TOPRIGHT", 12, -10)
-    KeyBindingFrame.scrollFrame.scrollBorderMiddle:SetPoint("BOTTOMLEFT", KeyBindingFrame.scrollFrame,"BOTTOMRIGHT", 12, 10)
-    KeyBindingFrame.scrollFrame.scrollFrameScrollBarBackground:Hide()
+    SkinScrollFrame(_G.KeyBindingFrameScrollFrame)
+    SkinScrollBar(_G.KeyBindingFrameScrollFrameScrollBar)
 
-    KeyBindingFrameScrollFrameScrollBarThumbTexture:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbarmiddle")
-    KeyBindingFrameScrollFrameScrollBarThumbTexture:SetSize(12, KeyBindingFrameScrollFrameScrollBarThumbTexture:GetSize())
-    KeyBindingFrameScrollFrameScrollBarScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    KeyBindingFrameScrollFrameScrollBarScrollUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    KeyBindingFrameScrollFrameScrollBarScrollUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    KeyBindingFrameScrollFrameScrollBarScrollUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    KeyBindingFrameScrollFrameScrollBarScrollDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    KeyBindingFrameScrollFrameScrollBarScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    KeyBindingFrameScrollFrameScrollBarScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    KeyBindingFrameScrollFrameScrollBarScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    --hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(_, button)
+        --if not button.IsSkinned then
+            --local selected = button.selectedHighlight
+            --selected:SetTexture("Interface/AddOns/GW2_UI/textures/button_hover")
+            --selected:SetColorTexture(1, 1, 1, .25)
+            --SkinButton(button, false, true)
+        --end
+    --end)
 end
 GW.SkinBindingsUI = SkinBindingsUI

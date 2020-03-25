@@ -1,6 +1,8 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 local SkinButton = GW.skins.SkinButton
+local SkinScrollBar = GW.skins.SkinScrollBar
+local SkinScrollFrame = GW.skins.SkinScrollFrame
 
 local function SkinGearManagerDialogPopup_OnShow()
     local GearManagerDialogPopup = _G.GearManagerDialogPopup
@@ -28,25 +30,8 @@ local function SkinGearManagerDialogPopup_OnShow()
     GearManagerDialogPopupCancel:SetPoint("BOTTOMRIGHT" ,-11, 20)
 
     SkinButton(_G.GearManagerDialogPopupOkay, false, true)
-
-    _G["GearManagerDialogPopupScrollFrameTop"]:Hide()
-    _G["GearManagerDialogPopupScrollFrameBottom"]:Hide()
-    _G["GearManagerDialogPopupScrollFrameMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
-    _G["GearManagerDialogPopupScrollFrameMiddle"]:SetSize(3, _G["GearManagerDialogPopupScrollFrameMiddle"]:GetSize())
-    _G["GearManagerDialogPopupScrollFrameMiddle"]:ClearAllPoints()
-    _G["GearManagerDialogPopupScrollFrameMiddle"]:SetPoint("TOPLEFT", _G["GearManagerDialogPopupScrollFrame"], "TOPRIGHT", 12, -10)
-    _G["GearManagerDialogPopupScrollFrameMiddle"]:SetPoint("BOTTOMLEFT", _G["GearManagerDialogPopupScrollFrame"],"BOTTOMRIGHT", 12, 10)
-
-    _G["GearManagerDialogPopupScrollFrameScrollBarThumbTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbarmiddle")
-    _G["GearManagerDialogPopupScrollFrameScrollBarThumbTexture"]:SetSize(12, _G["GearManagerDialogPopupScrollFrameScrollBarThumbTexture"]:GetSize())
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollUpButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollUpButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollUpButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollUpButton"]:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollDownButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollDownButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollDownButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G["GearManagerDialogPopupScrollFrameScrollBarScrollDownButton"]:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    SkinScrollFrame(_G.GearManagerDialogPopupScrollFrame)
+    SkinScrollBar(_G.GearManagerDialogPopupScrollFrameScrollBar)
 end
 
 local function SkinGearManagerDialogPopupButtons_OnUpdate()

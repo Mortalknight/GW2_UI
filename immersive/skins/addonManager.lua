@@ -4,6 +4,8 @@ local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local SkinButton = GW.skins.SkinButton
 local SkinDropDownMenu = GW.skins.SkinDropDownMenu
 local SkinCheckButton = GW.skins.SkinCheckButton
+local SkinScrollBar = GW.skins.SkinScrollBar
+local SkinScrollFrame = GW.skins.SkinScrollFrame
 
 local function SkinAddonList()
     local AddonList = _G.AddonList
@@ -46,23 +48,7 @@ local function SkinAddonList()
         SkinButton(_G["AddonListEntry"  ..  i].LoadAddonButton, false, true)
 	end
 
-    _G.AddonListScrollFrameScrollBarTop:Hide()
-    _G.AddonListScrollFrameScrollBarBottom:Hide()
-    _G.AddonListScrollFrameScrollBarMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
-    _G.AddonListScrollFrameScrollBarMiddle:SetSize(3, _G.AddonListScrollFrameScrollBarMiddle:GetSize())
-    _G.AddonListScrollFrameScrollBarMiddle:ClearAllPoints()
-    _G.AddonListScrollFrameScrollBarMiddle:SetPoint("TOPLEFT", _G.AddonListScrollFrame, "TOPRIGHT", 12, -10)
-    _G.AddonListScrollFrameScrollBarMiddle:SetPoint("BOTTOMLEFT", _G.AddonListScrollFrame,"BOTTOMRIGHT", 12, 10)
-
-    _G.AddonListScrollFrameScrollBarThumbTexture:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbarmiddle")
-    _G.AddonListScrollFrameScrollBarThumbTexture:SetSize(12, _G.AddonListScrollFrameScrollBarThumbTexture:GetSize())
-    _G.AddonListScrollFrameScrollBarScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G.AddonListScrollFrameScrollBarScrollUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G.AddonListScrollFrameScrollBarScrollUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G.AddonListScrollFrameScrollBarScrollUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G.AddonListScrollFrameScrollBarScrollDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G.AddonListScrollFrameScrollBarScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G.AddonListScrollFrameScrollBarScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G.AddonListScrollFrameScrollBarScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    SkinScrollFrame(_G.AddonListScrollFrame)
+    SkinScrollBar(_G.AddonListScrollFrameScrollBar)
 end
 GW.SkinAddonList = SkinAddonList
