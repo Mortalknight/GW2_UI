@@ -67,6 +67,7 @@ local function SkinGearManagerDialogPopupButtons_OnUpdate()
         end
     end
 end
+
 local function SkinGearManagerDialogPopup()
     hooksecurefunc("GearManagerDialogPopup_Update", SkinGearManagerDialogPopupButtons_OnUpdate)
     SkinGearManagerDialogPopup_OnShow()

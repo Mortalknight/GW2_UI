@@ -51,32 +51,32 @@ local function SkinStaticPopup()
 
     --Movie skip Frame
     hooksecurefunc('CinematicFrame_OnDisplaySizeChanged', function(self)
-		if self and self.closeDialog and not self.closeDialog.template then
+        if self and self.closeDialog and not self.closeDialog.template then
             self.closeDialog.Border:Hide()
             
-			local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
+            local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
             tex:SetPoint("TOP", self.closeDialog, "TOP", 0, 0)
             tex:SetSize(self.closeDialog:GetSize())
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
             self.closeDialog.tex = tex
 
-			local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
-			local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName..'ConfirmButton'])
-			local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName..'ResumeButton'])
+            local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
+            local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName..'ConfirmButton'])
+            local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName..'ResumeButton'])
             if closeButton then 
                 SkinButton(closeButton, false, true)
             end
             if resumeButton then
                 SkinButton(resumeButton, false, true)
             end
-		end
+        end
     end)
-    
+
     hooksecurefunc('MovieFrame_PlayMovie', function(self)
-		if self and self.CloseDialog and not self.CloseDialog.template then
-			self.CloseDialog.Border:Hide()
+        if self and self.CloseDialog and not self.CloseDialog.template then
+            self.CloseDialog.Border:Hide()
             
-			local tex = self.CloseDialog:CreateTexture("bg", "BACKGROUND")
+            local tex = self.CloseDialog:CreateTexture("bg", "BACKGROUND")
             tex:SetPoint("TOP", self.CloseDialog, "TOP", 0, 0)
             tex:SetSize(self.CloseDialog:GetSize())
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -84,8 +84,8 @@ local function SkinStaticPopup()
 
             SkinButton(self.CloseDialog.ConfirmButton, false, true)
             SkinButton(self.CloseDialog.ResumeButton, false, true)
-		end
-	end)
+        end
+    end)
 
 end
 GW.SkinStaticPopup = SkinStaticPopup

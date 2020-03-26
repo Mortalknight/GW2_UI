@@ -93,12 +93,12 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
 
     if itemIDOrLink then
         if not suppressOverlays then
-			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemIDOrLink) then
-				button.IconOverlay:SetAtlas("AzeriteIconFrame");
-				button.IconOverlay:Show();
-			elseif IsCorruptedItem(itemIDOrLink) then
-				button.IconOverlay:SetAtlas("Nzoth-inventory-icon");
-				button.IconOverlay:Show();
+            if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemIDOrLink) then
+                button.IconOverlay:SetAtlas("AzeriteIconFrame");
+                button.IconOverlay:Show();
+            elseif IsCorruptedItem(itemIDOrLink) then
+                button.IconOverlay:SetAtlas("Nzoth-inventory-icon");
+                button.IconOverlay:Show();
             end
         end
     end

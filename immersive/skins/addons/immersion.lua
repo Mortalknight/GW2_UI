@@ -2,7 +2,7 @@ local _, GW = ...
 
 local function SkinImmersionAddonFrame()
     local ImmersionFrame = _G.ImmersionFrame
-    
+
     if ImmersionFrame then
         ImmersionFrame.TalkBox.MainFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
         ImmersionFrame.TalkBox.MainFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")

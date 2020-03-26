@@ -2,7 +2,7 @@ local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 local SkinButton = GW.skins.SkinButton
 
-local function SkinReadyCheckListenerFrame()
+local function SkinReadyCheck()
     _G.ReadyCheckListenerFrame:SetBackdrop(nil)
 
     SkinButton(_G.ReadyCheckFrameYesButton, false, true)
@@ -19,4 +19,4 @@ local function SkinReadyCheckListenerFrame()
     _G.ReadyCheckPortrait:Show()
     _G.ReadyCheckPortrait:SetDrawLayer("OVERLAY", 2)
 end
-GW.SkinReadyCheckListenerFrame = SkinReadyCheckListenerFrame
+GW.SkinReadyCheck = SkinReadyCheck

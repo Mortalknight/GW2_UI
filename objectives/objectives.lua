@@ -505,7 +505,7 @@ local function OnBlockClick(self, button, isHeader)
     CloseDropDownMenus()
 
     if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
-		return
+        return
     end
     
     if isHeader and not IsModifiedClick("QUESTWATCHTOGGLE") then
@@ -515,12 +515,12 @@ local function OnBlockClick(self, button, isHeader)
 
     if button ~= "RightButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		if IsModifiedClick("QUESTWATCHTOGGLE") then
-			QuestObjectiveTracker_UntrackQuest(nil, self.questID)
-		else
-			QuestMapFrame_OpenToQuestDetails(self.questID)
+        if IsModifiedClick("QUESTWATCHTOGGLE") then
+            QuestObjectiveTracker_UntrackQuest(nil, self.questID)
+        else
+            QuestMapFrame_OpenToQuestDetails(self.questID)
         end
-	end
+    end
 end
 GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
 

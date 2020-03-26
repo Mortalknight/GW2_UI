@@ -19,22 +19,22 @@ end
 GW.skins.addHoverToButton = addHoverToButton
 
 local constBackdropFrame = {
-	bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
-	edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
-	tile = false,
-	tileSize = 64,
-	edgeSize = 32,
-	insets = {left = 2, right = 2, top = 2, bottom = 2}
+    bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 GW.skins.constBackdropFrame = constBackdropFrame
 
 local constBackdropFrameBorder = {
-	bgFile = "",
-	edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
-	tile = false,
-	tileSize = 64,
-	edgeSize = 32,
-	insets = {left = 2, right = 2, top = 2, bottom = 2}
+    bgFile = "",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 GW.skins.constBackdropFrameBorder = constBackdropFrameBorder
 
@@ -79,7 +79,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
         addHoverToButton(button)
     end
 
-	button.isSkinned = true
+    button.isSkinned = true
 end
 GW.skins.SkinButton = SkinButton
 
@@ -135,37 +135,37 @@ end
 GW.skins.SkinTab = SkinTab
 
 function SkinSliderFrame(frame)
-	local orientation = frame:GetOrientation()
+    local orientation = frame:GetOrientation()
     local SIZE = 12
-    
+
     frame:SetBackdrop(nil)
     frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/sliderhandle")
 
-	local thumb = frame:GetThumbTexture()
+    local thumb = frame:GetThumbTexture()
     thumb:SetSize(SIZE - 2, SIZE - 2)
     
     local tex = frame:CreateTexture("bg", "BACKGROUND")
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/sliderbg")
     frame.tex = tex
 
-	if orientation == "VERTICAL" then
+    if orientation == "VERTICAL" then
         frame:SetWidth(SIZE)
         frame.tex:SetPoint("TOP", frame, "TOP")
         frame.tex:SetPoint("BOTTOM", frame, "BOTTOM")
-	else
+    else
         frame:SetHeight(SIZE)
         frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
         frame.tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 
-		for i = 1, frame:GetNumRegions() do
-			local region = select(i, frame:GetRegions())
-			if region and region:IsObjectType("FontString") then
-				local point, anchor, anchorPoint, x, y = region:GetPoint()
-				if strfind(anchorPoint, "BOTTOM") then
-					region:SetPoint(point, anchor, anchorPoint, x, y - 4)
-				end
-			end
-		end
+        for i = 1, frame:GetNumRegions() do
+            local region = select(i, frame:GetRegions())
+            if region and region:IsObjectType("FontString") then
+                local point, anchor, anchorPoint, x, y = region:GetPoint()
+                if strfind(anchorPoint, "BOTTOM") then
+                    region:SetPoint(point, anchor, anchorPoint, x, y - 4)
+                end
+            end
+        end
     end
 end
 GW.skins.SkinSliderFrame = SkinSliderFrame
@@ -191,7 +191,7 @@ local function SkinScrollFrame(frame)
         _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
         _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
     end
-    
+
     if _G[frame:GetName() .. "Top"] then _G[frame:GetName() .. "Top"]:Hide() end
     if _G[frame:GetName() .. "Bottom"] then _G[frame:GetName() .. "Bottom"]:Hide() end
     if _G[frame:GetName() .. "Middle"] then
@@ -232,7 +232,7 @@ local function SkinScrollBar(frame)
 end
 GW.skins.SkinScrollBar = SkinScrollBar
 
-local function SkinDropDownMenu(self)
+local function  SkinDropDownMenu(self)
     if self.Left then self.Left:Hide() end
     if self.Middle then self.Middle:Hide() end
     if self.Right then self.Right:Hide() end
@@ -259,25 +259,28 @@ GW.skins.SkinDropDownMenu = SkinDropDownMenu
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_Initialize", SkinDropDownMenu)
 end
-GW.SkinUIDropDownMenu = SkinUIDropDownMenu
-
-local function SkinDropDownList_OnShow(self)
-    _G[self:GetName() .. "Backdrop"]:Hide()
-    _G[self:GetName() .. "MenuBackdrop"]:Hide()
-    self:SetBackdrop(constBackdropFrame)
-    for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
-        if _G[self:GetName() .. "Button" .. i .. "ExpandArrow"] then
-            _G[self:GetName() .. "Button" .. i .. "ExpandArrow"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
-        end
-    end
-    --Check if Raider.IO Entry is added
-    if IsAddOnLoaded("RaiderIO") and RaiderIO_CustomDropDownList then
-        _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
-        _G["RaiderIO_CustomDropDownList"]:SetBackdrop(constBackdropFrame)
-    end
-end
 
 local function SkinDropDownList()
+    local SkinDropDownList_OnShow = function(self)
+        _G[self:GetName() .. "Backdrop"]:Hide()
+        _G[self:GetName() .. "MenuBackdrop"]:Hide()
+        self:SetBackdrop(constBackdropFrame)
+        for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
+            if _G[self:GetName() .. "Button" .. i .. "ExpandArrow"] then
+                _G[self:GetName() .. "Button" .. i .. "ExpandArrow"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+            end
+        end
+        --Check if Raider.IO Entry is added
+        if IsAddOnLoaded("RaiderIO") and RaiderIO_CustomDropDownList then
+            _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
+            _G["RaiderIO_CustomDropDownList"]:SetBackdrop(constBackdropFrame)
+        end
+    end
     hooksecurefunc("UIDropDownMenu_OnShow", SkinDropDownList_OnShow)
 end
-GW.SkinDropDownList = SkinDropDownList
+
+local function SkinDropDown()
+    SkinDropDownList()
+    SkinUIDropDownMenu()
+end
+GW.SkinDropDown = SkinDropDown

@@ -573,7 +573,7 @@
                 <Alpha childKey="GlyphTranslation" startDelay="0.25" smoothing="OUT" duration="0.25" order="1" fromAlpha="1" toAlpha="0"/>
                 <Scripts>
                     <OnFinished>
-						self:GetParent().GlyphActivate:Hide()
+                        self:GetParent().GlyphActivate:Hide()
                     </OnFinished>
                 </Scripts>
             </AnimationGroup>

@@ -219,8 +219,8 @@ local function setUnitPortraitFrame(self, event)
         txt = UnitHonorLevel(self.unit)
     
         if txt > 199 then
-			plvl = 4
-		elseif txt > 99 then
+            plvl = 4
+        elseif txt > 99 then
             plvl = 3
         elseif txt > 49 then 
             plvl = 2
@@ -822,7 +822,7 @@ local function LoadTarget()
 
     NewUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     NewUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")
-	
+    
     NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
 
     NewUnitFrame.debuffFilter = "player"

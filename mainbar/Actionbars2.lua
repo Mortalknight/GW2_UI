@@ -1027,7 +1027,7 @@ GW.AddForProfiling("Actionbars2", "updateAnchors", updateAnchors)
 
 local function changeFlyoutStyle(self)
     if not self.FlyoutArrow then
-		return
+        return
     end
     
     self.FlyoutBorder:Hide()

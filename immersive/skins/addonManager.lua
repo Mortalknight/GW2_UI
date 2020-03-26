@@ -46,7 +46,7 @@ local function SkinAddonList()
         SkinCheckButton(_G["AddonListEntry" .. i .. "Enabled"])
         _G["AddonListEntry" .. i .. "Enabled"]:SetSize(15, 15)
         SkinButton(_G["AddonListEntry"  ..  i].LoadAddonButton, false, true)
-	end
+    end
 
     SkinScrollFrame(_G.AddonListScrollFrame)
     SkinScrollBar(_G.AddonListScrollFrameScrollBar)

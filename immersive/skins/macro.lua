@@ -40,22 +40,23 @@ local function SkinMacroOptions()
     tex:SetSize(w + 50, h + 50)
     MacroFrame.tex = tex
 
-	SkinScrollBar(_G.MacroButtonScrollFrameScrollBar)
+    SkinScrollBar(_G.MacroButtonScrollFrameScrollBar)
     SkinScrollBar(_G.MacroFrameScrollFrameScrollBar)
     SkinScrollFrame(_G.MacroButtonScrollFrame)
-    
+
     local buttons = {
-		_G.MacroSaveButton,
-		_G.MacroCancelButton,
-		_G.MacroDeleteButton,
-		_G.MacroNewButton,
-		_G.MacroExitButton,
-		_G.MacroEditButton
+        _G.MacroSaveButton,
+        _G.MacroCancelButton,
+        _G.MacroDeleteButton,
+        _G.MacroNewButton,
+        _G.MacroExitButton,
+        _G.MacroEditButton
     }
-    
+
     for i = 1, #buttons do
-		SkinButton(buttons[i], false, true)
+        SkinButton(buttons[i], false, true)
     end
+
     SkinButton(_G.MacroFrameCloseButton, true)
     _G.MacroFrameCloseButton:SetSize(25, 25)
     _G.MacroFrameCloseButton:ClearAllPoints()
@@ -80,9 +81,9 @@ local function SkinMacroOptions()
     hooksecurefunc("MacroFrame_ShowDetails", function() _G.MacroFrameSelectedMacroBackground:Hide() end)
 
     -- Skin all buttons
-	for i = 1, _G.MAX_ACCOUNT_MACROS do
-		local b = _G["MacroButton" .. i]
-		local t = _G["MacroButton" .. i .. "Icon"]
+    for i = 1, _G.MAX_ACCOUNT_MACROS do
+        local b = _G["MacroButton" .. i]
+        local t = _G["MacroButton" .. i .. "Icon"]
 
         if b then
             b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
@@ -98,29 +99,29 @@ local function SkinMacroOptions()
                     ii = ii + 1
                 end
             end
-		end
+        end
 
         if t then
             t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-		end
+        end
     end
-    
+
     --Icon selection frame
-	ShowUIPanel(MacroFrame) --Toggle frame to create necessary variables needed for popup frame
-	HideUIPanel(MacroFrame)
-	local MacroPopupFrame = _G.MacroPopupFrame
-	MacroPopupFrame:Show() --Toggle the frame in order to create the necessary button elements
+    ShowUIPanel(MacroFrame) --Toggle frame to create necessary variables needed for popup frame
+    HideUIPanel(MacroFrame)
+    local MacroPopupFrame = _G.MacroPopupFrame
+    MacroPopupFrame:Show() --Toggle the frame in order to create the necessary button elements
     MacroPopupFrame:Hide()
-    
+
     -- Popout Frame
-	SkinButton(MacroPopupFrame.BorderBox.OkayButton, false, true)
-	SkinButton(MacroPopupFrame.BorderBox.CancelButton, false, true)
+    SkinButton(MacroPopupFrame.BorderBox.OkayButton, false, true)
+    SkinButton(MacroPopupFrame.BorderBox.CancelButton, false, true)
     SkinScrollBar(_G.MacroPopupScrollFrameScrollBar)
     SkinScrollFrame(_G.MacroPopupScrollFrame)
-	_G.MacroPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-	_G.MacroPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    _G.MacroPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    _G.MacroPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
     _G.MacroPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    
+
     local r = {MacroPopupFrame.BorderBox:GetRegions()}
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then
@@ -133,8 +134,8 @@ local function SkinMacroOptions()
     MacroPopupFrame:SetBackdrop(constBackdropFrame)
 
     for i = 1, _G.NUM_MACRO_ICONS_SHOWN do
-		local button = _G["MacroPopupButton" .. i]
-		if button then
+        local button = _G["MacroPopupButton" .. i]
+        if button then
             button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
             button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
             local r = {button:GetRegions()}
@@ -149,16 +150,16 @@ local function SkinMacroOptions()
                 end
             end
 
-			local icon = _G["MacroPopupButton" .. i .. "Icon"]
-			if icon then
-				icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-			end
-		end
+            local icon = _G["MacroPopupButton" .. i .. "Icon"]
+            if icon then
+                icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            end
+        end
     end
-    
+
     MacroPopupFrame:HookScript("OnShow", function(self)
-		self:ClearAllPoints()
-		self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
-	end)
+        self:ClearAllPoints()
+        self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
+    end)
 end
 GW.SkinMacroOptions = SkinMacroOptions

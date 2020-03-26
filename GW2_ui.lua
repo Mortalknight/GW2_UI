@@ -565,39 +565,17 @@ local function loadAddon(self)
     if GetSetting("GHOSTFRAME_SKIN_ENABLED") then
         GW.SkinGhostFrame()
     end
-    if GetSetting("QUEUESTATUSFRAME_SKIN_ENABLED") then
-        GW.SkinQueueStatusFrame()
-    end
     if GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then
         GW.SkinDeathRecapFrame()
     end
-    if GetSetting("DROPDOWNLIST_SKIN_ENABLED") then
-        GW.SkinDropDownList()
+    if GetSetting("DROPDOWN_SKIN_ENABLED") then
+        GW.SkinDropDown()
     end
-    if GetSetting("DROPDOWNMENU_SKIN_ENABLED") then
-        GW.SkinUIDropDownMenu()
+    if GetSetting("LFG_FRAMES_SKIN_ENABLED") then
+        GW.SkinLFGFrames()
     end
-    if GetSetting("GEARMANAGERDIALOGPOPUP_SKIN_ENABLED") then
-        GW.SkinGearManagerDialogPopup()
-    end
-    if GetSetting("LFGDUNGEONREADYSTATUS_SKIN_ENABLED") then
-        GW.SkinLFGDungeonReadyStatus()
-    end
-    if GetSetting("LFGLISTINVITEDIALOG_SKIN_ENABLED") then
-        GW.SkinLFGListInviteDialog()
-    end
-    if GetSetting("LFGLISTAPPLICATIONDIALOG_SKIN_ENABLED") then
-        GW.SkinLFGListApplicationDialog()
-    end
-    if GetSetting("LFGDUNGEONREADYDIALOG_SKIN_ENABLED") then
-        GW.SkinLFGDungeonReadyDialog()
-        GW.SkinLFDRoleCheckPopup()
-    end
-    if GetSetting("LFGINVITEPOPUP_SKIN_ENABLED") then
-        GW.SkinLFGInvitePopup()
-    end
-    if GetSetting("READYCHECKLISTENERFRAME_SKIN_ENABLED") then
-        GW.SkinReadyCheckListenerFrame()
+    if GetSetting("READYCHECK_SKIN_ENABLED") then
+        GW.SkinReadyCheck()
     end
     if GetSetting("TALKINGHEAD_SKIN_ENABLED") then
         GW.SkinTalkingHeadFrame()
@@ -614,14 +592,11 @@ local function loadAddon(self)
     if GetSetting("ADDONLIST_SKIN_ENABLED") then
         GW.SkinAddonList()
     end
-    if GetSetting("SETTINGS_SKIN_ENABLED") then
-        GW.SkinSystemSettings()
-    end
     if GetSetting("BINDINGS_SKIN_ENABLED") then
         GW.SkinBindingsUI()
     end
-    if GetSetting("INTERFACE_SKIN_ENABLED") then
-        GW.SkinInterfaceOptions()
+    if GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then
+        GW.SkinBlizzardOptions()
     end
     if GetSetting("MACRO_SKIN_ENABLED") then
         GW.SkinMacroOptions()

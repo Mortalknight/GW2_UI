@@ -1,6 +1,7 @@
 local _, GW = ...
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
+local SkinGearManagerDialogPopup = GW.SkinGearManagerDialogPopup
 local Debug = GW.Debug
 
 --local CHARACTER_PANEL_OPEN
@@ -125,6 +126,8 @@ local function LoadPaperDoll(tabContainer)
     CharacterMenuButton_OnLoad(fmMenu.equipmentMenu, false)
     CharacterMenuButton_OnLoad(fmMenu.outfitsMenu, true)
     CharacterMenuButton_OnLoad(fmMenu.titlesMenu, false)
+
+    SkinGearManagerDialogPopup()
 
     -- pull corruption thingy from default paperdoll
     if (CharacterStatsPane and CharacterStatsPane.ItemLevelFrame) then

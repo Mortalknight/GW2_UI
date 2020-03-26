@@ -103,20 +103,20 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
-				<Texture parentKey="SpecRing" atlas="equipmentmanager-spec-border" useAtlasSize="true">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="35" y="-25"/>
-					</Anchors>
-				</Texture>
-			</Layer>
+                <Texture parentKey="SpecRing" atlas="equipmentmanager-spec-border" useAtlasSize="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="35" y="-25"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="OVERLAY" textureSubLevel="3">
-				<Texture parentKey="SpecIcon">
-					<Size x="18" y="18"/>
-					<Anchors>
-						<Anchor point="CENTER" relativeKey="$parent.SpecRing" relativePoint="CENTER" x="0" y="0"/>
-					</Anchors>
-				</Texture>
-			</Layer>
+                <Texture parentKey="SpecIcon">
+                    <Size x="18" y="18"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.SpecRing" relativePoint="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
         </Layers>
         <Frames>
             <Button name="$parentEquipOutfit" hidden="true" parentKey="equipOutfit" inherits="GwStandardButton" text="Equip">

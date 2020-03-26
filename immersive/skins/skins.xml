@@ -5,20 +5,16 @@
 	<Script file="immersive\skins\deathrecapframe.lua"/>
     <Script file="immersive\skins\gearmanagerdialogpopup.lua"/>
     <Script file="immersive\skins\ghostframe.lua"/>
-    <Script file="immersive\skins\lfgdungeon.lua"/>
-    <Script file="immersive\skins\lfginvite.lua"/>
-    <Script file="immersive\skins\lfglist.lua"/>
+    <Script file="immersive\skins\lfg_popup_frames.lua"/>
     <Script file="immersive\skins\mainMenuFrame.lua"/>
-    <Script file="immersive\skins\queuestatusframe.lua"/>
     <Script file="immersive\skins\readycheck.lua"/>
     <Script file="immersive\skins\staticpopup.lua"/>
     <Script file="immersive\skins\talkinghead.lua"/>
     <Script file="immersive\skins\timetracker.lua"/>
     <Script file="immersive\skins\flightmap.lua"/>
     <Script file="immersive\skins\addonManager.lua"/>
-    <Script file="immersive\skins\systemsettings.lua"/>
     <Script file="immersive\skins\bindings.lua"/>
-    <Script file="immersive\skins\interface.lua"/>
+    <Script file="immersive\skins\blizzard_options.lua"/>
     <Script file="immersive\skins\macro.lua"/>
 
 	<Script file="immersive\skins\addons\immersion.lua"/>

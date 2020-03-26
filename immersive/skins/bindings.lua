@@ -9,17 +9,17 @@ local function SkinBindingsUI()
     KeyBindingFrame_LoadUI()
 
     local buttons = {
-		"defaultsButton",
-		"unbindButton",
-		"okayButton",
-		"cancelButton",
+        "defaultsButton",
+        "unbindButton",
+        "okayButton",
+        "cancelButton",
     }
-    
+
     local KeyBindingFrame = _G.KeyBindingFrame
-	for _, v in pairs(buttons) do
-		SkinButton(KeyBindingFrame[v], false, true)
+    for _, v in pairs(buttons) do
+        SkinButton(KeyBindingFrame[v], false, true)
     end
-    
+
     KeyBindingFrame.Header.CenterBG:Hide()
     KeyBindingFrame.Header.RightBG:Hide()
     KeyBindingFrame.Header.LeftBG:Hide()
@@ -38,7 +38,7 @@ local function SkinBindingsUI()
 
     SkinCheckButton(KeyBindingFrame.characterSpecificButton)
     KeyBindingFrame.characterSpecificButton:SetSize(15, 15)
-    
+
     SkinScrollFrame(_G.KeyBindingFrameScrollFrame)
     SkinScrollBar(_G.KeyBindingFrameScrollFrameScrollBar)
 

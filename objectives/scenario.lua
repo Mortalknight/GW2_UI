@@ -163,9 +163,9 @@ local function updateCurrentScenario()
     --
 
     --[[
-	local inChallengeMode = bit.band(flags, SCENARIO_FLAG_CHALLENGE_MODE) == SCENARIO_FLAG_CHALLENGE_MODE;
-	local inProvingGrounds = bit.band(flags, SCENARIO_FLAG_PROVING_GROUNDS) == SCENARIO_FLAG_PROVING_GROUNDS;
-	local dungeonDisplay = bit.band(flags, SCENARIO_FLAG_USE_DUNGEON_DISPLAY) == SCENARIO_FLAG_USE_DUNGEON_DISPLAY;
+    local inChallengeMode = bit.band(flags, SCENARIO_FLAG_CHALLENGE_MODE) == SCENARIO_FLAG_CHALLENGE_MODE;
+    local inProvingGrounds = bit.band(flags, SCENARIO_FLAG_PROVING_GROUNDS) == SCENARIO_FLAG_PROVING_GROUNDS;
+    local dungeonDisplay = bit.band(flags, SCENARIO_FLAG_USE_DUNGEON_DISPLAY) == SCENARIO_FLAG_USE_DUNGEON_DISPLAY;
     --]]
     local questLogIndex = 0
 
@@ -355,14 +355,14 @@ GW.AddForProfiling("scenario", "scenarioAffixes", scenarioAffixes)
 
 local function scenarioTimerUpdateDeathCounter(self)
     local count, timeLost = C_ChallengeMode.GetDeathCount()
-	self.deathcounter.count = count
-	self.deathcounter.timeLost = timeLost
-	if (timeLost and timeLost > 0 and count and count > 0) then
+    self.deathcounter.count = count
+    self.deathcounter.timeLost = timeLost
+    if (timeLost and timeLost > 0 and count and count > 0) then
         self.deathcounter.counterlabel:SetText(count)
         self.deathcounter:Show()
-	else
-		self.deathcounter:Hide()
-	end
+    else
+        self.deathcounter:Hide()
+    end
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdateDeathCounter", scenarioTimerUpdateDeathCounter)
 
@@ -379,8 +379,8 @@ local function scenarioTimerUpdate(...)
             if (mapID) then
                 local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
                 local time3 = timeLimit * TIME_FOR_3
-	            local time2 = timeLimit * TIME_FOR_2
-                --	Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
+                local time2 = timeLimit * TIME_FOR_2
+                --    Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
                 --set Chest icon
                 GwQuestTrackerTimer.chestoverlay:Show()
                 GwQuestTrackerTimer.chestoverlay.chest2:ClearAllPoints()
@@ -425,7 +425,7 @@ local function scenarioTimerUpdate(...)
         elseif (wtype == LE_WORLD_ELAPSED_TIMER_TYPE_PROVING_GROUND) then
             local _, _, _, duration = C_Scenario.GetProvingGroundsInfo()
             if (duration > 0) then
-                --	Scenario_ProvingGrounds_ShowBlock(timerID, elapsedTime, duration, diffID, currWave, maxWave);
+                --    Scenario_ProvingGrounds_ShowBlock(timerID, elapsedTime, duration, diffID, currWave, maxWave);
                 GwQuestTrackerTimer:SetScript(
                     "OnUpdate",
                     function()
@@ -469,7 +469,7 @@ local function scenarioTimerOnEvent(self, event, ...)
         scenarioTimerStop()
     elseif (event == "PROVING_GROUNDS_SCORE_UPDATE") then
         --elseif (event == "SPELL_UPDATE_COOLDOWN") then
-        --	ScenarioSpellButtons_UpdateCooldowns();
+        --    ScenarioSpellButtons_UpdateCooldowns();
         local score = ...
         GwQuestTrackerTimer.score.scoreString:SetText(score)
         GwQuestTrackerTimer.score:Show()
@@ -610,9 +610,9 @@ local function LoadScenarioFrame()
         "OnEnter",
         function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-	        GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(self.count), 1, 1, 1)
-	        GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(getTimeStringFromSeconds(self.timeLost)))
-	        GameTooltip:Show()
+            GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(self.count), 1, 1, 1)
+            GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(getTimeStringFromSeconds(self.timeLost)))
+            GameTooltip:Show()
         end
     )
     timerBlock.deathcounter:SetScript("OnLeave", GameTooltip_Hide)

@@ -2,89 +2,89 @@
 ..\FrameXML\UI.xsd">
 
     <Frame name="GwWelcomePageTmpl" virtual="true">
-		<Size x="512" y="512"/>
-		<Anchors>
-			<Anchor point="CENTER" relativePoint="CENTER" x="" y="30"/>
-		</Anchors>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/welcome-bg">
-				<Size x="512" y="512"/>
-					<Anchors>
-						<Anchor point="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="BORDER">
-				<FontString parentKey="header" text="Welcome to Gw2 UI" justifyH="CENTER">
-				<Anchors>
-						<Anchor point="TOP" x="0" y="-20"/>
-					</Anchors>
-				</FontString>
-				<FontString parentKey="subHeader" text="{VERSION}" justifyH="CENTER">
-				<Anchors>
-						<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="0"/>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-		<Frames>
-			<Frame parentKey="welcome" hidden="false">
-				<Size x="478" y="320"/>
-				<Anchors>
-					<Anchor point="BOTTOM" x="0" y="50"/>
-				</Anchors>
-				<Layers>
-					<Layer level="BORDER">
-						<FontString parentKey="header" text="{welcome}" justifyH="CENTER">
-						<Anchors>
-								<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="5"/>
-								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="5"/>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
-				<Frames>
-					<Button parentKey="pixelbutton" inherits="GwStandardButton" text="Pixel-Perfect">
-						<Size x="250" y="30"/>
-		                <Anchors>
-		                    <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="-10"/>
-		                </Anchors>
-		            </Button>
-				</Frames>
-			</Frame>
-			<Frame parentKey="changelog" hidden="false">
-				<Size x="478" y="330"/>
-				<Anchors>
-					<Anchor point="BOTTOM" x="0" y="50"/>
-				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
-							<Anchors>
-								<Anchor point="TOPLEFT"/>
-								<Anchor point="BOTTOMRIGHT"/>
-							</Anchors>
-							<Color r="0" b="0" g="0" a="0.3"/>
-						</Texture>
-					</Layer>
-					<Layer level="BORDER">
-						<FontString parentKey="header" text="Changelog" justifyH="LEFT">
-						<Anchors>
-								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="0" y="5"/>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
-				<Frames>
-					<ScrollFrame parentKey="scroll" enableMouse="true">
-					 <Size x="231" y="600"/>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
-						</Anchors>
-						<Frames>
+        <Size x="512" y="512"/>
+        <Anchors>
+            <Anchor point="CENTER" relativePoint="CENTER" x="" y="30"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/welcome-bg">
+                <Size x="512" y="512"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="header" text="Welcome to Gw2 UI" justifyH="CENTER">
+                <Anchors>
+                        <Anchor point="TOP" x="0" y="-20"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="subHeader" text="{VERSION}" justifyH="CENTER">
+                <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="welcome" hidden="false">
+                <Size x="478" y="320"/>
+                <Anchors>
+                    <Anchor point="BOTTOM" x="0" y="50"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                        <FontString parentKey="header" text="{welcome}" justifyH="CENTER">
+                        <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="5"/>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="5"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button parentKey="pixelbutton" inherits="GwStandardButton" text="Pixel-Perfect">
+                        <Size x="250" y="30"/>
+                        <Anchors>
+                            <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="-10"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+            </Frame>
+            <Frame parentKey="changelog" hidden="false">
+                <Size x="478" y="330"/>
+                <Anchors>
+                    <Anchor point="BOTTOM" x="0" y="50"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                            <Anchors>
+                                <Anchor point="TOPLEFT"/>
+                                <Anchor point="BOTTOMRIGHT"/>
+                            </Anchors>
+                            <Color r="0" b="0" g="0" a="0.3"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER">
+                        <FontString parentKey="header" text="Changelog" justifyH="LEFT">
+                        <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="0" y="5"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <ScrollFrame parentKey="scroll" enableMouse="true">
+                     <Size x="231" y="600"/>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        </Anchors>
+                        <Frames>
                             <Frame parentKey="scrollchild" enableMouse="false">
                                 <Size x="231" y="600"/>
                                 <Anchors>
@@ -166,43 +166,43 @@
                                     </Layer>
                                 </Layers>
                             </Button>
-					    </Frames>
-						<Scripts>
+                        </Frames>
+                        <Scripts>
                             <OnMouseWheel>
                                 delta = -delta * 15
                                 local s = math.max(0,self:GetVerticalScroll() + delta)
                                 self.slider:SetValue(s)
                                 self:SetVerticalScroll(s)
                             </OnMouseWheel>
-						</Scripts>
-					</ScrollFrame>
-				</Frames>
-			</Frame>
-			<Button parentKey="settings" inherits="GwStandardButton" text="">
+                        </Scripts>
+                    </ScrollFrame>
+                </Frames>
+            </Frame>
+            <Button parentKey="settings" inherits="GwStandardButton" text="">
             <Size x="120" y="28"/>
-				<Anchors>
-					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="10"/>
-				</Anchors>
-			</Button>
-			<Button parentKey="movehud" inherits="GwStandardButton" text="">
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="10"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="movehud" inherits="GwStandardButton" text="">
             <Size x="120" y="28"/>
-				<Anchors>
-					<Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.settings"  x="5" y="0"/>
-				</Anchors>
-			</Button>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.settings"  x="5" y="0"/>
+                </Anchors>
+            </Button>
             <Button parentKey="changelogORwelcome" inherits="GwStandardButton" text="">
             <Size x="120" y="28"/>
-				<Anchors>
-					<Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.movehud"  x="125" y="0"/>
-				</Anchors>
-			</Button>
-			<Button parentKey="close" inherits="GwStandardButton" text="Close">
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.movehud"  x="125" y="0"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="close" inherits="GwStandardButton" text="Close">
             <Size x="120" y="28"/>
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"/>
-				</Anchors>
-			</Button>
-		</Frames>
-	</Frame>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"/>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
 
 </Ui>
