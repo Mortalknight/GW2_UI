@@ -163,14 +163,14 @@
             <Layer level="OVERLAY">
 
                 <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="CENTER">
-                    <Size x="150" y="15"/>
+                    <Size x="200" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="CENTER">
-                    <Size x="100" y="15"/>
+                    <Size x="500" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
@@ -341,14 +341,14 @@
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="CENTER">
-                    <Size x="100" y="15"/>
+                    <Size x="120" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="CENTER">
-                    <Size x="50" y="15"/>
+                    <Size x="30" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
