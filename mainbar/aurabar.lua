@@ -484,7 +484,6 @@ local function loadAuras(lm, secure)
     hb:ClearAllPoints()
     if not hb.isMoved then
         local mbr = GwMultiBarBottomRight
-
         hb:SetPoint(anchor_hb, mbr, anchor_hb, 0, 20)
     else
         hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
@@ -507,9 +506,19 @@ local function loadAuras(lm, secure)
     lm:RegisterDebuffFrame(hd)
     hd:ClearAllPoints()
     if grow_dir == "DOWNR" or grow_dir == "DOWN" then
-        hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
+        if hd.inner and hb.inner then
+            hd.inner:ClearAllPoints()
+            hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, -50)
+        else
+            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
+        end
     else
-        hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
+        if hd.inner and hb.inner then
+            hd.inner:ClearAllPoints()
+            hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, 50)
+        else
+            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
+        end
     end
     hd:Show()
     if hd.inner then
