@@ -365,6 +365,9 @@ local function bag_OnHide(self)
     if IsBagOpen(BACKPACK_CONTAINER) then
         CloseBackpack()
     end
+    if self.buttonSettings.dropdown:IsShown() then
+        self.buttonSettings.dropdown:Hide()
+    end
 end
 GW.AddForProfiling("bag", "bag_OnHide", bag_OnHide)
 
@@ -635,6 +638,22 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.professionColor.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_PROFESSION_BAG_COLOR") then
+                    dd.professionColor.checkbutton:SetChecked(false)
+                    SetSetting("BAG_PROFESSION_BAG_COLOR", false)
+                else
+                    dd.professionColor.checkbutton:SetChecked(true)
+                    SetSetting("BAG_PROFESSION_BAG_COLOR", true)
+                end
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
+                dd:Hide()
+            end
+        )
+
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
             dd.compactBags.checkbutton:SetChecked(false)
         else
@@ -670,6 +689,11 @@ local function LoadBag(helpers)
         else
             dd.scrapIcon.checkbutton:SetChecked(false)
         end
+        if GetSetting("BAG_PROFESSION_BAG_COLOR") then
+            dd.professionColor.checkbutton:SetChecked(true)
+        else
+            dd.professionColor.checkbutton:SetChecked(false)
+        end
 
         -- setup bag setting icons locals
         dd.compactBags.title:SetText(L["COMPACT_ICONS"])
@@ -677,6 +701,7 @@ local function LoadBag(helpers)
         dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
         dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])
         dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
+        dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
     end
 
     -- setup money frame

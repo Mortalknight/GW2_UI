@@ -106,6 +106,12 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
     end
 
+    local professionColors = GW.professionBagColor[select(2, GetContainerNumFreeSlots(button:GetParent():GetID()))]
+    if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
+        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
+        t:Show()
+    end
+
     if itemIDOrLink then
         if not suppressOverlays then
             if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemIDOrLink) then

@@ -24,6 +24,19 @@ PowerBarColorCustom["AMMOSLOT"] = {r = 0.80, g = 0.60, b = 0.00}
 PowerBarColorCustom["FUEL"] = {r = 0.0, g = 0.55, b = 0.5}
 PowerBarColorCustom["STAGGER"] = {r = 0.52, g = 1.0, b = 0.52}
 
+local professionBagColor = {
+    [8] = {r = .88, g = .73, b = .29}, --leatherworking
+    [16] = {r = .29, g = .30, b = .88}, --inscription
+    [32] = {r = .07, g = .71, b = .13}, --herbs
+    [64] = {r = .76, g = .02, b = .8}, --enchanting
+    [128] = {r = .91, g = .46, b = .18}, --engineering
+    [512] = {r = .03, g = .71, b = .81}, --gems
+    [1024] = {r = .54, g = .40, b = .04}, --Mining Bag
+    [32768] = {r = .42, g = .59, b = 1}, --fishing
+    [65536] = {r = .87, g = .05, b = .25} --cooking
+}
+GW.professionBagColor = professionBagColor
+
 local DEBUFF_COLOR = {}
 GW.DEBUFF_COLOR = DEBUFF_COLOR
 DEBUFF_COLOR["none"] = {r = 220 / 255, g = 0, b = 0}
