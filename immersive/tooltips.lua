@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetUnitBattlefieldFaction = GW.GetUnitBattlefieldFaction
@@ -471,10 +472,15 @@ local function GameTooltip_OnTooltipSetUnit(self)
                 local _, class = UnitClass(unitTarget)
                 targetColor = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
             else
-                targetColor = useBlizzardClassColor and GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")] or _G.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
+                targetColor = useBlizzardClassColor and _G.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")] or GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
             end
 
-            self:AddDoubleLine(format("%s:", TARGET), format("|cff%02x%02x%02x%s|r", targetColor.r * 255, targetColor.g * 255, targetColor.b * 255, UnitName(unitTarget)))
+            if not targetColor.colorStr then
+                targetColor.colorStr = RGBToHex(targetColor.r, targetColor.g, targetColor.b, "ff")
+            elseif strlen(targetColor.colorStr) == 6 then
+                targetColor.colorStr = "ff" .. targetColor.colorStr
+            end
+            self:AddDoubleLine(format("%s:", TARGET), format("|c%s%s|r", targetColor.colorStr, UnitName(unitTarget)))
         end
 
         if targetInfo and IsInGroup() then
@@ -488,7 +494,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
             end
             local numList = #targetList
             if (numList > 0) then
-                self:AddLine(format("%s (|cffffffff%d|r): %s", L["TARGETED_BY"], numList, tconcat(targetList, ", ")), nil, nil, nil, true)
+                self:AddLine(format("%s (|cffffffff%d|r): %s", L["TARGETED_BY"], numList, table.concat(targetList, ", ")), nil, nil, nil, true)
                 wipe(targetList)
             end
         end
@@ -517,12 +523,6 @@ end
 
 local function GameTooltip_OnTooltipSetItem(self)
     if self:IsForbidden() then return end
-
-    if IsShiftKeyDown() then
-        self.itemCleared = true
-        self:Hide()
-        return
-    end
 
     if not self.itemCleared then
         local _, link = self:GetItem()
