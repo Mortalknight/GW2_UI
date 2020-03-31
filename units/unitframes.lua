@@ -14,11 +14,10 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local AddToClique = GW.AddToClique
 local IsIn = GW.IsIn
-local GetRealItemLevel = GW.GetRealItemLevel
 local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local unitIlvls = {}
+local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -212,8 +211,8 @@ local function setUnitPortraitFrame(self, event)
 
     if GetSetting(self.unit .. "_SHOW_ILVL") and CanInspect(self.unit) then
         local guid = UnitGUID(self.unit)
-        if guid and unitIlvls[guid] then
-            txt = unitIlvls[guid]
+        if guid and GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel then
+            txt = RoundDec(GW.unitIlvlsCache[guid].itemLevel, 0)
         end
     elseif (UnitHonorLevel(self.unit) ~= nil and UnitHonorLevel(self.unit) > 9)   then
         txt = UnitHonorLevel(self.unit)
@@ -282,32 +281,31 @@ GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
 
 local function updateAvgItemLevel(self, event, guid)
     if guid == UnitGUID(self.unit) and CanInspect(self.unit) then
-        if UnitIsUnit(self.unit, "player") then
-            unitIlvls[guid] = floor((GetAverageItemLevel()))
-        else
-            local ilvl, n, retry = 0, 0
-            for i=INVSLOT_HEAD,INVSLOT_OFFHAND do
-                if i ~= INVSLOT_BODY then
-                    local tex = GetInventoryItemTexture(self.unit, i)
-                    local link = tex and GetInventoryItemLink(self.unit, i)
-                    local lvl =  link and GetRealItemLevel(link)
-                    if lvl then
-                        ilvl, n = ilvl + lvl, n + 1
-                    elseif tex then
-                        retry = true
+        local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
+        if itemLevel == "tooSoon" then
+            GW.Wait(0.05, function()
+                local canUpdate = true
+                for _, x in ipairs(retryTable) do
+                    local slotInfo = GW.GetGearSlotInfo(retryUnit, x)
+                    if slotInfo == "tooSoon" then
+                        canUpdate = false
+                    else
+                        iLevelDB[x] = slotInfo.iLvl
                     end
                 end
-            end
-    
-            if retry and not unitIlvls[guid] then
-                C_Timer.After(0, function () NotifyInspect(self.unit) end)
-            elseif n > 0 then
-                unitIlvls[guid] = floor(ilvl / n)
-                ClearInspectPlayer()
-                self:UnregisterEvent("INSPECT_READY")
-            end
-        end
 
+                if canUpdate then
+                    local calculateItemLevel = GW.CalculateAverageItemLevel(iLevelDB, retryUnit)
+                    PopulateUnitIlvlsCache(guid, calculateItemLevel, "target")
+                    ClearInspectPlayer()
+                    self:UnregisterEvent("INSPECT_READY")
+                end
+            end)
+        else
+            PopulateUnitIlvlsCache(guid, itemLevel, "target")
+            ClearInspectPlayer()
+            self:UnregisterEvent("INSPECT_READY")
+        end
         setUnitPortraitFrame(self, event)
     end
 end
@@ -620,10 +618,8 @@ local function target_OnEvent(self, event, unit)
         if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GetSetting("target_SHOW_ILVL") then
             local guid = UnitGUID(self.unit)
             if guid then
-                if IsShiftKeyDown() then
-                    unitIlvls[guid] = nil
-                end
-                if not unitIlvls[guid] then
+                if not GW.unitIlvlsCache[guid] then
+                    GW.unitIlvlsCache[guid] = {unitColor = {r, g, b}}
                     self:RegisterEvent("INSPECT_READY")
                     NotifyInspect(self.unit)
                 end
@@ -657,14 +653,13 @@ local function target_OnEvent(self, event, unit)
             end
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
-        wipe(unitIlvls)
+        wipe(GW.unitIlvlsCache)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
     elseif event == "INSPECT_READY" then
         if not GetSetting("target_SHOW_ILVL") then
             self:UnregisterEvent("INSPECT_READY")
-            ClearInspectPlayer()
         else
             updateAvgItemLevel(self, event, unit)
         end

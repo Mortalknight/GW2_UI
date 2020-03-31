@@ -25,6 +25,7 @@ libs/libs.xml
 
 core/consts.lua
 core/utils.lua
+core/itemlevel.lua
 core/shared.xml
 core/fonts.lua
 core/storage.lua
@@ -41,6 +42,7 @@ settings/panel_player.lua
 settings/panel_target.lua
 settings/panel_actionbar.lua
 settings/panel_hud.lua
+settings/panel_tooltip.lua
 settings/panel_party.lua
 settings/panel_raid.lua
 settings/panel_auras.lua

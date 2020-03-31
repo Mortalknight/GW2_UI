@@ -39,13 +39,10 @@ local function LoadAurasPanel(sWindow)
 
     createCat(AURAS, L["AURAS_TOOLTIP"], p, 2)
 
-    addOptionText(p_auras, L["AURAS_IGNORED"], L["AURAS_IGNORED_DESC"], "AURAS_IGNORED")
-
-    addOptionText(p_auras, L["AURAS_MISSING"], L["AURAS_MISSING_DESC"], "AURAS_MISSING")
-
-    addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON")
-
-    addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME")
+    addOptionText(p_auras, L["AURAS_IGNORED"], L["AURAS_IGNORED_DESC"], "AURAS_IGNORED", nil, nil, nil, {["GROUP_FRAMES"] = true})
+    addOptionText(p_auras, L["AURAS_MISSING"], L["AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, {["GROUP_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
@@ -68,7 +65,8 @@ local function LoadAurasPanel(sWindow)
             end,
             auraKeys,
             auraVals,
-            {perSpec = true}
+            {perSpec = true},
+            {["GROUP_FRAMES"] = true}
         )
     end
 

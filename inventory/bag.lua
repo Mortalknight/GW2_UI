@@ -274,13 +274,13 @@ local function compactToggle()
         BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
         SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
         inv.resizeInventory()
-        return L["EXPAND_ICONS"]
+        return true
     end
 
     BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
     SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
     inv.resizeInventory()
-    return L["COMPACT_ICONS"]
+    return false
 end
 GW.AddForProfiling("bag", "compactToggle", compactToggle)
 
@@ -535,10 +535,10 @@ local function LoadBag(helpers)
             end
         )
 
-        dd.compactBags:HookScript(
+        dd.compactBags.checkbutton :HookScript(
             "OnClick",
             function(self)
-                self:SetText(compactToggle())
+                self:SetChecked(compactToggle())
                 dd:Hide()
             end
         )
@@ -547,10 +547,10 @@ local function LoadBag(helpers)
             "OnClick",
             function(self)
                 if GetInsertItemsLeftToRight() then
-                    dd.newOrder:SetText(L["BAG_NEW_ORDER_LAST"])
+                    dd.newOrder.title:SetText(L["BAG_NEW_ORDER_LAST"])
                     SetInsertItemsLeftToRight(false)
                 else
-                    dd.newOrder:SetText(L["BAG_NEW_ORDER_FIRST"])
+                    dd.newOrder.title:SetText(L["BAG_NEW_ORDER_FIRST"])
                     SetInsertItemsLeftToRight(true)
                 end
                 dd:Hide()
@@ -561,24 +561,24 @@ local function LoadBag(helpers)
             "OnClick",
             function(self)
                 if GetSortBagsRightToLeft() then
-                    dd.sortOrder:SetText(L["BAG_SORT_ORDER_FIRST"])
+                    dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_FIRST"])
                     SetSortBagsRightToLeft(false)
                 else
-                    dd.sortOrder:SetText(L["BAG_SORT_ORDER_LAST"])
+                    dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_LAST"])
                     SetSortBagsRightToLeft(true)
                 end
                 dd:Hide()
             end
         )
 
-        dd.bagOrder:HookScript(
+        dd.bagOrder.checkbutton:HookScript(
             "OnClick",
             function(self)
                 if GetSetting("BAG_REVERSE_SORT") then
-                    dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
+                    dd.bagOrder.checkbutton:SetChecked(false)
                     SetSetting("BAG_REVERSE_SORT", false)
                 else
-                    dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
+                    dd.bagOrder.checkbutton:SetChecked(true)
                     SetSetting("BAG_REVERSE_SORT", true)
                 end
                 setBagBarOrder(f.ItemFrame)
@@ -587,15 +587,47 @@ local function LoadBag(helpers)
             end
         )
 
-        dd.itemBorder:HookScript(
+        dd.itemBorder.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_ITEM_BORDER_HIDE") then
-                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
-                    SetSetting("BAG_ITEM_BORDER_HIDE", false)
+                if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+                    dd.itemBorder.checkbutton:SetChecked(false)
+                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", false)
                 else
-                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
-                    SetSetting("BAG_ITEM_BORDER_HIDE", true)
+                    dd.itemBorder.checkbutton:SetChecked(true)
+                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", true)
+                end
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
+                dd:Hide()
+            end
+        )
+
+        dd.junkIcon.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
+                    dd.junkIcon.checkbutton:SetChecked(false)
+                    SetSetting("BAG_ITEM_JUNK_ICON_SHOW", false)
+                else
+                    dd.junkIcon.checkbutton:SetChecked(true)
+                    SetSetting("BAG_ITEM_JUNK_ICON_SHOW", true)
+                end
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
+                dd:Hide()
+            end
+        )
+
+        dd.scrapIcon.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
+                    dd.scrapIcon.checkbutton:SetChecked(false)
+                    SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", false)
+                else
+                    dd.scrapIcon.checkbutton:SetChecked(true)
+                    SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", true)
                 end
                 setBagBarOrder(f.ItemFrame)
                 layoutItems(f)
@@ -604,30 +636,47 @@ local function LoadBag(helpers)
         )
 
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
-            dd.compactBags:SetText(L["COMPACT_ICONS"])
+            dd.compactBags.checkbutton:SetChecked(false)
         else
-            dd.compactBags:SetText(L["EXPAND_ICONS"])
+            dd.compactBags.checkbutton:SetChecked(true)
         end
         if GetInsertItemsLeftToRight() then
-            dd.newOrder:SetText(L["BAG_NEW_ORDER_FIRST"])
+            dd.newOrder.title:SetText(L["BAG_NEW_ORDER_FIRST"])
         else
-            dd.newOrder:SetText(L["BAG_NEW_ORDER_LAST"])
+            dd.newOrder.title:SetText(L["BAG_NEW_ORDER_LAST"])
         end
         if GetSortBagsRightToLeft() then
-            dd.sortOrder:SetText(L["BAG_SORT_ORDER_LAST"])
+            dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_LAST"])
         else
-            dd.sortOrder:SetText(L["BAG_SORT_ORDER_FIRST"])
+            dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_FIRST"])
         end
         if GetSetting("BAG_REVERSE_SORT") then
-            dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
+            dd.bagOrder.checkbutton:SetChecked(true)
         else
-            dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
+            dd.bagOrder.checkbutton:SetChecked(false)
         end
-        if GetSetting("BAG_ITEM_BORDER_HIDE") then
-            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
+        if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+            dd.itemBorder.checkbutton:SetChecked(true)
         else
-            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
+            dd.itemBorder.checkbutton:SetChecked(false)
         end
+        if GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
+            dd.junkIcon.checkbutton:SetChecked(true)
+        else
+            dd.junkIcon.checkbutton:SetChecked(false)
+        end
+        if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
+            dd.scrapIcon.checkbutton:SetChecked(true)
+        else
+            dd.scrapIcon.checkbutton:SetChecked(false)
+        end
+
+        -- setup bag setting icons locals
+        dd.compactBags.title:SetText(L["COMPACT_ICONS"])
+        dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
+        dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
+        dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])
+        dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
     end
 
     -- setup money frame

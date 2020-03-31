@@ -21,10 +21,10 @@ local function LoadRaidPanel(sWindow)
 
     createCat(RAID, L["GROUP_TOOLTIP"], p, 4)
 
-    addOption(p, RAID_USE_CLASS_COLORS, L["CLASS_COLOR_RAID_DESC"], "RAID_CLASS_COLOR")
-    addOption(p, DISPLAY_POWER_BARS, L["POWER_BARS_RAID_DESC"], "RAID_POWER_BARS")
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "RAID_ONLY_DISPELL_DEBUFFS")
-    addOption(p, RAID_TARGET_ICON, L["RAID_MARKER_DESC"], "RAID_UNIT_MARKERS")
+    addOption(p, RAID_USE_CLASS_COLORS, L["CLASS_COLOR_RAID_DESC"], "RAID_CLASS_COLOR", nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p, DISPLAY_POWER_BARS, L["POWER_BARS_RAID_DESC"], "RAID_POWER_BARS", nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p, RAID_TARGET_ICON, L["RAID_MARKER_DESC"], "RAID_UNIT_MARKERS", nil, nil, {["GROUP_FRAMES"] = true})
     addOption(
         p,
         L["RAID_SORT_BY_ROLE"],
@@ -35,9 +35,12 @@ local function LoadRaidPanel(sWindow)
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
-        end
+        end,
+        nil,
+        nil,
+        {["GROUP_FRAMES"] = true}
     )
-    addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT")
+    addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["GROUP_FRAMES"] = true})
 
     addOptionDropdown(
         p,
@@ -51,7 +54,9 @@ local function LoadRaidPanel(sWindow)
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC,
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH,
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH
-        }
+        },
+        nil,
+        {["GROUP_FRAMES"] = true}
     )
 
     addOptionDropdown(
@@ -61,7 +66,9 @@ local function LoadRaidPanel(sWindow)
         "RAID_UNIT_FLAGS",
         nil,
         {"NONE", "DIFFERENT", "ALL"},
-        {NONE_KEY, L["RAID_UNIT_FLAGS_2"], ALL}
+        {NONE_KEY, L["RAID_UNIT_FLAGS_2"], ALL},
+        nil,
+        {["GROUP_FRAMES"] = true}
     )
 
     local dirs, grow = {"DOWN", "UP", "RIGHT", "LEFT"}, {}
@@ -91,7 +98,9 @@ local function LoadRaidPanel(sWindow)
                 local g1, g2 = strsplit("+", dir)
                 return StrUpper(L["RAID_GROW_DIR"]:format(L[g1], L[g2]), 1, 1)
             end
-        )
+        ),
+        nil,
+        {["GROUP_FRAMES"] = true}
     )
 
     local pos = {"POSITION", "GROWTH"}
@@ -118,7 +127,9 @@ local function LoadRaidPanel(sWindow)
                 return StrUpper(L[i <= 2 and "RAID_ANCHOR_BY_" .. posi or posi], 1, 1)
             end,
             true
-        )
+        ),
+        nil,
+        {["GROUP_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -133,7 +144,10 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         0,
-        40
+        40,
+        nil,
+        0,
+        {["GROUP_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -148,7 +162,10 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         45,
-        300
+        300,
+        nil,
+        0,
+        {["GROUP_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -163,7 +180,10 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         15,
-        100
+        100,
+        nil,
+        0,
+        {["GROUP_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -178,7 +198,10 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         0,
-        GetScreenWidth()
+        GetScreenWidth(),
+        nil,
+        0,
+        {["GROUP_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -193,7 +216,10 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         0,
-        GetScreenHeight()
+        GetScreenHeight(),
+        nil,
+        0,
+        {["GROUP_FRAMES"] = true}
     )
 
     InitPanel(p)

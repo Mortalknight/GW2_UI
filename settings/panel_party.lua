@@ -18,7 +18,7 @@ local function LoadPartyPanel(sWindow)
 
     createCat(CHAT_MSG_PARTY, L["GROUP_TOOLTIP"], p, 4)
 
-    addOption(p, USE_RAID_STYLE_PARTY_FRAMES, L["RAID_PARTY_STYLE_DESC"], "RAID_STYLE_PARTY")
+    addOption(p, USE_RAID_STYLE_PARTY_FRAMES, L["RAID_PARTY_STYLE_DESC"], "RAID_STYLE_PARTY", nil, nil, {["GROUP_FRAMES"] = true})
     addOptionDropdown(
         p,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
@@ -31,7 +31,9 @@ local function LoadPartyPanel(sWindow)
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC,
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH,
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH
-        }
+        },
+        nil,
+        {["GROUP_FRAMES"] = true}
     )
 
     InitPanel(p)

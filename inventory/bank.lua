@@ -295,13 +295,13 @@ local function compactToggle()
         BANK_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
         SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
         inv.resizeInventory()
-        return L["BANK_EXPAND_ICONS"]
+        return true
     end
 
     BANK_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
     SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
     inv.resizeInventory()
-    return L["BANK_COMPACT_ICONS"]
+    return false
 end
 GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
@@ -591,7 +591,7 @@ local function LoadBank(helpers)
             end
         )
 
-        dd.compactBank:SetScript(
+        dd.compactBank.checkbutton:SetScript(
             "OnClick",
             function(self)
                 self:SetText(compactToggle())
@@ -599,14 +599,14 @@ local function LoadBank(helpers)
             end
         )
 
-        dd.bagOrder:SetScript(
+        dd.bagOrder.checkbutton:SetScript(
             "OnClick",
             function(self)
                 if GetSetting("BANK_REVERSE_SORT") then
-                    dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
+                    dd.bagOrder.checkbutton:SetChecked(false)
                     SetSetting("BANK_REVERSE_SORT", false)
                 else
-                    dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
+                    dd.bagOrder.checkbutton:SetChecked(true)
                     SetSetting("BANK_REVERSE_SORT", true)
                 end
                 setBagBarOrder(f.ItemFrame)
@@ -615,15 +615,15 @@ local function LoadBank(helpers)
             end
         )
 
-        dd.itemBorder:HookScript(
+        dd.itemBorder.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_ITEM_BORDER_HIDE") then
-                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
-                    SetSetting("BAG_ITEM_BORDER_HIDE", false)
+                if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+                    dd.itemBorder.checkbutton:SetChecked(false)
+                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", false)
                 else
-                    dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
-                    SetSetting("BAG_ITEM_BORDER_HIDE", true)
+                    dd.itemBorder.checkbutton:SetChecked(true)
+                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", true)
                 end
                 setBagBarOrder(f.ItemFrame)
                 layoutItems(f)
@@ -632,20 +632,25 @@ local function LoadBank(helpers)
         )
 
         if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
-            dd.compactBank:SetText(L["BANK_COMPACT_ICONS"])
+            dd.compactBank.checkbutton:SetChecked(false)
         else
-            dd.compactBank:SetText(L["BANK_EXPAND_ICONS"])
+            dd.compactBank.checkbutton:SetChecked(true)
         end
         if GetSetting("BANK_REVERSE_SORT") then
-            dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
+            dd.bagOrder.checkbutton:SetChecked(true)
         else
-            dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
+            dd.bagOrder.checkbutton:SetChecked(false)
         end
-        if GetSetting("BAG_ITEM_BORDER_HIDE") then
-            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. ACTIVATE)
+        if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+            dd.itemBorder.checkbutton:SetChecked(true)
         else
-            dd.itemBorder:SetText(COLORBLIND_ITEM_QUALITY .. ": " .. GARRISON_DEACTIVATE_FOLLOWER)
+            dd.itemBorder.checkbutton:SetChecked(false)
         end
+
+        -- setup bag setting icons locals
+        dd.compactBank.title:SetText(L["BANK_COMPACT_ICONS"])
+        dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
+        dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
     end
 
     -- setup bank/reagent switching tabs

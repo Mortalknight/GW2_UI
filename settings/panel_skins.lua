@@ -30,7 +30,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, FLIGHT_MAP, nil, "FLIGHTMAP_SKIN_ENABLED")
     addOption(p, "Use Blizzard Class Colors", nil, "BLIZZARDCLASSCOLOR_ENABLED")
     addOption(p, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED")
-    addOption(p, L["INTERFACE_OPTIONS"], nil, "BLIZZARD_OPTIONS_SKIN_ENABLED")
+    addOption(p, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED")
     addOption(p, KEY_BINDINGS, nil, "BINDINGS_SKIN_ENABLED")
     addOption(p, MACRO, nil, "MACRO_SKIN_ENABLED")
 

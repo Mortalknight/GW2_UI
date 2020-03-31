@@ -51,6 +51,21 @@ local function reskinItemButton(iname, b)
     if b.flash then
         b.flash:SetAllPoints(b)
     end
+
+    if not b.junkIcon then
+        b.junkIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
+        b.junkIcon:SetAtlas("bags-junkcoin", true)
+        b.junkIcon:SetPoint("TOPLEFT", -3, 3)
+        b.junkIcon:Hide()
+    end
+
+    if not b.scrapIcon then
+        b.scrapIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
+        b.scrapIcon:SetAtlas("bags-icon-scrappable")
+        b.scrapIcon:SetSize(14, 12)
+        b.scrapIcon:SetPoint("TOPLEFT", 0, 0)
+        b.scrapIcon:Hide()
+    end
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
@@ -87,20 +102,45 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
 
-    if GetSetting("BAG_ITEM_BORDER_HIDE") then
+    if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
     end
 
     if itemIDOrLink then
         if not suppressOverlays then
             if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemIDOrLink) then
-                button.IconOverlay:SetAtlas("AzeriteIconFrame");
-                button.IconOverlay:Show();
+                button.IconOverlay:SetAtlas("AzeriteIconFrame")
+                button.IconOverlay:Show()
             elseif IsCorruptedItem(itemIDOrLink) then
-                button.IconOverlay:SetAtlas("Nzoth-inventory-icon");
-                button.IconOverlay:Show();
+                button.IconOverlay:SetAtlas("Nzoth-inventory-icon")
+                button.IconOverlay:Show()
             end
         end
+        -- Show junk icon if active
+        local texture, count, locked, rarity, readable, _, itemLink, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
+
+        if button.junkIcon then
+            if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
+                button.junkIcon:Show()
+            else
+                button.junkIcon:Hide()
+            end
+        end
+        -- Show scrap icon if active
+        if button.scrapIcon then
+            local itemLoc = ItemLocation:CreateFromBagAndSlot(button:GetParent():GetID(), button:GetID())
+            if itemLoc and itemLoc ~= "" then
+                if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") and (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
+                    button.scrapIcon:SetShown(itemLoc)
+                else
+                    button.scrapIcon:SetShown(false)
+                end
+            end
+        end
+    else
+        if button.junkIcon then button.junkIcon:Hide() end
+        if button.scrapIcon then button.scrapIcon:Hide() end
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)

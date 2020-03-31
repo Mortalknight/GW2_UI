@@ -28,6 +28,71 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+local function GWGetClassColor(class, forNameString, usePriestColor)
+    if not class then return end
+
+    local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
+    local color
+
+    if useBlizzardClassColor then
+        color = RAID_CLASS_COLORS[class]
+    else
+        color = GW.CLASS_COLORS_RAIDFRAME[class]
+        if forNameString then
+            color.r = color.r + 0.3
+            color.g = color.g + 0.3
+            color.b = color.b + 0.3
+        end
+    end
+
+    if type(color) ~= "table" then return end
+
+    if not color.colorStr then
+        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+    elseif strlen(color.colorStr) == 6 then
+        color.colorStr = "ff" .. color.colorStr
+    end
+
+    local PriestColors = {r = 0.99, g = 0.99, b = 0.99, colorStr = "fffcfcfc"}
+    if (usePriestColor and class == "PRIEST") and tonumber(color.colorStr, 16) > tonumber(PriestColors.colorStr, 16) then
+        return PriestColors
+    else
+        return color
+    end
+end
+GW.GWGetClassColor = GWGetClassColor
+
+--RGB to Hex
+local function RGBToHex(r, g, b, header, ending)
+    r = r <= 1 and r >= 0 and r or 1
+    g = g <= 1 and g >= 0 and g or 1
+    b = b <= 1 and b >= 0 and b or 1
+    return format("%s%02x%02x%02x%s", header or "|cff", r * 255, g * 255, b * 255, ending or "")
+end
+GW.RGBToHex = RGBToHex
+
+local function GetUnitBattlefieldFaction(unit)
+    local englishFaction, localizedFaction = UnitFactionGroup(unit)
+
+    -- this might be a rated BG or wargame and if so the player's faction might be altered
+    -- should also apply if `player` is a mercenary.
+    if unit == "player" then
+        if C_PvP.IsRatedBattleground() or IsWargame() then
+            englishFaction = PLAYER_FACTION_GROUP[GetBattlefieldArenaFaction()]
+            localizedFaction = (englishFaction == "Alliance" and FACTION_ALLIANCE) or FACTION_HORDE
+        elseif UnitIsMercenary(unit) then
+            if englishFaction == "Alliance" then
+                englishFaction, localizedFaction = "Horde", FACTION_HORDE
+            else
+                englishFaction, localizedFaction = "Alliance", FACTION_ALLIANCE
+            end
+        end
+    end
+
+    return englishFaction, localizedFaction
+end
+GW.GetUnitBattlefieldFaction = GetUnitBattlefieldFaction
+
 local function MapTable(T, fn, withKey)
     local t = {}
     for k,v in pairs(T) do
@@ -335,40 +400,6 @@ local function MixinHideDuringPetAndOverride(f)
     end
 end
 GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
-
-local PATTERN_ILVL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
-local PATTERN_ILVL_SCALED = ITEM_LEVEL_ALT:gsub("%(%%d%)", "%%((%%d)%%)"):gsub("%%d", "%%d+")
-
--- Get an item's real level, scanning the tooltip if necessary
-local function GetRealItemLevel(link)
-    local i, numBonusIds, linkLvl, upgradeLvl = 0, 0
-    for v in link:gmatch(":(%-?%d*)") do
-        i, v = i + 1, tonumber(v)
-        if i == 9 then
-            linkLvl = v
-        elseif i == 13 then
-            numBonusIds = v or 0
-        elseif i == 14 + numBonusIds then
-            upgradeLvl = v break
-        end
-    end
-
-    if linkLvl and upgradeLvl and linkLvl ~= upgradeLvl then
-        local tt = GWHiddenTooltip or CreateFrame("GameTooltip", "GWHiddenTooltip", nil, "GameTooltipTemplate")
-        tt:SetOwner(UIParent, "ANCHOR_NONE")
-        tt:ClearLines()
-        tt:SetHyperlink(link)
-
-        for i=2,min(3, tt:NumLines()) do
-            local line = _G["GWHiddenTooltipTextLeft" .. i]:GetText()
-            local lvl = line and tonumber(line:match(PATTERN_ILVL_SCALED) or line:match(PATTERN_ILVL))
-            if lvl then return lvl end
-        end
-    end
-
-    return (GetDetailedItemLevelInfo(link))
-end
-GW.GetRealItemLevel = GetRealItemLevel
 
 local function getContainerItemLinkByName(itemName)
     for bag = 0, 4 do

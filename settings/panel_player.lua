@@ -27,7 +27,9 @@ local function LoadPlayerPanel(sWindow)
         {
             "Legacy",
             "Secure"
-        }
+        },
+        nil,
+        {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionSlider(
         p,
@@ -38,7 +40,8 @@ local function LoadPlayerPanel(sWindow)
         1,
         20,
         nil,
-        0
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -52,7 +55,9 @@ local function LoadPlayerPanel(sWindow)
             L["DOWN"],
             "Up and Right",
             "Down and Right"
-        }
+        },
+        nil,
+        {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -61,7 +66,9 @@ local function LoadPlayerPanel(sWindow)
         "PLAYER_UNIT_HEALTH",
         nil,
         {"NONE", "PREC", "VALUE", "BOTH"},
-        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}
+        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -70,7 +77,9 @@ local function LoadPlayerPanel(sWindow)
         "PLAYER_UNIT_ABSORB",
         nil,
         {"NONE", "PREC", "VALUE", "BOTH"},
-        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}
+        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
     )
 
     InitPanel(p)
