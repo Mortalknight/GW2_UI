@@ -639,6 +639,22 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.upgradeIcon.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") then
+                    dd.upgradeIcon.checkbutton:SetChecked(false)
+                    SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", false)
+                else
+                    dd.upgradeIcon.checkbutton:SetChecked(true)
+                    SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", true)
+                end
+                setBagBarOrder(f.ItemFrame)
+                layoutItems(f)
+                dd:Hide()
+            end
+        )
+
         dd.professionColor.checkbutton:HookScript(
             "OnClick",
             function(self)
@@ -690,6 +706,11 @@ local function LoadBag(helpers)
         else
             dd.scrapIcon.checkbutton:SetChecked(false)
         end
+        if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") then
+            dd.upgradeIcon.checkbutton:SetChecked(true)
+        else
+            dd.upgradeIcon.checkbutton:SetChecked(false)
+        end
         if GetSetting("BAG_PROFESSION_BAG_COLOR") then
             dd.professionColor.checkbutton:SetChecked(true)
         else
@@ -700,7 +721,8 @@ local function LoadBag(helpers)
         dd.compactBags.title:SetText(L["COMPACT_ICONS"])
         dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
         dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
-        dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])
+        dd.upgradeIcon.title:SetText(L["SHOW_UPGRADE_ICON"])
+        dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
         dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
         dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
     end

@@ -264,6 +264,7 @@ local function GWUseThisLocalization()
     L["SHOW_QUALITY_COLOR"] = "Zeige Qualitätsfarbe"
     L["SHOW_SCRAP_ICON"] = "Zeige Schrott Symbol"
     L["PROFESSION_BAG_COLOR"] = "Berufstaschen färben"
+    L["SHOW_UPGRADE_ICON"] = "Zeige Aufwertungs-Symbol"
 end
 
 if GetLocale() == "deDE" then

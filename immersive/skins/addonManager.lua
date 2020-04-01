@@ -51,5 +51,13 @@ local function SkinAddonList()
 
     SkinScrollFrame(_G.AddonListScrollFrame)
     SkinScrollBar(_G.AddonListScrollFrameScrollBar)
+
+    hooksecurefunc("TriStateCheckbox_SetState", function(checked, checkButton)
+        local checkedTexture = _G[checkButton:GetName().."CheckedTexture"]
+        -- 1 is a gray check
+        if checked == 1 then
+            checkedTexture:SetVertexColor(1, .93, .73)
+        end
+    end)
 end
 GW.SkinAddonList = SkinAddonList

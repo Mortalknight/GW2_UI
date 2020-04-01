@@ -260,6 +260,7 @@ local function GWUseThisLocalization()
     L["SHOW_QUALITY_COLOR"] = "Show Quality Color"
     L["SHOW_SCRAP_ICON"] = "Show Scrap Icon"
     L["PROFESSION_BAG_COLOR"] = "Colouring professional bags"
+    L["SHOW_UPGRADE_ICON"] = "Show Upgrade Icon"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
