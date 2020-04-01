@@ -432,6 +432,7 @@ local function bank_OnEvent(self, event, ...)
         ReagentBankFrameUnlockInfo:ClearAllPoints()
         ReagentBankFrameUnlockInfo:SetParent(ReagentBankFrame)
         updateBankContainers(self)
+        self.DepositAll:Show()
     end
 end
 GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
@@ -583,6 +584,7 @@ local function LoadBank(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
+        dd:SetBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:SetScript(
             "OnClick",
             function(self)

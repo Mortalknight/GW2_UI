@@ -216,18 +216,6 @@
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY" textureSubLevel="8">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background">
-                                    <Anchors>
-                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
-                                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                                    </Anchors>
-                                </Texture>
-                            </Layer>
-                        </Layers>
                         <Frames>
                             <Button parentKey="compactBags">
                                 <Size x="200" y="30"></Size>
