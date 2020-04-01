@@ -177,13 +177,19 @@ local function dodge_OnEvent(self, event, ...)
         updateAnim(self, start, duration, charges, maxCharges)
 
     elseif event == "PLAYER_ENTERING_WORLD" then
-        -- do the stuff that must be done before combat lockdown takes effect
+        -- do the stuff that must be done before combat lockdown takes effect, 'setupBar' here also, because talent infos are not available in 'SPELLS_CHANGED'
         initBar(self, true)
 
     elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" then
         -- do remaining spell detail stuff that is (usually) not available yet in PEW
-        initBar(self, false)
-        setupBar(self)
+        if not GW.inWorld or not self.spellId then
+            return
+        end
+        -- add a delay because spell infos sometimes not ready
+        Wait(0.05, function()
+            initBar(self, false)
+            setupBar(self)
+        end)
     end
 end
 GW.AddForProfiling("dodgebar", "dodge_OnEvent", dodge_OnEvent)

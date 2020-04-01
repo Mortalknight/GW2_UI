@@ -838,7 +838,13 @@ local function RangeMissChanceBossLevel()
     local enemyDefenseValue = (playerLevel + 3) * 5
 
     local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
-    missChance = missChance - _GetRangeHitBonus()
+	missChance = missChance - _GetRangeHitBonus()
+	
+	if missChance < 0 then
+        missChance = 0
+    elseif missChance > 100 then
+        missChance = 100
+    end
 
     return RoundDec(missChance, 2) .. "%"
 end

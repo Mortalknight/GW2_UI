@@ -78,14 +78,17 @@ local function lockableOnClick(self, btn)
     new_point["yOfs"] = math.floor(yOfs)
     SetSetting(settingsName, new_point)
 
-    SetSetting(lockAble, true)
+    --if 'PlayerBuffFrame', set also the grow direction to default
+    if settingsName == "PlayerBuffFrame" then
+        SetSetting(settingsName .. "_GrowDirection", "UP")
+    end
 end
 GW.AddForProfiling("index", "lockableOnClick", lockableOnClick)
 
 local function lockFrame_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
-    GameTooltip:AddLine("Lock to default position", 1, 1, 1)
+    GameTooltip:SetText(SYSTEM_DEFAULT, 1, 1, 1)
     GameTooltip:Show()
 end
 GW.AddForProfiling("index", "lockFrame_OnEnter", lockFrame_OnEnter)

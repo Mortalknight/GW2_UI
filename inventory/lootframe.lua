@@ -40,7 +40,7 @@ local function SkinLooTFrame()
     if GetCVar("lootUnderMouse") == "0" then
         local pos = GetSetting("LOOTFRAME_POSITION")
         LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
-        RegisterMovableFrame(LootFrame, "Loot window", "LOOTFRAME_POSITION", "VerticalActionBarDummy")
+        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POSITION", "VerticalActionBarDummy")
         hooksecurefunc("LootFrame_Show", function(self)
             local pos = GetSetting("LOOTFRAME_POSITION")
             LootFrame:ClearAllPoints()

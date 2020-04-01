@@ -418,7 +418,7 @@ end
 function GWshowExtendedAttributes(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-    GameTooltip:SetText(STAT_CATEGORY_ATTRIBUTES)
+    GameTooltip:SetText(STAT_CATEGORY_ATTRIBUTES) 
     GameTooltip:AddLine(" ")
 
     GameTooltip:AddLine(MELEE)

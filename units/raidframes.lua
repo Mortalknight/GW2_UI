@@ -1141,11 +1141,11 @@ local function LoadRaidFrames()
         GetSetting("raid_pos")["yOfs"]
     )
 
-    RegisterMovableFrame(GwRaidFrameContainer, "Raid Container", "raid_pos", "VerticalActionBarDummy")
+    RegisterMovableFrame(GwRaidFrameContainer, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy")
 
     hooksecurefunc(GwRaidFrameContainer.gwMover, "StopMovingOrSizing", function (frame)
         local anchor = GetSetting("RAID_ANCHOR")
- 
+
         if anchor == "GROWTH" then
             local g1, g2 = strsplit("+", GetSetting("RAID_GROW"))
             anchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
