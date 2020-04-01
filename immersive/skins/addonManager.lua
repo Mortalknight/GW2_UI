@@ -44,6 +44,7 @@ local function SkinAddonList()
 
     for i = 1, _G.MAX_ADDONS_DISPLAYED do
         SkinCheckButton(_G["AddonListEntry" .. i .. "Enabled"])
+        _G["AddonListEntry" .. i .. "Enabled"]:SetHitRectInsets(0, 0, 0, 0)
         _G["AddonListEntry" .. i .. "Enabled"]:SetSize(15, 15)
         SkinButton(_G["AddonListEntry"  ..  i].LoadAddonButton, false, true)
     end
