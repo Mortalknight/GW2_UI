@@ -585,9 +585,7 @@ local function LoadBag(helpers)
                     dd.bagOrder.checkbutton:SetChecked(true)
                     SetSetting("BAG_REVERSE_SORT", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
@@ -601,9 +599,7 @@ local function LoadBag(helpers)
                     dd.itemBorder.checkbutton:SetChecked(true)
                     SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
@@ -617,9 +613,7 @@ local function LoadBag(helpers)
                     dd.junkIcon.checkbutton:SetChecked(true)
                     SetSetting("BAG_ITEM_JUNK_ICON_SHOW", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
@@ -633,9 +627,7 @@ local function LoadBag(helpers)
                     dd.scrapIcon.checkbutton:SetChecked(true)
                     SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
@@ -649,9 +641,7 @@ local function LoadBag(helpers)
                     dd.upgradeIcon.checkbutton:SetChecked(true)
                     SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
@@ -665,9 +655,7 @@ local function LoadBag(helpers)
                     dd.professionColor.checkbutton:SetChecked(true)
                     SetSetting("BAG_PROFESSION_BAG_COLOR", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 

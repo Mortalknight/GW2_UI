@@ -614,9 +614,7 @@ local function LoadBank(helpers)
                     dd.bagOrder.checkbutton:SetChecked(true)
                     SetSetting("BANK_REVERSE_SORT", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
@@ -630,9 +628,7 @@ local function LoadBank(helpers)
                     dd.itemBorder.checkbutton:SetChecked(true)
                     SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
