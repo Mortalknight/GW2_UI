@@ -5,7 +5,7 @@ v(
     "5.3.0",
     [=[
 NEW
-    - World marker placement keybinds added to 'Other' section of default bindings UI
+    - World marker placement keybinds added to 'GW2 UI' section of default bindings UI
     - Added Corrupted Memento to scenario tracker in heroic vision
     - Rebuilt health globe for performance and graphical improvement
     - Rebuilt dodge bar for performance and graphical improvement
@@ -16,6 +16,17 @@ NEW
     - Added HUD Scale option as a slider
     - Added Grid to Move HUD
     - Added back Chatbubbles in none proteced areas
+    - Added new options to bags: "Show scrap Icon", "Show Junk Icon", "Colouring professional bags", "Show Upgrade Icon"
+    - Added "Advanced Tooltips" with these options:
+        - Show names in classcolor, show spec and ilvl while SHIFT is down, show AFK and DND Status, color level, etc.
+        - Item Count: Shows how many Items you have in bags and in bank (from this item)
+        - Spell/Item IDs: SHows the Spll/Item Id's in the tooltip
+        - NPC IDs: Show the NPC ID in the tooltip
+        - Current Mount: Displayes the current mount the player is riding, incl. source
+        - Target Info: Shows how in your party/raid is targeting this target
+        - Display the unit role in the tooltip
+        - some more
+    - Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
 ]=]
 )
 
