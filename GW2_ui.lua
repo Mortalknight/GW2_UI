@@ -470,7 +470,7 @@ GW.PixelPerfection = PixelPerfection
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
     local hudScale = GetSetting("HUD_SCALE")
-    MainMenuBarArtFrame:SetScale(hudScale)
+    if GetSetting("ACTIONBARS_ENABLED") then MainMenuBarArtFrame:SetScale(hudScale) end
     for i, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover

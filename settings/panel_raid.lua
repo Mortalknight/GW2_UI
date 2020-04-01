@@ -37,7 +37,6 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         nil,
-        nil,
         {["GROUP_FRAMES"] = true}
     )
     addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["GROUP_FRAMES"] = true})

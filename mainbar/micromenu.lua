@@ -232,7 +232,7 @@ local function setupMicroButtons(mbf)
         tref:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
 
         -- we've added an extra button so expand the container a bit
-        f:SetWidth(f:GetWidth() + 28)
+        mbf:SetWidth(mbf:GetWidth() + 28)
     end
 
     -- AchievementMicroButton
@@ -490,10 +490,8 @@ local function LoadMicroMenu()
     end
 
     -- fix alert positions and hide the micromenu bar
-    MicroButtonAndBagsBar:Hide()
-    MicroButtonAndBagsBar:SetMovable(1)
-    MicroButtonAndBagsBar:SetUserPlaced(true)
-    MicroButtonAndBagsBar:SetMovable(0)
+    MicroButtonAndBagsBar:SetAlpha(0)
+    MicroButtonAndBagsBar:EnableMouse(false)
     modifyMicroAlert(CollectionsMicroButtonAlert, CollectionsMicroButton)
     modifyMicroAlert(LFDMicroButtonAlert, LFDMicroButton)
     modifyMicroAlert(EJMicroButtonAlert, EJMicroButton)
