@@ -94,22 +94,25 @@ local function hookUpdateAnchors()
 end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
+local function CheckUpdateIcon_OnUpdate(self, elapsed)
+    self.timeSinceUpgradeCheck = (self.timeSinceUpgradeCheck or 0) + elapsed
+    if self.timeSinceUpgradeCheck >= 0.5 then
+        GW.CheckUpdateIcon(self)
+        self.timeSinceUpgradeCheck = 0
+    end
+end
+
 local function CheckUpdateIcon(button)
     local itemIsUpgrade = IsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
     if itemIsUpgrade == nil then -- nil means not all the data was available to determine if this is an upgrade.
         button.UpgradeIcon:SetShown(false)
-        button:SetScript("OnUpdate", function(self, elapsed)
-            self.timeSinceUpgradeCheck = (self.timeSinceUpgradeCheck or 0) + elapsed
-            if self.timeSinceUpgradeCheck >= 0.5 then
-                CheckUpdateIcon(self)
-                self.timeSinceUpgradeCheck = 0
-            end
-        end)
+        button:SetScript("OnUpdate", CheckUpdateIcon_OnUpdate)
     else
         button.UpgradeIcon:SetShown(itemIsUpgrade)
         button:SetScript("OnUpdate", nil)
     end
 end
+GW.CheckUpdateIcon = CheckUpdateIcon
 
 local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then

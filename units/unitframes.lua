@@ -304,7 +304,6 @@ local function updateAvgItemLevel(self, event, guid)
             end)
         else
             PopulateUnitIlvlsCache(guid, itemLevel, "target")
-            ClearInspectPlayer()
             self:UnregisterEvent("INSPECT_READY")
         end
         setUnitPortraitFrame(self, event)

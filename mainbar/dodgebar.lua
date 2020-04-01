@@ -194,7 +194,7 @@ local function dodge_OnEvent(self, event, ...)
             return
         end
         -- add a delay because spell infos sometimes not ready
-        Wait(0.05, function()
+        C_Timer.After(0.33, function()
             initBar(self, false)
             setupBar(self)
         end)

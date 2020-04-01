@@ -462,7 +462,7 @@ GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
 local function PixelPerfection()
     local _, screenHeight = GetPhysicalScreenSize()
-    local scale = 768 / screenHeight
+    local scale = max(0.4, min(1.15, 768 / screenHeight))
     UIParent:SetScale(scale)
 end
 GW.PixelPerfection = PixelPerfection

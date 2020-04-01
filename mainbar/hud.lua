@@ -138,7 +138,7 @@ GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
 local function xpbar_OnEvent(self, event)
     if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil then
-        Wait(0.4, xpbar_OnEvent(self, nil))
+        C_Timer.After(0.4, xpbar_OnEvent(self, nil))
     end
     if event == "UPDATE_FACTION" and not GW.inWorld then
         return

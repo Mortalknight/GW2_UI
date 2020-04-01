@@ -231,7 +231,6 @@ local function TT_OnEvent(self, event, unitGUID)
     end
 
     if event then
-        ClearInspectPlayer()
         TT:UnregisterEvent(event)
     end
 end
@@ -253,7 +252,7 @@ local function AddInspectInfo(tooltip, unit, numTries, r, g, b)
             GW.unitIlvlsCache[unitGUID].time = nil
             GW.unitIlvlsCache[unitGUID].specName = nil
             GW.unitIlvlsCache[unitGUID].itemLevel = nil
-            return Wait(0.33, AddInspectInfo(tooltip, unit, numTries + 1, r, g, b))
+            return C_Timer.After(0.33, AddInspectInfo(tooltip, unit, numTries + 1, r, g, b))
         end
 
         tooltip:AddDoubleLine(SPECIALIZATION .. ":", specName, nil, nil, nil, r, g, b)

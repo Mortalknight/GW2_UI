@@ -3,9 +3,6 @@ local RoundDec = GW.RoundDec
 
 local inspectColorFallback = {1, 1, 1}
 
-local PATTERN_ILVL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
-local PATTERN_ILVL_SCALED = ITEM_LEVEL_ALT:gsub("%(%%d%)", "%%((%%d)%%)"):gsub("%%d", "%%d+")
-
 local ITEM_SPELL_TRIGGER_ONEQUIP = ITEM_SPELL_TRIGGER_ONEQUIP
 local ESSENCE_DESCRIPTION = GetSpellDescription(277253)
 
@@ -23,38 +20,6 @@ local X2_INVTYPES, X2_EXCEPTIONS, ARMOR_SLOTS = {
 local essenceTextureID = 2975691
 local iLevelDB, tryAgain = {}, {}
 
--- Get an item's real level, scanning the tooltip if necessary
-local function GetRealItemLevel(link)
-    local i, numBonusIds, linkLvl, upgradeLvl = 0, 0
-    for v in link:gmatch(":(%-?%d*)") do
-        i, v = i + 1, tonumber(v)
-        if i == 9 then
-            linkLvl = v
-        elseif i == 13 then
-            numBonusIds = v or 0
-        elseif i == 14 + numBonusIds then
-            upgradeLvl = v break
-        end
-    end
-
-    if linkLvl and upgradeLvl and linkLvl ~= upgradeLvl then
-        -- Create and save hidde scan Tooltip
-        GW.ScanTooltip = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
-        local tt = GW.ScanTooltip   
-        tt:SetOwner(UIParent, "ANCHOR_NONE")
-        tt:ClearLines()
-        tt:SetHyperlink(link)
-
-        for i = 2,min(3, tt:NumLines()) do
-            local line = _G["GW2_UI_ScanTooltipTextLeft" .. i]:GetText()
-            local lvl = line and tonumber(line:match(PATTERN_ILVL_SCALED) or line:match(PATTERN_ILVL))
-            if lvl then return lvl end
-        end
-    end
-
-    return (GetDetailedItemLevelInfo(link))
-end
-GW.GetRealItemLevel = GetRealItemLevel
 
 local function _GetSpecializationInfo(unit, isPlayer)
     local spec = (isPlayer and GetSpecialization()) or (unit and GetInspectSpecialization(unit))
@@ -71,15 +36,14 @@ GW._GetSpecializationInfo = _GetSpecializationInfo
 local function PopulateUnitIlvlsCache(unitGUID, itemLevel, target, tooltip)
     local specName = _GetSpecializationInfo(target)
     if specName and itemLevel then
-        local inspectCache = GW.unitIlvlsCache[unitGUID]
-        if inspectCache then
+        if GW.unitIlvlsCache[unitGUID] then
             GW.unitIlvlsCache[unitGUID].time = GetTime()
             GW.unitIlvlsCache[unitGUID].itemLevel = itemLevel
             GW.unitIlvlsCache[unitGUID].specName = specName
         end
 
         if tooltip then
-            GameTooltip:AddDoubleLine(SPECIALIZATION .. ":", specName, nil, nil, nil, unpack((inspectCache and inspectCache.unitColor) or inspectColorFallback))
+            GameTooltip:AddDoubleLine(SPECIALIZATION .. ":", specName, nil, nil, nil, unpack((GW.unitIlvlsCache[unitGUID].unitColor) or inspectColorFallback))
             GameTooltip:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", itemLevel, nil, nil, nil, 1, 1, 1)
             GameTooltip:Show()
         end

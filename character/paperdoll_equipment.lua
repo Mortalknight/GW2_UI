@@ -102,8 +102,8 @@ local function setItemLevel(button, quality, itemLink)
                 1
             )
         end
-        local lvl = GW.GetRealItemLevel(itemLink)
-        button.itemlevel:SetText(lvl)
+        local slotInfo = GW.GetGearSlotInfo("player", button:GetID())
+        button.itemlevel:SetText(slotInfo.iLvl)
     else
         button.itemlevel:SetText("")
     end
