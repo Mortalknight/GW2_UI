@@ -96,7 +96,7 @@ local function CollectEssenceInfo(index, lineText, slotInfo)
 end
 
 local function ScanTooltipTextures()
-    local tt = GW.ScanTooltip
+    local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
 
     if not tt.gems then
         tt.gems = {}
@@ -141,7 +141,7 @@ local function ScanTooltipTextures()
 end
 
 local function GetGearSlotInfo(unit, slot, deepScan)
-    local tt = GW.ScanTooltip
+    local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
     tt:SetOwner(UIParent, "ANCHOR_NONE")
     tt:SetInventoryItem(unit, slot)
     tt:Show()

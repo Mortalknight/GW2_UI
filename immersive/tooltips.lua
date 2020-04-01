@@ -667,7 +667,7 @@ local function LoadTooltips()
         end
     end
 
-    -- Create and save hidde scan Tooltip
-    GW.ScanTooltip = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
+-- Create and save hidde scan Tooltip
+GW.ScanTooltip = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
 end
 GW.LoadTooltips = LoadTooltips
