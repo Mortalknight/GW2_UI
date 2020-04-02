@@ -6,7 +6,7 @@ local CommaValue = GW.CommaValue
 local Diff = GW.Diff
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
-local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
+local GWGetClassColor = GW.GWGetClassColor
 local TARGET_FRAME_ART = GW.TARGET_FRAME_ART
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
@@ -114,18 +114,14 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
         local _, englishClass, classIndex = UnitClass(self.unit)
-        local r, g, b, a
-        if self.blizzardclasscolor then
-            r, g, b, a = GetClassColor(englishClass)
-        else
-            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
-        end
-        self.healthbar:SetVertexColor(r, g, b, a)
-        self.healthbarSpark:SetVertexColor(r, g, b, a)
-        self.healthbarFlash:SetVertexColor(r, g, b, a)
-        self.healthbarFlashSpark:SetVertexColor(r, g, b, a)
+        local color = GWGetClassColor(englishClass)
 
-        self.nameString:SetTextColor(r + 0.3, g + 0.3, b + 0.3, 1)
+        self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
+        self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
+        self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
+        self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
+
+        self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
         local isFriend = UnitIsFriend("player", self.unit)
         local friendlyColor = COLOR_FRIENDLY[1]
@@ -619,7 +615,9 @@ local function target_OnEvent(self, event, unit)
             local guid = UnitGUID(self.unit)
             if guid then
                 if not GW.unitIlvlsCache[guid] then
-                    GW.unitIlvlsCache[guid] = {unitColor = {r, g, b}}
+                    local _, englishClass = UnitClass(self.unit)
+                    local color = GWGetClassColor(englishClass, true)
+                    GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}} 
                     self:RegisterEvent("INSPECT_READY")
                     NotifyInspect(self.unit)
                 end
@@ -809,7 +807,6 @@ local function LoadTarget()
 
     AddToClique(NewUnitFrame)
 
-    NewUnitFrame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     NewUnitFrame.classColor = GetSetting("target_CLASS_COLOR")
 
     NewUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
@@ -891,7 +888,6 @@ local function LoadFocus()
     NewUnitFrame.showHealthValue = GetSetting("focus_HEALTH_VALUE_ENABLED")
     NewUnitFrame.showHealthPrecentage = GetSetting("focus_HEALTH_VALUE_TYPE")
 
-    NewUnitFrame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     NewUnitFrame.classColor = GetSetting("focus_CLASS_COLOR")
 
     NewUnitFrame.displayBuffs = GetSetting("focus_BUFFS")
@@ -959,7 +955,6 @@ local function LoadTargetOfUnit(unit)
     f.showHealthValue = false
     f.showHealthPrecentage = false
 
-    f.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     f.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
     f.debuffFilter = nil
 

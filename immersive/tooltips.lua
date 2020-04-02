@@ -252,7 +252,7 @@ local function AddInspectInfo(tooltip, unit, numTries, r, g, b)
             GW.unitIlvlsCache[unitGUID].time = nil
             GW.unitIlvlsCache[unitGUID].specName = nil
             GW.unitIlvlsCache[unitGUID].itemLevel = nil
-            return C_Timer.After(0.33, AddInspectInfo(tooltip, unit, numTries + 1, r, g, b))
+            return Wait(0.33, AddInspectInfo(tooltip, unit, numTries + 1, r, g, b))
         end
 
         tooltip:AddDoubleLine(SPECIALIZATION .. ":", specName, nil, nil, nil, r, g, b)
@@ -293,12 +293,6 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         local showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
 
         color = GWGetClassColor(class, true)
-
-        if not color.colorStr then
-            color.colorStr = RGBToHex(color.r, color.g, color.b, "ff")
-        elseif strlen(color.colorStr) == 6 then
-            color.colorStr = "ff" .. color.colorStr
-        end
 
         if pvpName and playerTitles then
             name = pvpName
@@ -365,7 +359,6 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             color = {r = .6, g = .6, b = .6}
         else
             local unitReaction = UnitReaction(unit, "player")
-            local useBlizzardClassColor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
             if useBlizzardClassColor then
                 color = _G.FACTION_BAR_COLORS[unitReaction]
             else

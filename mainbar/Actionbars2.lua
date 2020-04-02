@@ -1084,6 +1084,8 @@ local function LoadActionBars(lm)
     fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE)
     fmActionbar.gw_Bar4 = updateMultiBar(lm, "MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE)
 
+    GW.RegisterScaleFrame(MainMenuBarArtFrame)
+
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", trackBarChanges)
     hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)

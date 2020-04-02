@@ -2,7 +2,7 @@ local _, GW = ...
 local L = GW.L
 GW.char_equipset_SavedItems = {}
 local SavedItemSlots = GW.char_equipset_SavedItems
-local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
+local GWGetClassColor = GW.GWGetClassColor
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
@@ -1024,12 +1024,10 @@ local function LoadPDBagList(fmMenu)
     fmGDR.characterData:SetFont(UNIT_NAME_FONT, 12)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
     local _, englishClass, classIndex = UnitClass("player")
+    local color = GWGetClassColor(englishClass)
+    
     SetClassIcon(fmGDR.classIcon, classIndex)
-    if GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
-        r, g, b, a = GetClassColor(englishClass)
-    else
-        r, g, b, a = GW.CLASS_COLORS_RAIDFRAME[classIndex].r, GW.CLASS_COLORS_RAIDFRAME[classIndex].g, GW.CLASS_COLORS_RAIDFRAME[classIndex].b, 1
-    end
+
     fmGDR.classIcon:SetVertexColor(r, g, b, a, 1)
     fmGDR:SetScript("OnClick", resetBagInventory)
 

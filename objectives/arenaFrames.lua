@@ -5,7 +5,7 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local SetClassIcon = GW.SetClassIcon
-local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
+local GWGetClassColor = GW.GWGetClassColor
 
 local countArenaFrames = 0
 local countArenaPrepFrames = 0
@@ -148,14 +148,16 @@ local function updateArena_Name(self, inBG, inArena)
     self.name:SetText(nameString)
     
     self.guid = UnitGUID(self.unit)
+    self.class = select(2, UnitClass(self.unit))
     self.classIndex = select(3, UnitClass(self.unit))
-    if self.classIndex then 
+    if self.class then 
         SetClassIcon(self.icon, self.classIndex)
+        local color = GWGetClassColor(self.class)
         self.health:SetStatusBarColor(
-            CLASS_COLORS_RAIDFRAME[self.classIndex].r,
-            CLASS_COLORS_RAIDFRAME[self.classIndex].g,
-            CLASS_COLORS_RAIDFRAME[self.classIndex].b,
-            1
+            color.r,
+            color.g,
+            color.b,
+            color.a
         )
     end
     if self.guid == guidTarget then

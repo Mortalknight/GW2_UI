@@ -1,4 +1,5 @@
 local _, GW = ...
+local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
@@ -33,16 +34,12 @@ local function GWGetClassColor(class, forNameString, usePriestColor)
 
     local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     local color
+    local colorForNameString
 
     if useBlizzardClassColor then
         color = RAID_CLASS_COLORS[class]
     else
         color = GW.CLASS_COLORS_RAIDFRAME[class]
-        if forNameString then
-            color.r = color.r + 0.3
-            color.g = color.g + 0.3
-            color.b = color.b + 0.3
-        end
     end
 
     if type(color) ~= "table" then return end
@@ -53,11 +50,15 @@ local function GWGetClassColor(class, forNameString, usePriestColor)
         color.colorStr = "ff" .. color.colorStr
     end
 
-    local PriestColors = {r = 0.99, g = 0.99, b = 0.99, colorStr = "fffcfcfc"}
+    if forNameString and not useBlizzardClassColor then
+        colorForNameString = {r = color.r + 0.3, g = color.g + 0.3, b = color.b + 0.3, a = color.a, colorStr = GW.RGBToHex(color.r + 0.3, color.g + 0.3, color.b + 0.3, "ff")}
+    end
+
+    local PriestColors = {r = 0.99, g = 0.99, b = 0.99, a = 1, colorStr = "fffcfcfc"}
     if (usePriestColor and class == "PRIEST") and tonumber(color.colorStr, 16) > tonumber(PriestColors.colorStr, 16) then
         return PriestColors
     else
-        return color
+        return colorForNameString and colorForNameString or color
     end
 end
 GW.GWGetClassColor = GWGetClassColor
