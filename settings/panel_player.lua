@@ -4,6 +4,7 @@ local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local StrUpper = GW.StrUpper
 local AddForProfiling = GW.AddForProfiling
 
 local function LoadPlayerPanel(sWindow)
@@ -19,21 +20,21 @@ local function LoadPlayerPanel(sWindow)
 
     addOptionDropdown(
         p,
-        "Aura Style",
+        L["AURA_STYLE"],
         nil,
         "PLAYER_AURA_STYLE",
         nil,
         {"LEGACY", "SECURE"},
         {
-            "Legacy",
-            "Secure"
+            LFG_LIST_LEGACY,
+            L["SECURE"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionSlider(
         p,
-        "Auras per Row",
+        L["AURAS_PER_ROW"],
         nil,
         "PLAYER_AURA_WRAP_NUM",
         nil,
@@ -51,10 +52,10 @@ local function LoadPlayerPanel(sWindow)
         GW.UpdateHudScale(),
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
-            L["UP"],
-            L["DOWN"],
-            "Up and Right",
-            "Down and Right"
+            StrUpper(L["UP"], 1, 1),
+            StrUpper(L["DOWN"], 1, 1),
+            L["UP_AND_RIGHT"],
+            L["DOWN_AND_RIGHT"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}

@@ -102,7 +102,7 @@ local function SkinBlizzardOptions()
                     else
                         SkinButton(Child, false, true)
                     end
-                elseif Child:IsObjectType('Slider') then
+                elseif Child:IsObjectType("Slider") then
                     SkinSliderFrame(Child)
                 elseif Child:IsObjectType("Tab") then
                     SkinTab(Child)
