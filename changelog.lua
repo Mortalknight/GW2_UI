@@ -16,7 +16,7 @@ NEW
     - Added HUD Scale option as a slider
     - Added Grid to Move HUD
     - Added back Chatbubbles in none proteced areas
-    - Added new options to bags: "Show scrap Icon", "Show Junk Icon", "Colouring professional bags", "Show Upgrade Icon"
+    - Added new options to bags: "Show scrap Icon", "Show Junk Icon", "Colouring professional bags", "Show Upgrade Icon", "Sell Junk automatically"
     - Added "Advanced Tooltips" with these options:
         - Show names in classcolor, show spec and ilvl while SHIFT is down, show AFK and DND Status, color level, etc.
         - Item Count: Shows how many Items you have in bags and in bank (from this item)
@@ -27,6 +27,7 @@ NEW
         - Display the unit role in the tooltip
         - some more
     - Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
+    - Update locals (zhTW)
 ]=]
 )
 

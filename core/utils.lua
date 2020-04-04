@@ -29,6 +29,28 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+local function FormatMoneyForChat(amount)
+    local str, coppercolor, silvercolor, goldcolor = "", "|cffb16022", "|cffaaaaaa", "|cffddbc44"
+
+    local value = abs(amount)
+    local gold = floor(value / 10000)
+    local silver = floor((value / 100) % 100)
+    local copper = floor(value % 100)
+
+    if gold > 0 then
+        str = format("%s%d|r|TInterface/MoneyFrame/UI-GoldIcon:12:12|t%s", goldcolor, GW.CommaValue(gold), (silver > 0 or copper > 0) and " " or "")
+    end
+    if silver > 0 then
+        str = format("%s%s%d|r|TInterface/MoneyFrame/UI-SilverIcon:12:12|t%s", str, silvercolor, silver, copper > 0 and " " or "")
+    end
+    if copper > 0 or value == 0 then
+        str = format("%s%s%d|r|TInterface/MoneyFrame/UI-CopperIcon:12:12|t", str, coppercolor, copper)
+    end
+
+    return str
+end
+GW.FormatMoneyForChat = FormatMoneyForChat
+
 local function GWGetClassColor(class, forNameString, usePriestColor)
     if not class then return end
 

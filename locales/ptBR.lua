@@ -267,6 +267,9 @@ local function GWUseThisLocalization()
     L["UP_AND_RIGHT"] = "Up and Right"
     L["DOWN_AND_RIGHT"] = "Down and Right"
     L["SECURE"] = "Secure"
+    L["VENDOR_GRAYS"] = "Sell Junk automatically"
+    L["SELLING_JUNK"] = "Selling Junk"
+    L["SELLING_JUNK_FOR"] = "Sold Junk for: %s"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

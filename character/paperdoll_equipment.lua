@@ -1028,7 +1028,7 @@ local function LoadPDBagList(fmMenu)
     
     SetClassIcon(fmGDR.classIcon, classIndex)
 
-    fmGDR.classIcon:SetVertexColor(r, g, b, a, 1)
+    fmGDR.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
     fmGDR:SetScript("OnClick", resetBagInventory)
 
     local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", GwPaperDoll, "GwPaperDollBagItemList")

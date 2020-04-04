@@ -276,7 +276,6 @@ end
 local function SetUnitText(self, unit, level, isShiftKeyDown)
     if self:IsForbidden() then return end
 
-    local useBlizzardClassColor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     local color
 
     if UnitIsPlayer(unit) then
@@ -356,14 +355,10 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         end
     else
         if UnitIsTapDenied(unit) then
-            color = {r = .6, g = .6, b = .6}
+            color = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         else
             local unitReaction = UnitReaction(unit, "player")
-            if useBlizzardClassColor then
-                color = _G.FACTION_BAR_COLORS[unitReaction]
-            else
-                color = GW.FACTION_BAR_COLORS[unitReaction]
-            end
+            color = GW.FACTION_BAR_COLORS[unitReaction]
         end
 
         if not color then color = RAID_CLASS_COLORS.PRIEST end
@@ -458,13 +453,12 @@ local function GameTooltip_OnTooltipSetUnit(self)
         local unitTarget = unit .. "target"
         local targetInfo = GetSetting("ADVANCED_TOOLTIP_SHOW_TARGET_INFO")
         if targetInfo and unit ~= "player" and UnitExists(unitTarget) then
-            local useBlizzardClassColor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
             local targetColor
             if(UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget)) then
                 local _, class = UnitClass(unitTarget)
                 targetColor = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
             else
-                targetColor = useBlizzardClassColor and _G.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")] or GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
+                targetColor = GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
             end
 
             if not targetColor.colorStr then
@@ -503,7 +497,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
         local guid = UnitGUID(unit) or ""
         local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then
-            self:AddLine(format("|cFFFFEDBA%s|r %d", ID, id))
+            self:AddLine(format("|cffffedba%s|r %d", ID, id))
         end
     end
 end
@@ -525,16 +519,16 @@ local function GameTooltip_OnTooltipSetItem(self)
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
 
         if right ~= nil and showSpellID then
-            right = format("|cFFFFEDBA%s|r %s", ID, strmatch(link, ":(%w+)"))
+            right = format("|cffffedba%s|r %s", ID, strmatch(link, ":(%w+)"))
         end
 
         if itemCountOption == "BAG" then
-            left = format("|cFFFFEDBA%s|r %d", AUCTION_HOUSE_QUANTITY_LABEL, num)
+            left = format("|cffffedba%s|r %d", AUCTION_HOUSE_QUANTITY_LABEL, num)
         elseif itemCountOption == "BANK" then
-            bankCount = format("|cFFFFEDBA%s|r %d", BANK, (numall - num))
+            bankCount = format("|cffffedba%s|r %d", BANK, (numall - num))
         elseif itemCountOption == "BOTH" then
-            left = format("|cFFFFEDBA%s|r %d", AUCTION_HOUSE_QUANTITY_LABEL, num)
-            bankCount = format("|cFFFFEDBA%s|r %d", BANK, (numall - num))
+            left = format("|cffffedba%s|r %d", AUCTION_HOUSE_QUANTITY_LABEL, num)
+            bankCount = format("|cffffedba%s|r %d", BANK, (numall - num))
         end
 
         if left ~= " " or right ~= " " then
@@ -555,7 +549,7 @@ local function GameTooltip_OnTooltipSetSpell(self)
     local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
     if not id or not showSpellID then return end
 
-    local displayString = format("|cFFFFEDBA%s|r %d", ID, id)
+    local displayString = format("|cffffedba%s|r %d", ID, id)
 
     for i = 1, self:NumLines() do
         local line = _G[format("GameTooltipTextLeft%d", i)]
@@ -588,9 +582,9 @@ local function SetUnitAura(self, unit, index, filter)
                 local name = UnitName(caster)
                 local _, class = UnitClass(caster)
                 local color = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
-                self:AddDoubleLine(format("|cFFFFEDBA%s|r %d", ID, id), format("|c%s%s|r", color.colorStr, name))
+                self:AddDoubleLine(format("|cffffedba%s|r %d", ID, id), format("|c%s%s|r", color.colorStr, name))
             else
-                self:AddLine(format("|cFFFFEDBA%s|r %d", ID, id))
+                self:AddLine(format("|cffffedba%s|r %d", ID, id))
             end
         end
 
@@ -604,7 +598,7 @@ local function SetToyByItemID(self, id)
 
     if not id or not showSpellID then return end
 
-    self:AddLine(format("|cFFFFEDBA%s|r %d", ID, id))
+    self:AddLine(format("|cffffedba%s|r %d", ID, id))
     self:Show()
 end
 

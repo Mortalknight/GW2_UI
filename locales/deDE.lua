@@ -271,6 +271,9 @@ local function GWUseThisLocalization()
     L["UP_AND_RIGHT"] = "Hoch und rechts"
     L["DOWN_AND_RIGHT"] = "Runter und rechts"
     L["SECURE"] = "Sicher"
+    L["VENDOR_GRAYS"] = "Müll automatisch verkaufen"
+    L["SELLING_JUNK"] = "Verkaufe Müll"
+    L["SELLING_JUNK_FOR"] = "Müll verkauft für: %s"
 end
 
 if GetLocale() == "deDE" then

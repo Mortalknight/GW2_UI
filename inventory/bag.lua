@@ -9,6 +9,7 @@ local GetCharClass = GW.GetCharClass
 local GetRealmStorage = GW.GetRealmStorage
 local ClearStorage = GW.ClearStorage
 local EnableTooltip = GW.EnableTooltip
+local FormatMoneyForChat = GW.FormatMoneyForChat
 local inv
 
 local BAG_ITEM_SIZE = 40
@@ -16,6 +17,106 @@ local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
 local BAG_WINDOW_SIZE = 480
+
+local IterationCount, totalPrice = 500, 0
+local SellJunkFrame = CreateFrame("FRAME")
+local SellJunkTicker, mBagID, mBagSlot
+
+-- automaticly vendor junk
+local function StopSelling()
+    if SellJunkTicker then SellJunkTicker:Cancel() end
+    GwBagFrame.smsj:Hide()
+    SellJunkFrame:UnregisterEvent("ITEM_LOCKED")
+    SellJunkFrame:UnregisterEvent("ITEM_UNLOCKED")
+end
+
+local function sellJunk()
+    -- Variables
+    local SoldCount, Rarity, ItemPrice = 0, 0, 0
+    local CurrentItemLink
+
+    -- Traverse bags and sell grey items
+    for BagID = 0, 4 do
+        for BagSlot = 1, GetContainerNumSlots(BagID) do
+            CurrentItemLink = GetContainerItemLink(BagID, BagSlot)
+            if CurrentItemLink then
+                _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
+                local _, itemCount = GetContainerItemInfo(BagID, BagSlot)
+                if Rarity == 0 and ItemPrice ~= 0 then
+                    SoldCount = SoldCount + 1
+                    if MerchantFrame:IsShown() then
+                        -- If merchant frame is open, vendor the item
+                        UseContainerItem(BagID, BagSlot)
+                        -- Perform actions on first iteration
+                        if SellJunkTicker._remainingIterations == IterationCount then
+                            -- Calculate total price
+                            totalPrice = totalPrice + (ItemPrice * itemCount)
+                            -- Store first sold bag slot for analysis
+                            if SoldCount == 1 then
+                                mBagID, mBagSlot = BagID, BagSlot
+                            end
+                        end
+                    else
+                        -- If merchant frame is not open, stop selling
+                        StopSelling()
+                        return
+                    end
+                end
+            end
+        end
+    end
+
+    -- Stop selling if no items were sold for this iteration or iteration limit was reached
+    if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
+        StopSelling() 
+        if totalPrice > 0 then 
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["SELLING_JUNK_FOR"]:format(FormatMoneyForChat(totalPrice)))
+        end
+    end
+end
+
+local function SellJunkFrame_OnEvent(self, event)
+    if event == "MERCHANT_SHOW" then
+        -- Reset variables
+        totalPrice, mBagID, mBagSlot = 0, -1, -1
+        -- Do nothing if shift key is held down
+        if IsShiftKeyDown() then return end
+        -- Cancel existing ticker if present
+        if SellJunkTicker then SellJunkTicker:Cancel() end
+        -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
+        SellJunkTicker = C_Timer.NewTicker(0.2, sellJunk, IterationCount)
+        SellJunkFrame:RegisterEvent("ITEM_LOCKED")
+        SellJunkFrame:RegisterEvent("ITEM_UNLOCKED")
+    elseif event == "ITEM_LOCKED" then
+        GwBagFrame.smsj:Show()
+        SellJunkFrame:UnregisterEvent("ITEM_LOCKED")
+    elseif event == "ITEM_UNLOCKED" then
+        SellJunkFrame:UnregisterEvent("ITEM_UNLOCKED")
+        -- Check whether vendor refuses to buy items
+        if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
+            local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
+            if count and not locked then
+                -- Item has been unlocked but still not sold so stop selling
+                StopSelling()
+            end
+        end
+    elseif event == "MERCHANT_CLOSED" then
+        -- If merchant frame is closed, stop selling
+        StopSelling()
+    end
+end
+
+local function setupVendorJunk(active)
+    if active then
+        SellJunkFrame:RegisterEvent("MERCHANT_SHOW")
+        SellJunkFrame:RegisterEvent("MERCHANT_CLOSED")
+        SellJunkFrame:SetScript("OnEvent", SellJunkFrame_OnEvent)
+    else
+        SellJunkFrame:UnregisterEvent("MERCHANT_SHOW")
+        SellJunkFrame:UnregisterEvent("MERCHANT_CLOSED")
+        SellJunkFrame:SetScript("OnEvent", nil)
+    end
+end
 
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
 local function layoutBagItems(f)
@@ -662,6 +763,20 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.vendorGrays.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_VENDOR_GRAYS") then
+                    dd.vendorGrays.checkbutton:SetChecked(false)
+                    SetSetting("BAG_VENDOR_GRAYS", false)
+                else
+                    dd.vendorGrays.checkbutton:SetChecked(true)
+                    SetSetting("BAG_VENDOR_GRAYS", true)
+                end
+                setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
+            end
+        )
+
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
             dd.compactBags.checkbutton:SetChecked(false)
         else
@@ -707,15 +822,23 @@ local function LoadBag(helpers)
         else
             dd.professionColor.checkbutton:SetChecked(false)
         end
+        if GetSetting("BAG_VENDOR_GRAYS") then
+            dd.vendorGrays.checkbutton:SetChecked(true)
+        else
+            dd.vendorGrays.checkbutton:SetChecked(false)
+        end
+        setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
 
-        -- setup bag setting icons locals
+        -- setup bag setting title locals
         dd.compactBags.title:SetText(L["COMPACT_ICONS"])
         dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
         dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
+        dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])
         dd.upgradeIcon.title:SetText(L["SHOW_UPGRADE_ICON"])
         dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
         dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
         dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
+        dd.vendorGrays.title:SetText(L["VENDOR_GRAYS"])
     end
 
     -- setup money frame
@@ -836,8 +959,26 @@ local function LoadBag(helpers)
         BAG_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
         layoutItems(f)
         snapFrameSize(f)
-        -- TODO: update the text on the compact icons config option
     end
+
+    -- Create sell junk banner
+    local smsj = CreateFrame("FRAME", nil, MerchantFrame)
+    smsj:ClearAllPoints()
+    smsj:SetPoint("BOTTOMLEFT", 4, 4)
+    smsj:SetSize(160, 22)
+    smsj:SetToplevel(true)
+    smsj:Hide()
+
+    smsj.shadow = smsj:CreateTexture(nil, "BACKGROUND")
+    smsj.shadow:SetAllPoints()
+    smsj.shadow:SetColorTexture(0.1, 0.1, 0.1, 1.0)
+
+    smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge") 
+    smsj.text:SetAllPoints();
+    smsj.text:SetText(L["SELLING_JUNK"])
+
+    f.smsj = smsj
+
     return changeItemSize
 end
 GW.LoadBag = LoadBag

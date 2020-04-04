@@ -161,7 +161,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Compact view" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -189,7 +189,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Reverse Bag Order" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -217,7 +217,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Show Item Border" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>

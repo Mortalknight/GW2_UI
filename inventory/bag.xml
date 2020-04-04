@@ -212,7 +212,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" hidden="true" frameLevel="58">
-                        <Size x="200" y="230"></Size>
+                        <Size x="200" y="255"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
@@ -225,7 +225,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Compact view" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -253,7 +253,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Sort to Bottom" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="5" y="0"/>
@@ -270,7 +270,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Insert at Bottom" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="5" y="0"/>
@@ -287,7 +287,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Reverse Bag Order" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -315,7 +315,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Show Item Border" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -343,7 +343,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Show Junk Icon" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -371,7 +371,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Show Scrap Icon" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -399,7 +399,7 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Show Upgrade Icon" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
@@ -427,7 +427,35 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Colouring professional bags" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="180" y="30"/>
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="vendorGrays">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-225"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Sell Junk automatically" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
                                                 <Anchor point="LEFT" x="25" y="0"/>
