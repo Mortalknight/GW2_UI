@@ -18,9 +18,11 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, "MainMenu", nil, "MAINMENU_SKIN_ENABLED")
     addOption(p, "Static Popup", nil, "STATICPOPUP_SKIN_ENABLED")
     addOption(p, "Battle.net Toast", nil, "BNTOASTFRAME_SKIN_ENABLED")
-    addOption(p, "Drop-Down-List", nil, "DROPDOWNLIST_SKIN_ENABLED")
-    addOption(p, "Drop-Down-Menu", nil, "DROPDOWNMENU_SKIN_ENABLED")
     addOption(p, "Use Blizzard Class Colors", nil, "BLIZZARDCLASSCOLOR_ENABLED")
+    addOption(p, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED")
+    addOption(p, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED")
+    addOption(p, KEY_BINDINGS, nil, "BINDINGS_SKIN_ENABLED")
+    addOption(p, MACRO, nil, "MACRO_SKIN_ENABLED")
 
     InitPanel(p)
 end

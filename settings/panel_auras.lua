@@ -21,10 +21,10 @@ local function LoadAurasPanel(sWindow)
     p_auras:SetPoint("TOPLEFT", p, "TOPLEFT", 0, 0)
     p_auras.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_auras.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_auras.header:SetText(AURAS)
+    p_auras.header:SetText(L["RAID_AURAS"])
     p_auras.sub:SetFont(UNIT_NAME_FONT, 12)
     p_auras.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p_auras.sub:SetText(L["AURAS_DESC"])
+    p_auras.sub:SetText(L["RAID_AURAS_DESC"])
 
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     p_indicator:SetHeight(360)
@@ -37,15 +37,12 @@ local function LoadAurasPanel(sWindow)
     p_indicator.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_indicator.sub:SetText(L["INDICATORS_DESC"])
 
-    createCat(AURAS, L["AURAS_TOOLTIP"], p, 2)
+    createCat(L["RAID_AURAS"], L["RAID_AURAS_DESC"], p, 2)
 
-    addOptionText(p_auras, L["AURAS_IGNORED"], L["AURAS_IGNORED_DESC"], "AURAS_IGNORED")
-
-    addOptionText(p_auras, L["AURAS_MISSING"], L["AURAS_MISSING_DESC"], "AURAS_MISSING")
-
-    addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON")
-
-    addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME")
+    addOptionText(p_auras, L["RAID_AURAS_IGNORED"], L["RAID_AURAS_IGNORED_DESC"], "AURAS_IGNORED", nil, nil, nil, {["GROUP_FRAMES"] = true})
+    addOptionText(p_auras, L["RAID_AURAS_MISSING"], L["RAID_AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, nil, {["GROUP_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
@@ -73,7 +70,8 @@ local function LoadAurasPanel(sWindow)
             end,
             auraKeys,
             auraVals,
-            {perSpec = true}
+            nil,
+            {["GROUP_FRAMES"] = true}
         )
     end
 

@@ -35,7 +35,7 @@ local function tableContains(t,val)
             return true
         end
     end
-     return false
+    return false
 end
 GW.tableContains = tableContains
 
@@ -95,6 +95,71 @@ local function MapTable(T, fn, withKey)
     return t
 end
 GW.MapTable = MapTable
+
+local function FormatMoneyForChat(amount)
+    local str, coppercolor, silvercolor, goldcolor = "", "|cffb16022", "|cffaaaaaa", "|cffddbc44"
+
+    local value = abs(amount)
+    local gold = floor(value / 10000)
+    local silver = floor((value / 100) % 100)
+    local copper = floor(value % 100)
+
+    if gold > 0 then
+        str = format("%s%d|r|TInterface/MoneyFrame/UI-GoldIcon:12:12|t%s", goldcolor, GW.CommaValue(gold), (silver > 0 or copper > 0) and " " or "")
+    end
+    if silver > 0 then
+        str = format("%s%s%d|r|TInterface/MoneyFrame/UI-SilverIcon:12:12|t%s", str, silvercolor, silver, copper > 0 and " " or "")
+    end
+    if copper > 0 or value == 0 then
+        str = format("%s%s%d|r|TInterface/MoneyFrame/UI-CopperIcon:12:12|t", str, coppercolor, copper)
+    end
+
+    return str
+end
+GW.FormatMoneyForChat = FormatMoneyForChat
+
+local function GWGetClassColor(class, forNameString, usePriestColor)
+    if not class then return end
+
+    local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
+    local color
+    local colorForNameString
+
+    if useBlizzardClassColor then
+        color = RAID_CLASS_COLORS[class]
+    else
+        color = GW.CLASS_COLORS_RAIDFRAME[class]
+    end
+
+    if type(color) ~= "table" then return end
+
+    if not color.colorStr then
+        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+    elseif strlen(color.colorStr) == 6 then
+        color.colorStr = "ff" .. color.colorStr
+    end
+
+    if forNameString and not useBlizzardClassColor then
+        colorForNameString = {r = color.r + 0.3, g = color.g + 0.3, b = color.b + 0.3, a = color.a, colorStr = GW.RGBToHex(color.r + 0.3, color.g + 0.3, color.b + 0.3, "ff")}
+    end
+
+    local PriestColors = {r = 0.99, g = 0.99, b = 0.99, a = 1, colorStr = "fffcfcfc"}
+    if (usePriestColor and class == "PRIEST") and tonumber(color.colorStr, 16) > tonumber(PriestColors.colorStr, 16) then
+        return PriestColors
+    else
+        return colorForNameString and colorForNameString or color
+    end
+end
+GW.GWGetClassColor = GWGetClassColor
+
+--RGB to Hex
+local function RGBToHex(r, g, b, header, ending)
+    r = r <= 1 and r >= 0 and r or 1
+    g = g <= 1 and g >= 0 and g or 1
+    b = b <= 1 and b >= 0 and b or 1
+    return format("%s%02x%02x%02x%s", header or "|cff", r * 255, g * 255, b * 255, ending or "")
+end
+GW.RGBToHex = RGBToHex
 
 local function FillTable(T, map, ...)
     wipe(T)

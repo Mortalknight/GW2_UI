@@ -15,10 +15,10 @@ local BUTTONS = {
 }
 
 local ICON_SPRITES = {
- width = 128,
- height = 128,
- colums = 4,
- rows = 4
+    width = 128,
+    height = 128,
+    colums = 4,
+    rows = 4
 }
 
 local function applyButtonStyle()

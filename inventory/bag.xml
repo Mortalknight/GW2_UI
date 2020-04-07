@@ -158,47 +158,195 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" hidden="true" frameLevel="58">
-                        <Size x="200" y="90"></Size>
+                        <Size x="200" y="180"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY" textureSubLevel="8">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
-                                    <Color r="0" b="0" g="0"></Color>
-                                    <Anchors>
-                                        <Anchor point="TOP" relativePoint="TOP"></Anchor>
-                                        <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
-                                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                                    </Anchors>
-                                </Texture>
-                            </Layer>
-                        </Layers>
                         <Frames>
-                            <Button parentKey="compactBags" text="Compact view">
-                                <Size x="100" y="30"></Size>
+                            <Button parentKey="compactBags">
+                                <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOP" relativePoint="TOP"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                                 </Anchors>
-                                <NormalFont style="ChatBubbleFont"></NormalFont>
-                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Compact view" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
                             </Button>
-                            <Button parentKey="sortOrder" text="Sort to Bottom">
-                                <Size x="100" y="30"></Size>
+                            <Button parentKey="sortOrder">
+                                <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOP" relativePoint="TOP" y="-30"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-25"></Anchor>
                                 </Anchors>
-                                <NormalFont style="ChatBubbleFont"></NormalFont>
-                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Sort to Bottom" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="5" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
                             </Button>
-                            <Button parentKey="bagOrder" text="Normal Bag Order">
-                                <Size x="100" y="30"></Size>
+                            <Button parentKey="bagOrder">
+                                <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOP" relativePoint="TOP" y="-60"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-50"></Anchor>
                                 </Anchors>
-                                <NormalFont style="ChatBubbleFont"></NormalFont>
-                                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Reverse Bag Order" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="itemBorder">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-75"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Show Item Border" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="junkIcon">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-100"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Show Junk Icon" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="professionColor">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-125"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Colouring professional bags" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="vendorGrays">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-150"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Sell Junk automatically" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
                             </Button>
                         </Frames>
                     </Frame>

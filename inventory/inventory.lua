@@ -48,6 +48,13 @@ local function reskinItemButton(iname, b)
     if b.flash then
         b.flash:SetAllPoints(b)
     end
+
+    if not b.junkIcon then
+        b.junkIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
+        b.junkIcon:SetAtlas("bags-junkcoin", true)
+        b.junkIcon:SetPoint("TOPLEFT", -3, 3)
+        b.junkIcon:Hide()
+    end
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
@@ -110,49 +117,60 @@ end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
 local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
-    local container = button:GetParent():GetID()
-    local isQuestItem = nil
-    
+    if not button.gwBackdrop then
+        return
+    end
+    local t = button.IconBorder
+    t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    t:SetAlpha(0.9)
+    button.IconOverlay:Hide()
+
     if itemIDOrLink then
-        isQuestItem = select(6, GetItemInfo(itemIDOrLink))
+        local isQuestItem = select(12, GetItemInfo(itemIDOrLink))
+
+        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+            t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+            t:Show()
+        else
+            t:Hide()
+        end
+
+        if isQuestItem == LE_ITEM_CLASS_QUESTITEM then
+            t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
+            t:Show()
+        end
+
+        -- Show junk icon if active
+        local texture, count, locked, rarity, readable, _, itemLink, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
+
+        if button.junkIcon then
+            if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
+                button.junkIcon:Show()
+            else
+                button.junkIcon:Hide()
+            end
+        end
+    else
+        t:Hide()
+        if button.junkIcon then button.junkIcon:Hide() end
     end
 
-	button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-    button.IconOverlay:Hide()
-    button.IconBorder:SetAlpha(0.9)
+    if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+        t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
+    end
 
-    --items
-	if quality then
-		if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-			button.IconBorder:Show()
-			button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
-		else
-			button.IconBorder:Hide()
-		end
-	else
-		button.IconBorder:Hide()
+    local professionColors = BAG_TYP_COLORS[select(2, GetContainerNumFreeSlots(button:GetParent():GetID()))]
+    if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
+        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
+        t:Show()
     end
 
     --Keyring
-    if container == KEYRING_CONTAINER then
-        button.IconBorder:Show()
-        button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
-    end
-
-    --Quest Items
-    if isQuestItem == BATTLE_PET_SOURCE_2 then 
-        button.IconBorder:Show()
-        button.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
-    end
-
-    --Professionbags
-    local bagItemLink = GetInventoryItemLink("player", CharacterBag0Slot:GetID() + container - 1)
-    if bagItemLink ~= nil and select(9, GetItemInfo(bagItemLink)) == "INVTYPE_BAG" then
-        local ContainerTyp = GetItemFamily(bagItemLink)
-        if ContainerTyp > 0 then
-            button.IconBorder:Show()
-            button.IconBorder:SetVertexColor(BAG_TYP_COLORS[ContainerTyp].r, BAG_TYP_COLORS[ContainerTyp].g, BAG_TYP_COLORS[ContainerTyp].b)
-        end
+    if button:GetParent():GetID() == KEYRING_CONTAINER then
+        t:Show()
+        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
     end
 end
 

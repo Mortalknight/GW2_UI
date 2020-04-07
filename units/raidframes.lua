@@ -4,11 +4,11 @@ local gw_set_unit_flag = GW.UnitFlags
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local CountTable = GW.CountTable
+local GWGetClassColor = GW.GWGetClassColor
 local SplitString = GW.SplitString
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local TogglePartyRaid = GW.TogglePartyRaid
@@ -258,13 +258,8 @@ local function updateAwayData(self)
     end
 
     if iconState == 0 then
-        local r, g, b, a
-        if self.blizzardclasscolor then
-            r, g, b, a = GetClassColor(englishClass)
-        else
-            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
-        end
-        self.healthbar:SetStatusBarColor(r, g, b, a)
+        local color = GWGetClassColor(englishClass)
+        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         if self.classicon:IsShown() then
             self.classicon:Hide()
         end
@@ -730,13 +725,8 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                 if UnitInRaid(self.unit) ~= nil then
                     localizedClass, englishClass, classIndex = UnitClass(self.unit)
                     if classColor == true then
-                        local r, g, b, a
-                        if self.blizzardclasscolor then
-                            r, g, b, a = GetClassColor(englishClass)
-                        else
-                            r, g, b, a = CLASS_COLORS_RAIDFRAME[classIndex].r, CLASS_COLORS_RAIDFRAME[classIndex].g, CLASS_COLORS_RAIDFRAME[classIndex].b, 1
-                        end
-                        self.healthbar:SetStatusBarColor(r, g, b, a)
+                        local color = GWGetClassColor(englishClass)
+                        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
                         if self.classicon:IsShown() then
                             self.classicon:Hide()
                         end
@@ -1033,7 +1023,6 @@ local function createRaidFrame(registerUnit, index)
     frame.ready = -1
     frame.targetmarker = GetRaidTargetIndex(frame.unit)
     frame.index = index
-    frame.blizzardclasscolor = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
 
     frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
     frame.healthbar.animationValue = 0

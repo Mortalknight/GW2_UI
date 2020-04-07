@@ -143,18 +143,18 @@ CLASS_ICONS["dead"] = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1}
 local CLASS_COLORS_RAIDFRAME = {}
 GW.CLASS_COLORS_RAIDFRAME = CLASS_COLORS_RAIDFRAME
 
-CLASS_COLORS_RAIDFRAME[1] = {r = 90 / 255, g = 54 / 255, b = 38 / 255} --Warrior
-CLASS_COLORS_RAIDFRAME[2] = {r = 177 / 255, g = 72 / 255, b = 117 / 255} --Paladin
-CLASS_COLORS_RAIDFRAME[3] = {r = 99 / 255, g = 125 / 255, b = 53 / 255} --Hunter
-CLASS_COLORS_RAIDFRAME[4] = {r = 190 / 255, g = 183 / 255, b = 79 / 255} --Rogue
-CLASS_COLORS_RAIDFRAME[5] = {r = 205 / 255, g = 205 / 255, b = 205 / 255} --Priest
-CLASS_COLORS_RAIDFRAME[6] = {r = 148 / 255, g = 62 / 255, b = 62 / 255} --Death Knight
-CLASS_COLORS_RAIDFRAME[7] = {r = 30 / 255, g = 44 / 255, b = 149 / 255} -- Shaman
-CLASS_COLORS_RAIDFRAME[8] = {r = 62 / 255, g = 121 / 255, b = 149 / 255} -- Mage
-CLASS_COLORS_RAIDFRAME[9] = {r = 125 / 255, g = 88 / 255, b = 154 / 255} -- Warlock
-CLASS_COLORS_RAIDFRAME[10] = {r = 66 / 255, g = 151 / 255, b = 112 / 255} -- Monk
-CLASS_COLORS_RAIDFRAME[11] = {r = 158 / 255, g = 103 / 255, b = 37 / 255} -- Druid
-CLASS_COLORS_RAIDFRAME[12] = {r = 72 / 255, g = 38 / 255, b = 148 / 255} -- Demon Hunter
+CLASS_COLORS_RAIDFRAME["WARRIOR"] = {r = 90 / 255, g = 54 / 255, b = 38 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["PALADIN"] = {r = 177 / 255, g = 72 / 255, b = 117 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["HUNTER"] = {r = 99 / 255, g = 125 / 255, b = 53 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["ROGUE"] = {r = 190 / 255, g = 183 / 255, b = 79 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["PRIEST"] = {r = 205 / 255, g = 205 / 255, b = 205 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["DEATHKNIGHT"] = {r = 148 / 255, g = 62 / 255, b = 62 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["SHAMAN"] = {r = 30 / 255, g = 44 / 255, b = 149 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["MAGE"] = {r = 62 / 255, g = 121 / 255, b = 149 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["WARLOCK"] = {r = 125 / 255, g = 88 / 255, b = 154 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["MONK"] = {r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["DRUID"] = {r = 158 / 255, g = 103 / 255, b = 37 / 255, a = 1}
+CLASS_COLORS_RAIDFRAME["DEMONHUNTER"] = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1}
 
 local FACTION_COLOR = {}
 GW.FACTION_COLOR = FACTION_COLOR

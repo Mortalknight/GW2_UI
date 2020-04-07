@@ -657,12 +657,22 @@ local function loadAddon(self)
     if GetSetting("BNTOASTFRAME_SKIN_ENABLED") then
         GW.SkinBNToastFrame()
     end
-    if GetSetting("DROPDOWNLIST_SKIN_ENABLED") then
-        GW.SkinDropDownList()
+    if GetSetting("DROPDOWN_SKIN_ENABLED") then
+        GW.SkinDropDown()
     end
-    if GetSetting("DROPDOWNMENU_SKIN_ENABLED") then
-        GW.SkinUIDropDownMenu()
+    if GetSetting("ADDONLIST_SKIN_ENABLED") then
+        GW.SkinAddonList()
     end
+    if GetSetting("BINDINGS_SKIN_ENABLED") then
+        GW.SkinBindingsUI()
+    end
+    if GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then
+        GW.SkinBlizzardOptions()
+    end
+    if GetSetting("MACRO_SKIN_ENABLED") then
+        GW.SkinMacroOptions()
+    end
+
 
     --Create hud art
     GW.LoadHudArt()

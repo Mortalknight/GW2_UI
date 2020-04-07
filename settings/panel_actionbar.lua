@@ -31,8 +31,8 @@ local function LoadActionbarPanel(sWindow)
 
     createCat(BINDING_HEADER_ACTIONBAR, nil, p, 7)
 
-    addOption(p, L["HIDE_EMPTY_SLOTS"], L["HIDE_EMPTY_SLOTS_DESC"], "HIDEACTIONBAR_BACKGROUND_ENABLED")
-    addOption(p, L["BUTTON_ASSIGNMENTS"], L["BUTTON_ASSIGNMENTS_DESC"], "BUTTON_ASSIGNMENTS")
+    addOption(p, L["HIDE_EMPTY_SLOTS"], L["HIDE_EMPTY_SLOTS_DESC"], "HIDEACTIONBAR_BACKGROUND_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true})
+    addOption(p, L["BUTTON_ASSIGNMENTS"], L["BUTTON_ASSIGNMENTS_DESC"], "BUTTON_ASSIGNMENTS", nil, nil, {["ACTIONBARS_ENABLED"] = true})
     addOptionDropdown(
         p,
         L["STG_RIGHT_BAR_COLS"],
@@ -40,7 +40,9 @@ local function LoadActionbarPanel(sWindow)
         "MULTIBAR_RIGHT_COLS",
         setMultibarCols,
         {1, 2, 3, 4, 6, 12},
-        {"1", "2", "3", "4", "6", "12"}
+        {"1", "2", "3", "4", "6", "12"},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -49,7 +51,9 @@ local function LoadActionbarPanel(sWindow)
         "STANCEBAR_POSITION",
         GW.setStanceBar,
         {"LEFT", "RIGHT"},
-        {L["LEFT"], L["RIGHT"]}
+        {L["LEFT"], L["RIGHT"]},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -58,7 +62,9 @@ local function LoadActionbarPanel(sWindow)
         "FADE_MULTIACTIONBAR_1",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -67,7 +73,9 @@ local function LoadActionbarPanel(sWindow)
         "FADE_MULTIACTIONBAR_2",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -76,7 +84,9 @@ local function LoadActionbarPanel(sWindow)
         "FADE_MULTIACTIONBAR_3",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -85,7 +95,9 @@ local function LoadActionbarPanel(sWindow)
         "FADE_MULTIACTIONBAR_4",
         nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]}
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -94,7 +106,9 @@ local function LoadActionbarPanel(sWindow)
         "MAINBAR_RANGEINDICATOR",
         nil,
         {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
-        {L["INDICATOR_TITLE"]:format(RED_GEM), L["RED_OVERLAY"], STATUS_TEXT_BOTH, NONE}
+        {L["INDICATOR_TITLE"]:format(RED_GEM), L["RED_OVERLAY"], STATUS_TEXT_BOTH, NONE},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
     )
 
     InitPanel(p)

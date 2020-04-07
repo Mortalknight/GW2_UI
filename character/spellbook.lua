@@ -31,9 +31,6 @@ function gw_spell_buttonOnEnter(self)
             GameTooltip:AddLine("|c00ff0000" .. UNLOCKED_AT_LEVEL:format(self.requiredLevel) .. "|r", 1, 1, 1)
         end
     end
-    --debug
-    GameTooltip:AddLine(' ')
-    GameTooltip:AddLine('Spell ID '..self.spellId)
     GameTooltip:Show()
 end
 

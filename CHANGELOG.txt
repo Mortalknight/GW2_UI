@@ -16,6 +16,16 @@
                             - Add Priests holy crit talent to calculation
 - Added Grid to Move HUD
 - Added back Chatbubbles in none proteced areas
+- Added new options to bags: Show Junk Icon", "Colouring professional bags", "Sell Junk automatically"
+- Added "Advanced Tooltips" with these options:
+    - Show names in classcolor, show AFK and DND Status, color level, etc.
+    - Item Count: Shows how many Items you have in bags and in bank (from this item)
+    - Spell/Item IDs: SHows the Spll/Item Id's in the tooltip
+    - NPC IDs: Show the NPC ID in the tooltip
+    - Target Info: Shows how in your party/raid is targeting this target
+    - Display the unit role in the tooltip
+    - some more
+- Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
 
 1.7.3
 - Added more stats to the extended stats (hover over the 'Attribute'-label)

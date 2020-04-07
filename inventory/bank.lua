@@ -265,13 +265,13 @@ local function compactToggle()
         BANK_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
         SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
         inv.resizeInventory()
-        return L["BANK_EXPAND_ICONS"]
+        return true
     end
 
     BANK_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
     SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
     inv.resizeInventory()
-    return L["BANK_COMPACT_ICONS"]
+    return false
 end
 GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
@@ -494,6 +494,7 @@ local function LoadBank(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
+        dd:SetBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:SetScript(
             "OnClick",
             function(self)
@@ -505,15 +506,15 @@ local function LoadBank(helpers)
             end
         )
 
-        dd.compactBank:SetScript(
+        dd.compactBank.checkbutton:SetScript(
             "OnClick",
             function(self)
-                self:SetText(compactToggle())
+                self:SetChecked(compactToggle())
                 dd:Hide()
             end
         )
 
-        dd.bagOrder:SetScript(
+        dd.bagOrder.checkbutton:SetScript(
             "OnClick",
             function(self)
                 if GetSetting("BANK_REVERSE_SORT") then
@@ -523,22 +524,24 @@ local function LoadBank(helpers)
                     dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
                     SetSetting("BANK_REVERSE_SORT", true)
                 end
-                setBagBarOrder(f.ItemFrame)
-                layoutItems(f)
-                dd:Hide()
+                ContainerFrame_UpdateAll()
             end
         )
 
         if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
-            dd.compactBank:SetText(L["BANK_COMPACT_ICONS"])
+            dd.compactBank.checkbutton:SetChecked(false)
         else
-            dd.compactBank:SetText(L["BANK_EXPAND_ICONS"])
+            dd.compactBank.checkbutton:SetChecked(true)
         end
         if GetSetting("BANK_REVERSE_SORT") then
-            dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
+            dd.bagOrder.checkbutton:SetChecked(true)
         else
-            dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
+            dd.bagOrder.checkbutton:SetChecked(false)
         end
+
+        -- setup bag setting title locals
+        dd.compactBank.title:SetText(L["COMPACT_ICONS"])
+        dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
     end
 
     -- return a callback that should be called when item size changes
@@ -547,7 +550,6 @@ local function LoadBank(helpers)
         reskinBankItemButtons()
         layoutItems(f)
         snapFrameSize(f)
-        -- TODO: update the text on the compact icons config option
     end
     return changeItemSize
 end

@@ -164,15 +164,16 @@ end
 GW.AddForProfiling("healthglobe", "globe_OnEvent", globe_OnEvent)
 
 local function globe_OnEnter(self)
-    local pvpdesired = GetPVPDesired("player")
+    local pvpdesired = GetPVPDesired()
     local pvpactive = UnitIsPVP("player") or UnitIsPVPFreeForAll("player")
 
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
+    GameTooltip_SetDefaultAnchor(GameTooltip, self)
+    GameTooltip:SetUnit("player")
+    GameTooltip:AddLine(" ")
     if pvpdesired or pvpactive then
-        GameTooltip_SetTitle(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_ENABLED)
+        GameTooltip_AddColoredLine(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_ENABLED, HIGHLIGHT_FONT_COLOR)
     else
-        GameTooltip_SetTitle(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_DISABLED)
+        GameTooltip_AddColoredLine(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_DISABLED, HIGHLIGHT_FONT_COLOR)
     end
     if pvpdesired then
         GameTooltip_AddNormalLine(GameTooltip, PVP_TOGGLE_ON_VERBOSE, true)
@@ -188,7 +189,7 @@ local function globe_OnEnter(self)
             end
             GameTooltip_AddNormalLine(GameTooltip, PVP_TOGGLE_OFF_VERBOSE, true)
         else
-            GameTooltip_AddNormalLine(GameTooltip, PVP_WARMODE_TOGGLE_OFF, true)
+            GameTooltip_AddNormalLine(GameTooltip, ERR_PVP_TOGGLE_OFF, true)
         end
     end
     GameTooltip:Show()

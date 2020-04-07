@@ -1,4 +1,5 @@
 local _, GW = ...
+local SkinButton = GW.skins.SkinButton
 
 local function resizeBNToastFrame()
     local BNToastFrame = _G.BNToastFrame
@@ -16,9 +17,7 @@ local function SkinBNToastFrame()
     tex:SetSize(BNToastFrame:GetSize())
     BNToastFrame.tex = tex
 
-    BNToastFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-    BNToastFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-    BNToastFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+    SkinButton(BNToastFrame.CloseButton, true)
 
     BNToastFrame:HookScript("OnShow", resizeBNToastFrame)
 end

@@ -3,6 +3,7 @@ local L = GW.L
 local comma_value = GW.comma_value
 local AddToAnimation = GW.AddToAnimation
 local RoundDec = GW.RoundDec
+local GWGetClassColor = GW.GWGetClassColor
 local RT = GW.REP_TEXTURES
 local REPBG_T = 0
 local REPBG_B = 0.464
@@ -122,17 +123,13 @@ end
 function gwPaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
     local spec = GW.api.GetSpecialization()
-    local localizedClass, englishClass, classIndex = UnitClass("player")
+    local localizedClass, englishClass = UnitClass("player")
     local id, name, description, icon, background, role = GW.api.GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
     local unitLevel = UnitLevel("player")
+    local color = GWGetClassColor(englishClass)
     GW.SetClassIcon(GwDressingRoom.classIcon, classIndex)
-    local r, g, b, a
-        if GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED") then
-            r, g, b, a = GetClassColor(englishClass)
-        else
-            r, g, b, a = GW.CLASS_COLORS_RAIDFRAME[classIndex].r, GW.CLASS_COLORS_RAIDFRAME[classIndex].g, GW.CLASS_COLORS_RAIDFRAME[classIndex].b, 1
-        end
-    GwDressingRoom.classIcon:SetVertexColor(r, g, b, a)
+
+    GwDressingRoom.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
 
     if name ~= nil then
         local data = GUILD_RECRUITMENT_LEVEL .. " " .. unitLevel .. " " .. name .. " " .. localizedClass

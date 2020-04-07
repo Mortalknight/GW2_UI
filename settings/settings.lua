@@ -7,6 +7,7 @@ local Debug = GW.Debug
 local AddForProfiling = GW.AddForProfiling
 
 local settings_cat = {}
+local all_options = {}
 local lhb
 local mhgb
 local grid_align
@@ -164,7 +165,7 @@ local function CreateCat(name, desc, panel, icon, bg)
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence)
     if not panel then
         return
     end
@@ -178,6 +179,7 @@ local function AddOption(panel, name, desc, optionName, callback, params)
     opt["optionName"] = optionName
     opt["optionType"] = "boolean"
     opt["callback"] = callback
+    opt["dependence"] = dependence
 
     if params then
         for k,v in pairs(params) do opt[k] = v end
@@ -186,12 +188,15 @@ local function AddOption(panel, name, desc, optionName, callback, params)
     local i = #(panel.gwOptions) + 1
     panel.gwOptions[i] = opt
 
+    local i = #(all_options) + 1
+    all_options[i] = opt
+
     return opt
 end
 GW.AddOption = AddOption
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers)
-    local opt = AddOption(panel, name, desc, optionName, callback, params)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence)
 
     opt["min"] = min
     opt["max"] = max
@@ -202,16 +207,16 @@ local function AddOptionSlider(panel, name, desc, optionName, callback, min, max
 end
 GW.AddOptionSlider = AddOptionSlider
 
-local function AddOptionText(panel, name, desc, optionName, callback, multiline, params)
-    local opt = AddOption(panel, name, desc, optionName, callback, params)
+local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence)
 
     opt["multiline"] = multiline
     opt["optionType"] = "text"
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params)
-    local opt = AddOption(panel, name, desc, optionName, callback, params)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence)
 
     opt["options"] = {}
     opt["options"] = options_list
@@ -293,6 +298,73 @@ local function WarningPrompt(text, method)
 end
 GW.WarningPrompt = WarningPrompt
 
+local function setDependenciesOption(type, name, SetEnable)
+    if SetEnable then
+        if type == "boolean" then
+            _G[name]:Enable()
+            _G[name].checkbutton:Enable()
+        elseif type == "slider" then
+            _G[name].slider:Enable()
+            _G[name].input:Enable()
+            _G[name].input:SetTextColor(0.82, 0.82, 0.82)
+        elseif type == "text" then
+            _G[name].input:Enable()
+            _G[name].input:SetTextColor(1, 1, 1)
+        elseif type == "dropdown" then
+            _G[name].button:Enable()
+            _G[name].button.string:SetTextColor(1, 1, 1)
+        end
+        _G[name].title:SetTextColor(1, 1, 1)
+    else
+        if type == "boolean" then
+            _G[name]:Disable()
+            _G[name].checkbutton:Disable()
+        elseif type == "slider" then
+            _G[name].slider:Disable()
+            _G[name].input:Disable()
+            _G[name].input:SetTextColor(0.82, 0.82, 0.82)
+        elseif type == "text" then
+            _G[name].input:Disable()
+            _G[name].input:SetTextColor(0.82, 0.82, 0.82)
+        elseif type == "dropdown" then
+            _G[name].button:Disable()
+            _G[name].button.string:SetTextColor(0.82, 0.82, 0.82)
+        end
+        _G[name].title:SetTextColor(0.82, 0.82, 0.82)
+    end
+end
+
+local function checkDependenciesOnLoad()
+    local options = all_options
+    local allOptionsSet = false
+
+    for k, v in pairs(options) do
+        if v.dependence then
+            allOptionsSet = false
+            for sn, sv in pairs(v.dependence) do
+                if type(sv) == "table" then
+                    for _, dv in ipairs(sv) do
+                        allOptionsSet = false
+                        if GetSetting(sn) == dv then
+                            allOptionsSet = true
+                            break
+                        end
+                    end
+                else
+                    if GetSetting(sn) == sv then
+                        allOptionsSet = true
+                    else
+                        allOptionsSet = false
+                        break
+                    end
+                end
+                if not allOptionsSet then break end
+            end
+            setDependenciesOption(v.optionType, v.optionName, allOptionsSet)
+        end
+    end
+end
+
 local function InitPanel(panel)
     if not panel or not panel.gwOptions then
         return
@@ -321,7 +393,7 @@ local function InitPanel(panel)
             newLine = true
         end
 
-        local of = CreateFrame("Button", nil, panel, optionFrameType)
+        local of = CreateFrame("Button", v.optionName, panel, optionFrameType)
 
         if newLine and not first or padding.x > 440 then
             padding.y = padding.y + (pY + box_padding)
@@ -389,6 +461,8 @@ local function InitPanel(panel)
                         if v.callback ~= nil then
                             v.callback()
                         end
+                        --Check all dependencies on this option
+                        checkDependenciesOnLoad()
                     end
                 )
 
@@ -470,6 +544,8 @@ local function InitPanel(panel)
                     if v.callback ~= nil then
                         v.callback()
                     end
+                    --Check all dependencies on this option
+                    checkDependenciesOnLoad()
                 end
             )
             of:SetScript(
@@ -485,6 +561,8 @@ local function InitPanel(panel)
                     if v.callback ~= nil then
                         v.callback()
                     end
+                    --Check all dependencies on this option
+                    checkDependenciesOnLoad()
                 end
             )
         end
@@ -493,27 +571,6 @@ local function InitPanel(panel)
             padding.x = padding.x + of:GetWidth() + box_padding
         end
 
-        if GetSetting("CURSOR_ANCHOR_TYPE") == "ANCHOR_CURSOR" then
-            if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
-                if of.slider then
-                    of.slider:Disable()
-                    SetSetting(v.optionName, 0)
-                    of.slider:SetValue(0)
-                    of.title:SetTextColor(0.82, 0.82, 0.82)
-                    of.input:Disable()
-                    of.input:SetTextColor(0.82, 0.82, 0.82)
-                end
-            end
-        else
-            if v.optionName == "ANCHOR_CURSOR_OFFSET_X" or v.optionName == "ANCHOR_CURSOR_OFFSET_Y" then
-                if of.slider then
-                    of.slider:Enable()
-                    of.title:SetTextColor(1, 1, 1)
-                    of.input:Enable()
-                    of.input:SetTextColor(1, 1, 1)
-                end
-            end
-        end
     end
 end
 GW.InitPanel = InitPanel
@@ -709,6 +766,7 @@ local function LoadSettings()
     GW.LoadTargetPanel(sWindow)
     GW.LoadActionbarPanel(sWindow)
     GW.LoadHudPanel(sWindow)
+    GW.LoadTooltipPanel(sWindow)
     GW.LoadPartyPanel(sWindow)
     GW.LoadRaidPanel(sWindow)
     GW.LoadAurasPanel(sWindow)

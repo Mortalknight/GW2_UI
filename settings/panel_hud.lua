@@ -20,13 +20,12 @@ local function LoadHudPanel(sWindow)
     createCat(L["HUD_CAT"], L["HUD_TOOLTIP"], p, 3)
 
     addOption(p, L["DYNAMIC_HUD"], L["DYNAMIC_HUD_DESC"], "HUD_SPELL_SWAP")
-    addOption(p, L["CHAT_FADE"], L["CHAT_FADE_DESC"], "CHATFRAME_FADE")
-    addOption(p, L["COMPASS_TOGGLE"], L["COMPASS_TOGGLE_DESC"], "SHOW_QUESTTRACKER_COMPASS")
-    addOption(p, L["ADV_CAST_BAR"], L["ADV_CAST_BAR_DESC"], "CASTINGBAR_DATA")
+    addOption(p, L["CHAT_FADE"], L["CHAT_FADE_DESC"], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p, L["COMPASS_TOGGLE"], L["COMPASS_TOGGLE_DESC"], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(p, L["ADV_CAST_BAR"], L["ADV_CAST_BAR_DESC"], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p, L["FADE_MICROMENU"], L["FADE_MICROMENU_DESC"], "FADE_MICROMENU")
     addOption(p, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
     addOption(p, L["PIXEL_PERFECTION"], L["PIXEL_PERFECTION_DESC"], "PIXEL_PERFECTION")
-    addOption(p, L["MOUSE_TOOLTIP"], L["MOUSE_TOOLTIP_DESC"], "TOOLTIP_MOUSE")
     addOptionSlider(
         p,
         L["HUD_SCALE"],
@@ -37,37 +36,6 @@ local function LoadHudPanel(sWindow)
         1.5,
         nil,
         2
-    )
-    addOptionSlider(
-        p,
-        L["ANCHOR_CURSOR_OFFSET_X"],
-        L["ANCHOR_CURSOR_OFFSET_DESC"],
-        "ANCHOR_CURSOR_OFFSET_X",
-        nil,
-        -128,
-        128
-    )
-    addOptionSlider(
-        p,
-        L["ANCHOR_CURSOR_OFFSET_Y"],
-        L["ANCHOR_CURSOR_OFFSET_DESC"],
-        "ANCHOR_CURSOR_OFFSET_Y",
-        nil,
-        -128,
-        128
-    )
-    addOptionDropdown(
-        p,
-        L["CURSOR_ANCHOR_TYPE"],
-        L["CURSOR_ANCHOR_TYPE_DESC"],
-        "CURSOR_ANCHOR_TYPE",
-        nil,
-        {"ANCHOR_CURSOR", "ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"},
-        {
-            L["CURSOR_ANCHOR"],
-            L["ANCHOR_CURSOR_LEFT"],
-            L["ANCHOR_CURSOR_RIGHT"]
-        }
     )
     addOptionDropdown(
         p,
@@ -81,7 +49,9 @@ local function LoadHudPanel(sWindow)
             ALL,
             TIMEMANAGER_TITLE,
             ZONE
-        }
+        },
+        nil,
+        {["MINIMAP_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -93,7 +63,9 @@ local function LoadHudPanel(sWindow)
         {
             TRACKER_SORT_MANUAL_BOTTOM,
             TRACKER_SORT_MANUAL_TOP
-        }
+        },
+        nil,
+        {["MINIMAP_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
@@ -108,7 +80,9 @@ local function LoadHudPanel(sWindow)
             LARGE,
             TIME_LEFT_MEDIUM,
             DEFAULT
-        }
+        },
+        nil,
+        {["MINIMAP_ENABLED"] = true}
     )
 
     InitPanel(p)
