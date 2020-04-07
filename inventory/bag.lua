@@ -643,7 +643,7 @@ local function LoadBag(helpers)
             end
         )
 
-        dd.compactBags.checkbutton :HookScript(
+        dd.compactBags.checkbutton:HookScript(
             "OnClick",
             function(self)
                 self:SetChecked(compactToggle())
@@ -835,7 +835,6 @@ local function LoadBag(helpers)
         dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
         dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])
         dd.upgradeIcon.title:SetText(L["SHOW_UPGRADE_ICON"])
-        dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
         dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
         dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
         dd.vendorGrays.title:SetText(L["VENDOR_GRAYS"])

@@ -1,5 +1,4 @@
 local _, GW = ...
-local addHoverToButton = GW.skins.addHoverToButton
 local SkinButton = GW.skins.SkinButton
 
 local function gwSetStaticPopupSize()

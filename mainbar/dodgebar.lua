@@ -215,8 +215,7 @@ local function dodge_OnEnter(self)
     self.border.hover:Show()
 
     -- show the spell tooltip
-    GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-    GameTooltip:ClearLines()
+    GameTooltip_SetDefaultAnchor(GameTooltip, self)
     GameTooltip:SetSpellByID(self.spellId)
     GameTooltip:Show()
 end

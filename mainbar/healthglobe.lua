@@ -219,12 +219,13 @@ local function globe_OnEnter(self)
     local pvpdesired = GetPVPDesired("player")
     local pvpactive = UnitIsPVP("player") or UnitIsPVPFreeForAll("player")
 
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
+    GameTooltip_SetDefaultAnchor(GameTooltip, self)
+    GameTooltip:SetUnit("player")
+    GameTooltip:AddLine(" ")
     if warmode or pvpdesired or pvpactive then
-        GameTooltip_SetTitle(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_ENABLED)
+        GameTooltip_AddColoredLine(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_ENABLED, HIGHLIGHT_FONT_COLOR)
     else
-        GameTooltip_SetTitle(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_DISABLED)
+        GameTooltip_AddColoredLine(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_DISABLED, HIGHLIGHT_FONT_COLOR)
     end
     if warmode then
         GameTooltip_AddNormalLine(GameTooltip, PVP_WARMODE_TOGGLE_ON, true)

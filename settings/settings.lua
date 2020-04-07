@@ -365,22 +365,6 @@ local function checkDependenciesOnLoad()
     end
 end
 
-local function checkDependenciesOnChange(dependence, value)
-    local options = all_options
-
-    for k, v in pairs(options) do
-        if v.dependence_value then
-            if v.dependence == dependence and v.dependence_value ~= value then
-                -- if dependence option is disable we alo disable this option
-                setDependenciesOption(v.optionType, v.optionName, false)
-            elseif v.dependence == dependence and v.dependence_value == value then
-                -- if dependence option is enable we alo eable this option
-                setDependenciesOption(v.optionType, v.optionName, true)
-            end
-        end
-    end
-end
-
 local function InitPanel(panel)
     if not panel or not panel.gwOptions then
         return
