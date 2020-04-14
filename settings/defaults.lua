@@ -258,6 +258,12 @@ GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["xOfs"] = 0
 GW_DEFAULT["GameTooltipPos"]["yOfs"] = 300
 
+GW_DEFAULT["BNToastPos"] = {}
+GW_DEFAULT["BNToastPos"]["point"] = "BOTTOM"
+GW_DEFAULT["BNToastPos"]["relativePoint"] = "BOTTOMLEFT"
+GW_DEFAULT["BNToastPos"]["xOfs"] = 78
+GW_DEFAULT["BNToastPos"]["yOfs"] = 246
+
 GW_DEFAULT["raid_pos"] = {}
 GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"
 GW_DEFAULT["raid_pos"]["relativePoint"] = "TOPLEFT"

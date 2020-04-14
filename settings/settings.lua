@@ -49,8 +49,7 @@ local function create_grid()
         end
     end    
 
-    local _, screenHeight = GetPhysicalScreenSize()
-    local size = (1 / 0.64) - ((1 - (768 / screenHeight)) / 0.64)
+    local size = (1 / 0.64) - ((1 - (768 / GW.screenHeight)) / 0.64)
     local width, height = UIParent:GetSize()
     local ratio = width / height
     local hStepheight = height * ratio

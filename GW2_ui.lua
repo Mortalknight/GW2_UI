@@ -735,6 +735,10 @@ local function loadAddon(self)
         end
     end
 
+    if GetSetting("AFK_MODE") then
+        GW.loadAFKAnimation()
+    end
+
     if GetSetting("CHATBUBBLES_ENABLED") then
         GW.LoadChatBubbles()
     end
