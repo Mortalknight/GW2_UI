@@ -3,7 +3,7 @@ GW.skins = {}
 
 local function addHoverToButton(self)
     if not self.hover then
-        local hover = self:CreateTexture("hover", "ARTWORK")
+        local hover = self:CreateTexture(nil, "ARTWORK")
         hover:SetPoint("LEFT", self, "LEFT")
         hover:SetPoint("TOP", self, "TOP")
         hover:SetPoint("BOTTOM", self, "BOTTOM")
@@ -55,16 +55,10 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
             end
             if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button") end
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/button_disable") end
+            button:DisableDrawLayer("BACKGROUND")
         end
 
         if setTextColor then
-            --button:SetTextColor(0, 0, 0, 1)
-            --button:SetShadowOffset(0, 0)
-            if button.Text then
-                button.Text:SetTextColor(0, 0, 0, 1)
-                button.Text:SetShadowOffset(0, 0)
-            end
-
             local r = {button:GetRegions()}
             for _,c in pairs(r) do
                 if c:GetObjectType() == "FontString" then

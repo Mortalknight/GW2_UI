@@ -523,11 +523,11 @@ local function GameTooltip_OnTooltipSetItem(self)
         end
 
         if itemCountOption == "BAG" then
-            left = format("|cffffedba%s|r %d", AUCTION_HOUSE_QUANTITY_LABEL, num)
+            left = format("|cffffedba%s|r %d", INVENTORY_TOOLTIP, num)
         elseif itemCountOption == "BANK" then
             bankCount = format("|cffffedba%s|r %d", BANK, (numall - num))
         elseif itemCountOption == "BOTH" then
-            left = format("|cffffedba%s|r %d", AUCTION_HOUSE_QUANTITY_LABEL, num)
+            left = format("|cffffedba%s|r %d", INVENTORY_TOOLTIP, num)
             bankCount = format("|cffffedba%s|r %d", BANK, (numall - num))
         end
 

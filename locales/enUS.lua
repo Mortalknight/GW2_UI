@@ -274,6 +274,9 @@ local function GWUseThisLocalization()
     L["VENDOR_GRAYS"] = "Sell Junk automatically"
     L["SELLING_JUNK"] = "Selling Junk"
     L["SELLING_JUNK_FOR"] = "Sold Junk for: %s"
+    L["NO_GUILD"] = "No Guild"
+    L["AFK_MODE"] = "AFK Mode"
+    L["AFK_MODE_DESC"] = "When you go AFK display the AFK screen."
 end
 
 local Locale = GetLocale()

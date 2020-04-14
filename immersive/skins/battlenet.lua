@@ -1,9 +1,7 @@
 local _, GW = ...
 local SkinButton = GW.skins.SkinButton
-
-local function resizeBNToastFrame()
-    _G.BNToastFrame.tex:SetSize(_G.BNToastFrame:GetSize())
-end
+local RegisterMovableFrame = GW.RegisterMovableFrame
+local GetSetting = GW.GetSetting
 
 local function SkinBNToastFrame()
     local BNToastFrame = _G.BNToastFrame
@@ -17,6 +15,19 @@ local function SkinBNToastFrame()
 
     SkinButton(BNToastFrame.CloseButton, true)
 
-    BNToastFrame:HookScript("OnShow", resizeBNToastFrame)
+    BNToastFrame:HookScript("OnShow", function(self)
+        self.tex:SetSize(_G.BNToastFrame:GetSize())
+
+        local point = GetSetting("BNToastPos")
+        self:ClearAllPoints()
+        self:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
+
+        -- remove SetPoint after "OnShow" function
+        local function NoOp() end
+        self.ClearAllPoints = NoOp
+        self.SetPoint = NoOp
+    end)
+
+    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy")
 end
 GW.SkinBNToastFrame = SkinBNToastFrame

@@ -274,6 +274,9 @@ local function GWUseThisLocalization()
     L["VENDOR_GRAYS"] = "Sell Junk automatically"
     L["SELLING_JUNK"] = "Selling Junk"
     L["SELLING_JUNK_FOR"] = "Sold Junk for: %s"
+    L["NO_GUILD"] = "길드 없음"
+    L["AFK_MODE"] = "자리비움 모드"
+    L["AFK_MODE_DESC"] = "자리비움 시 UI가 자리비움모드로 전환됩니다."
 end
 
 if GetLocale() == "koKR" then

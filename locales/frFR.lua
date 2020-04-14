@@ -274,6 +274,9 @@ local function GWUseThisLocalization()
     L["VENDOR_GRAYS"] = "Sell Junk automatically"
     L["SELLING_JUNK"] = "Selling Junk"
     L["SELLING_JUNK_FOR"] = "Sold Junk for: %s"
+    L["NO_GUILD"] = "Pas de Guilde"
+    L["AFK_MODE"] = "Mode ABS"
+    L["AFK_MODE_DESC"] = "Quand vous êtes ABS, affiche un écran spécial."
 end
 
 

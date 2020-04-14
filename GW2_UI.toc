@@ -1,5 +1,5 @@
 ## Interface: 80300
-## Title: GW2 UI
+## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon.
 ## Notes-deDE: Ersetzt die Benutzeroberfläche.
 ## OptionalDeps: MoveAnything

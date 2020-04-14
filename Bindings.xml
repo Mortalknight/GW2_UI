@@ -1,12 +1,12 @@
 <Bindings>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM8" header="GW2UI_MARKER_BINDINGS"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM6"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM3"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM1"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM5"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM7"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM2"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM4"/>
-    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button:WM9"/>
-    <Binding category="GW2 UI" name="CLICK GwDodgeBar:LeftButton" header="GW2UI_MOVE_BINDINGS"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM8" header="GW2UI_MARKER_BINDINGS"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM6"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM3"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM1"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM5"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM7"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM2"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM4"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM9"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GwDodgeBar:LeftButton" header="GW2UI_MOVE_BINDINGS"/>
 </Bindings>

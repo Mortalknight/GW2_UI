@@ -274,6 +274,9 @@ local function GWUseThisLocalization()
     L["VENDOR_GRAYS"] = "Müll automatisch verkaufen"
     L["SELLING_JUNK"] = "Verkaufe Müll"
     L["SELLING_JUNK_FOR"] = "Müll verkauft für: %s"
+    L["NO_GUILD"] = "Keine Gilde"
+    L["AFK_MODE"] = "AFK Modus"
+    L["AFK_MODE_DESC"] = "AFK Bildschirm anzeigen wenn du AFK bist."
 end
 
 if GetLocale() == "deDE" then

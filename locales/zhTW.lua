@@ -270,6 +270,9 @@ local function GWUseThisLocalization()
     L["VENDOR_GRAYS"] = "自動出售垃圾"
     L["SELLING_JUNK"] = "賣垃圾"
     L["SELLING_JUNK_FOR"] = "已售垃圾：%s"
+    L["NO_GUILD"] = "沒有公會"
+    L["AFK_MODE"] = "離開模式"
+    L["AFK_MODE_DESC"] = "當你離開時顯示暫離界面"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

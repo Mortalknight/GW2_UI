@@ -274,6 +274,9 @@ local function GWUseThisLocalization()
     L["VENDOR_GRAYS"] = "Sell Junk automatically"
     L["SELLING_JUNK"] = "Selling Junk"
     L["SELLING_JUNK_FOR"] = "Sold Junk for: %s"
+    L["NO_GUILD"] = "没有公会"
+    L["AFK_MODE"] = "离开模式"
+    L["AFK_MODE_DESC"] = "当你离开时显示AFK界面"
 end
 
 if GetLocale() == "zhCN" then

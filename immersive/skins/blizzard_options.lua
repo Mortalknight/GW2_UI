@@ -8,8 +8,7 @@ local SkinSliderFrame = GW.skins.SkinSliderFrame
 
 local function SkinBlizzardOptions()
     --Interface and System Options
-    local OptionsFrames = {_G.InterfaceOptionsFrame, _G.InterfaceOptionsFrameCategories, _G.InterfaceOptionsFramePanelContainer, _G.InterfaceOptionsFrameAddOns, _G.VideoOptionsFrame, _G.VideoOptionsFrameCategoryFrame, _G.VideoOptionsFramePanelContainer, _G.Display_, _G.Graphics_, _G.RaidGraphics_}
-    local OptionsFrameBackdrops = {_G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
+    local OptionsFrames = {_G.InterfaceOptionsFrameCategories, _G.InterfaceOptionsFramePanelContainer, _G.InterfaceOptionsFrameAddOns, _G.VideoOptionsFrameCategoryFrame, _G.VideoOptionsFramePanelContainer, _G.Display_, _G.Graphics_, _G.RaidGraphics_, _G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
     local OptionsButtons = {_G.GraphicsButton, _G.RaidButton}
 
     local InterfaceOptions = {
@@ -113,12 +112,6 @@ local function SkinBlizzardOptions()
         end
     end
 
-    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest.Texture:SetTexture()
-
-    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
-    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
-    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
-
     --Create New Raid Profle
     local newProfileDialog = _G.CompactUnitFrameProfilesNewProfileDialog
     if newProfileDialog then
@@ -163,5 +156,10 @@ local function SkinBlizzardOptions()
     local SplashFrame = _G.SplashFrame
     SkinButton(SplashFrame.BottomCloseButton, false, true)
     SkinButton(SplashFrame.TopCloseButton, true)
+
+    -- Voice Sliders
+	SkinSliderFrame(_G.UnitPopupVoiceSpeakerVolume.Slider)
+	SkinSliderFrame(_G.UnitPopupVoiceMicrophoneVolume.Slider)
+	SkinSliderFrame(_G.UnitPopupVoiceUserVolume.Slider)
 end
 GW.SkinBlizzardOptions = SkinBlizzardOptions

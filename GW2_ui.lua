@@ -12,8 +12,11 @@ local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
+-- setup Binding Header color
+_G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
+
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then 
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r  You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
     return
 end
 
@@ -251,9 +254,6 @@ GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 }
 ]]--
 local function getSprite(map,x,y)
-
-
-
     local pw = (map.width / map.colums) / map.width
     local ph = (map.height / map.rows) / map.height
 
@@ -461,9 +461,10 @@ end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
 local function PixelPerfection()
-    local _, screenHeight = GetPhysicalScreenSize()
-    local scale = max(0.4, min(1.15, 768 / screenHeight))
-    UIParent:SetScale(scale)
+    GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
+    GW.scale = max(0.4, min(1.15, 768 / GW.screenHeight))
+    GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+    UIParent:SetScale(GW.scale)
 end
 GW.PixelPerfection = PixelPerfection
 

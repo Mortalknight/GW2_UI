@@ -273,6 +273,9 @@ local function GWUseThisLocalization()
     L["VENDOR_GRAYS"] = "Sell Junk automatically"
     L["SELLING_JUNK"] = "Selling Junk"
     L["SELLING_JUNK_FOR"] = "Sold Junk for: %s"
+    L["NO_GUILD"] = "Нет гильдии"
+    L["AFK_MODE"] = "Режим АФК"
+    L["AFK_MODE_DESC"] = "Отображать специальный экран, когда вы переходите в состояние 'Отсутствует'."
 end
 
 

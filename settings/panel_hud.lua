@@ -28,6 +28,7 @@ local function LoadHudPanel(sWindow)
     addOption(p, WORLD_MARKER:format(0):gsub("%d", ""), L["WORLD_MARKER_DESC"], "WORLD_MARKER_FRAME")
     addOption(p, L["MINIMAP_FPS"], L["MINIMAP_FPS"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true})
     addOption(p, L["PIXEL_PERFECTION"], L["PIXEL_PERFECTION_DESC"], "PIXEL_PERFECTION")
+    addOption(p, L["AFK_MODE"], L["AFK_MODE_DESC"], "AFK_MODE")
     addOptionSlider(
         p,
         L["HUD_SCALE"],

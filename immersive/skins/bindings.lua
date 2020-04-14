@@ -42,13 +42,20 @@ local function SkinBindingsUI()
     SkinScrollFrame(_G.KeyBindingFrameScrollFrame)
     SkinScrollBar(_G.KeyBindingFrameScrollFrameScrollBar)
 
-    --hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(_, button)
-        --if not button.IsSkinned then
-            --local selected = button.selectedHighlight
-            --selected:SetTexture("Interface/AddOns/GW2_UI/textures/button_hover")
-            --selected:SetColorTexture(1, 1, 1, .25)
-            --SkinButton(button, false, true)
-        --end
-    --end)
+    hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(binding, button)
+        SkinButton(button, false, true)
+    end)
+
+    hooksecurefunc("BindingButtonTemplate_SetSelected", function(keyBindingButton, isSelected)
+        keyBindingButton.selectedHighlight:SetAlpha(0)
+        if isSelected then
+            keyBindingButton:SetScript("OnEnter", nil)
+            keyBindingButton:SetScript("OnLeave", nil)
+        else
+            keyBindingButton:SetScript("OnEnter", GwStandardButton_OnEnter)
+            keyBindingButton:SetScript("OnLeave", GwStandardButton_OnLeave)
+            GwStandardButton_OnLeave(keyBindingButton)
+        end
+    end)
 end
 GW.SkinBindingsUI = SkinBindingsUI
