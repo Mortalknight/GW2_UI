@@ -172,7 +172,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
 end
 
 local function LoopAnimations(self)
-    if self.curAnimation == "wav2e" then
+    if self.curAnimation == "wave" then
         self:SetAnimation(69)
         self.curAnimation = "dance"
         self.startTime = GetTime()
