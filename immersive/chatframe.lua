@@ -172,6 +172,13 @@ local function handleChatFrameFadeOut(chatFrame)
 
     UIFrameFadeOut(chatFrame.buttonFrame, 2, chatFrame.buttonFrame:GetAlpha(), 0)
     UIFrameFadeOut(ChatFrameMenuButton, 2, ChatFrameMenuButton:GetAlpha(), 0)
+
+    --check if other Tabs has Containers, which need to fade out
+    for i = 1, FCF_GetNumActiveChatFrames() do
+        if _G["ChatFrame" .. i].hasContainer and _G["ChatFrame" .. i].isDocked == chatFrame.isDocked and chatFrame:GetID() ~= i then
+            UIFrameFadeOut(_G["GwChatContainer" .. i], 2, _G["GwChatContainer" .. i]:GetAlpha(), chatAlpha)
+        end
+    end
 end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut)
 
