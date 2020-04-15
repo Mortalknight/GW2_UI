@@ -129,7 +129,7 @@ local function GWGetClassColor(class, forNameString, usePriestColor)
     if useBlizzardClassColor then
         color = RAID_CLASS_COLORS[class]
     else
-        color = GW.CLASS_COLORS_RAIDFRAME[class]
+        color = CLASS_COLORS_RAIDFRAME[class]
     end
 
     if type(color) ~= "table" then return end
