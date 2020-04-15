@@ -1,6 +1,8 @@
 local _, GW = ...
 
 local GetSetting = GW.GetSetting
+local SkinScrollBar = GW.skins.SkinScrollBar
+local StripTextures = GW.StripTextures
 
 local CHAT_FRAME_TEXTURES = {
     "TopLeftTexture",
@@ -30,27 +32,83 @@ local CHAT_FRAME_TEXTURES = {
     "TabSelectedMiddle",
     "TabRight",
     "TabLeft",
-    "TabMiddle"
+    "TabMiddle",
+    "Tab",
+    "TabText"
+}
+
+local tabTexs = {
+    "",
+    "Selected",
+    "Highlight"
 }
 
 local gw_fade_frames = {}
 
-local function chatFader(frame, to, from)
-    UIFrameFadeIn(frame, 2, from, to)
-end
-GW.AddForProfiling("chatframe", "chatFader", chatFader)
+local function setButtonPosition(frame)
+    local frame = _G["ChatFrame"..frame:GetID()]
+    local name = frame:GetName()
+    local editbox = _G[name..'EditBox']
 
-local function setChatBackgroundColor()
-    for i = 1, 10 do
-        if _G["ChatFrame" .. i .. "Background"] then
-            _G["ChatFrame" .. i .. "Background"]:SetVertexColor(0, 0, 0, 0)
-            _G["ChatFrame" .. i .. "Background"]:SetAlpha(0)
-            _G["ChatFrame" .. i .. "Background"]:Hide()
-            if _G["ChatFrame" .. i .. "ButtonFrameBackground"] then
-                _G["ChatFrame" .. i .. "ButtonFrameBackground"]:SetVertexColor(0, 0, 0, 0)
-                _G["ChatFrame" .. i .. "ButtonFrameBackground"]:Hide()
-                _G["ChatFrame" .. i .. "RightTexture"]:SetVertexColor(0, 0, 0, 1)
-            end
+    if frame.buttonSide == "right" then
+        frame.Container:ClearAllPoints()
+        frame.Container:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 5)
+        if not frame.isDocked then
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 0)
+        else
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
+        end
+
+        editbox:ClearAllPoints()
+        editbox:SetPoint("TOPLEFT", frame.Background, "BOTTOMLEFT", 0, 0)
+        editbox:SetPoint("TOPRIGHT", _G[name..'ButtonFrame'], "BOTTOMRIGHT", 0, 0)
+
+        if QuickJoinToastButton then
+            QuickJoinToastButton.ClearAllPoints = nil
+            QuickJoinToastButton.SetPoint = nil
+            QuickJoinToastButton:ClearAllPoints()
+            QuickJoinToastButton:SetPoint("LEFT", GeneralDockManager, "RIGHT", 30, -3)
+
+            local function NoOp() end
+            QuickJoinToastButton.ClearAllPoints = NoOp
+            QuickJoinToastButton.SetPoint = NoOp
+        end
+    else
+        frame.Container:ClearAllPoints()
+        frame.Container:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
+        if not frame.isDocked then
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+        else
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+        end
+
+        editbox:ClearAllPoints()
+        editbox:SetPoint("TOPLEFT", _G[name..'ButtonFrame'], "BOTTOMLEFT", 0, 0)
+        editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, 0)
+
+        if QuickJoinToastButton then
+            QuickJoinToastButton.ClearAllPoints = nil
+            QuickJoinToastButton.SetPoint = nil
+            QuickJoinToastButton:ClearAllPoints()
+            QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
+
+            local function NoOp() end
+            QuickJoinToastButton.ClearAllPoints = NoOp
+            QuickJoinToastButton.SetPoint = NoOp
+        end
+    end
+end
+
+local function setChatBackgroundColor(chatFrame)
+    local chatframe = chatFrame:GetName()
+    if _G[chatframe .. "Background"] then
+        _G[chatframe .. "Background"]:SetVertexColor(0, 0, 0, 0)
+        _G[chatframe .. "Background"]:SetAlpha(0)
+        _G[chatframe .. "Background"]:Hide()
+        if _G[chatframe .. "ButtonFrameBackground"] then
+            _G[chatframe .. "ButtonFrameBackground"]:SetVertexColor(0, 0, 0, 0)
+            _G[chatframe .. "ButtonFrameBackground"]:Hide()
+            _G[chatframe .. "RightTexture"]:SetVertexColor(0, 0, 0, 1)
         end
     end
 end
@@ -61,31 +119,36 @@ local function handleChatFrameFadeIn(chatFrame)
         return
     end
 
-    setChatBackgroundColor()
+    setChatBackgroundColor(chatFrame)
     local frameName = chatFrame:GetName()
     for k, v in pairs(CHAT_FRAME_TEXTURES) do
         local object = _G[chatFrame:GetName() .. v]
         if object and object:IsShown() then
-            chatFader(object, object:GetAlpha(), 1)
+            UIFrameFadeIn(object, 0.5, object:GetAlpha(), 1)
         end
     end
+    if chatFrame.isDocked == 1 then
+        for k, v in pairs(gw_fade_frames) do
+            if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
+                if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
+                    UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
+                elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
+                    UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
+                end
+            else
+                UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
+            end   
+        end
 
-    for k, v in pairs(gw_fade_frames) do
-        if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
-            if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
-                chatFader(v, v:GetAlpha(), 1)
-            elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
-                chatFader(v, v:GetAlpha(), 1)
-            end
-        else
-            chatFader(v, v:GetAlpha(), 1)
-        end   
+        UIFrameFadeIn(_G["GwChatContainer" .. 1], 0.5, _G["GwChatContainer" .. 1]:GetAlpha(), 1)
+        ChatFrameMenuButton:Show()
+    elseif chatFrame.isDocked == nil then
+        UIFrameFadeIn(_G["GwChatContainer" .. chatFrame:GetID()], 0.5, _G["GwChatContainer" .. 1]:GetAlpha(), 1)
     end
+
     local chatTab = _G[frameName .. "Tab"]
-    chatFader(chatTab, chatTab:GetAlpha(), 1)
-    chatFader(chatFrame.buttonFrame, chatFrame.buttonFrame:GetAlpha(), 1)
-    _G[frameName .. "ButtonFrame"]:Show()
-    ChatFrameMenuButton:Show()
+    UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
+    UIFrameFadeIn(chatFrame.buttonFrame, 0.5, chatFrame.buttonFrame:GetAlpha(), 1)
 end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeIn", handleChatFrameFadeIn)
 
@@ -93,7 +156,7 @@ local function handleChatFrameFadeOut(chatFrame)
     if not GetSetting("CHATFRAME_FADE") then
         return
     end
-    setChatBackgroundColor()
+    setChatBackgroundColor(chatFrame)
     if chatFrame.editboxHasFocus then
         handleChatFrameFadeIn(chatFrame)
         return
@@ -106,163 +169,31 @@ local function handleChatFrameFadeOut(chatFrame)
             UIFrameFadeOut(object, 2, object:GetAlpha(), 0)
         end
     end
-    for k, v in pairs(gw_fade_frames) do
-        if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
-            if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
-                UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
-            elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
+    if chatFrame.isDocked == 1 then
+        for k, v in pairs(gw_fade_frames) do
+            if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
+                if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
+                    UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
+                elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
+                    UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
+                end
+            else
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
-        else
-            UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
         end
+        UIFrameFadeOut(_G["GwChatContainer" .. 1], 2, _G["GwChatContainer" .. 1]:GetAlpha(), 0)
+    elseif chatFrame.isDocked == nil then
+        UIFrameFadeOut(_G["GwChatContainer" .. chatFrame:GetID()], 2, _G["GwChatContainer" .. 1]:GetAlpha(), 0)
+        UIFrameFadeOut(chatFrame.buttonFrame, 2, chatFrame.buttonFrame:GetAlpha(), 0)
     end
+
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeOut(chatTab, 2, chatTab:GetAlpha(), 0)
 
     UIFrameFadeOut(chatFrame.buttonFrame, 2, chatFrame.buttonFrame:GetAlpha(), 0)
-    _G[frameName .. "ButtonFrame"]:Hide()
     ChatFrameMenuButton:Hide()
 end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut)
-
-local function styleChatWindow(useId)
-    local cf = _G["ChatFrame" .. useId]
-    local cfeb = _G["ChatFrame" .. useId .. "EditBox"]
-    local cfbg = _G["ChatFrame" .. useId .. "Background"]
-
-    if not cf or not cfeb or not cfbg then
-        return
-    end
-
-    if not cf.gwhasBeenHooked then
-        if cf == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) then
-            cfeb:Show()
-        end
-
-        cfeb.editboxHasFocus = false
-        cfeb:HookScript(
-            "OnEditFocusGained",
-            function()
-                cf.editboxHasFocus = true
-                cf:SetScript(
-                    "OnUpdate",
-                    function()
-                        handleChatFrameFadeIn(cf)
-                    end
-                )
-
-                FCF_FadeInChatFrame(cf)
-                cfeb:SetText("")
-            end
-        )
-
-        cfeb:HookScript(
-            "OnEditFocusLost",
-            function()
-                cf:SetScript("OnUpdate", nil)
-                cf.editboxHasFocus = false
-                FCF_FadeOutChatFrame(cf)
-            end
-        )
-
-        cfeb:HookScript(
-            "OnHide",
-            function(self)
-                if cf == FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) then
-                    self:Show()
-                end
-            end
-        )
-
-        hooksecurefunc(
-            _G["ChatFrame" .. useId .. "EditBoxHeader"],
-            "SetTextColor",
-            function()
-                if not string.find(_G["ChatFrame" .. useId .. "EditBoxHeader"]:GetText(), "%[") then
-                    local newText = string.gsub(_G["ChatFrame" .. useId .. "EditBoxHeader"]:GetText(), ": ", "")
-                    _G["ChatFrame" .. useId .. "EditBoxHeader"]:SetText("[" .. newText .. "] ")
-                end
-            end
-        )
-
-        cf.gwhasBeenHooked = true
-    end
-
-    cf.ScrollToBottomButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
-    cf.ScrollToBottomButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up")
-    cf.ScrollToBottomButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
-    cf.ScrollToBottomButton:SetHeight(24)
-    cf.ScrollToBottomButton:SetWidth(24)
-    ChatFrameMenuButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
-    ChatFrameMenuButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
-    ChatFrameMenuButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
-
-    ChatFrameMenuButton:SetHeight(20)
-    ChatFrameMenuButton:SetWidth(20)
-    
-    _G["ChatFrame" .. useId .. "TabSelectedRight"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
-    _G["ChatFrame" .. useId .. "TabSelectedLeft"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
-    _G["ChatFrame" .. useId .. "TabSelectedMiddle"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactive")
-
-    _G["ChatFrame" .. useId .. "TabMiddle"]:SetHeight(40)
-    _G["ChatFrame" .. useId .. "TabLeft"]:SetHeight(40)
-    _G["ChatFrame" .. useId .. "TabRight"]:SetHeight(40)
-
-    _G["ChatFrame" .. useId .. "TabLeft"]:SetPoint("BOTTOM", GeneralDockManager, "BOTTOM", 0, -4)
-    _G["ChatFrame" .. useId .. "TabMiddle"]:SetPoint("BOTTOM", GeneralDockManager, "BOTTOM", 0, -4)
-
-    _G["ChatFrame" .. useId .. "TabSelectedRight"]:SetBlendMode("BLEND")
-    _G["ChatFrame" .. useId .. "TabSelectedLeft"]:SetBlendMode("BLEND")
-    _G["ChatFrame" .. useId .. "TabSelectedMiddle"]:SetBlendMode("BLEND")
-
-    _G["ChatFrame" .. useId .. "TabSelectedRight"]:SetVertexColor(1, 1, 1, 1)
-    _G["ChatFrame" .. useId .. "TabSelectedLeft"]:SetVertexColor(1, 1, 1, 1)
-    _G["ChatFrame" .. useId .. "TabSelectedMiddle"]:SetVertexColor(1, 1, 1, 1)
-
-    _G["ChatFrame" .. useId .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G["ChatFrame" .. useId .. "TabText"]:SetTextColor(1, 1, 1)
-
-    _G["ChatFrame" .. useId .. "TabHighlightMiddle"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "TabHighlightRight"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "TabHighlightLeft"]:SetTexture(nil)
-
-    _G["ChatFrame" .. useId .. "TabMiddle"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "TabLeft"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "TabRight"]:SetTexture(nil)
-
-    _G["ChatFrame" .. useId .. "ButtonFrameTopTexture"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "ButtonFrameRightTexture"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "ButtonFrameLeftTexture"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "ButtonFrameBottomTexture"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "TopTexture"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "BottomTexture"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "RightTexture"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "LeftTexture"]:SetTexture(nil)
-
-    cfeb:ClearAllPoints()
-    cfeb:SetPoint("TOPLEFT", _G["ChatFrame" .. useId .. "ButtonFrame"], "BOTTOMLEFT", 0, 0)
-    cfeb:SetPoint("TOPRIGHT", cfbg, "BOTTOMRIGHT", 0, 0)
-
-    _G["ChatFrame" .. useId .. "EditBoxRight"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "EditBoxLeft"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "EditBoxMid"]:SetTexture(nil)
-
-    _G["ChatFrame" .. useId .. "EditBoxFocusRight"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "EditBoxFocusLeft"]:SetTexture(nil)
-    _G["ChatFrame" .. useId .. "EditBoxFocusMid"]:SetTexture(nil)
-    
-    if GetSetting("FONTS_ENABLED") then
-        local _, fontSize = GetChatWindowInfo(useId)
-        if fontSize > 0 then
-            _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, fontSize)
-        elseif fontSize == 0 then
-            --fontSize will be 0 if it's still at the default (14)
-            _G["ChatFrame" .. useId]:SetFont(STANDARD_TEXT_FONT, 14)
-        end
-    end
-end
-GW.AddForProfiling("chatframe", "styleChatWindow", styleChatWindow)
 
 local function chatBackgroundOnResize(self)
     local w, h = self:GetSize()
@@ -274,7 +205,158 @@ local function chatBackgroundOnResize(self)
 end
 GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
 
+local function styleChatWindow(frame)
+    local name = frame:GetName()
+    _G[name.."TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G[name.."TabText"]:SetTextColor(1, 1, 1)
+
+    if frame.styled then return end
+
+    frame:SetFrameLevel(4)
+
+    local id = frame:GetID()
+    local _, _, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
+
+    local tab = _G[name..'Tab']
+    local editbox = _G[name..'EditBox']
+    local scroll = frame.ScrollBar
+    local scrollToBottom = frame.ScrollToBottomButton
+    local scrollTex = _G[name.."ThumbTexture"]
+    local background = _G[name .. "Background"]
+
+    if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
+        local fmGCC = CreateFrame("FRAME", "GwChatContainer" .. id, UIParent, "GwChatContainer")
+        fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
+        fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
+        if not frame.isDocked then
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+        else
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+        end
+        if not frame.isDocked then fmGCC.EditBox:Hide() end
+        frame.Container = fmGCC
+        frame.hasContainer = true
+    end
+    
+    for _, texName in pairs(tabTexs) do
+        if texName == "Selected" then
+            _G[tab:GetName()..texName..'Right']:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
+            _G[tab:GetName()..texName..'Left']:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
+            _G[tab:GetName()..texName..'Middle']:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactive")
+            
+            _G[tab:GetName()..texName..'Right']:SetBlendMode("BLEND")
+            _G[tab:GetName()..texName..'Left']:SetBlendMode("BLEND")
+            _G[tab:GetName()..texName..'Middle']:SetBlendMode("BLEND")
+
+            _G[tab:GetName()..texName..'Right']:SetVertexColor(1, 1, 1, 1)
+            _G[tab:GetName()..texName..'Left']:SetVertexColor(1, 1, 1, 1)
+            _G[tab:GetName()..texName..'Middle']:SetVertexColor(1, 1, 1, 1)
+        elseif texName == "" then
+            _G[tab:GetName()..texName..'Right']:SetHeight(40)
+            _G[tab:GetName()..texName..'Left']:SetHeight(40)
+            _G[tab:GetName()..texName..'Middle']:SetHeight(40)
+
+            _G[tab:GetName()..texName..'Left']:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, -4)
+            _G[tab:GetName()..texName..'Middle']:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, -4)
+
+            _G[tab:GetName()..texName..'Left']:SetTexture()
+            _G[tab:GetName()..texName..'Middle']:SetTexture()
+            _G[tab:GetName()..texName..'Right']:SetTexture()
+        else
+            _G[tab:GetName()..texName..'Left']:SetTexture()
+            _G[tab:GetName()..texName..'Middle']:SetTexture()
+            _G[tab:GetName()..texName..'Right']:SetTexture()
+        end
+    end
+    
+    scrollToBottom:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+    scrollToBottom:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up")
+    scrollToBottom:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+    scrollToBottom:SetHeight(24)
+    scrollToBottom:SetWidth(24)
+    SkinScrollBar(scroll)
+    ChatFrameMenuButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
+    ChatFrameMenuButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
+    ChatFrameMenuButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
+    ChatFrameMenuButton:SetHeight(20)
+    ChatFrameMenuButton:SetWidth(20)
+
+    hooksecurefunc(tab, "SetAlpha", function(t, alpha)
+        if alpha ~= 1 and (not t.isDocked or _G.GeneralDockManager.selected:GetID() == t:GetID()) then
+            t:SetAlpha(1)
+        elseif alpha < 0.6 then
+            t:SetAlpha(0.6)
+        end
+    end)
+    
+    tab.text = _G[name.."TabText"]
+    tab.text:SetTextColor(1, 1, 1)
+    hooksecurefunc(tab.text, "SetTextColor", function(tt, r, g, b)
+        local rR, gG, bB = 1, 1, 1
+        if r ~= rR or g ~= gG or b ~= bB then
+            tt:SetTextColor(rR, gG, bB)
+        end
+    end)
+    
+    if tab.conversationIcon then
+        tab.conversationIcon:ClearAllPoints()
+        tab.conversationIcon:SetPoint('RIGHT', tab.text, 'LEFT', -1, 0)
+    end
+    
+    frame:SetClampRectInsets(0,0,0,0)
+    frame:SetClampedToScreen(false)
+    StripTextures(frame, true)
+    _G[name..'ButtonFrame']:Hide()
+    
+    local a, b, c = select(6, editbox:GetRegions())
+    a:SetTexture()
+    b:SetTexture()
+    c:SetTexture()
+    _G[format(editbox:GetName() .. "Left", id)]:Hide()
+    _G[format(editbox:GetName() .. "Mid", id)]:Hide()
+    _G[format(editbox:GetName() .. "Right", id)]:Hide()
+    editbox:ClearAllPoints()
+    editbox:SetPoint("TOPLEFT", _G[name..'ButtonFrame'], "BOTTOMLEFT", 0, 0)
+    editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
+    editbox:SetAltArrowKeyMode(false)
+    editbox.editboxHasFocus = false
+    editbox:Hide()
+
+    editbox:HookScript("OnEditFocusGained", function(editBox)
+        frame.editboxHasFocus = true
+        frame:SetScript(
+            "OnUpdate",
+            function()
+                handleChatFrameFadeIn(frame)
+            end
+        )
+        FCF_FadeInChatFrame(frame)
+        editBox:Show()
+    end)
+    editbox:HookScript("OnEditFocusLost", function(editBox)
+        frame:SetScript("OnUpdate", nil)
+        frame.editboxHasFocus = false
+        FCF_FadeOutChatFrame(frame)
+        editBox:Hide()
+    end)
+
+    if GetSetting("FONTS_ENABLED") then
+        local _, fontSize = GetChatWindowInfo(id)
+        if fontSize > 0 then
+            frame:SetFont(STANDARD_TEXT_FONT, fontSize)
+        elseif fontSize == 0 then
+            frame:SetFont(STANDARD_TEXT_FONT, 14)
+        end
+    end
+
+    if frame.hasContainer then setButtonPosition(frame) end
+
+    frame.styled = true
+end
+
 local function LoadChat()
+    local shouldFading = GetSetting("CHATFRAME_FADE")
+
     if QuickJoinToastButton then
         QuickJoinToastButton:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
         QuickJoinToastButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
@@ -284,21 +366,66 @@ local function LoadChat()
         QuickJoinToastButton:SetHeight(25)
         QuickJoinToastButton:ClearAllPoints()
         QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
+        QuickJoinToastButton.FriendsButton:Hide()
+
+        local function NoOp() end
+        QuickJoinToastButton.ClearAllPoints = NoOp
+        QuickJoinToastButton.SetPoint = NoOp
     end
 
-    local fmGCC = CreateFrame("FRAME", "GwChatContainer", UIParent, "GwChatContainer")
-    fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
-    fmGCC:SetPoint("TOPLEFT", ChatFrame1, "TOPLEFT", -35, 5)
-    fmGCC:SetPoint("BOTTOMRIGHT", ChatFrame1EditBoxFocusRight, "BOTTOMRIGHT", 0, 0)
+    hooksecurefunc("FCF_DockUpdate", function()
+        for i = 1, FCF_GetNumActiveChatFrames() do
+            local frame = _G["ChatFrame" .. i]
+            styleChatWindow(frame)
+            FCFTab_UpdateAlpha(frame)
+            frame:SetTimeVisible(100)
+            frame:SetFading(shouldFading)
+        end
+    end)
+    hooksecurefunc("FCF_Close", function(frame)
+        if frame.Container then
+            frame.Container:Hide()
+        end
+    end)
+
+    hooksecurefunc("FCF_MinimizeFrame", function(chatFrame)
+        _G["GwChatContainer" .. chatFrame:GetID()]:SetAlpha(0)
+    end)
 
     for i = 1, FCF_GetNumActiveChatFrames() do
-        styleChatWindow(i)
+        local frame = _G["ChatFrame" .. i]
+        styleChatWindow(frame)
+        FCFTab_UpdateAlpha(frame)
+        frame:SetTimeVisible(100)
+        frame:SetFading(shouldFading)
     end
+    hooksecurefunc("FCFTab_OnDragStop", function(frame)
+        local frame = _G["ChatFrame"..frame:GetID()]
+        local name = frame:GetName()
+        local editbox = _G[name..'EditBox']
+        local id = frame:GetID()
+        local _, _, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
-    hooksecurefunc("FCF_NewChatWindow", function()
-        for i = 1, FCF_GetNumActiveChatFrames() do
-            styleChatWindow(i)
+        FCFTab_UpdateAlpha(frame)
+        frame:SetTimeVisible(100)
+        frame:SetFading(shouldFading)
+        if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
+            local fmGCC = CreateFrame("FRAME", "GwChatContainer" .. id, UIParent, "GwChatContainer")
+            fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
+            fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
+            if not frame.isDocked then
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+            else
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+            end
+            if not frame.isDocked  then fmGCC.EditBox:Hide() end
+            frame.Container = fmGCC
+            frame.hasContainer = true
+        elseif frame.hasContainer then
+            frame.Container:Show()
         end
+        --Set Button and container position after drag
+        setButtonPosition(frame)
     end)
 
     hooksecurefunc(
@@ -322,7 +449,6 @@ local function LoadChat()
 
     gw_fade_frames = {
         QuickJoinToastButton,
-        GwChatContainer,
         GeneralDockManager,
         ChatFrameChannelButton,
         ChatFrameToggleVoiceDeafenButton,
@@ -333,17 +459,17 @@ local function LoadChat()
 
     --Skin ChatMenus
     local ChatMenus = {
-		"ChatMenu",
-		"EmoteMenu",
-		"LanguageMenu",
-		"VoiceMacroMenu",
-	}
+        "ChatMenu",
+        "EmoteMenu",
+        "LanguageMenu",
+        "VoiceMacroMenu",
+    }
 
-	for i = 1, #ChatMenus do
+    for i = 1, #ChatMenus do
         _G[ChatMenus[i]]:HookScript("OnShow", 
             function(self)
                 self:SetBackdrop(GW.skins.constBackdropFrame)
             end)
-	end
+    end
 end
 GW.LoadChat = LoadChat

@@ -23,7 +23,11 @@ NEW
         - Display the unit role in the tooltip
         - some more
     - Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
-    - Update locals (zhTW)
+    - Added AFK-Mode
+    - Update locals (zhTW, ptBR)
+
+FIXES
+    - Chat window can now be separated and moved to the rightside of the screen
 
 
 5.2.3
