@@ -803,11 +803,10 @@ local function GetRaidFramesMeasures(players)
     local cW = GetSetting("RAID_CONT_WIDTH")
     local cH = GetSetting("RAID_CONT_HEIGHT")
     local per = ceil(GetSetting("RAID_UNITS_PER_COLUMN"))
-    local byRole = GetSetting("RAID_SORT_BY_ROLE")
     local m = 2
 
     -- Determine # of players
-    if players or byRole or not IsInRaid() then
+    if players or not IsInRaid() then
         players = players or max(1, GetNumGroupMembers())
     else
         players = 0
@@ -922,24 +921,6 @@ local function ToggleRaidFramesPreview()
     GwToggleRaidPreview:SetText(previewStep == 0 and "-" or previewSteps[previewStep])
 end
 
-local function sortByRole()
-    local sorted = {}
-    local unitString = IsInRaid() and "raid" or "party"
-
-    if unitString == "party" then
-        tinsert(sorted, "player")
-    end
-
-    for i = 1, 40 do
-        if UnitExists(unitString .. i) then
-            tinsert(sorted, unitString .. i)
-        end
-    end
-
-    return sorted
-end
-GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
-
 local grpPos, noGrp = {}, {}
 local function UpdateRaidFramesLayout()
     -- Get directions, rows, cols and sizing
@@ -951,12 +932,7 @@ local function UpdateRaidFramesLayout()
     end
 
     local unitString = IsInRaid() and "raid" or "party"
-    local sorted = (unitString == "party" or GetSetting("RAID_SORT_BY_ROLE")) and sortByRole() or {}
-
-    -- Position by role
-    for i, v in ipairs(sorted) do
-        PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-    end
+    local sorted = {}
 
     wipe(grpPos) wipe(noGrp)
 

@@ -26,6 +26,7 @@ local function LoadHudPanel(sWindow)
     addOption(p, L["FADE_MICROMENU"], L["FADE_MICROMENU_DESC"], "FADE_MICROMENU")
     addOption(p, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
     addOption(p, L["PIXEL_PERFECTION"], L["PIXEL_PERFECTION_DESC"], "PIXEL_PERFECTION")
+    addOption(p, L["AFK_MODE"], L["AFK_MODE_DESC"], "AFK_MODE")
     addOptionSlider(
         p,
         L["HUD_SCALE"],

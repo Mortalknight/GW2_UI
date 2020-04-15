@@ -12,8 +12,11 @@ local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 GW.VERSION_STRING = "GW2_UI_Classic @project-version@"
 
+-- setup Binding Header color
+_G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
+
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then 
-    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r You have installed GW2_UI classic version. Please install the retail version to use GW2_UI.")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r You have installed GW2_UI classic version. Please install the retail version to use GW2_UI.")
     return
 end
 
@@ -560,9 +563,10 @@ end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
 local function PixelPerfection()
-    local _, screenHeight = GetPhysicalScreenSize()
-    local scale = 768 / screenHeight
-    UIParent:SetScale(scale)
+    GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
+    GW.scale = max(0.4, min(1.15, 768 / GW.screenHeight))
+    GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+    UIParent:SetScale(GW.scale)
 end
 GW.PixelPerfection = PixelPerfection
 
@@ -614,7 +618,7 @@ local function loadAddon(self)
     --@debug@
     local dev_dbg_tab = GetSetting("DEV_DBG_CHAT_TAB")
     if dev_dbg_tab and dev_dbg_tab > 0 and _G["ChatFrame" .. dev_dbg_tab] then
-        DEFAULT_CHAT_FRAME:AddMessage("hooking Debug to chat tab #" .. dev_dbg_tab)
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #" .. dev_dbg_tab)
         GW.dbgTab = dev_dbg_tab
         GW.inDebug = true
     else
@@ -799,6 +803,10 @@ local function loadAddon(self)
         if GetCVar("test_cameraDynamicPitch") == "1" then
             SetCVar("test_cameraDynamicPitch", false)
         end
+    end
+
+    if GetSetting("AFK_MODE") then
+        GW.loadAFKAnimation()
     end
 
     if GetSetting("CHATBUBBLES_ENABLED") then

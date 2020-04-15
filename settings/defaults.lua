@@ -108,6 +108,7 @@ GW_DEFAULT["DISABLE_TOOLTIPS"] = false
 GW_DEFAULT["DISABLE_CHATFRAME"] = false
 GW_DEFAULT["CHATFRAME_FADE"] = true
 GW_DEFAULT["FADE_MICROMENU"] = false
+GW_DEFAULT["AFK_MODE"] = true
 
 GW_DEFAULT["target_TARGET_ENABLED"] = true
 GW_DEFAULT["target_DEBUFFS"] = true
@@ -226,6 +227,12 @@ GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["xOfs"] = 0
 GW_DEFAULT["GameTooltipPos"]["yOfs"] = 300
 
+GW_DEFAULT["BNToastPos"] = {}
+GW_DEFAULT["BNToastPos"]["point"] = "BOTTOM"
+GW_DEFAULT["BNToastPos"]["relativePoint"] = "BOTTOMLEFT"
+GW_DEFAULT["BNToastPos"]["xOfs"] = 78
+GW_DEFAULT["BNToastPos"]["yOfs"] = 246
+
 GW_DEFAULT["raid_pos"] = {}
 GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"
 GW_DEFAULT["raid_pos"]["relativePoint"] = "TOPLEFT"
@@ -241,7 +248,6 @@ GW_DEFAULT["RAID_ANCHOR"] = "POSITION"
 GW_DEFAULT["RAID_CONT_WIDTH"] = 0
 GW_DEFAULT["RAID_CONT_HEIGHT"] = 0
 GW_DEFAULT["RAID_ONLY_DISPELL_DEBUFFS"] = false
-GW_DEFAULT["RAID_SORT_BY_ROLE"] = true
 GW_DEFAULT["RAID_AURA_TOOLTIP_IN_COMBAT"] = true
 GW_DEFAULT["RAID_UNIT_HEALTH"] = "NONE"
 

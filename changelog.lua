@@ -31,6 +31,9 @@ v(
         - Display the unit role in the tooltip
         - some more
     - Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
+    - Added AFK-Mode
+    - Update locals (zhTW, ptBR)
+    - Chat window can now be separated and moved to the rightside of the screen
 
 ]=]
 )

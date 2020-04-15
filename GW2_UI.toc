@@ -1,5 +1,5 @@
 ## Interface: 11304
-## Title: GW2 UI
+## Title: |cffffedbaGW2 UI|r
 ## Notes: Hud Replacement addon.
 ## OptionalDeps: MoveAnything, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
 ## Author: deadend06
@@ -118,6 +118,7 @@ character/windowManager.lua
 immersive/skins/skins.xml
 immersive/tooltips.lua
 immersive/questview.xml
+immersive/afk.lua
 immersive/questview.lua
 immersive/chatframe.lua
 immersive/chatbubbles.lua

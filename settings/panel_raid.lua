@@ -25,20 +25,6 @@ local function LoadRaidPanel(sWindow)
     addOption(p, DISPLAY_POWER_BARS, L["POWER_BARS_RAID_DESC"], "RAID_POWER_BARS", nil, nil, {["GROUP_FRAMES"] = true})
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["GROUP_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["RAID_MARKER_DESC"], "RAID_UNIT_MARKERS", nil, nil, {["GROUP_FRAMES"] = true})
-    addOption(
-        p,
-        L["RAID_SORT_BY_ROLE"],
-        L["RAID_SORT_BY_ROLE_DESC"],
-        "RAID_SORT_BY_ROLE",
-        function()
-            if GetSetting("GROUP_FRAMES") == true then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
-        end,
-        nil,
-        {["GROUP_FRAMES"] = true}
-    )
     addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["GROUP_FRAMES"] = true})
     addOptionDropdown(
         p,

@@ -43,6 +43,29 @@ local CHAR_EQUIP_SLOTS = {
     ["Range"] = "RangedSlot",
 }
 
+local itemSets = {
+	["StormrageRaiment"] = {
+		[16899] = true,
+		[16900] = true,
+		[16901] = true,
+		[16902] = true,
+		[16903] = true,
+		[16904] = true,
+		[16897] = true,
+		[16898] = true
+	},
+	["VestmentsOfTranscendence"] = {
+		[16919] = true,
+		[16920] = true,
+		[16921] = true,
+		[16922] = true,
+		[16923] = true,
+		[16924] = true,
+		[16925] = true,
+		[16926] = true
+	}
+}
+
 local function formateStat(name, base, posBuff, negBuff)
 	local effective = max(0, base + posBuff + negBuff)
 	local text = HIGHLIGHT_FONT_COLOR_CODE .. name .. " " .. effective
@@ -615,33 +638,27 @@ local function _GetTalentModifierMP5()
     return mod
 end
 
+local function IsSetBonusActive(setname, bonusLevel)
+	local set = itemSets[setname]
+	if not set then return false end
+	
+    local pieces_equipped = 0
+    for slot = 1, 17 do
+        local itemID = GetInventoryItemID("player", slot)
+        if set[itemID] then pieces_equipped = pieces_equipped + 1 end
+    end
+    return (pieces_equipped >= bonusLevel)
+end
+
 local function _HasSetBonusModifierMP5()
     local _, _, classId = UnitClass("player")
     local hasSetBonus = false
-    local setCounter = 0
 
-    for i = 1, 18 do
-        local itemLink = GetInventoryItemLink("player", i)
-        if itemLink then
-            local itemName = C_Item.GetItemNameByID(GetInventoryItemLink("player", i))
-
-            if itemName then
-                if classId == 5 then -- Priest
-                    if string.sub(itemName, -13) == "Transcendence" or string.sub(itemName, -11) == "Erhabenheit" or string.sub(itemName, -13) == "Trascendencia" or string.sub(itemName, -13) == "transcendance" or string.sub(itemName, -14) == "Transcendência" then
-                        setCounter = setCounter + 1
-                    end
-                elseif classId == 11 then -- Druid
-                    if string.sub(itemName, 1, 9) == "Stormrage" or string.sub(itemName, -9) == "Stormrage" or string.sub(itemName, -10) == "Tempestira" or string.sub(itemName, -11) == "Tempesfúria" then
-                        setCounter = setCounter + 1
-                    end
-                end
-            end
-        end
-    end
-
-    if setCounter >= 3 then
-        hasSetBonus = true
-    end
+	if classId == 5 then -- Priest
+		return IsSetBonusActive("VestmentsOfTranscendence", 3)
+	elseif classId == 11 then -- Druid
+		return IsSetBonusActive("StormrageRaiment", 3)
+	end
 
     return hasSetBonus
 end
