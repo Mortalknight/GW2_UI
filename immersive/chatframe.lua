@@ -100,15 +100,17 @@ local function setButtonPosition(frame)
 end
 
 local function setChatBackgroundColor(chatFrame)
-    local chatframe = chatFrame:GetName()
-    if _G[chatframe .. "Background"] then
-        _G[chatframe .. "Background"]:SetVertexColor(0, 0, 0, 0)
-        _G[chatframe .. "Background"]:SetAlpha(0)
-        _G[chatframe .. "Background"]:Hide()
-        if _G[chatframe .. "ButtonFrameBackground"] then
-            _G[chatframe .. "ButtonFrameBackground"]:SetVertexColor(0, 0, 0, 0)
-            _G[chatframe .. "ButtonFrameBackground"]:Hide()
-            _G[chatframe .. "RightTexture"]:SetVertexColor(0, 0, 0, 1)
+    if chatFrame and chatFrame:GetName() then
+        local chatframe = strfind(chatFrame:GetName(), "Tab") and string.sub(chatFrame:GetName(), 1,strfind(chatFrame:GetName(), "Tab") - 1) or chatFrame:GetName()
+        if _G[chatframe .. "Background"] then
+            _G[chatframe .. "Background"]:SetVertexColor(0, 0, 0, 0)
+            _G[chatframe .. "Background"]:SetAlpha(0)
+            _G[chatframe .. "Background"]:Hide()
+            if _G[chatframe .. "ButtonFrameBackground"] then
+                _G[chatframe .. "ButtonFrameBackground"]:SetVertexColor(0, 0, 0, 0)
+                _G[chatframe .. "ButtonFrameBackground"]:Hide()
+                _G[chatframe .. "RightTexture"]:SetVertexColor(0, 0, 0, 1)
+            end
         end
     end
 end
