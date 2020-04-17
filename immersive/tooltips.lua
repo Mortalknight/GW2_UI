@@ -572,7 +572,6 @@ local function SetUnitAura(self, unit, index, filter)
             local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(MountIDs[id])
             self:AddLine(" ")
             self:AddLine(sourceText, 1, 1, 1)
-            self:AddLine(" ")
         end
 
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
