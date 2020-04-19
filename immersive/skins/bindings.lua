@@ -57,5 +57,21 @@ local function SkinBindingsUI()
 
     SkinScrollFrame(_G.KeyBindingFrameScrollFrame)
     SkinScrollBar(_G.KeyBindingFrameScrollFrameScrollBar)
+
+    hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(binding, button)
+        SkinButton(button, false, true)
+    end)
+
+    hooksecurefunc("BindingButtonTemplate_SetSelected", function(keyBindingButton, isSelected)
+        keyBindingButton.selectedHighlight:SetAlpha(0)
+        if isSelected then
+            keyBindingButton:SetScript("OnEnter", nil)
+            keyBindingButton:SetScript("OnLeave", nil)
+        else
+            keyBindingButton:SetScript("OnEnter", GwStandardButton_OnEnter)
+            keyBindingButton:SetScript("OnLeave", GwStandardButton_OnLeave)
+            GwStandardButton_OnLeave(keyBindingButton)
+        end
+    end)
 end
 GW.SkinBindingsUI = SkinBindingsUI
