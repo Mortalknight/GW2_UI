@@ -33,6 +33,54 @@ local function LoadActionbarPanel(sWindow)
 
     addOption(p, L["HIDE_EMPTY_SLOTS"], L["HIDE_EMPTY_SLOTS_DESC"], "HIDEACTIONBAR_BACKGROUND_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true})
     addOption(p, L["BUTTON_ASSIGNMENTS"], L["BUTTON_ASSIGNMENTS_DESC"], "BUTTON_ASSIGNMENTS", nil, nil, {["ACTIONBARS_ENABLED"] = true})
+    addOption(
+        p,
+        SHOW_MULTIBAR1_TEXT,
+        OPTION_TOOLTIP_SHOW_MULTIBAR1,
+        "GW_SHOW_MULTI_ACTIONBAR_1",
+        function(toSet)
+            if toSet then SHOW_MULTI_ACTIONBAR_1 = "1" else SHOW_MULTI_ACTIONBAR_1 = nil end
+            InterfaceOptions_UpdateMultiActionBars()
+        end,
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
+    )
+    addOption(
+        p,
+        SHOW_MULTIBAR2_TEXT,
+        OPTION_TOOLTIP_SHOW_MULTIBAR2,
+        "GW_SHOW_MULTI_ACTIONBAR_2",
+        function(toSet)
+            if toSet then SHOW_MULTI_ACTIONBAR_2 = "1" else SHOW_MULTI_ACTIONBAR_2 = nil end
+            InterfaceOptions_UpdateMultiActionBars()
+        end,
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
+    )
+    addOption(
+        p,
+        SHOW_MULTIBAR3_TEXT,
+        OPTION_TOOLTIP_SHOW_MULTIBAR3,
+        "GW_SHOW_MULTI_ACTIONBAR_3",
+        function(toSet)
+            if toSet then SHOW_MULTI_ACTIONBAR_3 = "1" else SHOW_MULTI_ACTIONBAR_3 = nil end
+            InterfaceOptions_UpdateMultiActionBars()
+        end,
+        nil,
+        {["ACTIONBARS_ENABLED"] = true}
+    )
+    addOption(
+        p,
+        SHOW_MULTIBAR4_TEXT,
+        OPTION_TOOLTIP_SHOW_MULTIBAR4,
+        "GW_SHOW_MULTI_ACTIONBAR_4",
+        function(toSet)
+            if toSet then SHOW_MULTI_ACTIONBAR_4 = "1" else SHOW_MULTI_ACTIONBAR_4 = nil end
+            InterfaceOptions_UpdateMultiActionBars()
+        end,
+        nil,
+        {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_3"] = true}
+    )
     addOptionDropdown(
         p,
         L["STG_RIGHT_BAR_COLS"],

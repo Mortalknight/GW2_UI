@@ -53,7 +53,7 @@ local function SetAFK(self, status)
         MoveViewLeftStop()
 
         self.timer:Cancel()
-        self.animTimer:Cancel()
+        if self.animTimer then self.animTimer:Cancel() end
         
         self.bottom.time:SetText("00:00")
 
@@ -278,7 +278,7 @@ local function loadAFKAnimation()
     AFKMode.bottom.model:SetFacing(6)
     AFKMode.bottom.model:SetScript("OnUpdate", function(self)
         local timePassed = GetTime() - self.startTime
-        if(timePassed > self.duration) and self.isIdle ~= true then
+        if timePassed > self.duration and self.isIdle ~= true then
             self:SetAnimation(0)
             self.isIdle = true
             AFKMode.animTimer = C_Timer.NewTimer(self.idleDuration, function() LoopAnimations(self) end)

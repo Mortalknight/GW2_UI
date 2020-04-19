@@ -25,7 +25,16 @@ local function LoadHudPanel(sWindow)
     addOption(p, L["ADV_CAST_BAR"], L["ADV_CAST_BAR_DESC"], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p, L["FADE_MICROMENU"], L["FADE_MICROMENU_DESC"], "FADE_MICROMENU")
     addOption(p, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
-    addOption(p, L["PIXEL_PERFECTION"], L["PIXEL_PERFECTION_DESC"], "PIXEL_PERFECTION")
+    addOption(
+        p,
+        L["PIXEL_PERFECTION"],
+        L["PIXEL_PERFECTION_DESC"],
+        "PIXEL_PERFECTION",
+        function()
+            SetCVar("useUiScale", 0)
+            GW.PixelPerfection()
+        end
+    )
     addOption(p, L["AFK_MODE"], L["AFK_MODE_DESC"], "AFK_MODE")
     addOptionSlider(
         p,

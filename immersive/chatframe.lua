@@ -228,12 +228,13 @@ local function styleChatWindow(frame)
             _G[tab:GetName()..texName.."Left"]:SetVertexColor(1, 1, 1, 1)
             _G[tab:GetName()..texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
         elseif texName == "" then
+            _G[tab:GetName()..texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+            _G[tab:GetName()..texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+            _G[tab:GetName()..texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+
             _G[tab:GetName()..texName.."Right"]:SetHeight(40)
             _G[tab:GetName()..texName.."Left"]:SetHeight(40)
             _G[tab:GetName()..texName.."Middle"]:SetHeight(40)
-
-            _G[tab:GetName()..texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, -4)
-            _G[tab:GetName()..texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, -4)
 
             _G[tab:GetName()..texName.."Left"]:SetTexture()
             _G[tab:GetName()..texName.."Middle"]:SetTexture()
@@ -262,6 +263,12 @@ local function styleChatWindow(frame)
     _G[name .. "ButtonFrameUpButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowup_down")
     _G[name .. "ButtonFrameUpButton"]:SetHeight(24)
     _G[name .. "ButtonFrameUpButton"]:SetWidth(24)
+
+    
+    frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
+    frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
+    frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
+    frame.buttonFrame.minimizeButton:SetSize(24, 24)
     
     ChatFrameMenuButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
     ChatFrameMenuButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
@@ -349,6 +356,15 @@ end
 GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
 
 local function LoadChat()
+
+    for i = 1, FCF_GetNumActiveChatFrames() do
+        local frame = _G["ChatFrame" .. i]
+        styleChatWindow(frame)
+        FCFTab_UpdateAlpha(frame)
+        frame:SetTimeVisible(100)
+        frame:SetFading(shouldFading)
+    end
+
     hooksecurefunc("FCF_DockUpdate", function()
         for i = 1, FCF_GetNumActiveChatFrames() do
             local frame = _G["ChatFrame" .. i]
@@ -365,16 +381,21 @@ local function LoadChat()
     end)
 
     hooksecurefunc("FCF_MinimizeFrame", function(chatFrame)
-        _G["GwChatContainer" .. chatFrame:GetID()]:SetAlpha(0)
+        if chatFrame.minimized then
+            local id = chatFrame:GetID()
+            _G["GwChatContainer" .. id]:SetAlpha(0)
+            if not chatFrame.minFrame.minimiizeStyled then
+                StripTextures(chatFrame.minFrame, true)
+                chatFrame.minFrame:SetBackdrop(GW.skins.constBackdropFrame)
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetSize(20, 20)
+                chatFrame.minFrame.minimiizeStyled = true
+            end
+        end
     end)
 
-    for i = 1, FCF_GetNumActiveChatFrames() do
-        local frame = _G["ChatFrame" .. i]
-        styleChatWindow(frame)
-        FCFTab_UpdateAlpha(frame)
-        frame:SetTimeVisible(100)
-        frame:SetFading(shouldFading)
-    end
     hooksecurefunc("FCFTab_OnDragStop", function(frame)
         local frame = _G["ChatFrame"..frame:GetID()]
         local name = frame:GetName()
@@ -434,6 +455,11 @@ local function LoadChat()
 
     for i = 1, FCF_GetNumActiveChatFrames() do
         FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+    end
+    FCF_FadeOutChatFrame(_G["ChatFrame1"])
+
+    for _, frameName in pairs(_G.CHAT_FRAMES) do
+        _G[frameName .. "Tab"]:SetScript("OnDoubleClick", nil)
     end
 
     --Skin ChatMenus

@@ -606,6 +606,10 @@ local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
         DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
+    else
+        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
+        GW.scale = UIParent:GetScale()
+        GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
 
     -- disable Move Anything bag handling
@@ -866,6 +870,11 @@ local function gw_OnEvent(self, event, ...)
             loadAddon(self)
         end
         GW.LoadStorage()
+    elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
+        SetSetting("PIXEL_PERFECTION", false)
+        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
+        GW.scale = UIParent:GetScale()
+        GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     elseif event == "PLAYER_LEAVING_WORLD" then
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
@@ -911,6 +920,7 @@ l:RegisterEvent("PLAYER_LOGIN")
 l:RegisterEvent("PLAYER_LEAVING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+l:RegisterEvent("UI_SCALE_CHANGED")
 
 local function AddToClique(frame)
     if type(frame) == "string" then

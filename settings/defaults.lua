@@ -96,6 +96,10 @@ GW_DEFAULT["target_HEALTH_VALUE_ENABLED"] = false
 GW_DEFAULT["target_HEALTH_VALUE_TYPE"] = false
 GW_DEFAULT["target_CLASS_COLOR"] = true
 
+GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_1"] = false
+GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_2"] = false
+GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_3"] = false
+GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_4"] = false
 GW_DEFAULT["FADE_MULTIACTIONBAR_1"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_2"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_3"] = "ALWAYS"
@@ -118,18 +122,6 @@ GW_DEFAULT["target_BUFFS_FILTER"] = true
 GW_DEFAULT["target_BUFFS_FILTER_ALL"] = false
 GW_DEFAULT["target_HOOK_COMBOPOINTS"] = false
 GW_DEFAULT["target_AURAS_ON_TOP"] = false
-
-GW_DEFAULT["target_x_position"] = -100
-GW_DEFAULT["target_y_position"] = -100
-
-GW_DEFAULT["focus_x_position"] = -350
-GW_DEFAULT["focus_y_position"] = -100
-
-GW_DEFAULT["multibarleft_x_position"] = -300
-GW_DEFAULT["multibarleft_y_position"] = -0
-
-GW_DEFAULT["multibarright_x_position"] = -260
-GW_DEFAULT["multibarright_y_position"] = -0
 
 GW_DEFAULT["multibarleft_pos"] = {}
 GW_DEFAULT["multibarleft_pos"]["point"] = "RIGHT"
