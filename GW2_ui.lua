@@ -605,7 +605,7 @@ GW.RegisterScaleFrame = RegisterScaleFrame
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
-        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
     else
         GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
         GW.scale = UIParent:GetScale()
@@ -651,7 +651,7 @@ local function loadAddon(self)
             "OnClick",
             function()
                 if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
                     return
                 end
                 GwSettingsWindow:Show()

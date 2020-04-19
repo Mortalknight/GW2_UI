@@ -541,7 +541,7 @@ local function InitPanel(panel)
                     SetSetting(v.optionName, toSet)
 
                     if v.callback ~= nil then
-                        v.callback()
+                        v.callback(toSet)
                     end
                     --Check all dependencies on this option
                     checkDependenciesOnLoad()
@@ -558,7 +558,7 @@ local function InitPanel(panel)
                     SetSetting(v.optionName, toSet)
 
                     if v.callback ~= nil then
-                        v.callback()
+                        v.callback(toSet)
                     end
                     --Check all dependencies on this option
                     checkDependenciesOnLoad()
