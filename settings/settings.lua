@@ -725,6 +725,11 @@ local function LoadSettings()
             _G["GW_SHOW_MULTI_ACTIONBAR_3"].checkbutton:SetChecked(bar3)
             _G["GW_SHOW_MULTI_ACTIONBAR_4"].checkbutton:SetChecked(bar4)
 
+            -- Check UI Scale
+            if GetCVarBool("useUiScale") then
+                _G["PIXEL_PERFECTION"].checkbutton:SetChecked(false)
+            end
+
             checkDependenciesOnLoad()
         end
     )
