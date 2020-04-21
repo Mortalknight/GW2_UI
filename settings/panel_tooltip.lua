@@ -16,7 +16,7 @@ local function LoadTooltipPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["HUD_DESC"])
 
-    createCat(L["TOOLTIPS"], nil, p, 3)
+    createCat(L["TOOLTIPS"], nil, p, 10)
 
     addOption(p, L["MOUSE_TOOLTIP"], L["MOUSE_TOOLTIP_DESC"], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p, L["ADVANCED_TOOLTIP"], L["ADVANCED_TOOLTIP_DESC"], "ADVANCED_TOOLTIP", nil, nil, {["TOOLTIPS_ENABLED"] = true})
