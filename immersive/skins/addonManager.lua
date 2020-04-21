@@ -6,21 +6,12 @@ local SkinDropDownMenu = GW.skins.SkinDropDownMenu
 local SkinCheckButton = GW.skins.SkinCheckButton
 local SkinScrollBar = GW.skins.SkinScrollBar
 local SkinScrollFrame = GW.skins.SkinScrollFrame
+local StripTextures = GW.StripTextures
 
 local function SkinAddonList()
     local AddonList = _G.AddonList
 
-    _G.AddonListTopBorder:Hide()
-    _G.AddonListLeftBorder:Hide()
-    _G.AddonListRightBorder:Hide()
-    _G.AddonListBottomBorder:Hide()
-    _G.AddonListTopLeftCorner:Hide()
-    _G.AddonListTopRightCorner:Hide()
-    _G.AddonListBotRightCorner:Hide()
-    _G.AddonListBotLeftCorner:Hide()
-    _G.AddonListBtnCornerLeft:Hide()
-    _G.AddonListBtnCornerRight:Hide()
-    _G.AddonListButtonBottomBorder:Hide()
+    StripTextures(_G.AddonList, true)
     _G.AddonListBg:Hide()
     AddonList.TitleBg:Hide()
     AddonList.TopTileStreaks:Hide()
