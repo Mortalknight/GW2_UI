@@ -573,6 +573,29 @@ local function LoadInventory()
     
     bag_resize = GW.LoadBag(helpers)
     bank_resize = GW.LoadBank(helpers)
+
+    -- Skin StackSplit
+	local StackSplitFrame = _G.StackSplitFrame
+    GW.StripTextures(StackSplitFrame)
+	StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
+
+	GW.skins.SkinButton(StackSplitFrame.OkayButton, false, true)
+	GW.skins.SkinButton(StackSplitFrame.CancelButton, false, true)
+
+    StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.RightButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.RightButton:SetSize(25, 25)
+    StackSplitFrame.RightButton:SetPoint("LEFT", StackSplitFrame, "CENTER", 51, 18)
+
+    StackSplitFrame.LeftButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.LeftButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.LeftButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.LeftButton:SetSize(25, 25)
+    StackSplitFrame.LeftButton:GetNormalTexture():SetTexCoord(1, 0, 1, 0)
+    StackSplitFrame.LeftButton:GetPushedTexture():SetTexCoord(1, 0, 1, 0)
+    StackSplitFrame.LeftButton:GetDisabledTexture():SetTexCoord(1, 0, 1, 0)
+    StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
 end
 GW.LoadInventory = LoadInventory
 

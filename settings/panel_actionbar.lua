@@ -112,7 +112,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true}
+        {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_1"] = true}
     )
     addOptionDropdown(
         p,
@@ -123,7 +123,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true}
+        {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_2"] = true}
     )
     addOptionDropdown(
         p,
@@ -134,7 +134,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true}
+        {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_3"] = true}
     )
     addOptionDropdown(
         p,
@@ -145,7 +145,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["MOUSE_OVER"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true}
+        {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_4"] = true}
     )
     addOptionDropdown(
         p,

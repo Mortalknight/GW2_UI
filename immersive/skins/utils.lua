@@ -259,13 +259,35 @@ local function SkinUIDropDownMenu()
 end
 
 local function SkinDropDownList()
-    local SkinDropDownList_OnShow = function(self)
-        _G[self:GetName() .. "Backdrop"]:Hide()
-        _G[self:GetName() .. "MenuBackdrop"]:Hide()
-        self:SetBackdrop(constBackdropFrame)
+    hooksecurefunc("ToggleDropDownMenu", function(level)
+        if not level then
+            level = 1
+        end
+        
+        _G["DropDownList" .. level .. "Backdrop"]:Hide()
+        _G["DropDownList" .. level .. "MenuBackdrop"]:Hide()
+        _G["DropDownList" .. level]:SetBackdrop(constBackdropFrame)
         for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
-            if _G[self:GetName() .. "Button" .. i .. "ExpandArrow"] then
-                _G[self:GetName() .. "Button" .. i .. "ExpandArrow"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+            local button = _G["DropDownList" .. level .. "Button" .. i]
+            local check = _G["DropDownList" .. level .. "Button" .. i .. "Check"]
+            local uncheck = _G["DropDownList" .. level .. "Button" .. i .. "UnCheck"]
+            local arrow = _G["DropDownList" .. level .. "Button" .. i .. "ExpandArrow"]
+
+            if button.hasArrow then
+                arrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+            end
+
+            if not button.notCheckable then
+                local _, co = check:GetTexCoord()
+                if co == 0 then
+                    check:SetTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked")
+                    check:SetTexCoord(0, 1, 0, 1)
+                    check:SetSize(13, 13)
+                    uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/checkbox")
+                    uncheck:SetTexCoord(0, 1, 0, 1)
+                    uncheck:SetSize(13, 13)
+                end
+
             end
         end
         --Check if Raider.IO Entry is added
@@ -273,8 +295,14 @@ local function SkinDropDownList()
             _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
             _G["RaiderIO_CustomDropDownList"]:SetBackdrop(constBackdropFrame)
         end
-    end
-    hooksecurefunc("UIDropDownMenu_OnShow", SkinDropDownList_OnShow)
+    end)
+
+    hooksecurefunc("UIDropDownMenu_SetIconImage", function(icon, texture)
+        if texture:find("Divider") then
+            icon:SetColorTexture(1, 0.93, 0.73, 0.45)
+            icon:SetHeight(1)
+        end
+    end)
 end
 
 local function SkinDropDown()
