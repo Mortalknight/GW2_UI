@@ -210,7 +210,7 @@ local function header_OnUpdate(self, elapsed)
             break
         end
 
-        local name, _ , _, _, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetAttribute("filter"))
+        local name, _ , _, _, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetFilter())
         if name and duration then
             btn:UpdateCD(expires - GetTime())
         end
@@ -248,7 +248,7 @@ local function aura_OnEnter(self)
     GameTooltip:ClearLines()
     local atype = self.atype
     if atype == 0 then
-        GameTooltip:SetUnitDebuff("player", self:GetID(), self:GetAttribute("filter"))
+        GameTooltip:SetUnitDebuff("player", self:GetID(), self:GetFilter())
     elseif atype == 1 then
         GameTooltip:SetUnitBuff("player", self:GetID())
     elseif atype == 2 then
