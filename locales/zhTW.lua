@@ -66,7 +66,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "更新資訊"
     L["CHARACTER_NEXT_RANK"] = "下一個"
     L["CHARACTER_PARAGON"] = "巔峰"
-    L["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。(Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。(Only in not protected areas)"
     L["CHAT_FADE"] = "淡出聊天視窗"
     L["CHAT_FADE_DESC"] = "允許非使用中淡出聊天視窗。"
     L["CHAT_FRAME_DESC"] = "使用加強型的聊天視窗。"

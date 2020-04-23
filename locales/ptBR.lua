@@ -68,7 +68,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "Lista de alterações"
     L["CHARACTER_NEXT_RANK"] = "PRÓXIMO"
     L["CHARACTER_PARAGON"] = "Paragon"
-    L["CHAT_BUBBLES_DESC"] = "Substituir os Balões de conversa da UI padrão (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Substituir os Balões de conversa da UI padrão (Only in not protected areas)"
     L["CHAT_FADE"] = "Ocultar conversa"
     L["CHAT_FADE_DESC"] = "Permitir que a conversa seja ocultada quando não estiver em uso."
     L["CHAT_FRAME_DESC"] = "Habilitar janela de conversa aprimorada."

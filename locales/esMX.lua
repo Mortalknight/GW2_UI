@@ -34,7 +34,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Activar la barra de casteo al estilo Gw2"
     L["CHARACTER_NEXT_RANK"] = "SIGUIENTE"
     L["CHARACTER_PARAGON"] = "Dechado"
-    L["CHAT_BUBBLES_DESC"] = "Reemplazar las burbujas de chat por defecto. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Reemplazar las burbujas de chat por defecto. (Only in not protected areas)"
     L["CHAT_FADE"] = "Desvanecer chat"
     L["CHAT_FADE_DESC"] = "Permitir que el chat desvanezca fuera de uso"
     L["CHAT_FRAME_DESC"] = "Activar la ventana de chat mejorada"

@@ -48,7 +48,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "Список изменений"
     L["CHARACTER_NEXT_RANK"] = "Следующий"
     L["CHARACTER_PARAGON"] = "Образец"
-    L["CHAT_BUBBLES_DESC"] = "Заменить стандартные облачка чата. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Заменить стандартные облачка чата. (Only in not protected areas)"
     L["CHAT_FADE"] = "Затемнить чат"
     L["CHAT_FADE_DESC"] = "Затемнять неактивный чат."
     L["CHAT_FRAME_DESC"] = "Использовать интерфейс GW2 UI для окна чата."

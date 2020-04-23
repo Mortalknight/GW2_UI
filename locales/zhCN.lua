@@ -49,7 +49,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "更新日志"
     L["CHARACTER_NEXT_RANK"] = "下一步"
     L["CHARACTER_PARAGON"] = "巅峰"
-    L["CHAT_BUBBLES_DESC"] = "使用GW2风格的聊天泡泡. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "使用GW2风格的聊天泡泡. (Only in not protected areas)"
     L["CHAT_FADE"] = "聊天框渐隐"
     L["CHAT_FADE_DESC"] = "当不使用聊天栏时渐隐."
     L["CHAT_FRAME_DESC"] = "使用GW2风格的聊天框体."

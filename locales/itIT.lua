@@ -46,7 +46,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Abilita la barra di lancio in stile Gw2."
     L["CHARACTER_NEXT_RANK"] = "PROSSIMO"
     L["CHARACTER_PARAGON"] = "Esemplare"
-    L["CHAT_BUBBLES_DESC"] = "Rimpiazza le nuvolette di dialogo dell'interfaccia utente predefinita. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Rimpiazza le nuvolette di dialogo dell'interfaccia utente predefinita. (Only in not protected areas)"
     L["CHAT_FADE"] = "Dissolvi Chat"
     L["CHAT_FADE_DESC"] = "Permetti alla chat di dissolversi quando non in uso."
     L["CHAT_FRAME_DESC"] = "Abilità la finestra chat migliorata."

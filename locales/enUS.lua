@@ -33,7 +33,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Enable the GW2 style casting bar."
     L["CHARACTER_NEXT_RANK"] = "NEXT"
     L["CHARACTER_PARAGON"] = "Paragon"
-    L["CHAT_BUBBLES_DESC"] = "Replace the default UI chat bubbles. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Replace the default UI chat bubbles. (Only in not protected areas)"
     L["CHAT_FADE"] = "Fade Chat"
     L["CHAT_FADE_DESC"] = "Allow the chat to fade when not in use."
     L["CHAT_FRAME_DESC"] = "Enable the improved chat window."

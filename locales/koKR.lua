@@ -33,7 +33,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "GW2 시전바 활성화"
     L["CHARACTER_NEXT_RANK"] = "다음"
     L["CHARACTER_PARAGON"] = "불멸의 동맹"
-    L["CHAT_BUBBLES_DESC"] = "기본 말풍선 교체 (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "기본 말풍선 교체 (Only in not protected areas)"
     L["CHAT_FADE"] = "채팅 숨기기"
     L["CHAT_FADE_DESC"] = "채팅을 사용하지 않을 시 자동 숨김. "
     L["CHAT_FRAME_DESC"] = "향상된 채팅 창 사용"

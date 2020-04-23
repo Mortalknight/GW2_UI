@@ -46,7 +46,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Activar la barra de casteo de GW2 UI"
     L["CHARACTER_NEXT_RANK"] = "SIGUIENTE"
     L["CHARACTER_PARAGON"] = "Paragón"
-    L["CHAT_BUBBLES_DESC"] = "Reemplazar los bocadillos de chat de IU predeterminados. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Reemplazar los bocadillos de chat de IU predeterminados. (Only in not protected areas)"
     L["CHAT_FADE"] = "Ocultar el chat"
     L["CHAT_FADE_DESC"] = "Permitir al chat ocultarse cuando no esté en uso."
     L["CHAT_FRAME_DESC"] = "Activar la ventana de chat mejorada."
