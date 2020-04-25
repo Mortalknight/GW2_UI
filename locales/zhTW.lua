@@ -273,6 +273,10 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "沒有公會"
     L["AFK_MODE"] = "離開模式"
     L["AFK_MODE_DESC"] = "當你離開時顯示暫離界面"
+    L["REPAIRD_FOR"] = "裝備已修理, 共支出: %s"
+    L["REPAIRD_FOR_GUILD"] = "已使用公會資金修理裝備, 共支出: %s"
+    L["AUTO_REPAIR"] = "自動修裝"
+    L["AUTO_REPAIR_DESC"] = "與商人對話時, 透過下列方式自動修復裝備."
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

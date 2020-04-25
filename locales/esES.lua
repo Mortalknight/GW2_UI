@@ -277,6 +277,10 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Sin gremio"
     L["AFK_MODE"] = "Modo AFK"
     L["AFK_MODE_DESC"] = "Cuando vaya a AFK, visualice la pantalla AFK."
+    L["REPAIRD_FOR"] = "Sus artículos han sido reparados para: %s"
+    L["REPAIRD_FOR_GUILD"] = "Tus artículos han sido reparados con fondos bancarios de hermandad para: %s"
+    L["AUTO_REPAIR"] = "Reparación de automóviles"
+    L["AUTO_REPAIR_DESC"] = "Repare automáticamente utilizando el siguiente método cuando visite a un comerciante."
 end
 
 

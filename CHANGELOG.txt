@@ -25,6 +25,7 @@ NEW
     - Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
     - Added AFK-Mode
     - Added Chat copy button, to copy out text from the chatwindow
+    - Added Auto repair mode
     - Update locals (zhTW, ptBR)
 
 FIXES

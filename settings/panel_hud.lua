@@ -100,6 +100,19 @@ local function LoadHudPanel(sWindow)
         nil,
         {["MINIMAP_ENABLED"] = true}
     )
+    addOptionDropdown(
+        p,
+        L["AUTO_REPAIR"],
+        L["AUTO_REPAIR_DESC"],
+        "AUTO_REPAIR",
+        GW.SetMinimapHover,
+        {"NONE", "PLAYER", "GUILD"},
+        {
+            NONE_KEY,
+            PLAYER,
+            GUILD,
+        }
+    )
 
     InitPanel(p)
 end

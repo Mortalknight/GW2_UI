@@ -277,6 +277,10 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Keine Gilde"
     L["AFK_MODE"] = "AFK Modus"
     L["AFK_MODE_DESC"] = "AFK Bildschirm anzeigen wenn du AFK bist."
+    L["REPAIRD_FOR"] = "Deine Gegenstände wurden repariert für: %s"
+    L["REPAIRD_FOR_GUILD"] = "Deine Gegenstände wurden aus der Gildenbank repariert für: %s"
+    L["AUTO_REPAIR"] = "Auto-Reparatur"
+    L["AUTO_REPAIR_DESC"] = "Repariert automatisch deine Ausrüstungsgegenstände, wenn du eine der folgenden Methoden auswählst."
 end
 
 if GetLocale() == "deDE" then

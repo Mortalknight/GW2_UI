@@ -277,6 +277,10 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Pas de Guilde"
     L["AFK_MODE"] = "Mode ABS"
     L["AFK_MODE_DESC"] = "Quand vous êtes ABS, affiche un écran spécial."
+    L["REPAIRD_FOR"] = "Votre équipement a été réparé pour: %s"
+    L["REPAIRD_FOR_GUILD"] = "Votre équipement a été réparé avec l'argent de la banque de guilde pour: %s"
+    L["AUTO_REPAIR"] = "Réparation automatique"
+    L["AUTO_REPAIR_DESC"] = "Répare automatiquement votre équipement chez le marchand selon le mode de réparation sélectionné."
 end
 
 

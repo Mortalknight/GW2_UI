@@ -673,6 +673,7 @@ local function loadAddon(self)
     GW.LoadCharacter()
 
     GW.LoadBreathMeter()
+    GW.LoadAutoRepair()
 
     --Create unitframes
     if GetSetting("FOCUS_ENABLED") then
