@@ -65,7 +65,7 @@ local function SkinMainMenu()
         "OnClick",
         function()
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
                 return
             end
             GwSettingsWindow:Show()
