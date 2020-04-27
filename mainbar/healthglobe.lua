@@ -210,6 +210,8 @@ local function globe_OnEvent(self, event, ...)
         updateHealthData(self, true)
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         selectPvp(self)
+    elseif event == "RESURRECT_REQUEST" then
+        PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
     end
 end
 GW.AddForProfiling("healthglobe", "globe_OnEvent", globe_OnEvent)
@@ -369,6 +371,7 @@ local function LoadHealthGlobe()
     hg:RegisterEvent("PLAYER_ENTERING_WORLD")
     hg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     hg:RegisterEvent("PLAYER_FLAGS_CHANGED")
+    hg:RegisterEvent("RESURRECT_REQUEST")
     hg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     hg:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
     hg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")

@@ -281,6 +281,8 @@ local function GWUseThisLocalization()
     L["REPAIRD_FOR_GUILD"] = "Deine Gegenstände wurden aus der Gildenbank repariert für: %s"
     L["AUTO_REPAIR"] = "Auto-Reparatur"
     L["AUTO_REPAIR_DESC"] = "Repariert automatisch deine Ausrüstungsgegenstände, wenn du eine der folgenden Methoden auswählst."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Gruppenmanage-Button ausblenden"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Blendet den Gruppenmanage-Button aus, wenn die Maus nicht in der Nähe ist."
 end
 
 if GetLocale() == "deDE" then

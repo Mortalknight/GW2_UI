@@ -281,6 +281,8 @@ local function GWUseThisLocalization()
     L["REPAIRD_FOR_GUILD"] = "길드자금으로 수리하고 비용을 지불했습니다: %s"
     L["AUTO_REPAIR"] = "자동 수리"
     L["AUTO_REPAIR_DESC"] = "수리가 가능한 상점을 열면 이 옵션에서 선택한 자금으로 장비를 자동 수리합니다."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 end
 
 if GetLocale() == "koKR" then

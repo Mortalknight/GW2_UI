@@ -281,6 +281,8 @@ local function GWUseThisLocalization()
     L["REPAIRD_FOR_GUILD"] = "Tus artículos han sido reparados con fondos bancarios de hermandad para: %s"
     L["AUTO_REPAIR"] = "Reparación de automóviles"
     L["AUTO_REPAIR_DESC"] = "Repare automáticamente utilizando el siguiente método cuando visite a un comerciante."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 end
 
 

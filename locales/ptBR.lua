@@ -277,6 +277,8 @@ local function GWUseThisLocalization()
     L["REPAIRD_FOR_GUILD"] = "Seus itens foram reparados usando fundos do banco da guilda por: %s"
     L["AUTO_REPAIR"] = "Reparar automaticamente"
     L["AUTO_REPAIR_DESC"] = "Reparar automaticamente usando o seguinte método ao visitar um vendedor."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

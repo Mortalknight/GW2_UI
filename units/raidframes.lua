@@ -10,7 +10,6 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GWGetClassColor = GW.GWGetClassColor
 local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
-local TogglePartyRaid = GW.TogglePartyRaid
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -79,8 +78,8 @@ local function togglePartyFrames(b)
         b = false
     end
 
-    if b == true then
-        if GetSetting("RAID_STYLE_PARTY") == true then
+    if b then
+        if GetSetting("RAID_STYLE_PARTY") then
             _G["GwCompactplayer"]:Show()
             RegisterUnitWatch(_G["GwCompactplayer"])
 
@@ -110,7 +109,7 @@ local function unhookPlayerFrame()
         return
     end
 
-    if IsInGroup() and GetSetting("RAID_STYLE_PARTY") == true then
+    if IsInGroup() and GetSetting("RAID_STYLE_PARTY") then
         _G["GwCompactplayer"]:Show()
         RegisterUnitWatch(_G["GwCompactplayer"])
     else
@@ -1125,16 +1124,14 @@ local function createRaidFrame(registerUnit, index)
 
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp", "Button4Up", "Button5Up", "MiddleButtonUp")
+    frame:RegisterForClicks("AnyUp")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript(
         "OnEnter",
         function()
-            GameTooltip:ClearLines()
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
             GameTooltip:SetUnit(registerUnit)
-
             GameTooltip:Show()
         end
     )
@@ -1271,7 +1268,7 @@ local function LoadRaidFrames()
             self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
 
-        if IsInRaid() == false and GROUPD_TYPE == "RAID" then
+        if not IsInRaid() and GROUPD_TYPE == "RAID" then
             togglePartyFrames(true)
             GROUPD_TYPE = "PARTY"
         end
@@ -1293,7 +1290,7 @@ local function LoadRaidFrames()
         end
     end)
 
-    if GetSetting("RAID_STYLE_PARTY") == false then
+    if not GetSetting("RAID_STYLE_PARTY") then
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
         for i = 1, 4 do

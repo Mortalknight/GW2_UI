@@ -82,7 +82,7 @@ do
         return y
     end
     removeIconFromLine = function(text)
-        text = gsub(text, "|TInterface\\TargetingFrame\\UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) --converts raid icons into {star} etc, if possible.
+        text = gsub(text, "|TInterface/TargetingFrame/UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) --converts raid icons into {star} etc, if possible.
         text = gsub(text, "(%s?)(|?)|[TA].-|[ta](%s?)", stripTextureFunc) --strip any other texture out but keep a single space from the side(s).
         text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc) --strip hyperlink data only keeping the actual text.
         return text
@@ -318,9 +318,9 @@ local function styleChatWindow(frame)
     
     for _, texName in pairs(tabTexs) do
         if texName == "Selected" then
-            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
-            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
-            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactive")
+            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveright")
+            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveleft")
+            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactive")
             
             _G[tab:GetName()..texName.."Right"]:SetBlendMode("BLEND")
             _G[tab:GetName()..texName.."Left"]:SetBlendMode("BLEND")
@@ -348,15 +348,15 @@ local function styleChatWindow(frame)
         end
     end
     
-    scrollToBottom:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
-    scrollToBottom:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up")
-    scrollToBottom:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+    scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
+    scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
     scrollToBottom:SetHeight(24)
     scrollToBottom:SetWidth(24)
     SkinScrollBar(scroll)
-    ChatFrameMenuButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
-    ChatFrameMenuButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
-    ChatFrameMenuButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
+    ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/bubble_down")
+    ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bubble_up")
+    ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bubble_down")
     ChatFrameMenuButton:SetHeight(20)
     ChatFrameMenuButton:SetWidth(20)
 
@@ -558,10 +558,10 @@ local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
 
     if QuickJoinToastButton then
-        QuickJoinToastButton:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-        QuickJoinToastButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-        QuickJoinToastButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-        QuickJoinToastButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
         QuickJoinToastButton:SetWidth(25)
         QuickJoinToastButton:SetHeight(25)
         QuickJoinToastButton:ClearAllPoints()
@@ -695,6 +695,6 @@ local function LoadChat()
     end
 
     _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
-    BuildCopyChatFrame()
+    BuildCopyChatFrame()  
 end
 GW.LoadChat = LoadChat

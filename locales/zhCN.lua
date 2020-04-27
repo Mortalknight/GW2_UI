@@ -281,6 +281,8 @@ local function GWUseThisLocalization()
     L["REPAIRD_FOR_GUILD"] = "物品已使用公会银行资金修复: %s"
     L["AUTO_REPAIR"] = "自动修理"
     L["AUTO_REPAIR_DESC"] = "使用以下方式来自动修理装备"
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 end
 
 if GetLocale() == "zhCN" then

@@ -21,7 +21,6 @@ local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
-        GameTooltip:ClearLines()
         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
         GameTooltip:SetUnit(self.unit)
         GameTooltip:Show()
@@ -640,6 +639,18 @@ local function target_OnEvent(self, event, unit)
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
         UpdateBuffLayout(self, event)
+
+        if UnitExists(self.unit) and not IsReplacingUnit() then
+            if UnitIsEnemy(self.unit, "player") then
+                PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+            elseif UnitIsFriend("player", self.unit) then
+                PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+            else
+                PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+            end
+        else
+            PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
+        end
     elseif event == "UNIT_TARGET" and unit == "target" then
         if (ttf ~= nil) then
             if UnitExists("targettarget") then
@@ -696,6 +707,18 @@ local function focus_OnEvent(self, event, unit)
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
         UpdateBuffLayout(self, event)
+
+        if UnitExists(self.unit) and not IsReplacingUnit() then
+            if UnitIsEnemy(self.unit, "player") then
+                PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+            elseif UnitIsFriend("player", self.unit) then
+                PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+            else
+                PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+            end
+        else
+            PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
+        end
         return
     end
 
