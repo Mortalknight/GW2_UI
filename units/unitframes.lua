@@ -122,25 +122,28 @@ local function updateHealthbarColor(self)
 
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
-        local isFriend = UnitIsFriend("player", self.unit)
-        local friendlyColor = COLOR_FRIENDLY[1]
-
-        if isFriend ~= true then
-            friendlyColor = COLOR_FRIENDLY[2]
+        local unitReaction = UnitReaction(self.unit, "player")
+        if not unitReaction then
+            return
         end
+        
+        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or PRIEST_COLOR
+
+        if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
+        if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+
         if UnitIsTapDenied(self.unit) then
-            friendlyColor = COLOR_FRIENDLY[3]
+            nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         end
-
-        self.healthbar:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarFlash:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarFlashSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.nameString:SetTextColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
+        self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.healthbarFlashSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.nameString:SetTextColor(nameColor.r, nameColor.g, nameColor.b, 1)
     end
 
     if (UnitLevel(self.unit) - UnitLevel("player")) <= -5 then
-        local r, g, b, _ = self.nameString:GetTextColor()
+        local r, g, b = self.nameString:GetTextColor()
         self.nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
     end
 end
@@ -640,16 +643,18 @@ local function target_OnEvent(self, event, unit)
         if (ttf) then updateRaidMarkers(ttf, event) end
         UpdateBuffLayout(self, event)
 
-        if UnitExists(self.unit) and not IsReplacingUnit() then
-            if UnitIsEnemy(self.unit, "player") then
-                PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
-            elseif UnitIsFriend("player", self.unit) then
-                PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+        if event == "PLAYER_TARGET_CHANGED" then
+            if UnitExists(self.unit) and not IsReplacingUnit() then
+                if UnitIsEnemy(self.unit, "player") then
+                    PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+                elseif UnitIsFriend("player", self.unit) then
+                    PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+                else
+                    PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+                end
             else
-                PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+                PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
             end
-        else
-            PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
         end
     elseif event == "UNIT_TARGET" and unit == "target" then
         if (ttf ~= nil) then
@@ -708,21 +713,20 @@ local function focus_OnEvent(self, event, unit)
         if (ttf) then updateRaidMarkers(ttf, event) end
         UpdateBuffLayout(self, event)
 
-        if UnitExists(self.unit) and not IsReplacingUnit() then
-            if UnitIsEnemy(self.unit, "player") then
-                PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
-            elseif UnitIsFriend("player", self.unit) then
-                PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+        if event == "PLAYER_FOCUS_CHANGED" then
+            if UnitExists(self.unit) and not IsReplacingUnit() then
+                if UnitIsEnemy(self.unit, "player") then
+                    PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+                elseif UnitIsFriend("player", self.unit) then
+                    PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+                else
+                    PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+                end
             else
-                PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+                PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
             end
-        else
-            PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
         end
-        return
-    end
-
-    if event == "UNIT_TARGET" and unit == "focus" then
+    elseif event == "UNIT_TARGET" and unit == "focus" then
         if (ttf ~= nil) then
             if UnitExists("focustarget") then
                 unitFrameData(ttf, event)
@@ -732,41 +736,22 @@ local function focus_OnEvent(self, event, unit)
                 updateRaidMarkers(ttf, event)
             end
         end
-        return
-    end
-
-    if event == "RAID_TARGET_UPDATE" then
+    elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
-        return
-    end
-
-    if unit == nil or not UnitIsUnit(self.unit, unit) then
-        return
-    end
-
-    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
-        updateHealthValues(self, event)
-        return
-    end
-
-    if IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-        updatePowerValues(self, event)
-        return
-    end
-
-    if IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
-        updateCastValues(self, event)
-        return
-    end
-
-    if IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
-        hideCastBar(self, event)
-        return
-    end
-
-    if event == "UNIT_AURA" then
-        UpdateBuffLayout(self, event)
-        return
+    elseif UnitIsUnit(unit, self.unit) then
+        if event == "UNIT_AURA" then
+            UpdateBuffLayout(self, event)
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT", "UNIT_HEAL_PREDICTION") then
+            updateHealthValues(self, event)
+        elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
+            updatePowerValues(self, event)
+        elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
+            updateCastValues(self, event)
+        elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
+            hideCastBar(self, event)
+        elseif event == "UNIT_FACTION" then
+            updateHealthbarColor(self)
+        end
     end
 end
 GW.AddForProfiling("unitframes", "focus_OnEvent", focus_OnEvent)
@@ -941,6 +926,7 @@ local function LoadFocus()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "focus")
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 

@@ -274,15 +274,12 @@ local function AddInspectInfo(tooltip, unit, numTries, r, g, b)
 end
 
 local function SetUnitText(self, unit, level, isShiftKeyDown)
-    if self:IsForbidden() then return end
-
-    local color
-
+    local name, realm = UnitName(unit)
+    
     if UnitIsPlayer(unit) then
         local localeClass, class = UnitClass(unit)
         if not localeClass or not class then return end
 
-        local name, realm = UnitName(unit)
         local guildName, guildRankName, _, guildRealm = GetGuildInfo(unit)
         local relationship = UnitRealmRelationship(unit)
         local pvpName = UnitPVPName(unit)
@@ -291,7 +288,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
         local showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
 
-        color = GWGetClassColor(class, true)
+        local nameColor = GWGetClassColor(class, true)
 
         if pvpName and playerTitles then
             name = pvpName
@@ -307,13 +304,9 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             end
         end
 
-        if UnitIsAFK(unit) then
-            name = name .. " |cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r"
-        elseif UnitIsDND(unit) then
-            name = name .. " |cffFFFFFF[|r|cffFFFF00" .. DND .. "|r|cffFFFFFF]|r"
-        end
+        name = name .. ((UnitIsAFK(unit) and " |cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r") or (UnitIsDND(unit) and " |cffFFFFFF[|r|cffFFFF00" .. DND .. "|r|cffFFFFFF]|r") or "")
 
-        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", color.colorStr, name or UNKNOWN)
+        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.colorStr, name or UNKNOWN)
 
         local lineOffset = 2
         if guildName then
@@ -336,7 +329,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             local race, englishRace = UnitRace(unit)
             local _, localizedFaction = GetUnitBattlefieldFaction(unit)
             if localizedFaction and englishRace == "Pandaren" then race = localizedFaction .. " " .. race end
-            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", color.colorStr, localeClass)
+            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", nameColor.colorStr, localeClass)
         end
 
         if showRole then
@@ -353,23 +346,15 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
                 GameTooltip:AddDoubleLine(format("%s:", ROLE), role, nil, nil, nil, r, g, b)
             end
         end
+
+        return nameColor
     else
-        if UnitIsTapDenied(unit) then
-            color = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
-        else
-            local unitReaction = UnitReaction(unit, "player")
-            color = GW.FACTION_BAR_COLORS[unitReaction]
-        end
-
-        if not color then color = RAID_CLASS_COLORS.PRIEST end
-
         local levelLine = GetLevelLine(self, 2)
         if levelLine then
             local isPetWild, isPetCompanion = UnitIsWildBattlePet(unit), UnitIsBattlePetCompanion(unit)
             local creatureClassification = UnitClassification(unit)
             local creatureType = UnitCreatureType(unit)
-            local pvpFlag = ""
-            local diffColor
+            local pvpFlag, diffColor
 
             if isPetWild or isPetCompanion then
                 level = UnitBattlePetLevel(unit)
@@ -395,10 +380,17 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
                 pvpFlag = format(" (%s)", PVP)
             end
 
-            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType or "", pvpFlag)
+            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType or "", pvpFlag or "")
         end
+
+        local unitReaction = UnitReaction(unit, "player")
+        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or PRIEST_COLOR
+        local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
+
+        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
+
+        return UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255} or nameColor
     end
-    return color
 end
 
 local function GameTooltip_OnTooltipSetUnit(self)
@@ -454,7 +446,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
         local targetInfo = GetSetting("ADVANCED_TOOLTIP_SHOW_TARGET_INFO")
         if targetInfo and unit ~= "player" and UnitExists(unitTarget) then
             local targetColor
-            if(UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget)) then
+            if UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget) then
                 local _, class = UnitClass(unitTarget)
                 targetColor = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
             else
