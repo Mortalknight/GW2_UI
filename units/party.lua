@@ -364,7 +364,7 @@ local function manageButton()
             end
         end)
         fmGMGB.cf:Hide()
-    end 
+    end
 end
 GW.AddForProfiling("party", "manageButton", manageButton)
 
