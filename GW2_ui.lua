@@ -181,10 +181,10 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         local growDirection = GetSetting(settingsName .. "_GrowDirection")
         if defaultPoint["point"] == dummyPoint["point"] and defaultPoint["relativePoint"] == dummyPoint["relativePoint"] and defaultPoint["xOfs"] == dummyPoint["xOfs"] and defaultPoint["yOfs"] == dummyPoint["yOfs"] and growDirection == "UP" then
             frame.isMoved = false
-            frame.secureHandler:SetAttribute("isMoved", false)
+            frame:SetAttribute("isMoved", false)
         else
             frame.isMoved = true
-            frame.secureHandler:SetAttribute("isMoved", true)
+            frame:SetAttribute("isMoved", true)
         end
     end
 
@@ -407,51 +407,6 @@ local function actionBarFrameHide(f, name)
     end)
 end
 
-local function FadeCheck(self, elapsed, fadeOption)
-    self.gw_LastFadeCheck = self.gw_LastFadeCheck - elapsed
-    if self.gw_LastFadeCheck > 0 then
-        return
-    end
-    self.gw_LastFadeCheck = 0.1
-    if not self:IsShown() then return end
-
-    local testFlyout
-    if SpellFlyout and SpellFlyout:IsShown() and SpellFlyout:GetParent() then
-        testFlyout = SpellFlyout:GetParent():GetParent()
-    end
-
-    local inCombat = UnitAffectingCombat("player")
-
-    local inFocus
-    if fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT" then
-        if self:IsMouseOver(100, -100, -100, 100) then
-            inFocus = true
-        else
-            inFocus = false
-        end
-    else
-        inFocus = true
-    end
-    local isFlyout = false
-    if testFlyout and testFlyout == self then
-        isFlyout = true
-    end
-    local curAlpha = self:GetAlpha()
-
-    if (inFocus and (fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT") and not inCombat) or (inFocus or (inCombat and fadeOption == "INCOMBAT")) or isFlyout or fadeOption == "ALWAYS" then
-        if not self.gw_FadeShowing and curAlpha < 1.0 then
-            actionBarFrameShow(self, self:GetName())
-            GW.updatePetFrameLocation()
-            GW.UpdatePlayerBuffFrame()
-        end
-    elseif self.gw_FadeShowing and curAlpha > 0.0 then
-        actionBarFrameHide(self, self:GetName())
-        GW.updatePetFrameLocation()
-        GW.UpdatePlayerBuffFrame()
-    end
-end
-GW.FadeCheck = FadeCheck
-
 local l = CreateFrame("Frame", nil, UIParent)
 local HasPetUIFrame = CreateFrame("Frame", nil, UIParent)
 local OnUpdateActionBars = nil
@@ -537,25 +492,6 @@ local function gw_OnUpdate(self, elapsed)
         cb.func(cb.payload, elapsed)
     end
 
-    --Check if MulitBarRight is active or changed
-    if (MultiBarRight or MultiBarLeft) and loaded and not InCombatLockdown() and ourActionbarsloaded then
-        if MultiBarRight then
-            if MultiBarRight:GetScale() ~= hudScale then
-                MultiBarRight:SetScale(hudScale)
-                MultiBarRight.gwMover:SetScale(hudScale)
-                MultiBarRight:ClearAllPoints()
-                MultiBarRight:SetPoint(MultiBarRight.gwMover:GetPoint())
-            end
-        end
-        if MultiBarLeft then
-            if MultiBarLeft:GetScale() ~= hudScale then
-                MultiBarLeft:SetScale(hudScale)
-                MultiBarLeft.gwMover:SetScale(hudScale)
-                MultiBarLeft:ClearAllPoints()
-                MultiBarLeft:SetPoint(MultiBarLeft.gwMover:GetPoint())
-            end
-        end
-    end
     if PetActionBarFrame:IsShown() and ourPetbar and loaded then
         PetActionBarFrame:Hide()
     end
@@ -573,7 +509,6 @@ GW.PixelPerfection = PixelPerfection
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
     hudScale = GetSetting("HUD_SCALE")
-    MainMenuBarArtFrame:SetScale(hudScale)
     for i, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
@@ -636,6 +571,9 @@ local function loadAddon(self)
     --Create Settings window
     GW.LoadSettings()
     GW.LoadHoverBinds()
+
+    --Create the mainbar layout manager
+    local lm = GW.LoadMainbarLayout()
 
     --Create general skins
     if GetSetting("MAINMENU_SKIN_ENABLED") then
@@ -729,8 +667,8 @@ local function loadAddon(self)
 
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") then
-        GW.LoadHealthGlobe()
-        GW.LoadDodgeBar()
+        local hg = GW.LoadHealthGlobe()
+        GW.LoadDodgeBar(hg)
     end
 
     if GetSetting("POWERBAR_ENABLED") then
@@ -772,27 +710,20 @@ local function loadAddon(self)
 
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") then
-        GW.LoadActionBars()
+        GW.LoadActionBars(lm)
         ourActionbarsloaded = true
-        if GetSetting("FADE_MULTIACTIONBAR_1") ~= "ALWAYS" or GetSetting("FADE_MULTIACTIONBAR_2") ~= "ALWAYS" or GetSetting("FADE_MULTIACTIONBAR_3") ~= "ALWAYS" or GetSetting("FADE_MULTIACTIONBAR_4") ~= "ALWAYS" then
-            OnUpdateActionBars = function(elapsed)
-                if GetSetting("FADE_MULTIACTIONBAR_1") ~= "ALWAYS" then GW.FadeCheck(MultiBarBottomLeft, elapsed, GetSetting("FADE_MULTIACTIONBAR_1")) end
-                if GetSetting("FADE_MULTIACTIONBAR_2") ~= "ALWAYS" then GW.FadeCheck(MultiBarBottomRight, elapsed, GetSetting("FADE_MULTIACTIONBAR_2")) end
-                if GetSetting("FADE_MULTIACTIONBAR_3") ~= "ALWAYS" then GW.FadeCheck(MultiBarRight, elapsed, GetSetting("FADE_MULTIACTIONBAR_3")) end
-                if GetSetting("FADE_MULTIACTIONBAR_4") ~= "ALWAYS" then GW.FadeCheck(MultiBarLeft, elapsed, GetSetting("FADE_MULTIACTIONBAR_4")) end
-            end
-        end
     end
 
     -- create pet frame
     if GetSetting("PETBAR_ENABLED") then
-        GW.LoadPetFrame()
+        GW.LoadPetFrame(lm)
         ourPetbar = true
     end
 
     -- create buff frame
     if GetSetting("PLAYER_BUFFS_ENABLED") then
-        GW.LoadBuffs()
+        -- GW.LoadBuffs()
+        GW.LoadPlayerAuras(lm)
     end
 
     if GetSetting("DYNAMIC_CAM") then

@@ -29,6 +29,9 @@ end
 GW.GetDefault = GetDefault
 
 local function GetSetting(name)
+    if not name then
+        return nil
+    end
     local profileIndex = GetActiveProfile()
 
     if GW2UI_SETTINGS_PROFILES == nil then

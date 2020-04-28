@@ -71,7 +71,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
     btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     if noBackDrop == nil or noBackDrop == false then
-        local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdrop")
+        local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
         if btn:GetWidth() > 40 then
             backDropSize = 2

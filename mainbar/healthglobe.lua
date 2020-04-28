@@ -239,8 +239,8 @@ function IncHeal:HealComm_GUIDDisappeared(event, guid)
 end
 
 local function LoadHealthGlobe()
-    local hg = CreateFrame("Button", "GwHealthGlobe", UIParent, "GwHealthGlobeTmpl")
-    GW.RegisterScaleFrame(playerPowerBar, 1.1)
+    local hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
+    GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space
     if GetSetting("XPBAR_ENABLED") then
@@ -289,11 +289,12 @@ local function LoadHealthGlobe()
 
 
     -- set text/font stuff
-    hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, 14)
+    hg.hSize = 14
+    hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
-        v:SetFont(DAMAGE_TEXT_FONT, 14)
+        v:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
         v:SetShadowColor(1, 1, 1, 0)
         v:SetTextColor(0, 0, 0, 1 / i)
     end
@@ -360,5 +361,6 @@ local function LoadHealthGlobe()
     pa2:SetToAlpha(0.33)
     pa2:SetDuration(0.1)
 
+    return hg
 end
 GW.LoadHealthGlobe = LoadHealthGlobe

@@ -1,16 +1,16 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwActionbar" virtual="true" protected="true" parent="UIParent" enableMouse="true" inherits="SecureHandlerStateTemplate">
+    <Frame name="GwActionbarTmpl" virtual="true" protected="true" parent="UIParent" enableMouse="true" inherits="SecureHandlerStateTemplate">
         <Anchors>
             <Anchor point="BOTTOM" y="30"/>
         </Anchors>
     </Frame>
 
-    <Frame name="GwMultibar" virtual="true" protected="true" parent="UIParent" hidden="true" enableMouse="true" inherits="SecureHandlerStateTemplate">
+    <Frame name="GwMultibarTmpl" virtual="true" protected="true" parent="UIParent" hidden="true" enableMouse="true" inherits="SecureHandlerStateTemplate">
     </Frame>
 
-    <Frame name="GwActionButtonBackdrop" virtual="true" frameLevel="1">
+    <Frame name="GwActionButtonBackdropTmpl" virtual="true" frameLevel="1">
         <Anchors>
             <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="-1" y="1"></Anchor>
             <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
@@ -27,7 +27,7 @@
         </Layers>
     </Frame>
 
-    <Frame name="GwActionHotkeyBackdrop" virtual="true">
+    <Frame name="GwActionHotkeyBackdropTmpl" virtual="true">
         <Size x="18" y="18"></Size>
         <Anchors>
             <Anchor point="CENTER"></Anchor>
@@ -46,7 +46,7 @@
         </Layers>
     </Frame>
 
-    <Frame name="GwActionRangeIndicator" virtual="true">
+    <Frame name="GwActionRangeIndicatorTmpl" virtual="true">
         <Size x="20" y="4"></Size>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1">

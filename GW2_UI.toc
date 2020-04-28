@@ -51,6 +51,8 @@ settings/welcome.xml
 settings/welcome.lua
 settings/versionApi.lua
 
+core/auras.lua
+
 character/data/ClassLoader.lua
 character/data/Druid.lua
 character/data/Hunter.lua
@@ -65,6 +67,8 @@ character/data/Warrior.lua
 changelog.lua
 GW2_ui.lua
 
+units/aurabar.xml
+units/aurabar.lua
 units/target.xml
 units/target.lua
 units/party.xml
@@ -80,6 +84,8 @@ mainbar/micromenu.lua
 mainbar/experiencebar.xml
 mainbar/hudart.xml
 mainbar/hudelements.xml
+mainbar/aurabar_legacy.xml
+mainbar/aurabar.xml
 mainbar/healthglobe.xml
 mainbar/classpowers.xml
 mainbar/powerbar.xml
@@ -89,12 +95,14 @@ mainbar/dodgebar.xml
 mainbar/hud.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
-mainbar/buffs.lua
+mainbar/aurabar_blizz_modified.lua
+mainbar/aurabar.lua
 mainbar/castingbar.lua
 mainbar/healthglobe.lua
 mainbar/powerbar.lua
 mainbar/classpowers.lua
 mainbar/dodgebar.lua
+mainbar/layout.lua
 mainbar/autoRepair.lua
 
 inventory/bag.xml
