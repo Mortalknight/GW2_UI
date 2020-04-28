@@ -46,5 +46,8 @@ local function SkinStaticPopup()
 
         hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
     end
+
+    hooksecurefunc("StaticPopup_OnShow", function() PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_open.ogg", "Master") end)
+    hooksecurefunc("StaticPopup_OnHide", function() PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_close.ogg", "Master") end)
 end
 GW.SkinStaticPopup = SkinStaticPopup

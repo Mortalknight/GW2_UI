@@ -288,9 +288,13 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Keine Gilde"
     L["AFK_MODE"] = "AFK Modus"
     L["AFK_MODE_DESC"] = "AFK Bildschirm anzeigen wenn du AFK bist."
+    L["REPAIRD_FOR"] = "Deine Gegenstände wurden repariert für: %s"
+    L["AUTO_REPAIR"] = "Auto-Reparatur"
+    L["AUTO_REPAIR_DESC"] = "Repariert automatisch deine Ausrüstungsgegenstände, wenn du eine der folgenden Methoden auswählst."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Gruppenmanage-Button ausblenden"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Blendet den Gruppenmanage-Button aus, wenn die Maus nicht in der Nähe ist."
 end
-	
-	
+
 if GetLocale() == "deDE" then
 	GWUseThisLocalization()
 end

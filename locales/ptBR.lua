@@ -79,7 +79,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "Lista de alterações"
     L["CHARACTER_NEXT_RANK"] = "PRÓXIMO"
     L["CHARACTER_PARAGON"] = "Paragon"
-    L["CHAT_BUBBLES_DESC"] = "Substituir os Balões de conversa da UI padrão (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Substituir os Balões de conversa da UI padrão (Only in not protected areas)"
     L["CHAT_FADE"] = "Ocultar conversa"
     L["CHAT_FADE_DESC"] = "Permitir que a conversa seja ocultada quando não estiver em uso."
     L["CHAT_FRAME_DESC"] = "Habilitar janela de conversa aprimorada."
@@ -284,6 +284,11 @@ local function GWUseThisLocalization()
     L["WELCOME_SPLASH_WELCOME_TEXT"] = "GW2 UI é uma substituição completa da interface do usuário. Criamos a interface do usuário com uma abordagem modular, isso significa que, se você não gosta de uma certa parte do complemento - ou tem outra que prefere para essa função - você pode simplesmente desativar essa parte, mantendo o restante da interface intacta.\nAlguns dos módulos disponíveis para você são uma janela imersiva de missões, uma substituição completa do inventário e uma substituição completa da janela de personagem. Você pode desfrutar de muito mais, basta dar uma olhada no menu de configurações para ver o que está disponível para você!"
     L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "O que é 'Pixel Perfection'?\n\nA GW2 UI possui uma configuração interna chamada 'Modo Pixel Perfection'. O que isso significa para você é que a interface do usuário terá a aparência desejada, com texturas mais nítidas e melhor escala. Obviamente, você pode desativar isso no menu de configurações, se preferir."
     L["WORLD_MARKER_DESC"] = "Mostrar menu para colocar marcadores quando está em raide."
+    L["REPAIRD_FOR"] = "Seus itens foram reparadas por: %s"
+    L["AUTO_REPAIR"] = "Reparar automaticamente"
+    L["AUTO_REPAIR_DESC"] = "Reparar automaticamente usando o seguinte método ao visitar um vendedor."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 	
 	--Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
@@ -291,8 +296,7 @@ local function GWUseThisLocalization()
 	L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
 	L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
 end
-	
-	
+
 if GetLocale() == "ptBR" then
 	GWUseThisLocalization()
 end

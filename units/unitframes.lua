@@ -339,25 +339,30 @@ local function updateHealthbarColor(self)
 
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
-        local isFriend = UnitIsFriend("player", self.unit)
-        local friendlyColor = COLOR_FRIENDLY[1]
+        local unitReaction = UnitReaction(self.unit, "player")
 
-        if isFriend ~= true then
-            friendlyColor = COLOR_FRIENDLY[2]
+        if not unitReaction then
+            return
         end
+
+        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or PRIEST_COLOR
+        if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
+        if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+
         if UnitIsTapDenied(self.unit) then
             friendlyColor = COLOR_FRIENDLY[3]
+            nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         end
 
-        self.healthbar:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarFlash:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.healthbarFlashSpark:SetVertexColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
-        self.nameString:SetTextColor(friendlyColor.r, friendlyColor.g, friendlyColor.b, 1)
+        self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.healthbarFlashSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.nameString:SetTextColor(nameColor.r, nameColor.g, nameColor.b, 1)
     end
 
     if (UnitLevel(self.unit) - UnitLevel("player")) <= -5 and not UnitIsPlayer(self.unit) then
-        local r, g, b, _ = self.nameString:GetTextColor()
+        local r, g, b = self.nameString:GetTextColor()
         self.nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
     end
 end
@@ -982,6 +987,19 @@ local function target_OnEvent(self, event, unit)
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
         UpdateBuffLayout(self, event)
+        if event == "PLAYER_TARGET_CHANGED" then
+            if UnitExists(self.unit) and not IsReplacingUnit() then
+                if UnitIsEnemy(self.unit, "player") then
+                    PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+                elseif UnitIsFriend("player", self.unit) then
+                    PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+                else
+                    PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+                end
+            else
+                PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
+            end
+        end
     elseif event == "UNIT_TARGET" and unit == "target" then
         if (ttf ~= nil) then
             if UnitExists("targettarget") then

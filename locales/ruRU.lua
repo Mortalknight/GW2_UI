@@ -59,7 +59,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "Список изменений"
     L["CHARACTER_NEXT_RANK"] = "Следующий"
     L["CHARACTER_PARAGON"] = "Образец"
-    L["CHAT_BUBBLES_DESC"] = "Заменить стандартные облачка чата. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Заменить стандартные облачка чата. (Only in not protected areas)"
     L["CHAT_FADE"] = "Затемнить чат"
     L["CHAT_FADE_DESC"] = "Затемнять неактивный чат."
     L["CHAT_FRAME_DESC"] = "Использовать интерфейс GW2 UI для окна чата."
@@ -287,8 +287,12 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Нет гильдии"
     L["AFK_MODE"] = "Режим АФК"
     L["AFK_MODE_DESC"] = "Отображать специальный экран, когда вы переходите в состояние 'Отсутствует'."
+    L["REPAIRD_FOR"] = "Ремонт обошелся в: %s"
+    L["AUTO_REPAIR"] = "Автоматический ремонт"
+    L["AUTO_REPAIR_DESC"] = "Автоматически чинить экипировку за счет выбранного источника при посещении торговца."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 end
-
 
 if GetLocale() == "ruRU" then
 	GWUseThisLocalization()

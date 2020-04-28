@@ -743,6 +743,7 @@ local function loadAddon(self)
     end
 
     GW.LoadBreathMeter()
+    GW.LoadAutoRepair()
 
     --Create unitframes
     if GetSetting("TARGET_ENABLED") then

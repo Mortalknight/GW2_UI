@@ -56,7 +56,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Activer la barre de lancement de sort GW2"
     L["CHARACTER_NEXT_RANK"] = "SUIVANT"
     L["CHARACTER_PARAGON"] = "Paragon"
-    L["CHAT_BUBBLES_DESC"] = "Remplace l'IU de la bulle de chat par défaut. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Remplace l'IU de la bulle de chat par défaut. (Only in not protected areas)"
     L["CHAT_FADE"] = "Occultation du chat"
     L["CHAT_FADE_DESC"] = "Autorise l'occultation du chat lorsqu'il n'est pas utilisé."
     L["CHAT_FRAME_DESC"] = "Active la fenêtre de discussion amélioré."
@@ -287,9 +287,13 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Pas de Guilde"
     L["AFK_MODE"] = "Mode ABS"
     L["AFK_MODE_DESC"] = "Quand vous êtes ABS, affiche un écran spécial."
+    L["REPAIRD_FOR"] = "Votre équipement a été réparé pour: %s"
+    L["AUTO_REPAIR"] = "Réparation automatique"
+    L["AUTO_REPAIR_DESC"] = "Répare automatiquement votre équipement chez le marchand selon le mode de réparation sélectionné."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 end
-	
-	
+
 if GetLocale() == "frFR" then
 	GWUseThisLocalization()
 end

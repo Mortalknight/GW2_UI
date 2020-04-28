@@ -24,6 +24,7 @@ local function LoadHudPanel(sWindow)
     addOption(p, L["COMPASS_TOGGLE"], L["COMPASS_TOGGLE_DESC"], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p, L["ADV_CAST_BAR"], L["ADV_CAST_BAR_DESC"], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p, L["FADE_MICROMENU"], L["FADE_MICROMENU_DESC"], "FADE_MICROMENU")
+    addOption(p, L["AUTO_REPAIR"], L["AUTO_REPAIR_DESC"], "AUTO_REPAIR")
     addOption(p, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
     addOption(
         p,

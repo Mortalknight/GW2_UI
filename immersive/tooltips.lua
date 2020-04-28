@@ -5,6 +5,7 @@ local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
+local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LibClassicDurations = LibStub("LibClassicDurations", true)
 
 local targetList = {}
@@ -86,15 +87,12 @@ local function RemoveTrashLines(self)
 end
 
 local function SetUnitText(self, unit, level, isShiftKeyDown)
-    if self:IsForbidden() then return end
-
-    local color
+    local name, realm = UnitName(unit)
 
     if UnitIsPlayer(unit) then
         local localeClass, class = UnitClass(unit)
         if not localeClass or not class then return end
 
-        local name, realm = UnitName(unit)
         local guildName, guildRankName, _, guildRealm = GetGuildInfo(unit)
         local relationship = UnitRealmRelationship(unit)
         local pvpName = UnitPVPName(unit)
@@ -102,7 +100,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         local alwaysShowRealm = GetSetting("ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS")
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
 
-        color = GWGetClassColor(class, true)
+        local nameColor = GWGetClassColor(class, true)
 
         if pvpName and playerTitles then
             name = pvpName
@@ -118,13 +116,9 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             end
         end
 
-        if UnitIsAFK(unit) then
-            name = name .. " |cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r"
-        elseif UnitIsDND(unit) then
-            name = name .. " |cffFFFFFF[|r|cffFFFF00" .. DND .. "|r|cffFFFFFF]|r"
-        end
+        name = name .. ((UnitIsAFK(unit) and " |cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r") or (UnitIsDND(unit) and " |cffFFFFFF[|r|cffFFFF00" .. DND .. "|r|cffFFFFFF]|r") or "")
 
-        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", color.colorStr, name or UNKNOWN)
+        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.colorStr, name or UNKNOWN)
 
         local lineOffset = 2
         if guildName then
@@ -143,7 +137,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
 
         local diffColor = GetCreatureDifficultyColor(level)
         local race = UnitRace(unit)
-        local levelString = format("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or '', color.colorStr, localeClass)
+        local levelString = format("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", nameColor.colorStr, localeClass)
 
         if levelLine then
             levelLine:SetText(levelString)
@@ -151,16 +145,8 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             GameTooltip:AddLine(levelString)
         end
 
+        return nameColor
     else
-        if UnitIsTapDenied(unit) then
-            color = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
-        else
-            local unitReaction = UnitReaction(unit, "player")
-            color = GW.FACTION_BAR_COLORS[unitReaction]
-        end
-
-        if not color then color = RAID_CLASS_COLORS.PRIEST end
-
         local levelLine = GetLevelLine(self, 2)
         if levelLine then
             local creatureClassification = UnitClassification(unit)
@@ -174,8 +160,18 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
 
             levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType or "", pvpFlag)
         end
+
+        local unitReaction = UnitReaction(unit, "player")
+        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or PRIEST_COLOR
+
+        if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
+        if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+        
+        local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
+        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
+
+        return UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255} or nameColor
     end
-    return color
 end
 
 local function GameTooltip_OnTooltipSetUnit(self)

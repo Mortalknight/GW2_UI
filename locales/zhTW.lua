@@ -77,7 +77,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "更新資訊"
     L["CHARACTER_NEXT_RANK"] = "下一個"
     L["CHARACTER_PARAGON"] = "巔峰"
-    L["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。(Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。(Only in not protected areas)"
     L["CHAT_FADE"] = "淡出聊天視窗"
     L["CHAT_FADE_DESC"] = "允許非使用中淡出聊天視窗。"
     L["CHAT_FRAME_DESC"] = "使用加強型的聊天視窗。"
@@ -284,6 +284,9 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "沒有公會"
     L["AFK_MODE"] = "離開模式"
     L["AFK_MODE_DESC"] = "當你離開時顯示暫離界面"
+    L["REPAIRD_FOR"] = "裝備已修理, 共支出: %s"
+    L["AUTO_REPAIR"] = "自動修裝"
+    L["AUTO_REPAIR_DESC"] = "與商人對話時, 透過下列方式自動修復裝備."
 
 	--Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

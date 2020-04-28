@@ -45,7 +45,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Activar la barra de casteo al estilo Gw2"
     L["CHARACTER_NEXT_RANK"] = "SIGUIENTE"
     L["CHARACTER_PARAGON"] = "Dechado"
-    L["CHAT_BUBBLES_DESC"] = "Reemplazar las burbujas de chat por defecto. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Reemplazar las burbujas de chat por defecto. (Only in not protected areas)"
     L["CHAT_FADE"] = "Desvanecer chat"
     L["CHAT_FADE_DESC"] = "Permitir que el chat desvanezca fuera de uso"
     L["CHAT_FRAME_DESC"] = "Activar la ventana de chat mejorada"
@@ -288,9 +288,13 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Sin Hermandad"
     L["AFK_MODE"] = "Modo AFK"
     L["AFK_MODE_DESC"] = "Cuando vayas AFK, visualice la pantalla AFK."
+    L["REPAIRD_FOR"] = "Tus objetos han sido reparados por: %s"
+    L["AUTO_REPAIR"] = "Reparación Automática"
+    L["AUTO_REPAIR_DESC"] = "Repara de forma automática usando el siguiente método cuando visites un comerciante."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 end
-	
-	
+
 if GetLocale() == "esMX" then
 	GWUseThisLocalization()
 end

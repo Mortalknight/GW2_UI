@@ -44,7 +44,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "GW2 시전바 활성화"
     L["CHARACTER_NEXT_RANK"] = "다음"
     L["CHARACTER_PARAGON"] = "불멸의 동맹"
-    L["CHAT_BUBBLES_DESC"] = "기본 말풍선 교체 (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "기본 말풍선 교체 (Only in not protected areas)"
     L["CHAT_FADE"] = "채팅 숨기기"
     L["CHAT_FADE_DESC"] = "채팅을 사용하지 않을 시 자동 숨김. "
     L["CHAT_FRAME_DESC"] = "향상된 채팅 창 사용"
@@ -288,6 +288,11 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "길드 없음"
     L["AFK_MODE"] = "자리비움 모드"
     L["AFK_MODE_DESC"] = "자리비움 시 UI가 자리비움모드로 전환됩니다."
+    L["REPAIRD_FOR"] = "자동으로 수리하고 비용을 지불했습니다: %s"
+    L["AUTO_REPAIR"] = "자동 수리"
+    L["AUTO_REPAIR_DESC"] = "수리가 가능한 상점을 열면 이 옵션에서 선택한 자금으로 장비를 자동 수리합니다."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
 end
 
 if GetLocale() == "koKR" then

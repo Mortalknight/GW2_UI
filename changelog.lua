@@ -20,19 +20,21 @@ v(
                                 - Added MP5-Bonus from T2 set bonuses
                                 - Add Priests holy crit talent to calculation
     - Added Grid to Move HUD
-    - Added back Chatbubbles in none proteced areas
+    - Added back Chatbubbles in none protected areas
     - Added new options to bags: Show Junk Icon", "Colouring professional bags", "Sell Junk automatically"
     - Added "Advanced Tooltips" with these options:
         - Show names in classcolor, show AFK and DND Status, color level, etc.
         - Item Count: Shows how many Items you have in bags and in bank (from this item)
-        - Spell/Item IDs: SHows the Spll/Item Id's in the tooltip
+        - Spell/Item IDs: Shows the Spll/Item Id's in the tooltip
         - NPC IDs: Show the NPC ID in the tooltip
-        - Target Info: Shows how in your party/raid is targeting this target
+        - Target Info: Shows who in your party/raid is targeting this target
         - Display the unit role in the tooltip
         - some more
     - Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
     - Added AFK-Mode
+    - Added Chat copy button, to copy out text from the chatwindow
     - Update locals (zhTW, ptBR)
+    - Added Auto repair mode
     - Chat window can now be separated and moved to the rightside of the screen
 
 ]=]

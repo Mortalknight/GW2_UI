@@ -121,31 +121,47 @@
         </Frames>
     </Button>
 
-    <Button name="GwManageGroupButton" frameStrata="LOW" toplevel="true" virtual="true" parent="UIParent">
-        <Size x="50" y="38"></Size>
+    <Frame name="GwManageGroupButtonTmpl" topLevel="true" frameStrata="HIGH" inherits="SecureHandlerEnterLeaveTemplate" virtual="true">
+        <Size x="100" y="72"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-60"></Anchor>
         </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons">
-                    <Size x="38" y="38"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0" right="0.59375" top="0" bottom="0.2968"/>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
-                    <Size x="16" y="32"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="RIGHT" x="-15"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
+        <Frames>
+            <Frame parentKey="cf" inherits="SecureFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+                <Frames>
+                    <Button parentKey="button" text="">
+                        <Size x="50" y="38"/>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons">
+                                    <Size x="38" y="38"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0" right="0.59375" top="0" bottom="0.2968"/>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORK" textureSubLevel="2">
+                                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                                    <Size x="16" y="32"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="RIGHT" x="-15"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
 
     <Frame name="GwGroupManage" enableMouse="true" hidden="true" virtual="true" parent="UIParent">
         <Size x="245" y="100"></Size>
@@ -259,14 +275,6 @@
                             </Layer>
                         </Layers>
                     </Button>
-                    <!--
-                    <Button name="GwGroupRoleCheck" inherits="GwStandardButton" text="Role Check">
-                        <Size x="100" y="30" />
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-200"></Anchor>
-                        </Anchors>
-                    </Button>
-                    -->
                     <Button name="GwGroupManagerConvert" inherits="GwStandardButton" text="Convert to Raid">
                         <Size x="120" y="30" />
                         <Anchors>
