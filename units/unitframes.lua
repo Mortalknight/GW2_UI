@@ -122,15 +122,13 @@ local function updateHealthbarColor(self)
 
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
-        local unitReaction = UnitReaction(self.unit, "player")
-        if not unitReaction then
-            return
-        end
-        
-        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or PRIEST_COLOR
+        local unitReaction = UnitReaction(self.unit, "player")      
+        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
 
-        if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
-        if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+        if unitReaction then
+            if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
+            if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+        end
 
         if UnitIsTapDenied(self.unit) then
             nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
