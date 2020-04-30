@@ -119,8 +119,10 @@ local function FormatMoneyForChat(amount)
 end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
-local function GWGetClassColor(class, forNameString, usePriestColor)
-    if not class then return end
+local function GWGetClassColor(class, useClassColor, forNameString)
+    if not class or not useClassColor then
+        return RAID_CLASS_COLORS.PRIEST
+    end
 
     local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     local color
@@ -144,12 +146,7 @@ local function GWGetClassColor(class, forNameString, usePriestColor)
         colorForNameString = {r = color.r + 0.3, g = color.g + 0.3, b = color.b + 0.3, a = color.a, colorStr = GW.RGBToHex(color.r + 0.3, color.g + 0.3, color.b + 0.3, "ff")}
     end
 
-    local PriestColors = {r = 0.99, g = 0.99, b = 0.99, a = 1, colorStr = "fffcfcfc"}
-    if (usePriestColor and class == "PRIEST") and tonumber(color.colorStr, 16) > tonumber(PriestColors.colorStr, 16) then
-        return PriestColors
-    else
-        return colorForNameString and colorForNameString or color
-    end
+    return forNameString and colorForNameString or color
 end
 GW.GWGetClassColor = GWGetClassColor
 

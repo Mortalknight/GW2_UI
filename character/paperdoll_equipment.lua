@@ -1024,7 +1024,7 @@ local function LoadPDBagList(fmMenu)
     fmGDR.characterData:SetFont(UNIT_NAME_FONT, 12)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
     local _, englishClass, classIndex = UnitClass("player")
-    local color = GWGetClassColor(englishClass)
+    local color = GWGetClassColor(englishClass, true)
     
     SetClassIcon(fmGDR.classIcon, classIndex)
 

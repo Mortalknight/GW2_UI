@@ -152,7 +152,7 @@ local function updateArena_Name(self, inBG, inArena)
     self.classIndex = select(3, UnitClass(self.unit))
     if self.class then 
         SetClassIcon(self.icon, self.classIndex)
-        local color = GWGetClassColor(self.class)
+        local color = GWGetClassColor(self.class, true)
         self.health:SetStatusBarColor(
             color.r,
             color.g,

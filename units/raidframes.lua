@@ -306,7 +306,7 @@ local function updateAwayData(self)
     end
 
     if iconState == 0 then
-        local color = GWGetClassColor(englishClass)
+        local color = GWGetClassColor(englishClass, true)
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         if self.classicon:IsShown() then
             self.classicon:Hide()
@@ -796,7 +796,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                 if UnitInRaid(self.unit) ~= nil then
                     local _, englishClass, classIndex = UnitClass(self.unit)
                     if classColor == true then
-                        local color = GWGetClassColor(englishClass)
+                        local color = GWGetClassColor(englishClass, true)
                         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
                         if self.classicon:IsShown() then
                             self.classicon:Hide()

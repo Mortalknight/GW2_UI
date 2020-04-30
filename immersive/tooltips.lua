@@ -291,7 +291,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
         local showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
 
-        local nameColor = showClassColor and GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
+        local nameColor = GWGetClassColor(class, showClassColor, true)
 
         if pvpName and playerTitles then
             name = pvpName
@@ -387,7 +387,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         end
 
         local unitReaction = UnitReaction(unit, "player")
-        local nameColor = unitReaction and showClassColor and GW.FACTION_BAR_COLORS[unitReaction] or PRIEST_COLOR
+        local nameColor = unitReaction and showClassColor and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
         if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
         if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
         local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
@@ -455,7 +455,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
             local targetColor
             if UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget) then
                 local _, class = UnitClass(unitTarget)
-                targetColor = showClassColor and GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
+                targetColor = GWGetClassColor(class, showClassColor, true)
             else
                 targetColor = GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
             end
@@ -473,7 +473,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
                 local groupUnit = (IsInRaid() and "raid" .. i or "party" .. i)
                 if (UnitIsUnit(groupUnit .. "target", unit)) and (not UnitIsUnit(groupUnit, "player")) then
                     local _, class = UnitClass(groupUnit)
-                    local classColor = showClassColor and GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
+                    local classColor = GWGetClassColor(class, showClassColor, true)
                     tinsert(targetList, format("|c%s%s|r", classColor.colorStr, UnitName(groupUnit)))
                 end
             end
@@ -574,12 +574,13 @@ local function SetUnitAura(self, unit, index, filter)
         end
 
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+        local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
         if showSpellID then
             if caster then
                 local name = UnitName(caster)
                 local _, class = UnitClass(caster)
-                local color = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
+                local color = GWGetClassColor(class, showClassColor, true)
                 self:AddDoubleLine(format("|cffffedba%s|r %d", ID, id), format("|c%s%s|r", color.colorStr, name))
             else
                 self:AddLine(format("|cffffedba%s|r %d", ID, id))

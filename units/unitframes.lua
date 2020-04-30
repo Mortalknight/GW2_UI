@@ -113,7 +113,7 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
         local _, englishClass, classIndex = UnitClass(self.unit)
-        local color = GWGetClassColor(englishClass)
+        local color = GWGetClassColor(englishClass, true)
 
         self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
         self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
@@ -618,7 +618,7 @@ local function target_OnEvent(self, event, unit)
             if guid then
                 if not GW.unitIlvlsCache[guid] then
                     local _, englishClass = UnitClass(self.unit)
-                    local color = GWGetClassColor(englishClass, true)
+                    local color = GWGetClassColor(englishClass, true, true)
                     GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}} 
                     self:RegisterEvent("INSPECT_READY")
                     NotifyInspect(self.unit)
