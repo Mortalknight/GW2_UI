@@ -279,6 +279,8 @@ local function GWUseThisLocalization()
     L["AUTO_REPAIR_DESC"] = "與商人對話時, 透過下列方式自動修復裝備."
     L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
     L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
+    L["HUD_BACKGROUND"] = "Show HUD background"
+    L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

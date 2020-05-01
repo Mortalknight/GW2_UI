@@ -72,14 +72,14 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentLEFT" parentKey="Left" file="Interface\AddOns\GW2_UI\textures\leftshadow">
+                        <Texture name="$parentLEFT" parentArray="HUDBG" parentKey="Left" file="Interface\AddOns\GW2_UI\textures\leftshadow">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                             </Anchors>
                         </Texture>
 
-                        <Texture name="$parentRIGHT" parentKey="Right" file="Interface\AddOns\GW2_UI\textures\rightshadow">
+                        <Texture name="$parentRIGHT" parentArray="HUDBG" parentKey="Right" file="Interface\AddOns\GW2_UI\textures\rightshadow">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
@@ -88,14 +88,14 @@
                     </Layer>
 
                     <Layer textureSubLevel="3" level="BACKGROUND">
-                        <Texture name="$parentLEFTSWIM" parentKey="LeftSwim" file="Interface\AddOns\GW2_UI\textures\leftshadowswim">
+                        <Texture name="$parentLEFTSWIM" parentArray="HUDBG" parentKey="LeftSwim" file="Interface\AddOns\GW2_UI\textures\leftshadowswim">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                             </Anchors>
                         </Texture>
 
-                        <Texture name="$parentRIGHTSWIM" parentKey="RightSwim" file="Interface\AddOns\GW2_UI\textures\rightshadowswim">
+                        <Texture name="$parentRIGHTSWIM" parentArray="HUDBG" parentKey="RightSwim" file="Interface\AddOns\GW2_UI\textures\rightshadowswim">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
@@ -103,14 +103,14 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="4" level="BACKGROUND">
-                        <Texture name="$parentLEFTBLOOD" parentKey="LeftBlood" file="Interface\AddOns\GW2_UI\textures\bloodLeft">
+                        <Texture name="$parentLEFTBLOOD" parentArray="HUDBG" parentKey="LeftBlood" file="Interface\AddOns\GW2_UI\textures\bloodLeft">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                             </Anchors>
                         </Texture>
 
-                        <Texture name="$parentRIGHTBLOOD" parentKey="RightBlood" file="Interface\AddOns\GW2_UI\textures\bloodRight">
+                        <Texture name="$parentRIGHTBLOOD" parentArray="HUDBG" parentKey="RightBlood" file="Interface\AddOns\GW2_UI\textures\bloodRight">
                             <Size x="512" y="256"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />

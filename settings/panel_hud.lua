@@ -19,7 +19,8 @@ local function LoadHudPanel(sWindow)
 
     createCat(UIOPTIONS_MENU, L["HUD_TOOLTIP"], p, 3)
 
-    addOption(p, L["DYNAMIC_HUD"], L["DYNAMIC_HUD_DESC"], "HUD_SPELL_SWAP")
+    addOption(p, L["HUD_BACKGROUND"], L["HUD_BACKGROUND_DESC"], "HUD_BACKGROUND")
+    addOption(p, L["DYNAMIC_HUD"], L["DYNAMIC_HUD_DESC"], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
     addOption(p, L["CHAT_FADE"], L["CHAT_FADE_DESC"], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p, L["COMPASS_TOGGLE"], L["COMPASS_TOGGLE_DESC"], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p, L["ADV_CAST_BAR"], L["ADV_CAST_BAR_DESC"], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})

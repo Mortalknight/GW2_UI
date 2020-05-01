@@ -283,6 +283,8 @@ local function GWUseThisLocalization()
     L["AUTO_REPAIR_DESC"] = "Repariert automatisch deine Ausrüstungsgegenstände, wenn du eine der folgenden Methoden auswählst."
     L["FADE_GROUP_MANAGE_FRAME"] = "Gruppenmanage-Button ausblenden"
     L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Blendet den Gruppenmanage-Button aus, wenn die Maus nicht in der Nähe ist."
+    L["HUD_BACKGROUND"] = "HUD Hintergrund anzeigen"
+    L["HUD_BACKGROUND_DESC"] = "Der HUD Hintergrund ändert seine Farbe in folgenden Situationen: Im Kampf, Nicht im Kampf, Im Wasser, Wenig HP, Geist"
 end
 
 if GetLocale() == "deDE" then
