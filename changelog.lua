@@ -36,6 +36,7 @@ v(
     - Update locals (zhTW, ptBR)
     - Added Auto repair mode
     - Chat window can now be separated and moved to the rightside of the screen
+    - Added toggle for HUD background
 
 ]=]
 )
