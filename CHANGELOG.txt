@@ -26,6 +26,7 @@ NEW
     - Added AFK-Mode
     - Added Chat copy button, to copy out text from the chatwindow
     - Added Auto repair mode
+    - Added toggle for HUD background
     - Update locals (zhTW, ptBR)
 
 FIXES
