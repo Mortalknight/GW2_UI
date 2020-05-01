@@ -126,7 +126,7 @@ function gwPaperDollUpdateUnitData()
     local localizedClass, englishClass = UnitClass("player")
     local id, name, description, icon, background, role = GW.api.GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
     local unitLevel = UnitLevel("player")
-    local color = GWGetClassColor(englishClass)
+    local color = GWGetClassColor(englishClass, true)
     GW.SetClassIcon(GwDressingRoom.classIcon, classIndex)
 
     GwDressingRoom.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)

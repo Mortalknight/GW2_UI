@@ -293,6 +293,8 @@ local function GWUseThisLocalization()
     L["AUTO_REPAIR_DESC"] = "수리가 가능한 상점을 열면 이 옵션에서 선택한 자금으로 장비를 자동 수리합니다."
     L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
     L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
+    L["HUD_BACKGROUND"] = "Show HUD background"
+    L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
 end
 
 if GetLocale() == "koKR" then

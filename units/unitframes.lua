@@ -108,7 +108,7 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
         local _, classFilename, classIndex = UnitClass(self.unit)
-        local color = GWGetClassColor(englishClass)
+        local color = GWGetClassColor(englishClass, true)
 
         self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
         self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
@@ -118,14 +118,12 @@ local function updateHealthbarColor(self)
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
         local unitReaction = UnitReaction(self.unit, "player")
-
-        if not unitReaction then
-            return
+        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
+        
+        if unitReaction then
+            if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
+            if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
         end
-
-        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or PRIEST_COLOR
-        if unitReaction <= 3 then nameColor = COLOR_FRIENDLY[2] end --Enemy
-        if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
 
         if UnitIsTapDenied(self.unit) then
             friendlyColor = COLOR_FRIENDLY[3]

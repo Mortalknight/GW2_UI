@@ -180,7 +180,8 @@ local function LoopAnimations(self)
 end
 
 local function loadAFKAnimation()
-    local classColor = GWGetClassColor(select(2, UnitClass("player")))
+    local _, class = UnitClass("player")
+    local classColor = GWGetClassColor(class, true, true)
     local playerName = UnitName("Player")
     
     local BackdropFrame = {

@@ -405,23 +405,8 @@ end
 local currentTexture = nil
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 
---[[
-local function getSpecSpecificHud(left, right)
-    --hard coded for now
-    local playerClassName, playerClassEng, playerClass = UnitClass("player")
-    if playerClass == 6 and GetSpecialization() == 3 then
-        right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_unholy"
-        left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_unholy"
-    elseif playerClass == 6 and GetSpecialization() == 2 then
-        right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost"
-        left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost"
-    end
-
-    return left, right
-end
---]]
 local function selectBg()
-    if not GetSetting("HUD_SPELL_SWAP") then
+    if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
         return
     end
     local right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow"
@@ -454,6 +439,10 @@ end
 GW.AddForProfiling("hud", "selectBg", selectBg)
 
 local function combatHealthState()
+    if not GetSetting("HUD_BACKGROUND") then 
+        return
+    end
+
     local unitHealthPrecentage = UnitHealth("player") / UnitHealthMax("player")
 
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
@@ -595,6 +584,12 @@ local function LoadHudArt()
 
     if not GetSetting("BORDER_ENABLED") and hudArtFrame.edgeTint then
         for _, f in ipairs(hudArtFrame.edgeTint) do
+            f:Hide()
+        end
+    end
+
+    if not GetSetting("HUD_BACKGROUND") and GwActionBarHud.HUDBG then
+        for _, f in ipairs(GwActionBarHud.HUDBG) do
             f:Hide()
         end
     end
