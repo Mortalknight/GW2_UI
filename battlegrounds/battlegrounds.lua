@@ -413,7 +413,7 @@ local function LoadBattlegrounds()
                 [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36}
             }
         },
-        [1105] = { --Deepwind (TODO: Add cart carrier to top)
+        [2245] = { --Deepwind (TODO: Add cart carrier to top)
             ["OnEvent"] = PointsAndPOI_onEvent,
             ["icons"] = {}
         },

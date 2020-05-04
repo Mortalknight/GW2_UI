@@ -21,20 +21,39 @@ local FractionIcon = {}
     FractionIcon["Horde"] = "|TInterface\\AddOns\\GW2_UI\\textures\\Horde:16:16:0:0|t "
     FractionIcon["NONE"] = ""
 
+local bgIndex = {}
+    bgIndex[30] = 5         -- Alterac
+    bgIndex[2197] = 5       -- Alterac
+    bgIndex[529] = 3        -- Arathi
+    bgIndex[1681] = 3       -- Arathi
+    bgIndex[2107] = 3       -- Arathi
+    bgIndex[2177] = 3       -- Arathi
+    bgIndex[1191] = 12      -- Ashran
+    bgIndex[2245] = 1       -- Deepwind
+    bgIndex[566] = 4        -- Eye Of The Storm
+    bgIndex[968] = 4        -- Eye Of The Storm
+    bgIndex[761] = 7        -- Gilneas
+    bgIndex[628] = 6        -- Isle Of Conquest
+    bgIndex[1803] = 13      -- Seething Shore
+    bgIndex[727] = 9        -- Silvershard Mines
+    bgIndex[998] = 10       -- Temple Of Kotmogu
+    bgIndex[726] = 8        -- Twin Peaks
+    bgIndex[2106] = 2       -- Warsong
+    bgIndex[2118] = 11      -- Wintergrasp
+
 local function setCompass(prepFrame)
-    local isArena = IsActiveBattlefieldArena()
+    local isArena = GetZonePVPInfo()
     local compassData = {}
 
-    if prepFrame == nil then 
-        prepFrame = false
-    end
-
-    if isArena or prepFrame then
+    if isArena == "arena" or prepFrame then
         compassData["TITLE"] = ARENA
         compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
     else
-        compassData["TITLE"] = BATTLEGROUND
-        compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
+        -- parse current BG date here, to show the correct name and subname
+        local _, _, _, _, _, _, _, mapID = GetInstanceInfo()
+
+        compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[mapID])) 
+        compassData["DESC"] = select(11, GetBattlegroundInfo(bgIndex[mapID])) 
     end
     compassData["TYPE"] = "ARENA"
     compassData["ID"] = "arena_unknown"
