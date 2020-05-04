@@ -315,7 +315,7 @@ local function styleChatWindow(frame)
         frame.Container = fmGCC
         frame.hasContainer = true
     end
-    
+
     for _, texName in pairs(tabTexs) do
         if texName == "Selected" then
             _G[tab:GetName()..texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveright")
@@ -671,7 +671,9 @@ local function LoadChat()
     }
 
     for i = 1, FCF_GetNumActiveChatFrames() do
-        FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+        if _G["ChatFrame" .. i] then
+            FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+        end
     end
     FCF_FadeOutChatFrame(_G["ChatFrame1"])
 
