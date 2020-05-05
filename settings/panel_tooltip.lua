@@ -58,7 +58,7 @@ local function LoadTooltipPanel(sWindow)
             L["ANCHOR_CURSOR_RIGHT"]
         },
         nil,
-        {["TOOLTIPS_ENABLED"] = true}
+        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true}
     )
     addOptionSlider(
         p,
@@ -70,7 +70,7 @@ local function LoadTooltipPanel(sWindow)
         128,
         nil,
         0,
-        {["TOOLTIPS_ENABLED"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
+        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
     )
     addOptionSlider(
         p,
@@ -82,7 +82,7 @@ local function LoadTooltipPanel(sWindow)
         128,
         nil,
         0,
-        {["TOOLTIPS_ENABLED"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
+        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
     )
 
     InitPanel(p)
