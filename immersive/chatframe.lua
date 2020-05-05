@@ -637,7 +637,9 @@ local function LoadChat()
     }
 
     for i = 1, FCF_GetNumActiveChatFrames() do
-        FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+        if _G["ChatFrame" .. i] then
+            FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+        end
     end
     FCF_FadeOutChatFrame(_G["ChatFrame1"])
 

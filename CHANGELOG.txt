@@ -32,6 +32,7 @@
 - Chat window can now be separated and moved to the rightside of the screen
 - Added Auto repair mode
 - Added toggle for HUD background
+- Buffs can be canceled in combat
 
 1.7.3
 - Added more stats to the extended stats (hover over the 'Attribute'-label)

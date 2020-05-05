@@ -37,6 +37,7 @@ v(
     - Added Auto repair mode
     - Chat window can now be separated and moved to the rightside of the screen
     - Added toggle for HUD background
+    - Buffs can be canceled in combat
 
 ]=]
 )
