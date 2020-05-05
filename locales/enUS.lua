@@ -289,7 +289,7 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "No Guild"
     L["AFK_MODE"] = "AFK Mode"
     L["AFK_MODE_DESC"] = "When you go AFK display the AFK screen."
-    L["REPAIRD_FOR"] = "I tuoi articoli sono stati riparati per: %s"
+    L["REPAIRD_FOR"] = "Your items have been repaired for: %s"
     L["AUTO_REPAIR"] = "Auto Repair"
     L["AUTO_REPAIR_DESC"] = "Automatically repair using the following method when visiting a merchant."
     L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
