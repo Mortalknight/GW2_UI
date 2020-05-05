@@ -6,6 +6,7 @@ local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local SetClassIcon = GW.SetClassIcon
 local GWGetClassColor = GW.GWGetClassColor
+local IsIn = GW.IsIn
 
 local countArenaFrames = 0
 local countArenaPrepFrames = 0
@@ -41,11 +42,11 @@ local bgIndex = {}
     bgIndex[2106] = 2       -- Warsong
     bgIndex[2118] = 11      -- Wintergrasp
 
-local function setCompass(prepFrame)
+local function setCompass()
     local isArena = GetZonePVPInfo()
     local compassData = {}
 
-    if isArena == "arena" or prepFrame then
+    if isArena == "arena" then
         compassData["TITLE"] = ARENA
         compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
     else
@@ -53,7 +54,7 @@ local function setCompass(prepFrame)
         local _, _, _, _, _, _, _, mapID = GetInstanceInfo()
 
         compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[mapID])) 
-        compassData["DESC"] = select(11, GetBattlegroundInfo(bgIndex[mapID])) 
+        compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[mapID]))
     end
     compassData["TYPE"] = "ARENA"
     compassData["ID"] = "arena_unknown"
@@ -128,7 +129,9 @@ local function updateArena_Power(self)
 end
 GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 
-local function updateArena_Name(self, inBG, inArena)
+local function updateArena_Name(self)
+    local inArena = GetZonePVPInfo()
+    local inBG = UnitInBattleground("player")
     local guidTarget = UnitGUID("target")
     local specID = GetArenaOpponentSpec(self.id)
     local specName = ""
@@ -141,7 +144,7 @@ local function updateArena_Name(self, inBG, inArena)
         name = UNKNOWNOBJECT
     end
 
-    if inArena then
+    if inArena == "arena" then
         if specID == nil then
             return
         else
@@ -188,33 +191,22 @@ end
 GW.AddForProfiling("arenaFrames", "updateArena_Name", updateArena_Name)
 
 local function arenaFrame_OnEvent(self, event, unit)
-    local isArena = IsActiveBattlefieldArena()
+    local isArena = GetZonePVPInfo()
     local inBG = UnitInBattleground("player")
-    if not isArena and inBG == nil then
+    if isArena ~= "arena" and inBG == nil then
         return
     end
 
-    if (event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT") then
+    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH_FREQUENT") then
         updateArena_Health(self)
-        return
-    end
-
-    if (event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT") then
+    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
         updateArena_Power(self)
-        return
-    end
-
-    if event == "PLAYER_TARGET_CHANGED" then
-        updateArena_Name(self, inBG, isArena)
-        return
-    end     
-    
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "PLAYER_ENTERING_BATTLEGROUND" or event == "ARENA_OPPONENT_UPDATE" then 
+    elseif event == "PLAYER_TARGET_CHANGED" then
+        updateArena_Name(self)
+    elseif IsIn(event, "PLAYER_ENTERING_WORLD", "UNIT_NAME_UPDATE", "ARENA_OPPONENT_UPDATE") then 
         updateArena_Health(self)
         updateArena_Power(self)
-        updateArena_Name(self, inBG, isArena)
-        setCompass()
-        return
+        updateArena_Name(self)
     end
 end
 GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
@@ -291,7 +283,6 @@ local function registerFrame(i)
     targetF:RegisterUnitEvent("UNIT_NAME_UPDATE", targetF.unit)
     targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
-    targetF:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     targetF:RegisterEvent("ARENA_OPPONENT_UPDATE")
 
     targetF:SetScript(
@@ -306,11 +297,10 @@ local function registerFrame(i)
             end
 
             updateArenaFrameHeight("GwQuestTrackerArenaFrame")
-            setCompass()
 
             updateArena_Health(self)
             updateArena_Power(self)
-            updateArena_Name(self, inBG, isArena)
+            updateArena_Name(self)
 
             countArenaFrames = countArenaFrames + 1
 
@@ -375,13 +365,13 @@ local function registerPrepFrame(i)
         "OnShow",
         function(self)
             updateArenaFrameHeight("GwQuestTrackerArenaPrepFrame")
-            setCompass(true)
             countArenaPrepFrames = countArenaPrepFrames + 1
 
             --Hide Blizzard frames
             for i = 1, 5 do
                 if _G["ArenaPrepFrame" .. i] ~= nil then
-                    _G["ArenaPrepFrame" .. i]:SetAlpha(0)
+                    _G["ArenaPrepFrame" .. i]:Hide()
+                    _G["ArenaPrepFrame" .. i]:HookScript("OnShow", function() _G["ArenaPrepFrame" .. i]:Hide() end)
                     _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
                 end
             end
@@ -410,6 +400,24 @@ local function LoadArenaFrame()
             _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
         end
     end
+
+    -- Log event for compass Header
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
+    f:SetScript("OnEvent", function(self, event)
+        C_Timer.After(0.8, function()
+            local isArena = GetZonePVPInfo()
+            local inBG = UnitInBattleground("player")
+
+            if isArena ~= "arena" and inBG == nil then
+                return
+            end
+
+            setCompass()
+        end)
+    end)
+
     updateArenaFrameHeight("GwQuestTrackerArenaFrame")
 end
 GW.LoadArenaFrame = LoadArenaFrame

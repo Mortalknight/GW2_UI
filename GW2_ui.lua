@@ -812,7 +812,7 @@ local function gw_OnEvent(self, event, ...)
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
             PixelPerfection()
         end
-        if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
+        if UnitInBattleground("player") == nil and select(1, GetZonePVPInfo()) ~= "arena" then
             GW.RemoveTrackerNotificationOfType("ARENA")
         end
     end
