@@ -31,6 +31,10 @@ NEW
     - Added Chat copy button, to copy out text from the chatwindow
     - Added Auto repair mode
     - Added toggle for HUD background
+    - Added more option to Player buffs:
+        - Style: Secure (can be canceld in combat); Legacy (sorted)
+        - Set the grow direction (left, right, up, down)
+        - Set auras per row
     - Update locals (zhTW, ptBR)
 
 FIXES

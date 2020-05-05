@@ -7,15 +7,10 @@ local PowerBarColorCustom = GW.PowerBarColorCustom
 local SetClassIcon = GW.SetClassIcon
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
+local nameRoleIcon = GW.nameRoleIcon
 
 local countArenaFrames = 0
 local countArenaPrepFrames = 0
-
-local nameRoleIcon = {}
-    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:16:16:0:0|t "
-    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:16:16:0:0|t "
-    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
-    nameRoleIcon["NONE"] = ""
 
 local FractionIcon = {}
     FractionIcon["Alliance"] = "|TInterface\\AddOns\\GW2_UI\\textures\\Alliance:16:16:0:0|t "

@@ -12,6 +12,7 @@ local AddToClique =GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local IsIn = GW.IsIn
+local nameRoleIcon = GW.nameRoleIcon
 
 local GW_READY_CHECK_INPROGRESS = false
 
@@ -686,12 +687,6 @@ end
 GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
 local function setUnitName(self)
-    local nameRoleIcon = {}
-    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:16:16:0:0|t "
-    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:16:16:0:0|t "
-    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
-    nameRoleIcon["NONE"] = ""
-
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
 

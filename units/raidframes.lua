@@ -22,6 +22,7 @@ local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local REALM_FLAGS = GW.REALM_FLAGS
+local nameRoleIcon = GW.nameRoleIcon
 local LRI = LibStub("LibRealmInfo", true)
 
 local GROUPD_TYPE = "PARTY"
@@ -191,12 +192,6 @@ local function setUnitName(self)
     if self == nil or self.unit == nil then
         return
     end
-
-    local nameRoleIcon = {}
-    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t "
-    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t "
-    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t "
-    nameRoleIcon["NONE"] = ""
 
     local flagSetting = GetSetting("RAID_UNIT_FLAGS")
     local playerLocal = GetLocale()
