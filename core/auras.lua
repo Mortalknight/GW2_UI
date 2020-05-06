@@ -3,6 +3,7 @@ local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
+local UnitAura = _G.UnitAura
 --local AddToAnimation = GW.AddToAnimation
 
 local textureMapping = {
@@ -43,7 +44,7 @@ local function getBuffs(unit, filter)
     local tempCounter = 1
     for i = 1, 40 do
         table.wipe(buffList[i])
-        if UnitBuff(unit, i, filter) ~= nil then
+        if UnitAura(unit, i, "HELPFUL") ~= nil then
             local bli = buffList[i]
             tempCounter = tempCounter + 1
             bli["id"] = i
@@ -57,7 +58,7 @@ local function getBuffs(unit, filter)
                 bli["caster"],
                 bli["isStealable"],
                 bli["shouldConsolidate"],
-                bli["spellID"] = UnitBuff(unit, i, filter)
+                bli["spellID"] = UnitAura(unit, i, "HELPFUL")
 
             bli["timeremaning"] = bli["expires"] - GetTime()
 
@@ -117,7 +118,7 @@ end
 local function getDebuffs(unit, filter)
     for i = 1, 40 do
         table.wipe(debuffList[i])
-        if UnitDebuff(unit, i, filter) ~= nil then
+        if UnitAura(unit, i, filter) ~= nil then
             local dbi = debuffList[i]
             dbi["id"] = i
 
@@ -130,7 +131,7 @@ local function getDebuffs(unit, filter)
                 dbi["caster"],
                 dbi["isStealable"],
                 dbi["shouldConsolidate"],
-                dbi["spellID"] = UnitDebuff(unit, i, filter)
+                dbi["spellID"] = UnitAura(unit, i, filter)
 
                 dbi["timeremaning"] = dbi["expires"] - GetTime()
 
@@ -257,6 +258,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     if anchorPos and anchorPos == "player" then
         isPlayer = true
         playerGrowDirection = GetSetting("PlayerBuffFrame_GrowDirection")
+        self.debuffFilter = "HARMFUL"
     elseif anchorPos ~= "player" then
         if self.displayBuffs ~= true then
             minIndex = 40

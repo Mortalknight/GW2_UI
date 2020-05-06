@@ -122,13 +122,13 @@ local function mover_OnDragStop(self)
     if isMoved ~= nil then
         local defaultPoint = GetDefault(settingsName)
         local growDirection = GetSetting(settingsName .. "_GrowDirection")
-        local frame = self.frame
+        local frame = self.gw_frame
         if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and growDirection == "UP" then
             frame.isMoved = false
-            frame.secureHandler:SetAttribute("isMoved", false)
+            frame:SetAttribute("isMoved", false)
         else
             frame.isMoved = true
-            frame.secureHandler:SetAttribute("isMoved", true)
+            frame:SetAttribute("isMoved", true)
         end
     end
 
@@ -141,7 +141,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     frame.gwMover = moveframe
     if frame == GameTooltip then
         moveframe:SetSize(230, 80)
-    elseif frame == GwPlayerAuraFrame then
+    elseif displayName == BUFFOPTIONS_LABEL then
         moveframe:SetSize(316, 100)
         moveframe:SetScale(frame:GetScale())
     else
