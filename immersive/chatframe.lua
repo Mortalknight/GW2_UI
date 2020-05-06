@@ -132,9 +132,8 @@ local function setButtonPosition(frame)
             QuickJoinToastButton:ClearAllPoints()
             QuickJoinToastButton:SetPoint("LEFT", GeneralDockManager, "RIGHT", 30, -3)
 
-            local function NoOp() end
-            QuickJoinToastButton.ClearAllPoints = NoOp
-            QuickJoinToastButton.SetPoint = NoOp
+            QuickJoinToastButton.ClearAllPoints = GW.NoOp
+            QuickJoinToastButton.SetPoint = GW.NoOp
         end
     else
         frame.Container:ClearAllPoints()
@@ -155,9 +154,8 @@ local function setButtonPosition(frame)
             QuickJoinToastButton:ClearAllPoints()
             QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
 
-            local function NoOp() end
-            QuickJoinToastButton.ClearAllPoints = NoOp
-            QuickJoinToastButton.SetPoint = NoOp
+            QuickJoinToastButton.ClearAllPoints = GW.NoOp
+            QuickJoinToastButton.SetPoint = GW.NoOp
         end
     end
 end
@@ -568,9 +566,8 @@ local function LoadChat()
         QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
         QuickJoinToastButton.FriendsButton:Hide()
 
-        local function NoOp() end
-        QuickJoinToastButton.ClearAllPoints = NoOp
-        QuickJoinToastButton.SetPoint = NoOp
+        QuickJoinToastButton.ClearAllPoints = GW.NoOp
+        QuickJoinToastButton.SetPoint = GW.NoOp
     end
 
     for i = 1, FCF_GetNumActiveChatFrames() do

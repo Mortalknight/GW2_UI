@@ -23,9 +23,8 @@ local function SkinBNToastFrame()
         self:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 
         -- remove SetPoint after "OnShow" function
-        local function NoOp() end
-        self.ClearAllPoints = NoOp
-        self.SetPoint = NoOp
+        self.ClearAllPoints = GW.NoOp
+        self.SetPoint = GW.NoOp
     end)
 
     RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy")
