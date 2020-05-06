@@ -22,8 +22,8 @@ local notification_priority = {}
 notification_priority["EVENT_NEARBY"] = 1
 notification_priority["SCENARIO"] = 2
 notification_priority["EVENT"] = 3
-notification_priority["BOSS"] = 4
-notification_priority["ARENA"] = 5
+notification_priority["ARENA"] = 4
+notification_priority["BOSS"] = 5
 
 local function prioritys(a, b)
     if a == nil or a == "" then
@@ -245,7 +245,7 @@ local function SetObjectiveNotification(mapID)
     for k, v in pairs(notifications) do
         if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
             if data ~= nil then
-                if prioritys(data["KEY"], notifications[k]["KEY"]) then
+                if prioritys(data["TYPE"], notifications[k]["TYPE"]) then
                     data = notifications[k]
                 end
             else
@@ -268,7 +268,7 @@ local function SetObjectiveNotification(mapID)
         return
     end
 
-    local key = data["KEY"]
+    local key = data["TYPE"]
     local title = data["TITLE"]
     local desc = data["DESC"]
     local color = data["COLOR"]
@@ -339,9 +339,10 @@ local function SetObjectiveNotification(mapID)
 
     if desc == nil or desc == "" then
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
-        
     else
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
+        GwObjectivesNotification.desc:SetSize(300, GwObjectivesNotification.desc:GetStringHeight())
+        GwObjectivesNotification.compassBG:SetSize(300, GwObjectivesNotification.desc:GetHeight() + 50)
     end
     GwObjectivesNotification.shouldDisplay = true
 end

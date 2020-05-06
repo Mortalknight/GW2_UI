@@ -809,7 +809,7 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
-        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
+        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
         end
         if UnitInBattleground("player") == nil and select(1, GetZonePVPInfo()) ~= "arena" then

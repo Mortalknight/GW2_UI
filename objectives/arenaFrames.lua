@@ -318,7 +318,10 @@ local function registerFrame(i)
         function()
             countArenaFrames = countArenaFrames - 1
             updateArenaFrameHeight("GwQuestTrackerArenaFrame")
-            if countArenaFrames < 1 then
+            local isArena = GetZonePVPInfo()
+            local inBG = UnitInBattleground("player")
+
+            if countArenaFrames < 1 and isArena ~= "arena" and inBG == nil then
                 RemoveTrackerNotificationOfType("ARENA")
                 countArenaFrames = 0
             end

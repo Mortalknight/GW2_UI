@@ -288,6 +288,8 @@ local function pvpHud_onEvent(self, event)
 
         GwBattleGroundScores.hasTimer = false
         GwBattleGroundScores.TrackFlag = false
+        GwBattleGroundScores:SetScript("OnEvent", nil)
+        GwBattleGroundScores:SetScript("OnUpdate", nil)
         GwBattleGroundScores:SetScript("OnEvent", bgs[mapID]["OnEvent"])
         if bgs[mapID]["OnUpdate"] then
             GwBattleGroundScores:SetScript("OnUpdate", bgs[mapID]["OnUpdate"])
@@ -314,6 +316,8 @@ local function pvpHud_onEvent(self, event)
     else
         GwBattleGroundScores:UnregisterAllEvents()
         GwBattleGroundScores:Hide()
+        GwBattleGroundScores.hasTimer = false
+        GwBattleGroundScores.TrackFlag = false
         GwBattleGroundScores:SetScript("OnEvent", nil)
         GwBattleGroundScores:SetScript("OnUpdate", nil)
         UIWidgetTopCenterContainerFrame:Show()
