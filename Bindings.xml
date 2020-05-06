@@ -9,4 +9,12 @@
     <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM4"/>
     <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM9"/>
     <Binding category="BINDING_HEADER_GW2UI" name="CLICK GwDodgeBar:LeftButton" header="GW2UI_MOVE_BINDINGS"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="BagSort" header="GW2UI_INVENTORY_BINDINGS" runOnUp="false">
+        PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
+        SortBags()
+    </Binding>
+    <Binding category="BINDING_HEADER_GW2UI" name="BankSort" runOnUp="false">
+        PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
+        SortBankBags()
+    </Binding>
 </Bindings>

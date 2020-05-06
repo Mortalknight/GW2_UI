@@ -203,13 +203,17 @@ local function handleChatFrameFadeIn(chatFrame)
             end   
         end
 
-        UIFrameFadeIn(_G["GwChatContainer" .. 1], 0.5, _G["GwChatContainer" .. 1]:GetAlpha(), 1)
+        UIFrameFadeIn(_G["GwChatContainer1"], 0.5, _G["GwChatContainer1"]:GetAlpha(), 1)
         UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
     elseif chatFrame.isDocked == nil then
-        UIFrameFadeIn(_G["GwChatContainer" .. chatFrame:GetID()], 0.5, _G["GwChatContainer" .. chatFrame:GetID()]:GetAlpha(), 1)
+        if chatFrame.Container then
+            UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
+        end
     end
 
-    UIFrameFadeIn(_G["CopyChatButton" .. chatFrame:GetID()], 0.5, _G["CopyChatButton" .. chatFrame:GetID()]:GetAlpha(), 0.35)
+    if chatFrame.button then
+        UIFrameFadeIn(chatFrame.button, 0.5, chatFrame.button:GetAlpha(), 0.35)
+    end
 
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
@@ -248,13 +252,16 @@ local function handleChatFrameFadeOut(chatFrame)
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
         end
-        UIFrameFadeOut(_G["GwChatContainer" .. 1], 2, _G["GwChatContainer" .. 1]:GetAlpha(), chatAlpha)
+        UIFrameFadeOut(_G["GwChatContainer1"], 2, _G["GwChatContainer1"]:GetAlpha(), chatAlpha)
     elseif chatFrame.isDocked == nil then
-        UIFrameFadeOut(_G["GwChatContainer" .. chatFrame:GetID()], 2, _G["GwChatContainer" .. chatFrame:GetID()]:GetAlpha(), chatAlpha)
-        UIFrameFadeOut(chatFrame.buttonFrame, 2, chatFrame.buttonFrame:GetAlpha(), 0)
+        if chatFrame.Container then
+            UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
+        end
     end
 
-    UIFrameFadeOut(_G["CopyChatButton" .. chatFrame:GetID()], 2, _G["CopyChatButton" .. chatFrame:GetID()]:GetAlpha(), 0)
+    if chatFrame.button then
+        UIFrameFadeOut(chatFrame.button, 2, chatFrame.button:GetAlpha(), 0)
+    end
 
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeOut(chatTab, 2, chatTab:GetAlpha(), 0)
@@ -433,7 +440,7 @@ local function styleChatWindow(frame)
     if frame.hasContainer then setButtonPosition(frame) end
 
     --copy chat button
-    frame.button = CreateFrame("Frame", format("CopyChatButton%d", id), frame)
+    frame.button = CreateFrame("Frame", nil, frame)
     frame.button:EnableMouse(true)
     frame.button:SetAlpha(0.35)
     frame.button:SetSize(20, 22)

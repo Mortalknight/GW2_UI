@@ -532,6 +532,10 @@ end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
 local function LoadInventory()
+    _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP
+    _G["BINDING_NAME_BagSort"] = BAG_CLEANUP_BAGS
+    _G["BINDING_NAME_BankSort"] = BAG_CLEANUP_BANK
+    
     item_size = GetSetting("BAG_ITEM_SIZE")
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
