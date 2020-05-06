@@ -684,7 +684,7 @@ local function LoadBag(helpers)
         "OnClick",
         function(self)
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
-            GW.SortBags()
+            GW_SortBags()
         end
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)

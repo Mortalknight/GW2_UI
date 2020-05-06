@@ -9,6 +9,8 @@ local GetSetting = GW.GetSetting
 local IncHeal = {}
 local HealComm = LibStub("LibHealComm-4.0", true)
 
+local hg
+
 local function repair_OnEvent(self, event, ...)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
         return
@@ -215,10 +217,10 @@ GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
 local function UpdateIncomingPredictionAmount(...)
     for i = 1, select("#", ...) do
-        if (select(i, ...) == GwHealthGlobe.guid) and (UnitPlayerOrPetInParty(GwHealthGlobe.unit) or UnitPlayerOrPetInRaid(GwHealthGlobe.unit) or UnitIsUnit("player", GwHealthGlobe.unit) or UnitIsUnit("pet", GwHealthGlobe.unit)) then
-            local amount = (HealComm:GetHealAmount(GwHealthGlobe.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(GwHealthGlobe.guid) or 1)
-            GwHealthGlobe.healPredictionAmount = amount
-            updateHealthData(GwHealthGlobe)
+        if (select(i, ...) == hg.guid) and (UnitPlayerOrPetInParty(hg.unit) or UnitPlayerOrPetInRaid(hg.unit) or UnitIsUnit("player", hg.unit) or UnitIsUnit("pet", hg.unit)) then
+            local amount = (HealComm:GetHealAmount(hg.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(hg.guid) or 1)
+            hg.healPredictionAmount = amount
+            updateHealthData(hg)
             break
         end
     end
@@ -239,7 +241,7 @@ function IncHeal:HealComm_GUIDDisappeared(event, guid)
 end
 
 local function LoadHealthGlobe()
-    local hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
+    hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
     GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space

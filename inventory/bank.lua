@@ -486,7 +486,7 @@ local function LoadBank(helpers)
         function(self)
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
             if self:GetParent().ItemFrame:IsShown() then
-                GW.SortBankBags()
+                GW_SortBankBags()
             end
         end
     )

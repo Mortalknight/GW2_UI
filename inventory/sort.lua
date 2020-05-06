@@ -7,7 +7,7 @@ CreateFrame('GameTooltip', 'SortBagsTooltip', nil, 'GameTooltipTemplate')
 
 local CONTAINERS
 
-local function SortBags()
+function GW_SortBags()
 	CONTAINERS = {0, 1, 2, 3, 4}
 	SortBagsRightToLeft = GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
 	for i = #CONTAINERS, 1, -1 do
@@ -17,9 +17,8 @@ local function SortBags()
 	end
 	Start()
 end
-GW.SortBags = SortBags
 
-local function SortBankBags()
+function GW_SortBankBags()
 	CONTAINERS = {-1, 5, 6, 7, 8, 9, 10}
 	SortBagsRightToLeft = GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
 	for i = #CONTAINERS, 1, -1 do
@@ -29,7 +28,6 @@ local function SortBankBags()
 	end
 	Start()
 end
-GW.SortBankBags = SortBankBags
 
 local function GetSortBagsRightToLeft(enabled)
 	return GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
