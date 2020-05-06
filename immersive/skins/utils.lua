@@ -38,6 +38,30 @@ local constBackdropFrameBorder = {
 }
 GW.skins.constBackdropFrameBorder = constBackdropFrameBorder
 
+local constBackdropDropDown = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/gwstatusbar",
+    edgeFile = "",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.skins.constBackdropDropDown = constBackdropDropDown
+
+local function CreateBackdrop(frame)
+    local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
+    if not frame.backdrop then frame.backdrop = backdrop end
+
+    local frameLevel = parent.GetFrameLevel and parent:GetFrameLevel()
+    local frameLevelMinusOne = frameLevel and (frameLevel - 1)
+    if frameLevelMinusOne and (frameLevelMinusOne >= 0) then
+        backdrop:SetFrameLevel(frameLevelMinusOne)
+    else
+        backdrop:SetFrameLevel(0)
+    end
+end
+
 local function SkinButton(button, isXButton, setTextColor, onlyHover)
     if not button or button.isSkinned then return end
 
@@ -235,46 +259,117 @@ local function SkinScrollBar(frame)
 end
 GW.skins.SkinScrollBar = SkinScrollBar
 
-local function SkinDropDownMenu(self)
-    if self.Left then self.Left:Hide() end
-    if self.Middle then self.Middle:Hide() end
-    if self.Right then self.Right:Hide() end
+local function SkinDropDownMenu(frame)
+    local frameName = frame.GetName and frame:GetName()
+    local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
+    local text = frameName and _G[frameName .. "Text"] or frame.Text
+    local icon = frame.Icon
 
-    if self.Button then
-        self.Button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-        self.Button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-        self.Button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-        self.Button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    if not width then
+        width = 155
     end
 
-    if self.Left and self.Right then
-        local tex = self:CreateTexture("bg", "BACKGROUND")
-        tex:SetPoint("TOP", self, "TOP", 0, 0)
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
-        tex:SetPoint("TOPLEFT", self.Left, "BOTTOMRIGHT", 0, 23)
-        tex:SetPoint("BOTTOMRIGHT", self.Right, "TOPLEFT", 10, -20)
-        tex:SetVertexColor(0, 0, 0)
-        self.tex = tex
+    GW.StripTextures(frame)
+    frame:SetWidth(width)
+
+    CreateBackdrop(frame)
+    frame.backdrop:SetBackdrop(constBackdropDropDown)
+    frame.backdrop:SetBackdropColor(0, 0, 0)
+
+    frame:SetFrameLevel(frame:GetFrameLevel() + 2)
+    frame.backdrop:SetPoint("TOPLEFT", 20, -2)
+    frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
+
+    button:ClearAllPoints()
+
+    if pos then
+        button:SetPoint("TOPRIGHT", frame.Right, -20, -21)
+    else
+        button:SetPoint("RIGHT", frame, "RIGHT", -10, 3)
+    end
+
+    button.SetPoint = GW.NoOp
+    button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+
+    if text then
+        text:ClearAllPoints()
+        text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+    end
+
+    if icon then
+        icon:SetPoint("LEFT", 23, 0)
     end
 end
 GW.skins.SkinDropDownMenu = SkinDropDownMenu
 
 local function SkinUIDropDownMenu()
-    hooksecurefunc("UIDropDownMenu_Initialize", SkinDropDownMenu)
+    hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
+        local listFrame = _G["DropDownList" .. level]
+        local listFrameName = listFrame:GetName()
+        local expandArrow = _G[listFrameName .. "Button" .. index .. "ExpandArrow"];
+        if expandArrow then
+            expandArrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+            expandArrow:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+            expandArrow:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+            expandArrow:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+        end
+    
+        local Backdrop = _G[listFrameName .. "Backdrop"]
+        GW.StripTextures(Backdrop)
+        Backdrop:SetBackdrop(constBackdropFrame)
+    
+        local menuBackdrop = _G[listFrameName .. "MenuBackdrop"]
+        GW.StripTextures(menuBackdrop)
+        menuBackdrop:SetBackdrop(constBackdropFrame)
+    end)
 end
 
 local function SkinDropDownList()
-    local SkinDropDownList_OnUpdate = function(self)
-        _G[self:GetName() .. "Backdrop"]:Hide()
-        _G[self:GetName() .. "MenuBackdrop"]:Hide()
-        self:SetBackdrop(constBackdropFrame)
-        for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
-            if _G[self:GetName() .. "Button" .. i .. "ExpandArrow"] then
-                _G[self:GetName() .. "Button" .. i .. "ExpandArrow"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    hooksecurefunc("ToggleDropDownMenu", function(level)
+        if not level then
+            level = 1
+        end
+
+        for i = 1, _G.UIDROPDOWNMENU_MAXBUTTONS do
+            local button = _G["DropDownList" .. level .. "Button" .. i]
+            local check = _G["DropDownList" .. level .. "Button" .. i .. "Check"]
+            local uncheck = _G["DropDownList" .. level .. "Button" .. i .. "UnCheck"]
+            local arrow = _G["DropDownList" .. level .. "Button" .. i .. "ExpandArrow"]
+
+            if not button.backdrop then
+                CreateBackdrop(button)
+            end
+
+            button.backdrop:Hide()
+
+            if button.hasArrow then
+                arrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+            end
+
+            if not button.notCheckable then
+                local _, co = check:GetTexCoord()
+                if co == 0 then
+                    check:SetTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked")
+                    check:SetTexCoord(0, 1, 0, 1)
+                    check:SetSize(13, 13)
+                    uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/checkbox")
+                    uncheck:SetTexCoord(0, 1, 0, 1)
+                    uncheck:SetSize(13, 13)
+                end
+
             end
         end
-    end
-    hooksecurefunc("UIDropDownMenu_OnUpdate", SkinDropDownList_OnUpdate)
+    end)
+
+    hooksecurefunc("UIDropDownMenu_SetIconImage", function(icon, texture)
+        if texture:find("Divider") then
+            icon:SetColorTexture(1, 0.93, 0.73, 0.45)
+            icon:SetHeight(1)
+        end
+    end)
 end
 
 local function SkinDropDown()
