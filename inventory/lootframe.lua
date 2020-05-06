@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function updateLootFrameButtons()
     for i=1,4 do
@@ -16,7 +17,6 @@ local function SkinLooTFrame()
     LootFramePortraitFrame:Hide()
     LootFramePortraitOverlay:Hide()
     LootFrameInset:Hide()
-    --LootFrame.NineSlice:Hide()
     LootFrameTopBorder:Hide()
     LootFrameTopRightCorner:Hide()
     LootFrameRightBorder:Hide()
@@ -77,6 +77,6 @@ local function SkinLooTFrame()
         _G["LootButton"..i.."Text"]:SetFont(UNIT_NAME_FONT, 12)
     end
 
-    hooksecurefunc("LootFrame_Update",updateLootFrameButtons)
+    hooksecurefunc("LootFrame_Update", updateLootFrameButtons)
 end
 GW.SkinLooTFrame = SkinLooTFrame

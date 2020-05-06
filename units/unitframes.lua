@@ -107,7 +107,7 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
-        local _, classFilename, classIndex = UnitClass(self.unit)
+        local _, englishClass, classIndex = UnitClass(self.unit)
         local color = GWGetClassColor(englishClass, true)
 
         self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
