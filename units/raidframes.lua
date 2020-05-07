@@ -831,16 +831,16 @@ local function GetRaidFramesMeasures(players)
 
     if per > 0 then
         cells1 = min(cells1, per)
-        if sizeMax1 > 0 then
+        if tonumber(sizeMax1) > 0 then
             sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
         end
-    elseif sizeMax1 > 0 then
+    elseif tonumber(sizeMax1) > 0 then
         cells1 = max(1, min(players, floor((sizeMax1 + m) / (sizePer1 + m))))
     end
 
     local cells2 = ceil(players / cells1)
 
-    if sizeMax2 > 0 then
+    if tonumber(sizeMax2) > 0 then
         sizePer2 = min(sizePer2, (sizeMax2 + m) / cells2 - m)
     end
 
