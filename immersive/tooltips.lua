@@ -388,7 +388,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
 
         local unitReaction = UnitReaction(unit, "player")
         local nameColor = unitReaction and showClassColor and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
-        if unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+        if unitReaction and unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
         local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
 
         _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
