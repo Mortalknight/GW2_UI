@@ -591,3 +591,23 @@ local function vernotes(ver, notes)
     GW.GW_CHANGELOGS = GW.GW_CHANGELOGS .. "\n" .. ver .. "\n\n" .. notes .. "\n\n"
 end
 GW.vernotes = vernotes
+
+-- create custom UIFrameFlash animation
+local function FrameFlash(frame, fadeInTime, fadeOutTime, flashDuration)
+    if not frame.flasher then
+        local flasher = frame:CreateAnimationGroup()
+        local fade1 = flasher:CreateAnimation("Alpha")
+        fade1:SetDuration(fadeInTime)
+        fade1:SetToAlpha(1)
+        fade1:SetOrder(1)
+        local fade2 = flasher:CreateAnimation("Alpha")
+        fade2:SetDuration(fadeOutTime)
+        fade2:SetToAlpha(0)
+        fade2:SetOrder(2)
+        fade2:SetStartDelay(flashDuration)
+        frame.flasher = flasher
+    end
+
+    frame.flasher:Play()
+end
+GW.FrameFlash = FrameFlash

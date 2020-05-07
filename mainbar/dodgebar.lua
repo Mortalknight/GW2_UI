@@ -2,6 +2,7 @@ local _, GW = ...
 local Wait = GW.Wait
 local Debug = GW.Debug
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
+local FrameFlash = GW.FrameFlash
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -34,7 +35,7 @@ local function fill_OnFinished(self, flag)
     local fm = f:GetParent():GetParent()
     fm:UnregisterEvent("SPELL_UPDATE_CHARGES")
     fm:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
-    UIFrameFlash(fm.arcfill.spark, 0.1, 0.1, 0.2, false, 0, 0)
+    FrameFlash(fm.arcfill.spark, 0.1, 0.1, 0.2)
     f:SetRotation(FULL_IN_RAD)
 end
 GW.AddForProfiling("dodgebar", "fill_OnFinished", fill_OnFinished)
@@ -52,7 +53,7 @@ local function updateAnim(self, start, duration, charges, maxCharges)
 
     -- spark if charge count has changed
     if not self.gwNeedDrain and self.gwCharges ~= charges then
-        UIFrameFlash(self.arcfill.spark, 0.1, 0.1, 0.2, false, 0, 0)
+        FrameFlash(self.arcfill.spark, 0.1, 0.1, 0.2)
     end
     self.gwCharges = charges
 
