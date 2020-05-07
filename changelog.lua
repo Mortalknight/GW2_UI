@@ -38,6 +38,9 @@ v(
     - Chat window can now be separated and moved to the rightside of the screen
     - Added toggle for HUD background
     - Buffs can be canceled in combat
+    - Added Keybinds for "Sort Bag" and "Sort Bank"
+    - Added LibThreatClassic2
+    - Added option to show threath value on target frame
 
 ]=]
 )

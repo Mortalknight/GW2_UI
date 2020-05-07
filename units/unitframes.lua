@@ -22,6 +22,7 @@ local UnitAura = _G.UnitAura
 local LibClassicDurations = LibStub("LibClassicDurations", true)
 local LibCC = LibStub("LibClassicCasterino", true)
 local HealComm = LibStub("LibHealComm-4.0", true)
+local ThreatLib = LibStub:GetLibrary("LibThreatClassic2", true)
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -41,6 +42,9 @@ local function createNormalUnitFrame(ftype)
 
     f.nameString:SetFont(UNIT_NAME_FONT, 14)
     f.nameString:SetShadowOffset(1, -1)
+
+    f.threatString:SetFont(STANDARD_TEXT_FONT, 11)
+    f.threatString:SetShadowOffset(1, -1)
 
     f.levelString:SetFont(UNIT_NAME_FONT, 14)
     f.levelString:SetShadowOffset(1, -1)
@@ -418,6 +422,21 @@ local function updatePowerValues(self, event)
 end
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
+local function updateThreatValues(self)
+    self.threatValue = select(3, ThreatLib:UnitDetailedThreatSituation("player", self.unit))
+
+    if self.threatValue == nil then
+        self.threatString:SetText("")
+        self.threattabbg:SetAlpha(0.0)
+    else
+        --self.threatString:SetTextColor(ThreatLib:GetThreatStatusColor(select(2, ThreatLib:UnitDetailedThreatSituation("player", self.unit))))
+        self.threatString:SetText(RoundDec(self.threatValue, 0) .. "%")
+        self.threattabbg:SetAlpha(1.0)
+
+    end
+end
+GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
+
 local function updateHealthValues(self, event)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
@@ -490,6 +509,12 @@ local function target_OnEvent(self, event, unit)
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED") then
+        if self.showThreat then
+            updateThreatValues(self)
+        elseif self.threattabbg:IsShown() then
+            self.threattabbg:Hide()
+        end
+
         unitFrameData(self, event)
         if (ttf) then unitFrameData(ttf, event) end
         updateHealthValues(self, event)
@@ -626,6 +651,8 @@ local function LoadTarget()
     NewUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     NewUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")
 
+    NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
+
     NewUnitFrame.debuffFilter = "PLAYER|HARMFUL"
 
     if GetSetting("target_BUFFS_FILTER_ALL") == true then
@@ -676,6 +703,13 @@ local function LoadTarget()
     LibClassicDurations.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
         target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
     end)    
+
+    if NewUnitFrame.showThreat then
+        ThreatLib.RegisterCallback(NewUnitFrame, "ThreatUpdated", function(event, unitguid, targetguid)
+            if targetguid == UnitGUID("target") then updateThreatValues(NewUnitFrame) end
+        end)
+        ThreatLib:RequestActiveOnSolo()
+    end
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 

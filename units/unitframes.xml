@@ -13,14 +13,21 @@
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
                 </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="portrait" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="58" y="58"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="25" y="-7"></Anchor>
                     </Anchors>
                 </Texture>
+                <Texture parentKey="threattabbg" file="Interface\AddOns\GW2_UI\textures\unittab" alpha="0.0">
+                    <Size x="40" y="33"/>
+                    <TexCoords top="1.0" bottom="0.0" left="0.0" right="1.0" />
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativeKey="$parent.portrait" relativepoint="BOTTOM" x="1" y="-25"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="healthbarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
                     <Size x="215" y="15"/>
                     <Anchors>
@@ -142,6 +149,12 @@
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="CENTER">
+                    <Size x="38" y="30"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.threattabbg" relativePoint="CENTER" x="0" y="1"></Anchor>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="CENTER">

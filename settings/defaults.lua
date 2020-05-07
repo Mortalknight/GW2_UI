@@ -94,10 +94,6 @@ GW_DEFAULT["RAID_STYLE_PARTY"] = false
 GW_DEFAULT["RAID_UNIT_FLAGS"] = "NONE"
 GW_DEFAULT["RAID_UNIT_MARKERS"] = false
 
-GW_DEFAULT["target_HEALTH_VALUE_ENABLED"] = false
-GW_DEFAULT["target_HEALTH_VALUE_TYPE"] = false
-GW_DEFAULT["target_CLASS_COLOR"] = true
-
 GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_1"] = false
 GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_2"] = false
 GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_3"] = false
@@ -120,10 +116,14 @@ GW_DEFAULT["target_TARGET_ENABLED"] = true
 GW_DEFAULT["target_DEBUFFS"] = true
 GW_DEFAULT["target_DEBUFFS_FILTER"] = true
 GW_DEFAULT["target_BUFFS"] = true
+GW_DEFAULT["target_THREAT_VALUE_ENABLED"] = false
 GW_DEFAULT["target_BUFFS_FILTER"] = true
 GW_DEFAULT["target_BUFFS_FILTER_ALL"] = false
 GW_DEFAULT["target_HOOK_COMBOPOINTS"] = false
 GW_DEFAULT["target_AURAS_ON_TOP"] = false
+GW_DEFAULT["target_HEALTH_VALUE_ENABLED"] = false
+GW_DEFAULT["target_HEALTH_VALUE_TYPE"] = false
+GW_DEFAULT["target_CLASS_COLOR"] = true
 
 GW_DEFAULT["multibarleft_pos"] = {}
 GW_DEFAULT["multibarleft_pos"]["point"] = "RIGHT"

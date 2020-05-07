@@ -30,6 +30,7 @@ local function LoadTargetPanel(sWindow)
     addOption(p_target, SHOW_DEBUFFS, L["SHOW_DEBUFFS_DESC"], "target_DEBUFFS", nil, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target, SHOW_ALL_ENEMY_DEBUFFS_TEXT, L["SHOW_ALL_DEBUFFS_DESC"], "target_BUFFS_FILTER_ALL", nil, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target, SHOW_BUFFS, L["SHOW_BUFFS_DESC"], "target_BUFFS", nil, nil, {["TARGET_ENABLED"] = true})
+    addOption(p_target, L["SHOW_THREAT_VALUE"], L["SHOW_THREAT_VALUE"], "target_THREAT_VALUE_ENABLED", nil, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target, L["TARGET_COMBOPOINTS"], L["TARGET_COMBOPOINTS_DEC"], "target_HOOK_COMBOPOINTS", nil, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target, BUFFS_ON_TOP, nil, "target_AURAS_ON_TOP", nil, nil, {["TARGET_ENABLED"] = true})
 

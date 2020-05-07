@@ -33,6 +33,9 @@
 - Added Auto repair mode
 - Added toggle for HUD background
 - Buffs can be canceled in combat
+- Added Keybinds for "Sort Bag" and "Sort Bank"
+- Added LibThreatClassic2
+- Added option to show threath value on target frame
 
 1.7.3
 - Added more stats to the extended stats (hover over the 'Attribute'-label)
