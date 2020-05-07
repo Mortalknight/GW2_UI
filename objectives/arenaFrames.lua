@@ -206,40 +206,40 @@ local function arenaFrame_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 
-local function arenaPrepFrame_OnEvent(self, event)
-    if event == "ARENA_PREP_OPPONENT_SPECIALIZATIONS" then
-        --Hide Blizzard frames
-        for i = 1, 5 do
-            if _G["ArenaPrepFrame" .. i] ~= nil then
-                _G["ArenaPrepFrame" .. i]:SetAlpha(0)
-                _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
-            end
-        end
-        local specID, gender = GetArenaOpponentSpec(self.id)
-        local nameString = UNKNOWEN
-        local className, classFile
+local function arenaPrepFrame_OnEvent()
+    local numOpps = GetNumArenaOpponentSpecs()
 
-        if specID == nil then 
-            return
-        end
-        if specID and specID > 0 then
-            local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)
-            for i = 1, GetNumClasses() do
-                className, classFile = GetClassInfo(i)
-                if class == classFile then
-                    break
+    for i = 1, _G.MAX_ARENA_ENEMIES do
+        local prepFrame = _G["GwQuestTrackerArenaPrepFrame" .. i]
+        if i <= numOpps then
+            local specID, gender = GetArenaOpponentSpec(i)
+            if specID > 0 then 
+                local nameString = UNKNOWEN
+                local className, classFile
+                local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)
+                for i = 1, GetNumClasses() do
+                    className, classFile = GetClassInfo(i)
+                    if class == classFile then
+                        break
+                    end
                 end
+                if nameRoleIcon[role] ~= nil then
+                    nameString = nameRoleIcon[role] .. className .. " - " .. specName
+                else
+                    nameString = className .. " - " .. specName
+                end   
+                prepFrame.name:SetText(nameString)
+                prepFrame.health:SetStatusBarColor(0.5, 0.5, 0.5)
+                prepFrame.power:SetStatusBarColor(0.5, 0.5, 0.5)
+                SetClassIcon(prepFrame.icon, class)
+                prepFrame:Show()
+            else
+                prepFrame:Hide()
             end
-            if nameRoleIcon[role] ~= nil then
-                nameString = nameRoleIcon[role] .. className .. " - " .. specName
-            end
-            self.name:SetText(nameString)
-            self.health:SetStatusBarColor(0.5, 0.5, 0.5)
-            self.power:SetStatusBarColor(0.5, 0.5, 0.5)
-            SetClassIcon(self.icon, class)
-            self:Show()
+        else
+            prepFrame:Hide()
         end
-    end   
+    end 
 end
 GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
 
@@ -349,37 +349,25 @@ local function registerPrepFrame(i)
 
     targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
-    targetF.id = i
-
     targetF:EnableMouse(true)
     targetF:RegisterForClicks("AnyDown")
 
     targetF.name:SetFont(UNIT_NAME_FONT, 12)
     targetF.name:SetShadowOffset(1, -1)
 
-    targetF:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
-
     targetF:SetScript(
         "OnShow",
         function(self)
             updateArenaFrameHeight("GwQuestTrackerArenaPrepFrame")
             countArenaPrepFrames = countArenaPrepFrames + 1
-
-            --Hide Blizzard frames
-            for i = 1, 5 do
-                if _G["ArenaPrepFrame" .. i] ~= nil then
-                    _G["ArenaPrepFrame" .. i]:Hide()
-                    _G["ArenaPrepFrame" .. i]:HookScript("OnShow", function() _G["ArenaPrepFrame" .. i]:Hide() end)
-                    _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
-                end
-            end
         end
     )
-    targetF:SetScript("OnEvent", arenaPrepFrame_OnEvent)
 end
 GW.AddForProfiling("arenaFrames", "registerPrepFrame", registerPrepFrame)
 
 local function LoadArenaFrame()
+    Arena_LoadUI()
+
     for i = 1, 5 do
         registerFrame(i)
         registerPrepFrame(i)
@@ -393,11 +381,22 @@ local function LoadArenaFrame()
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
             _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnShow", nil)
         end
-        if _G["ArenaPrepFrame" .. i] ~= nil then
-            _G["ArenaPrepFrame" .. i]:Hide()
-            _G["ArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
-        end
     end
+
+    _G.ArenaPrepFrames:HookScript("OnLoad", function(self)
+        self:Hide()
+        self:SetScript("OnEvent", nil)
+    end)
+
+    _G.ArenaPrepFrames:HookScript("OnShow", function(self)
+        self:Hide()
+        self:SetScript("OnEvent", nil)
+    end)
+
+    --create prepframe frame to handle events
+    local arenaPrepFrame = CreateFrame("Frame")
+    arenaPrepFrame:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+    arenaPrepFrame:SetScript("OnEvent", arenaPrepFrame_OnEvent)
 
     -- Log event for compass Header
     local f = CreateFrame("Frame")

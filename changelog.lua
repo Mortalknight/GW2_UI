@@ -40,6 +40,7 @@ NEW
 
 FIXES
     - Chat window can now be separated and moved to the rightside of the screen
+    - Arena prep frames are now displayes correctly
 ]=]
 )
 

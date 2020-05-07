@@ -184,15 +184,15 @@ local function NotificationStateChanged(show)
     AddToAnimation(
         "notificationToggle",
         0,
-        70,
+        GwObjectivesNotification.desc:GetHeight() + 50,
         GetTime(),
         0.2,
         function(step)
             if show == false then
-                step = 70 - step
+                step = GwObjectivesNotification.desc:GetHeight() + 50 - step
             end
 
-            GwObjectivesNotification:SetAlpha(step / 70)
+            GwObjectivesNotification:SetAlpha(step / GwObjectivesNotification.desc:GetHeight() + 50)
             GwObjectivesNotification:SetHeight(math.max(step, 1))
         end,
         nil,
