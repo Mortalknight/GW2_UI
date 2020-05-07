@@ -31,6 +31,7 @@ NEW
         - Style: Secure (can be canceld in combat); Legacy (sorted)
         - Set the grow direction (left, right, up, down)
         - Set auras per row
+    - Added Keybinds for "Sort Bag" and "Sort Bank"
     - Update locals (zhTW, ptBR)
 
 FIXES
