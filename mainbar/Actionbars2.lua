@@ -707,22 +707,22 @@ local function setStanceBar()
 
     SBB:ClearAllPoints()
     if GetSetting("STANCEBAR_POSITION") == "LEFT" then
-        SBB:SetPoint('BOTTOMRIGHT', ActionButton1, 'BOTTOMLEFT', -5, 0)
+        SBB:SetPoint("BOTTOMRIGHT", ActionButton1, "BOTTOMLEFT", -5, 0)
     else
-        SBB:SetPoint('BOTTOMLEFT', ActionButton12, 'BOTTOMRIGHT', 5, 0)
+        SBB:SetPoint("BOTTOMLEFT", ActionButton12, "BOTTOMRIGHT", 5, 0)
     end
 
     if GetNumShapeshiftForms() == 1 then
         StanceButton1:ClearAllPoints()
         if GetSetting("STANCEBAR_POSITION") == "LEFT" then
-            StanceButton1:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
+            StanceButton1:SetPoint("TOPRIGHT", ActionButton1, "TOPLEFT", -5, 2)
         else
-            StanceButton1:SetPoint('TOPLEFT', ActionButton12, 'TOPRIGHT', 5, 2)
+            StanceButton1:SetPoint("TOPLEFT", ActionButton12, "TOPRIGHT", 5, 2)
         end
     else
         SBC = getStanceBarContainer()
         SBC:ClearAllPoints()
-        SBC:SetPoint('BOTTOM', SBB, 'TOP', 0, 0)
+        SBC:SetPoint("BOTTOM", SBB, "TOP", 0, 0)
         
         StanceBarFrame:SetParent(SBC)
         StanceBarFrame:SetPoint("BOTTOMLEFT", SBB, "TOPLEFT", 0, 0)
@@ -1100,5 +1100,19 @@ local function LoadActionBars(lm)
     UIPARENT_MANAGED_FRAME_POSITIONS["TalkingHeadFrame"] = nil
 
     AlertFrame.UpdateAnchors = updateAnchors
+
+    --replace bags if our inventory is disabled
+    if not GetSetting("BAGS_ENABLED") then
+        CharacterBag0Slot:ClearAllPoints()
+        CharacterBag1Slot:ClearAllPoints()
+        CharacterBag2Slot:ClearAllPoints()
+        CharacterBag3Slot:ClearAllPoints()
+
+        MainMenuBarBackpackButton:SetPoint("RIGHT", ActionButton12, "RIGHT", ActionButton12:GetWidth() + 64, 0)
+        CharacterBag0Slot:SetPoint("LEFT", MainMenuBarBackpackButton, "RIGHT", 0, 0)
+        CharacterBag1Slot:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
+        CharacterBag2Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
+        CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
+    end
 end
 GW.LoadActionBars = LoadActionBars
