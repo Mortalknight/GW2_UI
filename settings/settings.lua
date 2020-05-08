@@ -612,6 +612,9 @@ local function LoadSettings()
     end
     local fnMf_OnDragStop = function(self)
         self:StopMovingOrSizing()
+
+        -- check if frame is out of screen, if yes move it back
+        ValidateFramePosition(self)
     end
     local mf = CreateFrame("Frame", "GwSettingsMoverFrame", UIParent, "GwSettingsMoverFrame")
     mf:RegisterForDrag("LeftButton")
