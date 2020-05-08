@@ -467,7 +467,7 @@ local function onMoved(self, setting, snap_size)
     self:StopMovingOrSizing()
     -- check if frame is out of screen, if yes move it back
     ValidateFramePosition(self)
-    
+
     local x = self:GetLeft()
     local y = self:GetTop()
 
@@ -536,8 +536,8 @@ GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
 local function LoadInventory()
     _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP
-    _G["BINDING_NAME_BagSort"] = BAG_CLEANUP_BAGS
-    _G["BINDING_NAME_BankSort"] = BAG_CLEANUP_BANK
+    _G["BINDING_NAME_GW2UI_BAG_SORT"] = BAG_CLEANUP_BAGS
+    _G["BINDING_NAME_GW2UI_BANK_SORT"] = BAG_CLEANUP_BANK
     
     item_size = GetSetting("BAG_ITEM_SIZE")
 
