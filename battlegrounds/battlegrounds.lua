@@ -430,6 +430,9 @@ local function LoadBattlegrounds()
         [1803] = { --SeethingShore
             ["OnEvent"] = OnlyPoints_onEvent
         },
+        [628] = { --Isle Of Conquest
+            ["OnEvent"] = OnlyPoints_onEvent
+        },
         [998] = { --TempleOfKotmogu (TODO: Add orb carrier to top)
             ["OnEvent"] = PointsAndPOI_onEvent,
             ["icons"] = {}
