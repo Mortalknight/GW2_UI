@@ -856,17 +856,31 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
                     btn.changedColor = true
                 end
             else
+                local isUsable, notEnoughMana = IsUsableAction(btn.action)
+
                 if btn.rangeIndicatorSetting == "RED_INDICATOR" then
                     btn.gw_RangeIndicator:Hide()
                 elseif btn.rangeIndicatorSetting == "RED_OVERLAY" then
                     if btn.changedColor then
-                        btn.icon:SetVertexColor(1, 1, 1)
+                        if isUsable then
+                            btn.icon:SetVertexColor(1, 1, 1)
+                        elseif notEnoughMana then
+                            btn.icon:SetVertexColor(0.5, 0.5, 1.0)
+                        else
+                            btn.icon:SetVertexColor(0.4, 0.4, 0.4)
+                        end
                         btn.changedColor = false
                     end
                 elseif btn.rangeIndicatorSetting == "BOTH" then
                     btn.gw_RangeIndicator:Hide()
                     if btn.changedColor then
-                        btn.icon:SetVertexColor(1, 1, 1)
+                        if isUsable then
+                            btn.icon:SetVertexColor(1, 1, 1)
+                        elseif notEnoughMana then
+                            btn.icon:SetVertexColor(0.5, 0.5, 1.0)
+                        else
+                            btn.icon:SetVertexColor(0.4, 0.4, 0.4)
+                        end
                         btn.changedColor = false
                     end
                 end
