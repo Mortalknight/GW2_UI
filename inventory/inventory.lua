@@ -465,6 +465,9 @@ local function onMoved(self, setting, snap_size)
     end
 
     self:StopMovingOrSizing()
+    -- check if frame is out of screen, if yes move it back
+    ValidateFramePosition(self)
+    
     local x = self:GetLeft()
     local y = self:GetTop()
 

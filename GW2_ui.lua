@@ -95,6 +95,9 @@ local function mover_OnDragStop(self)
     local lockAble = self.gw_Lockable
     local isMoved = self.gw_isMoved
     self:StopMovingOrSizing()
+    -- check if frame is out of screen, if yes move it back
+    ValidateFramePosition(self)
+    
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
     local new_point = GetSetting(settingsName)
