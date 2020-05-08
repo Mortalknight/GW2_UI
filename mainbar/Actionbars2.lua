@@ -874,7 +874,7 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
                     btn.changedColor = true
                 end
             else
-                local isUsable, notEnoughMana = IsUsableAction(self.action)
+                local isUsable, notEnoughMana = IsUsableAction(btn.action)
 
                 if btn.rangeIndicatorSetting == "RED_INDICATOR" then
                     btn.gw_RangeIndicator:Hide()
