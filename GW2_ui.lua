@@ -813,7 +813,7 @@ local function gw_OnEvent(self, event, ...)
             PixelPerfection()
         end
         C_Timer.After(0.5, function()
-            if UnitInBattleground("player") == nil and select(1, GetZonePVPInfo()) ~= "arena" then
+            if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
                 GW.RemoveTrackerNotificationOfType("ARENA")
             end
         end)

@@ -11,6 +11,7 @@ local nameRoleIcon = GW.nameRoleIcon
 
 local countArenaFrames = 0
 local countArenaPrepFrames = 0
+local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 
 local FractionIcon = {}
     FractionIcon["Alliance"] = "|TInterface\\AddOns\\GW2_UI\\textures\\Alliance:16:16:0:0|t "
@@ -38,18 +39,23 @@ local bgIndex = {}
     bgIndex[2118] = 11      -- Wintergrasp
 
 local function setCompass()
-    local isArena = GetZonePVPInfo()
+    local isArena = IsActiveBattlefieldArena()
     local compassData = {}
 
-    if isArena == "arena" then
+    if isArena then
         compassData["TITLE"] = ARENA
         compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
     else
         -- parse current BG date here, to show the correct name and subname
         local _, _, _, _, _, _, _, mapID = GetInstanceInfo()
 
-        compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[mapID])) 
-        compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[mapID]))
+        if GetBattlegroundInfo(bgIndex[mapID]) then
+            compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[mapID])) 
+            compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[mapID]))
+        else
+            compassData["TITLE"] = ARENA
+            compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
+        end
     end
     compassData["TYPE"] = "ARENA"
     compassData["ID"] = "arena_unknown"
@@ -209,7 +215,19 @@ GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 local function arenaPrepFrame_OnEvent()
     local numOpps = GetNumArenaOpponentSpecs()
 
-    for i = 1, _G.MAX_ARENA_ENEMIES do
+    if _G.ArenaPrepFrames then
+        _G.ArenaPrepFrames:HookScript("OnLoad", function(self)
+            self:Hide()
+            self:SetScript("OnEvent", nil)
+        end)
+
+        _G.ArenaPrepFrames:HookScript("OnShow", function(self)
+            self:Hide()
+            self:SetScript("OnEvent", nil)
+        end)
+    end
+
+    for i = 1, MAX_ARENA_ENEMIES do
         local prepFrame = _G["GwQuestTrackerArenaPrepFrame" .. i]
         if i <= numOpps then
             local specID, gender = GetArenaOpponentSpec(i)
@@ -300,11 +318,11 @@ local function registerFrame(i)
             countArenaFrames = countArenaFrames + 1
 
             --Hide Blizzard frames
-            if _G["ArenaEnemyFrame" .. i]:IsShown() then 
+            if _G["ArenaEnemyFrame" .. i] and _G["ArenaEnemyFrame" .. i]:IsShown() then 
                 _G["ArenaEnemyFrame" .. i]:SetAlpha(0)
                 _G["ArenaEnemyFrame" .. i]:SetScript("OnEvent", nil)
                 _G["ArenaEnemyFrame" .. i]:SetScript("OnEnter", nil)
-                if _G["ArenaEnemyFrame" .. i .. "PetFrame"]:IsShown() then
+                if _G["ArenaEnemyFrame" .. i .. "PetFrame"] and _G["ArenaEnemyFrame" .. i .. "PetFrame"]:IsShown() then
                     _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetAlpha(0)
                     _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
                     _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEnter", nil)
@@ -331,7 +349,7 @@ local function registerFrame(i)
     targetF:SetScript(
         "OnUpdate",
         function()
-            if _G["ArenaEnemyFrame" .. i .. "PetFrame"]:IsShown() then
+            if _G["ArenaEnemyFrame" .. i .. "PetFrame"] and _G["ArenaEnemyFrame" .. i .. "PetFrame"]:IsShown() then
                 _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetAlpha(0)
                 _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
                 _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEnter", nil)
@@ -383,15 +401,17 @@ local function LoadArenaFrame()
         end
     end
 
-    _G.ArenaPrepFrames:HookScript("OnLoad", function(self)
-        self:Hide()
-        self:SetScript("OnEvent", nil)
-    end)
+    if _G.ArenaPrepFrames then
+        _G.ArenaPrepFrames:HookScript("OnLoad", function(self)
+            self:Hide()
+            self:SetScript("OnEvent", nil)
+        end)
 
-    _G.ArenaPrepFrames:HookScript("OnShow", function(self)
-        self:Hide()
-        self:SetScript("OnEvent", nil)
-    end)
+        _G.ArenaPrepFrames:HookScript("OnShow", function(self)
+            self:Hide()
+            self:SetScript("OnEvent", nil)
+        end)
+    end
 
     --create prepframe frame to handle events
     local arenaPrepFrame = CreateFrame("Frame")
@@ -401,13 +421,12 @@ local function LoadArenaFrame()
     -- Log event for compass Header
     local f = CreateFrame("Frame")
     f:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-    f:RegisterEvent("PLAYER_ENTERING_WORLD")
     f:SetScript("OnEvent", function(self, event)
         C_Timer.After(0.8, function()
-            local isArena = GetZonePVPInfo()
+            local isArena = IsActiveBattlefieldArena()
             local inBG = UnitInBattleground("player")
 
-            if isArena ~= "arena" and inBG == nil then
+            if not isArena and inBG == nil then
                 return
             end
 
