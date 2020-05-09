@@ -1,6 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
+local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 
 local IS_GUILD_GROUP
@@ -240,6 +241,8 @@ local function MapCoordsMiniMap_OnClick(self, button)
         else
             MapCoordsMiniMapPrecision = 0
         end  
+
+        SetSetting("MINIMAP_COORDS_PRECISION", MapCoordsMiniMapPrecision)
         mapCoordsMiniMap_setCoords(self)
     end
 end
@@ -667,6 +670,8 @@ local function LoadMinimap()
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
     GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
     GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
+    GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
+    MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
