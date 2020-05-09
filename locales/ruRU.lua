@@ -110,6 +110,8 @@ local function GWUseThisLocalization()
     L["MAP_CLOCK_MILITARY"] = "Shift+ЛКМ для переключения на 24-часовой формат"
     L["MAP_CLOCK_STOPWATCH"] = "ПКМ для открытия секундомера"
     L["MAP_CLOCK_TIMEMANAGER"] = "Shift+ПКМ для открытия будильника"
+    L["MAP_COORDINATES_TITLE"] = "Координаты карты"
+    L["MAP_COORDINATES_TOGGLE_TEXT"] = "Левый щелчок для переключения координат с более высокой точностью."
     L["MINIMAP_COORDS"] = "Координаты"
     L["MINIMAP_DESC"] = "Использовать мини-карту в стиле GW2 UI"
     L["MINIMAP_FPS"] = "Показать FPS на мини-карте"

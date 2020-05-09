@@ -105,6 +105,8 @@ local function GWUseThisLocalization()
     L["MAP_CLOCK_MILITARY"] = "Shift-Clique gauche pour afficher l'heure militaire"
     L["MAP_CLOCK_STOPWATCH"] = "Clique droit pour afficher la minuterie"
     L["MAP_CLOCK_TIMEMANAGER"] = "Shift-Right Click to open the Time Manager"
+    L["MAP_COORDINATES_TITLE"] = "Coordonnées de la carte"
+    L["MAP_COORDINATES_TOGGLE_TEXT"] = "Clic gauche pour basculer des coordonnées plus précises."
     L["MINIMAP_DESC"] = "Utiliser le cadre et l'emplacement de mini-carte de GW2."
     L["MINIMAP_HOVER"] = "Détails de la mini-carte"
     L["MINIMAP_HOVER_TOOLTIP"] = "Toujours afficher les détails de la mini carte."

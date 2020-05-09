@@ -1,6 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
+local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 
 local IS_GUILD_GROUP
@@ -210,20 +211,51 @@ local function MapPositionToXY(arg)
 end
 GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
 
+
+local function MapCoordsMiniMap_OnEnter(self) 
+    GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
+    GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  
+    GameTooltip:AddLine(L["MAP_COORDINATES_TOGGLE_TEXT"], 1, 1, 1, TRUE) 
+    GameTooltip:SetMinimumWidth(100)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
+
+local function mapCoordsMiniMap_setCoords(self)
+    local posX, posY = MapPositionToXY("player")
+    if (posX == 0 and posY == 0) then
+        self.Coords:SetText("n/a")
+    else
+        self.Coords:SetText(RoundDec(posX * 1000 / 10, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, self.MapCoordsMiniMapPrecision)) 
+    end
+end
+GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
+
+local function MapCoordsMiniMap_OnClick(self, button) 
+    if button == "LeftButton" then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+        if self.MapCoordsMiniMapPrecision == 0 then 
+            self.MapCoordsMiniMapPrecision = 2
+        else
+            self.MapCoordsMiniMapPrecision = 0
+        end  
+
+        SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision)
+        mapCoordsMiniMap_setCoords(self)
+    end
+end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
+
 local function MapCoordsMiniMap_OnUpdate(self, elapsed)
     self.elapsedTimer = self.elapsedTimer - elapsed
     if self.elapsedTimer > 0 then
         return
     end
     self.elapsedTimer = self.updateCap
-
-    local posX, posY = MapPositionToXY("player")
-    if (posX == 0 and posY == 0) then
-        self.Coords:SetText("n/a")
-    else
-        self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
-    end
+    mapCoordsMiniMap_setCoords(self)
 end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnUpdate", MapCoordsMiniMap_OnUpdate)
 
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
@@ -635,7 +667,11 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     GwMapCoords.elapsedTimer = -1
     GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
+    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+    GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
+    GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
+    GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
