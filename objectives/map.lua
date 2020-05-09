@@ -70,8 +70,6 @@ local animationIndexY = 0
 local anim_thro = 0
 local framesToAdd = {}
 
-local MapCoordsMiniMapPrecision = 0 -- Zero precision by default
-
 local function SetMinimapHover()
     if GetSetting("MINIMAP_HOVER") == "NONE" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
@@ -228,21 +226,22 @@ local function mapCoordsMiniMap_setCoords(self)
     if (posX == 0 and posY == 0) then
         self.Coords:SetText("n/a")
     else
-        self.Coords:SetText(RoundDec(posX * 1000 / 10, MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, MapCoordsMiniMapPrecision)) 
+        self.Coords:SetText(RoundDec(posX * 1000 / 10, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, self.MapCoordsMiniMapPrecision)) 
     end
 end
+GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
 
 local function MapCoordsMiniMap_OnClick(self, button) 
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-        if MapCoordsMiniMapPrecision == 0 then 
-            MapCoordsMiniMapPrecision = 2
+        if self.MapCoordsMiniMapPrecision == 0 then 
+            self.MapCoordsMiniMapPrecision = 2
         else
-            MapCoordsMiniMapPrecision = 0
+            self.MapCoordsMiniMapPrecision = 0
         end  
 
-        SetSetting("MINIMAP_COORDS_PRECISION", MapCoordsMiniMapPrecision)
+        SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision)
         mapCoordsMiniMap_setCoords(self)
     end
 end
@@ -256,6 +255,7 @@ local function MapCoordsMiniMap_OnUpdate(self, elapsed)
     self.elapsedTimer = self.updateCap
     mapCoordsMiniMap_setCoords(self)
 end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnUpdate", MapCoordsMiniMap_OnUpdate)
 
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
@@ -667,11 +667,11 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     GwMapCoords.elapsedTimer = -1
     GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
+    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
     GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
     GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
     GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
-    MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
