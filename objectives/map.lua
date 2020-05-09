@@ -221,7 +221,7 @@ local function MapCoordsMiniMap_OnUpdate(self, elapsed)
     if (posX == 0 and posY == 0) then
         self.Coords:SetText("n/a")
     else
-        self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
+        self.Coords:SetText(RoundDec(posX * 1000 / 10, 2) .. ", " .. RoundDec(posY * 1000 / 10, 2)) -- 08 May 2020, hatdragon, added 2 decimal precision for coords.
     end
 end
 
