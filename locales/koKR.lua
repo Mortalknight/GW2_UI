@@ -89,6 +89,8 @@ local function GWUseThisLocalization()
     L["MAP_CLOCK_MILITARY"] = "쉬프트 클릭으로 군사 시간 형식 전환"
     L["MAP_CLOCK_STOPWATCH"] = "오른쪽 클릭으로 스톱 워치 열기"
     L["MAP_CLOCK_TIMEMANAGER"] = "Shift-Right Click to open the Time Manager"
+    L["MAP_COORDINATES_TITLE"] = "지도 좌표"
+    L["MAP_COORDINATES_TOGGLE_TEXT"] = "높은 정밀도 좌표를 전환하려면 왼쪽을 클릭하십시오."
     L["MINIMAP_DESC"] = "GW2 UI 스타일의 미니맵 사용."
     L["MINIMAP_HOVER"] = "미니맵 세부"
     L["MINIMAP_HOVER_TOOLTIP"] = "미니 맵 세부 정보를 영구히 표시하십시오,"

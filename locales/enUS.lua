@@ -89,6 +89,8 @@ local function GWUseThisLocalization()
     L["MAP_CLOCK_MILITARY"] = "Shift-Click to toggle military time format"
     L["MAP_CLOCK_STOPWATCH"] = "Right Click to open the Stopwatch"
     L["MAP_CLOCK_TIMEMANAGER"] = "Shift-Right Click to open the Time Manager"
+    L["MAP_COORDINATES_TITLE"] = "Map Coordinates"
+    L["MAP_COORDINATES_TOGGLE_TEXT"] = "Left Click to toggle higher precision coordinates."
     L["MINIMAP_DESC"] = "Use the GW2 UI Minimap frame."
     L["MINIMAP_HOVER"] = "Minimap details"
     L["MINIMAP_HOVER_TOOLTIP"] = "Always show Minimap details."

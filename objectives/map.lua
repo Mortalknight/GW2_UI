@@ -69,6 +69,8 @@ local animationIndexY = 0
 local anim_thro = 0
 local framesToAdd = {}
 
+local MapCoordsMiniMapPrecision = 0 -- Zero precision by default
+
 local function SetMinimapHover()
     if GetSetting("MINIMAP_HOVER") == "NONE" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
@@ -210,19 +212,46 @@ local function MapPositionToXY(arg)
 end
 GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
 
+
+local function MapCoordsMiniMap_OnEnter(self) 
+    GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
+    GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  
+    GameTooltip:AddLine(L["MAP_COORDINATES_TOGGLE_TEXT"], 1, 1, 1, TRUE) 
+    GameTooltip:SetMinimumWidth(100)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
+
+local function mapCoordsMiniMap_setCoords(self)
+    local posX, posY = MapPositionToXY("player")
+    if (posX == 0 and posY == 0) then
+        self.Coords:SetText("n/a")
+    else
+        self.Coords:SetText(RoundDec(posX * 1000 / 10, MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, MapCoordsMiniMapPrecision)) 
+    end
+end
+
+local function MapCoordsMiniMap_OnClick(self, button) 
+    if button == "LeftButton" then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+        if MapCoordsMiniMapPrecision == 0 then 
+            MapCoordsMiniMapPrecision = 2
+        else
+            MapCoordsMiniMapPrecision = 0
+        end  
+        mapCoordsMiniMap_setCoords(self)
+    end
+end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
+
 local function MapCoordsMiniMap_OnUpdate(self, elapsed)
     self.elapsedTimer = self.elapsedTimer - elapsed
     if self.elapsedTimer > 0 then
         return
     end
     self.elapsedTimer = self.updateCap
-
-    local posX, posY = MapPositionToXY("player")
-    if (posX == 0 and posY == 0) then
-        self.Coords:SetText("n/a")
-    else
-        self.Coords:SetText(RoundDec(posX * 1000 / 10, 2) .. ", " .. RoundDec(posY * 1000 / 10, 2)) -- 08 May 2020, hatdragon, added 2 decimal precision for coords.
-    end
+    mapCoordsMiniMap_setCoords(self)
 end
 
 local function hoverMiniMap()
@@ -636,6 +665,8 @@ local function LoadMinimap()
     GwMapCoords.elapsedTimer = -1
     GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+    GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
+    GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
