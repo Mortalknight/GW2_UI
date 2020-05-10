@@ -95,14 +95,11 @@ local onstate_Barlayout = [=[
         end
 
         if buff_action == "high" or buff_action == "low" then
-            local y_off = (buff_action == "high") and 220 or 120
+            local y_off = (buff_action == "high") and 120 or 20
             local grow_dir = bbar:GetAttribute("growDir")
+            local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
             bbar:ClearAllPoints()
-            if grow_dir == "UP" or grow_dir == "DOWN" then
-                bbar:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", 373, y_off)
-            else
-                bbar:SetPoint("BOTTOMLEFT", uip, "BOTTOM", 130, y_off)
-            end
+            bbar:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
             bbar:Show()
             if dbar then dbar:Show() end
         elseif buff_action == "hide" then
@@ -123,7 +120,7 @@ local function LoadMainbarLayout()
     end
     l:SetFrameRef("UIP", UIParent)
 
-    RegisterStateDriver(l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; none")
+    RegisterStateDriver(l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; outcombat")
 
     lm.layoutFrame = l
     return lm
