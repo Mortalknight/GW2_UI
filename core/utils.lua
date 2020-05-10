@@ -603,8 +603,9 @@ local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInH
     if showWhenDone then
         flasher:SetScript("OnFinished", function(self)
             frame:SetAlpha(1)
-            self:SetScript("OnFinished", nil)
         end)
+    else
+        flasher:SetScript("OnFinished", nil)
     end
 
     frame.flasher = flasher

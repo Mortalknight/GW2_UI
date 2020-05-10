@@ -50,27 +50,27 @@ local function updateHealthData(self, anims)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
     local prediction = self.healPredictionAmount
-
+    
     local health_def = healthMax - health
+    local prediction_over = prediction - health_def
+    if prediction_over < 0 then
+        prediction_over = 0
+    end
+    local prediction_under = prediction - prediction_over
 
     -- determine how much black (anti) area to mask off
-    local hp = health / healthMax
+    local hp = (health + prediction_under) / healthMax
     local hpy_off = Y_FULL - Y_RANGE * (1 - hp)
     local hpx_off = ((X_MAX - X_MIN) * (math.random())) + X_MIN
 
-    -- determine how much light (absorb) area to mask off
-    local aup = health / healthMax
-
-    -- determine how much predicted health to overlay
-    if prediction + health > healthMax then
-        prediction = healthMax - health
-    end
-    local pp = prediction / healthMax
-    local ppy_off = Y_FULL - Y_RANGE * (1 - aup)
+    -- determine how much light (prediction) area to mask off
+    local pup = health / healthMax
+    local puy_off = Y_FULL - Y_RANGE * (1 - pup)
 
     -- set the mask positions for health; prettily if animating,
     -- otherwise just force them
     local anti = self.fill.anti
+    local au = self.fill.prediction_under
     if anims then
         -- animate health transition
         local ag = anti.gwAnimGroup
@@ -83,29 +83,31 @@ local function updateHealthData(self, anims)
         aa.gwYoff = hpy_off
         aa:SetOffset(0, hpy_off - y)
         ag:Play()
+
+        -- animate absorb under transition
+        local ag2 = au.gwAnimGroup
+        ag2:Stop()
+        local _, _, _, _, y2 = au:GetPoint()
+        au:ClearAllPoints()
+        au:SetPoint("CENTER", self.fill, "CENTER", hpx_off, y2)
+        local aa2 = au.gwAnim
+        aa2.gwXoff = hpx_off
+        aa2.gwYoff = puy_off
+        aa2:SetOffset(0, puy_off - y2)
+        ag2:Play()
     else
         -- hard-set positions
         anti:ClearAllPoints()
         anti:SetPoint("CENTER", self.fill, "CENTER", hpx_off, hpy_off)
+        au:ClearAllPoints()
+        au:SetPoint("CENTER", self.fill, "CENTER", hpx_off, puy_off)
     end
 
     local flash = anti.gwFlashGroup
-    if aup < 0.5 and not UnitIsDeadOrGhost("PLAYER") then
+    if pup < 0.5 and not UnitIsDeadOrGhost("PLAYER") then
         flash:Play()
     else
         flash:Finish()
-    end
-
-    -- hard-set heal prediction amount; no animation setup for this yet
-    local pred = self.fill.pred
-    if prediction > 0 then
-        local h = (Y_RANGE * pp) - 2
-        pred:ClearAllPoints()
-        GW.Debug("ppy", ppy_off + h - 3)
-        pred:SetPoint("CENTER", self.fill, "CENTER", -hpx_off, math.min(ppy_off + h, 41))
-        pred:Show()
-    else
-        pred:Hide()
     end
 
     -- hard-set the text values for health based on the user settings (%, value or both)
@@ -194,6 +196,10 @@ local function globe_OnEnter(self)
         end
     end
     GameTooltip:Show()
+
+    if self.pvp.pvpFlag then
+        self.pvp:fadeIn()
+    end
 end
 GW.AddForProfiling("healthglobe", "globe_OnEnter", globe_OnEnter)
 
@@ -248,9 +254,9 @@ local function LoadHealthGlobe()
     -- setting these values in the XML creates animation glitches
     -- so we do it here instead
     hg.fill.maskb:SetPoint("CENTER", hg.fill, "CENTER", 0, 0)
-
+    
+    hg.fill.prediction_under:AddMaskTexture(hg.fill.maskb)
     hg.fill.anti:AddMaskTexture(hg.fill.maskb)
-    hg.fill.pred:AddMaskTexture(hg.fill.maskb)
 
     -- setup fill animations; this marks off the black/empty space
     local aag = hg.fill.anti:CreateAnimationGroup()
@@ -269,6 +275,13 @@ local function LoadHealthGlobe()
     afg:SetLooping("BOUNCE")
     hg.fill.anti.gwFlashGroup = afg
 
+    -- marks off the light absorb/shield space
+    local aag2 = hg.fill.prediction_under:CreateAnimationGroup()
+    local aa2 = aag2:CreateAnimation("translation")
+    aa2:SetDuration(0.2)
+    aa2:SetScript("OnFinished", fill_OnFinish)
+    hg.fill.prediction_under.gwAnimGroup = aag2
+    hg.fill.prediction_under.gwAnim = aa2
 
     -- set text/font stuff
     hg.hSize = 14
@@ -286,7 +299,12 @@ local function LoadHealthGlobe()
     PlayerFrame:Hide()
     hg:SetScript("OnEvent", globe_OnEvent)
     hg:SetScript("OnEnter", globe_OnEnter)
-    hg:SetScript("OnLeave", GameTooltip_Hide)
+    hg:SetScript("OnLeave", function(self)
+        GameTooltip_Hide()
+        if self.pvp.pvpFlag then
+            self.pvp:fadeOut()
+        end
+    end)
     hg:RegisterEvent("PLAYER_ENTERING_WORLD")
     hg:RegisterEvent("PLAYER_FLAGS_CHANGED")
     hg:RegisterEvent("RESURRECT_REQUEST")
@@ -335,18 +353,33 @@ local function LoadHealthGlobe()
 
     -- setup anim to flash the PvP marker
     local pvp = hg.pvp
-    local pag = pvp:CreateAnimationGroup()
-    local pa1 = pag:CreateAnimation("alpha")
-    local pa2 = pag:CreateAnimation("alpha")
-    pvp.gwAnimGroup = pag
-    pa1:SetOrder(1)
-    pa2:SetOrder(2)
-    pa1:SetFromAlpha(0.33)
-    pa1:SetToAlpha(1.0)
-    pa1:SetDuration(0.1)
-    pa2:SetFromAlpha(1.0)
-    pa2:SetToAlpha(0.33)
-    pa2:SetDuration(0.1)
+    local pagIn = pvp:CreateAnimationGroup("fadeIn")
+    local pagOut = pvp:CreateAnimationGroup("fadeOut")
+    local fadeOut = pagOut:CreateAnimation("Alpha")
+    local fadeIn = pagIn:CreateAnimation("Alpha")
+
+    pagOut:SetScript("OnFinished", function(self)
+        self:GetParent():SetAlpha(0.33)
+    end)
+
+    fadeOut:SetFromAlpha(1.0)
+    fadeOut:SetToAlpha(0.33)
+    fadeOut:SetDuration(0.1)
+    fadeIn:SetFromAlpha(0.33)
+    fadeIn:SetToAlpha(1.0)
+    fadeIn:SetDuration(0.1)
+
+    pvp.fadeOut = function(self)
+        pagIn:Stop()
+        pagOut:Stop()
+        pagOut:Play()
+    end
+    pvp.fadeIn = function(self)
+        self:SetAlpha(1)
+        pagIn:Stop()
+        pagOut:Stop()
+        pagIn:Play()
+    end
 
     return hg
 end

@@ -21,15 +21,15 @@
                             <Color r="1" g="0.25" b="0" a="0.5"/>
                         </Texture>
                     </Layer>
+                    <Layer level="BORDER" textureSubLevel="2">
+                        <Texture parentKey="prediction_under" file="Interface/AddOns/GW2_UI/textures/globe/fill-absorb" alphaMode="BLEND" alpha="0.66">
+                            <Size x="128" y="256"/>
+                            <Color r="0.15" g="0.8" b="0.15" a="0.5"/>
+                        </Texture>
+                    </Layer>
                     <Layer level="BORDER" textureSubLevel="3">
                         <Texture parentKey="anti" parentArray="masked" file="Interface/AddOns/GW2_UI/textures/globe/fill-anti">
                             <Size x="128" y="256"/>
-                        </Texture>
-                    </Layer>
-                    <Layer level="BORDER" textureSubLevel="4">
-                        <Texture parentKey="pred" file="Interface/AddOns/GW2_UI/textures/globe/pred-line" alphaMode="BLEND" alpha="0.66">
-                            <Size x="128" y="8"/>
-                            <Color r="0.15" g="0.8" b="0.15" a="0.5"/>
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
