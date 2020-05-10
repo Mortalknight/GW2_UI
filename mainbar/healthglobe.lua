@@ -7,9 +7,6 @@ local TimeParts = GW.TimeParts
 local IsIn = GW.IsIn
 local GetSetting = GW.GetSetting
 local IncHeal = {}
-local HealComm = LibStub("LibHealComm-4.0", true)
-
-local hg
 
 local function repair_OnEvent(self, event, ...)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
@@ -215,33 +212,16 @@ local function repair_OnEnter(self)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
-local function UpdateIncomingPredictionAmount(...)
-    for i = 1, select("#", ...) do
-        if (select(i, ...) == hg.guid) and (UnitPlayerOrPetInParty(hg.unit) or UnitPlayerOrPetInRaid(hg.unit) or UnitIsUnit("player", hg.unit) or UnitIsUnit("pet", hg.unit)) then
-            local amount = (HealComm:GetHealAmount(hg.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(hg.guid) or 1)
-            hg.healPredictionAmount = amount
-            updateHealthData(hg)
-            break
-        end
-    end
-end
+local function setPredictionAmount(self)
+    local prediction = (GW.HealComm:GetHealAmount(self.guid, GW.HealComm.ALL_HEALS) or 0) * (GW.HealComm:GetHealModifier(self.guid) or 1)
 
--- Handle callbacks from HealComm
-function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
-	UpdateIncomingPredictionAmount(...)
+    self.healPredictionAmount = prediction
+    updateHealthData(self)
 end
-function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
-	UpdateIncomingPredictionAmount(...)
-end
-function IncHeal:HealComm_ModifierChanged(event, guid)
-	UpdateIncomingPredictionAmount(guid)
-end
-function IncHeal:HealComm_GUIDDisappeared(event, guid)
-	UpdateIncomingPredictionAmount(guid)
-end
+GW.AddForProfiling("healthglobe", "setPredictionAmount", setPredictionAmount)
 
 local function LoadHealthGlobe()
-    hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
+    local hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
     GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space
@@ -314,13 +294,18 @@ local function LoadHealthGlobe()
     hg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     hg:RegisterUnitEvent("UNIT_FACTION", "player")
 
+    -- Handle callbacks from HealComm
+    local HealCommEventHandler = function (event, casterGUID, spellID, healType, endTime, ...)
+        local self = hg
+        return setPredictionAmount(self)
+    end
     --libHealComm setup
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
-    HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
-    HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
+    GW.HealComm.RegisterCallback(hg, "HealComm_HealStarted", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(hg, "HealComm_HealUpdated", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(hg, "HealComm_HealStopped", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(hg, "HealComm_HealDelayed", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(hg, "HealComm_ModifierChanged", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(hg, "HealComm_GUIDDisappeared", HealCommEventHandler)
     hg.healPredictionAmount = 0
     hg.unit = "Player"
     hg.guid = UnitGUID("Player")

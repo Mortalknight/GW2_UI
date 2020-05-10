@@ -471,6 +471,8 @@ end
 GW.CreateAuraFrame = CreateAuraFrame
 
 local function LoadAuras(f, a, u)
+    UnitAura = GW.LibClassicDurations.UnitAuraWithBuffs
+
     local unit = u or f.unit
     for i = 1, 40 do
         local frame = CreateAuraFrame("Gw" .. unit .. "buffFrame" .. i, a)

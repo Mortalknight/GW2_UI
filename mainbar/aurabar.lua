@@ -169,6 +169,7 @@ local function header_OnEvent(self, event, ...)
     for i = 1, 3 do
         local btn = self:GetTempEnchant(i)
         if btn then
+            TemporaryEnchantFrame:Hide()
             -- only look at buttons that have info
             if not weigot then
                 mh, mh_exp, mh_num, _, oh, oh_exp, oh_num, _, rh, rh_exp, rh_num, _= GetWeaponEnchantInfo()

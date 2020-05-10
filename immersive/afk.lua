@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
-local LibCC = LibStub("LibClassicCasterino", true)
 
 local ignoreKeys = {
     LALT = true,
@@ -86,7 +85,7 @@ local function AFKMode_OnEvent(self, event, ...)
     end
 
     if InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown() then return end
-    if LibCC:UnitCastingInfo("player") ~= nil then
+    if GW.LibCC:UnitCastingInfo("player") ~= nil then
         --Don't activate afk if player is crafting stuff, check back in 30 seconds
         C_Timer.After(30, function() AFKMode_OnEvent(self) end)
         return

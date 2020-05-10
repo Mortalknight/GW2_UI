@@ -1,6 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
+local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 local trackingTypes = GW.trackingTypes
 
@@ -44,25 +45,26 @@ local Minimap_Addon_Buttons = {
     [27] = "GameTimeFrame",
     [28] = "DA_Minimap",
     [29] = "ElvConfigToggle",
-    [31] = "MinimapZoneTextButton",
-    [33] = "MiniMapVoiceChatFrame",
-    [34] = "MiniMapRecordingButton",
-    [35] = "MiniMapBattlefieldFrame",
-    [36] = "GatherArchNote",
-    [37] = "ZGVMarker",
-    [38] = "QuestPointerPOI",
-    [39] = "poiMinimap",
-    [40] = "MiniMapLFGFrame",
-    [41] = "PremadeFilter_MinimapButton",
-    [43] = "GwMapTime",
-    [44] = "GwMapCoords",
-    [46] = "GwMapFPS",
-    [47] = "QuestieFrame",
-    [48] = "miningminimap",
-    [49] = "herbalismminimap",
-    [50] = "fishminimap",
-    [41] = "treasureminimap",
-    [42] = "GatherLite"
+    [30] = "MinimapZoneTextButton",
+    [31] = "MiniMapVoiceChatFrame",
+    [32] = "MiniMapRecordingButton",
+    [33] = "MiniMapBattlefieldFrame",
+    [34] = "GatherArchNote",
+    [35] = "ZGVMarker",
+    [36] = "QuestPointerPOI",
+    [37] = "poiMinimap",
+    [38] = "MiniMapLFGFrame",
+    [39] = "PremadeFilter_MinimapButton",
+    [40] = "GwMapTime",
+    [41] = "GwMapCoords",
+    [42] = "GwMapFPS",
+    [43] = "QuestieFrame",
+    [44] = "miningminimap",
+    [45] = "herbalismminimap",
+    [46] = "fishminimap",
+    [47] = "treasureminimap",
+    [48] = "GatherLite",
+    [49] = "GwMapFPS"
 }
 
 local MAP_FRAMES_HOVER = {}
@@ -217,19 +219,48 @@ local function MapPositionToXY(arg)
 end
 GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
 
+local function MapCoordsMiniMap_OnEnter(self) 
+    GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
+    GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  
+    GameTooltip:AddLine(L["MAP_COORDINATES_TOGGLE_TEXT"], 1, 1, 1, TRUE) 
+    GameTooltip:SetMinimumWidth(100)
+    GameTooltip:Show()
+end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
+
+local function mapCoordsMiniMap_setCoords(self)
+    local posX, posY = MapPositionToXY("player")
+    if (posX == 0 and posY == 0) then
+        self.Coords:SetText("n/a")
+    else
+        self.Coords:SetText(RoundDec(posX * 1000 / 10, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, self.MapCoordsMiniMapPrecision)) 
+    end
+end
+GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
+
+local function MapCoordsMiniMap_OnClick(self, button) 
+    if button == "LeftButton" then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+        if self.MapCoordsMiniMapPrecision == 0 then 
+            self.MapCoordsMiniMapPrecision = 2
+        else
+            self.MapCoordsMiniMapPrecision = 0
+        end  
+
+        SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision)
+        mapCoordsMiniMap_setCoords(self)
+    end
+end
+GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
+
 local function MapCoordsMiniMap_OnUpdate(self, elapsed)
     self.elapsedTimer = self.elapsedTimer - elapsed
     if self.elapsedTimer > 0 then
         return
     end
     self.elapsedTimer = self.updateCap
-
-    local posX, posY = MapPositionToXY("player")
-    if (posX == 0 and posY == 0) then
-        self.Coords:SetText("n/a")
-    else
-        self.Coords:SetText(RoundDec(posX * 1000 / 10) .. " / " .. RoundDec(posY * 1000 / 10))
-    end
+    mapCoordsMiniMap_setCoords(self)
 end
 
 local function hoverMiniMap()
@@ -441,7 +472,30 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     GwMapCoords.elapsedTimer = -1
     GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
+    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
     GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+    GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
+    GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
+    GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
+
+    --FPS
+    if GetSetting("MINIMAP_FPS") then
+        GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
+        GwMapFPS.fps:SetText("n/a")
+        GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
+        GwMapFPS.elapsedTimer = -1
+        local updateCap = 1 / 5 -- cap fps update to 5 FPS
+        local MapFPSMiniMap_OnUpdate = function(self, elapsed)
+            self.elapsedTimer = self.elapsedTimer - elapsed
+            if self.elapsedTimer > 0 then
+                return
+            end
+            self.elapsedTimer = updateCap
+            local framerate = GetFramerate()
+            self.fps:SetText(RoundDec(framerate) .. " FPS")
+        end
+        GwMapFPS:SetScript("OnUpdate", MapFPSMiniMap_OnUpdate)
+    end
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)

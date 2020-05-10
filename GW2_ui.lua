@@ -847,6 +847,14 @@ local function gw_OnEvent(self, event, ...)
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
+
+-- load libs
+GW.LibClassicDurations = LibStub("LibClassicDurations", true)
+GW.LibClassicDurations:Register("GW2_UI")
+GW.LibCC = LibStub("LibClassicCasterino", true)
+GW.HealComm = LibStub("LibHealComm-4.0", true)
+GW.ThreatLib = LibStub:GetLibrary("LibThreatClassic2", true)
+
 l:SetScript("OnEvent", gw_OnEvent)
 l:RegisterEvent("PLAYER_LOGIN")
 l:RegisterEvent("PLAYER_LEAVING_WORLD")

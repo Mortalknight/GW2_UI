@@ -17,12 +17,6 @@ local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local unitIlvls = {}
-local UnitAura = _G.UnitAura
-local LibClassicDurations = LibStub("LibClassicDurations", true)
-local LibCC = LibStub("LibClassicCasterino", true)
-local HealComm = LibStub("LibHealComm-4.0", true)
-local ThreatLib = LibStub:GetLibrary("LibThreatClassic2", true)
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -339,10 +333,10 @@ GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
 local function updateCastValues(self, event)
     local castType = 1
 
-    local name, _, texture, startTime, endTime, _, _, notInterruptible, spellID = LibCC:UnitCastingInfo(self.unit)
+    local name, _, texture, startTime, endTime, _, _, notInterruptible, spellID = GW.LibCC:UnitCastingInfo(self.unit)
 
     if name == nil then
-        name, _, texture, startTime, endTime, _, notInterruptible = LibCC:UnitChannelInfo(self.unit)
+        name, _, texture, startTime, endTime, _, notInterruptible = GW.LibCC:UnitChannelInfo(self.unit)
         castType = 0
     end
 
@@ -423,16 +417,14 @@ end
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
 local function updateThreatValues(self)
-    self.threatValue = select(3, ThreatLib:UnitDetailedThreatSituation("player", self.unit))
+    self.threatValue = select(3, GW.ThreatLib:UnitDetailedThreatSituation("player", self.unit))
 
     if self.threatValue == nil then
         self.threatString:SetText("")
         self.threattabbg:SetAlpha(0.0)
     else
-        --self.threatString:SetTextColor(ThreatLib:GetThreatStatusColor(select(2, ThreatLib:UnitDetailedThreatSituation("player", self.unit))))
         self.threatString:SetText(RoundDec(self.threatValue, 0) .. "%")
         self.threattabbg:SetAlpha(1.0)
-
     end
 end
 GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
@@ -549,12 +541,10 @@ local function target_OnEvent(self, event, unit)
                 updateRaidMarkers(ttf, event)
             end
         end
-    elseif event == "PLAYER_ENTERING_WORLD" then
-        wipe(unitIlvls)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
-    elseif UnitIsUnit(unit, self.unit) then       
+    elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
@@ -593,17 +583,12 @@ end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 
 local function UpdateIncomingPredictionAmount(self)
-    local amount = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
+    local amount = (GW.HealComm:GetHealAmount(self.guid, GW.HealComm.ALL_HEALS) or 0) * (GW.HealComm:GetHealModifier(self.guid) or 1)
     self.healPredictionAmount = amount
     updateHealthValues(self)
 end
 
 local function LoadTarget()
-    if LibClassicDurations then
-        LibClassicDurations:Register("GW2_UI")
-        UnitAura = LibClassicDurations.UnitAuraWrapper
-    end
-
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame")
     NewUnitFrame.unit = "target"
 
@@ -664,7 +649,6 @@ local function LoadTarget()
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
-    NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "target")
@@ -684,31 +668,31 @@ local function LoadTarget()
         return UpdateIncomingPredictionAmount(self)
     end
 
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_START", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_DELAYED", CastbarEventHandler) -- only for player
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_STOP", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_FAILED", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_INTERRUPTED", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_START", CastbarEventHandler)
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler) -- only for player
-    LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_START", CastbarEventHandler)
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_DELAYED", CastbarEventHandler) -- only for player
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_STOP", CastbarEventHandler)
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_FAILED", CastbarEventHandler)
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_INTERRUPTED", CastbarEventHandler)
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_START", CastbarEventHandler)
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler) -- only for player
+    GW.LibCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
 
-    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealStarted", HealCommEventHandler)
-    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealUpdated", HealCommEventHandler)
-    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealStopped", HealCommEventHandler)
-    HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealDelayed", HealCommEventHandler)
-    HealComm.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
-    HealComm.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealStarted", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealUpdated", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealStopped", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(NewUnitFrame, "HealComm_HealDelayed", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
-    LibClassicDurations.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
+    GW.LibClassicDurations.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
         target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
     end)    
 
     if NewUnitFrame.showThreat then
-        ThreatLib.RegisterCallback(NewUnitFrame, "ThreatUpdated", function(event, unitguid, targetguid)
+        GW.ThreatLib.RegisterCallback(NewUnitFrame, "ThreatUpdated", function(event, unitguid, targetguid)
             if targetguid == UnitGUID("target") then updateThreatValues(NewUnitFrame) end
         end)
-        ThreatLib:RequestActiveOnSolo()
+        GW.ThreatLib:RequestActiveOnSolo()
     end
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)

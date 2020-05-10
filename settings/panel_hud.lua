@@ -27,6 +27,7 @@ local function LoadHudPanel(sWindow)
     addOption(p, L["FADE_MICROMENU"], L["FADE_MICROMENU_DESC"], "FADE_MICROMENU")
     addOption(p, L["AUTO_REPAIR"], L["AUTO_REPAIR_DESC"], "AUTO_REPAIR")
     addOption(p, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
+    addOption(p, L["MINIMAP_FPS"], L["MINIMAP_FPS"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true})
     addOption(
         p,
         L["PIXEL_PERFECTION"],

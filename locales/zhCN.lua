@@ -122,6 +122,8 @@ local function GWUseThisLocalization()
     L["MAP_CLOCK_MILITARY"] = "Shift+左键 切换时间制式"
     L["MAP_CLOCK_STOPWATCH"] = "右键 打开计时器"
     L["MAP_CLOCK_TIMEMANAGER"] = "按住 Shift 键再右键点击来打开时间管理器"
+    L["MAP_COORDINATES_TITLE"] = "地图坐标"
+    L["MAP_COORDINATES_TOGGLE_TEXT"] = "左键单击以切换高精度坐标。"
     L["MINIMAP_COORDS"] = "小地图坐标"
     L["MINIMAP_DESC"] = "使用GW2风格的方形小地图."
     L["MINIMAP_FPS"] = "在小地图上显示帧数"

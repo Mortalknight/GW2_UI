@@ -1,12 +1,11 @@
 local _, GW = ...
 local L = GW.L
-local UnitAura = UnitAura
+local UnitAura = _G.UnitAura
 local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local LibClassicDurations = LibStub("LibClassicDurations", true)
 
 local targetList = {}
 local classification = {
@@ -413,9 +412,6 @@ local function LoadTooltips()
         end
     end
 
-    if LibClassicDurations then
-        LibClassicDurations:Register("GW2_UI")
-        UnitAura = LibClassicDurations.UnitAuraWrapper
-    end
+    UnitAura = GW.LibClassicDurations.UnitAuraWithBuffs
 end
 GW.LoadTooltips = LoadTooltips

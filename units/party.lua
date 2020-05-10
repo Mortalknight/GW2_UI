@@ -12,9 +12,6 @@ local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local UnitAura = _G.UnitAura
 
-local HealComm = LibStub("LibHealComm-4.0", true)
-local LibClassicDurations = LibStub("LibClassicDurations", true)
-
 local GW_READY_CHECK_INPROGRESS = false
 
 local GW_PORTRAIT_BACKGROUND = {}
@@ -647,7 +644,7 @@ end
 GW.AddForProfiling("party", "setHealth", setHealth)
 
 local function setPredictionAmount(self)
-    local prediction = (HealComm:GetHealAmount(self.guid, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(self.guid) or 1)
+    local prediction = (GW.HealComm:GetHealAmount(self.guid, GW.HealComm.ALL_HEALS) or 0) * (GW.HealComm:GetHealModifier(self.guid) or 1)
 
     self.healPredictionAmount = prediction
     setHealth(self)
@@ -864,14 +861,14 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
 
-    HealComm.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)
-    HealComm.RegisterCallback(frame, "HealComm_HealUpdated", HealCommEventHandler)
-    HealComm.RegisterCallback(frame, "HealComm_HealStopped", HealCommEventHandler)
-    HealComm.RegisterCallback(frame, "HealComm_HealDelayed", HealCommEventHandler)
-    HealComm.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
-    HealComm.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(frame, "HealComm_HealUpdated", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(frame, "HealComm_HealStopped", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(frame, "HealComm_HealDelayed", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
+    GW.HealComm.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
-    LibClassicDurations.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
+    GW.LibClassicDurations.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
         party_OnEvent(frame, "UNIT_AURA", unit)
     end) 
 
@@ -882,10 +879,7 @@ end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
 local function LoadPartyFrames()
-    if LibClassicDurations then
-        LibClassicDurations:Register("GW2_UI")
-        UnitAura = LibClassicDurations.UnitAuraWrapper
-    end
+    UnitAura = GW.LibClassicDurations.UnitAuraWithBuffs
 
     manageButton()
 
