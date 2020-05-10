@@ -32,6 +32,7 @@ NEW
         - Set the grow direction (left, right, up, down)
         - Set auras per row
     - Added Keybinds for "Sort Bag" and "Sort Bank"
+    - Added option to show coordinates with 2 digits (click on the coordinats; Thanks to: hatdragon)
     - Update locals (zhTW, ptBR)
 
 FIXES
