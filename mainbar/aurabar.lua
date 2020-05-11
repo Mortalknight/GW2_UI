@@ -485,7 +485,7 @@ local function loadAuras(lm, secure)
     hb:ClearAllPoints()
     if not hb.isMoved then
         local mbr = GwMultiBarBottomRight
-        hb:SetPoint(anchor_hb, mbr, anchor_hb, 0, 20)
+        hb:SetPoint(anchor_hb, mbr, anchor_hb, 0, 0)
     else
         hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     end
