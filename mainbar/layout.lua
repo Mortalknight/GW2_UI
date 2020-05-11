@@ -95,7 +95,7 @@ local onstate_Barlayout = [=[
         end
 
         if buff_action == "high" or buff_action == "low" then
-            local y_off = (buff_action == "high") and 120 or 20
+            local y_off = (buff_action == "high") and 100 or 0
             local grow_dir = bbar:GetAttribute("growDir")
             local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
             bbar:ClearAllPoints()
@@ -120,7 +120,13 @@ local function LoadMainbarLayout()
     end
     l:SetFrameRef("UIP", UIParent)
 
-    RegisterStateDriver(l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; outcombat")
+    RegisterStateDriver(l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; none")
+
+    l:RegisterEvent("PLAYER_REGEN_ENABLED")
+    l:SetScript("OnEvent", function(self, event)
+        self:SetAttribute("currentHandlerState", "none")
+        self:oocHandler()
+    end)
 
     lm.layoutFrame = l
     return lm
