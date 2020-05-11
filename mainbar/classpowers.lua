@@ -103,22 +103,20 @@ end
 local function powerMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
-        UpdatePowerData(self, 0, "MANA", "GwPlayerPowerBar")
+        UpdatePowerData(self, 0, "MANA", "GwLittlePowerBar")
     end
 end
 
 local function setManaBar(f)
-    f.barType = "mana"
-    f.background:SetTexture(nil)
-    f.fill:SetTexture(nil)
+    f.barType = "combo"  -- we use this only for druid extra bar
     GwPlayerPowerBarExtra:Show()
 
     if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
         f:ClearAllPoints()
         if GetSetting("XPBAR_ENABLED") then
-            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
         else
-            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
         end
         f:SetWidth(220)
         f:SetHeight(30)
