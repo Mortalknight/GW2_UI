@@ -740,8 +740,9 @@ local function tracker_OnUpdate()
         GwQuestTracker.trot = GetTime() + 1
         GW.SetObjectiveNotification(mapID)
 
-        if state ~= GwObjectivesNotification.shouldDisplay then
+        if state ~= GwObjectivesNotification.shouldDisplay or GwObjectivesNotification.shouldUpdate then
             state = GwObjectivesNotification.shouldDisplay
+            GwObjectivesNotification.shouldUpdate = false
             GW.NotificationStateChanged(state)
         end
     end
@@ -902,6 +903,7 @@ local function LoadQuestTracker()
     GW.LoadBonusFrame()
 
     fNotify.shouldDisplay = false
+    fNotify.shouldUpdate = false
     fTracker.trot = GetTime() + 2
     fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
     fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")

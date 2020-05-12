@@ -333,8 +333,15 @@ local function SetObjectiveNotification(mapID)
         GwObjectivesNotification.compass:SetScript("OnUpdate", nil)
     end
 
+    local oldText = GwObjectivesNotification.desc:GetText()
+    if oldText == desc then
+        GwObjectivesNotification.shouldUpdate = false
+    else
+        GwObjectivesNotification.shouldUpdate = true
+    end
     GwObjectivesNotification.title:SetText(title)
     GwObjectivesNotification.title:SetTextColor(color.r, color.g, color.b)
+    GwObjectivesNotification.desc:SetSize(300, 150)
     GwObjectivesNotification.desc:SetText(desc)
 
     if desc == nil or desc == "" then
