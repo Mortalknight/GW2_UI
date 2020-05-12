@@ -743,7 +743,7 @@ local function tracker_OnUpdate()
         if state ~= GwObjectivesNotification.shouldDisplay or GwObjectivesNotification.shouldUpdate then
             state = GwObjectivesNotification.shouldDisplay
             GwObjectivesNotification.shouldUpdate = false
-            GW.NotificationStateChanged(state)
+            GW.NotificationStateChanged(state, GwObjectivesNotification.shouldUpdate)
         end
     end
 end

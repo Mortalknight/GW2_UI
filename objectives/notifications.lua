@@ -177,34 +177,41 @@ local function removeNotification(key)
 end
 GW.AddForProfiling("notifications", "removeNotification", removeNotification)
 
-local function NotificationStateChanged(show)
+local function NotificationStateChanged(show, animated)
     if show then
         GwObjectivesNotification:Show()
     end
-    AddToAnimation(
-        "notificationToggle",
-        0,
-        GwObjectivesNotification.desc:GetHeight() + 50,
-        GetTime(),
-        0.2,
-        function(step)
-            if show == false then
-                step = GwObjectivesNotification.desc:GetHeight() + 50 - step
-            end
+    if animated then
+        AddToAnimation(
+            "notificationToggle",
+            0,
+            GwObjectivesNotification.desc:GetHeight() + 50,
+            GetTime(),
+            0.2,
+            function(step)
+                if show == false then
+                    step = GwObjectivesNotification.desc:GetHeight() + 50 - step
+                end
 
-            GwObjectivesNotification:SetAlpha(step / GwObjectivesNotification.desc:GetHeight() + 50)
-            GwObjectivesNotification:SetHeight(math.max(step, 1))
-        end,
-        nil,
-        function()
-            if not show then
-                GwObjectivesNotification:Hide()
-            end
-            GwObjectivesNotification.animating = false
-            GW.QuestTrackerLayoutChanged()
-        end,
-        true
-    )
+                GwObjectivesNotification:SetAlpha(step / GwObjectivesNotification.desc:GetHeight() + 50)
+                GwObjectivesNotification:SetHeight(math.max(step, 1))
+            end,
+            nil,
+            function()
+                if not show then
+                    GwObjectivesNotification:Hide()
+                end
+                GwObjectivesNotification.animating = false
+                GW.QuestTrackerLayoutChanged()
+            end,
+            true
+        )
+    else
+        GwObjectivesNotification:SetHeight(math.max(GwObjectivesNotification.desc:GetHeight() + 50, 1))
+        GwObjectivesNotification.animating = false
+        GW.QuestTrackerLayoutChanged()
+
+    end
 end
 GW.NotificationStateChanged = NotificationStateChanged
 
