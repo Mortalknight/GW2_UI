@@ -1435,7 +1435,26 @@ function LoadHonorTab()
     end
 end
 
+local function checkHonorSpy()
+    if not LibStub then
+        return nil
+    end
+    local ace = LibStub("AceAddon-3.0", true)
+    if not ace then
+        return nil
+    end
+    local HonorSpy = ace:GetAddon("HonorSpy", true)
+    if not HonorSpy then
+        return nil
+    end
+
+    return HonorSpy
+end
+
 function UpdateHonorTab(updateAll)
+    -- If Honotsyp is installed, display this data in our Honor tab
+    local HonorSpy = checkHonorSpy()
+
     local slot = GwPaperHonor.buttons[1]
     local hk, dk, contribution, rank, highestRank, rankName, rankNumber
     -- This only gets set on player entering the world
@@ -1446,8 +1465,12 @@ function UpdateHonorTab(updateAll)
 		GWHonorFrameYesterdayContributionValue:SetText(contribution)
 		-- This Week's values
 		hk, contribution = GetPVPThisWeekStats()
-		GWHonorFrameThisWeekHKValue:SetText(hk)
-		GWHonorFrameThisWeekContributionValue:SetText(contribution)
+        GWHonorFrameThisWeekHKValue:SetText(hk)
+        if HonorSpy then
+            GWHonorFrameThisWeekContributionValue:SetText(format("%d (%d)", contribution, HonorSpy.db.char.estimated_honor))
+        else
+            GWHonorFrameThisWeekContributionValue:SetText(contribution)
+        end
 		-- Last Week's values
 		hk, dk, contribution, rank = GetPVPLastWeekStats()
 		GWHonorFrameLastWeekHKValue:SetText(hk)
@@ -1455,9 +1478,13 @@ function UpdateHonorTab(updateAll)
 		GWHonorFrameLastWeekStandingValue:SetText(rank)
     end
     
-	-- This session's values
+	-- This session's values (today)
     hk, dk = GetPVPSessionStats()
-	GWHonorFrameCurrentHKValue:SetText(hk)
+    if HonorSpy then
+        GWHonorFrameCurrentHKValue:SetText(format("%d |cfff2ca45(%s: %s)|r", hk, HONOR, HonorSpy.db.char.estimated_honor - HonorSpy.db.char.original_honor))
+    else
+        GWHonorFrameCurrentHKValue:SetText(hk)
+    end
     GWHonorFrameCurrentDKValue:SetText(dk)
     
     -- Lifetime stats
@@ -1476,11 +1503,12 @@ function UpdateHonorTab(updateAll)
 		rankName = NONE
     end
 	slot.Header:SetText(rankName)
-    slot.Rank:SetText("("..RANK.." "..rankNumber..")")
+    slot.Rank:SetText(format("(%s %d) %d%%", RANK, rankNumber, GetPVPRankProgress() * 100))
 
+    print( (0 + (5000 * GetPVPRankProgress())) * 0.2)
     -- Set icon
 	if rankNumber > 0 then
-		GWHonorFramePvPIcon:SetTexture(format("%s%02d","Interface\\PvPRankBadges\\PvPRank", rankNumber))
+		GWHonorFramePvPIcon:SetTexture(format("%s%02d","Interface/PvPRankBadges/PvPRank", rankNumber))
         GWHonorFramePvPIcon:Show()
         slot.Header:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT" , 50, -15)
     else
@@ -1494,7 +1522,7 @@ function UpdateHonorTab(updateAll)
 	else
 		GWHonorFrameProgressBar:SetStatusBarColor(0.63, 0.09, 0.09)
     end
-	GWHonorFrameProgressBar:SetValue(GetPVPRankProgress())
+    GWHonorFrameProgressBar:SetValue(GetPVPRankProgress())
 
     -- Recenter rank text
 	slot.Header:SetPoint("TOP", "GwPaperHonor", "TOP", - slot.Rank:GetWidth() / 2 + 20, -83)

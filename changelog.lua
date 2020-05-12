@@ -43,6 +43,7 @@ v(
     - Added option to show threath value on target frame
     - Added option to show fps on minimap
     - Added option to show coordinates with 2 digits (click on the coordinats; Thanks to: hatdragon)
+    - Added HonorSpy support (Honortab)
 
 ]=]
 )
