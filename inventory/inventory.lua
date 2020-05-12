@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local setItemLevel = GW.setItemLevel
 
 
 -- global for this deprecated in 8.3; from ContainerFrame.lua
@@ -43,6 +44,7 @@ local function reskinItemButton(iname, b)
 
     local qtex = b.IconQuestTexture or _G[iname .. "IconQuestTexture"]
     if qtex then
+        b.IconQuestTexture = qtex
         qtex:SetSize(item_size + 2, item_size + 2)
         qtex:ClearAllPoints()
         qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
@@ -65,6 +67,13 @@ local function reskinItemButton(iname, b)
         b.scrapIcon:SetSize(14, 12)
         b.scrapIcon:SetPoint("TOPLEFT", 0, 0)
         b.scrapIcon:Hide()
+    end
+
+    if not b.itemlevel then
+        b.itemlevel = b:CreateFontString(nil, "OVERLAY")
+        b.itemlevel:SetFont(UNIT_NAME_FONT, 12)
+        b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
+        b.itemlevel:SetText("")
     end
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
@@ -155,18 +164,29 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         end
         -- Show scrap icon if active
         if button.scrapIcon then
-            local itemLoc = ItemLocation:CreateFromBagAndSlot(button:GetParent():GetID(), button:GetID())
-            if itemLoc and itemLoc ~= "" then
-                if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") and (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
-                    button.scrapIcon:SetShown(itemLoc)
-                else
-                    button.scrapIcon:SetShown(false)
+            if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(button:GetParent():GetID(), button:GetID())
+                if itemLoc and itemLoc ~= "" then
+                    if (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
+                        button.scrapIcon:SetShown(itemLoc)
+                    else
+                        button.scrapIcon:SetShown(false)
+                    end
                 end
+            else
+                button.scrapIcon:SetShown(false)
             end
         end
         -- Show upgrade icon if active
         if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") and button.UpgradeIcon then
             CheckUpdateIcon(button)
+        end
+
+        -- Show ilvl if active
+        if button.itemlevel and GetSetting("BAG_SHOW_ILVL") then
+            setItemLevel(button, quality, itemIDOrLink)
+        elseif button.itemlevel then
+            button.itemlevel:SetText("")
         end
     else
         if button.junkIcon then button.junkIcon:Hide() end
@@ -175,9 +195,25 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button.UpgradeIcon:Hide()
             button:SetScript("OnUpdate", nil)
         end
+        if button.itemlevel then button.itemlevel:SetText("") end
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
+
+local function hookQuestItemBorder(self)
+    local id = self:GetID()
+    local name = self:GetName()
+    
+    for i=1, self.size, 1 do
+		local itemButton = _G[name .. "Item" .. i]
+        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(id, itemButton:GetID())
+        if itemButton.IconQuestTexture then
+            if questId or isQuestItem then
+                itemButton.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
+            end
+        end
+    end
+end
 
 local bag_resize
 local bank_resize
@@ -549,6 +585,8 @@ local function LoadInventory()
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
     hooksecurefunc("SetItemButtonQuality", hookItemQuality)
+
+    hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do

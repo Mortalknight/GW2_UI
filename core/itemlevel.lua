@@ -140,10 +140,14 @@ local function ScanTooltipTextures()
     return tt.gems, tt.essences
 end
 
-local function GetGearSlotInfo(unit, slot, deepScan)
+local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
     local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
     tt:SetOwner(UIParent, "ANCHOR_NONE")
-    tt:SetInventoryItem(unit, slot)
+    if itemlink then
+        tt:SetHyperlink(itemlink)
+    else
+        tt:SetInventoryItem(unit, slot)
+    end
     tt:Show()
 
     if not tt.slotInfo then tt.slotInfo = {} else wipe(tt.slotInfo) end
@@ -177,7 +181,7 @@ local function GetGearSlotInfo(unit, slot, deepScan)
 
         local colorblind = GetCVarBool("colorblindmode") and 4 or 3
         for x = 2, colorblind do
-            local line = _G["GW2_UI_ScanTooltipTextLeft"..x]
+            local line = _G["GW2_UI_ScanTooltipTextLeft" .. x]
             if line then
                 local lineText = line:GetText()
                 local itemLevel = lineText and (strmatch(lineText, MATCH_ITEM_LEVEL_ALT) or strmatch(lineText, MATCH_ITEM_LEVEL))

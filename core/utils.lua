@@ -626,3 +626,22 @@ local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInH
     frame.flasher:Play()
 end
 GW.FrameFlash = FrameFlash
+
+local function setItemLevel(button, quality, itemlink)
+    button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+    if quality then
+        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+            button.itemlevel:SetTextColor(
+                BAG_ITEM_QUALITY_COLORS[quality].r,
+                BAG_ITEM_QUALITY_COLORS[quality].g,
+                BAG_ITEM_QUALITY_COLORS[quality].b,
+                1
+            )
+        end
+        local slotInfo = GW.GetGearSlotInfo("player", button:GetID(), itemlink)
+        button.itemlevel:SetText(slotInfo.iLvl)
+    else
+        button.itemlevel:SetText("")
+    end
+end
+GW.setItemLevel = setItemLevel
