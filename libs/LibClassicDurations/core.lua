@@ -19,7 +19,7 @@ Usage example 1:
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicDurations", 55
+local MAJOR, MINOR = "LibClassicDurations", 56
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -682,11 +682,6 @@ lib.scanTip = lib.scanTip or CreateFrame("GameTooltip", "LibClassicDurationsScan
 local scanTip = lib.scanTip
 scanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 local function RegenerateBuffList(unit, dstGUID)
-    local guidTable = guids[dstGUID]
-    if not guidTable then
-        return
-    end
-
     local buffs = {}
     local spellName
     for i=1, 32 do
@@ -694,9 +689,9 @@ local function RegenerateBuffList(unit, dstGUID)
         scanTip:SetUnitAura(unit, i, "HELPFUL")
         spellName = LibClassicDurationsScanTipTextLeft1:GetText()
         if spellName then
-            local spellID = spellNameToID[spellName] or NPCspellNameToID[spellName]
+            local spellID = GetLastRankSpellID(spellName)
             if spellID then
-                local icon = select(3,GetSpellInfo(spellID)) or 136235
+                local icon = GetSpellTexture(spellID)
                 local opts = spells[spellID]
                 local buffInfo = { spellName, icon, 0, (opts and opts.buffType), 0, 0, nil, nil, nil, spellID, false, false, false, false, 1 }
                 local isStacking = opts and opts.stacking

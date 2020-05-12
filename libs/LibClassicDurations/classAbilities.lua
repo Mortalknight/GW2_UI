@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 57
+local Type, Version = "SpellTable", 58
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -455,6 +455,7 @@ Spell( 12292 ,{ duration = 20, type = "BUFF" }) -- Sweeping Strikes
 Spell({ 12880, 14201, 14202, 14203, 14204 }, { duration = 12, type = "BUFF" }) -- Enrage
 Spell({ 12966, 12967, 12968, 12969, 12970 }, { duration = 15, type = "BUFF" }) -- Flurry
 Spell({ 16488, 16490, 16491 }, { duration = 6, type = "BUFF" }) -- Blood Craze
+Spell({ 23885, 23886, 23887, 23888 }, { duration = 6, type = "BUFF" }) -- Bloodthirst
 Spell(7922, { duration = 1 }) -- Charge
 Spell(5530, { duration = 3 }) -- Mace Specialization
 
@@ -596,6 +597,7 @@ Spell({ 6307, 7804, 7805, 11766, 11767 }, { duration = INFINITY }) -- Blood Pact
 Spell({ 18708 }, { duration = 15, type = "BUFF", buffType = "Magic" }) -- Fel Domination
 Spell({ 19480 }, { duration = INFINITY }) -- Paranoia
 Spell({ 25228 }, { duration = INFINITY, type = "BUFF", buffType = "Magic" }) -- Soul Link
+Spell({ 23829 }, { duration = INFINITY, type = "BUFF" }) -- Master Demonologist
 Spell({ 18265, 18879, 18880, 18881}, { duration = 30, stacking = true }) -- Siphon Life
 
 if locale ~= "zhCN" or class ~= "MAGE" then
@@ -773,6 +775,7 @@ Spell( 13163, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Monkey
 Spell({ 20043, 20190 }, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Wild
 Spell({ 13165, 14318, 14319, 14320, 14321, 14322, 25296 }, { duration = INFINITY, type = "BUFF" }) -- Aspect of the Hawk
 Spell( 5384, { duration = INFINITY, type = "BUFF" }) -- Feign Death (Will it work?)
+Spell({ 19579, 24529 }, { duration = INFINITY, type = "BUFF" }) -- Spirit Bond
 
 Spell({ 19506, 20905, 20906 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Trueshot Aura
 Spell(19615, { duration = 8, type = "BUFF" }) -- Frenzy
@@ -1023,5 +1026,11 @@ Spell(23214, { duration = INFINITY, type = "BUFF" }) -- Summon Charger
 Spell(13819, { duration = INFINITY, type = "BUFF" }) -- Summon Warhorse
 Spell(23161, { duration = INFINITY, type = "BUFF" }) -- Summon Dreadsteed
 Spell(5784, { duration = INFINITY, type = "BUFF" }) -- Summon Felsteed
+
+-------------
+-- ITEMS
+-------------
+
+Spell(17670, { duration = INFINITY, type = "BUFF" }) -- Argent Dawn Commission
 
 lib:SetDataVersion(Type, Version)
