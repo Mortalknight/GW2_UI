@@ -189,11 +189,13 @@ local function NotificationStateChanged(show, animated)
             GetTime(),
             0.2,
             function(step)
+                local h = GwObjectivesNotification.hasDesc and GwObjectivesNotification.desc:GetHeight() + 50 or 70
+
                 if show == false then
-                    step = GwObjectivesNotification.desc:GetHeight() + 50 - step
+                    step = h - step
                 end
 
-                GwObjectivesNotification:SetAlpha(step / GwObjectivesNotification.desc:GetHeight() + 50)
+                GwObjectivesNotification:SetAlpha(step / h)
                 GwObjectivesNotification:SetHeight(math.max(step, 1))
             end,
             nil,
@@ -207,7 +209,8 @@ local function NotificationStateChanged(show, animated)
             true
         )
     else
-        GwObjectivesNotification:SetHeight(math.max(GwObjectivesNotification.desc:GetHeight() + 50, 1))
+        local h = GwObjectivesNotification.hasDesc and GwObjectivesNotification.desc:GetHeight() + 50 or 70
+        GwObjectivesNotification:SetHeight(math.max(h, 1))
         GwObjectivesNotification.animating = false
         GW.QuestTrackerLayoutChanged()
 
@@ -341,7 +344,7 @@ local function SetObjectiveNotification(mapID)
     end
 
     local oldText = GwObjectivesNotification.desc:GetText()
-    if oldText == desc then
+    if oldText == desc or (oldText == nil and (desc == nil or desc == "")) then
         GwObjectivesNotification.shouldUpdate = false
     else
         GwObjectivesNotification.shouldUpdate = true
@@ -353,10 +356,14 @@ local function SetObjectiveNotification(mapID)
 
     if desc == nil or desc == "" then
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
+        GwObjectivesNotification.desc:SetSize(300, 35)
+        GwObjectivesNotification.compassBG:SetSize(300, 70)
+        GwObjectivesNotification.hasDesc = false
     else
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
         GwObjectivesNotification.desc:SetSize(300, GwObjectivesNotification.desc:GetStringHeight())
         GwObjectivesNotification.compassBG:SetSize(300, GwObjectivesNotification.desc:GetHeight() + 50)
+        GwObjectivesNotification.hasDesc = true
     end
     GwObjectivesNotification.shouldDisplay = true
 end

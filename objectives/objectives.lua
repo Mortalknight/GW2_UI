@@ -904,6 +904,7 @@ local function LoadQuestTracker()
 
     fNotify.shouldDisplay = false
     fNotify.shouldUpdate = false
+    fNotify.hasDesc = false
     fTracker.trot = GetTime() + 2
     fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
     fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
