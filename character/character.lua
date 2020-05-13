@@ -1505,7 +1505,6 @@ function UpdateHonorTab(updateAll)
 	slot.Header:SetText(rankName)
     slot.Rank:SetText(format("(%s %d) %d%%", RANK, rankNumber, GetPVPRankProgress() * 100))
 
-    print( (0 + (5000 * GetPVPRankProgress())) * 0.2)
     -- Set icon
 	if rankNumber > 0 then
 		GWHonorFramePvPIcon:SetTexture(format("%s%02d","Interface/PvPRankBadges/PvPRank", rankNumber))
