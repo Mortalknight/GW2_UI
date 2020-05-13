@@ -314,8 +314,9 @@ local function takeItemButtons(p, bag_id)
 end
 GW.AddForProfiling("inventory", "takeItemButtons", takeItemButtons)
 
-local function reskinBagBar(b)
+local function reskinBagBar(b, ha)
     local bag_size = 28
+    local highlightAlpha = ha and ha or 0
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
@@ -343,7 +344,8 @@ local function reskinBagBar(b)
     high:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
 
     if b.SlotHighlightTexture then
-        b.SlotHighlightTexture:SetAlpha(0)
+        b.SlotHighlightTexture:SetAlpha(highlightAlpha)
+        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
     end
 
     b:SetPushedTexture(nil)
@@ -569,6 +571,63 @@ local function onMoverDragStop(self)
     onMoved(self:GetParent(), self.onMoveSetting)
 end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
+
+local function LoadDefaultBagBar()
+    -- if not our bags, we need to cut the bagbar frame out of the micromenu
+    local bagFrame = CreateFrame("FRAME", nil, UIParent)
+    bagFrame:SetSize(140, 30)
+    RegisterMovableFrame(bagFrame, "BagSlots", "BAG_DEFAULT_CONTAINER_POSITION", "VerticalActionBarDummy", true)
+
+    hooksecurefunc(bagFrame.gwMover, "StopMovingOrSizing", function(frame)
+        local anchor = "BOTTOMRIGHT"
+        local x = frame:GetRight() - GetScreenWidth()
+        local y = frame:GetBottom()
+
+        frame:ClearAllPoints()
+        frame:SetPoint(anchor, x, y)
+
+        if not InCombatLockdown() then
+            bagFrame:ClearAllPoints()
+            bagFrame:SetPoint(frame:GetPoint())
+        end
+    end)
+
+    bagFrame:ClearAllPoints()
+    bagFrame:SetPoint(
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["point"],
+        UIParent,
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["relativePoint"],
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["xOfs"],
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["yOfs"]
+    )
+
+    reskinBagBar(MainMenuBarBackpackButton, 1)
+    reskinBagBar(CharacterBag0Slot, 1)
+    reskinBagBar(CharacterBag1Slot, 1)
+    reskinBagBar(CharacterBag2Slot, 1)
+    reskinBagBar(CharacterBag3Slot, 1)
+
+    SetItemButtonQuality(MainMenuBarBackpackButton, 1, nil)
+
+    MainMenuBarBackpackButton:ClearAllPoints()
+    CharacterBag0Slot:ClearAllPoints()
+    CharacterBag1Slot:ClearAllPoints()
+    CharacterBag2Slot:ClearAllPoints()
+    CharacterBag3Slot:ClearAllPoints()
+
+    MainMenuBarBackpackButton:SetParent(bagFrame)
+    CharacterBag0Slot:SetParent(bagFrame)
+    CharacterBag1Slot:SetParent(bagFrame)
+    CharacterBag2Slot:SetParent(bagFrame)
+    CharacterBag3Slot:SetParent(bagFrame)
+
+    CharacterBag3Slot:SetPoint("LEFT", bagFrame, "LEFT", 0, 0)
+    CharacterBag2Slot:SetPoint("LEFT", CharacterBag3Slot, "RIGHT", 0, 0)
+    CharacterBag1Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
+    CharacterBag0Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
+    MainMenuBarBackpackButton:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
+end
+GW.LoadDefaultBagBar = LoadDefaultBagBar
 
 local function LoadInventory()
     _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP

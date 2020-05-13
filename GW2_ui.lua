@@ -664,6 +664,9 @@ local function loadAddon(self)
     if GetSetting("BAGS_ENABLED") then
         GW.LoadInventory()
         GW.SkinLooTFrame()
+    else
+        -- if not our bags, we need to cut the bagbar frame out of the micromenu
+        GW.LoadDefaultBagBar()
     end
 
     if GetSetting("USE_BATTLEGROUND_HUD") then
