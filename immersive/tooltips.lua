@@ -260,7 +260,7 @@ local function GameTooltip_OnTooltipSetItem(self)
         local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
 
-        if right ~= nil and showSpellID then
+        if link ~= nil and showSpellID then
             right = format("|cffffedba%s|r %s", ID, strmatch(link, ":(%w+)"))
         end
 
