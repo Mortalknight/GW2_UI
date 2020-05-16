@@ -2,6 +2,7 @@ local _, GW = ...
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local setItemLevel = GW.setItemLevel
+local RegisterMovableFrame = GW.RegisterMovableFrame
 
 
 -- global for this deprecated in 8.3; from ContainerFrame.lua
