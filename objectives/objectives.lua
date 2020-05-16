@@ -632,7 +632,11 @@ local function updateQuestItemPositions(index, height)
     height = height + GwQuesttrackerContainerAchievement:GetHeight()
 
     if GwObjectivesNotification:IsShown() then
-        height = height + 70
+        height = height + GwObjectivesNotification.desc:GetHeight() + 50
+    end
+
+    if GwQuesttrackerContainerBossFrames:IsShown() then
+        height = height + GwQuesttrackerContainerBossFrames:GetHeight()
     end
 
     _G["GwQuestItemButton" .. index]:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
@@ -651,14 +655,16 @@ local function updateExtraQuestItemPositions()
     local height = 0
 
     if GwObjectivesNotification:IsShown() then
-        height = height + 70
+        height = height + GwObjectivesNotification.desc:GetHeight() + 50
     end
 
     GwScenarioItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 
-    height =
-        height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() +
-        GwQuesttrackerContainerAchievement:GetHeight() +
+    if GwQuesttrackerContainerBossFrames:IsShown() then
+        height = height + GwQuesttrackerContainerBossFrames:GetHeight()
+    end
+
+    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() +
         GwQuesttrackerContainerAchievement:GetHeight()
 
     GwBonusItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height + -25)
@@ -734,9 +740,10 @@ local function tracker_OnUpdate()
         GwQuestTracker.trot = GetTime() + 1
         GW.SetObjectiveNotification(mapID)
 
-        if state ~= GwObjectivesNotification.shouldDisplay then
+        if state ~= GwObjectivesNotification.shouldDisplay or GwObjectivesNotification.shouldUpdate then
             state = GwObjectivesNotification.shouldDisplay
-            GW.NotificationStateChanged(state)
+            GwObjectivesNotification.shouldUpdate = false
+            GW.NotificationStateChanged(state, GwObjectivesNotification.shouldUpdate)
         end
     end
 end
@@ -856,6 +863,7 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("PLAYER_MONEY")
     fQuest:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED")
     fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
+    fQuest:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
 
     local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
     header.icon:SetTexCoord(0, 1, 0.25, 0.5)
@@ -895,6 +903,8 @@ local function LoadQuestTracker()
     GW.LoadBonusFrame()
 
     fNotify.shouldDisplay = false
+    fNotify.shouldUpdate = false
+    fNotify.hasDesc = false
     fTracker.trot = GetTime() + 2
     fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
     fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")

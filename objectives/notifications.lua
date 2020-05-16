@@ -22,8 +22,8 @@ local notification_priority = {}
 notification_priority["EVENT_NEARBY"] = 1
 notification_priority["SCENARIO"] = 2
 notification_priority["EVENT"] = 3
-notification_priority["BOSS"] = 4
-notification_priority["ARENA"] = 5
+notification_priority["ARENA"] = 4
+notification_priority["BOSS"] = 5
 
 local function prioritys(a, b)
     if a == nil or a == "" then
@@ -177,34 +177,44 @@ local function removeNotification(key)
 end
 GW.AddForProfiling("notifications", "removeNotification", removeNotification)
 
-local function NotificationStateChanged(show)
+local function NotificationStateChanged(show, animated)
     if show then
         GwObjectivesNotification:Show()
     end
-    AddToAnimation(
-        "notificationToggle",
-        0,
-        70,
-        GetTime(),
-        0.2,
-        function(step)
-            if show == false then
-                step = 70 - step
-            end
+    if animated then
+        AddToAnimation(
+            "notificationToggle",
+            0,
+            GwObjectivesNotification.desc:GetHeight() + 50,
+            GetTime(),
+            0.2,
+            function(step)
+                local h = GwObjectivesNotification.hasDesc and GwObjectivesNotification.desc:GetHeight() + 50 or 70
 
-            GwObjectivesNotification:SetAlpha(step / 70)
-            GwObjectivesNotification:SetHeight(math.max(step, 1))
-        end,
-        nil,
-        function()
-            if not show then
-                GwObjectivesNotification:Hide()
-            end
-            GwObjectivesNotification.animating = false
-            GW.QuestTrackerLayoutChanged()
-        end,
-        true
-    )
+                if show == false then
+                    step = h - step
+                end
+
+                GwObjectivesNotification:SetAlpha(step / h)
+                GwObjectivesNotification:SetHeight(math.max(step, 1))
+            end,
+            nil,
+            function()
+                if not show then
+                    GwObjectivesNotification:Hide()
+                end
+                GwObjectivesNotification.animating = false
+                GW.QuestTrackerLayoutChanged()
+            end,
+            true
+        )
+    else
+        local h = GwObjectivesNotification.hasDesc and GwObjectivesNotification.desc:GetHeight() + 50 or 70
+        GwObjectivesNotification:SetHeight(math.max(h, 1))
+        GwObjectivesNotification.animating = false
+        GW.QuestTrackerLayoutChanged()
+
+    end
 end
 GW.NotificationStateChanged = NotificationStateChanged
 
@@ -245,7 +255,7 @@ local function SetObjectiveNotification(mapID)
     for k, v in pairs(notifications) do
         if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
             if data ~= nil then
-                if prioritys(data["KEY"], notifications[k]["KEY"]) then
+                if prioritys(data["TYPE"], notifications[k]["TYPE"]) then
                     data = notifications[k]
                 end
             else
@@ -268,7 +278,7 @@ local function SetObjectiveNotification(mapID)
         return
     end
 
-    local key = data["KEY"]
+    local key = data["TYPE"]
     local title = data["TITLE"]
     local desc = data["DESC"]
     local color = data["COLOR"]
@@ -333,15 +343,27 @@ local function SetObjectiveNotification(mapID)
         GwObjectivesNotification.compass:SetScript("OnUpdate", nil)
     end
 
+    local oldText = GwObjectivesNotification.desc:GetText()
+    if oldText == desc or (oldText == nil and (desc == nil or desc == "")) then
+        GwObjectivesNotification.shouldUpdate = false
+    else
+        GwObjectivesNotification.shouldUpdate = true
+    end
     GwObjectivesNotification.title:SetText(title)
     GwObjectivesNotification.title:SetTextColor(color.r, color.g, color.b)
+    GwObjectivesNotification.desc:SetSize(300, 150)
     GwObjectivesNotification.desc:SetText(desc)
 
     if desc == nil or desc == "" then
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
-        
+        GwObjectivesNotification.desc:SetSize(300, 35)
+        GwObjectivesNotification.compassBG:SetSize(300, 70)
+        GwObjectivesNotification.hasDesc = false
     else
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
+        GwObjectivesNotification.desc:SetSize(300, GwObjectivesNotification.desc:GetStringHeight())
+        GwObjectivesNotification.compassBG:SetSize(300, GwObjectivesNotification.desc:GetHeight() + 50)
+        GwObjectivesNotification.hasDesc = true
     end
     GwObjectivesNotification.shouldDisplay = true
 end

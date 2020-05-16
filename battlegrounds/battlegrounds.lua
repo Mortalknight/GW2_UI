@@ -288,6 +288,8 @@ local function pvpHud_onEvent(self, event)
 
         GwBattleGroundScores.hasTimer = false
         GwBattleGroundScores.TrackFlag = false
+        GwBattleGroundScores:SetScript("OnEvent", nil)
+        GwBattleGroundScores:SetScript("OnUpdate", nil)
         GwBattleGroundScores:SetScript("OnEvent", bgs[mapID]["OnEvent"])
         if bgs[mapID]["OnUpdate"] then
             GwBattleGroundScores:SetScript("OnUpdate", bgs[mapID]["OnUpdate"])
@@ -314,6 +316,8 @@ local function pvpHud_onEvent(self, event)
     else
         GwBattleGroundScores:UnregisterAllEvents()
         GwBattleGroundScores:Hide()
+        GwBattleGroundScores.hasTimer = false
+        GwBattleGroundScores.TrackFlag = false
         GwBattleGroundScores:SetScript("OnEvent", nil)
         GwBattleGroundScores:SetScript("OnUpdate", nil)
         UIWidgetTopCenterContainerFrame:Show()
@@ -413,7 +417,7 @@ local function LoadBattlegrounds()
                 [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  ["normalState"] = 36}
             }
         },
-        [1105] = { --Deepwind (TODO: Add cart carrier to top)
+        [2245] = { --Deepwind (TODO: Add cart carrier to top)
             ["OnEvent"] = PointsAndPOI_onEvent,
             ["icons"] = {}
         },
@@ -424,6 +428,9 @@ local function LoadBattlegrounds()
             ["OnEvent"] = OnlyPoints_onEvent
         },
         [1803] = { --SeethingShore
+            ["OnEvent"] = OnlyPoints_onEvent
+        },
+        [628] = { --Isle Of Conquest
             ["OnEvent"] = OnlyPoints_onEvent
         },
         [998] = { --TempleOfKotmogu (TODO: Add orb carrier to top)

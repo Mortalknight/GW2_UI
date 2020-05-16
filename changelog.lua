@@ -15,23 +15,34 @@ NEW
     - Settings menu improvements
     - Added HUD Scale option as a slider
     - Added Grid to Move HUD
-    - Added back Chatbubbles in none proteced areas
-    - Added new options to bags: "Show scrap Icon", "Show Junk Icon", "Colouring professional bags", "Show Upgrade Icon", "Sell Junk automatically"
+    - Added back Chatbubbles in none protected areas
+    - Added new options to bags: "Show scrap Icon", "Show Junk Icon", "Colouring professional bags", "Show Upgrade Icon", "Sell Junk automatically", "Show item level"
     - Added "Advanced Tooltips" with these options:
         - Show names in classcolor, show spec and ilvl while SHIFT is down, show AFK and DND Status, color level, etc.
         - Item Count: Shows how many Items you have in bags and in bank (from this item)
         - Spell/Item IDs: SHows the Spll/Item Id's in the tooltip
         - NPC IDs: Show the NPC ID in the tooltip
-        - Current Mount: Displayes the current mount the player is riding, incl. source
-        - Target Info: Shows how in your party/raid is targeting this target
+        - Current Mount: Display the current mount the player is riding, incl. source
+        - Target Info: Shows who in your party/raid is targeting this target
         - Display the unit role in the tooltip
         - some more
     - Skin Blizzard Options (Interface and Settings), Addon List, Keybindings and Macro options
     - Added AFK-Mode
+    - Added Chat copy button, to copy out text from the chatwindow
+    - Added Auto repair mode
+    - Added toggle for HUD background
+    - Added more option to Player buffs:
+        - Style: Secure (can be canceld in combat); Legacy (sorted)
+        - Set the grow direction (left, right, up, down)
+        - Set auras per row
+    - Added Keybinds for "Sort Bag" and "Sort Bank"
+    - Added option to show coordinates with 2 digits (click on the coordinats; Thanks to: hatdragon)
+    - Added extra mana bar for feral druids in cat form
     - Update locals (zhTW, ptBR)
 
 FIXES
     - Chat window can now be separated and moved to the rightside of the screen
+    - Arena prep frames are now displayes correctly
 ]=]
 )
 

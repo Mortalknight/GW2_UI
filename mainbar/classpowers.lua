@@ -115,6 +115,14 @@ local function powerMana(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerMana", powerMana)
 
+local function powerLittleMana(self, event, ...)
+    local ptype = select(2, ...)
+    if event == "CLASS_POWER_INIT" or ptype == "MANA" then
+        UpdatePowerData(self.lmb, 0, "MANA", "GwLittlePowerBar")
+    end
+end
+GW.AddForProfiling("classpowers", "powerLittleMana", powerLittleMana)
+
 local function setManaBar(f)
     f.barType = "mana"
     f.background:SetTexture(nil)
@@ -124,9 +132,9 @@ local function setManaBar(f)
     if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
         f:ClearAllPoints()
         if GetSetting("XPBAR_ENABLED") then
-            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
         else
-            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
         end
         f:SetWidth(220)
         f:SetHeight(30)
@@ -135,6 +143,29 @@ local function setManaBar(f)
 
     f:SetScript("OnEvent", powerMana)
     powerMana(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+end
+GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
+
+local function setLittleManaBar(f)
+    f.barType = "combo"  -- only used in feral form, so we need to show the combo points
+    f.lmb:Show()
+
+    if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
+        f:ClearAllPoints()
+        if GetSetting("XPBAR_ENABLED") then
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
+        else
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
+        end
+        f:SetWidth(220)
+        f:SetHeight(30)
+        f:Hide()
+    end
+
+    f:SetScript("OnEvent", powerLittleMana)
+    powerLittleMana(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
@@ -838,8 +869,8 @@ local function setDruid(f)
         end
     elseif spec == 2 then -- feral
         if form == 1 then
-            -- show combo points in cat form
-            barType = "combo"
+            -- show combo points and little mana bar in cat form
+            barType = "combo|little_mana"
         elseif form == 5 then
             -- show mana bar in bear form
             barType = "mana"
@@ -878,6 +909,10 @@ local function setDruid(f)
     elseif barType == "mana" then
         setManaBar(f)
         return true
+    elseif barType == "combo|little_mana" then
+        setComboBar(f)
+        setLittleManaBar(f)
+        return true
     else
         return false
     end
@@ -900,6 +935,7 @@ local function selectType(f)
     f.disc:Hide()
     f.decay:Hide()
     f.exbar:Hide()
+    f.lmb:Hide()
     f.gwPower = -1
     local showBar = false
 
@@ -974,6 +1010,20 @@ local function LoadClassPowers()
     cpf.gwPlayerClass = pClass
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
+
+    -- create an extra mana power bar that is used sometimes (feral druid in cat form)
+    local lmb = CreateFrame("Frame", nil, GwPlayerPowerBar, "GwPlayerPowerBar")
+    cpf.lmb = lmb
+    lmb.candy.spark:ClearAllPoints()
+    lmb:SetSize(GwPlayerPowerBar:GetWidth(), 5)
+    lmb.bar:SetHeight(5)
+    lmb.candy:SetHeight(5)
+    lmb.candy.spark:SetHeight(5)
+    lmb.statusBar:SetHeight(5)
+    lmb:ClearAllPoints()
+    lmb:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 0, 5)
+    lmb:SetFrameStrata("MEDIUM")
+    lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
 
     -- create an extra mana power bar that is used sometimes
     local exbar = CreateFrame("Frame", nil, cpf, "GwPlayerPowerBar")

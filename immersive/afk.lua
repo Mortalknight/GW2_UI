@@ -183,7 +183,8 @@ local function LoopAnimations(self)
 end
 
 local function loadAFKAnimation()
-    local classColor = GWGetClassColor(select(2, UnitClass("player")))
+    local _, class = UnitClass("player")
+    local classColor = GWGetClassColor(class, true, true)
     local playerName = UnitName("Player")
     
     local BackdropFrame = {
@@ -229,7 +230,7 @@ local function loadAFKAnimation()
     AFKMode.bottom.logo = AFKMode:CreateTexture(nil, "OVERLAY")
     AFKMode.bottom.logo:SetSize(250, 250)
     AFKMode.bottom.logo:SetPoint("CENTER", AFKMode.bottom, "CENTER", 0, 55)
-    AFKMode.bottom.logo:SetTexture("Interface/AddOns/GW2_UI/Textures/gw2-logo")
+    AFKMode.bottom.logo:SetTexture("Interface/AddOns/GW2_UI/Textures/gwlogo")
 
     local factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = UnitFactionGroup("player"), 140, -20, -8, -10, -36
     if factionGroup == "Neutral" then

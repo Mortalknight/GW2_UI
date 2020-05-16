@@ -1,6 +1,8 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local setItemLevel = GW.setItemLevel
+local RegisterMovableFrame = GW.RegisterMovableFrame
 
 
 -- global for this deprecated in 8.3; from ContainerFrame.lua
@@ -43,6 +45,7 @@ local function reskinItemButton(iname, b)
 
     local qtex = b.IconQuestTexture or _G[iname .. "IconQuestTexture"]
     if qtex then
+        b.IconQuestTexture = qtex
         qtex:SetSize(item_size + 2, item_size + 2)
         qtex:ClearAllPoints()
         qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
@@ -65,6 +68,13 @@ local function reskinItemButton(iname, b)
         b.scrapIcon:SetSize(14, 12)
         b.scrapIcon:SetPoint("TOPLEFT", 0, 0)
         b.scrapIcon:Hide()
+    end
+
+    if not b.itemlevel then
+        b.itemlevel = b:CreateFontString(nil, "OVERLAY")
+        b.itemlevel:SetFont(UNIT_NAME_FONT, 12)
+        b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
+        b.itemlevel:SetText("")
     end
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
@@ -155,18 +165,29 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         end
         -- Show scrap icon if active
         if button.scrapIcon then
-            local itemLoc = ItemLocation:CreateFromBagAndSlot(button:GetParent():GetID(), button:GetID())
-            if itemLoc and itemLoc ~= "" then
-                if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") and (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
-                    button.scrapIcon:SetShown(itemLoc)
-                else
-                    button.scrapIcon:SetShown(false)
+            if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(button:GetParent():GetID(), button:GetID())
+                if itemLoc and itemLoc ~= "" then
+                    if (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
+                        button.scrapIcon:SetShown(itemLoc)
+                    else
+                        button.scrapIcon:SetShown(false)
+                    end
                 end
+            else
+                button.scrapIcon:SetShown(false)
             end
         end
         -- Show upgrade icon if active
         if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") and button.UpgradeIcon then
             CheckUpdateIcon(button)
+        end
+
+        -- Show ilvl if active
+        if button.itemlevel and GetSetting("BAG_SHOW_ILVL") then
+            setItemLevel(button, quality, itemIDOrLink)
+        elseif button.itemlevel then
+            button.itemlevel:SetText("")
         end
     else
         if button.junkIcon then button.junkIcon:Hide() end
@@ -175,9 +196,25 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button.UpgradeIcon:Hide()
             button:SetScript("OnUpdate", nil)
         end
+        if button.itemlevel then button.itemlevel:SetText("") end
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
+
+local function hookQuestItemBorder(self)
+    local id = self:GetID()
+    local name = self:GetName()
+    
+    for i=1, self.size, 1 do
+		local itemButton = _G[name .. "Item" .. i]
+        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(id, itemButton:GetID())
+        if itemButton.IconQuestTexture then
+            if questId or isQuestItem then
+                itemButton.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
+            end
+        end
+    end
+end
 
 local bag_resize
 local bank_resize
@@ -278,8 +315,9 @@ local function takeItemButtons(p, bag_id)
 end
 GW.AddForProfiling("inventory", "takeItemButtons", takeItemButtons)
 
-local function reskinBagBar(b)
+local function reskinBagBar(b, ha)
     local bag_size = 28
+    local highlightAlpha = ha and ha or 0
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
@@ -307,7 +345,8 @@ local function reskinBagBar(b)
     high:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
 
     if b.SlotHighlightTexture then
-        b.SlotHighlightTexture:SetAlpha(0)
+        b.SlotHighlightTexture:SetAlpha(highlightAlpha)
+        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
     end
 
     b:SetPushedTexture(nil)
@@ -465,6 +504,9 @@ local function onMoved(self, setting, snap_size)
     end
 
     self:StopMovingOrSizing()
+    -- check if frame is out of screen, if yes move it back
+    ValidateFramePosition(self)
+
     local x = self:GetLeft()
     local y = self:GetTop()
 
@@ -531,7 +573,68 @@ local function onMoverDragStop(self)
 end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
+local function LoadDefaultBagBar()
+    -- if not our bags, we need to cut the bagbar frame out of the micromenu
+    local bagFrame = CreateFrame("FRAME", nil, UIParent)
+    bagFrame:SetSize(140, 30)
+    RegisterMovableFrame(bagFrame, "BagSlots", "BAG_DEFAULT_CONTAINER_POSITION", "VerticalActionBarDummy", true)
+
+    hooksecurefunc(bagFrame.gwMover, "StopMovingOrSizing", function(frame)
+        local anchor = "BOTTOMRIGHT"
+        local x = frame:GetRight() - GetScreenWidth()
+        local y = frame:GetBottom()
+
+        frame:ClearAllPoints()
+        frame:SetPoint(anchor, x, y)
+
+        if not InCombatLockdown() then
+            bagFrame:ClearAllPoints()
+            bagFrame:SetPoint(frame:GetPoint())
+        end
+    end)
+
+    bagFrame:ClearAllPoints()
+    bagFrame:SetPoint(
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["point"],
+        UIParent,
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["relativePoint"],
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["xOfs"],
+        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["yOfs"]
+    )
+
+    reskinBagBar(MainMenuBarBackpackButton, 1)
+    reskinBagBar(CharacterBag0Slot, 1)
+    reskinBagBar(CharacterBag1Slot, 1)
+    reskinBagBar(CharacterBag2Slot, 1)
+    reskinBagBar(CharacterBag3Slot, 1)
+
+    SetItemButtonQuality(MainMenuBarBackpackButton, 1, nil)
+
+    MainMenuBarBackpackButton:ClearAllPoints()
+    CharacterBag0Slot:ClearAllPoints()
+    CharacterBag1Slot:ClearAllPoints()
+    CharacterBag2Slot:ClearAllPoints()
+    CharacterBag3Slot:ClearAllPoints()
+
+    MainMenuBarBackpackButton:SetParent(bagFrame)
+    CharacterBag0Slot:SetParent(bagFrame)
+    CharacterBag1Slot:SetParent(bagFrame)
+    CharacterBag2Slot:SetParent(bagFrame)
+    CharacterBag3Slot:SetParent(bagFrame)
+
+    CharacterBag3Slot:SetPoint("LEFT", bagFrame, "LEFT", 0, 0)
+    CharacterBag2Slot:SetPoint("LEFT", CharacterBag3Slot, "RIGHT", 0, 0)
+    CharacterBag1Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
+    CharacterBag0Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
+    MainMenuBarBackpackButton:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
+end
+GW.LoadDefaultBagBar = LoadDefaultBagBar
+
 local function LoadInventory()
+    _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP
+    _G["BINDING_NAME_GW2UI_BAG_SORT"] = BAG_CLEANUP_BAGS
+    _G["BINDING_NAME_GW2UI_BANK_SORT"] = BAG_CLEANUP_BANK
+    
     item_size = GetSetting("BAG_ITEM_SIZE")
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
@@ -542,6 +645,8 @@ local function LoadInventory()
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
     hooksecurefunc("SetItemButtonQuality", hookItemQuality)
+
+    hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do
@@ -573,6 +678,29 @@ local function LoadInventory()
     
     bag_resize = GW.LoadBag(helpers)
     bank_resize = GW.LoadBank(helpers)
+
+    -- Skin StackSplit
+	local StackSplitFrame = _G.StackSplitFrame
+    GW.StripTextures(StackSplitFrame)
+	StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
+
+	GW.skins.SkinButton(StackSplitFrame.OkayButton, false, true)
+	GW.skins.SkinButton(StackSplitFrame.CancelButton, false, true)
+
+    StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.RightButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.RightButton:SetSize(25, 25)
+    StackSplitFrame.RightButton:SetPoint("LEFT", StackSplitFrame, "CENTER", 51, 18)
+
+    StackSplitFrame.LeftButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.LeftButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.LeftButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.LeftButton:SetSize(25, 25)
+    StackSplitFrame.LeftButton:GetNormalTexture():SetTexCoord(1, 0, 1, 0)
+    StackSplitFrame.LeftButton:GetPushedTexture():SetTexCoord(1, 0, 1, 0)
+    StackSplitFrame.LeftButton:GetDisabledTexture():SetTexCoord(1, 0, 1, 0)
+    StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
 end
 GW.LoadInventory = LoadInventory
 

@@ -46,7 +46,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Activar la barra de casteo de GW2 UI"
     L["CHARACTER_NEXT_RANK"] = "SIGUIENTE"
     L["CHARACTER_PARAGON"] = "Paragón"
-    L["CHAT_BUBBLES_DESC"] = "Reemplazar los bocadillos de chat de IU predeterminados. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Reemplazar los bocadillos de chat de IU predeterminados. (Only in not protected areas)"
     L["CHAT_FADE"] = "Ocultar el chat"
     L["CHAT_FADE_DESC"] = "Permitir al chat ocultarse cuando no esté en uso."
     L["CHAT_FRAME_DESC"] = "Activar la ventana de chat mejorada."
@@ -279,6 +279,14 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Sin gremio"
     L["AFK_MODE"] = "Modo AFK"
     L["AFK_MODE_DESC"] = "Cuando vaya a AFK, visualice la pantalla AFK."
+    L["REPAIRD_FOR"] = "Sus artículos han sido reparados para: %s"
+    L["REPAIRD_FOR_GUILD"] = "Tus artículos han sido reparados con fondos bancarios de hermandad para: %s"
+    L["AUTO_REPAIR"] = "Reparación de automóviles"
+    L["AUTO_REPAIR_DESC"] = "Repare automáticamente utilizando el siguiente método cuando visite a un comerciante."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
+    L["HUD_BACKGROUND"] = "Show HUD background"
+    L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
 end
 
 

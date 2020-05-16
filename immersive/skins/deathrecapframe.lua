@@ -24,10 +24,11 @@ local function SkinDeathRecapFrame_Loaded()
     _G["DeathRecapFrameBorderRight"]:Hide()
     DeathRecapFrame.BackgroundInnerGlow:Hide()
     DeathRecapFrame.Background:Hide()
-    DeathRecapFrame.Divider:SetTexture("Interface/AddOns/GW2_UI/textures/chatbubbles/border-bottom")
+    DeathRecapFrame.Divider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+    DeathRecapFrame.Divider:SetHeight(2)
     DeathRecapFrame.Divider:ClearAllPoints()
-    DeathRecapFrame.Divider:SetPoint("TOPLEFT", 4, -25)
-    DeathRecapFrame.Divider:SetPoint("TOPRIGHT", -4, -25)
+    DeathRecapFrame.Divider:SetPoint("TOPLEFT", 0, -25)
+    DeathRecapFrame.Divider:SetPoint("TOPRIGHT", 0, -25)
 
     for i = 1, 5 do
         local recap = DeathRecapFrame["Recap" .. i]

@@ -12,6 +12,7 @@ local AddToClique =GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local IsIn = GW.IsIn
+local nameRoleIcon = GW.nameRoleIcon
 
 local GW_READY_CHECK_INPROGRESS = false
 
@@ -54,7 +55,7 @@ end
 GW.AddForProfiling("party", "manageButtonDelay", manageButtonDelay)
 
 local function manageButton()
-    local fmGMGB = CreateFrame("Button", "GwManageGroupButton", UIParent, "GwManageGroupButton")
+    local fmGMGB = CreateFrame("Frame", "GwManageGroupButton", UIParent, "GwManageGroupButtonTmpl")
     local fnGMGB_OnClick = function(self, button)
         if GwGroupManage:IsShown() then
             GwGroupManage:Hide()
@@ -68,9 +69,9 @@ local function manageButton()
     local fnGMGB_OnLeave = function(self)
         self.arrow:SetSize(16, 32)
     end
-    fmGMGB:SetScript("OnClick", fnGMGB_OnClick)
-    fmGMGB:SetScript("OnEnter", fnGMGB_OnEnter)
-    fmGMGB:SetScript("OnLeave", fnGMGB_OnLeave)
+    fmGMGB.cf.button:SetScript("OnClick", fnGMGB_OnClick)
+    fmGMGB.cf.button:SetScript("OnEnter", fnGMGB_OnEnter)
+    fmGMGB.cf.button:SetScript("OnLeave", fnGMGB_OnLeave)
 
     CreateFrame("Frame", "GwGroupManage", UIParent, "GwGroupManage")
     local fmGMGIB = GwManageGroupInviteBox
@@ -195,9 +196,9 @@ local function manageButton()
         end
 
         if IsInRaid() then
-            GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
+            GwManageGroupButton.cf.button.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
         else
-            GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
+            GwManageGroupButton.cf.button.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
         end
         _G[self:GetName() .. "Target"]:SetFont(UNIT_NAME_FONT, 14)
         _G[self:GetName() .. "Target"]:SetTextColor(255 / 255, 241 / 255, 209 / 255)
@@ -217,19 +218,17 @@ local function manageButton()
         end
 
         if IsInRaid() then
-            GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
+            GwManageGroupButton.cf.button.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
         else
-            GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
+            GwManageGroupButton.cf.button.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
         end
     end
     fmGMIG:SetScript("OnEvent", fnGMIG_OnEvent)
     fnGMIG_OnLoad(fmGMIG)
 
     local fnGWMM_OnLoad = function(self)
-        if
-            GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
-                (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
-        then
+        if GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
+                (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
             self:Show()
         else
             self:Hide()
@@ -243,10 +242,8 @@ local function manageButton()
     end
     local fnGWMM_OnEvent = function(self)
         inCombat = UnitAffectingCombat("player")
-        if
-            GetSetting("WORLD_MARKER_FRAME") and((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
-                (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
-        then
+        if GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
+                (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
             manageButtonDelay(inCombat, "show")
         else
             manageButtonDelay(inCombat, "hide")
@@ -310,6 +307,7 @@ local function manageButton()
         f:SetScript(
             "OnClick",
             function()
+                PlaySound(1115) --U_CHAT_SCROLL_BUTTON
                 SetRaidTarget("target", i)
             end
         )
@@ -319,6 +317,54 @@ local function manageButton()
             y = y + -55
             x = 10
         end
+    end
+
+    if GetSetting("FADE_GROUP_MANAGE_FRAME") then
+        fmGMGB.cf:SetAttribute("fadeTime", 0.15)
+        local fo = fmGMGB.cf:CreateAnimationGroup("fadeOut")
+        local fi = fmGMGB.cf:CreateAnimationGroup("fadeIn")
+        local fadeOut = fo:CreateAnimation("Alpha")
+        local fadeIn = fi:CreateAnimation("Alpha")
+        fo:SetScript("OnFinished", function(self)
+            self:GetParent():SetAlpha(0)
+        end)
+        fadeOut:SetStartDelay(0.25)
+        fadeOut:SetFromAlpha(1.0)
+        fadeOut:SetToAlpha(0.0)
+        fadeOut:SetDuration(fmGMGB.cf:GetAttribute("fadeTime"))
+        fadeIn:SetFromAlpha(0.0)
+        fadeIn:SetToAlpha(1.0)
+        fadeIn:SetDuration(fmGMGB.cf:GetAttribute("fadeTime"))
+        fmGMGB.cf.fadeOut = function(self)
+            fi:Stop()
+            fo:Stop()
+            fo:Play()
+        end
+        fmGMGB.cf.fadeIn = function(self)
+            self:SetAlpha(1)
+            fi:Stop()
+            fo:Stop()
+            fi:Play()
+        end
+
+        fmGMGB:SetFrameRef("cf", fmGMGB.cf)
+
+        fmGMGB:SetAttribute("_onenter", [=[
+            local cf = self:GetFrameRef("cf")
+            if cf:IsShown() then
+                return
+            end
+            cf:UnregisterAutoHide()
+            cf:Show()
+            cf:CallMethod("fadeIn", cf)
+            cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
+        ]=])
+        fmGMGB.cf:HookScript("OnLeave", function(self)
+            if not self:IsMouseOver() and not GwGroupManage:IsShown() then
+                self:fadeOut()
+            end
+        end)
+        fmGMGB.cf:Hide()
     end
 end
 GW.AddForProfiling("party", "manageButton", manageButton)
@@ -641,12 +687,6 @@ end
 GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
 local function setUnitName(self)
-    local nameRoleIcon = {}
-    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:16:16:0:0|t "
-    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:16:16:0:0|t "
-    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:16:16:0:0|t "
-    nameRoleIcon["NONE"] = ""
-
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
 
@@ -831,7 +871,7 @@ end
 GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
 
 local function TogglePartyRaid(b)
-    if b == true and not IsInRaid() then
+    if b and not IsInRaid() then
         for i = 1, 4 do
             if _G["GwPartyFrame" .. i] ~= nil then
                 _G["GwPartyFrame" .. i]:Show()
@@ -877,16 +917,14 @@ local function createPartyFrame(i)
 
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "Button4Up", "Button5Up", "MiddleButtonUp")
+    frame:RegisterForClicks("AnyUp")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript(
         "OnEnter",
         function()
-            GameTooltip:ClearLines()
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
             GameTooltip:SetUnit(registerUnit)
-
             GameTooltip:Show()
         end
     )

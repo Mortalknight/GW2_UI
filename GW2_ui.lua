@@ -552,7 +552,7 @@ local function loadAddon(self)
             "OnClick",
             function()
                 if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
                     return
                 end
                 GwSettingsWindow:Show()
@@ -664,6 +664,9 @@ local function loadAddon(self)
     if GetSetting("BAGS_ENABLED") then
         GW.LoadInventory()
         GW.SkinLooTFrame()
+    else
+        -- if not our bags, we need to cut the bagbar frame out of the micromenu
+        GW.LoadDefaultBagBar()
     end
 
     if GetSetting("USE_BATTLEGROUND_HUD") then
@@ -673,6 +676,7 @@ local function loadAddon(self)
     GW.LoadCharacter()
 
     GW.LoadBreathMeter()
+    GW.LoadAutoRepair()
 
     --Create unitframes
     if GetSetting("FOCUS_ENABLED") then
@@ -808,12 +812,14 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
-        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
+        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
         end
-        if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
-            GW.RemoveTrackerNotificationOfType("ARENA")
-        end
+        C_Timer.After(0.5, function()
+            if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
+                GW.RemoveTrackerNotificationOfType("ARENA")
+            end
+        end)
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)

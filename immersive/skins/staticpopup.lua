@@ -49,7 +49,7 @@ local function SkinStaticPopup()
     hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
 
     --Movie skip Frame
-    hooksecurefunc('CinematicFrame_OnDisplaySizeChanged', function(self)
+    hooksecurefunc("CinematicFrame_OnDisplaySizeChanged", function(self)
         if self and self.closeDialog and not self.closeDialog.template then
             self.closeDialog.Border:Hide()
             
@@ -60,8 +60,8 @@ local function SkinStaticPopup()
             self.closeDialog.tex = tex
 
             local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
-            local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName..'ConfirmButton'])
-            local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName..'ResumeButton'])
+            local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName .. "ConfirmButton"])
+            local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName .. "ResumeButton"])
             if closeButton then 
                 SkinButton(closeButton, false, true)
             end
@@ -71,7 +71,7 @@ local function SkinStaticPopup()
         end
     end)
 
-    hooksecurefunc('MovieFrame_PlayMovie', function(self)
+    hooksecurefunc("MovieFrame_PlayMovie", function(self)
         if self and self.CloseDialog and not self.CloseDialog.template then
             self.CloseDialog.Border:Hide()
             
@@ -85,6 +85,5 @@ local function SkinStaticPopup()
             SkinButton(self.CloseDialog.ResumeButton, false, true)
         end
     end)
-
 end
 GW.SkinStaticPopup = SkinStaticPopup

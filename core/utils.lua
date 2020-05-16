@@ -27,6 +27,8 @@ local StripTexturesBlizzFrames = {
     "ScrollFrameBorder",
 }
 
+GW.NoOp = function() end
+
 local function StripRegion(which, object, hide, alpha)
     if hide then
         object:Hide()
@@ -119,8 +121,10 @@ local function FormatMoneyForChat(amount)
 end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
-local function GWGetClassColor(class, forNameString, usePriestColor)
-    if not class then return end
+local function GWGetClassColor(class, useClassColor, forNameString)
+    if not class or not useClassColor then
+        return RAID_CLASS_COLORS.PRIEST
+    end
 
     local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     local color
@@ -144,12 +148,7 @@ local function GWGetClassColor(class, forNameString, usePriestColor)
         colorForNameString = {r = color.r + 0.3, g = color.g + 0.3, b = color.b + 0.3, a = color.a, colorStr = GW.RGBToHex(color.r + 0.3, color.g + 0.3, color.b + 0.3, "ff")}
     end
 
-    local PriestColors = {r = 0.99, g = 0.99, b = 0.99, a = 1, colorStr = "fffcfcfc"}
-    if (usePriestColor and class == "PRIEST") and tonumber(color.colorStr, 16) > tonumber(PriestColors.colorStr, 16) then
-        return PriestColors
-    else
-        return colorForNameString and colorForNameString or color
-    end
+    return forNameString and colorForNameString or color
 end
 GW.GWGetClassColor = GWGetClassColor
 
@@ -592,3 +591,57 @@ local function vernotes(ver, notes)
     GW.GW_CHANGELOGS = GW.GW_CHANGELOGS .. "\n" .. ver .. "\n\n" .. notes .. "\n\n"
 end
 GW.vernotes = vernotes
+
+-- create custom UIFrameFlash animation
+local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInHoldTime, flashOutHoldTime)
+    local flasher
+
+    if not frame.flasher then
+        flasher = frame:CreateAnimationGroup()
+    else
+        flasher = frame.flasher
+    end
+
+    local fade1 = flasher:CreateAnimation("Alpha")
+    local fade2 = flasher:CreateAnimation("Alpha")
+    fade1:SetDuration(fadeInTime)
+    fade1:SetToAlpha(1)
+    fade1:SetOrder(1)
+    fade1:SetEndDelay(flashInHoldTime)
+    
+    fade2:SetDuration(fadeOutTime)
+    fade2:SetToAlpha(0)
+    fade2:SetOrder(2)
+    fade2:SetEndDelay(flashOutHoldTime)
+
+    if showWhenDone then
+        flasher:SetScript("OnFinished", function(self)
+            frame:SetAlpha(1)
+            self:SetScript("OnFinished", nil)
+        end)
+    end
+
+    frame.flasher = flasher
+
+    frame.flasher:Play()
+end
+GW.FrameFlash = FrameFlash
+
+local function setItemLevel(button, quality, itemlink)
+    button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+    if quality then
+        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+            button.itemlevel:SetTextColor(
+                BAG_ITEM_QUALITY_COLORS[quality].r,
+                BAG_ITEM_QUALITY_COLORS[quality].g,
+                BAG_ITEM_QUALITY_COLORS[quality].b,
+                1
+            )
+        end
+        local slotInfo = GW.GetGearSlotInfo("player", button:GetID(), itemlink)
+        button.itemlevel:SetText(slotInfo.iLvl)
+    else
+        button.itemlevel:SetText("")
+    end
+end
+GW.setItemLevel = setItemLevel

@@ -92,7 +92,7 @@ local function GWUseThisLocalization()
     L["MAP_CLOCK_STOPWATCH"] = "Rechts Klick zum öffnen der Stoppuhr"
     L["MAP_CLOCK_TIMEMANAGER"] = "Shift-Rechts Klick zum öffnen der Zeit Einstellungen"
     L["MAP_COORDINATES_TITLE"] = "Kartenkoordinaten"
-    L["MAP_COORDINATES_TOGGLE_TEXT"] = "Klicken Sie mit der linken Maustaste, um die Koordinaten mit höherer Genauigkeit umzuschalten."
+    L["MAP_COORDINATES_TOGGLE_TEXT"] = "Klicken Sie mit der linken Maustaste, um die Koordinaten mit höherer Genauigkeit anzuzeigen."
     L["MINIMAP_DESC"] = "Benutze den GW2 UI Minimaprahmen."
     L["MINIMAP_HOVER"] = "Minimap Details"
     L["MINIMAP_HOVER_TOOLTIP"] = "Zeige Minimap Informationen dauerhaft."
@@ -279,6 +279,14 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "Keine Gilde"
     L["AFK_MODE"] = "AFK Modus"
     L["AFK_MODE_DESC"] = "AFK Bildschirm anzeigen wenn du AFK bist."
+    L["REPAIRD_FOR"] = "Deine Gegenstände wurden repariert für: %s"
+    L["REPAIRD_FOR_GUILD"] = "Deine Gegenstände wurden aus der Gildenbank repariert für: %s"
+    L["AUTO_REPAIR"] = "Auto-Reparatur"
+    L["AUTO_REPAIR_DESC"] = "Repariert automatisch deine Ausrüstungsgegenstände, wenn du eine der folgenden Methoden auswählst."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Gruppenmanage-Button ausblenden"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Blendet den Gruppenmanage-Button aus, wenn die Maus nicht in der Nähe ist."
+    L["HUD_BACKGROUND"] = "HUD Hintergrund anzeigen"
+    L["HUD_BACKGROUND_DESC"] = "Der HUD Hintergrund ändert seine Farbe in folgenden Situationen: Im Kampf, Nicht im Kampf, Im Wasser, Wenig HP, Geist"
 end
 
 if GetLocale() == "deDE" then

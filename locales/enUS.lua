@@ -33,7 +33,7 @@ local function GWUseThisLocalization()
     L["CASTING_BAR_DESC"] = "Enable the GW2 style casting bar."
     L["CHARACTER_NEXT_RANK"] = "NEXT"
     L["CHARACTER_PARAGON"] = "Paragon"
-    L["CHAT_BUBBLES_DESC"] = "Replace the default UI chat bubbles. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "Replace the default UI chat bubbles. (Only in not protected areas)"
     L["CHAT_FADE"] = "Fade Chat"
     L["CHAT_FADE_DESC"] = "Allow the chat to fade when not in use."
     L["CHAT_FRAME_DESC"] = "Enable the improved chat window."
@@ -279,6 +279,14 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "No Guild"
     L["AFK_MODE"] = "AFK Mode"
     L["AFK_MODE_DESC"] = "When you go AFK display the AFK screen."
+    L["REPAIRD_FOR"] = "Your items have been repaired for: %s"
+    L["REPAIRD_FOR_GUILD"] = "Your items have been repaired using guild bank funds for: %s"
+    L["AUTO_REPAIR"] = "Auto Repair"
+    L["AUTO_REPAIR_DESC"] = "Automatically repair using the following method when visiting a merchant."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
+    L["HUD_BACKGROUND"] = "Show HUD background"
+    L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
 end
 
 local Locale = GetLocale()

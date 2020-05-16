@@ -169,6 +169,7 @@ local function header_OnEvent(self, event, ...)
     for i = 1, 3 do
         local btn = self:GetTempEnchant(i)
         if btn then
+            TemporaryEnchantFrame:Hide()
             -- only look at buttons that have info
             if not weigot then
                 mh, mh_exp, mh_num, _, oh, oh_exp, oh_num, _, rh, rh_exp, rh_num, _= GetWeaponEnchantInfo()
@@ -210,7 +211,7 @@ local function header_OnUpdate(self, elapsed)
             break
         end
 
-        local name, _ , _, _, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetAttribute("filter"))
+        local name, _ , _, _, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetFilter())
         if name and duration then
             btn:UpdateCD(expires - GetTime())
         end
@@ -248,7 +249,7 @@ local function aura_OnEnter(self)
     GameTooltip:ClearLines()
     local atype = self.atype
     if atype == 0 then
-        GameTooltip:SetUnitDebuff("player", self:GetID(), self:GetAttribute("filter"))
+        GameTooltip:SetUnitDebuff("player", self:GetID(), self:GetFilter())
     elseif atype == 1 then
         GameTooltip:SetUnitBuff("player", self:GetID())
     elseif atype == 2 then
@@ -484,7 +485,7 @@ local function loadAuras(lm, secure)
     hb:ClearAllPoints()
     if not hb.isMoved then
         local mbr = GwMultiBarBottomRight
-        hb:SetPoint(anchor_hb, mbr, anchor_hb, 0, 20)
+        hb:SetPoint(anchor_hb, mbr, anchor_hb, 0, 0)
     else
         hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     end

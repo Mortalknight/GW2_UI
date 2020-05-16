@@ -24,6 +24,13 @@ PowerBarColorCustom["AMMOSLOT"] = {r = 0.80, g = 0.60, b = 0.00}
 PowerBarColorCustom["FUEL"] = {r = 0.0, g = 0.55, b = 0.5}
 PowerBarColorCustom["STAGGER"] = {r = 0.52, g = 1.0, b = 0.52}
 
+local nameRoleIcon = {}
+GW.nameRoleIcon = nameRoleIcon
+nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t "
+nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t "
+nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t "
+nameRoleIcon["NONE"] = ""
+
 local professionBagColor = {
     [8] = {r = .88, g = .73, b = .29}, --leatherworking
     [16] = {r = .29, g = .30, b = .88}, --inscription

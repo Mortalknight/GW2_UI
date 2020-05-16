@@ -9,6 +9,8 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
+core/patch.lua
+
 locales/enUS.lua
 locales/deDE.lua
 locales/koKR.lua
@@ -96,6 +98,7 @@ mainbar/healthglobe.lua
 mainbar/powerbar.lua
 mainbar/classpowers.lua
 mainbar/dodgebar.lua
+mainbar/autoRepair.lua
 
 inventory/bag.xml
 inventory/bank.xml

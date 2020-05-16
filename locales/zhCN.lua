@@ -49,7 +49,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "更新日志"
     L["CHARACTER_NEXT_RANK"] = "下一步"
     L["CHARACTER_PARAGON"] = "巅峰"
-    L["CHAT_BUBBLES_DESC"] = "使用GW2风格的聊天泡泡. (Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "使用GW2风格的聊天泡泡. (Only in not protected areas)"
     L["CHAT_FADE"] = "聊天框渐隐"
     L["CHAT_FADE_DESC"] = "当不使用聊天栏时渐隐."
     L["CHAT_FRAME_DESC"] = "使用GW2风格的聊天框体."
@@ -279,6 +279,14 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "没有公会"
     L["AFK_MODE"] = "离开模式"
     L["AFK_MODE_DESC"] = "当你离开时显示AFK界面"
+    L["REPAIRD_FOR"] = "装备已修复: %s"
+    L["REPAIRD_FOR_GUILD"] = "物品已使用公会银行资金修复: %s"
+    L["AUTO_REPAIR"] = "自动修理"
+    L["AUTO_REPAIR_DESC"] = "使用以下方式来自动修理装备"
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
+    L["HUD_BACKGROUND"] = "Show HUD background"
+    L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
 end
 
 if GetLocale() == "zhCN" then

@@ -66,7 +66,7 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture name="compassBG" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture name="compassBG" parentKey="compassBG" file="Interface\AddOns\GW2_UI\textures\compas-bg">
                     <Color r="1" g="1" b="1" a="0.3"></Color>
                     <Size x="300" y="70"></Size>
                     <Anchors>
@@ -88,7 +88,7 @@
                     </Anchors>
                 </FontString>
                 <FontString name="$parentSubString" parentKey="desc" text="Quest name" justifyH="LEFT" justifyV="TOP">
-                    <Size x="300" y="35"></Size>
+                    <Size x="300" y="150"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" y="-39"></Anchor>
                     </Anchors>

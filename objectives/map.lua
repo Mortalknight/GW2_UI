@@ -211,7 +211,6 @@ local function MapPositionToXY(arg)
 end
 GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
 
-
 local function MapCoordsMiniMap_OnEnter(self) 
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  

@@ -777,6 +777,20 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.showItemLvl.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_SHOW_ILVL") then
+                    dd.showItemLvl.checkbutton:SetChecked(false)
+                    SetSetting("BAG_SHOW_ILVL", false)
+                else
+                    dd.showItemLvl.checkbutton:SetChecked(true)
+                    SetSetting("BAG_SHOW_ILVL", true)
+                end
+                ContainerFrame_UpdateAll()
+            end
+        )
+
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
             dd.compactBags.checkbutton:SetChecked(false)
         else
@@ -828,6 +842,11 @@ local function LoadBag(helpers)
             dd.vendorGrays.checkbutton:SetChecked(false)
         end
         setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
+        if GetSetting("BAG_SHOW_ILVL") then
+            dd.showItemLvl.checkbutton:SetChecked(true)
+        else
+            dd.showItemLvl.checkbutton:SetChecked(false)
+        end
 
         -- setup bag setting title locals
         dd.compactBags.title:SetText(L["COMPACT_ICONS"])
@@ -838,6 +857,7 @@ local function LoadBag(helpers)
         dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
         dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
         dd.vendorGrays.title:SetText(L["VENDOR_GRAYS"])
+        dd.showItemLvl.title:SetText(SHOW_ITEM_LEVEL)
     end
 
     -- setup money frame

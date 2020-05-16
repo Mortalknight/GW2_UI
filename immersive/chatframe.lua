@@ -44,11 +44,74 @@ local tabTexs = {
 }
 
 local gw_fade_frames = {}
+local copyLines = {}
+
+local function colorizeLine(text, r, g, b)
+    local hexCode = GW.RGBToHex(r, g, b)
+    local hexReplacement = format("|r%s", hexCode)
+
+    text = gsub(text, "|r", hexReplacement) --If the message contains color strings then we need to add message color hex code after every "|r"
+    text = format("%s%s|r", hexCode, text) --Add message color
+
+    return text
+end
+
+local canChangeMessage = function(arg1, id)
+    if id and arg1 == "" then return id end
+end
+
+local function messageIsProtected(message)
+    return message and (message ~= gsub(message, "(:?|?)|K(.-)|k", canChangeMessage))
+end
+
+local removeIconFromLine
+do
+    local raidIconFunc = function(x)
+        local x = x ~= "" and _G["RAID_TARGET_" .. x]
+        return x and ("{" .. strlower(x) .. "}") or ""
+    end
+    local stripTextureFunc = function(w, x, y)
+        if x == "" then
+            return (w ~= "" and w) or (y ~= "" and y) or ""
+        end
+    end
+    local hyperLinkFunc = function(w, x, y)
+        if w ~= "" then
+            return
+        end
+        return y
+    end
+    removeIconFromLine = function(text)
+        text = gsub(text, "|TInterface/TargetingFrame/UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) --converts raid icons into {star} etc, if possible.
+        text = gsub(text, "(%s?)(|?)|[TA].-|[ta](%s?)", stripTextureFunc) --strip any other texture out but keep a single space from the side(s).
+        text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc) --strip hyperlink data only keeping the actual text.
+        return text
+    end
+end
+
+local function getLines(frame)
+    local index = 1
+    for i = 1, frame:GetNumMessages() do
+        local message, r, g, b = frame:GetMessageInfo(i)
+        if message and not messageIsProtected(message) then
+            --Set fallback color values
+            r, g, b = r or 1, g or 1, b or 1
+            --Remove icons
+            message = removeIconFromLine(message)
+            --Add text color
+            message = colorizeLine(message, r, g, b)
+            copyLines[index] = message
+            index = index + 1
+        end
+    end
+
+    return index - 1
+end
 
 local function setButtonPosition(frame)
-    local frame = _G["ChatFrame"..frame:GetID()]
+    local frame = _G["ChatFrame" .. frame:GetID()]
     local name = frame:GetName()
-    local editbox = _G[name.."EditBox"]
+    local editbox = _G[name .. "EditBox"]
 
     if frame.buttonSide == "right" then
         frame.Container:ClearAllPoints()
@@ -61,7 +124,7 @@ local function setButtonPosition(frame)
 
         editbox:ClearAllPoints()
         editbox:SetPoint("TOPLEFT", frame.Background, "BOTTOMLEFT", 0, 0)
-        editbox:SetPoint("TOPRIGHT", _G[name.."ButtonFrame"], "BOTTOMRIGHT", 0, 0)
+        editbox:SetPoint("TOPRIGHT", _G[name .. "ButtonFrame"], "BOTTOMRIGHT", 0, 0)
 
         if QuickJoinToastButton then
             QuickJoinToastButton.ClearAllPoints = nil
@@ -69,9 +132,8 @@ local function setButtonPosition(frame)
             QuickJoinToastButton:ClearAllPoints()
             QuickJoinToastButton:SetPoint("LEFT", GeneralDockManager, "RIGHT", 30, -3)
 
-            local function NoOp() end
-            QuickJoinToastButton.ClearAllPoints = NoOp
-            QuickJoinToastButton.SetPoint = NoOp
+            QuickJoinToastButton.ClearAllPoints = GW.NoOp
+            QuickJoinToastButton.SetPoint = GW.NoOp
         end
     else
         frame.Container:ClearAllPoints()
@@ -92,9 +154,8 @@ local function setButtonPosition(frame)
             QuickJoinToastButton:ClearAllPoints()
             QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
 
-            local function NoOp() end
-            QuickJoinToastButton.ClearAllPoints = NoOp
-            QuickJoinToastButton.SetPoint = NoOp
+            QuickJoinToastButton.ClearAllPoints = GW.NoOp
+            QuickJoinToastButton.SetPoint = GW.NoOp
         end
     end
 end
@@ -142,10 +203,16 @@ local function handleChatFrameFadeIn(chatFrame)
             end   
         end
 
-        UIFrameFadeIn(_G["GwChatContainer" .. 1], 0.5, _G["GwChatContainer" .. 1]:GetAlpha(), 1)
+        UIFrameFadeIn(_G["GwChatContainer1"], 0.5, _G["GwChatContainer1"]:GetAlpha(), 1)
         UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
     elseif chatFrame.isDocked == nil then
-        UIFrameFadeIn(_G["GwChatContainer" .. chatFrame:GetID()], 0.5, _G["GwChatContainer" .. chatFrame:GetID()]:GetAlpha(), 1)
+        if chatFrame.Container then
+            UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
+        end
+    end
+
+    if chatFrame.button then
+        UIFrameFadeIn(chatFrame.button, 0.5, chatFrame.button:GetAlpha(), 0.35)
     end
 
     local chatTab = _G[frameName .. "Tab"]
@@ -185,10 +252,15 @@ local function handleChatFrameFadeOut(chatFrame)
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
         end
-        UIFrameFadeOut(_G["GwChatContainer" .. 1], 2, _G["GwChatContainer" .. 1]:GetAlpha(), chatAlpha)
+        UIFrameFadeOut(_G["GwChatContainer1"], 2, _G["GwChatContainer1"]:GetAlpha(), chatAlpha)
     elseif chatFrame.isDocked == nil then
-        UIFrameFadeOut(_G["GwChatContainer" .. chatFrame:GetID()], 2, _G["GwChatContainer" .. chatFrame:GetID()]:GetAlpha(), chatAlpha)
-        UIFrameFadeOut(chatFrame.buttonFrame, 2, chatFrame.buttonFrame:GetAlpha(), 0)
+        if chatFrame.Container then
+            UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
+        end
+    end
+
+    if chatFrame.button then
+        UIFrameFadeOut(chatFrame.button, 2, chatFrame.button:GetAlpha(), 0)
     end
 
     local chatTab = _G[frameName .. "Tab"]
@@ -248,12 +320,12 @@ local function styleChatWindow(frame)
         frame.Container = fmGCC
         frame.hasContainer = true
     end
-    
+
     for _, texName in pairs(tabTexs) do
         if texName == "Selected" then
-            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
-            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
-            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactive")
+            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveright")
+            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveleft")
+            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactive")
             
             _G[tab:GetName()..texName.."Right"]:SetBlendMode("BLEND")
             _G[tab:GetName()..texName.."Left"]:SetBlendMode("BLEND")
@@ -281,15 +353,15 @@ local function styleChatWindow(frame)
         end
     end
     
-    scrollToBottom:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
-    scrollToBottom:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_up")
-    scrollToBottom:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
+    scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
+    scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
     scrollToBottom:SetHeight(24)
     scrollToBottom:SetWidth(24)
     SkinScrollBar(scroll)
-    ChatFrameMenuButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
-    ChatFrameMenuButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
-    ChatFrameMenuButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
+    ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/bubble_down")
+    ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bubble_up")
+    ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bubble_down")
     ChatFrameMenuButton:SetHeight(20)
     ChatFrameMenuButton:SetWidth(20)
 
@@ -367,26 +439,142 @@ local function styleChatWindow(frame)
 
     if frame.hasContainer then setButtonPosition(frame) end
 
+    --copy chat button
+    frame.button = CreateFrame("Frame", nil, frame)
+    frame.button:EnableMouse(true)
+    frame.button:SetAlpha(0.35)
+    frame.button:SetSize(20, 22)
+    frame.button:SetPoint("TOPRIGHT")
+    frame.button:SetFrameLevel(frame:GetFrameLevel() + 5)
+
+    frame.button.tex = frame.button:CreateTexture(nil, "OVERLAY")
+    frame.button.tex:SetAllPoints()
+    frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
+
+    frame.button:SetScript("OnMouseUp", function(_, btn)
+        if not CopyChatFrame:IsShown() then
+            local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
+            if fontSize < 10 then fontSize = 12 end
+            FCF_SetChatWindowFontSize(frame, frame, 0.01)
+            CopyChatFrame:Show()
+            local lineCt = getLines(frame)
+            local text = table.concat(copyLines, " \n", 1, lineCt)
+            FCF_SetChatWindowFontSize(frame, frame, fontSize)
+            CopyChatFrameEditBox:SetText(text)
+        else
+            CopyChatFrame:Hide()
+        end
+    end)
+
+    frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
+    frame.button:SetScript("OnLeave", function(button)
+        if _G[button:GetParent():GetName() .. "TabText"]:IsShown() then
+            button:SetAlpha(0.35)
+        else
+            button:SetAlpha(0)
+        end
+    end)
+
     frame.styled = true
+end
+
+local function BuildCopyChatFrame()
+    local frame = CreateFrame("Frame", "CopyChatFrame", UIParent)
+
+    tinsert(UISpecialFrames, "CopyChatFrame")
+
+    frame.bg = frame:CreateTexture(nil, "ARTWORK")
+    frame.bg:SetAllPoints()
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+
+    frame:SetSize(700, 200)
+    frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 15)
+    frame:Hide()
+    frame:SetMovable(true)
+    frame:EnableMouse(true)
+    frame:SetResizable(true)
+    frame:SetMinResize(350, 100)
+    frame:SetScript("OnMouseDown", function(copyChat, button)
+        if button == "LeftButton" and not copyChat.isMoving then
+            copyChat:StartMoving()
+            copyChat.isMoving = true
+        elseif button == "RightButton" and not copyChat.isSizing then
+            copyChat:StartSizing()
+            copyChat.isSizing = true
+        end
+    end)
+    frame:SetScript("OnMouseUp", function(copyChat, button)
+        if button == "LeftButton" and copyChat.isMoving then
+            copyChat:StopMovingOrSizing()
+            copyChat.isMoving = false
+        elseif button == "RightButton" and copyChat.isSizing then
+            copyChat:StopMovingOrSizing()
+            copyChat.isSizing = false
+        end
+    end)
+    frame:SetScript("OnHide", function(copyChat)
+        if copyChat.isMoving or copyChat.isSizing then
+            copyChat:StopMovingOrSizing()
+            copyChat.isMoving = false
+            copyChat.isSizing = false
+        end
+    end)
+    frame:SetFrameStrata("DIALOG")
+
+    local scrollArea = CreateFrame("ScrollFrame", "CopyChatScrollFrame", frame, "UIPanelScrollFrameTemplate")
+    scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
+    scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
+    GW.skins.SkinScrollBar(CopyChatScrollFrameScrollBar)
+    scrollArea:SetScript("OnSizeChanged", function(scroll)
+        CopyChatFrameEditBox:SetWidth(scroll:GetWidth())
+        CopyChatFrameEditBox:SetHeight(scroll:GetHeight())
+    end)
+    scrollArea:HookScript("OnVerticalScroll", function(scroll, offset)
+        CopyChatFrameEditBox:SetHitRectInsets(0, 0, offset, (CopyChatFrameEditBox:GetHeight() - offset - scroll:GetHeight()))
+    end)
+
+    local editBox = CreateFrame("EditBox", "CopyChatFrameEditBox", frame)
+    editBox:SetMultiLine(true)
+    editBox:SetMaxLetters(99999)
+    editBox:EnableMouse(true)
+    editBox:SetAutoFocus(false)
+    editBox:SetFontObject(ChatFontNormal)
+    editBox:SetWidth(scrollArea:GetWidth())
+    editBox:SetHeight(200)
+    editBox:SetScript("OnEscapePressed", function() CopyChatFrame:Hide() end)
+    scrollArea:SetScrollChild(editBox)
+    CopyChatFrameEditBox:SetScript("OnTextChanged", function(_, userInput)
+        if userInput then return end
+        local _, max = CopyChatScrollFrameScrollBar:GetMinMaxValues()
+        for _ = 1, max do
+            ScrollFrameTemplate_OnMouseWheel(CopyChatScrollFrame, -1)
+        end
+    end)
+
+    local close = CreateFrame("Button", "CopyChatFrameCloseButton", frame, "UIPanelCloseButton")
+    close:SetPoint("TOPRIGHT")
+    close:SetFrameLevel(close:GetFrameLevel() + 1)
+    close:EnableMouse(true)
+    close:SetSize(20, 20)
+    GW.skins.SkinButton(close, true)
 end
 
 local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
 
     if QuickJoinToastButton then
-        QuickJoinToastButton:SetDisabledTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-        QuickJoinToastButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-        QuickJoinToastButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-        QuickJoinToastButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
         QuickJoinToastButton:SetWidth(25)
         QuickJoinToastButton:SetHeight(25)
         QuickJoinToastButton:ClearAllPoints()
         QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
         QuickJoinToastButton.FriendsButton:Hide()
 
-        local function NoOp() end
-        QuickJoinToastButton.ClearAllPoints = NoOp
-        QuickJoinToastButton.SetPoint = NoOp
+        QuickJoinToastButton.ClearAllPoints = GW.NoOp
+        QuickJoinToastButton.SetPoint = GW.NoOp
     end
 
     for i = 1, FCF_GetNumActiveChatFrames() do
@@ -487,7 +675,9 @@ local function LoadChat()
     }
 
     for i = 1, FCF_GetNumActiveChatFrames() do
-        FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+        if _G["ChatFrame" .. i] then
+            FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+        end
     end
     FCF_FadeOutChatFrame(_G["ChatFrame1"])
 
@@ -509,5 +699,8 @@ local function LoadChat()
                 self:SetBackdrop(GW.skins.constBackdropFrame)
             end)
     end
+
+    _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
+    BuildCopyChatFrame()  
 end
 GW.LoadChat = LoadChat

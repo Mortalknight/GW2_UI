@@ -210,6 +210,8 @@ local function globe_OnEvent(self, event, ...)
         updateHealthData(self, true)
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         selectPvp(self)
+    elseif event == "RESURRECT_REQUEST" then
+        PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
     end
 end
 GW.AddForProfiling("healthglobe", "globe_OnEvent", globe_OnEvent)
@@ -249,6 +251,10 @@ local function globe_OnEnter(self)
         end
     end
     GameTooltip:Show()
+
+    if self.pvp.pvpFlag then
+        self.pvp:fadeIn()
+    end
 end
 GW.AddForProfiling("healthglobe", "globe_OnEnter", globe_OnEnter)
 
@@ -365,10 +371,16 @@ local function LoadHealthGlobe()
     PlayerFrame:Hide()
     hg:SetScript("OnEvent", globe_OnEvent)
     hg:SetScript("OnEnter", globe_OnEnter)
-    hg:SetScript("OnLeave", GameTooltip_Hide)
+    hg:SetScript("OnLeave", function(self)
+        GameTooltip_Hide()
+        if self.pvp.pvpFlag then
+            self.pvp:fadeOut()
+        end
+    end)
     hg:RegisterEvent("PLAYER_ENTERING_WORLD")
     hg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     hg:RegisterEvent("PLAYER_FLAGS_CHANGED")
+    hg:RegisterEvent("RESURRECT_REQUEST")
     hg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     hg:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
     hg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
@@ -400,18 +412,33 @@ local function LoadHealthGlobe()
 
     -- setup anim to flash the PvP marker
     local pvp = hg.pvp
-    local pag = pvp:CreateAnimationGroup()
-    local pa1 = pag:CreateAnimation("alpha")
-    local pa2 = pag:CreateAnimation("alpha")
-    pvp.gwAnimGroup = pag
-    pa1:SetOrder(1)
-    pa2:SetOrder(2)
-    pa1:SetFromAlpha(0.33)
-    pa1:SetToAlpha(1.0)
-    pa1:SetDuration(0.1)
-    pa2:SetFromAlpha(1.0)
-    pa2:SetToAlpha(0.33)
-    pa2:SetDuration(0.1)
+    local pagIn = pvp:CreateAnimationGroup("fadeIn")
+    local pagOut = pvp:CreateAnimationGroup("fadeOut")
+    local fadeOut = pagOut:CreateAnimation("Alpha")
+    local fadeIn = pagIn:CreateAnimation("Alpha")
+
+    pagOut:SetScript("OnFinished", function(self)
+        self:GetParent():SetAlpha(0.33)
+    end)
+
+    fadeOut:SetFromAlpha(1.0)
+    fadeOut:SetToAlpha(0.33)
+    fadeOut:SetDuration(0.1)
+    fadeIn:SetFromAlpha(0.33)
+    fadeIn:SetToAlpha(1.0)
+    fadeIn:SetDuration(0.1)
+
+    pvp.fadeOut = function(self)
+        pagIn:Stop()
+        pagOut:Stop()
+        pagOut:Play()
+    end
+    pvp.fadeIn = function(self)
+        self:SetAlpha(1)
+        pagIn:Stop()
+        pagOut:Stop()
+        pagIn:Play()
+    end
 
     return hg
 end

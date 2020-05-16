@@ -16,7 +16,7 @@ local function LoadTooltipPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["HUD_DESC"])
 
-    createCat(L["TOOLTIPS"], nil, p, 3)
+    createCat(L["TOOLTIPS"], nil, p, 10)
 
     addOption(p, L["MOUSE_TOOLTIP"], L["MOUSE_TOOLTIP_DESC"], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p, L["ADVANCED_TOOLTIP"], L["ADVANCED_TOOLTIP_DESC"], "ADVANCED_TOOLTIP", nil, nil, {["TOOLTIPS_ENABLED"] = true})
@@ -28,6 +28,8 @@ local function LoadTooltipPanel(sWindow)
     addOption(p, L["ADVANCED_TOOLTIP_SHOW_GUILD_RANKS"], L["ADVANCED_TOOLTIP_SHOW_GUILD_RANKS_DESC"], "ADVANCED_TOOLTIP_SHOW_GUILD_RANKS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, L["ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS"], nil, "ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, ROLE, L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"], "ADVANCED_TOOLTIP_SHOW_ROLE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p, CLASS_COLORS, COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS, "ADVANCED_TOOLTIP_SHOW_CLASS_COLOR", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    
     addOptionDropdown(
         p,
         L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"],
@@ -56,7 +58,7 @@ local function LoadTooltipPanel(sWindow)
             L["ANCHOR_CURSOR_RIGHT"]
         },
         nil,
-        {["TOOLTIPS_ENABLED"] = true}
+        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true}
     )
     addOptionSlider(
         p,
@@ -68,7 +70,7 @@ local function LoadTooltipPanel(sWindow)
         128,
         nil,
         0,
-        {["TOOLTIPS_ENABLED"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
+        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
     )
     addOptionSlider(
         p,
@@ -80,7 +82,7 @@ local function LoadTooltipPanel(sWindow)
         128,
         nil,
         0,
-        {["TOOLTIPS_ENABLED"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
+        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
     )
 
     InitPanel(p)

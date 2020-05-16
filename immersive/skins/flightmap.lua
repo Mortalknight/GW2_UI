@@ -21,5 +21,22 @@ local function SkinFlightMap()
     _G.FlightMapFrameCloseButton:SetParent(FlightMapFrame)
 
     FlightMapFrame.BorderFrame:Hide()
+
+    --Same for TaxiFrame
+    local TaxiFrame = _G.TaxiFrame
+    GW.StripTextures(TaxiFrame)
+
+    local tex = TaxiFrame:CreateTexture("bg", "BACKGROUND")
+    local w, h = TaxiFrame:GetSize()
+    tex:SetPoint("TOP", TaxiFrame, "TOP", 0, 20)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetSize(w + 100, h + 60 )
+    TaxiFrame.tex = tex
+
+    SkinButton(TaxiFrame.CloseButton, true, false)
+    TaxiFrame.CloseButton:SetSize(25, 25)
+    TaxiFrame.CloseButton:ClearAllPoints()
+    TaxiFrame.CloseButton:SetPoint("TOPRIGHT", TaxiFrame, "TOPRIGHT", 20, 4)
+    TaxiFrame.CloseButton:SetParent(TaxiFrame)
 end
 GW.SkinFlightMap = SkinFlightMap

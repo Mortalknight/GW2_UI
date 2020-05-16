@@ -10,7 +10,6 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GWGetClassColor = GW.GWGetClassColor
 local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
-local TogglePartyRaid = GW.TogglePartyRaid
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -23,6 +22,7 @@ local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local REALM_FLAGS = GW.REALM_FLAGS
+local nameRoleIcon = GW.nameRoleIcon
 local LRI = LibStub("LibRealmInfo", true)
 
 local GROUPD_TYPE = "PARTY"
@@ -79,8 +79,8 @@ local function togglePartyFrames(b)
         b = false
     end
 
-    if b == true then
-        if GetSetting("RAID_STYLE_PARTY") == true then
+    if b then
+        if GetSetting("RAID_STYLE_PARTY") then
             _G["GwCompactplayer"]:Show()
             RegisterUnitWatch(_G["GwCompactplayer"])
 
@@ -110,7 +110,7 @@ local function unhookPlayerFrame()
         return
     end
 
-    if IsInGroup() and GetSetting("RAID_STYLE_PARTY") == true then
+    if IsInGroup() and GetSetting("RAID_STYLE_PARTY") then
         _G["GwCompactplayer"]:Show()
         RegisterUnitWatch(_G["GwCompactplayer"])
     else
@@ -192,12 +192,6 @@ local function setUnitName(self)
     if self == nil or self.unit == nil then
         return
     end
-
-    local nameRoleIcon = {}
-    nameRoleIcon["TANK"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-tank:12:12:0:0|t "
-    nameRoleIcon["HEALER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:0|t "
-    nameRoleIcon["DAMAGER"] = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-dps:12:12:0:0|t "
-    nameRoleIcon["NONE"] = ""
 
     local flagSetting = GetSetting("RAID_UNIT_FLAGS")
     local playerLocal = GetLocale()
@@ -307,7 +301,7 @@ local function updateAwayData(self)
     end
 
     if iconState == 0 then
-        local color = GWGetClassColor(englishClass)
+        local color = GWGetClassColor(englishClass, true)
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         if self.classicon:IsShown() then
             self.classicon:Hide()
@@ -365,7 +359,7 @@ local function updateAwayData(self)
         end
     end
 
-    if UnitIsConnected(self.unit) ~= true then
+    if not UnitIsConnected(self.unit) then
         self.classicon:SetTexture("Interface\\CharacterFrame\\Disconnect-Icon")
         self.classicon:SetTexCoord(0, 1, 0, 1)
         self.classicon:Show()
@@ -374,10 +368,8 @@ local function updateAwayData(self)
 
     if UnitIsConnected(self.unit) and ((not UnitInPhase(self.unit) or UnitIsWarModePhased(self.unit)) or not UnitInRange(self.unit)) then
         local r, g, b = self.healthbar:GetStatusBarColor()
-        r = r * 0.3
-        b = b * 0.3
-        g = g * 0.3
-        self.healthbar:SetStatusBarColor(r, g, b)
+
+        self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
         self.classicon:SetAlpha(0.4)
     else
         self.classicon:SetAlpha(1)
@@ -763,9 +755,9 @@ local function raidframe_OnEvent(self, event, unit, arg1)
     elseif event == "UPDATE_INSTANCE_INFO" then
         updateAuras(self)
         updateAwayData(self)
-    elseif event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED" then
+    elseif (event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED") and unit == self.unit then
         updateAwayData(self)
-    elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") == true then
+    elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") then
         updateRaidMarkers(self)
     elseif event == "READY_CHECK" then
         self.ready = -1
@@ -782,34 +774,24 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         self.ready = arg1
         updateAwayData(self)
     elseif event == "READY_CHECK_FINISHED" then
-        AddToAnimation(
-            "ReadyCheckRaidWaitCheck" .. self.unit,
-            0,
-            1,
-            GetTime(),
-            2,
-            function()
-            end,
-            nil,
-            function()
-                GW_READY_CHECK_INPROGRESS = false
-                local classColor = GetSetting("RAID_CLASS_COLOR")
-                if UnitInRaid(self.unit) ~= nil then
-                    local _, englishClass, classIndex = UnitClass(self.unit)
-                    if classColor == true then
-                        local color = GWGetClassColor(englishClass)
-                        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
-                        if self.classicon:IsShown() then
-                            self.classicon:Hide()
-                        end
-                    else
-                        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
+        C_Timer.After(2, function()
+            GW_READY_CHECK_INPROGRESS = false
+            local classColor = GetSetting("RAID_CLASS_COLOR")
+            if UnitInRaid(self.unit) ~= nil then
+                local _, englishClass, classIndex = UnitClass(self.unit)
+                if classColor == true then
+                    local color = GWGetClassColor(englishClass, true)
+                    self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+                    if self.classicon:IsShown() then
+                        self.classicon:Hide()
                     end
-                    self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
-                    SetClassIcon(self.classicon, classIndex)
+                else
+                    self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
                 end
+                self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
+                SetClassIcon(self.classicon, classIndex)
             end
-        )
+        end)
     end
 end
 GW.AddForProfiling("raidframes", "raidframe_OnEvent", raidframe_OnEvent)
@@ -1125,16 +1107,14 @@ local function createRaidFrame(registerUnit, index)
 
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonDown", "RightButtonUp", "Button4Up", "Button5Up", "MiddleButtonUp")
+    frame:RegisterForClicks("AnyUp")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript(
         "OnEnter",
         function()
-            GameTooltip:ClearLines()
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
             GameTooltip:SetUnit(registerUnit)
-
             GameTooltip:Show()
         end
     )
@@ -1271,7 +1251,7 @@ local function LoadRaidFrames()
             self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
 
-        if IsInRaid() == false and GROUPD_TYPE == "RAID" then
+        if not IsInRaid() and GROUPD_TYPE == "RAID" then
             togglePartyFrames(true)
             GROUPD_TYPE = "PARTY"
         end
@@ -1293,7 +1273,7 @@ local function LoadRaidFrames()
         end
     end)
 
-    if GetSetting("RAID_STYLE_PARTY") == false then
+    if not GetSetting("RAID_STYLE_PARTY") then
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
         for i = 1, 4 do

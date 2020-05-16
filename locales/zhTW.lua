@@ -66,7 +66,7 @@ local function GWUseThisLocalization()
     L["CHANGELOG"] = "更新資訊"
     L["CHARACTER_NEXT_RANK"] = "下一個"
     L["CHARACTER_PARAGON"] = "巔峰"
-    L["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。(Only in not proteced areas)"
+    L["CHAT_BUBBLES_DESC"] = "取代預設的聊天泡泡。(Only in not protected areas)"
     L["CHAT_FADE"] = "淡出聊天視窗"
     L["CHAT_FADE_DESC"] = "允許非使用中淡出聊天視窗。"
     L["CHAT_FRAME_DESC"] = "使用加強型的聊天視窗。"
@@ -275,6 +275,14 @@ local function GWUseThisLocalization()
     L["NO_GUILD"] = "沒有公會"
     L["AFK_MODE"] = "離開模式"
     L["AFK_MODE_DESC"] = "當你離開時顯示暫離界面"
+    L["REPAIRD_FOR"] = "裝備已修理, 共支出: %s"
+    L["REPAIRD_FOR_GUILD"] = "已使用公會資金修理裝備, 共支出: %s"
+    L["AUTO_REPAIR"] = "自動修裝"
+    L["AUTO_REPAIR_DESC"] = "與商人對話時, 透過下列方式自動修復裝備."
+    L["FADE_GROUP_MANAGE_FRAME"] = "Fade Group Manage Button"
+    L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
+    L["HUD_BACKGROUND"] = "Show HUD background"
+    L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

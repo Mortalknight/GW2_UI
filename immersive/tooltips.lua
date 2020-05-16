@@ -8,6 +8,7 @@ local GWGetClassColor = GW.GWGetClassColor
 local Wait = GW.Wait
 local GetUnitItemLevel = GW.GetUnitItemLevel
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
+local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 
 local MountIDs = {}
 local targetList = {}
@@ -76,8 +77,8 @@ end
 GW.AddForProfiling("tooltips", "movePlacement", movePlacement)
 
 local constBackdropArgs = {
-    bgFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background",
-    edgeFile = "Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -89,7 +90,7 @@ local function styleTooltip(self)
     end
     self:SetBackdrop(constBackdropArgs)
     if _G[self:GetName() .. "StatusBarTexture"] then
-        _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface\\Addons\\GW2_UI\\Textures\\castinbar-white")
+        _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
     end
     if DBMInfoFrame then 
         DBMInfoFrame:SetBackdrop(constBackdropArgs)
@@ -116,9 +117,9 @@ GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 local function SkinItemRefTooltip()
     local SkinItemRefTooltip_Update = function()
         if ItemRefTooltip:IsShown() then
-            ItemRefCloseButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
-            ItemRefCloseButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
-            ItemRefCloseButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+            ItemRefCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
+            ItemRefCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
             ItemRefCloseButton:SetSize(20, 20)
             ItemRefCloseButton:ClearAllPoints()
             ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -147,9 +148,9 @@ local function SkinBattlePetTooltip()
 
     local fbptt = function()
         if FloatingBattlePetTooltip:IsShown() then
-            FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-normal")
-            FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
-            FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\window-close-button-hover")
+            FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
+            FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
             FloatingBattlePetTooltip.CloseButton:SetSize(20, 20)
             FloatingBattlePetTooltip.CloseButton:ClearAllPoints()
             FloatingBattlePetTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -274,15 +275,14 @@ local function AddInspectInfo(tooltip, unit, numTries, r, g, b)
 end
 
 local function SetUnitText(self, unit, level, isShiftKeyDown)
-    if self:IsForbidden() then return end
-
-    local color
+    local name, realm = UnitName(unit)
+    
+    local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
     if UnitIsPlayer(unit) then
         local localeClass, class = UnitClass(unit)
         if not localeClass or not class then return end
 
-        local name, realm = UnitName(unit)
         local guildName, guildRankName, _, guildRealm = GetGuildInfo(unit)
         local relationship = UnitRealmRelationship(unit)
         local pvpName = UnitPVPName(unit)
@@ -291,7 +291,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
         local showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
 
-        color = GWGetClassColor(class, true)
+        local nameColor = GWGetClassColor(class, showClassColor, true)
 
         if pvpName and playerTitles then
             name = pvpName
@@ -307,13 +307,9 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             end
         end
 
-        if UnitIsAFK(unit) then
-            name = name .. " |cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r"
-        elseif UnitIsDND(unit) then
-            name = name .. " |cffFFFFFF[|r|cffFFFF00" .. DND .. "|r|cffFFFFFF]|r"
-        end
+        name = name .. ((UnitIsAFK(unit) and " |cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r") or (UnitIsDND(unit) and " |cffFFFFFF[|r|cffFFFF00" .. DND .. "|r|cffFFFFFF]|r") or "")
 
-        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", color.colorStr, name or UNKNOWN)
+        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.colorStr, name or UNKNOWN)
 
         local lineOffset = 2
         if guildName then
@@ -336,7 +332,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             local race, englishRace = UnitRace(unit)
             local _, localizedFaction = GetUnitBattlefieldFaction(unit)
             if localizedFaction and englishRace == "Pandaren" then race = localizedFaction .. " " .. race end
-            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", color.colorStr, localeClass)
+            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", nameColor.colorStr, localeClass)
         end
 
         if showRole then
@@ -353,23 +349,15 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
                 GameTooltip:AddDoubleLine(format("%s:", ROLE), role, nil, nil, nil, r, g, b)
             end
         end
+
+        return nameColor
     else
-        if UnitIsTapDenied(unit) then
-            color = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
-        else
-            local unitReaction = UnitReaction(unit, "player")
-            color = GW.FACTION_BAR_COLORS[unitReaction]
-        end
-
-        if not color then color = RAID_CLASS_COLORS.PRIEST end
-
         local levelLine = GetLevelLine(self, 2)
         if levelLine then
             local isPetWild, isPetCompanion = UnitIsWildBattlePet(unit), UnitIsBattlePetCompanion(unit)
             local creatureClassification = UnitClassification(unit)
             local creatureType = UnitCreatureType(unit)
-            local pvpFlag = ""
-            local diffColor
+            local pvpFlag, diffColor
 
             if isPetWild or isPetCompanion then
                 level = UnitBattlePetLevel(unit)
@@ -395,10 +383,18 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
                 pvpFlag = format(" (%s)", PVP)
             end
 
-            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType or "", pvpFlag)
+            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType or "", pvpFlag or "")
         end
+
+        local unitReaction = UnitReaction(unit, "player")
+        local nameColor = unitReaction and showClassColor and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
+        if unitReaction and unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+        local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
+
+        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
+
+        return UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255} or nameColor
     end
-    return color
 end
 
 local function GameTooltip_OnTooltipSetUnit(self)
@@ -423,6 +419,8 @@ local function GameTooltip_OnTooltipSetUnit(self)
 
     local color = SetUnitText(self, unit, UnitLevel(unit), isShiftKeyDown)
     local showMount = GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT")
+    local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
+
     if showMount and not isShiftKeyDown and unit ~= "player" and isPlayerUnit then
         for i = 1, 40 do
             local name, _, _, _, _, _, _, _, _, id = UnitBuff(unit, i)
@@ -454,9 +452,9 @@ local function GameTooltip_OnTooltipSetUnit(self)
         local targetInfo = GetSetting("ADVANCED_TOOLTIP_SHOW_TARGET_INFO")
         if targetInfo and unit ~= "player" and UnitExists(unitTarget) then
             local targetColor
-            if(UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget)) then
+            if UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget) then
                 local _, class = UnitClass(unitTarget)
-                targetColor = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
+                targetColor = GWGetClassColor(class, showClassColor, true)
             else
                 targetColor = GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
             end
@@ -474,7 +472,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
                 local groupUnit = (IsInRaid() and "raid" .. i or "party" .. i)
                 if (UnitIsUnit(groupUnit .. "target", unit)) and (not UnitIsUnit(groupUnit, "player")) then
                     local _, class = UnitClass(groupUnit)
-                    local classColor = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
+                    local classColor = GWGetClassColor(class, showClassColor, true)
                     tinsert(targetList, format("|c%s%s|r", classColor.colorStr, UnitName(groupUnit)))
                 end
             end
@@ -518,7 +516,7 @@ local function GameTooltip_OnTooltipSetItem(self)
         local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
 
-        if right ~= nil and showSpellID then
+        if link ~= nil and showSpellID then
             right = format("|cffffedba%s|r %s", ID, strmatch(link, ":(%w+)"))
         end
 
@@ -575,12 +573,13 @@ local function SetUnitAura(self, unit, index, filter)
         end
 
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+        local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
         if showSpellID then
             if caster then
                 local name = UnitName(caster)
                 local _, class = UnitClass(caster)
-                local color = GWGetClassColor(class, true) or RAID_CLASS_COLORS.PRIEST
+                local color = GWGetClassColor(class, showClassColor, true)
                 self:AddDoubleLine(format("|cffffedba%s|r %d", ID, id), format("|c%s%s|r", color.colorStr, name))
             else
                 self:AddLine(format("|cffffedba%s|r %d", ID, id))
