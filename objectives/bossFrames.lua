@@ -110,7 +110,7 @@ local function bossFrame_OnEvent(self, event, unit)
         return
     end
     
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then 
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then
         updateBoss_Health(self)
         updateBoss_Power(self)
         updateBoss_Name(self)
@@ -126,10 +126,11 @@ local function registerFrame(i)
 
     local targetF = CreateFrame("Button", "GwQuestTrackerBossFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFrame")
 
-    local p = 70 + ((35 * i) - 35)
+    local p = ((35 * i) - 35)
 
-    targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
+    targetF:SetPoint("BOTTOMRIGHT", GwObjectivesNotification, "BOTTOMRIGHT", 0, -p)
 
+    targetF.id = i
     targetF.unit = debug_unit_Track
     targetF.guid = UnitGUID(targetF.unit)
     targetF:SetAttribute("unit", debug_unit_Track)
@@ -172,7 +173,7 @@ local function registerFrame(i)
         "OnShow",
         function(self)
             updateBossFrameHeight(self)
-
+            print(1)
             local compassData = {}
 
             compassData["TYPE"] = "BOSS"
