@@ -486,12 +486,6 @@ GW.SpellsByLevel =
       {id =7918, isTalent =0, isSkill =1},
       -- @Shoot Crossbow undefined
       {id =7919, isTalent =0, isSkill =1},
-      -- @Improved Pummel Rank 1
-      {id =12288, rank =1, isTalent =0},
-      -- @Improved Pummel Rank 2
-      {id =12707, requiredIds ={12288}, rank =2, baseId =12288, isTalent =0},
-      -- @Improved Pummel Rank 3
-      {id =12708, requiredIds ={12707}, rank =3, baseId =12288, isTalent =0},
        },
 [4] = {
       -- @Charge Rank 1
