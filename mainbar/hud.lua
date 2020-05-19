@@ -359,7 +359,7 @@ local function xpbar_OnEvent(self, event)
 
         if maxPlayerLevel == UnitLevel("Player") then
             level = AzeritLevel
-            Nextlevel = math.min(AzeritLevel + 1, 80) --Max azerit level is 80
+            Nextlevel = AzeritLevel + 1 --Max azerit level is infinity
             GwExperienceFrame.NextLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             GwExperienceFrame.CurrentLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             GwExperienceFrame.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label-azerit")

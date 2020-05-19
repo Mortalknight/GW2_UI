@@ -126,9 +126,9 @@ local function registerFrame(i)
 
     local targetF = CreateFrame("Button", "GwQuestTrackerBossFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFrame")
 
-    local p = ((35 * i) - 35)
+    local p = 70 + ((35 * i) - 35)
 
-    targetF:SetPoint("BOTTOMRIGHT", GwObjectivesNotification, "BOTTOMRIGHT", 0, -p)
+    targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
     targetF.id = i
     targetF.unit = debug_unit_Track

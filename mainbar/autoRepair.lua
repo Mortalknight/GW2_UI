@@ -32,7 +32,7 @@ local function autoRepair(overrideSettings)
         RepairAllItems(TYPE == "GUILD")
 
         --Delay this a bit so we have time to catch the outcome of first repair attempt
-        C_Timer.After(0.5, function() autoRepairOutput() end)
+        C_Timer.After(0.8, function() autoRepairOutput() end)
     end
 end
 
