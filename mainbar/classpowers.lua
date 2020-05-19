@@ -118,7 +118,7 @@ GW.AddForProfiling("classpowers", "powerMana", powerMana)
 local function powerLittleMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
-        UpdatePowerData(self.lmb, 0, "MANA", "GwLittlePowerBar")
+        UpdatePowerData(self:GetParent().lmb, 0, "MANA", "GwLittlePowerBar")
     end
 end
 GW.AddForProfiling("classpowers", "powerLittleMana", powerLittleMana)
@@ -164,10 +164,10 @@ local function setLittleManaBar(f)
         f:Hide()
     end
 
-    f:SetScript("OnEvent", powerLittleMana)
-    powerLittleMana(f, "CLASS_POWER_INIT")
-    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    f.littleManaBarEventFrame:SetScript("OnEvent", powerLittleMana)
+    powerLittleMana(f.littleManaBarEventFrame, "CLASS_POWER_INIT")
+    f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
 GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
 
