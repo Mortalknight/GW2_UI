@@ -474,7 +474,7 @@ local function updateItemSlot(self)
 
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
-    setItemLevel(self, quality)
+    setItemLevel(self, quality, nil, slot)
 
     if self.HasPaperDollAzeriteItemOverlay then
         self:SetAzeriteItem(self.hasItem and ItemLocation:CreateFromEquipmentSlot(slot) or nil)

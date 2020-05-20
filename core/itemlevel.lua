@@ -143,9 +143,9 @@ end
 local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
     local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
     tt:SetOwner(UIParent, "ANCHOR_NONE")
-    if itemlink then
+    if itemlink and string.find(itemlink, "item") then
         tt:SetHyperlink(itemlink)
-    else
+    elseif slot then
         tt:SetInventoryItem(unit, slot)
     end
     tt:Show()

@@ -173,7 +173,6 @@ local function registerFrame(i)
         "OnShow",
         function(self)
             updateBossFrameHeight(self)
-            print(1)
             local compassData = {}
 
             compassData["TYPE"] = "BOSS"
