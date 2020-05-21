@@ -387,8 +387,8 @@ local function LoadCurrency(tabContainer)
     raidinfo.scrollBar.doNotHide = true
     raidInfoSetup(raidinfo)
 
-     -- update currency window when a currency update event occurs
-     raidinfo:SetScript(
+    -- update currency window when a currency update event occurs
+    raidinfo:SetScript(
         "OnEvent",
         function(self, event, ...)
             if not GW.inWorld then
