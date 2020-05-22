@@ -193,10 +193,10 @@ local function actionButtonGlobalStyle(self)
     _G[self:GetName() .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     _G[self:GetName() .. "NormalTexture"]:SetSize(self:GetSize(), self:GetSize())
     _G[self:GetName() .. "NormalTexture"]:Hide()
-    self.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+    self.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
 
     _G[self:GetName() .. "NormalTexture"]:SetTexture(nil)
-    _G[self:GetName()]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
+    _G[self:GetName()]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
     _G[self:GetName()]:SetHighlightTexture(nil)
 end
 GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButtonGlobalStyle)
@@ -663,12 +663,12 @@ end
 GW.AddForProfiling("paperdoll_equipment", "updateBagItemListAll", updateBagItemListAll)
 
 local function setStatIcon(self, stat)
-    local newTexture = "Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon"
+    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon"
     if STATS_ICONS[stat] ~= nil then
         -- If mastery we use need to use class icon
         if stat == "MASTERY" then
             SetClassIcon(self.icon, select(3, UnitClass("player")))
-            newTexture = "Interface\\AddOns\\GW2_UI\\textures\\party\\classicons"
+            newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons"
         else
             self.icon:SetTexCoord(STATS_ICONS[stat].l, STATS_ICONS[stat].r, STATS_ICONS[stat].t, STATS_ICONS[stat].b)
         end

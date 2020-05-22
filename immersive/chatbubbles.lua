@@ -50,8 +50,8 @@ local function SkinBubble(frame)
     end
 
     local name = frame:CreateFontString(nil, "BORDER")
-	name:SetPoint("TOPLEFT", 5, 5)
-	name:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -5, -5)
+	name:SetPoint("TOPLEFT", 5, 10)
+	name:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -5, 5)
     name:SetFont(UNIT_NAME_FONT, 12 * 0.85, "OUTLINED")
     name:SetTextColor(0, 0, 0, 1)
 	name:SetJustifyH("LEFT")

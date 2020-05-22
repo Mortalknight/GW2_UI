@@ -287,6 +287,8 @@ local function GWUseThisLocalization()
     L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Blendet den Gruppenmanage-Button aus, wenn die Maus nicht in der Nähe ist."
     L["HUD_BACKGROUND"] = "HUD Hintergrund anzeigen"
     L["HUD_BACKGROUND_DESC"] = "Der HUD Hintergrund ändert seine Farbe in folgenden Situationen: Im Kampf, Nicht im Kampf, Im Wasser, Wenig HP, Geist"
+    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Instanz & Schlachtzug Debuffs"
+    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Zeige wichtig Instanz & Schlachtzug Debuffs an"
 end
 
 if GetLocale() == "deDE" then

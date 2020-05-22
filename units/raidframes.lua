@@ -10,6 +10,7 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GWGetClassColor = GW.GWGetClassColor
 local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
+local ImportendRaidDebuff = GW.ImportendRaidDebuff
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -458,7 +459,9 @@ end
 
 local function updateDebuffs(self)
     local btnIndex, x, y = 1, 0, 0
-    local filter = GetSetting("RAID_ONLY_DISPELL_DEBUFFS") and "RAID" or nil
+    local show_debuffs = GetSetting("RAID_SHOW_DEBUFFS")
+    local only_dispellable_debuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
+    local show_importend_raid_debuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_DEBUFF")
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
     local i, framesDone, aurasDone = 0
@@ -476,11 +479,28 @@ local function updateDebuffs(self)
 
         -- show current debuffs
         if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, filter)
-            local shouldDisplay = debuffName and not (
-                ignored[debuffName]
-                or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
-            )
+            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId, canApplyAura = UnitDebuff(self.unit, i)
+            local shouldDisplay = false
+
+            if show_debuffs then
+                if only_dispellable_debuffs then
+                    if canApplyAura then
+                        shouldDisplay = debuffName and not (
+                            ignored[debuffName]
+                            or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                        )
+                    end
+                else
+                    shouldDisplay = debuffName and not (
+                        ignored[debuffName]
+                        or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                    )
+                end
+            end
+
+            if show_importend_raid_debuffs and not shouldDisplay then
+                shouldDisplay = ImportendRaidDebuff[spellId] or false
+            end
 
             if shouldDisplay then
                 btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
