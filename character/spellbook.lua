@@ -422,10 +422,10 @@ local function updateUnknownTab(knownSpellID)
 
     UNKNOW_SPELL_MAX_INDEX = 0
     for i=1,UNKNOW_SPELL_MAX_INDEX do
-         _G["GwSpellbookUnknownSpell"..i]:Hide()
+        _G["GwSpellbookUnknownSpell"..i]:Hide()
     end
     for i=1,UNKNOW_SPELL_CONTAINER_MAX_INDEX do
-         _G["GwUnknownSpellCat"..i]:Hide()
+        _G["GwUnknownSpellCat"..i]:Hide()
     end
     GwSpellbookUnknown.slider:SetMinMaxValues(0,0)
     GwSpellbookUnknown.container.headers = {}
@@ -460,9 +460,9 @@ local function updateUnknownTab(knownSpellID)
                 SPELL_INDEX = SPELL_INDEX + 1
             end
         end
-        if #buttons>0 then
+        if #buttons > 0 then
 
-            if k>level or header==nil then
+            if k > level or header==nil then
                 lastHeader= header
                 header = getUnknownSpellContainer(HEADER_INDEX)
                 GwSpellbookUnknown.container.headers[#GwSpellbookUnknown.container.headers +1] = header
@@ -479,10 +479,10 @@ local function updateUnknownTab(knownSpellID)
 
             txT = (zebraHeader - 1) * txH
 
-            header.repbg:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\" .. classID)
+            header.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. classID)
             header.repbg:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
 
-            if k<=level then
+            if k <= level then
                 header.repbg:SetDesaturated(false)
                 header.title:SetText(AVAILABLE)
                 header.title:SetTextColor(0.9, 0.9, 0.7, 1)
@@ -492,42 +492,39 @@ local function updateUnknownTab(knownSpellID)
                 header.title:SetTextColor(0.8,.8,.8,0.5)
             end
 
-            for buttonIndex=1,#buttons do
+            for buttonIndex = 1, #buttons do
                 local b = buttons[buttonIndex]
 
                 if lastHeader~=nil then
-                    header:SetPoint("TOPLEFT", lastHeader,"BOTTOMLEFT",0,-2)
+                    header:SetPoint("TOPLEFT", lastHeader, "BOTTOMLEFT", 0, -2)
                 else
-                    header:SetPoint("TOPLEFT", GwSpellbookUnknown.container,"TOPLEFT",1,-((100*(HEADER_INDEX - 2))+20))
+                    header:SetPoint("TOPLEFT", GwSpellbookUnknown.container, "TOPLEFT", 1, -((100 * (HEADER_INDEX - 2)) + 20))
                 end
 
-                if k<=level then
+                if k <= level then
                     b.icon:SetDesaturated(false)
                 else
                     b.icon:SetDesaturated(true)
                 end
                 b:ClearAllPoints()
                 b:SetParent(header)
-                b:SetPoint("TOPLEFT",header,"TOPLEFT",x,-y)
+                b:SetPoint("TOPLEFT", header, "TOPLEFT", x, -y)
                 x = x + b:GetWidth() + 10
-                if (x + b:GetWidth() + 10)>header:GetWidth() then
+                if (x + b:GetWidth() + 10) > header:GetWidth() then
                     y = y + (b:GetHeight() + 10)
                     x = 10
-                    header:SetHeight(50 +y)
-
+                    header:SetHeight(50 + y)
                 end
-
             end
-
         end
     end
 
     local h = 20
-    for i=1,#GwSpellbookUnknown.container.headers  do
+    for i = 1, #GwSpellbookUnknown.container.headers do
         h = h + GwSpellbookUnknown.container.headers[i]:GetHeight() + 2
     end
 
-    if #GwSpellbookUnknown.container.headers<1 then
+    if #GwSpellbookUnknown.container.headers < 1 then
         GwSpellbookUnknown.filltext:Show()
     else
         GwSpellbookUnknown.filltext:Hide()
@@ -541,8 +538,8 @@ local function updateUnknownTab(knownSpellID)
         GwSpellbookUnknown.slider:Show()
         GwSpellbookUnknown.ScrollButtonUp:Show()
         GwSpellbookUnknown.ScrollButtonDown:Show()
-        GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight()/h) * GwSpellbookUnknown.slider:GetHeight() )
-        GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0,h - GwSpellbookUnknown.container:GetHeight()))
+        GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight() / h) * GwSpellbookUnknown.slider:GetHeight())
+        GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0, h - GwSpellbookUnknown.container:GetHeight()))
         GwSpellbookUnknown.slider:SetValue(0)
     end
     knownTalents = nil

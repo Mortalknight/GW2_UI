@@ -1,5 +1,18 @@
 local _, GW = ...
 
+local ClassIndex = {}
+ClassIndex.WARRIOR = 1
+ClassIndex.PALADIN = 2
+ClassIndex.HUNTER = 3
+ClassIndex.ROGUE = 4
+ClassIndex.PRIEST = 5
+ClassIndex.SHAMAN = 7
+ClassIndex.MAGE = 8
+ClassIndex.WARLOCK = 9
+ClassIndex.DRUID = 11
+GW.ClassIndex = {}
+GW.ClassIndex = ClassIndex
+
 local PowerBarColorCustom = {}
 GW.PowerBarColorCustom = PowerBarColorCustom
 

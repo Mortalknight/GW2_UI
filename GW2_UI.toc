@@ -117,6 +117,7 @@ inventory/lootframe.lua
 
 character/reputation_table.lua
 character/stats.lua
+character/advanced_stats.lua
 character/character.lua
 character/character.xml
 character/spellbook.lua
