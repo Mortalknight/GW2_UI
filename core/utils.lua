@@ -369,7 +369,7 @@ GW.FindInList = FindInList
 
 -- String upper and lower that are noops for locales without letter case
 local function StrUpper(str, i, j)
-    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+    if not str or IsIn(GW.mylocal, "koKR", "zhCN", "zhTW") then
         return str
     else
         return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):upper() .. (j and str:sub(j + 1) or "")
@@ -377,7 +377,7 @@ local function StrUpper(str, i, j)
 end
 GW.StrUpper = StrUpper
 local function StrLower(str, i, j)
-    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+    if not str or IsIn(GW.mylocal, "koKR", "zhCN", "zhTW") then
         return str
     else
         return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):lower() .. (j and str:sub(j + 1) or "")
@@ -645,3 +645,34 @@ local function setItemLevel(button, quality, itemlink, slot)
     end
 end
 GW.setItemLevel = setItemLevel
+
+local function GetPlayerRole()
+    local assignedRole = UnitGroupRolesAssigned("player")
+    if assignedRole == "NONE" then
+        return GW.myspec and GetSpecializationRole(GW.myspec)
+    end
+
+    return assignedRole
+end
+GW.GetPlayerRole = GetPlayerRole
+
+local function CheckRole()
+    GW.myspec = GetSpecialization()
+    GW.myrole = GetPlayerRole()
+
+    -- myrole = group role; TANK, HEALER, DAMAGER
+
+    local dispel = GW.DispelClasses[GW.myclass]
+    if GW.myrole and (GW.myclass ~= "PRIEST" and dispel ~= nil) then
+        dispel.Magic = (GW.myrole == "HEALER")
+    end
+    GW.Debug("Player role:", GW.myrole)
+    GW.Debug("Player spec:", GW.myspec)
+end
+GW.CheckRole = CheckRole
+
+local function IsDispellableByMe(debuffType)
+    local dispel = GW.DispelClasses[GW.myclass] 
+    return dispel and dispel[debuffType]
+end
+GW.IsDispellableByMe = IsDispellableByMe

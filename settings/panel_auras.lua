@@ -45,7 +45,7 @@ local function LoadAurasPanel(sWindow)
     addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, {["GROUP_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
-    for spellID, indicator in pairs(GW.AURAS_INDICATORS[select(2, UnitClass("player"))]) do
+    for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
         if not indicator[4] then
             tinsert(auraKeys, spellID)
             tinsert(auraVals, (GetSpellInfo(spellID)))

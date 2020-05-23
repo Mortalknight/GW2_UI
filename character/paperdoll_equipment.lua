@@ -667,7 +667,7 @@ local function setStatIcon(self, stat)
     if STATS_ICONS[stat] ~= nil then
         -- If mastery we use need to use class icon
         if stat == "MASTERY" then
-            SetClassIcon(self.icon, select(3, UnitClass("player")))
+            SetClassIcon(self.icon, GW.myClassID)
             newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons"
         else
             self.icon:SetTexCoord(STATS_ICONS[stat].l, STATS_ICONS[stat].r, STATS_ICONS[stat].t, STATS_ICONS[stat].b)
@@ -709,9 +709,6 @@ local function updateStats()
     GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
     GwDressingRoom.itemLevel:SetTextColor(GetItemLevelColor())
 
-    local spec = GetSpecialization()
-    local role = GetSpecializationRole(spec)
-
     local statFrame
 
     local numShownStats = 1
@@ -724,7 +721,7 @@ local function updateStats()
             local stat = PAPERDOLL_STATCATEGORIES[catIndex].stats[statIndex]
             local showStat = true
             if (stat.primary) then
-                local primaryStat = select(6, GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player")))
+                local primaryStat = select(6, GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
                 if (stat.primary ~= primaryStat) then
                     showStat = false
                 end
@@ -732,7 +729,7 @@ local function updateStats()
             if (showStat and stat.roles) then
                 local foundRole = false
                 for _, statRole in pairs(stat.roles) do
-                    if (role == statRole) then
+                    if (GW.myrole == statRole) then
                         foundRole = true
                         break
                     end
@@ -740,7 +737,7 @@ local function updateStats()
                 showStat = foundRole
             end
 
-            if stat.stat == "MASTERY" and (UnitLevel("player") < SHOW_MASTERY_LEVEL) then
+            if stat.stat == "MASTERY" and (GW.mylevel < SHOW_MASTERY_LEVEL) then
                 showStat = false
             end
 
@@ -788,12 +785,10 @@ GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpda
 
 local function updateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
-    local spec = GetSpecialization()
-    local localizedClass = UnitClass("player")
-    local name = select(2, GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player")))
+    local name = select(2, GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
 
     if name ~= nil then
-        local data = LEVEL .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
+        local data = LEVEL .. " " .. GW.mylevel .. " " .. name .. " " .. GW.myLocalizedClass
         GwDressingRoom.characterData:SetWidth(180)
         GwDressingRoom.characterData:SetText(data)
     end
@@ -932,32 +927,31 @@ local function LoadPDBagList(fmMenu)
     fmPD3M:SetUnit("player")
     fmPD3M:SetPosition(0.8, 0, 0)
 
-    local _, raceEn = UnitRace("Player")
-    if raceEn == "Human" then
+    if GW.myrace == "Human" then
         fmPD3M:SetPosition(0.4, 0, -0.05)
-    elseif raceEn == "Worgen" then
+    elseif GW.myrace == "Worgen" then
         fmPD3M:SetPosition(0.1, 0, -0.1)
-    elseif raceEn == "Tauren" or raceEn == "HighmountainTauren" then
+    elseif GW.myrace == "Tauren" or GW.myrace == "HighmountainTauren" then
         fmPD3M:SetPosition(0.6, 0, 0)
-    elseif raceEn == "BloodElf" or raceEn == "VoidElf" then
+    elseif GW.myrace == "BloodElf" or GW.myrace == "VoidElf" then
         fmPD3M:SetPosition(0.5, 0, 0)
-    elseif raceEn == "Draenei" or raceEn == "LightforgedDraenei" then
+    elseif GW.myrace == "Draenei" or GW.myrace == "LightforgedDraenei" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "NightElf" or raceEn == "Nightborne" then
+    elseif GW.myrace == "NightElf" or GW.myrace == "Nightborne" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "Pandaren" or raceEn == "KulTiran" then
+    elseif GW.myrace == "Pandaren" or GW.myrace == "KulTiran" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "Goblin" then
+    elseif GW.myrace == "Goblin" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Troll" or raceEn == "ZandalariTroll" then
+    elseif GW.myrace == "Troll" or GW.myrace == "ZandalariTroll" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Scourge" then
+    elseif GW.myrace == "Scourge" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Dwarf" or raceEn == "DarkIronDwarf" then
+    elseif GW.myrace == "Dwarf" or GW.myrace == "DarkIronDwarf" then
         fmPD3M:SetPosition(0.3, 0, 0)
-    elseif raceEn == "Gnome" or raceEn == "Mechagnome"then
+    elseif GW.myrace == "Gnome" or GW.myrace == "Mechagnome"then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Orc" or raceEn == "MagharOrc" then
+    elseif GW.myrace == "Orc" or GW.myrace == "MagharOrc" then
         fmPD3M:SetPosition(0.1, 0, -0.15)
     end
     fmPD3M:SetRotation(-0.15)
@@ -1005,10 +999,9 @@ local function LoadPDBagList(fmMenu)
     fmGDR.characterName:SetFont(UNIT_NAME_FONT, 14)
     fmGDR.characterData:SetFont(UNIT_NAME_FONT, 12)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
-    local _, englishClass, classIndex = UnitClass("player")
-    local color = GWGetClassColor(englishClass, true)
+    local color = GWGetClassColor(GW.myclass, true)
     
-    SetClassIcon(fmGDR.classIcon, classIndex)
+    SetClassIcon(fmGDR.classIcon, GW.myClassID)
 
     fmGDR.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
     fmGDR:SetScript("OnClick", resetBagInventory)

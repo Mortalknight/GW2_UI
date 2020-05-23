@@ -221,10 +221,11 @@ local function setUpBlock(questIDs)
                 end
 
                 if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
+                    local progressValue = addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
                     if finished then
-                        objectiveProgress = objectiveProgress + (1 / numObjectives) + addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
+                        objectiveProgress = objectiveProgress + (1 / numObjectives)
                     else
-                        objectiveProgress = objectiveProgress + (addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType) / numObjectives)
+                        objectiveProgress = objectiveProgress + progressValue
                     end
                 end
             end

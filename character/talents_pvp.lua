@@ -222,7 +222,7 @@ local function setSlotButton(btn, info)
 
     local slotIndex = btn.slotIndex
     local unlock = C_SpecializationInfo.GetPvpTalentSlotUnlockLevel(slotIndex)
-    if info.enabled and UnitLevel("player") >= unlock then
+    if info.enabled and GW.mylevel >= unlock then
         btn.isEnabled = true
     else
         btn.isEnabled = false
@@ -246,9 +246,7 @@ GW.AddForProfiling("talents_pvp", "setSlotButton", setSlotButton)
 
 local talentIds = {}
 local function UpdatePvPTab(fmSpellbook, fmTab)
-    local level = UnitLevel("player")
-
-    if level < SHOW_PVP_TALENT_LEVEL then
+    if GW.mylevel < SHOW_PVP_TALENT_LEVEL then
         for k, v in pairs(fmTab.groups) do
             v:Hide()
         end
@@ -302,7 +300,6 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
         end
     )
 
-    local pLevel = UnitLevel("player")
     for i, talentId in ipairs(talentIds) do
         local _, name, icon, selected, available, spellId, unlocked = GetPvpTalentInfoByID(talentId)
         local isPassive = IsPassiveSpell(spellId)
@@ -327,7 +324,7 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
         btn.talentId = talentId
         btn.isPickable = true
         btn.unlockLevel = C_SpecializationInfo.GetPvpTalentUnlockLevel(talentId)
-        if pLevel < btn.unlockLevel then
+        if GW.mylevel < btn.unlockLevel then
             btn.isFuture = true
             btn.icon:SetDesaturated(true)
             btn.icon:SetAlpha(0.5)
@@ -464,7 +461,7 @@ local function toggle_OnEnter(self)
     GameTooltip:AddLine(PVP_WAR_MODE_DESCRIPTION, nil, nil, nil, true)
     if ((not canToggleWarmodeOFF and not C_PvP.IsWarModeDesired()) or (canToggleWarmodeON or C_PvP.IsWarModeDesired())) == false then
         local text =
-            UnitFactionGroup("player") == PLAYER_FACTION_GROUP[0] and PVP_WAR_MODE_NOT_NOW_HORDE or
+            GW.myfaction == PLAYER_FACTION_GROUP[0] and PVP_WAR_MODE_NOT_NOW_HORDE or
             PVP_WAR_MODE_NOT_NOW_ALLIANCE
         local r, g, b = RED_FONT_COLOR:GetRGB()
         GameTooltip:AddLine(text, r, g, b, true)

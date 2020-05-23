@@ -11,7 +11,6 @@ local updateOldData
 local updateReputations
 local updateDetails
 
-local gender = UnitSex("player")
 local savedReputation = {}
 local selectedReputationCat = 1
 local reputationLastUpdateMethod = nil
@@ -249,8 +248,8 @@ local function setDetailEx(
         isExpanded = true
     end
 
-    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), gender)
-    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), gender)
+    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
+    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
     local friendID, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold =
         GetFriendshipReputation(factionID)
 

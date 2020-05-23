@@ -267,10 +267,9 @@ end
 GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
 
 local function setWarrior(f)
-    local spec = f.gwPlayerSpec
     local selected
 
-    if spec == 2 or spec == 3 then
+    if GW.myspec == 2 or GW.myspec == 3 then
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fd = f.decay
@@ -280,10 +279,10 @@ local function setWarrior(f)
         fd.bar:SetValue(0)
         fd:Show()
 
-        if spec == 2 then -- fury
+        if GW.myspec == 2 then -- fury
             f:SetScript("OnEvent", powerEnrage)
             powerEnrage(f, "CLASS_POWER_INIT")
-        elseif spec == 3 then -- prot
+        elseif GW.myspec == 3 then -- prot
             -- determine if bolster talent is selected
             _, _, _, selected, _ = GetTalentInfo(4, 3, 1, false, "player")
             f.gw_BolsterSelected = selected
@@ -345,9 +344,7 @@ end
 GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
 
 local function setPaladin(f)
-    local spec = f.gwPlayerSpec
-
-    if spec == 2 then -- prot
+    if GW.myspec == 2 then -- prot
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fd = f.decay
@@ -362,7 +359,7 @@ local function setPaladin(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
 
         return true
-    elseif spec == 3 then -- retribution
+    elseif GW.myspec == 3 then -- retribution
         f:SetHeight(32)
         f:SetWidth(320)
         f.background:SetHeight(32)
@@ -435,15 +432,13 @@ end
 GW.AddForProfiling("classpowers", "powerMongoose", powerMongoose)
 
 local function setHunter(f)
-    local spec = f.gwPlayerSpec
-
     local selected = false
-    if spec == 3 then
+    if GW.myspec == 3 then
         -- determine if mongoose talent is selected for survival
         _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player")
     end
 
-    if spec == 1 or (spec == 3 and selected) then
+    if GW.myspec == 1 or (GW.myspec == 3 and selected) then
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fdc = f.decayCounter
@@ -452,11 +447,11 @@ local function setHunter(f)
         fdc.bar:SetValue(0)
         fdc:Show()
 
-        if spec == 1 then -- beast mastery
+        if GW.myspec == 1 then -- beast mastery
             f:SetScript("OnEvent", powerFrenzy)
             powerFrenzy(f, "CLASS_POWER_INIT")
             f:RegisterUnitEvent("UNIT_AURA", "pet")
-        elseif spec == 3 then -- survival
+        elseif GW.myspec == 3 then -- survival
             f:SetScript("OnEvent", powerMongoose)
             powerMongoose(f, "CLASS_POWER_INIT")
             f:RegisterUnitEvent("UNIT_AURA", "player")
@@ -478,9 +473,7 @@ GW.AddForProfiling("classpowers", "setRogue", setRogue)
 
 -- PRIEST
 local function setPriest(f)
-    local spec = f.gwPlayerSpec
-
-    if spec == 3 then -- shadow
+    if GW.myspec == 3 then -- shadow
         setManaBar(f)
         return true
     end
@@ -557,8 +550,6 @@ end
 GW.AddForProfiling("classpowers", "powerRune", powerRune)
 
 local function setDeathKnight(f)
-    local spec = f.gwPlayerSpec
-
     local fr = f.runeBar
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
@@ -568,9 +559,9 @@ local function setDeathKnight(f)
     fr:Show()
 
     local texture = "runes-blood"
-    if spec == 2 then -- frost
+    if GW.myspec == 2 then -- frost
         texture = "runes"
-    elseif spec == 3 then -- unholy
+    elseif GW.myspec == 3 then -- unholy
         texture = "runes-unholy"
     end
 
@@ -591,9 +582,7 @@ GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 
 -- SHAMAN
 local function setShaman(f)
-    local spec = f.gwPlayerSpec
-
-    if spec == 1 or spec == 2 then
+    if GW.myspec == 1 or GW.myspec == 2 then
         -- ele and enh both use extra mana bar on left
         setManaBar(f)
         return true
@@ -628,9 +617,7 @@ end
 GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
 local function setMage(f)
-    local spec = f.gwPlayerSpec
-
-    if spec == 1 then -- arcane
+    if GW.myspec == 1 then -- arcane
         if GetSetting("XPBAR_ENABLED") then
             f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 66)
         else
@@ -808,9 +795,7 @@ end
 GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
 
 local function setMonk(f)
-    local spec = f.gwPlayerSpec
-
-    if spec == 1 then -- brewmaster
+    if GW.myspec == 1 then -- brewmaster
         f.brewmaster:Show()
         f.staggerBar.loopValue = 0
         f.background:SetTexture(nil)
@@ -823,7 +808,7 @@ local function setMonk(f)
         f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
         return true
-    elseif spec == 3 then -- ww
+    elseif GW.myspec == 3 then -- ww
         f:SetHeight(32)
         f:SetWidth(256)
         f.background:SetHeight(32)
@@ -849,7 +834,6 @@ GW.AddForProfiling("classpowers", "setMonk", setMonk)
 
 -- DRUID
 local function setDruid(f)
-    local spec = f.gwPlayerSpec
     local form = f.gwPlayerForm
 
     -- determine affinity talent
@@ -859,7 +843,7 @@ local function setDruid(f)
     _, _, _, aff3, _ = GetTalentInfo(3, 3, 1, false, "player")
 
     local barType = "none"
-    if spec == 1 then -- balance
+    if GW.myspec == 1 then -- balance
         if form == 1 and aff1 then
             -- if in cat form with feral affinity, show combo points
             barType = "combo"
@@ -867,7 +851,7 @@ local function setDruid(f)
             -- show mana bar by default except in travel forms
             barType = "mana"
         end
-    elseif spec == 2 then -- feral
+    elseif GW.myspec == 2 then -- feral
         if form == 1 then
             -- show combo points and little mana bar in cat form
             barType = "combo|little_mana"
@@ -875,7 +859,7 @@ local function setDruid(f)
             -- show mana bar in bear form
             barType = "mana"
         end
-    elseif spec == 3 then -- guardian
+    elseif GW.myspec == 3 then -- guardian
         if form == 1 then
             if aff2 then
                 -- show combo points in cat form with feral affinity
@@ -888,7 +872,7 @@ local function setDruid(f)
             -- show mana in bear form
             barType = "mana"
         end
-    elseif spec == 4 then -- resto
+    elseif GW.myspec == 4 then -- resto
         if form == 1 then
             if aff2 then
                 -- show combo points in cat form with feral affinity
@@ -923,10 +907,6 @@ local function selectType(f)
     f:SetScript("OnEvent", nil)
     f:UnregisterAllEvents()
 
-    local spec = GetSpecialization()
-    f.gwPlayerSpec = spec
-    local pClass = f.gwPlayerClass
-
     -- hide all class power sub-pieces and reset anything needed
     f.runeBar:Hide()
     f.decayCounter:Hide()
@@ -939,27 +919,27 @@ local function selectType(f)
     f.gwPower = -1
     local showBar = false
 
-    if pClass == 1 then
+    if GW.myClassID == 1 then
         showBar = setWarrior(f)
-    elseif pClass == 2 then
+    elseif GW.myClassID == 2 then
         showBar = setPaladin(f)
-    elseif pClass == 3 then
+    elseif GW.myClassID == 3 then
         showBar = setHunter(f)
-    elseif pClass == 4 then
+    elseif GW.myClassID == 4 then
         showBar = setRogue(f)
-    elseif pClass == 5 then
+    elseif GW.myClassID == 5 then
         showBar = setPriest(f)
-    elseif pClass == 6 then
+    elseif GW.myClassID == 6 then
         showBar = setDeathKnight(f)
-    elseif pClass == 7 then
+    elseif GW.myClassID == 7 then
         showBar = setShaman(f)
-    elseif pClass == 8 then
+    elseif GW.myClassID == 8 then
         showBar = setMage(f)
-    elseif pClass == 9 then
+    elseif GW.myClassID == 9 then
         showBar = setWarlock(f)
-    elseif pClass == 10 then
+    elseif GW.myClassID == 10 then
         showBar = setMonk(f)
-    elseif pClass == 11 then
+    elseif GW.myClassID == 11 then
         showBar = setDruid(f)
     end
 
@@ -995,8 +975,6 @@ local function barChange_OnEvent(self, event, ...)
 end
 
 local function LoadClassPowers()
-    local _, _, pClass = UnitClass("player")
-
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.RegisterScaleFrame(cpf)
     if GW.GetSetting("XPBAR_ENABLED") then
@@ -1007,7 +985,6 @@ local function LoadClassPowers()
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
 
-    cpf.gwPlayerClass = pClass
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
 
@@ -1061,7 +1038,7 @@ local function LoadClassPowers()
 
     selectType(cpf)
 
-    if (pClass == 4 or pClass == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget) then
+    if (GW.myClassID == 4 or GW.myClassID == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget) then
         cpf.decay:RegisterEvent("PLAYER_TARGET_CHANGED")
         if cpf.barType == "combo" then
             cpf:Hide()

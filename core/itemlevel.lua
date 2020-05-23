@@ -22,7 +22,7 @@ local iLevelDB, tryAgain = {}, {}
 
 
 local function _GetSpecializationInfo(unit, isPlayer)
-    local spec = (isPlayer and GetSpecialization()) or (unit and GetInspectSpecialization(unit))
+    local spec = (isPlayer and GW.myspec) or (unit and GetInspectSpecialization(unit))
     if spec and spec > 0 then
         if isPlayer then
             return select(2, GetSpecializationInfo(spec))

@@ -184,8 +184,7 @@ local function selectPvp(self)
     if C_PvP.IsWarModeDesired() or GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player") then
         self.pvp.pvpFlag = true
         if prevFlag ~= true then
-            local fac, _ = UnitFactionGroup("player")
-            if fac == "Horde" then
+            if GW.myfaction == "Horde" then
                 self.pvp.ally:Hide()
                 self.pvp.horde:Show()
             else

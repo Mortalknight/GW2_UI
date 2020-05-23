@@ -195,7 +195,6 @@ local function setUnitName(self)
     end
 
     local flagSetting = GetSetting("RAID_UNIT_FLAGS")
-    local playerLocal = GetLocale()
 
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
@@ -210,7 +209,7 @@ local function setUnitName(self)
     if flagSetting == "DIFFERENT" then
         local realmLocal = select(5, LRI:GetRealmInfoByUnit(self.unit))
 
-        if playerLocal ~= realmLocal then
+        if GW.mylocal ~= realmLocal then
             realmflag = REALM_FLAGS[realmLocal]
         end
     elseif flagSetting == "ALL" then
@@ -459,6 +458,7 @@ end
 
 local function updateDebuffs(self)
     local btnIndex, x, y = 1, 0, 0
+    local filter = "HARMFUL"
     local show_debuffs = GetSetting("RAID_SHOW_DEBUFFS")
     local only_dispellable_debuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
     local show_importend_raid_debuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_DEBUFF")
@@ -479,12 +479,12 @@ local function updateDebuffs(self)
 
         -- show current debuffs
         if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId, canApplyAura = UnitDebuff(self.unit, i)
+            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId, canApplyAura = UnitDebuff(self.unit, i, filter)
             local shouldDisplay = false
 
             if show_debuffs then
                 if only_dispellable_debuffs then
-                    if canApplyAura then
+                    if debuffType and GW.IsDispellableByMe(debuffType) then
                         shouldDisplay = debuffName and not (
                             ignored[debuffName]
                             or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
@@ -587,7 +587,7 @@ end
 
 local function updateBuffs(self)
     local btnIndex, x, y = 1, 0, 0
-    local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
+    local indicators = AURAS_INDICATORS[GW.myclass]
     local i, name = 1
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
@@ -895,10 +895,10 @@ local function GetRaidFramesMeasures(players)
         players = players or max(1, GetNumGroupMembers())
     else
         players = 0
-        for i = 1, 40 do
+        for i = 1, MAX_RAID_MEMBERS do
             local _, _, grp = GetRaidRosterInfo(i)
-            if grp >= ceil(players / 5) then
-                players = max((grp - 1) * 5, players) + 1
+            if grp >= ceil(players / MEMBERS_PER_RAID_GROUP) then
+                players = max((grp - 1) * MEMBERS_PER_RAID_GROUP, players) + 1
             end
         end
         players = max(1, players, GetNumGroupMembers())
@@ -983,7 +983,7 @@ local function UpdateRaidFramesPosition()
     GwRaidFrameContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
 
     -- Update unit frames
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
     end
@@ -1016,7 +1016,7 @@ local function sortByRole()
             tinsert(sorted, "player")
         end
 
-        for i = 1, 40 do
+        for i = 1, MAX_RAID_MEMBERS do
             if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
                 tinsert(sorted, unitString .. i)
             end
@@ -1047,16 +1047,16 @@ local function UpdateRaidFramesLayout()
     wipe(grpPos) wipe(noGrp)
 
     -- Position by group
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         if not tContains(sorted, unitString .. i) then
-            if i < 5 then
+            if i < MEMBERS_PER_RAID_GROUP then
                 PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
 
             local name, _, grp = GetRaidRosterInfo(i)
             if name or grp > 1 then
                 grpPos[grp] = (grpPos[grp] or 0) + 1
-                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * 5 + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
             else
                 tinsert(noGrp, i)
             end
@@ -1065,10 +1065,10 @@ local function UpdateRaidFramesLayout()
 
     -- Find spots for units with missing group info
     for _,i in ipairs(noGrp) do
-        for grp=1,8 do
-            if (grpPos[grp] or 0) < 5 then
+        for grp = 1, NUM_RAID_GROUPS do
+            if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
                 grpPos[grp] = (grpPos[grp] or 0) + 1
-                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * 5 + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                 break
             end
         end
@@ -1222,7 +1222,7 @@ local function LoadRaidFrames()
         end
     end)
 
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainer.gwMover, "VerticalActionBarDummy")
         f:SetParent(GwRaidFrameContainer.gwMover)
         f.frameName:SetText("")
@@ -1235,7 +1235,7 @@ local function LoadRaidFrames()
         createRaidFrame("party" .. i, i)
     end
 
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         createRaidFrame("raid" .. i, i)
     end
 
@@ -1285,8 +1285,8 @@ local function LoadRaidFrames()
         UpdateRaidFramesLayout()
 
         updateFrameData(_G["GwCompactplayer"], nil)
-        for i = 1, 40 do
-            if i < 5 then
+        for i = 1, MAX_RAID_MEMBERS do
+            if i < MEMBERS_PER_RAID_GROUP then
                 updateFrameData(_G["GwCompactparty" .. i], i)
             end
             updateFrameData(_G["GwCompactraid" .. i], i)

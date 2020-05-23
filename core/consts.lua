@@ -3,6 +3,15 @@ local _, GW = ...
 --Create ilvl cache
 GW.unitIlvlsCache = {}
 
+GW.DispelClasses = {
+    PRIEST = { Magic = true, Disease = true },
+    SHAMAN = { Magic = false, Curse = true },
+    PALADIN = { Poison = true, Magic = false, Disease = true },
+    DRUID = { Magic = false, Curse = true, Poison = true, Disease = false },
+    MONK = { Magic = false, Disease = true, Poison = true },
+    MAGE = { Curse = true }
+}
+
 local PowerBarColorCustom = {}
 GW.PowerBarColorCustom = PowerBarColorCustom
 

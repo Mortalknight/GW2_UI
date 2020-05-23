@@ -140,7 +140,7 @@ local function updateHealthbarColor(self)
         self.nameString:SetTextColor(nameColor.r, nameColor.g, nameColor.b, 1)
     end
 
-    if (UnitLevel(self.unit) - UnitLevel("player")) <= -5 then
+    if (UnitLevel(self.unit) - GW.mylevel) <= -5 then
         local r, g, b = self.nameString:GetTextColor()
         self.nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
     end
