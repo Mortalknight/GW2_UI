@@ -7,6 +7,7 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
+core/init.lua
 core/patch.lua
 
 locales/enUS.lua
@@ -54,6 +55,9 @@ settings/versionApi.lua
 
 core/auras.lua
 
+changelog.lua
+GW2_ui.lua
+
 character/data/ClassLoader.lua
 character/data/Druid.lua
 character/data/Hunter.lua
@@ -64,9 +68,6 @@ character/data/Rogue.lua
 character/data/Shaman.lua
 character/data/Warlock.lua
 character/data/Warrior.lua
-
-changelog.lua
-GW2_ui.lua
 
 units/aurabar.xml
 units/aurabar.lua

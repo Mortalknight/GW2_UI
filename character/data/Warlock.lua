@@ -31,12 +31,8 @@ GW.TomesByLevel = {
 	[58] = {{id = 16320, cost = 24000}, {id = 16362, cost = 24000}, {id = 16378, cost = 24000}},
 	[60] = {{id = 16350, cost = 26000}, {id = 16366, cost = 26000}, {id = 16374, cost = 26000}}
 }
-GW.SpellsByLevel =
-
-
-
- {
- [0] = {
+GW.SpellsByLevel = {
+[0] = {
       -- @One-Handed Swords undefined
       {id =201, isTalent =0, isSkill =1},
       -- @Staves undefined

@@ -78,12 +78,8 @@ GW:SetPreviousAbilityMap(
 	}
 )
 
-GW.SpellsByLevel =
-
-
-
- {
- [0] = {
+GW.SpellsByLevel = {
+[0] = {
       -- @One-Handed Axes undefined
       {id =196, isTalent =0, isSkill =1},
       -- @Two-Handed Axes undefined

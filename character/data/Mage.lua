@@ -1,11 +1,8 @@
 local _, GW = ...
 if (GW.myclass ~= "MAGE") then return end
 GW.SpellsByLevel = GW.RaceFilter(
-
-
-
- {
- [0] = {
+{
+[0] = {
       -- @One-Handed Swords undefined
       {id =201, isTalent =0, isSkill =1},
       -- @Staves undefined

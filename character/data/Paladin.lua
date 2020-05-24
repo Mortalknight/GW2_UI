@@ -1,4 +1,5 @@
 local _, GW = ...
+print(GW.myclass)
 if (GW.myclass ~= "PALADIN") then
 	return
 end
@@ -17,12 +18,8 @@ local layOnHands = {633 --[[Rank 1]], 2800 --[[Rank 2]], 10310 --[[Rank 3]]}
 
 GW:SetPreviousAbilityMap({devotionAura, retAura, fireResAura, frostResAura, shadowResAura, layOnHands})
 
-GW.SpellsByLevel =
-
-
-
- {
- [0] = {
+GW.SpellsByLevel = {
+[0] = {
       -- @One-Handed Axes undefined
       {id =196, isTalent =0, isSkill =1},
       -- @Two-Handed Axes undefined

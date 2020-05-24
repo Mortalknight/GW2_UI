@@ -3,7 +3,7 @@ local _, GW = ...
 local tinsert = tinsert
 local ipairs = ipairs
 
-if GW.spellsByLevel==nil then
+if GW.spellsByLevel == nil then
     GW.spellsByLevel = {}
 end
 
@@ -44,8 +44,6 @@ function GW.RaceFilter(spellsByLevel)
     )
 end
 
-
-
 function GW:SetPreviousAbilityMap(t)
     local abilityMap = {}
     for _, abilityIds in ipairs(t) do
@@ -55,14 +53,16 @@ function GW:SetPreviousAbilityMap(t)
     end
     self.previousAbilityMap = abilityMap
 end
+
 function GW.isHigherRankLearnd(spellId)
     if (GW.previousAbilityMap == nil) then
-        return false,nil
+        return false, nil
     end
 
     if (not GW.previousAbilityMap[spellId]) then
-        return false,nil
+        return false, nil
     end
+
     local spellIndex, knownIndex = 0, 0
     for i, otherId in ipairs(GW.previousAbilityMap[spellId]) do
         if (otherId == spellId) then
@@ -72,5 +72,5 @@ function GW.isHigherRankLearnd(spellId)
             knownIndex = i
         end
     end
-    return   true,knownIndex <= spellIndex
+    return true, knownIndex <= spellIndex
 end

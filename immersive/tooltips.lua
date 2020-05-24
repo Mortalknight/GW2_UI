@@ -305,11 +305,14 @@ local function GameTooltip_OnTooltipSetSpell(self)
     self:Show()
 end
 
-local function SetUnitAura(self, unit, index, filter)
-    if not self or self:IsForbidden() then return end
-    local _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
-
+local function SetUnitAuraData(self, id, caster)
     if id then
+        if MountIDs[id] then
+            local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(MountIDs[id])
+            self:AddLine(" ")
+            self:AddLine(sourceText, 1, 1, 1)
+        end
+
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
         local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
@@ -326,6 +329,20 @@ local function SetUnitAura(self, unit, index, filter)
 
         self:Show()
     end
+end
+
+local function SetUnitBuff(self, unit, index, filter)
+    if not self or self:IsForbidden() then return end
+    local _, _, _, _, _, _, caster, _, _, id = UnitBuff(unit, index, filter)
+
+    SetUnitAuraData(self, id, caster)
+end
+
+local function SetUnitDebuff(self, unit, index, filter)
+    if not self or self:IsForbidden() then return end
+    local _, _, _, _, _, _, caster, _, _, id = UnitDebuff(unit, index, filter)
+
+    SetUnitAuraData(self, id, caster)
 end
 
 local function movePlacement(self)

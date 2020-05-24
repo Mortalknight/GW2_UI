@@ -58,12 +58,7 @@ GW:SetPreviousAbilityMap(
 	}
 )
 
-
-GW.SpellsByLevel =
-
-
-
- {
+GW.SpellsByLevel = {
  [0] = {
       -- @One-Handed Maces undefined
       {id =198, isTalent =0, isSkill =1},
