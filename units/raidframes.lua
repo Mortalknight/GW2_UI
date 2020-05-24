@@ -461,7 +461,7 @@ local function updateDebuffs(self)
     local filter = "HARMFUL"
     local show_debuffs = GetSetting("RAID_SHOW_DEBUFFS")
     local only_dispellable_debuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
-    local show_importend_raid_debuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_DEBUFF")
+    local show_importend_raid_instance_debuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
     local i, framesDone, aurasDone = 0
@@ -479,7 +479,7 @@ local function updateDebuffs(self)
 
         -- show current debuffs
         if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId, canApplyAura = UnitDebuff(self.unit, i, filter)
+            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, filter)
             local shouldDisplay = false
 
             if show_debuffs then
@@ -498,7 +498,7 @@ local function updateDebuffs(self)
                 end
             end
 
-            if show_importend_raid_debuffs and not shouldDisplay then
+            if show_importend_raid_instance_debuffs and not shouldDisplay then
                 shouldDisplay = ImportendRaidDebuff[spellId] or false
             end
 
