@@ -464,16 +464,10 @@ local function getUnitDebuffs(unit)
             if show_debuffs then
                 if only_dispellable_debuffs then
                     if debuffType and GW.IsDispellableByMe(debuffType) then
-                        shouldDisplay = debuffName and not (
-                            ignored[debuffName]
-                            or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
-                        )
+                        shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                     end
                 else
-                    shouldDisplay = debuffName and not (
-                        ignored[debuffName]
-                        or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
-                    )
+                    shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
             end
 
@@ -501,12 +495,14 @@ local function getUnitDebuffs(unit)
         end
     end
 
-    table.sort(
-        DebuffLists[unit],
-        function(a, b)
-            return a["timeRemaining"] < b["timeRemaining"]
-        end
-    )
+    if show_debuffs or show_importend_raid_instance_debuffs then
+        table.sort(
+            DebuffLists[unit],
+            function(a, b)
+                return a["timeRemaining"] < b["timeRemaining"]
+            end
+        )
+    end
 end
 GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
 
@@ -695,7 +691,7 @@ local function updatePartyAuras(self, unit)
             indexBuffFrame:Show()
 
             x = x + 1
-            if x > 7 then
+            if x > 8 then
                 y = y + 1
                 x = 0
             end

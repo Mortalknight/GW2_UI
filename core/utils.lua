@@ -666,8 +666,6 @@ local function CheckRole()
     if GW.myrole and (GW.myclass ~= "PRIEST" and dispel ~= nil) then
         dispel.Magic = (GW.myrole == "HEALER")
     end
-    GW.Debug("Player role:", GW.myrole)
-    GW.Debug("Player spec:", GW.myspec)
 end
 GW.CheckRole = CheckRole
 

@@ -31,6 +31,7 @@ core/itemlevel.lua
 core/shared.xml
 core/fonts.lua
 core/storage.lua
+core/init.lua
 
 settings/defaults.lua
 settings/api.lua

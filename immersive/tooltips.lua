@@ -561,10 +561,7 @@ local function GameTooltip_OnTooltipSetSpell(self)
     self:Show()
 end
 
-local function SetUnitAura(self, unit, index, filter)
-    if not self or self:IsForbidden() then return end
-    local _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
-
+local function SetUnitAuraData(self, id, caster)
     if id then
         if MountIDs[id] then
             local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(MountIDs[id])
@@ -588,6 +585,20 @@ local function SetUnitAura(self, unit, index, filter)
 
         self:Show()
     end
+end
+
+local function SetUnitBuff(self, unit, index, filter)
+    if not self or self:IsForbidden() then return end
+    local _, _, _, _, _, _, caster, _, _, id = UnitBuff(unit, index, filter)
+
+    SetUnitAuraData(self, id, caster)
+end
+
+local function SetUnitDebuff(self, unit, index, filter)
+    if not self or self:IsForbidden() then return end
+    local _, _, _, _, _, _, caster, _, _, id = UnitDebuff(unit, index, filter)
+
+    SetUnitAuraData(self, id, caster)
 end
 
 local function SetToyByItemID(self, id)
@@ -640,8 +651,8 @@ local function LoadTooltips()
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
-        hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
-        hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
+        hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitBuff)
+        hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
     end
     
     hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
