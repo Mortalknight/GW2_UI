@@ -1,5 +1,5 @@
 local _, GW = ...
-if (GW.currentClass ~= "PALADIN") then
+if (GW.myclass ~= "PALADIN") then
 	return
 end
 

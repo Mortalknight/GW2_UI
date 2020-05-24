@@ -179,9 +179,7 @@ local function LoopAnimations(self)
 end
 
 local function loadAFKAnimation()
-    local _, class = UnitClass("player")
-    local classColor = GWGetClassColor(class, true, true)
-    local playerName = UnitName("Player")
+    local classColor = GWGetClassColor(GW.myclass, true, true)
     
     local BackdropFrame = {
         bgFile = "Interface/AddOns/GW2_UI/textures/welcome-bg",
@@ -228,29 +226,29 @@ local function loadAFKAnimation()
     AFKMode.bottom.logo:SetPoint("CENTER", AFKMode.bottom, "CENTER", 0, 55)
     AFKMode.bottom.logo:SetTexture("Interface/AddOns/GW2_UI/Textures/gwlogo")
 
-    local raceEn, gender, modelOffsetY = select(2, UnitRace("Player")), UnitSex("Player"), 205
-    if raceEn == "Human" then
+    local modelOffsetY = 205
+    if GW.myrace == "Human" then
         modelOffsetY = 195
-    elseif raceEn == "Tauren" then
+    elseif GW.myrace == "Tauren" then
         modelOffsetY = 250
-    elseif raceEn == "Troll" then
-        if gender == 2 then 
+    elseif GW.myrace == "Troll" then
+        if GW.mysex == 2 then 
             modelOffsetY = 250
-        elseif gender == 3 then
+        elseif GW.mysex == 3 then
             modelOffsetY = 280
         end
-    elseif raceEn == "Dwarf"then
-        if gender == 2 then modelOffsetY = 250 end
+    elseif GW.myrace == "Dwarf"then
+        if GW.mysex == 2 then modelOffsetY = 250 end
     end
 
     AFKMode.bottom.faction = AFKMode.bottom:CreateTexture(nil, "OVERLAY")
     AFKMode.bottom.faction:SetPoint("BOTTOMLEFT", AFKMode.bottom, "BOTTOMLEFT", -20, -8)
-    AFKMode.bottom.faction:SetTexture("Interface/Timer/" .. UnitFactionGroup("player") .. "-Logo")
+    AFKMode.bottom.faction:SetTexture("Interface/Timer/" .. GW.myfaction .. "-Logo")
     AFKMode.bottom.faction:SetSize(140, 140)
 
     AFKMode.bottom.name = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
     AFKMode.bottom.name:SetFont(UNIT_NAME_FONT, 20)
-    AFKMode.bottom.name:SetFormattedText("%s-%s", playerName, GetRealmName())
+    AFKMode.bottom.name:SetFormattedText("%s-%s", GW.myname, GW.myname)
     AFKMode.bottom.name:SetPoint("TOPLEFT", AFKMode.bottom.faction, "TOPRIGHT", -10, -36)
     AFKMode.bottom.name:SetTextColor(classColor.r, classColor.g, classColor.b)
 

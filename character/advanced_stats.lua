@@ -4,7 +4,6 @@ local RoundDec = GW.RoundDec
 local ClassIndex = GW.ClassIndex
 
 local lastManaReg = 0
-local _, classname, classId = UnitClass("player")
 
 local CHAR_EQUIP_SLOTS = {
     ["Head"] = "HeadSlot",
@@ -29,7 +28,7 @@ local CHAR_EQUIP_SLOTS = {
 }
 
 local itemSets = {
-	["StormrageRaiment"] = {
+	["Stormrage Raiment"] = {
 		[16899] = true,
 		[16900] = true,
 		[16901] = true,
@@ -39,7 +38,7 @@ local itemSets = {
 		[16897] = true,
 		[16898] = true
 	},
-	["VestmentsOfTranscendence"] = {
+	["Vestments of Transcendence"] = {
 		[16919] = true,
 		[16920] = true,
 		[16921] = true,
@@ -49,21 +48,21 @@ local itemSets = {
 		[16925] = true,
 		[16926] = true
 	},
-	["Zul_DRUID"] = {
+	["Haruspex's Garb"] = {
 		[19613] = true,
 		[19955] = true,
 		[19840] = true,
 		[19839] = true,
 		[19838] = true
     },
-	["Zul_SHAMAN"] = {
+	["Augur's Regalia"] = {
 		[19609] = true,
 		[19956] = true,
 		[19830] = true,
 		[19829] = true,
 		[19828] = true
 	},
-	["Zul_PALADIN"] = {
+	["Freethinker's Armor"] = {
 		[19952] = true,
 		[19588] = true,
 		[19827] = true,
@@ -85,7 +84,7 @@ local function IsSetBonusActive(setname, bonusLevel)
 end
 
 local function _IsRangeAttackClass()
-    return classId == ClassIndex.WARRIOR or classId == ClassIndex.ROGUE or classId == ClassIndex.HUNTER
+    return GW.myClassID == ClassIndex.WARRIOR or GW.myClassID == ClassIndex.ROGUE or GW.myClassID == ClassIndex.HUNTER
 end
 
 local function _IsShapeshifted()
@@ -133,7 +132,7 @@ end
 local function _GetTalentModifierDefense()
     local mod = 0
 
-    if classId == ClassIndex.WARRIOR then
+    if GW.myClassID == ClassIndex.WARRIOR then
         local _, _, _, _, points = GetTalentInfo(3, 2)
         mod = points * 2 -- 0-10 Anticipation
     end
@@ -145,13 +144,13 @@ GW.stats._GetTalentModifierDefense = _GetTalentModifierDefense
 local function _GetTalentModifierMP5()
     local mod = 0
 
-    if classId == ClassIndex.PRIEST then
+    if GW.myClassID == ClassIndex.PRIEST then
         local _, _, _, _, points = GetTalentInfo(1, 8)
         mod = points * 0.05 -- 0-15% from Meditation
-    elseif classId == ClassIndex.MAGE then
+    elseif GW.myClassID == ClassIndex.MAGE then
         local _, _, _, _, points= GetTalentInfo(1, 12)
         mod = points * 0.05 -- 0-15% Arcane Meditation
-    elseif classId == ClassIndex.DRUID then
+    elseif GW.myClassID == ClassIndex.DRUID then
         local _, _, _, _, points = GetTalentInfo(3, 6)
         mod = points * 0.05 -- 0-15% from Reflection
     end
@@ -160,22 +159,31 @@ local function _GetTalentModifierMP5()
 end
 
 local function _HasSetBonusModifierMP5()
-	if classId == ClassIndex.PRIEST then
-		return IsSetBonusActive("VestmentsOfTranscendence", 3)
-    elseif classId == ClassIndex.DRUID then
-		return IsSetBonusActive("StormrageRaiment", 3)
+	if GW.myClassID == ClassIndex.PRIEST then
+		return IsSetBonusActive("Vestments of Transcendence", 3)
+    elseif GW.myClassID == ClassIndex.DRUID then
+		return IsSetBonusActive("Stormrage Raiment", 3)
 	end
 
     return false
 end
 
+local function GetSetBonusValueMP5()
+    if (GW.myClassID == ClassIndex.DRUID and IsSetBonusActive("Haruspex's Garb", 2))
+        or (GW.myClassID == ClassIndex.SHAMAN and IsSetBonusActive("Augur's Regalia", 2))
+        or (GW.myClassID == ClassIndex.PALADIN and IsSetBonusActive("Freethinker's Armor", 2)) then
+        return 4
+    end
+    return 0
+end
+
 local function _GetTalentModifierHolyCrit()
     local mod = 0
 
-    if classId == ClassIndex.PALADIN then -- Paladin
+    if GW.myClassID == ClassIndex.PALADIN then -- Paladin
         local _, _, _, _, points = GetTalentInfo(1, 13)
         mod = points * 1 -- 0-5% Holy Power
-    elseif classId == ClassIndex.PRIEST then -- Priest
+    elseif GW.myClassID == ClassIndex.PRIEST then -- Priest
         local _, _, _, _, points = GetTalentInfo(2, 3)
         mod = points * 1 -- 0-5% Holy Specialization
     end
@@ -186,7 +194,7 @@ end
 local function _GetTalentModifierSpellCrit()
     local mod = 0
 
-    if classId == ClassIndex.MAGE then -- Mage
+    if GW.myClassID == ClassIndex.MAGE then -- Mage
         local _, _, _, _, points = GetTalentInfo(1, 15)
         mod = points * 1 -- 0-3% Arcane Instability
     end
@@ -197,10 +205,10 @@ end
 local function _GetTalentModifierSpellHit()
     local mod = 0
 
-    if classId == ClassIndex.PRIEST then -- Priest
+    if GW.myClassID == ClassIndex.PRIEST then -- Priest
         local _, _, _, _, points = GetTalentInfo(3, 5)
         mod = points * 2 -- 0-10% from Shadow Focus
-    elseif classId == ClassIndex.MAGE then -- Mage
+    elseif GW.myClassID == ClassIndex.MAGE then -- Mage
         local _, _, _, _, points = GetTalentInfo(3, 3)
         mod = points * 2 -- 0-6% from Elemental Precision
     end
@@ -208,21 +216,9 @@ local function _GetTalentModifierSpellHit()
     return mod
 end
 
--- Get MP5 from spirit
-local function MP5FromSpirit()
-    local base, _ = GetManaRegen() -- Returns mana reg per 1 second
-    if base < 1 then
-        base = lastManaReg
-    end
-    lastManaReg = base
-    return RoundDec(base, 0) * 5
-end
-
--- Get MP5 from items
-local function MP5FromItems()
+local function _GetMP5ValueOnItems() 
     local mp5 = 0
-
-    for i = 1, 18 do
+    for i = 1, 17 do
         local itemLink = GetInventoryItemLink("player", i)
         if itemLink then
             local stats = GetItemStats(itemLink)
@@ -235,18 +231,29 @@ local function MP5FromItems()
         end
     end
 
-    -- check if Zul Gurub Set Bonus is active
-    if classId == ClassIndex.DRUID or classId == ClassIndex.PALADIN or classId == ClassIndex.SHAMAN then
-        if IsSetBonusActive("Zul_" .. classname, 2) then
-            mp5 = mp5 + 4
-        end
+    return mp5
+end
+
+-- Get MP5 from spirit
+local function GetMP5FromSpirit()
+    local base, _ = GetManaRegen() -- Returns mana reg per 1 second
+    if base < 1 then
+        base = lastManaReg
     end
+    lastManaReg = base
+    return RoundDec(base, 0) * 5
+end
+
+-- Get MP5 from items
+local function GetMP5FromItems()
+    local mp5 = _GetMP5ValueOnItems()
+    mp5 = mp5 + GetSetBonusValueMP5()
 
     return mp5
 end
 
 -- Get manaregen while casting
-local function MP5WhileCasting()
+local function GetMP5WhileCasting()
     local _, casting = GetManaRegen() -- Returns mana reg per 1 second
     if casting < 1 then
         casting = lastManaReg
@@ -261,7 +268,7 @@ local function MP5WhileCasting()
         casting = casting * mod
     end
 
-    local mp5Items = MP5FromItems()
+    local mp5Items = GetMP5FromItems()
     casting = (casting * 5) + mp5Items
 
     return RoundDec(casting, 2)
@@ -283,8 +290,7 @@ end
 
 local function MeleeHitMissChanceSameLevel()
     local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
-    local playerLevel = UnitLevel("player")
-    local enemyDefenseValue = playerLevel * 5
+    local enemyDefenseValue = GW.mylevel * 5
 
     local missChance = 0
     if _IsShapeshifted() then
@@ -309,8 +315,7 @@ end
 
 local function MeleeHitMissChanceBossLevel()
 	local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
-    local playerLevel = UnitLevel("player")
-    local enemyDefenseValue = (playerLevel + 3) * 5
+    local enemyDefenseValue = (GW.mylevel + 3) * 5
 
     local missChance = 0
     if _IsShapeshifted() then
@@ -339,8 +344,7 @@ end
 
 local function RangeMissChanceSameLevel()
     local rangedAttackBase, rangedAttackMod = UnitRangedAttack("player")
-    local playerLevel = UnitLevel("player")
-    local enemyDefenseValue = playerLevel * 5
+    local enemyDefenseValue = GW.mylevel * 5
 
     local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
     missChance = missChance - _GetRangeHitBonus()
@@ -357,8 +361,7 @@ end
 -- Gets the range hit chance against enemies 3 level above the player level
 local function RangeMissChanceBossLevel()
     local rangedAttackBase, rangedAttackMod = UnitRangedAttack("player")
-    local playerLevel = UnitLevel("player")
-    local enemyDefenseValue = (playerLevel + 3) * 5
+    local enemyDefenseValue = (GW.mylevel + 3) * 5
 
     local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
 	missChance = missChance - _GetRangeHitBonus()
@@ -479,7 +482,7 @@ end
 local function showAdvancedChatStats(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-    GameTooltip:SetText(ADVANCED_LABEL .. STAT_CATEGORY_ATTRIBUTES) 
+    GameTooltip:SetText(ADVANCED_LABEL .. " " .. STAT_CATEGORY_ATTRIBUTES) 
     GameTooltip:AddLine(" ")
 
     GameTooltip:AddLine(MELEE)
@@ -509,9 +512,9 @@ local function showAdvancedChatStats(self)
     if UnitPowerType("player") == 0 then
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(MANA_REGEN)
-        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. HELPFRAME_ITEM_TITLE .. "):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", MP5FromItems()) .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. PLAYERSTAT_SPELL_COMBAT .. "): " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", MP5WhileCasting()) .. FONT_COLOR_CODE_CLOSE)
-        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. ITEM_MOD_SPIRIT_SHORT .. "): " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", MP5FromSpirit()) .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. HELPFRAME_ITEM_TITLE .. "):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetMP5FromItems()) .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. PLAYERSTAT_SPELL_COMBAT .. "): " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetMP5WhileCasting()) .. FONT_COLOR_CODE_CLOSE)
+        GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. ITEM_MOD_SPIRIT_SHORT .. "): " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetMP5FromSpirit()) .. FONT_COLOR_CODE_CLOSE)
     end
 
     GameTooltip:AddLine(" ")

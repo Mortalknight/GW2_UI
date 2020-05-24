@@ -13,6 +13,16 @@ ClassIndex.DRUID = 11
 GW.ClassIndex = {}
 GW.ClassIndex = ClassIndex
 
+GW.DispelClasses = {
+    DRUID = { Curse = true, Poison = true },
+    MAGE = { Curse = true },
+    PALADIN = { Magic = true, Poison = true, Disease = true },
+    PRIEST = { Magic = true, Disease = true },
+    SHAMAN = { Poison = true, Disease = true },
+    WARLOCK = { Magic = true }
+}
+
+
 local PowerBarColorCustom = {}
 GW.PowerBarColorCustom = PowerBarColorCustom
 
@@ -396,3 +406,126 @@ local AURAS_MISSING = {
     --1459    -- Arcane Intellect
 }
 GW.AURAS_MISSING = AURAS_MISSING
+
+local ImportendRaidDebuff = {
+    -- Onyxia's Lair
+        [18431] = true, --Bellowing Roar
+    -- Molten Core
+        [19703] = true, --Lucifron's Curse
+        [19408] = true, --Panic
+        [19716] = true, --Gehennas' Curse
+        [20277] = true, --Fist of Ragnaros
+        [20475] = true, --Living Bomb
+        [19695] = true, --Inferno
+        [19659] = true, --Ignite Mana
+        [19714] = true, --Deaden Magic
+        [19713] = true, --Shazzrah's Curse
+    -- Blackwing's Lair
+        [23023] = true, --Conflagration
+        [18173] = true, --Burning Adrenaline
+        [24573] = true, --Mortal Strike
+        [23340] = true, --Shadow of Ebonroc
+        [23170] = true, --Brood Affliction: Bronze
+        [22687] = true, --Veil of Shadow
+    -- Zul'Gurub
+        [23860] = true, --Holy Fire
+        [22884] = true, --Psychic Scream
+        [23918] = true, --Sonic Burst
+        [24111] = true, --Corrosive Poison
+        [21060] = true, --Blind
+        [24328] = true, --Corrupted Blood
+        [16856] = true, --Mortal Strike
+        [24664] = true, --Sleep
+        [17172] = true, --Hex
+        [24306] = true, --Delusions of Jin'do
+        [24099] = true, --Poison Bolt Volley
+    -- Ahn'Qiraj Ruins
+        [25646] = true, --Mortal Wound
+        [25471] = true, --Attack Order
+        [96] = true, --Dismember
+        [25725] = true, --Paralyze
+        [25189] = true, --Enveloping Winds
+    -- Ahn'Qiraj Temple
+        [785] = true, --True Fulfillment
+        [26580] = true, --Fear
+        [26050] = true, --Acid Spit
+        [26180] = true, --Wyvern Sting
+        [26053] = true, --Noxious Poison
+        [26613] = true, --Unbalancing Strike
+        [26029] = true, --Dark Glare
+    -- Naxxramas
+        [28732] = true, --Widow's Embrace
+        [28622] = true, --Web Wrap
+        [28169] = true, --Mutating Injection
+        [29213] = true, --Curse of the Plaguebringer
+        [28835] = true, --Mark of Zeliek
+        [27808] = true, --Frost Blast
+        [28410] = true, --Chains of Kel'Thuzad
+        [27819] = true, --Detonate Mana
+    --Multiple Dungeons
+        [744] = true, --Poison
+        [18267] = true, --Curse of Weakness
+        [20800] = true, --Immolate
+        [246] = true, --Slow
+        [6533] = true, --Net
+        [8399] = true, --Sleep
+    -- Blackrock Depths
+        [13704] = true, --Psychic Scream
+    -- Deadmines
+        [6304] = true, --Rhahk'Zor Slam
+        [12097] = true, --Pierce Armor
+        [7399] = true, --Terrify
+        [6713] = true, --Disarm
+        [5213] = true, --Molten Metal
+        [5208] = true, --Poisoned Harpoon
+    -- Maraudon
+        [7964] = true, --Smoke Bomb
+        [21869] = true, --Repulsive Gaze
+    -- Razorfen Downs
+        [12255] = true, --Curse of Tuten'kash
+        [12252] = true, --Web Spray
+        [7645] = true, --Dominate Mind
+        [12946] = true, --Putrid Stench
+    -- Razorfen Kraul
+        [14515] = true, --Dominate Mind
+    -- Scarlet Monastry
+        [9034] = true, --Immolate
+        [8814] = true, --Flame Spike
+        [8988] = true, --Silence
+        [9256] = true, --Deep Sleep
+        [8282] = true, --Curse of Blood
+    -- Shadowfang Keep
+        [7068] = true, --Veil of Shadow
+        [7125] = true, --Toxic Saliva
+        [7621] = true, --Arugal's Curse
+    --Stratholme
+        [16798] = true, --Enchanting Lullaby
+        [12734] = true, --Ground Smash
+        [17293] = true, --Burning Winds
+        [17405] = true, --Domination
+        [16867] = true, --Banshee Curse
+        [6016] = true, --Pierce Armor
+        [16869] = true, --Ice Tomb
+        [17307] = true, --Knockout
+    -- Sunken Temple
+        [12889] = true, --Curse of Tongues
+        [12888] = true, --Cause Insanity
+        [12479] = true, --Hex of Jammal'an
+        [12493] = true, --Curse of Weakness
+        [12890] = true, --Deep Slumber
+        [24375] = true, --War Stomp
+    -- Uldaman
+        [3356] = true, --Flame Lash
+        [6524] = true, --Ground Tremor
+    -- Wailing Caverns
+        [8040] = true, --Druid's Slumber
+        [8142] = true, --Grasping Vines
+        [7967] = true, --Naralex's Nightmare
+        [8150] = true, --Thundercrack
+    -- Zul'Farrak
+        [11836] = true, --Freeze Solid
+    -- World Bosses
+        [21056] = true, --Mark of Kazzak
+        [24814] = true, --Seeping Fog
+    }
+GW.ImportendRaidDebuff = ImportendRaidDebuff

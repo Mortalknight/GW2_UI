@@ -1,5 +1,5 @@
 local _, GW = ...
-if (GW.currentClass ~= "MAGE") then return end
+if (GW.myclass ~= "MAGE") then return end
 GW.SpellsByLevel = GW.RaceFilter(
 
 

@@ -6,7 +6,6 @@ local ipairs = ipairs
 if GW.spellsByLevel==nil then
     GW.spellsByLevel = {}
 end
-GW.currentClass = select(2, UnitClass("player"))
 
 local function filter(spellsByLevel, pred)
     local output = {}
@@ -20,16 +19,16 @@ local function filter(spellsByLevel, pred)
     end
     return output
 end
-local playerFaction = UnitFactionGroup("player")
+
 function GW.FactionFilter(spellsByLevel)
     return filter(
         spellsByLevel,
         function(spell)
-            return spell.faction == nil or spell.faction == playerFaction
+            return spell.faction == nil or spell.faction == GW.myfaction
         end
     )
 end
-local playerRace = select(3, UnitRace("player"))
+
 function GW.RaceFilter(spellsByLevel)
     return filter(
         spellsByLevel,
@@ -38,9 +37,9 @@ function GW.RaceFilter(spellsByLevel)
                 return true
             end
             if (spell.races == nil) then
-                return spell.race == playerRace
+                return spell.race == GW.myrace
             end
-            return spell.races[1] == playerRace or spell.races[2] == playerRace
+            return spell.races[1] == GW.myrace or spell.races[2] == GW.myrace
         end
     )
 end

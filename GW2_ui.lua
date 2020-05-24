@@ -538,6 +538,16 @@ end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
 local function loadAddon(self)
+    -- init: store API, to reduce the API usage
+    GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
+    GW.myLocalizedClass, GW.myclass, GW.myClassID = UnitClass("player")
+    GW.myLocalizedRace, GW.myrace = UnitRace("player")
+    GW.myname = UnitName("player")
+    GW.myrealm = GetRealmName()
+    GW.mysex = UnitSex("player")
+    GW.mylevel = UnitLevel("player")
+    GW.mylocal = GetLocale()
+
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
@@ -789,6 +799,16 @@ local function loadAddon(self)
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)
+
+    -- Show stored player values
+    Debug("Player name:", GW.myname)
+    Debug("Player faction:", GW.myfaction, GW.myLocalizedFaction)
+    Debug("Player class:", GW.myLocalizedClass, GW.myclass, "ID:", GW.myClassID)
+    Debug("Player race:", GW.myLocalizedRace, GW.myrace)
+    Debug("Player realm:", GW.myrealm)
+    Debug("Player sex:", GW.mysex)
+    Debug("Player level:", GW.mylevel)
+    Debug("Player local:", GW.mylocal)
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)
 
@@ -844,6 +864,9 @@ local function gw_OnEvent(self, event, ...)
                 end
             )
         end
+    elseif event == "PLAYER_LEVEL_UP" then
+        GW.mylevel = ...
+        Debug("New level:", GW.mylevel)
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
@@ -861,6 +884,7 @@ l:RegisterEvent("PLAYER_LEAVING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 l:RegisterEvent("UI_SCALE_CHANGED")
+l:RegisterEvent("PLAYER_LEVEL_UP")
 
 local function AddToClique(frame)
     if type(frame) == "string" then

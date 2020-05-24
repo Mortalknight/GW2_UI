@@ -396,7 +396,10 @@ end
 
 local function updateDebuffs(self)
     local btnIndex, x, y = 1, 0, 0
-    local filter = GetSetting("RAID_ONLY_DISPELL_DEBUFFS") and "|RAID" or ""
+    local filter = "HARMFUL"
+    local show_debuffs = GetSetting("RAID_SHOW_DEBUFFS")
+    local only_dispellable_debuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
+    local show_importend_raid_instance_debuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
     local i, framesDone, aurasDone = 0
@@ -414,11 +417,28 @@ local function updateDebuffs(self)
 
         -- show current debuffs
         if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitAura(self.unit, i, "HARMFUL" .. filter)
-            local shouldDisplay = debuffName and not (
-                ignored[debuffName]
-                or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
-            )
+            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitAura(self.unit, i, "HARMFUL")
+            local shouldDisplay = false
+
+            if show_debuffs then
+                if only_dispellable_debuffs then
+                    if debuffType and GW.IsDispellableByMe(debuffType) then
+                        shouldDisplay = debuffName and not (
+                            ignored[debuffName]
+                            or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                        )
+                    end
+                else
+                    shouldDisplay = debuffName and not (
+                        ignored[debuffName]
+                        or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                    )
+                end
+            end
+
+            if show_importend_raid_instance_debuffs and not shouldDisplay then
+                shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
+            end
 
             if shouldDisplay then
                 btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
@@ -505,7 +525,7 @@ end
 
 local function updateBuffs(self)
     local btnIndex, x, y = 1, 0, 0
-    local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
+    local indicators = AURAS_INDICATORS[GW.myclass]
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 

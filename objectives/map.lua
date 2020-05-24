@@ -519,9 +519,8 @@ local function LoadMinimap()
     MiniMapTrackingFrame:Hide()
     GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
     GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -43, 0)
-    GwMiniMapTrackingFrame.pClass = select(3, UnitClass("player"))
     local icontype = GetTrackingTexture()
-    if icontype == 132328 then icontype = icontype .. GwMiniMapTrackingFrame.pClass end
+    if icontype == 132328 then icontype = icontype .. GW.myClassID end
     if icontype and trackingTypes[icontype] then
         GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
         GwMiniMapTrackingFrame:Show()
@@ -532,7 +531,7 @@ local function LoadMinimap()
     GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event) 
         if event == "UNIT_AURA" then
             local icontype = GetTrackingTexture()
-            if icontype == 132328 then icontype = icontype .. GwMiniMapTrackingFrame.pClass end
+            if icontype == 132328 then icontype = icontype .. GW.myClassID end
             if icontype and trackingTypes[icontype] then     
                 GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
                 GwMiniMapTrackingFrame:Show()

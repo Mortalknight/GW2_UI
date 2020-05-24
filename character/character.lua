@@ -9,8 +9,6 @@ local REPBG_T = 0
 local REPBG_B = 0.464
 local hasRanged = false
 
-local gender = UnitSex("player")
-
 local  statsIconsSprite = {
     width = 256,
     height = 512,
@@ -123,19 +121,17 @@ end
 function gwPaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
     local spec = GW.api.GetSpecialization()
-    local localizedClass, englishClass = UnitClass("player")
-    local id, name, description, icon, background, role = GW.api.GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player"))
-    local unitLevel = UnitLevel("player")
-    local color = GWGetClassColor(englishClass, true)
-    GW.SetClassIcon(GwDressingRoom.classIcon, englishClass)
+    local id, name, description, icon, background, role = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
+    local color = GWGetClassColor(GW.myclass, true)
+    GW.SetClassIcon(GwDressingRoom.classIcon, GW.myclass)
 
     GwDressingRoom.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
 
     if name ~= nil then
-        local data = GUILD_RECRUITMENT_LEVEL .. " " .. unitLevel .. " " .. name .. " " .. localizedClass
+        local data = GUILD_RECRUITMENT_LEVEL .. " " .. unitGW.mylevelLevel .. " " .. name .. " " .. GW.myLocalizedClass
         GwDressingRoom.characterData:SetText(data)
     else
-        GwDressingRoom.characterData:SetFormattedText(PLAYER_LEVEL, unitLevel, UnitRace("player"), localizedClass)
+        GwDressingRoom.characterData:SetFormattedText(PLAYER_LEVEL, GW.mylevel, GW.myLocalizedRace, GW.myLocalizedClass)
     end
 end
 
@@ -330,8 +326,6 @@ end
 GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
 
 function gwPaperDollUpdateStats()
-    local level = UnitLevel("player")
-    local _, _, classIndex = UnitClass("player")
 	local categoryYOffset = -5
 	local statYOffset = 0
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
@@ -366,7 +360,7 @@ function gwPaperDollUpdateStats()
     grid, x, y, numShownStats = setStatFrame("ARMOR", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
     -- Defense only for Tanksclasses
-    if classIndex == 1 or classIndex == 2 or classIndex == 11 then
+    if GW.myClassID == 1 or GW.myClassID == 2 or GW.myClassID == 11 then
         statText, tooltip1, tooltip2 = GW.stats.getDefense()
         grid, x, y, numShownStats = setStatFrame("DEFENSE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
@@ -908,8 +902,8 @@ local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName
         frame.controles:Show()
     end
 
-    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), gender)
-    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), gender)
+    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
+    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
     local friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold = GW.api.GetFriendshipReputation(factionID)
 
     if textureC == 1 then
@@ -1056,7 +1050,6 @@ end
 
 function GwUpdateReputationDetails()
     local buttonIndex = 1
-    local gender = UnitSex("player")
     local savedHeaderName = ""
     local savedHeight = 0
     local textureC = 1
@@ -1451,8 +1444,7 @@ function UpdateHonorTab(updateAll)
     end
 
     -- Set rank progress and bar color
-	local factionGroup, factionName = UnitFactionGroup("player")
-	if factionGroup == "Alliance" then
+	if GW.myfaction == "Alliance" then
 		GWHonorFrameProgressBar:SetStatusBarColor(0.05, 0.15, 0.36)
 	else
 		GWHonorFrameProgressBar:SetStatusBarColor(0.63, 0.09, 0.09)
@@ -1554,22 +1546,21 @@ local function LoadPaperDoll()
     GwDressingRoom.model:SetUnit("player")
     GwDressingRoom.model:SetPosition(0.8, 0, 0)
 
-    local _, raceEN = UnitRace("Player")
-    if raceEN == "Human" then
+    if GW.myrace == "Human" then
         GwDressingRoom.model:SetPosition(0.4, 0, -0.05)
-    elseif raceEN == "Tauren" then
+    elseif GW.myrace == "Tauren" then
         GwDressingRoom.model:SetPosition(0.6, 0, 0)
-    elseif raceEN == "NightElf" then
+    elseif GW.myrace == "NightElf" then
         GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
-    elseif raceEN == "Troll" then
+    elseif GW.myrace == "Troll" then
         GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
-    elseif raceEN == "Scourge" then
+    elseif GW.myrace == "Scourge" then
         GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
-    elseif raceEN == "Dwarf" then
+    elseif GW.myrace == "Dwarf" then
         GwDressingRoom.model:SetPosition(0.3, 0, 0)
-    elseif raceEN == "Gnome" then
+    elseif GW.myrace == "Gnome" then
         GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
-    elseif raceEN == "Orc" then
+    elseif GW.myrace == "Orc" then
         GwDressingRoom.model:SetPosition(0.1, 0, -0.15)
     end
     GwDressingRoom.model:SetRotation(-0.15)

@@ -26,7 +26,7 @@ local function xpbar_OnEnter()
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
 
-    if UnitLevel("Player") < GetMaxPlayerLevel() then
+    if GW.mylevel < GetMaxPlayerLevel() then
         GameTooltip:AddLine(
             COMBAT_XP_GAIN ..
                 " " ..
@@ -94,8 +94,8 @@ local function xpbar_OnEvent(self, event)
     local valPrec = valCurrent / valMax
     local valPrecRepu = 0
 
-    local level = UnitLevel("Player")
-    local Nextlevel = math.min(GetMaxPlayerLevel(), UnitLevel("Player") + 1)
+    local level = GW.mylevel
+    local Nextlevel = math.min(GetMaxPlayerLevel(), GW.mylevel + 1)
     local lockLevelTextUnderMaxLevel = false
 
     local rested = GetXPExhaustion()
@@ -131,9 +131,9 @@ local function xpbar_OnEvent(self, event)
         if isWatched == true then
             local name, reaction = GetWatchedFactionInfo()
             local currentRank =
-                GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), UnitSex("player"))
+                GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
             local nextRank =
-                GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), UnitSex("player"))
+                GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
 
             if currentRank == nextRank and earnedValue - bottomValue == 0 then
                 valPrecRepu = 1
@@ -185,7 +185,7 @@ local function xpbar_OnEvent(self, event)
     GwExperienceFrame.labelLeft:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
 
     local GainBigExp = false
-    local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (UnitLevel("Player") / GetMaxPlayerLevel())))
+    local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / GetMaxPlayerLevel())))
     if (valPrec - experiencebarAnimation) > FlareBreakPoint then
         GainBigExp = true
         flareAnim()

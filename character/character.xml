@@ -1332,7 +1332,7 @@
                 <Scripts>
                     <OnLoad>
                         self.header:SetFont(DAMAGE_TEXT_FONT, 14)
-                        self.header:SetText("|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:1|t " .. ADVANCED_LABEL .. STAT_CATEGORY_ATTRIBUTES)
+                        self.header:SetText("|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:1|t " .. STAT_CATEGORY_ATTRIBUTES)
                         self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
                         self:RegisterEvent("CHARACTER_POINTS_CHANGED")

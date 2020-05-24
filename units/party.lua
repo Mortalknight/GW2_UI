@@ -340,27 +340,52 @@ end
 GW.AddForProfiling("party", "updateAwayData", updateAwayData)
 
 local function getUnitDebuffs(unit)
+    local show_debuffs = GetSetting("PARTY_SHOW_DEBUFFS")
+    local only_dispellable_debuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
+    local show_importend_raid_instance_debuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
+
     DebuffLists[unit] = {}
     for i = 1, 40 do
         if UnitAura(unit, i, "HARMFUL") then
-            DebuffLists[unit][i] = {}
-            
-            DebuffLists[unit][i]["name"],
-            DebuffLists[unit][i]["icon"],
-            DebuffLists[unit][i]["count"],
-            DebuffLists[unit][i]["dispelType"],
-            DebuffLists[unit][i]["duration"],
-            DebuffLists[unit][i]["expires"],
-            DebuffLists[unit][i]["caster"],
-            DebuffLists[unit][i]["isStealable"],
-            DebuffLists[unit][i]["shouldConsolidate"],
-            DebuffLists[unit][i]["spellID"] = UnitAura(unit, i, "HARMFUL")
+            local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitAura(unit, i, "HARMFUL")
+            local shouldDisplay = false
 
-            DebuffLists[unit][i]["key"] = i
-            DebuffLists[unit][i]["timeRemaining"] = DebuffLists[unit][i]["expires"] - GetTime()
+            if show_debuffs then
+                if only_dispellable_debuffs then
+                    if debuffType and GW.IsDispellableByMe(debuffType) then
+                        shouldDisplay = debuffName and not (
+                            ignored[debuffName]
+                            or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                        )
+                    end
+                else
+                    shouldDisplay = debuffName and not (
+                        ignored[debuffName]
+                        or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                    )
+                end
+            end
 
-            if DebuffLists[unit][i]["duration"] <= 0 then
-                DebuffLists[unit][i]["timeRemaining"] = 500000
+            if show_importend_raid_instance_debuffs and not shouldDisplay then
+                shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
+            end
+
+            if shouldDisplay then
+                DebuffLists[unit][i] = {}
+                
+                DebuffLists[unit][i]["name"] = debuffName
+                DebuffLists[unit][i]["icon"] = icon
+                DebuffLists[unit][i]["count"] = count
+                DebuffLists[unit][i]["dispelType"] = debuffType
+                DebuffLists[unit][i]["duration"] = duration
+                DebuffLists[unit][i]["expires"] = expires
+                DebuffLists[unit][i]["caster"] = caster
+                DebuffLists[unit][i]["isStealable"] = isStealable
+                DebuffLists[unit][i]["shouldConsolidate"] = shouldConsolidate
+                DebuffLists[unit][i]["spellID"] = spellId
+                DebuffLists[unit][i]["key"] = i
+                DebuffLists[unit][i]["timeRemaining"] = expires - GetTime()
+                if duration <= 0 then DebuffLists[unit][i]["timeRemaining"] = 500000 end
             end
         end
     end

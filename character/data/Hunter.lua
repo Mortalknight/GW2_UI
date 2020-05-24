@@ -1,5 +1,5 @@
 local _, GW = ...
-if (GW.currentClass ~= "HUNTER") then
+if (GW.myclass ~= "HUNTER") then
   return
 end
 local petSpells = {

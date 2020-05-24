@@ -162,15 +162,13 @@ local function selectType(f)
     f:SetScript("OnEvent", nil)
     f:UnregisterAllEvents()
 
-    local pClass = f.gwPlayerClass
-
     GwPlayerPowerBarExtra:Hide()
     f.gwPower = -1
     local showBar = false
 
-    if pClass == 4 then
+    if GW.myClassID == 4 then
         showBar = setRogue(f)
-    elseif pClass == 11 then
+    elseif GW.myClassID == 11 then
         showBar = setDruid(f)
     end
     if showBar then
@@ -201,8 +199,6 @@ local function barChange_OnEvent(self, event, ...)
 end
 
 local function LoadClassPowers()
-    local _, _, pClass = UnitClass("player")
-
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.RegisterScaleFrame(cpf)
     if GW.GetSetting("XPBAR_ENABLED") then
@@ -211,7 +207,6 @@ local function LoadClassPowers()
         cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
     end
 
-    cpf.gwPlayerClass = pClass
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
     cpf.gwPlayerForm = findBuff("player", 768)

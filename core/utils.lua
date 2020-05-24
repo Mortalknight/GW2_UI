@@ -399,7 +399,7 @@ GW.FindInList = FindInList
 
 -- String upper and lower that are noops for locales without letter case
 local function StrUpper(str, i, j)
-    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+    if not str or IsIn(GW.mylocal, "koKR", "zhCN", "zhTW") then
         return str
     else
         return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):upper() .. (j and str:sub(j + 1) or "")
@@ -407,7 +407,7 @@ local function StrUpper(str, i, j)
 end
 GW.StrUpper = StrUpper
 local function StrLower(str, i, j)
-    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+    if not str or IsIn(GW.mylocal, "koKR", "zhCN", "zhTW") then
         return str
     else
         return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):lower() .. (j and str:sub(j + 1) or "")
@@ -613,3 +613,9 @@ local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInH
     frame.flasher:Play()
 end
 GW.FrameFlash = FrameFlash
+
+local function IsDispellableByMe(debuffType)
+    local dispel = GW.DispelClasses[GW.myclass] 
+    return dispel and dispel[debuffType]
+end
+GW.IsDispellableByMe = IsDispellableByMe

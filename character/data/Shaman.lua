@@ -1,5 +1,5 @@
 local _, GW = ...
-if (GW.currentClass ~= "SHAMAN") then
+if (GW.myclass ~= "SHAMAN") then
 	return
 end
 GW.SpellsByLevel =

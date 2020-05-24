@@ -1,5 +1,5 @@
 local _, GW = ...
-if (GW.currentClass ~= "WARLOCK") then
+if (GW.myclass ~= "WARLOCK") then
 	return
 end
 GW.TomesByLevel = {

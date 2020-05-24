@@ -25,7 +25,7 @@ function gw_spell_buttonOnEnter(self)
     else
         GameTooltip:SetSpellByID(self.spellId)
         GameTooltip:AddLine(' ')
-        if self.requiredLevel <= UnitLevel("Player") then
+        if self.requiredLevel <= GW.mylevel then
             GameTooltip:AddLine("|c0423ff2f" .. AVAILABLE .. "|r", 1, 1, 1)
         else
             GameTooltip:AddLine("|c00ff0000" .. UNLOCKED_AT_LEVEL:format(self.requiredLevel) .. "|r", 1, 1, 1)
@@ -132,7 +132,7 @@ local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spe
         _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].rank:SetText("")
     end
     if level ~= nil then
-        if level > UnitLevel("player") then
+        if level > GW.mylevel then
             _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-lock");
         else
             _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-unlock");
@@ -443,7 +443,6 @@ local function updateUnknownTab(knownSpellID)
     local x = 10
     local y = 50
 
-    local level = UnitLevel("player")
     for k,v in GW.orderedPairs(GW.SpellsByLevel) do
         local buttons = {}
         for _,spell in pairs(v) do
@@ -462,7 +461,7 @@ local function updateUnknownTab(knownSpellID)
         end
         if #buttons > 0 then
 
-            if k > level or header==nil then
+            if k > GW.mylevel or header==nil then
                 lastHeader= header
                 header = getUnknownSpellContainer(HEADER_INDEX)
                 GwSpellbookUnknown.container.headers[#GwSpellbookUnknown.container.headers +1] = header
@@ -482,7 +481,7 @@ local function updateUnknownTab(knownSpellID)
             header.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. classID)
             header.repbg:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
 
-            if k <= level then
+            if k <= GW.mylevel then
                 header.repbg:SetDesaturated(false)
                 header.title:SetText(AVAILABLE)
                 header.title:SetTextColor(0.9, 0.9, 0.7, 1)
@@ -501,7 +500,7 @@ local function updateUnknownTab(knownSpellID)
                     header:SetPoint("TOPLEFT", GwSpellbookUnknown.container, "TOPLEFT", 1, -((100 * (HEADER_INDEX - 2)) + 20))
                 end
 
-                if k <= level then
+                if k <= GW.mylevel then
                     b.icon:SetDesaturated(false)
                 else
                     b.icon:SetDesaturated(true)
