@@ -307,12 +307,6 @@ end
 
 local function SetUnitAuraData(self, id, caster)
     if id then
-        if MountIDs[id] then
-            local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(MountIDs[id])
-            self:AddLine(" ")
-            self:AddLine(sourceText, 1, 1, 1)
-        end
-
         local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
         local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
@@ -417,8 +411,8 @@ local function LoadTooltips()
         GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
-        hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
-        hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
+        hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitBuff)
+        hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
     end
 
     hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
