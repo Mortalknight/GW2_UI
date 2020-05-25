@@ -2,18 +2,18 @@ local _, GW = ...
 local L = GW.L
 
 local BUTTONS = {
-    {button = _G.GameMenuButtonHelp, sprite={1,1}},
-    {button = _G.GameMenuButtonStore, sprite={2,1}},
-    {button = _G.GameMenuButtonWhatsNew, sprite={3,1}},
-    {button = _G.GameMenuButtonOptions, sprite={4,1}},
-    {button = _G.GameMenuButtonUIOptions, sprite={1,2}},
-    {button = _G.GameMenuButtonKeybindings, sprite={2,2}},
-    {button = _G.GameMenuButtonMacros, sprite={3,2}},
-    {button = _G.GameMenuButtonAddons, sprite={4,2}},
-    {button = _G.GameMenuButtonLogout, sprite={1,3}},
-    {button = _G.GameMenuButtonQuit, sprite={2,3}},
-    {button = _G.GameMenuButtonContinue, sprite={3,3}},
-    {button = _G.GameMenuButtonRatings, sprite={3,1}}
+    {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
+    {button = _G.GameMenuButtonStore        , sprite = {2, 1}},
+    {button = _G.GameMenuButtonWhatsNew     , sprite = {3, 1}},
+    {button = _G.GameMenuButtonOptions      , sprite = {4, 1}},
+    {button = _G.GameMenuButtonUIOptions    , sprite = {1, 2}},
+    {button = _G.GameMenuButtonKeybindings  , sprite = {2, 2}},
+    {button = _G.GameMenuButtonMacros       , sprite = {3, 2}},
+    {button = _G.GameMenuButtonAddons       , sprite = {4, 2}},
+    {button = _G.GameMenuButtonLogout       , sprite = {1, 3}},
+    {button = _G.GameMenuButtonQuit         , sprite = {2, 3}},
+    {button = _G.GameMenuButtonContinue     , sprite = {3, 3}},
+    {button = _G.GameMenuButtonRatings      , sprite = {3, 1}}
 }
 
 local ICON_SPRITES = {
@@ -58,6 +58,7 @@ local function SkinMainMenu()
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
     GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
+    GwMainMenuFrame.Text:SetTextColor(1, 0.93, 0.73)
     GwMainMenuFrame:ClearAllPoints()
     GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
     GwMainMenuFrame:SetSize(150, 24)

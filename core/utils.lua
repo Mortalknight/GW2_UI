@@ -674,3 +674,15 @@ local function IsDispellableByMe(debuffType)
     return dispel and dispel[debuffType]
 end
 GW.IsDispellableByMe = IsDispellableByMe
+
+local function isItemEquipped(itemIDtoCheck)
+    for slot = 1, 19 do
+        local itemID = GetInventoryItemID("player", slot)
+        if itemID == itemIDtoCheck then
+            return true
+        end
+    end
+
+    return false
+end
+GW.isItemEquipped = isItemEquiped

@@ -131,9 +131,7 @@ local function updateBagItemButton(button)
             setTooltip()
         end
 
-        if button.ItemLink ~= nil then
-            setItemLevel(button, quality, button.ItemLink)
-        end
+        setItemLevel(button, quality, button.ItemLink)
         setItemButtonQuality(button, quality, id)
     end
     
@@ -150,13 +148,14 @@ local function updateBagItemList(itemButton)
 
     GetInventoryItemsForSlot(id, bagItemList)
 
+    local addedItems = {}
     local gridIndex = 1
     local itemIndex = 1
     local x = 10
     local y = 15
 
     for location, itemID in next, bagItemList do
-        if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
+        if not GW.isItemEquipped(itemID) and not addedItems[itemID] then -- Remove the currently equipped item from the list
             local itemFrame = getBagSlotFrame(itemIndex)
             itemFrame.location = location
             itemFrame.itemSlot = id
@@ -174,6 +173,8 @@ local function updateBagItemList(itemButton)
                 x = 10
                 y = y + 49 + 3
             end
+            addedItems[itemID] = true
+
             itemIndex = itemIndex + 1
         end
         if itemIndex > 36 then
@@ -241,11 +242,15 @@ local function itemSlot_OnClick(self, button, drag)
         if (infoType == "merchant" and MerchantFrame.extendedCost) then
             MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost)
         else
-            if not SpellIsTargeting() and (drag == nil and GwPaperDollBagItemList:IsShown()) then
+            if not SpellIsTargeting() and (drag == nil and GwPaperDollBagItemList:IsShown()) and not self.isEquipmentSelected then
                 GwPaperDollSelectedIndicator:SetPoint("LEFT", self, "LEFT", -16, 0)
                 GwPaperDollSelectedIndicator:Show()
                 selectedInventorySlot = self:GetID()
                 updateBagItemList(self)
+                self.isEquipmentSelected = true
+            elseif not SpellIsTargeting() and (drag == nil and GwPaperDollBagItemList:IsShown()) and self.isEquipmentSelected then
+                GW.resetBagInventory()
+                self.isEquipmentSelected = false
             else
                 if SpellCanTargetItem() then
                     local castingItem = nil
@@ -616,6 +621,7 @@ local function updateBagItemListAll()
         return
     end
 
+    local addedItems = {}
     local gridIndex = 1
     local itemIndex = 1
     local x = 10
@@ -629,7 +635,7 @@ local function updateBagItemListAll()
         GetInventoryItemsForSlot(id, bagItemList)
 
         for location, itemID in next, bagItemList do
-            if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
+            if not GW.isItemEquipped(itemID) and not addedItems[itemID] then -- Remove the currently equipped item from the list
                 local itemFrame = getBagSlotFrame(itemIndex)
                 itemFrame.location = location
                 itemFrame.itemSlot = id
@@ -647,6 +653,9 @@ local function updateBagItemListAll()
                     x = 10
                     y = y + 49 + 3
                 end
+
+                addedItems[itemID] = true
+
                 itemIndex = itemIndex + 1
                 if itemIndex > 36 then
                     break
@@ -835,6 +844,7 @@ local function resetBagInventory()
     selectedInventorySlot = nil
     updateBagItemListAll()
 end
+GW.resetBagInventory = resetBagInventory
 GW.AddForProfiling("paperdoll_equipment", "resetBagInventory", resetBagInventory)
 
 local function indicatorAnimation(self)

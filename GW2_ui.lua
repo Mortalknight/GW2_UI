@@ -545,6 +545,7 @@ local function loadAddon(self)
         --Setup addon button
         local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GwStandardButton")
         GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
+        GwMainMenuFrame.Text:SetTextColor(1, 0.93, 0.73)
         GwMainMenuFrame:ClearAllPoints()
         GwMainMenuFrame:SetPoint("TOP", _G.GameMenuFrame, "BOTTOM", 0, 0)
         GwMainMenuFrame:SetSize(150, 24)
