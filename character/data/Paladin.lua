@@ -1,5 +1,5 @@
 local _, GW = ...
-print(GW.myclass)
+
 if (GW.myclass ~= "PALADIN") then
 	return
 end
