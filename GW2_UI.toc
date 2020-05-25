@@ -3,6 +3,7 @@
 ## Notes: HUD Replacement addon.
 ## Notes-deDE: Ersetzt die Benutzeroberfläche.
 ## OptionalDeps: MoveAnything
+## Version: @project-version@
 
 ## Author: deadend06
 

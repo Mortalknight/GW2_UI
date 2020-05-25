@@ -800,6 +800,7 @@ local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         if not loaded then
             loaded = true
+            GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
             loadAddon(self)
         end
         GW.LoadStorage()
