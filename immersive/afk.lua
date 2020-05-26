@@ -222,8 +222,8 @@ local function loadAFKAnimation()
     AFKMode.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
 
     AFKMode.bottom.logo = AFKMode:CreateTexture(nil, "OVERLAY")
-    AFKMode.bottom.logo:SetSize(250, 250)
-    AFKMode.bottom.logo:SetPoint("CENTER", AFKMode.bottom, "CENTER", 0, 55)
+    AFKMode.bottom.logo:SetSize(150, 150)
+    AFKMode.bottom.logo:SetPoint("CENTER", AFKMode.bottom, "CENTER", 0, -10)
     AFKMode.bottom.logo:SetTexture("Interface/AddOns/GW2_UI/Textures/gwlogo")
 
     local modelOffsetY = 205
