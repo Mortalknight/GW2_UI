@@ -158,8 +158,8 @@ local function SkinBlizzardOptions()
     SkinButton(SplashFrame.TopCloseButton, true)
 
     -- Voice Sliders
-	SkinSliderFrame(_G.UnitPopupVoiceSpeakerVolume.Slider)
-	SkinSliderFrame(_G.UnitPopupVoiceMicrophoneVolume.Slider)
-	SkinSliderFrame(_G.UnitPopupVoiceUserVolume.Slider)
+    SkinSliderFrame(_G.UnitPopupVoiceSpeakerVolume.Slider)
+    SkinSliderFrame(_G.UnitPopupVoiceMicrophoneVolume.Slider)
+    SkinSliderFrame(_G.UnitPopupVoiceUserVolume.Slider)
 end
 GW.SkinBlizzardOptions = SkinBlizzardOptions

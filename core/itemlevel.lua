@@ -96,7 +96,7 @@ local function CollectEssenceInfo(index, lineText, slotInfo)
 end
 
 local function ScanTooltipTextures()
-    local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
+    local tt = GW.ScanTooltip
 
     if not tt.gems then
         tt.gems = {}
@@ -141,7 +141,8 @@ local function ScanTooltipTextures()
 end
 
 local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
-    local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
+    local tt = GW.ScanTooltip
+    
     tt:SetOwner(UIParent, "ANCHOR_NONE")
     if itemlink and string.find(itemlink, "item") then
         tt:SetHyperlink(itemlink)

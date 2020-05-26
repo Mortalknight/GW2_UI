@@ -543,12 +543,8 @@ local function loadAddon(self)
         GW.SkinMainMenu()
     else
         --Setup addon button
-        local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GwStandardButton")
-        GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
-        GwMainMenuFrame.Text:SetTextColor(1, 0.93, 0.73)
-        GwMainMenuFrame:ClearAllPoints()
-        GwMainMenuFrame:SetPoint("TOP", _G.GameMenuFrame, "BOTTOM", 0, 0)
-        GwMainMenuFrame:SetSize(150, 24)
+        local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GameMenuButtonTemplate")
+        GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
@@ -557,9 +553,16 @@ local function loadAddon(self)
                     return
                 end
                 GwSettingsWindow:Show()
-                ToggleGameMenu()
+                HideUIPanel(GameMenuFrame)
             end
         )
+        GameMenuFrame[L["SETTINGS_BUTTON"]] = GwMainMenuFrame
+
+        if not IsAddOnLoaded("ConsolePortUI_Menu") then
+            GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
+            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+            hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
+        end
     end
     if GetSetting("STATICPOPUP_SKIN_ENABLED") then
         GW.SkinStaticPopup()

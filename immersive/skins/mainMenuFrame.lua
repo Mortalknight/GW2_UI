@@ -23,6 +23,18 @@ local ICON_SPRITES = {
     rows = 4
 }
 
+local function PositionGameMenuButton()
+    GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
+    local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
+    if relTo ~= GameMenuFrame[L["SETTINGS_BUTTON"]] then
+        GameMenuFrame[L["SETTINGS_BUTTON"]]:ClearAllPoints()
+        GameMenuFrame[L["SETTINGS_BUTTON"]]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
+        GameMenuButtonLogout:ClearAllPoints()
+        GameMenuButtonLogout:SetPoint("TOPLEFT", GameMenuFrame[L["SETTINGS_BUTTON"]], "BOTTOMLEFT", 0, offY)
+    end
+end
+GW.PositionGameMenuButton = PositionGameMenuButton
+
 local function applyButtonStyle()
     for _, f in pairs(BUTTONS) do
         local b = f.button
@@ -57,11 +69,7 @@ local function SkinMainMenu()
     local GameMenuFrame = _G.GameMenuFrame
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
-    GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
-    GwMainMenuFrame.Text:SetTextColor(1, 0.93, 0.73)
-    GwMainMenuFrame:ClearAllPoints()
-    GwMainMenuFrame:SetPoint("TOP", GameMenuFrame, "BOTTOM", 0, 0)
-    GwMainMenuFrame:SetSize(150, 24)
+    GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
     GwMainMenuFrame:SetScript(
         "OnClick",
         function()
@@ -70,11 +78,17 @@ local function SkinMainMenu()
                 return
             end
             GwSettingsWindow:Show()
-            ToggleGameMenu()
+            HideUIPanel(GameMenuFrame)
         end
     )
+    GameMenuFrame[L["SETTINGS_BUTTON"]] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3} }
-    GwMainMenuFrame:SetPoint("TOP", _G.GameMenuButtonContinue, "BOTTOM", 0, -1)
+
+    if not IsAddOnLoaded("ConsolePortUI_Menu") then
+        GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
+        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+        hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
+    end
 
     local r = {GameMenuFrame:GetRegions()}
     for _, c in pairs(r) do

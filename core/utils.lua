@@ -685,4 +685,4 @@ local function isItemEquipped(itemIDtoCheck)
 
     return false
 end
-GW.isItemEquipped = isItemEquiped
+GW.isItemEquipped = isItemEquipped

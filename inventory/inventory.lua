@@ -206,7 +206,7 @@ local function hookQuestItemBorder(self)
     local name = self:GetName()
     
     for i=1, self.size, 1 do
-		local itemButton = _G[name .. "Item" .. i]
+        local itemButton = _G[name .. "Item" .. i]
         local isQuestItem, questId, isActive = GetContainerItemQuestInfo(id, itemButton:GetID())
         if itemButton.IconQuestTexture then
             if questId or isQuestItem then
@@ -653,12 +653,12 @@ local function LoadInventory()
     bank_resize = GW.LoadBank(helpers)
 
     -- Skin StackSplit
-	local StackSplitFrame = _G.StackSplitFrame
+    local StackSplitFrame = _G.StackSplitFrame
     GW.StripTextures(StackSplitFrame)
-	StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
+    StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
 
-	GW.skins.SkinButton(StackSplitFrame.OkayButton, false, true)
-	GW.skins.SkinButton(StackSplitFrame.CancelButton, false, true)
+    GW.skins.SkinButton(StackSplitFrame.OkayButton, false, true)
+    GW.skins.SkinButton(StackSplitFrame.CancelButton, false, true)
 
     StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
     StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")

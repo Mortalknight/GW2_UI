@@ -168,14 +168,14 @@ local function SetupRaidExtendButton(self)
             end
             return
         end
-	elseif self.extendButton.selectedWorldBossID then
-		if self.worldBossID == self.extendButton.selectedWorldBossID then
+    elseif self.extendButton.selectedWorldBossID then
+        if self.worldBossID == self.extendButton.selectedWorldBossID then
             self.extendButton:SetText(EXTEND_RAID_LOCK)
             self.extendButton:Disable()
             return
         end
-	end
-	self.extendButton:Disable()
+    end
+    self.extendButton:Disable()
 end
 GW.AddForProfiling("currency", "SetupRaidExtendButton", SetupRaidExtendButton)
 
@@ -214,10 +214,10 @@ local function loadRaidInfo(raidinfo)
                 slot.item.extendDisabled = extendDisabled
             else
                 instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(idx - raidInfoCount1)
-				difficultyName = RAID_INFO_WORLD_BOSS
+                difficultyName = RAID_INFO_WORLD_BOSS
                 slot.item.worldBossID = instanceID
                 slot.item.RaidInfoIdx = idx - raidInfoCount1
-				slot.item.instanceID = nil
+                slot.item.instanceID = nil
                 slot.item.longInstanceID = nil
                 slot.item.extendedValue = false
                 slot.item.locked = true
@@ -277,18 +277,18 @@ end
 GW.AddForProfiling("currency", "raidInfo_OnEnter", raidInfo_OnEnter)
 
 local function raidInfo_OnClick(self)
-	if IsModifiedClick("CHATLINK") then
-		if self.instanceID then
-			ChatEdit_InsertLink(GetSavedInstanceChatLink(self.RaidInfoIdx))
-		else
-			-- No chat links for World Boss locks yet
-		end
+    if IsModifiedClick("CHATLINK") then
+        if self.instanceID then
+            ChatEdit_InsertLink(GetSavedInstanceChatLink(self.RaidInfoIdx))
+        else
+            -- No chat links for World Boss locks yet
+        end
     else
-		self.extendButton.selectedRaidID = self.longInstanceID
+        self.extendButton.selectedRaidID = self.longInstanceID
         self.extendButton.selectedWorldBossID = self.worldBossID
         selectedLongInstanceID = self.longInstanceID
         loadRaidInfo(self.frame)
-	end
+    end
 end
 GW.AddForProfiling("currency", "raidInfo_OnClick", raidInfo_OnClick)
 
@@ -297,7 +297,7 @@ local function raidInfoExtended_OnClick(self)
         SetSavedInstanceExtend(self:GetParent().RaidInfoIdx, self.doExtend)
         selectedLongInstanceID = self:GetParent().longInstanceID
         RequestRaidInfo()
-	end
+    end
 end
 GW.AddForProfiling("currency", "raidInfoExtended_OnClick", raidInfoExtended_OnClick)
 

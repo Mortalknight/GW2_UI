@@ -12,3 +12,5 @@ GW.mylevel = UnitLevel("player")
 GW.myspec = GetSpecialization()
 GW.mylocal = GetLocale()
 GW.CheckRole()
+
+GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")

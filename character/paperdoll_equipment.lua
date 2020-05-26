@@ -217,11 +217,11 @@ local function itemSlot_OnModifiedClick(self, button)
             end
 
             local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-			if heartItemLocation and heartItemLocation:IsEqualTo(itemLocation) then
+            if heartItemLocation and heartItemLocation:IsEqualTo(itemLocation) then
                 OpenAzeriteEssenceUIFromItemLocation(itemLocation)
                 GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-				return
-			end
+                return
+            end
 
             SocketInventoryItem(self:GetID())
         end
@@ -381,7 +381,7 @@ local function DurabilityTooltip(self)
                 _G["GameTooltipTextRight2"]:SetText(_G["GameTooltipTextRight2"]:GetText() ..  valcol .. durapercent .. "%" .. "|n")
 
                 duravaltotal = duravaltotal + duraval
-				duramaxtotal = duramaxtotal + duramax
+                duramaxtotal = duramaxtotal + duramax
             end
         end
     end
@@ -392,7 +392,7 @@ local function DurabilityTooltip(self)
     end
     if validItems == true then
         -- Show overall durability in the tooltip
-        if durapercent >= 80 then valcol = "|cff00FF00"	elseif durapercent >= 60 then valcol = "|cff99FF00"	elseif durapercent >= 40 then valcol = "|cffFFFF00"	elseif durapercent >= 20 then valcol = "|cffFF9900"	elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
+        if durapercent >= 80 then valcol = "|cff00FF00"    elseif durapercent >= 60 then valcol = "|cff99FF00"    elseif durapercent >= 40 then valcol = "|cffFFFF00"    elseif durapercent >= 20 then valcol = "|cffFF9900"    elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
         _G["GameTooltipTextLeft3"]:SetText(TOTAL .. " " .. valcol)
         _G["GameTooltipTextRight3"]:SetText(valcol .. GW.RoundDec(durapercent) .. "%")
 

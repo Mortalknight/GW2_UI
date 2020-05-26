@@ -124,6 +124,10 @@ local function SkinItemRefTooltip()
             ItemRefCloseButton:ClearAllPoints()
             ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
             ItemRefTooltip:SetBackdrop(constBackdropArgs)
+
+            if IsAddOnLoaded("Pawn") then
+                ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            end
         end
     end
 
@@ -662,8 +666,5 @@ local function LoadTooltips()
             f:HookScript("OnUpdate", styleTooltip)
         end
     end
-
--- Create and save hidde scan Tooltip
-GW.ScanTooltip = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
 end
 GW.LoadTooltips = LoadTooltips
