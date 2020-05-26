@@ -3,6 +3,7 @@
 ## Notes: Hud Replacement addon.
 ## OptionalDeps: MoveAnything, HonorSpy, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
 ## Author: deadend06
+## Version: @project-version@
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES

@@ -2,29 +2,29 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
+    -- Create a global variable for the language strings
+    local L = GW.L
 
-	--Fonts
-	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"		
+    --Fonts
+    L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
+    L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
+    L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
+    L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
+    L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
+    L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"        
 
-	--classic ones
-	L["FPS_TOOLTIP_1"] = "每秒幀數 "
-	L["FPS_TOOLTIP_2"] = "網路延遲 (本地) "
-	L["FPS_TOOLTIP_3"] = "網路延遲 (世界) "
-	L["FPS_TOOLTIP_4"] = "頻寬 (下載) "
-	L["FPS_TOOLTIP_5"] = "頻寬 (上傳) "
-	L["FPS_TOOLTIP_6"] = "插件記憶體用量: "
-	L["FUTURE_SPELLS"] = "Future Spells"
-	L["INVTYPE_RANGED"] = "遠程"
-	
-	--Strings
-	L["ACTION_BAR_FADE"] = "淡出快捷列"
+    --classic ones
+    L["FPS_TOOLTIP_1"] = "每秒幀數 "
+    L["FPS_TOOLTIP_2"] = "網路延遲 (本地) "
+    L["FPS_TOOLTIP_3"] = "網路延遲 (世界) "
+    L["FPS_TOOLTIP_4"] = "頻寬 (下載) "
+    L["FPS_TOOLTIP_5"] = "頻寬 (上傳) "
+    L["FPS_TOOLTIP_6"] = "插件記憶體用量: "
+    L["FUTURE_SPELLS"] = "Future Spells"
+    L["INVTYPE_RANGED"] = "遠程"
+    
+    --Strings
+    L["ACTION_BAR_FADE"] = "淡出快捷列"
     L["ACTION_BAR_FADE_DESC"] = "非戰鬥中隱藏額外快捷列。"
     L["ACTION_BARS_DESC"] = "使用 GW2 UI 風格加強型的快捷列。"
     L["ADV_CAST_BAR"] = "進階施法條"
@@ -296,15 +296,15 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
 
-	--Composite
-	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
-	L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
-	L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
-	L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
+    --Composite
+    L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
+    L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
+    L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
+    L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
 end
-	
+    
 if GetLocale() == "zhTW" then
-	GWUseThisLocalization()
+    GWUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don"t need it, remove it from memory.

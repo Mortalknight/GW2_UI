@@ -99,20 +99,20 @@ end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
 local function SetItemButtonQualityForBags(button, quality, itemIDOrLink)
-	button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     button.IconOverlay:Hide()
     button.IconBorder:SetAlpha(0.9)
 
-	if quality then
-		if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-			button.IconBorder:Show()
-			button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
-		else
-			button.IconBorder:Hide()
-		end
-	else
-		button.IconBorder:Hide()
-	end
+    if quality then
+        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+            button.IconBorder:Show()
+            button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+        else
+            button.IconBorder:Hide()
+        end
+    else
+        button.IconBorder:Hide()
+    end
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 

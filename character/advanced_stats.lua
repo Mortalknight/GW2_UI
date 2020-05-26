@@ -28,53 +28,53 @@ local CHAR_EQUIP_SLOTS = {
 }
 
 local itemSets = {
-	["Stormrage Raiment"] = {
-		[16899] = true,
-		[16900] = true,
-		[16901] = true,
-		[16902] = true,
-		[16903] = true,
-		[16904] = true,
-		[16897] = true,
-		[16898] = true
-	},
-	["Vestments of Transcendence"] = {
-		[16919] = true,
-		[16920] = true,
-		[16921] = true,
-		[16922] = true,
-		[16923] = true,
-		[16924] = true,
-		[16925] = true,
-		[16926] = true
-	},
-	["Haruspex's Garb"] = {
-		[19613] = true,
-		[19955] = true,
-		[19840] = true,
-		[19839] = true,
-		[19838] = true
+    ["Stormrage Raiment"] = {
+        [16899] = true,
+        [16900] = true,
+        [16901] = true,
+        [16902] = true,
+        [16903] = true,
+        [16904] = true,
+        [16897] = true,
+        [16898] = true
     },
-	["Augur's Regalia"] = {
-		[19609] = true,
-		[19956] = true,
-		[19830] = true,
-		[19829] = true,
-		[19828] = true
-	},
-	["Freethinker's Armor"] = {
-		[19952] = true,
-		[19588] = true,
-		[19827] = true,
-		[19826] = true,
-		[19825] = true
-	}
+    ["Vestments of Transcendence"] = {
+        [16919] = true,
+        [16920] = true,
+        [16921] = true,
+        [16922] = true,
+        [16923] = true,
+        [16924] = true,
+        [16925] = true,
+        [16926] = true
+    },
+    ["Haruspex's Garb"] = {
+        [19613] = true,
+        [19955] = true,
+        [19840] = true,
+        [19839] = true,
+        [19838] = true
+    },
+    ["Augur's Regalia"] = {
+        [19609] = true,
+        [19956] = true,
+        [19830] = true,
+        [19829] = true,
+        [19828] = true
+    },
+    ["Freethinker's Armor"] = {
+        [19952] = true,
+        [19588] = true,
+        [19827] = true,
+        [19826] = true,
+        [19825] = true
+    }
 }
 
 local function IsSetBonusActive(setname, bonusLevel)
-	local set = itemSets[setname]
-	if not set then return false end
-	
+    local set = itemSets[setname]
+    if not set then return false end
+    
     local pieces_equipped = 0
     for slot = 1, 17 do
         local itemID = GetInventoryItemID("player", slot)
@@ -106,7 +106,7 @@ local function _GetMissChanceByDifference(weaponSkill, defenseValue)
 end
 
 local function _GetRangeHitBonus()
-	local hitValue = 0
+    local hitValue = 0
     -- From Enchant
     local slotId, _ = GetInventorySlotInfo(CHAR_EQUIP_SLOTS["Range"])
     local itemLink = GetInventoryItemLink("player", slotId)
@@ -159,11 +159,11 @@ local function _GetTalentModifierMP5()
 end
 
 local function _HasSetBonusModifierMP5()
-	if GW.myClassID == ClassIndex.PRIEST then
-		return IsSetBonusActive("Vestments of Transcendence", 3)
+    if GW.myClassID == ClassIndex.PRIEST then
+        return IsSetBonusActive("Vestments of Transcendence", 3)
     elseif GW.myClassID == ClassIndex.DRUID then
-		return IsSetBonusActive("Stormrage Raiment", 3)
-	end
+        return IsSetBonusActive("Stormrage Raiment", 3)
+    end
 
     return false
 end
@@ -314,7 +314,7 @@ local function MeleeHitMissChanceSameLevel()
 end
 
 local function MeleeHitMissChanceBossLevel()
-	local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
+    local mainBase, mainMod, _, _ = UnitAttackBothHands("player")
     local enemyDefenseValue = (GW.mylevel + 3) * 5
 
     local missChance = 0
@@ -364,9 +364,9 @@ local function RangeMissChanceBossLevel()
     local enemyDefenseValue = (GW.mylevel + 3) * 5
 
     local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
-	missChance = missChance - _GetRangeHitBonus()
-	
-	if missChance < 0 then
+    missChance = missChance - _GetRangeHitBonus()
+    
+    if missChance < 0 then
         missChance = 0
     elseif missChance > 100 then
         missChance = 100

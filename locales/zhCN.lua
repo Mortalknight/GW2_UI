@@ -2,8 +2,8 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
+    -- Create a global variable for the language strings
+    local L = GW.L
     
     --Fonts
     L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
@@ -15,16 +15,16 @@ local function GWUseThisLocalization()
 
     --classic ones
     L['FPS_TOOLTIP_1'] = 'FPS ' 
-	L['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
-	L['FPS_TOOLTIP_3'] = 'Latency (World) ' 
-	L['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
-	L['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
+    L['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
+    L['FPS_TOOLTIP_3'] = 'Latency (World) ' 
+    L['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
+    L['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
     L['FPS_TOOLTIP_6'] = 'Memory for Addons: '
     L["FUTURE_SPELLS"] = "Future Spells"
     L["INVTYPE_RANGED"] = "远程"
 
     --Strings
-	L["ACTION_BAR_FADE"] = "隐藏动作栏"
+    L["ACTION_BAR_FADE"] = "隐藏动作栏"
     L["ACTION_BAR_FADE_DESC"] = "当离开战斗时隐藏额外动作栏."
     L["ACTION_BARS_DESC"] = "使用GW2风格的增强动作栏."
     L["ADV_CAST_BAR"] = "高级施法条"

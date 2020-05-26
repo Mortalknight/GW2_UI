@@ -15,66 +15,66 @@ local Hunter = ThreatLib:GetOrCreateModule("Player-r"..MINOR)
 local distractingShotFactor = 600 / 60
 
 local threatTable = {
-	["DistractingShot"] = {
-		[20736] = distractingShotFactor * 12,
-		[14274] = distractingShotFactor * 20,
-		[15629] = distractingShotFactor * 30,
-		[15630] = distractingShotFactor * 40,
-		[15631] = distractingShotFactor * 50,
-		[15632] = 600,
-	},
-	["Disengage"] = {
-		[781] = -140,
-		[14272] = -280,
-		[14273] = -405,
-	}
+    ["DistractingShot"] = {
+        [20736] = distractingShotFactor * 12,
+        [14274] = distractingShotFactor * 20,
+        [15629] = distractingShotFactor * 30,
+        [15630] = distractingShotFactor * 40,
+        [15631] = distractingShotFactor * 50,
+        [15632] = 600,
+    },
+    ["Disengage"] = {
+        [781] = -140,
+        [14272] = -280,
+        [14273] = -405,
+    }
 }
 
 function Hunter:ClassInit()
-	for k, v in pairs(threatTable["DistractingShot"]) do
-		self.CastSuccessHandlers[k] = self.DistractingShot
-		self.CastMissHandlers[k] = self.DistractingShotMiss
-	end
-	for k, v in pairs(threatTable["Disengage"]) do
-		self.CastSuccessHandlers[k] = self.Disengage
-		self.CastMissHandlers[k] = self.DisengageMiss
-	end
+    for k, v in pairs(threatTable["DistractingShot"]) do
+        self.CastSuccessHandlers[k] = self.DistractingShot
+        self.CastMissHandlers[k] = self.DistractingShotMiss
+    end
+    for k, v in pairs(threatTable["Disengage"]) do
+        self.CastSuccessHandlers[k] = self.Disengage
+        self.CastMissHandlers[k] = self.DisengageMiss
+    end
 
-	self.CastHandlers[5384] = self.FeignDeath
+    self.CastHandlers[5384] = self.FeignDeath
 end
 
 function Hunter:ClassEnable()
-	-- Needed for FD. Ugly as hell, but it works.
-	self:RegisterEvent("UNIT_SPELLCAST_SENT")
-	self:RegisterEvent("UI_ERROR_MESSAGE")
-	-- ERR_FEIGN_DEATH_RESISTED
+    -- Needed for FD. Ugly as hell, but it works.
+    self:RegisterEvent("UNIT_SPELLCAST_SENT")
+    self:RegisterEvent("UI_ERROR_MESSAGE")
+    -- ERR_FEIGN_DEATH_RESISTED
 end
 
 function Hunter:ClassDisable()
-	self:UnregisterEvent("UNIT_SPELLCAST_SENT")
-	self:UnregisterEvent("UI_ERROR_MESSAGE")
+    self:UnregisterEvent("UNIT_SPELLCAST_SENT")
+    self:UnregisterEvent("UI_ERROR_MESSAGE")
 end
 
 function Hunter:DistractingShot(spellID, target)
-	local amt = threatTable["DistractingShot"][spellID]
-	self:AddTargetThreat(target, amt * self:threatMods())
+    local amt = threatTable["DistractingShot"][spellID]
+    self:AddTargetThreat(target, amt * self:threatMods())
 end
 
 function Hunter:DistractingShotMiss(spellID, target)
-	local amt = threatTable["DistractingShot"][spellID]
-	self:AddTargetThreat(target, -(amt * self:threatMods()))
+    local amt = threatTable["DistractingShot"][spellID]
+    self:AddTargetThreat(target, -(amt * self:threatMods()))
 end
 
 function Hunter:Disengage(spellID, target)
-	ThreatLib:Debug("Disengage caught, %s", spellID)
-	local amt = threatTable["Disengage"][spellID]
-	self:AddTargetThreat(target, amt * self:threatMods())
+    ThreatLib:Debug("Disengage caught, %s", spellID)
+    local amt = threatTable["Disengage"][spellID]
+    self:AddTargetThreat(target, amt * self:threatMods())
 end
 
 function Hunter:DisengageMiss(spellID, target)
-	ThreatLib:Debug("Disengage fail caught, %s", spellID)
-	local amt = threatTable["Disengage"][spellID]
-	self:AddTargetThreat(target, -(amt * self:threatMods()))
+    ThreatLib:Debug("Disengage fail caught, %s", spellID)
+    local amt = threatTable["Disengage"][spellID]
+    self:AddTargetThreat(target, -(amt * self:threatMods()))
 end
 
 -- Feign is a rather unique case. It's cast on all targets, but may be resisted by any one target. 
@@ -85,25 +85,25 @@ end
 -- but we can't help that since we don't have target data on who resisted
 local FeignDeathPrimed = 0
 function Hunter:FeignDeath()
-	if GetTime() - FeignDeathPrimed < 5 then
-		FeignDeathPrimed = 0
-		self:MultiplyThreat(0)
-		ThreatLib:Debug("Running FD, clearing threat!")
-	end
+    if GetTime() - FeignDeathPrimed < 5 then
+        FeignDeathPrimed = 0
+        self:MultiplyThreat(0)
+        ThreatLib:Debug("Running FD, clearing threat!")
+    end
 end
 
 function Hunter:UNIT_SPELLCAST_SENT(event, unit, target, castGUID, spellID)
-	ThreatLib:Debug("Hunter:UNIT_SPELLCAST_SENT: %s, %s, %s, %d", unit, target, castGUID, spellID)
-	if unit == "player" and spellID == 5384 then
-		ThreatLib:Debug("FD is primed!")
-		FeignDeathPrimed = GetTime()
-	end
+    ThreatLib:Debug("Hunter:UNIT_SPELLCAST_SENT: %s, %s, %s, %d", unit, target, castGUID, spellID)
+    if unit == "player" and spellID == 5384 then
+        ThreatLib:Debug("FD is primed!")
+        FeignDeathPrimed = GetTime()
+    end
 end
 
 function Hunter:UI_ERROR_MESSAGE(event, errorType, msg)
-	-- ThreatLib:Debug("ui error %s %s %s", event, errorType, msg)
-	if msg == ERR_FEIGN_DEATH_RESISTED then
-		ThreatLib:Debug("Canceling FD!")
-		FeignDeathPrimed = 0
-	end
+    -- ThreatLib:Debug("ui error %s %s %s", event, errorType, msg)
+    if msg == ERR_FEIGN_DEATH_RESISTED then
+        ThreatLib:Debug("Canceling FD!")
+        FeignDeathPrimed = 0
+    end
 end

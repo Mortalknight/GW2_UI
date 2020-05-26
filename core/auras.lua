@@ -7,9 +7,9 @@ local UnitAura = _G.UnitAura
 --local AddToAnimation = GW.AddToAnimation
 
 local textureMapping = {
-	[1] = 16,	--Main hand
-	[2] = 17,	--Off-hand
-	[3] = 18,	--Ranged
+    [1] = 16,    --Main hand
+    [2] = 17,    --Off-hand
+    [3] = 18,    --Ranged
 }
 
 local function sortAuras(a, b)
@@ -76,7 +76,7 @@ local function getBuffs(unit, filter)
 
         if numItems > 0 then
             TemporaryEnchantFrame:Hide()
-            for itemIndex = numItems, 1, -1 do	--Loop through the items from the back
+            for itemIndex = numItems, 1, -1 do    --Loop through the items from the back
                 local hasEnchant, enchantExpiration, enchantCharges = select(RETURNS_PER_ITEM * (itemIndex - 1) + 1, GetWeaponEnchantInfo())
                 if hasEnchant then
                     tempCounter = tempCounter + 1

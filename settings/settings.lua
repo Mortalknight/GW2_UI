@@ -21,84 +21,84 @@ function SlashCmdList.GWSLASH(msg)
 end
 
 local function Grid_GetRegion()
-	if grid then
-		if grid.regionCount and grid.regionCount > 0 then
-			local line = select(grid.regionCount, grid:GetRegions())
-			grid.regionCount = grid.regionCount - 1
-			line:SetAlpha(1)
-			return line
-		else
-			return grid:CreateTexture()
-		end
-	end
+    if grid then
+        if grid.regionCount and grid.regionCount > 0 then
+            local line = select(grid.regionCount, grid:GetRegions())
+            grid.regionCount = grid.regionCount - 1
+            line:SetAlpha(1)
+            return line
+        else
+            return grid:CreateTexture()
+        end
+    end
 end
 
 local function create_grid()
-	if not grid then
-		grid = CreateFrame("Frame", "GW_UI_Grid", UIParent)
-		grid:SetFrameStrata("BACKGROUND")
-	else
-		grid.regionCount = 0
-		local numRegions = grid:GetNumRegions()
-		for i = 1, numRegions do
-			local region = select(i, grid:GetRegions())
-			if region and region.IsObjectType and region:IsObjectType("Texture") then
-				grid.regionCount = grid.regionCount + 1
-				region:SetAlpha(0)
-			end
-		end
-	end    
+    if not grid then
+        grid = CreateFrame("Frame", "GW_UI_Grid", UIParent)
+        grid:SetFrameStrata("BACKGROUND")
+    else
+        grid.regionCount = 0
+        local numRegions = grid:GetNumRegions()
+        for i = 1, numRegions do
+            local region = select(i, grid:GetRegions())
+            if region and region.IsObjectType and region:IsObjectType("Texture") then
+                grid.regionCount = grid.regionCount + 1
+                region:SetAlpha(0)
+            end
+        end
+    end    
 
     local size = (1 / 0.64) - ((1 - (768 / GW.screenHeight)) / 0.64)
-	local width, height = UIParent:GetSize()
-	local ratio = width / height
-	local hStepheight = height * ratio
-	local wStep = width / gridSize
-	local hStep = hStepheight / gridSize
+    local width, height = UIParent:GetSize()
+    local ratio = width / height
+    local hStepheight = height * ratio
+    local wStep = width / gridSize
+    local hStep = hStepheight / gridSize
 
-	grid.boxSize = gridSize
-	grid:SetPoint("CENTER", UIParent)
-	grid:SetSize(width, height)
-	grid:Show()
+    grid.boxSize = gridSize
+    grid:SetPoint("CENTER", UIParent)
+    grid:SetSize(width, height)
+    grid:Show()
 
-	for i = 0, gridSize do
-		local tx = Grid_GetRegion()
-		if i == gridSize / 2 then
-			tx:SetColorTexture(1, 0, 0)
-			tx:SetDrawLayer("BACKGROUND", 1)
-		else
-			tx:SetColorTexture(0, 0, 0)
-			tx:SetDrawLayer("BACKGROUND", 0)
-		end
-		tx:ClearAllPoints()
-		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", i * wStep - (size / 2), 0)
-		tx:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", i * wStep + (size / 2), 0)
-	end
+    for i = 0, gridSize do
+        local tx = Grid_GetRegion()
+        if i == gridSize / 2 then
+            tx:SetColorTexture(1, 0, 0)
+            tx:SetDrawLayer("BACKGROUND", 1)
+        else
+            tx:SetColorTexture(0, 0, 0)
+            tx:SetDrawLayer("BACKGROUND", 0)
+        end
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", i * wStep - (size / 2), 0)
+        tx:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", i * wStep + (size / 2), 0)
+    end
 
-	do
-		local tx = Grid_GetRegion()
-		tx:SetColorTexture(1, 0, 0)
-		tx:SetDrawLayer("BACKGROUND", 1)
-		tx:ClearAllPoints()
-		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2) + (size / 2))
-		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + size / 2))
-	end
+    do
+        local tx = Grid_GetRegion()
+        tx:SetColorTexture(1, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 1)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2) + (size / 2))
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + size / 2))
+    end
 
-	for i = 1, floor((height / 2) / hStep) do
-		local tx = Grid_GetRegion()
-		tx:SetColorTexture(0, 0, 0)
-		tx:SetDrawLayer("BACKGROUND", 0)
-		tx:ClearAllPoints()
-		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 + i * hStep) + (size / 2))
-		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + i * hStep + size / 2))
+    for i = 1, floor((height / 2) / hStep) do
+        local tx = Grid_GetRegion()
+        tx:SetColorTexture(0, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 0)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 + i * hStep) + (size / 2))
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 + i * hStep + size / 2))
 
-		tx = Grid_GetRegion()
-		tx:SetColorTexture(0, 0, 0)
-		tx:SetDrawLayer("BACKGROUND", 0)
-		tx:ClearAllPoints()
-		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 - i * hStep) + (size / 2))
-		tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 - i * hStep + size / 2))
-	end
+        tx = Grid_GetRegion()
+        tx:SetColorTexture(0, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 0)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height / 2 - i * hStep) + (size / 2))
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(height / 2 - i * hStep + size / 2))
+    end
 end
 
 local function switchCat(index)
@@ -282,7 +282,7 @@ local function lockHudObjects()
         mf:Hide()
     end
     if grid then
-		grid:Hide()
+        grid:Hide()
     end
     GW.UpdateFramePositions()
     C_UI.Reload()
@@ -651,14 +651,14 @@ local function LoadSettings()
         end,
         OnShow = function(self)
             self:SetWidth(420)
-			local editBox = _G[self:GetName() .. "EditBox"]
-			editBox:SetText("https://discord.gg/MZZtRWt")
-			editBox:SetFocus()
-			editBox:HighlightText(false)
-			local button = _G[self:GetName() .. "Button2"]
-			button:ClearAllPoints()
-			button:SetWidth(200)
-			button:SetPoint("CENTER", editBox, "CENTER", 0, -30)
+            local editBox = _G[self:GetName() .. "EditBox"]
+            editBox:SetText("https://discord.gg/MZZtRWt")
+            editBox:SetFocus()
+            editBox:HighlightText(false)
+            local button = _G[self:GetName() .. "Button2"]
+            button:ClearAllPoints()
+            button:SetWidth(200)
+            button:SetPoint("CENTER", editBox, "CENTER", 0, -30)
         end,
         preferredIndex = 3
     }
@@ -748,36 +748,36 @@ local function LoadSettings()
 
     grid_align = CreateFrame("EditBox", "GwHudGridButtonEditBox", UIParent, "GwStandardInputBox")
     grid_align:SetPoint("TOP", UIParent, "TOP", 44, -55)
-	grid_align:SetScript("OnEscapePressed", function(eb)
-		eb:SetText(gridSize)
-		EditBox_ClearFocus(eb)
-	end)
-	grid_align:SetScript("OnEnterPressed", function(eb)
-		local text = eb:GetText()
-		if tonumber(text) then
-			if tonumber(text) <= 256 and tonumber(text) >= 4 then
-				gridSize = tonumber(text)
-			else
-				eb:SetText(gridSize)
-			end
-		else
-			eb:SetText(gridSize)
+    grid_align:SetScript("OnEscapePressed", function(eb)
+        eb:SetText(gridSize)
+        EditBox_ClearFocus(eb)
+    end)
+    grid_align:SetScript("OnEnterPressed", function(eb)
+        local text = eb:GetText()
+        if tonumber(text) then
+            if tonumber(text) <= 256 and tonumber(text) >= 4 then
+                gridSize = tonumber(text)
+            else
+                eb:SetText(gridSize)
+            end
+        else
+            eb:SetText(gridSize)
         end
         mhgb.forceHide = false
-		Grid_Show_Hide()
-		EditBox_ClearFocus(eb)
-	end)
-	grid_align:SetScript("OnEditFocusLost", function(eb)
-		eb:SetText(gridSize)
-	end)
-	grid_align:SetScript("OnEditFocusGained", grid_align.HighlightText)
-	grid_align:SetScript("OnShow", function(eb)
-		EditBox_ClearFocus(eb)
-		eb:SetText(gridSize)
+        Grid_Show_Hide()
+        EditBox_ClearFocus(eb)
+    end)
+    grid_align:SetScript("OnEditFocusLost", function(eb)
+        eb:SetText(gridSize)
+    end)
+    grid_align:SetScript("OnEditFocusGained", grid_align.HighlightText)
+    grid_align:SetScript("OnShow", function(eb)
+        EditBox_ClearFocus(eb)
+        eb:SetText(gridSize)
     end)
     grid_align.text = grid_align:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font")
-	grid_align.text:SetPoint("RIGHT", grid_align, "LEFT", -5, 0)
-	grid_align.text:SetText(L["GRID_SIZE_LABLE"])
+    grid_align.text:SetPoint("RIGHT", grid_align, "LEFT", -5, 0)
+    grid_align.text:SetText(L["GRID_SIZE_LABLE"])
     grid_align:Hide()
 
     GW.LoadModulesPanel(sWindow)

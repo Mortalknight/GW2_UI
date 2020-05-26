@@ -305,7 +305,7 @@ function GW_DurabilityTooltip(self)
     end
     if validItems == true then
         -- Show overall durability in the tooltip
-        if durapercent >= 80 then valcol = "|cff00FF00"	elseif durapercent >= 60 then valcol = "|cff99FF00"	elseif durapercent >= 40 then valcol = "|cffFFFF00"	elseif durapercent >= 20 then valcol = "|cffFF9900"	elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
+        if durapercent >= 80 then valcol = "|cff00FF00"    elseif durapercent >= 60 then valcol = "|cff99FF00"    elseif durapercent >= 40 then valcol = "|cffFFFF00"    elseif durapercent >= 20 then valcol = "|cffFF9900"    elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
         _G["GameTooltipTextLeft3"]:SetText(TOTAL .. " " .. valcol)
         _G["GameTooltipTextRight3"]:SetText(valcol .. GW.RoundDec(durapercent) .. "%")
 
@@ -326,8 +326,8 @@ end
 GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
 
 function gwPaperDollUpdateStats()
-	local categoryYOffset = -5
-	local statYOffset = 0
+    local categoryYOffset = -5
+    local statYOffset = 0
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
 
     avgItemLevel = nil or 0
@@ -341,19 +341,19 @@ function gwPaperDollUpdateStats()
     GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
     GwDressingRoom.itemLevel:SetTextColor(GW.api.GetItemLevelColor())
 
-	local spec = GW.api.GetSpecialization()
-	local role = GW.api.GetSpecializationRole(spec)
-	local statFrame = nil
-	local lastAnchor
+    local spec = GW.api.GetSpecialization()
+    local role = GW.api.GetSpecializationRole(spec)
+    local statFrame = nil
+    local lastAnchor
     local numShownStats = 1
     local grid = 1
     local x = 0
     local y = 0
 
-	for primaryStatIndex = 1, 5 do
+    for primaryStatIndex = 1, 5 do
         statName, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-	end
+    end
 
     -- Armor
     statText, tooltip1, tooltip2 = GW.stats.getArmor()
@@ -637,9 +637,9 @@ function gwPaperDollSlotButton_OnClick(self, button, drag)
 end
 
 function gwPaperDollSlotButton_OnLeave(self)
-	self:UnregisterEvent("MODIFIER_STATE_CHANGED")
-	GameTooltip:Hide()
-	ResetCursor()
+    self:UnregisterEvent("MODIFIER_STATE_CHANGED")
+    GameTooltip:Hide()
+    ResetCursor()
 end
 
 function gwPaperDollSlotButton_Update(self)
@@ -678,8 +678,8 @@ function gwPaperDollSlotButton_Update(self)
         self.repairIcon:Hide()
     end
 
-	local quality = GetInventoryItemQuality("player", slot)
-	GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
+    local quality = GetInventoryItemQuality("player", slot)
+    GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
 end
 
 
@@ -735,11 +735,11 @@ function GwPaperDollUpdateReputations()
 
     for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
         local  name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID = returnReputationData(factionIndex)
-		if name ~= nil then
+        if name ~= nil then
             cCur = cCur + standingId
-			cMax = cMax + 8
+            cMax = cMax + 8
             if isHeader and not isChild then
-				local header = getNewReputationCat(headerIndex)
+                local header = getNewReputationCat(headerIndex)
                 header:Show()
                 CurrentOwner = header
                 header:SetText(name)
@@ -1388,26 +1388,26 @@ function UpdateHonorTab(updateAll)
     local hk, dk, contribution, rank, highestRank, rankName, rankNumber
     -- This only gets set on player entering the world
     if updateAll then
-		-- Yesterday's values
-		hk, dk, contribution = GetPVPYesterdayStats()
-		GWHonorFrameYesterdayHKValue:SetText(hk)
-		GWHonorFrameYesterdayContributionValue:SetText(contribution)
-		-- This Week's values
-		hk, contribution = GetPVPThisWeekStats()
+        -- Yesterday's values
+        hk, dk, contribution = GetPVPYesterdayStats()
+        GWHonorFrameYesterdayHKValue:SetText(hk)
+        GWHonorFrameYesterdayContributionValue:SetText(contribution)
+        -- This Week's values
+        hk, contribution = GetPVPThisWeekStats()
         GWHonorFrameThisWeekHKValue:SetText(hk)
         if HonorSpy then
             GWHonorFrameThisWeekContributionValue:SetText(format("%d (%d)", contribution, HonorSpy.db.char.estimated_honor))
         else
             GWHonorFrameThisWeekContributionValue:SetText(contribution)
         end
-		-- Last Week's values
-		hk, dk, contribution, rank = GetPVPLastWeekStats()
-		GWHonorFrameLastWeekHKValue:SetText(hk)
-		GWHonorFrameLastWeekContributionValue:SetText(contribution)
-		GWHonorFrameLastWeekStandingValue:SetText(rank)
+        -- Last Week's values
+        hk, dk, contribution, rank = GetPVPLastWeekStats()
+        GWHonorFrameLastWeekHKValue:SetText(hk)
+        GWHonorFrameLastWeekContributionValue:SetText(contribution)
+        GWHonorFrameLastWeekStandingValue:SetText(rank)
     end
     
-	-- This session's values (today)
+    -- This session's values (today)
     hk, dk = GetPVPSessionStats()
     if HonorSpy then
         GWHonorFrameCurrentHKValue:SetText(format("%d |cfff2ca45(%s: %s)|r", hk, HONOR, HonorSpy.db.char.estimated_honor - HonorSpy.db.char.original_honor))
@@ -1417,42 +1417,42 @@ function UpdateHonorTab(updateAll)
     GWHonorFrameCurrentDKValue:SetText(dk)
     
     -- Lifetime stats
-	hk, dk, highestRank = GetPVPLifetimeStats()
-	GWHonorFrameLifeTimeHKValue:SetText(hk)
-	GWHonorFrameLifeTimeDKValue:SetText(dk)
-	rankName, rankNumber = GetPVPRankInfo(highestRank)
-	if not rankName then
-		rankName = NONE
-	end
+    hk, dk, highestRank = GetPVPLifetimeStats()
+    GWHonorFrameLifeTimeHKValue:SetText(hk)
+    GWHonorFrameLifeTimeDKValue:SetText(dk)
+    rankName, rankNumber = GetPVPRankInfo(highestRank)
+    if not rankName then
+        rankName = NONE
+    end
     GWHonorFrameLifeTimeRankValue:SetText(rankName)
     
     -- Set rank name and number
-	rankName, rankNumber = GetPVPRankInfo(UnitPVPRank("player"))
-	if not rankName then
-		rankName = NONE
+    rankName, rankNumber = GetPVPRankInfo(UnitPVPRank("player"))
+    if not rankName then
+        rankName = NONE
     end
-	slot.Header:SetText(rankName)
+    slot.Header:SetText(rankName)
     slot.Rank:SetText(format("(%s %d) %d%%", RANK, rankNumber, GetPVPRankProgress() * 100))
 
     -- Set icon
-	if rankNumber > 0 then
-		GWHonorFramePvPIcon:SetTexture(format("%s%02d","Interface/PvPRankBadges/PvPRank", rankNumber))
+    if rankNumber > 0 then
+        GWHonorFramePvPIcon:SetTexture(format("%s%02d","Interface/PvPRankBadges/PvPRank", rankNumber))
         GWHonorFramePvPIcon:Show()
         slot.Header:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT" , 50, -15)
     else
-		GWHonorFramePvPIcon:Hide()
+        GWHonorFramePvPIcon:Hide()
     end
 
     -- Set rank progress and bar color
-	if GW.myfaction == "Alliance" then
-		GWHonorFrameProgressBar:SetStatusBarColor(0.05, 0.15, 0.36)
-	else
-		GWHonorFrameProgressBar:SetStatusBarColor(0.63, 0.09, 0.09)
+    if GW.myfaction == "Alliance" then
+        GWHonorFrameProgressBar:SetStatusBarColor(0.05, 0.15, 0.36)
+    else
+        GWHonorFrameProgressBar:SetStatusBarColor(0.63, 0.09, 0.09)
     end
     GWHonorFrameProgressBar:SetValue(GetPVPRankProgress())
 
     -- Recenter rank text
-	slot.Header:SetPoint("TOP", "GwPaperHonor", "TOP", - slot.Rank:GetWidth() / 2 + 20, -83)
+    slot.Header:SetPoint("TOP", "GwPaperHonor", "TOP", - slot.Rank:GetWidth() / 2 + 20, -83)
 end
 
 local CHARACTER_PANEL_OPEN = ""

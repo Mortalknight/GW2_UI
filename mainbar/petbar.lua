@@ -221,9 +221,9 @@ local function SetPetHappiness(self)
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
     local hasPetUI, isHunterPet = HasPetUI()
 
-	if not happiness or not isHunterPet then
+    if not happiness or not isHunterPet then
         self.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
-		return
+        return
     end
     GwPetFrameHappinessInvisibleFrame:ClearAllPoints()
     GwPetFrameHappinessInvisibleFrame:SetPoint(self.portraitBackground:GetPoint())
@@ -254,16 +254,16 @@ local function SetPetHappiness(self)
         self.portraitBackground:SetTexCoord(0.5, 0.75, 0, 1)
     end
     
-	GwPetFrameHappinessInvisibleFrame.tooltip = _G["PET_HAPPINESS"  ..  happiness]
+    GwPetFrameHappinessInvisibleFrame.tooltip = _G["PET_HAPPINESS"  ..  happiness]
     GwPetFrameHappinessInvisibleFrame.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
     
-	if loyaltyRate < 0 then
-		GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = _G["LOSING_LOYALTY"]
-	elseif loyaltyRate > 0 then
-		GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = _G["GAINING_LOYALTY"]
-	else
-		GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = nil
-	end
+    if loyaltyRate < 0 then
+        GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = _G["LOSING_LOYALTY"]
+    elseif loyaltyRate > 0 then
+        GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = _G["GAINING_LOYALTY"]
+    else
+        GwPetFrameHappinessInvisibleFrame.tooltipLoyalty = nil
+    end
 end
 
 local function updatePetData(self, event, unit)

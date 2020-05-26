@@ -7,12 +7,12 @@ local FIREMAW_ID = 11983
 local WING_BUFFET_ID = 23339
 
 ThreatLib:GetModule("NPCCore-r"..MINOR):RegisterModule(FIREMAW_ID, function(Firemaw)
-	function Firemaw:Init()
+    function Firemaw:Init()
         self:RegisterCombatant(FIREMAW_ID, true)
-		self:RegisterSpellDamageHandler(FIREMAW_ID, WING_BUFFET_ID, self.WingBuffet)
-	end
+        self:RegisterSpellDamageHandler(FIREMAW_ID, WING_BUFFET_ID, self.WingBuffet)
+    end
 
-	function Firemaw:WingBuffet(sourceGUID, unitId)
+    function Firemaw:WingBuffet(sourceGUID, unitId)
         self:ModifyThreat(sourceGUID, unitId, 0.5, 0)
-	end
+    end
 end)

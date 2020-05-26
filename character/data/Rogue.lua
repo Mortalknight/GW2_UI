@@ -1,6 +1,6 @@
 local _, GW = ...
 if (GW.myclass ~= "ROGUE") then
-	return
+    return
 end
 
 -- ordered by rank
@@ -13,7 +13,7 @@ $$('#tab-abilities .listview-mode-default .clickable tr td:nth-child(3)>div')
     }))
     .sort((a,b)=>a.rank.localeCompare(b.rank))
     .map(s=>`${s.id} --[[${s.rank}]]`)
-	.join(',')
+    .join(',')
 
 or
 
@@ -29,103 +29,103 @@ $$('#search-listview .listview-mode-default .clickable tr td:nth-child(3)>div')
 --]=====]
 local stealth = {1784 --[[Rank 1]], 1785 --[[Rank 2]], 1786 --[[Rank 3]], 1787 --[[Rank 4]]}
 local backstab = {
-	53 --[[Rank 1]],
-	2589 --[[Rank 2]],
-	2590 --[[Rank 3]],
-	2591 --[[Rank 4]],
-	8721 --[[Rank 5]],
-	11279 --[[Rank 6]],
-	11280 --[[Rank 7]],
-	11281 --[[Rank 8]],
-	25300 --[[Rank 9]]
+    53 --[[Rank 1]],
+    2589 --[[Rank 2]],
+    2590 --[[Rank 3]],
+    2591 --[[Rank 4]],
+    8721 --[[Rank 5]],
+    11279 --[[Rank 6]],
+    11280 --[[Rank 7]],
+    11281 --[[Rank 8]],
+    25300 --[[Rank 9]]
 }
 local gouge = {1776 --[[Rank 1]], 1777 --[[Rank 2]], 8629 --[[Rank 3]], 11285 --[[Rank 4]], 11286 --[[Rank 5]]}
 local sap = {6770 --[[Rank 1]], 2070 --[[Rank 2]], 11297 --[[Rank 3]]}
 local garrote = {
-	703 --[[Rank 1]],
-	8631 --[[Rank 2]],
-	8632 --[[Rank 3]],
-	8633 --[[Rank 4]],
-	11289 --[[Rank 5]],
-	11290 --[[Rank 6]]
+    703 --[[Rank 1]],
+    8631 --[[Rank 2]],
+    8632 --[[Rank 3]],
+    8633 --[[Rank 4]],
+    11289 --[[Rank 5]],
+    11290 --[[Rank 6]]
 }
 local feint = {1966 --[[Rank 1]], 6768 --[[Rank 2]], 8637 --[[Rank 3]], 11303 --[[Rank 4]], 25302 --[[Rank 5]]}
 local rupture = {
-	1943 --[[Rank 1]],
-	8639 --[[Rank 2]],
-	8640 --[[Rank 3]],
-	11273 --[[Rank 4]],
-	11274 --[[Rank 5]],
-	11275 --[[Rank 6]]
+    1943 --[[Rank 1]],
+    8639 --[[Rank 2]],
+    8640 --[[Rank 3]],
+    11273 --[[Rank 4]],
+    11274 --[[Rank 5]],
+    11275 --[[Rank 6]]
 }
 local ambush = {
-	8676 --[[Rank 1]],
-	8724 --[[Rank 2]],
-	8725 --[[Rank 3]],
-	11267 --[[Rank 4]],
-	11268 --[[Rank 5]],
-	11269 --[[Rank 6]]
+    8676 --[[Rank 1]],
+    8724 --[[Rank 2]],
+    8725 --[[Rank 3]],
+    11267 --[[Rank 4]],
+    11268 --[[Rank 5]],
+    11269 --[[Rank 6]]
 }
 local exposeArmor = {8647 --[[Rank 1]], 8649 --[[Rank 2]], 8650 --[[Rank 3]], 11197 --[[Rank 4]], 11198 --[[Rank 5]]}
 local kick = {1766 --[[Rank 1]], 1767 --[[Rank 2]], 1768 --[[Rank 3]], 1769 --[[Rank 4]]}
 local cripplingPoison = {3420 --[[Rank 1]], 3421 --[[Rank 2]]}
 local mindNumbingPoison = {5763 --[[Rank 1]], 8694 --[[Rank 2]], 11400 --[[Rank 3]]}
 local instantPoiston = {
-	8681 --[[Rank 1]],
-	8687 --[[Rank 2]],
-	8691 --[[Rank 3]],
-	11341 --[[Rank 4]],
-	11342 --[[Rank 5]],
-	11343 --[[Rank 6]]
+    8681 --[[Rank 1]],
+    8687 --[[Rank 2]],
+    8691 --[[Rank 3]],
+    11341 --[[Rank 4]],
+    11342 --[[Rank 5]],
+    11343 --[[Rank 6]]
 }
 local deadlyPoison = {2835 --[[Rank 1]], 2837 --[[Rank 2]], 11357 --[[Rank 3]], 11358 --[[Rank 4]], 25347 --[[Rank 5]]}
 local sinisterStrike = {
-	1752 --[[Rank 1]],
-	1757 --[[Rank 2]],
-	1758 --[[Rank 3]],
-	1759 --[[Rank 4]],
-	1760 --[[Rank 5]],
-	8621 --[[Rank 6]],
-	11293 --[[Rank 7]],
-	11294 --[[Rank 8]]
+    1752 --[[Rank 1]],
+    1757 --[[Rank 2]],
+    1758 --[[Rank 3]],
+    1759 --[[Rank 4]],
+    1760 --[[Rank 5]],
+    8621 --[[Rank 6]],
+    11293 --[[Rank 7]],
+    11294 --[[Rank 8]]
 }
 local eviscerate = {
-	2098 --[[Rank 1]],
-	6760 --[[Rank 2]],
-	6761 --[[Rank 3]],
-	6762 --[[Rank 4]],
-	8623 --[[Rank 5]],
-	8624 --[[Rank 6]],
-	11299 --[[Rank 7]],
-	11300 --[[Rank 8]],
-	31016 --[[Rank 9]]
+    2098 --[[Rank 1]],
+    6760 --[[Rank 2]],
+    6761 --[[Rank 3]],
+    6762 --[[Rank 4]],
+    8623 --[[Rank 5]],
+    8624 --[[Rank 6]],
+    11299 --[[Rank 7]],
+    11300 --[[Rank 8]],
+    31016 --[[Rank 9]]
 }
 local sprint = {2983 --[[Rank 1]], 8696 --[[Rank 2]], 11305 --[[Rank 3]]}
 local sliceAndDice = {5171 --[[Rank 1]], 6774 --[[Rank 2]]}
 local vanish = {1856 --[[Rank 1]], 1857 --[[Rank 2]]}
 
 GW:SetPreviousAbilityMap(
-	{
-		stealth,
-		backstab,
-		gouge,
-		sap,
-		garrote,
-		feint,
-		rupture,
-		ambush,
-		exposeArmor,
-		kick,
-		cripplingPoison,
-		mindNumbingPoison,
-		instantPoiston,
-		deadlyPoison,
-		sinisterStrike,
-		eviscerate,
-		sprint,
-		sliceAndDice,
-		vanish
-	}
+    {
+        stealth,
+        backstab,
+        gouge,
+        sap,
+        garrote,
+        feint,
+        rupture,
+        ambush,
+        exposeArmor,
+        kick,
+        cripplingPoison,
+        mindNumbingPoison,
+        instantPoiston,
+        deadlyPoison,
+        sinisterStrike,
+        eviscerate,
+        sprint,
+        sliceAndDice,
+        vanish
+    }
 )
 
 GW.SpellsByLevel = {

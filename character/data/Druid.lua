@@ -1,18 +1,18 @@
 local _, GW = ...
 if (GW.myclass ~= "DRUID") then
-	return
+    return
 end
 
 local faerieFireFeral = {16857 --[[Rank 1]], 17390 --[[Rank 2]], 17391 --[[Rank 3]], 17392 --[[Rank 4]]}
 local ravage = {6785 --[[Rank 1]], 6787 --[[Rank 2]], 9866 --[[Rank 3]], 9867 --[[Rank 4]]}
 local maul = {
-	6807 --[[Rank 1]],
-	6808 --[[Rank 2]],
-	6809 --[[Rank 3]],
-	8972 --[[Rank 4]],
-	9745 --[[Rank 5]],
-	9880 --[[Rank 6]],
-	9881 --[[Rank 7]]
+    6807 --[[Rank 1]],
+    6808 --[[Rank 2]],
+    6809 --[[Rank 3]],
+    8972 --[[Rank 4]],
+    9745 --[[Rank 5]],
+    9880 --[[Rank 6]],
+    9881 --[[Rank 7]]
 }
 local demoralizingRoar = {99 --[[Rank 1]], 1735 --[[Rank 2]], 9490 --[[Rank 3]], 9747 --[[Rank 4]], 9898 --[[Rank 5]]}
 local cower = {8998, 9000, 9892}
@@ -22,11 +22,11 @@ local rake = {1822 --[[Rank 1]], 1823 --[[Rank 2]], 1824 --[[Rank 3]], 9904 --[[
 local pounce = {9005 --[[Rank 1]], 9823 --[[Rank 2]], 9827 --[[Rank 3]]}
 local frenziedRegeneration = {22842 --[[Rank 1]], 22895 --[[Rank 2]], 22896 --[[Rank 3]]}
 local freociousBite = {
-	22568 --[[Rank 1]],
-	22827 --[[Rank 2]],
-	22828 --[[Rank 3]],
-	22829 --[[Rank 4]],
-	31018 --[[Rank 5]]
+    22568 --[[Rank 1]],
+    22827 --[[Rank 2]],
+    22828 --[[Rank 3]],
+    22829 --[[Rank 4]],
+    31018 --[[Rank 5]]
 }
 local claw = {1082 --[[Rank 1]], 3029 --[[Rank 2]], 5201 --[[Rank 3]], 9849 --[[Rank 4]], 9850}
 local tigersFury = {5217 --[[Rank 1]], 6793 --[[Rank 2]], 9845 --[[Rank 3]], 9846 --[[Rank 4]]}
@@ -37,25 +37,25 @@ local dash = {1850, 9821}
 
 
 GW:SetPreviousAbilityMap(
-	{
-		faerieFireFeral,
-		ravage,
-		maul,
-		demoralizingRoar,
-		cower,
-		swipe,
-		shred,
-		rake,
-		pounce,
-		frenziedRegeneration,
-		freociousBite,
-		claw,
-		tigersFury,
-		prowl,
-		rip,
-		bash,
-		dash
-	}
+    {
+        faerieFireFeral,
+        ravage,
+        maul,
+        demoralizingRoar,
+        cower,
+        swipe,
+        shred,
+        rake,
+        pounce,
+        frenziedRegeneration,
+        freociousBite,
+        claw,
+        tigersFury,
+        prowl,
+        rip,
+        bash,
+        dash
+    }
 )
 
 GW.SpellsByLevel = {

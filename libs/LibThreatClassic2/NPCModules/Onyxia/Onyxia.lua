@@ -8,17 +8,17 @@ local FIREBALL_ID = 18392
 local KNOCK_AWAY_ID = 19633
 
 ThreatLib:GetModule("NPCCore-r"..MINOR):RegisterModule(ONYXIA_ID, function(Onyxia)
-	function Onyxia:Init()
+    function Onyxia:Init()
         self:RegisterCombatant(ONYXIA_ID, true)
-		self:RegisterSpellHandler("SPELL_CAST_SUCCESS", ONYXIA_ID, FIREBALL_ID, self.Fireball)
-		self:RegisterSpellDamageHandler(ONYXIA_ID, KNOCK_AWAY_ID, self.KnockAway)
-	end
+        self:RegisterSpellHandler("SPELL_CAST_SUCCESS", ONYXIA_ID, FIREBALL_ID, self.Fireball)
+        self:RegisterSpellDamageHandler(ONYXIA_ID, KNOCK_AWAY_ID, self.KnockAway)
+    end
 
     function Onyxia:Fireball(sourceGUID, unitId)
         self:ModifyThreat(sourceGUID, unitId, 0, 0)
-	end
+    end
 
-	function Onyxia:KnockAway(sourceGUID, unitId)
+    function Onyxia:KnockAway(sourceGUID, unitId)
         self:ModifyThreat(sourceGUID, unitId, 0.75, 0)
-	end
+    end
 end)

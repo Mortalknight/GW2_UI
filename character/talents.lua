@@ -131,24 +131,24 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
 end
 
 local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesaturated, tierUnlocked, ...)
-	local tier, column, isLearnable
+    local tier, column, isLearnable
     local requirementsMet
 
-	if tierUnlocked and not forceDesaturated then
-		requirementsMet = 1
-	else
-		requirementsMet = nil
-	end
-	for i = 1, select('#', ...), 3 do
-		tier = select(i, ...)
-		column = select(i + 1, ...)
-		isLearnable = select(i + 2, ...)
-		if not isLearnable or forceDesaturated then
-			requirementsMet = nil
-		end
-		getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
-	end
-	return requirementsMet
+    if tierUnlocked and not forceDesaturated then
+        requirementsMet = 1
+    else
+        requirementsMet = nil
+    end
+    for i = 1, select('#', ...), 3 do
+        tier = select(i, ...)
+        column = select(i + 1, ...)
+        isLearnable = select(i + 2, ...)
+        if not isLearnable or forceDesaturated then
+            requirementsMet = nil
+        end
+        getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
+    end
+    return requirementsMet
 end
 
 local function updateTalentTrees()
@@ -191,11 +191,11 @@ local function updateTalentTrees()
                 button.active = true
 
                 -- If player has no talent points then show only talents with points in them
-    			if TalentFrame.talentPoints <= 0 and rank == 0 then
-    				forceDesaturated = 1
-    			else
-    				forceDesaturated = nil
-    			end
+                if TalentFrame.talentPoints <= 0 and rank == 0 then
+                    forceDesaturated = 1
+                else
+                    forceDesaturated = nil
+                end
                 -- If the player has spent at least 5 talent points in the previous tier
                 local tierUnlocked = nil
                 if (tier - 1) * 5 <= TalentFrame.pointsSpent then

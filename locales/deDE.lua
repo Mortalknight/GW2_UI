@@ -2,29 +2,29 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
-	
-	--Fonts
-	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
-	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
-	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    -- Create a global variable for the language strings
+    local L = GW.L
+    
+    --Fonts
+    L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
+    L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
-	-- Classic ones
-	L["FPS_TOOLTIP_1"] = "Bildrate "
-	L["FPS_TOOLTIP_2"] = "Latenz (Standort) "
-	L["FPS_TOOLTIP_3"] = "Latenz (Welt) "
-	L["FPS_TOOLTIP_4"] = "Bandbreite (Download) "
-	L["FPS_TOOLTIP_5"] = "Bandbreite (Upload) "
-	L["FPS_TOOLTIP_6"] = "Speicher für Addons: "
-	L["FUTURE_SPELLS"] = "Zukünftige Zauber"
-	L["INVTYPE_RANGED"] = "Distanz"
-	
-	--Strings
-	L["QUEST_REQUIRED_ITEMS"] = "Erforderliches Item:"
+    -- Classic ones
+    L["FPS_TOOLTIP_1"] = "Bildrate "
+    L["FPS_TOOLTIP_2"] = "Latenz (Standort) "
+    L["FPS_TOOLTIP_3"] = "Latenz (Welt) "
+    L["FPS_TOOLTIP_4"] = "Bandbreite (Download) "
+    L["FPS_TOOLTIP_5"] = "Bandbreite (Upload) "
+    L["FPS_TOOLTIP_6"] = "Speicher für Addons: "
+    L["FUTURE_SPELLS"] = "Zukünftige Zauber"
+    L["INVTYPE_RANGED"] = "Distanz"
+    
+    --Strings
+    L["QUEST_REQUIRED_ITEMS"] = "Erforderliches Item:"
     L["ACTION_BAR_FADE"] = "Aktionsleisten ausblenden"
     L["ACTION_BAR_FADE_DESC"] = "Blendet die zusätzlichen Aktionsleisten außerhalb des Kampfes aus."
     L["ACTION_BARS_DESC"] = "Benutze die verbesserten GW2 UI Aktionsleisten."
@@ -168,7 +168,7 @@ local function GWUseThisLocalization()
     L["RAID_UNITS_PER_COLUMN_DESC"] = "Setzen die Anzahl der Wachstumsrichtung der Schlachtzugsfenster pro Spalte oder Zeile, abhängig von der Wachstumsrichtung."
     L["RESOURCE_DESC"] = "Ersetze die Standard Mana/Powerbar."
     L["SETTING_LOCK_HUD"] = "HUD sperren"
-    L["SETTINGS_BUTTON"] = "GW2 UI Einstellungen"
+    L["SETTINGS_BUTTON"] = "GW2 UI"
     L["SETTINGS_NO_LOAD_ERROR"] = "Einige Texte wurden nicht geladen, bitte versuche dein Interface neu zu laden."
     L["SETTINGS_RESET_TO_DEFAULT"] = "Standardeinstellungen wiederherstellen."
     L["SETTINGS_SAVE_RELOAD"] = "Speichern und \nneu laden"
@@ -302,9 +302,9 @@ local function GWUseThisLocalization()
 end
 
 if GetLocale() == "deDE" then
-	GWUseThisLocalization()
+    GWUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don"t need it, remove it from memory.
 GWUseThisLocalization = nil
-	
+    

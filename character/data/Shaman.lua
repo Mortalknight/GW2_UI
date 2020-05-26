@@ -1,6 +1,6 @@
 local _, GW = ...
 if (GW.myclass ~= "SHAMAN") then
-	return
+    return
 end
 GW.SpellsByLevel = {
 [0] = {

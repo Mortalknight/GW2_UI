@@ -58,20 +58,20 @@ AceComm.multipart_spool = AceComm.multipart_spool or {}
 -- @param prefix A printable character (\032-\255) classification of the message (typically AddonName or AddonNameEvent), max 16 characters
 -- @param method Callback to call on message reception: Function reference, or method name (string) to call on self. Defaults to "OnCommReceived"
 function AceComm:RegisterComm(prefix, method)
-	if method == nil then
-		method = "OnCommReceived"
-	end
+    if method == nil then
+        method = "OnCommReceived"
+    end
 
-	if #prefix > 16 then -- TODO: 15?
-		error("AceComm:RegisterComm(prefix,method): prefix length is limited to 16 characters")
-	end
-	if C_ChatInfo then
-		C_ChatInfo.RegisterAddonMessagePrefix(prefix)
-	else
-		RegisterAddonMessagePrefix(prefix)
-	end
+    if #prefix > 16 then -- TODO: 15?
+        error("AceComm:RegisterComm(prefix,method): prefix length is limited to 16 characters")
+    end
+    if C_ChatInfo then
+        C_ChatInfo.RegisterAddonMessagePrefix(prefix)
+    else
+        RegisterAddonMessagePrefix(prefix)
+    end
 
-	return AceComm._RegisterComm(self, prefix, method)	-- created by CallbackHandler
+    return AceComm._RegisterComm(self, prefix, method)    -- created by CallbackHandler
 end
 
 local warnedPrefix=false
@@ -85,60 +85,60 @@ local warnedPrefix=false
 -- @param callbackFn OPTIONAL: callback function to be called as each chunk is sent. receives 3 args: the user supplied arg (see next), the number of bytes sent so far, and the number of bytes total to send.
 -- @param callbackArg: OPTIONAL: first arg to the callback function. nil will be passed if not specified.
 function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callbackFn, callbackArg)
-	prio = prio or "NORMAL"	-- pasta's reference implementation had different prio for singlepart and multipart, but that's a very bad idea since that can easily lead to out-of-sequence delivery!
-	if not( type(prefix)=="string" and
-			type(text)=="string" and
-			type(distribution)=="string" and
-			(target==nil or type(target)=="string" or type(target)=="number") and
-			(prio=="BULK" or prio=="NORMAL" or prio=="ALERT")
-		) then
-		error('Usage: SendCommMessage(addon, "prefix", "text", "distribution"[, "target"[, "prio"[, callbackFn, callbackarg]]])', 2)
-	end
+    prio = prio or "NORMAL"    -- pasta's reference implementation had different prio for singlepart and multipart, but that's a very bad idea since that can easily lead to out-of-sequence delivery!
+    if not( type(prefix)=="string" and
+            type(text)=="string" and
+            type(distribution)=="string" and
+            (target==nil or type(target)=="string" or type(target)=="number") and
+            (prio=="BULK" or prio=="NORMAL" or prio=="ALERT")
+        ) then
+        error('Usage: SendCommMessage(addon, "prefix", "text", "distribution"[, "target"[, "prio"[, callbackFn, callbackarg]]])', 2)
+    end
 
-	local textlen = #text
-	local maxtextlen = 255  -- Yes, the max is 255 even if the dev post said 256. I tested. Char 256+ get silently truncated. /Mikk, 20110327
-	local queueName = prefix..distribution..(target or "")
+    local textlen = #text
+    local maxtextlen = 255  -- Yes, the max is 255 even if the dev post said 256. I tested. Char 256+ get silently truncated. /Mikk, 20110327
+    local queueName = prefix..distribution..(target or "")
 
-	local ctlCallback = nil
-	if callbackFn then
-		ctlCallback = function(sent)
-			return callbackFn(callbackArg, sent, textlen)
-		end
-	end
+    local ctlCallback = nil
+    if callbackFn then
+        ctlCallback = function(sent)
+            return callbackFn(callbackArg, sent, textlen)
+        end
+    end
 
-	local forceMultipart
-	if match(text, "^[\001-\009]") then -- 4.1+: see if the first character is a control character
-		-- we need to escape the first character with a \004
-		if textlen+1 > maxtextlen then	-- would we go over the size limit?
-			forceMultipart = true	-- just make it multipart, no escape problems then
-		else
-			text = "\004" .. text
-		end
-	end
+    local forceMultipart
+    if match(text, "^[\001-\009]") then -- 4.1+: see if the first character is a control character
+        -- we need to escape the first character with a \004
+        if textlen+1 > maxtextlen then    -- would we go over the size limit?
+            forceMultipart = true    -- just make it multipart, no escape problems then
+        else
+            text = "\004" .. text
+        end
+    end
 
-	if not forceMultipart and textlen <= maxtextlen then
-		-- fits all in one message
-		CTL:SendAddonMessage(prio, prefix, text, distribution, target, queueName, ctlCallback, textlen)
-	else
-		maxtextlen = maxtextlen - 1	-- 1 extra byte for part indicator in prefix(4.0)/start of message(4.1)
+    if not forceMultipart and textlen <= maxtextlen then
+        -- fits all in one message
+        CTL:SendAddonMessage(prio, prefix, text, distribution, target, queueName, ctlCallback, textlen)
+    else
+        maxtextlen = maxtextlen - 1    -- 1 extra byte for part indicator in prefix(4.0)/start of message(4.1)
 
-		-- first part
-		local chunk = strsub(text, 1, maxtextlen)
-		CTL:SendAddonMessage(prio, prefix, MSG_MULTI_FIRST..chunk, distribution, target, queueName, ctlCallback, maxtextlen)
+        -- first part
+        local chunk = strsub(text, 1, maxtextlen)
+        CTL:SendAddonMessage(prio, prefix, MSG_MULTI_FIRST..chunk, distribution, target, queueName, ctlCallback, maxtextlen)
 
-		-- continuation
-		local pos = 1+maxtextlen
+        -- continuation
+        local pos = 1+maxtextlen
 
-		while pos+maxtextlen <= textlen do
-			chunk = strsub(text, pos, pos+maxtextlen-1)
-			CTL:SendAddonMessage(prio, prefix, MSG_MULTI_NEXT..chunk, distribution, target, queueName, ctlCallback, pos+maxtextlen-1)
-			pos = pos + maxtextlen
-		end
+        while pos+maxtextlen <= textlen do
+            chunk = strsub(text, pos, pos+maxtextlen-1)
+            CTL:SendAddonMessage(prio, prefix, MSG_MULTI_NEXT..chunk, distribution, target, queueName, ctlCallback, pos+maxtextlen-1)
+            pos = pos + maxtextlen
+        end
 
-		-- final part
-		chunk = strsub(text, pos)
-		CTL:SendAddonMessage(prio, prefix, MSG_MULTI_LAST..chunk, distribution, target, queueName, ctlCallback, textlen)
-	end
+        -- final part
+        chunk = strsub(text, pos)
+        CTL:SendAddonMessage(prio, prefix, MSG_MULTI_LAST..chunk, distribution, target, queueName, ctlCallback, textlen)
+    end
 end
 
 
@@ -147,81 +147,81 @@ end
 ----------------------------------------
 
 do
-	local compost = setmetatable({}, {__mode = "k"})
-	local function new()
-		local t = next(compost)
-		if t then
-			compost[t]=nil
-			for i=#t,3,-1 do	-- faster than pairs loop. don't even nil out 1/2 since they'll be overwritten
-				t[i]=nil
-			end
-			return t
-		end
+    local compost = setmetatable({}, {__mode = "k"})
+    local function new()
+        local t = next(compost)
+        if t then
+            compost[t]=nil
+            for i=#t,3,-1 do    -- faster than pairs loop. don't even nil out 1/2 since they'll be overwritten
+                t[i]=nil
+            end
+            return t
+        end
 
-		return {}
-	end
+        return {}
+    end
 
-	local function lostdatawarning(prefix,sender,where)
-		DEFAULT_CHAT_FRAME:AddMessage(MAJOR..": Warning: lost network data regarding '"..tostring(prefix).."' from '"..tostring(sender).."' (in "..where..")")
-	end
+    local function lostdatawarning(prefix,sender,where)
+        DEFAULT_CHAT_FRAME:AddMessage(MAJOR..": Warning: lost network data regarding '"..tostring(prefix).."' from '"..tostring(sender).."' (in "..where..")")
+    end
 
-	function AceComm:OnReceiveMultipartFirst(prefix, message, distribution, sender)
-		local key = prefix.."\t"..distribution.."\t"..sender	-- a unique stream is defined by the prefix + distribution + sender
-		local spool = AceComm.multipart_spool
+    function AceComm:OnReceiveMultipartFirst(prefix, message, distribution, sender)
+        local key = prefix.."\t"..distribution.."\t"..sender    -- a unique stream is defined by the prefix + distribution + sender
+        local spool = AceComm.multipart_spool
 
-		--[[
-		if spool[key] then
-			lostdatawarning(prefix,sender,"First")
-			-- continue and overwrite
-		end
-		--]]
+        --[[
+        if spool[key] then
+            lostdatawarning(prefix,sender,"First")
+            -- continue and overwrite
+        end
+        --]]
 
-		spool[key] = message  -- plain string for now
-	end
+        spool[key] = message  -- plain string for now
+    end
 
-	function AceComm:OnReceiveMultipartNext(prefix, message, distribution, sender)
-		local key = prefix.."\t"..distribution.."\t"..sender	-- a unique stream is defined by the prefix + distribution + sender
-		local spool = AceComm.multipart_spool
-		local olddata = spool[key]
+    function AceComm:OnReceiveMultipartNext(prefix, message, distribution, sender)
+        local key = prefix.."\t"..distribution.."\t"..sender    -- a unique stream is defined by the prefix + distribution + sender
+        local spool = AceComm.multipart_spool
+        local olddata = spool[key]
 
-		if not olddata then
-			--lostdatawarning(prefix,sender,"Next")
-			return
-		end
+        if not olddata then
+            --lostdatawarning(prefix,sender,"Next")
+            return
+        end
 
-		if type(olddata)~="table" then
-			-- ... but what we have is not a table. So make it one. (Pull a composted one if available)
-			local t = new()
-			t[1] = olddata    -- add old data as first string
-			t[2] = message    -- and new message as second string
-			spool[key] = t    -- and put the table in the spool instead of the old string
-		else
-			tinsert(olddata, message)
-		end
-	end
+        if type(olddata)~="table" then
+            -- ... but what we have is not a table. So make it one. (Pull a composted one if available)
+            local t = new()
+            t[1] = olddata    -- add old data as first string
+            t[2] = message    -- and new message as second string
+            spool[key] = t    -- and put the table in the spool instead of the old string
+        else
+            tinsert(olddata, message)
+        end
+    end
 
-	function AceComm:OnReceiveMultipartLast(prefix, message, distribution, sender)
-		local key = prefix.."\t"..distribution.."\t"..sender	-- a unique stream is defined by the prefix + distribution + sender
-		local spool = AceComm.multipart_spool
-		local olddata = spool[key]
+    function AceComm:OnReceiveMultipartLast(prefix, message, distribution, sender)
+        local key = prefix.."\t"..distribution.."\t"..sender    -- a unique stream is defined by the prefix + distribution + sender
+        local spool = AceComm.multipart_spool
+        local olddata = spool[key]
 
-		if not olddata then
-			--lostdatawarning(prefix,sender,"End")
-			return
-		end
+        if not olddata then
+            --lostdatawarning(prefix,sender,"End")
+            return
+        end
 
-		spool[key] = nil
+        spool[key] = nil
 
-		if type(olddata) == "table" then
-			-- if we've received a "next", the spooled data will be a table for rapid & garbage-free tconcat
-			tinsert(olddata, message)
-			AceComm.callbacks:Fire(prefix, tconcat(olddata, ""), distribution, sender)
-			compost[olddata] = true
-		else
-			-- if we've only received a "first", the spooled data will still only be a string
-			AceComm.callbacks:Fire(prefix, olddata..message, distribution, sender)
-		end
-	end
+        if type(olddata) == "table" then
+            -- if we've received a "next", the spooled data will be a table for rapid & garbage-free tconcat
+            tinsert(olddata, message)
+            AceComm.callbacks:Fire(prefix, tconcat(olddata, ""), distribution, sender)
+            compost[olddata] = true
+        else
+            -- if we've only received a "first", the spooled data will still only be a string
+            AceComm.callbacks:Fire(prefix, olddata..message, distribution, sender)
+        end
+    end
 end
 
 
@@ -234,38 +234,38 @@ end
 ----------------------------------------
 
 if not AceComm.callbacks then
-	AceComm.callbacks = CallbackHandler:New(AceComm,
-						"_RegisterComm",
-						"UnregisterComm",
-						"UnregisterAllComm")
+    AceComm.callbacks = CallbackHandler:New(AceComm,
+                        "_RegisterComm",
+                        "UnregisterComm",
+                        "UnregisterAllComm")
 end
 
 AceComm.callbacks.OnUsed = nil
 AceComm.callbacks.OnUnused = nil
 
 local function OnEvent(self, event, prefix, message, distribution, sender)
-	if event == "CHAT_MSG_ADDON" then
-		sender = Ambiguate(sender, "none")
-		local control, rest = match(message, "^([\001-\009])(.*)")
-		if control then
-			if control==MSG_MULTI_FIRST then
-				AceComm:OnReceiveMultipartFirst(prefix, rest, distribution, sender)
-			elseif control==MSG_MULTI_NEXT then
-				AceComm:OnReceiveMultipartNext(prefix, rest, distribution, sender)
-			elseif control==MSG_MULTI_LAST then
-				AceComm:OnReceiveMultipartLast(prefix, rest, distribution, sender)
-			elseif control==MSG_ESCAPE then
-				AceComm.callbacks:Fire(prefix, rest, distribution, sender)
-			else
-				-- unknown control character, ignore SILENTLY (dont warn unnecessarily about future extensions!)
-			end
-		else
-			-- single part: fire it off immediately and let CallbackHandler decide if it's registered or not
-			AceComm.callbacks:Fire(prefix, message, distribution, sender)
-		end
-	else
-		assert(false, "Received "..tostring(event).." event?!")
-	end
+    if event == "CHAT_MSG_ADDON" then
+        sender = Ambiguate(sender, "none")
+        local control, rest = match(message, "^([\001-\009])(.*)")
+        if control then
+            if control==MSG_MULTI_FIRST then
+                AceComm:OnReceiveMultipartFirst(prefix, rest, distribution, sender)
+            elseif control==MSG_MULTI_NEXT then
+                AceComm:OnReceiveMultipartNext(prefix, rest, distribution, sender)
+            elseif control==MSG_MULTI_LAST then
+                AceComm:OnReceiveMultipartLast(prefix, rest, distribution, sender)
+            elseif control==MSG_ESCAPE then
+                AceComm.callbacks:Fire(prefix, rest, distribution, sender)
+            else
+                -- unknown control character, ignore SILENTLY (dont warn unnecessarily about future extensions!)
+            end
+        else
+            -- single part: fire it off immediately and let CallbackHandler decide if it's registered or not
+            AceComm.callbacks:Fire(prefix, message, distribution, sender)
+        end
+    else
+        assert(false, "Received "..tostring(event).." event?!")
+    end
 end
 
 AceComm.frame = AceComm.frame or CreateFrame("Frame", "AceComm30Frame")
@@ -279,27 +279,27 @@ AceComm.frame:RegisterEvent("CHAT_MSG_ADDON")
 ----------------------------------------
 
 local mixins = {
-	"RegisterComm",
-	"UnregisterComm",
-	"UnregisterAllComm",
-	"SendCommMessage",
+    "RegisterComm",
+    "UnregisterComm",
+    "UnregisterAllComm",
+    "SendCommMessage",
 }
 
 -- Embeds AceComm-3.0 into the target object making the functions from the mixins list available on target:..
 -- @param target target object to embed AceComm-3.0 in
 function AceComm:Embed(target)
-	for k, v in pairs(mixins) do
-		target[v] = self[v]
-	end
-	self.embeds[target] = true
-	return target
+    for k, v in pairs(mixins) do
+        target[v] = self[v]
+    end
+    self.embeds[target] = true
+    return target
 end
 
 function AceComm:OnEmbedDisable(target)
-	target:UnregisterAllComm()
+    target:UnregisterAllComm()
 end
 
 -- Update embeds
 for target, v in pairs(AceComm.embeds) do
-	AceComm:Embed(target)
+    AceComm:Embed(target)
 end

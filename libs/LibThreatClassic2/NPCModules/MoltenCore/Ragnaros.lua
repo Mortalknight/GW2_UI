@@ -7,12 +7,12 @@ local RAGNAROS_ID = 11502
 local WRATH_ID = 20566
 
 ThreatLib:GetModule("NPCCore-r"..MINOR):RegisterModule(RAGNAROS_ID, function(Ragnaros)
-	function Ragnaros:Init()
-		self:RegisterCombatant(RAGNAROS_ID, true)
-		self:RegisterSpellHandler("SPELL_CAST_SUCCESS", RAGNAROS_ID, WRATH_ID, self.Wrath)
-	end
+    function Ragnaros:Init()
+        self:RegisterCombatant(RAGNAROS_ID, true)
+        self:RegisterSpellHandler("SPELL_CAST_SUCCESS", RAGNAROS_ID, WRATH_ID, self.Wrath)
+    end
 
-	function Ragnaros:Wrath()
-		self:WipeRaidThreatOnMob(RAGNAROS_ID)
-	end
+    function Ragnaros:Wrath()
+        self:WipeRaidThreatOnMob(RAGNAROS_ID)
+    end
 end)

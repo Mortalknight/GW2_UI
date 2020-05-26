@@ -2,29 +2,29 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
+    -- Create a global variable for the language strings
+    local L = GW.L
 
-	--Fonts
-	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
-	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
-	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    --Fonts
+    L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
+    L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
-	--classic ones
-	L["FPS_TOOLTIP_1"] = "FPS "
-	L["FPS_TOOLTIP_2"] = "Latência (Local) "
-	L["FPS_TOOLTIP_3"] = "Latência (Global) "
-	L["FPS_TOOLTIP_4"] = "Banda (Download) "
-	L["FPS_TOOLTIP_5"] = "Banda (Upload) "
-	L["FPS_TOOLTIP_6"] = "Memória dos Addons: "
-	L["FUTURE_SPELLS"] = "Future Spells"
-	L["INVTYPE_RANGED"] = "Longo alcance"
-	
-	--Strings
-	L["ACTION_BAR_FADE"] = "Ocultar Barra de Ações"
+    --classic ones
+    L["FPS_TOOLTIP_1"] = "FPS "
+    L["FPS_TOOLTIP_2"] = "Latência (Local) "
+    L["FPS_TOOLTIP_3"] = "Latência (Global) "
+    L["FPS_TOOLTIP_4"] = "Banda (Download) "
+    L["FPS_TOOLTIP_5"] = "Banda (Upload) "
+    L["FPS_TOOLTIP_6"] = "Memória dos Addons: "
+    L["FUTURE_SPELLS"] = "Future Spells"
+    L["INVTYPE_RANGED"] = "Longo alcance"
+    
+    --Strings
+    L["ACTION_BAR_FADE"] = "Ocultar Barra de Ações"
     L["ACTION_BAR_FADE_DESC"] = "Ocultar Barras de Ações adicionais quando fora de combate."
     L["ACTION_BARS_DESC"] = "Usar as Barras de Ações melhoradas pelo GW2 ui"
     L["ADV_CAST_BAR"] = "Barra de Conjuração Avançada"
@@ -295,16 +295,16 @@ local function GWUseThisLocalization()
     L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
-	
-	--Composite
-	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
-	L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
-	L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
-	L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
+    
+    --Composite
+    L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
+    L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
+    L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
+    L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
 end
 
 if GetLocale() == "ptBR" then
-	GWUseThisLocalization()
+    GWUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don"t need it, remove it from memory.

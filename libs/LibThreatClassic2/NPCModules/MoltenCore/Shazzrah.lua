@@ -7,12 +7,12 @@ local SHAZZRAH_ID = 12264
 local GATE_ID = 23138
 
 ThreatLib:GetModule("NPCCore-r"..MINOR):RegisterModule(SHAZZRAH_ID, function(Shazzrah)
-	function Shazzrah:Init()
-		self:RegisterCombatant(SHAZZRAH_ID, true)
-		self:RegisterSpellHandler("SPELL_CAST_SUCCESS", SHAZZRAH_ID, GATE_ID, self.Gate)
-	end
+    function Shazzrah:Init()
+        self:RegisterCombatant(SHAZZRAH_ID, true)
+        self:RegisterSpellHandler("SPELL_CAST_SUCCESS", SHAZZRAH_ID, GATE_ID, self.Gate)
+    end
 
-	function Shazzrah:Gate()
-		self:WipeRaidThreatOnMob(SHAZZRAH_ID)
-	end
+    function Shazzrah:Gate()
+        self:WipeRaidThreatOnMob(SHAZZRAH_ID)
+    end
 end)

@@ -1,6 +1,6 @@
 local _, GW = ...
 if (GW.myclass ~= "WARRIOR") then
-	return
+    return
 end
 
 -- ordered by rank
@@ -13,12 +13,12 @@ local shieldSlam = {23922 --[[Rank 1]], 23923 --[[Rank 2]], 23924 --[[Rank 3]], 
 local overpower = {7384 --[[Rank 1]], 7887 --[[Rank 2]], 11584 --[[Rank 3]], 11585 --[[Rank 4]]}
 local cleave = {845 --[[Rank 1]], 7369 --[[Rank 2]], 11608 --[[Rank 3]], 11609 --[[Rank 4]], 20569 --[[Rank 5]]}
 local thunderClap = {
-	6343 --[[Rank 1]],
-	8198 --[[Rank 2]],
-	8204 --[[Rank 3]],
-	8205 --[[Rank 4]],
-	11580 --[[Rank 5]],
-	11581 --[[Rank 6]]
+    6343 --[[Rank 1]],
+    8198 --[[Rank 2]],
+    8204 --[[Rank 3]],
+    8205 --[[Rank 4]],
+    11580 --[[Rank 5]],
+    11581 --[[Rank 6]]
 }
 local sunderArmor = {7386 --[[Rank 1]], 7405 --[[Rank 2]], 8380 --[[Rank 3]], 11596 --[[Rank 4]], 11597 --[[Rank 5]]}
 local pummel = {6552, 6554}
@@ -26,56 +26,56 @@ local mockingBlow = {694 --[[Rank 1]], 7400 --[[Rank 2]], 7402 --[[Rank 3]], 205
 local execute = {5308 --[[Rank 1]], 20658 --[[Rank 2]], 20660 --[[Rank 3]], 20661 --[[Rank 4]], 20662 --[[Rank 5]]}
 local slam = {1464 --[[Rank 1]], 8820 --[[Rank 2]], 11604 --[[Rank 3]], 11605 --[[Rank 4]]}
 local revenge = {
-	6572 --[[Rank 1]],
-	6574 --[[Rank 2]],
-	7379 --[[Rank 3]],
-	11600 --[[Rank 4]],
-	11601 --[[Rank 5]],
-	25288 --[[Rank 6]]
+    6572 --[[Rank 1]],
+    6574 --[[Rank 2]],
+    7379 --[[Rank 3]],
+    11600 --[[Rank 4]],
+    11601 --[[Rank 5]],
+    25288 --[[Rank 6]]
 }
 local hamstring = {1715 --[[Rank 1]], 7372 --[[Rank 2]], 7373 --[[Rank 3]]}
 local demoralizingShout = {
-	1160 --[[Rank 1]],
-	6190 --[[Rank 2]],
-	11554 --[[Rank 3]],
-	11555 --[[Rank 4]],
-	11556 --[[Rank 5]]
+    1160 --[[Rank 1]],
+    6190 --[[Rank 2]],
+    11554 --[[Rank 3]],
+    11555 --[[Rank 4]],
+    11556 --[[Rank 5]]
 }
 local shieldBash = {72 --[[Rank 1]], 1671 --[[Rank 2]], 1672 --[[Rank 3]]}
 local charge = {100, 6178, 11578}
 local battleShout = {
-	6673 --[[Rank 1]],
-	5242 --[[Rank 2]],
-	6192 --[[Rank 3]],
-	11549 --[[Rank 4]],
-	11550 --[[Rank 5]],
-	11551 --[[Rank 6]],
-	25289 --[[Rank 7]]
+    6673 --[[Rank 1]],
+    5242 --[[Rank 2]],
+    6192 --[[Rank 3]],
+    11549 --[[Rank 4]],
+    11550 --[[Rank 5]],
+    11551 --[[Rank 6]],
+    25289 --[[Rank 7]]
 }
 
 GW:SetPreviousAbilityMap(
-	{
-		rend,
-		heroicStrike,
-		bloodthirst,
-		intercept,
-		mortalStrike,
-		shieldSlam,
-		overpower,
-		cleave,
-		thunderClap,
-		sunderArmor,
-		pummel,
-		mockingBlow,
-		execute,
-		slam,
-		revenge,
-		hamstring,
-		demoralizingShout,
-		shieldBash,
-		charge,
-		battleShout
-	}
+    {
+        rend,
+        heroicStrike,
+        bloodthirst,
+        intercept,
+        mortalStrike,
+        shieldSlam,
+        overpower,
+        cleave,
+        thunderClap,
+        sunderArmor,
+        pummel,
+        mockingBlow,
+        execute,
+        slam,
+        revenge,
+        hamstring,
+        demoralizingShout,
+        shieldBash,
+        charge,
+        battleShout
+    }
 )
 
 GW.SpellsByLevel = {

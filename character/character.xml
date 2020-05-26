@@ -1182,7 +1182,7 @@
         </Frames>
         <Scripts>
             <OnLoad>
-				self.backButton:SetText(CHARACTER .. ": " .. HONOR)
+                self.backButton:SetText(CHARACTER .. ": " .. HONOR)
                 self:RegisterEvent("PLAYER_PVP_KILLS_CHANGED")
                 self:RegisterEvent("PLAYER_ENTERING_WORLD")
                 self:RegisterEvent("PLAYER_PVP_RANK_CHANGED")

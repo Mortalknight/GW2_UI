@@ -2,29 +2,29 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
-	
-	--Fonts
-	L['FONT_NORMAL'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf' 
-	L['FONT_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf' 
-	L['FONT_NARROW'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
-	L['FONT_NARROW_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
-	L['FONT_LIGHT'] = 'Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf'
-	L['FONT_DAMAGE'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf'
+    -- Create a global variable for the language strings
+    local L = GW.L
+    
+    --Fonts
+    L['FONT_NORMAL'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf' 
+    L['FONT_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf' 
+    L['FONT_NARROW'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
+    L['FONT_NARROW_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
+    L['FONT_LIGHT'] = 'Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf'
+    L['FONT_DAMAGE'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf'
 
-	--classic ones
-	L["FPS_TOOLTIP_1"] = "FPS "
-	L["FPS_TOOLTIP_2"] = "Задержка (локальная) "
-	L["FPS_TOOLTIP_3"] = "Задержка (мир) "
-	L["FPS_TOOLTIP_4"] = "Трафик (получение) "
-	L["FPS_TOOLTIP_5"] = "Трафик (отдача) "
-	L["FPS_TOOLTIP_6"] = "Памяти на модификации: "
-	L["FUTURE_SPELLS"] = "Future Spells"
-	L["INVTYPE_RANGED"] = "Дальний бой"
-	
-	--Strings
-	L["ACTION_BAR_FADE"] = "Скрывать панели"
+    --classic ones
+    L["FPS_TOOLTIP_1"] = "FPS "
+    L["FPS_TOOLTIP_2"] = "Задержка (локальная) "
+    L["FPS_TOOLTIP_3"] = "Задержка (мир) "
+    L["FPS_TOOLTIP_4"] = "Трафик (получение) "
+    L["FPS_TOOLTIP_5"] = "Трафик (отдача) "
+    L["FPS_TOOLTIP_6"] = "Памяти на модификации: "
+    L["FUTURE_SPELLS"] = "Future Spells"
+    L["INVTYPE_RANGED"] = "Дальний бой"
+    
+    --Strings
+    L["ACTION_BAR_FADE"] = "Скрывать панели"
     L["ACTION_BAR_FADE_DESC"] = "Скрыть дополнительные панели вне боя."
     L["ACTION_BARS_DESC"] = "Использовать интерфейс GW2 UI для панелей."
     L["ADV_CAST_BAR"] = "Информативный кастбар"
@@ -301,7 +301,7 @@ local function GWUseThisLocalization()
 end
 
 if GetLocale() == "ruRU" then
-	GWUseThisLocalization()
+    GWUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don"t need it, remove it from memory.

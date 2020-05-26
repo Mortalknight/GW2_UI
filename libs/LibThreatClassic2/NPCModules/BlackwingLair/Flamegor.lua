@@ -7,12 +7,12 @@ local FLAMEGOR_ID = 11981
 local WING_BUFFET_ID = 23339
 
 ThreatLib:GetModule("NPCCore-r"..MINOR):RegisterModule(FLAMEGOR_ID, function(Flamegor)
-	function Flamegor:Init()
+    function Flamegor:Init()
         self:RegisterCombatant(FLAMEGOR_ID, true)
-		self:RegisterSpellDamageHandler(FLAMEGOR_ID, WING_BUFFET_ID, self.WingBuffet)
-	end
+        self:RegisterSpellDamageHandler(FLAMEGOR_ID, WING_BUFFET_ID, self.WingBuffet)
+    end
 
-	function Flamegor:WingBuffet(sourceGUID, unitId)
+    function Flamegor:WingBuffet(sourceGUID, unitId)
         self:ModifyThreat(sourceGUID, unitId, 0.5, 0)
-	end
+    end
 end)

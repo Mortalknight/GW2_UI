@@ -3,29 +3,29 @@ local _, GW = ...
 GW.L = {}
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
+    -- Create a global variable for the language strings
+    local L = GW.L
 
-	--Fonts
-	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
-	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
-	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    --Fonts
+    L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
+    L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
-	--classic ones
-	L["FPS_TOOLTIP_1"] = "FPS "
-	L["FPS_TOOLTIP_2"] = "Latency (Home) "
-	L["FPS_TOOLTIP_3"] = "Latency (World) "
-	L["FPS_TOOLTIP_4"] = "Bandwidth (Download) "
-	L["FPS_TOOLTIP_5"] = "Bandwidth (Upload) "
-	L["FPS_TOOLTIP_6"] = "Memory for Addons: "
-	L["FUTURE_SPELLS"] = "Future Spells"
-	L["INVTYPE_RANGED"] = "Ranged"
+    --classic ones
+    L["FPS_TOOLTIP_1"] = "FPS "
+    L["FPS_TOOLTIP_2"] = "Latency (Home) "
+    L["FPS_TOOLTIP_3"] = "Latency (World) "
+    L["FPS_TOOLTIP_4"] = "Bandwidth (Download) "
+    L["FPS_TOOLTIP_5"] = "Bandwidth (Upload) "
+    L["FPS_TOOLTIP_6"] = "Memory for Addons: "
+    L["FUTURE_SPELLS"] = "Future Spells"
+    L["INVTYPE_RANGED"] = "Ranged"
 
-	--Strings
-	L["ACTION_BAR_FADE"] = "Fade Action Bars"
+    --Strings
+    L["ACTION_BAR_FADE"] = "Fade Action Bars"
     L["ACTION_BAR_FADE_DESC"] = "Fade the additional action bars when out of combat."
     L["ACTION_BARS_DESC"] = "Use the GW2 UI improved action bars."
     L["ADV_CAST_BAR"] = "Advanced Casting Bar"
@@ -301,16 +301,16 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
 
-	--Composite
-	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
-	L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
-	L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
-	L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
+    --Composite
+    L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
+    L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
+    L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
+    L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
 end
 
 local Locale = GetLocale()
 if Locale == "enGB" or Locale == "enUS" then
-	GWUseThisLocalization()
+    GWUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don"t need it, remove it from memory.

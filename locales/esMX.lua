@@ -2,29 +2,29 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
-	
-	--Fonts
-	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
-	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
-	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    -- Create a global variable for the language strings
+    local L = GW.L
+    
+    --Fonts
+    L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+    L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+    L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
+    L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
-	--classic ones
-	L["FPS_TOOLTIP_1"] = "FPS "
-	L["FPS_TOOLTIP_2"] = "Latencia (Local) "
-	L["FPS_TOOLTIP_3"] = "Latencia (Mundo) "
-	L["FPS_TOOLTIP_4"] = "Ancho de banda (Descarga): "
-	L["FPS_TOOLTIP_5"] = "Ancho de banda (Subida): "
-	L["FPS_TOOLTIP_6"] = "Memoria para addons: "
-	L["FUTURE_SPELLS"] = "Future Spells"
-	L["INVTYPE_RANGED"] = "A distancia"
-	
-	--Strings
-	L["QUEST_REQUIRED_ITEMS"] = "Objetos requeridos:"
+    --classic ones
+    L["FPS_TOOLTIP_1"] = "FPS "
+    L["FPS_TOOLTIP_2"] = "Latencia (Local) "
+    L["FPS_TOOLTIP_3"] = "Latencia (Mundo) "
+    L["FPS_TOOLTIP_4"] = "Ancho de banda (Descarga): "
+    L["FPS_TOOLTIP_5"] = "Ancho de banda (Subida): "
+    L["FPS_TOOLTIP_6"] = "Memoria para addons: "
+    L["FUTURE_SPELLS"] = "Future Spells"
+    L["INVTYPE_RANGED"] = "A distancia"
+    
+    --Strings
+    L["QUEST_REQUIRED_ITEMS"] = "Objetos requeridos:"
     L["ACTION_BAR_FADE"] = "Ocultar las barras de acción"
     L["ACTION_BAR_FADE_DESC"] = "Ocultar las barras de acción adicionales fuera de combate."
     L["ACTION_BARS_DESC"] = "Usar las barras de acción mejoradas de Gw2 UI"
@@ -302,9 +302,9 @@ local function GWUseThisLocalization()
 end
 
 if GetLocale() == "esMX" then
-	GWUseThisLocalization()
+    GWUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don"t need it, remove it from memory.
 GWUseThisLocalization = nil
-	
+    

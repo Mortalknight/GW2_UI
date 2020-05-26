@@ -406,21 +406,21 @@
         <Size x="28" y="28"></Size>
         <Layers>
             <Layer level="OVERLAY">
-				<Texture parentKey="IconBorder" file="Interface\Common\WhiteIconFrame" hidden="true">
-					<Size x="28" y="28"/>
-					<Anchors>
-						<Anchor point="CENTER"/>
-					</Anchors>
-				</Texture>
-			</Layer>
+                <Texture parentKey="IconBorder" file="Interface\Common\WhiteIconFrame" hidden="true">
+                    <Size x="28" y="28"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="OVERLAY" textureSubLevel="1">
-				<Texture parentKey="IconOverlay" hidden="true">
-					<Size x="28" y="28"/>
-					<Anchors>
-						<Anchor point="CENTER"/>
-					</Anchors>
-				</Texture>
-			</Layer>
+                <Texture parentKey="IconOverlay" hidden="true">
+                    <Size x="28" y="28"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="ARTWORK">
                 <Texture parentKey="icon" file="Interface\ContainerFrame\KeyRing-Bag-Icon">
                     <Size x="28" y="28"></Size>

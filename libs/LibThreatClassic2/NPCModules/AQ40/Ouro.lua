@@ -7,12 +7,12 @@ local OURO_ID = 15517
 local SAND_BLAST_ID = 26102
 
 ThreatLib:GetModule("NPCCore-r"..MINOR):RegisterModule(OURO_ID, function(Ouro)
-	function Ouro:Init()
+    function Ouro:Init()
         self:RegisterCombatant(OURO_ID, true)
-		self:RegisterSpellDamageHandler(OURO_ID, SAND_BLAST_ID, self.SandBlast)
-	end
+        self:RegisterSpellDamageHandler(OURO_ID, SAND_BLAST_ID, self.SandBlast)
+    end
 
-	function Ouro:SandBlast(sourceGUID, unitId)
+    function Ouro:SandBlast(sourceGUID, unitId)
         self:ModifyThreat(sourceGUID, unitId, 0, 0)
-	end
+    end
 end)

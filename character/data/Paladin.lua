@@ -1,7 +1,7 @@
 local _, GW = ...
 
 if (GW.myclass ~= "PALADIN") then
-	return
+    return
 end
 
 -- Paladin Auras are special in that you never have multiple ranks in the spellbook, only the latest one is usable

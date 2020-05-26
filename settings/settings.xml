@@ -1,41 +1,41 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-	<FontFamily name="GW_Standard_Button_Font" virtual="true">
-		<Member alphabet="roman">
-			<Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
-		</Member>
-		<Member alphabet="korean">
-			<Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="14"/>
-		</Member>
-		<Member alphabet="simplifiedchinese">
-			<Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="14"/>
-		</Member>
-		<Member alphabet="traditionalchinese">
-			<Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="14"/>
-		</Member>
-		<Member alphabet="russian">
-			<Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
-		</Member>
-	</FontFamily>
+    <FontFamily name="GW_Standard_Button_Font" virtual="true">
+        <Member alphabet="roman">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="14"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="14"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="14"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
+        </Member>
+    </FontFamily>
 
     <FontFamily name="GW_Standard_Button_Font_Small" virtual="true">
-		<Member alphabet="roman">
-			<Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
-		</Member>
-		<Member alphabet="korean">
-			<Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="10"/>
-		</Member>
-		<Member alphabet="simplifiedchinese">
-			<Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="10"/>
-		</Member>
-		<Member alphabet="traditionalchinese">
-			<Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="10"/>
-		</Member>
-		<Member alphabet="russian">
-			<Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
-		</Member>
-	</FontFamily>
+        <Member alphabet="roman">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="10"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="10"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese.ttf" height="10"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
+        </Member>
+    </FontFamily>
 
     <Font name="gw_button_font_black" inherits="GW_Standard_Button_Font" virtual="true">
         <Color r="0" b="0" g="0"></Color>

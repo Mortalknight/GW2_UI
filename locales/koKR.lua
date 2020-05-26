@@ -2,29 +2,29 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
-	
-	--Fonts
-	L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
-	L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
-	L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
-	L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
-	L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
-	L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+    -- Create a global variable for the language strings
+    local L = GW.L
+    
+    --Fonts
+    L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+    L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+    L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+    L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+    L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+    L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
 
-	--classic ones
-	L["FPS_TOOLTIP_1"] = "FPS"
-	L["FPS_TOOLTIP_2"] = "대기시간 (서버): "
-	L["FPS_TOOLTIP_3"] = "대기시간 (세계): "
-	L["FPS_TOOLTIP_4"] = "대역폭 (다운로드): "
-	L["FPS_TOOLTIP_5"] = "대역폭 (업로드): "
-	L["FPS_TOOLTIP_6"] = "애드온 메모리: "
-	L["FUTURE_SPELLS"] = "Future Spells"
-	L["INVTYPE_RANGED"] = "원거리 장비"
-	
-	--Strings
-	L["ACTION_BAR_FADE"] = "액션바 숨기기"
+    --classic ones
+    L["FPS_TOOLTIP_1"] = "FPS"
+    L["FPS_TOOLTIP_2"] = "대기시간 (서버): "
+    L["FPS_TOOLTIP_3"] = "대기시간 (세계): "
+    L["FPS_TOOLTIP_4"] = "대역폭 (다운로드): "
+    L["FPS_TOOLTIP_5"] = "대역폭 (업로드): "
+    L["FPS_TOOLTIP_6"] = "애드온 메모리: "
+    L["FUTURE_SPELLS"] = "Future Spells"
+    L["INVTYPE_RANGED"] = "원거리 장비"
+    
+    --Strings
+    L["ACTION_BAR_FADE"] = "액션바 숨기기"
     L["ACTION_BAR_FADE_DESC"] = "전투 중 액션바 숨김"
     L["ACTION_BARS_DESC"] = "개선된 GW2 UI 액션바 사용"
     L["ADV_CAST_BAR"] = "고급 시전바"
@@ -302,7 +302,7 @@ local function GWUseThisLocalization()
 end
 
 if GetLocale() == "koKR" then
-	GWUseThisLocalization()
+    GWUseThisLocalization()
 end
 
 -- After using this localization or deciding that we don"t need it, remove it from memory.

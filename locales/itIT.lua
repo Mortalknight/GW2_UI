@@ -2,8 +2,8 @@
 local _, GW = ...
 
 local function GWUseThisLocalization()
-	-- Create a global variable for the language strings
-	local L = GW.L
+    -- Create a global variable for the language strings
+    local L = GW.L
     
     --Fonts
     L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
@@ -15,10 +15,10 @@ local function GWUseThisLocalization()
 
     --classic ones
     L['FPS_TOOLTIP_1'] = 'FPS ' 
-	L['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
-	L['FPS_TOOLTIP_3'] = 'Latency (World) ' 
-	L['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
-	L['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
+    L['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
+    L['FPS_TOOLTIP_3'] = 'Latency (World) ' 
+    L['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
+    L['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
     L['FPS_TOOLTIP_6'] = 'Memory for Addons: '
     L["FUTURE_SPELLS"] = "Future Spells"
     L["INVTYPE_RANGED"] = "A distanza"
