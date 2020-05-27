@@ -313,7 +313,7 @@ local function updateAwayData(self)
     end
 
     if self.targetmarker ~= nil and GW_READY_CHECK_INPROGRESS == false and GetSetting("RAID_UNIT_MARKERS") == true then
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         updateRaidMarkers(self)
     end
 
@@ -328,7 +328,7 @@ local function updateAwayData(self)
 
     if iconState == 3 then
         self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         self.name:SetTextColor(1, 1, 1)
         self.classicon:Show()
     end
@@ -340,7 +340,7 @@ local function updateAwayData(self)
         elseif iconState == 6 then
             self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         self.classicon:Show()
     end
 
@@ -361,7 +361,7 @@ local function updateAwayData(self)
 
     if not UnitIsConnected(self.unit) then
         self.classicon:SetTexture("Interface\\CharacterFrame\\Disconnect-Icon")
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         self.classicon:Show()
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end

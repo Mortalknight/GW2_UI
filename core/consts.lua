@@ -1,8 +1,5 @@
 local _, GW = ...
 
---Create ilvl cache
-GW.unitIlvlsCache = {}
-
 GW.DispelClasses = {
     PRIEST = { Magic = true, Disease = true },
     SHAMAN = { Magic = false, Curse = true },

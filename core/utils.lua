@@ -27,8 +27,6 @@ local StripTexturesBlizzFrames = {
     "ScrollFrameBorder",
 }
 
-GW.NoOp = function() end
-
 local function StripRegion(which, object, hide, alpha)
     if hide then
         object:Hide()

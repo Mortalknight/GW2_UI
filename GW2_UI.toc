@@ -33,6 +33,7 @@ core/shared.xml
 core/fonts.lua
 core/storage.lua
 core/init.lua
+core/statusReport.lua
 
 settings/defaults.lua
 settings/api.lua

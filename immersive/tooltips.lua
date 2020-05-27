@@ -126,7 +126,7 @@ local function SkinItemRefTooltip()
             ItemRefTooltip:SetBackdrop(constBackdropArgs)
 
             if IsAddOnLoaded("Pawn") then
-                if ItemRefTooltip.PawnIconFrame.PawnIconTexture then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+                if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
             end
         end
     end

@@ -1,5 +1,4 @@
 local _, GW = ...
-GW.skins = {}
 
 local function addHoverToButton(self)
     if not self.hover then
@@ -229,9 +228,9 @@ end
 
 local function SkinScrollBar(frame)
     local parent = frame:GetParent()
-    local ScrollUpButton = GrabScrollBarElement(frame, 'ScrollUpButton') or GrabScrollBarElement(frame, 'UpButton') or GrabScrollBarElement(frame, 'ScrollUp') or GrabScrollBarElement(parent, 'scrollUp')
-    local ScrollDownButton = GrabScrollBarElement(frame, 'ScrollDownButton') or GrabScrollBarElement(frame, 'DownButton') or GrabScrollBarElement(frame, 'ScrollDown') or GrabScrollBarElement(parent, 'scrollDown')
-    local Thumb = GrabScrollBarElement(frame, 'ThumbTexture') or GrabScrollBarElement(frame, 'thumbTexture') or frame.GetThumbTexture and frame:GetThumbTexture()
+    local ScrollUpButton = GrabScrollBarElement(frame, "ScrollUpButton") or GrabScrollBarElement(frame, "UpButton") or GrabScrollBarElement(frame, "ScrollUp") or GrabScrollBarElement(parent, "scrollUp")
+    local ScrollDownButton = GrabScrollBarElement(frame, "ScrollDownButton") or GrabScrollBarElement(frame, "DownButton") or GrabScrollBarElement(frame, "ScrollDown") or GrabScrollBarElement(parent, "scrollDown")
+    local Thumb = GrabScrollBarElement(frame, "ThumbTexture") or GrabScrollBarElement(frame, "thumbTexture") or frame.GetThumbTexture and frame:GetThumbTexture()
 
     if ScrollUpButton then
         ScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
@@ -348,10 +347,10 @@ local function SkinDropDownList()
                 local _, co = check:GetTexCoord()
                 if co == 0 then
                     check:SetTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked")
-                    check:SetTexCoord(0, 1, 0, 1)
+                    check:SetTexCoord(unpack(GW.TexCoords))
                     check:SetSize(13, 13)
                     uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/checkbox")
-                    uncheck:SetTexCoord(0, 1, 0, 1)
+                    uncheck:SetTexCoord(unpack(GW.TexCoords))
                     uncheck:SetSize(13, 13)
                 end
 

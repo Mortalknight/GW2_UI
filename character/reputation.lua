@@ -206,7 +206,7 @@ local function details_OnClick(self, button)
         detailFaction(self.item.factionID, true)
         self:SetHeight(DETAIL_LG_H)
         self.item.controles:Show()
-        self.item.repbg:SetTexCoord(0, 1, 0, 1)
+        self.item.repbg:SetTexCoord(unpack(GW.TexCoords))
         self.item.repbg:SetDesaturated(false)
     end
     updateOldData()
@@ -375,7 +375,7 @@ local function setDetailEx(
     if factionID and RT[factionID] then
         frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
         if isExpanded then
-            frame.repbg:SetTexCoord(0, 1, 0, 1)
+            frame.repbg:SetTexCoord(unpack(GW.TexCoords))
             frame.repbg:SetAlpha(0.85)
             frame.repbg:SetDesaturated(false)
         else

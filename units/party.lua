@@ -399,7 +399,7 @@ local function updateAwayData(self)
 
     if UnitHasIncomingResurrection(self.unit) then
         self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
     end
 
     if C_IncomingSummon.HasIncomingSummon(self.unit) then
@@ -411,7 +411,7 @@ local function updateAwayData(self)
         elseif status == Enum.SummonStatus.Declined then
             self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
     end
 
     if not UnitIsConnected(self.unit) then

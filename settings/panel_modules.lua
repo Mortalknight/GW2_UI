@@ -16,6 +16,14 @@ local welcome_OnClick = function(self, button)
 end
 AddForProfiling("panel_modules", "welcome_OnClick", welcome_OnClick)
 
+local statusReport_OnClick = function(self, button)
+    if self.settings then
+        self.settings:Hide()
+    end
+    GW.ShowStatusReport()
+end
+AddForProfiling("panel_modules", "statusReport_OnClick", statusReport_OnClick)
+
 local function LoadModulesPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsModulePanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -28,6 +36,10 @@ local function LoadModulesPanel(sWindow)
     p.welcome.settings = sWindow
     p.welcome:SetText(L["WELCOME"])
     p.welcome:SetScript("OnClick", welcome_OnClick)
+
+    p.statusReport.settings = sWindow
+    p.statusReport:SetText(LANDING_PAGE_REPORT)
+    p.statusReport:SetScript("OnClick", statusReport_OnClick)
 
     createCat(L["MODULES_CAT"], L["MODULES_CAT_TOOLTIP"], p, 0)
 

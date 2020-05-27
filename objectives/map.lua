@@ -157,14 +157,14 @@ local function lfgAnim(self, elapse)
     local rot = QueueStatusMinimapButton.animationCircle.background:GetRotation() + (speed * elapse)
 
     QueueStatusMinimapButton.animationCircle.background:SetRotation(rot)
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(0, 1, 0, 1)
+    QueueStatusMinimapButtonIconTexture:SetTexCoord(unpack(GW.TexCoords))
 end
 GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
 local function lfgAnimStop()
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
     QueueStatusMinimapButton.animationCircle:Hide()
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(0, 1, 0, 1)
+    QueueStatusMinimapButtonIconTexture:SetTexCoord(unpack(GW.TexCoords))
 end
 GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
 

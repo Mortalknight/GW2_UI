@@ -460,9 +460,13 @@ local function gw_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
+local function getBestPixelScale()
+    return max(0.4, min(1.15, 768 / GW.screenHeight))
+end
+GW.getBestPixelScale = getBestPixelScale
+
 local function PixelPerfection()
-    GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
-    GW.scale = max(0.4, min(1.15, 768 / GW.screenHeight))
+    GW.scale = getBestPixelScale()
     GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     UIParent:SetScale(GW.scale)
 end
@@ -504,7 +508,6 @@ local function loadAddon(self)
         PixelPerfection()
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
     else
-        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
         GW.scale = UIParent:GetScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
@@ -552,7 +555,7 @@ local function loadAddon(self)
                     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
                     return
                 end
-                GwSettingsWindow:Show()
+                ShowUIPanel(GwSettingsWindow)
                 HideUIPanel(GameMenuFrame)
             end
         )
@@ -809,9 +812,11 @@ local function gw_OnEvent(self, event, ...)
         end
         GW.LoadStorage()
     elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
+        print(1)
         SetSetting("PIXEL_PERFECTION", false)
-        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
         GW.scale = UIParent:GetScale()
+        GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
+        GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     elseif event == "PLAYER_LEAVING_WORLD" then
         GW.inWorld = false

@@ -372,7 +372,7 @@ local function reskinSearchBox(sb)
     sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
 
     sb.Middle:SetHeight(24)
-    sb.Middle:SetTexCoord(0, 1, 0, 1)
+    sb.Middle:SetTexCoord(unpack(GW.TexCoords))
 
     sb.searchIcon:Hide()
 end
