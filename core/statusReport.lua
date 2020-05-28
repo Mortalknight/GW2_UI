@@ -10,6 +10,17 @@ local function AreOtherAddOnsEnabled()
     return "No"
 end
 
+local function CheckForPasteAddon()
+    for i = 1, GetNumAddOns() do
+        local name = GetAddOnInfo(i)
+        if name == "Paste"and GetAddOnEnableState(GW.myname, name) == 2 then --Loaded or load on demand
+            return true
+        end
+    end
+    return false
+end
+GW.CheckForPasteAddon = CheckForPasteAddon
+
 local function GetDisplayMode()
     local window, maximize = GetCVar("gxWindow") == "1", GetCVar("gxMaximize") == "1"
     return (window and maximize and "Windowed (Fullscreen)") or (window and "Windowed") or "Fullscreen"
@@ -71,7 +82,7 @@ local EnglishSpecName = {
 
 local function CreateContentLines(num, parent, anchorTo)
     local content = CreateFrame("Frame", nil, parent)
-    content:SetSize(260, (num * 20) + ((num - 1) * 5)) --20 height and 5 spacing
+    content:SetSize(260, (num * 20) + ((num - 1) * 5))
     content:SetPoint("TOP", anchorTo, "BOTTOM",0 , -5)
 
     for i = 1, num do
@@ -118,19 +129,17 @@ local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, 
     section.Header.Text = text
 
     local leftDivider = section.Header:CreateTexture(nil, "ARTWORK")
-    leftDivider:SetHeight(8)
-    leftDivider:SetPoint("LEFT", section.Header, "LEFT", 5, 0)
-    leftDivider:SetPoint("RIGHT", section.Header.Text, "LEFT", -5, 0)
-    leftDivider:SetTexture("Interface/Tooltips/UI-Tooltip-Border")
-    leftDivider:SetTexCoord(0.81, 0.94, 0.5, 1)
+    leftDivider:SetHeight(2)
+    leftDivider:SetPoint("LEFT", section.Header, "LEFT", -10, 0)
+    leftDivider:SetPoint("RIGHT", section.Header.Text, "LEFT", 20, 0)
+    leftDivider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
     section.Header.LeftDivider = leftDivider
 
     local rightDivider = section.Header:CreateTexture(nil, "ARTWORK")
-    rightDivider:SetHeight(8)
-    rightDivider:SetPoint("RIGHT", section.Header, "RIGHT", -5, 0)
-    rightDivider:SetPoint("LEFT", section.Header.Text, "RIGHT", 5, 0)
-    rightDivider:SetTexture("Interface/Tooltips/UI-Tooltip-Border")
-    rightDivider:SetTexCoord(0.81, 0.94, 0.5, 1)
+    rightDivider:SetHeight(2)
+    rightDivider:SetPoint("RIGHT", section.Header, "RIGHT", 10, 0)
+    rightDivider:SetPoint("LEFT", section.Header.Text, "RIGHT", -20, 0)
+    rightDivider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
     section.Header.RightDivider = rightDivider
 
     return section
@@ -145,10 +154,11 @@ local function CreateStatusFrame()
         edgeSize = 32,
         insets = {left = 2, right = 2, top = 2, bottom = 2}
     }
+    local isPasteAddon = CheckForPasteAddon()
 
     --Main frame
     local StatusFrame = CreateFrame("Frame", "GWStatusFrame", UIParent)
-    StatusFrame:SetSize(320, 700)
+    StatusFrame:SetSize(320, 720)
     StatusFrame:SetPoint("CENTER", UIParent, "CENTER")
     StatusFrame:SetFrameStrata("HIGH")
     StatusFrame:SetBackdrop(BackdropFrame)
@@ -168,7 +178,7 @@ local function CreateStatusFrame()
     titleLogoFrame.Texture = titleTexture
 
     --Sections
-    StatusFrame.Section1 = CreateSection(300, 125, StatusFrame, "TOP", StatusFrame, "TOP", -150)
+    StatusFrame.Section1 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame, "TOP", -150)
     StatusFrame.Section2 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame.Section1, "BOTTOM", 0)
     StatusFrame.Section3 = CreateSection(300, 185, StatusFrame, "TOP", StatusFrame.Section2, "BOTTOM", 0)
     StatusFrame.Section4 = CreateSection(300, 60, StatusFrame, "TOP", StatusFrame.Section3, "BOTTOM", 0)
@@ -177,10 +187,10 @@ local function CreateStatusFrame()
     StatusFrame.Section1.Header.Text:SetText("|cffffedbaAddOn Info|r")
     StatusFrame.Section2.Header.Text:SetText("|cffffedbaWoW Info|r")
     StatusFrame.Section3.Header.Text:SetText("|cffffedbaCharacter Info|r")
-    StatusFrame.Section4.Header.Text:SetText("|cffffedbaAction|r")
+    StatusFrame.Section4.Header.Text:SetText("|cffffedbaActions|r")
 
     --Section content
-    StatusFrame.Section1.Content = CreateContentLines(4, StatusFrame.Section1, StatusFrame.Section1.Header)
+    StatusFrame.Section1.Content = CreateContentLines(5, StatusFrame.Section1, StatusFrame.Section1.Header)
     StatusFrame.Section2.Content = CreateContentLines(5, StatusFrame.Section2, StatusFrame.Section2.Header)
     StatusFrame.Section3.Content = CreateContentLines(6, StatusFrame.Section3, StatusFrame.Section3.Header)
     StatusFrame.Section4.Content = CreateFrame("Frame", nil, StatusFrame.Section4)
@@ -190,8 +200,9 @@ local function CreateStatusFrame()
     --Content lines
     StatusFrame.Section1.Content.Line1.Text:SetFormattedText("GW2 UI version: |cff4beb2c%s|r", GW.VERSION_STRING)
     StatusFrame.Section1.Content.Line2.Text:SetFormattedText("Other AddOns Enabled: |cff4beb2c%s|r", AreOtherAddOnsEnabled())
-    StatusFrame.Section1.Content.Line3.Text:SetFormattedText("Recommended Scale: |cff4beb2c%s|r", GW.getBestPixelScale())
-    StatusFrame.Section1.Content.Line4.Text:SetFormattedText("UI Scale Is: |cff4beb2c%s|r", GW.scale)
+    StatusFrame.Section1.Content.Line3.Text:SetFormattedText("Paste Addon Enabled: %s", isPasteAddon and "|cffff0000Yes|r" or "|cff4beb2cNo|r")
+    StatusFrame.Section1.Content.Line4.Text:SetFormattedText("Recommended Scale: |cff4beb2c%s|r", GW.getBestPixelScale())
+    StatusFrame.Section1.Content.Line5.Text:SetFormattedText("UI Scale Is: %s", GW.scale == GW.getBestPixelScale() and  format("|cff4beb2c%s|r", GW.scale) or format("|cffff0000%s|r", GW.scale))
     StatusFrame.Section2.Content.Line1.Text:SetFormattedText("WoW version: |cff4beb2c%s (build %s)|r", GW.wowpatch, GW.wowbuild) 
     StatusFrame.Section2.Content.Line2.Text:SetFormattedText("Client Language: |cff4beb2c%s|r", GetLocale())
     StatusFrame.Section2.Content.Line3.Text:SetFormattedText("Display Mode: |cff4beb2c%s|r", GetDisplayMode())
@@ -208,8 +219,15 @@ local function CreateStatusFrame()
     StatusFrame.Section4.Content.Button1 = CreateFrame("Button", nil, StatusFrame.Section4.Content, "GwStandardButton")
     StatusFrame.Section4.Content.Button1:SetSize(100, 25)
     StatusFrame.Section4.Content.Button1:SetPoint("LEFT", StatusFrame.Section4.Content, "LEFT")
-    StatusFrame.Section4.Content.Button1:SetText(CLOSE)
+    StatusFrame.Section4.Content.Button1:SetText(RELOADUI)
     StatusFrame.Section4.Content.Button1:SetScript("OnClick", function(self)
+        C_UI.Reload()
+    end)
+    StatusFrame.Section4.Content.Button2 = CreateFrame("Button", nil, StatusFrame.Section4.Content, "GwStandardButton")
+    StatusFrame.Section4.Content.Button2:SetSize(100, 25)
+    StatusFrame.Section4.Content.Button2:SetPoint("RIGHT", StatusFrame.Section4.Content, "RIGHT")
+    StatusFrame.Section4.Content.Button2:SetText(CLOSE)
+    StatusFrame.Section4.Content.Button2:SetScript("OnClick", function(self)
         HideUIPanel(StatusFrame)
     end)
 
@@ -222,7 +240,7 @@ local function UpdateDynamicValues()
     local StatusFrame = GW.StatusFrame
 
     local Section1 = StatusFrame.Section1
-    Section1.Content.Line4.Text:SetFormattedText("UI Scale Is: |cff4beb2c%s|r", GW.scale)
+    Section1.Content.Line5.Text:SetFormattedText("UI Scale Is: %s", GW.scale == GW.getBestPixelScale() and  format("|cff4beb2c%s|r", GW.scale) or format("|cffff0000%s|r", GW.scale))
 
     local Section2 = StatusFrame.Section2
     Section2.Content.Line3.Text:SetFormattedText("Display Mode: |cff4beb2c%s|r", GetDisplayMode())
@@ -241,7 +259,7 @@ local function ShowStatusReport()
 
     if not GW.StatusFrame:IsShown() then
         UpdateDynamicValues()
-        GW.StatusFrame:Raise() --Set framelevel above everything else
+        GW.StatusFrame:Raise()
         GW.StatusFrame:Show()
     else
         GW.StatusFrame:Hide()

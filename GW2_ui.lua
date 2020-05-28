@@ -20,6 +20,10 @@ if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
     return
 end
 
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then 
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
+end
+
 local loaded = false
 local forcedMABags = false
 
@@ -812,7 +816,6 @@ local function gw_OnEvent(self, event, ...)
         end
         GW.LoadStorage()
     elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
-        print(1)
         SetSetting("PIXEL_PERFECTION", false)
         GW.scale = UIParent:GetScale()
         GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()

@@ -454,6 +454,7 @@ local function getUnitDebuffs(unit)
     local show_debuffs = GetSetting("PARTY_SHOW_DEBUFFS")
     local only_dispellable_debuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
     local show_importend_raid_instance_debuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
+    local counter = 1
 
     DebuffLists[unit] = {}
     for i = 1, 40 do
@@ -462,10 +463,8 @@ local function getUnitDebuffs(unit)
             local shouldDisplay = false
 
             if show_debuffs then
-                if only_dispellable_debuffs then
-                    if debuffType and GW.IsDispellableByMe(debuffType) then
-                        shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
-                    end
+                if only_dispellable_debuffs and debuffType and GW.IsDispellableByMe(debuffType) then
+                    shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 else
                     shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
@@ -476,33 +475,32 @@ local function getUnitDebuffs(unit)
             end
 
             if shouldDisplay then
-                DebuffLists[unit][i] = {}
+                DebuffLists[unit][counter] = {}
                 
-                DebuffLists[unit][i]["name"] = debuffName
-                DebuffLists[unit][i]["icon"] = icon
-                DebuffLists[unit][i]["count"] = count
-                DebuffLists[unit][i]["dispelType"] = debuffType
-                DebuffLists[unit][i]["duration"] = duration
-                DebuffLists[unit][i]["expires"] = expires
-                DebuffLists[unit][i]["caster"] = caster
-                DebuffLists[unit][i]["isStealable"] = isStealable
-                DebuffLists[unit][i]["shouldConsolidate"] = shouldConsolidate
-                DebuffLists[unit][i]["spellID"] = spellId
-                DebuffLists[unit][i]["key"] = i
-                DebuffLists[unit][i]["timeRemaining"] = expires - GetTime()
-                if duration <= 0 then DebuffLists[unit][i]["timeRemaining"] = 500000 end
+                DebuffLists[unit][counter]["name"] = debuffName
+                DebuffLists[unit][counter]["icon"] = icon
+                DebuffLists[unit][counter]["count"] = count
+                DebuffLists[unit][counter]["dispelType"] = debuffType
+                DebuffLists[unit][counter]["duration"] = duration
+                DebuffLists[unit][counter]["expires"] = expires
+                DebuffLists[unit][counter]["caster"] = caster
+                DebuffLists[unit][counter]["isStealable"] = isStealable
+                DebuffLists[unit][counter]["shouldConsolidate"] = shouldConsolidate
+                DebuffLists[unit][counter]["spellID"] = spellId
+                DebuffLists[unit][counter]["key"] = i
+                DebuffLists[unit][counter]["timeRemaining"] = duration <= 0 and 500000 or expires - GetTime()
+
+                counter = counter  + 1
             end
         end
     end
 
-    if show_debuffs or show_importend_raid_instance_debuffs then
-        table.sort(
-            DebuffLists[unit],
-            function(a, b)
-                return a["timeRemaining"] < b["timeRemaining"]
-            end
-        )
-    end
+    table.sort(
+        DebuffLists[unit],
+        function(a, b)
+            return a["timeRemaining"] < b["timeRemaining"]
+        end
+    )
 end
 GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
 
