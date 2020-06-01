@@ -463,8 +463,10 @@ local function getUnitDebuffs(unit)
             local shouldDisplay = false
 
             if show_debuffs then
-                if only_dispellable_debuffs and debuffType and GW.IsDispellableByMe(debuffType) then
-                    shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
+                if only_dispellable_debuffs then
+                    if debuffType and GW.IsDispellableByMe(debuffType) then
+                        shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
+                    end
                 else
                     shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
