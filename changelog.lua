@@ -45,6 +45,7 @@ v(
     - Added option to show coordinates with 2 digits (click on the coordinats; Thanks to: hatdragon)
     - Added HonorSpy support (Honortab)
     - Added 'Show Debuff', 'Show only dispellable debuffs', 'Show importend raid & instance debuffs' to party and raidframes
+    - Added Status Report
 
 ]=]
 )
