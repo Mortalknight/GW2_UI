@@ -223,7 +223,7 @@ end
 GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
 local function LoadBossFrame()
-    for i = 1, 4 do
+    for i = 1, 5 do
         registerFrame(i)
         if _G["Boss" .. i .. "TargetFrame"] ~= nil then
             _G["Boss" .. i .. "TargetFrame"]:Hide()
