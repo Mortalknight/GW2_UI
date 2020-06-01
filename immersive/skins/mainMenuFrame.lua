@@ -78,6 +78,7 @@ local function SkinMainMenu()
                 return
             end
             ShowUIPanel(GwSettingsWindow)
+            UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
             HideUIPanel(GameMenuFrame)
         end
     )

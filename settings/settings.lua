@@ -9,12 +9,6 @@ local AddForProfiling = GW.AddForProfiling
 local settings_cat = {}
 local all_options = {}
 
-SLASH_GWSLASH1 = "/gw2"
-function SlashCmdList.GWSLASH(msg)
-    GwSettingsWindow:Show()
-    UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
-end
-
 local function Grid_GetRegion(mhgb)
     if mhgb.grid then
         if mhgb.grid.regionCount and mhgb.grid.regionCount > 0 then

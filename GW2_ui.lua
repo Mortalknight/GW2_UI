@@ -542,6 +542,9 @@ local function loadAddon(self)
     GW.LoadSettings()
     GW.LoadHoverBinds()
 
+    -- Load Slash commands
+    GW.LoadSlashCommands()
+
     --Create the mainbar layout manager
     local lm = GW.LoadMainbarLayout()
 
@@ -560,6 +563,7 @@ local function loadAddon(self)
                     return
                 end
                 ShowUIPanel(GwSettingsWindow)
+                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
                 HideUIPanel(GameMenuFrame)
             end
         )
