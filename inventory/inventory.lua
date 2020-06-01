@@ -327,7 +327,7 @@ local function reskinSearchBox(sb)
     sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
 
     sb.Middle:SetHeight(24)
-    sb.Middle:SetTexCoord(0, 1, 0, 1)
+    sb.Middle:SetTexCoord(unpack(GW.TexCoords))
 
     sb.searchIcon:Hide()
 end
@@ -577,12 +577,3 @@ local function LoadInventory()
     bank_resize = GW.LoadBank(helpers)
 end
 GW.LoadInventory = LoadInventory
-
-SLASH_GWWINRS1 = "/gw_win_reset"
-SlashCmdList["GWWINRS"] = function ()
-    GW.Debug("win reset")
-    SetSetting("BAG_POSITION", nil)
-    SetSetting("BANK_POSITION", nil)
-    SetSetting("HERO_POSITION", nil)
-    C_UI.Reload()
-end

@@ -10,7 +10,7 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = "GW2_UI_Classic @project-version@"
+GW.VERSION_STRING = "@project-version@ Classic"
 
 -- setup Binding Header color
 _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
@@ -18,6 +18,10 @@ _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then 
     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r You have installed GW2_UI classic version. Please install the retail version to use GW2_UI.")
     return
+end
+
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then 
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
 local loaded = false
@@ -498,9 +502,13 @@ local function gw_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
+local function getBestPixelScale()
+    return max(0.4, min(1.15, 768 / GW.screenHeight))
+end
+GW.getBestPixelScale = getBestPixelScale
+
 local function PixelPerfection()
-    GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
-    GW.scale = max(0.4, min(1.15, 768 / GW.screenHeight))
+    GW.scale = getBestPixelScale()
     GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     UIParent:SetScale(GW.scale)
 end
@@ -542,7 +550,6 @@ local function loadAddon(self)
         PixelPerfection()
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
     else
-        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
         GW.scale = UIParent:GetScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
@@ -572,6 +579,9 @@ local function loadAddon(self)
     GW.LoadSettings()
     GW.LoadHoverBinds()
 
+    -- Load Slash commands
+    GW.LoadSlashCommands()
+
     --Create the mainbar layout manager
     local lm = GW.LoadMainbarLayout()
 
@@ -589,7 +599,8 @@ local function loadAddon(self)
                     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
                     return
                 end
-                GwSettingsWindow:Show()
+                ShowUIPanel(GwSettingsWindow)
+                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
                 HideUIPanel(GameMenuFrame)
             end
         )
@@ -808,8 +819,9 @@ local function gw_OnEvent(self, event, ...)
         GW.LoadStorage()
     elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
         SetSetting("PIXEL_PERFECTION", false)
-        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
         GW.scale = UIParent:GetScale()
+        GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
+        GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     elseif event == "PLAYER_LEAVING_WORLD" then
         GW.inWorld = false

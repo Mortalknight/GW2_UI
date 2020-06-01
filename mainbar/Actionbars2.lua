@@ -494,9 +494,8 @@ local function updateMainBar(toggle)
     fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
     fmActionbar:SetSize(btn_padding, used_height)
     fmActionbar.gw_Width = btn_padding
-    local function NoOp() end
-    fmActionbar.SetPoint = NoOp
-    fmActionbar.ClearAllPoints = NoOp
+    fmActionbar.SetPoint = GW.NoOp
+    fmActionbar.ClearAllPoints = GW.NoOp
 
     -- event/update handlers
     AddUpdateCB(actionBar_OnUpdate, fmActionbar)

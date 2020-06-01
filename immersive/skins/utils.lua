@@ -1,5 +1,4 @@
 local _, GW = ...
-GW.skins = {}
 
 local function addHoverToButton(self)
     if not self.hover then
@@ -353,10 +352,10 @@ local function SkinDropDownList()
                 local _, co = check:GetTexCoord()
                 if co == 0 then
                     check:SetTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked")
-                    check:SetTexCoord(0, 1, 0, 1)
+                    check:SetTexCoord(unpack(GW.TexCoords))
                     check:SetSize(13, 13)
                     uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/checkbox")
-                    uncheck:SetTexCoord(0, 1, 0, 1)
+                    uncheck:SetTexCoord(unpack(GW.TexCoords))
                     uncheck:SetSize(13, 13)
                 end
 

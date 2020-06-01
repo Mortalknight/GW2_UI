@@ -884,7 +884,7 @@ local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName
     if factionID and RT[factionID] then
         frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
         if isExpanded then
-            frame.repbg:SetTexCoord(0, 1, 0, 1)
+            frame.repbg:SetTexCoord(unpack(GW.TexCoords))
             frame.repbg:SetAlpha(0.85)
             frame.repbg:SetDesaturated(false)
         else

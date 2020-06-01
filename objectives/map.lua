@@ -148,7 +148,7 @@ GW.SetMinimapPosition = SetMinimapPosition
 local function lfgAnimStop()
     MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
     MiniMapBattlefieldFrame.animationCircle:Hide()
-    MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
+    MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
 end
 GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
 
@@ -172,7 +172,7 @@ local function lfgAnim(elapse)
     local rot = MiniMapBattlefieldFrame.animationCircle.background:GetRotation() + (speed * elapse)
 
     MiniMapBattlefieldFrame.animationCircle.background:SetRotation(rot)
-    MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
+    MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
 end
 GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 

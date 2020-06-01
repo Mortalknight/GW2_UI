@@ -389,13 +389,13 @@ local function checkElvUI()
             local disabled = btn:GetDisabledTexture()
 
             if pushed then
-                pushed:SetTexCoord(0, 1, 0, 1)
+                pushed:SetTexCoord(unpack(GW.TexCoords))
             end
             if normal then
-                normal:SetTexCoord(0, 1, 0, 1)
+                normal:SetTexCoord(unpack(GW.TexCoords))
             end
             if disabled then
-                disabled:SetTexCoord(0, 1, 0, 1)
+                disabled:SetTexCoord(unpack(GW.TexCoords))
             end
 
             local high = btn:GetHighlightTexture()

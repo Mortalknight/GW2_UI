@@ -56,7 +56,7 @@ local function applyButtonStyle()
             local r = {b:GetRegions()}
             for _, c in pairs(r) do
                 if c:GetObjectType() == "Texture" and c:GetName() == nil then
-                    c:SetTexCoord(0, 1, 0, 1)
+                    c:SetTexCoord(unpack(GW.TexCoords))
                     c:SetSize(155, 30)
                 end
             end
@@ -77,7 +77,8 @@ local function SkinMainMenu()
                 DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
                 return
             end
-            GwSettingsWindow:Show()
+            ShowUIPanel(GwSettingsWindow)
+            UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
             HideUIPanel(GameMenuFrame)
         end
     )

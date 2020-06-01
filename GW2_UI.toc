@@ -30,6 +30,8 @@ core/utils.lua
 core/shared.xml
 core/fonts.lua
 core/storage.lua
+core/statusReport.lua
+core/slashcommands.lua
 
 settings/defaults.lua
 settings/api.lua
