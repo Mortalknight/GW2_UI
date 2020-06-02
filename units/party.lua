@@ -993,7 +993,7 @@ local function LoadPartyFrames()
 
     SetCVar("useCompactPartyFrames", 1)
 
-    if GetSetting("RAID_STYLE_PARTY") then
+    if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return
     end
 

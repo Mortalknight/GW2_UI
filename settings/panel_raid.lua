@@ -21,27 +21,27 @@ local function LoadRaidPanel(sWindow)
 
     createCat(RAID, L["GROUP_TOOLTIP"], p, 4)
 
-    addOption(p, RAID_USE_CLASS_COLORS, L["CLASS_COLOR_RAID_DESC"], "RAID_CLASS_COLOR", nil, nil, {["GROUP_FRAMES"] = true})
-    addOption(p, DISPLAY_POWER_BARS, L["POWER_BARS_RAID_DESC"], "RAID_POWER_BARS", nil, nil, {["GROUP_FRAMES"] = true})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["GROUP_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["GROUP_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
-    addOption(p, L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"], L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["GROUP_FRAMES"] = true})
-    addOption(p, RAID_TARGET_ICON, L["RAID_MARKER_DESC"], "RAID_UNIT_MARKERS", nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p, RAID_USE_CLASS_COLORS, L["CLASS_COLOR_RAID_DESC"], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_POWER_BARS, L["POWER_BARS_RAID_DESC"], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(p, L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"], L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, RAID_TARGET_ICON, L["RAID_MARKER_DESC"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
     addOption(
         p,
         L["RAID_SORT_BY_ROLE"],
         L["RAID_SORT_BY_ROLE_DESC"],
         "RAID_SORT_BY_ROLE",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
         end,
         nil,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
-    addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["GROUP_FRAMES"] = true})
+    addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["RAID_FRAMES"] = true})
 
     addOptionDropdown(
         p,
@@ -57,7 +57,7 @@ local function LoadRaidPanel(sWindow)
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH
         },
         nil,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     addOptionDropdown(
@@ -69,7 +69,7 @@ local function LoadRaidPanel(sWindow)
         {"NONE", "DIFFERENT", "ALL"},
         {NONE_KEY, L["RAID_UNIT_FLAGS_2"], ALL},
         nil,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     local dirs, grow = {"DOWN", "UP", "RIGHT", "LEFT"}, {}
@@ -86,7 +86,7 @@ local function LoadRaidPanel(sWindow)
         L["RAID_GROW"],
         "RAID_GROW",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesAnchor()
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
@@ -101,7 +101,7 @@ local function LoadRaidPanel(sWindow)
             end
         ),
         nil,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     local pos = {"POSITION", "GROWTH"}
@@ -117,7 +117,7 @@ local function LoadRaidPanel(sWindow)
         L["RAID_ANCHOR_DESC"],
         "RAID_ANCHOR",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesAnchor()
             end
         end,
@@ -130,7 +130,7 @@ local function LoadRaidPanel(sWindow)
             true
         ),
         nil,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -139,7 +139,7 @@ local function LoadRaidPanel(sWindow)
         L["RAID_UNITS_PER_COLUMN_DESC"],
         "RAID_UNITS_PER_COLUMN",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -148,7 +148,7 @@ local function LoadRaidPanel(sWindow)
         40,
         nil,
         0,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -157,7 +157,7 @@ local function LoadRaidPanel(sWindow)
         L["RAID_BAR_WIDTH_DESC"],
         "RAID_WIDTH",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -166,7 +166,7 @@ local function LoadRaidPanel(sWindow)
         300,
         nil,
         0,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -175,7 +175,7 @@ local function LoadRaidPanel(sWindow)
         L["RAID_BAR_HEIGHT_DESC"],
         "RAID_HEIGHT",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -184,7 +184,7 @@ local function LoadRaidPanel(sWindow)
         100,
         nil,
         0,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -193,7 +193,7 @@ local function LoadRaidPanel(sWindow)
         L["RAID_CONT_WIDTH_DESC"],
         "RAID_CONT_WIDTH",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -202,7 +202,7 @@ local function LoadRaidPanel(sWindow)
         GetScreenWidth(),
         nil,
         0,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     addOptionSlider(
@@ -211,7 +211,7 @@ local function LoadRaidPanel(sWindow)
         L["RAID_CONT_HEIGHT_DESC"],
         "RAID_CONT_HEIGHT",
         function()
-            if GetSetting("GROUP_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -220,7 +220,7 @@ local function LoadRaidPanel(sWindow)
         GetScreenHeight(),
         nil,
         0,
-        {["GROUP_FRAMES"] = true}
+        {["RAID_FRAMES"] = true}
     )
 
     InitPanel(p)

@@ -39,10 +39,10 @@ local function LoadAurasPanel(sWindow)
 
     createCat(L["RAID_AURAS"], L["RAID_AURAS_TOOLTIP"], p, 2)
 
-    addOptionText(p_auras, L["RAID_AURAS_IGNORED"], L["RAID_AURAS_IGNORED_DESC"], "AURAS_IGNORED", nil, nil, nil, {["GROUP_FRAMES"] = true})
-    addOptionText(p_auras, L["RAID_AURAS_MISSING"], L["RAID_AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["GROUP_FRAMES"] = true})
-    addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, {["GROUP_FRAMES"] = true})
-    addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, {["GROUP_FRAMES"] = true})
+    addOptionText(p_auras, L["RAID_AURAS_IGNORED"], L["RAID_AURAS_IGNORED_DESC"], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras, L["RAID_AURAS_MISSING"], L["RAID_AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
@@ -66,7 +66,7 @@ local function LoadAurasPanel(sWindow)
             auraKeys,
             auraVals,
             {perSpec = true},
-            {["GROUP_FRAMES"] = true}
+            {["RAID_FRAMES"] = true}
         )
     end
 
