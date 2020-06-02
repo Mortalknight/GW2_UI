@@ -768,8 +768,11 @@ local function loadAddon(self)
 
     GW.LoadMicroMenu()
 
-    if GetSetting("GROUP_FRAMES") then
+    if GetSetting("PARTY_FRAMES") then
         GW.LoadPartyFrames()
+    end
+
+    if GetSetting("RAID_FRAMES") then
         GW.LoadRaidFrames()
     end
 

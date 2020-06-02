@@ -4,10 +4,10 @@ local function AreOtherAddOnsEnabled()
     for i = 1, GetNumAddOns() do
         local name = GetAddOnInfo(i)
         if name ~= "GW2_UI"and GetAddOnEnableState(GW.myname, name) == 2 then --Loaded or load on demand
-            return "Yes"
+            return "|cffff0000Yes|r"
         end
     end
-    return "No"
+    return "|cff4beb2cNo|r"
 end
 
 local function CheckForPasteAddon()
