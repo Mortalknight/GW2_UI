@@ -1178,6 +1178,10 @@ end
 GW.AddForProfiling("raidframes", "createRaidFrame", createRaidFrame)
 
 local function LoadRaidFrames()
+    if not _G.GwManageGroupButton then
+        manageButton()
+    end
+    
     hideBlizzardRaidFrame()
 
     if CompactRaidFrameManager_UpdateShown then

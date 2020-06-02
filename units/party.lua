@@ -367,6 +367,7 @@ local function manageButton()
         fmGMGB.cf:Hide()
     end
 end
+GW.manageButton = manageButton
 GW.AddForProfiling("party", "manageButton", manageButton)
 
 local function setPortrait(self, index)
@@ -988,19 +989,42 @@ local function createPartyFrame(i)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
-local function LoadPartyFrames()
-    manageButton()
+local function hideBlizzardPartyFrame(i)
+    if InCombatLockdown() then
+        return
+    end
 
-    SetCVar("useCompactPartyFrames", 1)
+    if _G["PartyMemberFrame" .. i] then
+        _G["PartyMemberFrame" .. i]:UnregisterAllEvents()
+        _G["PartyMemberFrame" .. i]:Hide()
+    end
+
+    _G["PartyMemberFrame" .. i]:HookScript("OnShow", function()
+        _G["PartyMemberFrame" .. i]:Hide()
+    end)
+
+    if CompactRaidFrameManager then
+        CompactRaidFrameManager:UnregisterAllEvents()
+        CompactRaidFrameManager:Hide()
+    end
+end
+GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
+
+local function LoadPartyFrames()
+    if not _G.GwManageGroupButton then
+        manageButton()
+    end
+
+    --SetCVar("useCompactPartyFrames", 1)
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return
     end
 
-    createPartyFrame(1)
-    createPartyFrame(2)
-    createPartyFrame(3)
-    createPartyFrame(4)
+    for i = 1, 4 do
+        createPartyFrame(i)
+        hideBlizzardPartyFrame(i)
+    end
 
     GwPartyFrame1:SetPoint("TOPLEFT", 20, -104)
 end
