@@ -273,6 +273,7 @@ local function manageButton()
         fmGMGB.cf:Hide()
     end 
 end
+GW.manageButton = manageButton
 GW.AddForProfiling("party", "manageButton", manageButton)
 
 local function setPortrait(self, index)
@@ -813,9 +814,8 @@ GW.TogglePartyRaid = TogglePartyRaid
 
 local function createPartyFrame(i)
     local registerUnit = "party" .. i
-    --  registerUnit = 'player'
-
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
+
     frame.name:SetFont(UNIT_NAME_FONT, 12)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
@@ -837,7 +837,7 @@ local function createPartyFrame(i)
 
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
-    frame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "Button4Up", "Button5Up", "MiddleButtonUp")
+    frame:RegisterForClicks("AnyUp")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript(
@@ -900,22 +900,43 @@ local function createPartyFrame(i)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
+local function hideBlizzardPartyFrame(i)
+    if InCombatLockdown() then
+        return
+    end
+
+    if _G["PartyMemberFrame" .. i] then
+        _G["PartyMemberFrame" .. i]:UnregisterAllEvents()
+        _G["PartyMemberFrame" .. i]:Hide()
+    end
+
+    _G["PartyMemberFrame" .. i]:HookScript("OnShow", function()
+        _G["PartyMemberFrame" .. i]:Hide()
+    end)
+
+    if CompactRaidFrameManager then
+        CompactRaidFrameManager:UnregisterAllEvents()
+        CompactRaidFrameManager:Hide()
+    end
+end
+GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
+
 local function LoadPartyFrames()
     UnitAura = GW.LibClassicDurations.UnitAuraWithBuffs
 
-    manageButton()
+    if not _G.GwManageGroupButton then
+        manageButton()
+    end
 
-    SetCVar("useCompactPartyFrames", 1)
+    --SetCVar("useCompactPartyFrames", 1)
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return
     end
 
-    createPartyFrame(1)
-    createPartyFrame(2)
-    createPartyFrame(3)
-    createPartyFrame(4)
-
-    GwPartyFrame1:SetPoint("TOPLEFT", 20, -104)
+    for i = 1, 4 do
+        createPartyFrame(i)
+        hideBlizzardPartyFrame(i)
+    end
 end
 GW.LoadPartyFrames = LoadPartyFrames

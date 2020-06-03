@@ -11,7 +11,6 @@ local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
-local TogglePartyRaid = GW.TogglePartyRaid
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -1099,6 +1098,10 @@ GW.AddForProfiling("raidframes", "createRaidFrame", createRaidFrame)
 
 local function LoadRaidFrames()
     UnitAura = GW.LibClassicDurations.UnitAuraWithBuffs
+
+    if not _G.GwManageGroupButton then
+        GW.manageButton()
+    end
 
     hideBlizzardRaidFrame()
 

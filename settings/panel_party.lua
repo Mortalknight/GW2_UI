@@ -19,10 +19,9 @@ local function LoadPartyPanel(sWindow)
     createCat(CHAT_MSG_PARTY, L["GROUP_TOOLTIP"], p, 4)
 
     addOption(p, USE_RAID_STYLE_PARTY_FRAMES, L["RAID_PARTY_STYLE_DESC"], "RAID_STYLE_PARTY", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "PARTY_SHOW_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "PARTY_ONLY_DISPELL_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true})
-    addOption(p, L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"], L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["PARTY_FRAMES"] = true})
-    addOption(p, L["FADE_GROUP_MANAGE_FRAME"], L["FADE_GROUP_MANAGE_FRAME_DESC"], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "PARTY_SHOW_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "PARTY_ONLY_DISPELL_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"], L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOptionDropdown(
         p,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
@@ -37,7 +36,7 @@ local function LoadPartyPanel(sWindow)
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH
         },
         nil,
-        {["PARTY_FRAMES"] = true}
+        {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}
     )
 
     InitPanel(p)
