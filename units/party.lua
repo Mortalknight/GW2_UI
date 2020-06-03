@@ -1025,7 +1025,5 @@ local function LoadPartyFrames()
         createPartyFrame(i)
         hideBlizzardPartyFrame(i)
     end
-
-    GwPartyFrame1:SetPoint("TOPLEFT", 20, -104)
 end
 GW.LoadPartyFrames = LoadPartyFrames
