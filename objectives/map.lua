@@ -385,12 +385,7 @@ end
 GW.AddForProfiling("map", "garrisonBtn_OnEvent", garrisonBtn_OnEvent)
 
 local function stackIcons(self, event, ...)
-    for _, frame in pairs(framesToAdd) do
-        frame:SetParent(Minimap)
-    end
-
     local foundFrames = false
-    table.wipe(framesToAdd)
 
     local children = {Minimap:GetChildren()}
     for _, child in ipairs(children) do
@@ -406,24 +401,25 @@ local function stackIcons(self, event, ...)
             end
             if not ignore then
                 foundFrames = true
-                framesToAdd[#framesToAdd + 1] = child
+                framesToAdd[child:GetName()] = child
             end
         end
     end
 
-    if not foundFrames then
-        self:Hide()
-        return
-    end
-
-    self.container:SetWidth(#framesToAdd * 35)
     local frameIndex = 0
     for _, frame in pairs(framesToAdd) do
-        frame:SetParent(self.container)
-        frame:ClearAllPoints()
-        frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -36, 0)
-        frameIndex = frameIndex + 1
-        frame:SetScript("OnDragStart", nil)
+        if frame:IsShown() then
+            frame:SetParent(self.container)
+            frame:ClearAllPoints()
+            frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -36, 0)
+            frameIndex = frameIndex + 1
+            frame:SetScript("OnDragStart", nil)
+        end
+    end
+    self.container:SetWidth(frameIndex * 35)
+
+    if frameIndex == 0 then
+        self:Hide()
     end
 end
 GW.AddForProfiling("map", "stackIcons", stackIcons)
