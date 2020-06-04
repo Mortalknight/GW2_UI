@@ -75,7 +75,7 @@
         </Scripts>
     </Frame>
 
-    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton"  registerForClicks="LeftButtonUp RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
+    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
         <Size x="49" y="49"></Size>
         <Layers>
         <Layer level="BACKGROUND">

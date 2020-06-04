@@ -908,10 +908,12 @@ local function hideBlizzardPartyFrame(i)
     if _G["PartyMemberFrame" .. i] then
         _G["PartyMemberFrame" .. i]:UnregisterAllEvents()
         _G["PartyMemberFrame" .. i]:Hide()
+        _G["PartyMemberFrame" .. i].Show = GW.NoOp
     end
 
     _G["PartyMemberFrame" .. i]:HookScript("OnShow", function()
-        _G["PartyMemberFrame" .. i]:Hide()
+        _G["PartyMemberFrame" .. i]:SetAlpha(0)
+        _G["PartyMemberFrame" .. i]:EnableMouse(false)
     end)
 
     if CompactRaidFrameManager then
@@ -934,7 +936,7 @@ local function LoadPartyFrames()
         return
     end
 
-    for i = 1, 4 do
+    for i = 1, MAX_PARTY_MEMBERS do
         createPartyFrame(i)
         hideBlizzardPartyFrame(i)
     end
