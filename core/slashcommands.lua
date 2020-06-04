@@ -6,12 +6,12 @@ local function LoadSlashCommands()
     SlashCmdList["GWSLASH"] = function(msg, eb)
         if msg == "" then
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Slash commands:")
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r  /gw2 settings       -> To open the settings window")
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r  /gw2 reset windows  -> To reset the inventory and hero panel windows")
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r  /gw2 status         -> To show GW2 Status window")
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r  /gw2 kb             -> To activate the keybindoptions")
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r  /gw2 mh             -> To activate 'Move HUD'-Mode")
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r  /gw2 reset profile  -> To reset the current profile to default settings")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r   /gw2 settings       -> To open the settings window")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r   /gw2 reset windows  -> To reset the inventory and hero panel windows")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r   /gw2 status         -> To show GW2 Status window")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r   /gw2 kb             -> To activate the keybindoptions")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r   /gw2 mh             -> To activate 'Move HUD'-Mode")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r   /gw2 reset profile  -> To reset the current profile to default settings")
         elseif msg == "settings" then
             ShowUIPanel(GwSettingsWindow)
             UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
@@ -39,7 +39,7 @@ local function LoadSlashCommands()
                     end
                 )
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r '" .. msg .. "' is not a valid GW2 UI slash command.")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r \"" .. msg .. "\" is not a valid GW2 UI slash command.")
         end
     end
 end

@@ -434,7 +434,7 @@ local function styleChatWindow(frame)
         editBox:Hide()
     end)
 
-    if GetSetting("FONTS_ENABLED") then
+    if GetSetting("FONTS_ENABLED") and fontSize then
         if fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize)
         elseif fontSize == 0 then
@@ -589,6 +589,13 @@ local function LoadChat()
         frame:SetTimeVisible(100)
         frame:SetFading(shouldFading)
     end
+
+    hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
+        styleChatWindow(chatFrame)
+        FCFTab_UpdateAlpha(chatFrame)
+        chatFrame:SetTimeVisible(100)
+        chatFrame:SetFading(shouldFading)
+    end)
 
     hooksecurefunc("FCF_DockUpdate", function()
         for i = 1, FCF_GetNumActiveChatFrames() do
