@@ -7,7 +7,7 @@ local PowerBarColorCustom = GW.PowerBarColorCustom
 
 local function updateBossFrameHeight()
     local height = 1
-    for i = 1, 4 do
+    for i = 1, 5 do
         if _G["GwQuestTrackerBossFrame" .. i]:IsShown() then
             height = height + _G["GwQuestTrackerBossFrame" .. i]:GetHeight()
         end

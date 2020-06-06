@@ -3,15 +3,6 @@ local _, GW = ...
 --Message caches
 local messageToSender = {}
 
-local constBackdropFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/ChatBubble-Background",
-    edgeFile = "", --"Interface/AddOns/GW2_UI/textures/chatbubbles/corner-bottom-right",
-    tile = false,
-    tileSize = 64,
-    edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
-}
-
 local function UpdateFontColor(frame)
     frame.text:SetFont(UNIT_NAME_FONT, 12)
     frame.text:SetTextColor(0, 0, 0, 1)
@@ -57,7 +48,45 @@ local function SkinBubble(frame)
     name:SetJustifyH("LEFT")
     frame.Name = name
 
-    frame:SetBackdrop(constBackdropFrame)
+    frame.background = frame:CreateTexture(nil, "ARTWORK")
+    frame.background:SetTexture("Interface/AddOns/GW2_UI/textures/ChatBubble-Background")
+    frame.background:SetPoint("TOPLEFT", frame, "TOPLEFT")
+    frame.background:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
+    frame.background:SetDrawLayer("ARTWORK", -8)
+
+    frame.bordertop = frame:CreateTexture(nil, "ARTWORK")
+    frame.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chatbubbles/border-top")
+    frame.bordertop:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -10, 0)
+    frame.bordertop:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -25, 0)
+    frame.bordertop:SetDrawLayer("ARTWORK", -8)
+
+    frame.borderbottom = frame:CreateTexture(nil, "ARTWORK")
+    frame.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chatbubbles/border-bottom")
+    frame.borderbottom:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", -10)
+    frame.borderbottom:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    frame.borderbottom:SetDrawLayer("ARTWORK", -8)
+
+    frame.borderright = frame:CreateTexture(nil, "ARTWORK")
+    frame.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chatbubbles/border-right")
+    frame.borderright:SetPoint("TOPLEFT", frame, "TOPRIGHT")
+    frame.borderright:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT")
+    frame.borderright:SetDrawLayer("ARTWORK", -8)
+
+    frame.borderleft = frame:CreateTexture(nil, "ARTWORK")
+    frame.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chatbubbles/border-left")
+    frame.borderleft:SetPoint("TOPRIGHT", frame, "TOPLEFT")
+    frame.borderleft:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT")
+    frame.borderleft:SetDrawLayer("ARTWORK", -8)
+
+    frame.bordertopright = frame:CreateTexture(nil, "ARTWORK")
+    frame.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chatbubbles/corner-top-right")
+    frame.bordertopright:SetPoint("BOTTOMLEFT", frame, "TOPRIGHT", -25, 0)
+    frame.bordertopright:SetDrawLayer("ARTWORK", -8)
+
+    frame.borderbottomright = frame:CreateTexture(nil, "ARTWORK")
+    frame.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chatbubbles/corner-bottom-right")
+    frame.borderbottomright:SetPoint("TOPLEFT", frame, "BOTTOMRIGHT")
+    frame.borderbottomright:SetDrawLayer("ARTWORK", -8)
 
     frame:HookScript("OnShow", UpdateBubbleBorder)
     frame:SetFrameStrata("DIALOG") --Doesn't work currently in Legion due to a bug on Blizzards end

@@ -643,6 +643,14 @@ local function LoadTooltips()
     SkinQueueStatusFrame()
     SkinBattlePetTooltip()
 
+    if IsAddOnLoaded("Pawn") then
+        hooksecurefunc("GameTooltip_ShowCompareItem", function(self)
+            local tt1, tt2 = unpack(self.shoppingTooltips)
+            if tt1.PawnIconFrame then tt1.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+            if tt2.PawnIconFrame then tt2.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+        end)
+    end
+
     if GetSetting("ADVANCED_TOOLTIP") then
         mountIDs = C_MountJournal.GetMountIDs()
 
