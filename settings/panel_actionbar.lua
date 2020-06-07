@@ -10,7 +10,7 @@ local AddForProfiling = GW.AddForProfiling
 
 local function setMultibarCols()
     local cols = GetSetting("MULTIBAR_RIGHT_COLS")
-    Debug("setting multibar cols", cols)
+    GW:Debug("setting multibar cols", cols)
     local mb1 = GetSetting("MultiBarRight")
     local mb2 = GetSetting("MultiBarLeft")
     mb1["ButtonsPerRow"] = cols
