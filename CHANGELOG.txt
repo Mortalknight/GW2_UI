@@ -35,6 +35,7 @@ NEW
     - Added option to show coordinates with 2 digits (click on the coordinats; Thanks to: hatdragon)
     - Added extra mana bar for feral druids in cat form
     - Added 'Show Debuff', 'Show only dispellable debuffs', 'Show importend raid & instance debuffs' to party and raidframes
+    - Split Raid and Group frames to two different options
     - Update locals (zhTW, ptBR)
 
 FIXES
