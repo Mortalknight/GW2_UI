@@ -46,6 +46,7 @@ v(
     - Added HonorSpy support (Honortab)
     - Added 'Show Debuff', 'Show only dispellable debuffs', 'Show importend raid & instance debuffs' to party and raidframes
     - Added Status Report
+    - Split Raid and Group frames to two different options
 
 ]=]
 )
