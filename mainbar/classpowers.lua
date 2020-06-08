@@ -970,6 +970,7 @@ local function barChange_OnEvent(self, event, ...)
         end
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         f.gwPlayerForm = GetShapeshiftFormID()
+        GW.CheckRole()
         selectType(f)
     end
 end

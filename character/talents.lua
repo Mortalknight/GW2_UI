@@ -894,11 +894,10 @@ end
 GW.AddForProfiling("talents", "toggleTalentFrame", toggleTalentFrame)
 
 local function spellBook_OnEvent(self, event, ...)
-    if
-        event == "SPELLS_CHANGED" or event == "LEARNED_SPELL_IN_TAB" or event == "PLAYER_GUILD_UPDATE" or
+    if event == "SPELLS_CHANGED" or event == "LEARNED_SPELL_IN_TAB" or event == "PLAYER_GUILD_UPDATE" or
             event == "PLAYER_SPECIALIZATION_CHANGED" or
             event == ""
-     then
+    then
         if not GwTalentFrame:IsShown() or not GW.inWorld then
             return
         end
