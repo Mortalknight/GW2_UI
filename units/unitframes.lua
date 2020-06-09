@@ -686,7 +686,7 @@ local function LoadTarget()
 
     GW.LibClassicDurations.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
         target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
-    end)    
+    end)
 
     if NewUnitFrame.showThreat then
         GW.ThreatLib.RegisterCallback(NewUnitFrame, "ThreatUpdated", function(event, unitguid, targetguid)
