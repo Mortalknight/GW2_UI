@@ -33,7 +33,7 @@ local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
 local hudMoving = false
 local missing, ignored = {}, {}
-local spellBookIndex = {}
+local spellIDs = {}
 local spellBookSearched = 0
 
 local function hideBlizzardRaidFrame()
@@ -516,7 +516,7 @@ local function onBuffEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
     GameTooltip:ClearLines()
     if self.isMissing then
-        GameTooltip:SetSpellBookItem(self.index, BOOKTYPE_SPELL)
+        GameTooltip:SetSpellByID(self.index)
     else
         GameTooltip:SetUnitBuff(self:GetParent().unit, self.index)
     end
@@ -526,7 +526,7 @@ end
 local function onBuffMouseUp(self, btn)
     if btn == "RightButton" and IsShiftKeyDown() then
         if self.isMissing then
-            local name = GetSpellBookItemName(self.index, BOOKTYPE_SPELL)
+            local name = GetSpellInfo(self.index)
             if name then
                 local s = (GetSetting("AURAS_MISSING") or ""):gsub("%s*,?%s*" .. name .. "%s*,?%s*", ", "):trim(", ")
                 SetSetting("AURAS_MISSING", s)
@@ -588,7 +588,7 @@ end
 local function updateBuffs(self)
     local btnIndex, x, y = 1, 0, 0
     local indicators = AURAS_INDICATORS[GW.myclass]
-    local i, name = 1
+    local i, name, spellid = 1
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
@@ -607,21 +607,21 @@ local function updateBuffs(self)
         until not name
 
         i = 0
-        for mName,v in pairs(missing) do
+        for mName, v in pairs(missing) do
             if v then
-                while not spellBookIndex[mName] and spellBookSearched < 1000 do
+                while not spellIDs[mName] and spellBookSearched < MAX_SPELLS do
                     spellBookSearched = spellBookSearched + 1
-                    name = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
-                    if not name then
-                        spellBookSearched = 1000
-                    elseif missing[name] ~= nil and not spellBookIndex[name] then
-                        spellBookIndex[name] = spellBookSearched
+                    name, _, spellid = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
+                    if not name or not spellid then
+                        spellBookSearched = MAX_SPELLS
+                    elseif missing[name] ~= nil and not spellIDs[name] then
+                        spellIDs[name] = spellid
                     end
                 end
 
-                if spellBookIndex[mName] then
-                    local icon = GetSpellBookItemTexture(spellBookIndex[mName], BOOKTYPE_SPELL)
-                    i, btnIndex, x, y = i + 1, showBuffIcon(self, spellBookIndex[mName], btnIndex, x, y, icon, true)
+                if spellIDs[mName] then
+                    local icon = GetSpellTexture(spellIDs[mName])
+                    i, btnIndex, x, y = i + 1, showBuffIcon(self, spellIDs[mName], btnIndex, x, y, icon, true)
                 end
             end
         end
