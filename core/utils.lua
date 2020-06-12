@@ -72,7 +72,7 @@ GW.StripTextures = StripTextures
 local function KillTexture(object)
     if object.UnregisterAllEvents then
         object:UnregisterAllEvents()
-        object:SetParent(E.HiddenFrame)
+        object:SetParent(GW.HiddenFrame)
     else
         object.Show = object.Hide
     end

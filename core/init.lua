@@ -21,6 +21,8 @@ GW.wowpatch, GW.wowbuild = GetBuildInfo()
 GW.wowbuild = tonumber(GW.wowbuild)
 
 GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
+GW.HiddenFrame = CreateFrame("Frame")
+GW.HiddenFrame:Hide()
 
 --Tables
 GW.unitIlvlsCache = {}
