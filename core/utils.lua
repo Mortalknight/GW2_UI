@@ -69,6 +69,18 @@ local function StripTextures(object, hide, alpha)
 end
 GW.StripTextures = StripTextures
 
+local function KillTexture(object)
+    if object.UnregisterAllEvents then
+        object:UnregisterAllEvents()
+        object:SetParent(E.HiddenFrame)
+    else
+        object.Show = object.Hide
+    end
+
+    object:Hide()
+end
+GW.KillTexture = KillTexture
+
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
         if (UnitIsTapped("target")) and (not UnitIsTappedByPlayer("target")) then
@@ -672,15 +684,3 @@ local function IsDispellableByMe(debuffType)
     return dispel and dispel[debuffType]
 end
 GW.IsDispellableByMe = IsDispellableByMe
-
-local function isItemEquipped(itemIDtoCheck)
-    for slot = 1, 19 do
-        local itemID = GetInventoryItemID("player", slot)
-        if itemID == itemIDtoCheck then
-            return true
-        end
-    end
-
-    return false
-end
-GW.isItemEquipped = isItemEquipped

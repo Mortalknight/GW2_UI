@@ -148,14 +148,13 @@ local function updateBagItemList(itemButton)
 
     GetInventoryItemsForSlot(id, bagItemList)
 
-    local addedItems = {}
     local gridIndex = 1
     local itemIndex = 1
     local x = 10
     local y = 15
 
     for location, itemID in next, bagItemList do
-        if not GW.isItemEquipped(itemID) and not addedItems[itemID] then -- Remove the currently equipped item from the list
+        if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
             local itemFrame = getBagSlotFrame(itemIndex)
             itemFrame.location = location
             itemFrame.itemSlot = id
@@ -173,7 +172,6 @@ local function updateBagItemList(itemButton)
                 x = 10
                 y = y + 49 + 3
             end
-            addedItems[itemID] = true
 
             itemIndex = itemIndex + 1
         end
@@ -621,7 +619,6 @@ local function updateBagItemListAll()
         return
     end
 
-    local addedItems = {}
     local gridIndex = 1
     local itemIndex = 1
     local x = 10
@@ -635,7 +632,7 @@ local function updateBagItemListAll()
         GetInventoryItemsForSlot(id, bagItemList)
 
         for location, itemID in next, bagItemList do
-            if not GW.isItemEquipped(itemID) and not addedItems[itemID] then -- Remove the currently equipped item from the list
+            if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
                 local itemFrame = getBagSlotFrame(itemIndex)
                 itemFrame.location = location
                 itemFrame.itemSlot = id
@@ -653,8 +650,6 @@ local function updateBagItemListAll()
                     x = 10
                     y = y + 49 + 3
                 end
-
-                addedItems[itemID] = true
 
                 itemIndex = itemIndex + 1
                 if itemIndex > 36 then
