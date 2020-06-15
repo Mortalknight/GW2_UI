@@ -382,6 +382,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
 
     _G[frame:GetName() .. "CooldownBuffDuration"]:SetText(expires and TimeCount(expires - GetTime()) or "")
     _G[frame:GetName() .. "IconBuffStacks"]:SetText((count or 1) > 1 and count or "")
+    _G[frame:GetName() .. "IconBuffStacks"]:SetFont(UNIT_NAME_FONT, (count or 1) > 9 and 9 or 14)
 
     frame:Show()
 
@@ -606,7 +607,7 @@ local function updateBuffs(self)
                                     -- Stacks
                                     if count > 1 then
                                         frame.text:SetText(count)
-                                        frame.text:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
+                                        frame.text:SetFont(UNIT_NAME_FONT, count > 9 and 9 or 11, "OUTLINE")
                                         frame.text:Show()
                                     else
                                         frame.text:Hide()
