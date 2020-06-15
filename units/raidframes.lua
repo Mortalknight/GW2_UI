@@ -671,7 +671,6 @@ local function updateBuffs(self)
                                     -- Stacks
                                     if count > 1 then
                                         frame.text:SetText(count)
-                                        frame.text:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
                                         frame.text:SetFont(UNIT_NAME_FONT, count > 9 and 9 or 11, "OUTLINE")
                                         frame.text:Show()
                                     else

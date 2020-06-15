@@ -989,21 +989,23 @@ local function createPartyFrame(i)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
-local function hideBlizzardPartyFrame(i)
+local function hideBlizzardPartyFrame()
     if InCombatLockdown() then
         return
     end
 
-    if _G["PartyMemberFrame" .. i] then
-        _G["PartyMemberFrame" .. i]:UnregisterAllEvents()
-        _G["PartyMemberFrame" .. i]:Hide()
-        _G["PartyMemberFrame" .. i].Show = GW.NoOp
-    end
+    for i = 1, MAX_PARTY_MEMBERS do
+        if _G["PartyMemberFrame" .. i] then
+            _G["PartyMemberFrame" .. i]:UnregisterAllEvents()
+            _G["PartyMemberFrame" .. i]:Hide()
+            _G["PartyMemberFrame" .. i].Show = GW.NoOp
+        end
 
-    _G["PartyMemberFrame" .. i]:HookScript("OnShow", function()
-        _G["PartyMemberFrame" .. i]:SetAlpha(0)
-        _G["PartyMemberFrame" .. i]:EnableMouse(false)
-    end)
+        _G["PartyMemberFrame" .. i]:HookScript("OnShow", function()
+            _G["PartyMemberFrame" .. i]:SetAlpha(0)
+            _G["PartyMemberFrame" .. i]:EnableMouse(false)
+        end)
+    end
 
     if CompactRaidFrameManager then
         CompactRaidFrameManager:UnregisterAllEvents()
@@ -1017,7 +1019,7 @@ local function LoadPartyFrames()
         manageButton()
     end
 
-    --SetCVar("useCompactPartyFrames", 1)
+    hideBlizzardPartyFrame()
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return
@@ -1025,7 +1027,6 @@ local function LoadPartyFrames()
 
     for i = 1, MAX_PARTY_MEMBERS do
         createPartyFrame(i)
-        hideBlizzardPartyFrame(i)
     end
 end
 GW.LoadPartyFrames = LoadPartyFrames
