@@ -13,7 +13,8 @@ local BUTTONS = {
     {button = _G.GameMenuButtonLogout       , sprite = {1, 3}},
     {button = _G.GameMenuButtonQuit         , sprite = {2, 3}},
     {button = _G.GameMenuButtonContinue     , sprite = {3, 3}},
-    {button = _G.GameMenuButtonRatings      , sprite = {3, 1}}
+    {button = _G.GameMenuButtonRatings      , sprite = {3, 1}},
+    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}} -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
 }
 
 local ICON_SPRITES = {
