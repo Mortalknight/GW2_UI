@@ -124,6 +124,10 @@ local function SkinItemRefTooltip()
             ItemRefCloseButton:ClearAllPoints()
             ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
             ItemRefTooltip:SetBackdrop(constBackdropArgs)
+
+            if IsAddOnLoaded("Pawn") then
+                if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+            end
         end
     end
 
@@ -561,10 +565,7 @@ local function GameTooltip_OnTooltipSetSpell(self)
     self:Show()
 end
 
-local function SetUnitAura(self, unit, index, filter)
-    if not self or self:IsForbidden() then return end
-    local _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
-
+local function SetUnitAuraData(self, id, caster)
     if id then
         if MountIDs[id] then
             local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(MountIDs[id])
@@ -588,6 +589,20 @@ local function SetUnitAura(self, unit, index, filter)
 
         self:Show()
     end
+end
+
+local function SetUnitBuff(self, unit, index, filter)
+    if not self or self:IsForbidden() then return end
+    local _, _, _, _, _, _, caster, _, _, id = UnitBuff(unit, index, filter)
+
+    SetUnitAuraData(self, id, caster)
+end
+
+local function SetUnitDebuff(self, unit, index, filter)
+    if not self or self:IsForbidden() then return end
+    local _, _, _, _, _, _, caster, _, _, id = UnitDebuff(unit, index, filter)
+
+    SetUnitAuraData(self, id, caster)
 end
 
 local function SetToyByItemID(self, id)
@@ -628,6 +643,14 @@ local function LoadTooltips()
     SkinQueueStatusFrame()
     SkinBattlePetTooltip()
 
+    if IsAddOnLoaded("Pawn") then
+        hooksecurefunc("GameTooltip_ShowCompareItem", function(self)
+            local tt1, tt2 = unpack(self.shoppingTooltips)
+            if tt1.PawnIconFrame then tt1.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+            if tt2.PawnIconFrame then tt2.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+        end)
+    end
+
     if GetSetting("ADVANCED_TOOLTIP") then
         mountIDs = C_MountJournal.GetMountIDs()
 
@@ -640,8 +663,8 @@ local function LoadTooltips()
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
-        hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
-        hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
+        hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitBuff)
+        hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
     end
     
     hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
@@ -651,8 +674,5 @@ local function LoadTooltips()
             f:HookScript("OnUpdate", styleTooltip)
         end
     end
-
--- Create and save hidde scan Tooltip
-GW.ScanTooltip = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
 end
 GW.LoadTooltips = LoadTooltips

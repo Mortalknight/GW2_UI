@@ -3,6 +3,7 @@
 ## Notes: HUD Replacement addon.
 ## Notes-deDE: Ersetzt die Benutzeroberfläche.
 ## OptionalDeps: MoveAnything
+## Version: @project-version@
 
 ## Author: deadend06
 
@@ -31,6 +32,9 @@ core/itemlevel.lua
 core/shared.xml
 core/fonts.lua
 core/storage.lua
+core/init.lua
+core/statusReport.lua
+core/slashcommands.lua
 
 settings/defaults.lua
 settings/api.lua
@@ -111,12 +115,12 @@ inventory/lootframe.lua
 immersive/skins/skins.xml
 immersive/questview.xml
 immersive/toast.xml
+immersive/alerts.lua
 immersive/afk.lua
 immersive/questview.lua
 immersive/chatframe.lua
 immersive/chatbubbles.lua
 immersive/tooltips.lua
-immersive/toast.lua
 
 objectives/questtracker.xml
 objectives/map.lua

@@ -189,6 +189,7 @@ local function watchCurrency(self)
         if not isHeader and isWatched and watchSlot < 4 then
             self["currency" .. tostring(watchSlot)]:SetText(count)
             self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(icon)
+            self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
             watchSlot = watchSlot + 1
         end
     end
@@ -196,6 +197,7 @@ local function watchCurrency(self)
     for i = watchSlot, 3 do
         self["currency" .. tostring(i)]:SetText("")
         self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
+        self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = nil
     end
 end
 GW.AddForProfiling("bag", "watchCurrency", watchCurrency)
@@ -952,6 +954,44 @@ local function LoadBag(helpers)
     f.currency2:SetTextColor(1, 1, 1)
     f.currency3:SetFont(UNIT_NAME_FONT, 12)
     f.currency3:SetTextColor(1, 1, 1)
+
+    -- set warch currencies tooltips
+    f.currency1Frame:SetScript(
+        "OnEnter",
+        function(self)
+            if not self.CurrencyIdx then
+                return
+            end
+            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+            GameTooltip:ClearLines()
+            GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+            GameTooltip:Show()
+        end
+    )
+    f.currency2Frame:SetScript(
+        "OnEnter",
+        function(self)
+            if not self.CurrencyIdx then
+                return
+            end
+            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+            GameTooltip:ClearLines()
+            GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+            GameTooltip:Show()
+        end
+    )
+    f.currency3Frame:SetScript(
+        "OnEnter",
+        function(self)
+            if not self.CurrencyIdx then
+                return
+            end
+            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+            GameTooltip:ClearLines()
+            GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+            GameTooltip:Show()
+        end
+    )
 
     f.currency:SetScript(
         "OnEvent",

@@ -15,7 +15,10 @@ local activeMap
 local pointsAlliance = 0
 local pointsHorde = 0
 
+local MAX_LAND_MARKS = 10
+
 local updateCap = 1 / 5
+local gwbgs
 
 local PvPClassificationFaction = {
     [Enum.PvpUnitClassification.FlagCarrierHorde] = "A",
@@ -58,7 +61,7 @@ local function iconOverrider(self, icon)
         bgs[activeBg]["icons"][icon][3],
         bgs[activeBg]["icons"][icon][4]
 
-    self.icon:SetTexture("Interface\\AddOns\\GW2_UI\\Textures\\battleground\\objective-icons")
+    self.icon:SetTexture("Interface/AddOns/GW2_UI/Textures/battleground/objective-icons")
 
     self.icon:SetTexCoord(0.25, 0.5, 0, 1)
     self.icon:SetTexCoord(x1, x2, y1, y2)
@@ -97,7 +100,7 @@ local function setIconAtlas(self, atlas)
     self.icon:SetTexCoord(x1, x2, y1, y2)
     self.icon:SetSize(20, 20)
 end
-GW.AddForProfiling("battlegrounds", "setIcon", setIcon)
+GW.AddForProfiling("battlegrounds", "setIconAtlas", setIconAtlas)
 
 local function setIcon(self, icon)
     if self.savedIconIndex ~= icon then
@@ -116,23 +119,12 @@ local function setIcon(self, icon)
 end
 GW.AddForProfiling("battlegrounds", "setIcon", setIcon)
 
-local function LandMarkFrameSetPoint_noTimer(i)
-    _G["GwBattleLandMarkFrame" .. i]:SetPoint("CENTER", GwBattleGroundScores.MID, "BOTTOMLEFT", (36) * (i - 1) + 18, 45)
-end
-GW.AddForProfiling("battlegrounds", "LandMarkFrameSetPoint_noTimer", LandMarkFrameSetPoint_noTimer)
-
-local function getLandMarkFrame(i)
+local function getLandMarkFrame(i, hasTimer)
     if _G["GwBattleLandMarkFrame" .. i] == nil then
-        CreateFrame("FRAME", "GwBattleLandMarkFrame" .. i, GwBattleGroundScores, "GwBattleLandMarkFrame")
-        _G["GwBattleLandMarkFrame" .. i]:SetPoint(
-            "CENTER",
-            GwBattleGroundScores.MID,
-            "BOTTOMLEFT",
-            (36) * (i - 1) + 18,
-            32
-        )
+        local land_mark_frame = CreateFrame("Frame", "GwBattleLandMarkFrame" .. i, gwbgs, "GwBattleLandMarkFrame")
+        land_mark_frame:SetPoint("CENTER", gwbgs.MID, "BOTTOMLEFT", (36) * (i - 1) + 18, hasTimer and 32 or 45)
     end
-    return _G["GwBattleLandMarkFrame" .. i]
+    return land_mark_frame or _G["GwBattleLandMarkFrame" .. i]
 end
 GW.AddForProfiling("battlegrounds", "getLandMarkFrame", getLandMarkFrame)
 
@@ -157,7 +149,7 @@ local function PointsAndPOI_onEvent(self, event, ...)
 
     wipe(POIList)
     wipe(POIInfo)
-    for i = 1, 10 do
+    for i = 1, MAX_LAND_MARKS do
         if _G["GwBattleLandMarkFrame" .. i] ~= nil then
             _G["GwBattleLandMarkFrame" .. i]:Hide()
         end
@@ -167,10 +159,7 @@ local function PointsAndPOI_onEvent(self, event, ...)
 
     for i = 1, #POIList do
         POIInfo = GetAreaPOIInfo(activeMap, POIList[i])
-        local f = getLandMarkFrame(i)
-        if not self.hasTimer then
-            LandMarkFrameSetPoint_noTimer(i)
-        end
+        local f = getLandMarkFrame(i, self.hasTimer)
 
         if POIInfo.atlasName then
             local atlas = C_Texture.GetAtlasInfo(POIInfo.atlasName)
@@ -193,7 +182,7 @@ local function PointsAndPOI_onEvent(self, event, ...)
             end
         end
         f:Show()
-        GwBattleGroundScores.MID:SetWidth(36 * i)
+        gwbgs.MID:SetWidth(36 * i)
     end
     for i = 1, 5 do
         if _G["AlwaysUpFrame" .. i] ~= nil then
@@ -242,7 +231,7 @@ local function TimerFlag_OnUpdate(self, elapsed)
     end
     --Check flag
     if self.TrackFlag then
-        for i = 1, 10 do
+        for i = 1, MAX_LAND_MARKS do
             if _G["GwBattleLandMarkFrame" .. i] ~= nil then
                 _G["GwBattleLandMarkFrame" .. i]:Hide()
             end
@@ -251,10 +240,7 @@ local function TimerFlag_OnUpdate(self, elapsed)
         for i = 1, 5 do
             if UnitExists("arena" .. i)  then
                 counter = counter + 1
-                local f = getLandMarkFrame(counter)
-                if not self.hasTimer then
-                    LandMarkFrameSetPoint_noTimer(counter)
-                end
+                local f = getLandMarkFrame(counter, self.hasTimer)
                 local classificationFaction = PvPClassificationFaction[UnitPvpClassification("arena" .. i)]
                 if classificationFaction == "H" then
                     f.IconBackground:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
@@ -267,7 +253,7 @@ local function TimerFlag_OnUpdate(self, elapsed)
                 f:Show()
             end
         end
-        GwBattleGroundScores.MID:SetWidth(36 * counter)
+        gwbgs.MID:SetWidth(36 * counter)
     end
 end
 GW.AddForProfiling("battlegrounds", "TimerFlag_OnUpdate", TimerFlag_OnUpdate)
@@ -286,40 +272,40 @@ local function pvpHud_onEvent(self, event)
         activeMap = GetBestMapForUnit("player")
         UIWidgetTopCenterContainerFrame:Hide()
 
-        GwBattleGroundScores.hasTimer = false
-        GwBattleGroundScores.TrackFlag = false
-        GwBattleGroundScores:SetScript("OnEvent", nil)
-        GwBattleGroundScores:SetScript("OnUpdate", nil)
-        GwBattleGroundScores:SetScript("OnEvent", bgs[mapID]["OnEvent"])
+        gwbgs.hasTimer = false
+        gwbgs.TrackFlag = false
+        gwbgs:SetScript("OnEvent", nil)
+        gwbgs:SetScript("OnUpdate", nil)
+        gwbgs:SetScript("OnEvent", bgs[mapID]["OnEvent"])
         if bgs[mapID]["OnUpdate"] then
-            GwBattleGroundScores:SetScript("OnUpdate", bgs[mapID]["OnUpdate"])
-            GwBattleGroundScores.elapsedTimer = -1
+            gwbgs:SetScript("OnUpdate", bgs[mapID]["OnUpdate"])
+            gwbgs.elapsedTimer = -1
         end
         if bgs[mapID]["TrackFlag"] then
-            GwBattleGroundScores.TrackFlag = true
+            gwbgs.TrackFlag = true
         end
         if bgs[mapID]["hasTimer"] then
-            GwBattleGroundScores.hasTimer = true
+            gwbgs.hasTimer = true
         end
-        GwBattleGroundScores:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-        GwBattleGroundScores:RegisterEvent("UPDATE_BATTLEFIELD_SCORE")
-        GwBattleGroundScores:RegisterEvent("PLAYER_ENTERING_WORLD")
-        GwBattleGroundScores:RegisterEvent("ZONE_CHANGED")
-        GwBattleGroundScores:RegisterEvent("ZONE_CHANGED_INDOORS")
-        GwBattleGroundScores:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-        GwBattleGroundScores:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-        GwBattleGroundScores:RegisterEvent("BATTLEGROUND_POINTS_UPDATE")
-        GwBattleGroundScores:RegisterEvent("UPDATE_UI_WIDGET")
-        GwBattleGroundScores:RegisterEvent("AREA_POIS_UPDATED")
+        gwbgs:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
+        gwbgs:RegisterEvent("UPDATE_BATTLEFIELD_SCORE")
+        gwbgs:RegisterEvent("PLAYER_ENTERING_WORLD")
+        gwbgs:RegisterEvent("ZONE_CHANGED")
+        gwbgs:RegisterEvent("ZONE_CHANGED_INDOORS")
+        gwbgs:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        gwbgs:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+        gwbgs:RegisterEvent("BATTLEGROUND_POINTS_UPDATE")
+        gwbgs:RegisterEvent("UPDATE_UI_WIDGET")
+        gwbgs:RegisterEvent("AREA_POIS_UPDATED")
         
-        GwBattleGroundScores:Show()
+        gwbgs:Show()
     else
-        GwBattleGroundScores:UnregisterAllEvents()
-        GwBattleGroundScores:Hide()
-        GwBattleGroundScores.hasTimer = false
-        GwBattleGroundScores.TrackFlag = false
-        GwBattleGroundScores:SetScript("OnEvent", nil)
-        GwBattleGroundScores:SetScript("OnUpdate", nil)
+        gwbgs:UnregisterAllEvents()
+        gwbgs:Hide()
+        gwbgs.hasTimer = false
+        gwbgs.TrackFlag = false
+        gwbgs:SetScript("OnEvent", nil)
+        gwbgs:SetScript("OnUpdate", nil)
         UIWidgetTopCenterContainerFrame:Show()
     end
 end
@@ -430,9 +416,9 @@ local function LoadBattlegrounds()
         [1803] = { --SeethingShore
             ["OnEvent"] = OnlyPoints_onEvent
         },
-        [628] = { --Isle Of Conquest
-            ["OnEvent"] = OnlyPoints_onEvent
-        },
+        --[628] = { --Isle Of Conquest
+            --["OnEvent"] = OnlyPoints_onEvent
+        --},
         [998] = { --TempleOfKotmogu (TODO: Add orb carrier to top)
             ["OnEvent"] = PointsAndPOI_onEvent,
             ["icons"] = {}
@@ -479,9 +465,9 @@ local function LoadBattlegrounds()
         }
     }
 
-    CreateFrame("FRAME", "GwPvpHudManager", UIParent)
+    local pvp_hud_manager = CreateFrame("Frame", nil, UIParent)
 
-    local gwbgs = CreateFrame("FRAME", "GwBattleGroundScores", UIParent, "GwBattleGroundScores")
+    gwbgs = CreateFrame("Frame", nil, UIParent, "GwBattleGroundScores")
     gwbgs.leftFlag:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
     gwbgs.rightFlag:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
 
@@ -497,11 +483,11 @@ local function LoadBattlegrounds()
     gwbgs.timer:SetShadowColor(0, 0, 0, 1)
     gwbgs.timer:SetShadowOffset(1, -1)
 
-    GwPvpHudManager:RegisterEvent("PLAYER_ENTERING_WORLD")
-    GwPvpHudManager:RegisterEvent("ZONE_CHANGED")
-    GwPvpHudManager:RegisterEvent("ZONE_CHANGED_INDOORS")
-    GwPvpHudManager:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    GwPvpHudManager:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-    GwPvpHudManager:SetScript("OnEvent", pvpHud_onEvent)
+    pvp_hud_manager:RegisterEvent("PLAYER_ENTERING_WORLD")
+    pvp_hud_manager:RegisterEvent("ZONE_CHANGED")
+    pvp_hud_manager:RegisterEvent("ZONE_CHANGED_INDOORS")
+    pvp_hud_manager:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    pvp_hud_manager:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    pvp_hud_manager:SetScript("OnEvent", pvpHud_onEvent)
 end
 GW.LoadBattlegrounds = LoadBattlegrounds

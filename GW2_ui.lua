@@ -10,6 +10,8 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
+local AlertContainerFrame
+
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
@@ -18,6 +20,10 @@ _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then 
     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
     return
+end
+
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then 
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
 local loaded = false
@@ -460,9 +466,13 @@ local function gw_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
+local function getBestPixelScale()
+    return max(0.4, min(1.15, 768 / GW.screenHeight))
+end
+GW.getBestPixelScale = getBestPixelScale
+
 local function PixelPerfection()
-    GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
-    GW.scale = max(0.4, min(1.15, 768 / GW.screenHeight))
+    GW.scale = getBestPixelScale()
     GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     UIParent:SetScale(GW.scale)
 end
@@ -499,18 +509,102 @@ local function RegisterScaleFrame(f, modifier)
 end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
+-- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
+local function adjustFixedAnchors(self, relativeAlert)
+    if not self.anchorFrame:IsShown() then
+        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
+        local name = self.anchorFrame:GetName()
+        if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
+            if name == "TalkingHeadFrame" then
+                self.anchorFrame:ClearAllPoints()
+                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+            elseif name == "GroupLootContainer" then
+                self.anchorFrame:ClearAllPoints()
+                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
+                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
+                else
+                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+                end
+            end
+        end
+        return self.anchorFrame
+    end
+    return relativeAlert
+end
+GW.AddForProfiling("index", "adjustFixedAnchors", adjustFixedAnchors)
+
+local function adjustAlertAnchors(self, relativeAlert)
+    for alertFrame in self.alertFramePool:EnumerateActive() do
+        alertFrame:ClearAllPoints()
+        alertFrame:SetPoint("BOTTOM", relativeAlert, "TOP", 0, 5)
+        relativeAlert = alertFrame
+    end
+    return relativeAlert
+end
+
+local function updateAnchors(self)
+    self:CleanAnchorPriorities()
+
+    local relativeFrame = GwAlertFrameOffsetter
+    local relativeFrame2 = AlertContainerFrame
+    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
+        if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors and GetSetting("ACTIONBARS_ENABLED") then
+            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
+        elseif alertFrameSubSystem.AdjustAnchors == AlertFrameQueueMixin.AdjustAnchors and GetSetting("ALERTFRAME_ENABLED") then
+            relativeFrame2 = adjustAlertAnchors(alertFrameSubSystem, relativeFrame2)
+        else
+            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
+        end
+    end
+    _G.AlertFrame:ClearAllPoints()
+    _G.AlertFrame:SetPoint("BOTTOM", _G.Minimap, "TOP", 10, 5)
+end
+GW.AddForProfiling("index", "updateAnchors", updateAnchors)
+
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
     else
-        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
         GW.scale = UIParent:GetScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
 
     -- setup our frame pool
     GW.Pools = CreatePoolCollection()
+
+    -- setup AlertFrame and Bonus Roll Frame
+    AlertFrame.UpdateAnchors = updateAnchors
+
+    if GetSetting("ALERTFRAME_ENABLED") then
+        AlertContainerFrame = GW.loadAlterSystemFrameSkins()
+
+        hooksecurefunc("GroupLootContainer_Update", function(self)
+            local lastIdx = nil
+            local pt, _, relPt, _, _ = self:GetPoint()
+        
+            for i = 1 , self.maxIndex do
+                local frame = self.rollFrames[i]
+                local prevFrame = self.rollFrames[i-1]
+                if ( frame ) then
+                    frame:ClearAllPoints()
+                    if prevFrame and not (prevFrame == frame) then
+                        frame:SetPoint(POSITION, prevFrame, ANCHOR_POINT, 0, 0)
+                    else
+                        frame:SetPoint(pt, self, relPt, 0, self.reservedSize * (i - 1 + 0.5))
+                    end
+                    lastIdx = i
+                end
+            end
+        
+            if ( lastIdx ) then
+                self:SetHeight(self.reservedSize * lastIdx)
+                self:Show()
+            else
+                self:Hide()
+            end
+        end)
+    end
 
     -- disable Move Anything bag handling
     disableMABags()
@@ -535,6 +629,9 @@ local function loadAddon(self)
     GW.LoadSettings()
     GW.LoadHoverBinds()
 
+    -- Load Slash commands
+    GW.LoadSlashCommands()
+
     --Create the mainbar layout manager
     local lm = GW.LoadMainbarLayout()
 
@@ -543,11 +640,8 @@ local function loadAddon(self)
         GW.SkinMainMenu()
     else
         --Setup addon button
-        local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GwStandardButton")
-        GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
-        GwMainMenuFrame:ClearAllPoints()
-        GwMainMenuFrame:SetPoint("TOP", _G.GameMenuFrame, "BOTTOM", 0, 0)
-        GwMainMenuFrame:SetSize(150, 24)
+        local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GameMenuButtonTemplate")
+        GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
@@ -555,10 +649,18 @@ local function loadAddon(self)
                     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
                     return
                 end
-                GwSettingsWindow:Show()
-                ToggleGameMenu()
+                ShowUIPanel(GwSettingsWindow)
+                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+                HideUIPanel(GameMenuFrame)
             end
         )
+        GameMenuFrame[L["SETTINGS_BUTTON"]] = GwMainMenuFrame
+
+        if not IsAddOnLoaded("ConsolePortUI_Menu") then
+            GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
+            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+            hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
+        end
     end
     if GetSetting("STATICPOPUP_SKIN_ENABLED") then
         GW.SkinStaticPopup()
@@ -754,8 +856,11 @@ local function loadAddon(self)
     GW.LoadMicroMenu()
     GW.LoadOrderBar()
 
-    if GetSetting("GROUP_FRAMES") then
+    if GetSetting("PARTY_FRAMES") then
         GW.LoadPartyFrames()
+    end
+
+    if GetSetting("RAID_FRAMES") then
         GW.LoadRaidFrames()
     end
 
@@ -800,18 +905,23 @@ local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         if not loaded then
             loaded = true
+            GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
             loadAddon(self)
         end
         GW.LoadStorage()
+    elseif event == "ADDON_LOADED" then
+        
     elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
         SetSetting("PIXEL_PERFECTION", false)
-        GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
         GW.scale = UIParent:GetScale()
+        GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
+        GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     elseif event == "PLAYER_LEAVING_WORLD" then
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
+        GW.CheckRole()
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
         end
@@ -820,6 +930,14 @@ local function gw_OnEvent(self, event, ...)
                 GW.RemoveTrackerNotificationOfType("ARENA")
             end
         end)
+    elseif event == "PLAYER_LEVEL_UP" then
+        GW.mylevel = ...
+        Debug("New level:", GW.mylevel)
+    elseif event == "NEUTRAL_FACTION_SELECT_RESULT" then
+        GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
+        Debug("New faction:", GW.myfaction, GW.myLocalizedFaction)
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+        GW.CheckRole()
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
@@ -829,6 +947,10 @@ l:RegisterEvent("PLAYER_LEAVING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 l:RegisterEvent("UI_SCALE_CHANGED")
+l:RegisterEvent("PLAYER_LEVEL_UP")
+l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
+l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+l:RegisterEvent("ADDON_LOADED")
 
 local function AddToClique(frame)
     if type(frame) == "string" then

@@ -10,6 +10,7 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GWGetClassColor = GW.GWGetClassColor
 local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
+local ImportendRaidDebuff = GW.ImportendRaidDebuff
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -32,7 +33,7 @@ local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
 local hudMoving = false
 local missing, ignored = {}, {}
-local spellBookIndex = {}
+local spellIDs = {}
 local spellBookSearched = 0
 
 local function hideBlizzardRaidFrame()
@@ -194,7 +195,6 @@ local function setUnitName(self)
     end
 
     local flagSetting = GetSetting("RAID_UNIT_FLAGS")
-    local playerLocal = GetLocale()
 
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
@@ -209,7 +209,7 @@ local function setUnitName(self)
     if flagSetting == "DIFFERENT" then
         local realmLocal = select(5, LRI:GetRealmInfoByUnit(self.unit))
 
-        if playerLocal ~= realmLocal then
+        if GW.mylocal ~= realmLocal then
             realmflag = REALM_FLAGS[realmLocal]
         end
     elseif flagSetting == "ALL" then
@@ -313,7 +313,7 @@ local function updateAwayData(self)
     end
 
     if self.targetmarker ~= nil and GW_READY_CHECK_INPROGRESS == false and GetSetting("RAID_UNIT_MARKERS") == true then
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         updateRaidMarkers(self)
     end
 
@@ -328,7 +328,7 @@ local function updateAwayData(self)
 
     if iconState == 3 then
         self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         self.name:SetTextColor(1, 1, 1)
         self.classicon:Show()
     end
@@ -340,7 +340,7 @@ local function updateAwayData(self)
         elseif iconState == 6 then
             self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         self.classicon:Show()
     end
 
@@ -361,7 +361,7 @@ local function updateAwayData(self)
 
     if not UnitIsConnected(self.unit) then
         self.classicon:SetTexture("Interface\\CharacterFrame\\Disconnect-Icon")
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         self.classicon:Show()
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
@@ -445,6 +445,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
 
     _G[frame:GetName() .. "CooldownBuffDuration"]:SetText(expires and TimeCount(expires - GetTime()) or "")
     _G[frame:GetName() .. "IconBuffStacks"]:SetText((count or 1) > 1 and count or "")
+    _G[frame:GetName() .. "IconBuffStacks"]:SetFont(UNIT_NAME_FONT, (count or 1) > 9 and 9 or 14)
 
     frame:Show()
 
@@ -458,7 +459,10 @@ end
 
 local function updateDebuffs(self)
     local btnIndex, x, y = 1, 0, 0
-    local filter = GetSetting("RAID_ONLY_DISPELL_DEBUFFS") and "RAID" or nil
+    local filter = "HARMFUL"
+    local show_debuffs = GetSetting("RAID_SHOW_DEBUFFS")
+    local only_dispellable_debuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
+    local show_importend_raid_instance_debuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
     local i, framesDone, aurasDone = 0
@@ -477,10 +481,27 @@ local function updateDebuffs(self)
         -- show current debuffs
         if not aurasDone then
             local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, filter)
-            local shouldDisplay = debuffName and not (
-                ignored[debuffName]
-                or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
-            )
+            local shouldDisplay = false
+
+            if show_debuffs then
+                if only_dispellable_debuffs then
+                    if debuffType and GW.IsDispellableByMe(debuffType) then
+                        shouldDisplay = debuffName and not (
+                            ignored[debuffName]
+                            or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                        )
+                    end
+                else
+                    shouldDisplay = debuffName and not (
+                        ignored[debuffName]
+                        or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
+                    )
+                end
+            end
+
+            if show_importend_raid_instance_debuffs and not shouldDisplay then
+                shouldDisplay = ImportendRaidDebuff[spellId] or false
+            end
 
             if shouldDisplay then
                 btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
@@ -496,7 +517,7 @@ local function onBuffEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
     GameTooltip:ClearLines()
     if self.isMissing then
-        GameTooltip:SetSpellBookItem(self.index, BOOKTYPE_SPELL)
+        GameTooltip:SetSpellByID(self.index)
     else
         GameTooltip:SetUnitBuff(self:GetParent().unit, self.index)
     end
@@ -506,7 +527,7 @@ end
 local function onBuffMouseUp(self, btn)
     if btn == "RightButton" and IsShiftKeyDown() then
         if self.isMissing then
-            local name = GetSpellBookItemName(self.index, BOOKTYPE_SPELL)
+            local name = GetSpellInfo(self.index)
             if name then
                 local s = (GetSetting("AURAS_MISSING") or ""):gsub("%s*,?%s*" .. name .. "%s*,?%s*", ", "):trim(", ")
                 SetSetting("AURAS_MISSING", s)
@@ -567,8 +588,8 @@ end
 
 local function updateBuffs(self)
     local btnIndex, x, y = 1, 0, 0
-    local indicators = AURAS_INDICATORS[select(2, UnitClass("player"))]
-    local i, name = 1
+    local indicators = AURAS_INDICATORS[GW.myclass]
+    local i, name, spellid = 1
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
@@ -587,21 +608,21 @@ local function updateBuffs(self)
         until not name
 
         i = 0
-        for mName,v in pairs(missing) do
+        for mName, v in pairs(missing) do
             if v then
-                while not spellBookIndex[mName] and spellBookSearched < 1000 do
+                while not spellIDs[mName] and spellBookSearched < MAX_SPELLS do
                     spellBookSearched = spellBookSearched + 1
-                    name = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
-                    if not name then
-                        spellBookSearched = 1000
-                    elseif missing[name] ~= nil and not spellBookIndex[name] then
-                        spellBookIndex[name] = spellBookSearched
+                    name, _, spellid = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
+                    if not name or not spellid then
+                        spellBookSearched = MAX_SPELLS
+                    elseif missing[name] ~= nil and not spellIDs[name] then
+                        spellIDs[name] = spellid
                     end
                 end
 
-                if spellBookIndex[mName] then
-                    local icon = GetSpellBookItemTexture(spellBookIndex[mName], BOOKTYPE_SPELL)
-                    i, btnIndex, x, y = i + 1, showBuffIcon(self, spellBookIndex[mName], btnIndex, x, y, icon, true)
+                if spellIDs[mName] then
+                    local icon = GetSpellTexture(spellIDs[mName])
+                    i, btnIndex, x, y = i + 1, showBuffIcon(self, spellIDs[mName], btnIndex, x, y, icon, true)
                 end
             end
         end
@@ -650,7 +671,7 @@ local function updateBuffs(self)
                                     -- Stacks
                                     if count > 1 then
                                         frame.text:SetText(count)
-                                        frame.text:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
+                                        frame.text:SetFont(UNIT_NAME_FONT, count > 9 and 9 or 11, "OUTLINE")
                                         frame.text:Show()
                                     else
                                         frame.text:Hide()
@@ -875,10 +896,10 @@ local function GetRaidFramesMeasures(players)
         players = players or max(1, GetNumGroupMembers())
     else
         players = 0
-        for i = 1, 40 do
+        for i = 1, MAX_RAID_MEMBERS do
             local _, _, grp = GetRaidRosterInfo(i)
-            if grp >= ceil(players / 5) then
-                players = max((grp - 1) * 5, players) + 1
+            if grp >= ceil(players / MEMBERS_PER_RAID_GROUP) then
+                players = max((grp - 1) * MEMBERS_PER_RAID_GROUP, players) + 1
             end
         end
         players = max(1, players, GetNumGroupMembers())
@@ -963,7 +984,7 @@ local function UpdateRaidFramesPosition()
     GwRaidFrameContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
 
     -- Update unit frames
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
     end
@@ -996,7 +1017,7 @@ local function sortByRole()
             tinsert(sorted, "player")
         end
 
-        for i = 1, 40 do
+        for i = 1, MAX_RAID_MEMBERS do
             if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
                 tinsert(sorted, unitString .. i)
             end
@@ -1027,16 +1048,16 @@ local function UpdateRaidFramesLayout()
     wipe(grpPos) wipe(noGrp)
 
     -- Position by group
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         if not tContains(sorted, unitString .. i) then
-            if i < 5 then
+            if i < MEMBERS_PER_RAID_GROUP then
                 PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
 
             local name, _, grp = GetRaidRosterInfo(i)
             if name or grp > 1 then
                 grpPos[grp] = (grpPos[grp] or 0) + 1
-                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * 5 + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
             else
                 tinsert(noGrp, i)
             end
@@ -1045,10 +1066,10 @@ local function UpdateRaidFramesLayout()
 
     -- Find spots for units with missing group info
     for _,i in ipairs(noGrp) do
-        for grp=1,8 do
-            if (grpPos[grp] or 0) < 5 then
+        for grp = 1, NUM_RAID_GROUPS do
+            if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
                 grpPos[grp] = (grpPos[grp] or 0) + 1
-                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * 5 + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                 break
             end
         end
@@ -1158,6 +1179,10 @@ end
 GW.AddForProfiling("raidframes", "createRaidFrame", createRaidFrame)
 
 local function LoadRaidFrames()
+    if not _G.GwManageGroupButton then
+        GW.manageButton()
+    end
+    
     hideBlizzardRaidFrame()
 
     if CompactRaidFrameManager_UpdateShown then
@@ -1202,7 +1227,7 @@ local function LoadRaidFrames()
         end
     end)
 
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainer.gwMover, "VerticalActionBarDummy")
         f:SetParent(GwRaidFrameContainer.gwMover)
         f.frameName:SetText("")
@@ -1215,7 +1240,7 @@ local function LoadRaidFrames()
         createRaidFrame("party" .. i, i)
     end
 
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         createRaidFrame("raid" .. i, i)
     end
 
@@ -1265,8 +1290,8 @@ local function LoadRaidFrames()
         UpdateRaidFramesLayout()
 
         updateFrameData(_G["GwCompactplayer"], nil)
-        for i = 1, 40 do
-            if i < 5 then
+        for i = 1, MAX_RAID_MEMBERS do
+            if i < MEMBERS_PER_RAID_GROUP then
                 updateFrameData(_G["GwCompactparty" .. i], i)
             end
             updateFrameData(_G["GwCompactraid" .. i], i)

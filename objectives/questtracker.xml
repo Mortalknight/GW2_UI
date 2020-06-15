@@ -88,7 +88,7 @@
                     </Anchors>
                 </FontString>
                 <FontString name="$parentSubString" parentKey="desc" text="Quest name" justifyH="LEFT" justifyV="TOP">
-                    <Size x="300" y="150"></Size>
+                    <Size x="300" y="35"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" y="-39"></Anchor>
                     </Anchors>

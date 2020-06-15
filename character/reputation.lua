@@ -11,7 +11,6 @@ local updateOldData
 local updateReputations
 local updateDetails
 
-local gender = UnitSex("player")
 local savedReputation = {}
 local selectedReputationCat = 1
 local reputationLastUpdateMethod = nil
@@ -207,7 +206,7 @@ local function details_OnClick(self, button)
         detailFaction(self.item.factionID, true)
         self:SetHeight(DETAIL_LG_H)
         self.item.controles:Show()
-        self.item.repbg:SetTexCoord(0, 1, 0, 1)
+        self.item.repbg:SetTexCoord(unpack(GW.TexCoords))
         self.item.repbg:SetDesaturated(false)
     end
     updateOldData()
@@ -249,8 +248,8 @@ local function setDetailEx(
         isExpanded = true
     end
 
-    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), gender)
-    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), gender)
+    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
+    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
     local friendID, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold =
         GetFriendshipReputation(factionID)
 
@@ -376,7 +375,7 @@ local function setDetailEx(
     if factionID and RT[factionID] then
         frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
         if isExpanded then
-            frame.repbg:SetTexCoord(0, 1, 0, 1)
+            frame.repbg:SetTexCoord(unpack(GW.TexCoords))
             frame.repbg:SetAlpha(0.85)
             frame.repbg:SetDesaturated(false)
         else

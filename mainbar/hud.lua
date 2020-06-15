@@ -37,7 +37,7 @@ local function xpbar_OnEnter()
         GameTooltip:AddLine(gw_honor_vals, 1, 1, 1)
     end
 
-    if UnitLevel("Player") < GetMaxPlayerLevel() then
+    if GW.mylevel < GetMaxPlayerLevel() then
         GameTooltip:AddLine(
             COMBAT_XP_GAIN ..
                 " " ..
@@ -93,7 +93,7 @@ end
 GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
 
 local function xpbar_OnClick()
-    if UnitLevel("Player") < GetMaxPlayerLevel() then
+    if GW.mylevel < GetMaxPlayerLevel() then
         if GwLevelingRewards:IsShown() then
             GwLevelingRewards:Hide()
         else
@@ -137,7 +137,7 @@ end
 GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
 local function xpbar_OnEvent(self, event)
-    if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil and UnitLevel("Player") == GetMaxPlayerLevel() then
+    if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil and GW.mylevel == GetMaxPlayerLevel() then
         C_Timer.After(0.4, function() xpbar_OnEvent(self, nil) end)
     end
     if event == "UPDATE_FACTION" and not GW.inWorld then
@@ -155,7 +155,7 @@ local function xpbar_OnEvent(self, event)
     local valPrec = valCurrent / valMax
     local valPrecRepu = 0
 
-    local level = UnitLevel("Player")
+    local level = GW.mylevel
     local maxPlayerLevel = GetMaxPlayerLevel()
     local Nextlevel = math.min(maxPlayerLevel, level + 1)
     local lockLevelTextUnderMaxLevel = false
@@ -259,9 +259,9 @@ local function xpbar_OnEvent(self, event)
                 )
             else
                 local currentRank =
-                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), UnitSex("player"))
+                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
                 local nextRank =
-                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), UnitSex("player"))
+                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
 
                 if currentRank == nextRank and earnedValue - bottomValue == 0 then
                     valPrecRepu = 1
@@ -357,9 +357,9 @@ local function xpbar_OnEvent(self, event)
         )
         GwExperienceFrame.AzeritBar.AzeritBarAnimation = AzeritVal
 
-        if maxPlayerLevel == UnitLevel("Player") then
+        if maxPlayerLevel == GW.mylevel then
             level = AzeritLevel
-            Nextlevel = math.min(AzeritLevel + 1, 80) --Max azerit level is 80
+            Nextlevel = AzeritLevel + 1 --Max azerit level is infinity
             GwExperienceFrame.NextLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             GwExperienceFrame.CurrentLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             GwExperienceFrame.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label-azerit")
@@ -375,7 +375,7 @@ local function xpbar_OnEvent(self, event)
     --If we are inside a pvp arena we show the honorbar
     gw_honor_vals = nil
 
-    if UnitLevel("Player") == maxPlayerLevel and (UnitInBattleground("player") ~= nil or event == "PLAYER_ENTERING_BATTLEGROUND") then
+    if GW.mylevel== maxPlayerLevel and (UnitInBattleground("player") ~= nil or event == "PLAYER_ENTERING_BATTLEGROUND") then
         showBar1 = true
         level = UnitHonorLevel("player")
         Nextlevel = level + 1
@@ -396,7 +396,7 @@ local function xpbar_OnEvent(self, event)
     end
 
     local GainBigExp = false
-    local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (UnitLevel("Player") / maxPlayerLevel)))
+    local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / maxPlayerLevel)))
     if (valPrec - experiencebarAnimation) > FlareBreakPoint then
         GainBigExp = true
         flareAnim()
@@ -1024,8 +1024,7 @@ GW.AddForProfiling("hud", "loadRewards", loadRewards)
 
 local GW_LEVELING_REWARDS = {}
 displayRewards = function()
-    local _, englishClass = UnitClass("player")
-    local talentLevels = CLASS_TALENT_LEVELS[englishClass] or CLASS_TALENT_LEVELS["DEFAULT"]
+    local talentLevels = CLASS_TALENT_LEVELS[GW.myclass] or CLASS_TALENT_LEVELS["DEFAULT"]
 
     wipe(GW_LEVELING_REWARDS)
     for i = 1, 7 do
@@ -1037,8 +1036,7 @@ displayRewards = function()
 
     GW_LEVELING_REWARD_AVALIBLE = false
 
-    local currentSpec = GetSpecialization() -- Get the player's current spec
-    local spells = {GetSpecializationSpells(currentSpec)}
+    local spells = {GetSpecializationSpells(GW.myspec)}
     for k, v in pairs(spells) do
         if v ~= nil then
             local tIndex = #GW_LEVELING_REWARDS + 1
@@ -1078,9 +1076,8 @@ displayRewards = function()
     )
 
     local i = 1
-    local playerLevel = UnitLevel("player")
     for k, v in pairs(GW_LEVELING_REWARDS) do
-        if v["level"] > playerLevel then
+        if v["level"] > GW.mylevel then
             if _G["GwLevelingRewardsItem" .. i].mask ~= nil then
                 _G["GwLevelingRewardsItem" .. i].icon:RemoveMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
             end

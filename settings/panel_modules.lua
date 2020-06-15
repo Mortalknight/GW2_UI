@@ -16,6 +16,14 @@ local welcome_OnClick = function(self, button)
 end
 AddForProfiling("panel_modules", "welcome_OnClick", welcome_OnClick)
 
+local statusReport_OnClick = function(self, button)
+    if self.settings then
+        self.settings:Hide()
+    end
+    GW.ShowStatusReport()
+end
+AddForProfiling("panel_modules", "statusReport_OnClick", statusReport_OnClick)
+
 local function LoadModulesPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsModulePanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -28,6 +36,10 @@ local function LoadModulesPanel(sWindow)
     p.welcome.settings = sWindow
     p.welcome:SetText(L["WELCOME"])
     p.welcome:SetScript("OnClick", welcome_OnClick)
+
+    p.statusReport.settings = sWindow
+    p.statusReport:SetText(LANDING_PAGE_REPORT)
+    p.statusReport:SetScript("OnClick", statusReport_OnClick)
 
     createCat(L["MODULES_CAT"], L["MODULES_CAT_TOOLTIP"], p, 0)
 
@@ -48,12 +60,14 @@ local function LoadModulesPanel(sWindow)
     addOption(p, L["FONTS"], L["FONTS_DESC"], "FONTS_ENABLED")
     addOption(p, SHOW_ENEMY_CAST, L["CASTING_BAR_DESC"], "CASTINGBAR_ENABLED")
     addOption(p, L["CLASS_POWER"], L["CLASS_POWER_DESC"], "CLASS_POWER")
-    addOption(p, L["GROUP_FRAMES"], L["GROUP_FRAMES_DESC"], "GROUP_FRAMES")
+    addOption(p, RAID_FRAMES_LABEL, RAID_FRAMES_SUBTEXT, "RAID_FRAMES")
+    addOption(p, L["GROUP_FRAMES"], L["GROUP_FRAMES_DESC"], "PARTY_FRAMES")
     addOption(p, BINDING_NAME_TOGGLECHARACTER0, L["CHRACTER_WINDOW_DESC"], "USE_CHARACTER_WINDOW")
     addOption(p, TALENTS_BUTTON, L["TALENTS_BUTTON_DESC"], "USE_TALENT_WINDOW")
     addOption(p, BATTLEGROUND, nil, "USE_BATTLEGROUND_HUD")
     addOption(p, CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, "DYNAMIC_CAM")
     addOption(p, CHAT_BUBBLES_TEXT, L["CHAT_BUBBLES_DESC"], "CHATBUBBLES_ENABLED")
+    addOption(p, L["ALERTFRAMES"], nil, "ALERTFRAME_ENABLED")
 
     InitPanel(p)
 end

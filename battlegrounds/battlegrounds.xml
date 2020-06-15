@@ -6,7 +6,6 @@
         <Anchors>
             <Anchor point="TOP" relativePoint="TOP"></Anchor>
         </Anchors>
-
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="MID" file="Interface\AddOns\GW2_UI\textures\battleground\teamflag-mid">
@@ -51,6 +50,7 @@
             </Layer>
         </Layers>
     </Frame>
+
     <Frame name="GwBattleLandMarkFrame" virtual="true">
         <Size x="32" y="32"></Size>
         <Layers>

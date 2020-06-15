@@ -81,10 +81,15 @@ do
         end
         return y
     end
+    local fourString = function(v, w, x, y)
+        return format("%s%s%s", v, w, (v and v == "1" and x) or y)
+    end
+
     removeIconFromLine = function(text)
         text = gsub(text, "|TInterface/TargetingFrame/UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) --converts raid icons into {star} etc, if possible.
         text = gsub(text, "(%s?)(|?)|[TA].-|[ta](%s?)", stripTextureFunc) --strip any other texture out but keep a single space from the side(s).
         text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc) --strip hyperlink data only keeping the actual text.
+        text = gsub(text, "(%d-)(.-)|4(.-):(.-);", fourString) --stuff where it goes 'day' or 'days' like played; tech this is wrong but okayish
         return text
     end
 end
@@ -429,7 +434,7 @@ local function styleChatWindow(frame)
         editBox:Hide()
     end)
 
-    if GetSetting("FONTS_ENABLED") then
+    if GetSetting("FONTS_ENABLED") and fontSize then
         if fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize)
         elseif fontSize == 0 then
@@ -584,6 +589,13 @@ local function LoadChat()
         frame:SetTimeVisible(100)
         frame:SetFading(shouldFading)
     end
+
+    hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
+        styleChatWindow(chatFrame)
+        FCFTab_UpdateAlpha(chatFrame)
+        chatFrame:SetTimeVisible(100)
+        chatFrame:SetFading(shouldFading)
+    end)
 
     hooksecurefunc("FCF_DockUpdate", function()
         for i = 1, FCF_GetNumActiveChatFrames() do

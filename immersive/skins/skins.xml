@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     <Script file="immersive\skins\utils.lua"/>
-	<Script file="immersive\skins\battlenet.lua"/>
-	<Script file="immersive\skins\deathrecapframe.lua"/>
+    <Script file="immersive\skins\battlenet.lua"/>
+    <Script file="immersive\skins\deathrecapframe.lua"/>
     <Script file="immersive\skins\gearmanagerdialogpopup.lua"/>
     <Script file="immersive\skins\ghostframe.lua"/>
     <Script file="immersive\skins\lfg_popup_frames.lua"/>
@@ -17,5 +17,5 @@
     <Script file="immersive\skins\blizzard_options.lua"/>
     <Script file="immersive\skins\macro.lua"/>
 
-	<Script file="immersive\skins\addons\immersion.lua"/>
+    <Script file="immersive\skins\addons\immersion.lua"/>
 </Ui>

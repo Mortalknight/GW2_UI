@@ -45,19 +45,17 @@ GW.GetStorage = GetStorage
 
 -- Get a storage or value for the players realm+faction
 local GetRealmStorage = function (...)
-    local faction = UnitFactionGroup("player")
     local _, realm = UnitFullName("player")
 
-    return GetStorage(faction, realm, ...)
+    return GetStorage(GW.myfaction, realm, ...)
 end
 GW.GetRealmStorage = GetRealmStorage
 
 -- Set a value on the realm+faction storage
 local SetRealmStorage = function (...)
-    local faction = UnitFactionGroup("player")
     local _, realm = UnitFullName("player")
 
-    SetStorage(faction, realm, ...)
+    SetStorage(GW.myfaction, realm, ...)
 end
 GW.SetRealmStorage = SetRealmStorage
 
@@ -88,9 +86,7 @@ GW.ClearStorage = ClearStorage
 ---------- CLASS ----------
 
 local UpdateCharClass = function ()
-    local name = UnitName("player")
-    local class = select(2, UnitClass("player"))
-    SetRealmStorage("CLASS", name, class)
+    SetRealmStorage("CLASS", GW.myname, GW.myclass)
 end
 GW.UpdateCharClass = UpdateCharClass
 
@@ -104,8 +100,7 @@ GW.GetCharClass = GetCharClass
 
 local UpdateMoney = function ()
     local money = GetMoney()
-    local name = UnitName("player")
-    SetRealmStorage("MONEY", name, money)
+    SetRealmStorage("MONEY", GW.myname, money)
 end
 GW.UpdateMoney = UpdateMoney
 

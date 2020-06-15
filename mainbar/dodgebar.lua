@@ -91,23 +91,22 @@ GW.AddForProfiling("dodgebar", "updateAnim", updateAnim)
 
 local function initBar(self, pew)
     -- do everything required to make the dodge bar a secure clickable button
-    local _, c, _ = UnitClass("player")
     self.gwMaxCharges = nil
     self.spellId = nil
     if pew or not InCombatLockdown() then
         self:Hide()
     end
-    if not DODGEBAR_SPELLS[c] then
+    if not DODGEBAR_SPELLS[GW.myclass] then
         return
     end
-    local v, _ = SecureCmdOptionParse(DODGEBAR_SPELLS[c])
+    local v, _ = SecureCmdOptionParse(DODGEBAR_SPELLS[GW.myclass])
     if not v then
         return
     end
     self.spellId = tonumber(v)
     if pew or not InCombatLockdown() then
-        if DODGEBAR_SPELLS_ATTR[c] then
-            self:SetAttribute("spell", tonumber(SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[c])))
+        if DODGEBAR_SPELLS_ATTR[GW.myclass] then
+            self:SetAttribute("spell", tonumber(SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])))
         else
             self:SetAttribute("spell", self.spellId)
         end

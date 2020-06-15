@@ -283,6 +283,9 @@ local function GWUseThisLocalization()
     L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Fade the Group Manage Button when the mouse is not near."
     L["HUD_BACKGROUND"] = "Show HUD background"
     L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
+    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
+    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
+    L["ALERTFRAMES"] = "警報"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
@@ -290,7 +293,7 @@ local function GWUseThisLocalization()
     L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
     L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
 end
-    
+
 if GetLocale() == "zhTW" then
     GWUseThisLocalization()
 end

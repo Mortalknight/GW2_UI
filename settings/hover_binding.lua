@@ -13,7 +13,7 @@ end
 AddForProfiling("hover_binding", "keyBindPrompt", keyBindPrompt)
 
 local function HoverKeyBinds()
-    if InCombatLockdown() then DEFAULT_CHAT_FRAME:AddMessage(ERR_AFFECTING_COMBAT) return end
+    if InCombatLockdown() then DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. ERR_AFFECTING_COMBAT) return end
     if not bind.loaded then
         local _G = getfenv(0)
 
@@ -181,7 +181,7 @@ local function HoverKeyBinds()
                 for i = 1, #self.button.bindings do
                     SetBinding(self.button.bindings[i])
                 end
-                DEFAULT_CHAT_FRAME:AddMessage(L['BINGSINGS_CLEAR'] .." |cff00ff00" .. self.button.name .. "|r.")
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['BINGSINGS_CLEAR'] .." |cff00ff00" .. self.button.name .. "|r.")
                 self:Update(self.button, self.spellmacro)
                 if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
                 return
@@ -211,7 +211,7 @@ local function HoverKeyBinds()
             else
                 SetBinding(alt .. ctrl .. shift .. key, self.spellmacro .. " " .. self.button.name)
             end
-            DEFAULT_CHAT_FRAME:AddMessage(alt .. ctrl .. shift .. key .. " |cff00ff00" .. L['BINGSINGS_BIND'] .. " |r" .. self.button.name .. ".")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. alt .. ctrl .. shift .. key .. " |cff00ff00" .. L['BINGSINGS_BIND'] .. " |r" .. self.button.name .. ".")
             self:Update(self.button, self.spellmacro)
             if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
         end
@@ -227,10 +227,10 @@ local function HoverKeyBinds()
         function bind:Deactivate(save)
             if save then
                 SaveBindings(GetCurrentBindingSet())
-                DEFAULT_CHAT_FRAME:AddMessage(L['ALL_BINDINGS_SAVE'])
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['ALL_BINDINGS_SAVE'])
             else
                 LoadBindings(GetCurrentBindingSet())
-                DEFAULT_CHAT_FRAME:AddMessage(L['ALL_BINDINGS_DISCARD'])
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['ALL_BINDINGS_DISCARD'])
             end
             self.enabled = false
             self:HideFrame()

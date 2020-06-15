@@ -284,6 +284,7 @@ local function LoadProfilesPanel(sWindow)
                 L["PROFILES_DEFAULT_SETTINGS_PROMPT"],
                 function()
                     ResetToDefault()
+                    C_UI.Reload()
                 end
             )
         end

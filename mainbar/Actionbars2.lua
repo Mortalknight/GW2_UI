@@ -1000,44 +1000,6 @@ actionBar_OnUpdate = function(self, elapsed)
 end
 GW.AddForProfiling("Actionbars2", "actionBar_OnUpdate", actionBar_OnUpdate)
 
--- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
-local function adjustFixedAnchors(self, relativeAlert)
-    if self.anchorFrame:IsShown() then
-        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
-        local name = self.anchorFrame:GetName()
-        if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
-            if name == "TalkingHeadFrame" then
-                self.anchorFrame:ClearAllPoints()
-                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-            elseif name == "GroupLootContainer" then
-                self.anchorFrame:ClearAllPoints()
-                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
-                else
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-                end
-            end
-        end
-        return self.anchorFrame
-    end
-    return relativeAlert
-end
-GW.AddForProfiling("Actionbars2", "adjustFixedAnchors", adjustFixedAnchors)
-
-local function updateAnchors(self)
-    self:CleanAnchorPriorities()
-
-    local relativeFrame = GwAlertFrameOffsetter
-    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
-        if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors then
-            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
-        else
-            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
-        end
-    end
-end
-GW.AddForProfiling("Actionbars2", "updateAnchors", updateAnchors)
-
 local function changeFlyoutStyle(self)
     if not self.FlyoutArrow then
         return
@@ -1136,6 +1098,5 @@ local function LoadActionBars(lm)
         ZoneAbilityFrame:ClearAllPoints()
         ZoneAbilityFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 130)
     end
-    AlertFrame.UpdateAnchors = updateAnchors
 end
 GW.LoadActionBars = LoadActionBars

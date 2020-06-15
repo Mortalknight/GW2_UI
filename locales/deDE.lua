@@ -157,7 +157,7 @@ local function GWUseThisLocalization()
     L["RAID_UNITS_PER_COLUMN_DESC"] = "Setzen die Anzahl der Wachstumsrichtung der Schlachtzugsfenster pro Spalte oder Zeile, abhängig von der Wachstumsrichtung."
     L["RESOURCE_DESC"] = "Ersetze die Standard Mana/Powerbar."
     L["SETTING_LOCK_HUD"] = "HUD sperren"
-    L["SETTINGS_BUTTON"] = "GW2 UI Einstellungen"
+    L["SETTINGS_BUTTON"] = "GW2 UI"
     L["SETTINGS_NO_LOAD_ERROR"] = "Einige Texte wurden nicht geladen, bitte versuche dein Interface neu zu laden."
     L["SETTINGS_RESET_TO_DEFAULT"] = "Standardeinstellungen wiederherstellen."
     L["SETTINGS_SAVE_RELOAD"] = "Speichern und \nneu laden"
@@ -287,6 +287,9 @@ local function GWUseThisLocalization()
     L["FADE_GROUP_MANAGE_FRAME_DESC"] = "Blendet den Gruppenmanage-Button aus, wenn die Maus nicht in der Nähe ist."
     L["HUD_BACKGROUND"] = "HUD Hintergrund anzeigen"
     L["HUD_BACKGROUND_DESC"] = "Der HUD Hintergrund ändert seine Farbe in folgenden Situationen: Im Kampf, Nicht im Kampf, Im Wasser, Wenig HP, Geist"
+    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Instanz & Schlachtzug Debuffs"
+    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Zeige wichtig Instanz & Schlachtzug Debuffs an"
+    L["ALERTFRAMES"] = "Alarmfenster"
 end
 
 if GetLocale() == "deDE" then

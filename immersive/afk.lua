@@ -183,9 +183,8 @@ local function LoopAnimations(self)
 end
 
 local function loadAFKAnimation()
-    local _, class = UnitClass("player")
-    local classColor = GWGetClassColor(class, true, true)
-    local playerName = UnitName("Player")
+    local classColor = GWGetClassColor(GW.myclass, true, true)
+    local playerName = GW.myname
     
     local BackdropFrame = {
         bgFile = "Interface/AddOns/GW2_UI/textures/welcome-bg",
@@ -227,52 +226,47 @@ local function loadAFKAnimation()
     AFKMode.bottom:SetWidth(GetScreenWidth() + (GW.border * 2))
     AFKMode.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
 
-    AFKMode.bottom.logo = AFKMode:CreateTexture(nil, "OVERLAY")
-    AFKMode.bottom.logo:SetSize(250, 250)
-    AFKMode.bottom.logo:SetPoint("CENTER", AFKMode.bottom, "CENTER", 0, 55)
-    AFKMode.bottom.logo:SetTexture("Interface/AddOns/GW2_UI/Textures/gwlogo")
-
-    local factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = UnitFactionGroup("player"), 140, -20, -8, -10, -36
+    local factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = GW.myfaction, 140, -20, -8, -10, -36
     if factionGroup == "Neutral" then
         factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = "Panda", 90, 15, 10, 20, -5
     end
 
-    local raceEn, gender, modelOffsetY = select(2, UnitRace("Player")), UnitSex("Player"), 205
-    if raceEn == "Human" then
+    local modelOffsetY = 205
+    if GW.myrace == "Human" then
         modelOffsetY = 195
-    elseif raceEn == "Worgen" then
+    elseif GW.myrace == "Worgen" then
         modelOffsetY = 280
-    elseif raceEn == "Tauren" or raceEn == "HighmountainTauren" then
+    elseif GW.myrace == "Tauren" or GW.myrace == "HighmountainTauren" then
         modelOffsetY = 250
-    elseif raceEn == "Draenei" or raceEn == "LightforgedDraenei" then
-        if gender == 2 then modelOffsetY = 250 end
-    elseif raceEn == "Pandaren" then
-        if gender == 2 then 
+    elseif GW.myrace == "Draenei" or GW.myrace == "LightforgedDraenei" then
+        if GW.mysex == 2 then modelOffsetY = 250 end
+    elseif GW.myrace == "Pandaren" then
+        if GW.mysex == 2 then 
             modelOffsetY = 220
-        elseif gender == 3 then
+        elseif GW.mysex == 3 then
             modelOffsetY = 280
         end
-    elseif raceEn == "KulTiran" then
-        if gender == 2 then 
+    elseif GW.myrace == "KulTiran" then
+        if GW.mysex == 2 then 
             modelOffsetY = 220
-        elseif gender == 3 then
+        elseif GW.mysex == 3 then
             modelOffsetY = 240
         end
-    elseif raceEn == "Goblin" then
-        if gender == 2 then 
+    elseif GW.myrace == "Goblin" then
+        if GW.mysex == 2 then 
             modelOffsetY = 240
-        elseif gender == 3 then
+        elseif GW.mysex == 3 then
             modelOffsetY = 220
         end
-    elseif raceEn == "Troll" or raceEn == "ZandalariTroll" then
-        if gender == 2 then 
+    elseif GW.myrace == "Troll" or GW.myrace == "ZandalariTroll" then
+        if GW.mysex == 2 then 
             modelOffsetY = 250
-        elseif gender == 3 then
+        elseif GW.mysex == 3 then
             modelOffsetY = 280
         end
-    elseif raceEn == "Dwarf" or raceEn == "DarkIronDwarf" then
-        if gender == 2 then modelOffsetY = 250 end
-    elseif raceEn == "Vulpera" then
+    elseif GW.myrace == "Dwarf" or GW.myrace == "DarkIronDwarf" then
+        if GW.mysex == 2 then modelOffsetY = 250 end
+    elseif GW.myrace == "Vulpera" then
         modelOffsetY = 140
     end
 
@@ -283,7 +277,7 @@ local function loadAFKAnimation()
 
     AFKMode.bottom.name = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
     AFKMode.bottom.name:SetFont(UNIT_NAME_FONT, 20)
-    AFKMode.bottom.name:SetFormattedText("%s-%s", playerName, GetRealmName())
+    AFKMode.bottom.name:SetFormattedText("%s-%s", playerName, GW.myrealm)
     AFKMode.bottom.name:SetPoint("TOPLEFT", AFKMode.bottom.faction, "TOPRIGHT", nameOffsetX, nameOffsetY)
     AFKMode.bottom.name:SetTextColor(classColor.r, classColor.g, classColor.b)
 

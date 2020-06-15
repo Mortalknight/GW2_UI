@@ -22,7 +22,7 @@ local iLevelDB, tryAgain = {}, {}
 
 
 local function _GetSpecializationInfo(unit, isPlayer)
-    local spec = (isPlayer and GetSpecialization()) or (unit and GetInspectSpecialization(unit))
+    local spec = (isPlayer and GW.myspec) or (unit and GetInspectSpecialization(unit))
     if spec and spec > 0 then
         if isPlayer then
             return select(2, GetSpecializationInfo(spec))
@@ -96,7 +96,7 @@ local function CollectEssenceInfo(index, lineText, slotInfo)
 end
 
 local function ScanTooltipTextures()
-    local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
+    local tt = GW.ScanTooltip
 
     if not tt.gems then
         tt.gems = {}
@@ -141,11 +141,12 @@ local function ScanTooltipTextures()
 end
 
 local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
-    local tt = GW2_UI_ScanTooltip or CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
+    local tt = GW.ScanTooltip
+    
     tt:SetOwner(UIParent, "ANCHOR_NONE")
-    if itemlink then
+    if itemlink and string.find(itemlink, "item") then
         tt:SetHyperlink(itemlink)
-    else
+    elseif slot then
         tt:SetInventoryItem(unit, slot)
     end
     tt:Show()

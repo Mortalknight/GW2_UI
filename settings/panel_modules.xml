@@ -9,6 +9,12 @@
                     <Anchor point="TOPRIGHT" x="-10" y="-10"/>
                 </Anchors>
             </Button>
+            <Button parentKey="statusReport" inherits="GwStandardButton" text="StatusReport">
+                <Size x="120" y="22" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.welcome" x="-130" y="0"></Anchor>
+                </Anchors>
+            </Button>
         </Frames>
     </Frame>
 

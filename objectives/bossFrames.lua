@@ -7,7 +7,7 @@ local PowerBarColorCustom = GW.PowerBarColorCustom
 
 local function updateBossFrameHeight()
     local height = 1
-    for i = 1, 4 do
+    for i = 1, 5 do
         if _G["GwQuestTrackerBossFrame" .. i]:IsShown() then
             height = height + _G["GwQuestTrackerBossFrame" .. i]:GetHeight()
         end
@@ -110,7 +110,7 @@ local function bossFrame_OnEvent(self, event, unit)
         return
     end
     
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then 
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then
         updateBoss_Health(self)
         updateBoss_Power(self)
         updateBoss_Name(self)
@@ -130,6 +130,7 @@ local function registerFrame(i)
 
     targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
+    targetF.id = i
     targetF.unit = debug_unit_Track
     targetF.guid = UnitGUID(targetF.unit)
     targetF:SetAttribute("unit", debug_unit_Track)
@@ -172,7 +173,6 @@ local function registerFrame(i)
         "OnShow",
         function(self)
             updateBossFrameHeight(self)
-
             local compassData = {}
 
             compassData["TYPE"] = "BOSS"
@@ -223,7 +223,7 @@ end
 GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
 local function LoadBossFrame()
-    for i = 1, 4 do
+    for i = 1, 5 do
         registerFrame(i)
         if _G["Boss" .. i .. "TargetFrame"] ~= nil then
             _G["Boss" .. i .. "TargetFrame"]:Hide()

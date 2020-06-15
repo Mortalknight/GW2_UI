@@ -131,9 +131,7 @@ local function updateBagItemButton(button)
             setTooltip()
         end
 
-        if button.ItemLink ~= nil then
-            setItemLevel(button, quality, button.ItemLink)
-        end
+        setItemLevel(button, quality, button.ItemLink)
         setItemButtonQuality(button, quality, id)
     end
     
@@ -174,6 +172,7 @@ local function updateBagItemList(itemButton)
                 x = 10
                 y = y + 49 + 3
             end
+
             itemIndex = itemIndex + 1
         end
         if itemIndex > 36 then
@@ -193,10 +192,10 @@ local function actionButtonGlobalStyle(self)
     _G[self:GetName() .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     _G[self:GetName() .. "NormalTexture"]:SetSize(self:GetSize(), self:GetSize())
     _G[self:GetName() .. "NormalTexture"]:Hide()
-    self.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+    self.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
 
     _G[self:GetName() .. "NormalTexture"]:SetTexture(nil)
-    _G[self:GetName()]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
+    _G[self:GetName()]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
     _G[self:GetName()]:SetHighlightTexture(nil)
 end
 GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButtonGlobalStyle)
@@ -216,11 +215,11 @@ local function itemSlot_OnModifiedClick(self, button)
             end
 
             local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-			if heartItemLocation and heartItemLocation:IsEqualTo(itemLocation) then
+            if heartItemLocation and heartItemLocation:IsEqualTo(itemLocation) then
                 OpenAzeriteEssenceUIFromItemLocation(itemLocation)
                 GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-				return
-			end
+                return
+            end
 
             SocketInventoryItem(self:GetID())
         end
@@ -241,11 +240,15 @@ local function itemSlot_OnClick(self, button, drag)
         if (infoType == "merchant" and MerchantFrame.extendedCost) then
             MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost)
         else
-            if not SpellIsTargeting() and (drag == nil and GwPaperDollBagItemList:IsShown()) then
+            if not SpellIsTargeting() and (drag == nil and GwPaperDollBagItemList:IsShown()) and not self.isEquipmentSelected then
                 GwPaperDollSelectedIndicator:SetPoint("LEFT", self, "LEFT", -16, 0)
                 GwPaperDollSelectedIndicator:Show()
                 selectedInventorySlot = self:GetID()
                 updateBagItemList(self)
+                self.isEquipmentSelected = true
+            elseif not SpellIsTargeting() and (drag == nil and GwPaperDollBagItemList:IsShown()) and self.isEquipmentSelected then
+                GW.resetBagInventory()
+                self.isEquipmentSelected = false
             else
                 if SpellCanTargetItem() then
                     local castingItem = nil
@@ -376,7 +379,7 @@ local function DurabilityTooltip(self)
                 _G["GameTooltipTextRight2"]:SetText(_G["GameTooltipTextRight2"]:GetText() ..  valcol .. durapercent .. "%" .. "|n")
 
                 duravaltotal = duravaltotal + duraval
-				duramaxtotal = duramaxtotal + duramax
+                duramaxtotal = duramaxtotal + duramax
             end
         end
     end
@@ -387,7 +390,7 @@ local function DurabilityTooltip(self)
     end
     if validItems == true then
         -- Show overall durability in the tooltip
-        if durapercent >= 80 then valcol = "|cff00FF00"	elseif durapercent >= 60 then valcol = "|cff99FF00"	elseif durapercent >= 40 then valcol = "|cffFFFF00"	elseif durapercent >= 20 then valcol = "|cffFF9900"	elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
+        if durapercent >= 80 then valcol = "|cff00FF00"    elseif durapercent >= 60 then valcol = "|cff99FF00"    elseif durapercent >= 40 then valcol = "|cffFFFF00"    elseif durapercent >= 20 then valcol = "|cffFF9900"    elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
         _G["GameTooltipTextLeft3"]:SetText(TOTAL .. " " .. valcol)
         _G["GameTooltipTextRight3"]:SetText(valcol .. GW.RoundDec(durapercent) .. "%")
 
@@ -474,7 +477,7 @@ local function updateItemSlot(self)
 
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
-    setItemLevel(self, quality)
+    setItemLevel(self, quality, nil, slot)
 
     if self.HasPaperDollAzeriteItemOverlay then
         self:SetAzeriteItem(self.hasItem and ItemLocation:CreateFromEquipmentSlot(slot) or nil)
@@ -647,6 +650,7 @@ local function updateBagItemListAll()
                     x = 10
                     y = y + 49 + 3
                 end
+
                 itemIndex = itemIndex + 1
                 if itemIndex > 36 then
                     break
@@ -663,12 +667,12 @@ end
 GW.AddForProfiling("paperdoll_equipment", "updateBagItemListAll", updateBagItemListAll)
 
 local function setStatIcon(self, stat)
-    local newTexture = "Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon"
+    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon"
     if STATS_ICONS[stat] ~= nil then
         -- If mastery we use need to use class icon
         if stat == "MASTERY" then
-            SetClassIcon(self.icon, select(3, UnitClass("player")))
-            newTexture = "Interface\\AddOns\\GW2_UI\\textures\\party\\classicons"
+            SetClassIcon(self.icon, GW.myClassID)
+            newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons"
         else
             self.icon:SetTexCoord(STATS_ICONS[stat].l, STATS_ICONS[stat].r, STATS_ICONS[stat].t, STATS_ICONS[stat].b)
         end
@@ -709,9 +713,6 @@ local function updateStats()
     GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
     GwDressingRoom.itemLevel:SetTextColor(GetItemLevelColor())
 
-    local spec = GetSpecialization()
-    local role = GetSpecializationRole(spec)
-
     local statFrame
 
     local numShownStats = 1
@@ -724,7 +725,7 @@ local function updateStats()
             local stat = PAPERDOLL_STATCATEGORIES[catIndex].stats[statIndex]
             local showStat = true
             if (stat.primary) then
-                local primaryStat = select(6, GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player")))
+                local primaryStat = select(6, GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
                 if (stat.primary ~= primaryStat) then
                     showStat = false
                 end
@@ -732,7 +733,7 @@ local function updateStats()
             if (showStat and stat.roles) then
                 local foundRole = false
                 for _, statRole in pairs(stat.roles) do
-                    if (role == statRole) then
+                    if (GW.myrole == statRole) then
                         foundRole = true
                         break
                     end
@@ -740,7 +741,7 @@ local function updateStats()
                 showStat = foundRole
             end
 
-            if stat.stat == "MASTERY" and (UnitLevel("player") < SHOW_MASTERY_LEVEL) then
+            if stat.stat == "MASTERY" and (GW.mylevel < SHOW_MASTERY_LEVEL) then
                 showStat = false
             end
 
@@ -788,12 +789,10 @@ GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpda
 
 local function updateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
-    local spec = GetSpecialization()
-    local localizedClass = UnitClass("player")
-    local name = select(2, GetSpecializationInfo(spec, nil, nil, nil, UnitSex("player")))
+    local name = select(2, GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
 
     if name ~= nil then
-        local data = LEVEL .. " " .. UnitLevel("player") .. " " .. name .. " " .. localizedClass
+        local data = LEVEL .. " " .. GW.mylevel .. " " .. name .. " " .. GW.myLocalizedClass
         GwDressingRoom.characterData:SetWidth(180)
         GwDressingRoom.characterData:SetText(data)
     end
@@ -840,6 +839,7 @@ local function resetBagInventory()
     selectedInventorySlot = nil
     updateBagItemListAll()
 end
+GW.resetBagInventory = resetBagInventory
 GW.AddForProfiling("paperdoll_equipment", "resetBagInventory", resetBagInventory)
 
 local function indicatorAnimation(self)
@@ -932,32 +932,31 @@ local function LoadPDBagList(fmMenu)
     fmPD3M:SetUnit("player")
     fmPD3M:SetPosition(0.8, 0, 0)
 
-    local _, raceEn = UnitRace("Player")
-    if raceEn == "Human" then
+    if GW.myrace == "Human" then
         fmPD3M:SetPosition(0.4, 0, -0.05)
-    elseif raceEn == "Worgen" then
+    elseif GW.myrace == "Worgen" then
         fmPD3M:SetPosition(0.1, 0, -0.1)
-    elseif raceEn == "Tauren" or raceEn == "HighmountainTauren" then
+    elseif GW.myrace == "Tauren" or GW.myrace == "HighmountainTauren" then
         fmPD3M:SetPosition(0.6, 0, 0)
-    elseif raceEn == "BloodElf" or raceEn == "VoidElf" then
+    elseif GW.myrace == "BloodElf" or GW.myrace == "VoidElf" then
         fmPD3M:SetPosition(0.5, 0, 0)
-    elseif raceEn == "Draenei" or raceEn == "LightforgedDraenei" then
+    elseif GW.myrace == "Draenei" or GW.myrace == "LightforgedDraenei" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "NightElf" or raceEn == "Nightborne" then
+    elseif GW.myrace == "NightElf" or GW.myrace == "Nightborne" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "Pandaren" or raceEn == "KulTiran" then
+    elseif GW.myrace == "Pandaren" or GW.myrace == "KulTiran" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif raceEn == "Goblin" then
+    elseif GW.myrace == "Goblin" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Troll" or raceEn == "ZandalariTroll" then
+    elseif GW.myrace == "Troll" or GW.myrace == "ZandalariTroll" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Scourge" then
+    elseif GW.myrace == "Scourge" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Dwarf" or raceEn == "DarkIronDwarf" then
+    elseif GW.myrace == "Dwarf" or GW.myrace == "DarkIronDwarf" then
         fmPD3M:SetPosition(0.3, 0, 0)
-    elseif raceEn == "Gnome" or raceEn == "Mechagnome"then
+    elseif GW.myrace == "Gnome" or GW.myrace == "Mechagnome"then
         fmPD3M:SetPosition(0.2, 0, -0.05)
-    elseif raceEn == "Orc" or raceEn == "MagharOrc" then
+    elseif GW.myrace == "Orc" or GW.myrace == "MagharOrc" then
         fmPD3M:SetPosition(0.1, 0, -0.15)
     end
     fmPD3M:SetRotation(-0.15)
@@ -1005,10 +1004,9 @@ local function LoadPDBagList(fmMenu)
     fmGDR.characterName:SetFont(UNIT_NAME_FONT, 14)
     fmGDR.characterData:SetFont(UNIT_NAME_FONT, 12)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
-    local _, englishClass, classIndex = UnitClass("player")
-    local color = GWGetClassColor(englishClass, true)
+    local color = GWGetClassColor(GW.myclass, true)
     
-    SetClassIcon(fmGDR.classIcon, classIndex)
+    SetClassIcon(fmGDR.classIcon, GW.myClassID)
 
     fmGDR.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
     fmGDR:SetScript("OnClick", resetBagInventory)

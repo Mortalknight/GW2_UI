@@ -48,7 +48,7 @@ local function GetSetting(name, perSpec)
     end
 
     if perSpec then
-        local spec = GetSpecializationInfo(GetSpecialization())
+        local spec = GetSpecializationInfo(GW.myspec)
         if type(settings[name]) ~= "table" then
             settings[name] = {[0] = settings[name]}
         end
@@ -72,7 +72,7 @@ local function SetSetting(name, state, perSpec)
     end
 
     if perSpec then
-        local spec = GetSpecializationInfo(GetSpecialization())
+        local spec = GetSpecializationInfo(GW.myspec)
         if type(settings[name]) ~= "table" then
             settings[name] = {[0] = settings[name]}
         end

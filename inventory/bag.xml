@@ -124,26 +124,26 @@
                 <FontString parentKey="currency2" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                     <Size x="100" y="40"></Size>
                     <Anchors>
-                        <Anchor point="BOTTOMRIGHT" x="-245" y="-40"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-255" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
                 <Texture parentKey="currency2Texture" file="Interface/MoneyFrame/UI-GoldIcon">
                     <Size x="11" y="11"></Size>
                     <Anchors>
-                        <Anchor point="BOTTOMRIGHT" x="-233" y="-25"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-243" y="-25"></Anchor>
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
                 <FontString parentKey="currency3" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                     <Size x="100" y="40"></Size>
                     <Anchors>
-                        <Anchor point="BOTTOMRIGHT" x="-305" y="-40"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-315" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
                 <Texture parentKey="currency3Texture" file="Interface/MoneyFrame/UI-GoldIcon">
                     <Size x="11" y="11"></Size>
                     <Anchors>
-                        <Anchor point="BOTTOMRIGHT" x="-293" y="-25"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-303" y="-25"></Anchor>
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
@@ -163,6 +163,39 @@
                 <Size x="180" y="40"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" x="0" y="-40"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <Button parentKey="currency1Frame">
+                <Size x="50" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-183" y="-40"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <Button parentKey="currency2Frame">
+                <Size x="50" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-243" y="-40"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <Button parentKey="currency3Frame">
+                <Size x="50" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-303" y="-40"></Anchor>
                 </Anchors>
                 <Scripts>
                     <OnLeave>

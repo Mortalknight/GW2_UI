@@ -36,8 +36,9 @@ local function LoadTooltipPanel(sWindow)
         L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"],
         "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT",
         nil,
-        {"BAG", "BANK", "BOTH"},
+        {"NONE", "BAG", "BANK", "BOTH"},
         {
+            NONE,
             INVTYPE_BAG,
             BANK,
             STATUS_TEXT_BOTH

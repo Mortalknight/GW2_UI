@@ -27,8 +27,6 @@ local StripTexturesBlizzFrames = {
     "ScrollFrameBorder",
 }
 
-GW.NoOp = function() end
-
 local function StripRegion(which, object, hide, alpha)
     if hide then
         object:Hide()
@@ -70,6 +68,18 @@ local function StripTextures(object, hide, alpha)
     StripType(STRIP_TEX, object, hide, alpha)
 end
 GW.StripTextures = StripTextures
+
+local function KillTexture(object)
+    if object.UnregisterAllEvents then
+        object:UnregisterAllEvents()
+        object:SetParent(GW.HiddenFrame)
+    else
+        object.Show = object.Hide
+    end
+
+    object:Hide()
+end
+GW.KillTexture = KillTexture
 
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
@@ -369,7 +379,7 @@ GW.FindInList = FindInList
 
 -- String upper and lower that are noops for locales without letter case
 local function StrUpper(str, i, j)
-    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+    if not str or IsIn(GW.mylocal, "koKR", "zhCN", "zhTW") then
         return str
     else
         return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):upper() .. (j and str:sub(j + 1) or "")
@@ -377,7 +387,7 @@ local function StrUpper(str, i, j)
 end
 GW.StrUpper = StrUpper
 local function StrLower(str, i, j)
-    if not str or IsIn(GetLocale(), "koKR", "zhCN", "zhTW") then
+    if not str or IsIn(GW.mylocal, "koKR", "zhCN", "zhTW") then
         return str
     else
         return (i and str:sub(1, i - 1) or "") .. str:sub(i or 1, j):lower() .. (j and str:sub(j + 1) or "")
@@ -627,7 +637,7 @@ local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInH
 end
 GW.FrameFlash = FrameFlash
 
-local function setItemLevel(button, quality, itemlink)
+local function setItemLevel(button, quality, itemlink, slot)
     button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     if quality then
         if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
@@ -638,10 +648,39 @@ local function setItemLevel(button, quality, itemlink)
                 1
             )
         end
-        local slotInfo = GW.GetGearSlotInfo("player", button:GetID(), itemlink)
+        local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink)
         button.itemlevel:SetText(slotInfo.iLvl)
     else
         button.itemlevel:SetText("")
     end
 end
 GW.setItemLevel = setItemLevel
+
+local function GetPlayerRole()
+    local assignedRole = UnitGroupRolesAssigned("player")
+    if assignedRole == "NONE" then
+        return GW.myspec and GetSpecializationRole(GW.myspec)
+    end
+
+    return assignedRole
+end
+GW.GetPlayerRole = GetPlayerRole
+
+local function CheckRole()
+    GW.myspec = GetSpecialization()
+    GW.myrole = GetPlayerRole()
+
+    -- myrole = group role; TANK, HEALER, DAMAGER
+
+    local dispel = GW.DispelClasses[GW.myclass]
+    if GW.myrole and (GW.myclass ~= "PRIEST" and dispel ~= nil) then
+        dispel.Magic = (GW.myrole == "HEALER")
+    end
+end
+GW.CheckRole = CheckRole
+
+local function IsDispellableByMe(debuffType)
+    local dispel = GW.DispelClasses[GW.myclass] 
+    return dispel and dispel[debuffType]
+end
+GW.IsDispellableByMe = IsDispellableByMe

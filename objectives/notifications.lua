@@ -177,44 +177,34 @@ local function removeNotification(key)
 end
 GW.AddForProfiling("notifications", "removeNotification", removeNotification)
 
-local function NotificationStateChanged(show, animated)
+local function NotificationStateChanged(show)
     if show then
         GwObjectivesNotification:Show()
     end
-    if animated then
-        AddToAnimation(
-            "notificationToggle",
-            0,
-            GwObjectivesNotification.desc:GetHeight() + 50,
-            GetTime(),
-            0.2,
-            function(step)
-                local h = GwObjectivesNotification.hasDesc and GwObjectivesNotification.desc:GetHeight() + 50 or 70
+    AddToAnimation(
+        "notificationToggle",
+        0,
+        70,
+        GetTime(),
+        0.2,
+        function(step)
+            if show == false then
+                step = 70 - step
+            end
 
-                if show == false then
-                    step = h - step
-                end
-
-                GwObjectivesNotification:SetAlpha(step / h)
-                GwObjectivesNotification:SetHeight(math.max(step, 1))
-            end,
-            nil,
-            function()
-                if not show then
-                    GwObjectivesNotification:Hide()
-                end
-                GwObjectivesNotification.animating = false
-                GW.QuestTrackerLayoutChanged()
-            end,
-            true
-        )
-    else
-        local h = GwObjectivesNotification.hasDesc and GwObjectivesNotification.desc:GetHeight() + 50 or 70
-        GwObjectivesNotification:SetHeight(math.max(h, 1))
-        GwObjectivesNotification.animating = false
-        GW.QuestTrackerLayoutChanged()
-
-    end
+            GwObjectivesNotification:SetAlpha(step / 70)
+            GwObjectivesNotification:SetHeight(math.max(step, 1))
+        end,
+        nil,
+        function()
+            if not show then
+                GwObjectivesNotification:Hide()
+            end
+            GwObjectivesNotification.animating = false
+            GW.QuestTrackerLayoutChanged()
+        end,
+        true
+    )
 end
 GW.NotificationStateChanged = NotificationStateChanged
 
@@ -343,27 +333,14 @@ local function SetObjectiveNotification(mapID)
         GwObjectivesNotification.compass:SetScript("OnUpdate", nil)
     end
 
-    local oldText = GwObjectivesNotification.desc:GetText()
-    if oldText == desc or (oldText == nil and (desc == nil or desc == "")) then
-        GwObjectivesNotification.shouldUpdate = false
-    else
-        GwObjectivesNotification.shouldUpdate = true
-    end
     GwObjectivesNotification.title:SetText(title)
     GwObjectivesNotification.title:SetTextColor(color.r, color.g, color.b)
-    GwObjectivesNotification.desc:SetSize(300, 150)
     GwObjectivesNotification.desc:SetText(desc)
 
     if desc == nil or desc == "" then
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
-        GwObjectivesNotification.desc:SetSize(300, 35)
-        GwObjectivesNotification.compassBG:SetSize(300, 70)
-        GwObjectivesNotification.hasDesc = false
     else
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
-        GwObjectivesNotification.desc:SetSize(300, GwObjectivesNotification.desc:GetStringHeight())
-        GwObjectivesNotification.compassBG:SetSize(300, GwObjectivesNotification.desc:GetHeight() + 50)
-        GwObjectivesNotification.hasDesc = true
     end
     GwObjectivesNotification.shouldDisplay = true
 end

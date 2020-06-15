@@ -367,6 +367,7 @@ local function manageButton()
         fmGMGB.cf:Hide()
     end
 end
+GW.manageButton = manageButton
 GW.AddForProfiling("party", "manageButton", manageButton)
 
 local function setPortrait(self, index)
@@ -393,15 +394,13 @@ local function updateAwayData(self)
         portraitIndex = 2
     end
 
-    if (not UnitInPhase(self.unit) or UnitIsWarModePhased(self.unit)) then
+    if not UnitInPhase(self.unit) or UnitIsWarModePhased(self.unit) then
         portraitIndex = 4
-        self.classicon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
-        self.classicon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)
     end
 
     if UnitHasIncomingResurrection(self.unit) then
         self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
     end
 
     if C_IncomingSummon.HasIncomingSummon(self.unit) then
@@ -413,7 +412,7 @@ local function updateAwayData(self)
         elseif status == Enum.SummonStatus.Declined then
             self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
-        self.classicon:SetTexCoord(0, 1, 0, 1)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
     end
 
     if not UnitIsConnected(self.unit) then
@@ -453,24 +452,48 @@ end
 GW.AddForProfiling("party", "updateAwayData", updateAwayData)
 
 local function getUnitDebuffs(unit)
+    local show_debuffs = GetSetting("PARTY_SHOW_DEBUFFS")
+    local only_dispellable_debuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
+    local show_importend_raid_instance_debuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
+    local counter = 1
+
     DebuffLists[unit] = {}
     for i = 1, 40 do
-        if UnitDebuff(unit, i) then
-            DebuffLists[unit][i] = {}
-            DebuffLists[unit][i]["name"],
-                DebuffLists[unit][i]["icon"],
-                DebuffLists[unit][i]["count"],
-                DebuffLists[unit][i]["dispelType"],
-                DebuffLists[unit][i]["duration"],
-                DebuffLists[unit][i]["expires"],
-                DebuffLists[unit][i]["caster"],
-                DebuffLists[unit][i]["isStealable"],
-                DebuffLists[unit][i]["shouldConsolidate"],
-                DebuffLists[unit][i]["spellID"] = UnitDebuff(unit, i)
-            DebuffLists[unit][i]["key"] = i
-            DebuffLists[unit][i]["timeRemaining"] = DebuffLists[unit][i]["expires"] - GetTime()
-            if DebuffLists[unit][i]["duration"] <= 0 then
-                DebuffLists[unit][i]["timeRemaining"] = 500000
+        if UnitDebuff(unit, i, "HARMFUL") then
+            local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitDebuff(unit, i, "HARMFUL")
+            local shouldDisplay = false
+
+            if show_debuffs then
+                if only_dispellable_debuffs then
+                    if debuffType and GW.IsDispellableByMe(debuffType) then
+                        shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
+                    end
+                else
+                    shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
+                end
+            end
+
+            if show_importend_raid_instance_debuffs and not shouldDisplay then
+                shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
+            end
+
+            if shouldDisplay then
+                DebuffLists[unit][counter] = {}
+                
+                DebuffLists[unit][counter]["name"] = debuffName
+                DebuffLists[unit][counter]["icon"] = icon
+                DebuffLists[unit][counter]["count"] = count
+                DebuffLists[unit][counter]["dispelType"] = debuffType
+                DebuffLists[unit][counter]["duration"] = duration
+                DebuffLists[unit][counter]["expires"] = expires
+                DebuffLists[unit][counter]["caster"] = caster
+                DebuffLists[unit][counter]["isStealable"] = isStealable
+                DebuffLists[unit][counter]["shouldConsolidate"] = shouldConsolidate
+                DebuffLists[unit][counter]["spellID"] = spellId
+                DebuffLists[unit][counter]["key"] = i
+                DebuffLists[unit][counter]["timeRemaining"] = duration <= 0 and 500000 or expires - GetTime()
+
+                counter = counter  + 1
             end
         end
     end
@@ -669,7 +692,7 @@ local function updatePartyAuras(self, unit)
             indexBuffFrame:Show()
 
             x = x + 1
-            if x > 7 then
+            if x > 8 then
                 y = y + 1
                 x = 0
             end
@@ -966,20 +989,44 @@ local function createPartyFrame(i)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
-local function LoadPartyFrames()
-    manageButton()
-
-    SetCVar("useCompactPartyFrames", 1)
-
-    if GetSetting("RAID_STYLE_PARTY") then
+local function hideBlizzardPartyFrame()
+    if InCombatLockdown() then
         return
     end
 
-    createPartyFrame(1)
-    createPartyFrame(2)
-    createPartyFrame(3)
-    createPartyFrame(4)
+    for i = 1, MAX_PARTY_MEMBERS do
+        if _G["PartyMemberFrame" .. i] then
+            _G["PartyMemberFrame" .. i]:UnregisterAllEvents()
+            _G["PartyMemberFrame" .. i]:Hide()
+            _G["PartyMemberFrame" .. i].Show = GW.NoOp
+        end
 
-    GwPartyFrame1:SetPoint("TOPLEFT", 20, -104)
+        _G["PartyMemberFrame" .. i]:HookScript("OnShow", function()
+            _G["PartyMemberFrame" .. i]:SetAlpha(0)
+            _G["PartyMemberFrame" .. i]:EnableMouse(false)
+        end)
+    end
+
+    if CompactRaidFrameManager then
+        CompactRaidFrameManager:UnregisterAllEvents()
+        CompactRaidFrameManager:Hide()
+    end
+end
+GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
+
+local function LoadPartyFrames()
+    if not _G.GwManageGroupButton then
+        manageButton()
+    end
+
+    hideBlizzardPartyFrame()
+
+    if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
+        return
+    end
+
+    for i = 1, MAX_PARTY_MEMBERS do
+        createPartyFrame(i)
+    end
 end
 GW.LoadPartyFrames = LoadPartyFrames

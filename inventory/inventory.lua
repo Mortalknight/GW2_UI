@@ -206,7 +206,7 @@ local function hookQuestItemBorder(self)
     local name = self:GetName()
     
     for i=1, self.size, 1 do
-		local itemButton = _G[name .. "Item" .. i]
+        local itemButton = _G[name .. "Item" .. i]
         local isQuestItem, questId, isActive = GetContainerItemQuestInfo(id, itemButton:GetID())
         if itemButton.IconQuestTexture then
             if questId or isQuestItem then
@@ -372,7 +372,7 @@ local function reskinSearchBox(sb)
     sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
 
     sb.Middle:SetHeight(24)
-    sb.Middle:SetTexCoord(0, 1, 0, 1)
+    sb.Middle:SetTexCoord(unpack(GW.TexCoords))
 
     sb.searchIcon:Hide()
 end
@@ -575,33 +575,6 @@ GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
 local function LoadDefaultBagBar()
     -- if not our bags, we need to cut the bagbar frame out of the micromenu
-    local bagFrame = CreateFrame("FRAME", nil, UIParent)
-    bagFrame:SetSize(140, 30)
-    RegisterMovableFrame(bagFrame, "BagSlots", "BAG_DEFAULT_CONTAINER_POSITION", "VerticalActionBarDummy", true)
-
-    hooksecurefunc(bagFrame.gwMover, "StopMovingOrSizing", function(frame)
-        local anchor = "BOTTOMRIGHT"
-        local x = frame:GetRight() - GetScreenWidth()
-        local y = frame:GetBottom()
-
-        frame:ClearAllPoints()
-        frame:SetPoint(anchor, x, y)
-
-        if not InCombatLockdown() then
-            bagFrame:ClearAllPoints()
-            bagFrame:SetPoint(frame:GetPoint())
-        end
-    end)
-
-    bagFrame:ClearAllPoints()
-    bagFrame:SetPoint(
-        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["point"],
-        UIParent,
-        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["relativePoint"],
-        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["xOfs"],
-        GetSetting("BAG_DEFAULT_CONTAINER_POSITION")["yOfs"]
-    )
-
     reskinBagBar(MainMenuBarBackpackButton, 1)
     reskinBagBar(CharacterBag0Slot, 1)
     reskinBagBar(CharacterBag1Slot, 1)
@@ -616,13 +589,13 @@ local function LoadDefaultBagBar()
     CharacterBag2Slot:ClearAllPoints()
     CharacterBag3Slot:ClearAllPoints()
 
-    MainMenuBarBackpackButton:SetParent(bagFrame)
-    CharacterBag0Slot:SetParent(bagFrame)
-    CharacterBag1Slot:SetParent(bagFrame)
-    CharacterBag2Slot:SetParent(bagFrame)
-    CharacterBag3Slot:SetParent(bagFrame)
+    MainMenuBarBackpackButton:SetParent(UIParent)
+    CharacterBag0Slot:SetParent(UIParent)
+    CharacterBag1Slot:SetParent(UIParent)
+    CharacterBag2Slot:SetParent(UIParent)
+    CharacterBag3Slot:SetParent(UIParent)
 
-    CharacterBag3Slot:SetPoint("LEFT", bagFrame, "LEFT", 0, 0)
+    CharacterBag3Slot:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -500, 20)
     CharacterBag2Slot:SetPoint("LEFT", CharacterBag3Slot, "RIGHT", 0, 0)
     CharacterBag1Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
     CharacterBag0Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
@@ -680,12 +653,12 @@ local function LoadInventory()
     bank_resize = GW.LoadBank(helpers)
 
     -- Skin StackSplit
-	local StackSplitFrame = _G.StackSplitFrame
+    local StackSplitFrame = _G.StackSplitFrame
     GW.StripTextures(StackSplitFrame)
-	StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
+    StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
 
-	GW.skins.SkinButton(StackSplitFrame.OkayButton, false, true)
-	GW.skins.SkinButton(StackSplitFrame.CancelButton, false, true)
+    GW.skins.SkinButton(StackSplitFrame.OkayButton, false, true)
+    GW.skins.SkinButton(StackSplitFrame.CancelButton, false, true)
 
     StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
     StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
@@ -703,12 +676,3 @@ local function LoadInventory()
     StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
 end
 GW.LoadInventory = LoadInventory
-
-SLASH_GWWINRS1 = "/gw_win_reset"
-SlashCmdList["GWWINRS"] = function ()
-    GW.Debug("win reset")
-    SetSetting("BAG_POSITION", nil)
-    SetSetting("BANK_POSITION", nil)
-    SetSetting("HERO_POSITION", nil)
-    C_UI.Reload()
-end

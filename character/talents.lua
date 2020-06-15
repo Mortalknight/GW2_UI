@@ -117,15 +117,14 @@ local function updateActiveSpec()
     end
 
     -- update spec-specific skill tab tooltip
-    local current = GetSpecialization()
-    local _, specName, _ = GetSpecializationInfo(current)
+    local _, specName, _ = GetSpecializationInfo(GW.myspec)
     GwspellbookTab2.gwTipLabel = specName
 
     for i = 1, GetNumSpecializations() do
         local container = _G["GwSpecFrame" .. i]
 
         container.specIndex = i
-        if i == current then
+        if i == GW.myspec then
             container.active = true
             container.info:Hide()
             container.background:SetDesaturated(false)
@@ -163,7 +162,7 @@ local function updateActiveSpec()
 
                 local ispassive = IsPassiveSpell(spellid)
                 button:EnableMouse(true)
-                if i ~= current then
+                if i ~= GW.myspec then
                     button:EnableMouse(false)
                 end
 
@@ -183,7 +182,7 @@ local function updateActiveSpec()
                     button.outline:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border")
                 end
 
-                if i == current and (selected or available) and not known then
+                if i == GW.myspec and (selected or available) and not known then
                     button.highlight:Show()
                     button.legendaryHighlight:Hide()
 
@@ -208,11 +207,11 @@ local function updateActiveSpec()
                     button.highlight:Hide()
                 end
 
-                if i == current and (selected or available or known) then
+                if i == GW.myspec and (selected or available or known) then
                     button.icon:SetDesaturated(false)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
-                elseif i ~= current then
+                elseif i ~= GW.myspec then
                     button.icon:SetDesaturated(true)
                     button.icon:SetVertexColor(1, 1, 1, 0.1)
                     button:SetAlpha(0.5)
@@ -222,7 +221,7 @@ local function updateActiveSpec()
                 end
             end
 
-            if i == current and allAvalible == true and anySelected == false then
+            if i == GW.myspec and allAvalible == true and anySelected == false then
                 for index = 1, talentsPerRow do
                     local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
                     button.icon:SetDesaturated(false)
@@ -243,8 +242,6 @@ end
 GW.AddForProfiling("talents", "updateActiveSpec", updateActiveSpec)
 
 local function loadTalents()
-    local _, englishClass, classID = UnitClass("player")
-
     local txR, txT, txH, txMH
     txR = 588 / 1024
     txH = 140
@@ -269,7 +266,7 @@ local function loadTalents()
         self:SetScript("OnUpdate", nil)
     end
     local fnContainer_OnClick = function(self, button)
-        if not self.active and UnitLevel("player") > 9 then
+        if not self.active and GW.mylevel > 9 then
             SetSpecialization(self.specIndex)
         end
     end
@@ -309,7 +306,7 @@ local function loadTalents()
         container.info.specDesc:SetText(description)
 
         txT = (i - 1) * txH
-        container.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\" .. classID)
+        container.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\" .. GW.myClassID)
         container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
 
         local last = 0
@@ -368,7 +365,7 @@ local function loadTalents()
                 end
             end
             if i == 1 then
-                local talentLevels = CLASS_TALENT_LEVELS[englishClass] or CLASS_TALENT_LEVELS["DEFAULT"]
+                local talentLevels = CLASS_TALENT_LEVELS[GW.myclass] or CLASS_TALENT_LEVELS["DEFAULT"]
                 local numberDisplay =
                     CreateFrame("Frame", "GwTalentsLevelLabel" .. row, GwSpecContainerFrame, "GwTalentsLevelLabel")
                 numberDisplay.title:SetFont(DAMAGE_TEXT_FONT, 14)
@@ -897,11 +894,10 @@ end
 GW.AddForProfiling("talents", "toggleTalentFrame", toggleTalentFrame)
 
 local function spellBook_OnEvent(self, event, ...)
-    if
-        event == "SPELLS_CHANGED" or event == "LEARNED_SPELL_IN_TAB" or event == "PLAYER_GUILD_UPDATE" or
+    if event == "SPELLS_CHANGED" or event == "LEARNED_SPELL_IN_TAB" or event == "PLAYER_GUILD_UPDATE" or
             event == "PLAYER_SPECIALIZATION_CHANGED" or
             event == ""
-     then
+    then
         if not GwTalentFrame:IsShown() or not GW.inWorld then
             return
         end
@@ -1135,7 +1131,7 @@ local function LoadTalents(tabContainer)
     )
     fmSpellbook:SetAttribute("tabOpen", 2)
 
-    local _, specName, _ = GetSpecializationInfo(GetSpecialization())
+    local _, specName, _ = GetSpecializationInfo(GW.myspec)
     GwspellbookTab1.gwTipLabel = GENERAL_SPELLS
     GwspellbookTab2.gwTipLabel = specName
     GwspellbookTab3.gwTipLabel = PVP_LABEL_PVP_TALENTS
@@ -1151,7 +1147,7 @@ local function LoadTalents(tabContainer)
     GwspellbookTab4:SetScript("OnLeave", GameTooltip_Hide)
 
     -- set tab 2 to class icon
-    SetClassIcon(GwspellbookTab2.icon, select(3, UnitClass("player")))
+    SetClassIcon(GwspellbookTab2.icon, GW.myClassID)
 
     GwTalentFrame:HookScript(
         "OnShow",
