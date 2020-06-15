@@ -67,6 +67,7 @@ local function LoadModulesPanel(sWindow)
     addOption(p, BATTLEGROUND, nil, "USE_BATTLEGROUND_HUD")
     addOption(p, CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, "DYNAMIC_CAM")
     addOption(p, CHAT_BUBBLES_TEXT, L["CHAT_BUBBLES_DESC"], "CHATBUBBLES_ENABLED")
+    addOption(p, L["ALERTFRAMES"], nil, "ALERTFRAME_ENABLED")
 
     InitPanel(p)
 end

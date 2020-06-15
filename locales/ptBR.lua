@@ -285,6 +285,7 @@ local function GWUseThisLocalization()
     L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
+    L["ALERTFRAMES"] = "Alertas"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
@@ -292,8 +293,7 @@ local function GWUseThisLocalization()
     L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
     L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
 end
-    
-    
+
 if GetLocale() == "ptBR" then
     GWUseThisLocalization()
 end

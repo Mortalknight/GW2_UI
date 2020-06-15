@@ -289,8 +289,8 @@ local function GWUseThisLocalization()
     L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
+    L["ALERTFRAMES"] = "Alertas"
 end
-
 
 if GetLocale() == "esES" then
     GWUseThisLocalization()

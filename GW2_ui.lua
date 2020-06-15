@@ -10,6 +10,8 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
+local AlertContainerFrame
+
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
@@ -507,6 +509,58 @@ local function RegisterScaleFrame(f, modifier)
 end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
+-- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
+local function adjustFixedAnchors(self, relativeAlert)
+    if not self.anchorFrame:IsShown() then
+        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
+        local name = self.anchorFrame:GetName()
+        if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
+            if name == "TalkingHeadFrame" then
+                self.anchorFrame:ClearAllPoints()
+                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+            elseif name == "GroupLootContainer" then
+                self.anchorFrame:ClearAllPoints()
+                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
+                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
+                else
+                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
+                end
+            end
+        end
+        return self.anchorFrame
+    end
+    return relativeAlert
+end
+GW.AddForProfiling("index", "adjustFixedAnchors", adjustFixedAnchors)
+
+local function adjustAlertAnchors(self, relativeAlert)
+    for alertFrame in self.alertFramePool:EnumerateActive() do
+        alertFrame:ClearAllPoints()
+        alertFrame:SetPoint("BOTTOM", relativeAlert, "TOP", 0, 5)
+        relativeAlert = alertFrame
+    end
+    return relativeAlert
+end
+
+local function updateAnchors(self)
+    self:CleanAnchorPriorities()
+
+    local relativeFrame = GwAlertFrameOffsetter
+    local relativeFrame2 = AlertContainerFrame
+    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
+        if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors and GetSetting("ACTIONBARS_ENABLED") then
+            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
+        elseif alertFrameSubSystem.AdjustAnchors == AlertFrameQueueMixin.AdjustAnchors and GetSetting("ALERTFRAME_ENABLED") then
+            relativeFrame2 = adjustAlertAnchors(alertFrameSubSystem, relativeFrame2)
+        else
+            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
+        end
+    end
+    _G.AlertFrame:ClearAllPoints()
+    _G.AlertFrame:SetPoint("BOTTOM", _G.Minimap, "TOP", 10, 5)
+end
+GW.AddForProfiling("index", "updateAnchors", updateAnchors)
+
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
@@ -518,6 +572,39 @@ local function loadAddon(self)
 
     -- setup our frame pool
     GW.Pools = CreatePoolCollection()
+
+    -- setup AlertFrame and Bonus Roll Frame
+    AlertFrame.UpdateAnchors = updateAnchors
+
+    if GetSetting("ALERTFRAME_ENABLED") then
+        AlertContainerFrame = GW.loadAlterSystemFrameSkins()
+
+        hooksecurefunc("GroupLootContainer_Update", function(self)
+            local lastIdx = nil
+            local pt, _, relPt, _, _ = self:GetPoint()
+        
+            for i = 1 , self.maxIndex do
+                local frame = self.rollFrames[i]
+                local prevFrame = self.rollFrames[i-1]
+                if ( frame ) then
+                    frame:ClearAllPoints()
+                    if prevFrame and not (prevFrame == frame) then
+                        frame:SetPoint(POSITION, prevFrame, ANCHOR_POINT, 0, 0)
+                    else
+                        frame:SetPoint(pt, self, relPt, 0, self.reservedSize * (i - 1 + 0.5))
+                    end
+                    lastIdx = i
+                end
+            end
+        
+            if ( lastIdx ) then
+                self:SetHeight(self.reservedSize * lastIdx)
+                self:Show()
+            else
+                self:Hide()
+            end
+        end)
+    end
 
     -- disable Move Anything bag handling
     disableMABags()
@@ -822,6 +909,8 @@ local function gw_OnEvent(self, event, ...)
             loadAddon(self)
         end
         GW.LoadStorage()
+    elseif event == "ADDON_LOADED" then
+        
     elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
         SetSetting("PIXEL_PERFECTION", false)
         GW.scale = UIParent:GetScale()
@@ -861,6 +950,7 @@ l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
 l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+l:RegisterEvent("ADDON_LOADED")
 
 local function AddToClique(frame)
     if type(frame) == "string" then

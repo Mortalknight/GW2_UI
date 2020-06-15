@@ -60,6 +60,7 @@ local function CreateBackdrop(frame)
         backdrop:SetFrameLevel(0)
     end
 end
+GW.skins.CreateBackdrop = CreateBackdrop
 
 local function SkinButton(button, isXButton, setTextColor, onlyHover)
     if not button or button.isSkinned then return end

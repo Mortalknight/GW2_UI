@@ -289,6 +289,7 @@ local function GWUseThisLocalization()
     L["HUD_BACKGROUND_DESC"] = "Der HUD Hintergrund ändert seine Farbe in folgenden Situationen: Im Kampf, Nicht im Kampf, Im Wasser, Wenig HP, Geist"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Instanz & Schlachtzug Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Zeige wichtig Instanz & Schlachtzug Debuffs an"
+    L["ALERTFRAMES"] = "Alarmfenster"
 end
 
 if GetLocale() == "deDE" then
