@@ -2,16 +2,17 @@ local _, GW = ...
 local L = GW.L
 
 local BUTTONS = {
-    {button = _G.GameMenuButtonHelp, sprite={1,1} },
-    {button = _G.GameMenuButtonOptions, sprite={4,1} },
-    {button = _G.GameMenuButtonUIOptions, sprite={1,2} },
-    {button = _G.GameMenuButtonKeybindings, sprite={2,2} },
-    {button = _G.GameMenuButtonMacros, sprite={3,2} },
-    {button = _G.GameMenuButtonAddons, sprite={4,2} },
-    {button = _G.GameMenuButtonLogout, sprite={1,3} },
-    {button = _G.GameMenuButtonQuit, sprite={2,3} },
-    {button = _G.GameMenuButtonContinue, sprite={3,3} },
-    {button = _G.GameMenuButtonRatings, sprite={3,1} }
+    {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
+    {button = _G.GameMenuButtonOptions      , sprite = {4, 1}},
+    {button = _G.GameMenuButtonUIOptions    , sprite = {1, 2}},
+    {button = _G.GameMenuButtonKeybindings  , sprite = {2, 2}},
+    {button = _G.GameMenuButtonMacros       , sprite = {3, 2}},
+    {button = _G.GameMenuButtonAddons       , sprite = {4, 2}},
+    {button = _G.GameMenuButtonLogout       , sprite = {1, 3}},
+    {button = _G.GameMenuButtonQuit         , sprite = {2, 3}},
+    {button = _G.GameMenuButtonContinue     , sprite = {3, 3}},
+    {button = _G.GameMenuButtonRatings      , sprite = {3, 1}},
+    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}} -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
 }
 
 local ICON_SPRITES = {

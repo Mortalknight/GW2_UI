@@ -304,11 +304,7 @@ local function MeleeHitMissChanceSameLevel()
         missChance = missChance - hitFromItems
     end
 
-    if missChance < 0 then
-        missChance = 0
-    elseif missChance > 100 then
-        missChance = 100
-    end
+    missChance = Clamp(missChance, 0, 100)
 
     return RoundDec(missChance, 2) .. "%"
 end
@@ -329,11 +325,7 @@ local function MeleeHitMissChanceBossLevel()
         missChance = missChance - hitFromItems
     end
 
-    if missChance < 0 then
-        missChance = 0
-    elseif missChance > 100 then
-        missChance = 100
-    end
+    missChance = Clamp(missChance, 0, 100)
 
     return RoundDec(missChance, 2) .. "%"
 end
@@ -349,11 +341,7 @@ local function RangeMissChanceSameLevel()
     local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
     missChance = missChance - _GetRangeHitBonus()
 
-    if missChance < 0 then
-        missChance = 0
-    elseif missChance > 100 then
-        missChance = 100
-    end
+    missChance = Clamp(missChance, 0, 100)
 
     return RoundDec(missChance, 2) .. "%"
 end
@@ -366,11 +354,7 @@ local function RangeMissChanceBossLevel()
     local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
     missChance = missChance - _GetRangeHitBonus()
     
-    if missChance < 0 then
-        missChance = 0
-    elseif missChance > 100 then
-        missChance = 100
-    end
+    missChance = Clamp(missChance, 0, 100)
 
     return RoundDec(missChance, 2) .. "%"
 end
@@ -391,11 +375,7 @@ local function SpellMissChanceSameLevel()
         missChance = missChance - mod
     end
 
-    if missChance < 0 then
-        missChance = 0
-    elseif missChance > 100 then
-        missChance = 100
-    end
+    missChance = Clamp(missChance, 0, 100)
 
     return RoundDec(missChance, 2) .. "%"
 end
@@ -409,11 +389,7 @@ local function SpellMissChanceBossLevel()
         missChance = missChance - mod
     end
 
-    if missChance < 0 then
-        missChance = 0
-    elseif missChance > 100 then
-        missChance = 100
-    end
+    missChance = Clamp(missChance, 0, 100)
 
     return RoundDec(missChance, 2) .. "%"
 end
