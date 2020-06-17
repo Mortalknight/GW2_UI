@@ -47,7 +47,7 @@ local constBackdropDropDown = {
 }
 GW.skins.constBackdropDropDown = constBackdropDropDown
 
-local function CreateBackdrop(frame)
+local function CreateBackdrop(frame, backdropTexture)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
     if not frame.backdrop then frame.backdrop = backdrop end
@@ -58,6 +58,10 @@ local function CreateBackdrop(frame)
         backdrop:SetFrameLevel(frameLevelMinusOne)
     else
         backdrop:SetFrameLevel(0)
+    end
+
+    if backdropTexture then 
+        backdrop:SetBackdrop(backdropTexture)
     end
 end
 GW.skins.CreateBackdrop = CreateBackdrop
