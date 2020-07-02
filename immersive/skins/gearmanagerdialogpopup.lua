@@ -1,8 +1,5 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
-local SkinButton = GW.skins.SkinButton
-local SkinScrollBar = GW.skins.SkinScrollBar
-local SkinScrollFrame = GW.skins.SkinScrollFrame
 
 local function SkinGearManagerDialogPopup_OnShow()
     local GearManagerDialogPopup = _G.GearManagerDialogPopup
@@ -25,13 +22,13 @@ local function SkinGearManagerDialogPopup_OnShow()
 
     local GearManagerDialogPopupCancel = _G.GearManagerDialogPopupCancel
 
-    SkinButton(GearManagerDialogPopupCancel, false, true)
+    GearManagerDialogPopupCancel:SkinButton(false, true)
     GearManagerDialogPopupCancel:ClearAllPoints()
     GearManagerDialogPopupCancel:SetPoint("BOTTOMRIGHT" ,-11, 20)
 
-    SkinButton(_G.GearManagerDialogPopupOkay, false, true)
-    SkinScrollFrame(_G.GearManagerDialogPopupScrollFrame)
-    SkinScrollBar(_G.GearManagerDialogPopupScrollFrameScrollBar)
+    _G.GearManagerDialogPopupOkay:SkinButton(false, true)
+    _G.GearManagerDialogPopupScrollFrame:SkinScrollFrame()
+    _G.GearManagerDialogPopupScrollFrameScrollBar:SkinScrollBar()
 end
 
 local function SkinGearManagerDialogPopupButtons_OnUpdate()

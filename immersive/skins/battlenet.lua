@@ -1,5 +1,4 @@
 local _, GW = ...
-local SkinButton = GW.skins.SkinButton
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetSetting = GW.GetSetting
 
@@ -13,7 +12,7 @@ local function SkinBNToastFrame()
     tex:SetSize(BNToastFrame:GetSize())
     BNToastFrame.tex = tex
 
-    SkinButton(BNToastFrame.CloseButton, true)
+    BNToastFrame.CloseButton:SkinButton(true)
 
     BNToastFrame:HookScript("OnShow", function(self)
         self.tex:SetSize(_G.BNToastFrame:GetSize())

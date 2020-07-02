@@ -1,12 +1,11 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
-local SkinButton = GW.skins.SkinButton
 
 local function SkinReadyCheck()
     _G.ReadyCheckListenerFrame:SetBackdrop(nil)
 
-    SkinButton(_G.ReadyCheckFrameYesButton, false, true)
-    SkinButton(_G.ReadyCheckFrameNoButton, false, true)
+    _G.ReadyCheckFrameYesButton:SkinButton(false, true)
+    _G.ReadyCheckFrameNoButton:SkinButton(false, true)
 
     local r = {_G.ReadyCheckListenerFrame:GetRegions()}
     for _,c in pairs(r) do

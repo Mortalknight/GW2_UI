@@ -1,12 +1,11 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
-local SkinButton = GW.skins.SkinButton
 
 local function SkinDeathRecapFrame_Loaded()
     local DeathRecapFrame = _G.DeathRecapFrame
 
-    SkinButton(DeathRecapFrame.CloseButton, false, true)
-    SkinButton(DeathRecapFrame.CloseXButton, true)
+    DeathRecapFrame.CloseButton:SkinButton(false, true)
+    DeathRecapFrame.CloseXButton:SkinButton(true)
 
     DeathRecapFrame.CloseXButton:SetSize(20, 20)
     DeathRecapFrame.CloseXButton:ClearAllPoints()

@@ -1,5 +1,4 @@
 local _, GW = ...
-local SkinButton = GW.skins.SkinButton
 
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
@@ -31,9 +30,9 @@ local function SkinStaticPopup()
         --Style Buttons (upto 5)
         for ii = 1, 5 do
             if ii < 5 then
-                SkinButton(_G["StaticPopup" .. i .. "Button" .. ii], false, true)
+                _G["StaticPopup" .. i .. "Button" .. ii]:SkinButton(false, true)
             else
-                SkinButton(_G["StaticPopup" .. i .. "ExtraButton"], false, true)
+                _G["StaticPopup" .. i .. "ExtraButton"]:SkinButton(false, true)
             end
         end
 
@@ -63,10 +62,10 @@ local function SkinStaticPopup()
             local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName .. "ConfirmButton"])
             local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName .. "ResumeButton"])
             if closeButton then 
-                SkinButton(closeButton, false, true)
+                closeButton:SkinButton(false, true)
             end
             if resumeButton then
-                SkinButton(resumeButton, false, true)
+                resumeButton:SkinButton(false, true)
             end
         end
     end)
@@ -81,8 +80,8 @@ local function SkinStaticPopup()
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
             self.CloseDialog.tex = tex
 
-            SkinButton(self.CloseDialog.ConfirmButton, false, true)
-            SkinButton(self.CloseDialog.ResumeButton, false, true)
+            self.CloseDialog.ConfirmButton:SkinButton(false, true)
+            self.CloseDialog.ResumeButton:SkinButton(false, true)
         end
     end)
 end

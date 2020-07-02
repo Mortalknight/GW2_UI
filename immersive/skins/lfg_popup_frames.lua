@@ -1,6 +1,5 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
-local SkinButton = GW.skins.SkinButton
 
 -------------------------------------------------------LFGListInviteDialog-------------------------------------------------------
 local function SkinLFGListInviteDialog()
@@ -10,9 +9,9 @@ local function SkinLFGListInviteDialog()
         LFGListInviteDialog:SetBackdrop(nil)
         LFGListInviteDialog.Border:Hide()
 
-        SkinButton(LFGListInviteDialog.AcceptButton, false, true)
-        SkinButton(LFGListInviteDialog.DeclineButton, false, true)
-        SkinButton(LFGListInviteDialog.AcknowledgeButton, false, true)
+        LFGListInviteDialog.AcceptButton:SkinButton(false, true)
+        LFGListInviteDialog.DeclineButton:SkinButton(false, true)
+        LFGListInviteDialog.AcknowledgeButton:SkinButton(false, true)
 
         LFGListInviteDialog:SetBackdrop(constBackdropFrame)
     end
@@ -27,8 +26,8 @@ local function SkinLFGListApplicationDialog()
     LFGListApplicationDialog:SetBackdrop(nil)
     LFGListApplicationDialog.Border:Hide()
 
-    SkinButton(LFGListApplicationDialog.SignUpButton, false, true)
-    SkinButton(LFGListApplicationDialog.CancelButton, false, true)
+    LFGListApplicationDialog.SignUpButton:SkinButton(false, true)
+    LFGListApplicationDialog.CancelButton:SkinButton(false, true)
 
     local r = {LFGListApplicationDialog.Description:GetRegions()}
     for _,c in pairs(r) do
@@ -55,7 +54,7 @@ local function SkinLFGDungeonReadyStatus()
 
         LFGDungeonReadyStatus:SetBackdrop(nil)
         LFGDungeonReadyStatus.Border:Hide()
-        SkinButton(_G.LFGDungeonReadyStatusCloseButton, true)
+        _G.LFGDungeonReadyStatusCloseButton:SkinButton(true)
         _G.LFGDungeonReadyStatusCloseButton:SetSize(20, 20)
         _G.LFGDungeonReadyStatusCloseButton:ClearAllPoints()
         _G.LFGDungeonReadyStatusCloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -76,13 +75,13 @@ local function SkinLFGDungeonReadyDialog()
         LFGDungeonReadyDialog.background:Hide()
         LFGDungeonReadyDialog.filigree:Hide()
         LFGDungeonReadyDialog.bottomArt:Hide()
-        SkinButton(_G.LFGDungeonReadyDialogCloseButton, true)
+        _G.LFGDungeonReadyDialogCloseButton:SkinButton(true)
         _G.LFGDungeonReadyDialogCloseButton:SetSize(20, 20)
         _G.LFGDungeonReadyDialogCloseButton:ClearAllPoints()
         _G.LFGDungeonReadyDialogCloseButton:SetPoint("TOPRIGHT", -3, -3)
     
-        SkinButton(LFGDungeonReadyDialog.enterButton, false, true)
-        SkinButton(LFGDungeonReadyDialog.leaveButton, false, true)
+        LFGDungeonReadyDialog.enterButton:SkinButton(false, true)
+        LFGDungeonReadyDialog.leaveButton:SkinButton(false, true)
     
         LFGDungeonReadyDialog.instanceInfo.underline:Hide()
         
@@ -100,8 +99,8 @@ local function SkinLFDRoleCheckPopup()
         LFDRoleCheckPopup:SetBackdrop(nil)
         LFDRoleCheckPopup:SetBackdrop(constBackdropFrame)
         LFDRoleCheckPopup.Border:Hide()
-        SkinButton(_G.LFDRoleCheckPopupAcceptButton, false, true)
-        SkinButton(_G.LFDRoleCheckPopupDeclineButton, false, true)
+        _G.LFDRoleCheckPopupAcceptButton:SkinButton(false, true)
+        _G.LFDRoleCheckPopupDeclineButton:SkinButton(false, true)
     end
 
 
@@ -113,8 +112,8 @@ local function SkinLFGInvitePopup()
     _G.LFGInvitePopup:SetBackdrop(nil)
     _G.LFGInvitePopup.Border:Hide()
 
-    SkinButton(_G.LFGInvitePopupAcceptButton, false, true)
-    SkinButton(_G.LFGInvitePopupDeclineButton, false, true)
+    _G.LFGInvitePopupAcceptButton:SkinButton(false, true)
+    _G.LFGInvitePopupDeclineButton:SkinButton(false, true)
 
     _G.LFGInvitePopup:SetBackdrop(constBackdropFrame)
 end

@@ -367,7 +367,7 @@ local function LoadHealthGlobe()
 
     -- set handlers for health globe and disable default player frame
     PlayerFrame:SetScript("OnEvent", nil)
-    PlayerFrame:Hide()
+    PlayerFrame:Kill()
     hg:SetScript("OnEvent", globe_OnEvent)
     hg:SetScript("OnEnter", globe_OnEnter)
     hg:SetScript("OnLeave", function(self)
@@ -401,8 +401,6 @@ local function LoadHealthGlobe()
     -- grab the TotemFrame so it remains visible
     if PlayerFrame and TotemFrame then
         TotemFrame:SetParent(playerHealthGLobaBg)
-        PlayerFrame:ClearAllPoints()
-        PlayerFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -500, 50)
         -- TODO: we can't position this directly; it's permanently attached to the PlayerFrame via SetPoints
         -- in the TotemFrame OnUpdate that we can't override because combat lockdowns and whatnot, and simply
         -- moving the PlayerFrame isn't ideal because its layout is highly variable; really we probably just

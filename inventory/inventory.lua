@@ -654,11 +654,11 @@ local function LoadInventory()
 
     -- Skin StackSplit
     local StackSplitFrame = _G.StackSplitFrame
-    GW.StripTextures(StackSplitFrame)
+    StackSplitFrame:StripTextures()
     StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
 
-    GW.skins.SkinButton(StackSplitFrame.OkayButton, false, true)
-    GW.skins.SkinButton(StackSplitFrame.CancelButton, false, true)
+    StackSplitFrame.OkayButton:SkinButton(false, true)
+    StackSplitFrame.CancelButton:SkinButton(false, true)
 
     StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
     StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")

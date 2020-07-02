@@ -27,6 +27,7 @@ locales/itIT.lua
 libs/libs.xml
 
 core/consts.lua
+core/toolkit.lua
 core/utils.lua
 core/itemlevel.lua
 core/shared.xml

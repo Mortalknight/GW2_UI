@@ -1,10 +1,5 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
-local SkinButton = GW.skins.SkinButton
-local SkinDropDownMenu = GW.skins.SkinDropDownMenu
-local SkinCheckButton = GW.skins.SkinCheckButton
-local SkinTab = GW.skins.SkinTab
-local SkinSliderFrame = GW.skins.SkinSliderFrame
 
 local function SkinBlizzardOptions()
     --Interface and System Options
@@ -85,7 +80,7 @@ local function SkinBlizzardOptions()
     end
 
     for _, Tab in pairs(OptionsButtons) do
-        SkinTab(Tab)
+        Tab:SkinTab()
     end
 
     for _, Panel in pairs(InterfaceOptions) do
@@ -93,20 +88,20 @@ local function SkinBlizzardOptions()
             for i = 1, Panel:GetNumChildren() do
                 local Child = select(i, Panel:GetChildren())
                 if Child:IsObjectType("CheckButton") then
-                    SkinCheckButton(Child)
+                    Child:SkinCheckButton()
                     Child:SetSize(15, 15)
                 elseif Child:IsObjectType("Button") then
                     if Child == InterfaceOptionsFrameTab1 or Child == InterfaceOptionsFrameTab2 then
-                        SkinTab(Child)
+                        Child:SkinTab()
                     else
-                        SkinButton(Child, false, true)
+                        Child:SkinButton(false, true)
                     end
                 elseif Child:IsObjectType("Slider") then
-                    SkinSliderFrame(Child)
+                    Child:SkinSliderFrame()
                 elseif Child:IsObjectType("Tab") then
-                    SkinTab(Child)
+                    Child:SkinTab()
                 elseif Child:IsObjectType("Frame") and Child.Left and Child.Middle and Child.Right then
-                    SkinDropDownMenu(Child)
+                    Child:SkinDropDownMenu()
                 end
             end
         end
@@ -123,9 +118,9 @@ local function SkinBlizzardOptions()
 
         newProfileDialog.Border:Hide()
 
-        SkinDropDownMenu(_G.CompactUnitFrameProfilesNewProfileDialogBaseProfileSelector)
-        SkinButton(_G.CompactUnitFrameProfilesNewProfileDialogCreateButton, false, true)
-        SkinButton(_G.CompactUnitFrameProfilesNewProfileDialogCancelButton, false, true)
+        _G.CompactUnitFrameProfilesNewProfileDialogBaseProfileSelector:SkinDropDownMenu()
+        _G.CompactUnitFrameProfilesNewProfileDialogCreateButton:SkinButton(false, true)
+        _G.CompactUnitFrameProfilesNewProfileDialogCancelButton:SkinButton(false, true)
 
         if newProfileDialog.editBox then
             _G[newProfileDialog.editBox:GetName() .. "Left"]:Hide()
@@ -148,18 +143,18 @@ local function SkinBlizzardOptions()
 
         deleteProfileDialog.Border:Hide()
 
-        SkinButton(_G.CompactUnitFrameProfilesDeleteProfileDialogDeleteButton, false, true)
-        SkinButton(_G.CompactUnitFrameProfilesDeleteProfileDialogCancelButton, false, true)
+        _G.CompactUnitFrameProfilesDeleteProfileDialogDeleteButton:SkinButton(false, true)
+        _G.CompactUnitFrameProfilesDeleteProfileDialogCancelButton:SkinButton(false, true)
     end
 
     --What's New
     local SplashFrame = _G.SplashFrame
-    SkinButton(SplashFrame.BottomCloseButton, false, true)
-    SkinButton(SplashFrame.TopCloseButton, true)
+    SplashFrame.BottomCloseButton:SkinButton(false, true)
+    SplashFrame.TopCloseButton:SkinButton(true)
 
     -- Voice Sliders
-    SkinSliderFrame(_G.UnitPopupVoiceSpeakerVolume.Slider)
-    SkinSliderFrame(_G.UnitPopupVoiceMicrophoneVolume.Slider)
-    SkinSliderFrame(_G.UnitPopupVoiceUserVolume.Slider)
+    _G.UnitPopupVoiceSpeakerVolume.Slider:SkinSliderFrame()
+    _G.UnitPopupVoiceMicrophoneVolume.Slider:SkinSliderFrame()
+    _G.UnitPopupVoiceUserVolume.Slider:SkinSliderFrame()
 end
 GW.SkinBlizzardOptions = SkinBlizzardOptions

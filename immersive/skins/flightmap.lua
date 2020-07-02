@@ -1,6 +1,5 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
-local SkinButton = GW.skins.SkinButton
 
 local function SkinFlightMap()
     FlightMap_LoadUI()
@@ -14,7 +13,7 @@ local function SkinFlightMap()
     tex:SetSize(w + 120, h + 80 )
     FlightMapFrame.tex = tex
 
-    SkinButton(_G.FlightMapFrameCloseButton, true, false)
+    _G.FlightMapFrameCloseButton:SkinButton(true, false)
     _G.FlightMapFrameCloseButton:SetSize(25, 25)
     _G.FlightMapFrameCloseButton:ClearAllPoints()
     _G.FlightMapFrameCloseButton:SetPoint("TOPRIGHT", FlightMapFrame, "TOPRIGHT", 30, 8)
@@ -24,7 +23,7 @@ local function SkinFlightMap()
 
     --Same for TaxiFrame
     local TaxiFrame = _G.TaxiFrame
-    GW.StripTextures(TaxiFrame)
+    TaxiFrame:StripTextures()
 
     local tex = TaxiFrame:CreateTexture("bg", "BACKGROUND")
     local w, h = TaxiFrame:GetSize()
@@ -33,7 +32,7 @@ local function SkinFlightMap()
     tex:SetSize(w + 100, h + 60 )
     TaxiFrame.tex = tex
 
-    SkinButton(TaxiFrame.CloseButton, true, false)
+    TaxiFrame.CloseButton:SkinButton(true, false)
     TaxiFrame.CloseButton:SetSize(25, 25)
     TaxiFrame.CloseButton:ClearAllPoints()
     TaxiFrame.CloseButton:SetPoint("TOPRIGHT", TaxiFrame, "TOPRIGHT", 20, 4)

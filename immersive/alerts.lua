@@ -1,5 +1,4 @@
 local _, GW = ...
-local CreateBackdrop = GW.skins.CreateBackdrop
 local GetSetting = GW.GetSetting
 
 GW2_UIAlertSystem = {}
@@ -80,24 +79,24 @@ local function skinAchievementAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        constBackdropAlertFrame:CreateBackdrop()
         frame.backdrop:SetPoint("TOPLEFT", frame.Background, "TOPLEFT", -10, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Background, "BOTTOMRIGHT", 5, 0)
     end
 
     -- Background
     frame.Background:SetTexture()
-    GW.KillTexture(frame.OldAchievement)
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
-    GW.KillTexture(frame.GuildBanner)
-    GW.KillTexture(frame.GuildBorder)
+    frame.OldAchievement:Kill()
+    frame.glow:Kill()
+    frame.shine:Kill()
+    frame.GuildBanner:Kill()
+    frame.GuildBorder:Kill()
     -- Text
     frame.Unlocked:SetTextColor(1, 1, 1)
 
     -- Icon
     frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    GW.KillTexture(frame.Icon.Overlay)
+    frame.Icon.Overlay:Kill()
 
     frame.Icon.Texture:ClearAllPoints()
     frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
@@ -124,7 +123,7 @@ local function skinCriteriaAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 27, -10)
     end
@@ -133,11 +132,11 @@ local function skinCriteriaAlert(frame)
     frame.Name:SetTextColor(1, 1, 0)
     frame.Name:SetFont(UNIT_NAME_FONT, 12)
     frame.Unlocked:SetFont(UNIT_NAME_FONT, 14)
-    GW.KillTexture(frame.Background)
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
-    GW.KillTexture(frame.Icon.Bling)
-    GW.KillTexture(frame.Icon.Overlay)
+    frame.Background:Kill()
+    frame.glow:Kill()
+    frame.shine:Kill()
+    frame.Icon.Bling:Kill()
+    frame.Icon.Overlay:Kill()
 
     -- Icon border
     if not frame.Icon.Texture.b then
@@ -158,18 +157,18 @@ local function skinWorldQuestCompleteAlert(frame)
     if not frame.isSkinned then
         frame:SetAlpha(1)
         hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -10, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
-        GW.KillTexture(frame.shine)
+        frame.shine:Kill()
         -- Background
         if frame.GetNumRegions then
             for i = 1, frame:GetNumRegions() do
                 local region = select(i, frame:GetRegions())
                 if region:IsObjectType("Texture") then
                     if region:GetTexture() == "Interface\\LFGFrame\\UI-LFG-DUNGEONTOAST" then
-                        GW.KillTexture(region)
+                        region:Kill()
                     end
                 end
             end
@@ -203,21 +202,21 @@ local function skinDungeonCompletionAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 27, -10)
     end
 
-    GW.KillTexture(frame.shine)
-    GW.KillTexture(frame.glowFrame)
-    GW.KillTexture(frame.glowFrame.glow)
+    frame.shine:Kill()
+    frame.glowFrame:Kill()
+    frame.glowFrame.glow:Kill()
 
-    GW.KillTexture(frame.raidArt)
-    GW.KillTexture(frame.dungeonArt1)
-    GW.KillTexture(frame.dungeonArt2)
-    GW.KillTexture(frame.dungeonArt3)
-    GW.KillTexture(frame.dungeonArt4)
-    GW.KillTexture(frame.heroicIcon)
+    frame.raidArt:Kill()
+    frame.dungeonArt1:Kill()
+    frame.dungeonArt2:Kill()
+    frame.dungeonArt3:Kill()
+    frame.dungeonArt4:Kill()
+    frame.heroicIcon:Kill()
 
     -- Icon
     frame.dungeonTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -247,7 +246,7 @@ local function skinGuildChallengeAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -25, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 20, 0)
     end
@@ -256,12 +255,12 @@ local function skinGuildChallengeAlert(frame)
     local region = select(2, frame:GetRegions())
     if region:IsObjectType('Texture') then
         if region:GetTexture() == "Interface\\GuildFrame\\GuildChallenges" then
-            GW.KillTexture(region)
+            region:Kill()
         end
     end
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
-    GW.KillTexture(frame.EmblemBorder)
+    frame.glow:Kill()
+    frame.shine:Kill()
+    frame.EmblemBorder:Kill()
 
     -- Icon
     frame.EmblemIcon:ClearAllPoints()
@@ -294,8 +293,8 @@ local function skinHonorAwardedAlert(frame)
         frame.hooked = true
     end
 
-    GW.KillTexture(frame.Background)
-    GW.KillTexture(frame.IconBorder)
+    frame.Background:Kill()
+    frame.IconBorder:Kill()
     frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     -- Icon border
@@ -309,7 +308,7 @@ local function skinHonorAwardedAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
@@ -320,16 +319,16 @@ end
 
 local function skinLegendaryItemAlert(frame, itemLink)
     if not frame.isSkinned then
-        GW.KillTexture(frame.Background)
-        GW.KillTexture(frame.Background2)
-        GW.KillTexture(frame.Background3)
-        GW.KillTexture(frame.Ring1)
-        GW.KillTexture(frame.Particles1)
-        GW.KillTexture(frame.Particles2)
-        GW.KillTexture(frame.Particles3)
-        GW.KillTexture(frame.Starglow)
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
+        frame.Background:Kill()
+        frame.Background2:Kill()
+        frame.Background3:Kill()
+        frame.Ring1:Kill()
+        frame.Particles1:Kill()
+        frame.Particles2:Kill()
+        frame.Particles3:Kill()
+        frame.Starglow:Kill()
+        frame.glow:Kill()
+        frame.shine:Kill()
 
         --Icon
         frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -341,7 +340,7 @@ local function skinLegendaryItemAlert(frame, itemLink)
         frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", 25, -15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 5, 20)
 
@@ -367,18 +366,18 @@ local function skinLootWonAlert(frame)
     end
 
     frame:SetAlpha(1)
-    GW.KillTexture(frame.Background)
+    frame.Background:Kill()
 
     local lootItem = frame.lootItem or frame
     lootItem.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     lootItem.Icon:SetDrawLayer("BORDER")
-    GW.KillTexture(lootItem.IconBorder)
+    lootItem.IconBorder:Kill()
     lootItem.SpecRing:SetTexture("")
 
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
-    GW.KillTexture(frame.BGAtlas)
-    GW.KillTexture(frame.PvPBackground)
+    frame.glow:Kill()
+    frame.shine:Kill()
+    frame.BGAtlas:Kill()
+    frame.PvPBackground:Kill()
 
     -- Icon border
     if not lootItem.Icon.b then
@@ -388,7 +387,7 @@ local function skinLootWonAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", lootItem.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
@@ -405,9 +404,9 @@ local function skinLootUpgradeAlert(frame)
         frame.hooked = true
     end
 
-    GW.KillTexture(frame.Background)
-    GW.KillTexture(frame.BorderGlow)
-    GW.KillTexture(frame.Sheen)
+    frame.Background:Kill()
+    frame.BorderGlow:Kill()
+    frame.Sheen:Kill()
 
     frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     frame.Icon:SetDrawLayer("BORDER", 5)
@@ -420,7 +419,7 @@ local function skinLootUpgradeAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
@@ -437,9 +436,9 @@ local function skinMoneyWonAlert(frame)
         frame.hooked = true
     end
 
-    GW.KillTexture(frame.Background)
+    frame.Background:Kill()
     frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    GW.KillTexture(frame.IconBorder)
+    frame.IconBorder:Kill()
 
     -- Icon border
     if not frame.Icon.b then
@@ -452,7 +451,7 @@ local function skinMoneyWonAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
@@ -470,15 +469,15 @@ local function skinEntitlementDeliveredAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 10, 10)
     end
 
     -- Background
-    GW.KillTexture(frame.Background)
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
+    frame.Background:Kill()
+    frame.glow:Kill()
+    frame.shine:Kill()
 
     -- Icon
     frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -509,15 +508,15 @@ local function skinRafRewardDeliveredAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 10, 10)
     end
 
     -- Background
-    GW.KillTexture(frame.StandardBackground)
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
+    frame.StandardBackground:Kill()
+    frame.glow:Kill()
+    frame.shine:Kill()
 
     -- Icon
     frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -548,13 +547,13 @@ local function skinDigsiteCompleteAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 35, 10)
     end
 
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
+    frame.glow:Kill()
+    frame.shine:Kill()
     frame:GetRegions():Hide()
     frame.DigsiteTypeTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     frame.DigsiteTypeTexture:SetDrawLayer("BORDER", 5)
@@ -572,13 +571,13 @@ local function skinNewRecipeLearnedAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 10)
     end
 
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
+    frame.glow:Kill()
+    frame.shine:Kill()
     frame:GetRegions():Hide()
 
     frame.Icon:SetMask("")
@@ -614,8 +613,8 @@ local function skinNewPetAlert(frame)
         frame.hooked = true
     end
 
-    GW.KillTexture(frame.Background)
-    GW.KillTexture(frame.IconBorder)
+    frame.Background:Kill()
+    frame.IconBorder:Kill()
 
     frame.Icon:SetMask("")
     frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -633,7 +632,7 @@ local function skinNewPetAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
@@ -650,7 +649,7 @@ local function skinInvasionAlert(frame)
         frame:SetAlpha(1)
         hooksecurefunc(frame, "SetAlpha", forceAlpha)
         
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
         
@@ -659,7 +658,7 @@ local function skinInvasionAlert(frame)
             local region, icon = frame:GetRegions()
             if region and region:IsObjectType("Texture") then
                 if region:GetAtlas() == "legioninvasion-Toast-Frame" then
-                    GW.KillTexture(region)
+                    region:Kill()
                 end
             end
             -- Icon border
@@ -693,7 +692,7 @@ local function skinScenarioAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
     end
@@ -703,14 +702,14 @@ local function skinScenarioAlert(frame)
         local region = select(i, frame:GetRegions())
         if region:IsObjectType('Texture') then
             if region:GetAtlas() == "Toast-IconBG" or region:GetAtlas() == "Toast-Frame" then
-                GW.KillTexture(region)
+                region:Kill()
             end
         end
     end
 
-    GW.KillTexture(frame.shine)
-    GW.KillTexture(frame.glowFrame)
-    GW.KillTexture(frame.glowFrame.glow)
+    frame.shine:Kill()
+    frame.glowFrame:Kill()
+    frame.glowFrame.glow:Kill()
 
     -- Icon
     frame.dungeonTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -736,8 +735,8 @@ end
 local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
     -- /run GarrisonFollowerAlertSystem:AddAlert(204, "Ben Stone", 90, 3, false, C_Garrison.GetFollowerInfo(204))
     if not frame.isSkinned then
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
+        frame.glow:Kill()
+        frame.shine:Kill()
         frame.FollowerBG:SetAlpha(0)
         frame.DieIcon:SetAlpha(0)
         --Background
@@ -746,13 +745,13 @@ local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
                 local region = select(i, frame:GetRegions())
                 if region:IsObjectType('Texture') then
                     if region:GetAtlas() == "Garr_MissionToast" then
-                        GW.KillTexture(region)
+                        region:Kill()
                     end
                 end
             end
         end
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 10)
 
@@ -795,15 +794,15 @@ end
 
 local function skinGarrisonShipFollowerAlert(frame)
     if not frame.isSkinned then
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
+        frame.glow:Kill()
+        frame.shine:Kill()
 
         frame.FollowerBG:SetAlpha(0)
         frame.DieIcon:SetAlpha(0)
         --Background
-        GW.KillTexture(frame.Background)
+        frame.Background:Kill()
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
@@ -818,8 +817,8 @@ end
 local function skinGarrisonTalentAlert(frame)
     if not frame.isSkinned then
         frame:GetRegions():Hide()
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
+        frame.glow:Kill()
+        frame.shine:Kill()
         --Icon
         frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         frame.Icon.b = CreateFrame("Frame", nil, frame)
@@ -830,7 +829,7 @@ local function skinGarrisonTalentAlert(frame)
         frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
@@ -843,11 +842,11 @@ end
 
 local function skinGarrisonBuildingAlert(frame)
     if not frame.isSkinned then
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
+        frame.glow:Kill()
+        frame.shine:Kill()
         frame:GetRegions():Hide()
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
         --Icon
@@ -873,13 +872,13 @@ end
 local function skinGarrisonMissionAlert(frame)
     -- /run GarrisonMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(391))
     if not frame.isSkinned then
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
-        GW.KillTexture(frame.IconBG)
-        GW.KillTexture(frame.Background)
+        frame.glow:Kill()
+        frame.shine:Kill()
+        frame.IconBG:Kill()
+        frame.Background:Kill()
 
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
@@ -910,12 +909,12 @@ end
 local function skinGarrisonShipMissionAlert(frame)
     -- /run GarrisonShipMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(517))
     if not frame.isSkinned then
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
-        GW.KillTexture(frame.Background)
+        frame.glow:Kill()
+        frame.shine:Kill()
+        frame.Background:Kill()
 
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
@@ -943,14 +942,14 @@ end
 local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
     -- /run GarrisonRandomMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(391))
     if not frame.isSkinned then
-        GW.KillTexture(frame.glow)
-        GW.KillTexture(frame.shine)
-        GW.KillTexture(frame.Background)
-        GW.KillTexture(frame.Blank)
-        GW.KillTexture(frame.IconBG)
+        frame.glow:Kill()
+        frame.shine:Kill()
+        frame.Background:Kill()
+        frame.Blank:Kill()
+        frame.IconBG:Kill()
 
         --Create Backdrop
-        CreateBackdrop(frame, constBackdropAlertFrame)
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
@@ -989,8 +988,8 @@ local function skinBonusRollMoney()
     frame:SetAlpha(1)
     hooksecurefunc(frame, "SetAlpha", forceAlpha)
 
-    GW.KillTexture(frame.Background)
-    GW.KillTexture(frame.IconBorder)
+    frame.Background:Kill()
+    frame.IconBorder:Kill()
 
     frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
@@ -1004,7 +1003,7 @@ local function skinBonusRollMoney()
     frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
 
     --Create Backdrop
-    CreateBackdrop(frame, constBackdropAlertFrame)
+    frame:CreateBackdrop(constBackdropAlertFrame)
     frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
     frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
 
@@ -1017,13 +1016,13 @@ local function skinBonusRollLoot()
     frame:SetAlpha(1)
     hooksecurefunc(frame, "SetAlpha", forceAlpha)
 
-    GW.KillTexture(frame.Background)
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
+    frame.Background:Kill()
+    frame.glow:Kill()
+    frame.shine:Kill()
 
     local lootItem = frame.lootItem or frame
     lootItem.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    GW.KillTexture(lootItem.IconBorder)
+    lootItem.IconBorder:Kill()
     
     -- Icon border
     lootItem.Icon.b = CreateFrame("Frame", nil, frame)
@@ -1035,7 +1034,7 @@ local function skinBonusRollLoot()
     lootItem.Icon.iconBorder:SetAllPoints(lootItem.Icon.b)
 
     --Create Backdrop
-    CreateBackdrop(frame, constBackdropAlertFrame)
+    frame:CreateBackdrop(constBackdropAlertFrame)
     frame.backdrop:SetPoint("TOPLEFT", lootItem.Icon.b, "TOPLEFT", -25, 15)
     frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
 
@@ -1087,7 +1086,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        frame:CreateBackdrop()
         frame.backdrop:SetPoint("TOPLEFT", frame.Background, "TOPLEFT", -10, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Background, "BOTTOMRIGHT", 5, 0)
     end
@@ -1101,18 +1100,18 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
 
     -- Background
     frame.Background:SetTexture()
-    GW.KillTexture(frame.OldAchievement)
-    GW.KillTexture(frame.glow)
-    GW.KillTexture(frame.shine)
-    GW.KillTexture(frame.GuildBanner)
-    GW.KillTexture(frame.GuildBorder)
+    frame.OldAchievement:Kill()
+    frame.glow:Kill()
+    frame.shine:Kill()
+    frame.GuildBanner:Kill()
+    frame.GuildBorder:Kill()
 
     -- Text
     frame.Unlocked:SetTextColor(1, 1, 1)
 
     -- Icon
     frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    GW.KillTexture(frame.Icon.Overlay)
+    frame.Icon.Overlay:Kill()
 
     frame.Icon.Texture:ClearAllPoints()
     frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
