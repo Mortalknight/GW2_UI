@@ -35,6 +35,10 @@ end
 local function AddFlare(frame, flarFrame)
     if not flarFrame then return end
 
+    if not frame.flareIcon then
+        frame.flareIcon = flarFrame
+    end
+
     if not flarFrame.flare then
         flarFrame.flare = flarFrame:CreateTexture(nil, "BACKGROUND")
         flarFrame.flare:SetTexture("Interface/AddOns/GW2_UI/textures/level-up-flare")
@@ -66,7 +70,6 @@ local function AddFlare(frame, flarFrame)
         a2:SetSmoothing("OUT")
     end
 end
-GW.AddFlare = AddFlare
 
 local function skinAchievementAlert(frame)
     frame:SetAlpha(1)
@@ -77,10 +80,9 @@ local function skinAchievementAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Background, "TOPLEFT", -10, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Background, "BOTTOMRIGHT", 5, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     -- Background
@@ -110,8 +112,7 @@ local function skinAchievementAlert(frame)
     end
 
     --flare
-    frame.flareIcon = frame.Icon.Texture.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.Texture.b)
 end
 
 local function skinCriteriaAlert(frame)
@@ -123,10 +124,9 @@ local function skinCriteriaAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 27, -10)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     frame.Unlocked:SetTextColor(1, 1, 1)
@@ -151,18 +151,17 @@ local function skinCriteriaAlert(frame)
     frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     
     --flare
-    frame.flareIcon = frame.Icon.Texture.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.Texture.b)
 end
 
 local function skinWorldQuestCompleteAlert(frame)
     if not frame.isSkinned then
         frame:SetAlpha(1)
         hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -10, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
+
         GW.KillTexture(frame.shine)
         -- Background
         if frame.GetNumRegions then
@@ -189,8 +188,7 @@ local function skinWorldQuestCompleteAlert(frame)
         frame.QuestTexture.iconBorder:SetAllPoints(frame.QuestTexture.b)
 
         --flare
-        frame.flareIcon = frame.QuestTexture.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.QuestTexture.b)
 
         frame.isSkinned = true
     end
@@ -205,10 +203,9 @@ local function skinDungeonCompletionAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 27, -10)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     GW.KillTexture(frame.shine)
@@ -238,8 +235,7 @@ local function skinDungeonCompletionAlert(frame)
     end
     
     --flare
-    frame.flareIcon = frame.dungeonTexture.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.dungeonTexture.b)
 end
 
 local function skinGuildChallengeAlert(frame)
@@ -251,10 +247,9 @@ local function skinGuildChallengeAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -25, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 20, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     -- Background
@@ -288,8 +283,7 @@ local function skinGuildChallengeAlert(frame)
     SetLargeGuildTabardTextures("player", EmblemIcon)
     
     --flare
-    frame.flareIcon = EmblemIcon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, EmblemIcon.b)
 end
 
 local function skinHonorAwardedAlert(frame)
@@ -315,15 +309,13 @@ local function skinHonorAwardedAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinLegendaryItemAlert(frame, itemLink)
@@ -349,14 +341,12 @@ local function skinLegendaryItemAlert(frame, itemLink)
         frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", 25, -15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 5, 20)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
         --flare
-        frame.flareIcon = frame.Icon.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.Icon.b)
 
         frame.isSkinned = true
     end
@@ -398,15 +388,13 @@ local function skinLootWonAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", lootItem.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
     
     --flare
-    frame.flareIcon = lootItem.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, lootItem.Icon.b)
 end
 
 local function skinLootUpgradeAlert(frame)
@@ -432,15 +420,13 @@ local function skinLootUpgradeAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
     
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinMoneyWonAlert(frame)
@@ -466,15 +452,13 @@ local function skinMoneyWonAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
     
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinEntitlementDeliveredAlert(frame)
@@ -486,10 +470,9 @@ local function skinEntitlementDeliveredAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 10, 10)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     -- Background
@@ -514,8 +497,7 @@ local function skinEntitlementDeliveredAlert(frame)
     end
     
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinRafRewardDeliveredAlert(frame)
@@ -527,10 +509,9 @@ local function skinRafRewardDeliveredAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 10, 10)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     -- Background
@@ -555,8 +536,7 @@ local function skinRafRewardDeliveredAlert(frame)
     end
     
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinDigsiteCompleteAlert(frame)
@@ -568,10 +548,9 @@ local function skinDigsiteCompleteAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 35, 10)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     GW.KillTexture(frame.glow)
@@ -593,10 +572,9 @@ local function skinNewRecipeLearnedAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 10)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     GW.KillTexture(frame.glow)
@@ -625,8 +603,7 @@ local function skinNewRecipeLearnedAlert(frame)
     frame.Title:SetFont(UNIT_NAME_FONT, 14)
     
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinNewPetAlert(frame)
@@ -656,18 +633,16 @@ local function skinNewPetAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     frame.Name:SetFont(UNIT_NAME_FONT, 12)
     frame.Label:SetFont(UNIT_NAME_FONT, 14)
     
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinInvasionAlert(frame)
@@ -675,10 +650,9 @@ local function skinInvasionAlert(frame)
         frame:SetAlpha(1)
         hooksecurefunc(frame, "SetAlpha", forceAlpha)
         
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
         
         --Background contains the item border too, so have to remove it
         if frame.GetRegions then
@@ -702,8 +676,7 @@ local function skinInvasionAlert(frame)
                     icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
                     
                     --flare
-                    frame.flareIcon = icon.b
-                    AddFlare(frame, frame.flareIcon)
+                    AddFlare(frame, icon.b)
                 end
             end
         end
@@ -720,10 +693,9 @@ local function skinScenarioAlert(frame)
     end
 
     if not frame.backdrop then
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
     end
 
     -- Background
@@ -758,8 +730,7 @@ local function skinScenarioAlert(frame)
     end
     
     --flare
-    frame.flareIcon = frame.dungeonTexture.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.dungeonTexture.b)
 end
 
 local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
@@ -781,10 +752,9 @@ local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
             end
         end
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 10)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
         frame.PortraitFrame.PortraitRing:Hide()
         frame.PortraitFrame.PortraitRingQuality:SetTexture()
@@ -810,8 +780,7 @@ local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
         frame.Title:SetFont(UNIT_NAME_FONT, 14)
         
         --flare
-        frame.flareIcon = frame.PortraitFrame.squareBG
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.PortraitFrame.squareBG)
 
         frame.isSkinned = true
     end
@@ -834,10 +803,9 @@ local function skinGarrisonShipFollowerAlert(frame)
         --Background
         GW.KillTexture(frame.Background)
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
         frame.Name:SetFont(UNIT_NAME_FONT, 10)
         frame.Title:SetFont(UNIT_NAME_FONT, 12)
@@ -862,14 +830,12 @@ local function skinGarrisonTalentAlert(frame)
         frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
         --flare
-        frame.flareIcon = frame.Icon.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.Icon.b)
 
         frame.isSkinned = true
     end
@@ -881,10 +847,9 @@ local function skinGarrisonBuildingAlert(frame)
         GW.KillTexture(frame.shine)
         frame:GetRegions():Hide()
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
         --Icon
         frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         frame.Icon.b = CreateFrame("Frame", nil, frame)
@@ -899,8 +864,7 @@ local function skinGarrisonBuildingAlert(frame)
         frame.Title:SetFont(UNIT_NAME_FONT, 14)
 
         --flare
-        frame.flareIcon = frame.Icon.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.Icon.b)
 
         frame.isSkinned = true
     end
@@ -915,10 +879,9 @@ local function skinGarrisonMissionAlert(frame)
         GW.KillTexture(frame.Background)
 
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
         --Icon
         frame.MissionType:ClearAllPoints()
@@ -938,8 +901,7 @@ local function skinGarrisonMissionAlert(frame)
         frame.Title:SetFont(UNIT_NAME_FONT, 14)
         
         --flare
-        frame.flareIcon = frame.MissionType.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.MissionType.b)
 
         frame.isSkinned = true
     end
@@ -953,10 +915,9 @@ local function skinGarrisonShipMissionAlert(frame)
         GW.KillTexture(frame.Background)
 
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
         --Icon
         frame.MissionType:ClearAllPoints()
@@ -973,8 +934,7 @@ local function skinGarrisonShipMissionAlert(frame)
         frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
 
         --flare
-        frame.flareIcon = frame.MissionType.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.MissionType.b)
 
         frame.isSkinned = true
     end
@@ -990,10 +950,9 @@ local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
         GW.KillTexture(frame.IconBG)
 
         --Create Backdrop
-        CreateBackdrop(frame)
+        CreateBackdrop(frame, constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
         --Icon
         frame.MissionType:ClearAllPoints()
@@ -1010,8 +969,7 @@ local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
         frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
 
         --flare
-        frame.flareIcon = frame.MissionType.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.MissionType.b)
 
         frame.isSkinned = true
     end
@@ -1046,14 +1004,12 @@ local function skinBonusRollMoney()
     frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
 
     --Create Backdrop
-    CreateBackdrop(frame)
+    CreateBackdrop(frame, constBackdropAlertFrame)
     frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
     frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-    frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
     --flare
-    frame.flareIcon = frame.Icon.b
-    AddFlare(frame, frame.flareIcon)
+    AddFlare(frame, frame.Icon.b)
 end
 
 local function skinBonusRollLoot()
@@ -1079,14 +1035,13 @@ local function skinBonusRollLoot()
     lootItem.Icon.iconBorder:SetAllPoints(lootItem.Icon.b)
 
     --Create Backdrop
-    CreateBackdrop(frame)
+    CreateBackdrop(frame, constBackdropAlertFrame)
     frame.backdrop:SetPoint("TOPLEFT", lootItem.Icon.b, "TOPLEFT", -25, 15)
     frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
-    frame.backdrop:SetBackdrop(constBackdropAlertFrame)
 
     --flare
-    frame.flareIcon = lootItem.Icon.b
-    AddFlare(frame, frame.flareIcon)
+
+    AddFlare(frame, lootItem.Icon.b)
 end
 
 function GW2_UIAlertFrame_OnClick(self, ...)
@@ -1169,8 +1124,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
 
     --flare
     if not frame.flareIcon then
-        frame.flareIcon = frame.Icon.Texture.b
-        AddFlare(frame, frame.flareIcon)
+        AddFlare(frame, frame.Icon.Texture.b)
     end
 end
 
