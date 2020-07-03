@@ -6,7 +6,7 @@
 ## Version: @project-version@
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
-## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
+## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, LCD_Data, LCD_GUIDAccess
 
 core/init.lua
 core/patch.lua
