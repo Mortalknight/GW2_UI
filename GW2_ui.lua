@@ -75,8 +75,8 @@ local function lockableOnClick(self, btn)
     new_point["yOfs"] = math.floor(yOfs)
     SetSetting(settingsName, new_point)
 
-    --if 'PlayerBuffFrame', set also the grow direction to default
-    if settingsName == "PlayerBuffFrame" then
+    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
+    if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
         SetSetting(settingsName .. "_GrowDirection", "UP")
     end
 end
@@ -135,8 +135,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     frame.gwMover = moveframe
     if frame == GameTooltip then
         moveframe:SetSize(230, 80)
-    elseif displayName == BUFFOPTIONS_LABEL then
-        moveframe:SetSize(316, 100)
+    elseif displayName == SHOW_BUFFS or displayName == SHOW_DEBUFFS then
+        moveframe:SetSize(316, displayName == SHOW_BUFFS and 100 or 60) 
         moveframe:SetScale(frame:GetScale())
     else
         moveframe:SetSize(frame:GetSize())

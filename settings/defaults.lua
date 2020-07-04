@@ -233,6 +233,13 @@ GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
 GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
 GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
 
+GW_DEFAULT["PlayerDebuffFrame"] = {}
+GW_DEFAULT["PlayerDebuffFrame"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["PlayerDebuffFrame"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
+GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
+
 GW_DEFAULT["MultiBarRight"] = {}
 GW_DEFAULT["MultiBarRight"]["point"] = "RIGHT"
 GW_DEFAULT["MultiBarRight"]["relativePoint"] = "RIGHT"

@@ -1032,11 +1032,13 @@ local function UpdateRaidFramesLayout()
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures()
     local isV = grow1 == "DOWN" or grow1 == "UP"
-    
+    local cW = GetSetting("RAID_CONT_WIDTH")
+    local cH = GetSetting("RAID_CONT_HEIGHT")
     if not InCombatLockdown() then
         GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
+        GwRaidFrameContainer:SetSize(cH, cW)
     end
-
+    
     local unitString = IsInRaid() and "raid" or "party"
     local sorted = (unitString == "party" or GetSetting("RAID_SORT_BY_ROLE")) and sortByRole() or {}
 
@@ -1271,7 +1273,7 @@ local function LoadRaidFrames()
     GwRaidFrameContainer:SetScript("OnEvent", function(self)
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
-            return
+            --return
         else
             self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end

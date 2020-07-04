@@ -365,7 +365,7 @@ local function getLegacyTempEnchant(self, idx)
 end
 GW.AddForProfiling("aurabar_secure", "getLegacyTempEnchant", getLegacyTempEnchant)
 
-local function newHeader(filter, secure)
+local function newHeader(filter, secure, settingname)
     local h, w, aura_tmpl
     if secure then
         -- "secure" style auras
@@ -387,13 +387,13 @@ local function newHeader(filter, secure)
     end
     -- TODO: implement "GW2" style auras
 
-    local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
+    local grow_dir = GetSetting(settingname .. "_GrowDirection")
     local aura_style = GetSetting("PLAYER_AURA_STYLE")
     local wrap_num = tonumber(GetSetting("PLAYER_AURA_WRAP_NUM"))
     if not wrap_num or wrap_num < 1 or wrap_num > 20 then
         wrap_num = 7
     end
-    Debug("settings", grow_dir, aura_style, wrap_num)
+    Debug("settings", settingname, grow_dir, aura_style, wrap_num)
 
     local ap
     local yoff
@@ -474,14 +474,14 @@ local function loadAuras(lm, secure)
     local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
     -- create a new header for buffs
-    local hb = newHeader("HELPFUL", secure)
+    local hb = newHeader("HELPFUL", secure, "PlayerBuffFrame")
     hb:SetAttribute("growDir", grow_dir)
     GW.RegisterScaleFrame(hb)
     hb:Show()
     if hb.inner then
         hb.inner:Show()
     end
-    RegisterMovableFrame(hb, BUFFOPTIONS_LABEL, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
+    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
     hb:ClearAllPoints()
     if not hb.isMoved then
         local mbr = GwMultiBarBottomRight
@@ -501,36 +501,52 @@ local function loadAuras(lm, secure)
     end)
 
     -- create a new header for debuffs
-    local hd = newHeader("HARMFUL", secure)
-    local anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
+    local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
+    local hd = newHeader("HARMFUL", secure, "PlayerDebuffFrame")
+    local anchor_hd
     GW.RegisterScaleFrame(hd)
     lm:RegisterDebuffFrame(hd)
-    hd:ClearAllPoints()
-    if grow_dir == "DOWNR" or grow_dir == "DOWN" then
-        if hd.inner and hb.inner then
-            hd.inner:ClearAllPoints()
-            hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, -50)
-        else
-            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
-        end
-    else
-        if hd.inner and hb.inner then
-            hd.inner:ClearAllPoints()
-            hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, 50)
-        else
-            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
-        end
-    end
+    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", true, true)
     hd:Show()
     if hd.inner then
         hd.inner:Show()
     end
+    hd:ClearAllPoints()
+    if not hd.isMoved then
+        anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
+        if grow_dir == "DOWNR" or grow_dir == "DOWN" then
+            if hd.inner and hb.inner then
+                hd.inner:ClearAllPoints()
+                hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, -50)
+            else
+                hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
+            end
+        else
+            if hd.inner and hb.inner then
+                hd.inner:ClearAllPoints()
+                hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, 50)
+            else
+                hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
+            end
+        end
+    else
+        anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+        hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
+    end
+    hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function (frame)
+        local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
+        local anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+
+        if not InCombatLockdown() then
+            hd:ClearAllPoints()
+            hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
+        end
+    end)
 end
 
 local function LoadPlayerAuras(lm)
     -- hide default buffs
-    BuffFrame:Hide()
-    BuffFrame:UnregisterAllEvents()
+    BuffFrame:Kill()
     BuffFrame:SetScript("OnShow", Self_Hide)
 
     local aura_style = GetSetting("PLAYER_AURA_STYLE")

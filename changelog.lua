@@ -7,6 +7,7 @@ v(
 NEW
     - World marker placement keybinds added to 'GW2 UI' section of default bindings UI
     - Added Corrupted Memento to scenario tracker in heroic vision
+    - Added "Alert-System" (Module)
     - Rebuilt health globe for performance and graphical improvement
     - Rebuilt dodge bar for performance and graphical improvement
     - Dodge bar now works as a secure button and can be bound to a key
@@ -35,6 +36,7 @@ NEW
         - Style: Secure (can be canceld in combat); Legacy (sorted)
         - Set the grow direction (left, right, up, down)
         - Set auras per row
+        - Debuffs and Buffs are now separated and can be moved to different places (Debuffs only grows with Buffs if they are set there default position - To set the de/buffs to there default position, open Move HUD and click on the little button next to there mover frame)
     - Added Keybinds for "Sort Bag" and "Sort Bank"
     - Added option to show coordinates with 2 digits (click on the coordinats; Thanks to: hatdragon)
     - Added extra mana bar for feral druids in cat form

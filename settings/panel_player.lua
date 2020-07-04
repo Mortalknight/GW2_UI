@@ -46,9 +46,25 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        L["PLAYER_AURA_GROW"],
+        L["PLAYER_BUFFS_GROW"],
         nil,
         "PlayerBuffFrame_GrowDirection",
+        GW.UpdateHudScale(),
+        {"UP", "DOWN", "UPR", "DOWNR"},
+        {
+            StrUpper(L["UP"], 1, 1),
+            StrUpper(L["DOWN"], 1, 1),
+            L["UP_AND_RIGHT"],
+            L["DOWN_AND_RIGHT"]
+        },
+        nil,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionDropdown(
+        p,
+        L["PLAYER_DEBUFFS_GROW"],
+        nil,
+        "PlayerDebuffFrame_GrowDirection",
         GW.UpdateHudScale(),
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
