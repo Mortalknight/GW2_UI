@@ -126,6 +126,21 @@ local function mover_OnDragStop(self)
         end
     end
 
+    --check if we need to change the text string
+    if settingsName == "AlertPos" then
+        local _, y = self:GetCenter()
+        local screenHeight = UIParent:GetTop()
+        if y > (screenHeight / 2) then
+            if self.frameName and self.frameName.SetText then
+                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
+            end
+        else
+            if self.frameName and self.frameName.SetText then
+                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
+            end
+        end
+    end
+
     self.IsMoving = false
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
@@ -135,6 +150,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     frame.gwMover = moveframe
     if frame == GameTooltip then
         moveframe:SetSize(230, 80)
+    elseif settingsName == "AlertPos" then
+        moveframe:SetSize(300, 50)
     elseif displayName == SHOW_BUFFS or displayName == SHOW_DEBUFFS then
         moveframe:SetSize(316, displayName == SHOW_BUFFS and 100 or 60) 
         moveframe:SetScale(frame:GetScale())
@@ -533,16 +550,29 @@ local function adjustFixedAnchors(self, relativeAlert)
 end
 GW.AddForProfiling("index", "adjustFixedAnchors", adjustFixedAnchors)
 
-local function adjustAlertAnchors(self, relativeAlert)
+local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -10
+local function adjustAlertAnchors(self, relativeAlert)    
     for alertFrame in self.alertFramePool:EnumerateActive() do
         alertFrame:ClearAllPoints()
-        alertFrame:SetPoint("BOTTOM", relativeAlert, "TOP", 0, 5)
+        alertFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
         relativeAlert = alertFrame
     end
     return relativeAlert
 end
 
 local function updateAnchors(self)
+    local _, y = AlertContainerFrame:GetCenter()
+    local screenHeight = UIParent:GetTop()
+    if y > (screenHeight / 2) then
+        POSITION = "TOP"
+        ANCHOR_POINT = "BOTTOM"
+        YOFFSET = -5
+    else
+        POSITION = "BOTTOM"
+        ANCHOR_POINT = "TOP"
+        YOFFSET = 5
+    end
+
     self:CleanAnchorPriorities()
 
     local relativeFrame = GwAlertFrameOffsetter

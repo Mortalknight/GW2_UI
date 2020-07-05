@@ -1227,14 +1227,20 @@ local function loadAlterSystemFrameSkins()
     --Bonus Roll Loot
     skinBonusRollLoot() --TODO: position
 
-    -- check if not our Minimap or Minimap is set to top, if ys we need a anchor Point for the Alerts
+    -- check if not our Minimap or Minimap is set to top, if yes we need a anchor Point for the Alerts
     local AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
     AlertContainerFrame:SetSize(300, 5) -- 265
 
-    if not GetSetting("MINIMAP_ENABLED") or (GetSetting("MINIMAP_ENABLED") and GetSetting("MINIMAP_POS") == "TOP") then
-        AlertContainerFrame:SetPoint("BOTTOMRIGHT", 0, 300)
-    elseif GetSetting("MINIMAP_ENABLED") and GetSetting("MINIMAP_POS") == "BOTTOM" then
-        AlertContainerFrame:SetPoint("BOTTOM", _G.Minimap, "TOP", 0, 5)
+    local point = GetSetting("AlertPos")
+    AlertContainerFrame:ClearAllPoints()
+    AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
+
+    local _, y = AlertContainerFrame:GetCenter()
+    local screenHeight = UIParent:GetTop()
+    if y > (screenHeight / 2) then
+        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy")
+    else
+        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy")
     end
 
     AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")

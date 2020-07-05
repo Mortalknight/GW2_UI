@@ -129,17 +129,15 @@ local function setManaBar(f)
     f.fill:SetTexture(nil)
     f.exbar:Show()
 
-    if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
-        f:ClearAllPoints()
-        if GetSetting("XPBAR_ENABLED") then
-            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
-        else
-            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
-        end
-        f:SetWidth(220)
-        f:SetHeight(30)
-        f:Hide()
+    f:ClearAllPoints()
+    if GetSetting("XPBAR_ENABLED") then
+        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
+    else
+        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
     end
+    f:SetWidth(220)
+    f:SetHeight(30)
+    f:Hide()
 
     f:SetScript("OnEvent", powerMana)
     powerMana(f, "CLASS_POWER_INIT")
@@ -151,18 +149,6 @@ GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
 local function setLittleManaBar(f)
     f.barType = "combo"  -- only used in feral form, so we need to show the combo points
     f.lmb:Show()
-
-    if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
-        f:ClearAllPoints()
-        if GetSetting("XPBAR_ENABLED") then
-            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
-        else
-            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
-        end
-        f:SetWidth(220)
-        f:SetHeight(30)
-        f:Hide()
-    end
 
     f.littleManaBarEventFrame:SetScript("OnEvent", powerLittleMana)
     powerLittleMana(f.littleManaBarEventFrame, "CLASS_POWER_INIT")
@@ -963,9 +949,9 @@ local function barChange_OnEvent(self, event, ...)
         f.gwPlayerForm = s
         selectType(f)
     elseif event == "PLAYER_TARGET_CHANGED" then
-        if UnitExists("target") and UnitIsEnemy("player", "target") and f.barType == "combo" and not UnitIsDead("target") then
+        if UnitExists("target") and UnitCanAttack("player", "target") and f.barType == "combo" and not UnitIsDead("target") then
             f:Show()
-        else
+        elseif f.barType == "combo" then
             f:Hide()
         end
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then

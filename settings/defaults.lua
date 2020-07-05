@@ -274,6 +274,12 @@ GW_DEFAULT["BNToastPos"]["relativePoint"] = "BOTTOMLEFT"
 GW_DEFAULT["BNToastPos"]["xOfs"] = 78
 GW_DEFAULT["BNToastPos"]["yOfs"] = 246
 
+GW_DEFAULT["AlertPos"] = {}
+GW_DEFAULT["AlertPos"]["point"] = "BOTTOMRIGHT"
+GW_DEFAULT["AlertPos"]["relativePoint"] = "BOTTOMRIGHT"
+GW_DEFAULT["AlertPos"]["xOfs"] = 0
+GW_DEFAULT["AlertPos"]["yOfs"] = 300
+
 GW_DEFAULT["raid_pos"] = {}
 GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"
 GW_DEFAULT["raid_pos"]["relativePoint"] = "TOPLEFT"
