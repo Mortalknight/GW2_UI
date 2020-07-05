@@ -813,8 +813,14 @@ end
 GW.TogglePartyRaid = TogglePartyRaid
 
 local function createPartyFrame(i)
-    local registerUnit = "party" .. i
+    local registerUnit
+    if i > 0 then 
+        registerUnit = "party" .. i
+    else
+        registerUnit = "player"
+    end
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
+    local multiplier = GetSetting("PARTY_PLAYER_FRAME") and 1 or 0
 
     frame.name:SetFont(UNIT_NAME_FONT, 12)
     frame.name:SetShadowOffset(-1, -1)
@@ -824,7 +830,7 @@ local function createPartyFrame(i)
     frame.healthstring = frame.healthbar.healthstring
     frame:SetScript("OnEvent", party_OnEvent)
 
-    frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
+    frame:SetPoint("TOPLEFT", 20, -104 + (-85 * (i + multiplier)) + 85)
 
     frame.unit = registerUnit
     frame.ready = -1
@@ -835,7 +841,15 @@ local function createPartyFrame(i)
     frame:SetAttribute("*type1", "target")
     frame:SetAttribute("*type2", "togglemenu")
 
-    RegisterUnitWatch(frame)
+    if i > 0 then
+        RegisterUnitWatch(frame)
+    else
+        RegisterStateDriver(
+        frame,
+        "visibility",
+        "[nogroup] hide;show"
+    )
+    end
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
 
@@ -936,6 +950,10 @@ local function LoadPartyFrames()
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return
+    end
+
+    if GetSetting("PARTY_PLAYER_FRAME") then
+        createPartyFrame(0)
     end
 
     for i = 1, MAX_PARTY_MEMBERS do

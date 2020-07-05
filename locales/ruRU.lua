@@ -298,6 +298,8 @@ local function GWUseThisLocalization()
     L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
+    L["PLAYER_GROUP_FRAME"] = "Playerframe in group"
+    L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
 end
 
 if GetLocale() == "ruRU" then
