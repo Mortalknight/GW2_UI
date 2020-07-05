@@ -291,6 +291,8 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Instanz & Schlachtzug Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Zeige wichtig Instanz & Schlachtzug Debuffs an"
     L["ALERTFRAMES"] = "Alarmfenster"
+    L["PLAYER_GROUP_FRAME"] = "Spieler in Gruppe anzeigen"
+    L["PLAYER_GROUP_FRAME_DESC"] = "Spieler als Gruppenrahmen anzeigen"
 end
 
 if GetLocale() == "deDE" then

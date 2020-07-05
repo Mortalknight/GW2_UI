@@ -291,6 +291,8 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
     L["ALERTFRAMES"] = "Alertas"
+    L["PLAYER_GROUP_FRAME"] = "Playerframe in group"
+    L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
 end
 
 if GetLocale() == "esMX" then
