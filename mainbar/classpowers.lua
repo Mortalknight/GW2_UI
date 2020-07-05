@@ -6,21 +6,6 @@ local UpdatePowerData = GW.UpdatePowerData
 
 local MAX_COMBO_POINTS = 5
 
-local function findBuff(unit, searchID)
-    local spellID
-    for i = 1, 40 do
-        spellID = select(10, UnitBuff(unit, i))
-        if spellID == searchID then
-            return spellID
-        elseif not spellID then
-            break
-        end
-    end
-
-    return nil
-end
-GW.AddForProfiling("classpowers", "findBuff", findBuff)
-
 local function animFlare(f, scale, offset, duration, rotate)
     scale = scale or 32
     offset = offset or 0
@@ -111,17 +96,9 @@ local function setManaBar(f)
     f.barType = "combo"  -- we use this only for druid extra bar
     GwPlayerPowerBarExtra:Show()
 
-    if GetSetting("target_HOOK_COMBOPOINTS") and GetSetting("TARGET_ENABLED") then
-        f:ClearAllPoints()
-        if GetSetting("XPBAR_ENABLED") then
-            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
-        else
-            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
-        end
-        f:SetWidth(220)
-        f:SetHeight(30)
-        f:Hide()
-    end
+    f:SetWidth(220)
+    f:SetHeight(30)
+    f:Hide()
 
     GwPlayerPowerBarExtra:SetScript("OnEvent", powerMana)
     powerMana(GwPlayerPowerBarExtra, "CLASS_POWER_INIT")
@@ -139,19 +116,20 @@ end
 local function setDruid(f)
     local form = f.gwPlayerForm
     local barType = "none"
-    local extraManaBar = false
 
-    if form == 768 then
-        barType = "combo"
+    if form == 3 then -- cat
+        barType = "combo|little_mana"
+    elseif form == 1 then --bear
+        barType = "little_mana"
     end
-    if UnitPowerType("Player") ~= 0 then
-        extraManaBar = true
-    end
-    if extraManaBar then
+
+    if barType == "combo|little_mana" then
+        setComboBar(f)
         setManaBar(f)
-    end
-    if barType == "combo" then
         return true
+    elseif barType == "little_mana" then
+        setManaBar(f)
+        return false
     else
         return false
     end
@@ -183,16 +161,16 @@ local function barChange_OnEvent(self, event, ...)
     if event == "UPDATE_SHAPESHIFT_FORM" then
         -- this event fires often when form hasn't changed; check old form against current form
         -- to prevent touching the bar unnecessarily (which causes annoying anim flickering)
-        local results = findBuff("player", 768)
+        local results = GetShapeshiftForm()
         if f.gwPlayerForm == results then
             return
         end
         f.gwPlayerForm = results
         selectType(f)
     elseif event == "PLAYER_TARGET_CHANGED" then
-        if UnitExists("target") and UnitIsEnemy("player", "target") and f.barType == "combo" and not UnitIsDead("target") then
+        if UnitExists("target") and UnitCanAttack("player", "target") and f.barType == "combo" and not UnitIsDead("target") then
             f:Show()
-        else
+        elseif f.barType == "combo" then
             f:Hide()
         end
     end
@@ -209,7 +187,7 @@ local function LoadClassPowers()
 
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
-    cpf.gwPlayerForm = findBuff("player", 768)
+    cpf.gwPlayerForm = GetShapeshiftForm()
 
     -- create an extra mana power bar that is used sometimes (druid)
     local exbar = CreateFrame("Frame", "GwPlayerPowerBarExtra", GwPlayerPowerBar, "GwPlayerPowerBar")
