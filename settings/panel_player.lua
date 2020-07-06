@@ -21,6 +21,8 @@ local function LoadPlayerPanel(sWindow)
 
     addOption(p, L["5SR"], L["5SR_DESC"], "PLAYER_5SR", nil, nil, {["POWERBAR_ENABLED"] = true})
     addOption(p, L["5SR_TIMER"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_5SR"] = true})
+    addOption(p, L["5SR_MANA_TICK"], nil, "PLAYER_5SR_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_5SR"] = true})
+    
     addOptionSlider(
         p,
         L["AURAS_PER_ROW"],

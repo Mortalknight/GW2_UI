@@ -847,7 +847,7 @@ local function createPartyFrame(i)
         RegisterStateDriver(
         frame,
         "visibility",
-        "[nogroup] hide;show"
+        "[group:raid] hide; [group:party] show; hide"
     )
     end
     frame:EnableMouse(true)

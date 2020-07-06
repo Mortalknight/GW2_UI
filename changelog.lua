@@ -4,6 +4,14 @@ local v = GW.vernotes
 v(
     "1.8.1",
     [=[
+        - Fix some smaller bugs
+        - Added option for 5SR: Manarege Ticker: SHows a Ticker if you are Manarege
+]=]
+)
+
+v(
+    "1.8.1",
+    [=[
     - Added option "Show Player in Groupframes"
     - Added 5SR Timer
     - Debuffs and Buffs are now separated and can be moved to different places (Debuffs only grows with Buffs if they are set there default position - To set the de/buffs to there default position, open Move HUD and click on the little button next to there mover frame)

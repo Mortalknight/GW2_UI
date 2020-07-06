@@ -305,6 +305,7 @@ local function GWUseThisLocalization()
     L["5SR"] = "5 secound rule"
     L["5SR_DESC"] = "Show a timerbar before manarege starts"
     L["5SR_TIMER"] = "5 secound rule: display remaning time"
+    L["5SR_MANA_TICK"] = "Manarege Ticker"
 end
 
 if GetLocale() == "zhCN" then

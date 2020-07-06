@@ -305,6 +305,8 @@ local function GWUseThisLocalization()
     L["5SR"] = "5 Sekunden Regel"
     L["5SR_DESC"] = "Zeigen einen Timer für die 5SR zum Manareggen"
     L["5SR_TIMER"] = "5 Sekunden Regel Timer anzeigen"
+    L["5SR_MANA_TICK"] = "Manarege Ticker"
+    
 end
 
 if GetLocale() == "deDE" then
