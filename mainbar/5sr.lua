@@ -22,7 +22,7 @@ local function fsr_OnUpdate(self)
 end
 
 local function fsr_OnEvent(self, event, ...)
-    if IsIn(event, "PLAYER_ENTERING_WORLD","PLAYER_EQUIPMENT_CHANGED") then
+    if IsIn(event, "PLAYER_ENTERING_WORLD", "PLAYER_EQUIPMENT_CHANGED") then
         self.previousPower = UnitPower("player")
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
         -- Only reset the timer if we used ressource and we have mana
@@ -37,6 +37,12 @@ local function fsr_OnEvent(self, event, ...)
             self:SetScript("OnUpdate", fsr_OnUpdate)
         else
             self:SetScript("OnUpdate", nil)
+        end
+    elseif event == "UPDATE_SHAPESHIFT_FORM" then
+        if UnitPowerType("player") == 0 then
+            self:Show()
+        else
+            self:Hide()
         end
     end
 end
@@ -64,6 +70,7 @@ local function load5SR()
     fsr:RegisterEvent("PLAYER_ENTERING_WORLD")
     fsr:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     fsr:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    fsr:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     fsr.checkPowerValue = C_Timer.NewTicker(0.3, function()
         fsr.previousPower = UnitPower("player")
     end)
