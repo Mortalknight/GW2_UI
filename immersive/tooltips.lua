@@ -645,6 +645,7 @@ local function LoadTooltips()
 
     if IsAddOnLoaded("Pawn") then
         hooksecurefunc("GameTooltip_ShowCompareItem", function(self)
+            if not self then return end
             local tt1, tt2 = unpack(self.shoppingTooltips)
             if tt1.PawnIconFrame then tt1.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
             if tt2.PawnIconFrame then tt2.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end

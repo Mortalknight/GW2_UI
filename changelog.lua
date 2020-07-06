@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.3.1", [=[
+    NEW
+    - Added option "Show Player in Groupframes"
+    - Make Alertframe moveable
+
+FIXES
+    - Fix riadframes not shown
+]=])
+
 v(
     "5.3.0",
     [=[
@@ -42,7 +51,6 @@ NEW
     - Added extra mana bar for feral druids in cat form
     - Added 'Show Debuff', 'Show only dispellable debuffs', 'Show importend raid & instance debuffs' to party and raidframes
     - Split Raid and Group frames to two different options
-    - Added option "Show Player in Groupframes"
     - Update locals (zhTW, ptBR)
 
 FIXES
