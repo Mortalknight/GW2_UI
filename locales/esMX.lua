@@ -247,7 +247,8 @@ local function GWUseThisLocalization()
     L["ANCHOR_CURSOR_OFFSET_Y"] = "Cursor Anchor Offset Y"
     L["ANCHOR_CURSOR_OFFSET_DESC"] = "Take only effect if the option 'Cursor Tooltips' is activated and the Cursoer Anchor is NOT 'Cursor Anchor'"
     L["MOUSE_OVER"] = "Only Mouse over"
-    L["PLAYER_AURA_GROW"] = "Set Player Aura grow directions"
+    L["PLAYER_BUFFS_GROW"] = "Player Buff Growth Direction"
+    L["PLAYER_DEBUFFS_GROW"] = "Player Debuffs Growth Direction"
     L["RED_OVERLAY"] = "Red overlay"
     L["MAINBAR_RANGE_INDICATOR"] = "Mainbar range indicator"
     L["PLAYER_ABSORB_VALUE_TEXT"] = "Show Shield value"
@@ -301,6 +302,9 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
     L["PLAYER_GROUP_FRAME"] = "Playerframe in group"
     L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
+    L["5SR"] = "5 secound rule"
+    L["5SR_DESC"] = "Show a timerbar before manarege starts"
+    L["5SR_TIMER"] = "5 secound rule: display remaning time"
 end
 
 if GetLocale() == "esMX" then

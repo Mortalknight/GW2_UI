@@ -178,7 +178,8 @@ local function GWUseThisLocalization()
     L["PIXEL_PERFECTION_OFF"] = "Desactivar Pixel Perfection"
     L["PIXEL_PERFECTION_ON"] = "Activar Pixel Perfection"
     L["PLAYER_ABSORB_VALUE_TEXT"] = "Mostra Valor do Escudo"
-    L["PLAYER_AURA_GROW"] = "Direção da Distribuição das Auras do Jogador"
+    L["PLAYER_BUFFS_GROW"] = "Direção da Distribuição das Buffs do Jogador"
+    L["PLAYER_DEBUFFS_GROW"] = "PDireção da Distribuição das Debuffs do Jogador"
     L["PLAYER_AURAS_DESC"] = "Mover e redimensionar as auras dos jogadores."
     L["PLAYER_DESC"] = "Modificar as configurações do quadro do jogador."
     L["POWER_BARS_RAID_DESC"] = "Exibe as barras de recursos nas unidades da raide."
@@ -297,6 +298,9 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
     L["PLAYER_GROUP_FRAME"] = "Playerframe in group"
     L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
+    L["5SR"] = "5 secound rule"
+    L["5SR_DESC"] = "Show a timerbar before manarege starts"
+    L["5SR_TIMER"] = "5 secound rule: display remaning time"
     
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

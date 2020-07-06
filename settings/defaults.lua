@@ -216,6 +216,13 @@ GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
 GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
 GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
 
+GW_DEFAULT["PlayerDebuffFrame"] = {}
+GW_DEFAULT["PlayerDebuffFrame"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["PlayerDebuffFrame"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
+GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
+
 GW_DEFAULT["GameTooltipPos"] = {}
 GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"
@@ -298,3 +305,5 @@ GW_DEFAULT["MAINBAR_RANGEINDICATOR"] = "RED_INDICATOR"
 GW_DEFAULT["ACTIVE_PROFILE"] = nil
 
 GW_DEFAULT["PLAYER_AURA_WRAP_NUM"] = 7
+GW_DEFAULT["PLAYER_5SR"] = true
+GW_DEFAULT["PLAYER_5SR_TIMER"] = true

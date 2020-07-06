@@ -247,7 +247,8 @@ local function GWUseThisLocalization()
     L["ANCHOR_CURSOR_OFFSET_Y"] = "Zeigeranker Y-Versatz"
     L["ANCHOR_CURSOR_OFFSET_DESC"] = "Wird nur angewendet, wenn die Option 'Tooltip an der Maus' aktiviert und der Mausanker Typ NICHT 'Mausanker' ist"
     L["MOUSE_OVER"] = "Nur Maus über"
-    L["PLAYER_AURA_GROW"] = "Bestimmt die Wachstumsrichtung der Spieler Auren"
+    L["PLAYER_BUFFS_GROW"] = "Bestimmt die Wachstumsrichtung der Spieler Buffs"
+    L["PLAYER_DEBUFFS_GROW"] = "Bestimmt die Wachstumsrichtung der Spieler Debuffs"
     L["RED_OVERLAY"] = "Rotes Overlay"
     L["MAINBAR_RANGE_INDICATOR"] = "Hauptaktionsleisten Reichweitenanzeige"
     L["PLAYER_ABSORB_VALUE_TEXT"] = "Schildwert anzeigen"
@@ -301,6 +302,9 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Zeige wichtig Instanz & Schlachtzug Debuffs an"
     L["PLAYER_GROUP_FRAME"] = "Spieler in Gruppe anzeigen"
     L["PLAYER_GROUP_FRAME_DESC"] = "Spieler als Gruppenrahmen anzeigen"
+    L["5SR"] = "5 Sekunden Regel"
+    L["5SR_DESC"] = "Zeigen einen Timer für die 5SR zum Manareggen"
+    L["5SR_TIMER"] = "5 Sekunden Regel Timer anzeigen"
 end
 
 if GetLocale() == "deDE" then

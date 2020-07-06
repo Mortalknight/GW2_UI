@@ -2,6 +2,16 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.8.1",
+    [=[
+    - Added option "Show Player in Groupframes"
+    - Added 5SR Timer
+    - Debuffs and Buffs are now separated and can be moved to different places (Debuffs only grows with Buffs if they are set there default position - To set the de/buffs to there default position, open Move HUD and click on the little button next to there mover frame)
+    - Fix druidmanabar in shapeshift form
+]=]
+)
+
+v(
     "1.8.0",
     [=[
     - Added incoming resurrection icon to raid and party
@@ -47,7 +57,6 @@ v(
     - Added 'Show Debuff', 'Show only dispellable debuffs', 'Show importend raid & instance debuffs' to party and raidframes
     - Added Status Report
     - Split Raid and Group frames to two different options
-    - Added option "Show Player in Groupframes"
 
 ]=]
 )
