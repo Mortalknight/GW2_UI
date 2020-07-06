@@ -688,7 +688,7 @@ local function loadAddon(self)
 
     if GetSetting("POWERBAR_ENABLED") then
         GW.LoadPowerBar()
-        if GetSetting("PLAYER_5SR") then
+        if GetSetting("PLAYER_ENERGY_MANA_TICK") then
             GW.load5SR()
         end
     end

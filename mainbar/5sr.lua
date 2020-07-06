@@ -20,61 +20,45 @@ local Mp5IgnoredSpells = {
 local function fsr_OnUpdate(self, elapsed)
     local now = GetTime()
 
-    if self.mp5StartTime > 0 then
-        local remaining = (self.mp5StartTime - now - 5) * -1
+    self.sinceLastUpdate = (self.sinceLastUpdate or 0) + (tonumber(elapsed) or 0)
+    if self.sinceLastUpdate > 0.01 then
+        local powerType, powerName = UnitPowerType("player")
 
-        if remaining <= 5 then
-            self.statusBar:SetValue(remaining)
-            if self.showTimer then
-                self.statusBar.label:SetText(string.format("%.1f", remaining).."s")
+        if powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Mana then
+            return
+        end
+
+        CurrentValue = UnitPower("player", powerType)
+
+        if powerType == Enum.PowerType.Mana and (not CurrentValue or CurrentValue >= UnitPowerMax("player", Enum.PowerType.Mana)) then
+            self.statusBar:SetValue(0)
+            return
+        end
+
+        local Now = GetTime() or 0
+        if not (Now == nil) then
+            local Timer = Now - LastTickTime
+
+            if (CurrentValue > LastValue) or powerType == Enum.PowerType.Energy and (Now >= LastTickTime + 2) then
+                LastTickTime = Now
             end
-        elseif self.mp5started and self.showTick then
-            -- start mana Ticktimer
-            self.sinceLastUpdate = (self.sinceLastUpdate or 0) + (tonumber(elapsed) or 0)
-            if self.sinceLastUpdate > 0.01 then
-                local powerType = UnitPowerType("player")
-        
-                if powerType ~= Enum.PowerType.Mana then
-                    return
-                end
-        
-                CurrentValue = UnitPower("player", powerType)
-        
-                if powerType == Enum.PowerType.Mana and (not CurrentValue or CurrentValue >= UnitPowerMax("player", Enum.PowerType.Mana)) then
-                    self.statusBar:SetValue(0)
-                    return
-                end
-        
-                local Now = GetTime() or 0
-                if not (Now == nil) then
-                    local Timer = Now - LastTickTime
-        
-                    if (CurrentValue > LastValue) or powerType == Enum.PowerType.Energy and (Now >= LastTickTime + 2) then
-                        LastTickTime = Now
-                    end
-        
-                    if Timer > 0 then
-                        self.statusBar:SetMinMaxValues(0, 2)
-                        self.statusBar:SetValue(Timer)
-                        local pwcolor = GW.PowerBarColorCustom["MANA"]
-                        self.statusBar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-                        allowPowerEvent = true
-        
-                        LastValue = CurrentValue
-                    elseif Timer < 0 then
-                        -- if negative, it's mp5delay
-                        self.statusBar:SetMinMaxValues(0, Mp5Delay)
-                        self.statusBar:SetValue(math.abs(Timer))
-                        local pwcolor = GW.PowerBarColorCustom["ENERGY"]
-                        self.statusBar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-                    end
-        
-                    self.sinceLastUpdate = 0
-                end
+
+            if Timer > 0 then
+                self.statusBar.label:SetText("")
+                self.statusBar:SetMinMaxValues(0, 2)
+                self.statusBar:SetValue(Timer)
+                local pwcolor = GW.PowerBarColorCustom[powerName]
+                self.statusBar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+                allowPowerEvent = true
+
+                LastValue = CurrentValue
+            elseif Timer < 0 then
+                -- if negative, it's mp5delay
+                self.statusBar:SetMinMaxValues(0, Mp5Delay)
+                self.statusBar:SetValue(math.abs(Timer))
+                self.statusBar:SetStatusBarColor(1, 1, 1)
+                if self.showTimer then self.statusBar.label:SetText(string.format("%.1f", Timer * -1) .. "s") end
             end
-        else
-            self.mp5started = true
-            self.statusBar.label:SetText("")
         end
     end
 end
@@ -115,12 +99,6 @@ local function fsr_OnEvent(self, event, ...)
             LastTickTime = GetTime() + 5
             allowPowerEvent = false
         end
-    elseif event == "UPDATE_SHAPESHIFT_FORM" then
-        if powerType == Enum.PowerType.Mana then
-            self:Show()
-        else
-            self:Hide()
-        end
     elseif event == "UNIT_POWER_UPDATE" and allowPowerEvent then
         local Time = GetTime()
 
@@ -136,6 +114,17 @@ local function fsr_OnEvent(self, event, ...)
 
         LastTickTime = Time
     end
+end
+
+local function fsrHelperFrame_OnEvent(self, event, ...)
+    local form = GetShapeshiftForm()
+
+    if form == 1 then
+        self:GetParent():Hide()
+    else
+        self:GetParent():Show()
+    end
+
 end
 
 local function load5SR()
@@ -155,9 +144,10 @@ local function load5SR()
 
     fsr:SetScript("OnEvent", fsr_OnEvent)
     fsr:SetScript("OnUpdate", fsr_OnUpdate)
-    fsr:RegisterEvent("PLAYER_ENTERING_WORLD")
     fsr:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-    fsr:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     fsr:RegisterEvent("UNIT_POWER_UPDATE")
+
+    fsr.shapeshiftformHelper:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    fsr.shapeshiftformHelper:SetScript("OnEvent", fsrHelperFrame_OnEvent)
 end
 GW.load5SR = load5SR

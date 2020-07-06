@@ -302,10 +302,8 @@ local function GWUseThisLocalization()
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
     L["PLAYER_GROUP_FRAME"] = "Playerframe in group"
     L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
-    L["5SR"] = "5 secound rule"
-    L["5SR_DESC"] = "Show a timerbar before manarege starts"
     L["5SR_TIMER"] = "5 secound rule: display remaning time"
-    L["5SR_MANA_TICK"] = "Manarege Ticker"
+    L["ENERGY_MANA_TICK"] = "Energy/Mana Ticker"
 end
 
 if GetLocale() == "esES" then

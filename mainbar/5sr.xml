@@ -38,6 +38,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
+            <Frame parentKey="shapeshiftformHelper" hidden="true"/>
         </Frames>
     </Frame>
 
