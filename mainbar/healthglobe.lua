@@ -6,7 +6,7 @@ local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
 local IsIn = GW.IsIn
 local GetSetting = GW.GetSetting
-local IncHeal = {}
+local LHC = GW.Libs.LHC
 
 local function repair_OnEvent(self, event, ...)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
@@ -218,7 +218,7 @@ end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
 local function setPredictionAmount(self)
-    local prediction = (GW.HealComm:GetHealAmount(self.guid, GW.HealComm.ALL_HEALS) or 0) * (GW.HealComm:GetHealModifier(self.guid) or 1)
+    local prediction = (LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)
 
     self.healPredictionAmount = prediction
     updateHealthData(self)
@@ -317,12 +317,12 @@ local function LoadHealthGlobe()
         return setPredictionAmount(self)
     end
     --libHealComm setup
-    GW.HealComm.RegisterCallback(hg, "HealComm_HealStarted", HealCommEventHandler)
-    GW.HealComm.RegisterCallback(hg, "HealComm_HealUpdated", HealCommEventHandler)
-    GW.HealComm.RegisterCallback(hg, "HealComm_HealStopped", HealCommEventHandler)
-    GW.HealComm.RegisterCallback(hg, "HealComm_HealDelayed", HealCommEventHandler)
-    GW.HealComm.RegisterCallback(hg, "HealComm_ModifierChanged", HealCommEventHandler)
-    GW.HealComm.RegisterCallback(hg, "HealComm_GUIDDisappeared", HealCommEventHandler)
+    LHC.RegisterCallback(hg, "HealComm_HealStarted", HealCommEventHandler)
+    LHC.RegisterCallback(hg, "HealComm_HealUpdated", HealCommEventHandler)
+    LHC.RegisterCallback(hg, "HealComm_HealStopped", HealCommEventHandler)
+    LHC.RegisterCallback(hg, "HealComm_HealDelayed", HealCommEventHandler)
+    LHC.RegisterCallback(hg, "HealComm_ModifierChanged", HealCommEventHandler)
+    LHC.RegisterCallback(hg, "HealComm_GUIDDisappeared", HealCommEventHandler)
     hg.healPredictionAmount = 0
     hg.unit = "Player"
     hg.guid = UnitGUID("Player")

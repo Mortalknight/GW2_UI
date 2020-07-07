@@ -3,8 +3,7 @@ local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
-local UnitAura = _G.UnitAura
---local AddToAnimation = GW.AddToAnimation
+local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
 
 local textureMapping = {
     [1] = 16,    --Main hand
@@ -471,8 +470,6 @@ end
 GW.CreateAuraFrame = CreateAuraFrame
 
 local function LoadAuras(f, a, u)
-    UnitAura = GW.LibClassicDurations.UnitAuraWithBuffs
-
     local unit = u or f.unit
     for i = 1, 40 do
         local frame = CreateAuraFrame("Gw" .. unit .. "buffFrame" .. i, a)

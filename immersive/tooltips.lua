@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local UnitAura = _G.UnitAura
+local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
 local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
@@ -422,7 +422,5 @@ local function LoadTooltips()
             f:HookScript("OnUpdate", styleTooltip)
         end
     end
-
-    UnitAura = GW.LibClassicDurations.UnitAuraWithBuffs
 end
 GW.LoadTooltips = LoadTooltips

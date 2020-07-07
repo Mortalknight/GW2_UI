@@ -87,12 +87,8 @@ local function fsr_OnEvent(self, event, ...)
         end
         
         if spellCost and powerType == Enum.PowerType.Mana then
-            -- save mp5 startTimer
-            self.mp5StartTime = GetTime() + 5
-
             -- reset Tickerbar and start ticker
             self.statusBar:SetValue(0)
-            self.mp5started = false
             self.statusBar:SetMinMaxValues(0, 5)
             self.statusBar:SetStatusBarColor(1, 1, 1)
 
@@ -121,10 +117,12 @@ local function fsrHelperFrame_OnEvent(self, event, ...)
 
     if form == 1 then
         self:GetParent():Hide()
+    elseif form == 3 then
+        self:GetParent().statusBar:SetValue(0)
+        allowPowerEvent = true
     else
         self:GetParent():Show()
     end
-
 end
 
 local function load5SR()
@@ -139,7 +137,6 @@ local function load5SR()
     fsr.statusBar:SetValue(0)
     fsr.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
     fsr.mp5StartTime = 0
-    fsr.mp5started = false
     fsr.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
 
     fsr:SetScript("OnEvent", fsr_OnEvent)

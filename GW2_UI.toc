@@ -8,6 +8,8 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, LCD_Data, LCD_GUIDAccess
 
+libs/libs.xml
+
 core/init.lua
 core/patch.lua
 
@@ -22,8 +24,6 @@ locales/ptBR.lua
 locales/frFR.lua
 locales/zhCN.lua
 locales/itIT.lua
-
-libs/libs.xml
 
 core/consts.lua
 core/utils.lua
