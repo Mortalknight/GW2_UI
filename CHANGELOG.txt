@@ -1,3 +1,10 @@
+5.3.2
+
+FIXES
+    - Fixed "Show Player in Groupframes"
+    - Fixed Alertframe issue
+
+
 5.3.1
 
 NEW

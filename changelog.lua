@@ -2,7 +2,13 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("5.3.1", [=[
-    NEW
+FIXES
+    - Fixed "Show Player in Groupframes"
+    - Fixed Alertframe issue
+]=])
+
+v("5.3.1", [=[
+NEW
     - Added option "Show Player in Groupframes"
     - Make Alertframe moveable
 

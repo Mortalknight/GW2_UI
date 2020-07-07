@@ -79,7 +79,7 @@ local function skinAchievementAlert(frame)
     end
 
     if not frame.backdrop then
-        constBackdropAlertFrame:CreateBackdrop()
+        frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Background, "TOPLEFT", -10, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Background, "BOTTOMRIGHT", 5, 0)
     end

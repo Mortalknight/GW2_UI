@@ -11,6 +11,7 @@ local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 local AlertContainerFrame
+local ourAlertSystem = false
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
@@ -561,16 +562,18 @@ local function adjustAlertAnchors(self, relativeAlert)
 end
 
 local function updateAnchors(self)
-    local _, y = AlertContainerFrame:GetCenter()
-    local screenHeight = UIParent:GetTop()
-    if y > (screenHeight / 2) then
-        POSITION = "TOP"
-        ANCHOR_POINT = "BOTTOM"
-        YOFFSET = -5
-    else
-        POSITION = "BOTTOM"
-        ANCHOR_POINT = "TOP"
-        YOFFSET = 5
+    if ourAlertSystem then
+        local _, y = AlertContainerFrame:GetCenter()
+        local screenHeight = UIParent:GetTop()
+        if y > (screenHeight / 2) then
+            POSITION = "TOP"
+            ANCHOR_POINT = "BOTTOM"
+            YOFFSET = -5
+        else
+            POSITION = "BOTTOM"
+            ANCHOR_POINT = "TOP"
+            YOFFSET = 5
+        end
     end
 
     self:CleanAnchorPriorities()
@@ -580,7 +583,7 @@ local function updateAnchors(self)
     for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
         if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors and GetSetting("ACTIONBARS_ENABLED") then
             relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
-        elseif alertFrameSubSystem.AdjustAnchors == AlertFrameQueueMixin.AdjustAnchors and GetSetting("ALERTFRAME_ENABLED") then
+        elseif alertFrameSubSystem.AdjustAnchors == AlertFrameQueueMixin.AdjustAnchors and ourAlertSystem then
             relativeFrame2 = adjustAlertAnchors(alertFrameSubSystem, relativeFrame2)
         else
             relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
@@ -607,6 +610,7 @@ local function loadAddon(self)
     AlertFrame.UpdateAnchors = updateAnchors
 
     if GetSetting("ALERTFRAME_ENABLED") then
+        ourAlertSystem = true
         AlertContainerFrame = GW.loadAlterSystemFrameSkins()
 
         hooksecurefunc("GroupLootContainer_Update", function(self)
