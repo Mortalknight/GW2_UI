@@ -806,7 +806,7 @@ local function loadAddon(self)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
         GW.ShowChangelogPanel()
-        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)    
+        SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)

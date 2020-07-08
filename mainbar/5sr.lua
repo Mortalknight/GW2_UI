@@ -1,5 +1,8 @@
 local _, GW = ...
 
+local fsrMana
+local fsrEnergy
+
 local Mp5IgnoredSpells = {
     [11689] = true, -- life tap 6
     [11688] = true, -- life tap 5
@@ -56,6 +59,28 @@ local function fsr_OnUpdate(self, elapsed)
 end
 
 local function fsr_OnEvent(self, event, ...)
+    if event == "UPDATE_SHAPESHIFT_FORM" then
+        local results = GetShapeshiftForm()
+
+        if self.form == results then return end
+
+        self.form = results
+
+        if self.form == 1 then --bear (Hide all bars)
+            fsrMana:Hide()
+            self:Hide()
+        elseif self.form == 3 then  --cat (hide mana, show energy)
+            -- SHow Energybar, Hide Manabar
+            fsrMana:Hide()
+            self:Show()
+        else --human  (hide energy)
+            self:Hide()
+            fsrMana:Show()
+        end
+    
+        self.powerType, self.powerName = UnitPowerType("player")
+    end
+
     if self.powerType ~= Enum.PowerType.Mana then
         return
     end
@@ -91,7 +116,7 @@ local function fsr_OnEvent(self, event, ...)
         self.TickValue = Time - self.LastTickTime
 
         if self.TickValue > 5 then
-            if powerType == Enum.PowerType.Mana and InCombatLockdown() then
+            if self.powerType == Enum.PowerType.Mana and InCombatLockdown() then
                 self.TickValue = 5
             else
                 self.TickValue = 2
@@ -102,23 +127,7 @@ local function fsr_OnEvent(self, event, ...)
     end
 end
 
-local function fsrHelperFrame_OnEvent(self, event, ...)
-    local form = GetShapeshiftForm()
-
-    if form == 1 then
-        self:GetParent():Hide()
-    elseif form == 3 then
-        self:GetParent().statusBar:SetValue(0)
-        self:GetParent().allowPowerEvent = true
-    else
-        self:GetParent():Show()
-    end
-
-    self:GetParent().powerType, self:GetParent().powerName = UnitPowerType("player")
-end
-
-local function load5SR()
-    -- Setup bar
+local function createStatusbar()
     local fsr = CreateFrame("Frame", nil, _G.GwPlayerPowerBar)
     fsr:SetSize(316, 1)
     fsr:ClearAllPoints()
@@ -148,8 +157,6 @@ local function load5SR()
     fsr.statusBar.label:SetPoint("CENTER", fsr.statusBar, "CENTER", 0, 0)
     fsr.statusBar.label:SetTextColor(1, 1, 1)
 
-    fsr.shapeshiftformHelper = CreateFrame("Frame")
-
     fsr.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
     fsr.mp5StartTime = 0
     fsr.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
@@ -161,13 +168,27 @@ local function load5SR()
     fsr.Mp5Delay = 5
     fsr.allowPowerEvent = true
     fsr.powerType, fsr.powerName = UnitPowerType("player")
+    fsr.form = GetShapeshiftForm()
 
-    fsr:SetScript("OnEvent", fsr_OnEvent)
-    fsr:SetScript("OnUpdate", fsr_OnUpdate)
-    fsr:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-    fsr:RegisterEvent("UNIT_POWER_UPDATE")
+    return fsr
+end
 
-    fsr.shapeshiftformHelper:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    fsr.shapeshiftformHelper:SetScript("OnEvent", fsrHelperFrame_OnEvent)
+local function load5SR()
+    -- Setup bar
+    fsrMana = createStatusbar()
+
+    fsrMana:SetScript("OnEvent", fsr_OnEvent)
+    fsrMana:SetScript("OnUpdate", fsr_OnUpdate)
+    fsrMana:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+    fsrMana:RegisterEvent("UNIT_POWER_UPDATE")
+
+    -- if class is DRUID we need a secound statusbar and eventhandler for energybar
+    if GW.myclass == "DRUID" then
+        fsrEnergy = createStatusbar()
+        fsrEnergy:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+        fsrEnergy:SetScript("OnEvent", fsr_OnEvent)
+        fsrEnergy:SetScript("OnUpdate", fsr_OnUpdate)
+        fsrEnergy:RegisterEvent("UNIT_POWER_UPDATE")
+    end
 end
 GW.load5SR = load5SR
