@@ -5,6 +5,7 @@ v("5.3.1", [=[
 FIXES
     - Fixed "Show Player in Groupframes"
     - Fixed Alertframe issue
+    - Fix lua error in actionbar settings
 ]=])
 
 v("5.3.1", [=[
