@@ -97,7 +97,6 @@ mainbar/powerbar.xml
 mainbar/actionbars.xml
 mainbar/petbar.xml
 mainbar/dodgebar.xml
-mainbar/5sr.xml
 mainbar/5sr.lua
 mainbar/hud.lua
 mainbar/actionbars2.lua

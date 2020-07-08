@@ -1,11 +1,5 @@
 local _, GW = ...
 
-local LastTickTime = GetTime()
-local CurrentValue = UnitPower("player")
-local LastValue = CurrentValue
-local TickValue = 2
-local Mp5Delay = 5
-local allowPowerEvent = true
 local Mp5IgnoredSpells = {
     [11689] = true, -- life tap 6
     [11688] = true, -- life tap 5
@@ -22,39 +16,37 @@ local function fsr_OnUpdate(self, elapsed)
 
     self.sinceLastUpdate = (self.sinceLastUpdate or 0) + (tonumber(elapsed) or 0)
     if self.sinceLastUpdate > 0.01 then
-        local powerType, powerName = UnitPowerType("player")
-
-        if powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Mana then
+        if self.powerType ~= Enum.PowerType.Energy and self.powerType ~= Enum.PowerType.Mana then
             return
         end
 
-        CurrentValue = UnitPower("player", powerType)
+        self.CurrentValue = UnitPower("player", self.powerType)
 
-        if powerType == Enum.PowerType.Mana and (not CurrentValue or CurrentValue >= UnitPowerMax("player", Enum.PowerType.Mana)) then
+        if self.powerType == Enum.PowerType.Mana and (not self.CurrentValue or self.CurrentValue >= UnitPowerMax("player", Enum.PowerType.Mana)) then
             self.statusBar:SetValue(0)
             return
         end
 
         local Now = GetTime() or 0
         if not (Now == nil) then
-            local Timer = Now - LastTickTime
+            local Timer = Now - self.LastTickTime
 
-            if (CurrentValue > LastValue) or powerType == Enum.PowerType.Energy and (Now >= LastTickTime + 2) then
-                LastTickTime = Now
+            if (self.CurrentValue > self.LastValue) or self.powerType == Enum.PowerType.Energy and (Now >= self.LastTickTime + 2) then
+                self.LastTickTime = Now
             end
 
             if Timer > 0 then
                 self.statusBar.label:SetText("")
                 self.statusBar:SetMinMaxValues(0, 2)
                 self.statusBar:SetValue(Timer)
-                local pwcolor = GW.PowerBarColorCustom[powerName]
+                local pwcolor = GW.PowerBarColorCustom[self.powerName]
                 self.statusBar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-                allowPowerEvent = true
+                self.allowPowerEvent = true
 
-                LastValue = CurrentValue
+                self.LastValue = self.CurrentValue
             elseif Timer < 0 then
                 -- if negative, it's mp5delay
-                self.statusBar:SetMinMaxValues(0, Mp5Delay)
+                self.statusBar:SetMinMaxValues(0, self.Mp5Delay)
                 self.statusBar:SetValue(math.abs(Timer))
                 self.statusBar:SetStatusBarColor(1, 1, 1)
                 if self.showTimer then self.statusBar.label:SetText(string.format("%.1f", Timer * -1) .. "s") end
@@ -64,9 +56,7 @@ local function fsr_OnUpdate(self, elapsed)
 end
 
 local function fsr_OnEvent(self, event, ...)
-    local powerType = UnitPowerType("player")
-
-    if powerType ~= Enum.PowerType.Mana then
+    if self.powerType ~= Enum.PowerType.Mana then
         return
     end
 
@@ -82,33 +72,33 @@ local function fsr_OnEvent(self, event, ...)
             end
         end
 
-        if (CurrentValue < LastValue) and (not spellCost or Mp5IgnoredSpells[spellID]) then
+        if (self.CurrentValue < self.LastValue) and (not spellCost or Mp5IgnoredSpells[spellID]) then
             return
         end
         
-        if spellCost and powerType == Enum.PowerType.Mana then
+        if spellCost and self.powerType == Enum.PowerType.Mana then
             -- reset Tickerbar and start ticker
             self.statusBar:SetValue(0)
             self.statusBar:SetMinMaxValues(0, 5)
             self.statusBar:SetStatusBarColor(1, 1, 1)
 
-            LastTickTime = GetTime() + 5
-            allowPowerEvent = false
+            self.LastTickTime = GetTime() + 5
+            self.allowPowerEvent = false
         end
-    elseif event == "UNIT_POWER_UPDATE" and allowPowerEvent then
+    elseif event == "UNIT_POWER_UPDATE" and self.allowPowerEvent then
         local Time = GetTime()
 
-        TickValue = Time - LastTickTime
+        self.TickValue = Time - self.LastTickTime
 
-        if TickValue > 5 then
+        if self.TickValue > 5 then
             if powerType == Enum.PowerType.Mana and InCombatLockdown() then
-                TickValue = 5
+                self.TickValue = 5
             else
-                TickValue = 2
+                self.TickValue = 2
             end
         end
 
-        LastTickTime = Time
+        self.LastTickTime = Time
     end
 end
 
@@ -119,25 +109,58 @@ local function fsrHelperFrame_OnEvent(self, event, ...)
         self:GetParent():Hide()
     elseif form == 3 then
         self:GetParent().statusBar:SetValue(0)
-        allowPowerEvent = true
+        self:GetParent().allowPowerEvent = true
     else
         self:GetParent():Show()
     end
+
+    self:GetParent().powerType, self:GetParent().powerName = UnitPowerType("player")
 end
 
 local function load5SR()
-    local fsr = CreateFrame("Frame", nil, GwPlayerPowerBar, "GW5SRTemp")
+    -- Setup bar
+    local fsr = CreateFrame("Frame", nil, _G.GwPlayerPowerBar)
     fsr:SetSize(316, 1)
-    fsr.statusBar:SetMinMaxValues(0, 5)
     fsr:ClearAllPoints()
     fsr:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 2, 1)
     fsr:SetFrameStrata("MEDIUM")
-    fsr.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
 
+    fsr.background = fsr:CreateTexture(nil, "BACKGROUND")
+    fsr.background:SetSize(316, 20)
+    fsr.background:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+
+    fsr.bar = fsr:CreateTexture(nil, "BORDER")
+    fsr.bar:SetSize(316, 1)
+    fsr.bar:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
+    fsr.bar:SetPoint("LEFT", 0, 0)
+    fsr.bar:SetPoint("RIGHT", fsr, "LEFT", 0, 0)
+
+    fsr.statusBar = CreateFrame("StatusBar", nil, fsr)
+    fsr.statusBar:SetSize(315, 1)
+    fsr.statusBar:SetPoint("LEFT", fsr, "LEFT", 0, 0)
+    fsr.statusBar:SetMinMaxValues(0, 5)
     fsr.statusBar:SetValue(0)
+    fsr.statusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
+
+    fsr.statusBar.label = fsr.statusBar:CreateFontString(nil, "OVERLAY")
+    fsr.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+    fsr.statusBar.label:SetText("")
+    fsr.statusBar.label:SetPoint("CENTER", fsr.statusBar, "CENTER", 0, 0)
+    fsr.statusBar.label:SetTextColor(1, 1, 1)
+
+    fsr.shapeshiftformHelper = CreateFrame("Frame")
+
     fsr.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
     fsr.mp5StartTime = 0
     fsr.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
+
+    fsr.LastTickTime = GetTime()
+    fsr.CurrentValue = UnitPower("player")
+    fsr.LastValue = fsr.CurrentValue
+    fsr.TickValue = 2
+    fsr.Mp5Delay = 5
+    fsr.allowPowerEvent = true
+    fsr.powerType, fsr.powerName = UnitPowerType("player")
 
     fsr:SetScript("OnEvent", fsr_OnEvent)
     fsr:SetScript("OnUpdate", fsr_OnUpdate)
