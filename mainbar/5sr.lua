@@ -189,6 +189,15 @@ local function load5SR()
         fsrEnergy:SetScript("OnEvent", fsr_OnEvent)
         fsrEnergy:SetScript("OnUpdate", fsr_OnUpdate)
         fsrEnergy:RegisterEvent("UNIT_POWER_UPDATE")
+
+        if fsrEnergy.powerType == Enum.PowerType.Mana then
+            fsrEnergy:Hide()
+        elseif fsrEnergy.powerType == Enum.PowerType.Energy then
+            fsrMana:Hide()
+        else
+            fsrEnergy:Hide()
+            fsrMana:Hide()
+        end
     end
 end
 GW.load5SR = load5SR
