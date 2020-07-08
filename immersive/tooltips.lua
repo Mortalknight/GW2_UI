@@ -653,7 +653,7 @@ local function LoadTooltips()
     end
 
     if GetSetting("ADVANCED_TOOLTIP") then
-        mountIDs = C_MountJournal.GetMountIDs()
+        local mountIDs = C_MountJournal.GetMountIDs()
 
         for _, mountID in ipairs(mountIDs) do
             MountIDs[select(2, C_MountJournal.GetMountInfoByID(mountID))] = mountID

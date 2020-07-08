@@ -37,7 +37,7 @@ local function splitQuest(inputstr)
     inputstr = inputstr:gsub(" %s+", " ")
     inputstr = inputstr:gsub("%.%.%.", "…")
     local t = {}
-    i = 1
+    local i = 1
     for str in splitIter(inputstr, sep) do
         if str ~= nil and str ~= "" then
             t[i] = str
@@ -249,7 +249,7 @@ GW.AddForProfiling("questview", "questTextCompleted", questTextCompleted)
 
 local function nextGossip()
     QUESTSTRINGINT = QUESTSTRINGINT + 1
-    count = 0
+    local count = 0
     for k, v in pairs(QUESTSTRING) do
         count = count + 1
     end

@@ -522,7 +522,7 @@ local function InitPanel(panel)
             of.checkbutton:SetScript(
                 "OnClick",
                 function(self, button)
-                    toSet = false
+                    local toSet = false
                     if self:GetChecked() then
                         toSet = true
                     end
@@ -538,7 +538,7 @@ local function InitPanel(panel)
             of:SetScript(
                 "OnClick",
                 function(self)
-                    toSet = true
+                    local toSet = true
                     if self.checkbutton:GetChecked() then
                         toSet = false
                     end

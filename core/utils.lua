@@ -219,7 +219,7 @@ local function RoundInt(v)
     if v == nil then
         return 0
     end
-    vf = math.floor(v)
+    local vf = math.floor(v)
     if (v - vf) > 0.5 then
         return vf + 1
     end
@@ -267,11 +267,11 @@ local function SplitString(inputstr, sep, sep2, sep3)
     end
     inputstr = inputstr:gsub("\n", "")
     local t = {}
-    i = 1
+    local i = 1
     for str in string.gmatch(inputstr, "([^" .. sep .. "|" .. sep2 .. "|" .. sep3 .. "]+)") do
-        st, en, cap1, cap2, cap3 = string.find(inputstr, str)
+        local _, en = string.find(inputstr, str)
         if en ~= nil then
-            s = string.sub(inputstr, en + 1, en + 1)
+            local s = string.sub(inputstr, en + 1, en + 1)
             if s ~= nil or s ~= "" then
                 str = str .. s
             end

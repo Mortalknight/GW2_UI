@@ -212,7 +212,8 @@ local function setUnitPortraitFrame(self, event)
         end
     elseif (UnitHonorLevel(self.unit) ~= nil and UnitHonorLevel(self.unit) > 9)   then
         txt = UnitHonorLevel(self.unit)
-    
+        local plvl
+
         if txt > 199 then
             plvl = 4
         elseif txt > 99 then
@@ -222,8 +223,8 @@ local function setUnitPortraitFrame(self, event)
         elseif txt > 9 then
             plvl = 1
         end
-        
-        key = 'prestige'..plvl
+
+        local key = "prestige" .. plvl
         if TARGET_FRAME_ART[key]~=nil then
             border = key
         end

@@ -1,5 +1,6 @@
 local _, GW = ...
 local Debug = GW.Debug
+local gwMocks = GW.gwMocks
 
 local tests = {}
 

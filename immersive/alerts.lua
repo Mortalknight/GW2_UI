@@ -1012,7 +1012,7 @@ local function skinBonusRollMoney()
 end
 
 local function skinBonusRollLoot()
-    frame = _G.BonusRollLootWonFrame
+    local frame = _G.BonusRollLootWonFrame
     frame:SetAlpha(1)
     hooksecurefunc(frame, "SetAlpha", forceAlpha)
 

@@ -241,7 +241,7 @@ local function manageButton()
         _G[self:GetName() .. "Ground"]:SetText(L["GROUND_MARKER"])
     end
     local fnGWMM_OnEvent = function(self)
-        inCombat = UnitAffectingCombat("player")
+        local inCombat = UnitAffectingCombat("player")
         if GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
                 (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
             manageButtonDelay(inCombat, "show")
@@ -383,8 +383,8 @@ GW.AddForProfiling("party", "setPortrait", setPortrait)
 local function updateAwayData(self)
     local portraitIndex = 1
 
-    posY, posX, posZ, instanceID = UnitPosition(self.unit)
-    _, _, _, playerinstanceID = UnitPosition("player")
+    local _, _, _, instanceID = UnitPosition(self.unit)
+    local _, _, _, playerinstanceID = UnitPosition("player")
     if not GW_READY_CHECK_INPROGRESS then 
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
         SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
@@ -801,7 +801,7 @@ local function updatePartyData(self)
     local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
     local powerPrecentage = 0
 
-    powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+    local _, powerToken = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)

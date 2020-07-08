@@ -310,7 +310,7 @@ local function xpbar_OnEvent(self, event)
 
     if azeriteItemLocation then
         showBar2 = true
-        azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+        local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
         AzeritLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 
         if xpForNextPoint > 0 then
@@ -1088,7 +1088,7 @@ displayRewards = function()
             )
 
             if v["type"] == "SPELL" then
-                name, rank, icon = GetSpellInfo(v["id"])
+                local name, _, icon = GetSpellInfo(v["id"])
                 _G["GwLevelingRewardsItem" .. i].icon:SetTexture(icon)
                 _G["GwLevelingRewardsItem" .. i].name:SetText(name)
                 _G["GwLevelingRewardsItem" .. i]:SetScript(

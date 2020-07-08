@@ -28,3 +28,4 @@ GW.HiddenFrame:Hide()
 GW.unitIlvlsCache = {}
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
+GW.gwMocks = {}

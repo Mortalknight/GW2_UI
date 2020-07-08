@@ -190,6 +190,7 @@ local function loadRaidInfo(raidinfo)
 
     for i = 1, #raidinfo.buttons do
         local slot = raidinfo.buttons[i]
+        local instanceName, instanceID, instanceReset, locked, extended, instanceIDMostSig, difficultyName, _, _, extendDisabled
 
         local idx = i + offset
         if idx > raidInfoCount then
@@ -204,7 +205,7 @@ local function loadRaidInfo(raidinfo)
             slot.item.extendDisabled = nil
         else
             if idx <= raidInfoCount1 then
-                instanceName, instanceID, instanceReset, instanceDifficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, _, _, extendDisabled = GetSavedInstanceInfo(idx)
+                instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled = GetSavedInstanceInfo(idx)
                 slot.item.instanceID = instanceID
                 slot.item.worldBossID = nil
                 slot.item.RaidInfoIdx = idx

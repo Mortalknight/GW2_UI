@@ -275,14 +275,11 @@ local function SetObjectiveNotification(mapID)
     local useRadar = data["COMPASS"]
     local progress = data["PROGRESS"]
 
-    radarActive = useRadar
-
     if color == nil then
         color = {r = 1, g = 1, b = 1}
     end
 
     currentNotificationKey = key
-    currentNotificationType = key
 
     if icons[data["TYPE"]] ~= nil then
         GwObjectivesNotification.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. icons[data["TYPE"]].tex)

@@ -1,6 +1,6 @@
 local _, GW = ...
 
-gwMocks = {}
+local gwMocks = GW.gwMocks
 
 gwMocks.GetLFGCompletionReward = function(isScenario)
     if isScenario then

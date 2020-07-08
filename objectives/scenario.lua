@@ -233,7 +233,7 @@ local function updateCurrentScenario()
     local GwQuestTrackerTimerSavedHeight = 1
 
     for k, v in pairs(bonusSteps) do
-        bonusStepIndex = v
+        local bonusStepIndex = v
         --[[
         local scenarioName, currentStage, numStages, flags, _, _, completed, xp, money =
             C_Scenario.GetInfo(bonusStepIndex)

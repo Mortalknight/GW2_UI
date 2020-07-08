@@ -2,8 +2,6 @@ local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
-local CountTable = GW.CountTable
-local SplitString = GW.SplitString
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
@@ -15,7 +13,6 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
 local SetDeadIcon = GW.SetDeadIcon
-local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local FillTable = GW.FillTable
 local IsIn = GW.IsIn
@@ -35,6 +32,7 @@ local hudMoving = false
 local missing, ignored = {}, {}
 local spellIDs = {}
 local spellBookSearched = 0
+local players
 
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then
@@ -754,7 +752,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
             powerPrecentage = power / powerMax
         end
         self.manabar:SetValue(powerPrecentage)
-        powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+        local _, powerToken = UnitPowerType(self.unit)
         if PowerBarColorCustom[powerToken] then
             local pwcolor = PowerBarColorCustom[powerToken]
             self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
@@ -763,7 +761,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
-    elseif (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
+    elseif (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
         updateAwayData(self)
     elseif event == "PLAYER_TARGET_CHANGED" then
         highlightTargetFrame(self)
@@ -854,7 +852,7 @@ local function updateFrameData(self, index)
     self.absorbbar:SetValue(absorbPrecentage)
     self.predictionbar:SetValue(predictionPrecentage)
 
-    powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+    local _, powerToken = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
@@ -1168,6 +1166,7 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_TARGET", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
 
     raidframe_OnEvent(frame, "load")
 

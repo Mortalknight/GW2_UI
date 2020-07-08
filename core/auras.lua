@@ -271,6 +271,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
 
     local usedWidth = 0
     local usedHeight = 0
+    local usedWidth2 = 2
 
     local smallSize
     local bigSize

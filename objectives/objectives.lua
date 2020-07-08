@@ -559,7 +559,6 @@ local function updateQuest(block, questWatchId)
 
         if isComplete and isComplete < 0 then
             isComplete = false
-            questFailed = true
         elseif numObjectives == 0 and GetMoney() >= requiredMoney and not startEvent then
             isComplete = true
         end
