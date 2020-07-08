@@ -14,6 +14,4 @@
 
     <Script file="libs\LibHealComm-4.0\ChatThrottleLib.lua"/>
     <Script file="libs\LibHealComm-4.0\LibHealComm-4.0.lua"/>
-
-    <Include file="libs\LibThreatClassic2\lib.xml"/>
 </Ui>

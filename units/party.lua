@@ -291,11 +291,11 @@ GW.AddForProfiling("party", "setPortrait", setPortrait)
 local function updateAwayData(self)
     local portraitIndex = 1
 
-    posY, posX, posZ, instanceID = UnitPosition(self.unit)
-    _, _, _, playerinstanceID = UnitPosition("player")
+    local _, _, _, instanceID = UnitPosition(self.unit)
+    local _, _, _, playerinstanceID = UnitPosition("player")
     if not GW_READY_CHECK_INPROGRESS then 
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-        _, _, classIndex = UnitClass(self.unit)
+        local _, _, classIndex = UnitClass(self.unit)
         if classIndex ~= nil and classIndex ~= 0 then
             SetClassIcon(self.classicon, classIndex)
         end
@@ -336,6 +336,10 @@ local function updateAwayData(self)
         if not self.classicon:IsShown() then
             self.classicon:Show()
         end
+    end
+
+    if UnitThreatSituation(self.unit) ~= nil and UnitThreatSituation(self.unit) > 2 then
+        portraitIndex = 5
     end
 
     setPortrait(self, portraitIndex)
@@ -708,7 +712,7 @@ local function updatePartyData(self)
 
     self.level:SetText(UnitLevel(self.unit))
 
-    localizedClass, englishClass, classIndex = UnitClass(self.unit)
+    local _, _, classIndex = UnitClass(self.unit)
     if classIndex ~= nil and classIndex ~= 0 then
         SetClassIcon(self.classicon, classIndex)
     end
@@ -746,7 +750,7 @@ local function party_OnEvent(self, event, unit, arg1)
     if event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         updatePartyData(self)
     end
-    if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
+    if event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
         updateAwayData(self)
     end
     if event == "UNIT_NAME_UPDATE" and unit == self.unit then
@@ -782,7 +786,7 @@ local function party_OnEvent(self, event, unit, arg1)
             function()
                 if UnitInParty(self.unit) ~= nil then
                     self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-                    localizedClass, englishClass, classIndex = UnitClass(self.unit)
+                    local _, _, classIndex = UnitClass(self.unit)
                     if classIndex ~= nil and classIndex ~= 0 then
                         SetClassIcon(self.classicon, classIndex)
                     end
@@ -898,6 +902,7 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_POWER_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
 
     LHC.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_HealUpdated", HealCommEventHandler)

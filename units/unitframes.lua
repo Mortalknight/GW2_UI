@@ -20,7 +20,6 @@ local UpdateBuffLayout = GW.UpdateBuffLayout
 local LHC = GW.Libs.LHC
 local LCC = GW.Libs.LCC
 local LCD = GW.Libs.LCD
-local LTC = GW.Libs.LTC
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -128,7 +127,6 @@ local function updateHealthbarColor(self)
         end
 
         if UnitIsTapDenied(self.unit) then
-            friendlyColor = COLOR_FRIENDLY[3]
             nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         end
 
@@ -421,7 +419,7 @@ end
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
 local function updateThreatValues(self)
-    self.threatValue = select(3, LTC:UnitDetailedThreatSituation("player", self.unit))
+    self.threatValue = select(3, UnitDetailedThreatSituation("player", self.unit))
 
     if self.threatValue == nil then
         self.threatString:SetText("")
@@ -548,6 +546,8 @@ local function target_OnEvent(self, event, unit)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self, event)
         if (ttf) then updateRaidMarkers(ttf, event) end
+    elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
+        updateThreatValues(self)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
@@ -661,6 +661,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_POWER_UPDATE", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", "target")
 
     local CastbarEventHandler = function(event, ...)
         local self = NewUnitFrame
@@ -691,13 +692,6 @@ local function LoadTarget()
     LCD.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
         target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
     end)
-
-    if NewUnitFrame.showThreat then
-        LTC.RegisterCallback(NewUnitFrame, "ThreatUpdated", function(event, unitguid, targetguid)
-            if targetguid == UnitGUID("target") then updateThreatValues(NewUnitFrame) end
-        end)
-        LTC:RequestActiveOnSolo()
-    end
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 

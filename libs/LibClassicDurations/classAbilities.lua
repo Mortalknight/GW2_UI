@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 61
+local Type, Version = "SpellTable", 63
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -113,7 +113,7 @@ if class == "MAGE" then
             },
             -- targetSpellID = 22959, -- Fire Vulnerability
             rollbackMisses = true,
-            condition = function(isMine) return isMine end,
+            -- condition = function(isMine) return isMine end,
             -- it'll refresg only from mages personal casts which is fine
             -- because if mage doesn't have imp scorch then he won't even see a Fire Vulnerability timer
         },
@@ -278,7 +278,19 @@ Spell({ 7001, 27873, 27874 }, { duration = 10, type = "BUFF", buffType = "Magic"
 Spell( 552, { duration = 20, type = "BUFF", buffType = "Magic" }) -- Abolish Disease
 Spell({ 17, 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901 }, {duration = 30, type = "BUFF", buffType = "Magic" }) -- PWS
 Spell( 6788, { duration = 15 }) -- Weakened Soul
-Spell({ 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315 }, { duration = 15, type = "BUFF", buffType = "Magic" }) -- Renew
+if class == "PRIEST" then
+    lib:TrackItemSet("Garments of the Oracle", { 21349, 21350, 21348, 21352, 21351 })
+    lib:RegisterSetBonusCallback("Garments of the Oracle", 5)
+end
+Spell({ 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315 }, {
+    duration = function(spellID, isSrcPlayer)
+        if isSrcPlayer and lib:IsSetBonusActive("Garments of the Oracle", 5) then
+            return 18
+        else
+            return 15
+        end
+    end,
+    type = "BUFF", buffType = "Magic" }) -- Renew
 
 Spell( 15487, { duration = 5 }) -- Silence
 Spell({ 10797, 19296, 19299, 19302, 19303, 19304, 19305 }, { duration = 6, stacking = true }) -- starshards
@@ -296,7 +308,25 @@ Spell({ 9484, 9485, 10955 }, {
 Spell( 10060, { duration = 15, type = "BUFF", buffType = "Magic" }) --Power Infusion
 Spell({ 14914, 15261, 15262, 15263, 15264, 15265, 15266, 15267 }, { duration = 10, stacking = true }) -- Holy Fire, stacking?
 Spell({ 586, 9578, 9579, 9592, 10941, 10942 }, { duration = 10, type = "BUFF" }) -- Fade
-Spell({ 8122, 8124, 10888, 10890 }, { duration = 8,  }) -- Psychic Scream
+if class == "PRIEST" then
+    lib:TrackItemSet("PriestPvPSet", {
+        17604, 17603, 17605, 17608, 17607, 17602,
+        17623, 17625, 17622, 17624, 17618, 17620,
+        22869, 22859, 22882, 22885, 23261, 23262,
+        23302, 23303, 23288, 23289, 23316, 23317,
+    })
+    lib:RegisterSetBonusCallback("PriestPvPSet", 3)
+end
+Spell({ 8122, 8124, 10888, 10890 }, {
+    duration = function(spellID, isSrcPlayer)
+        if isSrcPlayer then
+            local pvpSetBonus = lib:IsSetBonusActive("PriestPvPSet", 3) and 1 or 0
+            return 8 + pvpSetBonus
+        else
+            return 8
+        end
+    end
+}) -- Psychic Scream
 Spell({ 589, 594, 970, 992, 2767, 10892, 10893, 10894 }, { stacking = true,
     duration = function(spellID, isSrcPlayer)
         -- Improved SWP, 2 ranks: Increases the duration of your Shadow Word: Pain spell by 3 sec.
@@ -747,7 +777,12 @@ Spell({ 2878, 5627, 5627 }, {
     end
 }) -- Turn Undead
 
-Spell( 1044, { duration = 10, type = "BUFF", buffType = "Magic" }) -- Blessing of Freedom
+Spell( 1044, {
+    duration = function(spellID, isSrcPlayer)
+        local talents = 0
+        if isSrcPlayer then talents = 3*Talent(20174, 20175)  end
+        return 10 + talents
+    end, type = "BUFF", buffType = "Magic" }) -- Blessing of Freedom
 Spell({ 6940, 20729 }, { duration = 30, type = "BUFF", buffType = "Magic" }) -- Blessing of Sacrifice
 Spell({ 1022, 5599, 10278 }, { type = "BUFF",
     buffType = "Magic",

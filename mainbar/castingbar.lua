@@ -55,7 +55,7 @@ local function LoadCastingBar()
         "OnEvent",
         function(self, event, unitID, spellid)
             local castingType = 1
-            local spell, icon, startTime, endTime
+            local spell, text, icon, startTime, endTime, isTradeSkill, notInterruptible, spellID, castID, interrupt
             if unitID ~= "player" then
                 return
             end

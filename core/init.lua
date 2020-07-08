@@ -29,15 +29,10 @@ do
         if not name then return end
         GW.Libs[name] = _G.LibStub(libname, silent)
     end
-    local function GetLib(name, libname, silent)
-        if not name then return end
-        GW.Libs[name] = _G.LibStub:GetLibrary(libname, silent)
-    end
-    
+
     AddLib("LCD", "LibClassicDurations", true)
     AddLib("LCC", "LibClassicCasterino", true)
     AddLib("LHC", "LibHealComm-4.0", true)
-    GetLib("LTC", "LibThreatClassic2", true)
     if GW.Libs.LCD then
         GW.Libs.LCD:Register("GW2_UI")
     end

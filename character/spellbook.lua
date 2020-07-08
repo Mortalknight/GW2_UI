@@ -1,10 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local MAX_SPELLS = MAX_SPELLS
-local MAX_SKILLLINE_TABS = MAX_SKILLLINE_TABS
-local SPELLS_PER_PAGE = 21
-local MAX_SPELL_PAGES = ceil(MAX_SPELLS / SPELLS_PER_PAGE)
-local ACTIVE_PAGE = 1
 
 function gw_spell_buttonOnEnter(self)
     if self.spellId == nil then return end
@@ -541,7 +536,6 @@ local function updateUnknownTab(knownSpellID)
         GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0, h - GwSpellbookUnknown.container:GetHeight()))
         GwSpellbookUnknown.slider:SetValue(0)
     end
-    knownTalents = nil
 end
 
 local function updateSpellbookTab()
@@ -563,7 +557,7 @@ local function updateSpellbookTab()
 
         if spellBookTabs == 5 then
             BOOKTYPE='pet'
-            numSpells, petToken = HasPetSpells()
+            numSpells = HasPetSpells()
             offset = 0
             name = PET
             texture = "Interface\\AddOns\\GW2_UI\\textures\\talents\\tabicon_pet"

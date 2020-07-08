@@ -153,7 +153,7 @@ function gwPaperDollPetStats_OnEvent(self, event, ...)
     end
 
     local unit = ...
-    hasUI, isHunterPet = HasPetUI()
+    local hasUI = HasPetUI()
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and arg1 == "player") then
         if GwPetContainer:IsVisible() and not hasUI then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
@@ -231,7 +231,7 @@ local function statGridPos(grid, x, y)
 end
 
 local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    statFrame = gwPaperDollGetStatListFrame(GwPapaerDollStats, index)
+    local statFrame = gwPaperDollGetStatListFrame(GwPapaerDollStats, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
@@ -249,7 +249,7 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
     return grid, x, y, index + 1
 end
 local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    statFrame = gwPaperDollPetGetStatListFrame(GwPapaerDollStatsPet, index)
+    local statFrame = gwPaperDollPetGetStatListFrame(GwPapaerDollStatsPet, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
@@ -326,9 +326,8 @@ end
 GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
 
 function gwPaperDollUpdateStats()
-    local categoryYOffset = -5
-    local statYOffset = 0
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
+    local statName, statText, tooltip1, tooltip2
 
     avgItemLevel = nil or 0
     avgItemLevelEquipped = nil or 0
@@ -341,10 +340,6 @@ function gwPaperDollUpdateStats()
     GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
     GwDressingRoom.itemLevel:SetTextColor(GW.api.GetItemLevelColor())
 
-    local spec = GW.api.GetSpecialization()
-    local role = GW.api.GetSpecializationRole(spec)
-    local statFrame = nil
-    local lastAnchor
     local numShownStats = 1
     local grid = 1
     local x = 0
@@ -408,6 +403,7 @@ end
 
 function gwPaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
+    local statName, statText, tooltip1, tooltip2
     GwCharacterMenu.petMenu:Hide()
     if not hasUI then return end
 
@@ -421,7 +417,7 @@ function gwPaperDollUpdatePetStats()
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
-        local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
+        local happiness = GetPetHappiness()
         local totalPoints, spent = GetPetTrainingPoints()
         local currXP, nextXP = GetPetExperience()
 
@@ -548,7 +544,7 @@ function gwPaperDollSlotButton_OnHide(self)
 end
 
 function gwPaperDollSlotButton_OnEvent(self, event, ...)
-    local arg1, arg2 = ...
+    local arg1 = ...
     if event == "PLAYER_EQUIPMENT_CHANGED" then
         if self:GetID() == arg1 then
             gwPaperDollSlotButton_Update(self)
@@ -567,7 +563,7 @@ function gwPaperDollSlotButton_OnEnter(self)
     self:RegisterEvent("MODIFIER_STATE_CHANGED")
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    local hasItem, hasCooldown, repairCost = GameTooltip:SetInventoryItem("player", self:GetID(), nil, true)
+    local hasItem, _, repairCost = GameTooltip:SetInventoryItem("player", self:GetID(), nil, true)
     if not hasItem then
         local text = _G[strupper(strsub(self:GetName(), 12))]
         if self.checkRelic and UnitHasRelicSlot("player") then
@@ -880,6 +876,7 @@ end
 local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName, name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus)
     frame:Show()
     frame.factionIndex = factionIndex
+    local textureC
 
     if factionID and RT[factionID] then
         frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
@@ -1052,7 +1049,6 @@ function GwUpdateReputationDetails()
     local buttonIndex = 1
     local savedHeaderName = ""
     local savedHeight = 0
-    local textureC = 1
 
     for factionIndex = selectedReputationCat + 1, GetNumFactions() do
         local  name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus = returnReputationData(factionIndex)
@@ -1105,7 +1101,6 @@ function GwUpdateReputationDetailsSearch(s)
     local buttonIndex = 1
     local savedHeaderName = ""
     local savedHeight = 0
-    local textureC = 1
 
     for factionIndex = 1, GetNumFactions() do
         local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus = returnReputationData(factionIndex)

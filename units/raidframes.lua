@@ -35,6 +35,7 @@ local hudMoving = false
 local missing, ignored = {}, {}
 local spellIDs = {}
 local spellBookSearched = 0
+local players
 
 local function hideBlizzardRaidFrame()
     if InCombatLockdown() then
@@ -237,7 +238,7 @@ local function updateAwayData(self)
     local classColor = GetSetting("RAID_CLASS_COLOR")
     local iconState = 1
 
-    localizedClass, englishClass, classIndex = UnitClass(self.unit)
+    local _, englishClass, classIndex = UnitClass(self.unit)
     self.name:SetTextColor(1, 1, 1)
 
     if classIndex ~= nil and classIndex ~= 0 and classColor == false and GW_READY_CHECK_INPROGRESS == false then
@@ -318,6 +319,12 @@ local function updateAwayData(self)
         self.classicon:SetAlpha(0.4)
     else
         self.classicon:SetAlpha(1)
+    end
+
+    if UnitThreatSituation(self.unit) ~= nil and UnitThreatSituation(self.unit) > 2 then
+        self.aggroborder:Show()
+    else
+        self.aggroborder:Hide()
     end
 end
 GW.AddForProfiling("raidframes", "updateAwayData", updateAwayData)
@@ -691,15 +698,12 @@ local function raidframe_OnEvent(self, event, unit, arg1)
             powerPrecentage = power / powerMax
         end
         self.manabar:SetValue(powerPrecentage)
-        powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+        local _, powerToken = UnitPowerType(self.unit)
         if PowerBarColorCustom[powerToken] then
             local pwcolor = PowerBarColorCustom[powerToken]
             self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
-    elseif
-        (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or
-            event == "PARTY_MEMBER_ENABLE"
-    then
+    elseif (event == "UNIT_PHASE" and unit == self.unit) or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
         updateAwayData(self)
     elseif event == "PLAYER_TARGET_CHANGED" then
         highlightTargetFrame(self)
@@ -744,7 +748,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
                 GW_READY_CHECK_INPROGRESS = false
                 local classColor = GetSetting("RAID_CLASS_COLOR")
                 if UnitInRaid(self.unit) ~= nil then
-                    localizedClass, englishClass, classIndex = UnitClass(self.unit)
+                    local _, englishClass, classIndex = UnitClass(self.unit)
                     if classColor == true then
                         local color = GWGetClassColor(englishClass, true)
                         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
@@ -790,7 +794,7 @@ local function updateFrameData(self, index)
     Bar(self.healthbar, healthPrec)
     self.predictionbar:SetValue(0)
 
-    powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+    local _, powerToken = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
@@ -882,7 +886,7 @@ local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer
     if not isV then
         dir1, dir2 = dir2, dir1
     end
-    
+
     local pos1, pos2 = dir1 * ((i - 1) % cells1), dir2 * (ceil(i / cells1) - 1)
 
     local a = (isU and "BOTTOM" or "TOP") .. (isR and "LEFT" or "RIGHT")
@@ -947,7 +951,7 @@ local function UpdateRaidFramesLayout()
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures()
     local isV = grow1 == "DOWN" or grow1 == "UP"
-    
+
     if not InCombatLockdown() then
         GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
     end
@@ -1011,6 +1015,7 @@ local function createRaidFrame(registerUnit, index)
         frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
         frame.classicon = _G[frame:GetName() .. "Data"].classicon
         frame.healthbar = frame.predictionbar.healthbar
+        frame.aggroborder = frame.healthbar.aggroborder
         frame.nameNotLoaded = false
 
         frame.name:SetFont(UNIT_NAME_FONT, 12)
@@ -1095,6 +1100,7 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_TARGET", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
 
     LHC.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_HealUpdated", HealCommEventHandler)

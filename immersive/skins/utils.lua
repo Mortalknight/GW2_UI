@@ -264,12 +264,8 @@ local function SkinDropDownMenu(frame)
     local text = frameName and _G[frameName .. "Text"] or frame.Text
     local icon = frame.Icon
 
-    if not width then
-        width = 155
-    end
-
     GW.StripTextures(frame)
-    frame:SetWidth(width)
+    frame:SetWidth(155)
 
     CreateBackdrop(frame)
     frame.backdrop:SetBackdrop(constBackdropDropDown)

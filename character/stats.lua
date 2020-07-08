@@ -55,7 +55,7 @@ end
 
 local function getPrimary(i, unit)
     local statText
-    local tooltip1
+    local tooltip
     local tooltip2
     local stat
     local effectiveStat
@@ -107,7 +107,7 @@ local function getPrimary(i, unit)
         end
     end
 
-    return _G["SPELL_STAT" .. i .. "_NAME"], statText, tooltip,tooltip2
+    return _G["SPELL_STAT" .. i .. "_NAME"], statText, tooltip, tooltip2
 end
 GW.stats.getPrimary = getPrimary
 
@@ -298,7 +298,7 @@ local function getDamage(unit, prefix)
         end
     end
 
-    tooltip = HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_WEAPONMAINHAND .. FONT_COLOR_CODE_CLOSE
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_WEAPONMAINHAND .. FONT_COLOR_CODE_CLOSE
 
     local tooltip2 = ATTACK_SPEED_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", speed) .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip2 = tooltip2 .. DAMAGE_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. damageTooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
@@ -469,6 +469,7 @@ local function getRangedAttackPower(unit, prefix)
     end
 
     local base, posBuff, negBuff = UnitRangedAttackPower(unit)
+    local tooltip, tooltip2
     stat, tooltip = formateStat(RANGED_ATTACK_POWER, base, posBuff, negBuff)
 
     tooltip2 = format(RANGED_ATTACK_POWER_TOOLTIP, base / ATTACK_POWER_MAGIC_NUMBER)
@@ -513,6 +514,7 @@ local function getResitance(i, unit)
     end
 
     local unitLevel = UnitLevel(unit)
+    local resistanceLevel
     unitLevel = max(unitLevel, 20)
     local magicResistanceNumber = resistance / unitLevel
     if magicResistanceNumber > 5 then

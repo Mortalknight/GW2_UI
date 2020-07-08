@@ -1,4 +1,4 @@
-## Interface: 11304
+## Interface: 11305
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: Hud Replacement addon.
 ## OptionalDeps: MoveAnything, HonorSpy, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
