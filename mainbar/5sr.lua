@@ -60,11 +60,7 @@ end
 
 local function fsr_OnEvent(self, event, ...)
     if event == "UPDATE_SHAPESHIFT_FORM" then
-        local results = GetShapeshiftForm()
-
-        if self.form == results then return end
-
-        self.form = results
+        self.form = GetShapeshiftForm()
 
         if self.form == 1 then --bear (Hide all bars)
             fsrMana:Hide()
@@ -167,7 +163,6 @@ local function createStatusbar()
     fsr.TickValue = 2
     fsr.Mp5Delay = 5
     fsr.allowPowerEvent = true
-    fsr.powerType, fsr.powerName = UnitPowerType("player")
     fsr.form = GetShapeshiftForm()
 
     return fsr
@@ -181,6 +176,8 @@ local function load5SR()
     fsrMana:SetScript("OnUpdate", fsr_OnUpdate)
     fsrMana:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     fsrMana:RegisterEvent("UNIT_POWER_UPDATE")
+    fsrMana.powerType = Enum.PowerType.Mana
+    fsrMana.powerName = "MANA"
 
     -- if class is DRUID we need a secound statusbar and eventhandler for energybar
     if GW.myclass == "DRUID" then
@@ -189,10 +186,14 @@ local function load5SR()
         fsrEnergy:SetScript("OnEvent", fsr_OnEvent)
         fsrEnergy:SetScript("OnUpdate", fsr_OnUpdate)
         fsrEnergy:RegisterEvent("UNIT_POWER_UPDATE")
+        fsrEnergy.powerType = Enum.PowerType.Energy
+        fsrEnergy.powerName = "ENERGY"
 
-        if fsrEnergy.powerType == Enum.PowerType.Mana then
+        local powerType = UnitPowerType("player")
+
+        if powerType == Enum.PowerType.Mana then
             fsrEnergy:Hide()
-        elseif fsrEnergy.powerType == Enum.PowerType.Energy then
+        elseif powerType == Enum.PowerType.Energy then
             fsrMana:Hide()
         else
             fsrEnergy:Hide()

@@ -2,10 +2,19 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
-    "1.8.1",
+    "1.8.3",
+    [=[
+        - Added option for Mana/Energy Tickerbar
+        - Update to 1.13.5
+        - Added aggroborder to party and raidframes
+]=]
+)
+
+v(
+    "1.8.2",
     [=[
         - Fix some smaller bugs
-        - Added option for 5SR: Manarege Ticker: SHows a Ticker if you are Manarege
+        - Added option for 5SR: Manarege Ticker: Shows a Ticker if you are Manarege
 ]=]
 )
 

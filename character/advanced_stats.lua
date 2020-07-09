@@ -202,6 +202,17 @@ local function _GetTalentModifierSpellCrit()
     return mod
 end
 
+local function _GetGeneralTalentModifier()
+    local mod = 0
+
+    if classId == ClassIndex.MAGE then
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 15)
+        mod = points * 1 -- 0-3% Arcane Instability
+    end
+
+    return mod
+end
+
 local function _GetTalentModifierSpellHit()
     local mod = 0
 
@@ -218,7 +229,7 @@ end
 
 local function _GetMP5ValueOnItems() 
     local mp5 = 0
-    for i = 1, 17 do
+    for i = 1, 18 do
         local itemLink = GetInventoryItemLink("player", i)
         if itemLink then
             local stats = GetItemStats(itemLink)
@@ -232,6 +243,15 @@ local function _GetMP5ValueOnItems()
     end
 
     return mp5
+end
+
+local function GetSpellDmg(i)
+    local spellDmg = GetSpellBonusDamage(i)
+    local modifier = _GetGeneralTalentModifier()
+
+    spellDmg = spellDmg * (1 + (modifier / 100))
+
+    return RoundDec(spellDmg, 0)
 end
 
 -- Get MP5 from spirit
@@ -504,19 +524,19 @@ local function showAdvancedChatStats(self)
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(SPELL_BONUS)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. BONUS_HEALING .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusHealing()) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(6)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(6)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. ShadowCrit().. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(2)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(2)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. HolyCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(3)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(3)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. FireCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(5)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(5)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. FrostCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(7)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(7)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. ArcaneCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(4)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(4)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. NatureCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusDamage(1)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(1)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. CRIT_ABBR .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. PhysicalCrit() .. FONT_COLOR_CODE_CLOSE)
 
     GameTooltip:Show()
