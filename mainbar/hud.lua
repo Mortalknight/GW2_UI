@@ -1178,6 +1178,8 @@ local function LoadHudArt()
         for _, f in ipairs(GwActionBarHud.HUDBG) do
             f:Hide()
         end
+    else
+        GW.RegisterScaleFrame(GwActionBarHud)
     end
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)

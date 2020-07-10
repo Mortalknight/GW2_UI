@@ -152,7 +152,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     if frame == GameTooltip then
         moveframe:SetSize(230, 80)
     elseif settingsName == "AlertPos" then
-        moveframe:SetSize(300, 50)
+        moveframe:SetSize(300, 5)
     elseif displayName == SHOW_BUFFS or displayName == SHOW_DEBUFFS then
         moveframe:SetSize(316, displayName == SHOW_BUFFS and 100 or 60) 
         moveframe:SetScale(frame:GetScale())
@@ -551,8 +551,8 @@ local function adjustFixedAnchors(self, relativeAlert)
 end
 GW.AddForProfiling("index", "adjustFixedAnchors", adjustFixedAnchors)
 
-local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -10
-local function adjustAlertAnchors(self, relativeAlert)    
+local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
+local function adjustAlertAnchors(self, relativeAlert)
     for alertFrame in self.alertFramePool:EnumerateActive() do
         alertFrame:ClearAllPoints()
         alertFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
@@ -589,8 +589,6 @@ local function updateAnchors(self)
             relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
         end
     end
-    _G.AlertFrame:ClearAllPoints()
-    _G.AlertFrame:SetPoint("BOTTOM", _G.Minimap, "TOP", 10, 5)
 end
 GW.AddForProfiling("index", "updateAnchors", updateAnchors)
 
@@ -650,6 +648,7 @@ local function loadAddon(self)
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #" .. dev_dbg_tab)
         GW.dbgTab = dev_dbg_tab
         GW.AlertTestsSetup()
+        SetCVar('fstack_preferParentKeys', 0) --Add back the frame names via fstack!
         GW.inDebug = true
     else
         GW.inDebug = false
