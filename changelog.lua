@@ -5,6 +5,7 @@ local v = GW.vernotes
 v(
     "1.8.4",
     [=[
+        - Added option to change player buff and debuff size
         - Fix lua error in party frames
         - Fix lua error with frFR
 ]=]

@@ -304,6 +304,8 @@ local function GWUseThisLocalization()
     L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
     L["5SR_TIMER"] = "5 secound rule: display remaning time"
     L["ENERGY_MANA_TICK"] = "Energy/Mana Ticker"
+    L["PLAYER_BUFF_SIZE"] = "Buff size"
+    L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
 end
 
 if GetLocale() == "koKR" then

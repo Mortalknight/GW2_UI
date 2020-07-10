@@ -365,42 +365,43 @@ local function getLegacyTempEnchant(self, idx)
 end
 GW.AddForProfiling("aurabar_secure", "getLegacyTempEnchant", getLegacyTempEnchant)
 
-local function newHeader(filter)
+local function newHeader(filter, settingname)
     local h, w, aura_tmpl
 
     -- "secure" style auras
     h = CreateFrame("Frame", nil, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
-    aura_tmpl = "GwAuraSecureTmpl"
     h.GetAura = getSecureAura
     h.GetTempEnchant = getSecureTempEnchant
     h.GetFilter = getSecureFilter
     h.GetAType = getSecureAType
 
-    local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
+    local grow_dir = GetSetting(settingname .. "_GrowDirection")
     local wrap_num = tonumber(GetSetting("PLAYER_AURA_WRAP_NUM"))
+    local size = tonumber(GW.RoundDec(GetSetting(settingname .. "_ICON_SIZE")))
+    aura_tmpl = format("GwAuraSecureTmpl%d", size)
     if not wrap_num or wrap_num < 1 or wrap_num > 20 then
         wrap_num = 7
     end
-    Debug("settings", grow_dir, wrap_num)
+    Debug("settings", settingname, grow_dir, wrap_num, size)
 
     local ap
     local yoff
     local xoff
     if grow_dir == "UPR" then
         ap = "BOTTOMLEFT"
-        xoff = 33
+        xoff = (size + 1)
         yoff = 50
     elseif grow_dir == "DOWN" then
         ap = "TOPRIGHT"
-        xoff = -33
+        xoff = -(size + 1)
         yoff = -50
     elseif grow_dir == "DOWNR" then
         ap = "TOPLEFT"
-        xoff = 33
+        xoff = (size + 1)
         yoff = -50
     else
         ap = "BOTTOMRIGHT"
-        xoff = -33
+        xoff = -(size + 1)
         yoff = 50
     end
 
@@ -410,8 +411,8 @@ local function newHeader(filter)
     h:SetAttribute("filter", filter)
     h:SetAttribute("sortMethod", "INDEX")
     h:SetAttribute("sortDirection", "+")
-    h:SetAttribute("minWidth", 33 * wrap_num)
-    h:SetAttribute("minHeight", 33)
+    h:SetAttribute("minWidth", (size + 1) * wrap_num)
+    h:SetAttribute("minHeight", (size + 1))
     h:SetAttribute("separateOwn", 0)
     h:SetAttribute("point", ap)
     h:SetAttribute("xOffset", xoff)
@@ -446,7 +447,7 @@ local function loadAuras(lm)
     local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
     -- create a new header for buffs
-    local hb = newHeader("HELPFUL")
+    local hb = newHeader("HELPFUL", "PlayerBuffFrame")
     hb:SetAttribute("growDir", grow_dir)
     GW.RegisterScaleFrame(hb)
     hb:Show()
@@ -474,7 +475,7 @@ local function loadAuras(lm)
 
     -- create a new header for debuffs
     local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
-    local hd = newHeader("HARMFUL")
+    local hd = newHeader("HARMFUL", "PlayerDebuffFrame")
     local anchor_hd
     GW.RegisterScaleFrame(hd)
     lm:RegisterDebuffFrame(hd)
