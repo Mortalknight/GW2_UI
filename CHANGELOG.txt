@@ -1,7 +1,8 @@
-1.8.4
+1.8.4a
 - Added option to change player buff and debuff size
 - Fix lua error in party frames
 - Fix lua error with frFR
+- Fix Mana/Energy for energy only classes
 
 1.8.3
 - Added option for Mana/Energy Tickerbar (Thanks Skippbo#2190 aka Saar for all the time and Tests)

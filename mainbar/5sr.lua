@@ -169,6 +169,7 @@ local function createStatusbar()
 end
 
 local function load5SR()
+    local powerType, powerName = UnitPowerType("player")
     -- Setup bar
     fsrMana = createStatusbar()
 
@@ -176,8 +177,8 @@ local function load5SR()
     fsrMana:SetScript("OnUpdate", fsr_OnUpdate)
     fsrMana:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     fsrMana:RegisterEvent("UNIT_POWER_UPDATE")
-    fsrMana.powerType = Enum.PowerType.Mana
-    fsrMana.powerName = "MANA"
+    fsrMana.powerType = GW.myclass == "DRUID" and Enum.PowerType.Mana or powerType
+    fsrMana.powerName = GW.myclass == "DRUID" and "MANA" or powerName
 
     -- if class is DRUID we need a secound statusbar and eventhandler for energybar
     if GW.myclass == "DRUID" then
@@ -188,8 +189,6 @@ local function load5SR()
         fsrEnergy:RegisterEvent("UNIT_POWER_UPDATE")
         fsrEnergy.powerType = Enum.PowerType.Energy
         fsrEnergy.powerName = "ENERGY"
-
-        local powerType = UnitPowerType("player")
 
         if powerType == Enum.PowerType.Mana then
             fsrEnergy:Hide()
