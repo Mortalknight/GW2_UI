@@ -6,6 +6,7 @@ v(
     "1.8.4a",
     [=[
         - Added option to change player buff and debuff size
+        - Added option to hide Mana/Energy tickerbar out of combat
         - Fix lua error in party frames
         - Fix lua error with frFR
         - Fix Mana/Energy for energy only classes

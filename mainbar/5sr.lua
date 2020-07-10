@@ -77,6 +77,12 @@ local function fsr_OnEvent(self, event, ...)
         self.powerType, self.powerName = UnitPowerType("player")
     end
 
+    if event == "PLAYER_REGEN_ENABLED" then
+        self:Hide()
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        self:Show()
+    end
+
     if self.powerType ~= Enum.PowerType.Mana then
         return
     end
@@ -169,6 +175,7 @@ local function createStatusbar()
 end
 
 local function load5SR()
+    local hide_ofc = GW.GetSetting("PLAYER_ENERGY_MANA_TICK_HIDE_OFC")
     local powerType, powerName = UnitPowerType("player")
     -- Setup bar
     fsrMana = createStatusbar()
@@ -177,6 +184,10 @@ local function load5SR()
     fsrMana:SetScript("OnUpdate", fsr_OnUpdate)
     fsrMana:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     fsrMana:RegisterEvent("UNIT_POWER_UPDATE")
+    if hide_ofc then
+        fsrMana:RegisterEvent("PLAYER_REGEN_DISABLED")
+        fsrMana:RegisterEvent("PLAYER_REGEN_ENABLED")
+    end
     fsrMana.powerType = GW.myclass == "DRUID" and Enum.PowerType.Mana or powerType
     fsrMana.powerName = GW.myclass == "DRUID" and "MANA" or powerName
 
@@ -187,6 +198,10 @@ local function load5SR()
         fsrEnergy:SetScript("OnEvent", fsr_OnEvent)
         fsrEnergy:SetScript("OnUpdate", fsr_OnUpdate)
         fsrEnergy:RegisterEvent("UNIT_POWER_UPDATE")
+        if hide_ofc then
+            fsrMana:RegisterEvent("PLAYER_REGEN_DISABLED")
+            fsrMana:RegisterEvent("PLAYER_REGEN_ENABLED")
+        end
         fsrEnergy.powerType = Enum.PowerType.Energy
         fsrEnergy.powerName = "ENERGY"
 
@@ -198,6 +213,11 @@ local function load5SR()
             fsrEnergy:Hide()
             fsrMana:Hide()
         end
+    end
+
+    if not InCombatLockdown() and hide_ofc then
+        fsrMana:Hide()
+        if fsrEnergy then fsrEnergy:Hide() end
     end
 end
 GW.load5SR = load5SR

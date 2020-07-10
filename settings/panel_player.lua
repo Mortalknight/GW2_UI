@@ -20,6 +20,7 @@ local function LoadPlayerPanel(sWindow)
     createCat(PLAYER, L["PLAYER_DESC"], p, 9)
 
     addOption(p, L["ENERGY_MANA_TICK"], nil, "PLAYER_ENERGY_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true})
+    addOption(p, L["ENERGY_MANA_TICK_HIDE_OFC"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
     addOption(p, L["5SR_TIMER"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
 
     addOptionSlider(

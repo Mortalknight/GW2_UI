@@ -304,6 +304,7 @@ local function GWUseThisLocalization()
     L["PLAYER_GROUP_FRAME_DESC"] = "Spieler als Gruppenrahmen anzeigen"
     L["5SR_TIMER"] = "5 Sekunden Regel Timer anzeigen"
     L["ENERGY_MANA_TICK"] = "Energie/Mana Ticker"
+    L["ENERGY_MANA_TICK_HIDE_OFC"] = "Zeige den Energie/Mana Ticker nur im Kampf"
     L["PLAYER_BUFF_SIZE"] = "Stärkungszaubergröße"
     L["PLAYER_DEBUFF_SIZE"] = "Schwächungszaubergröße"
 end
