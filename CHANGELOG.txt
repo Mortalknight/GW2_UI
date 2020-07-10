@@ -1,5 +1,5 @@
 1.8.3
-- Added option for Mana/Energy Tickerbar
+- Added option for Mana/Energy Tickerbar (Thanks Skippbo#2190 aka Saar for all the time and Tests)
 - Update to 1.13.5
 - Added aggroborder to party and raidframes
 
