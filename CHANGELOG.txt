@@ -1,3 +1,7 @@
+1.8.4
+- Fix lua error in party frames
+- Fix lua error with frFR
+
 1.8.3
 - Added option for Mana/Energy Tickerbar (Thanks Skippbo#2190 aka Saar for all the time and Tests)
 - Update to 1.13.5

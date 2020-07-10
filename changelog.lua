@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+
+v(
+    "1.8.4",
+    [=[
+        - Fix lua error in party frames
+        - Fix lua error with frFR
+]=]
+)
+
 v(
     "1.8.3",
     [=[

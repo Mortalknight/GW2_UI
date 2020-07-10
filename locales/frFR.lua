@@ -14,6 +14,7 @@ local function GWUseThisLocalization()
     L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
     --classic ones
+    L["FPS_TOOLTIP_1"] = "FPS "
     L["FPS_TOOLTIP_2"] = "Latence (Locale): "
     L["FPS_TOOLTIP_3"] = "Latence (Monde): "
     L["FPS_TOOLTIP_4"] = "Bande passante (Aval): "
