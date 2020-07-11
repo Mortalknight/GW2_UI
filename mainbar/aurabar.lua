@@ -367,19 +367,20 @@ GW.AddForProfiling("aurabar_secure", "getLegacyTempEnchant", getLegacyTempEnchan
 
 local function newHeader(filter, secure, settingname)
     local h, w, aura_tmpl
+    local size = tonumber(GW.RoundDec(GetSetting(settingname .. "_ICON_SIZE")))
     if secure then
         -- "secure" style auras
         h = CreateFrame("Frame", nil, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
-        aura_tmpl = "GwAuraSecureTmpl"
+        aura_tmpl = format("GwAuraSecureTmpl%d", size)
         h.GetAura = getSecureAura
         h.GetTempEnchant = getSecureTempEnchant
         h.GetFilter = getSecureFilter
         h.GetAType = getSecureAType
     else
         -- "legacy" style auras
-        w = GW.CreateModifiedAuraHeader()
+        w = GW.CreateModifiedAuraHeader(settingname)
         h = w.inner
-        aura_tmpl = "GwAuraTmpl"
+        aura_tmpl = format("GwAuraSecureTmpl%d", size)
         h.GetAura = getLegacyAura
         h.GetTempEnchant = getLegacyTempEnchant
         h.GetFilter = getLegacyFilter
@@ -393,26 +394,26 @@ local function newHeader(filter, secure, settingname)
     if not wrap_num or wrap_num < 1 or wrap_num > 20 then
         wrap_num = 7
     end
-    Debug("settings", settingname, grow_dir, aura_style, wrap_num)
+    Debug("settings", settingname, grow_dir, aura_style, wrap_num, size)
 
     local ap
     local yoff
     local xoff
     if grow_dir == "UPR" then
         ap = "BOTTOMLEFT"
-        xoff = 33
+        xoff = (size + 1)
         yoff = 50
     elseif grow_dir == "DOWN" then
         ap = "TOPRIGHT"
-        xoff = -33
+        xoff = -(size + 1)
         yoff = -50
     elseif grow_dir == "DOWNR" then
         ap = "TOPLEFT"
-        xoff = 33
+        xoff = (size + 1)
         yoff = -50
     else
         ap = "BOTTOMRIGHT"
-        xoff = -33
+        xoff = -(size + 1)
         yoff = 50
     end
 
@@ -438,8 +439,8 @@ local function newHeader(filter, secure, settingname)
         h:SetAttribute("sortMethod", "INDEX")
         h:SetAttribute("sortDirection", "+")
     end
-    h:SetAttribute("minWidth", 33 * wrap_num)
-    h:SetAttribute("minHeight", 33)
+    h:SetAttribute("minWidth", (size + 1) * wrap_num)
+    h:SetAttribute("minHeight", (size + 1))
     h:SetAttribute("separateOwn", 0)
     h:SetAttribute("point", ap)
     h:SetAttribute("xOffset", xoff)

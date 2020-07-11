@@ -289,6 +289,8 @@ local function GWUseThisLocalization()
     L["ALERTFRAMES"] = "Alertas"
     L["PLAYER_GROUP_FRAME"] = "Playerframe in group"
     L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
+    L["PLAYER_BUFF_SIZE"] = "Buff size"
+    L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

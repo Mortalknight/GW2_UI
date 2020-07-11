@@ -44,6 +44,32 @@ local function LoadPlayerPanel(sWindow)
         0,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
+    addOptionSlider(
+        p,
+        L["PLAYER_BUFF_SIZE"],
+        nil,
+        "PlayerBuffFrame_ICON_SIZE",
+        nil,
+        16,
+        60,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true},
+        2
+    )
+    addOptionSlider(
+        p,
+        L["PLAYER_DEBUFF_SIZE"],
+        nil,
+        "PlayerDebuffFrame_ICON_SIZE",
+        nil,
+        16,
+        60,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true},
+        2
+    )
     addOptionDropdown(
         p,
         L["PLAYER_BUFFS_GROW"],

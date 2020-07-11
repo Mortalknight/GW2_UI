@@ -36,6 +36,15 @@ local StripTexturesBlizzFrames = {
     "ScrollFrameBorder",
 }
 
+local constBackdropDropDown = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/gwstatusbar",
+    edgeFile = "",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+
 local function GrabScrollBarElement(frame, element)
     local FrameName = frame:GetDebugName()
     return frame[element] or FrameName and (_G[FrameName..element] or strfind(FrameName, element)) or nil

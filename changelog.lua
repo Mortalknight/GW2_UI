@@ -1,7 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.3.1", [=[
+v("5.3.3", [=[
+FIXES
+    - Added option to change player buff and debuff size
+]=])
+
+v("5.3.2", [=[
 FIXES
     - Fixed "Show Player in Groupframes"
     - Fixed Alertframe issue

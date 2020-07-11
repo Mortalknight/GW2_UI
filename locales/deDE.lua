@@ -293,6 +293,8 @@ local function GWUseThisLocalization()
     L["ALERTFRAMES"] = "Alarmfenster"
     L["PLAYER_GROUP_FRAME"] = "Spieler in Gruppe anzeigen"
     L["PLAYER_GROUP_FRAME_DESC"] = "Spieler als Gruppenrahmen anzeigen"
+    L["PLAYER_BUFF_SIZE"] = "Stärkungszaubergröße"
+    L["PLAYER_DEBUFF_SIZE"] = "Schwächungszaubergröße"
 end
 
 if GetLocale() == "deDE" then

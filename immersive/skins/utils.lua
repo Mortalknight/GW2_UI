@@ -20,17 +20,6 @@ local constBackdropFrameBorder = {
 }
 GW.skins.constBackdropFrameBorder = constBackdropFrameBorder
 
-local constBackdropDropDown = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/gwstatusbar",
-    edgeFile = "",
-    tile = false,
-    tileSize = 64,
-    edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
-}
-GW.skins.constBackdropDropDown = constBackdropDropDown
-
-
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
         local listFrame = _G["DropDownList" .. level]

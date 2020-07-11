@@ -95,6 +95,7 @@ local function skinAchievementAlert(frame)
     frame.Unlocked:SetTextColor(1, 1, 1)
 
     -- Icon
+    frame.Icon.Texture:SetSize(45, 45)
     frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     frame.Icon.Overlay:Kill()
 
@@ -148,7 +149,7 @@ local function skinCriteriaAlert(frame)
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.Texture.b)
     end
     frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    
+    frame.Icon.Texture:SetSize(45, 45)
     --flare
     AddFlare(frame, frame.Icon.Texture.b)
 end
@@ -548,8 +549,10 @@ local function skinDigsiteCompleteAlert(frame)
 
     if not frame.backdrop then
         frame:CreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 35, 10)
+        --frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
+        --frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 35, 10)
+        frame.backdrop:SetPoint("TOPLEFT", frame.Background, "TOPLEFT", -10, 0)
+        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Background, "BOTTOMRIGHT", 5, 0)
     end
 
     frame.glow:Kill()

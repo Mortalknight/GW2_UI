@@ -183,12 +183,13 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
 end
 GW.AddOption = AddOption
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, dependence_value)
 
     opt["min"] = min
     opt["max"] = max
     opt["decimalNumbers"] = decimalNumbers or 0
+    opt["step"] = step
     opt["optionType"] = "slider"
 
     return opt
@@ -471,6 +472,8 @@ local function InitPanel(panel)
         if v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
             of.slider:SetValue(GetSetting(v.optionName, v.perSpec))
+            if v.step then of.slider:SetValueStep(v.step) end
+            of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
                 "OnValueChanged",
                 function(self)
