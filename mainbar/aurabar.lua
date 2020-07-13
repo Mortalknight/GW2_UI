@@ -380,7 +380,7 @@ local function newHeader(filter, secure, settingname)
         -- "legacy" style auras
         w = GW.CreateModifiedAuraHeader(settingname)
         h = w.inner
-        aura_tmpl = format("GwAuraSecureTmpl%d", size)
+        aura_tmpl = format("GwAuraTmpl%d", size)
         h.GetAura = getLegacyAura
         h.GetTempEnchant = getLegacyTempEnchant
         h.GetFilter = getLegacyFilter
