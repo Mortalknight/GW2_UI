@@ -1,3 +1,6 @@
+1.8.5
+- Fix error in afk mode
+
 1.8.4a
 - Added option to change player buff and debuff size
 - Added option to hide Mana/Energy tickerbar out of combat

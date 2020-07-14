@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v(
+    "1.8.5",
+    [=[
+        - Fix error in afk mode
+]=]
+)
 
 v(
     "1.8.4a",
