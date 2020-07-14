@@ -125,9 +125,11 @@ local function setDruid(f)
 
     if barType == "combo|little_mana" then
         setComboBar(f)
-        setManaBar(f)
+        if f.ourPowerBar then
+            setManaBar(f)
+        end
         return true
-    elseif barType == "little_mana" then
+    elseif barType == "little_mana" and f.ourPowerBar then
         setManaBar(f)
         return false
     else
@@ -140,7 +142,9 @@ local function selectType(f)
     f:SetScript("OnEvent", nil)
     f:UnregisterAllEvents()
 
-    GwPlayerPowerBarExtra:Hide()
+    if f.ourPowerBar then
+        GwPlayerPowerBarExtra:Hide()
+    end
     f.gwPower = -1
     local showBar = false
 
@@ -187,20 +191,23 @@ local function LoadClassPowers()
 
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
+    cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
     cpf.gwPlayerForm = GetShapeshiftForm()
 
-    -- create an extra mana power bar that is used sometimes (druid)
-    local exbar = CreateFrame("Frame", "GwPlayerPowerBarExtra", GwPlayerPowerBar, "GwPlayerPowerBar")
-    exbar.candy.spark:ClearAllPoints()
-    exbar:SetSize(GwPlayerPowerBar:GetWidth(), 5)
-    exbar.bar:SetHeight(5)
-    exbar.candy:SetHeight(5)
-    exbar.candy.spark:SetHeight(5)
-    exbar.statusBar:SetHeight(5)
-    exbar:ClearAllPoints()
-    exbar:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 0, 5)
-    exbar:SetFrameStrata("MEDIUM")
-    exbar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+    -- create an extra mana power bar that is used sometimes (druid) only if our Powerbar is on
+    if cpf.ourPowerBar then
+        local exbar = CreateFrame("Frame", "GwPlayerPowerBarExtra", GwPlayerPowerBar, "GwPlayerPowerBar")
+        exbar.candy.spark:ClearAllPoints()
+        exbar:SetSize(GwPlayerPowerBar:GetWidth(), 5)
+        exbar.bar:SetHeight(5)
+        exbar.candy:SetHeight(5)
+        exbar.candy.spark:SetHeight(5)
+        exbar.statusBar:SetHeight(5)
+        exbar:ClearAllPoints()
+        exbar:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 0, 5)
+        exbar:SetFrameStrata("MEDIUM")
+        exbar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+    end
 
     cpf.Script:SetScript("OnEvent", barChange_OnEvent)
     cpf.Script:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
