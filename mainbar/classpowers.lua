@@ -881,7 +881,9 @@ local function setDruid(f)
         return true
     elseif barType == "combo|little_mana" then
         setComboBar(f)
-        setLittleManaBar(f)
+        if f.ourPowerBar then
+            setLittleManaBar(f)
+        end
         return true
     else
         return false
@@ -901,7 +903,9 @@ local function selectType(f)
     f.disc:Hide()
     f.decay:Hide()
     f.exbar:Hide()
-    f.lmb:Hide()
+    if f.ourPowerBar then
+        f.lmb:Hide()
+    end
     f.gwPower = -1
     local showBar = false
 
@@ -974,20 +978,24 @@ local function LoadClassPowers()
 
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
+    cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
 
-    -- create an extra mana power bar that is used sometimes (feral druid in cat form)
-    local lmb = CreateFrame("Frame", nil, GwPlayerPowerBar, "GwPlayerPowerBar")
-    cpf.lmb = lmb
-    lmb.candy.spark:ClearAllPoints()
-    lmb:SetSize(GwPlayerPowerBar:GetWidth(), 5)
-    lmb.bar:SetHeight(5)
-    lmb.candy:SetHeight(5)
-    lmb.candy.spark:SetHeight(5)
-    lmb.statusBar:SetHeight(5)
-    lmb:ClearAllPoints()
-    lmb:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 0, 5)
-    lmb:SetFrameStrata("MEDIUM")
-    lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+    -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
+    if cpf.ourPowerBar then
+        local lmb = CreateFrame("Frame", nil, GwPlayerPowerBar, "GwPlayerPowerBar")
+        GW.MixinHideDuringPetAndOverride(lmb)
+        cpf.lmb = lmb
+        lmb.candy.spark:ClearAllPoints()
+        lmb:SetSize(GwPlayerPowerBar:GetWidth(), 5)
+        lmb.bar:SetHeight(5)
+        lmb.candy:SetHeight(5)
+        lmb.candy.spark:SetHeight(5)
+        lmb.statusBar:SetHeight(5)
+        lmb:ClearAllPoints()
+        lmb:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 0, 5)
+        lmb:SetFrameStrata("MEDIUM")
+        lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+    end
 
     -- create an extra mana power bar that is used sometimes
     local exbar = CreateFrame("Frame", nil, cpf, "GwPlayerPowerBar")

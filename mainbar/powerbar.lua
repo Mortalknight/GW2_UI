@@ -167,7 +167,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
         if
             self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or
                 self.powerType == 8
-         then
+        then
             self:SetScript("OnUpdate", nil)
         else
             self:SetScript("OnUpdate", powerBar_OnUpdate)
