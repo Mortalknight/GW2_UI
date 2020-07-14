@@ -722,6 +722,10 @@ local function setUnitName(self)
     if nameRoleIcon[role] ~= nil then
         nameString = nameRoleIcon[role] .. nameString
     end
+
+    if UnitIsGroupLeader(self.unit) then
+        nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-groupleader:18:18:0:-3|t" .. nameString
+    end
     
     self.name:SetText(nameString)
 end
