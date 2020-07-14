@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.3.3", [=[
 FIXES
     - Added option to change player buff and debuff size
+    - Fix error in afk mode
 ]=])
 
 v("5.3.2", [=[

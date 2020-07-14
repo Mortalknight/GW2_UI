@@ -130,7 +130,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     local info = ChatTypeInfo[type]
 
     if event == "CHAT_MSG_BN_WHISPER" then
-        coloredName = RAID_CLASS_COLORS.PRIEST --CH:GetBNFriendColor(arg2, arg13)
+        coloredName = format("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, arg2)
     end
 
     arg1 = RemoveExtraSpaces(arg1)
