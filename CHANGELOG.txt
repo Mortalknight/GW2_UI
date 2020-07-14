@@ -1,5 +1,7 @@
 1.8.5
+- Added party leader indicator
 - Fix error in afk mode
+- Fix Mana/Energy Ticker events
 
 1.8.4a
 - Added option to change player buff and debuff size

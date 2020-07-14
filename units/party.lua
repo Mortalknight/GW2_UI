@@ -615,7 +615,11 @@ local function setUnitName(self)
         self.nameNotLoaded = false
     else
         self.nameNotLoaded = true
-    end    
+    end
+
+    if UnitIsGroupLeader(self.unit) then
+        nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-groupleader:18:18:0:-3|t" .. nameString
+    end
     self.name:SetText(nameString)
 end
 GW.AddForProfiling("party", "setUnitName", setUnitName)

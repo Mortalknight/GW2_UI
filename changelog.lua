@@ -4,7 +4,9 @@ local v = GW.vernotes
 v(
     "1.8.5",
     [=[
+        - Added party leader indicator
         - Fix error in afk mode
+        - Fix Mana/Energy Ticker events
 ]=]
 )
 
