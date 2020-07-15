@@ -1,3 +1,9 @@
+5.3.4
+
+FIXES
+    - Fix lua error if enter an invalid player de/buff size
+
+
 5.3.3
 
 NEW

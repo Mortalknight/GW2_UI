@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.3.4", [=[
+FIXES
+    - Fix lua error if enter an invalid player de/buff size
+]=])
+
 v("5.3.3", [=[
 FIXES
     - Added option to change player buff and debuff size

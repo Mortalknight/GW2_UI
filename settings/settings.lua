@@ -490,12 +490,16 @@ local function InitPanel(panel)
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
-                    local roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or 0
+                    local roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or v.min
 
                     self:ClearFocus()
                     if tonumber(roundValue) > v.max then self:SetText(v.max) end
                     if tonumber(roundValue) < v.min then self:SetText(v.min) end
-                    roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or 0
+                    roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or v.min
+                    if v.step and v.step > 0 then
+                        local min_value = v.min or 0
+                        roundValue = floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value
+                    end
                     self:GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
                     SetSetting(v.optionName, roundValue, v.perSpec)
