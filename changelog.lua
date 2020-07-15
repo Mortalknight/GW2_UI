@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+
+v(
+    "1.8.6",
+    [=[
+        -Fix lua error if enter an invalid player de/buff size
+]=]
+)
+
 v(
     "1.8.5",
     [=[

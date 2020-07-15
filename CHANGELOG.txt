@@ -1,3 +1,6 @@
+1.8.6
+-Fix lua error if enter an invalid player de/buff size
+
 1.8.5
 - Added party leader indicator
 - Fix error in afk mode
