@@ -447,7 +447,7 @@ end
 
 local function CreateModifiedAuraHeader(settingname)
     local wrap_num = GW.GetSetting("PLAYER_AURA_WRAP_NUM")
-    local grow_dir = GW.GetSetting("PlayerBuffFrame_GrowDirection")
+    local grow_dir = GW.GetSetting(settingname .. "_GrowDirection")
     local size = tonumber(GW.RoundDec(GW.GetSetting(settingname .. "_ICON_SIZE")))
     local w = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
     w:Hide()
