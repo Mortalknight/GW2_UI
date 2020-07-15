@@ -1,5 +1,6 @@
 1.8.6
--Fix lua error if enter an invalid player de/buff size
+- Fix lua error if enter an invalid player de/buff size
+- Fix petbar auto moving in default position
 
 1.8.5
 - Added party leader indicator

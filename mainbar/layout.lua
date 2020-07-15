@@ -73,6 +73,23 @@ local onstate_Barlayout = [=[
     local dbar = self:GetFrameRef("debuffs")
     local pet = self:GetFrameRef("pet")
 
+    if mbl and mbl:IsShown() and pet and not pet:GetAttribute("isMoved") then
+        if newstate == "incombat" then
+            pet:ClearAllPoints()
+            pet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+        else
+            if mbl and mbl:IsShown() then
+                if mbl:GetAttribute("gw_FadeShowing") then
+                    pet:ClearAllPoints()
+                    pet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+                else
+                    pet:ClearAllPoints()
+                    pet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+                end
+            end
+        end
+    end
+
     if bbar and not bbar:GetAttribute("isMoved") then
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then

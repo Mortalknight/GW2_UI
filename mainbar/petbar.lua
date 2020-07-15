@@ -189,7 +189,7 @@ GW.AddForProfiling("petbar", "setPetBar", setPetBar)
 
 local function updatePetFrameLocation()
     local fPet = GwPlayerPetFrame
-    if not fPet or InCombatLockdown() or not GetSetting("PETBAR_LOCKED") then
+    if not fPet or InCombatLockdown() then
         return
     end
     local fMover = GwPlayerPetFrame.gwMover
@@ -331,7 +331,7 @@ local function updatePetData(self, event, unit)
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
-local function LoadPetFrame()
+local function LoadPetFrame(lm)
     -- disable default PetFrame stuff
     PetFrame:UnregisterAllEvents()
     PetFrame:SetScript("OnUpdate", nil)
@@ -381,42 +381,11 @@ local function LoadPetFrame()
 
     updatePetData(playerPetFrame, "UNIT_PET", "player")
 
-    if GetSetting("PETBAR_LOCKED") then
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
+
+    if not playerPetFrame.isMoved then
         AddActionBarCallback(updatePetFrameLocation)
         updatePetFrameLocation()
-
-        local fgw = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
-        fgw:SetFrameRef("GwPlayerPetFrame", playerPetFrame)
-        fgw:SetFrameRef("UIParent", UIParent)
-        if MultiBarBottomLeft then
-            fgw:SetFrameRef("MultiBarBottomLeft", MultiBarBottomLeft)
-            fgw:SetAttribute(
-                "_onstate-combat",
-                [=[
-                local mbar = self:GetFrameRef("MultiBarBottomLeft")
-                local petbar = self:GetFrameRef("GwPlayerPetFrame")
-                local uip = self:GetFrameRef("UIParent")
-                local protected = mbar:IsProtected()
-
-                if newstate == "incombat" and protected then
-                    if not mbar or not mbar:IsShown() then
-                        newstate = "low"
-                    else
-                        newstate = "high"
-                    end
-                end
-                
-                if newstate == "high" then
-                    petbar:ClearAllPoints()
-                    petbar:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", -53, 212)
-                elseif newstate == "low" then
-                    petbar:ClearAllPoints()
-                    petbar:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", -53, 120)
-                end
-                ]=]
-            )
-            RegisterStateDriver(fgw, "combat", "[combat] incombat; none")
-        end
     else
         playerPetFrame:ClearAllPoints()
         playerPetFrame:SetPoint(
@@ -427,7 +396,8 @@ local function LoadPetFrame()
             GetSetting("pet_pos")["yOfs"]
         )
     end
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", "PETBAR_LOCKED")
+
+    lm:RegisterPetFrame(playerPetFrame)
 
     setPetBar(playerPetFrame)
 end

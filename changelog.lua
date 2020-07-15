@@ -5,7 +5,8 @@ local v = GW.vernotes
 v(
     "1.8.6",
     [=[
-        -Fix lua error if enter an invalid player de/buff size
+        - Fix lua error if enter an invalid player de/buff size
+        - Fix petbar auto moving in default position
 ]=]
 )
 
