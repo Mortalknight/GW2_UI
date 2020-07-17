@@ -7,6 +7,7 @@ v(
     [=[
         - Fix lua error if enter an invalid player de/buff size
         - Fix petbar auto moving in default position
+        - Fix combopoint on target error
 ]=]
 )
 

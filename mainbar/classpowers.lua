@@ -214,7 +214,7 @@ local function LoadClassPowers()
 
     selectType(cpf)
 
-    if (pClass == 4 or pClass == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget) then
+    if (GW.myClassID == 4 or GW.myClassID == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget) then
         cpf.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
         if cpf.barType == "combo" then
             cpf:Hide()
