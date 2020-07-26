@@ -602,6 +602,25 @@ local function powerArcane(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
+local function powerFrost(self, event, ...)
+    local _, count, duration, expires = findBuff("player", 205473)
+
+    if not count then count = 0 end
+
+    local old power = self.gwPower
+    old_power = old_power or -1
+
+    local p = count
+
+    self.gwPower = count
+    self.background:SetTexCoord(0, 1, 0.125 * 5, 0.125 *( 5+ 1))
+    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+
+    if old_power < count and count > 0 and event ~= "CLASS_POWER_INIT" then
+        animFlare(self, 32, -16, 2, true)
+    end
+end
+
 local function setMage(f)
     if GW.myspec == 1 then -- arcane
         if GetSetting("XPBAR_ENABLED") then
@@ -627,6 +646,26 @@ local function setMage(f)
         powerArcane(f, "CLASS_POWER_INIT")
         f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
         f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+        return true
+    elseif GW.myspec == 3 then --frost
+        f:SetHeight(32)
+        f:SetWidth(256)
+        f.background:SetHeight(32)
+        f.background:SetWidth(256)
+        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\frostmage-altpower")
+        f.background:SetTexCoord(0, 1, 0.125 * 5, 0.125 * (5 + 1))
+        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane-flash")
+        f.flare:SetWidth(128)
+        f.flare:SetHeight(128)
+        f.fill:SetHeight(32)
+        f.fill:SetWidth(256)
+        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\frostmage-altpower")
+        f.background:SetVertexColor(0, 0, 0, 0.5)
+
+        f:SetScript("OnEvent", powerFrost)
+        powerFrost(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_AURA", "player")
 
         return true
     end

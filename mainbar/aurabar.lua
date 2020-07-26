@@ -482,7 +482,7 @@ local function loadAuras(lm, secure)
     if hb.inner then
         hb.inner:Show()
     end
-    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", true, true)
+    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, true)
     hb:ClearAllPoints()
     if not hb.isMoved then
         local mbr = GwMultiBarBottomRight
@@ -507,7 +507,7 @@ local function loadAuras(lm, secure)
     local anchor_hd
     GW.RegisterScaleFrame(hd)
     lm:RegisterDebuffFrame(hd)
-    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", true, true)
+    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, true)
     hd:Show()
     if hd.inner then
         hd.inner:Show()

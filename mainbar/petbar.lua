@@ -193,7 +193,7 @@ local function updatePetFrameLocation()
         return
     end
     local fMover = GwPlayerPetFrame.gwMover
-    local fBar = GwMultiBarBottomLeft
+    local fBar = MultiBarBottomLeft
     fPet:ClearAllPoints()
     if fMover then
         if not fMover.IsMoving then
@@ -324,7 +324,7 @@ local function LoadPetFrame(lm)
 
     updatePetData(playerPetFrame, "UNIT_PET", "player")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", true, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, true)
 
     if not playerPetFrame.isMoved then
         AddActionBarCallback(updatePetFrameLocation)

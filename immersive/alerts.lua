@@ -1241,9 +1241,9 @@ local function loadAlterSystemFrameSkins()
     local _, y = AlertContainerFrame:GetCenter()
     local screenHeight = UIParent:GetTop()
     if y > (screenHeight / 2) then
-        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy")
+        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
     else
-        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy")
+        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
     end
 
     AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
