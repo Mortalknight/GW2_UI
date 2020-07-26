@@ -16,6 +16,7 @@
     <Script file="immersive\skins\bindings.lua"/>
     <Script file="immersive\skins\blizzard_options.lua"/>
     <Script file="immersive\skins\macro.lua"/>
-
+    <Script file="immersive\skins\mail.lua"/>
+    
     <Script file="immersive\skins\addons\immersion.lua"/>
 </Ui>

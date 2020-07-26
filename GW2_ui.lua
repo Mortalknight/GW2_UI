@@ -735,6 +735,8 @@ local function loadAddon(self)
     if GetSetting("MACRO_SKIN_ENABLED") then
         GW.SkinMacroOptions()
     end
+    
+    
 
     --Create hud art
     GW.LoadHudArt()
@@ -979,6 +981,18 @@ l:RegisterEvent("PLAYER_LEVEL_UP")
 l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 l:RegisterEvent("ADDON_LOADED")
+
+l:RegisterEvent("MAIL_SHOW");
+l:RegisterEvent("MAIL_INBOX_UPDATE");
+l:RegisterEvent("MAIL_CLOSED");
+l:RegisterEvent("MAIL_SEND_INFO_UPDATE");
+l:RegisterEvent("MAIL_SEND_SUCCESS");
+l:RegisterEvent("MAIL_FAILED");
+l:RegisterEvent("MAIL_SUCCESS");	
+l:RegisterEvent("CLOSE_INBOX_ITEM");
+l:RegisterEvent("MAIL_LOCK_SEND_ITEMS");
+l:RegisterEvent("MAIL_UNLOCK_SEND_ITEMS");
+l:RegisterEvent("TRIAL_STATUS_UPDATE");
 
 local function AddToClique(frame)
     if type(frame) == "string" then
