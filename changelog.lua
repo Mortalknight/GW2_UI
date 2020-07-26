@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v(
+    "1.8.7",
+    [=[
+        - Fix petbar auto moving in default position
+]=]
+)
 
 v(
     "1.8.6",
