@@ -118,7 +118,7 @@ local function mover_OnDragStop(self)
         local defaultPoint = GetDefault(settingsName)
         local growDirection = GetSetting(settingsName .. "_GrowDirection")
         local frame = self.gw_frame
-        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and growDirection == "UP" then
+        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and (growDirection and growDirection == "UP") then
             frame.isMoved = false
             frame:SetAttribute("isMoved", false)
         else
@@ -146,16 +146,11 @@ local function mover_OnDragStop(self)
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, lockAble, isMoved)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved)
     local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
     frame.gwMover = moveframe
-    if frame == GameTooltip then
-        moveframe:SetSize(230, 80)
-    elseif settingsName == "AlertPos" then
-        moveframe:SetSize(300, 5)
-    elseif displayName == SHOW_BUFFS or displayName == SHOW_DEBUFFS then
-        moveframe:SetSize(316, displayName == SHOW_BUFFS and 100 or 60) 
-        moveframe:SetScale(frame:GetScale())
+    if size then
+        moveframe:SetSize(unpack(size))
     else
         moveframe:SetSize(frame:GetSize())
     end
