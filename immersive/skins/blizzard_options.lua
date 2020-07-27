@@ -8,8 +8,7 @@ local SkinSliderFrame = GW.skins.SkinSliderFrame
 
 local function SkinBlizzardOptions()
     --Interface and System Options
-    local OptionsFrames = {_G.InterfaceOptionsFrameCategories, _G.InterfaceOptionsFramePanelContainer, _G.InterfaceOptionsFrameAddOns, _G.VideoOptionsFrameCategoryFrame, _G.VideoOptionsFramePanelContainer, _G.Display_, _G.Graphics_, _G.RaidGraphics_}
-    local OptionsFrameBackdrops = {_G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
+    local OptionsFrames = {_G.InterfaceOptionsFrameCategories, _G.InterfaceOptionsFramePanelContainer, _G.InterfaceOptionsFrameAddOns, _G.VideoOptionsFrameCategoryFrame, _G.VideoOptionsFramePanelContainer, _G.Display_, _G.Graphics_, _G.RaidGraphics_, _G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
     local OptionsButtons = {_G.GraphicsButton, _G.RaidButton}
 
     local InterfaceOptions = {
@@ -40,6 +39,7 @@ local function SkinBlizzardOptions()
         _G.Advanced_,
         _G.NetworkOptionsPanel,
         _G.InterfaceOptionsLanguagesPanel,
+        _G.MacKeyboardOptionsPanel,
         _G.AudioOptionsSoundPanel,
         _G.AudioOptionsSoundPanelHardware,
         _G.AudioOptionsSoundPanelVolume,
