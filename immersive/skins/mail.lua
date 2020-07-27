@@ -10,10 +10,6 @@ local OpenMailFrame = _G.OpenMailFrame
 
 local function FixMailSkin()
     MailFrameTab2:SetSize(310, 24)
-    SendStationeryBackgroundLeft:StripTextures()
-    SendStationeryBackgroundRight:StripTextures()
-    SendStationeryBackgroundLeft:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
-    SendStationeryBackgroundRight:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
 end
 GW.FixMailSkin = FixMailSkin
 
@@ -45,8 +41,13 @@ local function SkinOpenMailFrame()
 
     OpenMailReportSpamButton:SkinButton(false, true)
     OpenMailReplyButton:SkinButton(false, true)
+    OpenMailReplyButton:SetPoint("RIGHT", OpenMailDeleteButton, "LEFT", -5, 0)
+
     OpenMailDeleteButton:SkinButton(false, true)
+    OpenMailDeleteButton:SetPoint("RIGHT", OpenMailCancelButton, "LEFT", -5, 0)
+
     OpenMailCancelButton:SkinButton(false, true)
+
     OpenAllMail:SkinButton(false, true)
     OpenMailScrollChildFrame:SkinScrollFrame()
     OpenMailScrollFrameScrollBar:SkinScrollBar()
@@ -58,11 +59,20 @@ local function SkinSendMailFrame()
     SendMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 46, 20)
     SendMailFrame:SetParent(MailFrame)
 
+    --Hides
     SendMailTitleText:Hide()
-
+    SendStationeryBackgroundLeft:Hide() 
+    SendStationeryBackgroundRight:Hide() 
+    
     SendMailCancelButton:SkinButton(false, true)
     SendMailMailButton:SkinButton(false, true)
+
     SendMailScrollChildFrame:SkinScrollFrame()
+    -- SendMailScrollChildFrame.mailFrameBgTexture = MailFrame:CreateTexture("MailFrameBgTexture", "BACKGROUND")
+    -- SendMailScrollChildFrame.mailFrameBgTexture:SetSize(SendMailScrollChildFrame:GetSize())
+    -- SendMailScrollChildFrame.mailFrameBgTexture:SetPoint("TOPLEFT", SendMailScrollChildFrame, "TOPLEFT", 5, 5)
+    -- SendMailScrollChildFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+    -- SendMailScrollChildFrame.mailFrameBgTexture:SetAlpha(.5)
     SendMailScrollFrameScrollBar:SkinScrollBar()
 
     SendMailMoneyBg:Hide()
@@ -70,6 +80,9 @@ local function SkinSendMailFrame()
     SendMailMoneyFrame:ClearAllPoints()
     SendMailMoneyFrame:SetPoint("BOTTOMLEFT", InboxFrame, "BOTTOMLEFT", 10, 42)
     
+    SendMailBodyEditBox:SetFont(UNIT_NAME_FONT, 14)
+    SendMailBodyEditBox:SetTextColor(1, 1, 1, 1)
+
     --reposition buttons
     SendMailMailButton:ClearAllPoints()
     SendMailMailButton:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -53, 92)
@@ -85,7 +98,24 @@ local function SkinSendMailFrame()
         end
     end)
 
-    --SendStationeryBackgroundLeft:Hide()
+    local cancelButton = CreateFrame("Button", "SendMailQuit", SendMailFrame, "UIPanelButtonNoTooltipTemplate")
+    cancelButton:ClearAllPoints()
+    cancelButton:SetPoint("RIGHT", SendMailCancelButton, "LEFT", -5, 0)
+    cancelButton:SetText("Cancel")
+    cancelButton:SetSize(SendMailCancelButton:GetSize())
+    cancelButton:SkinButton(false, true)
+    cancelButton:SetScript("OnClick", function()
+        SendMailFrame_Reset()    
+        --clear attachments
+        for i=1, ATTACHMENTS_MAX_SEND do
+            ClickSendMailItemButton(i, true);	
+        end
+
+        SendMailFrame:Hide()  
+        SetSendMailShowing(false)
+        MailFrameTab_OnClick(self, 1)
+    end)
+
 
 end
 
@@ -96,6 +126,7 @@ local function SkinComposeButton()
     MailFrameTab2:SetPoint("TOPLEFT", InboxTitleText, "TOPLEFT", 85, 40)
     MailFrameTab2:SkinButton(false, true)
     MailFrameTab2:SetScript("OnClick", function()
+        --SendMailScrollChildFrame.mailFrameBgTexture:Show()
         OpenMailFrame:Hide()
         MailFrameTab_OnClick(self, 2)
 
@@ -135,8 +166,6 @@ end
 local function SkinMail()
 
     -- Strip and hide default textures
-
-
     _G.MailFrameBg:Hide()
     _G.MailFrameInset.NineSlice:Hide()
     _G.MailFrameInset:SetBackdrop(constBackdropFrameBorder)
@@ -200,8 +229,6 @@ local function SkinMail()
     InboxFrame.heading = inboxHeading
     InboxFrame.heading:SetWidth(310)
 
- 
-
     InboxTitleText:SetPoint("TOPLEFT", MailItem1, "TOPLEFT", -85, 20)
     InboxTitleText:SetFont(UNIT_NAME_FONT, 14)
     InboxTitleText:SetTextColor(1, 1, 1, 1)
@@ -211,7 +238,6 @@ local function SkinMail()
     SkinSendMailFrame()
     SkinComposeButton()
 
-    
     -- hook inbox buttons to close the compose view if we want to look at a message and it's open
 
 
