@@ -2,12 +2,47 @@ local _, GW = ...
 local L = GW.L
 local constBackdropFrame = GW.skins.constBackdropFrame
 
+-- get local references
+local MailFrame = _G.MailFrame
+local InboxFrame = _G.InboxFrame
+local SendMailFrame = _G.SendMailFrame
+local OpenMailFrame = _G.OpenMailFrame
+
 local function FixMailSkin()
     MailFrameTab2:SetSize(310, 24)
+    SendStationeryBackgroundLeft:StripTextures()
+    SendStationeryBackgroundRight:StripTextures()
+    SendStationeryBackgroundLeft:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+    SendStationeryBackgroundRight:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
 end
 GW.FixMailSkin = FixMailSkin
 
 local function SkinOpenMailFrame()
+    -- configure location of OpenMail Frame
+    OpenMailFrame:ClearAllPoints()
+    OpenMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 0, 20)
+    OpenMailFrameCloseButton:Hide()
+    OpenMailTitleText:Hide()
+    OpenMailFrameIcon:Hide()
+    OpenMailSenderLabel:Hide()
+    OpenMailSubjectLabel:Hide()
+
+    OpenMailFrame.NineSlice:Hide()
+    OpenMailFrame.TitleBg:Hide()
+    OpenMailFrame.TopTileStreaks:Hide()
+    OpenMailFrame:SetBackdrop(nil)
+    OpenMailFrame:SetParent(MailFrame)
+
+    OpenMailSenderLabel:Hide()
+    OpenMailSender.Name:SetPoint("TOPLEFT", OpenMailScrollFrame, "TOPLEFT", 0, 50)
+    OpenMailSender.Name:SetFont(UNIT_NAME_FONT, 14)
+    OpenMailSender.Name:SetTextColor(1, 1, 1, 1)
+
+    OpenMailSubjectLabel:Hide()
+    OpenMailSubject:SetPoint("TOPLEFT", OpenMailSender.Name, "BOTTOMLEFT", 0, -10)
+    OpenMailSubject:SetFont(UNIT_NAME_FONT, 12)
+    OpenMailSubject:SetTextColor(1, 1, 1, 1)
+
     OpenMailReportSpamButton:SkinButton(false, true)
     OpenMailReplyButton:SkinButton(false, true)
     OpenMailDeleteButton:SkinButton(false, true)
@@ -18,11 +53,23 @@ local function SkinOpenMailFrame()
 end
 
 local function SkinSendMailFrame()
+    -- configure location of SendMail Frame
+    SendMailFrame:ClearAllPoints()
+    SendMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 46, 20)
+    SendMailFrame:SetParent(MailFrame)
+
+    SendMailTitleText:Hide()
+
     SendMailCancelButton:SkinButton(false, true)
     SendMailMailButton:SkinButton(false, true)
     SendMailScrollChildFrame:SkinScrollFrame()
     SendMailScrollFrameScrollBar:SkinScrollBar()
 
+    SendMailMoneyBg:Hide()
+    SendMailMoneyInset:Hide()
+    SendMailMoneyFrame:ClearAllPoints()
+    SendMailMoneyFrame:SetPoint("BOTTOMLEFT", InboxFrame, "BOTTOMLEFT", 10, 42)
+    
     --reposition buttons
     SendMailMailButton:ClearAllPoints()
     SendMailMailButton:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -53, 92)
@@ -37,6 +84,8 @@ local function SkinSendMailFrame()
             ClickSendMailItemButton(i, true);	
         end
     end)
+
+    --SendStationeryBackgroundLeft:Hide()
 
 end
 
@@ -73,13 +122,20 @@ local function ClearMailTextures()
     MailFrameTab1:Hide()
 end
 
+local function InboxFrameMailItem_OnClick()
+    
+    -- local modifiedClick = IsModifiedClick("MAILAUTOLOOTTOGGLE");
+    -- if ( modifiedClick ) then
+    --     InboxFrame_OnModifiedClick(self, self.index);
+    -- else
+    --     InboxFrame_OnClick(self, self.index);
+    -- end
+end
+
 local function SkinMail()
 
     -- Strip and hide default textures
-    local MailFrame = _G.MailFrame
-    local InboxFrame = _G.InboxFrame
-    local SendMailFrame = _G.SendMailFrame
-    local OpenMailFrame = _G.OpenMailFrame
+
 
     _G.MailFrameBg:Hide()
     _G.MailFrameInset.NineSlice:Hide()
@@ -113,11 +169,16 @@ local function SkinMail()
     MailFrame.heading.Title:SetFont(DAMAGE_TEXT_FONT, 20)
     MailFrame.heading.Title:SetText("Mail")
 
+    -- MailFrame.icon = MailFrame:CreateTexture("MailFrameIcon", "ARTWORK")
+    -- MailFrame.icon:SetSize(128, 128)
+    -- MailFrame.icon:SetPoint("CENTER", MailFrame, "TOPLEFT", -16, 16)
+    -- MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/mail-icon")
+
     MailFrame.headingRight = MailFrame:CreateTexture("bg", "BACKGROUND")
     MailFrame.headingRight:SetSize(newWidth, 64)
     MailFrame.headingRight:SetPoint("BOTTOMRIGHT", MailFrame, "TOPRIGHT", 0, 5)
     MailFrame.headingRight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader-right")
-
+ 
     MailFrame.CloseButton:SkinButton(true, false)
     MailFrame.CloseButton:SetSize(25, 25)
     MailFrame.CloseButton:ClearAllPoints()
@@ -130,7 +191,7 @@ local function SkinMail()
     MailFrame.footer:SetPoint("TOPLEFT", MailFrame, "BOTTOMLEFT", 0, 10)
     MailFrame.footer:SetPoint("TOPRIGHT", MailFrame, "BOTTOMRIGHT", 0, 10)
     MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter")
-
+   
     local inboxHeading = InboxFrame:CreateTexture("InboxHeadingBgTexture", "BACKGROUND")
     inboxHeading:SetSize(newWidth, 64)
     inboxHeading:SetPoint("BOTTOMLEFT", InboxTitleText, "TOPLEFT", 85, -24)
@@ -139,35 +200,7 @@ local function SkinMail()
     InboxFrame.heading = inboxHeading
     InboxFrame.heading:SetWidth(310)
 
-    -- configure location of SendMail Frame
-    SendMailFrame:ClearAllPoints()
-    SendMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 0, 0)
-    SendMailFrame:SetParent(MailFrame)
-
-    -- configure location of OpenMail Frame
-    OpenMailFrame:ClearAllPoints()
-    OpenMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 0, 20)
-    OpenMailFrameCloseButton:Hide()
-    OpenMailTitleText:Hide()
-    OpenMailFrameIcon:Hide()
-    OpenMailSenderLabel:Hide()
-    OpenMailSubjectLabel:Hide()
-
-    OpenMailFrame.NineSlice:Hide()
-    OpenMailFrame.TitleBg:Hide()
-    OpenMailFrame.TopTileStreaks:Hide()
-    OpenMailFrame:SetBackdrop(nil)
-    OpenMailFrame:SetParent(MailFrame)
-
-    OpenMailSenderLabel:Hide()
-    OpenMailSender.Name:SetPoint("TOPLEFT", OpenMailScrollFrame, "TOPLEFT", 0, 50)
-    OpenMailSender.Name:SetFont(UNIT_NAME_FONT, 14)
-    OpenMailSender.Name:SetTextColor(1, 1, 1, 1)
-
-    OpenMailSubjectLabel:Hide()
-    OpenMailSubject:SetPoint("TOPLEFT", OpenMailSender.Name, "BOTTOMLEFT", 0, -10)
-    OpenMailSubject:SetFont(UNIT_NAME_FONT, 12)
-    OpenMailSubject:SetTextColor(1, 1, 1, 1)
+ 
 
     InboxTitleText:SetPoint("TOPLEFT", MailItem1, "TOPLEFT", -85, 20)
     InboxTitleText:SetFont(UNIT_NAME_FONT, 14)
