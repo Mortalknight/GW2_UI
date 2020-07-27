@@ -23,6 +23,12 @@ local function SkinOpenMailFrame()
     OpenMailSenderLabel:Hide()
     OpenMailSubjectLabel:Hide()
 
+    OpenStationeryBackgroundLeft:Hide() 
+    OpenStationeryBackgroundRight:Hide() 
+
+    OpenMailBodyText:SetFont(UNIT_NAME_FONT, 14)
+    OpenMailBodyText:SetTextColor(1, 1, 1, 1)
+
     OpenMailFrame.NineSlice:Hide()
     OpenMailFrame.TitleBg:Hide()
     OpenMailFrame.TopTileStreaks:Hide()
