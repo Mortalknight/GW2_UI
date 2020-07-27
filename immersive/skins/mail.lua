@@ -7,18 +7,57 @@ local function FixMailSkin()
 end
 GW.FixMailSkin = FixMailSkin
 
-local function SkinMail()
+local function SkinOpenMailFrame()
+    OpenMailReportSpamButton:SkinButton(false, true)
+    OpenMailReplyButton:SkinButton(false, true)
+    OpenMailDeleteButton:SkinButton(false, true)
+    OpenMailCancelButton:SkinButton(false, true)
+    OpenAllMail:SkinButton(false, true)
+    OpenMailScrollChildFrame:SkinScrollFrame()
+    OpenMailScrollFrameScrollBar:SkinScrollBar()
+end
 
-    -- Strip and hide default textures
-    local MailFrame = _G.MailFrame
-    local InboxFrame = _G.InboxFrame
-    local SendMailFrame = _G.SendMailFrame
-    local OpenMailFrame = _G.OpenMailFrame
+local function SkinSendMailFrame()
+    SendMailCancelButton:SkinButton(false, true)
+    SendMailMailButton:SkinButton(false, true)
+    SendMailScrollChildFrame:SkinScrollFrame()
+    SendMailScrollFrameScrollBar:SkinScrollBar()
 
-    _G.MailFrameBg:Hide()
-    _G.MailFrameInset.NineSlice:Hide()
-    _G.MailFrameInset:SetBackdrop(constBackdropFrameBorder)
+    --reposition buttons
+    SendMailMailButton:ClearAllPoints()
+    SendMailMailButton:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -53, 92)
 
+    SendMailCancelButton:ClearAllPoints()
+    SendMailCancelButton:SetPoint("RIGHT", SendMailMailButton, "LEFT", -5, 0)
+    SendMailCancelButton:SetText("Clear")
+    SendMailCancelButton:SetScript("OnClick", function()
+        SendMailFrame_Reset()    
+        --clear attachments
+        for i=1, ATTACHMENTS_MAX_SEND do
+            ClickSendMailItemButton(i, true);	
+        end
+    end)
+
+end
+
+local function SkinComposeButton()
+    MailFrameTab2:SetSize(310, 24)
+    -- MailFrameTab2:SetFont(UNIT_NAME_FONT, 14)
+    MailFrameTab2:SetText("Compose")
+    MailFrameTab2:SetPoint("TOPLEFT", InboxTitleText, "TOPLEFT", 85, 40)
+    MailFrameTab2:SkinButton(false, true)
+    MailFrameTab2:SetScript("OnClick", function()
+        OpenMailFrame:Hide()
+        MailFrameTab_OnClick(self, 2)
+
+        InboxFrame:Show()
+        SendMailFrame:Show()
+        SendMailFrame_Update()
+        SetSendMailShowing(true)
+    end)
+end
+
+local function ClearMailTextures()
     MailFrame:StripTextures()
     InboxFrame:StripTextures()
     SendMailFrame:StripTextures()
@@ -31,17 +70,33 @@ local function SkinMail()
     MailFrame.TopTileStreaks:Hide()
     MailFrame:SetBackdrop(nil)
 
+    MailFrameTab1:Hide()
+end
+
+local function SkinMail()
+
+    -- Strip and hide default textures
+    local MailFrame = _G.MailFrame
+    local InboxFrame = _G.InboxFrame
+    local SendMailFrame = _G.SendMailFrame
+    local OpenMailFrame = _G.OpenMailFrame
+
+    _G.MailFrameBg:Hide()
+    _G.MailFrameInset.NineSlice:Hide()
+    _G.MailFrameInset:SetBackdrop(constBackdropFrameBorder)
+
+    ClearMailTextures()
+
     -- Setup double sized frame to mimic approx. size for GW2 mail layout
     local newWidth, newHeight = MailFrame:GetSize()
     newWidth = (newWidth * 2.0) + 50
-    newHeight = newHeight + 80
+    newHeight = newHeight + 30
     MailFrame:SetSize(newWidth, newHeight)
 
     -- override max tabsize for the "compose" button (as it's just the send mail tab)
     MailFrame.maxTabWidth = 320
 
     -- Configure Mail Frame Background
-
     MailFrame.mailFrameBgTexture = MailFrame:CreateTexture("MailFrameBgTexture", "BACKGROUND")
     MailFrame.mailFrameBgTexture:SetSize(newWidth, newHeight)
     MailFrame.mailFrameBgTexture:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 0, 5)
@@ -78,9 +133,11 @@ local function SkinMail()
 
     local inboxHeading = InboxFrame:CreateTexture("InboxHeadingBgTexture", "BACKGROUND")
     inboxHeading:SetSize(newWidth, 64)
-    inboxHeading:SetPoint("BOTTOMLEFT", nil, "TOPLEFT", 0, 5)
+    inboxHeading:SetPoint("BOTTOMLEFT", InboxTitleText, "TOPLEFT", 85, -24)
     inboxHeading:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader")
+    
     InboxFrame.heading = inboxHeading
+    InboxFrame.heading:SetWidth(310)
 
     -- configure location of SendMail Frame
     SendMailFrame:ClearAllPoints()
@@ -89,7 +146,7 @@ local function SkinMail()
 
     -- configure location of OpenMail Frame
     OpenMailFrame:ClearAllPoints()
-    OpenMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 0, 0)
+    OpenMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 0, 20)
     OpenMailFrameCloseButton:Hide()
     OpenMailTitleText:Hide()
     OpenMailFrameIcon:Hide()
@@ -117,34 +174,18 @@ local function SkinMail()
     InboxTitleText:SetTextColor(1, 1, 1, 1)
 
     -- Reskin OpenMailFrame Buttons
-    OpenMailReportSpamButton:SkinButton(false, true)
-    OpenMailReplyButton:SkinButton(false, true)
-    OpenMailDeleteButton:SkinButton(false, true)
-    OpenMailCancelButton:SkinButton(false, true)
-    OpenAllMail:SkinButton(false, true)
-    OpenMailScrollChildFrame:SkinScrollFrame()
-    OpenMailScrollFrameScrollBar:SkinScrollBar()
+    SkinOpenMailFrame()
+    SkinSendMailFrame()
+    SkinComposeButton()
 
-    SendMailCancelButton:SkinButton(false, true)
-    SendMailMailButton:SkinButton(false, true)
-
-    MailFrameTab1:Hide()
-    MailFrameTab2:SetSize(310, 24)
-    -- MailFrameTab2:SetFont(UNIT_NAME_FONT, 14)
-    MailFrameTab2:SetText("Compose")
-    MailFrameTab2:SetPoint("TOPLEFT", InboxTitleText, "TOPLEFT", 85, 35)
-    MailFrameTab2:SkinButton(false, true)
-    MailFrameTab2:SetScript("OnClick", function()
-        OpenMailFrame:Hide()
-        MailFrameTab_OnClick(self, 2)
-
-        InboxFrame:Show()
-        SendMailFrame:Show()
-        SendMailFrame_Update()
-        SetSendMailShowing(true)
-    end)
+    
     -- hook inbox buttons to close the compose view if we want to look at a message and it's open
+
+
+
 end
 GW.SkinMail = SkinMail
+
+
 
 GW.SkinMail()
