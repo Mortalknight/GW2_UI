@@ -1,3 +1,9 @@
+5.3.5
+
+NEW
+    - Make bottom left and right multibar moveable
+    
+
 5.3.4
 
 FIXES

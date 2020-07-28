@@ -647,8 +647,10 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy")
     elseif barName == "MultiBarBottomLeft" then
         lm:RegisterMultiBarLeft(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
     elseif barName == "MultiBarBottomRight" then
         lm:RegisterMultiBarRight(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
     end
     
     return fmMultibar
