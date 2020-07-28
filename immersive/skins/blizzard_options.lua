@@ -34,6 +34,7 @@ local function SkinBlizzardOptions()
         _G.Advanced_,
         _G.NetworkOptionsPanel,
         _G.InterfaceOptionsLanguagesPanel,
+        _G.MacKeyboardOptionsPanel,
         _G.AudioOptionsSoundPanel,
         _G.AudioOptionsSoundPanelHardware,
         _G.AudioOptionsSoundPanelVolume,
