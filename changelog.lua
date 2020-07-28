@@ -4,6 +4,13 @@ local v = GW.vernotes
 v(
     "1.8.7",
     [=[
+        - Make bottom left and right multibar moveable
+]=]
+)
+
+v(
+    "1.8.7",
+    [=[
         - Fix petbar auto moving in default position
 ]=]
 )

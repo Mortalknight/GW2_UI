@@ -192,26 +192,12 @@ local function updatePetFrameLocation()
     if not fPet or InCombatLockdown() then
         return
     end
-    local fMover = GwPlayerPetFrame.gwMover
     local fBar = MultiBarBottomLeft
     fPet:ClearAllPoints()
-    if fMover then
-        if not fMover.IsMoving then
-            fMover:ClearAllPoints()
-        else
-            fMover = nil
-        end
-    end
     if fBar and fBar.gw_FadeShowing then
         fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
-        if fMover then
-            fMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
-        end
     else
         fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
-        if fMover then
-            fMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
-        end
     end
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)

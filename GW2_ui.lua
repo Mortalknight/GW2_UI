@@ -81,8 +81,8 @@ local function lockableOnClick(self, btn)
     local new_point = GetSetting(settingsName)
     new_point["point"] = point
     new_point["relativePoint"] = relativePoint
-    new_point["xOfs"] = math.floor(xOfs)
-    new_point["yOfs"] = math.floor(yOfs)
+    new_point["xOfs"] = GW.RoundInt(xOfs)
+    new_point["yOfs"] = GW.RoundInt(yOfs)
     SetSetting(settingsName, new_point)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default

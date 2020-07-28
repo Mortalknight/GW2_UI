@@ -73,7 +73,7 @@ local onstate_Barlayout = [=[
     local dbar = self:GetFrameRef("debuffs")
     local pet = self:GetFrameRef("pet")
 
-    if mbl and mbl:IsShown() and pet and not pet:GetAttribute("isMoved") then
+    if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
         if newstate == "incombat" then
             pet:ClearAllPoints()
             pet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
@@ -90,11 +90,11 @@ local onstate_Barlayout = [=[
         end
     end
 
-    if bbar and not bbar:GetAttribute("isMoved") then
+    if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then
             buff_action = "low"
-            if mbr and mbr:IsShown() then
+            if mbr and mbr:IsShown() and not mbr:GetAttribute("isMoved") then
                 if newstate == "outcombat" then
                     if mbr:GetAttribute("gw_FadeShowing") then
                         buff_action = "high"

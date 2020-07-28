@@ -456,12 +456,7 @@ local function loadAuras(lm)
     end
     RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, true)
     hb:ClearAllPoints()
-    if not hb.isMoved then
-        local mbr = GwMultiBarBottomRight
-        hb:SetPoint(anchor_hb, mbr, anchor_hb, 0, 0)
-    else
-        hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
-    end
+    hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function (frame)
         local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
