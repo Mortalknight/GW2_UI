@@ -97,3 +97,33 @@ local function SkinDropDown()
     SkinUIDropDownMenu()
 end
 GW.SkinDropDown = SkinDropDown
+
+local function SkinTextBox(seg1, seg2, seg3)
+    if seg1 ~= nil then
+        seg1:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    end
+
+    if seg2 ~= nil then
+        seg2:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    end 
+
+    if seg3 ~= nil then
+        seg3:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    end
+end
+GW.SkinTextBox = SkinTextBox
+
+local function MutateInaccessableObject(frame, objType, func)
+    local r = {frame:GetRegions()}
+
+    if frame == nil or objType == nil or func == nil then
+        return
+    end
+
+    for _, c in pairs(r) do
+        if c:GetObjectType() == objType then
+            func(c)
+        end
+    end
+end
+GW.MutateInaccessableObject = MutateInaccessableObject

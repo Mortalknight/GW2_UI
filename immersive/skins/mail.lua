@@ -10,10 +10,16 @@ local OpenMailFrame = _G.OpenMailFrame
 
 local function FixMailSkin()
     MailFrameTab2:SetSize(310, 24)
+    SendMailSendMoneyButtonText:SetTextColor(1, 1, 1, 1)
+    SendMailCODButtonText:SetTextColor(1, 1, 1, 1)
 end
-GW.FixMailSkin = FixMailSkin
 
 local function SkinOpenMailFrame()
+ 
+    -- InboxPrevPageButton:SetTextColor(1, 1, 1, 1)
+    GW.MutateInaccessableObject(InboxNextPageButton, "FontString", setFontColorToWhite)
+  
+
     -- configure location of OpenMail Frame
     OpenMailFrame:ClearAllPoints()
     OpenMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 0, 20)
@@ -59,7 +65,19 @@ local function SkinOpenMailFrame()
     OpenMailScrollFrameScrollBar:SkinScrollBar()
 end
 
+local function setFontColorToWhite(self)
+    self:SetTextColor(1, 1, 1, 1)
+end
+
 local function SkinSendMailFrame()
+
+    GW.MutateInaccessableObject(SendMailCostMoneyFrame, "FontString", setFontColorToWhite)
+    GW.MutateInaccessableObject(SendMailNameEditBox, "FontString", setFontColorToWhite)
+    GW.MutateInaccessableObject(SendMailSubjectEditBox, "FontString", setFontColorToWhite)
+    
+    SendMailMoneyText:SetTextColor(1, 1, 1, 1)
+    -- setFontColorToWhite(SendMailMoneyButtonText)
+
     -- configure location of SendMail Frame
     SendMailFrame:ClearAllPoints()
     SendMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 46, 20)
@@ -68,7 +86,9 @@ local function SkinSendMailFrame()
     --Hides
     SendMailTitleText:Hide()
     SendStationeryBackgroundLeft:Hide() 
-    SendStationeryBackgroundRight:Hide() 
+    SendStationeryBackgroundRight:Hide()    
+    SendMailMoneyBg:Hide()
+    SendMailMoneyInset:Hide() 
     
     SendMailCancelButton:SkinButton(false, true)
     SendMailMailButton:SkinButton(false, true)
@@ -81,11 +101,47 @@ local function SkinSendMailFrame()
     -- SendMailScrollChildFrame.mailFrameBgTexture:SetAlpha(.5)
     SendMailScrollFrameScrollBar:SkinScrollBar()
 
-    SendMailMoneyBg:Hide()
-    SendMailMoneyInset:Hide()
     SendMailMoneyFrame:ClearAllPoints()
     SendMailMoneyFrame:SetPoint("BOTTOMLEFT", InboxFrame, "BOTTOMLEFT", 10, 42)
     
+    GW.SkinTextBox(SendMailNameEditBoxLeft,SendMailNameEditBoxMiddle, SendMailNameEditBoxRight)
+    GW.SkinTextBox(SendMailSubjectEditBoxLeft,SendMailSubjectEditBoxMiddle, SendMailSubjectEditBoxRight)
+    GW.SkinTextBox(SendMailMoneyGoldLeft,SendMailMoneyGoldMiddle, SendMailMoneyGoldRight)
+    GW.SkinTextBox(SendMailMoneySilverLeft,SendMailMoneySilverMiddle, SendMailMoneySilverRight)
+    GW.SkinTextBox(SendMailMoneyCopperLeft,SendMailMoneyCopperMiddle, SendMailMoneyCopperRight)
+
+    for i=1, _G.ATTACHMENTS_MAX_SEND do
+
+    end
+
+    -- for i = 1, _G.MAX_ACCOUNT_MACROS do
+    --     local b = _G["MacroButton" .. i]
+    --     local t = _G["MacroButton" .. i .. "Icon"]
+
+    --     if b then
+    --         b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    --         b:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    --         local r = {b:GetRegions()}
+    --         local ii = 1
+    --         for _,c in pairs(r) do
+    --             if c:GetObjectType() == "Texture" then
+    --                 if ii == 1 then
+    --                     c:SetTexture("Interface/AddOns/GW2_UI/textures/spelliconempty")
+    --                     c:SetSize(b:GetSize())
+    --                 end
+    --                 ii = ii + 1
+    --             end
+    --         end
+    --     end
+
+    --     if t then
+    --         t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    --     end
+    -- end
+
+
+
+
     SendMailBodyEditBox:SetFont(UNIT_NAME_FONT, 14)
     SendMailBodyEditBox:SetTextColor(1, 1, 1, 1)
 
@@ -170,6 +226,20 @@ local function InboxFrameMailItem_OnClick()
 end
 
 local function SkinMail()
+    
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("MAIL_SHOW")
+	eventFrame:RegisterEvent("MAIL_INBOX_UPDATE");
+	eventFrame:RegisterEvent("MAIL_CLOSED");
+	eventFrame:RegisterEvent("MAIL_SEND_INFO_UPDATE");
+	eventFrame:RegisterEvent("MAIL_SEND_SUCCESS");
+	eventFrame:RegisterEvent("MAIL_FAILED");
+	eventFrame:RegisterEvent("MAIL_SUCCESS");	
+	eventFrame:RegisterEvent("CLOSE_INBOX_ITEM");
+	eventFrame:RegisterEvent("MAIL_LOCK_SEND_ITEMS");
+	eventFrame:RegisterEvent("MAIL_UNLOCK_SEND_ITEMS");
+	eventFrame:RegisterEvent("TRIAL_STATUS_UPDATE");
+    eventFrame:SetScript("OnEvent", FixMailSkin)
 
     -- Strip and hide default textures
     _G.MailFrameBg:Hide()
@@ -253,4 +323,4 @@ GW.SkinMail = SkinMail
 
 
 
-GW.SkinMail()
+--GW.SkinMail()

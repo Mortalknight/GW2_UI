@@ -735,6 +735,9 @@ local function loadAddon(self)
     if GetSetting("MACRO_SKIN_ENABLED") then
         GW.SkinMacroOptions()
     end
+    if GetSetting("MAIL_SKIN_ENABLED") then
+        GW.SkinMail()
+    end
     
     
 
@@ -968,8 +971,6 @@ local function gw_OnEvent(self, event, ...)
         Debug("New faction:", GW.myfaction, GW.myLocalizedFaction)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         GW.CheckRole()
-    elseif event == "MAIL_SHOW" then
-        GW.FixMailSkin()
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
@@ -983,7 +984,6 @@ l:RegisterEvent("PLAYER_LEVEL_UP")
 l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 l:RegisterEvent("ADDON_LOADED")
-l:RegisterEvent("MAIL_SHOW");
 
 local function AddToClique(frame)
     if type(frame) == "string" then
