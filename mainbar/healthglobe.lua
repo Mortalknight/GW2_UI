@@ -398,13 +398,9 @@ local function LoadHealthGlobe()
     rep:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
     rep:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    -- grab the TotemFrame so it remains visible
+    -- grab the TotemFramebuttons to our own Totem Frame
     if PlayerFrame and TotemFrame then
-        TotemFrame:SetParent(playerHealthGLobaBg)
-        -- TODO: we can't position this directly; it's permanently attached to the PlayerFrame via SetPoints
-        -- in the TotemFrame OnUpdate that we can't override because combat lockdowns and whatnot, and simply
-        -- moving the PlayerFrame isn't ideal because its layout is highly variable; really we probably just
-        -- need to completely re-implement the TotemFrame with a custom version
+        GW.Create_Totem_Bar()
     end
 
     -- setup anim to flash the PvP marker

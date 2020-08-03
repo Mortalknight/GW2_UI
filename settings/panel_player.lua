@@ -125,6 +125,29 @@ local function LoadPlayerPanel(sWindow)
         {["HEALTHGLOBE_ENABLED"] = true}
     )
 
+    addOptionDropdown(
+        p,
+        L["TOTEMBAR_SORTING"],
+        nil,
+        "TotemBar_SortDirection",
+        nil,
+        {"ASC", "DSC"},
+        {L["ASCENDING"], L["DESCENDING"]},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
+    )
+    addOptionDropdown(
+        p,
+        L["TOTEMBAR_GROW_DIRECTION"],
+        nil,
+        "TotemBar_GrowDirection",
+        nil,
+        {"HORIZONTAL", "VERTICAL"},
+        {L["HORIZONTAL"], L["VERTICAL"]},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
+    )
+
     InitPanel(p)
 end
 GW.LoadPlayerPanel = LoadPlayerPanel

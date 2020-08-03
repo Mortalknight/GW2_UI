@@ -294,6 +294,13 @@ local function GWUseThisLocalization()
     L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
     L["PLAYER_BUFF_SIZE"] = "Buff size"
     L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
+    L["ASCENDING"] = "Ascending"
+    L["DESCENDING"] = "Descending"
+    L["CLASS_TOTEMS"] = "Class Totems"
+    L["TOTEMBAR_GROW_DIRECTION"] = "Class Totmes grow direction"
+    L["TOTEMBAR_SORTING"] = "Class Totmes sorting"
+    L["HORIZONTAL"] = "Horizontal"
+    L["VERTICAL"] = "Vertical"
 end
 
 if GetLocale() == "ruRU" then
