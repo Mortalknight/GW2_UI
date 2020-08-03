@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.3.5", [=[
 NEW
     - Make bottom left and right multibar moveable
+    - Make Talking Head Framwe moveable
 ]=])
 
 

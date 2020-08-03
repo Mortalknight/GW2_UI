@@ -528,10 +528,7 @@ local function adjustFixedAnchors(self, relativeAlert)
         local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
         local name = self.anchorFrame:GetName()
         if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
-            if name == "TalkingHeadFrame" then
-                self.anchorFrame:ClearAllPoints()
-                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-            elseif name == "GroupLootContainer" then
+            if name == "GroupLootContainer" then
                 self.anchorFrame:ClearAllPoints()
                 if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
                     self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
@@ -712,7 +709,7 @@ local function loadAddon(self)
         GW.SkinReadyCheck()
     end
     if GetSetting("TALKINGHEAD_SKIN_ENABLED") then
-        GW.SkinTalkingHeadFrame()
+        GW.SkinAndPositionTalkingHeadFrame()
     end
     if GetSetting("TIMERTRACKER_SKIN_ENABLED") then
         GW.SkinTimerTrackerFrame()

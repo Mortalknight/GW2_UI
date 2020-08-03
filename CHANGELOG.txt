@@ -2,6 +2,7 @@
 
 NEW
     - Make bottom left and right multibar moveable
+    - Make Talking Head Framwe moveable
     
 
 5.3.4
