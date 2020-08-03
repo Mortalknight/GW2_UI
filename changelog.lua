@@ -5,6 +5,8 @@ v("5.3.5", [=[
 NEW
     - Make bottom left and right multibar moveable
     - Make Talking Head Framwe moveable
+    - Added custom and moveable class totems
+    - Added player and mouse coordinates to Worldmap
 ]=])
 
 

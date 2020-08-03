@@ -3,6 +3,8 @@
 NEW
     - Make bottom left and right multibar moveable
     - Make Talking Head Framwe moveable
+    - Added custom and moveable class totems
+    - Added player and mouse coordinates to Worldmap
     
 
 5.3.4

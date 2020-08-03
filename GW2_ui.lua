@@ -733,6 +733,8 @@ local function loadAddon(self)
         GW.SkinMacroOptions()
     end
 
+    GW.AddCoordsToWorldMap()
+
     --Create hud art
     GW.LoadHudArt()
 
