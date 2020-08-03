@@ -1,6 +1,6 @@
 1.8.8
 - Make bottom left and right multibar moveable
-- Added Worldmap skin
+- Added Worldmap skin (incl. Player and Mouse coords)
 
 1.8.7
 - Fix petbar auto moving in default position
