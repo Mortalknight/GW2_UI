@@ -1,6 +1,4 @@
 local _, GW = ...
-local SkinScrollBar = GW.skins.SkinScrollBar
-local StripTextures = GW.StripTextures
 local GetSetting = GW.GetSetting
 
 local CHAT_FRAME_TEXTURES = {
@@ -378,7 +376,7 @@ local function styleChatWindow(frame)
     
     frame:SetClampRectInsets(0,0,0,0)
     frame:SetClampedToScreen(false)
-    StripTextures(frame, true)
+    frame:StripTextures(true)
     _G[name.."ButtonFrame"]:Hide()
     
     _G[format(editbox:GetName() .. "Left", id)]:Hide()
@@ -515,7 +513,7 @@ local function BuildCopyChatFrame()
     local scrollArea = CreateFrame("ScrollFrame", "CopyChatScrollFrame", frame, "UIPanelScrollFrameTemplate")
     scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
     scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
-    GW.skins.SkinScrollBar(CopyChatScrollFrameScrollBar)
+    CopyChatScrollFrameScrollBar:SkinScrollBar()
     scrollArea:SetScript("OnSizeChanged", function(scroll)
         CopyChatFrameEditBox:SetWidth(scroll:GetWidth())
         CopyChatFrameEditBox:SetHeight(scroll:GetHeight())
@@ -547,7 +545,7 @@ local function BuildCopyChatFrame()
     close:SetFrameLevel(close:GetFrameLevel() + 1)
     close:EnableMouse(true)
     close:SetSize(20, 20)
-    GW.skins.SkinButton(close, true)
+    close:SkinButton(true)
 end
 
 local function LoadChat()
@@ -581,7 +579,7 @@ local function LoadChat()
             local id = chatFrame:GetID()
             _G["GwChatContainer" .. id]:SetAlpha(0)
             if not chatFrame.minFrame.minimiizeStyled then
-                StripTextures(chatFrame.minFrame, true)
+                chatFrame.minFrame:StripTextures(true)
                 chatFrame.minFrame:SetBackdrop(GW.skins.constBackdropFrame)
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/maximize_button")

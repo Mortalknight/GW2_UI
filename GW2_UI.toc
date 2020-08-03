@@ -26,6 +26,7 @@ locales/zhCN.lua
 locales/itIT.lua
 
 core/consts.lua
+core/toolkit.lua
 core/utils.lua
 core/shared.xml
 core/fonts.lua

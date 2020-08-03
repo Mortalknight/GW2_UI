@@ -1,17 +1,11 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
-local SkinButton = GW.skins.SkinButton
-local SkinDropDownMenu = GW.skins.SkinDropDownMenu
-local SkinCheckButton = GW.skins.SkinCheckButton
-local SkinScrollBar = GW.skins.SkinScrollBar
-local SkinScrollFrame = GW.skins.SkinScrollFrame
-local StripTextures = GW.StripTextures
 
 local function SkinAddonList()
     local AddonList = _G.AddonList
 
-    StripTextures(_G.AddonList, true)
+    _G.AddonList:StripTextures(true)
     _G.AddonListBg:Hide()
     AddonList.TitleBg:Hide()
     AddonList.TopTileStreaks:Hide()
@@ -35,13 +29,13 @@ local function SkinAddonList()
     tex:SetSize(w + 50, h + 50)
     AddonList.tex = tex
 
-    SkinButton(AddonList.CloseButton, true)
-    SkinButton(AddonList.EnableAllButton, false, true)
-    SkinButton(AddonList.DisableAllButton, false, true)
-    SkinButton(AddonList.OkayButton, false, true)
-    SkinButton(AddonList.CancelButton, false, true)
-    SkinDropDownMenu(_G.AddonCharacterDropDown)
-    SkinCheckButton(_G.AddonListForceLoad)
+    AddonList.CloseButton:SkinButton(true)
+    AddonList.EnableAllButton:SkinButton(false, true)
+    AddonList.DisableAllButton:SkinButton(false, true)
+    AddonList.OkayButton:SkinButton(false, true)
+    AddonList.CancelButton:SkinButton(false, true)
+    _G.AddonCharacterDropDown:SkinDropDownMenu()
+    _G.AddonListForceLoad:SkinCheckButton()
     _G.AddonListForceLoad:SetSize(18, 18)
 
     AddonList.CloseButton:SetSize(25, 25)
@@ -51,14 +45,14 @@ local function SkinAddonList()
     _G.AddonListScrollFrame:SetBackdrop(nil)
 
     for i = 1, _G.MAX_ADDONS_DISPLAYED do
-        SkinCheckButton(_G["AddonListEntry" .. i .. "Enabled"])
+        _G["AddonListEntry" .. i .. "Enabled"]:SkinCheckButton()
         _G["AddonListEntry" .. i .. "Enabled"]:SetHitRectInsets(0, 0, 0, 0)
         _G["AddonListEntry" .. i .. "Enabled"]:SetSize(15, 15)
-        SkinButton(_G["AddonListEntry"  ..  i].LoadAddonButton, false, true)
+        _G["AddonListEntry"  ..  i].LoadAddonButton:SkinButton(false, true)
     end
 
-    SkinScrollFrame(_G.AddonListScrollFrame)
-    SkinScrollBar(_G.AddonListScrollFrameScrollBar)
+    _G.AddonListScrollFrame:SkinScrollFrame()
+    _G.AddonListScrollFrameScrollBar:SkinScrollBar()
 
     hooksecurefunc("TriStateCheckbox_SetState", function(checked, checkButton)
         local checkedTexture = _G[checkButton:GetName().."CheckedTexture"]

@@ -30,9 +30,9 @@ local function SkinStaticPopup()
         --Style Buttons (upto 5)
         for ii = 1, 5 do
             if ii < 5 then
-                SkinButton(_G["StaticPopup" .. i .. "Button" .. ii], false, true)
+                _G["StaticPopup" .. i .. "Button" .. ii]:SkinButton(false, true)
             else
-                SkinButton(_G["StaticPopup" .. i .. "ExtraButton"], false, true)
+                _G["StaticPopup" .. i .. "ExtraButton"]:SkinButton(false, true)
             end
         end
 

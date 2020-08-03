@@ -47,9 +47,9 @@ local function SkinMacroOptions()
     tex:SetSize(w + 50, h + 50)
     MacroFrame.tex = tex
 
-    SkinScrollBar(_G.MacroButtonScrollFrameScrollBar)
-    SkinScrollBar(_G.MacroFrameScrollFrameScrollBar)
-    SkinScrollFrame(_G.MacroButtonScrollFrame)
+    _G.MacroButtonScrollFrameScrollBar:SkinScrollBar()
+    _G.MacroFrameScrollFrameScrollBar:SkinScrollBar()
+    _G.MacroButtonScrollFrame:SkinScrollFrame()
 
     local buttons = {
         _G.MacroSaveButton,
@@ -61,15 +61,15 @@ local function SkinMacroOptions()
     }
 
     for i = 1, #buttons do
-        SkinButton(buttons[i], false, true)
+        buttons[i]:SkinButton(false, true)
     end
 
-    SkinButton(_G.MacroFrameCloseButton, true)
+    _G.MacroFrameCloseButton:SkinButton(true)
     _G.MacroFrameCloseButton:SetSize(25, 25)
     _G.MacroFrameCloseButton:ClearAllPoints()
     _G.MacroFrameCloseButton:SetPoint("TOPRIGHT", 0, 0)
-    SkinTab(_G.MacroFrameTab1)
-    SkinTab(_G.MacroFrameTab2)
+    _G.MacroFrameTab1:SkinTab()
+    _G.MacroFrameTab2:SkinTab()
 
     local r = {_G.MacroFrameSelectedMacroButton:GetRegions()}
     local ii = 1
@@ -121,10 +121,10 @@ local function SkinMacroOptions()
     MacroPopupFrame:Hide()
 
     -- Popout Frame
-    SkinButton(MacroPopupFrame.BorderBox.OkayButton, false, true)
-    SkinButton(MacroPopupFrame.BorderBox.CancelButton, false, true)
-    SkinScrollBar(_G.MacroPopupScrollFrameScrollBar)
-    SkinScrollFrame(_G.MacroPopupScrollFrame)
+    MacroPopupFrame.BorderBox.OkayButton:SkinButton(false, true)
+    MacroPopupFrame.BorderBox.CancelButton:SkinButton(false, true)
+    _G.MacroPopupScrollFrameScrollBar:SkinScrollBar()
+    _G.MacroPopupScrollFrame:SkinScrollFrame()
     _G.MacroPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
     _G.MacroPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
     _G.MacroPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")

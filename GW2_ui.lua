@@ -630,6 +630,9 @@ local function loadAddon(self)
     if GetSetting("MACRO_SKIN_ENABLED") then
         GW.SkinMacroOptions()
     end
+    if GetSetting("WORLDMAP_SKIN_ENABLED") then
+        GW.SkinWorldMap()
+    end
 
 
     --Create hud art

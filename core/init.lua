@@ -21,6 +21,8 @@ local Debug = GW.Debug
     --Tables
     GW.skins = {}
     GW.TexCoords = {0, 1, 0, 1}
+    GW.HiddenFrame = CreateFrame("Frame")
+    GW.HiddenFrame:Hide()
 
     --register libs
 do

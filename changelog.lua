@@ -5,6 +5,7 @@ v(
     "1.8.7",
     [=[
         - Make bottom left and right multibar moveable
+        - Added Worldmap skin
 ]=]
 )
 
