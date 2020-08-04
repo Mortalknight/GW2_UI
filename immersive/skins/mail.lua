@@ -140,6 +140,31 @@ local function SkinOpenMailFrame()
     OpenAllMail:SkinButton(false, true)
     OpenMailScrollChildFrame:SkinScrollFrame()
     OpenMailScrollFrameScrollBar:SkinScrollBar()
+
+    for i=1, _G.ATTACHMENTS_MAX_RECEIVE do
+        local b = _G["OpenMailAttachmentButton" .. i]
+        local t = _G["OpenMailAttachmentButton" .. i .. "IconTexture"]
+        if b then
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            local r = {b:GetRegions()}
+            local ii = 1
+            for _,c in pairs(r) do
+                if c:GetObjectType() == "Texture" then
+                    if ii == 1 then
+                        c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
+                        c:SetSize(b:GetSize())
+                        c:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+                    end
+                    ii = ii + 1
+                end
+            end
+        end
+
+        if t then
+            t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        end
+    end
+
 end
 
 local function setFontColorToWhite(self)
@@ -195,6 +220,7 @@ local function SkinSendMailFrame()
                     if ii == 1 then
                         c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
                         c:SetSize(b:GetSize())
+                        c:SetTexCoord(0.1, 0.9, 0.1, 0.9)
                     end
                     ii = ii + 1
                 end
@@ -281,8 +307,25 @@ local function ClearMailTextures()
     MailFrame:SetBackdrop(nil)
 
     for i=1, _G.INBOXITEMS_TO_DISPLAY do
-        local b = _G["MailItem"..i ] --.. "ButtonSlot"
+        local b = _G["MailItem" .. i ]
+        local bb = _G["MailItem" .. i .. "ButtonSlot"]
         b:StripTextures()
+         if bb then
+            bb:SetSize(b:GetHeight(), b:GetHeight())
+             bb:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        end
+
+        local r = {b:GetRegions()}
+        print(r)
+        local ii = 1
+        for _,c in pairs(r) do
+            if c:GetObjectType() == "Texture" then
+                if ii == 1 then
+                    c:SetSize(b:GetSize())
+                end
+                ii = ii + 1
+            end
+        end
     end
     MailFrameTab1:Hide()
 end
