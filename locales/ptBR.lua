@@ -285,12 +285,19 @@ local function GWUseThisLocalization()
     L["HUD_BACKGROUND"] = "Show HUD background"
     L["HUD_BACKGROUND_DESC"] = "The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"
     L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"] = "Dungeon & Raid Debuffs"
-    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importend Dungeon & Raid debuffs"
+    L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"] = "Show importent Dungeon & Raid debuffs"
     L["ALERTFRAMES"] = "Alertas"
     L["PLAYER_GROUP_FRAME"] = "Playerframe in group"
     L["PLAYER_GROUP_FRAME_DESC"] = "Show Player as Groupframe"
     L["PLAYER_BUFF_SIZE"] = "Buff size"
     L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
+    L["ASCENDING"] = "Ascending"
+    L["DESCENDING"] = "Descending"
+    L["CLASS_TOTEMS"] = "Class Totems"
+    L["TOTEMBAR_GROW_DIRECTION"] = "Class Totmes grow direction"
+    L["TOTEMBAR_SORTING"] = "Class Totmes sorting"
+    L["HORIZONTAL"] = "Horizontal"
+    L["VERTICAL"] = "Vertical"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

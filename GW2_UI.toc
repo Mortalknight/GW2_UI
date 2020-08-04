@@ -99,6 +99,7 @@ mainbar/petbar.lua
 mainbar/aurabar_blizz_modified.lua
 mainbar/aurabar.lua
 mainbar/castingbar.lua
+mainbar/totemBar.lua
 mainbar/healthglobe.lua
 mainbar/powerbar.lua
 mainbar/classpowers.lua
@@ -125,6 +126,7 @@ immersive/tooltips.lua
 
 objectives/questtracker.xml
 objectives/map.lua
+objectives/worldmap.lua
 objectives/objectives.lua
 objectives/scenario.lua
 objectives/notifications.lua

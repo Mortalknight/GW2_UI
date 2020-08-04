@@ -274,6 +274,21 @@ GW_DEFAULT["BNToastPos"]["relativePoint"] = "BOTTOMLEFT"
 GW_DEFAULT["BNToastPos"]["xOfs"] = 78
 GW_DEFAULT["BNToastPos"]["yOfs"] = 246
 
+GW_DEFAULT["TalkingHeadFrame_pos"] = {}
+GW_DEFAULT["TalkingHeadFrame_pos"]["point"] = "BOTTOM"
+GW_DEFAULT["TalkingHeadFrame_pos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["TalkingHeadFrame_pos"]["xOfs"] = 0
+GW_DEFAULT["TalkingHeadFrame_pos"]["yOfs"] = 372
+
+GW_DEFAULT["TotemBar_pos"] = {}
+GW_DEFAULT["TotemBar_pos"]["point"] = "TOPRIGHT"
+GW_DEFAULT["TotemBar_pos"]["relativePoint"] = "TOPRIGHT"
+GW_DEFAULT["TotemBar_pos"]["xOfs"] = -500
+GW_DEFAULT["TotemBar_pos"]["yOfs"] = -50
+
+GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
+GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
+
 GW_DEFAULT["AlertPos"] = {}
 GW_DEFAULT["AlertPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["AlertPos"]["relativePoint"] = "BOTTOMRIGHT"

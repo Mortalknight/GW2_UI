@@ -295,6 +295,13 @@ local function GWUseThisLocalization()
     L["PLAYER_GROUP_FRAME_DESC"] = "Spieler als Gruppenrahmen anzeigen"
     L["PLAYER_BUFF_SIZE"] = "Stärkungszaubergröße"
     L["PLAYER_DEBUFF_SIZE"] = "Schwächungszaubergröße"
+    L["ASCENDING"] = "Aufsteigend"
+    L["DESCENDING"] = "Absteigend"
+    L["CLASS_TOTEMS"] = "Klassen Totems"
+    L["TOTEMBAR_GROW_DIRECTION"] = "Klassen Totmes Wachstumsrichtung"
+    L["TOTEMBAR_SORTING"] = "Klassen Totmes Sortierrichtung"
+    L["HORIZONTAL"] = "Horizontal"
+    L["VERTICAL"] = "Vertikal"
 end
 
 if GetLocale() == "deDE" then

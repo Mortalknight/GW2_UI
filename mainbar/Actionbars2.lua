@@ -1087,7 +1087,6 @@ local function LoadActionBars(lm)
     UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["GroupLootContainer"] = nil
-    UIPARENT_MANAGED_FRAME_POSITIONS["TalkingHeadFrame"] = nil
 
     if not IsFrameModified("ExtraActionBarFrame") then
         GW.Debug("moving ExtraActionBarFrame")
