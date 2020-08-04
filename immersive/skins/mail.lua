@@ -14,12 +14,65 @@ local function FixMailSkin()
     SendMailCODButtonText:SetTextColor(1, 1, 1, 1)
 end
 
-local function SkinOpenMailFrame()
- 
-    -- InboxPrevPageButton:SetTextColor(1, 1, 1, 1)
-    GW.MutateInaccessableObject(InboxNextPageButton, "FontString", setFontColorToWhite)
-  
+local function AddFrameSeperator()
+    MailFrame.mailFrameSepTexture = MailFrame:CreateTexture("MailFrameSepTexture", "BACKGROUND")
+    MailFrame.mailFrameSepTexture:SetSize(600, 2)
+    MailFrame.mailFrameSepTexture:SetPoint("BOTTOMRIGHT", MailFrame, "BOTTOMRIGHT", 110, 50)
+    MailFrame.mailFrameSepTexture:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+end
 
+local function AddOnClickHandlers()
+    for i=1, _G.INBOXITEMS_TO_DISPLAY do
+        local b = _G["MailItem"..i .. "Button"]
+        
+        if b then
+            local r = {b:GetRegions()}
+            local ii = 1
+            
+            b:SetScript("OnClick", function(self)
+                --setup our UI code
+                SendMailFrame:Hide()
+                MailFrameTab_OnClick(self, 1)
+        
+                InboxFrame:Show()
+                OpenMailFrame:Show()
+                SendMailFrame_Update()
+                SetSendMailShowing(false)           
+
+                --callback into blizz native functions for click handler
+                local modifiedClick = IsModifiedClick("MAILAUTOLOOTTOGGLE");
+                if ( modifiedClick ) then
+                    InboxFrame_OnModifiedClick(self, self.index);
+                else
+                    InboxFrame_OnClick(self, self.index);
+                end
+    
+            end)
+        end
+    end
+end
+
+local function SkinPager()
+        
+    --InboxPrevPageButton:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
+    --InboxNextPageButton:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
+
+    local r = {InboxPrevPageButton:GetRegions()}
+    r[1]:SetTextColor(1,1,1,1)
+    r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
+    r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
+    r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
+    SetDesaturation(r[4], true)
+
+    local r2 = {InboxNextPageButton:GetRegions()}
+    r2[1]:SetTextColor(1,1,1,1)
+    r2[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
+    r2[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
+    r2[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
+    SetDesaturation(r2[4], true)
+end
+
+local function SkinOpenMailFrame()
     -- configure location of OpenMail Frame
     OpenMailFrame:ClearAllPoints()
     OpenMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 0, 20)
@@ -28,7 +81,6 @@ local function SkinOpenMailFrame()
     OpenMailFrameIcon:Hide()
     OpenMailSenderLabel:Hide()
     OpenMailSubjectLabel:Hide()
-
     OpenStationeryBackgroundLeft:Hide() 
     OpenStationeryBackgroundRight:Hide() 
 
@@ -53,12 +105,25 @@ local function SkinOpenMailFrame()
 
     OpenMailReportSpamButton:SkinButton(false, true)
     OpenMailReplyButton:SkinButton(false, true)
-    OpenMailReplyButton:SetPoint("RIGHT", OpenMailDeleteButton, "LEFT", -5, 0)
+    OpenMailReplyButton:SetPoint("RIGHT", OpenMailDeleteButton, "LEFT", -5,  0)
+    OpenMailReplyButton:SetScript("OnClick", 
+        function()
+            OpenMail_Reply()
+            OpenMailFrame:Hide()
+            MailFrameTab_OnClick(self, 2)
+    
+            InboxFrame:Show()
+            SendMailFrame:Show()
+            SendMailFrame_Update()
+            SetSendMailShowing(true)
+        end
+    )
 
     OpenMailDeleteButton:SkinButton(false, true)
     OpenMailDeleteButton:SetPoint("RIGHT", OpenMailCancelButton, "LEFT", -5, 0)
 
     OpenMailCancelButton:SkinButton(false, true)
+    OpenMailCancelButton:SetPoint("BOTTOMRIGHT", OpenMailFrame, "BOTTOMRIGHT", -7, -31)
 
     OpenAllMail:SkinButton(false, true)
     OpenMailScrollChildFrame:SkinScrollFrame()
@@ -75,6 +140,7 @@ local function SkinSendMailFrame()
     GW.MutateInaccessableObject(SendMailNameEditBox, "FontString", setFontColorToWhite)
     GW.MutateInaccessableObject(SendMailSubjectEditBox, "FontString", setFontColorToWhite)
     
+
     SendMailMoneyText:SetTextColor(1, 1, 1, 1)
     -- setFontColorToWhite(SendMailMoneyButtonText)
 
@@ -94,11 +160,6 @@ local function SkinSendMailFrame()
     SendMailMailButton:SkinButton(false, true)
 
     SendMailScrollChildFrame:SkinScrollFrame()
-    -- SendMailScrollChildFrame.mailFrameBgTexture = MailFrame:CreateTexture("MailFrameBgTexture", "BACKGROUND")
-    -- SendMailScrollChildFrame.mailFrameBgTexture:SetSize(SendMailScrollChildFrame:GetSize())
-    -- SendMailScrollChildFrame.mailFrameBgTexture:SetPoint("TOPLEFT", SendMailScrollChildFrame, "TOPLEFT", 5, 5)
-    -- SendMailScrollChildFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
-    -- SendMailScrollChildFrame.mailFrameBgTexture:SetAlpha(.5)
     SendMailScrollFrameScrollBar:SkinScrollBar()
 
     SendMailMoneyFrame:ClearAllPoints()
@@ -111,43 +172,34 @@ local function SkinSendMailFrame()
     GW.SkinTextBox(SendMailMoneyCopperLeft,SendMailMoneyCopperMiddle, SendMailMoneyCopperRight)
 
     for i=1, _G.ATTACHMENTS_MAX_SEND do
+        local b = _G["SendMailAttachment" .. i]
+        local t = _G["SendMailAttachment" .. i .. "IconOverlay"]
+        if b then
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            local r = {b:GetRegions()}
+            local ii = 1
+            for _,c in pairs(r) do
+                if c:GetObjectType() == "Texture" then
+                    if ii == 1 then
+                        c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
+                        c:SetSize(b:GetSize())
+                    end
+                    ii = ii + 1
+                end
+            end
+        end
 
+        if t then
+            t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        end
     end
-
-    -- for i = 1, _G.MAX_ACCOUNT_MACROS do
-    --     local b = _G["MacroButton" .. i]
-    --     local t = _G["MacroButton" .. i .. "Icon"]
-
-    --     if b then
-    --         b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-    --         b:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-    --         local r = {b:GetRegions()}
-    --         local ii = 1
-    --         for _,c in pairs(r) do
-    --             if c:GetObjectType() == "Texture" then
-    --                 if ii == 1 then
-    --                     c:SetTexture("Interface/AddOns/GW2_UI/textures/spelliconempty")
-    --                     c:SetSize(b:GetSize())
-    --                 end
-    --                 ii = ii + 1
-    --             end
-    --         end
-    --     end
-
-    --     if t then
-    --         t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    --     end
-    -- end
-
-
-
 
     SendMailBodyEditBox:SetFont(UNIT_NAME_FONT, 14)
     SendMailBodyEditBox:SetTextColor(1, 1, 1, 1)
 
     --reposition buttons
     SendMailMailButton:ClearAllPoints()
-    SendMailMailButton:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -53, 92)
+    SendMailMailButton:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -53, 57)
 
     SendMailCancelButton:ClearAllPoints()
     SendMailCancelButton:SetPoint("RIGHT", SendMailMailButton, "LEFT", -5, 0)
@@ -163,7 +215,7 @@ local function SkinSendMailFrame()
     local cancelButton = CreateFrame("Button", "SendMailQuit", SendMailFrame, "UIPanelButtonNoTooltipTemplate")
     cancelButton:ClearAllPoints()
     cancelButton:SetPoint("RIGHT", SendMailCancelButton, "LEFT", -5, 0)
-    cancelButton:SetText("Cancel")
+    cancelButton:SetText(CANCEL)
     cancelButton:SetSize(SendMailCancelButton:GetSize())
     cancelButton:SkinButton(false, true)
     cancelButton:SetScript("OnClick", function()
@@ -200,6 +252,10 @@ local function SkinComposeButton()
 end
 
 local function ClearMailTextures()
+    _G.MailFrameBg:Hide()
+    _G.MailFrameInset.NineSlice:Hide()
+    _G.MailFrameInset:SetBackdrop(constBackdropFrameBorder)
+
     MailFrame:StripTextures()
     InboxFrame:StripTextures()
     SendMailFrame:StripTextures()
@@ -212,17 +268,11 @@ local function ClearMailTextures()
     MailFrame.TopTileStreaks:Hide()
     MailFrame:SetBackdrop(nil)
 
+    for i=1, _G.INBOXITEMS_TO_DISPLAY do
+        local b = _G["MailItem"..i ] --.. "ButtonSlot"
+        b:StripTextures()
+    end
     MailFrameTab1:Hide()
-end
-
-local function InboxFrameMailItem_OnClick()
-    
-    -- local modifiedClick = IsModifiedClick("MAILAUTOLOOTTOGGLE");
-    -- if ( modifiedClick ) then
-    --     InboxFrame_OnModifiedClick(self, self.index);
-    -- else
-    --     InboxFrame_OnClick(self, self.index);
-    -- end
 end
 
 local function SkinMail()
@@ -242,12 +292,10 @@ local function SkinMail()
     eventFrame:SetScript("OnEvent", FixMailSkin)
 
     -- Strip and hide default textures
-    _G.MailFrameBg:Hide()
-    _G.MailFrameInset.NineSlice:Hide()
-    _G.MailFrameInset:SetBackdrop(constBackdropFrameBorder)
-
     ClearMailTextures()
-
+   
+    SkinPager()
+    
     -- Setup double sized frame to mimic approx. size for GW2 mail layout
     local newWidth, newHeight = MailFrame:GetSize()
     newWidth = (newWidth * 2.0) + 50
@@ -272,7 +320,7 @@ local function SkinMail()
     MailFrame.heading.Title = MailFrame:CreateFontString("MailFrameTitle", "ARTWORK")
     MailFrame.heading.Title:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 5, 30)
     MailFrame.heading.Title:SetFont(DAMAGE_TEXT_FONT, 20)
-    MailFrame.heading.Title:SetText("Mail")
+    MailFrame.heading.Title:SetText(MAIL_LABEL)
 
     -- MailFrame.icon = MailFrame:CreateTexture("MailFrameIcon", "ARTWORK")
     -- MailFrame.icon:SetSize(128, 128)
@@ -313,14 +361,13 @@ local function SkinMail()
     SkinOpenMailFrame()
     SkinSendMailFrame()
     SkinComposeButton()
+    
+    AddFrameSeperator()
+
 
     -- hook inbox buttons to close the compose view if we want to look at a message and it's open
-
+    AddOnClickHandlers()
 
 
 end
 GW.SkinMail = SkinMail
-
-
-
---GW.SkinMail()
