@@ -732,6 +732,11 @@ local function loadAddon(self)
     if GetSetting("MACRO_SKIN_ENABLED") then
         GW.SkinMacroOptions()
     end
+    if GetSetting("MAIL_SKIN_ENABLED") then
+        GW.SkinMail()
+    end
+    
+    
 
     GW.AddCoordsToWorldMap()
 
