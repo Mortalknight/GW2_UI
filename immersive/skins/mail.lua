@@ -316,7 +316,6 @@ local function ClearMailTextures()
         end
 
         local r = {b:GetRegions()}
-        print(r)
         local ii = 1
         for _,c in pairs(r) do
             if c:GetObjectType() == "Texture" then
