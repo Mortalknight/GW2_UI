@@ -54,12 +54,14 @@ end
 
 local function SkinMoneyFrame()
     -- setup money frame
-    SendMailMoneyFrame.bronze:SetFont(UNIT_NAME_FONT, 12)
-    SendMailMoneyFrame.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    SendMailMoneyFrame.silver:SetFont(UNIT_NAME_FONT, 12)
-    SendMailMoneyFrame.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    SendMailMoneyFrame.gold:SetFont(UNIT_NAME_FONT, 12)
-    SendMailMoneyFrame.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+    SendMailMoneyFrameCopperButtonText:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrameCopperButtonText:SetTextColor(177 / 255, 97 / 255, 34 / 255)
+    
+    SendMailMoneyFrameSilverButtonText:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrameSilverButtonText:SetTextColor(170 / 255, 170 / 255, 170 / 255)
+    
+    SendMailMoneyFrameGoldButtonText:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrameGoldButtonText:SetTextColor(221/255, 187/255, 68/255)
 end
 
 local function SkinPager()
@@ -150,7 +152,7 @@ local function SkinSendMailFrame()
     GW.MutateInaccessableObject(SendMailNameEditBox, "FontString", setFontColorToWhite)
     GW.MutateInaccessableObject(SendMailSubjectEditBox, "FontString", setFontColorToWhite)
     
-
+    SkinMoneyFrame()
     SendMailMoneyText:SetTextColor(1, 1, 1, 1)
     -- setFontColorToWhite(SendMailMoneyButtonText)
 
