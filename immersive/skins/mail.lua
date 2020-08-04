@@ -52,6 +52,16 @@ local function AddOnClickHandlers()
     end
 end
 
+local function SkinMoneyFrame()
+    -- setup money frame
+    SendMailMoneyFrame.bronze:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrame.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
+    SendMailMoneyFrame.silver:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrame.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
+    SendMailMoneyFrame.gold:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrame.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+end
+
 local function SkinPager()
         
     --InboxPrevPageButton:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
