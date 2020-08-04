@@ -192,12 +192,12 @@ local function SkinMailFrameSendItems()
         end
 	local t = b:GetNormalTexture()
 		
-        if b then
-            b:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        if t then
+            t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         end
-	i.IconBorder:ClearAllPoints()
-	i.IconBorder:SetPoint("TOPLEFT", b, "TOPLEFT", -2, 2)
-	i.IconBorder:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 2, -2)
+	b.IconBorder:ClearAllPoints()
+	b.IconBorder:SetPoint("TOPLEFT", b, "TOPLEFT", -2, 2)
+	b.IconBorder:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 2, -2)
     end	
 end
 
