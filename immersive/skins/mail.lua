@@ -313,7 +313,7 @@ local function ClearMailTextures()
     MailFrame:SetBackdrop(nil)
 
     for i = 1, _G.INBOXITEMS_TO_DISPLAY do
-        local bb = _G["MailItem" .. i]
+        local bg = _G["MailItem" .. i]
 		bg:StripTextures()
 		
         local btn = _G["MailItem" .. i .. "Button"]
