@@ -401,8 +401,8 @@ local function SkinMail()
     MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter")
    
     local inboxHeading = InboxFrame:CreateTexture("InboxHeadingBgTexture", "BACKGROUND")
-    inboxHeading:SetSize(newWidth, 64)
-    inboxHeading:SetPoint("BOTTOMLEFT", InboxTitleText, "TOPLEFT", 85, -24)
+    inboxHeading:SetSize(newWidth, 48)
+    inboxHeading:SetPoint("BOTTOMLEFT", InboxTitleText, "TOPLEFT", 85, -18)
     inboxHeading:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader")
     
     InboxFrame.heading = inboxHeading
