@@ -75,13 +75,14 @@ local function getNearestQuestPOI(currentMapID)
     if not currentMapID then
         return nil
     end
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
+
+	local posX, posY = GW.GetPlayerMapPos(currentMapID)
+    
     local numQuests, _ = GetNumQuestLogEntries()
-    if posTable == nil or numQuests == nil then
+    if posX == nil or posY == nil or numQuests == nil then
         return nil
     end
 
-    local posX, posY = posTable:GetXY()
     local closest = false
     for i = 1, numQuests do
         local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI, _ = GetQuestLogTitle(i)
@@ -122,14 +123,12 @@ local function getBodyPOI()
     if not currentMapID then
         return nil
     end
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
+
+    local posX, posY = GW.GetPlayerMapPos(currentMapID)
+
     local corpTable = C_DeathInfo.GetCorpseMapPosition(currentMapID)
-    if posTable == nil or corpTable == nil then
-        return nil
-    end
-    local posX, _ = posTable:GetXY()
     local x, y = corpTable:GetXY()
-    if posX == nil or posX == 0 or x == nil or x == 0 then
+    if posX == nil or posY == nil or x == nil or x == 0 or corpTable == nil then
         return nil
     end
 
@@ -220,12 +219,12 @@ local function updateRadar(self, elapsed)
     end
     self.TotalElapsed = 0
 
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
-    if posTable == nil or self.data["X"] == nil then
+	local posX, posY = GW.GetPlayerMapPos(currentMapID)
+
+    if posX == nil or posY == nil or self.data["X"] == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
         return
     end
-    local posX, posY = posTable:GetXY()
 
     local pFacing = GetPlayerFacing()
     if pFacing == nil then pFacing = 0 end
@@ -306,7 +305,6 @@ local function SetObjectiveNotification(mapID)
         GwObjectivesNotification.compass:Show()
         GwObjectivesNotification.compass.data = data
         GwObjectivesNotification.compass.dataIndex = data["ID"]
-        currentNotificationKey = key
 
         if icons[data["TYPE"]] ~= nil then
             GwObjectivesNotification.compass.icon:SetTexture(

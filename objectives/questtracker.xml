@@ -532,7 +532,7 @@
         </Frames>
     </Frame>
     
-    <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerBossFrame" virtual="true">
+    <Button name="GwQuestTrackerBossFrameTemp" inherits="SecureUnitButtonTemplate" virtual="true" hidden="true">
         <Size x="300" y="35"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -568,8 +568,7 @@
             </Layer>
         </Layers>
         <Frames>
-
-            <StatusBar name="$parentStatusBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentHealthBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="280" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
@@ -587,7 +586,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar name="$parentStatusBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentPowerBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="280" y="2"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-28"></Anchor>
@@ -597,7 +596,7 @@
         </Frames>
     </Button>
 
-    <Button inherits="SecureUnitButtonTemplate" name="GwQuestTrackerArenaPrepFrame" virtual="true" hidden="true">
+    <Button name="GwQuestTrackerArenaPrepFrameTemp" inherits="SecureUnitButtonTemplate" virtual="true" hidden="true">
         <Size x="300" y="35"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>

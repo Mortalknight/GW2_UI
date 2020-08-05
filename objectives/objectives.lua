@@ -11,6 +11,7 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
 local mapID = ""
+local updateCap = 1 / 5
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -732,17 +733,21 @@ local function trackerNotification_OnEvent(self, event)
 end
 GW.AddForProfiling("objectives", "trackerNotification_OnEvent", trackerNotification_OnEvent)
 
-local function tracker_OnUpdate()
-    if GwQuestTracker.trot < GetTime() then
-        local state = GwObjectivesNotification.shouldDisplay
+local function tracker_OnUpdate(self, elapsed)
+    self.elapsedTimer = self.elapsedTimer - elapsed
+    if self.elapsedTimer > 0 then
+        return
+    end
+    self.elapsedTimer = updateCap
 
-        GwQuestTracker.trot = GetTime() + 1
+    local prevState = GwObjectivesNotification.shouldDisplay
+
+    if mapID then
         GW.SetObjectiveNotification(mapID)
+    end
 
-        if state ~= GwObjectivesNotification.shouldDisplay then
-            state = GwObjectivesNotification.shouldDisplay
-            GW.NotificationStateChanged(state)
-        end
+    if prevState ~= GwObjectivesNotification.shouldDisplay then
+        GW.NotificationStateChanged(GwObjectivesNotification.shouldDisplay)
     end
 end
 GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
@@ -861,7 +866,6 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("PLAYER_MONEY")
     fQuest:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED")
     fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
-    fQuest:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
 
     local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
     header.icon:SetTexCoord(0, 1, 0.25, 0.5)
@@ -901,7 +905,7 @@ local function LoadQuestTracker()
     GW.LoadBonusFrame()
 
     fNotify.shouldDisplay = false
-    fTracker.trot = GetTime() + 2
+    fTracker.elapsedTimer = -1
     fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
     fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
     fTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")

@@ -200,10 +200,7 @@ GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 local function MapPositionToXY(arg)
     local mapID = C_Map.GetBestMapForUnit(arg)
     if mapID and arg then
-        local mapPos = C_Map.GetPlayerMapPosition(mapID, arg)
-        if mapPos then
-            return mapPos:GetXY()
-        end
+        return GW.GetPlayerMapPos(mapID)
     end
     return 0, 0
 end

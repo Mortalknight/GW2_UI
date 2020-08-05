@@ -20,6 +20,7 @@ local function GetPlayerMapPos(mapID)
 
 	return (tempVec2D.y/mapRect[2].y), (tempVec2D.x/mapRect[2].x)
 end
+GW.GetPlayerMapPos = GetPlayerMapPos
 
 local function UpdateCoords()
     local WorldMapFrame = _G.WorldMapFrame

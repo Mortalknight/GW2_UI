@@ -8,6 +8,8 @@ local SetClassIcon = GW.SetClassIcon
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 local nameRoleIcon = GW.nameRoleIcon
+local arenaFrames = {}
+local arenaPrepFrames = {}
 
 local countArenaFrames = 0
 local countArenaPrepFrames = 0
@@ -69,21 +71,16 @@ local function setCompass()
     AddTrackerNotification(compassData)
 end
 
-local function updateArenaFrameHeight(frame)
-    local height = 1
-    local ii = 0
-    for i = 1, 5 do 
-        if _G[frame .. i]:IsShown() then
-            ii = i
+local function updateArenaFrameHeight(frames)
+    local i = 0
+
+    for k, frame in pairs(frames) do
+        if frame:IsShown() then
+            i = k
         end
     end
-    for i = 1, 5 do
-        if _G[frame .. i]:IsShown() then
-            height = height + (_G[frame .. i]:GetHeight() * ii)
-            break
-        end
-    end
-    GwQuesttrackerContainerBossFrames:SetHeight(height)
+
+    GwQuesttrackerContainerBossFrames:SetHeight(i > 0 and 1 + (frames[i]:GetHeight() * i) or 1)
 end
 GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)
 
@@ -96,7 +93,8 @@ local function updateArena_Health(self)
         healthPrecentage = health / maxHealth
     end
 
-    self.health:SetValue(healthPrecentage)
+    self.health:SetMinMaxValues(0, maxHealth)
+    self.health:SetValue(maxHealth)
     self.health.value:SetText(GW.RoundInt(healthPrecentage * 100) .. "%")
 end
 GW.AddForProfiling("arenaFrames", "updateArena_Health", updateArena_Health)
@@ -105,19 +103,6 @@ local function updateArena_Power(self)
     local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
-    local powerPrecentage = 0
-
-    if power > 0 and powerMax > 0 then
-        powerPrecentage = power / powerMax
-    end
-
-    if power <= 0 then
-        self.power:Hide()
-        self.health:SetHeight(10)
-    else
-        self.power:Show()
-        self.health:SetHeight(8)
-    end
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
@@ -126,7 +111,8 @@ local function updateArena_Power(self)
         self.power:SetStatusBarColor(altR, altG, altB)
     end
 
-    self.power:SetValue(powerPrecentage)
+    self.power:SetMinMaxValues(0, powerMax)
+    self.power:SetValue(power)
 end
 GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 
@@ -216,19 +202,11 @@ local function arenaPrepFrame_OnEvent()
     local numOpps = GetNumArenaOpponentSpecs()
 
     if _G.ArenaPrepFrames then
-        _G.ArenaPrepFrames:HookScript("OnLoad", function(self)
-            self:Hide()
-            self:SetScript("OnEvent", nil)
-        end)
-
-        _G.ArenaPrepFrames:HookScript("OnShow", function(self)
-            self:Hide()
-            self:SetScript("OnEvent", nil)
-        end)
+        _G.ArenaPrepFrames:Kill()
     end
 
     for i = 1, MAX_ARENA_ENEMIES do
-        local prepFrame = _G["GwQuestTrackerArenaPrepFrame" .. i]
+        local prepFrame = arenaPrepFrames[i]
         if i <= numOpps then
             local specID, gender = GetArenaOpponentSpec(i)
             if specID > 0 then 
@@ -262,80 +240,65 @@ end
 GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
 
 local function registerFrame(i)
-    local debug_unit_Track = "arena" .. i
-
-    local targetF = CreateFrame("Button", "GwQuestTrackerArenaFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFrame")
-
+    local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
+    local unit = "arena" .. i
     local p = 70 + ((35 * i) - 35)
 
-    targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
+    arenaFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
-    targetF.unit = debug_unit_Track
-    targetF.id = i
-    targetF.guid = UnitGUID(targetF.unit)
-    targetF:SetAttribute("unit", debug_unit_Track)
+    arenaFrame.unit = unit
+    arenaFrame.id = i
+    arenaFrame.guid = UnitGUID(unit)
 
-    targetF:SetAttribute("*type1", "target")
-    targetF:SetAttribute("*type2", "showmenu")
+    arenaFrame:SetAttribute("unit", unit)
+    arenaFrame:SetAttribute("*type1", "target")
+    arenaFrame:SetAttribute("*type2", "showmenu")
 
-    AddToClique(targetF)
+    AddToClique(arenaFrame)
 
-    RegisterUnitWatch(targetF)
-    targetF:EnableMouse(true)
-    targetF:RegisterForClicks("AnyDown")
+    RegisterUnitWatch(arenaFrame)
+    arenaFrame:EnableMouse(true)
+    arenaFrame:RegisterForClicks("AnyDown")
 
-    targetF.name:SetFont(UNIT_NAME_FONT, 12)
-    targetF.name:SetShadowOffset(1, -1)
-    targetF.marker:Hide()
-    targetF.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
+    arenaFrame.name:SetFont(UNIT_NAME_FONT, 12)
+    arenaFrame.name:SetShadowOffset(1, -1)
+    arenaFrame.marker:Hide()
+    arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
 
-    targetF:RegisterUnitEvent("UNIT_MAXHEALTH", targetF.unit)
-    targetF:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", targetF.unit)
-    targetF:RegisterUnitEvent("UNIT_MAXPOWER", targetF.unit)
-    targetF:RegisterUnitEvent("UNIT_POWER_FREQUENT", targetF.unit)
-    targetF:RegisterUnitEvent("UNIT_NAME_UPDATE", targetF.unit)
-    targetF:RegisterEvent("PLAYER_TARGET_CHANGED")
-    targetF:RegisterEvent("PLAYER_ENTERING_WORLD")
-    targetF:RegisterEvent("ARENA_OPPONENT_UPDATE")
-
-    targetF:SetScript(
+    arenaFrame:SetScript(
         "OnShow",
         function(self)
             --Hide prep frames
-            for i = 1, 5 do
-                if _G["GwQuestTrackerArenaPrepFrame" .. i]:IsShown() then
-                    _G["GwQuestTrackerArenaPrepFrame" .. i]:Hide()
-                    _G["GwQuestTrackerArenaPrepFrame" .. i]:SetScript("OnEvent", nil)
+            for k, frame in pairs(arenaPrepFrames) do
+                if frame:IsShown() then
+                    frame:Hide()
                 end
             end
 
-            updateArenaFrameHeight("GwQuestTrackerArenaFrame")
+            self:RegisterEvent("PLAYER_TARGET_CHANGED")
+            self:RegisterEvent("PLAYER_ENTERING_WORLD")
+            self:RegisterEvent("ARENA_OPPONENT_UPDATE")
+            self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
+            self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self.unit)
+            self:RegisterUnitEvent("UNIT_MAXPOWER", self.unit)
+            self:RegisterUnitEvent("UNIT_POWER_FREQUENT", self.unit)
+            self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
+
+            updateArenaFrameHeight(arenaPrepFrames)
 
             updateArena_Health(self)
             updateArena_Power(self)
             updateArena_Name(self)
 
             countArenaFrames = countArenaFrames + 1
-
-            --Hide Blizzard frames
-            if _G["ArenaEnemyFrame" .. i] and _G["ArenaEnemyFrame" .. i]:IsShown() then 
-                _G["ArenaEnemyFrame" .. i]:SetAlpha(0)
-                _G["ArenaEnemyFrame" .. i]:SetScript("OnEvent", nil)
-                _G["ArenaEnemyFrame" .. i]:SetScript("OnEnter", nil)
-                if _G["ArenaEnemyFrame" .. i .. "PetFrame"] and _G["ArenaEnemyFrame" .. i .. "PetFrame"]:IsShown() then
-                    _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetAlpha(0)
-                    _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
-                    _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEnter", nil)
-                end  
-            end
         end
     )
 
-    targetF:SetScript(
+    arenaFrame:SetScript(
         "OnHide",
-        function()
+        function(self)
             countArenaFrames = countArenaFrames - 1
-            updateArenaFrameHeight("GwQuestTrackerArenaFrame")
+            updateArenaFrameHeight(arenaFrames)
             local isArena = GetZonePVPInfo()
             local inBG = UnitInBattleground("player")
 
@@ -343,74 +306,53 @@ local function registerFrame(i)
                 RemoveTrackerNotificationOfType("ARENA")
                 countArenaFrames = 0
             end
+
+            self:UnregisterAllEvent()
         end
     )
 
-    targetF:SetScript(
-        "OnUpdate",
-        function()
-            if _G["ArenaEnemyFrame" .. i .. "PetFrame"] and _G["ArenaEnemyFrame" .. i .. "PetFrame"]:IsShown() then
-                _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetAlpha(0)
-                _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
-                _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEnter", nil)
-            end 
-        end
-    )
+    arenaFrame:SetScript("OnEvent", arenaFrame_OnEvent)
 
-    targetF:SetScript("OnEvent", arenaFrame_OnEvent)
+    return arenaFrame
 end
 GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 
 local function registerPrepFrame(i)
-    local targetF = CreateFrame("Button", "GwQuestTrackerArenaPrepFrame" .. i, GwQuestTracker, "GwQuestTrackerArenaPrepFrame")
+    local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
     local p = 70 + ((35 * i) - 35)
 
-    targetF:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
+    arenaPrepFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
-    targetF:EnableMouse(true)
-    targetF:RegisterForClicks("AnyDown")
+    arenaPrepFrame:EnableMouse(true)
+    arenaPrepFrame:RegisterForClicks("AnyDown")
 
-    targetF.name:SetFont(UNIT_NAME_FONT, 12)
-    targetF.name:SetShadowOffset(1, -1)
+    arenaPrepFrame.name:SetFont(UNIT_NAME_FONT, 12)
+    arenaPrepFrame.name:SetShadowOffset(1, -1)
 
-    targetF:SetScript(
+    arenaPrepFrame:SetScript(
         "OnShow",
         function(self)
-            updateArenaFrameHeight("GwQuestTrackerArenaPrepFrame")
+            updateArenaFrameHeight(arenaPrepFrames)
             countArenaPrepFrames = countArenaPrepFrames + 1
         end
     )
+
+    return arenaPrepFrame
 end
 GW.AddForProfiling("arenaFrames", "registerPrepFrame", registerPrepFrame)
 
 local function LoadArenaFrame()
     Arena_LoadUI()
 
-    for i = 1, 5 do
-        registerFrame(i)
-        registerPrepFrame(i)
+    for i = 1, MAX_ARENA_ENEMIES do
+        arenaFrames[i] = registerFrame(i)
+        arenaPrepFrames[i] = registerPrepFrame(i)
         if _G["ArenaEnemyFrame" .. i] ~= nil then
-            _G["ArenaEnemyFrame" .. i]:Hide()
-            _G["ArenaEnemyFrame" .. i]:SetScript("OnEvent", nil)
-            _G["ArenaEnemyFrame" .. i]:SetScript("OnShow", function(self) self:Hide() end)
+            _G["ArenaEnemyFrame" .. i]:Kill()
         end
         if _G["ArenaEnemyFrame" .. i .. "PetFrame"] ~= nil then
-            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Hide()
-            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnEvent", nil)
-            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:SetScript("OnShow", nil)
+            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Kill()
         end
-    end
-
-    if _G.ArenaPrepFrames then
-        _G.ArenaPrepFrames:HookScript("OnLoad", function(self)
-            self:Hide()
-            self:SetScript("OnEvent", nil)
-        end)
-
-        _G.ArenaPrepFrames:HookScript("OnShow", function(self)
-            self:Hide()
-            self:SetScript("OnEvent", nil)
-        end)
     end
 
     --create prepframe frame to handle events
@@ -434,6 +376,6 @@ local function LoadArenaFrame()
         end)
     end)
 
-    updateArenaFrameHeight("GwQuestTrackerArenaFrame")
+    updateArenaFrameHeight(arenaFrames)
 end
 GW.LoadArenaFrame = LoadArenaFrame
