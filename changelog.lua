@@ -5,7 +5,7 @@ v(
     "1.8.7",
     [=[
         - Make bottom left and right multibar moveable
-        - Added Worldmap skin (incl. Player and Mouse coords)
+        - Added Worldmap skin (incl. Player and Mouse coords, moving and resizing)
 ]=]
 )
 
