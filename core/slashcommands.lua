@@ -19,6 +19,7 @@ local function LoadSlashCommands()
             GW.SetSetting("BAG_POSITION", nil)
             GW.SetSetting("BANK_POSITION", nil)
             GW.SetSetting("HERO_POSITION", nil)
+            GW.SetSetting("MAILBOX_POSITION", nil)
             C_UI.Reload()
         elseif msg == "status" then
             GW.ShowStatusReport()
