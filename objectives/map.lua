@@ -217,7 +217,7 @@ GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
 
 local function mapCoordsMiniMap_setCoords(self)
     local posX, posY = MapPositionToXY("player")
-    if (posX == 0 and posY == 0) then
+    if (posX == nil and posY == nil) then
         self.Coords:SetText("n/a")
     else
         self.Coords:SetText(RoundDec(posX * 1000 / 10, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, self.MapCoordsMiniMapPrecision)) 
