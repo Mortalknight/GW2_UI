@@ -28,17 +28,6 @@ local function UpdateCoords()
         return
     end
 
-    if WorldMapFrame.ScrollContainer:IsMouseOver() then
-        local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
-        if x and y and x >= 0 and y >= 0 then
-            CoordsFrame.mouseCoords:SetFormattedText("%s: %.2f, %.2f", MOUSE_LABEL, x * 100, y * 100)
-        else
-            CoordsFrame.mouseCoords:SetText("")
-        end
-    else
-        CoordsFrame.mouseCoords:SetText("")
-    end
-
 	local x, y
 	local mapID = C_Map.GetBestMapForUnit("player")
 	if mapID then
@@ -50,10 +39,17 @@ local function UpdateCoords()
 	if x and y then
 		x = GW.RoundDec(100 * x, 2)
 		y = GW.RoundDec(100 * y, 2)
-		CoordsFrame.playerCoords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (x or 0), (y or 0))
+		CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (x or 0), (y or 0))
 	else
-		CoordsFrame.playerCoords:SetFormattedText("%s: %s", PLAYER, "N/A")
-	end
+		CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, "n/a")
+    end
+    
+    if WorldMapFrame.ScrollContainer:IsMouseOver() then
+        local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
+        if x and y and x >= 0 and y >= 0 then
+            CoordsFrame.Coords:SetFormattedText("%s - %s: %.2f, %.2f", CoordsFrame.Coords:GetText(), MOUSE_LABEL, x * 100, y * 100)
+        end
+    end
 end
 
 local function AddCoordsToWorldMap()
@@ -63,12 +59,9 @@ local function AddCoordsToWorldMap()
     CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
     CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
     CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
-    CoordsFrame.playerCoords = CoordsFrame:CreateFontString(nil, "OVERLAY")
-    CoordsFrame.mouseCoords = CoordsFrame:CreateFontString(nil, "OVERLAY")
-    CoordsFrame.playerCoords:SetTextColor(1, 1 ,1)
-    CoordsFrame.mouseCoords:SetTextColor(1, 1 ,1)
-    CoordsFrame.playerCoords:SetFontObject(_G.NumberFontNormal)
-    CoordsFrame.mouseCoords:SetFontObject(_G.NumberFontNormal)
+    CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
+    CoordsFrame.Coords:SetTextColor(1, 1 ,1)
+    CoordsFrame.Coords:SetFontObject(_G.NumberFontNormal)
 
     WorldMapFrame:HookScript("OnShow", function()
         if not CoordsTimer then
@@ -81,10 +74,7 @@ local function AddCoordsToWorldMap()
         CoordsTimer = nil
     end)
 
-    CoordsFrame.playerCoords:ClearAllPoints()
-	CoordsFrame.playerCoords:SetPoint("BOTTOMLEFT", _G.WorldMapFrame.ScrollContainer, "BOTTOMLEFT", 5, 5)
-
-	CoordsFrame.mouseCoords:ClearAllPoints()
-	CoordsFrame.mouseCoords:SetPoint("BOTTOMLEFT", CoordsFrame.playerCoords, "TOPLEFT", 0, 5)
+    CoordsFrame.Coords:ClearAllPoints()
+	CoordsFrame.Coords:SetPoint("TOP", _G.WorldMapFrame.ScrollContainer, "TOP", 0, 0)
 end
 GW.AddCoordsToWorldMap = AddCoordsToWorldMap

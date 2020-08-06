@@ -27,7 +27,7 @@ local function updateBoss_Health(self)
     end
 
     self.health:SetMinMaxValues(0, maxHealth)
-    self.health:SetValue(maxHealth)
+    self.health:SetValue(health)
     self.health.value:SetText(GW.RoundInt(healthPrecentage * 100) .. "%")
 end
 GW.AddForProfiling("bossFrames", "updateBoss_Health", updateBoss_Health)
