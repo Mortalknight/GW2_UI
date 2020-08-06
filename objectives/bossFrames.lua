@@ -174,7 +174,7 @@ local function registerFrame(i)
         "OnHide",
         function(self)
             updateBossFrameHeight()
-            self:UnregisterAllEvent()
+            self:UnregisterAllEvents()
 
             if self.id == 1 then
                 RemoveTrackerNotificationOfType("BOSS")

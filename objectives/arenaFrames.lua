@@ -307,7 +307,7 @@ local function registerFrame(i)
                 countArenaFrames = 0
             end
 
-            self:UnregisterAllEvent()
+            self:UnregisterAllEvents()
         end
     )
 
