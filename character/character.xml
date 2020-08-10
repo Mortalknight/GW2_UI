@@ -89,7 +89,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture name="$parentRepair" hidden="true" parentKey="repairIcon" file="Interface\AddOns\GW2_UI\textures\repair">
+                <Texture name="$parentRepair" hidden="true" parentKey="repairIcon" file="Interface\AddOns\GW2_UI\textures\globe\repair">
                     <Size x="20" y="20"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
