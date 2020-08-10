@@ -69,7 +69,7 @@ local function SkinWorldMap()
     local w, h = WorldMapFrame:GetSize()
     tex:SetPoint("TOP", WorldMapFrame, "TOP", 10, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    tex:SetSize(w + 120, h + 80 )
+    tex:SetSize(w + 110, h + 50)
     WorldMapFrame.tex = tex
 
     _G.WorldMapContinentDropDown:SkinDropDownMenu()
@@ -163,10 +163,17 @@ local function SkinWorldMap()
     WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
     -- Create scale handle
+    -- Replace function to account for frame scale
+    WorldMapFrame.ScrollContainer.GetCursorPosition = function(f)
+        local x,y = MapCanvasScrollControllerMixin.GetCursorPosition(f)
+        local s = WorldMapFrame:GetScale() * UIParent:GetEffectiveScale()
+        return x/s, y/s
+    end        
+
     local scaleHandle = CreateFrame("Frame", nil, WorldMapFrame)
     scaleHandle:SetWidth(50)
     scaleHandle:SetHeight(50)
-    scaleHandle:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", 8, 5)
+    scaleHandle:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", -10, 30)
     scaleHandle:SetFrameStrata(WorldMapFrame:GetFrameStrata())
     scaleHandle:SetFrameLevel(WorldMapFrame:GetFrameLevel() + 15)
 
