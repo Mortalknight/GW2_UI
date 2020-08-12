@@ -13,8 +13,12 @@ local function GetPlayerMapPos(mapID)
 		mapRect = {
 			select(2, C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(0, 0))),
 			select(2, C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(1, 1)))}
-		mapRect[2]:Subtract(mapRect[1])
-		mapRects[mapID] = mapRect
+		if mapRect[1] and mapRect[2] then	
+			mapRect[2]:Subtract(mapRect[1])
+			mapRects[mapID] = mapRect
+		else
+			return nil, nil
+		end
 	end
 	tempVec2D:Subtract(mapRect[1])
 
