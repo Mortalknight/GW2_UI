@@ -16,7 +16,7 @@ local function SkinStaticPopup()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
 
-        StaticPopup:SetBackdrop(nil)
+        StaticPopup:CreateBackdrop(nil)
         StaticPopup.CoverFrame:Hide()
         StaticPopup.Separator:Hide()
         StaticPopup.Border:Hide()

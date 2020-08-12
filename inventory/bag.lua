@@ -183,12 +183,12 @@ GW.AddForProfiling("bag", "updateMoney", updateMoney)
 
 local function watchCurrency(self)
     local watchSlot = 1
-    local currencyCount = GetCurrencyListSize()
+    local currencyCount = C_CurrencyInfo.GetCurrencyListSize()
     for i = 1, currencyCount do
-        local _, isHeader, _, _, isWatched, count, icon, _ = GetCurrencyListInfo(i)
-        if not isHeader and isWatched and watchSlot < 4 then
-            self["currency" .. tostring(watchSlot)]:SetText(count)
-            self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(icon)
+        local info = C_CurrencyInfo.GetCurrencyListInfo(i)
+        if not info.isHeader and info.isShownInBackpack and watchSlot < 4 then
+            self["currency" .. tostring(watchSlot)]:SetText(info.quantitly)
+            self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(info.iconFileID)
             self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
             watchSlot = watchSlot + 1
         end
@@ -634,7 +634,7 @@ local function LoadBag(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:SetBackdrop(GW.skins.constBackdropFrame)
+        dd:CreateBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:HookScript(
             "OnClick",
             function(self)
@@ -1006,12 +1006,13 @@ local function LoadBag(helpers)
         end
     )
     f.currency:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-    hooksecurefunc(
-        "SetCurrencyBackpack",
-        function()
-            watchCurrency(f)
-        end
-    )
+    --TODO: new function is C_CurrencyInfo.SetCurrencyBackpack
+    --hooksecurefunc(
+    --    "C_CurrencyInfo.SetCurrencyBackpack",
+    --    function()
+    --        watchCurrency(f)
+    --    end
+    --)
     watchCurrency(f)
 
     -- return a callback that should be called when item size changes

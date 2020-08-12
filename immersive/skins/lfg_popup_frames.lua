@@ -6,14 +6,14 @@ local function SkinLFGListInviteDialog()
     local SkinLFGListInviteDialog_Show = function()
         local LFGListInviteDialog = _G.LFGListInviteDialog
 
-        LFGListInviteDialog:SetBackdrop(nil)
+        LFGListInviteDialog:CreateBackdrop(nil)
         LFGListInviteDialog.Border:Hide()
 
         LFGListInviteDialog.AcceptButton:SkinButton(false, true)
         LFGListInviteDialog.DeclineButton:SkinButton(false, true)
         LFGListInviteDialog.AcknowledgeButton:SkinButton(false, true)
 
-        LFGListInviteDialog:SetBackdrop(constBackdropFrame)
+        LFGListInviteDialog:CreateBackdrop(constBackdropFrame)
     end
         
     hooksecurefunc("LFGListInviteDialog_Show", SkinLFGListInviteDialog_Show)
@@ -23,7 +23,7 @@ end
 local function SkinLFGListApplicationDialog()
     local LFGListApplicationDialog = _G.LFGListApplicationDialog
 
-    LFGListApplicationDialog:SetBackdrop(nil)
+    LFGListApplicationDialog:CreateBackdrop(nil)
     LFGListApplicationDialog.Border:Hide()
 
     LFGListApplicationDialog.SignUpButton:SkinButton(false, true)
@@ -44,7 +44,7 @@ local function SkinLFGListApplicationDialog()
     LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
     LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
     LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    LFGListApplicationDialog:SetBackdrop(constBackdropFrame)
+    LFGListApplicationDialog:CreateBackdrop(constBackdropFrame)
 end
 
 -------------------------------------------------------LFGDungeonReadyStatus-------------------------------------------------------
@@ -52,14 +52,14 @@ local function SkinLFGDungeonReadyStatus()
     local SkinLFGDungeonReadyStatus_OnUpdate = function()
         local LFGDungeonReadyStatus = _G.LFGDungeonReadyStatus
 
-        LFGDungeonReadyStatus:SetBackdrop(nil)
+        LFGDungeonReadyStatus:CreateBackdrop(nil)
         LFGDungeonReadyStatus.Border:Hide()
         _G.LFGDungeonReadyStatusCloseButton:SkinButton(true)
         _G.LFGDungeonReadyStatusCloseButton:SetSize(20, 20)
         _G.LFGDungeonReadyStatusCloseButton:ClearAllPoints()
         _G.LFGDungeonReadyStatusCloseButton:SetPoint("TOPRIGHT", -3, -3)
 
-        LFGDungeonReadyStatus:SetBackdrop(constBackdropFrame)
+        LFGDungeonReadyStatus:CreateBackdrop(constBackdropFrame)
     end
 
     hooksecurefunc("LFGDungeonReadyPopup_Update", SkinLFGDungeonReadyStatus_OnUpdate)
@@ -70,7 +70,7 @@ local function SkinLFGDungeonReadyDialog()
     local SkinLFGDungeonReadyDialog_OnUpdate = function()
         local LFGDungeonReadyDialog = _G.LFGDungeonReadyDialog
 
-        LFGDungeonReadyDialog:SetBackdrop(nil)
+        LFGDungeonReadyDialog:CreateBackdrop(nil)
         LFGDungeonReadyDialog.Border:Hide()
         LFGDungeonReadyDialog.background:Hide()
         LFGDungeonReadyDialog.filigree:Hide()
@@ -85,7 +85,7 @@ local function SkinLFGDungeonReadyDialog()
     
         LFGDungeonReadyDialog.instanceInfo.underline:Hide()
         
-        LFGDungeonReadyDialog:SetBackdrop(constBackdropFrame)
+        LFGDungeonReadyDialog:CreateBackdrop(constBackdropFrame)
     end
 
     hooksecurefunc("LFGDungeonReadyPopup_Update", SkinLFGDungeonReadyDialog_OnUpdate)
@@ -96,8 +96,8 @@ local function SkinLFDRoleCheckPopup()
     local SkinLFDRoleCheckPopup_OnUpdate = function()
         local LFDRoleCheckPopup = _G.LFDRoleCheckPopup
 
-        LFDRoleCheckPopup:SetBackdrop(nil)
-        LFDRoleCheckPopup:SetBackdrop(constBackdropFrame)
+        LFDRoleCheckPopup:CreateBackdrop(nil)
+        LFDRoleCheckPopup:CreateBackdrop(constBackdropFrame)
         LFDRoleCheckPopup.Border:Hide()
         _G.LFDRoleCheckPopupAcceptButton:SkinButton(false, true)
         _G.LFDRoleCheckPopupDeclineButton:SkinButton(false, true)
@@ -109,13 +109,13 @@ end
 
 -------------------------------------------------------LFGInvitePopup-------------------------------------------------------
 local function SkinLFGInvitePopup()
-    _G.LFGInvitePopup:SetBackdrop(nil)
+    _G.LFGInvitePopup:CreateBackdrop(nil)
     _G.LFGInvitePopup.Border:Hide()
 
     _G.LFGInvitePopupAcceptButton:SkinButton(false, true)
     _G.LFGInvitePopupDeclineButton:SkinButton(false, true)
 
-    _G.LFGInvitePopup:SetBackdrop(constBackdropFrame)
+    _G.LFGInvitePopup:CreateBackdrop(constBackdropFrame)
 end
 
 local function SkinLFGFrames()

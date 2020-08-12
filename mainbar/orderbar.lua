@@ -28,7 +28,7 @@ end
 GW.AddForProfiling("orderbar", "createFollower", createFollower)
 
 local function updateOrderBar(self)
-    local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(LE_FOLLOWER_TYPE_GARRISON_7_0)
+    local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(Enum.GarrisonFollowerType.FollowerType_7_0)
 
     for index, category in ipairs(categoryInfo) do
         local categoryInfoFrame = _G["GwOrderHallFollower" .. index]
@@ -58,13 +58,13 @@ local function orderBar_OnEvent(self, event)
         OrderHallCommandBar:SetScript("OnShow", Self_Hide)
     end
 
-    local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0)
+    local inOrderHall = C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0)
     self:SetShown(inOrderHall)
 
-    local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(LE_GARRISON_TYPE_7_0)
+    local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(Enum.GarrisonType.Type_7_0)
 
-    local _, amount, _ = GetCurrencyInfo(primaryCurrency)
-    amount = BreakUpLargeNumbers(amount)
+    local cinfo = C_CurrencyInfo.GetCurrencyInfo(primaryCurrency)
+    local amount = BreakUpLargeNumbers(cinfo.quantity)
     self.currency:SetText(amount)
 
     updateOrderBar(self)
@@ -81,7 +81,7 @@ local function LoadOrderBar()
     GwOrderhallBar:RegisterEvent("PLAYER_ALIVE")
     GwOrderhallBar:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    local inOrderHall = C_Garrison.IsPlayerInGarrison(LE_GARRISON_TYPE_7_0)
+    local inOrderHall = C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0)
     if inOrderHall then
         GwOrderhallBar:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
         GwOrderhallBar:RegisterEvent("DISPLAY_SIZE_CHANGED")

@@ -365,7 +365,6 @@ local function loadTalents()
                 end
             end
             if i == 1 then
-                local talentLevels = CLASS_TALENT_LEVELS[GW.myclass] or CLASS_TALENT_LEVELS["DEFAULT"]
                 local numberDisplay =
                     CreateFrame("Frame", "GwTalentsLevelLabel" .. row, GwSpecContainerFrame, "GwTalentsLevelLabel")
                 numberDisplay.title:SetFont(DAMAGE_TEXT_FONT, 14)
@@ -373,7 +372,7 @@ local function loadTalents()
                 numberDisplay.title:SetShadowColor(0, 0, 0, 0)
                 numberDisplay.title:SetShadowOffset(1, -1)
                 numberDisplay:SetPoint("BOTTOM", fistOnRow, "TOP", 0, 13)
-                numberDisplay.title:SetText(talentLevels[row])
+                numberDisplay.title:SetText(select(3, GetTalentTierInfo(row, GetActiveSpecGroup())))
             end
         end
     end

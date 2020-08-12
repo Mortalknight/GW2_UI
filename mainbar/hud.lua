@@ -1024,14 +1024,13 @@ GW.AddForProfiling("hud", "loadRewards", loadRewards)
 
 local GW_LEVELING_REWARDS = {}
 displayRewards = function()
-    local talentLevels = CLASS_TALENT_LEVELS[GW.myclass] or CLASS_TALENT_LEVELS["DEFAULT"]
 
     wipe(GW_LEVELING_REWARDS)
     for i = 1, 7 do
         GW_LEVELING_REWARDS[i] = {}
         GW_LEVELING_REWARDS[i]["type"] = "TALENT"
         GW_LEVELING_REWARDS[i]["id"] = 0
-        GW_LEVELING_REWARDS[i]["level"] = talentLevels[i]
+        GW_LEVELING_REWARDS[i]["level"] = select(3, GetTalentTierInfo(i, GetActiveSpecGroup()))
     end
 
     GW_LEVELING_REWARD_AVALIBLE = false
@@ -1155,7 +1154,7 @@ local function hud_OnEvent(self, event, ...)
         end
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         selectBg()
-    elseif event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" then
+    elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
         local unit = ...
         if unit == "player" then
             combatHealthState()
@@ -1188,7 +1187,7 @@ local function LoadHudArt()
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    hudArtFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
+    hudArtFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     selectBg()
     combatHealthState()

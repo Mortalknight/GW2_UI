@@ -14,7 +14,7 @@ local function SkinGearManagerDialogPopup_OnShow()
     GearManagerDialogPopup.BorderBox.NameText:SetFont(DAMAGE_TEXT_FONT, 12)
     GearManagerDialogPopup.BorderBox.ChooseIconText:SetFont(DAMAGE_TEXT_FONT, 12)
     GearManagerDialogPopup:SetSize(GearManagerDialogPopup:GetSize(), GearManagerDialogPopup:GetSize() + 5)
-    GearManagerDialogPopup:SetBackdrop(constBackdropFrame)
+    GearManagerDialogPopup:CreateBackdrop(constBackdropFrame)
     --Change EditBox
     _G["GearManagerDialogPopupEditBoxLeft"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
     _G["GearManagerDialogPopupEditBoxRight"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")

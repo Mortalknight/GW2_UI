@@ -71,6 +71,7 @@ end
 GW.AddForProfiling("micromenu", "gwMicro_PositionAlert", gwMicro_PositionAlert)
 
 local function modifyMicroAlert(alert, microButton)
+    if not alert then return end --TODO: Alerts are changed
     alert.GwMicroButton = microButton
     alert.Arrow.Arrow:SetTexCoord(0.78515625, 0.99218750, 0.58789063, 0.54687500)
     alert.Arrow.Glow:SetTexCoord(0.40625000, 0.66015625, 0.82812500, 0.77343750)
@@ -426,10 +427,10 @@ local function LoadMicroMenu()
         end
     )
 
-    -- get rid of the super-persistent PvP talent selector alert
-    if not TalentMicroButton:HasTalentAlertToShow() then
-        TalentMicroButtonAlert:Hide()
-    end
+    -- get rid of the super-persistent PvP talent selector alert TODO
+    --if not TalentMicroButton:HasTalentAlertToShow() then
+    --   TalentMicroButtonAlert:Hide()
+    --end
     hooksecurefunc(
         "MainMenuMicroButton_ShowAlert",
         function(f, t)
@@ -506,7 +507,7 @@ local function LoadMicroMenu()
     else
         modifyMicroAlert(TalentMicroButtonAlert, TalentMicroButton)
     end
-    hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert)
+    --hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert) TODO
 
 end
 GW.LoadMicroMenu = LoadMicroMenu

@@ -75,13 +75,10 @@ local durabilityFrame = nil
 
 local function setItemButtonQuality(button, quality, itemIDOrLink)
     if quality then
-        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+        if quality >= Enum.ItemQuality.Common and GetItemQualityColor(quality) then
+            local r, g, b = GetItemQualityColor(quality)
             button.IconBorder:Show()
-            button.IconBorder:SetVertexColor(
-                BAG_ITEM_QUALITY_COLORS[quality].r,
-                BAG_ITEM_QUALITY_COLORS[quality].g,
-                BAG_ITEM_QUALITY_COLORS[quality].b
-            )
+            button.IconBorder:SetVertexColor(r, g, b)
         else
             button.IconBorder:Hide()
         end
@@ -741,7 +738,7 @@ local function updateStats()
                 showStat = foundRole
             end
 
-            if stat.stat == "MASTERY" and (GW.mylevel < SHOW_MASTERY_LEVEL) then
+            if stat.stat == "MASTERY" then
                 showStat = false
             end
 

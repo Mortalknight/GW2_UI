@@ -560,13 +560,9 @@ GW.FrameFlash = FrameFlash
 local function setItemLevel(button, quality, itemlink, slot)
     button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     if quality then
-        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-            button.itemlevel:SetTextColor(
-                BAG_ITEM_QUALITY_COLORS[quality].r,
-                BAG_ITEM_QUALITY_COLORS[quality].g,
-                BAG_ITEM_QUALITY_COLORS[quality].b,
-                1
-            )
+        if quality >= Enum.ItemQuality.Common and GetItemQualityColor(quality) then
+            local r, g, b = GetItemQualityColor(quality)
+            button.itemlevel:SetTextColor(r, g, b, 1)
         end
         local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink)
         button.itemlevel:SetText(slotInfo.iLvl)

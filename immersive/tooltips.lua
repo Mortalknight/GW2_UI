@@ -88,12 +88,12 @@ local function styleTooltip(self)
     if not self:IsShown() then
         return
     end
-    self:SetBackdrop(constBackdropArgs)
+    self:CreateBackdrop(constBackdropArgs)
     if _G[self:GetName() .. "StatusBarTexture"] then
         _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
     end
-    if DBMInfoFrame then 
-        DBMInfoFrame:SetBackdrop(constBackdropArgs)
+    if DBMInfoFrame then
+        DBMInfoFrame:CreateBackdrop(constBackdropArgs)
     end
 end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
@@ -105,7 +105,7 @@ local function tooltip_SetBackdropStyle(self, args)
     if not self:IsShown() then
         return
     end
-    self:SetBackdrop(constBackdropArgs)
+    self:CreateBackdrop(constBackdropArgs)
 end
 GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 
@@ -123,7 +123,7 @@ local function SkinItemRefTooltip()
             ItemRefCloseButton:SetSize(20, 20)
             ItemRefCloseButton:ClearAllPoints()
             ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
-            ItemRefTooltip:SetBackdrop(constBackdropArgs)
+            ItemRefTooltip:CreateBackdrop(constBackdropArgs)
 
             if IsAddOnLoaded("Pawn") then
                 if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
@@ -145,7 +145,7 @@ local function SkinBattlePetTooltip()
         self.BorderBottom:Hide()
         self.BorderLeft:Hide()
         self.Background:Hide()
-        self:SetBackdrop(constBackdropArgs)
+        self:CreateBackdrop(constBackdropArgs)
     end
 
     hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", function(self) skin_battle_pet_tt(self) end)
@@ -173,7 +173,7 @@ end
 local function SkinQueueStatusFrame()
     local QueueStatusFrame = _G.QueueStatusFrame
 
-    QueueStatusFrame:SetBackdrop(nil)
+    QueueStatusFrame:CreateBackdrop(nil)
     QueueStatusFrame.BorderTopLeft:Hide()
     QueueStatusFrame.BorderTopRight:Hide()
     QueueStatusFrame.BorderBottomRight:Hide()
@@ -183,7 +183,7 @@ local function SkinQueueStatusFrame()
     QueueStatusFrame.BorderBottom:Hide()
     QueueStatusFrame.BorderLeft:Hide()
     QueueStatusFrame.Background:Hide()
-    QueueStatusFrame:SetBackdrop(constBackdropArgs)
+    QueueStatusFrame:CreateBackdrop(constBackdropArgs)
 end
 
 local function GetLevelLine(self, offset)
@@ -668,12 +668,13 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
     end
     
-    hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
-    for _, toStyle in ipairs(UNSTYLED) do
-        local f = _G[toStyle]
-        if f then
-            f:HookScript("OnUpdate", styleTooltip)
-        end
-    end
+    --TODO
+    --hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
+    --for _, toStyle in ipairs(UNSTYLED) do
+    --    local f = _G[toStyle]
+    --    if f then
+    --        f:HookScript("OnUpdate", styleTooltip)
+    --    end
+    --end
 end
 GW.LoadTooltips = LoadTooltips

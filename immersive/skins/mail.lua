@@ -99,7 +99,7 @@ local function SkinOpenMailFrame()
     OpenMailFrame.NineSlice:Hide()
     OpenMailFrame.TitleBg:Hide()
     OpenMailFrame.TopTileStreaks:Hide()
-    OpenMailFrame:SetBackdrop(nil)
+    OpenMailFrame:CreateBackdrop(nil)
     OpenMailFrame:SetParent(MailFrame)
 
     OpenMailSenderLabel:Hide()
@@ -284,7 +284,7 @@ end
 local function ClearMailTextures()
     _G.MailFrameBg:Hide()
     _G.MailFrameInset.NineSlice:Hide()
-    _G.MailFrameInset:SetBackdrop(constBackdropFrameBorder)
+    _G.MailFrameInset:CreateBackdrop(constBackdropFrameBorder)
 
     MailFrame:StripTextures()
     InboxFrame:StripTextures()
@@ -296,7 +296,7 @@ local function ClearMailTextures()
     MailFrame.NineSlice:Hide()
     MailFrame.TitleBg:Hide()
     MailFrame.TopTileStreaks:Hide()
-    MailFrame:SetBackdrop(nil)
+    MailFrame:CreateBackdrop(nil)
 
     for i = 1, _G.INBOXITEMS_TO_DISPLAY do
         local bg = _G["MailItem" .. i]
@@ -397,8 +397,8 @@ local function SkinMail()
     InboxTitleText:SetFont(UNIT_NAME_FONT, 14)
     InboxTitleText:SetTextColor(1, 1, 1, 1)
     InboxTitleText:SetJustifyH("LEFT")
-
-    _G.AutoCompleteBox:SetBackdrop(GW.skins.constBackdropFrame)
+    
+    _G.AutoCompleteBox:CreateBackdrop(GW.skins.constBackdropFrame)
 
     -- movable stuff
     local pos = GetSetting("MAILBOX_POSITION")

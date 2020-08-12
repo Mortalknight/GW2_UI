@@ -849,9 +849,9 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        if (ActionButton_IsFlashing(btn)) then
-            actionButtonFlashing(btn, elapsed)
-        end
+        --if (ActionButton_IsFlashing(btn)) then TODO
+        --    actionButtonFlashing(btn, elapsed)
+        --end
 
         if testRange then
             local valid = IsActionInRange(btn.action)
@@ -933,9 +933,9 @@ local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        if (ActionButton_IsFlashing(btn)) then
-            actionButtonFlashing(btn, elapsed)
-        end
+        --if (ActionButton_IsFlashing(btn)) then TODO
+        --    actionButtonFlashing(btn, elapsed)
+        --end
 
         if testRange then
             local valid = IsActionInRange(btn.action)
@@ -1065,7 +1065,7 @@ local function LoadActionBars(lm)
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", trackBarChanges)
-    hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
+    --hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars) TODO
     hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
     trackBarChanges()
 
@@ -1076,7 +1076,7 @@ local function LoadActionBars(lm)
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes
-    hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey)
+    --hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey) TODO
 
     -- frames using the alert frame subsystem have their positioning managed by UIParent
     -- the secure code for that lives mostly in Interface/FrameXML/UIParent.lua

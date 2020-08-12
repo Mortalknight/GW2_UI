@@ -195,12 +195,12 @@ local function updateCurrentScenario()
     end
 
     if inWarfront then
-        local wname, wqty, _, _, _, wmax = GetCurrencyInfo(1540)  --Wood
-        local iname, iqty, _, _, _, imax = GetCurrencyInfo(1541)  --Iron
+        local winfo = C_CurrencyInfo.GetCurrencyInfo(1540) -- wood
+        local iinfo = C_CurrencyInfo.GetCurrencyInfo(1541) -- iron
         --Wood
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(wqty, wmax, wname),
+            ParseCriteria(winfo.quantity, winfo.maxQuantity, winfo.name),
             false,
             numCriteria + 1,
             "progressbar",
@@ -209,7 +209,7 @@ local function updateCurrentScenario()
         --Iron
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(iqty, imax, iname),
+            ParseCriteria(iinfo.quantity, iinfo.maxQuantity, iinfo.name),
             false,
             numCriteria + 2,
             "progressbar",
@@ -217,10 +217,10 @@ local function updateCurrentScenario()
         )
         numCriteria = numCriteria + 2
     elseif uiMap == 1469 or uiMap == 1470 then -- Heroic Vision for OP and SW
-        local cmname, cmqty = GetCurrencyInfo(1744) --Corrupted Memento
+        local info = GetCurrencyInfo(1744) --Corrupted Memento
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(cmqty, 0, cmname),
+            ParseCriteria(info.quantity, 0, info.name),
             false,
             numCriteria + 1,
             "monster",

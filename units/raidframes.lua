@@ -364,7 +364,8 @@ local function updateAwayData(self)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 
-    if UnitIsConnected(self.unit) and ((not UnitInPhase(self.unit) or UnitIsWarModePhased(self.unit)) or not UnitInRange(self.unit)) then
+    local phaseReason = UnitPhaseReason(self.unit)
+    if UnitIsConnected(self.unit) and (phaseReason or not UnitInRange(self.unit)) then
         local r, g, b = self.healthbar:GetStatusBarColor()
 
         self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
@@ -742,7 +743,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setAbsorbAmount(self)
         setPredictionAmount(self)
         setHealth(self)
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" and unit == self.unit then
         setHealth(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
@@ -1155,7 +1156,7 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
     frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
 
-    frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)

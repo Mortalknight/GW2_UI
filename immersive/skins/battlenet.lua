@@ -4,7 +4,7 @@ local GetSetting = GW.GetSetting
 
 local function SkinBNToastFrame()
     local BNToastFrame = _G.BNToastFrame
-    BNToastFrame:SetBackdrop(nil)
+    BNToastFrame:CreateBackdrop(nil)
 
     local tex = BNToastFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", BNToastFrame, "TOP", 0, 0)

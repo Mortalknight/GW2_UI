@@ -616,7 +616,7 @@ local function LoadChat()
             _G["GwChatContainer" .. id]:SetAlpha(0)
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:StripTextures(true)
-                chatFrame.minFrame:SetBackdrop(GW.skins.constBackdropFrame)
+                chatFrame.minFrame:CreateBackdrop(GW.skins.constBackdropFrame)
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
@@ -706,7 +706,7 @@ local function LoadChat()
     for i = 1, #ChatMenus do
         _G[ChatMenus[i]]:HookScript("OnShow", 
             function(self)
-                self:SetBackdrop(GW.skins.constBackdropFrame)
+                self:CreateBackdrop(GW.skins.constBackdropFrame)
             end)
     end
 

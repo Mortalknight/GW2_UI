@@ -11,12 +11,12 @@ local function SkinMacroOptions()
     MacroFrame.NineSlice:Hide()
     MacroFrame.TitleBg:Hide()
     MacroFrame.TopTileStreaks:Hide()
-    MacroFrame:SetBackdrop(nil)
+    MacroFrame:CreateBackdrop(nil)
 
     _G.MacroFrameInset.NineSlice:Hide()
-    _G.MacroFrameInset:SetBackdrop(constBackdropFrameBorder)
+    _G.MacroFrameInset:CreateBackdrop(constBackdropFrameBorder)
     _G.MacroHorizontalBarLeft:Hide()
-    _G.MacroFrameTextBackground:SetBackdrop(constBackdropFrame)
+    _G.MacroFrameTextBackground:CreateBackdrop(constBackdropFrame)
 
     local r = {MacroFrame:GetRegions()}
     local i = 1
@@ -127,7 +127,7 @@ local function SkinMacroOptions()
     MacroPopupFrame.BG:Hide()
 
     MacroPopupFrame:SetSize(MacroPopupFrame:GetSize(), MacroPopupFrame:GetSize() + 5)
-    MacroPopupFrame:SetBackdrop(constBackdropFrame)
+    MacroPopupFrame:CreateBackdrop(constBackdropFrame)
 
     for i = 1, _G.NUM_MACRO_ICONS_SHOWN do
         local button = _G["MacroPopupButton" .. i]

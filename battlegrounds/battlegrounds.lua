@@ -21,15 +21,15 @@ local updateCap = 1 / 5
 local gwbgs
 
 local PvPClassificationFaction = {
-    [Enum.PvpUnitClassification.FlagCarrierHorde] = "A",
-    [Enum.PvpUnitClassification.FlagCarrierAlliance] = "H",
-    [Enum.PvpUnitClassification.FlagCarrierNeutral] = "N",
-    [Enum.PvpUnitClassification.CartRunnerHorde] = "A",
-    [Enum.PvpUnitClassification.CartRunnerAlliance] = "H"
-    --[Enum.PvpUnitClassification.OrbCarrierBlue] = "orb",
-    --[Enum.PvpUnitClassification.OrbCarrierGreen] = "orb",
-    --[Enum.PvpUnitClassification.OrbCarrierOrange] = "orb",
-    --[Enum.PvpUnitClassification.OrbCarrierPurple] = "orb"
+    [Enum.PvPUnitClassification.FlagCarrierHorde] = "A",
+    [Enum.PvPUnitClassification.FlagCarrierAlliance] = "H",
+    [Enum.PvPUnitClassification.FlagCarrierNeutral] = "N",
+    [Enum.PvPUnitClassification.CartRunnerHorde] = "A",
+    [Enum.PvPUnitClassification.CartRunnerAlliance] = "H"
+    --[Enum.PvPUnitClassification.OrbCarrierBlue] = "orb",
+    --[Enum.PvPUnitClassification.OrbCarrierGreen] = "orb",
+    --[Enum.PvPUnitClassification.OrbCarrierOrange] = "orb",
+    --[Enum.PvPUnitClassification.OrbCarrierPurple] = "orb"
 }
 
 local function getPoints(widget)

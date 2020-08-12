@@ -770,7 +770,7 @@ local function loadAddon(self)
     end
 
     if GetSetting("QUESTTRACKER_ENABLED") then
-        GW.LoadQuestTracker()
+        --GW.LoadQuestTracker()
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then

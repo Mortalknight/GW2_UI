@@ -130,7 +130,7 @@ function SkinSliderFrame(frame)
     local orientation = frame:GetOrientation()
     local SIZE = 12
 
-    frame:SetBackdrop(nil)
+    frame:CreateBackdrop(nil)
     frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/sliderhandle")
 
     local thumb = frame:GetThumbTexture()
@@ -163,7 +163,7 @@ end
 
 local function CreateBackdrop(frame, backdropTexture)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
-    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, BackdropTemplateMixin and "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
 
     local frameLevel = parent.GetFrameLevel and parent:GetFrameLevel()
@@ -174,6 +174,7 @@ local function CreateBackdrop(frame, backdropTexture)
         backdrop:SetFrameLevel(0)
     end
 
+    backdrop:SetAllPoints()
     if backdropTexture then 
         backdrop:SetBackdrop(backdropTexture)
     end
@@ -218,7 +219,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
 end
 
 local function SkinTab(tabButton)
-    tabButton:SetBackdrop(nil)
+    tabButton:CreateBackdrop(nil)
 
     if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/unittab") end
     if tabButton.SetHighlightTexture then 
@@ -317,8 +318,7 @@ local function SkinDropDownMenu(frame)
     frame:StripTextures()
     frame:SetWidth(155)
 
-    frame:CreateBackdrop()
-    frame.backdrop:SetBackdrop(constBackdropDropDown)
+    frame:CreateBackdrop(constBackdropDropDown)
     frame.backdrop:SetBackdropColor(0, 0, 0)
 
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
