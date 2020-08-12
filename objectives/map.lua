@@ -601,7 +601,7 @@ local function LoadMinimap()
 
     GwCalendarButton = CreateFrame("Button", "GwCalendarButton", UIParent, "GwCalendarButton")
     local fnGwCalendarButton_OnShow = function(self)
-        if (IsKioskModeEnabled()) then
+        if (Kiosk.IsEnabled()) then
             self:Disable()
         end
     end
