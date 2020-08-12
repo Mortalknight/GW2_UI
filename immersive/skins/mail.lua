@@ -296,7 +296,7 @@ local function ClearMailTextures()
     MailFrame.NineSlice:Hide()
     MailFrame.TitleBg:Hide()
     MailFrame.TopTileStreaks:Hide()
-    MailFrame:CreateBackdrop(nil)
+    MailFrame:CreateBackdrop()
 
     for i = 1, _G.INBOXITEMS_TO_DISPLAY do
         local bg = _G["MailItem" .. i]

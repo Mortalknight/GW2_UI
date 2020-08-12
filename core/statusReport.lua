@@ -157,7 +157,7 @@ local function CreateStatusFrame()
     local isPasteAddon = CheckForPasteAddon()
 
     --Main frame
-    local StatusFrame = CreateFrame("Frame", "GWStatusFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+    local StatusFrame = CreateFrame("Frame", "GWStatusFrame", UIParent, "BackdropTemplate")
     StatusFrame:SetSize(320, 720)
     StatusFrame:SetPoint("CENTER", UIParent, "CENTER")
     StatusFrame:SetFrameStrata("HIGH")

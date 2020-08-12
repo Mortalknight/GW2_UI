@@ -2,8 +2,6 @@ local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function SkinReadyCheck()
-    _G.ReadyCheckListenerFrame:CreateBackdrop(nil)
-
     _G.ReadyCheckFrameYesButton:SkinButton(false, true)
     _G.ReadyCheckFrameNoButton:SkinButton(false, true)
 

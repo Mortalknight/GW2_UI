@@ -6,7 +6,6 @@ local function SkinLFGListInviteDialog()
     local SkinLFGListInviteDialog_Show = function()
         local LFGListInviteDialog = _G.LFGListInviteDialog
 
-        LFGListInviteDialog:CreateBackdrop(nil)
         LFGListInviteDialog.Border:Hide()
 
         LFGListInviteDialog.AcceptButton:SkinButton(false, true)
@@ -23,7 +22,6 @@ end
 local function SkinLFGListApplicationDialog()
     local LFGListApplicationDialog = _G.LFGListApplicationDialog
 
-    LFGListApplicationDialog:CreateBackdrop(nil)
     LFGListApplicationDialog.Border:Hide()
 
     LFGListApplicationDialog.SignUpButton:SkinButton(false, true)
@@ -52,7 +50,6 @@ local function SkinLFGDungeonReadyStatus()
     local SkinLFGDungeonReadyStatus_OnUpdate = function()
         local LFGDungeonReadyStatus = _G.LFGDungeonReadyStatus
 
-        LFGDungeonReadyStatus:CreateBackdrop(nil)
         LFGDungeonReadyStatus.Border:Hide()
         _G.LFGDungeonReadyStatusCloseButton:SkinButton(true)
         _G.LFGDungeonReadyStatusCloseButton:SetSize(20, 20)
@@ -69,8 +66,6 @@ end
 local function SkinLFGDungeonReadyDialog()
     local SkinLFGDungeonReadyDialog_OnUpdate = function()
         local LFGDungeonReadyDialog = _G.LFGDungeonReadyDialog
-
-        LFGDungeonReadyDialog:CreateBackdrop(nil)
         LFGDungeonReadyDialog.Border:Hide()
         LFGDungeonReadyDialog.background:Hide()
         LFGDungeonReadyDialog.filigree:Hide()
@@ -96,7 +91,6 @@ local function SkinLFDRoleCheckPopup()
     local SkinLFDRoleCheckPopup_OnUpdate = function()
         local LFDRoleCheckPopup = _G.LFDRoleCheckPopup
 
-        LFDRoleCheckPopup:CreateBackdrop(nil)
         LFDRoleCheckPopup:CreateBackdrop(constBackdropFrame)
         LFDRoleCheckPopup.Border:Hide()
         _G.LFDRoleCheckPopupAcceptButton:SkinButton(false, true)
@@ -109,7 +103,6 @@ end
 
 -------------------------------------------------------LFGInvitePopup-------------------------------------------------------
 local function SkinLFGInvitePopup()
-    _G.LFGInvitePopup:CreateBackdrop(nil)
     _G.LFGInvitePopup.Border:Hide()
 
     _G.LFGInvitePopupAcceptButton:SkinButton(false, true)

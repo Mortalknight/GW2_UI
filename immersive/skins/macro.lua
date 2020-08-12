@@ -11,7 +11,7 @@ local function SkinMacroOptions()
     MacroFrame.NineSlice:Hide()
     MacroFrame.TitleBg:Hide()
     MacroFrame.TopTileStreaks:Hide()
-    MacroFrame:CreateBackdrop(nil)
+    MacroFrame:CreateBackdrop()
 
     _G.MacroFrameInset.NineSlice:Hide()
     _G.MacroFrameInset:CreateBackdrop(constBackdropFrameBorder)

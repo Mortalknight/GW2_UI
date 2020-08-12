@@ -35,7 +35,7 @@ local function SkinAddonList()
     AddonList.CloseButton:ClearAllPoints()
     AddonList.CloseButton:SetPoint("TOPRIGHT", 0, 0)
 
-    _G.AddonListScrollFrame:CreateBackdrop(nil)
+    _G.AddonListScrollFrame:CreateBackdrop()
 
     for i = 1, _G.MAX_ADDONS_DISPLAYED do
         _G["AddonListEntry" .. i .. "Enabled"]:SkinCheckButton()

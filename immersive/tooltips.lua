@@ -98,10 +98,10 @@ local function styleTooltip(self)
 end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
-local function tooltip_SetBackdropStyle(self, args)
-    if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
-        return
-    end
+local function tooltip_SetBackdropStyle(self)
+    --if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
+    --    return
+    --end
     if not self:IsShown() then
         return
     end
@@ -173,7 +173,6 @@ end
 local function SkinQueueStatusFrame()
     local QueueStatusFrame = _G.QueueStatusFrame
 
-    QueueStatusFrame:CreateBackdrop(nil)
     QueueStatusFrame.BorderTopLeft:Hide()
     QueueStatusFrame.BorderTopRight:Hide()
     QueueStatusFrame.BorderBottomRight:Hide()
@@ -669,12 +668,12 @@ local function LoadTooltips()
     end
     
     --TODO
-    --hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
-    --for _, toStyle in ipairs(UNSTYLED) do
-    --    local f = _G[toStyle]
-    --    if f then
-    --        f:HookScript("OnUpdate", styleTooltip)
-    --    end
-    --end
+    hooksecurefunc("GameTooltip_UpdateStyle", tooltip_SetBackdropStyle)
+    for _, toStyle in ipairs(UNSTYLED) do
+        local f = _G[toStyle]
+        if f then
+            f:HookScript("OnUpdate", styleTooltip)
+        end
+    end
 end
 GW.LoadTooltips = LoadTooltips
