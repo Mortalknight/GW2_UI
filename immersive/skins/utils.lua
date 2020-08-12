@@ -32,7 +32,6 @@ local function SkinUIDropDownMenu()
             expandArrow:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
         end
     
-        -- TODO: no dropdown background
         local Backdrop = _G[listFrameName .. "Backdrop"]
         Backdrop:StripTextures()
         Backdrop:CreateBackdrop(constBackdropFrame)
