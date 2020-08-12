@@ -31,6 +31,7 @@ end
 local function SkinBubble(frame)
     if frame:IsForbidden() then return end
 
+    print(3)
     for i = 1, frame:GetNumRegions() do
         local region = select(i, frame:GetRegions())
         if region:IsObjectType("Texture") then
@@ -110,7 +111,10 @@ local function ChatBubble_OnUpdate(self, elapsed)
     self.lastupdate = 0
 
     for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
-        if not chatBubble.isSkinnedGW2_UI then
+        local bubble = chatBubble:GetChildren(1)
+        print(2, bubble)
+        if bubble and not bubble:IsForbidden() and not chatBubble.isSkinnedGW2_UI then
+            print(1)
             SkinBubble(chatBubble)
         end
     end
