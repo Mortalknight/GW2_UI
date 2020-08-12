@@ -854,7 +854,7 @@ local function LoadTarget()
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
     TargetFrame:SetScript("OnEvent", nil)
-    TargetFrame:Hide()
+    TargetFrame:Kill()
 end
 GW.LoadTarget = LoadTarget
 
@@ -927,7 +927,7 @@ local function LoadFocus()
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
     FocusFrame:SetScript("OnEvent", nil)
-    FocusFrame:Hide()
+    FocusFrame:Kill()
 end
 GW.LoadFocus = LoadFocus
 

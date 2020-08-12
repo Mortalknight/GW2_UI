@@ -88,6 +88,7 @@ local function styleTooltip(self)
     if not self:IsShown() then
         return
     end
+
     self:CreateBackdrop(constBackdropArgs)
     if _G[self:GetName() .. "StatusBarTexture"] then
         _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
@@ -102,6 +103,7 @@ local function tooltip_SetBackdropStyle(self)
     --if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
     --    return
     --end
+    print(self:GetName())
     if not self:IsShown() then
         return
     end
@@ -667,8 +669,8 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
     end
     
-    --TODO
-    hooksecurefunc("GameTooltip_UpdateStyle", tooltip_SetBackdropStyle)
+    --TODO nned a new hook function
+    hooksecurefunc("GameTooltip_OnUpdate", tooltip_SetBackdropStyle)
     for _, toStyle in ipairs(UNSTYLED) do
         local f = _G[toStyle]
         if f then

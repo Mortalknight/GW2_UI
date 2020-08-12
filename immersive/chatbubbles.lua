@@ -15,9 +15,9 @@ local function AddChatBubbleName(chatBubble, name)
 end
 
 local function UpdateBubbleBorder(self)
-    UpdateFontColor(self)
-
     if not self.text then return end
+
+    UpdateFontColor(self)
 
     local name = self.Name and self.Name:GetText()
     if name then self.Name:SetText() end
@@ -31,12 +31,13 @@ end
 local function SkinBubble(frame)
     if frame:IsForbidden() then return end
 
-    print(3)
+
     for i = 1, frame:GetNumRegions() do
         local region = select(i, frame:GetRegions())
         if region:IsObjectType("Texture") then
             region:SetTexture()
         elseif region:IsObjectType("FontString") then
+            print(1)
             frame.text = region
         end
     end
@@ -110,14 +111,20 @@ local function ChatBubble_OnUpdate(self, elapsed)
     if self.lastupdate < 0.1 then return end
     self.lastupdate = 0
 
-    for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
-        local bubble = chatBubble:GetChildren(1)
-        print(2, bubble)
-        if bubble and not bubble:IsForbidden() and not chatBubble.isSkinnedGW2_UI then
-            print(1)
-            SkinBubble(chatBubble)
-        end
-    end
+    --for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
+    --    local bubble = chatBubble:GetChildren(1)
+    --    if not chatBubble.isSkinnedGW2_UI then
+    --        SkinBubble(chatBubble)
+    --    end
+    --end
+
+    for _, frame in pairs(C_ChatBubbles.GetAllChatBubbles()) do
+        local bub = frame:GetChildren(1)
+		if bub and not bub:IsForbidden() and not bub.isSkinnedGW2_UI then
+			SkinBubble(frame)
+		end
+	end
+
 end
 
 local function ToggleChatBubbleScript(self)
