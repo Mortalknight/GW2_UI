@@ -271,13 +271,13 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
     for i, slot in ipairs({"TalentSlot1", "TalentSlot2", "TalentSlot3"}) do
         local btn = slotGroup.pool:Acquire()
         local row = 0
-        local col = (i - 1) % 4
+        local col = (i - 1) % 3
 
         btn.slotIndex = i
         local info = C_SpecializationInfo.GetPvpTalentSlotInfo(i)
 
         setSlotButton(btn, info)
-        btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 30 + (50 * col), -37 + (-50 * row))
+        btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 55 + (50 * col), -37 + (-50 * row))
 
         for j, talentId in ipairs(info.availableTalentIDs) do
             if not tContains(talentIds, talentId) then
