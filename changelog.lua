@@ -7,6 +7,7 @@ NEW
     - Make Talking Head Framwe moveable
     - Added custom and moveable class totems
     - Added player and mouse coordinates to Worldmap
+    - Added Inbox skin
 ]=])
 
 
