@@ -373,15 +373,14 @@ local function LoadCurrency(tabContainer)
     curwin:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 
     -- update currency window when anyone adds a watch currency
-    --TODO: new function is C_CurrencyInfo.SetCurrencyBackpack
-    --hooksecurefunc(
-    --    "C_CurrencyInfo.SetCurrencyBackpack",
-    --    function()
-    --        if curwin:IsShown() then
-    --            loadCurrency(curwin)
-    --        end
-    --    end
-    --)
+    hooksecurefunc(
+        C_CurrencyInfo, "SetCurrencyBackpack",
+        function()
+            if curwin:IsShown() then
+                loadCurrency(curwin)
+            end
+        end
+    )
 
     -- setup the raid info window
     local raidinfo = curwin_outer.RaidScroll

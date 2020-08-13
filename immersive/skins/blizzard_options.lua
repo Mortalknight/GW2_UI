@@ -77,6 +77,7 @@ local function SkinBlizzardOptions()
     VideoOptionsFrame.tex = tex
 
     for _, Frame in pairs(OptionsFrames) do
+        Frame:StripTextures()
         Frame:CreateBackdrop(constBackdropFrameBorder)
     end
 

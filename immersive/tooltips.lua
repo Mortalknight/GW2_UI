@@ -88,7 +88,7 @@ local function styleTooltip(self)
     if not self:IsShown() then
         return
     end
-
+    self:StripTextures()
     self:CreateBackdrop(constBackdropArgs)
     if _G[self:GetName() .. "StatusBarTexture"] then
         _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")

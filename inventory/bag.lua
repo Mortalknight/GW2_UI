@@ -1006,13 +1006,12 @@ local function LoadBag(helpers)
         end
     )
     f.currency:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-    --TODO: new function is C_CurrencyInfo.SetCurrencyBackpack
-    --hooksecurefunc(
-    --    "C_CurrencyInfo.SetCurrencyBackpack",
-    --    function()
-    --        watchCurrency(f)
-    --    end
-    --)
+    hooksecurefunc(
+        C_CurrencyInfo, "SetCurrencyBackpack",
+        function()
+            watchCurrency(f)
+        end
+    )
     watchCurrency(f)
 
     -- return a callback that should be called when item size changes
