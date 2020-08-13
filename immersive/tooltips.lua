@@ -22,48 +22,54 @@ local classification = {
 local TT = CreateFrame("Frame")
 
 local UNSTYLED = {
-    "GameTooltip",
-    "ShoppingTooltip1",
-    "ShoppingTooltip2",
-    "ShoppingTooltip3",
-    "ItemRefShoppingTooltip1",
-    "ItemRefShoppingTooltip2",
-    "ItemRefShoppingTooltip3",
-    "WorldMapTooltip",
-    "WorldMapCompareTooltip1",
-    "WorldMapCompareTooltip2",
-    "WorldMapCompareTooltip3",
-    "AtlasLootTooltip",
-    "QuestHelperTooltip",
-    "QuestGuru_QuestWatchTooltip",
-    "TRP2_MainTooltip",
-    "TRP2_ObjetTooltip",
-    "TRP2_StaticPopupPersoTooltip",
-    "TRP2_PersoTooltip",
-    "TRP2_MountTooltip",
-    "AltoTooltip",
-    "AltoScanningTooltip",
-    "ArkScanTooltipTemplate",
-    "NxTooltipItem",
-    "NxTooltipD",
-    "DBMInfoFrame",
-    "DBMRangeCheck",
-    "DatatextTooltip",
-    "VengeanceTooltip",
-    "FishingBuddyTooltip",
-    "FishLibTooltip",
-    "HealBot_ScanTooltip",
-    "hbGameTooltip",
-    "PlateBuffsTooltip",
-    "LibGroupInSpecTScanTip",
-    "RecountTempTooltip",
-    "VuhDoScanTooltip",
-    "XPerl_BottomTip",
-    "EventTraceTooltip",
-    "FrameStackTooltip",
-    "PetBattlePrimaryUnitTooltip",
-    "PetBattlePrimaryAbilityTooltip",
-    "LibDBIconTooltip"
+    GameTooltip,
+    ShoppingTooltip1,
+    ShoppingTooltip2,
+    ShoppingTooltip3,
+    ItemRefShoppingTooltip1,
+    ItemRefShoppingTooltip2,
+    ItemRefShoppingTooltip3,
+    WorldMapTooltip,
+    WorldMapCompareTooltip1,
+    WorldMapCompareTooltip2,
+    WorldMapCompareTooltip3,
+    AtlasLootTooltip,
+    QuestHelperTooltip,
+    QuestGuru_QuestWatchTooltip,
+    TRP2_MainTooltip,
+    TRP2_ObjetTooltip,
+    TRP2_StaticPopupPersoTooltip,
+    TRP2_PersoTooltip,
+    TRP2_MountTooltip,
+    AltoTooltip,
+    AltoScanningTooltip,
+    ArkScanTooltipTemplate,
+    NxTooltipItem,
+    NxTooltipD,
+    DBMInfoFrame,
+    DBMRangeCheck,
+    DatatextTooltip,
+    VengeanceTooltip,
+    FishingBuddyTooltip,
+    FishLibTooltip,
+    HealBot_ScanTooltip,
+    hbGameTooltip,
+    PlateBuffsTooltip,
+    LibGroupInSpecTScanTip,
+    RecountTempTooltip,
+    VuhDoScanTooltip,
+    XPerl_BottomTip,
+    EventTraceTooltip,
+    FrameStackTooltip,
+    PetBattlePrimaryUnitTooltip,
+    PetBattlePrimaryAbilityTooltip,
+    LibDBIconTooltip,
+    FriendsTooltip,
+    EmbeddedItemTooltip,
+    RepurationParagonTooltip,
+    WarCampaignTooltip,
+    QuestScrollFrame.StoryTooltip,
+    QuestScrollFrame.CampaignTooltip
 }
 
 local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
@@ -99,11 +105,11 @@ local function styleTooltip(self)
 end
 GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
-local function tooltip_SetBackdropStyle(self)
-    --if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
-    --    return
-    --end
-    print(self:GetName())
+local function tooltip_SetBackdropStyle(self, args)
+    if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
+        return
+    end
+   
     if not self:IsShown() then
         return
     end
@@ -669,12 +675,11 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
     end
     
-    --TODO nned a new hook function
-    hooksecurefunc("GameTooltip_OnUpdate", tooltip_SetBackdropStyle)
-    for _, toStyle in ipairs(UNSTYLED) do
-        local f = _G[toStyle]
-        if f then
-            f:HookScript("OnUpdate", styleTooltip)
+    --TODO copate with embedded style is not skinned
+    hooksecurefunc("SharedTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
+    for _, toStyle in pairs(UNSTYLED) do
+        if toStyle then
+            toStyle:HookScript("OnShow", styleTooltip)
         end
     end
 end
