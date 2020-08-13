@@ -916,7 +916,7 @@ local function createPartyFrame(i)
     LHC.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
-    LibLCD.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
+    LibLCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(event, unit)
         party_OnEvent(frame, "UNIT_AURA", unit)
     end) 
 

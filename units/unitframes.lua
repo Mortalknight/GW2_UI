@@ -690,7 +690,7 @@ local function LoadTarget()
     LHC.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
     LHC.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
-    LCD.RegisterCallback(NewUnitFrame, "UNIT_BUFF", function(event, unit)
+    LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(event, unit)
         target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
     end)
 

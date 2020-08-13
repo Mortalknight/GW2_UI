@@ -1109,7 +1109,7 @@ local function createRaidFrame(registerUnit, index)
     LHC.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
-    LCD.RegisterCallback(frame, "UNIT_BUFF", function(event, unit)
+    LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(event, unit)
         raidframe_OnEvent(frame, "UNIT_AURA", unit)
     end) 
 
