@@ -1191,10 +1191,10 @@ local function loadAlterSystemFrameSkins()
     
     -- Encounters
     hooksecurefunc(_G.DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
-    hooksecurefunc(_G.WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert) --TODO: position
+    hooksecurefunc(_G.WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert)
     hooksecurefunc(_G.GuildChallengeAlertSystem, "setUpFunction", skinGuildChallengeAlert)
     hooksecurefunc(_G.InvasionAlertSystem, "setUpFunction", skinInvasionAlert)
-    hooksecurefunc(_G.ScenarioAlertSystem, "setUpFunction", skinScenarioAlert) --TODO: position
+    hooksecurefunc(_G.ScenarioAlertSystem, "setUpFunction", skinScenarioAlert)
 
     -- Loot
     hooksecurefunc(_G.LegendaryItemAlertSystem, "setUpFunction", skinLegendaryItemAlert)
@@ -1219,7 +1219,7 @@ local function loadAlterSystemFrameSkins()
     -- Garrisons
     hooksecurefunc(_G.GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
     hooksecurefunc(_G.GarrisonShipFollowerAlertSystem, "setUpFunction", skinGarrisonShipFollowerAlert)
-    hooksecurefunc(_G.GarrisonTalentAlertSystem, "setUpFunction", skinGarrisonTalentAlert) --TODO: position
+    hooksecurefunc(_G.GarrisonTalentAlertSystem, "setUpFunction", skinGarrisonTalentAlert)
     hooksecurefunc(_G.GarrisonBuildingAlertSystem, "setUpFunction", skinGarrisonBuildingAlert)
     hooksecurefunc(_G.GarrisonMissionAlertSystem, "setUpFunction", skinGarrisonMissionAlert)
     hooksecurefunc(_G.GarrisonShipMissionAlertSystem, "setUpFunction", skinGarrisonShipMissionAlert)
