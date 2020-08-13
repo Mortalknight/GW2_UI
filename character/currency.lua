@@ -11,7 +11,7 @@ local function checkNumWatched()
 
     for i = 1, C_CurrencyInfo.GetCurrencyListSize() do
         local info = C_CurrencyInfo.GetCurrencyListInfo(i)
-        if info.isShownInBackpack then
+        if info.isShowInBackpack then
             numWatched = numWatched + 1
         end
     end
@@ -26,17 +26,17 @@ local function currency_OnClick(self)
             return
         end
         local info = C_CurrencyInfo.GetCurrencyListInfo(self.CurrencyIdx)
-
-        if not info.isShownInBackpack then
+        print(info.isShowInBackpack, MAX_WATCHED_TOKENS)
+        if not info.isShowInBackpack then
             if checkNumWatched() >= MAX_WATCHED_TOKENS then
                 UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, MAX_WATCHED_TOKENS), 1.0, 0.1, 0.1, 1.0)
                 return
             end
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, 1)
+            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, true)
         else
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, 0)
+            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, false)
         end
     end
 end
@@ -62,6 +62,7 @@ local function loadCurrency(curwin)
 
     local offset = HybridScrollFrame_GetOffset(curwin)
     local currencyCount = C_CurrencyInfo.GetCurrencyListSize()
+    print(currencyCount)
     for i = 1, #curwin.buttons do
         local slot = curwin.buttons[i]
 
@@ -73,7 +74,6 @@ local function loadCurrency(curwin)
             slot.item.CurrencyIdx = nil
             slot.header:Hide()
         else
-            local count, icon, maximum
             local info = C_CurrencyInfo.GetCurrencyListInfo(idx)
             if info.isHeader then
                 slot.item:Hide()
@@ -97,7 +97,7 @@ local function loadCurrency(curwin)
 
                 -- set currency item values
                 slot.item.spaceString:SetText(cinfo.name)
-                if maximum == 0 then
+                if cinfo.maxQuantity == 0 then
                     slot.item.amount:SetText(CommaValue(cinfo.quantity))
                 else
                     slot.item.amount:SetText(CommaValue(cinfo.quantity) .. " / " .. CommaValue(cinfo.maxQuantity))
@@ -106,7 +106,7 @@ local function loadCurrency(curwin)
 
                 -- set zebra color by idx or watch status
                 zebra = idx % 2
-                if info.isWatched then
+                if info.isShowInBackpack then
                     slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
                 else
                     slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
