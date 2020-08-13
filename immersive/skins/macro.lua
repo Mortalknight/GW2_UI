@@ -16,6 +16,7 @@ local function SkinMacroOptions()
     _G.MacroFrameInset.NineSlice:Hide()
     _G.MacroFrameInset:CreateBackdrop(constBackdropFrameBorder)
     _G.MacroHorizontalBarLeft:Hide()
+    _G.MacroFrameTextBackground:StripTextures()
     _G.MacroFrameTextBackground:CreateBackdrop(constBackdropFrame)
 
     local r = {MacroFrame:GetRegions()}

@@ -37,7 +37,6 @@ local function SkinBubble(frame)
         if region:IsObjectType("Texture") then
             region:SetTexture()
         elseif region:IsObjectType("FontString") then
-            print(1)
             frame.text = region
         end
     end

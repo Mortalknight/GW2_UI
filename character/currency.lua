@@ -26,7 +26,6 @@ local function currency_OnClick(self)
             return
         end
         local info = C_CurrencyInfo.GetCurrencyListInfo(self.CurrencyIdx)
-        print(info.isShowInBackpack, MAX_WATCHED_TOKENS)
         if not info.isShowInBackpack then
             if checkNumWatched() >= MAX_WATCHED_TOKENS then
                 UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, MAX_WATCHED_TOKENS), 1.0, 0.1, 0.1, 1.0)
@@ -62,7 +61,7 @@ local function loadCurrency(curwin)
 
     local offset = HybridScrollFrame_GetOffset(curwin)
     local currencyCount = C_CurrencyInfo.GetCurrencyListSize()
-    print(currencyCount)
+
     for i = 1, #curwin.buttons do
         local slot = curwin.buttons[i]
 

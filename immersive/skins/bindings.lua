@@ -29,7 +29,9 @@ local function SkinBindingsUI()
     tex:SetSize(w + 50, h + 50)
     KeyBindingFrame.tex = tex
 
+    _G.KeyBindingFrameCategoryList:StripTextures()
     _G.KeyBindingFrameCategoryList:CreateBackdrop(constBackdropFrameBorder)
+    KeyBindingFrame.bindingsContainer:StripTextures()
     KeyBindingFrame.bindingsContainer:CreateBackdrop(constBackdropFrameBorder)
 
     KeyBindingFrame.characterSpecificButton:SkinCheckButton()
