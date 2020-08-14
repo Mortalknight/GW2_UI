@@ -1065,7 +1065,7 @@ local function LoadActionBars(lm)
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", trackBarChanges)
-    --hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars) TODO
+    hooksecurefunc(ActionBarActionButtonMixin, "UpdateUsable", changeVertexColorActionbars)
     hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
     trackBarChanges()
 
@@ -1076,7 +1076,7 @@ local function LoadActionBars(lm)
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes
-    --hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey) TODO
+    hooksecurefunc(ActionBarActionButtonMixin, "UpdateHotkeys", updateHotkey)
 
     -- frames using the alert frame subsystem have their positioning managed by UIParent
     -- the secure code for that lives mostly in Interface/FrameXML/UIParent.lua

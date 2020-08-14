@@ -491,7 +491,7 @@ local function CreatePvPTab(fmSpellbook)
     lockGroup.info:SetTextColor(1, 1, 1, 1)
     lockGroup.info:SetShadowColor(0, 0, 0, 1)
     lockGroup.info:SetShadowOffset(1, -1)
-    --lockGroup.info:SetText(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, SHOW_PVP_TALENT_LEVEL)) TODO
+    lockGroup.info:SetText(TALENT_TREE_LOCKED)
 
     warGroup:ClearAllPoints()
     warGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
