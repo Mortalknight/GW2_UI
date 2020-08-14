@@ -2,7 +2,15 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
-    "1.8.7",
+    "1.8.9",
+    [=[
+        - Update libs
+        - Update tooltips
+]=]
+)
+
+v(
+    "1.8.8",
     [=[
         - Make bottom left and right multibar moveable
         - Added Worldmap skin (incl. Player and Mouse coords, moving and resizing)

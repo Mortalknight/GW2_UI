@@ -413,6 +413,18 @@ local function LoadTooltips()
         GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
         hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitBuff)
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
+
+        local eventFrame = CreateFrame("Frame")
+        eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
+        eventFrame:SetScript("OnEvent", function(self, event, key)
+            if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" then
+                local owner = GameTooltip:GetOwner()
+                local notOnAuras = not (owner and owner.UpdateTooltip)
+                if notOnAuras and UnitExists("mouseover") then
+                    GameTooltip:SetUnit("mouseover")
+                end
+            end
+        end)
     end
 
     hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)

@@ -1,3 +1,7 @@
+1.8.9
+- Update libs
+- Tooltip updates
+
 1.8.8
 - Make bottom left and right multibar moveable
 - Added Worldmap skin (incl. Player and Mouse coords, moving and resizing)
