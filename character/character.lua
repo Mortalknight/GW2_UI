@@ -154,7 +154,7 @@ local charSecure_OnAttributeChanged =
             fmSBM:SetAttribute("tabopen", 2)
         end
     elseif fmTal ~= nil and value == "petbook" then
-        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 4 then
+        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 5 then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
