@@ -20,7 +20,7 @@
 - Fix error in afk mode
 - Fix Mana/Energy Ticker events
 
-1.8.4a
+1.8.4
 - Added option to change player buff and debuff size
 - Added option to hide Mana/Energy tickerbar out of combat
 - Fix lua error in party frames
