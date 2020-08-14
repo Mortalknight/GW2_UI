@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.3.5-hotfix", [=[
+FIXES
+    - Fix error while dead
+]=])
+
 v("5.3.5", [=[
 NEW
     - Make bottom left and right multibar moveable

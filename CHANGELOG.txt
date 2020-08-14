@@ -1,3 +1,9 @@
+5.3.5-hotfix
+
+FIXES
+    - Fix error while dead
+    
+
 5.3.5
 
 NEW

@@ -125,10 +125,17 @@ local function getBodyPOI()
     end
 
     local posX, posY = GW.GetPlayerMapPos(currentMapID)
+    if posX == nil or posY == nil then
+        return nil
+    end
 
     local corpTable = C_DeathInfo.GetCorpseMapPosition(currentMapID)
+    if corpTable == nil then
+        return nil
+    end
+
     local x, y = corpTable:GetXY()
-    if posX == nil or posY == nil or x == nil or x == 0 or corpTable == nil then
+    if x == nil or x == 0 then
         return nil
     end
 
