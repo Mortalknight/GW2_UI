@@ -849,9 +849,9 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        --if (ActionButton_IsFlashing(btn)) then TODO
-        --    actionButtonFlashing(btn, elapsed)
-        --end
+        if (btn:IsFlashing()) then 
+            actionButtonFlashing(btn, elapsed)
+        end
 
         if testRange then
             local valid = IsActionInRange(btn.action)
@@ -933,9 +933,9 @@ local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        --if (ActionButton_IsFlashing(btn)) then TODO
-        --    actionButtonFlashing(btn, elapsed)
-        --end
+        if (btn:IsFlashing()) then 
+            actionButtonFlashing(btn, elapsed)
+        end
 
         if testRange then
             local valid = IsActionInRange(btn.action)

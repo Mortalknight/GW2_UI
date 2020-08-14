@@ -673,9 +673,21 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
         hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitBuff)
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
+
+        local eventFrame = CreateFrame("Frame")
+        eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
+        eventFrame:SetScript("OnEvent", function(self, event, key)
+            if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" then
+                local owner = GameTooltip:GetOwner()
+                local notOnAuras = not (owner and owner.UpdateTooltip)
+                if notOnAuras and UnitExists("mouseover") then
+                    GameTooltip:SetUnit("mouseover")
+                end
+            end
+        end)
     end
     
-    --TODO copate with embedded style is not skinned
+    --TODO copare with embedded style is not skinned
     hooksecurefunc("SharedTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
     for _, toStyle in pairs(UNSTYLED) do
         if toStyle then
