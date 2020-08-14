@@ -120,7 +120,7 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" justifyH="LEFT" virtual="true">
         <Size x="231" y="36"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -138,7 +138,7 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" justifyH="LEFT" virtual="true">
         <Layers>
             <Layer layer="OVERLAY" textureSubLevel="8">
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
@@ -151,5 +151,5 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true"/>
+    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" justifyH="LEFT" virtual="true"/>
 </Ui>

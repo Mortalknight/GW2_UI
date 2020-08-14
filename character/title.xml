@@ -19,7 +19,7 @@
             </Texture>
           </Layer>
           <Layer textureSubLevel="2">
-            <FontString parentKey="name" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
+            <FontString parentKey="name" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="LEFT">
               <Anchors>
                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
               </Anchors>

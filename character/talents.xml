@@ -16,7 +16,7 @@
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyY="CENTER">
+                <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="256" y="32"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-10"></Anchor>
@@ -31,10 +31,10 @@
         <Size x="30" y="30"></Size>
         <Layers>
             <Layer level="BORDER">
-                <FontString parentKey="title" text="0" justifyH="CENTER" justifyY="CENTER">
+                <FontString parentKey="title" text="0" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="32" y="32"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y=""></Anchor>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -95,13 +95,13 @@
                         <FontString parentKey="specTitle" text="Arcane" justifyH="LEFT">
                             <Size x="200" y="20"></Size>
                             <Anchors>
-                                <Anchor point="TOPLEFT" x="" y="-20"></Anchor>
+                                <Anchor point="TOPLEFT" x="0" y="-20"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
                             <Size x="400" y="50"></Size>
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="" y="-5"></Anchor>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -173,13 +173,13 @@
                         <FontString parentKey="specTitle" text="Arcane" justifyH="LEFT">
                             <Size x="200" y="20"></Size>
                             <Anchors>
-                                <Anchor point="TOPLEFT" x="" y="-20"></Anchor>
+                                <Anchor point="TOPLEFT" x="0" y="-20"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
                             <Size x="400" y="50"></Size>
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="" y="-5"></Anchor>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -390,7 +390,7 @@
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <FontString parentKey="info" text="Info" justifyH="CENTER" justifyY="CENTER">
+                <FontString parentKey="info" text="Info" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="245" y="32"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="-100"></Anchor>
@@ -437,7 +437,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <FontString parentKey="title" text="Title" justifyH="LEFT" justifyY="CENTER">
+                        <FontString parentKey="title" text="Title" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="256" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" x="10" y="-2"></Anchor>
@@ -470,7 +470,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <FontString parentKey="title" text="Title" justifyH="LEFT" justifyY="CENTER">
+                        <FontString parentKey="title" text="Title" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="256" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" x="10" y="-2"></Anchor>

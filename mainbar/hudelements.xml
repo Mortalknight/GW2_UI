@@ -118,7 +118,7 @@
         <Layers>
             <Layer>
                 <Texture file="Interface\AddOns\GW2_UI\textures\gradient">
-                    <Color a="0.7"></Color>
+                    <Color r="0" g="0" b="0" a="0.7"></Color>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
@@ -293,7 +293,6 @@
                             </Anchors>
                         </Texture>
                         <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep">
-
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="TOP" y="2"></Anchor>

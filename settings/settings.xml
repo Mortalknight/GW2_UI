@@ -326,7 +326,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY" textureSubLayer="3">
-                        <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyY="CENTER">
+                        <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="240" y="20"/>
                             <Color r="1" b="1" g="1"/>
                             <Anchors>
@@ -362,7 +362,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLayer="3">
-                <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyY="CENTER">
+                <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="240" y="20"/>
                     <Color r="1" b="1" g="1"/>
                     <Anchors>
