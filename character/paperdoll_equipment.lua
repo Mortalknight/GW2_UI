@@ -563,6 +563,7 @@ end
 GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnLeave", itemSlot_OnLeave)
 
 local function stat_OnEnter(self)
+    print(self.stat)
     if self.stat == "MASTERY" then
         Mastery_OnEnter(self)
         return
@@ -716,7 +717,16 @@ local function updateStats()
     local grid = 1
     local x = 0
     local y = 0
+    local i
 
+    -- hide old stats
+    for i = 1, 20 do
+        statFrame = _G["GwPaperDollStat" .. i]
+        if statFrame then
+            statFrame.stat = nil
+            statFrame:Hide()
+        end
+    end
     for catIndex = 1, #PAPERDOLL_STATCATEGORIES do
         for statIndex = 1, #PAPERDOLL_STATCATEGORIES[catIndex].stats do
             local stat = PAPERDOLL_STATCATEGORIES[catIndex].stats[statIndex]
@@ -738,12 +748,9 @@ local function updateStats()
                 showStat = foundRole
             end
 
-            if stat.stat == "MASTERY" then
-                showStat = false
-            end
-
             if (showStat) then
                 statFrame = getStatListFrame(GwPaperDollStats, numShownStats)
+                statFrame:Show()
                 statFrame.stat = stat.stat
                 statFrame.onEnterFunc = nil
                 PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player")
@@ -772,7 +779,7 @@ local function updateStats()
     statFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
     statFrame.icon:SetTexCoord(0, 1, 0, 0.5)
     statFrame.icon:SetDesaturated(true)
-    statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
+    statFrame:Show()
     durabilityFrame = statFrame
 end
 GW.AddForProfiling("paperdoll_equipment", "updateStats", updateStats)

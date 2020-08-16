@@ -331,7 +331,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/character/statsicon">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>

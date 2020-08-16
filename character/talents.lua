@@ -111,14 +111,36 @@ local function setLineRotation(self, from, to)
 end
 GW.AddForProfiling("talents", "setLineRotation", setLineRotation)
 
+local function setSpecTabIconAndTooltip(tab)
+    -- update spec-specific skill tab tooltip and icon
+    local _, specName, _ = GetSpecializationInfo(GW.myspec)
+    tab.gwTipLabel = specName
+    local spec = GetSpecialization()
+    if spec then
+        local role = GetSpecializationRole(spec)
+        if role == "DAMAGER" then
+            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
+            tab.icon:SetTexCoord(0.75, 1, 0.75, 1)
+        elseif role == "TANK" then
+            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
+            tab.icon:SetTexCoord(0.75, 1, 0.5, 0.75)
+        elseif role == "HEALER" then
+            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
+            tab.icon:SetTexCoord(0.25, 0.5, 0.75, 1)
+        else
+            -- set default icon
+            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock")
+            tab.icon:SetTexCoord(0, 1, 0, 1)
+        end
+    end
+end
+
 local function updateActiveSpec()
     if InCombatLockdown() then
         return
     end
 
-    -- update spec-specific skill tab tooltip
-    local _, specName, _ = GetSpecializationInfo(GW.myspec)
-    GwspellbookTab3.gwTipLabel = specName
+    setSpecTabIconAndTooltip(GwspellbookTab3)
 
     for i = 1, GetNumSpecializations() do
         local container = _G["GwSpecFrame" .. i]
@@ -266,7 +288,7 @@ local function loadTalents()
         self:SetScript("OnUpdate", nil)
     end
     local fnContainer_OnClick = function(self, button)
-        if not self.active and GW.mylevel > 9 then
+        if not self.active and C_SpecializationInfo.CanPlayerUseTalentSpecUI() then
             SetSpecialization(self.specIndex)
         end
     end
@@ -559,7 +581,15 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     local petToken
 
     local BOOKTYPE = BOOKTYPE_SPELL
-    if spellBookTabs == 5 then
+    if spellBookTabs == 3 and GW.mylevel < 10 then
+        fmTab.groups["active"]:Hide()
+        fmTab.groups["passive"]:Hide()
+        fmTab.groups["lock"]:Show()
+    elseif spellBookTabs == 3 and GW.mylevel >= 10 then
+        fmTab.groups["active"]:Show()
+        fmTab.groups["passive"]:Show()
+        fmTab.groups["lock"]:Hide()
+    elseif spellBookTabs == 5 then
         BOOKTYPE = BOOKTYPE_PET
         numSpells, petToken = HasPetSpells()
         offset = 0
@@ -975,7 +1005,7 @@ local function createRegTab(fmSpellbook, tab)
     psvGroup.label.title:SetText(SPELL_PASSIVE)
     psvGroup.pool = CreateFramePool("Button", psvGroup, "GwSpellbookPassiveButton", passivePool_Resetter)
 
-    if tab == 5 then
+    if tab == 3 or tab == 5 then
         local lockGroup = CreateFrame("Frame", nil, container, "GwSpellbookLockGroup")
         container.groups["lock"] = lockGroup
         lockGroup:ClearAllPoints()
@@ -984,7 +1014,7 @@ local function createRegTab(fmSpellbook, tab)
         lockGroup.info:SetTextColor(1, 1, 1, 1)
         lockGroup.info:SetShadowColor(0, 0, 0, 1)
         lockGroup.info:SetShadowOffset(1, -1)
-        lockGroup.info:SetText(SPELL_FAILED_NO_PET)
+        lockGroup.info:SetText(tab == 3 and format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, 10) or SPELL_FAILED_NO_PET)
     end
 
     return container
@@ -1162,9 +1192,9 @@ local function LoadTalents(tabContainer)
     GwspellbookTab5:SetScript("OnEnter", spellTab_OnEnter)
     GwspellbookTab5:SetScript("OnLeave", GameTooltip_Hide)
 
-    -- set tab 2 to class icon
+    -- set tab 2/3 to class/spec icon
     SetClassIcon(GwspellbookTab2.icon, GW.myClassID)
-    SetClassIcon(GwspellbookTab3.icon, GW.myClassID) --TODO: Maybe spec icon?
+    setSpecTabIconAndTooltip(GwspellbookTab3)
 
     GwTalentFrame:HookScript(
         "OnShow",
