@@ -756,6 +756,7 @@ local function updateStats()
 
                 setStatIcon(statFrame, stat.stat)
 
+                statFrame:ClearAllPoints()
                 statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
                 grid = grid + 1
                 x = x + 92
@@ -778,6 +779,8 @@ local function updateStats()
     statFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
     statFrame.icon:SetTexCoord(0, 1, 0, 0.5)
     statFrame.icon:SetDesaturated(true)
+    statFrame:ClearAllPoints()
+    statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     statFrame:Show()
     durabilityFrame = statFrame
 end
