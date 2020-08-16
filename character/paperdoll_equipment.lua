@@ -563,7 +563,6 @@ end
 GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnLeave", itemSlot_OnLeave)
 
 local function stat_OnEnter(self)
-    print(self.stat)
     if self.stat == "MASTERY" then
         Mastery_OnEnter(self)
         return
