@@ -871,7 +871,7 @@ local function GetRaidFramesMeasures(players)
 
     -- Container size
     local size1, size2 = cells1 * (sizePer1 + m) - m, cells2 * (sizePer2 + m) - m
-    sizeMax1, sizeMax1 = max(size1, sizeMax1), max(size2, sizeMax2)
+    sizeMax1, sizeMax2 = max(size1, sizeMax1), max(size2, sizeMax2)
 
     return grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m
 end

@@ -418,7 +418,7 @@
                         </FontString>
                         <FontString parentKey="unspentPointsLabel" text="Unspent talent points" justifyH="LEFT" justifyY="CENTER">
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.unspentPoints" x="0" y=""/>
+                                <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.unspentPoints" x="0" y="0"/>
                             </Anchors>
                         </FontString>
                     </Layer>

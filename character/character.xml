@@ -98,7 +98,7 @@
                 </Texture>
             </Layer>
             <Frames>
-                <CheckButton hidden="true" name="$parentCheckButton"  checked="false">
+                <CheckButton hidden="true" name="$parentCheckButton" checked="false">
                     <Size x="160" y="160"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10" y="0"></Anchor>

@@ -4,7 +4,7 @@
     <Frame name="GwWelcomePageTmpl" virtual="true">
         <Size x="512" y="512"/>
         <Anchors>
-            <Anchor point="CENTER" relativePoint="CENTER" x="" y="30"/>
+            <Anchor point="CENTER" relativePoint="CENTER" x="0" y="30"/>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">

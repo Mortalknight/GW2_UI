@@ -146,56 +146,56 @@
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString enableMouse="false" name="$parentShadow2" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString enableMouse="false" name="$parentShadow3" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString enableMouse="false" name="$parentShadow4" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString enableMouse="false" name="$parentShadow5" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString enableMouse="false" name="$parentShadow6" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString enableMouse="false" name="$parentShadow7" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString enableMouse="false" name="$parentShadow8" text="100,000" fontSize="14" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -204,7 +204,7 @@
                             <Size x="102" y="25"/>
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="" y="0"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                     </Layer>

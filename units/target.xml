@@ -311,7 +311,7 @@
                     <Size x="18" y="18"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y=""/>
+                        <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
                 <FontString name="$parentBuffDuration" parentKey="durationString" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
