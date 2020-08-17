@@ -772,31 +772,28 @@ local function updateStats()
                 end
                 showStat = foundRole
             end
+            statFrame = getStatListFrame(GwPaperDollStats, numShownStats)    
+            statFrame.onEnterFunc = nil
+            statFrame.UpdateTooltip = nil
+            PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player")
 
-            if (showStat) then
-                statFrame = getStatListFrame(GwPaperDollStats, numShownStats)
+            if (showStat) and (not stat.hideAt or stat.hideAt ~= statFrame.numericValue) then
+                statFrame:Show()
                 statFrame.stat = stat.stat
-                statFrame.onEnterFunc = nil
-                PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player")
+                setStatIcon(statFrame, stat.stat)
 
-                if not stat.hideAt or stat.hideAt ~= statFrame.numericValue then
-                    statFrame:Show()
-            
-                    setStatIcon(statFrame, stat.stat)
+                statFrame:ClearAllPoints()
+                statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
+                grid = grid + 1
+                x = x + 92
 
-                    statFrame:ClearAllPoints()
-                    statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
-                    grid = grid + 1
-                    x = x + 92
-
-                    if grid > 2 then
-                        grid = 1
-                        x = 0
-                        y = y + 35
-                    end
-
-                    numShownStats = numShownStats + 1
+                if grid > 2 then
+                    grid = 1
+                    x = 0
+                    y = y + 35
                 end
+
+                numShownStats = numShownStats + 1
             end
         end
     end
@@ -804,7 +801,6 @@ local function updateStats()
     statFrame = getDurabilityListFrame(GwPaperDollStats)
     statFrame:ClearAllPoints()
     statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
-    statFrame:Show()
     durabilityFrame = statFrame
 end
 GW.AddForProfiling("paperdoll_equipment", "updateStats", updateStats)
