@@ -37,7 +37,7 @@ local function xpbar_OnEnter()
         GameTooltip:AddLine(gw_honor_vals, 1, 1, 1)
     end
 
-    if GW.mylevel < GetMaxPlayerLevel() then
+    if not IsPlayerAtEffectiveMaxLevel() then
         GameTooltip:AddLine(
             COMBAT_XP_GAIN ..
                 " " ..
@@ -93,7 +93,7 @@ end
 GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
 
 local function xpbar_OnClick()
-    if GW.mylevel < GetMaxPlayerLevel() then
+    if not IsPlayerAtEffectiveMaxLevel() then
         if GwLevelingRewards:IsShown() then
             GwLevelingRewards:Hide()
         else
@@ -137,7 +137,7 @@ end
 GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
 local function xpbar_OnEvent(self, event)
-    if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil and GW.mylevel == GetMaxPlayerLevel() then
+    if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil and IsPlayerAtEffectiveMaxLevel() then
         C_Timer.After(0.4, function() xpbar_OnEvent(self, nil) end)
     end
     if event == "UPDATE_FACTION" and not GW.inWorld then
@@ -156,7 +156,7 @@ local function xpbar_OnEvent(self, event)
     local valPrecRepu = 0
 
     local level = GW.mylevel
-    local maxPlayerLevel = GetMaxPlayerLevel()
+    local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
     local Nextlevel = math.min(maxPlayerLevel, level + 1)
     local lockLevelTextUnderMaxLevel = false
 
