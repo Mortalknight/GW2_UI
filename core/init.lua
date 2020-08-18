@@ -29,3 +29,7 @@ GW.unitIlvlsCache = {}
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.gwMocks = {}
+GW.locationData = {}
+
+-- Init global function
+GW.InitLocationDataHandler()

@@ -1,30 +1,8 @@
 local _, GW = ...
+local locationData = GW.locationData
 
 local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
-
-local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
-local function GetPlayerMapPos(mapID)
-	tempVec2D.x, tempVec2D.y = UnitPosition("player")
-	if not tempVec2D.x then return end
-
-	local mapRect = mapRects[mapID]
-	if not mapRect then
-		mapRect = {
-			select(2, C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(0, 0))),
-			select(2, C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(1, 1)))}
-		if mapRect[1] and mapRect[2] then	
-			mapRect[2]:Subtract(mapRect[1])
-			mapRects[mapID] = mapRect
-		else
-			return nil, nil
-		end
-	end
-	tempVec2D:Subtract(mapRect[1])
-
-	return (tempVec2D.y/mapRect[2].y), (tempVec2D.x/mapRect[2].x)
-end
-GW.GetPlayerMapPos = GetPlayerMapPos
 
 local function UpdateCoords()
     local WorldMapFrame = _G.WorldMapFrame
@@ -32,13 +10,7 @@ local function UpdateCoords()
         return
     end
 
-	local x, y
-	local mapID = C_Map.GetBestMapForUnit("player")
-	if mapID then
-		x, y = GetPlayerMapPos(mapID)
-	else
-		x, y = nil, nil
-	end
+	local x, y = GW.GetPlayerMapPos()
 
 	if x and y then
 		x = GW.RoundDec(100 * x, 2)

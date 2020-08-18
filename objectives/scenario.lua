@@ -6,6 +6,7 @@ local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local UpdateQuestItem = GW.UpdateQuestItem
 local setBlockColor = GW.setBlockColor
+local locationData = GW.locationData
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
@@ -114,7 +115,6 @@ local function updateCurrentScenario()
     GwScenarioBlock:Show()
 
     local _, _, numStages, _, _, _, _, _, _, scenarioType = C_Scenario.GetInfo()
-    local uiMap = C_Map.GetBestMapForUnit("player")
     local inWarfront = (scenarioType == LE_SCENARIO_TYPE_WARFRONT)
 
     if (numStages == 0) then
@@ -216,7 +216,7 @@ local function updateCurrentScenario()
             iqty / imax * 100
         )
         numCriteria = numCriteria + 2
-    elseif uiMap == 1469 or uiMap == 1470 then -- Heroic Vision for OP and SW
+    elseif locationData.mapID == 1469 or locationData.mapID == 1470 then -- Heroic Vision for OP and SW
         local info = GetCurrencyInfo(1744) --Corrupted Memento
         addObjectiveBlock(
             GwScenarioBlock,
@@ -374,7 +374,6 @@ local function scenarioTimerUpdate(...)
         local timerID = select(i, ...)
         local _, _, wtype = GetWorldElapsedTime(timerID)
         if (wtype == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE) then
-            --local _, _, _, _, _, _, _, mapID = GetInstanceInfo();
             local mapID = C_ChallengeMode.GetActiveChallengeMapID()
             if (mapID) then
                 local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)

@@ -8,9 +8,9 @@ local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
+local locationData = GW.locationData
 
 local savedQuests = {}
-local mapID = ""
 local updateCap = 1 / 5
 
 local function wiggleAnim(self)
@@ -728,11 +728,6 @@ local function tracker_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
-local function trackerNotification_OnEvent(self, event)
-    mapID = C_Map.GetBestMapForUnit("player")
-end
-GW.AddForProfiling("objectives", "trackerNotification_OnEvent", trackerNotification_OnEvent)
-
 local function tracker_OnUpdate(self, elapsed)
     self.elapsedTimer = self.elapsedTimer - elapsed
     if self.elapsedTimer > 0 then
@@ -742,8 +737,8 @@ local function tracker_OnUpdate(self, elapsed)
 
     local prevState = GwObjectivesNotification.shouldDisplay
 
-    if mapID then
-        GW.SetObjectiveNotification(mapID)
+    if locationData.mapID then
+        GW.SetObjectiveNotification()
     end
 
     if prevState ~= GwObjectivesNotification.shouldDisplay then

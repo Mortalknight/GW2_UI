@@ -33,6 +33,7 @@ core/itemlevel.lua
 core/shared.xml
 core/fonts.lua
 core/storage.lua
+core/locationData.lua
 core/init.lua
 core/statusReport.lua
 core/slashcommands.lua

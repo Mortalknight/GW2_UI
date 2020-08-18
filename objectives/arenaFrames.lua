@@ -49,11 +49,9 @@ local function setCompass()
         compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
     else
         -- parse current BG date here, to show the correct name and subname
-        local _, _, _, _, _, _, _, mapID = GetInstanceInfo()
-
-        if GetBattlegroundInfo(bgIndex[mapID]) then
-            compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[mapID])) 
-            compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[mapID]))
+        if GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
+            compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])) 
+            compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
         else
             compassData["TITLE"] = ARENA
             compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
