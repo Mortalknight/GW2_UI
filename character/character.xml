@@ -221,7 +221,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.reputationMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="Reputation" >
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="Reputation" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>

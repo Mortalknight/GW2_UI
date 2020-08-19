@@ -4,6 +4,7 @@ local SetSetting = GW.SetSetting
 
 local windowsList = {}
 local hasBeenLoaded = false
+local hideCharframe = true
 
 windowsList[1] = {
     ['OnLoad'] = "LoadPaperDoll",
@@ -475,6 +476,44 @@ local function charTab_OnEnter(self)
     GameTooltip:Show()
 end
 
+local function CharacterMenuButton_OnLoad(self, odd)
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    if not odd then
+        self:SetNormalTexture(nil)
+    else
+        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+    end
+    self:GetFontString():SetTextColor(1, 1, 1, 1)
+    self:GetFontString():SetShadowColor(0, 0, 0, 0)
+    self:GetFontString():SetShadowOffset(1, -1)
+    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
+    self:GetFontString():SetJustifyH("LEFT")
+    self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
+end
+
+local nextShadow, nextAnchor
+local function addAddonButton(name, setting, buttonName, shadow, anchor, showFunction)
+    if IsAddOnLoaded(name) and (setting == nil or setting == true) then
+        GwCharacterMenu.buttonName = CreateFrame("Button", nil, GwCharacterMenu, shadow and "GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" or "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate2")
+        GwCharacterMenu.buttonName:SetText(name)
+        GwCharacterMenu.buttonName:SetSize(231, 36)
+        GwCharacterMenu.buttonName:ClearAllPoints()
+        GwCharacterMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
+        CharacterMenuButton_OnLoad(GwCharacterMenu.buttonName, shadow)
+        GwCharacterMenu.buttonName:SetFrameRef("charwin", GwCharacterWindow)
+        GwCharacterMenu.buttonName.ui_show = showFunction
+        GwCharacterMenu.buttonName:SetAttribute("_onclick", [=[
+            local fchar = self:GetFrameRef("charwin")
+            if fchar then
+                fchar:SetAttribute("windowpanelopen", nil)
+            end
+            self:CallMethod("ui_show")
+        ]=])
+        nextShadow = not nextShadow
+        nextAnchor = GwCharacterMenu.buttonName
+    end
+end
+
 local LoadCharWindowAfterCombat = CreateFrame("Frame", nil, UIParent)
 local function LoadWindows()
     if InCombatLockdown() then
@@ -542,6 +581,11 @@ local function LoadWindows()
                 styleCharacterMenuBackButton(GwPaperHonor.backButton)
                 styleCharacterMenuBackButton(GwDressingRoomPet.backButton)
 
+                -- add addon buttons here
+                nextShadow = true
+                nextAnchor = GwCharacterMenu.petMenu
+                addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), OutfitterButton, nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
+
                 GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
                     f:SetAttribute("keytoggle", true)
@@ -587,6 +631,15 @@ local function LoadWindows()
 
             tabIndex = tabIndex + 1
         end
+    end
+
+    if GetSetting("USE_CHARACTER_WINDOW") then
+        CharacterFrame:SetScript("OnShow", function()
+            if hideCharframe then
+                HideUIPanel(CharacterFrame)
+            end
+            hideCharframe = true
+        end)
     end
 
     -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win

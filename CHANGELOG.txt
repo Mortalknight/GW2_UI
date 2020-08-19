@@ -1,3 +1,6 @@
+1.9.0
+- Added Outfitter support
+
 1.8.9
 - Update libs
 - Tooltip updates

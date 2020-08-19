@@ -2,6 +2,13 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.9.0",
+    [=[
+        - Added Outfitter support
+]=]
+)
+
+v(
     "1.8.9",
     [=[
         - Update libs

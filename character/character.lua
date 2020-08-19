@@ -1504,10 +1504,6 @@ local function LoadPaperDoll()
     end)
     GwPaperSkills.scroll.slider:SetValue(1)
 
-    CharacterFrame:SetScript("OnShow", function()
-        HideUIPanel(CharacterFrame)
-    end)
-
     GwDressingRoom.model:SetUnit("player")
     GwDressingRoom.model:SetPosition(0.8, 0, 0)
 
