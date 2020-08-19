@@ -55,16 +55,16 @@ local function LoadCastingBar()
         "OnEvent",
         function(self, event, unitID, spellid)
             local castingType = 1
-            local spell, text, icon, startTime, endTime, isTradeSkill, notInterruptible, spellID, castID, interrupt
+            local spell, icon, startTime, endTime, spellID
             if unitID ~= "player" then
                 return
             end
             if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" or event == "UNIT_SPELLCAST_DELAYED" then
                 if event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-                    spell, text, icon, startTime, endTime, isTradeSkill, notInterruptible, spellID = ChannelInfo()
+                    spell, _, icon, startTime, endTime, _, _, spellID = ChannelInfo()
                     castingType = 2
                 else
-                    spell, text, icon, startTime, endTime, isTradeSkill, castID, interrupt = CastingInfo()
+                    spell, _, icon, startTime, endTime, _, _, _ = CastingInfo()
                 end
 
                 if GetSetting("CASTINGBAR_DATA") then

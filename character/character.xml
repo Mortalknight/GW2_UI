@@ -32,7 +32,7 @@
                         <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT"></Anchor>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="Value" text="Not Loaded" justifyV="CENTER" justifyH="LEFT">
+                <FontString parentKey="Value" text="Not Loaded" justifyV="MIDDLE" justifyH="LEFT">
                     <Size x="72" y="35"></Size>
                     <Anchors>
                         <Anchor point="LEFT" x="35"></Anchor>
@@ -75,10 +75,10 @@
         </Scripts>
     </Frame>
 
-    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
+    <Button name="GwPaperDollButtonTemplate" registerForClicks="LeftButtonUp, RightButtonUp" inherits="ItemButtonTemplate" virtual="true">
         <Size x="49" y="49"></Size>
         <Layers>
-        <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND">
                 <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
                     <Size x="49" y="49"></Size>
                     <Anchors>
@@ -143,7 +143,7 @@
         </Scripts>
     </Button>
 
-    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" justifyH="LEFT" virtual="true">
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
         <Layers>
             <Layer>
@@ -157,7 +157,7 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuButtonTemplate2" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuButtonTemplate2" inherits="GwStandardButton" justifyH="LEFT" virtual="true">
         <Layers>
             <Layer>
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
@@ -170,9 +170,9 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" jusifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" justifyH="LEFT" virtual="true">
         <Layers>
-            <Layer layer="OVERLAY" textureSubLevel="8">
+            <Layer level="OVERLAY" textureSubLevel="8">
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
                     <Size x="32" y="32"></Size>
                     <Anchors>
@@ -183,7 +183,7 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" jusifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" justifyH="LEFT" virtual="true">
         <Scripts>
             <OnLoad>
                 self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
@@ -255,7 +255,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
+            <StatusBar name="$parentStatusBar" minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
                 <Size x="201" y="4"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="8"></Anchor>
@@ -416,7 +416,7 @@
                             </Layer>
                         </Layers>
                     </Button>
-                    <Button parentKey="inactive" checked="false">
+                    <Button parentKey="inactive">
                         <Size x="100" y="20"/>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="5"></Anchor>
@@ -442,7 +442,7 @@
                             </CheckButton>
                         </Frames>
                     </Button>
-                    <Button parentKey="showAsBar" checked="false">
+                    <Button parentKey="showAsBar">
                         <Size x="200" y="20"/>
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-15" y="0"></Anchor>
@@ -483,7 +483,7 @@
                     </OnHide>
                 </Scripts>
             </Frame>
-            <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
+            <StatusBar name="$parentStatusBar" minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
                 <Size x="201" y="10"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
@@ -632,7 +632,7 @@
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="13" y="-15"></Anchor>
                 </Anchors>
             </Button>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -645,7 +645,7 @@
                     </OnLoad>
                 </Scripts>
                 <Frames>
-                    <StatusBar name="$parentExpBar"  min="0" max="1" hidden="false" parentKey="expBar">
+                    <StatusBar name="$parentExpBar"  minValue="0" maxValue="1" hidden="false" parentKey="expBar">
                         <Size x="380" y="10"></Size>
                         <Anchors>
                             <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="40"></Anchor>
@@ -801,7 +801,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
+            <StatusBar name="$parentStatusBar" minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
                 <Size x="196" y="4"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.name" x="0" y="0"></Anchor>
@@ -1173,7 +1173,7 @@
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-232" y="-10"></Anchor>
                 </Anchors>
             </Button>
-            <Frame parentKey="HonorDetails" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
+            <Frame name="$parentHonorDetails" parentKey="HonorDetails" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
                 <Size x="580" y="576"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
@@ -1206,7 +1206,7 @@
     <Frame name="GwHonorInfoRow" virtual="true" frameStrata="HIGH">
         <Size x="512" y="96"></Size>
         <Anchors>
-            <Anchors point="TOPLEFT"></Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
         </Anchors>
         <Layers>
             <Layer textureSubLevel="3">
@@ -1520,7 +1520,7 @@
                     </OnLoad>
                 </Scripts>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown"  parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>

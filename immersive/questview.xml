@@ -66,13 +66,13 @@
                                 </Texture>
                             </Layer>
                             <Layer level="OVERLAY" textureSubLevel="2">
-                                <FontString name="$parentString" inherits="GameFontNormal" text="Test text" justify="CENTER">
+                                <FontString name="$parentString" inherits="GameFontNormal" text="Test text" justifyV="MIDDLE">
                                     <Size x="850" y="100"></Size>
                                     <Anchors>
                                         <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" />
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentQuestTitle" inherits="GameFontNormal" text="Test text" justify="CENTER">
+                                <FontString name="$parentQuestTitle" inherits="GameFontNormal" text="Test text" justifyV="MIDDLE">
                                     <Size x="950" y="100"></Size>
                                     <Anchors>
                                         <Anchor point="TOP" relativePoint="TOP" x="0" y="0" />

@@ -1,6 +1,4 @@
 local _, GW = ...
-local L = GW.L
-local RoundDec = GW.RoundDec
 
 GW.stats = {}
 local PRIMARY_STATS={
@@ -69,7 +67,7 @@ local function getPrimary(i, unit)
     local tooltipText = HIGHLIGHT_FONT_COLOR_CODE .. _G["SPELL_STAT" .. i .. "_NAME"] .. " "
 
     -- Get class specific tooltip for that stat
-    local temp, classFileName = UnitClass(unit)
+    local _, classFileName = UnitClass(unit)
     local classStatText = _G[strupper(classFileName) .. "_" .. PRIMARY_STATS[i] .. "_" .. "TOOLTIP"]
 
     -- If can't find one use the default
@@ -122,8 +120,7 @@ local function getArmor(unit, prefix)
     local stat
     local tooltip
     local tooltip2
-    local base, effectiveArmor, armor, posBuff, negBuff = UnitArmor(unit)
-    local totalBufs = posBuff + negBuff
+    local base, effectiveArmor, _, posBuff, negBuff = UnitArmor(unit)
 
     stat, tooltip = formateStat(ARMOR, base, posBuff, negBuff)
     local playerLevel = UnitLevel(unit)
@@ -189,8 +186,6 @@ local function getAttackBothHands(unit, prefix)
     end
 
     local stat
-    local tooltip
-    local tooltip2
     local mainHandAttackBase, mainHandAttackMod = UnitAttackBothHands(unit)
 
     if mainHandAttackMod == 0 then

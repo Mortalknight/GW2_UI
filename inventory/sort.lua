@@ -294,7 +294,7 @@ local function TooltipInfo(container, position)
     for i = 1, SortBagsTooltip:NumLines() do
         local text = getglobal('SortBagsTooltipTextLeft' .. i):GetText()
 
-        local charges = GW.itemCharges(text)
+        charges = GW.itemCharges(text)
         if charges then
             charges = charges
         elseif strfind(text, '^' .. ITEM_SPELL_TRIGGER_ONUSE) then

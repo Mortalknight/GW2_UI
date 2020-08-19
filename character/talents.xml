@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwTalentFrame" enableMouse="true" inherits="SecureHandlerBaseTemplate" protected="true" registerForClicks="LeftButtonUp" virtual="true">
+    <Frame name="GwTalentFrame" enableMouse="true" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
         <Size x="608" y="621"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"/>
@@ -16,7 +16,7 @@
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyY="CENTER">
+                <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="256" y="32"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-10"/>
@@ -52,8 +52,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -62,7 +62,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
                     <Size x="44" y="44"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
@@ -78,7 +78,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <FontString parentKey="points" text="10/10" justifyH="CENTER" justifyY="CENTER">
+                <FontString parentKey="points" text="10/10" justifyH="CENTER" justifyV="MIDDLE">
                     <Anchors>
                         <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0"/>
                     </Anchors>
@@ -144,7 +144,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="background" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\button_hover" hidden="true">
+                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\button_hover" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -160,7 +160,7 @@
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
-                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
+                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="5" y="0"/>
@@ -195,12 +195,12 @@
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
+                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="pages" text="0" justifyH="LEFT" justifyY="CENTER">
+                <FontString parentKey="pages" text="0" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
                         <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="10"/>
                     </Anchors>
@@ -260,7 +260,7 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"  x="-30" y="5" />
                 </Anchors>
                 <Layers>
-                    <Layer layer="OVERLAY" textureSubLevel="8">
+                    <Layer level="OVERLAY" textureSubLevel="8">
                         <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -276,7 +276,7 @@
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"  x="30" y="5" />
                 </Anchors>
                 <Layers>
-                    <Layer layer="OVERLAY" textureSubLevel="8">
+                    <Layer level="OVERLAY" textureSubLevel="8">
                         <Texture file="Interface\AddOns\GW2_UI\textures\character\forwardicon">
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -297,7 +297,7 @@
         <Layers>
             <Layer level="BACKGROUND"/>
             <Layer level="BORDER">
-                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyY="CENTER">
+                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="256" y="20"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-10"/>
@@ -323,8 +323,8 @@
                 </Anchors>
             </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -353,14 +353,14 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="rank" text="" justifyH="RIGHT" justifyY="BOTTOM">
+                <FontString parentKey="rank" text="" justifyH="RIGHT" justifyV="BOTTOM">
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
                     <Size x="40" y="40"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
@@ -380,7 +380,7 @@
         </Scripts>
     </Button>
 
-    <Frame name="GwLegacyTalentFrame" enableMouse="true" inherits="SecureHandlerStateTemplate,SecureHandlerBaseTemplate" protected="true" registerForClicks="LeftButtonUp" virtual="true">
+    <Frame name="GwLegacyTalentFrame" enableMouse="true" inherits="SecureHandlerStateTemplate,SecureHandlerBaseTemplate" protected="true" virtual="true">
         <Size x="853" y="627"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -411,12 +411,12 @@
                     </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyY="CENTER">
+                        <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-20"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="unspentPointsLabel" text="Unspent talent points" justifyH="LEFT" justifyY="CENTER">
+                        <FontString parentKey="unspentPointsLabel" text="Unspent talent points" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.unspentPoints" x="0" y="0"/>
                             </Anchors>
@@ -444,7 +444,7 @@
         </Scripts>
     </Frame>
 
-    <Frame name="GwLegacyTalentTree" enableMouse="true" registerForClicks="LeftButtonUp" virtual="true">
+    <Frame name="GwLegacyTalentTree" enableMouse="true" virtual="true">
         <Size x="284" y="535"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -471,13 +471,13 @@
                 <Layers>
                     <Layer level="BACKGROUND"/>
                     <Layer level="BORDER">
-                        <FontString parentKey="title" text="" justifyH="LEFT" justifyY="CENTER">
+                        <FontString parentKey="title" text="" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="10"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="10" y="-10"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="points" text="20" justifyH="RIGHT" justifyY="CENTER">
+                        <FontString parentKey="points" text="20" justifyH="RIGHT" justifyV="MIDDLE">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="10"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="-10"/>

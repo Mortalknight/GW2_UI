@@ -295,7 +295,6 @@ local function LoadProfilesPanel(sWindow)
     fmGCNP:SetWidth(fmGCNP:GetTextWidth() + 10)
     fmGCNP:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     local fnGCNP_OnClick = function(self, button)
-        local up = self
         inputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()

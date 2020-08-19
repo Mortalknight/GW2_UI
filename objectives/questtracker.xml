@@ -17,7 +17,7 @@
                 </Texture>
             </Layer>
             <Layer Level="OVERLAY">
-                <FontString name="$parentString" text="Quests" parentKey="title" justifyH="LEFT" justifyV="CENTER">
+                <FontString name="$parentString" text="Quests" parentKey="title" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="250" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
@@ -132,7 +132,7 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true">
+    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" parent="GwQuestTracker" virtual="true">
         <HitRectInsets>
             <AbsInset left="0" right="0" top="30" bottom="0"/>
         </HitRectInsets>
@@ -314,7 +314,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" parentKey="value" fontSize="12" text="50%" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString name="$parentString" parentKey="value" text="50%" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="8"/>
                             <Anchors>

@@ -325,8 +325,8 @@
                             </Anchors>
                         </Texture>
                     </Layer>
-                    <Layer level="OVERLAY" textureSubLayer="3">
-                        <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyY="CENTER">
+                    <Layer level="OVERLAY" textureSubLevel="3">
+                        <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="240" y="20"/>
                             <Color r="1" b="1" g="1"/>
                             <Anchors>
@@ -335,7 +335,7 @@
                         </FontString>
 
                     </Layer>
-                    <Layer level="OVERLAY" textureSubLayer="4">
+                    <Layer level="OVERLAY" textureSubLevel="4">
                         <Texture file="Interface/AddOns/GW2_UI/textures/arrowdown_down">
                             <Color r="1" g="1" b="1" a="1"/>
                             <Size x="18" y="18"/>
@@ -361,8 +361,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="OVERLAY" textureSubLayer="3">
-                <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyY="CENTER">
+            <Layer level="OVERLAY" textureSubLevel="3">
+                <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="240" y="20"/>
                     <Color r="1" b="1" g="1"/>
                     <Anchors>

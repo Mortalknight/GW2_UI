@@ -66,36 +66,6 @@ local reputationLastUpdateMethod = function() end
 local reputationLastUpdateMethodParams = nil
 local durabilityFrame = nil
 local expandedFactions = {}
-local PAPERDOLL_STATCATEGORIES= {
-    [1] = {
-        categoryFrame = "AttributesCategory",
-        stats = {
-            [1] = { stat = "STRENGTH", primary = LE_UNIT_STAT_STRENGTH },
-            [2] = { stat = "AGILITY", primary = LE_UNIT_STAT_AGILITY },
-            [3] = { stat = "INTELLECT", primary = LE_UNIT_STAT_INTELLECT },
-            [4] = { stat = "STAMINA" },
-            [5] = { stat = "ARMOR" },
-            [6] = { stat = "MANAREGEN", roles =  { "HEALER" } },
-        },
-    },
-    [2] = {
-        categoryFrame = "EnhancementsCategory",
-        stats = {
-            [1] = { stat = "CRITCHANCE", hideAt = 0 },
-            [2] = { stat = "HASTE", hideAt = 0 },
-            [3] = { stat = "MASTERY", hideAt = 0 },
-            [4] = { stat = "VERSATILITY", hideAt = 0 },
-
-
-            [5] = { stat = "DODGE",  },
-            [6] = { stat = "PARRY", hideAt = 0,  },
-            [7] = { stat = "BLOCK", hideAt = 0,  },
-            [8] = { stat = "AVOIDANCE", hideAt = 0 },
-            [9] = { stat = "LIFESTEAL", hideAt = 0 },
-            [10] = { stat = "MOVESPEED", hideAt = 0,  },
-        },
-    },
-}
 
 local function collectDurability(self)
     local completeDurability = 0

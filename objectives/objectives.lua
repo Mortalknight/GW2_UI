@@ -1,5 +1,4 @@
 local _, GW = ...
-local RoundDec = GW.RoundDec
 local lerp = GW.lerp
 local GetSetting = GW.GetSetting
 local CommaValue = GW.CommaValue

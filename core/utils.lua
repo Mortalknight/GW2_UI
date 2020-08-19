@@ -29,9 +29,8 @@ end
 GW.CountTable = CountTable
 
 local function tableContains(t,val)
-    local b = false
     for _,v in pairs(t) do
-        if v==val then
+        if v == val then
             return true
         end
     end
@@ -193,7 +192,7 @@ end
 GW.TimeParts = TimeParts
 
 local function GetCIDFromGUID(guid)
-    local type, _, playerdbID, _, _, cid, creationbits = strsplit("-", guid or "")
+    local type, _, playerdbID, _, _, cid, _ = strsplit("-", guid or "")
     if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
         return tonumber(cid)
     elseif type and (type == "Player" or type == "Item") then

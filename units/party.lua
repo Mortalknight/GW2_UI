@@ -194,10 +194,7 @@ local function manageButton()
     tinsert(UISpecialFrames, "GwGroupManage")
     local x = 10
     local y = -30
-
-    local xx = 1
-    local yy = -30
-
+    
     local fnF_OnEnter = function(self)
         self.texture:SetBlendMode("ADD")
     end
@@ -572,7 +569,7 @@ local function updatePartyAuras(self, unit)
             end
             indexBuffFrame.expires = buffLists[unit][i]["expires"]
             indexBuffFrame.duration = buffLists[unit][i]["duration"]
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffDuration"]:SetText("")
+            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffDuration"]:SetText(buffDur)
             _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffStacks"]:SetText(stacks)
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
@@ -694,7 +691,7 @@ local function updatePartyData(self)
     local power = UnitPower(self.unit, UnitPowerType(self.unit))
     local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
     local powerPrecentage = 0
-    local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
+    local _, powerToken = UnitPowerType(self.unit)
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
         self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)

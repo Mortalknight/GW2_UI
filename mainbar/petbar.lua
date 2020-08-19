@@ -205,7 +205,7 @@ GW.updatePetFrameLocation = updatePetFrameLocation
 
 local function SetPetHappiness(self)
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
-    local hasPetUI, isHunterPet = HasPetUI()
+    local _, isHunterPet = HasPetUI()
 
     if not happiness or not isHunterPet then
         self.portraitBackground:SetTexCoord(0, 0.25, 0, 1)

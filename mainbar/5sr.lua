@@ -15,8 +15,6 @@ local Mp5IgnoredSpells = {
 }
 
 local function fsr_OnUpdate(self, elapsed)
-    local now = GetTime()
-
     self.sinceLastUpdate = (self.sinceLastUpdate or 0) + (tonumber(elapsed) or 0)
     if self.sinceLastUpdate > 0.01 then
         if self.powerType ~= Enum.PowerType.Energy and self.powerType ~= Enum.PowerType.Mana then

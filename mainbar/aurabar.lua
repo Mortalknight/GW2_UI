@@ -366,7 +366,7 @@ end
 GW.AddForProfiling("aurabar_secure", "getLegacyTempEnchant", getLegacyTempEnchant)
 
 local function newHeader(filter, settingname)
-    local h, w, aura_tmpl
+    local h, aura_tmpl
 
     -- "secure" style auras
     h = CreateFrame("Frame", nil, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
@@ -434,11 +434,7 @@ local function newHeader(filter, settingname)
     h:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
     h:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    if w then
-        return w
-    else
-        return h
-    end
+    return h
 end
 GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 

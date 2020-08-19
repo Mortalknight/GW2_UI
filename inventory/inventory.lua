@@ -141,7 +141,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         end
 
         -- Show junk icon if active
-        local texture, count, locked, rarity, readable, _, itemLink, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
         button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
 
         if button.junkIcon then

@@ -22,7 +22,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer layer="ARTWORK" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="portrait" alphaMode="add" name="$parentPortrait">
                     <Size x="60" y="60"></Size>
                     <TexCoords left="1" right="0" top="0" bottom="1" />
@@ -41,7 +41,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString name="$parentString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="16"/>
                             <Anchors>

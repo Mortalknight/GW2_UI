@@ -117,7 +117,7 @@
                         <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="TOPRIGHT" x="2" y="15"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                <Texture parentKey="castingbarNormalSpark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="13"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.castingbarNormal" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -133,31 +133,31 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="CENTER">
+                <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="150" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="CENTER">
+                <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
                     <Size x="100" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="CENTER">
+                <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="CENTER">
+                <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="38" y="30"/>
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.threattabbg" relativePoint="CENTER" x="0" y="1"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="CENTER">
+                <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="7" y="0"></Anchor>
@@ -265,7 +265,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
-                <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                <Texture parentKey="castingbarNormalSpark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="14"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.castingbarNormal" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -281,25 +281,25 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="CENTER">
+                <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="100" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="CENTER">
+                <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
                     <Size x="50" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="CENTER">
+                <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="146" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="CENTER">
+                <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="146" y="15"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="7" y="0"></Anchor>

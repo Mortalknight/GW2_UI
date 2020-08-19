@@ -8,7 +8,7 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwAuraFrame" enabledMouse="true" registerForClicks="RightButtonDown" hidden="true" virtual="true">
+    <Button name="GwAuraFrame" registerForClicks="RightButtonDown" hidden="true" virtual="true">
         <Size x="32" y="32"></Size>
         <Anchors>
             <Anchor point="CENTER" relativePoint="TOPLEFT"></Anchor>

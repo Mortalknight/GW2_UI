@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local RoundDec = GW.RoundDec
 local ClassIndex = GW.ClassIndex
 

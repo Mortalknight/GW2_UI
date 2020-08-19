@@ -3,7 +3,6 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetSetting = GW.GetSetting
 local Wait = GW.Wait
 local Self_Hide = GW.Self_Hide
-local IsFrameModified = GW.IsFrameModified
 local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
 

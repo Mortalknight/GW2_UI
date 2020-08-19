@@ -12,15 +12,15 @@
 
     <Frame name="GwActionButtonBackdropTmpl" virtual="true" frameLevel="1">
         <Anchors>
-            <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="-1" y="1"></Anchor>
-            <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
         </Anchors>
         <Layers>
             <Layer>
                 <Texture file="Interface\AddOns\GW2_UI\textures\spelliconempty">
                     <Anchors>
-                        <Anchor point="TOPLEFT" realtivePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" realtivePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>
