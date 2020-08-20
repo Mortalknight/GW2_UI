@@ -302,6 +302,8 @@ local function GWUseThisLocalization()
     L["TOTEMBAR_SORTING"] = "Class Totmes sorting"
     L["HORIZONTAL"] = "Horizontal"
     L["VERTICAL"] = "Vertical"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "头像上显示伤害"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "在此框体头像上显示伤害"
 end
 
 if GetLocale() == "zhCN" then

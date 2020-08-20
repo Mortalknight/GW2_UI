@@ -853,8 +853,28 @@ local function LoadTarget()
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
-    TargetFrame:SetScript("OnEvent", nil)
-    TargetFrame:Hide()
+    -- create floating combat text
+    if GetSetting("target_FLOATING_COMBAT_TEXT") then
+        local fctf = CreateFrame("Frame", nil, NewUnitFrame)
+        fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
+        fctf:RegisterEvent("UNIT_COMBAT")
+        fctf:SetScript("OnEvent", function(self, event, unit, ...)
+            if self.unit == unit then
+                CombatFeedback_OnCombatEvent(self, ...)
+            end
+        end)
+        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+        fctf.unit = NewUnitFrame.unit
+        
+        local font = fctf:CreateFontString(nil, "OVERLAY", "NumberFont_Outline_Huge")
+        fctf.fontString = font
+        font:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER")
+        font:Hide()
+        
+        CombatFeedback_Initialize(fctf, font, 30)
+    end
+
+    TargetFrame:Kill()
 end
 GW.LoadTarget = LoadTarget
 

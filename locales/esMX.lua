@@ -302,6 +302,8 @@ local function GWUseThisLocalization()
     L["TOTEMBAR_SORTING"] = "Class Totmes sorting"
     L["HORIZONTAL"] = "Horizontal"
     L["VERTICAL"] = "Vertical"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "Display Portrait Damage"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Display Portrait Damage on this frame"
 end
 
 if GetLocale() == "esMX" then
