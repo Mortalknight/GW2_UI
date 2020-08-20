@@ -147,6 +147,7 @@ GW_DEFAULT["target_HEALTH_VALUE_TYPE"] = false
 GW_DEFAULT["target_CLASS_COLOR"] = true
 GW_DEFAULT["target_CASTINGBAR_DATA"] = false
 GW_DEFAULT["target_AURAS_ON_TOP"] = false
+GW_DEFAULT["target_FLOATING_COMBAT_TEXT"] = true
 
 GW_DEFAULT["focus_TARGET_ENABLED"] = true
 GW_DEFAULT["focus_DEBUFFS"] = true

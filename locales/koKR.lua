@@ -302,6 +302,8 @@ local function GWUseThisLocalization()
     L["TOTEMBAR_SORTING"] = "Class Totmes sorting"
     L["HORIZONTAL"] = "Horizontal"
     L["VERTICAL"] = "Vertical"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "초상화 피해 표시"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "이 창의 초상화에 피해를 표시합니다."
 end
 
 if GetLocale() == "koKR" then

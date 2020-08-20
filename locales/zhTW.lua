@@ -298,6 +298,8 @@ local function GWUseThisLocalization()
     L["TOTEMBAR_SORTING"] = "Class Totmes sorting"
     L["HORIZONTAL"] = "Horizontal"
     L["VERTICAL"] = "Vertical"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "頭像上顯示傷害"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "在此框體頭像上顯示傷害"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

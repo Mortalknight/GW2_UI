@@ -301,6 +301,8 @@ local function GWUseThisLocalization()
     L["TOTEMBAR_SORTING"] = "Class Totmes sorting"
     L["HORIZONTAL"] = "Horizontal"
     L["VERTICAL"] = "Vertical"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "Отображать урон на портрете"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Отображать урон на портрете в этой рамке"
 end
 
 if GetLocale() == "ruRU" then
