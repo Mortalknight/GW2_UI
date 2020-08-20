@@ -307,6 +307,8 @@ local function GWUseThisLocalization()
     L["ENERGY_MANA_TICK_HIDE_OFC"] = "Show Energy/Mana Ticker only in combat"
     L["PLAYER_BUFF_SIZE"] = "Buff size"
     L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "Display Portrait Damage"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Display Portrait Damage on this frame"
 end
 
 if GetLocale() == "itIT" then

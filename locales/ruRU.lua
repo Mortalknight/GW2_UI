@@ -306,6 +306,8 @@ local function GWUseThisLocalization()
     L["ENERGY_MANA_TICK_HIDE_OFC"] = "Show Energy/Mana Ticker only in combat"
     L["PLAYER_BUFF_SIZE"] = "Buff size"
     L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "Отображать урон на портрете"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Отображать урон на портрете в этой рамке"
 end
 
 if GetLocale() == "ruRU" then

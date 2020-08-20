@@ -307,6 +307,8 @@ local function GWUseThisLocalization()
     L["ENERGY_MANA_TICK_HIDE_OFC"] = "Show Energy/Mana Ticker only in combat"
     L["PLAYER_BUFF_SIZE"] = "Buff size"
     L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "초상화 피해 표시"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "이 창의 초상화에 피해를 표시합니다."
 end
 
 if GetLocale() == "koKR" then

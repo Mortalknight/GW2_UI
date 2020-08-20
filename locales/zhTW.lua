@@ -303,6 +303,8 @@ local function GWUseThisLocalization()
     L["ENERGY_MANA_TICK_HIDE_OFC"] = "Show Energy/Mana Ticker only in combat"
     L["PLAYER_BUFF_SIZE"] = "Buff size"
     L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "頭像上顯示傷害"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "在此框體頭像上顯示傷害"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

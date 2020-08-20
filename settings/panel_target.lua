@@ -33,6 +33,7 @@ local function LoadTargetPanel(sWindow)
     addOption(p_target, L["SHOW_THREAT_VALUE"], L["SHOW_THREAT_VALUE"], "target_THREAT_VALUE_ENABLED", nil, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target, L["TARGET_COMBOPOINTS"], L["TARGET_COMBOPOINTS_DEC"], "target_HOOK_COMBOPOINTS", nil, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target, BUFFS_ON_TOP, nil, "target_AURAS_ON_TOP", nil, nil, {["TARGET_ENABLED"] = true})
+    addOption(p_target, L["DISPLAY_PORTRAIT_DAMAGED"], L["DISPLAY_PORTRAIT_DAMAGED_DESC"], "TARGET_FLOATING_COMBAT_TEXT", nil, nil, {["TARGET_ENABLED"] = true})
 
     InitPanel(p_target)
 end

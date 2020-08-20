@@ -132,6 +132,7 @@ GW_DEFAULT["target_AURAS_ON_TOP"] = false
 GW_DEFAULT["target_HEALTH_VALUE_ENABLED"] = false
 GW_DEFAULT["target_HEALTH_VALUE_TYPE"] = false
 GW_DEFAULT["target_CLASS_COLOR"] = true
+GW_DEFAULT["TARGET_FLOATING_COMBAT_TEXT"] = true
 
 GW_DEFAULT["multibarleft_pos"] = {}
 GW_DEFAULT["multibarleft_pos"]["point"] = "RIGHT"

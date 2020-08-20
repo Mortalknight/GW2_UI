@@ -307,6 +307,8 @@ local function GWUseThisLocalization()
     L["ENERGY_MANA_TICK_HIDE_OFC"] = "Zeige den Energie/Mana Ticker nur im Kampf"
     L["PLAYER_BUFF_SIZE"] = "Stärkungszaubergröße"
     L["PLAYER_DEBUFF_SIZE"] = "Schwächungszaubergröße"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "Zeige Schaden im Portrait"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Zeige in diesem Fenster den Schaden im Portrait"
 end
 
 if GetLocale() == "deDE" then

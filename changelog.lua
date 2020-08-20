@@ -5,6 +5,7 @@ v(
     "1.9.0",
     [=[
         - Added Outfitter support
+        - Added target portrait damage
 ]=]
 )
 

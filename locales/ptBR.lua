@@ -303,6 +303,8 @@ local function GWUseThisLocalization()
     L["ENERGY_MANA_TICK_HIDE_OFC"] = "Show Energy/Mana Ticker only in combat"
     L["PLAYER_BUFF_SIZE"] = "Buff size"
     L["PLAYER_DEBUFF_SIZE"] = "Debuff size"
+    L["DISPLAY_PORTRAIT_DAMAGED"] = "Mostrar dano no retrato"
+    L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Mostrar dano no retrato neste quadro"
     
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
