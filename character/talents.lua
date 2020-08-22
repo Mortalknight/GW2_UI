@@ -581,11 +581,11 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     local petToken
 
     local BOOKTYPE = BOOKTYPE_SPELL
-    if spellBookTabs == 3 and GW.mylevel < 10 then
+    if spellBookTabs == 3 and numSpells < 1 then
         fmTab.groups["active"]:Hide()
         fmTab.groups["passive"]:Hide()
         fmTab.groups["lock"]:Show()
-    elseif spellBookTabs == 3 and GW.mylevel >= 10 then
+    elseif spellBookTabs == 3 and numSpells >= 1 then
         fmTab.groups["active"]:Show()
         fmTab.groups["passive"]:Show()
         fmTab.groups["lock"]:Hide()
