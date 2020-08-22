@@ -62,7 +62,7 @@ local function SkinAddonList()
                     character = nil
                 end
 
-                local checkedTexture = _G[checkbox:GetName().."CheckedTexture"]
+                local checkedTexture = checkbox:GetCheckedTexture()
                 -- 1 is a gray check
                 if checkboxState == 1 then
                     checkedTexture:SetVertexColor(1, .93, .73)
