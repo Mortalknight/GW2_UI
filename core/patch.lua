@@ -95,6 +95,7 @@ if (UIDROPDOWNMENU_VALUE_PATCH_VERSION or 0) < 2 then
     end)
 end
 
+--[[
 hooksecurefunc(NineSliceUtil, "ApplyLayout", function(frame, layout)
     if not rawget(frame, "ApplyBackdrop") or rawget(layout, "setupPieceVisualsFunction") ~= BackdropTemplateMixin.SetupPieceVisuals then
         -- Probably not a backdrop being applied.
@@ -120,3 +121,4 @@ hooksecurefunc(NineSliceUtil, "ApplyLayout", function(frame, layout)
         end
     end
 end);
+]]--

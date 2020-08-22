@@ -345,7 +345,7 @@ local function setPaladin(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
 
         return true
-    elseif GW.myspec == 3 then -- retribution
+    elseif GW.myspec == 3 or GW.myspec == 5 then -- retribution / standard
         f:SetHeight(32)
         f:SetWidth(320)
         f.background:SetHeight(32)
