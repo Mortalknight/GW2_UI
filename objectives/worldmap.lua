@@ -10,12 +10,8 @@ local function UpdateCoords()
         return
     end
 
-	local x, y = GW.GetPlayerMapPos()
-
-	if x and y then
-		x = GW.RoundDec(100 * x, 2)
-		y = GW.RoundDec(100 * y, 2)
-		CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (x or 0), (y or 0))
+	if GW.locationData.x and GW.locationData.y then
+		CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (GW.locationData.xText or 0), (GW.locationData.yText or 0))
 	else
 		CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, "n/a")
     end
