@@ -391,7 +391,7 @@ local function showQuestFrame()
     local npc_type = UnitCreatureType("npc")
 
     if UnitIsUnit("npc", "player") then
-        local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2"
+        local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2" -- TODO need new files, this one does not exist anymore
         QUEST_NPC_TYPE = 1
         GwQuestviewFrameContainerGiverModel:ClearModel()
         GwQuestviewFrameContainerGiverModel:SetUnit("none")

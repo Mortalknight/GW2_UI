@@ -94,10 +94,12 @@ local function styleTooltip(self)
     if not self:IsShown() then
         return
     end
+
+    local ttName = self:GetName()
     self:StripTextures()
     self:CreateBackdrop(constBackdropArgs)
-    if _G[self:GetName() .. "StatusBarTexture"] then
-        _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
+    if ttName and _G[ttName .. "StatusBarTexture"] then
+        _G[ttName .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
     end
     if DBMInfoFrame then
         DBMInfoFrame:CreateBackdrop(constBackdropArgs)

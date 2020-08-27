@@ -593,9 +593,6 @@ local function loadAddon(self)
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
 
-    -- setup our frame pool
-    GW.Pools = CreatePoolCollection()
-
     -- setup AlertFrame and Bonus Roll Frame
     AlertFrame.UpdateAnchors = updateAnchors
 
