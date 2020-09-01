@@ -157,7 +157,7 @@ do -- This code is from WeakAuras Team, creadits goes to them
     local function GetExportString(profileIndex, profileName)
         local profileTable = GW2UI_SETTINGS_PROFILES[profileIndex]
         local serialData = Serializer:Serialize(profileTable)
-        local exportString = format("%s::%s::%s", serialData, profileName, GW.myname)
+        local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Retail")
         local compressedData = Compress:Compress(exportString)
         local encodedData = LibBase64:Encode(compressedData) 
 
@@ -166,31 +166,9 @@ do -- This code is from WeakAuras Team, creadits goes to them
     GW.GetExportString = GetExportString
 end
 
-do
-    local splitTable = {}
-    local function splitString(str, delim)
-        local start = 1
-        wipe(splitTable)
-
-        while true do
-            local pos = strfind(str, delim, start, true)
-            if not pos then
-                break
-            end
-            tinsert(splitTable, strsub(str, start, pos -1))
-            start = pos + strlen(delim)
-        end
-        
-        tinsert(splitTable, strsub(str, start))
-
-        return unpack(splitTable)
-    end
-    GW.splitString = splitString
-end
-
 local function DecodeProfile(dataString)
     local dataType = LibBase64:IsBase64(dataString) and "base64" or strfind(dataString, "{") and "table" or nil
-    local profileName, profilePlayer, profileData
+    local profileName, profilePlayer, version, profileData
 
     if dataType == "base64" then
         local decodedData = LibBase64:Decode(dataString)
@@ -208,7 +186,7 @@ local function DecodeProfile(dataString)
 
         serializedData = format("%s%s", serializedData, "^^")
 
-        profileName, profilePlayer = GW.splitString(profileInfos, "::")
+        profileName, profilePlayer, version = GW.splitString(profileInfos, "::")
 
         success, profileData = Serializer:Deserialize(serializedData)
 
@@ -224,7 +202,7 @@ local function DecodeProfile(dataString)
 
         profileData = format("%s%s", profileDataAsString, "}")
         profileData = gsub(profileData, "\124\124", "\124")
-        profileName, profilePlayer = GW.splitString(profileInfos, "::")
+        profileName, profilePlayer, version = GW.splitString(profileInfos, "::")
 
         local profileToTable = loadstring(format("%s %s", "return", profileData))
         local pm
@@ -237,19 +215,19 @@ local function DecodeProfile(dataString)
         end
     end
 
-    return profileName, profilePlayer, profileData
+    return profileName, profilePlayer, version, profileData
 end
 GW.DecodeProfile = DecodeProfile
 
 local function ImportProfile(dataString, settingsWindow)
-    local profileName, profilePlayer, profileDataString = DecodeProfile(dataString)
+    local profileName, profilePlayer, version, profileDataString = DecodeProfile(dataString)
 
-    if not profileDataString then
+    if not profileDataString or version ~= "Retail" then
         return
     end
 
     GW.addProfile(settingsWindow, profileName, profileDataString)
 
-    return profileName, profilePlayer
+    return profileName, profilePlayer, version
 end
 GW.ImportProfile = ImportProfile

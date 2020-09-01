@@ -261,27 +261,27 @@ local function Length(T)
 end
 GW.Length = Length
 
-local function SplitString(inputstr, sep, sep2, sep3)
-    if sep == nil then
-        sep = "%s"
-    end
-    inputstr = inputstr:gsub("\n", "")
-    local t = {}
-    local i = 1
-    for str in string.gmatch(inputstr, "([^" .. sep .. "|" .. sep2 .. "|" .. sep3 .. "]+)") do
-        local _, en = string.find(inputstr, str)
-        if en ~= nil then
-            local s = string.sub(inputstr, en + 1, en + 1)
-            if s ~= nil or s ~= "" then
-                str = str .. s
+do
+    local splitTable = {}
+    local function splitString(str, delim)
+        local start = 1
+        wipe(splitTable)
+
+        while true do
+            local pos = strfind(str, delim, start, true)
+            if not pos then
+                break
             end
+            tinsert(splitTable, strsub(str, start, pos -1))
+            start = pos + strlen(delim)
         end
-        t[i] = str
-        i = i + 1
+        
+        tinsert(splitTable, strsub(str, start))
+
+        return unpack(splitTable)
     end
-    return t
+    GW.splitString = splitString
 end
-GW.SplitString = SplitString
 
 local function FindInList(list, str, i, del)
     local del = "([^%s" .. (del or ",;") .. ")]?)"

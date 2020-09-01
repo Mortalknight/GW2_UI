@@ -12,7 +12,7 @@ local GW_PROFILE_ICONS_PRESET = {}
 GW_PROFILE_ICONS_PRESET[0] = 538514 -- Interface/icons/spell_druid_displacement
 GW_PROFILE_ICONS_PRESET[1] = 1041232 -- Interface/icons/ability_socererking_arcanemines
 GW_PROFILE_ICONS_PRESET[2] = 236304 -- Interface/icons/ability_warrior_bloodbath
-GW_PROFILE_ICONS_PRESET[3] = 1060892 -- Interface/icons/ability_priest_ascendance
+GW_PROFILE_ICONS_PRESET[3] = 135990 -- Interface/icons/ability_priest_ascendance
 GW_PROFILE_ICONS_PRESET[4] = 1033914 -- Interface/icons/spell_mage_overpowered
 GW_PROFILE_ICONS_PRESET[5] = 298660 -- Interface/icons/achievement_boss_kingymiron
 GW_PROFILE_ICONS_PRESET[6] = 135791 -- Interface/icons/spell_fire_elementaldevastation
@@ -106,13 +106,13 @@ local function createImportExportFrame(settingsWindow)
     frame.import:SetSize(128, 28)
     frame.import:SetText(L["IMPORT"])
     frame.import:SetScript("OnClick", function()
-        local profileName, profilePlayer = GW.ImportProfile(frame.editBox:GetText(), settingsWindow)
+        local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText(), settingsWindow)
 
         frame.result:SetText("")
-        if profileName or profilePlayer then
-            frame.subheader:SetText(profileName .. " - " .. profilePlayer)
+        if profileName and profilePlayer and version == "Retail" then
+            frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["IMPORT_SUCCESSFUL"])
-            editBox:SetText("")
+            frame.editBox:SetText("")
         else
             frame.subheader:SetText("")
             frame.result:SetFormattedText("|cffff0000%s|r", L["IMPORT_FAILED"])
@@ -126,17 +126,17 @@ local function createImportExportFrame(settingsWindow)
     frame.decode:SetSize(128, 28)
     frame.decode:SetText(L["DECODE"])
     frame.decode:SetScript("OnClick", function()
-        local profileName, profilePlayer, profileData = GW.DecodeProfile(frame.editBox:GetText())
+        local profileName, profilePlayer, version, profileData = GW.DecodeProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
-        if not profileName or not profilePlayer then
+        if not profileName or not profilePlayer or version ~= "Retail" then
             frame.subheader:SetText("")
             frame.result:SetFormattedText("|cffff0000%s|r", L["IMPORT_DECODE_FALIED"] )
         else
-            frame.subheader:SetText(profileName .. " - " .. profilePlayer)
+            frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
 
             local decodedString = (profileData and GW.TableToLuaString(profileData)) or nil
-            local importString = format("%s::%s::%s", decodedString, profileName, profilePlayer)
+            local importString = format("%s::%s::%s::%s", decodedString, profileName, profilePlayer, version)
             frame.editBox:SetText(importString)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["IMPORT_DECODE:SUCCESSFUL"])
         end
