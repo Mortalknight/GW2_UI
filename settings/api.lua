@@ -203,7 +203,7 @@ GW.DecodeProfile = DecodeProfile
 local function ImportProfile(dataString, settingsWindow)
     local profileName, profilePlayer, version, profileDataString = DecodeProfile(dataString)
 
-    if not profileDataString or ~= "Classic" then
+    if not profileDataString or version ~= "Classic" then
         return
     end
 
