@@ -127,12 +127,12 @@ GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 local function SkinItemRefTooltip()
     local SkinItemRefTooltip_Update = function()
         if ItemRefTooltip:IsShown() then
-            ItemRefCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-            ItemRefCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-            ItemRefCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-            ItemRefCloseButton:SetSize(20, 20)
-            ItemRefCloseButton:ClearAllPoints()
-            ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
+            ItemRefTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
+            ItemRefTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefTooltip.CloseButton:SetSize(20, 20)
+            ItemRefTooltip.CloseButton:ClearAllPoints()
+            ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
             ItemRefTooltip:CreateBackdrop(constBackdropArgs)
 
             if IsAddOnLoaded("Pawn") then
