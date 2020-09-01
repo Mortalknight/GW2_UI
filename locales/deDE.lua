@@ -309,6 +309,18 @@ local function GWUseThisLocalization()
     L["PLAYER_DEBUFF_SIZE"] = "Schwächungszaubergröße"
     L["DISPLAY_PORTRAIT_DAMAGED"] = "Zeige Schaden im Portrait"
     L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Zeige in diesem Fenster den Schaden im Portrait"
+    L["IMPORT"] = "Importieren"
+    L["DECODE"] = "Decodieren"
+    L["IMPORT_SUCCESSFUL"] = "Profil erfolgreich importiert!"
+    L["IMPORT_FAILED"] = "Fehler beim importieren: Ungültige oder beschädigte Zeichenfolge!"
+    L["IMPORT_DECODE_FALIED"] = "Fehler beim decodieren: Ungültige oder beschädigte Zeichenfolge!"
+    L["IMPORT_DECODE:SUCCESSFUL"] = "Zeichenfolge erfolgreich decodiert!"
+    L["EXPORT_PROFILE"] = "Profilexport"
+    L["EXPORT_PROFILE_DESC"] = "Zeichenfolge um deine Einstellungen zu teilen:"
+    L["IMPORT_PROFILE"] = "Profilimport"
+    L["IMPORT_PROFILE_DESC"] = "Füge einen Profiltext ein um dieses Profil zu importieren:"
+    L["IMPORT_POFILE_BUTTON"] = "Profil importieren"
+    L["EXPORT"] = "Exportieren"
 end
 
 if GetLocale() == "deDE" then

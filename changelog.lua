@@ -2,6 +2,14 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.9.1",
+    [=[
+        - Added profile sharing
+        - Druid fixes
+]=]
+)
+
+v(
     "1.9.0",
     [=[
         - Added Outfitter support

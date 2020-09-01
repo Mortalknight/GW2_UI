@@ -117,9 +117,9 @@ local function setDruid(f)
     local form = f.gwPlayerForm
     local barType = "none"
 
-    if form == 3 then -- cat
+    if form == 1 then -- cat
         barType = "combo|little_mana"
-    elseif form == 1 then --bear
+    elseif form == 5 then --bear
         barType = "little_mana"
     end
 
@@ -165,7 +165,7 @@ local function barChange_OnEvent(self, event, ...)
     if event == "UPDATE_SHAPESHIFT_FORM" then
         -- this event fires often when form hasn't changed; check old form against current form
         -- to prevent touching the bar unnecessarily (which causes annoying anim flickering)
-        local results = GetShapeshiftForm()
+        local results = GetShapeshiftFormID()
         if f.gwPlayerForm == results then
             return
         end
@@ -192,7 +192,7 @@ local function LoadClassPowers()
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
     cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
-    cpf.gwPlayerForm = GetShapeshiftForm()
+    cpf.gwPlayerForm = GetShapeshiftFormID()
 
     -- create an extra mana power bar that is used sometimes (druid) only if our Powerbar is on
     if cpf.ourPowerBar then

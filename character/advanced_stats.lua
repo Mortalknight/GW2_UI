@@ -26,6 +26,21 @@ local CHAR_EQUIP_SLOTS = {
     ["Range"] = "RangedSlot",
 }
 
+local enchants = {
+    Biznick = "2523", --3% Hit from Biznick
+    Bracer_Mana_Reg = "2565" -- 4 MP5
+}
+
+local schools = {
+    physical = 1,
+    holy = 2,
+    fire = 3,
+    nature = 4,
+    frost = 5,
+    shadow = 6,
+    arcane = 7
+}
+
 local itemSets = {
     ["Stormrage Raiment"] = {
         [16899] = true,
@@ -67,6 +82,16 @@ local itemSets = {
         [19827] = true,
         [19826] = true,
         [19825] = true
+    },
+    ["The Ten Storms"] = {
+        [16944] = true,
+        [16943] = true,
+        [16950] = true,
+        [16945] = true,
+        [16948] = true,
+        [16949] = true,
+        [16947] = true,
+        [16946] = true
     }
 }
 
@@ -87,8 +112,9 @@ local function _IsRangeAttackClass()
 end
 
 local function _IsShapeshifted()
-    for i = 0, 40 do
+    for i = 1, 40 do
         local _, _, _, _, _, _, _, _, _, spellId, _ = UnitAura("player", i, "HELPFUL", "PLAYER")
+        if not spellId then break end
         if spellId == 5487 or spellId == 9634 or spellId == 768 then
             return true
         end
@@ -104,21 +130,32 @@ local function _GetMissChanceByDifference(weaponSkill, defenseValue)
     end
 end
 
+local function GetEnchantFromItemLink(itemLink)
+    if  not itemLink then return nil end
+
+    local _, itemStrLink = GetItemInfo(itemLink)
+    if itemStrLink then
+        local _, _, enchant = strfind(itemStrLink, "item:%d+:(%d*)")
+        return enchant
+    end
+end
+
+local function GetEnchantForEuipentSlot(slot)
+    local slotID = GetInventoryItemInfo(slot)
+    local itemLink = GetInventoryItemLink("player", slotID)
+
+    return GetEnchantFromItemLink(itemLink)
+end
+
 local function _GetRangeHitBonus()
     local hitValue = 0
+
     -- From Enchant
-    local slotId, _ = GetInventorySlotInfo(CHAR_EQUIP_SLOTS["Range"])
-    local itemLink = GetInventoryItemLink("player", slotId)
-    if itemLink then
-        local _, itemStringLink = GetItemInfo(itemLink)
-        if itemStringLink then
-            local _, _, _, _, _, Enchant, _, _, _, _, _, _, _, _ = string.find(itemStringLink,
-            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-            if (Enchant == "2523") then -- 3% Hit from Biznicks 247x128 Accurascope
-                hitValue = hitValue + 3
-            end
-        end
+    local rangedEnchant = GetEnchantForEuipentSlot(CHAR_EQUIP_SLOTS["Range"])
+    if rangedEnchant and rangedEnchant == enchants.Biznick then 
+        hitValue = hitValue + 3
     end
+
     -- From Items
     local hitFromItems = GetHitModifier()
     if hitFromItems then -- This needs to be checked because on dungeon entering it becomes nil
@@ -157,6 +194,20 @@ local function _GetTalentModifierMP5()
     return mod
 end
 
+local function _GetAuraModifier()
+    local mod = 0
+
+    for i = 1, 40 do
+        local _, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i, "HELPFUK")
+        if not spellId then break end
+        if spellId == 6117 or spellId == 22782 or spellId == 22783 then
+            mod = mod + 0.3 -- 30% Mage Armor
+        end
+    end
+
+    return mod
+end
+
 local function _HasSetBonusModifierMP5()
     if GW.myClassID == ClassIndex.PRIEST then
         return IsSetBonusActive("Vestments of Transcendence", 3)
@@ -176,36 +227,20 @@ local function GetSetBonusValueMP5()
     return 0
 end
 
-local function _GetTalentModifierHolyCrit()
-    local mod = 0
-
-    if GW.myClassID == ClassIndex.PALADIN then -- Paladin
-        local _, _, _, _, points = GetTalentInfo(1, 13)
-        mod = points * 1 -- 0-5% Holy Power
-    elseif GW.myClassID == ClassIndex.PRIEST then -- Priest
-        local _, _, _, _, points = GetTalentInfo(2, 3)
-        mod = points * 1 -- 0-5% Holy Specialization
+local function HasSetBonusModifierNatureCrit()
+    if GW.myClassID == ClassIndex.SHAMAN then
+        return IsSetBonusActive("The Then Storms", 5)
     end
 
-    return mod
+    return false
 end
 
-local function _GetTalentModifierSpellCrit()
-    local mod = 0
-
-    if GW.myClassID == ClassIndex.MAGE then -- Mage
-        local _, _, _, _, points = GetTalentInfo(1, 15)
-        mod = points * 1 -- 0-3% Arcane Instability
-    end
-
-    return mod
-end
 
 local function _GetGeneralTalentModifier()
     local mod = 0
 
-    if classId == ClassIndex.MAGE then
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 15)
+    if GW.myClassID == ClassIndex.MAGE then -- Mage
+        local _, _, _, _, points = GetTalentInfo(1, 15)
         mod = points * 1 -- 0-3% Arcane Instability
     end
 
@@ -238,14 +273,18 @@ local function _GetMP5ValueOnItems()
                     mp5 = mp5 + statMP5 + 1
                 end
             end
+            local enchant = GetEnchantFromItemLink(itemLink)
+            if enchant and enchant == enchants.Bracer_Mana_Reg then
+                mp5 = mp5 + 4
+            end
         end
     end
 
     return mp5
 end
 
-local function GetSpellDmg(i)
-    local spellDmg = GetSpellBonusDamage(i)
+local function GetSpellDmg(school)
+    local spellDmg = GetSpellBonusDamage(school)
     local modifier = _GetGeneralTalentModifier()
 
     spellDmg = spellDmg * (1 + (modifier / 100))
@@ -283,28 +322,15 @@ local function GetMP5WhileCasting()
     if _HasSetBonusModifierMP5() then
         mod = mod + 0.15
     end
-    if mod > 0 then
-        casting = casting * mod
+    mod = mod + _GetAuraModifier()
+    if mod == 0 then
+        casting = 0
     end
 
     local mp5Items = GetMP5FromItems()
     casting = (casting * 5) + mp5Items
 
     return RoundDec(casting, 2)
-end
-
--- Get holy crit chance
-local function HolyCrit()
-    local spellCrit = _GetTalentModifierSpellCrit()
-    local talentModifier = _GetTalentModifierHolyCrit()
-    spellCrit = spellCrit + talentModifier + GetSpellCritChance(2)
-    return RoundDec(spellCrit, 2) .. "%"
-end
-
-local function SpellCrit()
-    local crit = _GetTalentModifierSpellCrit()
-    crit = crit + GetSpellCritChance()
-    return RoundDec(crit, 2) .. "%"
 end
 
 local function MeleeHitMissChanceSameLevel()
@@ -417,46 +443,104 @@ local function GetBlockValue()
     return RoundDec(GetShieldBlock(), 2)
 end
 
-local function PhysicalCrit()
-    local spellCrit = _GetTalentModifierSpellCrit()
-    spellCrit = spellCrit + GetSpellCritChance(1)
+local function _GetTalentModifierHolyCrit()
+    local mod = 0
 
-    return RoundDec(spellCrit, 2) .. "%"
+    if GW.myClassID == ClassIndex.PALADIN then -- Paladin
+        local _, _, _, _, points = GetTalentInfo(1, 13)
+        mod = points * 1 -- 0-5% Holy Power
+    elseif GW.myClassID == ClassIndex.PRIEST then -- Priest
+        local _, _, _, _, points = GetTalentInfo(2, 3)
+        mod = points * 1 -- 0-5% Holy Specialization
+    end
+
+    return mod
+end
+
+local function _GetTalentModifierFireCrit()
+    local mod = 0
+
+    if GW.myClassID == ClassIndex.MAGE then -- Mage
+        local _, _, _, _, points = GetTalentInfo(2, 13)
+        mod = points * 2 -- 0-6% Critical Mass
+    end
+
+    return mod
+end
+
+local function _GetTalentModierBySchool(school)
+    if school == schools.holy then
+        return _GetTalentModifierHolyCrit()
+    elseif school == schools.fire then
+        return _GetTalentModifierFireCrit()
+    else
+        return 0
+    end
+end
+
+local function _GetItemModifierBySchool(school)
+    if school == schools.holy then
+        local mainHand = GetInventoryItemID("player", 16)
+        if mainHand == 18608 then 
+            return 2 -- 2% Holy Crit from Benediction
+        end
+    end
+
+    return 0
+end
+
+local function _GetSetBonus(school)
+    local bonus = 0
+
+    if schools == schools.nature and HasSetBonusModifierNatureCrit() then
+        bonus = 3 -- 3% Nature Crit Shame T2
+    end
+
+    return bonus
+end
+
+local function _GetTalentModifier(school)
+    local modifier = _GetGeneralTalentModifier()
+    local modifierForSchool = _GetTalentModierBySchool(school)
+
+    return modifier + modifierForSchool
+end
+
+local function GetSpellCrit(school)
+    local crit = _GetTalentModifier(school)
+    local itemBonus = _GetItemModifierBySchool(school)
+    local setBonus = _GetSetBonus(school)
+    crit = crit + GetSpellCritChance() + itemBonus + setBonus
+    return RoundDec(crit, 2) .. "%"
+end
+
+local function PhysicalCrit()
+    return GetSpellCrit(schools.physical)
+end
+
+-- Get holy crit chance
+local function HolyCrit()
+    return GetSpellCrit(schools.holy)
 end
 
 local function FireCrit()
-    local spellCrit = _GetTalentModifierSpellCrit()
-    spellCrit = spellCrit + GetSpellCritChance(3)
-
-    return RoundDec(spellCrit, 2) .. "%"
+    return GetSpellCrit(schools.fire)
 end
 
 local function NatureCrit()
-    local spellCrit = _GetTalentModifierSpellCrit()
-    spellCrit = spellCrit + GetSpellCritChance(4)
-
-    return RoundDec(spellCrit, 2) .. "%"
+    return GetSpellCrit(schools.nature)
 end
 
 local function FrostCrit()
-    local spellCrit = _GetTalentModifierSpellCrit()
-    spellCrit = spellCrit + GetSpellCritChance(5)
-
-    return RoundDec(spellCrit, 2) .. "%"
+    return GetSpellCrit(schools.frost)
 end
 
 local function ShadowCrit()
-    local spellCrit = _GetTalentModifierSpellCrit()
-    spellCrit = spellCrit + GetSpellCritChance(6)
-
-    return RoundDec(spellCrit, 2) .. "%"
+    return GetSpellCrit(schools.shadow)
 end
 
 local function ArcaneCrit()
-    local spellCrit = _GetTalentModifierSpellCrit()
-    spellCrit = spellCrit + GetSpellCritChance(7)
-
-    return RoundDec(spellCrit, 2) .. "%"
+    return GetSpellCrit(schools.arcane)
 end
 
 local function GetMeleeAttackPower()
@@ -514,7 +598,7 @@ local function showAdvancedChatStats(self)
 
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(STAT_CATEGORY_SPELL)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. SPELL_CRIT_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. SpellCrit() .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. SPELL_CRIT_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GetSpellCrit() .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_HIT_SPELL_RATING_SHORT .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. SpellHitBonus() .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance:" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. SpellMissChanceSameLevel() .. FONT_COLOR_CODE_CLOSE)
         GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance (Level + 3):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. SpellMissChanceBossLevel() .. FONT_COLOR_CODE_CLOSE)
@@ -523,19 +607,19 @@ local function showAdvancedChatStats(self)
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(SPELL_BONUS)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. BONUS_HEALING .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellBonusHealing()) .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(6)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(schools.shadow)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL6 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. ShadowCrit().. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(2)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(schools.holy)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL2 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. HolyCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(3)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(schools.fire)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL3 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. FireCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(5)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(schools.frost)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL5 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. FrostCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(7)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(schools.arcane)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL7 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. ArcaneCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(4)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(schools.nature)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. DAMAGE_SCHOOL4 .. " ".. CRIT_ABBR ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. NatureCrit() .. FONT_COLOR_CODE_CLOSE)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(1)) .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. DAMAGE ..": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", GetSpellDmg(schools.physical)) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. STRING_SCHOOL_PHYSICAL .. " " .. CRIT_ABBR .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. PhysicalCrit() .. FONT_COLOR_CODE_CLOSE)
 
     GameTooltip:Show()

@@ -5,7 +5,6 @@ local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local CountTable = GW.CountTable
 local GWGetClassColor = GW.GWGetClassColor
-local SplitString = GW.SplitString
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY

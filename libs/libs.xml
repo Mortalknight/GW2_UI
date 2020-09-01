@@ -14,4 +14,8 @@
 
     <Script file="libs\LibHealComm-4.0\ChatThrottleLib.lua"/>
     <Script file="libs\LibHealComm-4.0\LibHealComm-4.0.lua"/>
+
+    <Script file="libs\LibCompress\LibCompress.lua"/>
+    <Script file="libs\AceSerializer-3.0\AceSerializer-3.0.lua"/>
+    <Script file="libs\LibBase64-1.0\LibBase64-1.0.lua"/>
 </Ui>

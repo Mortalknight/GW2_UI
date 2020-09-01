@@ -709,7 +709,8 @@ local function LoadTarget()
         fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
         fctf.unit = NewUnitFrame.unit
         
-        local font = fctf:CreateFontString(nil, "OVERLAY", "NumberFont_Outline_Huge")
+        local font = fctf:CreateFontString(nil, "OVERLAY")
+        font:SetFont(DAMAGE_TEXT_FONT, 30)
         fctf.fontString = font
         font:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER")
         font:Hide()
