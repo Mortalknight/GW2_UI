@@ -172,6 +172,20 @@ local function delete_OnEnter(self)
 end
 AddForProfiling("panel_profiles", "delete_OnEnter", delete_OnEnter)
 
+local function buttons_OnLeave(self)
+    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
+        self:GetParent().deleteButton:Hide()
+    end
+    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
+        self:GetParent().exportButton:Hide()
+    end
+    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
+        self:GetParent().activateButton:Hide()
+    end
+    self:GetParent().background:SetBlendMode("BLEND")
+end
+AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
+
 local function delete_OnClick(self, button)
     local p = self:GetParent()
     GW.WarningPrompt(
@@ -235,10 +249,13 @@ local function item_OnLoad(self)
     self.exportButton:SetText(L["EXPORT"])
 
     self.deleteButton:SetScript("OnEnter", delete_OnEnter)
+    self.deleteButton:SetScript("OnLeave", buttons_OnLeave)
     self.deleteButton:SetScript("OnClick", delete_OnClick)
     self.activateButton:SetScript("OnEnter", activate_export_OnEnter)
+    self.activateButton:SetScript("OnLeave", buttons_OnLeave)
     self.activateButton:SetScript("OnClick", activate_OnClick)
     self.exportButton:SetScript("OnEnter", activate_export_OnEnter)
+    self.exportButton:SetScript("OnLeave", buttons_OnLeave)
     self.exportButton:SetScript("OnClick", export_OnClick)
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
