@@ -159,19 +159,6 @@ local function setProfile(index)
 end
 AddForProfiling("panel_profiles", "setProfile", setProfile)
 
-local function delete_OnEnter(self)
-    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
-        self:GetParent().deleteButton:Show()
-    end
-    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
-        self:GetParent().activateButton:Show()
-    end
-    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
-        self:GetParent().exportButton:Show()
-    end
-end
-AddForProfiling("panel_profiles", "delete_OnEnter", delete_OnEnter)
-
 local function delete_OnClick(self, button)
     local p = self:GetParent()
     GW.WarningPrompt(
@@ -184,7 +171,7 @@ local function delete_OnClick(self, button)
 end
 AddForProfiling("panel_profiles", "delete_OnClick", delete_OnClick)
 
-local function activate_export_OnEnter(self)
+local function buttons_OnEnter(self)
     if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
         self:GetParent().activateButton:Show()
     end
@@ -196,6 +183,20 @@ local function activate_export_OnEnter(self)
     end
 end
 AddForProfiling("panel_profiles", "activate_OnEnter", activate_OnEnter)
+
+local function buttons_OnLeave(self)
+    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
+        self:GetParent().deleteButton:Hide()
+    end
+    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
+        self:GetParent().exportButton:Hide()
+    end
+    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
+        self:GetParent().activateButton:Hide()
+    end
+    self:GetParent().background:SetBlendMode("BLEND")
+end
+AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
 
 local function activate_OnClick(self, button)
     local p = self:GetParent()
@@ -234,11 +235,14 @@ local function item_OnLoad(self)
     self.activateButton:SetText(ACTIVATE)
     self.exportButton:SetText(L["EXPORT"])
 
-    self.deleteButton:SetScript("OnEnter", delete_OnEnter)
+    self.deleteButton:SetScript("OnEnter", buttons_OnEnter)
+    self.deleteButton:SetScript("OnLeave", buttons_OnLeave)
     self.deleteButton:SetScript("OnClick", delete_OnClick)
-    self.activateButton:SetScript("OnEnter", activate_export_OnEnter)
+    self.activateButton:SetScript("OnEnter", buttons_OnEnter)
+    self.activateButton:SetScript("OnLeave", buttons_OnLeave)
     self.activateButton:SetScript("OnClick", activate_OnClick)
-    self.exportButton:SetScript("OnEnter", activate_export_OnEnter)
+    self.exportButton:SetScript("OnEnter", buttons_OnEnter)
+    self.exportButton:SetScript("OnLeave", buttons_OnLeave)
     self.exportButton:SetScript("OnClick", export_OnClick)
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
