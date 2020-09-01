@@ -314,6 +314,8 @@ local function GWUseThisLocalization()
     L["EXPORT_PROFILE_DESC"] = "Profile string to share your settings:"
     L["IMPORT_PROFILE"] = "Import Profile"
     L["IMPORT_PROFILE_DESC"] = "Past your profile string here, to import the profile."
+    L["IMPORT_POFILE_BUTTON"] = "Import profile"
+    L["EXPORT"] = "Export"
 end
 
 local Locale = GetLocale()
