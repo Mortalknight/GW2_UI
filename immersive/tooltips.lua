@@ -133,6 +133,7 @@ local function SkinItemRefTooltip()
             ItemRefTooltip.CloseButton:SetSize(20, 20)
             ItemRefTooltip.CloseButton:ClearAllPoints()
             ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
+            ItemRefTooltip:StripTextures()
             ItemRefTooltip:CreateBackdrop(constBackdropArgs)
 
             if IsAddOnLoaded("Pawn") then
