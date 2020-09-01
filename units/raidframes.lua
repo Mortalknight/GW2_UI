@@ -21,7 +21,7 @@ local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local REALM_FLAGS = GW.REALM_FLAGS
 local nameRoleIcon = GW.nameRoleIcon
-local LRI = LibStub("LibRealmInfo", true)
+local LRI = GW.Libs.LRI
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false

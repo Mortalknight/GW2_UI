@@ -700,7 +700,7 @@ local function LoadSettings()
     end
     local fmGSWKB_OnClick = function(self, button)
         GwSettingsWindow:Hide()
-        GW.HoverKeyBinds()
+        GW.DisplayHoverBinding()
     end
     fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
     fmGSWS:SetScript("OnClick", fnGSWS_OnClick)

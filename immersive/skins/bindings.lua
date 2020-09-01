@@ -9,6 +9,7 @@ local function SkinBindingsUI()
         "unbindButton",
         "okayButton",
         "cancelButton",
+        "quickKeybindButton"
     }
 
     local KeyBindingFrame = _G.KeyBindingFrame
@@ -55,5 +56,25 @@ local function SkinBindingsUI()
             GwStandardButton_OnLeave(keyBindingButton)
         end
     end)
+
+    -- QuickKeybind
+    _G.QuickKeybindFrame:StripTextures()
+    _G.QuickKeybindFrame.Header:StripTextures()
+    _G.QuickKeybindFrame.Header.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+
+    _G.QuickKeybindFrame.characterSpecificButton:SkinCheckButton()
+    _G.QuickKeybindFrame.characterSpecificButton:SetSize(13, 13)
+
+    local tex = _G.QuickKeybindFrame:CreateTexture("bg", "BACKGROUND")
+    tex:SetPoint("TOP", _G.QuickKeybindFrame, "TOP", 0, 25)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    local w, h = _G.QuickKeybindFrame:GetSize()
+    tex:SetSize(w + 50, h + 50)
+    _G.QuickKeybindFrame.tex = tex
+
+    local buttons = {"okayButton", "defaultsButton", "cancelButton"}
+    for _, v in pairs(buttons) do
+        _G.QuickKeybindFrame[v]:SkinButton(false, true)
+    end
 end
 GW.SkinBindingsUI = SkinBindingsUI

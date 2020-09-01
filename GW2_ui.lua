@@ -8,7 +8,7 @@ local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
-local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
+local LibSharedMedia = GW.Libs.LSM
 
 local AlertContainerFrame
 local ourAlertSystem = false
@@ -649,7 +649,6 @@ local function loadAddon(self)
 
     --Create Settings window
     GW.LoadSettings()
-    GW.LoadHoverBinds()
 
     -- Load Slash commands
     GW.LoadSlashCommands()

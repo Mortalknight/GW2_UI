@@ -300,6 +300,16 @@ local function GWUseThisLocalization()
     L["VERTICAL"] = "Vertical"
     L["DISPLAY_PORTRAIT_DAMAGED"] = "Mostrar dano no retrato"
     L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Mostrar dano no retrato neste quadro"
+    L["IMPORT"] = "Import"
+    L["DECODE"] = "Decode"
+    L["IMPORT_SUCCESSFUL"] = "Import string succsessfully imported!"
+    L["IMPORT_FAILED"] = "Error importing profile: Invalid or corrupted string!"
+    L["IMPORT_DECODE_FALIED"] = "Error decoding profile: Invalid or corrupted string!"
+    L["IMPORT_DECODE:SUCCESSFUL"] = "Import string succsessfully decoded!"
+    L["EXPORT_PROFILE"] = "Export Profile"
+    L["EXPORT_PROFILE_DESC"] = "Profile string to share your settings:"
+    L["IMPORT_PROFILE"] = "Import Profile"
+    L["IMPORT_PROFILE_DESC"] = "Past your profile string here, to import the profile."
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

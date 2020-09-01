@@ -304,6 +304,16 @@ local function GWUseThisLocalization()
     L["VERTICAL"] = "Vertical"
     L["DISPLAY_PORTRAIT_DAMAGED"] = "Dégâts sur portrait"
     L["DISPLAY_PORTRAIT_DAMAGED_DESC"] = "Affiche les dégâts reçus sur le portrait pour ce(s) cadre(s)."
+    L["IMPORT"] = "Import"
+    L["DECODE"] = "Decode"
+    L["IMPORT_SUCCESSFUL"] = "Import string succsessfully imported!"
+    L["IMPORT_FAILED"] = "Error importing profile: Invalid or corrupted string!"
+    L["IMPORT_DECODE_FALIED"] = "Error decoding profile: Invalid or corrupted string!"
+    L["IMPORT_DECODE:SUCCESSFUL"] = "Import string succsessfully decoded!"
+    L["EXPORT_PROFILE"] = "Export Profile"
+    L["EXPORT_PROFILE_DESC"] = "Profile string to share your settings:"
+    L["IMPORT_PROFILE"] = "Import Profile"
+    L["IMPORT_PROFILE_DESC"] = "Past your profile string here, to import the profile."
 end
 
 if GetLocale() == "frFR" then

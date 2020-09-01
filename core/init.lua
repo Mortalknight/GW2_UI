@@ -33,3 +33,18 @@ GW.locationData = {}
 
 -- Init global function
 GW.InitLocationDataHandler()
+
+-- Init Libs
+do
+    GW.Libs = {}
+    local function AddLib(name, libname, silent)
+        if not name then return end
+        GW.Libs[name] = _G.LibStub(libname, silent)
+    end
+
+    AddLib("LRI", "LibRealmInfo", true)
+    AddLib("LSM", "LibSharedMedia-3.0", true)
+    AddLib("Compress", "LibCompress", true)
+    AddLib("Serializer", "AceSerializer-3.0", true)
+    AddLib("LibBase64", "LibBase64-1.0", true)
+end
