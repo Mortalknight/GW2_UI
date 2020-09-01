@@ -112,7 +112,7 @@ local function createImportExportFrame(settingsWindow)
         if profileName and profilePlayer and version == "Classic" then
             frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["IMPORT_SUCCESSFUL"])
-            editBox:SetText("")
+            frame.editBox:SetText("")
         else
             frame.subheader:SetText("")
             frame.result:SetFormattedText("|cffff0000%s|r", L["IMPORT_FAILED"])
