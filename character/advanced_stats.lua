@@ -140,8 +140,8 @@ local function GetEnchantFromItemLink(itemLink)
     end
 end
 
-local function GetEnchantForEuipentSlot(slot)
-    local slotID = GetInventoryItemInfo(slot)
+local function GetEnchantForEquipSlot(slot)
+    local slotID = GetInventorySlotInfo(slot)
     local itemLink = GetInventoryItemLink("player", slotID)
 
     return GetEnchantFromItemLink(itemLink)
@@ -151,7 +151,7 @@ local function _GetRangeHitBonus()
     local hitValue = 0
 
     -- From Enchant
-    local rangedEnchant = GetEnchantForEuipentSlot(CHAR_EQUIP_SLOTS["Range"])
+    local rangedEnchant = GetEnchantForEquipSlot(CHAR_EQUIP_SLOTS["Range"])
     if rangedEnchant and rangedEnchant == enchants.Biznick then 
         hitValue = hitValue + 3
     end
@@ -196,16 +196,31 @@ end
 
 local function _GetAuraModifier()
     local mod = 0
+    local bonus = 0
 
     for i = 1, 40 do
         local _, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i, "HELPFUK")
         if not spellId then break end
         if spellId == 6117 or spellId == 22782 or spellId == 22783 then
             mod = mod + 0.3 -- 30% Mage Armor
+        elseif spellId == 24363 then
+            bonus = bonus + 12 -- 12 MP5 from Mageblood Potion
+        elseif spellId == 16609 then
+            bonus = bonus + 10 -- 10 MP5 from Warchief Belssing
+        elseif spellId == 18194 then
+            bonus = bonus + 8 -- 8 MP5 from Nightfin Soup
+        elseif spellId == 5677 then
+            bonus = bonus + 10 -- 4 mana pe 2 sec Mana spring Totem Rank 1
+        elseif spellId == 10491 then
+            bonus = bonus + 15 -- 6 mana pe 2 sec Mana spring Totem Rank 2
+        elseif spellId == 10493 then
+            bonus = bonus + 20 -- 8 mana pe 2 sec Mana spring Totem Rank 3
+        elseif spellId == 10494 then
+            bonus = bonus + 25 -- 10 mana pe 2 sec Mana spring Totem Rank 4
         end
     end
 
-    return mod
+    return mod, bonus
 end
 
 local function _HasSetBonusModifierMP5()
@@ -322,13 +337,15 @@ local function GetMP5WhileCasting()
     if _HasSetBonusModifierMP5() then
         mod = mod + 0.15
     end
-    mod = mod + _GetAuraModifier()
+    local auraMod, auraValues = _GetAuraModifier()
+    mod = mod + auraMod
     if mod == 0 then
         casting = 0
     end
+    casting = casting + mod
 
     local mp5Items = GetMP5FromItems()
-    casting = (casting * 5) + mp5Items
+    casting = (casting * 5) + mp5Items + auraValues
 
     return RoundDec(casting, 2)
 end

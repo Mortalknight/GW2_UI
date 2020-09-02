@@ -2,6 +2,15 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.9.2",
+    [=[
+        - Added profile sharing
+        - Druid fixes
+        - Fix lua error
+]=]
+)
+
+v(
     "1.9.1",
     [=[
         - Added profile sharing

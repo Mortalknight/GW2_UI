@@ -1,6 +1,11 @@
 1.9.1
 - Added profile sharing
 - Druid fixes
+- Fix lua error
+
+1.9.1
+- Added profile sharing
+- Druid fixes
 
 1.9.0
 - Added Outfitter support
