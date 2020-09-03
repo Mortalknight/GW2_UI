@@ -298,6 +298,11 @@ local function ClearMailTextures()
     MailFrame.TopTileStreaks:Hide()
     MailFrame:CreateBackdrop()
 
+    OpenMailLetterButtonIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    OpenMailLetterButton:StripTextures()
+    OpenMailMoneyButtonIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    OpenMailMoneyButton:StripTextures()
+
     for i = 1, _G.INBOXITEMS_TO_DISPLAY do
         local bg = _G["MailItem" .. i]
         bg:StripTextures()
