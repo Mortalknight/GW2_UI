@@ -76,5 +76,34 @@ local function SkinBindingsUI()
     for _, v in pairs(buttons) do
         _G.QuickKeybindFrame[v]:SkinButton(false, true)
     end
+
+    QuickKeybindFrame:HookScript("OnShow", function()
+        _G.MultiBarRight.QuickKeybindGlow:Hide()
+        _G.MultiBarLeft.QuickKeybindGlow:Hide()
+        _G.MultiBarBottomRight.QuickKeybindGlow:Hide()
+        _G.MultiBarBottomLeft.QuickKeybindGlow:Hide()
+    end)
+
+    -- make the frame movable (maybe someone have a actionbar behinde that frame)
+    QuickKeybindFrame:SetClampedToScreen(true)
+    QuickKeybindFrame.Header:EnableMouse(true)
+    QuickKeybindFrame.Header:RegisterForDrag("LeftButton")
+
+    QuickKeybindFrame.Header:SetScript(
+        'OnDragStart',
+        function(self)
+            self.moving = true
+            self:GetParent():StartMoving()
+        end
+    )
+
+    QuickKeybindFrame.Header:SetScript(
+        'OnDragStop',
+        function(self)
+            self.moving = nil
+            self:GetParent():StopMovingOrSizing()
+        end
+    )
+
 end
 GW.SkinBindingsUI = SkinBindingsUI

@@ -22,7 +22,7 @@ local function DisplayHoverBinding()
                 if KeyBindingFrame:IsShown() then
                     HideUIPanel(KeyBindingFrame)
                 end
-                C_Timer.After(0.01, function()
+                C_Timer.After(0.001, function()
                     if GameMenuFrame:IsShown() then
                         HideUIPanel(GameMenuFrame)
                     end
