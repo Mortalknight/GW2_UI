@@ -79,6 +79,15 @@ local function loadCurrency(curwin)
                 slot.item.CurrencyID = nil
                 slot.item.CurrencyIdx = nil
                 slot.header.spaceString:SetText(info.name)
+                slot.header.isHeaderExpanded = info.isHeaderExpanded
+                slot.header.index = idx
+                if slot.header.isHeaderExpanded then
+                    slot.header.icon:Show()
+                    slot.header.icon2:Hide()
+                else
+                    slot.header.icon:Hide()
+                    slot.header.icon2:Show()
+                end
                 slot.header:Show()
             else
                 slot.header:Hide()
@@ -101,6 +110,13 @@ local function loadCurrency(curwin)
                 else
                     slot.item.amount:SetText(CommaValue(cinfo.quantity) .. " / " .. CommaValue(cinfo.maxQuantity))
                 end
+                if cinfo.quantity == 0 then
+                    slot.item.amount:SetFontObject("GameFontDisable")
+                    slot.item.spaceString:SetFontObject("GameFontDisable")
+				else
+					slot.item.amount:SetFontObject("GameFontHighlight")
+					slot.item.spaceString:SetFontObject("GameFontHighlight")
+                end
                 slot.item.icon:SetTexture(cinfo.iconFileID)
 
                 -- set zebra color by idx or watch status
@@ -121,6 +137,16 @@ local function loadCurrency(curwin)
 end
 GW.AddForProfiling("currency", "loadCurrency", loadCurrency)
 
+local function header_OnClick(self)
+    if self.isHeaderExpanded then
+        C_CurrencyInfo.ExpandCurrencyList(self.index, false)
+    else
+        C_CurrencyInfo.ExpandCurrencyList(self.index, true)
+    end
+
+    loadCurrency(self.curwin)
+end
+
 local function currencySetup(curwin)
     HybridScrollFrame_CreateButtons(curwin, "GwCurrencyRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
     for i = 1, #curwin.buttons do
@@ -128,10 +154,12 @@ local function currencySetup(curwin)
         slot:SetWidth(curwin:GetWidth() - 12)
         slot.header.spaceString:SetFont(DAMAGE_TEXT_FONT, 14)
         slot.header.spaceString:SetTextColor(1, 1, 1)
+        slot.header.icon:ClearAllPoints()
+        slot.header.icon:SetPoint("LEFT", 0, 0)
+        slot.header.icon2:ClearAllPoints()
+        slot.header.icon2:SetPoint("LEFT", 0, 0)
         slot.item.spaceString:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.spaceString:SetTextColor(1, 1, 1)
         slot.item.amount:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.amount:SetTextColor(1, 1, 1)
         slot.item.icon:ClearAllPoints()
         slot.item.icon:SetPoint("LEFT", 0, 0)
         if not slot.item.ScriptsHooked then
@@ -139,6 +167,11 @@ local function currencySetup(curwin)
             slot.item:HookScript("OnEnter", currency_OnEnter)
             slot.item:HookScript("OnLeave", GameTooltip_Hide)
             slot.item.ScriptsHooked = true
+        end
+        if not slot.header.ScriptsHooked then
+            slot.header:HookScript("OnClick", header_OnClick)
+            slot.header.curwin = curwin
+            slot.header.ScriptsHooked = true
         end
     end
 
