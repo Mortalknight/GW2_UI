@@ -433,6 +433,18 @@ local function getContainerItemLinkByName(itemName)
 end
 GW.getContainerItemLinkByName = getContainerItemLinkByName
 
+local function getInventoryItemLinkByNameAndId(name, id)
+    for slot = 1, 17 do
+        local itemLink = GetInventoryItemLink("player", slot)
+        if itemLink and itemLink:find(name) and itemLink:find(id) then
+            return itemLink
+        end
+    end
+
+    return nil
+end
+GW.getInventoryItemLinkByNameAndId = getInventoryItemLinkByNameAndId
+
 local function frame_OnEnter(self)
     GameTooltip:SetOwner(self, self.tooltipDir, 0, self.tooltipYoff)
     GameTooltip:SetText(self.tooltipText, 1, 1, 1)

@@ -100,7 +100,7 @@ local function updateBagItemButton(button)
     button.ItemId = id
     button.ItemLink = getContainerItemLinkByName(name)
     if button.ItemLink == nil then 
-        button.ItemLink = GetInventoryItemLink("player", button.itemSlot)
+        button.ItemLink = GW.getInventoryItemLinkByNameAndId(name, id)
     end
     
     if textureName then
