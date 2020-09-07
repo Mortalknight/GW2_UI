@@ -1,4 +1,7 @@
-1.9.1
+1.9.3
+- Added Clique support
+
+1.9.1/2
 - Added profile sharing
 - Druid fixes
 - Fix lua error

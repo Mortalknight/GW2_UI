@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+
+v(
+    "1.9.3",
+    [=[
+        - Added clique
+]=]
+)
 v(
     "1.9.2",
     [=[

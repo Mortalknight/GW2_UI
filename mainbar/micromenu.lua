@@ -459,6 +459,11 @@ local function LoadMicroMenu()
         end
     )
 
+    -- hide bg if borders are off
+    if not GetSetting("BORDER_ENABLED") then
+        mbf.cf.bg:Hide()
+    end
+
     -- if set to fade micro menu, add fader
     if GetSetting("FADE_MICROMENU") then
         mbf.cf:SetAttribute("fadeTime", 0.15)

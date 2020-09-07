@@ -492,7 +492,7 @@ local function CharacterMenuButton_OnLoad(self, odd)
 end
 
 local nextShadow, nextAnchor
-local function addAddonButton(name, setting, buttonName, shadow, anchor, showFunction)
+local function addAddonButton(name, setting, shadow, anchor, showFunction)
     if IsAddOnLoaded(name) and (setting == nil or setting == true) then
         GwCharacterMenu.buttonName = CreateFrame("Button", nil, GwCharacterMenu, shadow and "GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" or "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate2")
         GwCharacterMenu.buttonName:SetText(name)
@@ -584,7 +584,8 @@ local function LoadWindows()
                 -- add addon buttons here
                 nextShadow = true
                 nextAnchor = GwCharacterMenu.petMenu
-                addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), OutfitterButton, nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
+                addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
+                addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
 
                 GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")

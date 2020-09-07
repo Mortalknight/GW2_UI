@@ -899,10 +899,6 @@ local function LoadSpellBook()
     end)
     --hooksecurefunc('ToggleSpellBook',gwToggleSpellbook)
 
-    -- Remove blizzard default panel
-    SpellBookFrame:SetScript("OnShow", function()
-        HideUIPanel(SpellBookFrame)
-    end)
     SpellBookFrame:UnregisterAllEvents()
 
     return GwSpellbook
