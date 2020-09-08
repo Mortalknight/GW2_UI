@@ -878,7 +878,7 @@ local function loadAddon(self)
     end
 
     if GetSetting("CHATBUBBLES_ENABLED") then
-        GW.LoadChatBubbles() --TODO: Forbidden again?
+        GW.LoadChatBubbles()
     end
     -- create new microbuttons
     GW.LoadMicroMenu()
