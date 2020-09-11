@@ -13,6 +13,8 @@ local LibSharedMedia = GW.Libs.LSM
 local AlertContainerFrame
 local ourAlertSystem = false
 
+local elvUILoaded = IsAddOnLoaded("ElvUI")
+
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
@@ -568,9 +570,10 @@ local function updateAnchors(self)
         end
     end
 
-    self:CleanAnchorPriorities()
 
-    local relativeFrame = GwAlertFrameOffsetter
+
+    self:CleanAnchorPriorities()
+    local relativeFrame = ourAlertSystem and GwAlertFrameOffsetter or elvUILoaded and AlertFrameHolder or AlertContainer
     local relativeFrame2 = AlertContainerFrame
     for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
         if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors and GetSetting("ACTIONBARS_ENABLED") then
@@ -679,8 +682,10 @@ local function loadAddon(self)
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then
             GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
-            hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
+            GwMainMenuFrame:SetPoint("TOPLEFT", elvUILoaded and GameMenuButtonContinue or GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+            if not elvUILoaded then
+                hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
+            end
         end
     end
     if GetSetting("STATICPOPUP_SKIN_ENABLED") then
