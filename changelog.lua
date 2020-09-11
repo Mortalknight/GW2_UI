@@ -6,6 +6,7 @@ v(
     "1.9.3",
     [=[
         - Added clique
+        - Fix lua error
 ]=]
 )
 v(

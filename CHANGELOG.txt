@@ -1,5 +1,6 @@
 1.9.3
 - Added Clique support
+- Fix lua error
 
 1.9.1/2
 - Added profile sharing
