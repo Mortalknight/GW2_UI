@@ -91,34 +91,6 @@ local constBackdropArgs = {
     edgeSize = 32,
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
-local function styleTooltip(self)
-    if not self:IsShown() then
-        return
-    end
-
-    local ttName = self:GetName()
-    self:StripTextures()
-    self:CreateBackdrop(constBackdropArgs)
-    if ttName and _G[ttName .. "StatusBarTexture"] then
-        _G[ttName .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
-    end
-    if DBMInfoFrame then
-        DBMInfoFrame:CreateBackdrop(constBackdropArgs)
-    end
-end
-GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
-
-local function tooltip_SetBackdropStyle(self, args)
-    if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
-        return
-    end
-   
-    if not self:IsShown() then
-        return
-    end
-    self:CreateBackdrop(constBackdropArgs)
-end
-GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 
 local function anchorTooltip(self, p)
     self:SetOwner(p, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
@@ -626,7 +598,24 @@ local function SetToyByItemID(self, id)
     self:Show()
 end
 
+local function SetStyle(tooltip)
+    if not tooltip or tooltip.IsEmbedded or tooltip:IsForbidden() or not tooltip.SetBackdrop then
+        return
+    end
+
+    tooltip:SetBackdrop(constBackdropArgs)
+end
+
 local function LoadTooltips()
+    -- Style Tooltips first
+    for _, tooltip in pairs(UNSTYLED) do
+        SetStyle(tooltip)
+    end
+    hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle)
+    _G.GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
+    _G.GameTooltip.ItemTooltip:CreateBackdrop(constBackdropArgs)
+
+
     if GetSetting("TOOLTIP_MOUSE") then
         hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
     else
@@ -689,14 +678,6 @@ local function LoadTooltips()
                 end
             end
         end)
-    end
-    
-    --TODO copare with embedded style is not skinned
-    hooksecurefunc("SharedTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
-    for _, toStyle in pairs(UNSTYLED) do
-        if toStyle then
-            toStyle:HookScript("OnShow", styleTooltip)
-        end
     end
 end
 GW.LoadTooltips = LoadTooltips
