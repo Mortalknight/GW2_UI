@@ -455,17 +455,17 @@ local function styleChatWindow(frame)
     frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
 
     frame.button:SetScript("OnMouseUp", function(_, btn)
-        if not CopyChatFrame:IsShown() then
+        if not GW2_UICopyChatFrame:IsShown() then
             local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
             if fontSize < 10 then fontSize = 12 end
             FCF_SetChatWindowFontSize(frame, frame, 0.01)
-            CopyChatFrame:Show()
+            GW2_UICopyChatFrame:Show()
             local lineCt = getLines(frame)
             local text = table.concat(copyLines, " \n", 1, lineCt)
             FCF_SetChatWindowFontSize(frame, frame, fontSize)
-            CopyChatFrame.editBox:SetText(text)
+            GW2_UICopyChatFrame.editBox:SetText(text)
         else
-            CopyChatFrame:Hide()
+            GW2_UICopyChatFrame:Hide()
         end
     end)
 
@@ -544,7 +544,7 @@ local function BuildCopyChatFrame()
     frame.editBox:SetFontObject(ChatFontNormal)
     frame.editBox:SetWidth(frame.scrollArea:GetWidth())
     frame.editBox:SetHeight(200)
-    frame.editBox:SetScript("OnEscapePressed", function() CopyChatFrame:Hide() end)
+    frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
     frame.scrollArea:SetScrollChild(frame.editBox)
     frame.editBox:SetScript("OnTextChanged", function(_, userInput)
         if userInput then return end
