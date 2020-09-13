@@ -1231,26 +1231,26 @@ local function loadAlterSystemFrameSkins()
     --Bonus Roll Loot
     skinBonusRollLoot() --TODO: position
 
-    local AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
-    AlertContainerFrame:SetSize(300, 5) -- 265
+    GW.AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
+    GW.AlertContainerFrame:SetSize(300, 5) -- 265
 
     local point = GetSetting("AlertPos")
-    AlertContainerFrame:ClearAllPoints()
-    AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
+    GW.AlertContainerFrame:ClearAllPoints()
+    GW.AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 
-    local _, y = AlertContainerFrame:GetCenter()
+    local _, y = GW.AlertContainerFrame:GetCenter()
     local screenHeight = UIParent:GetTop()
     if y > (screenHeight / 2) then
-        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
+        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
     else
-        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
+        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
     end
 
-    AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
-    AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
+    GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    GW.AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     
-    AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
+    GW.AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
 
     -- add flare animation
     hooksecurefunc("AlertFrame_PlayIntroAnimation", function(self)
@@ -1271,7 +1271,5 @@ local function loadAlterSystemFrameSkins()
             end)
         end
     end)
-
-    return AlertContainerFrame
 end
 GW.loadAlterSystemFrameSkins = loadAlterSystemFrameSkins

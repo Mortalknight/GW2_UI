@@ -10,11 +10,6 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = GW.Libs.LSM
 
-local AlertContainerFrame
-local ourAlertSystem = false
-
-local elvUILoaded = IsAddOnLoaded("ElvUI")
-
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
@@ -524,69 +519,6 @@ local function RegisterScaleFrame(f, modifier)
 end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
--- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
-local function adjustFixedAnchors(self, relativeAlert)
-    if not self.anchorFrame:IsShown() then
-        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
-        local name = self.anchorFrame:GetName()
-        if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
-            if name == "GroupLootContainer" then
-                self.anchorFrame:ClearAllPoints()
-                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
-                else
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-                end
-            end
-        end
-        return self.anchorFrame
-    end
-    return relativeAlert
-end
-GW.AddForProfiling("index", "adjustFixedAnchors", adjustFixedAnchors)
-
-local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
-local function adjustAlertAnchors(self, relativeAlert)
-    for alertFrame in self.alertFramePool:EnumerateActive() do
-        alertFrame:ClearAllPoints()
-        alertFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
-        relativeAlert = alertFrame
-    end
-    return relativeAlert
-end
-
-local function updateAnchors(self)
-    if ourAlertSystem then
-        local _, y = AlertContainerFrame:GetCenter()
-        local screenHeight = UIParent:GetTop()
-        if y > (screenHeight / 2) then
-            POSITION = "TOP"
-            ANCHOR_POINT = "BOTTOM"
-            YOFFSET = -5
-        else
-            POSITION = "BOTTOM"
-            ANCHOR_POINT = "TOP"
-            YOFFSET = 5
-        end
-    end
-
-
-
-    self:CleanAnchorPriorities()
-    local relativeFrame = ourAlertSystem and GwAlertFrameOffsetter or elvUILoaded and AlertFrameHolder or AlertContainer
-    local relativeFrame2 = AlertContainerFrame
-    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
-        if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors and GetSetting("ACTIONBARS_ENABLED") then
-            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
-        elseif alertFrameSubSystem.AdjustAnchors == AlertFrameQueueMixin.AdjustAnchors and ourAlertSystem then
-            relativeFrame2 = adjustAlertAnchors(alertFrameSubSystem, relativeFrame2)
-        else
-            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
-        end
-    end
-end
-GW.AddForProfiling("index", "updateAnchors", updateAnchors)
-
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
@@ -596,39 +528,12 @@ local function loadAddon(self)
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
 
-    -- setup AlertFrame and Bonus Roll Frame
-    AlertFrame.UpdateAnchors = updateAnchors
-
     if GetSetting("ALERTFRAME_ENABLED") then
-        ourAlertSystem = true
-        AlertContainerFrame = GW.loadAlterSystemFrameSkins()
-
-        hooksecurefunc("GroupLootContainer_Update", function(self)
-            local lastIdx = nil
-            local pt, _, relPt, _, _ = self:GetPoint()
-        
-            for i = 1 , self.maxIndex do
-                local frame = self.rollFrames[i]
-                local prevFrame = self.rollFrames[i-1]
-                if ( frame ) then
-                    frame:ClearAllPoints()
-                    if prevFrame and not (prevFrame == frame) then
-                        frame:SetPoint(POSITION, prevFrame, ANCHOR_POINT, 0, 0)
-                    else
-                        frame:SetPoint(pt, self, relPt, 0, self.reservedSize * (i - 1 + 0.5))
-                    end
-                    lastIdx = i
-                end
-            end
-        
-            if ( lastIdx ) then
-                self:SetHeight(self.reservedSize * lastIdx)
-                self:Show()
-            else
-                self:Hide()
-            end
-        end)
+        GW.loadAlterSystemFrameSkins()
+        GW.SetupAlertFramePosition()
     end
+
+
 
     -- disable Move Anything bag handling
     disableMABags()
@@ -682,8 +587,8 @@ local function loadAddon(self)
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then
             GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-            GwMainMenuFrame:SetPoint("TOPLEFT", elvUILoaded and GameMenuButtonContinue or GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
-            if not elvUILoaded then
+            GwMainMenuFrame:SetPoint("TOPLEFT", IsAddOnLoaded("ElvUI") and GameMenuButtonContinue or GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+            if not IsAddOnLoaded("ElvUI") then
                 hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
             end
         end

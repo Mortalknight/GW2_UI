@@ -369,6 +369,11 @@ local ImportendRaidDebuff = {
     [334913] = true,  -- Master of Death
     [325725] = true,  -- Cosmic Artifice
     [328987] = true,  -- Zealous
+    [334496] = true, -- Soporific Shimmerdust
+    [339978] = true, -- Pacifying Mists
+    [323692] = true, -- Arcane Vulnerability
+    [333250] = true, -- Reaver
+
 
 -- BFA Dungeons
     -- Freehold

@@ -1083,7 +1083,6 @@ local function LoadActionBars(lm)
     -- we can override the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
     -- doing it there avoids any taint issues
     -- we also exclude a few frames from the auto-positioning stuff regardless
-    GwAlertFrameOffsetter:SetHeight(205)
     UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["GroupLootContainer"] = nil

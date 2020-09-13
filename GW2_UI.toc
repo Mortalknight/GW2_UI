@@ -118,6 +118,7 @@ inventory/lootframe.lua
 immersive/skins/skins.xml
 immersive/questview.xml
 immersive/toast.xml
+immersive/alertPosition.lua
 immersive/alerts.lua
 immersive/afk.lua
 immersive/questview.lua

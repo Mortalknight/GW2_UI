@@ -11,12 +11,6 @@
             <Color r="0" g="0" b="0" a="1"/>
         </Shadow>
     </Font>
-    <Button name="GwAlertFrameOffsetter" toplevel="true" parent="UIParent" frameStrata="BACKGROUND" frameLevel="1" enableMouse="false" hidden="true">
-        <Size x="800" y="140"/>
-        <Anchors>
-            <Anchor point="BOTTOM" x="0" y="0"/>
-        </Anchors>
-    </Button>
 
     <Button name="GwGarrisonButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
         <Size x="50" y="50"/>

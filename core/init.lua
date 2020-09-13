@@ -34,6 +34,8 @@ GW.locationData = {}
 -- Init global function
 GW.InitLocationDataHandler()
 
+GW.AlertContainerFrame = nil
+
 -- Init Libs
 do
     GW.Libs = {}
