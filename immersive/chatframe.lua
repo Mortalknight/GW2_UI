@@ -148,8 +148,8 @@ local function setButtonPosition(frame)
         end
 
         editbox:ClearAllPoints()
-        editbox:SetPoint("TOPLEFT", _G[name.."ButtonFrame"], "BOTTOMLEFT", 0, 0)
-        editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, 0)
+        editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, -6)
+        editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, -6)
 
         if QuickJoinToastButton then
             QuickJoinToastButton.ClearAllPoints = nil
@@ -372,6 +372,7 @@ local function styleChatWindow(frame)
     frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
     frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
     frame.buttonFrame.minimizeButton:SetSize(24, 24)
+    frame.buttonFrame:StripTextures()
 
     hooksecurefunc(tab, "SetAlpha", function(t, alpha)
         if alpha ~= 1 and (not t.isDocked or _G.GeneralDockManager.selected:GetID() == t:GetID()) then
@@ -447,7 +448,7 @@ local function styleChatWindow(frame)
     frame.button:EnableMouse(true)
     frame.button:SetAlpha(0.35)
     frame.button:SetSize(20, 22)
-    frame.button:SetPoint("TOPRIGHT")
+    frame.button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 20, 0)
     frame.button:SetFrameLevel(frame:GetFrameLevel() + 5)
 
     frame.button.tex = frame.button:CreateTexture(nil, "OVERLAY")

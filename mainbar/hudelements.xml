@@ -236,6 +236,7 @@
             </Layer>
         </Layers>
     </Frame>
+    
     <Frame name="GwLevelingRewards" hidden="true" virtual="true">
         <Size x="376" y="361"></Size>
         <Anchors>
