@@ -1043,7 +1043,6 @@ local function skinBonusRollLoot()
     frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
 
     --flare
-
     AddFlare(frame, lootItem.Icon.b)
 end
 

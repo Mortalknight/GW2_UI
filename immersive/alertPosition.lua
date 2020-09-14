@@ -1,12 +1,10 @@
 local _, GW = ...
 
-local ourAlertSystem = GW.GetSetting("ALERTFRAME_ENABLED")
-local ourActionBars = GW.GetSetting("ACTIONBARS_ENABLED")
 local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
 
 local function UpdateGroupLootContainer(self)
     local lastIdx = nil
-    local pt, _, relPt, _, _ = self:GetPoint()
+    local pt, relTo, relPt, _, _ = self:GetPoint()
 
     for i = 1 , self.maxIndex do
         local frame = self.rollFrames[i]
@@ -14,9 +12,9 @@ local function UpdateGroupLootContainer(self)
         if frame then
             frame:ClearAllPoints()
             if prevFrame and not (prevFrame == frame) then
-                frame:SetPoint(POSITION, prevFrame, ANCHOR_POINT, 0, 0)
+                frame:SetPoint(pt, prevFrame, relPt, 0, 0)
             else
-                frame:SetPoint(pt, self, relPt, 0, self.reservedSize * (i - 1 + 0.5))
+                frame:SetPoint(pt, UIParent, relPt, 0, _G.GwAlertFrameOffsetter:GetHeight())
             end
             lastIdx = i
         end
@@ -45,8 +43,6 @@ local function RePostAlertFrame()
 
     AlertFrame:ClearAllPoints()
     AlertFrame:SetAllPoints(GW.AlertContainerFrame)
-    GroupLootContainer:ClearAllPoints()
-    GroupLootContainer:SetPoint(POSITION, GW.AlertContainerFrame, ANCHOR_POINT, 0, YOFFSET)
     if GroupLootContainer:IsShown() then
         UpdateGroupLootContainer(GroupLootContainer)
     end
@@ -90,6 +86,7 @@ local function resetAlertSubSystemAdjustPositions(subSystem)
 end
 
 local function SetupAlertFramePosition()
+    _G.GwAlertFrameOffsetter:SetHeight(205)
     hooksecurefunc("GroupLootContainer_Update", UpdateGroupLootContainer)
 
     -- override anchor function

@@ -598,6 +598,40 @@ local function SetToyByItemID(self, id)
     self:Show()
 end
 
+local function SetCurrencyToken(self, idx)
+    if self:IsForbidden() then return end
+    local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+
+    if not idx or not showSpellID then return end
+
+    local id = tonumber(strmatch(C_CurrencyInfo.GetCurrencyListLink(idx),"currency:(%d+)"))
+    self:AddLine(format("|cffffedba%s|r %d", ID, id))
+	self:Show()
+end
+
+local function SetCurrencyTokenByID(self, id)
+    if self:IsForbidden() then return end
+    local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+
+    if not id or not showSpellID then return end
+
+    self:AddLine(format("|cffffedba%s|r %d", ID, id))
+	self:Show()
+end
+
+local function SetBackpackToken(self, id)
+    if self:IsForbidden() then return end
+    local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+
+    if not id or not showSpellID then return end
+
+    local info = C_CurrencyInfo.GetBackpackCurrencyInfo(id)
+    if info and info.currencyTypesID then
+        self:AddLine(format("|cffffedba%s|r %d", ID, id))
+        self:Show()
+    end
+end
+
 local function SetStyle(tooltip)
     if not tooltip or tooltip.IsEmbedded or tooltip:IsForbidden() or not tooltip.SetBackdrop then
         return
@@ -666,6 +700,9 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
         hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitBuff)
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
+        hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
+        hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", SetCurrencyTokenByID)
+        hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
 
         local eventFrame = CreateFrame("Frame")
         eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
