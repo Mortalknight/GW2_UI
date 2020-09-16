@@ -1129,13 +1129,17 @@ local function createRaidFrame(registerUnit, index)
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
 
-    frame:SetScript("OnLeave", GameTooltip_Hide)
+    frame:SetScript("OnLeave", function(self)
+        GameTooltip_Hide()
+        self.targetHighlight:SetVertexColor(0, 0, 0, 1)
+    end)
     frame:SetScript(
         "OnEnter",
-        function()
+        function(self)
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
             GameTooltip:SetUnit(registerUnit)
             GameTooltip:Show()
+            self.targetHighlight:SetVertexColor(1, 1, 1, 1)
         end
     )
 
