@@ -1131,7 +1131,9 @@ local function createRaidFrame(registerUnit, index)
 
     frame:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
-        self.targetHighlight:SetVertexColor(0, 0, 0, 1)
+        if self.guid ~= UnitGUID("target") then
+            self.targetHighlight:SetVertexColor(0, 0, 0, 1)
+        end
     end)
     frame:SetScript(
         "OnEnter",
