@@ -316,6 +316,10 @@ local function GWUseThisLocalization()
     L["IMPORT_PROFILE_DESC"] = "Füge einen Profiltext ein um dieses Profil zu importieren:"
     L["IMPORT_POFILE_BUTTON"] = "Profil importieren"
     L["EXPORT"] = "Exportieren"
+    L["SMALL_SETTINGS_DEFAULT_DESC"] = "Rechtsklick auf ein Fenster um zusätzliche Optionen anzuzeigen"
+    L["SMALL_SETTINGS_NO_SETTINGS_FOR"] = "Keine Extraoptionen für das Fenster '%s' verfügbar"
+    L["SMALL_SETTINGS_HEADER"] = "Extra Festeroptionen "
+    L["SMALL_SETTINGS_OPTION_SCALE"] = "Skalierung"
 end
 
 if GetLocale() == "deDE" then

@@ -477,12 +477,11 @@ local function loadAuras(lm, secure)
     -- create a new header for buffs
     local hb = newHeader("HELPFUL", secure, "PlayerBuffFrame")
     hb:SetAttribute("growDir", grow_dir)
-    GW.RegisterScaleFrame(hb)
     hb:Show()
     if hb.inner then
         hb.inner:Show()
     end
-    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, true)
+    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, nil, true, true)
     hb:ClearAllPoints()
     hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     lm:RegisterBuffFrame(hb)
@@ -500,9 +499,6 @@ local function loadAuras(lm, secure)
     local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
     local hd = newHeader("HARMFUL", secure, "PlayerDebuffFrame")
     local anchor_hd
-    GW.RegisterScaleFrame(hd)
-    lm:RegisterDebuffFrame(hd)
-    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, true)
     hd:Show()
     if hd.inner then
         hd.inner:Show()
@@ -529,6 +525,8 @@ local function loadAuras(lm, secure)
         anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
         hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
     end
+    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, nil, true, true)
+    lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function (frame)
         local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
         local anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"

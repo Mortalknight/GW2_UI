@@ -27,9 +27,6 @@ end
 local loaded = false
 local forcedMABags = false
 
-local MOVABLE_FRAMES = {}
-GW.MOVABLE_FRAMES = MOVABLE_FRAMES
-
 local swimAnimation = 0
 local lastSwimState = true
 
@@ -47,166 +44,6 @@ local function disableMABags()
     forcedMABags = true
 end
 GW.AddForProfiling("index", "disableMABags", disableMABags)
-
-local function lockableOnClick(self, btn)
-    local mf = self:GetParent()
-    --local f = mf.gw_frame
-    local settingsName = mf.gw_Settings
-    local lockAble = mf.gw_Lockable
-
-    local dummyPoint = GetDefault(settingsName)
-    mf:ClearAllPoints()
-    mf:SetPoint(
-        dummyPoint["point"],
-        UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
-    )
-
-    local point, _, relativePoint, xOfs, yOfs = mf:GetPoint()
-
-    local new_point = GetSetting(settingsName)
-    new_point["point"] = point
-    new_point["relativePoint"] = relativePoint
-    new_point["xOfs"] = GW.RoundInt(xOfs)
-    new_point["yOfs"] = GW.RoundInt(yOfs)
-    SetSetting(settingsName, new_point)
-
-    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
-    if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
-        SetSetting(settingsName .. "_GrowDirection", "UP")
-    end
-end
-GW.AddForProfiling("index", "lockableOnClick", lockableOnClick)
-
-local function lockFrame_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(SYSTEM_DEFAULT, 1, 1, 1)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("index", "lockFrame_OnEnter", lockFrame_OnEnter)
-
-local function mover_OnDragStart(self)
-    self.IsMoving = true
-    self:StartMoving()
-end
-GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
-
-local function mover_OnDragStop(self)
-    local settingsName = self.gw_Settings
-    local lockAble = self.gw_Lockable
-    local isMoved = self.gw_isMoved
-    self:StopMovingOrSizing()
-    local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
-
-    local new_point = GetSetting(settingsName)
-    new_point.point = point
-    new_point.relativePoint = relativePoint
-    new_point.xOfs = math.floor(xOfs)
-    new_point.yOfs = math.floor(yOfs)
-    SetSetting(settingsName, new_point)
-    if lockAble ~= nil then
-        SetSetting(lockAble, false)
-    end
-    -- check if we need to know if the frame is on its default position
-    if isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-        local growDirection = GetSetting(settingsName .. "_GrowDirection")
-        local frame = self.gw_frame
-        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and (growDirection and growDirection == "UP") then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-
-    --check if we need to change the text string
-    if settingsName == "AlertPos" then
-        local _, y = self:GetCenter()
-        local screenHeight = UIParent:GetTop()
-        if y > (screenHeight / 2) then
-            if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
-            end
-        else
-            if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
-            end
-        end
-    end
-
-    self.IsMoving = false
-end
-GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
-
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved)
-    local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
-    frame.gwMover = moveframe
-    if size then
-        moveframe:SetSize(unpack(size))
-    else
-        moveframe:SetSize(frame:GetSize())
-    end
-    moveframe.gw_Settings = settingsName
-    moveframe.gw_Lockable = lockAble
-    moveframe.gw_isMoved = isMoved
-    moveframe.gw_frame = frame
-
-    if moveframe.frameName and moveframe.frameName.SetText then
-        moveframe.frameName:SetText(displayName)
-    end
-
-    local dummyPoint = GetSetting(settingsName)
-    moveframe:ClearAllPoints()
-    moveframe:SetPoint(
-        dummyPoint["point"],
-        UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
-    )
-    local num = #MOVABLE_FRAMES
-    MOVABLE_FRAMES[num + 1] = moveframe
-    moveframe:Hide()
-    moveframe:RegisterForDrag("LeftButton")
-
-    if lockAble ~= nil then
-        local lockFrame = CreateFrame("Button", nil, moveframe, "GwDummyLockButton")
-        lockFrame:SetScript("OnEnter", lockFrame_OnEnter)
-        lockFrame:SetScript("OnLeave", GameTooltip_Hide)
-        lockFrame:SetScript("OnClick", lockableOnClick)
-    end
-
-    if isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-
-        if defaultPoint["point"] == dummyPoint["point"] and defaultPoint["relativePoint"] == dummyPoint["relativePoint"] and defaultPoint["xOfs"] == dummyPoint["xOfs"] and defaultPoint["yOfs"] == dummyPoint["yOfs"] then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-
-    moveframe:SetScript("OnDragStart", mover_OnDragStart)
-    moveframe:SetScript("OnDragStop", mover_OnDragStop)
-end
-GW.RegisterMovableFrame = RegisterMovableFrame
-
-local function UpdateFramePositions()
-    for i, mf in pairs(MOVABLE_FRAMES) do
-        local f = mf.gw_frame
-        local newp = GetSetting(mf.gw_Settings)
-        f:ClearAllPoints()
-        f:SetPoint(newp["point"], UIParent, newp["relativePoint"], newp["xOfs"], newp["yOfs"])
-    end
-end
-GW.UpdateFramePositions = UpdateFramePositions
 
 -- https://us.battle.net/forums/en/wow/topic/6036615884
 if AchievementMicroButton_Update == nil then
@@ -556,6 +393,7 @@ local function loadAddon(self)
     --@end-non-debug@]===]
 
     --Create Settings window
+    GW.LoadMovers()
     GW.LoadSettings()
 
     -- Load Slash commands
@@ -764,8 +602,6 @@ local function loadAddon(self)
     -- create buff frame
     if GetSetting("PLAYER_BUFFS_ENABLED") then
         GW.LoadPlayerAuras(lm)
-        --GW.LoadAurasSecure()
-        --GW.LoadAurasLegacy()
     end
 
     if GetSetting("DYNAMIC_CAM") then

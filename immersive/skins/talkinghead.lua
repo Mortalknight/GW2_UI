@@ -15,10 +15,6 @@ end
 local function InitTalkingHeadFrame()
     UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
 
-    local point = GW.GetSetting("TalkingHeadFrame_pos")
-    TalkingHeadFrame:ClearAllPoints()
-    TalkingHeadFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
-
     -- remove TalkingHeadFrame from Alert System
     for i, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do
         if alertFrameSubSystem.anchorFrame and alertFrameSubSystem.anchorFrame == TalkingHeadFrame then
@@ -26,7 +22,10 @@ local function InitTalkingHeadFrame()
         end
     end
 
-    GW.RegisterMovableFrame(TalkingHeadFrame, "Talking Head Frame", "TalkingHeadFrame_pos", "VerticalActionBarDummy")
+    GW.RegisterMovableFrame(TalkingHeadFrame, "Talking Head Frame", "TalkingHeadFrame_pos", "VerticalActionBarDummy", nil, nil, nil, true)
+    local point = GW.GetSetting("TalkingHeadFrame_pos")
+    TalkingHeadFrame:ClearAllPoints()
+    TalkingHeadFrame:SetPoint("TOPLEFT", TalkingHeadFrame.gwMover)
 
     -- Skin
     hooksecurefunc("TalkingHeadFrame_PlayCurrent", SkinTalkingHeadFrame_OnShow)

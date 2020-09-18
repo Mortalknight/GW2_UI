@@ -38,18 +38,11 @@ local function LoadCastingBar()
     GwCastingBar.spark:ClearAllPoints()
     GwCastingBar.spark:SetPoint("RIGHT", GwCastingBar.bar, "RIGHT")
 
-    GwCastingBar:ClearAllPoints()
-    GwCastingBar:SetPoint(
-        GetSetting("castingbar_pos")["point"],
-        UIParent,
-        GetSetting("castingbar_pos")["relativePoint"],
-        GetSetting("castingbar_pos")["xOfs"],
-        GetSetting("castingbar_pos")["yOfs"]
-    )
-
     GwCastingBar:SetAlpha(0)
 
-    RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy")
+    RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, nil, nil, true)
+    GwCastingBar:ClearAllPoints()
+    GwCastingBar:SetPoint("TOPLEFT", GwCastingBar.gwMover)
 
     GwCastingBar:SetScript(
         "OnEvent",

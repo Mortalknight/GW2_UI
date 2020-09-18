@@ -316,6 +316,10 @@ local function GWUseThisLocalization()
     L["IMPORT_PROFILE_DESC"] = "Past your profile string here, to import the profile."
     L["IMPORT_POFILE_BUTTON"] = "Import Profile"
     L["EXPORT"] = "Export"
+    L["SMALL_SETTINGS_DEFAULT_DESC"] = "Right click on a moverframe to show extra frame options"
+    L["SMALL_SETTINGS_NO_SETTINGS_FOR"] = "No extra frame settings for '%s'"
+    L["SMALL_SETTINGS_HEADER"] = "Extra frame options"
+    L["SMALL_SETTINGS_OPTION_SCALE"] = "Scale"
 end
 
 if GetLocale() == "itIT" then

@@ -72,9 +72,6 @@ end
 
 local function Create_Totem_Bar()
     local gw_totem_bar = CreateFrame("Frame", "GW_TotemBar", UIParent)
-    local point = GW.GetSetting("TotemBar_pos")
-    gw_totem_bar:ClearAllPoints()
-    gw_totem_bar:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 
     for i = 1, MAX_TOTEMS do
         local button = CreateFrame("Button", gw_totem_bar:GetName() .. "Totem" .. i, gw_totem_bar)
@@ -121,7 +118,9 @@ local function Create_Totem_Bar()
 
     end)
 
-    GW.RegisterMovableFrame(gw_totem_bar, GW.L["CLASS_TOTEMS"], "TotemBar_pos", "VerticalActionBarDummy")
-    GW.RegisterScaleFrame(gw_totem_bar)
+    local point = GW.GetSetting("TotemBar_pos")
+    GW.RegisterMovableFrame(gw_totem_bar, GW.L["CLASS_TOTEMS"], "TotemBar_pos", "VerticalActionBarDummy", nil, nil, nil, true)
+    gw_totem_bar:ClearAllPoints()
+    gw_totem_bar:SetPoint("TOPLEFT", gw_totem_bar.gwMover)
 end
 GW.Create_Totem_Bar = Create_Totem_Bar

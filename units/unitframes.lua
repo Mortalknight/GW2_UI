@@ -782,19 +782,12 @@ local function LoadTarget()
         NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.nameString, "TOPLEFT", 2, 17)
     end
 
-    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy", nil, nil, nil, true)
 
     NewUnitFrame:ClearAllPoints()
-    NewUnitFrame:SetPoint(
-        GetSetting("target_pos")["point"],
-        UIParent,
-        GetSetting("target_pos")["relativePoint"],
-        GetSetting("target_pos")["xOfs"],
-        GetSetting("target_pos")["yOfs"]
-    )
+    NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
 
     NewUnitFrame:SetAttribute("unit", "target")
-
     NewUnitFrame:SetAttribute("*type1", "target")
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
     NewUnitFrame:SetAttribute("unit", "target")
@@ -883,16 +876,10 @@ local function LoadFocus()
     local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame")
     NewUnitFrame.unit = "focus"
 
-    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy", nil, nil, nil, true)
 
     NewUnitFrame:ClearAllPoints()
-    NewUnitFrame:SetPoint(
-        GetSetting("focus_pos")["point"],
-        UIParent,
-        GetSetting("focus_pos")["relativePoint"],
-        GetSetting("focus_pos")["xOfs"],
-        GetSetting("focus_pos")["yOfs"]
-    )
+    NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
 
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
@@ -958,16 +945,10 @@ local function LoadTargetOfUnit(unit)
 
     f.unit = unitID
 
-    RegisterMovableFrame(f, SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(f, SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameTemplateDummy", nil, nil, nil, true)
 
     f:ClearAllPoints()
-    f:SetPoint(
-        GetSetting(unitID .. "_pos")["point"],
-        UIParent,
-        GetSetting(unitID .. "_pos")["relativePoint"],
-        GetSetting(unitID .. "_pos")["xOfs"],
-        GetSetting(unitID .. "_pos")["yOfs"]
-    )
+    f:SetPoint("TOPLEFT", f.gwMover)
 
     f:SetAttribute("*type1", "target")
     f:SetAttribute("*type2", "togglemenu")

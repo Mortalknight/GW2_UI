@@ -573,7 +573,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local btn_this_row = 0
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
-    GW.RegisterScaleFrame(fmMultibar)
     GW.MixinHideDuringPetAndOverride(fmMultibar)
     if actionPage ~= nil then
         fmMultibar:SetAttribute("actionpage", actionPage)
@@ -623,13 +622,26 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     end
 
     fmMultibar:SetScript("OnUpdate", nil)
+    fmMultibar:SetSize(used_width, used_height)
+
+    if barName == "MultiBarLeft" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy", nil, nil, nil, true)
+    elseif barName == "MultiBarRight" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy", nil, nil, nil, true)
+    elseif barName == "MultiBarBottomLeft" then
+        lm:RegisterMultiBarLeft(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, nil, true, true)
+    elseif barName == "MultiBarBottomRight" then
+        lm:RegisterMultiBarRight(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, nil, true, true)
+    end
+
     fmMultibar:ClearAllPoints()
     if (barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft") and not GetSetting("XPBAR_ENABLED") then
-        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs -14)
+        fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover, "TOPLEFT", 0, -14)
     else
-        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
+        fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
     end
-    fmMultibar:SetSize(used_width, used_height)
 
     -- set fader logic
     createFaderAnim(fmMultibar, state)
@@ -640,18 +652,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar:SetScript("OnShow", nil)
     multibar:SetScript("OnHide", nil)
     multibar:EnableMouse(false)
-
-    if barName == "MultiBarLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy")
-    elseif barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy")
-    elseif barName == "MultiBarBottomLeft" then
-        lm:RegisterMultiBarLeft(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
-    elseif barName == "MultiBarBottomRight" then
-        lm:RegisterMultiBarRight(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
-    end
     
     return fmMultibar
 end
