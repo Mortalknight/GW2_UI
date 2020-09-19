@@ -248,10 +248,12 @@ local function SkinTab(tabButton)
         end
     end
 
-    for _, object in pairs(tabs) do
-        local tex = _G[tabButton:GetName() .. object]
-        if tex then
-            tex:SetTexture()
+    if tabButton:GetName() then
+        for _, object in pairs(tabs) do
+            local tex = _G[tabButton:GetName() .. object]
+            if tex then
+                tex:SetTexture()
+            end
         end
     end
 end

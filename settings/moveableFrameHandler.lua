@@ -161,6 +161,7 @@ local function mover_scaleable(self, button)
             GW.MoveHudScaleableFrame.default:Hide()
             GW.MoveHudScaleableFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
             GW.MoveHudScaleableFrame.desc:Show()
+            GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
         else
             local scale = GetSetting(self.gw_Settings .."_scale")
             GW.MoveHudScaleableFrame.child = self
@@ -170,6 +171,12 @@ local function mover_scaleable(self, button)
             GW.MoveHudScaleableFrame.desc:Hide()
             GW.MoveHudScaleableFrame.scaleSlider:Show()
             GW.MoveHudScaleableFrame.default:Show()
+            if GW.MoveHudScaleableFrame.activeFlasher then
+                GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
+                UIFrameFadeOut(GW.MoveHudScaleableFrame.activeFlasher, 0.5, GW.MoveHudScaleableFrame.activeFlasher:GetAlpha(), 0.5)
+            end
+            GW.MoveHudScaleableFrame.activeFlasher = self
+            GW.FrameFlash(self, 1.5, 0.5, 1, true)
         end
     end
 end
@@ -282,21 +289,30 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe:SetScript("OnMouseDown", mover_scaleable)
         moveframe:SetScale(frame:GetScale())
     else
-        moveframe:SetScript("OnMouseDown", function(self)
-            if GW.MoveHudScaleableFrame.child == "nil" then
-                GW.MoveHudScaleableFrame.child = nil
-                GW.MoveHudScaleableFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
-                GW.MoveHudScaleableFrame.scaleSlider:Hide()
-                GW.MoveHudScaleableFrame.default:Hide()
-                GW.MoveHudScaleableFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
-                GW.MoveHudScaleableFrame.desc:Show()
-            else
-                GW.MoveHudScaleableFrame.child = "nil"
-                GW.MoveHudScaleableFrame.headerString:SetText(displayName)
-                GW.MoveHudScaleableFrame.scaleSlider:Hide()
-                GW.MoveHudScaleableFrame.default:Hide()
-                GW.MoveHudScaleableFrame.desc:SetText(format(L["SMALL_SETTINGS_NO_SETTINGS_FOR"], displayName))
-                GW.MoveHudScaleableFrame.desc:Show()
+        moveframe:SetScript("OnMouseDown", function(self, button)
+            if button =="RightButton" then
+                if GW.MoveHudScaleableFrame.child == "nil" then
+                    GW.MoveHudScaleableFrame.child = nil
+                    GW.MoveHudScaleableFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
+                    GW.MoveHudScaleableFrame.scaleSlider:Hide()
+                    GW.MoveHudScaleableFrame.default:Hide()
+                    GW.MoveHudScaleableFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
+                    GW.MoveHudScaleableFrame.desc:Show()
+                    GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
+                else
+                    GW.MoveHudScaleableFrame.child = "nil"
+                    GW.MoveHudScaleableFrame.headerString:SetText(displayName)
+                    GW.MoveHudScaleableFrame.scaleSlider:Hide()
+                    GW.MoveHudScaleableFrame.default:Hide()
+                    GW.MoveHudScaleableFrame.desc:SetText(format(L["SMALL_SETTINGS_NO_SETTINGS_FOR"], displayName))
+                    GW.MoveHudScaleableFrame.desc:Show()
+                    if GW.MoveHudScaleableFrame.activeFlasher then
+                        GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
+                        UIFrameFadeOut(GW.MoveHudScaleableFrame.activeFlasher, 0.5, GW.MoveHudScaleableFrame.activeFlasher:GetAlpha(), 0.5)
+                    end
+                    GW.MoveHudScaleableFrame.activeFlasher = self
+                    GW.FrameFlash(self, 1.5, 0.5, 1, true)
+                end
             end
         end)
     end

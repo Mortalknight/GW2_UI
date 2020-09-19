@@ -34,7 +34,8 @@ local function fill_OnFinished(self, flag)
     local fm = f:GetParent():GetParent()
     fm:UnregisterEvent("SPELL_UPDATE_CHARGES")
     fm:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
-    FrameFlash(fm.arcfill.spark, 0.2, 0.2, false, 0, 0)
+    --FrameFlash(fm.arcfill.spark, 0.2, 0.2, false, 0, 0)
+    FrameFlash(fm.arcfill.spark, 0.2)
     f:SetRotation(FULL_IN_RAD)
 end
 GW.AddForProfiling("dodgebar", "fill_OnFinished", fill_OnFinished)
@@ -52,7 +53,8 @@ local function updateAnim(self, start, duration, charges, maxCharges)
 
     -- spark if charge count has changed
     if not self.gwNeedDrain and self.gwCharges ~= charges then
-        FrameFlash(self.arcfill.spark, 0.2, 0.2, false, 0, 0)
+        --FrameFlash(self.arcfill.spark, 0.2, 0.2, false, 0, 0)
+        FrameFlash(self.arcfill.spark, 0.2)
     end
     self.gwCharges = charges
 

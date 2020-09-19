@@ -535,37 +535,42 @@ end
 GW.vernotes = vernotes
 
 -- create custom UIFrameFlash animation
-local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInHoldTime, flashOutHoldTime)
-    local flasher
+local function SetUpFrameFlash(frame, loop)
+    frame.flasher = frame:CreateAnimationGroup("Flash")
+    frame.flasher.fadein = frame.flasher:CreateAnimation("ALPHA", "FadeIn")
+    frame.flasher.fadein:SetOrder(1)
 
-    if not frame.flasher then
-        flasher = frame:CreateAnimationGroup()
-    else
-        flasher = frame.flasher
-    end
+    frame.flasher.fadeout = frame.flasher:CreateAnimation("ALPHA", "FadeOut")
+    frame.flasher.fadeout:SetOrder(2)
 
-    local fade1 = flasher:CreateAnimation("Alpha")
-    local fade2 = flasher:CreateAnimation("Alpha")
-    fade1:SetDuration(fadeInTime)
-    fade1:SetToAlpha(1)
-    fade1:SetOrder(1)
-    fade1:SetEndDelay(flashInHoldTime)
-    
-    fade2:SetDuration(fadeOutTime)
-    fade2:SetToAlpha(0)
-    fade2:SetOrder(2)
-    fade2:SetEndDelay(flashOutHoldTime)
-
-    if showWhenDone then
-        flasher:SetScript("OnFinished", function(self)
-            frame:SetAlpha(1)
-            self:SetScript("OnFinished", nil)
+    if loop then
+        frame.flasher:SetScript("OnFinished", function(self)
+            self:Play()
         end)
     end
+end
 
-    frame.flasher = flasher
+local function StopFlash(frame)
+    if frame.flasher and frame.flasher:IsPlaying() then
+        frame.flasher:Stop()
+    end
+end
+GW.StopFlash = StopFlash
 
-    frame.flasher:Play()
+local function FrameFlash(frame, duration, fadeOutAlpha, fadeInAlpha, loop)
+	if not frame.flasher then
+		SetUpFrameFlash(frame,loop)
+	end
+
+	if not frame.flasher:IsPlaying() then
+        frame.flasher.fadein:SetDuration(duration)
+        frame.flasher.fadein:SetFromAlpha(fadeOutAlpha or 0)
+        frame.flasher.fadein:SetToAlpha(fadeInAlpha or 1)
+        frame.flasher.fadeout:SetDuration(duration)
+        frame.flasher.fadeout:SetFromAlpha(fadeInAlpha or 1)
+        frame.flasher.fadeout:SetToAlpha(fadeOutAlpha or 0)
+		frame.flasher:Play()
+	end
 end
 GW.FrameFlash = FrameFlash
 
