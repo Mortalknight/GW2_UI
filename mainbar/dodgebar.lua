@@ -174,7 +174,9 @@ local function dodge_OnEvent(self, event, ...)
             return
         end
         local start, duration, _ = GetSpellCooldown(self.spellId)
-        updateAnim(self, start, duration, 0, 1)
+        if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
+            updateAnim(self, start, duration, 0, 1)
+        end
 
     elseif event == "SPELL_UPDATE_CHARGES" then
         -- only registered when our dodge skill is actively on cooldown
@@ -182,7 +184,9 @@ local function dodge_OnEvent(self, event, ...)
             return
         end
         local charges, maxCharges, start, duration = GetSpellCharges(self.spellId)
-        updateAnim(self, start, duration, charges, maxCharges)
+        if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
+            updateAnim(self, start, duration, charges, maxCharges)
+        end
 
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
