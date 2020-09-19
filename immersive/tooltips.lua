@@ -157,15 +157,7 @@ end
 local function SkinQueueStatusFrame()
     local QueueStatusFrame = _G.QueueStatusFrame
 
-    QueueStatusFrame.BorderTopLeft:Hide()
-    QueueStatusFrame.BorderTopRight:Hide()
-    QueueStatusFrame.BorderBottomRight:Hide()
-    QueueStatusFrame.BorderBottomLeft:Hide()
-    QueueStatusFrame.BorderTop:Hide()
-    QueueStatusFrame.BorderRight:Hide()
-    QueueStatusFrame.BorderBottom:Hide()
-    QueueStatusFrame.BorderLeft:Hide()
-    QueueStatusFrame.Background:Hide()
+    QueueStatusFrame:StripTextures()
     QueueStatusFrame:CreateBackdrop(constBackdropArgs)
 end
 
