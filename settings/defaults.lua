@@ -300,7 +300,7 @@ GW_DEFAULT["TalkingHeadFrame_pos"]["point"] = "BOTTOM"
 GW_DEFAULT["TalkingHeadFrame_pos"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["TalkingHeadFrame_pos"]["xOfs"] = 0
 GW_DEFAULT["TalkingHeadFrame_pos"]["yOfs"] = 372
-GW_DEFAULT["TalkingHeadFrame_pos_scale"] = 1
+GW_DEFAULT["TalkingHeadFrame_pos_scale"] = 0.9
 
 GW_DEFAULT["TotemBar_pos"] = {}
 GW_DEFAULT["TotemBar_pos"]["point"] = "TOPRIGHT"
