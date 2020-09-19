@@ -287,7 +287,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe.gw_frame:SetScale(scale)
         moveframe:SetScale(scale)
         moveframe:SetScript("OnMouseDown", mover_scaleable)
-        moveframe:SetScale(frame:GetScale())
+        frame:SetScale(scale)
     else
         moveframe:SetScript("OnMouseDown", function(self, button)
             if button =="RightButton" then

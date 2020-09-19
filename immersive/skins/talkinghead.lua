@@ -27,6 +27,13 @@ local function InitTalkingHeadFrame()
     TalkingHeadFrame:ClearAllPoints()
     TalkingHeadFrame:SetPoint("TOPLEFT", TalkingHeadFrame.gwMover)
 
+    --Reset Model Camera
+    local model = TalkingHeadFrame.MainFrame.Model
+    if model.uiCameraID then
+        model:RefreshCamera()
+        _G.Model_ApplyUICamera(model, model.uiCameraID)
+    end
+
     -- Skin
     hooksecurefunc("TalkingHeadFrame_PlayCurrent", SkinTalkingHeadFrame_OnShow)
 end
