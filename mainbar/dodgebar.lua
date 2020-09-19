@@ -56,6 +56,7 @@ local function updateAnim(self, start, duration, charges, maxCharges)
     end
     self.gwCharges = charges
 
+    if maxCharges == nil or maxCharges == 0 then maxCharges = 1 end
     -- figure out the total time (and fraction of 1 time) remaining until the bar is full again
     local time_remain = (duration * (maxCharges - charges)) - (GetTime() - start)
     local time_remain_frac = (time_remain / (duration * maxCharges))
