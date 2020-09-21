@@ -426,6 +426,8 @@ local function loadBaseFrame()
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwCharacterWindow:GetPoint()
         SetSetting("HERO_POSITION", pos)
+        --Reset Model Camera
+        PaperDoll3dModel:RefreshCamera()
     end)
     
     -- set binding change handlers

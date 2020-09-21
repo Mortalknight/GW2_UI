@@ -137,6 +137,7 @@ objectives/bonusObjective.lua
 objectives/bossFrames.lua
 objectives/arenaFrames.lua
 objectives/achievement.lua
+objectives/vehicleButton.lua
 
 character/character.xml
 character/paperdoll.xml

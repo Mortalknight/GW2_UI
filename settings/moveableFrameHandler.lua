@@ -317,11 +317,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         end)
     end
 
-    if frame:GetScale() ~= (GetSetting("HUD_SCALE") * 1.0) then
-        frame.isMoved = true
-        frame:SetAttribute("isMoved", true)
-    end
-
     moveframe:SetScript("OnDragStart", mover_OnDragStart)
     moveframe:SetScript("OnDragStop", mover_OnDragStop)
 end

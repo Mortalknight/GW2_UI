@@ -483,6 +483,7 @@ local function loadAddon(self)
     
 
     GW.AddCoordsToWorldMap()
+    GW.LoadVehicleButton()
 
     --Create hud art
     GW.LoadHudArt()
