@@ -1275,7 +1275,6 @@ local function LoadOurAlertSubSystem()
 
     -- Add customs alert system
     if not GW2_UIAlertSystem.AlertSystem then
-        print(1)
         GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
     end
 end
