@@ -332,6 +332,7 @@ local function GWUseThisLocalization()
     L["INSTALL_FINISHED_HEADER"] = "Installation done"
     L["INSTALL_FINISHED_DESC"] = "You are now finished with the installation process."
     L["INSTALL_FINISHED_BTN"] = "Finished"
+    L["SIZER_HERO_PANEL"] = "Scale with Right Click"
 end
 
 if GetLocale() == "ruRU" then
