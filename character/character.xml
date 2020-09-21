@@ -96,6 +96,23 @@
                 </Anchors>
             </Frame>
 
+            <Frame parentKey="sizer" enableMouse="true">
+                <Size x="32" y="32"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/resize">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+
             <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate" text="" framelevel="10">
                 <Size x="20" y="20" />
                 <Anchors>
