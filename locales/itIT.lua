@@ -320,6 +320,19 @@ local function GWUseThisLocalization()
     L["SMALL_SETTINGS_NO_SETTINGS_FOR"] = "No extra frame settings for '%s'"
     L["SMALL_SETTINGS_HEADER"] = "Extra frame options"
     L["SMALL_SETTINGS_OPTION_SCALE"] = "Scale"
+    L["INSTALL_START_HEADER"] = "Installation process"
+    L["INSTALL_DESCRIPTION_HEADER"] = "GW2_UI installation process"
+    L["INSTALL_DESCRIPTION_DSC"] = "This short installation process, will help you to set up all neccessary settings which are used from GW2_UI"
+    L["INSTALL_START_BTN"] = "Start installation process"
+    L["INSTALL_CHAT_DESC"] = "This part sets up your chat windows names, positions and colors."
+    L["INSTALL_CHAT_BTN"] = "Setup Chat"
+    L["INSTALL_CVARS_DESC"] = "This part sets up your World of Warcraft default options."
+    L["INSTALL_CVARS_BTN"] = "Setup CVars"
+    L["INSTALL_UISCALE_DESC"] = "Adjust the UI Scale to fit your screen, press the autoscale button to set the UI Scale automatically."
+    L["INSTALL_UISCALE_BTN"] = "Auto Scale"
+    L["INSTALL_FINISHED_HEADER"] = "Installation done"
+    L["INSTALL_FINISHED_DESC"] = "You are now finished with the installation process."
+    L["INSTALL_FINISHED_BTN"] = "Finished"
 end
 
 if GetLocale() == "itIT" then

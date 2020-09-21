@@ -29,7 +29,6 @@ local function LoadVehicleButton()
         hooksecurefunc("VehicleSeatIndicator_SetUpVehicle", VehicleSetUp)
         GW.RegisterMovableFrame(_G.VehicleSeatIndicator, BINDING_HEADER_VEHICLE, "VEHICLE_SEAT_POS", "VerticalActionBarDummy", nil, nil, nil, true)
         _G.VehicleSeatIndicator.PositionVehicleFrameHooked = true
-        print(1)
 	end
 
     if _G.VehicleSeatIndicator.currSkin then

@@ -320,6 +320,19 @@ local function GWUseThisLocalization()
     L["SMALL_SETTINGS_NO_SETTINGS_FOR"] = "Keine Extraoptionen für das Fenster '%s' verfügbar"
     L["SMALL_SETTINGS_HEADER"] = "Extra Festeroptionen "
     L["SMALL_SETTINGS_OPTION_SCALE"] = "Skalierung"
+    L["INSTALL_START_HEADER"] = "Installationsprozess"
+    L["INSTALL_DESCRIPTION_HEADER"] = "GW2_UI Installationsprozess"
+    L["INSTALL_DESCRIPTION_DSC"] = "Dieser kurze Installationsprozess wird dir helfen, alle wichtigen Einstellung, welche GW2_UI benötigt, einzustellen."
+    L["INSTALL_START_BTN"] = "Starte Installationsprozess"
+    L["INSTALL_CHAT_DESC"] = "Dieser Abschnitt der Installation richtet die Chat Fenster Namen, Positionen und Farben ein."
+    L["INSTALL_CHAT_BTN"] = "Chateinstellungen"
+    L["INSTALL_CVARS_DESC"] = "Dieser Abschnitt der Installation richtet alle wichtigen CVar's deines World of Warcrafts ein."
+    L["INSTALL_CVARS_BTN"] = "Installiere CVars"
+    L["INSTALL_UISCALE_DESC"] = "Passt die UI-Skallierung für deine Auflösung an, drücke den Auto-Skallierung Knopf um die UI-Skallierung automatisch anzupassen."
+    L["INSTALL_UISCALE_BTN"] = "Auto-Skallierung"
+    L["INSTALL_FINISHED_HEADER"] = "Installation abgeschlossen"
+    L["INSTALL_FINISHED_DESC"] = "Du hast den Installationsprozess abgeschlossen."
+    L["INSTALL_FINISHED_BTN"] = "Abgeschlossen"
 end
 
 if GetLocale() == "deDE" then
