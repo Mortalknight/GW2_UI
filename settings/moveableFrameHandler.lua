@@ -352,6 +352,7 @@ local function LoadMovers()
     moverSettingsFrame.scaleSlider.slider:SetValue(1)
     moverSettingsFrame.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
     moverSettingsFrame.scaleSlider.input:SetNumber(1)
+    moverSettingsFrame.scaleSlider.input:SetFont(UNIT_NAME_FONT, 8)
     moverSettingsFrame.scaleSlider.input:SetScript("OnEnterPressed", sliderEditBoxValueChanged)
 
     moverSettingsFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
