@@ -333,6 +333,7 @@ local function GWUseThisLocalization()
     L["INSTALL_FINISHED_HEADER"] = "Installation abgeschlossen"
     L["INSTALL_FINISHED_DESC"] = "Du hast den Installationsprozess abgeschlossen."
     L["INSTALL_FINISHED_BTN"] = "Abgeschlossen"
+    L["SIZER_HERO_PANEL"] = "Skalieren mit Rechtsklick"
 end
 
 if GetLocale() == "deDE" then

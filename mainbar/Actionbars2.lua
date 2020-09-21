@@ -639,6 +639,13 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:ClearAllPoints()
     fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
 
+    -- position mover
+    if (barName == "MultiBarBottomLeft" or barNem == "MultiBarBottomRight") and not GetSetting("XPBAR_ENABLED") then
+        local framePoint = GetSetting(barName)
+        fmMultibar.gwMover:ClearAllPoints()
+        fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+    end
+
     -- set fader logic
     createFaderAnim(fmMultibar, state)
 
