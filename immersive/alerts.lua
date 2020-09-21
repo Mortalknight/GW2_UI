@@ -1174,14 +1174,9 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     end
 end
 
-local function loadAlterSystemFrameSkins()
+local function LoadAlertSystemFrameSkins()
     if not AchievementFrame then
         AchievementFrame_LoadUI()
-    end
-
-    -- Add customs alert system
-    if not GW2_UIAlertSystem.AlertSystem then
-        GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
     end
     
     -- Achievements
@@ -1271,4 +1266,17 @@ local function loadAlterSystemFrameSkins()
         end
     end)
 end
-GW.loadAlterSystemFrameSkins = loadAlterSystemFrameSkins
+GW.LoadAlertSystemFrameSkins = LoadAlertSystemFrameSkins
+
+local function LoadOurAlertSubSystem()
+    if not AchievementFrame then
+        AchievementFrame_LoadUI()
+    end
+
+    -- Add customs alert system
+    if not GW2_UIAlertSystem.AlertSystem then
+        print(1)
+        GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
+    end
+end
+GW.LoadOurAlertSubSystem = LoadOurAlertSubSystem

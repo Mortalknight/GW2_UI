@@ -6,6 +6,7 @@ local AddForProfiling = GW.AddForProfiling
 
 local wpanel
 local step = 0
+local alertSystemActive
 
 local function settings_OnClick(self, button)
     local t = self.target
@@ -121,13 +122,15 @@ local function button1_OnClick()
             ChatFrame_AddChannel(_G.ChatFrame3, TRADE)
 
             -- set the chat groups names in class color to enabled for all chat groups which players names appear
-            chatGroup = { "SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "COMMUNITIES_CHANNEL" }
+            chatGroup = {"SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "COMMUNITIES_CHANNEL"}
             for i = 1, _G.MAX_WOW_CHAT_CHANNELS do
                 tinsert(chatGroup, "CHANNEL" .. i)
             end
             for _, v in ipairs(chatGroup) do
                 ToggleChatColorNamesByClassGroup(true, v)
             end
+
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CHAT_BTN"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
 
             step = 2
             button1_OnClick()
@@ -161,6 +164,8 @@ local function button1_OnClick()
             SetCVar("cameraDistanceMaxZoomFactor", 2.6)
             SetCVar("showQuestTrackingTooltips", 1)
             SetCVar("fstack_preferParentKeys", 0)
+
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CVARS_BTN"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
 
             step = 3
             button1_OnClick()
@@ -200,6 +205,8 @@ local function button1_OnClick()
             GW.PixelPerfection()
             wpanel.welcome.scaleSlider.slider:SetValue(GW.scale)
             wpanel.welcome.scaleSlider.title:SetText(GW.scale)
+
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_UISCALE_BTN"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
 
             step = 4
             button1_OnClick()
@@ -302,6 +309,8 @@ local function ShowWelcomePanel()
     wpanel.changelog:Hide()
     wpanel.welcome:Show()
     wpanel:Show()
+
+    alertSystemActive = GetSetting("ALERTFRAME_ENABLED")
 end
 GW.ShowWelcomePanel = ShowWelcomePanel
 

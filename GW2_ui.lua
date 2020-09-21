@@ -366,11 +366,10 @@ local function loadAddon(self)
     end
 
     if GetSetting("ALERTFRAME_ENABLED") then
-        GW.loadAlterSystemFrameSkins()
+        GW.LoadAlertSystemFrameSkins()
         GW.SetupAlertFramePosition()
     end
-
-
+    GW.LoadOurAlertSubSystem()
 
     -- disable Move Anything bag handling
     disableMABags()
