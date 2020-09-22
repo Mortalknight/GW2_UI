@@ -788,44 +788,69 @@ GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
 local action_hud_auras = {}
 
-local function registerActionHudAura(aura, left, right)
-    action_hud_auras[aura] = {}
-    action_hud_auras[aura]["aura"] = aura
-    action_hud_auras[aura]["left"] = left
-    action_hud_auras[aura]["right"] = right
+local function registerActionHudAura(auraID, left, right, unit)
+    action_hud_auras[auraID] = {}
+    action_hud_auras[auraID].auraID = auraID
+    action_hud_auras[auraID].left = left
+    action_hud_auras[auraID].right = right
+    action_hud_auras[auraID].unit = unit
 end
-local currentTexture = nil
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
+
+local currentTexture = nil
 
 local function selectBg()
     if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
         return
     end
-    local right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow"
-    local left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadow"
+    local right = "Interface/AddOns/GW2_UI/textures/rightshadow"
+    local left = "Interface/AddOns/GW2_UI/textures/leftshadow"
 
     if UnitIsDeadOrGhost("player") then
-        right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_dead"
-        left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_dead"
+        right = "Interface/AddOns/GW2_UI/textures/rightshadow_dead"
+        left = "Interface/AddOns/GW2_UI/textures/leftshadow_dead"
+    end
+
+    if GW.myClassID == 11 then --Druid
+        local ShapeshiftFormID = GetShapeshiftFormID()
+        if ShapeshiftFormID == BEAR_FORM then
+            right = "Interface/AddOns/GW2_UI/textures/rightshadow_bear"
+            left = "Interface/AddOns/GW2_UI/textures/leftshadow_bear"
+        elseif ShapeshiftFormID == CAT_FORM then
+            right = "Interface/AddOns/GW2_UI/textures/rightshadow_cat"
+            left = "Interface/AddOns/GW2_UI/textures/leftshadow_cat"
+        end
     end
 
     if UnitAffectingCombat("player") then
-        right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat"
-        left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat"
+        right = "Interface/AddOns/GW2_UI/textures/rightshadowcombat"
+        left = "Interface/AddOns/GW2_UI/textures/leftshadowcombat"
 
+        local bolFound = false
         for i = 1, 40 do
             local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i)
-            if spellID ~= nil and action_hud_auras[spellID] ~= nil then
-                left = action_hud_auras[spellID]["left"]
-                right = action_hud_auras[spellID]["right"]
+            if spellID ~= nil and action_hud_auras[spellID] ~= nil and action_hud_auras[spellID].unit == "player" then
+                right = action_hud_auras[spellID].right
+                left = action_hud_auras[spellID].left
+                break
+            end
+        end
+        if not bolFound then
+            for i = 1, 40 do
+                local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("pet", i)
+                if spellID ~= nil and action_hud_auras[spellID] ~= nil and action_hud_auras[spellID].unit == "pet" then
+                    right = action_hud_auras[spellID].right
+                    left = action_hud_auras[spellID].left
+                    break
+                end
             end
         end
     end
 
     if currentTexture ~= left then
         currentTexture = left
-        GwActionBarHud.Left:SetTexture(left)
         GwActionBarHud.Right:SetTexture(right)
+        GwActionBarHud.Left:SetTexture(left)
     end
 end
 GW.AddForProfiling("hud", "selectBg", selectBg)
@@ -863,53 +888,57 @@ GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 
 registerActionHudAura(
     31842,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_holy",
+    "player"
 )
 registerActionHudAura(
     31884,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy"
-)
-registerActionHudAura(
-    5487,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear"
-)
-registerActionHudAura(
-    768,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_holy",
+    "player"
 )
 registerActionHudAura(
     51271,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_frost",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_frost",
+    "player"
 )
 registerActionHudAura(
     162264,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_metamorph",
+    "player"
 )
 registerActionHudAura(
     187827,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_metamorph",
+    "player"
 )
 registerActionHudAura(
     215785,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_shaman_fire",
+    "player"
 )
 registerActionHudAura(
     77762,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_shaman_fire",
+    "player"
 )
 registerActionHudAura(
     201846,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_storm",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_storm"
+    "Interface/AddOns/GW2_UI/textures/leftshadow_shaman_storm",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_shaman_storm",
+    "player"
+)
+registerActionHudAura(
+    63560,
+    "Interface/AddOns/GW2_UI/textures/leftshadow_unholy",
+    "Interface/AddOns/GW2_UI/textures/rightshadow_unholy",
+    "pet"
 )
 
 local function LoadBreathMeter()
