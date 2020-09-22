@@ -70,45 +70,6 @@
                             <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeKey="$parent.button1" x="0" y="-80"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="scaleSlider" hidden="true">
-                        <Size x="450" y="40"></Size>
-                       <Anchors>
-                            <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.subHeader" x="0" y="-10"/>
-                        </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY" textureSubLevel="2">
-                                <FontString parentKey="title" text="Skalierung" justifyH="CENTER">
-                                    <Size x="450" y="16"/>
-                                    <Color r="1" b="1" g="1"/>
-                                    <Anchors>
-                                        <Anchor point="CENTER" x="0" y="5"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                        <Frames>
-                            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
-                                <Size x="450" y="16"/>
-                                <Anchors>
-                                    <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
-                                </Anchors>
-                                <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/sliderhandle">
-                                    <Size x="12" y="12"/>
-                                </ThumbTexture>
-                                <Layers>
-                                    <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/sliderbg">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
-                                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
-                                            </Anchors>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
-                            </Slider>
-                        </Frames>
-                    </Button>
                 </Frames>
             </Frame>
             <Frame parentKey="changelog" hidden="false">
