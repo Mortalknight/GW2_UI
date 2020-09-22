@@ -111,6 +111,14 @@ local function powerMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
         UpdatePowerData(self.exbar, 0, "MANA", "GwExtraPowerBar")
+
+        C_Timer.After(0.12, function()
+            if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
+                self.exbar:Hide()
+            else
+                self.exbar:Show()
+            end
+        end)
     end
 end
 GW.AddForProfiling("classpowers", "powerMana", powerMana)
