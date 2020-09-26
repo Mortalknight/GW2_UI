@@ -91,7 +91,8 @@ local function LoadHudPanel(sWindow)
         L["MINIMAP_SCALE_DESC"],
         "MINIMAP_SCALE",
         function()
-            Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
+            local size = GetSetting("MINIMAP_SCALE")
+            Minimap:SetSize(size, size)
         end,
         {250, 200, 170},
         {
