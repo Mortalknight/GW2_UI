@@ -364,6 +364,7 @@ local function loadAddon(self)
         GW.scale = UIParent:GetScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
+    GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
 
     if GetSetting("ALERTFRAME_ENABLED") then
         GW.LoadAlertSystemFrameSkins()
