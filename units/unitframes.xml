@@ -213,6 +213,12 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
+                <Size x="10" y="10"/>
+                <Anchors>
+                    <Anchor point="TOP" x="10" y="-60"/>
+                </Anchors>
+            </Frame>
             <Frame parentKey="auras">
                 <Size x="215" y="100"/>
                 <Anchors>

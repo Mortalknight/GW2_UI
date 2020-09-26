@@ -499,6 +499,7 @@ local function loadAuras(lm, secure)
     local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
     local hd = newHeader("HARMFUL", secure, "PlayerDebuffFrame")
     local anchor_hd
+    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, true)
     hd:Show()
     if hd.inner then
         hd.inner:Show()
@@ -525,7 +526,6 @@ local function loadAuras(lm, secure)
         anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
         hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
     end
-    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, true)
     lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function (frame)
         local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
