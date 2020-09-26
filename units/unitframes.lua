@@ -949,7 +949,7 @@ local function LoadTargetOfUnit(unit)
 
     f.unit = unitID
 
-    RegisterMovableFrame(f, SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameTemplateDummy", nil, nil, nil, true)
+    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy", nil, nil, nil, true)
 
     f:ClearAllPoints()
     f:SetPoint("TOPLEFT", f.gwMover)

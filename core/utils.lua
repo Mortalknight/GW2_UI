@@ -617,8 +617,3 @@ local function IsDispellableByMe(debuffType)
     return dispel and dispel[debuffType]
 end
 GW.IsDispellableByMe = IsDispellableByMe
-
-local function Scale(x)
-    return GW.mult * floor(x / GW.mult + 0.5)
-end
-GW.Scale = Scale
