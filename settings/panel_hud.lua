@@ -107,7 +107,7 @@ local function LoadHudPanel(sWindow)
         L["AUTO_REPAIR"],
         L["AUTO_REPAIR_DESC"],
         "AUTO_REPAIR",
-        GW.SetMinimapHover,
+        nil,
         {"NONE", "PLAYER", "GUILD"},
         {
             NONE_KEY,
