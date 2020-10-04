@@ -156,7 +156,7 @@ local function setupMicroButtons(mbf)
     -- or if we need to create our own char button for the custom hero panel
     local cref
     if GetSetting("USE_CHARACTER_WINDOW") then
-        cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
@@ -170,12 +170,13 @@ local function setupMicroButtons(mbf)
             f:SetAttribute("windowpanelopen", "paperdoll")
             ]=]
         )
-
         disableMicroButton(CharacterMicroButton, true)
         CharacterMicroButton.GwSetAnchorPoint = function(self)
             self:ClearAllPoints()
             self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
         end
+        cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        cref:SetScript("OnHide", GameTooltip_Hide)
     else
         cref = CharacterMicroButton
         MicroButtonPortrait:Hide()
@@ -203,7 +204,7 @@ local function setupMicroButtons(mbf)
     -- or if we need our custom talent button for the hero panel
     local tref
     if GetSetting("USE_TALENT_WINDOW") then
-        tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         tref.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
         tref.newbieText = NEWBIE_TOOLTIP_TALENTS
         reskinMicroButton(tref, "TalentMicroButton", mbf)
@@ -219,6 +220,8 @@ local function setupMicroButtons(mbf)
             f:SetAttribute("windowpanelopen", "talents")
             ]=]
         )
+        tref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        tref:SetScript("OnHide", GameTooltip_Hide)
 
         disableMicroButton(SpellbookMicroButton)
         disableMicroButton(TalentMicroButton, true)
