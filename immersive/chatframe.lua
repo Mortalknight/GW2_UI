@@ -707,6 +707,7 @@ local function LoadChat()
     for i = 1, #ChatMenus do
         _G[ChatMenus[i]]:HookScript("OnShow", 
             function(self)
+                self:StripTextures()
                 self:CreateBackdrop(GW.skins.constBackdropFrame)
             end)
     end
