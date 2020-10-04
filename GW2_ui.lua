@@ -382,7 +382,7 @@ local function loadAddon(self)
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #" .. dev_dbg_tab)
         GW.dbgTab = dev_dbg_tab
         GW.AlertTestsSetup()
-        SetCVar('fstack_preferParentKeys', 0) --Add back the frame names via fstack!
+        SetCVar("fstack_preferParentKeys", 0) --Add back the frame names via fstack!
         GW.inDebug = true
     else
         GW.inDebug = false

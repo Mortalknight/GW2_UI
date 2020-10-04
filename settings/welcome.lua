@@ -6,7 +6,6 @@ local AddForProfiling = GW.AddForProfiling
 
 local wpanel
 local step = 0
-local alertSystemActive
 
 local function settings_OnClick(self, button)
     local t = self.target
@@ -35,7 +34,7 @@ local function movehud_OnClick(self, button)
         return
     end
     self:GetParent():Hide()
-    GW.moveHudObjects()
+    GW.moveHudObjects(GwSettingsWindowMoveHud)
 end
 AddForProfiling("welcome", "movehud_OnClick", movehud_OnClick)
 
@@ -75,7 +74,7 @@ local function button1_OnClick()
 
         wpanel.welcome.button1:SetScript("OnClick", function(self)
             FCF_ResetChatWindows()
-            FCF_OpenNewWindow(LOOT)
+            FCF_OpenNewWindow(LOOT .. " / " .. TRADE)
 
             for _, name in ipairs(_G.CHAT_FRAMES) do
                 local frame = _G[name]
@@ -90,25 +89,16 @@ local function button1_OnClick()
                 FCF_SavePositionAndDimensions(frame)
                 FCF_StopDragging(frame)
                 FCF_SetChatWindowFontSize(nil, frame, 12)
-        
-                -- rename windows general because moved to chat #3
-                if id == 1 then
-                    FCF_SetWindowName(frame, GENERAL)
-                elseif id == 2 then
-                    FCF_SetWindowName(frame, GUILD_EVENT_LOG)
-                elseif id == 3 then
-                    FCF_SetWindowName(frame, LOOT .. " / " .. TRADE)
-                end
             end
 
-            -- keys taken from `ChatTypeGroup` but doesnt add: "OPENING", "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO", "COMMUNITIES_CHANNEL", "PET_BATTLE_COMBAT_LOG", "PET_BATTLE_INFO", "TARGETICONS"
+            -- keys taken from "ChatTypeGroup" but doesnt add: "OPENING", "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO", "COMMUNITIES_CHANNEL", "PET_BATTLE_COMBAT_LOG", "PET_BATTLE_INFO", "TARGETICONS"
             local chatGroup = {"SYSTEM", "CHANNEL", "SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "MONSTER_SAY", "MONSTER_YELL", "MONSTER_EMOTE", "MONSTER_WHISPER", "MONSTER_BOSS_EMOTE", "MONSTER_BOSS_WHISPER", "ERRORS", "AFK", "DND", "IGNORED", "BG_HORDE", "BG_ALLIANCE", "BG_NEUTRAL", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "BN_WHISPER", "BN_INLINE_TOAST_ALERT"}
             ChatFrame_RemoveAllMessageGroups(_G.ChatFrame1)
             for _, v in ipairs(chatGroup) do
                 ChatFrame_AddMessageGroup(_G.ChatFrame1, v)
             end
 
-            -- keys taken from `ChatTypeGroup` which weren"t added above to ChatFrame1
+            -- keys taken from "ChatTypeGroup" which weren't added above to ChatFrame1
             chatGroup = {"COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "CURRENCY", "MONEY"}
             ChatFrame_RemoveAllMessageGroups(_G.ChatFrame3)
             for _, v in ipairs(chatGroup) do
@@ -126,6 +116,18 @@ local function button1_OnClick()
             end
             for _, v in ipairs(chatGroup) do
                 ToggleChatColorNamesByClassGroup(true, v)
+            end
+
+            -- if we are in debug mode add a "Debug"-Tab
+            if GW.VERSION_STRING == "GW2_UI @project-version@" then
+                FCF_OpenNewWindow(BINDING_HEADER_DEBUG, true)
+                SetSetting("DEV_DBG_CHAT_TAB", 4)
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #4")
+                GW.AlertTestsSetup()
+                SetCVar("fstack_preferParentKeys", 0) --Add back the frame names via fstack!
+                GW.inDebug = true
+            else
+                GW.inDebug = false
             end
 
             GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CHAT_BTN"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
@@ -208,25 +210,25 @@ local function button1_OnClick()
 end
 AddForProfiling("welcome", "pixel_OnClick", pixel_OnClick)
 
-local function setDefaultOpenLayout(self)
-    self.welcome.header:SetFont(DAMAGE_TEXT_FONT,14)
-    self.welcome.header:SetTextColor(0.9,0.85,0.7,1)
+local function setDefaultOpenLayout()
+    wpanel.welcome.header:SetFont(DAMAGE_TEXT_FONT,14)
+    wpanel.welcome.header:SetTextColor(0.9,0.85,0.7,1)
 
-    self.welcome.subHeader:SetFont(DAMAGE_TEXT_FONT,22,"OUTLINE")
-    self.welcome.subHeader:SetTextColor(0.8,0.75,0.6,1)
+    wpanel.welcome.subHeader:SetFont(DAMAGE_TEXT_FONT,22,"OUTLINE")
+    wpanel.welcome.subHeader:SetTextColor(0.8,0.75,0.6,1)
 
-    self.header:SetText(L["WELCOME_SPLASH_HEADER"])
-    self.welcome.header:SetText(L["WELCOME_SPLASH_WELCOME_TEXT"] .. "\n\n\n\n\n\n\n\n")
-    self.welcome.subHeader:SetText("\n\n\n\n" .. L["INSTALL_DESCRIPTION_HEADER"])
+    wpanel.header:SetText(L["WELCOME_SPLASH_HEADER"])
+    wpanel.welcome.header:SetText(L["WELCOME_SPLASH_WELCOME_TEXT"] .. "\n\n\n\n\n\n\n\n")
+    wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["INSTALL_DESCRIPTION_HEADER"])
 
-    self.close:SetText(CLOSE)
-    self.settings:SetText(CHAT_CONFIGURATION)
-    self.welcome.button0:SetText(L["INSTALL_START_BTN"])
-    self.welcome.button0:Show()
-    self.welcome.button1:Hide()
-    self.welcome.button2:Hide()
-    self.settings:Show()
-    self.changelogORwelcome:Show()
+    wpanel.close:SetText(CLOSE)
+    wpanel.settings:SetText(CHAT_CONFIGURATION)
+    wpanel.welcome.button0:SetText(L["INSTALL_START_BTN"])
+    wpanel.welcome.button0:Show()
+    wpanel.welcome.button1:Hide()
+    wpanel.welcome.button2:Hide()
+    wpanel.settings:Show()
+    wpanel.changelogORwelcome:Show()
 end
 
 local function createPanel()
@@ -246,8 +248,6 @@ local function createPanel()
 
     wpanel.changelog.scroll.scrollchild.text:SetFont(DAMAGE_TEXT_FONT,14)
     wpanel.changelog.scroll.scrollchild.text:SetTextColor(0.8,0.75,0.6,1)
-
-    setDefaultOpenLayout(wpanel)
 
     wpanel.changelog.header:SetText(L["CHANGELOG"])
 
@@ -278,13 +278,11 @@ local function ShowWelcomePanel()
         createPanel()
     end
     step = 0
-    setDefaultOpenLayout(wpanel)
+    setDefaultOpenLayout()
     wpanel.changelogORwelcome:SetText(L["CHANGELOG"])
     wpanel.changelog:Hide()
     wpanel.welcome:Show()
     wpanel:Show()
-
-    alertSystemActive = GetSetting("ALERTFRAME_ENABLED")
 end
 GW.ShowWelcomePanel = ShowWelcomePanel
 
