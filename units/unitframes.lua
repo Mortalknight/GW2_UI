@@ -782,22 +782,19 @@ local function LoadTarget()
         NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.nameString, "TOPLEFT", 2, 17)
     end
 
-    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy", nil, nil, nil, true)
 
     NewUnitFrame:ClearAllPoints()
-    NewUnitFrame:SetPoint(
-        GetSetting("target_pos")["point"],
-        UIParent,
-        GetSetting("target_pos")["relativePoint"],
-        GetSetting("target_pos")["xOfs"],
-        GetSetting("target_pos")["yOfs"]
-    )
+    NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
 
-    NewUnitFrame:SetAttribute("unit", "target")
+    local dropdown = _G["GwTargetUnitFrameDropDown"]
+    UIDropDownMenu_SetInitializeFunction(dropdown, TargetFrameDropDown_Initialize)
+    UIDropDownMenu_SetDisplayMode(dropdown, "MENU")
 
-    NewUnitFrame:SetAttribute("*type1", "target")
-    NewUnitFrame:SetAttribute("*type2", "togglemenu")
-    NewUnitFrame:SetAttribute("unit", "target")
+    local showmenu = function()
+        ToggleDropDownMenu(1, nil, dropdown, "GwTargetUnitFrame", 120, 10)
+    end
+    SecureUnitButton_OnLoad(NewUnitFrame, NewUnitFrame.unit, showmenu)
     RegisterUnitWatch(NewUnitFrame)
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
@@ -853,8 +850,29 @@ local function LoadTarget()
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
-    TargetFrame:SetScript("OnEvent", nil)
-    TargetFrame:Hide()
+    -- create floating combat text
+    if GetSetting("target_FLOATING_COMBAT_TEXT") then
+        local fctf = CreateFrame("Frame", nil, NewUnitFrame)
+        fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
+        fctf:RegisterEvent("UNIT_COMBAT")
+        fctf:SetScript("OnEvent", function(self, event, unit, ...)
+            if self.unit == unit then
+                CombatFeedback_OnCombatEvent(self, ...)
+            end
+        end)
+        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+        fctf.unit = NewUnitFrame.unit
+
+        local font = fctf:CreateFontString(nil, "OVERLAY")
+        font:SetFont(DAMAGE_TEXT_FONT, 30)
+        fctf.fontString = font
+        font:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER")
+        font:Hide()
+
+        CombatFeedback_Initialize(fctf, font, 30)
+    end
+
+    TargetFrame:Kill()
 end
 GW.LoadTarget = LoadTarget
 
@@ -862,16 +880,10 @@ local function LoadFocus()
     local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame")
     NewUnitFrame.unit = "focus"
 
-    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy", nil, nil, nil, true)
 
     NewUnitFrame:ClearAllPoints()
-    NewUnitFrame:SetPoint(
-        GetSetting("focus_pos")["point"],
-        UIParent,
-        GetSetting("focus_pos")["relativePoint"],
-        GetSetting("focus_pos")["xOfs"],
-        GetSetting("focus_pos")["yOfs"]
-    )
+    NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
 
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
@@ -926,6 +938,8 @@ local function LoadFocus()
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
+
+
     FocusFrame:SetScript("OnEvent", nil)
     FocusFrame:Hide()
 end
@@ -937,16 +951,10 @@ local function LoadTargetOfUnit(unit)
 
     f.unit = unitID
 
-    RegisterMovableFrame(f, SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameTemplateDummy")
+    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy", nil, nil, nil, true)
 
     f:ClearAllPoints()
-    f:SetPoint(
-        GetSetting(unitID .. "_pos")["point"],
-        UIParent,
-        GetSetting(unitID .. "_pos")["relativePoint"],
-        GetSetting(unitID .. "_pos")["xOfs"],
-        GetSetting(unitID .. "_pos")["yOfs"]
-    )
+    f:SetPoint("TOPLEFT", f.gwMover)
 
     f:SetAttribute("*type1", "target")
     f:SetAttribute("*type2", "togglemenu")
