@@ -4,9 +4,9 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local GetSetting = GW.GetSetting
 --local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 local AddToAnimation = GW.AddToAnimation
+local locationData = GW.locationData
 
 local currentNotificationKey = ""
-local currentMapID = ""
 local notifications = {}
 
 local icons = {}
@@ -71,12 +71,12 @@ local questCompass = {
     ["COLOR"] = TRACKER_TYPE_COLOR["QUEST"],
     ["COMPASS"] = true
 }
-local function getNearestQuestPOI(currentMapID)
-    if not currentMapID then
+local function getNearestQuestPOI()
+    if not locationData.mapID then
         return nil
     end
 
-	local posX, posY = GW.GetPlayerMapPos(currentMapID)
+	local posX, posY = GW.GetPlayerMapPos()
     
     local numQuests, _ = GetNumQuestLogEntries()
     if posX == nil or posY == nil or numQuests == nil then
@@ -120,16 +120,16 @@ local bodyCompass = {
     ["COMPASS"] = true
 }
 local function getBodyPOI()
-    if not currentMapID then
+    if not locationData.mapID then
         return nil
     end
 
-    local posX, posY = GW.GetPlayerMapPos(currentMapID)
+    local posX, posY = GW.GetPlayerMapPos()
     if posX == nil or posY == nil then
         return nil
     end
 
-    local corpTable = C_DeathInfo.GetCorpseMapPosition(currentMapID)
+    local corpTable = C_DeathInfo.GetCorpseMapPosition(locationData.mapID)
     if corpTable == nil then
         return nil
     end
@@ -217,7 +217,7 @@ GW.NotificationStateChanged = NotificationStateChanged
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self, elapsed)
-    if not currentMapID then
+    if not locationData.mapID then
         return
     end
     self.TotalElapsed = self.TotalElapsed + elapsed
@@ -226,7 +226,7 @@ local function updateRadar(self, elapsed)
     end
     self.TotalElapsed = 0
 
-	local posX, posY = GW.GetPlayerMapPos(currentMapID)
+	local posX, posY = GW.GetPlayerMapPos()
 
     if posX == nil or posY == nil or self.data["X"] == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
@@ -245,8 +245,7 @@ local function updateRadar(self, elapsed)
 end
 GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
-local function SetObjectiveNotification(mapID)
-    currentMapID = mapID
+local function SetObjectiveNotification()
     local data
     for k, v in pairs(notifications) do
         if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
@@ -265,7 +264,7 @@ local function SetObjectiveNotification(mapID)
             data = getBodyPOI()
         end
         if data == nil then
-            data = getNearestQuestPOI(currentMapID)
+            data = getNearestQuestPOI()
         end
     end
 

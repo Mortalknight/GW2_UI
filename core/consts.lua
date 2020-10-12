@@ -217,6 +217,7 @@ GW.INDICATORS = INDICATORS
 local AURAS_INDICATORS = {
     PRIEST = {
         [194384] =  {1, 1, 0.66},       -- Atonement
+        [214206] =  {1, 1, 0.66},       -- Atonement (PvP)
         [41635] =   {1, 1, 0.66},       -- Prayer of Mending
         [193065] =  {0.54, 0.21, 0.78}, -- Masochism
         [139] =     {0.4, 0.7, 0.2},    -- Renew
@@ -229,6 +230,7 @@ local AURAS_INDICATORS = {
         [155777] =  {0.8, 0.4, 0.8},    -- Germination
         [8936] =    {0.2, 0.8, 0.2},    -- Regrowth
         [33763] =   {0.4, 0.8, 0.2},    -- Lifebloom
+        [188550] =   {0.4, 0.8, 0.2},    -- Lifebloom Legendary version
         [48438] =   {0.8, 0.4, 0},      -- Wild Growth
         [207386] =  {0.4, 0.2, 0.8},    -- Spring Blossoms
         [102351] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (Initial Buff)
@@ -293,7 +295,7 @@ local AURAS_MISSING = {
 GW.AURAS_MISSING = AURAS_MISSING
 
 local ImportendRaidDebuff = {
-    -- Mythic+ Dungeons
+-- Mythic+ Dungeons
     [209858] = true, -- Necrotic
     [226512] = true, -- Sanguine
     [240559] = true, -- Grievous
@@ -309,6 +311,69 @@ local ImportendRaidDebuff = {
     [314411] = true, -- Lingering Doubt
     [314565] = true, -- Defiled Ground
     [314392] = true, -- Vile Corruption
+    -- Shadowlands
+    [342494] = true, -- Belligerent Boast (Prideful)
+    
+-- Shadowlands Dungeons
+    -- Halls of Atonement
+    [335338] = true,  -- Ritual of Woe
+    [326891] = true,  -- Anguish
+    [329321] = true,  -- Jagged Swipe
+    [319603] = true,  -- Curse of Stone
+    [319611] = true,  -- Turned to Stone
+    [325876] = true,  -- Curse of Obliteration
+    [326632] = true,  -- Stony Veins
+    [323650] = true,  -- Haunting Fixation
+    [326874] = true,  -- Ankle Bites
+    -- Mists of Tirna Scithe
+    [325027] = true,  -- Bramble Burst
+    [323043] = true,  -- Bloodletting
+    [322557] = true,  -- Soul Split
+    [331172] = true,  -- Mind Link
+    [322563] = true,  -- Marked Prey
+    -- Plaguefall
+    [336258] = true,  -- Solitary Prey
+    [331818] = true,  -- Shadow Ambush
+    [329110] = true,  -- Slime Injection
+    [325552] = true,  -- Cytotoxic Slash
+    [336301] = true,  -- Web Wrap
+    -- The Necrotic Wake
+    [321821] = true,  -- Disgusting Guts
+    [323365] = true,  -- Clinging Darkness
+    [338353] = true,  -- Goresplatter
+    [333485] = true,  -- Disease Cloud
+    [338357] = true,  -- Tenderize
+    [328181] = true,  -- Frigid Cold
+    [320170] = true,  -- Necrotic Bolt
+    [323464] = true,  -- Dark Ichor
+    [323198] = true,  -- Dark Exile
+    -- Theater of Pain
+    [333299] = true,  -- Curse of Desolation
+    [319539] = true,  -- Soulless
+    [326892] = true,  -- Fixate
+    [321768] = true,  -- On the Hook
+    [323825] = true,  -- Grasping Rift
+    -- Sanguine Depths
+    [326827] = true,  -- Dread Bindings
+    [326836] = true,  -- Curse of Suppression
+    [322554] = true,  -- Castigate
+    [321038] = true,  -- Burden Soul
+    -- Spires of Ascension
+    [338729] = true,  -- Charged Stomp
+    [338747] = true,  -- Purifying Blast
+    [327481] = true,  -- Dark Lance
+    [322818] = true,  -- Lost Confidence
+    [322817] = true,  -- Lingering Doubt
+    -- De Other Side
+    [320786] = true,  -- Power Overwhelming
+    [334913] = true,  -- Master of Death
+    [325725] = true,  -- Cosmic Artifice
+    [328987] = true,  -- Zealous
+    [334496] = true, -- Soporific Shimmerdust
+    [339978] = true, -- Pacifying Mists
+    [323692] = true, -- Arcane Vulnerability
+    [333250] = true, -- Reaver
+
 
 -- BFA Dungeons
     -- Freehold
@@ -502,6 +567,67 @@ local ImportendRaidDebuff = {
     [301712] = true, -- Pounce
     [299475] = true, -- B.O.R.K
     [293670] = true, -- Chain Blade
+
+-- Castle Nathria
+    -- Shriekwing
+    [328897] = true,  -- Exsanguinated
+    [330713] = true,  -- Reverberating Pain
+    [329370] = true,  -- Deadly Descent
+    [336494] = true,  -- Echo Screech
+    -- Huntsman Altimor
+    [335304] = true,  -- Sinseeker
+    [334971] = true,  -- Jagged Claws
+    [335113] = true,  -- Huntsman's Mark 1
+    [335112] = true,  -- Huntsman's Mark 2
+    [335111] = true,  -- Huntsman's Mark 3
+    [334945] = true,  -- Bloody Thrash
+    -- Hungering Destroyer
+    [334228] = true,  -- Volatile Ejection
+    [329298] = true,  -- Gluttonous Miasma
+    -- Lady Inerva Darkvein
+    [325936] = true,  -- Shared Cognition
+    [335396] = true,  -- Hidden Desire
+    [324983] = true,  -- Shared Suffering
+    [324982] = true,  -- Shared Suffering Partner
+    [332664] = true,  -- Concentrate Anima
+    [325382] = true,  -- Warped Desires
+    -- Sun King's Salvation
+    [333002] = true,  -- Vulgar Brand
+    [326078] = true,  -- Infuser's Boon
+    [325251] = true,  -- Sin of Pride
+    -- Artificer Xy'mox
+    [327902] = true,  -- Fixate
+    [326302] = true,  -- Stasis Trap
+    [325236] = true,  -- Glyph of Destruction
+    [327414] = true,  -- Possession
+    -- The Council of Blood
+    [327773] = true,  -- Drain Essence 1
+    [327052] = true,  -- Drain Essence 2
+    [328334] = true,  -- Tactical Advance
+    [330848] = true,  -- Wrong Moves
+    [331706] = true,  -- Scarlet Letter
+    [331636] = true,  -- Dark Recital 1
+    [331637] = true,  -- Dark Recital 2
+    -- Sludgefist
+    [335470] = true,  -- Chain Slam
+    [339181] = true,  -- Chain Slam (Root)
+    [331209] = true,  -- Hateful Gaze
+    [335293] = true,  -- Chain Link
+    [335270] = true,  -- Chain This One!
+    [335295] = true,  -- Shattering Chain
+    -- Stone Legion Generals
+    [334498] = true,  -- Seismic Upheaval
+    [337643] = true,  -- Unstable Footing
+    [334765] = true,  -- Stone Shatterer
+    [333377] = true,  -- Wicked Mark
+    [334616] = true,  -- Petrified
+    [334541] = true,  -- Curse of Petrification
+    -- Sire Denathrius
+    [326851] = true,  -- Blood Price
+    [327798] = true,  -- Night Hunter
+    [327992] = true,  -- Desolation
+    [328276] = true,  -- March of the Penitent
+    [326699] = true,  -- Burden of Sin
 
 -- Uldir
     -- MOTHER

@@ -13,6 +13,7 @@ local lm = {}
 function lm:RegisterBuffFrame(f)
     local l = self.layoutFrame
     l:SetFrameRef("buffs", f)
+    l:SetFrameRef("buffs_mover", f.gwMover)
     self.buffFrame = f
 
     local up = self
@@ -25,6 +26,7 @@ end
 function lm:RegisterDebuffFrame(f)
     local l = self.layoutFrame
     l:SetFrameRef("debuffs", f)
+    l:SetFrameRef("debuffs_mover", f.gwMover)
     self.debuffFrame = f
 end
 
@@ -43,6 +45,7 @@ end
 function lm:RegisterPetFrame(f)
     local l = self.layoutFrame
     l:SetFrameRef("pet", f)
+    l:SetFrameRef("pet_mover", f.gwMover)
     self.petFrame = f
 end
 
@@ -70,24 +73,42 @@ local onstate_Barlayout = [=[
     local mbr = self:GetFrameRef("mbr")
     local mbl = self:GetFrameRef("mbl")
     local bbar = self:GetFrameRef("buffs")
+    local bbarmover = self:GetFrameRef("buffs_mover")
     local dbar = self:GetFrameRef("debuffs")
+    local dbarmover = self:GetFrameRef("debuffs_mover")
     local pet = self:GetFrameRef("pet")
+    local petmover = self:GetFrameRef("pet_mover")
 
     if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
         if newstate == "incombat" then
-            pet:ClearAllPoints()
-            pet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+            petmover:ClearAllPoints()
+            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
         else
             if mbl and mbl:IsShown() then
                 if mbl:GetAttribute("gw_FadeShowing") then
-                    pet:ClearAllPoints()
-                    pet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+                    petmover:ClearAllPoints()
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
                 else
-                    pet:ClearAllPoints()
-                    pet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+                    petmover:ClearAllPoints()
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
                 end
             end
         end
+    end
+
+    -- only set the bbarmover frame to the correct position, based on scaling
+    if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
+        local buff_action = "none"
+        if mbr and mbr:IsShown() and not mbr:GetAttribute("isMoved") then
+            if mbr:GetAttribute("gw_FadeShowing") then
+                buff_action = "high"
+            end
+        end
+        local y_off = (buff_action == "high") and 200 or 100
+        local grow_dir = bbar:GetAttribute("growDir")
+        local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+        dbarmover:ClearAllPoints()
+        dbarmover:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
     end
 
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
@@ -112,11 +133,11 @@ local onstate_Barlayout = [=[
         end
 
         if buff_action == "high" or buff_action == "low" then
-            local y_off = (buff_action == "high") and 100 or 00
+            local y_off = (buff_action == "high") and 100 or 0
             local grow_dir = bbar:GetAttribute("growDir")
             local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-            bbar:ClearAllPoints()
-            bbar:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
+            bbarmover:ClearAllPoints()
+            bbarmover:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
             bbar:Show()
             if dbar then dbar:Show() end
         elseif buff_action == "hide" then

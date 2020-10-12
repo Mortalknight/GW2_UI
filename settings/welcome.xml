@@ -4,7 +4,7 @@
     <Frame name="GwWelcomePageTmpl" virtual="true">
         <Size x="512" y="512"/>
         <Anchors>
-            <Anchor point="CENTER" relativePoint="CENTER" x="" y="30"/>
+            <Anchor point="CENTER" relativePoint="CENTER" x="0" y="30"/>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
@@ -18,12 +18,12 @@
             </Layer>
             <Layer level="BORDER">
                 <FontString parentKey="header" text="Welcome to Gw2 UI" justifyH="CENTER">
-                <Anchors>
+                    <Anchors>
                         <Anchor point="TOP" x="0" y="-20"/>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="subHeader" text="{VERSION}" justifyH="CENTER">
-                <Anchors>
+                    <Anchors>
                         <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="0"/>
                     </Anchors>
                 </FontString>
@@ -38,18 +38,36 @@
                 <Layers>
                     <Layer level="BORDER">
                         <FontString parentKey="header" text="{welcome}" justifyH="CENTER">
-                        <Anchors>
+                            <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="5"/>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="5"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="subHeader" text="{welcome}" justifyH="CENTER">
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.header" x="0" y="5"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.header" x="0" y="5"/>
                             </Anchors>
                         </FontString>
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="pixelbutton" inherits="GwStandardButton" text="Pixel-Perfect">
+                    <Button parentKey="button0" inherits="GwStandardButton" text="button0">
                         <Size x="250" y="30"/>
                         <Anchors>
-                            <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.header" x="0" y="-10"/>
+                            <Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.subHeader" x="0" y="-10"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="button1" inherits="GwStandardButton" text="button1">
+                        <Size x="250" y="30"/>
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="BOTTOM" relativeKey="$parent.subHeader" x="0" y="-50"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="button2" inherits="GwStandardButton" text="button2">
+                        <Size x="125" y="30"/>
+                        <Anchors>
+                            <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeKey="$parent.button1" x="0" y="-80"/>
                         </Anchors>
                     </Button>
                 </Frames>
@@ -179,25 +197,19 @@
                 </Frames>
             </Frame>
             <Button parentKey="settings" inherits="GwStandardButton" text="">
-            <Size x="120" y="28"/>
+                <Size x="120" y="28"/>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="10"/>
                 </Anchors>
             </Button>
-            <Button parentKey="movehud" inherits="GwStandardButton" text="">
-            <Size x="120" y="28"/>
-                <Anchors>
-                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.settings"  x="5" y="0"/>
-                </Anchors>
-            </Button>
             <Button parentKey="changelogORwelcome" inherits="GwStandardButton" text="">
-            <Size x="120" y="28"/>
+                <Size x="120" y="28"/>
                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.movehud"  x="125" y="0"/>
+                    <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.settings"  x="125" y="0"/>
                 </Anchors>
             </Button>
             <Button parentKey="close" inherits="GwStandardButton" text="Close">
-            <Size x="120" y="28"/>
+                <Size x="120" y="28"/>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"/>
                 </Anchors>

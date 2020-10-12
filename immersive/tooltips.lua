@@ -22,48 +22,55 @@ local classification = {
 local TT = CreateFrame("Frame")
 
 local UNSTYLED = {
-    "GameTooltip",
-    "ShoppingTooltip1",
-    "ShoppingTooltip2",
-    "ShoppingTooltip3",
-    "ItemRefShoppingTooltip1",
-    "ItemRefShoppingTooltip2",
-    "ItemRefShoppingTooltip3",
-    "WorldMapTooltip",
-    "WorldMapCompareTooltip1",
-    "WorldMapCompareTooltip2",
-    "WorldMapCompareTooltip3",
-    "AtlasLootTooltip",
-    "QuestHelperTooltip",
-    "QuestGuru_QuestWatchTooltip",
-    "TRP2_MainTooltip",
-    "TRP2_ObjetTooltip",
-    "TRP2_StaticPopupPersoTooltip",
-    "TRP2_PersoTooltip",
-    "TRP2_MountTooltip",
-    "AltoTooltip",
-    "AltoScanningTooltip",
-    "ArkScanTooltipTemplate",
-    "NxTooltipItem",
-    "NxTooltipD",
-    "DBMInfoFrame",
-    "DBMRangeCheck",
-    "DatatextTooltip",
-    "VengeanceTooltip",
-    "FishingBuddyTooltip",
-    "FishLibTooltip",
-    "HealBot_ScanTooltip",
-    "hbGameTooltip",
-    "PlateBuffsTooltip",
-    "LibGroupInSpecTScanTip",
-    "RecountTempTooltip",
-    "VuhDoScanTooltip",
-    "XPerl_BottomTip",
-    "EventTraceTooltip",
-    "FrameStackTooltip",
-    "PetBattlePrimaryUnitTooltip",
-    "PetBattlePrimaryAbilityTooltip",
-    "LibDBIconTooltip"
+    GameTooltip,
+    ShoppingTooltip1,
+    ShoppingTooltip2,
+    ShoppingTooltip3,
+    ItemRefShoppingTooltip1,
+    ItemRefShoppingTooltip2,
+    ItemRefShoppingTooltip3,
+    WorldMapTooltip,
+    WorldMapCompareTooltip1,
+    WorldMapCompareTooltip2,
+    WorldMapCompareTooltip3,
+    AtlasLootTooltip,
+    QuestHelperTooltip,
+    QuestGuru_QuestWatchTooltip,
+    TRP2_MainTooltip,
+    TRP2_ObjetTooltip,
+    TRP2_StaticPopupPersoTooltip,
+    TRP2_PersoTooltip,
+    TRP2_MountTooltip,
+    AltoTooltip,
+    AltoScanningTooltip,
+    ArkScanTooltipTemplate,
+    NxTooltipItem,
+    NxTooltipD,
+    DBMInfoFrame,
+    DBMRangeCheck,
+    DatatextTooltip,
+    VengeanceTooltip,
+    FishingBuddyTooltip,
+    FishLibTooltip,
+    HealBot_ScanTooltip,
+    hbGameTooltip,
+    PlateBuffsTooltip,
+    LibGroupInSpecTScanTip,
+    RecountTempTooltip,
+    VuhDoScanTooltip,
+    XPerl_BottomTip,
+    EventTraceTooltip,
+    FrameStackTooltip,
+    PetBattlePrimaryUnitTooltip,
+    PetBattlePrimaryAbilityTooltip,
+    LibDBIconTooltip,
+    FriendsTooltip,
+    EmbeddedItemTooltip,
+    RepurationParagonTooltip,
+    WarCampaignTooltip,
+    QuestScrollFrame.StoryTooltip,
+    QuestScrollFrame.CampaignTooltip,
+    QuickKeybindTooltip
 }
 
 local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
@@ -84,30 +91,6 @@ local constBackdropArgs = {
     edgeSize = 32,
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
-local function styleTooltip(self)
-    if not self:IsShown() then
-        return
-    end
-    self:SetBackdrop(constBackdropArgs)
-    if _G[self:GetName() .. "StatusBarTexture"] then
-        _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
-    end
-    if DBMInfoFrame then 
-        DBMInfoFrame:SetBackdrop(constBackdropArgs)
-    end
-end
-GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
-
-local function tooltip_SetBackdropStyle(self, args)
-    if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
-        return
-    end
-    if not self:IsShown() then
-        return
-    end
-    self:SetBackdrop(constBackdropArgs)
-end
-GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 
 local function anchorTooltip(self, p)
     self:SetOwner(p, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
@@ -117,13 +100,14 @@ GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 local function SkinItemRefTooltip()
     local SkinItemRefTooltip_Update = function()
         if ItemRefTooltip:IsShown() then
-            ItemRefCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-            ItemRefCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-            ItemRefCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-            ItemRefCloseButton:SetSize(20, 20)
-            ItemRefCloseButton:ClearAllPoints()
-            ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
-            ItemRefTooltip:SetBackdrop(constBackdropArgs)
+            ItemRefTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
+            ItemRefTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefTooltip.CloseButton:SetSize(20, 20)
+            ItemRefTooltip.CloseButton:ClearAllPoints()
+            ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
+            ItemRefTooltip:StripTextures()
+            ItemRefTooltip:CreateBackdrop(constBackdropArgs)
 
             if IsAddOnLoaded("Pawn") then
                 if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
@@ -145,7 +129,7 @@ local function SkinBattlePetTooltip()
         self.BorderBottom:Hide()
         self.BorderLeft:Hide()
         self.Background:Hide()
-        self:SetBackdrop(constBackdropArgs)
+        self:CreateBackdrop(constBackdropArgs)
     end
 
     hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", function(self) skin_battle_pet_tt(self) end)
@@ -173,17 +157,8 @@ end
 local function SkinQueueStatusFrame()
     local QueueStatusFrame = _G.QueueStatusFrame
 
-    QueueStatusFrame:SetBackdrop(nil)
-    QueueStatusFrame.BorderTopLeft:Hide()
-    QueueStatusFrame.BorderTopRight:Hide()
-    QueueStatusFrame.BorderBottomRight:Hide()
-    QueueStatusFrame.BorderBottomLeft:Hide()
-    QueueStatusFrame.BorderTop:Hide()
-    QueueStatusFrame.BorderRight:Hide()
-    QueueStatusFrame.BorderBottom:Hide()
-    QueueStatusFrame.BorderLeft:Hide()
-    QueueStatusFrame.Background:Hide()
-    QueueStatusFrame:SetBackdrop(constBackdropArgs)
+    QueueStatusFrame:StripTextures()
+    QueueStatusFrame:CreateBackdrop(constBackdropArgs)
 end
 
 local function GetLevelLine(self, offset)
@@ -615,7 +590,58 @@ local function SetToyByItemID(self, id)
     self:Show()
 end
 
+local function SetCurrencyToken(self, idx)
+    if self:IsForbidden() then return end
+    local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+
+    if not idx or not showSpellID then return end
+
+    local id = tonumber(strmatch(C_CurrencyInfo.GetCurrencyListLink(idx),"currency:(%d+)"))
+    self:AddLine(format("|cffffedba%s|r %d", ID, id))
+	self:Show()
+end
+
+local function SetCurrencyTokenByID(self, id)
+    if self:IsForbidden() then return end
+    local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+
+    if not id or not showSpellID then return end
+
+    self:AddLine(format("|cffffedba%s|r %d", ID, id))
+	self:Show()
+end
+
+local function SetBackpackToken(self, id)
+    if self:IsForbidden() then return end
+    local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
+
+    if not id or not showSpellID then return end
+
+    local info = C_CurrencyInfo.GetBackpackCurrencyInfo(id)
+    if info and info.currencyTypesID then
+        self:AddLine(format("|cffffedba%s|r %d", ID, id))
+        self:Show()
+    end
+end
+
+local function SetStyle(tooltip)
+    if not tooltip or tooltip.IsEmbedded or tooltip:IsForbidden() or not tooltip.SetBackdrop then
+        return
+    end
+
+    tooltip:SetBackdrop(constBackdropArgs)
+end
+
 local function LoadTooltips()
+    -- Style Tooltips first
+    for _, tooltip in pairs(UNSTYLED) do
+        SetStyle(tooltip)
+    end
+    hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle)
+    _G.GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
+    _G.GameTooltip.ItemTooltip:CreateBackdrop(constBackdropArgs)
+
+
     if GetSetting("TOOLTIP_MOUSE") then
         hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
     else
@@ -666,14 +692,21 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
         hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitBuff)
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitDebuff)
-    end
-    
-    hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
-    for _, toStyle in ipairs(UNSTYLED) do
-        local f = _G[toStyle]
-        if f then
-            f:HookScript("OnUpdate", styleTooltip)
-        end
+        hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
+        hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", SetCurrencyTokenByID)
+        hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
+
+        local eventFrame = CreateFrame("Frame")
+        eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
+        eventFrame:SetScript("OnEvent", function(self, event, key)
+            if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" then
+                local owner = GameTooltip:GetOwner()
+                local notOnAuras = not (owner and owner.UpdateTooltip)
+                if notOnAuras and UnitExists("mouseover") then
+                    GameTooltip:SetUnit("mouseover")
+                end
+            end
+        end)
     end
 end
 GW.LoadTooltips = LoadTooltips

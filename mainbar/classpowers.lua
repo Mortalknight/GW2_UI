@@ -111,6 +111,14 @@ local function powerMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
         UpdatePowerData(self.exbar, 0, "MANA", "GwExtraPowerBar")
+
+        C_Timer.After(0.12, function()
+            if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
+                self.exbar:Hide()
+            else
+                self.exbar:Show()
+            end
+        end)
     end
 end
 GW.AddForProfiling("classpowers", "powerMana", powerMana)
@@ -345,7 +353,7 @@ local function setPaladin(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
 
         return true
-    elseif GW.myspec == 3 then -- retribution
+    elseif GW.myspec == 3 or GW.myspec == 5 then -- retribution / standard
         f:SetHeight(32)
         f:SetWidth(320)
         f.background:SetHeight(32)

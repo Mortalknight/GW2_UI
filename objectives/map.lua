@@ -197,15 +197,6 @@ local function hideMiniMapIcons()
 end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
-local function MapPositionToXY(arg)
-    local mapID = C_Map.GetBestMapForUnit(arg)
-    if mapID and arg then
-        return GW.GetPlayerMapPos(mapID)
-    end
-    return 0, 0
-end
-GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
-
 local function MapCoordsMiniMap_OnEnter(self) 
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  
@@ -216,11 +207,10 @@ end
 GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
 
 local function mapCoordsMiniMap_setCoords(self)
-    local posX, posY = MapPositionToXY("player")
-    if (posX == nil and posY == nil) then
-        self.Coords:SetText("n/a")
+    if GW.locationData.x and GW.locationData.y then
+        self.Coords:SetText(RoundDec(GW.locationData.xText, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(GW.locationData.yText, self.MapCoordsMiniMapPrecision)) 
     else
-        self.Coords:SetText(RoundDec(posX * 1000 / 10, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, self.MapCoordsMiniMapPrecision)) 
+        self.Coords:SetText("n/a")
     end
 end
 GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
@@ -241,22 +231,12 @@ local function MapCoordsMiniMap_OnClick(self, button)
 end
 GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
 
-local function MapCoordsMiniMap_OnUpdate(self, elapsed)
-    self.elapsedTimer = self.elapsedTimer - elapsed
-    if self.elapsedTimer > 0 then
-        return
-    end
-    self.elapsedTimer = self.updateCap
-    mapCoordsMiniMap_setCoords(self)
-end
-GW.AddForProfiling("map", "MapCoordsMiniMap_OnUpdate", MapCoordsMiniMap_OnUpdate)
-
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
         UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
         if child == GwMapCoords then
-            GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+            GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
         end
     end
     MinimapNorthTag:Hide()
@@ -270,6 +250,9 @@ local function hoverMiniMapOut()
             UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
             if child == GwMapCoords then
                 GwMapCoords:SetScript("OnUpdate", nil)
+                if GwMapCoords.CoordsTimer then
+                    GwMapCoords.CoordsTimer = nil
+                end
             end
         end
     end
@@ -530,14 +513,15 @@ local function LoadMinimap()
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
     GwMapCoords.Coords:SetText("n/a")
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
-    GwMapCoords.elapsedTimer = -1
-    GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
     GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
-    GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
     GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
     GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
     GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
-
+    -- only set the coords updater here if they are showen always
+    local hoverSetting = GetSetting("MINIMAP_HOVER")
+    if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" then
+        GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+    end
     --FPS
     if GetSetting("MINIMAP_FPS") then
         GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
@@ -601,7 +585,7 @@ local function LoadMinimap()
 
     GwCalendarButton = CreateFrame("Button", "GwCalendarButton", UIParent, "GwCalendarButton")
     local fnGwCalendarButton_OnShow = function(self)
-        if (IsKioskModeEnabled()) then
+        if (Kiosk.IsEnabled()) then
             self:Disable()
         end
     end

@@ -219,7 +219,7 @@ local function loadAFKAnimation()
     AFKMode.chat:SetScript("OnMouseWheel", Chat_OnMouseWheel)
     AFKMode.chat:SetScript("OnEvent", Chat_OnEvent)
 
-    AFKMode.bottom = CreateFrame("Frame", nil, AFKMode)
+    AFKMode.bottom = CreateFrame("Frame", nil, AFKMode, "BackdropTemplate")
     AFKMode.bottom:SetFrameLevel(0)
     AFKMode.bottom:SetPoint("BOTTOM", AFKMode, "BOTTOM", 0, -5)
     AFKMode.bottom:SetBackdrop(BackdropFrame)

@@ -161,7 +161,7 @@ local function CreateStatusFrame()
     StatusFrame:SetSize(320, 720)
     StatusFrame:SetPoint("CENTER", UIParent, "CENTER")
     StatusFrame:SetFrameStrata("HIGH")
-    StatusFrame:SetBackdrop(BackdropFrame)
+    StatusFrame:CreateBackdrop(BackdropFrame)
     StatusFrame:SetMovable(true)
     StatusFrame:Hide()
 
@@ -249,7 +249,7 @@ local function UpdateDynamicValues()
     local Section3 = StatusFrame.Section3
     Section3.Content.Line4.Text:SetFormattedText("Specialization: |cff4beb2c%s|r", EnglishSpecName[GetSpecializationInfo(GetSpecialization())])
     Section3.Content.Line5.Text:SetFormattedText("Level: |cff4beb2c%s|r", GW.mylevel)
-    Section3.Content.Line6.Text:SetFormattedText("Zone: |cff4beb2c%s|r", GetRealZoneText())
+    Section3.Content.Line6.Text:SetFormattedText("Zone: |cff4beb2c%s|r", GW.locationData.ZoneText)
 end
 
 local function ShowStatusReport()

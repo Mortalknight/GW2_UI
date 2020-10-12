@@ -79,7 +79,7 @@ end
 GW.AddForProfiling("unitframes", "updateRaidMarkers", updateRaidMarkers)
 
 local function bossFrame_OnEvent(self, event, unit)
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         updateBoss_Health(self)
     elseif event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT" then
         updateBoss_Power(self)
@@ -156,7 +156,7 @@ local function registerFrame(i)
             self:RegisterEvent("PLAYER_ENTERING_WORLD")
             self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
             self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
-            self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self.unit)
+            self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
             self:RegisterUnitEvent("UNIT_MAXPOWER", self.unit)
             self:RegisterUnitEvent("UNIT_POWER_FREQUENT", self.unit)
             self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)

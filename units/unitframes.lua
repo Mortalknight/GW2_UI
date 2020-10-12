@@ -678,7 +678,7 @@ local function target_OnEvent(self, event, unit)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
-        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT", "UNIT_HEAL_PREDICTION") then
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
             updatePowerValues(self, event)
@@ -853,28 +853,8 @@ local function LoadTarget()
 
     LoadAuras(NewUnitFrame, NewUnitFrame.auras)
 
-    -- create floating combat text
-    if GetSetting("target_FLOATING_COMBAT_TEXT") then
-        local fctf = CreateFrame("Frame", nil, NewUnitFrame)
-        fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
-        fctf:RegisterEvent("UNIT_COMBAT")
-        fctf:SetScript("OnEvent", function(self, event, unit, ...)
-            if self.unit == unit then
-                CombatFeedback_OnCombatEvent(self, ...)
-            end
-        end)
-        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
-        fctf.unit = NewUnitFrame.unit
-        
-        local font = fctf:CreateFontString(nil, "OVERLAY", "NumberFont_Outline_Huge")
-        fctf.fontString = font
-        font:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER")
-        font:Hide()
-        
-        CombatFeedback_Initialize(fctf, font, 30)
-    end
-
-    TargetFrame:Kill()
+    TargetFrame:SetScript("OnEvent", nil)
+    TargetFrame:Hide()
 end
 GW.LoadTarget = LoadTarget
 

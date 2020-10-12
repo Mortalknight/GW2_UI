@@ -34,7 +34,8 @@ local function fill_OnFinished(self, flag)
     local fm = f:GetParent():GetParent()
     fm:UnregisterEvent("SPELL_UPDATE_CHARGES")
     fm:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
-    FrameFlash(fm.arcfill.spark, 0.2, 0.2, false, 0, 0)
+    --FrameFlash(fm.arcfill.spark, 0.2, 0.2, false, 0, 0)
+    FrameFlash(fm.arcfill.spark, 0.2)
     f:SetRotation(FULL_IN_RAD)
 end
 GW.AddForProfiling("dodgebar", "fill_OnFinished", fill_OnFinished)
@@ -52,10 +53,12 @@ local function updateAnim(self, start, duration, charges, maxCharges)
 
     -- spark if charge count has changed
     if not self.gwNeedDrain and self.gwCharges ~= charges then
-        FrameFlash(self.arcfill.spark, 0.2, 0.2, false, 0, 0)
+        --FrameFlash(self.arcfill.spark, 0.2, 0.2, false, 0, 0)
+        FrameFlash(self.arcfill.spark, 0.2)
     end
     self.gwCharges = charges
 
+    if maxCharges == nil or maxCharges == 0 then maxCharges = 1 end
     -- figure out the total time (and fraction of 1 time) remaining until the bar is full again
     local time_remain = (duration * (maxCharges - charges)) - (GetTime() - start)
     local time_remain_frac = (time_remain / (duration * maxCharges))
@@ -173,7 +176,9 @@ local function dodge_OnEvent(self, event, ...)
             return
         end
         local start, duration, _ = GetSpellCooldown(self.spellId)
-        updateAnim(self, start, duration, 0, 1)
+        if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
+            updateAnim(self, start, duration, 0, 1)
+        end
 
     elseif event == "SPELL_UPDATE_CHARGES" then
         -- only registered when our dodge skill is actively on cooldown
@@ -181,7 +186,9 @@ local function dodge_OnEvent(self, event, ...)
             return
         end
         local charges, maxCharges, start, duration = GetSpellCharges(self.spellId)
-        updateAnim(self, start, duration, charges, maxCharges)
+        if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
+            updateAnim(self, start, duration, charges, maxCharges)
+        end
 
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect

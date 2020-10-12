@@ -573,7 +573,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local btn_this_row = 0
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
-    GW.RegisterScaleFrame(fmMultibar)
     GW.MixinHideDuringPetAndOverride(fmMultibar)
     if actionPage ~= nil then
         fmMultibar:SetAttribute("actionpage", actionPage)
@@ -623,13 +622,29 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     end
 
     fmMultibar:SetScript("OnUpdate", nil)
-    fmMultibar:ClearAllPoints()
-    if (barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft") and not GetSetting("XPBAR_ENABLED") then
-        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs -14)
-    else
-        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
-    end
     fmMultibar:SetSize(used_width, used_height)
+
+    if barName == "MultiBarLeft" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy", nil, nil, nil, true)
+    elseif barName == "MultiBarRight" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy", nil, nil, nil, true)
+    elseif barName == "MultiBarBottomLeft" then
+        lm:RegisterMultiBarLeft(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, nil, true, true)
+    elseif barName == "MultiBarBottomRight" then
+        lm:RegisterMultiBarRight(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, nil, true, true)
+    end
+
+    fmMultibar:ClearAllPoints()
+    fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
+
+    -- position mover
+    if (barName == "MultiBarBottomLeft" or barNem == "MultiBarBottomRight") and not GetSetting("XPBAR_ENABLED") then
+        local framePoint = GetSetting(barName)
+        fmMultibar.gwMover:ClearAllPoints()
+        fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+    end
 
     -- set fader logic
     createFaderAnim(fmMultibar, state)
@@ -640,18 +655,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar:SetScript("OnShow", nil)
     multibar:SetScript("OnHide", nil)
     multibar:EnableMouse(false)
-
-    if barName == "MultiBarLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy")
-    elseif barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy")
-    elseif barName == "MultiBarBottomLeft" then
-        lm:RegisterMultiBarLeft(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
-    elseif barName == "MultiBarBottomRight" then
-        lm:RegisterMultiBarRight(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
-    end
     
     return fmMultibar
 end
@@ -849,7 +852,7 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        if (ActionButton_IsFlashing(btn)) then
+        if (btn:IsFlashing()) then 
             actionButtonFlashing(btn, elapsed)
         end
 
@@ -933,7 +936,7 @@ local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        if (ActionButton_IsFlashing(btn)) then
+        if (btn:IsFlashing()) then 
             actionButtonFlashing(btn, elapsed)
         end
 
@@ -1065,7 +1068,7 @@ local function LoadActionBars(lm)
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", trackBarChanges)
-    hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
+    hooksecurefunc(ActionBarActionButtonMixin, "UpdateUsable", changeVertexColorActionbars)
     hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
     trackBarChanges()
 
@@ -1076,14 +1079,13 @@ local function LoadActionBars(lm)
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes
-    hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey)
+    hooksecurefunc(ActionBarActionButtonMixin, "UpdateHotkeys", updateHotkey)
 
     -- frames using the alert frame subsystem have their positioning managed by UIParent
     -- the secure code for that lives mostly in Interface/FrameXML/UIParent.lua
     -- we can override the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
     -- doing it there avoids any taint issues
     -- we also exclude a few frames from the auto-positioning stuff regardless
-    GwAlertFrameOffsetter:SetHeight(205)
     UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["GroupLootContainer"] = nil

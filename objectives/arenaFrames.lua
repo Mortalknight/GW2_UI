@@ -49,11 +49,9 @@ local function setCompass()
         compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
     else
         -- parse current BG date here, to show the correct name and subname
-        local _, _, _, _, _, _, _, mapID = GetInstanceInfo()
-
-        if GetBattlegroundInfo(bgIndex[mapID]) then
-            compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[mapID])) 
-            compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[mapID]))
+        if GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
+            compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])) 
+            compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
         else
             compassData["TITLE"] = ARENA
             compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
@@ -184,7 +182,7 @@ local function arenaFrame_OnEvent(self, event, unit)
         return
     end
 
-    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH_FREQUENT") then
+    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
         updateArena_Health(self)
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
         updateArena_Power(self)
@@ -279,7 +277,7 @@ local function registerFrame(i)
             self:RegisterEvent("PLAYER_ENTERING_WORLD")
             self:RegisterEvent("ARENA_OPPONENT_UPDATE")
             self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
-            self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self.unit)
+            self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
             self:RegisterUnitEvent("UNIT_MAXPOWER", self.unit)
             self:RegisterUnitEvent("UNIT_POWER_FREQUENT", self.unit)
             self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)

@@ -148,8 +148,8 @@ local function setButtonPosition(frame)
         end
 
         editbox:ClearAllPoints()
-        editbox:SetPoint("TOPLEFT", _G[name.."ButtonFrame"], "BOTTOMLEFT", 0, 0)
-        editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, 0)
+        editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, -6)
+        editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, -6)
 
         if QuickJoinToastButton then
             QuickJoinToastButton.ClearAllPoints = nil
@@ -372,6 +372,7 @@ local function styleChatWindow(frame)
     frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
     frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
     frame.buttonFrame.minimizeButton:SetSize(24, 24)
+    frame.buttonFrame:StripTextures()
 
     hooksecurefunc(tab, "SetAlpha", function(t, alpha)
         if alpha ~= 1 and (not t.isDocked or _G.GeneralDockManager.selected:GetID() == t:GetID()) then
@@ -447,7 +448,7 @@ local function styleChatWindow(frame)
     frame.button:EnableMouse(true)
     frame.button:SetAlpha(0.35)
     frame.button:SetSize(20, 22)
-    frame.button:SetPoint("TOPRIGHT")
+    frame.button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 20, 0)
     frame.button:SetFrameLevel(frame:GetFrameLevel() + 5)
 
     frame.button.tex = frame.button:CreateTexture(nil, "OVERLAY")
@@ -455,17 +456,17 @@ local function styleChatWindow(frame)
     frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
 
     frame.button:SetScript("OnMouseUp", function(_, btn)
-        if not CopyChatFrame:IsShown() then
+        if not GW2_UICopyChatFrame:IsShown() then
             local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
             if fontSize < 10 then fontSize = 12 end
             FCF_SetChatWindowFontSize(frame, frame, 0.01)
-            CopyChatFrame:Show()
+            GW2_UICopyChatFrame:Show()
             local lineCt = getLines(frame)
             local text = table.concat(copyLines, " \n", 1, lineCt)
             FCF_SetChatWindowFontSize(frame, frame, fontSize)
-            CopyChatFrameEditBox:SetText(text)
+            GW2_UICopyChatFrame.editBox:SetText(text)
         else
-            CopyChatFrame:Hide()
+            GW2_UICopyChatFrame:Hide()
         end
     end)
 
@@ -482,9 +483,9 @@ local function styleChatWindow(frame)
 end
 
 local function BuildCopyChatFrame()
-    local frame = CreateFrame("Frame", "CopyChatFrame", UIParent)
+    local frame = CreateFrame("Frame", "GW2_UICopyChatFrame", UIParent)
 
-    tinsert(UISpecialFrames, "CopyChatFrame")
+    tinsert(UISpecialFrames, "GW2_UICopyChatFrame")
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
@@ -524,42 +525,42 @@ local function BuildCopyChatFrame()
     end)
     frame:SetFrameStrata("DIALOG")
 
-    local scrollArea = CreateFrame("ScrollFrame", "CopyChatScrollFrame", frame, "UIPanelScrollFrameTemplate")
-    scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
-    scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
-    CopyChatScrollFrameScrollBar:SkinScrollBar()
-    scrollArea:SetScript("OnSizeChanged", function(scroll)
-        CopyChatFrameEditBox:SetWidth(scroll:GetWidth())
-        CopyChatFrameEditBox:SetHeight(scroll:GetHeight())
+    frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+    frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
+    frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
+    frame.scrollArea.ScrollBar:SkinScrollBar()
+    frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
+        frame.editBox:SetWidth(scroll:GetWidth())
+        frame.editBox:SetHeight(scroll:GetHeight())
     end)
-    scrollArea:HookScript("OnVerticalScroll", function(scroll, offset)
-        CopyChatFrameEditBox:SetHitRectInsets(0, 0, offset, (CopyChatFrameEditBox:GetHeight() - offset - scroll:GetHeight()))
+    frame.scrollArea:HookScript("OnVerticalScroll", function(scroll, offset)
+        frame.editBox:SetHitRectInsets(0, 0, offset, (frame.editBox:GetHeight() - offset - scroll:GetHeight()))
     end)
 
-    local editBox = CreateFrame("EditBox", "CopyChatFrameEditBox", frame)
-    editBox:SetMultiLine(true)
-    editBox:SetMaxLetters(99999)
-    editBox:EnableMouse(true)
-    editBox:SetAutoFocus(false)
-    editBox:SetFontObject(ChatFontNormal)
-    editBox:SetWidth(scrollArea:GetWidth())
-    editBox:SetHeight(200)
-    editBox:SetScript("OnEscapePressed", function() CopyChatFrame:Hide() end)
-    scrollArea:SetScrollChild(editBox)
-    CopyChatFrameEditBox:SetScript("OnTextChanged", function(_, userInput)
+    frame.editBox = CreateFrame("EditBox", nil, frame)
+    frame.editBox:SetMultiLine(true)
+    frame.editBox:SetMaxLetters(99999)
+    frame.editBox:EnableMouse(true)
+    frame.editBox:SetAutoFocus(false)
+    frame.editBox:SetFontObject(ChatFontNormal)
+    frame.editBox:SetWidth(frame.scrollArea:GetWidth())
+    frame.editBox:SetHeight(200)
+    frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
+    frame.scrollArea:SetScrollChild(frame.editBox)
+    frame.editBox:SetScript("OnTextChanged", function(_, userInput)
         if userInput then return end
-        local _, max = CopyChatScrollFrameScrollBar:GetMinMaxValues()
+        local _, max = frame.scrollArea.ScrollBar:GetMinMaxValues()
         for _ = 1, max do
-            ScrollFrameTemplate_OnMouseWheel(CopyChatScrollFrame, -1)
+            ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
         end
     end)
 
-    local close = CreateFrame("Button", "CopyChatFrameCloseButton", frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT")
-    close:SetFrameLevel(close:GetFrameLevel() + 1)
-    close:EnableMouse(true)
-    close:SetSize(20, 20)
-    close:SkinButton(true)
+    frame.close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+    frame.close:SetPoint("TOPRIGHT")
+    frame.close:SetFrameLevel(frame.close:GetFrameLevel() + 1)
+    frame.close:EnableMouse(true)
+    frame.close:SetSize(20, 20)
+    frame.close:SkinButton(true)
 end
 
 local function LoadChat()
@@ -616,7 +617,7 @@ local function LoadChat()
             _G["GwChatContainer" .. id]:SetAlpha(0)
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:StripTextures(true)
-                chatFrame.minFrame:SetBackdrop(GW.skins.constBackdropFrame)
+                chatFrame.minFrame:CreateBackdrop(GW.skins.constBackdropFrame)
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
@@ -706,7 +707,8 @@ local function LoadChat()
     for i = 1, #ChatMenus do
         _G[ChatMenus[i]]:HookScript("OnShow", 
             function(self)
-                self:SetBackdrop(GW.skins.constBackdropFrame)
+                self:StripTextures()
+                self:CreateBackdrop(GW.skins.constBackdropFrame)
             end)
     end
 

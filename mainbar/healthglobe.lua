@@ -205,7 +205,7 @@ local function globe_OnEvent(self, event, ...)
         MixinHideDuringPetAndOverride(self)
         updateHealthData(self, false)
         selectPvp(self)
-    elseif IsIn(event, "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
+    elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self, true)
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         selectPvp(self)
@@ -382,7 +382,7 @@ local function LoadHealthGlobe()
     hg:RegisterEvent("RESURRECT_REQUEST")
     hg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     hg:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
-    hg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
+    hg:RegisterUnitEvent("UNIT_HEALTH", "player")
     hg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     hg:RegisterUnitEvent("UNIT_FACTION", "player")
 

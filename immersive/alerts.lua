@@ -1043,7 +1043,6 @@ local function skinBonusRollLoot()
     frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
 
     --flare
-
     AddFlare(frame, lootItem.Icon.b)
 end
 
@@ -1141,7 +1140,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
             --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
         end
-        if numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
+        if C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
             GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
             --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
         end
@@ -1175,14 +1174,9 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     end
 end
 
-local function loadAlterSystemFrameSkins()
+local function LoadAlertSystemFrameSkins()
     if not AchievementFrame then
         AchievementFrame_LoadUI()
-    end
-
-    -- Add customs alert system
-    if not GW2_UIAlertSystem.AlertSystem then
-        GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
     end
     
     -- Achievements
@@ -1191,10 +1185,10 @@ local function loadAlterSystemFrameSkins()
     
     -- Encounters
     hooksecurefunc(_G.DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
-    hooksecurefunc(_G.WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert) --TODO: position
+    hooksecurefunc(_G.WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert)
     hooksecurefunc(_G.GuildChallengeAlertSystem, "setUpFunction", skinGuildChallengeAlert)
     hooksecurefunc(_G.InvasionAlertSystem, "setUpFunction", skinInvasionAlert)
-    hooksecurefunc(_G.ScenarioAlertSystem, "setUpFunction", skinScenarioAlert) --TODO: position
+    hooksecurefunc(_G.ScenarioAlertSystem, "setUpFunction", skinScenarioAlert)
 
     -- Loot
     hooksecurefunc(_G.LegendaryItemAlertSystem, "setUpFunction", skinLegendaryItemAlert)
@@ -1219,7 +1213,7 @@ local function loadAlterSystemFrameSkins()
     -- Garrisons
     hooksecurefunc(_G.GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
     hooksecurefunc(_G.GarrisonShipFollowerAlertSystem, "setUpFunction", skinGarrisonShipFollowerAlert)
-    hooksecurefunc(_G.GarrisonTalentAlertSystem, "setUpFunction", skinGarrisonTalentAlert) --TODO: position
+    hooksecurefunc(_G.GarrisonTalentAlertSystem, "setUpFunction", skinGarrisonTalentAlert)
     hooksecurefunc(_G.GarrisonBuildingAlertSystem, "setUpFunction", skinGarrisonBuildingAlert)
     hooksecurefunc(_G.GarrisonMissionAlertSystem, "setUpFunction", skinGarrisonMissionAlert)
     hooksecurefunc(_G.GarrisonShipMissionAlertSystem, "setUpFunction", skinGarrisonShipMissionAlert)
@@ -1231,26 +1225,26 @@ local function loadAlterSystemFrameSkins()
     --Bonus Roll Loot
     skinBonusRollLoot() --TODO: position
 
-    local AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
-    AlertContainerFrame:SetSize(300, 5) -- 265
+    GW.AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
+    GW.AlertContainerFrame:SetSize(300, 5) -- 265
 
     local point = GetSetting("AlertPos")
-    AlertContainerFrame:ClearAllPoints()
-    AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
+    GW.AlertContainerFrame:ClearAllPoints()
+    GW.AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 
-    local _, y = AlertContainerFrame:GetCenter()
+    local _, y = GW.AlertContainerFrame:GetCenter()
     local screenHeight = UIParent:GetTop()
     if y > (screenHeight / 2) then
-        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
+        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
     else
-        GW.RegisterMovableFrame(AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
+        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
     end
 
-    AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
-    AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
+    GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    GW.AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     
-    AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
+    GW.AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
 
     -- add flare animation
     hooksecurefunc("AlertFrame_PlayIntroAnimation", function(self)
@@ -1271,7 +1265,17 @@ local function loadAlterSystemFrameSkins()
             end)
         end
     end)
-
-    return AlertContainerFrame
 end
-GW.loadAlterSystemFrameSkins = loadAlterSystemFrameSkins
+GW.LoadAlertSystemFrameSkins = LoadAlertSystemFrameSkins
+
+local function LoadOurAlertSubSystem()
+    if not AchievementFrame then
+        AchievementFrame_LoadUI()
+    end
+
+    -- Add customs alert system
+    if not GW2_UIAlertSystem.AlertSystem then
+        GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
+    end
+end
+GW.LoadOurAlertSubSystem = LoadOurAlertSubSystem

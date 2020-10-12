@@ -96,12 +96,21 @@ GW_DEFAULT["HERO_POSITION"]["point"] = "LEFT"
 GW_DEFAULT["HERO_POSITION"]["relativePoint"] = "LEFT"
 GW_DEFAULT["HERO_POSITION"]["xOfs"] = 100
 GW_DEFAULT["HERO_POSITION"]["yOfs"] = 0
+GW_DEFAULT["HERO_POSITION_SCALE"] = 1
 
 GW_DEFAULT["LOOTFRAME_POS"] = {}
 GW_DEFAULT["LOOTFRAME_POS"]["point"] = "LEFT"
 GW_DEFAULT["LOOTFRAME_POS"]["relativePoint"] = "LEFT"
 GW_DEFAULT["LOOTFRAME_POS"]["xOfs"] = 20
 GW_DEFAULT["LOOTFRAME_POS"]["yOfs"] = -45
+GW_DEFAULT["LOOTFRAME_POS_scale"] = 1
+
+GW_DEFAULT["VEHICLE_SEAT_POS"] = {}
+GW_DEFAULT["VEHICLE_SEAT_POS"]["point"] = "LEFT"
+GW_DEFAULT["VEHICLE_SEAT_POS"]["relativePoint"] = "LEFT"
+GW_DEFAULT["VEHICLE_SEAT_POS"]["xOfs"] = 20
+GW_DEFAULT["VEHICLE_SEAT_POS"]["yOfs"] = -45
+GW_DEFAULT["VEHICLE_SEAT_POS_scale"] = 1
 
 GW_DEFAULT["MAILBOX_POSITION"] = {}
 GW_DEFAULT["MAILBOX_POSITION"]["point"] = "TOPLEFT"
@@ -177,42 +186,49 @@ GW_DEFAULT["target_pos"]["point"] = "TOP"
 GW_DEFAULT["target_pos"]["relativePoint"] = "TOP"
 GW_DEFAULT["target_pos"]["xOfs"] = -56
 GW_DEFAULT["target_pos"]["yOfs"] = -100
+GW_DEFAULT["target_pos_scale"] = 1
 
 GW_DEFAULT["pet_pos"] = {}
 GW_DEFAULT["pet_pos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["pet_pos"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["pet_pos"]["xOfs"] = -53
 GW_DEFAULT["pet_pos"]["yOfs"] = 120
+GW_DEFAULT["pet_pos_scale"] = 1
 
 GW_DEFAULT["castingbar_pos"] = {}
 GW_DEFAULT["castingbar_pos"]["point"] = "BOTTOM"
 GW_DEFAULT["castingbar_pos"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["castingbar_pos"]["xOfs"] = 0
 GW_DEFAULT["castingbar_pos"]["yOfs"] = 300
+GW_DEFAULT["castingbar_pos_scale"] = 1
 
 GW_DEFAULT["targettarget_pos"] = {}
 GW_DEFAULT["targettarget_pos"]["point"] = "TOP"
 GW_DEFAULT["targettarget_pos"]["relativePoint"] = "TOP"
 GW_DEFAULT["targettarget_pos"]["xOfs"] = 250
 GW_DEFAULT["targettarget_pos"]["yOfs"] = -100
+GW_DEFAULT["targettarget_pos_scale"] = 1
 
 GW_DEFAULT["focus_pos"] = {}
 GW_DEFAULT["focus_pos"]["point"] = "CENTER"
 GW_DEFAULT["focus_pos"]["relativePoint"] = "CENTER"
 GW_DEFAULT["focus_pos"]["xOfs"] = -350
 GW_DEFAULT["focus_pos"]["yOfs"] = 0
+GW_DEFAULT["focus_pos_scale"] = 1
 
 GW_DEFAULT["focustarget_pos"] = {}
 GW_DEFAULT["focustarget_pos"]["point"] = "CENTER"
 GW_DEFAULT["focustarget_pos"]["relativePoint"] = "CENTER"
 GW_DEFAULT["focustarget_pos"]["xOfs"] = -80
 GW_DEFAULT["focustarget_pos"]["yOfs"] = 0
+GW_DEFAULT["focustarget_pos_scale"] = 1
 
 GW_DEFAULT["MultiBarBottomLeft"] = {}
 GW_DEFAULT["MultiBarBottomLeft"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["MultiBarBottomLeft"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["MultiBarBottomLeft"]["xOfs"] = -372
 GW_DEFAULT["MultiBarBottomLeft"]["yOfs"] = 120
+GW_DEFAULT["MultiBarBottomLeft_scale"] = 1
 
 GW_DEFAULT["MultiBarBottomLeft"]["size"] = 38
 GW_DEFAULT["MultiBarBottomLeft"]["margin"] = 2
@@ -224,6 +240,7 @@ GW_DEFAULT["MultiBarBottomRight"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["MultiBarBottomRight"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["MultiBarBottomRight"]["xOfs"] = 372
 GW_DEFAULT["MultiBarBottomRight"]["yOfs"] = 120
+GW_DEFAULT["MultiBarBottomRight_scale"] = 1
 
 GW_DEFAULT["MultiBarBottomRight"]["size"] = 38
 GW_DEFAULT["MultiBarBottomRight"]["margin"] = 2
@@ -239,6 +256,7 @@ GW_DEFAULT["PlayerBuffFrame"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
 GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
 GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerBuffFrame_scale"] = 1
 
 GW_DEFAULT["PlayerDebuffFrame"] = {}
 GW_DEFAULT["PlayerDebuffFrame"]["point"] = "BOTTOMLEFT"
@@ -246,12 +264,14 @@ GW_DEFAULT["PlayerDebuffFrame"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 53
 GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
 GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
 
 GW_DEFAULT["MultiBarRight"] = {}
 GW_DEFAULT["MultiBarRight"]["point"] = "RIGHT"
 GW_DEFAULT["MultiBarRight"]["relativePoint"] = "RIGHT"
 GW_DEFAULT["MultiBarRight"]["xOfs"] = -320
 GW_DEFAULT["MultiBarRight"]["yOfs"] = 0
+GW_DEFAULT["MultiBarRight_scale"] = 1
 
 GW_DEFAULT["MultiBarRight"]["size"] = 38
 GW_DEFAULT["MultiBarRight"]["margin"] = 2
@@ -263,6 +283,7 @@ GW_DEFAULT["MultiBarLeft"]["point"] = "RIGHT"
 GW_DEFAULT["MultiBarLeft"]["relativePoint"] = "RIGHT"
 GW_DEFAULT["MultiBarLeft"]["xOfs"] = -368
 GW_DEFAULT["MultiBarLeft"]["yOfs"] = 0
+GW_DEFAULT["MultiBarLeft_scale"] = 1
 
 GW_DEFAULT["MultiBarLeft"]["size"] = 38
 GW_DEFAULT["MultiBarLeft"]["margin"] = 2
@@ -280,18 +301,21 @@ GW_DEFAULT["BNToastPos"]["point"] = "BOTTOM"
 GW_DEFAULT["BNToastPos"]["relativePoint"] = "BOTTOMLEFT"
 GW_DEFAULT["BNToastPos"]["xOfs"] = 78
 GW_DEFAULT["BNToastPos"]["yOfs"] = 246
+GW_DEFAULT["BNToastPos_scale"] = 1
 
 GW_DEFAULT["TalkingHeadFrame_pos"] = {}
 GW_DEFAULT["TalkingHeadFrame_pos"]["point"] = "BOTTOM"
 GW_DEFAULT["TalkingHeadFrame_pos"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["TalkingHeadFrame_pos"]["xOfs"] = 0
 GW_DEFAULT["TalkingHeadFrame_pos"]["yOfs"] = 372
+GW_DEFAULT["TalkingHeadFrame_pos_scale"] = 0.9
 
 GW_DEFAULT["TotemBar_pos"] = {}
 GW_DEFAULT["TotemBar_pos"]["point"] = "TOPRIGHT"
 GW_DEFAULT["TotemBar_pos"]["relativePoint"] = "TOPRIGHT"
 GW_DEFAULT["TotemBar_pos"]["xOfs"] = -500
 GW_DEFAULT["TotemBar_pos"]["yOfs"] = -50
+GW_DEFAULT["TotemBar_pos_scale"] = 1
 
 GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
 GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
@@ -301,6 +325,7 @@ GW_DEFAULT["AlertPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["AlertPos"]["relativePoint"] = "BOTTOMRIGHT"
 GW_DEFAULT["AlertPos"]["xOfs"] = 0
 GW_DEFAULT["AlertPos"]["yOfs"] = 300
+GW_DEFAULT["AlertPos_scale"] = 1
 
 GW_DEFAULT["raid_pos"] = {}
 GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"

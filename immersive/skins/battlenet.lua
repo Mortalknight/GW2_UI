@@ -4,7 +4,16 @@ local GetSetting = GW.GetSetting
 
 local function SkinBNToastFrame()
     local BNToastFrame = _G.BNToastFrame
-    BNToastFrame:SetBackdrop(nil)
+    BNToastFrame:CreateBackdrop()
+    BNToastFrame.BottomRightCorner:Hide()
+    BNToastFrame.RightEdge:Hide()
+    BNToastFrame.TopRightCorner:Hide()
+    BNToastFrame.TopEdge:Hide()
+    BNToastFrame.TopLeftCorner:Hide()
+    BNToastFrame.LeftEdge:Hide()
+    BNToastFrame.BottomLeftCorner:Hide()
+    BNToastFrame.BottomEdge:Hide()
+    BNToastFrame.Center:Hide()
 
     local tex = BNToastFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", BNToastFrame, "TOP", 0, 0)
@@ -19,13 +28,13 @@ local function SkinBNToastFrame()
 
         local point = GetSetting("BNToastPos")
         self:ClearAllPoints()
-        self:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
+        self:SetPoint("TOPLEFT", self.gwMover)
 
         -- remove SetPoint after "OnShow" function
         self.ClearAllPoints = GW.NoOp
         self.SetPoint = GW.NoOp
     end)
 
-    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy")
+    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy", nil, nil, nil, true)
 end
 GW.SkinBNToastFrame = SkinBNToastFrame

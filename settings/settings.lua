@@ -249,6 +249,10 @@ local function moveHudObjects(self)
         mf:SetMovable(true)
         mf:Show()
     end
+    GW.MoveHudScaleableFrame.scaleSlider:Hide()
+    GW.MoveHudScaleableFrame.default:Hide()
+    GW.MoveHudScaleableFrame.desc:Show()
+    GW.MoveHudScaleableFrame:Show()
 end
 GW.moveHudObjects = moveHudObjects
 
@@ -700,7 +704,7 @@ local function LoadSettings()
     end
     local fmGSWKB_OnClick = function(self, button)
         GwSettingsWindow:Hide()
-        GW.HoverKeyBinds()
+        GW.DisplayHoverBinding()
     end
     fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
     fmGSWS:SetScript("OnClick", fnGSWS_OnClick)

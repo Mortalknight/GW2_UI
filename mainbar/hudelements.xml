@@ -11,6 +11,7 @@
             <Color r="0" g="0" b="0" a="1"/>
         </Shadow>
     </Font>
+
     <Button name="GwAlertFrameOffsetter" toplevel="true" parent="UIParent" frameStrata="BACKGROUND" frameLevel="1" enableMouse="false" hidden="true">
         <Size x="800" y="140"/>
         <Anchors>
@@ -118,7 +119,7 @@
         <Layers>
             <Layer>
                 <Texture file="Interface\AddOns\GW2_UI\textures\gradient">
-                    <Color a="0.7"></Color>
+                    <Color r="0" g="0" b="0" a="0.7"></Color>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
@@ -242,6 +243,7 @@
             </Layer>
         </Layers>
     </Frame>
+
     <Frame name="GwLevelingRewards" hidden="true" virtual="true">
         <Size x="376" y="361"></Size>
         <Anchors>
@@ -293,7 +295,6 @@
                             </Anchors>
                         </Texture>
                         <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep">
-
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="TOP" y="2"></Anchor>

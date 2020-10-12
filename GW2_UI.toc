@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon.
 ## Notes-deDE: Ersetzt die Benutzeroberfläche.
@@ -33,6 +33,7 @@ core/itemlevel.lua
 core/shared.xml
 core/fonts.lua
 core/storage.lua
+core/locationData.lua
 core/init.lua
 core/statusReport.lua
 core/slashcommands.lua
@@ -58,6 +59,7 @@ settings/panel_profiles.lua
 settings/hover_binding.lua
 settings/welcome.xml
 settings/welcome.lua
+settings/moveableFrameHandler.lua
 
 core/auras.lua
 
@@ -117,6 +119,7 @@ inventory/lootframe.lua
 immersive/skins/skins.xml
 immersive/questview.xml
 immersive/toast.xml
+immersive/alertPosition.lua
 immersive/alerts.lua
 immersive/afk.lua
 immersive/questview.lua
@@ -134,6 +137,7 @@ objectives/bonusObjective.lua
 objectives/bossFrames.lua
 objectives/arenaFrames.lua
 objectives/achievement.lua
+objectives/vehicleButton.lua
 
 character/character.xml
 character/paperdoll.xml

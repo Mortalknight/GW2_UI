@@ -132,7 +132,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     t:SetAlpha(0.9)
 
     if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
-        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
+        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
     end
 
     local professionColors = GW.professionBagColor[select(2, GetContainerNumFreeSlots(button:GetParent():GetID()))]
@@ -153,7 +153,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         end
         -- Show junk icon if active
         local texture, count, locked, rarity, readable, _, itemLink, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
-        button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
+        button.isJunk = (rarity and rarity == Enum.ItemQuality.Poor) and not noValue
 
         if button.junkIcon then
             if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
@@ -654,7 +654,7 @@ local function LoadInventory()
     -- Skin StackSplit
     local StackSplitFrame = _G.StackSplitFrame
     StackSplitFrame:StripTextures()
-    StackSplitFrame:SetBackdrop(GW.skins.constBackdropFrame)
+    StackSplitFrame:CreateBackdrop(GW.skins.constBackdropFrame)
 
     StackSplitFrame.OkayButton:SkinButton(false, true)
     StackSplitFrame.CancelButton:SkinButton(false, true)
@@ -673,5 +673,11 @@ local function LoadInventory()
     StackSplitFrame.LeftButton:GetPushedTexture():SetTexCoord(1, 0, 1, 0)
     StackSplitFrame.LeftButton:GetDisabledTexture():SetTexCoord(1, 0, 1, 0)
     StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
+
+    StackSplitFrame.textboxbg = StackSplitFrame:CreateTexture(nil, "BACKGROUND")
+    StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+	StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
+	StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
+
 end
 GW.LoadInventory = LoadInventory

@@ -194,10 +194,13 @@ local function updatePetFrameLocation()
     end
     local fBar = MultiBarBottomLeft
     fPet:ClearAllPoints()
+    fPet.gwMover:ClearAllPoints()
     if fBar and fBar.gw_FadeShowing then
-        fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+        fPet:SetPoint("TOPLEFT", fPet.gwMover)
     else
-        fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+        fPet:SetPoint("TOPLEFT", fPet.gwMover)
     end
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
@@ -263,11 +266,9 @@ GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
 local function LoadPetFrame(lm)
     -- disable default PetFrame stuff
-    PetFrame:UnregisterAllEvents()
-    PetFrame:SetScript("OnUpdate", nil)
+    PetFrame:Kill()
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
-    GW.RegisterScaleFrame(playerPetFrame)
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
@@ -302,7 +303,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_PET", "player")
     playerPetFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MAXPOWER", "pet")
-    playerPetFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_HEALTH", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
@@ -310,20 +311,14 @@ local function LoadPetFrame(lm)
 
     updatePetData(playerPetFrame, "UNIT_PET", "player")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, nil, true, true)
 
     if not playerPetFrame.isMoved then
         AddActionBarCallback(updatePetFrameLocation)
         updatePetFrameLocation()
     else
         playerPetFrame:ClearAllPoints()
-        playerPetFrame:SetPoint(
-            GetSetting("pet_pos")["point"],
-            UIParent,
-            GetSetting("pet_pos")["relativePoint"],
-            GetSetting("pet_pos")["xOfs"],
-            GetSetting("pet_pos")["yOfs"]
-        )
+        playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
     end
 
     lm:RegisterPetFrame(playerPetFrame)

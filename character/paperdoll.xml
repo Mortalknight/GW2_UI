@@ -31,7 +31,7 @@
                         <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="Value" text="Not Loaded" justifyV="CENTER" justifyH="LEFT">
+                <FontString parentKey="Value" text="Not Loaded" justifyV="MIDDLE" justifyH="LEFT">
                     <Size x="72" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="35"></Anchor>
@@ -91,7 +91,7 @@
 
     <ItemButton name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true"/>
 
-    <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" jusifyH="LEFT" virtual="true">
+    <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" justifyH="LEFT" virtual="true">
         <Layers>
             <Layer>
                 <Texture parentKey="ddbg" hidden="true" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">

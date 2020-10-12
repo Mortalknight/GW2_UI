@@ -50,7 +50,7 @@
                 </Texture>
             </Layer>
             <Layer Level="OVERLAY">
-                <FontString name="$parentString" text="Quests" parentKey="title" justifyH="LEFT" justifyV="CENTER">
+                <FontString name="$parentString" text="Quests" parentKey="title" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="300" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
@@ -274,7 +274,7 @@
             <Button name="$parentJoinGroup" hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="joingroup">
                 <Size x="25" y="25"></Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="" y="-25"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="-25"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK" textureSubLevel="1">
@@ -520,7 +520,7 @@
                         </Texture>
                     </Layer>
                     <Layer Level="OVERLAY">
-                        <FontString name="$parentString" text="TEST" parentKey="counterlabel" justifyH="RIGHT" justifyV="CENTER">
+                        <FontString name="$parentString" text="TEST" parentKey="counterlabel" justifyH="RIGHT" justifyV="MIDDLE">
                             <Size x="30" y="15"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
@@ -576,7 +576,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" parentKey="value" fontSize="12" text="50%" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString name="$parentString" parentKey="value" text="50%" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="8"/>
                             <Anchors>

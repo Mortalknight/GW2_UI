@@ -9,9 +9,9 @@ local function SkinAddonList()
     _G.AddonListBg:Hide()
     AddonList.TitleBg:Hide()
     AddonList.TopTileStreaks:Hide()
-    AddonList:SetBackdrop(nil)
+    AddonList:CreateBackdrop(nil)
     _G.AddonListInset.NineSlice:Hide()
-    _G.AddonListInset:SetBackdrop(constBackdropFrameBorder)
+    _G.AddonListInset:CreateBackdrop(constBackdropFrameBorder)
 
     AddonList.TitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
@@ -35,7 +35,7 @@ local function SkinAddonList()
     AddonList.CloseButton:ClearAllPoints()
     AddonList.CloseButton:SetPoint("TOPRIGHT", 0, 0)
 
-    _G.AddonListScrollFrame:SetBackdrop(nil)
+    _G.AddonListScrollFrame:CreateBackdrop()
 
     for i = 1, _G.MAX_ADDONS_DISPLAYED do
         _G["AddonListEntry" .. i .. "Enabled"]:SkinCheckButton()
@@ -47,11 +47,27 @@ local function SkinAddonList()
     _G.AddonListScrollFrame:SkinScrollFrame()
     _G.AddonListScrollFrameScrollBar:SkinScrollBar()
 
-    hooksecurefunc("TriStateCheckbox_SetState", function(checked, checkButton)
-        local checkedTexture = _G[checkButton:GetName().."CheckedTexture"]
-        -- 1 is a gray check
-        if checked == 1 then
-            checkedTexture:SetVertexColor(1, .93, .73)
+    hooksecurefunc("AddonList_Update", function()
+        local numEntrys = GetNumAddOns()
+
+        for i = 1, MAX_ADDONS_DISPLAYED do
+            local addonIndex = AddonList.offset + i
+
+            if addonIndex <= numEntrys then
+                local checkbox = _G["AddonListEntry" .. i .. "Enabled"]
+                local checkboxState = GetAddOnEnableState(character, addonIndex)
+                -- Get the character from the current list (nil is all characters)
+                local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
+                if ( character == true ) then
+                    character = nil
+                end
+
+                local checkedTexture = checkbox:GetCheckedTexture()
+                -- 1 is a gray check
+                if checkboxState == 1 then
+                    checkedTexture:SetVertexColor(1, .93, .73)
+                end
+            end
         end
     end)
 end

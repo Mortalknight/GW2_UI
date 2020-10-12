@@ -93,8 +93,7 @@ local function updateSavedReputation()
             savedReputation[factionIndex].isWatched,
             savedReputation[factionIndex].isChild,
             savedReputation[factionIndex].factionID,
-            savedReputation[factionIndex].hasBonusRepGain,
-            savedReputation[factionIndex].canBeLFGBonus = GetFactionInfo(factionIndex)
+            savedReputation[factionIndex].hasBonusRepGain = GetFactionInfo(factionIndex)
     end
 end
 GW.AddForProfiling("reputation", "updateSavedReputation", updateSavedReputation)
@@ -103,17 +102,21 @@ local function returnReputationData(factionIndex)
     if savedReputation[factionIndex] == nil then
         return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
     end
-    return savedReputation[factionIndex].name, savedReputation[factionIndex].description, savedReputation[factionIndex].standingId, savedReputation[
-        factionIndex
-    ].bottomValue, savedReputation[factionIndex].topValue, savedReputation[factionIndex].earnedValue, savedReputation[
-        factionIndex
-    ].atWarWith, savedReputation[factionIndex].canToggleAtWar, savedReputation[factionIndex].isHeader, savedReputation[
-        factionIndex
-    ].isCollapsed, savedReputation[factionIndex].hasRep, savedReputation[factionIndex].isWatched, savedReputation[
-        factionIndex
-    ].isChild, savedReputation[factionIndex].factionID, savedReputation[factionIndex].hasBonusRepGain, savedReputation[
-        factionIndex
-    ].canBeLFGBonus
+    return savedReputation[factionIndex].name,
+            savedReputation[factionIndex].description,
+            savedReputation[factionIndex].standingId,
+            savedReputation[factionIndex].bottomValue,
+            savedReputation[factionIndex].topValue,
+            savedReputation[factionIndex].earnedValue,
+            savedReputation[factionIndex].atWarWith,
+            savedReputation[factionIndex].canToggleAtWar,
+            savedReputation[factionIndex].isHeader,
+            savedReputation[factionIndex].isCollapsed,
+            savedReputation[factionIndex].hasRep,
+            savedReputation[factionIndex].isWatched,
+            savedReputation[factionIndex].isChild,
+            savedReputation[factionIndex].factionID,
+            savedReputation[factionIndex].hasBonusRepGain
 end
 GW.AddForProfiling("reputation", "returnReputationData", returnReputationData)
 
@@ -139,23 +142,6 @@ local function detailsAtwar_OnLeave(self)
 end
 GW.AddForProfiling("reputation", "detailsAtwar_OnLeave", detailsAtwar_OnLeave)
 
-local function detailsFavorite_OnEnter(self)
-    self.icon:SetTexCoord(0, 0.5, 0.5, 1)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(SET_FACTION_LFG_BONUS_REP_TOOLTIP, nil, nil, nil, nil, true)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("reputation", "detailsFavorite_OnEnter", detailsFavorite_OnEnter)
-
-local function detailsFavorite_OnLeave(self)
-    if not self.isActive then
-        self.icon:SetTexCoord(0.5, 1, 0.5, 1)
-    end
-    GameTooltip:Hide()
-end
-GW.AddForProfiling("reputation", "detailsFavorite_OnLeave", detailsFavorite_OnLeave)
-
 local function detailsInactive_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:ClearLines()
@@ -180,11 +166,6 @@ local function detailsControls_OnShow(self)
         self.atwar:Show()
     else
         self.atwar:Hide()
-    end
-    if self.favorit.isShowAble then
-        self.favorit:Show()
-    else
-        self.favorit:Hide()
     end
 end
 GW.AddForProfiling("reputation", "detailsControls_OnShow", detailsControls_OnShow)
@@ -231,8 +212,7 @@ local function setDetailEx(
     isWatched,
     isChild,
     factionID,
-    hasBonusRepGain,
-    canBeLFGBonus)
+    hasBonusRepGain)
     frame:Show()
 
     frame.factionIndex = factionIndex
@@ -319,20 +299,6 @@ local function setDetailEx(
             updateOldData()
         end
     )
-
-    if canBeLFGBonus then
-        frame.controles.favorit.isShowAble = true
-        frame.controles.favorit:SetScript(
-            "OnClick",
-            function()
-                ReputationBar_SetLFBonus(factionID)
-                updateSavedReputation()
-                updateOldData()
-            end
-        )
-    else
-        frame.controles.favorit.isShowAble = false
-    end
 
     frame.controles.atwar:SetScript(
         "OnClick",
@@ -511,8 +477,7 @@ local function setDetail(frame, dat)
         dat.isWatched,
         dat.isChild,
         dat.factionID,
-        dat.hasBonusRepGain,
-        dat.canBeLFGBonus
+        dat.hasBonusRepGain
     )
 end
 GW.AddForProfiling("reputation", "setDetail", setDetail)
@@ -549,8 +514,7 @@ updateDetails = function()
             isWatched,
             isChild,
             factionID,
-            hasBonusRepGain,
-            canBeLFGBonus = returnReputationData(idx)
+            hasBonusRepGain = returnReputationData(idx)
 
         if isHeader and not isChild then
             break
@@ -590,7 +554,6 @@ updateDetails = function()
         facData[factionID].isChild = isChild
         facData[factionID].factionID = factionID
         facData[factionID].hasBonusRepGain = hasBonusRepGain
-        facData[factionID].canBeLFGBonus = canBeLFGBonus
         facData[factionID].savedHeaderName = savedHeaderName
     end
 
@@ -632,8 +595,6 @@ GW.AddForProfiling("reputation", "status_SetValue", status_SetValue)
 local function setupDetail(self)
     self.controles.atwar:SetScript("OnEnter", detailsAtwar_OnEnter)
     self.controles.atwar:SetScript("OnLeave", detailsAtwar_OnLeave)
-    self.controles.favorit:SetScript("OnEnter", detailsFavorite_OnEnter)
-    self.controles.favorit:SetScript("OnLeave", detailsFavorite_OnLeave)
     self.controles.inactive:SetScript("OnEnter", detailsInactive_OnEnter)
     self.controles.inactive:SetScript("OnLeave", GameTooltip_Hide)
     self.controles.inactive.checkbutton:SetScript("OnEnter", detailsInactive_OnEnter)
@@ -700,6 +661,16 @@ local function setupDetail(self)
     self.currentRank:SetText(REFORGE_CURRENT)
     self.nextRank:SetText(L["CHARACTER_NEXT_RANK"])
     self:GetParent():SetScript("OnClick", details_OnClick)
+    self:GetParent():SetScript("OnEnter", function(self)
+        self.item.repbg:SetBlendMode("ADD")
+        self.item.background:SetBlendMode("ADD")
+        self.item.background2:SetBlendMode("ADD")
+    end)
+    self:GetParent():SetScript("OnLeave", function(self)
+        self.item.repbg:SetBlendMode("BLEND")
+        self.item.background:SetBlendMode("BLEND")
+        self.item.background2:SetBlendMode("BLEND")
+    end)
 
     self.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)
     self.repbg:SetDesaturated(true)
@@ -845,8 +816,7 @@ local function updateDetailsSearch(s)
             isWatched,
             isChild,
             factionID,
-            hasBonusRepGain,
-            canBeLFGBonus = returnReputationData(idx)
+            hasBonusRepGain = returnReputationData(idx)
 
         local lower1 = string.lower(name)
         local lower2 = string.lower(s)
@@ -890,7 +860,6 @@ local function updateDetailsSearch(s)
             facData[factionID].isChild = isChild
             facData[factionID].factionID = factionID
             facData[factionID].hasBonusRepGain = hasBonusRepGain
-            facData[factionID].canBeLFGBonus = canBeLFGBonus
             facData[factionID].savedHeaderName = savedHeaderName
         end
     end

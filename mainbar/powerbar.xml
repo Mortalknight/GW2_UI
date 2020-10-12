@@ -49,7 +49,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="label" name="$parentString" fontSize="14" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="label" name="$parentString" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" b="1" g="1"></Color>
                             <Size x="316" y="16"/>
                             <Anchors>

@@ -99,7 +99,7 @@ local function SkinOpenMailFrame()
     OpenMailFrame.NineSlice:Hide()
     OpenMailFrame.TitleBg:Hide()
     OpenMailFrame.TopTileStreaks:Hide()
-    OpenMailFrame:SetBackdrop(nil)
+    OpenMailFrame:CreateBackdrop(nil)
     OpenMailFrame:SetParent(MailFrame)
 
     OpenMailSenderLabel:Hide()
@@ -284,7 +284,7 @@ end
 local function ClearMailTextures()
     _G.MailFrameBg:Hide()
     _G.MailFrameInset.NineSlice:Hide()
-    _G.MailFrameInset:SetBackdrop(constBackdropFrameBorder)
+    _G.MailFrameInset:CreateBackdrop(constBackdropFrameBorder)
 
     MailFrame:StripTextures()
     InboxFrame:StripTextures()
@@ -296,7 +296,12 @@ local function ClearMailTextures()
     MailFrame.NineSlice:Hide()
     MailFrame.TitleBg:Hide()
     MailFrame.TopTileStreaks:Hide()
-    MailFrame:SetBackdrop(nil)
+    MailFrame:CreateBackdrop()
+
+    OpenMailLetterButtonIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    OpenMailLetterButton:StripTextures()
+    OpenMailMoneyButtonIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    OpenMailMoneyButton:StripTextures()
 
     for i = 1, _G.INBOXITEMS_TO_DISPLAY do
         local bg = _G["MailItem" .. i]
@@ -359,15 +364,15 @@ local function SkinMail()
     MailFrame.heading:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader")
 
     MailFrame.heading.Title = MailFrame:CreateFontString("MailFrameTitle", "ARTWORK")
-    MailFrame.heading.Title:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 15, 30)
+    MailFrame.heading.Title:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 50, 30)
     MailFrame.heading.Title:SetFont(DAMAGE_TEXT_FONT, 20)
     MailFrame.heading.Title:SetText(MAIL_LABEL)
     MailFrame.heading.Title:SetTextColor(1, .93, .73)
 
-    --MailFrame.icon = MailFrame:CreateTexture("MailFrameIcon", "ARTWORK")
-    --MailFrame.icon:SetSize(64, 64)
-    --MailFrame.icon:SetPoint("CENTER", MailFrame, "TOPLEFT", -16, 16)
-    --MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/mail")
+    MailFrame.icon = MailFrame:CreateTexture("MailFrameIcon", "ARTWORK")
+    MailFrame.icon:SetSize(80, 80)
+    MailFrame.icon:SetPoint("CENTER", MailFrame, "TOPLEFT", 12, 25)
+    MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/mail-window-icon")
 
     MailFrame.headingRight = MailFrame:CreateTexture("bg", "BACKGROUND")
     MailFrame.headingRight:SetSize(newWidth, 64)
@@ -397,8 +402,8 @@ local function SkinMail()
     InboxTitleText:SetFont(UNIT_NAME_FONT, 14)
     InboxTitleText:SetTextColor(1, 1, 1, 1)
     InboxTitleText:SetJustifyH("LEFT")
-
-    _G.AutoCompleteBox:SetBackdrop(GW.skins.constBackdropFrame)
+    
+    _G.AutoCompleteBox:CreateBackdrop(GW.skins.constBackdropFrame)
 
     -- movable stuff
     local pos = GetSetting("MAILBOX_POSITION")

@@ -5,6 +5,7 @@ local SetSetting = GW.SetSetting
 
 local windowsList = {}
 local hasBeenLoaded = false
+local moveDistance, heroFrameX, heroFrameY, heroFrameLeft, heroFrameTop, heroFrameNormalScale, heroFrameEffectiveScale = 0, 0, 0, 0, 0, 1
 
 windowsList[1] = {
     ["OnLoad"] = "LoadPaperDoll",
@@ -154,7 +155,7 @@ local charSecure_OnAttributeChanged =
             fmSBM:SetAttribute("tabopen", 2)
         end
     elseif fmTal ~= nil and value == "petbook" then
-        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 4 then
+        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 5 then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
@@ -336,6 +337,15 @@ local function click_OnEvent(self, event)
 end
 GW.AddForProfiling("character", "mover_OnEvent", mover_OnEvent)
 
+local function GetScaleDistance()
+    local left, top = heroFrameLeft, heroFrameTop
+    local scale = heroFrameEffectiveScale
+    local x, y = GetCursorPosition()
+    x = x / scale - left
+    y = top - y / scale
+    return sqrt(x * x + y * y)
+end
+
 local function loadBaseFrame()
     if hasBeenLoaded then
         return
@@ -344,7 +354,6 @@ local function loadBaseFrame()
 
     -- create the character window and secure bind its tab open/close functions
     local fmGCW = CreateFrame("Frame", "GwCharacterWindow", UIParent, "GwCharacterWindowTemplate")
-    GW.RegisterScaleFrame(fmGCW)
     fmGCW.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
     fmGCW.WindowHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     fmGCW:SetAttribute("windowpanelopen", nil)
@@ -368,13 +377,64 @@ local function loadBaseFrame()
     -- the close button securely closes the char window
     fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
-    -- setup movable stuff
+    -- setup movable stuff and scale
     local pos = GetSetting("HERO_POSITION")
+    local scale = GetSetting("HERO_POSITION_SCALE")
+    fmGCW:SetScale(scale)
     fmGCW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     fmGCW.mover.onMoveSetting = "HERO_POSITION"
     fmGCW.mover.savePosition = mover_SavePosition
     fmGCW.mover:SetAttribute("_onmousedown", mover_OnDragStart)
     fmGCW.mover:SetAttribute("_onmouseup", mover_OnDragStop)
+    fmGCW.sizer.texture:SetDesaturated(true)
+    fmGCW.sizer:SetScript("OnEnter", function(self)
+        fmGCW.sizer.texture:SetDesaturated(false)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
+        GameTooltip:ClearLines()
+        GameTooltip_SetTitle(GameTooltip, L["SIZER_HERO_PANEL"])
+        GameTooltip:Show()
+    end)
+    fmGCW.sizer:SetScript("OnLeave", function(self)
+        fmGCW.sizer.texture:SetDesaturated(true)
+        GameTooltip_Hide()
+    end)
+    fmGCW.sizer:SetFrameStrata(fmGCW:GetFrameStrata())
+    fmGCW.sizer:SetFrameLevel(fmGCW:GetFrameLevel() + 15)
+    fmGCW.sizer:SetScript("OnMouseDown", function(self, btn)
+        if btn ~= "RightButton" then
+            return
+        end
+        heroFrameLeft, heroFrameTop = GwCharacterWindow:GetLeft(), GwCharacterWindow:GetTop()
+        heroFrameNormalScale = GwCharacterWindow:GetScale()
+        heroFrameX,heroFrameY = heroFrameLeft, heroFrameTop - (UIParent:GetHeight() / heroFrameNormalScale)
+        heroFrameEffectiveScale = GwCharacterWindow:GetEffectiveScale()
+        moveDistance = GetScaleDistance()
+        self:SetScript("OnUpdate", function()
+            local scale = GetScaleDistance() / moveDistance * heroFrameNormalScale
+            if scale < 0.2 then	scale = 0.2	elseif scale > 3.0 then	scale = 3.0	end
+            GwCharacterWindow:SetScale(scale)
+            local s = heroFrameNormalScale / GwCharacterWindow:GetScale()
+            local x = heroFrameX * s
+            local y = heroFrameY * s
+            GwCharacterWindow:ClearAllPoints()
+            GwCharacterWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
+        end)
+    end)
+    fmGCW.sizer:SetScript("OnMouseUp", function(self, btn)
+        self:SetScript("OnUpdate", nil)
+        SetSetting("HERO_POSITION_SCALE", GwCharacterWindow:GetScale())
+        -- Save hero frame position
+        local pos = GetSetting("HERO_POSITION")
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwCharacterWindow:GetPoint()
+        SetSetting("HERO_POSITION", pos)
+        --Reset Model Camera
+        PaperDoll3dModel:RefreshCamera()
+    end)
     
     -- set binding change handlers
     fmGCW.secure:HookScript("OnEvent", click_OnEvent)

@@ -69,7 +69,7 @@ local function StripType(which, object, kill, alpha)
         if which == STRIP_TEX then
             local FrameName = object.GetName and object:GetName()
             for _, Blizzard in pairs(StripTexturesBlizzFrames) do
-                local BlizzFrame = object[Blizzard] or (FrameName and _G[FrameName..Blizzard])
+                local BlizzFrame = object[Blizzard] or (FrameName and _G[FrameName .. Blizzard])
                 if BlizzFrame and BlizzFrame.StripTextures then
                     BlizzFrame:StripTextures(kill, alpha)
                 end
@@ -131,6 +131,10 @@ function SkinSliderFrame(frame)
     local SIZE = 12
 
     frame:SetBackdrop(nil)
+    if not frame.backdrop then
+        frame:CreateBackdrop()
+    end
+
     frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/sliderhandle")
 
     local thumb = frame:GetThumbTexture()
@@ -163,7 +167,7 @@ end
 
 local function CreateBackdrop(frame, backdropTexture)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
-    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
 
     local frameLevel = parent.GetFrameLevel and parent:GetFrameLevel()
@@ -174,8 +178,11 @@ local function CreateBackdrop(frame, backdropTexture)
         backdrop:SetFrameLevel(0)
     end
 
+    backdrop:SetAllPoints()
     if backdropTexture then 
         backdrop:SetBackdrop(backdropTexture)
+    else
+        backdrop:SetBackdrop(nil)
     end
 end
 
@@ -218,7 +225,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
 end
 
 local function SkinTab(tabButton)
-    tabButton:SetBackdrop(nil)
+    tabButton:CreateBackdrop()
 
     if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/unittab") end
     if tabButton.SetHighlightTexture then 
@@ -241,10 +248,12 @@ local function SkinTab(tabButton)
         end
     end
 
-    for _, object in pairs(tabs) do
-        local tex = _G[tabButton:GetName() .. object]
-        if tex then
-            tex:SetTexture()
+    if tabButton:GetName() then
+        for _, object in pairs(tabs) do
+            local tex = _G[tabButton:GetName() .. object]
+            if tex then
+                tex:SetTexture()
+            end
         end
     end
 end
@@ -317,8 +326,7 @@ local function SkinDropDownMenu(frame)
     frame:StripTextures()
     frame:SetWidth(155)
 
-    frame:CreateBackdrop()
-    frame.backdrop:SetBackdrop(constBackdropDropDown)
+    frame:CreateBackdrop(constBackdropDropDown)
     frame.backdrop:SetBackdropColor(0, 0, 0)
 
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)

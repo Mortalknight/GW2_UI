@@ -219,7 +219,7 @@ local function setSlotButton(btn, info)
     if not btn.slotIndex then
         return
     end
-
+    
     local slotIndex = btn.slotIndex
     local unlock = C_SpecializationInfo.GetPvpTalentSlotUnlockLevel(slotIndex)
     if info.enabled and GW.mylevel >= unlock then
@@ -246,7 +246,7 @@ GW.AddForProfiling("talents_pvp", "setSlotButton", setSlotButton)
 
 local talentIds = {}
 local function UpdatePvPTab(fmSpellbook, fmTab)
-    if GW.mylevel < SHOW_PVP_TALENT_LEVEL then
+    if not C_SpecializationInfo.CanPlayerUsePVPTalentUI() then
         for k, v in pairs(fmTab.groups) do
             v:Hide()
         end
@@ -268,16 +268,16 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
 
     wipe(talentIds)
     local tidx = 1
-    for i, slot in ipairs({"TrinketSlot1", "TalentSlot1", "TalentSlot2", "TalentSlot3"}) do
+    for i, slot in ipairs({"TalentSlot1", "TalentSlot2", "TalentSlot3"}) do
         local btn = slotGroup.pool:Acquire()
         local row = 0
-        local col = (i - 1) % 4
+        local col = (i - 1) % 3
 
         btn.slotIndex = i
         local info = C_SpecializationInfo.GetPvpTalentSlotInfo(i)
 
         setSlotButton(btn, info)
-        btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 30 + (50 * col), -37 + (-50 * row))
+        btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 55 + (50 * col), -37 + (-50 * row))
 
         for j, talentId in ipairs(info.availableTalentIDs) do
             if not tContains(talentIds, talentId) then
@@ -491,7 +491,7 @@ local function CreatePvPTab(fmSpellbook)
     lockGroup.info:SetTextColor(1, 1, 1, 1)
     lockGroup.info:SetShadowColor(0, 0, 0, 1)
     lockGroup.info:SetShadowOffset(1, -1)
-    lockGroup.info:SetText(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, SHOW_PVP_TALENT_LEVEL))
+    lockGroup.info:SetText(select(2, C_SpecializationInfo.CanPlayerUsePVPTalentUI()))
 
     warGroup:ClearAllPoints()
     warGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)

@@ -7,7 +7,7 @@
             <Anchors point="TOPLEFT"></Anchors>
         </Anchors>
         <Frames>
-            <Frame parentKey="header" setAllPoints="true">
+            <Button parentKey="header" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer>
                         <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
@@ -18,15 +18,21 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <FontString parentKey="spaceString" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                        </Texture>
+                        <FontString parentKey="spaceString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-5" />
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
                             </Anchors>
                             <Size x="200" y="24" />
                         </FontString>
                     </Layer>
                 </Layers>
-            </Frame>
+            </Button>
             <Button parentKey="item" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer level="ARTWORK">
@@ -46,13 +52,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <FontString parentKey="spaceString" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="LEFT">
+                        <FontString parentKey="spaceString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="42" y="-5" />
                             </Anchors>
                             <Size x="350" y="24" />
                         </FontString>
-                        <FontString parentKey="amount" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="CENTER" justifyH="RIGHT">
+                        <FontString parentKey="amount" text="Amount Could not be loaded" justifyV="MIDDLE" justifyH="RIGHT">
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-5" y="-5" />
                             </Anchors>

@@ -75,13 +75,10 @@ local durabilityFrame = nil
 
 local function setItemButtonQuality(button, quality, itemIDOrLink)
     if quality then
-        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+        if quality >= Enum.ItemQuality.Common and GetItemQualityColor(quality) then
+            local r, g, b = GetItemQualityColor(quality)
             button.IconBorder:Show()
-            button.IconBorder:SetVertexColor(
-                BAG_ITEM_QUALITY_COLORS[quality].r,
-                BAG_ITEM_QUALITY_COLORS[quality].g,
-                BAG_ITEM_QUALITY_COLORS[quality].b
-            )
+            button.IconBorder:SetVertexColor(r, g, b)
         else
             button.IconBorder:Hide()
         end
@@ -103,7 +100,7 @@ local function updateBagItemButton(button)
     button.ItemId = id
     button.ItemLink = getContainerItemLinkByName(name)
     if button.ItemLink == nil then 
-        button.ItemLink = GetInventoryItemLink("player", button.itemSlot)
+        button.ItemLink = GW.getInventoryItemLinkByNameAndId(name, id)
     end
     
     if textureName then
@@ -702,6 +699,32 @@ local function getStatListFrame(self, i)
 end
 GW.AddForProfiling("paperdoll_equipment", "getStatListFrame", getStatListFrame)
 
+local function getDurabilityListFrame(self)
+    if _G["GwPaperDollStatDurability"] ~= nil then
+        return _G["GwPaperDollStatDurability"]
+    end
+
+    local fm = CreateFrame("Frame", "GwPaperDollStatDurability", self, "GwPaperDollStat")
+    fm.Value:SetFont(UNIT_NAME_FONT, 14)
+    fm.Value:SetText(ERRORS)
+    fm.Label:SetFont(UNIT_NAME_FONT, 1)
+    fm.Label:SetTextColor(0, 0, 0, 0)
+
+    fm.stat = "DURABILITY"
+    fm.onEnterFunc = nil
+
+    --Icon setzen
+    fm.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
+    fm.icon:SetTexCoord(0, 1, 0, 0.5)
+    fm.icon:SetDesaturated(true)
+
+    fm:SetScript("OnEnter", stat_OnEnter)
+    fm:SetScript("OnLeave", GameTooltip_Hide)
+
+    return fm
+end
+GW.AddForProfiling("paperdoll_equipment", "getDurabilityListFrame", getDurabilityListFrame)
+
 local function updateStats()
     local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
     avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
@@ -719,7 +742,16 @@ local function updateStats()
     local grid = 1
     local x = 0
     local y = 0
+    local i
 
+    -- hide old stats
+    for i = 1, 20 do
+        statFrame = _G["GwPaperDollStat" .. i]
+        if statFrame then
+            statFrame.stat = nil
+            statFrame:Hide()
+        end
+    end
     for catIndex = 1, #PAPERDOLL_STATCATEGORIES do
         for statIndex = 1, #PAPERDOLL_STATCATEGORIES[catIndex].stats do
             local stat = PAPERDOLL_STATCATEGORIES[catIndex].stats[statIndex]
@@ -740,19 +772,17 @@ local function updateStats()
                 end
                 showStat = foundRole
             end
+            statFrame = getStatListFrame(GwPaperDollStats, numShownStats)    
+            statFrame.onEnterFunc = nil
+            statFrame.UpdateTooltip = nil
+            PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player")
 
-            if stat.stat == "MASTERY" and (GW.mylevel < SHOW_MASTERY_LEVEL) then
-                showStat = false
-            end
-
-            if (showStat) then
-                statFrame = getStatListFrame(GwPaperDollStats, numShownStats)
+            if (showStat) and (not stat.hideAt or stat.hideAt ~= statFrame.numericValue) then
+                statFrame:Show()
                 statFrame.stat = stat.stat
-                statFrame.onEnterFunc = nil
-                PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player")
-
                 setStatIcon(statFrame, stat.stat)
 
+                statFrame:ClearAllPoints()
                 statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
                 grid = grid + 1
                 x = x + 92
@@ -768,13 +798,8 @@ local function updateStats()
         end
     end
     -- Add Durability Icon
-    statFrame = getStatListFrame(GwPaperDollStats, numShownStats)
-    statFrame.stat = "DURABILITY"
-    statFrame.onEnterFunc = nil
-    --Icon setzen
-    statFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
-    statFrame.icon:SetTexCoord(0, 1, 0, 0.5)
-    statFrame.icon:SetDesaturated(true)
+    statFrame = getDurabilityListFrame(GwPaperDollStats)
+    statFrame:ClearAllPoints()
     statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     durabilityFrame = statFrame
 end

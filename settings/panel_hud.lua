@@ -91,7 +91,8 @@ local function LoadHudPanel(sWindow)
         L["MINIMAP_SCALE_DESC"],
         "MINIMAP_SCALE",
         function()
-            Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
+            local size = GetSetting("MINIMAP_SCALE")
+            Minimap:SetSize(size, size)
         end,
         {250, 200, 170},
         {
@@ -107,7 +108,7 @@ local function LoadHudPanel(sWindow)
         L["AUTO_REPAIR"],
         L["AUTO_REPAIR_DESC"],
         "AUTO_REPAIR",
-        GW.SetMinimapHover,
+        nil,
         {"NONE", "PLAYER", "GUILD"},
         {
             NONE_KEY,

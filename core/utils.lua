@@ -261,27 +261,27 @@ local function Length(T)
 end
 GW.Length = Length
 
-local function SplitString(inputstr, sep, sep2, sep3)
-    if sep == nil then
-        sep = "%s"
-    end
-    inputstr = inputstr:gsub("\n", "")
-    local t = {}
-    local i = 1
-    for str in string.gmatch(inputstr, "([^" .. sep .. "|" .. sep2 .. "|" .. sep3 .. "]+)") do
-        local _, en = string.find(inputstr, str)
-        if en ~= nil then
-            local s = string.sub(inputstr, en + 1, en + 1)
-            if s ~= nil or s ~= "" then
-                str = str .. s
+do
+    local splitTable = {}
+    local function splitString(str, delim)
+        local start = 1
+        wipe(splitTable)
+
+        while true do
+            local pos = strfind(str, delim, start, true)
+            if not pos then
+                break
             end
+            tinsert(splitTable, strsub(str, start, pos -1))
+            start = pos + strlen(delim)
         end
-        t[i] = str
-        i = i + 1
+        
+        tinsert(splitTable, strsub(str, start))
+
+        return unpack(splitTable)
     end
-    return t
+    GW.splitString = splitString
 end
-GW.SplitString = SplitString
 
 local function FindInList(list, str, i, del)
     local del = "([^%s" .. (del or ",;") .. ")]?)"
@@ -433,6 +433,18 @@ local function getContainerItemLinkByName(itemName)
 end
 GW.getContainerItemLinkByName = getContainerItemLinkByName
 
+local function getInventoryItemLinkByNameAndId(name, id)
+    for slot = 1, 17 do
+        local itemLink = GetInventoryItemLink("player", slot)
+        if itemLink and itemLink:find(name) and itemLink:find(id) then
+            return itemLink
+        end
+    end
+
+    return nil
+end
+GW.getInventoryItemLinkByNameAndId = getInventoryItemLinkByNameAndId
+
 local function frame_OnEnter(self)
     GameTooltip:SetOwner(self, self.tooltipDir, 0, self.tooltipYoff)
     GameTooltip:SetText(self.tooltipText, 1, 1, 1)
@@ -523,50 +535,51 @@ end
 GW.vernotes = vernotes
 
 -- create custom UIFrameFlash animation
-local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInHoldTime, flashOutHoldTime)
-    local flasher
+local function SetUpFrameFlash(frame, loop)
+    frame.flasher = frame:CreateAnimationGroup("Flash")
+    frame.flasher.fadein = frame.flasher:CreateAnimation("ALPHA", "FadeIn")
+    frame.flasher.fadein:SetOrder(1)
 
-    if not frame.flasher then
-        flasher = frame:CreateAnimationGroup()
-    else
-        flasher = frame.flasher
-    end
+    frame.flasher.fadeout = frame.flasher:CreateAnimation("ALPHA", "FadeOut")
+    frame.flasher.fadeout:SetOrder(2)
 
-    local fade1 = flasher:CreateAnimation("Alpha")
-    local fade2 = flasher:CreateAnimation("Alpha")
-    fade1:SetDuration(fadeInTime)
-    fade1:SetToAlpha(1)
-    fade1:SetOrder(1)
-    fade1:SetEndDelay(flashInHoldTime)
-    
-    fade2:SetDuration(fadeOutTime)
-    fade2:SetToAlpha(0)
-    fade2:SetOrder(2)
-    fade2:SetEndDelay(flashOutHoldTime)
-
-    if showWhenDone then
-        flasher:SetScript("OnFinished", function(self)
-            frame:SetAlpha(1)
-            self:SetScript("OnFinished", nil)
+    if loop then
+        frame.flasher:SetScript("OnFinished", function(self)
+            self:Play()
         end)
     end
+end
 
-    frame.flasher = flasher
+local function StopFlash(frame)
+    if frame.flasher and frame.flasher:IsPlaying() then
+        frame.flasher:Stop()
+    end
+end
+GW.StopFlash = StopFlash
 
-    frame.flasher:Play()
+local function FrameFlash(frame, duration, fadeOutAlpha, fadeInAlpha, loop)
+	if not frame.flasher then
+		SetUpFrameFlash(frame,loop)
+	end
+
+	if not frame.flasher:IsPlaying() then
+        frame.flasher.fadein:SetDuration(duration)
+        frame.flasher.fadein:SetFromAlpha(fadeOutAlpha or 0)
+        frame.flasher.fadein:SetToAlpha(fadeInAlpha or 1)
+        frame.flasher.fadeout:SetDuration(duration)
+        frame.flasher.fadeout:SetFromAlpha(fadeInAlpha or 1)
+        frame.flasher.fadeout:SetToAlpha(fadeOutAlpha or 0)
+		frame.flasher:Play()
+	end
 end
 GW.FrameFlash = FrameFlash
 
 local function setItemLevel(button, quality, itemlink, slot)
     button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     if quality then
-        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-            button.itemlevel:SetTextColor(
-                BAG_ITEM_QUALITY_COLORS[quality].r,
-                BAG_ITEM_QUALITY_COLORS[quality].g,
-                BAG_ITEM_QUALITY_COLORS[quality].b,
-                1
-            )
+        if quality >= Enum.ItemQuality.Common and GetItemQualityColor(quality) then
+            local r, g, b = GetItemQualityColor(quality)
+            button.itemlevel:SetTextColor(r, g, b, 1)
         end
         local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink)
         button.itemlevel:SetText(slotInfo.iLvl)

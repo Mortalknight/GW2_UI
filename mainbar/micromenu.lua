@@ -71,6 +71,7 @@ end
 GW.AddForProfiling("micromenu", "gwMicro_PositionAlert", gwMicro_PositionAlert)
 
 local function modifyMicroAlert(alert, microButton)
+    if not alert then return end --TODO: Alerts are changed
     alert.GwMicroButton = microButton
     alert.Arrow.Arrow:SetTexCoord(0.78515625, 0.99218750, 0.58789063, 0.54687500)
     alert.Arrow.Glow:SetTexCoord(0.40625000, 0.66015625, 0.82812500, 0.77343750)
@@ -155,7 +156,7 @@ local function setupMicroButtons(mbf)
     -- or if we need to create our own char button for the custom hero panel
     local cref
     if GetSetting("USE_CHARACTER_WINDOW") then
-        cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
@@ -169,12 +170,13 @@ local function setupMicroButtons(mbf)
             f:SetAttribute("windowpanelopen", "paperdoll")
             ]=]
         )
-
         disableMicroButton(CharacterMicroButton, true)
         CharacterMicroButton.GwSetAnchorPoint = function(self)
             self:ClearAllPoints()
             self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
         end
+        cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        cref:SetScript("OnHide", GameTooltip_Hide)
     else
         cref = CharacterMicroButton
         MicroButtonPortrait:Hide()
@@ -202,7 +204,7 @@ local function setupMicroButtons(mbf)
     -- or if we need our custom talent button for the hero panel
     local tref
     if GetSetting("USE_TALENT_WINDOW") then
-        tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         tref.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
         tref.newbieText = NEWBIE_TOOLTIP_TALENTS
         reskinMicroButton(tref, "TalentMicroButton", mbf)
@@ -218,6 +220,8 @@ local function setupMicroButtons(mbf)
             f:SetAttribute("windowpanelopen", "talents")
             ]=]
         )
+        tref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        tref:SetScript("OnHide", GameTooltip_Hide)
 
         disableMicroButton(SpellbookMicroButton)
         disableMicroButton(TalentMicroButton, true)
@@ -426,10 +430,10 @@ local function LoadMicroMenu()
         end
     )
 
-    -- get rid of the super-persistent PvP talent selector alert
-    if not TalentMicroButton:HasTalentAlertToShow() then
-        TalentMicroButtonAlert:Hide()
-    end
+    -- get rid of the super-persistent PvP talent selector alert TODO
+    --if not TalentMicroButton:HasTalentAlertToShow() then
+    --   TalentMicroButtonAlert:Hide()
+    --end
     hooksecurefunc(
         "MainMenuMicroButton_ShowAlert",
         function(f, t)
@@ -438,6 +442,11 @@ local function LoadMicroMenu()
             end
         end
     )
+
+    -- if borders are hidden, hide the bg
+    if not GetSetting("BORDER_ENABLED") then
+        mbf.cf.bg:Hide()
+    end
 
     -- if set to fade micro menu, add fader
     if GetSetting("FADE_MICROMENU") then
@@ -506,7 +515,7 @@ local function LoadMicroMenu()
     else
         modifyMicroAlert(TalentMicroButtonAlert, TalentMicroButton)
     end
-    hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert)
+    --hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert) TODO
 
 end
 GW.LoadMicroMenu = LoadMicroMenu

@@ -212,7 +212,7 @@ local function setUpBlock(questIDs)
                 compassData["X"] = x
                 compassData["Y"] = y
                 compassData["QUESTID"] = questID
-                compassData["MAPID"] = mapId
+                compassData["MAPID"] = GW.locationData.mapID
 
                 if simpleDesc == "" then
                     simpleDesc = ParseSimpleObjective(txt)

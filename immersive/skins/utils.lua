@@ -34,11 +34,11 @@ local function SkinUIDropDownMenu()
     
         local Backdrop = _G[listFrameName .. "Backdrop"]
         Backdrop:StripTextures()
-        Backdrop:SetBackdrop(constBackdropFrame)
+        Backdrop:CreateBackdrop(constBackdropFrame)
     
         local menuBackdrop = _G[listFrameName .. "MenuBackdrop"]
         menuBackdrop:StripTextures()
-        menuBackdrop:SetBackdrop(constBackdropFrame)
+        menuBackdrop:CreateBackdrop(constBackdropFrame)
     end)
 end
 
@@ -80,7 +80,7 @@ local function SkinDropDownList()
         --Check if Raider.IO Entry is added
         if IsAddOnLoaded("RaiderIO") and _G.RaiderIO_CustomDropDownList then
             _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
-            _G["RaiderIO_CustomDropDownList"]:SetBackdrop(constBackdropFrame)
+            _G["RaiderIO_CustomDropDownList"]:CreateBackdrop(constBackdropFrame)
         end
     end)
 

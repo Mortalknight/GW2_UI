@@ -9,9 +9,9 @@ local selectedLongInstanceID = nil
 local function checkNumWatched()
     local numWatched = 0
 
-    for i = 1, GetCurrencyListSize() do
-        local isWatched = select(5, GetCurrencyListInfo(i))
-        if isWatched then
+    for i = 1, C_CurrencyInfo.GetCurrencyListSize() do
+        local info = C_CurrencyInfo.GetCurrencyListInfo(i)
+        if info.isShowInBackpack then
             numWatched = numWatched + 1
         end
     end
@@ -25,18 +25,17 @@ local function currency_OnClick(self)
         if not self.CurrencyID or not self.CurrencyIdx then
             return
         end
-        local _, _, _, _, isWatched, _ = GetCurrencyListInfo(self.CurrencyIdx)
-
-        if not isWatched then
+        local info = C_CurrencyInfo.GetCurrencyListInfo(self.CurrencyIdx)
+        if not info.isShowInBackpack then
             if checkNumWatched() >= MAX_WATCHED_TOKENS then
                 UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, MAX_WATCHED_TOKENS), 1.0, 0.1, 0.1, 1.0)
                 return
             end
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            SetCurrencyBackpack(self.CurrencyIdx, 1)
+            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, true)
         else
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            SetCurrencyBackpack(self.CurrencyIdx, 0)
+            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, false)
         end
     end
 end
@@ -61,7 +60,8 @@ local function loadCurrency(curwin)
     local zebra
 
     local offset = HybridScrollFrame_GetOffset(curwin)
-    local currencyCount = GetCurrencyListSize()
+    local currencyCount = C_CurrencyInfo.GetCurrencyListSize()
+
     for i = 1, #curwin.buttons do
         local slot = curwin.buttons[i]
 
@@ -73,40 +73,55 @@ local function loadCurrency(curwin)
             slot.item.CurrencyIdx = nil
             slot.header:Hide()
         else
-            local count, icon, maximum
-            local name, isHeader, _, _, isWatched, _ = GetCurrencyListInfo(idx)
-            if isHeader then
+            local info = C_CurrencyInfo.GetCurrencyListInfo(idx)
+            if info.isHeader then
                 slot.item:Hide()
                 slot.item.CurrencyID = nil
                 slot.item.CurrencyIdx = nil
-                slot.header.spaceString:SetText(name)
+                slot.header.spaceString:SetText(info.name)
+                slot.header.isHeaderExpanded = info.isHeaderExpanded
+                slot.header.index = idx
+                if slot.header.isHeaderExpanded then
+                    slot.header.icon:Show()
+                    slot.header.icon2:Hide()
+                else
+                    slot.header.icon:Hide()
+                    slot.header.icon2:Show()
+                end
                 slot.header:Show()
             else
                 slot.header:Hide()
 
                 -- parse out the currency ID to get more accurate info
-                local link = GetCurrencyListLink(idx)
+                local link = C_CurrencyInfo.GetCurrencyListLink(idx)
                 local _, _, _, _, curid, _ =
                     string.find(
                     link,
                     "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%]%[]*)%]?|?h?|?r?"
                 )
-                name, count, icon, _, _, maximum, _, _ = GetCurrencyInfo(curid)
+                local cinfo = C_CurrencyInfo.GetCurrencyInfo(curid)
                 slot.item.CurrencyID = curid
                 slot.item.CurrencyIdx = idx
 
                 -- set currency item values
-                slot.item.spaceString:SetText(name)
-                if maximum == 0 then
-                    slot.item.amount:SetText(CommaValue(count))
+                slot.item.spaceString:SetText(cinfo.name)
+                if cinfo.maxQuantity == 0 then
+                    slot.item.amount:SetText(CommaValue(cinfo.quantity))
                 else
-                    slot.item.amount:SetText(CommaValue(count) .. " / " .. CommaValue(maximum))
+                    slot.item.amount:SetText(CommaValue(cinfo.quantity) .. " / " .. CommaValue(cinfo.maxQuantity))
                 end
-                slot.item.icon:SetTexture(icon)
+                if cinfo.quantity == 0 then
+                    slot.item.amount:SetFontObject("GameFontDisable")
+                    slot.item.spaceString:SetFontObject("GameFontDisable")
+				else
+					slot.item.amount:SetFontObject("GameFontHighlight")
+					slot.item.spaceString:SetFontObject("GameFontHighlight")
+                end
+                slot.item.icon:SetTexture(cinfo.iconFileID)
 
                 -- set zebra color by idx or watch status
                 zebra = idx % 2
-                if isWatched then
+                if info.isShowInBackpack then
                     slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
                 else
                     slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
@@ -122,6 +137,16 @@ local function loadCurrency(curwin)
 end
 GW.AddForProfiling("currency", "loadCurrency", loadCurrency)
 
+local function header_OnClick(self)
+    if self.isHeaderExpanded then
+        C_CurrencyInfo.ExpandCurrencyList(self.index, false)
+    else
+        C_CurrencyInfo.ExpandCurrencyList(self.index, true)
+    end
+
+    loadCurrency(self.curwin)
+end
+
 local function currencySetup(curwin)
     HybridScrollFrame_CreateButtons(curwin, "GwCurrencyRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
     for i = 1, #curwin.buttons do
@@ -129,10 +154,12 @@ local function currencySetup(curwin)
         slot:SetWidth(curwin:GetWidth() - 12)
         slot.header.spaceString:SetFont(DAMAGE_TEXT_FONT, 14)
         slot.header.spaceString:SetTextColor(1, 1, 1)
+        slot.header.icon:ClearAllPoints()
+        slot.header.icon:SetPoint("LEFT", 0, 0)
+        slot.header.icon2:ClearAllPoints()
+        slot.header.icon2:SetPoint("LEFT", 0, 0)
         slot.item.spaceString:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.spaceString:SetTextColor(1, 1, 1)
         slot.item.amount:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.amount:SetTextColor(1, 1, 1)
         slot.item.icon:ClearAllPoints()
         slot.item.icon:SetPoint("LEFT", 0, 0)
         if not slot.item.ScriptsHooked then
@@ -140,6 +167,11 @@ local function currencySetup(curwin)
             slot.item:HookScript("OnEnter", currency_OnEnter)
             slot.item:HookScript("OnLeave", GameTooltip_Hide)
             slot.item.ScriptsHooked = true
+        end
+        if not slot.header.ScriptsHooked then
+            slot.header:HookScript("OnClick", header_OnClick)
+            slot.header.curwin = curwin
+            slot.header.ScriptsHooked = true
         end
     end
 
@@ -374,7 +406,7 @@ local function LoadCurrency(tabContainer)
 
     -- update currency window when anyone adds a watch currency
     hooksecurefunc(
-        "SetCurrencyBackpack",
+        C_CurrencyInfo, "SetCurrencyBackpack",
         function()
             if curwin:IsShown() then
                 loadCurrency(curwin)

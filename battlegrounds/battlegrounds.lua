@@ -3,7 +3,7 @@ local FACTION_COLOR = GW.FACTION_COLOR
 local AddToAnimation = GW.AddToAnimation
 local GetAreaPOIForMap = C_AreaPoiInfo.GetAreaPOIForMap
 local GetAreaPOIInfo = C_AreaPoiInfo.GetAreaPOIInfo
-local GetBestMapForUnit = C_Map.GetBestMapForUnit
+local locationData = GW.locationData
 
 local bgs = {}
 local POIList = {}
@@ -21,15 +21,15 @@ local updateCap = 1 / 5
 local gwbgs
 
 local PvPClassificationFaction = {
-    [Enum.PvpUnitClassification.FlagCarrierHorde] = "A",
-    [Enum.PvpUnitClassification.FlagCarrierAlliance] = "H",
-    [Enum.PvpUnitClassification.FlagCarrierNeutral] = "N",
-    [Enum.PvpUnitClassification.CartRunnerHorde] = "A",
-    [Enum.PvpUnitClassification.CartRunnerAlliance] = "H"
-    --[Enum.PvpUnitClassification.OrbCarrierBlue] = "orb",
-    --[Enum.PvpUnitClassification.OrbCarrierGreen] = "orb",
-    --[Enum.PvpUnitClassification.OrbCarrierOrange] = "orb",
-    --[Enum.PvpUnitClassification.OrbCarrierPurple] = "orb"
+    [Enum.PvPUnitClassification.FlagCarrierHorde] = "A",
+    [Enum.PvPUnitClassification.FlagCarrierAlliance] = "H",
+    [Enum.PvPUnitClassification.FlagCarrierNeutral] = "N",
+    [Enum.PvPUnitClassification.CartRunnerHorde] = "A",
+    [Enum.PvPUnitClassification.CartRunnerAlliance] = "H"
+    --[Enum.PvPUnitClassification.OrbCarrierBlue] = "orb",
+    --[Enum.PvPUnitClassification.OrbCarrierGreen] = "orb",
+    --[Enum.PvPUnitClassification.OrbCarrierOrange] = "orb",
+    --[Enum.PvPUnitClassification.OrbCarrierPurple] = "orb"
 }
 
 local function getPoints(widget)
@@ -259,32 +259,28 @@ end
 GW.AddForProfiling("battlegrounds", "TimerFlag_OnUpdate", TimerFlag_OnUpdate)
 
 local function pvpHud_onEvent(self, event)
-    local _, _, _, _, _, _, _, mapID, _ = GetInstanceInfo()
-
-    GW.Debug("pvp instance: ", mapID)
-    
-    if bgs[mapID] ~= nil then
+    if bgs[locationData.instanceMapID] ~= nil then
         if event == "PLAYER_ENTERING_BATTLEGROUND" then
             pointsAlliance = 0
             pointsHorde = 0
         end
-        activeBg = mapID
-        activeMap = GetBestMapForUnit("player")
+        activeBg = locationData.instanceMapID
+        activeMap = locationData.mapID
         UIWidgetTopCenterContainerFrame:Hide()
 
         gwbgs.hasTimer = false
         gwbgs.TrackFlag = false
         gwbgs:SetScript("OnEvent", nil)
         gwbgs:SetScript("OnUpdate", nil)
-        gwbgs:SetScript("OnEvent", bgs[mapID]["OnEvent"])
-        if bgs[mapID]["OnUpdate"] then
-            gwbgs:SetScript("OnUpdate", bgs[mapID]["OnUpdate"])
+        gwbgs:SetScript("OnEvent", bgs[locationData.instanceMapID]["OnEvent"])
+        if bgs[locationData.instanceMapID]["OnUpdate"] then
+            gwbgs:SetScript("OnUpdate", bgs[locationData.instanceMapID]["OnUpdate"])
             gwbgs.elapsedTimer = -1
         end
-        if bgs[mapID]["TrackFlag"] then
+        if bgs[locationData.instanceMapID]["TrackFlag"] then
             gwbgs.TrackFlag = true
         end
-        if bgs[mapID]["hasTimer"] then
+        if bgs[locationData.instanceMapID]["hasTimer"] then
             gwbgs.hasTimer = true
         end
         gwbgs:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
@@ -304,6 +300,8 @@ local function pvpHud_onEvent(self, event)
         gwbgs:Hide()
         gwbgs.hasTimer = false
         gwbgs.TrackFlag = false
+        activeMap = nil
+        activeBg = 0
         gwbgs:SetScript("OnEvent", nil)
         gwbgs:SetScript("OnUpdate", nil)
         UIWidgetTopCenterContainerFrame:Show()

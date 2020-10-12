@@ -8,10 +8,7 @@ local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
-local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
-
-local AlertContainerFrame
-local ourAlertSystem = false
+local LibSharedMedia = GW.Libs.LSM
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
@@ -30,9 +27,6 @@ end
 local loaded = false
 local forcedMABags = false
 
-local MOVABLE_FRAMES = {}
-GW.MOVABLE_FRAMES = MOVABLE_FRAMES
-
 local swimAnimation = 0
 local lastSwimState = true
 
@@ -50,166 +44,6 @@ local function disableMABags()
     forcedMABags = true
 end
 GW.AddForProfiling("index", "disableMABags", disableMABags)
-
-local function lockableOnClick(self, btn)
-    local mf = self:GetParent()
-    --local f = mf.gw_frame
-    local settingsName = mf.gw_Settings
-    local lockAble = mf.gw_Lockable
-
-    local dummyPoint = GetDefault(settingsName)
-    mf:ClearAllPoints()
-    mf:SetPoint(
-        dummyPoint["point"],
-        UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
-    )
-
-    local point, _, relativePoint, xOfs, yOfs = mf:GetPoint()
-
-    local new_point = GetSetting(settingsName)
-    new_point["point"] = point
-    new_point["relativePoint"] = relativePoint
-    new_point["xOfs"] = GW.RoundInt(xOfs)
-    new_point["yOfs"] = GW.RoundInt(yOfs)
-    SetSetting(settingsName, new_point)
-
-    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
-    if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
-        SetSetting(settingsName .. "_GrowDirection", "UP")
-    end
-end
-GW.AddForProfiling("index", "lockableOnClick", lockableOnClick)
-
-local function lockFrame_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(SYSTEM_DEFAULT, 1, 1, 1)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("index", "lockFrame_OnEnter", lockFrame_OnEnter)
-
-local function mover_OnDragStart(self)
-    self.IsMoving = true
-    self:StartMoving()
-end
-GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
-
-local function mover_OnDragStop(self)
-    local settingsName = self.gw_Settings
-    local lockAble = self.gw_Lockable
-    local isMoved = self.gw_isMoved
-    self:StopMovingOrSizing()
-    local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
-
-    local new_point = GetSetting(settingsName)
-    new_point.point = point
-    new_point.relativePoint = relativePoint
-    new_point.xOfs = math.floor(xOfs)
-    new_point.yOfs = math.floor(yOfs)
-    SetSetting(settingsName, new_point)
-    if lockAble ~= nil then
-        SetSetting(lockAble, false)
-    end
-    -- check if we need to know if the frame is on its default position
-    if isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-        local growDirection = GetSetting(settingsName .. "_GrowDirection")
-        local frame = self.gw_frame
-        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and (growDirection and growDirection == "UP") then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-
-    --check if we need to change the text string
-    if settingsName == "AlertPos" then
-        local _, y = self:GetCenter()
-        local screenHeight = UIParent:GetTop()
-        if y > (screenHeight / 2) then
-            if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
-            end
-        else
-            if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
-            end
-        end
-    end
-
-    self.IsMoving = false
-end
-GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
-
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved)
-    local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
-    frame.gwMover = moveframe
-    if size then
-        moveframe:SetSize(unpack(size))
-    else
-        moveframe:SetSize(frame:GetSize())
-    end
-    moveframe.gw_Settings = settingsName
-    moveframe.gw_Lockable = lockAble
-    moveframe.gw_isMoved = isMoved
-    moveframe.gw_frame = frame
-
-    if moveframe.frameName and moveframe.frameName.SetText then
-        moveframe.frameName:SetText(displayName)
-    end
-
-    local dummyPoint = GetSetting(settingsName)
-    moveframe:ClearAllPoints()
-    moveframe:SetPoint(
-        dummyPoint["point"],
-        UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
-    )
-    local num = #MOVABLE_FRAMES
-    MOVABLE_FRAMES[num + 1] = moveframe
-    moveframe:Hide()
-    moveframe:RegisterForDrag("LeftButton")
-
-    if lockAble ~= nil then
-        local lockFrame = CreateFrame("Button", nil, moveframe, "GwDummyLockButton")
-        lockFrame:SetScript("OnEnter", lockFrame_OnEnter)
-        lockFrame:SetScript("OnLeave", GameTooltip_Hide)
-        lockFrame:SetScript("OnClick", lockableOnClick)
-    end
-
-    if isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-
-        if defaultPoint["point"] == dummyPoint["point"] and defaultPoint["relativePoint"] == dummyPoint["relativePoint"] and defaultPoint["xOfs"] == dummyPoint["xOfs"] and defaultPoint["yOfs"] == dummyPoint["yOfs"] then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-
-    moveframe:SetScript("OnDragStart", mover_OnDragStart)
-    moveframe:SetScript("OnDragStop", mover_OnDragStop)
-end
-GW.RegisterMovableFrame = RegisterMovableFrame
-
-local function UpdateFramePositions()
-    for i, mf in pairs(MOVABLE_FRAMES) do
-        local f = mf.gw_frame
-        local newp = GetSetting(mf.gw_Settings)
-        f:ClearAllPoints()
-        f:SetPoint(newp["point"], UIParent, newp["relativePoint"], newp["xOfs"], newp["yOfs"])
-    end
-end
-GW.UpdateFramePositions = UpdateFramePositions
 
 -- https://us.battle.net/forums/en/wow/topic/6036615884
 if AchievementMicroButton_Update == nil then
@@ -522,68 +356,6 @@ local function RegisterScaleFrame(f, modifier)
 end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
--- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
-local function adjustFixedAnchors(self, relativeAlert)
-    if not self.anchorFrame:IsShown() then
-        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
-        local name = self.anchorFrame:GetName()
-        if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
-            if name == "GroupLootContainer" then
-                self.anchorFrame:ClearAllPoints()
-                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
-                else
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-                end
-            end
-        end
-        return self.anchorFrame
-    end
-    return relativeAlert
-end
-GW.AddForProfiling("index", "adjustFixedAnchors", adjustFixedAnchors)
-
-local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
-local function adjustAlertAnchors(self, relativeAlert)
-    for alertFrame in self.alertFramePool:EnumerateActive() do
-        alertFrame:ClearAllPoints()
-        alertFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
-        relativeAlert = alertFrame
-    end
-    return relativeAlert
-end
-
-local function updateAnchors(self)
-    if ourAlertSystem then
-        local _, y = AlertContainerFrame:GetCenter()
-        local screenHeight = UIParent:GetTop()
-        if y > (screenHeight / 2) then
-            POSITION = "TOP"
-            ANCHOR_POINT = "BOTTOM"
-            YOFFSET = -5
-        else
-            POSITION = "BOTTOM"
-            ANCHOR_POINT = "TOP"
-            YOFFSET = 5
-        end
-    end
-
-    self:CleanAnchorPriorities()
-
-    local relativeFrame = GwAlertFrameOffsetter
-    local relativeFrame2 = AlertContainerFrame
-    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
-        if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors and GetSetting("ACTIONBARS_ENABLED") then
-            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
-        elseif alertFrameSubSystem.AdjustAnchors == AlertFrameQueueMixin.AdjustAnchors and ourAlertSystem then
-            relativeFrame2 = adjustAlertAnchors(alertFrameSubSystem, relativeFrame2)
-        else
-            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
-        end
-    end
-end
-GW.AddForProfiling("index", "updateAnchors", updateAnchors)
-
 local function loadAddon(self)
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
@@ -592,43 +364,13 @@ local function loadAddon(self)
         GW.scale = UIParent:GetScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
-
-    -- setup our frame pool
-    GW.Pools = CreatePoolCollection()
-
-    -- setup AlertFrame and Bonus Roll Frame
-    AlertFrame.UpdateAnchors = updateAnchors
+    GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
 
     if GetSetting("ALERTFRAME_ENABLED") then
-        ourAlertSystem = true
-        AlertContainerFrame = GW.loadAlterSystemFrameSkins()
-
-        hooksecurefunc("GroupLootContainer_Update", function(self)
-            local lastIdx = nil
-            local pt, _, relPt, _, _ = self:GetPoint()
-        
-            for i = 1 , self.maxIndex do
-                local frame = self.rollFrames[i]
-                local prevFrame = self.rollFrames[i-1]
-                if ( frame ) then
-                    frame:ClearAllPoints()
-                    if prevFrame and not (prevFrame == frame) then
-                        frame:SetPoint(POSITION, prevFrame, ANCHOR_POINT, 0, 0)
-                    else
-                        frame:SetPoint(pt, self, relPt, 0, self.reservedSize * (i - 1 + 0.5))
-                    end
-                    lastIdx = i
-                end
-            end
-        
-            if ( lastIdx ) then
-                self:SetHeight(self.reservedSize * lastIdx)
-                self:Show()
-            else
-                self:Hide()
-            end
-        end)
+        GW.LoadAlertSystemFrameSkins()
+        GW.SetupAlertFramePosition()
     end
+    GW.LoadOurAlertSubSystem()
 
     -- disable Move Anything bag handling
     disableMABags()
@@ -640,7 +382,7 @@ local function loadAddon(self)
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #" .. dev_dbg_tab)
         GW.dbgTab = dev_dbg_tab
         GW.AlertTestsSetup()
-        SetCVar('fstack_preferParentKeys', 0) --Add back the frame names via fstack!
+        SetCVar("fstack_preferParentKeys", 0) --Add back the frame names via fstack!
         GW.inDebug = true
     else
         GW.inDebug = false
@@ -651,8 +393,8 @@ local function loadAddon(self)
     --@end-non-debug@]===]
 
     --Create Settings window
+    GW.LoadMovers()
     GW.LoadSettings()
-    GW.LoadHoverBinds()
 
     -- Load Slash commands
     GW.LoadSlashCommands()
@@ -683,8 +425,10 @@ local function loadAddon(self)
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then
             GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
-            hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
+            GwMainMenuFrame:SetPoint("TOPLEFT", IsAddOnLoaded("ElvUI") and GameMenuButtonContinue or GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+            if not IsAddOnLoaded("ElvUI") then
+                hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
+            end
         end
     end
     if GetSetting("STATICPOPUP_SKIN_ENABLED") then
@@ -739,6 +483,7 @@ local function loadAddon(self)
     
 
     GW.AddCoordsToWorldMap()
+    GW.LoadVehicleButton()
 
     --Create hud art
     GW.LoadHudArt()
@@ -770,7 +515,7 @@ local function loadAddon(self)
     end
 
     if GetSetting("QUESTTRACKER_ENABLED") then
-        GW.LoadQuestTracker()
+        --GW.LoadQuestTracker()
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then
@@ -858,8 +603,6 @@ local function loadAddon(self)
     -- create buff frame
     if GetSetting("PLAYER_BUFFS_ENABLED") then
         GW.LoadPlayerAuras(lm)
-        --GW.LoadAurasSecure()
-        --GW.LoadAurasLegacy()
     end
 
     if GetSetting("DYNAMIC_CAM") then

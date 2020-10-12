@@ -21,7 +21,7 @@ local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local REALM_FLAGS = GW.REALM_FLAGS
 local nameRoleIcon = GW.nameRoleIcon
-local LRI = LibStub("LibRealmInfo", true)
+local LRI = GW.Libs.LRI
 
 local GROUPD_TYPE = "PARTY"
 local GW_READY_CHECK_INPROGRESS = false
@@ -364,7 +364,8 @@ local function updateAwayData(self)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 
-    if UnitIsConnected(self.unit) and ((not UnitInPhase(self.unit) or UnitIsWarModePhased(self.unit)) or not UnitInRange(self.unit)) then
+    local phaseReason = UnitPhaseReason(self.unit)
+    if UnitIsConnected(self.unit) and (phaseReason or not UnitInRange(self.unit)) then
         local r, g, b = self.healthbar:GetStatusBarColor()
 
         self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
@@ -742,7 +743,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         setAbsorbAmount(self)
         setPredictionAmount(self)
         setHealth(self)
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" and unit == self.unit then
         setHealth(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
@@ -930,7 +931,7 @@ local function GetRaidFramesMeasures(players)
 
     -- Container size
     local size1, size2 = cells1 * (sizePer1 + m) - m, cells2 * (sizePer2 + m) - m
-    sizeMax1, sizeMax1 = max(size1, sizeMax1), max(size2, sizeMax2)
+    sizeMax1, sizeMax2 = max(size1, sizeMax1), max(size2, sizeMax2)
 
     return grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m
 end
@@ -1128,13 +1129,19 @@ local function createRaidFrame(registerUnit, index)
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
 
-    frame:SetScript("OnLeave", GameTooltip_Hide)
+    frame:SetScript("OnLeave", function(self)
+        GameTooltip_Hide()
+        if self.guid ~= UnitGUID("target") then
+            self.targetHighlight:SetVertexColor(0, 0, 0, 1)
+        end
+    end)
     frame:SetScript(
         "OnEnter",
-        function()
+        function(self)
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
             GameTooltip:SetUnit(registerUnit)
             GameTooltip:Show()
+            self.targetHighlight:SetVertexColor(1, 1, 1, 1)
         end
     )
 
@@ -1155,7 +1162,7 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
     frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
 
-    frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
