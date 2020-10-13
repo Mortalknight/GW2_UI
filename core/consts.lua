@@ -300,7 +300,6 @@ local ImportendRaidDebuff = {
     [226512] = true, -- Sanguine
     [240559] = true, -- Grievous
     [240443] = true, -- Bursting
-    [196376] = true, -- Grievous Tear
     -- 8.3 Affix
     [314531] = true, -- Tear Flesh
     [314308] = true, -- Spirit Breaker

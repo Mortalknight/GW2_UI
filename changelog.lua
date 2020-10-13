@@ -1,6 +1,26 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.0", [=[
+    Update for Shadowlands Pre-Patch
+
+    Note: Quest Tracker ist disabled for now, need a complete rework
+
+NEW
+    - Sizer for Heropanel
+    - Redo "Move HUD" mode:
+        - Frame are now moving with there movers
+        - Added new frames
+        - Added "Little Settings Window": Right click a mover to see extra options for that frame (atm only scaling)
+    - Now you can collaps Addons in the currency tab
+    - Export and import Profiles
+    - Added a short install process
+
+FIXES
+    - Fix target dropdown menu
+    - Fix many more bugs
+]=])
+
 v("5.3.5-hotfix", [=[
 FIXES
     - Fix error while dead
