@@ -338,22 +338,22 @@ end
 GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
 
 local function setPaladin(f)
-    if GW.myspec == 2 then -- prot
-        f.background:SetTexture(nil)
-        f.fill:SetTexture(nil)
-        local fd = f.decay
-        fd.bar:SetStatusBarColor(0.85, 0.65, 0)
-        fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
-        fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
-        fd.bar:SetValue(0)
-        fd:Show()
+    --if GW.myspec == 2 then -- prot
+        --f.background:SetTexture(nil)
+        --f.fill:SetTexture(nil)
+        --local fd = f.decay
+        --fd.bar:SetStatusBarColor(0.85, 0.65, 0)
+        --fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
+        --fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
+        --fd.bar:SetValue(0)
+        --fd:Show()
 
-        f:SetScript("OnEvent", powerSotR)
-        powerSotR(f, "CLASS_POWER_INIT")
-        f:RegisterUnitEvent("UNIT_AURA", "player")
+        --f:SetScript("OnEvent", powerSotR)
+        --powerSotR(f, "CLASS_POWER_INIT")
+        --f:RegisterUnitEvent("UNIT_AURA", "player")
 
-        return true
-    elseif GW.myspec == 3 or GW.myspec == 5 then -- retribution / standard
+        --return true
+    --elseif GW.myspec == 3 or GW.myspec == 5 then -- retribution / standard
         f:SetHeight(32)
         f:SetWidth(320)
         f.background:SetHeight(32)
@@ -370,9 +370,9 @@ local function setPaladin(f)
         f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
         return true
-    end
+    --end
 
-    return false
+    --return false
 end
 GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
 
