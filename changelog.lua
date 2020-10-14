@@ -1,6 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.1", [=[
+NEW
+    - Added Maelstrom classpowerbar
+    
+FIXES
+    - Spec spellbooktab is now only with a spec available
+    - Fix some lua errors
+    - Set default quest tracker into top right corner
+]=])
+
 v("5.4.0", [=[
     Update for Shadowlands Pre-Patch
 

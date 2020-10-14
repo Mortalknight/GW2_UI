@@ -54,6 +54,26 @@ local function decayCounterFlash_OnAnim()
 end
 GW.AddForProfiling("classpowers", "decayCounterFlash_OnAnim", decayCounterFlash_OnAnim)
 
+local function maelstromCounter_OnAnim()
+    local f = CPWR_FRAME
+    local fms = f.maelstrom
+    local p = animations["MAELSTROMCOUNTER_BAR"]["progress"]
+    local px = p * 262
+    fms.precentage = p
+    fms.bar:SetValue(p)
+    fms.bar.spark:ClearAllPoints()
+    fms.bar.spark:SetPoint("RIGHT", fms.bar, "LEFT", px, 0)
+    fms.bar.spark:SetWidth(math.min(15, math.max(1, px)))
+end
+GW.AddForProfiling("classpowers", "maelstromCounter_OnAnim", maelstromCounter_OnAnim)
+
+local function maelstromCounterFlash_OnAnim()
+    local f = CPWR_FRAME
+    local fms = f.maelstrom
+    fms.flash:SetAlpha(animations["MAELSTROMCOUNTER_TEXT"]["progress"])
+end
+GW.AddForProfiling("classpowers", "maelstromCounterFlash_OnAnim", maelstromCounterFlash_OnAnim)
+
 local function decay_OnAnim()
     local f = CPWR_FRAME
     local fd = f.decay
@@ -575,10 +595,48 @@ end
 GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 
 -- SHAMAN
+local function powerMaelstrom(self, event, ...)
+    local fdc = self.maelstrom
+    local _, count, duration, expires = findBuff("player", 344179)
+
+    if duration == nil then
+        fdc.count:SetText(0)
+        self.gwPower = -1
+        return
+    end
+
+    fdc.count:SetText(count)
+    local old_expires = self.gwPower
+    old_expires = old_expires or -1
+    self.gwPower = expires
+    if event == "CLASS_POWER_INIT" or expires > old_expires then
+        local pre = (expires - GetTime()) / duration
+        AddToAnimation("MAELSTROMCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), maelstromCounter_OnAnim, "noease")
+        if event ~= "CLASS_POWER_INIT" then
+            AddToAnimation("MAELSTROMCOUNTER_TEXT", 1, 0, GetTime(), 0.5, maelstromCounterFlash_OnAnim)
+        end
+    end
+end
+GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
+
 local function setShaman(f)
-    if GW.myspec == 1 or GW.myspec == 2 then
-        -- ele and enh both use extra mana bar on left
+    print(GW.myspec)
+    if GW.myspec == 1 then
+        -- ele use extra mana bar on left
         setManaBar(f)
+        return true
+    elseif GW.myspec == 2 then -- enh
+        f.background:SetTexture(nil)
+        f.fill:SetTexture(nil)
+        local fms = f.maelstrom
+        fms.bar.texture1:SetVertexColor(1, 1, 1, 0)
+        fms.bar.texture2:SetVertexColor(1, 1, 1, 0)
+        fms.bar:SetValue(0)
+        fms:Show()
+
+        f:SetScript("OnEvent", powerMaelstrom)
+        powerMaelstrom(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_AURA", "player")
         return true
     end
 
@@ -945,6 +1003,7 @@ local function selectType(f)
     -- hide all class power sub-pieces and reset anything needed
     f.runeBar:Hide()
     f.decayCounter:Hide()
+    f.maelstrom:Hide()
     f.brewmaster:Hide()
     f.staggerBar:Hide()
     f.disc:Hide()
@@ -1056,6 +1115,7 @@ local function LoadClassPowers()
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+    cpf.maelstrom.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
     cpf.brewmaster.debugpre = 0
     cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 11)
     cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 11)

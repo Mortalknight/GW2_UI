@@ -184,6 +184,72 @@
                     </StatusBar>
                 </Frames>
             </Frame>
+            <Frame parentKey="maelstrom" hidden="true">
+                <Size x="266" y="18"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                            <Size x="266" y="18"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentBackground" alpha="0" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash">
+                            <Size x="80" y="80"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="RIGHT" x="20" y="20"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <FontString parentKey="count" justifyH="CENTER" justifyV="MIDDLE" inherits="GameFontNormalSmall">
+                            <Size x="45" y="45"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="5" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1">
+                        <Size x="262" y="14"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                        <BarColor r="0" g="0.5" b="1.0"></BarColor>
+                        <Layers>
+                            <Layer level="ARTWORK" textureSubLevel="1">
+                                <Texture parentKey="texture1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation">
+                                    <Size x="262" y="14"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                                <Texture parentKey="texture2" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2">
+                                    <Size x="262" y="14"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORK" textureSubLevel="2">
+                                <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                    <Size x="1" y="14"></Size>
+                                    <Anchors>
+                                        <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                    <Color r="1" b="0.6" g="0.6" a="0.7"></Color>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </StatusBar>
+                </Frames>
+            </Frame>
             <Frame parentKey="brewmaster" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>
