@@ -250,7 +250,7 @@ local function UpdateDynamicValues()
     Section2.Content.Line4.Text:SetFormattedText("Resolution: |cff4beb2c%s|r", GW.resolution)
 
     local Section3 = StatusFrame.Section3
-    Section3.Content.Line4.Text:SetFormattedText("Specialization: |cff4beb2c%s|r", EnglishSpecName[GetSpecializationInfo(GetSpecialization())])
+    Section3.Content.Line4.Text:SetFormattedText("Specialization: |cff4beb2c%s|r", GetEnglishSpecName())
     Section3.Content.Line5.Text:SetFormattedText("Level: |cff4beb2c%s|r", GW.mylevel)
     Section3.Content.Line6.Text:SetFormattedText("Zone: |cff4beb2c%s|r", GW.locationData.ZoneText)
 end
