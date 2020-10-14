@@ -106,10 +106,10 @@ local function SetMinimapPosition()
 
     local mc_x = 0
     if ourTracker then
-        mc_x = -320
+        --mc_x = -320  TODO: Need to be enabled if your tracker is back
     end
 
-    MinimapCluster:ClearAllPoints()
+    --MinimapCluster:ClearAllPoints()
     Minimap:ClearAllPoints()
     Minimap:SetParent(UIParent)
     MinimapZoneTextButton:Hide()
@@ -117,6 +117,7 @@ local function SetMinimapPosition()
     MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
 
     if mapPos == "TOP" then
+        MinimapCluster:ClearAllPoints()
         if ourBuffBar then
             MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -(mapSize + 60))
             Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
