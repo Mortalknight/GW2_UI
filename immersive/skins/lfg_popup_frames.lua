@@ -66,10 +66,8 @@ end
 local function SkinLFGDungeonReadyDialog()
     local SkinLFGDungeonReadyDialog_OnUpdate = function()
         local LFGDungeonReadyDialog = _G.LFGDungeonReadyDialog
-        LFGDungeonReadyDialog.Border:Hide()
-        LFGDungeonReadyDialog.background:Hide()
-        LFGDungeonReadyDialog.filigree:Hide()
-        LFGDungeonReadyDialog.bottomArt:Hide()
+        LFGDungeonReadyDialog:StripTextures()
+
         _G.LFGDungeonReadyDialogCloseButton:SkinButton(true)
         _G.LFGDungeonReadyDialogCloseButton:SetSize(20, 20)
         _G.LFGDungeonReadyDialogCloseButton:ClearAllPoints()
