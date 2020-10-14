@@ -4,7 +4,7 @@
     <Button name="GwCurrencyRow" virtual="true">
         <Size x="512" y="32"></Size>
         <Anchors>
-            <Anchors point="TOPLEFT"></Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
         </Anchors>
         <Frames>
             <Button parentKey="header" setAllPoints="true" hidden="true">
@@ -13,7 +13,7 @@
                         <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
                             <Size x="512" y="32"></Size>
                             <Anchors>
-                                <Anchors point="TOPLEFT"></Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
@@ -39,14 +39,14 @@
                         <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                             <Size x="32" y="32"></Size>
                             <Anchors>
-                                <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
-                                <Anchors point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                             </Anchors>
                         </Texture>
                         <Texture parentKey="icon">
                             <Size x="32" y="32"></Size>
                             <Anchors>
-                                <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                             </Anchors>
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                         </Texture>
@@ -73,7 +73,7 @@
     <Button name="GwRaidInfoRow" virtual="true">
         <Size x="512" y="55"></Size>
         <Anchors>
-            <Anchors point="TOPLEFT"></Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
         </Anchors>
         <Frames>
             <Button parentKey="item" setAllPoints="true" hidden="true">
@@ -82,8 +82,8 @@
                         <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                             <Size x="32" y="55"></Size>
                             <Anchors>
-                                <Anchors point="TOPLEFT" relativePoint="TOPLEFT"></Anchors>
-                                <Anchors point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
@@ -115,7 +115,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="extendButton" inherits="GwStandardButton" text="???" hidden="true" style="ChatBubbleFont">
+                    <Button parentKey="extendButton" inherits="GwStandardButton" text="???" hidden="true">
                         <Size x="210" y="13"/>
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="15" y="5"/>

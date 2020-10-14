@@ -2,7 +2,6 @@ local _, GW = ...
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
 local SkinGearManagerDialogPopup = GW.SkinGearManagerDialogPopup
-local Debug = GW.Debug
 
 --local CHARACTER_PANEL_OPEN
 
@@ -93,7 +92,6 @@ end
 local function LoadPaperDoll(tabContainer)
     --local fmPD = CreateFrame("Frame", "GwPaperDoll", tabContainer, "GwPaperDoll")
     GwPaperDoll = tabContainer
-    local fmDoll = tabContainer
 
     fmMenu = CreateFrame("Frame", nil, tabContainer, "GwCharacterMenu")
     fmMenu.SetupBackButton = menu_SetupBackButton

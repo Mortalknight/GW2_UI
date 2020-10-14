@@ -3,9 +3,7 @@ local L = GW.L
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
-local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadPartyPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")

@@ -4,7 +4,7 @@ local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
 
 local function UpdateGroupLootContainer(self)
     local lastIdx = nil
-    local pt, relTo, relPt, _, _ = self:GetPoint()
+    local pt, _, relPt, _, _ = self:GetPoint()
 
     for i = 1 , self.maxIndex do
         local frame = self.rollFrames[i]

@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwTalentFrame" enableMouse="true" inherits="SecureHandlerBaseTemplate" protected="true" registerForClicks="LeftButtonUp" virtual="true">
+    <Frame name="GwTalentFrame" enableMouse="true" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
         <Size x="608" y="621"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
@@ -87,7 +87,7 @@
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                             </Anchors>
-                            <Color a="0.6"></Color>
+                            <Color r="1" g="1" b="1" a="0.6"></Color>
                             <TexCoords left="1" right="0" top="0" bottom="1" />
                         </Texture>
                     </Layer>
@@ -165,7 +165,7 @@
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                             </Anchors>
-                            <Color a="0.6"></Color>
+                            <Color r="1" g="1" b="1" a="0.6"></Color>
                             <TexCoords left="1" right="0" top="0" bottom="1" />
                         </Texture>
                     </Layer>
@@ -202,9 +202,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
-
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -213,7 +212,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
                     <Size x="34" y="34"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -519,8 +518,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -575,7 +574,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -624,8 +623,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -634,7 +633,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -656,8 +655,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -681,7 +680,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -709,8 +708,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -719,7 +718,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -741,8 +740,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2" file="Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -758,7 +757,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>

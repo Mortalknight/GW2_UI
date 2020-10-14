@@ -3,7 +3,6 @@ local L = GW.L
 local RoundInt = GW.RoundInt
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
-local GetDefault = GW.GetDefault
 local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified

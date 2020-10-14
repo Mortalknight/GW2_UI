@@ -162,8 +162,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     --Escape any % characters, as it may otherwise cause an "invalid option in format" error in the next step
     message = gsub(message, "%%", "%%%%")
 
-    local success
-    success, body = pcall(format, _G["CHAT_" .. type .. "_GET"]..message, playerLink .. "[" .. coloredName .. "]" .. "|h")
+    _, body = pcall(format, _G["CHAT_" .. type .. "_GET"]..message, playerLink .. "[" .. coloredName .. "]" .. "|h")
 
     local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
     local typeID = ChatHistory_GetAccessID(type, chatTarget, arg12 == "" and arg13 or arg12)

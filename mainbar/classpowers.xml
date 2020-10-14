@@ -140,7 +140,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="2">
-                        <FontString parentKey="count" justifyH="MIDDLE" justifyV="MIDDLE" inherits="GameFontNormalSmall">
+                        <FontString parentKey="count" justifyH="CENTER" justifyV="MIDDLE" inherits="GameFontNormalSmall">
                             <Size x="45" y="45"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="5" y="0"></Anchor>
@@ -263,7 +263,7 @@
                             </Layer>
                         </Layers>
                     </Frame>
-                    <Frame parentKey="ironskin" hidde="true">
+                    <Frame parentKey="ironskin" hidden="true">
                         <Size x="316" y="18"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>

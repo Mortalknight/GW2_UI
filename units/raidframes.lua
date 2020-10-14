@@ -270,7 +270,7 @@ local function updateAwayData(self)
     local classColor = GetSetting("RAID_CLASS_COLOR")
     local iconState = 1
 
-    local localizedClass, englishClass, classIndex = UnitClass(self.unit)
+    local _, englishClass, classIndex = UnitClass(self.unit)
     self.name:SetTextColor(1, 1, 1)
 
     if classColor == false and GW_READY_CHECK_INPROGRESS == false then
@@ -976,7 +976,7 @@ local function UpdateRaidFramesPosition()
     players = previewStep == 0 and 40 or previewSteps[previewStep]
 
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Update size
@@ -1029,7 +1029,7 @@ GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 local grpPos, noGrp = {}, {}
 local function UpdateRaidFramesLayout()
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     if not InCombatLockdown() then

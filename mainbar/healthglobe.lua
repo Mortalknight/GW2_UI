@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local CommaValue = GW.CommaValue
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide

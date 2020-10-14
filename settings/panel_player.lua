@@ -5,7 +5,6 @@ local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local StrUpper = GW.StrUpper
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadPlayerPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")

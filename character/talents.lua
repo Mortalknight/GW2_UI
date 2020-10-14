@@ -578,7 +578,6 @@ GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
 
 local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
-    local petToken
 
     local BOOKTYPE = BOOKTYPE_SPELL
     if spellBookTabs == 3 and numSpells < 1 then
@@ -591,7 +590,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         fmTab.groups["lock"]:Hide()
     elseif spellBookTabs == 5 then
         BOOKTYPE = BOOKTYPE_PET
-        numSpells, petToken = HasPetSpells()
+        numSpells = HasPetSpells()
         offset = 0
         if numSpells == nil then
             numSpells = 0
@@ -712,7 +711,6 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
 
     if BOOKTYPE == BOOKTYPE_SPELL and spellBookTabs == 3 then
         for row = 1, maxTalentRows do
-            local anySelected = false
             for index = 1, talentsPerRow do
                 local _, name, icon, selected, available, spellId, _, _, _, _, _ = GetTalentInfo(row, index, 1, false, "player")
                 if selected and available then

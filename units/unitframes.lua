@@ -112,7 +112,7 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 
 local function updateHealthbarColor(self)
     if self.classColor == true and UnitIsPlayer(self.unit) then
-        local _, englishClass, classIndex = UnitClass(self.unit)
+        local _, englishClass = UnitClass(self.unit)
         local color = GWGetClassColor(englishClass, true)
 
         self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
@@ -244,7 +244,7 @@ local function setUnitPortraitFrame(self, event)
     if IsAddOnLoaded("DBM-Core") then
         local npcId = GW.GetUnitCreatureId(self.unit)
 
-        for modId, idTable in pairs(DBM.ModLists) do
+        for modId, _ in pairs(DBM.ModLists) do
             for i, id in ipairs(DBM.ModLists[modId]) do
                 local mod = DBM:GetModByName(id)
                 if mod.creatureId ~= nil and mod.creatureId == npcId then

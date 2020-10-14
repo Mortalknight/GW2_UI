@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
 local SavedItemSlots = GW.char_equipset_SavedItems
 local WarningPrompt = GW.WarningPrompt

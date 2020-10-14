@@ -36,14 +36,14 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString name="$parentCurrentLevel" parentKey="CurrentLevel" text="100" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString name="$parentCurrentLevel" parentKey="CurrentLevel" text="100" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="80" y="25"/>
                     <Color r="1" b="1" g="1"></Color>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-5" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentNextLevel" parentKey="NextLevel" text="100" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString name="$parentNextLevel" parentKey="NextLevel" text="100" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="80" y="25"/>
                     <Color r="1" b="1" g="1"></Color>
                     <Anchors>

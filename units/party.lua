@@ -664,11 +664,11 @@ local function updatePartyAuras(self, unit)
             local marginy = indexBuffFrame:GetWidth() + 12
             _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffLists[unit][i]["icon"])
             _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetParent(_G["Gw" .. unit .. "BuffItemFrame" .. i])
-            local buffDur = ""
+            --local buffDur = ""
             local stacks = ""
-            if buffLists[unit][i]["duration"] > 0 then
-                buffDur = TimeCount(buffLists[unit][i]["timeRemaining"])
-            end
+            --if buffLists[unit][i]["duration"] > 0 then
+                --buffDur = TimeCount(buffLists[unit][i]["timeRemaining"])
+            --end -- Note: Not needed atm
             if buffLists[unit][i]["count"] > 1 then
                 stacks = buffLists[unit][i]["count"]
             end

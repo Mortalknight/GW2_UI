@@ -1,5 +1,4 @@
 local _, GW = ...
-local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
 
 local BAG_TITLE_SIZE = 32
 local savedPlayerTitles = {}
@@ -14,7 +13,6 @@ GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
 
 local function loadTitle(titlewin)
     local USED_TITLE_HEIGHT
-    local KNOWEN_TITLE_COUNT = 0
     local zebra
     
     local offset = HybridScrollFrame_GetOffset(titlewin)

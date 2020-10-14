@@ -152,7 +152,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show junk icon if active
-        local texture, count, locked, rarity, readable, _, itemLink, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
         button.isJunk = (rarity and rarity == Enum.ItemQuality.Poor) and not noValue
 
         if button.junkIcon then
@@ -206,7 +206,7 @@ local function hookQuestItemBorder(self)
     
     for i=1, self.size, 1 do
         local itemButton = _G[name .. "Item" .. i]
-        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(id, itemButton:GetID())
+        local isQuestItem, questId, _ = GetContainerItemQuestInfo(id, itemButton:GetID())
         if itemButton.IconQuestTexture then
             if questId or isQuestItem then
                 itemButton.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")

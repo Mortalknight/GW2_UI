@@ -11,7 +11,6 @@ local function CheckIfMoved(self, settingsName, new_point)
     -- check if we need to know if the frame is on its default position
     if self.gw_isMoved ~= nil then
         local defaultPoint = GetDefault(settingsName)
-        local framePoint = GetSetting(settingsName)
         local growDirection = GetSetting(settingsName .. "_GrowDirection")
         local frame = self.gw_frame
         if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and (growDirection and growDirection == "UP") then
@@ -28,7 +27,6 @@ local function lockableOnClick(self, btn)
     local mf = self:GetParent()
     --local f = mf.gw_frame
     local settingsName = mf.gw_Settings
-    local lockAble = mf.gw_Lockable
 
     local dummyPoint = GetDefault(settingsName)
     mf:ClearAllPoints()
@@ -62,7 +60,6 @@ local function smallSettings_resetToDefault(self, btn)
     local mf = self:GetParent().child
     --local f = mf.gw_frame
     local settingsName = mf.gw_Settings
-    local lockAble = mf.gw_Lockable
 
     local dummyPoint = GetDefault(settingsName)
     mf:ClearAllPoints()
@@ -117,7 +114,6 @@ GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 local function mover_OnDragStop(self)
     local settingsName = self.gw_Settings
     local lockAble = self.gw_Lockable
-    local isMoved = self.gw_isMoved
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 

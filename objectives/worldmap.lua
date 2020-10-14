@@ -1,5 +1,4 @@
 local _, GW = ...
-local locationData = GW.locationData
 
 local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")

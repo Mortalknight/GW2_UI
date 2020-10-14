@@ -1,4 +1,3 @@
-local _, GW = ...
 
 function GwTargetFrameTemplateHealthBar_OnLoad(self)
     self:GetParent().bar = self.bar

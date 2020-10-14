@@ -67,7 +67,6 @@ changelog.lua
 GW2_ui.lua
 
 units/aurabar.xml
-units/aurabar.lua
 units/target.xml
 units/target.lua
 units/party.xml

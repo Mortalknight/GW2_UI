@@ -62,7 +62,7 @@
             </Layer>
 
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon" protected="true">
+                <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
                     <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="18" y="-22" />
@@ -137,7 +137,7 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" justifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" virtual="true">
         <Size x="231" y="36"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -155,9 +155,9 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" justifyH="LEFT" virtual="true">
+    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" virtual="true">
         <Layers>
-            <Layer layer="OVERLAY" textureSubLevel="8">
+            <Layer level="OVERLAY" textureSubLevel="8">
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
                     <Size x="32" y="32"></Size>
                     <Anchors>
@@ -168,5 +168,5 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" justifyH="LEFT" virtual="true"/>
+    <Button name="GwCharacterMenuBlank" inherits="GwStandardButton" text="Not yet loaded" virtual="true"/>
 </Ui>

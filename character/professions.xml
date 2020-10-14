@@ -54,8 +54,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" textureSubLevel="2">
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="icon">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -85,7 +85,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -130,7 +130,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
-                    <Color a="0.25"></Color>
+                    <Color r="1" g="1" b="1" a="0.25"></Color>
                     <TexCoords left="0.1" right="0.9" top="0.9" bottom="0.1" />
                 </Texture>
                 <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
@@ -173,7 +173,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="350" y="-60"></Anchor>
                 </Anchors>
             </Button>
-            <StatusBar min="0" max="1" parentKey="StatusBar">
+            <StatusBar minValue="0" maxValue="1" parentKey="StatusBar">
                 <Size x="201" y="12"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="102" y="-80"></Anchor>

@@ -279,7 +279,7 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
         setSlotButton(btn, info)
         btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 55 + (50 * col), -37 + (-50 * row))
 
-        for j, talentId in ipairs(info.availableTalentIDs) do
+        for _, talentId in ipairs(info.availableTalentIDs) do
             if not tContains(talentIds, talentId) then
                 talentIds[tidx] = talentId
                 tidx = tidx + 1
@@ -301,7 +301,7 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
     )
 
     for i, talentId in ipairs(talentIds) do
-        local _, name, icon, selected, available, spellId, unlocked = GetPvpTalentInfoByID(talentId)
+        local _, _, icon, _, _, spellId, _ = GetPvpTalentInfoByID(talentId)
         local isPassive = IsPassiveSpell(spellId)
         local btn
         if isPassive then

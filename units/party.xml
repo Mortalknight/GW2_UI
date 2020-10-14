@@ -92,7 +92,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="OVERLAY">
-                                <FontString name="$parenthealthstring" parentKey="healthstring" text="50%" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString name="$parenthealthstring" parentKey="healthstring" text="50%" inherits="GameFontNormalSmall" justifyH="LEFT">
                                     <Size x="65" y="8"/>
                                     <Color r="1" g="1" b="1"></Color>
                                     <Anchors>

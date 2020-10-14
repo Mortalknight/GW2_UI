@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local CommaValue = GW.CommaValue
 

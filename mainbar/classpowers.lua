@@ -611,11 +611,11 @@ end
 GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
 local function powerFrost(self, event, ...)
-    local _, count, duration, expires = findBuff("player", 205473)
+    local _, count, _, _ = findBuff("player", 205473)
 
     if not count then count = 0 end
 
-    local old power = self.gwPower
+    local old_power = self.gwPower
     old_power = old_power or -1
 
     local p = count
@@ -870,10 +870,10 @@ local function setDruid(f)
     local form = f.gwPlayerForm
 
     -- determine affinity talent
-    local aff1, aff2, aff3
+    local aff1, aff2--, aff3
     _, _, _, aff1, _ = GetTalentInfo(3, 1, 1, false, "player")
     _, _, _, aff2, _ = GetTalentInfo(3, 2, 1, false, "player")
-    _, _, _, aff3, _ = GetTalentInfo(3, 3, 1, false, "player")
+   -- _, _, _, aff3, _ = GetTalentInfo(3, 3, 1, false, "player") -- Note: Not needed atm
 
     local barType = "none"
     if GW.myspec == 1 then -- balance

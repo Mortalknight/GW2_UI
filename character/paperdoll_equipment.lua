@@ -6,7 +6,6 @@ local GWGetClassColor = GW.GWGetClassColor
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
-local GetSetting = GW.GetSetting
 local getContainerItemLinkByName = GW.getContainerItemLinkByName
 local setItemLevel = GW.setItemLevel
 
@@ -348,7 +347,6 @@ GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnLoad", itemSlot_OnLoad)
 
 local function DurabilityTooltip(self)
     local duravaltotal, duramaxtotal, durapercent = 0, 0, 0
-    local id
     local valcol, id, duraval, duramax
     local validItems = false
 
@@ -742,7 +740,6 @@ local function updateStats()
     local grid = 1
     local x = 0
     local y = 0
-    local i
 
     -- hide old stats
     for i = 1, 20 do

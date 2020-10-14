@@ -177,7 +177,6 @@ FACTION_COLOR[2] = {r = 57 / 255, g = 115 / 255, b = 186 / 255}
 
 local TARGET_FRAME_ART = {
     ["minus"] = "Interface/AddOns/GW2_UI/textures/targetshadow",
-    ["minus"] = "Interface/AddOns/GW2_UI/textures/targetshadow",
     ["normal"] = "Interface/AddOns/GW2_UI/textures/targetshadow",
     ["elite"] = "Interface/AddOns/GW2_UI/textures/targetShadowElit",
     ["rare"] = "Interface/AddOns/GW2_UI/textures/targetShadowRare",

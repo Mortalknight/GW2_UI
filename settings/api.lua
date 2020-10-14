@@ -172,7 +172,7 @@ local function DecodeProfile(dataString)
 
     if dataType == "base64" then
         local decodedData = LibBase64:Decode(dataString)
-        local decompressedData, decompressedMessage = Compress:Decompress(decodedData)
+        local decompressedData, _ = Compress:Decompress(decodedData)
 
         if not decompressedData then
             return

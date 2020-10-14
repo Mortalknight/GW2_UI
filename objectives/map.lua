@@ -4,8 +4,6 @@ local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 
-local IS_GUILD_GROUP
-
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
 MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
@@ -63,9 +61,6 @@ local Minimap_Addon_Buttons = {
 
 local MAP_FRAMES_HOVER = {}
 
-local animationIndex = 0
-local animationIndexY = 0
-local anim_thro = 0
 local framesToAdd = {}
 
 local function SetMinimapHover()
@@ -363,8 +358,6 @@ end
 GW.AddForProfiling("map", "garrisonBtn_OnEvent", garrisonBtn_OnEvent)
 
 local function stackIcons(self, event, ...)
-    local foundFrames = false
-
     local children = {Minimap:GetChildren()}
     for _, child in ipairs(children) do
         if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
@@ -378,7 +371,6 @@ local function stackIcons(self, event, ...)
                 end
             end
             if not ignore then
-                foundFrames = true
                 framesToAdd[child:GetName()] = child
             end
         end

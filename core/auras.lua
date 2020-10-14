@@ -76,7 +76,7 @@ local function getBuffs(unit, filter)
         if numItems > 0 then
             TemporaryEnchantFrame:Hide()
             for itemIndex = numItems, 1, -1 do    --Loop through the items from the back
-                local hasEnchant, enchantExpiration, enchantCharges = select(RETURNS_PER_ITEM * (itemIndex - 1) + 1, GetWeaponEnchantInfo())
+                local hasEnchant, enchantExpiration, _ = select(RETURNS_PER_ITEM * (itemIndex - 1) + 1, GetWeaponEnchantInfo())
                 if hasEnchant then
                     tempCounter = tempCounter + 1
 

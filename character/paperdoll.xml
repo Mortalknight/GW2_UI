@@ -91,7 +91,7 @@
 
     <ItemButton name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true"/>
 
-    <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" justifyH="LEFT" virtual="true">
+    <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" virtual="true">
         <Layers>
             <Layer>
                 <Texture parentKey="ddbg" hidden="true" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
@@ -669,7 +669,7 @@
                     </ItemButton>
                 </Frames>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" registerForClicks="LeftButtonDown" parentKey="model">
+            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>

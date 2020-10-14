@@ -4,10 +4,6 @@ local GetSetting = GW.GetSetting
 GW2_UIAlertSystem = {}
 local toastQueue = {} --Prevent from showing all "new" spells after spec change
 
-local lastShown
-local i = 0
-local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -10
-
 local constBackdropAlertFrame = {
     bgFile = "Interface/AddOns/GW2_UI/textures/toast-bg",
     edgeFile = "",
@@ -1061,7 +1057,7 @@ end
 
 local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID)
     -- An alert flagged as alreadyEarned has more space for the text to display since there's no shield+points icon.
-    local ret = AchievementAlertFrame_SetUp(frame, 5208, true)
+    AchievementAlertFrame_SetUp(frame, 5208, true)
     frame.Name:SetText(name)
     frame.Name:SetFont(UNIT_NAME_FONT, 12)
     frame.Unlocked:SetText(toptext or "")
@@ -1133,7 +1129,7 @@ end
 local function AlertContainerFrameOnEvent(self, event, ...)
     if event == "PLAYER_LEVEL_UP" then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
-        GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. ..., nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
+        GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
 
         if talentPoints and talentPoints > 0 then

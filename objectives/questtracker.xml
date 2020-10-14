@@ -38,7 +38,7 @@
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
         </Anchors>
         <Layers>
-            <Layer Level="ARTOWORK">
+            <Layer Level="ARTWORK">
 
             </Layer>
             <Layer Level="BACKGROUND">
@@ -184,7 +184,7 @@
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
-    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enabledMouse="true" parent="GwQuestTracker" virtual="true">
+    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" parent="GwQuestTracker" virtual="true">
         <HitRectInsets>
             <AbsInset left="0" right="0" top="30" bottom="0"/>
         </HitRectInsets>
@@ -281,7 +281,7 @@
                         <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\LFDMicroButton-Down">
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
-                                <Anchor point="BOTTOMLEFT" relativePoint="BOTOMLEFT"></Anchor>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
@@ -509,7 +509,7 @@
             <Button name="GwDeathCounterButton" hidden="true" frameLevel="5" virtual="true" parentKey="deathcounter">
                 <Size x="30" y="15"></Size>
                 <Layers>
-                    <Layer Level="ARTOWORK">
+                    <Layer Level="ARTWORK">
                     </Layer>
                     <Layer Level="BACKGROUND">
                         <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\icon-dead">
@@ -576,7 +576,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" parentKey="value" text="50%" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString name="$parentString" parentKey="value" text="50%" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="8"/>
                             <Anchors>

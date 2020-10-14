@@ -139,7 +139,7 @@
                         <Anchor point="CENTER" relativeKey="$parent.prestigeString" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                <Texture parentKey="castingbarNormalSpark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="13"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.castingbarNormal" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -324,7 +324,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
-                <Texture parentKey="castingbarNormalSpark" alphaBlend="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                <Texture parentKey="castingbarNormalSpark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                     <Size x="16" y="14"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.castingbarNormal" relativePoint="RIGHT" x="0" y="0"></Anchor>

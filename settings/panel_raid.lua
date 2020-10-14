@@ -8,7 +8,6 @@ local MapTable = GW.MapTable
 local StrUpper = GW.StrUpper
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadRaidPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsRaidPanelTmpl")
@@ -105,8 +104,8 @@ local function LoadRaidPanel(sWindow)
     )
 
     local pos = {"POSITION", "GROWTH"}
-    for i, v in pairs({"TOP", "", "BOTTOM"}) do
-        for j, h in pairs({"LEFT", "", "RIGHT"}) do
+    for _, v in pairs({"TOP", "", "BOTTOM"}) do
+        for _, h in pairs({"LEFT", "", "RIGHT"}) do
             tinsert(pos, (v .. h) == "" and "CENTER" or v .. h)
         end
     end

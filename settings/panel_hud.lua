@@ -6,7 +6,6 @@ local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadHudPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")

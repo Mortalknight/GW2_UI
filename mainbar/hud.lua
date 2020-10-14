@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local CommaValue = GW.CommaValue
-local Wait = GW.Wait
 local lerp = GW.lerp
 local GetSetting = GW.GetSetting
 local Diff = GW.Diff

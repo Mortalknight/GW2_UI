@@ -49,13 +49,13 @@
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <FontString name="$parentLevel" fontColor="white" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                <FontString name="$parentLevel" inherits="GameFontNormalSmall" justifyH="RIGHT">
                     <Size x="100" y="10"/>
                     <Anchors>
                         <Anchor point="TOPRIGHT" x="5" y="-20"/>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentName" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                <FontString name="$parentName" text="unknown" inherits="GameFontNormalSmall" justifyH="LEFT">
                     <Size x="200" y="10"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="130" y="-20"/>
@@ -101,7 +101,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentHealthBarString" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <FontString name="$parentHealthBarString" text="unknown" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="200" y="12"/>
                             <Anchors>
                                 <Anchor point="LEFT" x="5" y="0"/>
@@ -155,7 +155,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="2">
-                        <FontString name="$parentCastingBarString" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <FontString name="$parentCastingBarString" text="unknown" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="200" y="12"/>
                             <Anchors>
                                 <Anchor point="LEFT" x="5" y="0"/>
@@ -217,13 +217,13 @@
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <FontString name="$parentLevel" fontColor="white" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                <FontString name="$parentLevel" inherits="GameFontNormalSmall" justifyH="RIGHT">
                     <Size x="50" y="10"/>
                     <Anchors>
                         <Anchor point="TOPRIGHT" x="0" y="-20"/>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentName" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                <FontString name="$parentName" text="unknown" inherits="GameFontNormalSmall" justifyH="LEFT">
                     <Size x="120" y="10"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="0" y="-20"/>
@@ -267,7 +267,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentHealthBarString" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <FontString name="$parentHealthBarString" text="unknown" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="200" y="11"/>
                             <Anchors>
                                 <Anchor point="LEFT" x="5" y="0"/>
@@ -305,7 +305,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentCastingBarString" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <FontString name="$parentCastingBarString" text="unknown" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="200" y="12"/>
                             <Anchors>
                                 <Anchor point="LEFT" x="5" y="0"/>
@@ -357,13 +357,13 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString name="$parentBuffDuration" parentKey="durationString" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString name="$parentBuffDuration" parentKey="durationString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="12"/>
                     <Anchors>
                         <Anchor point="BOTTOM" x="0" y="-12"/>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentBuffStacks" parentKey="stacksString" text="unknown" fontColor="white" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString name="$parentBuffStacks" parentKey="stacksString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="-10"/>
@@ -563,10 +563,10 @@
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
                     <Anchors>
-                        <Anchor point="TOPLEFT" reletivePoint="TOPLEFT" x="0" y="0"/>
-                        <Anchor point="TOPRIGHT" reletivePoint="TOPRIGHT" x="0" y="0"/>
-                        <Anchor point="BOTTOMLEFT" reletivePoint="BOTTOMLEFT" x="0" y="0"/>
-                        <Anchor point="BOTTOMRIGHT" reletivePoint="BOTTOMRIGHT" x="0" y="0"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">

@@ -307,7 +307,6 @@ local function styleChatWindow(frame)
     local editbox = _G[name.."EditBox"]
     local scroll = frame.ScrollBar
     local scrollToBottom = frame.ScrollToBottomButton
-    local scrollTex = _G[name.."ThumbTexture"]
     local background = _G[name .. "Background"]
 
     if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then

@@ -8,7 +8,6 @@ local StrUpper = GW.StrUpper
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadAurasPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")

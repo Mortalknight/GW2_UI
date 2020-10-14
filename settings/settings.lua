@@ -3,7 +3,6 @@ local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
-local Debug = GW.Debug
 local AddForProfiling = GW.AddForProfiling
 
 local settings_cat = {}

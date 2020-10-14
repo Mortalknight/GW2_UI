@@ -85,7 +85,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" min="0" max="1" hidden="false" parentKey="StatusBar">
+            <StatusBar name="$parentStatusBar" minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
                 <Size x="201" y="4"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="8"></Anchor>
@@ -111,9 +111,6 @@
 
     <Button name="GwReputationDetails" virtual="true">
         <Size x="580" y="65"></Size>
-        <Anchors>
-            <Anchors point="TOPLEFT"></Anchors>
-        </Anchors>
         <Frames>
             <Frame parentKey="item" setAllPoints="true">
                 <Layers>
@@ -245,7 +242,7 @@
                                     </Layer>
                                 </Layers>
                             </Button>
-                            <Button parentKey="inactive" checked="false">
+                            <Button parentKey="inactive">
                                 <Size x="100" y="20"/>
                                 <Anchors>
                                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="5"></Anchor>
@@ -271,7 +268,7 @@
                                     </CheckButton>
                                 </Frames>
                             </Button>
-                            <Button parentKey="showAsBar" checked="false">
+                            <Button parentKey="showAsBar">
                                 <Size x="200" y="20"/>
                                 <Anchors>
                                     <Anchor point="RIGHT" relativeKey="$parent.inactive" relativePoint="LEFT" x="-15" y="0"></Anchor>
@@ -299,7 +296,7 @@
                             </Button>
                         </Frames>
                     </Frame>
-                    <StatusBar min="0" max="1" hidden="false" parentKey="StatusBar">
+                    <StatusBar minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
                         <Size x="0" y="10"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
