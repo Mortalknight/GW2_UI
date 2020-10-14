@@ -3,9 +3,6 @@
 
     <Button name="GwCurrencyRow" virtual="true">
         <Size x="512" y="32"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT"></Anchor>
-        </Anchors>
         <Frames>
             <Button parentKey="header" setAllPoints="true" hidden="true">
                 <Layers>
@@ -72,9 +69,6 @@
 
     <Button name="GwRaidInfoRow" virtual="true">
         <Size x="512" y="55"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT"></Anchor>
-        </Anchors>
         <Frames>
             <Button parentKey="item" setAllPoints="true" hidden="true">
                 <Layers>

@@ -21,7 +21,8 @@ DODGEBAR_SPELLS["MONK"] = "[talent:2/2] 115008; 109132" -- Chi Torpedo if talent
 DODGEBAR_SPELLS_ATTR["MONK"] = "109132" -- use Roll instead of Chi Torpedo for the button attr
 DODGEBAR_SPELLS["DRUID"] = "[talent:2/1] 252216; [talent:2/3,form:1] 16979; [talent:2/3,form:2] 49376; [talent:2/3,form:3,swimming] 102416; [talent:2/3,form:3] 102417; [talent:2/3,form:4] 102383; [talent:2/3] 102401; 1850" -- Tiger Dash if talented, else Wild Charge if talented (with all its sub-details for different forms), else Dash
 DODGEBAR_SPELLS_ATTR["DRUID"] = "[talent:2/3] 102401; 1850" -- use Dash (instead of Tiger Dash) and Wild Charge baseline(instead of form-specific talents) for the button attr
-DODGEBAR_SPELLS["DEMONHUNTER"] = "[spec:1] 195072; [spec:2] 189110" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
+DODGEBAR_SPELLS["DEMONHUNTER"] = "[spec:1] 195072; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
+DODGEBAR_SPELLS_ATTR["DEMONHUNTER"] = "[spec:1] 343017,320416,344865; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
 
 local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty bar
 local FULL_IN_RAD = 2 * math.pi / 180 -- the angle in radians for a full bar
@@ -34,7 +35,6 @@ local function fill_OnFinished(self, flag)
     local fm = f:GetParent():GetParent()
     fm:UnregisterEvent("SPELL_UPDATE_CHARGES")
     fm:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
-    --FrameFlash(fm.arcfill.spark, 0.2, 0.2, false, 0, 0)
     FrameFlash(fm.arcfill.spark, 0.2)
     f:SetRotation(FULL_IN_RAD)
 end
@@ -53,7 +53,6 @@ local function updateAnim(self, start, duration, charges, maxCharges)
 
     -- spark if charge count has changed
     if not self.gwNeedDrain and self.gwCharges ~= charges then
-        --FrameFlash(self.arcfill.spark, 0.2, 0.2, false, 0, 0)
         FrameFlash(self.arcfill.spark, 0.2)
     end
     self.gwCharges = charges
@@ -106,10 +105,33 @@ local function initBar(self, pew)
     if not v then
         return
     end
-    self.spellId = tonumber(v)
+
+    if string.find(v, ",") then
+        for k, v in pairs(GW.splitString(v, ",", true)) do
+            if IsSpellKnown(tonumber(v)) then
+                self.spellId = tonumber(v)
+                break
+            end
+        end
+    else
+        self.spellId = tonumber(v)
+    end
+    Debug("Dodgebar spell for Tooltip: ", self.spellId)
+
     if pew or not InCombatLockdown() then
         if DODGEBAR_SPELLS_ATTR[GW.myclass] then
-            self:SetAttribute("spell", tonumber(SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])))
+            v = SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])
+            if string.find(v, ",") then
+                for k, v in pairs(GW.splitString(v, ",", true)) do
+                    if IsSpellKnown(tonumber(v)) then
+                        self:SetAttribute("spell", tonumber(v))
+                        break
+                    end
+                end
+            else
+                self:SetAttribute("spell", tonumber(v))
+            end
+            Debug("Dodgebar spell for Click: ", self:GetAttribute("spell"))
         else
             self:SetAttribute("spell", self.spellId)
         end

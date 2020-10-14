@@ -263,7 +263,7 @@ GW.Length = Length
 
 do
     local splitTable = {}
-    local function splitString(str, delim)
+    local function splitString(str, delim, returnTable)
         local start = 1
         wipe(splitTable)
 
@@ -278,7 +278,11 @@ do
         
         tinsert(splitTable, strsub(str, start))
 
-        return unpack(splitTable)
+        if returnTable then
+            return splitTable
+        else
+            return unpack(splitTable)
+        end
     end
     GW.splitString = splitString
 end
