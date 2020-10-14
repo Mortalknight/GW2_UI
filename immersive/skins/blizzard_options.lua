@@ -48,6 +48,11 @@ local function SkinBlizzardOptions()
         _G.AudioOptionsVoicePanelChatMode2,
         }
 
+    _G.RolePollPopup:StripTextures()
+	_G.RolePollPopup:CreateBackdrop(GW.skins.constBackdropFrame)
+	_G.RolePollPopupCloseButton:SkinButton(true)
+
+
     local InterfaceOptionsFrame = _G.InterfaceOptionsFrame
     InterfaceOptionsFrame.Header:StripTextures()
     InterfaceOptionsFrame.Header.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
@@ -176,6 +181,7 @@ local function SkinBlizzardOptions()
     --What's New
     local SplashFrame = _G.SplashFrame
     SplashFrame.BottomCloseButton:SkinButton(false, true)
+    SplashFrame.BottomCloseButton:SetFrameLevel(SplashFrame.BottomCloseButton:GetFrameLevel() + 1)
     SplashFrame.TopCloseButton:SkinButton(true)
 
     -- Voice Sliders
