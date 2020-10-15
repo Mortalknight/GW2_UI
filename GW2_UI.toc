@@ -66,12 +66,14 @@ core/auras.lua
 changelog.lua
 GW2_ui.lua
 
+units/raidControl.xml
 units/aurabar.xml
 units/target.xml
 units/target.lua
 units/party.xml
 units/raidframes.xml
 units/unitframes.xml
+units/raidControl.lua
 units/raidframes.lua
 units/unitframes.lua
 units/party.lua
