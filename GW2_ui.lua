@@ -478,6 +478,9 @@ local function loadAddon(self)
     if GetSetting("MAIL_SKIN_ENABLED") then
         GW.SkinMail()
     end
+    if GetSetting("BARBERSHOP_SKIN_ENABLED") then
+        GW.SkinBarShopUI()
+    end
     
     
 
