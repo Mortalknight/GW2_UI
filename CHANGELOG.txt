@@ -1,3 +1,12 @@
+5.4.2
+
+NEW
+    - Barbershop skin
+    - HUD Settings: "Apply UI scale to all scaleable frames"
+
+FIXES
+    - Bug fixes for raidcontrol frame
+
 5.4.1
 
 NEW

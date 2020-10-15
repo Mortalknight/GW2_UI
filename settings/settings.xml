@@ -411,6 +411,33 @@
         </Frames>
     </Button>
 
+    <Button name="GwButtonTextTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="256" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="button" inherits="GwStandardButton">
+                <Size x="256" y="20"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                </Anchors>
+                <FontString inherits="ChatFontNormal" />
+            </Button>
+        </Frames>
+    </Button>
+
     <Button name="GwStandardButton" text="" virtual="true">
         <Size x="128" y="24" />
         <NormalTexture file="Interface/AddOns/GW2_UI/textures/button"/>

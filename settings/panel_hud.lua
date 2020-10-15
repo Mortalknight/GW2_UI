@@ -1,6 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local addOption = GW.AddOption
+local addOptionButton = GW.AddOptionButton
 local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
@@ -50,6 +51,14 @@ local function LoadHudPanel(sWindow)
         nil,
         2
     )
+    addOptionButton(p, L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES"], L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES_DESC"], nil, function()
+        local scale = GetSetting("HUD_SCALE")
+        for _, mf in pairs(GW.scaleableFrames) do
+            mf.gw_frame:SetScale(scale)
+            mf:SetScale(scale)
+            GW.SetSetting(mf.gw_Settings .."_scale", scale)
+        end
+    end)
     addOptionDropdown(
         p,
         L["MINIMAP_HOVER"],

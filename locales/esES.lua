@@ -332,6 +332,8 @@ local function GWUseThisLocalization()
     L["INSTALL_FINISHED_DESC"] = "You are now finished with the installation process."
     L["INSTALL_FINISHED_BTN"] = "Finished"
     L["SIZER_HERO_PANEL"] = "Scale with Right Click"
+    L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES"] = "Apply UI scale to all scaleable frames"
+    L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES_DESC"] = "Apply's the UI scale to alle frames, which can be scaled in 'Move HUD' mode."
 end
 
 if GetLocale() == "esES" then

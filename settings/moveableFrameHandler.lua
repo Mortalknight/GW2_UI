@@ -6,6 +6,8 @@ local L = GW.L
 
 local MOVABLE_FRAMES = {}
 GW.MOVABLE_FRAMES = MOVABLE_FRAMES
+local scaleableFrames = {}
+GW.scaleableFrames = scaleableFrames
 
 local function CheckIfMoved(self, settingsName, new_point)
     -- check if we need to know if the frame is on its default position
@@ -283,7 +285,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe.gw_frame:SetScale(scale)
         moveframe:SetScale(scale)
         moveframe:SetScript("OnMouseDown", mover_scaleable)
-        frame:SetScale(scale)
+        scaleableFrames[#scaleableFrames + 1] = moveframe
     else
         moveframe:SetScript("OnMouseDown", function(self, button)
             if button =="RightButton" then

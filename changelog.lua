@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.2", [=[
+    NEW
+    - Barbershop skin
+    - HUD Settings: "Apply UI scale to all scaleable frames"
+
+FIXES
+    - Bug fixes for raidcontrol frame
+]=])
+
 v("5.4.1", [=[
 NEW
     - Added Maelstrom classpowerbar (shaman)

@@ -182,6 +182,36 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
 end
 GW.AddOption = AddOption
 
+local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence)
+    if not panel then
+        return
+    end
+    if not panel.gwOptions then
+        panel.gwOptions = {}
+    end
+    
+    local opt = {}
+    opt["name"] = name
+    opt["desc"] = desc
+    opt["optionName"] = optionName
+    opt["optionType"] = "button"
+    opt["callback"] = callback
+    opt["dependence"] = dependence
+
+    if params then
+        for k, v in pairs(params) do opt[k] = v end
+    end
+
+    local i = #(panel.gwOptions) + 1
+    panel.gwOptions[i] = opt
+
+    local i = #(all_options) + 1
+    all_options[i] = opt
+
+    return opt
+end
+GW.AddOptionButton = AddOptionButton
+
 local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, dependence_value)
 
@@ -304,6 +334,8 @@ local function setDependenciesOption(type, name, SetEnable)
         elseif type == "dropdown" then
             _G[name].button:Enable()
             _G[name].button.string:SetTextColor(1, 1, 1)
+        elseif type == "button" then
+            _G[name].button:Enable()
         end
         _G[name].title:SetTextColor(1, 1, 1)
     else
@@ -320,6 +352,8 @@ local function setDependenciesOption(type, name, SetEnable)
         elseif type == "dropdown" then
             _G[name].button:Disable()
             _G[name].button.string:SetTextColor(0.82, 0.82, 0.82)
+        elseif type == "button" then
+            _G[name].button:Disable()
         end
         _G[name].title:SetTextColor(0.82, 0.82, 0.82)
     end
@@ -374,13 +408,14 @@ local function InitPanel(panel)
         if v.optionType == "slider" then
             optionFrameType = "GwOptionBoxSliderTmpl"
             newLine = true
-        end
-        if v.optionType == "dropdown" then
+        elseif v.optionType == "dropdown" then
             optionFrameType = "GwOptionBoxDropDownTmpl"
             newLine = true
-        end
-        if v.optionType == "text" then
+        elseif v.optionType == "text" then
             optionFrameType = "GwOptionBoxTextTmpl"
+            newLine = true
+        elseif v.optionType == "button" then
+            optionFrameType = "GwButtonTextTmpl"
             newLine = true
         end
 
@@ -470,9 +505,7 @@ local function InitPanel(panel)
                     end
                 end
             )
-        end
-
-        if v.optionType == "slider" then
+        elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
             of.slider:SetValue(GetSetting(v.optionName, v.perSpec))
             if v.step then of.slider:SetValueStep(v.step) end
@@ -511,9 +544,7 @@ local function InitPanel(panel)
                     end
                 end
             )
-        end
-
-        if v.optionType == "text" then
+        elseif v.optionType == "text" then
             of.input:SetText(GetSetting(v.optionName, v.perSpec) or "")
             of.input:SetScript(
                 "OnEnterPressed",
@@ -525,9 +556,7 @@ local function InitPanel(panel)
                     end
                 end
             )
-        end
-
-        if v.optionType == "boolean" then
+        elseif v.optionType == "boolean" then
             of.checkbutton:SetChecked(GetSetting(v.optionName, v.perSpec))
             of.checkbutton:SetScript(
                 "OnClick",
@@ -557,6 +586,17 @@ local function InitPanel(panel)
 
                     if v.callback ~= nil then
                         v.callback(toSet)
+                    end
+                    --Check all dependencies on this option
+                    checkDependenciesOnLoad()
+                end
+            )
+        elseif v.optionType == "button" then
+            of.button:SetScript(
+                "OnClick",
+                function(self, button)
+                    if v.callback ~= nil then
+                        v.callback()
                     end
                     --Check all dependencies on this option
                     checkDependenciesOnLoad()
