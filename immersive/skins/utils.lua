@@ -54,6 +54,12 @@ local function SkinDropDownList()
             local uncheck = _G["DropDownList" .. level .. "Button" .. i .. "UnCheck"]
             local arrow = _G["DropDownList" .. level .. "Button" .. i .. "ExpandArrow"]
 
+            check:SetTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked")
+            check:SetTexCoord(unpack(GW.TexCoords))
+            check:SetSize(13, 13)
+            uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/checkbox")
+            uncheck:SetTexCoord(unpack(GW.TexCoords))
+            uncheck:SetSize(13, 13)
             if not button.backdrop then
                 button:CreateBackdrop()
             end
@@ -65,16 +71,7 @@ local function SkinDropDownList()
             end
 
             if not button.notCheckable then
-                local _, co = check:GetTexCoord()
-                if co == 0 then
-                    check:SetTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked")
-                    check:SetTexCoord(unpack(GW.TexCoords))
-                    check:SetSize(13, 13)
-                    uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/checkbox")
-                    uncheck:SetTexCoord(unpack(GW.TexCoords))
-                    uncheck:SetSize(13, 13)
-                end
-
+                button.backdrop:Show()
             end
         end
         --Check if Raider.IO Entry is added
