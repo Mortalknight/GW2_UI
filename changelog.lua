@@ -3,7 +3,7 @@ local v = GW.vernotes
 
 v("5.4.1", [=[
 NEW
-    - Added Maelstrom classpowerbar
+    - Added Maelstrom classpowerbar (shaman)
     
 FIXES
     - Spec spellbooktab is now only with a spec available
@@ -14,7 +14,7 @@ FIXES
 v("5.4.0", [=[
     Update for Shadowlands Pre-Patch
 
-    Note: Quest Tracker ist disabled for now, need a complete rework
+    Note: Quest Tracker is disabled for now, need a complete rework
 
 NEW
     - Sizer for Heropanel
