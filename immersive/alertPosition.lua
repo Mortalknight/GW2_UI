@@ -6,15 +6,15 @@ local function UpdateGroupLootContainer(self)
     local lastIdx = nil
     local pt, _, relPt, _, _ = self:GetPoint()
 
-    for i = 1 , self.maxIndex do
+    for i = 1, self.maxIndex do
         local frame = self.rollFrames[i]
-        local prevFrame = self.rollFrames[i - 1]
         if frame then
             frame:ClearAllPoints()
-            if prevFrame and not (prevFrame == frame) then
-                frame:SetPoint(pt, prevFrame, relPt, 0, 0)
+            local prevFrame = self.rollFrames[i-1]
+            if prevFrame and prevFrame ~= frame then
+                frame:SetPoint(pt, prevFrame, relPt, 0, self.reservedSize * (i-1 + 0.5))
             else
-                frame:SetPoint(pt, UIParent, relPt, 0, _G.GwAlertFrameOffsetter:GetHeight())
+                frame:SetPoint(pt, _G.GwAlertFrameOffsetter, pt, 0, _G.GwAlertFrameOffsetter:GetHeight())
             end
             lastIdx = i
         end
@@ -27,6 +27,8 @@ local function UpdateGroupLootContainer(self)
         self:Hide()
     end
 end
+
+-- /run BonusRollFrame_StartBonusRoll(242969,'test',10,1220,1273,14)
 
 local function RePostAlertFrame()
     local _, y = GW.AlertContainerFrame:GetCenter()
