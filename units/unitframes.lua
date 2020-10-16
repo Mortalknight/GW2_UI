@@ -787,14 +787,9 @@ local function LoadTarget()
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
 
-    local dropdown = _G["GwTargetUnitFrameDropDown"]
-    UIDropDownMenu_SetInitializeFunction(dropdown, TargetFrameDropDown_Initialize)
-    UIDropDownMenu_SetDisplayMode(dropdown, "MENU")
-
-    local showmenu = function()
-        ToggleDropDownMenu(1, nil, dropdown, "GwTargetUnitFrame", 120, 10)
-    end
-    SecureUnitButton_OnLoad(NewUnitFrame, NewUnitFrame.unit, showmenu)
+    NewUnitFrame:SetAttribute("*type1", "target")
+    NewUnitFrame:SetAttribute("*type2", "togglemenu")
+    NewUnitFrame:SetAttribute("unit", "target")
     RegisterUnitWatch(NewUnitFrame)
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
