@@ -755,22 +755,74 @@ local function powerSoulshard(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
 
+
+local function powerSoulshardAnimated(self, event, ...)
+    --[[
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
+        return
+    end
+
+    local pwrMax = UnitPowerMax("player", 7)
+    local pwr = UnitPower("player", 7)
+    local shardPower = WarlockPowerBar_UnitPower("player")
+
+    self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
+    self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
+    ]]
+
+    -- TODO: THis is temp, till we have our own texture
+    WarlockPowerFrame:ClearAllPoints()
+    WarlockPowerFrame:SetParent(self)
+    self.unit ="player"
+    if GW.GetSetting("XPBAR_ENABLED") then
+        WarlockPowerFrame:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -362, 87)
+    else
+        WarlockPowerFrame:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -362, 73)
+    end
+end
+
 local function setWarlock(f)
-    f:SetHeight(32)
-    f:SetWidth(256)
-    f.background:SetHeight(32)
-    f.background:SetWidth(128)
-    f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs-bg")
-    f.fill:SetHeight(32)
-    f.fill:SetWidth(256)
-    f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs")
+    if GW.myspec == 3 then -- destruction
+        --[[
+        f:SetHeight(32)
+        f:SetWidth(256)
+        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs-bg")
+        f.fill:SetHeight(32)
+        f.fill:SetWidth(256)
+        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs")
+        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\runeflash")
+        f.flare:SetWidth(256)
+        f.flare:SetHeight(128)
+    ]]
 
-    f:SetScript("OnEvent", powerSoulshard)
-    powerSoulshard(f, "CLASS_POWER_INIT")
-    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+        f.background:SetTexture()
+        f.fill:SetTexture()
+        f:SetScript("OnEvent", powerSoulshardAnimated)
+        powerSoulshardAnimated(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-    return true
+        return true
+    else
+        f:SetHeight(32)
+        f:SetWidth(256)
+        f.background:SetHeight(32)
+        f.background:SetWidth(128)
+        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs-bg")
+        f.fill:SetHeight(32)
+        f.fill:SetWidth(256)
+        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs")
+
+        f:SetScript("OnEvent", powerSoulshard)
+        powerSoulshard(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+        return true
+    end
+
+    return false
 end
 GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
 

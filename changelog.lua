@@ -8,6 +8,7 @@ v("5.4.2", [=[
 
 FIXES
     - Bug fixes for raidcontrol frame
+    - Destruction Warlooks: We steel the blizzard Soul shards as our classpower so you can see also soul shard fragments (temp, till we have our own graphic)
 ]=])
 
 v("5.4.1", [=[
