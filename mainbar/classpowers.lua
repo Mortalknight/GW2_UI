@@ -780,6 +780,7 @@ local function powerSoulshardAnimated(self, event, ...)
     else
         WarlockPowerFrame:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -362, 73)
     end
+    WarlockPowerFrame:Show()
 end
 
 local function setWarlock(f)
@@ -798,10 +799,10 @@ local function setWarlock(f)
 
         f.background:SetTexture()
         f.fill:SetTexture()
-        f:SetScript("OnEvent", powerSoulshardAnimated)
+        --f:SetScript("OnEvent", powerSoulshardAnimated)
         powerSoulshardAnimated(f, "CLASS_POWER_INIT")
-        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+        --f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+        --f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
         return true
     else
@@ -818,6 +819,7 @@ local function setWarlock(f)
         powerSoulshard(f, "CLASS_POWER_INIT")
         f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
         f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+        WarlockPowerFrame:Hide()
 
         return true
     end
