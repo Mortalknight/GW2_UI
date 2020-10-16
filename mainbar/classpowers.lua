@@ -237,7 +237,7 @@ local function setComboBar(f)
 
     if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -10)
+        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -5)
         f:SetWidth(220)
         f:SetHeight(30)
         f:Hide()
