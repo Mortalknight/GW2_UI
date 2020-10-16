@@ -511,7 +511,7 @@ local function LoadMinimap()
     GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
     -- only set the coords updater here if they are showen always
     local hoverSetting = GetSetting("MINIMAP_HOVER")
-    if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" then
+    if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
         GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
     end
     --FPS
