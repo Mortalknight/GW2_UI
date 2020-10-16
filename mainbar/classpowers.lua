@@ -620,7 +620,6 @@ end
 GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
 
 local function setShaman(f)
-    print(GW.myspec)
     if GW.myspec == 1 then
         -- ele use extra mana bar on left
         setManaBar(f)
