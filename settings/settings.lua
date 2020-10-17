@@ -321,6 +321,7 @@ GW.WarningPrompt = WarningPrompt
 
 local function setDependenciesOption(type, name, SetEnable)
     if SetEnable then
+        _G[name].title:SetTextColor(1, 1, 1)
         if type == "boolean" then
             _G[name]:Enable()
             _G[name].checkbutton:Enable()
@@ -335,10 +336,11 @@ local function setDependenciesOption(type, name, SetEnable)
             _G[name].button:Enable()
             _G[name].button.string:SetTextColor(1, 1, 1)
         elseif type == "button" then
-            _G[name].button:Enable()
+            _G[name]:Enable()
+            _G[name].title:SetTextColor(0, 0, 0)
         end
-        _G[name].title:SetTextColor(1, 1, 1)
     else
+        _G[name].title:SetTextColor(0.82, 0.82, 0.82)
         if type == "boolean" then
             _G[name]:Disable()
             _G[name].checkbutton:Disable()
@@ -353,9 +355,8 @@ local function setDependenciesOption(type, name, SetEnable)
             _G[name].button:Disable()
             _G[name].button.string:SetTextColor(0.82, 0.82, 0.82)
         elseif type == "button" then
-            _G[name].button:Disable()
+            _G[name]:Disable()
         end
-        _G[name].title:SetTextColor(0.82, 0.82, 0.82)
     end
 end
 
@@ -592,7 +593,7 @@ local function InitPanel(panel)
                 end
             )
         elseif v.optionType == "button" then
-            of.button:SetScript(
+            of:SetScript(
                 "OnClick",
                 function(self, button)
                     if v.callback ~= nil then
@@ -602,6 +603,8 @@ local function InitPanel(panel)
                     checkDependenciesOnLoad()
                 end
             )
+            of.title:SetTextColor(0, 0, 0)
+            of.title:SetShadowColor(0, 0, 0, 0)
         end
 
         if v.perSpec then
