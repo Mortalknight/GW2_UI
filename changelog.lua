@@ -5,10 +5,12 @@ v("5.4.2", [=[
     NEW
     - Barbershop skin
     - HUD Settings: "Apply UI scale to all scaleable frames"
+    - Added option to show inventory separated
 
 FIXES
     - Bug fixes for raidcontrol frame
     - Destruction Warlooks: We steel the blizzard Soul shards as our classpower so you can see also soul shard fragments (temp, till we have our own graphic)
+    - Bonus Roll should now show properly
 ]=])
 
 v("5.4.1", [=[

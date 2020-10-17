@@ -334,6 +334,7 @@ local function GWUseThisLocalization()
     L["SIZER_HERO_PANEL"] = "Skalieren mit Rechtsklick"
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES"] = "UI Saklierung auf alle skalierbaren Fenster anwenden"
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES_DESC"] = "Überträgt die UI Skalierung auf alle Fenster, welche im 'Move HUD' skaliert werden können"
+    L["SEPARATE_BAGS"] = "Taschen separat anzeigen"
 end
 
 if GetLocale() == "deDE" then

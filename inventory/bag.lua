@@ -18,6 +18,8 @@ local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
 local BAG_WINDOW_SIZE = 480
 
+local BAG1
+
 local IterationCount, totalPrice = 500, 0
 local SellJunkFrame = CreateFrame("FRAME")
 local SellJunkTicker, mBagID, mBagSlot
@@ -118,14 +120,35 @@ local function setupVendorJunk(active)
     end
 end
 
+local function setBagHeaders()
+    for i = 0, 4 do
+        if i > 0 then
+            local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
+            local itemID = GetInventoryItemID("player", slotID)
+
+            if itemID then
+                local itemName, _, itemRarity = GetItemInfo(itemID)
+                local r, g, b = GetItemQualityColor(itemRarity)
+                _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(itemName)
+                _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, a)
+            else
+                _G["GwBagFrameGwBagHeader" .. i]:Hide()
+            end
+        end
+    end
+    _G["GwBagFrameGwBagHeader0"].nameString:SetText(BACKPACK_TOOLTIP)
+end
+
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
 local function layoutBagItems(f)
     local max_col = f:GetParent().gw_bag_cols
-    local row = 0
     local col = 0
     local rev = GetSetting("BAG_REVERSE_SORT")
-
+    local sep = GetSetting("BAG_SEPARATE_BAGS")
+    local row = sep and 1 or 0
     local item_off = BAG_ITEM_SIZE + BAG_ITEM_PADDING
+    local unfinishedRow = false
+    local finishedRow = 0
 
     local iS = BACKPACK_CONTAINER
     local iE = NUM_BAG_SLOTS
@@ -135,13 +158,53 @@ local function layoutBagItems(f)
         iS = NUM_BAG_SLOTS
         iD = -1
     end
-
+    f:GetParent().unfinishedRow = 0
+    f:GetParent().finishedRow = 0
     local lcf = inv.layoutContainerFrame
     for i = iS, iE, iD do
         local bag_id = i
+        local slotID, itemID 
         local cf = f.Containers[bag_id]
-        col, row = lcf(cf, max_col, row, col, false, item_off)
+        if sep then
+            _G["GwBagFrameGwBagHeader" .. bag_id]:Show()
+            _G["GwBagFrameGwBagHeader" .. bag_id]:ClearAllPoints()
+            _G["GwBagFrameGwBagHeader" .. bag_id]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
+            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(BAG_WINDOW_SIZE)
+            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(BAG_WINDOW_SIZE)
+        else
+            _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
+        end
+        if sep and cf.shouldShow then
+            col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off)
+            cf:Show()
+        elseif sep and not cf.shouldShow then
+            cf:Hide()
+        elseif not sep then
+            col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off)
+            cf:Show()
+        end
+
+        if unfinishedRow then f:GetParent().unfinishedRow = f:GetParent().unfinishedRow  + 1 end
+        if finishedRows then f:GetParent().finishedRow = f:GetParent().finishedRow + finishedRows end
+
+        if not rev and bag_id < 4 then 
+            slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
+            itemID = GetInventoryItemID("player", slotID)
+        elseif rev and bag_id <= 5 and bag_id > 0 then
+            slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
+            itemID = GetInventoryItemID("player", slotID)
+        end
+
+        if (sep and bag_id == 0) or (sep and itemID) then
+            if col ~= 0 then
+                row = row + 2
+                col = 0
+            else
+                row = row + 1
+            end
+        end
     end
+    setBagHeaders()
 end
 GW.AddForProfiling("bag", "layoutBagItems", layoutBagItems)
 
@@ -523,6 +586,23 @@ local function bag_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
 
+local function bagHeader_OnClick(self, btn)
+    local bag_id = string.sub(self:GetName(), -1)
+
+    if self.icon:IsShown() then
+        -- collaps
+        self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = false
+    else
+        -- expand
+        self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = true
+    end
+    self.icon:SetShown(not self.icon:IsShown())
+    self.icon2:SetShown(not self.icon:IsShown())
+
+    layoutItems(self:GetParent())
+    snapFrameSize(self:GetParent())
+end
+
 local function LoadBag(helpers)
     inv = helpers
 
@@ -561,6 +641,15 @@ local function LoadBag(helpers)
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
+    -- setup bagher stuff
+    for i = 0, 4 do
+        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12)
+        _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
+        _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
+        _G["GwBagFrameGwBagHeader" .. i].icon2:Hide()
+        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnClick", bagHeader_OnClick)
+    end
+
     -- take the original search box
     inv.reskinSearchBox(BagItemSearchBox)
     hooksecurefunc(
@@ -581,6 +670,7 @@ local function LoadBag(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
+        cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end
 
@@ -692,7 +782,9 @@ local function LoadBag(helpers)
                     dd.bagOrder.checkbutton:SetChecked(true)
                     SetSetting("BAG_REVERSE_SORT", true)
                 end
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()
+                layoutItems(f)
+                snapFrameSize(f)
             end
         )
 
@@ -794,6 +886,21 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.separateBags.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                if GetSetting("BAG_SEPARATE_BAGS") then
+                    dd.separateBags.checkbutton:SetChecked(false)
+                    SetSetting("BAG_SEPARATE_BAGS", false)
+                else
+                    dd.separateBags.checkbutton:SetChecked(true)
+                    SetSetting("BAG_SEPARATE_BAGS", true)
+                end
+                layoutItems(f)
+                snapFrameSize(f)
+            end
+        )
+
         if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
             dd.compactBags.checkbutton:SetChecked(false)
         else
@@ -850,6 +957,11 @@ local function LoadBag(helpers)
         else
             dd.showItemLvl.checkbutton:SetChecked(false)
         end
+        if GetSetting("BAG_SEPARATE_BAGS") then
+            dd.separateBags.checkbutton:SetChecked(true)
+        else
+            dd.separateBags.checkbutton:SetChecked(false)
+        end
 
         -- setup bag setting title locals
         dd.compactBags.title:SetText(L["COMPACT_ICONS"])
@@ -861,6 +973,7 @@ local function LoadBag(helpers)
         dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
         dd.vendorGrays.title:SetText(L["VENDOR_GRAYS"])
         dd.showItemLvl.title:SetText(SHOW_ITEM_LEVEL)
+        dd.separateBags.title:SetText(L["SEPARATE_BAGS"])
     end
 
     -- setup money frame

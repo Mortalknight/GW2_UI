@@ -334,6 +334,7 @@ local function GWUseThisLocalization()
     L["SIZER_HERO_PANEL"] = "Scale with Right Click"
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES"] = "Apply UI scale to all scaleable frames"
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES_DESC"] = "Apply's the UI scale to all frames, which can be scaled in 'Move HUD' mode."
+    L["SEPARATE_BAGS"] = "Separate bags"
 end
 
 local Locale = GetLocale()

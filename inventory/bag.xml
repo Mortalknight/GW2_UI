@@ -152,6 +152,171 @@
 
         </Layers>
         <Frames>
+            <Button name="$parentGwBagHeader0" framelevel="50">
+                <Size x="512" y="32"></Size>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep" setAllPoints="true">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                            </Anchors>
+                            <Size x="300" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="$parentGwBagHeader1" framelevel="50">
+                <Size x="512" y="32"></Size>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                            </Anchors>
+                            <Size x="300" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="$parentGwBagHeader2" framelevel="50">
+                <Size x="512" y="32"></Size>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                            </Anchors>
+                            <Size x="300" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="$parentGwBagHeader3" framelevel="50">
+                <Size x="512" y="32"></Size>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                            </Anchors>
+                            <Size x="300" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="$parentGwBagHeader4" framelevel="50">
+                <Size x="512" y="32"></Size>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                            </Anchors>
+                            <Size x="300" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
             <Button parentKey="currency" framelevel="50">
                 <Size x="32" y="32"></Size>
                 <Anchors>
@@ -204,7 +369,7 @@
                 </Scripts>
             </Button>
 
-            <Frame parentkey="mover" enableMouse="true">
+            <Frame parentKey="mover" enableMouse="true">
                 <Size y="40" />
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0"></Anchor>
@@ -245,7 +410,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" hidden="true" frameLevel="58">
-                        <Size x="200" y="280"></Size>
+                        <Size x="200" y="305"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
@@ -516,6 +681,34 @@
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
                                         <FontString parentKey="title" text="Show Itemlevel" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="separateBags">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-275"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="SEPARATE_BAGS" inherits="ChatBubbleFont" justifyH="LEFT">
                                             <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
