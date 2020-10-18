@@ -11,6 +11,8 @@ local function gwSetStaticPopupSize()
         _G["StaticPopup" .. i .. "ItemFrameNormalTexture"]:SetTexture(nil)
         _G["StaticPopup" .. i .. "CloseButton"]:SkinButton(true)
         _G["StaticPopup" .. i .. "CloseButton"]:SetSize(20, 20)
+        _G["StaticPopup" .. i .. "CloseButton"]:ClearAllPoints()
+        _G["StaticPopup" .. i .. "CloseButton"]:SetPoint("TOPRIGHT", -20, -5)
     end
 end
 
