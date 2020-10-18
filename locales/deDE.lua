@@ -337,6 +337,8 @@ local function GWUseThisLocalization()
     L["SEPARATE_BAGS"] = "Taschen separat anzeigen"
     L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Geschlecht"
     L["ADVANCED_TOOLTIP_SHOW_GENDER_DESC"] = "Zeigt das Geschlecht eines Spielers an."
+    L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"] = "Neuer Taschenname:"
+    L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"] = "Rechtsklick um einen individuellen Namen festzulegen"
 end
 
 if GetLocale() == "deDE" then

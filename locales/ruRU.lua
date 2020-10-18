@@ -336,6 +336,8 @@ local function GWUseThisLocalization()
     L["SEPARATE_BAGS"] = "Separate bags"
     L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Gender"
     L["ADVANCED_TOOLTIP_SHOW_GENDER_DESC"] = "Displays the gender of players."
+    L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"] = "New bag name"
+    L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"] = "Right click to set an individual name"
 end
 
 if GetLocale() == "ruRU" then

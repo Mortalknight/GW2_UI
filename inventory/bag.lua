@@ -125,18 +125,20 @@ local function setBagHeaders()
         if i > 0 then
             local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
             local itemID = GetInventoryItemID("player", slotID)
+            local customBagHeaderName = GetSetting("BAG_HEADER_NAME" .. i)
 
             if itemID then
                 local itemName, _, itemRarity = GetItemInfo(itemID)
                 local r, g, b = GetItemQualityColor(itemRarity)
-                _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(itemName)
+                _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName)
                 _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, a)
             else
                 _G["GwBagFrameGwBagHeader" .. i]:Hide()
             end
         end
     end
-    _G["GwBagFrameGwBagHeader0"].nameString:SetText(BACKPACK_TOOLTIP)
+    local customBagHeaderName = GetSetting("BAG_HEADER_NAME0")
+    _G["GwBagFrameGwBagHeader0"].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
 end
 
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
@@ -588,19 +590,29 @@ GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
 
 local function bagHeader_OnClick(self, btn)
     local bag_id = string.sub(self:GetName(), -1)
+    if btn == "LeftButton" then
+        if self.icon:IsShown() then
+            -- collaps
+            self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = false
+        else
+            -- expand
+            self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = true
+        end
+        self.icon:SetShown(not self.icon:IsShown())
+        self.icon2:SetShown(not self.icon:IsShown())
 
-    if self.icon:IsShown() then
-        -- collaps
-        self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = false
-    else
-        -- expand
-        self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = true
+        layoutItems(self:GetParent())
+        snapFrameSize(self:GetParent())
+    elseif btn == "RightButton" then
+        StaticPopup_Show("GW_CHANGE_BAG_HEADER", nil, nil, bag_id)
     end
-    self.icon:SetShown(not self.icon:IsShown())
-    self.icon2:SetShown(not self.icon:IsShown())
+end
 
-    layoutItems(self:GetParent())
-    snapFrameSize(self:GetParent())
+local function bagHeader_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, -45)
+    GameTooltip:ClearLines()
+    GameTooltip_SetTitle(GameTooltip, L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"])
+    GameTooltip:Show()
 end
 
 local function LoadBag(helpers)
@@ -648,6 +660,9 @@ local function LoadBag(helpers)
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
         _G["GwBagFrameGwBagHeader" .. i].icon2:Hide()
         _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnClick", bagHeader_OnClick)
+        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnClick", bagHeader_OnClick)
+        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnEnter", bagHeader_OnEnter)
+        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnLeave", GameTooltip_Hide)
     end
 
     -- take the original search box
@@ -1151,6 +1166,39 @@ local function LoadBag(helpers)
     smsj.text:SetText(L["SELLING_JUNK"])
 
     f.smsj = smsj
+    
+    
+    StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
+        text = L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"],
+        button1 = SAVE,
+        button2 = RESET,
+        selectCallbackByIndex = true,
+        OnButton1 = function(self, data)
+            SetSetting("BAG_HEADER_NAME" .. data, self.editBox:GetText())
+            _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(self.editBox:GetText())
+            return
+        end,
+        OnButton2 = function(self, data)
+            SetSetting("BAG_HEADER_NAME" .. data, "")
+
+            local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
+            local itemID = GetInventoryItemID("player", slotID)
+
+            if itemID then
+                local itemName, _, itemRarity = GetItemInfo(itemID)
+                local r, g, b = GetItemQualityColor(itemRarity)
+                _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName)
+                _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, a)
+            end
+            return
+        end,
+        timeout = 0,
+        whileDead = 1,
+        hasEditBox = 1,
+        maxLetters = 64,
+        editBoxWidth = 250,
+        closeButton = 1,
+    }
 
     return changeItemSize
 end

@@ -187,7 +187,7 @@ local function CreateBackdrop(frame, backdropTexture)
 end
 
 local function SkinButton(button, isXButton, setTextColor, onlyHover)
-    if not button or button.isSkinned then return end
+    if not button then return end
 
     if not onlyHover then
         if isXButton then
@@ -220,8 +220,6 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
     if not isXButton or onlyHover then
         button:AddHover()
     end
-
-    button.isSkinned = true
 end
 
 local function SkinTab(tabButton)

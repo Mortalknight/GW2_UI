@@ -152,7 +152,7 @@
 
         </Layers>
         <Frames>
-            <Button name="$parentGwBagHeader0" framelevel="50">
+            <Button name="$parentGwBagHeader0" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
@@ -185,7 +185,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="$parentGwBagHeader1" framelevel="50">
+            <Button name="$parentGwBagHeader1" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
@@ -218,7 +218,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="$parentGwBagHeader2" framelevel="50">
+            <Button name="$parentGwBagHeader2" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
@@ -251,7 +251,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="$parentGwBagHeader3" framelevel="50">
+            <Button name="$parentGwBagHeader3" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
@@ -284,7 +284,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="$parentGwBagHeader4" framelevel="50">
+            <Button name="$parentGwBagHeader4" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
