@@ -653,7 +653,7 @@ local function LoadBag(helpers)
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
-    -- setup bagher stuff
+    -- setup bagheader stuff
     for i = 0, 4 do
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12)
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
@@ -808,7 +808,6 @@ local function LoadBag(helpers)
                     dd.bagOrder.checkbutton:SetChecked(true)
                     SetSetting("BAG_REVERSE_SORT", true)
                 end
-                --ContainerFrame_UpdateAll()
                 layoutItems(f)
                 snapFrameSize(f)
             end

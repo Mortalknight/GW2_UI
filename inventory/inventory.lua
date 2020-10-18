@@ -312,6 +312,7 @@ local function takeItemButtons(p, bag_id)
         end
     end
 end
+--/run ContainerFrameItemButton_SetForceExtended(_G["ContainerFrame1Item4"], true)
 GW.AddForProfiling("inventory", "takeItemButtons", takeItemButtons)
 
 local function reskinBagBar(b, ha)
@@ -512,6 +513,8 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
                 bags_equipped = bags_equipped + 1
             end
         end
+        f.finishedRow = f.finishedRow and f.finishedRow or 0
+        f.unfinishedRow = f.unfinishedRow and f.unfinishedRow or 0
         rows = f.finishedRow + bags_equipped + 1 + f.unfinishedRow
     else
         rows = math.ceil(slots / cols)
