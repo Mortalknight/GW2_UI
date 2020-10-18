@@ -345,7 +345,7 @@ local function garrisonBtn_OnEvent(self, event, ...)
         self.gw_Showing = false
         return
     end
-    if garrisonType == LE_GARRISON_TYPE_6_0 or garrisonType == LE_GARRISON_TYPE_7_0 or garrisonType == LE_GARRISON_TYPE_8_0 then
+    if garrisonType == Enum.GarrisonType.Type_6_0 or garrisonType == Enum.GarrisonType.Type_7_0 or garrisonType == Enum.GarrisonType.Type_8_0 or garrisonType == Enum.GarrisonType.Type_9_0 then
         if Minimap:IsShown() then
             self:Show()
         end
