@@ -415,10 +415,11 @@ local function spellButton_OnEnter(self)
         GameTooltip:AddLine(desc)
     end
     if self.isFuture then
-        GameTooltip:AddLine(" ")
         if self.unlockLevel then
+            GameTooltip:AddLine(" ")
             GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
-        else
+        elseif GetSpellLevelLearned(self.spellId) > 0 then
+            GameTooltip:AddLine(" ")
             GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(GetSpellLevelLearned(self.spellId)), 1, 1, 1)  
         end
     end

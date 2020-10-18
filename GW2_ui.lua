@@ -482,8 +482,6 @@ local function loadAddon(self)
         GW.SkinBarShopUI()
     end
     
-    
-
     GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
 
