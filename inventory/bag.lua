@@ -1101,15 +1101,20 @@ local function LoadBag(helpers)
         OnButton2 = function(self, data)
             SetSetting("BAG_HEADER_NAME" .. data, "")
 
-            local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
-            local itemID = GetInventoryItemID("player", slotID)
-
-            if itemID then
-                local itemName, _, itemRarity = GetItemInfo(itemID)
-                local r, g, b = GetItemQualityColor(itemRarity)
-                _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName)
-                _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, a)
+            if tonumber(data) > 0 then
+                local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
+                local itemID = GetInventoryItemID("player", slotID)
+            
+                if itemID then
+                    local itemName, _, itemRarity = GetItemInfo(itemID)
+                    local r, g, b = GetItemQualityColor(itemRarity)
+                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName)
+                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, a)
+                end
+            else
+                _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(BACKPACK_TOOLTIP)
             end
+
             return
         end,
         timeout = 0,
