@@ -770,30 +770,13 @@ local function LoadBag(helpers)
             end
         )
 
-        dd.newOrder:HookScript(
+        dd.newOrder.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetInsertItemsLeftToRight() then
-                    dd.newOrder.title:SetText(L["BAG_NEW_ORDER_LAST"])
-                    SetInsertItemsLeftToRight(false)
-                else
-                    dd.newOrder.title:SetText(L["BAG_NEW_ORDER_FIRST"])
-                    SetInsertItemsLeftToRight(true)
-                end
-                dd:Hide()
-            end
-        )
-
-        dd.sortOrder:HookScript(
-            "OnClick",
-            function(self)
-                if GetSortBagsRightToLeft() then
-                    dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_FIRST"])
-                    SetSortBagsRightToLeft(false)
-                else
-                    dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_LAST"])
-                    SetSortBagsRightToLeft(true)
-                end
+                local newStatus = not GetSetting("BAG_REVERSE_NEW_LOOT")
+                SetInsertItemsLeftToRight(newStatus)
+                dd.newOrder.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_REVERSE_NEW_LOOT", newStatus)
                 dd:Hide()
             end
         )
@@ -801,13 +784,10 @@ local function LoadBag(helpers)
         dd.bagOrder.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_REVERSE_SORT") then
-                    dd.bagOrder.checkbutton:SetChecked(false)
-                    SetSetting("BAG_REVERSE_SORT", false)
-                else
-                    dd.bagOrder.checkbutton:SetChecked(true)
-                    SetSetting("BAG_REVERSE_SORT", true)
-                end
+                local newStatus = not GetSetting("BAG_REVERSE_SORT")
+                dd.bagOrder.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_REVERSE_SORT", newStatus)
+
                 layoutItems(f)
                 snapFrameSize(f)
             end
@@ -816,13 +796,10 @@ local function LoadBag(helpers)
         dd.itemBorder.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
-                    dd.itemBorder.checkbutton:SetChecked(false)
-                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", false)
-                else
-                    dd.itemBorder.checkbutton:SetChecked(true)
-                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", true)
-                end
+                local newStatus = not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
+                dd.itemBorder.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
@@ -830,13 +807,10 @@ local function LoadBag(helpers)
         dd.junkIcon.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
-                    dd.junkIcon.checkbutton:SetChecked(false)
-                    SetSetting("BAG_ITEM_JUNK_ICON_SHOW", false)
-                else
-                    dd.junkIcon.checkbutton:SetChecked(true)
-                    SetSetting("BAG_ITEM_JUNK_ICON_SHOW", true)
-                end
+                local newStatus = not GetSetting("BAG_ITEM_JUNK_ICON_SHOW")
+                dd.junkIcon.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_ITEM_JUNK_ICON_SHOW", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
@@ -844,13 +818,10 @@ local function LoadBag(helpers)
         dd.scrapIcon.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
-                    dd.scrapIcon.checkbutton:SetChecked(false)
-                    SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", false)
-                else
-                    dd.scrapIcon.checkbutton:SetChecked(true)
-                    SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", true)
-                end
+                local newStatus = not GetSetting("BAG_ITEM_SCRAP_ICON_SHOW")
+                dd.scrapIcon.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
@@ -858,13 +829,10 @@ local function LoadBag(helpers)
         dd.upgradeIcon.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") then
-                    dd.upgradeIcon.checkbutton:SetChecked(false)
-                    SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", false)
-                else
-                    dd.upgradeIcon.checkbutton:SetChecked(true)
-                    SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", true)
-                end
+                local newStatus = not GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW")
+                dd.upgradeIcon.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
@@ -872,13 +840,10 @@ local function LoadBag(helpers)
         dd.professionColor.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_PROFESSION_BAG_COLOR") then
-                    dd.professionColor.checkbutton:SetChecked(false)
-                    SetSetting("BAG_PROFESSION_BAG_COLOR", false)
-                else
-                    dd.professionColor.checkbutton:SetChecked(true)
-                    SetSetting("BAG_PROFESSION_BAG_COLOR", true)
-                end
+                local newStatus = not GetSetting("BAG_PROFESSION_BAG_COLOR")
+                dd.professionColor.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_PROFESSION_BAG_COLOR", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
@@ -886,27 +851,21 @@ local function LoadBag(helpers)
         dd.vendorGrays.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_VENDOR_GRAYS") then
-                    dd.vendorGrays.checkbutton:SetChecked(false)
-                    SetSetting("BAG_VENDOR_GRAYS", false)
-                else
-                    dd.vendorGrays.checkbutton:SetChecked(true)
-                    SetSetting("BAG_VENDOR_GRAYS", true)
-                end
-                setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
+                local newStatus = not GetSetting("BAG_VENDOR_GRAYS")
+                dd.vendorGrays.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_VENDOR_GRAYS", newStatus)
+
+                setupVendorJunk(newStatus)
             end
         )
 
         dd.showItemLvl.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_SHOW_ILVL") then
-                    dd.showItemLvl.checkbutton:SetChecked(false)
-                    SetSetting("BAG_SHOW_ILVL", false)
-                else
-                    dd.showItemLvl.checkbutton:SetChecked(true)
-                    SetSetting("BAG_SHOW_ILVL", true)
-                end
+                local newStatus = not GetSetting("BAG_SHOW_ILVL")
+                dd.showItemLvl.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_SHOW_ILVL", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
@@ -914,82 +873,33 @@ local function LoadBag(helpers)
         dd.separateBags.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_SEPARATE_BAGS") then
-                    dd.separateBags.checkbutton:SetChecked(false)
-                    SetSetting("BAG_SEPARATE_BAGS", false)
-                else
-                    dd.separateBags.checkbutton:SetChecked(true)
-                    SetSetting("BAG_SEPARATE_BAGS", true)
-                end
+                local newStatus = not GetSetting("BAG_SEPARATE_BAGS")
+                dd.separateBags.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_SEPARATE_BAGS", newStatus)
+
                 layoutItems(f)
                 snapFrameSize(f)
+                dd:Hide()
             end
         )
 
-        if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
-            dd.compactBags.checkbutton:SetChecked(false)
-        else
-            dd.compactBags.checkbutton:SetChecked(true)
-        end
-        if GetInsertItemsLeftToRight() then
-            dd.newOrder.title:SetText(L["BAG_NEW_ORDER_FIRST"])
-        else
-            dd.newOrder.title:SetText(L["BAG_NEW_ORDER_LAST"])
-        end
-        if GetSortBagsRightToLeft() then
-            dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_LAST"])
-        else
-            dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_FIRST"])
-        end
-        if GetSetting("BAG_REVERSE_SORT") then
-            dd.bagOrder.checkbutton:SetChecked(true)
-        else
-            dd.bagOrder.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
-            dd.itemBorder.checkbutton:SetChecked(true)
-        else
-            dd.itemBorder.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
-            dd.junkIcon.checkbutton:SetChecked(true)
-        else
-            dd.junkIcon.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
-            dd.scrapIcon.checkbutton:SetChecked(true)
-        else
-            dd.scrapIcon.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") then
-            dd.upgradeIcon.checkbutton:SetChecked(true)
-        else
-            dd.upgradeIcon.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_PROFESSION_BAG_COLOR") then
-            dd.professionColor.checkbutton:SetChecked(true)
-        else
-            dd.professionColor.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_VENDOR_GRAYS") then
-            dd.vendorGrays.checkbutton:SetChecked(true)
-        else
-            dd.vendorGrays.checkbutton:SetChecked(false)
-        end
+        dd.compactBags.checkbutton:SetChecked(not BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE)
+        dd.newOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_NEW_LOOT"))
+        dd.bagOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_SORT"))
+        dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
+        dd.junkIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_JUNK_ICON_SHOW"))
+        dd.scrapIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_SCRAP_ICON_SHOW"))
+        dd.upgradeIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW"))
+        dd.professionColor.checkbutton:SetChecked(GetSetting("BAG_PROFESSION_BAG_COLOR"))
+        dd.vendorGrays.checkbutton:SetChecked(GetSetting("BAG_VENDOR_GRAYS"))
+        dd.showItemLvl.checkbutton:SetChecked(GetSetting("BAG_SHOW_ILVL"))
+        dd.separateBags.checkbutton:SetChecked(GetSetting("BAG_SEPARATE_BAGS"))
+
         setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
-        if GetSetting("BAG_SHOW_ILVL") then
-            dd.showItemLvl.checkbutton:SetChecked(true)
-        else
-            dd.showItemLvl.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_SEPARATE_BAGS") then
-            dd.separateBags.checkbutton:SetChecked(true)
-        else
-            dd.separateBags.checkbutton:SetChecked(false)
-        end
 
         -- setup bag setting title locals
         dd.compactBags.title:SetText(L["COMPACT_ICONS"])
+        dd.newOrder.title:SetText(L["REVERSE_NEW_LOOT_TEXT"])
         dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
         dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
         dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])

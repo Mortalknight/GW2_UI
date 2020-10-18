@@ -410,7 +410,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" hidden="true" frameLevel="58">
-                        <Size x="200" y="305"></Size>
+                        <Size x="200" y="280"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
@@ -443,27 +443,10 @@
                                     </CheckButton>
                                 </Frames>
                             </Button>
-                            <Button parentKey="sortOrder">
-                                <Size x="200" y="30"></Size>
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-25"></Anchor>
-                                </Anchors>
-                                <Layers>
-                                    <Layer level="OVERLAY" textureSubLevel="2">
-                                        <FontString parentKey="title" text="Sort to Bottom" inherits="ChatBubbleFont" justifyH="LEFT">
-                                            <Size x="170" y="30"/>
-                                            <Color r="1" b="1" g="1"/>
-                                            <Anchors>
-                                                <Anchor point="LEFT" x="5" y="0"/>
-                                            </Anchors>
-                                        </FontString>
-                                    </Layer>
-                                </Layers>
-                            </Button>
                             <Button parentKey="newOrder">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-50"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-25"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -471,16 +454,27 @@
                                             <Size x="170" y="30"/>
                                             <Color r="1" b="1" g="1"/>
                                             <Anchors>
-                                                <Anchor point="LEFT" x="5" y="0"/>
+                                                <Anchor point="LEFT" x="25" y="0"/>
                                             </Anchors>
                                         </FontString>
                                     </Layer>
                                 </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
                             </Button>
                             <Button parentKey="bagOrder">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-75"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-50"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -508,7 +502,7 @@
                             <Button parentKey="itemBorder">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-100"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-75"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -536,7 +530,7 @@
                             <Button parentKey="junkIcon">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-125"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-100"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -564,7 +558,7 @@
                             <Button parentKey="scrapIcon">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-150"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-125"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -592,7 +586,7 @@
                             <Button parentKey="upgradeIcon">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-175"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-150"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -620,7 +614,7 @@
                             <Button parentKey="professionColor">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-200"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-175"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -648,7 +642,7 @@
                             <Button parentKey="vendorGrays">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-225"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-200"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -676,7 +670,7 @@
                             <Button parentKey="showItemLvl">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-250"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-225"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -704,7 +698,7 @@
                             <Button parentKey="separateBags">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-275"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-250"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">

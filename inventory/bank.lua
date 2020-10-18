@@ -620,13 +620,10 @@ local function LoadBank(helpers)
         dd.bagOrder.checkbutton:SetScript(
             "OnClick",
             function(self)
-                if GetSetting("BANK_REVERSE_SORT") then
-                    dd.bagOrder.checkbutton:SetChecked(false)
-                    SetSetting("BANK_REVERSE_SORT", false)
-                else
-                    dd.bagOrder.checkbutton:SetChecked(true)
-                    SetSetting("BANK_REVERSE_SORT", true)
-                end
+                local newStatus = not GetSetting("BANK_REVERSE_SORT")
+                dd.bagOrder.checkbutton:SetChecked(newStatus)
+                SetSetting("BANK_REVERSE_SORT", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
@@ -634,33 +631,18 @@ local function LoadBank(helpers)
         dd.itemBorder.checkbutton:HookScript(
             "OnClick",
             function(self)
-                if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
-                    dd.itemBorder.checkbutton:SetChecked(false)
-                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", false)
-                else
-                    dd.itemBorder.checkbutton:SetChecked(true)
-                    SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", true)
-                end
+                local newStatus = not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
+                dd.itemBorder.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
 
-        if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
-            dd.compactBank.checkbutton:SetChecked(false)
-        else
-            dd.compactBank.checkbutton:SetChecked(true)
-        end
-        if GetSetting("BANK_REVERSE_SORT") then
-            dd.bagOrder.checkbutton:SetChecked(true)
-        else
-            dd.bagOrder.checkbutton:SetChecked(false)
-        end
-        if GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
-            dd.itemBorder.checkbutton:SetChecked(true)
-        else
-            dd.itemBorder.checkbutton:SetChecked(false)
-        end
-
+        dd.compactBank.checkbutton:SetChecked(not BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE)
+        dd.bagOrder.checkbutton:SetChecked(GetSetting("BANK_REVERSE_SORT"))
+        dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
+        
         -- setup bag setting icons locals
         dd.compactBank.title:SetText(L["BANK_COMPACT_ICONS"])
         dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
