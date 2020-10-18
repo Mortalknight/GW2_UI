@@ -592,6 +592,18 @@ local function LoadBank(helpers)
                 if dd:IsShown() then
                     dd:Hide()
                 else
+                    -- check if the dropdown need to grow up or down
+                    local _, y = self:GetCenter()
+                    local screenHeight = UIParent:GetTop()
+                    local position
+                    if y > (screenHeight / 2) then
+                        position = "TOPRIGHT"
+                    else
+                        position = "BOTTOMRIGHT"
+                    end
+                    dd:ClearAllPoints()
+                    dd:SetPoint(position, dd:GetParent(), "LEFT", 0, -5)
+                    dd:Show()
                     dd:Show()
                 end
             end
