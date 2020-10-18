@@ -41,14 +41,6 @@ local function manageButton()
             GwGroupManage:Show()
         end
     end
-    local fnGMGB_OnEnter = function(self)
-        self.arrow:SetSize(21, 42)
-    end
-    local fnGMGB_OnLeave = function(self)
-        self.arrow:SetSize(16, 32)
-    end
-    fmGMGB:HookScript("OnEnter", fnGMGB_OnEnter)
-    fmGMGB:HookScript("OnLeave", fnGMGB_OnLeave)
     fmGMGB:SetScript("OnMouseDown", fnGMGB_OnClick)
 
     local fmGMGIB = GwManageGroupInviteBox
@@ -300,8 +292,28 @@ local function manageButton()
         end
     end
 
+    local fnGMGB_OnEnter = function(self)
+        self.arrow:SetSize(21, 42)
+        if GetSetting("FADE_GROUP_MANAGE_FRAME") then
+            if GwGroupManage:IsShown() then
+                return
+            end
+            fmGMGB.fadeIn()
+        end
+    end
+    local fnGMGB_OnLeave = function(self)
+        self.arrow:SetSize(16, 32)
+        if GetSetting("FADE_GROUP_MANAGE_FRAME") then
+            if GwGroupManage:IsShown() then
+                return
+            end
+            fmGMGB.fadeOut()
+        end
+    end
+    fmGMGB:SetScript("OnEnter", fnGMGB_OnEnter)
+    fmGMGB:HookScript("OnLeave", fnGMGB_OnLeave)
+
     if GetSetting("FADE_GROUP_MANAGE_FRAME") then
-        fmGMGB:SetAttribute("fadeTime", 0.15)
         local fo = fmGMGB:CreateAnimationGroup("fadeOut")
         local fi = fmGMGB:CreateAnimationGroup("fadeIn")
         local fadeOut = fo:CreateAnimation("Alpha")
@@ -309,44 +321,26 @@ local function manageButton()
         fo:SetScript("OnFinished", function(self)
             self:GetParent():SetAlpha(0)
         end)
+        fi:SetScript("OnFinished", function(self)
+            self:GetParent():SetAlpha(1)
+        end)
         fadeOut:SetStartDelay(0.25)
         fadeOut:SetFromAlpha(1.0)
         fadeOut:SetToAlpha(0.0)
-        fadeOut:SetDuration(fmGMGB:GetAttribute("fadeTime"))
+        fadeOut:SetDuration(0.15)
         fadeIn:SetFromAlpha(0.0)
         fadeIn:SetToAlpha(1.0)
-        fadeIn:SetDuration(fmGMGB:GetAttribute("fadeTime"))
+        fadeIn:SetDuration(0.15)
         fmGMGB.fadeOut = function(self)
             fi:Stop()
             fo:Stop()
             fo:Play()
         end
         fmGMGB.fadeIn = function(self)
-            self:SetAlpha(1)
             fi:Stop()
             fo:Stop()
             fi:Play()
         end
-
-        fmGMGB:SetFrameRef("cf", fmGMGB)
-        fmGMGB:SetFrameRef("GwGroupManage", GwGroupManage)
-
-        fmGMGB:SetAttribute("_onenter", [=[
-            local cf = self:GetFrameRef("cf")
-            local GwGroupManage = self:GetFrameRef("GwGroupManage")
-            if GwGroupManage:IsShown() then
-                return
-            end
-            cf:CallMethod("fadeIn", cf)
-        ]=])
-        fmGMGB:SetAttribute("_onleave", [=[
-            local cf = self:GetFrameRef("cf")
-            local GwGroupManage = self:GetFrameRef("GwGroupManage")
-            if GwGroupManage:IsShown() then
-                return
-            end
-            cf:CallMethod("fadeOut", cf)
-        ]=])
         fmGMGB:SetAlpha(0)
     end
 end
