@@ -6,6 +6,7 @@ v("5.4.2", [=[
     - Barbershop skin
     - HUD Settings: "Apply UI scale to all scaleable frames"
     - Added option to show inventory separated
+    - Added option to show unit gender in tooltip
 
 FIXES
     - Bug fixes for raidcontrol frame
