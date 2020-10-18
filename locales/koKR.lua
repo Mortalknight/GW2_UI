@@ -335,6 +335,8 @@ local function GWUseThisLocalization()
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES"] = "Apply UI scale to all scaleable frames"
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES_DESC"] = "Apply's the UI scale to alle frames, which can be scaled in 'Move HUD' mode."
     L["SEPARATE_BAGS"] = "Separate bags"
+    L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Gender"
+    L["ADVANCED_TOOLTIP_SHOW_GENDER_DESC"] = "Displays the gender of players."
 end
 
 if GetLocale() == "koKR" then

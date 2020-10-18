@@ -18,6 +18,11 @@ local classification = {
     elite = "|cffAF5050+|r",
     rare = format("|cffAF5050 %s|r", ITEM_QUALITY3_DESC)
 }
+local genderTable = {
+    " " .. _G.UNKNOWN .. " ",
+    " " .. _G.MALE .. " ",
+    " " .. _G.FEMALE .. " "
+}
 
 local TT = CreateFrame("Frame")
 
@@ -253,7 +258,7 @@ local function AddInspectInfo(tooltip, unit, numTries, r, g, b)
     end
 end
 
-local function SetUnitText(self, unit, level, isShiftKeyDown)
+local function SetUnitText(self, unit, isShiftKeyDown)
     local name, realm = UnitName(unit)
     
     local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
@@ -265,10 +270,13 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         local guildName, guildRankName, _, guildRealm = GetGuildInfo(unit)
         local relationship = UnitRealmRelationship(unit)
         local pvpName = UnitPVPName(unit)
+        local gender = UnitSex(unit)
+        local level, realLevel = UnitEffectiveLevel(unit), UnitLevel(unit)
         local playerTitles = GetSetting("ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES")
         local alwaysShowRealm = GetSetting("ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS")
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
         local showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
+        local showGender = GetSetting("ADVANCED_TOOLTIP_SHOW_GENDER")
 
         local nameColor = GWGetClassColor(class, showClassColor, true)
 
@@ -311,7 +319,15 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             local race, englishRace = UnitRace(unit)
             local _, localizedFaction = GetUnitBattlefieldFaction(unit)
             if localizedFaction and englishRace == "Pandaren" then race = localizedFaction .. " " .. race end
-            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", nameColor.colorStr, localeClass)
+            local hexColor = RGBToHex(diffColor.r, diffColor.g, diffColor.b)
+            local unitGender = showGender and genderTable[gender]
+            if level < realLevel then
+                levelLine:SetFormattedText("%s%s|r |cffFFFFFF(%s)|r %s%s |c%s%s|r", hexColor, level > 0 and level or '??', realLevel, unitGender or "", race or '', nameColor.colorStr, localeClass)
+            else
+                levelLine:SetFormattedText("%s%s|r %s%s |c%s%s|r", hexColor, level > 0 and level or "??", unitGender or "", race or "", nameColor.colorStr, localeClass)
+            end
+
+            
         end
 
         if showRole then
@@ -396,7 +412,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
 
     RemoveTrashLines(self) -- keep an eye on this may be buggy
 
-    local color = SetUnitText(self, unit, UnitLevel(unit), isShiftKeyDown)
+    local color = SetUnitText(self, unit, isShiftKeyDown)
     local showMount = GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT")
     local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 

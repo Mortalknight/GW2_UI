@@ -335,6 +335,8 @@ local function GWUseThisLocalization()
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES"] = "UI Saklierung auf alle skalierbaren Fenster anwenden"
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES_DESC"] = "Überträgt die UI Skalierung auf alle Fenster, welche im 'Move HUD' skaliert werden können"
     L["SEPARATE_BAGS"] = "Taschen separat anzeigen"
+    L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Geschlecht"
+    L["ADVANCED_TOOLTIP_SHOW_GENDER_DESC"] = "Zeigt das Geschlecht eines Spielers an."
 end
 
 if GetLocale() == "deDE" then
