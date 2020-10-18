@@ -354,6 +354,7 @@ local function SetUnitText(self, unit, isShiftKeyDown)
             local creatureType = UnitCreatureType(unit)
             local pvpFlag, diffColor
 
+            local level = UnitEffectiveLevel(unit)
             if isPetWild or isPetCompanion then
                 level = UnitBattlePetLevel(unit)
 
