@@ -115,7 +115,7 @@ do -- This code is from WeakAuras Team, creadits goes to them
             if type(i) == "string" then
                 ret = ret .. '"' .. i .. '"'
             else
-                ret = ret .. i
+                ret = ret .. tostring(i)
             end
             ret = ret .. "] = "
 

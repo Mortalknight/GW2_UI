@@ -83,11 +83,14 @@ local function createImportExportFrame(settingsWindow)
 
     frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
     frame.scrollArea:SetScrollChild(frame.editBox)
-    frame.editBox:SetScript("OnTextChanged", function(_, userInput)
+    frame.editBox:SetScript("OnTextChanged", function(self, userInput)
         if userInput then return end
         local _, max = frame.scrollArea.ScrollBar:GetMinMaxValues()
         for _ = 1, max do
             ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
+        end
+        if strlen(self:GetText()) > 0 and string.sub(self:GetText(), -1) == "=" then
+            frame.decode:Enable()
         end
     end)
 
@@ -139,6 +142,7 @@ local function createImportExportFrame(settingsWindow)
             local importString = format("%s::%s::%s::%s", decodedString, profileName, profilePlayer, version)
             frame.editBox:SetText(importString)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["IMPORT_DECODE:SUCCESSFUL"])
+            frame.decode:Disable()
         end
     end)
 
@@ -485,6 +489,7 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.editBox:SetText("")
         ImportExportFrame.import:Show()
         ImportExportFrame.decode:Show()
+        ImportExportFrame.decode:Disable()
         ImportExportFrame.result:SetText("")  
         ImportExportFrame.editBox:SetFocus()
     end
