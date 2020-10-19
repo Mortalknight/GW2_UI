@@ -980,16 +980,10 @@ GW.AddForProfiling("classpowers", "setMonk", setMonk)
 local function setDruid(f)
     local form = f.gwPlayerForm
 
-    -- determine affinity talent
-    local aff1, aff2--, aff3
-    _, _, _, aff1, _ = GetTalentInfo(3, 1, 1, false, "player")
-    _, _, _, aff2, _ = GetTalentInfo(3, 2, 1, false, "player")
-   -- _, _, _, aff3, _ = GetTalentInfo(3, 3, 1, false, "player") -- Note: Not needed atm
-
     local barType = "none"
     if GW.myspec == 1 then -- balance
-        if form == 1 and aff1 then
-            -- if in cat form with feral affinity, show combo points
+        if form == 1 then
+            -- if in cat form, show combo points
             barType = "combo"
         elseif form ~= 4 and form ~= 29 and form ~= 27 and form ~= 3 then
             -- show mana bar by default except in travel forms
@@ -1005,26 +999,16 @@ local function setDruid(f)
         end
     elseif GW.myspec == 3 then -- guardian
         if form == 1 then
-            if aff2 then
-                -- show combo points in cat form with feral affinity
-                barType = "combo"
-            else
-                -- show mana in cat form without affinity
-                barType = "mana"
-            end
+            -- show combo points in cat form
+            barType = "combo"
         elseif form == 5 then
             -- show mana in bear form
             barType = "mana"
         end
     elseif GW.myspec == 4 then -- resto
         if form == 1 then
-            if aff2 then
-                -- show combo points in cat form with feral affinity
-                barType = "combo"
-            else
-                -- show mana in cat form without affinity
-                barType = "mana"
-            end
+            -- show combo points in cat form
+            barType = "combo"
         elseif form == 5 then
             -- show mana in bear form
             barType = "mana"

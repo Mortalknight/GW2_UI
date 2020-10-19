@@ -1,3 +1,8 @@
+5.4.4
+
+FIXES
+    - Show combo points for druid in cat form correctly
+
 5.4.3
 
 FIXES

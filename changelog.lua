@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.4", [=[
+FIXES
+    - Show combo points for druid in cat form correctly
+]=])
+
 v("5.4.3", [=[
 FIXES
     - Fix Bags if the account has no authenticator
