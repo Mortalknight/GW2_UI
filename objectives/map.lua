@@ -536,7 +536,12 @@ local function LoadMinimap()
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
 
-    MinimapCluster:SetAlpha(0.0)
+    MinimapCluster:SetAlpha(0)
+    hooksecurefunc(MinimapCluster, "SetAlpha", function(self, alpha, forced)
+        if alpha ~= 0 and forced ~= true then
+            self:SetAlpha(0, true)
+        end
+    end)
     MinimapBorder:Hide()
     MiniMapWorldMapButton:Hide()
 
