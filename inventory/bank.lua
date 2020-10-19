@@ -639,7 +639,7 @@ local function LoadBank(helpers)
             end
         )
 
-        dd.compactBank.checkbutton:SetChecked(not BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE)
+        dd.compactBank.checkbutton:SetChecked(GetSetting("BAG_ITEM_SIZE") == BANK_ITEM_COMPACT_SIZE)
         dd.bagOrder.checkbutton:SetChecked(GetSetting("BANK_REVERSE_SORT"))
         dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
         

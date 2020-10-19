@@ -883,7 +883,7 @@ local function LoadBag(helpers)
             end
         )
 
-        dd.compactBags.checkbutton:SetChecked(not BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE)
+        dd.compactBags.checkbutton:SetChecked(GetSetting("BAG_ITEM_SIZE") == BAG_ITEM_COMPACT_SIZE)
         dd.newOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_NEW_LOOT"))
         dd.bagOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_SORT"))
         dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
