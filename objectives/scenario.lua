@@ -6,7 +6,6 @@ local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local UpdateQuestItem = GW.UpdateQuestItem
 local setBlockColor = GW.setBlockColor
-local locationData = GW.locationData
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
@@ -216,7 +215,7 @@ local function updateCurrentScenario()
             iqty / imax * 100
         )
         numCriteria = numCriteria + 2
-    elseif locationData.mapID == 1469 or locationData.mapID == 1470 then -- Heroic Vision for OP and SW
+    elseif GW.locationData.mapID == 1469 or GW.locationData.mapID == 1470 then -- Heroic Vision for OP and SW
         local info = GetCurrencyInfo(1744) --Corrupted Memento
         addObjectiveBlock(
             GwScenarioBlock,

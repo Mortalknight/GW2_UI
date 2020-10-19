@@ -3,7 +3,6 @@ local FACTION_COLOR = GW.FACTION_COLOR
 local AddToAnimation = GW.AddToAnimation
 local GetAreaPOIForMap = C_AreaPoiInfo.GetAreaPOIForMap
 local GetAreaPOIInfo = C_AreaPoiInfo.GetAreaPOIInfo
-local locationData = GW.locationData
 
 local bgs = {}
 local POIList = {}
@@ -259,28 +258,28 @@ end
 GW.AddForProfiling("battlegrounds", "TimerFlag_OnUpdate", TimerFlag_OnUpdate)
 
 local function pvpHud_onEvent(self, event)
-    if bgs[locationData.instanceMapID] ~= nil then
+    if bgs[GW.locationData.instanceMapID] ~= nil then
         if event == "PLAYER_ENTERING_BATTLEGROUND" then
             pointsAlliance = 0
             pointsHorde = 0
         end
-        activeBg = locationData.instanceMapID
-        activeMap = locationData.mapID
+        activeBg = GW.locationData.instanceMapID
+        activeMap = GW.locationData.mapID
         UIWidgetTopCenterContainerFrame:Hide()
 
         gwbgs.hasTimer = false
         gwbgs.TrackFlag = false
         gwbgs:SetScript("OnEvent", nil)
         gwbgs:SetScript("OnUpdate", nil)
-        gwbgs:SetScript("OnEvent", bgs[locationData.instanceMapID]["OnEvent"])
-        if bgs[locationData.instanceMapID]["OnUpdate"] then
-            gwbgs:SetScript("OnUpdate", bgs[locationData.instanceMapID]["OnUpdate"])
+        gwbgs:SetScript("OnEvent", bgs[GW.locationData.instanceMapID]["OnEvent"])
+        if bgs[GW.locationData.instanceMapID]["OnUpdate"] then
+            gwbgs:SetScript("OnUpdate", bgs[GW.locationData.instanceMapID]["OnUpdate"])
             gwbgs.elapsedTimer = -1
         end
-        if bgs[locationData.instanceMapID]["TrackFlag"] then
+        if bgs[GW.locationData.instanceMapID]["TrackFlag"] then
             gwbgs.TrackFlag = true
         end
-        if bgs[locationData.instanceMapID]["hasTimer"] then
+        if bgs[GW.locationData.instanceMapID]["hasTimer"] then
             gwbgs.hasTimer = true
         end
         gwbgs:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")

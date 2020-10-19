@@ -8,7 +8,6 @@ local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
-local locationData = GW.locationData
 
 local savedQuests = {}
 local updateCap = 1 / 5
@@ -737,7 +736,7 @@ local function tracker_OnUpdate(self, elapsed)
 
     local prevState = GwObjectivesNotification.shouldDisplay
 
-    if locationData.mapID then
+    if GW.locationData.mapID then
         GW.SetObjectiveNotification()
     end
 

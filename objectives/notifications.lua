@@ -4,7 +4,6 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local GetSetting = GW.GetSetting
 --local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 local AddToAnimation = GW.AddToAnimation
-local locationData = GW.locationData
 
 local currentNotificationKey = ""
 local notifications = {}
@@ -72,7 +71,7 @@ local questCompass = {
     ["COMPASS"] = true
 }
 local function getNearestQuestPOI()
-    if not locationData.mapID then
+    if not GW.locationData.mapID then
         return nil
     end
 
@@ -120,7 +119,7 @@ local bodyCompass = {
     ["COMPASS"] = true
 }
 local function getBodyPOI()
-    if not locationData.mapID then
+    if not GW.locationData.mapID then
         return nil
     end
 
@@ -129,7 +128,7 @@ local function getBodyPOI()
         return nil
     end
 
-    local corpTable = C_DeathInfo.GetCorpseMapPosition(locationData.mapID)
+    local corpTable = C_DeathInfo.GetCorpseMapPosition(GW.locationData.mapID)
     if corpTable == nil then
         return nil
     end
@@ -217,7 +216,7 @@ GW.NotificationStateChanged = NotificationStateChanged
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self, elapsed)
-    if not locationData.mapID then
+    if not GW.locationData.mapID then
         return
     end
     self.TotalElapsed = self.TotalElapsed + elapsed
