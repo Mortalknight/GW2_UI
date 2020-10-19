@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.3", [=[
+FIXES
+    - Fix Bags if the account has no authenticator
+    - Fix raid control error during combat
+]=])
+
 v("5.4.2", [=[
     NEW
     - Barbershop skin

@@ -300,7 +300,7 @@ local function takeItemButtons(p, bag_id)
     end
     cf.gw_owner = p
     
-    local num_slots = GetContainerNumSlots(bag_id)
+    local num_slots = ContainerFrame_GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
 
     for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
