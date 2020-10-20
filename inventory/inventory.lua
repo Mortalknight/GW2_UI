@@ -487,7 +487,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
 
     local cols = f.gw_bag_cols
-    local sep = GetSetting("BAG_SEPARATE_BAGS")
+    local sep = f:GetName() == "GwBagFrame" and GetSetting("BAG_SEPARATE_BAGS") or false
 
     if not cfs then
         f:SetHeight(min_height)
