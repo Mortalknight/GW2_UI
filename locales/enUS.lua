@@ -336,10 +336,10 @@ local function GWUseThisLocalization()
     L["APPLY_SCALE_TO_ALL_SCALEABELFRAMES_DESC"] = "Apply's the UI scale to all frames, which can be scaled in 'Move HUD' mode."
     L["SEPARATE_BAGS"] = "Separate bags"
     L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Gender"
-    L["ADVANCED_TOOLTIP_SHOW_GENDER_DESC"] = "Displays the gender of players."
+    L["ADVANCED_TOOLTIP_SHOW_GENDER_DESC"] = "Displays the player character's gender."
     L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"] = "New bag name"
-    L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"] = "Right click to set an individual name"
-    L["REVERSE_NEW_LOOT_TEXT"] = "Loot to Leftmost Bag"
+    L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"] = "Right click to customise the bag title."
+    L["REVERSE_NEW_LOOT_TEXT"] = "Loot to leftmost Bag"
 end
 
 local Locale = GetLocale()
