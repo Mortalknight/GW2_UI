@@ -10,7 +10,7 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
-core/patch.lua
+core/TaintLess.xml
 
 locales/enUS.lua
 locales/deDE.lua
