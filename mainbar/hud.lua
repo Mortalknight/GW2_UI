@@ -516,7 +516,7 @@ local function xpbar_OnEvent(self, event)
     experiencebarAnimation = valPrec
 
     if GW_LEVELING_REWARD_AVALIBLE then
-        Nextlevel = Nextlevel .. " |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:20:20:0:0|t"
+        Nextlevel = Nextlevel and Nextlevel or "" .. " |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:20:20:0:0|t"
     end
 
     GwExperienceFrame.NextLevel:SetText(Nextlevel)
