@@ -1076,11 +1076,10 @@ local function selectType(f)
         showBar = setDruid(f)
     end
 
-    if showBar then
-        f:Show()
-    else
-        f:Hide()
+    if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
+        showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target")
     end
+    f:SetShown(showBar)
 end
 GW.AddForProfiling("classpowers", "selectType", selectType)
 
@@ -1177,7 +1176,7 @@ local function LoadClassPowers()
 
     selectType(cpf)
 
-    if (GW.myClassID == 4 or GW.myClassID == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget) then
+    if (GW.myClassID == 4 or GW.myClassID == 11) and cpf.ourTarget and cpf.comboPointsOnTarget then
         cpf.decay:RegisterEvent("PLAYER_TARGET_CHANGED")
         if cpf.barType == "combo" then
             cpf:Hide()
