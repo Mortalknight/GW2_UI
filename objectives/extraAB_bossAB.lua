@@ -10,6 +10,8 @@ local function ExtraButtons_ZoneScale()
 
     local width, height = _G.ZoneAbilityFrame.SpellButtonContainer:GetSize()
     ZoneAbilityFrame.gwMover:SetSize(width * scale, height * scale)
+    ZoneAbilityFrame.SpellButtonContainer:ClearAllPoints()
+    ZoneAbilityFrame.SpellButtonContainer:SetAllPoints(ZoneAbilityFrame.gwMover)
 end
 
 local function ExtraButtons_UpdateScale()
@@ -19,7 +21,7 @@ local function ExtraButtons_UpdateScale()
     _G.ExtraActionBarFrame:SetScale(scale)
 
     local width, height = _G.ExtraActionBarFrame.button:GetSize()
-    ExtraActionBarFrame.gwMover:SetSize(width * scale, height * scale)
+    ExtraActionBarFrame.gwMover:SetSize(width, height)
 end
 
 local function ExtraAB_BossAB_Setup()
@@ -53,8 +55,11 @@ local function ExtraAB_BossAB_Setup()
         for spellButton in self.SpellButtonContainer:EnumerateActive() do
             if spellButton then
                 spellButton.holder = ZoneAbilityFrame.gwMover
+                spellButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+                spellButton.NormalTexture:SetAlpha(0)
                 spellButton:ClearAllPoints()
                 spellButton:SetAllPoints(ExtraActionBarFrame.gwMover)
+                spellButton:GetHighlightTexture():SetColorTexture(1, 1, 1, 0.25)
             end
         end
     end)
@@ -67,6 +72,8 @@ local function ExtraAB_BossAB_Setup()
             button.holder = ExtraActionBarFrame.gwMover
             button:ClearAllPoints()
             button:SetAllPoints(ExtraActionBarFrame.gwMover)
+            button.icon:SetDrawLayer("ARTWORK")
+            button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         end
     end
 end
