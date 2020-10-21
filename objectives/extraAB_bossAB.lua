@@ -20,7 +20,6 @@ local function ExtraButtons_UpdateScale()
 
     local width, height = _G.ExtraActionBarFrame.button:GetSize()
     ExtraActionBarFrame.gwMover:SetSize(width * scale, height * scale)
-    print(width * scale, height * scale)
 end
 
 local function ExtraAB_BossAB_Setup()
@@ -47,10 +46,10 @@ local function ExtraAB_BossAB_Setup()
 
     -- Spawn the mover before its available.
     local size = 52 * GetSetting("ZoneAbilityFramePos_scale")
-	ZoneAbilityFrame.gwMover:SetSize(size, size)
+    ZoneAbilityFrame.gwMover:SetSize(size, size)
 
     hooksecurefunc(ZoneAbilityFrame.SpellButtonContainer, "SetSize", ExtraButtons_ZoneScale)
-    hooksecurefunc(ZoneAbilityFrame, 'UpdateDisplayedZoneAbilities', function(self)
+    hooksecurefunc(ZoneAbilityFrame, "UpdateDisplayedZoneAbilities", function(self)
         for spellButton in self.SpellButtonContainer:EnumerateActive() do
             if spellButton then
                 spellButton.holder = ZoneAbilityFrame.gwMover
@@ -59,9 +58,8 @@ local function ExtraAB_BossAB_Setup()
     end)
 
     for i = 1, ExtraActionBarFrame:GetNumChildren() do
-        local button = _G['ExtraActionButton' .. i]
+        local button = _G["ExtraActionButton" .. i]
         if button then
-            print(i)
             button.pushed = true
             button.checked = true    
             button.holder = ExtraActionBarFrame.gwMover
