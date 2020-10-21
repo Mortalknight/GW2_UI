@@ -340,6 +340,8 @@ local function GWUseThisLocalization()
     L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"] = "Neuer Taschenname:"
     L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"] = "Rechtsklick um einen individuellen Namen festzulegen"
     L["REVERSE_NEW_LOOT_TEXT"] = "Beute in die am weitesten linke Tasche legen"
+    L["EXTRA_AB_NAME"] = "Boss Button"
+    L["ZONE_ANILITY_AB_NAME"] = "Zonen Fähigkeit"
 end
 
 if GetLocale() == "deDE" then

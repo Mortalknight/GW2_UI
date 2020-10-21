@@ -336,6 +336,8 @@ local function GWUseThisLocalization()
     L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"] = "New bag name"
     L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"] = "Right click to set an individual name"
     L["REVERSE_NEW_LOOT_TEXT"] = "戰利品會放在最左邊的包包"
+    L["EXTRA_AB_NAME"] = "Boss Button"
+    L["ZONE_ANILITY_AB_NAME"] = "Zone Ability"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

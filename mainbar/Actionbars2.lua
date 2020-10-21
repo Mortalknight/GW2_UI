@@ -1086,8 +1086,6 @@ local function LoadActionBars(lm)
     -- we can override the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
     -- doing it there avoids any taint issues
     -- we also exclude a few frames from the auto-positioning stuff regardless
-    UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
-    UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["GroupLootContainer"] = nil
 
     if not IsFrameModified("ExtraActionBarFrame") then
@@ -1095,11 +1093,6 @@ local function LoadActionBars(lm)
         ExtraActionBarFrame:ClearAllPoints()
         ExtraActionBarFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 130)
         ExtraActionBarFrame:SetFrameStrata("MEDIUM")
-    end
-    if not IsFrameModified("ZoneAbilityFrame") then
-        GW.Debug("moving ZoneAbilityFrame")
-        ZoneAbilityFrame:ClearAllPoints()
-        ZoneAbilityFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 130)
     end
 end
 GW.LoadActionBars = LoadActionBars

@@ -2,8 +2,12 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("5.4.4", [=[
+NEW
+    - Added "Boss Button" and "Zone Ability" to Move HUD
 FIXES
     - Show combo points for druid in cat form correctly
+    - Fix Bankframe issue in combination with separate bags
+    - Bug fixes
 ]=])
 
 v("5.4.3", [=[

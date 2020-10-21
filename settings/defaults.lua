@@ -311,6 +311,20 @@ GW_DEFAULT["BNToastPos"]["xOfs"] = 78
 GW_DEFAULT["BNToastPos"]["yOfs"] = 246
 GW_DEFAULT["BNToastPos_scale"] = 1
 
+GW_DEFAULT["ExtraActionBarFramePos"] = {}
+GW_DEFAULT["ExtraActionBarFramePos"]["point"] = "BOTTOM"
+GW_DEFAULT["ExtraActionBarFramePos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["ExtraActionBarFramePos"]["xOfs"] = -150
+GW_DEFAULT["ExtraActionBarFramePos"]["yOfs"] = 300
+GW_DEFAULT["ExtraActionBarFramePos_scale"] = 1
+
+GW_DEFAULT["ZoneAbilityFramePos"] = {}
+GW_DEFAULT["ZoneAbilityFramePos"]["point"] = "BOTTOM"
+GW_DEFAULT["ZoneAbilityFramePos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["ZoneAbilityFramePos"]["xOfs"] = 150
+GW_DEFAULT["ZoneAbilityFramePos"]["yOfs"] = 300
+GW_DEFAULT["ZoneAbilityFramePos_scale"] = 1
+
 GW_DEFAULT["TalkingHeadFrame_pos"] = {}
 GW_DEFAULT["TalkingHeadFrame_pos"]["point"] = "BOTTOM"
 GW_DEFAULT["TalkingHeadFrame_pos"]["relativePoint"] = "BOTTOM"

@@ -484,6 +484,7 @@ local function loadAddon(self)
     
     GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
+    GW.ExtraAB_BossAB_Setup()
 
     --Create hud art
     GW.LoadHudArt()
