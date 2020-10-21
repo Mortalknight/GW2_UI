@@ -32,14 +32,14 @@ local function ExtraAB_BossAB_Setup()
     _G.ExtraAbilityContainer.SetSize = GW.NoOp
     _G.ExtraActionBarFrame.SetSize = GW.NoOp
     
-    ZoneAbilityFrame:SetParent(ZoneAbilityFrame.gwMover)
+    local point = GW.GetSetting("ZoneAbilityFramePos")
     ZoneAbilityFrame:ClearAllPoints()
-    ZoneAbilityFrame:SetAllPoints()
+    ZoneAbilityFrame:SetAllPoints(ZoneAbilityFrame.gwMover)
     ZoneAbilityFrame.ignoreInLayout = true
 
-    ExtraActionBarFrame:SetParent(ExtraActionBarFrame.gwMover)
+    local point = GW.GetSetting("ExtraActionBarFramePos")
     ExtraActionBarFrame:ClearAllPoints()
-    ExtraActionBarFrame:SetAllPoints()
+    ExtraActionBarFrame:SetAllPoints(ExtraActionBarFrame.gwMover)
     ExtraActionBarFrame.ignoreInLayout = true
 
     ExtraButtons_UpdateScale()
@@ -53,6 +53,8 @@ local function ExtraAB_BossAB_Setup()
         for spellButton in self.SpellButtonContainer:EnumerateActive() do
             if spellButton then
                 spellButton.holder = ZoneAbilityFrame.gwMover
+                spellButton:ClearAllPoints()
+                spellButton:SetAllPoints(ExtraActionBarFrame.gwMover)
             end
         end
     end)
