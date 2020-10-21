@@ -1,4 +1,4 @@
--- zhCN localization
+-- zhTW localization
 local _, GW = ...
 
 local function GWUseThisLocalization()
@@ -345,7 +345,7 @@ local function GWUseThisLocalization()
     L["ZONE_ANILITY_AB_NAME"] = "Zone Ability"
 end
 
-if GetLocale() == "zhCN" then
+if GetLocale() == "zhTW" then
     GWUseThisLocalization()
 end
 
