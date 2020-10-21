@@ -136,7 +136,9 @@ local function powerMana(self, event, ...)
             if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
                 self.exbar:Hide()
             else
-                self.exbar:Show()
+                if self.barType == "mana" then
+                    self.exbar:Show()
+                end
             end
         end)
     end
@@ -191,7 +193,6 @@ local function powerCombo(self, event, ...)
     if event ~= "CLASS_POWER_INIT" and pType ~= "COMBO_POINTS" then
         return
     end
-
     local old_power = self.gwPower
     old_power = old_power or -1
     
@@ -979,12 +980,12 @@ GW.AddForProfiling("classpowers", "setMonk", setMonk)
 -- DRUID
 local function setDruid(f)
     local form = f.gwPlayerForm
-
+    
     local barType = "none"
     if GW.myspec == 1 then -- balance
         if form == 1 then
             -- if in cat form, show combo points
-            barType = "combo"
+            barType = "combo|little_mana"
         elseif form ~= 4 and form ~= 29 and form ~= 27 and form ~= 3 then
             -- show mana bar by default except in travel forms
             barType = "mana"
@@ -1000,7 +1001,7 @@ local function setDruid(f)
     elseif GW.myspec == 3 then -- guardian
         if form == 1 then
             -- show combo points in cat form
-            barType = "combo"
+            barType = "combo|little_mana"
         elseif form == 5 then
             -- show mana in bear form
             barType = "mana"
@@ -1008,13 +1009,12 @@ local function setDruid(f)
     elseif GW.myspec == 4 then -- resto
         if form == 1 then
             -- show combo points in cat form
-            barType = "combo"
+            barType = "combo|little_mana"
         elseif form == 5 then
             -- show mana in bear form
             barType = "mana"
         end
     end
-
     if barType == "combo" then
         setComboBar(f)
         return true
