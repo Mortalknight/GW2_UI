@@ -2,7 +2,7 @@ local _, GW = ...
 local L = GW.L
 
 local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA, r, g, b, shadowR, shadowG, shadowB)
-    if not obj then return end
+    if not fontObject then return end
 
     local _, oldSize, oldStyle = fontObject:GetFont()
 
