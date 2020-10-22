@@ -19,9 +19,17 @@ local function ExtraButtons_UpdateScale()
 
     local scale = GetSetting("ExtraActionBarFramePos_scale")
     _G.ExtraActionBarFrame:SetScale(scale)
+    QuickKeybindFrame.phantomExtraActionButton:SetScale(scale)
 
     local width, height = _G.ExtraActionBarFrame.button:GetSize()
     ExtraActionBarFrame.gwMover:SetSize(width, height)
+    QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/spelliconempty")
+    QuickKeybindFrame.phantomExtraActionButton.normalTexture:ClearAllPoints()
+    QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetAllPoints(ExtraActionBarFrame.gwMover)
+    QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:ClearAllPoints()
+    QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:SetAllPoints(ExtraActionBarFrame.gwMover)
+    QuickKeybindFrame.phantomExtraActionButton:ClearAllPoints()
+    QuickKeybindFrame.phantomExtraActionButton:SetAllPoints(ExtraActionBarFrame.gwMover)
 end
 
 local function ExtraAB_BossAB_Setup()
