@@ -781,6 +781,17 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.sortOrder.checkbutton:HookScript(
+            "OnClick",
+            function(self)
+                local newStatus = not GetSetting("BAG_ITEMS_REVERSE_SORT")
+                SetSortBagsRightToLeft(newStatus)
+                dd.newOrder.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_ITEMS_REVERSE_SORT", newStatus)
+                dd:Hide()
+            end
+        )
+
         dd.bagOrder.checkbutton:HookScript(
             "OnClick",
             function(self)
@@ -885,6 +896,7 @@ local function LoadBag(helpers)
 
         dd.compactBags.checkbutton:SetChecked(GetSetting("BAG_ITEM_SIZE") == BAG_ITEM_COMPACT_SIZE)
         dd.newOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_NEW_LOOT"))
+        dd.sortOrder.checkbutton:SetChecked(GetSetting("BAG_ITEMS_REVERSE_SORT"))
         dd.bagOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_SORT"))
         dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
         dd.junkIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_JUNK_ICON_SHOW"))
@@ -900,6 +912,7 @@ local function LoadBag(helpers)
         -- setup bag setting title locals
         dd.compactBags.title:SetText(L["COMPACT_ICONS"])
         dd.newOrder.title:SetText(L["REVERSE_NEW_LOOT_TEXT"])
+        dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_LAST"])
         dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
         dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
         dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])
