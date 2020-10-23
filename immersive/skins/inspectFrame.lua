@@ -30,7 +30,7 @@ local function SkinInspectFrameOnLoad()
     local tex = InspectFrame:CreateTexture("bg", "BACKGROUND", 0)
     tex:SetPoint("TOP", InspectFrame, "TOP", 0, 20)
     local w, h = InspectFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
+    tex:SetSize(w + 50, h + 70)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     InspectFrame.tex = tex
 
@@ -53,8 +53,19 @@ local function SkinInspectFrameOnLoad()
     end
 
     for i = 1, 4 do
-        _G["InspectFrameTab" .. i]:SkinTab("down")
+        _G["InspectFrameTab" .. i]:SkinButton(false, true)
+        _G["InspectFrameTab" .. i]:SetSize(80, 24)
+        if i > 1 then
+            _G["InspectFrameTab" .. i]:ClearAllPoints()
+            _G["InspectFrameTab" .. i]:SetPoint("RIGHT",  _G["InspectFrameTab" .. i - 1], "RIGHT", 75, 0)
+        end
     end
+
+    hooksecurefunc("PanelTemplates_SelectTab", function(tab)
+        local name = tab:GetName()
+        local text = tab.Text or _G[name .. "Text"]
+        text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2))
+    end)
 
     InspectModelFrame:StripTextures()
     InspectModelFrameBorderTopLeft:Kill()
