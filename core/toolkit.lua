@@ -229,16 +229,17 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
     end
 end
 
-local function SkinTab(tabButton)
+local function SkinTab(tabButton, direction)
     tabButton:CreateBackdrop()
+    local direction = direction and direction == "down" and "_down" or ""
 
-    if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/unittab") end
+    if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction) end
     if tabButton.SetHighlightTexture then 
-        tabButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/unittab")
+        tabButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction)
         tabButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
     end
-    if tabButton.SetPushedTexture then tabButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/unittab") end
-    if tabButton.SetDisabledTexture then tabButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/unittab") end
+    if tabButton.SetPushedTexture then tabButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction) end
+    if tabButton.SetDisabledTexture then tabButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction) end
 
     if tabButton.Text then
         --tabButton.Text:SetTextColor(0, 0, 0, 1)

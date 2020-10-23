@@ -556,6 +556,7 @@ local function loadAddon(self)
     GW.LoadCharacter()
     if GetSetting("USE_CHARACTER_WINDOW") then
         GW.SkinDressUpFrame()
+        GW.SkinInspectFrame()
     end
 
     GW.LoadBreathMeter()
