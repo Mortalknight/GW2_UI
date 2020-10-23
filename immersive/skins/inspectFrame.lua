@@ -22,17 +22,40 @@ local InscpectSlots = {
 }
 
 local function SkinInspectFrameOnLoad()
+    local w, h = InspectFrame:GetSize()
     InspectFrame:StripTextures()
     InspectFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     InspectFrameCloseButton:SkinButton(true)
     InspectFrameCloseButton:SetSize(20, 20)
     InspectPaperDollFrame.ViewButton:SkinButton(false, true)
-    local tex = InspectFrame:CreateTexture("bg", "BACKGROUND", 0)
-    tex:SetPoint("TOP", InspectFrame, "TOP", 0, 20)
-    local w, h = InspectFrame:GetSize()
-    tex:SetSize(w + 50, h + 70)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    InspectFrame.tex = tex
+    if not InspectFrame.tex then
+        local tex = InspectFrame:CreateTexture("bg", "BACKGROUND", 0)
+        tex:SetPoint("TOP", InspectFrame, "TOP", 0, 20)
+        local w, h = InspectFrame:GetSize()
+        tex:SetSize(w + 50, h + 70)
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        InspectFrame.tex = tex
+    else
+        InspectFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    end
+
+    InspectFrame.mover = CreateFrame("Frame", nil, InspectFrame)
+    InspectFrame.mover:EnableMouse(true)
+    InspectFrame:SetMovable(true)
+    InspectFrame.mover:SetSize(w, 30)
+    InspectFrame.mover:SetPoint("BOTTOMLEFT", InspectFrame, "TOPLEFT", 0, -20)
+    InspectFrame.mover:SetPoint("BOTTOMRIGHT", InspectFrame, "TOPRIGHT", 0, 20)
+    InspectFrame.mover:RegisterForDrag("LeftButton")
+    InspectFrame.mover:SetScript("OnDragStart", function(self)
+        self:GetParent():StartMoving()
+    end)
+    InspectFrame.mover:SetScript("OnDragStop", function(self)
+        local self = self:GetParent()
+
+        self:StopMovingOrSizing()
+        -- check if frame is out of screen, if yes move it back
+        ValidateFramePosition(self)
+    end)
 
     -- PVE Talents
     for i = 1, 7 do
