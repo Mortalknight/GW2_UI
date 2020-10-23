@@ -18,6 +18,7 @@
     <Script file="immersive\skins\macro.lua"/>
     <Script file="immersive\skins\mail.lua"/>
     <Script file="immersive\skins\barber.lua"/>
+    <Script file="immersive\skins\dressUpFrame.lua"/>
     
     <Script file="immersive\skins\addons\immersion.lua"/>
 </Ui>

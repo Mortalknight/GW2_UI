@@ -554,6 +554,9 @@ local function loadAddon(self)
     end
 
     GW.LoadCharacter()
+    if GetSetting("USE_CHARACTER_WINDOW") then
+        GW.SkinDressUpFrame()
+    end
 
     GW.LoadBreathMeter()
     GW.LoadAutoRepair()

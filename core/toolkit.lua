@@ -4,6 +4,13 @@ local _, GW = ...
 local STRIP_TEX = "Texture"
 local STRIP_FONT = "FontString"
 
+local ArrowRotation = {
+    up = 0,
+    down = 3.14,
+    left = 1.57,
+    right = -1.57,
+}
+
 local tabs = {
     "LeftDisabled",
     "MiddleDisabled",
@@ -333,11 +340,7 @@ local function SkinDropDownMenu(frame)
 
     button:ClearAllPoints()
 
-    if pos then
-        button:SetPoint("TOPRIGHT", frame.Right, -20, -21)
-    else
-        button:SetPoint("RIGHT", frame, "RIGHT", -10, 3)
-    end
+    button:SetPoint("RIGHT", frame, "RIGHT", -10, 3)
 
     button.SetPoint = GW.NoOp
     button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
@@ -355,6 +358,34 @@ local function SkinDropDownMenu(frame)
     end
 end
 
+local btns = {MaximizeButton = "up", MinimizeButton = "down"}
+local function HandleMaxMinFrame(frame)
+    if frame.isSkinned then return end
+
+    frame:StripTextures(true)
+
+    for name, direction in pairs(btns) do
+        local button = frame[name]
+        if button then
+            button:SetSize(20, 20)
+            button:ClearAllPoints()
+            button:SetPoint("CENTER")
+            button:SetHitRectInsets(1, 1, 1, 1)
+            button:GetHighlightTexture():Kill()
+
+            button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+            button:GetNormalTexture():SetRotation(ArrowRotation[direction])
+
+            button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+            button:GetPushedTexture():SetRotation(ArrowRotation[direction])
+        end
+    end
+
+    frame.isSkinned = true
+end
+
+
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.Kill then mt.Kill = Kill end
@@ -368,6 +399,7 @@ local function addapi(object)
     if not object.SkinScrollFrame then mt.SkinScrollFrame = SkinScrollFrame end
     if not object.SkinScrollBar then mt.SkinScrollBar = SkinScrollBar end
     if not object.SkinDropDownMenu then mt.SkinDropDownMenu = SkinDropDownMenu end
+    if not object.HandleMaxMinFrame then mt.HandleMaxMinFrame = HandleMaxMinFrame end
 end
 
 local handled = {["Frame"] = true}
