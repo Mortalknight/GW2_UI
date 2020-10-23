@@ -611,18 +611,18 @@ local function loadAddon(self)
     end
 
     if GetSetting("DYNAMIC_CAM") then
-        if GetCVar("test_cameraDynamicPitch") == "0" then
-            SetCVar("test_cameraDynamicPitch", true)
-        end
+        SetCVar("test_cameraDynamicPitch", true)
+        SetCVar("cameraKeepCharacterCentered", false)
+        SetCVar("cameraReduceUnexpectedMovement", false)
         hooksecurefunc("StaticPopup_Show", function(which, text_arg1, text_arg2, data, insertedFrame)
             if which == "EXPERIMENTAL_CVAR_WARNING" then
                 StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
             end
         end)
     else
-        if GetCVar("test_cameraDynamicPitch") == "1" then
-            SetCVar("test_cameraDynamicPitch", false)
-        end
+        SetCVar("test_cameraDynamicPitch", false)
+        SetCVar("cameraKeepCharacterCentered", true)
+        SetCVar("cameraReduceUnexpectedMovement", true)
     end
 
     if GetSetting("AFK_MODE") then
