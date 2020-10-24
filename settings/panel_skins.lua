@@ -31,8 +31,10 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED")
     addOption(p, KEY_BINDINGS, nil, "BINDINGS_SKIN_ENABLED")
     addOption(p, MACRO, nil, "MACRO_SKIN_ENABLED")
-    addOption(p, INBOX, nil, "MAIL_SKIN_ENABLED")
+    addOption(p, MINIMAP_TRACKING_MAILBOX, nil, "MAIL_SKIN_ENABLED")
     addOption(p, BARBERSHOP, nil, "BARBERSHOP_SKIN_ENABLED")
+    addOption(p, INSPECT, nil, "INSPECTION_SKIN_ENABLED")
+    addOption(p, DRESSUP_FRAME, nil, "DRESSUP_SKIN_ENABLED")
 
     InitPanel(p)
 end

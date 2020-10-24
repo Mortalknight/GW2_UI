@@ -1,6 +1,20 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.5", [=[
+NEW
+    - Added inspection frame skin
+    - Added dress-up frame skin
+    - Skin more default fonts with the GW2 UI fonts
+    - Re-added "Sort to last bag" option
+
+FIXES
+    - Show combo points for druid in cat form correctly
+    - Fix dynamic cam mode (was in conflict with the new motion sickness option)
+    - Fix "Boss Button" and "Zone Ability" mover and keybind issues
+    - Update locals
+]=])
+
 v("5.4.4", [=[
 NEW
     - Added "Boss Button" and "Zone Ability" to Move HUD

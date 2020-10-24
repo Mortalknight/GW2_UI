@@ -481,6 +481,12 @@ local function loadAddon(self)
     if GetSetting("BARBERSHOP_SKIN_ENABLED") then
         GW.SkinBarShopUI()
     end
+    if GetSetting("INSPECTION_SKIN_ENABLED") then
+        GW.SkinInspectFrame()
+    end
+    if GetSetting("INSPECTION_SKIN_ENABLED") then
+        GW.SkinDressUpFrame()
+    end
     
     GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
@@ -554,10 +560,6 @@ local function loadAddon(self)
     end
 
     GW.LoadCharacter()
-    if GetSetting("USE_CHARACTER_WINDOW") then
-        GW.SkinDressUpFrame()
-        GW.SkinInspectFrame()
-    end
 
     GW.LoadBreathMeter()
     GW.LoadAutoRepair()
