@@ -262,6 +262,14 @@ local function pvpHud_onEvent(self, event)
         if event == "PLAYER_ENTERING_BATTLEGROUND" then
             pointsAlliance = 0
             pointsHorde = 0
+            gwbgs.scoreRight:SetText(0)
+            gwbgs.scoreLeft:SetText(0)
+            gwbgs.MID:SetWidth(36)
+            for i = 1, 5 do
+                if _G["AlwaysUpFrame" .. i] ~= nil then
+                    _G["AlwaysUpFrame" .. i]:Hide()
+                end
+            end
         end
         activeBg = GW.locationData.instanceMapID
         activeMap = GW.locationData.mapID
@@ -304,6 +312,14 @@ local function pvpHud_onEvent(self, event)
         gwbgs:SetScript("OnEvent", nil)
         gwbgs:SetScript("OnUpdate", nil)
         UIWidgetTopCenterContainerFrame:Show()
+        gwbgs.scoreRight:SetText(0)
+        gwbgs.scoreLeft:SetText(0)
+        gwbgs.MID:SetWidth(36)
+        for i = 1, 5 do
+            if _G["AlwaysUpFrame" .. i] ~= nil then
+                _G["AlwaysUpFrame" .. i]:Hide()
+            end
+        end
     end
 end
 GW.AddForProfiling("battlegrounds", "pvpHud_onEvent", pvpHud_onEvent)

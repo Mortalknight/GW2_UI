@@ -104,6 +104,8 @@ local function InitLocationDataHandler()
     MapInfoFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     MapInfoFrame:RegisterEvent("ZONE_CHANGED")
     MapInfoFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+    MapInfoFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    MapInfoFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     MapInfoFrame:SetScript("OnEvent", MapInfoFrameOnEvent)
 
     MapCoordsFrame:RegisterEvent("CRITERIA_UPDATE")

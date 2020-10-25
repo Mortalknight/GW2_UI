@@ -374,7 +374,7 @@ local function xpbar_OnEvent(self, event)
     --If we are inside a pvp arena we show the honorbar
     gw_honor_vals = nil
 
-    if GW.mylevel== maxPlayerLevel and (UnitInBattleground("player") ~= nil or event == "PLAYER_ENTERING_BATTLEGROUND") then
+    if (GW.mylevel == maxPlayerLevel and (UnitInBattleground("player") ~= nil or event == "PLAYER_ENTERING_BATTLEGROUND")) or IsWatchingHonorAsXP() then
         showBar1 = true
         level = UnitHonorLevel("player")
         Nextlevel = level + 1
