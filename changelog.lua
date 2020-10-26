@@ -1,7 +1,7 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.4.5", [=[
+v("5.4.5 (hotfix)", [=[
 NEW
     - Added inspection frame skin
     - Added dress-up frame skin
