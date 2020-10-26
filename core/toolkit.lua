@@ -421,5 +421,5 @@ while object do
 end
 
 --Hacky fix for issue on 7.1 PTR where scroll frames no longer seem to inherit the methods from the 'Frame' widget
-local scrollFrame = CreateFrame('ScrollFrame')
+local scrollFrame = CreateFrame("ScrollFrame")
 addapi(scrollFrame)

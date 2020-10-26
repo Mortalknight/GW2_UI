@@ -406,7 +406,7 @@ local function loadAddon(self)
         GW.SkinMainMenu()
     else
         --Setup addon button
-        local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GameMenuButtonTemplate")
+        local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
         GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
         GwMainMenuFrame:SetScript(
             "OnClick",

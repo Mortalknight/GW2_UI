@@ -418,7 +418,7 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="MIDDLE">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="200" y="25"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
