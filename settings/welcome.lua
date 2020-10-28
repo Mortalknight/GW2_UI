@@ -164,6 +164,7 @@ local function button1_OnClick()
             SetCVar("cameraDistanceMaxZoomFactor", 2.6)
             SetCVar("showQuestTrackingTooltips", 1)
             SetCVar("fstack_preferParentKeys", 0)
+            SetCVar("whisperMode", "inline")
 
             GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CVARS_BTN"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
 
