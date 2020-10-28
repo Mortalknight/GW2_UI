@@ -46,6 +46,7 @@ local function SkinInspectFrameOnLoad()
     InspectFrame.mover:SetPoint("BOTTOMLEFT", InspectFrame, "TOPLEFT", 0, -20)
     InspectFrame.mover:SetPoint("BOTTOMRIGHT", InspectFrame, "TOPRIGHT", 0, 20)
     InspectFrame.mover:RegisterForDrag("LeftButton")
+    InspectFrame:SetClampedToScreen(true)
     InspectFrame.mover:SetScript("OnDragStart", function(self)
         self:GetParent():StartMoving()
     end)
@@ -53,8 +54,6 @@ local function SkinInspectFrameOnLoad()
         local self = self:GetParent()
 
         self:StopMovingOrSizing()
-        -- check if frame is out of screen, if yes move it back
-        ValidateFramePosition(self)
     end)
 
     -- PVE Talents

@@ -415,6 +415,7 @@ local function SkinMail()
     MailFrame.mover:SetPoint("BOTTOMRIGHT", MailFrame, "TOPRIGHT", 0, 0)
     MailFrame.mover:RegisterForDrag("LeftButton")
     MailFrame.mover.onMoveSetting = "MAILBOX_POSITION"
+    MailFrame:SetClampedToScreen(true)
     MailFrame.mover:SetScript("OnDragStart", function(self)
         self:GetParent():StartMoving()
     end)
@@ -422,8 +423,6 @@ local function SkinMail()
         local self = self:GetParent()
 
         self:StopMovingOrSizing()
-        -- check if frame is out of screen, if yes move it back
-        ValidateFramePosition(self)
 
         local x = self:GetLeft()
         local y = self:GetTop()

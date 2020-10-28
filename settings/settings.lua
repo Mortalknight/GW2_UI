@@ -681,16 +681,16 @@ local function LoadSettings()
         self:StartMoving()
     end
     local fnMf_OnDragStop = function(self)
-        -- check if frame is out of screen, if yes move it back
-        ValidateFramePosition(self)
         self:StopMovingOrSizing()
     end
     local mf = CreateFrame("Frame", "GwSettingsMoverFrame", UIParent, "GwSettingsMoverFrame")
+    mf:SetClampedToScreen(true)
     mf:RegisterForDrag("LeftButton")
     mf:SetScript("OnDragStart", fnMf_OnDragStart)
     mf:SetScript("OnDragStop", fnMf_OnDragStop)
 
     local sWindow = CreateFrame("Frame", "GwSettingsWindow", UIParent, "GwSettingsWindowTmpl")
+    sWindow:SetClampedToScreen(true)
     tinsert(UISpecialFrames, "GwSettingsWindow")
     local fmGSWMH = GwSettingsWindowMoveHud
     local fmGSWS = sWindow.save

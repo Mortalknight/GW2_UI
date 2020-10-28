@@ -253,6 +253,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe.frameName:SetText(displayName)
     end
 
+    moveframe:SetClampedToScreen(true)
+
     -- position mover
     local framePoint = GetSetting(settingsName)
     moveframe:ClearAllPoints()
@@ -345,7 +347,7 @@ local function MoveFrameByPixel(nudgeX, nudgeY)
     x = x + nudgeX
     y = y + nudgeY
     mover:ClearAllPoints()
-	mover:SetPoint(point, UIParent, anchorPoint, x, y)
+    mover:SetPoint(point, UIParent, anchorPoint, x, y)
 
     mover_OnDragStop(mover)
 end
@@ -356,8 +358,6 @@ local function LoadMovers()
         self:StartMoving()
     end
     local fnMf_OnDragStop = function(self)
-        -- check if frame is out of screen, if yes move it back
-        ValidateFramePosition(self)
         self:StopMovingOrSizing()
     end
     local mf = CreateFrame("Frame", "GwSmallSettingsMoverFrame", UIParent, "GwSmallSettingsMoverFrame")

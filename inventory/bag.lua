@@ -632,6 +632,7 @@ local function LoadBag(helpers)
     f:ClearAllPoints()
     f:SetWidth(BAG_WINDOW_SIZE)
     onBagFrameChangeSize(f, nil, nil, true)
+    f:SetClampedToScreen(true)
 
     -- setup show/hide
     f:SetScript("OnShow", bag_OnShow)
