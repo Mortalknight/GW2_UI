@@ -112,7 +112,13 @@ local function CheckUpdateIcon_OnUpdate(self, elapsed)
 end
 
 local function CheckUpdateIcon(button)
-    local itemIsUpgrade = IsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
+    local itemIsUpgrade = nil
+    if IsAddOnLoaded("Pawn") then
+        itemIsUpgrade = PawnIsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
+    else
+        itemIsUpgrade = IsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
+    end
+    
     if itemIsUpgrade == nil then -- nil means not all the data was available to determine if this is an upgrade.
         button.UpgradeIcon:SetShown(false)
         button:SetScript("OnUpdate", CheckUpdateIcon_OnUpdate)
@@ -642,6 +648,8 @@ local function LoadInventory()
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
+
+    hooksecurefunc("ContainerFrameItemButton_UpdateItemUpgradeIcon", CheckUpdateIcon)
 
     -- reskin all the multi-use ContainerFrame ItemButtons
     reskinItemButtons()
