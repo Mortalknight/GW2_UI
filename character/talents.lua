@@ -2,6 +2,7 @@ local _, GW = ...
 local SetClassIcon = GW.SetClassIcon
 local UpdatePvPTab = GW.UpdatePvPTab
 local CreatePvPTab = GW.CreatePvPTab
+local IsIn = GW.IsIn
 
 local maxTalentRows = 7
 local talentsPerRow = 3
@@ -922,15 +923,12 @@ end
 GW.AddForProfiling("talents", "toggleTalentFrame", toggleTalentFrame)
 
 local function spellBook_OnEvent(self, event, ...)
-    if event == "SPELLS_CHANGED" or event == "LEARNED_SPELL_IN_TAB" or event == "PLAYER_GUILD_UPDATE" or
-            event == "PLAYER_SPECIALIZATION_CHANGED" or
-            event == ""
-    then
+    if IsIn(event, "SPELLS_CHANGED", "LEARNED_SPELL_IN_TAB", "PLAYER_GUILD_UPDATE", "PLAYER_SPECIALIZATION_CHANGED", "PLAYER_LEVEL_UP", "") then
         if not GwTalentFrame:IsShown() or not GW.inWorld then
             return
         end
         queueUpdateTab(self)
-    elseif event == "USE_GLYPH" or event == "ACTIVATE_GLYPH" then
+    elseif IsIn(event ,"USE_GLYPH", "ACTIVATE_GLYPH") then
         -- open and highlight glyphable spell
         local slot = ...
         GW.Debug("in event", event, slot, IsPendingGlyphRemoval())
@@ -1066,6 +1064,7 @@ local function LoadTalents(tabContainer)
     fmSpellbook:RegisterEvent("CANCEL_GLYPH_CAST")
     fmSpellbook:RegisterEvent("ACTIVATE_GLYPH")
     fmSpellbook:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
+    fmSpellbook:RegisterEvent("PLAYER_LEVEL_UP")
     SpellBookFrame:UnregisterAllEvents()
 
     for tab = 1, 5 do
