@@ -99,7 +99,7 @@
                             </Anchors>
                         </FontString>
                         <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
-                            <Size x="400" y="50"></Size>
+                            <Size x="400" y="60"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                             </Anchors>
