@@ -83,6 +83,7 @@ local function button1_OnClick()
                 if id == 1 then
                     frame:ClearAllPoints()
                     frame:SetPoint("BOTTOMLEFT", UIParent, 40, 60)
+                    frame:SetUserPlaced(true)
                 end
         
                 FCF_SavePositionAndDimensions(frame)
