@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.6", [=[
+NEW
+    - Added ability to move movers pixel by pixel
+
+FIXES
+    - Fix some BG HUD issues
+    - Update locals
+]=])
+
 v("5.4.5 (hotfix)", [=[
 NEW
     - Added inspection frame skin

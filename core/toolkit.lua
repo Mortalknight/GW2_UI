@@ -385,7 +385,32 @@ local function HandleMaxMinFrame(frame)
     frame.isSkinned = true
 end
 
+local function HandleNextPrevButton(button, arrowDir)
+    if button.isSkinned then return end
 
+    button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+    button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+
+    local Normal, Disabled, Pushed = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture()
+
+    button:SetSize(20, 20)
+    Disabled:SetVertexColor(.3, .3, .3)
+
+    Normal:SetTexCoord(0, 1, 0, 1)
+    Pushed:SetTexCoord(0, 1, 0, 1)
+    Disabled:SetTexCoord(0, 1, 0, 1)
+
+    local rotation = ArrowRotation[arrowDir]
+    if rotation then
+        Normal:SetRotation(rotation)
+        Pushed:SetRotation(rotation)
+        Disabled:SetRotation(rotation)
+    end
+
+    button.isSkinned = true
+end
+GW.HandleNextPrevButton = HandleNextPrevButton
 
 local function addapi(object)
     local mt = getmetatable(object).__index

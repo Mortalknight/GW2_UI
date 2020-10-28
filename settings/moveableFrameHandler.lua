@@ -154,21 +154,25 @@ local function mover_scaleable(self, button)
     if button =="RightButton" then
         if GW.MoveHudScaleableFrame.child == self then
             GW.MoveHudScaleableFrame.child = nil
+            GW.MoveHudScaleableFrame.childMover = nil
             GW.MoveHudScaleableFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
             GW.MoveHudScaleableFrame.scaleSlider:Hide()
             GW.MoveHudScaleableFrame.default:Hide()
+            GW.MoveHudScaleableFrame.movers:Hide()
             GW.MoveHudScaleableFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
             GW.MoveHudScaleableFrame.desc:Show()
             GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
         else
             local scale = GetSetting(self.gw_Settings .."_scale")
             GW.MoveHudScaleableFrame.child = self
+            GW.MoveHudScaleableFrame.childMover = self
             GW.MoveHudScaleableFrame.headerString:SetText(self.frameName:GetText())
             GW.MoveHudScaleableFrame.scaleSlider.slider:SetValue(scale)
             GW.MoveHudScaleableFrame.scaleSlider.input:SetNumber(scale)
             GW.MoveHudScaleableFrame.desc:Hide()
             GW.MoveHudScaleableFrame.scaleSlider:Show()
             GW.MoveHudScaleableFrame.default:Show()
+            GW.MoveHudScaleableFrame.movers:Show()
             if GW.MoveHudScaleableFrame.activeFlasher then
                 GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
                 UIFrameFadeOut(GW.MoveHudScaleableFrame.activeFlasher, 0.5, GW.MoveHudScaleableFrame.activeFlasher:GetAlpha(), 0.5)
@@ -291,17 +295,21 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
             if button =="RightButton" then
                 if GW.MoveHudScaleableFrame.child == "nil" then
                     GW.MoveHudScaleableFrame.child = nil
+                    GW.MoveHudScaleableFrame.childMover = nil
                     GW.MoveHudScaleableFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
                     GW.MoveHudScaleableFrame.scaleSlider:Hide()
                     GW.MoveHudScaleableFrame.default:Hide()
+                    GW.MoveHudScaleableFrame.movers:Hide()
                     GW.MoveHudScaleableFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
                     GW.MoveHudScaleableFrame.desc:Show()
                     GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
                 else
                     GW.MoveHudScaleableFrame.child = "nil"
+                    GW.MoveHudScaleableFrame.childMover = self
                     GW.MoveHudScaleableFrame.headerString:SetText(displayName)
                     GW.MoveHudScaleableFrame.scaleSlider:Hide()
                     GW.MoveHudScaleableFrame.default:Hide()
+                    GW.MoveHudScaleableFrame.movers:Show()
                     GW.MoveHudScaleableFrame.desc:SetText(format(L["SMALL_SETTINGS_NO_SETTINGS_FOR"], displayName))
                     GW.MoveHudScaleableFrame.desc:Show()
                     if GW.MoveHudScaleableFrame.activeFlasher then
@@ -329,6 +337,18 @@ local function UpdateFramePositions()
     end
 end
 GW.UpdateFramePositions = UpdateFramePositions
+
+local function MoveFrameByPixel(nudgeX, nudgeY)
+    local mover = GwSmallSettingsWindow.childMover
+
+    local point, anchor, anchorPoint, x, y = mover:GetPoint()
+    x = x + nudgeX
+    y = y + nudgeY
+    mover:ClearAllPoints()
+	mover:SetPoint(point, UIParent, anchorPoint, x, y)
+
+    mover_OnDragStop(mover)
+end
 
 local function LoadMovers()
     -- Create mover settings frame
@@ -359,6 +379,18 @@ local function LoadMovers()
     moverSettingsFrame.scaleSlider.title:SetText(L["SMALL_SETTINGS_OPTION_SCALE"])
     moverSettingsFrame.headerString:SetFont(UNIT_NAME_FONT, 14)
     moverSettingsFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
+
+    moverSettingsFrame.movers.title:SetText(NPE_MOVE )
+    moverSettingsFrame.movers.title:SetFont(UNIT_NAME_FONT, 12)
+    GW.HandleNextPrevButton(moverSettingsFrame.movers.left, "left")
+    GW.HandleNextPrevButton(moverSettingsFrame.movers.right, "right")
+    GW.HandleNextPrevButton(moverSettingsFrame.movers.up, "up")
+    GW.HandleNextPrevButton(moverSettingsFrame.movers.down, "down")
+    moverSettingsFrame.movers.left:SetScript("OnClick", function() MoveFrameByPixel(-1, 0) end)
+    moverSettingsFrame.movers.right:SetScript("OnClick", function() MoveFrameByPixel(1, 0) end)
+    moverSettingsFrame.movers.up:SetScript("OnClick", function() MoveFrameByPixel(0, 1) end)
+    moverSettingsFrame.movers.down:SetScript("OnClick", function() MoveFrameByPixel(0, -1) end)
+
     moverSettingsFrame:SetScript("OnShow", function(self)
         mf:Show()
     end)
