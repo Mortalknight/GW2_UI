@@ -8,6 +8,7 @@ local bgs = {}
 local POIList = {}
 local POIInfo = {}
 
+local lastBG = 0
 local activeBg = 0
 local activeMap
 
@@ -259,7 +260,8 @@ GW.AddForProfiling("battlegrounds", "TimerFlag_OnUpdate", TimerFlag_OnUpdate)
 
 local function pvpHud_onEvent(self, event)
     if bgs[GW.locationData.instanceMapID] ~= nil then
-        if event == "PLAYER_ENTERING_BATTLEGROUND" then
+        -- check if we are in the same BG or if we directly join from another BG. In that case we need to reset the score OR if we joind a new BG
+        if (lastBG > 0 and lastBG ~= GW.locationData.instanceMapID) or event == "PLAYER_ENTERING_BATTLEGROUND" then
             pointsAlliance = 0
             pointsHorde = 0
             gwbgs.scoreRight:SetText(0)
@@ -271,6 +273,7 @@ local function pvpHud_onEvent(self, event)
                 end
             end
         end
+        lastBG = GW.locationData.instanceMapID
         activeBg = GW.locationData.instanceMapID
         activeMap = GW.locationData.mapID
         UIWidgetTopCenterContainerFrame:Hide()
