@@ -968,7 +968,7 @@ local function LoadPDBagList(fmMenu)
         fmPD3M:SetPosition(0.3, 0, -0.15)
     elseif GW.myrace == "Pandaren" or GW.myrace == "KulTiran" then
         fmPD3M:SetPosition(0.3, 0, -0.15)
-    elseif GW.myrace == "Goblin" then
+    elseif GW.myrace == "Goblin" or GW.myrace == "Vulpera" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Troll" or GW.myrace == "ZandalariTroll" then
         fmPD3M:SetPosition(0.2, 0, -0.05)
