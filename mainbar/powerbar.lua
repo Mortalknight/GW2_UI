@@ -186,23 +186,23 @@ local function LoadPowerBar()
     end
     GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
-    _G[playerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()
+    playerPowerBar.candy.spark:ClearAllPoints()
 
     playerPowerBar:SetScript(
         "OnEvent",
         function(self, event, unit)
             if (event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER") and unit == "player" then
-                UpdatePowerData(GwPlayerPowerBar)
+                UpdatePowerData(playerPowerBar)
                 return
             end
             if event == "UPDATE_SHAPESHIFT_FORM" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
-                GwPlayerPowerBar.lastPowerType = nil
-                UpdatePowerData(GwPlayerPowerBar)
+                playerPowerBar.lastPowerType = nil
+                UpdatePowerData(playerPowerBar)
             end
         end
     )
 
-    _G["GwPlayerPowerBarBarString"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    playerPowerBar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
 
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
@@ -211,6 +211,6 @@ local function LoadPowerBar()
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
     playerPowerBar:RegisterEvent("PLAYER_TALENT_UPDATE")
 
-    UpdatePowerData(GwPlayerPowerBar)
+    UpdatePowerData(playerPowerBar)
 end
 GW.LoadPowerBar = LoadPowerBar
