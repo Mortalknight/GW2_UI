@@ -279,11 +279,21 @@ local function LoadHealthGlobe()
     local hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
     GW.RegisterScaleFrame(hg, 1.1)
 
-    -- position based on XP bar space
-    if GetSetting("XPBAR_ENABLED") then
-        hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
+    -- position based on XP bar space and make it movable if your actionbars are off
+    if GetSetting("ACTIONBARS_ENABLED") then
+        if GetSetting("XPBAR_ENABLED") then
+            hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
+        else
+            hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+        end
     else
-        hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+        GW.RegisterMovableFrame(hg, GW.L["HEALTH_GLOBE"], "HealthGlobe_pos", "VerticalActionBarDummy", nil, true, true, false)
+        hg:SetPoint("TOPLEFT", hg.gwMover)
+        if not GetSetting("XPBAR_ENABLED") and not hg.isMoved then
+            local framePoint = GetSetting("HealthGlobe_pos")
+            hg.gwMover:ClearAllPoints()
+            hg.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, 0)
+        end
     end
 
     --save settingsvalue for later use

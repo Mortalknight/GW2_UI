@@ -333,6 +333,12 @@ GW_DEFAULT["TalkingHeadFrame_pos"]["xOfs"] = 0
 GW_DEFAULT["TalkingHeadFrame_pos"]["yOfs"] = 372
 GW_DEFAULT["TalkingHeadFrame_pos_scale"] = 0.9
 
+GW_DEFAULT["HealthGlobe_pos"] = {}
+GW_DEFAULT["HealthGlobe_pos"]["point"] = "BOTTOM"
+GW_DEFAULT["HealthGlobe_pos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["HealthGlobe_pos"]["xOfs"] = 0
+GW_DEFAULT["HealthGlobe_pos"]["yOfs"] = 17
+
 GW_DEFAULT["TotemBar_pos"] = {}
 GW_DEFAULT["TotemBar_pos"]["point"] = "TOPRIGHT"
 GW_DEFAULT["TotemBar_pos"]["relativePoint"] = "TOPRIGHT"
