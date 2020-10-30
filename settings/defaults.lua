@@ -346,6 +346,13 @@ GW_DEFAULT["TotemBar_pos"]["xOfs"] = -500
 GW_DEFAULT["TotemBar_pos"]["yOfs"] = -50
 GW_DEFAULT["TotemBar_pos_scale"] = 1
 
+GW_DEFAULT["PowerBar_pos"] = {}
+GW_DEFAULT["PowerBar_pos"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["PowerBar_pos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["PowerBar_pos"]["xOfs"] = 53
+GW_DEFAULT["PowerBar_pos"]["yOfs"] = 86
+GW_DEFAULT["PowerBar_pos_scale"] = 1
+
 GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
 GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 

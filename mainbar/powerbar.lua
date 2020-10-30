@@ -178,11 +178,18 @@ GW.UpdatePowerData = UpdatePowerData
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
-    GW.RegisterScaleFrame(playerPowerBar)
-    if GW.GetSetting("XPBAR_ENABLED") then
-        playerPowerBar:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", 53, 86)
-    else
-        playerPowerBar:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", 53, 72)
+    --GW.RegisterScaleFrame(playerPowerBar)
+
+    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true)
+
+    playerPowerBar:ClearAllPoints()
+    playerPowerBar:SetPoint("TOPLEFT", playerPowerBar.gwMover)
+
+    -- position mover
+    if not GW.GetSetting("XPBAR_ENABLED") and not playerPowerBar.isMoved  then
+        local framePoint = GW.GetSetting("PowerBar_pos")
+        playerPowerBar.gwMover:ClearAllPoints()
+        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
     end
     GW.MixinHideDuringPetAndOverride(playerPowerBar)
 

@@ -765,7 +765,7 @@ local function powerSoulshardAnimated(self, event, ...)
 
     local pwrMax = UnitPowerMax("player", 7)
     local pwr = UnitPower("player", 7)
-    local shardPower = WarlockPowerBar_UnitPower("player")
+    local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - UnitPower("player", 7))
 
     self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
     self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
