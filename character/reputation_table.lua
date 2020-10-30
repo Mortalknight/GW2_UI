@@ -2,6 +2,36 @@ local _, GW = ...
 
 local T = {}
 
+-- SL
+--T[2422] = "SL/TheWildHunt"
+--T[2439] = "SL/Avowed"
+--T[2413] = "SL/CourtOfHarvesters"
+--T[2410] = "SL/TheUndyingArmy"
+--T[2407] = "SL/Ascended"
+--T[2462] = "SL/Stitchmasters"
+--T[2432] = "SL/Venari"
+--T[2445] = "SL/THeEmverCourt"
+--T[2459] = "SL/Sika"
+--T[2452] = "SL/PolemarchAdrestes"
+--T[2444] = "SL/TheWildHunt" -- Paragon
+--T[2450] = "SL/AlecandrosMorgraine"
+--T[2441] = "SL/Ascended" -- Paragon
+--T[2456] = "SL/DromanAliothe"
+--T[2447] = "SL/LadyMoonberry"
+--T[2454] = "SL/Choofa"
+--T[2453] = "SL/RendleAndCudgelface"
+--T[2460] = "SL/Stonehead"
+--T[2449] = "SL/Countess"
+--T[2446] = "SL/BaronessVashj"
+--T[2451] = "SL/HuntCaptainKorayn"
+--T[2458] = "SL/KleiaAndPelagos"
+--T[2448] = "SL/Mikanikos"
+--T[2440] = "SL/TheUndyingArmy" -- Paragon
+--T[2442] = "SL/CourtOfHarvesters" -- Paragon
+--T[2455] = "SL/CryptkeeperKassir"
+--T[2457] = "SL/GrandmasterVole"
+--T[2461] = "SL/PlagueDeviserMarileth"
+
 -- BFA
 T[2159] = "BFA/7thLegion"
 T[2164] = "BFA/Champions"
