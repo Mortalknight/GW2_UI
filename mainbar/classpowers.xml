@@ -250,6 +250,126 @@
                     </StatusBar>
                 </Frames>
             </Frame>
+            <Frame parentKey="warlock" hidden="true">
+                <Size x="316" y="18"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0.5" right="1" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0.5" right="1" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0.5" right="1" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0.5" right="1" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                          <TexCoords left="0.5" right="1" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+
+
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="shard1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                            <TexCoords left="0" right="0.5" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="shard2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0" right="0.5" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="shard3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0" right="0.5" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="shard4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0" right="0.5" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="shard5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                            <TexCoords left="0" right="0.5" top="1" bottom="0" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                      </Layer>
+                    </Layers>
+
+                <Frames>
+                  <Frame parentKey="shardFragment" hidden="true">
+                    <Size x="132" y="10"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Layers>
+                      <Layer level="BACKGROUND">
+                        <Texture parentKey="barBg" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardFragmentBarBg">
+
+                            <Size x="132" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                      </Layer>
+                      <Layer level="OVERLAY">
+                        <Texture parentKey="barFill" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardFragmentBarFill">
+                            <Size x="130" y="8"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardFragmentFlare">
+
+                            <Size x="32" y="64"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.barFill" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+
+                      </Layer>
+                    </Layers>
+                  </Frame>
+                </Frames>
+              </Frame>
             <Frame parentKey="brewmaster" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>

@@ -195,7 +195,7 @@ local function powerCombo(self, event, ...)
     end
     local old_power = self.gwPower
     old_power = old_power or -1
-    
+
 
     local pwrMax = UnitPowerMax("player", 4)
     local pwr = UnitPower("player", 4)
@@ -750,8 +750,43 @@ local function powerSoulshard(self, event, ...)
     local pwrMax = UnitPowerMax("player", 7)
     local pwr = UnitPower("player", 7)
 
-    self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
-    self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
+    for i = 1, pwrMax do
+      if pwr>=i then
+        self.warlock["shard" .. i]:Show()
+      else
+        self.warlock["shard" .. i]:Hide()
+      end
+    end
+
+    if GW.myspec == 3 then -- Destruction
+
+      if pwr>= pwrMax then
+        self.warlock.shardFragment:Hide()
+      else
+        self.warlock.shardFragment:Show()
+      end
+
+      local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - UnitPower("player", 7))
+      self.warlock.shardFragment.barFill:SetWidth(130*shardPower)
+      self.warlock.shardFragment.barFill:SetTexCoord(0,shardPower,0,1)
+      if self.warlock.shardFragment.amount < shardPower then
+        AddToAnimation(
+            "WARLOCK_FRAGMENT_FLARE",
+            1,
+            0,
+            GetTime(),
+            0.3,
+            function()
+                local p = animations["WARLOCK_FRAGMENT_FLARE"]["progress"]
+                self.warlock.shardFragment.flare:SetAlpha(p)
+
+            end
+        )
+      end
+      self.warlock.shardFragment.amount = shardPower;
+    end
+  --  self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
+  --  self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
 end
 GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
 
@@ -784,47 +819,25 @@ local function powerSoulshardAnimated(self, event, ...)
 end
 
 local function setWarlock(f)
-    if GW.myspec == 3 then -- destruction
-        --[[
-        f:SetHeight(32)
-        f:SetWidth(256)
-        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs-bg")
-        f.fill:SetHeight(32)
-        f.fill:SetWidth(256)
-        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs")
-        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\runeflash")
-        f.flare:SetWidth(256)
-        f.flare:SetHeight(128)
-    ]]
 
-        f.background:SetTexture()
-        f.fill:SetTexture()
-        --f:SetScript("OnEvent", powerSoulshardAnimated)
-        powerSoulshardAnimated(f, "CLASS_POWER_INIT")
-        --f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-        --f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+  f.background:SetTexture(nil)
+  f.fill:SetTexture(nil)
+  f:SetHeight(32)
+  f.warlock:Show()
+    if GW.myspec == 3 then -- Destruction
+      f.warlock.shardFragment.amount = 0;
+      f.warlock.shardFragment:Show();
+  else
+      f.warlock.shardFragment:Hide();
+  end
+  f:SetScript("OnEvent", powerSoulshard)
+  powerSoulshard(f, "CLASS_POWER_INIT")
+  f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+  f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+  return true;
 
-        return true
-    else
-        f:SetHeight(32)
-        f:SetWidth(256)
-        f.background:SetHeight(32)
-        f.background:SetWidth(128)
-        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs-bg")
-        f.fill:SetHeight(32)
-        f.fill:SetWidth(256)
-        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\shadoworbs")
 
-        f:SetScript("OnEvent", powerSoulshard)
-        powerSoulshard(f, "CLASS_POWER_INIT")
-        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
-        WarlockPowerFrame:Hide()
 
-        return true
-    end
-
-    return false
 end
 GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
 
@@ -980,7 +993,7 @@ GW.AddForProfiling("classpowers", "setMonk", setMonk)
 -- DRUID
 local function setDruid(f)
     local form = f.gwPlayerForm
-    
+
     local barType = "none"
     if GW.myspec == 1 then -- balance
         if form == 1 then
@@ -1182,6 +1195,6 @@ local function LoadClassPowers()
             cpf:Hide()
         end
     end
-    
+
 end
 GW.LoadClassPowers = LoadClassPowers
