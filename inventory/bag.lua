@@ -171,8 +171,8 @@ local function layoutBagItems(f)
             _G["GwBagFrameGwBagHeader" .. bag_id]:Show()
             _G["GwBagFrameGwBagHeader" .. bag_id]:ClearAllPoints()
             _G["GwBagFrameGwBagHeader" .. bag_id]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(BAG_WINDOW_SIZE)
-            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(BAG_WINDOW_SIZE)
+            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(BAG_WINDOW_SIZE - BAG_ITEM_PADDING)
+            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(BAG_WINDOW_SIZE - BAG_ITEM_PADDING)
         else
             _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
         end

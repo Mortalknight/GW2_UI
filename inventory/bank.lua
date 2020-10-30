@@ -13,7 +13,7 @@ local BANK_WINDOW_SIZE = 720
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutBankItems(f)
-    local max_col = f:GetParent().gw_bag_cols
+    local max_col = f:GetParent().gw_bank_cols
     local row = 0
     local col = 0
     local rev = GetSetting("BANK_REVERSE_SORT")
@@ -43,7 +43,7 @@ GW.AddForProfiling("bank", "layoutBankItems", layoutBankItems)
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutReagentItems(f)
-    local max_col = f:GetParent().gw_bag_cols
+    local max_col = f:GetParent().gw_bank_cols
     local row = 0
     local col = 0
 
@@ -281,8 +281,8 @@ GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
 local function onBankFrameChangeSize(self, width, height, skip)
     local cols = inv.colCount(BANK_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
 
-    if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
-        self.gw_bag_cols = cols
+    if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
+        self.gw_bank_cols = cols
         if not skip then
             layoutItems(self)
         end

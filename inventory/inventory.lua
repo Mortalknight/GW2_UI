@@ -492,7 +492,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
         return
     end
 
-    local cols = f.gw_bag_cols
+    local cols = f == _G.GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
     local sep = f == _G.GwBagFrame and GetSetting("BAG_SEPARATE_BAGS") or false
 
     if not cfs then
@@ -528,9 +528,9 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     f:SetHeight(max((isize * rows) + 75, min_height))
     f:SetWidth((isize * cols) + padding + 2)
     for i = 0, 5 do
-        if _G["GwBagFrameGwBagHeader" .. i] then
-            _G["GwBagFrameGwBagHeader" .. i]:SetWidth((isize * cols) + padding + 2)
-            _G["GwBagFrameGwBagHeader" .. i].background:SetWidth((isize * cols) + padding + 2)
+        if _G["GwBagFrameGwBagHeader" .. i] and sep then
+            _G["GwBagFrameGwBagHeader" .. i]:SetWidth((isize * cols) + padding + 2 - 5)
+            _G["GwBagFrameGwBagHeader" .. i].background:SetWidth((isize * cols) + padding + 2 - 5)
         end
     end
 end
