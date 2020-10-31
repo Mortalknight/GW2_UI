@@ -601,22 +601,43 @@ local function powerMaelstrom(self, event, ...)
     local _, count, duration, expires = findBuff("player", 344179)
 
     if duration == nil then
-        fdc.count:SetText(0)
+      --  fdc.count:SetText(0)
         self.gwPower = -1
-        return
+        count = 0;
+
     end
 
-    fdc.count:SetText(count)
-    local old_expires = self.gwPower
-    old_expires = old_expires or -1
-    self.gwPower = expires
-    if event == "CLASS_POWER_INIT" or expires > old_expires then
-        local pre = (expires - GetTime()) / duration
-        AddToAnimation("MAELSTROMCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), maelstromCounter_OnAnim, "noease")
-        if event ~= "CLASS_POWER_INIT" then
-            AddToAnimation("MAELSTROMCOUNTER_TEXT", 1, 0, GetTime(), 0.5, maelstromCounterFlash_OnAnim)
-        end
+    if count>=5 then
+      self.maelstrom.flare1:Show()
+    else
+      self.maelstrom.flare1:Hide()
     end
+    if count>=10 then
+      self.maelstrom.flare2:Show()
+    else
+      self.maelstrom.flare2:Hide()
+    end
+
+    for i =1,10 do
+      if count >=i then
+          self.maelstrom["rune"..i]:Show()
+
+      else
+          self.maelstrom["rune"..i]:Hide()
+      end
+    end
+
+--    fdc.count:SetText(count)
+  --  local old_expires = self.gwPower
+--    old_expires = old_expires or -1
+  --  self.gwPower = expires
+  --  if event == "CLASS_POWER_INIT" or expires > old_expires then
+  --      local pre = (expires - GetTime()) / duration
+  --      AddToAnimation("MAELSTROMCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), maelstromCounter_OnAnim, "noease")
+  --      if event ~= "CLASS_POWER_INIT" then
+  --          AddToAnimation("MAELSTROMCOUNTER_TEXT", 1, 0, GetTime(), 0.5, maelstromCounterFlash_OnAnim)
+  --      end
+--    end
 end
 GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
 
@@ -629,9 +650,9 @@ local function setShaman(f)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fms = f.maelstrom
-        fms.bar.texture1:SetVertexColor(1, 1, 1, 0)
-        fms.bar.texture2:SetVertexColor(1, 1, 1, 0)
-        fms.bar:SetValue(0)
+      --  fms.bar.texture1:SetVertexColor(1, 1, 1, 0)
+      --  fms.bar.texture2:SetVertexColor(1, 1, 1, 0)
+      --  fms.bar:SetValue(0)
         fms:Show()
 
         f:SetScript("OnEvent", powerMaelstrom)
@@ -760,6 +781,7 @@ local function powerSoulshard(self, event, ...)
 
     if GW.myspec == 3 then -- Destruction
 
+      --Hide fragment bar if capped
       if pwr>= pwrMax then
         self.warlock.shardFragment:Hide()
       else
@@ -1164,7 +1186,7 @@ local function LoadClassPowers()
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
-    cpf.maelstrom.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+    --cpf.maelstrom.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
     cpf.brewmaster.debugpre = 0
     cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 11)
     cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 11)
