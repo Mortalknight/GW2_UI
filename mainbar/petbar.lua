@@ -311,7 +311,7 @@ local function LoadPetFrame(lm)
 
     updatePetData(playerPetFrame, "UNIT_PET", "player")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, nil, true, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, nil, true, true, true)
 
     if not playerPetFrame.isMoved then
         AddActionBarCallback(updatePetFrameLocation)

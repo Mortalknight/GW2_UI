@@ -353,6 +353,13 @@ GW_DEFAULT["PowerBar_pos"]["xOfs"] = 53
 GW_DEFAULT["PowerBar_pos"]["yOfs"] = 86
 GW_DEFAULT["PowerBar_pos_scale"] = 1
 
+GW_DEFAULT["ClasspowerBar_pos"] = {}
+GW_DEFAULT["ClasspowerBar_pos"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["ClasspowerBar_pos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["ClasspowerBar_pos"]["xOfs"] = -372
+GW_DEFAULT["ClasspowerBar_pos"]["yOfs"] = 81
+GW_DEFAULT["ClasspowerBar_pos_scale"] = 1
+
 GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
 GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 
