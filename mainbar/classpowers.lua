@@ -601,10 +601,8 @@ local function powerMaelstrom(self, event, ...)
     local _, count, duration, expires = findBuff("player", 344179)
 
     if duration == nil then
-      --  fdc.count:SetText(0)
         self.gwPower = -1
-        count = 0;
-
+        count = 0
     end
 
     if count>=5 then
@@ -618,26 +616,14 @@ local function powerMaelstrom(self, event, ...)
       self.maelstrom.flare2:Hide()
     end
 
-    for i =1,10 do
-      if count >=i then
-          self.maelstrom["rune"..i]:Show()
+    for i = 1, 10 do
+      if count >= i then
+          self.maelstrom["rune" .. i]:Show()
 
       else
-          self.maelstrom["rune"..i]:Hide()
+          self.maelstrom["rune" .. i]:Hide()
       end
     end
-
---    fdc.count:SetText(count)
-  --  local old_expires = self.gwPower
---    old_expires = old_expires or -1
-  --  self.gwPower = expires
-  --  if event == "CLASS_POWER_INIT" or expires > old_expires then
-  --      local pre = (expires - GetTime()) / duration
-  --      AddToAnimation("MAELSTROMCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), maelstromCounter_OnAnim, "noease")
-  --      if event ~= "CLASS_POWER_INIT" then
-  --          AddToAnimation("MAELSTROMCOUNTER_TEXT", 1, 0, GetTime(), 0.5, maelstromCounterFlash_OnAnim)
-  --      end
---    end
 end
 GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
 
@@ -650,9 +636,6 @@ local function setShaman(f)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fms = f.maelstrom
-      --  fms.bar.texture1:SetVertexColor(1, 1, 1, 0)
-      --  fms.bar.texture2:SetVertexColor(1, 1, 1, 0)
-      --  fms.bar:SetValue(0)
         fms:Show()
 
         f:SetScript("OnEvent", powerMaelstrom)
@@ -772,7 +755,7 @@ local function powerSoulshard(self, event, ...)
     local pwr = UnitPower("player", 7)
 
     for i = 1, pwrMax do
-      if pwr>=i then
+      if pwr >= i then
         self.warlock["shard" .. i]:Show()
       else
         self.warlock["shard" .. i]:Hide()
@@ -780,86 +763,53 @@ local function powerSoulshard(self, event, ...)
     end
 
     if GW.myspec == 3 then -- Destruction
+        local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - pwr)
+        --Hide fragment bar if capped or not shardPower
+        if pwr >= pwrMax or shardPower >= 1 or shardPower == 0 then
+            self.warlock.shardFragment:Hide()
+        else
+            self.warlock.shardFragment:Show()
+        end
 
-      --Hide fragment bar if capped
-      if pwr>= pwrMax then
-        self.warlock.shardFragment:Hide()
-      else
-        self.warlock.shardFragment:Show()
-      end
+        self.warlock.shardFragment.barFill:SetWidth(130 * shardPower)
+        self.warlock.shardFragment.barFill:SetTexCoord(0, shardPower, 0, 1)
+        if self.warlock.shardFragment.amount < shardPower then
+            AddToAnimation(
+                "WARLOCK_FRAGMENT_FLARE",
+                1,
+                0,
+                GetTime(),
+                0.3,
+                function()
+                    local p = animations["WARLOCK_FRAGMENT_FLARE"]["progress"]
+                    self.warlock.shardFragment.flare:SetAlpha(p)
 
-      local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - UnitPower("player", 7))
-      self.warlock.shardFragment.barFill:SetWidth(130*shardPower)
-      self.warlock.shardFragment.barFill:SetTexCoord(0,shardPower,0,1)
-      if self.warlock.shardFragment.amount < shardPower then
-        AddToAnimation(
-            "WARLOCK_FRAGMENT_FLARE",
-            1,
-            0,
-            GetTime(),
-            0.3,
-            function()
-                local p = animations["WARLOCK_FRAGMENT_FLARE"]["progress"]
-                self.warlock.shardFragment.flare:SetAlpha(p)
-
-            end
-        )
-      end
-      self.warlock.shardFragment.amount = shardPower;
+                end
+            )
+        end
+        self.warlock.shardFragment.amount = shardPower
     end
-  --  self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
-  --  self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
 end
 GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
 
-
-local function powerSoulshardAnimated(self, event, ...)
-    --[[
-    local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
-        return
-    end
-
-    local pwrMax = UnitPowerMax("player", 7)
-    local pwr = UnitPower("player", 7)
-    local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - UnitPower("player", 7))
-
-    self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
-    self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
-    ]]
-
-    -- TODO: THis is temp, till we have our own texture
-    WarlockPowerFrame:ClearAllPoints()
-    WarlockPowerFrame:SetParent(self)
-    self.unit ="player"
-    if GW.GetSetting("XPBAR_ENABLED") then
-        WarlockPowerFrame:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -362, 87)
-    else
-        WarlockPowerFrame:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -362, 73)
-    end
-    WarlockPowerFrame:Show()
-end
-
 local function setWarlock(f)
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f:SetHeight(32)
+    f.warlock:Show()
 
-  f.background:SetTexture(nil)
-  f.fill:SetTexture(nil)
-  f:SetHeight(32)
-  f.warlock:Show()
     if GW.myspec == 3 then -- Destruction
-      f.warlock.shardFragment.amount = 0;
-      f.warlock.shardFragment:Show();
-  else
-      f.warlock.shardFragment:Hide();
-  end
-  f:SetScript("OnEvent", powerSoulshard)
-  powerSoulshard(f, "CLASS_POWER_INIT")
-  f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-  f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
-  return true;
+        f.warlock.shardFragment.amount = 0
+        f.warlock.shardFragment:Show()
+    else
+        f.warlock.shardFragment:Hide()
+    end
 
-
-
+    f:SetScript("OnEvent", powerSoulshard)
+    powerSoulshard(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    return true
 end
 GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
 
