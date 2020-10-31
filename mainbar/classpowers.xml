@@ -365,6 +365,15 @@
                             </Anchors>
                         </Texture>
                       </Layer>
+                      <Layer textureSubLevel="8" level="OVERLAY">
+                          <Texture parentKey="shardFlare" file="Interface\AddOns\GW2_UI\textures\altpower\soulshardFlare" hidden="true">
+
+                              <Size x="256" y="128"></Size>
+                              <Anchors>
+                                    <Anchor point="CENTER" relativePoint="LEFT" x="128" y="0"></Anchor>
+                              </Anchors>
+                          </Texture>
+                      </Layer>
                     </Layers>
 
                 <Frames>

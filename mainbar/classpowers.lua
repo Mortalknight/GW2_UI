@@ -770,14 +770,37 @@ local function powerSoulshard(self, event, ...)
 
     local pwrMax = UnitPowerMax("player", 7)
     local pwr = UnitPower("player", 7)
+    local old_power = self.gwPower;
+     self.gwPower = pwr
 
     for i = 1, pwrMax do
       if pwr>=i then
         self.warlock["shard" .. i]:Show()
+        self.warlock.shardFlare:ClearAllPoints()
+        self.warlock.shardFlare:SetPoint("CENTER",self.warlock["shard" .. i],"CENTER",0,0)
+        if pwr>old_power then
+          self.warlock.shardFlare:Show()
+        AddToAnimation(
+            "WARLOCK_SHARD_FLARE",
+            0,
+            5,
+            GetTime(),
+            0.7,
+            function()
+                local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"]["progress"])
+                self.warlock.shardFlare:SetTexCoord( GW.getSpriteByIndex(self.warlock.flareMap,p))
+            end,
+            nil,
+            function()
+              self.warlock.shardFlare:Hide()
+            end
+        )
+      end
       else
         self.warlock["shard" .. i]:Hide()
       end
     end
+
 
     if GW.myspec == 3 then -- Destruction
 
@@ -849,6 +872,13 @@ local function setWarlock(f)
     if GW.myspec == 3 then -- Destruction
       f.warlock.shardFragment.amount = 0;
       f.warlock.shardFragment:Show();
+      flarAnimationMap = {
+       width = 512,
+       height = 512,
+       colums = 2,
+       rows = 4
+     }
+     f.warlock.flareMap = flarAnimationMap
   else
       f.warlock.shardFragment:Hide();
   end

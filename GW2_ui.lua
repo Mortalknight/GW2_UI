@@ -14,12 +14,12 @@ GW.VERSION_STRING = "GW2_UI @project-version@"
 -- setup Binding Header color
 _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 
-if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then 
+if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
     return
 end
 
-if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then 
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then
     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
@@ -118,6 +118,31 @@ local function getSprite(map,x,y)
     return left, right, top, bottom;
 end
 GW.getSprite = getSprite
+
+
+local function getSpriteByIndex(map,index)
+
+  local tileWidth =  map.width / map.colums;
+  local tileHeight =  map.height / map.rows;
+
+  local tilesPerColums = map.width / tileWidth;
+  local tilesPerRow = map.height / tileHeight;
+
+
+
+  local left = tileWidth * (index % tilesPerColums);
+  local top =  tileHeight * math.floor(index / tilesPerColums)
+
+
+
+  local bottom = top + tileHeight;
+  local right = left + tileWidth;
+
+
+  return left / map.width, right /  map.width, top /  map.height,bottom /  map.height
+
+end
+GW.getSpriteByIndex = getSpriteByIndex
 
 
 function GwStandardButton_OnEnter(self)
@@ -487,7 +512,7 @@ local function loadAddon(self)
     if GetSetting("INSPECTION_SKIN_ENABLED") then
         GW.SkinDressUpFrame()
     end
-    
+
     GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
     GW.ExtraAB_BossAB_Setup()
@@ -668,7 +693,7 @@ local function loadAddon(self)
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface/Addons/GW2_UI/Textures/castinbar-white.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_2", "Interface/Addons/GW2_UI/Textures/gwstatusbar.tga")
     LibSharedMedia:Register(LibSharedMedia.MediaType.BORDER, "GW2_UI", "Interface/Addons/GW2_UI/Textures/UI-Tooltip-Border.tga")
-    
+
     --Check if we should show Welcomepage or Changelog
     if GetSetting("GW2_UI_VERSION") == "WELCOME" then
         GW.ShowWelcomePanel()
@@ -692,7 +717,7 @@ local function gw_OnEvent(self, event, ...)
         end
         GW.LoadStorage()
     elseif event == "ADDON_LOADED" then
-        
+
     elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
         SetSetting("PIXEL_PERFECTION", false)
         GW.scale = UIParent:GetScale()
