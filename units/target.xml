@@ -474,11 +474,9 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -498,10 +496,9 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="5" y="-22"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="0" y="0"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="-5"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -520,11 +517,9 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -544,11 +539,9 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="0" y="0"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -569,11 +562,9 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>

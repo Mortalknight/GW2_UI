@@ -250,6 +250,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe.gw_frame = frame
 
     if moveframe.frameName and moveframe.frameName.SetText then
+        moveframe.frameName:SetSize(moveframe:GetSize())
         moveframe.frameName:SetText(displayName)
     end
 

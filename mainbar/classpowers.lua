@@ -1096,12 +1096,19 @@ end
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
-    GW.RegisterScaleFrame(cpf)
-    if GW.GetSetting("XPBAR_ENABLED") then
-        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
-    else
-        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
+
+    GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true)
+
+    cpf:ClearAllPoints()
+    cpf:SetPoint("TOPLEFT", cpf.gwMover)
+
+    -- position mover
+    if not GW.GetSetting("XPBAR_ENABLED") and not cpf.isMoved  then
+        local framePoint = GW.GetSetting("ClasspowerBar_pos")
+        cpf.gwMover:ClearAllPoints()
+        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
     end
+
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
 
@@ -1116,6 +1123,7 @@ local function LoadClassPowers()
         cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()
         lmb:SetSize(GwPlayerPowerBar:GetWidth(), 5)
+        lmb:SetScale(GwPlayerPowerBar:GetScale())
         lmb.bar:SetHeight(5)
         lmb.candy:SetHeight(5)
         lmb.candy.spark:SetHeight(5)
