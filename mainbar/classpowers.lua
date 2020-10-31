@@ -764,8 +764,10 @@ local function powerSoulshard(self, event, ...)
 
     if GW.myspec == 3 then -- Destruction
         local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - pwr)
+        if shardPower == 0 then shardPower = 0.00000000000001 end
+
         --Hide fragment bar if capped or not shardPower
-        if pwr >= pwrMax or shardPower >= 1 or shardPower == 0 then
+        if pwr >= pwrMax or shardPower >= 1 then
             self.warlock.shardFragment:Hide()
         else
             self.warlock.shardFragment:Show()
@@ -799,7 +801,7 @@ local function setWarlock(f)
     f.warlock:Show()
 
     if GW.myspec == 3 then -- Destruction
-        f.warlock.shardFragment.amount = 0
+        f.warlock.shardFragment.amount = -1
         f.warlock.shardFragment:Show()
     else
         f.warlock.shardFragment:Hide()
