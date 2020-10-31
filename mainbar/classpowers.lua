@@ -601,43 +601,28 @@ local function powerMaelstrom(self, event, ...)
     local _, count, duration, expires = findBuff("player", 344179)
 
     if duration == nil then
-      --  fdc.count:SetText(0)
         self.gwPower = -1
-        count = 0;
-
+        count = 0
     end
 
-    if count>=5 then
-      self.maelstrom.flare1:Show()
+    if count >= 5 then
+        self.maelstrom.flare1:Show()
     else
-      self.maelstrom.flare1:Hide()
+        self.maelstrom.flare1:Hide()
     end
-    if count>=10 then
-      self.maelstrom.flare2:Show()
+    if count >= 10 then
+        self.maelstrom.flare2:Show()
     else
-      self.maelstrom.flare2:Hide()
+        self.maelstrom.flare2:Hide()
     end
 
-    for i =1,10 do
-      if count >=i then
-          self.maelstrom["rune"..i]:Show()
-
-      else
-          self.maelstrom["rune"..i]:Hide()
-      end
+    for i = 1, 10 do
+        if count >= i then
+            self.maelstrom["rune" .. i]:Show()
+        else
+            self.maelstrom["rune" .. i]:Hide()
+        end
     end
-
---    fdc.count:SetText(count)
-  --  local old_expires = self.gwPower
---    old_expires = old_expires or -1
-  --  self.gwPower = expires
-  --  if event == "CLASS_POWER_INIT" or expires > old_expires then
-  --      local pre = (expires - GetTime()) / duration
-  --      AddToAnimation("MAELSTROMCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), maelstromCounter_OnAnim, "noease")
-  --      if event ~= "CLASS_POWER_INIT" then
-  --          AddToAnimation("MAELSTROMCOUNTER_TEXT", 1, 0, GetTime(), 0.5, maelstromCounterFlash_OnAnim)
-  --      end
---    end
 end
 GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
 
@@ -650,9 +635,6 @@ local function setShaman(f)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fms = f.maelstrom
-      --  fms.bar.texture1:SetVertexColor(1, 1, 1, 0)
-      --  fms.bar.texture2:SetVertexColor(1, 1, 1, 0)
-      --  fms.bar:SetValue(0)
         fms:Show()
 
         f:SetScript("OnEvent", powerMaelstrom)
@@ -770,126 +752,92 @@ local function powerSoulshard(self, event, ...)
 
     local pwrMax = UnitPowerMax("player", 7)
     local pwr = UnitPower("player", 7)
-    local old_power = self.gwPower;
-     self.gwPower = pwr
+    local old_power = self.gwPower
+    self.gwPower = pwr
 
     for i = 1, pwrMax do
-      if pwr>=i then
-        self.warlock["shard" .. i]:Show()
-        self.warlock.shardFlare:ClearAllPoints()
-        self.warlock.shardFlare:SetPoint("CENTER",self.warlock["shard" .. i],"CENTER",0,0)
-        if pwr>old_power then
-          self.warlock.shardFlare:Show()
-        AddToAnimation(
-            "WARLOCK_SHARD_FLARE",
-            0,
-            5,
-            GetTime(),
-            0.7,
-            function()
-                local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"]["progress"])
-                self.warlock.shardFlare:SetTexCoord( GW.getSpriteByIndex(self.warlock.flareMap,p))
-            end,
-            nil,
-            function()
-              self.warlock.shardFlare:Hide()
+        if pwr >= i then
+            self.warlock["shard" .. i]:Show()
+            self.warlock.shardFlare:ClearAllPoints()
+            self.warlock.shardFlare:SetPoint("CENTER", self.warlock["shard" .. i],"CENTER", 0, 0)
+            if pwr > old_power then
+                self.warlock.shardFlare:Show()
+                AddToAnimation(
+                    "WARLOCK_SHARD_FLARE",
+                    0,
+                    5,
+                    GetTime(),
+                    0.7,
+                    function()
+                        local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"]["progress"])
+                        self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
+                    end,
+                    nil,
+                    function()
+                        self.warlock.shardFlare:Hide()
+                    end
+                )
             end
-        )
-      end
-      else
-        self.warlock["shard" .. i]:Hide()
-      end
+        else
+            self.warlock["shard" .. i]:Hide()
+        end
     end
-
 
     if GW.myspec == 3 then -- Destruction
+        local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - pwr)
+        if shardPower == 0 then shardPower = 0.00000000000001 end
 
-      --Hide fragment bar if capped
-      if pwr>= pwrMax then
-        self.warlock.shardFragment:Hide()
-      else
-        self.warlock.shardFragment:Show()
-      end
+        --Hide fragment bar if capped
+        if pwr >= pwrMax or shardPower >= 1 then
+            self.warlock.shardFragment:Hide()
+        else
+            self.warlock.shardFragment:Show()
+        end
 
-      local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - UnitPower("player", 7))
-      self.warlock.shardFragment.barFill:SetWidth(130*shardPower)
-      self.warlock.shardFragment.barFill:SetTexCoord(0,shardPower,0,1)
-      if self.warlock.shardFragment.amount < shardPower then
-        AddToAnimation(
-            "WARLOCK_FRAGMENT_FLARE",
-            1,
-            0,
-            GetTime(),
-            0.3,
-            function()
-                local p = animations["WARLOCK_FRAGMENT_FLARE"]["progress"]
-                self.warlock.shardFragment.flare:SetAlpha(p)
-
-            end
-        )
-      end
-      self.warlock.shardFragment.amount = shardPower;
+        self.warlock.shardFragment.barFill:SetWidth(130 * shardPower)
+        self.warlock.shardFragment.barFill:SetTexCoord(0, shardPower, 0, 1)
+        if self.warlock.shardFragment.amount < shardPower then
+            AddToAnimation(
+                "WARLOCK_FRAGMENT_FLARE",
+                1,
+                0,
+                GetTime(),
+                0.3,
+                function()
+                    local p = animations["WARLOCK_FRAGMENT_FLARE"]["progress"]
+                    self.warlock.shardFragment.flare:SetAlpha(p)
+                end
+            )
+        end
+        self.warlock.shardFragment.amount = shardPower
     end
-  --  self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
-  --  self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
 end
 GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
 
-
-local function powerSoulshardAnimated(self, event, ...)
-    --[[
-    local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
-        return
-    end
-
-    local pwrMax = UnitPowerMax("player", 7)
-    local pwr = UnitPower("player", 7)
-    local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - UnitPower("player", 7))
-
-    self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
-    self.fill:SetTexCoord(0, 1, 0.125 * pwr, 0.125 * (pwr + 1))
-    ]]
-
-    -- TODO: THis is temp, till we have our own texture
-    WarlockPowerFrame:ClearAllPoints()
-    WarlockPowerFrame:SetParent(self)
-    self.unit ="player"
-    if GW.GetSetting("XPBAR_ENABLED") then
-        WarlockPowerFrame:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -362, 87)
-    else
-        WarlockPowerFrame:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -362, 73)
-    end
-    WarlockPowerFrame:Show()
-end
-
 local function setWarlock(f)
-
-  f.background:SetTexture(nil)
-  f.fill:SetTexture(nil)
-  f:SetHeight(32)
-  f.warlock:Show()
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f:SetHeight(32)
+    f.warlock:Show()
     if GW.myspec == 3 then -- Destruction
-      f.warlock.shardFragment.amount = 0;
-      f.warlock.shardFragment:Show();
-      flarAnimationMap = {
-       width = 512,
-       height = 512,
-       colums = 2,
-       rows = 4
-     }
-     f.warlock.flareMap = flarAnimationMap
-  else
-      f.warlock.shardFragment:Hide();
-  end
-  f:SetScript("OnEvent", powerSoulshard)
-  powerSoulshard(f, "CLASS_POWER_INIT")
-  f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-  f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
-  return true;
+        f.warlock.shardFragment.amount = -1
+        f.warlock.shardFragment:Show()
+        flarAnimationMap = {
+            width = 512,
+            height = 512,
+            colums = 2,
+            rows = 4
+        }
+        f.warlock.flareMap = flarAnimationMap
+    else
+        f.warlock.shardFragment:Hide()
+    end
+    f:SetScript("OnEvent", powerSoulshard)
+    powerSoulshard(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-
-
+    return true
 end
 GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
 
@@ -1174,12 +1122,7 @@ end
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
-    GW.RegisterScaleFrame(cpf)
-    if GW.GetSetting("XPBAR_ENABLED") then
-        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
-    else
-        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
-    end
+
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
 
@@ -1194,6 +1137,7 @@ local function LoadClassPowers()
         cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()
         lmb:SetSize(GwPlayerPowerBar:GetWidth(), 5)
+        lmb:SetScale(GwPlayerPowerBar:GetScale())
         lmb.bar:SetHeight(5)
         lmb.candy:SetHeight(5)
         lmb.candy.spark:SetHeight(5)
@@ -1216,7 +1160,6 @@ local function LoadClassPowers()
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
-    --cpf.maelstrom.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
     cpf.brewmaster.debugpre = 0
     cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 11)
     cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 11)
@@ -1248,5 +1191,16 @@ local function LoadClassPowers()
         end
     end
 
+    GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true, true)
+
+    cpf:ClearAllPoints()
+    cpf:SetPoint("TOPLEFT", cpf.gwMover)
+
+    -- position mover
+    if not GW.GetSetting("XPBAR_ENABLED") and not cpf.isMoved  then
+        local framePoint = GW.GetSetting("ClasspowerBar_pos")
+        cpf.gwMover:ClearAllPoints()
+        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+    end
 end
 GW.LoadClassPowers = LoadClassPowers
