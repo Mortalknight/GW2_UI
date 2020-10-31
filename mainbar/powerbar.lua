@@ -178,9 +178,8 @@ GW.UpdatePowerData = UpdatePowerData
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
-    --GW.RegisterScaleFrame(playerPowerBar)
 
-    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true)
+    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true, true)
 
     playerPowerBar:ClearAllPoints()
     playerPowerBar:SetPoint("TOPLEFT", playerPowerBar.gwMover)

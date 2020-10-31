@@ -30,6 +30,9 @@ GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.gwMocks = {}
 GW.locationData = {}
+GW.MOVABLE_FRAMES = {}
+GW.scaleableFrames = {}
+GW.scaleableMainHudFrames = {}
 
 -- Init global function
 GW.InitLocationDataHandler()

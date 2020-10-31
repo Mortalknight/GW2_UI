@@ -4,11 +4,6 @@ local SetSetting = GW.SetSetting
 local GetDefault = GW.GetDefault
 local L = GW.L
 
-local MOVABLE_FRAMES = {}
-GW.MOVABLE_FRAMES = MOVABLE_FRAMES
-local scaleableFrames = {}
-GW.scaleableFrames = scaleableFrames
-
 local function CheckIfMoved(self, settingsName, new_point)
     -- check if we need to know if the frame is on its default position
     if self.gw_isMoved ~= nil then
@@ -217,7 +212,7 @@ local function moverframe_OnEnter(self)
         return
     end
 
-    for _, moverframe in pairs(MOVABLE_FRAMES) do
+    for _, moverframe in pairs(GW.MOVABLE_FRAMES) do
         if moverframe:IsShown() and moverframe ~= self then
             UIFrameFadeOut(moverframe, 0.5, moverframe:GetAlpha(), 0.5)
         end
@@ -229,14 +224,14 @@ local function moverframe_OnLeave(self)
         return
     end
 
-    for _, moverframe in pairs(MOVABLE_FRAMES) do
+    for _, moverframe in pairs(GW.MOVABLE_FRAMES) do
         if moverframe:IsShown() and moverframe ~= self then
             UIFrameFadeIn(moverframe, 0.5, moverframe:GetAlpha(), 1)
         end
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved, scaleable)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved, scaleable, mhf)
     local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
@@ -261,8 +256,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe:ClearAllPoints()
     moveframe:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
 
-    local num = #MOVABLE_FRAMES
-    MOVABLE_FRAMES[num + 1] = moveframe
+    local num = #GW.MOVABLE_FRAMES
+    GW.MOVABLE_FRAMES[num + 1] = moveframe
     moveframe:Hide()
     moveframe:RegisterForDrag("LeftButton")
     moveframe:SetScript("OnEnter", moverframe_OnEnter)
@@ -287,12 +282,16 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         end
     end
 
+    if mhf then
+        GW.scaleableMainHudFrames[#GW.scaleableMainHudFrames + 1] = moveframe
+    end
+
     if scaleable then
         local scale = GetSetting(settingsName .. "_scale")
         moveframe.gw_frame:SetScale(scale)
         moveframe:SetScale(scale)
         moveframe:SetScript("OnMouseDown", mover_scaleable)
-        scaleableFrames[#scaleableFrames + 1] = moveframe
+        GW.scaleableFrames[#GW.scaleableFrames + 1] = moveframe
     else
         moveframe:SetScript("OnMouseDown", function(self, button)
             if button =="RightButton" then
@@ -332,7 +331,7 @@ end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
 local function UpdateFramePositions()
-    for i, mf in pairs(MOVABLE_FRAMES) do
+    for i, mf in pairs(GW.MOVABLE_FRAMES) do
         local f = mf.gw_frame
         local newp = GetSetting(mf.gw_Settings)
         f:ClearAllPoints()
