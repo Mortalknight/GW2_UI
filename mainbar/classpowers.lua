@@ -853,9 +853,6 @@ local function setWarlock(f)
             rows = 4
         }
         f.warlock.flareMap = flarAnimationMap
-        -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
-        f:RegisterEvent("LEARNED_SPELL_IN_TAB")
-        updateTextureBasedOnCondition(f)
     else
         f.warlock.shardFragment:Hide()
     end
@@ -863,6 +860,9 @@ local function setWarlock(f)
     powerSoulshard(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
+    f:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    updateTextureBasedOnCondition(f)
 
     return true
 end
