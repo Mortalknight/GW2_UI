@@ -750,6 +750,18 @@ local function powerSoulshard(self, event, ...)
         return
     end
 
+    -- Hook green fire
+    if event == "CLASS_POWER_INIT" and true==false then -- check for spell id 101508
+        self.warlock.shardFlare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshardFlare-green")
+        self.warlock.shard1:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
+        self.warlock.shard2:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
+        self.warlock.shard3:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
+        self.warlock.shard4:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
+        self.warlock.shard5:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
+
+      self.warlock.shardFragment.barFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshardFragmentBarFill-green")
+    end
+
     local pwrMax = UnitPowerMax("player", 7)
     local pwr = UnitPower("player", 7)
     local old_power = self.gwPower
