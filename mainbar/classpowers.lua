@@ -8,6 +8,25 @@ local GetSetting = GW.GetSetting
 
 local CPWR_FRAME
 
+local function updateTextureBasedOnCondition(self)
+    if GW.myClassID == 9 then -- Warlock
+        -- Hook green fire
+        if IsSpellKnown(101508) then -- check for spell id 101508
+            self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-green")
+            self.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-green")
+            for i = 1, 5 do
+                self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-green")
+            end
+        else
+            self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare")
+            self.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill")
+            for i = 1, 5 do
+                self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard")
+            end
+        end
+    end
+end
+
 local function animFlare(f, scale, offset, duration, rotate)
     scale = scale or 32
     offset = offset or 0
@@ -222,14 +241,14 @@ local function setComboBar(f)
     f:SetWidth(320)
     f.background:SetHeight(32)
     f.background:SetWidth(256)
-    f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-bg")
+    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/combo-bg")
     f.background:SetTexCoord(0, 1, 0.5, 1)
     f.flare:SetWidth(128)
     f.flare:SetHeight(128)
-    f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-flash")
+    f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/combo-flash")
     f.fill:SetHeight(40)
     f.fill:SetWidth(320)
-    f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo")
+    f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/combo")
 
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
@@ -379,11 +398,11 @@ local function setPaladin(f)
         f:SetWidth(320)
         f.background:SetHeight(32)
         f.background:SetWidth(320)
-        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower")
         f.background:SetTexCoord(0, 1, 0.5, 1)
         f.fill:SetHeight(32)
         f.fill:SetWidth(320)
-        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\holypower")
+        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower")
 
         f:SetScript("OnEvent", powerHoly)
         powerHoly(f, "CLASS_POWER_INIT")
@@ -568,7 +587,7 @@ local function setDeathKnight(f)
     local fr = f.runeBar
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
-    f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\runeflash")
+    f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
     f.flare:SetWidth(256)
     f.flare:SetHeight(128)
     fr:Show()
@@ -583,8 +602,8 @@ local function setDeathKnight(f)
     for i = 1, 6 do
         local fFill = fr["runeTexFill" .. i]
         local fTex = fr["runeTex" .. i]
-        fFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\" .. texture)
-        fTex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\" .. texture)
+        fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+        fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
     end
 
     f:SetScript("OnEvent", powerRune)
@@ -701,14 +720,14 @@ local function setMage(f)
         f:SetWidth(512)
         f.background:SetHeight(64)
         f.background:SetWidth(512)
-        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane")
         f.background:SetTexCoord(0, 1, 0.125 * 3, 0.125 * (3 + 1))
-        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane-flash")
+        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane-flash")
         f.flare:SetWidth(256)
         f.flare:SetHeight(256)
         f.fill:SetHeight(64)
         f.fill:SetWidth(512)
-        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane")
+        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane")
         f.background:SetVertexColor(0, 0, 0, 0.5)
 
         f:SetScript("OnEvent", powerArcane)
@@ -722,14 +741,14 @@ local function setMage(f)
         f:SetWidth(256)
         f.background:SetHeight(32)
         f.background:SetWidth(256)
-        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\frostmage-altpower")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/frostmage-altpower")
         f.background:SetTexCoord(0, 1, 0.125 * 5, 0.125 * (5 + 1))
-        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\arcane-flash")
+        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane-flash")
         f.flare:SetWidth(128)
         f.flare:SetHeight(128)
         f.fill:SetHeight(32)
         f.fill:SetWidth(256)
-        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\frostmage-altpower")
+        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/frostmage-altpower")
         f.background:SetVertexColor(0, 0, 0, 0.5)
 
         f:SetScript("OnEvent", powerFrost)
@@ -745,21 +764,14 @@ GW.AddForProfiling("classpowers", "setMage", setMage)
 
 -- WARLOCK
 local function powerSoulshard(self, event, ...)
-    local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
+    if event == "LEARNED_SPELL_IN_TAB" then
+        updateTextureBasedOnCondition(self)
         return
     end
 
-    -- Hook green fire
-    if event == "CLASS_POWER_INIT" and true==false then -- check for spell id 101508
-        self.warlock.shardFlare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshardFlare-green")
-        self.warlock.shard1:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
-        self.warlock.shard2:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
-        self.warlock.shard3:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
-        self.warlock.shard4:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
-        self.warlock.shard5:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshard-green")
-
-      self.warlock.shardFragment.barFill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\soulshardFragmentBarFill-green")
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
+        return
     end
 
     local pwrMax = UnitPowerMax("player", 7)
@@ -841,6 +853,9 @@ local function setWarlock(f)
             rows = 4
         }
         f.warlock.flareMap = flarAnimationMap
+        -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
+        f:RegisterEvent("LEARNED_SPELL_IN_TAB")
+        updateTextureBasedOnCondition(f)
     else
         f.warlock.shardFragment:Hide()
     end
@@ -983,12 +998,12 @@ local function setMonk(f)
         f:SetWidth(256)
         f.background:SetHeight(32)
         f.background:SetWidth(320)
-        f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
         f.background:SetTexCoord(0, 1, 0.5, 1)
-        f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi-flare")
+        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi-flare")
         f.fill:SetHeight(32)
         f.fill:SetWidth(256)
-        f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\chi")
+        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
 
         f:SetScript("OnEvent", powerChi)
         powerChi(f, "CLASS_POWER_INIT")

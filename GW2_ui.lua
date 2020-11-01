@@ -119,32 +119,26 @@ local function getSprite(map,x,y)
 end
 GW.getSprite = getSprite
 
+local function getSpriteByIndex(map, index)
+    if map == nil then
+        return 0, 0, 0, 0
+    end
 
-local function getSpriteByIndex(map,index)
-  if map==nil then return 0,0,0,0 end
+    local tileWidth =  map.width / map.colums
+    local tileHeight =  map.height / map.rows
 
-  local tileWidth =  map.width / map.colums;
-  local tileHeight =  map.height / map.rows;
+    local tilesPerColums = map.width / tileWidth
+    local tilesPerRow = map.height / tileHeight
 
-  local tilesPerColums = map.width / tileWidth;
-  local tilesPerRow = map.height / tileHeight;
+    local left = tileWidth * (index % tilesPerColums)
+    local top =  tileHeight * math.floor(index / tilesPerColums)
 
+    local bottom = top + tileHeight
+    local right = left + tileWidth
 
-
-  local left = tileWidth * (index % tilesPerColums);
-  local top =  tileHeight * math.floor(index / tilesPerColums)
-
-
-
-  local bottom = top + tileHeight;
-  local right = left + tileWidth;
-
-
-  return left / map.width, right /  map.width, top /  map.height,bottom /  map.height
-
+    return left / map.width, right / map.width, top / map.height,bottom / map.height
 end
 GW.getSpriteByIndex = getSpriteByIndex
-
 
 function GwStandardButton_OnEnter(self)
     local name = tostring(self)
