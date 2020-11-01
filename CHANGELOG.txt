@@ -1,9 +1,16 @@
 5.4.6
 
 NEW
-    - Added ability to move movers pixel by pixel
+    - Make classpower and ressourcebar moveable
+    - Make healthglobe moveable, if the actionbar module is deactivated
+    - Added option to move frame pixel by pixel
+    - Added missing fraction backgrounds (thanks to v_riz_tabl_Mfsa)
+    - Added now grapihcs for shaman maelstrom classpower
+    - Added new graphics for warlock classpower (also in green if you have the green fire)
+    - The "HUD Scale" option now scales all main HUD frames (actionbars, healthglobe, petbar, buffs, debuffs) if they are not moved and have the same scale as the "HUD Scale" slider has
 
 FIXES
+    - Some bugfixes
     - Fix some BG HUD issues
     - Update locals
 
