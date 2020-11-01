@@ -7,7 +7,7 @@ local FrameFlash = GW.FrameFlash
 -- https://wow.gamepedia.com/Secure_command_options
 local DODGEBAR_SPELLS = {} -- spell ID used to generate the bar information/tooltip
 local DODGEBAR_SPELLS_ATTR = {} -- spell ID used to cast ability on button click, if different than above
-DODGEBAR_SPELLS["WARRIOR"] = "[spec:3] 198304; 100" -- Intercept if Prot, else Charge
+DODGEBAR_SPELLS["WARRIOR"] = "100" -- Charge
 DODGEBAR_SPELLS["PALADIN"] = "190784" -- Divine Steed
 DODGEBAR_SPELLS["HUNTER"] = "781" -- Disengage
 DODGEBAR_SPELLS["ROGUE"] = "2983" -- Sprint
