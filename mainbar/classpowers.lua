@@ -791,7 +791,7 @@ local function powerSoulshard(self, event, ...)
                     0,
                     5,
                     GetTime(),
-                    0.4,
+                    0.7,
                     function()
                         local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"]["progress"])
                         self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
