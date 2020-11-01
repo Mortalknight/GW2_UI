@@ -121,6 +121,7 @@ GW.getSprite = getSprite
 
 
 local function getSpriteByIndex(map,index)
+  if map==nil then return 0,0,0,0 end
 
   local tileWidth =  map.width / map.colums;
   local tileHeight =  map.height / map.rows;
