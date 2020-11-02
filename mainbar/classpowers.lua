@@ -7,6 +7,7 @@ local AddToAnimation = GW.AddToAnimation
 local GetSetting = GW.GetSetting
 
 local CPWR_FRAME
+local CPF_HOOKED_TO_TARGETFRAME = false
 
 local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then -- Warlock
@@ -261,6 +262,8 @@ local function setComboBar(f)
         f:SetWidth(220)
         f:SetHeight(30)
         f:Hide()
+
+        CPF_HOOKED_TO_TARGETFRAME = true
     end
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
@@ -1218,16 +1221,19 @@ local function LoadClassPowers()
         end
     end
 
-    GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true, true)
+    -- Register CPF only as movableframe if it is not hooked to the targetframe
+    if not CPF_HOOKED_TO_TARGETFRAME then
+        GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true, true)
 
-    cpf:ClearAllPoints()
-    cpf:SetPoint("TOPLEFT", cpf.gwMover)
+        cpf:ClearAllPoints()
+        cpf:SetPoint("TOPLEFT", cpf.gwMover)
 
-    -- position mover
-    if not GW.GetSetting("XPBAR_ENABLED") and not cpf.isMoved  then
-        local framePoint = GW.GetSetting("ClasspowerBar_pos")
-        cpf.gwMover:ClearAllPoints()
-        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+        -- position mover
+        if not GW.GetSetting("XPBAR_ENABLED") and not cpf.isMoved  then
+            local framePoint = GW.GetSetting("ClasspowerBar_pos")
+            cpf.gwMover:ClearAllPoints()
+            cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+        end
     end
 end
 GW.LoadClassPowers = LoadClassPowers
