@@ -250,10 +250,10 @@ local function LoadAchievementFrame()
 
     local header =
         CreateFrame("Button", "GwAchievementHeader", GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")
-    header.icon:SetTexCoord(0, 1, 0, 0.25)
+    header.icon:SetTexCoord(0, 0.5, 0, 0.25)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
-    header.title:SetText(ACHIEVEMENTS)
+    header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
 
     GwQuesttrackerContainerAchievement.collapsed = false
     header:SetScript(

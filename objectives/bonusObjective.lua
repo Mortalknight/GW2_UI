@@ -148,7 +148,7 @@ local function setUpBlock(questIDs)
     for k, v in pairs(questIDs) do
         local questID = v["ID"]
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
-        local questLogIndex = GetQuestLogIndexByID(questID)
+        local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
         local simpleDesc = ""
         local compassData = {}
 
@@ -278,11 +278,11 @@ local function updateBonusObjective(self, event)
     blockIndex = 1
     trackedEventIDs = {}
 
-    for i = 1, GetNumWorldQuestWatches() do
-        if trackedEventIDs[GetWorldQuestWatchInfo(i)] == nil then
-            trackedEventIDs[GetWorldQuestWatchInfo(i)] = {}
-            trackedEventIDs[GetWorldQuestWatchInfo(i)]["ID"] = GetWorldQuestWatchInfo(i)
-            trackedEventIDs[GetWorldQuestWatchInfo(i)]["tracked"] = true
+    for i = 1, C_QuestLog.GetNumWorldQuestWatches() do
+        if trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)] == nil then
+            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)] = {}
+            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)]["ID"] = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)]["tracked"] = true
             EventToShow = true
         end
     end
@@ -344,7 +344,7 @@ local function LoadBonusFrame()
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
 
     local header = CreateFrame("Button", "GwBonusHeader", GwQuesttrackerContainerBonusObjectives, "GwQuestTrackerHeader")
-    header.icon:SetTexCoord(0, 1, 0.5, 0.75)
+    header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
     header.title:SetText(EVENTS_LABEL)

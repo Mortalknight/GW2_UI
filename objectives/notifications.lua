@@ -9,10 +9,11 @@ local currentNotificationKey = ""
 local notifications = {}
 
 local icons = {}
-icons["QUEST"] = {tex = "icon-objective", l = 0, r = 1, t = 0.25, b = 0.5}
-icons["EVENT_NEARBY"] = {tex = "icon-objective", l = 0, r = 1, t = 0.5, b = 0.75}
-icons["EVENT"] = {tex = "icon-objective", l = 0, r = 1, t = 0.5, b = 0.75}
-icons["SCENARIO"] = {tex = "icon-objective", l = 0, r = 1, t = 0.75, b = 1}
+icons["QUEST"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5}
+icons["CAMPAIGN"] = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25}
+icons["EVENT_NEARBY"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75}
+icons["EVENT"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75}
+icons["SCENARIO"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1}
 icons["BOSS"] = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1}
 icons["DEAD"] = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1}
 icons["ARENA"] = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1}
@@ -75,27 +76,29 @@ local function getNearestQuestPOI()
         return nil
     end
 
+    local numQuests = C_QuestLog.GetNumQuestLogEntries()
 	local posX, posY = GW.GetPlayerMapPos()
     
-    local numQuests, _ = GetNumQuestLogEntries()
     if posX == nil or posY == nil or numQuests == nil then
         return nil
     end
 
     local closest = false
-    for i = 1, numQuests do
-        local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI, _ = GetQuestLogTitle(i)
-        if not isHeader and not isComplete and hasLocalPOI then
-            local _, poiX, poiY, _ = QuestPOIGetIconInfo(questID)
+    for questLogIndex = 1, numQuests do
+        local questInfo = C_QuestLog.GetInfo(questLogIndex)
+        local isComplete = C_QuestLog.IsComplete(questInfo.questID)
+
+        if not questInfo.isHeader and not isComplete and questInfo.hasLocalPOI then
+            local _, poiX, poiY, _ = QuestPOIGetIconInfo(questInfo.questID)
             if poiX then
                 local dx = posX - poiX
                 local dy = posY - poiY
                 local dist = sqrt(dx * dx + dy * dy)
                 if not closest or dist < closest then
                     closest = dist
-                    local objectiveText = getQuestPOIText(i)
+                    local objectiveText = getQuestPOIText(questLogIndex)
                     questCompass["DESC"] = objectiveText
-                    questCompass["TITLE"] = title
+                    questCompass["TITLE"] = questInfo.title
                     questCompass["ID"] = questID
                     questCompass["X"] = poiX
                     questCompass["Y"] = poiY
@@ -286,7 +289,7 @@ local function SetObjectiveNotification()
     currentNotificationKey = key
 
     if icons[data["TYPE"]] ~= nil then
-        GwObjectivesNotification.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. icons[data["TYPE"]].tex)
+        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data["TYPE"]].tex)
         GwObjectivesNotification.icon:SetTexCoord(
             icons[data["TYPE"]].l,
             icons[data["TYPE"]].r,
@@ -313,7 +316,7 @@ local function SetObjectiveNotification()
 
         if icons[data["TYPE"]] ~= nil then
             GwObjectivesNotification.compass.icon:SetTexture(
-                "Interface\\AddOns\\GW2_UI\\textures\\" .. icons[data["TYPE"]].tex
+                "Interface/AddOns/GW2_UI/textures/" .. icons[data["TYPE"]].tex
             )
             GwObjectivesNotification.compass.icon:SetTexCoord(
                 icons[data["TYPE"]].l,
