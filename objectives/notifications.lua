@@ -77,7 +77,7 @@ local function getNearestQuestPOI()
     end
 
     local numQuests = C_QuestLog.GetNumQuestLogEntries()
-	local posX, posY = GW.GetPlayerMapPos()
+	local posX, posY = GW.locationData.x, GW.locationData.y
     
     if posX == nil or posY == nil or numQuests == nil then
         return nil
@@ -126,7 +126,7 @@ local function getBodyPOI()
         return nil
     end
 
-    local posX, posY = GW.GetPlayerMapPos()
+    local posX, posY = GW.locationData.x, GW.locationData.y
     if posX == nil or posY == nil then
         return nil
     end
@@ -228,7 +228,7 @@ local function updateRadar(self, elapsed)
     end
     self.TotalElapsed = 0
 
-	local posX, posY = GW.GetPlayerMapPos()
+	local posX, posY = GW.locationData.x, GW.locationData.y
 
     if posX == nil or posY == nil or self.data["X"] == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
