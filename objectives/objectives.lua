@@ -743,7 +743,7 @@ local function updateQuestLogLayout(intent, frame)
 
     local numQuests = C_QuestLog.GetNumQuestWatches()
     if GwQuesttrackerContainerCampaign.collapsed == true then
-        GwQuestHeader:Show()
+        GwCampaginHeader:Show()
         savedHeightCampagin = 20
         shouldShowCampaign = false
     end
@@ -760,7 +760,7 @@ local function updateQuestLogLayout(intent, frame)
         -- Campaing Quests
         if campaignID > 0 then
             if shouldShowCampaign then
-                GwQuestHeader:Show()
+                GwCampaginHeader:Show()
 
                 if counterCampaign == 1 then
                     savedHeightCampagin = 20
@@ -816,16 +816,18 @@ local function updateQuestLogLayout(intent, frame)
     -- hide other quests
     for i = counterCampaign + 1, 25 do
         if _G["GwCampaignBlock" .. i] ~= nil then
-            --_G["GwCampaignBlock" .. i]:Hide()
-            --UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
+            _G["GwCampaignBlock" .. i]:Hide()
+            UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
         end
     end
     for i = counterQuest + 1, 25 do
         if _G["GwQuestBlock" .. i] ~= nil then
-            --_G["GwQuestBlock" .. i]:Hide()
-            --UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
+            _G["GwQuestBlock" .. i]:Hide()
+            UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
         end
     end
+
+    if counterCampaign == 1 then GwCampaginHeader:Hide() end
 
     QuestTrackerLayoutChanged()
 end
@@ -972,7 +974,7 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("PLAYER_MONEY")
     fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
 
-    local headerCampagin = CreateFrame("Button", "GwQuestHeader", fCampaign, "GwQuestTrackerHeader")
+    local headerCampagin = CreateFrame("Button", "GwCampaginHeader", fCampaign, "GwQuestTrackerHeader")
     headerCampagin.icon:SetTexCoord(0.5, 1, 0, 0.25)
     headerCampagin.title:SetFont(UNIT_NAME_FONT, 14)
     headerCampagin.title:SetShadowOffset(1, -1)
