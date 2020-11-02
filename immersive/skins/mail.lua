@@ -356,7 +356,7 @@ local function SkinMail()
     MailFrame.mailFrameBgTexture:SetSize(newWidth, newHeight)
     MailFrame.mailFrameBgTexture:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 0, 5)
     MailFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/mailboxwindow-background")
-    MailFrame.mailFrameBgTexture:SetTexCoord(0,0.708,0,0.955);
+    MailFrame.mailFrameBgTexture:SetTexCoord(0,0.7099,0,0.955);
 
     -- Configure Mail Heading
     MailFrame.heading = MailFrame:CreateTexture("bg", "BACKGROUND")
@@ -389,8 +389,8 @@ local function SkinMail()
     -- Configure footer
     MailFrame.footer = MailFrame:CreateTexture("bg", "BACKGROUND")
     MailFrame.footer:SetSize(newWidth, 70)
-    MailFrame.footer:SetPoint("TOPLEFT", MailFrame, "BOTTOMLEFT", 0, 10)
-    MailFrame.footer:SetPoint("TOPRIGHT", MailFrame, "BOTTOMRIGHT", 0, 10)
+    MailFrame.footer:SetPoint("TOPLEFT", MailFrame, "BOTTOMLEFT", 0, 5)
+    MailFrame.footer:SetPoint("TOPRIGHT", MailFrame, "BOTTOMRIGHT", 0, 5)
     MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter")
 
     InboxFrame.heading = InboxFrame:CreateTexture("InboxHeadingBgTexture", "BACKGROUND")
