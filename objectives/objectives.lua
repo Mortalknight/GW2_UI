@@ -603,9 +603,7 @@ local function updateQuest(block, questWatchId)
         --Quest item
         UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
 
-        if isComplete and isComplete < 0 then
-            isComplete = false
-        elseif numObjectives == 0 and GetMoney() >= requiredMoney and not startEvent then
+        if numObjectives == 0 and GetMoney() >= requiredMoney and not startEvent then
             isComplete = true
         end
 
