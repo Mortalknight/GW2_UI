@@ -143,6 +143,7 @@ objectives/arenaFrames.lua
 objectives/achievement.lua
 objectives/vehicleButton.lua
 objectives/extraAB_bossAB.lua
+objectives/altPowerBar.lua
 
 character/character.xml
 character/paperdoll.xml

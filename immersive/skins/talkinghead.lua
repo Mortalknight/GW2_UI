@@ -23,7 +23,6 @@ local function InitTalkingHeadFrame()
     end
 
     GW.RegisterMovableFrame(TalkingHeadFrame, "Talking Head Frame", "TalkingHeadFrame_pos", "VerticalActionBarDummy", nil, nil, nil, true)
-    local point = GW.GetSetting("TalkingHeadFrame_pos")
     TalkingHeadFrame:ClearAllPoints()
     TalkingHeadFrame:SetPoint("TOPLEFT", TalkingHeadFrame.gwMover)
 

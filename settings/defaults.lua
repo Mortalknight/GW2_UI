@@ -360,6 +360,13 @@ GW_DEFAULT["ClasspowerBar_pos"]["xOfs"] = -372
 GW_DEFAULT["ClasspowerBar_pos"]["yOfs"] = 81
 GW_DEFAULT["ClasspowerBar_pos_scale"] = 1
 
+GW_DEFAULT["AltPowerBar_pos"] = {}
+GW_DEFAULT["AltPowerBar_pos"]["point"] = "TOP"
+GW_DEFAULT["AltPowerBar_pos"]["relativePoint"] = "TOP"
+GW_DEFAULT["AltPowerBar_pos"]["xOfs"] = 0
+GW_DEFAULT["AltPowerBar_pos"]["yOfs"] = -30
+GW_DEFAULT["AltPowerBar_pos_scale"] = 1
+
 GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
 GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 
