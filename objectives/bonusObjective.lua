@@ -114,14 +114,14 @@ local function createNewBonusObjectiveBlock(blockIndex)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
 
-    newBlock.joingroup:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
     newBlock.joingroup:SetScript(
-                    "OnClick",
-                    function (self)
-                        local p = self:GetParent()
-                        LFGListUtil_FindQuestGroup(p.questID)
-                    end
-                )
+        "OnClick",
+        function (self)
+            local p = self:GetParent()
+            LFGListUtil_FindQuestGroup(p.questID)
+        end
+    )
     newBlock.joingroup:SetScript(
         "OnEnter",
         function (self)
@@ -146,22 +146,22 @@ local blockIndex = 1
 
 local function setUpBlock(questIDs)
     for k, v in pairs(questIDs) do
-        local questID = v["ID"]
+        local questID = v.ID
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
         local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
         local simpleDesc = ""
         local compassData = {}
 
         if isOnMap then
-            compassData["TYPE"] = "EVENT"
-            compassData["COMPASS"] = true
+            compassData.TYPE = "EVENT"
+            compassData.COMPASS = true
         end
 
         if numObjectives == nil then
             numObjectives = 0
         end
-        if isInArea or v["tracked"] then
-            compassData["TITLE"] = text
+        if isInArea or v.tracked then
+            compassData.TITLE = text
 
             if text == nil then
                 text = ""
@@ -199,20 +199,20 @@ local function setUpBlock(questIDs)
 
             foundEvent = true
 
-            compassData["PROGRESS"] = 0
+            compassData.PROGRESS = 0
 
             local objectiveProgress = 0
             for objectiveIndex = 1, numObjectives do
                 local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
 
-                compassData["TYPE"] = "EVENT"
-                compassData["ID"] = questID
-                compassData["COLOR"] = TRACKER_TYPE_COLOR["EVENT"]
-                compassData["COMPASS"] = false
-                compassData["X"] = x
-                compassData["Y"] = y
-                compassData["QUESTID"] = questID
-                compassData["MAPID"] = GW.locationData.mapID
+                compassData.TYPE = "EVENT"
+                compassData.ID = questID
+                compassData.COLOR = TRACKER_TYPE_COLOR.EVENT
+                compassData.COMPASS = false
+                compassData.X = nil
+                compassData.Y = nil
+                compassData.QUESTID = questID
+                compassData.MAPID = GW.locationData.mapID
 
                 if simpleDesc == "" then
                     simpleDesc = ParseSimpleObjective(txt)
@@ -231,10 +231,10 @@ local function setUpBlock(questIDs)
             end
 
             if simpleDesc ~= "" then
-                compassData["DESC"] = simpleDesc
+                compassData.DESC = simpleDesc
             end
 
-            compassData["PROGRESS"] = objectiveProgress
+            compassData.PROGRESS = objectiveProgress
 
             AddTrackerNotification(compassData)
 
@@ -281,8 +281,8 @@ local function updateBonusObjective(self, event)
     for i = 1, C_QuestLog.GetNumWorldQuestWatches() do
         if trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)] == nil then
             trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)] = {}
-            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)]["ID"] = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
-            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)]["tracked"] = true
+            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)].ID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)].tracked = true
             EventToShow = true
         end
     end
@@ -290,8 +290,8 @@ local function updateBonusObjective(self, event)
     for k, v in pairs(tasks) do
         if trackedEventIDs[v] == nil then
             trackedEventIDs[v] = {}
-            trackedEventIDs[v]["ID"] = v
-            trackedEventIDs[v]["tracked"] = false
+            trackedEventIDs[v].ID = v
+            trackedEventIDs[v].tracked = false
             local isInArea = GetTaskInfo(v)
             if isInArea then EventToShow = true end
         end
@@ -367,9 +367,9 @@ local function LoadBonusFrame()
         end
     )
     header.title:SetTextColor(
-        TRACKER_TYPE_COLOR["BONUS"].r,
-        TRACKER_TYPE_COLOR["BONUS"].g,
-        TRACKER_TYPE_COLOR["BONUS"].b
+        TRACKER_TYPE_COLOR.BONUS.r,
+        TRACKER_TYPE_COLOR.BONUS.g,
+        TRACKER_TYPE_COLOR.BONUS.b
     )
     
     updateBonusObjective()

@@ -3,14 +3,12 @@ local RoundDec = GW.RoundDec
 local lerp = GW.lerp
 local GetSetting = GW.GetSetting
 local CommaValue = GW.CommaValue
---local NotificationStateChanged = GW.NotificationStateChanged
---local SetObjectiveNotification = GW.SetObjectiveNotification
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
-local updateCap = 1 / 5
+local updateCap = 1 / 3
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -257,71 +255,70 @@ local function CreateObjectiveNormal(name, parent)
 end
 GW.CreateObjectiveNormal = CreateObjectiveNormal
 
+local function blockOnEnter(self)
+    if not self.hover then
+        self.oldColor = {}
+        self.oldColor.r, self.oldColor.g, self.oldColor.b = self:GetParent().Header:GetTextColor()
+        self:GetParent().Header:SetTextColor(self.oldColor.r * 2, self.oldColor.g * 2, self.oldColor.b * 2)
+
+        self = self:GetParent()
+    end
+
+    self.hover:Show()
+    if self.objectiveBlocks == nil then
+        self.objectiveBlocks = {}
+    end
+    for k, v in pairs(self.objectiveBlocks) do
+        v.StatusBar.progress:Show()
+    end
+    AddToAnimation(
+        self:GetName() .. "hover",
+        0,
+        1,
+        GetTime(),
+        0.2,
+        function(step)
+            self.hover:SetAlpha(step - 0.3)
+            self.hover:SetTexCoord(0, step, 0, 1)
+        end
+    )
+    if self.event then
+        BonusObjectiveTracker_ShowRewardsTooltip(self)
+    end
+end
+
+local function blockOnLeave(self)
+    if not self.hover then
+        if self.oldColor ~= nil then
+            self:GetParent().Header:SetTextColor(self.oldColor.r, self.oldColor.g, self.oldColor.b)
+        end
+
+        self = self:GetParent()
+    end
+
+    self.hover:Hide()
+    if self.objectiveBlocks == nil then
+        self.objectiveBlocks = {}
+    end
+    for k, v in pairs(self.objectiveBlocks) do
+        v.StatusBar.progress:Hide()
+    end
+    if animations[self:GetName() .. "hover"] ~= nil then
+        animations[self:GetName() .. "hover"]["complete"] = true
+    end
+    GameTooltip_Hide()
+end
+
 local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
     f.Header:SetFont(UNIT_NAME_FONT, 14)
     f.SubHeader:SetFont(UNIT_NAME_FONT, 12)
     f.Header:SetShadowOffset(1, -1)
     f.SubHeader:SetShadowOffset(1, -1)
-    f:SetScript(
-        "OnEnter",
-        function(self)
-            self.hover:Show()
-            if self.objectiveBlocks == nil then
-                self.objectiveBlocks = {}
-            end
-            for k, v in pairs(self.objectiveBlocks) do
-                v.StatusBar.progress:Show()
-            end
-            AddToAnimation(
-                self:GetName() .. "hover",
-                0,
-                1,
-                GetTime(),
-                0.2,
-                function(step)
-                    self.hover:SetAlpha(step - 0.3)
-                    self.hover:SetTexCoord(0, step, 0, 1)
-                end
-            )
-            if self.event then
-                BonusObjectiveTracker_ShowRewardsTooltip(self)
-            end
-        end
-    )
-    f:SetScript(
-        "OnLeave",
-        function(self)
-            self.hover:Hide()
-            if self.objectiveBlocks == nil then
-                self.objectiveBlocks = {}
-            end
-            for k, v in pairs(self.objectiveBlocks) do
-                v.StatusBar.progress:Hide()
-            end
-            if animations[self:GetName() .. "hover"] ~= nil then
-                animations[self:GetName() .. "hover"]["complete"] = true
-            end
-            GameTooltip_Hide()
-        end
-    )
-    f.clickHeader:SetScript(
-        "OnEnter",
-        function(self)
-            self.oldColor = {}
-            self.oldColor.r, self.oldColor.g, self.oldColor.b = self:GetParent().Header:GetTextColor()
-            self:GetParent().Header:SetTextColor(self.oldColor.r * 2, self.oldColor.g * 2, self.oldColor.b * 2)
-        end
-    )
-    f.clickHeader:SetScript(
-        "OnLeave",
-        function(self)
-            if self.oldColor == nil then
-                return
-            end
-            self:GetParent().Header:SetTextColor(self.oldColor.r, self.oldColor.g, self.oldColor.b)
-        end
-    )
+    f:SetScript("OnEnter", blockOnEnter)
+    f:SetScript("OnLeave", blockOnLeave)
+    f.clickHeader:SetScript("OnEnter", blockOnEnter)
+    f.clickHeader:SetScript("OnLeave", blockOnLeave)
     f.turnin:SetScript(
         "OnShow",
         function(self)
@@ -733,8 +730,8 @@ GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
 local function updateQuestLogLayout(intent, frame)
     local questFrame = Campaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
-    local counterQuest = 1
-    local counterCampaign = 1
+    local counterQuest = 0
+    local counterCampaign = 0
     local savedHeightQuest = 1
     local savedHeightCampagin = 1
     local shouldShowQuests = true
@@ -761,6 +758,7 @@ local function updateQuestLogLayout(intent, frame)
         if campaignID > 0 then
             if shouldShowCampaign then
                 GwCampaginHeader:Show()
+                counterCampaign = counterCampaign + 1
 
                 if counterCampaign == 1 then
                     savedHeightCampagin = 20
@@ -775,17 +773,17 @@ local function updateQuestLogLayout(intent, frame)
                 updateQuestItemPositions(i, savedHeightCampagin)
 
                 savedHeightCampagin = savedHeightCampagin + block.height
-                counterCampaign = counterCampaign + 1
             else
+                counterCampaign = counterCampaign + 1
                 if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
                     _G["GwCampaignBlock" .. counterCampaign]:Hide()
                     UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
                 end
-                counterCampaign = counterCampaign + 1
             end
         else
             if shouldShowQuests then
                 GwQuestHeader:Show()
+                counterQuest = counterQuest + 1
 
                 if counterQuest == 1 then
                     savedHeightQuest = 20
@@ -799,13 +797,12 @@ local function updateQuestLogLayout(intent, frame)
                 updateQuestItemPositions(i, savedHeightQuest, "QUEST")
 
                 savedHeightQuest = savedHeightQuest + block.height
-                counterQuest = counterQuest + 1
             else
+                counterQuest = counterQuest + 1
                 if _G["GwQuestBlock" .. counterQuest] ~= nil then
                     _G["GwQuestBlock" .. counterQuest]:Hide()
                     UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
                 end
-                counterQuest = counterQuest + 1
             end
         end
     end
@@ -827,7 +824,7 @@ local function updateQuestLogLayout(intent, frame)
         end
     end
 
-    if counterCampaign == 1 then GwCampaginHeader:Hide() end
+    if counterCampaign == 0 then GwCampaginHeader:Hide() end
 
     QuestTrackerLayoutChanged()
 end
@@ -994,11 +991,7 @@ local function LoadQuestTracker()
             updateQuestLogLayout("COLLAPSE", p)
         end
     )
-    headerCampagin.title:SetTextColor(
-        TRACKER_TYPE_COLOR["CAMPAIGN"].r,
-        TRACKER_TYPE_COLOR["CAMPAIGN"].g,
-        TRACKER_TYPE_COLOR["CAMPAIGN"].b
-    )
+    headerCampagin.title:SetTextColor(TRACKER_TYPE_COLOR.CAMPAIGN.r, TRACKER_TYPE_COLOR.CAMPAIGN.g, TRACKER_TYPE_COLOR.CAMPAIGN.b)
 
     local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
     header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
@@ -1020,11 +1013,7 @@ local function LoadQuestTracker()
             updateQuestLogLayout("COLLAPSE", p)
         end
     )
-    header.title:SetTextColor(
-        TRACKER_TYPE_COLOR["QUEST"].r,
-        TRACKER_TYPE_COLOR["QUEST"].g,
-        TRACKER_TYPE_COLOR["QUEST"].b
-    )
+    header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
 
     loadQuestButtons()
     updateQuestLogLayout("LOAD")

@@ -44,27 +44,23 @@ local function setCompass()
     local isArena = IsActiveBattlefieldArena()
     local compassData = {}
 
-    if isArena then
-        compassData["TITLE"] = ARENA
-        compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
+    -- parse current BG date here, to show the correct name and subname
+    if GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
+        compassData.TITLE = select(1, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])) 
+        compassData.DESC = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
     else
-        -- parse current BG date here, to show the correct name and subname
-        if GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
-            compassData["TITLE"] = select(1, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])) 
-            compassData["DESC"] = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
-        else
-            compassData["TITLE"] = ARENA
-            compassData["DESC"] = VOICEMACRO_2_Ta_1_FEMALE
-        end
+        compassData.TITLE = ARENA
+        compassData.DESC = VOICEMACRO_2_Ta_1_FEMALE
     end
-    compassData["TYPE"] = "ARENA"
-    compassData["ID"] = "arena_unknown"
-    compassData["QUESTID"] = "unknown"
-    compassData["COMPASS"] = false
-    compassData["MAPID"] = 0
-    compassData["X"] = 0
-    compassData["Y"] = 0
-    compassData["COLOR"] = TRACKER_TYPE_COLOR["ARENA"]
+
+    compassData.TYPE = "ARENA"
+    compassData.ID = "arena_unknown"
+    compassData.QUESTID = "unknown"
+    compassData.COMPASS = false
+    compassData.MAPID = nil
+    compassData.X = nil
+    compassData.Y = nil
+    compassData.COLOR = TRACKER_TYPE_COLOR.ARENA
 
     AddTrackerNotification(compassData)
 end

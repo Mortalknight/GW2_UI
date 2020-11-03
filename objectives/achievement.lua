@@ -150,7 +150,7 @@ local function updateAchievementObjectives(block)
 
             if (description and bit.band(flags, EVALUATION_TREE_FLAG_PROGRESS_BAR) == EVALUATION_TREE_FLAG_PROGRESS_BAR) then
                 -- progress bar
-                if (string.find(strlower(quantityString), "interface\\moneyframe")) then -- no easy way of telling it's a money progress bar
+                if (string.find(strlower(quantityString), "interface/moneyframe")) then -- no easy way of telling it's a money progress bar
                     quantity = math.floor(quantity / (COPPER_PER_SILVER * SILVER_PER_GOLD))
                     totalQuantity = math.floor(totalQuantity / (COPPER_PER_SILVER * SILVER_PER_GOLD))
 
@@ -271,9 +271,9 @@ local function LoadAchievementFrame()
         end
     )
     header.title:SetTextColor(
-        TRACKER_TYPE_COLOR["ACHIEVEMENT"].r,
-        TRACKER_TYPE_COLOR["ACHIEVEMENT"].g,
-        TRACKER_TYPE_COLOR["ACHIEVEMENT"].b
+        TRACKER_TYPE_COLOR.ACHIEVEMENT.r,
+        TRACKER_TYPE_COLOR.ACHIEVEMENT.g,
+        TRACKER_TYPE_COLOR.ACHIEVEMENT.b
     ) 
 
     updateAchievementLayout()

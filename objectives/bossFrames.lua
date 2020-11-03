@@ -67,11 +67,11 @@ local function updateBoss_RaidMarkers(self)
     local i = GetRaidTargetIndex(self.unit)
 
     if i then
-        self.marker:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. i)
+        self.marker:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
         self.marker:Show()
         self.icon:Hide()
     else
-        self.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icon-boss")
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icon-boss")
         self.icon:Show()
         self.marker:Hide()
     end
@@ -122,14 +122,14 @@ local function registerFrame(i)
     bossFrame.marker:Hide()
 
     bossFrame.health:SetStatusBarColor(
-        TRACKER_TYPE_COLOR["BOSS"].r,
-        TRACKER_TYPE_COLOR["BOSS"].g,
-        TRACKER_TYPE_COLOR["BOSS"].b
+        TRACKER_TYPE_COLOR.BOSS.r,
+        TRACKER_TYPE_COLOR.BOSS.g,
+        TRACKER_TYPE_COLOR.BOSS.b
     )
     bossFrame.icon:SetVertexColor(
-        TRACKER_TYPE_COLOR["BOSS"].r,
-        TRACKER_TYPE_COLOR["BOSS"].g,
-        TRACKER_TYPE_COLOR["BOSS"].b
+        TRACKER_TYPE_COLOR.BOSS.r,
+        TRACKER_TYPE_COLOR.BOSS.g,
+        TRACKER_TYPE_COLOR.BOSS.b
     )
 
     bossFrame:SetScript(
@@ -137,19 +137,19 @@ local function registerFrame(i)
         function(self)
             local compassData = {}
 
-            compassData["TYPE"] = "BOSS"
-            compassData["TITLE"] = "Unknown"
-            compassData["ID"] = "boss_unknown"
-            compassData["QUESTID"] = "unknown"
-            compassData["COMPASS"] = false
-            compassData["DESC"] = ""
+            compassData.TYPE = "BOSS"
+            compassData.TITLE = "Unknown"
+            compassData.ID = "boss_unknown"
+            compassData.QUESTID = "unknown"
+            compassData.COMPASS = false
+            compassData.DESC = ""
 
-            compassData["MAPID"] = 0
-            compassData["X"] = 0
-            compassData["Y"] = 0
+            compassData.MAPID = nil
+            compassData.X = nil
+            compassData.Y = nil
 
-            compassData["COLOR"] = TRACKER_TYPE_COLOR["BOSS"]
-            compassData["TITLE"] = UnitName(self.unit)
+            compassData.COLOR = TRACKER_TYPE_COLOR.BOSS
+            compassData.TITLE = UnitName(self.unit)
 
             self:RegisterEvent("RAID_TARGET_UPDATE")
             self:RegisterEvent("PLAYER_TARGET_CHANGED")

@@ -101,7 +101,7 @@ local function SetMinimapPosition()
 
     local mc_x = 0
     if ourTracker then
-        --mc_x = -320  TODO: Need to be enabled if your tracker is back
+        mc_x = -320
     end
 
     MinimapCluster:ClearAllPoints()
@@ -144,7 +144,7 @@ local function lfgAnim(self, elapse)
     end
     QueueStatusMinimapButton.animationCircle:Show()
 
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    QueueStatusMinimapButtonIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
 
     local speed = 1.5
     local rot = QueueStatusMinimapButton.animationCircle.background:GetRotation() + (speed * elapse)
@@ -155,7 +155,7 @@ end
 GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
 local function lfgAnimStop()
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    QueueStatusMinimapButtonIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
     QueueStatusMinimapButton.animationCircle:Hide()
     QueueStatusMinimapButtonIconTexture:SetTexCoord(unpack(GW.TexCoords))
 end
@@ -456,12 +456,12 @@ local function LoadMinimap()
     hooksecurefunc("EyeTemplate_StopAnimating", lfgAnimStop)
 
     QueueStatusMinimapButtonIconTexture:SetSize(20, 20)
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    QueueStatusMinimapButtonIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
     QueueStatusMinimapButtonIcon:SetSize(20, 20)
     QueueStatusMinimapButton.animationCircle =
         CreateFrame("Frame", "GwLFDAnimation", QueueStatusMinimapButton, "GwLFDAnimation")
 
-    Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
+    Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
     Minimap:SetParent(UIParent)
     Minimap:SetFrameStrata("LOW")
 

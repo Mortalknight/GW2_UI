@@ -80,17 +80,17 @@ local function updateCurrentScenario()
     local compassData = {}
     local showTimerAsBonus = false
 
-    compassData["TYPE"] = "SCENARIO"
-    compassData["TITLE"] = "Unknown Scenario"
-    compassData["ID"] = "unknown"
-    compassData["QUESTID"] = "unknown"
-    compassData["COMPASS"] = false
+    compassData.TYPE = "SCENARIO"
+    compassData.TITLE = "Unknown Scenario"
+    compassData.ID = "unknown"
+    compassData.QUESTID = "unknown"
+    compassData.COMPASS = false
 
-    compassData["MAPID"] = 0
-    compassData["X"] = 0
-    compassData["Y"] = 0
+    compassData.MAPID = nil
+    compassData.X = nil
+    compassData.Y = nil
 
-    compassData["COLOR"] = TRACKER_TYPE_COLOR["SCENARIO"]
+    compassData.COLOR = TRACKER_TYPE_COLOR.SCENARIO
 
     local delayUpdateTime = GetTime() + 0.8
     GwQuesttrackerContainerScenario:SetScript(
@@ -119,8 +119,8 @@ local function updateCurrentScenario()
     if (numStages == 0) then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
-            compassData["TITLE"] = name
-            compassData["DESC"] = difficultyName
+            compassData.TITLE = name
+            compassData.DESC = difficultyName
             GW.AddTrackerNotification(compassData)
         else
             GW.RemoveTrackerNotificationOfType("SCENARIO")
@@ -152,11 +152,11 @@ local function updateCurrentScenario()
     if difficultyName ~= nil then
         local level, _, _ = C_ChallengeMode.GetActiveKeystoneInfo()
         if level > 0 then
-            compassData["TITLE"] = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
+            compassData.TITLE = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
         else
-            compassData["TITLE"] = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
+            compassData.TITLE = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
         end
-        compassData["DESC"] = stageDescription .. " "
+        compassData.DESC = stageDescription .. " "
         GW.AddTrackerNotification(compassData)
     end
     --

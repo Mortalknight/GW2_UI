@@ -45,13 +45,15 @@ local function ExtraAB_BossAB_Setup()
     _G.ExtraActionBarFrame.SetSize = GW.NoOp
     
     local point = GW.GetSetting("ZoneAbilityFramePos")
+    ZoneAbilityFrame:SetParent(ZoneAbilityFrame.gwMover)
     ZoneAbilityFrame:ClearAllPoints()
-    ZoneAbilityFrame:SetAllPoints(ZoneAbilityFrame.gwMover)
+    ZoneAbilityFrame:SetAllPoints()
     ZoneAbilityFrame.ignoreInLayout = true
 
     local point = GW.GetSetting("ExtraActionBarFramePos")
+    ExtraActionBarFrame:SetParent(ExtraActionBarFrame.gwMover)
     ExtraActionBarFrame:ClearAllPoints()
-    ExtraActionBarFrame:SetAllPoints(ExtraActionBarFrame.gwMover)
+    ExtraActionBarFrame:SetAllPoints()
     ExtraActionBarFrame.ignoreInLayout = true
 
     ExtraButtons_UpdateScale()
