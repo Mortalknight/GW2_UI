@@ -668,14 +668,14 @@ local function updateQuestItemPositions(index, height, type)
         return
     end
 
-    height = height + GwQuesttrackerContainerScenario:GetHeight() + 25
+    height = height + GwQuesttrackerContainerScenario:GetHeight() --+ 25
     height = height + GwQuesttrackerContainerAchievement:GetHeight()
     if type == "QUEST" then
         height = height + GwQuesttrackerContainerCampaign:GetHeight()
     end
 
     if GwObjectivesNotification:IsShown() then
-        height = height + GwObjectivesNotification.desc:GetHeight() + 50
+        height = height + GwObjectivesNotification.desc:GetHeight() --+ 20
     end
 
     if GwQuesttrackerContainerBossFrames:IsShown() then
@@ -707,8 +707,7 @@ local function updateExtraQuestItemPositions()
         height = height + GwQuesttrackerContainerBossFrames:GetHeight()
     end
 
-    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() +
-        GwQuesttrackerContainerAchievement:GetHeight()
+    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight()
 
     GwBonusItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height + -25)
 end
@@ -770,9 +769,8 @@ local function updateQuestLogLayout(intent, frame)
 
                 updateQuest(block, i, counterCampaign)
                 block:Show()
-                updateQuestItemPositions(i, savedHeightCampagin)
-
                 savedHeightCampagin = savedHeightCampagin + block.height
+                updateQuestItemPositions(i, savedHeightCampagin)
             else
                 counterCampaign = counterCampaign + 1
                 if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
@@ -794,9 +792,8 @@ local function updateQuestLogLayout(intent, frame)
                 end
                 updateQuest(block, i, counterQuest)
                 block:Show()
-                updateQuestItemPositions(i, savedHeightQuest, "QUEST")
-
                 savedHeightQuest = savedHeightQuest + block.height
+                updateQuestItemPositions(i, savedHeightQuest, "QUEST")
             else
                 counterQuest = counterQuest + 1
                 if _G["GwQuestBlock" .. counterQuest] ~= nil then
