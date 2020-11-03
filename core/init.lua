@@ -64,6 +64,7 @@ local function RemoveNPE(self, event)
     if NPE then
         if NPE:GetIsActive() then
             NPE:Shutdown()
+            SetCVar("showNPETutorials", 0)
         end
 
         if event then
