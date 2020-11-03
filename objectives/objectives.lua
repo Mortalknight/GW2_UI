@@ -659,12 +659,24 @@ local function updateQuest(block, questWatchId)
 end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
+local helperFrameToSetQuestaButtonPositionAfterCombat = CreateFrame("Frame")
+helperFrameToSetQuestaButtonPositionAfterCombat:Hide()
+helperFrameToSetQuestaButtonPositionAfterCombat:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_REGEN_ENABLED" then
+        GW.updateQuestItemPositions(self.index, self.height, self.type)
+        self:UnregisterAllEvents()
+    end
+end)
 local function updateQuestItemPositions(index, height, type)
     if _G["GwQuestItemButton" .. index] == nil then
         return
     end
 
     if InCombatLockdown() then
+        helperFrameToSetQuestaButtonPositionAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
+        helperFrameToSetQuestaButtonPositionAfterCombat.index = index
+        helperFrameToSetQuestaButtonPositionAfterCombat.height = height
+        helperFrameToSetQuestaButtonPositionAfterCombat.type = type
         return
     end
 
@@ -684,14 +696,27 @@ local function updateQuestItemPositions(index, height, type)
 
     _G["GwQuestItemButton" .. index]:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 end
+GW.updateQuestItemPositions = updateQuestItemPositions
 GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
+local helperFrameToSetExtraButtonPositionAfterCombat = CreateFrame("Frame")
+helperFrameToSetExtraButtonPositionAfterCombat:Hide()
+helperFrameToSetExtraButtonPositionAfterCombat:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_REGEN_ENABLED" then
+        GW.updateExtraQuestItemPositions(self.index, self.height, self.type)
+        self:UnregisterAllEvents()
+    end
+end)
 local function updateExtraQuestItemPositions()
     if GwBonusItemButton == nil or GwScenarioItemButton == nil then
         return
     end
 
     if InCombatLockdown() then
+        helperFrameToSetExtraButtonPositionAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
+        helperFrameToSetExtraButtonPositionAfterCombat.index = index
+        helperFrameToSetExtraButtonPositionAfterCombat.height = height
+        helperFrameToSetExtraButtonPositionAfterCombat.type = type
         return
     end
 
@@ -711,6 +736,7 @@ local function updateExtraQuestItemPositions()
 
     GwBonusItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height + -25)
 end
+GW.updateExtraQuestItemPositions = updateExtraQuestItemPositions
 GW.AddForProfiling("objectives", "updateExtraQuestItemPositions", updateExtraQuestItemPositions)
 
 --[[
@@ -722,7 +748,7 @@ local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
     GwQuestTrackerScroll:SetSize(
         400,
-        GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight()
+        GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight()
     )
 end
 GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
