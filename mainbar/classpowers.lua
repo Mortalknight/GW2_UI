@@ -8,6 +8,7 @@ local GetSetting = GW.GetSetting
 
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
+local hasMover = false
 
 local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then -- Warlock
@@ -179,12 +180,15 @@ local function setManaBar(f)
     f.fill:SetTexture(nil)
     f.exbar:Show()
 
-    f:ClearAllPoints()
-    if GetSetting("XPBAR_ENABLED") then
-        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
-    else
-        f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
+    if not f.isMoved then
+        f:ClearAllPoints()
+        if GetSetting("XPBAR_ENABLED") then
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
+        else
+            f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
+        end
     end
+
     f:SetWidth(220)
     f:SetHeight(30)
     f:Hide()
@@ -262,8 +266,6 @@ local function setComboBar(f)
         f:SetWidth(220)
         f:SetHeight(30)
         f:Hide()
-
-        CPF_HOOKED_TO_TARGETFRAME = true
     end
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
@@ -714,11 +716,14 @@ end
 
 local function setMage(f)
     if GW.myspec == 1 then -- arcane
-        if GetSetting("XPBAR_ENABLED") then
-            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 66)
-        else
-            f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 52)
-        end
+        if not f.isMoved then
+            f:ClearAllPoints()
+            if GetSetting("XPBAR_ENABLED") then
+                f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 66)
+            else
+                f:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 52)
+            end
+        end 
         f:SetHeight(64)
         f:SetWidth(512)
         f.background:SetHeight(64)
@@ -1123,6 +1128,9 @@ local function selectType(f)
         showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target")
     end
     f:SetShown(showBar)
+    
+    --Change moever size if needed
+    f.gwMover:SetSize(f:GetSize())
 end
 GW.AddForProfiling("classpowers", "selectType", selectType)
 
@@ -1152,6 +1160,18 @@ end
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
+
+    GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true, true)
+
+    cpf:ClearAllPoints()
+    cpf:SetPoint("TOPLEFT", cpf.gwMover)
+
+    -- position mover
+    if not GW.GetSetting("XPBAR_ENABLED") and not cpf.isMoved  then
+        local framePoint = GW.GetSetting("ClasspowerBar_pos")
+        cpf.gwMover:ClearAllPoints()
+        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+    end
 
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
@@ -1216,23 +1236,9 @@ local function LoadClassPowers()
 
     if (GW.myClassID == 4 or GW.myClassID == 11) and cpf.ourTarget and cpf.comboPointsOnTarget then
         cpf.decay:RegisterEvent("PLAYER_TARGET_CHANGED")
+        CPF_HOOKED_TO_TARGETFRAME = true
         if cpf.barType == "combo" then
             cpf:Hide()
-        end
-    end
-
-    -- Register CPF only as movableframe if it is not hooked to the targetframe
-    if not CPF_HOOKED_TO_TARGETFRAME then
-        GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true, true)
-
-        cpf:ClearAllPoints()
-        cpf:SetPoint("TOPLEFT", cpf.gwMover)
-
-        -- position mover
-        if not GW.GetSetting("XPBAR_ENABLED") and not cpf.isMoved  then
-            local framePoint = GW.GetSetting("ClasspowerBar_pos")
-            cpf.gwMover:ClearAllPoints()
-            cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
         end
     end
 end
