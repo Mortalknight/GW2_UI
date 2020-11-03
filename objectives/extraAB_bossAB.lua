@@ -44,19 +44,17 @@ local function ExtraAB_BossAB_Setup()
     _G.ExtraAbilityContainer.SetSize = GW.NoOp
     _G.ExtraActionBarFrame.SetSize = GW.NoOp
     
-    local point = GW.GetSetting("ZoneAbilityFramePos")
-    ZoneAbilityFrame:SetParent(ZoneAbilityFrame.gwMover)
+    ExtraButtons_UpdateScale()
+    
+    --ZoneAbilityFrame:SetParent(ZoneAbilityFrame.gwMover)
     ZoneAbilityFrame:ClearAllPoints()
-    ZoneAbilityFrame:SetAllPoints()
+    ZoneAbilityFrame:SetAllPoints(ZoneAbilityFrame.gwMover)
     ZoneAbilityFrame.ignoreInLayout = true
 
-    local point = GW.GetSetting("ExtraActionBarFramePos")
-    ExtraActionBarFrame:SetParent(ExtraActionBarFrame.gwMover)
+    --ExtraActionBarFrame:SetParent(ExtraActionBarFrame.gwMover)
     ExtraActionBarFrame:ClearAllPoints()
-    ExtraActionBarFrame:SetAllPoints()
+    ExtraActionBarFrame:SetAllPoints(ExtraActionBarFrame.gwMover)
     ExtraActionBarFrame.ignoreInLayout = true
-
-    ExtraButtons_UpdateScale()
 
     -- Spawn the mover before its available.
     local size = 52 * GetSetting("ZoneAbilityFramePos_scale")
