@@ -53,3 +53,38 @@ do
     AddLib("Serializer", "AceSerializer-3.0", true)
     AddLib("LibBase64", "LibBase64-1.0", true)
 end
+
+
+-- remove the NPE, conflicts with customs hero and spell book panel
+local NPERemoveFrame = CreateFrame("Frame")
+NPERemoveFrame:Hide()
+
+local function RemoveNPE(self, event)
+    local NPE = _G.NewPlayerExperience
+    if NPE then
+        if NPE:GetIsActive() then
+            NPE:Shutdown()
+        end
+
+        if event then
+            NPERemoveFrame:UnregisterEvent(event)
+        end
+    end
+end
+
+if _G.NewPlayerExperience then
+    RemoveNPE()
+else
+    NPERemoveFrame:RegisterEvent("ADDON_LOADED")
+    NPERemoveFrame:SetScript("OnEvent",RemoveNPE)
+end
+
+local function AcknowledgeTips()
+    for frame in _G.HelpTip.framePool:EnumerateActive() do
+        frame:Acknowledge()
+    end
+end
+
+-- disable helper tooltips
+hooksecurefunc(_G.HelpTip, "Show", AcknowledgeTips)
+C_Timer.After(1, function() AcknowledgeTips() end)

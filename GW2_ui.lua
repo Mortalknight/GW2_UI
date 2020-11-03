@@ -719,8 +719,6 @@ local function gw_OnEvent(self, event, ...)
             loadAddon(self)
         end
         GW.LoadStorage()
-    elseif event == "ADDON_LOADED" then
-
     elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
         SetSetting("PIXEL_PERFECTION", false)
         GW.scale = UIParent:GetScale()
@@ -760,7 +758,6 @@ l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
 l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-l:RegisterEvent("ADDON_LOADED")
 
 local function AddToClique(frame)
     if type(frame) == "string" then
