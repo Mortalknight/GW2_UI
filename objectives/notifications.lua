@@ -160,7 +160,7 @@ local function RemoveTrackerNotification(notificationID)
         return
     end
 
-    notifications[data.ID] = nil
+    notifications[notificationID] = nil
 end
 GW.RemoveTrackerNotification = RemoveTrackerNotification
 
