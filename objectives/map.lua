@@ -60,32 +60,33 @@ local Minimap_Addon_Buttons = {
 }
 
 local MAP_FRAMES_HOVER = {}
-
 local framesToAdd = {}
 
 local function SetMinimapHover()
-    if GetSetting("MINIMAP_HOVER") == "NONE" then
+    local hoverSetting = GetSetting("MINIMAP_HOVER")
+
+    if hoverSetting == "NONE" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapTime"
         MAP_FRAMES_HOVER[4] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "CLOCK" then
+    elseif hoverSetting == "CLOCK" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "ZONE" then
+    elseif hoverSetting == "ZONE" then
         MAP_FRAMES_HOVER[1] = "GwMapTime"
         MAP_FRAMES_HOVER[2] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "COORDS" then
+    elseif hoverSetting == "COORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapTime"
-    elseif GetSetting("MINIMAP_HOVER") == "CLOCKZONE" then
+    elseif hoverSetting == "CLOCKZONE" then
         MAP_FRAMES_HOVER[1] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "CLOCKCOORDS" then
+    elseif hoverSetting == "CLOCKCOORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-    elseif GetSetting("MINIMAP_HOVER") == "ZONECOORDS" then
+    elseif hoverSetting == "ZONECOORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapTime"
     end
 end
@@ -239,6 +240,8 @@ end
 GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
 
 local function hoverMiniMapOut()
+    local shouldShowNorthTag = false
+
     for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
         if child ~= nil then
@@ -250,8 +253,11 @@ local function hoverMiniMapOut()
                 end
             end
         end
+        if v == "MinimapZoneText" then
+            shouldShowNorthTag = true
+        end
     end
-    MinimapNorthTag:Show()
+    MinimapNorthTag:SetShown(shouldShowNorthTag)
 end
 GW.AddForProfiling("map", "hoverMiniMapOut", hoverMiniMapOut)
 
@@ -528,7 +534,7 @@ local function LoadMinimap()
             end
             self.elapsedTimer = updateCap
             local framerate = GetFramerate()
-            self.fps:SetText(RoundDec(framerate) .. " FPS")
+            self.fps:SetText(FPS_FORMAT:format(RoundDec(framerate)))
         end
         GwMapFPS:SetScript("OnUpdate", MapFPSMiniMap_OnUpdate)
     end
@@ -709,6 +715,6 @@ local function LoadMinimap()
 
     SetMinimapPosition()
 
-    hoverMiniMapOut()
+    C_Timer.After(0.1, function() hoverMiniMapOut() end)
 end
 GW.LoadMinimap = LoadMinimap
