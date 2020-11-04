@@ -362,8 +362,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
         _G[buttonName .. "NormalTexture2"]:Hide()
     end
-    if btn.AutoCastable ~= nil then
-        btn.AutoCastable:SetSize(btn:GetWidth(), btn:GetWidth())
+    if btn.AutoCastable then
+        btn.AutoCastable:SetSize(btn:GetWidth() * 2, btn:GetWidth() * 2)
+    end
+    if btn.AutoCastShine then
+        btn.AutoCastShine:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
     btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
