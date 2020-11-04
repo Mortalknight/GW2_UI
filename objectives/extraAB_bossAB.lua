@@ -46,12 +46,10 @@ local function ExtraAB_BossAB_Setup()
     
     ExtraButtons_UpdateScale()
     
-    ZoneAbilityFrame:SetParent(ZoneAbilityFrame.gwMover)
     ZoneAbilityFrame:ClearAllPoints()
     ZoneAbilityFrame:SetAllPoints(ZoneAbilityFrame.gwMover)
     ZoneAbilityFrame.ignoreInLayout = true
 
-    ExtraActionBarFrame:SetParent(ExtraActionBarFrame.gwMover)
     ExtraActionBarFrame:ClearAllPoints()
     ExtraActionBarFrame:SetAllPoints(ExtraActionBarFrame.gwMover)
     ExtraActionBarFrame.ignoreInLayout = true
@@ -74,7 +72,6 @@ local function ExtraAB_BossAB_Setup()
         end
     end)
     hooksecurefunc(ExtraActionBarFrame, "SetPoint", function()
-        ExtraActionBarFrame:SetParent(ExtraActionBarFrame.gwMover)
         ExtraActionBarFrame:ClearAllPoints()
         ExtraActionBarFrame:SetAllPoints(ExtraActionBarFrame.gwMover)
     end)
