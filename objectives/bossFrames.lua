@@ -79,6 +79,10 @@ end
 GW.AddForProfiling("unitframes", "updateRaidMarkers", updateRaidMarkers)
 
 local function bossFrame_OnEvent(self, event, unit)
+    if not self:IsShown() then
+        return
+    end
+
     if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         updateBoss_Health(self)
     elseif event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT" then
@@ -132,6 +136,16 @@ local function registerFrame(i)
         TRACKER_TYPE_COLOR.BOSS.b
     )
 
+    bossFrame:RegisterEvent("RAID_TARGET_UPDATE")
+    bossFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    bossFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    bossFrame:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
+    bossFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
+    bossFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
+    bossFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
+    bossFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
+    bossFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+
     bossFrame:SetScript(
         "OnShow",
         function(self)
@@ -151,16 +165,6 @@ local function registerFrame(i)
             compassData.COLOR = TRACKER_TYPE_COLOR.BOSS
             compassData.TITLE = UnitName(self.unit)
 
-            self:RegisterEvent("RAID_TARGET_UPDATE")
-            self:RegisterEvent("PLAYER_TARGET_CHANGED")
-            self:RegisterEvent("PLAYER_ENTERING_WORLD")
-            self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
-            self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
-            self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
-            self:RegisterUnitEvent("UNIT_MAXPOWER", self.unit)
-            self:RegisterUnitEvent("UNIT_POWER_FREQUENT", self.unit)
-            self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-
             AddTrackerNotification(compassData)
             updateBossFrameHeight()
             updateBoss_Health(self)
@@ -174,7 +178,6 @@ local function registerFrame(i)
         "OnHide",
         function(self)
             updateBossFrameHeight()
-            self:UnregisterAllEvents()
 
             if self.id == 1 then
                 RemoveTrackerNotificationOfType("BOSS")
@@ -191,10 +194,8 @@ GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 local function LoadBossFrame()
     for i = 1, 5 do
         bossFrames[i] = registerFrame(i)
-        if _G["Boss" .. i .. "TargetFrame"] ~= nil then
-            _G["Boss" .. i .. "TargetFrame"]:Kill()
-        end
+        _G["Boss" .. i .. "TargetFrame"]:Kill()
     end
-    updateBossFrameHeight()
+    C_Timer.After(0.01, function() updateBossFrameHeight() end)
 end
 GW.LoadBossFrame = LoadBossFrame

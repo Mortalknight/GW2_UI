@@ -248,8 +248,7 @@ local function LoadAchievementFrame()
     GwQuesttrackerContainerAchievement:RegisterEvent("ACHIEVEMENT_EARNED")
     GwQuesttrackerContainerAchievement:SetScript("OnEvent", updateAchievementLayout)
 
-    local header =
-        CreateFrame("Button", "GwAchievementHeader", GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")
+    local header = CreateFrame("Button", "GwAchievementHeader", GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")
     header.icon:SetTexCoord(0, 0.5, 0, 0.25)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
