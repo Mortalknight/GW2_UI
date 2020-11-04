@@ -216,7 +216,7 @@ local function updateCurrentScenario()
         )
         numCriteria = numCriteria + 2
     elseif GW.locationData.mapID == 1469 or GW.locationData.mapID == 1470 then -- Heroic Vision for OP and SW
-        local info = GetCurrencyInfo(1744) --Corrupted Memento
+        local info = C_CurrencyInfo.GetCurrencyInfo(1744) --Corrupted Memento
         addObjectiveBlock(
             GwScenarioBlock,
             ParseCriteria(info.quantity, 0, info.name),
