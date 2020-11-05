@@ -34,6 +34,19 @@ local function InitTalkingHeadFrame()
     end
 
     -- Skin
+    TalkingHeadFrame.BackgroundFrame.TextBackground.SetAtlas = GW.NoOp
+    TalkingHeadFrame.PortraitFrame.Portrait.SetAtlas = GW.NoOp
+    TalkingHeadFrame.MainFrame.Model.PortraitBg.SetAtlas = GW.NoOp
+
+    TalkingHeadFrame.NameFrame.Name:SetTextColor(1, 0.82, 0.02)
+    TalkingHeadFrame.NameFrame.Name.SetTextColor = GW.NoOp
+    TalkingHeadFrame.NameFrame.Name:SetShadowColor(0, 0, 0, 1)
+    TalkingHeadFrame.NameFrame.Name:SetShadowOffset(2, -2)
+
+    TalkingHeadFrame.TextFrame.Text:SetTextColor(1, 1, 1)
+    TalkingHeadFrame.TextFrame.Text.SetTextColor = GW.NoOp
+    TalkingHeadFrame.TextFrame.Text:SetShadowColor(0, 0, 0, 1)
+    TalkingHeadFrame.TextFrame.Text:SetShadowOffset(2, -2)
     hooksecurefunc("TalkingHeadFrame_PlayCurrent", SkinTalkingHeadFrame_OnShow)
 end
 
