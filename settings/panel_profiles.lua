@@ -182,6 +182,9 @@ local function buttons_OnEnter(self)
     if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
         self:GetParent().deleteButton:Show()
     end
+    if self:GetParent().renameable ~= nil and self:GetParent().renameable == true then
+        self:GetParent().renameButton:Show()
+    end
     if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
         self:GetParent().exportButton:Show()
     end
@@ -194,6 +197,9 @@ local function buttons_OnLeave(self)
     end
     if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
         self:GetParent().exportButton:Hide()
+    end
+    if self:GetParent().renameable ~= nil and self:GetParent().renameable == true then
+        self:GetParent().renameButton:Hide()
     end
     if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
         self:GetParent().activateButton:Hide()
@@ -225,10 +231,14 @@ local function export_OnClick(self, button)
 end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
+local function rename_OnClick(self, button)
+    StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent())
+end
+
 local function item_OnLoad(self)
     self.name:SetFont(UNIT_NAME_FONT, 14)
     self.name:SetTextColor(1, 1, 1)
-    self.desc:SetFont(UNIT_NAME_FONT, 12)
+    self.desc:SetFont(UNIT_NAME_FONT, 10)
     self.desc:SetTextColor(125 / 255, 125 / 255, 125 / 255)
     self.desc:SetText(L["PROFILES_MISSING_LOAD"])
 
@@ -248,12 +258,18 @@ local function item_OnLoad(self)
     self.exportButton:SetScript("OnEnter", buttons_OnEnter)
     self.exportButton:SetScript("OnLeave", buttons_OnLeave)
     self.exportButton:SetScript("OnClick", export_OnClick)
+    self.renameButton:SetScript("OnEnter", buttons_OnEnter)
+    self.renameButton:SetScript("OnLeave", buttons_OnLeave)
+    self.renameButton:SetScript("OnClick", rename_OnClick)
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
 
 local function item_OnEnter(self)
     if self.deleteable ~= nil and self.deleteable == true then
         self.deleteButton:Show()
+    end
+    if self.renameable ~= nil and self.renameable == true then
+        self.renameButton:Show()
     end
     if self.activateAble ~= nil and self.activateAble == true then
         self.activateButton:Show()
@@ -268,6 +284,9 @@ AddForProfiling("panel_profiles", "item_OnEnter", item_OnEnter)
 local function item_OnLeave(self)
     if self.deleteable ~= nil and self.deleteable == true then
         self.deleteButton:Hide()
+    end
+    if self.renameable ~= nil and self.renameable == true then
+        self.renameButton:Hide()
     end
     if self.exportable ~= nil and self.exportable == true then
         self.exportButton:Hide()
@@ -305,6 +324,7 @@ updateProfiles = function(self)
 
             f.deleteable = true
             f.exportable = true
+            f.renameable = true
             f.background:SetTexCoord(0, 1, 0, 0.5)
             f.activateAble = true
             if currentProfile == k then
@@ -442,6 +462,7 @@ local function LoadProfilesPanel(sWindow)
 
     resetTodefault.deleteable = false
     resetTodefault.exportable = false
+    resetTodefault.renameable = false
     resetTodefault.background:SetTexCoord(0, 1, 0, 0.5)
     resetTodefault.activateAble = true
 
@@ -502,5 +523,24 @@ local function LoadProfilesPanel(sWindow)
     updateProfiles(p)
 
     ImportExportFrame = createImportExportFrame(p)
+
+    StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
+        text = GARRISON_SHIP_RENAME_LABEL,
+        button1 = SAVE,
+        button2 = CANCEL,
+        selectCallbackByIndex = true,
+        OnButton1 = function(self, data)
+            GW2UI_SETTINGS_PROFILES[data.profileID]["profilename"] = self.editBox:GetText()
+            data.name:SetText(self.editBox:GetText())
+            return
+        end,
+        OnButton2 = function() end,
+        timeout = 0,
+        whileDead = 1,
+        hasEditBox = 1,
+        maxLetters = 64,
+        editBoxWidth = 250,
+        closeButton = 0,
+    }
 end
 GW.LoadProfilesPanel = LoadProfilesPanel

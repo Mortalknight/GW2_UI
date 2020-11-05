@@ -148,6 +148,12 @@
                     </Layer>
                 </Layers>
             </Button>
+            <Button hidden="true" inherits="GwStandardButton" text="PET_RENAME" parentKey="renameButton">
+                <Size x="90" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="35"/>
+                </Anchors>
+            </Button>
             <Button hidden="true" inherits="GwStandardButton" text="Activate" parentKey="activateButton">
                 <Size x="70" y="20" />
                 <Anchors>
@@ -155,7 +161,7 @@
                 </Anchors>
             </Button>
             <Button hidden="true" inherits="GwStandardButton" text="EXPORT" parentKey="exportButton">
-                <Size x="80" y="20" />
+                <Size x="90" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="5"/>
                 </Anchors>

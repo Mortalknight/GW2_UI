@@ -1101,7 +1101,6 @@ local function LoadBag(helpers)
 
     f.smsj = smsj
     
-    
     StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
         text = L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"],
         button1 = SAVE,
