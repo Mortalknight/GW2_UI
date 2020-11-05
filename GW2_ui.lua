@@ -730,6 +730,7 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
+        GW.myeffectivelevel = UnitEffectiveLevel("player")
         GW.CheckRole()
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
@@ -747,6 +748,8 @@ local function gw_OnEvent(self, event, ...)
         Debug("New faction:", GW.myfaction, GW.myLocalizedFaction)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         GW.CheckRole()
+    elseif event == "PLAYER_LEVEL_CHANGED" then
+        GW.myeffectivelevel = UnitEffectiveLevel("player")
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
@@ -759,6 +762,7 @@ l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
 l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+l:RegisterEvent("PLAYER_LEVEL_CHANGED")
 
 local function AddToClique(frame)
     if type(frame) == "string" then
