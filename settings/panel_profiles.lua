@@ -530,9 +530,15 @@ local function LoadProfilesPanel(sWindow)
         button2 = CANCEL,
         selectCallbackByIndex = true,
         OnButton1 = function(self, data)
-            GW2UI_SETTINGS_PROFILES[data.profileID]["profilename"] = self.editBox:GetText()
-            GW2UI_SETTINGS_PROFILES[data.profileID]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
+            local profileToRename = GW2UI_SETTINGS_PROFILES[data.profileID]
+            local changeDate = date("%m/%d/%y %H:%M:%S")
+            local description = L["PROFILES_CREATED"] .. profileToRename["profileCreatedDate"] .. L["PROFILES_CREATED_BY"] ..
+                profileToRename["profileCreatedCharacter"] .. L["PROFILES_LAST_UPDATE"] .. changeDate
+
+            profileToRename["profilename"] = self.editBox:GetText()
+            profileToRename["profileLastUpdated"] = changeDate
             data.name:SetText(self.editBox:GetText())
+            data.desc:SetText(description)
 
             return
         end,
