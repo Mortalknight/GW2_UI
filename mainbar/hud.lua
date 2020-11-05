@@ -55,7 +55,7 @@ local function xpbar_OnEnter()
                 CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,
-            1   
+            1
         )
     end
 
@@ -154,6 +154,7 @@ local function xpbar_OnEvent(self, event)
     local valPrec = valCurrent / valMax
     local valPrecRepu = 0
 
+    local effectiveLevel = GW.myeffectivelevel;
     local level = GW.mylevel
     local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
     local Nextlevel = math.min(maxPlayerLevel, level + 1)
@@ -164,6 +165,8 @@ local function xpbar_OnEvent(self, event)
     local showBar2 = false
     local showBar3 = false
     local restingIconString = " |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t "
+
+
 
     if not IsResting() then
         restingIconString = ""
@@ -519,6 +522,10 @@ local function xpbar_OnEvent(self, event)
         Nextlevel = Nextlevel and Nextlevel .. " |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:20:20:0:0|t" or ""
     end
 
+    if GW.mylevel ~= effectiveLevel then
+      level = level.. " |cFF00FF00("..effectiveLevel..")|r"
+    end
+
     GwExperienceFrame.NextLevel:SetText(Nextlevel)
     GwExperienceFrame.CurrentLevel:SetText(restingIconString .. level)
     if showBar1 and showBar2 and showBar3 then
@@ -855,10 +862,10 @@ end
 GW.AddForProfiling("hud", "selectBg", selectBg)
 
 local function combatHealthState()
-    if not GetSetting("HUD_BACKGROUND") then 
+    if not GetSetting("HUD_BACKGROUND") then
         return
     end
-    
+
     local unitHealthPrecentage = UnitHealth("player") / UnitHealthMax("player")
 
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
