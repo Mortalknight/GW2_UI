@@ -45,7 +45,7 @@ local function setCompass()
     local compassData = {}
 
     -- parse current BG date here, to show the correct name and subname
-    if GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
+    if not isArena and GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
         compassData.TITLE = select(1, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])) 
         compassData.DESC = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
     else
