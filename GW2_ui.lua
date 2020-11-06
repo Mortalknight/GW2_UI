@@ -518,7 +518,6 @@ local function loadAddon(self)
 
     GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
-    GW.ExtraAB_BossAB_Setup()
     GW.MakeAltPowerBarMovable()
 
     --Create hud art
@@ -542,9 +541,13 @@ local function loadAddon(self)
         GW.LoadFonts()
     end
 
+    -- save "floatingCombatTextCombatDamage" before we check to change that values and set it back to prev values if we do not change that value
+    local cVar_fctcb = GetCVar("floatingCombatTextCombatDamage")
     if GetSetting("GW_COMBAT_TEXT_ENABLED") then
         SetCVar("floatingCombatTextCombatDamage", 0)
         GW.LoadDamageText()
+    else
+        SetCVar("floatingCombatTextCombatDamage", cVar_fctcb)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
@@ -634,6 +637,7 @@ local function loadAddon(self)
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") then
         GW.LoadActionBars(lm)
+        GW.ExtraAB_BossAB_Setup()
     end
 
     -- create pet frame
