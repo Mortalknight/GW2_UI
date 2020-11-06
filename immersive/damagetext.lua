@@ -35,8 +35,8 @@ local PET_SCALE_MODIFIER = 0.7
 local NORMAL_ANIMATION_OFFSET_Y = 20
 
 -- Display settings
-local USE_BLIZZARD_COLORS = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
-local USE_COMMA_FORMATING = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
+local USE_BLIZZARD_COLORS
+local USE_COMMA_FORMATING
 
 
 local function animateTextCritical(frame,offsetIndex)
@@ -285,6 +285,8 @@ end
 
 local function LoadDamageText()
     playerGUID = UnitGUID("player")
+    USE_BLIZZARD_COLORS = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
+    USE_COMMA_FORMATING = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
 
     local f = CreateFrame("Frame")
     f:RegisterEvent("NAME_PLATE_UNIT_ADDED")
