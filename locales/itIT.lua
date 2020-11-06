@@ -337,6 +337,8 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT"] = "GW2 UI sostituisce completamente l'interfaccia utente. Abbiamo creato questa interfaccia con un approccio modulare, ciò significa che se non ti piace una certa parte dell'addon - o ne hai un'altra che preferisci per quella funzione - puoi semplicemente disabilitare quella parte, mantenendo intatto il resto. Alcuni dei moduli disponibili sono una finestra di ricerca immersiva, una sostituzione di inventario completa e una sostituzione della finestra del personaggio completa. Puoi personalizzarla a tuo piacimento, dai un'occhiata al menu delle impostazioni per vedere cosa è a tua disposizione!"
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Che cos'è \"Pixel Perfection\"? L'interfaccia utente di GW2 ha un'impostazione integrata chiamata \"Pixel Perfection Mode\". Ciò che significa che l'interfaccia utente apparirà migliorata, con texture più nitide e un miglior ridimensionamento. Naturalmente, puoi disattivarlo nel menu delle impostazioni, se preferisci."
 	L["WORLD_MARKER_DESC"] = "Mostra il menu per posizionare i marcatori durante i raid."
+	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
 
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

@@ -542,6 +542,11 @@ local function loadAddon(self)
         GW.LoadFonts()
     end
 
+    if GetSetting("GW_COMBAT_TEXT_ENABLED") then
+        SetCVar("floatingCombatTextCombatDamage", 0)
+        GW.LoadDamageText()
+    end
+
     if GetSetting("CASTINGBAR_ENABLED") then
         GW.LoadCastingBar()
     end

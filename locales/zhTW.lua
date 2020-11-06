@@ -338,7 +338,9 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "什麼是 '完美細緻'?\n\nGW2 UI 內建了一項設定叫做 '完美細緻模式'，擁有更清晰的材質和更佳的縮放大小處理，讓每一個像素都趨近完美，使用者介面看起來能夠完全符合你的期望。當然，完全可以依據你的喜好來開關這個設定。"
 	L["WORLD_MARKER_DESC"] = "在團隊中時顯示世界標記工具。"
     L["EXTRA_AB_NAME"] = "首領按鈕"
-    L["ZONE_ANILITY_AB_NAME"] = "區域技能"
+	L["ZONE_ANILITY_AB_NAME"] = "區域技能"
+	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
 	
 	-- Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

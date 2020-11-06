@@ -40,6 +40,8 @@ local function LoadHudPanel(sWindow)
         end
     )
     addOption(p, L["AFK_MODE"], L["AFK_MODE_DESC"], "AFK_MODE")
+    addOption(p, COMBAT_TEXT_LABEL .. L["GW_COMBAT_TEXT_BLIZZARD_COLOR"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_ENABLED"] = true})
+    addOption(p, COMBAT_TEXT_LABEL .. L["GW_COMBAT_TEXT_COMMA_FORMAT"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_ENABLED"] = true})
     addOptionSlider(
         p,
         L["HUD_SCALE"],

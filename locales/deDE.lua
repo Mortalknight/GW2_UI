@@ -342,6 +342,8 @@ local function GWUseThisLocalization()
     L["REVERSE_NEW_LOOT_TEXT"] = "Beute in die am weitesten linke Tasche legen"
     L["EXTRA_AB_NAME"] = "Boss Button"
     L["ZONE_ANILITY_AB_NAME"] = "Zonen Fähigkeit"
+    L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Blizzard Farben verwenden"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Zahlen mir Komma anzeigen"
 end
 
 if GetLocale() == "deDE" then

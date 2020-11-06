@@ -342,6 +342,8 @@ local function GWUseThisLocalization()
     L["ZONE_ANILITY_AB_NAME"] = "Zone Ability"
     L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"] = "Right click to customise the bag title."
     L["REVERSE_NEW_LOOT_TEXT"] = "Loot to leftmost Bag"
+    L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
 end
 
 local Locale = GetLocale()

@@ -339,7 +339,8 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "O que é 'Pixel Perfection'?\n\nA GW2 UI possui uma configuração interna chamada 'Modo Pixel Perfection'. O que isso significa para você é que a interface do usuário terá a aparência desejada, com texturas mais nítidas e melhor escala. Obviamente, você pode desativar isso no menu de configurações, se preferir."
 	L["WORLD_MARKER_DESC"] = "Mostrar menu para colocar marcadores quando está em raide."
 	L["ZONE_ANILITY_AB_NAME"] = "Habilidade de Zona"
-
+    L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

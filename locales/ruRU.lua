@@ -339,7 +339,8 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Что такое 'Pixel Perfection'?\n\nB GW2 UI есть режим с таким названием. Он создан, чтобы ваш UI выглядел, как задумано, с четкими текстурами и лучшим масштабированием. Конечно, по желанию вы можете отключить этот режим в настройках."
 	L["WORLD_MARKER_DESC"] = "Отображать панель с метками цели пока вы в рейде."
 	L["ZONE_ANILITY_AB_NAME"] = "Зоновая способность"
-
+    L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
 	
 	-- Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

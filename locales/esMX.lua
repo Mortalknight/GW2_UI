@@ -342,6 +342,8 @@ local function GWUseThisLocalization()
     L["REVERSE_NEW_LOOT_TEXT"] = "Botín para la bolsa más a la izquierda"
     L["EXTRA_AB_NAME"] = "Boss Button"
     L["ZONE_ANILITY_AB_NAME"] = "Zone Ability"
+    L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
 end
 
 if GetLocale() == "esMX" then
