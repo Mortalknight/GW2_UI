@@ -49,7 +49,7 @@ local function animateTextCritical(frame,offsetIndex)
         GetTime(),
         CRITICAL_ANIMATION_DURATION,
         function()
-            local p =  animations[aName]["progress"]
+            local p = animations[aName]["progress"]
             local pet_scale = 1
             if frame.pet then
                 pet_scale = PET_SCALE_MODIFIER
@@ -94,7 +94,7 @@ local function animateTextNormal(frame, offsetIndex)
         GetTime(),
         NORMAL_ANIMATION_DURATION,
         function()
-            local p =  animations[aName]["progress"]
+            local p = animations[aName]["progress"]
             local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
             local pet_scale = 1
             if frame.pet then
@@ -280,7 +280,7 @@ local function onNamePlateRemoved(self, event, unitID)
 end
 
 local function onCombatLogEvent(self, event)
-   handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
+    handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
 end
 
 local function LoadDamageText()
@@ -293,7 +293,7 @@ local function LoadDamageText()
 
     f:SetScript("OnEvent", function(self, event, ...)
       if event == "NAME_PLATE_UNIT_ADDED" then
-          onNamePlateAdded(f, event, ...)
+            onNamePlateAdded(f, event, ...)
       elseif event == "NAME_PLATE_UNIT_REMOVED" then
             onNamePlateRemoved(f, event, ...)
       elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then

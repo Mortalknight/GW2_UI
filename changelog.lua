@@ -1,6 +1,23 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.7", [=[
+NEW
+    - Added back our Quest Tracker (Note: This is only a fixed of the old one, a rework is still needed)
+    - Added option to rename profiles
+    - Added custom GW2 "Floating Combat Text" (this module turns Blizzard Floating Combat Text off)
+    - Show your scaled level at the expbar if you are scaled
+    - Make "Alternative Powerbar" moveable
+
+FIXES
+    - Fix warlock shouldshard graphic issue
+    - Fix classpower and ressourcebar movers
+    - Fix "Boss Button" mover
+    - Fix "Nothtag" overlaps Zonename on minimap
+    - Fix TalkingHead text color
+    - Update locals
+]=])
+
 v("5.4.6", [=[
 NEW
     - Make classpower and ressourcebar moveable
