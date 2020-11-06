@@ -106,7 +106,7 @@ local function animateTextNormal(frame, offsetIndex)
             elseif offsetIndex== 1 then
                 frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPLEFT", 0, offsetY)
             elseif offsetIndex== 2 then
-                frame:SetPoint("BOTTOM", frame.anchorFrame  "TOPRIGHT", 0, offsetY)
+                frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPRIGHT", 0, offsetY)
             end
 
             if p > 0.7 then
