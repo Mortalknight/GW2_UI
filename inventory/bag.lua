@@ -121,20 +121,20 @@ local function setupVendorJunk(active)
 end
 
 local function setBagHeaders()
-    for i = 0, 4 do
-        if i > 0 then
-            local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
-            local itemID = GetInventoryItemID("player", slotID)
-            local customBagHeaderName = GetSetting("BAG_HEADER_NAME" .. i)
+    for i = 1, 4 do
+        local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
+        local itemID = GetInventoryItemID("player", slotID)
+        local customBagHeaderName = GetSetting("BAG_HEADER_NAME" .. i)
 
-            if itemID then
-                local itemName, _, itemRarity = GetItemInfo(itemID)
-                local r, g, b = GetItemQualityColor(itemRarity)
-                _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName)
-                _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, a)
-            else
-                _G["GwBagFrameGwBagHeader" .. i]:Hide()
-            end
+        if itemID then
+            local r, g, b = 1, 1, 1
+            local itemName, _, itemRarity = GetItemInfo(itemID)
+            if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+            
+            _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
+            _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, 1)
+        else
+            _G["GwBagFrameGwBagHeader" .. i]:Hide()
         end
     end
     local customBagHeaderName = GetSetting("BAG_HEADER_NAME0")
@@ -1119,10 +1119,12 @@ local function LoadBag(helpers)
                 local itemID = GetInventoryItemID("player", slotID)
             
                 if itemID then
+                    local r, g, b = 1, 1, 1
                     local itemName, _, itemRarity = GetItemInfo(itemID)
-                    local r, g, b = GetItemQualityColor(itemRarity)
-                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName)
-                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, a)
+                    if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+
+                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName or UNKNOWN)
+                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, 1)
                 end
             else
                 _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(BACKPACK_TOOLTIP)
