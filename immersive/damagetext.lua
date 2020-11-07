@@ -11,15 +11,15 @@ local namePlatesOffsets = {}
 local namePlatesCriticalOffsets = {}
 
 local colorTable ={
-    ["gw"] ={
-        ["spell"] = {r=1,g=1,b=1,a=1},
-        ["melee"] = {r=1,g=1,b=1,a=1},
-        ["pet"] = {r=1,g=0.2,b=0.2,a=1}
+    ["gw"] = {
+        ["spell"] = {r = 1, g = 1, b = 1, a = 1},
+        ["melee"] = {r = 1, g = 1, b = 1, a = 1},
+        ["pet"] = {r = 1, g = 0.2, b= 0.2, a = 1}
     },
-    ["blizzard"] ={
-        ["spell"] = {r=1,g=1,b=0,a=1},
-        ["melee"] = {r=1,g=1,b=1,a=1},
-        ["pet"] = {r=1,g=1,b=1,a=1}
+    ["blizzard"] = {
+        ["spell"] = {r = 1, g = 1, b = 0, a = 1},
+        ["melee"] = {r = 1, g = 1, b = 1, a = 1},
+        ["pet"] = {r = 1, g = 1, b = 1, a = 1}
     }
 }
 
@@ -39,7 +39,7 @@ local USE_BLIZZARD_COLORS
 local USE_COMMA_FORMATING
 
 
-local function animateTextCritical(frame,offsetIndex)
+local function animateTextCritical(frame, offsetIndex)
     local aName = frame:GetName()
 
     AddToAnimation(
@@ -54,7 +54,7 @@ local function animateTextCritical(frame,offsetIndex)
             if frame.pet then
                 pet_scale = PET_SCALE_MODIFIER
             end
-            if p<0.25 then
+            if p < 0.25 then
                 local scaleFade = p - 0.25
 
                 frame:SetScale(GW.lerp(1 * pet_scale * CRITICAL_SCALE_MODIFIER, pet_scale, scaleFade / 0.25))
@@ -70,7 +70,7 @@ local function animateTextCritical(frame,offsetIndex)
                 frame:SetPoint("TOP", frame.anchorFrame, "BOTTOMRIGHT", 0, 0)
             end
 
-            if p>0.7 then
+            if p > 0.7 then
                 local alphaFade = p - 0.7
                 frame:SetAlpha(GW.lerp(1, 0, alphaFade / 0.3))
             else
@@ -171,7 +171,7 @@ local function setElementData(self, critical, source)
         end
     end
 
-    local activeColorTable = USE_BLIZZARD_COLORS and colorTable["blizzard"] or colorTable["gw"]
+    local activeColorTable = USE_BLIZZARD_COLORS and colorTable.blizzard or colorTable.gw
 
     self.string:SetTextColor(activeColorTable[colorSource].r, activeColorTable[colorSource].g, activeColorTable[colorSource].b, activeColorTable[colorSource].a)
 end
@@ -227,7 +227,7 @@ local function displayDamageText(self, guid, amount, critical, source)
     animateTextNormal(f, namePlatesOffsets[nameplate])
 end
 
-local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags ,destRaidFlags, ... )
+local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
     local targetUnit = guidToUnit[destGUID]
     -- if targetNameplate doesnt exists, ignore
     if not targetUnit then return end
@@ -294,13 +294,13 @@ local function LoadDamageText()
     f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
     f:SetScript("OnEvent", function(self, event, ...)
-      if event == "NAME_PLATE_UNIT_ADDED" then
+        if event == "NAME_PLATE_UNIT_ADDED" then
             onNamePlateAdded(f, event, ...)
-      elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        elseif event == "NAME_PLATE_UNIT_REMOVED" then
             onNamePlateRemoved(f, event, ...)
-      elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+        elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
             onCombatLogEvent(f, event, ...)
-      end
+        end
     end)
 end
 GW.LoadDamageText = LoadDamageText

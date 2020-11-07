@@ -541,13 +541,11 @@ local function loadAddon(self)
         GW.LoadFonts()
     end
 
-    -- save "floatingCombatTextCombatDamage" before we check to change that values and set it back to prev values if we do not change that value
-    local cVar_fctcb = GetCVar("floatingCombatTextCombatDamage")
     if GetSetting("GW_COMBAT_TEXT_ENABLED") then
         SetCVar("floatingCombatTextCombatDamage", 0)
         GW.LoadDamageText()
     else
-        SetCVar("floatingCombatTextCombatDamage", cVar_fctcb)
+        SetCVar("floatingCombatTextCombatDamage", 1)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then

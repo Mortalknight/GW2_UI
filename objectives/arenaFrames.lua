@@ -21,24 +21,24 @@ local FractionIcon = {}
     FractionIcon["NONE"] = ""
 
 local bgIndex = {}
-    bgIndex[30] = 5         -- Alterac
-    bgIndex[2197] = 5       -- Alterac
-    bgIndex[529] = 3        -- Arathi
-    bgIndex[1681] = 3       -- Arathi
-    bgIndex[2107] = 3       -- Arathi
-    bgIndex[2177] = 3       -- Arathi
-    bgIndex[1191] = 12      -- Ashran
-    bgIndex[2245] = 1       -- Deepwind
+    bgIndex[30] = 3         -- Alterac
+    bgIndex[2197] = 3      -- Alterac
+    bgIndex[529] = 2        -- Arathi
+    bgIndex[1681] = 2       -- Arathi
+    bgIndex[2107] = 2       -- Arathi
+    bgIndex[2177] = 2       -- Arathi
+    bgIndex[1191] = 7      -- Ashran
+    bgIndex[2245] = 13       -- Deepwind
     bgIndex[566] = 4        -- Eye Of The Storm
     bgIndex[968] = 4        -- Eye Of The Storm
     bgIndex[761] = 7        -- Gilneas
-    bgIndex[628] = 6        -- Isle Of Conquest
-    bgIndex[1803] = 13      -- Seething Shore
+    bgIndex[628] = 5        -- Isle Of Conquest
+    bgIndex[1803] = 11      -- Seething Shore
     bgIndex[727] = 9        -- Silvershard Mines
     bgIndex[998] = 10       -- Temple Of Kotmogu
     bgIndex[726] = 8        -- Twin Peaks
-    bgIndex[2106] = 2       -- Warsong
-    bgIndex[2118] = 11      -- Wintergrasp
+    bgIndex[2106] = 1       -- Warsong
+    bgIndex[2118] = 12      -- Wintergrasp
 
 local function setCompass()
     local isArena = IsActiveBattlefieldArena()
@@ -46,7 +46,7 @@ local function setCompass()
 
     -- parse current BG date here, to show the correct name and subname
     if not isArena and GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
-        compassData.TITLE = select(1, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])) 
+        compassData.TITLE = GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])
         compassData.DESC = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
     else
         compassData.TITLE = ARENA
