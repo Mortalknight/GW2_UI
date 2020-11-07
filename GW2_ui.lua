@@ -384,6 +384,10 @@ end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
 local function loadAddon(self)
+    --Create Settings window
+    GW.LoadMovers()
+    GW.LoadSettings()
+
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
@@ -418,10 +422,6 @@ local function loadAddon(self)
     --[===[@non-debug@
     GW.inDebug = false
     --@end-non-debug@]===]
-
-    --Create Settings window
-    GW.LoadMovers()
-    GW.LoadSettings()
 
     -- Load Slash commands
     GW.LoadSlashCommands()

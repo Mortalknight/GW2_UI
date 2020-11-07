@@ -279,6 +279,7 @@ local function moveHudObjects(self)
         mf:Show()
     end
     GW.MoveHudScaleableFrame.scaleSlider:Hide()
+    GW.MoveHudScaleableFrame.heightSlider:Hide()
     GW.MoveHudScaleableFrame.default:Hide()
     GW.MoveHudScaleableFrame.movers:Hide()
     GW.MoveHudScaleableFrame.desc:Show()

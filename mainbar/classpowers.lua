@@ -1161,7 +1161,7 @@ end
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
 
-    GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, true, true)
+    GW.RegisterMovableFrame(cpf, GW.L["CLASS_POWER"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, nil, true, {"scaleable"}, true)
 
     cpf:ClearAllPoints()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)

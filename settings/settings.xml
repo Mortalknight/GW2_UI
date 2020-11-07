@@ -568,7 +568,7 @@
         </Anchors>
     </Frame>
 
-    <Frame name="GwScaleablePanelTmpl" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" parent="UIParent" virtual="true">
+    <Frame name="GwSmallSettings" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" parent="UIParent" virtual="true">
         <Size x="180" y="180"/>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSmallSettingsMoverFrame" relativePoint="TOP" x="0" y="-20"></Anchor>
@@ -636,6 +636,65 @@
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="2">
                         <FontString parentKey="title" text="Skalierung" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size x="150" y="12"/>
+                            <Color r="1" b="1" g="1"/>
+                            <Anchors>
+                                <Anchor point="LEFT" x="8" y="5"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+                        <Size x="120" y="16"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
+                        </Anchors>
+                        <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
+                        <ThumbTexture file="Interface/AddOns/GW2_UI/textures/sliderhandle">
+                            <Size x="12" y="12"/>
+                        </ThumbTexture>
+                        <Layers>
+                            <Layer>
+                                <Texture file="Interface/AddOns/GW2_UI/textures/sliderbg">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Slider>
+                    <EditBox parentKey="input" autoFocus="false">
+                        <Size x="25" y="16"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="BACKGROUND">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="-5" y="3"/>
+                                        <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
+                                    </Anchors>
+                                    <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <FontString inherits="GameFontNormalSmall">
+                            <Color r="1" b="1" g="1"/>
+                        </FontString>
+                    </EditBox>
+                </Frames>
+            </Button>
+            <Button parentKey="heightSlider">
+                <Size x="170" y="40"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-45"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="title" text="HEIGHT" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="150" y="12"/>
                             <Color r="1" b="1" g="1"/>
                             <Anchors>

@@ -380,6 +380,14 @@ GW_DEFAULT["AlertPos"]["xOfs"] = 0
 GW_DEFAULT["AlertPos"]["yOfs"] = 300
 GW_DEFAULT["AlertPos_scale"] = 1
 
+GW_DEFAULT["QuestTracker_pos"] = {}
+GW_DEFAULT["QuestTracker_pos"]["point"] = "TOPRIGHT"
+GW_DEFAULT["QuestTracker_pos"]["relativePoint"] = "TOPRIGHT"
+GW_DEFAULT["QuestTracker_pos"]["xOfs"] = 0
+GW_DEFAULT["QuestTracker_pos"]["yOfs"] = 0
+GW_DEFAULT["QuestTracker_pos_height"] = 700
+GW_DEFAULT["QuestTracker_pos_scale"] = 1
+
 GW_DEFAULT["raid_pos"] = {}
 GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"
 GW_DEFAULT["raid_pos"]["relativePoint"] = "TOPLEFT"

@@ -35,8 +35,8 @@ end
 local function ExtraAB_BossAB_Setup()
     KeyBindingFrame_LoadUI()
 
-    RegisterMovableFrame(ExtraActionBarFrame, L["EXTRA_AB_NAME"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, nil, nil, true)
-    RegisterMovableFrame(ZoneAbilityFrame, L["ZONE_ANILITY_AB_NAME"], "ZoneAbilityFramePos", "VerticalActionBarDummy", nil, nil, nil, true)
+    RegisterMovableFrame(ExtraActionBarFrame, L["EXTRA_AB_NAME"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, nil, nil, {"scaleable"})
+    RegisterMovableFrame(ZoneAbilityFrame, L["ZONE_ANILITY_AB_NAME"], "ZoneAbilityFramePos", "VerticalActionBarDummy", nil, nil, nil, {"scaleable"})
 
     ZoneAbilityFrame.SpellButtonContainer.holder = ZoneAbilityFrame.gwMover
 

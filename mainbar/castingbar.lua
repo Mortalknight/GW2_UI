@@ -40,7 +40,7 @@ local function LoadCastingBar()
 
     GwCastingBar:SetAlpha(0)
 
-    RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, nil, nil, true)
+    RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, nil, nil, {"scaleable"})
     GwCastingBar:ClearAllPoints()
     GwCastingBar:SetPoint("TOPLEFT", GwCastingBar.gwMover)
 

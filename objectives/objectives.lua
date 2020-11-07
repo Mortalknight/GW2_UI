@@ -580,10 +580,7 @@ local function updateQuest(block, questWatchId)
     local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local isComplete = C_QuestLog.IsComplete(questID)
-    local title = questInfo.title
     local campaignID = C_CampaignInfo.GetCampaignID(questID)
-    local isHeader = questInfo.isHeader
-    local startEvent = questInfo.startEvent
 
     if questID then
         if savedQuests[questID] == nil then
@@ -595,16 +592,16 @@ local function updateQuest(block, questWatchId)
         block.id = questID
         block.questLogIndex = questLogIndex
 
-        block.Header:SetText(title)
+        block.Header:SetText(questInfo.title)
 
         --Quest item
         UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
 
-        if numObjectives == 0 and GetMoney() >= requiredMoney and not startEvent then
+        if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
             isComplete = true
         end
 
-        updateQuestObjective(block, numObjectives, isComplete, title)
+        updateQuestObjective(block, numObjectives, isComplete, questInfo.title)
 
         if requiredMoney ~= nil and requiredMoney > GetMoney() then
             addObjective(
@@ -617,7 +614,7 @@ local function updateQuest(block, questWatchId)
         end
 
         if isComplete then
-            if isAutoComplete then
+            if questInfo.isAutoComplete then
                 addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
                 block.turnin:Show()
                 block.turnin:SetScript(
@@ -942,23 +939,13 @@ local function LoadQuestTracker()
     local fCampaign = CreateFrame("Frame", "GwQuesttrackerContainerCampaign", fScroll, "GwQuesttrackerContainer")
     local fQuest = CreateFrame("Frame", "GwQuesttrackerContainerQuests", fScroll, "GwQuesttrackerContainer")
     local fBonus = CreateFrame("Frame", "GwQuesttrackerContainerBonusObjectives", fScroll, "GwQuesttrackerContainer")
+    fNotify:SetParent(fTracker)
+    fBoss:SetParent(fTracker)
+    fScen:SetParent(fTracker)
     fAchv:SetParent(fScroll)
     fCampaign:SetParent(fScroll)
     fQuest:SetParent(fScroll)
     fBonus:SetParent(fScroll)
-
-    if map_enabled then
-        if map_position == "TOP" then
-            fTracker:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
-            fTracker:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 25)
-        else
-            fTracker:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT")
-            fTracker:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, 3)
-        end
-    else
-        fTracker:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
-        fTracker:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT")
-    end
 
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
     fBoss:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
@@ -1055,5 +1042,24 @@ local function LoadQuestTracker()
     fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
     fTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     fTracker:SetScript("OnUpdate", tracker_OnUpdate)
+
+    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, nil, true, {"scaleable", "height"}, nil, true)
+    fTracker:ClearAllPoints()
+    fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
+    fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
+
+    print(fTracker.isMoved)
+    if not fTracker.isMoved then
+        fTracker.gwMover:ClearAllPoints()
+        if map_enabled then
+            if map_position == "TOP" then
+                fTracker.gwMover:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
+            else
+                fTracker.gwMover:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT")
+            end
+        else
+            fTracker.gwMover:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
+        end
+    end
 end
 GW.LoadQuestTracker = LoadQuestTracker
