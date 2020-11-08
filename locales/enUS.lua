@@ -206,10 +206,6 @@ local function GWUseThisLocalization()
     L["TOP"] = "Top"
     L["BOTTOM"] = "Bottom"
     L["CENTER"] = "Center"
-    L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
-    L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
-    L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
-    L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
     L["RAID_UNIT_LOST_HEALTH_PREC"] = "Remaining Health Percentage"
     L["SHOW_THREAT_VALUE"] = "Show Threat"
     L["MINIMAP_FPS"] = "Show FPS on minimap"
@@ -344,6 +340,12 @@ local function GWUseThisLocalization()
     L["REVERSE_NEW_LOOT_TEXT"] = "Loot to leftmost Bag"
     L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
     L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
+	
+	--Composite
+    L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
+    L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
+    L["BOTTOMLEFT"] = ("%s %s"):format(L["BOTTOM"], L["LEFT"])
+    L["BOTTOMRIGHT"] = ("%s %s"):format(L["BOTTOM"], L["RIGHT"])
 end
 
 local Locale = GetLocale()
