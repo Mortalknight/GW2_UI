@@ -4,6 +4,8 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
 
+local C_QuestLog_GetInfo= C_QuestLog.GetInfo
+
 local currentNotificationKey = ""
 local notifications = {}
 
@@ -78,13 +80,11 @@ local function getNearestQuestPOI()
     local closest = false
     local questCompass = {}
     for questLogIndex = 1, numQuests do
-        local questInfo = C_QuestLog.GetInfo(questLogIndex)
-        local isComplete = C_QuestLog.IsComplete(questInfo.questID)
-        local campaignID = C_CampaignInfo.GetCampaignID(questInfo.questID)
-
+        local questInfo = C_QuestLog_GetInfo(questLogIndex)
+        
         if not questInfo.isHeader and questInfo.hasLocalPOI then
             local _, poiX, poiY, _ = QuestPOIGetIconInfo(questInfo.questID)
-            
+
             if poiX then
                 local dx = GW.locationData.x - poiX
                 local dy = GW.locationData.y - poiY
@@ -98,16 +98,18 @@ local function getNearestQuestPOI()
                     questCompass.X = poiX
                     questCompass.Y = poiY
                     questCompass.QUESTID = questInfo.questID
-                    questCompass.TYPE = campaignID > 0 and "CAMPAIGN" or "QUEST"
-                    questCompass.COLOR = campaignID > 0 and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
+                    questCompass.TYPE = questInfo.campaignID ~= nil and "CAMPAIGN" or "QUEST"
+                    questCompass.COLOR = questInfo.campaignID ~= nil and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
                     questCompass.COMPASS = true
                 end
             end
         end
+        questInfo = nil
     end
     if closest then
         return questCompass
     else
+        wipe(questCompass)
         return nil
     end
 end

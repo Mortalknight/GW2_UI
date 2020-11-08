@@ -579,7 +579,6 @@ local function updateQuest(block, questWatchId)
     local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local isComplete = C_QuestLog.IsComplete(questID)
-    local campaignID = C_CampaignInfo.GetCampaignID(questID)
 
     if questID then
         if savedQuests[questID] == nil then
@@ -778,11 +777,10 @@ local function updateQuestLogLayout(intent, frame)
     end
 
     for i = 1, numQuests do
-        local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
-        local campaignID = C_CampaignInfo.GetCampaignID(questID)
+        local questInfo = C_QuestLog.GetInfo(i)
         
         -- Campaing Quests
-        if campaignID > 0 then
+        if questInfo.campaignID ~= nil then
             if shouldShowCampaign then
                 GwCampaginHeader:Show()
                 counterCampaign = counterCampaign + 1
@@ -795,7 +793,7 @@ local function updateQuestLogLayout(intent, frame)
                     return
                 end
 
-                updateQuest(block, i, counterCampaign)
+                updateQuest(block, i)
                 block:Show()
                 savedHeightCampagin = savedHeightCampagin + block.height
                 updateQuestItemPositions(i, savedHeightCampagin)
@@ -818,7 +816,7 @@ local function updateQuestLogLayout(intent, frame)
                 if block == nil then
                     return
                 end
-                updateQuest(block, i, counterQuest)
+                updateQuest(block, i)
                 block:Show()
                 savedHeightQuest = savedHeightQuest + block.height
                 updateQuestItemPositions(i, savedHeightQuest, "QUEST")
