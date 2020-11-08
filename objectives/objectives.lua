@@ -1049,9 +1049,6 @@ local function LoadQuestTracker()
 
     fNotify.shouldDisplay = false
     fTracker.elapsedTimer = -1
-    fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
-    fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-    fTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     fTracker:SetScript("OnUpdate", tracker_OnUpdate)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, nil, true, {"scaleable", "height"}, nil, true)
