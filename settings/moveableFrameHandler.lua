@@ -246,7 +246,7 @@ local function heightEditBoxValueChanged(self)
 
     SetSetting(moverFrame.gw_Settings .."_height", roundValue)
 
-    moverFrame.gw_frame:SetHeigt(roundValue)
+    moverFrame.gw_frame:SetHeight(roundValue)
     moverFrame:SetHeight(roundValue)
 end
 
