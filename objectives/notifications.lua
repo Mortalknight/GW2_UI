@@ -3,11 +3,12 @@ local L = GW.L
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
-
-local C_QuestLog_GetInfo= C_QuestLog.GetInfo
+local ParseSimpleObjective = GW.ParseSimpleObjective
 
 local currentNotificationKey = ""
+local currentNotificationObject = 1
 local notifications = {}
+local questCompass = {}
 
 local icons = {
     ["QUEST"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
@@ -72,21 +73,56 @@ local function getNearestQuestPOI()
         return nil
     end
 
-    local numQuests = C_QuestLog.GetNumQuestWatches()
-    if GW.locationData.x == nil or GW.locationData.y == nil or numQuests == nil then
+    local numTrackedQuests = C_QuestLog.GetNumQuestWatches()
+    local numTrackedWQ = C_QuestLog.GetNumWorldQuestWatches()
+    local numQuests = C_QuestLog.GetNumQuestLogEntries()
+
+    if (GW.locationData.x == nil or GW.locationData.y == nil) and (numTrackedQuests == 0 or numTrackedWQ == 0 or numQuests) then
         return nil
     end
 
     local closestQuestID
     local minDistSqr = math.huge
-    local questCompass = {}
-    for i = 1, numQuests do
-        local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
-        if questID and QuestHasPOIInfo(questID) then
-            local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-            if onContinent and distSqr <= minDistSqr then
-                minDistSqr = distSqr;
-                closestQuestID = questID
+    local isWQ = false
+    wipe(questCompass)
+
+    -- first check for nearest tracker WQ
+    for i = 1, numTrackedWQ do
+        local watchedWorldQuestID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+        if watchedWorldQuestID then
+            local distanceSq = C_QuestLog.GetDistanceSqToQuest(watchedWorldQuestID)
+            if distanceSq and distanceSq <= minDistSqr then
+                minDistSqr = distanceSq;
+                closestQuestID = watchedWorldQuestID
+                isWQ = true
+            end
+        end
+    end
+
+    -- if nothing was found lock for nearest tracked quest
+    if not closestQuestID then
+        for i = 1, numTrackedQuests do
+            local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
+            if questID and QuestHasPOIInfo(questID) then
+                local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+                if onContinent and distSqr <= minDistSqr then
+                    minDistSqr = distSqr
+                    closestQuestID = questID
+                end
+            end
+        end
+    end
+
+    -- If nothing with POI data is being tracked expand search to quest log
+    if not closestQuestID then
+        for questLogIndex = 1, numQuests do
+            local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
+            if questID and QuestCache:Get(questID):IsOnMap() and QuestHasPOIInfo(questID) then
+                local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+                if onContinent and distSqr <= minDistSqr then
+                    minDistSqr = distSqr
+                    closestQuestID = questID
+                end
             end
         end
     end
@@ -97,16 +133,16 @@ local function getNearestQuestPOI()
             local dx = GW.locationData.x - poiX
             local dy = GW.locationData.y - poiY
             local dist = sqrt(dx * dx + dy * dy)
-            local objectiveText = getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
-            local compaignID = C_CampaignInfo.GetCampaignID(closestQuestID)
+            local objectiveText = isWQ and ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
+            local isCampaign = QuestCache:Get(closestQuestID):IsCampaign()
             questCompass.DESC = objectiveText
             questCompass.TITLE = QuestUtils_GetQuestName(closestQuestID)
             questCompass.ID = closestQuestID
             questCompass.X = poiX
             questCompass.Y = poiY
             questCompass.QUESTID = closestQuestID
-            questCompass.TYPE = compaignID > 0 and "CAMPAIGN" or "QUEST"
-            questCompass.COLOR = compaignID > 0 and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
+            questCompass.TYPE = isCampaign and "CAMPAIGN" or "QUEST"
+            questCompass.COLOR = isCampaignand and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
             questCompass.COMPASS = true
 
             return questCompass
@@ -257,14 +293,21 @@ local function SetObjectiveNotification()
     if UnitIsDeadOrGhost("PLAYER") then
         data = getBodyPOI()
     end
+
     if data == nil then
         data = getNearestQuestPOI()
     end
-
     if data == nil then
         removeNotification(currentNotificationKey)
         return
     end
+
+    -- check if we already track that data, if yes, we do not update the tracker
+    if currentNotificationObject == data  then 
+        return
+    end
+    -- save current tracked object
+    currentNotificationObject = data
 
     local key = data.TYPE
     local title = data.TITLE
@@ -317,12 +360,15 @@ local function SetObjectiveNotification()
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end
 
-        GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+        if not GwObjectivesNotification.compass.Timer then
+            GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+        end
         GwObjectivesNotification.icon:SetTexture(nil)
     else
         GwObjectivesNotification.compass:Hide()
         if GwObjectivesNotification.compass.Timer then
             GwObjectivesNotification.compass.Timer:Cancel()
+            GwObjectivesNotification.compass.Timer = nil
         end
     end
 

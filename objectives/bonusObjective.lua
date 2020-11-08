@@ -279,10 +279,11 @@ local function updateBonusObjective(self, event)
     trackedEventIDs = {}
 
     for i = 1, C_QuestLog.GetNumWorldQuestWatches() do
-        if trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)] == nil then
-            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)] = {}
-            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)].ID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
-            trackedEventIDs[C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)].tracked = true
+        local wqID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+        if trackedEventIDs[wqID] == nil then
+            trackedEventIDs[wqID] = {}
+            trackedEventIDs[wqID].ID = wqID
+            trackedEventIDs[wqID].tracked = true
             EventToShow = true
         end
     end

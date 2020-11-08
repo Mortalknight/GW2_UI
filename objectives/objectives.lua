@@ -8,6 +8,7 @@ local AddToAnimation = GW.AddToAnimation
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
+local questInfo = {}
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -574,11 +575,11 @@ local function updateQuest(block, questWatchId)
     block.turnin:Hide()
 
     local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(questWatchId)
-    local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
-    local questInfo = C_QuestLog.GetInfo(questLogIndex)
-    local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
-    local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
-    local isComplete = C_QuestLog.IsComplete(questID)
+    local quest = QuestCache:Get(questID)
+    local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
+    local isComplete = quest:IsComplete()
+    local questLogIndex = quest:GetQuestLogIndex()
+    questInfo = C_QuestLog.GetInfo(questLogIndex)
 
     if questID then
         if savedQuests[questID] == nil then
@@ -590,18 +591,18 @@ local function updateQuest(block, questWatchId)
         block.id = questID
         block.questLogIndex = questLogIndex
 
-        block.Header:SetText(questInfo.title)
+        block.Header:SetText(quest.title)
 
         --Quest item
         UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
 
-        if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
+        if numObjectives == 0 and GetMoney() >= quest.requiredMoney and not questInfo.startEvent then
             isComplete = true
         end
 
-        updateQuestObjective(block, numObjectives, isComplete, questInfo.title)
+        updateQuestObjective(block, numObjectives, quest:IsComplete(), quest.title)
 
-        if requiredMoney ~= nil and requiredMoney > GetMoney() then
+        if quest.requiredMoney ~= nil and quest.requiredMoney > GetMoney() then
             addObjective(
                 block,
                 GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney),
@@ -612,7 +613,7 @@ local function updateQuest(block, questWatchId)
         end
 
         if isComplete then
-            if questInfo.isAutoComplete then
+            if quest.isAutoComplete then
                 addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
                 block.turnin:Show()
                 block.turnin:SetScript(
@@ -777,10 +778,10 @@ local function updateQuestLogLayout(intent, frame)
     end
 
     for i = 1, numQuests do
-        local questInfo = C_QuestLog.GetInfo(i)
+        local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
         
         -- Campaing Quests
-        if questInfo.campaignID ~= nil then
+        if QuestCache:Get(questID):IsCampaign() then
             if shouldShowCampaign then
                 GwCampaginHeader:Show()
                 counterCampaign = counterCampaign + 1
@@ -1040,7 +1041,7 @@ local function LoadQuestTracker()
 
     fNotify.shouldDisplay = false
     fTracker.elapsedTimer = -1
-    C_Timer.NewTicker(0.33, function() tracker_OnUpdate(fTracker) end)
+    C_Timer.NewTicker(1, function() tracker_OnUpdate(fTracker) end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, nil, true, {"scaleable", "height"}, nil, true)
     fTracker:ClearAllPoints()
