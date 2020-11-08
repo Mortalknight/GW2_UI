@@ -44,6 +44,7 @@ GW.AddForProfiling("notifications", "prioritys", prioritys)
 local function getQuestPOIText(questLogIndex)
     local finalText = ""
     local text, finished
+    local numFinished = 0
     local numItemDropTooltips = GetNumQuestItemDrops(questLogIndex)
     if numItemDropTooltips and numItemDropTooltips > 0 then
         for i = 1, numItemDropTooltips do
@@ -51,7 +52,9 @@ local function getQuestPOIText(questLogIndex)
             if text and not finished then
                 finalText = finalText .. text .. "\n"
             end
+            if finished then numFinished = numFinished + 1 end
         end
+        if finalText == "" and numItemDropTooltips == numFinished then finalText = QUEST_WATCH_QUEST_READY end
     else
         local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
         for i = 1, numObjectives do
@@ -62,7 +65,9 @@ local function getQuestPOIText(questLogIndex)
             elseif text and numObjectives == 1  and finished then
                 finalText = QUEST_WATCH_QUEST_READY
             end
+            if finished then numFinished = numFinished + 1 end
         end
+        if finalText == "" and numObjectives == numFinished then finalText = QUEST_WATCH_QUEST_READY end
     end
     return finalText
 end
@@ -142,7 +147,7 @@ local function getNearestQuestPOI()
             questCompass.Y = poiY
             questCompass.QUESTID = closestQuestID
             questCompass.TYPE = isCampaign and "CAMPAIGN" or "QUEST"
-            questCompass.COLOR = isCampaignand and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
+            questCompass.COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
             questCompass.COMPASS = true
 
             return questCompass
