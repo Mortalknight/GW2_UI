@@ -8,7 +8,6 @@ local AddToAnimation = GW.AddToAnimation
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
-local updateCap = 1 / 3
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -747,7 +746,7 @@ local function QuestTrackerLayoutChanged()
     local height = GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() - 80 -- 80 for headers
     local scroll = 0
     local trackerHeight = GetSetting("QuestTracker_pos_height")
-    if height > trackerHeight then
+    if height > tonumber(trackerHeight) then
         scroll = math.abs(trackerHeight - height)
     end
     GwQuestTrackerScroll.maxScroll = scroll
@@ -861,13 +860,7 @@ local function tracker_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
-local function tracker_OnUpdate(self, elapsed)
-    self.elapsedTimer = self.elapsedTimer - elapsed
-    if self.elapsedTimer > 0 then
-        return
-    end
-    self.elapsedTimer = updateCap
-
+local function tracker_OnUpdate(self)
     local prevState = GwObjectivesNotification.shouldDisplay
 
     if GW.locationData.mapID then
@@ -1049,7 +1042,7 @@ local function LoadQuestTracker()
 
     fNotify.shouldDisplay = false
     fTracker.elapsedTimer = -1
-    fTracker:SetScript("OnUpdate", tracker_OnUpdate)
+    C_Timer.NewTicker(0.33, function() tracker_OnUpdate(fTracker) end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, nil, true, {"scaleable", "height"}, nil, true)
     fTracker:ClearAllPoints()

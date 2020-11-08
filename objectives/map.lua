@@ -249,6 +249,7 @@ local function hoverMiniMapOut()
             if child == GwMapCoords then
                 GwMapCoords:SetScript("OnUpdate", nil)
                 if GwMapCoords.CoordsTimer then
+                    GwMapCoords.CoordsTimer:Cancel()
                     GwMapCoords.CoordsTimer = nil
                 end
             end

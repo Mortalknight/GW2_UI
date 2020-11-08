@@ -212,15 +212,10 @@ GW.NotificationStateChanged = NotificationStateChanged
 
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
-local function updateRadar(self, elapsed)
+local function updateRadar(self)
     if not GW.locationData.mapID then
         return
     end
-    self.TotalElapsed = self.TotalElapsed + elapsed
-    if self.TotalElapsed < 0.025 then
-        return
-    end
-    self.TotalElapsed = 0
 
     if GW.locationData.x == nil or GW.locationData.y == nil or self.data.X == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
@@ -318,12 +313,13 @@ local function SetObjectiveNotification()
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end
 
-        GwObjectivesNotification.compass.TotalElapsed = 0
-        GwObjectivesNotification.compass:SetScript("OnUpdate", updateRadar)
+        GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         GwObjectivesNotification.icon:SetTexture(nil)
     else
         GwObjectivesNotification.compass:Hide()
-        GwObjectivesNotification.compass:SetScript("OnUpdate", nil)
+        if GwObjectivesNotification.compass.Timer then
+            GwObjectivesNotification.compass.Timer:Cancel()
+        end
     end
 
     GwObjectivesNotification.title:SetText(title)
