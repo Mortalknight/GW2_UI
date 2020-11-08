@@ -743,10 +743,16 @@ end
 --]]
 local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
-    GwQuestTrackerScroll:SetSize(
-        400,
-        GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight()
-    )
+    -- adjust scrolframe height
+    local height = GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() - 80 -- 80 for headers
+    local scroll = 0
+    local trackerHeight = GetSetting("QuestTracker_pos_height")
+    if height > trackerHeight then
+        scroll = math.abs(trackerHeight - height)
+    end
+    GwQuestTrackerScroll.maxScroll = scroll
+
+    GwQuestTrackerScroll:SetSize(GwQuestTracker:GetWidth(), height)
 end
 GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
@@ -908,14 +914,19 @@ local function LoadQuestTracker()
     local fTracker = CreateFrame("Frame", "GwQuestTracker", UIParent, "GwQuestTracker")
 
     local fTraScr = CreateFrame("ScrollFrame", "GwQuestTrackerScroll", fTracker, "GwQuestTrackerScroll")
+    fTraScr:SetHeight(GetSetting("QuestTracker_pos_height"))
     fTraScr:SetScript(
         "OnMouseWheel",
         function(self, delta)
             delta = -delta * 15
             local s = math.max(0, self:GetVerticalScroll() + delta)
+            if self.maxScroll ~= nil then
+                s = math.min(self.maxScroll, s)
+            end
             self:SetVerticalScroll(s)
         end
     )
+    fTraScr.maxScroll = 0
 
     local fScroll = CreateFrame("Frame", "GwQuestTrackerScrollChild", fTraScr, "GwQuestTracker")
 
@@ -960,7 +971,7 @@ local function LoadQuestTracker()
     fQuest:SetPoint("TOPRIGHT", fCampaign, "BOTTOMRIGHT")
     fBonus:SetPoint("TOPRIGHT", fQuest, "BOTTOMRIGHT")
 
-    fScroll:SetSize(400, 2)
+    fScroll:SetSize(fTracker:GetWidth(), 2)
     fTraScr:SetScrollChild(fScroll)
 
     fQuest:SetScript("OnEvent", tracker_OnEvent)
@@ -1048,7 +1059,6 @@ local function LoadQuestTracker()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
 
-    print(fTracker.isMoved)
     if not fTracker.isMoved then
         fTracker.gwMover:ClearAllPoints()
         if map_enabled then

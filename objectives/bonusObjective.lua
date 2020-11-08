@@ -326,7 +326,7 @@ local function updateBonusObjective(self, event)
             end
         end
     end
-    
+
     QuestTrackerLayoutChanged()
 end
 GW.AddForProfiling("bonusObjective", "updateBonusObjective", updateBonusObjective)
