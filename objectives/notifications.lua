@@ -72,46 +72,48 @@ local function getNearestQuestPOI()
         return nil
     end
 
-    local numQuests = C_QuestLog.GetNumQuestLogEntries()
+    local numQuests = C_QuestLog.GetNumQuestWatches()
     if GW.locationData.x == nil or GW.locationData.y == nil or numQuests == nil then
         return nil
     end
 
-    local closest = false
+    local closestQuestID
+    local minDistSqr = math.huge
     local questCompass = {}
-    for questLogIndex = 1, numQuests do
-        local questInfo = C_QuestLog_GetInfo(questLogIndex)
-        
-        if not questInfo.isHeader and questInfo.hasLocalPOI then
-            local _, poiX, poiY, _ = QuestPOIGetIconInfo(questInfo.questID)
-
-            if poiX then
-                local dx = GW.locationData.x - poiX
-                local dy = GW.locationData.y - poiY
-                local dist = sqrt(dx * dx + dy * dy)
-                if not closest or dist < closest then
-                    closest = dist
-                    local objectiveText = getQuestPOIText(questLogIndex)
-                    questCompass.DESC = objectiveText
-                    questCompass.TITLE = questInfo.title
-                    questCompass.ID = questInfo.questID
-                    questCompass.X = poiX
-                    questCompass.Y = poiY
-                    questCompass.QUESTID = questInfo.questID
-                    questCompass.TYPE = questInfo.campaignID ~= nil and "CAMPAIGN" or "QUEST"
-                    questCompass.COLOR = questInfo.campaignID ~= nil and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
-                    questCompass.COMPASS = true
-                end
+    for i = 1, numQuests do
+        local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
+        if questID and QuestHasPOIInfo(questID) then
+            local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+            if onContinent and distSqr <= minDistSqr then
+                minDistSqr = distSqr;
+                closestQuestID = questID
             end
         end
-        questInfo = nil
     end
-    if closest then
-        return questCompass
-    else
-        wipe(questCompass)
-        return nil
+
+    if closestQuestID then
+        local _, poiX, poiY, _ = QuestPOIGetIconInfo(closestQuestID)
+        if poiX then
+            local dx = GW.locationData.x - poiX
+            local dy = GW.locationData.y - poiY
+            local dist = sqrt(dx * dx + dy * dy)
+            local objectiveText = getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
+            local compaignID = C_CampaignInfo.GetCampaignID(closestQuestID)
+            questCompass.DESC = objectiveText
+            questCompass.TITLE = QuestUtils_GetQuestName(closestQuestID)
+            questCompass.ID = closestQuestID
+            questCompass.X = poiX
+            questCompass.Y = poiY
+            questCompass.QUESTID = closestQuestID
+            questCompass.TYPE = compaignID > 0 and "CAMPAIGN" or "QUEST"
+            questCompass.COLOR = compaignID > 0 and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
+            questCompass.COMPASS = true
+
+            return questCompass
+        end
     end
+
+    return nil
 end
 GW.AddForProfiling("notifications", "getNearestQuestPOI", getNearestQuestPOI)
 
