@@ -90,8 +90,6 @@ local function loadQuestButtons()
         actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
         actionButton:SetScript("OnLeave", GameTooltip_Hide)
         actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
-        actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
-        
     end
 
     actionButton = CreateFrame("Button", "GwBonusItemButton", GwQuestTracker, "GwQuestItemTemplate")
@@ -103,7 +101,6 @@ local function loadQuestButtons()
     actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
     actionButton:SetScript("OnLeave", GameTooltip_Hide)
     actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
-    actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
 
     actionButton = CreateFrame("Button", "GwScenarioItemButton", GwQuestTracker, "GwQuestItemTemplate")
     actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -114,7 +111,6 @@ local function loadQuestButtons()
     actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
     actionButton:SetScript("OnLeave", GameTooltip_Hide)
     actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
-    actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
 end
 GW.AddForProfiling("objectives", "loadQuestButtons", loadQuestButtons)
 
@@ -545,6 +541,7 @@ local function UpdateQuestItem(button, questLogIndex)
 
     if item == nil or questLogIndex == 0 then
         button:Hide()
+        button:SetScript("OnUpdate", nil)
         return
     end
 
@@ -559,6 +556,7 @@ local function UpdateQuestItem(button, questLogIndex)
     SetItemButtonCount(button, charges)
 
     QuestObjectiveItem_UpdateCooldown(button)
+    button:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
     button:Show()
 end
 GW.UpdateQuestItem = UpdateQuestItem
