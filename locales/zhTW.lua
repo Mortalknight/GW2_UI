@@ -339,8 +339,8 @@ local function GWUseThisLocalization()
 	L["WORLD_MARKER_DESC"] = "在團隊中時顯示世界標記工具。"
     L["EXTRA_AB_NAME"] = "首領按鈕"
 	L["ZONE_ANILITY_AB_NAME"] = "區域技能"
-	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
-    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
+	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": 使用暴雪顏色"
+    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": 數字顯示逗號"
 	
 	-- Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
