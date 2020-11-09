@@ -155,7 +155,7 @@ GW.ParseCriteria = ParseCriteria
 local function ParseObjectiveString(block, text, objectiveType, quantity)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
-        block.StatusBar:SetValue(quantity)
+        block.StatusBar:SetValue(quantity or 0)
         block.StatusBar:Show()
         block.StatusBar.precentage = true
         return true
@@ -450,6 +450,36 @@ local function getBlockCampaign(blockIndex)
 end
 GW.AddForProfiling("objectives", "getBlockCampaign", getBlockCampaign)
 
+local function getBlockByID(questID, isCampaign)
+    local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
+    local correctBlock
+
+    for i = 1, 25 do
+        if _G[blockName .. i] ~= nil then
+            if _G[blockName .. i].questID == questID then
+                return _G[blockName .. i]
+            elseif _G[blockName .. i].questID == nil then
+                return isCampaign and getBlockCampaign(i) or getBlockQuest(i)
+            end
+        end
+    end
+
+    return correctBlock
+end
+
+local function getQuestWatchId(questID)
+    local questWatchId
+
+    for i = 1, C_QuestLog.GetNumQuestWatches() do
+        if questID == C_QuestLog.GetQuestIDForQuestWatchIndex(i) then
+            questWatchId = 1
+            break
+        end
+    end
+
+    return questWatchId
+end
+
 local function addObjective(block, text, finished, objectiveIndex, objectiveType)
     if finished == true then
         return
@@ -570,7 +600,7 @@ local function OnBlockClickHandler(self, button)
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
-local function updateQuest(block, questWatchId)
+local function updateQuest(self, block, questWatchId)
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
@@ -580,12 +610,19 @@ local function updateQuest(block, questWatchId)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local questLogIndex = quest:GetQuestLogIndex()
+    local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     questInfo = C_QuestLog.GetInfo(questLogIndex)
 
     if questID then
         if savedQuests[questID] == nil then
             NewQuestAnimation(block)
             savedQuests[questID] = true
+        end
+
+        if requiredMoney then
+            self.watchMoneyReasons = self.watchMoneyReasons + 1
+        else
+            self.watchMoneyReasons = self.watchMoneyReasons - 1
         end
 
         block.questID = questID
@@ -597,17 +634,17 @@ local function updateQuest(block, questWatchId)
         --Quest item
         UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
 
-        if numObjectives == 0 and GetMoney() >= quest.requiredMoney and not questInfo.startEvent then
+        if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
             isComplete = true
         end
 
         updateQuestObjective(block, numObjectives, quest:IsComplete(), quest.title)
 
-        if quest.requiredMoney ~= nil and quest.requiredMoney > GetMoney() then
+        if requiredMoney ~= nil and requiredMoney > GetMoney() then
             addObjective(
                 block,
                 GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney),
-                finished,
+                isComplete,
                 block.numObjectives + 1,
                 nil
             )
@@ -642,6 +679,92 @@ local function updateQuest(block, questWatchId)
             block.joingroup:Hide()
         end
     end
+    if block.objectiveBlocks == nil then
+        block.objectiveBlocks = {}
+    end
+
+    for i = block.numObjectives + 1, 20 do
+        if _G[block:GetName() .. "GwQuestObjective" .. i] ~= nil then
+            _G[block:GetName() .. "GwQuestObjective" .. i]:Hide()
+        end
+    end
+    block.height = block.height + 5
+    block:SetHeight(block.height)
+end
+GW.AddForProfiling("objectives", "updateQuest", updateQuest)
+
+local function updateQuestByID(self, block, questID, questWatchId)
+    block.height = 25
+    block.numObjectives = 0
+    block.turnin:Hide()
+
+    local quest = QuestCache:Get(questID)
+    local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
+    local isComplete = quest:IsComplete()
+    local questLogIndex = quest:GetQuestLogIndex()
+    local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
+    questInfo = C_QuestLog.GetInfo(questLogIndex)
+
+    if requiredMoney then
+        self.watchMoneyReasons = self.watchMoneyReasons + 1
+    else
+        self.watchMoneyReasons = self.watchMoneyReasons - 1
+    end
+
+    block.questID = questID
+    block.id = questID
+    block.questLogIndex = questLogIndex
+
+    block.Header:SetText(quest.title)
+
+    --Quest item
+    UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
+
+    if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
+        isComplete = true
+    end
+
+    updateQuestObjective(block, numObjectives, quest:IsComplete(), quest.title)
+
+    if requiredMoney ~= nil and requiredMoney > GetMoney() then
+        addObjective(
+            block,
+            GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney),
+            isComplete,
+            block.numObjectives + 1,
+            nil
+        )
+    end
+
+    if isComplete then
+        if quest.isAutoComplete then
+            addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
+            block.turnin:Show()
+            block.turnin:SetScript(
+                "OnClick",
+                function()
+                    ShowQuestComplete(questLogIndex)
+                end
+            )
+        else
+            local completionText = GetQuestLogCompletionText(questLogIndex)
+
+            if (completionText) then
+                addObjective(block, completionText, false, block.numObjectives + 1, nil)
+            else
+                addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
+            end
+        end
+    end
+    block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
+    block:SetScript("OnClick", OnBlockClickHandler)
+    --add groupfinder button
+    if C_LFGList.CanCreateQuestGroup(block.questID) then
+        block.joingroup:Show()
+    else
+        block.joingroup:Hide()
+    end
+
     if block.objectiveBlocks == nil then
         block.objectiveBlocks = {}
     end
@@ -756,7 +879,12 @@ local function QuestTrackerLayoutChanged()
 end
 GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
-local function updateQuestLogLayout(intent, frame)
+local function updateQuestLogLayout(self, intent, frame)
+    if self.isUpdating or not self.init then
+        return
+    end
+    self.isUpdating = true
+
     local questFrame = Campaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
     local counterQuest = 0
     local counterCampaign = 0
@@ -795,7 +923,7 @@ local function updateQuestLogLayout(intent, frame)
                     return
                 end
 
-                updateQuest(block, i)
+                updateQuest(self, block, i)
                 block:Show()
                 savedHeightCampagin = savedHeightCampagin + block.height
                 updateQuestItemPositions(i, savedHeightCampagin)
@@ -818,7 +946,7 @@ local function updateQuestLogLayout(intent, frame)
                 if block == nil then
                     return
                 end
-                updateQuest(block, i)
+                updateQuest(self, block, i)
                 block:Show()
                 savedHeightQuest = savedHeightQuest + block.height
                 updateQuestItemPositions(i, savedHeightQuest, "QUEST")
@@ -838,12 +966,14 @@ local function updateQuestLogLayout(intent, frame)
     -- hide other quests
     for i = counterCampaign + 1, 25 do
         if _G["GwCampaignBlock" .. i] ~= nil then
+            _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i]:Hide()
             UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
         end
     end
     for i = counterQuest + 1, 25 do
         if _G["GwQuestBlock" .. i] ~= nil then
+            _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i]:Hide()
             UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
         end
@@ -852,11 +982,87 @@ local function updateQuestLogLayout(intent, frame)
     if counterCampaign == 0 then GwCampaginHeader:Hide() end
 
     QuestTrackerLayoutChanged()
+
+    self.isUpdating = false
 end
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
+local function updateQuestLogLayoutSingle(self, questID, ...)
+    if self.isUpdating or not self.init then
+        return
+    end
+    self.isUpdating = true
+
+    -- get the correct quest block for that questID
+    local isCampaign = QuestCache:Get(questID):IsCampaign() 
+    local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
+    local questWatchId = getQuestWatchId(questID)
+    local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
+    local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
+    local savedHeight = 1
+
+    if questWatchId ~= nil then
+        if questBlockOfIdOrNew ~= nil then
+            updateQuestByID(self,questBlockOfIdOrNew, questID, questWatchId)
+            questBlockOfIdOrNew:Show()
+        end
+
+        for i = 1, 25 do
+            if _G[blockName .. i] and _G[blockName .. i]:IsShown() then
+                savedHeight = savedHeight + _G[blockName .. i].height
+            end
+        end
+
+        containerName:SetHeight(savedHeight)
+        updateQuestItemPositions(questWatchId, savedHeight, isCampaign and "" or "QUEST")
+    end
+
+    QuestTrackerLayoutChanged()
+
+    self.isUpdating = false
+end
+
 local function tracker_OnEvent(self, event, ...)
-    updateQuestLogLayout(...)
+    local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
+
+    if event == "QUEST_LOG_UPDATE" then
+		updateQuestLogLayout(self, ...)
+	elseif event == "QUEST_ACCEPTED" then
+		local questID = ...
+		if not C_QuestLog.IsQuestBounty(questID) then
+			if C_QuestLog.IsQuestTask(questID) then
+				if not QuestUtils_IsQuestWorldQuest(questID) then
+                    updateQuestLogLayoutSingle(self, questID)
+				end
+			else
+				if AUTO_QUEST_WATCH == "1" and C_QuestLog.GetNumQuestWatches() < Constants.QuestWatchConsts.MAX_QUEST_WATCHES then
+                    updateQuestLogLayoutSingle(self, questID)
+				end
+			end
+		end
+	elseif event == "QUEST_WATCH_LIST_CHANGED" then
+		local questID, added = ...
+		if added then
+			if not C_QuestLog.IsQuestBounty(questID) or C_QuestLog.IsComplete(questID) then
+                updateQuestLogLayoutSingle(self, questID)
+			end
+        else
+            if savedQuests[questID] ~= nil then
+                savedQuests[questID] = nil
+            end
+			updateQuestLogLayout(self, ...)
+		end
+	elseif event == "QUEST_AUTOCOMPLETE" then
+		local questId = ...
+        updateQuestLogLayoutSingle(self, questID)
+    elseif event == "PLAYER_MONEY" and self.watchMoneyReasons > numWatchedQuests then
+        updateQuestLogLayout(self, ...)
+    elseif event == "LOAD" then
+        updateQuestLogLayout(self, ...)
+        self.init = true
+    end
+
+    if self.watchMoneyReasons > numWatchedQuests then self.watchMoneyReasons = self.watchMoneyReasons - numWatchedQuests end
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
@@ -969,21 +1175,11 @@ local function LoadQuestTracker()
 
     fQuest:SetScript("OnEvent", tracker_OnEvent)
     fQuest:RegisterEvent("QUEST_LOG_UPDATE")
-    fQuest:RegisterEvent("QUEST_ITEM_UPDATE")
-    fQuest:RegisterEvent("QUEST_REMOVED")
-    fQuest:RegisterEvent("QUESTLINE_UPDATE")
-    fQuest:RegisterEvent("TASK_PROGRESS_UPDATE")
     fQuest:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
     fQuest:RegisterEvent("QUEST_AUTOCOMPLETE")
     fQuest:RegisterEvent("QUEST_ACCEPTED")
-    fQuest:RegisterEvent("QUEST_GREETING")
-    fQuest:RegisterEvent("QUEST_DETAIL")
-    fQuest:RegisterEvent("QUEST_PROGRESS")
-    fQuest:RegisterEvent("QUEST_COMPLETE")
-    fQuest:RegisterEvent("QUEST_FINISHED")
-    fQuest:RegisterEvent("QUEST_POI_UPDATE")
     fQuest:RegisterEvent("PLAYER_MONEY")
-    fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
+    fQuest.watchMoneyReasons = 0
 
     local headerCampagin = CreateFrame("Button", "GwCampaginHeader", fCampaign, "GwQuestTrackerHeader")
     headerCampagin.icon:SetTexCoord(0.5, 1, 0, 0.25)
@@ -1002,7 +1198,7 @@ local function LoadQuestTracker()
                 p.collapsed = false
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
-            updateQuestLogLayout("COLLAPSE", p)
+            updateQuestLogLayout(fQuest, "COLLAPSE", p)
         end
     )
     headerCampagin.title:SetTextColor(TRACKER_TYPE_COLOR.CAMPAIGN.r, TRACKER_TYPE_COLOR.CAMPAIGN.g, TRACKER_TYPE_COLOR.CAMPAIGN.b)
@@ -1024,13 +1220,14 @@ local function LoadQuestTracker()
                 p.collapsed = false
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
-            updateQuestLogLayout("COLLAPSE", p)
+            updateQuestLogLayout(fQuest, "COLLAPSE", p)
         end
     )
     header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
 
     loadQuestButtons()
-    updateQuestLogLayout("LOAD")
+    fQuest.init = false
+    tracker_OnEvent(fQuest, "LOAD")
 
     GW.LoadBossFrame()
     if not IsAddOnLoaded("sArena") then
@@ -1048,19 +1245,11 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_LOST")
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
     compassUpdateFrame:RegisterEvent("QUEST_LOG_UPDATE")
-    compassUpdateFrame:RegisterEvent("QUEST_ITEM_UPDATE")
-    compassUpdateFrame:RegisterEvent("QUEST_REMOVED")
-    compassUpdateFrame:RegisterEvent("QUESTLINE_UPDATE")
-    compassUpdateFrame:RegisterEvent("TASK_PROGRESS_UPDATE")
     compassUpdateFrame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
     compassUpdateFrame:RegisterEvent("QUEST_AUTOCOMPLETE")
     compassUpdateFrame:RegisterEvent("QUEST_ACCEPTED")
-    compassUpdateFrame:RegisterEvent("QUEST_GREETING")
-    compassUpdateFrame:RegisterEvent("QUEST_DETAIL")
-    compassUpdateFrame:RegisterEvent("QUEST_PROGRESS")
-    compassUpdateFrame:RegisterEvent("QUEST_COMPLETE")
-    compassUpdateFrame:RegisterEvent("QUEST_FINISHED")
-    compassUpdateFrame:RegisterEvent("QUEST_POI_UPDATE")
+    compassUpdateFrame:RegisterEvent("PLAYER_MONEY")
+    compassUpdateFrame:RegisterEvent("QUEST_ITEM_UPDATE")
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
