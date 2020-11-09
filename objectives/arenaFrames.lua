@@ -48,7 +48,7 @@ local function setCompass(isArena)
         compassData.TITLE = GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])
         compassData.DESC = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
     else
-        compassData.TITLE = ARENA
+        compassData.TITLE = select(2, GetBattlefieldStatus(1))
         compassData.DESC = VOICEMACRO_2_Ta_1_FEMALE
     end
 
@@ -183,7 +183,7 @@ local function arenaFrame_OnEvent(self, event, unit)
         updateArena_Power(self)
     elseif event == "PLAYER_TARGET_CHANGED" then
         updateArena_Name(self)
-    elseif IsIn(event, "PLAYER_ENTERING_WORLD", "UNIT_NAME_UPDATE", "ARENA_OPPONENT_UPDATE") then 
+    elseif IsIn(event, "PLAYER_ENTERING_WORLD", "PLAYER_ENTERING_BATTLEGROUND", "UNIT_NAME_UPDATE", "ARENA_OPPONENT_UPDATE") then 
         updateArena_Health(self)
         updateArena_Power(self)
         updateArena_Name(self)
@@ -228,7 +228,7 @@ local function arenaPrepFrame_OnEvent()
         else
             prepFrame:Hide()
         end
-    end 
+    end
 end
 GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
 
@@ -260,6 +260,7 @@ local function registerFrame(i)
 
     arenaFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     arenaFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    arenaFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     arenaFrame:RegisterEvent("ARENA_OPPONENT_UPDATE")
     arenaFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
     arenaFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
@@ -354,6 +355,7 @@ local function LoadArenaFrame()
 
     -- Log event for compass Header
     local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
     f:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     f:SetScript("OnEvent", function(self, event)
         C_Timer.After(0.8, function()
