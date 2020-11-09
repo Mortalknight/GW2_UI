@@ -5,6 +5,7 @@ local GetSetting = GW.GetSetting
 local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local IsIn = GW.IsIn
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
@@ -862,7 +863,7 @@ GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 local function tracker_OnUpdate(self)
     local prevState = GwObjectivesNotification.shouldDisplay
 
-    if GW.locationData.mapID then
+    if GW.locationData.mapID or GW.locationData.instanceMapID then
         GW.SetObjectiveNotification()
     end
 
@@ -1040,8 +1041,39 @@ local function LoadQuestTracker()
     GW.LoadBonusFrame()
 
     fNotify.shouldDisplay = false
-    fTracker.elapsedTimer = -1
-    C_Timer.NewTicker(1, function() tracker_OnUpdate(fTracker) end)
+    -- only update the tracker on Events or if player moves
+    local compassUpdateFrame = CreateFrame("Frame")
+    compassUpdateFrame:RegisterEvent("PLAYER_STARTED_MOVING")
+    compassUpdateFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
+    compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_LOST")
+    compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
+    compassUpdateFrame:RegisterEvent("QUEST_LOG_UPDATE")
+    compassUpdateFrame:RegisterEvent("QUEST_ITEM_UPDATE")
+    compassUpdateFrame:RegisterEvent("QUEST_REMOVED")
+    compassUpdateFrame:RegisterEvent("QUESTLINE_UPDATE")
+    compassUpdateFrame:RegisterEvent("TASK_PROGRESS_UPDATE")
+    compassUpdateFrame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+    compassUpdateFrame:RegisterEvent("QUEST_AUTOCOMPLETE")
+    compassUpdateFrame:RegisterEvent("QUEST_ACCEPTED")
+    compassUpdateFrame:RegisterEvent("QUEST_GREETING")
+    compassUpdateFrame:RegisterEvent("QUEST_DETAIL")
+    compassUpdateFrame:RegisterEvent("QUEST_PROGRESS")
+    compassUpdateFrame:RegisterEvent("QUEST_COMPLETE")
+    compassUpdateFrame:RegisterEvent("QUEST_FINISHED")
+    compassUpdateFrame:RegisterEvent("QUEST_POI_UPDATE")
+    compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
+        -- Events for start updating
+        if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
+            self.Ticker = C_Timer.NewTicker(1, function() tracker_OnUpdate(fTracker) end)
+        elseif IsIn(event, "PLAYER_STOPPED_MOVING", "PLAYER_CONTROL_GAINED") then -- Events for stop updating
+            if self.Ticker then
+                self.Ticker:Cancel()
+                self.Ticker = nil
+            end
+        else
+            tracker_OnUpdate(fTracker)
+        end
+    end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, nil, true, {"scaleable", "height"}, nil, true)
     fTracker:ClearAllPoints()

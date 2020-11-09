@@ -152,7 +152,6 @@ local function registerFrame(i)
             local compassData = {}
 
             compassData.TYPE = "BOSS"
-            compassData.TITLE = "Unknown"
             compassData.ID = "boss_unknown"
             compassData.QUESTID = "unknown"
             compassData.COMPASS = false
