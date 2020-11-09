@@ -40,8 +40,7 @@ local bgIndex = {}
     bgIndex[2106] = 1       -- Warsong
     bgIndex[2118] = 12      -- Wintergrasp
 
-local function setCompass()
-    local isArena = IsActiveBattlefieldArena()
+local function setCompass(isArena)
     local compassData = {}
 
     -- parse current BG date here, to show the correct name and subname
@@ -49,7 +48,7 @@ local function setCompass()
         compassData.TITLE = GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])
         compassData.DESC = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
     else
-        compassData.TITLE = ARENA
+        compassData.TITLE = select(2, GetBattlefieldStatus(1))
         compassData.DESC = VOICEMACRO_2_Ta_1_FEMALE
     end
 
@@ -74,7 +73,7 @@ local function updateArenaFrameHeight(frames)
         end
     end
 
-    GwQuesttrackerContainerBossFrames:SetHeight(i > 0 and 1 + (frames[i]:GetHeight() * i) or 1)
+    GwQuesttrackerContainerBossFrames:SetHeight(i > 0 and (35 * i) or 1)
 end
 GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)
 
@@ -184,7 +183,7 @@ local function arenaFrame_OnEvent(self, event, unit)
         updateArena_Power(self)
     elseif event == "PLAYER_TARGET_CHANGED" then
         updateArena_Name(self)
-    elseif IsIn(event, "PLAYER_ENTERING_WORLD", "UNIT_NAME_UPDATE", "ARENA_OPPONENT_UPDATE") then 
+    elseif IsIn(event, "PLAYER_ENTERING_WORLD", "PLAYER_ENTERING_BATTLEGROUND", "UNIT_NAME_UPDATE", "ARENA_OPPONENT_UPDATE") then 
         updateArena_Health(self)
         updateArena_Power(self)
         updateArena_Name(self)
@@ -229,7 +228,7 @@ local function arenaPrepFrame_OnEvent()
         else
             prepFrame:Hide()
         end
-    end 
+    end
 end
 GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
 
@@ -259,6 +258,16 @@ local function registerFrame(i)
     arenaFrame.marker:Hide()
     arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
 
+    arenaFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    arenaFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    arenaFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    arenaFrame:RegisterEvent("ARENA_OPPONENT_UPDATE")
+    arenaFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
+    arenaFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
+    arenaFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
+    arenaFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
+    arenaFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+
     arenaFrame:SetScript(
         "OnShow",
         function(self)
@@ -269,16 +278,7 @@ local function registerFrame(i)
                 end
             end
 
-            self:RegisterEvent("PLAYER_TARGET_CHANGED")
-            self:RegisterEvent("PLAYER_ENTERING_WORLD")
-            self:RegisterEvent("ARENA_OPPONENT_UPDATE")
-            self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
-            self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
-            self:RegisterUnitEvent("UNIT_MAXPOWER", self.unit)
-            self:RegisterUnitEvent("UNIT_POWER_FREQUENT", self.unit)
-            self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-
-            updateArenaFrameHeight(arenaPrepFrames)
+            updateArenaFrameHeight(arenaFrames)
 
             updateArena_Health(self)
             updateArena_Power(self)
@@ -300,8 +300,6 @@ local function registerFrame(i)
                 RemoveTrackerNotificationOfType("ARENA")
                 countArenaFrames = 0
             end
-
-            self:UnregisterAllEvents()
         end
     )
 
@@ -352,24 +350,25 @@ local function LoadArenaFrame()
     --create prepframe frame to handle events
     local arenaPrepFrame = CreateFrame("Frame")
     arenaPrepFrame:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+    arenaPrepFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     arenaPrepFrame:SetScript("OnEvent", arenaPrepFrame_OnEvent)
 
     -- Log event for compass Header
     local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
     f:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     f:SetScript("OnEvent", function(self, event)
         C_Timer.After(0.8, function()
             local isArena = IsActiveBattlefieldArena()
             local inBG = UnitInBattleground("player")
-
             if not isArena and inBG == nil then
                 return
             end
 
-            setCompass()
+            setCompass(isArena)
+            updateArenaFrameHeight(arenaFrames)
         end)
     end)
-
-    updateArenaFrameHeight(arenaFrames)
+    C_Timer.After(0.01, function() updateArenaFrameHeight(arenaFrames) end)
 end
 GW.LoadArenaFrame = LoadArenaFrame

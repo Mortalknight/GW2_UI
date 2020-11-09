@@ -22,12 +22,11 @@ local icons = {
 }
 
 local notification_priority = {
-    ["DEAD"] = 1,
-    ["EVENT_NEARBY"] = 2,
-    ["SCENARIO"] = 3,
-    ["EVENT"] = 4,
-    ["ARENA"] = 5,
-    ["BOSS"] = 6,
+    ["EVENT_NEARBY"] = 1,
+    ["SCENARIO"] = 2,
+    ["EVENT"] = 3,
+    ["ARENA"] = 4,
+    ["BOSS"] = 5,
 }
 
 local function prioritys(a, b)
@@ -195,7 +194,6 @@ local function AddTrackerNotification(data)
     if data == nil or data.ID == nil then
         return
     end
-
     notifications[data.ID] = data
 end
 GW.AddTrackerNotification = AddTrackerNotification
@@ -294,7 +292,6 @@ local function SetObjectiveNotification()
             end
         end
     end
-
     if UnitIsDeadOrGhost("PLAYER") then
         data = getBodyPOI()
     end
