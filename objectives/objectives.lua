@@ -8,7 +8,6 @@ local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
-local savedQuests = {}
 local questInfo = {}
 
 local function wiggleAnim(self)
@@ -614,11 +613,6 @@ local function updateQuest(self, block, questWatchId)
     questInfo = C_QuestLog.GetInfo(questLogIndex)
 
     if questID then
-        if savedQuests[questID] == nil then
-            NewQuestAnimation(block)
-            savedQuests[questID] = true
-        end
-
         if requiredMoney then
             self.watchMoneyReasons = self.watchMoneyReasons + 1
         else
@@ -1003,8 +997,11 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
 
     if questWatchId ~= nil then
         if questBlockOfIdOrNew ~= nil then
-            updateQuestByID(self,questBlockOfIdOrNew, questID, questWatchId)
+            updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
             questBlockOfIdOrNew:Show()
+            if ... == true then
+                NewQuestAnimation(_G[blockName .. "1"]) -- new quests always on top
+            end
         end
 
         for i = 1, 25 do
@@ -1043,13 +1040,10 @@ local function tracker_OnEvent(self, event, ...)
 	elseif event == "QUEST_WATCH_LIST_CHANGED" then
 		local questID, added = ...
 		if added then
-			if not C_QuestLog.IsQuestBounty(questID) or C_QuestLog.IsComplete(questID) then
-                updateQuestLogLayoutSingle(self, questID)
+            if not C_QuestLog.IsQuestBounty(questID) or C_QuestLog.IsComplete(questID) then
+                updateQuestLogLayoutSingle(self, questID, added)
 			end
         else
-            if savedQuests[questID] ~= nil then
-                savedQuests[questID] = nil
-            end
 			updateQuestLogLayout(self, ...)
 		end
 	elseif event == "QUEST_AUTOCOMPLETE" then
