@@ -778,11 +778,11 @@ local helperFrameToSetQuestaButtonPositionAfterCombat = CreateFrame("Frame")
 helperFrameToSetQuestaButtonPositionAfterCombat:Hide()
 helperFrameToSetQuestaButtonPositionAfterCombat:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_REGEN_ENABLED" then
-        GW.updateQuestItemPositions(self.index, self.type, self.block)
+        GW.updateQuestItemPositions(self.index, self.height, self.type, self.block)
         self:UnregisterAllEvents()
     end
 end)
-local function updateQuestItemPositions(index, type, block)
+local function updateQuestItemPositions(index, height, type, block)
     if _G["GwQuestItemButton" .. index] == nil or not block.hasItem then
         return
     end
@@ -790,13 +790,26 @@ local function updateQuestItemPositions(index, type, block)
     if InCombatLockdown() then
         helperFrameToSetQuestaButtonPositionAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
         helperFrameToSetQuestaButtonPositionAfterCombat.index = index
+        helperFrameToSetQuestaButtonPositionAfterCombat.height = height
         helperFrameToSetQuestaButtonPositionAfterCombat.type = type
         helperFrameToSetQuestaButtonPositionAfterCombat.block = block
         return
     end
+    height = height + GwQuesttrackerContainerScenario:GetHeight() --+ 25
+    height = height + GwQuesttrackerContainerAchievement:GetHeight()
+    if GwObjectivesNotification:IsShown() then
+        height = height + GwObjectivesNotification.desc:GetHeight() --+ 20
+    end
+    if GwQuesttrackerContainerBossFrames:IsShown() then
+        height = height + GwQuesttrackerContainerBossFrames:GetHeight()
+    end
+    if type == "QUEST" then
+        height = height + GwQuesttrackerContainerCampaign:GetHeight()
+    end
 
-    _G["GwQuestItemButton" .. index]:SetPoint("TOPLEFT", block, "TOPRIGHT", -330, -25)
+    _G["GwQuestItemButton" .. index]:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 end
+GW.updateQuestItemPositions = updateQuestItemPositions
 GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
 local helperFrameToSetExtraButtonPositionAfterCombat = CreateFrame("Frame")
@@ -906,7 +919,7 @@ local function updateQuestLogLayout(self, intent, frame)
                 updateQuest(self, block, i)
                 block:Show()
                 savedHeightCampagin = savedHeightCampagin + block.height
-                updateQuestItemPositions(i, nil, block)
+                updateQuestItemPositions(i, savedHeightCampagin, nil, block)
             else
                 counterCampaign = counterCampaign + 1
                 if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
@@ -929,7 +942,7 @@ local function updateQuestLogLayout(self, intent, frame)
                 updateQuest(self, block, i)
                 block:Show()
                 savedHeightQuest = savedHeightQuest + block.height
-                updateQuestItemPositions(i, "QUEST", block)
+                updateQuestItemPositions(i, savedHeightQuest, "QUEST", block)
             else
                 counterQuest = counterQuest + 1
                 if _G["GwQuestBlock" .. counterQuest] ~= nil then
@@ -995,7 +1008,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         end
 
         containerName:SetHeight(savedHeight)
-        updateQuestItemPositions(questWatchId, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
+        updateQuestItemPositions(questWatchId, savedHeight, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
     end
 
     self.isUpdating = false
