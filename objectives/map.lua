@@ -712,6 +712,10 @@ local function LoadMinimap()
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
 
+    -- remove quest blob
+    Minimap:SetArchBlobRingScalar(0)
+    Minimap:SetQuestBlobRingScalar(0)
+
     Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
 
     SetMinimapPosition()

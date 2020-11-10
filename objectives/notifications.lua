@@ -6,7 +6,6 @@ local AddToAnimation = GW.AddToAnimation
 local ParseSimpleObjective = GW.ParseSimpleObjective
 
 local currentNotificationKey = ""
-local currentNotificationObject = 1
 local notifications = {}
 local questCompass = {}
 
@@ -121,7 +120,8 @@ local function getNearestQuestPOI()
     if not closestQuestID then
         for questLogIndex = 1, numQuests do
             local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-            if questID and QuestCache:Get(questID):IsOnMap() and QuestHasPOIInfo(questID) then
+            local isOnMap, hasLocalPOI = QuestCache:Get(questID):IsOnMap()
+            if questID and isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
                 local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
                 if onContinent and distSqr <= minDistSqr then
                     minDistSqr = distSqr
@@ -277,6 +277,7 @@ local function updateRadar(self)
 end
 GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
+local currentCompassData
 local function SetObjectiveNotification()
     if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then return end
 
@@ -303,13 +304,6 @@ local function SetObjectiveNotification()
         removeNotification(currentNotificationKey)
         return
     end
-
-    -- check if we already track that data, if yes, we do not update the tracker
-    if currentNotificationObject == data  then 
-        return
-    end
-    -- save current tracked object
-    currentNotificationObject = data
 
     local key = data.TYPE
     local title = data.TITLE
@@ -362,7 +356,14 @@ local function SetObjectiveNotification()
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end
 
-        if not GwObjectivesNotification.compass.Timer then
+        if currentCompassData and currentCompassData ~= GwObjectivesNotification.compass.dataIndex then
+            currentCompassData = GwObjectivesNotification.compass.dataIndex
+            if GwObjectivesNotification.compass.Timer then
+                GwObjectivesNotification.compass.Timer:Cancel()
+            end
+            GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+        elseif not currentCompassData then
+            currentCompassData = GwObjectivesNotification.compass.dataIndex
             GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         end
         GwObjectivesNotification.icon:SetTexture(nil)
