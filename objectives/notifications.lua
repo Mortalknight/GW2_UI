@@ -120,7 +120,8 @@ local function getNearestQuestPOI()
     if not closestQuestID then
         for questLogIndex = 1, numQuests do
             local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-            if questID and QuestCache:Get(questID):IsOnMap() and QuestHasPOIInfo(questID) then
+            local isOnMap, hasLocalPOI = QuestCache:Get(questID):IsOnMap()
+            if questID and isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
                 local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
                 if onContinent and distSqr <= minDistSqr then
                     minDistSqr = distSqr

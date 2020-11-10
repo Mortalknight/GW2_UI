@@ -648,8 +648,8 @@ local function updateQuest(self, block, questWatchId)
                 block.turnin:Show()
                 block.turnin:SetScript(
                     "OnClick",
-                    function()
-                        ShowQuestComplete(questLogIndex)
+                    function(self)
+                        ShowQuestComplete(self:GetParent().id)
                     end
                 )
             else
@@ -734,8 +734,8 @@ local function updateQuestByID(self, block, questID, questWatchId)
             block.turnin:Show()
             block.turnin:SetScript(
                 "OnClick",
-                function()
-                    ShowQuestComplete(questLogIndex)
+                function(self)
+                    ShowQuestComplete(self:GetParent().id)
                 end
             )
         else
@@ -980,7 +980,7 @@ end
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
 local function updateQuestLogLayoutSingle(self, questID, ...)
-    if self.isUpdating or not self.init then
+    if self.isUpdating or not self.init or not questID then
         return
     end
     self.isUpdating = true
