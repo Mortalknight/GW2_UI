@@ -16,6 +16,13 @@ GW_PROFILE_ICONS_PRESET[3] = 135990 -- Interface/icons/ability_priest_ascendance
 GW_PROFILE_ICONS_PRESET[4] = 1033914 -- Interface/icons/spell_mage_overpowered
 GW_PROFILE_ICONS_PRESET[5] = 298660 -- Interface/icons/achievement_boss_kingymiron
 GW_PROFILE_ICONS_PRESET[6] = 135791 -- Interface/icons/spell_fire_elementaldevastation
+GW_PROFILE_ICONS_PRESET[7] = 538514 -- Interface/icons/spell_druid_displacement
+GW_PROFILE_ICONS_PRESET[8] = 1041232 -- Interface/icons/ability_socererking_arcanemines
+GW_PROFILE_ICONS_PRESET[9] = 236304 -- Interface/icons/ability_warrior_bloodbath
+GW_PROFILE_ICONS_PRESET[10] = 135990 -- Interface/icons/ability_priest_ascendance
+GW_PROFILE_ICONS_PRESET[11] = 1033914 -- Interface/icons/spell_mage_overpowered
+GW_PROFILE_ICONS_PRESET[12] = 298660 -- Interface/icons/achievement_boss_kingymiron
+GW_PROFILE_ICONS_PRESET[13] = 135791 -- Interface/icons/spell_fire_elementaldevastation
 
 -- local forward function defs
 local updateProfiles = nil
@@ -305,7 +312,7 @@ updateProfiles = function(self)
 
     local h = 0
     local profiles = GetSettingsProfiles()
-    for i = 0, 6 do
+    for i = 0, 13 do
         local k = i
         local v = profiles[i]
         local f = self.profile_buttons[k + 1]
@@ -347,10 +354,12 @@ updateProfiles = function(self)
         end
     end
 
-    if h < 7 then
+    if h < 14 then
         self.createNew:Enable()
+        self.importProfile:Enable()
     else
         self.createNew:Disable()
+        self.importProfile:Disable()
     end
 
     local scrollM = (120 + (70 * h))
@@ -374,14 +383,14 @@ local function addProfile(self, name, profileData)
     local index = 0
     local profileList = GetSettingsProfiles()
 
-    for i = 0, 7 do
+    for i = 0, 13 do
         index = i
         if profileList[i] == nil then
             break
         end
     end
 
-    if index > 6 then
+    if index > 13 then
         return
     end
 
