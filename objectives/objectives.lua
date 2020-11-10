@@ -1242,6 +1242,8 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("QUEST_ACCEPTED")
     compassUpdateFrame:RegisterEvent("PLAYER_MONEY")
     compassUpdateFrame:RegisterEvent("QUEST_ITEM_UPDATE")
+    compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
