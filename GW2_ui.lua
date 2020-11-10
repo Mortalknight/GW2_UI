@@ -544,8 +544,6 @@ local function loadAddon(self)
     if GetSetting("GW_COMBAT_TEXT_ENABLED") then
         SetCVar("floatingCombatTextCombatDamage", 0)
         GW.LoadDamageText()
-    else
-        SetCVar("floatingCombatTextCombatDamage", 1)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
