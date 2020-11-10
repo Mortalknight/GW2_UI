@@ -122,6 +122,7 @@ local function updateCurrentScenario()
             compassData.TITLE = name
             compassData.DESC = difficultyName
             GW.AddTrackerNotification(compassData)
+            GwScenarioBlock.height = GwScenarioBlock.height + 5
         else
             GW.RemoveTrackerNotificationOfType("SCENARIO")
             GwScenarioBlock:Hide()
@@ -132,8 +133,6 @@ local function updateCurrentScenario()
                 _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
             end
         end
-
-        GwScenarioBlock.height = GwScenarioBlock.height + 5
 
         GwScenarioBlock:SetHeight(GwScenarioBlock.height)
         GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)

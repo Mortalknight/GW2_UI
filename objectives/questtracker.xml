@@ -271,6 +271,30 @@
                     </Layer>
                 </Layers>
             </Button>
+            <Button name="$parentClickToAccept" hidden="true" parentKey="popupQuestAccept">
+                <size x="90" y="90"></size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="-1">
+                        <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\reward-icon-flare">
+                            <size x="200" y="200"></size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\autoquest-icon">
+                            <size x="140" y="140"></size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
             <Button name="$parentJoinGroup" hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="joingroup">
                 <Size x="25" y="25"></Size>
                 <Anchors>
