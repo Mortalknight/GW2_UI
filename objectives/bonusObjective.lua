@@ -195,7 +195,7 @@ local function setUpBlock(questIDs)
             GwBonusObjectiveBlock.module = module
 
             GwBonusHeader:Show()
-            UpdateQuestItem(GwBonusItemButton, questLogIndex)
+            UpdateQuestItem(GwBonusItemButton, questLogIndex, GwBonusObjectiveBlock)
 
             foundEvent = true
 
@@ -267,7 +267,7 @@ local function updateBonusObjective(self, event)
     RemoveTrackerNotificationOfType("EVENT_NEARBY")
     RemoveTrackerNotificationOfType("BONUS")
 
-    UpdateQuestItem(GwBonusItemButton, 0)
+    UpdateQuestItem(GwBonusItemButton, 0, nil)
 
     local tasks = GetTasksTable()
     local EventToShow = false
@@ -321,8 +321,8 @@ local function updateBonusObjective(self, event)
             end
         end
     else
-        for i = 1, 20 do
-            if _G["GwBonusObjectiveBlock" .. i] ~= nil and i > shownBlocks then
+        for i = shownBlocks + 1, 20 do
+            if _G["GwBonusObjectiveBlock" .. i] ~= nil then
                 _G["GwBonusObjectiveBlock" .. i]:Hide()
             end
         end

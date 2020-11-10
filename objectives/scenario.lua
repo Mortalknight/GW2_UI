@@ -126,7 +126,7 @@ local function updateCurrentScenario()
             GW.RemoveTrackerNotificationOfType("SCENARIO")
             GwScenarioBlock:Hide()
         end
-        UpdateQuestItem(GwScenarioItemButton, 0)
+        UpdateQuestItem(GwScenarioItemButton, 0, GwScenarioBlock)
         for i = GwScenarioBlock.numObjectives + 1, 20 do
             if _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
                 _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
@@ -172,7 +172,7 @@ local function updateCurrentScenario()
         questLogIndex = GetQuestLogIndexByID(questID)
     end
 
-    UpdateQuestItem(GwScenarioItemButton, questLogIndex)
+    UpdateQuestItem(GwScenarioItemButton, questLogIndex, GwScenarioBlock)
 
     for criteriaIndex = 1, numCriteria do
         local criteriaString, _, _, quantity, totalQuantity, _, _, _, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)

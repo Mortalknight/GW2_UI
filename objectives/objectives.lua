@@ -528,7 +528,7 @@ local function updateQuestObjective(block, numObjectives, isComplete, title)
 end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
-local function UpdateQuestItem(button, questLogIndex)
+local function UpdateQuestItem(button, questLogIndex, block)
     if InCombatLockdown() or not questLogIndex then
         return
     end
@@ -542,8 +542,11 @@ local function UpdateQuestItem(button, questLogIndex)
     if item == nil or questLogIndex == 0 then
         button:Hide()
         button:SetScript("OnUpdate", nil)
+        if block then block.hasItem = false end
         return
     end
+
+    if block then block.hasItem = true end
 
     button:SetID(questLogIndex)
 
@@ -624,7 +627,7 @@ local function updateQuest(self, block, questWatchId)
         block.Header:SetText(quest.title)
 
         --Quest item
-        UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
+        UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex, block)
 
         if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
             isComplete = true
@@ -710,7 +713,7 @@ local function updateQuestByID(self, block, questID, questWatchId)
     block.Header:SetText(quest.title)
 
     --Quest item
-    UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex)
+    UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex, block)
 
     if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
         isComplete = true
@@ -775,40 +778,25 @@ local helperFrameToSetQuestaButtonPositionAfterCombat = CreateFrame("Frame")
 helperFrameToSetQuestaButtonPositionAfterCombat:Hide()
 helperFrameToSetQuestaButtonPositionAfterCombat:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_REGEN_ENABLED" then
-        GW.updateQuestItemPositions(self.index, self.height, self.type)
+        GW.updateQuestItemPositions(self.index, self.type, self.block)
         self:UnregisterAllEvents()
     end
 end)
-local function updateQuestItemPositions(index, height, type)
-    if _G["GwQuestItemButton" .. index] == nil then
+local function updateQuestItemPositions(index, type, block)
+    if _G["GwQuestItemButton" .. index] == nil or not block.hasItem then
         return
     end
 
     if InCombatLockdown() then
         helperFrameToSetQuestaButtonPositionAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
         helperFrameToSetQuestaButtonPositionAfterCombat.index = index
-        helperFrameToSetQuestaButtonPositionAfterCombat.height = height
         helperFrameToSetQuestaButtonPositionAfterCombat.type = type
+        helperFrameToSetQuestaButtonPositionAfterCombat.block = block
         return
     end
 
-    height = height + GwQuesttrackerContainerScenario:GetHeight() --+ 25
-    height = height + GwQuesttrackerContainerAchievement:GetHeight()
-    if type == "QUEST" then
-        height = height + GwQuesttrackerContainerCampaign:GetHeight()
-    end
-
-    if GwObjectivesNotification:IsShown() then
-        height = height + GwObjectivesNotification.desc:GetHeight() --+ 20
-    end
-
-    if GwQuesttrackerContainerBossFrames:IsShown() then
-        height = height + GwQuesttrackerContainerBossFrames:GetHeight()
-    end
-
-    _G["GwQuestItemButton" .. index]:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
+    _G["GwQuestItemButton" .. index]:SetPoint("TOPLEFT", block, "TOPRIGHT", -330, -25)
 end
-GW.updateQuestItemPositions = updateQuestItemPositions
 GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
 local helperFrameToSetExtraButtonPositionAfterCombat = CreateFrame("Frame")
@@ -918,12 +906,12 @@ local function updateQuestLogLayout(self, intent, frame)
                 updateQuest(self, block, i)
                 block:Show()
                 savedHeightCampagin = savedHeightCampagin + block.height
-                updateQuestItemPositions(i, savedHeightCampagin)
+                updateQuestItemPositions(i, nil, block)
             else
                 counterCampaign = counterCampaign + 1
                 if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
                     _G["GwCampaignBlock" .. counterCampaign]:Hide()
-                    UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
+                    UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, G["GwCampaignBlock" .. counterCampaign])
                 end
             end
         else
@@ -941,12 +929,12 @@ local function updateQuestLogLayout(self, intent, frame)
                 updateQuest(self, block, i)
                 block:Show()
                 savedHeightQuest = savedHeightQuest + block.height
-                updateQuestItemPositions(i, savedHeightQuest, "QUEST")
+                updateQuestItemPositions(i, "QUEST", block)
             else
                 counterQuest = counterQuest + 1
                 if _G["GwQuestBlock" .. counterQuest] ~= nil then
                     _G["GwQuestBlock" .. counterQuest]:Hide()
-                    UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
+                    UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, _G["GwQuestBlock" .. counterQuest])
                 end
             end
         end
@@ -960,20 +948,18 @@ local function updateQuestLogLayout(self, intent, frame)
         if _G["GwCampaignBlock" .. i] ~= nil then
             _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i]:Hide()
-            UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
+            UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, _G["GwCampaignBlock" .. i])
         end
     end
     for i = counterQuest + 1, 25 do
         if _G["GwQuestBlock" .. i] ~= nil then
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i]:Hide()
-            UpdateQuestItem(_G["GwQuestItemButton" .. i], 0)
+            UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, _G["GwQuestBlock" .. counterQuest])
         end
     end
 
     if counterCampaign == 0 then GwCampaginHeader:Hide() end
-
-    QuestTrackerLayoutChanged()
 
     self.isUpdating = false
 end
@@ -1009,10 +995,8 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         end
 
         containerName:SetHeight(savedHeight)
-        updateQuestItemPositions(questWatchId, savedHeight, isCampaign and "" or "QUEST")
+        updateQuestItemPositions(questWatchId, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
     end
-
-    QuestTrackerLayoutChanged()
 
     self.isUpdating = false
 end
@@ -1055,6 +1039,7 @@ local function tracker_OnEvent(self, event, ...)
     end
 
     if self.watchMoneyReasons > numWatchedQuests then self.watchMoneyReasons = self.watchMoneyReasons - numWatchedQuests end
+    QuestTrackerLayoutChanged()
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
