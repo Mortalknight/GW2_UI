@@ -1187,7 +1187,6 @@ local function LoadClassPowers()
         cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()
         lmb:SetSize(GwPlayerPowerBar:GetWidth(), 5)
-        lmb:SetScale(GwPlayerPowerBar:GetScale())
         lmb.bar:SetHeight(5)
         lmb.candy:SetHeight(5)
         lmb.candy.spark:SetHeight(5)
