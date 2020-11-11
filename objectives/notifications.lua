@@ -134,6 +134,10 @@ local function getNearestQuestPOI()
 
     if closestQuestID then
         local _, poiX, poiY, _ = QuestPOIGetIconInfo(closestQuestID)
+        if isWQ then 
+            poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.locationData.mapID)
+        end
+
         if poiX then
             local dx = GW.locationData.x - poiX
             local dy = GW.locationData.y - poiY
@@ -147,8 +151,8 @@ local function getNearestQuestPOI()
             questCompass.X = poiX
             questCompass.Y = poiY
             questCompass.QUESTID = closestQuestID
-            questCompass.TYPE = isCampaign and "CAMPAIGN" or isFrequent and "DAILY" or "QUEST"
-            questCompass.COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN or isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
+            questCompass.TYPE = isCampaign and "CAMPAIGN" or isFrequent and "DAILY" or isWQ and "EVENT" or "QUEST"
+            questCompass.COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN or isFrequent and TRACKER_TYPE_COLOR.DAILY or isWQ and TRACKER_TYPE_COLOR.BONUS or TRACKER_TYPE_COLOR.QUEST
             questCompass.COMPASS = true
 
             return questCompass

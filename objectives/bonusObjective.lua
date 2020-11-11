@@ -236,7 +236,9 @@ local function setUpBlock(questIDs)
 
             compassData.PROGRESS = objectiveProgress
 
-            AddTrackerNotification(compassData)
+            if isInArea then
+                AddTrackerNotification(compassData)
+            end
 
             savedHeight = savedHeight + GwBonusObjectiveBlock.height
 
