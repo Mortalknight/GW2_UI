@@ -836,7 +836,7 @@ local function updateQuestItemPositions(index, height, type, block)
         return
     end
 
-    local height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight()
+    local height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight()
     else
@@ -876,9 +876,11 @@ local function updateExtraQuestItemPositions(height)
         height = height + GwObjectivesNotification.desc:GetHeight() + 50
     end
 
+    height = height + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
+
     GwScenarioItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 
-    height = height + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight()
+    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight()
 
     -- get correct height for WQ block
     for i = 1, 20 do
@@ -1206,6 +1208,7 @@ local function LoadQuestTracker()
     fNotify.compass:SetScript("OnShow", NewQuestAnimation)
 
     local fBoss = CreateFrame("Frame", "GwQuesttrackerContainerBossFrames", fTracker, "GwQuesttrackerContainer")
+    local fArenaBG = CreateFrame("Frame", "GwQuesttrackerContainerArenaBGFrames", fTracker, "GwQuesttrackerContainer")
     local fScen = CreateFrame("Frame", "GwQuesttrackerContainerScenario", fTracker, "GwQuesttrackerContainer")
     local fAchv = CreateFrame("Frame", "GwQuesttrackerContainerAchievement", fTracker, "GwQuesttrackerContainer")
     local fCampaign = CreateFrame("Frame", "GwQuesttrackerContainerCampaign", fScroll, "GwQuesttrackerContainer")
@@ -1213,6 +1216,7 @@ local function LoadQuestTracker()
     local fBonus = CreateFrame("Frame", "GwQuesttrackerContainerBonusObjectives", fScroll, "GwQuesttrackerContainer")
     fNotify:SetParent(fTracker)
     fBoss:SetParent(fTracker)
+    fArenaBG:SetParent(fTracker)
     fScen:SetParent(fTracker)
     fAchv:SetParent(fScroll)
     fCampaign:SetParent(fScroll)
@@ -1221,7 +1225,8 @@ local function LoadQuestTracker()
 
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
     fBoss:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
-    fScen:SetPoint("TOPRIGHT", fBoss, "BOTTOMRIGHT")
+    fArenaBG:SetPoint("TOPRIGHT", fBoss, "BOTTOMRIGHT")
+    fScen:SetPoint("TOPRIGHT", fArenaBG, "BOTTOMRIGHT")
 
     fTraScr:SetPoint("TOPRIGHT", fScen, "BOTTOMRIGHT")
     fTraScr:SetPoint("BOTTOMRIGHT", fTracker, "BOTTOMRIGHT")
@@ -1331,6 +1336,7 @@ local function LoadQuestTracker()
 
     -- some hooks to set the itembuttons correct
     hooksecurefunc(fBoss, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
+    hooksecurefunc(fArenaBG, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
     fNotify:HookScript("OnShow", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
     fNotify:HookScript("OnHide", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
     hooksecurefunc(fAchv, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)

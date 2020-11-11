@@ -4,6 +4,7 @@ local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
+local GetSetting = GW.GetSetting
 local bossFrames = {}
 
 local function updateBossFrameHeight()
@@ -103,7 +104,8 @@ GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
 local function registerFrame(i)
     local bossFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
     local unit = "boss" .. i
-    local p = 70 + ((35 * i) - 35)
+    local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+    local p = yOffset + ((35 * i) - 35)
 
     bossFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 

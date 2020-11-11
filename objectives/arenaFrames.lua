@@ -8,6 +8,7 @@ local SetClassIcon = GW.SetClassIcon
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 local nameRoleIcon = GW.nameRoleIcon
+local GetSetting = GW.GetSetting
 local arenaFrames = {}
 local arenaPrepFrames = {}
 
@@ -73,7 +74,7 @@ local function updateArenaFrameHeight(frames)
         end
     end
 
-    GwQuesttrackerContainerBossFrames:SetHeight(i > 0 and (35 * i) or 1)
+    GwQuesttrackerContainerArenaBGFrames:SetHeight(i > 0 and (35 * i) or 1)
 end
 GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)
 
@@ -235,7 +236,8 @@ GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEve
 local function registerFrame(i)
     local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
     local unit = "arena" .. i
-    local p = 70 + ((35 * i) - 35)
+    local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+    local p = yOffset + ((35 * i) - 35)
 
     arenaFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
@@ -311,7 +313,8 @@ GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 
 local function registerPrepFrame(i)
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
-    local p = 70 + ((35 * i) - 35)
+    local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+    local p = yOffset + ((35 * i) - 35)
 
     arenaPrepFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
