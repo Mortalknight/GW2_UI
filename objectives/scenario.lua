@@ -168,7 +168,7 @@ local function updateCurrentScenario()
     local questLogIndex = 0
 
     if questID ~= nil then
-        questLogIndex = GetQuestLogIndexByID(questID)
+        questLogIndex = QuestCache:Get(questID):GetQuestLogIndex()
     end
 
     UpdateQuestItem(GwScenarioItemButton, questLogIndex, GwScenarioBlock)
