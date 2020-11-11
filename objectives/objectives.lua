@@ -797,6 +797,7 @@ questButtonHelperFrame:SetScript("OnEvent", function(self, event)
     end
     GW.updateQuestItemPositions(self.index, self.height, self.type, self.block)
 end)
+
 local function updateQuestItemPositions(index, height, type, block)
     if not index or _G["GwQuestItemButton" .. index] == nil or not block.hasItem then
         return
@@ -831,19 +832,21 @@ questExraButtonHelperFrame:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_REGEN_ENABLED" then
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
-    GW.updateExtraQuestItemPositions()
+    GW.updateExtraQuestItemPositions(self.height)
 end)
-local function updateExtraQuestItemPositions()
+
+local function updateExtraQuestItemPositions(height)
     if GwBonusItemButton == nil or GwScenarioItemButton == nil then
         return
     end
 
     if InCombatLockdown() then
         questExraButtonHelperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        questExraButtonHelperFrame.height = height
         return
     end
 
-    local height = 0
+    local height = height or 0
 
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight() + 50
@@ -851,11 +854,17 @@ local function updateExtraQuestItemPositions()
 
     GwScenarioItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 
-    if GwQuesttrackerContainerBossFrames:IsShown() then
-        height = height + GwQuesttrackerContainerBossFrames:GetHeight()
-    end
+    height = height + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight()
 
-    height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight()
+    -- get correct height for WQ block
+    for i = 1, 20 do
+        if _G["GwBonusObjectiveBlock" .. i] ~= nil and _G["GwBonusObjectiveBlock" .. i].questID then
+            if _G["GwBonusObjectiveBlock" .. i].hasItem then
+                break
+            end
+            height = height + _G["GwBonusObjectiveBlock" .. i]:GetHeight()
+        end
+    end
 
     GwBonusItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height + -25)
 end
