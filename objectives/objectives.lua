@@ -381,7 +381,11 @@ GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
 
 local function getBlockQuest(blockIndex)
     if _G["GwQuestBlock" .. blockIndex] ~= nil then
-        return _G["GwQuestBlock" .. blockIndex]
+        local block = _G["GwQuestBlock" .. blockIndex]
+        setBlockColor(block, "QUEST")
+        block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+        return block
     end
 
     local newBlock = CreateTrackerObject("GwQuestBlock" .. blockIndex, GwQuesttrackerContainerQuests)
@@ -468,6 +472,8 @@ local function getBlockByID(questID, isCampaign)
             elseif _G[blockName .. i].questID == nil then
                 return isCampaign and getBlockCampaign(i) or getBlockQuest(i)
             end
+        else
+            return isCampaign and getBlockCampaign(i) or getBlockQuest(i)
         end
     end
 
@@ -971,6 +977,17 @@ local function updateQuestLogLayout(self)
                     return
                 end
                 updateQuest(self, block, i)
+                --if quest is reapeataple make it blue
+                local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
+                if QuestCache:Get(questID).frequency == nil then
+                    questInfo = C_QuestLog.GetInfo(QuestCache:Get(questID):GetQuestLogIndex())
+                    isFrequency = questInfo.frequency > 0
+                end
+                if isFrequency then
+                    setBlockColor(block, "DAILY")
+                    block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+                    block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+                end
                 block:Show()
                 savedHeightQuest = savedHeightQuest + block.height
                 updateQuestItemPositions(i, savedHeightQuest, "QUEST", block)
@@ -1041,9 +1058,19 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
     local savedHeight = 1
-
     if questWatchId ~= nil then
         if questBlockOfIdOrNew ~= nil then
+            --if quest is frequency make it blue (here we need info from quest info because QuestCache is not ready)
+            local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
+            if QuestCache:Get(questID).frequency == nil then
+                questInfo = C_QuestLog.GetInfo(QuestCache:Get(questID):GetQuestLogIndex())
+                isFrequency = questInfo.frequency > 0
+            end
+            if isFrequency then
+                setBlockColor(questBlockOfIdOrNew, "DAILY")
+                questBlockOfIdOrNew.Header:SetTextColor(questBlockOfIdOrNew.color.r, questBlockOfIdOrNew.color.g, questBlockOfIdOrNew.color.b)
+                questBlockOfIdOrNew.hover:SetVertexColor(questBlockOfIdOrNew.color.r, questBlockOfIdOrNew.color.g, questBlockOfIdOrNew.color.b)
+            end
             updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
             questBlockOfIdOrNew:Show()
             if ... == true then

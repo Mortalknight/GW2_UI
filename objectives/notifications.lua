@@ -139,6 +139,7 @@ local function getNearestQuestPOI()
             local dist = sqrt(dx * dx + dy * dy)
             local objectiveText = isWQ and ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
             local isCampaign = QuestCache:Get(closestQuestID):IsCampaign()
+            local isFrequent = QuestCache:Get(closestQuestID).frequency and QuestCache:Get(closestQuestID).frequency > 0
             questCompass.DESC = objectiveText
             questCompass.TITLE = QuestUtils_GetQuestName(closestQuestID)
             questCompass.ID = closestQuestID
@@ -146,7 +147,7 @@ local function getNearestQuestPOI()
             questCompass.Y = poiY
             questCompass.QUESTID = closestQuestID
             questCompass.TYPE = isCampaign and "CAMPAIGN" or "QUEST"
-            questCompass.COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN or TRACKER_TYPE_COLOR.QUEST
+            questCompass.COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN or isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
             questCompass.COMPASS = true
 
             return questCompass
