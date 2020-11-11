@@ -1339,7 +1339,6 @@ local function LoadQuestTracker()
                 self.Ticker = nil
             end
         else
-            print(event)
             C_Timer.After(0.25, function() tracker_OnUpdate(fTracker) end)
         end
     end)
