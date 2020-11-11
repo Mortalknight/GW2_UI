@@ -995,6 +995,7 @@ local function updateQuestLogLayout(self)
                 questBlockOfIdOrNew.popupQuestAccept:Show()
                 questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
                     ShowQuestOffer(self:GetParent().id)
+                    RemoveAutoQuestPopUp(self:GetParent().id)
                     self:Hide()
                 end)
             end
