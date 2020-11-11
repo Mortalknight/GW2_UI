@@ -548,7 +548,7 @@ end)
 
 local function UpdateQuestItem(button, questLogIndex, block)
     if InCombatLockdown() or not button then
-        if block and questLogIndex and questLogIndex > 0 then
+        if block and questLogIndex and questLogIndex > 0 and GetQuestLogSpecialItemInfo(questLogIndex) then
             itemButtonUpdateAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
         return
