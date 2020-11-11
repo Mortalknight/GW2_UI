@@ -1,6 +1,25 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.8", [=[
+NEW
+    - Added scaling to the quest tracker and made it moveable
+    - Added new icons and animations for pop-up quests in the quest tracker
+    - Increased profile slots to 14
+
+FIXES
+    - Fixed memory leak related to quest tracker
+    - Fixed battleground ID changes
+    - Fixed quest tracker unlimited scrolling
+    - Fixed arena frames issues
+    - Fixed issues with quest auto-turn-in
+    - Removed the quest "blob ring" from the minimap
+
+OTHER
+    - Updated locales for Chinese (Taiwan), Italian, Russian, and Portuguese (Brazil)
+    - General clean-up of code, removing unused code.
+]=])
+
 v("5.4.7", [=[
 NEW
     - Added back our Quest Tracker (Note: This is only a fixed of the old one, a rework is still needed)
