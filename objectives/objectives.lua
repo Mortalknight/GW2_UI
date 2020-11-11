@@ -1067,7 +1067,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     local questWatchId = getQuestWatchId(questID)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
-    local savedHeight = 1
+    local savedHeight = 20
     if questWatchId ~= nil then
         if questBlockOfIdOrNew ~= nil then
             updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
@@ -1079,6 +1079,9 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
             for i = 1, 25 do
                 if _G[blockName .. i] and _G[blockName .. i]:IsShown() then
                     savedHeight = savedHeight + _G[blockName .. i].height
+                    if _G[blockName .. i].questID == questID then
+                        break
+                    end
                 end
             end
 
@@ -1130,8 +1133,8 @@ local function tracker_OnEvent(self, event, ...)
     elseif event == "QUEST_DATA_LOAD_RESULT" then
         local questId, success = ...
         local idx = C_QuestLog.GetLogIndexForQuestID(questId)
-        if success and idx and idx > 0 then
-            C_Timer.After(1, function() updateQuestLogLayout(self) end)
+        if success and questId and idx and idx > 0 then
+            C_Timer.After(1, function() updateQuestLogLayoutSingle(self, questId) end)
         end
     end
 
