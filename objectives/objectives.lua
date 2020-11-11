@@ -575,28 +575,27 @@ local function UpdateQuestItem(button, questLogIndex, block)
     local isQuestComplete = (block and block.questID) and QuestCache:Get(block.questID):IsComplete() or false
     local shouldShowItem = item and (not isQuestComplete or showItemWhenComplete)
 
-    if not shouldShowItem then
+    if shouldShowItem then
+        if block then block.hasItem = true end
+
+        button:SetID(questLogIndex)
+
+        button:SetAttribute("type", "item")
+        button:SetAttribute("item", link)
+
+        button.charges = charges
+        button.rangeTimer = -1
+        SetItemButtonTexture(button, item)
+        SetItemButtonCount(button, charges)
+
+        QuestObjectiveItem_UpdateCooldown(button)
+        button:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
+        button:Show()
+    else
         button:Hide()
         button:SetScript("OnUpdate", nil)
         if block then block.hasItem = false end
-        return
     end
-
-    if block then block.hasItem = true end
-
-    button:SetID(questLogIndex)
-
-    button:SetAttribute("type", "item")
-    button:SetAttribute("item", link)
-
-    button.charges = charges
-    button.rangeTimer = -1
-    SetItemButtonTexture(button, item)
-    SetItemButtonCount(button, charges)
-
-    QuestObjectiveItem_UpdateCooldown(button)
-    button:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
-    button:Show()
 end
 GW.UpdateQuestItem = UpdateQuestItem
 
@@ -1057,8 +1056,11 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     -- get the correct quest block for that questID
     local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
     if QuestCache:Get(questID).frequency == nil then
-        questInfo = C_QuestLog.GetInfo(QuestCache:Get(questID):GetQuestLogIndex())
-        isFrequency = questInfo.frequency > 0
+        local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
+        if questLogIndex and questLogIndex > 0 then
+            questInfo = C_QuestLog.GetInfo(questLogIndex)
+            isFrequency = questInfo.frequency > 0
+        end
     end
     local isCampaign = QuestCache:Get(questID):IsCampaign() 
     local questBlockOfIdOrNew = getBlockByID(questID, isCampaign, isFrequency)
@@ -1092,37 +1094,45 @@ local function tracker_OnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
     if event == "QUEST_LOG_UPDATE" then
-		updateQuestLogLayout(self)
-	elseif event == "QUEST_ACCEPTED" then
-		local questID = ...
-		if not C_QuestLog.IsQuestBounty(questID) then
-			if C_QuestLog.IsQuestTask(questID) then
-				if not QuestUtils_IsQuestWorldQuest(questID) then
+        updateQuestLogLayout(self)
+    elseif event == "QUEST_ACCEPTED" then
+        local questID = ...
+        if not C_QuestLog.IsQuestBounty(questID) then
+            if C_QuestLog.IsQuestTask(questID) then
+                if not QuestUtils_IsQuestWorldQuest(questID) then
                     updateQuestLogLayoutSingle(self, questID)
-				end
-			else
-				if AUTO_QUEST_WATCH == "1" and C_QuestLog.GetNumQuestWatches() < Constants.QuestWatchConsts.MAX_QUEST_WATCHES then
+                end
+            else
+                if AUTO_QUEST_WATCH == "1" and C_QuestLog.GetNumQuestWatches() < Constants.QuestWatchConsts.MAX_QUEST_WATCHES then
                     updateQuestLogLayoutSingle(self, questID)
-				end
-			end
-		end
-	elseif event == "QUEST_WATCH_LIST_CHANGED" then
-		local questID, added = ...
-		if added then
+                end
+            end
+        end
+    elseif event == "QUEST_WATCH_LIST_CHANGED" then
+        local questID, added = ...
+        if added then
             if not C_QuestLog.IsQuestBounty(questID) or C_QuestLog.IsComplete(questID) then
                 updateQuestLogLayoutSingle(self, questID, added)
-			end
+            end
         else
-			updateQuestLogLayout(self)
-		end
-	elseif event == "QUEST_AUTOCOMPLETE" then
-		local questId = ...
+            updateQuestLogLayout(self)
+        end
+    elseif event == "QUEST_AUTOCOMPLETE" then
+        local questId = ...
         updateQuestLogLayoutSingle(self, questID)
     elseif event == "PLAYER_MONEY" and self.watchMoneyReasons > numWatchedQuests then
         updateQuestLogLayout(self)
-    elseif event == "LOAD" or event == "PLAYER_ENTERING_WORLD" then
+    elseif event == "LOAD" then
         updateQuestLogLayout(self)
         self.init = true
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+    elseif event == "QUEST_DATA_LOAD_RESULT" then
+        local questId, success = ...
+        local idx = C_QuestLog.GetLogIndexForQuestID(questId)
+        if success and idx and idx > 0 then
+            C_Timer.After(1, function() updateQuestLogLayout(self) end)
+        end
     end
 
     if self.watchMoneyReasons > numWatchedQuests then self.watchMoneyReasons = self.watchMoneyReasons - numWatchedQuests end
