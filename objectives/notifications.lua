@@ -18,6 +18,7 @@ local icons = {
     ["BOSS"] = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
     ["DEAD"] = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
     ["ARENA"] = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
+    ["DAILY"] = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
 }
 
 local notification_priority = {
@@ -146,7 +147,7 @@ local function getNearestQuestPOI()
             questCompass.X = poiX
             questCompass.Y = poiY
             questCompass.QUESTID = closestQuestID
-            questCompass.TYPE = isCampaign and "CAMPAIGN" or "QUEST"
+            questCompass.TYPE = isCampaign and "CAMPAIGN" or isFrequent and "DAILY" or "QUEST"
             questCompass.COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN or isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
             questCompass.COMPASS = true
 
