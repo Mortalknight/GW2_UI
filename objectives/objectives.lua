@@ -540,18 +540,30 @@ local function updateQuestObjective(block, numObjectives, isComplete, title)
 end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
+local itemButtonUpdateAfterCombat = CreateFrame("Frame")
+itemButtonUpdateAfterCombat:SetScript("OnEvent", function(self, event)
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    GW.updateQuestLogLayout(GwQuesttrackerContainerQuests)
+end)
+
 local function UpdateQuestItem(button, questLogIndex, block)
-    if InCombatLockdown() or not questLogIndex then
+    if InCombatLockdown() or not button then
+        if block and questLogIndex and questLogIndex > 0 then
+            itemButtonUpdateAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
+        end
         return
     end
 
-    if button == nil then
-        return
+    local link, item, charges, showItemWhenComplete = nil, nil, nil, false
+
+    if questLogIndex then
+        link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(questLogIndex)
     end
 
-    local link, item, charges, _ = GetQuestLogSpecialItemInfo(questLogIndex)
+    local isQuestComplete = (block and block.questID) and QuestCache:Get(block.questID):IsComplete() or false
+    local shouldShowItem = item and (not isQuestComplete or showItemWhenComplete)
 
-    if item == nil or questLogIndex == 0 then
+    if not shouldShowItem then
         button:Hide()
         button:SetScript("OnUpdate", nil)
         if block then block.hasItem = false end
@@ -891,7 +903,7 @@ local function QuestTrackerLayoutChanged()
 end
 GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
-local function updateQuestLogLayout(self, intent, frame)
+local function updateQuestLogLayout(self)
     if self.isUpdating or not self.init then
         return
     end
@@ -979,7 +991,7 @@ local function updateQuestLogLayout(self, intent, frame)
             --find our block with that questId
             local isCampaign = QuestCache:Get(questID):IsCampaign() 
             local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
-            if questBlockOfIdOrNew.questID == questID then
+            if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
                 questBlockOfIdOrNew.popupQuestAccept:Show()
                 questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
                     ShowQuestOffer(self:GetParent().id)
@@ -1012,6 +1024,7 @@ local function updateQuestLogLayout(self, intent, frame)
 
     self.isUpdating = false
 end
+GW.updateQuestLogLayout = updateQuestLogLayout
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
 local function updateQuestLogLayoutSingle(self, questID, ...)
@@ -1054,7 +1067,7 @@ local function tracker_OnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
     if event == "QUEST_LOG_UPDATE" then
-		updateQuestLogLayout(self, ...)
+		updateQuestLogLayout(self)
 	elseif event == "QUEST_ACCEPTED" then
 		local questID = ...
 		if not C_QuestLog.IsQuestBounty(questID) then
@@ -1075,15 +1088,15 @@ local function tracker_OnEvent(self, event, ...)
                 updateQuestLogLayoutSingle(self, questID, added)
 			end
         else
-			updateQuestLogLayout(self, ...)
+			updateQuestLogLayout(self)
 		end
 	elseif event == "QUEST_AUTOCOMPLETE" then
 		local questId = ...
         updateQuestLogLayoutSingle(self, questID)
     elseif event == "PLAYER_MONEY" and self.watchMoneyReasons > numWatchedQuests then
-        updateQuestLogLayout(self, ...)
+        updateQuestLogLayout(self)
     elseif event == "LOAD" or event == "PLAYER_ENTERING_WORLD" then
-        updateQuestLogLayout(self, ...)
+        updateQuestLogLayout(self)
         self.init = true
     end
 
@@ -1292,6 +1305,13 @@ local function LoadQuestTracker()
             tracker_OnUpdate(fTracker)
         end
     end)
+
+    -- some hooks to set the itembuttons correct
+    hooksecurefunc(fBoss, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
+    fNotify:HookScript("OnShow", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
+    fNotify:HookScript("OnHide", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
+    hooksecurefunc(fAchv, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
+    hooksecurefunc(fScen, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, nil, true, {"scaleable", "height"}, nil, true)
     fTracker:ClearAllPoints()
