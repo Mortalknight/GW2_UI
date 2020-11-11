@@ -1326,11 +1326,7 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_LOST")
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
     compassUpdateFrame:RegisterEvent("QUEST_LOG_UPDATE")
-    compassUpdateFrame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
-    compassUpdateFrame:RegisterEvent("QUEST_AUTOCOMPLETE")
-    compassUpdateFrame:RegisterEvent("QUEST_ACCEPTED")
     compassUpdateFrame:RegisterEvent("PLAYER_MONEY")
-    compassUpdateFrame:RegisterEvent("QUEST_ITEM_UPDATE")
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
@@ -1343,7 +1339,8 @@ local function LoadQuestTracker()
                 self.Ticker = nil
             end
         else
-            tracker_OnUpdate(fTracker)
+            print(event)
+            C_Timer.After(0.25, function() tracker_OnUpdate(fTracker) end)
         end
     end)
 
