@@ -69,7 +69,7 @@ TRACKER_TYPE_COLOR["SCENARIO"] = {r = 171 / 255, g = 37 / 255, b = 240 / 255}
 TRACKER_TYPE_COLOR["BOSS"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
 TRACKER_TYPE_COLOR["ARENA"] = {r = 240 / 255, g = 37 / 255, b = 37 / 255}
 TRACKER_TYPE_COLOR["ACHIEVEMENT"] = {r = 37 / 255, g = 240 / 255, b = 172 / 255}
-TRACKER_TYPE_COLOR["DAILY"] = {r = 54 / 255, g = 135 / 255, b = 234 / 255}
+TRACKER_TYPE_COLOR["DAILY"] = {r = 68 / 255, g = 192 / 255, b = 250 / 255}
 
 --GW_FACTION_BAR_COLORS = FACTION_BAR_COLORS
 --GW_FACTION_BAR_COLORS = {
@@ -189,7 +189,7 @@ local TARGET_FRAME_ART = {
     ["prestige2"] = "Interface/AddOns/GW2_UI/textures/targetshadow_p2",
     ["prestige3"] = "Interface/AddOns/GW2_UI/textures/targetshadow_p3",
     ["prestige4"] = "Interface/AddOns/GW2_UI/textures/targetshadow_p4",
-    ["realboss"] = "Interface/AddOns/GW2_UI/textures/targetshadow-raidboss" 
+    ["realboss"] = "Interface/AddOns/GW2_UI/textures/targetshadow-raidboss"
 }
 GW.TARGET_FRAME_ART = TARGET_FRAME_ART
 
@@ -313,7 +313,7 @@ local ImportendRaidDebuff = {
     [314392] = true, -- Vile Corruption
     -- Shadowlands
     [342494] = true, -- Belligerent Boast (Prideful)
-    
+
 -- Shadowlands Dungeons
     -- Halls of Atonement
     [335338] = true,  -- Ritual of Woe
