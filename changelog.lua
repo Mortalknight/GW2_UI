@@ -14,6 +14,7 @@ FIXES
     - Fixed arena frames issues
     - Fixed issues with quest auto-turn-in
     - Removed the quest "blob ring" from the minimap
+    - Fixed issue with floating combat text wherein Blizzard floating combat text would be disabled upon disabling the GW2 UI floating combat text.
 
 OTHER
     - Updated locales for Chinese (Taiwan & China), Italian, Russian, and Portuguese (Brazil)
