@@ -145,6 +145,25 @@ local function getNearestQuestPOI()
             local objectiveText = isWQ and ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
             local isCampaign = QuestCache:Get(closestQuestID):IsCampaign()
             local isFrequent = QuestCache:Get(closestQuestID).frequency and QuestCache:Get(closestQuestID).frequency > 0
+            if QuestCache:Get(closestQuestID).frequency == nil then
+                -- Could happens that blizzard returns the wrong value, check at the tracker is the quest us frequent to avoid a memory leak here
+                local found = false
+                for i = 1, 25 do
+                    if _G["GwCampaignBlock" .. i] ~= nil then
+                        isFrequent = _G["GwCampaignBlock" .. i].isFrequency
+                        found = true
+                        break
+                    end
+                end
+                if not found then
+                    for i = 1, 25 do
+                        if _G["GwQuestBlock" .. i] ~= nil then
+                            isFrequent = _G["GwQuestBlock" .. i].isFrequency
+                            break
+                        end
+                    end
+                end
+            end
             questCompass.DESC = objectiveText
             questCompass.TITLE = QuestUtils_GetQuestName(closestQuestID)
             questCompass.ID = closestQuestID
