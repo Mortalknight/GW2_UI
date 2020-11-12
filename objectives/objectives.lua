@@ -722,6 +722,7 @@ local function updateQuest(self, block, questWatchId)
     end
     block.height = block.height + 5
     block:SetHeight(block.height)
+    wipe(questInfo)
 end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
@@ -810,6 +811,7 @@ local function updateQuestByID(self, block, questID, questWatchId)
     end
     block.height = block.height + 5
     block:SetHeight(block.height)
+    wipe(questInfo)
 end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
@@ -984,12 +986,14 @@ local function updateQuestLogLayout(self)
                 if QuestCache:Get(questID).frequency == nil then
                     questInfo = C_QuestLog.GetInfo(QuestCache:Get(questID):GetQuestLogIndex())
                     isFrequency = questInfo.frequency > 0
+                    wipe(questInfo)
                 end
                 local block = getBlockQuest(counterQuest, isFrequency)
                 if block == nil then
                     return
                 end
                 updateQuest(self, block, i)
+                block.isFrequency = isFrequency
                 block:Show()
                 savedHeightQuest = savedHeightQuest + block.height
                 updateQuestItemPositions(i, savedHeightQuest, "QUEST", block)
@@ -1060,6 +1064,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         if questLogIndex and questLogIndex > 0 then
             questInfo = C_QuestLog.GetInfo(questLogIndex)
             isFrequency = questInfo.frequency > 0
+            wipe(questInfo)
         end
     end
     local isCampaign = QuestCache:Get(questID):IsCampaign() 
@@ -1071,6 +1076,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     if questWatchId ~= nil then
         if questBlockOfIdOrNew ~= nil then
             updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
+            questBlockOfIdOrNew.isFrequency = isFrequency
             questBlockOfIdOrNew:Show()
             if ... == true then
                 NewQuestAnimation(_G[blockName .. "1"]) -- new quests always on top
@@ -1330,6 +1336,7 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_MONEY")
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    compassUpdateFrame:RegisterEvent("QUEST_DATA_LOAD_RESULT")
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
@@ -1338,6 +1345,11 @@ local function LoadQuestTracker()
             if self.Ticker then
                 self.Ticker:Cancel()
                 self.Ticker = nil
+            end
+        elseif event == "QUEST_DATA_LOAD_RESULT" then
+            local questID, success = ...
+            if success and GwObjectivesNotification.compass.dataIndex and questID == GwObjectivesNotification.compass.dataIndex then
+                tracker_OnUpdate(fTracker)
             end
         else
             C_Timer.After(0.25, function() tracker_OnUpdate(fTracker) end)
