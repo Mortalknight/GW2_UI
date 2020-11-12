@@ -6,6 +6,7 @@ NEW
     - Added scaling to the quest tracker and made it moveable
     - Added new icons and animations for pop-up quests and daily quests in the quest tracker
     - Increased profile slots to 14
+    - Added new skin for Customer Support
 
 FIXES
     - Fixed memory leak related to quest tracker
