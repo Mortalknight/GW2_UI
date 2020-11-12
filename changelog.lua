@@ -4,7 +4,7 @@ local v = GW.vernotes
 v("5.4.8", [=[
 NEW
     - Added scaling to the quest tracker and made it moveable
-    - Added new icons and animations for pop-up quests in the quest tracker
+    - Added new icons and animations for pop-up quests and daily quests in the quest tracker
     - Increased profile slots to 14
 
 FIXES
