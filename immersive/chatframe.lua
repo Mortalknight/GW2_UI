@@ -711,6 +711,8 @@ local function LoadChat()
             end)
     end
 
+    _G.CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
+
     _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()  
 end
