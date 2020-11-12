@@ -14,7 +14,7 @@ FIXES
     - Removed the quest "blob ring" from the minimap
 
 OTHER
-    - Updated locales for Chinese (Taiwan), Italian, Russian, and Portuguese (Brazil)
+    - Updated locales for Chinese (Taiwan & China), Italian, Russian, and Portuguese (Brazil)
     - General clean-up of code, removing unused code.
 
 
