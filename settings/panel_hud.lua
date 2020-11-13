@@ -83,26 +83,13 @@ local function LoadHudPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        L["MINIMAP_POS"],
-        nil,
-        "MINIMAP_POS",
-        GW.SetMinimapPosition,
-        {"BOTTOM", "TOP"},
-        {
-            TRACKER_SORT_MANUAL_BOTTOM,
-            TRACKER_SORT_MANUAL_TOP
-        },
-        nil,
-        {["MINIMAP_ENABLED"] = true}
-    )
-    addOptionDropdown(
-        p,
         L["MINIMAP_SCALE"],
         L["MINIMAP_SCALE_DESC"],
         "MINIMAP_SCALE",
         function()
             local size = GetSetting("MINIMAP_SCALE")
             Minimap:SetSize(size, size)
+            Minimap.gwMover:SetSize(size, size)
         end,
         {250, 200, 170},
         {

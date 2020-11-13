@@ -26,7 +26,6 @@ GW_DEFAULT["CASTINGBAR_ENABLED"] = true
 GW_DEFAULT["HIDEACTIONBAR_BACKGROUND_ENABLED"] = false
 GW_DEFAULT["SHOW_QUESTTRACKER_COMPASS"] = true
 GW_DEFAULT["MINIMAP_HOVER"] = "NONE"
-GW_DEFAULT["MINIMAP_POS"] = "BOTTOM"
 GW_DEFAULT["CLASS_POWER"] = true
 GW_DEFAULT["RAID_FRAMES"] = true
 GW_DEFAULT["PARTY_FRAMES"] = true
@@ -379,6 +378,13 @@ GW_DEFAULT["AlertPos"]["relativePoint"] = "BOTTOMRIGHT"
 GW_DEFAULT["AlertPos"]["xOfs"] = 0
 GW_DEFAULT["AlertPos"]["yOfs"] = 300
 GW_DEFAULT["AlertPos_scale"] = 1
+
+GW_DEFAULT["MinimapPos"] = {}
+GW_DEFAULT["MinimapPos"]["point"] = "BOTTOMRIGHT"
+GW_DEFAULT["MinimapPos"]["relativePoint"] = "BOTTOMRIGHT"
+GW_DEFAULT["MinimapPos"]["xOfs"] = -5
+GW_DEFAULT["MinimapPos"]["yOfs"] = 21
+GW_DEFAULT["MinimapPos_scale"] = 1
 
 GW_DEFAULT["QuestTracker_pos"] = {}
 GW_DEFAULT["QuestTracker_pos"]["point"] = "TOPRIGHT"

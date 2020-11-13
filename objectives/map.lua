@@ -92,50 +92,6 @@ local function SetMinimapHover()
 end
 GW.SetMinimapHover = SetMinimapHover
 
-local function SetMinimapPosition()
-    local ourBuffBar = GetSetting("PLAYER_BUFFS_ENABLED")
-    local ourTracker = GetSetting("QUESTTRACKER_ENABLED")
-    local mapPos = GetSetting("MINIMAP_POS")
-    local mapSize = Minimap:GetHeight()
-
-    -- adjust minimap and minimap cluster placement (some default things anchor off cluster)
-
-    local mc_x = 0
-    if ourTracker then
-        mc_x = -320
-    end
-
-    MinimapCluster:ClearAllPoints()
-    Minimap:ClearAllPoints()
-    Minimap:SetParent(UIParent)
-    MinimapZoneTextButton:Hide()
-
-    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
-
-    if mapPos == "TOP" then
-        if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -(mapSize + 60))
-            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
-        else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -(mapSize + 110))
-            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -50)
-        end
-    else
-        if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 0)
-        else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -50)
-        end
-        if GW.GetSetting("XPBAR_ENABLED") then
-            Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
-        else
-            Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 7)
-        end
-    end
-
-end
-GW.SetMinimapPosition = SetMinimapPosition
-
 local function lfgAnim(self, elapse)
     if Minimap:IsShown() then
         QueueStatusMinimapButtonIcon:SetAlpha(1)
@@ -451,6 +407,32 @@ local function minimap_OnHide(self)
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
+local function setMinimapButtons(side)
+    QueueStatusMinimapButton:ClearAllPoints()
+    GwCalendarButton:ClearAllPoints()
+    GwGarrisonButton:ClearAllPoints()
+    GwMailButton:ClearAllPoints()
+    GwAddonToggle:ClearAllPoints()
+    GwAddonToggle.container:ClearAllPoints()
+    
+    if side == "left" then
+        QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
+        GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
+        GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
+        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
+        GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
+        GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
+    else
+        QueueStatusMinimapButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -69)
+        GwCalendarButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 7, 0)
+        GwGarrisonButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", -1, -7)
+        GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 10, -47)
+        GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5.5, -127)
+        GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
+    end
+end
+GW.setMinimapButtons = setMinimapButtons
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     _G["GetMinimapShape"] = getMinimapShape
@@ -553,18 +535,16 @@ local function LoadMinimap()
     MiniMapWorldMapButton:Hide()
 
     GarrisonLandingPageMinimapButton:ClearAllPoints()
-    MiniMapMailFrame:ClearAllPoints()
-    MinimapZoneText:ClearAllPoints()
+    GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", Minimap, 0, 30)
 
+    MiniMapMailFrame:ClearAllPoints()
+    MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
+
+    MinimapZoneText:ClearAllPoints()
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
-
-    GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", Minimap, 0, 30)
     GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-    MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
-    QueueStatusMinimapButton:ClearAllPoints()
-    QueueStatusMinimapButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
 
     MinimapZoneText:SetTextColor(1, 1, 1)
 
@@ -577,8 +557,6 @@ local function LoadMinimap()
     )
 
     QueueStatusMinimapButtonBorder:SetTexture(nil)
-    QueueStatusMinimapButton:ClearAllPoints()
-    QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
 
     GameTimeFrame:HookScript(
         "OnShow",
@@ -603,13 +581,11 @@ local function LoadMinimap()
     GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
     GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
     GwCalendarButton.gw_Showing = true
-    GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
     GwCalendarButton.Text:SetFont(UNIT_NAME_FONT, 14)
     GwCalendarButton.Text:SetTextColor(0, 0, 0)
     GwCalendarButton.Text:SetText(date("%d"))
 
     local GwGarrisonButton = CreateFrame("Button", "GwGarrisonButton", UIParent, "GwGarrisonButton")
-    GwGarrisonButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
     GwGarrisonButton:SetScript("OnClick", GarrisonLandingPageMinimapButton_OnClick)
     GwGarrisonButton:SetScript("OnEnter", garrisonBtn_OnEnter)
     GwGarrisonButton:SetScript("OnLeave", GameTooltip_Hide)
@@ -646,13 +622,12 @@ local function LoadMinimap()
     GwMailButton.gw_Showing = false
     GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
     GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
-    GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
+    
 
     local fmGAT = CreateFrame("Button", "GwAddonToggle", UIParent, "GwAddonToggle")
     fmGAT:SetScript("OnClick", stack_OnClick)
     fmGAT:SetScript("OnEvent", stack_OnEvent)
     fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
-    fmGAT:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
     fmGAT:SetFrameStrata("MEDIUM")
     fmGAT.gw_Showing = true
     stackIcons(fmGAT)
@@ -716,9 +691,24 @@ local function LoadMinimap()
     Minimap:SetArchBlobRingScalar(0)
     Minimap:SetQuestBlobRingScalar(0)
 
-    Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
+    local size = GetSetting("MINIMAP_SCALE")
+    Minimap:SetSize(size, size)
 
-    SetMinimapPosition()
+    -- mobeable stuff
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, nil, nil, {"default"})
+    Minimap:ClearAllPoints()
+    Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
+    -- check on which side we need to set the buttons
+    local x = Minimap:GetCenter()
+    local screenWidth = UIParent:GetRight()
+    if x > (screenWidth / 2) then
+        setMinimapButtons("left")
+    else
+        setMinimapButtons("right")
+    end
+    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
+    MinimapCluster:ClearAllPoints()
+    MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
 
     C_Timer.After(0.1, function() hoverMiniMapOut() end)
 end

@@ -1173,8 +1173,6 @@ GW.AddForProfiling("objectives", "bonus_OnEnter", bonus_OnEnter)
 local function LoadQuestTracker()
     --local qt_enabled = GetSetting("QUESTTRACKER_ENABLED")
     --local bars_enabled = GetSetting("ACTIONBARS_ENABLED")
-    local map_enabled = GetSetting("MINIMAP_ENABLED")
-    local map_position = GetSetting("MINIMAP_POS")
 
     -- disable the default tracker
     ObjectiveTrackerFrame:SetMovable(1)
@@ -1370,18 +1368,5 @@ local function LoadQuestTracker()
     fTracker:ClearAllPoints()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
-
-    if not fTracker.isMoved and map_enabled then
-        fTracker.gwMover:ClearAllPoints()
-        if map_enabled then
-            if map_position == "TOP" then
-                fTracker.gwMover:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
-            else
-                fTracker.gwMover:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT")
-            end
-        else
-            fTracker.gwMover:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
-        end
-    end
 end
 GW.LoadQuestTracker = LoadQuestTracker

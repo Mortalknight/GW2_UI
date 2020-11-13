@@ -137,7 +137,7 @@ local function mover_OnDragStop(self)
     -- check if we need to know if the frame is on its default position
     CheckIfMoved(self, settingsName, new_point)
 
-    --check if we need to change the text string
+    --check if we need to change the text string or button locations
     if settingsName == "AlertPos" then
         local _, y = self:GetCenter()
         local screenHeight = UIParent:GetTop()
@@ -149,6 +149,14 @@ local function mover_OnDragStop(self)
             if self.frameName and self.frameName.SetText then
                 self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
             end
+        end
+    elseif settingsName == "MinimapPos" then
+        local x = self:GetCenter()
+        local screenWidth = UIParent:GetRight()
+        if x > (screenWidth / 2) then
+            GW.setMinimapButtons("left")
+        else
+            GW.setMinimapButtons("right")
         end
     end
 
@@ -170,18 +178,20 @@ local function mover_options(self, button)
             GW.MoveHudScaleableFrame.desc:Show()
             GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
         else
-            local scale = GetSetting(self.gw_Settings .."_scale")
             GW.MoveHudScaleableFrame.child = self
             GW.MoveHudScaleableFrame.childMover = self
             GW.MoveHudScaleableFrame.headerString:SetText(self.frameName:GetText())
             GW.MoveHudScaleableFrame.desc:Hide()
             GW.MoveHudScaleableFrame.default:Show()
             GW.MoveHudScaleableFrame.movers:Show()
+            -- options 
             GW.MoveHudScaleableFrame.scaleSlider:SetShown(self.optionScaleable)
-            GW.MoveHudScaleableFrame.scaleSlider.slider:SetValue(scale)
-            GW.MoveHudScaleableFrame.scaleSlider.input:SetNumber(scale)
-            -- options (scale is default for every frame, which has extra options)
             GW.MoveHudScaleableFrame.heightSlider:SetShown(self.optionHeight)
+            if self.optionScaleable then
+                local scale = GetSetting(self.gw_Settings .. "_scale")
+                GW.MoveHudScaleableFrame.scaleSlider.slider:SetValue(scale)
+                GW.MoveHudScaleableFrame.scaleSlider.input:SetNumber(scale)
+            end
             if self.optionHeight then
                 local height = GetSetting(self.gw_Settings .. "_height")
                 GW.MoveHudScaleableFrame.heightSlider.slider:SetValue(height)
@@ -282,6 +292,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     else
         moveframe:SetSize(frame:GetSize())
     end
+    moveframe:SetScale(frame:GetScale())
     moveframe.gw_Settings = settingsName
     moveframe.gw_Lockable = lockAble
     moveframe.gw_isMoved = isMoved
@@ -343,7 +354,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         end
     end
 
-    if moveframe.optionScaleable or moveframe.optionHeight then
+    if smallOptions and #smallOptions > 0 then
         if moveframe.optionScaleable then
             local scale = GetSetting(settingsName .. "_scale")
             moveframe.gw_frame:SetScale(scale)
