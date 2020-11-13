@@ -906,9 +906,9 @@ end
 local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
     -- adjust scrolframe height
-    local height = GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() - 80 -- 80 for headers
+    local height = GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight()
     local scroll = 0
-    local trackerHeight = GetSetting("QuestTracker_pos_height")
+    local trackerHeight = GetSetting("QuestTracker_pos_height") - GwQuesttrackerContainerBossFrames:GetHeight() - GwQuesttrackerContainerArenaBGFrames:GetHeight() - GwQuesttrackerContainerScenario:GetHeight() - GwObjectivesNotification:GetHeight()
     if height > tonumber(trackerHeight) then
         scroll = math.abs(trackerHeight - height)
     end
@@ -1285,7 +1285,8 @@ local function LoadQuestTracker()
                 p.collapsed = false
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
-            updateQuestLogLayout(fQuest, "COLLAPSE", p)
+            updateQuestLogLayout(fQuest)
+            QuestTrackerLayoutChanged()
         end
     )
     headerCampagin.title:SetTextColor(TRACKER_TYPE_COLOR.CAMPAIGN.r, TRACKER_TYPE_COLOR.CAMPAIGN.g, TRACKER_TYPE_COLOR.CAMPAIGN.b)
@@ -1307,7 +1308,8 @@ local function LoadQuestTracker()
                 p.collapsed = false
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
-            updateQuestLogLayout(fQuest, "COLLAPSE", p)
+            updateQuestLogLayout(fQuest)
+            QuestTrackerLayoutChanged()
         end
     )
     header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
