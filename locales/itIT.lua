@@ -76,7 +76,7 @@ local function GWUseThisLocalization()
 	L["CHANGELOG"] = "Registro"
 	L["CHARACTER_NEXT_RANK"] = "PROSSIMO"
 	L["CHARACTER_PARAGON"] = "Esemplare"
-	L["CHAT_BUBBLES_DESC"] = "Rimpiazza le nuvolette di dialogo dell'interfaccia utente predefinita."
+	L["CHAT_BUBBLES_DESC"] = "Sostituisci i fumetti della chat dell'interfaccia utente predefinita. (Solo in zone non protette)"
 	L["CHAT_FADE"] = "Dissolvi Chat"
 	L["CHAT_FADE_DESC"] = "Permetti alla chat di dissolversi quando non in uso."
 	L["CHAT_FRAME_DESC"] = "Abilità la finestra chat migliorata."
