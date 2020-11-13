@@ -64,8 +64,9 @@ local function xpbar_OnEnter()
     UIFrameFadeOut(GwExperienceFrame.RepuBar, 0.2, GwExperienceFrame.RepuBar:GetAlpha(), 0)
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
 
-    if azeriteItemLocation then
+    if shouldShowAzeritBar then
         local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
         local xpPct
         if xpForNextPoint > 0 then
@@ -136,9 +137,6 @@ end
 GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
 local function xpbar_OnEvent(self, event)
-    if event == "CHAT_MSG_COMBAT_HONOR_GAIN" and UnitInBattleground("player") ~= nil and IsPlayerAtEffectiveMaxLevel() then
-        C_Timer.After(0.4, function() xpbar_OnEvent(self, nil) end)
-    end
     if event == "UPDATE_FACTION" and not GW.inWorld then
         return
     end
@@ -146,6 +144,7 @@ local function xpbar_OnEvent(self, event)
     displayRewards()
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
     local AzeritVal = 0
     local AzeritLevel = 0
 
@@ -165,8 +164,6 @@ local function xpbar_OnEvent(self, event)
     local showBar2 = false
     local showBar3 = false
     local restingIconString = " |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t "
-
-
 
     if not IsResting() then
         restingIconString = ""
@@ -310,7 +307,7 @@ local function xpbar_OnEvent(self, event)
         end
     end
 
-    if azeriteItemLocation then
+    if shouldShowAzeritBar then
         showBar2 = true
         local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
         AzeritLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
@@ -1289,11 +1286,10 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE")
     experiencebar:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
     experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
-    experiencebar:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN")
+    experiencebar:RegisterEvent("HONOR_XP_UPDATE")
     experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
     experiencebar:RegisterEvent("PLAYER_LEVEL_CHANGED")
-
 
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
     experiencebar:SetScript(
