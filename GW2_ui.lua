@@ -544,11 +544,13 @@ local function loadAddon(self)
         GW.LoadFonts()
     end
 
-    if GetSetting("GW_COMBAT_TEXT_ENABLED") then
+    if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
         SetCVar("floatingCombatTextCombatDamage", 0)
         GW.LoadDamageText()
-    else
+    elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
         SetCVar("floatingCombatTextCombatDamage", 1)
+    else
+        SetCVar("floatingCombatTextCombatDamage", 0)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then

@@ -424,7 +424,7 @@ local function InitPanel(panel)
 
         local of = CreateFrame("Button", v.optionName, panel, optionFrameType)
 
-        if newLine and not first or padding.x > 440 then
+        if (newLine and not first) or padding.x > 440 then
             padding.y = padding.y + (pY + box_padding)
             padding.x = box_padding
         end
@@ -638,8 +638,10 @@ local function InitPanel(panel)
             of:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
         end
 
-        if newLine == false then
+        if not newLine then
             padding.x = padding.x + of:GetWidth() + box_padding
+        else
+            padding.x = 450
         end
     end
 end
