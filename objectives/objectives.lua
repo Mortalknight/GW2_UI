@@ -1369,7 +1369,7 @@ local function LoadQuestTracker()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
 
-    if not fTracker.isMoved then
+    if not fTracker.isMoved and map_enabled then
         fTracker.gwMover:ClearAllPoints()
         if map_enabled then
             if map_position == "TOP" then
