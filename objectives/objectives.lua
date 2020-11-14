@@ -1223,6 +1223,7 @@ local function LoadQuestTracker()
     fNotify.bonusbar:SetScript("OnEnter", bonus_OnEnter)
     fNotify.bonusbar:SetScript("OnLeave", GameTooltip_Hide)
     fNotify.compass:SetScript("OnShow", NewQuestAnimation)
+    fNotify.compass:SetScript("OnMouseDown", function() C_SuperTrack.SetSuperTrackedQuestID(0) end) -- to rest the SuperTracked quest
 
     local fBoss = CreateFrame("Frame", "GwQuesttrackerContainerBossFrames", fTracker, "GwQuesttrackerContainer")
     local fArenaBG = CreateFrame("Frame", "GwQuesttrackerContainerArenaBGFrames", fTracker, "GwQuesttrackerContainer")
@@ -1337,6 +1338,7 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     compassUpdateFrame:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+    compassUpdateFrame:RegisterEvent("SUPER_TRACKING_CHANGED")
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then

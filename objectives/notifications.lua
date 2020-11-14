@@ -103,16 +103,26 @@ local function getNearestQuestPOI()
         end
     end
 
-    -- if nothing was found lock for nearest tracked quest
+    -- if nothing was found lock for nearest tracked quest (lets use the "SuperTrackedQuest" here)
+    --if not closestQuestID then
+    --    for i = 1, numTrackedQuests do
+    --        local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
+    --        if questID and QuestHasPOIInfo(questID) then
+    --            local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+    --            if onContinent and distSqr <= minDistSqr then
+    --                minDistSqr = distSqr
+    --                closestQuestID = questID
+    --            end
+    --        end
+    --    end
+    --end
     if not closestQuestID then
-        for i = 1, numTrackedQuests do
-            local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
-            if questID and QuestHasPOIInfo(questID) then
-                local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-                if onContinent and distSqr <= minDistSqr then
-                    minDistSqr = distSqr
-                    closestQuestID = questID
-                end
+        local questID = C_SuperTrack.GetSuperTrackedQuestID()
+        if questID and QuestHasPOIInfo(questID) then
+            local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(11266)
+            if onContinent and distSqr <= minDistSqr then
+                minDistSqr = distSqr
+                closestQuestID = questID
             end
         end
     end
