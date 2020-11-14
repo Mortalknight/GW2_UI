@@ -86,6 +86,7 @@ local function getNearestQuestPOI()
     end
 
     local closestQuestID
+    local xQ, yQ = nil, nil
     local minDistSqr = math.huge
     local isWQ = false
     wipe(questCompass)
@@ -119,7 +120,7 @@ local function getNearestQuestPOI()
     if not closestQuestID then
         local questID = C_SuperTrack.GetSuperTrackedQuestID()
         if questID and QuestHasPOIInfo(questID) then
-            local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(11266)
+            local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
             if onContinent and distSqr <= minDistSqr then
                 minDistSqr = distSqr
                 closestQuestID = questID
@@ -143,15 +144,12 @@ local function getNearestQuestPOI()
     end
 
     if closestQuestID then
-        local _, poiX, poiY, _ = QuestPOIGetIconInfo(closestQuestID)
+        local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
         if isWQ then 
             poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.locationData.mapID)
         end
 
         if poiX then
-            local dx = GW.locationData.x - poiX
-            local dy = GW.locationData.y - poiY
-            local dist = sqrt(dx * dx + dy * dy)
             local objectiveText = isWQ and ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
             local isCampaign = QuestCache:Get(closestQuestID):IsCampaign()
             local isFrequent = QuestCache:Get(closestQuestID).frequency and QuestCache:Get(closestQuestID).frequency > 0
