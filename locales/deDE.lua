@@ -344,8 +344,8 @@ local function GWUseThisLocalization()
     L["ZONE_ANILITY_AB_NAME"] = "Zonen Fähigkeit"
     L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Blizzard Farben verwenden"
     L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Zahlen mir Komma anzeigen"
-    L["PLAYER_DODGEBAR_SPELL"] = "Ausweichenleiste Zauber"
-    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Trage die Zauber ID des Zaubers ein, der über der Gesundheitskungel angezeit wird.\nIst keiner eingetragen, werden die Standardzauber angezeigt, abhängig von Talenten & Süezialisierung."
+    L["PLAYER_DODGEBAR_SPELL"] = "Ausweichenleiste-Zauber"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Trage die Zauber ID des Zaubers ein, der über der Gesundheitskugel angezeit wird.\nIst keiner eingetragen, werden die Standardzauber angezeigt, abhängig von Talenten & Spezialisierung."
 end
 
 if GetLocale() == "deDE" then
