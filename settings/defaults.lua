@@ -218,7 +218,7 @@ GW_DEFAULT["targettarget_pos"] = {}
 GW_DEFAULT["targettarget_pos"]["point"] = "TOP"
 GW_DEFAULT["targettarget_pos"]["relativePoint"] = "TOP"
 GW_DEFAULT["targettarget_pos"]["xOfs"] = 250
-GW_DEFAULT["targettarget_pos"]["yOfs"] = -100
+GW_DEFAULT["targettarget_pos"]["yOfs"] = -110
 GW_DEFAULT["targettarget_pos_scale"] = 1
 
 GW_DEFAULT["focus_pos"] = {}
@@ -232,7 +232,7 @@ GW_DEFAULT["focustarget_pos"] = {}
 GW_DEFAULT["focustarget_pos"]["point"] = "CENTER"
 GW_DEFAULT["focustarget_pos"]["relativePoint"] = "CENTER"
 GW_DEFAULT["focustarget_pos"]["xOfs"] = -80
-GW_DEFAULT["focustarget_pos"]["yOfs"] = 0
+GW_DEFAULT["focustarget_pos"]["yOfs"] = -10
 GW_DEFAULT["focustarget_pos_scale"] = 1
 
 GW_DEFAULT["MultiBarBottomLeft"] = {}

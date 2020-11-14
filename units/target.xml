@@ -471,7 +471,7 @@
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\targetshadowmoveable">
                     <Size x="512" y="128"/>
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"/>
+                        <Anchor point="CENTER" x="0" y="-5"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
@@ -492,8 +492,8 @@
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
                     <Size x="150" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-29"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="5" y="-22"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-22"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="4" y="-22"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
