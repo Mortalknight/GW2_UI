@@ -16,7 +16,7 @@ FIXES
 
 OTHER
     - Changed the priority system of the quest tracker so that your tracked quest has a higher compass priority
-    - Updated locales for French and Italian
+    - Updated locales for English, French, and Italian
     - Minor tweaks to unit frames
 ]=])
 
