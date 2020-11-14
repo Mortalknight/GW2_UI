@@ -1012,7 +1012,7 @@ local function updateQuestLogLayout(self)
         local questID, popUpType = GetAutoQuestPopUp(i)
         if questID and popUpType == "OFFER" then
             --find our block with that questId
-            local isCampaign = QuestCache:Get(questID):IsCampaign() 
+            local isCampaign = QuestCache:Get(questID):IsCampaign()
             local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
             if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
                 questBlockOfIdOrNew.popupQuestAccept:Show()
@@ -1068,32 +1068,29 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         end
     end
     local isCampaign = QuestCache:Get(questID):IsCampaign() 
-    local questBlockOfIdOrNew = getBlockByID(questID, isCampaign, isFrequency)
     local questWatchId = getQuestWatchId(questID)
+    local questBlockOfIdOrNew = questWatchId and getBlockByID(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
     local savedHeight = 20
-    if questWatchId ~= nil then
-        if questBlockOfIdOrNew ~= nil then
-            updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
-            questBlockOfIdOrNew.isFrequency = isFrequency
-            questBlockOfIdOrNew:Show()
-            if ... == true then
-                NewQuestAnimation(_G[blockName .. "1"]) -- new quests always on top
-            end
-        
-            for i = 1, 25 do
-                if _G[blockName .. i] and _G[blockName .. i]:IsShown() then
-                    savedHeight = savedHeight + _G[blockName .. i].height
-                    if _G[blockName .. i].questID == questID then
-                        break
-                    end
-                end
-            end
-
-            containerName:SetHeight(savedHeight)
-            updateQuestItemPositions(questWatchId, savedHeight, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
+    if questWatchId ~= nil and questBlockOfIdOrNew ~= nil then
+        updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
+        questBlockOfIdOrNew.isFrequency = isFrequency
+        questBlockOfIdOrNew:Show()
+        if ... == true then
+            NewQuestAnimation(_G[blockName .. "1"]) -- new quests always on top
         end
+    
+        for i = 1, 25 do
+            if _G[blockName .. i] and _G[blockName .. i]:IsShown() and _G[blockName .. i].questID ~= nil then
+                savedHeight = savedHeight + _G[blockName .. i].height
+            elseif _G[blockName .. i] and not _G[blockName .. i]:IsShown() then
+                _G[blockName .. i]:Hide()
+            end
+        end
+
+        containerName:SetHeight(savedHeight)
+        updateQuestItemPositions(questWatchId, savedHeight, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
     end
 
     self.isUpdating = false
