@@ -326,7 +326,7 @@
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
                 <Texture parentKey="absorbbar" file="Interface\AddOns\GW2_UI\textures\absorbbar-animated">
-                    <Size x="146" y="15"/>
+                    <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
                     </Anchors>

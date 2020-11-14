@@ -553,7 +553,7 @@ local function updateHealthValues(self, event)
         local absorbAmount = healthPrecentage + absorbPrecentage
         local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
 
-        absbarbg:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * absorbAmount)))
+        absbarbg:SetWidth(math.min((self.barWidth - 1), math.max(1, self.barWidth * absorbAmount)))
         absbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * absorbAmount2)))
 
         absbarbg:SetTexCoord(0, math.min(1, 1 * absorbAmount), 0, 1)
