@@ -2,6 +2,7 @@ local _, GW = ...
 local L = GW.L
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
+local addOptionText = GW.AddOptionText
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local StrUpper = GW.StrUpper
@@ -143,6 +144,26 @@ local function LoadPlayerPanel(sWindow)
         nil,
         {"HORIZONTAL", "VERTICAL"},
         {L["HORIZONTAL"], L["VERTICAL"]},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
+    )
+    addOptionText(p,
+        L["PLAYER_DODGEBAR_SPELL"],
+        L["PLAYER_DODGEBAR_SPELL_DESC"],
+        "PLAYER_TRACKED_DODGEBAR_SPELL",
+        function(self)
+            local spellId = self:GetNumber()
+            local name = ""
+            if spellId > 0 and IsSpellKnown(spellId) then
+                name = GetSpellInfo(spellId)
+            end
+            self:SetText(name)
+            GW.SetSetting("PLAYER_TRACKED_DODGEBAR_SPELL", name)
+            GW.SetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID", spellId)
+            GW.initDodgebarSpell(GwDodgeBar)
+            GW.setDodgebarSpell(GwDodgeBar)
+        end,
+        nil,
         nil,
         {["HEALTHGLOBE_ENABLED"] = true}
     )

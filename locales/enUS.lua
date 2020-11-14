@@ -340,6 +340,8 @@ local function GWUseThisLocalization()
     L["REVERSE_NEW_LOOT_TEXT"] = "Loot to leftmost Bag"
     L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Use Blizzard colors"
     L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
+    L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

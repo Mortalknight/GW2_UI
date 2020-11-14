@@ -340,7 +340,9 @@ local function GWUseThisLocalization()
     L["EXTRA_AB_NAME"] = "首領按鈕"
 	L["ZONE_ANILITY_AB_NAME"] = "區域技能"
 	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": 使用暴雪顏色"
-    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": 數字顯示逗號"
+	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": 數字顯示逗號"
+	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
 	
 	-- Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

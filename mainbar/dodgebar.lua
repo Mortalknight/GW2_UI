@@ -2,6 +2,7 @@ local _, GW = ...
 local Debug = GW.Debug
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local FrameFlash = GW.FrameFlash
+local GetSetting = GW.GetSetting
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -93,16 +94,18 @@ GW.AddForProfiling("dodgebar", "updateAnim", updateAnim)
 
 local function initBar(self, pew)
     -- do everything required to make the dodge bar a secure clickable button
+    local overrideSpellID = GetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID")
+
     self.gwMaxCharges = nil
     self.spellId = nil
     if pew or not InCombatLockdown() then
         self:Hide()
     end
-    if not DODGEBAR_SPELLS[GW.myclass] then
+    if not DODGEBAR_SPELLS[GW.myclass] and tonumber(overrideSpellID) == 0 then
         return
     end
     local v, _ = SecureCmdOptionParse(DODGEBAR_SPELLS[GW.myclass])
-    if not v then
+    if not v and tonumber(overrideSpellID) == 0 then
         return
     end
 
@@ -114,12 +117,12 @@ local function initBar(self, pew)
             end
         end
     else
-        self.spellId = tonumber(v)
+        self.spellId = tonumber(overrideSpellID) > 0 and tonumber(overrideSpellID) or tonumber(v)
     end
     Debug("Dodgebar spell for Tooltip: ", self.spellId)
 
     if pew or not InCombatLockdown() then
-        if DODGEBAR_SPELLS_ATTR[GW.myclass] then
+        if tonumber(overrideSpellID) == 0 and DODGEBAR_SPELLS_ATTR[GW.myclass] then
             v = SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])
             if string.find(v, ",") then
                 for k, v in pairs(GW.splitString(v, ",", true)) do
@@ -138,6 +141,7 @@ local function initBar(self, pew)
         self:Show()
     end
 end
+GW.initDodgebarSpell = initBar
 GW.AddForProfiling("dodgebar", "initBar", initBar)
 
 local function setupBar(self)
@@ -176,6 +180,7 @@ local function setupBar(self)
 
     updateAnim(self, start, duration, charges, maxCharges)
 end
+GW.setDodgebarSpell = setupBar
 GW.AddForProfiling("dodgebar", "setupBar", setupBar)
 
 local function dodge_OnEvent(self, event, ...)

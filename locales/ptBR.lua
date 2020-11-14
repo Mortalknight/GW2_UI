@@ -340,7 +340,9 @@ local function GWUseThisLocalization()
 	L["WORLD_MARKER_DESC"] = "Mostrar menu para colocar marcadores quando está em raide."
 	L["ZONE_ANILITY_AB_NAME"] = "Habilidade de Zona"
     L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Usar as cores do Blizzard"
-    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Mostrar números com círgulas"
+	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Mostrar números com círgulas"
+	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
 
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

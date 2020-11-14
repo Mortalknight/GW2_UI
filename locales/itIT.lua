@@ -338,7 +338,9 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Che cos'è \"Pixel Perfection\"? L'interfaccia utente di GW2 ha un'impostazione integrata chiamata \"Pixel Perfection Mode\". Ciò che significa che l'interfaccia utente apparirà migliorata, con texture più nitide e un miglior ridimensionamento. Naturalmente, puoi disattivarlo nel menu delle impostazioni, se preferisci."
 	L["WORLD_MARKER_DESC"] = "Mostra il menu per posizionare i marcatori durante i raid."
 	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Utilizzare i colori Blizzard"
-    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Mostra numeri con virgole"
+	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Mostra numeri con virgole"
+	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
 
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

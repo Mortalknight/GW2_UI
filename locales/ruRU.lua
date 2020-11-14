@@ -340,7 +340,9 @@ local function GWUseThisLocalization()
 	L["WORLD_MARKER_DESC"] = "Отображать панель с метками цели пока вы в рейде."
 	L["ZONE_ANILITY_AB_NAME"] = "Зоновая способность"
     L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Используйте цвета Blizzard"
-    L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Показывать числа с запятыми"
+	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Показывать числа с запятыми"
+	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
 	
 	-- Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

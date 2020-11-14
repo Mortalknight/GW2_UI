@@ -341,6 +341,8 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "Qu'est-ce que \"Pixel Perfect\" ?\n\nL'interface utilisateur de GW2 possède un paramètre intégré appelé \"Mode Pixel Perfect\". Cela signifie que votre interface utilisateur sera fidèle à ce qui était prévu, avec des textures plus nettes et une meilleure mise à l'échelle. Bien entendu, vous pouvez désactiver ce mode dans le menu des paramètres si vous le souhaitez."
 	L["WORLD_MARKER_DESC"] = "Afficher le menu pour placer les marqueurs de raid."
 	L["ZONE_ANILITY_AB_NAME"] = "Capacité de la zone"
+	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
 	
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

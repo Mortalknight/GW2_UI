@@ -555,7 +555,7 @@ local function InitPanel(panel)
                     self:ClearFocus()
                     SetSetting(v.optionName, self:GetText(), v.perSpec)
                     if v.callback ~= nil then
-                        v.callback()
+                        v.callback(self)
                     end
                 end
             )

@@ -391,16 +391,16 @@
         </Layers>
         <Frames>
             <EditBox parentKey="input" autoFocus="false">
-                <Size x="256" y="20"/>
+                <Size x="240" y="20"/>
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-15" y="0"/>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
                             <Anchors>
-                                <Anchor point="TOPLEFT" x="-5" y="3"/>
-                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
+                                <Anchor point="TOPLEFT" x="-5" y="1"/>
+                                <Anchor point="BOTTOMRIGHT" x="5" y="-1"/>
                             </Anchors>
                             <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
                         </Texture>
