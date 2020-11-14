@@ -381,8 +381,8 @@ local function hideCastBar(self, event)
 
     self.castingbarNormal:Hide()
     self.castingbarNormalSpark:Hide()
-
-    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", -2, 19)
+    self.castingbarBackground:ClearAllPoints()
+    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, 19)
 
     if self.portrait ~= nil then
         setUnitPortrait(self)
@@ -421,7 +421,8 @@ local function updateCastValues(self, event)
     end
 
     self.castingbarBackground:Show()
-    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", -2, -1)
+    self.castingbarBackground:ClearAllPoints()
+    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, -1)
     self.castingString:Show()
     if self.castingTimeString then
         self.castingTimeString:Show()
@@ -775,6 +776,7 @@ GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 local function LoadTarget()
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame")
     NewUnitFrame.unit = "target"
+    NewUnitFrame.type = "NormalTarget"
     NewUnitFrame.auraPositionTop = GetSetting("target_AURAS_ON_TOP")
 
     if NewUnitFrame.auraPositionTop then
@@ -815,7 +817,7 @@ local function LoadTarget()
 
     NewUnitFrame.debuffFilter = "player"
 
-    if GetSetting("target_BUFFS_FILTER_ALL") == true then
+    if GetSetting("target_BUFFS_FILTER_ALL") then
         NewUnitFrame.debuffFilter = nil
     end
 
@@ -874,6 +876,7 @@ GW.LoadTarget = LoadTarget
 local function LoadFocus()
     local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame")
     NewUnitFrame.unit = "focus"
+    NewUnitFrame.type = "NormalTarget"
 
     RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy", nil, nil, nil, {"scaleable"})
 
@@ -943,7 +946,7 @@ GW.LoadFocus = LoadFocus
 local function LoadTargetOfUnit(unit)
     local f = createNormalUnitFrameSmall("Gw" .. unit .. "TargetUnitFrame")
     local unitID = string.lower(unit) .. "target"
-
+    f.type = "SmallTarget"
     f.unit = unitID
 
     RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy", nil, nil, nil, {"scaleable"})
