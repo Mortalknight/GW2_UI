@@ -29,6 +29,34 @@ local function updateGuildButton(self, event)
 end
 GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
 
+local function updateQuestLogButton(self, event)
+    if event ~= "QUEST_LOG_UPDATE" then
+        return
+    end
+
+    local qlmb = QuestLogMicroButton
+    if qlmb == nil then
+        return
+    end
+
+    local _, numQuests = C_QuestLog.GetNumQuestLogEntries()
+
+    if numQuests ~= nil and numQuests > 0 then
+        qlmb.GwNotifyDark:Show()
+
+        if numQuests > 9 then
+            qlmb.GwNotifyText:SetText(numQuests)
+        else
+            qlmb.GwNotifyText:SetText(numQuests .. " ")
+        end
+        qlmb.GwNotifyText:Show()
+    else
+        qlmb.GwNotifyDark:Hide()
+        qlmb.GwNotifyText:Hide()
+    end
+end
+GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
+
 local function bag_OnUpdate(self, elapsed)
     self.interval = self.interval - elapsed
     if self.interval > 0 then
@@ -246,6 +274,9 @@ local function setupMicroButtons(mbf)
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
     QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
+    QuestLogMicroButton:RegisterEvent("QUEST_LOG_UPDATE")
+    QuestLogMicroButton:HookScript("OnEvent", updateQuestLogButton)
+    updateQuestLogButton()
 
     -- GuildMicroButton
     GuildMicroButton:ClearAllPoints()

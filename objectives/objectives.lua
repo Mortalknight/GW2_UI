@@ -202,7 +202,7 @@ local function statusBar_OnShow(self)
         return
     end
     f:SetHeight(50)
-    f.statusbarBg:Show()
+    f.StatusBar.statusbarBg:Show()
 end
 GW.AddForProfiling("objectives", "statusBar_OnShow", statusBar_OnShow)
 
@@ -212,7 +212,7 @@ local function statusBar_OnHide(self)
         return
     end
     f:SetHeight(20)
-    f.statusbarBg:Hide()
+    f.StatusBar.statusbarBg:Hide()
 end
 GW.AddForProfiling("objectives", "statusBar_OnHide", statusBar_OnHide)
 
@@ -508,6 +508,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
     if text then
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText(text)
+        objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
         else
@@ -525,12 +526,12 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
         else
             objectiveBlock.StatusBar:Hide()
         end
-        local h = 20
+        local h = objectiveBlock.ObjectiveText:GetStringHeight() + 5
         if objectiveBlock.StatusBar:IsShown() then
             if block.numObjectives >= 1 then
-                h = 50
+                h = h + objectiveBlock.ObjectiveText:GetStringHeight() + 5
             else
-                h = 40
+                h = h + objectiveBlock.ObjectiveText:GetStringHeight() + 5
             end
         end
         block.height = block.height + h
@@ -1046,6 +1047,10 @@ local function updateQuestLogLayout(self)
 
     if counterCampaign == 0 then GwCampaginHeader:Hide() end
 
+    -- Set number of quest to the Header
+    GwQuestHeader.title:SetText(TRACKER_HEADER_QUESTS .. " (" .. counterQuest .. ")")
+    GwCampaginHeader.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS .. " (" .. counterCampaign .. ")")
+
     self.isUpdating = false
 end
 GW.updateQuestLogLayout = updateQuestLogLayout
@@ -1072,7 +1077,9 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     local questBlockOfIdOrNew = questWatchId and getBlockByID(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
+    local header = isCampaign and GwCampaginHeader or GwQuestHeader
     local savedHeight = 20
+    local counterQuest = 0
     if questWatchId ~= nil and questBlockOfIdOrNew ~= nil then
         updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
         questBlockOfIdOrNew.isFrequency = isFrequency
@@ -1084,6 +1091,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         for i = 1, 25 do
             if _G[blockName .. i] and _G[blockName .. i]:IsShown() and _G[blockName .. i].questID ~= nil then
                 savedHeight = savedHeight + _G[blockName .. i].height
+                counterQuest = counterQuest + 1
             elseif _G[blockName .. i] and not _G[blockName .. i]:IsShown() then
                 _G[blockName .. i]:Hide()
             end
@@ -1091,6 +1099,10 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
 
         containerName:SetHeight(savedHeight)
         updateQuestItemPositions(questWatchId, savedHeight, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
+
+        -- Set number of quest to the Header
+        local headerCounterText = " (" .. counterQuest .. ")"
+        header.title:SetText(isCampaign and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
     end
 
     self.isUpdating = false
