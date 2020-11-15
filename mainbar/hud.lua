@@ -1290,6 +1290,7 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
     experiencebar:RegisterEvent("PLAYER_LEVEL_CHANGED")
+    hooksecurefunc("SetWatchingHonorAsXP", xpbar_OnEvent)
 
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
     experiencebar:SetScript(

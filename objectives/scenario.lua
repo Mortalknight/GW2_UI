@@ -202,7 +202,7 @@ local function updateCurrentScenario()
             false,
             numCriteria + 1,
             "progressbar",
-            wqty
+            winfo.quantity
         )
         --Iron
         addObjectiveBlock(
@@ -211,7 +211,7 @@ local function updateCurrentScenario()
             false,
             numCriteria + 2,
             "progressbar",
-            iqty / imax * 100
+            iinfo.quantity / iinfo.maxQuantity * 100
         )
         numCriteria = numCriteria + 2
     elseif GW.locationData.mapID == 1469 or GW.locationData.mapID == 1470 then -- Heroic Vision for OP and SW
@@ -222,8 +222,9 @@ local function updateCurrentScenario()
             false,
             numCriteria + 1,
             "monster",
-            cmqty
+            info.quantity
         )
+        numCriteria = numCriteria + 1
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps()

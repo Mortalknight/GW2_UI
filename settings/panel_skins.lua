@@ -14,7 +14,7 @@ local function LoadSkinsPanel(sWindow)
 
     createCat("General Skins", "Enable and disable general skins", p, 6)
 
-    addOption(p, "MainMenu", nil, "MAINMENU_SKIN_ENABLED")
+    addOption(p, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED")
     addOption(p, "Static Popup", nil, "STATICPOPUP_SKIN_ENABLED")
     addOption(p, SHOW_BATTLENET_TOASTS, nil, "BNTOASTFRAME_SKIN_ENABLED")
     addOption(p, "Ghost frame", nil, "GHOSTFRAME_SKIN_ENABLED")
