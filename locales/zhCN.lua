@@ -341,8 +341,8 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "什么是'完美比例'?\n\nGW2 UI 内建了一项设定叫做'完美比例模式',拥有更清晰的材质和更佳的缩放大小处理,让每一个像素都趋近完美,使用者介面看起来能够完全符合你的期望.当然,完全可以依据你的喜好来开关这个设定."
 	L["WORLD_MARKER_DESC"] = "显示用于在团队中放置世界标记的菜单."
 	L["ZONE_ANILITY_AB_NAME"] = "区域技能名称"
-	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
-    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
+	L["PLAYER_DODGEBAR_SPELL"] = "位移条技能"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "输入需要显示的位移技能ID.\n默认则会根据各职业的当前天赋来设定位移条技能."
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

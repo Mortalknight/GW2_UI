@@ -339,8 +339,8 @@ local function GWUseThisLocalization()
 	L["WORLD_MARKER_DESC"] = "Mostra il menu per posizionare i marcatori durante i raid."
 	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": Utilizzare i colori Blizzard"
 	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Mostra numeri con virgole"
-	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
-    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
+	L["PLAYER_DODGEBAR_SPELL"] = "Abilità per la barra di schivata"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Inserisci l'ID dell'incantesimo che dovrebbe essere tracciato dalla barra di schivata.\nSe non viene inserito alcun ID, vengono registrate le abilità predefinite basate sulla tua specializzazione e sui tuoi talenti."
 
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
