@@ -578,6 +578,45 @@ local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, b
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
 
+local function checkForGlyph(btn, spellId, fmSpellbook)
+    if HasAttachedGlyph(spellId) then
+        btn.GlyphIcon:Show()
+        if IsPendingGlyphRemoval() and fmSpellbook.glyphReason then
+            btn.AbilityHighlight:Show()
+            btn.AbilityHighlightAnim:Play()
+            btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
+        else
+            btn.AbilityHighlightAnim:Stop()
+            btn.AbilityHighlight:Hide()
+            btn:SetAttribute("type1", nil)
+        end
+    else
+        btn.GlyphIcon:Hide()
+    end
+    if fmSpellbook.glyphSlot == spellId then
+        if (fmSpellbook.glyphReason == "USE_GLYPH") then
+            btn.AbilityHighlight:Show()
+            btn.AbilityHighlightAnim:Play()
+            btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
+            fmSpellbook.glyphBtn = btn
+        else
+            btn.AbilityHighlightAnim:Stop()
+            btn.AbilityHighlight:Hide()
+            fmSpellbook.glyphBtn = nil
+            fmSpellbook.glyphSlot = nil
+            fmSpellbook.glyphIndex = nil
+            btn:SetAttribute("type1", nil)
+
+            if (fmSpellbook.glyphReason == "ACTIVATE_GLYPH") then
+                btn.GlyphActivate:Show()
+                btn.GlyphIcon:Show()
+                btn.GlyphTranslation:Show()
+                btn.GlyphActivateAnim:Play()
+            end
+        end
+    end
+end
+
 local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
 
@@ -654,6 +693,11 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
                 local col = (passiveIndex - 1) % 5
                 btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
                 setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+
+                -- check for should glyph highlight
+                if spellBookTabs == 2 or spellBookTabs == 3 then
+                    checkForGlyph(btn, spellId, fmSpellbook)
+                end
                 passiveIndex = passiveIndex + 1
             end
         else
@@ -669,42 +713,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
 
             -- check for should glyph highlight
             if spellBookTabs == 2 or spellBookTabs == 3 then
-                if HasAttachedGlyph(spellId) then
-                    btn.GlyphIcon:Show()
-                    if IsPendingGlyphRemoval() and fmSpellbook.glyphReason then
-                        btn.AbilityHighlight:Show()
-                        btn.AbilityHighlightAnim:Play()
-                        btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
-                    else
-                        btn.AbilityHighlightAnim:Stop()
-                        btn.AbilityHighlight:Hide()
-                        btn:SetAttribute("type1", nil)
-                    end
-                else
-                    btn.GlyphIcon:Hide()
-                end
-                if fmSpellbook.glyphSlot == spellIndex then
-                    if (fmSpellbook.glyphReason == "USE_GLYPH") then
-                        btn.AbilityHighlight:Show()
-                        btn.AbilityHighlightAnim:Play()
-                        btn:SetAttribute("type1", "GlyphApply") -- enable strict left-click glyph applying
-                        fmSpellbook.glyphBtn = btn
-                    else
-                        btn.AbilityHighlightAnim:Stop()
-                        btn.AbilityHighlight:Hide()
-                        fmSpellbook.glyphBtn = nil
-                        fmSpellbook.glyphSlot = nil
-                        fmSpellbook.glyphIndex = nil
-                        btn:SetAttribute("type1", nil)
-
-                        if (fmSpellbook.glyphReason == "ACTIVATE_GLYPH") then
-                            btn.GlyphActivate:Show()
-                            btn.GlyphIcon:Show()
-                            btn.GlyphTranslation:Show()
-                            btn.GlyphActivateAnim:Play()
-                        end
-                    end
-                end
+                checkForGlyph(btn, spellId, fmSpellbook)
             end
 
             activeIndex = activeIndex + 1
@@ -846,6 +855,7 @@ local function passivePool_Resetter(self, btn)
     btn:SetScript("OnLeave", GameTooltip_Hide)
     btn:SetAttribute("shift-type1", nil)
     btn:SetAttribute("shift-type2", nil)
+    btn.GlyphApply = spellButton_GlyphApply
     btn.isFuture = nil
     btn.spellbookIndex = nil
     btn.booktype = nil
@@ -928,7 +938,7 @@ local function spellBook_OnEvent(self, event, ...)
             return
         end
         queueUpdateTab(self)
-    elseif IsIn(event ,"USE_GLYPH", "ACTIVATE_GLYPH") then
+    elseif IsIn(event, "USE_GLYPH", "ACTIVATE_GLYPH") then
         -- open and highlight glyphable spell
         local slot = ...
         GW.Debug("in event", event, slot, IsPendingGlyphRemoval())
