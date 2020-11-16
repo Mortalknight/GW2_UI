@@ -341,8 +341,8 @@ local function GWUseThisLocalization()
 	L["ZONE_ANILITY_AB_NAME"] = "區域技能"
 	L["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = ": 使用暴雪顏色"
 	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": 數字顯示逗號"
-	L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
-    L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
+	L["PLAYER_DODGEBAR_SPELL"] = "閃躲條技能"
+    L["PLAYER_DODGEBAR_SPELL_DESC"] = "輸入閃躲條要追蹤的法術 ID。\n如果沒有輸入 ID，會依據你的專精和天賦來追蹤預設的技能。"
 	
 	-- Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
