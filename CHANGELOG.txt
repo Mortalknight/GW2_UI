@@ -13,6 +13,7 @@ FIXES
     - Fixed an issue wherein the compass would show the incorrect colouration for daily quests.
     - Fixed an issue with the combo points mover.
 	- Fixed issues with warfronts.
+	- Fixed an issue with passive glyph application.
 
 OTHER
     - Changed the priority system of the quest tracker so that your tracked quest has a higher compass priority.
