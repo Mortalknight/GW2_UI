@@ -157,7 +157,7 @@ local function getNearestQuestPOI()
                 -- Could happens that blizzard returns the wrong value, check at the tracker is the quest us frequent to avoid a memory leak here
                 local found = false
                 for i = 1, 25 do
-                    if _G["GwCampaignBlock" .. i] ~= nil then
+                    if _G["GwCampaignBlock" .. i] ~= nil and _G["GwCampaignBlock" .. i].questID == closestQuestID then
                         isFrequent = _G["GwCampaignBlock" .. i].isFrequency
                         found = true
                         break
@@ -165,7 +165,7 @@ local function getNearestQuestPOI()
                 end
                 if not found then
                     for i = 1, 25 do
-                        if _G["GwQuestBlock" .. i] ~= nil then
+                        if _G["GwQuestBlock" .. i] ~= nil and _G["GwQuestBlock" .. i].questID == closestQuestID then
                             isFrequent = _G["GwQuestBlock" .. i].isFrequency
                             break
                         end
