@@ -1067,6 +1067,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     -- get the correct quest block for that questID
     local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
     if QuestCache:Get(questID).frequency == nil then
+        local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
         questInfo = C_QuestLog.GetInfo(questLogIndex)
         isFrequency = questInfo.frequency > 0
         wipe(questInfo)
