@@ -52,7 +52,7 @@ local function TryAddingExpirationWarningLine(block, objectiveIndex)
     if QuestUtils_ShouldDisplayExpirationWarning(block.questID) then
         local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
         local timeLeftMinutes = C_TaskQuest.GetQuestTimeLeftMinutes(block.questID)
-        if timeLeftMinutes > 0 and block.tickerSeconds  then
+        if timeLeftMinutes and block.tickerSeconds and timeLeftMinutes > 0 then
             if timeLeftMinutes < WORLD_QUESTS_TIME_CRITICAL_MINUTES then
                 local timeString = SecondsToTime(timeLeftMinutes * 60)
                 local text = BONUS_OBJECTIVE_TIME_LEFT:format(timeString)
