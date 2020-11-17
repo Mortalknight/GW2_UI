@@ -65,13 +65,13 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
         if not ParseObjectiveString(objectiveBlock, text, objectiveType, quantity) then
             objectiveBlock.StatusBar:Hide()
         end
-        local h = objectiveBlock.ObjectiveText:GetStringHeight() + 5
+        local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
         objectiveBlock:SetHeight(h)
         if objectiveBlock.StatusBar:IsShown() then
             if block.numObjectives >= 1 then
-                h = h + objectiveBlock.StatusBar:GetHeight() + 15
-            else
                 h = h + objectiveBlock.StatusBar:GetHeight() + 10
+            else
+                h = h + objectiveBlock.StatusBar:GetHeight() + 5
             end
             objectiveBlock:SetHeight(h)
         end
