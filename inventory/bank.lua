@@ -488,7 +488,7 @@ local function LoadBank(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(508, 340)
+    f:SetMinResize(340, 340)
     f:SetScript("OnSizeChanged", onBankFrameChangeSize)
     f.sizer.onResizeStop = onBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
