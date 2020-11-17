@@ -495,7 +495,7 @@ local function getQuestWatchId(questID)
 
     for i = 1, C_QuestLog.GetNumQuestWatches() do
         if questID == C_QuestLog.GetQuestIDForQuestWatchIndex(i) then
-            questWatchId = 1
+            questWatchId = i
             break
         end
     end
@@ -824,9 +824,7 @@ GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
 local questButtonHelperFrame = CreateFrame("Frame")
 questButtonHelperFrame:SetScript("OnEvent", function(self, event)
-    if event == "PLAYER_REGEN_ENABLED" then
-        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    end
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     GW.updateQuestItemPositions(self.index, self.height, self.type, self.block)
 end)
 
@@ -861,9 +859,7 @@ GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPosi
 
 local questExraButtonHelperFrame = CreateFrame("Frame")
 questExraButtonHelperFrame:SetScript("OnEvent", function(self, event)
-    if event == "PLAYER_REGEN_ENABLED" then
-        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    end
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     GW.updateExtraQuestItemPositions(self.height)
 end)
 
@@ -1071,12 +1067,9 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     -- get the correct quest block for that questID
     local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
     if QuestCache:Get(questID).frequency == nil then
-        local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
-        if questLogIndex and questLogIndex > 0 then
-            questInfo = C_QuestLog.GetInfo(questLogIndex)
-            isFrequency = questInfo.frequency > 0
-            wipe(questInfo)
-        end
+        questInfo = C_QuestLog.GetInfo(questLogIndex)
+        isFrequency = questInfo.frequency > 0
+        wipe(questInfo)
     end
     local isCampaign = QuestCache:Get(questID):IsCampaign() 
     local questWatchId = getQuestWatchId(questID)
@@ -1085,6 +1078,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
     local header = isCampaign and GwCampaginHeader or GwQuestHeader
     local savedHeight = 20
+    local heightForQuestItem = 20
     local counterQuest = 0
     if questWatchId ~= nil and questBlockOfIdOrNew ~= nil then
         updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
@@ -1102,9 +1096,21 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
                 _G[blockName .. i]:Hide()
             end
         end
-
+        
         containerName:SetHeight(savedHeight)
-        updateQuestItemPositions(questWatchId, savedHeight, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
+
+        if questBlockOfIdOrNew.hasItem then
+            for i = 1, 25 do
+                if _G[blockName .. i] and _G[blockName .. i]:IsShown() and _G[blockName .. i].questID ~= questID then
+                    heightForQuestItem = heightForQuestItem + _G[blockName .. i].height
+                    break
+                elseif _G[blockName .. i] and _G[blockName .. i]:IsShown() and _G[blockName .. i].questID == questID then
+                    heightForQuestItem = heightForQuestItem + _G[blockName .. i].height
+                    break
+                end
+            end
+            updateQuestItemPositions(questWatchId, heightForQuestItem, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
+        end
 
         -- Set number of quest to the Header
         local headerCounterText = " (" .. counterQuest .. ")"
