@@ -48,6 +48,35 @@ local function getObjectiveBlock(self, index)
 end
 GW.AddForProfiling("bonusObjective", "getObjectiveBlock", getObjectiveBlock)
 
+local function TryAddingExpirationWarningLine(block, objectiveIndex)
+    if QuestUtils_ShouldDisplayExpirationWarning(block.questID) then
+        local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
+        local timeLeftMinutes = C_TaskQuest.GetQuestTimeLeftMinutes(block.questID)
+        if timeLeftMinutes > 0 and block.tickerSeconds  then
+            if timeLeftMinutes < WORLD_QUESTS_TIME_CRITICAL_MINUTES then
+                local timeString = SecondsToTime(timeLeftMinutes * 60)
+                local text = BONUS_OBJECTIVE_TIME_LEFT:format(timeString)
+                objectiveBlock:Show()
+                objectiveBlock.ObjectiveText:SetText(text)
+                objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b )
+                objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
+                objectiveBlock.StatusBar:Hide()
+                local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
+                objectiveBlock:SetHeight(h)
+                block.height = block.height + objectiveBlock:GetHeight()
+                block.numObjectives = block.numObjectives + 1
+
+                block.tickerSeconds = 10
+            else
+                local timeToAlert = min((timeLeftMinutes - WORLD_QUESTS_TIME_CRITICAL_MINUTES) * 60 - 10, 10)
+                if block.tickerSeconds == 0 or timeToAlert < block.tickerSeconds then
+                    block.tickerSeconds = timeToAlert
+                end
+            end
+        end
+    end
+end
+
 local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity)
     local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
 
@@ -179,6 +208,11 @@ local function setUpBlock(questIDs)
             if GwBonusObjectiveBlock == nil then
                 return
             end
+            if GwBonusObjectiveBlock.ticker then
+                GwBonusObjectiveBlock.ticker:Cancel()
+                GwBonusObjectiveBlock.ticker = nil
+            end
+            GwBonusObjectiveBlock.tickerSeconds = 0
             shownBlocks = shownBlocks + 1
             GwBonusObjectiveBlock.height = 20
             GwBonusObjectiveBlock.numObjectives = 0
@@ -239,6 +273,14 @@ local function setUpBlock(questIDs)
                 end
             end
 
+            -- try to add a timer here
+            TryAddingExpirationWarningLine(GwBonusObjectiveBlock, numObjectives + 1)
+            if GwBonusObjectiveBlock.tickerSeconds > 0 then
+                GwBonusObjectiveBlock.ticker = C_Timer.NewTicker(GwBonusObjectiveBlock.tickerSeconds, function()
+                    GW.updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
+                end)
+            end
+
             if simpleDesc ~= "" then
                 compassData.DESC = simpleDesc
             end
@@ -275,6 +317,7 @@ local function setUpBlock(questIDs)
 end
 
 local function updateBonusObjective(self, event)
+    print(12)
     RemoveTrackerNotificationOfType("EVENT")
     RemoveTrackerNotificationOfType("EVENT_NEARBY")
     RemoveTrackerNotificationOfType("BONUS")
@@ -331,6 +374,10 @@ local function updateBonusObjective(self, event)
             if _G["GwBonusObjectiveBlock" .. i] ~= nil then
                 _G["GwBonusObjectiveBlock" .. i].questID = false
                 _G["GwBonusObjectiveBlock" .. i]:Hide()
+                if _G["GwBonusObjectiveBlock" .. i].ticker then
+                    _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
+                    _G["GwBonusObjectiveBlock" .. i].ticker = nil
+                end
             end
         end
     else
@@ -338,22 +385,21 @@ local function updateBonusObjective(self, event)
             if _G["GwBonusObjectiveBlock" .. i] ~= nil then
                 _G["GwBonusObjectiveBlock" .. i].questID = false
                 _G["GwBonusObjectiveBlock" .. i]:Hide()
+                if _G["GwBonusObjectiveBlock" .. i].ticker then
+                    _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
+                    _G["GwBonusObjectiveBlock" .. i].ticker = nil
+                end
             end
         end
     end
 
     QuestTrackerLayoutChanged()
 end
+GW.updateBonusObjective = updateBonusObjective
 GW.AddForProfiling("bonusObjective", "updateBonusObjective", updateBonusObjective)
 
 local function LoadBonusFrame()
-    GwQuesttrackerContainerBonusObjectives:SetScript(
-        "OnEvent",
-        function(self, event)
-            updateBonusObjective(self, event)
-        end
-    )
-
+    GwQuesttrackerContainerBonusObjectives:SetScript("OnEvent", pdateBonusObjective)
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_LOG_UPDATE")
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("TASK_PROGRESS_UPDATE")
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
