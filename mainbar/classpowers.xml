@@ -186,103 +186,103 @@
                 </Frames>
             </Frame>
 
-              <Frame parentKey="maelstrom" hidden="true">
-                  <Size x="316" y="32"></Size>
-                  <Anchors>
-                      <Anchor point="LEFT" relativePoint="LEFT" x="0" y="5"></Anchor>
-                  </Anchors>
-                  <Layers>
-                      <Layer level="BACKGROUND">
-                        <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareLeft">
+            <Frame parentKey="maelstrom" hidden="true">
+                <Size x="316" y="32"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                    <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareLeft">
 
-                            <Size x="256" y="64"></Size>
+                        <Size x="256" y="64"></Size>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativePoint="CENTER" x="30" y="0"></Anchor>
+                        </Anchors>
+                    </Texture>
+                    <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareRight">
+
+                        <Size x="256" y="64"></Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="CENTER" x="-30" y="0"></Anchor>
+                        </Anchors>
+                    </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="rune1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0" right="0.226" top="0" bottom="0.3125" />
+                            <Size x="29" y="10"></Size>
                             <Anchors>
-                                <Anchor point="RIGHT" relativePoint="CENTER" x="30" y="0"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareRight">
-
-                            <Size x="256" y="64"></Size>
+                        <Texture parentKey="rune2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0.226" right="0.4531" top="0" bottom="0.3125" />
+                            <Size x="29" y="10"></Size>
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="CENTER" x="-30" y="0"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="31" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                      </Layer>
-                      <Layer level="OVERLAY">
-                          <Texture parentKey="rune1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0" right="0.226" top="0" bottom="0.3125" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0.226" right="0.4531" top="0" bottom="0.3125" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="LEFT" relativePoint="LEFT" x="31" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune3" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0.4531" right="0.679" top="0" bottom="0.3125" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="LEFT" relativePoint="LEFT" x="62" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune4" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0.679" right="0.906" top="0" bottom="0.3125" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="LEFT" relativePoint="LEFT" x="93" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune5" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0" right="0.226" top="0.3125" bottom="0.625" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="LEFT" relativePoint="LEFT" x="124" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune10" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0.226" right="0.4531" top="0.3125" bottom="0.625" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune9" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0.4531" right="0.679" top="0.3125" bottom="0.625" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="RIGHT" relativePoint="RIGHT" x="-31" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune8" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0.679" right="0.906" top="0.3125" bottom="0.625" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="RIGHT" relativePoint="RIGHT" x="-62" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune7" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0" right="0.226" top="0.625" bottom="0.9375" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="RIGHT" relativePoint="RIGHT" x="-93" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
-                          <Texture parentKey="rune6" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
-                              <TexCoords left="0.226" right="0.4531" top="0.625" bottom="0.9375" />
-                              <Size x="29" y="10"></Size>
-                              <Anchors>
-                                  <Anchor point="RIGHT" relativePoint="RIGHT" x="-124" y="0"></Anchor>
-                              </Anchors>
-                          </Texture>
+                        <Texture parentKey="rune3" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0.4531" right="0.679" top="0" bottom="0.3125" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="62" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="rune4" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0.679" right="0.906" top="0" bottom="0.3125" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="93" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="rune5" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0" right="0.226" top="0.3125" bottom="0.625" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="124" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="rune10" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0.226" right="0.4531" top="0.3125" bottom="0.625" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="rune9" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0.4531" right="0.679" top="0.3125" bottom="0.625" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-31" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="rune8" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0.679" right="0.906" top="0.3125" bottom="0.625" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-62" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="rune7" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0" right="0.226" top="0.625" bottom="0.9375" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-93" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="rune6" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                            <TexCoords left="0.226" right="0.4531" top="0.625" bottom="0.9375" />
+                            <Size x="29" y="10"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-124" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
 
-                      </Layer>
-                  </Layers>
-              </Frame>
+                    </Layer>
+                </Layers>
+            </Frame>
             <Frame parentKey="warlock" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>

@@ -108,6 +108,19 @@ local function decay_OnAnim()
 end
 GW.AddForProfiling("classpowers", "decay_OnAnim", decay_OnAnim)
 
+local function metamorphosis_OnAnim()
+    local f = CPWR_FRAME
+    local fd = f.decay
+    local p = animations["METAMORPHOSIS_BAR"]["progress"]
+    local px = p * 310
+    fd.precentage = p
+    fd.bar:SetValue(p)
+    fd.bar.spark:ClearAllPoints()
+    fd.bar.spark:SetPoint("RIGHT", fd.bar, "LEFT", px, 0)
+    fd.bar.spark:SetWidth(math.min(15, math.max(1, px)))
+end
+GW.AddForProfiling("classpowers", "metamorphosis_OnAnim", metamorphosis_OnAnim)
+
 local function findBuff(unit, searchID)
     local name, count, duration, expires, spellID
     for i = 1, 40 do
@@ -274,6 +287,16 @@ local function setComboBar(f)
     end
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
+
+-- DEAMONHUNTER
+local function timerMetamorphosis(self, event, ...)
+    local _, _, duration, expires = findBuff("player", 162264)
+    if duration ~= nil then
+        local pre = (expires - GetTime()) / duration
+        AddToAnimation("METAMORPHOSIS_BAR", pre, 0, GetTime(), expires - GetTime(), metamorphosis_OnAnim, "noease")
+    end
+end
+GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 
 -- WARRIOR
 local function powerEnrage(self, event, ...)
@@ -1088,6 +1111,28 @@ local function setDruid(f)
 end
 GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
+local function setDeamonHunter(f)
+    if GW.myspec == 1 then -- havoc
+        f.background:SetTexture(nil)
+        f.fill:SetTexture(nil)
+        local fd = f.decay
+        fd.bar:SetStatusBarColor(72 / 255, 38 / 255, 148 / 255)
+        fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
+        fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
+        fd.bar:SetValue(0)
+        fd:Show()
+
+        f:SetScript("OnEvent", timerMetamorphosis)
+        timerMetamorphosis(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_AURA", "player")
+
+        return true
+    end
+
+    return false
+end
+GW.AddForProfiling("classpowers", "setDeamonHunter", setDeamonHunter)
+
 local function selectType(f)
     f:SetScript("OnEvent", nil)
     f:UnregisterAllEvents()
@@ -1129,6 +1174,8 @@ local function selectType(f)
         showBar = setMonk(f)
     elseif GW.myClassID == 11 then
         showBar = setDruid(f)
+    elseif GW.myClassID == 12 then
+        showBar = setDeamonHunter(f)
     end
 
     if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
