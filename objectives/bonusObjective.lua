@@ -152,6 +152,8 @@ local shownBlocks = 0
 local blockIndex = 1
 
 local function setUpBlock(questIDs)
+    local savedHeight = 0
+
     for k, v in pairs(questIDs) do
         local questID = v.ID
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
@@ -264,11 +266,12 @@ local function setUpBlock(questIDs)
                 end
             end
 
-            GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 5)
-            GwQuesttrackerContainerBonusObjectives:SetHeight(GwBonusObjectiveBlock.height + 20)
+            GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 10)
             blockIndex = blockIndex + 1
         end
     end
+
+    GwQuesttrackerContainerBonusObjectives:SetHeight(savedHeight)
 end
 
 local function updateBonusObjective(self, event)

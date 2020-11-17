@@ -909,7 +909,7 @@ end
 local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
     -- adjust scrolframe height
-    local height = GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 20
+    local height = GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60
     local scroll = 0
     local trackerHeight = GetSetting("QuestTracker_pos_height") - GwQuesttrackerContainerBossFrames:GetHeight() - GwQuesttrackerContainerArenaBGFrames:GetHeight() - GwQuesttrackerContainerScenario:GetHeight() - GwObjectivesNotification:GetHeight()
     if height > tonumber(trackerHeight) then
