@@ -68,7 +68,7 @@ local function TryAddingExpirationWarningLine(block, objectiveIndex)
 
                 block.tickerSeconds = 10
             else
-                local timeToAlert = min((timeLeftMinutes - WORLD_QUESTS_TIME_CRITICAL_MINUTES) * 60 - 10, 10)
+                local timeToAlert = max((timeLeftMinutes - WORLD_QUESTS_TIME_CRITICAL_MINUTES) * 60 - 10, 10)
                 if block.tickerSeconds == 0 or timeToAlert < block.tickerSeconds then
                     block.tickerSeconds = timeToAlert
                 end
@@ -317,7 +317,7 @@ local function setUpBlock(questIDs)
 end
 
 local function updateBonusObjective(self, event)
-    print(12)
+    print(12, event)
     RemoveTrackerNotificationOfType("EVENT")
     RemoveTrackerNotificationOfType("EVENT_NEARBY")
     RemoveTrackerNotificationOfType("BONUS")
