@@ -55,6 +55,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
     if text then
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText(text)
+        objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
         else
@@ -74,11 +75,17 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
             objectiveBlock.StatusBar:Hide()
         end
 
-        local h = 20
+        local h = objectiveBlock.ObjectiveText:GetStringHeight() + 5
+        objectiveBlock:SetHeight(h)
         if objectiveBlock.StatusBar:IsShown() then
-            h = 50
+            if block.numObjectives >= 1 then
+                h = h + objectiveBlock.StatusBar:GetHeight() + 15
+            else
+                h = h + objectiveBlock.StatusBar:GetHeight() + 10
+            end
+            objectiveBlock:SetHeight(h)
         end
-        block.height = block.height + h
+        block.height = block.height + objectiveBlock:GetHeight()
         block.numObjectives = block.numObjectives + 1
     end
     return precentageComplete

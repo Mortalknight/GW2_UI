@@ -91,29 +91,35 @@ local function getBlock(blockIndex)
 end
 GW.AddForProfiling("achievement", "getBlock", getBlock)
 
-local function addObjective(block, text, finished, firstunfinishedobjectiv)
+local function addObjective(block, text, finished, firstunfinishedobjectiv, qty, totalqty)
     if finished or not text then
         return
     end
-
-    block.numObjectives = block.numObjectives + 1
 
     local objectiveBlock = getObjectiveBlock(block, firstunfinishedobjectiv)
 
     objectiveBlock:Show()
     objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
+    objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
     objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
 
-    if ParseObjectiveString(objectiveBlock, text) then
+    if ParseObjectiveString(objectiveBlock, text, nil, nil, qty, totalqty) then
         --added progressbar in ParseObjectiveString
     else
         objectiveBlock.StatusBar:Hide()
     end
-    local h = 20
+    local h = objectiveBlock.ObjectiveText:GetStringHeight() + 5
+    objectiveBlock:SetHeight(h)
     if objectiveBlock.StatusBar:IsShown() then
-        h = 50
+        if block.numObjectives >= 1 then
+            h = h + objectiveBlock.StatusBar:GetHeight() + 15
+        else
+            h = h + objectiveBlock.StatusBar:GetHeight() + 10
+        end
+        objectiveBlock:SetHeight(h)
     end
-    block.height = block.height + h
+    block.height = block.height + objectiveBlock:GetHeight()
+    block.numObjectives = block.numObjectives + 1
 end
 GW.AddForProfiling("achievement", "addObjective", addObjective)
 
@@ -154,10 +160,10 @@ local function updateAchievementObjectives(block)
                     quantity = math.floor(quantity / (COPPER_PER_SILVER * SILVER_PER_GOLD))
                     totalQuantity = math.floor(totalQuantity / (COPPER_PER_SILVER * SILVER_PER_GOLD))
 
-                    criteriaString = quantity .. "/" .. totalQuantity .. " " .. description
+                    criteriaString = description
                 else
-                    -- remove spaces so it matches the quest look, x/y
-                    criteriaString = string.gsub(quantityString, " / ", "/") .. " " .. description
+
+                    criteriaString = description
                 end
             else
                 -- for meta criteria look up the achievement name
@@ -165,10 +171,10 @@ local function updateAchievementObjectives(block)
                     _, criteriaString = GetAchievementInfo(assetID)
                 end
             end
-            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv)
+            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity)
 
             if numIncomplete == MAX_OBJECTIVES then
-                addObjective(block, "....", false, firstunfinishedobjectiv)
+                addObjective(block, "...", false, firstunfinishedobjectiv)
                 break
             end
         end

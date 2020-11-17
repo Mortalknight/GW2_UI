@@ -147,7 +147,7 @@ local function ParseCriteria(quantity, totalQuantity, criteriaString)
 end
 GW.ParseCriteria = ParseCriteria
 
-local function ParseObjectiveString(block, text, objectiveType, quantity)
+local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity or 0)
@@ -156,9 +156,13 @@ local function ParseObjectiveString(block, text, objectiveType, quantity)
         return true
     end
     block.StatusBar.precentage = false
-    local _, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
-    if numItems == nil then
-        numItems, numNeeded, _ = string.match(text, "(%d+)/(%d+) (%S+)")
+
+    local numItems, numNeeded = numItems, numNeeded
+    if not numItems and not numNeeded then
+        _, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
+        if numItems == nil then
+            numItems, numNeeded, _ = string.match(text, "(%d+)/(%d+) (%S+)")
+        end
     end
     numItems = tonumber(numItems)
     numNeeded = tonumber(numNeeded)
