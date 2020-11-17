@@ -3,7 +3,8 @@ local v = GW.vernotes
 
 v("5.4.9-hotfix", [=[
 NEW
-	- Added a class power bar for Havoc Demon Hunter
+	- Added a class power bar for Havoc Demon Hunter.
+	- Added time remaining for World Quests in the Quest Tracker.
 
 FIXES
 	- Fixed an issue with the dynamic height in the Quest Tracker.
