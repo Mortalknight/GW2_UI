@@ -10,23 +10,23 @@ local notifications = {}
 local questCompass = {}
 
 local icons = {
-    ["QUEST"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
-    ["CAMPAIGN"] = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
-    ["EVENT_NEARBY"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
-    ["EVENT"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
-    ["SCENARIO"] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
-    ["BOSS"] = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
-    ["DEAD"] = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
-    ["ARENA"] = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
-    ["DAILY"] = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
+    QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    CAMPAIGN = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
+    EVENT_NEARBY = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
+    EVENT = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
+    SCENARIO = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
+    BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
+    DEAD = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
+    ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
+    DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
 }
 
 local notification_priority = {
-    ["EVENT_NEARBY"] = 1,
-    ["SCENARIO"] = 2,
-    ["EVENT"] = 3,
-    ["ARENA"] = 4,
-    ["BOSS"] = 5,
+    EVENT_NEARBY = 1,
+    SCENARIO = 2,
+    EVENT = 3,
+    ARENA = 4,
+    BOSS = 5,
 }
 
 local function prioritys(a, b)
@@ -209,15 +209,14 @@ local function getBodyPOI()
         return nil
     end
 
-    local bodyCompass = {
-        ["X"] = x,
-        ["Y"] = y,
-        ["TITLE"] = L["TRACKER_RETRIVE_CORPSE"],
-        ["TYPE"] = "DEAD",
-        ["ID"] = "playerDead",
-        ["COLOR"] = TRACKER_TYPE_COLOR.DEAD,
-        ["COMPASS"] = true,
-    }
+    local bodyCompass = {}
+    bodyCompass.X = x
+    bodyCompass.Y = y
+    bodyCompass.TITLE = L["TRACKER_RETRIVE_CORPSE"]
+    bodyCompass.TYPE = "DEAD"
+    bodyCompass.ID = "playerDead"
+    bodyCompass.COLOR = TRACKER_TYPE_COLOR.DEAD
+    bodyCompass.COMPASS = true
 
     return bodyCompass
 end
@@ -378,7 +377,7 @@ local function SetObjectiveNotification()
         GwObjectivesNotification.compass.dataIndex = data.ID
 
         if icons[data.TYPE] ~= nil then
-            GwObjectivesNotification.compass.icon:SetTexture( "Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
+            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
             GwObjectivesNotification.compass.icon:SetTexCoord(
                 icons[data.TYPE].l,
                 icons[data.TYPE].r,
