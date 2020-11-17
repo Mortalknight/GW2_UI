@@ -317,7 +317,6 @@ local function setUpBlock(questIDs)
 end
 
 local function updateBonusObjective(self, event)
-    print(12, event)
     RemoveTrackerNotificationOfType("EVENT")
     RemoveTrackerNotificationOfType("EVENT_NEARBY")
     RemoveTrackerNotificationOfType("BONUS")
