@@ -398,7 +398,7 @@ GW.updateBonusObjective = updateBonusObjective
 GW.AddForProfiling("bonusObjective", "updateBonusObjective", updateBonusObjective)
 
 local function LoadBonusFrame()
-    GwQuesttrackerContainerBonusObjectives:SetScript("OnEvent", pdateBonusObjective)
+    GwQuesttrackerContainerBonusObjectives:SetScript("OnEvent", updateBonusObjective)
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_LOG_UPDATE")
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("TASK_PROGRESS_UPDATE")
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
