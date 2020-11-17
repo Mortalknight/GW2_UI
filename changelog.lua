@@ -1,6 +1,20 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.9-hotfix", [=[
+NEW
+	- Added a class power bar for Havoc Demon Hunter
+
+FIXES
+	- Fixed an issue with the dynamic height in the Quest Tracker.
+	- Fixed an issue where quests would show with the wrong colouration.
+	- Fixed an issue where quest items would show in the incorrect location in the Quest Tracker.
+	- Fixed an issue with Quest Tracker scrolling.
+	
+OTHER
+	- Changed the minimum size for the bag and bank windows.
+]=])
+
 v("5.4.9", [=[
 NEW
     - Added a new setting for floating combat text.
