@@ -1,19 +1,25 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.10", [=[
+FIXES
+    - Update TOC
+    - Disable help frame skinning until it can be properly fixed
+]=])
+
 v("5.4.9-hotfix", [=[
 NEW
-	- Added a class power bar for Havoc Demon Hunter.
-	- Added time remaining for World Quests in the Quest Tracker.
+    - Added a class power bar for Havoc Demon Hunter.
+    - Added time remaining for World Quests in the Quest Tracker.
 
 FIXES
-	- Fixed an issue with the dynamic height in the Quest Tracker.
-	- Fixed an issue where quests would show with the wrong colouration.
-	- Fixed an issue where quest items would show in the incorrect location in the Quest Tracker.
-	- Fixed an issue with Quest Tracker scrolling.
-	
+    - Fixed an issue with the dynamic height in the Quest Tracker.
+    - Fixed an issue where quests would show with the wrong colouration.
+    - Fixed an issue where quest items would show in the incorrect location in the Quest Tracker.
+    - Fixed an issue with Quest Tracker scrolling.
+
 OTHER
-	- Changed the minimum size for the bag and bank windows.
+    - Changed the minimum size for the bag and bank windows.
 ]=])
 
 v("5.4.9", [=[
@@ -21,7 +27,7 @@ NEW
     - Added a new setting for floating combat text.
     - The minimap is now able to be moved using the Move HUD mode.
     - Added the ability to manually set which spell ID is tracked with the dodge bar.
-	- Added a counter to the journal micromenu icon to track the total number of active quests. Also counters to the quest tracker titles to show how many currently tracked quests are under each category.
+    - Added a counter to the journal micromenu icon to track the total number of active quests. Also counters to the quest tracker titles to show how many currently tracked quests are under each category.
 
 FIXES
     - Fixed an issue where the quest tracker position would be reset if the GW2 UI minimap module was disabled.
@@ -29,8 +35,8 @@ FIXES
     - Fixed an issue which disabled quest tracker scrolling.
     - Fixed an issue wherein the compass would show the incorrect colouration for daily quests.
     - Fixed an issue with the combo points mover.
-	- Fixed issues with warfronts.
-	- Fixed an issue with passive glyph application.
+    - Fixed issues with warfronts.
+    - Fixed an issue with passive glyph application.
 
 OTHER
     - Changed the priority system of the quest tracker so that your tracked quest has a higher compass priority.

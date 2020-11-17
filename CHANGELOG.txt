@@ -1,3 +1,8 @@
+5.4.10
+FIXES
+    - Update TOC
+    - Disable help frame skinning until it can be properly fixed
+
 5.4.9-hotfix
 NEW
 	- Added a class power bar for Havoc Demon Hunter.
