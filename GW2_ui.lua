@@ -520,8 +520,10 @@ local function loadAddon(self)
         GW.skinHelpFrameOnEvent()
     end
 
+    if GetSetting("WORLDMAP_COORDS") then
+        GW.AddCoordsToWorldMap()
+    end
 
-    GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
 

@@ -27,7 +27,9 @@ local function LoadHudPanel(sWindow)
     addOption(p, L["FADE_MICROMENU"], L["FADE_MICROMENU_DESC"], "FADE_MICROMENU")
     addOption(p, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
     addOption(p, WORLD_MARKER:format(0):gsub("%d", ""), L["WORLD_MARKER_DESC"], "WORLD_MARKER_FRAME")
+    addOption(p, L["WORLDMAP_COORDS"], L["WORLDMAP_COORDS"], "WORLDMAP_COORDS", nil, nil, {["MINIMAP_ENABLED"] = true})
     addOption(p, L["MINIMAP_FPS"], L["MINIMAP_FPS"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true})
+    addOption(p, L["MINIMAP_COORDS"], L["MINIMAP_COORDS"], "MINIMAP_COORDS", nil, nil, {["MINIMAP_ENABLED"] = true})
     addOption(p, L["FADE_GROUP_MANAGE_FRAME"], L["FADE_GROUP_MANAGE_FRAME_DESC"], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
     addOption(
         p,
