@@ -3,8 +3,9 @@ local v = GW.vernotes
 
 v("5.5.0", [=[
 NEW
+    - Added skinning support for Postal in the Mail frame UI (Thanks, Hatdragon)
 
-FIXES
+    FIXES
 
 ]=])
 
