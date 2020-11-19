@@ -185,6 +185,8 @@ local function GWUseThisLocalization()
 	L["MAP_COORDINATES_TITLE"] = "Coordonnées de la carte"
 	L["MAP_COORDINATES_TOGGLE_TEXT"] = "Clic gauche pour afficher les coordonnées de plus grande précision."
 	L["MINIMAP_COORDS"] = "Les coordonnées"
+    L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
 	L["MINIMAP_DESC"] = "Utiliser le cadre et l'emplacement de mini-carte de GW2."
 	L["MINIMAP_FPS"] = "Afficher les IPS sur la minimap"
 	L["MINIMAP_HOVER"] = "Détails de la mini-carte"

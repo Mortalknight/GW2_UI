@@ -198,6 +198,8 @@ local function GWUseThisLocalization()
     L["BINGSINGS_BIND"] = "bound to"
     L["MINIMAP_POS"] = "Minimap position"
     L["MINIMAP_COORDS"] = "Coordenadas"
+    L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
     L["WORLD_MARKER_DESC"] = "Show menu for placing world markers when in raids."
     L["UP"] = "up"
     L["DOWN"] = "down"
