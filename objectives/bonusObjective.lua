@@ -308,7 +308,6 @@ local function setUpBlock(questIDs)
             blockIndex = blockIndex + 1
         end
     end
-    print(savedContainerHeight)
     GwQuesttrackerContainerBonusObjectives:SetHeight(savedContainerHeight)
 end
 
