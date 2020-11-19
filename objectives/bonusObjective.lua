@@ -181,8 +181,6 @@ local shownBlocks = 0
 local blockIndex = 1
 
 local function setUpBlock(questIDs)
-    local savedHeight = 0
-
     for k, v in pairs(questIDs) do
         local questID = v.ID
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
@@ -352,7 +350,7 @@ local function updateBonusObjective(self, event)
         end
     end
 
-    if GwQuesttrackerContainerBonusObjectives.collapsed == true then
+    if GwQuesttrackerContainerBonusObjectives.collapsed then
         if EventToShow then
             GwBonusHeader:Show()
             foundEvent = true
@@ -365,8 +363,7 @@ local function updateBonusObjective(self, event)
     end
 
     setUpBlock(trackedEventIDs)
-
-    if foundEvent == false then
+    if not foundEvent then
         savedQuests = {}
         GwBonusHeader:Hide()
         for i = 1, 20 do
