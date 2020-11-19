@@ -515,13 +515,15 @@ local function loadAddon(self)
     if GetSetting("INSPECTION_SKIN_ENABLED") then
         GW.SkinDressUpFrame()
     end
-    --[[
+
     if GetSetting("HELPFRAME_SKIN_ENABLED") then
         GW.skinHelpFrameOnEvent()
     end
-    --]]
 
-    GW.AddCoordsToWorldMap()
+    if GetSetting("WORLDMAP_COORDS") then
+        GW.AddCoordsToWorldMap()
+    end
+
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
 

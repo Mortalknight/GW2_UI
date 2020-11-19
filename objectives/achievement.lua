@@ -95,7 +95,8 @@ local function addObjective(block, text, finished, firstunfinishedobjectiv, qty,
     if finished or not text then
         return
     end
-
+    
+    block.numObjectives = block.numObjectives + 1
     local objectiveBlock = getObjectiveBlock(block, firstunfinishedobjectiv)
 
     objectiveBlock:Show()
@@ -119,7 +120,6 @@ local function addObjective(block, text, finished, firstunfinishedobjectiv, qty,
         objectiveBlock:SetHeight(h)
     end
     block.height = block.height + objectiveBlock:GetHeight()
-    block.numObjectives = block.numObjectives + 1
 end
 GW.AddForProfiling("achievement", "addObjective", addObjective)
 
