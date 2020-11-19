@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.5.0", [=[
+NEW
+
+FIXES
+
+]=])
+
 v("5.4.10", [=[
 FIXES
     - Update TOC
