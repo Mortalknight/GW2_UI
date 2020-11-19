@@ -3,9 +3,10 @@ local v = GW.vernotes
 
 v("5.5.0", [=[
 NEW
+    - Added skinning support for Postal in the Mail frame UI (Thanks, Hatdragon)
     - Added options for disabling the map coordinates in both minimap and world map (Thanks, Hatdragon)
 
-FIXES
+    FIXES
 
 ]=])
 

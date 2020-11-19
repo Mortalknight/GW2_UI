@@ -464,5 +464,6 @@ local function SkinMail()
 
     -- hook inbox buttons to close the compose view if we want to look at a message and it's open
     AddOnClickHandlers()
+
 end
 GW.SkinMail = SkinMail
