@@ -343,8 +343,8 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "¿Qué es 'Píxel Perfecto'?\n\nLa interfaz de usuario de GW2 tiene una configuración incorporada llamada 'Modo perfecto de píxel'. Esto significa que su interfaz de usuario se verá como se esperaba, con texturas más nítidas y mejor escala. Por supuesto, puede desactivar esto en el menú de configuración si lo prefiere."
 	L["WORLD_MARKER_DESC"] = "Muestra el menú para colocar marcadores del mundo en bandas."
 	L["ZONE_ANILITY_AB_NAME"] = "Habilidad de zona"
-	L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
-    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
+	L["MINIMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el minimapa"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el mapa del mundo"
 
 	
 	--Composite
