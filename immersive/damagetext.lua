@@ -131,8 +131,6 @@ local function createNewFontElement(self)
     end
 
     local f = CreateFrame("FRAME", "GwDamageTextElement" .. createdFramesIndex, self, "GwDamageText")
-    f.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
-    f.string:SetTextColor(1, 1, 1, 1)
     table.insert(fontStringList, f)
     createdFramesIndex = createdFramesIndex + 1
     return f
@@ -156,9 +154,11 @@ end
 local function setElementData(self, critical, source)
     if critical then
       self.crit = true
+      self.string:SetFont(DAMAGE_TEXT_FONT, 34, "OUTLINED")
       self.critTexture:Show()
     else
       self.critTexture:Hide()
+      self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
       self.crit = false
     end
     self.pet = false
