@@ -521,7 +521,10 @@ local function loadAddon(self)
     end
     --]]
 
-    GW.AddCoordsToWorldMap()
+    if GetSetting("WORLDMAP_COORDS") then
+        GW.AddCoordsToWorldMap()
+    end
+
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
 

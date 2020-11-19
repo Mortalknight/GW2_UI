@@ -53,7 +53,7 @@
     </Frame>
 
     <Frame name="GwSettingsWindowTmpl" frameStrata="HIGH" enableMouse="true" parent="UIParent" virtual="true">
-        <Size x="512" y="600"></Size>
+        <Size x="512" y="625"></Size>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSettingsMoverFrame" relativePoint="TOP" x="20" y="-40"></Anchor>
         </Anchors>
