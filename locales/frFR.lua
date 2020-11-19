@@ -337,6 +337,7 @@ local function GWUseThisLocalization()
 	L["ZONE_ANILITY_AB_NAME"] = "Capacité de la zone"
 	L["PLAYER_DODGEBAR_SPELL"] = "Barre des sorts de mouvement"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Entrez l'identification du sort qui doit être suivi par la barre de mouvement.\nSi aucune identification n'est entrée, ce sera le sort par défaut, basé selon votre spécialisation et vos talents, qui sera suivi."
+	L["COPY_OF"] = "Copy of"
 	
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

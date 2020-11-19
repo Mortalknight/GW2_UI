@@ -337,6 +337,7 @@ local function GWUseThisLocalization()
 	L["ZONE_ANILITY_AB_NAME"] = "区域技能名称"
 	L["PLAYER_DODGEBAR_SPELL"] = "位移条技能"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "输入需要显示的位移技能ID.\n默认则会根据各职业的当前天赋来设定位移条技能."
+	L["COPY_OF"] = "Copy of"
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

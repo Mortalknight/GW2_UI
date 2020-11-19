@@ -340,6 +340,7 @@ local function GWUseThisLocalization()
     L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
     L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
+    L["COPY_OF"] = "Copy of"
 end
 
 if GetLocale() == "koKR" then

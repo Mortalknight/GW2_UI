@@ -345,7 +345,7 @@ local function GWUseThisLocalization()
 	L["ZONE_ANILITY_AB_NAME"] = "Habilidad de zona"
 	L["MINIMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el minimapa"
     L["WORLDMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el mapa del mundo"
-
+	L["COPY_OF"] = "Copy of"
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

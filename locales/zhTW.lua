@@ -337,6 +337,7 @@ local function GWUseThisLocalization()
 	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": 數字顯示逗號"
 	L["PLAYER_DODGEBAR_SPELL"] = "閃躲條技能"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "輸入閃躲條要追蹤的法術 ID。\n如果沒有輸入 ID，會依據你的專精和天賦來追蹤預設的技能。"
+	L["COPY_OF"] = "Copy of"
 	
 	-- Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

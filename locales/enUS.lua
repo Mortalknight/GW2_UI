@@ -336,7 +336,8 @@ local function GWUseThisLocalization()
     L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Show numbers with commas"
     L["PLAYER_DODGEBAR_SPELL"] = "Dodge Bar Ability"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."
-	
+    L["COPY_OF"] = "Copy of"
+    
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
     L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])

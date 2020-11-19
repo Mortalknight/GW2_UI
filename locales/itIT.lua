@@ -335,7 +335,8 @@ local function GWUseThisLocalization()
 	L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Mostra numeri con virgole"
 	L["PLAYER_DODGEBAR_SPELL"] = "Abilità per la barra di schivata"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Inserisci l'ID dell'incantesimo che dovrebbe essere tracciato dalla barra di schivata.\nSe non viene inserito alcun ID, vengono registrate le abilità predefinite basate sulla tua specializzazione e sui tuoi talenti."
-
+	L["COPY_OF"] = "Copy of"
+	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
     L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])

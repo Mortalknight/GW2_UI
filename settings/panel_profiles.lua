@@ -195,6 +195,9 @@ local function buttons_OnEnter(self)
     if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
         self:GetParent().exportButton:Show()
     end
+    if self:GetParent().copyable ~= nil and self:GetParent().copyable == true then
+        self:GetParent().copyButton:Show()
+    end
 end
 AddForProfiling("panel_profiles", "activate_OnEnter", activate_OnEnter)
 
@@ -210,6 +213,9 @@ local function buttons_OnLeave(self)
     end
     if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
         self:GetParent().activateButton:Hide()
+    end
+    if self:GetParent().copyable ~= nil and self:GetParent().copyable == true then
+        self:GetParent().copyButton:Hide()
     end
     self:GetParent().background:SetBlendMode("BLEND")
 end
@@ -242,6 +248,27 @@ local function rename_OnClick(self, button)
     StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent())
 end
 
+local function copyTable(newTable, tableToCopy)
+    if type(newTable) ~= "table" then newTable = {} end
+
+    if type(tableToCopy) == "table" then
+        for option, value in pairs(tableToCopy) do
+            if type(value) == "table" then
+                value = copyTable(newTable[option], value)
+            end
+
+            newTable[option] = value
+        end
+    end
+
+    return newTable
+end
+
+local function copy_OnClick(self, button)
+    local newProfil = copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
+    GW.addProfile(self:GetParent():GetParent():GetParent():GetParent(), L["COPY_OF"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().profileID]["profilename"], newProfil, true)
+end
+
 local function item_OnLoad(self)
     self.name:SetFont(UNIT_NAME_FONT, 14)
     self.name:SetTextColor(1, 1, 1)
@@ -268,6 +295,9 @@ local function item_OnLoad(self)
     self.renameButton:SetScript("OnEnter", buttons_OnEnter)
     self.renameButton:SetScript("OnLeave", buttons_OnLeave)
     self.renameButton:SetScript("OnClick", rename_OnClick)
+    self.copyButton:SetScript("OnEnter", buttons_OnEnter)
+    self.copyButton:SetScript("OnLeave", buttons_OnLeave)
+    self.copyButton:SetScript("OnClick", copy_OnClick)
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
 
@@ -284,6 +314,9 @@ local function item_OnEnter(self)
     if self.exportable ~= nil and self.exportable == true then
         self.exportButton:Show()
     end
+    if self.copyable ~= nil and self.copyable == true then
+        self.copyButton:Show()
+    end
     self.background:SetBlendMode("ADD")
 end
 AddForProfiling("panel_profiles", "item_OnEnter", item_OnEnter)
@@ -297,6 +330,9 @@ local function item_OnLeave(self)
     end
     if self.exportable ~= nil and self.exportable == true then
         self.exportButton:Hide()
+    end
+    if self.copyable ~= nil and self.copyable == true then
+        self.copyButton:Hide()
     end
     self.activateButton:Hide()
     self.background:SetBlendMode("BLEND")
@@ -323,7 +359,7 @@ updateProfiles = function(self)
             item_OnLoad(f)
             self.profile_buttons[k + 1] = f
         end
-
+    
         if v ~= nil then
             f:Show()
             f.profileID = k
@@ -332,6 +368,7 @@ updateProfiles = function(self)
             f.deleteable = true
             f.exportable = true
             f.renameable = true
+            f.copyable = true
             f.background:SetTexCoord(0, 1, 0, 0.5)
             f.activateAble = true
             if currentProfile == k then
@@ -346,6 +383,7 @@ updateProfiles = function(self)
                         v["profileCreatedCharacter"] .. L["PROFILES_LAST_UPDATE"] .. v["profileLastUpdated"]
 
             f.name:SetText(v["profilename"])
+            f.name:SetWidth(min(f.name:GetStringWidth(), 250))
             f.desc:SetText(description)
             f:SetPoint("TOPLEFT", 15, (-70 * h) + -120)
             h = h + 1
@@ -379,7 +417,7 @@ updateProfiles = function(self)
 end
 AddForProfiling("panel_profiles", "updateProfiles", updateProfiles)
 
-local function addProfile(self, name, profileData)
+local function addProfile(self, name, profileData, copy)
     local index = 0
     local profileList = GetSettingsProfiles()
 
@@ -394,11 +432,13 @@ local function addProfile(self, name, profileData)
         return
     end
 
-    GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
-
-    if profileData then
+    if copy then
+        GW2UI_SETTINGS_PROFILES[index] = profileData
+        GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
+    elseif profileData then
         GW2UI_SETTINGS_PROFILES[index] = profileData
     else
+        GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
         GW2UI_SETTINGS_PROFILES[index] = {}
         GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
         GW2UI_SETTINGS_PROFILES[index]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
@@ -472,6 +512,7 @@ local function LoadProfilesPanel(sWindow)
     resetTodefault.deleteable = false
     resetTodefault.exportable = false
     resetTodefault.renameable = false
+    resetTodefault.copyable = false
     resetTodefault.background:SetTexCoord(0, 1, 0, 0.5)
     resetTodefault.activateAble = true
 
@@ -547,6 +588,7 @@ local function LoadProfilesPanel(sWindow)
             profileToRename["profilename"] = self.editBox:GetText()
             profileToRename["profileLastUpdated"] = changeDate
             data.name:SetText(self.editBox:GetText())
+            data.name:SetWidth(min(self.editBox:GetStringWidth(), 250))
             data.desc:SetText(description)
 
             return

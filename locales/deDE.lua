@@ -340,6 +340,7 @@ local function GWUseThisLocalization()
     L["GW_COMBAT_TEXT_COMMA_FORMAT"] = ": Zahlen mir Komma anzeigen"
     L["PLAYER_DODGEBAR_SPELL"] = "Ausweichenleiste-Zauber"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Trage die Zauber ID des Zaubers ein, der über der Gesundheitskugel angezeit wird.\nIst keiner eingetragen, werden die Standardzauber angezeigt, abhängig von Talenten & Spezialisierung."
+    L["COPY_OF"] = "Kopie von"
 end
 
 if GetLocale() == "deDE" then

@@ -123,8 +123,19 @@
             </Layer>
         </Layers>
         <Frames>
+            <Button hidden="true" parentKey="copyButton">
+                <Size x="20" y="20"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.name" relativePoint="RIGHT" x="10" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/maximize_button" SetAllPoints="true"/>
+                    </Layer>
+                </Layers>
+            </Button>
             <Button hidden="true" parentKey="deleteButton">
-                <size x="56" y="20"/>
+                <Size x="56" y="20"/>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" x="-10" y="5"/>
                 </Anchors>
