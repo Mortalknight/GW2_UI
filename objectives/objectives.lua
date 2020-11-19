@@ -987,9 +987,12 @@ local function updateQuestLogLayout(self)
                 --if quest is reapeataple make it blue
                 local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
                 if QuestCache:Get(questID).frequency == nil then
-                    questInfo = C_QuestLog.GetInfo(QuestCache:Get(questID):GetQuestLogIndex())
-                    isFrequency = questInfo.frequency > 0
-                    wipe(questInfo)
+                    local questLogIndex = QuestCache:Get(questID):GetQuestLogIndex()
+                    if questLogIndex and questLogIndex > 0 then
+                        questInfo = C_QuestLog.GetInfo(questLogIndex)
+                        isFrequency = questInfo.frequency > 0
+                        wipe(questInfo)
+                    end
                 end
                 local block = getBlockQuest(counterQuest, isFrequency)
                 if block == nil then
@@ -1068,9 +1071,11 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
     if QuestCache:Get(questID).frequency == nil then
         local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
-        questInfo = C_QuestLog.GetInfo(questLogIndex)
-        isFrequency = questInfo.frequency > 0
-        wipe(questInfo)
+        if questLogIndex and questLogIndex > 0 then
+            questInfo = C_QuestLog.GetInfo(questLogIndex)
+            isFrequency = questInfo.frequency > 0
+            wipe(questInfo)
+        end
     end
     local isCampaign = QuestCache:Get(questID):IsCampaign() 
     local questWatchId = getQuestWatchId(questID)
