@@ -3,6 +3,7 @@ local v = GW.vernotes
 
 v("5.5.0", [=[
 NEW
+    - Added options for disabling the map coordinates in both minimap and world map (Thanks, Hatdragon)
 
 FIXES
 
