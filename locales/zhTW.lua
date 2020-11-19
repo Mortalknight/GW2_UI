@@ -182,6 +182,8 @@ local function GWUseThisLocalization()
 	L["MAP_COORDINATES_TITLE"] = "地圖坐標"
 	L["MAP_COORDINATES_TOGGLE_TEXT"] = "點一下切換坐標的精確度。"
 	L["MINIMAP_COORDS"] = "坐標"
+    L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
 	L["MINIMAP_DESC"] = "使用 GW2 UI 小地圖框架。"
 	L["MINIMAP_FPS"] = "小地圖上顯示 FPS"
 	L["MINIMAP_HOVER"] = "小地圖資訊"

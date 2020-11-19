@@ -198,6 +198,8 @@ local function GWUseThisLocalization()
     L["UPDATE_STRING_2"] = "Nueva actualización disponible que contiene nuevas características."
     L["UPDATE_STRING_3"] = "Una actualización |cFFFF0000importante| está disponible.\n\nEs muy recomendable que actualice."
     L["MINIMAP_COORDS"] = "Coordenadas"
+    L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
     L["WORLD_MARKER_DESC"] = "Show menu for placing world markers when in raids."
     L["UP"] = "up"
     L["DOWN"] = "down"

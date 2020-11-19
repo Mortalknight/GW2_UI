@@ -521,7 +521,7 @@ local function loadAddon(self)
     end
     --]]
 
-    if GetSetting("WORLDMAP_COORDS") then
+    if GetSetting("WORLDMAP_COORDS_TOGGLE") then
         GW.AddCoordsToWorldMap()
     end
 

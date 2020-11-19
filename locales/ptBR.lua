@@ -183,6 +183,8 @@ local function GWUseThisLocalization()
 	L["MAP_COORDINATES_TITLE"] = "Coordenadas do Mapa"
 	L["MAP_COORDINATES_TOGGLE_TEXT"] = "Clique com o botão esquerdo para aumentar a precisão das coordenadas."
 	L["MINIMAP_COORDS"] = "Coordenadas"
+    L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
 	L["MINIMAP_DESC"] = "Usar a unidade de Minimapa do GW2 UI"
 	L["MINIMAP_FPS"] = "Mostrar FPS no mini mapa"
 	L["MINIMAP_HOVER"] = "Detalhes do Minimapa"

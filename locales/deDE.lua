@@ -199,6 +199,8 @@ local function GWUseThisLocalization()
     L["BINGSINGS_BIND"] = "gebunden an"
     L["MINIMAP_POS"] = "Minikartenposition"
     L["MINIMAP_COORDS"] = "Koordinaten"
+    L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
     L["WORLD_MARKER_DESC"] = "Zeige Menü, um in Schlachtzügen Welt-Markierungen zu positionieren."
     L["UP"] = "hoch"
     L["DOWN"] = "runter"

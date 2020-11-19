@@ -183,6 +183,8 @@ local function GWUseThisLocalization()
 	L["MAP_COORDINATES_TITLE"] = "Координаты карты "
 	L["MAP_COORDINATES_TOGGLE_TEXT"] = "Щелкните левой кнопкой мыши, чтобы переключить на координаты более высокой точности. "
 	L["MINIMAP_COORDS"] = "Координаты"
+    L["MINIMAP_COORDS_TOGGLE"] = "Show Coordinates on Minimap"
+    L["WORLDMAP_COORDS_TOGGLE"] = "Show Coordinates on world map"
 	L["MINIMAP_DESC"] = "Использовать мини-карту в стиле GW2 UI"
 	L["MINIMAP_FPS"] = "Показать FPS на мини-карте"
 	L["MINIMAP_HOVER"] = "Элементы миникарты"

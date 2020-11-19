@@ -491,7 +491,8 @@ local function LoadMinimap()
     GwMapTime:SetScript("OnEnter", time_OnEnter)
     GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
 
-    if GetSetting("MINIMAP_COORDS") then
+    --coords
+    if GetSetting("MINIMAP_COORDS_TOGGLE") then
         GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
         GwMapCoords.Coords:SetText("n/a")
         GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
@@ -499,11 +500,12 @@ local function LoadMinimap()
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
         GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
-    end
-    -- only set the coords updater here if they are showen always
-    local hoverSetting = GetSetting("MINIMAP_HOVER")
-    if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
-        GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+   
+        -- only set the coords updater here if they are showen always
+        local hoverSetting = GetSetting("MINIMAP_HOVER")
+        if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
+            GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+        end
     end
 
     --FPS
