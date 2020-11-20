@@ -163,7 +163,7 @@ local function xpbar_OnEvent(self, event)
     local showBar1 = false
     local showBar2 = false
     local showBar3 = false
-    local restingIconString = " |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t "
+    local restingIconString = " |TInterface/AddOns/GW2_UI/textures/icons/resting-icon:16:16:0:0|t "
 
     if not IsResting() then
         restingIconString = ""
@@ -361,14 +361,14 @@ local function xpbar_OnEvent(self, event)
             Nextlevel = AzeritLevel + 1 --Max azerit level is infinity
             GwExperienceFrame.NextLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             GwExperienceFrame.CurrentLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
-            GwExperienceFrame.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label-azerit")
-            GwExperienceFrame.labelLeft:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label-azerit")
+            GwExperienceFrame.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
+            GwExperienceFrame.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
         end
     else
         GwExperienceFrame.NextLevel:SetTextColor(1, 1, 1)
         GwExperienceFrame.CurrentLevel:SetText(1, 1, 1)
-        GwExperienceFrame.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
-        GwExperienceFrame.labelLeft:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
+        GwExperienceFrame.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
+        GwExperienceFrame.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
     end
 
     --If we are inside a pvp arena we show the honorbar
@@ -516,7 +516,7 @@ local function xpbar_OnEvent(self, event)
     experiencebarAnimation = valPrec
 
     if GW_LEVELING_REWARD_AVALIBLE then
-        Nextlevel = Nextlevel and Nextlevel .. " |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:20:20:0:0|t" or ""
+        Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or ""
     end
 
     if GW.mylevel ~= effectiveLevel then
@@ -806,28 +806,28 @@ local function selectBg()
     if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
         return
     end
-    local right = "Interface/AddOns/GW2_UI/textures/rightshadow"
-    local left = "Interface/AddOns/GW2_UI/textures/leftshadow"
+    local right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow"
+    local left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow"
 
     if UnitIsDeadOrGhost("player") then
-        right = "Interface/AddOns/GW2_UI/textures/rightshadow_dead"
-        left = "Interface/AddOns/GW2_UI/textures/leftshadow_dead"
+        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_dead"
+        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_dead"
     end
 
     if GW.myClassID == 11 then --Druid
         local ShapeshiftFormID = GetShapeshiftFormID()
         if ShapeshiftFormID == BEAR_FORM then
-            right = "Interface/AddOns/GW2_UI/textures/rightshadow_bear"
-            left = "Interface/AddOns/GW2_UI/textures/leftshadow_bear"
+            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear"
+            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear"
         elseif ShapeshiftFormID == CAT_FORM then
-            right = "Interface/AddOns/GW2_UI/textures/rightshadow_cat"
-            left = "Interface/AddOns/GW2_UI/textures/leftshadow_cat"
+            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat"
+            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat"
         end
     end
 
     if UnitAffectingCombat("player") then
-        right = "Interface/AddOns/GW2_UI/textures/rightshadowcombat"
-        left = "Interface/AddOns/GW2_UI/textures/leftshadowcombat"
+        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadowcombat"
+        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadowcombat"
 
         local bolFound = false
         for i = 1, 40 do
@@ -891,56 +891,56 @@ GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 
 registerActionHudAura(
     31842,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_holy",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy",
     "player"
 )
 registerActionHudAura(
     31884,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_holy",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy",
     "player"
 )
 registerActionHudAura(
     51271,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_frost",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_frost",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_frost",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_frost",
     "player"
 )
 registerActionHudAura(
     162264,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_metamorph",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph",
     "player"
 )
 registerActionHudAura(
     187827,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_metamorph",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph",
     "player"
 )
 registerActionHudAura(
     215785,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_shaman_fire",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire",
     "player"
 )
 registerActionHudAura(
     77762,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_shaman_fire",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire",
     "player"
 )
 registerActionHudAura(
     201846,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_shaman_storm",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_shaman_storm",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_storm",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_storm",
     "player"
 )
 registerActionHudAura(
     63560,
-    "Interface/AddOns/GW2_UI/textures/leftshadow_unholy",
-    "Interface/AddOns/GW2_UI/textures/rightshadow_unholy",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_unholy",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_unholy",
     "pet"
 )
 
@@ -968,9 +968,9 @@ local function LoadBreathMeter()
         "OnEvent",
         function(self, event, arg1, arg2, arg3, arg4)
             if event == "MIRROR_TIMER_START" then
-                local texture = "Interface\\AddOns\\GW2_UI\\textures\\castingbar"
+                local texture = "Interface/AddOns/GW2_UI/textures/hud/castingbar"
                 if arg1 == "BREATH" then
-                    texture = "Interface\\AddOns\\GW2_UI\\textures\\breathmeter"
+                    texture = "Interface/AddOns/GW2_UI/textures/hud/breathmeter"
                 end
                 GwBreathMeterBar:SetStatusBarTexture(texture)
                 GwBreathMeterBar:SetMinMaxValues(0, arg3)
@@ -1115,7 +1115,7 @@ displayRewards = function()
 
             _G["GwLevelingRewardsItem" .. i]:Show()
             _G["GwLevelingRewardsItem" .. i].level:SetText(
-                v["level"] .. " |TInterface\\AddOns\\GW2_UI\\textures\\levelreward-icon:24:24:0:0|t "
+                v["level"] .. " |TInterface/AddOns/GW2_UI/textures/icons/hud/levelreward-icon:24:24:0:0|t "
             )
 
             if v["type"] == "SPELL" then
@@ -1147,7 +1147,7 @@ displayRewards = function()
                 end
                 _G["GwLevelingRewardsItem" .. i]:SetScript("OnLeave", GameTooltip_Hide)
             elseif v["type"] == "TALENT" then
-                _G["GwLevelingRewardsItem" .. i].icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talent-icon")
+                _G["GwLevelingRewardsItem" .. i].icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/talent-icon")
                 _G["GwLevelingRewardsItem" .. i].name:SetText(BONUS_TALENTS)
                 _G["GwLevelingRewardsItem" .. i]:SetScript(
                     "OnEnter",

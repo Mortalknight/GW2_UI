@@ -178,18 +178,18 @@ FACTION_COLOR[1] = {r = 163 / 255, g = 46 / 255, b = 54 / 255}
 FACTION_COLOR[2] = {r = 57 / 255, g = 115 / 255, b = 186 / 255}
 
 local TARGET_FRAME_ART = {
-    ["minus"] = "Interface/AddOns/GW2_UI/textures/targetshadow",
-    ["normal"] = "Interface/AddOns/GW2_UI/textures/targetshadow",
-    ["elite"] = "Interface/AddOns/GW2_UI/textures/targetShadowElit",
-    ["rare"] = "Interface/AddOns/GW2_UI/textures/targetShadowRare",
-    ["rareelite"] = "Interface/AddOns/GW2_UI/textures/targetShadowRare",
-    ["worldboss"] = "Interface/AddOns/GW2_UI/textures/targetshadow_boss",
-    ["boss"] = "Interface/AddOns/GW2_UI/textures/targetshadow_boss",
-    ["prestige1"] = "Interface/AddOns/GW2_UI/textures/targetshadow_p1",
-    ["prestige2"] = "Interface/AddOns/GW2_UI/textures/targetshadow_p2",
-    ["prestige3"] = "Interface/AddOns/GW2_UI/textures/targetshadow_p3",
-    ["prestige4"] = "Interface/AddOns/GW2_UI/textures/targetshadow_p4",
-    ["realboss"] = "Interface/AddOns/GW2_UI/textures/targetshadow-raidboss"
+    ["minus"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow",
+    ["normal"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow",
+    ["elite"] = "Interface/AddOns/GW2_UI/textures/units/targetShadowElit",
+    ["rare"] = "Interface/AddOns/GW2_UI/textures/units/targetShadowRare",
+    ["rareelite"] = "Interface/AddOns/GW2_UI/textures/units/targetShadowRare",
+    ["worldboss"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow_boss",
+    ["boss"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow_boss",
+    ["prestige1"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p1",
+    ["prestige2"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p2",
+    ["prestige3"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p3",
+    ["prestige4"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p4",
+    ["realboss"] = "Interface/AddOns/GW2_UI/textures/units/targetshadow-raidboss"
 }
 GW.TARGET_FRAME_ART = TARGET_FRAME_ART
 

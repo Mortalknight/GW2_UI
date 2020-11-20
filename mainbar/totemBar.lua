@@ -77,8 +77,8 @@ local function Create_Totem_Bar()
         local button = CreateFrame("Button", gw_totem_bar:GetName() .. "Totem" .. i, gw_totem_bar)
 
         button:SetID(i)
-        button:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
-        button:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
+        button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+        button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
 
         local backDrop = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
         local backDropSize = 1

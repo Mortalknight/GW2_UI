@@ -74,7 +74,7 @@ local function SkinMacroOptions()
 
     _G.MacroFrameSelectedMacroButton:DisableDrawLayer("BACKGROUND")
     _G.MacroFrameSelectedMacroButtonIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    _G.MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    _G.MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     hooksecurefunc("MacroFrame_ShowDetails", function() _G.MacroFrameSelectedMacroBackground:Hide() end)
 
     -- Skin all buttons
@@ -83,14 +83,14 @@ local function SkinMacroOptions()
         local t = _G["MacroButton" .. i .. "Icon"]
 
         if b then
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-            b:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+            b:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
             local r = {b:GetRegions()}
             local ii = 1
             for _,c in pairs(r) do
                 if c:GetObjectType() == "Texture" then
                     if ii == 1 then
-                        c:SetTexture("Interface/AddOns/GW2_UI/textures/spelliconempty")
+                        c:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
                         c:SetSize(b:GetSize())
                     end
                     ii = ii + 1
@@ -115,9 +115,9 @@ local function SkinMacroOptions()
     MacroPopupFrame.BorderBox.CancelButton:SkinButton(false, true)
     _G.MacroPopupScrollFrameScrollBar:SkinScrollBar()
     _G.MacroPopupScrollFrame:SkinScrollFrame()
-    _G.MacroPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    _G.MacroPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    _G.MacroPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    _G.MacroPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    _G.MacroPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    _G.MacroPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
 
     local r = {MacroPopupFrame.BorderBox:GetRegions()}
     for _,c in pairs(r) do
@@ -133,14 +133,14 @@ local function SkinMacroOptions()
     for i = 1, _G.NUM_MACRO_ICONS_SHOWN do
         local button = _G["MacroPopupButton" .. i]
         if button then
-            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-            button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+            button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
             local r = {button:GetRegions()}
             local ii = 1
             for _,c in pairs(r) do
                 if c:GetObjectType() == "Texture" then
                     if ii == 1 then
-                        c:SetTexture("Interface/AddOns/GW2_UI/textures/spelliconempty")
+                        c:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
                         c:SetSize(button:GetSize())
                     end
                     ii = ii + 1

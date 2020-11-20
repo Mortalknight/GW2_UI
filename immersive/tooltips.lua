@@ -89,8 +89,8 @@ end
 GW.AddForProfiling("tooltips", "movePlacement", movePlacement)
 
 local constBackdropArgs = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -105,9 +105,9 @@ GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 local function SkinItemRefTooltip()
     local SkinItemRefTooltip_Update = function()
         if ItemRefTooltip:IsShown() then
-            ItemRefTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-            ItemRefTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-            ItemRefTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
+            ItemRefTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+            ItemRefTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
             ItemRefTooltip.CloseButton:SetSize(20, 20)
             ItemRefTooltip.CloseButton:ClearAllPoints()
             ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -141,9 +141,9 @@ local function SkinBattlePetTooltip()
 
     local fbptt = function()
         if FloatingBattlePetTooltip:IsShown() then
-            FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-            FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-            FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
+            FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+            FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
             FloatingBattlePetTooltip.CloseButton:SetSize(20, 20)
             FloatingBattlePetTooltip.CloseButton:ClearAllPoints()
             FloatingBattlePetTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -655,7 +655,7 @@ local function LoadTooltips()
         SetStyle(tooltip)
     end
     hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle)
-    _G.GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
+    _G.GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
     _G.GameTooltip.ItemTooltip:CreateBackdrop(constBackdropArgs)
 
 

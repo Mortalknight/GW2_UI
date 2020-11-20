@@ -352,7 +352,7 @@ local function reskinBagBar(b, ha)
 
     if b.SlotHighlightTexture then
         b.SlotHighlightTexture:SetAlpha(highlightAlpha)
-        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
 
     b:SetPushedTexture(nil)
@@ -698,15 +698,15 @@ local function LoadInventory()
     StackSplitFrame.OkayButton:SkinButton(false, true)
     StackSplitFrame.CancelButton:SkinButton(false, true)
 
-    StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
-    StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
-    StackSplitFrame.RightButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+    StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+    StackSplitFrame.RightButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     StackSplitFrame.RightButton:SetSize(25, 25)
     StackSplitFrame.RightButton:SetPoint("LEFT", StackSplitFrame, "CENTER", 51, 18)
 
-    StackSplitFrame.LeftButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
-    StackSplitFrame.LeftButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
-    StackSplitFrame.LeftButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+    StackSplitFrame.LeftButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+    StackSplitFrame.LeftButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+    StackSplitFrame.LeftButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     StackSplitFrame.LeftButton:SetSize(25, 25)
     StackSplitFrame.LeftButton:GetNormalTexture():SetTexCoord(1, 0, 1, 0)
     StackSplitFrame.LeftButton:GetPushedTexture():SetTexCoord(1, 0, 1, 0)
@@ -714,7 +714,7 @@ local function LoadInventory()
     StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
 
     StackSplitFrame.textboxbg = StackSplitFrame:CreateTexture(nil, "BACKGROUND")
-    StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
 	StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
 	StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
 

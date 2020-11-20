@@ -23,7 +23,7 @@ local function ExtraButtons_UpdateScale()
 
     local width, height = _G.ExtraActionBarFrame.button:GetSize()
     ExtraActionBarFrame.gwMover:SetSize(width, height)
-    QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/spelliconempty")
+    QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
     QuickKeybindFrame.phantomExtraActionButton.normalTexture:ClearAllPoints()
     QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetAllPoints(ExtraActionBarFrame.gwMover)
     QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:ClearAllPoints()

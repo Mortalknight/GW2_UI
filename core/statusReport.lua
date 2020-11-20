@@ -136,14 +136,14 @@ local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, 
     leftDivider:SetHeight(2)
     leftDivider:SetPoint("LEFT", section.Header, "LEFT", -10, 0)
     leftDivider:SetPoint("RIGHT", section.Header.Text, "LEFT", 20, 0)
-    leftDivider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+    leftDivider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
     section.Header.LeftDivider = leftDivider
 
     local rightDivider = section.Header:CreateTexture(nil, "ARTWORK")
     rightDivider:SetHeight(2)
     rightDivider:SetPoint("RIGHT", section.Header, "RIGHT", 10, 0)
     rightDivider:SetPoint("LEFT", section.Header.Text, "RIGHT", -20, 0)
-    rightDivider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+    rightDivider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
     section.Header.RightDivider = rightDivider
 
     return section
@@ -151,7 +151,7 @@ end
 
 local function CreateStatusFrame()
     local BackdropFrame = {
-        bgFile = "Interface/AddOns/GW2_UI/textures/welcome-bg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg",
         edgeFile = "",
         tile = false,
         tileSize = 64,
@@ -176,7 +176,7 @@ local function CreateStatusFrame()
 
     local titleTexture = StatusFrame.TitleLogoFrame:CreateTexture(nil, "ARTWORK")
     titleTexture:SetPoint("CENTER", titleLogoFrame, "CENTER")
-    titleTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/gwlogo")
+    titleTexture:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo")
     titleTexture:SetSize(128, 128)
     titleLogoFrame.Texture = titleTexture
 

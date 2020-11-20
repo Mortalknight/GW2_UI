@@ -4,7 +4,7 @@ local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
         StaticPopup.tex:SetSize(StaticPopup:GetSize())
-        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface/AddOns/GW2_UI/textures/warning-icon") 
+        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon") 
         _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:SetTexture(nil)
         _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -44,7 +44,7 @@ local function SkinStaticPopup()
         --Change EditBox
         _G["StaticPopup" .. i .. "EditBoxLeft"]:Hide()
         _G["StaticPopup" .. i .. "EditBoxRight"]:Hide()
-        _G["StaticPopup" .. i .. "EditBoxMid"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+        _G["StaticPopup" .. i .. "EditBoxMid"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
         _G["StaticPopup" .. i .. "EditBoxMid"]:ClearAllPoints()
         _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("TOPLEFT", _G["StaticPopup" .. i .. "EditBoxLeft"], "BOTTOMRIGHT", -25, 3)
         _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("BOTTOMRIGHT", _G["StaticPopup" .. i .. "EditBoxRight"], "TOPLEFT", 25, -3)

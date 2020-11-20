@@ -130,7 +130,7 @@ local function button1_OnClick()
                 GW.inDebug = false
             end
 
-            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CHAT_BTN"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CHAT_BTN"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 2
             button1_OnClick()
@@ -166,7 +166,7 @@ local function button1_OnClick()
             SetCVar("fstack_preferParentKeys", 0)
             SetCVar("whisperMode", "inline")
 
-            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CVARS_BTN"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CVARS_BTN"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 3
             button1_OnClick()
@@ -188,7 +188,7 @@ local function button1_OnClick()
             SetSetting("PIXEL_PERFECTION", true)
             GW.PixelPerfection()
 
-            GW2_UIAlertSystem.AlertSystem:AddAlert(L["PIXEL_PERFECTION"], nil, L["PIXEL_PERFECTION_ON"], false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["PIXEL_PERFECTION"], nil, L["PIXEL_PERFECTION_ON"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 4
             button1_OnClick()

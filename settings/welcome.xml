@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/welcome-bg">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg">
                 <Size x="512" y="512"/>
                     <Anchors>
                         <Anchor point="TOPLEFT"/>
@@ -79,7 +79,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Anchors>
                                 <Anchor point="TOPLEFT"/>
                                 <Anchor point="BOTTOMRIGHT"/>
@@ -126,7 +126,7 @@
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"/>
                                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"/>
                                 </Anchors>
-                                <ThumbTexture parentKey="thumb" file="Interface/AddOns/GW2_UI/textures/scrollbarmiddle">
+                                <ThumbTexture parentKey="thumb" file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle">
                                     <Size x="12" y="100"/>
                                     <Anchors>
                                         <Anchor point="TOP" relativePoint="TOP"/>
@@ -134,7 +134,7 @@
                                 </ThumbTexture>
                                 <Layers>
                                     <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbg">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbg">
                                             <Anchors>
                                                 <Anchor point="TOP" relativePoint="TOP"/>
                                                 <Anchor point="BOTTOM" relativePoint="BOTTOM"/>
@@ -158,7 +158,7 @@
                                 </Anchors>
                                 <Layers>
                                     <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbutton">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
                                         <Size x="12" y="12"/>
                                             <Anchors>
                                                 <Anchor point="TOP" relativePoint="TOP"/>
@@ -174,7 +174,7 @@
                                 </Anchors>
                                 <Layers>
                                     <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbutton">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
                                             <Size x="12" y="12"/>
                                             <Anchors>
                                                 <Anchor point="TOP" relativePoint="TOP"/>

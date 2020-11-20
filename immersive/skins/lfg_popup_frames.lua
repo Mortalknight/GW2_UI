@@ -30,18 +30,18 @@ local function SkinLFGListApplicationDialog()
     local r = {LFGListApplicationDialog.Description:GetRegions()}
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then
-            c:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+            c:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
         end
     end
-    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
 
-    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    LFGListApplicationDialog.Description.ScrollBar.ScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     LFGListApplicationDialog:CreateBackdrop(constBackdropFrame)
 end
 

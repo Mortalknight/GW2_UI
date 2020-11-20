@@ -17,7 +17,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\spelliconempty">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -34,7 +34,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="1">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
+                <Texture name="$parentTexture" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
                     <Color r="0" g="0" b="0" a="0.9"></Color>
                     <Size x="20" y="20">
                     </Size>
@@ -50,7 +50,7 @@
         <Size x="20" y="4"></Size>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture name="$parentTexture" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Color r="0" g="0" b="0" a="1"></Color>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>

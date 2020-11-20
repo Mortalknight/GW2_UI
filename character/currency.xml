@@ -7,7 +7,7 @@
             <Button parentKey="header" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer>
-                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                        <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
                             <Size x="512" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -15,10 +15,10 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
                             <Size x="28" y="28"></Size>
                         </Texture>
-                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
                             <Size x="28" y="28"></Size>
                         </Texture>
                         <FontString parentKey="spaceString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
@@ -33,7 +33,7 @@
             <Button parentKey="item" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                        <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -73,7 +73,7 @@
             <Button parentKey="item" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                        <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Size x="32" y="55"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>

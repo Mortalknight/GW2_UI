@@ -104,7 +104,7 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="3">
-                <Texture file="Interface/AddOns/GW2_UI/textures/settingsicon">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/settingsicon">
                     <Size x="128" y="128"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
@@ -167,9 +167,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-normal"/>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"/>
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"/>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal"/>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"/>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"/>
                 <NormalFont style="ChatBubbleFont"/>
                 <HighlightFont style="ChatBubbleFont"/>
             </Button>
@@ -180,7 +180,7 @@
         <Size x="40" y="40"/>
         <Layers>
             <Layer>
-                <Texture parentKey="iconbg" hidden="true" file="Interface/AddOns/GW2_UI/textures/settingsiconbg">
+                <Texture parentKey="iconbg" hidden="true" file="Interface/AddOns/GW2_UI/textures/icons/settingsiconbg">
                     <Size x="64" y="40"/>
                     <Anchors>
                         <Anchor point="CENTER" x="-6" y="0"/>
@@ -188,7 +188,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icon-module">
+                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-module">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
@@ -221,8 +221,8 @@
                 <Anchors>
                     <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
             </CheckButton>
         </Frames>
     </Button>
@@ -250,12 +250,12 @@
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-55"/>
                 </Anchors>
                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/sliderhandle">
+                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
                     <Size x="16" y="16"/>
                 </ThumbTexture>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/sliderbg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -271,7 +271,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-5" y="3"/>
                                 <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
@@ -317,7 +317,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND" textureSubLevel="2">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Color r="0" b="0" g="0"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -336,7 +336,7 @@
 
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="4">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/arrowdown_down">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down">
                             <Color r="1" g="1" b="1" a="1"/>
                             <Size x="18" y="18"/>
                             <Anchors>
@@ -353,7 +353,7 @@
         <Size x="250" y="20"/>
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Color r="0" b="0" g="0"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -397,7 +397,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-5" y="1"/>
                                 <Anchor point="BOTTOMRIGHT" x="5" y="-1"/>
@@ -430,13 +430,13 @@
 
     <Button name="GwStandardButton" text="" virtual="true">
         <Size x="128" y="24" />
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/button"/>
-        <DisabledTexture file="Interface/AddOns/GW2_UI/textures/button_disable"/>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button"/>
+        <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button_disable"/>
         <NormalFont style="gw_button_font_black"/>
         <HighlightFont style="gw_button_font_black"/>
         <Layers>
             <Layer textureSubLevel="3">
-                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/button_hover">
+                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"/>
                         <Anchor point="TOP" relativePoint="TOP"/>
@@ -456,7 +456,7 @@
         <Size x="30" y="20"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Anchors>
                         <Anchor point="TOPLEFT" x="-5" y="3"/>
                         <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
@@ -486,7 +486,7 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="2">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/warning-icon">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/icons/warning-icon">
                     <Size x="50" y="50"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="15" y="-15"/>
@@ -509,7 +509,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-5" y="3"/>
                                 <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
@@ -605,7 +605,7 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="3">
-                <Texture file="Interface/AddOns/GW2_UI/textures/settingsicon">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/settingsicon">
                     <Size x="52" y="52"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-7" y="10" />
@@ -651,12 +651,12 @@
                             <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
                         </Anchors>
                         <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                        <ThumbTexture file="Interface/AddOns/GW2_UI/textures/sliderhandle">
+                        <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
                             <Size x="12" y="12"/>
                         </ThumbTexture>
                         <Layers>
                             <Layer>
-                                <Texture file="Interface/AddOns/GW2_UI/textures/sliderbg">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -672,7 +672,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="BACKGROUND">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                                     <Anchors>
                                         <Anchor point="TOPLEFT" x="-5" y="3"/>
                                         <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
@@ -710,12 +710,12 @@
                             <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
                         </Anchors>
                         <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                        <ThumbTexture file="Interface/AddOns/GW2_UI/textures/sliderhandle">
+                        <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
                             <Size x="12" y="12"/>
                         </ThumbTexture>
                         <Layers>
                             <Layer>
-                                <Texture file="Interface/AddOns/GW2_UI/textures/sliderbg">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -731,7 +731,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="BACKGROUND">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                                     <Anchors>
                                         <Anchor point="TOPLEFT" x="-5" y="3"/>
                                         <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>

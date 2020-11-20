@@ -115,7 +115,7 @@ GW.AddForProfiling("micromenu", "modifyMicroAlert", modifyMicroAlert)
 
 local function reskinMicroButton(btn, name, mbf)
     btn:SetParent(mbf)
-    local tex = "Interface/AddOns/GW2_UI/textures/" .. name .. "-Up"
+    local tex = "Interface/AddOns/GW2_UI/textures/icons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
     btn:SetDisabledTexture(tex)
@@ -135,13 +135,13 @@ local function reskinMicroButton(btn, name, mbf)
 
     btn.GwNotify:SetSize(18, 18)
     btn.GwNotify:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-    btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/notification-backdrop")
+    btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
     btn.GwNotify:SetVertexColor(1, 0, 0, 1)
     btn.GwNotify:Hide()
 
     btn.GwNotifyDark:SetSize(18, 18)
     btn.GwNotifyDark:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-    btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/notification-backdrop")
+    btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
     btn.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
     btn.GwNotifyDark:Hide()
 
@@ -328,10 +328,10 @@ local function setupMicroButtons(mbf)
             if m.updateInterval ~= PERFORMANCEBAR_UPDATE_INTERVAL then
                 return
             end
-            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
+            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
+            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
+            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
+            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
             MainMenuBarPerformanceBar:Hide()
             MainMenuBarDownload:Hide()
         end
@@ -454,10 +454,10 @@ local function LoadMicroMenu()
             MicroButtonPortrait:Hide()
             GuildMicroButtonTabard:Hide()
             local m = GuildMicroButton
-            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
+            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
+            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
+            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
+            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
         end
     )
 

@@ -20,7 +20,7 @@ local function AddFrameSeperator()
     MailFrame.mailFrameSepTexture = MailFrame:CreateTexture("MailFrameSepTexture", "ARTWORK")
     MailFrame.mailFrameSepTexture:SetSize(600, 2)
     MailFrame.mailFrameSepTexture:SetPoint("BOTTOMRIGHT", MailFrame, "BOTTOMRIGHT", 110, 50)
-    MailFrame.mailFrameSepTexture:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+    MailFrame.mailFrameSepTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
 end
 
 local function AddOnClickHandlers()
@@ -143,7 +143,7 @@ local function SkinOpenMailFrame()
     b:StripTextures()
 
         if b then
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
             local r = {b:GetRegions()}
             local ii = 1
             for _,c in pairs(r) do
@@ -169,7 +169,7 @@ local function SkinMailFrameSendItems()
     for i = 1, _G.ATTACHMENTS_MAX_SEND do
         local b = _G["SendMailAttachment" .. i]
         if b then
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
             local r = {b:GetRegions()}
             local ii = 1
             for _,c in pairs(r) do
@@ -355,7 +355,7 @@ local function SkinMail()
     MailFrame.mailFrameBgTexture = MailFrame:CreateTexture("MailFrameBgTexture", "BACKGROUND")
     MailFrame.mailFrameBgTexture:SetSize(newWidth, newHeight)
     MailFrame.mailFrameBgTexture:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 0, 5)
-    MailFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/mailboxwindow-background")
+    MailFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/mailboxwindow-background")
     MailFrame.mailFrameBgTexture:SetTexCoord(0,0.7099,0,0.955);
 
     -- Configure Mail Heading
@@ -373,7 +373,7 @@ local function SkinMail()
     MailFrame.icon = MailFrame:CreateTexture("MailFrameIcon", "ARTWORK")
     MailFrame.icon:SetSize(80, 80)
     MailFrame.icon:SetPoint("CENTER", MailFrame, "TOPLEFT", 12, 25)
-    MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/mail-window-icon")
+    MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mail-window-icon")
 
     MailFrame.headingRight = MailFrame:CreateTexture("bg", "BACKGROUND")
     MailFrame.headingRight:SetSize(newWidth, 64)

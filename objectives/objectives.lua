@@ -411,7 +411,7 @@ local function getBlockQuest(blockIndex, isFrequency)
     setBlockColor(newBlock, isFrequency and "DAILY" or "QUEST")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.joingroup:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
     newBlock.joingroup:SetScript(
         "OnClick",
         function (self)
@@ -450,7 +450,7 @@ local function getBlockCampaign(blockIndex)
     setBlockColor(newBlock, "CAMPAIGN")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.joingroup:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
     newBlock.joingroup:SetScript(
         "OnClick",
         function (self)

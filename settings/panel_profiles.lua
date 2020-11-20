@@ -40,7 +40,7 @@ local function createImportExportFrame(settingsWindow)
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/welcome-bg")
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg")
     
     frame.header = frame:CreateFontString(nil, "OVERLAY")
     frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
@@ -70,7 +70,7 @@ local function createImportExportFrame(settingsWindow)
     end)
     frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
     frame.scrollArea.bg:SetAllPoints()
-    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground")
 
     -- added description here
     frame.description = frame:CreateFontString(nil, "OVERLAY")
@@ -496,7 +496,7 @@ local function LoadProfilesPanel(sWindow)
     end
     p.scrollFrame:SetScript("OnMouseWheel", fnGSPF_scroll_OnMouseWheel)
 
-    createCat(L["PROFILES_CAT"], L["PROFILES_TOOLTIP"], p, 5, "Interface/AddOns/GW2_UI/textures/settingsiconbg-2")
+    createCat(L["PROFILES_CAT"], L["PROFILES_TOOLTIP"], p, 5, "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2")
 
     p.slider:SetValue(0)
 

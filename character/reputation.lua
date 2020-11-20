@@ -364,7 +364,7 @@ local function setDetailEx(
         end
 
         if hasRewardPending then 
-            local nameReward = name .. "|TInterface\\AddOns\\GW2_UI\\textures\\rewards-icon:32:32:0:0|t"
+            local nameReward = name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t"
             frame.name:SetText(nameReward)
         else
             frame.name:SetText(name)

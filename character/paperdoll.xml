@@ -82,8 +82,8 @@
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10" y="0"></Anchor>
                     </Anchors>
-                    <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                    <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                    <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                    <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                 </CheckButton>
             </Frames>
         </Layers>
@@ -149,7 +149,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\MainMenuMicroButton-Up">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up">
                             <Size x="20" y="20"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -398,8 +398,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -413,8 +413,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -428,8 +428,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -443,8 +443,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -458,8 +458,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -473,8 +473,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -488,8 +488,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -503,8 +503,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -518,8 +518,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -533,8 +533,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -550,8 +550,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -566,8 +566,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -582,8 +582,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -598,8 +598,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -614,8 +614,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -630,8 +630,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -646,8 +646,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>
@@ -662,8 +662,8 @@
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                                 </Anchors>
-                                <NormalTexture file="Interface\AddOns\GW2_UI\textures\checkbox"></NormalTexture>
-                                <CheckedTexture file="Interface\AddOns\GW2_UI\textures\checkboxchecked"></CheckedTexture>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
                             </CheckButton>
                         </Frames>
                     </ItemButton>

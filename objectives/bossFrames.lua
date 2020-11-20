@@ -72,7 +72,7 @@ local function updateBoss_RaidMarkers(self)
         self.marker:Show()
         self.icon:Hide()
     else
-        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icon-boss")
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
         self.icon:Show()
         self.marker:Hide()
     end

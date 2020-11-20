@@ -9,7 +9,7 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-32"/>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="32"/>
                 </Anchors>
-                <ThumbTexture parentKey="thumb" file="Interface/AddOns/GW2_UI/textures/scrollbarmiddle">
+                <ThumbTexture parentKey="thumb" file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle">
                     <Size x="12" y="100"/>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP"/>
@@ -17,7 +17,7 @@
                 </ThumbTexture>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbg">
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"/>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM"/>
@@ -33,7 +33,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbutton">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
                             <Size x="12" y="12"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"/>
@@ -49,7 +49,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbutton">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
                             <Size x="12" y="12"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"/>
@@ -130,7 +130,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/maximize_button" SetAllPoints="true"/>
+                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/maximize_button" SetAllPoints="true"/>
                     </Layer>
                 </Layers>
             </Button>

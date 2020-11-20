@@ -44,7 +44,7 @@ local StripTexturesBlizzFrames = {
 }
 
 local constBackdropDropDown = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/gwstatusbar",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar",
     edgeFile = "",
     tile = false,
     tileSize = 64,
@@ -116,7 +116,7 @@ local function AddHover(self)
         hover:SetPoint("TOP", self, "TOP")
         hover:SetPoint("BOTTOM", self, "BOTTOM")
         hover:SetPoint("RIGHT", self, "RIGHT")
-        hover:SetTexture("Interface/AddOns/GW2_UI/textures/button_hover")
+        hover:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
         self.hover = hover
         self.hover:SetAlpha(0)
 
@@ -126,11 +126,11 @@ local function AddHover(self)
 end
 
 local function SkinCheckButton(button)
-    if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/checkbox") end
-    if button.SetCheckedTexture then button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked") end
-    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked") end
-    if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/checkbox") end
-    if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal") end
+    if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox") end
+    if button.SetCheckedTexture then button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked") end
+    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked") end
+    if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox") end
+    if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
 end
 
 function SkinSliderFrame(frame)
@@ -142,13 +142,13 @@ function SkinSliderFrame(frame)
         frame:CreateBackdrop()
     end
 
-    frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/sliderhandle")
+    frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle")
 
     local thumb = frame:GetThumbTexture()
     thumb:SetSize(SIZE - 2, SIZE - 2)
     
     local tex = frame:CreateTexture("bg", "BACKGROUND")
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/sliderbg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderbg")
     frame.tex = tex
 
     if orientation == "VERTICAL" then
@@ -198,18 +198,18 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
 
     if not onlyHover then
         if isXButton then
-            if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal") end
-            if button.SetHighlightTexture then button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover") end
-            if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover") end
-            if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal") end
+            if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
+            if button.SetHighlightTexture then button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover") end
+            if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover") end
+            if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
         else
-            if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button") end
+            if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/button") end
             if button.SetHighlightTexture then 
-                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/button_hover")
+                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
                 button:GetHighlightTexture():SetVertexColor(0, 0, 0)
             end
-            if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button") end
-            if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/button_disable") end
+            if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/button") end
+            if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_disable") end
             button:DisableDrawLayer("BACKGROUND")
         end
 
@@ -233,13 +233,13 @@ local function SkinTab(tabButton, direction)
     tabButton:CreateBackdrop()
     local direction = direction and direction == "down" and "_down" or ""
 
-    if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction) end
+    if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction) end
     if tabButton.SetHighlightTexture then 
-        tabButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction)
+        tabButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction)
         tabButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
     end
-    if tabButton.SetPushedTexture then tabButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction) end
-    if tabButton.SetDisabledTexture then tabButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/unittab" .. direction) end
+    if tabButton.SetPushedTexture then tabButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction) end
+    if tabButton.SetDisabledTexture then tabButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction) end
 
     if tabButton.Text then
         --tabButton.Text:SetTextColor(0, 0, 0, 1)
@@ -269,7 +269,7 @@ local function SkinScrollFrame(frame)
     if frame.scrollBorderBottom then frame.scrollBorderBottom:Hide() end
     if frame.scrollFrameScrollBarBackground then frame.scrollFrameScrollBarBackground:Hide() end
     if frame.scrollBorderMiddle then
-        frame.scrollBorderMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
+        frame.scrollBorderMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
         frame.scrollBorderMiddle:SetSize(3, frame.scrollBorderMiddle:GetSize())
         frame.scrollBorderMiddle:ClearAllPoints()
         frame.scrollBorderMiddle:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
@@ -279,7 +279,7 @@ local function SkinScrollFrame(frame)
     if _G[frame:GetName() .. "ScrollBarTop"] then _G[frame:GetName() .. "ScrollBarTop"]:Hide() end
     if _G[frame:GetName() .. "ScrollBarBottom"] then _G[frame:GetName() .. "ScrollBarBottom"]:Hide() end
     if _G[frame:GetName() .. "ScrollBarMiddle"] then
-        _G[frame:GetName() .. "ScrollBarMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
+        _G[frame:GetName() .. "ScrollBarMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
         _G[frame:GetName() .. "ScrollBarMiddle"]:SetSize(3, _G[frame:GetName() .. "ScrollBarMiddle"]:GetSize())
         _G[frame:GetName() .. "ScrollBarMiddle"]:ClearAllPoints()
         _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
@@ -289,7 +289,7 @@ local function SkinScrollFrame(frame)
     if _G[frame:GetName() .. "Top"] then _G[frame:GetName() .. "Top"]:Hide() end
     if _G[frame:GetName() .. "Bottom"] then _G[frame:GetName() .. "Bottom"]:Hide() end
     if _G[frame:GetName() .. "Middle"] then
-        _G[frame:GetName() .. "Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbg")
+        _G[frame:GetName() .. "Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
         _G[frame:GetName() .. "Middle"]:SetSize(3, _G[frame:GetName() .. "Middle"]:GetSize())
         _G[frame:GetName() .. "Middle"]:ClearAllPoints()
         _G[frame:GetName() .. "Middle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
@@ -304,21 +304,21 @@ local function SkinScrollBar(frame)
     local Thumb = GrabScrollBarElement(frame, "ThumbTexture") or GrabScrollBarElement(frame, "thumbTexture") or frame.GetThumbTexture and frame:GetThumbTexture()
 
     if ScrollUpButton then
-        ScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-        ScrollUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowup_down")
-        ScrollUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowup_down")
-        ScrollUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
+        ScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
+        ScrollUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
+        ScrollUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
+        ScrollUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
     end
 
     if ScrollDownButton then
-        ScrollDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
-        ScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-        ScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-        ScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
+        ScrollDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
+        ScrollDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+        ScrollDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+        ScrollDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
     end
 
     if Thumb then
-        Thumb:SetTexture("Interface/AddOns/GW2_UI/textures/scrollbarmiddle")
+        Thumb:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
         Thumb:SetSize(12, Thumb:GetSize())
     end
 end
@@ -344,10 +344,10 @@ local function SkinDropDownMenu(frame)
     button:SetPoint("RIGHT", frame, "RIGHT", -10, 3)
 
     button.SetPoint = GW.NoOp
-    button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
 
     if text then
         text:ClearAllPoints()
@@ -374,10 +374,10 @@ local function HandleMaxMinFrame(frame)
             button:SetHitRectInsets(1, 1, 1, 1)
             button:GetHighlightTexture():Kill()
 
-            button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+            button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
             button:GetNormalTexture():SetRotation(ArrowRotation[direction])
 
-            button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+            button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
             button:GetPushedTexture():SetRotation(ArrowRotation[direction])
         end
     end
@@ -388,9 +388,9 @@ end
 local function HandleNextPrevButton(button, arrowDir)
     if button.isSkinned then return end
 
-    button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+    button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+    button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Texturesuistuff//arrowup_down")
 
     local Normal, Disabled, Pushed = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture()
 

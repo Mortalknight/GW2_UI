@@ -4,7 +4,7 @@
         <Size x="26" y="26"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="backdrop" file="Interface\AddOns\GW2_UI\textures\spelliconempty">
+                <Texture name="backdrop" file="Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty">
                     <Size x="26" y="26"/>
 
                     <Anchors>
@@ -14,7 +14,7 @@
                 </Texture>
             </Layer>
             <Layer>
-                <Texture name="$parentBuffIcon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture name="$parentBuffIcon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Size x="24" y="24"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
 

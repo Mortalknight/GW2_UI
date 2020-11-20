@@ -8,12 +8,12 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="316" y="18"></Size>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture parentKey="fill" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="316" y="18"></Size>
                 </Texture>
             </Layer>
@@ -126,7 +126,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                        <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="266" y="18"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
@@ -155,17 +155,17 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                         <BarColor r="0.623" g="0.141" b="0.078"></BarColor>
                         <Layers>
                             <Layer level="ARTWORK" textureSubLevel="1">
-                                <Texture parentKey="texture1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation">
+                                <Texture parentKey="texture1" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation">
                                     <Size x="262" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>
-                                <Texture parentKey="texture2" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2">
+                                <Texture parentKey="texture2" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation2">
                                     <Size x="262" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -173,7 +173,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSubLevel="2">
-                                <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                                     <Size x="1" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -534,13 +534,13 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="316" y="12"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="ironSkinBg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                        <Texture parentKey="ironSkinBg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="316" y="4"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="13"></Anchor>
@@ -556,7 +556,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="ARTWORK" textureSubLevel="-1">
-                                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                                <Texture parentKey="fill" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                                     <Size x="312" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -565,7 +565,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSublevel="2">
-                                <Texture parentKey="texture1" file="Interface\AddOns\GW2_UI\textures\staggaer-animation">
+                                <Texture parentKey="texture1" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation">
                                     <Size x="312" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -574,7 +574,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSublevel="2">
-                                <Texture parentKey="texture2" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2">
+                                <Texture parentKey="texture2" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation2">
                                     <Size x="312" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -583,7 +583,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSubLevel="3">
-                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                <Texture parentKey="spark" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                                     <Size x="10" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -598,7 +598,7 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.ironSkinBg" x="2" y="2"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                     </StatusBar>
                 </Frames>
             </Frame>
@@ -609,7 +609,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="316" y="18"></Size>
                         </Texture>
                         <Anchors>
@@ -641,7 +641,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="314" y="18"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
@@ -655,17 +655,17 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                         <BarColor r="0.95" g="0.25" b="0.05"></BarColor>
                         <Layers>
                             <Layer level="ARTWORK" textureSubLevel="1">
-                                <Texture parentKey="texture1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation">
+                                <Texture parentKey="texture1" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation">
                                     <Size x="310" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>
-                                <Texture parentKey="texture2" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\staggaer-animation2">
+                                <Texture parentKey="texture2" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation2">
                                     <Size x="310" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -673,7 +673,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSubLevel="2">
-                                <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                                     <Size x="1" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>

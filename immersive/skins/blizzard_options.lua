@@ -156,7 +156,7 @@ local function SkinBlizzardOptions()
         if newProfileDialog.editBox then
             _G[newProfileDialog.editBox:GetName() .. "Left"]:Hide()
             _G[newProfileDialog.editBox:GetName() .. "Right"]:Hide()
-            _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+            _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
             _G[newProfileDialog.editBox:GetName() .. "Mid"]:ClearAllPoints()
             _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetPoint("TOPLEFT", _G[newProfileDialog.editBox:GetName() .. "Left"], "BOTTOMRIGHT", -25, 3)
             _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetPoint("BOTTOMRIGHT", _G[newProfileDialog.editBox:GetName() .. "Right"], "TOPLEFT", 25, -3)
@@ -301,15 +301,15 @@ local function SkinBlizzardOptions()
     
     GW.SkinTextBox(_G.CombatConfigSettingsNameEditBox.Left, _G.CombatConfigSettingsNameEditBox.Middle, _G.CombatConfigSettingsNameEditBox.Right)
 
-    _G.ChatConfigMoveFilterUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
-    _G.ChatConfigMoveFilterUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowup_down")
-    _G.ChatConfigMoveFilterUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowup_down")
-    _G.ChatConfigMoveFilterUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowup_up")
+    _G.ChatConfigMoveFilterUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
+    _G.ChatConfigMoveFilterUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
+    _G.ChatConfigMoveFilterUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
+    _G.ChatConfigMoveFilterUpButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
 
-    _G.ChatConfigMoveFilterDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
-    _G.ChatConfigMoveFilterDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G.ChatConfigMoveFilterDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    _G.ChatConfigMoveFilterDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
+    _G.ChatConfigMoveFilterDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
+    _G.ChatConfigMoveFilterDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    _G.ChatConfigMoveFilterDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    _G.ChatConfigMoveFilterDownButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
 
     hooksecurefunc("ChatConfig_UpdateCheckboxes", function(self)
         if not _G.FCF_GetCurrentChatFrame() then return end

@@ -191,7 +191,7 @@ local function actionButtonGlobalStyle(self)
     self.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
 
     _G[self:GetName() .. "NormalTexture"]:SetTexture(nil)
-    _G[self:GetName()]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
+    _G[self:GetName()]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
     _G[self:GetName()]:SetHighlightTexture(nil)
 end
 GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButtonGlobalStyle)

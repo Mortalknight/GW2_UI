@@ -5,7 +5,7 @@ GW2_UIAlertSystem = {}
 local toastQueue = {} --Prevent from showing all "new" spells after spec change
 
 local constBackdropAlertFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/toast-bg",
+    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-bg",
     edgeFile = "",
     tile = false,
     tileSize = 64,
@@ -13,7 +13,7 @@ local constBackdropAlertFrame = {
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 local constBackdropLevelUpAlertFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/toast-levelup",
+    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-levelup",
     edgeFile = "",
     tile = false,
     tileSize = 64,
@@ -36,14 +36,14 @@ local function AddFlare(frame, flarFrame)
 
     if not flarFrame.flare then
         flarFrame.flare = flarFrame:CreateTexture(nil, "BACKGROUND")
-        flarFrame.flare:SetTexture("Interface/AddOns/GW2_UI/textures/level-up-flare")
+        flarFrame.flare:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare")
         flarFrame.flare:SetPoint("CENTER")
         flarFrame.flare:SetSize(120, 120)
         flarFrame.flare:Show()
     end
     if not flarFrame.flare2 then
         flarFrame.flare2 = flarFrame:CreateTexture(nil, "BACKGROUND")
-        flarFrame.flare2:SetTexture("Interface/AddOns/GW2_UI/textures/level-up-flare")
+        flarFrame.flare2:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare")
         flarFrame.flare2:SetPoint("CENTER")
         flarFrame.flare2:SetSize(120, 120)
         flarFrame.flare2:Show()
@@ -1129,16 +1129,16 @@ end
 local function AlertContainerFrameOnEvent(self, event, ...)
     if event == "PLAYER_LEVEL_UP" then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
-        GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
-        -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icon-levelup", true)
+        GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+        -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
         if talentPoints and talentPoints > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
-            --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
         end
         if C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
-            --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/talent-icon", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
         end
 
         -- if we learn a spell here we should show the new spell so we remove the event drom the toastQueue list

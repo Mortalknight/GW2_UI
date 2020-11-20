@@ -82,7 +82,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
 
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
@@ -126,14 +126,14 @@
                 </Layers>
                 <Frames>
                     <Button name="GwGroupReadyCheck" inherits="GwStandardButton" text="READY_CHECK">
-                        <NormalTexture file="Interface\AddOns\GW2_UI\textures\readycheck-button"></NormalTexture>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
                         <Size x="235" y="30" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-160"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture file="Interface\AddOns\GW2_UI\textures\readycheck-icon">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
                                     <Size x="30" y="30"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
@@ -143,14 +143,14 @@
                         </Layers>
                     </Button>
                     <Button name="GwGroupCountdown" inherits="GwStandardButton" text="PLAYER_COUNTDOWN_BUTTON">
-                        <NormalTexture file="Interface\AddOns\GW2_UI\textures\readycheck-button"></NormalTexture>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
                         <Size x="235" y="30" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-200"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture file="Interface\AddOns\GW2_UI\textures\readycheck-icon">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
                                     <Size x="30" y="30"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>

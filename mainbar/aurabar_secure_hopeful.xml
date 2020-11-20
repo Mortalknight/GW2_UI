@@ -11,7 +11,7 @@
         </Scripts>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                <Texture parentKey="backdrop" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                <Texture parentKey="backdrop" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
@@ -20,7 +20,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
@@ -46,7 +46,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -55,7 +55,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="1">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/icon-overlay">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/icons/icon-overlay">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="0" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent.icon" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -92,7 +92,7 @@
         </Scripts>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                <Texture parentKey="backdrop" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                <Texture parentKey="backdrop" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
@@ -101,7 +101,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
@@ -118,7 +118,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -127,7 +127,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="1">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/icon-overlay">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/icons/icon-overlay">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="0" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent.icon" relativePoint="BOTTOMRIGHT" x="0" y="0"/>

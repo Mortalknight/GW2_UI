@@ -16,7 +16,7 @@ local icons = {
     EVENT = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
     SCENARIO = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
     BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
-    DEAD = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
+    DEAD = {tex = "../party/icon-dead", l = 0, r = 1, t = 0, b = 1},
     ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
     DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
 }
@@ -351,7 +351,7 @@ local function SetObjectiveNotification()
     currentNotificationKey = key
 
     if icons[data.TYPE] ~= nil then
-        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
+        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
         GwObjectivesNotification.icon:SetTexCoord(
             icons[data.TYPE].l,
             icons[data.TYPE].r,
@@ -377,7 +377,7 @@ local function SetObjectiveNotification()
         GwObjectivesNotification.compass.dataIndex = data.ID
 
         if icons[data.TYPE] ~= nil then
-            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
+            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
             GwObjectivesNotification.compass.icon:SetTexCoord(
                 icons[data.TYPE].l,
                 icons[data.TYPE].r,

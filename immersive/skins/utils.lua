@@ -1,8 +1,8 @@
 local _, GW = ...
 
 local constBackdropFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -12,7 +12,7 @@ GW.skins.constBackdropFrame = constBackdropFrame
 
 local constBackdropFrameBorder = {
     bgFile = "",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -26,10 +26,10 @@ local function SkinUIDropDownMenu()
         local listFrameName = listFrame:GetName()
         local expandArrow = _G[listFrameName .. "Button" .. index .. "ExpandArrow"];
         if expandArrow then
-            expandArrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-            expandArrow:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-            expandArrow:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-            expandArrow:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+            expandArrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+            expandArrow:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+            expandArrow:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+            expandArrow:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
         end
     
         local Backdrop = _G[listFrameName .. "Backdrop"]
@@ -54,10 +54,10 @@ local function SkinDropDownList()
             local uncheck = _G["DropDownList" .. level .. "Button" .. i .. "UnCheck"]
             local arrow = _G["DropDownList" .. level .. "Button" .. i .. "ExpandArrow"]
 
-            check:SetTexture("Interface/AddOns/GW2_UI/textures/checkboxchecked")
+            check:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
             check:SetTexCoord(unpack(GW.TexCoords))
             check:SetSize(13, 13)
-            uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/checkbox")
+            uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
             uncheck:SetTexCoord(unpack(GW.TexCoords))
             uncheck:SetSize(13, 13)
             if not button.backdrop then
@@ -67,7 +67,7 @@ local function SkinDropDownList()
             button.backdrop:Hide()
 
             if button.hasArrow then
-                arrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrow_right")
+                arrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
             end
 
             if not button.notCheckable then
@@ -97,15 +97,15 @@ GW.SkinDropDown = SkinDropDown
 
 local function SkinTextBox(seg1, seg2, seg3)
     if seg1 ~= nil then
-        seg1:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+        seg1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
     end
 
     if seg2 ~= nil then
-        seg2:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+        seg2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
     end 
 
     if seg3 ~= nil then
-        seg3:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+        seg3:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
     end
 end
 GW.SkinTextBox = SkinTextBox

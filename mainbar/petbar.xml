@@ -9,14 +9,14 @@
         <Layers>
             <Layer level="ARTWORK">
 
-                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
+                <Texture name="$parentBarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" parentKey="Background">
                     <Color r="0" g="0" b="0" a="0.8"/>
                     <Size x="232" y="18"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" x="0" y="4"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\petportrait">
+                <Texture parentKey="portraitBackground" file="Interface/AddOns/GW2_UI/textures/units/petportrait">
                     <Size x="60" y="60"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.Background" x="0" y="-3"></Anchor>
@@ -40,7 +40,7 @@
                 <Anchors>
                     <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString name="$parentString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
@@ -58,7 +58,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
 
             </StatusBar>
             <Frame parentKey="auras">

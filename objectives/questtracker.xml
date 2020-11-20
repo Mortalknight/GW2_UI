@@ -42,7 +42,7 @@
 
             </Layer>
             <Layer Level="BACKGROUND">
-                <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icon-objective">
+                <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
                     <Size x="30" y="30"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="LEFT" x="-20" y="0"></Anchor>
@@ -66,7 +66,7 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture name="compassBG" parentKey="compassBG" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture name="compassBG" parentKey="compassBG" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
                     <Color r="1" g="1" b="1" a="0.3"></Color>
                     <Size x="300" y="70"></Size>
                     <Anchors>
@@ -75,7 +75,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture name="$parenticon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture name="$parenticon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
                     <Size x="30" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-10"></Anchor>
@@ -128,7 +128,7 @@
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2" Level="BACKGROUND">
-                        <Texture name="GwCompassRound" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
+                        <Texture name="GwCompassRound" file="Interface/AddOns/GW2_UI/textures/questview/compass-rad-bg">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -136,7 +136,7 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="3" Level="BACKGROUND">
-                        <Texture name="GwCompassArrow" parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\compass-arrow">
+                        <Texture name="GwCompassArrow" parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/questview/compass-arrow">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -144,13 +144,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="4" Level="BACKGROUND">
-                        <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icon-objective">
+                        <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
                             <Size x="30" y="30"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface\AddOns\GW2_UI\textures\expflare">
+                        <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
                             <Size x="150" y="150"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="LEFT" y="0" x="20"></Anchor>
@@ -195,14 +195,14 @@
         <Layers>
             <Layer Level="BACKGROUND">
 
-                <Texture name="$parentSep" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture name="$parentSep" alphaMode="add" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
                     <Color r="1" b="1" g="1" a="0.6"></Color>
                     <Size x="300" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHoverBg" parentKey="hover" hidden="true" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture name="$parentHoverBg" parentKey="hover" hidden="true" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
 
                     <Size x="300" y="70"></Size>
                     <Anchors>
@@ -211,7 +211,7 @@
                     </Anchors>
                 </Texture>
 
-                <Texture name="$parentFlare" parentKey="flare" hidden="true" file="Interface\AddOns\GW2_UI\textures\expflare">
+                <Texture name="$parentFlare" parentKey="flare" hidden="true" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
                     <Size x="150" y="150"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="0"></Anchor>
@@ -254,7 +254,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK" textureSubLevel="-1">
-                        <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\reward-icon-flare">
+                        <Texture parentKey="flare" file="Interface/AddOns/GW2_UI/textures/icons/reward-icon-flare">
                             <size x="200" y="200"></size>
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
@@ -262,7 +262,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\rewards-icon">
+                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/icons/rewards-icon">
                             <size x="140" y="140"></size>
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
@@ -278,7 +278,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK" textureSubLevel="-1">
-                        <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\reward-icon-flare">
+                        <Texture parentKey="flare" file="Interface/AddOns/GW2_UI/textures/icons/reward-icon-flare">
                             <size x="170" y="170"></size>
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
@@ -286,7 +286,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\autoquest-icon">
+                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/icons/autoquest-icon">
                             <size x="70" y="70"></size>
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
@@ -302,7 +302,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK" textureSubLevel="1">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\LFDMicroButton-Down">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down">
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
@@ -334,10 +334,10 @@
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ObjectiveText"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar" />
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" />
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" hidden="true" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" hidden="true" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="284" y="14"></Size>
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
@@ -345,7 +345,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white" parentKey="Spark">
+                        <Texture name="$parentSpark" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white" parentKey="Spark">
                             <Size x="10" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -371,7 +371,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture name="$parentStatusBarBg" hidden="true" parentKey="timerBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture name="$parentStatusBarBg" hidden="true" parentKey="timerBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="282" y="12"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
@@ -385,7 +385,7 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar" />
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" />
                 <Layers>
                     <Layer level="ARTWORK">
                         <FontString parentKey="timerString" text="0:00" justifyH="RIGHT">
@@ -455,7 +455,7 @@
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -471,7 +471,7 @@
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -487,7 +487,7 @@
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -503,7 +503,7 @@
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -521,10 +521,10 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture name="chest2" parentKey="chest2" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
+                        <Texture name="chest2" parentKey="chest2" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="2" y="23"></Size>
                         </Texture>
-                        <Texture name="chest3" parentKey="chest3" file="Interface\AddOns\GW2_UI\textures\xpbarbg">
+                        <Texture name="chest3" parentKey="chest3" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="2" y="23"></Size>
                         </Texture>
                     </Layer>
@@ -563,13 +563,13 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentStatusBarBg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture name="$parentStatusBarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="282" y="12"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icon-boss">
+                <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
@@ -597,7 +597,7 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString name="$parentString" parentKey="value" text="50%" inherits="GameFontNormalSmall" justifyH="CENTER">
@@ -615,7 +615,7 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-28"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
             </StatusBar>
         </Frames>
     </Button>
@@ -627,7 +627,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentStatusBarBg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture name="$parentStatusBarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="282" y="12"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
@@ -655,14 +655,14 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
             </StatusBar>
             <StatusBar name="$parentStatusBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="280" y="2"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-28"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
             </StatusBar>
         </Frames>
     </Button>

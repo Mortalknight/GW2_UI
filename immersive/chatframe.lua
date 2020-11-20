@@ -325,9 +325,9 @@ local function styleChatWindow(frame)
 
     for _, texName in pairs(tabTexs) do
         if texName == "Selected" then
-            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveright")
-            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveleft")
-            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactive")
+            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
+            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
+            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
             
             _G[tab:GetName()..texName.."Right"]:SetBlendMode("BLEND")
             _G[tab:GetName()..texName.."Left"]:SetBlendMode("BLEND")
@@ -355,21 +355,21 @@ local function styleChatWindow(frame)
         end
     end
     
-    scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/arrowdown_up")
-    scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
+    scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     scrollToBottom:SetHeight(24)
     scrollToBottom:SetWidth(24)
     scroll:SkinScrollBar()
-    ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/bubble_down")
-    ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bubble_up")
-    ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bubble_down")
+    ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
+    ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up")
+    ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
     ChatFrameMenuButton:SetHeight(20)
     ChatFrameMenuButton:SetWidth(20)
 
-    frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
-    frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
-    frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/minimize_button")
+    frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+    frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+    frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
     frame.buttonFrame.minimizeButton:SetSize(24, 24)
     frame.buttonFrame:StripTextures()
 
@@ -452,7 +452,7 @@ local function styleChatWindow(frame)
 
     frame.button.tex = frame.button:CreateTexture(nil, "OVERLAY")
     frame.button.tex:SetAllPoints()
-    frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
+    frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
 
     frame.button:SetScript("OnMouseUp", function(_, btn)
         if not GW2_UICopyChatFrame:IsShown() then
@@ -488,7 +488,7 @@ local function BuildCopyChatFrame()
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground")
 
     frame:SetSize(700, 200)
     frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 15)
@@ -566,10 +566,10 @@ local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
 
     if QuickJoinToastButton then
-        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
-        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
-        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
-        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
         QuickJoinToastButton:SetWidth(25)
         QuickJoinToastButton:SetHeight(25)
         QuickJoinToastButton:ClearAllPoints()
@@ -617,9 +617,9 @@ local function LoadChat()
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:StripTextures(true)
                 chatFrame.minFrame:CreateBackdrop(GW.skins.constBackdropFrame)
-                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
-                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
-                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetSize(20, 20)
                 chatFrame.minFrame.minimiizeStyled = true
             end
@@ -711,7 +711,7 @@ local function LoadChat()
             end)
     end
 
-    _G.CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
+    _G.CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
 
     _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()  

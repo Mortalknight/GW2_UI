@@ -156,7 +156,7 @@
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep" setAllPoints="true">
+                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep" setAllPoints="true">
                             <Size x="512" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -164,13 +164,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -189,7 +189,7 @@
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
                             <Size x="512" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -197,13 +197,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -222,7 +222,7 @@
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
                             <Size x="512" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -230,13 +230,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -255,7 +255,7 @@
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
                             <Size x="512" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -263,13 +263,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -288,7 +288,7 @@
                 <Size x="512" y="32"></Size>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="background" name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\bag-sep">
+                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
                             <Size x="512" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -296,13 +296,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
                             <Size x="28" y="28"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"></Anchor>
@@ -322,7 +322,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="2" y="-2" />
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/currency-icon"></NormalTexture>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/currency-icon"></NormalTexture>
             </Button>
             <Button parentKey="moneyFrame" registerForClicks="RightButtonUp">
                 <Size x="180" y="40"></Size>
@@ -384,7 +384,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" file="Interface/AddOns/GW2_UI/textures/resize">
+                        <Texture name="$parentTexture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -402,9 +402,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></PushedTexture >
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
@@ -438,8 +438,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -466,8 +466,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -494,8 +494,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -522,8 +522,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -550,8 +550,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -578,8 +578,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -606,8 +606,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -634,8 +634,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -662,8 +662,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -690,8 +690,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -718,8 +718,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -746,8 +746,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -763,9 +763,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></PushedTexture >
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/BagMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/BagMicroButton-Down"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/BagMicroButton-Down"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
@@ -775,9 +775,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-normal"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></PushedTexture >
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>

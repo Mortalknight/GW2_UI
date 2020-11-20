@@ -150,7 +150,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
 
-    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/LFDMicroButton-Down")
+    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
     newBlock.joingroup:SetScript(
         "OnClick",
         function (self)

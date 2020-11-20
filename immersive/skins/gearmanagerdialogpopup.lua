@@ -16,9 +16,9 @@ local function SkinGearManagerDialogPopup_OnShow()
     GearManagerDialogPopup:SetSize(GearManagerDialogPopup:GetSize(), GearManagerDialogPopup:GetSize() + 5)
     GearManagerDialogPopup:CreateBackdrop(constBackdropFrame)
     --Change EditBox
-    _G["GearManagerDialogPopupEditBoxLeft"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    _G["GearManagerDialogPopupEditBoxRight"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    _G["GearManagerDialogPopupEditBoxMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    _G["GearManagerDialogPopupEditBoxLeft"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    _G["GearManagerDialogPopupEditBoxRight"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    _G["GearManagerDialogPopupEditBoxMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
 
     local GearManagerDialogPopupCancel = _G.GearManagerDialogPopupCancel
 
@@ -59,8 +59,8 @@ local function SkinGearManagerDialogPopupButtons_OnUpdate()
                 button.icon:SetTexture("INTERFACE/ICONS/" .. texture)
                 button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             end
-            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-            button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+            button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
         end
     end
 end

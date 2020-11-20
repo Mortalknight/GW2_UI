@@ -103,7 +103,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/resize">
+                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -118,9 +118,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-normal"></NormalTexture>
-                <PushedTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></PushedTexture >
-                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\window-close-button-hover"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
