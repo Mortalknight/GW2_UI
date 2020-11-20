@@ -7,8 +7,13 @@ NEW
     - Added options for disabling the map coordinates in both minimap and world map (Thanks, Hatdragon)
     - Added "Copy Profile" function
 
-    FIXES
+FIXES
+]=])
 
+v("5.4.11", [=[
+FIXES
+    - Fix bonus objective container height
+    - Fix bonus objective lua error
 ]=])
 
 v("5.4.10", [=[
