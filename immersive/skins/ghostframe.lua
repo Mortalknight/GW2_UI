@@ -5,7 +5,7 @@ local function SkinGhostFrame()
 
     local tex = GhostFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", GhostFrame, "TOP", 0, 0)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/button")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
     tex:SetSize(_G.GhostFrameContentsFrame:GetSize())
     GhostFrame.tex = tex
     GhostFrame:SkinButton(false, false, true)
