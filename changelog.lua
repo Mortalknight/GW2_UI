@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.11", [=[
+FIXES
+    - Fix bonus objective container height
+    - Fix bonus objective lua error
+]=])
+
 v("5.4.10", [=[
 FIXES
     - Update TOC
