@@ -27,14 +27,22 @@ foreach ($srcItem in $srcFiles) {
         New-Item -Path $tgtPath -ItemType Directory
     }
     $inFmt = (& $convCmd identify -format '%[channels]' $srcItem.FullName) | Out-String
+    $inFmt = $inFmt.Trim()
 
-    $outType = 'TrueColorAlpha'
-    if ($inFmt.trim() -eq 'srgb') {
-        $outType = 'TrueColor'
+    # alpha TGA's need to be flipped, non-alpha ones don't; no clue why
+    if ($inFmt -eq 'srgb') {
+        $outType = "TrueColor"
+        #$outArgs = "convert","-compress","RLE",$srcItem.FullName,"-define","colorspace:auto-grayscale=off","-type","TrueColor",$texPath
+    }
+    else {
+        $outType = "TrueColorAlpha"
+        #$outArgs = "convert","-compress","RLE",$srcItem.FullName,"-define","colorspace:auto-grayscale=off","-flip","-type","TrueColorAlpha",$texPath
     }
 
 	if (-not $quiet) {
-		Write-Output "converting: $srcName"
-	}
-    & $convCmd convert -flip -compress RLE $srcItem.FullName -define colorspace:auto-grayscale=off -type $outType $texPath
+		Write-Output "converting [$inFmt]: $srcName"
+    }
+    # -define tga:image-origin=BottomLeft
+    #& $convCmd $outArgs
+    & $convCmd convert $srcItem.FullName -strip -orient bottom-left -define colorspace:auto-grayscale=off -compress RLE -flip -type $outType $texPath
 }
