@@ -787,7 +787,7 @@ local function LoadBag(helpers)
             function(self)
                 local newStatus = not GetSetting("BAG_ITEMS_REVERSE_SORT")
                 SetSortBagsRightToLeft(newStatus)
-                dd.newOrder.checkbutton:SetChecked(newStatus)
+                dd.sortOrder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEMS_REVERSE_SORT", newStatus)
                 dd:Hide()
             end
