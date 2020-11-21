@@ -438,7 +438,7 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
                                         <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
