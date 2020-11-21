@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.4.12", [=[
+FIXES
+    - Bag sort and new loot setting crosslink fixed
+]=])
+
 v("5.4.11", [=[
 FIXES
     - Fix bonus objective container height
