@@ -569,6 +569,8 @@ local function loadAddon(self)
 
     if GetSetting("QUESTTRACKER_ENABLED") then
         GW.LoadQuestTracker()
+    else
+        GW.AdjustQuestTracker(GetSetting("ACTIONBARS_ENABLED"), GetSetting("MINIMAP_ENABLED"))
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then
