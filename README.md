@@ -19,7 +19,7 @@ This UI is designed for players who want a quick-and-easy, plug-and-play interfa
 Not compatible with the *"Paste"* addon (action bars will appear empty). This may also occur if you are using older versions of the "StrataFix" addon.
 *There is a new version from "Paste" which works with this UI: [Paste working version][newPastAddon]*
 
-[![GW2 UI on Discord](https://discord.com/api/guilds/243035988614578176/widget.png?style=banner1)](https://discord.gg/MZZtRWt)
+[![GW2 UI on Discord](https://discord.com/api/guilds/243035988614578176/widget.png?style=banner2)](https://discord.gg/MZZtRWt)
 
 [![GW2 UI on Patreon](http://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](http://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WBGL5GPMTNEL4)
 
