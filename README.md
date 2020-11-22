@@ -23,7 +23,7 @@ Not compatible with the *"Paste"* addon (action bars will appear empty). This ma
 
 [![GW2 UI on Patreon](http://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](http://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WBGL5GPMTNEL4)
 
-### SCREENSHOOTS
+### SCREENSHOTS
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/overview-2.png?raw=true)
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/combat-2.png?raw=true)
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/Bag-frame.png?raw=true)
@@ -31,7 +31,7 @@ Not compatible with the *"Paste"* addon (action bars will appear empty). This ma
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/professions.jpg?raw=true)
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/spells_and_talents.jpg?raw=true)
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/Dungeon-frames-in-quest-tracker.png?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/eJwdwUsOgyAQANC7sC_Dr0Xc9gK9wgQJmqBDmDFdNN7dpO_91DmamtUq0nkGWDbONBbNQgNr0ZWotoJ9Y51pBxTBvO7lEAabnt7a6GIyZppCSh6cCdGE4P68fxkL74bMjw99y2Ddj6quG7QxJFs.fXPA9TRxFowuG9YSoM8lDfPcUcU.png?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/classpower.png?raw=true)
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/raidcom.png?raw=true)
 
 
