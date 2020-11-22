@@ -516,6 +516,10 @@ updateDetails = function()
             factionID,
             hasBonusRepGain = returnReputationData(idx)
 
+        if not factionID then
+            break
+        end
+
         if isHeader and not isChild then
             break
         end
