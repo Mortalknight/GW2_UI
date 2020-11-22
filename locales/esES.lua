@@ -89,6 +89,7 @@ local function GWUseThisLocalization()
 	L["COMPACT_ICONS"] = "Iconos compactos"
 	L["COMPASS_TOGGLE"] = "Mostrar/Ocultar brújula"
 	L["COMPASS_TOGGLE_DESC"] = "Activar o desactivar la brújula de rastreador de misiones."
+	L["COPY_OF"] = "Copia de"
 	L["CURSOR_ANCHOR"] = "Anclaje de cursor"
 	L["CURSOR_ANCHOR_TYPE"] = "Tipo de anclaje de cursor"
 	L["CURSOR_ANCHOR_TYPE_DESC"] = "Solo funciona si la opción 'Sugerencias de cursor' está activado."
@@ -185,6 +186,7 @@ local function GWUseThisLocalization()
 	L["MAP_COORDINATES_TITLE"] = "Coordenadas del mapa"
 	L["MAP_COORDINATES_TOGGLE_TEXT"] = "Clic izquierdo para alternar coordenadas de mayor precisión."
 	L["MINIMAP_COORDS"] = "Coordenadas"
+	L["MINIMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el minimapa."
 	L["MINIMAP_DESC"] = "Utilizar el marco de minimapa de GW2 UI."
 	L["MINIMAP_FPS"] = "Muestra FPS en el minimapa"
 	L["MINIMAP_HOVER"] = "Detalles de minimapa"
@@ -342,10 +344,8 @@ local function GWUseThisLocalization()
 	L["WELCOME_SPLASH_WELCOME_TEXT"] = "GW2 UI es un reemplazo completo de la interfaz de usuario. Hemos construido la interfaz de usuario con un enfoque modular, esto significa que si no te gusta una cierta parte del addon, o tienes otro  que prefieras para esa función, puedes simplemente deshabilitar esa parte, mientras mantienes intacto el resto de la interfaz.\nAlgunos de los módulos disponibles para ti son una ventana de misiones inmersiva, un reemplazo completo del inventario, así como un reemplazo completo de la ventana de personaje. Hay muchos más que puedes disfrutar, ¡solo echa un vistazo al menú de configuración para ver qué está disponible para ti!"
 	L["WELCOME_SPLASH_WELCOME_TEXT_PP"] = "¿Qué es 'Píxel Perfecto'?\n\nLa interfaz de usuario de GW2 tiene una configuración incorporada llamada 'Modo perfecto de píxel'. Esto significa que su interfaz de usuario se verá como se esperaba, con texturas más nítidas y mejor escala. Por supuesto, puede desactivar esto en el menú de configuración si lo prefiere."
 	L["WORLD_MARKER_DESC"] = "Muestra el menú para colocar marcadores del mundo en bandas."
+	L["WORLDMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el mapa del mundo."
 	L["ZONE_ANILITY_AB_NAME"] = "Habilidad de zona"
-	L["MINIMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el minimapa"
-    L["WORLDMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el mapa del mundo"
-	L["COPY_OF"] = "Copy of"
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
