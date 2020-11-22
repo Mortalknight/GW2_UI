@@ -341,6 +341,7 @@ local function GWUseThisLocalization()
     L["PLAYER_DODGEBAR_SPELL"] = "Dodgebar spell"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
     L["COPY_OF"] = "Copy of"
+    L["MICRO_BAR"] = "메뉴모음 바"
 end
 
 if GetLocale() == "koKR" then

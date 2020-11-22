@@ -346,6 +346,7 @@ local function GWUseThisLocalization()
 	L["WORLD_MARKER_DESC"] = "Mostra il menu per posizionare i marcatori durante i raid."
 	L["WORLDMAP_COORDS_TOGGLE"] = "Mostra le Coordinate sulla mappa del mondo"
 	L["ZONE_ANILITY_AB_NAME"] = "Abilità di zona"
+	L["MICRO_BAR"] = "Micro Bar"
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

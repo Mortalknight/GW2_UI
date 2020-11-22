@@ -341,6 +341,7 @@ local function GWUseThisLocalization()
     L["PLAYER_DODGEBAR_SPELL"] = "Ausweichenleiste-Zauber"
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Trage die Zauber ID des Zaubers ein, der über der Gesundheitskugel angezeit wird.\nIst keiner eingetragen, werden die Standardzauber angezeigt, abhängig von Talenten & Spezialisierung."
     L["COPY_OF"] = "Kopie von"
+    L["MICRO_BAR"] = "Mikroleiste"
 end
 
 if GetLocale() == "deDE" then

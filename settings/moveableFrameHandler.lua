@@ -80,6 +80,9 @@ local function smallSettings_resetToDefault(self, btn)
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
     if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
         SetSetting(settingsName .. "_GrowDirection", "UP")
+    elseif settingsName == "MicromenuPos" then
+        -- Hide/Show BG here
+        mf.gw_frame.cf.bg:Show()
     end
 
     -- check if we need to know if the frame is on its default position
@@ -128,8 +131,8 @@ local function mover_OnDragStop(self)
     local new_point = GetSetting(settingsName)
     new_point.point = point
     new_point.relativePoint = relativePoint
-    new_point.xOfs = math.floor(xOfs)
-    new_point.yOfs = math.floor(yOfs)
+    new_point.xOfs = xOfs and math.floor(xOfs) or 0
+    new_point.yOfs = yOfs and math.floor(yOfs) or 0
     SetSetting(settingsName, new_point)
     if lockAble ~= nil then
         SetSetting(lockAble, false)
@@ -158,6 +161,9 @@ local function mover_OnDragStop(self)
         else
             GW.setMinimapButtons("right")
         end
+    elseif settingsName == "MicromenuPos" then
+        -- Hide/Show BG here
+        self.gw_frame.cf.bg:SetShown(not self.gw_frame.isMoved)
     end
 
     self.IsMoving = false
@@ -284,7 +290,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved, smallOptions, mhf, settingHeight)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved, smallOptions, mhf)
     local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
@@ -369,7 +375,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe:SetScript("OnMouseDown", mover_options)
     else
         moveframe:SetScript("OnMouseDown", function(self, button)
-            if button =="RightButton" then
+            if button == "RightButton" then
                 if GW.MoveHudScaleableFrame.child == "nil" then
                     GW.MoveHudScaleableFrame.child = nil
                     GW.MoveHudScaleableFrame.childMover = nil

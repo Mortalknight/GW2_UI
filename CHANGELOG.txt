@@ -4,3 +4,4 @@ NEW
     - Option to disable map coordinates in both minimap and world map (Thanks, Hatdragon)
     - "Copy Profile" function added
     - Organized, optimized, and cleaned up textures to reduce download size
+    - Make Micro Bar movable

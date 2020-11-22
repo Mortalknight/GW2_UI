@@ -346,6 +346,7 @@ local function GWUseThisLocalization()
 	L["WORLD_MARKER_DESC"] = "Отображать панель с метками цели пока вы в рейде."
 	L["WORLDMAP_COORDS_TOGGLE"] = "Отображение координат на мировой карте"
 	L["ZONE_ANILITY_AB_NAME"] = "Локационная способность"
+	L["MICRO_BAR"] = "Микроменю"
 	
 	-- Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

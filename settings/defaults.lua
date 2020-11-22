@@ -387,6 +387,12 @@ GW_DEFAULT["MinimapPos"]["xOfs"] = -5
 GW_DEFAULT["MinimapPos"]["yOfs"] = 21
 GW_DEFAULT["MinimapPos_scale"] = 1
 
+GW_DEFAULT["MicromenuPos"] = {}
+GW_DEFAULT["MicromenuPos"]["point"] = "TOPLEFT"
+GW_DEFAULT["MicromenuPos"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["MicromenuPos"]["xOfs"] = 0
+GW_DEFAULT["MicromenuPos"]["yOfs"] = 1
+
 GW_DEFAULT["QuestTracker_pos"] = {}
 GW_DEFAULT["QuestTracker_pos"]["point"] = "TOPRIGHT"
 GW_DEFAULT["QuestTracker_pos"]["relativePoint"] = "TOPRIGHT"

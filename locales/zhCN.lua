@@ -346,6 +346,7 @@ local function GWUseThisLocalization()
 	L["WORLD_MARKER_DESC"] = "显示用于在团队中放置世界标记的菜单."
 	L["WORLDMAP_COORDS_TOGGLE"] = "在世界地图上显示坐标"
 	L["ZONE_ANILITY_AB_NAME"] = "区域技能名称"
+	L["MICRO_BAR"] = "微型系统菜单"
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
