@@ -118,18 +118,6 @@ local function button1_OnClick()
                 ToggleChatColorNamesByClassGroup(true, v)
             end
 
-            -- if we are in debug mode add a "Debug"-Tab
-            if GW.VERSION_STRING == "GW2_UI @project-version@" then
-                FCF_OpenNewWindow(BINDING_HEADER_DEBUG, true)
-                SetSetting("DEV_DBG_CHAT_TAB", 4)
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #4")
-                GW.AlertTestsSetup()
-                SetCVar("fstack_preferParentKeys", 0) --Add back the frame names via fstack!
-                GW.inDebug = true
-            else
-                GW.inDebug = false
-            end
-
             GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CHAT_BTN"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 2

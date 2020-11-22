@@ -128,7 +128,7 @@ local function getSpriteByIndex(map, index)
     local tileHeight =  map.height / map.rows
 
     local tilesPerColums = map.width / tileWidth
-    local tilesPerRow = map.height / tileHeight
+    --local tilesPerRow = map.height / tileHeight
 
     local left = tileWidth * (index % tilesPerColums)
     local top =  tileHeight * math.floor(index / tilesPerColums)
@@ -384,6 +384,10 @@ end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
 local function loadAddon(self)
+    if GW.inDebug then
+        GW.AlertTestsSetup()
+    end
+
     --Create Settings window
     GW.LoadMovers()
     GW.LoadSettings()
@@ -405,23 +409,6 @@ local function loadAddon(self)
 
     -- disable Move Anything bag handling
     disableMABags()
-
-    -- hook debug output if relevant
-    --@debug@
-    local dev_dbg_tab = GetSetting("DEV_DBG_CHAT_TAB")
-    if dev_dbg_tab and dev_dbg_tab > 0 and _G["ChatFrame" .. dev_dbg_tab] then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #" .. dev_dbg_tab)
-        GW.dbgTab = dev_dbg_tab
-        GW.AlertTestsSetup()
-        SetCVar("fstack_preferParentKeys", 0) --Add back the frame names via fstack!
-        GW.inDebug = true
-    else
-        GW.inDebug = false
-    end
-    --@end-debug@
-    --[===[@non-debug@
-    GW.inDebug = false
-    --@end-non-debug@]===]
 
     -- Load Slash commands
     GW.LoadSlashCommands()

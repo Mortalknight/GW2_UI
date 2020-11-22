@@ -288,11 +288,11 @@ do
 end
 
 local function FindInList(list, str, i, del)
-    local del = "([^%s" .. (del or ",;") .. ")]?)"
-    str = del .. "(%s*)(" .. str .. ")(%s*)" .. del
+    local dl = "([^%s" .. (del or ",;") .. ")]?)"
+    local st = dl .. "(%s*)(" .. str .. ")(%s*)" .. dl
     i = i or 1
     while i do
-        local s, e, a, b, m, c, d = list:find(str, i)
+        local s, e, a, b, m, c, d = list:find(st, i)
         if s and a == "" and d == "" then
             return s + #b, e - #c, m
         end
@@ -472,64 +472,6 @@ local function EnableTooltip(self, text, dir, y_off)
 end
 GW.EnableTooltip = EnableTooltip
 
---@debug@
-local function AddForProfiling(unit, name, ...)
-    if not Profiler then
-        return
-    end
-    local gName = "GW_" .. unit
-    if not _G[gName] then
-        _G[gName] = {}
-    end
-
-    _G[gName][name] = ...
-end
-
-local function inDebug(tab, ...)
-    local debug_tab = _G["ChatFrame" .. tab]
-    if not debug_tab then
-        return
-    end
-    local msg = ""
-    for i = 1, select("#", ...) do
-        local arg = select(i, ...)
-        msg = msg .. tostring(arg) .. " "
-    end
-    debug_tab:AddMessage(date("%H:%M:%S") .. " " .. msg)
-end
-
-local function Debug(...)
-    if GW.dbgTab then
-        inDebug(GW.dbgTab, ...)
-    end
-end
-
-local function Trace()
-    print("------------------------- Trace -------------------------")
-    for i,v in ipairs({("\n"):split(debugstack(2))}) do
-        if v ~= "" then
-            print(i .. ": " .. v)
-        end
-    end
-    print("---------------------------------------------------------")
-end
-
---@end-debug@
---[===[@non-debug@
-local function Debug()
-    return
-end
-local function AddForProfiling()
-    return
-end
-local function Trace()
-    return
-end
---@end-non-debug@]===]
-GW.Debug = Debug
-GW.Trace = Trace
-GW.AddForProfiling = AddForProfiling
-
 local function vernotes(ver, notes)
     if not GW.GW_CHANGELOGS then
         GW.GW_CHANGELOGS = ""
@@ -617,7 +559,7 @@ end
 GW.CheckRole = CheckRole
 
 local function IsDispellableByMe(debuffType)
-    local dispel = GW.DispelClasses[GW.myclass] 
+    local dispel = GW.DispelClasses[GW.myclass]
     return dispel and dispel[debuffType]
 end
 GW.IsDispellableByMe = IsDispellableByMe

@@ -2,7 +2,7 @@
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon.
 ## Notes-deDE: Ersetzt die Benutzeroberfläche.
-## OptionalDeps: MoveAnything
+## OptionalDeps: MoveAnything, _DebugLog, BugSack, !Stragglers, ACU
 ## Version: @project-version@
 ## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
 ## X-Curse-Project-ID: 94310
@@ -14,6 +14,7 @@
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
 
 core/TaintLess.xml
+core/debug.lua
 
 locales/enUS.lua
 locales/deDE.lua
