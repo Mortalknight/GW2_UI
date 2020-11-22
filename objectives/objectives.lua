@@ -1241,10 +1241,10 @@ local function LoadQuestTracker()
         end
     )
 
-    ObjectiveTrackerFrame:UnregisterAllEvents()
+    --ObjectiveTrackerFrame:UnregisterAllEvents()
     ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
     ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
-    ObjectiveTrackerFrame:SetScript("OnEvent", nil)
+    --ObjectiveTrackerFrame:SetScript("OnEvent", nil)
 
     -- create our tracker
     local fTracker = CreateFrame("Frame", "GwQuestTracker", UIParent, "GwQuestTracker")
