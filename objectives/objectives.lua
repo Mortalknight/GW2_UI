@@ -733,13 +733,12 @@ local function updateQuest(self, block, questWatchId)
 end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
-local function updateQuestByID(self, block, questID, questWatchId)
+local function updateQuestByID(self, block, quest, questID, questWatchId)
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
     block.popupQuestAccept:Hide()
 
-    local quest = QuestCache:Get(questID)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local questLogIndex = quest:GetQuestLogIndex()
@@ -1068,8 +1067,9 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     self.isUpdating = true
 
     -- get the correct quest block for that questID
-    local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
-    if QuestCache:Get(questID).frequency == nil then
+    local q = QuestCache:Get(questID)
+    local isFrequency = q.frequency and q.frequency > 0
+    if q.frequency == nil then
         local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
         if questLogIndex and questLogIndex > 0 then
             questInfo = C_QuestLog.GetInfo(questLogIndex)
@@ -1077,7 +1077,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
             wipe(questInfo)
         end
     end
-    local isCampaign = QuestCache:Get(questID):IsCampaign() 
+    local isCampaign = q:IsCampaign()
     local questWatchId = getQuestWatchId(questID)
     local questBlockOfIdOrNew = questWatchId and getBlockByID(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
@@ -1087,7 +1087,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     local heightForQuestItem = 20
     local counterQuest = 0
     if questWatchId ~= nil and questBlockOfIdOrNew ~= nil then
-        updateQuestByID(self, questBlockOfIdOrNew, questID, questWatchId)
+        updateQuestByID(self, questBlockOfIdOrNew, q, questID, questWatchId)
         questBlockOfIdOrNew.isFrequency = isFrequency
         questBlockOfIdOrNew:Show()
         if ... == true then
@@ -1154,7 +1154,7 @@ local function tracker_OnEvent(self, event, ...)
             updateQuestLogLayout(self)
         end
     elseif event == "QUEST_AUTOCOMPLETE" then
-        local questId = ...
+        local questID = ...
         updateQuestLogLayoutSingle(self, questID)
     elseif event == "PLAYER_MONEY" and self.watchMoneyReasons > numWatchedQuests then
         updateQuestLogLayout(self)
@@ -1164,10 +1164,10 @@ local function tracker_OnEvent(self, event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" then
         self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
     elseif event == "QUEST_DATA_LOAD_RESULT" then
-        local questId, success = ...
-        local idx = C_QuestLog.GetLogIndexForQuestID(questId)
-        if success and questId and idx and idx > 0 then
-            C_Timer.After(1, function() updateQuestLogLayoutSingle(self, questId) end)
+        local questID, success = ...
+        local idx = C_QuestLog.GetLogIndexForQuestID(questID)
+        if success and questID and idx and idx > 0 then
+            C_Timer.After(1, function() updateQuestLogLayoutSingle(self, questID) end)
         end
     end
 

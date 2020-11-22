@@ -6,6 +6,7 @@ FIXES
     - Bag sort and new loot setting crosslink fixed
     - Fix objective tracker alignment when not using GW2 tracker
     - Avoid rare minimap error from a timing issue on initial load
+    - Fix typo on ID used in tracker auto-complete quests
 ]=])
 
 v("5.4.11", [=[
