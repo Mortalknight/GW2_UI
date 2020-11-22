@@ -4,6 +4,8 @@ local v = GW.vernotes
 v("5.4.12", [=[
 FIXES
     - Bag sort and new loot setting crosslink fixed
+    - Fix objective tracker alignment when not using GW2 tracker
+    - Avoid rare minimap error from a timing issue on initial load
 ]=])
 
 v("5.4.11", [=[

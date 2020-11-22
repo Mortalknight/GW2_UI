@@ -186,9 +186,11 @@ GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
-        UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
-        if child == GwMapCoords then
-            GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+        if child ~= nil then
+            UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
+            if child == GwMapCoords then
+                GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+            end
         end
     end
     MinimapNorthTag:Hide()
@@ -710,6 +712,6 @@ local function LoadMinimap()
     MinimapCluster:ClearAllPoints()
     MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
 
-    C_Timer.After(0.1, function() hoverMiniMapOut() end)
+    C_Timer.After(0.1, hoverMiniMapOut)
 end
 GW.LoadMinimap = LoadMinimap
