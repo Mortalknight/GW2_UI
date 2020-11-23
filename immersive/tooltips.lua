@@ -650,9 +650,7 @@ local function SetBackpackToken(self, id)
 end
 
 local function SetStyle(tooltip)
-    if not tooltip or tooltip.IsEmbedded or tooltip:IsForbidden() or not tooltip.SetBackdrop then
-        return
-    end
+    if not tooltip or (tooltip == GW.ScanTooltip or tooltip.IsEmbedded or not tooltip.SetBackdrop) or tooltip:IsForbidden() then return end
 
     tooltip:SetBackdrop(constBackdropArgs)
 end
@@ -664,8 +662,7 @@ local function LoadTooltips()
     end
     hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle)
     _G.GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-    _G.GameTooltip.ItemTooltip:CreateBackdrop(constBackdropArgs)
-
+    _G.GameTooltip.ItemTooltip.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     if GetSetting("TOOLTIP_MOUSE") then
         hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
