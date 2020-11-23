@@ -97,7 +97,11 @@ local function SkinBubble(frame, backdrop)
 end
 
 local function ChatBubble_OnEvent(self, event, msg, sender, _, _, _, _, _, _, _, _, _, guid)
-    messageToSender[msg] = Ambiguate(sender, "none")
+    if event == "PLAYER_ENTERING_WORLD" then --Clear caches
+        wipe(messageToSender)
+    else
+        messageToSender[msg] = Ambiguate(sender, "none")
+    end
 end
 
 local function ChatBubble_OnUpdate(self, elapsed)
@@ -140,5 +144,6 @@ local function LoadChatBubbles()
     f.BubbleFrame:RegisterEvent("CHAT_MSG_YELL")
     f.BubbleFrame:RegisterEvent("CHAT_MSG_MONSTER_SAY")
     f.BubbleFrame:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+    f.BubbleFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 GW.LoadChatBubbles = LoadChatBubbles
