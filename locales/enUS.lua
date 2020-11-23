@@ -241,10 +241,6 @@ local function GWUseThisLocalization()
     L["ADVANCED_TOOLTIP_DESC"] = "Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"
     L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Item Count"
     L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Display how many of a certain item you have in your possession."
-    L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "Spell/Item IDs"
-    L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Display the spell or item ID when hovering over a spell or item tooltip."
-    L["ADVANCED_TOOLTIP_NPC_ID"] = "NPC IDs"
-    L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Display the NPC ID when hovering over an NPC tooltip."
     L["ADVANCED_TOOLTIP_SHOW_MOUNT"] = "Current Mount"
     L["ADVANCED_TOOLTIP_SHOW_MOUNT_DESC"] = "Display current mount the unit is riding."
     L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Target Info"
@@ -338,6 +334,7 @@ local function GWUseThisLocalization()
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."
     L["COPY_OF"] = "Copy of"
     L["MICRO_BAR"] = "Micro Bar"
+    L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
     
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

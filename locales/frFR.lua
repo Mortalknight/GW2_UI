@@ -20,8 +20,6 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "Activer ou désactiver la barre de lancement additionnelle"
 	L["ADVANCED_TOOLTIP"] = "Infobulle détaillée"
 	L["ADVANCED_TOOLTIP_DESC"] = "Affiche davantage d'informations dans l'infobulle (plus d'informations affichées quand la touche MAJ est appuyée)"
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "ID du PNJ"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Afficher l'ID du PNJ quand la souris se trouve sur l'infobulle du PNJ."
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Nombre d'objets"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Affiche le nombre d'objets en votre possession"
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Genre"
@@ -35,8 +33,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "Affiche le rôle de l'unité dans l'infobulle"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Info de la cible"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "Lorsque dans un groupe de raid, montre si quelqu'un cible l'unité actuelle de l'infobulle."
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "ID des sorts/articles"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Affiche l'ID du sort ou de l'article lorsque la souris passe sur l'infobulle d'un sort ou un article."
 	L["AFK_MODE"] = "Mode ABS"
 	L["AFK_MODE_DESC"] = "Quand vous êtes ABS, affiche un écran spécial."
 	L["ALERTFRAMES"] = "Cadres d'alerte"
@@ -347,6 +343,7 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "Afficher les coordonnées sur la carte du monde"
 	L["ZONE_ANILITY_AB_NAME"] = "Capacité de la zone"
 	L["MICRO_BAR"] = "Micro Barre"
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 	
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

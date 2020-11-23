@@ -20,8 +20,6 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "啟用或停用進階的施法條。"
 	L["ADVANCED_TOOLTIP"] = "進階滑鼠提示"
 	L["ADVANCED_TOOLTIP_DESC"] = "在滑鼠提示中顯示更多資訊 (按住 SHIFT 鍵來顯示)"
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "NPC ID"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "滑鼠指向 NPC 時在滑鼠提示中顯示 NPC ID。"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "物品數量"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "顯示某樣物品你擁有多少數量。"
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "性別"
@@ -35,8 +33,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "在滑鼠提示中顯示單位的角色職責。"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "目標資訊"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "在團隊中時，顯示將目前的滑鼠提示單位選取為目標的人。"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "法術/物品 ID"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "滑鼠指向法術或物品時，在滑鼠提示中顯示法術或物品的 ID。"
 	L["AFK_MODE"] = "AFK 模式"
 	L["AFK_MODE_DESC"] = "AFK 時顯示暫離畫面。"
 	L["ALERTFRAMES"] = "通知框架"
@@ -347,6 +343,7 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "世界地圖顯示坐標"
 	L["ZONE_ANILITY_AB_NAME"] = "區域技能"
 	L["MICRO_BAR"] = "微型系統菜單"
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 	
 	-- Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

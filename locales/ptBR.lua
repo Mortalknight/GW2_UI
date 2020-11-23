@@ -20,8 +20,6 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "Habilitar ou Desabilitar a Barra de Conjuração Avançada"
 	L["ADVANCED_TOOLTIP"] = "Descrições Avançadas"
 	L["ADVANCED_TOOLTIP_DESC"] = "Exibe informações adicionais na descrição (mais informação é mostrada ao pressionar a tecla SHIFT)"
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "IDs dos PNJs"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Mostra o ID de um PNJ quando o mouse passa sobre a descrição."
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Contagem de Itens"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Mostra quantos de um certo item você tem em sua posse."
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Gênero"
@@ -35,8 +33,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "Mostra a função da unidade na descrição."
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Informação do Alvo"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "Quando estiver em um grupo de raide, mostra se alguém na sua raide tem a unidade atualmente mostrada na descrição como alvo."
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "IDs dos Feitiços/Itens"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Mostra o ID do feitiço ou item quando o mouse estiver sobre a descrição de um feitiço ou item."
 	L["AFK_MODE"] = "Modo Ausente"
 	L["AFK_MODE_DESC"] = "Quando fica Ausente, exibe a tela Ausente."
 	L["ALERTFRAMES"] = "Unidades de Alerta"
@@ -347,6 +343,7 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "Mostrar Coordenadas no mapa do mundo"
 	L["ZONE_ANILITY_AB_NAME"] = "Habilidade de Zona"
 	L["MICRO_BAR"] = "Micro Barra"
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 	
     --Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

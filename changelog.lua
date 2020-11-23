@@ -9,4 +9,5 @@ NEW
     - Organized, optimized, and cleaned up textures to reduce download size
     - Make Micro Bar movable
     - Update "Importend Raid debuffs" with Shadowland ones / remove BfA debuffs
+    - Added option to show ID's in tooltips with a modifier
 ]=])

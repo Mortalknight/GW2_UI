@@ -20,8 +20,6 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "Activar o Desactivar barra de casteo avanzada"
 	L["ADVANCED_TOOLTIP"] = "Descripción  emergente avanzada"
 	L["ADVANCED_TOOLTIP_DESC"] = "Muestra información adicional en la descripción emergency (se muestra más información cuando se presiona la tecla SHIFT)"
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "Identidad del NPC"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Muestra el ID de NPC al pasar el cursor sobre una descripción emergente de NPC."
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Recuento de elementos"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Muestra cuántos elementos de un determinado objeto tienes en tu poder."
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Género"
@@ -35,8 +33,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "Muestra la función de la unidad en la información sobre herramientas."
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Información de objetivo"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "Cuando estés en un grupo de raid, muestra si alguien en tu raid está apuntando a la unidad marcada con tu puntero de mouse actual."
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "ID de hechizo / objeto"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Muestra el ID del hechizo o del objeto al pasar el cursor sobre la descripción de un hechizo o objeto."
 	L["AFK_MODE"] = "Modo AFK"
 	L["AFK_MODE_DESC"] = "Cuando vayas AFK, visualice la pantalla AFK."
 	L["ALERTFRAMES"] = "Cuadro de alerta"
@@ -347,6 +343,7 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "Mostrar coordenadas en el mapa del mundo"
 	L["ZONE_ANILITY_AB_NAME"] = "habilidad de zona"
 	L["MICRO_BAR"] = "Micro Barra"
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

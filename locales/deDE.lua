@@ -245,10 +245,6 @@ local function GWUseThisLocalization()
     L["ADVANCED_TOOLTIP_DESC"] = "Zeigt zusätzliche Informationen im Tooltip an (weitere werden bei gedrückter SHIFT-Taste angezeigt)"
     L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Gegenstandsanzahl"
     L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Zeige wie viele sich von dem ausgewählten Gegenstand in deinem Besitz befinden."
-    L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "Zauber/Gegenstand IDs"
-    L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Zeige die ID des Zaubers oder des Gegenstands an, wenn du mit der Maus über einen Zauber oder Gegenstand ziehst."
-    L["ADVANCED_TOOLTIP_NPC_ID"] = "NPC IDs"
-    L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Zeigt die NPC ID an, wenn du mit der Maus über einen NPC ziehst."
     L["ADVANCED_TOOLTIP_SHOW_MOUNT"] = "Aktuelles Mount"
     L["ADVANCED_TOOLTIP_SHOW_MOUNT_DESC"] = "Zeigt das aktuelle Mount der Einheit an."
     L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Ziel Infos"
@@ -342,6 +338,7 @@ local function GWUseThisLocalization()
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Trage die Zauber ID des Zaubers ein, der über der Gesundheitskugel angezeit wird.\nIst keiner eingetragen, werden die Standardzauber angezeigt, abhängig von Talenten & Spezialisierung."
     L["COPY_OF"] = "Kopie von"
     L["MICRO_BAR"] = "Mikroleiste"
+    L["TOOLTIP_ID_MODIFIER"] = "Tastenkombi für IDs"
 end
 
 if GetLocale() == "deDE" then

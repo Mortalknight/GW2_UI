@@ -20,8 +20,6 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "Activar o desactivar la barra de casteo avanzado."
 	L["ADVANCED_TOOLTIP"] = "Sugerencias Avanzadas"
 	L["ADVANCED_TOOLTIP_DESC"] = "Muestra información adicional en la sugerencia (se visualiza información extra cuando la tecla SHIFT es presionada)"
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "IDs de los PNJs"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Muestra el ID del PNJ cuando el ratón está en su sugerencia."
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Recuento de Objetos"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Muestra cuantos de un cierto objeto tienes en tu posesión"
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Género"
@@ -35,8 +33,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "Muestra el role de la unidad en la sugerencia."
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Información del Objetivo"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "Cuando en un grupo de banda, muestra se alguien apunta a la sugerencia actual."
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "IDs de Hechizo/Objeto"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Muestra el ID del hechizo o objeto cuando el ratón está en su sugerencia."
 	L["AFK_MODE"] = "Modo AFK"
 	L["AFK_MODE_DESC"] = "Cuando vaya a AFK, visualice la pantalla AFK."
 	L["ALERTFRAMES"] = "Marcos de alerta"
@@ -347,6 +343,7 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "Muestra las coordenadas en el mapa del mundo."
 	L["ZONE_ANILITY_AB_NAME"] = "Habilidad de zona"
 	L["MICRO_BAR"] = "Micro Barra"
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

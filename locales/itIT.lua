@@ -20,8 +20,6 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "Abilita o disabilita la barra degli incantesimi avanzata."
 	L["ADVANCED_TOOLTIP"] = "Suggerimenti Avanzati"
 	L["ADVANCED_TOOLTIP_DESC"] = "Mostra informazioni aggiungtive nel suggerimento (ulteriori informazioni sono mostrate quando il tasto SHIFT viene premuto)"
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "IDs PNG"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Mostra l'ID del PNG quando ci si posiziona sopra a un suggerimento di un PNG."
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Conta Oggetti"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Mostra quanti oggetti di un determinato tipo possiedi."
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Genere"
@@ -35,8 +33,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "Mostra il ruolo dell'unità nel suggerimento."
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Informazioni Bersaglio"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "Quando ci si trova in un gruppo di una incursione, mostra se qualcuno nella tua incursione sta selezionando l'unità del suggerimento."
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "ID Incantesimo/Oggetto"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Mostra l'ID dell'incantesimo o dell'oggetto mentre ci si posiziona sul suggerimento dell'incantesimo o dell'oggetto."
 	L["AFK_MODE"] = "Modalità AFK"
 	L["AFK_MODE_DESC"] = "Quando vai AFK, visualizza la schermata AFK."
 	L["ALERTFRAMES"] = "Frames di Allerta"
@@ -347,6 +343,7 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "Mostra le Coordinate sulla mappa del mondo"
 	L["ZONE_ANILITY_AB_NAME"] = "Abilità di zona"
 	L["MICRO_BAR"] = "Micro Bar"
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 	
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

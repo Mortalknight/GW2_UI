@@ -245,10 +245,6 @@ local function GWUseThisLocalization()
     L["ADVANCED_TOOLTIP_DESC"] = "Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"
     L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Item Count"
     L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Display how many of a certain item you have in your possession."
-    L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "Spell/Item IDs"
-    L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Display the spell or item ID when mousing over a spell or item tooltip."
-    L["ADVANCED_TOOLTIP_NPC_ID"] = "NPC IDs"
-    L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Display the npc ID when mousing over a npc tooltip."
     L["ADVANCED_TOOLTIP_SHOW_MOUNT"] = "Current Mount"
     L["ADVANCED_TOOLTIP_SHOW_MOUNT_DESC"] = "Display current mount the unit is riding."
     L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Target Info"
@@ -342,6 +338,7 @@ local function GWUseThisLocalization()
     L["PLAYER_DODGEBAR_SPELL_DESC"] = "Enter the spell id which should be tracker on the dodgebar.\nIf no id is entered, the default spells, based on your spec and talents are tracked."
     L["COPY_OF"] = "Copy of"
     L["MICRO_BAR"] = "메뉴모음 바"
+    L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 end
 
 if GetLocale() == "koKR" then

@@ -20,8 +20,6 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "Включить или выключить дополнительную индикацию кастбара."
 	L["ADVANCED_TOOLTIP"] = "Расширенные всплывающие подсказки "
 	L["ADVANCED_TOOLTIP_DESC"] = "Отображает дополнительную информацию во всплывающей подсказке (дополнительная информация отображается при нажатии клавиши SHIFT) "
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "ID NPC"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "Отображение ID NPC при наведении курсора мыши на подсказку NPC. "
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "Количество предметов "
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "Отображает количество определенного предмета в вашем распоряжении."
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "Пол "
@@ -35,8 +33,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "Отображать роль цели во всплывающей подсказке. "
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "Информация о цели  "
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "Находясь в группе рейда, покажет, нацелен ли кто-либо в вашем рейде на текущую цель во всплывающей подсказки."
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "ID Заклинаний/Предметов "
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "Отображение ID заклинания или предмета при наведении курсора мыши на всплывающую подсказку заклинания или предмета. "
 	L["AFK_MODE"] = "Режим AFK"
 	L["AFK_MODE_DESC"] = "Отображать специальный экран, когда вы переходите в состояние 'Отсутствует'."
 	L["ALERTFRAMES"] = "Фреймы предупреждений"
@@ -347,6 +343,7 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "Отображение координат на мировой карте"
 	L["ZONE_ANILITY_AB_NAME"] = "Локационная способность"
 	L["MICRO_BAR"] = "Микроменю"
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
 	
 	-- Composite
 	L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])

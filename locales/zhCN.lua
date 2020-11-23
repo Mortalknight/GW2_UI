@@ -20,8 +20,7 @@ local function GWUseThisLocalization()
 	L["ADV_CAST_BAR_DESC"] = "打开或关闭高级施法条."
 	L["ADVANCED_TOOLTIP"] = "更多提示"
 	L["ADVANCED_TOOLTIP_DESC"] = "按SHIFT来显示更多的鼠标提示信息."
-	L["ADVANCED_TOOLTIP_NPC_ID"] = "NPC ID"
-	L["ADVANCED_TOOLTIP_NPC_ID_DESC"] = "鼠标提示中列出NPC ID."
+
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = "指向的物品数量"
 	L["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_DESC"] = "鼠标指向显示物品的数量."
 	L["ADVANCED_TOOLTIP_SHOW_GENDER"] = "性别"
@@ -35,8 +34,6 @@ local function GWUseThisLocalization()
 	L["ADVANCED_TOOLTIP_SHOW_ROLE_DESC"] = "在鼠标提示中显示角色的当前专精."
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = "目标信息"
 	L["ADVANCED_TOOLTIP_SHOW_TARGET_INFO_DESC"] = "显示队伍中是否有人以当前鼠标提示的单位为目标."
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID"] = "技能/物品 ID"
-	L["ADVANCED_TOOLTIP_SPELL_ITEM_ID_DESC"] = "显示鼠标指向的技能或物品的ID."
 	L["AFK_MODE"] = "离开模式"
 	L["AFK_MODE_DESC"] = "当你离开时显示AFK动画界面."
 	L["ALERTFRAMES"] = "警报框体"
@@ -347,7 +344,8 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "在世界地图上显示坐标"
 	L["ZONE_ANILITY_AB_NAME"] = "区域技能名称"
 	L["MICRO_BAR"] = "微型系统菜单"
-	
+	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
+
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
     L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
