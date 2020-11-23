@@ -33,7 +33,7 @@ local function SkinDeathRecapFrame_Loaded()
         recap.SpellInfo.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         recap.SpellInfo.IconBorder:SetAlpha(0)
         if i == 1 then
-            DeathRecapFrame.Recap1.tombstone:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-dead")
+            DeathRecapFrame.Recap1.tombstone:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-dead")
             DeathRecapFrame.Recap1.tombstone:SetSize(30, 30)
             DeathRecapFrame.Recap1.tombstone:ClearAllPoints()
             DeathRecapFrame.Recap1.tombstone:SetPoint("RIGHT", DeathRecapFrame.Recap1.DamageInfo.Amount, "LEFT", 0, 0)
@@ -53,7 +53,7 @@ local function SkinDeathRecapFrame_Loaded()
                     end
                 end
                 if _G["DetailsDeathRecapLine" .. i].graveIcon then
-                    _G["DetailsDeathRecapLine" .. i].graveIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-dead")
+                    _G["DetailsDeathRecapLine" .. i].graveIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-dead")
                     _G["DetailsDeathRecapLine" .. i].graveIcon:SetTexCoord(0,1,0,1)
                     _G["DetailsDeathRecapLine" .. i].graveIcon:SetSize(30, 30)
                     _G["DetailsDeathRecapLine" .. i].graveIcon:ClearAllPoints()

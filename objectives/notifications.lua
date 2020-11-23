@@ -16,7 +16,7 @@ local icons = {
     EVENT = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
     SCENARIO = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
     BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
-    DEAD = {tex = "../party/icon-dead", l = 0, r = 1, t = 0, b = 1},
+    DEAD = {tex = "icon-dead", l = 0, r = 1, t = 0, b = 1},
     ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
     DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
 }

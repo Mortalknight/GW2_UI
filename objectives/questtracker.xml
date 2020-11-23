@@ -536,7 +536,7 @@
                     <Layer Level="ARTWORK">
                     </Layer>
                     <Layer Level="BACKGROUND">
-                        <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\icon-dead">
+                        <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead">
                             <Size x="15" y="15"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -575,7 +575,7 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentMarker" parentKey="marker" hidden="true" file="Interface\AddOns\GW2_UI\textures\party\icon-dead">
+                <Texture name="$parentMarker" parentKey="marker" hidden="true" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
