@@ -649,6 +649,24 @@ local function SetBackpackToken(self, id)
     end
 end
 
+local function SkinProgressbar(self)
+    if not self or self:IsForbidden() or not self.progressBarPool then return end
+
+	local sb = self.progressBarPool:GetNextActive()
+	if (not sb or not sb.Bar) or sb.Bar.backdrop then return end
+
+	sb.Bar:StripTextures()
+	sb.Bar:CreateBackdrop()
+    sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
+    sb.Bar.BorderLeft:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    sb.Bar.BorderRight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    sb.Bar.BorderMid:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    sb.Bar.LeftDivider:Hide()
+    sb.Bar.RightDivider:Hide()
+
+	self.pbBar = sb.Bar
+end
+
 local function SetStyle(tooltip)
     if not tooltip or (tooltip == GW.ScanTooltip or tooltip.IsEmbedded or not tooltip.SetBackdrop) or tooltip:IsForbidden() then return end
 
@@ -663,6 +681,7 @@ local function LoadTooltips()
     hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle)
     _G.GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
     _G.GameTooltip.ItemTooltip.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    hooksecurefunc("GameTooltip_ShowProgressBar", SkinProgressbar)
 
     if GetSetting("TOOLTIP_MOUSE") then
         hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
