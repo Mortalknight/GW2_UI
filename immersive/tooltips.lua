@@ -726,7 +726,7 @@ local function LoadTooltips()
         local eventFrame = CreateFrame("Frame")
         eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
         eventFrame:SetScript("OnEvent", function(self, event, key)
-            if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" then
+            if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" or key == 'LALT' or key == 'RALT' then
                 local owner = GameTooltip:GetOwner()
                 local notOnAuras = not (owner and owner.UpdateTooltip)
                 if notOnAuras and UnitExists("mouseover") then
