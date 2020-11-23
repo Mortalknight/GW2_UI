@@ -5,3 +5,4 @@ NEW
     - "Copy Profile" function added
     - Organized, optimized, and cleaned up textures to reduce download size
     - Make Micro Bar movable
+    - Update "Importend Raid debuffs" with Shadowland ones / remove BfA debuffs
