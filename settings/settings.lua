@@ -309,7 +309,6 @@ local function lockHudObjects(self)
         self.mhgb.grid:Hide()
     end
     GW.UpdateFramePositions()
-    C_UI.Reload()
 end
 AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 
