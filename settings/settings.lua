@@ -308,8 +308,8 @@ local function lockHudObjects(self)
     if self.mhgb.grid then
         self.mhgb.grid:Hide()
     end
-    GW.MoveHudScaleableFrame:Hide()
     GW.UpdateFramePositions()
+    C_UI.Reload()
 end
 AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 
