@@ -1012,24 +1012,6 @@ local function updateQuestLogLayout(self)
         end
     end
 
-    -- check for AutoQuests
-    for i = 1, GetNumAutoQuestPopUps() do
-        local questID, popUpType = GetAutoQuestPopUp(i)
-        if questID and popUpType == "OFFER" then
-            --find our block with that questId
-            local isCampaign = QuestCache:Get(questID):IsCampaign()
-            local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
-            if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
-                questBlockOfIdOrNew.popupQuestAccept:Show()
-                questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
-                    ShowQuestOffer(self:GetParent().id)
-                    RemoveAutoQuestPopUp(self:GetParent().id)
-                    self:Hide()
-                end)
-            end
-        end
-    end
-
     GwQuesttrackerContainerCampaign:SetHeight(savedHeightCampagin)
     GwQuesttrackerContainerQuests:SetHeight(savedHeightQuest)
 
@@ -1126,6 +1108,25 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     self.isUpdating = false
 end
 
+local function checkForAutoQuests()
+    for i = 1, GetNumAutoQuestPopUps() do
+        local questID, popUpType = GetAutoQuestPopUp(i)
+        if questID and popUpType == "OFFER" then
+            --find our block with that questId
+            local isCampaign = QuestCache:Get(questID):IsCampaign()
+            local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
+            if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
+                questBlockOfIdOrNew.popupQuestAccept:Show()
+                questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
+                    ShowQuestOffer(self:GetParent().id)
+                    RemoveAutoQuestPopUp(self:GetParent().id)
+                    self:Hide()
+                end)
+            end
+        end
+    end
+end
+
 local function tracker_OnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
@@ -1173,6 +1174,7 @@ local function tracker_OnEvent(self, event, ...)
     end
 
     if self.watchMoneyReasons > numWatchedQuests then self.watchMoneyReasons = self.watchMoneyReasons - numWatchedQuests end
+    checkForAutoQuests()
     QuestTrackerLayoutChanged()
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
