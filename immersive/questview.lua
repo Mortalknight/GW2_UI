@@ -272,7 +272,8 @@ GW.AddForProfiling("questview", "nextGossip", nextGossip)
 
 local model_tweaks = {
     [1717164] = {["z"] = -0.35},
-    [415230] = {["z"] = 0}
+    [415230] = {["z"] = 0},
+    [3023013] = {["x"] = -4, ["y"] = 1, ["z"] = -0.33}
 }
 local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7
@@ -369,7 +370,7 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     
     if dirty then
         PM:SetPosition(uX, uY, uZ)
-        GW.Debug("set pos:", unit, fileid, uX, uY, uZ)
+        GW.Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ)
         PM:SetUnit(unit)
         if crace then
             PM:SetCustomRace(crace, cgender)

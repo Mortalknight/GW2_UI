@@ -7,3 +7,6 @@ NEW
     - Make Micro Bar movable
     - Update "Importend Raid debuffs" with Shadowland ones / remove BfA debuffs
     - Added option to show ID's in tooltips with a modifier
+
+FIXES
+    - Adjust quest view position for a number of Shadowlands NPCs
