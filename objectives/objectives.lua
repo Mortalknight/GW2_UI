@@ -952,7 +952,7 @@ local function updateQuestLogLayout(self)
         -- check if we have a quest id to prevent errors
         if questID then
             local q = QuestCache:Get(questID)
-        -- Campaing Quests
+            -- Campaing Quests
             if q and q:IsCampaign() then
                 if shouldShowCampaign then
                     GwCampaginHeader:Show()
@@ -1080,7 +1080,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         questBlockOfIdOrNew.isFrequency = isFrequency
         questBlockOfIdOrNew:Show()
         if ... == true then
-            NewQuestAnimation(_G[blockName .. "1"]) -- new quests always on top
+            NewQuestAnimation(questBlockOfIdOrNew)
         end
     
         for i = 1, 25 do
@@ -1093,6 +1093,7 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         end
         
         containerName:SetHeight(savedHeight)
+        header:Show()
 
         if questBlockOfIdOrNew.hasItem then
             for i = 1, 25 do
@@ -1424,12 +1425,15 @@ local function LoadQuestTracker()
     end)
 
     -- some hooks to set the itembuttons correct
-    hooksecurefunc(fBoss, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
-    hooksecurefunc(fArenaBG, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
-    fNotify:HookScript("OnShow", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
-    fNotify:HookScript("OnHide", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
-    hooksecurefunc(fAchv, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
-    hooksecurefunc(fScen, "SetHeight", function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end)
+    hooksecurefunc(fBoss, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    hooksecurefunc(fArenaBG, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    hooksecurefunc(fScen, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    hooksecurefunc(fCampaign, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    GwCampaginHeader:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    GwCampaginHeader:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, nil, true, {"scaleable", "height"}, nil, true)
     fTracker:ClearAllPoints()
