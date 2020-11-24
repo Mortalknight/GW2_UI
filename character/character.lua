@@ -327,9 +327,12 @@ local function click_OnEvent(self, event)
     for k, win in pairs(windowsList) do
         if win.TabFrame and win.Bindings then
             for key, click in pairs(win.Bindings) do
-                local keyBind = GetBindingKey(key)
+                local keyBind, keyBind2 = GetBindingKey(key)
                 if keyBind then
                     SetOverrideBinding(self, false, keyBind, "CLICK GwCharacterWindowClick:" .. click)
+                end
+                if keyBind2 then
+                    SetOverrideBinding(self, false, keyBind2, "CLICK GwCharacterWindowClick:" .. click)
                 end
             end
         end
