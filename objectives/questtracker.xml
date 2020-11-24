@@ -38,9 +38,6 @@
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
         </Anchors>
         <Layers>
-            <Layer Level="ARTWORK">
-
-            </Layer>
             <Layer Level="BACKGROUND">
                 <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
                     <Size x="30" y="30"></Size>

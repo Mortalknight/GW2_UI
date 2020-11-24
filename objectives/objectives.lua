@@ -1047,7 +1047,7 @@ end
 GW.updateQuestLogLayout = updateQuestLogLayout
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
-local function updateQuestLogLayoutSingle(self, questID, ...)
+local function updateQuestLogLayoutSingle(self, questID, added)
     if self.isUpdating or not self.init or not questID then
         return
     end
@@ -1079,8 +1079,11 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
         updateQuestByID(self, questBlockOfIdOrNew, q, questID, questWatchId, questLogIndex)
         questBlockOfIdOrNew.isFrequency = isFrequency
         questBlockOfIdOrNew:Show()
-        if ... == true then
-            NewQuestAnimation(questBlockOfIdOrNew)
+        if added == true then
+            C_Timer.After(0.1, function()
+                local questBlockOfIdOrNew = questWatchId and getBlockByID(questID, isCampaign, isFrequency)
+                NewQuestAnimation(questBlockOfIdOrNew)
+            end)
         end
     
         for i = 1, 25 do
@@ -1340,7 +1343,7 @@ local function LoadQuestTracker()
     headerCampagin.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
 
     headerCampagin:SetScript(
-        "OnClick",
+        "OnMouseDown",
         function(self)
             local p = self:GetParent()
             if p.collapsed == nil or p.collapsed == false then
@@ -1363,7 +1366,7 @@ local function LoadQuestTracker()
     header.title:SetText(TRACKER_HEADER_QUESTS)
 
     header:SetScript(
-        "OnClick",
+        "OnMouseDown",
         function(self)
             local p = self:GetParent()
             if p.collapsed == nil or p.collapsed == false then

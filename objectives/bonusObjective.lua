@@ -403,7 +403,7 @@ local function LoadBonusFrame()
 
     GwQuesttrackerContainerBonusObjectives.collapsed = false
     header:SetScript(
-        "OnClick",
+        "OnMouseDown",
         function(self)
             local p = self:GetParent()
             if p.collapsed == nil or p.collapsed == false then
