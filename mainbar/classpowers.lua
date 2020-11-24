@@ -302,8 +302,11 @@ GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 local function powerEnrage(self, event, ...)
     local _, _, duration, expires = findBuff("player", 184362)
     if duration ~= nil then
+        self.decay:Show()
         local pre = (expires - GetTime()) / duration
         AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
+    else
+        self.decay:Hide()
     end
 end
 GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
@@ -1120,7 +1123,6 @@ local function setDeamonHunter(f)
         fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
         fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
         fd.bar:SetValue(0)
-        fd:Show()
 
         f:SetScript("OnEvent", timerMetamorphosis)
         timerMetamorphosis(f, "CLASS_POWER_INIT")
