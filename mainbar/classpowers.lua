@@ -292,8 +292,11 @@ GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 local function timerMetamorphosis(self, event, ...)
     local _, _, duration, expires = findBuff("player", 162264)
     if duration ~= nil then
+        self.decay:Show()
         local pre = (expires - GetTime()) / duration
         AddToAnimation("METAMORPHOSIS_BAR", pre, 0, GetTime(), expires - GetTime(), metamorphosis_OnAnim, "noease")
+    else
+        self.decay:Hide()
     end
 end
 GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
@@ -302,11 +305,8 @@ GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 local function powerEnrage(self, event, ...)
     local _, _, duration, expires = findBuff("player", 184362)
     if duration ~= nil then
-        self.decay:Show()
         local pre = (expires - GetTime()) / duration
         AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
-    else
-        self.decay:Hide()
     end
 end
 GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
