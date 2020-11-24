@@ -1115,7 +1115,7 @@ displayRewards = function()
 
             _G["GwLevelingRewardsItem" .. i]:Show()
             _G["GwLevelingRewardsItem" .. i].level:SetText(
-                v["level"] .. " |TInterface/AddOns/GW2_UI/textures/icons/hud/levelreward-icon:24:24:0:0|t "
+                v["level"] .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:24:24:0:0|t "
             )
 
             if v["type"] == "SPELL" then
@@ -1136,7 +1136,7 @@ displayRewards = function()
                         local mask = UIParent:CreateMaskTexture()
                         mask:SetPoint("CENTER", _G["GwLevelingRewardsItem" .. i].icon, "CENTER", 0, 0)
                         mask:SetTexture(
-                            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+                            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
                             "CLAMPTOBLACKADDITIVE",
                             "CLAMPTOBLACKADDITIVE"
                         )
