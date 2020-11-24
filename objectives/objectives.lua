@@ -642,21 +642,21 @@ local function OnBlockClickHandler(self, button)
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
-local function updateQuest(self, block, questWatchId)
+local function updateQuest(self, block, questWatchId, quest)
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
     block.popupQuestAccept:Hide()
 
-    local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(questWatchId)
-    local quest = QuestCache:Get(questID)
+    local questID = quest:GetID()
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local questLogIndex = quest:GetQuestLogIndex()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
-    questInfo = C_QuestLog.GetInfo(questLogIndex)
 
-    if questID then
+    if questID and questLogIndex and questLogIndex > 0 then
+        questInfo = C_QuestLog.GetInfo(questLogIndex)
+
         if requiredMoney then
             self.watchMoneyReasons = self.watchMoneyReasons + 1
         else
@@ -672,7 +672,7 @@ local function updateQuest(self, block, questWatchId)
         --Quest item
         UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex, block)
 
-        if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
+        if numObjectives == 0 and GetMoney() >= requiredMoney and (questInfo and not questInfo.startEvent) then
             isComplete = true
         end
 
@@ -717,6 +717,7 @@ local function updateQuest(self, block, questWatchId)
         else
             block.joingroup:Hide()
         end
+        wipe(questInfo)
     end
     if block.objectiveBlocks == nil then
         block.objectiveBlocks = {}
@@ -729,11 +730,10 @@ local function updateQuest(self, block, questWatchId)
     end
     block.height = block.height + 5
     block:SetHeight(block.height)
-    wipe(questInfo)
 end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
-local function updateQuestByID(self, block, quest, questID, questWatchId)
+local function updateQuestByID(self, block, quest, questID, questWatchId, questLogIndex)
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
@@ -741,7 +741,6 @@ local function updateQuestByID(self, block, quest, questID, questWatchId)
 
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
-    local questLogIndex = quest:GetQuestLogIndex()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     questInfo = C_QuestLog.GetInfo(questLogIndex)
 
@@ -760,7 +759,7 @@ local function updateQuestByID(self, block, quest, questID, questWatchId)
     --Quest item
     UpdateQuestItem(_G["GwQuestItemButton" .. questWatchId], questLogIndex, block)
 
-    if numObjectives == 0 and GetMoney() >= requiredMoney and not questInfo.startEvent then
+    if numObjectives == 0 and GetMoney() >= requiredMoney and (questInfo and not questInfo.startEvent) then
         isComplete = true
     end
 
@@ -950,63 +949,69 @@ local function updateQuestLogLayout(self)
     for i = 1, numQuests do
         local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
         
+        -- check if we have a quest id to prevent errors
+        if questID then
+            local q = QuestCache:Get(questID)
         -- Campaing Quests
-        if QuestCache:Get(questID):IsCampaign() then
-            if shouldShowCampaign then
-                GwCampaginHeader:Show()
-                counterCampaign = counterCampaign + 1
+            if q and q:IsCampaign() then
+                if shouldShowCampaign then
+                    GwCampaginHeader:Show()
+                    counterCampaign = counterCampaign + 1
 
-                if counterCampaign == 1 then
-                    savedHeightCampagin = 20
-                end
-                local block = getBlockCampaign(counterCampaign)
-                if block == nil then
-                    return
-                end
+                    if counterCampaign == 1 then
+                        savedHeightCampagin = 20
+                    end
+                    local block = getBlockCampaign(counterCampaign)
+                    if block == nil then
+                        return
+                    end
 
-                updateQuest(self, block, i)
-                block:Show()
-                savedHeightCampagin = savedHeightCampagin + block.height
-                updateQuestItemPositions(i, savedHeightCampagin, nil, block)
-            else
-                counterCampaign = counterCampaign + 1
-                if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
-                    _G["GwCampaignBlock" .. counterCampaign]:Hide()
-                    UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, _G["GwCampaignBlock" .. counterCampaign])
-                end
-            end
-        else
-            if shouldShowQuests then
-                GwQuestHeader:Show()
-                counterQuest = counterQuest + 1
-
-                if counterQuest == 1 then
-                    savedHeightQuest = 20
-                end
-                --if quest is reapeataple make it blue
-                local isFrequency = QuestCache:Get(questID).frequency and QuestCache:Get(questID).frequency > 0
-                if QuestCache:Get(questID).frequency == nil then
-                    local questLogIndex = QuestCache:Get(questID):GetQuestLogIndex()
-                    if questLogIndex and questLogIndex > 0 then
-                        questInfo = C_QuestLog.GetInfo(questLogIndex)
-                        isFrequency = questInfo.frequency > 0
-                        wipe(questInfo)
+                    updateQuest(self, block, i, q)
+                    block:Show()
+                    savedHeightCampagin = savedHeightCampagin + block.height
+                    updateQuestItemPositions(i, savedHeightCampagin, nil, block)
+                else
+                    counterCampaign = counterCampaign + 1
+                    if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
+                        _G["GwCampaignBlock" .. counterCampaign]:Hide()
+                        UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, _G["GwCampaignBlock" .. counterCampaign])
                     end
                 end
-                local block = getBlockQuest(counterQuest, isFrequency)
-                if block == nil then
-                    return
-                end
-                updateQuest(self, block, i)
-                block.isFrequency = isFrequency
-                block:Show()
-                savedHeightQuest = savedHeightQuest + block.height
-                updateQuestItemPositions(i, savedHeightQuest, "QUEST", block)
-            else
-                counterQuest = counterQuest + 1
-                if _G["GwQuestBlock" .. counterQuest] ~= nil then
-                    _G["GwQuestBlock" .. counterQuest]:Hide()
-                    UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, _G["GwQuestBlock" .. counterQuest])
+            elseif q then
+                if shouldShowQuests then
+                    GwQuestHeader:Show()
+                    counterQuest = counterQuest + 1
+
+                    if counterQuest == 1 then
+                        savedHeightQuest = 20
+                    end
+                    --if quest is reapeataple make it blue
+                    local isFrequency = q.frequency and q.frequency > 0
+                    if q.frequency == nil then
+                        local questLogIndex = q:GetQuestLogIndex()
+                        if questLogIndex and questLogIndex > 0 then
+                            questInfo = C_QuestLog.GetInfo(questLogIndex)
+                            if questInfo then
+                                isFrequency = questInfo.frequency > 0
+                                wipe(questInfo)
+                            end
+                        end
+                    end
+                    local block = getBlockQuest(counterQuest, isFrequency)
+                    if block == nil then
+                        return
+                    end
+                    updateQuest(self, block, i, q)
+                    block.isFrequency = isFrequency
+                    block:Show()
+                    savedHeightQuest = savedHeightQuest + block.height
+                    updateQuestItemPositions(i, savedHeightQuest, "QUEST", block)
+                else
+                    counterQuest = counterQuest + 1
+                    if _G["GwQuestBlock" .. counterQuest] ~= nil then
+                        _G["GwQuestBlock" .. counterQuest]:Hide()
+                        UpdateQuestItem(_G["GwQuestItemButton" .. i], 0, _G["GwQuestBlock" .. counterQuest])
+                    end
                 end
             end
         end
@@ -1050,13 +1055,15 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
 
     -- get the correct quest block for that questID
     local q = QuestCache:Get(questID)
+    local questLogIndex = q:GetQuestLogIndex()
     local isFrequency = q.frequency and q.frequency > 0
     if q.frequency == nil then
-        local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
         if questLogIndex and questLogIndex > 0 then
             questInfo = C_QuestLog.GetInfo(questLogIndex)
-            isFrequency = questInfo.frequency > 0
-            wipe(questInfo)
+            if questInfo then
+                isFrequency = questInfo.frequency > 0
+                wipe(questInfo)
+            end
         end
     end
     local isCampaign = q:IsCampaign()
@@ -1068,8 +1075,8 @@ local function updateQuestLogLayoutSingle(self, questID, ...)
     local savedHeight = 20
     local heightForQuestItem = 20
     local counterQuest = 0
-    if questWatchId ~= nil and questBlockOfIdOrNew ~= nil then
-        updateQuestByID(self, questBlockOfIdOrNew, q, questID, questWatchId)
+    if questWatchId ~= nil and questBlockOfIdOrNew ~= nil and questLogIndex and questLogIndex > 0 then
+        updateQuestByID(self, questBlockOfIdOrNew, q, questID, questWatchId, questLogIndex)
         questBlockOfIdOrNew.isFrequency = isFrequency
         questBlockOfIdOrNew:Show()
         if ... == true then
