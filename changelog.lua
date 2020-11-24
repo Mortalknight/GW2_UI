@@ -13,4 +13,5 @@ NEW
 
 FIXES
     - Adjust quest view position for a number of Shadowlands NPCs
+    - Possible fix for "ZoneabilityContainer"
 ]=])

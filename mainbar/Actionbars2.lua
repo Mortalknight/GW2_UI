@@ -310,6 +310,7 @@ local function updateHotkey(self, actionButtonType)
         end
     end
 end
+GW.updateHotkey = updateHotkey
 GW.AddForProfiling("Actionbars2", "updateHotkey", updateHotkey)
 
 local function hideBackdrop(self)
