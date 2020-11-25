@@ -174,7 +174,7 @@ local function GWUseThisLocalization()
 	L["INVENTORY_FRAME_DESC"] = "Включить единый стиль интерфейса для инвентаря."
 	L["LEFT"] = "Cлева"
 	L["LEVEL_REWARDS"] = "Награда за уровень"
-	L["MAINBAR_RANGE_INDICATOR"] = "Индикатор проверка расстояния основной панели навыков"
+	L["MAINBAR_RANGE_INDICATOR"] = "Индикатор проверки расстояния основной панели навыков"
 	L["MAP_CLOCK_LOCAL_REALM"] = "ЛКМ чтобы переключиться между локальным и серверным временем"
 	L["MAP_CLOCK_MILITARY"] = "Shift+ЛКМ для переключения на 24-часовой формат"
 	L["MAP_CLOCK_STOPWATCH"] = "ПКМ чтобы открыть секундомер"
