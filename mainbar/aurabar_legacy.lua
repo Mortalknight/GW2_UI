@@ -6,7 +6,7 @@ local UpdateBuffLayout = GW.UpdateBuffLayout
 local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Debug = GW.Debug
-
+--- NOT USED ATM
 local function UpdatePlayerBuffFrame()
     if InCombatLockdown() or not GwPlayerAuraFrame or GwPlayerAuraFrame.isMoved then
         return

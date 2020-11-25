@@ -20,39 +20,6 @@ local function CheckIfMoved(self, settingsName, new_point)
     end
 end
 
-local function lockableOnClick(self, btn)
-    local mf = self:GetParent()
-    --local f = mf.gw_frame
-    local settingsName = mf.gw_Settings
-
-    local dummyPoint = GetDefault(settingsName)
-    mf:ClearAllPoints()
-    mf:SetPoint(
-        dummyPoint["point"],
-        UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
-    )
-
-    local point, _, relativePoint, xOfs, yOfs = mf:GetPoint()
-    local new_point = GetSetting(settingsName)
-    new_point["point"] = point
-    new_point["relativePoint"] = relativePoint
-    new_point["xOfs"] = GW.RoundInt(xOfs)
-    new_point["yOfs"] = GW.RoundInt(yOfs)
-    SetSetting(settingsName, new_point)
-
-    -- check if we need to know if the frame is on its default position
-    CheckIfMoved(self, settingsName, new_point)
-
-    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
-    if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
-        SetSetting(settingsName .. "_GrowDirection", "UP")
-    end
-end
-GW.AddForProfiling("index", "lockableOnClick", lockableOnClick)
-
 local function smallSettings_resetToDefault(self, btn)
     local mf = self:GetParent().child
     --local f = mf.gw_frame
@@ -86,11 +53,16 @@ local function smallSettings_resetToDefault(self, btn)
     end
 
     -- check if we need to know if the frame is on its default position
-    CheckIfMoved(self, settingsName, new_point)
+    CheckIfMoved(mf, settingsName, new_point)
 
     -- Set Scale back to default
     if mf.optionScaleable then
-        local scale = GetDefault(settingsName .. "_scale")
+        local scale
+        if mf.gw_mhf then
+            scale = GetSetting("HUD_SCALE")
+        else
+            scale = GetDefault(settingsName .. "_scale")
+        end
         mf:SetScale(scale)
         mf.gw_frame:SetScale(scale)
         SetSetting(settingsName .. "_scale", scale)
@@ -105,8 +77,10 @@ local function smallSettings_resetToDefault(self, btn)
         SetSetting(settingsName .. "_height", height)
         self:GetParent().heightSlider.slider:SetValue(height)
     end
+
+    GW.UpdateHudScale()
 end
-GW.AddForProfiling("index", "lockableOnClick", lockableOnClick)
+GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
 
 local function lockFrame_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -290,7 +264,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved, smallOptions, mhf)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, smallOptions, mhf)
     local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
@@ -303,6 +277,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe.gw_Lockable = lockAble
     moveframe.gw_isMoved = isMoved
     moveframe.gw_frame = frame
+    moveframe.gw_mhf = mhf
 
     if moveframe.frameName and moveframe.frameName.SetText then
         moveframe.frameName:SetSize(moveframe:GetSize())
@@ -322,13 +297,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe:RegisterForDrag("LeftButton")
     moveframe:SetScript("OnEnter", moverframe_OnEnter)
     moveframe:SetScript("OnLeave", moverframe_OnLeave)
-
-    if lockAble ~= nil then
-        local lockFrame = CreateFrame("Button", nil, moveframe, "GwDummyLockButton")
-        lockFrame:SetScript("OnEnter", lockFrame_OnEnter)
-        lockFrame:SetScript("OnLeave", GameTooltip_Hide)
-        lockFrame:SetScript("OnClick", lockableOnClick)
-    end
 
     if isMoved ~= nil then
         local defaultPoint = GetDefault(settingsName)
@@ -412,16 +380,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe:SetScript("OnDragStop", mover_OnDragStop)
 end
 GW.RegisterMovableFrame = RegisterMovableFrame
-
-local function UpdateFramePositions()
-    for i, mf in pairs(GW.MOVABLE_FRAMES) do
-        local f = mf.gw_frame
-        local newp = GetSetting(mf.gw_Settings)
-        f:ClearAllPoints()
-        f:SetPoint(newp["point"], UIParent, newp["relativePoint"], newp["xOfs"], newp["yOfs"])
-    end
-end
-GW.UpdateFramePositions = UpdateFramePositions
 
 local function MoveFrameByPixel(nudgeX, nudgeY)
     local mover = GwSmallSettingsWindow.childMover

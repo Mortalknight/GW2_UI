@@ -295,6 +295,7 @@ local function lockHudObjects(self)
     self:Hide()
     self.mhgb:Hide()
     self.mhgb.grid_align:Hide()
+    GW.MoveHudScaleableFrame:Hide()
     if settings_window_open_before_change then
         settings_window_open_before_change = false
         GwSettingsWindow:Show()
@@ -308,8 +309,6 @@ local function lockHudObjects(self)
     if self.mhgb.grid then
         self.mhgb.grid:Hide()
     end
-    GW.UpdateFramePositions()
-    C_UI.Reload()
 end
 AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 

@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function MakeAltPowerBarMovable()
-    GW.RegisterMovableFrame(PlayerPowerBarAlt, ALTERNATE_RESOURCE_TEXT, "AltPowerBar_pos", "VerticalActionBarDummy", {256, 64}, nil, nil, {"scaleable"})
+    GW.RegisterMovableFrame(PlayerPowerBarAlt, ALTERNATE_RESOURCE_TEXT, "AltPowerBar_pos", "VerticalActionBarDummy", {256, 64}, nil, {"scaleable"})
 
     _G.PlayerPowerBarAlt:ClearAllPoints()
     _G.PlayerPowerBarAlt:SetPoint("TOPLEFT", _G.PlayerPowerBarAlt.gwMover)

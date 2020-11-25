@@ -574,15 +574,4 @@
         </Scripts>
     </Frame>
 
-    <Button name="GwDummyLockButton" enableMouse="true" virtual="true">
-        <Size x="20" y="20"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="5"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture name="$parentBarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/actionbarmoveable" parentKey="Background"/>
-            </Layer>
-        </Layers>
-    </Button>
 </Ui>
