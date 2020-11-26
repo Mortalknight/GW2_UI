@@ -534,10 +534,10 @@ updateDetails = function()
                 savedHeaderName = ""
             end
 
-            if not facData[factionID] and not isHeader then
+            if not facData[factionID] and (not isHeader or hasRep) then
                 facData[factionID] = {}
             end
-            if not isHeader then
+            if not isHeader or hasRep then
                 facOrder[#facOrder + 1] = factionID
                 facData[factionID].loaded = true
                 facData[factionID].factionIndex = idx
