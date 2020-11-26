@@ -287,7 +287,7 @@ local function LoadHealthGlobe()
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
         end
     else
-        GW.RegisterMovableFrame(hg, GW.L["HEALTH_GLOBE"], "HealthGlobe_pos", "VerticalActionBarDummy", nil, true, {"scaleable"}, true)
+        GW.RegisterMovableFrame(hg, GW.L["HEALTH_GLOBE"], "HealthGlobe_pos", "VerticalActionBarDummy", nil, true, {"default"}, false)
         hg:SetPoint("TOPLEFT", hg.gwMover)
         if not GetSetting("XPBAR_ENABLED") and not hg.isMoved then
             local framePoint = GetSetting("HealthGlobe_pos")
