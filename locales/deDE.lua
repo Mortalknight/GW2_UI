@@ -172,7 +172,7 @@ local function GWUseThisLocalization()
     L["TARGET_TOOLTIP"] = "Bearbeite die Einstellungen der Zieleinheit"
     L["TOOLTIPS"] = "Tooltips"
     L["TOOLTIPS_DESC"] = "Ersetze die Standard UI Tooltips."
-    L["TRACKER_RETRIVE_CORPSE"] = "Erreiche deine Leiche"
+    L["TRACKER_RETRIVE_CORPSE"] = "Erreiche deinen Leichenam"
     L["UPDATE_STRING_1"] = "Ein neues Update steht zum download bereit."
     L["UPDATE_STRING_2"] = "Ein neues Update mit neuen Funktionen ist verfügbar."
     L["UPDATE_STRING_3"] = "Ein  |cFFFF0000wichtiges|r update ist verfügbar.\nEs wird drigend empfohlen ein Umpdate durch zuführen."
