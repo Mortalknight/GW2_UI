@@ -253,6 +253,9 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
         fmTab.groups["lock"]:Show()
         return
     else
+        for k, v in pairs(fmTab.groups) do
+            v:Show()
+        end
         fmTab.groups["lock"]:Hide()
     end
 
