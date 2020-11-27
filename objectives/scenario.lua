@@ -10,12 +10,24 @@ local setBlockColor = GW.setBlockColor
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
 
+local JAILERS_TOWER_LEVEL_TYPE_STRINGS = {
+    [Enum.JailersTowerType.TwistingCorridors] = JAILERS_TOWER_LEVEL_TOAST_TWISTING_CORRIDORS,
+    [Enum.JailersTowerType.SkoldusHalls] = JAILERS_TOWER_LEVEL_TOAST_SKOLDUS_HALLS, 
+    [Enum.JailersTowerType.FractureChambers] = JAILERS_TOWER_LEVEL_TOAST_FRACTURE_CHAMBERS,
+    [Enum.JailersTowerType.Soulforges] = JAILERS_TOWER_LEVEL_TOAST_SOULFORGES,
+    [Enum.JailersTowerType.Coldheart] = JAILERS_TOWER_LEVEL_TOAST_COLDHEART,
+    [Enum.JailersTowerType.Mortregar] = JAILERS_TOWER_LEVEL_TOAST_MORTREGAR,
+    [Enum.JailersTowerType.UpperReaches] = JAILERS_TOWER_LEVEL_TOAST_UPPER_REACHES,
+}
+
 local function getTimeStringFromSeconds(timeAmount)
     return SecondsToClock(timeAmount, hours ~= 0)
 end
 
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
+        _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnEnter", nil)
+        _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnLeave", nil)
         return _G[self:GetName() .. "GwQuestObjective" .. index]
     end
 
@@ -43,6 +55,8 @@ local function getObjectiveBlock(self, index)
         )
     end
 
+    newBlock:SetScript("OnEnter", nil)
+    newBlock:SetScript("OnLeave", nil)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
 
     return newBlock
@@ -81,7 +95,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
 end
 GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
-local function updateCurrentScenario()
+local function updateCurrentScenario(self, event, ...)
     GW.RemoveTrackerNotificationOfType("SCENARIO")
 
     local compassData = {}
@@ -106,7 +120,7 @@ local function updateCurrentScenario()
             if GetTime() < delayUpdateTime then
                 return
             end
-            updateCurrentScenario()
+            updateCurrentScenario(self, event)
             GwQuesttrackerContainerScenario:SetScript("OnUpdate", nil)
         end
     )
@@ -123,7 +137,7 @@ local function updateCurrentScenario()
     local _, _, numStages, _, _, _, _, _, _, scenarioType = C_Scenario.GetInfo()
     local inWarfront = (scenarioType == LE_SCENARIO_TYPE_WARFRONT)
 
-    if (numStages == 0) then
+    if (numStages == 0 or IsOnGroundFloorInJailersTower()) then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
             compassData.TITLE = name
@@ -163,8 +177,23 @@ local function updateCurrentScenario()
             compassData.TITLE = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
         end
         compassData.DESC = stageDescription .. " "
-        GW.AddTrackerNotification(compassData)
+        
     end
+    
+    if IsInJailersTower() then
+        if event == "JAILERS_TOWER_LEVEL_UPDATE" then
+            self.jailersTower.level, self.jailersTower.type = ...
+        end
+        if self.jailersTower.level == nil then
+            self.jailersTower.level = GetJailersTowerLevel()
+        end
+        compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. JAILERS_TOWER_SCENARIO_FLOOR:format(self.jailersTower.level) .. "|r"
+        local typeString = JAILERS_TOWER_LEVEL_TYPE_STRINGS[self.jailersTower.type]
+        if typeString then
+            compassData.DESC = stageDescription .. " - " .. typeString
+        end
+    end
+    GW.AddTrackerNotification(compassData)
     --
 
     --[[
@@ -232,6 +261,38 @@ local function updateCurrentScenario()
             info.quantity
         )
         numCriteria = numCriteria + 1
+    elseif IsInJailersTower() then
+        local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728) -- Phantasma
+        local objectiveBlock
+        --Phantasma
+        addObjectiveBlock(
+            GwScenarioBlock,
+            ParseCriteria(phinfo.quantity, 0, phinfo.name),
+            false,
+            numCriteria + 1,
+            "monster",
+            phinfo.quantity
+        )
+        objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 1)
+        objectiveBlock:SetScript("OnEnter", function() 
+            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+            GameTooltip:ClearLines()
+            GameTooltip:SetCurrencyByID(1728)
+            GameTooltip:Show()
+        end)
+        objectiveBlock:HookScript("OnLeave", GameTooltip_Hide)
+
+        -- grab the MawBuffs Button drom here (need a skin later)
+        local container = _G.ScenarioBlocksFrame.MawBuffsBlock.Container
+        objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 2)
+        objectiveBlock:SetHeight(container:GetHeight())
+        container:SetParent(objectiveBlock)
+        container:ClearAllPoints()
+        container:SetAllPoints()
+        objectiveBlock:Show()
+        objectiveBlock.ObjectiveText:SetText(text)
+        GwScenarioBlock.height = GwScenarioBlock.height + objectiveBlock:GetHeight()
+        GwScenarioBlock.numObjectives = GwScenarioBlock.numObjectives + 1
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps()
@@ -486,13 +547,14 @@ local function scenarioTimerOnEvent(self, event, ...)
     end
     GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
 
-    updateCurrentScenario()
+    updateCurrentScenario(GwQuesttrackerContainerScenario)
 end
 GW.AddForProfiling("scenario", "scenarioTimerOnEvent", scenarioTimerOnEvent)
 
 local function LoadScenarioFrame()
     GwQuesttrackerContainerScenario:SetScript("OnEvent", updateCurrentScenario)
 
+    GwQuesttrackerContainerScenario:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_UPDATE")
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
     GwQuesttrackerContainerScenario:RegisterEvent("LOOT_CLOSED")
@@ -503,6 +565,12 @@ local function LoadScenarioFrame()
     GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED")
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_COMPLETED")
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_SPELL_UPDATE")
+    GwQuesttrackerContainerScenario:RegisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
+
+    GwQuesttrackerContainerScenario.jailersTower = {}
+    GwQuesttrackerContainerScenario.jailersTower.level = nil
+    GwQuesttrackerContainerScenario.jailersTower.type = nil
+
 
     local timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", GwQuesttrackerContainerScenario, "GwQuesttrackerScenarioBlock")
     timerBlock.height = timerBlock:GetHeight()
@@ -646,7 +714,7 @@ local function LoadScenarioFrame()
     setBlockColor(newBlock, "SCENARIO")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    updateCurrentScenario()
+    updateCurrentScenario(GwQuesttrackerContainerScenario)
     scenarioTimerOnEvent()
 end
 GW.LoadScenarioFrame = LoadScenarioFrame
