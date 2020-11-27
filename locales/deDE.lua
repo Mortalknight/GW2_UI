@@ -321,7 +321,7 @@ local function GWUseThisLocalization()
     L["TOPRIGHT"] = ("%s %s"):format(L["TOP"], L["RIGHT"])
     L["TOTEMBAR_GROW_DIRECTION"] = "Klassen Totmes Wachstumsrichtung"
     L["TOTEMBAR_SORTING"] = "Klassen Totmes Sortierrichtung"
-    L["TRACKER_RETRIVE_CORPSE"] = "Erreiche deinen Leichenam"
+    L["TRACKER_RETRIVE_CORPSE"] = "Erreiche deinen Leichnam"
     L["UNEQUIP_LEGENDARY"] = "Du musst das Item erst ausziehen, bevor du es aufwerten kannst."
     L["UP"] = "hoch"
     L["UPDATE_STRING_1"] = "Ein neues Update steht zum download bereit."
