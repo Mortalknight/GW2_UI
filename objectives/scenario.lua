@@ -273,6 +273,15 @@ local function updateCurrentScenario(self, event, ...)
             "monster",
             phinfo.quantity
         )
+        --reamaning death
+        addObjectiveBlock(
+            GwScenarioBlock,
+            ParseCriteria(4, 0, "REMAINING DEATH"),
+            false,
+            numCriteria + 2,
+            "monster",
+            phinfo.quantity
+        )
         objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 1)
         objectiveBlock:SetScript("OnEnter", function() 
             GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -284,7 +293,7 @@ local function updateCurrentScenario(self, event, ...)
 
         -- grab the MawBuffs Button drom here (need a skin later)
         local container = _G.ScenarioBlocksFrame.MawBuffsBlock.Container
-        objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 2)
+        objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 3)
         objectiveBlock:SetHeight(container:GetHeight())
         container:SetParent(objectiveBlock)
         container:ClearAllPoints()
