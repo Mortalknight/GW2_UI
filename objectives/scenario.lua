@@ -9,6 +9,8 @@ local setBlockColor = GW.setBlockColor
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
+local remainingDeathText = ""
+local remainingDeath = 4
 
 local JAILERS_TOWER_LEVEL_TYPE_STRINGS = {
     [Enum.JailersTowerType.TwistingCorridors] = JAILERS_TOWER_LEVEL_TOAST_TWISTING_CORRIDORS,
@@ -177,14 +179,15 @@ local function updateCurrentScenario(self, event, ...)
             compassData.TITLE = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
         end
         compassData.DESC = stageDescription .. " "
-        
     end
     
     if IsInJailersTower() then
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
+            GW.Debug("event", ...)
             self.jailersTower.level, self.jailersTower.type = ...
         end
-        if self.jailersTower.level == nil then
+        GW.Debug("values", self.jailersTower.level, GetJailersTowerLevel())
+        if self.jailersTower.level == nil or (self.jailersTower.level and self.jailersTower.level ~= GetJailersTowerLevel()) then
             self.jailersTower.level = GetJailersTowerLevel()
         end
         compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. JAILERS_TOWER_SCENARIO_FLOOR:format(self.jailersTower.level) .. "|r"
@@ -262,6 +265,24 @@ local function updateCurrentScenario(self, event, ...)
         )
         numCriteria = numCriteria + 1
     elseif IsInJailersTower() then
+        if remainingDeath == 4 and remainingDeathText == "" then -- on init
+            local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
+            if widgetInfo then
+                local currencies = widgetInfo.currencies
+                remainingDeathText = currencies[1].tooltip
+                remainingDeath = currencies[1].text
+            end
+        end
+        if event == "UPDATE_UI_WIDGET" then
+            local w = ...
+            if w then
+                local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(w.widgetID)
+                local currencies = widgetInfo.currencies
+                remainingDeathText = currencies[1].tooltip
+                remainingDeath = currencies[1].text
+            end
+        end
+
         local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728) -- Phantasma
         local objectiveBlock
         --Phantasma
@@ -276,7 +297,7 @@ local function updateCurrentScenario(self, event, ...)
         --reamaning death
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(4, 0, "REMAINING DEATH"),
+            ParseCriteria(remainingDeath, 0, remainingDeathText),
             false,
             numCriteria + 2,
             "monster",
@@ -302,6 +323,9 @@ local function updateCurrentScenario(self, event, ...)
         objectiveBlock.ObjectiveText:SetText(text)
         GwScenarioBlock.height = GwScenarioBlock.height + objectiveBlock:GetHeight()
         GwScenarioBlock.numObjectives = GwScenarioBlock.numObjectives + 1
+    elseif not IsInJailersTower() and remainingDeath ~= 4 and remainingDeathText ~= "" then -- reset for next visit
+        remainingDeath = 4
+        remainingDeathText = ""
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps()
@@ -568,6 +592,7 @@ local function LoadScenarioFrame()
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
     GwQuesttrackerContainerScenario:RegisterEvent("LOOT_CLOSED")
     GwQuesttrackerContainerScenario:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    GwQuesttrackerContainerScenario:RegisterEvent("UPDATE_UI_WIDGET")
 
     GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED_INDOORS")
     GwQuesttrackerContainerScenario:RegisterEvent("ZONE_CHANGED_NEW_AREA")
