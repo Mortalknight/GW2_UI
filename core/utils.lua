@@ -33,9 +33,9 @@ local function FormatMoneyForChat(amount)
     local str, coppercolor, silvercolor, goldcolor = "", "|cffb16022", "|cffaaaaaa", "|cffddbc44"
 
     local value = abs(amount)
-    local gold = floor(value / 10000)
-    local silver = floor((value / 100) % 100)
-    local copper = floor(value % 100)
+    local gold = math.floor(value / (COPPER_PER_SILVER * SILVER_PER_GOLD))
+    local silver = math.floor((value - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
+    local copper = mod(value, COPPER_PER_SILVER)
 
     if gold > 0 then
         str = format("%s%d|r|TInterface/MoneyFrame/UI-GoldIcon:12:12|t%s", goldcolor, GW.CommaValue(gold), (silver > 0 or copper > 0) and " " or "")

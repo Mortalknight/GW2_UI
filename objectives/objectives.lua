@@ -236,15 +236,15 @@ local function statusBarSetValue(self)
     if not f then
         return
     end
-    local _, mx = self:GetMinMaxValues()
-    local v = self:GetValue()
+    local _, mx = f.StatusBar:GetMinMaxValues()
+    local v = f.StatusBar:GetValue()
     local width = math.max(1, math.min(10, 10 * ((v / mx) / 0.1)))
-    f.StatusBar.Spark:SetPoint("RIGHT", self, "LEFT", 280 * (v / mx), 0)
+    f.StatusBar.Spark:SetPoint("RIGHT", f.StatusBar, "LEFT", 280 * (v / mx), 0)
     f.StatusBar.Spark:SetWidth(width)
-    if self.precentage == nil or self.precentage == false then
-        self.progress:SetText(v .. " / " .. mx)
+    if f.StatusBar.precentage == nil or f.StatusBar.precentage == false then
+        f.StatusBar.progress:SetText(v .. " / " .. mx)
     else
-        self.progress:SetText(math.floor((v / mx) * 100) .. "%")
+        f.StatusBar.progress:SetText(math.floor((v / mx) * 100) .. "%")
     end
 end
 GW.AddForProfiling("objectives", "statusBarSetValue", statusBarSetValue)
