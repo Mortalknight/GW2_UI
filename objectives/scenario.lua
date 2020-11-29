@@ -159,6 +159,11 @@ local function updateCurrentScenario(self, event, ...)
 
         GwScenarioBlock:SetHeight(GwScenarioBlock.height)
         GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
+
+        -- set jailers tower values back to default
+        remainingDeath = 4
+        remainingDeathText = ""
+
         return
     end
 
