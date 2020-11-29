@@ -365,10 +365,11 @@ local function xpbar_OnEvent(self, event)
             GwExperienceFrame.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
         end
     else
+        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
         GwExperienceFrame.NextLevel:SetTextColor(1, 1, 1)
         GwExperienceFrame.CurrentLevel:SetText(1, 1, 1)
-        GwExperienceFrame.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
-        GwExperienceFrame.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
+        GwExperienceFrame.labelRight:SetTexture(texture)
+        GwExperienceFrame.labelLeft:SetTexture(texture)
     end
 
     --If we are inside a pvp arena we show the honorbar
