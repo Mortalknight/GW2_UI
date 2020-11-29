@@ -147,6 +147,7 @@ objectives/achievement.lua
 objectives/vehicleButton.lua
 objectives/extraAB_bossAB.lua
 objectives/altPowerBar.lua
+objectives/widgetUI.lua
 
 character/character.xml
 character/paperdoll.xml

@@ -515,6 +515,7 @@ local function loadAddon(self)
 
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
+    GW.WidgetUISetup()
 
     --Create hud art
     GW.LoadHudArt()

@@ -369,6 +369,13 @@ GW_DEFAULT["AltPowerBar_pos"]["xOfs"] = 0
 GW_DEFAULT["AltPowerBar_pos"]["yOfs"] = -30
 GW_DEFAULT["AltPowerBar_pos_scale"] = 1
 
+GW_DEFAULT["TopCenterWidget_pos"] = {}
+GW_DEFAULT["TopCenterWidget_pos"]["point"] = "TOP"
+GW_DEFAULT["TopCenterWidget_pos"]["relativePoint"] = "TOP"
+GW_DEFAULT["TopCenterWidget_pos"]["xOfs"] = 0
+GW_DEFAULT["TopCenterWidget_pos"]["yOfs"] = -30
+GW_DEFAULT["TopCenterWidget_pos_scale"] = 1
+
 GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
 GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 
