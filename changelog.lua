@@ -8,8 +8,9 @@ NEW
     - "Copy Profile" function added
     - Organized, optimized, and cleaned up textures to reduce download size
     - Make Micro Bar movable
-    - Update "Importend Raid debuffs" with Shadowland ones / remove BfA debuffs
+    - Update "Important Raid debuffs" with Shadowland ones / remove BfA debuffs
     - Added option to show ID's in tooltips with a modifier
+    - Torghast info added to the objective tracker
 
 FIXES
     - Adjust quest view position for a number of Shadowlands NPCs
