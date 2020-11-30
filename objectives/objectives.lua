@@ -1146,21 +1146,28 @@ local function checkForAutoQuests()
         local questID, popUpType = GetAutoQuestPopUp(i)
         if questID and popUpType == "OFFER" then
             --find our block with that questId
-            local isCampaign = QuestCache:Get(questID):IsCampaign()
-            local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
-            if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
-                questBlockOfIdOrNew.popupQuestAccept:Show()
-                questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
-                    ShowQuestOffer(self:GetParent().id)
-                    RemoveAutoQuestPopUp(self:GetParent().id)
-                    self:Hide()
-                end)
+            local q = QuestCache:Get(questID)
+            if q then
+                local isCampaign = q:IsCampaign()
+                local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
+                if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
+                    questBlockOfIdOrNew.popupQuestAccept:Show()
+                    questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
+                        ShowQuestOffer(self:GetParent().id)
+                        RemoveAutoQuestPopUp(self:GetParent().id)
+                        self:Hide()
+                    end)
+                end
+            else 
+                -- try again in a few frames
+                C_Timer.After(0.5, checkForAutoQuests)
             end
         end
     end
 end
 
 local function tracker_OnEvent(self, event, ...)
+    if event == "SCENARIO_UPDATE" or event == "SCENARIO_CRITERIA_UPDATE" then return end -- this are only needed to update the scenario header
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
     if event == "QUEST_LOG_UPDATE" then
@@ -1430,6 +1437,8 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     compassUpdateFrame:RegisterEvent("QUEST_DATA_LOAD_RESULT")
     compassUpdateFrame:RegisterEvent("SUPER_TRACKING_CHANGED")
+    compassUpdateFrame:RegisterEvent("SCENARIO_UPDATE")
+    compassUpdateFrame:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then

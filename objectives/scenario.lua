@@ -200,6 +200,7 @@ local function updateCurrentScenario(self, event, ...)
         if typeString then
             compassData.DESC = stageDescription .. " - " .. typeString
         end
+        GW.Debug(compassData.TITLE, "type:", typeString, compassData.DESC)
     end
     GW.AddTrackerNotification(compassData)
     --
@@ -282,9 +283,11 @@ local function updateCurrentScenario(self, event, ...)
             local w = ...
             if w then
                 local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(w.widgetID)
-                local currencies = widgetInfo.currencies
-                remainingDeathText = currencies[1].tooltip
-                remainingDeath = currencies[1].text
+                if widgetInfo then 
+                    local currencies = widgetInfo.currencies
+                    remainingDeathText = currencies[1].tooltip
+                    remainingDeath = currencies[1].text
+                end
             end
         end
 
