@@ -187,124 +187,62 @@ local function xpbar_OnEvent(self, event)
     GwExperienceFrame.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
 
     gw_reputation_vals = nil
-    local standingId, bottomValue, topValue, earnedValue, isWatched
-    for factionIndex = 1, GetNumFactions() do
-        _, _, standingId, bottomValue, topValue, earnedValue, _, _, _, _, _, isWatched, _ = GetFactionInfo(factionIndex)
-        if isWatched == true then
-            local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
-            local friendID, friendRep, friendMaxRep, friendName, _, _, _, friendThreshold, nextFriendThreshold =
-                GetFriendshipReputation(factionID)
-            if C_Reputation.IsFactionParagon(factionID) then
-                local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
+    
+    local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
+    if factionID and factionID > 0 then
+        local factionName, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
+        local friendID, friendRep, friendMaxRep, friendName, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+        local isParagon = false
+        local isFriend = false
+        local isNormal = false
+        if C_Reputation.IsFactionParagon(factionID) then
+            local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
 
-                if currentValue > 10000 then
-                    repeat
-                        currentValue = currentValue - 10000
-                    until (currentValue < 10000)
-                end
-                valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
-                gw_reputation_vals =
-                    name ..
-                        " " ..
-                            REPUTATION ..
-                                " " ..
-                                    CommaValue((currentValue - 0)) ..
-                                        " / " ..
-                                            CommaValue((maxValueParagon - 0)) ..
-                                                " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
-                    1,
-                    1,
-                    1
+            if currentValue > 10000 then
+                repeat
+                    currentValue = currentValue - 10000
+                until (currentValue < 10000)
+            end
+            valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
+            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((currentValue - 0)) .. " / " .. CommaValue((maxValueParagon - 0)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
-                GwExperienceFrame.RepuBar:SetStatusBarColor(
-                    FACTION_BAR_COLORS[9].r,
-                    FACTION_BAR_COLORS[9].g,
-                    FACTION_BAR_COLORS[9].b
-                )
-            elseif (friendID ~= nil) then
-                if (nextFriendThreshold) then
-                    valPrecRepu = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
-                    gw_reputation_vals =
-                        friendName ..
-                            " " ..
-                                REPUTATION ..
-                                    " " ..
-                                        CommaValue((friendRep - friendThreshold)) ..
-                                            " / " ..
-                                                CommaValue((nextFriendThreshold - friendThreshold)) ..
-                                                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
-                        1,
-                        1,
-                        1
-                else
-                    valPrecRepu = 1
-                    gw_reputation_vals =
-                        friendName ..
-                            " " ..
-                                REPUTATION ..
-                                    " " ..
-                                        CommaValue(friendMaxRep) ..
-                                            " / " ..
-                                                CommaValue(friendMaxRep) ..
-                                                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
-                        1,
-                        1,
-                        1
-                end
-                GwExperienceFrame.RepuBar:SetStatusBarColor(
-                    FACTION_BAR_COLORS[5].r,
-                    FACTION_BAR_COLORS[5].g,
-                    FACTION_BAR_COLORS[5].b
-                )
+            GwExperienceFrame.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+            isParagon = true
+        elseif friendID ~= nil then
+            if nextFriendThreshold then
+                valPrecRepu = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
+                gw_reputation_vals = friendName .. " " .. REPUTATION .. " " .. CommaValue((friendRep - friendThreshold)) .. " / " .. CommaValue((nextFriendThreshold - friendThreshold)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
-                local currentRank =
-                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
-                local nextRank =
-                    GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
-
-                if currentRank == nextRank and earnedValue - bottomValue == 0 then
-                    valPrecRepu = 1
-                    gw_reputation_vals =
-                        name ..
-                            " " ..
-                                REPUTATION ..
-                                    " " .. "21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
-                        1,
-                        1,
-                        1
-                else
-                    valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
-                    gw_reputation_vals =
-                        name ..
-                            " " ..
-                                REPUTATION ..
-                                    " " ..
-                                        CommaValue((earnedValue - bottomValue)) ..
-                                            " / " ..
-                                                CommaValue((topValue - bottomValue)) ..
-                                                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
-                        1,
-                        1,
-                        1
-                end
-                GwExperienceFrame.RepuBar:SetStatusBarColor(
-                    FACTION_BAR_COLORS[reaction].r,
-                    FACTION_BAR_COLORS[reaction].g,
-                    FACTION_BAR_COLORS[reaction].b
-                )
+                valPrecRepu = 1
+                gw_reputation_vals = friendName .. " " .. REPUTATION .. " " .. CommaValue(friendMaxRep) .. " / " .. CommaValue(friendMaxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
+            GwExperienceFrame.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+            isFriend = true
+        else
+            local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
+            local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
 
-            local nextId = standingId + 1
-            if nextId == nil then
-                nextId = standingId
+            if currentRank == nextRank and earnedValue - bottomValue == 0 then
+                valPrecRepu = 1
+                gw_reputation_vals = name .. " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            else
+                valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
+                gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((earnedValue - bottomValue)) .. " / " .. CommaValue((topValue - bottomValue)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
-            if not lockLevelTextUnderMaxLevel then
-                level = getglobal("FACTION_STANDING_LABEL" .. standingId)
-                Nextlevel = getglobal("FACTION_STANDING_LABEL" .. nextId)
-            end
-
-            showBar3 = true
+            GwExperienceFrame.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+            isNormal = true
         end
+
+        local nextId = standingId + 1
+        if nextId == nil then
+            nextId = standingId
+        end
+        if not lockLevelTextUnderMaxLevel then
+            level = isParagon and getglobal("FACTION_STANDING_LABEL" .. standingId) or isFriend and friendTextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. standingId)
+            Nextlevel = isParagon and L["CHARACTER_PARAGON"] or isFriend and "" or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+        end
+
+        showBar3 = true
     end
 
     if shouldShowAzeritBar then
