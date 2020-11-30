@@ -71,7 +71,7 @@ local function sellJunk()
     -- Stop selling if no items were sold for this iteration or iteration limit was reached
     if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
         StopSelling() 
-        if totalPrice > 0 then 
+        if totalPrice > 0 then
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["SELLING_JUNK_FOR"]:format(FormatMoneyForChat(totalPrice)))
         end
     end
