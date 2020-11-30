@@ -14,6 +14,7 @@ local function GWUseThisLocalization()
 
     --Strings
 	L["ACTION_BARS_DESC"] = "使用GW2风格的增强动作栏."
+    L["ACTION_BAR_FADE"] = "隐藏动作栏"
 	L["ACTION_BAR_FADE_DESC"] = "当离开战斗时隐藏额外动作栏."
 	L["ADVANCED_TOOLTIP"] = "更多提示"
 	L["ADVANCED_TOOLTIP_DESC"] = "按SHIFT来显示更多的鼠标提示信息."
@@ -323,7 +324,7 @@ local function GWUseThisLocalization()
 	L["TARGET_TOOLTIP"] = "目标与焦点框体设置."
 	L["TOOLTIPS"] = "鼠标提示"
 	L["TOOLTIPS_DESC"] = "使用GW2风格的鼠标提示."
-	L["TOOLTIP_ID_MODIFIER"] = "Modifier for IDs"
+	L["TOOLTIP_ID_MODIFIER"] = "修改ID排列键"
 	L["TOP"] = "顶部"
 	L["TOTEMBAR_GROW_DIRECTION"] = "职业图腾朝向"
 	L["TOTEMBAR_SORTING"] = "职业图腾排序"
@@ -343,7 +344,6 @@ local function GWUseThisLocalization()
 	L["WORLDMAP_COORDS_TOGGLE"] = "在世界地图上显示坐标"
 	L["WORLD_MARKER_DESC"] = "显示用于在团队中放置世界标记的菜单."
 	L["ZONE_ANILITY_AB_NAME"] = "区域技能名称"
-    L["ACTION_BAR_FADE"] = "隐藏动作栏"
 
 	--Composite
     L["TOPLEFT"] = ("%s %s"):format(L["TOP"], L["LEFT"])
