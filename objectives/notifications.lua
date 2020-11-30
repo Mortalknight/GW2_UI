@@ -222,11 +222,14 @@ local function getBodyPOI()
 end
 GW.AddForProfiling("notifications", "getBodyPOI", getBodyPOI)
 
-local function AddTrackerNotification(data)
+local function AddTrackerNotification(data, forceUpdate)
     if data == nil or data.ID == nil then
         return
     end
     notifications[data.ID] = data
+    if forceUpdate then
+        GW.forceCompassHeaderUpdate()
+    end
 end
 GW.AddTrackerNotification = AddTrackerNotification
 

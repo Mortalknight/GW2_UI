@@ -188,18 +188,22 @@ local function updateCurrentScenario(self, event, ...)
     
     if IsInJailersTower() then
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
-            self.jailersTower.level, self.jailersTower.type = ...
+            local level, type = ...
+            if level then self.jailersTower.level = level end
+            if type then self.jailersTower.type = level end
         end
         if self.jailersTower.level == nil or (self.jailersTower.level and self.jailersTower.level ~= GetJailersTowerLevel()) then
             self.jailersTower.level = GetJailersTowerLevel()
         end
-        compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. JAILERS_TOWER_SCENARIO_FLOOR:format(self.jailersTower.level) .. "|r"
+        
         local typeString = JAILERS_TOWER_LEVEL_TYPE_STRINGS[self.jailersTower.type]
         if typeString then
-            compassData.DESC = stageDescription .. " - " .. typeString
+            compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. JAILERS_TOWER_SCENARIO_FLOOR:format(self.jailersTower.level) .. " - " .. typeString .. "|r"
+        else
+            compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. JAILERS_TOWER_SCENARIO_FLOOR:format(self.jailersTower.level) .. "|r"
         end
     end
-    GW.AddTrackerNotification(compassData)
+    GW.AddTrackerNotification(compassData, true)
     --
 
     --[[
