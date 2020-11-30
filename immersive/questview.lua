@@ -289,7 +289,8 @@ local model_tweaks = {
     [2529386] = {["x"] = 0, ["y"] = 1.5, ["z"] = 0},
     [3387000] = {["x"] = 0, ["y"] = 2.75, ["z"] = 0},
     [3067262] = {["z"] = -0.05},
-    [3483610] = {["x"] = -0.5, ["y"] = 4, ["z"] = 0.25}
+    [3483610] = {["x"] = -0.5, ["y"] = 4, ["z"] = 0.25},
+    [3492867] = {["x"] = 5, ["y"] = 10, ["z"] = 2.5}
 
 }
 local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
@@ -387,7 +388,7 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     
     if dirty then
         PM:SetPosition(uX, uY, uZ)
-        GW.Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ)
+        GW.Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ, "is_dead:", is_dead)
         PM:SetUnit(unit)
         if crace then
             PM:SetCustomRace(crace, cgender)
