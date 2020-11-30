@@ -188,10 +188,8 @@ local function updateCurrentScenario(self, event, ...)
     
     if IsInJailersTower() then
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
-            GW.Debug("event", ...)
             self.jailersTower.level, self.jailersTower.type = ...
         end
-        GW.Debug("values", self.jailersTower.level, GetJailersTowerLevel())
         if self.jailersTower.level == nil or (self.jailersTower.level and self.jailersTower.level ~= GetJailersTowerLevel()) then
             self.jailersTower.level = GetJailersTowerLevel()
         end
@@ -200,7 +198,6 @@ local function updateCurrentScenario(self, event, ...)
         if typeString then
             compassData.DESC = stageDescription .. " - " .. typeString
         end
-        GW.Debug(compassData.TITLE, "type:", typeString, compassData.DESC)
     end
     GW.AddTrackerNotification(compassData)
     --
