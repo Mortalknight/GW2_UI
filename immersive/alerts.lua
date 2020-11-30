@@ -159,6 +159,7 @@ local function skinWorldQuestCompleteAlert(frame)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
         frame.shine:Kill()
+        frame.ToastBackground:Kill()
         -- Background
         if frame.GetNumRegions then
             for i = 1, frame:GetNumRegions() do
