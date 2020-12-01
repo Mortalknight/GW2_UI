@@ -98,6 +98,13 @@ end
 GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
 local function updateCurrentScenario(self, event, ...)
+    if event == "UPDATE_UI_WIDGET" then
+        -- we need this event only for torghast atm, so only update this we it is the torghast widget
+        local w = ...
+        if not w or (w and w.widgetID ~= 2319) then
+            return
+        end
+    end
     GW.RemoveTrackerNotificationOfType("SCENARIO")
 
     local compassData = {}
@@ -160,10 +167,6 @@ local function updateCurrentScenario(self, event, ...)
         GwScenarioBlock:SetHeight(GwScenarioBlock.height)
         GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
 
-        -- set jailers tower values back to default
-        remainingDeath = 4
-        remainingDeathText = ""
-
         return
     end
 
@@ -188,19 +191,19 @@ local function updateCurrentScenario(self, event, ...)
     
     if IsInJailersTower() then
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
-            local level, type = ...
-            if level then self.jailersTower.level = level end
-            if type then self.jailersTower.type = level end
+            local _, type = ...
+            if type then self.jailersTower.type = type end
         end
-        if self.jailersTower.level == nil or (self.jailersTower.level and self.jailersTower.level ~= GetJailersTowerLevel()) then
-            self.jailersTower.level = GetJailersTowerLevel()
+        local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
+        if widgetInfo then
+            self.jailersTower.level = widgetInfo.headerText or ""
         end
         
         local typeString = JAILERS_TOWER_LEVEL_TYPE_STRINGS[self.jailersTower.type]
         if typeString then
-            compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. JAILERS_TOWER_SCENARIO_FLOOR:format(self.jailersTower.level) .. " - " .. typeString .. "|r"
+            compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. self.jailersTower.level .. " - " .. typeString .. "|r"
         else
-            compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. JAILERS_TOWER_SCENARIO_FLOOR:format(self.jailersTower.level) .. "|r"
+            compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. self.jailersTower.level .. "|r"
         end
     end
     GW.AddTrackerNotification(compassData, true)
@@ -271,25 +274,12 @@ local function updateCurrentScenario(self, event, ...)
             info.quantity
         )
         numCriteria = numCriteria + 1
-    elseif IsInJailersTower() then
-        if remainingDeath == 4 and remainingDeathText == "" then -- on init
-            local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
-            if widgetInfo then
-                local currencies = widgetInfo.currencies
-                remainingDeathText = currencies[1].tooltip
-                remainingDeath = currencies[1].text
-            end
-        end
-        if event == "UPDATE_UI_WIDGET" then
-            local w = ...
-            if w then
-                local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(w.widgetID)
-                if widgetInfo then 
-                    local currencies = widgetInfo.currencies
-                    remainingDeathText = currencies[1].tooltip
-                    remainingDeath = currencies[1].text
-                end
-            end
+    elseif IsInJailersTower() then      
+        local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
+        if widgetInfo then
+            local currencies = widgetInfo.currencies
+            remainingDeathText = currencies[1].tooltip
+            remainingDeath = currencies[1].text
         end
 
         local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728) -- Phantasma
@@ -332,9 +322,6 @@ local function updateCurrentScenario(self, event, ...)
         objectiveBlock.ObjectiveText:SetText(text)
         GwScenarioBlock.height = GwScenarioBlock.height + objectiveBlock:GetHeight()
         GwScenarioBlock.numObjectives = GwScenarioBlock.numObjectives + 1
-    elseif not IsInJailersTower() and remainingDeath ~= 4 and remainingDeathText ~= "" then -- reset for next visit
-        remainingDeath = 4
-        remainingDeathText = ""
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps()
