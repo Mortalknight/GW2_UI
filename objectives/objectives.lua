@@ -1437,6 +1437,8 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     compassUpdateFrame:RegisterEvent("QUEST_DATA_LOAD_RESULT")
     compassUpdateFrame:RegisterEvent("SUPER_TRACKING_CHANGED")
+    compassUpdateFrame:RegisterEvent("SCENARIO_UPDATE")
+    compassUpdateFrame:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
