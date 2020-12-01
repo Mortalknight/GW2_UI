@@ -314,6 +314,7 @@ local function LoadPDEquipset(fmMenu)
         self.oldParent = GearManagerDialogPopup:GetParent()
         GearManagerDialogPopup:SetParent(GwDressingRoom)
         --GearManagerDialogPopup:GetParent():ClearAllPoints()
+        GearManagerDialogPopup:ClearAllPoints()
         GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
         PaperDollEquipmentManagerPane.selectedSetID = nil
         GearManagerDialogPopup:Show()

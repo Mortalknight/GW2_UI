@@ -1,3 +1,8 @@
+5.5.1
+FIXES
+    - Fix equipment manager error
+
+
 5.5.0
 NEW
     - Skinning support for Postal in the mail frame UI (Thanks, Hatdragon)

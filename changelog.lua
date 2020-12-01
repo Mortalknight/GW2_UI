@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.5.1", [=[
+FIXES
+    - - Fix equipment manager error
+]=])
+
 v("5.5.0", [=[
 NEW
     - Skinning support for Postal in the mail frame UI (Thanks, Hatdragon)
