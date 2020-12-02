@@ -168,6 +168,17 @@ local function createNewBonusObjectiveBlock(blockIndex)
     )
     newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
 
+    -- quest item button here
+    newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+    newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    newBlock.actionButton.NormalTexture:SetTexture(nil)
+    newBlock.actionButton:RegisterForClicks("AnyUp")
+    newBlock.actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
+    newBlock.actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
+    newBlock.actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
+    newBlock.actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
+
     newBlock.height = 20
     newBlock.numObjectives = 0
     newBlock:Hide()
@@ -228,13 +239,14 @@ local function setUpBlock(questIDs)
             GwBonusObjectiveBlock.id = questID
             GwBonusObjectiveBlock.TrackedQuest = {}
             GwBonusObjectiveBlock.TrackedQuest.questID = questID
+            GwBonusObjectiveBlock.questLogIndex = questLogIndex
 
             local module = CreateBonusObjectiveTrackerModule()
             module.ShowWorldQuests = true
             GwBonusObjectiveBlock.module = module
 
             GwBonusHeader:Show()
-            UpdateQuestItem(GwBonusItemButton, questLogIndex, GwBonusObjectiveBlock)
+            UpdateQuestItem(GwBonusObjectiveBlock.actionButton, GwBonusObjectiveBlock)
 
             foundEvent = true
 
@@ -316,7 +328,11 @@ local function updateBonusObjective(self, event)
     RemoveTrackerNotificationOfType("EVENT_NEARBY")
     RemoveTrackerNotificationOfType("BONUS")
 
-    UpdateQuestItem(GwBonusItemButton, 0, nil)
+    for i = 1, 20 do
+        if _G["GwBonusObjectiveBlock" .. i] ~= nil then
+            UpdateQuestItem(_G["GwBonusObjectiveBlock" .. i].actionButton, _G["GwBonusObjectiveBlock" .. i])
+        end
+    end
 
     local tasks = GetTasksTable()
     local EventToShow = false

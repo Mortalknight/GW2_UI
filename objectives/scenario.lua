@@ -141,6 +141,7 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     GwScenarioBlock.numObjectives = 0
+    GwScenarioBlock.questLogIndex = 0
     GwScenarioBlock:Show()
 
     local _, _, numStages, _, _, _, _, _, _, scenarioType = C_Scenario.GetInfo()
@@ -157,7 +158,7 @@ local function updateCurrentScenario(self, event, ...)
             GW.RemoveTrackerNotificationOfType("SCENARIO")
             GwScenarioBlock:Hide()
         end
-        UpdateQuestItem(GwScenarioItemButton, 0, GwScenarioBlock)
+        UpdateQuestItem(GwScenarioBlock.actionButton, GwScenarioBlock)
         for i = GwScenarioBlock.numObjectives + 1, 20 do
             if _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
                 _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
@@ -214,13 +215,11 @@ local function updateCurrentScenario(self, event, ...)
     local inProvingGrounds = bit.band(flags, SCENARIO_FLAG_PROVING_GROUNDS) == SCENARIO_FLAG_PROVING_GROUNDS;
     local dungeonDisplay = bit.band(flags, SCENARIO_FLAG_USE_DUNGEON_DISPLAY) == SCENARIO_FLAG_USE_DUNGEON_DISPLAY;
     --]]
-    local questLogIndex = 0
-
     if questID ~= nil then
-        questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
+        GwScenarioBlock.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
     end
 
-    UpdateQuestItem(GwScenarioItemButton, questLogIndex, GwScenarioBlock)
+    UpdateQuestItem(GwScenarioBlock.actionButton, GwScenarioBlock)
 
     for criteriaIndex = 1, numCriteria do
         local criteriaString, _, _, quantity, totalQuantity, _, _, _, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
@@ -740,6 +739,16 @@ local function LoadScenarioFrame()
     newBlock:SetParent(GwQuesttrackerContainerScenario)
     newBlock:SetPoint("TOPRIGHT", timerBlock, "BOTTOMRIGHT", 0, 0)
     newBlock.Header:SetText("")
+
+    newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+    newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    newBlock.actionButton.NormalTexture:SetTexture(nil)
+    newBlock.actionButton:RegisterForClicks("AnyUp")
+    newBlock.actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
+    newBlock.actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
+    newBlock.actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
+    newBlock.actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
 
     setBlockColor(newBlock, "SCENARIO")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
