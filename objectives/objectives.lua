@@ -553,9 +553,9 @@ itemButtonUpdateAfterCombat:SetScript("OnEvent", function(self, event)
     GW.updateQuestLogLayout(GwQuesttrackerContainerQuests)
 end)
 
-local function UpdateQuestItem(button, block)
-    if InCombatLockdown() or not button then
-        if block and block.questLogIndex and block.questLogIndex > 0 and GetQuestLogSpecialItemInfo(block.questLogIndex) then
+local function UpdateQuestItem(block)
+    if InCombatLockdown() then
+        if block.questLogIndex and block.questLogIndex > 0 and GetQuestLogSpecialItemInfo(block.questLogIndex) then
             itemButtonUpdateAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
         return
@@ -570,25 +570,22 @@ local function UpdateQuestItem(button, block)
     local isQuestComplete = (block and block.questID) and QuestCache:Get(block.questID):IsComplete() or false
     local shouldShowItem = item and (not isQuestComplete or showItemWhenComplete)
     if shouldShowItem then
-        if block then block.hasItem = true end
+        block.actionButton:SetID(block.questLogIndex)
 
-        button:SetID(block.questLogIndex)
+        block.actionButton:SetAttribute("type", "item")
+        block.actionButton:SetAttribute("item", link)
 
-        button:SetAttribute("type", "item")
-        button:SetAttribute("item", link)
+        block.actionButton.charges = charges
+        block.actionButton.rangeTimer = -1
+        SetItemButtonTexture(block.actionButton, item)
+        SetItemButtonCount(block.actionButton, charges)
 
-        button.charges = charges
-        button.rangeTimer = -1
-        SetItemButtonTexture(button, item)
-        SetItemButtonCount(button, charges)
-
-        QuestObjectiveItem_UpdateCooldown(button)
-        button:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
-        button:Show()
+        QuestObjectiveItem_UpdateCooldown(block.actionButton)
+        block.actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
+        block.actionButton:Show()
     else
-        button:Hide()
-        button:SetScript("OnUpdate", nil)
-        if block then block.hasItem = false end
+        block.actionButton:Hide()
+        block.actionButton:SetScript("OnUpdate", nil)
     end
 end
 GW.UpdateQuestItem = UpdateQuestItem
@@ -658,7 +655,7 @@ local function updateQuest(self, block, questWatchId, quest)
 
         --Quest item
         local itemButton = quest:IsCampaign() and "GwCampaginItemButton" or "GwQuestItemButton"
-        UpdateQuestItem(block.actionButton, block)
+        UpdateQuestItem(block)
 
         if numObjectives == 0 and GetMoney() >= requiredMoney and (questInfo and not questInfo.startEvent) then
             isComplete = true
@@ -746,7 +743,7 @@ local function updateQuestByID(self, block, quest, questID, questWatchId, questL
 
     --Quest item
     local itemButton = quest:IsCampaign() and "GwCampaginItemButton" or "GwQuestItemButton"
-    UpdateQuestItem(block.actionButton, block)
+    UpdateQuestItem(block)
 
     if numObjectives == 0 and GetMoney() >= requiredMoney and (questInfo and not questInfo.startEvent) then
         isComplete = true
@@ -935,14 +932,6 @@ local function updateQuestLogLayout(self)
         shouldShowQuests = false
     end
 
-    -- first set all questbuttons to nil
-    for i = 1, 25 do
-        if _G["GwCampaignBlock" .. i] ~= nil then
-            --UpdateQuestItem(_G["GwCampaginItemButton" .. i], _G["GwCampaignBlock" .. i])
-            --UpdateQuestItem(_G["GwQuestItemButton" .. i], _G["GwQuestBlock" .. i])
-        end
-    end
-
     for i = 1, numQuests do
         local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
         
@@ -972,7 +961,7 @@ local function updateQuestLogLayout(self)
                     if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
                         _G["GwCampaignBlock" .. counterCampaign]:Hide()
                         _G["GwCampaignBlock" .. counterCampaign].questLogIndex = 0
-                        UpdateQuestItem(_G["GwCampaignBlock" .. counterCampaign].actionButton, _G["GwCampaignBlock" .. counterCampaign])
+                        UpdateQuestItem(_G["GwCampaignBlock" .. counterCampaign])
                     end
                 end
             elseif q then
@@ -1009,7 +998,7 @@ local function updateQuestLogLayout(self)
                     if _G["GwQuestBlock" .. counterQuest] ~= nil then
                         _G["GwQuestBlock" .. counterQuest]:Hide()
                         _G["GwQuestBlock" .. counterQuest].questLogIndex = 0
-                        UpdateQuestItem(_G["GwQuestBlock" .. counterQuest].actionButton, _G["GwQuestBlock" .. counterQuest])
+                        UpdateQuestItem(_G["GwQuestBlock" .. counterQuest])
                     end
                 end
             end
@@ -1025,7 +1014,7 @@ local function updateQuestLogLayout(self)
             _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i].questLogIndex = 0
             _G["GwCampaignBlock" .. i]:Hide()
-            UpdateQuestItem(_G["GwCampaignBlock" .. i].actionButton, _G["GwCampaignBlock" .. i])
+            UpdateQuestItem(_G["GwCampaignBlock" .. i])
         end
     end
     for i = counterQuest + 1, 25 do
@@ -1033,7 +1022,7 @@ local function updateQuestLogLayout(self)
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
             _G["GwQuestBlock" .. i]:Hide()
-            UpdateQuestItem(_G["GwQuestBlock" .. i].actionButton, _G["GwQuestBlock" .. i])
+            UpdateQuestItem(_G["GwQuestBlock" .. i])
         end
     end
 

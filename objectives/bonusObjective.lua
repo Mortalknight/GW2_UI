@@ -246,7 +246,7 @@ local function setUpBlock(questIDs)
             GwBonusObjectiveBlock.module = module
 
             GwBonusHeader:Show()
-            UpdateQuestItem(GwBonusObjectiveBlock.actionButton, GwBonusObjectiveBlock)
+            UpdateQuestItem(GwBonusObjectiveBlock)
 
             foundEvent = true
 
@@ -330,7 +330,8 @@ local function updateBonusObjective(self, event)
 
     for i = 1, 20 do
         if _G["GwBonusObjectiveBlock" .. i] ~= nil then
-            UpdateQuestItem(_G["GwBonusObjectiveBlock" .. i].actionButton, _G["GwBonusObjectiveBlock" .. i])
+            _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
+            UpdateQuestItem(_G["GwBonusObjectiveBlock" .. i])
         end
     end
 
