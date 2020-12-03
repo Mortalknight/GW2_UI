@@ -570,6 +570,7 @@ local function UpdateQuestItem(block)
     local isQuestComplete = (block and block.questID) and QuestCache:Get(block.questID):IsComplete() or false
     local shouldShowItem = item and (not isQuestComplete or showItemWhenComplete)
     if shouldShowItem then
+        block.hasItem = true
         block.actionButton:SetID(block.questLogIndex)
 
         block.actionButton:SetAttribute("type", "item")
@@ -584,6 +585,7 @@ local function UpdateQuestItem(block)
         block.actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
         block.actionButton:Show()
     else
+        block.hasItem = false
         block.actionButton:Hide()
         block.actionButton:SetScript("OnUpdate", nil)
     end
