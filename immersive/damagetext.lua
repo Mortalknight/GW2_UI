@@ -161,6 +161,7 @@ local function setElementData(self, critical, source)
       self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
       self.crit = false
     end
+    self:SetWidth(self.string:GetWidth())
     self.pet = false
 
     local colorSource = "spell"
