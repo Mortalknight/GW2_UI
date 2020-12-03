@@ -1,10 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.5.2", [=[
+FIXES
+    - Fix missing Exodar reputation background
+]=])
+
 v("5.5.1", [=[
 FIXES
     - Fix equipment manager error
-	- Fix Torghast floor/level counter mixup
+    - Fix Torghast floor/level counter mixup
 ]=])
 
 v("5.5.0", [=[
