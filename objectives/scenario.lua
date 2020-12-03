@@ -14,7 +14,7 @@ local remainingDeath = 4
 
 local JAILERS_TOWER_LEVEL_TYPE_STRINGS = {
     [Enum.JailersTowerType.TwistingCorridors] = JAILERS_TOWER_LEVEL_TOAST_TWISTING_CORRIDORS,
-    [Enum.JailersTowerType.SkoldusHalls] = JAILERS_TOWER_LEVEL_TOAST_SKOLDUS_HALLS, 
+    [Enum.JailersTowerType.SkoldusHalls] = JAILERS_TOWER_LEVEL_TOAST_SKOLDUS_HALLS,
     [Enum.JailersTowerType.FractureChambers] = JAILERS_TOWER_LEVEL_TOAST_FRACTURE_CHAMBERS,
     [Enum.JailersTowerType.Soulforges] = JAILERS_TOWER_LEVEL_TOAST_SOULFORGES,
     [Enum.JailersTowerType.Coldheart] = JAILERS_TOWER_LEVEL_TOAST_COLDHEART,
@@ -122,6 +122,7 @@ local function updateCurrentScenario(self, event, ...)
 
     compassData.COLOR = TRACKER_TYPE_COLOR.SCENARIO
 
+
     local delayUpdateTime = GetTime() + 0.8
     GwQuesttrackerContainerScenario:SetScript(
         "OnUpdate",
@@ -189,7 +190,7 @@ local function updateCurrentScenario(self, event, ...)
         end
         compassData.DESC = stageDescription .. " "
     end
-    
+
     if IsInJailersTower() then
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
             local _, type = ...
@@ -199,13 +200,17 @@ local function updateCurrentScenario(self, event, ...)
         if widgetInfo then
             self.jailersTower.level = widgetInfo.headerText or ""
         end
-        
+
         local typeString = JAILERS_TOWER_LEVEL_TYPE_STRINGS[self.jailersTower.type]
         if typeString then
             compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. self.jailersTower.level .. " - " .. typeString .. "|r"
         else
             compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. self.jailersTower.level .. "|r"
         end
+
+        compassData.COLOR = TRACKER_TYPE_COLOR.TORGHAST
+        compassData.TYPE = "TORGHAST"
+
     end
     GW.AddTrackerNotification(compassData, true)
     --
@@ -273,7 +278,7 @@ local function updateCurrentScenario(self, event, ...)
             info.quantity
         )
         numCriteria = numCriteria + 1
-    elseif IsInJailersTower() then      
+    elseif IsInJailersTower() then
         local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
         if widgetInfo then
             local currencies = widgetInfo.currencies
@@ -302,7 +307,7 @@ local function updateCurrentScenario(self, event, ...)
             phinfo.quantity
         )
         objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 1)
-        objectiveBlock:SetScript("OnEnter", function() 
+        objectiveBlock:SetScript("OnEnter", function()
             GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
             GameTooltip:ClearLines()
             GameTooltip:SetCurrencyByID(1728)

@@ -19,6 +19,7 @@ local icons = {
     DEAD = {tex = "icon-dead", l = 0, r = 1, t = 0, b = 1},
     ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
     DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
+    TORGHAST = {tex = "icon-objective", l = 0.5, r = 1, t = 0.5, b = 0.75},
 }
 
 local notification_priority = {
@@ -145,7 +146,7 @@ local function getNearestQuestPOI()
 
     if closestQuestID then
         local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
-        if isWQ then 
+        if isWQ then
             poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.locationData.mapID)
         end
 
