@@ -212,6 +212,9 @@ local function updateCurrentScenario(self, event, ...)
         compassData.TYPE = "TORGHAST"
 
     end
+    setBlockColor(GwScenarioBlock, compassData.TYPE)
+    GwScenarioBlock.Header:SetTextColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
+    GwScenarioBlock.hover:SetVertexColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
     GW.AddTrackerNotification(compassData, true)
     --
 
@@ -286,12 +289,11 @@ local function updateCurrentScenario(self, event, ...)
             remainingDeath = currencies[1].text
         end
 
-        local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728) -- Phantasma
-        local objectiveBlock
         --Phantasma
+        local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728)
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(phinfo.quantity, 0, phinfo.name),
+            "|T3743737:0:0:0:0:64:64:4:60:4:60|t " .. phinfo.quantity .. " " .. phinfo.name,
             false,
             numCriteria + 1,
             "monster",
@@ -300,13 +302,13 @@ local function updateCurrentScenario(self, event, ...)
         --reamaning death
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(remainingDeath, 0, remainingDeathText),
+            "|TInterface/AddOns/GW2_UI/textures/icons/icon-dead:0:0:0:0:64:64:4:60:4:60|t " .. remainingDeath .. " " .. remainingDeathText,
             false,
             numCriteria + 2,
             "monster",
             phinfo.quantity
         )
-        objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 1)
+        local objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 1)
         objectiveBlock:SetScript("OnEnter", function()
             GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
             GameTooltip:ClearLines()

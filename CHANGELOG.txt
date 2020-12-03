@@ -1,7 +1,11 @@
+5.5.2
+FIXES
+    - Fix missing Exodar reputation background
+
 5.5.1
 FIXES
     - Fix equipment manager error
-	- Fix Torghast floor/level counter mixup
+    - Fix Torghast floor/level counter mixup
 
 
 5.5.0
