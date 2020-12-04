@@ -15,6 +15,7 @@
 
 core/TaintLess.xml
 core/debug.lua
+core/errorHandler.lua
 
 locales/enUS.lua
 locales/deDE.lua

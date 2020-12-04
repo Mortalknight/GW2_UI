@@ -38,6 +38,9 @@ GW.scaleableMainHudFrames = {}
 -- Init global function
 GW.InitLocationDataHandler()
 
+-- Init error handler
+GW.RegisterErrorHandler()
+
 GW.AlertContainerFrame = nil
 
 -- Init Libs
