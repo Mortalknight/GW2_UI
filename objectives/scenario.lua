@@ -191,16 +191,17 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     if IsInJailersTower() then
-        local type, level = "", ""
+        local level
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
-            _, type = ...
+            local _, type = ...
+            if type then self.jailersTowerType = type end
         end
         local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
         if widgetInfo then
             level = widgetInfo.headerText or ""
         end
 
-        local typeString = JAILERS_TOWER_LEVEL_TYPE_STRINGS[type]
+        local typeString = JAILERS_TOWER_LEVEL_TYPE_STRINGS[self.jailersTowerType]
         if typeString then
             compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. level .. " - " .. typeString .. "|r"
         else
@@ -601,6 +602,8 @@ local function LoadScenarioFrame()
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_COMPLETED")
     GwQuesttrackerContainerScenario:RegisterEvent("SCENARIO_SPELL_UPDATE")
     GwQuesttrackerContainerScenario:RegisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
+
+    GwQuesttrackerContainerScenario.jailersTowerType = nil
 
     local timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", GwQuesttrackerContainerScenario, "GwQuesttrackerScenarioBlock")
     timerBlock.height = timerBlock:GetHeight()
