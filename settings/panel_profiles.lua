@@ -581,14 +581,18 @@ local function LoadProfilesPanel(sWindow)
         selectCallbackByIndex = true,
         OnButton1 = function(self, data)
             local profileToRename = GW2UI_SETTINGS_PROFILES[data.profileID]
+            local text = self.editBox:GetText()
             local changeDate = date("%m/%d/%y %H:%M:%S")
             local description = L["PROFILES_CREATED"] .. profileToRename["profileCreatedDate"] .. L["PROFILES_CREATED_BY"] ..
                 profileToRename["profileCreatedCharacter"] .. L["PROFILES_LAST_UPDATE"] .. changeDate
 
-            profileToRename["profilename"] = self.editBox:GetText()
+            -- Use hidden frame font object to calculate string width
+            GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)
+            GW.HiddenFrame.HiddenString:SetText(text)
+            profileToRename["profilename"] = text
             profileToRename["profileLastUpdated"] = changeDate
-            data.name:SetText(self.editBox:GetText())
-            data.name:SetWidth(min(self.editBox:GetStringWidth(), 250))
+            data.name:SetText(text)
+            data.name:SetWidth(min(GW.HiddenFrame.HiddenString:GetStringWidth() + 5, 250))
             data.desc:SetText(description)
 
             return

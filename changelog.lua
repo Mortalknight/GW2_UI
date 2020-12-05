@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.5.2", [=[
 FIXES
     - Fix missing Exodar reputation background
+    - Fix error while profile renaming
 ]=])
 
 v("5.5.1", [=[
