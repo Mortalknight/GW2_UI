@@ -23,23 +23,23 @@ local FractionIcon = {}
 
 local bgIndex = {}
     bgIndex[30] = 3         -- Alterac
-    bgIndex[2197] = 3      -- Alterac
+    bgIndex[2197] = 3       -- Alterac
     bgIndex[529] = 2        -- Arathi
     bgIndex[1681] = 2       -- Arathi
     bgIndex[2107] = 2       -- Arathi
     bgIndex[2177] = 2       -- Arathi
-    bgIndex[1191] = 7      -- Ashran
-    bgIndex[2245] = 13       -- Deepwind
+    bgIndex[1191] = 8       -- Ashran
+    bgIndex[2245] = 13      -- Deepwind
     bgIndex[566] = 4        -- Eye Of The Storm
     bgIndex[968] = 4        -- Eye Of The Storm
-    bgIndex[761] = 7        -- Gilneas
+    bgIndex[761] = 6        -- Gilneas
     bgIndex[628] = 5        -- Isle Of Conquest
-    bgIndex[1803] = 11      -- Seething Shore
-    bgIndex[727] = 9        -- Silvershard Mines
-    bgIndex[998] = 10       -- Temple Of Kotmogu
-    bgIndex[726] = 8        -- Twin Peaks
+    bgIndex[1803] = 12      -- Seething Shore
+    bgIndex[727] = 10       -- Silvershard Mines
+    bgIndex[998] = 11       -- Temple Of Kotmogu
+    bgIndex[726] = 9        -- Twin Peaks
     bgIndex[2106] = 1       -- Warsong
-    bgIndex[2118] = 12      -- Wintergrasp
+    bgIndex[2118] = 7       -- Wintergrasp
 
 local function setCompass(isArena)
     local compassData = {}
