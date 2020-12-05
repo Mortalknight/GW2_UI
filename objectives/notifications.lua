@@ -24,10 +24,11 @@ local icons = {
 
 local notification_priority = {
     EVENT_NEARBY = 1,
-    SCENARIO = 2,
-    EVENT = 3,
-    ARENA = 4,
-    BOSS = 5,
+    TORGHAST = 2,
+    SCENARIO = 3,
+    EVENT = 4,
+    ARENA = 5,
+    BOSS = 6,
 }
 
 local function prioritys(a, b)
