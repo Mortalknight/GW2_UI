@@ -142,7 +142,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     hooksecurefunc("BonusObjectiveTracker_UntrackWorldQuest", function(questID)
         savedQuests[questID] = nil
         if trackedEventIDs[questID] ~= nil then
-            trackedEventIDs[questID]["tracked"] = false
+            trackedEventIDs[questID].tracked = false
         end
     end)
 
@@ -168,6 +168,17 @@ local function createNewBonusObjectiveBlock(blockIndex)
     )
     newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
 
+    -- quest item button here
+    newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+    newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    newBlock.actionButton.NormalTexture:SetTexture(nil)
+    newBlock.actionButton:RegisterForClicks("AnyUp")
+    newBlock.actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
+    newBlock.actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
+    newBlock.actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
+    newBlock.actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
+
     newBlock.height = 20
     newBlock.numObjectives = 0
     newBlock:Hide()
@@ -175,12 +186,11 @@ local function createNewBonusObjectiveBlock(blockIndex)
     return newBlock
 end
 
-local foundEvent = false
-local shownBlocks = 0
-local blockIndex = 1
-
 local function setUpBlock(questIDs)
     local savedContainerHeight = 20
+    local shownBlocks = 0
+    local blockIndex = 1
+    local foundEvent = false
 
     for k, v in pairs(questIDs) do
         local questID = v.ID
@@ -212,7 +222,6 @@ local function setUpBlock(questIDs)
                 GwBonusObjectiveBlock.ticker = nil
             end
             GwBonusObjectiveBlock.tickerSeconds = 0
-            shownBlocks = shownBlocks + 1
             GwBonusObjectiveBlock.height = 20
             GwBonusObjectiveBlock.numObjectives = 0
             
@@ -228,13 +237,14 @@ local function setUpBlock(questIDs)
             GwBonusObjectiveBlock.id = questID
             GwBonusObjectiveBlock.TrackedQuest = {}
             GwBonusObjectiveBlock.TrackedQuest.questID = questID
+            GwBonusObjectiveBlock.questLogIndex = questLogIndex
 
             local module = CreateBonusObjectiveTrackerModule()
             module.ShowWorldQuests = true
             GwBonusObjectiveBlock.module = module
 
             GwBonusHeader:Show()
-            UpdateQuestItem(GwBonusItemButton, questLogIndex, GwBonusObjectiveBlock)
+            UpdateQuestItem(GwBonusObjectiveBlock)
 
             foundEvent = true
 
@@ -243,7 +253,7 @@ local function setUpBlock(questIDs)
             local objectiveProgress = 0
             for objectiveIndex = 1, numObjectives do
                 local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
-
+                local txt = txt and txt or ""
                 compassData.TYPE = "EVENT"
                 compassData.ID = questID
                 compassData.COLOR = TRACKER_TYPE_COLOR.EVENT
@@ -305,10 +315,13 @@ local function setUpBlock(questIDs)
             end
 
             GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 10)
+            shownBlocks = shownBlocks + 1
             blockIndex = blockIndex + 1
         end
     end
     GwQuesttrackerContainerBonusObjectives:SetHeight(savedContainerHeight)
+
+    return foundEvent, shownBlocks
 end
 
 local function updateBonusObjective(self, event)
@@ -316,15 +329,17 @@ local function updateBonusObjective(self, event)
     RemoveTrackerNotificationOfType("EVENT_NEARBY")
     RemoveTrackerNotificationOfType("BONUS")
 
-    UpdateQuestItem(GwBonusItemButton, 0, nil)
+    for i = 1, 20 do
+        if _G["GwBonusObjectiveBlock" .. i] ~= nil then
+            _G["GwBonusObjectiveBlock" .. i].questID = false
+            _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
+            UpdateQuestItem(_G["GwBonusObjectiveBlock" .. i])
+        end
+    end
 
     local tasks = GetTasksTable()
     local EventToShow = false
-
-    foundEvent = false
-    shownBlocks = 0
-    blockIndex = 1
-    trackedEventIDs = {}
+    wipe(trackedEventIDs)
 
     for i = 1, C_QuestLog.GetNumWorldQuestWatches() do
         local wqID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
@@ -346,42 +361,36 @@ local function updateBonusObjective(self, event)
         end
     end
 
-    if GwQuesttrackerContainerBonusObjectives.collapsed then
+    if self.collapsed and EventToShow then wipe(trackedEventIDs) end
+    local foundEvent, shownBlocks = setUpBlock(trackedEventIDs)
+
+    if self.collapsed then
         if EventToShow then
             GwBonusHeader:Show()
             foundEvent = true
-            trackedEventIDs = {}
         else
             foundEvent = false
-            GwQuesttrackerContainerBonusObjectives.collapsed = false
+            self.collapsed = false
         end
     end
 
-    setUpBlock(trackedEventIDs)
-    if not foundEvent then
-        savedQuests = {}
-        GwBonusHeader:Hide()
-        for i = 1, 20 do
-            if _G["GwBonusObjectiveBlock" .. i] ~= nil then
-                _G["GwBonusObjectiveBlock" .. i].questID = false
-                _G["GwBonusObjectiveBlock" .. i]:Hide()
-                if _G["GwBonusObjectiveBlock" .. i].ticker then
-                    _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
-                    _G["GwBonusObjectiveBlock" .. i].ticker = nil
-                end
+    for i = shownBlocks > 0 and (shownBlocks + 1) or 1, 20 do
+        if _G["GwBonusObjectiveBlock" .. i] ~= nil then
+            _G["GwBonusObjectiveBlock" .. i].questID = false
+            _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
+            _G["GwBonusObjectiveBlock" .. i]:Hide()
+            if _G["GwBonusObjectiveBlock" .. i].ticker then
+                _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
+                _G["GwBonusObjectiveBlock" .. i].ticker = nil
             end
         end
+    end
+
+    if foundEvent or shownBlocks > 0 then
+        GwBonusHeader:Show()
     else
-        for i = shownBlocks + 1, 20 do
-            if _G["GwBonusObjectiveBlock" .. i] ~= nil then
-                _G["GwBonusObjectiveBlock" .. i].questID = false
-                _G["GwBonusObjectiveBlock" .. i]:Hide()
-                if _G["GwBonusObjectiveBlock" .. i].ticker then
-                    _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
-                    _G["GwBonusObjectiveBlock" .. i].ticker = nil
-                end
-            end
-        end
+        GwBonusHeader:Hide()
+        wipe(savedQuests)
     end
 
     QuestTrackerLayoutChanged()
@@ -415,7 +424,7 @@ local function LoadBonusFrame()
 
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
             end
-            updateBonusObjective()
+            updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
         end
     )
     header.title:SetTextColor(
@@ -424,6 +433,6 @@ local function LoadBonusFrame()
         TRACKER_TYPE_COLOR.BONUS.b
     )
     
-    updateBonusObjective()
+    updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
 end
 GW.LoadBonusFrame = LoadBonusFrame
