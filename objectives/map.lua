@@ -7,9 +7,9 @@ local RoundDec = GW.RoundDec
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
 MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
-MAP_FRAMES_HIDE[3] = GameTimeFrame
-MAP_FRAMES_HIDE[4] = MiniMapTrackingButton
-MAP_FRAMES_HIDE[5] = MiniMapTracking
+--MAP_FRAMES_HIDE[3] = GameTimeFrame
+MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
+MAP_FRAMES_HIDE[4] = MiniMapTracking
 
 local Minimap_Addon_Buttons = {
     [1] = "MiniMapTrackingFrame",
@@ -331,8 +331,8 @@ end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
 local function minimap_OnShow(self)
-    if GwCalendarButton then
-        GwCalendarButton:Show()
+    if GameTimeFrame then
+        GameTimeFrame:Show()
     end
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
@@ -347,8 +347,8 @@ end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
 local function minimap_OnHide(self)
-    if GwCalendarButton then
-        GwCalendarButton:Hide()
+    if GameTimeFrame then
+        GameTimeFrame:Hide()
     end
     if GwAddonToggle then
         GwAddonToggle:Hide()
@@ -367,7 +367,7 @@ local function setMinimapButtons(side)
     GarrisonLandingPageMinimapButton.ClearAllPoints = nil
 
     QueueStatusMinimapButton:ClearAllPoints()
-    GwCalendarButton:ClearAllPoints()
+    GameTimeFrame:ClearAllPoints()
     GarrisonLandingPageMinimapButton:ClearAllPoints()
     GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
@@ -375,14 +375,14 @@ local function setMinimapButtons(side)
     
     if side == "left" then
         QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
-        GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
+        GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
         GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
         GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
         GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
     else
         QueueStatusMinimapButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -69)
-        GwCalendarButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 7, 0)
+        GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 7, 0)
         GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", -1, -7)
         GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 10, -47)
         GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5.5, -127)
@@ -505,7 +505,6 @@ local function LoadMinimap()
     MinimapZoneText:ClearAllPoints()
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
-    GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
 
     MinimapZoneText:SetTextColor(1, 1, 1)
@@ -520,32 +519,17 @@ local function LoadMinimap()
 
     QueueStatusMinimapButtonBorder:SetTexture(nil)
 
-    GameTimeFrame:HookScript(
-        "OnShow",
-        function(self)
-            self:Hide()
-        end
-    )
-
-    GwCalendarButton = CreateFrame("Button", "GwCalendarButton", UIParent, "GwCalendarButton")
-    local fnGwCalendarButton_OnShow = function(self)
-        if (Kiosk.IsEnabled()) then
-            self:Disable()
-        end
-    end
-    local fnGwCalendarButton_OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -70)
-        GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR, 1, 1, 1)
-        GameTooltip:Show()
-    end
-    GwCalendarButton:SetScript("OnShow", fnGwCalendarButton_OnShow)
-    GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
-    GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
-    GwCalendarButton.gw_Showing = true
-    GwCalendarButton.Text:SetFont(UNIT_NAME_FONT, 14)
-    GwCalendarButton.Text:SetTextColor(0, 0, 0)
-    GwCalendarButton.Text:SetText(date("%d"))
+    GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)
+    GameTimeFrame.gw_Showing = true
+    GameTimeFrame:SetSize(35, 35)
+    GameTimeFrame:StripTextures()
+    GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar-Up")
+    GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar")
+    GameTimeFrame:SetHighlightTexture(nil)
+    local GameTimeFrameNormalTexture = GameTimeFrame:GetNormalTexture()
+    local GameTimeFramePushedTexture = GameTimeFrame:GetPushedTexture()
+    GameTimeFrameNormalTexture:SetTexCoord(0, 1, 0, 1)
+    GameTimeFramePushedTexture:SetTexCoord(0, 1, 0, 1)
 
     GarrisonLandingPageMinimapButton:SetSize(50, 50)
     GarrisonLandingPageMinimapButton.gw_Showing = false
@@ -677,3 +661,4 @@ local function LoadMinimap()
     C_Timer.After(0.1, hoverMiniMapOut)
 end
 GW.LoadMinimap = LoadMinimap
+
