@@ -641,8 +641,6 @@ local function updateQuest(self, block, questWatchId, quest)
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
 
     if questID and questLogIndex and questLogIndex > 0 then
-        questInfo = C_QuestLog.GetInfo(questLogIndex)
-
         if requiredMoney then
             self.watchMoneyReasons = self.watchMoneyReasons + 1
         else
@@ -659,7 +657,7 @@ local function updateQuest(self, block, questWatchId, quest)
         local itemButton = quest:IsCampaign() and "GwCampaginItemButton" or "GwQuestItemButton"
         UpdateQuestItem(block)
 
-        if numObjectives == 0 and GetMoney() >= requiredMoney and (questInfo and not questInfo.startEvent) then
+        if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
             isComplete = true
         end
 
@@ -678,14 +676,6 @@ local function updateQuest(self, block, questWatchId, quest)
         if isComplete then
             if quest.isAutoComplete then
                 addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
-                block.turnin:Show()
-                block.turnin:SetScript(
-                    "OnClick",
-                    function(self)
-                        ShowQuestComplete(self:GetParent().id)
-                        self:Hide()
-                    end
-                )
             else
                 local completionText = GetQuestLogCompletionText(questLogIndex)
 
@@ -729,7 +719,6 @@ local function updateQuestByID(self, block, quest, questID, questWatchId, questL
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
-    questInfo = C_QuestLog.GetInfo(questLogIndex)
 
     if requiredMoney then
         self.watchMoneyReasons = self.watchMoneyReasons + 1
@@ -747,7 +736,7 @@ local function updateQuestByID(self, block, quest, questID, questWatchId, questL
     local itemButton = quest:IsCampaign() and "GwCampaginItemButton" or "GwQuestItemButton"
     UpdateQuestItem(block)
 
-    if numObjectives == 0 and GetMoney() >= requiredMoney and (questInfo and not questInfo.startEvent) then
+    if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
         isComplete = true
     end
 
@@ -766,14 +755,6 @@ local function updateQuestByID(self, block, quest, questID, questWatchId, questL
     if isComplete then
         if quest.isAutoComplete then
             addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
-            block.turnin:Show()
-            block.turnin:SetScript(
-                "OnClick",
-                function(self)
-                    ShowQuestComplete(self:GetParent().id)
-                    self:Hide()
-                end
-            )
         else
             local completionText = GetQuestLogCompletionText(questLogIndex)
 
@@ -1115,24 +1096,36 @@ end
 local function checkForAutoQuests()
     for i = 1, GetNumAutoQuestPopUps() do
         local questID, popUpType = GetAutoQuestPopUp(i)
-        if questID and popUpType == "OFFER" then
+        if questID and (popUpType == "OFFER" or popUpType == "COMPLETE") then
             --find our block with that questId
             local q = QuestCache:Get(questID)
             if q then
                 local isCampaign = q:IsCampaign()
                 local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
                 if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
-                    questBlockOfIdOrNew.popupQuestAccept:Show()
-                    questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
-                        ShowQuestOffer(self:GetParent().id)
-                        RemoveAutoQuestPopUp(self:GetParent().id)
-                        self:Hide()
-                    end)
+                    if popUpType == "" then
+                        questBlockOfIdOrNew.popupQuestAccept:Show()
+                        questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
+                            ShowQuestOffer(self:GetParent().id)
+                            RemoveAutoQuestPopUp(self:GetParent().id)
+                            self:Hide()
+                        end)
+                    elseif popUpType == "COMPLETE" then
+                        questBlockOfIdOrNew.turnin:Show()
+                        questBlockOfIdOrNew.turnin:SetScript(
+                            "OnClick",
+                            function(self)
+                                ShowQuestComplete(self:GetParent().id)
+                                RemoveAutoQuestPopUp(self:GetParent().id)
+                                self:Hide()
+                            end
+                        )
+                    end
                 end
-            else 
-                -- try again in a few frames
-                C_Timer.After(0.5, checkForAutoQuests)
             end
+        elseif questID and popUpType == "COMPLETE" then
+
+
         end
     end
 end
