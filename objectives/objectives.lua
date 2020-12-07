@@ -1123,9 +1123,6 @@ local function checkForAutoQuests()
                     end
                 end
             end
-        elseif questID and popUpType == "COMPLETE" then
-
-
         end
     end
 end
