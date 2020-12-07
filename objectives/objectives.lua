@@ -639,6 +639,7 @@ local function updateQuest(self, block, questWatchId, quest)
     local isComplete = quest:IsComplete()
     local questLogIndex = quest:GetQuestLogIndex()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
+    local questFailed = C_QuestLog.IsFailed(questID)
 
     if questID and questLogIndex and questLogIndex > 0 then
         if requiredMoney then
@@ -685,6 +686,8 @@ local function updateQuest(self, block, questWatchId, quest)
                     addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
                 end
             end
+        elseif questFailed then
+            addObjective(block, FAILED, false, block.numObjectives + 1, nil)
         end
         block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
         block:SetScript("OnClick", OnBlockClickHandler)
@@ -719,6 +722,7 @@ local function updateQuestByID(self, block, quest, questID, questWatchId, questL
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
+    local questFailed = C_QuestLog.IsFailed(questID)
 
     if requiredMoney then
         self.watchMoneyReasons = self.watchMoneyReasons + 1
@@ -764,6 +768,8 @@ local function updateQuestByID(self, block, quest, questID, questWatchId, questL
                 addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
             end
         end
+    elseif questFailed then
+        addObjective(block, FAILED, false, block.numObjectives + 1, nil)
     end
     block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
     block:SetScript("OnClick", OnBlockClickHandler)
