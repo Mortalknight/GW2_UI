@@ -526,10 +526,8 @@ local function LoadMinimap()
     GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar-Up")
     GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar")
     GameTimeFrame:SetHighlightTexture(nil)
-    local GameTimeFrameNormalTexture = GameTimeFrame:GetNormalTexture()
-    local GameTimeFramePushedTexture = GameTimeFrame:GetPushedTexture()
-    GameTimeFrameNormalTexture:SetTexCoord(0, 1, 0, 1)
-    GameTimeFramePushedTexture:SetTexCoord(0, 1, 0, 1)
+    GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+    GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
 
     GarrisonLandingPageMinimapButton:SetSize(50, 50)
     GarrisonLandingPageMinimapButton.gw_Showing = false
