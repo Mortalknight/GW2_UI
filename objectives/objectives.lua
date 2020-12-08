@@ -900,23 +900,22 @@ local function updateQuestLogLayout(self)
     end
     self.isUpdating = true
 
-    local questFrame = Campaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
     local counterQuest = 0
     local counterCampaign = 0
     local savedHeightQuest = 1
     local savedHeightCampagin = 1
     local shouldShowQuests = true
     local shouldShowCampaign = true
-    GwQuestHeader:Hide()
+    GwQuesttrackerContainerQuests.header:Hide()
 
     local numQuests = C_QuestLog.GetNumQuestWatches()
     if GwQuesttrackerContainerCampaign.collapsed == true then
-        GwCampaginHeader:Show()
+        GwQuesttrackerContainerCampaign.header:Show()
         savedHeightCampagin = 20
         shouldShowCampaign = false
     end
     if GwQuesttrackerContainerQuests.collapsed == true then
-        GwQuestHeader:Show()
+        GwQuesttrackerContainerQuests.header:Show()
         savedHeightQuest = 20
         shouldShowQuests = false
     end
@@ -930,7 +929,7 @@ local function updateQuestLogLayout(self)
             -- Campaing Quests
             if q and q:IsCampaign() then
                 if shouldShowCampaign then
-                    GwCampaginHeader:Show()
+                    GwQuesttrackerContainerCampaign.header:Show()
                     counterCampaign = counterCampaign + 1
 
                     if counterCampaign == 1 then
@@ -955,7 +954,7 @@ local function updateQuestLogLayout(self)
                 end
             elseif q then
                 if shouldShowQuests then
-                    GwQuestHeader:Show()
+                    GwQuesttrackerContainerQuests.header:Show()
                     counterQuest = counterQuest + 1
 
                     if counterQuest == 1 then
@@ -1015,11 +1014,11 @@ local function updateQuestLogLayout(self)
         end
     end
 
-    if counterCampaign == 0 then GwCampaginHeader:Hide() end
+    if counterCampaign == 0 then GwQuesttrackerContainerCampaign.header:Hide() end
 
     -- Set number of quest to the Header
-    GwQuestHeader.title:SetText(TRACKER_HEADER_QUESTS .. " (" .. counterQuest .. ")")
-    GwCampaginHeader.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS .. " (" .. counterCampaign .. ")")
+    GwQuesttrackerContainerQuests.header.title:SetText(TRACKER_HEADER_QUESTS .. " (" .. counterQuest .. ")")
+    GwQuesttrackerContainerCampaign.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS .. " (" .. counterCampaign .. ")")
 
     self.isUpdating = false
 end
@@ -1051,7 +1050,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
     local itemButton = isCampaign and "GwCampaginItemButton" or "GwQuestItemButton"
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
-    local header = isCampaign and GwCampaginHeader or GwQuestHeader
+    local header = containerName.header
     local savedHeight = 20
     local heightForQuestItem = 20
     local counterQuest = 0
@@ -1329,13 +1328,13 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("PLAYER_ENTERING_WORLD")
     fQuest.watchMoneyReasons = 0
 
-    local headerCampagin = CreateFrame("Button", "GwCampaginHeader", fCampaign, "GwQuestTrackerHeader")
-    headerCampagin.icon:SetTexCoord(0.5, 1, 0, 0.25)
-    headerCampagin.title:SetFont(UNIT_NAME_FONT, 14)
-    headerCampagin.title:SetShadowOffset(1, -1)
-    headerCampagin.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
+    fCampaign.header = CreateFrame("Button", nil, fCampaign, "GwQuestTrackerHeader")
+    fCampaign.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
+    fCampaign.header.title:SetFont(UNIT_NAME_FONT, 14)
+    fCampaign.header.title:SetShadowOffset(1, -1)
+    fCampaign.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
 
-    headerCampagin:SetScript(
+    fCampaign.header:SetScript(
         "OnMouseDown",
         function(self)
             local p = self:GetParent()
@@ -1350,15 +1349,15 @@ local function LoadQuestTracker()
             QuestTrackerLayoutChanged()
         end
     )
-    headerCampagin.title:SetTextColor(TRACKER_TYPE_COLOR.CAMPAIGN.r, TRACKER_TYPE_COLOR.CAMPAIGN.g, TRACKER_TYPE_COLOR.CAMPAIGN.b)
+    fCampaign.header.title:SetTextColor(TRACKER_TYPE_COLOR.CAMPAIGN.r, TRACKER_TYPE_COLOR.CAMPAIGN.g, TRACKER_TYPE_COLOR.CAMPAIGN.b)
 
-    local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
-    header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
-    header.title:SetFont(UNIT_NAME_FONT, 14)
-    header.title:SetShadowOffset(1, -1)
-    header.title:SetText(TRACKER_HEADER_QUESTS)
+    fQuest.header = CreateFrame("Button", nil, fQuest, "GwQuestTrackerHeader")
+    fQuest.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
+    fQuest.header.title:SetFont(UNIT_NAME_FONT, 14)
+    fQuest.header.title:SetShadowOffset(1, -1)
+    fQuest.header.title:SetText(TRACKER_HEADER_QUESTS)
 
-    header:SetScript(
+    fQuest.header:SetScript(
         "OnMouseDown",
         function(self)
             local p = self:GetParent()
@@ -1369,11 +1368,11 @@ local function LoadQuestTracker()
                 p.collapsed = false
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
-            updateQuestLogLayout(fQuest)
+            updateQuestLogLayout(p)
             QuestTrackerLayoutChanged()
         end
     )
-    header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
+    fQuest.header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
 
     fQuest.init = false
     tracker_OnEvent(fQuest, "LOAD")
@@ -1429,8 +1428,8 @@ local function LoadQuestTracker()
     hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
     hooksecurefunc(fScen, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
     fCampaign:HookScript("OnSizeChanged", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    GwCampaginHeader:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    GwCampaginHeader:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    GwQuesttrackerContainerCampaign.header:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    GwQuesttrackerContainerCampaign.header:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, true, {"scaleable", "height"}, nil, true)
     fTracker:ClearAllPoints()

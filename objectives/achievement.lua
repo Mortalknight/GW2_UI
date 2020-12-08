@@ -192,16 +192,16 @@ local function updateAchievementObjectives(block)
 end
 GW.AddForProfiling("achievement", "updateAchievementObjectives", updateAchievementObjectives)
 
-local function updateAchievementLayout()
+local function updateAchievementLayout(self)
     local savedHeight = 1
     local shownIndex = 1
     local trackedAchievements = {GetTrackedAchievements()}
 
-    GwAchievementHeader:Hide() 
+    self.header:Hide() 
 
     local numQuests = #trackedAchievements
-    if GwQuesttrackerContainerAchievement.collapsed == true then
-        GwAchievementHeader:Show()
+    if GwQuesttrackerContainerAchievement.collapsed then
+        self.header:Show()
         numQuests = 0
         savedHeight = 20
     end
@@ -216,7 +216,7 @@ local function updateAchievementLayout()
                 savedHeight = 20
             end
 
-            GwAchievementHeader:Show()
+            self.header:Show()
             local block = getBlock(shownIndex)
             if block == nil then
                 return
@@ -254,33 +254,33 @@ local function LoadAchievementFrame()
     GwQuesttrackerContainerAchievement:RegisterEvent("ACHIEVEMENT_EARNED")
     GwQuesttrackerContainerAchievement:SetScript("OnEvent", updateAchievementLayout)
 
-    local header = CreateFrame("Button", "GwAchievementHeader", GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")
-    header.icon:SetTexCoord(0, 0.5, 0, 0.25)
-    header.title:SetFont(UNIT_NAME_FONT, 14)
-    header.title:SetShadowOffset(1, -1)
-    header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
+    GwQuesttrackerContainerAchievement.header = CreateFrame("Button", nil, GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")
+    GwQuesttrackerContainerAchievement.header.icon:SetTexCoord(0, 0.5, 0, 0.25)
+    GwQuesttrackerContainerAchievement.header.title:SetFont(UNIT_NAME_FONT, 14)
+    GwQuesttrackerContainerAchievement.header.title:SetShadowOffset(1, -1)
+    GwQuesttrackerContainerAchievement.header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
 
     GwQuesttrackerContainerAchievement.collapsed = false
-    header:SetScript(
+    GwQuesttrackerContainerAchievement.header:SetScript(
         "OnMouseDown",
         function(self)
             local p = self:GetParent()
-            if p.collapsed == nil or p.collapsed == false then
+            if p.collapsed == false then
                 p.collapsed = true
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
             else
                 p.collapsed = false
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
-            updateAchievementLayout()
+            updateAchievementLayout(p)
         end
     )
-    header.title:SetTextColor(
+    GwQuesttrackerContainerAchievement.header.title:SetTextColor(
         TRACKER_TYPE_COLOR.ACHIEVEMENT.r,
         TRACKER_TYPE_COLOR.ACHIEVEMENT.g,
         TRACKER_TYPE_COLOR.ACHIEVEMENT.b
-    ) 
+    )
 
-    updateAchievementLayout()
+    updateAchievementLayout(GwQuesttrackerContainerAchievement)
 end
 GW.LoadAchievementFrame = LoadAchievementFrame
