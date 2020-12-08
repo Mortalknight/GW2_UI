@@ -1118,14 +1118,11 @@ local function checkForAutoQuests()
                         end)
                     elseif popUpType == "COMPLETE" then
                         questBlockOfIdOrNew.turnin:Show()
-                        questBlockOfIdOrNew.turnin:SetScript(
-                            "OnClick",
-                            function(self)
-                                ShowQuestComplete(self:GetParent().id)
-                                RemoveAutoQuestPopUp(self:GetParent().id)
-                                self:Hide()
-                            end
-                        )
+                        questBlockOfIdOrNew.turnin:SetScript("OnClick",function(self)
+                            ShowQuestComplete(self:GetParent().id)
+                            RemoveAutoQuestPopUp(self:GetParent().id)
+                            self:Hide()
+                        end)
                     end
                 end
             end
