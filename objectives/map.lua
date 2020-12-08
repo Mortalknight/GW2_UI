@@ -331,14 +331,8 @@ end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
 local function minimap_OnShow(self)
-    if GameTimeFrame then
-        GameTimeFrame:Show()
-    end
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
-    end
-    if GarrisonLandingPageMinimapButton and GarrisonLandingPageMinimapButton.gw_Showing then
-        GarrisonLandingPageMinimapButton:Show()
     end
     if GwMailButton and GwMailButton.gw_Showing then
         GwMailButton:Show()
@@ -347,14 +341,8 @@ end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
 local function minimap_OnHide(self)
-    if GameTimeFrame then
-        GameTimeFrame:Hide()
-    end
     if GwAddonToggle then
         GwAddonToggle:Hide()
-    end
-    if GarrisonLandingPageMinimapButton then
-        GarrisonLandingPageMinimapButton:Hide()
     end
     if GwMailButton then
         GwMailButton:Hide()
@@ -520,7 +508,6 @@ local function LoadMinimap()
     QueueStatusMinimapButtonBorder:SetTexture(nil)
 
     GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)
-    GameTimeFrame.gw_Showing = true
     GameTimeFrame:SetSize(35, 35)
     GameTimeFrame:StripTextures()
     GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar-Up")
@@ -530,7 +517,6 @@ local function LoadMinimap()
     GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
 
     GarrisonLandingPageMinimapButton:SetSize(50, 50)
-    GarrisonLandingPageMinimapButton.gw_Showing = false
     hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", function(self)
         self:SetSize(50, 50)
         self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
