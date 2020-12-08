@@ -1109,7 +1109,7 @@ local function checkForAutoQuests()
                 local isCampaign = q:IsCampaign()
                 local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
                 if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
-                    if popUpType == "" then
+                    if popUpType == "OFFER" then
                         questBlockOfIdOrNew.popupQuestAccept:Show()
                         questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
                             ShowQuestOffer(self:GetParent().id)
