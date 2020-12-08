@@ -138,7 +138,9 @@ local function initBar(self, pew)
         else
             self:SetAttribute("spell", self.spellId)
         end
-        self:Show()
+        if not C_PetBattles.IsInBattle() and not HasOverrideActionBar() and not HasVehicleActionBar() then
+            self:Show()
+        end
     end
 end
 GW.initDodgebarSpell = initBar
