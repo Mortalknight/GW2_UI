@@ -7,7 +7,6 @@ local RoundDec = GW.RoundDec
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
 MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
---MAP_FRAMES_HIDE[3] = GameTimeFrame
 MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
 MAP_FRAMES_HIDE[4] = MiniMapTracking
 
@@ -151,7 +150,7 @@ GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 local function MapCoordsMiniMap_OnEnter(self) 
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  
-    GameTooltip:AddLine(L["MAP_COORDINATES_TOGGLE_TEXT"], 1, 1, 1, TRUE) 
+    GameTooltip:AddLine(L["MAP_COORDINATES_TOGGLE_TEXT"], 1, 1, 1, true) 
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
 end
@@ -486,9 +485,6 @@ local function LoadMinimap()
     end)
     MinimapBorder:Hide()
     MiniMapWorldMapButton:Hide()
-
-    MiniMapMailFrame:ClearAllPoints()
-    MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
 
     MinimapZoneText:ClearAllPoints()
     MinimapZoneText:SetParent(GwMapGradient)
