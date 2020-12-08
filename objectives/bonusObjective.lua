@@ -136,6 +136,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     end
 
     newBlock.Header:SetText("")
+    newBlock.event = true -- needed for tooltip
     newBlock:SetScript("OnClick", BonusObjectiveTracker_OnBlockClick)
 
     newBlock.color = TRACKER_TYPE_COLOR["EVENT"]
