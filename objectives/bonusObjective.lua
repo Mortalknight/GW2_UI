@@ -291,6 +291,9 @@ local function setUpBlock(questIDs, collapsed)
                 end
 
                 savedContainerHeight = savedContainerHeight + GwBonusObjectiveBlock.height + 10
+                if GwBonusObjectiveBlock.hasItem then
+                    GW.updateQuestItemPositions(GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT", GwBonusObjectiveBlock)
+                end
 
                 if not GwQuesttrackerContainerBonusObjectives.collapsed then
                     --add groupfinder button

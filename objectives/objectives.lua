@@ -814,14 +814,19 @@ local function updateQuestItemPositions(button, height, type, block)
         questButtonHelperFrame.block = block
         return
     end
-
     local height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight()
     else
         height = height - 40
     end
-    if type == "QUEST" then
+    if type == "SCENARIO" then
+        height = height - (GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight())
+    end
+    if type == "EVENT" then
+        height = height + GwQuesttrackerContainerQuests:GetHeight()
+    end
+    if type == "QUEST" or type == "EVENT" then
         height = height + GwQuesttrackerContainerCampaign:GetHeight()
     end
 
@@ -1164,6 +1169,7 @@ local function tracker_OnEvent(self, event, ...)
         updateQuestLogLayout(self)
     elseif event == "LOAD" then
         updateQuestLogLayout(self)
+        C_Timer.After(0.5, function() GW.updateBonusObjective(GwQuesttrackerContainerBonusObjectives) end)
         self.init = true
     elseif event == "PLAYER_ENTERING_WORLD" then
         self:RegisterEvent("QUEST_DATA_LOAD_RESULT")

@@ -160,6 +160,9 @@ local function updateCurrentScenario(self, event, ...)
             GwScenarioBlock:Hide()
         end
         UpdateQuestItem(GwScenarioBlock)
+        if GwScenarioBlock.hasItem then
+            GW.updateQuestItemPositions(GwScenarioBlock.actionButton, GwScenarioBlock.height, "SCENARIO", GwScenarioBlock)
+        end
         for i = GwScenarioBlock.numObjectives + 1, 20 do
             if _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
                 _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
@@ -391,6 +394,9 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     GwScenarioBlock.height = GwScenarioBlock.height + 5
+    if GwScenarioBlock.hasItem then
+        GW.updateQuestItemPositions(GwScenarioBlock.actionButton, GwScenarioBlock.height, "SCENARIO", GwScenarioBlock)
+    end
 
     local intGWQuestTrackerHeight = 0
 
