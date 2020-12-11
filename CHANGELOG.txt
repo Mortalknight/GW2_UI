@@ -1,7 +1,19 @@
-5.5.2
+5.6.0
+NEW
+    - Added error handler, so that yo can see in the chat if a error was caused by GW2 UI
+    - Added new Torghast scenario typ and its own texture
+    - We now use default garrison and calender icons with our textures, that mean that you get all the notifications now
+    - Quest Tracker shows now if a quest is failed
+
 FIXES
     - Fix missing Exodar reputation background
     - Fix error while profile renaming
+    - Fix item level color issue in bags
+    - Fix FCT damage number > 10k
+    - Adjust quest view position for a number of Shadowlands NPCs
+    - Correct battleground headers
+    - Now dodgebar is hidden while actionbaroverride
+    - Fix some smaller issues
 
 5.5.1
 FIXES
