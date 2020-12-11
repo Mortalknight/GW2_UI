@@ -129,7 +129,7 @@ local function setButtonPosition(frame)
         editbox:SetPoint("TOPLEFT", frame.Background, "BOTTOMLEFT", 0, 0)
         editbox:SetPoint("TOPRIGHT", _G[name .. "ButtonFrame"], "BOTTOMRIGHT", 0, 0)
 
-        if QuickJoinToastButton then
+        if QuickJoinToastButton and frame.isDocked ~= nil then
             QuickJoinToastButton.ClearAllPoints = nil
             QuickJoinToastButton.SetPoint = nil
             QuickJoinToastButton:ClearAllPoints()
@@ -151,7 +151,7 @@ local function setButtonPosition(frame)
         editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, -6)
         editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, -6)
 
-        if QuickJoinToastButton then
+        if QuickJoinToastButton and frame.isDocked ~= nil then
             QuickJoinToastButton.ClearAllPoints = nil
             QuickJoinToastButton.SetPoint = nil
             QuickJoinToastButton:ClearAllPoints()
@@ -354,7 +354,7 @@ local function styleChatWindow(frame)
             _G[tab:GetName()..texName.."Right"]:SetTexture()
         end
     end
-    
+
     scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
     scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
@@ -380,7 +380,7 @@ local function styleChatWindow(frame)
             t:SetAlpha(0.6)
         end
     end)
-    
+
     tab.text = _G[name.."TabText"]
     tab.text:SetTextColor(1, 1, 1)
     hooksecurefunc(tab.text, "SetTextColor", function(tt, r, g, b)
@@ -389,12 +389,12 @@ local function styleChatWindow(frame)
             tt:SetTextColor(rR, gG, bB)
         end
     end)
-    
+
     if tab.conversationIcon then
         tab.conversationIcon:ClearAllPoints()
         tab.conversationIcon:SetPoint("RIGHT", tab.text, "LEFT", -1, 0)
     end
-    
+
     frame:SetClampRectInsets(0,0,0,0)
     frame:SetClampedToScreen(false)
     frame:StripTextures(true)
@@ -645,7 +645,7 @@ local function LoadChat()
             else
                 fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
             end
-            if not frame.isDocked  then fmGCC.EditBox:Hide() end
+            if not frame.isDocked then fmGCC.EditBox:Hide() end
             frame.Container = fmGCC
             frame.hasContainer = true
         elseif frame.hasContainer then
@@ -714,6 +714,6 @@ local function LoadChat()
     _G.CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
 
     _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
-    BuildCopyChatFrame()  
+    BuildCopyChatFrame()
 end
 GW.LoadChat = LoadChat
