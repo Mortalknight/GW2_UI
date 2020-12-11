@@ -27,7 +27,7 @@ local function LoadSlashCommands()
             GW.HoverKeyBinds()
         elseif msg == "mh" then
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
                 return
             end
             GW.moveHudObjects(GwSettingsWindowMoveHud)

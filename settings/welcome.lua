@@ -29,7 +29,7 @@ AddForProfiling("welcome", "toggle_OnClick", toggle_OnClick)
 
 local function movehud_OnClick(self, button)
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
         return
     end
     self:GetParent():Hide()

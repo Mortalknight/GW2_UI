@@ -266,6 +266,31 @@ local function Grid_Show_Hide(mhgb)
 end
 
 local settings_window_open_before_change = false
+local function lockHudObjects(self, inCombat)
+    if InCombatLockdown() then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+        return
+    end
+    self:Hide()
+    self.mhgb:Hide()
+    self.mhgb.grid_align:Hide()
+    GW.MoveHudScaleableFrame:Hide()
+    if settings_window_open_before_change and inCombat ~= true then
+        settings_window_open_before_change = false
+        GwSettingsWindow:Show()
+    end
+
+    for i, mf in ipairs(GW.MOVABLE_FRAMES) do
+        mf:EnableMouse(false)
+        mf:SetMovable(false)
+        mf:Hide()
+    end
+    if self.mhgb.grid then
+        self.mhgb.grid:Hide()
+    end
+end
+AddForProfiling("settings", "lockHudObjects", lockHudObjects)
+
 local function moveHudObjects(self)
     self.lhb:Show()
     self.mhgb:Show()
@@ -284,33 +309,18 @@ local function moveHudObjects(self)
     GW.MoveHudScaleableFrame.movers:Hide()
     GW.MoveHudScaleableFrame.desc:Show()
     GW.MoveHudScaleableFrame:Show()
+
+    -- register event to close move hud in combat
+    self:RegisterEvent("PLAYER_REGEN_DISABLED")
+    self:SetScript("OnEvent", function(self, event)
+        if event == "PLAYER_REGEN_DISABLED" then
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+            lockHudObjects(self.lhb, true)
+            self:UnregisterEvent(event)
+        end
+    end)
 end
 GW.moveHudObjects = moveHudObjects
-
-local function lockHudObjects(self)
-    if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
-        return
-    end
-    self:Hide()
-    self.mhgb:Hide()
-    self.mhgb.grid_align:Hide()
-    GW.MoveHudScaleableFrame:Hide()
-    if settings_window_open_before_change then
-        settings_window_open_before_change = false
-        GwSettingsWindow:Show()
-    end
-
-    for i, mf in ipairs(GW.MOVABLE_FRAMES) do
-        mf:EnableMouse(false)
-        mf:SetMovable(false)
-        mf:Hide()
-    end
-    if self.mhgb.grid then
-        self.mhgb.grid:Hide()
-    end
-end
-AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 
 local function WarningPrompt(text, method)
     GwWarningPrompt.string:SetText(text)
@@ -736,7 +746,7 @@ local function LoadSettings()
 
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then
-            DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
             return
         end
         moveHudObjects(self)
