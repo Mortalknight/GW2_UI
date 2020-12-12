@@ -267,6 +267,9 @@ end
 
 local settings_window_open_before_change = false
 local function lockHudObjects(self, inCombat)
+    if self:GetParent() then
+        self:GetParent():UnregisterAllEvents()
+    end
     if InCombatLockdown() then
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
         return
