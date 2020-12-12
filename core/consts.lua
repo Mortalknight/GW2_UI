@@ -224,19 +224,21 @@ local AURAS_INDICATORS = {
         [139] =     {0.4, 0.7, 0.2},    -- Renew
         [17] =      {0.7, 0.7, 0.7},    -- Power Word: Shield
         [47788] =   {0.86, 0.45, 0},    -- Guardian Spirit
-        [33206] =   {0.47, 0.35, 0.74}  -- Pain Suppression
+        [33206] =   {0.47, 0.35, 0.74}, -- Pain Suppression
+        [6788]   =  {0.89, 0.1, 0.1},   -- Weakened Soul
     },
     DRUID = {
         [774] =     {0.8, 0.4, 0.8},    -- Rejuvenation
         [155777] =  {0.8, 0.4, 0.8},    -- Germination
         [8936] =    {0.2, 0.8, 0.2},    -- Regrowth
         [33763] =   {0.4, 0.8, 0.2},    -- Lifebloom
-        [188550] =   {0.4, 0.8, 0.2},    -- Lifebloom Legendary version
+        [188550] =  {0.4, 0.8, 0.2},    -- Lifebloom Legendary version
         [48438] =   {0.8, 0.4, 0},      -- Wild Growth
         [207386] =  {0.4, 0.2, 0.8},    -- Spring Blossoms
         [102351] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (Initial Buff)
         [102352] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (HoT)
         [200389] =  {1, 1, 0.4},        -- Cultivation
+        [203554] =  {1, 1, 0.4}),		-- Focused Growth (PvP)
     },
     PALADIN = {
         [53563] =   {1, 0.3, 0},        -- Beacon of Light
@@ -247,6 +249,8 @@ local AURAS_INDICATORS = {
         [6940] =    {0.89, 0.1, 0.1},   -- Hand of Sacrifice
         [223306] =  {0.7, 0.7, 0.3},    -- Bestow Faith
         [287280] =  {1, 0.5, 0},        -- Glimmer of Light
+        [157047] =  {0.15, 0.58, 0.84},	-- Saved by the Light (T25 Talent)
+        [204018] =  {0.2, 0.2, 1},      -- Blessing of Spellwarding
     },
     SHAMAN = {
         [61295] =   {0, 0.4, 0.53},     -- Riptide
@@ -257,6 +261,8 @@ local AURAS_INDICATORS = {
         [116849] =  {0.2, 0.8, 0.2},    -- Life Cocoon
         [124682] =  {0.8, 0.8, 0.25},   -- Enveloping Mist
         [191840] =  {0.27, 0.62, 0.7},  -- Essence Font
+        [116841] =  {0.12, 1.00, 0.53},	-- Tiger's Lust (Freedom)
+        [325209] =  {0.3, 0.8, 0.6},	-- Enveloping Breath
     },
     ROGUE = {
         [57934] =   {0.89, 0.09, 0.05}  -- Tricks of the Trade
@@ -265,7 +271,9 @@ local AURAS_INDICATORS = {
         [114030] =  {0.2, 0.2, 1},      -- Vigilance
         [3411] =    {0.89, 0.09, 0.05}  -- Intervene
     },
-    HUNTER = {},
+    HUNTER = {
+        [90361]  = {0.34, 0.47, 0.31},	-- Spirit Mend (HoT)
+    },
     DEMONHUNTER = {},
     WARLOCK = {},
     MAGE = {},
@@ -438,10 +446,10 @@ local ImportendRaidDebuff = {
         [335304] = true, -- Sinseeker
         [334971] = true, -- Jagged Claws
         [335111] = true, -- Huntsman's Mark 3
-		[335112] = true, -- Huntsman's Mark 2
-		[335113] = true, -- Huntsman's Mark 1
-		[334945] = true, -- Vicious Lunge
-		[334852] = true, -- Petrifying Howl
+        [335112] = true, -- Huntsman's Mark 2
+        [335113] = true, -- Huntsman's Mark 1
+        [334945] = true, -- Vicious Lunge
+        [334852] = true, -- Petrifying Howl
         -- Hungering Destroyer
         [334228] = true, -- Volatile Ejection
         [329298] = true, -- Gluttonous Miasma
@@ -457,16 +465,16 @@ local ImportendRaidDebuff = {
         [326078] = true, -- Infuser's Boon
         [325251] = true, -- Sin of Pride
         [341475] = true, -- Crimson Flurry
-		[341473] = true, -- Crimson Flurry Teleport
-		[328479] = true, -- Eyes on Target
-		[328889] = true, -- Greater Castigation
+        [341473] = true, -- Crimson Flurry Teleport
+        [328479] = true, -- Eyes on Target
+        [328889] = true, -- Greater Castigation
         -- Artificer Xy'mox
         [327902] = true, -- Fixate
         [326302] = true, -- Stasis Trap
         [325236] = true, -- Glyph of Destruction
         [327414] = true, -- Possession
         [328468] = true, -- Dimensional Tear 1
-		[328448] = true, -- Dimensional Tear 2
+        [328448] = true, -- Dimensional Tear 2
         -- The Council of Blood
         [327052] = true, -- Drain Essence 1
         [327773] = true, -- Drain Essence 2
@@ -483,9 +491,9 @@ local ImportendRaidDebuff = {
         [335293] = true, -- Chain Link
         [335270] = true, -- Chain This One!
         [342419] = true, -- Chain Them! 1
-		[342420] = true, -- Chain Them! 2
-		[335295] = true, -- Shattering Chain
-		[332572] = true, -- Falling Rubble
+        [342420] = true, -- Chain Them! 2
+        [335295] = true, -- Shattering Chain
+        [332572] = true, -- Falling Rubble
         -- Stone Legion Generals
         [334498] = true, -- Seismic Upheaval
         [337643] = true, -- Unstable Footing
@@ -507,7 +515,6 @@ local ImportendRaidDebuff = {
         [335873] = true, -- Rancor
         [329951] = true, -- Impale
         [327039] = true, -- Feeding Time
-		[332794] = true, -- Fatal Finesse
-
+        [332794] = true, -- Fatal Finesse
 }
 GW.ImportendRaidDebuff = ImportendRaidDebuff
