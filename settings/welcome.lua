@@ -280,7 +280,7 @@ local function ShowChangelogPanel()
     if not wpanel then
         createPanel()
     end
-
+    setDefaultOpenLayout()
     wpanel.changelogORwelcome:SetText(L["WELCOME"])
     wpanel.welcome:Hide()
     wpanel.changelog:Show()
