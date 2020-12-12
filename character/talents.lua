@@ -80,7 +80,7 @@ local function hookTalentButton(self, container, row, index)
     mask:SetPoint("CENTER", self, "CENTER", 0, 0)
 
     mask:SetTexture(
-        "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+        "Interface/AddOns/GW2_UI/textures/talents/passive_border",
         "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE"
     )
@@ -119,14 +119,12 @@ local function setSpecTabIconAndTooltip(tab)
     local spec = GetSpecialization()
     if spec then
         local role = GetSpecializationRole(spec)
+        tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
         if role == "DAMAGER" then
-            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
             tab.icon:SetTexCoord(0.75, 1, 0.75, 1)
         elseif role == "TANK" then
-            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
             tab.icon:SetTexCoord(0.75, 1, 0.5, 0.75)
         elseif role == "HEALER" then
-            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
             tab.icon:SetTexCoord(0.25, 0.5, 0.75, 1)
         else
             -- set default icon
@@ -166,8 +164,7 @@ local function updateActiveSpec()
             local sel = nil
             for index = 1, talentsPerRow do
                 local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
-                local talentID, _, texture, selected, available, spellid, _, _, _, _, known =
-                    GetTalentInfo(row, index, 1, false, "player")
+                local talentID, _, texture, selected, available, spellid, _, _, _, _, known = GetTalentInfo(row, index, 1, false, "player")
 
                 if not availible then
                     allAvalible = false
@@ -190,19 +187,15 @@ local function updateActiveSpec()
                 end
 
                 if ispassive then
-                    button.legendaryHighlight:SetTexture(
-                        "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight"
-                    )
-                    button.highlight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight")
+                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
+                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
                     button.icon:AddMaskTexture(button.mask)
-                    button.outline:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline")
+                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline")
                 else
-                    button.highlight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight")
-                    button.legendaryHighlight:SetTexture(
-                        "Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight"
-                    )
+                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
+                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
                     button.icon:RemoveMaskTexture(button.mask)
-                    button.outline:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border")
+                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
                 end
 
                 if i == GW.myspec and (selected or available) and not known then
@@ -300,7 +293,7 @@ local function loadTalents()
         local mask = UIParent:CreateMaskTexture()
         mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
         mask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -329,7 +322,7 @@ local function loadTalents()
         container.info.specDesc:SetText(description)
 
         txT = (i - 1) * txH
-        container.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\" .. GW.myClassID)
+        container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
         container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
 
         local last = 0
@@ -359,8 +352,7 @@ local function loadTalents()
         end
         for row = 1, maxTalentRows do
             local fistOnRow
-            local line =
-                CreateFrame("Frame", "GwTalentLine" .. i .. "-" .. last .. "-" .. row, container, "GwTalentLine")
+            local line = CreateFrame("Frame", "GwTalentLine" .. i .. "-" .. last .. "-" .. row, container, "GwTalentLine")
 
             line:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (88)), -10)
 
@@ -656,6 +648,28 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     activeGroup.poolNSD:ReleaseAll()
     passiveGroup.pool:ReleaseAll()
 
+    -- first add talent passives to not habe spaces between
+    if BOOKTYPE == BOOKTYPE_SPELL and spellBookTabs == 3 then
+        for row = 1, maxTalentRows do
+            for index = 1, talentsPerRow do
+                local _, name, icon, selected, available, spellId = GetTalentInfo(row, index, 1, false, "player")
+                if selected and available then
+                    local isPassive = IsPassiveSpell(spellId)
+                    local btn
+                    if isPassive then
+                        local skillType = "TALENT"
+                        btn = passiveGroup.pool:Acquire()
+                        local row = math.floor((passiveIndex - 1) / 5)
+                        local col = (passiveIndex - 1) % 5
+                        btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+                        setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)      
+                        passiveIndex = passiveIndex + 1
+                    end
+                end
+            end
+        end
+    end
+
     for i = 1, numSpells do
         local spellIndex = i + offset
         local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
@@ -717,27 +731,6 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
             end
 
             activeIndex = activeIndex + 1
-        end
-    end
-
-    if BOOKTYPE == BOOKTYPE_SPELL and spellBookTabs == 3 then
-        for row = 1, maxTalentRows do
-            for index = 1, talentsPerRow do
-                local _, name, icon, selected, available, spellId, _, _, _, _, _ = GetTalentInfo(row, index, 1, false, "player")
-                if selected and available then
-                    local isPassive = IsPassiveSpell(spellId)
-                    local btn
-                    if isPassive then
-                        local skillType = "TALENT"
-                        btn = passiveGroup.pool:Acquire()
-                        local row = math.floor((passiveIndex - 1) / 5)
-                        local col = (passiveIndex - 1) % 5
-                        btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-                        setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)      
-                        passiveIndex = passiveIndex + 1
-                    end
-                end
-            end
         end
     end
 
@@ -867,7 +860,7 @@ local function passivePool_Resetter(self, btn)
         local mask = UIParent:CreateMaskTexture()
         mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
         mask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -1134,16 +1127,14 @@ local function LoadTalents(tabContainer)
     fmSpellbook:SetFrameRef("GwspellbookTab5", GwspellbookTab5)
     fmSpellbook:SetFrameRef("GwSpecContainerFrame", GwSpecContainerFrame)
     fmSpellbook.UnselectAllTabs = function(self)
-        GwspellbookTab1.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-        GwspellbookTab2.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-        GwspellbookTab3.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-        GwspellbookTab4.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
-        GwspellbookTab5.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg_inactive")
+        GwspellbookTab1.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
+        GwspellbookTab2.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
+        GwspellbookTab3.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
+        GwspellbookTab4.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
+        GwspellbookTab5.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
     end
     fmSpellbook.SelectTab = function(self, tab)
-        _G["GwspellbookTab" .. tab].background:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\talents\\spellbooktab_bg"
-        )
+        _G["GwspellbookTab" .. tab].background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg")
     end
     fmSpellbook:SetAttribute(
         "_onattributechanged",
