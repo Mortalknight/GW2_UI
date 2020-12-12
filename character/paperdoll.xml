@@ -47,7 +47,7 @@
         </Layers>
     </Frame>
 
-    <ItemButton name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" mixin="ContainerFrameItemButtonMixin" virtual="true">
+    <ItemButton name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" mixin="ContainerFrameItemButtonMixin" inherits="SecureActionButtonTemplate" virtual="true">
         <Size x="49" y="49"></Size>
         <Layers>
             <Layer level="BACKGROUND">

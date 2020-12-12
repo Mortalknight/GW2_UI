@@ -437,10 +437,11 @@ local ImportendRaidDebuff = {
         -- Huntsman Altimor
         [335304] = true, -- Sinseeker
         [334971] = true, -- Jagged Claws
-        [335111] = true, -- Huntsman's Mark 1
-        [335112] = true, -- Huntsman's Mark 2
-        [335113] = true, -- Huntsman's Mark 3
-        [334945] = true, -- Bloody Thrash
+        [335111] = true, -- Huntsman's Mark 3
+		[335112] = true, -- Huntsman's Mark 2
+		[335113] = true, -- Huntsman's Mark 1
+		[334945] = true, -- Vicious Lunge
+		[334852] = true, -- Petrifying Howl
         -- Hungering Destroyer
         [334228] = true, -- Volatile Ejection
         [329298] = true, -- Gluttonous Miasma
@@ -455,11 +456,17 @@ local ImportendRaidDebuff = {
         [333002] = true, -- Vulgar Brand
         [326078] = true, -- Infuser's Boon
         [325251] = true, -- Sin of Pride
+        [341475] = true, -- Crimson Flurry
+		[341473] = true, -- Crimson Flurry Teleport
+		[328479] = true, -- Eyes on Target
+		[328889] = true, -- Greater Castigation
         -- Artificer Xy'mox
         [327902] = true, -- Fixate
         [326302] = true, -- Stasis Trap
         [325236] = true, -- Glyph of Destruction
         [327414] = true, -- Possession
+        [328468] = true, -- Dimensional Tear 1
+		[328448] = true, -- Dimensional Tear 2
         -- The Council of Blood
         [327052] = true, -- Drain Essence 1
         [327773] = true, -- Drain Essence 2
@@ -475,7 +482,10 @@ local ImportendRaidDebuff = {
         [331209] = true, -- Hateful Gaze
         [335293] = true, -- Chain Link
         [335270] = true, -- Chain This One!
-        [335295] = true, -- Shattering Chain
+        [342419] = true, -- Chain Them! 1
+		[342420] = true, -- Chain Them! 2
+		[335295] = true, -- Shattering Chain
+		[332572] = true, -- Falling Rubble
         -- Stone Legion Generals
         [334498] = true, -- Seismic Upheaval
         [337643] = true, -- Unstable Footing
@@ -486,6 +496,7 @@ local ImportendRaidDebuff = {
         [339690] = true, -- Crystalize
         [342655] = true, -- Volatile Anima Infusion
         [342698] = true, -- Volatile Anima Infection
+        [343881] = true, -- Serrated Tear
         -- Sire Denathrius
         [326851] = true, -- Blood Price
         [327796] = true, -- Night Hunter
@@ -495,5 +506,8 @@ local ImportendRaidDebuff = {
         [329181] = true, -- Wracking Pain
         [335873] = true, -- Rancor
         [329951] = true, -- Impale
+        [327039] = true, -- Feeding Time
+		[332794] = true, -- Fatal Finesse
+
 }
 GW.ImportendRaidDebuff = ImportendRaidDebuff
