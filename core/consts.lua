@@ -238,7 +238,7 @@ local AURAS_INDICATORS = {
         [102351] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (Initial Buff)
         [102352] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (HoT)
         [200389] =  {1, 1, 0.4},        -- Cultivation
-        [203554] =  {1, 1, 0.4}),		-- Focused Growth (PvP)
+        [203554] =  {1, 1, 0.4},		-- Focused Growth (PvP)
     },
     PALADIN = {
         [53563] =   {1, 0.3, 0},        -- Beacon of Light
