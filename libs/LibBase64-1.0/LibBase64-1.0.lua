@@ -6,7 +6,7 @@ Description: A library to encode and decode Base64 strings
 License: MIT
 ]]
 
-local MAJOR, MINOR = 'LibBase64-1.0', 2
+local MAJOR, MINOR = 'LibBase64-1.0_GW2', 2
 local LibBase64 = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibBase64 then return end
 
