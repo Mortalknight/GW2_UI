@@ -649,6 +649,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     passiveGroup.pool:ReleaseAll()
 
     -- first add talent passives to not habe spaces between
+    local talentPassiveSkills = {}
     if BOOKTYPE == BOOKTYPE_SPELL and spellBookTabs == 3 then
         for row = 1, maxTalentRows do
             for index = 1, talentsPerRow do
@@ -664,6 +665,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
                         btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
                         setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)      
                         passiveIndex = passiveIndex + 1
+                        talentPassiveSkills[spellId] = true
                     end
                 end
             end
@@ -686,21 +688,8 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
 
         local btn
         if isPassive then
-            local bolfound = false
-            for row = 1, maxTalentRows do
-                for index = 1, talentsPerRow do
-                    local _, nameTalent, _, selected, available, _, _, _, _, _, _ = GetTalentInfo(row, index, 1, false, "player")
-                    if selected and available then
-                        if name == nameTalent then
-                            bolfound = true
-                            break
-                        end
-                    end
-                end
-                if bolfound then 
-                    break
-                end
-            end
+            local bolfound = talentPassiveSkills[spellId] or false
+
             if not bolfound then 
                 btn = passiveGroup.pool:Acquire()
                 local row = math.floor((passiveIndex - 1) / 5)
@@ -733,6 +722,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
             activeIndex = activeIndex + 1
         end
     end
+    talentPassiveSkills = nil
 
     local offY = (math.ceil((activeIndex - 1) / 5) * 50) + 66
     passiveGroup:ClearAllPoints()
