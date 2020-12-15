@@ -4,6 +4,7 @@ NEW
     - Added new Torghast scenario typ and its own texture
     - We now use default garrison and calender icons with our textures, that mean that you get all the notifications now
     - Quest Tracker shows now if a quest is failed
+    - Added charged combopoints
 
 FIXES
     - Fix missing Exodar reputation background

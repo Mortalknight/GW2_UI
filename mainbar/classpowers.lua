@@ -235,43 +235,67 @@ local function powerCombo(self, event, ...)
     if event ~= "CLASS_POWER_INIT" and pType ~= "COMBO_POINTS" then
         return
     end
-    local old_power = self.gwPower
-    old_power = old_power or -1
 
-
-    local pwrMax = UnitPowerMax("player", 4)
-    local pwr = UnitPower("player", 4)
-    local p = pwr - 1
-
-    if pwr > 0 and not self:IsShown() and UnitExists("target") then
-        self:Show()
-    end
-
+    local pwrMax = UnitPowerMax("player", Enum.PowerType.ComboPoints)
+    local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
+    local chargedPowerPoints = GetUnitChargedPowerPoints("player")
+    local chargedPowerPointIndex = chargedPowerPoints and chargedPowerPoints[1]
+    local old_power = self.gwPower 
     self.gwPower = pwr
 
-    self.background:SetTexCoord(0, 1, 0.125 * (pwrMax - 1), 0.125 * pwrMax)
-    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+    if pwr > 0 and not self:IsShown() and UnitExists("target") then
+        self.combopoints:Show()
+    end
 
-    if old_power < pwr and event ~= "CLASS_POWER_INIT" then
-        animFlare(self, 40)
+    -- hide all not needed ones
+    for i = pwrMax + 1, 9 do
+        self.combopoints["runeTex" .. i]:Hide()
+        self.combopoints["combo" .. i]:Hide()
+    end
+
+    for i = 1, pwrMax do
+        if pwr >= i then
+            local isCharged = i == chargedPowerPointIndex
+            if isCharged then
+                self.combopoints["combo" .. i]:SetTexCoord(0, 0.5, 0.5, 1)
+            else
+                self.combopoints["combo" .. i]:SetTexCoord(0.5, 1, 0.5, 0)
+            end
+            self.combopoints["runeTex" .. i]:Show()
+            self.combopoints["combo" .. i]:Show()
+            self.combopoints.comboFlare:ClearAllPoints()
+            self.combopoints.comboFlare:SetPoint("CENTER", self.combopoints["combo" .. i],"CENTER", 0, 0)
+            if pwr > old_power then
+                self.combopoints.comboFlare:Show()
+                AddToAnimation(
+                    "COMBOPOINTS_FLARE",
+                    0,
+                    5,
+                    GetTime(),
+                    0.5,
+                    function()
+                        local p = animations["COMBOPOINTS_FLARE"]["progress"]
+                        self.combopoints.comboFlare:SetAlpha(p)
+                    end,
+                    nil,
+                    function()
+                        self.combopoints.comboFlare:Hide()
+                    end
+                )
+            end
+        else
+            self.combopoints["combo" .. i]:Hide()
+        end
     end
 end
 GW.AddForProfiling("classpowers", "powerCombo", powerCombo)
 
 local function setComboBar(f)
     f.barType = "combo"
-    f:SetHeight(40)
-    f:SetWidth(320)
-    f.background:SetHeight(32)
-    f.background:SetWidth(256)
-    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/combo-bg")
-    f.background:SetTexCoord(0, 1, 0.5, 1)
-    f.flare:SetWidth(128)
-    f.flare:SetHeight(128)
-    f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/combo-flash")
-    f.fill:SetHeight(40)
-    f.fill:SetWidth(320)
-    f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/combo")
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f:SetHeight(32)
+    f.combopoints:Show()
 
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
@@ -280,9 +304,14 @@ local function setComboBar(f)
 
     if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -5)
+        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -0, -5)
         f:SetWidth(220)
         f:SetHeight(30)
+        f.combopoints.comboFlare:SetSize(64, 64)
+        for i = 1, 9 do
+            f.combopoints["runeTex" .. i]:SetSize(18, 18)
+            f.combopoints["combo" .. i]:SetSize(18, 18)
+        end
         f:Hide()
     end
 end
@@ -1148,6 +1177,8 @@ local function selectType(f)
     f.disc:Hide()
     f.decay:Hide()
     f.exbar:Hide()
+    f.warlock:Hide()
+    f.combopoints:Hide()
     if f.ourPowerBar then
         f.lmb:Hide()
     end
