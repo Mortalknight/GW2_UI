@@ -419,7 +419,6 @@ local function loadDropDown(scrollFrame)
             slot:Hide()
         else
             if scrollFrame.data then
-                local item = scrollFrame.data.options[idx]
                 if not scrollFrame.data.hasCheckbox then
                     slot.checkbutton:Hide()
                     slot.string:ClearAllPoints()
@@ -512,7 +511,7 @@ local function InitPanel(panel)
             scrollFrame.of = of
             scrollFrame.update = loadDropDown
             scrollFrame.scrollBar.doNotHide = false
-            HybridScrollFrame_CreateButtons(scrollFrame, "GwDropDownItemTmpl", 0, -20, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
+            HybridScrollFrame_CreateButtons(scrollFrame, "GwDropDownItemTmpl", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
             for i = 1, #scrollFrame.buttons do
                 local slot = scrollFrame.buttons[i]
                 slot:SetWidth(scrollFrame:GetWidth())
