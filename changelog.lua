@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.6.1", [=[
+FIXES
+    - Fix wrong lib name
+]=])
+
 v("5.6.0", [=[
 NEW
     - Added error handler, so that yo can see in the chat if a error was caused by GW2 UI
