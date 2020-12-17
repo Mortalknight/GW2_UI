@@ -233,12 +233,13 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, dependence_value)
 
     opt["options"] = {}
     opt["options"] = options_list
     opt["options_names"] = option_names
+    opt["hasCheckbox"] = checkbox
     opt["optionType"] = "dropdown"
 end
 GW.AddOptionDropdown = AddOptionDropdown
@@ -403,6 +404,47 @@ local function checkDependenciesOnLoad()
     end
 end
 
+local function loadDropDown(scrollFrame)
+    local USED_DROPDOWN_HEIGHT
+
+    local offset = HybridScrollFrame_GetOffset(scrollFrame)
+    local ddCount = scrollFrame.numEntries
+
+    for i = 1, #scrollFrame.buttons do
+        local slot = scrollFrame.buttons[i]
+
+        local idx = i + offset
+        if idx > ddCount then
+            -- empty row (blank starter row, final row, and any empty entries)
+            slot:Hide()
+        else
+            if scrollFrame.data then
+                local item = scrollFrame.data.options[idx]
+                if not scrollFrame.data.hasCheckbox then
+                    slot.checkbutton:Hide()
+                    slot.string:ClearAllPoints()
+                    slot.string:SetPoint("LEFT", 5, 0)
+                else
+                    slot.checkbutton:Show()
+                end
+
+                slot.string:SetText(scrollFrame.data.options_names[idx])
+
+                if GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec) == scrollFrame.data.options[idx] then
+                    scrollFrame.of.button.string:SetText(scrollFrame.data.options_names[idx])
+                end
+
+                slot:Show()
+            else
+                slot:Hide()
+            end    
+        end
+    end
+
+    USED_DROPDOWN_HEIGHT = 20 * ddCount
+    HybridScrollFrame_Update(scrollFrame, USED_DROPDOWN_HEIGHT, 120)
+end
+
 local function InitPanel(panel)
     if not panel or not panel.gwOptions then
         return
@@ -462,51 +504,44 @@ local function InitPanel(panel)
         of:SetScript("OnLeave", GameTooltip_Hide)
 
         if v.optionType == "dropdown" then
-            local i = 1
-            local pre = of.container
-            for key, val in pairs(v.options) do
-                local dd =
-                    CreateFrame(
-                    "Button",
-                    nil,
-                    of.container,
-                    "GwDropDownItemTmpl"
-                )
-                dd:SetPoint("TOPRIGHT", pre, "BOTTOMRIGHT")
+            local scrollFrame = of.container.contentScroll
+            scrollFrame.numEntries = #v.options
+            scrollFrame.scrollBar.thumbTexture:SetSize(12, 30)
+            
+            scrollFrame.data = GW.copyTable(nil, v)
+            scrollFrame.of = of
+            scrollFrame.update = loadDropDown
+            scrollFrame.scrollBar.doNotHide = false
+            HybridScrollFrame_CreateButtons(scrollFrame, "GwDropDownItemTmpl", 0, -20, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
+            for i = 1, #scrollFrame.buttons do
+                local slot = scrollFrame.buttons[i]
+                slot:SetWidth(scrollFrame:GetWidth())
+                slot.string:SetFont(UNIT_NAME_FONT, 12)
+                slot.of = of
+                if not slot.ScriptsHooked then
+                    slot:HookScript("OnClick", function(self)
+                        of.button.string:SetText(v.options_names[i])
 
-                dd.string:SetFont(UNIT_NAME_FONT, 12)
-                of.button.string:SetFont(UNIT_NAME_FONT, 12)
-                dd.string:SetText(v.options_names[key])
-                pre = dd
-
-                if GetSetting(v.optionName, v.perSpec) == val then
-                    of.button.string:SetText(v.options_names[key])
-                end
-
-                dd:SetScript(
-                    "OnClick",
-                    function(self, button)
-                        local ddof = self:GetParent():GetParent()
-                        ddof.button.string:SetText(v.options_names[key])
-
-                        if ddof.container:IsShown() then
-                            ddof.container:Hide()
+                        if of.container:IsShown() then
+                            of.container:Hide()
                         else
-                            ddof.container:Show()
+                            of.container:Show()
                         end
 
-                        SetSetting(v.optionName, val, v.perSpec)
+                        SetSetting(v.optionName, v.options[i], v.perSpec)
 
                         if v.callback ~= nil then
                             v.callback()
                         end
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
-                    end
-                )
-
-                i = i + 1
+                    end)
+                    slot.ScriptsHooked = true
+                end
             end
+            loadDropDown(scrollFrame)
+
+            of.button.string:SetFont(UNIT_NAME_FONT, 12)
             of.button:SetScript(
                 "OnClick",
                 function(self, button)
@@ -515,6 +550,16 @@ local function InitPanel(panel)
                         dd.container:Hide()
                     else
                         dd.container:Show()
+                    end
+                end
+            )
+            scrollFrame:SetScript(
+                "OnMouseDown",
+                function(self)
+                    if self:GetParent():IsShown() then
+                        self:GetParent():Hide()
+                    else
+                        self:GetParent():Show()
                     end
                 end
             )

@@ -309,6 +309,14 @@
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
                 </Anchors>
+                 <Frames>
+                    <ScrollFrame parentKey="contentScroll" inherits="GwHybridScrollFrameTemplate">
+                        <Size x="250" y="120"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        </Anchors>
+                    </ScrollFrame>
+                </Frames>
             </Frame>
             <Button parentKey="button">
                 <Size x="250" y="20"/>
@@ -333,7 +341,6 @@
                                 <Anchor point="CENTER"/>
                             </Anchors>
                         </FontString>
-
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="4">
                         <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down">
@@ -366,11 +373,22 @@
                     <Size x="240" y="20"/>
                     <Color r="1" b="1" g="1"/>
                     <Anchors>
-                        <Anchor point="CENTER"/>
+                        <Anchor point="LEFT" x="25" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
+        <Frames>
+            <CheckButton parentKey="checkbutton" checked="false">
+                <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                <Size x="16" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                </Anchors>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
+            </CheckButton>
+        </Frames>
     </Button>
 
     <Button name="GwOptionBoxTextTmpl" frameStrata="HIGH" virtual="true">

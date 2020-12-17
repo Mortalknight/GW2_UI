@@ -263,6 +263,7 @@ local function copyTable(newTable, tableToCopy)
 
     return newTable
 end
+GW.copyTable = copyTable
 
 local function copy_OnClick(self, button)
     local newProfil = copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
