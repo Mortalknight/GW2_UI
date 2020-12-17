@@ -45,6 +45,9 @@ core/slashcommands.lua
 
 settings/defaults.lua
 settings/api.lua
+
+core/raid_debuffs.lua
+
 settings/settings.xml
 settings/panel_modules.xml
 settings/panel_profiles.xml

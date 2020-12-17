@@ -15,7 +15,7 @@ local function LoadAurasPanel(sWindow)
     p.sub:Hide()
 
     local p_auras = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
-    p_auras:SetHeight(140)
+    p_auras:SetHeight(180)
     p_auras:ClearAllPoints()
     p_auras:SetPoint("TOPLEFT", p, "TOPLEFT", 0, 0)
     p_auras.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -26,7 +26,7 @@ local function LoadAurasPanel(sWindow)
     p_auras.sub:SetText(L["RAID_AURAS_DESC"])
 
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
-    p_indicator:SetHeight(360)
+    p_indicator:SetHeight(340)
     p_indicator:ClearAllPoints()
     p_indicator:SetPoint("TOPLEFT", p_auras, "BOTTOMLEFT", 0, 0)
     p_indicator.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -40,6 +40,31 @@ local function LoadAurasPanel(sWindow)
 
     addOptionText(p_auras, L["RAID_AURAS_IGNORED"], L["RAID_AURAS_IGNORED_DESC"], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
     addOptionText(p_auras, L["RAID_AURAS_MISSING"], L["RAID_AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
+
+    local raidDebuffKeys, raidDebuffVales = {}, {}
+    for spellID, value in pairs(GW.ImportendRaidDebuff) do
+        if spellID and GetSpellInfo(spellID) then
+            local name = GetSpellInfo(spellID) .. " (" .. spellID .. ")"
+            tinsert(raidDebuffKeys, spellID)
+            tinsert(raidDebuffVales, name)
+        end
+    end
+
+    addOptionDropdown(
+        p_auras,
+            L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"],
+            L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"],
+            "RAIDDEBUFFS",
+            function(toSet, id)
+                GW.ImportendRaidDebuff[id] = toSet
+            end,
+            raidDebuffKeys,
+            raidDebuffVales,
+            nil,
+            nil,
+            true
+        )
+
     addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
 

@@ -432,6 +432,14 @@ local function loadDropDown(scrollFrame)
                 if GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec) == scrollFrame.data.options[idx] then
                     scrollFrame.of.button.string:SetText(scrollFrame.data.options_names[idx])
                 end
+                if scrollFrame.data.hasCheckbox then
+                    local settingstable = GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec)
+                    if settingstable[scrollFrame.data.options[idx]] then
+                        slot.checkbutton:SetChecked(true)
+                    else
+                        slot.checkbutton:SetChecked(false)
+                    end
+                end
 
                 slot:Show()
             else
@@ -531,6 +539,20 @@ local function InitPanel(panel)
 
                         if v.callback ~= nil then
                             v.callback()
+                        end
+                        --Check all dependencies on this option
+                        checkDependenciesOnLoad()
+                    end)
+                    slot.checkbutton:HookScript("OnClick", function(self)
+                        local toSet = false
+                        if self:GetChecked() then
+                            toSet = true
+                        end
+
+                        SetSetting(v.optionName, toSet, v.perSpec, v.options[i])
+
+                        if v.callback ~= nil then
+                            v.callback(toSet, v.options[i])
                         end
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()

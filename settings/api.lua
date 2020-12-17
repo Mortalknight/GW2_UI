@@ -65,7 +65,7 @@ local function GetSetting(name, perSpec)
 end
 GW.GetSetting = GetSetting
 
-local function SetSetting(name, state, perSpec)
+local function SetSetting(name, state, perSpec, tableID)
     local profileIndex = GetActiveProfile()
     
     local settings = GW2UI_SETTINGS_DB_03
@@ -80,6 +80,8 @@ local function SetSetting(name, state, perSpec)
             settings[name] = {[0] = settings[name]}
         end
         settings[name][spec] = state
+    elseif tableID then
+        settings[name][tableID] = state
     else
         settings[name] = state
     end

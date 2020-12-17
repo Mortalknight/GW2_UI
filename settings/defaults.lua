@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local GW_DEFAULT = {}
+local GW_DEFAULT = GW.DEFAULTS or {}
 GW.DEFAULTS = GW_DEFAULT
 
 GW_DEFAULT["GW2_UI_VERSION"] = "WELCOME"
