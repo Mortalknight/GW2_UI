@@ -30,7 +30,11 @@ local function LoadSlashCommands()
                 DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
                 return
             end
-            GW.moveHudObjects(GwSettingsWindowMoveHud)
+            if GW.MoveHudScaleableFrame:IsShown() then
+                GW.lockHudObjects(GW.MoveHudScaleableFrame)
+            else
+                GW.moveHudObjects(GW.MoveHudScaleableFrame)
+            end
         elseif msg == "reset profile" then
                 GW.WarningPrompt(
                     GW.L["PROFILES_DEFAULT_SETTINGS_PROMPT"],

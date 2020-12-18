@@ -587,7 +587,7 @@
     </Frame>
 
     <Frame name="GwSmallSettings" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" parent="UIParent" virtual="true">
-        <Size x="180" y="180"/>
+        <Size x="180" y="260"/>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSmallSettingsMoverFrame" relativePoint="TOP" x="0" y="-20"></Anchor>
         </Anchors>
@@ -767,7 +767,7 @@
             <Frame parentKey="movers" text="">
                 <Size x="170" y="40"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="40" />
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="105" />
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -781,22 +781,22 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="left" inherits="GwStandardButton">
+                    <Button parentKey="left">
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="37" y="-5" />
                         </Anchors>
                     </Button>
-                    <Button parentKey="right" inherits="GwStandardButton">
+                    <Button parentKey="right">
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="62" y="-5" />
                         </Anchors>
                     </Button>
-                    <Button parentKey="up" inherits="GwStandardButton">
+                    <Button parentKey="up">
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="87" y="-5" />
                         </Anchors>
                     </Button>
-                    <Button parentKey="down" inherits="GwStandardButton">
+                    <Button parentKey="down">
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="112" y="-5" />
                         </Anchors>
@@ -806,10 +806,37 @@
             <Button parentKey="default" inherits="GwStandardButton" text="RESET_TO_DEFAULT">
                 <Size x="170" y="20" />
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="5" />
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="80" />
                 </Anchors>
             </Button>
-        </Frames>
+            <Button parentKey="lockHud" inherits="GwStandardButton" text="LOCK HUD">
+                <Size x="170" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="55" />
+                </Anchors>
+            </Button>
+            <Button parentKey="showGrid" inherits="GwStandardButton" text="SHOW GRID">
+                <Size x="170" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="30" />
+                </Anchors>
+            </Button>
+            <EditBox parentKey="gridAlign" inherits="GwStandardInputBox">
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="5" />
+                </Anchors>
+                    <Layers>
+                        <Layer>
+                        <FontString parentKey="text" text="GRID ALIGN" inherits="GW_Standard_Button_Font" justifyH="LEFT">
+                            <Size x="130" y="20"/>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="LEFT" x="-5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </EditBox>
+        </Frames> 
     </Frame>
 
 </Ui>

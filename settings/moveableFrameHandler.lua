@@ -4,6 +4,168 @@ local SetSetting = GW.SetSetting
 local GetDefault = GW.GetDefault
 local L = GW.L
 
+local settings_window_open_before_change = false
+local function lockHudObjects(self, inCombat)
+    GW.MoveHudScaleableFrame:UnregisterAllEvents()
+    if InCombatLockdown() then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+        return
+    end
+
+    GW.MoveHudScaleableFrame:Hide()
+    if settings_window_open_before_change and inCombat ~= true then
+        settings_window_open_before_change = false
+        GwSettingsWindow:Show()
+    end
+
+    for i, mf in ipairs(GW.MOVABLE_FRAMES) do
+        mf:EnableMouse(false)
+        mf:SetMovable(false)
+        mf:Hide()
+    end
+    if GW.MoveHudScaleableFrame.showGrid.grid then
+        GW.MoveHudScaleableFrame.showGrid.grid:Hide()
+        GW.MoveHudScaleableFrame.gridAlign:Hide()
+        GW.MoveHudScaleableFrame.showGrid.forceHide = false
+        GW.MoveHudScaleableFrame.showGrid:SetText(L["GRID_BUTTON_SHOW"])
+    end
+end
+GW.lockHudObjects = lockHudObjects
+GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
+
+local function moveHudObjects(self)
+    if GwSettingsWindow:IsShown() then
+        settings_window_open_before_change = true
+    end
+    GwSettingsWindow:Hide()
+    for i, mf in pairs(GW.MOVABLE_FRAMES) do
+        mf:EnableMouse(true)
+        mf:SetMovable(true)
+        mf:Show()
+    end
+    GW.MoveHudScaleableFrame.scaleSlider:Hide()
+    GW.MoveHudScaleableFrame.heightSlider:Hide()
+    GW.MoveHudScaleableFrame.default:Hide()
+    GW.MoveHudScaleableFrame.movers:Hide()
+    GW.MoveHudScaleableFrame.desc:Show()
+    GW.MoveHudScaleableFrame:Show()
+
+    -- register event to close move hud in combat
+    self:RegisterEvent("PLAYER_REGEN_DISABLED")
+    self:SetScript("OnEvent", function(self, event)
+        if event == "PLAYER_REGEN_DISABLED" then
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+            self:UnregisterEvent(event)
+            lockHudObjects(self, true)
+        end
+    end)
+end
+GW.moveHudObjects = moveHudObjects
+
+local function Grid_GetRegion(mhgb)
+    if mhgb.grid then
+        if mhgb.grid.regionCount and mhgb.grid.regionCount > 0 then
+            local line = select(mhgb.grid.regionCount, mhgb.grid:GetRegions())
+            mhgb.grid.regionCount = mhgb.grid.regionCount - 1
+            line:SetAlpha(1)
+            return line
+        else
+            return mhgb.grid:CreateTexture()
+        end
+    end
+end
+
+local function create_grid(mhgb)
+    if not mhgb.grid then
+        mhgb.grid = CreateFrame("Frame", nil, UIParent)
+        mhgb.grid:SetFrameStrata("BACKGROUND")
+    else
+        mhgb.grid.regionCount = 0
+        local numRegions = mhgb.grid:GetNumRegions()
+        for i = 1, numRegions do
+            local region = select(i, mhgb.grid:GetRegions())
+            if region and region.IsObjectType and region:IsObjectType("Texture") then
+                mhgb.grid.regionCount = mhgb.grid.regionCount + 1
+                region:SetAlpha(0)
+            end
+        end
+    end
+
+    local size = (1 / 0.64) - ((1 - (768 / GW.screenHeight)) / 0.64)
+    local width, height = UIParent:GetSize()
+    local ratio = width / height
+    local hStepheight = height * ratio
+    local wStep = width / mhgb.gridSize
+    local hStep = hStepheight / mhgb.gridSize
+
+    mhgb.grid.boxSize = mhgb.gridSize
+    mhgb.grid:SetPoint("CENTER", UIParent)
+    mhgb.grid:SetSize(width, height)
+    mhgb.grid:Hide()
+
+    for i = 0, mhgb.gridSize do
+        local tx = Grid_GetRegion(mhgb)
+        if i == mhgb.gridSize / 2 then
+            tx:SetColorTexture(1, 0, 0)
+            tx:SetDrawLayer("BACKGROUND", 1)
+        else
+            tx:SetColorTexture(0, 0, 0)
+            tx:SetDrawLayer("BACKGROUND", 0)
+        end
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", i * wStep - (size / 2), 0)
+        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "BOTTOMLEFT", i * wStep + (size / 2), 0)
+    end
+
+    do
+        local tx = Grid_GetRegion(mhgb)
+        tx:SetColorTexture(1, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 1)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", 0, -(height / 2) + (size / 2))
+        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "TOPRIGHT", 0, -(height / 2 + size / 2))
+    end
+
+    for i = 1, floor((height / 2) / hStep) do
+        local tx = Grid_GetRegion(mhgb)
+        tx:SetColorTexture(0, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 0)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", 0, -(height / 2 + i * hStep) + (size / 2))
+        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "TOPRIGHT", 0, -(height / 2 + i * hStep + size / 2))
+
+        tx = Grid_GetRegion(mhgb)
+        tx:SetColorTexture(0, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 0)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", 0, -(height / 2 - i * hStep) + (size / 2))
+        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "TOPRIGHT", 0, -(height / 2 - i * hStep + size / 2))
+    end
+end
+
+local function Grid_Show_Hide(self)
+    local self = self:GetParent()
+    if self.showGrid.forceHide then
+        if self.showGrid.grid then
+            self.showGrid.grid:Hide()
+        end
+        self.gridAlign:Hide()
+        self.showGrid.forceHide = false
+        self.showGrid:SetText(L["GRID_BUTTON_SHOW"])
+    else
+        if not self.showGrid.grid then
+            create_grid(self.showGrid)
+        elseif self.showGrid.grid.boxSize ~= self.showGrid.gridSize then
+            self.showGrid.grid:Hide()
+            create_grid(self.showGrid)
+        end
+        self.gridAlign:Show()
+        self.showGrid.grid:Show()
+        self.showGrid.forceHide = true
+        self.showGrid:SetText(L["GRID_BUTTON_HIDE"])
+    end
+end
+
 local function CheckIfMoved(self, settingsName, new_point)
     -- check if we need to know if the frame is on its default position
     if self.gw_isMoved ~= nil then
@@ -449,6 +611,46 @@ local function LoadMovers()
     end)
 
     moverSettingsFrame.default:SetScript("OnClick", smallSettings_resetToDefault)
+
+    -- lock and grid button
+    moverSettingsFrame.lockHud:SetScript("OnClick", lockHudObjects)
+    moverSettingsFrame.lockHud:SetText(L["SETTING_LOCK_HUD"])
+
+    moverSettingsFrame.showGrid:SetScript("OnClick", Grid_Show_Hide)
+    moverSettingsFrame.showGrid:SetText(L["GRID_BUTTON_SHOW"])
+    moverSettingsFrame.showGrid.gridSize = 64
+    moverSettingsFrame.showGrid.forceHide = false
+    create_grid(moverSettingsFrame.showGrid)
+
+    moverSettingsFrame.gridAlign:SetScript("OnEscapePressed", function(eb)
+        eb:SetText(moverSettingsFrame.showGrid.gridSize)
+        EditBox_ClearFocus(eb)
+    end)
+    moverSettingsFrame.gridAlign:SetScript("OnEnterPressed", function(eb)
+        local text = eb:GetText()
+        if tonumber(text) then
+            if tonumber(text) <= 256 and tonumber(text) >= 4 then
+                moverSettingsFrame.showGrid.gridSize = tonumber(text)
+            else
+                eb:SetText(moverSettingsFrame.showGrid.gridSize)
+            end
+        else
+            eb:SetText(moverSettingsFrame.showGrid.gridSize)
+        end
+        moverSettingsFrame.showGrid.forceHide = false
+        Grid_Show_Hide(moverSettingsFrame.showGrid)
+        EditBox_ClearFocus(eb)
+    end)
+    moverSettingsFrame.gridAlign:SetScript("OnEditFocusLost", function(eb)
+        eb:SetText(moverSettingsFrame.showGrid.gridSize)
+    end)
+    moverSettingsFrame.gridAlign:SetScript("OnEditFocusGained", moverSettingsFrame.gridAlign.HighlightText)
+    moverSettingsFrame.gridAlign:SetScript("OnShow", function(eb)
+        EditBox_ClearFocus(eb)
+        eb:SetText(moverSettingsFrame.showGrid.gridSize)
+    end)
+    moverSettingsFrame.gridAlign.text:SetText(L["GRID_SIZE_LABLE"])
+    moverSettingsFrame.gridAlign:Hide()
 
     moverSettingsFrame:Hide()
     mf:Hide()

@@ -33,7 +33,7 @@ local function movehud_OnClick(self, button)
         return
     end
     self:GetParent():Hide()
-    GW.moveHudObjects(GwSettingsWindowMoveHud)
+    GW.moveHudObjects(GW.MoveHudScaleableFrame)
 end
 AddForProfiling("welcome", "movehud_OnClick", movehud_OnClick)
 
