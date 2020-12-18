@@ -32,6 +32,7 @@ locales/itIT.lua
 libs/libs.xml
 
 core/consts.lua
+core/raid_debuffs.lua
 core/toolkit.lua
 core/utils.lua
 core/itemlevel.lua
@@ -45,9 +46,6 @@ core/slashcommands.lua
 
 settings/defaults.lua
 settings/api.lua
-
-core/raid_debuffs.lua
-
 settings/settings.xml
 settings/panel_modules.xml
 settings/panel_profiles.xml

@@ -527,6 +527,7 @@ local function InitPanel(panel)
                 slot.of = of
                 if not slot.ScriptsHooked then
                     slot:HookScript("OnClick", function(self)
+                        if v.hasCheckbox then return end
                         of.button.string:SetText(v.options_names[i])
 
                         if of.container:IsShown() then

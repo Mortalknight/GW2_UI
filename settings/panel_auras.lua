@@ -42,28 +42,30 @@ local function LoadAurasPanel(sWindow)
     addOptionText(p_auras, L["RAID_AURAS_MISSING"], L["RAID_AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
+    local settingstable = GetSetting("RAIDDEBUFFS")
     for spellID, value in pairs(GW.ImportendRaidDebuff) do
         if spellID and GetSpellInfo(spellID) then
             local name = GetSpellInfo(spellID) .. " (" .. spellID .. ")"
             tinsert(raidDebuffKeys, spellID)
             tinsert(raidDebuffVales, name)
+
+            GW.ImportendRaidDebuff[spellID] = settingstable[spellID]
         end
     end
-
     addOptionDropdown(
         p_auras,
-            L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"],
-            L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"],
-            "RAIDDEBUFFS",
-            function(toSet, id)
-                GW.ImportendRaidDebuff[id] = toSet
-            end,
-            raidDebuffKeys,
-            raidDebuffVales,
-            nil,
-            nil,
-            true
-        )
+        L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"],
+        L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"],
+        "RAIDDEBUFFS",
+        function(toSet, id)
+            GW.ImportendRaidDebuff[id] = toSet
+        end,
+        raidDebuffKeys,
+        raidDebuffVales,
+        nil,
+        nil,
+        true
+    )
 
     addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})

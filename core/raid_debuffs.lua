@@ -4,10 +4,8 @@ GW.DEFAULTS.RAIDDEBUFFS = {}
 GW.ImportendRaidDebuff = {}
 
 local function SetDefaultOnTheFly(id)
-    local settingstable = GW.GetSetting("RAIDDEBUFFS")
-
     GW.DEFAULTS.RAIDDEBUFFS[id] = true
-    GW.ImportendRaidDebuff[id] = settingstable[id]
+    GW.ImportendRaidDebuff[id] = true
 end
 
 -- Mythic+ Dungeons
