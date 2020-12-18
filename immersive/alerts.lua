@@ -214,6 +214,7 @@ local function skinDungeonCompletionAlert(frame)
     end
 
     if frame.raidArt then frame.raidArt:Kill() end
+    if frame.dungeonArt then frame.dungeonArt:Kill() end
     if frame.dungeonArt1 then frame.dungeonArt1:Kill() end
     if frame.dungeonArt2 then frame.dungeonArt2:Kill() end
     if frame.dungeonArt3 then frame.dungeonArt3:Kill() end
