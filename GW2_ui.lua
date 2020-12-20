@@ -422,12 +422,12 @@ local function loadAddon(self)
     else
         --Setup addon button
         local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
-        GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
+        GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["GW2 UI Settings"]))
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
                 if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Settings are not available in combat!"])
                     return
                 end
                 ShowUIPanel(GwSettingsWindow)
@@ -435,7 +435,7 @@ local function loadAddon(self)
                 HideUIPanel(GameMenuFrame)
             end
         )
-        GameMenuFrame[L["SETTINGS_BUTTON"]] = GwMainMenuFrame
+        GameMenuFrame[L["GW2 UI Settings"]] = GwMainMenuFrame
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then
             GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
@@ -684,7 +684,7 @@ local function loadAddon(self)
     GW.UpdateHudScale()
 
     if (forcedMABags) then
-        GW.Notice(L["DISABLED_MA_BAGS"])
+        GW.Notice(L["MoveAnything bag handling disabled."])
     end
 
     --Add Shared Media

@@ -217,7 +217,7 @@ local function manageButton()
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
         _G[self:GetName() .. "Ground"]:SetFont(UNIT_NAME_FONT, 14)
         _G[self:GetName() .. "Ground"]:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-        _G[self:GetName() .. "Ground"]:SetText(L["GROUND_MARKER"])
+        _G[self:GetName() .. "Ground"]:SetText(L["WM"])
     end
     local fnGWMM_OnEvent = function(self)
         local inCombat = UnitAffectingCombat("player")

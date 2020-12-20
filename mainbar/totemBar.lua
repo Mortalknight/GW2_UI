@@ -118,7 +118,7 @@ local function Create_Totem_Bar()
 
     end)
 
-    GW.RegisterMovableFrame(gw_totem_bar, GW.L["CLASS_TOTEMS"], "TotemBar_pos", "VerticalActionBarDummy", nil, nil, {"scaleable"})
+    GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", "VerticalActionBarDummy", nil, nil, {"scaleable"})
     gw_totem_bar:ClearAllPoints()
     gw_totem_bar:SetPoint("TOPLEFT", gw_totem_bar.gwMover)
 end

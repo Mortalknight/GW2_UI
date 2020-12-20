@@ -27,7 +27,7 @@ local function xpbar_OnEnter()
     local isRestingString = ""
 
     if IsResting() then
-        isRestingString = L["EXP_BAR_TOOLTIP_EXP_RESTING"]
+        isRestingString = L[" (Resting)"]
     end
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
@@ -51,7 +51,7 @@ local function xpbar_OnEnter()
 
     if rested ~= nil and rested ~= 0 then
         GameTooltip:AddLine(
-            L["EXP_BAR_TOOLTIP_EXP_RESTED"] ..
+            L["Rested "] ..
                 CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,
@@ -239,7 +239,7 @@ local function xpbar_OnEvent(self, event)
         end
         if not lockLevelTextUnderMaxLevel then
             level = isParagon and getglobal("FACTION_STANDING_LABEL" .. standingId) or isFriend and friendTextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. standingId)
-            Nextlevel = isParagon and L["CHARACTER_PARAGON"] or isFriend and "" or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
 
         showBar3 = true
@@ -955,7 +955,7 @@ local function loadRewards()
     local f = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
 
     f.header:SetFont(DAMAGE_TEXT_FONT, 24)
-    f.header:SetText(L["LEVEL_REWARDS"])
+    f.header:SetText(L["Upcoming Level Rewards"])
 
     f.rewardHeader:SetFont(DAMAGE_TEXT_FONT, 11)
     f.rewardHeader:SetTextColor(0.6, 0.6, 0.6)
@@ -973,19 +973,19 @@ local function loadRewards()
 
     f.Item1.name:SetFont(DAMAGE_TEXT_FONT, 14)
     f.Item1.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item1.name:SetText(L["LEVEL_REWARDS"])
+    f.Item1.name:SetText(L["Upcoming Level Rewards"])
 
     f.Item2.name:SetFont(DAMAGE_TEXT_FONT, 14)
     f.Item2.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item2.name:SetText(L["LEVEL_REWARDS"])
+    f.Item2.name:SetText(L["Upcoming Level Rewards"])
 
     f.Item3.name:SetFont(DAMAGE_TEXT_FONT, 14)
     f.Item3.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item3.name:SetText(L["LEVEL_REWARDS"])
+    f.Item3.name:SetText(L["Upcoming Level Rewards"])
 
     f.Item4.name:SetFont(DAMAGE_TEXT_FONT, 14)
     f.Item4.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item4.name:SetText(L["LEVEL_REWARDS"])
+    f.Item4.name:SetText(L["Upcoming Level Rewards"])
 
     f:SetScript("OnShow", levelingRewards_OnShow)
 

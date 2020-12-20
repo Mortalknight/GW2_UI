@@ -15,21 +15,21 @@ end
 AddForProfiling("welcome", "settings_OnClick", settings_OnClick)
 
 local function toggle_OnClick(self, button)
-    if self:GetText() == L["CHANGELOG"] then
+    if self:GetText() == L["Changelog"] then
         self:GetParent().welcome:Hide()
         self:GetParent().changelog:Show()
-        self:SetText(L["WELCOME"])
+        self:SetText(L["Welcome"])
     else
         self:GetParent().changelog:Hide()
         self:GetParent().welcome:Show()
-        self:SetText(L["CHANGELOG"])
+        self:SetText(L["Changelog"])
     end
 end
 AddForProfiling("welcome", "toggle_OnClick", toggle_OnClick)
 
 local function movehud_OnClick(self, button)
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
         return
     end
     self:GetParent():Hide()
@@ -51,8 +51,8 @@ local function button1_OnClick()
 
     -- Start install Process
     if step == 0 then
-        wpanel.welcome.header:SetText(L["INSTALL_START_HEADER"] .. "\n\n\n\n")
-        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["INSTALL_DESCRIPTION_DSC"])
+        wpanel.welcome.header:SetText(L["Installation"] .. "\n\n\n\n")
+        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["This short installation process will help you to set up all of the necessary settings used by GW2 UI."])
         wpanel.welcome.button0:Hide()
         wpanel.welcome.button1:SetText(NEXT)
         wpanel.welcome.button1:Show()
@@ -64,10 +64,10 @@ local function button1_OnClick()
         end)
     elseif step == 1 then
         wpanel.welcome.header:SetText(CHAT .. "\n\n\n\n")
-        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["INSTALL_CHAT_DESC"])
+        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["This part sets up your chat window names, positions, and colors."])
         wpanel.welcome.button0:Hide()
-        wpanel.welcome.button1:SetText(L["INSTALL_CHAT_BTN"])
-        wpanel.welcome.button2:SetText(L["QUEST_VIEW_SKIP"])
+        wpanel.welcome.button1:SetText(L["Setup Chat"])
+        wpanel.welcome.button2:SetText(L["Skip"])
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Show()
 
@@ -118,7 +118,7 @@ local function button1_OnClick()
                 ToggleChatColorNamesByClassGroup(true, v)
             end
 
-            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CHAT_BTN"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["Complete"], nil, L["Setup Chat"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 2
             button1_OnClick()
@@ -129,10 +129,10 @@ local function button1_OnClick()
         end)
     elseif step == 2 then
         wpanel.welcome.header:SetText("CVars" .. "\n\n\n\n")
-        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["INSTALL_CVARS_DESC"])
+        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["This part sets up your World of Warcraft default options."])
         wpanel.welcome.button0:Hide()
-        wpanel.welcome.button1:SetText(L["INSTALL_CVARS_BTN"])
-        wpanel.welcome.button2:SetText(L["QUEST_VIEW_SKIP"])
+        wpanel.welcome.button1:SetText(L["Setup CVars"])
+        wpanel.welcome.button2:SetText(L["Skip"])
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Show()
 
@@ -154,7 +154,7 @@ local function button1_OnClick()
             SetCVar("fstack_preferParentKeys", 0)
             SetCVar("whisperMode", "inline")
 
-            GW2_UIAlertSystem.AlertSystem:AddAlert(L["INSTALL_FINISHED_BTN"], nil, L["INSTALL_CVARS_BTN"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["Complete"], nil, L["Setup CVars"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 3
             button1_OnClick()
@@ -164,11 +164,11 @@ local function button1_OnClick()
             button1_OnClick()
         end)
     elseif step == 3 then
-        wpanel.welcome.header:SetText(L["PIXEL_PERFECTION"] .. "\n\n\n\n\n\n")
-        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["WELCOME_SPLASH_WELCOME_TEXT_PP"])
+        wpanel.welcome.header:SetText(L["Pixel Perfect Mode"] .. "\n\n\n\n\n\n")
+        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["What is 'Pixel Perfect'?\n\nGW2 UI has a built-in setting called 'Pixel Perfect Mode'. What this means for you is that your user interface will look as was intended, with crisper textures and better scaling. Of course, you can toggle this off in the settings menu should you prefer."])
         wpanel.welcome.button0:Hide()
-        wpanel.welcome.button1:SetText(L["PIXEL_PERFECTION_ON"])
-        wpanel.welcome.button2:SetText(L["QUEST_VIEW_SKIP"])
+        wpanel.welcome.button1:SetText(L["Turn Pixel Perfect Mode On"])
+        wpanel.welcome.button2:SetText(L["Skip"])
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Show()
 
@@ -176,7 +176,7 @@ local function button1_OnClick()
             SetSetting("PIXEL_PERFECTION", true)
             GW.PixelPerfection()
 
-            GW2_UIAlertSystem.AlertSystem:AddAlert(L["PIXEL_PERFECTION"], nil, L["PIXEL_PERFECTION_ON"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 4
             button1_OnClick()
@@ -186,10 +186,10 @@ local function button1_OnClick()
             button1_OnClick()
         end)
     elseif step == 4 then
-        wpanel.welcome.header:SetText(L["INSTALL_FINISHED_HEADER"] .. "\n\n\n\n")
-        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["INSTALL_FINISHED_DESC"])
+        wpanel.welcome.header:SetText(L["Installation Complete"] .. "\n\n\n\n")
+        wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["You have now finished installing GW2 UI!"])
         wpanel.welcome.button0:Hide()
-        wpanel.welcome.button1:SetText(L["INSTALL_FINISHED_BTN"])
+        wpanel.welcome.button1:SetText(L["Complete"])
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Hide()
 
@@ -207,13 +207,13 @@ local function setDefaultOpenLayout()
     wpanel.welcome.subHeader:SetFont(DAMAGE_TEXT_FONT,22,"OUTLINE")
     wpanel.welcome.subHeader:SetTextColor(0.8,0.75,0.6,1)
 
-    wpanel.header:SetText(L["WELCOME_SPLASH_HEADER"])
-    wpanel.welcome.header:SetText(L["WELCOME_SPLASH_WELCOME_TEXT"] .. "\n\n\n\n\n\n\n\n")
-    wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["INSTALL_DESCRIPTION_HEADER"])
+    wpanel.header:SetText(L["Welcome to GW2 UI"])
+    wpanel.welcome.header:SetText(L["GW2 UI is a full user interface replacement. We have built the user interface with a modular approach, this means that if you dislike a certain part of the addon - or have another you prefer for that function - you can just disable that part, while keeping the rest of the interface intact.\nSome of the modules available to you are an immersive questing window, a full inventory replacement, as well as a full character window replacement. There are many more that you can enjoy, just take a look in the settings menu to see what's available to you!"] .. "\n\n\n\n\n\n\n\n")
+    wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["GW2 UI installation"])
 
     wpanel.close:SetText(CLOSE)
     wpanel.settings:SetText(CHAT_CONFIGURATION)
-    wpanel.welcome.button0:SetText(L["INSTALL_START_BTN"])
+    wpanel.welcome.button0:SetText(L["Start installation"])
     wpanel.welcome.button0:Show()
     wpanel.welcome.button1:Hide()
     wpanel.welcome.button2:Hide()
@@ -239,14 +239,14 @@ local function createPanel()
     wpanel.changelog.scroll.scrollchild.text:SetFont(DAMAGE_TEXT_FONT,14)
     wpanel.changelog.scroll.scrollchild.text:SetTextColor(0.8,0.75,0.6,1)
 
-    wpanel.changelog.header:SetText(L["CHANGELOG"])
+    wpanel.changelog.header:SetText(L["Changelog"])
 
     wpanel.subHeader:SetText(GW.VERSION_STRING)
     wpanel.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
     wpanel.changelog.scroll.slider:SetMinMaxValues(0, wpanel.changelog.scroll.scrollchild.text:GetStringHeight())
     wpanel.changelog.scroll.slider.thumb:SetHeight(100)
     wpanel.changelog.scroll.slider:SetValue(1)
-    wpanel.changelogORwelcome:SetText(L["CHANGELOG"])
+    wpanel.changelogORwelcome:SetText(L["Changelog"])
 
     -- settings button
     wpanel.settings.target = GwSettingsWindow
@@ -269,7 +269,7 @@ local function ShowWelcomePanel()
     end
     step = 0
     setDefaultOpenLayout()
-    wpanel.changelogORwelcome:SetText(L["CHANGELOG"])
+    wpanel.changelogORwelcome:SetText(L["Changelog"])
     wpanel.changelog:Hide()
     wpanel.welcome:Show()
     wpanel:Show()
@@ -281,7 +281,7 @@ local function ShowChangelogPanel()
         createPanel()
     end
     setDefaultOpenLayout()
-    wpanel.changelogORwelcome:SetText(L["WELCOME"])
+    wpanel.changelogORwelcome:SetText(L["Welcome"])
     wpanel.welcome:Hide()
     wpanel.changelog:Show()
     wpanel:Show()

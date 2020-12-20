@@ -8,7 +8,7 @@ local settings_window_open_before_change = false
 local function lockHudObjects(self, inCombat)
     GW.MoveHudScaleableFrame:UnregisterAllEvents()
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
         return
     end
 
@@ -27,7 +27,7 @@ local function lockHudObjects(self, inCombat)
         GW.MoveHudScaleableFrame.showGrid.grid:Hide()
         GW.MoveHudScaleableFrame.gridAlign:Hide()
         GW.MoveHudScaleableFrame.showGrid.forceHide = false
-        GW.MoveHudScaleableFrame.showGrid:SetText(L["GRID_BUTTON_SHOW"])
+        GW.MoveHudScaleableFrame.showGrid:SetText(L["Show grid"])
     end
 end
 GW.lockHudObjects = lockHudObjects
@@ -54,7 +54,7 @@ local function moveHudObjects(self)
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
     self:SetScript("OnEvent", function(self, event)
         if event == "PLAYER_REGEN_DISABLED" then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
             self:UnregisterEvent(event)
             lockHudObjects(self, true)
         end
@@ -151,7 +151,7 @@ local function Grid_Show_Hide(self)
         end
         self.gridAlign:Hide()
         self.showGrid.forceHide = false
-        self.showGrid:SetText(L["GRID_BUTTON_SHOW"])
+        self.showGrid:SetText(L["Show grid"])
     else
         if not self.showGrid.grid then
             create_grid(self.showGrid)
@@ -162,7 +162,7 @@ local function Grid_Show_Hide(self)
         self.gridAlign:Show()
         self.showGrid.grid:Show()
         self.showGrid.forceHide = true
-        self.showGrid:SetText(L["GRID_BUTTON_HIDE"])
+        self.showGrid:SetText(L["Hide grid"])
     end
 end
 
@@ -282,11 +282,11 @@ local function mover_OnDragStop(self)
         local screenHeight = UIParent:GetTop()
         if y > (screenHeight / 2) then
             if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
+                self.frameName:SetText(L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
             end
         else
             if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["ALERTFRAMES"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
+                self.frameName:SetText(L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
             end
         end
     elseif settingsName == "MinimapPos" then
@@ -311,12 +311,12 @@ local function mover_options(self, button)
         if GW.MoveHudScaleableFrame.child == self then
             GW.MoveHudScaleableFrame.child = nil
             GW.MoveHudScaleableFrame.childMover = nil
-            GW.MoveHudScaleableFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
+            GW.MoveHudScaleableFrame.headerString:SetText(L["Extra Frame Options"])
             GW.MoveHudScaleableFrame.scaleSlider:Hide()
             GW.MoveHudScaleableFrame.heightSlider:Hide()
             GW.MoveHudScaleableFrame.default:Hide()
             GW.MoveHudScaleableFrame.movers:Hide()
-            GW.MoveHudScaleableFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
+            GW.MoveHudScaleableFrame.desc:SetText(L["Right click on a moverframe to show extra frame options"])
             GW.MoveHudScaleableFrame.desc:Show()
             GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
         else
@@ -509,12 +509,12 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
                 if GW.MoveHudScaleableFrame.child == "nil" then
                     GW.MoveHudScaleableFrame.child = nil
                     GW.MoveHudScaleableFrame.childMover = nil
-                    GW.MoveHudScaleableFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
+                    GW.MoveHudScaleableFrame.headerString:SetText(L["Extra Frame Options"])
                     GW.MoveHudScaleableFrame.scaleSlider:Hide()
                     GW.MoveHudScaleableFrame.heightSlider:Hide()
                     GW.MoveHudScaleableFrame.default:Hide()
                     GW.MoveHudScaleableFrame.movers:Hide()
-                    GW.MoveHudScaleableFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
+                    GW.MoveHudScaleableFrame.desc:SetText(L["Right click on a moverframe to show extra frame options"])
                     GW.MoveHudScaleableFrame.desc:Show()
                     GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
                 else
@@ -525,7 +525,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
                     GW.MoveHudScaleableFrame.heightSlider:Hide()
                     GW.MoveHudScaleableFrame.default:Hide()
                     GW.MoveHudScaleableFrame.movers:Show()
-                    GW.MoveHudScaleableFrame.desc:SetText(format(L["SMALL_SETTINGS_NO_SETTINGS_FOR"], displayName))
+                    GW.MoveHudScaleableFrame.desc:SetText(format(L["No extra frame options for '%s'"], displayName))
                     GW.MoveHudScaleableFrame.desc:Show()
                     if GW.MoveHudScaleableFrame.activeFlasher then
                         GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
@@ -583,14 +583,14 @@ local function LoadMovers()
     moverSettingsFrame.heightSlider.input:SetFont(UNIT_NAME_FONT, 7)
     moverSettingsFrame.heightSlider.input:SetScript("OnEnterPressed", heightEditBoxValueChanged)
 
-    moverSettingsFrame.desc:SetText(L["SMALL_SETTINGS_DEFAULT_DESC"])
+    moverSettingsFrame.desc:SetText(L["Right click on a moverframe to show extra frame options"])
     moverSettingsFrame.desc:SetFont(UNIT_NAME_FONT, 12)
     moverSettingsFrame.scaleSlider.title:SetFont(UNIT_NAME_FONT, 12)
-    moverSettingsFrame.scaleSlider.title:SetText(L["SMALL_SETTINGS_OPTION_SCALE"])
+    moverSettingsFrame.scaleSlider.title:SetText(L["Scale"])
     moverSettingsFrame.heightSlider.title:SetFont(UNIT_NAME_FONT, 12)
     moverSettingsFrame.heightSlider.title:SetText(COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT)
     moverSettingsFrame.headerString:SetFont(UNIT_NAME_FONT, 14)
-    moverSettingsFrame.headerString:SetText(L["SMALL_SETTINGS_HEADER"])
+    moverSettingsFrame.headerString:SetText(L["Extra Frame Options"])
 
     moverSettingsFrame.movers.title:SetText(NPE_MOVE )
     moverSettingsFrame.movers.title:SetFont(UNIT_NAME_FONT, 12)
@@ -614,10 +614,10 @@ local function LoadMovers()
 
     -- lock and grid button
     moverSettingsFrame.lockHud:SetScript("OnClick", lockHudObjects)
-    moverSettingsFrame.lockHud:SetText(L["SETTING_LOCK_HUD"])
+    moverSettingsFrame.lockHud:SetText(L["Lock HUD"])
 
     moverSettingsFrame.showGrid:SetScript("OnClick", Grid_Show_Hide)
-    moverSettingsFrame.showGrid:SetText(L["GRID_BUTTON_SHOW"])
+    moverSettingsFrame.showGrid:SetText(L["Show grid"])
     moverSettingsFrame.showGrid.gridSize = 64
     moverSettingsFrame.showGrid.forceHide = false
     create_grid(moverSettingsFrame.showGrid)
@@ -649,7 +649,7 @@ local function LoadMovers()
         EditBox_ClearFocus(eb)
         eb:SetText(moverSettingsFrame.showGrid.gridSize)
     end)
-    moverSettingsFrame.gridAlign.text:SetText(L["GRID_SIZE_LABLE"])
+    moverSettingsFrame.gridAlign.text:SetText(L["Grid Size:"])
     moverSettingsFrame.gridAlign:Hide()
 
     moverSettingsFrame:Hide()

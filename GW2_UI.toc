@@ -16,6 +16,8 @@
 core/TaintLess.xml
 core/debug.lua
 core/errorHandler.lua
+core/locationData.lua
+libs/libs.xml
 
 locales/enUS.lua
 locales/deDE.lua
@@ -29,9 +31,8 @@ locales/frFR.lua
 locales/zhCN.lua
 locales/itIT.lua
 
-libs/libs.xml
-
 core/consts.lua
+core/init.lua
 core/raid_debuffs.lua
 core/toolkit.lua
 core/utils.lua
@@ -39,8 +40,6 @@ core/itemlevel.lua
 core/shared.xml
 core/fonts.lua
 core/storage.lua
-core/locationData.lua
-core/init.lua
 core/statusReport.lua
 core/slashcommands.lua
 

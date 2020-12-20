@@ -620,13 +620,13 @@ local function LoadSettings()
     sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
     sWindow.versionString:SetText(GW.VERSION_STRING)
     sWindow.headerString:SetText(CHAT_CONFIGURATION)
-    fmGSWMH:SetText(L["MOVE_HUD_BUTTON"])
-    fmGSWS:SetText(L["SETTINGS_SAVE_RELOAD"])
+    fmGSWMH:SetText(L["Move HUD"])
+    fmGSWS:SetText(L["Save and Reload"])
     fmGSWKB:SetText(KEY_BINDING)
-    fmGSWD:SetText(L["DISCORD"])
+    fmGSWD:SetText(L["Join Discord"])
 
     StaticPopupDialogs["JOIN_DISCORD"] = {
-        text = L["DISCORD"],
+        text = L["Join Discord"],
         button2 = CLOSE,
         timeout = 0,
         whileDead = true,
@@ -653,7 +653,7 @@ local function LoadSettings()
 
     local fnGSWMH_OnClick = function(self, button)
         if InCombatLockdown() then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
             return
         end
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
@@ -708,7 +708,7 @@ local function LoadSettings()
             if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
                 self:Hide()
                 mf:Hide()
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFB900<GW2_UI>|r " .. L["Settings are not available in combat!"])
                 sWindow.wasOpen = true
             elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
                 self:Show()

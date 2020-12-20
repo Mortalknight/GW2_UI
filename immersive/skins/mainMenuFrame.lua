@@ -27,11 +27,11 @@ local ICON_SPRITES = {
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
     local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
-    if relTo ~= GameMenuFrame[L["SETTINGS_BUTTON"]] then
-        GameMenuFrame[L["SETTINGS_BUTTON"]]:ClearAllPoints()
-        GameMenuFrame[L["SETTINGS_BUTTON"]]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
+    if relTo ~= GameMenuFrame[L["GW2 UI Settings"]] then
+        GameMenuFrame[L["GW2 UI Settings"]]:ClearAllPoints()
+        GameMenuFrame[L["GW2 UI Settings"]]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
         GameMenuButtonLogout:ClearAllPoints()
-        GameMenuButtonLogout:SetPoint("TOPLEFT", GameMenuFrame[L["SETTINGS_BUTTON"]], "BOTTOMLEFT", 0, offY)
+        GameMenuButtonLogout:SetPoint("TOPLEFT", GameMenuFrame[L["GW2 UI Settings"]], "BOTTOMLEFT", 0, offY)
     end
 end
 GW.PositionGameMenuButton = PositionGameMenuButton
@@ -70,12 +70,12 @@ local function SkinMainMenu()
     local GameMenuFrame = _G.GameMenuFrame
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
-    GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
+    GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["GW2 UI Settings"]))
     GwMainMenuFrame:SetScript(
         "OnClick",
         function()
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Settings are not available in combat!"])
                 return
             end
             ShowUIPanel(GwSettingsWindow)
@@ -83,7 +83,7 @@ local function SkinMainMenu()
             HideUIPanel(GameMenuFrame)
         end
     )
-    GameMenuFrame[L["SETTINGS_BUTTON"]] = GwMainMenuFrame
+    GameMenuFrame[L["GW2 UI Settings"]] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3} }
 
     if not IsAddOnLoaded("ConsolePortUI_Menu") then

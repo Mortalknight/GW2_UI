@@ -371,7 +371,7 @@ local function setDetailEx(
         end
 
         frame.currentRank:SetText(currentRank)
-        frame.nextRank:SetText(L["CHARACTER_PARAGON"])
+        frame.nextRank:SetText(L["Paragon"])
 
         frame.currentValue:SetText(CommaValue(currentValue))
         frame.nextValue:SetText(CommaValue(maxValueParagon))
@@ -663,7 +663,7 @@ local function setupDetail(self)
     self.detailsbg:Hide()
 
     self.currentRank:SetText(REFORGE_CURRENT)
-    self.nextRank:SetText(L["CHARACTER_NEXT_RANK"])
+    self.nextRank:SetText(NEXT)
     self:GetParent():SetScript("OnClick", details_OnClick)
     self:GetParent():SetScript("OnEnter", function(self)
         self.item.repbg:SetBlendMode("ADD")

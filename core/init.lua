@@ -2,8 +2,32 @@
 local _, GW = ...
 
 -- init: store API, to reduce the API usage
+local function GetPlayerRole()
+    local assignedRole = UnitGroupRolesAssigned("player")
+    if assignedRole == "NONE" then
+        return GW.myspec and GetSpecializationRole(GW.myspec)
+    end
+
+    return assignedRole
+end
+GW.GetPlayerRole = GetPlayerRole
+
+local function CheckRole()
+    GW.myspec = GetSpecialization()
+    GW.myrole = GetPlayerRole()
+
+    -- myrole = group role; TANK, HEALER, DAMAGER
+
+    local dispel = GW.DispelClasses[GW.myclass]
+    if GW.myrole and (GW.myclass ~= "PRIEST" and dispel ~= nil) then
+        dispel.Magic = (GW.myrole == "HEALER")
+    end
+end
+GW.CheckRole = CheckRole
 
 --Constants
+local gameLocale = GetLocale()
+GW.mylocal = gameLocale == "enGB" and "enUS" or gameLocale
 GW.NoOp = function() end
 GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
 GW.myLocalizedClass, GW.myclass, GW.myClassID = UnitClass("player")
@@ -14,7 +38,6 @@ GW.mysex = UnitSex("player")
 GW.mylevel = UnitLevel("player")
 GW.myeffectivelevel = UnitEffectiveLevel("player")
 GW.myspec = GetSpecialization()
-GW.mylocal = GetLocale()
 GW.CheckRole()
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
@@ -57,8 +80,11 @@ do
     AddLib("Compress", "LibCompress", true)
     AddLib("Serializer", "AceSerializer-3.0", true)
     AddLib("LibBase64", "LibBase64-1.0_GW2", true)
+    AddLib("AceLocale", "AceLocale-3.0", true)
 end
 
+-- Locale doesn't exist yet, make it exist
+GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI") 
 
 -- remove the NPE, conflicts with customs hero and spell book panel
 local NPERemoveFrame = CreateFrame("Frame")

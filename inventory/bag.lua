@@ -72,7 +72,7 @@ local function sellJunk()
     if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
         StopSelling() 
         if totalPrice > 0 then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["SELLING_JUNK_FOR"]:format(FormatMoneyForChat(totalPrice)))
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Sold junk for: %s"]:format(FormatMoneyForChat(totalPrice)))
         end
     end
 end
@@ -611,7 +611,7 @@ end
 local function bagHeader_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, -45)
     GameTooltip:ClearLines()
-    GameTooltip_SetTitle(GameTooltip, L["SEPARATE_BAGS_CHANGE_HEADER_TOOLTIP"])
+    GameTooltip_SetTitle(GameTooltip, L["Right click to customize the bag title."])
     GameTooltip:Show()
 end
 
@@ -911,18 +911,18 @@ local function LoadBag(helpers)
         setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
 
         -- setup bag setting title locals
-        dd.compactBags.title:SetText(L["COMPACT_ICONS"])
-        dd.newOrder.title:SetText(L["REVERSE_NEW_LOOT_TEXT"])
-        dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_LAST"])
-        dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
-        dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
-        dd.scrapIcon.title:SetText(L["SHOW_SCRAP_ICON"])
-        dd.upgradeIcon.title:SetText(L["SHOW_UPGRADE_ICON"])
-        dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
-        dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
-        dd.vendorGrays.title:SetText(L["VENDOR_GRAYS"])
+        dd.compactBags.title:SetText(L["Compact Icons"])
+        dd.newOrder.title:SetText(L["Loot to leftmost Bag"])
+        dd.sortOrder.title:SetText(L["Sort to Last Bag"])
+        dd.itemBorder.title:SetText(L["Show Quality Color"])
+        dd.junkIcon.title:SetText(L["Show Junk Icon"])
+        dd.scrapIcon.title:SetText(L["Show Scrap Icon"])
+        dd.upgradeIcon.title:SetText(L["Show Upgrade Icon"])
+        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
+        dd.professionColor.title:SetText(L["Show Profession Bag Coloring"])
+        dd.vendorGrays.title:SetText(L["Sell junk automatically"])
         dd.showItemLvl.title:SetText(SHOW_ITEM_LEVEL)
-        dd.separateBags.title:SetText(L["SEPARATE_BAGS"])
+        dd.separateBags.title:SetText(L["Separate bags"])
     end
 
     -- setup money frame
@@ -1097,12 +1097,12 @@ local function LoadBag(helpers)
 
     smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge") 
     smsj.text:SetAllPoints();
-    smsj.text:SetText(L["SELLING_JUNK"])
+    smsj.text:SetText(L["Selling junk"])
 
     f.smsj = smsj
     
     StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
-        text = L["SEPARATE_BAGS_CHANGE_HEADER_TEXT"],
+        text = L["New Bag Name"],
         button1 = SAVE,
         button2 = RESET,
         selectCallbackByIndex = true,

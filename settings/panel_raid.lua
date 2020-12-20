@@ -6,6 +6,7 @@ local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local MapTable = GW.MapTable
 local StrUpper = GW.StrUpper
+local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 
@@ -16,20 +17,20 @@ local function LoadRaidPanel(sWindow)
     p.header:SetText(RAID)
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["GROUP_DESC"])
+    p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
-    createCat(RAID, L["GROUP_TOOLTIP"], p, 4)
+    createCat(RAID, L["Edit the group settings."], p, 4)
 
-    addOption(p, RAID_USE_CLASS_COLORS, L["CLASS_COLOR_RAID_DESC"], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_POWER_BARS, L["POWER_BARS_RAID_DESC"], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["DEBUFF_DISPELL_DESC"], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
-    addOption(p, L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"], L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, RAID_TARGET_ICON, L["RAID_MARKER_DESC"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
     addOption(
         p,
-        L["RAID_SORT_BY_ROLE"],
-        L["RAID_SORT_BY_ROLE_DESC"],
+        L["Sort Raid Frames by Role"],
+        L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
         "RAID_SORT_BY_ROLE",
         function()
             if GetSetting("RAID_FRAMES") == true then
@@ -40,7 +41,7 @@ local function LoadRaidPanel(sWindow)
         nil,
         {["RAID_FRAMES"] = true}
     )
-    addOption(p, L["RAID_AURA_TOOLTIP_IN_COMBAT"], L["RAID_AURA_TOOLTIP_IN_COMBAT_DESC"], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, L["Show Aura Tooltips in Combat"], L["Show tooltips of buffs and debuffs even when you are in combat."], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["RAID_FRAMES"] = true})
 
     addOptionDropdown(
         p,
@@ -61,28 +62,28 @@ local function LoadRaidPanel(sWindow)
 
     addOptionDropdown(
         p,
-        L["RAID_UNIT_FLAGS"],
-        L["RAID_UNIT_FLAGS_TOOLTIP"],
+        L["Show Country Flag"],
+        L["Display a country flag based on the unit's language"],
         "RAID_UNIT_FLAGS",
         nil,
         {"NONE", "DIFFERENT", "ALL"},
-        {NONE_KEY, L["RAID_UNIT_FLAGS_2"], ALL},
+        {NONE_KEY, L["Different Than Own"], ALL},
         nil,
         {["RAID_FRAMES"] = true}
     )
 
-    local dirs, grow = {"DOWN", "UP", "RIGHT", "LEFT"}, {}
+    local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
         local k = i <= 2 and 3 or 1
         for j = k, k + 1 do
-            tinsert(grow, dirs[i] .. "+" .. dirs[j])
+            tinsert(grow, StrUpper(dirs[i] .. "+" .. dirs[j]))
         end
     end
 
     addOptionDropdown(
         p,
-        L["RAID_GROW"],
-        L["RAID_GROW"],
+        L["Set Raid Growth Direction"],
+        L["Set the grow direction for raid frames."],
         "RAID_GROW",
         function()
             if GetSetting("RAID_FRAMES") == true then
@@ -96,46 +97,33 @@ local function LoadRaidPanel(sWindow)
             grow,
             function(dir)
                 local g1, g2 = strsplit("+", dir)
-                return StrUpper(L["RAID_GROW_DIR"]:format(L[g1], L[g2]), 1, 1)
+                return L["%s and then %s"]:format(L[StrLower(g1, 2)], L[StrLower(g2, 2)])
             end
         ),
         nil,
         {["RAID_FRAMES"] = true}
     )
 
-    local pos = {"POSITION", "GROWTH"}
-    for _, v in pairs({"TOP", "", "BOTTOM"}) do
-        for _, h in pairs({"LEFT", "", "RIGHT"}) do
-            tinsert(pos, (v .. h) == "" and "CENTER" or v .. h)
-        end
-    end
-
     addOptionDropdown(
         p,
-        L["RAID_ANCHOR"],
-        L["RAID_ANCHOR_DESC"],
+        L["Set Raid Anchor"],
+        L["Set where the raid frame container should be anchored.\n\nBy position: Always the same as the container's position on screen.\nBy growth: Always opposite to the growth direction."],
         "RAID_ANCHOR",
         function()
             if GetSetting("RAID_FRAMES") == true then
                 GW.UpdateRaidFramesAnchor()
             end
         end,
-        pos,
-        MapTable(
-            pos,
-            function(posi, i)
-                return StrUpper(L[i <= 2 and "RAID_ANCHOR_BY_" .. posi or posi], 1, 1)
-            end,
-            true
-        ),
+        {"POSITION", "GROWTH", "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
+        {L["By position on screen"], L["By growth direction"], "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
         nil,
         {["RAID_FRAMES"] = true}
     )
 
     addOptionSlider(
         p,
-        L["RAID_UNITS_PER_COLUMN"],
-        L["RAID_UNITS_PER_COLUMN_DESC"],
+        L["Set Raid Units per Column"],
+        L["Set the number of raid unit frames per column or row, depending on grow directions."],
         "RAID_UNITS_PER_COLUMN",
         function()
             if GetSetting("RAID_FRAMES") == true then
@@ -152,8 +140,8 @@ local function LoadRaidPanel(sWindow)
 
     addOptionSlider(
         p,
-        L["RAID_BAR_WIDTH"],
-        L["RAID_BAR_WIDTH_DESC"],
+        L["Set Raid Unit Width"],
+        L["Set the width of the raid units."],
         "RAID_WIDTH",
         function()
             if GetSetting("RAID_FRAMES") == true then
@@ -170,8 +158,8 @@ local function LoadRaidPanel(sWindow)
 
     addOptionSlider(
         p,
-        L["RAID_BAR_HEIGHT"],
-        L["RAID_BAR_HEIGHT_DESC"],
+        L["Set Raid Unit Height"],
+        L["Set the height of the raid units."],
         "RAID_HEIGHT",
         function()
             if GetSetting("RAID_FRAMES") == true then
@@ -188,8 +176,8 @@ local function LoadRaidPanel(sWindow)
 
     addOptionSlider(
         p,
-        L["RAID_CONT_WIDTH"],
-        L["RAID_CONT_WIDTH_DESC"],
+        L["Set Raid Frame Container Width"],
+        L["Set the maximum width that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next row."],
         "RAID_CONT_WIDTH",
         function()
             if GetSetting("RAID_FRAMES") == true then
@@ -206,8 +194,8 @@ local function LoadRaidPanel(sWindow)
 
     addOptionSlider(
         p,
-        L["RAID_CONT_HEIGHT"],
-        L["RAID_CONT_HEIGHT_DESC"],
+        L["Set Raid Frame Container Height"],
+        L["Set the maximum height that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next column."],
         "RAID_CONT_HEIGHT",
         function()
             if GetSetting("RAID_FRAMES") == true then

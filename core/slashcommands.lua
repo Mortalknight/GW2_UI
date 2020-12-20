@@ -27,7 +27,7 @@ local function LoadSlashCommands()
             GW.HoverKeyBinds()
         elseif msg == "mh" then
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HUD_MOVE_ERR"])
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
                 return
             end
             if GW.MoveHudScaleableFrame:IsShown() then
@@ -37,7 +37,7 @@ local function LoadSlashCommands()
             end
         elseif msg == "reset profile" then
                 GW.WarningPrompt(
-                    GW.L["PROFILES_DEFAULT_SETTINGS_PROMPT"],
+                    GW.L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
                     function()
                         GW.ResetToDefault()
                         C_UI.Reload()

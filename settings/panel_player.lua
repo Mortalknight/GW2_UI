@@ -14,27 +14,27 @@ local function LoadPlayerPanel(sWindow)
     p.header:SetText(PLAYER)
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["PLAYER_DESC"])
+    p.sub:SetText(L["Modify the player frame settings."])
 
-    createCat(PLAYER, L["PLAYER_DESC"], p, 9)
+    createCat(PLAYER, L["Modify the player frame settings."], p, 9)
 
     addOptionDropdown(
         p,
-        L["AURA_STYLE"],
+        L["Aura Style"],
         nil,
         "PLAYER_AURA_STYLE",
         nil,
         {"LEGACY", "SECURE"},
         {
             LFG_LIST_LEGACY,
-            L["SECURE"]
+            L["Secure"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionSlider(
         p,
-        L["AURAS_PER_ROW"],
+        L["Auras per row"],
         nil,
         "PLAYER_AURA_WRAP_NUM",
         nil,
@@ -46,7 +46,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p,
-        L["PLAYER_BUFF_SIZE"],
+        L["Buff size"],
         nil,
         "PlayerBuffFrame_ICON_SIZE",
         nil,
@@ -59,7 +59,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p,
-        L["PLAYER_DEBUFF_SIZE"],
+        L["Debuff size"],
         nil,
         "PlayerDebuffFrame_ICON_SIZE",
         nil,
@@ -72,32 +72,32 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        L["PLAYER_BUFFS_GROW"],
+        L["Player Buff Growth Direction"],
         nil,
         "PlayerBuffFrame_GrowDirection",
         GW.UpdateHudScale(),
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
-            StrUpper(L["UP"], 1, 1),
-            StrUpper(L["DOWN"], 1, 1),
-            L["UP_AND_RIGHT"],
-            L["DOWN_AND_RIGHT"]
+            StrUpper(L["Up"], 1, 1),
+            StrUpper(L["Down"], 1, 1),
+            L["Up and right"],
+            L["Down and right"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
-        L["PLAYER_DEBUFFS_GROW"],
+        L["Player Debuffs Growth Direction"],
         nil,
         "PlayerDebuffFrame_GrowDirection",
         GW.UpdateHudScale(),
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
-            StrUpper(L["UP"], 1, 1),
-            StrUpper(L["DOWN"], 1, 1),
-            L["UP_AND_RIGHT"],
-            L["DOWN_AND_RIGHT"]
+            StrUpper(L["Up"], 1, 1),
+            StrUpper(L["Down"], 1, 1),
+            L["Up and right"],
+            L["Down and right"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
@@ -115,7 +115,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        L["PLAYER_ABSORB_VALUE_TEXT"],
+        L["Show Shield Value"],
         nil,
         "PLAYER_UNIT_ABSORB",
         nil,
@@ -127,29 +127,29 @@ local function LoadPlayerPanel(sWindow)
 
     addOptionDropdown(
         p,
-        L["TOTEMBAR_SORTING"],
+        L["Class Totems Sorting"],
         nil,
         "TotemBar_SortDirection",
         nil,
         {"ASC", "DSC"},
-        {L["ASCENDING"], L["DESCENDING"]},
+        {L["Ascending"], L["Descending"]},
         nil,
         {["HEALTHGLOBE_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
-        L["TOTEMBAR_GROW_DIRECTION"],
+        L["Class Totems Growth Direction"],
         nil,
         "TotemBar_GrowDirection",
         nil,
         {"HORIZONTAL", "VERTICAL"},
-        {L["HORIZONTAL"], L["VERTICAL"]},
+        {L["Horizontal"], L["Vertical"]},
         nil,
         {["HEALTHGLOBE_ENABLED"] = true}
     )
     addOptionText(p,
-        L["PLAYER_DODGEBAR_SPELL"],
-        L["PLAYER_DODGEBAR_SPELL_DESC"],
+        L["Dodge Bar Ability"],
+        L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."],
         "PLAYER_TRACKED_DODGEBAR_SPELL",
         function(self)
             local spellId = self:GetNumber()

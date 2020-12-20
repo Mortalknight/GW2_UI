@@ -114,18 +114,18 @@ local function createImportExportFrame(settingsWindow)
     frame.import:SetFrameLevel(frame.import:GetFrameLevel() + 1)
     frame.import:EnableMouse(true)
     frame.import:SetSize(128, 28)
-    frame.import:SetText(L["IMPORT"])
+    frame.import:SetText(L["Import"])
     frame.import:SetScript("OnClick", function()
         local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText(), settingsWindow)
 
         frame.result:SetText("")
         if profileName and profilePlayer and version == "Retail" then
             frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
-            frame.result:SetFormattedText("|cff4beb2c%s|r", L["IMPORT_SUCCESSFUL"])
+            frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully imported!"])
             frame.editBox:SetText("")
         else
             frame.subheader:SetText("")
-            frame.result:SetFormattedText("|cffff0000%s|r", L["IMPORT_FAILED"])
+            frame.result:SetFormattedText("|cffff0000%s|r", L["Error importing profile: Invalid or corrupt string!"])
         end
     end)
 
@@ -134,21 +134,21 @@ local function createImportExportFrame(settingsWindow)
     frame.decode:SetFrameLevel(frame.decode:GetFrameLevel() + 1)
     frame.decode:EnableMouse(true)
     frame.decode:SetSize(128, 28)
-    frame.decode:SetText(L["DECODE"])
+    frame.decode:SetText(L["Decode"])
     frame.decode:SetScript("OnClick", function()
         local profileName, profilePlayer, version, profileData = GW.DecodeProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
         if not profileName or not profilePlayer or version ~= "Retail" then
             frame.subheader:SetText("")
-            frame.result:SetFormattedText("|cffff0000%s|r", L["IMPORT_DECODE_FALIED"] )
+            frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"] )
         else
             frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
 
             local decodedString = (profileData and GW.TableToLuaString(profileData)) or nil
             local importString = format("%s::%s::%s::%s", decodedString, profileName, profilePlayer, version)
             frame.editBox:SetText(importString)
-            frame.result:SetFormattedText("|cff4beb2c%s|r", L["IMPORT_DECODE:SUCCESSFUL"])
+            frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
             frame.decode:Disable()
         end
     end)
@@ -173,7 +173,7 @@ AddForProfiling("panel_profiles", "setProfile", setProfile)
 local function delete_OnClick(self, button)
     local p = self:GetParent()
     GW.WarningPrompt(
-        L["PROFILES_DELETE"],
+        L["Are you sure you want to delete this profile?"],
         function()
             deleteProfile(p.profileID)
             updateProfiles(p:GetParent():GetParent():GetParent())
@@ -233,9 +233,9 @@ local function export_OnClick(self, button)
     local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
 
     ImportExportFrame:Show()
-    ImportExportFrame.header:SetText(L["EXPORT_PROFILE"])
+    ImportExportFrame.header:SetText(L["Export Profile"])
     ImportExportFrame.subheader:SetText(GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
-    ImportExportFrame.description:SetText(L["EXPORT_PROFILE_DESC"])
+    ImportExportFrame.description:SetText(L["Profile string to share your settings:"])
     ImportExportFrame.import:Hide()
     ImportExportFrame.decode:Hide()
     ImportExportFrame.editBox:SetText(exportString)
@@ -267,7 +267,7 @@ GW.copyTable = copyTable
 
 local function copy_OnClick(self, button)
     local newProfil = copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
-    GW.addProfile(self:GetParent():GetParent():GetParent():GetParent(), L["COPY_OF"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().profileID]["profilename"], newProfil, true)
+    GW.addProfile(self:GetParent():GetParent():GetParent():GetParent(), L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().profileID]["profilename"], newProfil, true)
 end
 
 local function item_OnLoad(self)
@@ -275,14 +275,14 @@ local function item_OnLoad(self)
     self.name:SetTextColor(1, 1, 1)
     self.desc:SetFont(UNIT_NAME_FONT, 10)
     self.desc:SetTextColor(125 / 255, 125 / 255, 125 / 255)
-    self.desc:SetText(L["PROFILES_MISSING_LOAD"])
+    self.desc:SetText(L["Text has not loaded."])
 
     self.deleteButton.string:SetFont(UNIT_NAME_FONT, 12)
     self.deleteButton.string:SetTextColor(255 / 255, 255 / 255, 255 / 255)
     self.deleteButton.string:SetText(DELETE)
 
     self.activateButton:SetText(ACTIVATE)
-    self.exportButton:SetText(L["EXPORT"])
+    self.exportButton:SetText(L["Export"])
 
     self.deleteButton:SetScript("OnEnter", buttons_OnEnter)
     self.deleteButton:SetScript("OnLeave", buttons_OnLeave)
@@ -378,10 +378,10 @@ updateProfiles = function(self)
             end
 
             local description =
-                L["PROFILES_CREATED"] ..
+                L["Created: "] ..
                 v["profileCreatedDate"] ..
-                    L["PROFILES_CREATED_BY"] ..
-                        v["profileCreatedCharacter"] .. L["PROFILES_LAST_UPDATE"] .. v["profileLastUpdated"]
+                    L["\nCreated by: "] ..
+                        v["profileCreatedCharacter"] .. L["\nLast updated: "] .. v["profileLastUpdated"]
 
             f.name:SetText(v["profilename"])
             f.name:SetWidth(min(f.name:GetStringWidth(), 250))
@@ -466,10 +466,10 @@ local function LoadProfilesPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsProfilesPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 255 / 255, 255 / 255)
-    p.header:SetText(L["PROFILES_CAT_1"])
+    p.header:SetText(L["Profiles"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(125 / 255, 125 / 255, 125 / 255)
-    p.sub:SetText(L["PROFILES_DESC"])
+    p.sub:SetText(L["Profiles are an easy way to share your settings across characters and realms."])
 
     local fnGSPF_OnShow = function(self)
         sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/profiles/profiles-bg")
@@ -497,7 +497,7 @@ local function LoadProfilesPanel(sWindow)
     end
     p.scrollFrame:SetScript("OnMouseWheel", fnGSPF_scroll_OnMouseWheel)
 
-    createCat(L["PROFILES_CAT"], L["PROFILES_TOOLTIP"], p, 5, "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2")
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, 5, "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2")
 
     p.slider:SetValue(0)
 
@@ -519,13 +519,13 @@ local function LoadProfilesPanel(sWindow)
 
     resetTodefault:SetPoint("TOPLEFT", 15, 0)
 
-    resetTodefault.name:SetText(L["PROFILES_DEFAULT_SETTINGS"])
-    resetTodefault.desc:SetText(L["PROFILES_DEFAULT_SETTINGS_DESC"])
+    resetTodefault.name:SetText(L["Default Settings"])
+    resetTodefault.desc:SetText(L["Load the default addon settings to the current profile."])
     resetTodefault.activateButton:SetScript(
         "OnClick",
         function()
             GW.WarningPrompt(
-                L["PROFILES_DEFAULT_SETTINGS_PROMPT"],
+                L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
                 function()
                     ResetToDefault()
                     C_UI.Reload()
@@ -533,7 +533,7 @@ local function LoadProfilesPanel(sWindow)
             )
         end
     )
-    resetTodefault.activateButton:SetText(L["PROFILES_LOAD_BUTTON"])
+    resetTodefault.activateButton:SetText(L["Load"])
 
     local fmGCNP = CreateFrame("Button", nil, p.scrollchild, "GwCreateNewProfileTmpl")
     fmGCNP:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
@@ -551,13 +551,13 @@ local function LoadProfilesPanel(sWindow)
     fmGCNP:SetPoint("TOPLEFT", 15, -80)
 
     local fmIP = CreateFrame("Button", nil, p.scrollchild, "GwCreateNewProfileTmpl")
-    fmIP:SetText(L["IMPORT_POFILE_BUTTON"])
+    fmIP:SetText(L["Import Profile"])
     fmIP:SetWidth(fmIP:GetTextWidth() + 10)
     local fnGCNP_OnClick = function(self, button)
         ImportExportFrame:Show()
-        ImportExportFrame.header:SetText(L["IMPORT_PROFILE"])
+        ImportExportFrame.header:SetText(L["Import Profile"])
         ImportExportFrame.subheader:SetText("")
-        ImportExportFrame.description:SetText(L["IMPORT_PROFILE_DESC"])
+        ImportExportFrame.description:SetText(L["Paste your profile string here to import the profile."])
         ImportExportFrame.editBox:SetText("")
         ImportExportFrame.import:Show()
         ImportExportFrame.decode:Show()
@@ -584,8 +584,8 @@ local function LoadProfilesPanel(sWindow)
             local profileToRename = GW2UI_SETTINGS_PROFILES[data.profileID]
             local text = self.editBox:GetText()
             local changeDate = date("%m/%d/%y %H:%M:%S")
-            local description = L["PROFILES_CREATED"] .. profileToRename["profileCreatedDate"] .. L["PROFILES_CREATED_BY"] ..
-                profileToRename["profileCreatedCharacter"] .. L["PROFILES_LAST_UPDATE"] .. changeDate
+            local description = L["Created: "] .. profileToRename["profileCreatedDate"] .. L["\nCreated by: "] ..
+                profileToRename["profileCreatedCharacter"] .. L["\nLast updated: "] .. changeDate
 
             -- Use hidden frame font object to calculate string width
             GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)

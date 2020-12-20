@@ -424,7 +424,7 @@ local function LoadMicroMenu()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", nil, UIParent, "GwMicroButtonFrameTmpl")
-    GW.RegisterMovableFrame(mbf, GW.L["MICRO_BAR"], "MicromenuPos", "VerticalActionBarDummy", nil, true, {"default"})
+    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "VerticalActionBarDummy", nil, true, {"default"})
     mbf:SetPoint("TOPLEFT", mbf.gwMover)
 
     -- reskin all default (and custom) micro buttons to our styling

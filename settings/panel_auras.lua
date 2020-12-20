@@ -20,10 +20,10 @@ local function LoadAurasPanel(sWindow)
     p_auras:SetPoint("TOPLEFT", p, "TOPLEFT", 0, 0)
     p_auras.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_auras.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_auras.header:SetText(L["RAID_AURAS"])
+    p_auras.header:SetText(L["Raid Auras"])
     p_auras.sub:SetFont(UNIT_NAME_FONT, 12)
     p_auras.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p_auras.sub:SetText(L["RAID_AURAS_DESC"])
+    p_auras.sub:SetText(L["Edit which buffs and debuffs are shown."])
 
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     p_indicator:SetHeight(340)
@@ -31,15 +31,15 @@ local function LoadAurasPanel(sWindow)
     p_indicator:SetPoint("TOPLEFT", p_auras, "BOTTOMLEFT", 0, 0)
     p_indicator.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_indicator.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_indicator.header:SetText(L["INDICATORS"])
+    p_indicator.header:SetText(L["Raid Indicators"])
     p_indicator.sub:SetFont(UNIT_NAME_FONT, 12)
     p_indicator.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p_indicator.sub:SetText(L["INDICATORS_DESC"])
+    p_indicator.sub:SetText(L["Edit raid aura indicators."])
 
-    createCat(L["RAID_AURAS"], L["RAID_AURAS_TOOLTIP"], p, 2)
+    createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2)
 
-    addOptionText(p_auras, L["RAID_AURAS_IGNORED"], L["RAID_AURAS_IGNORED_DESC"], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
-    addOptionText(p_auras, L["RAID_AURAS_MISSING"], L["RAID_AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
     local settingstable = GetSetting("RAIDDEBUFFS")
@@ -54,8 +54,8 @@ local function LoadAurasPanel(sWindow)
     end
     addOptionDropdown(
         p_auras,
-        L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS"],
-        L["RAID_SHOW_IMPORTEND_RAID_DEBUFFS_DESC"],
+        L["Dungeon & Raid Debuffs"],
+        L["Show important Dungeon & Raid debuffs"],
         "RAIDDEBUFFS",
         function(toSet, id)
             GW.ImportendRaidDebuff[id] = toSet
@@ -67,8 +67,8 @@ local function LoadAurasPanel(sWindow)
         true
     )
 
-    addOption(p_indicator, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p_indicator, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
@@ -83,8 +83,8 @@ local function LoadAurasPanel(sWindow)
         local t = StrUpper(L[key] or L[pos], 1, 1)
         addOptionDropdown(
             p_indicator,
-            L["INDICATOR_TITLE"]:format(t),
-            L["INDICATOR_DESC"]:format(t),
+            L["%s Indicator"]:format(t),
+            L["Edit %s raid aura indicator."]:format(t),
             key,
             function()
                 SetSetting(key, tonumber(GetSetting(key, true)), true)

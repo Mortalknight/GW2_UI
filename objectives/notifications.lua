@@ -212,7 +212,7 @@ local function getBodyPOI()
     local bodyCompass = {}
     bodyCompass.X = x
     bodyCompass.Y = y
-    bodyCompass.TITLE = L["TRACKER_RETRIVE_CORPSE"]
+    bodyCompass.TITLE = L["Retrieve your corpse"]
     bodyCompass.TYPE = "DEAD"
     bodyCompass.ID = "playerDead"
     bodyCompass.COLOR = TRACKER_TYPE_COLOR.DEAD

@@ -645,9 +645,9 @@ local function LoadBank(helpers)
         dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
         
         -- setup bag setting icons locals
-        dd.compactBank.title:SetText(L["BANK_COMPACT_ICONS"])
-        dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
-        dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
+        dd.compactBank.title:SetText(L["Compact Icons"])
+        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
+        dd.itemBorder.title:SetText(L["Show Quality Color"])
     end
 
     -- setup bank/reagent switching tabs
