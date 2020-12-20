@@ -380,9 +380,14 @@ local function setMinimapButtons(side)
 end
 GW.setMinimapButtons = setMinimapButtons
 
+local function MinimapPostDrag()
+    _G.MinimapBackdrop:ClearAllPoints()
+    _G.MinimapBackdrop:SetAllPoints(_G.Minimap)
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
-    _G["GetMinimapShape"] = getMinimapShape
+    _G.GetMinimapShape = getMinimapShape
 
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
@@ -623,7 +628,7 @@ local function LoadMinimap()
     Minimap:SetSize(size, size)
 
     -- mobeable stuff
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, nil, {"default"})
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, nil, {"default"}, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
     -- check on which side we need to set the buttons

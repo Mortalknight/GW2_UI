@@ -27,6 +27,7 @@ local REPBG_B = 0.464
 local expandedFactions = {}
 
 local function detailFaction(factionIndex, boolean)
+    if not factionIndex then return end
     if boolean then
         expandedFactions[factionIndex] = true
         return

@@ -302,6 +302,11 @@ local function mover_OnDragStop(self)
         self.gw_frame.cf.bg:SetShown(not self.gw_frame.isMoved)
     end
 
+    if self.gw_postdrag then
+        self.gw_postdrag()
+    end
+
+    self:SetUserPlaced(true)
     self.IsMoving = false
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
@@ -426,7 +431,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, smallOptions, mhf)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, smallOptions, mhf, postdrag)
     local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
@@ -440,6 +445,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe.gw_isMoved = isMoved
     moveframe.gw_frame = frame
     moveframe.gw_mhf = mhf
+    moveframe.gw_postdrag = postdrag
 
     if moveframe.frameName and moveframe.frameName.SetText then
         moveframe.frameName:SetSize(moveframe:GetSize())
@@ -535,6 +541,15 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
                     GW.FrameFlash(self, 1.5, 0.5, 1, true)
                 end
             end
+        end)
+    end
+
+    if postdrag then
+        print(settingsName)
+        moveframe:RegisterEvent("PLAYER_ENTERING_WORLD")
+        moveframe:SetScript("OnEvent", function(self)
+            postdrag()
+            self:UnregisterAllEvents()
         end)
     end
 

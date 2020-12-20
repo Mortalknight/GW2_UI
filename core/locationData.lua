@@ -1,5 +1,4 @@
 local _, GW = ...
-local IsIn = GW.IsIn
 
 local MapCoordsFrame = CreateFrame("Frame")
 local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
@@ -63,7 +62,7 @@ end
 local function MapCoordsFrameOnEvent(self, event)
     -- check if we need to starte coords updating
     -- Events for start updating coords
-    if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
+    if event == "PLAYER_STARTED_MOVING" or event == "PLAYER_CONTROL_LOST" then
         GW.locationData.coordsWatching = true
         GW.locationData.coordsFalling = nil
         self:SetScript("OnUpdate", LocationDate_OnUpdate)
@@ -73,7 +72,7 @@ local function MapCoordsFrameOnEvent(self, event)
             GW.locationData.coordsStopTimer = nil
         end
     
-    elseif IsIn(event, "CRITERIA_UPDATE", "PLAYER_STOPPED_MOVING", "PLAYER_CONTROL_GAINED") then -- Events for stop updating coords
+    elseif event == "CRITERIA_UPDATE" or event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_CONTROL_GAINED" then -- Events for stop updating coords
         if event == 'CRITERIA_UPDATE' then
             if not GW.locationData.coordsFalling or (GetUnitSpeed("player") or 0) > 0 then -- stop if we weren't falling or we are still moving
                 return 
