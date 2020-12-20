@@ -1234,13 +1234,21 @@ local function LoadAlertSystemFrameSkins()
     GW.AlertContainerFrame:ClearAllPoints()
     GW.AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 
-    local _, y = GW.AlertContainerFrame:GetCenter()
-    local screenHeight = UIParent:GetTop()
-    if y > (screenHeight / 2) then
-        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
-    else
-        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")", "AlertPos", "VerticalActionBarDummy", {300, 5})
+    local postDragFunction = function(self)
+        local _, y = self.gwMover:GetCenter()
+        local screenHeight = UIParent:GetTop()
+        if y > (screenHeight / 2) then
+            if self.gwMover.frameName and self.gwMover.frameName.SetText then
+                self.gwMover.frameName:SetText(GW.L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
+            end
+        else
+            if self.gwMover.frameName and self.gwMover.frameName.SetText then
+                self.gwMover.frameName:SetText(GW.L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
+            end
+        end
     end
+
+    GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", "VerticalActionBarDummy", {300, 5}, nil, {"default"}, nil, postDragFunction)
 
     GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
     GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")

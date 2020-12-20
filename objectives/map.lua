@@ -380,9 +380,17 @@ local function setMinimapButtons(side)
 end
 GW.setMinimapButtons = setMinimapButtons
 
-local function MinimapPostDrag()
+local function MinimapPostDrag(self)
     _G.MinimapBackdrop:ClearAllPoints()
     _G.MinimapBackdrop:SetAllPoints(_G.Minimap)
+
+    local x = self.gwMover:GetCenter()
+    local screenWidth = UIParent:GetRight()
+    if x > (screenWidth / 2) then
+        GW.setMinimapButtons("left")
+    else
+        GW.setMinimapButtons("right")
+    end
 end
 
 local function LoadMinimap()

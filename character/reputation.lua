@@ -41,8 +41,7 @@ local function getNewCategory(i)
         return _G["GwPaperDollReputationCat" .. i]
     end
 
-    local f =
-        CreateFrame("Button", "GwPaperDollReputationCat" .. i, GwPaperReputation.categories, "GwPaperDollReputationCat")
+    local f = CreateFrame("Button", "GwPaperDollReputationCat" .. i, GwPaperReputation.categories, "GwPaperDollReputationCat")
     CharacterMenuBlank_OnLoad(f)
     f.StatusBar:SetMinMaxValues(0, 1)
     f.StatusBar:SetStatusBarColor(240 / 255, 240 / 255, 155 / 255)

@@ -240,6 +240,10 @@ local function smallSettings_resetToDefault(self, btn)
         self:GetParent().heightSlider.slider:SetValue(height)
     end
 
+    if mf.gw_postdrag then
+        mf.gw_postdrag(mf.gw_frame)
+    end
+
     GW.UpdateHudScale()
 end
 GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
@@ -269,6 +273,8 @@ local function mover_OnDragStop(self)
     new_point.relativePoint = relativePoint
     new_point.xOfs = xOfs and math.floor(xOfs) or 0
     new_point.yOfs = yOfs and math.floor(yOfs) or 0
+    self:ClearAllPoints()
+    self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
     SetSetting(settingsName, new_point)
     if lockAble ~= nil then
         SetSetting(lockAble, false)
@@ -276,34 +282,8 @@ local function mover_OnDragStop(self)
     -- check if we need to know if the frame is on its default position
     CheckIfMoved(self, settingsName, new_point)
 
-    --check if we need to change the text string or button locations
-    if settingsName == "AlertPos" then
-        local _, y = self:GetCenter()
-        local screenHeight = UIParent:GetTop()
-        if y > (screenHeight / 2) then
-            if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
-            end
-        else
-            if self.frameName and self.frameName.SetText then
-                self.frameName:SetText(L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
-            end
-        end
-    elseif settingsName == "MinimapPos" then
-        local x = self:GetCenter()
-        local screenWidth = UIParent:GetRight()
-        if x > (screenWidth / 2) then
-            GW.setMinimapButtons("left")
-        else
-            GW.setMinimapButtons("right")
-        end
-    elseif settingsName == "MicromenuPos" then
-        -- Hide/Show BG here
-        self.gw_frame.cf.bg:SetShown(not self.gw_frame.isMoved)
-    end
-
     if self.gw_postdrag then
-        self.gw_postdrag()
+        self.gw_postdrag(self.gw_frame)
     end
 
     self:SetUserPlaced(true)
@@ -378,7 +358,7 @@ local function sliderEditBoxValueChanged(self)
 
     self:GetParent().slider:SetValue(roundValue)
     self:SetText(roundValue)
-    SetSetting(moverFrame.gw_Settings .."_scale", roundValue)
+    SetSetting(moverFrame.gw_Settings .. "_scale", roundValue)
 
     self:GetParent():GetParent().child.gw_frame.isMoved = true
     self:GetParent():GetParent().child.gw_frame:SetAttribute("isMoved", true)
@@ -545,10 +525,9 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     end
 
     if postdrag then
-        print(settingsName)
         moveframe:RegisterEvent("PLAYER_ENTERING_WORLD")
         moveframe:SetScript("OnEvent", function(self)
-            postdrag()
+            postdrag(self.gw_frame)
             self:UnregisterAllEvents()
         end)
     end
