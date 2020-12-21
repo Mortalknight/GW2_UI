@@ -78,7 +78,7 @@ local function MapCoordsFrameOnEvent(self, event)
                 return 
             end 
             GW.locationData.coordsFalling = nil -- we were falling!
-        elseif IsIn(event ,'PLAYER_STOPPED_MOVING', 'PLAYER_CONTROL_GAINED') and IsFalling() then
+        elseif event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_CONTROL_GAINED" and IsFalling() then
             GW.locationData.coordsFalling = true
             return
         end

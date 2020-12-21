@@ -882,6 +882,7 @@ local function skinGarrisonMissionAlert(frame)
         frame.shine:Kill()
         frame.IconBG:Kill()
         frame.Background:Kill()
+        if frame.EncounterIcon.EliteOveraly then frame.EncounterIcon.EliteOveraly:Kill() end
 
         --Create Backdrop
         frame:CreateBackdrop(constBackdropAlertFrame)
