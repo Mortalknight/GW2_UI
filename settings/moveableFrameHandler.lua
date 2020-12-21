@@ -441,6 +441,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     if not framePoint.point or not framePoint.relativePoint or not framePoint.xOfs or not framePoint.yOfs then
         -- use default position
         moveframe:SetPoint(defaultPoint.point, UIParent, defaultPoint.relativePoint, defaultPoint.xOfs, defaultPoint.yOfs)
+        framePoint = defaultPoint
     else
         moveframe:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
     end
