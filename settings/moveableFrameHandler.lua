@@ -434,10 +434,16 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
 
     moveframe:SetClampedToScreen(true)
 
-    -- position mover
+    -- position mover (as fallback use the default position)
     local framePoint = GetSetting(settingsName)
+    local defaultPoint = GetDefault(settingsName)
     moveframe:ClearAllPoints()
-    moveframe:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
+    if not framePoint.point or not framePoint.relativePoint or not framePoint.xOfs or not framePoint.yOfs then
+        -- use default position
+        moveframe:SetPoint(defaultPoint.point, UIParent, defaultPoint.relativePoint, defaultPoint.xOfs, defaultPoint.yOfs)
+    else
+        moveframe:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
+    end
 
     local num = #GW.MOVABLE_FRAMES
     GW.MOVABLE_FRAMES[num + 1] = moveframe
