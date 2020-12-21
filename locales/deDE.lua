@@ -309,3 +309,4 @@ L["What is 'Pixel Perfect'?\n\nGW2 UI has a built-in setting called 'Pixel Perfe
 L["Show Coordinates on World Map"] = "Zeige Koordinaten auf der Weltkarte"
 L["Show menu for placing world markers when in raids."] = "Zeige Menü, um in Schlachtzügen Welt-Markierungen zu positionieren."
 L["Zone Ability"] = "Zonen Fähigkeit"
+L["GW2 UI Update"] = true
