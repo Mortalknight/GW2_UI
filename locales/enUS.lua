@@ -2,13 +2,12 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GW2_UI", "enUS", true, true)
 
 --Fonts
-L["FONT_NORMAL"] = true
-L["FONT_BOLD"] = true
-L["FONT_NARROW"] = true
-L["FONT_NARROW_BOLD"] = true
-L["FONT_LIGHT"] = true
-L["FONT_DAMAGE"] = true
-
+L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
+L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 --Strings
 L["Use the GW2 UI improved action bars."] = true
 L["Fade Action Bars"] = true
