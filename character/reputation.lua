@@ -230,8 +230,7 @@ local function setDetailEx(
 
     local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
     local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
-    local friendID, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold =
-        GetFriendshipReputation(factionID)
+    local friendID, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
 
     --if factionIndex % 2 == 0 then
     frame.background:SetTexture(nil)
@@ -336,8 +335,6 @@ local function setDetailEx(
         end
     )
 
-    SetFactionInactive(GetSelectedFaction())
-
     if factionID and RT[factionID] then
         frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
         if isExpanded then
@@ -363,12 +360,7 @@ local function setDetailEx(
             until (currentValue < 10000)
         end
 
-        if hasRewardPending then 
-            local nameReward = name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t"
-            frame.name:SetText(nameReward)
-        else
-            frame.name:SetText(name)
-        end
+        frame.name:SetText(hasRewardPending and name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t" or name)
 
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(L["Paragon"])
@@ -384,7 +376,7 @@ local function setDetailEx(
 
         frame.background2:SetVertexColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
         frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
-    elseif (friendID ~= nil) then
+    elseif friendID ~= nil then
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.currentRank:SetText(friendTextLevel)
         frame.nextRank:SetText()
