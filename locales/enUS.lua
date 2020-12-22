@@ -309,3 +309,7 @@ L["Show Coordinates on World Map"] = true
 L["Show menu for placing world markers when in raids."] = true
 L["Zone Ability"] = true
 L["GW2 UI Update"] = true
+L["Bar"] = true
+L["Top Left"] = true
+L["Top Right"] = true
+L["Center"] = true

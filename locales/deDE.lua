@@ -310,3 +310,7 @@ L["Show Coordinates on World Map"] = "Zeige Koordinaten auf der Weltkarte"
 L["Show menu for placing world markers when in raids."] = "Zeige Menü, um in Schlachtzügen Welt-Markierungen zu positionieren."
 L["Zone Ability"] = "Zonen Fähigkeit"
 L["GW2 UI Update"] = true
+L["Bar"] = true
+L["Top Left"] = "Oben links"
+L["Top Right"] = "Oben rechts"
+L["Center"] = "Mitte"

@@ -210,8 +210,10 @@ local REALM_FLAGS = {
 }
 GW.REALM_FLAGS = REALM_FLAGS
 
-local INDICATORS = {"BAR", "TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
+local INDICATORS = {"BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
+local indicatorsText = {"Bar", "Top Left", "Top", "Top Right", "Left", "Center", "Right"}
 GW.INDICATORS = INDICATORS
+GW.indicatorsText = indicatorsText
 
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
 -- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}

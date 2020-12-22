@@ -13,7 +13,6 @@ L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 --Strings
 L["Use the GW2 UI improved action bars."] = "Utiliser les barres d'actions améliorées de GW2 UI."
 L["Fade Action Bars"] = "Occultation de la barre d'action"
-
 L["Advanced Tooltips"] = "Infobulle détaillée"
 L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"] = "Affiche davantage d'informations dans l'infobulle (plus d'informations affichées quand la touche MAJ est appuyée)"
 L["Item Count"] = "Nombre d'objets"
@@ -163,7 +162,6 @@ L["Use the GW2 UI Minimap frame."] = "Utiliser le cadre et l'emplacement de mini
 L["Show FPS on minimap"] = "Afficher les IPS sur la minimap"
 L["Minimap details"] = "Détails de la mini-carte"
 L["Always show Minimap details."] = "Toujours afficher les détails de la mini carte."
-L["MINIMAP_POS"] = "Position de la mini-carte"
 L["Minimap Scale"] = "Taille Minimap"
 L["Change the Minimap size."] = "Changer la taille de la Minimap."
 L["MODULES"] = "MODULES"
@@ -182,7 +180,6 @@ L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resoluti
 L["Turn Pixel Perfect Mode On"] = "Désactiver le mode résolution-parfaite"
 L["Show Shield Value"] = "Afficher la valeur du bouclier"
 L["Move and resize the player auras."] = "Déplacer et redimensionner les auras du joueur."
-L["PLAYER_AURA_GROW"] = "Direction de l'expansion des auras du joueur"
 L["Player Buff Growth Direction"] = "Direction de la croissance des amélioration du joueur"
 L["Buff size"] = "Taille des améliorations"
 L["Player Debuffs Growth Direction"] = "Direction de la croissance des affaiblissements du joueur."

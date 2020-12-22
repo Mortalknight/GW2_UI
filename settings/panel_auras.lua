@@ -5,6 +5,7 @@ local addOptionDropdown = GW.AddOptionDropdown
 local addOptionText = GW.AddOptionText
 local createCat = GW.CreateCat
 local StrUpper = GW.StrUpper
+local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
@@ -78,9 +79,9 @@ local function LoadAurasPanel(sWindow)
         end
     end
 
-    for _, pos in ipairs(GW.INDICATORS) do
+    for v, pos in ipairs(GW.INDICATORS) do
         local key = "INDICATOR_" .. pos
-        local t = StrUpper(L[key] or L[pos], 1, 1)
+        local t = L[GW.indicatorsText[v]]
         addOptionDropdown(
             p_indicator,
             L["%s Indicator"]:format(t),
