@@ -94,35 +94,38 @@ GW.AddForProfiling("dodgebar", "updateAnim", updateAnim)
 
 local function initBar(self, pew)
     -- do everything required to make the dodge bar a secure clickable button
-    local overrideSpellID = GetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID")
+    local overrideSpellID = tonumber(GetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID"))
 
     self.gwMaxCharges = nil
-    self.spellId = nil
+    self.spellId = overrideSpellID and overrideSpellID > 0 and overrideSpellID or nil
     if pew or not InCombatLockdown() then
         self:Hide()
     end
-    if not DODGEBAR_SPELLS[GW.myclass] and tonumber(overrideSpellID) == 0 then
+    if not DODGEBAR_SPELLS[GW.myclass] and overrideSpellID == 0 then
         return
     end
-    local v, _ = SecureCmdOptionParse(DODGEBAR_SPELLS[GW.myclass])
-    if not v and tonumber(overrideSpellID) == 0 then
-        return
-    end
-
-    if string.find(v, ",") then
-        for k, v in pairs(GW.splitString(v, ",", true)) do
-            if IsSpellKnown(tonumber(v)) then
-                self.spellId = tonumber(v)
-                break
-            end
+    local v
+    if not self.spellId then
+        v, _ = SecureCmdOptionParse(DODGEBAR_SPELLS[GW.myclass])
+        if not v then
+            return
         end
-    else
-        self.spellId = tonumber(overrideSpellID) > 0 and tonumber(overrideSpellID) or tonumber(v)
+
+        if string.find(v, ",") then
+            for k, v in pairs(GW.splitString(v, ",", true)) do
+                if IsSpellKnown(tonumber(v)) then
+                    self.spellId = tonumber(v)
+                    break
+                end
+            end
+        else
+            self.spellId = tonumber(v)
+        end
     end
     Debug("Dodgebar spell for Tooltip: ", self.spellId)
 
     if pew or not InCombatLockdown() then
-        if tonumber(overrideSpellID) == 0 and DODGEBAR_SPELLS_ATTR[GW.myclass] then
+        if overrideSpellID == 0 and DODGEBAR_SPELLS_ATTR[GW.myclass] then
             v = SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])
             if string.find(v, ",") then
                 for k, v in pairs(GW.splitString(v, ",", true)) do
