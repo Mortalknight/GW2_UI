@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwHealthGlobeTmpl" registerForClicks="LeftButtonDown,RightButtonDown" inherits="SecureActionButtonTemplate,SecureHandlerStateTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="2">
+    <Button name="GwHealthGlobeTmpl" inherits="SecureActionButtonTemplate,SecureHandlerStateTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="2">
     
         <Size x="88" y="88"></Size>
         <Frames>

@@ -305,6 +305,7 @@ local function LoadHealthGlobe()
     hg:SetAttribute("*type2", "togglemenu")
     hg:SetAttribute("unit", "player")
     AddToClique(hg)
+    hg:RegisterForClicks("AnyUp")
 
     -- setup masking textures
     for i, v in ipairs(hg.fill.masked) do
