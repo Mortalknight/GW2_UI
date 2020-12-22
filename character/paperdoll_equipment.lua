@@ -222,10 +222,7 @@ local function itemSlot_OnModifiedClick(self, button)
         GwCharacterWindow:SetAttribute("windowpanelopen", nil)
         return
     end
-    if (HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID()))) then
-        GwCharacterWindow:SetAttribute("windowpanelopen", nil)
-        return
-    end
+    HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID()))
 end
 GW.AddForProfiling("paperdoll_equipment", "itemSlot_OnModifiedClick", itemSlot_OnModifiedClick)
 
