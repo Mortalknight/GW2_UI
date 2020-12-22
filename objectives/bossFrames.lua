@@ -8,13 +8,15 @@ local GetSetting = GW.GetSetting
 local bossFrames = {}
 
 local function updateBossFrameHeight()
-    local height = 1
+    local i = 0
+
     for k, frame in pairs(bossFrames) do
         if frame:IsShown() then
-            height = height + frame:GetHeight()
+            i = k
         end
     end
-    GwQuesttrackerContainerBossFrames:SetHeight(height)
+
+    GwQuesttrackerContainerBossFrames:SetHeight(i > 0 and (35 * i) or 1)
 end
 GW.AddForProfiling("bossFrames", "updateBossFrameHeight", updateBossFrameHeight)
 
