@@ -133,19 +133,13 @@ local function castBar_OnEvent(self, event, unitID)
 end
 
 local function petCastBar_OnEvent(self, event, unit)
-	if event == "UNIT_PET" then
-		if unit == "player" then
-			self.showCastbar = UnitIsPossessed("pet")
-
-			if not self.showCastbar then
-				self:Hide();
-			elseif self.casting or self.channeling then
-				self:Show()
-			end
-		end
-		return
-	end
-	castBar_OnEvent(self, event, unit)
+    if event == "UNIT_PET" then
+        if unit == "player" then
+            self.showCastbar = UnitIsPossessed("pet")
+        end
+        return
+    end
+    castBar_OnEvent(self, event, unit)
 end
 
 local function LoadCastingBar(castingBarType, name, unit)
