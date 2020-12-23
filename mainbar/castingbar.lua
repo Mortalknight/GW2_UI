@@ -8,63 +8,62 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local IsIn = GW.IsIn
 
-local function barValues(self, name, icon, spellid)
+local function barValues(self, name, icon)
     self.name:SetText(name)
     self.icon:SetTexture(icon)
     self.latency:Show()
-    self.spellId = spellid
 end
 GW.AddForProfiling("castingbar", "barValues", barValues)
 
 local function barReset(self)
-    if animations[self:GetName()] then
-        animations[self:GetName()]["completed"] = true
-        animations[self:GetName()]["duration"] = 0
+    if animations[self.animationName] then
+        animations[self.animationName].completed = true
+        animations[self.animationName].duration = 0
     end
 end
 GW.AddForProfiling("castingbar", "barReset", barReset)
 
-local function castBar_OnEvent(self, event, unitID, spellid)
+local function castBar_OnEvent(self, event, unitID)
     local castingType = 1
-    local spell, icon, startTime, endTime
-    local unit = self.unit
+    local spell, icon, startTime, endTime, spellID
 
     if event == "PLAYER_ENTERING_WORLD" then
-        local nameChannel = UnitChannelInfo(unit)
-        local nameSpell = UnitCastingInfo(unit)
+        local nameChannel = UnitChannelInfo(self.unit)
+        local nameSpell = UnitCastingInfo(self.unit)
         if nameChannel then
             event = "UNIT_SPELLCAST_CHANNEL_START"
-            unitID = unit
+            unitID = self.unit
         elseif nameSpell then
             event = "UNIT_SPELLCAST_START"
-            unitID = unit
+            unitID = self.unit
         else
             barReset(self)
         end
     end
 
-    if unitID ~= unit or not self.showCastbar then
+    if unitID ~= self.unit or not self.showCastbar then
         return
     end
     if IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE") then
-            spell, _, icon, startTime, endTime = UnitChannelInfo(unitID)
+            spell, _, icon, startTime, endTime, _, _, spellID = UnitChannelInfo(self.unit)
             castingType = 2
         else
-            spell, _, icon, startTime, endTime = UnitCastingInfo(unitID)
+            spell, _, icon, startTime, endTime, _, _, _, spellID = UnitCastingInfo(self.unit)
         end
 
         if GetSetting("CASTINGBAR_DATA") then
-            barValues(self, spell, icon, spellid)
+            barValues(self, spell, icon)
         end
 
+        self.spellID = spellID
         startTime = startTime / 1000
         endTime = endTime / 1000
         barReset(self)
         self.spark:Show()
-        StopAnimation(self:GetName())
+        StopAnimation(self.animationName)
         AddToAnimation(
-            self:GetName(),
+            self.animationName,
             0,
             1,
             startTime,
@@ -74,11 +73,11 @@ local function castBar_OnEvent(self, event, unitID, spellid)
                     self.time:SetText(TimeCount(endTime - GetTime(), true))
                 end
 
-                local p = animations[self:GetName()]["progress"]
+                local p = animations[self.animationName].progress
                 self.latency:ClearAllPoints()
                 self.latency:SetPoint("RIGHT", self, "RIGHT")
                 if castingType == 2 then
-                    p = 1 - animations[self:GetName()]["progress"]
+                    p = 1 - animations[self.animationName].progress
                     self.latency:ClearAllPoints()
                     self.latency:SetPoint("LEFT", self, "LEFT")
                 end
@@ -89,8 +88,7 @@ local function castBar_OnEvent(self, event, unitID, spellid)
                 self.spark:SetWidth(math.min(15, math.max(1, p * 176)))
                 self.bar:SetTexCoord(0, p, 0.25, 0.5)
 
-                local _, _, _, lagWorld = GetNetStats()
-                lagWorld = lagWorld / 1000
+                local lagWorld = select(4, GetNetStats()) / 1000
                 self.latency:SetWidth(math.min(1, (lagWorld / (endTime - startTime))) * 176)
             end,
             "noease"
@@ -106,27 +104,22 @@ local function castBar_OnEvent(self, event, unitID, spellid)
         end
         barReset(self)
         self.isCasting = 0
-    elseif IsIn(event, "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_INTERRUPTED") then
+    elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
         barReset(self)
         self.isCasting = 0
-    elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellId == spellid then
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == spellID then
         self.animating = true
         self.bar:SetTexCoord(0, 1, 0.5, 0.75)
         self.bar:SetWidth(176)
         self.spark:Hide()
         AddToAnimation(
-            self:GetName() .. "Complete",
+            self.animationName .. "Complete",
             0,
             1,
             GetTime(),
             0.2,
             function()
-                self.bar:SetVertexColor(
-                    1,
-                    1,
-                    1,
-                    lerp(1, 0.7, animations[self:GetName() .. "Complete"]["progress"])
-                )
+                self.bar:SetVertexColor(1, 1,1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
             end,
             nil,
             function()
@@ -141,7 +134,7 @@ local function castBar_OnEvent(self, event, unitID, spellid)
     end
 end
 
-local function petCastBar_OnEvent(self, event, unit, spellID)
+local function petCastBar_OnEvent(self, event, unit)
 	if event == "UNIT_PET" then
 		if unit == "player" then
 			self.showCastbar = UnitIsPossessed("pet")
@@ -154,7 +147,7 @@ local function petCastBar_OnEvent(self, event, unit, spellID)
 		end
 		return
 	end
-	castBar_OnEvent(self, event, unit, spellID)
+	castBar_OnEvent(self, event, unit)
 end
 
 local function LoadCastingBar(castingBarType, name, unit)
@@ -173,7 +166,9 @@ local function LoadCastingBar(castingBarType, name, unit)
 
     GwCastingBar.unit = unit
     GwCastingBar.showCastbar = true
+    GwCastingBar.spellID = nil
     GwCastingBar.isCasting = 0
+    GwCastingBar.animationName = name
 
     if name == "GwCastingBarPlayer" then
         RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, nil, {"scaleable"})
@@ -186,15 +181,14 @@ local function LoadCastingBar(castingBarType, name, unit)
 
     GwCastingBar:SetScript("OnEvent", unit == "pet" and petCastBar_OnEvent or castBar_OnEvent)
 
-    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", unit)
     GwCastingBar:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_START", unit)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_STOP", unit)
-    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
     if unit == "pet" then
         GwCastingBar:RegisterEvent("UNIT_PET")
         GwCastingBar.showCastbar = UnitIsPossessed(unit)
