@@ -546,7 +546,8 @@ local function loadAddon(self)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
-        GW.LoadCastingBar()
+        GW.LoadCastingBar(CastingBarFrame, "GwCastingBarPlayer", "player")
+        GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet")
     end
 
     if GetSetting("MINIMAP_ENABLED") then
