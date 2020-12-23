@@ -32,10 +32,8 @@ local function castBar_OnEvent(self, event, unitID)
         local nameSpell = UnitCastingInfo(self.unit)
         if nameChannel then
             event = "UNIT_SPELLCAST_CHANNEL_START"
-            unitID = self.unit
         elseif nameSpell then
             event = "UNIT_SPELLCAST_START"
-            unitID = self.unit
         else
             barReset(self)
         end
