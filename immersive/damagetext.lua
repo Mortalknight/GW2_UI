@@ -11,15 +11,15 @@ local namePlatesOffsets = {}
 local namePlatesCriticalOffsets = {}
 
 local colorTable ={
-    ["gw"] = {
-        ["spell"] = {r = 1, g = 1, b = 1, a = 1},
-        ["melee"] = {r = 1, g = 1, b = 1, a = 1},
-        ["pet"] = {r = 1, g = 0.2, b= 0.2, a = 1}
+    gw = {
+        spell = {r = 1, g = 1, b = 1, a = 1},
+        melee = {r = 1, g = 1, b = 1, a = 1},
+        pet = {r = 1, g = 0.2, b= 0.2, a = 1}
     },
-    ["blizzard"] = {
-        ["spell"] = {r = 1, g = 1, b = 0, a = 1},
-        ["melee"] = {r = 1, g = 1, b = 1, a = 1},
-        ["pet"] = {r = 1, g = 1, b = 1, a = 1}
+    blizzard = {
+        spell = {r = 1, g = 1, b = 0, a = 1},
+        melee = {r = 1, g = 1, b = 1, a = 1},
+        pet = {r = 1, g = 1, b = 1, a = 1}
     }
 }
 
@@ -49,7 +49,7 @@ local function animateTextCritical(frame, offsetIndex)
         GetTime(),
         CRITICAL_ANIMATION_DURATION,
         function()
-            local p = animations[aName]["progress"]
+            local p = animations[aName].progress
             local pet_scale = 1
             if frame.pet then
                 pet_scale = PET_SCALE_MODIFIER
@@ -94,7 +94,7 @@ local function animateTextNormal(frame, offsetIndex)
         GetTime(),
         NORMAL_ANIMATION_DURATION,
         function()
-            local p = animations[aName]["progress"]
+            local p = animations[aName].progress
             local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
             local pet_scale = 1
             if frame.pet then
@@ -151,17 +151,20 @@ local function getFontElement(self)
         return f
     end
 end
-local function setElementData(self, critical, source)
+local function setElementData(self, critical, source, missType)
     if critical then
       self.crit = true
       self.string:SetFont(DAMAGE_TEXT_FONT, 34, "OUTLINED")
       self.critTexture:Show()
+    elseif missType then
+        self.critTexture:Hide()
+        self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
+        self.crit = false
     else
       self.critTexture:Hide()
       self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
       self.crit = false
     end
-    self:SetWidth(self.string:GetWidth())
     self.pet = false
 
     local colorSource = "spell"
@@ -181,9 +184,9 @@ local function formatDamageValue(amount)
     return USE_COMMA_FORMATING and CommaValue(amount) or amount
 end
 
-local function displayDamageText(self, guid, amount, critical, source)
+local function displayDamageText(self, guid, amount, critical, source, missType)
     local f = getFontElement(self)
-    f.string:SetText(formatDamageValue(amount))
+    f.string:SetText(missType and getglobal(missType) or formatDamageValue(amount))
 
     local nameplate
     local unit = guidToUnit[guid]
@@ -199,7 +202,7 @@ local function displayDamageText(self, guid, amount, critical, source)
     f.anchorFrame = nameplate
     f.unit = unit
 
-    setElementData(f, critical, source)
+    setElementData(f, critical, source, missType)
 
     f:Show()
     f:ClearAllPoints()
@@ -244,6 +247,16 @@ local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGU
                 spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = ...
             end
             displayDamageText(self, destGUID, amount, critical, spellName)
+        elseif (string.find(event, "_MISSED")) then
+            local missType, isOffHand, amountMissed, critical, spellId, spellName, spellSchool
+            if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
+                missType, isOffHand, amountMissed, critical = select(4,...)
+            elseif (string.find(event, "SWING")) then
+                missType, isOffHand, amountMissed, critical = ...
+            else
+                spellId, spellName, spellSchool, missType = ...
+            end
+            displayDamageText(self, destGUID, nil, nil, nil, missType)
         end
     elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0)	and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then -- caster is player pet
         if (string.find(event, "_DAMAGE")) then
@@ -256,6 +269,14 @@ local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGU
                 spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = ...
             end
             displayDamageText(self, destGUID, amount, critical, "pet")
+        elseif (string.find(event, "_MISSED")) then
+            local missType, isOffHand, amountMissed, critical
+            if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
+                missType, isOffHand, amountMissed, critical = select(4,...)
+            elseif (string.find(event, "SWING")) then
+                missType, isOffHand, amountMissed, critical = ...
+            end
+            displayDamageText(self, destGUID, nil, nil, nil, missType)
         end
     end
 end

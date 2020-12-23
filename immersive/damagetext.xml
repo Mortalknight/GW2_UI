@@ -14,7 +14,7 @@
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="-7">
                 <FontString parentKey="string" inherits="GameFontNormal" text="100" justifyV="MIDDLE">
-                    <Size x="100" y="30"></Size>
+                    <Size x="500" y="30"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" />
                     </Anchors>
