@@ -361,7 +361,7 @@ local function setMinimapButtons(side)
     GwAddonToggle.container:ClearAllPoints()
     
     if side == "left" then
-        QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -69)
+        QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
         GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
         GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -16, -47)
