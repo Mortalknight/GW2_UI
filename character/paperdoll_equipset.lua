@@ -119,6 +119,7 @@ local function outfitSaveButton_OnClick(self, button)
         function()
             C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
             drawItemSetList()
+            toggleIgnoredSlots(false)
         end
     )
 end
