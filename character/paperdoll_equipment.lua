@@ -777,7 +777,6 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.overlayButton:Hide()
     slot.overlayButton.isEquipmentSelected = false
     slot.overlayButton:SetScript("OnClick", function(self)
-        print(self:GetParent():GetID())
         if self.isEquipmentSelected and selectedInventorySlot == self:GetParent():GetID() then
             GwPaperDollSelectedIndicator:Hide()
             selectedInventorySlot = nil
