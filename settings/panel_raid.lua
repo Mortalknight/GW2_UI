@@ -19,7 +19,7 @@ local function LoadRaidPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
-    createCat(RAID, L["Edit the group settings."], p, 4)
+    createCat(RAID, L["Edit the group settings."], p, 8)
 
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
