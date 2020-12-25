@@ -782,7 +782,6 @@ local function grabDefaultSlots(slot, anchor, parent, size)
             GwPaperDollSelectedIndicator:ClearAllPoints()
             GwPaperDollSelectedIndicator:SetPoint("LEFT", self:GetParent(), "LEFT", -16, 0)
             GwPaperDollSelectedIndicator:Show()
-            GwPaperDollSelectedIndicator:Show()
             selectedInventorySlot = self:GetParent():GetID()
             updateBagItemList(self:GetParent())
             self.isEquipmentSelected = true

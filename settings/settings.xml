@@ -130,28 +130,28 @@
             <Button name="$parentMoveHud" parentKey="moveHud" inherits="GwStandardButton" text="Move HUD">
                 <Size x="100" y="28" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="10" y="-5"/>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="10" y="-2"/>
                 </Anchors>
             </Button>
 
             <Button parentKey="keyBind" inherits="GwStandardButton" text="Keybind">
                 <Size x="120" y="28" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="120" y="-5"/>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="120" y="-2"/>
                 </Anchors>
             </Button>
 
             <Button parentKey="discord" inherits="GwStandardButton" text="Join Discord">
                 <Size x="120" y="28" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-140" y="-5"/>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-140" y="-2"/>
                 </Anchors>
             </Button>
 
             <Button parentKey="save" inherits="GwStandardButton" text="Save and Reload">
                 <Size x="120" y="28" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="-5"/>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="-2"/>
                 </Anchors>
             </Button>
 
