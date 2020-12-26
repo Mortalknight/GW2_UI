@@ -46,7 +46,7 @@ local function LoadAurasPanel(sWindow)
     local settingstable = GetSetting("RAIDDEBUFFS")
     for spellID, value in pairs(GW.ImportendRaidDebuff) do
         if spellID and GetSpellInfo(spellID) then
-            local name = GetSpellInfo(spellID) .. " (" .. spellID .. ")"
+            local name = format("%s |cFF888888(%d)|r", GetSpellInfo(spellID), spellID)
             tinsert(raidDebuffKeys, spellID)
             tinsert(raidDebuffVales, name)
 
