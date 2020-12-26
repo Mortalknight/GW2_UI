@@ -74,8 +74,9 @@ local function LoadAurasPanel(sWindow)
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
         if not indicator[4] then
+            local name = format("%s |cFF888888(%d)|r", GetSpellInfo(spellID), spellID)
             tinsert(auraKeys, spellID)
-            tinsert(auraVals, (GetSpellInfo(spellID)))
+            tinsert(auraVals, name)
         end
     end
 

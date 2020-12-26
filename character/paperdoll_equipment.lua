@@ -727,6 +727,30 @@ local function indicatorAnimation(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "indicatorAnimation", indicatorAnimation)
 
+local function UpdateAzeriteItem(self)
+    if not self.styled then
+        self.styled = true
+
+        self.AzeriteTexture:SetAlpha(0)
+        self.RankFrame.Texture:SetTexture()
+        self.RankFrame.Label:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+    end
+end
+
+local function UpdateAzeriteEmpoweredItem(self)
+    self.AzeriteTexture:SetAtlas("AzeriteIconFrame")
+    self.AzeriteTexture:ClearAllPoints()
+    self.AzeriteTexture:SetPoint("TOPLEFT", self.AzeriteTexture:GetParent(), "TOPLEFT", 2, -2)
+    self.AzeriteTexture:SetPoint("BOTTOMRIGHT", self.AzeriteTexture:GetParent(), "BOTTOMRIGHT", -2, 2)
+    self.AzeriteTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    self.AzeriteTexture:SetDrawLayer("BORDER", 1)
+end
+
+local function CorruptionIcon(self)
+    local itemLink = GetInventoryItemLink("player", self:GetID())
+    self.IconOverlay:SetShown(itemLink and IsCorruptedItem(itemLink))
+end
+
 local function grabDefaultSlots(slot, anchor, parent, size)
     slot:ClearAllPoints()
     slot:SetPoint(unpack(anchor))
@@ -758,8 +782,8 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.repairIcon:SetSize(20, 20)
 
     slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
-    slot.itemlevel:SetSize(100, 10)
-    slot.itemlevel:SetPoint("BOTTOMLEFT", 0, 2)
+    slot.itemlevel:SetSize(size, 10)
+    slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
     slot.itemlevel:SetTextColor(1, 1, 1)
     slot.itemlevel:SetJustifyH("LEFT")
 
@@ -769,6 +793,12 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.overlayButton:SetAllPoints()
     slot.overlayButton:Hide()
     slot.overlayButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+
+    slot.IconOverlay:SetAtlas("Nzoth-inventory-icon")
+    slot.IconOverlay:ClearAllPoints()
+    slot.IconOverlay:SetPoint("TOPLEFT", slot.IconOverlay:GetParent(), "TOPLEFT", 1, -1)
+    slot.IconOverlay:SetPoint("BOTTOMRIGHT", slot.IconOverlay:GetParent(), "BOTTOMRIGHT", -1, 1)
+
     slot.overlayButton:GetHighlightTexture():SetBlendMode("ADD")
     slot.overlayButton:GetHighlightTexture():SetAlpha(0.33)
     slot.overlayButton.isEquipmentSelected = false
@@ -787,6 +817,12 @@ local function grabDefaultSlots(slot, anchor, parent, size)
             self.isEquipmentSelected = true
         end
     end)
+
+    hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
+    hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
+
+    slot:HookScript('OnShow', CorruptionIcon)
+	slot:HookScript('OnEvent', CorruptionIcon)
 
     EquipSlotList[#EquipSlotList + 1] = slot:GetID()
     slotButtons[#slotButtons + 1] = slot
