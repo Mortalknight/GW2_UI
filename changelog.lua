@@ -1,6 +1,22 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.7.0", [=[
+NEW
+    - Dropdown in GW2 Settings habe now scrolling
+    - "Importend Raid & Dungeon" Debuffs can now be disable/enabled per debuffs
+    - Added ingame notification if a new addon update is available (icon at the micromenu)
+    - Added missing types at GW2 floating combat text
+    - We now use blizzards heropanel itemslots, that means that now everything can applyed to that buttons and the can be used, if they have "use" attributes
+
+FIXES
+    - Fix Minimap button alignments
+    - Fix an rare error with reputation ignore
+    - Added fallback for moverframes, to prevent profile corruptions
+    - Fix dodgebar spell changing, if customs spell is Settings
+    - Added any button to the healthglobe
+]=])
+
 v("5.6.1", [=[
 FIXES
     - Fix wrong lib name
