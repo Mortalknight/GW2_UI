@@ -9,6 +9,29 @@ local REPBG_T = 0
 local REPBG_B = 0.464
 local hasRanged = false
 
+local PlayerSlots = {
+    ["CharacterHeadSlot"] = {0, 0.25, 0, 0.125},
+    ["CharacterNeckSlot"] = {0.25, 0.5, 0, 0.125},
+    ["CharacterShoulderSlot"] = {0.5, 0.75, 0.25, 0.375},
+    ["CharacterBackSlot"] = {0.75, 1, 0, 0.125},
+    ["CharacterChestSlot"] = {0.75, 1, 0.25, 0.375},
+    ["CharacterShirtSlot"] = {0.75, 1, 0.25, 0.375},
+    ["CharacterTabardSlot"] = {0.25, 0.5, 0.375, 0.5},
+    ["CharacterWristSlot"] = {0.75, 1, 0.125, 0.25},
+    ["CharacterHandsSlot"] = {0, 0.25, 0.375, 0.5},
+    ["CharacterWaistSlot"] = {0.25, 0.5, 0.25, 0.375},
+    ["CharacterLegsSlot"] = {0, 0.25, 0.25, 0.375},
+    ["CharacterFeetSlot"] = {0.5, 0.75, 0.125, 0.25},
+    ["CharacterFinger0Slot"] = {0.5, 0.75, 0, 0.125},
+    ["CharacterFinger1Slot"] = {0.5, 0.75, 0, 0.125},
+    ["CharacterTrinket0Slot"] = {0.5, 0.75, 0.375, 0.5},
+    ["CharacterTrinket1Slot"] = {0.5, 0.75, 0.375, 0.5},
+    ["CharacterMainHandSlot"] = {0.25, 0.5, 0.125, 0.25},
+    ["CharacterSecondaryHandSlot"] = {0, 0.25, 0.125, 0.25},
+    ["CharacterRangedSlot"] = {0.25, 0.5, 0.5, 0.625},
+    ["CharacterAmmoSlot"] = {0.75, 1, 0.375, 0.5},
+}
+
 local  statsIconsSprite = {
     width = 256,
     height = 512,
@@ -469,169 +492,30 @@ function gwPaperDollPetGetStatListFrame(self, i)
     return CreateFrame("Frame", "GwPaperDollPetStat" .. i, self, "GwPaperDollStat")
 end
 
-function gwActionButtonGlobalStyle(self)
-    self.IconBorder:SetSize(self:GetSize(), self:GetSize())
-    _G[self:GetName() .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    _G[self:GetName() .. "NormalTexture"]:SetSize(self:GetSize(), self:GetSize())
-    _G[self:GetName() .. "NormalTexture"]:Hide()
-    self.IconBorder:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\itemborder")
-
-    _G[self:GetName() .. "NormalTexture"]:SetTexture(nil)
-    _G[self:GetName()]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
-    _G[self:GetName()]:SetHighlightTexture(nil)
-end
-
-function gwPaperDollSlotButton_OnLoad(self)
-    self:RegisterForDrag("LeftButton")
-    self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    self:RegisterEvent("UNIT_INVENTORY_CHANGED")
-    local slotName = self:GetName()
-    local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName, 12))
-    self:SetID(id);
-    self.checkRelic = checkRelic
-
-    gwActionButtonGlobalStyle(self)
-end
-
-function gwPaperDollSlotButton_OnShow(self)
-    self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    self:RegisterEvent("MERCHANT_UPDATE")
-    self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
-    self:RegisterEvent("ITEM_LOCK_CHANGED")
-    self:RegisterEvent("CURSOR_UPDATE")
-    self:RegisterEvent("UPDATE_INVENTORY_ALERTS")
-    gwPaperDollSlotButton_Update(self)
-end
-
-function gwPaperDollSlotButton_OnHide(self)
-    self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    self:UnregisterEvent("MERCHANT_UPDATE")
-    self:UnregisterEvent("PLAYERBANKSLOTS_CHANGED")
-    self:UnregisterEvent("ITEM_LOCK_CHANGED")
-    self:UnregisterEvent("CURSOR_UPDATE")
-    self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
-    self:UnregisterEvent("UPDATE_INVENTORY_ALERTS")
-end
-
-function gwPaperDollSlotButton_OnEvent(self, event, ...)
-    local arg1 = ...
-    if event == "PLAYER_EQUIPMENT_CHANGED" then
-        if self:GetID() == arg1 then
-            gwPaperDollSlotButton_Update(self)
-        end
-    elseif event == "UNIT_INVENTORY_CHANGED" then
-        if arg1 == "player" then
-            gwPaperDollSlotButton_Update(self)
-        end
-    end
-    if event == "BAG_UPDATE_COOLDOWN" then
-        gwPaperDollSlotButton_Update(self)
-    end
-end
-
-function gwPaperDollSlotButton_OnEnter(self)
-    self:RegisterEvent("MODIFIER_STATE_CHANGED")
-
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    local hasItem, _, repairCost = GameTooltip:SetInventoryItem("player", self:GetID(), nil, true)
-    if not hasItem then
-        local text = _G[strupper(strsub(self:GetName(), 12))]
-        if self.checkRelic and UnitHasRelicSlot("player") then
-            text = RELICSLOT
-        end
-        GameTooltip:SetText(text)
-    end
-    if InRepairMode() and repairCost and (repairCost > 0) then
-        GameTooltip:AddLine(REPAIR_COST, nil, nil, nil, true)
-        SetTooltipMoney(GameTooltip, repairCost)
-        GameTooltip:Show()
-    else
-        CursorUpdate(self)
-    end
-end
-
-function gwPaperDollSlotButton_OnModifiedClick(self, button)
-    if HandleModifiedItemClick(GetInventoryItemLink("player", self:GetID())) then
-        return
-    end
-    if IsModifiedClick("SOCKETITEM") then
-        SocketInventoryItem(self:GetID())
-        if InCombatLockdown() then return end
-        GwCharacterWindow:SetAttribute("windowPanelOpen", nil)
-    end
-end
-
-function gwPaperDollSlotButton_OnClick(self, button, drag)
-    MerchantFrame_ResetRefundItem()
-    if button == "LeftButton" then
-        local infoType, _ = GetCursorInfo()
-        if infoType == "merchant" and MerchantFrame.extendedCost then
-            MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost)
-        else
-            if SpellCanTargetItem() then
-                local castingItem = nil
-                for bag = 0, NUM_BAG_SLOTS do
-                    for slot = 1, GetContainerNumSlots(bag) do
-                        local id = GetContainerItemID(bag, slot)
-                        if id then
-                            local _, _ = GetItemInfo(id)
-                            if IsCurrentItem(id) then
-                                castingItem = id
-                                break
-                            end
-                        end
-                    end
-                    if castingItem then
-                        break
-                    end
-                end
-                if castingItem then
-                    -- PickupInventoryItem to behave as protected if we try to upgrade any item; no idea why
-                    -- So we display a nice message instead of a UI error
-                    StaticPopup_Show("UNEQUIP_LEGENDARY")
-                    return
-                end
-            end
-            PickupInventoryItem(self:GetID())
-            if CursorHasItem() then
-                MerchantFrame_SetRefundItem(self, 1)
-            end
-        end
-    else
-        UseInventoryItem(self:GetID())
-    end
-end
-
-function gwPaperDollSlotButton_OnLeave(self)
-    self:UnregisterEvent("MODIFIER_STATE_CHANGED")
-    GameTooltip:Hide()
-    ResetCursor()
-end
-
 function gwPaperDollSlotButton_Update(self)
     local slot = self:GetID()
     local textureName = GetInventoryItemTexture("player", slot)
     local cooldown = _G[self:GetName() .. "Cooldown"]
 
     if textureName then
-        SetItemButtonTexture(self, textureName)
-        SetItemButtonCount(self, GetInventoryItemCount("player", slot))
         if (GetInventoryItemBroken("player", slot) or GetInventoryItemEquippedUnusable("player", slot)) then
             SetItemButtonTextureVertexColor(self, 0.9, 0, 0)
         else
             SetItemButtonTextureVertexColor(self, 1.0, 1.0, 1.0)
         end
 
-        local current, maximum = GetInventoryItemDurability(slot)
-        if current ~= nil and (current / maximum) < 0.5 then
-            self.repairIcon:Show()
-            if (current / maximum) == 0 then
-                self.repairIcon:SetTexCoord(0, 1, 0.5, 1)
+        if self.repairIcon then
+            local current, maximum = GetInventoryItemDurability(slot)
+            if current ~= nil and (current / maximum) < 0.5 then
+                self.repairIcon:Show()
+                if (current / maximum) == 0 then
+                    self.repairIcon:SetTexCoord(0, 1, 0.5, 1)
+                else
+                    self.repairIcon:SetTexCoord(0, 1, 0, 0.5)
+                end
             else
-                self.repairIcon:SetTexCoord(0, 1, 0, 0.5)
+                self.repairIcon:Hide()
             end
-        else
-            self.repairIcon:Hide()
         end
 
         if cooldown then
@@ -640,14 +524,14 @@ function gwPaperDollSlotButton_Update(self)
         end
         self.hasItem = 1
     else
-        SetItemButtonTexture(self, nil)
-        self.repairIcon:Hide()
+        if self.repairIcon then self.repairIcon:Hide() end
     end
 
-    local quality = GetInventoryItemQuality("player", slot)
-    GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
+    if self.IconBorder then
+        local quality = GetInventoryItemQuality("player", slot)
+        GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
+    end
 end
-
 
 function GwSetItemButtonQuality(button, quality, itemIDOrLink)
     if quality then
@@ -1475,6 +1359,50 @@ function GwToggleCharacter(tab, onlyShow)
     end
 end
 
+local function grabDefaultSlots(slot, anchor, parent, size)
+    slot:ClearAllPoints()
+    slot:SetPoint(unpack(anchor))
+    slot:SetParent(parent)
+    slot:SetSize(size, size)
+    slot:StripTextures()
+    slot:SetFrameLevel(parent:GetFrameLevel() + 15)
+
+    if slot.icon then
+        slot.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        slot.icon:SetAlpha(0.9)
+        slot.icon:SetAllPoints(slot)
+    else
+        local icon = _G[slot:GetName() .. "IconTexture"]
+        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        icon:SetAlpha(0.9)
+        icon:SetAllPoints(slot)
+        slot.icon = icon
+    end
+    if slot.IconBorder then
+        slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        slot.IconBorder:SetAllPoints(slot)
+        slot.IconBorder:SetParent(slot)
+    end
+
+    slot:GetNormalTexture():SetTexture(nil)
+
+    local high = slot:GetHighlightTexture()
+    high:SetAllPoints(slot)
+    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetBlendMode("ADD")
+    high:SetAlpha(0.33)
+
+    if slot ~= CharacterAmmoSlot then
+        slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
+        slot.repairIcon:SetPoint("BOTTOMRIGHT", slot, "BOTTOMRIGHT", 0, 0)
+        slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
+        slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
+        slot.repairIcon:SetSize(20, 20)
+    end
+
+    slot.IsGW2Hooked = true
+end
+
 local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
@@ -1486,6 +1414,56 @@ local function LoadPaperDoll()
     --Legacy pet window
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
     CreateFrame("Button", "GwDressingRoomPet", GwPetContainer, "GwPetPaperdoll")
+
+    grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", GwDressingRoom.gear, "TOPLEFT", 0, 0}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterChestSlot, {"TOPLEFT", CharacterShoulderSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterWristSlot, {"TOPLEFT", CharacterChestSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterHandsSlot, {"TOPLEFT", CharacterWristSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterWaistSlot, {"TOPLEFT", CharacterHandsSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterLegsSlot, {"TOPLEFT", CharacterWaistSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterFeetSlot, {"TOPLEFT", CharacterLegsSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterMainHandSlot, {"TOPLEFT", CharacterFeetSlot, "BOTTOMLEFT", 0, -20}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterSecondaryHandSlot, {"TOPLEFT", CharacterMainHandSlot, "TOPRIGHT", 5, 0}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterRangedSlot, {"TOPLEFT", CharacterMainHandSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    grabDefaultSlots(CharacterAmmoSlot, {"TOPLEFT", CharacterRangedSlot, "TOPRIGHT", 5, 0}, GwDressingRoom, 50)
+
+    grabDefaultSlots(CharacterTabardSlot, {"TOPRIGHT", GwPapaerDollStats, "BOTTOMRIGHT", -5, -20}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterShirtSlot, {"TOPRIGHT", CharacterTabardSlot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterTrinket0Slot, {"TOPRIGHT", CharacterTabardSlot, "TOPLEFT", -5, 0}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterTrinket1Slot, {"TOPRIGHT", CharacterTrinket0Slot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterFinger0Slot, {"TOPRIGHT", CharacterTrinket0Slot, "TOPLEFT", -5, 0}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterFinger1Slot, {"TOPRIGHT", CharacterFinger0Slot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterNeckSlot, {"TOPRIGHT", CharacterFinger0Slot, "TOPLEFT", -5, 0}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterBackSlot, {"TOPRIGHT", CharacterNeckSlot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
+
+    if UnitHasRelicSlot("player") then
+        CharacterRangedSlot.icon:SetTexCoord(0.25, 0.5, 0.5, 0.625)
+        CharacterAmmoSlot:Hide()
+    else
+        CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
+        CharacterAmmoSlot:Show()
+    end
+
+    hooksecurefunc("PaperDollItemSlotButton_Update", function(button)
+        if not button.IsGW2Hooked then return end
+        local textureName = GetInventoryItemTexture("player", button:GetID())
+        if not textureName then
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg")
+            button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
+            if button == CharacterRangedSlot then
+                if UnitHasRelicSlot("player") then
+                    CharacterRangedSlot.icon:SetTexCoord(0.25, 0.5, 0.5, 0.625)
+                else
+                    CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
+                end
+            end
+            gwPaperDollSlotButton_Update(button)
+        else
+            button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+            gwPaperDollSlotButton_Update(button)
+        end  
+    end)
 
     GW.RegisterScaleFrame(GwCharacterWindow)
     GwUpdateSavedReputation()
