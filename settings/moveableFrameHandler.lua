@@ -286,6 +286,7 @@ local function mover_OnDragStop(self)
         self.gw_postdrag(self.gw_frame)
     end
 
+    self:SetMovable(true)
     self:SetUserPlaced(true)
     self.IsMoving = false
 end

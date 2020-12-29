@@ -1,3 +1,7 @@
+5.7.2
+FIXES
+    - Fix scrolling in dropdown settings
+
 5.7.1
 FIXES
     - Fix hero panel icon border if Mail skin is disabled

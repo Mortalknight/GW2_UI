@@ -256,6 +256,9 @@ local function loadDropDown(scrollFrame)
         if idx > ddCount then
             -- empty row (blank starter row, final row, and any empty entries)
             slot:Hide()
+            slot.option = nil
+            slot.optionName = nil
+            slot.optionDisplayName = nil
         else
             if scrollFrame.data then
                 if not scrollFrame.data.hasCheckbox then
@@ -267,10 +270,10 @@ local function loadDropDown(scrollFrame)
                 end
 
                 slot.string:SetText(scrollFrame.data.options_names[idx])
+                slot.option = scrollFrame.data.options[idx]
+                slot.optionName = scrollFrame.data.optionName
+                slot.optionDisplayName = scrollFrame.data.options_names[idx]
 
-                if GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec) == scrollFrame.data.options[idx] then
-                    scrollFrame.of.button.string:SetText(scrollFrame.data.options_names[idx])
-                end
                 if scrollFrame.data.hasCheckbox then
                     local settingstable = GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec)
                     if settingstable[scrollFrame.data.options[idx]] then
@@ -367,7 +370,7 @@ local function InitPanel(panel)
                 if not slot.ScriptsHooked then
                     slot:HookScript("OnClick", function(self)
                         if v.hasCheckbox then return end
-                        of.button.string:SetText(v.options_names[i])
+                        of.button.string:SetText(self.optionDisplayName)
 
                         if of.container:IsShown() then
                             of.container:Hide()
@@ -375,8 +378,8 @@ local function InitPanel(panel)
                             of.container:Show()
                         end
 
-                        SetSetting(v.optionName, v.options[i], v.perSpec)
-
+                        SetSetting(self.optionName, self.option, self:GetParent():GetParent().data.perSpec)
+                        print(self.optionName, self.option)
                         if v.callback ~= nil then
                             v.callback()
                         end
@@ -389,10 +392,10 @@ local function InitPanel(panel)
                             toSet = true
                         end
 
-                        SetSetting(v.optionName, toSet, v.perSpec, v.options[i])
+                        SetSetting(self:GetParent().optionName, toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
 
                         if v.callback ~= nil then
-                            v.callback(toSet, v.options[i])
+                            v.callback(toSet, self:GetParent().option)
                         end
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
@@ -401,6 +404,13 @@ local function InitPanel(panel)
                 end
             end
             loadDropDown(scrollFrame)
+            -- set current settings value
+            for key, val in pairs(v.options) do
+                if GetSetting(v.optionName, v.perSpec) == val then
+                    of.button.string:SetText(v.options_names[key])
+                    break
+                end
+            end
 
             of.button.string:SetFont(UNIT_NAME_FONT, 12)
             of.button:SetScript(

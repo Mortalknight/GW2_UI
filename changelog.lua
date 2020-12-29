@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.7.2", [=[
+FIXES
+    - Fix scrolling in dropdown settings
+]=])
+
 v("5.7.1", [=[
 FIXES
     - Fix hero panel icon border if Mail skin is disabled
