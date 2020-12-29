@@ -786,6 +786,8 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.itemlevel:SetTextColor(1, 1, 1)
     slot.itemlevel:SetJustifyH("LEFT")
 
+    slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+
     slot.ignoreSlotCheck = CreateFrame("CheckButton", nil, slot, "GWIgnoreSlotCheck")
 
     slot.IconOverlay:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -820,6 +822,9 @@ local function grabDefaultSlots(slot, anchor, parent, size)
 
     hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
     hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
+    hooksecurefunc(slot.IconBorder, "SetVertexColor", function(self)
+        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    end)
 
     slot:HookScript("OnShow", CorruptionIcon)
     slot:HookScript("OnEvent", CorruptionIcon)

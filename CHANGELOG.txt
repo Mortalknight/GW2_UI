@@ -1,3 +1,7 @@
+5.7.1
+FIXES
+    - Fix hero panel icon border if Mail skin is disabled
+
 5.7.0
 NEW
     - Dropdown in GW2 Settings habe now scrolling

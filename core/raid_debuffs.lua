@@ -179,6 +179,7 @@ end
     SetDefaultOnTheFly(327414) -- Possession
     SetDefaultOnTheFly(328468) -- Dimensional Tear 1
     SetDefaultOnTheFly(328448) -- Dimensional Tear 2
+    SetDefaultOnTheFly(340860) -- Withering Touch
     -- The Council of Blood
     SetDefaultOnTheFly(327052) -- Drain Essence 1
     SetDefaultOnTheFly(327773) -- Drain Essence 2

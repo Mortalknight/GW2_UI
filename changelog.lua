@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.7.1", [=[
+FIXES
+    - Fix hero panel icon border if Mail skin is disabled
+]=])
+
 v("5.7.0", [=[
 NEW
     - Dropdown in GW2 Settings habe now scrolling

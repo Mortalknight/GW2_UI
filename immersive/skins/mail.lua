@@ -317,9 +317,10 @@ local function ClearMailTextures()
         ib:ClearAllPoints()
         ib:SetPoint("TOPLEFT", t, "TOPLEFT", -2, 2)
         ib:SetPoint("BOTTOMRIGHT", t, "BOTTOMRIGHT", 2, -2)
-        hooksecurefunc("SetItemButtonQuality", function(button)
-            button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        hooksecurefunc(ib, "SetVertexColor", function(self)
+            self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         end)
+    
     end
     MailFrameTab1:Hide()
 end
@@ -327,16 +328,16 @@ end
 local function SkinMail()
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("MAIL_SHOW")
-    eventFrame:RegisterEvent("MAIL_INBOX_UPDATE");
-    eventFrame:RegisterEvent("MAIL_CLOSED");
-    eventFrame:RegisterEvent("MAIL_SEND_INFO_UPDATE");
-    eventFrame:RegisterEvent("MAIL_SEND_SUCCESS");
-    eventFrame:RegisterEvent("MAIL_FAILED");
-    eventFrame:RegisterEvent("MAIL_SUCCESS");
-    eventFrame:RegisterEvent("CLOSE_INBOX_ITEM");
-    eventFrame:RegisterEvent("MAIL_LOCK_SEND_ITEMS");
-    eventFrame:RegisterEvent("MAIL_UNLOCK_SEND_ITEMS");
-    eventFrame:RegisterEvent("TRIAL_STATUS_UPDATE");
+    eventFrame:RegisterEvent("MAIL_INBOX_UPDATE")
+    eventFrame:RegisterEvent("MAIL_CLOSED")
+    eventFrame:RegisterEvent("MAIL_SEND_INFO_UPDATE")
+    eventFrame:RegisterEvent("MAIL_SEND_SUCCESS")
+    eventFrame:RegisterEvent("MAIL_FAILED")
+    eventFrame:RegisterEvent("MAIL_SUCCESS")
+    eventFrame:RegisterEvent("CLOSE_INBOX_ITEM")
+    eventFrame:RegisterEvent("MAIL_LOCK_SEND_ITEMS")
+    eventFrame:RegisterEvent("MAIL_UNLOCK_SEND_ITEMS")
+    eventFrame:RegisterEvent("TRIAL_STATUS_UPDATE")
     eventFrame:SetScript("OnEvent", FixMailSkin)
 
     -- Strip and hide default textures
