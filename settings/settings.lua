@@ -379,7 +379,7 @@ local function InitPanel(panel)
                         end
 
                         SetSetting(self.optionName, self.option, self:GetParent():GetParent().data.perSpec)
-                        print(self.optionName, self.option)
+
                         if v.callback ~= nil then
                             v.callback()
                         end
