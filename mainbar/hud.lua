@@ -883,108 +883,6 @@ registerActionHudAura(
     "pet"
 )
 
-local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
-    -- Pick a free dialog to use
-    local dialog = nil
-    -- Find an open dialog of the requested type
-    for index = 1, _G.MIRRORTIMER_NUMTIMERS, 1 do
-        local frame = _G["GwMirrorTimer" .. index]
-        if frame:IsShown() and frame.timer == timer then
-            dialog = frame
-            break
-        end
-    end
-    if not dialog then
-        -- Find a free dialog
-        for index = 1, _G.MIRRORTIMER_NUMTIMERS, 1 do
-            local frame = _G["GwMirrorTimer" .. index]
-            if not frame:IsShown() then
-                dialog = frame
-                break
-            end
-        end
-    end
-    if not dialog then
-        return
-    end
-
-    dialog.timer = timer
-    dialog.value = (value / 1000)
-    dialog.scale = scale
-    if paused > 0 then
-        dialog.paused = 1
-    else
-        dialog.paused = nil
-    end
-
-    -- Set the text of the dialog
-    dialog.bar.name:SetText(label)
-
-    -- Set the status bar of the dialog
-    local texture = dialog.timer == "BREATH" and "breathmeter" or "castingbar"
-    dialog.bar:SetMinMaxValues(0, (maxvalue / 1000))
-    dialog.bar:SetValue(dialog.value)
-    dialog.bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/hud/" .. texture)
-
-    dialog:Show()
-end
-
-local function mirrorTimerFrame_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6)
-    if event == "PLAYER_ENTERING_WORLD" then
-        for index = 1, _G.MIRRORTIMER_NUMTIMERS do
-            local timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(index)
-            if timer == "UNKNOWN" then
-                self:Hide()
-                self.timer = nil
-            else
-                MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
-            end
-        end
-    elseif event == "MIRROR_TIMER_START" then
-        MirrorTimer_Show(arg1, arg2, arg3, arg4, arg5, arg6)
-    end
-
-    if not self:IsShown() or arg1 ~= self.timer then
-        return
-    end
-    
-    if event == "MIRROR_TIMER_PAUSE" then
-        if arg1 > 0 then
-            self.paused = 1
-        else
-            self.paused = nil
-        end
-    elseif event == "MIRROR_TIMER_STOP" then
-        self:Hide()
-        self.timer = nil
-    end
-end
-
-local function mirrorTimerFrame_OnUpdate(self)
-    if self.paused then
-        return
-    end
-    self.value = GetMirrorTimerProgress(self.timer) / 1000
-    self.bar:SetValue(self.value)
-end
-
-local function LoadMirrorTimers()
-    for i = 1, _G.MIRRORTIMER_NUMTIMERS do
-        _G["MirrorTimer" .. i]:Kill()
-
-        local mirrorTimer = CreateFrame("Frame", "GwMirrorTimer" .. i, UIParent, "GwMirrorTimer")
-        mirrorTimer.bar.name:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
-        mirrorTimer.timer = nil
-        mirrorTimer:RegisterEvent("MIRROR_TIMER_START")
-        mirrorTimer:RegisterEvent("MIRROR_TIMER_PAUSE")
-        mirrorTimer:RegisterEvent("MIRROR_TIMER_STOP")
-        mirrorTimer:RegisterEvent("PLAYER_ENTERING_WORLD")
-        mirrorTimer:SetScript("OnEvent", mirrorTimerFrame_OnEvent)
-        mirrorTimer:SetScript("OnUpdate", mirrorTimerFrame_OnUpdate)
-        mirrorTimer:SetScript("OnShow", function() UIFrameFadeIn(mirrorTimer, 0.2, mirrorTimer:GetAlpha(), 1) end)
-    end
-end
-GW.LoadMirrorTimers = LoadMirrorTimers
 
 local function levelingRewards_OnShow(self)
     PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
@@ -1186,6 +1084,9 @@ local function hud_OnEvent(self, event, ...)
         if unit == "player" then
             combatHealthState()
         end
+    elseif event == "MIRROR_TIMER_START" then
+        local arg1, arg2, arg3, arg4, arg5, arg6 = ...
+        GW.MirrorTimer_Show(arg1, arg2, arg3, arg4, arg5, arg6)
     end
 end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
@@ -1214,6 +1115,7 @@ local function LoadHudArt()
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    hudArtFrame:RegisterEvent("MIRROR_TIMER_START")
     hudArtFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     selectBg()
