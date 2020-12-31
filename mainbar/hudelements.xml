@@ -154,7 +154,7 @@
             </Layer>
         </Layers>
     </Button>
-    <Frame name="GwBreathMeter" frameStrata="LOW" virtual="true" parent="UIParent">
+    <Frame name="GwMirrorTimer" frameStrata="LOW" virtual="true" parent="UIParent">
         <Size x="258" y="22"></Size>
         <Anchors>
             <Anchor point="TOP" x="0" y="-200"></Anchor>
@@ -171,12 +171,22 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentBar" defaultValue="1" minValue="0" maxValue="1">
+            <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="258" y="22"></Size>
                 <Anchors>
                     <Anchor point="LEFT" x="1"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/hud/breathmeter"/>
+                <Layers>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="name" text="" justifyH="CENTER">
+                            <Size x="258" y="22"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </StatusBar>
         </Frames>
     </Frame>

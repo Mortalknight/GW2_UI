@@ -883,52 +883,108 @@ registerActionHudAura(
     "pet"
 )
 
-local function LoadBreathMeter()
-    CreateFrame("Frame", "GwBreathMeter", UIParent, "GwBreathMeter")
-    GwBreathMeter:Hide()
-    GwBreathMeter:SetScript(
-        "OnShow",
-        function()
-            UIFrameFadeIn(GwBreathMeter, 0.2, GwBreathMeter:GetAlpha(), 1)
+local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
+    -- Pick a free dialog to use
+    local dialog = nil
+    -- Find an open dialog of the requested type
+    for index = 1, _G.MIRRORTIMER_NUMTIMERS, 1 do
+        local frame = _G["GwMirrorTimer" .. index]
+        if frame:IsShown() and frame.timer == timer then
+            dialog = frame
+            break
         end
-    )
-    MirrorTimer1:SetScript(
-        "OnShow",
-        function(self)
-            self:Hide()
-        end
-    )
-    MirrorTimer1:UnregisterAllEvents()
-
-    GwBreathMeter:RegisterEvent("MIRROR_TIMER_START")
-    GwBreathMeter:RegisterEvent("MIRROR_TIMER_STOP")
-
-    GwBreathMeter:SetScript(
-        "OnEvent",
-        function(self, event, arg1, arg2, arg3, arg4)
-            if event == "MIRROR_TIMER_START" then
-                local texture = "Interface/AddOns/GW2_UI/textures/hud/castingbar"
-                if arg1 == "BREATH" then
-                    texture = "Interface/AddOns/GW2_UI/textures/hud/breathmeter"
-                end
-                GwBreathMeterBar:SetStatusBarTexture(texture)
-                GwBreathMeterBar:SetMinMaxValues(0, arg3)
-                GwBreathMeterBar:SetScript(
-                    "OnUpdate",
-                    function()
-                        GwBreathMeterBar:SetValue(GetMirrorTimerProgress(arg1))
-                    end
-                )
-                GwBreathMeter:Show()
-            end
-            if event == "MIRROR_TIMER_STOP" then
-                GwBreathMeterBar:SetScript("OnUpdate", nil)
-                GwBreathMeter:Hide()
+    end
+    if not dialog then
+        -- Find a free dialog
+        for index = 1, _G.MIRRORTIMER_NUMTIMERS, 1 do
+            local frame = _G["GwMirrorTimer" .. index]
+            if not frame:IsShown() then
+                dialog = frame
+                break
             end
         end
-    )
+    end
+    if not dialog then
+        return
+    end
+
+    dialog.timer = timer
+    dialog.value = (value / 1000)
+    dialog.scale = scale
+    if paused > 0 then
+        dialog.paused = 1
+    else
+        dialog.paused = nil
+    end
+
+    -- Set the text of the dialog
+    dialog.bar.name:SetText(label)
+
+    -- Set the status bar of the dialog
+    local texture = dialog.timer == "BREATH" and "breathmeter" or "castingbar"
+    dialog.bar:SetMinMaxValues(0, (maxvalue / 1000))
+    dialog.bar:SetValue(dialog.value)
+    dialog.bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/hud/" .. texture)
+
+    dialog:Show()
 end
-GW.LoadBreathMeter = LoadBreathMeter
+
+local function mirrorTimerFrame_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6)
+    if event == "PLAYER_ENTERING_WORLD" then
+        for index = 1, _G.MIRRORTIMER_NUMTIMERS do
+            local timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(index)
+            if timer == "UNKNOWN" then
+                self:Hide()
+                self.timer = nil
+            else
+                MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
+            end
+        end
+    elseif event == "MIRROR_TIMER_START" then
+        MirrorTimer_Show(arg1, arg2, arg3, arg4, arg5, arg6)
+    end
+
+    if not self:IsShown() or arg1 ~= self.timer then
+        return
+    end
+    
+    if event == "MIRROR_TIMER_PAUSE" then
+        if arg1 > 0 then
+            self.paused = 1
+        else
+            self.paused = nil
+        end
+    elseif event == "MIRROR_TIMER_STOP" then
+        self:Hide()
+        self.timer = nil
+    end
+end
+
+local function mirrorTimerFrame_OnUpdate(self)
+    if self.paused then
+        return
+    end
+    self.value = GetMirrorTimerProgress(self.timer) / 1000
+    self.bar:SetValue(self.value)
+end
+
+local function LoadMirrorTimers()
+    for i = 1, _G.MIRRORTIMER_NUMTIMERS do
+        _G["MirrorTimer" .. i]:Kill()
+
+        local mirrorTimer = CreateFrame("Frame", "GwMirrorTimer" .. i, UIParent, "GwMirrorTimer")
+        mirrorTimer.bar.name:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+        mirrorTimer.timer = nil
+        mirrorTimer:RegisterEvent("MIRROR_TIMER_START")
+        mirrorTimer:RegisterEvent("MIRROR_TIMER_PAUSE")
+        mirrorTimer:RegisterEvent("MIRROR_TIMER_STOP")
+        mirrorTimer:RegisterEvent("PLAYER_ENTERING_WORLD")
+        mirrorTimer:SetScript("OnEvent", mirrorTimerFrame_OnEvent)
+        mirrorTimer:SetScript("OnUpdate", mirrorTimerFrame_OnUpdate)
+        mirrorTimer:SetScript("OnShow", function() UIFrameFadeIn(mirrorTimer, 0.2, mirrorTimer:GetAlpha(), 1) end)
+    end
+end
+GW.LoadMirrorTimers = LoadMirrorTimers
 
 local function levelingRewards_OnShow(self)
     PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
