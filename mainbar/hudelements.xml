@@ -439,6 +439,7 @@
             </Layer>
         </Layers>
     </Frame>
+
     <Frame name="GwCastingBar" virtual="true">
         <Size x="176" y="15"></Size>
         <Anchors>
@@ -472,15 +473,11 @@
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="4">
                 <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                     <Size x="15" y="15"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                    </Anchors>
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
             </Layer>

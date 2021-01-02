@@ -38,11 +38,11 @@ local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
     dialog.bar.name:SetText(label)
 
     -- Set the status bar of the dialog
-    local texture = dialog.timer == "BREATH" and "breathmeter" or "castingbar"
+    local color = MirrorTimerColors[timer]
     dialog.bar:SetMinMaxValues(0, (maxvalue / 1000))
     dialog.bar:SetValue(dialog.value)
-    dialog.bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/hud/" .. texture)
-
+    dialog.bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+    dialog.bar:SetStatusBarColor(color.r, color.g, color.b)
     dialog:Show()
 end
 GW.MirrorTimer_Show = MirrorTimer_Show
