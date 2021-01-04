@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.7.4", [=[
+FIXES
+    - Fix some castbar issues
+    - Fix some mirrottimer issues
+]=])
+
 v("5.7.2", [=[
 FIXES
     - Fix scrolling in dropdown settings
