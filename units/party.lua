@@ -26,7 +26,7 @@ GW_PORTRAIT_BACKGROUND[5] = {l = 0, r = 0.828, t = 0.166015625 * 4, b = 0.166015
 local buffLists = {}
 local DebuffLists = {}
 
-local function setPortrait(self, index)
+local function setPortraitBackground(self, index)
     self.portraitBackground:SetTexCoord(
         GW_PORTRAIT_BACKGROUND[index].l,
         GW_PORTRAIT_BACKGROUND[index].r,
@@ -34,19 +34,19 @@ local function setPortrait(self, index)
         GW_PORTRAIT_BACKGROUND[index].b
     )
 end
-GW.AddForProfiling("party", "setPortrait", setPortrait)
+GW.AddForProfiling("party", "setPortraitBackground", setPortraitBackground)
 
 local function updateAwayData(self)
+    local playerInstanceId = select(4, ("player"))
+    local instanceId = select(4, UnitPosition(self.unit))
     local portraitIndex = 1
 
-    local _, _, _, instanceID = UnitPosition(self.unit)
-    local _, _, _, playerinstanceID = UnitPosition("player")
     if not GW_READY_CHECK_INPROGRESS then 
         self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
         SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
 
-    if playerinstanceID ~= instanceID then
+    if playerInstanceId ~= instanceId then
         portraitIndex = 2
     end
 
@@ -76,15 +76,6 @@ local function updateAwayData(self)
         portraitIndex = 3
     end
 
-    if portraitIndex == 1 then
-        SetPortraitTexture(self.portrait, self.unit)
-        if self.portrait:GetTexture() == nil then
-            portraitIndex = 2
-        end
-    else
-        self.portrait:SetTexture(nil)
-    end
-
     if GW_READY_CHECK_INPROGRESS == true then
         if self.ready == -1 then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
@@ -104,9 +95,24 @@ local function updateAwayData(self)
         portraitIndex = 5
     end
     
-    setPortrait(self, portraitIndex)
+    setPortraitBackground(self, portraitIndex)
 end
 GW.AddForProfiling("party", "updateAwayData", updateAwayData)
+
+local function updateUnitPortrait(self)
+    if self.portrait then
+        local playerInstanceId = select(4, UnitPosition("player"))
+        local instanceId = select(4, UnitPosition(self.unit))
+        local phaseReason = UnitPhaseReason(self.unit)
+
+        if playerInstanceId == instanceId and not phaseReason then
+            SetPortraitTexture(self.portrait, self.unit)
+        else
+            self.portrait:SetTexture(nil)
+        end
+    end
+end
+GW.AddForProfiling("party", "updateUnitPortrait", updateUnitPortrait)
 
 local function getUnitDebuffs(unit)
     local show_debuffs = GetSetting("PARTY_SHOW_DEBUFFS")
@@ -483,6 +489,7 @@ local function updatePartyData(self)
     setHealth(self)
     setUnitName(self)
     updateAwayData(self)
+    updateUnitPortrait(self)
 
     self.level:SetText(UnitLevel(self.unit))
 
@@ -519,7 +526,9 @@ local function party_OnEvent(self, event, unit, arg1)
     elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
         setPredictionAmount(self)
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
-        updateAwayData(self)
+        updateAwayData(self)  
+    elseif (event == "UNIT_PORTRAIT_UPDATE" and unit == self.unit) or event == "PORTRAITS_UPDATED" then
+        updateUnitPortrait(self)
     elseif event == "UNIT_NAME_UPDATE" and unit == self.unit then
         setUnitName(self)
     elseif event == "UNIT_AURA" and unit == self.unit then
@@ -645,6 +654,7 @@ local function createPartyFrame(i)
     frame:RegisterEvent("PLAYER_TARGET_CHANGED")
     frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
     frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
+    frame:RegisterEvent("PORTRAITS_UPDATED")
 
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
@@ -657,6 +667,7 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
 
     party_OnEvent(frame, "load")
 

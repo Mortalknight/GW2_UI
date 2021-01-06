@@ -1,6 +1,7 @@
 5.7.5
 FIXES
     - Fix chatframe fade
+    - Update party portraits correctly
 
 5.7.4
 FIXES

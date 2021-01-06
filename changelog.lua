@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.7.5", [=[
 FIXES
     - Fix chatframe fade
+    - Update party portraits correctly
 ]=])
 
 v("5.7.4", [=[
