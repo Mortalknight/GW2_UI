@@ -188,7 +188,7 @@ local function handleChatFrameFadeIn(chatFrame)
     setChatBackgroundColor(chatFrame)
     local frameName = chatFrame:GetName()
     for k, v in pairs(CHAT_FRAME_TEXTURES) do
-        local object = _G[chatFrame:GetName() .. v]
+        local object = _G[frameName .. v]
         if object and object:IsShown() then
             UIFrameFadeIn(object, 0.5, object:GetAlpha(), 1)
         end
@@ -206,11 +206,11 @@ local function handleChatFrameFadeIn(chatFrame)
             end   
         end
 
-        UIFrameFadeIn(_G["GwChatContainer1"], 0.5, _G["GwChatContainer1"]:GetAlpha(), 1)
+        UIFrameFadeIn(_G.ChatFrame1.Container, 0.5, _G.ChatFrame1.Container:GetAlpha(), 1)
         UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
-            UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
+            UIFrameFadeIn(chatFrame.Container, 0.5, chatFrame.Container:GetAlpha(), 1)
         end
     end
 
@@ -238,7 +238,7 @@ local function handleChatFrameFadeOut(chatFrame)
     local frameName = chatFrame:GetName()
 
     for k, v in pairs(CHAT_FRAME_TEXTURES) do
-        local object = _G[chatFrame:GetName() .. v]
+        local object = _G[frameName .. v]
         if object and object:IsShown() then
             UIFrameFadeOut(object, 2, object:GetAlpha(), 0)
         end
@@ -255,7 +255,7 @@ local function handleChatFrameFadeOut(chatFrame)
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
         end
-        UIFrameFadeOut(_G["GwChatContainer1"], 2, _G["GwChatContainer1"]:GetAlpha(), chatAlpha)
+        UIFrameFadeOut(_G.ChatFrame1.Container, 2, _G.ChatFrame1.Container:GetAlpha(), chatAlpha)
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
             UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
@@ -275,7 +275,7 @@ local function handleChatFrameFadeOut(chatFrame)
     --check if other Tabs has Containers, which need to fade out
     for i = 1, FCF_GetNumActiveChatFrames() do
         if _G["ChatFrame" .. i].hasContainer and _G["ChatFrame" .. i].isDocked == chatFrame.isDocked and chatFrame:GetID() ~= i then
-            UIFrameFadeOut(_G["GwChatContainer" .. i], 2, _G["GwChatContainer" .. i]:GetAlpha(), chatAlpha)
+            UIFrameFadeOut(_G["ChatFrame" .. i].Container, 2, _G["ChatFrame" .. i].Container:GetAlpha(), chatAlpha)
         end
     end
 end
@@ -310,7 +310,7 @@ local function styleChatWindow(frame)
     local background = _G[name .. "Background"]
 
     if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
-        local fmGCC = CreateFrame("FRAME", "GwChatContainer" .. id, UIParent, "GwChatContainer")
+        local fmGCC = CreateFrame("Frame", nil, UIParent, "GwChatContainer")
         fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
         fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
@@ -613,7 +613,7 @@ local function LoadChat()
     hooksecurefunc("FCF_MinimizeFrame", function(chatFrame)
         if chatFrame.minimized then
             local id = chatFrame:GetID()
-            _G["GwChatContainer" .. id]:SetAlpha(0)
+            chatFrame.Container:SetAlpha(0)
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:StripTextures(true)
                 chatFrame.minFrame:CreateBackdrop(GW.skins.constBackdropFrame)
@@ -637,7 +637,7 @@ local function LoadChat()
         frame:SetTimeVisible(100)
         frame:SetFading(shouldFading)
         if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
-            local fmGCC = CreateFrame("FRAME", "GwChatContainer" .. id, UIParent, "GwChatContainer")
+            local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
             fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
             fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
             if not frame.isDocked then

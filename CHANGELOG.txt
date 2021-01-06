@@ -1,3 +1,7 @@
+5.7.5
+FIXES
+    - Fix chatframe fade
+
 5.7.4
 FIXES
     - Fix some castbar issues
