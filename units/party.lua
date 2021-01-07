@@ -37,7 +37,7 @@ end
 GW.AddForProfiling("party", "setPortraitBackground", setPortraitBackground)
 
 local function updateAwayData(self)
-    local playerInstanceId = select(4, ("player"))
+    local playerInstanceId = select(4, UnitPosition("player"))
     local instanceId = select(4, UnitPosition(self.unit))
     local portraitIndex = 1
 
