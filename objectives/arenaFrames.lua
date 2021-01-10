@@ -17,42 +17,33 @@ local countArenaPrepFrames = 0
 local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 
 local FractionIcon = {}
-    FractionIcon["Alliance"] = "|TInterface/AddOns/GW2_UI/textures/battleground/Alliance:16:16:0:0|t "
-    FractionIcon["Horde"] = "|TInterface/AddOns/GW2_UI/textures/battleground/Horde:16:16:0:0|t "
-    FractionIcon["NONE"] = ""
-
-local bgIndex = {}
-    bgIndex[30] = 3         -- Alterac
-    bgIndex[2197] = 3       -- Alterac
-    bgIndex[529] = 2        -- Arathi
-    bgIndex[1681] = 2       -- Arathi
-    bgIndex[2107] = 2       -- Arathi
-    bgIndex[2177] = 2       -- Arathi
-    bgIndex[1191] = 8       -- Ashran
-    bgIndex[2245] = 13      -- Deepwind
-    bgIndex[566] = 4        -- Eye Of The Storm
-    bgIndex[968] = 4        -- Eye Of The Storm
-    bgIndex[761] = 6        -- Gilneas
-    bgIndex[628] = 5        -- Isle Of Conquest
-    bgIndex[1803] = 12      -- Seething Shore
-    bgIndex[727] = 10       -- Silvershard Mines
-    bgIndex[998] = 11       -- Temple Of Kotmogu
-    bgIndex[726] = 9        -- Twin Peaks
-    bgIndex[2106] = 1       -- Warsong
-    bgIndex[2118] = 7       -- Wintergrasp
+    FractionIcon.Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/Alliance:16:16:0:0|t "
+    FractionIcon.Horde = "|TInterface/AddOns/GW2_UI/textures/battleground/Horde:16:16:0:0|t "
+    FractionIcon.NONE = ""
 
 local function setCompass(isArena)
     local compassData = {}
+    local compassTitle, compassDesc = "", ""
 
-    -- parse current BG date here, to show the correct name and subname
-    if not isArena and GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]) then
-        compassData.TITLE = GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID])
-        compassData.DESC = select(12, GetBattlegroundInfo(bgIndex[GW.locationData.instanceMapID]))
+    if C_PvP.IsInBrawl() then
+        local brawlInfo = C_PvP.GetActiveBrawlInfo()
+        if brawlInfo then
+            compassTitle = brawlInfo.name
+            compassDesc = brawlInfo.shortDescription
+        end
     else
-        compassData.TITLE = select(2, GetBattlefieldStatus(1))
-        compassData.DESC = VOICEMACRO_2_Ta_1_FEMALE
+        for i = 1, GetMaxBattlefieldID() do
+            local status, mapName, _, _, _, _, _, _, _, shortDescription = GetBattlefieldStatus(i)
+            if status and status == "active" then
+                compassTitle = mapName
+                compassDesc = shortDescription and shortDescription or ""
+                break
+            end
+        end
     end
 
+    compassData.TITLE = compassTitle
+    compassData.DESC = compassDesc
     compassData.TYPE = "ARENA"
     compassData.ID = "arena_unknown"
     compassData.QUESTID = "unknown"
@@ -62,18 +53,25 @@ local function setCompass(isArena)
     compassData.Y = nil
     compassData.COLOR = TRACKER_TYPE_COLOR.ARENA
 
-    AddTrackerNotification(compassData)
+    AddTrackerNotification(compassData, true)
 end
 
-local function updateArenaFrameHeight(frames)
+local function updateArenaFrameHeight()
     local i = 0
 
-    for k, frame in pairs(frames) do
+    for k, frame in pairs(arenaFrames) do
         if frame:IsShown() then
             i = k
         end
     end
 
+    if i == 0 then
+        for k, frame in pairs(arenaPrepFrames) do
+            if frame:IsShown() then
+                i = k
+            end
+        end
+    end
     GwQuesttrackerContainerArenaBGFrames:SetHeight(i > 0 and (35 * i) or 1)
 end
 GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)
@@ -172,9 +170,8 @@ end
 GW.AddForProfiling("arenaFrames", "updateArena_Name", updateArena_Name)
 
 local function arenaFrame_OnEvent(self, event, unit)
-    local isArena = GetZonePVPInfo()
-    local inBG = UnitInBattleground("player")
-    if isArena ~= "arena" and inBG == nil then
+    local _, instanceType = IsInInstance()
+    if instanceType ~= "arena" and instanceType ~= "pvp" then
         return
     end
 
@@ -230,6 +227,8 @@ local function arenaPrepFrame_OnEvent()
             prepFrame:Hide()
         end
     end
+
+    updateArenaFrameHeight()
 end
 GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
 
@@ -280,7 +279,7 @@ local function registerFrame(i)
                 end
             end
 
-            updateArenaFrameHeight(arenaFrames)
+            updateArenaFrameHeight()
 
             updateArena_Health(self)
             updateArena_Power(self)
@@ -294,11 +293,9 @@ local function registerFrame(i)
         "OnHide",
         function(self)
             countArenaFrames = countArenaFrames - 1
-            updateArenaFrameHeight(arenaFrames)
-            local isArena = GetZonePVPInfo()
-            local inBG = UnitInBattleground("player")
-
-            if countArenaFrames < 1 and isArena ~= "arena" and inBG == nil then
+            updateArenaFrameHeight()
+            local _, instanceType = IsInInstance()
+            if countArenaFrames < 1 and instanceType ~= "arena" and instanceType ~= "pvp" then
                 RemoveTrackerNotificationOfType("ARENA")
                 countArenaFrames = 0
             end
@@ -327,7 +324,7 @@ local function registerPrepFrame(i)
     arenaPrepFrame:SetScript(
         "OnShow",
         function(self)
-            updateArenaFrameHeight(arenaPrepFrames)
+            updateArenaFrameHeight()
             countArenaPrepFrames = countArenaPrepFrames + 1
         end
     )
@@ -360,18 +357,17 @@ local function LoadArenaFrame()
     local f = CreateFrame("Frame")
     f:RegisterEvent("PLAYER_ENTERING_WORLD")
     f:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    f:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
+    f:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
     f:SetScript("OnEvent", function(self, event)
         C_Timer.After(0.8, function()
-            local isArena = IsActiveBattlefieldArena()
-            local inBG = UnitInBattleground("player")
-            if not isArena and inBG == nil then
-                return
+            local _, instanceType = IsInInstance()
+            if instanceType == "arena" or instanceType == "pvp" then
+                setCompass(isArena)
+                updateArenaFrameHeight()
             end
-
-            setCompass(isArena)
-            updateArenaFrameHeight(arenaFrames)
         end)
     end)
-    C_Timer.After(0.01, function() updateArenaFrameHeight(arenaFrames) end)
+    C_Timer.After(0.01, function() updateArenaFrameHeight() end)
 end
 GW.LoadArenaFrame = LoadArenaFrame

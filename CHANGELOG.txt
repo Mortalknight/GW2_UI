@@ -2,6 +2,9 @@
 FIXES
     - Fix chatframe fade
     - Update party portraits correctly
+    - Fix arena headers
+    - Fix keybind slash command
+    - Fix arena prep frames overlaps with quests
 
 5.7.4
 FIXES

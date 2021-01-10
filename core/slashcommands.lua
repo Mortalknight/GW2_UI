@@ -24,7 +24,7 @@ local function LoadSlashCommands()
         elseif msg == "status" then
             GW.ShowStatusReport()
         elseif msg == "kb" then
-            GW.HoverKeyBinds()
+            GW.DisplayHoverBinding()
         elseif msg == "mh" then
             if InCombatLockdown() then
                 DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])

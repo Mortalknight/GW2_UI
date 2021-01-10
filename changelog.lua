@@ -5,6 +5,9 @@ v("5.7.5", [=[
 FIXES
     - Fix chatframe fade
     - Update party portraits correctly
+    - Fix arena headers
+    - Fix keybind slash command
+    - Fix arena prep frames overlaps with quests
 ]=])
 
 v("5.7.4", [=[
