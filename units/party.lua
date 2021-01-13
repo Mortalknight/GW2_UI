@@ -527,7 +527,7 @@ local function party_OnEvent(self, event, unit, arg1)
         setPredictionAmount(self)
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         updateAwayData(self)  
-    elseif (event == "UNIT_PORTRAIT_UPDATE" and unit == self.unit) or event == "PORTRAITS_UPDATED" then
+    elseif (event == "UNIT_PORTRAIT_UPDATE" and unit == self.unit) or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
         updateUnitPortrait(self)
     elseif event == "UNIT_NAME_UPDATE" and unit == self.unit then
         setUnitName(self)
