@@ -1,3 +1,7 @@
+5.7.6
+FIXES
+    - Fix castbar latency issue
+
 5.7.5
 FIXES
     - Fix chatframe fade

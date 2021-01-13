@@ -93,7 +93,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 self.bar:SetTexCoord(0, p, 0.25, 0.5)
 
                 local lagWorld = select(4, GetNetStats()) / 1000
-                self.latency:SetWidth(math.min(1, (lagWorld / (self.endTime - self.startTime))) * 176)
+                self.latency:SetWidth(math.max(0.0001, math.min(1, (lagWorld / (self.endTime - self.startTime)))) * 176)
             end,
             "noease"
         )

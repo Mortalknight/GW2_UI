@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.7.6", [=[
+FIXES
+    - Fix castbar latency issue
+]=])
+
 v("5.7.5", [=[
 FIXES
     - Fix chatframe fade
