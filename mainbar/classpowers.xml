@@ -478,7 +478,7 @@
                     </Layer>
                     <Layer level="OVERLAY">
                         <Texture parentKey="comboFlare" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" hidden="true">
-                            <Size x="128" y="128"></Size>
+                            <Size x="70" y="70"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="LEFT" x="128" y="0"></Anchor>
                             </Anchors>
