@@ -450,6 +450,7 @@ local function SkinMail()
             SetSetting(self.mover.onMoveSetting, pos)
         end
     end)
+    MailFrame:ClearAllPoints()
     MailFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     MailFrame.SetPoint = GW.NoOp -- Prevent Blizzard to reanchor that frame
 
