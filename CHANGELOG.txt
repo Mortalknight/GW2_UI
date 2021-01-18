@@ -2,6 +2,7 @@
 FIXES
     - Fix castbar latency issue
     - Fix rested expbar issue
+    - Fix inactive fractions listend under classic and others
 
 5.7.5
 FIXES

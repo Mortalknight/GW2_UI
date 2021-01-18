@@ -5,6 +5,7 @@ v("5.7.6", [=[
 FIXES
     - Fix castbar latency issue
     - Fix rested expbar issue
+    - Fix inactive fractions listend under classic and others
 ]=])
 
 v("5.7.5", [=[

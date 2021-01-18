@@ -508,48 +508,46 @@ updateDetails = function()
             factionID,
             hasBonusRepGain = returnReputationData(idx)
 
-        if factionID then
-            if isHeader and not isChild then
-                break
-            end
+        if not factionID or (isHeader and not isChild) then
+            break
+        end
 
-            repCount = repCount + 1
-            if expandedFactions[factionID] then
-                expCount = expCount + 1
-            end
+        repCount = repCount + 1
+        if expandedFactions[factionID] then
+            expCount = expCount + 1
+        end
 
-            if isHeader and isChild then
-                savedHeaderName = name
-            end
+        if isHeader and isChild then
+            savedHeaderName = name
+        end
 
-            if not isChild then
-                savedHeaderName = ""
-            end
+        if not isChild then
+            savedHeaderName = ""
+        end
 
-            if not facData[factionID] and (not isHeader or hasRep) then
-                facData[factionID] = {}
-            end
-            if not isHeader or hasRep then
-                facOrder[#facOrder + 1] = factionID
-                facData[factionID].loaded = true
-                facData[factionID].factionIndex = idx
-                facData[factionID].name = name
-                facData[factionID].desc = desc
-                facData[factionID].standingId = standingId
-                facData[factionID].bottomValue = bottomValue
-                facData[factionID].topValue = topValue
-                facData[factionID].earnedValue = earnedValue
-                facData[factionID].atWarWith = atWarWith
-                facData[factionID].canToggleAtWar = canToggleAtWar
-                facData[factionID].isHeader = isHeader
-                facData[factionID].isCollapsed = isCollapsed
-                facData[factionID].hasRep = hasRep
-                facData[factionID].isWatched = isWatched
-                facData[factionID].isChild = isChild
-                facData[factionID].factionID = factionID
-                facData[factionID].hasBonusRepGain = hasBonusRepGain
-                facData[factionID].savedHeaderName = savedHeaderName
-            end
+        if not facData[factionID] and (not isHeader or hasRep) then
+            facData[factionID] = {}
+        end
+        if not isHeader or hasRep then
+            facOrder[#facOrder + 1] = factionID
+            facData[factionID].loaded = true
+            facData[factionID].factionIndex = idx
+            facData[factionID].name = name
+            facData[factionID].desc = desc
+            facData[factionID].standingId = standingId
+            facData[factionID].bottomValue = bottomValue
+            facData[factionID].topValue = topValue
+            facData[factionID].earnedValue = earnedValue
+            facData[factionID].atWarWith = atWarWith
+            facData[factionID].canToggleAtWar = canToggleAtWar
+            facData[factionID].isHeader = isHeader
+            facData[factionID].isCollapsed = isCollapsed
+            facData[factionID].hasRep = hasRep
+            facData[factionID].isWatched = isWatched
+            facData[factionID].isChild = isChild
+            facData[factionID].factionID = factionID
+            facData[factionID].hasBonusRepGain = hasBonusRepGain
+            facData[factionID].savedHeaderName = savedHeaderName
         end
     end
 
@@ -707,8 +705,7 @@ updateReputations = function()
     local textureC = 1
 
     for factionIndex = GwPaperReputation.categories.scroll, GetNumFactions() do
-        local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID =
-            returnReputationData(factionIndex)
+        local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
         local friendID = GetFriendshipReputation(factionID)
         if name ~= nil then
             cCur = cCur + standingId
