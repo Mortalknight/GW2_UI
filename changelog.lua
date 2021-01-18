@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.7.6", [=[
 FIXES
     - Fix castbar latency issue
+    - Fix rested expbar issue
 ]=])
 
 v("5.7.5", [=[
