@@ -4,7 +4,7 @@ local function TopCenterPosition(self, _, b)
     local holder = _G.UIWidgetTopCenterContainerFrame.gwMover
     if b and (b ~= holder) then
         self:ClearAllPoints()
-        self:Point("TOPLEFT", holder)
+        self:SetPoint("CENTER", holder, "CENTER")
     end
 end
 
