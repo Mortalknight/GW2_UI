@@ -146,6 +146,8 @@ end
     SetDefaultOnTheFly(330713) -- Reverberating Pain
     SetDefaultOnTheFly(329370) -- Deadly Descent
     SetDefaultOnTheFly(336494) -- Echo Screech
+    SetDefaultOnTheFly(346301) -- Bloodlight
+    SetDefaultOnTheFly(342077) -- Echolocation
     -- Huntsman Altimor
     SetDefaultOnTheFly(335304) -- Sinseeker
     SetDefaultOnTheFly(334971) -- Jagged Claws

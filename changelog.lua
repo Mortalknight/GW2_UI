@@ -6,6 +6,8 @@ FIXES
     - Fix castbar latency issue
     - Fix rested expbar issue
     - Fix inactive factions listed under classic and others
+    - Fix Postal skin issue
+    - Update "Raid Debuffs"
 ]=])
 
 v("5.7.5", [=[
