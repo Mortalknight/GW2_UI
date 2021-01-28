@@ -582,6 +582,8 @@ local function LoadChat()
 
     for i = 1, FCF_GetNumActiveChatFrames() do
         local frame = _G["ChatFrame" .. i]
+        -- possible fix for chatframe floating max error
+        frame.oldAlpha = frame.oldAlpha and frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
         styleChatWindow(frame)
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)

@@ -8,6 +8,7 @@ FIXES
     - Fix inactive factions listed under classic and others
     - Fix Postal skin issue
     - Update "Raid Debuffs"
+    - Possible fix for chatframe floating max error
 ]=])
 
 v("5.7.5", [=[
