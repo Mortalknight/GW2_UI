@@ -71,7 +71,7 @@ local nextShadow, nextAnchor
 local function addAddonButton(name, setting, buttonName, shadow, anchor, showFunction)
     if IsAddOnLoaded(name) and (setting == nil or setting == true) then
         fmMenu.buttonName = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
-        fmMenu.buttonName:SetText(name)
+        fmMenu.buttonName:SetText(select(2, GetAddOnInfo(name)))
         fmMenu.buttonName:ClearAllPoints()
         fmMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
         CharacterMenuButton_OnLoad(fmMenu.buttonName, shadow)
@@ -145,6 +145,7 @@ local function LoadPaperDoll(tabContainer)
     addAddonButton("Clique", GW.GetSetting("USE_TALENT_WINDOW"), CliqueButton, nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
     addAddonButton("Outfitter", GW.GetSetting("USE_CHARACTER_WINDOW"), OutfitterButton, nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
     addAddonButton("MyRolePlay", GW.GetSetting("USE_CHARACTER_WINDOW"), MyRolePlayButton, nextShadow, nextAnchor, function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end)
+    addAddonButton("TalentSetManager", GW.GetSetting("USE_TALENT_WINDOW"), TalentSetManagerPlayButton, nextShadow, nextAnchor, function() TalentFrame_LoadUI() if PlayerTalentFrame_Toggle then PlayerTalentFrame_Toggle(TALENTS_TAB) end end)
 
     CharacterFrame:SetScript(
         "OnShow",

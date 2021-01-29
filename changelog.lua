@@ -2,6 +2,9 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("5.7.6", [=[
+NEW
+    - Added Talent Set Manager support (button on hero panel)
+    
 FIXES
     - Fix castbar latency issue
     - Fix rested expbar issue
