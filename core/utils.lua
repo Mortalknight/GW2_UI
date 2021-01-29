@@ -545,3 +545,37 @@ local function IsDispellableByMe(debuffType)
     return dispel and dispel[debuffType]
 end
 GW.IsDispellableByMe = IsDispellableByMe
+
+local function GetScreenQuadrant(frame)
+    local x, y = frame:GetCenter()
+    local screenWidth = GetScreenWidth()
+    local screenHeight = GetScreenHeight()
+
+    if not (x and y) then
+        return "UNKNOWN"
+    end
+
+    local point
+    if (x > (screenWidth / 3) and x < (screenWidth / 3) * 2) and y > (screenHeight / 3) * 2 then
+        point = "TOP"
+    elseif x < (screenWidth / 3) and y > (screenHeight / 3) * 2 then
+        point = "TOPLEFT"
+    elseif x > (screenWidth / 3) * 2 and y > (screenHeight / 3) * 2 then
+        point = "TOPRIGHT"
+    elseif (x > (screenWidth / 3) and x < (screenWidth / 3) * 2) and y < (screenHeight / 3) then
+        point = "BOTTOM"
+    elseif x < (screenWidth / 3) and y < (screenHeight / 3) then
+        point = "BOTTOMLEFT"
+    elseif x > (screenWidth / 3) * 2 and y < (screenHeight / 3) then
+        point = "BOTTOMRIGHT"
+    elseif x < (screenWidth / 3) and (y > (screenHeight / 3) and y < (screenHeight / 3) * 2) then
+        point = "LEFT"
+    elseif x > (screenWidth / 3) * 2 and y < (screenHeight / 3) * 2 and y > (screenHeight / 3) then
+        point = "RIGHT"
+    else
+        point = "CENTER"
+    end
+
+    return point
+end
+GW.GetScreenQuadrant = GetScreenQuadrant

@@ -1,10 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.7.6", [=[
+v("5.8.0", [=[
 NEW
     - Added Talent Set Manager support (button on hero panel)
-    
+    - Button flyout direction is based on actionbar screen position
+
 FIXES
     - Fix castbar latency issue
     - Fix rested expbar issue
