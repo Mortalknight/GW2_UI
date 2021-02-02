@@ -64,6 +64,7 @@ local function createNormalUnitFrame(ftype)
 
     return f
 end
+GW.createNormalUnitFrame = createNormalUnitFrame
 GW.AddForProfiling("unitframes", "createNormalUnitFrame", createNormalUnitFrame)
 
 local function createNormalUnitFrameSmall(ftype)
@@ -111,7 +112,7 @@ end
 GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
 local function updateHealthbarColor(self)
-    if self.classColor == true and UnitIsPlayer(self.unit) then
+    if self.classColor and UnitIsPlayer(self.unit) then
         local _, englishClass = UnitClass(self.unit)
         local color = GWGetClassColor(englishClass, true)
 
@@ -187,6 +188,7 @@ local function healthBarAnimation(self, powerPrec, norm)
         0
     )
 end
+GW.healthBarAnimation = healthBarAnimation
 GW.AddForProfiling("unitframes", "healthBarAnimation", healthBarAnimation)
 
 local function setUnitPortraitFrame(self, event)
@@ -466,7 +468,7 @@ local function updateCastValues(self, event)
 end
 GW.AddForProfiling("unitframes", "updateCastValues", updateCastValues)
 
-local function updatePowerValues(self, event)
+local function updatePowerValues(self, event, hideAt0)
     local powerType, powerToken, _ = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
@@ -476,7 +478,7 @@ local function updatePowerValues(self, event)
         powerPrecentage = power / powerMax
     end
 
-    if power <= 0 then
+    if power <= 0 and hideAt0 then
         self.powerbarBackground:Hide()
         self.powerbar:Hide()
     else
@@ -491,6 +493,7 @@ local function updatePowerValues(self, event)
 
     self.powerbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * powerPrecentage)))
 end
+GW.updatePowerValues = updatePowerValues
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
 
 local function updateThreatValues(self)
@@ -539,7 +542,7 @@ local function updateHealthValues(self, event)
         StopAnimation(self:GetName() .. self.unit)
     else
         animationSpeed = Diff(self.healthValue, healthPrecentage)
-        animationSpeed = math.min(1.00, math.max(0.2, 2.00 * animationSpeed))
+        animationSpeed = math.min(1, math.max(0.2, 2 * animationSpeed))
     end
 
     -- absorb calc got inlined here because nothing else uses this
@@ -973,3 +976,5 @@ local function LoadTargetOfUnit(unit)
     f:SetScript("OnUpdate", unittarget_OnUpdate)
 end
 GW.LoadTargetOfUnit = LoadTargetOfUnit
+
+

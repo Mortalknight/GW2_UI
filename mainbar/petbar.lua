@@ -193,13 +193,14 @@ local function updatePetFrameLocation()
         return
     end
     local fBar = MultiBarBottomLeft
+    local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 54 or 0
     fPet:ClearAllPoints()
     fPet.gwMover:ClearAllPoints()
     if fBar and fBar.gw_FadeShowing then
-        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 212)
         fPet:SetPoint("TOPLEFT", fPet.gwMover)
     else
-        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 120)
         fPet:SetPoint("TOPLEFT", fPet.gwMover)
     end
 end
@@ -270,6 +271,7 @@ local function LoadPetFrame(lm)
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
+    playerPetFrame:SetAttribute("playerFrameAsTarget", GetSetting("PLAYER_AS_TARGET_FRAME"))
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
     playerPetFrame:SetAttribute("unit", "pet")

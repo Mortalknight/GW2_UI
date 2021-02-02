@@ -503,3 +503,12 @@ GW_DEFAULT["PlayerBuffFrame_ICON_SIZE"] = 32
 GW_DEFAULT["PlayerDebuffFrame_ICON_SIZE"] = 32
 GW_DEFAULT["PLAYER_TRACKED_DODGEBAR_SPELL"] = ""
 GW_DEFAULT["PLAYER_TRACKED_DODGEBAR_SPELL_ID"] = 0
+GW_DEFAULT["PLAYER_AS_TARGET_FRAME"] = false
+GW_DEFAULT["player_CLASS_COLOR"] = false
+
+GW_DEFAULT["player_pos"] = {}
+GW_DEFAULT["player_pos"]["point"] = "CENTER"
+GW_DEFAULT["player_pos"]["relativePoint"] = "CENTER"
+GW_DEFAULT["player_pos"]["xOfs"] = -56
+GW_DEFAULT["player_pos"]["yOfs"] = -100
+GW_DEFAULT["player_pos_scale"] = 1

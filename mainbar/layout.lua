@@ -78,17 +78,18 @@ local onstate_Barlayout = [=[
     local petmover = self:GetFrameRef("pet_mover")
 
     if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
+        local pfat = pet:GetAttribute("playerFrameAsTarget")
         if newstate == "incombat" then
             petmover:ClearAllPoints()
-            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
         else
             if mbl and mbl:IsShown() then
                 if mbl:GetAttribute("gw_FadeShowing") then
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
                 else
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 120)
                 end
             end
         end

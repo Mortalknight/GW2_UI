@@ -542,7 +542,7 @@ local function updateMainBar(toggle)
                 btn_yOff
             )
 
-            if i == 6 then
+            if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
                 btn_padding = btn_padding + 108
             end
         end
@@ -692,10 +692,15 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
 
     -- position mover
-    if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and not GetSetting("XPBAR_ENABLED") and not fmMultibar.isMoved  then
+    if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not fmMultibar.isMoved  then
         local framePoint = GetSetting(barName)
+        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
         fmMultibar.gwMover:ClearAllPoints()
-        fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+        if barName == "MultiBarBottomLeft" then
+            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + 56, framePoint.yOfs - yOff)
+        elseif barName == "MultiBarBottomRight" then
+            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs - 56, framePoint.yOfs - yOff)
+        end
     end
 
     -- set fader logic

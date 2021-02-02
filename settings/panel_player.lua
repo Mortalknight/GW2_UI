@@ -1,5 +1,6 @@
 local _, GW = ...
 local L = GW.L
+local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
 local addOptionText = GW.AddOptionText
@@ -18,6 +19,8 @@ local function LoadPlayerPanel(sWindow)
 
     createCat(PLAYER, L["Modify the player frame settings."], p, 9)
 
+    addOption(p, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
     addOptionDropdown(
         p,
         L["Aura Style"],
@@ -122,7 +125,7 @@ local function LoadPlayerPanel(sWindow)
         {"NONE", "PREC", "VALUE", "BOTH"},
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
+        {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}
     )
 
     addOptionDropdown(

@@ -1252,10 +1252,12 @@ local function LoadClassPowers()
     hooksecurefunc(cpf, "SetWidth", function() cpf.gwMover:SetWidth(cpf:GetWidth()) end)
 
     -- position mover
-    if not GW.GetSetting("XPBAR_ENABLED") and not cpf.isMoved  then
+    if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then
         local framePoint = GW.GetSetting("ClasspowerBar_pos")
+        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
         cpf.gwMover:ClearAllPoints()
-        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
 
     GW.MixinHideDuringPetAndOverride(cpf)

@@ -573,9 +573,12 @@ local function loadAddon(self)
     end
 
     --Create player hud
-    if GetSetting("HEALTHGLOBE_ENABLED") then
+    if GetSetting("HEALTHGLOBE_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadHealthGlobe()
-        GW.LoadDodgeBar(hg)
+        GW.LoadDodgeBar(hg, false)
+    elseif GetSetting("HEALTHGLOBE_ENABLED") and GetSetting("PLAYER_AS_TARGET_FRAME") then
+        local hg = GW.LoadPlayerFrame()
+        GW.LoadDodgeBar(hg, true)
     end
 
     if GetSetting("POWERBAR_ENABLED") then

@@ -4,6 +4,7 @@ local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local GetSetting = GW.GetSetting
 
 local function powerBar_OnUpdate(self)
     if self.lostKnownPower == nil or self.powerMax == nil or self.lastUpdate == nil or self.animating == true then
@@ -185,10 +186,12 @@ local function LoadPowerBar()
     playerPowerBar:SetPoint("TOPLEFT", playerPowerBar.gwMover)
 
     -- position mover
-    if not GW.GetSetting("XPBAR_ENABLED") and not playerPowerBar.isMoved  then
+    if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not playerPowerBar.isMoved  then
         local framePoint = GW.GetSetting("PowerBar_pos")
+        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and -56 or 0
         playerPowerBar.gwMover:ClearAllPoints()
-        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - 14)
+        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
     GW.MixinHideDuringPetAndOverride(playerPowerBar)
 

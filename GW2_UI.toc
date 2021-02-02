@@ -83,6 +83,7 @@ units/raidframes.lua
 units/unitframes.lua
 units/party.lua
 units/markers.lua
+units/playerFrame.lua
 
 mainbar/micromenu.xml
 mainbar/micromenu.lua

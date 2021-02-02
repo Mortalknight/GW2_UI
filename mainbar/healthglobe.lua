@@ -197,6 +197,7 @@ local function selectPvp(self)
         self.pvp.horde:Hide()
     end
 end
+GW.PlayerSelectPvp = selectPvp
 GW.AddForProfiling("healthglobe", "selectPvp", selectPvp)
 
 local function globe_OnEvent(self, event, ...)
@@ -254,6 +255,7 @@ local function globe_OnEnter(self)
         self.pvp:fadeIn()
     end
 end
+GW.PlayerFrame_OnEnter = globe_OnEnter
 GW.AddForProfiling("healthglobe", "globe_OnEnter", globe_OnEnter)
 
 local function fill_OnFinish(self)

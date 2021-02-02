@@ -314,3 +314,4 @@ L["Bar"] = true
 L["Top Left"] = "Oben links"
 L["Top Right"] = "Oben rechts"
 L["Center"] = "Mitte"
+L["Player frame in target frame style"] = "Spielereinheit im Zieleinheiten Style"
