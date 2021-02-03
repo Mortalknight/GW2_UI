@@ -152,7 +152,7 @@ local function player_OnEvent(self, event, unit)
         unitFrameData(self)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self)
-    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
+    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM", "ACTIVE_TALENT_GROUP_CHANGED") then
         GW.updatePowerValues(self, event, false)
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         GW.PlayerSelectPvp(self)
@@ -162,7 +162,7 @@ local function player_OnEvent(self, event, unit)
 end
 
 local function LoadPlayerFrame()
-    local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame")
+    local NewUnitFrame = createNormalUnitFrame("GwPlayerUnitFrame")
     NewUnitFrame.unit = "player"
     NewUnitFrame.type = "NormalTarget"
 
@@ -221,7 +221,9 @@ local function LoadPlayerFrame()
     NewUnitFrame:RegisterEvent("RESURRECT_REQUEST")
     NewUnitFrame:RegisterEvent("PLAYER_LEVEL_UP")
     NewUnitFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    NewUnitFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")  
+    NewUnitFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
+    NewUnitFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    NewUnitFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "player")

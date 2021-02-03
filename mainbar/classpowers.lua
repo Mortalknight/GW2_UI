@@ -1269,28 +1269,39 @@ local function LoadClassPowers()
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
     if cpf.ourPowerBar then
-        local lmb = CreateFrame("Frame", nil, GwPlayerPowerBar, "GwPlayerPowerBar")
+        local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
+        local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
+        local lmb = CreateFrame("Frame", nil, anchorFrame, "GwPlayerPowerBar")
         GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()
-        lmb:SetSize(GwPlayerPowerBar:GetWidth(), 7)
+        
         lmb.bar:SetHeight(5)
         lmb.candy:SetHeight(5)
         lmb.candy.spark:SetHeight(5)
         lmb.statusBar:SetHeight(5)
         lmb:ClearAllPoints()
-        lmb:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 0, 5)
+        if GetSetting("PLAYER_AS_TARGET_FRAME") then
+            lmb:SetPoint("LEFT", anchorFrame.castingbarBackground, "LEFT", 2, 5)
+            lmb:SetSize(barWidth + 2, 7)
+            lmb.statusBar:SetWidth(barWidth - 2)
+        else
+            lmb:SetPoint("TOPLEFT", anchorFrame, "TOPLEFT", 0, 5)
+            lmb:SetSize(barWidth, 7)
+        end
         lmb:SetFrameStrata("MEDIUM")
         lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
     end
 
     -- create an extra mana power bar that is used sometimes
+    local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+    local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
     local exbar = CreateFrame("Frame", nil, cpf, "GwPlayerPowerBar")
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
     exbar.candy.spark:ClearAllPoints()
     exbar:ClearAllPoints()
-    exbar:SetPoint("BOTTOMLEFT", cpf, "BOTTOMLEFT", 0, 5)
+    exbar:SetPoint("BOTTOMLEFT", cpf, "BOTTOMLEFT", 0 + xOff, 5 - yOff)
     exbar:SetFrameStrata("MEDIUM")
     exbar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
 

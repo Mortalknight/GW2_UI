@@ -186,12 +186,11 @@ local function LoadPowerBar()
     playerPowerBar:SetPoint("TOPLEFT", playerPowerBar.gwMover)
 
     -- position mover
-    if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not playerPowerBar.isMoved  then
-        local framePoint = GW.GetSetting("PowerBar_pos")
+    if not playerPowerBar.isMoved  then
+        local framePoint = GetSetting("PowerBar_pos")
         local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
-        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and -56 or 0
         playerPowerBar.gwMover:ClearAllPoints()
-        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
+        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - yOff)
     end
     GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
@@ -202,9 +201,7 @@ local function LoadPowerBar()
         function(self, event, unit)
             if (event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER") and unit == "player" then
                 UpdatePowerData(playerPowerBar)
-                return
-            end
-            if event == "UPDATE_SHAPESHIFT_FORM" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+            elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
                 playerPowerBar.lastPowerType = nil
                 UpdatePowerData(playerPowerBar)
             end
@@ -217,8 +214,6 @@ local function LoadPowerBar()
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    playerPowerBar:RegisterEvent("PLAYER_TALENT_UPDATE")
 
     UpdatePowerData(playerPowerBar)
 end

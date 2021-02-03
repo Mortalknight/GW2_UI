@@ -581,7 +581,7 @@ local function loadAddon(self)
         GW.LoadDodgeBar(hg, true)
     end
 
-    if GetSetting("POWERBAR_ENABLED") then
+    if GetSetting("POWERBAR_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
         GW.LoadPowerBar()
     end
 
