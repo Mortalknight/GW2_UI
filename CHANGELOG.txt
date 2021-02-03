@@ -1,3 +1,11 @@
+5.9.0
+NEW
+    - Added "layer frame in target frame style"
+
+FIXES
+    - Update "Raid Debuffs"
+    - Guild auto repair if not in guild
+
 5.8.0
 NEW
     - Added Talent Set Manager support (button on hero panel)
