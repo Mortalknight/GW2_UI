@@ -3,7 +3,7 @@ local v = GW.vernotes
 
 v("5.9.0", [=[
 NEW
-    - Added "layer frame in target frame style"
+    - Added "player frame in target frame style"
 
 FIXES
     - Update "Raid Debuffs"
