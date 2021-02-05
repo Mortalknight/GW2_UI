@@ -473,6 +473,17 @@ local function LoadQuestview()
         "OnShow",
         function()
             UIFrameFadeIn(GwQuestviewFrame, 0.2, 0, 1)
+            GwQuestviewFrame:EnableKeyboard(true)
+            GwQuestviewFrame:SetScript("OnKeyDown", function(self, key)
+                if key == "SPACE" then nextGossip() end
+            end)
+        end
+    )
+    GwQuestviewFrame:SetScript(
+        "OnHide",
+        function()
+            GwQuestviewFrame:EnableKeyboard(false)
+            GwQuestviewFrame:SetScript("OnKeyDown", nil)
         end
     )
 

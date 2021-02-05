@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.9.0", [=[
 NEW
     - Added "player frame in target frame style"
+    - Immersive Questing: "Next Gossip" with space
 
 FIXES
     - Update "Raid Debuffs"

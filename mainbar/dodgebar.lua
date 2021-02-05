@@ -119,12 +119,12 @@ local function initBar(self, pew)
                 end
             end
         else
-            self.spellId = tonumber(v)
+            self.spellId = IsSpellKnown(tonumber(v)) and tonumber(v) or nil
         end
     end
     Debug("Dodgebar spell for Tooltip: ", self.spellId)
 
-    if pew or not InCombatLockdown() then
+    if self.spellId and (pew or not InCombatLockdown()) then
         if overrideSpellID == 0 and DODGEBAR_SPELLS_ATTR[GW.myclass] then
             v = SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])
             if string.find(v, ",") then
