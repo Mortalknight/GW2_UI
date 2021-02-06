@@ -255,7 +255,6 @@ L["Sold junk for: %s"] = true
 L["Separate bags"] = true
 L["New Bag Name"] = true
 L["Right click to customize the bag title."] = true
-L["GW2 UI Settings"] = true
 L["Save and Reload"] = true
 L["Lock HUD"] = true
 L["Display all of the target's debuffs."] = true

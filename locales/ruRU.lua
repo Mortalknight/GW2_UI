@@ -257,7 +257,6 @@ L["Sold junk for: %s"] = "Продано хлама на сумму: %s"
 L["Separate bags"] = "Раздельные сумки"
 L["New Bag Name"] = "Новое название сумки"
 L["Right click to customize the bag title."] = "Щелкните правой кнопкой мыши, чтобы настроить название сумки."
-L["GW2 UI Settings"] = "Настройки GW2 UI"
 L["Save and Reload"] = "Применить"
 L["Lock HUD"] = "Закрепить HUD"
 L["Display all of the target's debuffs."] = "Отображать все отрицательные эффекты на цели."
@@ -309,3 +308,4 @@ L["What is 'Pixel Perfect'?\n\nGW2 UI has a built-in setting called 'Pixel Perfe
 L["Show Coordinates on World Map"] = "Отображение координат на мировой карте"
 L["Show menu for placing world markers when in raids."] = "Отображать панель с метками цели пока вы в рейде."
 L["Zone Ability"] = "Локационная способность"
+L["Player frame in target frame style"] = true

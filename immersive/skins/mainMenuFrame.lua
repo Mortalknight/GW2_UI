@@ -14,7 +14,8 @@ local BUTTONS = {
     {button = _G.GameMenuButtonQuit         , sprite = {2, 3}},
     {button = _G.GameMenuButtonContinue     , sprite = {3, 3}},
     {button = _G.GameMenuButtonRatings      , sprite = {3, 1}},
-    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}} -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
+    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}}, -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
+    {button = _G.GameMenuFrame              , sprite = {4, 2}},
 }
 
 local ICON_SPRITES = {
@@ -26,12 +27,12 @@ local ICON_SPRITES = {
 
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
-    local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
-    if relTo ~= GameMenuFrame[L["GW2 UI Settings"]] then
-        GameMenuFrame[L["GW2 UI Settings"]]:ClearAllPoints()
-        GameMenuFrame[L["GW2 UI Settings"]]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
-        GameMenuButtonLogout:ClearAllPoints()
-        GameMenuButtonLogout:SetPoint("TOPLEFT", GameMenuFrame[L["GW2 UI Settings"]], "BOTTOMLEFT", 0, offY)
+    local _, relTo, _, _, offY = GameMenuButtonAddons:GetPoint()
+    if relTo ~= GameMenuFrame[GW.addonName] then
+        GameMenuFrame[GW.addonName]:ClearAllPoints()
+        GameMenuFrame[GW.addonName]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
+        GameMenuButtonAddons:ClearAllPoints()
+        GameMenuButtonAddons:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
     end
 end
 GW.PositionGameMenuButton = PositionGameMenuButton
@@ -39,6 +40,7 @@ GW.PositionGameMenuButton = PositionGameMenuButton
 local function applyButtonStyle()
     for _, f in pairs(BUTTONS) do
         local b = f.button
+        if b == _G.GameMenuFrame then b = b.ElvUI end
         if b ~= nil then
             b.Right:Hide()
             b.Left:Hide()
@@ -70,7 +72,7 @@ local function SkinMainMenu()
     local GameMenuFrame = _G.GameMenuFrame
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
-    GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["GW2 UI Settings"]))
+    GwMainMenuFrame:SetText(format("|cffffedba%s|r", GW.addonName))
     GwMainMenuFrame:SetScript(
         "OnClick",
         function()
@@ -83,12 +85,12 @@ local function SkinMainMenu()
             HideUIPanel(GameMenuFrame)
         end
     )
-    GameMenuFrame[L["GW2 UI Settings"]] = GwMainMenuFrame
-    BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3} }
+    GameMenuFrame[GW.addonName] = GwMainMenuFrame
+    BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
 
     if not IsAddOnLoaded("ConsolePortUI_Menu") then
         GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonMacros, "BOTTOMLEFT", 0, -1)
         hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
     end
 
@@ -107,10 +109,12 @@ local function SkinMainMenu()
 
     GameMenuFrame.Border:Hide()
     GameMenuFrame.Header:Hide()
-    if _G.GameMenuFrameHeader then
-        _G.GameMenuFrameHeader:Hide()
-    end
 
     applyButtonStyle()
+
+    -- remove elvui transparent bg if ours is enabled
+    if IsAddOnLoaded("ElvUI") then
+        _G.GameMenuFrame.backdrop:Hide()
+    end
 end
 GW.SkinMainMenu = SkinMainMenu

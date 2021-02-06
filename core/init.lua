@@ -1,5 +1,5 @@
 
-local _, GW = ...
+local addonName, GW = ...
 
 -- init: store API, to reduce the API usage
 local function GetPlayerRole()
@@ -27,6 +27,7 @@ GW.CheckRole = CheckRole
 
 --Constants
 local gameLocale = GetLocale()
+GW.addonName = addonName
 GW.mylocal = gameLocale == "enGB" and "enUS" or gameLocale
 GW.NoOp = function() end
 GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")

@@ -9,6 +9,7 @@ NEW
 FIXES
     - Update "Raid Debuffs"
     - Guild auto repair if not in guild
+    - Gamemenu fixes to better interact with ElvUI
 ]=])
 
 v("5.8.0", [=[

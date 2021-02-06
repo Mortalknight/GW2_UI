@@ -422,7 +422,7 @@ local function loadAddon(self)
     else
         --Setup addon button
         local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
-        GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["GW2 UI Settings"]))
+        GwMainMenuFrame:SetText(format("|cffffedba%s|r", GW.addonName))
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
@@ -435,14 +435,12 @@ local function loadAddon(self)
                 HideUIPanel(GameMenuFrame)
             end
         )
-        GameMenuFrame[L["GW2 UI Settings"]] = GwMainMenuFrame
+        GameMenuFrame[GW.addonName] = GwMainMenuFrame
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then
-            GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-            GwMainMenuFrame:SetPoint("TOPLEFT", IsAddOnLoaded("ElvUI") and GameMenuButtonContinue or GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
-            if not IsAddOnLoaded("ElvUI") then
-                hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
-            end
+            GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
+            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonMacros, "BOTTOMLEFT", 0, -1)
+            hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
         end
     end
     if GetSetting("STATICPOPUP_SKIN_ENABLED") then

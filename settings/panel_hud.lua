@@ -49,7 +49,7 @@ local function LoadHudPanel(sWindow)
         "GW_COMBAT_TEXT_MODE",
         nil,
         {"GW2", "BLIZZARD", "OFF"},
-        {L["GW2 UI Settings"], "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS}
+        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS}
     )
     addOption(p, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"})
     addOption(p, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"})
