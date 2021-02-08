@@ -313,4 +313,4 @@ L["Bar"] = "Barra"
 L["Top Left"] = "Topo Esquerda"
 L["Top Right"] = "Topo Direita"
 L["Center"] = "Centro"
-L["Player frame in target frame style"] = true
+L["Player frame in target frame style"] = "Quadro de jogador no estilo do quadro de alvo."
