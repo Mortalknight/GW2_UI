@@ -42,6 +42,7 @@ core/fonts.lua
 core/storage.lua
 core/statusReport.lua
 core/slashcommands.lua
+core/cooldowns.lua
 
 settings/defaults.lua
 settings/api.lua

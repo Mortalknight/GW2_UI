@@ -75,6 +75,8 @@ local function reskinItemButton(iname, b)
         b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
         b.itemlevel:SetText("")
     end
+
+	GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 

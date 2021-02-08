@@ -768,6 +768,8 @@ local function grabDefaultSlots(slot, anchor, parent, size)
 
     slot:GetNormalTexture():SetTexture(nil)
 
+    GW.RegisterCooldown(_G[slot:GetName()..'Cooldown'])
+
     local high = slot:GetHighlightTexture()
     high:SetAllPoints(slot)
     high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")

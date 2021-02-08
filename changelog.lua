@@ -5,6 +5,7 @@ v("5.9.0", [=[
 NEW
     - Added "player frame in target frame style"
     - Immersive Questing: "Next Gossip" with space
+    - Show cooldowns at bags and character correct by using our own cooldown system
 
 FIXES
     - Update "Raid Debuffs"
