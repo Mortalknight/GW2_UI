@@ -110,7 +110,6 @@ local function initBar(self, pew)
         if not v then
             return
         end
-
         if string.find(v, ",") then
             for k, v in pairs(GW.splitString(v, ",", true)) do
                 if IsSpellKnown(tonumber(v)) then
@@ -119,7 +118,7 @@ local function initBar(self, pew)
                 end
             end
         else
-            self.spellId = IsSpellKnown(tonumber(v)) and tonumber(v) or nil
+            self.spellId = IsSpellKnown(tonumber(v)) and tonumber(v) or DODGEBAR_SPELLS_ATTR[GW.myclass] and tonumber(v) or nil
         end
     end
     Debug("Dodgebar spell for Tooltip: ", self.spellId)
@@ -128,12 +127,15 @@ local function initBar(self, pew)
         if overrideSpellID == 0 and DODGEBAR_SPELLS_ATTR[GW.myclass] then
             v = SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])
             if string.find(v, ",") then
+                local found = false
                 for k, v in pairs(GW.splitString(v, ",", true)) do
                     if IsSpellKnown(tonumber(v)) then
                         self:SetAttribute("spell", tonumber(v))
+                        found = true
                         break
                     end
                 end
+                if not found then return end
             else
                 self:SetAttribute("spell", tonumber(v))
             end
