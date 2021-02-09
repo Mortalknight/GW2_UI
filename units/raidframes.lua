@@ -442,7 +442,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
     frame.index = i
     frame.filter = filter
 
-    _G[frame:GetName() .. "CooldownBuffDuration"]:SetText(expires and TimeCount(expires - GetTime()) or "")
+    _G[frame:GetName() .. "CooldownBuffDuration"]:SetText(expires and TimeCount(expires - GetTime()) or 0)
     _G[frame:GetName() .. "IconBuffStacks"]:SetText((count or 1) > 1 and count or "")
     _G[frame:GetName() .. "IconBuffStacks"]:SetFont(UNIT_NAME_FONT, (count or 1) > 9 and 9 or 14)
 
