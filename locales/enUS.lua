@@ -312,3 +312,4 @@ L["Top Left"] = true
 L["Top Right"] = true
 L["Center"] = true
 L["Player frame in target frame style"] = true
+L["PvP Indicator"] = true

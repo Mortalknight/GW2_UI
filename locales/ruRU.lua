@@ -308,4 +308,10 @@ L["What is 'Pixel Perfect'?\n\nGW2 UI has a built-in setting called 'Pixel Perfe
 L["Show Coordinates on World Map"] = "Отображение координат на мировой карте"
 L["Show menu for placing world markers when in raids."] = "Отображать панель с метками цели пока вы в рейде."
 L["Zone Ability"] = "Локационная способность"
-L["Player frame in target frame style"] = true
+L["GW2 UI Update"] = "GW2 UI Обновить"
+L["Bar"] = "Индикатор"
+L["Top Left"] = "Вверху слева"
+L["Top Right"] = "Вверху справа"
+L["Center"] = "Центр"
+L["Player frame in target frame style"] = "Кадр игрока в стиле целевой рамки"
+L["PvP Indicator"] = "Индикатор PvP"

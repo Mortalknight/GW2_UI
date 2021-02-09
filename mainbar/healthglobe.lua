@@ -180,7 +180,7 @@ GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
 local function selectPvp(self)
     local prevFlag = self.pvp.pvpFlag
-    if C_PvP.IsWarModeDesired() or GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player") then
+    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and (C_PvP.IsWarModeDesired() or GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
         self.pvp.pvpFlag = true
         if prevFlag ~= true then
             if GW.myfaction == "Horde" then
@@ -251,7 +251,7 @@ local function globe_OnEnter(self)
     end
     GameTooltip:Show()
 
-    if self.pvp.pvpFlag then
+    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
         self.pvp:fadeIn()
     end
 end
@@ -384,7 +384,7 @@ local function LoadHealthGlobe()
     hg:SetScript("OnEnter", globe_OnEnter)
     hg:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
-        if self.pvp.pvpFlag then
+        if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
             self.pvp:fadeOut()
         end
     end)
@@ -444,6 +444,8 @@ local function LoadHealthGlobe()
         pagOut:Stop()
         pagIn:Play()
     end
+
+    if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
 
     return hg
 end

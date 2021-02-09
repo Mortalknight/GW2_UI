@@ -313,4 +313,5 @@ L["Bar"] = "Barra"
 L["Top Left"] = "In alto a sinistra"
 L["Top Right"] = "In altro a destra"
 L["Center"] = "Centro"
-L["Player frame in target frame style"] = true
+L["Player frame in target frame style"] = "Frame del giocatore nello stile del frame di destinazione"
+L["PvP Indicator"] = "Indicatore PvP "

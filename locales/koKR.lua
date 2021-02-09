@@ -315,4 +315,5 @@ L["Bar"] = "바"
 L["Top Left"] = "좌상단"
 L["Top Right"] = "우상단"
 L["Center"] = "가운데"
-L["Player frame in target frame style"] = true
+L["Player frame in target frame style"] = "대상 프레임 스타일의 플레이어 프레임"
+L["PvP Indicator"] = "PvP 표시기"

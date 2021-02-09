@@ -640,7 +640,7 @@
                     <Size x="148" y="160"/>
                     <Color r="1" b="0.73" g="0.93"/>
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="20"/>
+                        <Anchor point="CENTER" x="0" y="60"/>
                     </Anchors>
                 </FontString>
             </Layer>

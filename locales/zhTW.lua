@@ -313,4 +313,5 @@ L["Bar"] = "條列"
 L["Top Left"] = "左上"
 L["Top Right"] = "右上"
 L["Center"] = "中間"
-L["Player frame in target frame style"] = true
+L["Player frame in target frame style"] = "目標框架樣式的播放器框架"
+L["PvP Indicator"] = "PvP 提示器"
