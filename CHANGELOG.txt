@@ -4,6 +4,7 @@ NEW
     - Immersive Questing: "Next Gossip" with space
     - Show cooldowns at bags and character correct by using our own cooldown system
     - Added toggle for player PvP indicator
+    - Added "World Quest Addon"-Skin (embedded into Objectives tracker)
 
 FIXES
     - Update "Raid Debuffs"
