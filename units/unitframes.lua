@@ -848,7 +848,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "target")
 
-    LoadAuras(NewUnitFrame, NewUnitFrame.auras)
+    LoadAuras(NewUnitFrame)
 
     -- create floating combat text
     if GetSetting("target_FLOATING_COMBAT_TEXT") then
@@ -937,9 +937,7 @@ local function LoadFocus()
     NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "focus")
 
-    LoadAuras(NewUnitFrame, NewUnitFrame.auras)
-
-
+    LoadAuras(NewUnitFrame)
 
     FocusFrame:SetScript("OnEvent", nil)
     FocusFrame:Hide()

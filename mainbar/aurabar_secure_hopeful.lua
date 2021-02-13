@@ -1,8 +1,6 @@
 local _, GW = ...
 --local AddActionBarCallback = GW.AddActionBarCallback
 local Self_Hide = GW.Self_Hide
---local LoadAuras = GW.LoadAuras
---local UpdateBuffLayout = GW.UpdateBuffLayout
 --local GetSetting = GW.GetSetting
 --local RegisterMovableFrame = GW.RegisterMovableFrame
 local Debug = GW.Debug

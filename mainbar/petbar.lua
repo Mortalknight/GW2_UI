@@ -300,7 +300,7 @@ local function LoadPetFrame(lm)
     playerPetFrame.displayDebuffs = true
     playerPetFrame.debuffFilter = "player"
 
-    LoadAuras(playerPetFrame, playerPetFrame.auras)
+    LoadAuras(playerPetFrame)
 
     playerPetFrame:RegisterUnitEvent("UNIT_PET", "player")
     playerPetFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "pet")
