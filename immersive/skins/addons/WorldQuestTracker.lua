@@ -51,7 +51,7 @@ local function addWQTTrackerQuest(self)
     for i = 1, 25 do
         wqtFrame = _G["WorldQuestTracker_Tracker" .. i]
         
-        if wqtFrame and _wqtFrame:IsShown() then
+        if wqtFrame and wqtFrame:IsShown() then
             counter = counter + 1
             foundEvent = true
             
