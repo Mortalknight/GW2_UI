@@ -143,12 +143,8 @@ local function setBuffData(self, buffs, i)
     end
 
     if self.auraType == "debuff" then
-        if b.dispelType ~= nil then
-            self.background:SetVertexColor(
-                DEBUFF_COLOR[b.dispelType].r,
-                DEBUFF_COLOR[b.dispelType].g,
-                DEBUFF_COLOR[b.dispelType].b
-            )
+        if b.dispelType then
+            self.background:SetVertexColor(DEBUFF_COLOR[b.dispelType].r, DEBUFF_COLOR[b.dispelType].g, DEBUFF_COLOR[b.dispelType].b)
         else
             self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
         end
