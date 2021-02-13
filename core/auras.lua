@@ -69,7 +69,7 @@ local function getDebuffs(unit, filter)
             dbi.id = i
 
             dbi.name,
-            dbi.ico],
+            dbi.icon,
             dbi.count,
             dbi.dispelType,
             dbi.duration,
