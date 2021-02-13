@@ -11,13 +11,13 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddActionBarCallback = GW.AddActionBarCallback
 
 local function petBarUpdate()
-    _G["PetActionButton1Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-attack")
-    _G["PetActionButton2Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-follow")
-    _G["PetActionButton3Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-place")
+    _G.PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
+    _G.PetActionButton2Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
+    _G.PetActionButton3Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
 
-    _G["PetActionButton8Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-assist")
-    _G["PetActionButton9Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-defense")
-    _G["PetActionButton10Icon"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\pet-passive")
+    _G.PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
+    _G.PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
+    _G.PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
     for i = 1, 12 do
         if _G["PetActionButton" .. i] ~= nil then
             _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
@@ -48,10 +48,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
     if btn.Border ~= nil then
         btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
         btn.Border:SetBlendMode("BLEND")
-        btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+        btn.Border:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     end
     if btn.NormalTexture ~= nil then
-        btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
+        btn:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bagnormal")
     end
 
     if _G[buttonName .. "FloatingBG"] ~= nil then
@@ -148,7 +148,7 @@ local function setPetBar(fmPet)
                 btn:SetSize(32, 32)
             elseif i == 8 then
                 btn:ClearAllPoints()
-                btn:SetPoint("BOTTOM", _G["PetActionButton5"], "TOP", 0, BUTTON_MARGIN)
+                btn:SetPoint("BOTTOM", _G.PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
 
             if i > 1 and i ~= 8 then
@@ -163,11 +163,6 @@ local function setPetBar(fmPet)
             local btnShine = _G["PetActionButton" .. i .. "Shine"]
             if btnShine then
                 btnShine:SetSize(btn:GetSize())
-
-            --for k,v in pairs(_G['PetActionButton'..i..'Shine'].sparkles) do
-            --   v:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
-            --end
-            -- _G['PetActionButton'..i..'ShineAutoCastable']:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\autocast')
             end
 
             if i == 1 then
@@ -214,10 +209,8 @@ local function updatePetData(self, event, unit)
     if event == "UNIT_AURA" then
         UpdateBuffLayout(self, event, unit)
         return
-    end
-
-    if event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
-        SetPortraitTexture(_G["GwPlayerPetFramePortrait"], "pet")
+    elseif event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+        SetPortraitTexture(self.portrait, "pet")
         if event ~= "UNIT_PET" then
             return
         end
@@ -247,21 +240,21 @@ local function updatePetData(self, event, unit)
 
     self.resource:SetValue(resourcePrec)
 
-    if GwPlayerPetFrameHealth.animationCurrent == nil then
-        GwPlayerPetFrameHealth.animationCurrent = 0
+    if self.health.animationCurrent == nil then
+        self.health.animationCurrent = 0
     end
     AddToAnimation(
         "petBarAnimation",
-        GwPlayerPetFrameHealth.animationCurrent,
+        self.health.animationCurrent,
         healthprec,
         GetTime(),
         0.2,
         function()
-            _G["GwPlayerPetFrameHealth"]:SetValue(animations["petBarAnimation"]["progress"])
+            self.health:SetValue(animations.petBarAnimation.progress)
         end
     )
-    GwPlayerPetFrameHealth.animationCurrent = healthprec
-    _G["GwPlayerPetFrameHealthString"]:SetText(CommaValue(health))
+    self.health.animationCurrent = healthprec
+    self.health.text:SetText(CommaValue(health))
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
@@ -284,14 +277,14 @@ local function LoadPetFrame(lm)
     )
     -- TODO: When in override/vehicleui, we should show the pet auras/buffs as this can be important info
 
-    _G["GwPlayerPetFrameHealth"]:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-    _G["GwPlayerPetFrameHealthString"]:SetFont(UNIT_NAME_FONT, 11)
+    playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+    playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
 
     playerPetFrame:SetScript("OnEvent", updatePetData)
     playerPetFrame:HookScript(
         "OnShow",
         function(self)
-            updatePetData(self, "UNIT_PET", "player")
+            updatePetData(self, "UNIT_PET", "pet")
         end
     )
     playerPetFrame.unit = "pet"
@@ -311,7 +304,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
 
-    updatePetData(playerPetFrame, "UNIT_PET", "player")
+    updatePetData(playerPetFrame, "UNIT_PET", "pet")
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, {"scaleable"}, true)
 

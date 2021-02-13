@@ -264,14 +264,15 @@ local function UpdateBuffLayout(self, event, anchorPos)
             end
             local px = usedWidth2  + (size / 2)
             local py = usedHeight + (size / 2)
-            if not anchorPos then
+
+            if anchorPos == "pet" then
+                frame:SetPoint("CENTER", self.auras, "BOTTOMRIGHT", -px, py)
+            else
                 if self.auraPositionTop then
                     frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, py)
                 else
                     frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, -py)
                 end
-            elseif anchorPos == "pet" then
-                frame:SetPoint("CENTER", self.auras, "BOTTOMRIGHT", -px, py)
             end
 
             frame:SetSize(size, size)
