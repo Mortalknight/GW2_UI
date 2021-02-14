@@ -304,13 +304,26 @@ local function setComboBar(f)
 
     if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -0, -5)
+        if GwTargetUnitFrame.frameInvert then
+            f:SetPoint("TOPRIGHT", GwTargetUnitFrame.castingbar, "TOPRIGHT", 0, -5)
+            f.combopoints:SetWidth(213)
+        else
+            f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", 0, -5)
+        end
         f:SetWidth(220)
         f:SetHeight(30)
         f.combopoints.comboFlare:SetSize(64, 64)
+        local point = 0
         for i = 1, 9 do
             f.combopoints["runeTex" .. i]:SetSize(18, 18)
             f.combopoints["combo" .. i]:SetSize(18, 18)
+            if GwTargetUnitFrame.frameInvert then
+                f.combopoints["runeTex" .. i]:ClearAllPoints()
+                f.combopoints["combo" .. i]:ClearAllPoints()
+                f.combopoints["runeTex" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
+                f.combopoints["combo" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
+                point = point - 32
+            end
         end
         f:Hide()
     end

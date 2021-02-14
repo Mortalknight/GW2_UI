@@ -313,3 +313,5 @@ L["Top Right"] = true
 L["Center"] = true
 L["Player frame in target frame style"] = true
 L["PvP Indicator"] = true
+L["Invert target frame"] = true
+L["Invert focus frame"] = true

@@ -5,20 +5,29 @@ local TimeCount = GW.TimeCount
 
 local function sortAuras(a, b)
     if a.caster and b.caster and a.caster == b.caster then
-        return a.timeremaning < b.timeremaning
+        return tonumber(a.timeremaning) < tonumber(b.timeremaning)
     end
 
     return (b.caster ~= "player" and a.caster == "player")
 end
 GW.AddForProfiling("unitframes", "sortAuras", sortAuras)
 
-local function sortAuraList(auraList)
-    table.sort(
-        auraList,
-        function(a, b)
-            return sortAuras(a, b)
-        end
-    )
+local function sortAurasRevert(a, b)
+    if a.caster and b.caster and a.caster == b.caster then
+        return tonumber(a.timeremaning) > tonumber(b.timeremaning)
+    end
+
+    return (a.caster ~= "player" and b.caster == "player")
+end
+GW.AddForProfiling("unitframes", "sortAuras", sortAuras)
+
+
+local function sortAuraList(auraList, revert)
+    if revert then
+        table.sort(auraList, sortAurasRevert)
+    else
+        table.sort(auraList, sortAuras)
+    end
 
     return auraList
 end
@@ -28,7 +37,7 @@ local buffList = {}
 for i = 1, 40 do
     buffList[i] = {}
 end
-local function getBuffs(unit, filter)
+local function getBuffs(unit, filter, revert)
     if filter == nil then
         filter = ""
     end
@@ -53,7 +62,7 @@ local function getBuffs(unit, filter)
         end
     end
 
-    return sortAuraList(buffList)
+    return sortAuraList(buffList, revert)
 end
 GW.AddForProfiling("unitframes", "getBuffs", getBuffs)
 
@@ -183,8 +192,8 @@ GW.AddForProfiling("unitframes", "auraAnimateIn", auraAnimateIn)
 
 -- No use for player (not secure)
 local function UpdateBuffLayout(self, event, anchorPos)
-    local minIndex = not self.displayBuffs and 40 or 1
-    local maxIndex = not self.displayDebuffs and 40 or 80
+    local minIndex = self.displayBuffs and 1 or 40
+    local maxIndex = self.displayDebuffs and 80 or 40
     local marginX = 3
     local marginY = 20
     local usedWidth = 0
@@ -194,8 +203,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local bigSize = 28
     local maxSize = self.auras:GetWidth()
     local isBuff = false
-    local auraList = getBuffs(self.unit)
-    local dbList = getDebuffs(self.unit, self.debuffFilter)
+    local auraList = getBuffs(self.unit, nil, self.frameInvert)
+    local dbList = getDebuffs(self.unit, self.debuffFilter, self.frameInvert)
     local lineSize = smallSize
     local saveAuras = {}
 
@@ -264,11 +273,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
             if anchorPos == "pet" then
                 frame:SetPoint("CENTER", self.auras, "BOTTOMRIGHT", -px, py)
             else
-                if self.auraPositionTop then
-                    frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, py)
-                else
-                    frame:SetPoint("CENTER", self.auras, "TOPLEFT", px, -py)
-                end
+                frame:SetPoint("CENTER", self.auras, self.frameInvert and "TOPRIGHT" or "TOPLEFT", self.frameInvert and -px or px, self.auraPositionTop and py or -py)
             end
 
             frame:SetSize(size, size)
