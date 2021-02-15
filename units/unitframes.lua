@@ -227,7 +227,7 @@ local function setUnitPortraitFrame(self, event)
         end
 
         local key = "prestige" .. plvl
-        if TARGET_FRAME_ART[key]~=nil then
+        if TARGET_FRAME_ART[key] then
             border = key
         end
     end
@@ -267,7 +267,6 @@ local function setUnitPortraitFrame(self, event)
             end
         end
     end
-
 
     if foundBossMod and border == "boss" then
         border = "realboss"

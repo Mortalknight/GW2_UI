@@ -5,6 +5,7 @@ NEW
     - Show cooldowns at bags and character correct by using our own cooldown system
     - Added toggle for player PvP indicator
     - Added "World Quest Addon"-Skin (embedded into Objectives tracker)
+    - Added option to invert target/focus frame
 
 FIXES
     - Update "Raid Debuffs"

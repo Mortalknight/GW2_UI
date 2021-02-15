@@ -718,6 +718,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
             if spellBookTabs == 2 or spellBookTabs == 3 then
                 checkForGlyph(btn, spellId, fmSpellbook)
             end
+            GW.RegisterCooldown(btn.cooldown)
 
             activeIndex = activeIndex + 1
         end
