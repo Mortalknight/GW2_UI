@@ -434,7 +434,7 @@ local function updatePartyDebuffs(self, unit, x, y)
             end
 
             _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "CooldownBuffDuration"]:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffStacks"]:SetText(debuffList[i].count > 1 and debuffList[i].count or "")
+            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffStacks"]:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint("BOTTOMRIGHT", (26 * x), 26 * y)
 
@@ -528,7 +528,7 @@ local function updatePartyAuras(self, unit)
             indexBuffFrame.expires = buffList[i].expires
             indexBuffFrame.duration = buffList[i].duration
             _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffDuration"]:SetText(buffList[i].duration > 0 and TimeCount(buffList[i].timeRemaining) or "")
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffStacks"]:SetText(buffList[i].count > 1 and buffList[i].count or "")
+            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffStacks"]:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
 
