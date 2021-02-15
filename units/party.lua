@@ -409,8 +409,6 @@ local function updatePartyDebuffs(self, unit, x, y)
     for i = 1, 40 do
         local indexBuffFrame = _G["Gw" .. unit .. "DebuffItemFrame" .. i]
         if debuffList[i] then
-            local key = debuffList[i].key
-
             if indexBuffFrame == nil then
                 indexBuffFrame = CreateFrame("Frame", "Gw" .. unit .. "DebuffItemFrame" .. i, _G[self:GetName() .. "Auras"], "GwDeBuffIcon")
                 indexBuffFrame:SetParent(_G[self:GetName() .. "Auras"])
@@ -443,7 +441,7 @@ local function updatePartyDebuffs(self, unit, x, y)
                 function()
                     GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT")
                     GameTooltip:ClearLines()
-                    GameTooltip:SetUnitDebuff(unit, key)
+                    GameTooltip:SetUnitDebuff(unit, debuffList[i].key)
                     GameTooltip:Show()
                 end
             )
@@ -509,7 +507,6 @@ local function updatePartyAuras(self, unit)
     for i = 1, 40 do
         local indexBuffFrame = _G["Gw" .. unit .. "BuffItemFrame" .. i]
         if buffList[i] then
-            local key = buffList[i].key
             if indexBuffFrame == nil then
                 indexBuffFrame = CreateFrame("Button", "Gw" .. unit .. "BuffItemFrame" .. i, _G[self:GetName() .. "Auras"], "GwBuffIconBig")
                 indexBuffFrame:RegisterForClicks("RightButtonUp")
@@ -537,7 +534,7 @@ local function updatePartyAuras(self, unit)
                 function()
                     GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT", 28, 0)
                     GameTooltip:ClearLines()
-                    GameTooltip:SetUnitBuff(unit, key)
+                    GameTooltip:SetUnitBuff(unit, buffList[i].key)
                     GameTooltip:Show()
                 end
             )
