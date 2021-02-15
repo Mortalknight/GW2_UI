@@ -23,9 +23,6 @@ GW_PORTRAIT_BACKGROUND[3] = {l = 0, r = 0.828, t = 0.166015625 * 2, b = 0.166015
 GW_PORTRAIT_BACKGROUND[4] = {l = 0, r = 0.828, t = 0.166015625 * 3, b = 0.166015625 * 4}
 GW_PORTRAIT_BACKGROUND[5] = {l = 0, r = 0.828, t = 0.166015625 * 4, b = 0.166015625 * 5}
 
-local buffLists = {}
-local DebuffLists = {}
-
 local function inviteToGroup(str)
     InviteUnit(str)
 end
@@ -345,12 +342,12 @@ end
 GW.AddForProfiling("party", "updateAwayData", updateAwayData)
 
 local function getUnitDebuffs(unit)
+    local debuffList = {}
     local show_debuffs = GetSetting("PARTY_SHOW_DEBUFFS")
     local only_dispellable_debuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
     local show_importend_raid_instance_debuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     local counter = 1
 
-    DebuffLists[unit] = {}
     for i = 1, 40 do
         if UnitAura(unit, i, "HARMFUL") then
             local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitAura(unit, i, "HARMFUL")
@@ -371,21 +368,20 @@ local function getUnitDebuffs(unit)
             end
 
             if shouldDisplay then
-                DebuffLists[unit][counter] = {}
+                debuffList[counter] = {}
                 
-                DebuffLists[unit][counter]["name"] = debuffName
-                DebuffLists[unit][counter]["icon"] = icon
-                DebuffLists[unit][counter]["count"] = count
-                DebuffLists[unit][counter]["dispelType"] = debuffType
-                DebuffLists[unit][counter]["duration"] = duration
-                DebuffLists[unit][counter]["expires"] = expires
-                DebuffLists[unit][counter]["caster"] = caster
-                DebuffLists[unit][counter]["isStealable"] = isStealable
-                DebuffLists[unit][counter]["shouldConsolidate"] = shouldConsolidate
-                DebuffLists[unit][counter]["spellID"] = spellId
-                DebuffLists[unit][counter]["key"] = i
-                DebuffLists[unit][counter]["timeRemaining"] = expires - GetTime()
-                if duration <= 0 then DebuffLists[unit][i]["timeRemaining"] = 500000 end
+                debuffList[counter].name = debuffName
+                debuffList[counter].icon = icon
+                debuffList[counter].count = count
+                debuffList[counter].dispelType = debuffType
+                debuffList[counter].duration = duration
+                debuffList[counter].expires = expires
+                debuffList[counter].caster = caster
+                debuffList[counter].isStealable = isStealable
+                debuffList[counter].shouldConsolidate = shouldConsolidate
+                debuffList[counter].spellID = spellId
+                debuffList[counter].key = i
+                debuffList[counter].timeRemaining = duration <= 0 and 500000 or expires - GetTime()
 
                 counter = counter  + 1
             end
@@ -393,11 +389,13 @@ local function getUnitDebuffs(unit)
     end
 
     table.sort(
-        DebuffLists[unit],
+        debuffList,
         function(a, b)
-            return a["timeRemaining"] < b["timeRemaining"]
+            return a.timeRemaining < b.timeRemaining
         end
     )
+
+    return debuffList
 end
 GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
 
@@ -406,64 +404,37 @@ local function updatePartyDebuffs(self, unit, x, y)
         y = y + 1
     end
     x = 0
-    getUnitDebuffs(unit)
+    local debuffList = getUnitDebuffs(unit)
 
     for i = 1, 40 do
         local indexBuffFrame = _G["Gw" .. unit .. "DebuffItemFrame" .. i]
-        if DebuffLists[unit][i] then
-            local key = DebuffLists[unit][i]["key"]
+        if debuffList[i] then
+            local key = debuffList[i].key
 
             if indexBuffFrame == nil then
-                indexBuffFrame =
-                    CreateFrame(
-                    "Frame",
-                    "Gw" .. unit .. "DebuffItemFrame" .. i,
-                    _G[self:GetName() .. "Auras"],
-                    "GwDeBuffIcon"
-                )
+                indexBuffFrame = CreateFrame("Frame", "Gw" .. unit .. "DebuffItemFrame" .. i, _G[self:GetName() .. "Auras"], "GwDeBuffIcon")
                 indexBuffFrame:SetParent(_G[self:GetName() .. "Auras"])
 
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(
-                    COLOR_FRIENDLY[2].r,
-                    COLOR_FRIENDLY[2].g,
-                    COLOR_FRIENDLY[2].b
-                )
+                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
                 _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetDrawEdge(0)
                 _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetDrawSwipe(1)
                 _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetReverse(1)
                 _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetHideCountdownNumbers(true)
                 indexBuffFrame:SetSize(24, 24)
             end
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffIcon"]:SetTexture(DebuffLists[unit][i]["icon"])
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffIcon"]:SetParent(
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i]
-            )
-            local buffDur = ""
-            local stacks = ""
-            if DebuffLists[unit][i]["count"] > 1 then
-                stacks = DebuffLists[unit][i]["count"]
-            end
-            if DebuffLists[unit][i]["duration"] > 0 then
-                buffDur = TimeCount(DebuffLists[unit][i]["timeRemaining"])
-            end
-            indexBuffFrame.expires = DebuffLists[unit][i]["expires"]
-            indexBuffFrame.duration = DebuffLists[unit][i]["duration"]
+            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffIcon"]:SetTexture(debuffList[i].icon)
+            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffIcon"]:SetParent(_G["Gw" .. unit .. "DebuffItemFrame" .. i])
 
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(
-                COLOR_FRIENDLY[2].r,
-                COLOR_FRIENDLY[2].g,
-                COLOR_FRIENDLY[2].b
-            )
-            if DebuffLists[unit][i]["dispelType"] ~= nil and DEBUFF_COLOR[DebuffLists[unit][i]["dispelType"]] ~= nil then
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(
-                    DEBUFF_COLOR[DebuffLists[unit][i]["dispelType"]].r,
-                    DEBUFF_COLOR[DebuffLists[unit][i]["dispelType"]].g,
-                    DEBUFF_COLOR[DebuffLists[unit][i]["dispelType"]].b
-                )
+            indexBuffFrame.expires = debuffList[i].expires
+            indexBuffFrame.duration = debuffList[]i].duration
+
+            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+            if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
+                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(DEBUFF_COLOR[debuffList[i].dispelType].r, DEBUFF_COLOR[debuffList[i].dispelType].g, DEBUFF_COLOR[debuffList[i].dispelType].b)
             end
 
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "CooldownBuffDuration"]:SetText(buffDur)
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffStacks"]:SetText(stacks)
+            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "CooldownBuffDuration"]:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
+            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffStacks"]:SetText(debuffList[i].count > 1 and debuffList[i].count or "")
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint("BOTTOMRIGHT", (26 * x), 26 * y)
 
@@ -495,36 +466,36 @@ end
 GW.AddForProfiling("party", "updatePartyDebuffs", updatePartyDebuffs)
 
 local function getUnitBuffs(unit)
-    buffLists[unit] = {}
+    local buffList = {}
+
     for i = 1, 40 do
         if UnitAura(unit, i, "HELPFUL") then
-            buffLists[unit][i] = {}
+            buffList[i] = {}
 
-            buffLists[unit][i]["name"],
-            buffLists[unit][i]["icon"],
-            buffLists[unit][i]["count"],
-            buffLists[unit][i]["dispelType"],
-            buffLists[unit][i]["duration"],
-            buffLists[unit][i]["expires"],
-            buffLists[unit][i]["caster"],
-            buffLists[unit][i]["isStealable"],
-            buffLists[unit][i]["shouldConsolidate"],
-            buffLists[unit][i]["spellID"] = UnitAura(unit, i, "HELPFUL")
+            buffList[i].name,
+            buffList[i].icon,
+            buffList[i].count,
+            buffList[i].dispelType,
+            buffList[i].duration,
+            buffList[i].expires,
+            buffList[i].caster,
+            buffList[i].isStealable,
+            buffList[i].shouldConsolidate,
+            buffList[i].spellID = UnitAura(unit, i, "HELPFUL")
 
-            buffLists[unit][i]["key"] = i
-            buffLists[unit][i]["timeRemaining"] = buffLists[unit][i]["expires"] - GetTime()
-            if buffLists[unit][i]["duration"] <= 0 then
-                buffLists[unit][i]["timeRemaining"] = 500000
-            end
+            buffList[i].key = i
+            buffList[i].timeRemaining = buffList[i].duration and 500000 or buffList[i].expires - GetTime()
         end
     end
 
     table.sort(
-        buffLists[unit],
+        buffList,
         function(a, b)
-            return a["timeRemaining"] > b["timeRemaining"]
+            return a.timeRemaining > b.timeRemaining
         end
     )
+
+    return buffList
 end
 GW.AddForProfiling("party", "getUnitBuffs", getUnitBuffs)
 
@@ -532,21 +503,15 @@ local function updatePartyAuras(self, unit)
     local x = 0
     local y = 0
 
-    getUnitBuffs(unit)
+    local buffList = getUnitBuffs(unit)
     local fname = self:GetName()
 
     for i = 1, 40 do
         local indexBuffFrame = _G["Gw" .. unit .. "BuffItemFrame" .. i]
-        if buffLists[unit][i] then
-            local key = buffLists[unit][i]["key"]
+        if buffList[i] then
+            local key = buffList[i].key
             if indexBuffFrame == nil then
-                indexBuffFrame =
-                    CreateFrame(
-                    "Button",
-                    "Gw" .. unit .. "BuffItemFrame" .. i,
-                    _G[self:GetName() .. "Auras"],
-                    "GwBuffIconBig"
-                )
+                indexBuffFrame = CreateFrame("Button", "Gw" .. unit .. "BuffItemFrame" .. i, _G[self:GetName() .. "Auras"], "GwBuffIconBig")
                 indexBuffFrame:RegisterForClicks("RightButtonUp")
                 _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
                 _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
@@ -557,20 +522,13 @@ local function updatePartyAuras(self, unit)
             end
             local margin = -indexBuffFrame:GetWidth() + -2
             local marginy = indexBuffFrame:GetWidth() + 12
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffLists[unit][i]["icon"])
+            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffList[i].ico])
             _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetParent(_G["Gw" .. unit .. "BuffItemFrame" .. i])
-            local buffDur = ""
-            local stacks = ""
-            if buffLists[unit][i]["duration"] > 0 then
-                buffDur = TimeCount(buffLists[unit][i]["timeRemaining"])
-            end
-            if buffLists[unit][i]["count"] > 1 then
-                stacks = buffLists[unit][i]["count"]
-            end
-            indexBuffFrame.expires = buffLists[unit][i]["expires"]
-            indexBuffFrame.duration = buffLists[unit][i]["duration"]
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffDuration"]:SetText(buffDur)
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffStacks"]:SetText(stacks)
+
+            indexBuffFrame.expires = buffList[i].expires
+            indexBuffFrame.duration = buffList[i].duration
+            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffDuration"]:SetText(buffList[i].duration > 0 and TimeCount(buffList[i].timeRemaining) or "")
+            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffStacks"]:SetText(buffList[i].count > 1 and buffList[i].count or "")
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
 

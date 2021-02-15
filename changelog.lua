@@ -2,6 +2,13 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.10.1",
+    [=[
+    - Fix party buff error
+]=]
+)
+
+v(
     "1.10.0",
     [=[
     - We now use blizzards heropanel itemslots, that means that now everything can applyed to that buttons and the can be used, if they have "use" attributes
