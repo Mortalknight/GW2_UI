@@ -1,6 +1,8 @@
-1.10.1
-- Fix party buff error
+1.10.3
+- Fix lua error
 
+1.10.1/2
+- Fix party buff error
 
 1.10.0
 - We now use blizzards heropanel itemslots, that means that now everything can applyed to that buttons and the can be used, if they have "use" attributes

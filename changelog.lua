@@ -2,7 +2,14 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
-    "1.10.1",
+    "1.10.3",
+    [=[
+    - Fix lua error
+]=]
+)
+
+v(
+    "1.10.1/2",
     [=[
     - Fix party buff error
 ]=]

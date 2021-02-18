@@ -424,7 +424,7 @@ local function updatePartyDebuffs(self, unit, x, y)
             _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffIcon"]:SetParent(_G["Gw" .. unit .. "DebuffItemFrame" .. i])
 
             indexBuffFrame.expires = debuffList[i].expires
-            indexBuffFrame.duration = debuffList[]i].duration
+            indexBuffFrame.duration = debuffList[i].duration
 
             _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
             if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
