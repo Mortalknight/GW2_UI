@@ -1,3 +1,6 @@
+1.10.4
+- Fix lua error
+
 1.10.3
 - Fix lua error
 

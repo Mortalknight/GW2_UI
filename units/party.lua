@@ -519,7 +519,7 @@ local function updatePartyAuras(self, unit)
             end
             local margin = -indexBuffFrame:GetWidth() + -2
             local marginy = indexBuffFrame:GetWidth() + 12
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffList[i].ico])
+            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffList[i].icon)
             _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetParent(_G["Gw" .. unit .. "BuffItemFrame" .. i])
 
             indexBuffFrame.expires = buffList[i].expires
