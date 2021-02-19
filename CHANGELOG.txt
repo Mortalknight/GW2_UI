@@ -1,3 +1,6 @@
+1.10.5
+- Party buff shows now correct duration
+
 1.10.4
 - Fix lua error
 

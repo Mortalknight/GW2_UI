@@ -2,6 +2,13 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.10.5",
+    [=[
+    - Party buff shows now correct duration
+]=]
+)
+
+v(
     "1.10.4",
     [=[
     - Fix lua error
