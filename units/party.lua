@@ -221,7 +221,7 @@ local function updatePartyDebuffs(self, x, y)
                 x = 0
             end
         else
-            if indexBuffFrame ~= nil then
+            if indexBuffFrame then
                 indexBuffFrame:Hide()
             end
         end
@@ -274,7 +274,7 @@ local function updatePartyAuras(self)
         local indexBuffFrame = _G["Gw" .. unit .. "BuffItemFrame" .. i]
         if buffList[i] then
             if indexBuffFrame == nil then
-                indexBuffFrame = CreateFrame("Button", "Gw" .. unit .. "BuffItemFrame" .. i, _G[self:GetName() .. "Auras"], "GwBuffIconBig")
+                indexBuffFrame = CreateFrame("Button", "Gw" .. unit .. "BuffItemFrame" .. i, _G[fname .. "Auras"], "GwBuffIconBig")
                 indexBuffFrame:RegisterForClicks("RightButtonUp")
                 _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
                 _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
@@ -315,7 +315,7 @@ local function updatePartyAuras(self)
                 x = 0
             end
         else
-            if indexBuffFrame ~= nil then
+            if indexBuffFrame then
                 indexBuffFrame:Hide()
                 indexBuffFrame:SetScript("OnEnter", nil)
                 indexBuffFrame:SetScript("OnClick", nil)

@@ -473,6 +473,7 @@ local function LoadQuestview()
         "OnShow",
         function()
             UIFrameFadeIn(GwQuestviewFrame, 0.2, 0, 1)
+            GwQuestviewFrameContainerDeclineQuest:SetShown(not QuestFrame.autoQuest and true or false)
             GwQuestviewFrame:EnableKeyboard(true)
             GwQuestviewFrame:SetScript("OnKeyDown", function(self, key)
                 if key == "SPACE" then nextGossip() end
@@ -568,6 +569,11 @@ local function LoadQuestview()
                 QuestInfoRewardsFrame:Hide()
                 QuestProgressRequiredMoneyFrame:Hide()
                 GwQuestviewFrameContainerDialogRequired:Hide()
+                if QuestGetAutoAccept() and not QuestFrame.autoQuest then
+                    QuestFrame.autoQuest = true
+                else
+                    QuestFrame.autoQuest = nil
+                end
                 for i = 1, 32, 1 do
                     local frame = _G["QuestProgressItem" .. i]
                     if (frame) then
@@ -602,7 +608,7 @@ local function LoadQuestview()
     )
     GwQuestviewFrameContainerAcceptButton:SetScript(
         "OnClick",
-        function(self, event, addon)
+        function(self, button, addon)
             Stringcount = 0
             for k, v in pairs(QUESTSTRING) do
                 Stringcount = Stringcount + 1
@@ -623,6 +629,7 @@ local function LoadQuestview()
                             CloseQuest()
                         end
                     end
+                    if GwQuestviewFrame:IsShown() then GwQuestviewFrame:Hide() end
                 elseif questState == "PROGRESS" then
                     CloseQuest()
                 else
