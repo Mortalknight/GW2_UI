@@ -6,11 +6,13 @@ NEW
     - Added toggle for player PvP indicator
     - Added "World Quest Addon"-Skin (embedded into Objectives tracker)
     - Added option to invert target/focus frame
+    - Immersive Questing: Now works with auto accepting quest addons like AAP
 
 FIXES
     - Update "Raid Debuffs"
     - Guild auto repair if not in guild
     - Gamemenu fixes to better interact with ElvUI
+    - Immersive Questing: "Ignore"-Button now only shows if applicable
 
 5.8.0
 NEW
