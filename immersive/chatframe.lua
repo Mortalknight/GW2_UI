@@ -293,8 +293,8 @@ GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize
 
 local function styleChatWindow(frame)
     local name = frame:GetName()
-    _G[name.."TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G[name.."TabText"]:SetTextColor(1, 1, 1)
+    _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G[name .. "TabText"]:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
 
@@ -408,7 +408,7 @@ local function styleChatWindow(frame)
     _G[format(editbox:GetName() .. "Mid", id)]:Hide()
     _G[format(editbox:GetName() .. "Right", id)]:Hide()
     editbox:ClearAllPoints()
-    editbox:SetPoint("TOPLEFT", _G[name.."ButtonFrame"], "BOTTOMLEFT", 0, 0)
+    editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, 0)
     editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
     editbox:SetAltArrowKeyMode(false)
     editbox.editboxHasFocus = false

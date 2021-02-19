@@ -296,7 +296,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
         fmdb.arcfill.maskr_normal:SetSize(80, 72)
         fmdb.arcfill.maskr_hover:SetSize(80, 72)
         fmdb.border:SetSize(80, 72)
-        fmdb:SetPoint("TOPLEFT", hg, "TOPLEFT", -10, 5)
+        fmdb:SetPoint("TOPLEFT", hg, "TOPLEFT", -9.5, 5)
         fmdb:SetFrameStrata("BACKGROUND")
         hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GetSetting("player_pos_scale")) end)
     else
