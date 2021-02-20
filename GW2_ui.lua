@@ -449,9 +449,6 @@ local function loadAddon(self)
     if GetSetting("BNTOASTFRAME_SKIN_ENABLED") then
         GW.SkinBNToastFrame()
     end
-    if GetSetting("GHOSTFRAME_SKIN_ENABLED") then
-        GW.SkinGhostFrame()
-    end
     if GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then
         GW.SkinDeathRecapFrame()
     end
@@ -467,8 +464,9 @@ local function loadAddon(self)
     if GetSetting("TALKINGHEAD_SKIN_ENABLED") then
         GW.SkinAndPositionTalkingHeadFrame()
     end
-    if GetSetting("TIMERTRACKER_SKIN_ENABLED") then
+    if GetSetting("MISC_SKIN_ENABLED") then
         GW.SkinTimerTrackerFrame()
+        GW.SkinGhostFrame()
     end
     if GetSetting("IMMERSIONADDON_SKIN_ENABLED") then
         GW.SkinImmersionAddonFrame()

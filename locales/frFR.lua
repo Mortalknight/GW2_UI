@@ -318,3 +318,7 @@ L["Invert focus frame"] = true
 L["Talking Head"] = "Dialogue flottant"
 L["Skins"] = "Habillage"
 L["Adjust Skin settings."] = "Ajuste les paramètres d'habillage."
+L["Blizzard Class Colors"] = true
+L["Popup notifications"] = true
+L["Looking for Group notifications"] = true
+L["Misc Frames"] = "Divers"

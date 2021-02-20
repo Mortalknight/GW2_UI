@@ -320,3 +320,7 @@ L["Invert focus frame"] = true
 L["Talking Head"] = true
 L["Skins"] = "스킨"
 L["Adjust Skin settings."] = "다른 애드온이나 게임 내 여러 프레임에 체크 시 스킨을 적용합니다."
+L["Blizzard Class Colors"] = true
+L["Popup notifications"] = true
+L["Looking for Group notifications"] = true
+L["Misc Frames"] = "기타 프레임"

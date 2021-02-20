@@ -318,3 +318,7 @@ L["Invert focus frame"] = true
 L["Talking Head"] = "剧情对话框"
 L["Skins"] = "美化外观"
 L["Adjust Skin settings."] = "调整外观设定"
+L["Blizzard Class Colors"] = true
+L["Popup notifications"] = true
+L["Looking for Group notifications"] = true
+L["Misc Frames"] = "其他"

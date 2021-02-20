@@ -316,3 +316,7 @@ L["Invert focus frame"] = true
 L["Talking Head"] = true
 L["Skins"] = true
 L["Adjust Skin settings."] = true
+L["Blizzard Class Colors"] = true
+L["Popup notifications"] = true
+L["Looking for Group notifications"] = true
+L["Misc Frames"] = true

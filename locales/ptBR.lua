@@ -318,3 +318,7 @@ L["Invert focus frame"] = "Inverter Quadro do Foco"
 L["Talking Head"] = true
 L["Skins"] = "Aparências"
 L["Adjust Skin settings."] = "Ajustar definições de Aparências."
+L["Blizzard Class Colors"] = true
+L["Popup notifications"] = true
+L["Looking for Group notifications"] = true
+L["Misc Frames"] = "Diversos"

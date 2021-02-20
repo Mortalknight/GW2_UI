@@ -318,3 +318,7 @@ L["Invert focus frame"] = true
 L["Talking Head"] = true
 L["Skins"] = "Cubiertas"
 L["Adjust Skin settings."] = "Configura los Ajustes de Cubiertas."
+L["Blizzard Class Colors"] = true
+L["Popup notifications"] = true
+L["Looking for Group notifications"] = true
+L["Misc Frames"] = "Misceláneos"
