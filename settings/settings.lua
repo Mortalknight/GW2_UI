@@ -303,7 +303,7 @@ local function InitPanel(panel)
     local box_padding = 8
     local pY = -48
 
-    local padding = {x = box_padding, y = -55}
+    local padding = {x = box_padding, y = panel.sub:GetText() and -55 or -35}
     local first = true
 
     for k, v in pairs(options) do
